@@ -1,32 +1,82 @@
-// Ionic Starter App
-
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
 (function() {
-    function FleetService(){
+	function GMapsService(uiGmapGoogleMapApi,uiGmapIsReady,$q){
+		this._googleMapsDefer= $q.defer();
+		this._mapsInstancesDefer= $q.defer();
+		this.googleMaps=this._googleMapsDefer.promise;
+		this.mapsInstances=this._mapsInstancesDefer.promise;
+		var self=this;
+		uiGmapGoogleMapApi.then(this.handleGMaps.bind(this));
+		uiGmapIsReady.promise(1).then(this.handleGMapsInstances.bind(this));
+	}
+	GMapsService.prototype.handleGMaps = function(maps) {
+		this._googleMapsDefer.resolve(maps);
+	};
+	GMapsService.prototype.handleGMapsInstances = function(instances) {
+		this._mapsInstancesDefer.resolve(instances);
+	};
+	function FleetService($rootScope,gMapsService){
+		this.gMapsService=gMapsService;
+		
+	}
+	FleetService.prototype.getNearbyFleet = function() {
+		return this.gMapsService.googleMaps.then(function(maps){
+			return [
+				{latitude:40.76,longitude:-74.16,title:"[40.76,-74.16]","id":"0"},
+				{latitude:41,longitude:-75,title:"[41,-75]",id:"1"},
+				{latitude:40.76,longitude:-73.4,title:"[40.76,-73.4]",id:"2"},
+			]
+		});
+	};
+	function RouteService($rootScope,gMapsService,$q){
+		this.gMapsService=gMapsService;
+		this.$q=$q;
+	}
 
-    }
-    FleetService.prototype.getNearbyFleet = function() {
-      return [
- 
-        {latitude:40.76,longitude:-74.16,title:"[40.76,-74.16]","id":"0"},
-        {latitude:41,longitude:-75,title:"[41,-75]",id:"1"},
-        {latitude:40.76,longitude:-73.4,title:"[40.76,-73.4]",id:"2"},
+	RouteService.prototype.getRoute = function(pointA,pointB) {
+		var self=this;
+		return this.gMapsService.googleMaps.then(function(maps){
+			var start=new maps.LatLng(pointA.latitude,pointA.longitude);
+			var finish=new maps.LatLng(pointB.latitude,pointB.longitude);
+		
+			return self.gMapsService.mapsInstances.then(function(instances){
+				var mainInstance=instances[0].map;
+				 var request = {
+		            origin:start,//new maps.LatLng(40.76,-74.16),
+		            destination:finish,//new maps.LatLng(40.76,-73.4),
+		            travelMode: google.maps.TravelMode.DRIVING
+		        };
+		        var directionService=new maps.DirectionsService();
+		        var deferred=self.$q.defer();
+				console.debug('GOT map instances trying to get the directions');
 
-      ]
-    };
-    function MapController($scope,fleetService,uiGmapGoogleMapApi){
-      $scope.map = { center: { latitude: 40.74, longitude: -74.18 }, zoom: 9 };
-      var self=this;
-      $scope.fleetCars=[]; 
-      uiGmapGoogleMapApi.then(function(maps) {
-          $scope.fleetCars=fleetService.getNearbyFleet();
-      });
-    }
-    angular.module('starter', ['ionic','uiGmapgoogle-maps'])
-    .service('fleetService',['$rootScope',FleetService])
-    .controller('waiveCar-mapCtrl',['$scope','fleetService','uiGmapGoogleMapApi',MapController])
+		        directionService.route(request, function(result, status) {
+					if (status == google.maps.DirectionsStatus.OK) {
+						directionsDisplay = new maps.DirectionsRenderer();
+						directionsDisplay.setDirections(result);
+						directionsDisplay.setMap(mainInstance);
+						deferred.resolve(true);
+					}
+         		});
+         		return deferred.promise;
+			});
+		});
+	};
+	function MapController($scope,fleetService,routeService){
+		$scope.map = { center: { latitude: 40.74, longitude: -74.18 }, zoom: 9 };
+		var self=this;
+		$scope.fleetCars=[];
+		fleetService.getNearbyFleet().then(function(fleetCars){
+			$scope.fleetCars=fleetCars;
+			routeService.getRoute(fleetCars[0],fleetCars[1]);
+		});
+	}
+
+	angular.module('starter', ['ionic','uiGmapgoogle-maps'])
+	.service('waiveCar-gMapsService',['uiGmapGoogleMapApi','uiGmapIsReady','$q',GMapsService])
+    .service('waiveCar-fleetService',['$rootScope','waiveCar-gMapsService',FleetService])
+    .service('waiveCar-routeService',['$rootScope','waiveCar-gMapsService','$q',RouteService])
+
+    .controller('waiveCar-mapCtrl',['$scope','waiveCar-fleetService','waiveCar-routeService',MapController])
     .directive('nearbyFleet', [function() {
                     return {
                       templateUrl:'/templates/nearbyFleet.html',
