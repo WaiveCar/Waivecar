@@ -12,18 +12,21 @@
  
         {latitude:40.76,longitude:-74.16,title:"[40.76,-74.16]","id":"0"},
         {latitude:41,longitude:-75,title:"[41,-75]",id:"1"},
+        {latitude:40.76,longitude:-73.4,title:"[40.76,-73.4]",id:"2"},
+
       ]
     };
-    function MapController($scope,fleetService){
-      $scope.map = { center: { latitude: 40.74, longitude: -74.18 }, zoom: 3 };
+    function MapController($scope,fleetService,uiGmapGoogleMapApi){
+      $scope.map = { center: { latitude: 40.74, longitude: -74.18 }, zoom: 9 };
       var self=this;
-      $scope.fleetCars=fleetService.getNearbyFleet();
-      this.name='FOO';
-      $scope.name="AA";
+      $scope.fleetCars=[]; 
+      uiGmapGoogleMapApi.then(function(maps) {
+          $scope.fleetCars=fleetService.getNearbyFleet();
+      });
     }
     angular.module('starter', ['ionic','uiGmapgoogle-maps'])
     .service('fleetService',['$rootScope',FleetService])
-    .controller('waiveCar-mapCtrl',['$scope','fleetService',MapController])
+    .controller('waiveCar-mapCtrl',['$scope','fleetService','uiGmapGoogleMapApi',MapController])
     .directive('nearbyFleet', [function() {
                     return {
                       templateUrl:'/templates/nearbyFleet.html',
@@ -44,5 +47,12 @@
         }
       });
     })
+      .config(function(uiGmapGoogleMapApiProvider) {
+          uiGmapGoogleMapApiProvider.configure({
+              //    key: 'your api key',
+              v: '3.17',
+              libraries: 'weather,geometry,visualization'
+          });
+      })
 
 })();
