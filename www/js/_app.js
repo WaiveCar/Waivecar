@@ -11,7 +11,6 @@
 					return {
 						latitude:position.coords.latitude,
 						longitude:position.coords.longitude,
-						id:"Location"
 					}
 				}
 			);
@@ -121,12 +120,4 @@
         }
       });
     })
-      .config(function(uiGmapGoogleMapApiProvider) {
-          uiGmapGoogleMapApiProvider.configure({
-              //    key: 'your api key',
-              v: '3.17',
-              libraries: 'weather,geometry,visualization'
-          });
-      })
-
 })();
