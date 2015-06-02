@@ -1,0 +1,15 @@
+extends ../layout-email
+block content
+  p.lead.text-center #{ item.name }
+  if message
+    p.text-center #{ message }
+  else
+    p.text-center An item has been shared with you.
+  br
+  br
+  p.text-center Click the button below or copy/paste the following url:
+  p.text-center.bg-info
+    a(href=item.url, target="_blank") #{ item.url }
+  br
+  p.text-center
+    a.btn.btn-lg.btn-primary(href=item.url, target="_blank") View Now

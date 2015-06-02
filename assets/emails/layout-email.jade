@@ -1,0 +1,29 @@
+table.email-wrapper(width="100%", border="0", cellspacing="0", cellpadding="0")
+  tbody
+    tr
+      td(colspan="3", width="100%", style="width:10%;height:30px;") &nbsp;
+    tr
+      td(width="10%", style="width:10%") &nbsp;
+      td(width="80%", style="width:80%")
+        table.email(width="100%", border="0", cellspacing="0", cellpadding="0")
+          tbody
+            tr
+              td
+                .email-header
+                    img.app-logo(src=appImage)
+              td
+                .email-header.pull-right
+                    img.brand-logo(src=brandImage)
+            tr
+              td(colspan="2")
+                .email-content
+                  block content
+            tr
+              td(colspan="2")
+                .email-footer.text-center
+                  span &copy; Copyright #{ currentYear } - All Rights Reserved.
+      td(width="10%", style="width:10%") &nbsp;
+    tr
+      td(width="10%", style="width:10%") &nbsp;
+      td.email-wrapper-footer(width="80%", style="width:80%") &nbsp;
+      td(width="10%", style="width:10%") &nbsp;
