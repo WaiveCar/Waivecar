@@ -15,7 +15,7 @@
     <script src="lib/ionic/js/ionic.bundle.js"></script>
     <script src='/lib/lodash/dist/lodash.min.js'></script>
     <script src='/lib/angular-google-maps/dist/angular-google-maps.min.js'></script>
-
+    <script src="lib/ngCordova/dist/ng-cordova.min.js"></script>
     <!-- cordova script (this will be a 404 during development) -->
     <script src="cordova.js"></script>
 
@@ -29,7 +29,7 @@
         <h1 class="title">Waivecars-map</h1>
       </ion-header-bar>
       <ion-content>
-        <div ng-controller="waiveCar-mapCtrl as map">
+        <div ng-controller="waiveCar-mapCtrl as map" class="mapContainer">
           <ui-gmap-google-map center='map.center' zoom='map.zoom'>
             <nearby-fleet></nearby-fleet>
           </ui-gmap-google-map>

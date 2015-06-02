@@ -1,4 +1,21 @@
 (function() {
+	function LocationService($cordovaGeolocation){
+		this.$cordovaGeolocation=$cordovaGeolocation;
+	}
+	LocationService.prototype.getLocation = function() {
+		var posOptions = {timeout: 10000, enableHighAccuracy: false};
+		return this.$cordovaGeolocation
+			.getCurrentPosition(posOptions)
+   			.then(function (position) {
+					
+					return {
+						latitude:position.coords.latitude,
+						longitude:position.coords.longitude,
+						id:"Location"
+					}
+				}
+			);
+	};
 	function GMapsService(uiGmapGoogleMapApi,uiGmapIsReady,$q){
 		this._googleMapsDefer= $q.defer();
 		this._mapsInstancesDefer= $q.defer();
@@ -61,22 +78,29 @@
 			});
 		});
 	};
-	function MapController($scope,fleetService,routeService){
+	function MapController($scope,fleetService,routeService,locationService){
 		$scope.map = { center: { latitude: 40.74, longitude: -74.18 }, zoom: 9 };
 		var self=this;
 		$scope.fleetCars=[];
 		fleetService.getNearbyFleet().then(function(fleetCars){
 			$scope.fleetCars=fleetCars;
 			routeService.getRoute(fleetCars[0],fleetCars[1]);
+			locationService.getLocation().then(function(location){
+				console.log("MY CURRENT LOCATION");
+				console.log(location);
+				$scope.map.center=location;
+				$scope.apply();
+			})
 		});
 	}
 
-	angular.module('starter', ['ionic','uiGmapgoogle-maps'])
+	angular.module('starter', ['ionic','uiGmapgoogle-maps','ngCordova'])
+	.service('waiveCar-locationService',['$cordovaGeolocation',LocationService])
 	.service('waiveCar-gMapsService',['uiGmapGoogleMapApi','uiGmapIsReady','$q',GMapsService])
     .service('waiveCar-fleetService',['$rootScope','waiveCar-gMapsService',FleetService])
     .service('waiveCar-routeService',['$rootScope','waiveCar-gMapsService','$q',RouteService])
 
-    .controller('waiveCar-mapCtrl',['$scope','waiveCar-fleetService','waiveCar-routeService',MapController])
+    .controller('waiveCar-mapCtrl',['$scope','waiveCar-fleetService','waiveCar-routeService','waiveCar-locationService',MapController])
     .directive('nearbyFleet', [function() {
                     return {
                       templateUrl:'/templates/nearbyFleet.html',
