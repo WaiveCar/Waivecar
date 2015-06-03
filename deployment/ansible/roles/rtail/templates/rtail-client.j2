@@ -10,7 +10,7 @@ name=rtail-client
 dir=/opt/{{ name }}
 pidfile=/var/run/$name.pid
 logfile=/var/log/rtail/$name.log
-command="tail -F /opt/{{ name }}.log | rtail --id {{ env }}.{{ name }}.com/api --host 127.0.0.1 --port 9090"
+command="tail -F /opt/{{ name }}-{{ env }}.log | rtail --id {{ env }}.{{ name }}.com/api --host 127.0.0.1 --port 9090"
 
 if [ ! -d /var/log/rtail ]; then
     mkdir /var/log/rtail

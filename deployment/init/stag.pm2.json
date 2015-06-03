@@ -3,7 +3,7 @@
     "name"        : "waivecar",
     "cwd"         : "/opt/waivecar-api/",
     "out_file"    : "../waivecar-stag.log",
-    "error_file"  : "../waivecar-stag.error.log",
+    "error_file"  : "../waivecar-stag.log",
     "pid_file"    : "../waivecar-dev.pid",
     "script"      : "app.js",
     "merge_logs"  : true,
