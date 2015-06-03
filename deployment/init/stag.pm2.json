@@ -1,7 +1,7 @@
 {
   "apps" : [{
     "name"        : "waivecar",
-    "cwd"         : "/opt/waivecar/",
+    "cwd"         : "/opt/waivecar-api/",
     "out_file"    : "../waivecar-stag.log",
     "error_file"  : "../waivecar-stag.error.log",
     "pid_file"    : "../waivecar-dev.pid",

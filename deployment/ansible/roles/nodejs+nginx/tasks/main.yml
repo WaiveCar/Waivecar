@@ -32,7 +32,13 @@
   action: file path=/opt owner=travis group=travis
 
 - name: Create application dir
-  action: file path=/opt/{{ name }} owner=travis group=travis state=directory
+  action: file path=/opt/{{ name }}-api owner=travis group=travis state=directory
+
+- name: Create application dir
+  action: file path=/opt/{{ name }}-admin owner=travis group=travis state=directory
+
+- name: Create application dir
+  action: file path=/opt/{{ name }}-web owner=travis group=travis state=directory
 
 - name: Add Travis to sudoers
   lineinfile: dest=/etc/sudoers
