@@ -4,6 +4,6 @@
 set -e
 echo "`date -u `: Starting commit_build"
 
-echo Doing nothing!
+gulp postinstall
 
 echo "`date -u `: commit_build done"
