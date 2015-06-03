@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# Exit at first failure
+set -e
+echo "`date -u `: Starting commit_build"
+
+echo Doing nothing!
+
+echo "`date -u `: commit_build done"
