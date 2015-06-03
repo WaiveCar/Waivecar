@@ -8,7 +8,7 @@ exports = module.exports = function(Role, MigrationService, config, logger, done
     },
     {
       name: 'user',
-      description: 'Graphics Tool Access',
+      description: 'App Access',
       permissions: [ 'app' ]
     }
   ];
