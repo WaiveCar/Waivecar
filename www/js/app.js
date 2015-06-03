@@ -4,15 +4,14 @@
 		this.$q=$q;
 	}
 	LocationService.prototype.getLocation = function(timeoutLimit,enableHighAccuracy) {
-
 		timeoutLimit=timeoutLimit || 10000;
 		var posOptions = {timeout: timeoutLimit, enableHighAccuracy: enableHighAccuracy};
-		var deferred=this.$q.defer();
+		var defered=this.$q.defer();
 		this.$cordovaGeolocation
 			.getCurrentPosition(posOptions)
 			.then(function (position) {
 					console.debug('GOT location');
-					deferred.resolve(
+					defered.resolve(
 						{
 							latitude:position.coords.latitude,
 							longitude:position.coords.longitude,
@@ -21,23 +20,58 @@
 					
 				}
 			);
-		return deferred.promise;
+		return defered.promise;
 
 	};
 
-	function RouteService($rootScope,GMapsLoader){
-
+	function RouteService($rootScope,GMapsLoader,$q){
+		this.GMapsLoader=GMapsLoader;
+		this.$q=$q;
 	}
+
+	RouteService.prototype.getRoute = function(pointA,pointB) {
+		var self=this;
+		return this.GMapsLoader.getMap.then(function(maps){
+			var start=pointA;
+			var finish=pointB;
+
+			var request = {
+				origin:start,//new maps.LatLng(40.76,-74.16),
+				destination:finish,//new maps.LatLng(40.76,-73.4),
+				travelMode: maps.TravelMode.DRIVING
+			};
+			var directionService=new maps.DirectionsService();
+			var defered=self.$q.defer();
+
+			directionService.route(request, function(result, status) {
+				if (status == google.maps.DirectionsStatus.OK) {
+					directionsDisplay = new maps.DirectionsRenderer();
+					directionsDisplay.setDirections(result);
+					// directionsDisplay.setMap(mainInstance);
+					defered.resolve(directionsDisplay);
+				}
+				});
+				return defered.promise;
+		});
+	};
 	function MapController($scope,routeService,locationService,$q){
 		this._deferedMap=$q.defer();
 		this.mapInstance=this._deferedMap.promise;
+		this._deferedLocation=$q.defer();
+		this.locationMarker=this._deferedLocation.promise;
+		this._deferedDestiny=$q.defer();
+		this.destinyMarker=this._deferedDestiny.promise;
 
 	}
 	MapController.prototype.solveMap = function(mapInstance) {
 		this._deferedMap.resolve(mapInstance);
 	};
-
-
+	MapController.prototype.solveLocation = function(locationMarker) {
+		this._deferedLocation.resolve(locationMarker);
+	};
+	MapController.prototype.solveDestiny = function(destinyMarker) {
+		this._deferedDestiny.resolve(destinyMarker);
+	};
 	function FleetService($rootScope,$q,LocationService){
 		this.$q=$q;
 		this.locationService=LocationService;
@@ -49,6 +83,7 @@
 	    numNearby=numNearby || 10;
 	    var maxDiff=0.005;
 	    var minDiff=0.0005;
+
 	    //mockups
 	    return this.locationService.getLocation().then(function(deviceLocation){ 
 			var ret=[];
@@ -56,6 +91,12 @@
 			for(var i=0;i<numNearby;i++){
 				var diffA=Math.random() * (maxDiff - minDiff) + minDiff;
 				var diffB=Math.random() * (maxDiff - minDiff) + minDiff
+				if(Math.random()<.5){
+					diffA=diffA*-1;
+				}
+				if(Math.random()<.5){
+					diffB=diffB*-1;
+				}
 				ret.push(
 					{
 						latitude:deviceLocation.latitude+diffA,
@@ -75,12 +116,17 @@
 				GMapsLoader.getMap.then(function(gMaps){
 					ctrl.mapInstance.then(function(mapInstance){
 						var latLng;
+						var markers=[];
 						fleet.forEach(function(f){
 							latLng = new gMaps.LatLng(f.latitude,f.longitude);
-							new gMaps.Marker({
-								position: latLng,
-								map: mapInstance,
-							});
+							markers.push(
+								new gMaps.Marker({
+									position: latLng,
+									map: mapInstance,
+								})
+							);
+							ctrl.solveDestiny(markers[0]);
+
 						});
 					});
 				});
@@ -99,12 +145,17 @@
 					locationService.getLocation().then(function(deviceLocation){
 						ctrl.mapInstance.then(function(mapInstance){
 							latLng = new gMaps.LatLng(deviceLocation.latitude,deviceLocation.longitude);
-							new gMaps.Marker({
-								position: latLng,
+							scope.marker=new gMaps.Marker({
 								map: mapInstance,
-								animation: gMaps.Animation.BOUNCE
-
+								position: latLng,
+								animation: gMaps.Animation.BOUNCE,
+								draggable:true,
+								icon: {
+									path: gMaps.SymbolPath.CIRCLE,
+									scale: 10
+								}
 							});
+							ctrl.solveLocation(scope.marker);
 						});
 					});
 				});
@@ -112,7 +163,8 @@
 		}
 		return {
 			link:link,
-			require:'^gMap'
+			require:'^gMap',
+			scope:{}
 
 		}
 	}
@@ -122,7 +174,7 @@
 			GMapsLoader.getMap.then(function(maps){
 				 locationService.getLocation().then(function(deviceLocation){
 					 var mapOptions = {
-						zoom: 15,
+						zoom: parseInt(scope.zoom,10),
 						center: new maps.LatLng(deviceLocation.latitude, deviceLocation.longitude)
 					};
 
@@ -136,7 +188,7 @@
 		return {
 			restrict:'CE',
 			scope:{
-				mapLoaded:'&'
+				zoom:'@'
 			},
 			templateUrl:'/templates/map.html',
 			link: link,
@@ -145,14 +197,40 @@
 
 		};
 	}
+	function routeToNearestDirective(GMapsLoader,$q,routeService){
+		function link(scope, element, attrs,ctrl) {
+			GMapsLoader.getMap.then(function(maps){
+				ctrl.mapInstance.then(function(mapInstance){
+					ctrl.locationMarker.then(function(startLocation){
+						ctrl.destinyMarker.then(function(destinyLocation){
+							routeService.getRoute(startLocation.getPosition(),destinyLocation.getPosition())
+								.then(function(directionsDisplay){
+																console.log('Get direction display');
+
+									directionsDisplay.setMap(mapInstance);
+								});
+
+						});
+					});
+				});
+			});
+		}
+		return {
+			restrict:'E',
+			require:'^gMap',
+			link:link
+		}
+	}
 	angular.module('mapConcept', ['ionic','GMaps','ngCordova'])
 	.service('waiveCar_locationService',['$cordovaGeolocation','$q',LocationService])
 	.service('waiveCar_fleetService',['$rootScope','$q','waiveCar_locationService',FleetService])
-	.service('waiveCar_routeService',['$rootScope','waiveCar_GMapsLoader',RouteService])
+	.service('waiveCar_routeService',['$rootScope','waiveCar_GMapsLoader','$q',RouteService])
+
+
 	.directive('gMap',['waiveCar_GMapsLoader','$q','waiveCar_locationService',mapDirective])
 	.directive('nearbyFleet',['waiveCar_GMapsLoader','$q','waiveCar_fleetService',nearbyFleetDirective])
-
 	.directive('deviceLocation',['waiveCar_GMapsLoader','waiveCar_locationService','$q',deviceLocationDirective])
+	.directive('routeToNearestCar',['waiveCar_GMapsLoader','$q','waiveCar_routeService',routeToNearestDirective])
 
 	.run(function($ionicPlatform) {
 		$ionicPlatform.ready(function() {

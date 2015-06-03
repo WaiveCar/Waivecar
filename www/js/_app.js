@@ -85,8 +85,7 @@
 			$scope.fleetCars=fleetCars;
 			routeService.getRoute(fleetCars[0],fleetCars[1]);
 			locationService.getLocation().then(function(location){
-				console.log("MY CURRENT LOCATION");
-				console.log(location);
+				
 				$scope.map.center=location;
 				$scope.apply();
 			})
