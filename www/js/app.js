@@ -2,11 +2,20 @@
 	function LocationService($cordovaGeolocation,$q){
 		this.$cordovaGeolocation=$cordovaGeolocation;
 		this.$q=$q;
+		this.mockLocationMarker;
 	}
 	LocationService.prototype.getLocation = function(timeoutLimit,enableHighAccuracy) {
 		timeoutLimit=timeoutLimit || 10000;
 		var posOptions = {timeout: timeoutLimit, enableHighAccuracy: enableHighAccuracy};
 		var defered=this.$q.defer();
+		if(this.mockLocationMarker){
+			defered.resolve({
+				latitude:this.mockLocationMarker.getPosition().lat(),
+				longitude:this.mockLocationMarker.getPosition().lng()
+			})
+			
+			return defered.promise;
+		}
 		this.$cordovaGeolocation
 			.getCurrentPosition(posOptions)
 			.then(function (position) {
@@ -45,10 +54,8 @@
 
 			directionService.route(request, function(result, status) {
 				if (status == google.maps.DirectionsStatus.OK) {
-					directionsDisplay = new maps.DirectionsRenderer();
-					directionsDisplay.setDirections(result);
-					// directionsDisplay.setMap(mainInstance);
-					defered.resolve(directionsDisplay);
+					
+					defered.resolve(result);
 				}
 				});
 				return defered.promise;
@@ -112,6 +119,7 @@
 	function nearbyFleetDirective(GMapsLoader,$q,fleetService){
 		
 		function link(scope, element, attrs,ctrl) {
+
 			fleetService.getNearbyFleet().then(function(fleet){	
 				GMapsLoader.getMap.then(function(gMaps){
 					ctrl.mapInstance.then(function(mapInstance){
@@ -155,6 +163,8 @@
 									scale: 10
 								}
 							});
+							locationService.mockLocationMarker=scope.marker;
+
 							ctrl.solveLocation(scope.marker);
 						});
 					});
@@ -198,18 +208,36 @@
 		};
 	}
 	function routeToNearestDirective(GMapsLoader,$q,routeService){
+		function mockWalking(gMaps,startLocation,destinyLocation,mapInstance,scope){
+			gMaps.event.addListener(startLocation, "dragend", function(event) { 
+				var lat = event.latLng.lat(); 
+				var lng = event.latLng.lng(); 
+				routeService.getRoute(startLocation.getPosition(),destinyLocation.getPosition())
+				.then(function(result){
+					scope.directionsDisplay.setMap(null);
+					scope.directionsDisplay.setDirections(result);
+					scope.directionsDisplay.setMap(mapInstance);
+				});
+			}); 
+		}
 		function link(scope, element, attrs,ctrl) {
 			GMapsLoader.getMap.then(function(maps){
+				scope.directionsDisplay = new maps.DirectionsRenderer();
+					
 				ctrl.mapInstance.then(function(mapInstance){
 					ctrl.locationMarker.then(function(startLocation){
 						ctrl.destinyMarker.then(function(destinyLocation){
+							
+							
 							routeService.getRoute(startLocation.getPosition(),destinyLocation.getPosition())
-								.then(function(directionsDisplay){
-																console.log('Get direction display');
+								.then(function(result){
+									scope.directionsDisplay.setMap(null);
+									scope.directionsDisplay.setDirections(result);
+									scope.directionsDisplay.setMap(mapInstance);
 
-									directionsDisplay.setMap(mapInstance);
+									mockWalking(maps,startLocation,destinyLocation,mapInstance,scope);
+
 								});
-
 						});
 					});
 				});
