@@ -1,0 +1,117 @@
+.btn-secondary {
+  background-color: $brand-secondary;
+  border-color: $brand-secondary;
+  color: $white;
+}
+
+.btn-alternate {
+  background-color: $brand-alternate;
+  border-color: $brand-alternate;
+  color: $white;
+  &.active, &:hover, &:active {
+    //.active-button($brand-alternate, $brand-alternate, $white);
+  }
+  &[disabled], &[readonly], &.disabled {
+    opacity: 0.5;
+    //.disabled-button($brand-alternate);
+  }
+}
+.text-alternate {
+  color: $brand-alternate;
+  & {
+    text-decoration: underline;
+  }
+}
+.btn-secondary-dark {
+  background-color: $brand-secondary-dark;
+  border-color: $brand-secondary-dark;
+  color: $white;
+}
+
+.btn-gray {
+  background-color: $gray;
+  border-color: $gray;
+  color: $white;
+}
+
+.btn-facebook {
+  background-color: $brand-facebook;
+  border-color: $brand-facebook;
+  color: $white;
+  &.active, &:hover, &:active {
+    //.active-button($brand-facebook, $brand-facebook, $white);
+  }
+  &[disabled], &[readonly], &.disabled {
+    opacity: 0.5;
+    //.disabled-button($brand-facebook);
+  }
+}
+
+.btn-twitter {
+  background-color: $brand-twitter;
+  border-color: $brand-twitter;
+  color: $white;
+  &.active, &:hover, &:active {
+    //.active-button($brand-twitter, $brand-twitter, $white);
+  }
+  &[disabled], &[readonly], &.disabled {
+    opacity: 0.5;
+    //.disabled-button($brand-twitter);
+  }
+}
+
+.btn-google {
+  background-color: $brand-google;
+  border-color: $brand-google;
+  color: $white;
+  &.active, &:hover, &:active {
+    //.active-button($brand-google, $brand-google, $white);
+  }
+  &[disabled], &[readonly], &.disabled {
+    opacity: 0.5;
+    //.disabled-button($brand-google);
+  }
+}
+
+.btn-github {
+  background-color: $brand-github;
+  border-color: $brand-github;
+  color: $white;
+  &.active, &:hover, &:active {
+    //.active-button($brand-github, $brand-github, $white);
+  }
+  &[disabled], &[readonly], &.disabled {
+    opacity: 0.5;
+    //.disabled-button($brand-github);
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn.active:focus, .btn.focus, .btn:active.focus, .btn.active.focus {
+  outline: none;
+  outline-offset: 0;
+}
+
+.input-group-btn > .btn {
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 31px;
+  height: 31px;
+  padding: 6px;
+  border-radius: 2px;
+  &.btn-add {
+    //.img-retina('../img/icn-add.png', '../img/icn-add$2x.png', 11px, 12px);
+  }
+  &.btn-remove {
+    //.img-retina('../img/icn-remove.png', '../img/icn-remove$2x.png', 11px, 12px);
+  }
+}
+
+.btn-default.disabled, .btn-default[disabled] {
+  i {
+    color: $gray-lighter;
+  }
+}
+
+.btn-xl {
+  font-size: 18px;
+}

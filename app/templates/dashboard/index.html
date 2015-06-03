@@ -1,0 +1,49 @@
+<div ng-include="'/templates/partials/admin-header.html'"></div>
+<div ng-if="me" ng-controller="DashboardController" class="container-fluid main-content push-bottom-xs">
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="panel panel-default panel-dashboard stretch-right">
+        <div class="panel-heading">
+          <h3 class="panel-title">Head 1</h3>
+        </div>
+        <div class="panel-body">
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="panel panel-default panel-dashboard stretch-right stretch-left">
+        <div class="panel-heading">
+          <h3 class="panel-title">System load</h3>
+        </div>
+        <div class="panel-body">
+          <div class="load text-center">
+            <h1>{{ load.used }}%</h1>
+            <h6>used</h6>
+          </div>
+          <canvas data="load.data" labels="load.labels" options="load.options" colours="load.colors" class="chart chart-doughnut"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="panel panel-default panel-dashboard stretch-left">
+        <div class="panel-heading">
+          <h3 class="panel-title">Head 3</h3>
+        </div>
+        <div class="panel-body">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12 pull-top-xs">
+      <div class="panel panel-default panel-dashboard panel-chart">
+        <div class="panel-heading">
+          <h3 class="panel-title">Recent Activity</h3>
+        </div>
+        <div class="panel-body">
+          <canvas data="stats.data" labels="stats.labels" series="stats.series" class="chart chart-stacked-bar"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

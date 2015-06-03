@@ -1,0 +1,62 @@
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div id="lead-navbar" class="collapse navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li><a href="//localhost:3080" target="_self">Website</a></li>
+        <li class="last-nav"><a href="/">Help</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="container-fluid">
+  <div class="row push-padding push-top-sm push-bottom-sm branding">
+    <div class="col-xs-6"><a ui-sref="dashboard">
+        <div class="brand-logo"></div></a></div>
+    <div class="col-xs-6">
+      <div class="org-logo pull-right"></div>
+    </div>
+  </div>
+  <div class="row push-padding">
+    <div class="col-xs-12">
+      <nav class="navbar navbar-default">
+        <div class="navbar-header">
+          <button type="button" data-toggle="collapse" data-target="#main-navbar" class="navbar-toggle collapsed"><span class="sr-only">Toggle Menu Navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+        </div>
+        <div id="main-navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a ui-sref="dashboard">Dashboard</a></li>
+            <li><a ui-sref="media">Media</a></li>
+            <li class="dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle">Settings<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li><a ui-sref="blacklisted-emails">Email Blacklist</a></li>
+                <li><a ui-sref="settings">System Settings</a></li>
+              </ul>
+            </li>
+            <li><a ui-sref="style-guide">Style Guide</a></li>
+            <li class="dropdown no-trail"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle">Users<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li><a ui-sref="users">Users</a></li>
+                <li><a ui-sref="roles">Roles</a></li>
+              </ul>
+            </li>
+            <li ng-if="!me" class="no-trail highlight-nav dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle">Sign In<span class="caret"></span></a>
+              <ul role="menu" class="dropdown-menu">
+                <li ng-if="!me" class="highlight-nav"><a ui-sref="signin">Sign In</a></li>
+                <li ng-if="!me"><a ui-sref="signup">Register</a></li>
+              </ul>
+            </li>
+            <li ng-if="me" class="no-trail highlight-nav dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle"><span class="caret"></span>&nbsp;
+                {{ me.name }}</a>
+              <ul role="menu" class="dropdown-menu">
+                <li ng-if="!isAdminApp && hasPermission('can-access-admin')"><a target="_self" href="/admin">Admin Portal</a></li>
+                <li ng-if="isAdminApp"><a target="_self" href="/">Return to App</a></li>
+                <li class="divider"></li>
+                <li><a id="signout" href="javascript:void(0)" ng-controller="SignoutController" ng-click="signout()">Sign Out</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </div>
+</div>

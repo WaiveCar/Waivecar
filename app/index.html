@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:ng="http://angularjs.org" id="ng-app" ng-app="app.admin">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title ng-if="!$state">Waivecar | Loading...</title>
+  <title ng-if="$state">Waivecar | {{$state.current.title}}</title>
+
+  <meta name="web-base-url" content="">
+  <meta name="admin-base-url" content="">
+  <meta name="media-base-url" content="">
+  <style>[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak { display: none !important; }</style>
+  <link href="//fonts.googleapis.com/css?family=Roboto:400,500,300" rel="stylesheet" type="text/css">
+
+  <!-- build:css(app) css/compiled/bower.min.css -->
+  <link href="bower/font-awesome/css/font-awesome.css" rel="stylesheet">
+  <link href="bower/animate.css/animate.css" rel="stylesheet">
+  <link href="bower/angular-bootstrap/ui-bootstrap-csp.css" rel="stylesheet">
+  <!-- endbuild -->
+
+  <!-- build:css(app) css/compiled/main.min.css -->
+  <link href="css/main.css" rel="stylesheet">
+  <!-- endbuild -->
+
+  <!--[if lte IE 8]>
+  <!-- build:js(app) scripts/polyfills.min.js -->
+  <script src="bower/html5shiv/dist/html5shiv.js"></script>
+  <script src="bower/respond/dest/respond.src.js"></script>
+  <script src="bower/json3/lib/json3.js"></script>
+  <script src="bower/es5-shim/es5-shim.js"></script>
+  <script src="bower/es5-shim/es5-sham.js"></script>
+  <!-- endbuild -->
+  <![endif]-->
+
+  <!-- build:js(app) scripts/libs.min.js -->
+  <script src="bower/jquery/dist/jquery.js"></script>
+  <script src="bower/moment/moment.js"></script>
+  <script src="bower/moment-timezone/builds/moment-timezone-with-data.js"></script>
+  <script src="bower/lodash/lodash.js"></script>
+  <script src="bower/moment/moment.js"></script>
+  <script src="bower/async/lib/async.js"></script>
+  <script src="bower/bootstrap-sass/assets/javascripts/bootstrap.js"></script>
+  <script src="bower/bootbox/bootbox.js"></script>
+  <script src="bower/Chart.js/Chart.js"></script>
+  <script src="bower/Chart.StackedBar.js/src/Chart.StackedBar.js"></script>
+  <!--<script src="bower/socket.io-client/socket.io.js"></script>-->
+  <script src="bower/angular-socket-io/mock/socket-io.js"></script>
+  <!-- endbuild -->
+
+  <!-- build:js(app) scripts/angular.min.js -->
+  <script src="bower/angular/angular.js"></script>
+  <script src="bower/angular-sanitize/angular-sanitize.js"></script>
+  <script src="bower/angular-animate/angular-animate.js"></script>
+  <script src="bower/angular-ui-router/release/angular-ui-router.js"></script>
+  <script src="bower/angular-filter/dist/angular-filter.js"></script>
+  <script src="bower/ng-file-upload/angular-file-upload.js"></script>
+  <script src="bower/ngtoast/dist/ngToast.js"></script>
+  <script src="bower/angular-moment/angular-moment.js"></script>
+  <script src="bower/angular-bootstrap/ui-bootstrap.js"></script>
+  <script src="bower/satellizer/satellizer.js"></script>
+  <script src="bower/angular-json-human/dist/angular-json-human.js"></script>
+  <script src="bower/angular-chart.js/dist/angular-chart.js"></script>
+  <script src="bower/angular-socket-io/socket.js"></script>
+  <script src="bower/angular-strap/dist/angular-strap.min.js"></script>
+  <script src="bower/angular-strap/dist/angular-strap.tpl.min.js"></script>
+  <!-- endbuild -->
+
+  <!-- build:js(app) scripts/app.min.js -->
+  <!--<script src="js/templates.js"></script>-->
+  <script src="js/app/main.js"></script>
+  <script src="js/app/controllers/main-controller.js"></script>
+  <script src="js/app/controllers/dashboard-controller.js"></script>
+  <script src="js/app/controllers/list-controller.js"></script>
+  <script src="js/app/controllers/components-controller.js"></script>
+  <script src="js/modules/common/index.js"></script>
+  <script src="js/modules/common/services/socket-service.js"></script>
+  <script src="js/modules/common/services/data-service.js"></script>
+  <script src="js/modules/alert/index.js"></script>
+  <script src="js/modules/authentication/index.js"></script>
+  <script src="js/modules/authentication/services/utils-service.js"></script>
+  <script src="js/modules/authentication/services/account-service.js"></script>
+  <script src="js/modules/logging/index.js"></script>
+  <script src="js/modules/modals/index.js"></script>
+  <script src='js/modules/common/directives/autofocus-directive.js'></script>
+  <script src='js/modules/common/directives/validations-directive.js'></script>
+  <script src='js/modules/common/directives/tooltip-directive.js'></script>
+  <script src='js/modules/common/directives/equals-directive.js'></script>
+  <script src='js/modules/common/filters/email-filter.js'></script>
+  <script src='js/modules/common/filters/props-filter.js'></script>
+  <script src="js/modules/common/directives/chart-stackedbar-directive.js"></script>
+  <script src="js/modules/common/filters/where-in-filter.js") ></script>
+  <!-- endbuild -->
+</head>
+<body ui-view class="{{ bodyClass }}" ng-controller="MainController">
+</body>
+</html>

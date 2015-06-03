@@ -1,0 +1,53 @@
+<div>
+  <form ng-submit="finalizeCreateItem()" name="forms.editForm" role="form" validations="validations" novalidate="novalidate" class="popped">
+    <div class="form-group first-group">
+      <label for="email" class="control-label">Email</label>
+      <input name="email" type="email" ng-model="editable.user.email" tabindex="1" placeholder="Email" autofocus="autofocus" ng-required="true" autocapitalize="off" autocorrect="off" class="form-control"/>
+      <div ng-show="forms.editForm.email.$dirty &amp;&amp; forms.editForm.email.$invalid" class="validation">
+        <div class="help-icon"></div>
+        <div ng-show="forms.editForm.email.$error.required" class="help-block">An email is required</div>
+        <div ng-show="forms.editForm.email.$error.email" class="help-block">A valid email is required</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="password" class="control-label">Password</label>
+      <input name="password" type="text" ng-model="editable.user.password" placeholder="Password" tabindex="2" ng-required="true" autocapitalize="off" autocorrect="off" class="form-control"/>
+      <div ng-show="forms.editForm.password.$dirty &amp;&amp; forms.editForm.password.$invalid" class="validation">
+        <div class="help-icon"></div>
+        <div ng-show="forms.editForm.password.$error.required" class="help-block">A Password is required</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="firstName" class="control-label">First Name</label>
+      <input name="firstName" type="text" ng-model="editable.user.firstName" placeholder="First Name" tabindex="3" ng-required="true" autocapitalize="off" autocorrect="off" class="form-control"/>
+      <div ng-show="forms.editForm.firstName.$dirty && forms.editForm.firstName.$invalid" class="validation">
+        <div class="help-icon"></div>
+        <div ng-show="forms.editForm.firstName.$error.required" class="help-block">A First Name is required</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="lastName" class="control-label">Last Name</label>
+      <input name="lastName" type="text" ng-model="editable.user.lastName" placeholder="Last Name" tabindex="4" ng-required="true" autocapitalize="off" autocorrect="off" class="form-control"/>
+      <div ng-show="forms.editForm.lastName.$dirty && forms.editForm.lastName.$invalid" class="validation">
+        <div class="help-icon"></div>
+        <div ng-show="forms.editForm.lastName.$error.required" class="help-block">A Last Name is required</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="phoneCountryCode" class="control-label">Phone Country Code</label>
+      <input name="phoneCountryCode" type="text" ng-model="editable.user.phoneCountryCode" placeholder="Cell Counry Code" tabindex="5" autocapitalize="off" autocorrect="off" class="form-control"/>
+    </div>
+    <div class="form-group">
+      <label for="phoneNumber" class="control-label">Phone</label>
+      <input name="phoneNumber" type="text" ng-model="editable.user.phoneNumber" placeholder="Cell Number" tabindex="6" autocapitalize="off" autocorrect="off" class="form-control"/>
+    </div>
+    <div class="form-group last-group">
+      <input type="checkbox" name="isAdmin" ng-model="editable.user.isAdmin"/>
+      <label for="isAdmin"><span>&nbsp;Is Administrator</span></label>
+    </div>
+    <div class="form-group form-actions blocked">
+      <button type="button" data-dismiss="modal" aria-hidden="true" class="btn btn-lg btn-default bootbox-close-button">Cancel</button>
+      <button type="submit" name="submit" ng-class="{ 'btn-disabled': forms.editForm.$invalid }" ng-disabled="forms.editForm.$invalid" class="btn btn-lg btn-primary">Add</button>
+    </div>
+  </form>
+</div>

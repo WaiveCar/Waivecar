@@ -1,0 +1,19 @@
+<div class="container">
+  <div class="row push-padding push-top-sm push-bottom-sm branding">
+    <div class="col-xs-6"><a ui-sref="dashboard">
+        <div class="brand-logo"></div></a></div>
+    <div class="col-xs-6">
+      <div class="org-logo pull-right"></div>
+    </div>
+  </div>
+</div>
+<div ng-controller="SignoutController" class="container main-content push-bottom-sm">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="text-center">
+        <h4>You are not authorized to perform this request.</h4>
+        <button ng-click="signout()" class="btn btn-link">Sign in as a different user.</button>
+      </div>
+    </div>
+  </div>
+</div>

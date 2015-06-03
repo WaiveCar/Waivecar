@@ -1,0 +1,46 @@
+<div class="container">
+  <div class="row push-padding push-top-sm push-bottom-sm branding">
+    <div class="col-xs-6"><a ui-sref="dashboard">
+        <div class="brand-logo"></div></a></div>
+    <div class="col-xs-6">
+      <div class="org-logo pull-right"></div>
+    </div>
+  </div>
+</div>
+<div ng-controller="SigninController" class="container main-content push-bottom-sm">
+  <div class="row">
+    <div class="col-sm-12">
+      <form ng-submit="signin()" name="forms.signinForm" role="form" validations="validations" novalidate="novalidate" class="form-signin form-centered">
+        <legend class="text-primary">Administrator Login</legend>
+        <fieldset class="last-set">
+          <input type="hidden" name="returnUrl" value="returnUrl"/>
+          <div class="form-group first-group">
+            <label class="control-label"><span>Email Address</span></label>
+            <input id="email" tabindex="1" type="email" name="email" ng-model="email" placeholder="Email Address" autofocus="autofocus" ng-required="true" autocapitalize="off" autocorrect="off" class="form-control"/>
+            <div ng-show="forms.signinForm.email.$dirty && forms.signinForm.email.$invalid" class="validation">
+              <div class="help-icon"></div>
+              <div ng-show="forms.signinForm.email.$dirty && forms.signinForm.email.$error.required" class="help-block">Your Email Address is required</div>
+              <div ng-show="forms.signinForm.email.$dirty && forms.signinForm.email.$error.email" class="help-block">A Valid Email Address is required</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label"><span>Password</span></label>
+            <input id="password" tabindex="1" type="password" name="password" ng-model="password" placeholder="********" autofocus="autofocus" ng-required="true" autocapitalize="off" autocorrect="off" class="form-control"/>
+            <div ng-show="forms.signinForm.password.$dirty && forms.signinForm.password.$error.required" class="validation">
+              <div class="help-icon"></div>
+              <div class="help-block">Your Password is required</div>
+            </div>
+          </div>
+          <div class="form-group last-group"><a ui-sref="forgot-password">Forgot your email address or password?</a></div>
+        </fieldset>
+        <fieldset class="borderless">
+          <div class="form-group form-actions">
+            <div class="col-sm-12">
+              <button id="signin" tabindex="3" type="submit" name="signin" ng-class="{ 'btn-disabled': !forms.signinForm.$valid || exceeded, 'btn-loading': signinInProgress }" ng-disabled="!forms.signinForm.$valid || exceeded" class="btn btn-md btn-primary pull-right">Next</button>
+            </div>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  </div>
+</div>

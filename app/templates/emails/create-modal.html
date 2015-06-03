@@ -1,0 +1,17 @@
+<div>
+  <form ng-submit="finalizeCreateItem()" name="forms.editForm" role="form" validations="validations" novalidate="novalidate" class="popped">
+    <div class="form-group first-group last-group">
+      <label for="email" class="control-label">Email</label>
+      <input tabindex="1" type="email" name="email" ng-model="editable.email.email" placeholder="Email" autofocus="autofocus" ng-required="true" autocapitalize="off" autocorrect="off" class="form-control"/>
+      <div ng-show="forms.editForm.email.$dirty &amp;&amp; forms.editForm.email.$invalid" class="validation">
+        <div class="help-icon"></div>
+        <div ng-show="forms.editForm.email.$error.required" class="help-block">An email is required</div>
+        <div ng-show="forms.editForm.email.$error.email" class="help-block">A valid email is required</div>
+      </div>
+    </div>
+    <div class="form-group form-actions blocked">
+      <button tabindex="3" type="button" data-dismiss="modal" aria-hidden="true" class="btn btn-lg btn-default bootbox-close-button">Cancel</button>
+      <button tabindex="2" type="submit" name="submit" ng-class="{ 'btn-disabled': forms.editForm.$invalid }" ng-disabled="forms.editForm.$invalid" class="btn btn-lg btn-primary">Add</button>
+    </div>
+  </form>
+</div>

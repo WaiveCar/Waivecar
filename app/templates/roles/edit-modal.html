@@ -1,0 +1,20 @@
+<div>
+  <form ng-submit="finalizeEditRow()" name="forms.editForm" role="form" validations="validations" novalidate="novalidate" class="popped">
+    <div class="form-group first-group">
+      <label for="name" class="control-label">Name</label>
+      <input tabindex="1" type="text" name="name" ng-model="editable.role.name" placeholder="Name" autofocus="autofocus" ng-required="true" autocapitalize="off" autocorrect="off" class="form-control"/>
+      <div ng-show="forms.editForm.name.$dirty && forms.editForm.name.$invalid" class="validation">
+        <div class="help-icon"></div>
+        <div ng-show="forms.editForm.name.$error.required" class="help-block">A Name is required</div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="description" class="control-label">Description</label>
+      <input tabindex="2" type="text" name="description" ng-model="editable.role.description" placeholder="Description" autofocus="autofocus" autocapitalize="off" autocorrect="off" class="form-control"/>
+    </div>
+    <div class="form-group form-actions blocked">
+      <button type="button" data-dismiss="modal" aria-hidden="true" class="btn btn-lg btn-default bootbox-close-button">Cancel</button>
+      <button type="submit" name="submit" ng-class="{ 'btn-disabled': forms.editForm.$invalid }" ng-disabled="forms.editForm.$invalid" class="btn btn-lg btn-primary">Update</button>
+    </div>
+  </form>
+</div>

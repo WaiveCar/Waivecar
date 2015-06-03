@@ -1,0 +1,49 @@
+<div class="container">
+  <div class="row push-padding push-top-sm push-bottom-sm branding">
+    <div class="col-xs-6"><a ui-sref="dashboard">
+        <div class="brand-logo"></div></a></div>
+    <div class="col-xs-6">
+      <div class="org-logo pull-right"></div>
+    </div>
+  </div>
+</div>
+<div ng-controller="PasswordController" class="container main-content push-bottom-sm">
+  <div ng-if="email" class="row">
+    <div class="col-sm-12">
+      <form ng-submit="reset()" name="forms.signinForm" role="form" validations="validations" novalidate="novalidate" class="form-signin form-centered">
+        <legend class="text-primary">Set Your Password</legend>
+        <fieldset ng-class="{ 'first-set' : !isAdminApp }" class="last-set">
+          <input type="hidden" name="returnUrl" value="returnUrl"/>
+          <div class="form-group">
+            <div class="help-block">Enter your new Password now.</div>
+          </div>
+          <div class="form-group first-group">
+            <label class="control-label"><span>Password</span></label>
+            <input id="password" tabindex="1" type="password" name="password" ng-model="password" ng-minlength="6" placeholder="********" autofocus="autofocus" ng-required="true" autocapitalize="off" autocorrect="off" class="form-control"/>
+            <div ng-show="forms.signinForm.password.$dirty &amp;&amp; forms.signinForm.password.$invalid" class="validation">
+              <div class="help-icon"></div>
+              <div ng-show="forms.signinForm.password.$error.minlength" class="help-block">Passwords must be 6 characters or more</div>
+              <div ng-show="forms.signinForm.password.$error.required" class="help-block">Your Password is required</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label"><span>Password Confirmation</span></label>
+            <input id="password" tabindex="1" type="password" name="passwordConfirmation" ng-model="passwordConfirmation" ng-minlength="6" placeholder="********" ng-required="true" autocapitalize="off" autocorrect="off" equals="password" class="form-control"/>
+            <div ng-show="forms.signinForm.passwordConfirmation.$dirty &amp;&amp; forms.signinForm.passwordConfirmation.$invalid" class="validation">
+              <div class="help-icon"></div>
+              <div ng-show="forms.signinForm.passwordConfirmation.$error.equals" class="help-block">Passwords do not match</div>
+              <div ng-show="forms.signinForm.passwordConfirmation.$error.required" class="help-block">Password Confirmation is required</div>
+            </div>
+          </div>
+        </fieldset>
+        <fieldset class="borderless">
+          <div class="form-group form-actions">
+            <div class="col-sm-12">
+              <button id="signin" tabindex="3" type="submit" name="signin" ng-class="{ 'btn-disabled': !forms.signinForm.$valid || exceeded, 'btn-loading': signinInProgress }" ng-disabled="!forms.signinForm.$valid || exceeded" class="btn btn-md btn-primary pull-right">Next</button>
+            </div>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  </div>
+</div>

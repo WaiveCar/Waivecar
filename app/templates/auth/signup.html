@@ -1,0 +1,86 @@
+<div class="container">
+  <div class="row push-padding push-top-sm push-bottom-sm branding">
+    <div class="col-xs-6"><a ui-sref="dashboard">
+        <div class="brand-logo"></div></a></div>
+    <div class="col-xs-6">
+      <div class="org-logo pull-right"></div>
+    </div>
+  </div>
+</div>
+<div ng-controller="SigninController" class="container main-content">
+  <div class="row">
+    <div class="col-sm-12">
+      <form ng-submit="signin()" name="forms.userForm" role="form" validations="validations" novalidate="novalidate" class="form-boxed">
+        <legend>
+          <h2>Provide your contact information</h2>
+          <p>All fields are required. Read more about your privacy and security <a href="#">here</a>.</p>
+        </legend>
+        <fieldset class="first-set">
+          <div class="form-group first-group">
+            <label class="control-label"><span>First name</span></label>
+            <input tabindex="1" type="text" name="firstName" ng-model="editable.user.firstName" placeholder="Enter your first name" autofocus="autofocus" ng-required="true" autocorrect="off" class="form-control"/>
+            <button type="button" ng-show="forms.userForm.name.$dirty && forms.userForm.firstName.$error.required" title="First Name is required" class="btn-link tip error-tip">?</button>
+          </div>
+          <div class="form-group">
+            <label class="control-label"><span>Last name</span></label>
+            <input tabindex="2" type="text" name="lastName" ng-model="editable.user.lastName" placeholder="Enter your last name" ng-required="true" autocorrect="off" class="form-control"/>
+            <button type="button" ng-show="forms.userForm.name.$dirty && forms.userForm.lastName.$error.required" title="Last Name is required" class="btn-link tip error-tip">?</button>
+          </div>
+          <div class="form-group">
+            <label class="control-label"><span>Email</span></label>
+            <input tabindex="3" type="text" name="email" ng-model="editable.user.email" placeholder="Enter your email" ng-required="true" autocorrect="off" class="form-control"/>
+            <button type="button" ng-show="forms.userForm.name.$dirty && forms.userForm.lastName.$error.required" title="Last Name is required" class="btn-link tip error-tip">?</button>
+          </div>
+          <div class="form-group">
+            <label class="control-label"><span>Confirm email</span></label>
+            <input tabindex="4" type="text" name="emailConfirmation" ng-model="editable.user.emailConfirmation" placeholder="Confirm your email" ng-required="true" autocorrect="off" class="form-control"/>
+            <button type="button" ng-show="forms.userForm.emailConfirmation.$dirty && forms.userForm.emailConfirmation.$error.required" title="Email confirmation is required" class="btn-link tip error-tip">?</button>
+          </div>
+          <div class="form-group last-group">
+            <label class="control-label"><span>Country</span></label>
+            <input tabindex="5" type="text" name="country" ng-model="editable.user.country" placeholder="Enter your country" ng-required="true" autocorrect="off" class="form-control"/>
+            <button type="button" ng-show="forms.userForm.country.$dirty && forms.userForm.country.$error.required" title="Last Name is required" class="btn-link tip error-tip">?</button>
+          </div>
+        </fieldset>
+        <legend class="head-only">
+          <h2>Select the IEEE publication to which you intend to submit an article</h2>
+        </legend>
+        <fieldset>
+          <div class="form-group first-group last-group">
+            <label class="control-label"><span>Publication</span></label>
+            <input tabindex="6" type="text" name="firstName" ng-model="editable.user.firstName" placeholder="Enter your first name" autofocus="autofocus" ng-required="true" autocorrect="off" class="form-control"/>
+            <button type="button" ng-show="forms.userForm.name.$dirty && forms.userForm.firstName.$error.required" title="First Name is required" class="btn-link tip error-tip">?</button>
+          </div>
+        </fieldset>
+        <legend>
+          <h2>We will notify you by email when the graphics file analysis is complete</h2>
+          <p>Fill out the fields below if you wish to be notified also by text messsage, otherwise leave them empty.</p>
+        </legend>
+        <fieldset class="last-set">
+          <div class="form-group first-group">
+            <label class="control-label"><span>International Prefix</span></label>
+            <input tabindex="7" type="text" name="phoneCountryCode" ng-model="editable.user.phone.countryCode" placeholder="Enter your first name" autofocus="autofocus" ng-required="true" autocorrect="off" class="form-control"/>
+            <button type="button" ng-show="forms.userForm.phoneCountryCode.$dirty && forms.userForm.phoneCountryCode.$error.required" title="First Name is required" class="btn-link tip error-tip">?</button>
+          </div>
+          <div class="form-group">
+            <label class="control-label"><span>Text mesage number</span></label>
+            <input tabindex="8" type="text" name="phoneNumber" ng-model="editable.user.phone.number" placeholder="Enter your last name" ng-required="true" autocorrect="off" class="form-control"/>
+            <button type="button" ng-show="forms.userForm.name.$dirty && forms.userForm.lastName.$error.required" title="Last Name is required" class="btn-link tip error-tip">?</button>
+          </div>
+          <div class="form-group last-group">
+            <label class="control-label"><span>Confirm text message number</span></label>
+            <input tabindex="9" type="text" name="phoneNumberConfirmation" ng-model="editable.user.phone.numberConfirmation" placeholder="Enter your last name" ng-required="true" autocorrect="off" class="form-control"/>
+            <button type="button" ng-show="forms.userForm.name.$dirty && forms.userForm.lastName.$error.required" title="Last Name is required" class="btn-link tip error-tip">?</button>
+          </div>
+        </fieldset>
+        <fieldset class="borderless">
+          <div class="form-group form-actions">
+            <div class="pull-right">
+              <button tabindex="10" type="submit" name="submit" ng-class="{ 'btn-disabled': !forms.userForm.$valid || exceeded, 'btn-loading': inProgress }" ng-disabled="!forms.userForm.$valid" class="btn btn-md btn-secondary">Next</button>
+            </div>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  </div>
+</div>
