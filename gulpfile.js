@@ -23,7 +23,7 @@ gulp.task('bower', function() {
   return bower({
     force: true,
     directory: './app/bower'
-  }); //.pipe(gulp.dest('./dist/bower'));
+  });
 });
 
 gulp.task('clean:dist', function () {
@@ -183,7 +183,7 @@ gulp.task('build:quickapp', function (done) {
 });
 
 gulp.task('build:app', function (done) {
-  run('clean:sass', [ 'bower', 'sass', 'config' ], done);
+  run([ 'clean:sass', 'bower' ], [ 'sass', 'config' ], done);
 });
 
 gulp.task('build:dist', function (done) {
