@@ -1,0 +1,67 @@
+#!/bin/bash
+# Exit status = 0 if success, non-zero if error
+
+
+# Exit at first failure
+set -e
+echo "`date -u `: Starting commit_create_package"
+
+
+# Command line options
+COMMIT=
+NAME=
+while :; do
+    case $1 in
+        --commit)       # git commit ref
+            if [ "$2" ]; then
+                COMMIT=$2
+                shift 2
+                continue
+            else
+                echo 'ERROR: Must specify a non-empty "--commit XXX" argument.' >&2
+                exit 1
+            fi
+            ;;
+        --name)       # application name
+            if [ "$2" ]; then
+                NAME=$2
+                shift 2
+                continue
+            else
+                echo 'ERROR: Must specify a non-empty "--name YYY" argument.' >&2
+                exit 1
+            fi
+            ;;
+        --fast)
+            # Ignored
+            ;;
+        *)               # Default case: If no more options then break out of the loop.
+            break
+    esac
+
+    shift
+done
+
+if [ ! "$COMMIT" ]; then
+    echo 'ERROR: option "--commit XXX" not given.' >&2
+    exit 1
+fi
+if [ ! "$NAME" ]; then
+    echo 'ERROR: option "--name YYYY" not given.' >&2
+    exit 1
+fi
+
+echo "`date -u `: Packaging $NAME, commit $COMMIT"
+
+if [ "${TRAVIS_BRANCH}" == "admin/development" ]; then
+    DIR=app
+else
+    DIR=dist
+fi
+
+cd ${DIR}
+tar czf ../deployment/build/artifacts/$NAME\_$COMMIT.tgz .
+cd ..
+ls -lh deployment/build/artifacts/$NAME\_$COMMIT.tgz
+
+echo "`date -u `: commit_create_package done"

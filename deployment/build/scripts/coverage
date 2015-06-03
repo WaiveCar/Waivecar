@@ -1,0 +1,25 @@
+#!/bin/bash
+# Exit status = 0 if success, non-zero if error
+# coverage packer v2.4.2
+
+# TRAVIS_PULL_REQUEST=${TRAVIS_PULL_REQUEST} TRAVIS_REPO_SLUG=${TRAVIS_REPO_SLUG} TRAVIS_COMMIT=${TRAVIS_COMMIT} coverage
+
+IFS=$'\n'
+
+set -f
+rm -rf coverage.tar
+tar cvf coverage.tar coverage/
+CONTENT=$`echo -e | base64 coverage.tar`
+
+JSONSTRING="{
+  \"pull_request\": \"${TRAVIS_PULL_REQUEST}\",
+  \"repo\": \"${TRAVIS_REPO_SLUG}\",
+  \"commit\": \"${TRAVIS_COMMIT}\",
+  \"lcov\": \"${CONTENT}\" }"
+
+# create temporary file
+echo -e json=${JSONSTRING} > coverage.json
+
+curl -X POST -d "@coverage.json" https://coverage.clevertech.biz/api/jobs
+rm -rf coverage.json
+rm -rf coverage.tar
