@@ -28,7 +28,7 @@
 	function RouteService($rootScope,GMapsLoader){
 
 	}
-	function MapController($scope,fleetService,routeService,locationService,GMapsLoader,$q){
+	function MapController($scope,routeService,locationService,$q){
 		this._deferedMap=$q.defer();
 		this.mapInstance=this._deferedMap.promise;
 
@@ -50,7 +50,7 @@
 	    var maxDiff=0.005;
 	    var minDiff=0.0005;
 	    //mockups
-	    return this.locationService.getLocation().then(function(centerLocation){ 
+	    return this.locationService.getLocation().then(function(deviceLocation){ 
 			var ret=[];
 
 			for(var i=0;i<numNearby;i++){
@@ -58,8 +58,8 @@
 				var diffB=Math.random() * (maxDiff - minDiff) + minDiff
 				ret.push(
 					{
-						latitude:centerLocation.latitude+diffA,
-						longitude:centerLocation.longitude+diffB
+						latitude:deviceLocation.latitude+diffA,
+						longitude:deviceLocation.longitude+diffB
 					}
 				)
 			}
@@ -93,22 +93,37 @@
 			require:'^gMap'
 		}
 	}
-	function centerLocationDirective(GMapsLoader,locationService,$q){
+	function deviceLocationDirective(GMapsLoader,locationService,$q){
 		function link(scope,element,attrs,ctrl){
+				GMapsLoader.getMap.then(function(gMaps){
+					locationService.getLocation().then(function(deviceLocation){
+						ctrl.mapInstance.then(function(mapInstance){
+							latLng = new gMaps.LatLng(deviceLocation.latitude,deviceLocation.longitude);
+							new gMaps.Marker({
+								position: latLng,
+								map: mapInstance,
+								animation: gMaps.Animation.BOUNCE
 
+							});
+						});
+					});
+				});
+			
 		}
 		return {
 			link:link,
+			require:'^gMap'
+
 		}
 	}
 	function mapDirective(GMapsLoader,$q,locationService){
 		function link(scope, element, attrs,ctrl) {
 
 			GMapsLoader.getMap.then(function(maps){
-				 locationService.getLocation().then(function(centerPosition){
+				 locationService.getLocation().then(function(deviceLocation){
 					 var mapOptions = {
 						zoom: 15,
-						center: new maps.LatLng(centerPosition.latitude, centerPosition.longitude)
+						center: new maps.LatLng(deviceLocation.latitude, deviceLocation.longitude)
 					};
 
 					var mapInstance=new maps.Map(element[0].firstChild,mapOptions);
@@ -126,7 +141,7 @@
 			templateUrl:'/templates/map.html',
 			link: link,
 			transclude: true,
-			controller:['$scope','waiveCar_fleetService','waiveCar_routeService','waiveCar_locationService','waiveCar_GMapsLoader','$q',MapController]
+			controller:['$scope','waiveCar_routeService','waiveCar_locationService','$q',MapController]
 
 		};
 	}
@@ -137,7 +152,7 @@
 	.directive('gMap',['waiveCar_GMapsLoader','$q','waiveCar_locationService',mapDirective])
 	.directive('nearbyFleet',['waiveCar_GMapsLoader','$q','waiveCar_fleetService',nearbyFleetDirective])
 
-	.directive('centerLocation',['waiveCar_GMapsLoader','waiveCar_locationService','$q',centerLocationDirective])
+	.directive('deviceLocation',['waiveCar_GMapsLoader','waiveCar_locationService','$q',deviceLocationDirective])
 
 	.run(function($ionicPlatform) {
 		$ionicPlatform.ready(function() {
