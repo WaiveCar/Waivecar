@@ -3,7 +3,7 @@
     height: 100%;
 }
  
-#map {
+#map,.gMapsInstance{
     width: 100%;
     height: 100%;
 }

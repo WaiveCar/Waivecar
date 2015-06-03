@@ -28,35 +28,14 @@
 	function RouteService($rootScope,GMapsLoader){
 
 	}
-	function MapController($scope,fleetService,routeService,locationService,GMapsLoader){
+	function MapController($scope,fleetService,routeService,locationService,GMapsLoader,$q){
+		this._deferedMap=$q.defer();
+		this.mapInstance=this._deferedMap.promise;
 
-		$scope.getCenter=function(){
-
-			return locationService.getLocation();
-		}
-		$scope.whenMapLoaded=function(mapInstance){
-			//@todo throw that on nearby fleet directive
-			fleetService.getNearbyFleet().then(function(fleet){	
-				console.log("GOT NEARBU FLEET AND IT IS AS FOLLOWS");
-				console.debug(JSON.stringify(fleet));
-				GMapsLoader.getMap.then(function(gMaps){
-					console.log('GOT THE MAP AND WILL DRAW');
-					var latLng;
-					fleet.forEach(function(f){
-						 latLng = new gMaps.LatLng(f.latitude,f.longitude);
-						 console.log('DRAWING '+latLng);
-						 console.log(mapInstance);
-						new gMaps.Marker({
-							position: latLng,
-							map: mapInstance,
-						});
-
-					});
-				});
-
-			});
-		}
 	}
+	MapController.prototype.solveMap = function(mapInstance) {
+		this._deferedMap.resolve(mapInstance);
+	};
 
 
 	function FleetService($rootScope,$q,LocationService){
@@ -68,18 +47,19 @@
 
 		//Mockup to get nearby fleet nearby of person,On production it'll send to server
 	    numNearby=numNearby || 10;
-	    var maxDiff=0.5;
-	    console.debug('Getting nearby fleet');
+	    var maxDiff=0.005;
+	    var minDiff=0.0005;
 	    //mockups
 	    return this.locationService.getLocation().then(function(centerLocation){ 
 			var ret=[];
-			console.debug('Nearby fleet centerLocation '+centerLocation);
 
 			for(var i=0;i<numNearby;i++){
+				var diffA=Math.random() * (maxDiff - minDiff) + minDiff;
+				var diffB=Math.random() * (maxDiff - minDiff) + minDiff
 				ret.push(
 					{
-						latitude:centerLocation.latitude+Math.random(),
-						longitude:centerLocation.longitude+Math.random()
+						latitude:centerLocation.latitude+diffA,
+						longitude:centerLocation.longitude+diffB
 					}
 				)
 			}
@@ -88,17 +68,51 @@
 	    	console.error('PAU '+ JSON.stringify(error));
 	    });
 	}
-	function mapDirective(GMapsLoader,$q){
-		function link(scope, element, attrs) {
+	function nearbyFleetDirective(GMapsLoader,$q,fleetService){
+		
+		function link(scope, element, attrs,ctrl) {
+			fleetService.getNearbyFleet().then(function(fleet){	
+				GMapsLoader.getMap.then(function(gMaps){
+					ctrl.mapInstance.then(function(mapInstance){
+						var latLng;
+						fleet.forEach(function(f){
+							latLng = new gMaps.LatLng(f.latitude,f.longitude);
+							new gMaps.Marker({
+								position: latLng,
+								map: mapInstance,
+							});
+						});
+					});
+				});
+
+			});
+		}
+		return {
+			restrict:'CE',
+			link: link,
+			require:'^gMap'
+		}
+	}
+	function centerLocationDirective(GMapsLoader,locationService,$q){
+		function link(scope,element,attrs,ctrl){
+
+		}
+		return {
+			link:link,
+		}
+	}
+	function mapDirective(GMapsLoader,$q,locationService){
+		function link(scope, element, attrs,ctrl) {
 
 			GMapsLoader.getMap.then(function(maps){
-				 scope.center().then(function(centerPosition){
+				 locationService.getLocation().then(function(centerPosition){
 					 var mapOptions = {
-						zoom: 8,
+						zoom: 15,
 						center: new maps.LatLng(centerPosition.latitude, centerPosition.longitude)
 					};
-					var mapInstance=new maps.Map(element[0],mapOptions);
-					scope.mapLoaded({mapInstance:mapInstance});
+
+					var mapInstance=new maps.Map(element[0].firstChild,mapOptions);
+					ctrl.solveMap(mapInstance);
 				})
 				
 			});
@@ -107,18 +121,24 @@
 		return {
 			restrict:'CE',
 			scope:{
-				center:'&',
 				mapLoaded:'&'
 			},
-			link: link
+			templateUrl:'/templates/map.html',
+			link: link,
+			transclude: true,
+			controller:['$scope','waiveCar_fleetService','waiveCar_routeService','waiveCar_locationService','waiveCar_GMapsLoader','$q',MapController]
+
 		};
 	}
 	angular.module('mapConcept', ['ionic','GMaps','ngCordova'])
 	.service('waiveCar_locationService',['$cordovaGeolocation','$q',LocationService])
 	.service('waiveCar_fleetService',['$rootScope','$q','waiveCar_locationService',FleetService])
 	.service('waiveCar_routeService',['$rootScope','waiveCar_GMapsLoader',RouteService])
-	.controller('waiveCar_mapCtrl',['$scope','waiveCar_fleetService','waiveCar_routeService','waiveCar_locationService','waiveCar_GMapsLoader',MapController])
-	.directive('gMap',['waiveCar_GMapsLoader','$q',mapDirective])
+	.directive('gMap',['waiveCar_GMapsLoader','$q','waiveCar_locationService',mapDirective])
+	.directive('nearbyFleet',['waiveCar_GMapsLoader','$q','waiveCar_fleetService',nearbyFleetDirective])
+
+	.directive('centerLocation',['waiveCar_GMapsLoader','waiveCar_locationService','$q',centerLocationDirective])
+
 	.run(function($ionicPlatform) {
 		$ionicPlatform.ready(function() {
 		// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
