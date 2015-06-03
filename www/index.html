@@ -13,8 +13,6 @@
     -->
     <!-- ionic/angularjs js -->
     <script src="lib/ionic/js/ionic.bundle.js"></script>
-    <script src='/lib/lodash/dist/lodash.min.js'></script>
-    <script src='/lib/ngmap/dist/ng-map.min.js'></script>
     <script src="lib/ngCordova/dist/ng-cordova.min.js"></script>
     <!-- cordova script (this will be a 404 during development) -->
     <script src="cordova.js"></script>
@@ -31,7 +29,7 @@
       </ion-header-bar>
       <ion-content>
         <div ng-controller="waiveCar_mapCtrl as mapCtrl" class="mapContainer">
-          <div class="g-map" id="map" center="getCenter()">
+          <div class="g-map" id="map" center="getCenter()" map-loaded="whenMapLoaded(mapInstance)">
             <nearby-fleet></nearby-fleet>
           </div>
         </div>
