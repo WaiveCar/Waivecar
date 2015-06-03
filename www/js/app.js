@@ -222,8 +222,7 @@
 		}
 		function link(scope, element, attrs,ctrl) {
 			GMapsLoader.getMap.then(function(maps){
-				scope.directionsDisplay = new maps.DirectionsRenderer();
-					
+				scope.directionsDisplay = new maps.DirectionsRenderer({suppressMarkers: true});
 				ctrl.mapInstance.then(function(mapInstance){
 					ctrl.locationMarker.then(function(startLocation){
 						ctrl.destinyMarker.then(function(destinyLocation){
