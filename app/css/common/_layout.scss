@@ -412,11 +412,10 @@ html, body {
         }
       }
       &.highlight-nav {
-        background-color: $gray;
         > a, > button {
           color: $white;
           border: 0;
-          padding-right: 5px;
+          //padding-right: 5px;
         }
       }
       &:after {
@@ -434,7 +433,7 @@ html, body {
     }
   }
   &.navbar-inverse {
-    background-color: #414141;
+    background-color: #3F4045;
     color: $white;
     .navbar-nav {
       li {
@@ -490,32 +489,15 @@ html, body {
   }
 }
 
-.wedge {
-  &:after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: -15px;
-    width: 20px;
-    height: 40px;
-    //.img-retina('../img/wedge-report.png', '../img/wedge-report$2x.png', 216px, 40px);
-    background-repeat: no-repeat;
-    background-position: right;
-  }
-}
-.container .navbar-default {
-  margin: 0 15px 0 0;
-  //.wedge;
-}
 
 .container-fluid .navbar-default {
-  margin: 0 30px 0 15px;
+  margin: 0 15px;
   //.wedge;
 }
 
 .navbar-default .navbar-nav > .open {
   > a, > a:hover, > a:focus {
-    background-color: #868686;
+    //background-color: #3F4045;
     color: $white;
   }
   .caret {

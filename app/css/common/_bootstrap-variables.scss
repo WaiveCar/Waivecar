@@ -21,11 +21,12 @@ $bootstrap-sass-asset-helper: false !default;
 // $brand-warning:         #f0ad4e !default;
 // $brand-danger:          #d9534f !default;
 
-
+$gray-dark: #3F4045;
+$white: #ffffff;
 
 
 $gray-darker:            #000; //lighten(#000, 13.5%); // #222
-$gray-dark:              #4A4A4A; //lighten(#000, 20%);   // #333
+//$gray-dark:              #4A4A4A; //lighten(#000, 20%);   // #333
 $gray:                   #868686; //lighten(#000, 33.5%); // #555
 $gray-light:             #9B9B9B; //lighten(#000, 46.7%); // #777
 $gray-lighter:           #c3c3c3;
@@ -34,9 +35,9 @@ $gray-light-border: #E8E8E8;
 $gray-alt: #ECECEC;
 $gray-border: #DADADA;
 $gray-white: #F6F5F5;
-$gray-whiter: #f7f7f7;
+$gray-whiter: #F2F7F3; // #f7f7f7;
 $gray-list-item: #F9F9F9;
-$brand-primary:         #009FDA; //#428bca;
+$brand-primary:         #38A538; // #009FDA; //#428bca;
 $brand-success:         #66cc33; //#5cb85c;
 $brand-success-text:    #56AC2A;
 $brand-info:            #5fbff9; //#5bc0de;
@@ -390,17 +391,17 @@ $navbar-padding-horizontal:        floor(($grid-gutter-width / 2)) !default;
 $navbar-padding-vertical:          (($navbar-height - $line-height-computed) / 2) !default;
 $navbar-collapse-max-height:       340px !default;
 
-$navbar-default-color:             #777 !default;
-$navbar-default-bg:                #f8f8f8 !default;
+$navbar-default-color:             #DADBDF; //#777 !default;
+$navbar-default-bg:                $gray-dark; //#f8f8f8 !default;
 $navbar-default-border:            darken($navbar-default-bg, 6.5%) !default;
 
 // Navbar links
-$navbar-default-link-color:                #777 !default;
-$navbar-default-link-hover-color:          #333 !default;
+$navbar-default-link-color:                #DADBDF !default;
+$navbar-default-link-hover-color:          $white !default;
 $navbar-default-link-hover-bg:             transparent !default;
-$navbar-default-link-active-color:         #555 !default;
+$navbar-default-link-active-color:         $white !default;
 $navbar-default-link-active-bg:            darken($navbar-default-bg, 6.5%) !default;
-$navbar-default-link-disabled-color:       #ccc !default;
+$navbar-default-link-disabled-color:       darken($navbar-default-link-color, 6.5%) !default;
 $navbar-default-link-disabled-bg:          transparent !default;
 
 // Navbar brand label

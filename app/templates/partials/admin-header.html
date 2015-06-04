@@ -24,34 +24,60 @@
         </div>
         <div id="main-navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a ui-sref="dashboard">Dashboard</a></li>
-            <li><a ui-sref="media">Media</a></li>
-            <li class="dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle">Settings<span class="caret"></span></a>
+            <li>
+              <a ui-sref="dashboard">Dashboard</a>
+            </li>
+            <li>
+              <a ui-sref="media">Media</a>
+            </li>
+            <li class="dropdown">
+              <a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle"><span class="caret"></span>&nbsp;Settings</a>
               <ul role="menu" class="dropdown-menu">
-                <li><a ui-sref="blacklisted-emails">Email Blacklist</a></li>
-                <li><a ui-sref="settings">System Settings</a></li>
+                <li>
+                  <a ui-sref="blacklisted-emails">Email Blacklist</a>
+                </li>
+                <li>
+                  <a ui-sref="settings">System Settings</a>
+                </li>
               </ul>
             </li>
-            <li><a ui-sref="style-guide">Style Guide</a></li>
-            <li class="dropdown no-trail"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle">Users<span class="caret"></span></a>
+            <li>
+              <a ui-sref="style-guide">Style Guide</a>
+            </li>
+            <li class="dropdown no-trail">
+              <a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle"><span class="caret"></span>&nbsp;Users</a>
               <ul role="menu" class="dropdown-menu">
-                <li><a ui-sref="users">Users</a></li>
-                <li><a ui-sref="roles">Roles</a></li>
+                <li>
+                  <a ui-sref="users">Users</a>
+                </li>
+                <li>
+                  <a ui-sref="roles">Roles</a>
+                </li>
               </ul>
             </li>
-            <li ng-if="!me" class="no-trail highlight-nav dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle">Sign In<span class="caret"></span></a>
+            <li ng-if="!me" class="no-trail highlight-nav dropdown">
+              <a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle"><span class="caret"></span>&nbsp;Sign In</a>
               <ul role="menu" class="dropdown-menu">
-                <li ng-if="!me" class="highlight-nav"><a ui-sref="signin">Sign In</a></li>
-                <li ng-if="!me"><a ui-sref="signup">Register</a></li>
+                <li ng-if="!me" class="highlight-nav">
+                  <a ui-sref="signin">Sign In</a>
+                </li>
+                <li ng-if="!me">
+                  <a ui-sref="signup">Register</a>
+                </li>
               </ul>
             </li>
-            <li ng-if="me" class="no-trail highlight-nav dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle"><span class="caret"></span>&nbsp;
-                {{ me.name }}</a>
+            <li ng-if="me" class="no-trail highlight-nav dropdown"><a href="#" data-toggle="dropdown" role="button" aria-expanded="false" class="dropdown-toggle"><span class="caret"></span>&nbsp;{{ me.name }}</a>
               <ul role="menu" class="dropdown-menu">
-                <li ng-if="!isAdminApp && hasPermission('can-access-admin')"><a target="_self" href="/admin">Admin Portal</a></li>
-                <li ng-if="isAdminApp"><a target="_self" href="/">Return to App</a></li>
+                <li ng-if="!isAdminApp && hasPermission('can-access-admin')">
+                  <a target="_self" href="/admin">Admin Portal</a>
+                </li>
+                <li ng-if="isAdminApp">
+                  <a target="_self" href="/">Return to App</a>
+                </li>
                 <li class="divider"></li>
-                <li><a id="signout" href="javascript:void(0)" ng-controller="SignoutController" ng-click="signout()">Sign Out</a></li>
+                <li>
+                  <a id="signout" href="javascript:void(0)" ng-controller="SignoutController" ng-click="signout()">Sign Out</a>
+                </li>
               </ul>
             </li>
           </ul>
@@ -60,3 +86,5 @@
     </div>
   </div>
 </div>
+
+
