@@ -224,6 +224,7 @@
 					scope.directionsDisplay.setMap(null);
 					scope.directionsDisplay.setDirections(result);
 					scope.directionsDisplay.setMap(mapInstance);
+					mapInstance.setCenter(startLocation.getPosition());
 				});
 			}); 
 		}

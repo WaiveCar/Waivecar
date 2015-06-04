@@ -4,18 +4,21 @@
 	function LocationService($cordovaGeolocation,$q){
 		this.$cordovaGeolocation=$cordovaGeolocation;
 		this.$q=$q;
-		this.mockLocationMarker;
+		this.savedLocation;
+		var self=this;
+		$cordovaGeolocation.watchPosition(function(position){
+			self.savedLocation={
+				latitude:position.coords.latitude,
+				longitude:position.coords.longitude,
+			}
+		});
 	}
 	LocationService.prototype.getLocation = function(timeoutLimit,enableHighAccuracy) {
 		timeoutLimit=timeoutLimit || 10000;
 		var posOptions = {timeout: timeoutLimit, enableHighAccuracy: enableHighAccuracy};
 		var defered=this.$q.defer();
-		if(this.mockLocationMarker){
-			defered.resolve({
-				latitude:this.mockLocationMarker.getPosition().lat(),
-				longitude:this.mockLocationMarker.getPosition().lng()
-			})
-			
+		if(this.savedLocation){
+			defered.resolve(this.savedLocation);
 			return defered.promise;
 		}
 		this.$cordovaGeolocation
@@ -168,7 +171,6 @@
 									scale: 10
 								}
 							});
-							locationService.mockLocationMarker=scope.marker;
 
 							ctrl.solveLocation(scope.marker);
 						});
@@ -224,6 +226,7 @@
 					scope.directionsDisplay.setMap(null);
 					scope.directionsDisplay.setDirections(result);
 					scope.directionsDisplay.setMap(mapInstance);
+					mapInstance.setCenter(startLocation.getPosition());
 				});
 			}); 
 		}
