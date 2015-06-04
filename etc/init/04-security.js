@@ -1,9 +1,10 @@
 var helmet = require('helmet');
-var corser = require('corser');
+var cors = require('cors');
 
 exports = module.exports = function(IoC, config) {
 
   var app = this;
+  app.use(cors());
 
   // var allowCrossDomain = function(req, res, next) {
   //     res.header('Access-Control-Allow-Origin', '*');
@@ -24,12 +25,10 @@ exports = module.exports = function(IoC, config) {
 
 
 
-
-
-  app.use(corser.create({
-    supportsCredentials: true,
-    requestHeaders: corser.simpleRequestHeaders.concat([ 'Content-Type', 'Authorization', 'Access-Control-Allow-Origin', 'X-Requested-With' ])
-  }));
+  // app.use(corser.create({
+  //   supportsCredentials: true,
+  //   requestHeaders: corser.simpleRequestHeaders.concat([ 'Content-Type', 'Authorization', 'Access-Control-Allow-Origin', 'X-Requested-With' ])
+  // }));
 
   // trust proxy
   if (config.trustProxy) app.enable('trust proxy');
