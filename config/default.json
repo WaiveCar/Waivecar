@@ -1,6 +1,9 @@
 {
-  "api_uri": "",
-  "app_uri": "",
-  "admin_uri": "",
-  "assets_uri": ""
+  "uri": {
+    "api": "http://localhost:3000/v1",
+    "auth": "http://localhost:3000/auth",
+    "web": "http://localhost:3080",
+    "admin": "http://localhost:3081",
+    "assets": ""
+  }
 }

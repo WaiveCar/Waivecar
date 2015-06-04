@@ -5,43 +5,44 @@ angular.module('app.modules.common.services').factory('$data', [
   '$notification',
   '$applicationLoggingService',
   '$socket',
-  function($rootScope, $log, $http, $notification, $applicationLoggingService, $socket) {
+  '$config',
+  function($rootScope, $log, $http, $notification, $applicationLoggingService, $socket, $config) {
     var svc = {
       models: {
         'blacklisted-emails': {
           name: 'blacklistedEmail',
           plural: 'blacklistedEmails',
-          url: '/v1/blacklisted-emails',
+          url: '/blacklisted-emails',
           initialized: false
         },
         'media': {
           name: 'media',
           plural: 'media',
-          url: '/v1/media',
+          url: '/media',
           initialized: false
         },
         'users': {
           name: 'user',
           plural: 'users',
-          url: '/v1/users',
+          url: '/users',
           initialized: false
         },
         'roles': {
           name: 'role',
           plural: 'roles',
-          url: '/v1/roles',
+          url: '/roles',
           initialized: false
         },
         'migrations': {
           name: 'migration',
           plural: 'migrations',
-          url: '/v1/migrations',
+          url: '/migrations',
           initialized: false
         },
         'settings': {
           name: 'settings',
           plural: 'settings',
-          url: '/v1/settings',
+          url: '/settings',
           initialized: false
         }
       },
@@ -134,7 +135,7 @@ angular.module('app.modules.common.services').factory('$data', [
 
         if (q) url = [ url, q ].join('?');
 
-        $http({ method: 'GET', url: 'http://localhost:3000' + url })
+        $http({ method: 'GET', url: $config.uri.api + url })
           .success(function(data, status) {
             var pagination = {
               hasMore: data && data['has_more'] ? data['has_more'] : false,
@@ -186,7 +187,7 @@ angular.module('app.modules.common.services').factory('$data', [
         var url = svc.models[modelName].url;
         var query = '/' + encodeURIComponent(id);
 
-        $http({ method: 'GET', url: 'http://localhost:3000' + url + query })
+        $http({ method: 'GET', url: $config.uri.api + url + query })
           .success(function(data, status) {
 
             if (data && data.itemCount === 0) {
@@ -236,7 +237,7 @@ angular.module('app.modules.common.services').factory('$data', [
         var url = meta.url;
         var request = { method: 'create', modelName: modelName, model: model };
 
-        $http({ method: 'POST', url: 'http://localhost:3000' + url, data: model })
+        $http({ method: 'POST', url: $config.uri.api + url, data: model })
           .success(function(data, status) {
             if (svc.inject(modelName, data)) {
               svc.activate(meta.plural, data.id);
@@ -255,7 +256,7 @@ angular.module('app.modules.common.services').factory('$data', [
         var url = meta.url + '/' + model.id;
         var request = { method: 'save', modelName: modelName, model: model };
 
-        $http({ method: 'PUT', url: 'http://localhost:3000' + url, data: model })
+        $http({ method: 'PUT', url: $config.uri.api + url, data: model })
           .success(function(data) {
             svc.inject(modelName, data);
             svc.handleResponse(null, data, request, next);
@@ -283,7 +284,7 @@ angular.module('app.modules.common.services').factory('$data', [
         }
 
         // The formality of actually deleting the model. :P
-        $http({ method: 'DELETE', url: 'http://localhost:3000' + url + '/' + encodeURIComponent(id) })
+        $http({ method: 'DELETE', url: $config.uri.api + url + '/' + encodeURIComponent(id) })
           .success(function() {
             svc.handleResponse(null, null, request, next);
           })

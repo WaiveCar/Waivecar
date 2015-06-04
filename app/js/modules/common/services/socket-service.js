@@ -5,8 +5,11 @@ angular.module('app.modules.common.services').factory('$socket', [
   '$notification',
   '$applicationLoggingService',
   'socketFactory',
-  function($rootScope, $log, $http, $notification, $applicationLoggingService, socketFactory) {
-    var ioSocket = io.connect('http://localhost:3000');
+  '$config',
+  function($rootScope, $log, $http, $notification, $applicationLoggingService, socketFactory, $config) {
+    var apiRoute = $config.uri.api;
+    var apiServerRoute = apiRoute.replace('/v1', '');
+    var ioSocket = io.connect(apiServerRoute);
 
     var socket = socketFactory({ ioSocket: ioSocket });
     socket.forward('error');

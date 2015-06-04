@@ -11,6 +11,7 @@ angular.module('app.modules.authentication.directives', []);
 angular.module('app.modules.authentication', [
   'ui.router',
   'satellizer',
+  'app.modules.common.services',
   'app.modules.alert',
   'app.modules.authentication.services',
   'app.modules.authentication.controllers',
@@ -18,11 +19,7 @@ angular.module('app.modules.authentication', [
 ]).config([
   '$authProvider',
   function($authProvider) {
-
     $authProvider.tokenPrefix = 'auth';
-    $authProvider.loginUrl = 'http://localhost:3000/auth/signin';
-    $authProvider.signupUrl = 'http://localhost:3000/auth/signup';
-
     $authProvider.facebook({
       clientId: '1610795072499821'
     });
@@ -33,7 +30,11 @@ angular.module('app.modules.authentication', [
   '$account',
   '$auth',
   '$notification',
-  function($scope, $state, $account, $auth, $notification) {
+  'satellizer.config',
+  '$config',
+  function($scope, $state, $account, $auth, $notification, sat, $config) {
+    sat.loginUrl = $config.uri.auth + '/signin';
+
     $scope.signin = function() {
       var model = { email: $scope.email, password: $scope.password, isAdmin: $state.current.data.auth.app === 'admin' };
       $auth.login(model).then(function() {
@@ -57,19 +58,20 @@ angular.module('app.modules.authentication', [
   '$auth',
   '$http',
   '$notification',
-  function($scope, $state, $account, $auth, $http, $notification) {
+  '$config',
+  function($scope, $state, $account, $auth, $http, $notification, $config) {
     $scope.isReset = $state.current.name !== 'forgot-password';
 
     $scope.forgot = function() {
       var model = { email: $scope.email, isAdmin: $state.current.data.auth.app === 'admin' };
-      $http.post('/auth/forgot-password', model).then(function() {
+      $http.post($config.uri.auth + '/forgot-password', model).then(function() {
         $notification.success('Please check your email for further intructions.');
       }).catch($notification.error);
     };
 
     $scope.resetRequest = function() {
       var model = { email: $scope.email, isAdmin: $state.current.data.auth.app === 'admin' };
-      $http.get('/auth/reset-password/' + $state.params.emailToken + '/' + $state.params.resetToken).then(function(response) {
+      $http.get($config.uri.auth + '/reset-password/' + $state.params.emailToken + '/' + $state.params.resetToken).then(function(response) {
         $scope.email = response.data.user.email;
       }).catch(function(err) {
         $notification.error(err);
@@ -79,7 +81,7 @@ angular.module('app.modules.authentication', [
 
     $scope.reset = function() {
       var model = { email: $scope.email, password: $scope.password, isAdmin: $state.current.data.auth.app === 'admin' };
-      $http.post('/auth/reset-password', model).then(function() {
+      $http.post($config.uri.auth + '/reset-password', model).then(function() {
         $auth.login(model).then(function() {
           $account.refresh(function() {
             $notification.success('Welcome back ' + $account.me.name + '. You have successfully reset your password.');
@@ -111,8 +113,10 @@ angular.module('app.modules.authentication', [
   '$scope',
   '$state',
   '$auth',
+  'satellizer.config',
   '$notification',
-  function($scope, $state, $auth, $notification) {
+  function($scope, $state, $auth, sat, $notification) {
+    sat.signupUrl = $config.uri.auth + '/signup';
     $scope.signup = function() {
       $auth.signup({
         displayName: $scope.displayName,
@@ -154,12 +158,9 @@ angular.module('app.modules.authentication', [
   '$account',
   '$state',
   '$utils',
-  function($rootScope, $window, $auth, $account, $state, $utils) {
+  '$config',
+  function($rootScope, $window, $auth, $account, $state, $utils, $config) {
 
-    $rootScope.url = {
-      app: $('meta[name="app-base-url"]').attr('content'),
-      admin: $('meta[name="admin-base-url"]').attr('content'),
-    };
     $rootScope.goToPrevious = function(defaultState) {
       if ($state.previousState && $state.previousState.name.length > 0) {
         $state.go($state.previousState.name, $state.previousState.params);
@@ -203,7 +204,7 @@ angular.module('app.modules.authentication', [
 
       //nb. fromState will actually be posted as the initialled requested toState.
       if (!redirection) {
-        $utils.navigate($rootScope.url.app + '/');
+        $utils.navigate($config.uri.app + '/');
       } else if (options.refreshAccount) {
         $account.refresh(function () {
           $state.go(redirection.name, {}, { notify: false }).then(function () {

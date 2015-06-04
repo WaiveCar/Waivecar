@@ -7,7 +7,8 @@ angular.module('app.admin.controllers').controller('DashboardController', [
   '$http',
   '$notification',
   '$data',
-  function ($rootScope, $scope, $interval, $account, $state, $http, $notification, $data) {
+  '$config',
+  function ($rootScope, $scope, $interval, $account, $state, $http, $notification, $data, $config) {
 
     var statusTimer;
 
@@ -57,21 +58,21 @@ angular.module('app.admin.controllers').controller('DashboardController', [
     };
 
     $scope.fetch = function() {
-      // $http.get('//localhost:3000/v1/status').then(function(response) {
-      //   $scope.status = response.data;
-      //   $scope.load.used = Math.round((response.data.memory.used / response.data.memory.total) * 100, 2);
-      //   $scope.load.data[0] = response.data.memory.used;
-      //   $scope.load.data[1] = response.data.memory.free;
-      //   $scope.stats.labels = _.pluck(response.data.report, 'date');
-      //   $scope.stats.data[0] = _.pluck(response.data.report, 'valid');
-      //   $scope.stats.data[1] = _.pluck(response.data.report, 'invalid');
+      $http.get($config.uri.api + '/status').then(function(response) {
+        // $scope.status = response.data;
+        $scope.load.used = Math.round((response.data.memory.used / response.data.memory.total) * 100, 2);
+        $scope.load.data[0] = response.data.memory.used;
+        $scope.load.data[1] = response.data.memory.free;
+        // $scope.stats.labels = _.pluck(response.data.report, 'date');
+        // $scope.stats.data[0] = _.pluck(response.data.report, 'valid');
+        // $scope.stats.data[1] = _.pluck(response.data.report, 'invalid');
 
-      //   if (!statusTimer) {
-      //     statusTimer = $interval($scope.fetch, 10000);
-      //   }
-      // }).catch(function(err) {
-      //   $notification.error(err);
-      // });
+        if (!statusTimer) {
+          statusTimer = $interval($scope.fetch, 10000);
+        }
+      }).catch(function(err) {
+        $notification.error(err);
+      });
     };
 
     $scope.init = function() {

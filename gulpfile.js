@@ -95,10 +95,10 @@ gulp.task('config', function () {
   var config = require('config');
   var data = JSON.stringify(config, null, '  ').split('\n').join('\n    ');
 
-  return gulp.src('app/services/config.js.tpl')
+  return gulp.src('app/js/modules/common/services/config.js.tpl')
     .pipe(plugins.template({ data: data }))
     .pipe(plugins.rename('config.js'))
-    .pipe(gulp.dest('app/services'));
+    .pipe(gulp.dest('app/js/modules/common/services'));
 });
 
 gulp.task('html', function () {
@@ -139,7 +139,7 @@ gulp.task('copy:bower', function () {
 
 gulp.task('app', ['build:quickapp'], function (done) {
   gulp.watch('app/css/**/*.scss', ['sass']);
-  gulp.watch('app/services/config.js.tpl', ['config']);
+  gulp.watch('app/js/modules/common/services/config.js.tpl', [ 'config' ]);
   gulp.watch('config/*', ['config']);
 
   plugins.livereload({ start: true });

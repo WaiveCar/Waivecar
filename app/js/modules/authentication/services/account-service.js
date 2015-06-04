@@ -6,7 +6,8 @@ angular.module('app.modules.authentication.services')
     '$state',
     '$utils',
     '$auth',
-    function($rootScope, $notification, $http, $state, $utils, $auth) {
+    '$config',
+    function($rootScope, $notification, $http, $state, $utils, $auth, $config) {
 
       var svc = {
 
@@ -16,7 +17,7 @@ angular.module('app.modules.authentication.services')
 
         me: null,
 
-        url: 'http://localhost:3000/v1/me',
+        url: $config.uri.api + '/me',
 
         hasPermission: function(permission) {
           if (svc.me && svc.me.permissions) {

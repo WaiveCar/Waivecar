@@ -1,6 +1,9 @@
 {
-  "api_uri": "http://api-waivecar-dev.cleverbuild.biz/v1",
-  "app_uri": "http://waivecar-dev.cleverbuild.biz",
-  "admin_uri": "http://admin-waivecar-dev.cleverbuild.biz",
-  "assets_uri": ""
+  "uri": {
+    "api": "https://api-waivecar-dev.cleverbuild.biz/v1",
+    "auth": "https://api-waivecar-dev.cleverbuild.biz/auth",
+    "web": "https://waivecar-dev.cleverbuild.biz",
+    "admin": "https://admin-waivecar-dev.cleverbuild.biz",
+    "assets": ""
+  }
 }
