@@ -7,7 +7,6 @@
 		this.mockLocationMarker;
 	}
 	LocationService.prototype.getLocation = function(timeoutLimit,enableHighAccuracy) {
-		debugLog("Getting location");
 		timeoutLimit=timeoutLimit || 10000;
 		var posOptions = {timeout: timeoutLimit, enableHighAccuracy: enableHighAccuracy};
 		var defered=this.$q.defer();
@@ -22,7 +21,6 @@
 		this.$cordovaGeolocation
 			.getCurrentPosition(posOptions)
 			.then(function (position) {
-					debugLog('GOT location');
 					defered.resolve(
 						{
 							latitude:position.coords.latitude,
@@ -45,7 +43,6 @@
 
 		var self=this;
 		return this.GMapsLoader.getMap.then(function(maps){
-			debugLog("Get map for route solved");
 			var start=pointA;
 			var finish=pointB;
 
@@ -93,7 +90,6 @@
 	
 	}
 	FleetService.prototype.getNearbyFleet = function(numNearby) {
-		debugLog("Getting nearby fleet");
 		//Mockup to get nearby fleet nearby of person,On production it'll send to server
 	    numNearby=numNearby || 10;
 	    var maxDiff=0.005;
@@ -121,17 +117,14 @@
 			}
 			return ret;
 	    },function(error){
-	    	debugLog('PAU '+ JSON.stringify(error));
 	    });
 	}
 	function nearbyFleetDirective(GMapsLoader,$q,fleetService){
 		
 
 		function link(scope, element, attrs,ctrl) {
-			debugLog('Link nby fleet')
 			fleetService.getNearbyFleet().then(function(fleet){	
 				GMapsLoader.getMap.then(function(gMaps){
-					debugLog("Get map by  nearbYFleet solved");
 
 					ctrl.mapInstance.then(function(mapInstance){
 						var latLng;
@@ -160,9 +153,7 @@
 	}
 	function deviceLocationDirective(GMapsLoader,locationService,$q){
 		function link(scope,element,attrs,ctrl){
-			debugLog('LINK device location directive');
 				GMapsLoader.getMap.then(function(gMaps){
-					debugLog("Get map by  device location solved");
 
 					locationService.getLocation().then(function(deviceLocation){
 						ctrl.mapInstance.then(function(mapInstance){
@@ -193,22 +184,11 @@
 		}
 	}
 	function mapDirective(GMapsLoader,$q,locationService){
-		debugLog('Map directive instantiated');
-		var defer=$q.defer();
-		var p=defer.promise;
-		p.then(function(n){
-			debugLog("RESOLVEU "+n);
-		})
-		defer.resolve(10);
-		debugLog("DOING PROMISE");
+		
 		function link(scope, element, attrs,ctrl) {
-			debugLog("Running link map directive");
 			GMapsLoader.getMap.then(function(maps){
-				debugLog("Got the map on map directive");
 
 				 locationService.getLocation().then(function(deviceLocation){
- 					debugLog("Got location for map directive");
- 					debugLog(JSON.stringify(deviceLocation));
 
 					 var mapOptions = {
 						zoom: parseInt(scope.zoom,10),
@@ -227,7 +207,7 @@
 			scope:{
 				zoom:'@'
 			},
-			templateUrl:'/templates/map.html',
+			templateUrl:'templates/map.html',
 			link: link,
 			transclude: true,
 			controller:['$scope','waiveCar_routeService','waiveCar_locationService','$q',MapController]
@@ -250,7 +230,6 @@
 		function link(scope, element, attrs,ctrl) {
 
 			GMapsLoader.getMap.then(function(maps){
-				debugLog("Get map by  route to nearest  solved");
 
 				scope.directionsDisplay = new maps.DirectionsRenderer({suppressMarkers: true});
 				ctrl.mapInstance.then(function(mapInstance){
@@ -290,10 +269,8 @@
 	.directive('routeToNearestCar',['waiveCar_GMapsLoader','$q','waiveCar_routeService',routeToNearestDirective])
 
 	.run(function($ionicPlatform) {
-					debugLog("STARTING RUN");
 
 		$ionicPlatform.ready(function() {
-			debugLog("IONIC PLATFORM READY");
 		// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
 		// for form inputs)
 		if(window.cordova && window.cordova.plugins.Keyboard) {
