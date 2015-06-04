@@ -10,6 +10,7 @@ exports = module.exports = function(IoC, config, logger) {
   app.phase(bootable.di.routes('./routes/settings.js'));
   app.phase(bootable.di.routes('./routes/notifications.js'));
   app.phase(bootable.di.routes('./routes/users.js'));
+  app.phase(bootable.di.routes('./routes/status.js'));
   app.phase(bootable.di.routes('./routes/logs.js'));
   app.phase(bootable.di.routes('./routes/blacklisted-emails.js'));
   app.phase(bootable.di.routes('./routes/auth.js'));
