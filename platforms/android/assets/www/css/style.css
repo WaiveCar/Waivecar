@@ -3,8 +3,15 @@
     height: 100%;
 }
  
-#map,.gMapsInstance{
-    width: 100%;
+.gMapsInstance{
+    width: 80%;
     height: 100%;
+    float:left;
+}
+#debugArea{
+	width:18%;
+	float:right;
+	background-color: #BEBEBE;
+	height: :100%;
 }
 .mapContainer { height: 100%;width:100%; }
