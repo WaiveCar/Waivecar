@@ -21,7 +21,7 @@
     "compression": "^1.0.6",
     "connect": "^3.1.1",
     "cookie-parser": "^1.1.0",
-    "corser": "^2.0.0",
+    "cors": "^2.7.1",
     "csurf": "^1.2.1",
     "electrolyte": "0.0.3",
     "errorhandler": "^1.0.1",
