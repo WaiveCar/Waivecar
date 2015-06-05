@@ -28,7 +28,7 @@ var fixtureFilename = 'nyc.copy.jpg';
 var fixture = path.join(deletableFolder, fixtureFilename);
 var non_existant = 'nonexistantfile.none';
 
-describe('cleanup-media', function() {
+describe('media-cleanup-service', function() {
 
   before(function (done) {
     fs.mkdir(deletableFolder, function(err) {

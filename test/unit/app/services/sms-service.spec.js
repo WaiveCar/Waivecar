@@ -25,56 +25,59 @@ var config = IoC.create('igloo/settings');
 
 var message = 'this is a message';
 
-describe('Failed Messages', function () {
+describe('sms-service', function() {
 
-  it('should fail on non existant number', function (done) {
-    this.timeout(30000);
-    smsService.message(undefined, message, function (err) {
-      expect(err).to.exist;
-      done();
+  describe('failed messages', function () {
+
+    it('should fail on non existant number', function (done) {
+      this.timeout(30000);
+      smsService.message(undefined, message, function (err) {
+        expect(err).to.exist;
+        done();
+      });
+    });
+
+    it ('should fail on invalid number', function (done) {
+      this.timeout(30000);
+      smsService.message('+15005550001', message, function (err) {
+        expect(err).to.exist;
+        done();
+      });
+    });
+
+    it ('should fail on non-routeable number', function (done) {
+      this.timeout(30000);
+      smsService.message('+15005550002', message, function (err) {
+        expect(err).to.exist;
+        done();
+      });
+    });
+
+    it ('should fail on blacklisted number number', function (done) {
+      this.timeout(30000);
+      smsService.message('+15005550004', message, function (err) {
+        expect(err).to.exist;
+        done();
+      });
+    });
+
+    it ('should fail on non sms-capable number', function (done) {
+      this.timeout(30000);
+      smsService.message('+15005550009', message, function (err) {
+        expect(err).to.exist;
+        done();
+      })
     });
   });
 
-  it ('should fail on invalid number', function (done) {
+  describe('successful messages', function () {
     this.timeout(30000);
-    smsService.message('+15005550001', message, function (err) {
-      expect(err).to.exist;
-      done();
+    it('Valid Number', function (done) {
+      smsService.message('+14108675309', message, function (err) {
+        console.log(err);
+        expect(err).to.not.exist;
+        done();
+      })
     });
-  });
-
-  it ('should fail on non-routeable number', function (done) {
-    this.timeout(30000);
-    smsService.message('+15005550002', message, function (err) {
-      expect(err).to.exist;
-      done();
-    });
-  });
-
-  it ('should fail on blacklisted number number', function (done) {
-    this.timeout(30000);
-    smsService.message('+15005550004', message, function (err) {
-      expect(err).to.exist;
-      done();
-    });
-  });
-
-  it ('should fail on non sms-capable number', function (done) {
-    this.timeout(30000);
-    smsService.message('+15005550009', message, function (err) {
-      expect(err).to.exist;
-      done();
-    })
-  });
-});
-
-describe('Working Messages', function () {
-  this.timeout(30000);
-  it('Valid Number', function (done) {
-    smsService.message('+14108675309', message, function (err) {
-      console.log(err);
-      expect(err).to.not.exist;
-      done();
-    })
   });
 });

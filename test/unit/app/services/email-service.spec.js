@@ -23,7 +23,7 @@ IoC.loader('services', IoC.node(path.join(basePath, 'app', 'services')));
 var emailService = IoC.create('services/email-service');
 var config = IoC.create('igloo/settings');
 
-describe('email-service test', function () {
+describe('email-service', function () {
 
   before(function () {
   });

@@ -22,7 +22,7 @@ IoC.loader('services', IoC.node(path.join(basePath, 'app', 'services')));
 
 var enumService = IoC.create('services/enum-service');
 
-describe('enum-service tests', function() {
+describe('enum-service', function() {
   it ('get media types', function (done) {
     var mediaTypes = enumService.getMediaTypes();
     expect(mediaTypes).to.be.a('Array');
