@@ -15,23 +15,17 @@ exports = module.exports = function(EnumService, PubSubService, mongoose, mongoo
 
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 
-    state: { type: String, required: true, enum: _.pluck(EnumService.getMediaStateTypes(), 'name'), default: 'not-started' }
+    state: { type: String, required: true, enum: _.pluck(EnumService.getStateTypes(), 'name'), default: 'active' }
 
   });
 
   Model.pre('save', function(next) {
     var model = this;
-    var states = EnumService.getMediaStateTypes();
-
-    if (!model.duration && model.state === 'completed') {
-      model.duration = moment(model.createdAt).toNow(true);
-    }
-
-    model.progress = _.findWhere(states, { 'name': model.state }).progress;
     return next();
   });
 
   Model.post('save', function(model) {
+    //TODO: find a better way to determine isNew.
     if (moment(model.createdAt).isSame(model.updatedAt, 'second')) {
       logger.debug(model.id + ': publishing add');
       PubSubService.publishAdd('media', model);

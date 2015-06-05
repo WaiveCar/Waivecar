@@ -8,7 +8,7 @@ var moment = require('moment');
 var shortid = require('shortid');
 var util = require('util');
 
-module.exports = function(User, Role, EnumService, JobService, config, logger) {
+module.exports = function(User, BlacklistedEmail, Role, EnumService, JobService, config, logger) {
 
   var methods = {
 
@@ -62,6 +62,15 @@ module.exports = function(User, Role, EnumService, JobService, config, logger) {
       ], next);
     },
 
+    isEmailBlacklisted: function(email, next) {
+      BlacklistedEmail.findOne({ email: email }).exec(function(err, model) {
+        if (err) return next(err);
+        if (!model) return next(null, false);
+
+        return next(null, true)
+      });
+    },
+
     isAdmin: function(user, next) {
       user.getPermissions(function(err, permissions) {
         if (!err && permissions && _.contains(permissions, 'can-access-admin')) return next(null, true);
@@ -111,4 +120,4 @@ module.exports = function(User, Role, EnumService, JobService, config, logger) {
 };
 
 module.exports['@singleton'] = true;
-module.exports['@require'] = [ 'models/user', 'models/role', 'services/enum-service', 'services/job-service', 'igloo/settings', 'igloo/logger' ];
+module.exports['@require'] = [ 'models/user', 'models/blacklisted-email', 'models/role', 'services/enum-service', 'services/job-service', 'igloo/settings', 'igloo/logger' ];

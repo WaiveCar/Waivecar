@@ -20,19 +20,6 @@ module.exports = function() {
       ];
     },
 
-    getMediaStateTypes: function() {
-      return [
-        { name: 'not-started', description: 'Not Started', icon: 'ico-pending', progress: 0 },
-        { name: 'uploading', description: 'The file is being uploaded', icon: 'ico-pending', progress: 10 },
-        { name: 'children-pending', description: 'Media Children are processing', icon: 'ico-pending', progress: 70, service: 'finalize-parent-media' },
-        { name: 'extracting', description: 'The file is being processed', icon: 'ico-pending', progress: 70, service: 'extract-media' },
-        { name: 'analyzing', description: 'The file is being processed', icon: 'ico-active', progress: 80, service: 'analyze-media' },
-        { name: 'manual-pending', description: 'Manual processing required', icon: 'ico-pending', progress: 80 },
-        { name: 'validating', description: 'The file is being processed', icon: 'ico-active', progress: 90, service: 'validate-media' },
-        { name: 'completed', description: 'Completed Processing', icon: 'ico-active', progress: 100, service: 'finalize-media' }
-      ];
-    },
-
     getAuthTypes: function() {
       return [
         { name: 'password', description: 'Password', icon: 'ico-padlock-closed', isSecure: true },

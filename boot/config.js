@@ -173,7 +173,7 @@ exports = module.exports = function() {
       twilio: {
         sid: 'AC5bdaac9e2ad39755f9565c7e9d75dab4',
         token: '6134bfa803b73155fe0cf13b506798ee',
-        number: '',
+        number: '+16692440099',
         message: 'api'
       }
     },
@@ -194,6 +194,9 @@ exports = module.exports = function() {
       logger: {
         'console': false,
         requests: false
+      },
+      twilio: {
+        number: '+15005550006'
       }
     },
 
