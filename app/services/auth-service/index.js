@@ -67,7 +67,7 @@ module.exports = function(User, BlacklistedEmail, Role, EnumService, JobService,
         if (err) return next(err);
         if (!model) return next(null, false);
 
-        return next(null, true)
+        return next(null, true);
       });
     },
 
