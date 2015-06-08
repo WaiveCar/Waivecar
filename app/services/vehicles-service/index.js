@@ -12,6 +12,10 @@ function VehicleService(config,logger){
 	this._expiredLatency=5;
 	this._logger=logger;
 };
+
+var GM_ASYNC_SUCCESS='success';
+var GM_ASYNC_FAILURE='failure';
+var GM_ASYNC_IN_PROGRESS='inProgress';
 VehicleService.prototype.makeRequest = function(path,options) {
 	var defaultHeaders={
 		'Accept':'application/json',
@@ -28,17 +32,54 @@ VehicleService.prototype.makeRequest = function(path,options) {
 	else{
 		options=defaultHeaders;
 	}
-	console.log(options);
 	var deferred=q.defer();
 	request(options, function (error, response, body) {
 		if(error ||   response && (response.statusCode != 200 && response.statusCode != 202)){
 			var statusCode=response && response.statusCode;
-			deferred.reject({error:error,statusCode:statusCode});
+			deferred.reject({error:error,response:response,body:body});
 			return;
 		}
 		deferred.resolve({body:body,response:response});
 	});
 	return deferred.promise;
+};
+VehicleService.prototype.makeAsyncRequest = function(path,options) {
+	var self=this;
+	function checkResponse(deferred,url){
+		var asyncOptions={
+			url:url,
+			headers:{
+				'Authorization':options.headers.Authorization
+			}
+		}
+		self.makeRequest(null,asyncOptions).then(function(data){
+			var bodyData=JSON.parse(data.body);
+			var commandResponse=bodyData.commandResponse;
+			if(commandResponse.status==GM_ASYNC_IN_PROGRESS){
+				setTimeout(function(){checkResponse(deferred,commandResponse.url)}, 5000);
+			}
+			if(commandResponse.status==GM_ASYNC_FAILURE){
+				deferred.reject(commandResponse);
+			}
+			if(commandResponse.status==GM_ASYNC_SUCCESS){
+				deferred.resolve(commandResponse);
+			}
+		})
+		.catch(function(error){
+			deferred.reject(error);
+		});
+	}
+	return this.makeRequest(path,options).then(function(data){
+		
+		var bodyData=JSON.parse(data.body);
+		var asyncUrl=bodyData.url;
+		var commandResponse=bodyData.commandResponse;
+		var deferred=q.defer();
+		setTimeout(function(){checkResponse(deferred,commandResponse.url)}, 5000);
+		return deferred.promise;
+		
+
+	});
 };
 VehicleService.prototype._setBearerToken = function(tokenData) {
 	this._bearerToken=tokenData.access_token;
@@ -72,9 +113,6 @@ VehicleService.prototype.connect = function() {
 		var data=JSON.parse(res.body);
 		self._setBearerToken(data);
 		return self.getBearerToken();
-	})
-	.catch(function (error) {
-    	throw error;
 	});
 
 };
@@ -91,12 +129,7 @@ VehicleService.prototype.listVehicles = function() {
 
 	})
 	.then(function(response){
-		console.log(response.body)	;
 		return JSON.parse(response.body)
-	})
-	.catch(function (error) {
-		console.log(error);
-    	throw error;
 	});
 };
 VehicleService.prototype.getVehicleCapabilities = function(vin) {
@@ -105,18 +138,35 @@ VehicleService.prototype.getVehicleCapabilities = function(vin) {
 		https://developer.gm.com/api/v1/account/vehicles/1GKUKEEF9AR000010
 		var options={
 			'headers':{
-				'Authorization':'Basic '+this._base64KeyAndSecret
 			}
 		};
 	var request= self.makeRequest(path,options);
 
 	return request.then(function(response){
-		console.log(response.body)	;
 		return JSON.parse(response.body)
+	});
+};
+VehicleService.prototype.unlockDoor = function(vin) {
+	var self=this;
+	return this.connect().then(function(bearerToken){
+		var bodyStr=JSON.stringify({
+			"unlockDoorRequest": {
+				"delay": "0"
+			}
+		});
+		var path='account/vehicles/'+vin+'/commands/unlockDoor';
+		var options={
+			'headers':{
+				'Authorization':'Bearer '+bearerToken,
+				'content-type': 'application/json'
+			},
+			method:'POST',
+			body:bodyStr
+		};
+		return self.makeAsyncRequest(path,options);
 	})
-	.catch(function (error) {
-		console.log(error);
-    	throw error;
+	.then(function(response){
+		return true;
 	});
 };
 exports = module.exports = function(config, logger) {
