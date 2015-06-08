@@ -1,27 +1,22 @@
-describe.only('vehicle-service',function(){
-    var IoC = require('electrolyte');
-    var path = require('path');
-    var chai = require('chai');
-    var expect = chai.expect;
-    var basePath = process.cwd();
-    var assert=chai.assert;
+var IoC = require('electrolyte');
+var path = require('path');
+var chai = require('chai');
+var expect = chai.expect;
+var basePath = process.cwd();
+var assert=chai.assert;
 
-    IoC.loader(IoC.node(path.join(basePath, 'boot')));
-    IoC.loader('igloo', require('igloo'));
-    // IoC.loader('lib', IoC.node(path.join(basePath, 'lib')));
-    // IoC.loader('middleware', IoC.node(path.join(basePath, 'middleware')));
-    // IoC.loader('controllers', IoC.node(path.join(basePath, 'app', 'controllers')));
-    // IoC.loader('handlers', IoC.node(path.join(basePath, 'app', 'services', 'job-service', 'handlers')));
-    // IoC.loader('models', IoC.node(path.join(basePath, 'app', 'models')));
-    // IoC.loader('policies', IoC.node(path.join(basePath, 'app', 'policies')));
-    IoC.loader('services', IoC.node(path.join(basePath, 'app', 'services')));
+// IoC.loader(IoC.node(path.join(basePath, 'boot')));
+IoC.loader('igloo', require('igloo'));
+IoC.loader('services', IoC.node(path.join(basePath, 'app', 'services')));
 
-    var mockVehicles={
-        'chevVolt':{
-            'vin':'1G1RD6E44CU000002'
-        }
+var mockVehicles={
+    'chevVolt':{
+        'vin':'1G1RD6E44CU000002'
     }
-    var vehicleService = IoC.create('services/vehicles-service');
+}
+var vehicleService = IoC.create('services/vehicles-service');
+
+describe('vehicle-service',function(){
     describe('Login',function(){
         it('Log in on the gm api',function(){
             this.timeout(0);
@@ -40,8 +35,8 @@ describe.only('vehicle-service',function(){
         });
 
     });
-    describe('Vehicle funcitons',function(){
-        it('Should be able to list available vehicles',function(){
+    describe('Vehicle functions',function(){
+        it('List available vehicles',function(){
             this.timeout(0);
             return vehicleService.listVehicles().then(function(response){
                 expect(response).to.exist;
@@ -52,10 +47,10 @@ describe.only('vehicle-service',function(){
                 assert.fail();
             });
         });
-        it('Should be able to get vehicle capabilities',function(){
+        it('Get vehicle capabilities',function(){
             this.timeout(0);
             var desiredVin=mockVehicles.chevVolt.vin;
-            return vehicleService.getVehicleCapabilities(desiredVin).then(function(response,error){
+            return vehicleService.getVehicleCapabilities(desiredVin).then(function(response){
                 expect(response).to.exist;
                 expect(response.vehicleCapabilities).to.exist;
                 expect(response.vehicleCapabilities.vin).to.equal(desiredVin);
@@ -63,6 +58,18 @@ describe.only('vehicle-service',function(){
                   
             })
             .catch(function(error){
+                assert.fail();
+            });
+        });
+        it.only('Unlock doors',function(){
+            this.timeout(0);
+            var desiredVin=mockVehicles.chevVolt.vin;
+            return vehicleService.unlockDoor(desiredVin).then(function(response){
+                 expect(response).to.exist;
+                 expect(response).to.be.true;
+            })
+            .catch(function(error){
+                console.log(error);
                 assert.fail();
             });
         });
