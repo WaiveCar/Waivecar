@@ -49,6 +49,7 @@
     "nodemailer": "^1.3.4",
     "pluralize": "^1.0.0",
     "qs": "^2.4.1",
+    "q":"^1.4.1",
     "randomstring-extended": "^1.0.0",
     "recluster": "^0.3.7",
     "request":"^2.57.0",
