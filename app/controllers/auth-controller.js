@@ -33,9 +33,8 @@ exports = module.exports = function(User, AuthService, EmailService, config, log
       User.findOne({ email: email }).exec(function(err, existingUser) {
         if (existingUser) return res.status(409).send({ message: 'Email is already taken' });
 
-        EmailService.isBlackListed(email, function(err, isBlacklisted) {
+        AuthService.isEmailBlacklisted(email, function(err, isBlacklisted) {
           if (err) return next(err);
-
           if (isBlacklisted) return res.status(400).send({ message: 'Email address is not valid. Please contact us if you believe your Email address is valid and acceptable.' });
 
           var user = new User({
