@@ -11,7 +11,7 @@ function VehicleService(config,logger){
     this._bearerReceivedAt;
     this._expiredLatency=5;
     this._logger=logger;
-};
+}
 
 var GM_ASYNC_SUCCESS='success';
 var GM_ASYNC_FAILURE='failure';
@@ -19,7 +19,7 @@ var GM_ASYNC_IN_PROGRESS='inProgress';
 VehicleService.prototype.makeRequest = function(path,options) {
     var defaultHeaders={
         'Accept':'application/json',
-    }
+    };
     var defaultOptions = {
         url: this._host+path,
         headers: {
@@ -35,7 +35,7 @@ VehicleService.prototype.makeRequest = function(path,options) {
     console.log(options);
     var deferred=q.defer();
     request(options, function (error, response, body) {
-        if(error ||   response && (response.statusCode != 200 && response.statusCode != 202)){
+        if(error ||   response && (response.statusCode !== 200 && response.statusCode !== 202)){
             var statusCode=response && response.statusCode;
             deferred.reject({error:error,response:response,body:body});
             return;
