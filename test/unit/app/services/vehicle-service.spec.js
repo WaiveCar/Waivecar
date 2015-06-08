@@ -47,6 +47,67 @@ describe('vehicle-service',function(){
                 assert.fail();
             });
         });
+
+        it("Get vehicle data",function(){
+            this.timeout(0);
+            var desiredVin=mockVehicles.chevVolt.vin;
+            return vehicleService.getVehicleInfo(desiredVin).then(function(response){
+                expect(response).to.exist;
+                expect(response.vehicle.vin).to.equal(desiredVin);
+            })
+            .catch(function(error){
+                assert.fail();
+            });
+        });
+        //Receiving auth error for now,
+        it.skip('Get vehicle location',function(){
+            this.timeout(0);
+            var desiredVin=mockVehicles.chevVolt.vin;
+            return vehicleService.getVehicleLocation(desiredVin).then(function(response){
+                expect(response).to.exist;
+               //TOdo make deeper assertions when get response
+            })
+            .catch(function(error){
+                console.log(error);
+                assert.fail();
+            });
+        });
+        it.only('Fet vehicle diagnostics',function(){
+            this.timeout(0);
+            var desiredVin=mockVehicles.chevVolt.vin;
+            return vehicleService.getVehicleDiagnostics(desiredVin).then(function(response){
+                expect(response).to.exist;
+                expect(response["EV BATTERY LEVEL"].unit).to.exist;
+                expect(response["EV BATTERY LEVEL"].value).to.exist;
+                expect(response["EV CHARGE STATE"]["EV CHARGE STATE"].value).to.exist;
+                expect(response["FUEL TANK INFO"]["FUEL AMOUNT"].value).to.exist;
+                expect(response["FUEL TANK INFO"]["FUEL AMOUNT"].unit).to.exist;
+                expect(response["FUEL TANK INFO"]["FUEL CAPACITY"].value).to.exist;
+                expect(response["FUEL TANK INFO"]["FUEL CAPACITY"].unit).to.exist;
+                expect(response["FUEL TANK INFO"]["FUEL LEVEL"].value).to.exist;
+                expect(response["FUEL TANK INFO"]["FUEL LEVEL"].unit).to.exist;
+                expect(response["OIL LIFE"].unit).to.exist;
+                expect(response["OIL LIFE"].value).to.exist;
+                expect(response["TIRE PRESSURE"]["TIRE PRESSURE LF"].value).to.exist;
+                expect(response["TIRE PRESSURE"]["TIRE PRESSURE LF"].unit).to.exist;
+                expect(response["TIRE PRESSURE"]["TIRE PRESSURE LR"].value).to.exist;
+                expect(response["TIRE PRESSURE"]["TIRE PRESSURE LR"].unit).to.exist;
+                expect(response["TIRE PRESSURE"]["TIRE PRESSURE RR"].value).to.exist;
+                expect(response["TIRE PRESSURE"]["TIRE PRESSURE RR"].unit).to.exist;
+                expect(response["TIRE PRESSURE"]["TIRE PRESSURE RF"].value).to.exist;
+                expect(response["TIRE PRESSURE"]["TIRE PRESSURE RF"].unit).to.exist;
+                expect(response["VEHICLE RANGE"]["EV RANGE"].value).to.exist;
+                expect(response["VEHICLE RANGE"]["EV RANGE"].unit).to.exist;
+                expect(response["VEHICLE RANGE"]["TOTAL RANGE"].value).to.exist;
+                expect(response["VEHICLE RANGE"]["TOTAL RANGE"].unit).to.exist;
+    
+
+            })
+            .catch(function(error){
+                console.log(error);
+                assert.fail();
+            });
+        });
         it('Get vehicle capabilities',function(){
             this.timeout(0);
             var desiredVin=mockVehicles.chevVolt.vin;
@@ -55,16 +116,27 @@ describe('vehicle-service',function(){
                 expect(response.vehicleCapabilities).to.exist;
                 expect(response.vehicleCapabilities.vin).to.equal(desiredVin);
                 //TODO make deeper comparison?
-                  
             })
             .catch(function(error){
                 assert.fail();
             });
         });
-        it.only('Unlock doors',function(){
+        it('Unlock doors',function(){
             this.timeout(0);
             var desiredVin=mockVehicles.chevVolt.vin;
             return vehicleService.unlockDoor(desiredVin).then(function(response){
+                 expect(response).to.exist;
+                 expect(response).to.be.true;
+            })
+            .catch(function(error){
+                console.log(error);
+                assert.fail();
+            });
+        });
+        it("Lock doors",function(){
+            this.timeout(0);
+            var desiredVin=mockVehicles.chevVolt.vin;
+            return vehicleService.lockDoor(desiredVin).then(function(response){
                  expect(response).to.exist;
                  expect(response).to.be.true;
             })
