@@ -53,17 +53,20 @@ VehicleService.prototype.makeAsyncRequest = function(path,options) {
             headers:{
                 'Authorization':options.headers.Authorization
             }
-        }
+        };
         self.makeRequest(null,asyncOptions).then(function(data){
             var bodyData=JSON.parse(data.body);
             var commandResponse=bodyData.commandResponse;
-            if(commandResponse.status==GM_ASYNC_IN_PROGRESS){
-                setTimeout(function(){checkResponse(deferred,commandResponse.url)}, 5000);
+            if(commandResponse.status===GM_ASYNC_IN_PROGRESS){
+                var timeoutFn=function(){
+                    checkResponse(deferred,commandResponse.url);
+                };
+                setTimeout(timeoutFn, 5000);
             }
-            if(commandResponse.status==GM_ASYNC_FAILURE){
+            if(commandResponse.status===GM_ASYNC_FAILURE){
                 deferred.reject(commandResponse);
             }
-            if(commandResponse.status==GM_ASYNC_SUCCESS){
+            if(commandResponse.status===GM_ASYNC_SUCCESS){
                 deferred.resolve(commandResponse);
             }
         })
@@ -77,7 +80,10 @@ VehicleService.prototype.makeAsyncRequest = function(path,options) {
         var asyncUrl=bodyData.url;
         var commandResponse=bodyData.commandResponse;
         var deferred=q.defer();
-        setTimeout(function(){checkResponse(deferred,commandResponse.url)}, 5000);
+        var timeoutFn=function(){
+            checkResponse(deferred,commandResponse.url);
+        };
+        setTimeout(timeoutFn, 5000);
         return deferred.promise;
         
 
@@ -131,26 +137,26 @@ VehicleService.prototype.listVehicles = function() {
 
     })
     .then(function(response){
-        return JSON.parse(response.body)
+        return JSON.parse(response.body);
     });
 };
 VehicleService.prototype.getVehicleDiagnostics = function(vin) {
     var self=this;
     var bodyStr=JSON.stringify({
-          "diagnosticsRequest": {
-                "diagnosticItem": [
-                        "FUEL TANK INFO",
-                        // "LAST TRIP DISTANCE",
-                        // "LAST TRIP FUEL ECONOMY",
-                        // "LIFETIME FUEL ECON",
-                        // "LIFETIME FUEL USED",
-                        // "ODOMETER",
-                        "OIL LIFE",
-                        "TIRE PRESSURE",
-                        "VEHICLE RANGE",
-                        "EV BATTERY LEVEL",
-                        "EV CHARGE STATE",
-                        "EV ESTIMATED CHARGE END"
+          'diagnosticsRequest': {
+                'diagnosticItem': [
+                        'FUEL TANK INFO',
+                        // 'LAST TRIP DISTANCE',
+                        // 'LAST TRIP FUEL ECONOMY',
+                        // 'LIFETIME FUEL ECON',
+                        // 'LIFETIME FUEL USED',
+                        // 'ODOMETER',
+                        'OIL LIFE',
+                        'TIRE PRESSURE',
+                        'VEHICLE RANGE',
+                        'EV BATTERY LEVEL',
+                        'EV CHARGE STATE',
+                        'EV ESTIMATED CHARGE END'
                     ]
                 }
 
@@ -161,7 +167,7 @@ VehicleService.prototype.getVehicleDiagnostics = function(vin) {
         };
         response.forEach(function(d){
             var key=d.name;
-            if(d[elementName].length==1){
+            if(d[elementName].length===1){
                 delete d[elementName][0].name;
                 ret[key]=d[elementName][0];
                 return;
@@ -176,7 +182,7 @@ VehicleService.prototype.getVehicleDiagnostics = function(vin) {
             ret[key]=obj;
         });
         return ret;
-    };
+    }
     return this.connect().then(function(bearerToken){
         // account/vehicles/{vin}/commands/location
         var path='account/vehicles/'+vin+'/commands/diagnostics';
@@ -224,7 +230,7 @@ VehicleService.prototype.getVehicleInfo = function(vin) {
         return self.makeRequest(path,options);
     })
     .then(function(response){
-        return JSON.parse(response.body)
+        return JSON.parse(response.body);
     });
 };
 VehicleService.prototype.getVehicleCapabilities = function(vin) {
@@ -237,15 +243,15 @@ VehicleService.prototype.getVehicleCapabilities = function(vin) {
     var request= self.makeRequest(path,options);
 
     return request.then(function(response){
-        return JSON.parse(response.body)
+        return JSON.parse(response.body);
     });
 };
 VehicleService.prototype.unlockDoor = function(vin) {
     var self=this;
     return this.connect().then(function(bearerToken){
         var bodyStr=JSON.stringify({
-            "unlockDoorRequest": {
-                "delay": "0"
+            'unlockDoorRequest': {
+                'delay': '0'
             }
         });
         var path='account/vehicles/'+vin+'/commands/unlockDoor';
@@ -267,8 +273,8 @@ VehicleService.prototype.lockDoor = function(vin) {
     var self=this;
     return this.connect().then(function(bearerToken){
         var bodyStr=JSON.stringify({
-            "lockDoorRequest": {
-                "delay": "0"
+            'lockDoorRequest': {
+                'delay': '0'
             }
         });
         var path='account/vehicles/'+vin+'/commands/lockDoor';
