@@ -1,6 +1,11 @@
+var GM_ASYNC_SUCCESS='success';
+var GM_ASYNC_FAILURE='failure';
+var GM_ASYNC_IN_PROGRESS='inProgress';
+
 var request=require('request');
 var q=require('q');
 var _=require('lodash');
+
 function VehicleService(config,logger){
     this._apiKey=config.vehiclesService.api.key;
     this._apiSecret=config.vehiclesService.api.secret;
@@ -11,11 +16,9 @@ function VehicleService(config,logger){
     this._bearerReceivedAt;
     this._expiredLatency=5;
     this._logger=logger;
+    this._asyncDelay=5000;
 }
 
-var GM_ASYNC_SUCCESS='success';
-var GM_ASYNC_FAILURE='failure';
-var GM_ASYNC_IN_PROGRESS='inProgress';
 VehicleService.prototype.makeRequest = function(path,options) {
     var defaultHeaders={
         'Accept':'application/json',
@@ -61,7 +64,7 @@ VehicleService.prototype.makeAsyncRequest = function(path,options) {
                 var timeoutFn=function(){
                     checkResponse(deferred,commandResponse.url);
                 };
-                setTimeout(timeoutFn, 5000);
+                setTimeout(timeoutFn, self._asyncDelay);
             }
             if(commandResponse.status===GM_ASYNC_FAILURE){
                 deferred.reject(commandResponse);
@@ -83,20 +86,24 @@ VehicleService.prototype.makeAsyncRequest = function(path,options) {
         var timeoutFn=function(){
             checkResponse(deferred,commandResponse.url);
         };
-        setTimeout(timeoutFn, 5000);
+        setTimeout(timeoutFn, this._asyncDelay);
         return deferred.promise;
         
 
     });
 };
+
+
 VehicleService.prototype._setBearerToken = function(tokenData) {
     this._bearerToken=tokenData.access_token;
     this._bearerExpiresIn=tokenData.expires_in-this._expiredLatency;
     this._bearerReceivedAt=new Date().getTime();
 };
+
 VehicleService.prototype.getBearerToken = function() {
     return this._bearerToken;
 };
+
 VehicleService.prototype.isTokenExpired = function() {
     if(!this._bearerToken){
         return true;
@@ -104,6 +111,7 @@ VehicleService.prototype.isTokenExpired = function() {
     var timeDiff=new Date().getTime()-this._bearerReceivedAt;
     return timeDiff/(1000*60)>this._bearerExpiresIn;
 };
+
 VehicleService.prototype.connect = function() {
     var self=this;
     
@@ -123,6 +131,25 @@ VehicleService.prototype.connect = function() {
         return self.getBearerToken();
     });
 
+};
+
+VehicleService.prototype.startEngine = function(vin) {
+     var self=this;
+    return this.connect().then(function(bearerToken){
+        // account/vehicles/{vin}/commands/location
+        var path='account/vehicles/'+vin+'/commands/start';
+        var options={
+            'headers':{
+                'Authorization':'Bearer '+bearerToken
+            },
+            method:'POST',
+        };
+        return self.makeAsyncRequest(path,options);
+    })
+    .then(function(response){
+        console.log(response);
+        return true;
+    });
 };
 VehicleService.prototype.listVehicles = function() {
     var self=this;

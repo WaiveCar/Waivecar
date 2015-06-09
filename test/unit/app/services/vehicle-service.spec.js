@@ -60,7 +60,7 @@ describe('vehicle-service',function(){
             });
         });
         //Receiving auth error for now,
-        it.skip('Get vehicle location',function(){
+        it('Get vehicle location',function(){
             this.timeout(0);
             var desiredVin=mockVehicles.chevVolt.vin;
             return vehicleService.getVehicleLocation(desiredVin).then(function(response){
@@ -72,7 +72,7 @@ describe('vehicle-service',function(){
                 assert.fail();
             });
         });
-        it.only('Fet vehicle diagnostics',function(){
+        it('Fet vehicle diagnostics',function(){
             this.timeout(0);
             var desiredVin=mockVehicles.chevVolt.vin;
             return vehicleService.getVehicleDiagnostics(desiredVin).then(function(response){
@@ -137,6 +137,18 @@ describe('vehicle-service',function(){
             this.timeout(0);
             var desiredVin=mockVehicles.chevVolt.vin;
             return vehicleService.lockDoor(desiredVin).then(function(response){
+                 expect(response).to.exist;
+                 expect(response).to.be.true;
+            })
+            .catch(function(error){
+                console.log(error);
+                assert.fail();
+            });
+        });
+        it.only("Starts the engine",function(){
+            this.timeout(0);
+            var desiredVin=mockVehicles.chevVolt.vin;
+            return vehicleService.startEngine(desiredVin).then(function(response){
                  expect(response).to.exist;
                  expect(response).to.be.true;
             })
