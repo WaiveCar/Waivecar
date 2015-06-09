@@ -72,13 +72,15 @@ describe('vehicle-service',function(){
                 assert.fail();
             });
         });
-        it('Fet vehicle diagnostics',function(){
+        it.only('Fet vehicle diagnostics',function(){
             this.timeout(0);
             var desiredVin=mockVehicles.chevVolt.vin;
             return vehicleService.getVehicleDiagnostics(desiredVin).then(function(response){
                 expect(response).to.exist;
                 expect(response["EV BATTERY LEVEL"].unit).to.exist;
                 expect(response["EV BATTERY LEVEL"].value).to.exist;
+                expect(response["ODOMETER"].unit).to.exist;
+                expect(response["ODOMETER"].value).to.exist;
                 expect(response["EV CHARGE STATE"]["EV CHARGE STATE"].value).to.exist;
                 expect(response["FUEL TANK INFO"]["FUEL AMOUNT"].value).to.exist;
                 expect(response["FUEL TANK INFO"]["FUEL AMOUNT"].unit).to.exist;
@@ -108,7 +110,7 @@ describe('vehicle-service',function(){
                 assert.fail();
             });
         });
-        it.only('Get vehicle capabilities',function(){
+        it('Get vehicle capabilities',function(){
             this.timeout(0);
             var desiredVin=mockVehicles.chevVolt.vin;
             return vehicleService.getVehicleCapabilities(desiredVin).then(function(response){

@@ -187,25 +187,28 @@ VehicleService.prototype.listVehicles = function() {
         return JSON.parse(response.body);
     });
 };
-VehicleService.prototype.getVehicleDiagnostics = function(vin) {
+VehicleService.prototype.getVehicleDiagnostics = function(vin,diagnostItems) {
+    if(!diagnostItems){
+       diagnosticItems= [
+            'FUEL TANK INFO',
+            // 'LAST TRIP DISTANCE',
+            // 'LAST TRIP FUEL ECONOMY',
+            // 'LIFETIME FUEL ECON',
+            // 'LIFETIME FUEL USED',
+            'ODOMETER',
+            'OIL LIFE',
+            'TIRE PRESSURE',
+            'VEHICLE RANGE',
+            'EV BATTERY LEVEL',
+            'EV CHARGE STATE',
+            'EV ESTIMATED CHARGE END'
+        ]
+    }
     var self=this;
     var bodyStr=JSON.stringify({
           'diagnosticsRequest': {
-                'diagnosticItem': [
-                        'FUEL TANK INFO',
-                        // 'LAST TRIP DISTANCE',
-                        // 'LAST TRIP FUEL ECONOMY',
-                        // 'LIFETIME FUEL ECON',
-                        // 'LIFETIME FUEL USED',
-                        // 'ODOMETER',
-                        'OIL LIFE',
-                        'TIRE PRESSURE',
-                        'VEHICLE RANGE',
-                        'EV BATTERY LEVEL',
-                        'EV CHARGE STATE',
-                        'EV ESTIMATED CHARGE END'
-                    ]
-                }
+                'diagnosticItem':diagnosticItems
+            }
 
     });
     function parseResponse(response,elementName){
