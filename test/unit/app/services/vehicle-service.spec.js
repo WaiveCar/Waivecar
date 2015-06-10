@@ -186,7 +186,7 @@ describe('vehicle-service',function(){
                     done();
                 });
             });
-            it('Vehicle data',function(done){
+            it.only('Vehicle data',function(done){
                 this.timeout(0);
                 var desiredVin=mockVehicles.chevVolt.vin;
                 vehicleService.vehicleData(desiredVin,function(err,response){

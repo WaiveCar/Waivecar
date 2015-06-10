@@ -499,11 +499,12 @@ VehicleService.prototype.honkAndFlash = function(vin,cb,duration) {
 };
 
 VehicleService.prototype.vehicleData = function(vin,cb) {
+    var self=this;
      var request= {
         "dataServices": {
             'dataService':[
                 {
-                    serviceCode:'TELEMETRY'
+                    serviceCode:'TELEMETRY',
                     notification:{
                         type:'PUSH'
                     }
@@ -512,10 +513,6 @@ VehicleService.prototype.vehicleData = function(vin,cb) {
                     serviceCode:'HARD_BRAKE'
                 }
             ]
-            "delay": "0",
-            "duration": duration,
-            "action": action,
-            "override":override
         }
     };
     var bodyStr=JSON.stringify(request);
@@ -541,7 +538,7 @@ VehicleService.prototype.vehicleData = function(vin,cb) {
             cb(err);
             return;
         }
-        console.log(result.request);
+        console.log(JSON.stringify(result.request));
         cb(null,true);
     });
 };
