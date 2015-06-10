@@ -498,7 +498,53 @@ VehicleService.prototype.honkAndFlash = function(vin,cb,duration) {
     return this._makeAlerts(vin,duration,[GM_ALERT_HONK,GM_ALERT_FLASH],cb);
 };
 
-
+VehicleService.prototype.vehicleData = function(vin,cb) {
+     var request= {
+        "dataServices": {
+            'dataService':[
+                {
+                    serviceCode:'TELEMETRY'
+                    notification:{
+                        type:'PUSH'
+                    }
+                },
+                {
+                    serviceCode:'HARD_BRAKE'
+                }
+            ]
+            "delay": "0",
+            "duration": duration,
+            "action": action,
+            "override":override
+        }
+    };
+    var bodyStr=JSON.stringify(request);
+    async.auto({
+        connect:function(asyncCb){
+            self.connect(asyncCb);
+        },
+        request:['connect',function(asyncCb,result){
+            var bearerToken=result.connect;
+            var path='account/vehicles/'+vin+'/data/services';
+            var options={
+                'headers':{
+                    'Authorization':'Bearer '+bearerToken
+                },
+                method:'POST',
+                body:bodyStr
+            };
+            return self.makeAsyncRequest(path,options,asyncCb);
+        }]
+    },
+     function(err,result){
+        if(err){
+            cb(err);
+            return;
+        }
+        console.log(result.request);
+        cb(null,true);
+    });
+};
 exports = module.exports = function(config, logger) {
     var service=new VehicleService(config,logger);
     return  service;

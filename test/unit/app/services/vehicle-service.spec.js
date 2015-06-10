@@ -186,6 +186,16 @@ describe('vehicle-service',function(){
                     done();
                 });
             });
+            it('Vehicle data',function(done){
+                this.timeout(0);
+                var desiredVin=mockVehicles.chevVolt.vin;
+                vehicleService.vehicleData(desiredVin,function(err,response){
+                    expect(err).to.not.exist;
+                    expect(response).to.exist;
+                    expect(response).to.be.true;
+                    done();
+                });
+            });
         });
     });
 
