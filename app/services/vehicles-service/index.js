@@ -6,7 +6,7 @@ var GM_ALERT_FLASH='Flash';
 var request=require('request');
 var q=require('q');
 var _=require('lodash');
-
+var async=require('async');
 function VehicleService(config,logger){
     this._apiKey=config.vehiclesService.api.key;
     this._apiSecret=config.vehiclesService.api.secret;
@@ -21,7 +21,7 @@ function VehicleService(config,logger){
     this._defaultAlertDuration=15;
 }
 
-VehicleService.prototype.makeRequest = function(path,options) {
+VehicleService.prototype.makeRequest = function(path,options,cb) {
     var defaultHeaders={
         'Accept':'application/json',
     };
@@ -38,61 +38,65 @@ VehicleService.prototype.makeRequest = function(path,options) {
         options=defaultHeaders;
     }
     console.log(options);
-    var deferred=q.defer();
     request(options, function (error, response, body) {
         if(error ||   response && (response.statusCode !== 200 && response.statusCode !== 202)){
             var statusCode=response && response.statusCode;
-            deferred.reject({error:error,response:response,body:body});
+            cb({error:error,response:response,body:body});
             return;
         }
-        deferred.resolve({body:body,response:response});
+        cb(null,{body:body,response:response});
     });
-    return deferred.promise;
 };
 
-VehicleService.prototype.makeAsyncRequest = function(path,options) {
+VehicleService.prototype.makeAsyncRequest = function(path,options,cb) {
     var self=this;
-    function checkResponse(deferred,url){
+    function checkResponse(url,cb){
         var asyncOptions={
             url:url,
             headers:{
                 'Authorization':options.headers.Authorization
             }
         };
-        self.makeRequest(null,asyncOptions).then(function(data){
+        var requestCb=function(err,data){
+            if(err){
+                cb(err);
+                return;
+            }
             var bodyData=JSON.parse(data.body);
             var commandResponse=bodyData.commandResponse;
             if(commandResponse.status===GM_ASYNC_IN_PROGRESS){
                 var timeoutFn=function(){
-                    checkResponse(deferred,commandResponse.url);
+                    checkResponse(url,cb);
                 };
                 setTimeout(timeoutFn, self._asyncDelay);
             }
             if(commandResponse.status===GM_ASYNC_FAILURE){
-                deferred.reject(commandResponse);
+                cb(commandResponse);
             }
             if(commandResponse.status===GM_ASYNC_SUCCESS){
-                deferred.resolve(commandResponse);
+                cb(null,commandResponse);
             }
-        })
-        .catch(function(error){
-            deferred.reject(error);
-        });
+            
+        }
+        self.makeRequest(null,asyncOptions,requestCb);
+     
     }
-    return this.makeRequest(path,options).then(function(data){
-        
+    var requestCb=function(err,data){
+        if(err){
+            cb(err);
+            return;
+        }
         var bodyData=JSON.parse(data.body);
         var asyncUrl=bodyData.url;
         var commandResponse=bodyData.commandResponse;
         var deferred=q.defer();
         var timeoutFn=function(){
-            checkResponse(deferred,commandResponse.url);
+            checkResponse(commandResponse.url,cb);
         };
         setTimeout(timeoutFn, this._asyncDelay);
-        return deferred.promise;
         
-
-    });
+    }
+    this.makeRequest(path,options,requestCb);
 };
 
 
@@ -114,82 +118,114 @@ VehicleService.prototype.isTokenExpired = function() {
     return timeDiff/(1000*60)>this._bearerExpiresIn;
 };
 
-VehicleService.prototype.connect = function() {
+VehicleService.prototype.connect = function(cb) {
     var self=this;
     
     if(!this.isTokenExpired()){
-        return q.fcall(function(){
-            return self.getBearerToken();
-        });
+        cb(null,self.getBearerToken());
+        return;
     }
     var options={
         'headers':{
             'Authorization':'Basic '+this._base64KeyAndSecret
         }
     };
-    return this.makeRequest('oauth/access_token',options).then(function(res){
+    var requestCb=function(err,res){
+        if(err){
+            cb(err);
+            return;
+        }
         var data=JSON.parse(res.body);
         self._setBearerToken(data);
-        return self.getBearerToken();
-    });
-
+        cb(null,self.getBearerToken());
+        
+    }
+    this.makeRequest('oauth/access_token',options,requestCb);
 };
 
-VehicleService.prototype.cancelStartEngine = function(vin) {
-     var self=this;
-    return this.connect().then(function(bearerToken){
-        // account/vehicles/{vin}/commands/location
-        var path='account/vehicles/'+vin+'/commands/cancelStart';
-        var options={
-            'headers':{
-                'Authorization':'Bearer '+bearerToken
-            },
-            method:'POST',
-        };
-        return self.makeAsyncRequest(path,options);
-    })
-    .then(function(response){
-        console.log(response);
-        return true;
-    });
-};
-VehicleService.prototype.startEngine = function(vin) {
-     var self=this;
-    return this.connect().then(function(bearerToken){
-        // account/vehicles/{vin}/commands/location
-        var path='account/vehicles/'+vin+'/commands/start';
-        var options={
-            'headers':{
-                'Authorization':'Bearer '+bearerToken
-            },
-            method:'POST',
-        };
-        return self.makeAsyncRequest(path,options);
-    })
-    .then(function(response){
-        console.log(response);
-        return true;
-    });
-};
-VehicleService.prototype.listVehicles = function() {
+VehicleService.prototype.cancelStartEngine = function(vin,cb) {
+
     var self=this;
-    return this.connect().then(function(bearerToken){
-        var path='account/vehicles';
-        var options={
-            'headers':{
-                'Authorization':'Bearer '+bearerToken
-            }
-        };
-        return self.makeRequest(path,options);
-
-    })
-    .then(function(response){
-        return JSON.parse(response.body);
+    async.auto({
+        'connect':function(asyncCb){
+            self.connect(asyncCb);
+        },
+        'request':['connect',function (asyncCb,result) {
+            var bearerToken=result.connect;
+            var path='account/vehicles/'+vin+'/commands/cancelStart';
+            var options={
+                'headers':{
+                    'Authorization':'Bearer '+bearerToken
+                },
+                method:'POST',
+            };
+            self.makeAsyncRequest(path,options,asyncCb);
+        }]
+    },
+    function(err,result){
+        if(err){
+            cb(err);
+            return;
+        }
+        cb(null,true);
     });
 };
-VehicleService.prototype.getVehicleDiagnostics = function(vin,diagnostItems) {
+VehicleService.prototype.startEngine = function(vin,cb) {
+    var self=this;
+    async.auto({
+        'connect':function(asyncCb){
+            self.connect(asyncCb);
+        },
+        'request':['connect',function (asyncCb,result) {
+            var bearerToken=result.connect;
+            var path='account/vehicles/'+vin+'/commands/start';
+            var options={
+                'headers':{
+                    'Authorization':'Bearer '+bearerToken
+                },
+                method:'POST',
+            };
+            self.makeAsyncRequest(path,options,asyncCb);
+        }]
+    },
+    function(err,result){
+        if(err){
+            cb(err);
+            return;
+        }
+        cb(null,true);
+    });
+};
+VehicleService.prototype.listVehicles = function(cb) {
+    var self=this;
+    async.auto({
+        connect:function(asyncCb){
+            self.connect(asyncCb);
+        },
+        list:['connect',function(asyncCb,result){
+            var bearerToken=result.connect;
+            var path='account/vehicles';
+            var options={
+                'headers':{
+                    'Authorization':'Bearer '+bearerToken
+                }
+            };
+            self.makeRequest(path,options,asyncCb);
+        }]
+    },
+    function(err,result){
+        console.log("AQUI "+!!err+"  "+!!result);
+        if(err){
+            cb(err);
+            return;
+        }
+        var data=JSON.parse(result.list.body);
+        cb(null,data);
+    });
+};
+VehicleService.prototype.getVehicleDiagnostics = function(vin,cb,diagnostItems) {
     if(!diagnostItems){
-       diagnosticItems= [
+       diagnostItems= [
             'FUEL TANK INFO',
             // 'LAST TRIP DISTANCE',
             // 'LAST TRIP FUEL ECONOMY',
@@ -207,7 +243,7 @@ VehicleService.prototype.getVehicleDiagnostics = function(vin,diagnostItems) {
     var self=this;
     var bodyStr=JSON.stringify({
           'diagnosticsRequest': {
-                'diagnosticItem':diagnosticItems
+                'diagnosticItem':diagnostItems
             }
 
     });
@@ -233,120 +269,182 @@ VehicleService.prototype.getVehicleDiagnostics = function(vin,diagnostItems) {
         });
         return ret;
     }
-    return this.connect().then(function(bearerToken){
-        // account/vehicles/{vin}/commands/location
-        var path='account/vehicles/'+vin+'/commands/diagnostics';
-        var options={
-            'headers':{
-                'Authorization':'Bearer '+bearerToken
-            },
-            method:'POST',
-            body:bodyStr
-        };
-        return self.makeAsyncRequest(path,options);
-    })
-    .then(function(response){
-        // console.log(JSON.stringify(response.body.diagnosticResponse));
-        return parseResponse(response.body.diagnosticResponse,'diagnosticElement');
+    
+    async.auto({
+        connect:function(asyncCb){
+            self.connect(asyncCb);
+        },
+        request:['connect',function(asyncCb,result){
+            var path='account/vehicles/'+vin+'/commands/diagnostics';
+            var options={
+                'headers':{
+                    'Authorization':'Bearer '+result.connect
+                },
+                method:'POST',
+                body:bodyStr
+            };
+            self.makeAsyncRequest(path,options,asyncCb);
+        }],
+        parse:['request',function(asyncCb,result){
+             var response=parseResponse(result.request.body.diagnosticResponse,'diagnosticElement');
+            cb(null,response);
+        }]
+    },
+    function(err,result){
+        if(err){
+            cb(err);
+            return;
+        }
+        cb(null,result.parse);
+    }
+    );   
+};
+VehicleService.prototype.getVehicleLocation = function(vin,cb) {
+    var self=this;
+    async.auto({
+        'connect':function(asyncCb){
+            self.connect(asyncCb);
+        },
+        'request':['connect',function (asyncCb,result) {
+            var bearerToken=result.connect;
+            var path='account/vehicles/'+vin+'/commands/location';
+            var options={
+                'headers':{
+                    'Authorization':'Bearer '+bearerToken
+                },
+                method:'POST',
+            };
+            return self.makeAsyncRequest(path,options,asyncCb);
+        }]
+    },
+    function(err,result){
+        if(err){
+            cb(err);
+            return;
+        }
+        cb(null,result.response);
     });
 };
-VehicleService.prototype.getVehicleLocation = function(vin) {
+VehicleService.prototype.getVehicleInfo = function(vin,cb) {
     var self=this;
-    return this.connect().then(function(bearerToken){
-        // account/vehicles/{vin}/commands/location
-        var path='account/vehicles/'+vin+'/commands/location';
-        var options={
-            'headers':{
-                'Authorization':'Bearer '+bearerToken
-            },
-            method:'POST',
-        };
-        return self.makeAsyncRequest(path,options);
-    })
-    .then(function(response){
-        console.log(response);
-        return true;
+    async.auto({
+        connect:function(asyncCb){
+            self.connect(asyncCb);
+        },
+        'request':['connect',function(asyncCb,result){
+            var bearerToken=result.connect;
+             var path='account/vehicles/'+vin;
+            var options={
+                'headers':{
+                    'Authorization':'Bearer '+bearerToken
+                }
+            };
+            self.makeRequest(path,options,asyncCb);
+        }]
+    },function(err,results){
+        if(err){
+            cb(err);
+            return;
+        }
+        var response=JSON.parse(results.request.body);
+        cb(null,response);
     });
 };
-VehicleService.prototype.getVehicleInfo = function(vin) {
+VehicleService.prototype.getVehicleCapabilities = function(vin,cb) {
     var self=this;
-    return this.connect().then(function(bearerToken){
-        var path='account/vehicles/'+vin;
-        var options={
-            'headers':{
-                'Authorization':'Bearer '+bearerToken
-            }
-        };
-        return self.makeRequest(path,options);
-    })
-    .then(function(response){
-        return JSON.parse(response.body);
+    var path='vehicles/'+vin+'/capabilities';
+    var options={
+        'headers':{
+            'Authorization':'Basic '+this._base64KeyAndSecret
+        }
+    };
+    async.auto({
+        request:function(asyncCb){
+            self.makeRequest(path,options,asyncCb);
+        },
+        response:['request',function(asyncCb,result){
+            cb(null,JSON.parse(result.request.body));
+        }]
+    },
+    function(err,result){
+        if(err){
+            cb(err);
+            return;
+        }
+        cb(null,result.response);
     });
 };
-VehicleService.prototype.getVehicleCapabilities = function(vin) {
+VehicleService.prototype.unlockDoor = function(vin,cb) {
     var self=this;
-        var path='vehicles/'+vin+'/capabilities';
-        var options={
-            'headers':{
-                'Authorization':'Basic '+this._base64KeyAndSecret
-            }
-        };
-    var request= self.makeRequest(path,options);
+    async.auto({
+        'connect':function(asyncCb){
+            self.connect(asyncCb);
+        },
+        'request':['connect',function (asyncCb,result) {
+            var bearerToken=result.connect;
+            var bodyStr=JSON.stringify({
+                'unlockDoorRequest': {
+                    'delay': '0'
+                }
+            });
+            var path='account/vehicles/'+vin+'/commands/unlockDoor';
+            var options={
+                'headers':{
+                    'Authorization':'Bearer '+bearerToken,
+                    'content-type': 'application/json'
+                },
+                method:'POST',
+                body:bodyStr
+            };
+            self.makeAsyncRequest(path,options,asyncCb);
+        }]
+    },
+    function(err,result){
+        if(err){
+            cb(err);
+            return;
+        }
+        cb(null,true);
+    });
+};
+VehicleService.prototype.lockDoor = function(vin,cb) {
+    var self=this;
+    async.auto({
+        'connect':function(asyncCb){
+            self.connect(asyncCb);
+        },
+        'request':['connect',function (asyncCb,result) {
+            var bearerToken=result.connect;
+            var bodyStr=JSON.stringify({
+                'lockDoorRequest': {
+                    'delay': '0'
+                }
+            });
+            var path='account/vehicles/'+vin+'/commands/lockDoor';
+            var options={
+                'headers':{
+                    'Authorization':'Bearer '+bearerToken,
+                    'content-type': 'application/json'
+                },
+                method:'POST',
+                body:bodyStr
 
-    return request.then(function(response){
-        return JSON.parse(response.body);
-    });
-};
-VehicleService.prototype.unlockDoor = function(vin) {
-    var self=this;
-    return this.connect().then(function(bearerToken){
-        var bodyStr=JSON.stringify({
-            'unlockDoorRequest': {
-                'delay': '0'
-            }
-        });
-        var path='account/vehicles/'+vin+'/commands/unlockDoor';
-        var options={
-            'headers':{
-                'Authorization':'Bearer '+bearerToken,
-                'content-type': 'application/json'
-            },
-            method:'POST',
-            body:bodyStr
-        };
-        return self.makeAsyncRequest(path,options);
-    })
-    .then(function(response){
-        return true;
-    });
-};
-VehicleService.prototype.lockDoor = function(vin) {
-    var self=this;
-    return this.connect().then(function(bearerToken){
-        var bodyStr=JSON.stringify({
-            'lockDoorRequest': {
-                'delay': '0'
-            }
-        });
-        var path='account/vehicles/'+vin+'/commands/lockDoor';
-        var options={
-            'headers':{
-                'Authorization':'Bearer '+bearerToken,
-                'content-type': 'application/json'
-            },
-            method:'POST',
-            body:bodyStr
 
-
-        };
-        return self.makeAsyncRequest(path,options);
-    })
-    .then(function(response){
-        return true;
+            };
+            self.makeAsyncRequest(path,options,asyncCb);
+        }]
+    },
+    function(err,result){
+        if(err){
+            cb(err);
+            return;
+        }
+        cb(null,true);
     });
+    
 };
 
-VehicleService.prototype._makeAlerts = function(vin,duration,action) {
+VehicleService.prototype._makeAlerts = function(vin,duration,action,cb) {
     var self=this;
     duration=duration || this._defaultAlertDuration;
     if(!Array.isArray(action)){
@@ -365,30 +463,39 @@ VehicleService.prototype._makeAlerts = function(vin,duration,action) {
         }
     };
     var bodyStr=JSON.stringify(request);
-    return this.connect().then(function(bearerToken){
-        // account/vehicles/{vin}/commands/location
-        var path='account/vehicles/'+vin+'/commands/alert';
-        var options={
-            'headers':{
-                'Authorization':'Bearer '+bearerToken
-            },
-            method:'POST',
-            body:bodyStr
-        };
-        return self.makeAsyncRequest(path,options);
-    })
-    .then(function(response){
-       return true;
+    async.auto({
+        connect:function(asyncCb){
+            self.connect(asyncCb);
+        },
+        request:['connect',function(asyncCb,result){
+            var bearerToken=result.connect;
+            var path='account/vehicles/'+vin+'/commands/alert';
+            var options={
+                'headers':{
+                    'Authorization':'Bearer '+bearerToken
+                },
+                method:'POST',
+                body:bodyStr
+            };
+            return self.makeAsyncRequest(path,options,asyncCb);
+        }]
+    },
+     function(err,result){
+        if(err){
+            cb(err);
+            return;
+        }
+        cb(null,true);
     });
 };
-VehicleService.prototype.honk = function(vin,duration) {
-    return this._makeAlerts(vin,duration,GM_ALERT_HONK);
+VehicleService.prototype.honk = function(vin,cb,duration) {
+    this._makeAlerts(vin,duration,GM_ALERT_HONK,cb);
 };
-VehicleService.prototype.flash = function(vin,duration) {
-    return this._makeAlerts(vin,duration,GM_ALERT_FLASH);
+VehicleService.prototype.flash = function(vin,cb,duration) {
+    return this._makeAlerts(vin,duration,GM_ALERT_FLASH,cb);
 };
-VehicleService.prototype.honkAndFlash = function(vin,duration) {
-    return this._makeAlerts(vin,duration,[GM_ALERT_HONK,GM_ALERT_FLASH]);
+VehicleService.prototype.honkAndFlash = function(vin,cb,duration) {
+    return this._makeAlerts(vin,duration,[GM_ALERT_HONK,GM_ALERT_FLASH],cb);
 };
 
 

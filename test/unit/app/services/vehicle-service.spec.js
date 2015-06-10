@@ -18,16 +18,14 @@ var vehicleService = IoC.create('services/vehicles-service');
 
 describe('vehicle-service',function(){
     describe('Login',function(){
-        it('Log in on the gm api',function(){
+        it('Log in on the gm api',function(done){
             this.timeout(0);
-            var connect=vehicleService.connect();
-            return connect.then(function(response){
+            vehicleService.connect(function(err,response){
+                expect(err).to.not.exist;
                 expect(response).to.exist;
                 expect(response).to.equal(vehicleService.getBearerToken());
+                done();
             })
-            .catch(function(error){
-                assert.fail();
-            });
         });
         describe('Tokens',function(){
             it('Reuse the token if it\'s already received');
@@ -35,47 +33,46 @@ describe('vehicle-service',function(){
         });
 
     });
-    describe('Vehicle functions',function(){
-        it('List available vehicles',function(){
+    describe('Vehicle functions',function(done){
+        it('List available vehicles',function(done){
             this.timeout(0);
-            return vehicleService.listVehicles().then(function(response){
+            vehicleService.listVehicles(function(err,response){
+                expect(err).to.not.exist;
                 expect(response).to.exist;
                 expect(response.vehicles).to.exist;
                 expect(response.vehicles.size).to.be.above(0);
-            })
-            .catch(function(error){
-                assert.fail();
+                done();
             });
+           
         });
 
-        it("Get vehicle data",function(){
+        it("Get vehicle data",function(done){
             this.timeout(0);
             var desiredVin=mockVehicles.chevVolt.vin;
-            return vehicleService.getVehicleInfo(desiredVin).then(function(response){
+            vehicleService.getVehicleInfo(desiredVin,function(err,response){
+                expect(err).to.not.exist;
                 expect(response).to.exist;
                 expect(response.vehicle.vin).to.equal(desiredVin);
-            })
-            .catch(function(error){
-                assert.fail();
+                done();
             });
         });
         //Receiving auth error for now,
-        it.skip('Get vehicle location',function(){
+        it.skip('Get vehicle location',function(done){
             this.timeout(0);
             var desiredVin=mockVehicles.chevVolt.vin;
-            return vehicleService.getVehicleLocation(desiredVin).then(function(response){
+            vehicleService.getVehicleLocation(desiredVin,function(err,response){
+                console.log(err);
+                expect(err).to.not.exist;
                 expect(response).to.exist;
+                done();
                //TOdo make deeper assertions when get response
-            })
-            .catch(function(error){
-                console.log(error);
-                assert.fail();
             });
         });
-        it.only('Fet vehicle diagnostics',function(){
+        it('Fetch vehicle diagnostics',function(done){
             this.timeout(0);
             var desiredVin=mockVehicles.chevVolt.vin;
-            return vehicleService.getVehicleDiagnostics(desiredVin).then(function(response){
+            vehicleService.getVehicleDiagnostics(desiredVin,function(error,response){
+                expect(error).to.not.exist;
                 expect(response).to.exist;
                 expect(response["EV BATTERY LEVEL"].unit).to.exist;
                 expect(response["EV BATTERY LEVEL"].value).to.exist;
@@ -103,110 +100,90 @@ describe('vehicle-service',function(){
                 expect(response["VEHICLE RANGE"]["TOTAL RANGE"].value).to.exist;
                 expect(response["VEHICLE RANGE"]["TOTAL RANGE"].unit).to.exist;
     
-
-            })
-            .catch(function(error){
-                console.log(error);
-                assert.fail();
+                done();
             });
         });
-        it('Get vehicle capabilities',function(){
+        it('Get vehicle capabilities',function(done){
             this.timeout(0);
             var desiredVin=mockVehicles.chevVolt.vin;
-            return vehicleService.getVehicleCapabilities(desiredVin).then(function(response){
+            vehicleService.getVehicleCapabilities(desiredVin,function(err,response){
+                expect(err).to.not.exist;
                 expect(response).to.exist;
                 expect(response.vehicleCapabilities).to.exist;
                 expect(response.vehicleCapabilities.vin).to.equal(desiredVin);
                 //TODO make deeper comparison?
-            })
-            .catch(function(error){
-                console.log(error);
-                assert.fail();
+                done();
             });
         });
-        it('Unlock doors',function(){
+        it('Unlock doors',function(done){
             this.timeout(0);
             var desiredVin=mockVehicles.chevVolt.vin;
-            return vehicleService.unlockDoor(desiredVin).then(function(response){
+            vehicleService.unlockDoor(desiredVin,function(err,response){
+                 expect(err).to.not.exist;
                  expect(response).to.exist;
                  expect(response).to.be.true;
-            })
-            .catch(function(error){
-                console.log(error);
-                assert.fail();
+                 done();
             });
         });
-        it("Lock doors",function(){
+        it("Lock doors",function(done){
             this.timeout(0);
             var desiredVin=mockVehicles.chevVolt.vin;
-            return vehicleService.lockDoor(desiredVin).then(function(response){
+            vehicleService.lockDoor(desiredVin,function(err,response){
+                 expect(err).to.not.exist;
                  expect(response).to.exist;
                  expect(response).to.be.true;
-            })
-            .catch(function(error){
-                console.log(error);
-                assert.fail();
+                 done();
             });
         });
-        it("Starts the engine",function(){
+        it("Starts the engine",function(done){
             this.timeout(0);
             var desiredVin=mockVehicles.chevVolt.vin;
-            return vehicleService.startEngine(desiredVin).then(function(response){
+            vehicleService.startEngine(desiredVin,function(err,response){
+                 expect(err).to.not.exist;
                  expect(response).to.exist;
                  expect(response).to.be.true;
-            })
-            .catch(function(error){
-                console.log(error);
-                assert.fail();
+                 done();
             });
         });
-        it("Cancels start the engine command",function(){
+        it("Cancels start the engine command",function(done){
             this.timeout(0);
             var desiredVin=mockVehicles.chevVolt.vin;
-            return vehicleService.cancelStartEngine(desiredVin).then(function(response){
+            vehicleService.cancelStartEngine(desiredVin,function(err,response){
+                 expect(err).to.not.exist;
                  expect(response).to.exist;
                  expect(response).to.be.true;
-            })
-            .catch(function(error){
-                console.log(error);
-                assert.fail();
+                 done();
             });
         });
         describe('Vehicle alerts',function(){
-            it('Honks',function(){
-                 this.timeout(0);
+            it('Honks',function(done){
+                this.timeout(0);
                 var desiredVin=mockVehicles.chevVolt.vin;
-                return vehicleService.honk(desiredVin).then(function(response){
-                     expect(response).to.exist;
-                     expect(response).to.be.true;
-                })
-                .catch(function(error){
-                    console.log(error);
-                    assert.fail();
+                vehicleService.honk(desiredVin,function(err,response){
+                    expect(err).to.not.exist;
+                    expect(response).to.exist;
+                    expect(response).to.be.true;
+                    done();
                 });
             });
-            it('Flashes',function(){
-                 this.timeout(0);
+            it('Flashes',function(done){
+                this.timeout(0);
                 var desiredVin=mockVehicles.chevVolt.vin;
-                return vehicleService.flash(desiredVin).then(function(response){
-                     expect(response).to.exist;
-                     expect(response).to.be.true;
-                })
-                .catch(function(error){
-                    console.log(error);
-                    assert.fail();
+                vehicleService.flash(desiredVin,function(err,response){
+                    expect(err).to.not.exist;
+                    expect(response).to.exist;
+                    expect(response).to.be.true;
+                    done();
                 });
             });
-            it('Honks and flashes',function(){
-                 this.timeout(0);
+            it('Honks and flashes',function(done){
+                this.timeout(0);
                 var desiredVin=mockVehicles.chevVolt.vin;
-                return vehicleService.honkAndFlash(desiredVin).then(function(response){
-                     expect(response).to.exist;
-                     expect(response).to.be.true;
-                })
-                .catch(function(error){
-                    console.log(error);
-                    assert.fail();
+                vehicleService.honkAndFlash(desiredVin,function(err,response){
+                    expect(err).to.not.exist;
+                    expect(response).to.exist;
+                    expect(response).to.be.true;
+                    done();
                 });
             });
         });
