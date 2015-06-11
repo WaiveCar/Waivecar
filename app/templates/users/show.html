@@ -1,0 +1,85 @@
+<div ng-include="'/templates/partials/admin-header.html'"></div>
+<div ng-controller="UserController" class="container-fluid main-content">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="list-head">
+        <div class="row">
+          <div class="col-xs-8">
+            <div class="list-head-content">
+              <h5>{{ active.user.name }}</h5>
+            </div>
+          </div>
+          <div class="col-xs-4">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row push-top-xs">
+    <div class="col-sm-3">
+      <ul class="list-group">
+        <li class="list-group-item text-muted">Profile</li>
+        <li class="list-group-item text-right">
+          <span class="pull-left">
+            <strong>Registered</strong>
+          </span>
+          {{ active.user.createdAt | date }}
+        </li>
+        <li class="list-group-item text-right">
+          <span class="pull-left">
+            <strong>Last Updated</strong>
+          </span>
+          {{ active.user.updatedAt | date }}
+        </li>
+        <li class="list-group-item text-right">
+          <span class="pull-left">
+            <strong>First Name</strong>
+          </span>
+          {{ active.user.firstName }}
+        </li>
+        <li class="list-group-item text-right">
+          <span class="pull-left">
+            <strong>Last Name</strong>
+          </span>
+          {{ active.user.lastName }}
+        </li>
+      </ul>
+    </div>
+    <div class="col-sm-9">
+      <ul id="user-tabs" class="nav nav-tabs">
+        <li class="active">
+          <button>Bookings</button>
+        </li>
+        <li>
+          <button>History</button>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div id="user-bookings" class="tab-pane active">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Id</th>
+                  <th>Start</th>
+                  <th>End</th>
+                  <th>Car</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

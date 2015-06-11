@@ -45,7 +45,7 @@
               <td ng-repeat="col in list.columns | filter: { isVisible: true }" class="admin-table-col-{{ col.name }}"><span>{{ format[col.formatter](item[col.name]) }}</span></td>
               <td ng-if="list.display.actions" class="admin-table-col-actions">
                 <button ng-if="list.display.edit" ng-click="editItem(item)" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i></button>
-                <button ng-if="list.display.show" ng-click="editItem(item)" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i></button>
+                <a ng-if="list.display.show" ui-sref="users-show({ id: item.id })" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i></button>
                 <button ng-if="list.display.destroy" ng-click="deleteItem(item)" class="btn btn-sm btn-danger"><i class="fa fa-remove"></i></button>
               </td>
             </tr>

@@ -81,6 +81,15 @@ window.app.config([
           }
         }
       })
+      .state('users-show', {
+        url: '/users/:id',
+        templateUrl: '/templates/users/show.html',
+        data: {
+          auth: {
+            role: 'admin'
+          }
+        }
+      })
       .state('media', {
         url: '/media',
         templateUrl: '/templates/table/index.html',
@@ -102,6 +111,15 @@ window.app.config([
       .state('vehicles', {
         url: '/vehicles',
         templateUrl: '/templates/table/index.html',
+        data: {
+          auth: {
+            role: 'admin'
+          }
+        }
+      })
+      .state('vehicles-show', {
+        url: '/vehicles/:id',
+        templateUrl: '/templates/vehicles/show.html',
         data: {
           auth: {
             role: 'admin'
