@@ -1,18 +1,14 @@
-var path = require('path');
-var Blueprint = require(path.join(process.env.PWD, 'lib', 'route-blueprint'));
 var express = require('express');
 
-exports = module.exports = function(container, controller, logger) {
+exports = module.exports = function(container, controller, tokenPassThrough, isAuthenticated, isAdmin, logger) {
 
-  var options = {
-    app: this,
-    container: container,
-    controller: controller,
-    logger: logger
-  };
+  var app = this;
+  var router = express.Router();
 
-  return new Blueprint(options);
+  router.get('/', tokenPassThrough, isAuthenticated, isAdmin, controller.index);
+  app.use('/v1/roles', router);
+
 };
 
+exports['@require'] = [ '$container', 'controllers/roles-controller', 'policies/tokenPassThrough', 'policies/isAuthenticated', 'policies/isAdmin', 'igloo/logger' ];
 exports['@singleton'] = true;
-exports['@require'] = [ '$container', 'controllers/roles-controller', 'igloo/logger' ];

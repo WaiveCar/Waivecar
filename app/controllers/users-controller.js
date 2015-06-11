@@ -22,18 +22,14 @@ exports = module.exports = function(Model, Setting, config) {
       Model.findById(req.user.id, function(err, user) {
         if (err) return next(err);
         var model = user.toJSON();
-        user.getPermissions(function(err, permissions) {
-          if (err) return next(err);
-          model.permissions = permissions;
-          Setting.find({}).exec(function (err, settings) {
-            model.environment = {
-              settings: settings
-            };
-            return res.format({
-              json: function() {
-                res.json(model);
-              }
-            });
+        Setting.find({}).exec(function (err, settings) {
+          model.environment = {
+            settings: settings
+          };
+          return res.format({
+            json: function() {
+              res.json(model);
+            }
           });
         });
       });

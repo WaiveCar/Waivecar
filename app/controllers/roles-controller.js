@@ -1,16 +1,22 @@
-var path = require('path');
-var Blueprint = require(path.join(process.env.PWD, 'lib', 'controller-blueprint'));
+var os = require('os');
+var _ = require('lodash');
+var async = require('async');
+var moment = require('moment');
 
-exports = module.exports = function(Model, config) {
-  var options = {
-    config: config,
-    controllerName: 'roles',
-    model: Model,
-    modelName: 'role'
+exports = module.exports = function(EnumService, config, logger) {
+
+  var methods = {
+    index: function(req, res, next) {
+      return res.format({
+        json: function() {
+          res.json(EnumService.getRoleTypes());
+        }
+      });
+    }
   };
 
-  return new Blueprint(options);
+  return methods;
 };
 
 exports['@singleton'] = true;
-exports['@require'] = [ 'models/role', 'igloo/settings' ];
+exports['@require'] = [ 'services/enum-service', 'igloo/settings', 'igloo/logger' ];

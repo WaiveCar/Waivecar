@@ -7,7 +7,7 @@ var bcrypt = require('bcryptjs');
 var async = require('async');
 var jsonSelect = require('mongoose-json-select');
 
-exports = module.exports = function(Role, EnumService, mongoose, mongoosePlugin) {
+exports = module.exports = function(EnumService, mongoose, mongoosePlugin) {
 
   var validations = {
     name: [ function(val) { return !_.isBlank(val); }, '{path} was blank' ],
@@ -38,7 +38,7 @@ exports = module.exports = function(Role, EnumService, mongoose, mongoosePlugin)
 
     resetAt: { type: Date },
 
-    roles: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Role', required: true }],
+    role: { type: String, required: true, enum: _.pluck(EnumService.getRoleTypes(), 'name'), default: 'user' },
 
     facebookId: String,
     facebookAccessToken: String,
@@ -63,15 +63,9 @@ exports = module.exports = function(Role, EnumService, mongoose, mongoosePlugin)
       });
     };
 
-    if (user.roles.length === 0) {
-      Role.findOne({ name: 'user'}).exec(function(err, role) {
-        if (err) return next(new Error('User role cannot be found.'));
-        user.roles.push(role);
-        return setPassword(user, next);
-      });
-    } else {
-      return setPassword(user, next);
-    }
+    if (_.isEmpty(user.role)) user.role = 'user';
+
+    return setPassword(user, next);
   });
 
   Model.methods.comparePassword = function(password, next) {
@@ -98,26 +92,10 @@ exports = module.exports = function(Role, EnumService, mongoose, mongoosePlugin)
     return name;
   });
 
-  Model.methods.getPermissions = function(next) {
-    var model = this;
-    var permissions = [];
-    async.each(model.roles, function(role, complete) {
-      Role.findById(role).exec(function(err, role) {
-        if (err) return complete(err);
-        if (!role) return complete(new Error('Role not found'));
-        permissions = _.union(permissions, role.permissions);
-        return complete();
-      });
-    }, function(err) {
-      if (err) return next(err);
-      return next(null, permissions);
-    });
-  };
-
   Model.plugin(mongoosePlugin);
   Model.plugin(jsonSelect, '-password -salt');
   return mongoose.model('User', Model);
 };
 
 exports['@singleton'] = true;
-exports['@require'] = [ 'models/role', 'services/enum-service', 'igloo/mongo', 'lib/mongoose-plugin' ];
+exports['@require'] = [ 'services/enum-service', 'igloo/mongo', 'lib/mongoose-plugin' ];

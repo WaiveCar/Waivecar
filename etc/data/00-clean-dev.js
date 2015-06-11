@@ -1,9 +1,9 @@
 var async = require('async');
 
-exports = module.exports = function(Media, User, Role, Setting, Migration, config, logger, done) {
+exports = module.exports = function(Media, User, Setting, Migration, config, logger, done) {
 
   if (config.cleanOnRestart && config.server.env === 'development') {
-    var models = [ Media, User, Role, Setting, Migration ];
+    var models = [ Media, User, Setting, Migration ];
 
     var iterator = function(Model, next) {
       var model = new Model();
@@ -21,4 +21,4 @@ exports = module.exports = function(Media, User, Role, Setting, Migration, confi
 
 };
 
-exports['@require'] = [ 'models/media', 'models/user', 'models/role', 'models/setting', 'models/migration', 'igloo/settings', 'igloo/logger' ];
+exports['@require'] = [ 'models/media', 'models/user', 'models/setting', 'models/migration', 'igloo/settings', 'igloo/logger' ];

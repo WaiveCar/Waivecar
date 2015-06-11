@@ -8,13 +8,11 @@ exports = module.exports = function(User, AuthService, logger, config) {
     if (config.bypassSecurity) {
       User.findOne({ email: config.admin.email }).exec(function(err, user) {
         if (err || !user) return next(authError);
-        user.getPermissions(function(err, permissions) {
-          logger.warn('BYPASSING SECURITY');
-          req.permissions = permissions;
-          req.user = user;
-          logger.warn('req.user has been manually set to use the default admin account (%s).', user.email);
-          return next();
-        });
+
+        logger.warn('BYPASSING SECURITY');
+        req.user = user;
+        logger.warn('req.user has been manually set to use the default admin account (%s).', user.email);
+        return next();
       });
     } else {
 
@@ -30,7 +28,6 @@ exports = module.exports = function(User, AuthService, logger, config) {
         token = req.headers.authorization.split(' ')[1];
       }
 
-
       // If no token set, pass-through (we exepect other policies to produce a 401 if necessary)
       if (!token) return next();
 
@@ -44,12 +41,8 @@ exports = module.exports = function(User, AuthService, logger, config) {
         User.findById(req.token.sub).exec(function(err, user) {
           if (err || !user) return next(authError);
           logger.debug('setting user to %s ', user.email);
-
-          user.getPermissions(function(err, permissions) {
-            req.permissions = permissions;
-            req.user = user;
-            return next();
-          });
+          req.user = user;
+          return next();
         });
       });
     }

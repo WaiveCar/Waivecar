@@ -13,6 +13,13 @@ module.exports = function() {
       ];
     },
 
+    getRoleTypes: function() {
+      return [
+        { name: 'user', description: 'User' },
+        { name: 'admin', description: 'Administrator' }
+      ];
+    },
+
     getStateTypes: function() {
       return [
         { name: 'active', description: 'Active', icon: 'ico-active' },
