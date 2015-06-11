@@ -41,7 +41,7 @@ window.app.config([
         templateUrl: '/templates/dashboard/index.html',
         data: {
           auth: {
-            permissions: [ 'can-access-admin' ]
+            role: 'admin'
           }
         }
       })
@@ -50,7 +50,7 @@ window.app.config([
         templateUrl: '/templates/style-guide/index.html',
         data: {
           auth: {
-            permissions: [ 'can-access-admin' ]
+            role: 'admin'
           }
         }
       })
@@ -59,7 +59,7 @@ window.app.config([
         templateUrl: '/templates/table/index.html',
         data: {
           auth: {
-            permissions: [ 'can-access-admin' ]
+            role: 'admin'
           }
         }
       })
@@ -68,7 +68,7 @@ window.app.config([
         templateUrl: '/templates/table/index.html',
         data: {
           auth: {
-            permissions: [ 'can-access-admin' ]
+            role: 'admin'
           }
         }
       })
@@ -77,7 +77,7 @@ window.app.config([
         templateUrl: '/templates/table/index.html',
         data: {
           auth: {
-            permissions: [ 'can-access-admin' ]
+            role: 'admin'
           }
         }
       })
@@ -86,7 +86,7 @@ window.app.config([
         templateUrl: '/templates/table/index.html',
         data: {
           auth: {
-            permissions: [ 'can-access-admin' ]
+            role: 'admin'
           }
         },
       })
@@ -95,7 +95,25 @@ window.app.config([
         templateUrl: '/templates/table/index.html',
         data: {
           auth: {
-            permissions: [ 'can-access-admin' ]
+            role: 'admin'
+          }
+        }
+      })
+      .state('vehicles', {
+        url: '/vehicles',
+        templateUrl: '/templates/table/index.html',
+        data: {
+          auth: {
+            role: 'admin'
+          }
+        }
+      })
+      .state('rentals', {
+        url: '/rentals',
+        templateUrl: '/templates/table/index.html',
+        data: {
+          auth: {
+            role: 'admin'
           }
         }
       })
@@ -104,7 +122,6 @@ window.app.config([
         templateUrl: '/templates/auth/signup.html',
         data: {
           auth: {
-            permissions: []
           }
         }
       })
@@ -124,7 +141,6 @@ window.app.config([
         templateUrl: '/templates/auth/reset.html',
         data: {
           auth: {
-            permissions: []
           }
         }
       })
@@ -133,7 +149,6 @@ window.app.config([
         templateUrl: '/templates/auth/forgot.html',
         data: {
           auth: {
-            permissions: []
           }
         }
       })
@@ -142,7 +157,6 @@ window.app.config([
         templateUrl: '/templates/auth/forbidden.html',
         data: {
           auth: {
-            permissions: []
           }
         }
       });

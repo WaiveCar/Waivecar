@@ -5,7 +5,8 @@ angular.module('app.controllers').controller('ListController', [
   '$notification',
   '$ngBootbox',
   '$data',
-  function ($rootScope, $scope, $state, $notification, $ngBootbox, $data) {
+  '$config',
+  function ($rootScope, $scope, $state, $notification, $ngBootbox, $data, $config) {
 
     $scope.data = $data.data;
 
@@ -137,16 +138,6 @@ angular.module('app.controllers').controller('ListController', [
         if (!field) return '';
         return $scope.getName('users', field);
       },
-      role: function(field) {
-        if (!field) return '';
-        return $scope.getName('roles', field);
-      },
-      roles: function(field) {
-        if (!field) return '';
-        var roles = [];
-        _.each(field, function(id) { roles.push($scope.getName('roles', id)); });
-        return roles.join(', ');
-      },
       list: function(field) {
         if (!field) return '';
         return field.join(', ');
@@ -164,97 +155,78 @@ angular.module('app.controllers').controller('ListController', [
 
       // any defaults based on route.
       $scope.list.model = $scope.meta.route;
-      switch ($scope.meta.route) {
-        case 'media':
-        {
-          $scope.list.columns = [
-            { displayName: 'Id', name: 'id', formatter: 'raw', isSortable: true, isFilterable: false, isVisible: true },
-            { displayName: 'Filename', name: 'filename', formatter: 'raw', isSortable: true, isFilterable: true, isVisible: true },
-            { displayName: 'Size', name: 'size', formatter: 'raw', isSortable: true, isFilterable: false, isVisible: true },
-            { displayName: 'Children', name: 'children', formatter: 'count', isSortable: true, isFilterable: false, isVisible: false },
-            { displayName: 'Validations', name: 'validations', formatter: 'list', isSortable: true, isFilterable: false, isVisible: true },
-            { displayName: 'State', name: 'state', formatter: 'title', isSortable: true, isFilterable: true, isVisible: true },
-            { displayName: 'Duration', name: 'duration', formatter: 'raw', isSortable: true, isFilterable: false, isVisible: true }
-          ].concat(defaultColumns);
-          $data.subscribe();
-          break;
-        }
-        case 'users':
-        {
-          $scope.list.display.create = true;
-          $scope.list.columns = [
-            { displayName: 'Id', name: 'id', formatter: 'raw', isSortable: true, isFilterable: false, isVisible: false },
-            { displayName: 'Email', name: 'email', formatter: 'raw', isSortable: true, isFilterable: true, isVisible: true },
-            { displayName: 'First Name', name: 'firstName', formatter: 'raw', isSortable: true, isFilterable: true, isVisible: true },
-            { displayName: 'Last Name', name: 'lastName', formatter: 'raw', isSortable: true, isFilterable: true, isVisible: true },
-            { displayName: 'Prefix', name: 'phoneCountryCode', formatter: 'raw', isSortable: false, isFilterable: true, isVisible: true },
-            { displayName: 'Phone', name: 'phoneNumber', formatter: 'raw', isSortable: false, isFilterable: true, isVisible: true },
-            { displayName: 'Roles', name: 'roles', formatter: 'roles', isSortable: true, isFilterable: true, isVisible: true },
-            { displayName: 'State', name: 'state', formatter: 'title', isSortable: true, isFilterable: true, isVisible: true }
-          ].concat(defaultColumns);
-          break;
-        }
-        case 'reports':
-        {
-          $scope.list.columns = [
-            { displayName: 'Id', name: 'id', formatter: 'raw', isSortable: true, isFilterable: false, isVisible: false },
-            { displayName: 'Name', name: 'name', formatter: 'raw', isSortable: true, isFilterable: true, isVisible: true },
-            { displayName: 'Publication', name: 'publication', formatter: 'title', isSortable: true, isFilterable: true, isVisible: true },
-            { displayName: 'User', name: 'email', formatter: 'raw', isSortable: true, isFilterable: true, isVisible: true },
-            { displayName: 'Ip Address', name: 'ip', formatter: 'raw', isSortable: true, isFilterable: true, isVisible: false },
-            { displayName: 'Web Browser', name: 'browser', formatter: 'raw', isSortable: true, isFilterable: true, isVisible: false },
-            { displayName: 'Media Count', name: 'media', formatter: 'count', isSortable: false, isFilterable: false, isVisible: true },
-            { displayName: 'State', name: 'state', formatter: 'title', isSortable: true, isFilterable: true, isVisible: true },
-            { displayName: 'Duration', name: 'duration', formatter: 'raw', isSortable: true, isFilterable: false, isVisible: true }
-          ].concat(defaultColumns);
-          $data.subscribe();
-          break;
-        }
-        case 'roles':
-        {
-          $scope.list.display.destroy = false;
-          $scope.list.columns = [
-            { displayName: 'Id', name: 'id', formatter: 'raw', isSortable: true, isFilterable: false, isVisible: false },
-            { displayName: 'Name', name: 'name', formatter: 'title', isSortable: true, isFilterable: true, isVisible: true },
-            { displayName: 'Description', name: 'description', formatter: 'raw', isSortable: true, isFilterable: true, isVisible: true },
-            { displayName: 'Permissions', name: 'permissions', formatter: 'list', isSortable: true, isFilterable: true, isVisible: true }
-          ].concat(defaultColumns);
-          break;
-        }
-        case 'validations':
-        {
-          $scope.list.display.destroy = false;
-          $scope.list.columns = [
-            { displayName: 'Id', name: 'id', formatter: 'raw', isSortable: true, isFilterable: false, isVisible: false },
-            { displayName: 'Code', name: 'code', formatter: 'raw', isSortable: true, isFilterable: true, isVisible: true },
-            { displayName: 'Type', name: 'type', formatter: 'title', isSortable: true, isFilterable: true, isVisible: true },
-            { displayName: 'Reason', name: 'reason', formatter: 'raw', isSortable: true, isFilterable: true, isVisible: true },
-            { displayName: 'Message', name: 'message', formatter: 'raw', isSortable: true, isFilterable: true, isVisible: true },
-            { displayName: 'KB', name: 'kb', formatter: 'raw', isSortable: true, isFilterable: true, isVisible: true }
-          ].concat(defaultColumns);
-          break;
-        }
-        case 'settings':
-        {
-          $scope.list.display.destroy = false;
-          $scope.list.columns = [
-            { displayName: 'Id', name: 'id', formatter: 'raw', isSortable: true, isFilterable: false, isVisible: false },
-            { displayName: 'Name', name: 'name', formatter: 'upper', isSortable: true, isFilterable: true, isVisible: true },
-            { displayName: 'Description', name: 'description', formatter: 'raw', isSortable: true, isFilterable: true, isVisible: true },
-            { displayName: 'Value', name: 'value', formatter: 'raw', isSortable: true, isFilterable: true, isVisible: true }
-          ].concat(defaultColumns);
-          break;
-        }
-        case 'blacklisted-emails':
-        {
-          $scope.list.display.create = true;
-          $scope.list.columns = [
-            { displayName: 'Id', name: 'id', formatter: 'raw', isSortable: true, isFilterable: false, isVisible: false },
-            { displayName: 'Email', name: 'email', formatter: 'raw', isSortable: true, isFilterable: true, isVisible: true },
-          ].concat(defaultColumns);
-          break;
-        }
-      }
+      $scope.list.columns = angular.copy($config.models[$scope.meta.route].fields);
+
+      // switch ($scope.meta.route) {
+      //   case 'media':
+      //   {
+
+      //       { displayName: 'Id', name: 'id', formatter: 'raw', isSortable: true, isFilterable: false, isVisible: true },
+      //       { displayName: 'Filename', name: 'filename', formatter: 'raw', isSortable: true, isFilterable: true, isVisible: true },
+      //       { displayName: 'Location', name: 'location', formatter: 'raw', isSortable: true, isFilterable: true, isVisible: true }
+      //     ].concat(defaultColumns);
+      //     $data.subscribe();
+      //     break;
+      //   }
+      //   case 'users':
+      //   {
+      //     $scope.list.display.create = true;
+      //     $scope.list.columns = [
+      //       { displayName: 'Id', name: 'id', formatter: 'raw', "isSortable": true, "isFilterable": false, "isVisible": false },
+      //       { displayName: 'Email', name: 'email', formatter: 'raw', isSortable: true, isFilterable: true, isVisible: true },
+      //       { displayName: 'First Name', name: 'firstName', formatter: 'raw', isSortable: true, isFilterable: true, isVisible: true },
+      //       { displayName: 'Last Name', name: 'lastName', formatter: 'raw', isSortable: true, isFilterable: true, isVisible: true },
+      //       { displayName: 'Prefix', name: 'phoneCountryCode', formatter: 'raw', isSortable: false, isFilterable: true, isVisible: true },
+      //       { displayName: 'Phone', name: 'phoneNumber', formatter: 'raw', isSortable: false, isFilterable: true, isVisible: true },
+      //       { displayName: 'Roles', name: 'roles', formatter: 'roles', isSortable: true, isFilterable: true, isVisible: true },
+      //       { displayName: 'State', name: 'state', formatter: 'title', isSortable: true, isFilterable: true, isVisible: true }
+      //     ].concat(defaultColumns);
+      //     break;
+      //   }
+      //   case 'reports':
+      //   {
+      //     $scope.list.columns = [
+      //       { displayName: 'Id', name: 'id', formatter: 'raw', "isSortable": true, "isFilterable": false, "isVisible": false },
+      //       { displayName: 'Make', name: 'make', formatter: 'title', isSortable: true, isFilterable: true, isVisible: true },
+      //       { displayName: 'Model', name: 'model', formatter: 'raw', isSortable: true, isFilterable: true, isVisible: true },
+      //       { displayName: 'Manufacturer', name: 'manufacturer', formatter: 'raw', isSortable: true, isFilterable: true, isVisible: false },
+      //       { displayName: 'State', name: 'state', formatter: 'title', isSortable: true, isFilterable: true, isVisible: true }
+      //     ].concat(defaultColumns);
+      //     $data.subscribe();
+      //     break;
+      //   }
+      //   case 'roles':
+      //   {
+      //     $scope.list.display.destroy = false;
+      //     $scope.list.columns = [
+      //       { displayName: 'Id', name: 'id', formatter: 'raw', "isSortable": true, "isFilterable": false, "isVisible": false },
+      //       { displayName: 'Name', name: 'name', formatter: 'title', isSortable: true, isFilterable: true, isVisible: true },
+      //       { displayName: 'Description', name: 'description', formatter: 'raw', isSortable: true, isFilterable: true, isVisible: true },
+      //       { displayName: 'Permissions', name: 'permissions', formatter: 'list', isSortable: true, isFilterable: true, isVisible: true }
+      //     ].concat(defaultColumns);
+      //     break;
+      //   }
+      //   case 'settings':
+      //   {
+      //     $scope.list.display.destroy = false;
+      //     $scope.list.columns = [
+      //       { displayName: 'Id', name: 'id', formatter: 'raw', "isSortable": true, "isFilterable": false, "isVisible": false },
+      //       { displayName: 'Name', name: 'name', formatter: 'upper', isSortable: true, isFilterable: true, isVisible: true },
+      //       { displayName: 'Description', name: 'description', formatter: 'raw', isSortable: true, isFilterable: true, isVisible: true },
+      //       { displayName: 'Value', name: 'value', formatter: 'raw', isSortable: true, isFilterable: true, isVisible: true }
+      //     ].concat(defaultColumns);
+      //     break;
+      //   }
+      //   case 'blacklisted-emails':
+      //   {
+      //     $scope.list.display.create = true;
+      //     $scope.list.columns = [
+      //       { displayName: 'Id', name: 'id', formatter: 'raw', "isSortable": true, "isFilterable": false, "isVisible": false },
+      //       { displayName: 'Email', name: 'email', formatter: 'raw', isSortable: true, isFilterable: true, isVisible: true },
+      //     ].concat(defaultColumns);
+      //     break;
+      //   }
+      // }
 
       if ($state.params.filters) {
         _.forOwn($state.params.filters, function(filter, name) {
@@ -303,8 +275,9 @@ angular.module('app.controllers').controller('ListController', [
     $scope.finalizeCreateItem = function() {
       var name = $data.models[$scope.meta.route].name;
       if ($scope.editable[name].isAdmin) {
-        var adminRole = _.findWhere($data.data.roles, { name:'admin' });
-        $scope.editable[name].roles = [ adminRole.id ];
+        $scope.editable[name].role = 'admin';
+      } else {
+        $scope.editable[name].role = 'user';
       }
 
       $data.create($scope.meta.route, $scope.editable[name], function() {
@@ -316,12 +289,7 @@ angular.module('app.controllers').controller('ListController', [
 
     $scope.editItem = function(item) {
       var name = $data.models[$scope.meta.route].name;
-      if (item.roles) {
-        var adminRole = _.findWhere($data.data.roles, { name: 'admin' });
-        if (_.contains(item.roles, adminRole.id)) {
-          item.isAdmin = true;
-        }
-      }
+      if (item.role && item.role === 'admin') item.isAdmin = true;
       $scope.editable[name] = angular.copy(item);
       var tmpl = '/templates/' + $scope.meta.route + '/edit-modal.html';
       $ngBootbox.dialog($scope.meta.route, null, null,  tmpl, $scope);
