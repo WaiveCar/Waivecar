@@ -35,54 +35,6 @@
           "isVisible": true
         },
         {
-          "name": "firstName",
-          "displayName": "First Name",
-          "formatter": "raw",
-          "isSortable": true,
-          "isFilterable": true,
-          "isVisible": true
-        },
-        {
-          "name": "lastName",
-          "displayName": "Last Name",
-          "formatter": "raw",
-          "isSortable": true,
-          "isFilterable": true,
-          "isVisible": true
-        },
-        {
-          "name": "phoneCountryCode",
-          "displayName": "Prefix",
-          "formatter": "raw",
-          "isSortable": false,
-          "isFilterable": true,
-          "isVisible": true
-        },
-        {
-          "name": "phoneNumber",
-          "displayName": "Phone",
-          "formatter": "raw",
-          "isSortable": false,
-          "isFilterable": true,
-          "isVisible": true
-        },
-        {
-          "name": "role",
-          "displayName": "Role",
-          "formatter": "raw",
-          "isSortable": true,
-          "isFilterable": true,
-          "isVisible": true
-        },
-        {
-          "name": "state",
-          "displayName": "State",
-          "formatter": "title",
-          "isSortable": true,
-          "isFilterable": true,
-          "isVisible": true
-        },
-        {
           "name": "createdAt",
           "displayName": "Created",
           "formatter": "date",
@@ -112,6 +64,22 @@
           "isSortable": true,
           "isFilterable": false,
           "isVisible": false
+        },
+        {
+          "name": "filename",
+          "displayName": "Filename",
+          "formatter": "raw",
+          "isSortable": true,
+          "isFilterable": true,
+          "isVisible": true
+        },
+        {
+          "name": "location",
+          "displayName": "Location",
+          "formatter": "raw",
+          "isSortable": true,
+          "isFilterable": true,
+          "isVisible": true
         },
         {
           "name": "state",
@@ -151,6 +119,14 @@
           "isSortable": true,
           "isFilterable": false,
           "isVisible": false
+        },
+        {
+          "name": "name",
+          "displayName": "Name",
+          "formatter": "raw",
+          "isSortable": true,
+          "isFilterable": false,
+          "isVisible": true
         },
         {
           "name": "createdAt",

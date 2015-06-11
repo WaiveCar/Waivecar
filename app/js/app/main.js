@@ -99,14 +99,14 @@ window.app.config([
           }
         },
       })
-      .state('roles', {
-        url: '/roles',
+      .state('migrations', {
+        url: '/migrations',
         templateUrl: '/templates/table/index.html',
         data: {
           auth: {
             role: 'admin'
           }
-        }
+        },
       })
       .state('vehicles', {
         url: '/vehicles',

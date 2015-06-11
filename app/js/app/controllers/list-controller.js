@@ -174,9 +174,12 @@ angular.module('app.controllers').controller('ListController', [
           $data.subscribe();
           break;
         }
-        case 'roles':
+        case 'migrations':
         {
           $scope.list.display.destroy = false;
+          $scope.list.display.edit = false;
+          $scope.list.display.show = false;
+          $scope.list.display.actions = false;
           break;
         }
         case 'settings':
@@ -194,6 +197,8 @@ angular.module('app.controllers').controller('ListController', [
         case 'blacklisted-emails':
         {
           $scope.list.display.create = true;
+          $scope.list.display.destroy = true;
+          $scope.list.display.edit = true;
           break;
         }
       }
@@ -236,14 +241,14 @@ angular.module('app.controllers').controller('ListController', [
     };
 
     $scope.createItem = function() {
-      var name = $data.models[$scope.meta.route].name;
+      var name = $data.models[$scope.meta.route].singular;
       $scope.editable[name] = {};
       var tmpl = '/templates/' + $scope.meta.route + '/create-modal.html';
       $ngBootbox.dialog($scope.meta.route, null, null,  tmpl, $scope);
     };
 
     $scope.finalizeCreateItem = function() {
-      var name = $data.models[$scope.meta.route].name;
+      var name = $data.models[$scope.meta.route].singular;
       if ($scope.editable[name].isAdmin) {
         $scope.editable[name].role = 'admin';
       } else {
@@ -258,7 +263,7 @@ angular.module('app.controllers').controller('ListController', [
     };
 
     $scope.editItem = function(item) {
-      var name = $data.models[$scope.meta.route].name;
+      var name = $data.models[$scope.meta.route].singular;
       if (item.role && item.role === 'admin') item.isAdmin = true;
       $scope.editable[name] = angular.copy(item);
       var tmpl = '/templates/' + $scope.meta.route + '/edit-modal.html';
@@ -266,7 +271,7 @@ angular.module('app.controllers').controller('ListController', [
     };
 
     $scope.finalizeEditRow = function() {
-      var name = $data.models[$scope.meta.route].name;
+      var name = $data.models[$scope.meta.route].singular;
       $data.save($scope.meta.route, $scope.editable[name], function(err) {
         if (err) {
           $notification.error(err);
