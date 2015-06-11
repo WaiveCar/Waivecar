@@ -3,7 +3,7 @@ var async = require('async');
 exports = module.exports = function(BlacklistedEmail, Media, Rental, Vehicle, User, Setting, Migration, config, logger, done) {
 
   if (config.cleanOnRestart && config.server.env === 'development') {
-    var models = [ Media, User, Setting, Migration ];
+    var models = [ BlacklistedEmail, Media, Rental, Vehicle, User, Setting, Migration ];
 
     var iterator = function(Model, next) {
       var model = new Model();
