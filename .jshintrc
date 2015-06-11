@@ -41,7 +41,7 @@
   "es5" : false,
   "browser" : true,
   "jquery": true,
-  "camelcase": true,
+  "camelcase": false,
   "unused": false, //turn this on at some point
   "indent": 2,
   "maxlen": 400,

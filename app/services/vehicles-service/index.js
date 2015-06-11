@@ -37,7 +37,6 @@ VehicleService.prototype.makeRequest = function(path,options,cb) {
     else{
         options=defaultHeaders;
     }
-    console.log(options);
     request(options, function (error, response, body) {
         if(error ||   response && (response.statusCode !== 200 && response.statusCode !== 202)){
             var statusCode=response && response.statusCode;
@@ -64,20 +63,20 @@ VehicleService.prototype.makeAsyncRequest = function(path,options,cb) {
             }
             var bodyData=JSON.parse(data.body);
             var commandResponse=bodyData.commandResponse;
-            if(commandResponse.status===GM_ASYNC_IN_PROGRESS){
+            if(commandResponse.status === GM_ASYNC_IN_PROGRESS){
                 var timeoutFn=function(){
                     checkResponse(url,cb);
                 };
                 setTimeout(timeoutFn, self._asyncDelay);
             }
-            if(commandResponse.status===GM_ASYNC_FAILURE){
+            if(commandResponse.status === GM_ASYNC_FAILURE){
                 cb(commandResponse);
             }
-            if(commandResponse.status===GM_ASYNC_SUCCESS){
+            if(commandResponse.status === GM_ASYNC_SUCCESS){
                 cb(null,commandResponse);
             }
             
-        }
+        };
         self.makeRequest(null,asyncOptions,requestCb);
      
     }
@@ -86,24 +85,24 @@ VehicleService.prototype.makeAsyncRequest = function(path,options,cb) {
             cb(err);
             return;
         }
-        var bodyData=JSON.parse(data.body);
-        var asyncUrl=bodyData.url;
-        var commandResponse=bodyData.commandResponse;
-        var deferred=q.defer();
-        var timeoutFn=function(){
+        var bodyData= JSON.parse(data.body);
+        var asyncUrl= bodyData.url;
+        var commandResponse= bodyData.commandResponse;
+        var deferred= q.defer();
+        var timeoutFn= function(){
             checkResponse(commandResponse.url,cb);
         };
         setTimeout(timeoutFn, this._asyncDelay);
         
-    }
+    };
     this.makeRequest(path,options,requestCb);
 };
 
 
 VehicleService.prototype._setBearerToken = function(tokenData) {
-    this._bearerToken=tokenData.access_token;
-    this._bearerExpiresIn=tokenData.expires_in-this._expiredLatency;
-    this._bearerReceivedAt=new Date().getTime();
+    this._bearerToken= tokenData.access_token;
+    this._bearerExpiresIn= tokenData.expires_in-this._expiredLatency;
+    this._bearerReceivedAt= new Date().getTime();
 };
 
 VehicleService.prototype.getBearerToken = function() {
@@ -119,7 +118,7 @@ VehicleService.prototype.isTokenExpired = function() {
 };
 
 VehicleService.prototype.connect = function(cb) {
-    var self=this;
+    var self= this;
     
     if(!this.isTokenExpired()){
         cb(null,self.getBearerToken());
@@ -135,11 +134,11 @@ VehicleService.prototype.connect = function(cb) {
             cb(err);
             return;
         }
-        var data=JSON.parse(res.body);
+        var data= JSON.parse(res.body);
         self._setBearerToken(data);
         cb(null,self.getBearerToken());
         
-    }
+    };
     this.makeRequest('oauth/access_token',options,requestCb);
 };
 
@@ -152,8 +151,8 @@ VehicleService.prototype.cancelStartEngine = function(vin,cb) {
         },
         'request':['connect',function (asyncCb,result) {
             var bearerToken=result.connect;
-            var path='account/vehicles/'+vin+'/commands/cancelStart';
-            var options={
+            var path= 'account/vehicles/'+vin+'/commands/cancelStart';
+            var options= {
                 'headers':{
                     'Authorization':'Bearer '+bearerToken
                 },
@@ -171,15 +170,15 @@ VehicleService.prototype.cancelStartEngine = function(vin,cb) {
     });
 };
 VehicleService.prototype.startEngine = function(vin,cb) {
-    var self=this;
+    var self= this;
     async.auto({
         'connect':function(asyncCb){
             self.connect(asyncCb);
         },
         'request':['connect',function (asyncCb,result) {
-            var bearerToken=result.connect;
-            var path='account/vehicles/'+vin+'/commands/start';
-            var options={
+            var bearerToken =result.connect;
+            var path= 'account/vehicles/'+vin+'/commands/start';
+            var options= {
                 'headers':{
                     'Authorization':'Bearer '+bearerToken
                 },
@@ -214,12 +213,11 @@ VehicleService.prototype.listVehicles = function(cb) {
         }]
     },
     function(err,result){
-        console.log("AQUI "+!!err+"  "+!!result);
         if(err){
             cb(err);
             return;
         }
-        var data=JSON.parse(result.list.body);
+        var data= JSON.parse(result.list.body);
         cb(null,data);
     });
 };
@@ -238,7 +236,7 @@ VehicleService.prototype.getVehicleDiagnostics = function(vin,cb,diagnostItems) 
             'EV BATTERY LEVEL',
             'EV CHARGE STATE',
             'EV ESTIMATED CHARGE END'
-        ]
+        ];
     }
     var self=this;
     var bodyStr=JSON.stringify({
@@ -248,12 +246,10 @@ VehicleService.prototype.getVehicleDiagnostics = function(vin,cb,diagnostItems) 
 
     });
     function parseResponse(response,elementName){
-        var ret={
-
-        };
+        var ret={};
         response.forEach(function(d){
             var key=d.name;
-            if(d[elementName].length===1){
+            if(d[elementName].length === 1){
                 delete d[elementName][0].name;
                 ret[key]=d[elementName][0];
                 return;
@@ -275,8 +271,8 @@ VehicleService.prototype.getVehicleDiagnostics = function(vin,cb,diagnostItems) 
             self.connect(asyncCb);
         },
         request:['connect',function(asyncCb,result){
-            var path='account/vehicles/'+vin+'/commands/diagnostics';
-            var options={
+            var path= 'account/vehicles/'+vin+'/commands/diagnostics';
+            var options= {
                 'headers':{
                     'Authorization':'Bearer '+result.connect
                 },
@@ -286,7 +282,7 @@ VehicleService.prototype.getVehicleDiagnostics = function(vin,cb,diagnostItems) 
             self.makeAsyncRequest(path,options,asyncCb);
         }],
         parse:['request',function(asyncCb,result){
-             var response=parseResponse(result.request.body.diagnosticResponse,'diagnosticElement');
+             var response= parseResponse(result.request.body.diagnosticResponse,'diagnosticElement');
             cb(null,response);
         }]
     },
@@ -300,14 +296,14 @@ VehicleService.prototype.getVehicleDiagnostics = function(vin,cb,diagnostItems) 
     );   
 };
 VehicleService.prototype.getVehicleLocation = function(vin,cb) {
-    var self=this;
+    var self= this;
     async.auto({
         'connect':function(asyncCb){
             self.connect(asyncCb);
         },
         'request':['connect',function (asyncCb,result) {
-            var bearerToken=result.connect;
-            var path='account/vehicles/'+vin+'/commands/location';
+            var bearerToken= result.connect;
+            var path= 'account/vehicles/'+vin+'/commands/location';
             var options={
                 'headers':{
                     'Authorization':'Bearer '+bearerToken
@@ -326,7 +322,7 @@ VehicleService.prototype.getVehicleLocation = function(vin,cb) {
     });
 };
 VehicleService.prototype.getVehicleInfo = function(vin,cb) {
-    var self=this;
+    var self= this;
     async.auto({
         connect:function(asyncCb){
             self.connect(asyncCb);
@@ -346,14 +342,14 @@ VehicleService.prototype.getVehicleInfo = function(vin,cb) {
             cb(err);
             return;
         }
-        var response=JSON.parse(results.request.body);
+        var response= JSON.parse(results.request.body);
         cb(null,response);
     });
 };
 VehicleService.prototype.getVehicleCapabilities = function(vin,cb) {
-    var self=this;
-    var path='vehicles/'+vin+'/capabilities';
-    var options={
+    var self= this;
+    var path= 'vehicles/'+vin+'/capabilities';
+    var options= {
         'headers':{
             'Authorization':'Basic '+this._base64KeyAndSecret
         }
@@ -451,15 +447,15 @@ VehicleService.prototype._makeAlerts = function(vin,duration,action,cb) {
         action=[action];
     }
     var override= [
-        "DoorOpen",
-        "IgnitionOn"
+        'DoorOpen',
+        'IgnitionOn'
     ];
     var request= {
-        "alertRequest": {
-            "delay": "0",
-            "duration": duration,
-            "action": action,
-            "override":override
+        'alertRequest': {
+            'delay': '0',
+            'duration': duration,
+            'action': action,
+            'override':override
         }
     };
     var bodyStr=JSON.stringify(request);
@@ -501,7 +497,7 @@ VehicleService.prototype.honkAndFlash = function(vin,cb,duration) {
 VehicleService.prototype.vehicleData = function(vin,cb) {
     var self=this;
      var request= {
-        "dataServices": {
+        'dataServices': {
             'dataService':[
                 {
                     serviceCode:'TELEMETRY',
@@ -538,7 +534,6 @@ VehicleService.prototype.vehicleData = function(vin,cb) {
             cb(err);
             return;
         }
-        console.log(JSON.stringify(result.request));
         cb(null,true);
     });
 };
