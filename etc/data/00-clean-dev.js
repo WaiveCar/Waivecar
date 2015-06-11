@@ -1,6 +1,6 @@
 var async = require('async');
 
-exports = module.exports = function(Media, User, Setting, Migration, config, logger, done) {
+exports = module.exports = function(BlacklistedEmail, Media, Rental, Vehicle, User, Setting, Migration, config, logger, done) {
 
   if (config.cleanOnRestart && config.server.env === 'development') {
     var models = [ Media, User, Setting, Migration ];
@@ -21,4 +21,4 @@ exports = module.exports = function(Media, User, Setting, Migration, config, log
 
 };
 
-exports['@require'] = [ 'models/media', 'models/user', 'models/setting', 'models/migration', 'igloo/settings', 'igloo/logger' ];
+exports['@require'] = [ 'models/blacklisted-email', 'models/media', 'models/rental', 'models/vehicle', 'models/user', 'models/setting', 'models/migration', 'igloo/settings', 'igloo/logger' ];

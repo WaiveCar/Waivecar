@@ -17,7 +17,7 @@ exports = module.exports = function() {
       app: {
         name: 'api'
       },
-      allowCleanup: false,
+      allowCleanup: true,
       auth: {
         tokenSecret: 'api-app-secret'
       },
