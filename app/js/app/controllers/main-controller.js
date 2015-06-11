@@ -1,4 +1,4 @@
-angular.module('app.admin.controllers').controller('MainController', [
+angular.module('app.controllers').controller('MainController', [
   '$rootScope',
   '$scope',
   '$state',

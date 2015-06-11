@@ -1,4 +1,4 @@
-angular.module('app.admin.controllers').controller('DashboardController', [
+angular.module('app.controllers').controller('DashboardController', [
   '$rootScope',
   '$scope',
   '$interval',

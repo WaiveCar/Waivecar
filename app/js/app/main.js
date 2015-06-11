@@ -1,13 +1,12 @@
 'use strict';
 
-angular.module('app.admin.controllers', []);
-angular.module('app.admin.directives', []);
-angular.module('app.admin.filters', []);
-angular.module('app.admin.providers', []);
-angular.module('app.admin.services', []);
+angular.module('app.controllers', []);
+angular.module('app.directives', []);
+angular.module('app.filters', []);
+angular.module('app.providers', []);
+angular.module('app.services', []);
 
-window.app = window.app || {};
-window.app.admin = angular.module('app.admin', [
+window.app = angular.module('app', [
   'ngAnimate',
   'ngSanitize',
   'ui.router',
@@ -22,14 +21,14 @@ window.app.admin = angular.module('app.admin', [
   'app.modules.logging',
   'app.modules.authentication',
   'app.modules.alert',
-  'app.admin.controllers',
-  'app.admin.directives',
-  'app.admin.filters',
-  'app.admin.providers',
-  'app.admin.services'
+  'app.controllers',
+  'app.directives',
+  'app.filters',
+  'app.providers',
+  'app.services'
 ]);
 
-window.app.admin.config([
+window.app.config([
   '$stateProvider',
   '$locationProvider',
   '$httpProvider',

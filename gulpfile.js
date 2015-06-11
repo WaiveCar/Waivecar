@@ -95,10 +95,10 @@ gulp.task('config', function () {
   var config = require('config');
   var data = JSON.stringify(config, null, '  ').split('\n').join('\n    ');
 
-  return gulp.src('app/js/modules/common/services/config.js.tpl')
+  return gulp.src('app/js/app/services/config.js.tpl')
     .pipe(plugins.template({ data: data }))
     .pipe(plugins.rename('config.js'))
-    .pipe(gulp.dest('app/js/modules/common/services'));
+    .pipe(gulp.dest('app/js/app/services'));
 });
 
 gulp.task('html', function () {
