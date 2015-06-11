@@ -102,10 +102,12 @@ dwsync.xml
 # Add your custom excludes below
 # ------------------------------------------------------------------------------
 dist
-app/js/modules/common/services/config.js
 app/bower/
 app/css/*.css
 .bower-cache/
 .bower-registry/
 coverage/
 .vagrant/
+app/js/app/services/config.js
+config/local.json
+
