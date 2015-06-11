@@ -20,6 +20,25 @@ module.exports = function() {
       ];
     },
 
+    getRentalStateTypes: function() {
+      return [
+        { name: 'new', description: 'New' },
+        { name: 'pending', description: 'Pending' },
+        { name: 'active', description: 'Active' },
+        { name: 'voided', description: 'Expired' },
+        { name: 'archived', description: 'Archived' }
+      ];
+    },
+
+    getVehicleStateTypes: function() {
+      return [
+        { name: 'unavailable', description: 'Unavailable', icon: 'ico-disabled' },
+        { name: 'available', description: 'Available', icon: 'ico-active' },
+        { name: 'pending', description: 'Pending', icon: 'ico-disabled' },
+        { name: 'booked', description: 'Booked', icon: 'ico-disabled' }
+      ]
+    },
+
     getAuthTypes: function() {
       return [
         { name: 'password', description: 'Password', icon: 'ico-padlock-closed', isSecure: true },
