@@ -82,23 +82,30 @@ exports = module.exports = function(Model, VehicleService, Setting, config) {
     },
 
     executeCommand: function(req, res, next) {
-      if (!(req.params.id && req.params.command)) return next(new Error('required params missing'));
+      if (!req.params.id) return next(new Error('required params missing'));
+
       var command = '';
       switch(req.params.command) {
         case 'start': {
           command = 'startEngine';
+          break;
         }
         case 'stop': {
           command = 'cancelStartEngine';
+          break;
         }
         case 'lock': {
           command = 'lockDoor';
+          break;
         }
         case 'unlock': {
           command = 'unlockDoor';
+          break;
+        }
+        default: {
+          return next(new Error('required command param was not provided.'));
         }
       }
-
 
       VehicleService[command](req.params.id, function(err, data) {
         if (err) return next(err);

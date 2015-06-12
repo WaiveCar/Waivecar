@@ -43,7 +43,7 @@ module.exports = function() {
         { name: 'available', description: 'Available', icon: 'ico-active' },
         { name: 'pending', description: 'Pending', icon: 'ico-disabled' },
         { name: 'booked', description: 'Booked', icon: 'ico-disabled' }
-      ]
+      ];
     },
 
     getAuthTypes: function() {
