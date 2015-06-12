@@ -38,6 +38,15 @@ angular.module('app.controllers').controller('VehicleController', [
       return $scope.executeCommand('stop');
     };
 
+    $scope.chart = {
+      labels: [ 'Available', 'Used' ],
+      data: [ 0, 0 ],
+      options: {
+        percentageInnerCutout : 70,
+      },
+      colors: [ '#38A538', '#A9A9A9' ],
+    };
+
     var initVehicle = function(next) {
       $data.fetch('vehicles', $state.params.id, next);
     };
@@ -48,6 +57,8 @@ angular.module('app.controllers').controller('VehicleController', [
 
     $scope.fetch = function(next) {
       async.series([ initVehicle, activateVehicle ], function(err) {
+        $scope.chart.data[0] = $scope.active.vehicle.diagnostics['EV BATTERY LEVEL'].value;
+        $scope.chart.data[1] = 100 - $scope.chart.data[0];
         $scope.initialized = true;
       });
     };
