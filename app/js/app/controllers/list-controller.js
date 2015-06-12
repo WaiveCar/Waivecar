@@ -190,8 +190,8 @@ angular.module('app.controllers').controller('ListController', [
         case 'vehicles':
         {
           $scope.list.display.show = true;
+          $scope.list.display.edit = false;
           $scope.list.display.destroy = false;
-          $data.subscribe();
           break;
         }
         case 'blacklisted-emails':
@@ -268,6 +268,11 @@ angular.module('app.controllers').controller('ListController', [
       $scope.editable[name] = angular.copy(item);
       var tmpl = '/templates/' + $scope.meta.route + '/edit-modal.html';
       $ngBootbox.dialog($scope.meta.route, null, null,  tmpl, $scope);
+    };
+
+    $scope.showItem = function(item) {
+      var name = $data.models[$scope.meta.route].plural;
+      $state.go(name + '-show', { id: item.id });
     };
 
     $scope.finalizeEditRow = function() {

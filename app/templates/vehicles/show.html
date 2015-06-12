@@ -1,0 +1,113 @@
+<div ng-include="'/templates/partials/admin-header.html'"></div>
+<div ng-controller="VehicleController" class="container-fluid main-content">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="list-head">
+        <div class="row">
+          <div class="col-xs-8">
+            <div class="list-head-content">
+              <h5>{{ active.vehicle.vin }} {{ active.vehicle.make }} {{ active.vehicle.model }} {{ active.vehicle.year }}</h5>
+            </div>
+          </div>
+          <div class="col-xs-4">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row push-top-xs">
+    <div class="col-sm-3">
+      <ul class="list-group">
+        <li class="list-group-item text-muted">Vehicle</li>
+        <li class="list-group-item text-right">
+          <span class="pull-left">
+            <strong>VIN</strong>
+          </span>
+          <span>{{ active.vehicle.vin }}</span>
+        </li>
+        <li class="list-group-item text-right">
+          <span class="pull-left">
+            <strong>Manufacturer</strong>
+          </span>
+          {{ active.vehicle.manufacturer }}
+        </li>
+        <li class="list-group-item text-right">
+          <span class="pull-left">
+            <strong>Make</strong>
+          </span>
+          {{ active.vehicle.make }}
+        </li>
+        <li class="list-group-item text-right">
+          <span class="pull-left">
+            <strong>Model</strong>
+          </span>
+          {{ active.vehicle.model }}
+        </li>
+        <li class="list-group-item text-right">
+          <span class="pull-left">
+            <strong>Year</strong>
+          </span>
+          {{ active.vehicle.year }}
+        </li>
+      </ul>
+    </div>
+    <div class="col-sm-9">
+      <ul id="user-tabs" class="nav nav-tabs">
+        <li class="active">
+          <button data-toggle="tab" data-target="#vehicleInformation">Information</button>
+        </li>
+        <li>
+          <button data-toggle="tab" data-target="#vehicleCommands">Commands</button>
+        </li>
+        <li>
+          <button data-toggle="tab" data-target="#vehicleBookings">Bookings</button>
+        </li>
+      </ul>
+      <div class="tab-content">
+        <div id="vehicleInformation" class="tab-pane active">
+          <div class="meta" json-human="active.vehicle"></div>
+        </div>
+        <div id="vehicleCommands" class="tab-pane">
+          <ul class="list-unstyled">
+            <li>
+              <button class="btn btn-danger" ng-click="unlock()">Unlock</button>
+            </li>
+            <li>
+              <button class="btn btn-primary" ng-click="lock()">Lock</button>
+            </li>
+            <li>
+              <button class="btn btn-danger" ng-click="start()">Start</button>
+            </li>
+            <li>
+              <button class="btn btn-primary" ng-click="stop()">Stop</button>
+            </li>
+          </ul>
+        </div>
+        <div id="vehicleBookings" class="tab-pane">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Id</th>
+                  <th>Start</th>
+                  <th>End</th>
+                  <th>Car</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

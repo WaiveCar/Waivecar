@@ -321,29 +321,24 @@
           "isFilterable": false,
           "isVisible": false
         },
-        {
-          "name": "make",
-          "displayName": "Make",
-          "formatter": "raw",
-          "isSortable": true,
-          "isFilterable": true,
-          "isVisible": true
-        },
-        {
-          "name": "model",
-          "displayName": "Model",
-          "formatter": "raw",
-          "isSortable": true,
-          "isFilterable": true,
-          "isVisible": true
-        },
+        { "name": "vin", "displayName": "VIN", "formatter": "raw", "isSortable": true, "isFilterable": false, "isVisible": true },
+        { "name": "make", "displayName": "Make", "formatter": "raw", "isSortable": true, "isFilterable": false, "isVisible": true },
+        { "name": "manufacturer", "displayName": "Manufacturer", "formatter": "raw", "isSortable": true, "isFilterable": false, "isVisible": true },
+        { "name": "model", "displayName": "Model", "formatter": "raw", "isSortable": true, "isFilterable": false, "isVisible": true },
+        { "name": "year", "displayName": "Year", "formatter": "raw", "isSortable": true, "isFilterable": false, "isVisible": true },
+        { "name": "onstarStatus", "displayName": "State", "formatter": "raw", "isSortable": true, "isFilterable": false, "isVisible": true },
+        { "name": "phone", "displayName": "Phone", "formatter": "raw", "isSortable": true, "isFilterable": false, "isVisible": true },
+        { "name": "primaryDriverId", "displayName": "DriverId", "formatter": "raw", "isSortable": true, "isFilterable": false, "isVisible": false },
+        { "name": "primaryDriverURL", "displayName": "DriverUrl", "formatter": "raw", "isSortable": true, "isFilterable": false, "isVisible": false },
+        { "name": "unitType", "displayName": "Unit", "formatter": "raw", "isSortable": true, "isFilterable": false, "isVisible": false },
+        { "name": "url", "displayName": "Url", "formatter": "raw", "isSortable": true, "isFilterable": false, "isVisible": false },
         {
           "name": "state",
           "displayName": "State",
           "formatter": "title",
           "isSortable": true,
           "isFilterable": true,
-          "isVisible": true
+          "isVisible": false
         },
         {
           "name": "createdAt",
@@ -351,7 +346,7 @@
           "formatter": "date",
           "isSortable": true,
           "isFilterable": false,
-          "isVisible": true
+          "isVisible": false
         },
         {
           "name": "updatedAt",
@@ -359,7 +354,7 @@
           "formatter": "date",
           "isSortable": true,
           "isFilterable": false,
-          "isVisible": true
+          "isVisible": false
         }
       ]
     }
