@@ -59,7 +59,7 @@ exports = module.exports = function(Model, VehicleService, Setting, config) {
         // },
         function(completeTask) {
           VehicleService.getVehicleCapabilities(req.params.id, function(err, data) {
-            model.capabilities = data;
+            if (data && data.vehicleCapabilities) model.capabilities = data.vehicleCapabilities;
             return completeTask(err);
           });
         }

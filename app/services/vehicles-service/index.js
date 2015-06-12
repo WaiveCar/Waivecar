@@ -1,24 +1,26 @@
-var GM_ASYNC_SUCCESS='success';
-var GM_ASYNC_FAILURE='failure';
-var GM_ASYNC_IN_PROGRESS='inProgress';
-var GM_ALERT_HONK='Honk';
-var GM_ALERT_FLASH='Flash';
-var request=require('request');
-var q=require('q');
-var _=require('lodash');
-var async=require('async');
+var GM_ASYNC_SUCCESS = 'success';
+var GM_ASYNC_FAILURE = 'failure';
+var GM_ASYNC_IN_PROGRESS = 'inProgress';
+var GM_ALERT_HONK = 'Honk';
+var GM_ALERT_FLASH = 'Flash';
+var request = require('request');
+var q = require('q');
+var _ = require('lodash');
+var async = require('async');
+var S = require('string');
+
 function VehicleService(config,logger){
-    this._apiKey=config.vehiclesService.api.key;
-    this._apiSecret=config.vehiclesService.api.secret;
-    this._host=config.vehiclesService.host;
-    this._base64KeyAndSecret=new Buffer(this._apiKey+':'+this._apiSecret).toString('base64');
-    this._bearerToken;
-    this._bearerExpiresIn;
-    this._bearerReceivedAt;
-    this._expiredLatency=5;
-    this._logger=logger;
-    this._asyncDelay=5000;
-    this._defaultAlertDuration=15;
+  this._apiKey=config.vehiclesService.api.key;
+  this._apiSecret=config.vehiclesService.api.secret;
+  this._host=config.vehiclesService.host;
+  this._base64KeyAndSecret=new Buffer(this._apiKey+':'+this._apiSecret).toString('base64');
+  this._bearerToken;
+  this._bearerExpiresIn;
+  this._bearerReceivedAt;
+  this._expiredLatency=5;
+  this._logger=logger;
+  this._asyncDelay=5000;
+  this._defaultAlertDuration=15;
 }
 
 VehicleService.prototype.makeRequest = function(path,options,cb) {
@@ -75,10 +77,10 @@ VehicleService.prototype.makeAsyncRequest = function(path,options,cb) {
             if(commandResponse.status === GM_ASYNC_SUCCESS){
                 cb(null,commandResponse);
             }
-            
+
         };
         self.makeRequest(null,asyncOptions,requestCb);
-     
+
     }
     var requestCb=function(err,data){
         if(err){
@@ -93,7 +95,7 @@ VehicleService.prototype.makeAsyncRequest = function(path,options,cb) {
             checkResponse(commandResponse.url,cb);
         };
         setTimeout(timeoutFn, this._asyncDelay);
-        
+
     };
     this.makeRequest(path,options,requestCb);
 };
@@ -119,7 +121,7 @@ VehicleService.prototype.isTokenExpired = function() {
 
 VehicleService.prototype.connect = function(cb) {
     var self= this;
-    
+
     if(!this.isTokenExpired()){
         cb(null,self.getBearerToken());
         return;
@@ -137,7 +139,7 @@ VehicleService.prototype.connect = function(cb) {
         var data= JSON.parse(res.body);
         self._setBearerToken(data);
         cb(null,self.getBearerToken());
-        
+
     };
     this.makeRequest('oauth/access_token',options,requestCb);
 };
@@ -245,27 +247,30 @@ VehicleService.prototype.getVehicleDiagnostics = function(vin,cb,diagnostItems) 
             }
 
     });
-    function parseResponse(response,elementName){
-        var ret={};
-        response.forEach(function(d){
-            var key=d.name;
-            if(d[elementName].length === 1){
-                delete d[elementName][0].name;
-                ret[key]=d[elementName][0];
-                return;
-            }
-            var obj={};
-            d[elementName].forEach(function(el){
-                obj[el.name]=el;
 
-                delete obj[el.name].name;
+    function parseResponse(response, elementName) {
+      var ret = {};
+      response.forEach(function(d) {
+        var key = S(d.name.toLowerCase()).camelize().s;
 
-            });
-            ret[key]=obj;
+        if (d[elementName].length === 1) {
+          delete d[elementName][0].name;
+          ret[key] = d[elementName][0];
+          return;
+        }
+
+        var obj={};
+        d[elementName].forEach(function(el) {
+          var name = S(el.name.toLowerCase()).camelize().s;
+          obj[name]=el;
+          delete obj[name].name;
         });
-        return ret;
+
+        ret[key]=obj;
+      });
+      return ret;
     }
-    
+
     async.auto({
         connect:function(asyncCb){
             self.connect(asyncCb);
@@ -293,7 +298,7 @@ VehicleService.prototype.getVehicleDiagnostics = function(vin,cb,diagnostItems) 
         }
         cb(null,result.parse);
     }
-    );   
+    );
 };
 VehicleService.prototype.getVehicleLocation = function(vin,cb) {
     var self= this;
@@ -437,7 +442,7 @@ VehicleService.prototype.lockDoor = function(vin,cb) {
         }
         cb(null,true);
     });
-    
+
 };
 
 VehicleService.prototype._makeAlerts = function(vin,duration,action,cb) {
