@@ -57,7 +57,7 @@ angular.module('app.controllers').controller('VehicleController', [
 
     $scope.fetch = function(next) {
       async.series([ initVehicle, activateVehicle ], function(err) {
-        $scope.chart.data[0] = $scope.active.vehicle.diagnostics['EV BATTERY LEVEL'].value;
+        $scope.chart.data[0] = $scope.active.vehicle.diagnostics['evBatteryLevel'].value;
         $scope.chart.data[1] = 100 - $scope.chart.data[0];
         $scope.initialized = true;
       });
