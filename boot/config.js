@@ -18,6 +18,7 @@ exports = module.exports = function() {
         name: 'api'
       },
       cleanOnRestart: false,
+      allowCleanup: true,
       auth: {
         tokenSecret: 'api-app-secret'
       },
@@ -116,6 +117,12 @@ exports = module.exports = function() {
           secret:'7ae244bc215e4f80988cc2184d2f552c',
         },
         host:'https://developer.gm.com/api/v1/'
+      },
+      origins: {
+        whitelist: ['*'],
+        // sets the req.origin based on matched origins list
+        // { 'http://localhost:3081' : 'admin' }
+        list: {}
       },
       mongo: {
         host: 'localhost',

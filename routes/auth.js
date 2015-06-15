@@ -9,6 +9,8 @@ exports = module.exports = function(container, controller, isAuthenticated, isAn
   router.post('/signup', isAnonymous, controller.signup);
   router.get('/unlink/:provider', isAuthenticated, controller.unlink);
 
+  router.post('/facebook', isAnonymous, controller.facebook);
+
   router.post('/forgot-password', isAnonymous, controller.resetRequest);
   router.get('/reset-password/:emailToken/:resetToken', isAnonymous, controller.reset);
   router.post('/reset-password', isAnonymous, controller.changePassword);
