@@ -34,6 +34,12 @@
           <div class="form-group last-group"><a ui-sref="forgot-password">Forgot your email address or password?</a></div>
         </fieldset>
         <fieldset class="borderless">
+          <button class="btn btn-block btn-facebook" ng-click="authenticate('facebook')">
+            <i class="ion-social-facebook"></i>
+            Log in with facebook
+          </button>
+        </fieldset>
+        <fieldset class="borderless">
           <div class="form-group form-actions">
             <div class="col-sm-12">
               <button id="signin" tabindex="3" type="submit" name="signin" ng-class="{ 'btn-disabled': !forms.signinForm.$valid || exceeded, 'btn-loading': signinInProgress }" ng-disabled="!forms.signinForm.$valid || exceeded" class="btn btn-md btn-primary pull-right">Next</button>
