@@ -12,6 +12,11 @@
     "admin": "",
     "assets": ""
   },
+  "satellizer": {
+    "facebook": {
+      "clientId": null
+    }
+  },
   "models": {
     "blacklisted-emails": {
       "singular": "blacklistedEmail",

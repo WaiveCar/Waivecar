@@ -109,5 +109,6 @@ app/css/*.css
 coverage/
 .vagrant/
 app/js/app/services/config.js
+app/js/vendors
 config/local.json
 
