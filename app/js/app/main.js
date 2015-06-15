@@ -12,15 +12,15 @@ window.app = angular.module('app', [
   'ui.router',
   'chart.js',
   'yaru22.jsonHuman',
-  'ngBootbox',
   'mgcrea.ngStrap',
   'btford.socket-io',
   'angularFileUpload',
   //'app.modules.templates',
+  'app.modules.alert',
+  'app.modules.modals',
   'app.modules.common',
   'app.modules.logging',
   'app.modules.authentication',
-  'app.modules.alert',
   'app.controllers',
   'app.directives',
   'app.filters',
@@ -126,8 +126,8 @@ window.app.config([
           }
         }
       })
-      .state('rentals', {
-        url: '/rentals',
+      .state('bookings', {
+        url: '/bookings',
         templateUrl: '/templates/table/index.html',
         data: {
           auth: {

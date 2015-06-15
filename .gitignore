@@ -110,4 +110,4 @@ coverage/
 .vagrant/
 app/js/app/services/config.js
 config/local.json
-
+app/templates/common

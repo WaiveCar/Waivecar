@@ -73,6 +73,12 @@ gulp.task('copy:svg', function () {
     .pipe(gulp.dest('dist/img'));
 });
 
+gulp.task('copy:templates', function() {
+  return gulp.src([
+    'app/bower/common-modules/src/templates/**/*.html'
+  ]).pipe(gulp.dest('app/templates'));
+});
+
 gulp.task('sass', function () {
   return gulp.src([
     'app/css/main.scss',
@@ -179,17 +185,18 @@ gulp.task('dist', ['build:dist'], function (done) {
 });
 
 gulp.task('build:quickapp', function (done) {
-  run('clean:sass', [ 'sass', 'config' ], done);
+  run('clean:sass', [ 'copy:templates', 'sass', 'config' ], done);
 });
 
 gulp.task('build:app', function (done) {
-  run([ 'clean:sass', 'bower' ], [ 'sass', 'config' ], done);
+  run([ 'clean:sass', 'bower' ], [ 'copy:templates', 'sass', 'config' ], done);
 });
 
 gulp.task('build:dist', function (done) {
   run(
     'clean',
-    ['copy:views', 'sass', 'config', 'copy:fonts', 'copy:img', 'copy:svg'],
+    ['sass', 'config', 'copy:templates', 'copy:fonts', 'copy:img', 'copy:svg'],
+    ['copy:views'],
     'html',
     'fix:css',
     done

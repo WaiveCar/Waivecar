@@ -64,8 +64,8 @@
   <script src="bower/angular-json-human/dist/angular-json-human.js"></script>
   <script src="bower/angular-chart.js/dist/angular-chart.js"></script>
   <script src="bower/angular-socket-io/socket.js"></script>
-  <script src="bower/angular-strap/dist/angular-strap.min.js"></script>
-  <script src="bower/angular-strap/dist/angular-strap.tpl.min.js"></script>
+  <script src="bower/angular-strap/dist/angular-strap.js"></script>
+  <script src="bower/angular-strap/dist/angular-strap.tpl.js"></script>
   <!-- endbuild -->
 
   <!-- build:js(app) scripts/app.min.js -->
@@ -73,33 +73,44 @@
   <script src="js/app/main.js"></script>
   <script src="js/app/controllers/main-controller.js"></script>
   <script src="js/app/controllers/dashboard-controller.js"></script>
-  <script src="js/app/controllers/list-controller.js"></script>
   <script src="js/app/controllers/user-controller.js"></script>
   <script src="js/app/controllers/vehicle-controller.js"></script>
   <script src="js/app/controllers/style-guide-controller.js"></script>
   <script src="js/app/services/config.js"></script>
-  <script src="bower/angular-common/src/js/common/index.js"></script>
-  <script src="bower/angular-common/src/js/common/services/socket-service.js"></script>
-  <script src="bower/angular-common/src/js/common/services/data-service.js"></script>
-  <script src="bower/angular-common/src/js/alert/index.js"></script>
-  <script src="bower/angular-common/src/js/authentication/index.js"></script>
-  <script src="bower/angular-common/src/js/authentication/controllers/password-controller.js"></script>
-  <script src="bower/angular-common/src/js/authentication/controllers/provider-controller.js"></script>
-  <script src="bower/angular-common/src/js/authentication/controllers/signin-controller.js"></script>
-  <script src="bower/angular-common/src/js/authentication/controllers/signout-controller.js"></script>
-  <script src="bower/angular-common/src/js/authentication/controllers/signup-controller.js"></script>
-  <script src="bower/angular-common/src/js/authentication/services/utils-service.js"></script>
-  <script src="bower/angular-common/src/js/authentication/services/account-service.js"></script>
-  <script src="bower/angular-common/src/js/logging/index.js"></script>
-  <script src="bower/angular-common/src/js/modals/index.js"></script>
-  <script src='bower/angular-common/src/js/common/directives/autofocus-directive.js'></script>
-  <script src='bower/angular-common/src/js/common/directives/validations-directive.js'></script>
-  <script src='bower/angular-common/src/js/common/directives/tooltip-directive.js'></script>
-  <script src='bower/angular-common/src/js/common/directives/equals-directive.js'></script>
-  <script src='bower/angular-common/src/js/common/filters/email-filter.js'></script>
-  <script src='bower/angular-common/src/js/common/filters/props-filter.js'></script>
-  <script src="bower/angular-common/src/js/common/directives/chart-stackedbar-directive.js"></script>
-  <script src="bower/angular-common/src/js/common/filters/where-in-filter.js") ></script>
+
+  <script src="bower/common-modules/src/js/common/index.js"></script>
+  <script src="bower/common-modules/src/js/common/services/socket-service.js"></script>
+  <script src="bower/common-modules/src/js/common/services/data-service.js"></script>
+  <script src="bower/common-modules/src/js/common/controllers/list-controller.js"></script>
+  <script src='bower/common-modules/src/js/common/directives/autofocus-directive.js'></script>
+  <script src='bower/common-modules/src/js/common/directives/validations-directive.js'></script>
+  <script src='bower/common-modules/src/js/common/directives/tooltip-directive.js'></script>
+  <script src='bower/common-modules/src/js/common/directives/equals-directive.js'></script>
+  <script src='bower/common-modules/src/js/common/filters/email-filter.js'></script>
+  <script src='bower/common-modules/src/js/common/filters/props-filter.js'></script>
+  <script src="bower/common-modules/src/js/common/directives/chart-stackedbar-directive.js"></script>
+  <script src="bower/common-modules/src/js/common/filters/where-in-filter.js") ></script>
+
+  <script src="bower/common-modules/src/js/alert/index.js"></script>
+  <script src="bower/common-modules/src/js/alert/services/notification-service.js"></script>
+
+  <script src="bower/common-modules/src/js/authentication/index.js"></script>
+  <script src="bower/common-modules/src/js/authentication/controllers/password-controller.js"></script>
+  <script src="bower/common-modules/src/js/authentication/controllers/provider-controller.js"></script>
+  <script src="bower/common-modules/src/js/authentication/controllers/signin-controller.js"></script>
+  <script src="bower/common-modules/src/js/authentication/controllers/signout-controller.js"></script>
+  <script src="bower/common-modules/src/js/authentication/controllers/signup-controller.js"></script>
+  <script src="bower/common-modules/src/js/authentication/services/utils-service.js"></script>
+  <script src="bower/common-modules/src/js/authentication/services/account-service.js"></script>
+
+  <script src="bower/common-modules/src/js/logging/index.js"></script>
+  <script src="bower/common-modules/src/js/logging/services/logging-utils-service.js"></script>
+  <script src="bower/common-modules/src/js/logging/services/exception-handler-service.js"></script>
+  <script src="bower/common-modules/src/js/logging/services/application-logging-service.js"></script>
+
+  <script src="bower/common-modules/src/js/modals/index.js"></script>
+  <script src="bower/common-modules/src/js/modals/services/pop-service.js"></script>
+
   <!-- endbuild -->
 </head>
 <body ui-view class="{{ bodyClass }}" ng-controller="MainController">
