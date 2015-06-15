@@ -3,6 +3,7 @@ var jwt = require('jwt-simple');
 var moment = require('moment');
 var async = require('async');
 var bcrypt = require('bcryptjs');
+var request = require('request');
 var _ = require('lodash');
 var validator = require('validator');
 
@@ -100,12 +101,99 @@ exports = module.exports = function(User, AuthService, EmailService, config, log
           return res.status(200).end();
         });
       });
+    },
+
+    facebook: function (req, res, next) {
+      var accessTokenUrl = 'https://graph.facebook.com/v2.3/oauth/access_token';
+      var graphApiUrl    = 'https://graph.facebook.com/v2.3/me';
+      var params         = {
+        code          : req.body.code,
+        client_id     : req.body.clientId,
+        client_secret : config.facebook.appSecret,
+        redirect_uri  : req.body.redirectUri
+      };
+
+      // ### Call Facebook
+
+      // Step 1. Exchange authorization code for access token.
+      request.get({ url: accessTokenUrl, qs: params, json: true }, function(err, response, accessToken) {
+        if (response.statusCode !== 200) {
+          return res.status(500).send({ message: accessToken.error.message });
+        }
+
+        // Step 2. Retrieve profile information about the current user.
+        request.get({ url: graphApiUrl, qs: accessToken, json: true }, function(err, response, profile) {
+          User.findOne({
+            facebookId : profile.id
+          }, function (err, user) {
+            if (err) {
+              return res.status(500).send({ message: 'An internal error occured when processing your request' });
+            }
+
+            if ('admin' === req.from) {
+              return handleAdmin(user);
+            }
+            return handleUser(user, profile);
+          });
+        });
+      });
+
+      // ### Auth Handlers
+
+      /**
+       * @param {object} user The user stored in our database
+       */
+      function handleAdmin(user) {
+        if (!user || 'admin' !== user.role) {
+          return res.status(401).send({ message: 'You do not have the required access rights' });
+        }
+        return res.send({ token: AuthService.createToken(user) });
+      }
+
+      /**
+       * @param {object||null} user    The user stored in our database
+       * @param {object}       profile The profile information returned from facebook
+       */
+      function handleUser(user, profile) {
+        if (user) {
+          return res.send({ token: AuthService.createToken(user) });
+        }
+
+        // ### Create User
+        // If no user is present we create a new user with the facebook profile information
+
+        AuthService.isEmailBlacklisted(profile.email, function(err, isBlacklisted) {
+          if (err) return next(err);
+          if (isBlacklisted) return res.status(400).send({ message: 'Email address is not valid. Please contact us if you believe your Email address is valid and acceptable.' });
+
+          var user = new User({
+            firstName: profile.first_name,
+            lastName: profile.last_name,
+            email: profile.email,
+            facebookId: profile.id
+          });
+
+          user.save(function(err) {
+            if (err) logger.debug(err);
+            return res.send({ token: AuthService.createToken(user) });
+          });
+        });
+      }
     }
 
   };
 
   return methods;
 };
+
+function createJWT(user) {
+  var payload = {
+    sub: user._id,
+    iat: moment().unix(),
+    exp: moment().add(14, 'days').unix()
+  };
+  return jwt.encode(payload, '94ce19a7fb09739032a1e6fa2181e33f');
+}
 
 exports['@singleton'] = true;
 exports['@require'] = [ 'models/user', 'services/auth-service', 'services/email-service', 'igloo/settings', 'igloo/logger' ];

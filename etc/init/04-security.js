@@ -3,38 +3,35 @@ var cors = require('cors');
 
 exports = module.exports = function(IoC, config) {
 
-  var app = this;
-  app.use(cors());
+  var app       = this;
+  var whitelist = config.origins.whitelist;
 
-  // var allowCrossDomain = function(req, res, next) {
-  //     res.header('Access-Control-Allow-Origin', '*');
-  //     res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  //     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  app.use(cors({
+    credentials: true,
+    origin: function(origin, callback){
+      var originIsWhitelisted = whitelist.indexOf(origin) !== -1;
+      callback(null, originIsWhitelisted);
+    }
+  }));
 
-  //     // intercept OPTIONS method
-  //     if ('OPTIONS' == req.method) {
-  //       res.send(200);
-  //     }
-  //     else {
-  //       next();
-  //     }
-  // };
+  app.use(function (req, res, next) {
+    var list   = config.origins.list;
+    var origin = req.headers.origin;
 
-  // app.use(allowCrossDomain);
+    if (list.hasOwnProperty(origin)) {
+      req.from = list[origin];
+    } else {
+      req.from = null;
+    }
 
-
-
-
-  // app.use(corser.create({
-  //   supportsCredentials: true,
-  //   requestHeaders: corser.simpleRequestHeaders.concat([ 'Content-Type', 'Authorization', 'Access-Control-Allow-Origin', 'X-Requested-With' ])
-  // }));
+    next();
+  });
 
   // trust proxy
-  if (config.trustProxy) app.enable('trust proxy');
+  //if (config.trustProxy) app.enable('trust proxy');
 
   // use helmet for security
-  app.use(helmet());
+  //app.use(helmet());
 };
 
 exports['@require'] = [ '$container', 'igloo/settings' ];
