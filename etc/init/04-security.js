@@ -28,10 +28,10 @@ exports = module.exports = function(IoC, config) {
   });
 
   // trust proxy
-  //if (config.trustProxy) app.enable('trust proxy');
+  if (config.trustProxy) app.enable('trust proxy');
 
   // use helmet for security
-  //app.use(helmet());
+  app.use(helmet());
 };
 
 exports['@require'] = [ '$container', 'igloo/settings' ];
