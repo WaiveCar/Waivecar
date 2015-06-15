@@ -113,32 +113,22 @@ exports = module.exports = function(User, AuthService, EmailService, config, log
         redirect_uri  : req.body.redirectUri
       };
 
-      // ### Call Facebook
-
-      // Step 1. Exchange authorization code for access token.
       request.get({ url: accessTokenUrl, qs: params, json: true }, function(err, response, accessToken) {
         if (response.statusCode !== 200) {
           return res.status(500).send({ message: accessToken.error.message });
         }
 
-        // Step 2. Retrieve profile information about the current user.
         request.get({ url: graphApiUrl, qs: accessToken, json: true }, function(err, response, profile) {
           User.findOne({
             facebookId : profile.id
           }, function (err, user) {
             if (err) {
-              return res.status(500).send({ message: 'An internal error occured when processing your request' });
+              return next(err);
             }
-
-            if ('admin' === req.from) {
-              return handleAdmin(user);
-            }
-            return handleUser(user, profile);
+            return 'admin' === req.from ? handleAdmin(user) : handleUser(user, profile);
           });
         });
       });
-
-      // ### Auth Handlers
 
       /**
        * @param {object} user The user stored in our database
@@ -163,8 +153,14 @@ exports = module.exports = function(User, AuthService, EmailService, config, log
         // If no user is present we create a new user with the facebook profile information
 
         AuthService.isEmailBlacklisted(profile.email, function(err, isBlacklisted) {
-          if (err) return next(err);
-          if (isBlacklisted) return res.status(400).send({ message: 'Email address is not valid. Please contact us if you believe your Email address is valid and acceptable.' });
+          if (err) {
+            return next(err);
+          }
+          if (isBlacklisted) {
+            return res.status(400).send({
+              message: 'Email address is not valid. Please contact us if you believe your Email address is valid and acceptable.'
+            });
+          }
 
           var user = new User({
             firstName: profile.first_name,
@@ -185,15 +181,6 @@ exports = module.exports = function(User, AuthService, EmailService, config, log
 
   return methods;
 };
-
-function createJWT(user) {
-  var payload = {
-    sub: user._id,
-    iat: moment().unix(),
-    exp: moment().add(14, 'days').unix()
-  };
-  return jwt.encode(payload, '94ce19a7fb09739032a1e6fa2181e33f');
-}
 
 exports['@singleton'] = true;
 exports['@require'] = [ 'models/user', 'services/auth-service', 'services/email-service', 'igloo/settings', 'igloo/logger' ];
