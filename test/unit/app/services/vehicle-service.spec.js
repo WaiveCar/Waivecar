@@ -43,7 +43,7 @@ describe('vehicle-service',function(){
                 expect(response.vehicles.size).to.be.above(0);
                 done();
             });
-           
+
         });
 
         it("Get vehicle data",function(done){
@@ -99,7 +99,7 @@ describe('vehicle-service',function(){
                 expect(response["VEHICLE RANGE"]["EV RANGE"].unit).to.exist;
                 expect(response["VEHICLE RANGE"]["TOTAL RANGE"].value).to.exist;
                 expect(response["VEHICLE RANGE"]["TOTAL RANGE"].unit).to.exist;
-    
+
                 done();
             });
         });
@@ -186,7 +186,7 @@ describe('vehicle-service',function(){
                     done();
                 });
             });
-            it.only('Vehicle data',function(done){
+            it('Vehicle data',function(done){
                 this.timeout(0);
                 var desiredVin=mockVehicles.chevVolt.vin;
                 vehicleService.vehicleData(desiredVin,function(err,response){
