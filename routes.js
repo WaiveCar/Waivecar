@@ -15,7 +15,7 @@ exports = module.exports = function(IoC, config, logger) {
   app.phase(bootable.di.routes('./routes/blacklisted-emails.js'));
   app.phase(bootable.di.routes('./routes/auth.js'));
   app.phase(bootable.di.routes('./routes/vehicles.js'));
-  app.phase(bootable.di.routes('./routes/rentals.js'));
+  app.phase(bootable.di.routes('./routes/bookings.js'));
 
   if (app.io) {
     app.io.sockets.on('connection', IoC.create('controllers/sockets-controller'));

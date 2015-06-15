@@ -11,6 +11,7 @@ exports = module.exports = function(EnumService, mongoose, mongoosePlugin) {
     startAt: { type: Date },
 
     startLocation: {
+      description: { type: String },
       lat: { type: Number },
       long: { type: Number }
     },
@@ -18,6 +19,7 @@ exports = module.exports = function(EnumService, mongoose, mongoosePlugin) {
     endAt: { type: Date },
 
     endLocation: {
+      description: { type: String },
       lat: { type: Number },
       long: { type: Number }
     },
@@ -27,7 +29,7 @@ exports = module.exports = function(EnumService, mongoose, mongoosePlugin) {
   });
 
   Model.plugin(mongoosePlugin);
-  return mongoose.model('Rental', Model);
+  return mongoose.model('Booking', Model);
 };
 
 exports['@singleton'] = true;

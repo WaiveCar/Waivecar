@@ -15,4 +15,4 @@ exports = module.exports = function(container, controller, logger) {
 };
 
 exports['@singleton'] = true;
-exports['@require'] = [ '$container', 'controllers/rentals-controller', 'igloo/logger' ];
+exports['@require'] = [ '$container', 'controllers/bookings-controller', 'igloo/logger' ];

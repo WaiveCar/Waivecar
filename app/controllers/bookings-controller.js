@@ -4,13 +4,13 @@ var Blueprint = require(path.join(process.env.PWD, 'lib', 'controller-blueprint'
 exports = module.exports = function(Model, config) {
   var options = {
     config: config,
-    controllerName: 'rentals',
+    controllerName: 'bookings',
     model: Model,
-    modelName: 'rental'
+    modelName: 'booking'
   };
 
   return new Blueprint(options);
 };
 
 exports['@singleton'] = true;
-exports['@require'] = [ 'models/rental', 'igloo/settings' ];
+exports['@require'] = [ 'models/booking', 'igloo/settings' ];
