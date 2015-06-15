@@ -14,7 +14,8 @@
   },
   "satellizer": {
     "facebook": {
-      "clientId": null
+      "clientId": null,
+      "url": ""
     }
   },
   "models": {
