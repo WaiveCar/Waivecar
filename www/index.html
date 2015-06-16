@@ -19,11 +19,15 @@
     <script src="cordova.js"></script>
 
     <!-- your app's js -->
-    <script src="js/app.js"></script>
-    <script src="js/controllers.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/controllers/application-controller.js"></script>
+    <script src="js/controllers/playlist-controller.js"></script>
+    <script src="js/controllers/playlists-controller.js"></script>
+    <script src="lib/common-modules/src/js/common/index.js"></script>
+    <script src="lib/common-modules/src/js/common/directives/select-on-click-directive.js"></script>
   </head>
 
-  <body ng-app="starter">
+  <body ng-app="app">
     <ion-nav-view></ion-nav-view>
   </body>
 </html>
