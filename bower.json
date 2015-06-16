@@ -1,7 +1,14 @@
 {
-  "name": "HelloIonic",
+  "name": "app",
   "private": "true",
   "devDependencies": {
+    "common-modules": "~0.1.3",
     "ionic": "driftyco/ionic-bower#1.0.0"
+  },
+  "resolutions": {
+    "angular": "~1.4.0",
+    "angular-ui-router": "~0.2.15"
+  },
+  "dependencies": {
   }
 }
