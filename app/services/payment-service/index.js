@@ -13,20 +13,34 @@ exports = module.exports = function(config, logger) {
             description: description
           }, next);
     },
-    createCustomer:function(description,email,cardData,next){
-        var stripeRequest = {
-          description: description,
-          email: email,
-          card: cardData
-        };
-        stripe.customers.create(stripeRequest, function(err, customer) {
+    capturePayment:function(amount,chargeId,next){
+      if(amount){
+        stripe.charges.capture(chargeId,{amount:amount},next);
+      }
+      else{
+        stripe.charges.capture(chargeId,next);
+      }
+    },
+    updateCustomer:function(customerId,customerData,next){
+        stripe.customers.update(customerId,customerData,next);
+    },
+    createCustomer:function(customerData,next){
+        stripe.customers.create(customerData, function(err, customer) {
           if(err){
             next(err);
             return;
           }
           next(null,customer);
         });
+    },
+    retrieveBalance:function(next){
+        stripe.balance.retrieve(next);
+    },
+    deleteCard:function(customerId,cardId,next){
+      stripe.customers.deleteCard(customerId, cardId,next);
     }
+
+
   }
     // NB. tokens are issued client side, this method should only be used by server tests.
     // generateToken: function(model, next) {
