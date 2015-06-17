@@ -62,6 +62,7 @@
     "socket.io-redis": "^0.1.4",
     "strength": "^0.1.4",
     "string": "^3.2.0",
+    "stripe": "^3.5.0",
     "twilio": "^2.0.0",
     "underscore.string": "^2.3.3",
     "validator": "^3.13.0",
