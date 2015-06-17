@@ -41,6 +41,24 @@ angular.module('app', [
       templateUrl: "templates/menu.html"
     })
 
+    .state('app.users-new', {
+      url: "/register",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/users/new.html"
+        }
+      }
+    })
+
+    .state('app.users-show', {
+      url: "/my-account",
+      views: {
+        'menuContent': {
+          templateUrl: "templates/users/show.html"
+        }
+      }
+    })
+
     .state('app.search', {
       url: "/search",
       views: {
