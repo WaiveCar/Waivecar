@@ -8,7 +8,5 @@
   "resolutions": {
     "angular": "~1.4.0",
     "angular-ui-router": "~0.2.15"
-  },
-  "dependencies": {
   }
 }

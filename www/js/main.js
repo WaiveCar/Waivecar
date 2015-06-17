@@ -9,12 +9,17 @@ angular.module('app.services', []);
 angular.module('app', [
   'ionic',
   'app.controllers',
-  'app.services'
+  'app.services',
+  'mgcrea.ngStrap',
+  'app.modules.alert',
+  'app.modules.authentication'
 ])
 
 .run([
   '$ionicPlatform',
-  function($ionicPlatform) {
+  '$http',
+  '$config',
+  function($ionicPlatform, $http, $config) {
     $ionicPlatform.ready(function() {
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
       // for form inputs)
@@ -35,27 +40,27 @@ angular.module('app', [
   function($stateProvider, $urlRouterProvider) {
     $stateProvider
       .state('intro', {
-        url: "/welcome",
-        templateUrl: "templates/intro.html"
+        url: '/welcome',
+        templateUrl: 'templates/intro.html'
       })
       .state('app', {
-        url: "/app",
+        url: '/app',
         abstract: true,
-        templateUrl: "templates/menu.html"
+        templateUrl: 'templates/menu.html'
       })
       .state('app.users-new', {
-        url: "/register",
+        url: '/register',
         views: {
           'menuContent': {
-            templateUrl: "templates/users/new.html"
+            templateUrl: 'templates/users/new.html'
           }
         }
       })
       .state('app.users-show', {
-        url: "/my-account",
+        url: '/my-account',
         views: {
           'menuContent': {
-            templateUrl: "templates/users/show.html"
+            templateUrl: 'templates/users/show.html'
           }
         }
       });

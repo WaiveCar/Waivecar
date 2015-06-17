@@ -17,6 +17,12 @@
           <input type="password" ng-model="loginData.password">
         </label>
         <label class="item">
+          <button class="button button-block button-facebook" type="button" ng-click="authenticate('facebook')">
+            <i class="ion-social-facebook"></i>
+            Log in with facebook
+          </button>
+        </label>
+        <label class="item">
           <button class="button button-block button-positive" type="submit">Log in</button>
         </label>
       </div>
