@@ -3,15 +3,10 @@ var cors = require('cors');
 
 exports = module.exports = function(IoC, config) {
 
-  var app       = this;
-  var whitelist = config.origins.whitelist;
+  var app = this;
 
   app.use(cors({
-    credentials: true,
-    origin: function(origin, callback){
-      var originIsWhitelisted = whitelist.indexOf(origin) !== -1;
-      callback(null, originIsWhitelisted);
-    }
+    credentials: true
   }));
 
   app.use(function (req, res, next) {
