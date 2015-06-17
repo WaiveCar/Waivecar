@@ -13,6 +13,13 @@ module.exports = function() {
       ];
     },
 
+    getTransactionTypes: function() {
+      return [
+        { title: 'rental', description: 'Rental' },
+        { title: 'refund', description: 'Refund' }
+      ];
+    }
+
     getRoleTypes: function() {
       return [
         { name: 'user', description: 'User' },
