@@ -6,7 +6,7 @@
     "clean": "./bin/clean.sh",
     "start": "node ./app.js",
     "prepublish": "npm prune",
-    "test": "NODE_ENV=test mocha --reporter spec --bail --ignore-leaks --require test/support/should --recursive test/",
+    "test": "NODE_ENV=test mocha --reporter spec --bail --ignore-leaks --verbose --require test/support/should --recursive test/",
     "test-cov": "NODE_ENV=test istanbul cover node_modules/mocha/bin/_mocha -- --reporter dot --ignore-leaks --require test/support/should  --recursive test/",
     "test-travis": "mkdir -p ./coverage; (NODE_ENV=test istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --reporter spec --check-leaks --require test/support/should --recursive test/; echo $? > retval) | tee coverage/coverage.txt; egrep '^0$' retval"
   },

@@ -18,7 +18,7 @@ module.exports = function() {
         { title: 'rental', description: 'Rental' },
         { title: 'refund', description: 'Refund' }
       ];
-    }
+    },
 
     getRoleTypes: function() {
       return [
