@@ -34,66 +34,33 @@ angular.module('app', [
   '$urlRouterProvider',
   function($stateProvider, $urlRouterProvider) {
     $stateProvider
-
-    .state('app', {
-      url: "/app",
-      abstract: true,
-      templateUrl: "templates/menu.html"
-    })
-
-    .state('app.users-new', {
-      url: "/register",
-      views: {
-        'menuContent': {
-          templateUrl: "templates/users/new.html"
-        }
-      }
-    })
-
-    .state('app.users-show', {
-      url: "/my-account",
-      views: {
-        'menuContent': {
-          templateUrl: "templates/users/show.html"
-        }
-      }
-    })
-
-    .state('app.search', {
-      url: "/search",
-      views: {
-        'menuContent': {
-          templateUrl: "templates/search.html"
-        }
-      }
-    })
-
-    .state('app.browse', {
-      url: "/browse",
-      views: {
-        'menuContent': {
-          templateUrl: "templates/browse.html"
-        }
-      }
-    })
-      .state('app.playlists', {
-        url: "/playlists",
+      .state('intro', {
+        url: "/welcome",
+        templateUrl: "templates/intro.html"
+      })
+      .state('app', {
+        url: "/app",
+        abstract: true,
+        templateUrl: "templates/menu.html"
+      })
+      .state('app.users-new', {
+        url: "/register",
         views: {
           'menuContent': {
-            templateUrl: "templates/playlists.html"
+            templateUrl: "templates/users/new.html"
           }
         }
       })
-
-    .state('app.single', {
-      url: "/playlists/:playlistId",
-      views: {
-        'menuContent': {
-          templateUrl: "templates/playlist.html"
+      .state('app.users-show', {
+        url: "/my-account",
+        views: {
+          'menuContent': {
+            templateUrl: "templates/users/show.html"
+          }
         }
-      }
-    });
+      });
+
     // if none of the above states are matched, use this as the fallback
-    $urlRouterProvider.otherwise('/app/playlists');
+    $urlRouterProvider.otherwise('/welcome');
   }
 ]);

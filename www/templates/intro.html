@@ -1,0 +1,41 @@
+<ion-view view-title="Welcome" ng-controller="IntroController">
+  <ion-nav-bar class="bar-stable">
+    <ion-nav-buttons side="right">
+      <button class="button button-positive" ui-sref="app.users-new">Skip</button>
+    </ion-nav-buttons>
+  </ion-nav-bar>
+  <ion-content>
+    <ion-slide-box does-continue="false" auto-play="false">
+      <ion-slide>
+        <div class="box text-center">
+          <h2>Welcome to </h2>
+          <h1>WAIVECAR</h1>
+          <br />
+          <p class="lead">Premium electric cars with the rental fee waived.</p>
+          <br />
+          <p>Swipe left to begin.</p>
+        </div>
+      </ion-slide>
+      <ion-slide>
+        <div class="box text-center">
+          <p>Waivecar provides free electric cars o rent.</p>
+          <p>Cars are free to rent for up to 2hours, then cost $15 an hour.</p>
+        </div>
+      </ion-slide>
+      <ion-slide>
+        <div class="box text-center">
+          <p>You can reserve a car up to 15 minutes ahead of time.</p>
+          <p>Return to any one thousand of locations.</p>
+          <p>Under two hours? Totally free!</p>
+        </div>
+      </ion-slide>
+      <ion-slide>
+        <div class="box text-center">
+          <h1>Let's get started</h1>
+          <button ui-sref="app.users-new">Rent a car</button>
+        </div>
+      </ion-slide>
+      <ion-slide-pager></ion-slide-pager>
+    </ion-slide-box>
+  </ion-content>
+</ion-view>
