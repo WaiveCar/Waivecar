@@ -108,5 +108,35 @@ module.exports= {
 					description:'Charge will be declined with a processing_error code.',
 				}
 		}
+	},
+	'bankAccounts':{
+		'routing':{
+			'number':'110000000',
+			'description':'STRIPE TEST BANK US routing number'
+		},
+		'suceed':{
+			'number':'000123456789',
+			'description':'Transfer will succeed.',
+		},
+		'failNoAccount':{
+			'number':'000111111116',
+			'description':'Transfer will fail with a no_account code.',
+		},
+		'failAccountClosed':{
+			'number':'000111111113',
+			'description':'Transfer will fail with an account_closed code.',
+		},
+		'failInsufficientFunds':{
+			'number':'000222222227',
+			'description':'Transfer will fail with an insufficient_funds code.',
+		},
+		'failNotAuthorized':{
+			'number':'000333333335',
+			'description':'Transfer will fail with a not_authorized code.',
+		},
+		'failInvalidCurrency':{
+			'number':'000444444440',
+			'description':'Transfer will fail with an invalid_currency code.',
+		}
 	}
 };
