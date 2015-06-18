@@ -18,7 +18,7 @@
     </ion-header-bar>
     <ion-content>
       <ion-list>
-        <ion-item menu-close ng-click="login()">
+        <ion-item ng-hide="me" menu-close ng-click="login()">
           Login
         </ion-item>
         <ion-item menu-close href="" ui-sref="app.users-show">
@@ -26,6 +26,9 @@
         </ion-item>
         <ion-item menu-close href="" ui-sref="app.users-new">
           Register
+        </ion-item>
+        <ion-item ng-show="me" menu-close ng-controller="SignoutController" ng-click="signout()">
+          Logout
         </ion-item>
       </ion-list>
     </ion-content>
