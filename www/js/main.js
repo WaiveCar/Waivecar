@@ -47,7 +47,6 @@ angular.module('app', [
         templateUrl: 'templates/intro.html',
         data: {
           auth: {
-
           }
         }
       })
@@ -55,11 +54,6 @@ angular.module('app', [
         url: '/app',
         abstract: true,
         templateUrl: 'templates/menu.html',
-        data: {
-          auth: {
-
-          }
-        }
       })
       .state('app.users-new', {
         url: '/register',
@@ -70,7 +64,80 @@ angular.module('app', [
         },
         data: {
           auth: {
-
+          }
+        }
+      })
+      .state('app.vehicles', {
+        url: '/vehicles',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/vehicles/index.html'
+          }
+        },
+        data: {
+          auth: {
+          }
+        }
+      })
+      .state('app.vehicles-show', {
+        url: '/vehicles/:id',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/vehicles/show.html'
+          }
+        },
+        data: {
+          auth: {
+          }
+        }
+      })
+      .state('app.vehicles-edit', {
+        url: '/vehicles/:id/edit',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/vehicles/edit.html'
+          }
+        },
+        data: {
+          auth: {
+          }
+        }
+      })
+      .state('app.bookings-new', {
+        url: '/vehicles/:id/book',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/bookings/new.html'
+          }
+        },
+        data: {
+          auth: {
+          }
+        }
+      })
+      .state('app.bookings-edit', {
+        url: '/bookings/:id',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/bookings/edit.html'
+          }
+        },
+        data: {
+          auth: {
+            role: 'user'
+          }
+        }
+      })
+      .state('app.bookings-show', {
+        url: '/bookings/:id',
+        views: {
+          'menuContent': {
+            templateUrl: 'templates/bookings/show.html'
+          }
+        },
+        data: {
+          auth: {
+            role: 'user'
           }
         }
       })
