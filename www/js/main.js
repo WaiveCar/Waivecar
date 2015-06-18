@@ -11,8 +11,11 @@ angular.module('app', [
   'app.controllers',
   'app.services',
   'mgcrea.ngStrap',
+  'btford.socket-io',
+  'yaru22.jsonHuman',
   'app.modules.alert',
-  'app.modules.authentication'
+  'app.modules.authentication',
+  'app.modules.logging'
 ])
 
 .run([
@@ -41,18 +44,33 @@ angular.module('app', [
     $stateProvider
       .state('intro', {
         url: '/welcome',
-        templateUrl: 'templates/intro.html'
+        templateUrl: 'templates/intro.html',
+        data: {
+          auth: {
+
+          }
+        }
       })
       .state('app', {
         url: '/app',
         abstract: true,
-        templateUrl: 'templates/menu.html'
+        templateUrl: 'templates/menu.html',
+        data: {
+          auth: {
+
+          }
+        }
       })
       .state('app.users-new', {
         url: '/register',
         views: {
           'menuContent': {
             templateUrl: 'templates/users/new.html'
+          }
+        },
+        data: {
+          auth: {
+
           }
         }
       })
@@ -61,6 +79,11 @@ angular.module('app', [
         views: {
           'menuContent': {
             templateUrl: 'templates/users/show.html'
+          }
+        },
+        data: {
+          auth: {
+            role: 'admin'
           }
         }
       });
