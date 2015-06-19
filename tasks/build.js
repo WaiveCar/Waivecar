@@ -20,6 +20,7 @@ gulp.task('build:quickapp', function (done) {
   run(
     'clean:sass',
     [
+      'copy:common:js',
       'copy:common:templates',
       'sass',
       'config'

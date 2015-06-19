@@ -12,6 +12,7 @@
 // ### Dependencies
 
 var gulp     = require('gulp');
+var concat   = require('gulp-concat');
 var imagemin = require('gulp-imagemin');
 
 // ### Tasks
@@ -81,6 +82,17 @@ gulp.task('copy:templates', function () {
   return gulp
     .src('./app/templates/**')
     .pipe(gulp.dest('./dist/templates'));
+});
+
+/**
+ * Compiles and copies common-modules
+ * @task copy:common:js
+ */
+gulp.task('copy:common:js', function(done) {
+  return gulp
+    .src('./app/bower/common-modules/src/js/**/*.js')
+    .pipe(concat('common-modules.js'))
+    .pipe(gulp.dest('./app/js'));
 });
 
 /**
