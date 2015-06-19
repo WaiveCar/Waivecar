@@ -22,19 +22,20 @@ var gulpIf       = require('gulp-if');
  * @task sass
  */
 gulp.task('sass', function () {
-  return gulp.src([
-    'app/css/main.scss',
-  ], {
-    base: 'app'
-  })
-  .pipe(sourcemaps.init())
-  .pipe(sass({
-    onError: function(err) {
-      util.log('sass error', err);
-      util.beep();
-    }
-  }))
-  .pipe(sourcemaps.write())
-  .pipe(gulpIf('*.css', autoprefixer('last 2 version')))
-  .pipe(gulp.dest('app'));
+  return gulp
+    .src([
+      './app/css/main.scss',
+    ], {
+      base: './app'
+    })
+    .pipe(sourcemaps.init())
+    .pipe(sass({
+      onError: function(err) {
+        util.log('sass error', err);
+        util.beep();
+      }
+    }))
+    .pipe(sourcemaps.write())
+    .pipe(gulpIf('*.css', autoprefixer('last 2 version')))
+    .pipe(gulp.dest('./app'));
 });

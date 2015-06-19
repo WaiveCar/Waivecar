@@ -21,12 +21,13 @@ var imagemin = require('gulp-imagemin');
  * @task copy:img
  */
 gulp.task('copy:img', function () {
-  return gulp.src([
-    'app/img/**/*',
-    '!app/img/**/*.svg'
-  ])
-  .pipe(imagemin({ optimizationLevel: 3, progressive: true, interlaced: true }))
-  .pipe(gulp.dest('dist/img'));
+  return gulp
+    .src([
+      './app/img/**/*',
+      '!./app/img/**/*.svg'
+    ])
+    .pipe(imagemin({ optimizationLevel: 3, progressive: true, interlaced: true }))
+    .pipe(gulp.dest('./dist/img'));
 });
 
 /**
@@ -34,10 +35,12 @@ gulp.task('copy:img', function () {
  * @task copy:fonts
  */
 gulp.task('copy:fonts', function () {
-  return gulp.src([
-    'app/fonts/**.*',
-    'app/bower/font-awesome/fonts/**.*'
-  ]).pipe(gulp.dest('./dist/fonts'));
+  return gulp
+    .src([
+      './app/fonts/**.*',
+      './app/bower/font-awesome/fonts/**.*'
+    ])
+    .pipe(gulp.dest('./dist/fonts'));
 });
 
 /**
@@ -45,7 +48,9 @@ gulp.task('copy:fonts', function () {
  * @task copy:svg
  */
 gulp.task('copy:svg', function () {
-  return gulp.src('app/img/**/*.svg').pipe(gulp.dest('dist/img'));
+  return gulp
+    .src('./app/img/**/*.svg')
+    .pipe(gulp.dest('./dist/img'));
 });
 
 /**
@@ -53,7 +58,9 @@ gulp.task('copy:svg', function () {
  * @task copy:views
  */
 gulp.task('copy:views', function () {
-  return gulp.src('app/templates/**/*.html', { base: 'app' }).pipe(gulp.dest('dist'));
+  return gulp
+    .src('./app/templates/**/*.html', { base: './app' })
+    .pipe(gulp.dest('./dist'));
 });
 
 /**
@@ -61,15 +68,19 @@ gulp.task('copy:views', function () {
  * @task copy:bower
  */
 gulp.task('copy:bower', function () {
-  return gulp.src('app/bower/**').pipe(gulp.dest('dist/bower'));
+  return gulp
+    .src('./app/bower/**')
+    .pipe(gulp.dest('./dist/bower'));
 });
 
 /**
  * Copies all the ./app/templates to ./dist/templates
  * @task copy:template
  */
-gulp.task('copy:template', function () {
-  return gulp.src('app/templates/**').pipe(gulp.dest('dist/templates'));
+gulp.task('copy:templates', function () {
+  return gulp
+    .src('./app/templates/**')
+    .pipe(gulp.dest('./dist/templates'));
 });
 
 /**
@@ -77,5 +88,7 @@ gulp.task('copy:template', function () {
  * @task copy:templates
  */
 gulp.task('copy:common:templates', function() {
-  return gulp.src('app/bower/common-modules/src/templates/**/*.html').pipe(gulp.dest('app/templates'));
+  return gulp
+    .src('./app/bower/common-modules/src/templates/**/*.html')
+    .pipe(gulp.dest('./app/templates'));
 });

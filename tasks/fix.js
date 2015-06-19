@@ -15,7 +15,7 @@ var replace = require('gulp-replace');
 
 gulp.task('fix:css', function () {
   return gulp
-    .src('dist/css/main.min.css')
+    .src('./dist/css/main.min.css')
     .pipe(replace(/\.\.\/\.\.\//g, '../'))
     .pipe(gulp.dest('./dist/css'));
 });

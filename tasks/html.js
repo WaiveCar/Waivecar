@@ -21,7 +21,8 @@ var useref     = require('gulp-useref');
 gulp.task('html', function () {
   var assets = useref.assets();
 
-  return gulp.src('app/index.html')
+  return gulp
+    .src('./app/index.html')
     .pipe(assets)
     .pipe(gulpIf('*.js', ngAnnotate()))
     .pipe(gulpIf('*.js', uglify()))
@@ -29,5 +30,5 @@ gulp.task('html', function () {
     .pipe(gulpIf('*.html', minifyHtml( { conditionals: true, quotes: true })))
     .pipe(assets.restore())
     .pipe(useref())
-    .pipe(gulp.dest('dist'));
+    .pipe(gulp.dest('./dist'));
 });

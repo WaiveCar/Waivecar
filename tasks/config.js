@@ -25,8 +25,8 @@ gulp.task('config', function () {
   var data = JSON.stringify(config, null, '  ').split('\n').join('\n    ');
 
   return gulp
-    .src('app/js/services/config.js.tpl')
+    .src('./app/js/services/config.js.tpl')
     .pipe(template({ data: data }))
-    .pipe(rename('config.js'))
-    .pipe(gulp.dest('app/js/services'));
+    .pipe(rename('./config.js'))
+    .pipe(gulp.dest('./app/js/services'));
 });

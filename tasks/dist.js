@@ -18,7 +18,7 @@ var util    = require('gulp-util');
 gulp.task('dist', ['build:dist'], function (done) {
   var PORT = process.env.PORT || 3081;
   var BASE = process.env.BASE || '/';
-  var DIR = 'dist';
+  var DIR = './dist';
 
   express()
     .use(BASE, express.static(path.join(__dirname, '../', DIR), { etag: false }))

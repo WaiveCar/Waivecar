@@ -38,9 +38,10 @@ gulp.task('clean:deps', function (done) {
  * @task clean:dist
  */
 gulp.task('clean:dist', function () {
-  return gulp.src('dist').pipe(clean({
-    force : true
-  }));
+  return gulp
+    .src('./dist').pipe(clean({
+      force : true
+    }));
 });
 
 /**
@@ -48,10 +49,11 @@ gulp.task('clean:dist', function () {
  * @task clean:sass
  */
 gulp.task('clean:sass', function () {
-  return gulp.src([
-    'app/css/**/*.css*'
-  ])
-  .pipe(clean());
+  return gulp
+    .src([
+      './app/css/**/*.css*'
+    ])
+    .pipe(clean());
 });
 
 /**
@@ -59,12 +61,16 @@ gulp.task('clean:sass', function () {
  * @task clean:bower
  */
 gulp.task('clean:bower', function () {
-  return gulp.src('app/bower').pipe(clean());
+  return gulp
+    .src('./app/bower')
+    .pipe(clean());
 });
 
 /**
  * Remove the node_module folder from the project root
  */
 gulp.task('clean:npm', function () {
-  return gulp.src('node_modules').pipe(clean());
+  return gulp
+    .src('./node_modules')
+    .pipe(clean());
 });
