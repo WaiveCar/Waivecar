@@ -1,15 +1,15 @@
 <ion-view view-title="Welcome" ng-controller="IntroController">
-  <ion-nav-bar class="bar-stable">
+  <ion-nav-bar class="bar-dark">
     <ion-nav-buttons side="right">
-      <button class="button button-positive" ui-sref="app.users-new">Skip</button>
+      <button class="button button-clear" ui-sref="app.users-new">Skip</button>
     </ion-nav-buttons>
   </ion-nav-bar>
-  <ion-content>
+  <ion-content class="background-vehicle">
     <ion-slide-box does-continue="false" auto-play="false">
       <ion-slide>
-        <div class="box text-center">
-          <h2>Welcome to </h2>
-          <h1>WAIVECAR</h1>
+        <div class="box text-center light">
+          <h2 class="light">Welcome to </h2>
+          <h1 class="positive">WAIVECAR</h1>
           <br />
           <p class="lead">Premium electric cars with the rental fee waived.</p>
           <br />
@@ -17,22 +17,22 @@
         </div>
       </ion-slide>
       <ion-slide>
-        <div class="box text-center">
+        <div class="box text-center light">
           <p>Waivecar provides free electric cars o rent.</p>
           <p>Cars are free to rent for up to 2hours, then cost $15 an hour.</p>
         </div>
       </ion-slide>
       <ion-slide>
-        <div class="box text-center">
+        <div class="box text-center light">
           <p>You can reserve a car up to 15 minutes ahead of time.</p>
           <p>Return to any one thousand of locations.</p>
           <p>Under two hours? Totally free!</p>
         </div>
       </ion-slide>
       <ion-slide>
-        <div class="box text-center">
-          <h1>Let's get started</h1>
-          <button ui-sref="app.users-new">Rent a car</button>
+        <div class="box text-center light">
+          <h2 class="light">Let's get started</h1>
+          <button class="button button-positive" ui-sref="app.users-new">Rent a car</button>
         </div>
       </ion-slide>
       <ion-slide-pager></ion-slide-pager>

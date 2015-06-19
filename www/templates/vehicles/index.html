@@ -3,20 +3,20 @@
     <div class="row">
       <div class="col">
         <h1>Search</h1>
-        <div class="mapContainer" style="width: 100%; height: 300px;">
+        <div class="map-container">
           <map id="map" zoom="15" >
             <nearby-fleet></nearby-fleet>
             <device-location></device-location>
             <route-to-nearest-car></route-to-nearest-car>
             <div ng-controller="RouteTimeController as route">
-              <maps-info></maps-info>
+              <map-info></map-info>
             </div>
             <div ng-controller="RouteDurationController as duration">
-              <maps-info></maps-info>
+              <map-info></map-info>
             </div>
           </map>
         </div>
-        <a class="button" ui-sref="app.vehicles-show({ id: id })">Show Car</a>
+        <a class="button button-positive" ui-sref="app.vehicles-show({ id: id })">Show Car</a>
       </div>
     </div>
   </ion-content>

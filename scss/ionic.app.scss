@@ -4,16 +4,16 @@ in ionic's _variables.scss file.
 
 For example, you might change some of the default colors:
 
-$light:                           #fff !default;
-$stable:                          #f8f8f8 !default;
-$positive:                        #387ef5 !default;
+*/
+$light:                           #f2f7f3 !default;
+$stable:                          #f2f7f3 !default;
+$positive:                        #3da43f !default;
 $calm:                            #11c1f3 !default;
 $balanced:                        #33cd5f !default;
 $energized:                       #ffc900 !default;
 $assertive:                       #ef473a !default;
 $royal:                           #886aea !default;
-$dark:                            #444 !default;
-*/
+$dark:                            #3F4045 !default;
 
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;
@@ -21,19 +21,24 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 // Include all of Ionic
 @import "www/lib/ionic/scss/ionic";
 
-body, html, .pane {
-  // background-color: #2A2A2B;
-  // color: white;
-}
-h1, h2, h3, h4, h5, h6, p {
-  // color: white;
+
+.background-vehicle {
+  background-image: url('../img/mock.png');
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
+// body, html, .pane {
+//   background-color: #2A2A2B;
+//   color: white;
+// }
+// h1, h2, h3, h4, h5, h6, p {
+//   color: white;
+// }
 
-/* Empty. Add your own CSS if you like */
-.scroll {
-    height: 100%;
-}
+// .scroll {
+//   height: 100%;
+// }
 
 .gMapsInstance{
     width: 100%;
@@ -41,7 +46,11 @@ h1, h2, h3, h4, h5, h6, p {
     float:left;
 }
 
-.mapContainer { height: 100%;width:100%; }
+.map-container {
+  height: 400px;
+  width: 100%;
+  margin: 20px 0;
+}
 
 @-moz-keyframes pulsate {
     from {
