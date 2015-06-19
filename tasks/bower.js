@@ -1,20 +1,21 @@
 /*
  |--------------------------------------------------------------------------------
- | Gulpfile
+ | Bower
  |--------------------------------------------------------------------------------
  */
 
-'use strit';
+'use strict';
 
 // ### Dependencies
 
-var gulp = require('gulp');
+var gulp  = require('gulp');
+var bower = require('gulp-bower');
 
 // ### Tasks
-// Require all tasks defined in the ./tasks folder
 
-require('require-dir')('tasks');
-
-// ### Default
-
-gulp.task('default', ['build:dist']);
+gulp.task('bower', function() {
+  return bower({
+    force     : true,
+    directory : './app/bower'
+  });
+});
