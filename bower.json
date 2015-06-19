@@ -4,11 +4,12 @@
   "devDependencies": {
     "angular-json-human": "~1.2.1",
     "common-modules": "~0.1.4",
-    "ionic": "driftyco/ionic-bower#1.0.0"
+    "ionic": "driftyco/ionic-bower#1.0.0",
+    "ngCordova": "~0.1.17-alpha"
   },
   "resolutions": {
     "angular": "~1.4.0",
     "angular-ui-router": "~0.2.15",
     "lodash": "~3.9.3"
-  },
+  }
 }
