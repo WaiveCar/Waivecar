@@ -2,7 +2,8 @@ angular.module('app.modules.mapping.services').service('$mapRoute', [
   '$rootScope',
   '$q',
   'mappingLoader',
-  function ($rootScope, $q, mappingLoader) {
+  'EVENTS',
+  function ($rootScope, $q, mappingLoader, EVENTS) {
     'use strict';
 
     var svc = {
@@ -27,8 +28,8 @@ angular.module('app.modules.mapping.services').service('$mapRoute', [
                 totalDistance += leg.distance.value; //Depends on routes option in meter usualy but can be on Imperial
               });
 
-              $rootScope.$broadcast(ROUTE_DURATION_CHANGED_EVENT, totalTime);
-              $rootScope.$broadcast(ROUTE_DISTANCE_CHANGED_EVENT, totalDistance);
+              $rootScope.$broadcast(EVENTS.ROUTE_DURATION_CHANGED_EVENT, totalTime);
+              $rootScope.$broadcast(EVENTS.ROUTE_DISTANCE_CHANGED_EVENT, totalDistance);
               defered.resolve(result);
             }
           });

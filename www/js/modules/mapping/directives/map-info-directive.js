@@ -15,7 +15,7 @@ angular.module('app.modules.mapping.directives').directive('mapInfo', [
     return {
       restrict:'E',
       require:'^map',
-      templateUrl:'templates/gMapsInfoContainer.html',
+      templateUrl:'templates/mapping/map-info.html',
       link:link
     }
   }

@@ -18,15 +18,13 @@ angular.module('app.modules.mapping.directives').directive('deviceLocation', [
         $mapLocation.getLocation().then(function(deviceLocation) {
           ctrl.mapInstance.then(function(mapInstance){
             var latLng = new gMaps.LatLng(deviceLocation.latitude, deviceLocation.longitude);
-            scope.marker=new gMaps.Marker({
+            scope.marker = new gMaps.Marker({
               map: mapInstance,
               position: latLng,
               title: 'pulsing',
               draggable: true,
               icon: image
             });
-
-            console.log(scope.marker);
 
             gMaps.event.addListener(scope.marker, 'click', function() {
               mapInstance.setCenter({ lat: deviceLocation.latitude, lng: deviceLocation.longitude });

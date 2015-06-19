@@ -24,7 +24,7 @@ angular.module('app.modules.mapping.directives').directive('map', [
       scope: {
         zoom: '@'
       },
-      templateUrl: 'templates/map.html',
+      templateUrl: 'templates/mapping/map.html',
       link: link,
       transclude: true,
       controller: 'MapController'

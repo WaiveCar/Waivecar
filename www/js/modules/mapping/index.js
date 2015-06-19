@@ -6,7 +6,10 @@ angular.module('app.modules.mapping', [
   'app.modules.mapping.controllers',
   'app.modules.mapping.directives',
   'app.modules.mapping.services'
-]).config([
+]).constant('EVENTS', {
+  'ROUTE_DURATION_CHANGED_EVENT': 'waiveCarRouteDurationChanged',
+  'ROUTE_DISTANCE_CHANGED_EVENT': 'waiveCarRouteDistanceChanged'
+}).config([
   function() {
     'use strict';
   }
