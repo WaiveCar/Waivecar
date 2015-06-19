@@ -22,7 +22,7 @@ if [ "${TRAVIS}" == "true" ]; then
     echo "Doing nothing"
     npm run-script test-travis
     echo "Sending report to Clever Coverage...."
-    TRAVIS_PULL_REQUEST=${TRAVIS_PULL_REQUEST} TRAVIS_REPO_SLUG=${TRAVIS_REPO_SLUG} TRAVIS_COMMIT=${TRAVIS_COMMIT} deployment/build/scripts/coverage
+    deployment/build/scripts/coverage
 else
     npm test
 fi

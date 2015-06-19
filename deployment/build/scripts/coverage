@@ -2,24 +2,26 @@
 # Exit status = 0 if success, non-zero if error
 # coverage packer v2.4.2
 
-# TRAVIS_PULL_REQUEST=${TRAVIS_PULL_REQUEST} TRAVIS_REPO_SLUG=${TRAVIS_REPO_SLUG} TRAVIS_COMMIT=${TRAVIS_COMMIT} coverage
-
 IFS=$'\n'
 
-set -f
-rm -rf coverage.tar
-tar cvf coverage.tar coverage/
-CONTENT=$`echo -e | base64 coverage.tar`
+rm -f coverage.tar
+
+cd coverage
+tar cvf ../coverage.tar *
+cd ..
+FILE=$`echo -e | base64 coverage.tar`
 
 JSONSTRING="{
+  \"token\": \"${COVERAGE_TOKEN}\",
   \"pull_request\": \"${TRAVIS_PULL_REQUEST}\",
   \"repo\": \"${TRAVIS_REPO_SLUG}\",
+  \"branch\": \"${TRAVIS_BRANCH}\",
   \"commit\": \"${TRAVIS_COMMIT}\",
-  \"lcov\": \"${CONTENT}\" }"
+  \"file\": \"${FILE}\" }"
 
 # create temporary file
-echo -e json=${JSONSTRING} > coverage.json
+echo -e ${JSONSTRING} > coverage.json
 
-curl -X POST -d "@coverage.json" https://coverage.clevertech.biz/api/jobs
-rm -rf coverage.json
-rm -rf coverage.tar
+curl -X POST -H "Content-Type: application/json"  -d "@coverage.json" https://devops.clevertech.biz/api/coverage/report
+rm coverage.json
+rm coverage.tar

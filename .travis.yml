@@ -15,6 +15,7 @@ env:
   - BRANCHING_MODEL=API_APP
   - PACKAGE_NAME=waivecar
   - REMOTE_USER=travis
+  - COVERAGE_TOKEN=Prejal3413sfJsad43jadasd431
   - INIT_SCRIPT=/etc/init.d/node-${PACKAGE_NAME}
   - STRICT_VERSION_CHECK=false
   - REMOTE_DIR_WEB=/opt/${PACKAGE_NAME}-web
@@ -29,7 +30,7 @@ services:
 - redis-server
 before_install:
 - curl 'http://cistats.clevertech.biz/logstat/?&project=Waivecar&type=3'
-- TRAVIS_PULL_REQUEST=${TRAVIS_PULL_REQUEST} TRAVIS_REPO_SLUG=${TRAVIS_REPO_SLUG} TRAVIS_COMMIT=${TRAVIS_COMMIT} deployment/build/scripts/trigger_coverage
+- deployment/build/scripts/trigger_coverage
 - openssl aes-256-cbc -K $encrypted_e155dc6b3053_key -iv $encrypted_e155dc6b3053_iv
   -in deployment/build/ssh/id_rsa.enc -out deployment/build/ssh/id_rsa -d
 - chmod 400 deployment/build/ssh/id_rsa

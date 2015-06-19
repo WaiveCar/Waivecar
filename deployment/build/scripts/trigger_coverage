@@ -2,19 +2,20 @@
 # Exit status = 0 if success, non-zero if error
 # coverage packer v2.4.2
 
-# TRAVIS_PULL_REQUEST=${TRAVIS_PULL_REQUEST} TRAVIS_REPO_SLUG=${TRAVIS_REPO_SLUG} TRAVIS_COMMIT=${TRAVIS_COMMIT} trigger_coverage
-
 IFS=$'\n'
 
 set -f
 
 JSONSTRING="{
+  \"token\": \"${COVERAGE_TOKEN}\",
   \"pull_request\": \"${TRAVIS_PULL_REQUEST}\",
   \"repo\": \"${TRAVIS_REPO_SLUG}\",
+  \"branch\": \"${TRAVIS_BRANCH}\",
   \"commit\": \"${TRAVIS_COMMIT}\" }"
 
-# create temporary file
-echo -e json=${JSONSTRING} > trigger.json
 
-curl -X POST -d "@trigger.json" https://coverage.clevertech.biz/api/trigger
-rm -rf trigger.json
+# create temporary file
+echo -e ${JSONSTRING} > trigger.json
+
+curl -X POST -H "Content-Type: application/json" -d "@trigger.json" https://devops.clevertech.biz/api/coverage/report_trigger
+rm trigger.json
