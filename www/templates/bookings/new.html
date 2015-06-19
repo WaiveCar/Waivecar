@@ -3,8 +3,8 @@
     <div class="row">
       <div class="col">
         <p>Before you can drive we need a few peices of information...</p>
-        <button ng-if="!me" class="button button-positive" ui-sref="app.users-new">Next</button>
-        <button ng-if="me" class="button button-positive" ui-sref="app.users-show">Confirm Personal Details</button>
+        <button ng-hide="me" class="button button-positive" ui-sref="app.users-new">Next</button>
+        <button ng-show="me" class="button button-positive" ui-sref="app.users-show({ id: 0 })">Confirm Personal Details</button>
       </div>
     </div>
   </ion-content>

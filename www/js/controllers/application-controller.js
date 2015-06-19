@@ -4,12 +4,23 @@ angular.module('app.controllers').controller('ApplicationController', [
   '$ionicModal',
   '$auth',
   '$account',
-  function ($rootScope, $scope, $ionicModal, $auth, $account) {
+  '$data',
+  function ($rootScope, $scope, $ionicModal, $auth, $account, $data) {
     'use strict';
 
     $rootScope.$watch(function() { return $account.me; }, function() {
       if (!(angular.equals($account.me, $rootScope.me))) {
         $rootScope.me = $account.me;
+        async.parallel([
+          function(completeTask) {
+            $data.init('users', completeTask);
+          },
+          function(completeTask) {
+            $data.init('vehicles', completeTask);
+          }
+        ], function(err) {
+          if (err) alert(err);
+        });
       }
     }, true);
 

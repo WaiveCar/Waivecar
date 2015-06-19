@@ -1,12 +1,39 @@
 <ion-view view-title="Car Make and Model" ng-controller="VehicleController">
-  <ion-content class="text-center">
+  <ion-content>
     <div class="row">
-      <div class="col">
+      <div class="col text-center">
         <p>Car Image</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col text-center">
+        <ul>
+          <li>Year: {{ active.vehicle.year }}</li>
+          <li>Make: {{ active.vehicle.make }}</li>
+          <li>Model: {{ active.vehicle.model }}</li>
+        </ul>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col text-center">
         <p>Car Description</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col text-center">
         <p>Current Charge</p>
+      </div>
+      <div class="col text-center">
         <p>Current Range</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col text-center">
         <p>Current Location</p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col text-center">
         <button class="button" ui-sref="app.bookings-new({ id: active.vehicle.id })">Reserve this Car</button>
       </div>
     </div>
