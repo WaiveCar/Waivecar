@@ -1,5 +1,3 @@
-'use strict';
-
 angular.module('app.controllers', []);
 angular.module('app.directives', []);
 angular.module('app.filters', []);
@@ -8,21 +6,27 @@ angular.module('app.services', []);
 
 angular.module('app', [
   'ionic',
-  'app.controllers',
-  'app.services',
+  'ngCordova',
   'mgcrea.ngStrap',
   'btford.socket-io',
   'yaru22.jsonHuman',
   'app.modules.alert',
   'app.modules.authentication',
-  'app.modules.logging'
+  'app.modules.logging',
+  'app.modules.mapping',
+  'app.controllers',
+  'app.directives',
+  'app.filters',
+  'app.providers',
+  'app.services'
 ])
-
 .run([
   '$ionicPlatform',
   '$http',
   '$config',
   function($ionicPlatform, $http, $config) {
+    'use strict';
+
     $ionicPlatform.ready(function() {
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
       // for form inputs)
@@ -41,6 +45,8 @@ angular.module('app', [
   '$stateProvider',
   '$urlRouterProvider',
   function($stateProvider, $urlRouterProvider) {
+    'use strict';
+
     $stateProvider
       .state('intro', {
         url: '/welcome',

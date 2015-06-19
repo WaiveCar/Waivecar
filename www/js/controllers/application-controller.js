@@ -5,6 +5,8 @@ angular.module('app.controllers').controller('ApplicationController', [
   '$auth',
   '$account',
   function ($rootScope, $scope, $ionicModal, $auth, $account) {
+    'use strict';
+
     $rootScope.$watch(function() { return $account.me; }, function() {
       if (!(angular.equals($account.me, $rootScope.me))) {
         $rootScope.me = $account.me;

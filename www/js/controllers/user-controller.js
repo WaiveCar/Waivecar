@@ -5,6 +5,7 @@ angular.module('app.controllers').controller('UserController', [
   '$account',
   '$data',
   function($rootScope, $scope, $state, $account, $data) {
+    'use strict';
 
     $scope.data = $data.data;
     $scope.active = $data.active;
