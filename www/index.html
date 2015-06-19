@@ -59,11 +59,29 @@
     <script src="lib/common-modules/src/js/modals/index.js"></script>
     <script src="lib/common-modules/src/js/modals/services/pop-service.js"></script>
 
+
+    <script src="js/modules/mapping/index.js"></script>
+    <script src="js/modules/mapping/services/fleet-service.js"></script>
+    <script src="js/modules/mapping/services/map-location-service.js"></script>
+    <script src="js/modules/mapping/services/map-route-service.js"></script>
+    <script src="js/modules/mapping/controllers/map-controller.js"></script>
+    <script src="js/modules/mapping/controllers/route-duration-controller.js"></script>
+    <script src="js/modules/mapping/controllers/route-time-controller.js"></script>
+    <script src="js/modules/mapping/directives/device-location-directive.js"></script>
+    <script src="js/modules/mapping/directives/map-directive.js"></script>
+    <script src="js/modules/mapping/directives/map-info-directive.js"></script>
+    <script src="js/modules/mapping/directives/nearby-fleet-directive.js"></script>
+    <script src="js/modules/mapping/directives/route-to-nearest-vehicle-directive.js"></script>
+
     <!-- cordova script (this will be a 404 during development) -->
     <script src="cordova.js"></script>
 
     <!-- your app's js -->
     <script src="js/main.js"></script>
+
+
+    <script src="js/services/config.js"></script>
+
     <script src="js/controllers/application-controller.js"></script>
     <script src="js/controllers/booking-controller.js"></script>
     <script src="js/controllers/bookings-controller.js"></script>
@@ -73,9 +91,7 @@
     <script src="js/controllers/vehicle-controller.js"></script>
     <script src="js/controllers/vehicles-controller.js"></script>
 
-    <script src="js/services/config.js"></script>
   </head>
-
   <body ng-app="app">
     <ion-nav-view></ion-nav-view>
   </body>
