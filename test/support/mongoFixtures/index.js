@@ -48,12 +48,7 @@ exports = module.exports = function(config) {
           var filterNames=[];
           collections.forEach(function(c){
             filterNames.push(
-                {
-                  $and: [
-                      {name: c}, 
-                      {name:/^((?!\$).)*$/}
-                    ]
-                }
+               {name: c}
             );
           });
             
