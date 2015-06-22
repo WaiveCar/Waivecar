@@ -4,12 +4,18 @@ var chai = require('chai');
 var expect = chai.expect;
 var basePath = process.cwd();
 var assert=chai.assert;
+var request = require('supertest');
 
-// IoC.loader(IoC.node(path.join(basePath, 'boot')));
 IoC.loader('igloo', require('igloo'));
 IoC.loader('services', IoC.node(path.join(basePath, 'app', 'services')));
+IoC.loader(IoC.node(path.join(basePath, 'boot')));
+IoC.loader('support',IoC.node(path.join(basePath, 'test','support')));
+
 var fixtures=require(path.join(basePath,'test','fixtures','stripe.js'));
+var stripeEventsFixture={stripeEvents:require(path.join(basePath,'test','fixtures','dataBase','stripeEvents'))};
+
 var paymentService = IoC.create('services/payment-service');
+var mongoFixtures= IoC.create('support/mongoFixtures');
 
 function createCustomer(cardNumber,cb){
     var date=new Date();
@@ -40,7 +46,7 @@ describe('payment-service',function(){
     });
     describe('Customer',function(){
         it('Creates a customer',function(done){
-            this.timeout(0);
+            this.timeout(5000);
             var cardNumber=fixtures.cards.successfull.Visa.number;
             var date=new Date();
             var cardData={
@@ -58,14 +64,19 @@ describe('payment-service',function(){
             }
             var description='description';
             var email='email@email.com';
-            paymentService.createCustomer(description,email,cardData,function(err,data){
+           var customerData = {
+                description: description,
+                email: email,
+                card: cardData
+            };
+            paymentService.createCustomer(customerData,function(err,data){
                 expect(err).to.not.exist;
                 expect(data.id).to.exist;
                 done();
             });
         });
-        it.only('Updates a customer',function(done){
-                this.timeout(0);
+        it('Updates a customer',function(done){
+                this.timeout(5000);
                 createCustomer(fixtures.cards.successfull.Visa.number,function(err,data){
                     expect(err).to.not.exist;
                     var customerId=data.id;
@@ -82,7 +93,7 @@ describe('payment-service',function(){
         var customer;
         var customerThatFails;
         before(function(done){
-             this.timeout(0);
+             this.timeout(5000);
             createCustomer(fixtures.cards.successfull.Visa.number,function(err,data){
                 if (err) {
                     done(err);
@@ -98,7 +109,7 @@ describe('payment-service',function(){
             })
         });
         it('Authorizes a payment',function(done){
-            this.timeout(0);
+            this.timeout(5000);
             var description='Test authorize ';
             paymentService.authorizePayment(1000,customer.id,description,function(err,data){
               expect(err).to.not.exist;
@@ -107,7 +118,7 @@ describe('payment-service',function(){
             });
         });
         it('Captures a previously authorized payment',function(done){
-            this.timeout(0);
+            this.timeout(5000);
             var description='Test authorize and capture';
             var amount=1000;
             paymentService.authorizePayment(1000,customer.id,description,function(err,data){
@@ -119,7 +130,7 @@ describe('payment-service',function(){
             });
         });
         it('Fails to capture a incorrect card',function(done){
-            this.timeout(0);
+            this.timeout(5000);
             var description='Test authorize and capture';
             var amount=1000;
             paymentService.authorizePayment(1000,customerThatFails.id,description,function(err,data){
@@ -130,7 +141,7 @@ describe('payment-service',function(){
     });
     describe('Balance',function(){
         it("Retrive balance",function(done){
-            this.timeout(0);
+            this.timeout(5000);
             paymentService.retrieveBalance(function(err,data){
                 expect(err).to.not.exist;
                 done();
@@ -138,8 +149,8 @@ describe('payment-service',function(){
         })
     });
     describe('Cards',function(){
-        it.only('Deletes a user card',function(done){
-            this.timeout(0);
+        it('Deletes a user card',function(done){
+            this.timeout(5000);
             createCustomer(fixtures.cards.successfull.Visa.number,function(err,data){
                     expect(err).to.not.exist;
                     var cardId=data.sources.data[0].id;
@@ -149,6 +160,45 @@ describe('payment-service',function(){
                         done();
                     })
             });
+        });
+    });
+    describe('WebHooks',function(){
+        var app;
+        var agent;
+        before(function(done){
+            this.timeout(5000);
+            mongoFixtures.connect(done);
+        })
+        beforeEach(function(done){
+            this.timeout(5000);
+            mongoFixtures.clearAndLoad(stripeEventsFixture,function(err){
+                if(err){
+                    done(err);
+                    return;
+                }
+                app = require(path.join(basePath, 'app'));
+                agent = request.agent(app);
+                done();
+            });
+        });
+        it('Calls a webHook on the url',function(done){
+            this.timeout(5000);
+             var eventData={'foo':'bar'};
+             agent.post('/v1/paymentWebHooks/')
+                .set('Accept', 'application/json')
+                .send(eventData)
+                .expect(200)
+                .end(function(err,data){
+                    if(err){
+                        done(err);
+                        return;
+                    }
+                    expect(data.body.id).to.exist;
+                    done();
+                });
+        });
+        after(function(done){
+            mongoFixtures.close(done);
         });
     });
 });

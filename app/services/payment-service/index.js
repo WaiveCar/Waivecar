@@ -6,7 +6,7 @@ exports = module.exports = function(config, logger) {
 
           stripe.charges.create({
             amount: amount,
-            currency: "usd",
+            currency: 'usd',
             capture:false,
             customer:customerId,
             // source: "ANY_TOKEN!", // obtained with Stripe.js
@@ -39,9 +39,7 @@ exports = module.exports = function(config, logger) {
     deleteCard:function(customerId,cardId,next){
       stripe.customers.deleteCard(customerId, cardId,next);
     }
-
-
-  }
+  };
     // NB. tokens are issued client side, this method should only be used by server tests.
     // generateToken: function(model, next) {
     //   return stripe.tokens.create(model, next);
