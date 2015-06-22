@@ -63,6 +63,7 @@ exports = module.exports = function(config) {
           else{
             filterNames=filterNames[0];
           }
+          console.log(JSON.stringify(filterNames));
           db.listCollections(filterNames).toArray(function(err,data){
             var asyncFunctions=[];
             console.log("Result of list collections");
