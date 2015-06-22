@@ -184,7 +184,7 @@ describe('payment-service',function(){
         it('Calls a webHook on the url',function(done){
             this.timeout(5000);
              var eventData={'foo':'bar'};
-             agent.post('/v1/paymentWebHooks/')
+             agent.post('/v1/paymentWebHooks//')
                 .set('Accept', 'application/json')
                 .send(eventData)
                 .expect(200)

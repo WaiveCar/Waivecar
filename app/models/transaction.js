@@ -2,7 +2,7 @@ exports = module.exports = function(EnumService, mongoose, mongoosePlugin) {
 
   var Model = new mongoose.Schema({
 
-    type: { type: String, lowercase: true, trim: true, enum: _.pluck(OptionsService.getTransactionTypes(), 'title'), default: 'rental' },
+    type: { type: String, lowercase: true, trim: true, enum: _.pluck(EnumService.getTransactionTypes(), 'title'), default: 'rental' },
 
     amount: { type: Number, default: 100 },
 
