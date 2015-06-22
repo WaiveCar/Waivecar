@@ -184,6 +184,11 @@ exports = module.exports = function() {
         key: '',
         secret: ''
       },
+      stripe: {
+        // Test Keys for matt.ginty@clevertech.biz | gUiEm96C
+        secretKey: 'sk_test_HgvD2NV6Okva9KpRgDYxNWkR',
+        publishKey: 'pk_test_olwmNxeFPL77Rmq0t7Fq3plL'
+      },
       twilio: {
         sid: 'AC5bdaac9e2ad39755f9565c7e9d75dab4',
         token: '6134bfa803b73155fe0cf13b506798ee',
