@@ -170,7 +170,7 @@ describe('payment-service',function(){
             mongoFixtures.connect(done);
         })
         beforeEach(function(done){
-            this.timeout(5000);
+            this.timeout(8000);
             mongoFixtures.clearAndLoad(stripeEventsFixture,function(err){
                 if(err){
                     done(err);
@@ -178,10 +178,10 @@ describe('payment-service',function(){
                 }
                 app = require(path.join(basePath, 'app'));
                 agent = request.agent(app);
-                done();
+                setTimeout(done, 5000);
             });
         });
-        it.only('Calls a webHook on the url',function(done){
+        it('Calls a webHook on the url',function(done){
             this.timeout(5000);
              var eventData={'foo':'bar'};
              agent.post('/v1/paymentWebHooks//')
