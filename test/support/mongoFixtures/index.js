@@ -65,10 +65,16 @@ exports = module.exports = function(config) {
           }
           db.listCollections(filterNames).toArray(function(err,data){
             var asyncFunctions=[];
+            console.log("Result of list collections");
+            console.log(data);
             data.forEach(function(d){
               var collection=db.collection(d.name);
               asyncFunctions.push(function(asyncCb){
-                collection.drop(asyncCb);
+                collection.drop(function(err,data){
+                  console.log("Result of drop");
+                  console.log(err);
+                  asyncCb(err);
+                });
               });
 
             });

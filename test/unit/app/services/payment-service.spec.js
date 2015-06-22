@@ -181,7 +181,7 @@ describe('payment-service',function(){
                 done();
             });
         });
-        it('Calls a webHook on the url',function(done){
+        it.only('Calls a webHook on the url',function(done){
             this.timeout(5000);
              var eventData={'foo':'bar'};
              agent.post('/v1/paymentWebHooks//')
