@@ -15,7 +15,7 @@ describe('smoke tests for API', function() {
   });
 
   describe('api url', function() {
-    request = request(app);
+    
     it('should return a 401 response', function(done) {
       agent
         .get('/v1/users')

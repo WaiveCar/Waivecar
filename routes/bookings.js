@@ -3,7 +3,6 @@ var Blueprint = require(path.join(process.env.PWD, 'lib', 'route-blueprint'));
 var express = require('express');
 
 exports = module.exports = function(container, controller, logger) {
-
   var options = {
     app: this,
     container: container,

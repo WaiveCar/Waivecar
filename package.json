@@ -96,6 +96,7 @@
     "istanbul": "^0.3.2",
     "jshint-stylish": "^0.2.0",
     "mocha": "^1.21.4",
+    "mongodb":"^2.0.34",
     "run-sequence": "^0.3.6",
     "sinon": "^1.10.2",
     "sinon-chai": "^2.5.0",
