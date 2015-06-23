@@ -239,6 +239,12 @@ exports = module.exports = function() {
           database: 'igloo_development'
         }
       },
+      facebook: {
+        enabled: true,
+        appID: '1022708504415468',
+        appSecret: '1112617da837aa59b2f096ca9e813dd3',
+        scope: [ 'email' ]
+      },
       redis: {
         prefix: 'igloo-development'
       }
@@ -275,6 +281,12 @@ exports = module.exports = function() {
           password: '',
           database: 'igloo_production'
         }
+      },
+      facebook: {
+        enabled: true,
+        appID: '1022704731082512',
+        appSecret: '168ccd9302b080acb2c5221873a8c066',
+        scope: [ 'email' ]
       },
       redis: {
         prefix: 'igloo_production'
