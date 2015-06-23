@@ -6,10 +6,8 @@ var express = require('express');
 exports = module.exports = function(container,controller,logger) {
   var app = this;
   var router = express.Router();
-  router.post(
-    '/',
-    controller.index
-  );
+  router.post('/create',controller.create);
+  router.get('/',controller.index);
   app.use(
     '/v1/paymentWebHooks',
     router

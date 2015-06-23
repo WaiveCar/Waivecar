@@ -1,7 +1,7 @@
 var paginate = require('express-paginate');
 
 exports = module.exports = function(model,config) {
-  function index(req, res, next) {
+  function create(req, res, next) {
     var data=req.body;
     if(typeof data !== 'string'){
         data=JSON.stringify(data);
@@ -14,9 +14,21 @@ exports = module.exports = function(model,config) {
             res.json(model);
         }
      });
-    }
+    };
+    function index(req,res,next){
+        var readCb=function(err,pageCount,models,itemCount){
+            console.log(err);
+            console.log(models);
+            console.log(itemCount);
+            console.log(pageCount);
+            res.json(models);
+        }
+        var sort = '-updatedAt';
+        model.paginate({},0,0,readCb,{ sortBy : sort });
+    };
     return {
-        index: index,
+        create: create,
+        index:index
     };
 };
 
