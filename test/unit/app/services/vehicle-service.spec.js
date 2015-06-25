@@ -39,8 +39,7 @@ describe('vehicle-service',function(){
             vehicleService.listVehicles(function(err,response){
                 expect(err).to.not.exist;
                 expect(response).to.exist;
-                expect(response.vehicles).to.exist;
-                expect(response.vehicles.size).to.be.above(0);
+                expect(response.length).to.be.above(0);
                 done();
             });
 

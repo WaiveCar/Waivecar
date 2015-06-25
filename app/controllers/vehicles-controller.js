@@ -12,64 +12,59 @@ exports = module.exports = function(Model, VehicleService, Setting, config) {
       modelName: 'vehicle'
     },
 
-    index: function(req, res, next) {
-      VehicleService.listVehicles(function(err, data) {
-        if (err) return next(err);
-
-        _.each(data.vehicles.vehicle, function(v) {
-          v.id = v.vin;
-        });
-
-        return res.format({
-          json: function() {
-            res.json({
-              object: 'list',
-              has_more: false,
-              pageCount: 1,
-              itemCount: parseInt(data.vehicles.size),
-              data: data.vehicles.vehicle
-            });
-          }
-        });
-      });
-    },
-
     show: function(req, res, next) {
       var model = {};
-      async.parallel([
-        function(completeTask) {
-          VehicleService.getVehicleInfo(req.params.id, function(err, data) {
-            _.extend(model, data.vehicle);
-            model.id = model.vin;
-            return completeTask(err);
-          });
-        },
-        function(completeTask) {
-          VehicleService.getVehicleDiagnostics(req.params.id, function(err, data) {
-            model.diagnostics = data;
-            return completeTask(err);
-          });
-        },
-        // 403 error!?
-        // function(completeTask) {
-        //   VehicleService.getVehicleLocation(req.params.id, function(err, data) {
-        //     model.location = data;
-        //     return completeTask(err);
-        //   });
-        // },
-        function(completeTask) {
-          VehicleService.getVehicleCapabilities(req.params.id, function(err, data) {
-            if (data && data.vehicleCapabilities) model.capabilities = data.vehicleCapabilities;
-            return completeTask(err);
+      Model.findById(req.params.id, function(err, model) {
+        if (err) return next(err);
+        if (!model) return next(new Error('Vehicle could not be found for ' + req.params.id));
+
+        //TODO: HACK TO NOT CALL GM API EVERY TIME. IMPLEMENT CACHING EXPIRATION TO KNOW WHEN TO REFRESH.
+        if (model.diagnostics && model.capabilities && model.location) {
+          return res.format({
+            json: function() {
+              res.json(model);
+            }
           });
         }
-      ], function(err) {
-        if (err) return next(err);
 
-        return res.format({
-          json: function() {
-            res.json(model);
+        async.parallel([
+          function(completeTask) {
+            VehicleService.getVehicleInfo(model.vin, function(err, data) {
+              _.extend(model, data.vehicle);
+              return completeTask(err);
+            });
+          },
+          function(completeTask) {
+            VehicleService.getVehicleDiagnostics(model.vin, function(err, data) {
+              model.diagnostics = data;
+              return completeTask(err);
+            });
+          },
+          // 403 error!?
+          function(completeTask) {
+            VehicleService.getVehicleLocation(model.vin, function(err, data) {
+              console.log(err);
+              console.log(data);
+              model.location = data;
+              return completeTask(err);
+            });
+          },
+          function(completeTask) {
+            VehicleService.getVehicleCapabilities(model.vin, function(err, data) {
+              if (data && data.vehicleCapabilities) model.capabilities = data.vehicleCapabilities;
+              return completeTask(err);
+            });
           }
+        ], function(err) {
+          if (err) return next(err);
+          model.save(function(dbErr) {
+            if (dbErr) return next(dbErr);
+            return res.format({
+              json: function() {
+                res.json(model);
+              }
+            });
+          });
         });
       });
     },
