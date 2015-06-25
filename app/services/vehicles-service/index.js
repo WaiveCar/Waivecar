@@ -198,31 +198,41 @@ VehicleService.prototype.startEngine = function(vin,cb) {
     });
 };
 VehicleService.prototype.listVehicles = function(cb) {
-    var self=this;
-    async.auto({
-        connect:function(asyncCb){
-            self.connect(asyncCb);
-        },
-        list:['connect',function(asyncCb,result){
-            var bearerToken=result.connect;
-            var path='account/vehicles';
-            var options={
-                'headers':{
-                    'Authorization':'Bearer '+bearerToken
-                }
-            };
-            self.makeRequest(path,options,asyncCb);
-        }]
+  var self = this;
+  async.auto({
+    connect: function(asyncCb) {
+      self.connect(asyncCb);
     },
-    function(err,result){
-        if(err){
-            cb(err);
-            return;
-        }
-        var data= JSON.parse(result.list.body);
-        cb(null,data);
-    });
+    list: [
+      'connect',
+      function(asyncCb, result) {
+        var bearerToken = result.connect;
+        var path = 'account/vehicles';
+        var options = {
+          'headers': {
+            'Authorization': 'Bearer ' + bearerToken
+          }
+        };
+
+        self.makeRequest(path, options, asyncCb);
+      }
+    ]
+  }, function(err, result) {
+    if (err) return cb(err);
+
+    var data = JSON.parse(result.list.body);
+
+    //TODO: current location?
+
+    if (data.vehicles && data.vehicles.vehicle) {
+      self._logger.info('updating %s vehicles', data.vehicles.vehicle.length);
+      return cb(null, data.vehicles.vehicle);
+    }
+
+    return cb(null,data);
+  });
 };
+
 VehicleService.prototype.getVehicleDiagnostics = function(vin,cb,diagnostItems) {
     if(!diagnostItems){
        diagnostItems= [
@@ -252,6 +262,13 @@ VehicleService.prototype.getVehicleDiagnostics = function(vin,cb,diagnostItems) 
       var ret = {};
       response.forEach(function(d) {
         var key = S(d.name.toLowerCase()).camelize().s;
+
+        //TODO: this falls over sometimes, investigate.
+        if (!d[elementName]) {
+          console.log(d);
+          console.log(elementName);
+          return;
+        }
 
         if (d[elementName].length === 1) {
           delete d[elementName][0].name;
@@ -300,32 +317,36 @@ VehicleService.prototype.getVehicleDiagnostics = function(vin,cb,diagnostItems) 
     }
     );
 };
-VehicleService.prototype.getVehicleLocation = function(vin,cb) {
-    var self= this;
-    async.auto({
-        'connect':function(asyncCb){
-            self.connect(asyncCb);
-        },
-        'request':['connect',function (asyncCb,result) {
-            var bearerToken= result.connect;
-            var path= 'account/vehicles/'+vin+'/commands/location';
-            var options={
-                'headers':{
-                    'Authorization':'Bearer '+bearerToken
-                },
-                method:'POST',
-            };
-            return self.makeAsyncRequest(path,options,asyncCb);
-        }]
+
+VehicleService.prototype.getVehicleLocation = function(vin, cb) {
+  var self= this;
+  async.auto({
+    'connect': function(asyncCb) {
+      self.connect(asyncCb);
     },
-    function(err,result){
-        if(err){
-            cb(err);
-            return;
-        }
-        cb(null,result.response);
-    });
+    'request': [
+      'connect',
+      function (asyncCb, result) {
+        var bearerToken = result.connect;
+        var path = 'account/vehicles/' + vin + '/commands/location';
+        var options = {
+          'headers': {
+            'Authorization': 'Bearer ' + bearerToken
+          },
+          method: 'POST',
+        };
+        return self.makeAsyncRequest(path, options, asyncCb);
+      }
+    ]
+  }, function(err, result) {
+    if (result && result.request && result.request.body && result.request.body.location) {
+      return cb(err, result.request.body.location);
+    }
+
+    return cb(err);
+  });
 };
+
 VehicleService.prototype.getVehicleInfo = function(vin,cb) {
     var self= this;
     async.auto({

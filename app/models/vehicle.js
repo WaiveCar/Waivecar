@@ -14,17 +14,32 @@ exports = module.exports = function(EnumService, mongoose, mongoosePlugin) {
 
     manufacturer: { type: String, trim: true, required: true },
 
-    location: {
-      lat: { type: Number },
-      long: { type: Number }
-    },
+    onstarStatus: { type: String, required: false },
+
+    phone: { type: String, required: false },
+
+    primaryDriverId: { type: String, required: false },
+
+    primaryDriverURL: { type: String, required: false },
+
+    unitType: { type: String, required: false },
+
+    url: { type: String, required: false },
+
+    location: { },
+    //   lat: { type: Number },
+    //   long: { type: Number }
+    //   ?
+    // },
 
     diagnostics: { },
       // fuel: {
       //   capacity,
       //   level,
       //   levelInGal
+      // etc.
       // }
+    capabilities: { },
 
     state: { type: String, required: true, enum: _.pluck(EnumService.getVehicleStateTypes(), 'name'), default: 'available' },
 

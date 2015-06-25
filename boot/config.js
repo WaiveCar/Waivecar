@@ -116,10 +116,11 @@ exports = module.exports = function() {
           key:'l7xx4b8664dc303546798628cd60ed052ac6',
           secret:'7ae244bc215e4f80988cc2184d2f552c',
         },
-        host:'https://developer.gm.com/api/v1/'
+        host:'https://developer.gm.com/api/v1/',
+        initFleetOnStart: false
       },
       origins: {
-        whitelist: ['*'],
+        whitelist: [ '*' ],
         // sets the req.origin based on matched origins list
         // { 'http://localhost:3081' : 'admin' }
         list: {}

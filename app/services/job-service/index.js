@@ -1,6 +1,6 @@
 /*jshint loopfunc: true */
 var path = require('path');
-var kue = require('kue');
+var kue = require('kue-scheduler');
 var queue = null;
 var glob = require('glob');
 var _ = require('lodash');
@@ -22,12 +22,37 @@ exports = module.exports = function(IoC, config, logger) {
         }
       });
 
+      queue.enableExpiryNotifications();
+
       queue.on('error', function(err) {
         logger.error('Kue failed');
         logger.error(err);
       });
 
       return queue;
+    },
+
+    repeat: function(type, data, when, next) {
+      if (!when) return next(new Error('no repeating time interval provided.'));
+
+      var job = svc.getQueue().create(type, data);
+      job.priority('normal');
+      job.attempts(3).backoff({ delay: (30 + Math.floor(Math.random() * 60)) * 1000, type: 'fixed' });
+      queue.every(when, job);
+      return next();
+    },
+
+    schedule: function(type, data, when, next) {
+      var job = svc.getQueue().create(type, data);
+      job.priority('normal');
+      job.attempts(3).backoff({ delay: (30 + Math.floor(Math.random() * 60)) * 1000, type: 'fixed' });
+      if (when) {
+        queue.schedule(when, job);
+        return next();
+      } else {
+        queue.now(job);
+        return next();
+      }
     },
 
     enqueue: function(type, data, next, priority, attempts, delay) {

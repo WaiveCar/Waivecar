@@ -9,6 +9,7 @@ exports = module.exports = function(IoC, config) {
   app.use(cors({
     credentials: true,
     origin: function(origin, callback){
+      console.log(origin);
       var originIsWhitelisted = whitelist.indexOf(origin) !== -1;
       callback(null, originIsWhitelisted);
     }
