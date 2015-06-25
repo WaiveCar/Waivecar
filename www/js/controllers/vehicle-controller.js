@@ -15,7 +15,7 @@ angular.module('app.controllers').controller('VehicleController', [
     $scope.inprogress = false;
 
     $scope.executeCommand = function(command) {
-      var id = $state.params.id || '1G1RD6E47BU000008'; //test
+      var id = $state.params.id;
       var url = [ $config.uri.api, 'vehicles', id, 'commands', command ].join('/');
       $scope.inprogress = true;
       $http.post(url).then(function(response) {
@@ -44,11 +44,7 @@ angular.module('app.controllers').controller('VehicleController', [
     };
 
     var initVehicle = function(next) {
-      if ($data.data.vehicles.length === 0) {
-        $data.init('vehicles', next);
-      } else {
-        return next();
-      }
+      $data.fetch('vehicles', $state.params.id, next);
     };
 
     var activateVehicle = function(next) {
