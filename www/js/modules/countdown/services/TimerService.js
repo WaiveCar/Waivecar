@@ -1,3 +1,4 @@
+(function() {
 var FREE_RIDE_STATUS='freeRide';
 var FREE_RIDE_ALERT_STATUS='freeRideAlert';
 var PAID_RIDE_STATUS='paidRide';
@@ -95,3 +96,4 @@ TimerService.prototype.setDurations = function(durations) {
 };
 angular.module('app.modules.countdown.service',[])
 .service('timerService',['$rootScope','$timeout',TimerService])
+})();

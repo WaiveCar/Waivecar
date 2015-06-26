@@ -6,6 +6,7 @@
     <title></title>
     <!-- compiled css output -->
     <link href="css/ionic.app.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
 
     <!-- ionic/angularjs js -->
     <script src="lib/ionic/js/ionic.bundle.js"></script>
@@ -59,9 +60,12 @@
     <script src="lib/common-modules/src/js/modals/index.js"></script>
     <script src="lib/common-modules/src/js/modals/services/pop-service.js"></script>
 
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet-src.js"></script>
+    <script src="js/skobbler-2.0.js"></script>
+    <script src="js/leafletMakiMarkers.js"></script>
 
     <script src="js/modules/mapping/index.js"></script>
-    <script src="js/modules/mapping/services/fleet-service.js"></script>
+    <!--<script src="js/modules/mapping/services/fleet-service.js"></script>
     <script src="js/modules/mapping/services/map-location-service.js"></script>
     <script src="js/modules/mapping/services/map-route-service.js"></script>
     <script src="js/modules/mapping/controllers/map-controller.js"></script>
@@ -72,8 +76,7 @@
     <script src="js/modules/mapping/directives/map-info-directive.js"></script>
     <script src="js/modules/mapping/directives/nearby-fleet-directive.js"></script>
     <script src="js/modules/mapping/directives/route-to-nearest-vehicle-directive.js"></script>
-
-
+    -->
 
 
     <script src="js/modules/countdown/services/TimerService.js"></script>
@@ -81,9 +84,6 @@
     <script src="js/modules/countdown/directives/TimerDirective.js"></script>
 
 
-
-    <!-- cordova script (this will be a 404 during development) -->
-    <script src="cordova.js"></script>
 
     <!-- your app's js -->
     <script src="js/main.js"></script>

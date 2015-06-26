@@ -1,3 +1,4 @@
+(function() {
 var NEW_COUNTER_EVENT='waivecarCounterStarted';
 var COUNTER_CANCELLED_EVENT='waivecarCounterCancelled';
 var COUNTER_STATE_CHANGED_EVENT='waivecarCounterStateChanged';
@@ -68,3 +69,4 @@ TimerController.prototype.cancel = function() {
 };
 angular.module('app.modules.countdown.controller',['app.modules.countdown.service'])
 .controller('timerController',['$scope','$interval','timerService',TimerController])
+})();
