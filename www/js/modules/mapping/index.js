@@ -389,8 +389,8 @@ angular.module('app.modules.mapping', [
           var radius=25;
           scope.unlockRadius=L.circle(destinyLocation.getLatLng(),radius,unlockRangeOptions).addTo(mapInstance);
           console.log(scope.route.getBounds());
-          mapInstance.panTo(startLocation.getLatLng());
-           //mapInstance.fitBounds(scope.route.getBounds());
+          // mapInstance.panTo(startLocation.getLatLng());
+           mapInstance.fitBounds(scope.route.getBounds());
         });
     }
     function mockWalking(maps,startLocation,destinyLocation,mapInstance,scope){
