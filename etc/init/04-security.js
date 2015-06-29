@@ -1,5 +1,6 @@
 var helmet = require('helmet');
 var cors = require('cors');
+var _ = require('lodash');
 
 exports = module.exports = function(IoC, config) {
 
@@ -9,8 +10,8 @@ exports = module.exports = function(IoC, config) {
   app.use(cors({
     credentials: true,
     origin: function(origin, callback){
-      console.log(origin);
       var originIsWhitelisted = whitelist.indexOf(origin) !== -1;
+      if (_.contains(whitelist, '*')) originIsWhitelisted = true;
       callback(null, originIsWhitelisted);
     }
   }));
