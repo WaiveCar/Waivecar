@@ -56,11 +56,10 @@ describe('vehicle-service',function(){
             });
         });
         //Receiving auth error for now,
-        it.skip('Get vehicle location',function(done){
+        it('Get vehicle location',function(done){
             this.timeout(0);
             var desiredVin=mockVehicles.chevVolt.vin;
             vehicleService.getVehicleLocation(desiredVin,function(err,response){
-                console.log(err);
                 expect(err).to.not.exist;
                 expect(response).to.exist;
                 done();
