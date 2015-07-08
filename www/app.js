@@ -13,8 +13,9 @@ function Run($ionicPlatform) {
   });
 }
 
-function Config($stateProvider, $urlRouterProvider) {
+function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
   'use strict';
+  $ionicConfigProvider.views.transition('platform');
   $stateProvider
     // FIND WAIVECARS
     .state('search', {
@@ -67,4 +68,4 @@ angular.module('app', [
   'Maps'
 ])
 .run(['$ionicPlatform', Run])
-.config([ '$stateProvider', '$urlRouterProvider', Config ]);
+.config([ '$stateProvider', '$urlRouterProvider', '$ionicConfigProvider', Config ]);
