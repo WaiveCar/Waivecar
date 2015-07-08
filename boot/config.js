@@ -17,6 +17,7 @@ exports = module.exports = function() {
       app: {
         name: 'api'
       },
+      bypassSecurity: true,
       cleanOnRestart: false,
       allowCleanup: true,
       auth: {
