@@ -1,0 +1,46 @@
+<ion-pane class="nav-component">
+  <ion-header-bar class="bar bar-header bar-balanced">
+    <h1 class="title">WaiveCar</h1>
+    <div class="buttons">
+      <button class="button button-balanced button-icon icon ion-close" ng-click="hideNav()"></button>
+    </div>
+  </ion-header-bar>
+  <ion-content scroll="false">
+    <div class="row">
+      <div class="col col-center text-center">
+        <a ui-sref="search" ng-click="hideNav()" class="button button-balanced button-icon icon ion-power">
+          <span class="button-icon-label">Find Cars</span>
+        </a>
+      </div>
+      <div class="col col-center text-center">
+        <a ui-sref="account" ng-click="hideNav()" class="button button-balanced button-icon icon ion-person">
+          <span class="button-icon-label">Account</span>
+        </a>
+      </div>
+    </div>
+    <div class="row row-center">
+      <div class="col col-center text-center">
+        <a ui-sref="bookings" ng-click="hideNav()" class="button button-balanced button-icon icon ion-clock">
+          <span class="button-icon-label">Past Rides</span>
+        </a>
+      </div>
+      <div class="col col-center text-center">
+        <a ui-sref="vision" ng-click="hideNav()" class="button button-balanced button-icon icon ion-leaf">
+          <span class="button-icon-label">Vision</span>
+        </a>
+      </div>
+    </div>
+    <div class="row row-bottom">
+      <div class="col col-center text-center">
+        <a ui-sref="contact" ng-click="hideNav()" class="button button-balanced button-icon icon ion-paper-airplane">
+          <span class="button-icon-label">Contact</span>
+        </a>
+      </div>
+      <div class="col col-center text-center">
+        <a ui-sref="points" ng-click="hideNav()" class="button button-balanced button-icon icon ion-bag">
+          <span class="button-icon-label">Earned Points</span>
+        </a>
+      </div>
+    </div>
+  </ion-content>
+</ion-pane>

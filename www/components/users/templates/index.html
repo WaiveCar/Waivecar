@@ -1,0 +1,27 @@
+<ion-pane class="bookings-component" ng-controller="UserController as userCtrl">
+  <ion-header-bar class="bar bar-header bar-light">
+    <h1 class="title">My Account</h1>
+    <div class="buttons">
+      <button class="button button-icon icon ion-navicon" ng-click="showNav()"></button>
+    </div>
+  </ion-header-bar>
+  <ion-content scroll="false">
+    <div class="list">
+      <label class="item item-input item-floating-label">
+        <span class="input-label">First Name</span>
+        <input type="text" placeholder="First Name" ng-model="userCtrl.user.firstName">
+      </label>
+      <label class="item item-input item-floating-label">
+        <span class="input-label">Last Name</span>
+        <input type="text" placeholder="Last Name" ng-model="userCtrl.user.lastName">
+      </label>
+      <label class="item item-input item-floating-label">
+        <span class="input-label">Email</span>
+        <input type="text" placeholder="Email" ng-model="userCtrl.user.email">
+      </label>
+    </div>
+  </ion-content>
+  <div class="bar bar-footer">
+    <a ui-sref="search" class="button button-balanced">Back</a>
+  </div>
+</ion-pane>

@@ -1,0 +1,28 @@
+<ion-pane class="bookings-component" ng-controller="BookingController as booking">
+  <ion-header-bar class="bar bar-header bar-light">
+    <h1 class="title">Address</h1>
+    <div class="buttons">
+      <a ui-sref="search" class="button button-icon icon ion-close"></a>
+    </div>
+  </ion-header-bar>
+  <ion-content scroll="false">
+    <div class="placeholder"></div>
+    <div class="list pin-bottom">
+      <div class="item item-icon-left">
+        <i class="icon ion-battery-full"></i>
+        65% charged - Full in 20 mins
+      </div>
+      <div class="item item-icon-left">
+        <i class="icon ion-paper-airplane"></i>
+        10 miles available on current charge
+      </div>
+      <div class="item item-icon-left">
+        <i class="icon ion-power"></i>
+        Parked at charging station
+      </div>
+    </div>
+  </ion-content>
+  <div class="bar bar-footer">
+    <button class="button button-balanced" ng-click="booking.createBooking()">Book WaiveCar</button>
+  </div>
+</ion-pane>
