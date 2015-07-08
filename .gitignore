@@ -6,3 +6,4 @@ platforms/
 plugins/
 www/lib/
 www/css/
+www/services/templates.min.js

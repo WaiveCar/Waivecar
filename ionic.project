@@ -1,8 +1,9 @@
 {
-  "name": "app",
-  "app_id": "",
+  "name": "WaiveCar",
+  "app_id": "b3bc80d6",
   "gulpStartupTasks": [
     "sass",
+    "templates",
     "watch"
   ],
   "watchPatterns": [

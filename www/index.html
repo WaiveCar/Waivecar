@@ -3,105 +3,55 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-    <title></title>
+    <title>WaiveCar</title>
     <!-- compiled css output -->
     <link href="css/ionic.app.css" rel="stylesheet">
-    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
-
     <!-- ionic/angularjs js -->
     <script src="lib/ionic/js/ionic.bundle.js"></script>
+
+<!--    <script src="lib/angular/angular.js"></script>
+    <script src="lib/angular-animate/angular-animate.js"></script>
+    <script src="lib/angular-sanitize/angular-sanitize.js"></script>
+    <script src="lib/angular-resource/angular-resource.js"></script>
+    <script src="lib/angular-mocks/angular-mocks.js"></script>
+    <script src="lib/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="lib/ionic/js/ionic.min.js"></script>
+    <script src="lib/ionic/js/ionic-angular.min.js"></script>
+-->
+
     <script src="lib/ngCordova/dist/ng-cordova.min.js"></script>
     <!-- cordova script (this will be a 404 during development) -->
     <script src="cordova.js"></script>
-
     <!-- lib js -->
-    <script src="lib/lodash/lodash.js"></script>
-    <script src="lib/async/lib/async.js"></script>
-    <script src="lib/angular-socket-io/mock/socket-io.js"></script>
-
-    <!-- angular modules js -->
-    <script src="lib/satellizer/satellizer.js"></script>
-    <script src="lib/angular-strap/dist/angular-strap.min.js"></script>
-    <script src="lib/angular-strap/dist/angular-strap.tpl.js"></script>
-
-    <script src="lib/angular-socket-io/socket.js"></script>
-    <script src="lib/angular-json-human/dist/angular-json-human.js"></script>
-
-    <script src="lib/common-modules/src/js/common/index.js"></script>
-    <script src="lib/common-modules/src/js/common/services/socket-service.js"></script>
-    <script src="lib/common-modules/src/js/common/services/data-service.js"></script>
-    <script src="lib/common-modules/src/js/common/controllers/list-controller.js"></script>
-    <script src='lib/common-modules/src/js/common/directives/autofocus-directive.js'></script>
-    <script src='lib/common-modules/src/js/common/directives/validations-directive.js'></script>
-    <script src='lib/common-modules/src/js/common/directives/tooltip-directive.js'></script>
-    <script src='lib/common-modules/src/js/common/directives/equals-directive.js'></script>
-    <script src='lib/common-modules/src/js/common/filters/email-filter.js'></script>
-    <script src='lib/common-modules/src/js/common/filters/props-filter.js'></script>
-    <script src="lib/common-modules/src/js/common/directives/chart-stackedbar-directive.js"></script>
-    <script src="lib/common-modules/src/js/common/filters/where-in-filter.js") ></script>
-
-    <script src="lib/common-modules/src/js/alert/index.js"></script>
-    <script src="lib/common-modules/src/js/alert/services/notification-service.js"></script>
-
-    <script src="lib/common-modules/src/js/authentication/index.js"></script>
-    <script src="lib/common-modules/src/js/authentication/controllers/password-controller.js"></script>
-    <script src="lib/common-modules/src/js/authentication/controllers/provider-controller.js"></script>
-    <script src="lib/common-modules/src/js/authentication/controllers/signin-controller.js"></script>
-    <script src="lib/common-modules/src/js/authentication/controllers/signout-controller.js"></script>
-    <script src="lib/common-modules/src/js/authentication/controllers/signup-controller.js"></script>
-    <script src="lib/common-modules/src/js/authentication/services/utils-service.js"></script>
-    <script src="lib/common-modules/src/js/authentication/services/account-service.js"></script>
-
-    <script src="lib/common-modules/src/js/logging/index.js"></script>
-    <script src="lib/common-modules/src/js/logging/services/logging-utils-service.js"></script>
-    <script src="lib/common-modules/src/js/logging/services/exception-handler-service.js"></script>
-    <script src="lib/common-modules/src/js/logging/services/application-logging-service.js"></script>
-
-    <script src="lib/common-modules/src/js/modals/index.js"></script>
-    <script src="lib/common-modules/src/js/modals/services/pop-service.js"></script>
-
-    <script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet-src.js"></script>
+    <script src="lib/angular-resource/angular-resource.js"></script>
+    <!-- local libraries -->
+    <script src="js/leaflet-src.js"></script>
     <script src="js/skobbler-2.0.js"></script>
     <script src="js/leafletMakiMarkers.js"></script>
-
-    <script src="js/modules/mapping/index.js"></script>
-    <!--<script src="js/modules/mapping/services/fleet-service.js"></script>
-    <script src="js/modules/mapping/services/map-location-service.js"></script>
-    <script src="js/modules/mapping/services/map-route-service.js"></script>
-    <script src="js/modules/mapping/controllers/map-controller.js"></script>
-    <script src="js/modules/mapping/controllers/route-duration-controller.js"></script>
-    <script src="js/modules/mapping/controllers/route-time-controller.js"></script>
-    <script src="js/modules/mapping/directives/device-location-directive.js"></script>
-    <script src="js/modules/mapping/directives/map-directive.js"></script>
-    <script src="js/modules/mapping/directives/map-info-directive.js"></script>
-    <script src="js/modules/mapping/directives/nearby-fleet-directive.js"></script>
-    <script src="js/modules/mapping/directives/route-to-nearest-vehicle-directive.js"></script>
-    -->
-
-
-    <script src="js/modules/countdown/services/TimerService.js"></script>
-    <script src="js/modules/countdown/controllers/TimerController.js"></script>
-    <script src="js/modules/countdown/directives/TimerDirective.js"></script>
-
-
-
-    <!-- your app's js -->
-    <script src="js/main.js"></script>
-
-
-    <script src="js/services/config.js"></script>
-
-    <script src="js/controllers/application-controller.js"></script>
-    <script src="js/controllers/booking-controller.js"></script>
-    <script src="js/controllers/bookings-controller.js"></script>
-    <script src="js/controllers/intro-controller.js"></script>
-    <script src="js/controllers/registration-controller.js"></script>
-    <script src="js/controllers/user-controller.js"></script>
-    <script src="js/controllers/vehicle-controller.js"></script>
-    <script src="js/controllers/vehicles-controller.js"></script>
-
+    <!-- app -->
+    <script src="app.js"></script>
+    <!-- services -->
+    <script src="services/config.js"></script>
+    <script src="services/utils.js"></script>
+    <script src="services/templates.min.js"></script>
+    <!-- resources -->
+    <script src="resources/bookings.js"></script>
+    <script src="resources/users.js"></script>
+    <script src="resources/vehicles.js"></script>
+    <!-- components -->
+    <script src="components/application/index.js"></script>
+    <script src="components/bookings/index.js"></script>
+    <script src="components/contact/index.js"></script>
+    <script src="components/countdown/timer-controller.js"></script>
+    <script src="components/countdown/timer-directive.js"></script>
+    <script src="components/countdown/timer.js"></script>
+    <script src="components/mapping/index.js"></script>
+    <script src="components/menu/index.js"></script>
+    <script src="components/search/index.js"></script>
+    <script src="components/users/index.js"></script>
+    <script src="components/vision/index.js"></script>
   </head>
-  <body ng-app="app">
+  <body ng-app="app" ng-controller="ApplicationController">
     <ion-nav-view></ion-nav-view>
   </body>
 </html>

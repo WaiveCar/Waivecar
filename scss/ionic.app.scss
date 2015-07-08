@@ -1,19 +1,12 @@
-/*
-To customize the look and feel of Ionic, you can override the variables
-in ionic's _variables.scss file.
-
-For example, you might change some of the default colors:
-
-*/
-$light:                           #f2f7f3 !default;
-$stable:                          #f2f7f3 !default;
-$positive:                        #3da43f !default;
+$light:                           #fff !default;
+$stable:                          #f8f8f8 !default;
+$positive:                        #387ef5 !default;
 $calm:                            #11c1f3 !default;
-$balanced:                        #33cd5f !default;
+$balanced:                        #25C155 !default;
 $energized:                       #ffc900 !default;
-$assertive:                       #ef473a !default;
+$assertive:                       #D0021B !default;
 $royal:                           #886aea !default;
-$dark:                            #3F4045 !default;
+$dark:                            #444 !default;
 
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;
@@ -21,82 +14,65 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 // Include all of Ionic
 @import "www/lib/ionic/scss/ionic";
 
-
-.background-vehicle {
-  background: $dark;
-  // background-image: url('../img/mock.png');
-  // background-size: cover;
-  // background-repeat: no-repeat;
+// Global styles
+.bar-header {
+  h1.title {
+    text-transform: uppercase;
+    font-family: "Helvetica Neue";
+    font-weight: 300;
+    font-size: 20px;
+  }
 }
-
-// body, html, .pane {
-//   background-color: #2A2A2B;
-//   color: white;
-// }
-// h1, h2, h3, h4, h5, h6, p {
-//   color: white;
-// }
-
-// .scroll {
-//   height: 100%;
-// }
-
-.mapsInstance{
+.bar-footer {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  height: 60px;
+  .button {
     width: 100%;
-    height: 100%;
-    float:left;
-}
-
-.map-container {
-  height: 400px;
-  width: 100%;
-  margin: 20px 0;
-}
-
-@-moz-keyframes pulsate {
-    from {
-      -moz-transform: scale(0.25);
-      opacity: 1.0;
-    }
-    95% {
-      -moz-transform: scale(1.3);
-      opacity: 0;
-    }
-    to {
-      -moz-transform: scale(0.3);
-      opacity: 0;
+    height: 60px;
+    line-height: 60px;
+    border-radius: 0;
+    border: 0;
+    text-transform: uppercase;
+    font-family: "Helvetica Neue";
+    font-weight: 300;
+    font-size: 20px;
+  }
+  .footer-buttons {
+    width: 100%;
+    .button {
+      display: inline-block;
+      width: 50%;
     }
   }
-  @-webkit-keyframes pulsate {
-    from {
-      -webkit-transform: scale(0.25);
-      opacity: 1.0;
-    }
-    95% {
-      -webkit-transform: scale(1.3);
-      opacity: 0;
-    }
-    to {
-      -webkit-transform: scale(0.3);
-      opacity: 0;
+}
+.bar.bar-balanced {
+  border-color: $balanced;
+  background: $balanced;
+}
+.bar {
+  .button.button-icon.icon.ion-close {
+    height: 20px;
+    line-height: 20px;
+    font-size: 20px;
+    &:before {
+      font-size: 20px;
+      line-height: 20px;
+      height: 20px;
     }
   }
-  /* get the container that's just outside the marker image,
-    which just happens to have our Marker title in it */
-.gMapsInstance div.gmnoprint[title="pulsing"] {
-  -moz-animation: pulsate 1.5s ease-in-out infinite;
-  -webkit-animation: pulsate 1.5s ease-in-out infinite;
-  border:1pt solid #fff;
-  /* make a circle */
-  -moz-border-radius:51px;
-  -webkit-border-radius:51px;
-  border-radius:51px;
-  /* multiply the shadows, inside and outside the circle */
-  -moz-box-shadow:inset 0 0 5px #06f, inset 0 0 5px #06f, inset 0 0 5px #06f, 0 0 5px #06f, 0 0 5px #06f, 0 0 5px #06f;
-  -webkit-box-shadow:inset 0 0 5px #06f, inset 0 0 5px #06f, inset 0 0 5px #06f, 0 0 5px #06f, 0 0 5px #06f, 0 0 5px #06f;
-  box-shadow:inset 0 0 5px #06f, inset 0 0 5px #06f, inset 0 0 5px #06f, 0 0 5px #06f, 0 0 5px #06f, 0 0 5px #06f;
-  /* set the ring's new dimension and re-center it */
-  height:51px!important;
-  margin:-18px 0 0 -18px;
-  width:51px!important;
 }
+
+.button-icon {
+  .button-icon-label {
+    display: block;
+    padding-top: 10px;
+    line-height: 20px;
+    font-size: 20px;
+  }
+}
+
+@import "www/components/search/style.scss";
+@import "www/components/bookings/style.scss";
+@import "www/components/mapping/style.scss";

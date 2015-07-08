@@ -1,0 +1,20 @@
+<ion-pane class="bookings-component" ng-controller="BookingController as booking">
+  <ion-header-bar class="bar bar-header bar-light">
+    <h1 class="title">Get To Your WaiveCar</h1>
+    <div class="buttons">
+      <button class="button button-icon icon ion-navicon" ng-click="showNav()"></button>
+    </div>
+  </ion-header-bar>
+  <ion-content scroll="false">
+    <div class="map placeholder placeholder-small"></div>
+    <div class="list pin-bottom pin-bottom-large">
+      <p>car image</p>
+      <p>car details</p>
+    </div>
+  </ion-content>
+  <div class="bar bar-footer">
+    <div class="footer-buttons">
+      <button class="button button-balanced" ng-click="booking.openMap()">Get Directions</button><button class="button button-assertive" ng-click="booking.cancelBooking()">Cancel</button>
+    </div>
+  </div>
+</ion-pane>

@@ -1,0 +1,26 @@
+.bookings-component {
+  .placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 222px;
+    width: 100%;
+    background: lightgray;
+    &.placeholder-small {
+      bottom: 305px;
+    }
+  }
+  .pin-bottom {
+    position: absolute;
+    top: initial;
+    left: 0;
+    right: 0;
+    height: 222px;
+    bottom: 0;
+    width: 100%;
+    &.pin-bottom-large {
+      height: 305px;
+    }
+  }
+}
