@@ -2,7 +2,7 @@
   Tests
   =====
 
-  Stability: 2 - Stable
+  Stability: 3 - Stable
 
   Add all your tests relative to their functionality in your API folder to keep with
   good organization and add your tests to the list.
@@ -50,7 +50,7 @@ co(function *() {
 
     // ### Custom Tests
 
-    reach.config.test.custom.forEach(function (file) {
+    Reach.config.test.custom.forEach(function (file) {
       mocha.addFile(path.join(__dirname, 'test', file + '.test.js'));
     });
 
@@ -58,13 +58,13 @@ co(function *() {
     // List of services you wish to test, remember to register the tests in your
     // service index.js file before adding them here.
 
-    reach.config.test.services.forEach(function (service) {
-      var tests = Reach.store.tests[service];
+    Reach.config.test.services.forEach(function (service) {
+      var tests = Reach.store.tests['service:' + service];
       if (!tests) {
         Reach.Logger.warn('%s service does not have any registered unit tests', service);
         return;
       }
-      Reach.store.tests[service].forEach(function (test) {
+      Reach.store.tests['service:' + service].forEach(function (test) {
         mocha.addFile(test);
       });
     });
@@ -73,13 +73,13 @@ co(function *() {
     // List of modules you wish to test, remember to register the tests in your
     // module index.js file before adding them here.
 
-    reach.config.test.modules.forEach(function (module) {
-      var tests = Reach.store.tests[module];
+    Reach.config.test.modules.forEach(function (module) {
+      var tests = Reach.store.tests['module:' + module];
       if (!tests) {
         Reach.Logger.warn('%s module does not have any registered unit tests', module);
         return;
       }
-      Reach.store.tests[module].forEach(function (test) {
+      Reach.store.tests['module:' + module].forEach(function (test) {
         mocha.addFile(test);
       });
     });
