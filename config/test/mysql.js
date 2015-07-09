@@ -12,7 +12,7 @@ module.exports = {
 
   mysql : {
     host     : 'localhost',
-    database : 'reach_api_test',
+    database : 'waivecar_test',
     user     : 'root',
     password : '',
     force    : true

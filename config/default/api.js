@@ -17,8 +17,8 @@ module.exports = {
    */
 
   api : {
-    name    : 'REACH API',
-    version : '0.1.12',
+    name    : 'WAIVECAR API',
+    version : '0.0.1',
     port    : 8081,
     uri     : 'http://localhost:8081',
     cors    : {
