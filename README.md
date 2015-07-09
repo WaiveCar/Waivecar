@@ -1,174 +1,70 @@
-# Waivecar - API
+Reach API
+=========
 
-[![Build Status](https://magnum.travis-ci.com/clevertech/Waivecar.svg?token=EMVjzHuEYHd2d2DHdQxn&branch=api/development)](https://magnum.travis-ci.com/clevertech/Waivecar)
-[![Coverage Status](https://devops.clevertech.biz/api/coverage/badge?token=fhrk45ASDA45asdkj545434343&repo=clevertech%2FWaivecar&branch=api/development)](https://devops.clevertech.biz/api/coverage/report?token=fhrk45ASDA45asdkj545434343&repo=clevertech%2FWaivecar&branch=api/development)
+[![Build Status](https://travis-ci.org/reach/api.svg?branch=development)](https://travis-ci.org/reach/api)
+[![Coverage Status](https://coveralls.io/repos/reach/api/badge.svg)](https://coveralls.io/r/reach/api)
 
-## Install
+A back end API service setup that gives you the ability to pick and choose the modules you need for your project, mainly developed for the way I enjoy setting up my back end along with the ideas and wishes of my programming peers. It is built on KOA and Socket.io creating a robust and accessible experience for your development.
 
-```bash
-# create a waivecar folder and cd in to the folder.
-mkdir waivecar && cd ./waivecar
+Please refer to the [wiki](https://github.com/Kodemon/reach-api/wiki) for full documentation.
 
-# clone the repo in to an api local repo
-git clone git@github.com:clevertech/waivecar.git api
+### NODE
 
-# change dir to the cloned repo
-cd api
+Do not run with NODE `0.12.5`, it currently has install issues with istanbul. `0.12.4` is recommended.
 
-# ensure you are running on the /api/development branch
+### Install
 
-# install dev dependencies
-npm install -d
+First download this repo and unpack it into your destination of choice, then open your terminal and run npm install to install all the dependencies for the api.
 
-# install gulp cli
-npm install -g gulp
+```sh
+# Install NPM packages
+$ npm install
 
-# build bower/less files
-gulp postinstall
+# Install reach-cli [optional]
+$ npm install -g reach-cli
+
+# Nodemon for local development [optional]
+$ npm install -g nodemon
 ```
 
-Non-Default Features:
-- built/building to be API only so no view features will be available (e.g. no support for req.flash, sessions, etc.)
-- JSON Web Tokens to be used for security and all routes (other than auth) will be secured.
-- `/lib` includes some helpers that are used to auto-wire up routing and controllers.
-- `/app/policies` are used to secure the application or inject any middleware-type operations.
-- `/etc/data` is a crude data migration strategy to enable seeding of data (and simple data migrations).
-- `/app/services` is a services layer to be used when more than simple CRUD is needed.
-- `/app/services/job-service` is a hook in to `Kue` to enable out of process jobs to be scheduled and run (using redis as a store).
+### Startup
 
+After installing the npm dependencies, reach modules and services you can startup your server.
 
-## Configuration
-
-Configuration (e.g. database and logging setting per environment) is stored in `boot/config.js`.
-
-Be sure to create a `local.js` file in `boot/config.js` to override some default config values. Your file should look something like the following:
-```
-/*jshint camelcase: false */
-
-// This configuration file is specific to each developer's environment,
-// and will merge on top of all other settings from ./config.js
-// (but only will merge in development environment)
-exports = module.exports = function() {
-  return {
-    cache: false,
-    bypassSecurity: true,
-    cleanOnRestart: true,
-    url: 'http://localhost:3000',
-    admin: {
-      email: 'john.smith@example.com',
-      password: 'lollipop0',
-      firstName: 'Site',
-      lastName: 'Administrator'
-    }
-  };
-};
-
-exports['@singleton'] = true;
+```sh
+$ npm run local # Requires nodemon, edit the package.json scripts to change nodemon to node
+$ npm run dev
+$ npm run stag
+$ npm run prod
+$ NODE_ENV=env node --harmony server.js
 ```
 
+### WARNING
 
-THE INFORMATION BELOW THIS IS YET TO BE REVIEWED.
+**DO NOT USE IN PRODUCTION**
 
-## Usage
+This API is in pre-alpha and is very much subject to major changes until we hit beta. Please make sure to keep an eye on the stability reports in the wiki.
 
-### Development
+### License
 
-Default:
+The MIT License (MIT)
 
-```bash
-node app
-```
+Copyright (c) 2015 Christoffer Rødvik
 
-Debugging:
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-```bash
-DEBUG=* node app
-```
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
 
-#### Gulp tasks:
-
-```bash
-# Run 'bower', 'less', and 'jshint' tasks
-gulp postinstall
-
-# Runs 'build'
-gulp
-
-# Run jshint to check syntax of JavaScript files
-gulp jshint
-
-# Runs 'clean', 'bower', 'less', 'copy', 'imagemin', 'usemin-css', 'usemin-js', and 'usemin-jade'
-gulp build
-
-# Runs 'watch-noapp', running the app with nodemon and livereload
-gulp watch
-
-# Runs 'watch-noreload', and starts a livereload server to automatically refresh your browser when changes are done
-gulp watch-noapp
-
-# Watches changes to public assets (images, fonts, less/css, js, and jade files) and runs appropriate tasks ('imagemin', 'less'/'usemin-css', 'usemin-js', 'usemin-jade') to parse them
-gulp watch-noreload
-
-# Run less to create CSS files
-gulp less
-
-# Optimizes and copies images to 'assets/dist/img'
-gulp imagemin
-
-# Adds versions to JS files, copying them later to 'assets/dist/js'
-gulp usemin-js
-
-# Adds versions to CSS files, optimizes and parses images and CSS files as well, copying them later to 'assets/dist'
-gulp usemin-css
-
-# Adds versions to assets in JADE files, optimizes and parses assets, copying them later to 'assets/dist'
-gulp usemin-jade
-
-# Cleans 'assets/dist' and 'bower_components' directories
-gulp clean
-
-# Copies some static files (favicon, robots.txt, etc) to 'assets/dist'
-gulp copy
-```
-
-### Production
-
-> Production environment requires that you have built out the "assets/dist" folder.
-
-Build project with [gulp.js](http://gulpjs.com/):
-
-```bash
-gulp build
-```
-
-> Now you can proceed to running in production mode with optional `recluster` support.
-
-Default:
-
-```bash
-sudo NODE_ENV=production node app
-```
-
-[Recluster](https://github.com/doxout/recluster):
-
-```bash
-sudo NODE_ENV=production node cluster
-# kill -s SIGUSR2 %d
-```
-
-
-## Tests
-
-```bash
-npm test
-```
-
-
-## Contributors
-
-See "package.json" for a list of contributors.  Learn how to add contributors using [npm's docs](https://www.npmjs.org/doc/files/package.json.html#people-fields-author-contributors).
-
-
-## License
-
-**TODO**: [Choose a license](http://choosealicense.com/) and insert it here.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.

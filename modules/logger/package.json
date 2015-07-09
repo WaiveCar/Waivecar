@@ -1,0 +1,11 @@
+{
+  "name": "reach-api-logger",
+  "author": "Christoffer Rødvik",
+  "description": "A logger module providing access to errors occuring in the system",
+  "license": "MIT",
+  "main": "logger.js",
+  "models": {
+    "ErrorLog" : "models/error-log"
+  },
+  "routes": "routes.js"
+}

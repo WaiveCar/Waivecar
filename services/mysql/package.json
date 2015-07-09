@@ -1,0 +1,17 @@
+{
+  "name": "reach-api-mysql",
+  "author": "Christoffer Rødvik",
+  "license": "MIT",
+  "bootstrap": [
+    "bootstrap/database.js",
+    "bootstrap/models.js"
+  ],
+  "tests": [],
+  "dependencies": {
+    "node": [
+      "async",
+      "mysql",
+      "co-mysql"
+    ]
+  }
+}

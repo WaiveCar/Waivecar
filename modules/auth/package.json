@@ -1,0 +1,19 @@
+{
+  "name": "kodemon-auth",
+  "version": "0.0.1",
+  "description": "Authentication module",
+  "author": "Christoffer Rødvik",
+  "license": "MIT",
+  "controllers": {
+    "AuthController": "controllers/auth-controller"
+  },
+  "tests": [
+    "test/auth"
+  ],
+  "routes": "routes.js",
+  "dependencies": {
+    "node": [
+      "reach-auth"
+    ]
+  }
+}

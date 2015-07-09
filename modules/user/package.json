@@ -1,0 +1,15 @@
+{
+  "name": "reach-api-user",
+  "author": "Christoffer Rødvik",
+  "description": "A user module providing access to user handling from front end applications",
+  "license": "MIT",
+  "main": "init.js",
+  "controllers": {
+    "UsersController": "controllers/users-controller"
+  },
+  "tests": [
+    "test/user"
+  ],
+  "errors": "errors.js",
+  "routes": "routes.js"
+}

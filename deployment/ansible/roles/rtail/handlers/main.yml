@@ -1,6 +1,0 @@
-- name: restart rtail
-  action: service name=rtail state=restarted
-
-- name: restart rtail-client
-  action: service name=rtail-client state=restarted
-

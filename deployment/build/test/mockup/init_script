@@ -1,4 +1,0 @@
-#!/bin/bash
-
-echo "$*" >> /tmp/mockup_init_script
-
