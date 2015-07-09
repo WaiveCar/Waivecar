@@ -1,6 +1,5 @@
 'use strict';
 
-let co         = require('co');
 let request    = require('co-request');
 let _          = require('lodash');
 let changeCase = require('change-case');
@@ -65,7 +64,6 @@ module.exports = (function () {
   VehicleService.prototype.makeAsyncRequest = function *(path, options) {
     let result = yield this.makeRequest(path, options);
     var res    = result.toJSON();
-
     if (500 === res.statusCode) {
       let error    = new Error('GM API: VehicleService');
       error.code   = 'GM_API_VEHICLE_SERVICE';
@@ -73,12 +71,7 @@ module.exports = (function () {
       error.data   = res;
       throw error;
     }
-
     let body = JSON.parse(result.body);
-    let id   = body.commandResponse.url.split('/');
-
-    Reach.Logger.info('GM API: VehicleService awaiting request [%s] result [%s]', id[id.length - 1], body.commandResponse.status);
-
     return yield this.checkResponse(body.commandResponse, {
       headers : {
         Authorization : options.headers.Authorization
@@ -168,12 +161,16 @@ module.exports = (function () {
    */
   VehicleService.prototype.startEngine = function *(vin) {
     let bearerToken = yield this.connect();
-    return yield this.makeRequest('account/vehicles/' + vin + '/commands/start', {
-      'headers':{
-        'Authorization' : 'Bearer ' + bearerToken
+    let result      = yield this.makeAsyncRequest('account/vehicles/' + vin + '/commands/start', {
+      headers : {
+        Authorization : 'Bearer ' + bearerToken
       },
       method : 'POST'
     });
+    if ('success' === result.status) {
+      return true;
+    }
+    return false;
   };
 
   /**
@@ -182,12 +179,16 @@ module.exports = (function () {
    */
   VehicleService.prototype.cancelStartEngine = function *(vin) {
     let bearerToken = yield this.connect();
-    return yield this.makeRequest('account/vehicles/' + vin + '/commands/cancelStart', {
-      'headers':{
-        'Authorization' : 'Bearer ' + bearerToken
+    let result      = yield this.makeAsyncRequest('account/vehicles/' + vin + '/commands/cancelStart', {
+      headers : {
+        Authorization : 'Bearer ' + bearerToken
       },
       method : 'POST'
     });
+    if ('success' === result.status) {
+      return true;
+    }
+    return false;
   };
 
   /**
@@ -196,8 +197,8 @@ module.exports = (function () {
   VehicleService.prototype.listVehicles = function *() {
     let bearerToken = yield this.connect();
     let result      = yield this.makeRequest('account/vehicles', {
-      'headers':{
-        'Authorization' : 'Bearer ' + bearerToken
+      headers : {
+        Authorization : 'Bearer ' + bearerToken
       }
     });
 
@@ -206,7 +207,6 @@ module.exports = (function () {
     // TODO: current location?
 
     if (data.vehicles && data.vehicles.vehicle) {
-      Reach.Logger.info('GM-API: VehicleService updating %s vehicles', data.vehicles.vehicle.length);
       return data.vehicles.vehicle;
     }
     return data;
@@ -293,14 +293,13 @@ module.exports = (function () {
    */
   VehicleService.prototype.getVehicleLocation = function *(vin) {
     let bearerToken = yield this.connect();
-    let result      = yield this.makeRequest('account/vehicles/' + vin + '/commands/location', {
+    let result      = yield this.makeAsyncRequest('account/vehicles/' + vin + '/commands/location', {
       'headers':{
         'Authorization' : 'Bearer ' + bearerToken
       },
       method : 'POST'
     });
-
-    if (result.body && result.request.body.location) {
+    if (result.body && result.body.location) {
       return result.body.location;
     }
     return null;
@@ -315,8 +314,7 @@ module.exports = (function () {
     let result      = yield this.makeRequest('account/vehicles/' + vin, {
       'headers':{
         'Authorization' : 'Bearer ' + bearerToken
-      },
-      method : 'POST'
+      }
     });
     return JSON.parse(result.body);
   };
@@ -326,53 +324,62 @@ module.exports = (function () {
    * @param  {String} vin
    */
   VehicleService.prototype.getVehicleCapabilities = function *(vin) {
-    let bearerToken = yield this.connect();
-    return yield this.makeRequest('vehicles/' + vin + '/capabilities', {
+    let result = yield this.makeRequest('vehicles/' + vin + '/capabilities', {
       'headers':{
-        'Authorization' : 'Bearer ' + bearerToken
-      },
-      method : 'POST'
+        'Authorization' : 'Basic ' + this._base64KeyAndSecret
+      }
     });
+    return JSON.parse(result.body);
   };
 
   /**
    * @method unlockDoor
    * @param  {String} vin
+   * @return {Boolean}
    */
   VehicleService.prototype.unlockDoor = function *(vin) {
     let bearerToken = yield this.connect();
-    yield this.makeRequest('account/vehicles/' + vin + '/commands/unlockDoor', {
-      'headers':{
-        'Authorization' : 'Bearer ' + bearerToken,
-        'content-type'  : 'application/json'
+    let result      = yield this.makeAsyncRequest('account/vehicles/' + vin + '/commands/unlockDoor', {
+      headers : {
+        Authorization  : 'Bearer ' + bearerToken,
+        'content-type' : 'application/json'
       },
       method : 'POST',
       body   : JSON.stringify({
-        'unlockDoorRequest': {
-          'delay': '0'
+        unlockDoorRequest : {
+          delay : 0
         }
       })
     });
+    if ('success' === result.status) {
+      return true;
+    }
+    return false;
   };
 
   /**
    * @method lockDoor
    * @param  {String} vin
+   * @return {Boolean}
    */
   VehicleService.prototype.lockDoor = function *(vin) {
     let bearerToken = yield this.connect();
-    yield this.makeRequest('account/vehicles/' + vin + '/commands/lockDoor', {
-      'headers':{
-        'Authorization' : 'Bearer ' + bearerToken,
-        'content-type'  : 'application/json'
+    let result      = yield this.makeAsyncRequest('account/vehicles/' + vin + '/commands/lockDoor', {
+      headers : {
+        Authorization  : 'Bearer ' + bearerToken,
+        'content-type' : 'application/json'
       },
       method : 'POST',
       body   : JSON.stringify({
-        'lockDoorRequest': {
-          'delay': '0'
+        lockDoorRequest : {
+          delay : 0
         }
       })
     });
+    if ('success' === result.status) {
+      return true;
+    }
+    return false;
   };
 
   /**
@@ -383,15 +390,12 @@ module.exports = (function () {
    */
   VehicleService.prototype._makeAlerts = function *(vin, duration, action) {
     let bearerToken = yield this.connect();
-
     duration = duration || this._defaultAlertDuration;
     if (!Array.isArray(action)) {
       action = [action];
     }
-
     let override = [ 'DoorOpen', 'IgnitionOn' ];
-
-    return yield this.makeAsyncRequest('account/vehicles/' + vin + '/commands/alert', {
+    let result   = yield this.makeAsyncRequest('account/vehicles/' + vin + '/commands/alert', {
       headers : {
         'Authorization' : 'Bearer ' + bearerToken
       },
@@ -405,6 +409,10 @@ module.exports = (function () {
         }
       })
     });
+    if ('success' === result.status) {
+      return true;
+    }
+    return false;
   };
 
   /**
@@ -440,10 +448,10 @@ module.exports = (function () {
    */
   VehicleService.prototype.vehicleData = function *(vin) {
     let bearerToken = yield this.connect();
-    yield this.makeRequest('account/vehicles/' + vin + '/data/services', {
-      'headers':{
-        'Authorization' : 'Bearer ' + bearerToken,
-        'content-type'  : 'application/json'
+    let result      = yield this.makeAsyncRequest('account/vehicles/' + vin + '/data/services', {
+      headers : {
+        Authorization  : 'Bearer ' + bearerToken,
+        'content-type' : 'application/json'
       },
       method : 'POST',
       body   : JSON.stringify({
@@ -462,6 +470,10 @@ module.exports = (function () {
         }
       })
     });
+    if ('success' === result.status) {
+      return true;
+    }
+    return false;
   };
 
   return VehicleService;
