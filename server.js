@@ -55,6 +55,7 @@ function *master() {
     yield Reach.Bootstrap();
   } catch (err) {
     console.log('\n  You have a fatal system error in your code, you must fix these errors before proceeding\n');
+    console.log(err);
     return process.exit(1);
   }
 
@@ -71,6 +72,7 @@ function *worker() {
   } catch (err) {
     if (err) {
       console.log('\n  You have a fatal system error in your code\n');
+      console.log(err);
     }
   }
 }
