@@ -1,5 +1,8 @@
 {
   "name": "gm-api",
+  "tests": [
+    "test/vehicle-service"
+  ],
   "dependencies": {
     "node": [ "co-request", "lodash" ]
   }

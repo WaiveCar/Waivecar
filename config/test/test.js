@@ -14,7 +14,9 @@ module.exports = {
       'auth',
       'user'
     ],
-    services : []
+    services : [
+      'gm-api'
+    ]
   }
 
 };
