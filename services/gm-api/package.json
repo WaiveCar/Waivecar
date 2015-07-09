@@ -1,0 +1,6 @@
+{
+  "name": "gm-api",
+  "dependencies": {
+    "node": [ "co-request", "lodash" ]
+  }
+}
