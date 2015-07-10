@@ -55,7 +55,8 @@
 
 'use strict';
 
-let log = Reach.Logger;
+let register = Reach.Register;
+let log      = Reach.Logger;
 
 require('./policies');
 
@@ -66,87 +67,58 @@ require('./policies');
 var Interface = module.exports = {};
 
 /**
- * Validates the current Interface implementation
- * @method valid
- * @return {bool}
- */
-Interface.valid = function () {
-  if (!validUser())     { return false; }
-  if (!validPolicies()) { return false; }
-  return true;
-};
-
-/**
  * Loads the Interface onto the worker
  * @method load
  */
 Interface.load = function () {
-  Reach.register.models(__dirname, {
+  let valid = true;
+
+  // ### Load and Validate User
+
+  log.silent('info')('Interface');
+  log.silent('info')('  Load Model');
+  register.models(__dirname, {
     User : 'models/user'
   });
-};
 
-/**
- * Validate the user implementation
- * @private
- * @method validUser
- * @return {bool}
- */
-function validUser() {
-  var valid = true;
+  let User            = Reach.model('User');
+  let user            = new User({});
+  let instanceMethods = ['save', 'update', 'delete', 'toJSON'];
+  let staticMethods   = ['find'];
 
-  log.silent('info')('Check User');
-
-  // ### Validate Model
-
-  var User = require('./models/user');
-  if (!User) {
-    log.silent('error')(' - User model has not been defined');
-    return false;
-  }
-
-  // ### Validate Methods
-
-  var user            = new User({});
-  var instanceMethods = ['save', 'update', 'delete', 'toJSON'];
-  var staticMethods   = ['find'];
+  log.silent('info')('  Validate Model');
 
   instanceMethods.forEach(function (method) {
     if ('function' !== typeof user[method]) {
-      log.silent('error')(' - User model is missing .%s() method', method);
+      log.silent('error')('   - .%s() method is not defined', method);
       valid = false;
+    } else {
+      log.silent('info')('   - .%s() [OK]', method);
     }
   });
 
   staticMethods.forEach(function (method) {
     if ('function' !== typeof User[method]) {
-      log.silent('error')(' - User model is missing .%s() method', method);
+      log.silent('error')('   - .%s() method is not defined', method);
       valid = false;
+    } else {
+      log.silent('info')('   - .%s() [OK]', method);
     }
   });
 
-  return valid;
-}
+  // ### Load and Validate Policies
 
-/**
- * Validate the Interface policies
- * @private
- * @method validPolicies
- * @return {bool}
- */
-function validPolicies() {
-  var valid = true;
-
-  log.silent('info')('Check Policies');
-
-  var policies = ['authenticate'];
+  log.silent('info')('  Validate Policies');
+  let policies = ['authenticate', 'admin'];
   policies.forEach(function (id) {
-    var handler = Reach.policy(id);
+    let handler = Reach.policy(id);
     if (!handler) {
-      log.silent('error')(' - Policy %s has not been defined', id);
+      log.silent('error')('   - %s has not been defined', id);
       valid = false;
+    } else {
+      log.silent('info')('   - %s [OK]', id);
     }
   });
 
   return valid;
-}
+};

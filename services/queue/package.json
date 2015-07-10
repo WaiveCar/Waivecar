@@ -1,10 +1,9 @@
 {
-  "name": "reach-api-queue",
+  "name": "reach-queue",
+  "private": true,
   "author": "Christoffer Rødvik",
   "license": "MIT",
   "dependencies": {
-    "node": [
-      "kue"
-    ]
+    "kue": "0.9.3"
   }
 }

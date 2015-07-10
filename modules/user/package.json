@@ -1,5 +1,6 @@
 {
-  "name": "reach-api-user",
+  "name": "reach-user",
+  "private": true,
   "author": "Christoffer Rødvik",
   "description": "A user module providing access to user handling from front end applications",
   "license": "MIT",

@@ -14,10 +14,12 @@
 
 'use strict';
 
+let register = Reach.Register;
+
 // ### Authenticate
 // Authenticates the incoming request before allowing access to the route
 
-Reach.register.policy('authenticate', function *() {
+register.policy('authenticate', function *() {
   if (!this.auth.check()) {
     this.throw({
       code    : 'AUTH_ERROR',
@@ -26,7 +28,7 @@ Reach.register.policy('authenticate', function *() {
   }
 });
 
-Reach.register.policy('admin', function *() {
+register.policy('admin', function *() {
   if ('admin' !== this.user.role) {
     this.throw({
       code    : 'AUTH_ERROR',

@@ -1,5 +1,6 @@
 {
-  "name": "kodemon-auth",
+  "name": "reach-auth",
+  "private": true,
   "version": "0.0.1",
   "description": "Authentication module",
   "author": "Christoffer Rødvik",
@@ -10,10 +11,5 @@
   "tests": [
     "test/auth"
   ],
-  "routes": "routes.js",
-  "dependencies": {
-    "node": [
-      "reach-auth"
-    ]
-  }
+  "routes": "routes.js"
 }

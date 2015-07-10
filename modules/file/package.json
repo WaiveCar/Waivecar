@@ -1,17 +1,15 @@
 {
-  "name": "reach-api-file",
+  "name": "reach-file",
+  "private": true,
   "description": "A module that handles files",
   "main": "init.js",
   "models": {
-    "File" : "models/file"
+    "File": "models/file"
   },
   "routes": "routes.js",
   "dependencies": {
-    "node": [
-      "knox",
-      "co-fs",
-      "save-to",
-      "mimetype"
-    ]
+    "knox": "0.9.2",
+    "mimetype": "0.0.7",
+    "save-to": "1.0.3"
   }
 }

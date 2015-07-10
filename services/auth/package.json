@@ -1,10 +1,9 @@
 {
-  "name": "reach-api-auth",
+  "name": "reach-auth",
+  "private": true,
   "author": "Christoffer Rødvik",
   "license": "MIT",
   "dependencies": {
-    "node": [
-      "koa-request"
-    ]
+    "koa-request": "1.0.0"
   }
 }

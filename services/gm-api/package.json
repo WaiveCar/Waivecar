@@ -1,12 +1,7 @@
 {
   "name": "gm-api",
-  "bootstrap": [
-    "bootstrap/validate.js"
-  ],
+  "bootstrap": "bootstrap/validate.js",
   "tests": [
     "test/vehicle-service"
-  ],
-  "dependencies": {
-    "node": [ "co-request", "lodash" ]
-  }
+  ]
 }
