@@ -10,7 +10,7 @@
 // ### Dependencies
 
 var kue    = require('kue');
-var config = reach.config.queue;
+var config = Reach.config.queue;
 var queue  = config ? kue.createQueue(config) : null;
 
 // ### Module

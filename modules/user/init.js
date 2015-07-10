@@ -2,4 +2,4 @@
 
 // ### Load Jobs
 
-reach.service('queue/loader')(__dirname + '/jobs');
+Reach.service('queue/loader')(__dirname + '/jobs');

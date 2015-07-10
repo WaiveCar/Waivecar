@@ -13,6 +13,10 @@ var ErrorLog = Reach.model('ErrorLog');
 
 Router.get('/logger', {
   handler : function *(query) {
-    return yield ErrorLog.find(query);
+    return yield ErrorLog.find({
+      order  : query.sort   || ['createdAt', 'ASC'],
+      limit  : query.limit  || 20,
+      offset : query.offset || 0
+    });
   }
 });

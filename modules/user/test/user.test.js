@@ -11,7 +11,7 @@
 
 var assert  = require('chai').assert;
 var name    = require('node-random-name');
-var config  = reach.config;
+var config  = Reach.config;
 
 // ### Unit Tests
 
@@ -76,7 +76,7 @@ describe('User Module', function () {
 
     function is_done() {
       if (0 === count) {
-        reach.test.tokens = tokens;
+        Reach._mock.tokens = tokens;
         done();
       } else {
         count--;
@@ -198,7 +198,7 @@ describe('User Module', function () {
     it('should retrieve the authenticated users profile', function (done) {
       request.get({
         headers : {
-          Authorization : reach.test.user.token
+          Authorization : Reach._mock.user.token
         }
       }, function (err, res, body) {
         if (err) {
@@ -207,7 +207,7 @@ describe('User Module', function () {
 
         assert.equal(res.statusCode, 200, body.message);
         assert.isObject(body, 'Response is not of type object!');
-        assert.equal(body.id, reach.test.user.id);
+        assert.equal(body.id, Reach._mock.user.id);
         assert.isUndefined(body.token, 'Token should not be included!');
 
         done();
@@ -306,7 +306,7 @@ describe('User Module', function () {
       request.put({
         uri     : config.api.uri + '/users/1',
         headers : {
-          Authorization : reach.test.user.token
+          Authorization : Reach._mock.user.token
         },
         body : {
           firstName : 'Jack'
@@ -378,7 +378,7 @@ describe('User Module', function () {
       request.del({
         uri     : config.api.uri + '/users/1',
         headers : {
-          Authorization : reach.test.user.token
+          Authorization : Reach._mock.user.token
         }
       }, function (err, res) {
         if (err) {
@@ -387,7 +387,7 @@ describe('User Module', function () {
 
         assert.equal(res.statusCode, 200);
 
-        delete reach.test.user;
+        delete Reach._mock.user;
 
         done();
       });

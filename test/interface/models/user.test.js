@@ -11,7 +11,7 @@ var assert = require('chai').assert;
 
 describe('Interface', function () {
   describe('User', function () {
-    var User = reach.model('User');
+    var User = Reach.model('User');
     var user = null;
 
     it('has been defined', function (done) {

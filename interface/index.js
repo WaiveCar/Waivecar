@@ -55,6 +55,8 @@
 
 'use strict';
 
+let log = Reach.Logger;
+
 require('./policies');
 
 /**
@@ -79,7 +81,7 @@ Interface.valid = function () {
  * @method load
  */
 Interface.load = function () {
-  reach.register.models(__dirname, {
+  Reach.register.models(__dirname, {
     User : 'models/user'
   });
 };
@@ -93,13 +95,13 @@ Interface.load = function () {
 function validUser() {
   var valid = true;
 
-  Reach.Logger.silent('info')('Check User');
+  log.silent('info')('Check User');
 
   // ### Validate Model
 
   var User = require('./models/user');
   if (!User) {
-    Reach.Logger.silent('error')(' - User model has not been defined');
+    log.silent('error')(' - User model has not been defined');
     return false;
   }
 
@@ -111,14 +113,14 @@ function validUser() {
 
   instanceMethods.forEach(function (method) {
     if ('function' !== typeof user[method]) {
-      Reach.Logger.silent('error')(' - User model is missing .%s() method', method);
+      log.silent('error')(' - User model is missing .%s() method', method);
       valid = false;
     }
   });
 
   staticMethods.forEach(function (method) {
     if ('function' !== typeof User[method]) {
-      Reach.Logger.silent('error')(' - User model is missing .%s() method', method);
+      log.silent('error')(' - User model is missing .%s() method', method);
       valid = false;
     }
   });
@@ -135,13 +137,13 @@ function validUser() {
 function validPolicies() {
   var valid = true;
 
-  Reach.Logger.silent('info')('Check Policies');
+  log.silent('info')('Check Policies');
 
   var policies = ['authenticate'];
   policies.forEach(function (id) {
-    var handler = reach.policy(id);
+    var handler = Reach.policy(id);
     if (!handler) {
-      Reach.Logger.silent('error')(' - Policy %s has not been defined', id);
+      log.silent('error')(' - Policy %s has not been defined', id);
       valid = false;
     }
   });

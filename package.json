@@ -5,10 +5,10 @@
     "test": "NODE_ENV=test node --harmony tests.js",
     "test-cov": "NODE_ENV=test node --harmony node_modules/.bin/istanbul cover tests.js",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-    "local": "NODE_ENV=local DEBUG=socket:* nodemon --harmony server.js",
-    "dev": "NODE_ENV=dev node --harmony server.js",
-    "stag": "NODE_ENV=stag node --harmony server.js",
-    "prod": "NODE_ENV=prod node --harmony server.js"
+    "local": "NODE_ENV=local DEBUG=socket:* nodemon --harmony run.js",
+    "dev": "NODE_ENV=dev node --harmony run.js",
+    "stag": "NODE_ENV=stag node --harmony run.js",
+    "prod": "NODE_ENV=prod node --harmony run.js"
   },
   "repository": {
     "type": "git",
@@ -26,10 +26,8 @@
   },
   "devDependencies": {
     "chai": "^2.3.0",
-    "co-mocha": "^1.1.2",
     "coveralls": "^2.11.2",
     "istanbul-harmony": "^0.3.15",
-    "mocha": "^2.2.5",
     "node-random-name": "^1.0.1",
     "request": "^2.58.0"
   }

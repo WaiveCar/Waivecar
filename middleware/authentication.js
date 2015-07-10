@@ -14,7 +14,7 @@
 
 var auth   = require('reach-auth');
 var bcrypt = require('co-bcrypt');
-var User   = reach.model('User');
+var User   = Reach.model('User');
 
 // ### Authentication Handlers
 

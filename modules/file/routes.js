@@ -2,6 +2,7 @@
 
 var FileHandler = require('./classes/file-handler');
 var Router      = Reach.Router;
+var where       = Reach.service('mysql/where');
 var File        = Reach.model('File');
 
 Router.post('/files/:target', {
@@ -20,6 +21,11 @@ Router.post('/files/:target', {
 
 Router.get('/files', {
   handler : function *(query) {
-    return yield File.find(query);
+    return yield File.find({
+      where  : where(query, ['id', 'source', 'mime']),
+      order  : query.sort   || ['createdAt', 'ASC'],
+      limit  : query.limit  || 20,
+      offset : query.offset || 0
+    });
   }
 });

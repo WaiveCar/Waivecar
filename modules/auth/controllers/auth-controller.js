@@ -7,8 +7,8 @@
 
 'use strict';
 
-var Facebook = reach.service('auth/facebook');
-var User     = reach.model('User');
+var Facebook = Reach.service('auth/facebook');
+var User     = Reach.model('User');
 
 module.exports = (function () {
 
@@ -38,7 +38,7 @@ module.exports = (function () {
    * @method facebook
    */
   AuthController.prototype.facebook = function *(post) {
-    var facebook    = new Facebook(reach.config.facebook);
+    var facebook    = new Facebook(Reach.config.facebook);
     var accessToken = yield facebook.accessToken(post.code, post.redirectUri);
     var profile     = yield facebook.profile(accessToken);
     var user        = yield User.findOne({ facebook : profile.id });

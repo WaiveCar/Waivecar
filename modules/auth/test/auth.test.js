@@ -10,7 +10,7 @@
 // ### Dependencies
 
 var assert = require('chai').assert;
-var config = reach.config;
+var config = Reach.config;
 
 // ### Unit Tests
 
@@ -43,7 +43,7 @@ describe('Auth Module', function () {
         assert.isObject(body, 'Response is not of type object!');
         assert.isDefined(body.token, 'Missing authorization token!');
 
-        reach.test.user = body; // Add user to the reach.test object
+        Reach._mock.user = body; // Add user to the Reach._mock object
 
         done();
       });
@@ -53,7 +53,7 @@ describe('Auth Module', function () {
       request.get({
         uri     : config.api.uri + '/auth/validate',
         headers : {
-          Authorization : reach.test.user.token
+          Authorization : Reach._mock.user.token
         }
       }, function (err, res) {
         if (err) {

@@ -1,11 +1,48 @@
 language: node_js
 sudo: false
 node_js:
-  - '0.12.4'
+  - '0.12'
+branches:
+  only:
+  - api/master
+  - api/staging
+  - api/development
+cache:
+  directories:
+    - node_modules
+env:
+  global:
+  - BRANCHING_MODEL=API_APP
+  - PACKAGE_NAME=waivecar
+  - REMOTE_USER=travis
+  - COVERAGE_TOKEN=Prejal3413sfJsad43jadasd431
+  - INIT_SCRIPT=/etc/init.d/node-${PACKAGE_NAME}
+  - STRICT_VERSION_CHECK=false
+  - REMOTE_DIR_WEB=/opt/${PACKAGE_NAME}-web
+  - REMOTE_DIR_APP=/opt/${PACKAGE_NAME}-admin
+  - REMOTE_DIR_API=/opt/${PACKAGE_NAME}-api
+  - REMOTE_HOST_DEV=${PACKAGE_NAME}-dev.cleverbuild.biz
+  - REMOTE_HOST_STAG=${PACKAGE_NAME}-stag.cleverbuild.biz
+  - REMOTE_HOST_PROD=${PACKAGE_NAME}-prod.cleverbuild.biz
+  - SCR=deployment/build/scripts
 services:
+  - mongodb
   - redis-server
+before_install:
+  - curl 'http://cistats.clevertech.biz/logstat/?&project=Waivecar&type=3'
+  - deployment/build/scripts/trigger_coverage
+  - openssl aes-256-cbc -K $encrypted_e155dc6b3053_key -iv $encrypted_e155dc6b3053_iv
+    -in deployment/build/ssh/id_rsa.enc -out deployment/build/ssh/id_rsa -d
+  - chmod 400 deployment/build/ssh/id_rsa
 install:
-  - npm install
+  - $SCR/commit_dependencies --fast
 script:
-  - npm run test-cov
-  - npm run coveralls
+  - $SCR/commit_build && $SCR/commit_analysis && $SCR/commit_test && $SCR/commit_package
+    --name ${PACKAGE_NAME} --commit ${TRAVIS_COMMIT} && $SCR/deploy
+notifications:
+  slack:
+    secure: cSyGb0+qd+MpHSf3tPr546dLaKkeZx0S5sbkr1eJxr45fKIDNO+bO5bYJezGlozoFZXHq/9HXKL+uoRTfF2uLpVmMVFjAeKs/UHcdnLjGlKQ3M0APLSM3iK0D3aYQ19u0FJ8aNaV/2Jv+gl0QIL6TV5jb2QBji1rDMZsjeNHE68=
+after_success:
+  - curl 'http://cistats.clevertech.biz/logstat/?&project=Waivecar&type=2'
+after_failure:
+  - curl 'http://cistats.clevertech.biz/logstat/?&project=Waivecar&type=2'

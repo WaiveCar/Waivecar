@@ -10,5 +10,5 @@
 // ### Middleware
 
 module.exports = function (app) {
-  app.use(Reach.Errors());
+  app.use(Reach.ErrorHandler());
 };

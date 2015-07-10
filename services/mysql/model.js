@@ -59,9 +59,9 @@ module.exports = (function () {
     for (let key in attrs) {
       data[key] = this[key];
     }
-    data.createdAt = this.createdAt;
-    data.updatedAt = this.updatedAt;
-    data.deletedAt = this.deletedAt;
+    if (data.createdAt) { data.createdAt = this.createdAt; }
+    if (data.updatedAt) { data.updatedAt = this.updatedAt; }
+    if (data.deletedAt) { data.deletedAt = this.deletedAt; }
     return data;
   };
 

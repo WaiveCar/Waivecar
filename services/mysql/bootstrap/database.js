@@ -10,7 +10,7 @@
 // ### Dependencies
 
 var mysql  = require('mysql');
-var config = reach.config;
+var config = Reach.config;
 
 // ### Export Config
 

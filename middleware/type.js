@@ -20,7 +20,7 @@
 module.exports = function (app) {
   app.use(function *(next) {
     var origin = this.headers.origin;
-    var types  = reach.config.api.sites;
+    var types  = Reach.config.api.sites;
 
     this.from = null;
 

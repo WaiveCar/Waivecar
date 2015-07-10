@@ -1,6 +1,6 @@
 'use strict';
 
-let _super = reach.service('mysql/model');
+let _super = Reach.service('mysql/model');
 let query  = Reach.service('mysql/query');
 
 module.exports = (function () {

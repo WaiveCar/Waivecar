@@ -21,7 +21,7 @@ var mysql   = require('mysql');
  * @property config
  * @type     object
  */
-var config = reach.config.mysql;
+var config = Reach.config.mysql;
 
 /**
  * Connection pool where the adapter retrives query connections.

@@ -240,7 +240,7 @@ Query.getModel = function (options) {
   var model = {};
 
   model.key     = 'string' === typeof options ? options : Object.keys(options)[0];
-  model.creator = reach.model(model.key);
+  model.creator = Reach.model(model.key);
 
   return model.creator ? model : false;
 };

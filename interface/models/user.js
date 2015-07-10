@@ -1,8 +1,8 @@
 'use strict';
 
 var bcrypt = require('co-bcrypt');
-var query  = reach.service('mysql/query');
-var _super = reach.service('mysql/model');
+var query  = Reach.service('mysql/query');
+var _super = Reach.service('mysql/model');
 
 /**
  * @class User
