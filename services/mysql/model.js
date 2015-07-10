@@ -1,26 +1,16 @@
-/**
-  MySQL Model
-  ===========
-
-  Stability: 3 - Stable
-
-  @author  Christoffer Rødvik
-  @license MIT
- */
-
 'use strict';
 
 let changeCase = require('change-case');
-
-// ### Export Module
+let moment     = require('moment');
+let query      = Reach.service('mysql/query');
 
 module.exports = (function () {
 
   /**
-   * @class MySQL
+   * @class MySQLModel
    * @constructor
    */
-  function MySQL(data) {
+  function MySQLModel(data) {
     let self       = this;
     let attributes = Object.keys(this._schema.attributes);
 
@@ -45,7 +35,78 @@ module.exports = (function () {
    * @type     Array
    * @default  []
    */
-  MySQL.prototype._blacklist = [];
+  MySQLModel.prototype._blacklist = [];
+
+  /**
+   * Performs a insert query on the model.
+   * @method insert
+   * @return {Object} result
+   */
+  MySQLModel.prototype.save = function *() {
+    if (!this._table) { throw missingTableError(); }
+
+    let result = yield query.insert(this._table, this._data());
+
+    this.id        = result.insertId;
+    this.createdAt = moment().format('YYYY-MM-DD HH-mm-ss');
+
+    return result;
+  };
+
+  /**
+   * Performs a select query on the model.
+   * @method select
+   */
+  MySQLModel.find = function *(options) {
+    if (!this._table) { throw missingTableError(); }
+
+    let result = yield query.select(this._table, options);
+    let Model  = this;
+
+    if (!result) {
+      return result;
+    }
+
+    if (options && options.limit && 1 === options.limit) {
+      return new Model(result);
+    }
+
+    result.forEach(function (user, index) {
+      result[index] = new Model(user);
+    });
+
+    return result;
+  };
+
+  /**
+   * Performs a update query on the model.
+   * @method update
+   * @param  {Object} data
+   * @return {Object}
+   */
+  MySQLModel.prototype.update = function *(data) {
+    if (!this._table) { throw missingTableError(); }
+
+    let result = yield query('UPDATE '+ this._table +' SET ?, updated_at = NOW() WHERE id = ?', [data, this.id]);
+    for (var key in data) {
+      if (this.hasOwnProperty(key)) {
+        this[key] = data[key];
+      }
+    }
+    this.updatedAt = moment().format('YYYY-MM-DD HH-mm-ss');
+    return result;
+  };
+
+  /**
+   * Performs a soft delete on the model.
+   * @method delete
+   * @return {Object}
+   */
+  MySQLModel.prototype.delete = function *() {
+    if (!this._table) { throw missingTableError(); }
+
+    return yield query('UPDATE ' + this._table + ' SET deleted_at = NOW() WHERE id = ?', [this.id]);
+  };
 
   /**
    * Collects all the data belonging to the model and returns it as
@@ -53,7 +114,7 @@ module.exports = (function () {
    * @method _data
    * @return {Object} data
    */
-  MySQL.prototype._data = function () {
+  MySQLModel.prototype._data = function () {
     let attrs = this._schema.attributes;
     let data  = {};
     for (let key in attrs) {
@@ -70,7 +131,7 @@ module.exports = (function () {
    * @param  {Array} attributes
    * @return {Object}
    */
-  MySQL.prototype.toJSON = function (attributes) {
+  MySQLModel.prototype.toJSON = function (attributes) {
     let result = this._data();
 
     // ### Remove Blacklist Keys
@@ -99,6 +160,18 @@ module.exports = (function () {
   };
 
   /**
+   * Create a new error object for missing _table parameter.
+   * @private
+   * @method missingTableError
+   * @return {Error}
+   */
+  function missingTableError() {
+    let err = new Error('Missing _table parameter on MySQL model');
+    err.code = 'MYSQL_SERVICE_MISSING_ATTRIBUTE';
+    return err;
+  }
+
+  /**
    * Converts keys in an object from camelCase to snake_case
    * @private
    * @method changeKeyCase
@@ -119,6 +192,6 @@ module.exports = (function () {
     return converted;
   }
 
-  return MySQL;
+  return MySQLModel;
 
 })();
