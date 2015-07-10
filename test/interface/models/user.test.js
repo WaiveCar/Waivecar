@@ -24,10 +24,10 @@ describe('Interface', function () {
       user = new User({
         firstName : 'John',
         lastName  : 'Doe',
-        email     : 'john.doe@test.none',
-        password  : 'password'
+        email     : 'john.doe@test.none'
       });
 
+      yield user.preparePassword('password');
       yield user.save();
 
       assert.isNumber(user.id, 'User was not assigned an id');
