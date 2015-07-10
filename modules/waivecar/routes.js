@@ -21,3 +21,15 @@ Router.get('/cars/:vin/vehicle-diagnostics', {
     return yield service.getVehicleDiagnostics(vin);
   }
 });
+
+Router.get('/cars/:vin/info', {
+  handler : function *(vin) {
+    return yield service.getVehicleInfo(vin);
+  }
+});
+
+Router.get('/cars/:vin/vehicle-data', {
+  handler : function *(vin) {
+    return yield service.vehicleData(vin);
+  }
+});

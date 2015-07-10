@@ -1,5 +1,8 @@
 {
   "name": "clevertech-waivecar",
   "description": "Module for managing cars and bookings for electric cars",
+  "models": {
+    "Car": "models/car"
+  },
   "routes": "routes.js"
 }
