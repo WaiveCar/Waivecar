@@ -73,6 +73,26 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
   }
 }
 
+.action-button{
+  height:10%;
+  background-color:rgb(37,193,85);
+  color:#FFF;
+  text-transform:uppercase;
+  text-align:center;
+  vertical-align: middle;
+  width:100%;
+  font-size: 2em;
+}
+.action-button p{
+ 
+  transform: translate(0%, 100%);
+}
+.button-right{
+  float:right;
+  clear:both;
+}
+
+
 @import "www/components/search/style.scss";
 @import "www/components/bookings/style.scss";
-@import "www/components/mapping/style.scss";
+@import "www/components/maps/style.scss";

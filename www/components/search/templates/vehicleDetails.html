@@ -1,0 +1,29 @@
+<ion-pane>
+  <ion-header-bar class="bar bar-header bar-light route-details">
+    <div class="title">
+      <route-information></route-information>
+    </div>
+    <div class="buttons">
+        <button ui-sref="search" class="button button-icon icon ion-close button-right"></button>
+    </div>
+  </ion-header-bar>
+  <ion-content scroll="false">
+    <div ng-controller="VehicleDetailsController as details">
+    </div>
+        <div class="map-container map-container-medium">
+            <map id="map" zoom="15" >
+                  <device-location></device-location>
+                  <destiny-location ></destiny-location>
+                  <route-to-car></route-to-car>
+            </map>
+        </div>
+        <div class="vehicle-summary-container">
+            <vehicle-summary></vehicle-summary>
+        </div>
+
+        <div class="action-button">
+          <p>book waivecar</p>
+        </div>
+   
+  </ion-content>
+</ion-pane>

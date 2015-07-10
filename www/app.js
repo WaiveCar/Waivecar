@@ -52,6 +52,12 @@ function Config($stateProvider, $urlRouterProvider) {
       url: '/my-account',
       templateUrl: '/components/users/templates/index.html'
     })
+    .state('vehicle-details', {
+      url: '/vehicleDetails',
+      templateUrl: '/components/search/templates/vehicleDetails.html',
+      params : { vehicleDetails: null}
+
+    })
     .state('points', {
       url: '/my-points',
       templateUrl: '/components/users/templates/reward-points.html'
@@ -62,9 +68,11 @@ function Config($stateProvider, $urlRouterProvider) {
 
 angular.module('app', [
   'ionic',
-  'ngCordova',
   'ngResource',
-  'Maps'
+  'Maps',
+  'Maps.realReach',
+  'Maps.fleet',
+  'Maps.route'
 ])
 .run(['$ionicPlatform', Run])
 .config([ '$stateProvider', '$urlRouterProvider', Config ]);

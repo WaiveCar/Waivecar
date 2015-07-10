@@ -1,7 +1,8 @@
 function Config() {
+  var apiUri='https://api-waivecar-dev.cleverbuild.biz/v1';
   return {
     uri: {
-      api: 'https://api-waivecar-dev.cleverbuild.biz/v1',
+      api: apiUri,
       auth: {
         signin: 'https://api-waivecar-dev.cleverbuild.biz/auth/signin',
         signup: 'https://api-waivecar-dev.cleverbuild.biz/auth/signup',
@@ -10,7 +11,10 @@ function Config() {
       },
       web: 'https://web-waivecar-dev.cleverbuild.biz',
       admin: 'https://admin-waivecar-dev.cleverbuild.biz',
-      assets: ''
+      assets: '',
+      vehicles:{
+        getNearby:apiUri+'/vehicles/'
+      }
     },
     satellizer: {
       facebook: {

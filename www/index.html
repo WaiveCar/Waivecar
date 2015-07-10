@@ -6,6 +6,8 @@
     <title>WaiveCar</title>
     <!-- compiled css output -->
     <link href="css/ionic.app.css" rel="stylesheet">
+    <link rel="stylesheet" href="leaflet/leaflet.css" />
+
     <!-- ionic/angularjs js -->
     <script src="lib/ionic/js/ionic.bundle.js"></script>
 
@@ -25,7 +27,7 @@
     <!-- lib js -->
     <script src="lib/angular-resource/angular-resource.js"></script>
     <!-- local libraries -->
-    <script src="js/leaflet-src.js"></script>
+    <script src="leaflet/leaflet-src.js"></script>
     <script src="js/skobbler-2.0.js"></script>
     <script src="js/leafletMakiMarkers.js"></script>
     <!-- app -->
@@ -45,13 +47,19 @@
     <script src="components/countdown/timer-controller.js"></script>
     <script src="components/countdown/timer-directive.js"></script>
     <script src="components/countdown/timer.js"></script>
-    <script src="components/mapping/index.js"></script>
+    
+    <script src="modules/maps/index.js"></script>
+    <script src="modules/maps/fleet.js"></script>
+    <script src="modules/maps/realReach.js"></script>
+    <script src="modules/maps/route.js"></script>
+
+
     <script src="components/menu/index.js"></script>
     <script src="components/search/index.js"></script>
     <script src="components/users/index.js"></script>
     <script src="components/vision/index.js"></script>
   </head>
   <body ng-app="app" ng-controller="ApplicationController">
-    <ion-nav-view></ion-nav-view>
+    <ion-nav-view animation="no-animation"></ion-nav-view>
   </body>
 </html>

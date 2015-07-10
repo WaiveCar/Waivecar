@@ -8,14 +8,19 @@
   <ion-content scroll="false">
     <div class="map-container">
       <map id="map" zoom="15" >
-        <nearby-fleet></nearby-fleet>
-        <device-location></device-location>
-        <route-to-nearest-car></route-to-nearest-car>
-        <div ng-controller="RouteTimeController as route">
-          <map-info></map-info>
-        </div>
-        <div ng-controller="RouteDurationController as duration">
-          <map-info></map-info>
+        <div ng-controller="SearchController as search">
+
+          <device-location></device-location>
+
+          <nearby-fleet  on-click-marker="search.showCarDetails(marker,info)"></nearby-fleet>
+          <!-- 
+          <route-to-nearest-car></route-to-nearest-car>
+          <div ng-controller="RouteTimeController as route">
+            <map-info></map-info>
+          </div>
+          <div ng-controller="RouteDurationController as duration">
+            <map-info></map-info>
+          </div> -->
         </div>
       </map>
     </div>
