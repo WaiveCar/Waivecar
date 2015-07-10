@@ -26,7 +26,15 @@ function BookingController($rootScope, $scope, $state, Bookings) {
   };
 
   self.openMap = function() {
-    // TODO: open map.
+    // TODO: use actual address.
+    var url= [
+      'comgooglemaps-x-callback://?',
+      '&daddr=International+Airport',
+      '&directionsmode=walking',
+      '&x-success=WaiveCar://?resume=true',
+      '&x-source=WaiveCar'
+    ].join('');
+    window.open(encodeURI(url), '_system');
   };
 }
 
