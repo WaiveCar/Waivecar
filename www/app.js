@@ -59,6 +59,13 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
       params : { vehicleDetails: null}
 
     })
+
+    .state('get-to-waivecar',{
+      url: '/getToWaiveCar',
+      templateUrl: '/components/search/templates/getToWaiveCar.html',
+      params : { vehicleDetails: null}
+
+    })
     .state('points', {
       url: '/my-points',
       templateUrl: '/components/users/templates/reward-points.html'

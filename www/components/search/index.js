@@ -18,11 +18,25 @@ SearchController.prototype.showCarDetails = function(marker,data) {
 	
 };
 function VehicleDetailsController(selectedService,$state){
+  this.selectedService=selectedService;
   var selectedData=selectedService.getSelected();
+  this.state=$state;
   if(typeof selectedData=="undefined"){
     $state.go('search');
   }
 }
+VehicleDetailsController.prototype.bookingClick = function() {
+  var selectedData=this.selectedService.getSelected();
+  this.state.go('get-to-waivecar',{vehicleDetails:selectedData});
+
+};
+VehicleDetailsController.prototype.cancelClick = function() {
+    this.state.go('search');
+};
+
+VehicleDetailsController.prototype.getDirectionsClick = function() {
+  console.log("Get directions");
+};
 
 function SelectedVehicleService($rootScope){
 	this.$rootScope;
@@ -35,11 +49,12 @@ SelectedVehicleService.prototype.getSelected = function() {
 };
 
 
-function vehicleSummaryDirective(searchEvents,$state){
+function vehicleChargeStatusDirective(searchEvents,$state){
       function link(scope,element,attrs,ctrl){
+        if(!$state.params){
+          return;
+        }
         var details=$state.params.vehicleDetails.status;
-        console.log("SUMMARRY");
-        console.log(JSON.stringify(details));
         scope.chargeLevel=details.charge.current+"% full";
         if(details.charge.charging){
             scope.chargeState="Parked at charging station";
@@ -54,17 +69,37 @@ function vehicleSummaryDirective(searchEvents,$state){
       return {
         restrict:'E',
         link:link,
-        templateUrl:'components/search/templates/vehicleSummary.html',
+        templateUrl:'components/search/templates/vehicleChargeStatus.html',
       }
 }
 
+function timeToGetToCarDirective(searchEvents,$state){
+   return {
+        restrict:'E',
+        templateUrl:'components/search/templates/timeToGetToCar.html',
+      }
+}
+function vehicleInformationDirective(searchEvents,$state){
+      function link(scope,element,attrs,ctrl){
+        if(!$state.params){
+          return;
+        }
+        var details=$state.params.vehicleDetails;
+        scope.name=details.name;
+        scope.plate=details.plate;
+      }
+      return {
+        restrict:'E',
+        link:link,
+        templateUrl:'components/search/templates/vehicleInformation.html',
+      }
+}
 angular.module('app')
 .constant('searchEvents',{
     vehicleSelected:'vehicleSelected',
 })
 
 .service('selectedVehicleService',['$rootScope',SelectedVehicleService])
-
 
 .controller('VehicleDetailsController', ['selectedVehicleService','$state',VehicleDetailsController])
 
@@ -78,4 +113,6 @@ angular.module('app')
   'mapsEvents',
   SearchController
 ])
-.directive('vehicleSummary',['searchEvents','$state',vehicleSummaryDirective]);
+.directive('timeToGetToCar',['searchEvents','$state',timeToGetToCarDirective])
+.directive('vehicleChargeStatus',['searchEvents','$state',vehicleChargeStatusDirective])
+.directive('vehicleInformation',['searchEvents','$state',vehicleInformationDirective]);

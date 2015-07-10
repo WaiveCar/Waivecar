@@ -13,38 +13,43 @@
   	this.timerService = Timer;
   	this.$interval=$interval;
   	this.scope=$scope;
-
-  	var unbindList=[];
-  	var unbind;
-  	unbind=$scope.$on(NEW_COUNTER_EVENT,function(){
-  		self.startCount();
-  	});
-  	unbindList.push(unbind);
-
-  	unbind=$scope.$on(COUNTER_STATE_CHANGED_EVENT,function(ev,status){
-  		self.status=status;
-  	});
-  	unbindList.push(unbind);
-
-  	unbind=$scope.$on(COUNTER_CANCELLED_EVENT,function(ev,status){
-  		self.stopCount();
-  	});
+  	this.unbindList=[];
+  
   	unbindList.push(unbind);
   	$scope.$on("$destroy", function() {
           self.stopCount();
-          unbindList.map(function(u){
+          self.unbindList.map(function(u){
           	u();
           })
       });
   }
+  TimerController.prototype.createTimer = function(name) {
+    var unbind;
+    var self=this;
+    unbind=$scope.$on(NEW_COUNTER_EVENT+"_"+name,function(){
+      self.startCount();
+    });
+    this.unbindList.push(unbind);
+
+    unbind=$scope.$on(COUNTER_STATE_CHANGED_EVENT+"_"+name,function(ev,status){
+      self.status=status;
+    });
+    this.unbindList.push(unbind);
+
+    this.unbind=$scope.$on(COUNTER_CANCELLED_EVENT+"_"+name,function(ev,status){
+      self.stopCount();
+    });
+    this._timerName=name;
+    this.timerService.createTimer(name);
+  };
   TimerController.prototype.start = function() {
-  	this.timerService.start();
+  	this.timerService.start(this._timerName);
   };
   TimerController.prototype.startCount=function(){
-  	this.status=this.timerService.getStatus();
-  	this.hours=this.timerService.getEllapsedHours();
-  	this.minutes=this.timerService.getEllapsedMinutes();
-  	this.seconds=this.timerService.getEllapsedSeconds();
+  	this.status=this.timerService.getStatus(this._timerName);
+  	this.hours=this.timerService.getEllapsedHours(this._timerName);
+  	this.minutes=this.timerService.getEllapsedMinutes(this._timerName);
+  	this.seconds=this.timerService.getEllapsedSeconds(this._timerName);
   	var self=this;
   	var intervalFunction=function(){
   		self.seconds++;
@@ -66,7 +71,7 @@
   	}
   };
   TimerController.prototype.cancel = function() {
-  	this.timerService.cancel();
+  	this.timerService.cancel(this._timerName);
   };
 
   angular.module('app')

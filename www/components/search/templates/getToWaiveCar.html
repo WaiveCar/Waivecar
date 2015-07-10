@@ -1,0 +1,27 @@
+<ion-pane>
+  <ion-header-bar class="bar bar-header bar-light">
+    <h1 class="title">Get to your waivecar</h1>
+    <div class="buttons">
+      <button class="button button-icon icon ion-navicon" ng-click="showNav()"></button>
+    </div>
+  </ion-header-bar>
+  <ion-content scroll="false" ng-controller="VehicleDetailsController as details">
+     <div class="map-container map-container-medium">
+        <map id="map" zoom="15" >
+              <device-location></device-location>
+              <destiny-location ></destiny-location>
+              <route-to-car></route-to-car>
+        </map>
+    </div>
+    <div class="vehicle-summary-container">
+        <vehicle-information></vehicle-information>
+        <time-to-get-to-car></time-to-get-to-car>
+    </div>
+    <div class="action-button confirm left-button" >
+      <p  ng-click="details.getDirectionsClick()" >get directions</p>
+    </div>
+    <div class="action-button cancel right-button" >
+      <p ng-click="details.cancelClick()" >cancel</p>
+    </div>
+  </ion-content>
+</ion-pane>

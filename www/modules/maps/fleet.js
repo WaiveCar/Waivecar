@@ -35,8 +35,10 @@
                                     timeUntilFull:20,
                                     reach:10,
                                     charging:true
-                                }
-                            }
+                                },
+                            },
+                            name:'Chevrolet Spark',
+                            plate:'AUD 568'
                         }
                     )
                 }

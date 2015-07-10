@@ -75,7 +75,6 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 
 .action-button{
   height:10%;
-  background-color:rgb(37,193,85);
   color:#FFF;
   text-transform:uppercase;
   text-align:center;
@@ -83,6 +82,22 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
   width:100%;
   font-size: 2em;
 }
+.action-button.left-button{
+  width:50%;
+  float:left;
+}
+.action-button.right-button{
+  width:50%;
+  float:right;
+}
+.action-button.confirm{
+
+  background-color:rgb(37,193,85);
+}
+.action-button.cancel{
+  background-color:rgb(208,2,27);
+}
+
 .action-button p{
  
   transform: translate(0%, 100%);

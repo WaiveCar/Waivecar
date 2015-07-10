@@ -7,9 +7,8 @@
         <button ui-sref="search" class="button button-icon icon ion-close button-right"></button>
     </div>
   </ion-header-bar>
-  <ion-content scroll="false">
-    <div ng-controller="VehicleDetailsController as details">
-    </div>
+  <ion-content scroll="false" ng-controller="VehicleDetailsController as details">
+ 
         <div class="map-container map-container-medium">
             <map id="map" zoom="15" >
                   <device-location></device-location>
@@ -18,11 +17,11 @@
             </map>
         </div>
         <div class="vehicle-summary-container">
-            <vehicle-summary></vehicle-summary>
+            <vehicle-charge-status></vehicle-charge-status>
         </div>
 
-        <div class="action-button">
-          <p>book waivecar</p>
+        <div class="action-button confirm" >
+          <p ng-click="details.bookingClick()">book waivecar</p>
         </div>
    
   </ion-content>
