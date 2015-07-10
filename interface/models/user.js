@@ -1,7 +1,6 @@
 'use strict';
 
 var bcrypt = require('co-bcrypt');
-var query  = Reach.service('mysql/query');
 var _super = Reach.service('mysql/model');
 
 /**
@@ -37,7 +36,7 @@ module.exports = (function () {
   User.prototype._schema = User._schema = {
     attributes : {
       id         : 'INT(11) NOT NULL AUTO_INCREMENT',
-      role       : 'ENUM("user","admin") NOT NULL DEFAULT "user"',
+      role       : 'ENUM("user","admin") DEFAULT "user"',
       firstName  : 'VARCHAR(28) NOT NULL',
       lastName   : 'VARCHAR(28) NOT NULL',
       email      : 'VARCHAR(128) NOT NULL',
@@ -80,67 +79,12 @@ module.exports = (function () {
   };
 
   /**
-   * Adds the user to the database.
-   * @method save
-   * @return {object}
+   * BCrypts the provided password and assigns it to the user.
+   * @method preparePassword
+   * @param  {String} password
    */
-  User.prototype.save = function *() {
-    this.password = this.password ? yield bcrypt.hash(this.password, 10) : null;
-
-    var result = yield query.insert(this._table, {
-      firstName : this.firstName,
-      lastName  : this.lastName,
-      email     : this.email,
-      password  : this.password,
-      facebook  : this.facebook
-    });
-
-    this.id        = result.insertId;
-    this.role      = this.role || 'user';
-    this.createdAt = Date.now();
-  };
-
-  /**
-   * @static
-   * @method find
-   * @param  {object} options
-   * @return {array}  users
-   */
-  User.find = function *(options) {
-    var result = yield query.select('users', options);
-    if (!result) {
-      return result;
-    }
-    if (options && options.limit && 1 === options.limit) {
-      return new User(result);
-    }
-    result.forEach(function (user, index) {
-      result[index] = new User(user);
-    });
-    return result;
-  };
-
-  /**
-   * @method update
-   * @param  {object} data
-   * @return {object}
-   */
-  User.prototype.update = function *(data) {
-    yield query('UPDATE users SET ?, updated_at = NOW() WHERE id = ?', [data, this.id]);
-    for (var key in data) {
-      if (this.hasOwnProperty(key)) {
-        this[key] = data[key];
-      }
-    }
-    this.updatedAt = Date.now();
-  };
-
-  /**
-   * @method delete
-   * @return {object}
-   */
-  User.prototype.delete = function *() {
-    yield query('UPDATE users SET deleted_at = NOW() WHERE id = ?', [this.id]);
+  User.prototype.preparePassword = function *(password) {
+    this.password = yield bcrypt.hash(password, 10);
   };
 
   return User;

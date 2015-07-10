@@ -1,7 +1,6 @@
 'use strict';
 
 let _super = Reach.service('mysql/model');
-let query  = Reach.service('mysql/query');
 
 module.exports = (function () {
 
@@ -53,38 +52,6 @@ module.exports = (function () {
   ErrorLog.prototype._blacklist = [
     'deletedAt'
   ];
-
-  /**
-   * @static
-   * @method find
-   * @param  {object} options
-   * @return {array}  users
-   */
-  ErrorLog.find = function *(options) {
-    var result = yield query.select('error_log', options);
-    if (!result) {
-      return result;
-    }
-    if (options.limit && 1 === options.limit) {
-      return new ErrorLog(result);
-    }
-    result.forEach(function (log, index) {
-      result[index] = new ErrorLog(log);
-    });
-    return result;
-  };
-
-  /**
-   * @method save
-   */
-  ErrorLog.prototype.save = function *() {
-    let result = yield query.insert(
-      this._table,
-      this._data()
-    );
-    this.id        = result.insertId;
-    this.createdAt = Date.now();
-  };
 
   return ErrorLog;
 
