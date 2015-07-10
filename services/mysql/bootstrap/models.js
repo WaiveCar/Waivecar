@@ -1,9 +1,10 @@
 'use strict';
 
-var cluster = require('cluster');
-var fs      = require('co-fs');
-var path    = require('path');
-var schemas = require('../schemas');
+let cluster      = require('cluster');
+let fs           = require('co-fs');
+let path         = require('path');
+let schemas      = require('../schemas');
+let errorHandler = Reach.ErrorHandler;
 
 // ### Export Config
 
@@ -22,7 +23,15 @@ module.exports = function *() {
       if (cluster.isMaster || 'test' === Reach.ENV && json.models) {
         for (let key in json.models) {
           let Model = require(path.join(moduleDir, json.models[key]));
-          yield schemas.add(Model._table, Model._schema);
+          try {
+            yield schemas.add(Model._table, Model._schema);
+          } catch (err) {
+            errorHandler.log('error', 'MySQL SERVER ERROR', {
+              code    : err.code,
+              message : err.toString(),
+              stack   : errorHandler.parseStack(err.stack)
+            });
+          }
         }
       }
     }
