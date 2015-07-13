@@ -5,7 +5,7 @@ let name   = require('node-random-name');
 let query  = require('../query');
 let User   = Reach.model('User');
 
-describe('MySQL Service [query.js]', function () {
+describe('Query', function () {
   this.timeout(10000);
 
   describe('Query', function () {

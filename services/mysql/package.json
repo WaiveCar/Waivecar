@@ -6,9 +6,7 @@
   "license": "MIT",
   "bootstrap": "bootstrap/init.js",
   "tests": [
-    "test/bootstrap.test.js",
-    "test/query.test.js",
-    "test/where.test.js"
+    "test/service.test.js"
   ],
   "dependencies": {
     "co-mysql": "1.0.0",

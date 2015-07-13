@@ -23,8 +23,8 @@ describe('Interface', function () {
     it('can create a new user', function *() {
       user = new User({
         firstName : 'John',
-        lastName  : 'Doe',
-        email     : 'john.doe@test.none'
+        lastName  : 'Interface',
+        email     : 'john.interface@test.none'
       });
 
       yield user.preparePassword('password');

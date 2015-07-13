@@ -7,7 +7,7 @@ let config = Reach.config;
 
 let storeConfig = config.mysql;
 
-describe('MySQL Service [Bootstrap]', function () {
+describe('Bootstrap', function () {
   this.timeout(10000);
 
   describe('Database', function () {
@@ -34,6 +34,8 @@ describe('MySQL Service [Bootstrap]', function () {
 
   describe('Schemas', function () {
     let models = require('../bootstrap/models');
+
+    config.mysql.force = false; // Don't delete old records at this point
 
     it('should create tables from all models in the api', function *() {
       yield models();

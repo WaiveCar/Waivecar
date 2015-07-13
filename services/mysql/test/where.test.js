@@ -13,7 +13,7 @@ let query = {
   offset    : 10
 };
 
-describe('MySQL Service [where.js]', function () {
+describe('Where', function () {
   it('should create valid where from query', function () {
     let result = where(query, {
       firstName : {

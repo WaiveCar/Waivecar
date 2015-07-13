@@ -10,7 +10,7 @@ describe('Auth Module', function () {
     let user = new User({
       firstName : 'John',
       lastName  : 'Doe',
-      email     : 'john.doe@test.none'
+      email     : 'john.auth@test.none'
     });
     yield user.preparePassword('password');
     yield user.save();
@@ -31,7 +31,7 @@ describe('Auth Module', function () {
     it('should successfully login', function (done) {
       request.post({
         body : {
-          email    : 'john.doe@test.none',
+          email    : 'john.auth@test.none',
           password : 'password'
         }
       }, function (err, res, body) {
@@ -69,7 +69,7 @@ describe('Auth Module', function () {
     it('should fail with wrong credentials', function (done) {
       request.post({
         body : {
-          email    : 'john.doe@test.none',
+          email    : 'john.auth@test.none',
           password : 'invalid.password'
         }
       }, function (err, res, body) {
