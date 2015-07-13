@@ -80,7 +80,8 @@ angular.module('app', [
   'Maps',
   'Maps.realReach',
   'Maps.fleet',
-  'Maps.route'
+  'Maps.route',
+  'countdown'
 ])
 .run(['$ionicPlatform', Run])
 .config([ '$stateProvider', '$urlRouterProvider', '$ionicConfigProvider', Config ]);
