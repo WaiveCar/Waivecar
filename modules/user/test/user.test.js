@@ -1,91 +1,10 @@
-/*
-  User Module Tests
-  =================
-  @author Christoffer Rødvik
-  @github https://github.com/kodemon/reach-api
- */
-
 'use strict';
 
-// ### Dependencies
-
-var assert  = require('chai').assert;
-var name    = require('node-random-name');
-var config  = Reach.config;
-
-// ### Unit Tests
+var assert = require('chai').assert;
+var config = Reach.config;
 
 describe('User Module', function () {
   this.timeout(10000);
-
-  after(function (done) {
-    var count   = 10;
-    var tokens  = [];
-    var request = require('request').defaults({
-      json    : true,
-      headers : {
-        'content-type' : 'application/json'
-      }
-    });
-
-    function user_create() {
-      var firstName = name({ first: true, random: Math.random });
-      var lastName  = name({ last: true, random: Math.random });
-      var email     = (firstName + '.' + lastName + '@test.none').toLowerCase();
-
-      request.post({
-        uri  : config.api.uri + '/users',
-        body : {
-          firstName : firstName,
-          lastName  : lastName,
-          email     : email,
-          password  : 'password'
-        }
-      }, function (err, res) {
-        if (err) {
-          return done(err);
-        }
-
-        assert.equal(res.statusCode, 200);
-
-        user_login(email);
-      });
-    }
-
-    function user_login(email) {
-      request.post({
-        uri  : config.api.uri + '/auth/login',
-        body : {
-          email    : email,
-          password : 'password'
-        }
-      }, function (err, res, body) {
-        if (err) {
-          return done(err);
-        }
-
-        assert.equal(res.statusCode, 200, body.message);
-        assert.isObject(body, 'Response is not of type object!');
-        assert.isDefined(body.token, 'Missing authorization token!');
-
-        tokens.push(body.token);
-
-        is_done();
-      });
-    }
-
-    function is_done() {
-      if (0 === count) {
-        Reach._mock.tokens = tokens;
-        done();
-      } else {
-        count--;
-        user_create();
-      }
-    }
-
-    user_create();
-  });
 
   describe('POST /users', function () {
 
@@ -174,8 +93,8 @@ describe('User Module', function () {
         }
 
         assert.equal(res.statusCode, 200, body.message);
-        assert.isArray(body, 'Response is not of type array!');
-        assert.lengthOf(body, 2, 'Response has more than 2 user!');
+        assert.isArray(body);
+        assert.isAbove(body.length, 0);
 
         done();
       });
@@ -304,7 +223,7 @@ describe('User Module', function () {
 
     it('should update user data', function (done) {
       request.put({
-        uri     : config.api.uri + '/users/1',
+        uri     : config.api.uri + '/users/' + Reach._mock.user.id,
         headers : {
           Authorization : Reach._mock.user.token
         },
@@ -324,7 +243,7 @@ describe('User Module', function () {
 
     it('should 401 when invalid Authorization', function (done) {
       request.put({
-        uri     : config.api.uri + '/users/1',
+        uri     : config.api.uri + '/users/' + Reach._mock.user.id,
         headers : {
           Authorization : 'invalid.auth.token'
         },
@@ -346,7 +265,7 @@ describe('User Module', function () {
 
     it('should 401 when missing Authorization', function (done) {
       request.put({
-        uri     : config.api.uri + '/users/1',
+        uri     : config.api.uri + '/users/' + Reach._mock.user.id,
         body : {
           firstName : 'Jack'
         }
@@ -376,7 +295,7 @@ describe('User Module', function () {
 
     it('should delete a user', function (done) {
       request.del({
-        uri     : config.api.uri + '/users/1',
+        uri     : config.api.uri + '/users/' + Reach._mock.user.id,
         headers : {
           Authorization : Reach._mock.user.token
         }
@@ -387,15 +306,13 @@ describe('User Module', function () {
 
         assert.equal(res.statusCode, 200);
 
-        delete Reach._mock.user;
-
         done();
       });
     });
 
     it('should not find user after delete', function (done) {
       request.get({
-        uri : config.api.uri + '/users/1'
+        uri : config.api.uri + '/users/' + Reach._mock.user.id
       }, function (err, res, body) {
         if (err) {
           return done(err);
@@ -404,6 +321,8 @@ describe('User Module', function () {
         assert.equal(res.statusCode, 404, body.message);
         assert.isObject(body, 'Response is not of type object!');
         assert.equal(body.code, 'USER_NOT_FOUND', body.code);
+
+        delete Reach._mock.user;
 
         done();
       });

@@ -20,7 +20,7 @@ module.exports = Reach.resource(function (_super) {
    * @class UsersController
    */
   function UsersController() {
-    _super.call(this, 'user', Reach.model('User'));
+    _super.call(this, 'User');
   }
 
   /**

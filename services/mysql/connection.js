@@ -1,17 +1,4 @@
-/*
-  Connection
-  ==========
-
-  Stability: 3 - Stable
-
-  @author  Christoffer Rødvik (C) 2015
-  @github  https://github.com/kodemon/reach-api
-  @license MIT
- */
-
 'use strict';
-
-// ### Dependencies
 
 var wrapper = require('co-mysql');
 var mysql   = require('mysql');

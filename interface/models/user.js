@@ -3,11 +3,6 @@
 var bcrypt = require('co-bcrypt');
 var _super = Reach.service('mysql/model');
 
-/**
- * @class User
- * @constructor
- * @param {object} data
- */
 module.exports = (function () {
 
   Reach.extends(User, _super);
@@ -36,7 +31,7 @@ module.exports = (function () {
   User.prototype._schema = User._schema = {
     attributes : {
       id         : 'INT(11) NOT NULL AUTO_INCREMENT',
-      role       : 'ENUM("user","admin") DEFAULT "user"',
+      role       : 'ENUM("user","admin") NOT NULL',
       firstName  : 'VARCHAR(28) NOT NULL',
       lastName   : 'VARCHAR(28) NOT NULL',
       email      : 'VARCHAR(128) NOT NULL',
@@ -49,6 +44,15 @@ module.exports = (function () {
     uniqueKeys : {
       email : ['email']
     }
+  };
+
+  /**
+   * List of default values that are set instead of null when instancing a new model
+   * @property _defaults
+   * @type     Object
+   */
+  User.prototype._defaults = {
+    role : 'user'
   };
 
   /**

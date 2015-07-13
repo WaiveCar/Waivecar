@@ -1,10 +1,12 @@
 'use strict';
 
-var fs   = require('fs');
-var path = require('path');
-var co   = require('co');
-var knox = require('knox'); // AWS S3
-var File = Reach.model('File');
+let fs      = require('fs');
+let path    = require('path');
+let co      = require('co');
+let knox    = require('knox'); // AWS S3
+let through = require('through2');
+let File    = Reach.model('File');
+let log     = Reach.Logger;
 
 module.exports = (function () {
 
@@ -12,7 +14,21 @@ module.exports = (function () {
    * Provides access to S3 operators for easy handling.
    * @class S3
    */
-  function S3() {}
+  function S3() {
+    // ...
+  }
+
+  /**
+   * @property config
+   * @type     Object
+   */
+  S3.config = (function getS3Config() {
+    let config = Reach.config.S3;
+    if (!config || !config.key || !config.secret) {
+      return false;
+    }
+    return config;
+  })();
 
   /**
    * @method upload
@@ -20,20 +36,59 @@ module.exports = (function () {
    * @param  {Function} done
    */
   S3.upload = function (files, bucket, done) {
-    let config = getS3Config();
-
-    if (!config) {
+    if (!S3.config) {
       done('This API is not setup for S3 uploads');
       return;
     }
 
     let client = knox.createClient({
-      key    : config.key,
-      secret : config.secret,
-      bucket : bucket || config.bucket
+      key         : S3.config.key,
+      secret      : S3.config.secret,
+      bucket      : bucket || S3.config.bucket
     });
 
     uploadFiles(files, client, done);
+  };
+
+  /**
+   * Streams the file content to from S3 bucket to the client.
+   * @method stream
+   * @param  {Object} koa
+   * @param  {Object} file
+   * @return {stream}
+   */
+  S3.stream = function (koa, file) {
+    if (!S3.config) {
+      koa.throw({
+        code    : 'S3_BAD_CONFIG',
+        message : 'The API is not setup for S3 services'
+      }, 400);
+    }
+
+    let stream = through();
+    let client = knox.createClient({
+      key    : S3.config.key,
+      secret : S3.config.secret,
+      bucket : file.bucket
+    });
+
+    client.getFile(file.path, function (err, res) {
+      if (err) {
+        stream.end(500);
+      }
+      if (200 !== res.statusCode) {
+        stream.end(500);
+      } else {
+        koa.type = file.mime;
+        res.pipe(stream);
+      }
+    });
+
+    stream.on('close', function () {
+      log.info('FileHandler: %s was streamed from S3 bucket', file.path);
+    });
+
+    return stream;
   };
 
   /**
@@ -48,45 +103,49 @@ module.exports = (function () {
       return done(); // If no more files to upload we are done!
     }
 
-    let file   = files.pop();
-    let target = fs.createReadStream(file.path);
-    let bucket = client.put((file.folder ? file.folder + '/' + file.name : file.name), {
-      'content-length' : file.size,
-      'content-type'   : file.mime
-    });
+    co(function *() {
+      let pop    = files.pop();
+      let file   = yield File.find({ where : { id : pop.id }, limit : 1 });
+      let local  = path.join(Reach.STORAGE_PATH, file.path);
+      let target = fs.createReadStream(local);
+      let bucket = client.put(file.path, {
+        'content-length' : file.size,
+        'content-type'   : file.mime,
+        'x-amz-acl'      : 'private'
+      });
 
-    target.pipe(bucket);
+      target.pipe(bucket);
 
-    bucket.on('response', function (res) {
-      if (200 !== res.statusCode) {
-        Reach.Logger.error('S3 upload failed with status: ' + res.statusCode + ' ' + res.statusMessage);
-        return uploadFiles(files, client, done);
-      }
+      bucket.on('response', function (res) {
+        if (200 !== res.statusCode) {
+          log.error('S3 upload failed with status: ' + res.statusCode + ' ' + res.statusMessage);
+          return uploadFiles(files, client, done);
+        }
 
-      co(function *() {
-        file = yield File.find({ where : { id : file.id }, limit : 1 });
-        yield file.update({
-          source : 'S3',
-          path   : bucket.url
+        co(function *() {
+          yield file.update({
+            store  : 'S3',
+            bucket : client.options.bucket
+          });
+          fs.unlink(local);
+          log.info('FileHandler: %s was uploaded to S3 bucket', file.path);
+          uploadFiles(files, client, done);
         });
-        fs.unlink(path.join(Reach.STORAGE_PATH, 'tmp', (file.folder ? file.folder + '/' + file.name : file.name)));
-        Reach.Logger.info('FileHandler: %s was uploaded to S3 bucket', file.name);
-        uploadFiles(files, client, done);
       });
     });
   }
 
   /**
-   * @private
-   * @method getS3Config
-   * @return {Mixed} Returns a boolean or the config object
+   * @method getFile
+   * @param  {Object} file
+   * @param  {Mixed}
    */
-  function getS3Config() {
-    var config = Reach.config.S3;
-    if (!config || !config.key || !config.secret) {
-      return false;
-    }
-    return config;
+  function *getFile(file) {
+    return yield File.find({
+      where : {
+        id : file.id
+      }, limit : 1
+    });
   }
 
   return S3;

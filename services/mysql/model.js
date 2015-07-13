@@ -13,12 +13,13 @@ module.exports = (function () {
   function MySQLModel(data) {
     let self       = this;
     let attributes = Object.keys(this._schema.attributes);
-
-    data = changeKeyCase(data) || {};
+        data       = data ? changeKeyCase(data) : {};
 
     attributes.forEach(function (key) {
       if (data.hasOwnProperty(key)) {
         self[key] = data[key];
+      } else if (self._defaults.hasOwnProperty(key)) {
+        self[key] = self._defaults[key];
       } else {
         self[key] = null;
       }
@@ -28,6 +29,13 @@ module.exports = (function () {
     this.updatedAt = data.updatedAt || null;
     this.deletedAt = data.deletedAt || null;
   }
+
+  /**
+   * List of default values that are set instead of null when instancing a new model
+   * @property _defaults
+   * @type     Object
+   */
+  MySQLModel.prototype._defaults = {};
 
   /**
    * A list of whitelisted columns that can be return with .toJSON()
@@ -59,6 +67,7 @@ module.exports = (function () {
    */
   MySQLModel.find = function *(options) {
     if (!this._table) { throw missingTableError(); }
+    options = options || {};
 
     let result = yield query.select(this._table, options);
     let Model  = this;

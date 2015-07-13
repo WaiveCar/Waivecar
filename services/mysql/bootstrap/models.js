@@ -1,12 +1,9 @@
 'use strict';
 
-let cluster      = require('cluster');
-let fs           = require('co-fs');
-let path         = require('path');
-let schemas      = require('../schemas');
-let errorHandler = Reach.ErrorHandler;
-
-// ### Export Config
+let fs      = require('co-fs');
+let path    = require('path');
+let schemas = require('../schemas');
+let error   = Reach.ErrorHandler;
 
 module.exports = function *() {
   let User = require(path.join(Reach.INTERFACE_PATH, 'models', 'user.js'));
@@ -14,26 +11,43 @@ module.exports = function *() {
 
   // ### Register Module Models
 
+  let models = yield getAllModels();
+  if (models.length) {
+    for (let i = 0, len = models.length; i < len; i++) {
+      yield schemas.add(models[i]._table, models[i]._schema);
+    }
+  }
+};
+
+/**
+ * Returns a list of all the models registered in the API
+ * @method getAllModels
+ * @return {Array}
+ */
+function *getAllModels() {
+  let models  = [];
   let modules = yield fs.readdir(Reach.MODULE_PATH);
+
   for (let i = 0, len = modules.length; i < len; i++) {
-    let module    = modules[i];
-    let moduleDir = path.join(Reach.MODULE_PATH, module);
-    if (yield fs.exists(path.join(moduleDir, 'package.json'))) {
-      let json = JSON.parse(yield fs.readFile(path.join(moduleDir, 'package.json')));
-      if (cluster.isMaster || 'test' === Reach.ENV && json.models) {
-        for (let key in json.models) {
-          let Model = require(path.join(moduleDir, json.models[key]));
-          try {
-            yield schemas.add(Model._table, Model._schema);
-          } catch (err) {
-            errorHandler.log('error', 'MySQL SERVER ERROR', {
-              code    : err.code,
-              message : err.toString(),
-              stack   : errorHandler.parseStack(err.stack)
+    let module = modules[i];
+    let dir    = path.join(Reach.MODULE_PATH, module);
+    if (yield fs.exists(path.join(dir, 'package.json'))) {
+      let config = JSON.parse(yield fs.readFile(path.join(dir, 'package.json')));
+      if (config.models) {
+        for (let key in config.models) {
+          let file   = path.join(dir, config.models[key]);
+          let exists = yield fs.exists(file);
+          if (!exists) {
+            throw error.parse({
+              code    : 'MYSQL_MODEL_NOT_FOUND',
+              message : 'Could not find ' + file
             });
           }
+          models.push(require(file));
         }
       }
     }
   }
-};
+
+  return models;
+}

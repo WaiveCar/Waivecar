@@ -16,28 +16,32 @@
 
 let register = Reach.Register;
 
-// ### Authenticate
-// Authenticates the incoming request before allowing access to the route
+module.exports = function *() {
 
-register.policy('authenticate', function *() {
-  if (!this.auth.check()) {
-    this.throw({
-      code    : 'AUTH_ERROR',
-      message : 'You do not have the required permissions'
-    }, 401);
-  }
-});
+  // ### Authenticate
+  // Authenticates the incoming request before allowing access to the route
 
-register.policy('admin', function *() {
-  if ('admin' !== this.user.role) {
-    this.throw({
-      code    : 'AUTH_ERROR',
-      message : 'You do not have the required permissions'
-    }, 401);
-  }
-});
+  yield register.policy('authenticate', function *() {
+    if (!this.auth.check()) {
+      this.throw({
+        code    : 'AUTH_ERROR',
+        message : 'You do not have the required permissions'
+      }, 401);
+    }
+  });
 
-// ### Custom Policies
-// Add your custom policies, usually modules will register their own
-// policies if needed but there should be no issue registering your
-// policies in the interface.
+  yield register.policy('admin', function *() {
+    if ('admin' !== this.user.role) {
+      this.throw({
+        code    : 'AUTH_ERROR',
+        message : 'You do not have the required permissions'
+      }, 401);
+    }
+  });
+
+  // ### Custom Policies
+  // Add your custom policies, usually modules will register their own
+  // policies if needed but there should be no issue registering your
+  // policies in the interface.
+
+};

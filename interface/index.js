@@ -56,9 +56,8 @@
 'use strict';
 
 let register = Reach.Register;
+let error    = Reach.ErrorHandler;
 let log      = Reach.Logger;
-
-require('./policies');
 
 /**
  * @class Interface
@@ -70,15 +69,19 @@ var Interface = module.exports = {};
  * Loads the Interface onto the worker
  * @method load
  */
-Interface.load = function () {
+Interface.load = function *() {
   let valid = true;
+
+  let policies = require('./policies');
+  yield policies();
 
   // ### Load and Validate User
 
   log.silent('info')('Interface');
-  log.silent('info')('  Load Model');
-  register.models(__dirname, {
-    User : 'models/user'
+  log.silent('info')('  Load User');
+
+  yield register.models(__dirname, {
+    User : 'models/user.js'
   });
 
   let User            = Reach.model('User');
@@ -86,7 +89,7 @@ Interface.load = function () {
   let instanceMethods = ['save', 'update', 'delete', 'toJSON'];
   let staticMethods   = ['find'];
 
-  log.silent('info')('  Validate Model');
+  log.silent('info')('  Validate User');
 
   instanceMethods.forEach(function (method) {
     if ('function' !== typeof user[method]) {
@@ -109,8 +112,8 @@ Interface.load = function () {
   // ### Load and Validate Policies
 
   log.silent('info')('  Validate Policies');
-  let policies = ['authenticate', 'admin'];
-  policies.forEach(function (id) {
+  let policyChecks = ['authenticate', 'admin'];
+  policyChecks.forEach(function (id) {
     let handler = Reach.policy(id);
     if (!handler) {
       log.silent('error')('   - %s has not been defined', id);
@@ -120,5 +123,10 @@ Interface.load = function () {
     }
   });
 
-  return valid;
+  if (!valid) {
+    throw error.parse({
+      code    : 'INVALID_INTERFACE',
+      message : 'Your interface setup is invalid'
+    });
+  }
 };

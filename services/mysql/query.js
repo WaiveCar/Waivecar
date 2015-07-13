@@ -44,8 +44,10 @@ Query.select = function *(tableName, options) {
   var data = [];
 
   sql += handleSelect(options.attributes, tableName, data);
-  if (options.where) {
+  if (options.where && Object.keys(options.where).length) {
     sql += handleWhere(options.where, data) + ' AND deleted_at IS NULL';
+  } else {
+    sql += ' WHERE deleted_at IS NULL';
   }
   if (options.order)  { sql += handleOrderBy(options.order, data); }
   if (options.limit)  { sql += ' LIMIT '    + options.limit; }

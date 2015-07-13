@@ -8,5 +8,5 @@ Router.get('/users/me', {
 });
 
 Router.resource('users', 'UsersController', {
-  params : ['firstName', 'lastName', 'email', 'password'],
+  params : ['firstName', 'lastName', 'email', 'password']
 });

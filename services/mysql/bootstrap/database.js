@@ -1,22 +1,16 @@
-/**
-  Database Setup
-  ==============
-  @author  Christoffer Rødvik
-  @license MIT
- */
-
 'use strict';
 
-// ### Dependencies
-
-var mysql  = require('mysql');
-var config = Reach.config;
-
-// ### Export Config
+let mysql  = require('mysql');
+let error  = Reach.ErrorHandler;
+let config = Reach.config;
 
 module.exports = function *() {
   if (!config.mysql) {
-    return;
+    throw error.parse({
+      code     : 'MYSQL_NO_CONFIG',
+      message  : 'Missing mysql config, make sure you have set it up correctly',
+      solution : 'Copy the MySQL config template from the mysql service folder and populate it into your api config'
+    });
   }
 
   var host = mysql.createConnection({
@@ -25,23 +19,17 @@ module.exports = function *() {
     password : config.mysql.password
   });
 
-  yield function (done) {
+  yield new Promise(function (resolve, reject) {
     host.connect(function (err) {
-      if (err) {
-        Reach.Logger.error(' - MySQL Connection Error [%s]', err.toString());
-        done(new Error());
-      }
-      done();
+      if (err) { return reject(err); }
+      resolve();
     });
-  };
+  });
 
-  yield function (done) {
-      host.query('CREATE DATABASE IF NOT EXISTS ' + config.mysql.database + ' CHARACTER SET = utf8 COLLATE = ' + config.mysql.charset, function (err) {
-      if (err) {
-        Reach.Logger.error(' - MySQL Database Error [%s]', err.toString());
-        return done(new Error());
-      }
-      done();
+  yield new Promise(function (resolve, reject) {
+    host.query('CREATE DATABASE IF NOT EXISTS ' + config.mysql.database + ' CHARACTER SET = utf8 COLLATE = ' + config.mysql.charset || 'utf8_unicode_ci', function (err) {
+      if (err) { return reject(err); }
+      resolve();
     });
-  };
+  });
 };

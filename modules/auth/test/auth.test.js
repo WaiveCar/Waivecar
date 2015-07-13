@@ -1,20 +1,20 @@
-/*
-  Auth Module Tests
-  =================
-  @author Christoffer Rødvik
-  @github https://github.com/kodemon/reach-api
- */
-
 'use strict';
 
-// ### Dependencies
-
 var assert = require('chai').assert;
+var User   = Reach.model('User');
 var config = Reach.config;
 
-// ### Unit Tests
-
 describe('Auth Module', function () {
+
+  before(function *() {
+    let user = new User({
+      firstName : 'John',
+      lastName  : 'Doe',
+      email     : 'john.doe@test.none'
+    });
+    yield user.preparePassword('password');
+    yield user.save();
+  });
 
   describe('POST /auth/login', function () {
 

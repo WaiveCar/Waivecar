@@ -1,5 +1,6 @@
 {
   "name": "reach-queue",
+  "version": "0.1.0",
   "private": true,
   "author": "Christoffer Rødvik",
   "license": "MIT",

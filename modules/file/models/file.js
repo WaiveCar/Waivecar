@@ -29,16 +29,24 @@ module.exports = (function () {
    */
   File.prototype._schema = File._schema = {
     attributes : {
-      id     : 'INT(11) NOT NULL AUTO_INCREMENT',
-      source : 'ENUM("local","s3") NOT NULL DEFAULT "local"',
-      name   : 'VARCHAR(128) NOT NULL',
-      folder : 'VARCHAR(128) NULL',
-      path   : 'VARCHAR(128) NOT NULL',
-      mime   : 'VARCHAR(64) NOT NULL',
-      size   : 'INT(28) NOT NULL'
+      id      : 'INT(11) NOT NULL AUTO_INCREMENT',
+      name    : 'VARCHAR(128) NULL',
+      path    : 'VARCHAR(128) NOT NULL',
+      mime    : 'VARCHAR(64) NOT NULL',
+      size    : 'INT(28) NOT NULL',
+      store   : 'ENUM("local","s3") NOT NULL DEFAULT "local"',
+      bucket  : 'VARCHAR(64) NULL',
+      private : 'TINYINT(1) DEFAULT 0'
     },
     primaryKey : 'id'
   };
+
+  /**
+   * Attributes to remove before returning model.toJSON()
+   * @property _blacklist
+   * @type     Array
+   */
+  File.prototype._blacklist = [ 'store', 'bucket', 'private' ];
 
   return File;
 

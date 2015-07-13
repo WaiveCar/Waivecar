@@ -10,12 +10,15 @@
 
 'use strict';
 
-var coFs   = require('co-fs');
-var path   = require('path');
-var saveTo = require('save-to');
-var mime   = require('mimetype');
-var queue  = Reach.service('queue');
-var File   = Reach.model('File');
+let fs     = require('co-fs');
+let oFs    = require('fs');
+let path   = require('path');
+let saveTo = require('save-to');
+let mime   = require('mimetype');
+let S3     = require('./S3');
+let queue  = Reach.service('queue');
+let File   = Reach.model('File');
+let log    = Reach.Logger;
 
 module.exports = (function () {
 
@@ -28,23 +31,12 @@ module.exports = (function () {
    * Upload a file to the local api storage
    * @method local
    * @param  {Object} post
-   * @param  {String} options
    * @return {Array}  files
    */
-  FileHandler.local = function *(post, options) {
-    let opts    = options || {};
-    let folder  = opts.tmp ? 'tmp' : (opts.folder || '');
-    let storage = path.join(Reach.STORAGE_PATH, folder);
+  FileHandler.local = function *(post) {
+    let storage = path.join(Reach.STORAGE_PATH);
     let files   = [];
     let part;
-
-    // ### Storage
-    // If a custom folder has been designated we want to make sure
-    // it exists or create it.
-
-    if (opts.folder && !coFs.exists(storage)) {
-      yield coFs.mkdir(storage);
-    }
 
     // ### Handle
 
@@ -54,14 +46,12 @@ module.exports = (function () {
 
       yield saveTo(part, filepath);
 
-      let stat = yield coFs.stat(filepath);
+      let stat = yield fs.stat(filepath);
       let file = new File({
-        name   : filename,
-        source : 'local',
-        folder : opts.folder || null,
-        path   : filepath,
-        mime   : mime.lookup(filename),
-        size   : stat.size
+        path  : filename,
+        mime  : mime.lookup(filename),
+        size  : stat.size,
+        store : 'local'
       });
 
       yield file.save();
@@ -80,10 +70,7 @@ module.exports = (function () {
    * @return {Array}  files
    */
   FileHandler.S3 = function *(post, bucket) {
-    let files = yield FileHandler.local(post, {
-      tmp : true
-    });
-
+    let files = yield FileHandler.local(post);
     queue
       .create('S3 Upload', {
         files  : files,
@@ -92,12 +79,43 @@ module.exports = (function () {
       .removeOnComplete(true)
       .save(function (err) {
         if (err) {
-          Reach.Logger.error('Queue: S3 Upload job [%s] error', err);
+          log.error('Queue: S3 Upload job [%s] error', err);
         }
       })
     ;
-
     return files;
+  };
+
+  /**
+   * Downstream a file to the client.
+   * @method stream
+   * @param  {Object} koa
+   * @param  {Int}    id
+   * @return {Mixed}
+   */
+  FileHandler.stream = function *(koa, id) {
+    let file = yield File.find({ where : { id : id }, limit : 1 });
+
+    if (!file) {
+      koa.throw({
+        code    : 'FILE_NOT_FOUND',
+        message : 'The requested file does not exist'
+      }, 404);
+    }
+
+    if ('local' === file.store) {
+      koa.type = file.mime;
+      return oFs.createReadStream(path.join(Reach.STORAGE_PATH, file.path));
+    }
+
+    if ('s3' === file.store) {
+      return S3.stream(koa, file);
+    }
+
+    koa.throw({
+      code    : 'FILE_UNKNOWN_STORE',
+      message : 'The file requested is registered in an unknown storage location'
+    }, 400);
   };
 
   /**
