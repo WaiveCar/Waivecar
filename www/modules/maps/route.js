@@ -35,7 +35,6 @@ function routeToCarDirective(MapsLoader,$q,routeService,mapsEvents){
     this.drawRoute=function(L,startLocation,destinyLocation,mapInstance,scope){
       return routeService.getRoute(startLocation.getLatLng(),destinyLocation.getLatLng())
         .then(function(result){
-          console.log(JSON.stringify(result));
           var coordinates=[];
           result.route.routePoints.forEach(function(p){
             coordinates.push([p.x,p.y]);
