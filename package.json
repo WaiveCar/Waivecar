@@ -2,13 +2,16 @@
   "name": "reach-api",
   "private": true,
   "scripts": {
+    "prepublish": "npm prune",
     "test": "NODE_ENV=test node --harmony tests.js",
     "test-cov": "NODE_ENV=test node --harmony node_modules/.bin/istanbul cover tests.js",
+    "test-travis": "mkdir -p ./coverage; (NODE_ENV=test istanbul cover node_modules/mocha/bin/_mocha -- --reporter spec --check-leaks --require test/support/should --recursive test/; echo $? > retval) | tee coverage/coverage.txt; egrep '^0$' retval",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "local": "NODE_ENV=local DEBUG=socket:* nodemon --harmony run.js",
     "dev": "NODE_ENV=dev node --harmony run.js",
     "stag": "NODE_ENV=stag node --harmony run.js",
-    "prod": "NODE_ENV=prod node --harmony run.js"
+    "prod": "NODE_ENV=prod node --harmony run.js",
+    "start": "node --harmony run.js"
   },
   "repository": {
     "type": "git",

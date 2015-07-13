@@ -1,0 +1,129 @@
+#!/bin/bash
+# Exit status = 0 if success, non-zero if error
+
+
+# Exit at first failure
+set -e
+
+function deploy_web {
+    echo "`date -u `: Starting deploy on ${REMOTE_HOST}"
+
+    echo -e "Host ${REMOTE_HOST}\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+    scp -i deployment/build/ssh/id_rsa deployment/build/artifacts/${PACKAGE_NAME}_${TRAVIS_COMMIT}.tgz ${REMOTE_USER}@${REMOTE_HOST}:/tmp
+    scp -i deployment/build/ssh/id_rsa deployment/build/scripts/deploy_remote ${REMOTE_USER}@${REMOTE_HOST}:/tmp/${PACKAGE_NAME}_${TRAVIS_COMMIT}.deploy_remote
+    ssh -i deployment/build/ssh/id_rsa ${REMOTE_USER}@${REMOTE_HOST} STRICT_VERSION_CHECK=${STRICT_VERSION_CHECK} BRANCHING_MODEL=${BRANCHING_MODEL} TRAVIS_NODE_VERSION=${TRAVIS_NODE_VERSION} INIT_SCRIPT=${INIT_SCRIPT} PACKAGE_NAME=${PACKAGE_NAME} TRAVIS_COMMIT=${TRAVIS_COMMIT} REMOTE_DIR=${REMOTE_DIR_WEB} /tmp/${PACKAGE_NAME}_${TRAVIS_COMMIT}.deploy_remote
+    ssh -i deployment/build/ssh/id_rsa ${REMOTE_USER}@${REMOTE_HOST} rm /tmp/${PACKAGE_NAME}_${TRAVIS_COMMIT}.deploy_remote
+
+    echo "`date -u `: deploy done"
+}
+
+function deploy_api {
+    echo "`date -u `: Starting deploy api module on ${REMOTE_HOST}"
+
+    echo -e "Host ${REMOTE_HOST}\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+    scp -i deployment/build/ssh/id_rsa deployment/build/artifacts/${PACKAGE_NAME}_${TRAVIS_COMMIT}.tgz ${REMOTE_USER}@${REMOTE_HOST}:/tmp/${PACKAGE_NAME}_api_${TRAVIS_COMMIT}.tgz
+    scp -i deployment/build/ssh/id_rsa deployment/build/scripts/deploy_remote ${REMOTE_USER}@${REMOTE_HOST}:/tmp/${PACKAGE_NAME}_${TRAVIS_COMMIT}.deploy_remote_api
+    ssh -i deployment/build/ssh/id_rsa ${REMOTE_USER}@${REMOTE_HOST} STRICT_VERSION_CHECK=${STRICT_VERSION_CHECK} BRANCHING_MODEL=${BRANCHING_MODEL} BRANCHING_MODULE=api TRAVIS_NODE_VERSION=${TRAVIS_NODE_VERSION} INIT_SCRIPT=${INIT_SCRIPT} PACKAGE_NAME=${PACKAGE_NAME} TRAVIS_COMMIT=${TRAVIS_COMMIT} REMOTE_DIR=${REMOTE_DIR_API} /tmp/${PACKAGE_NAME}_${TRAVIS_COMMIT}.deploy_remote_api
+    ssh -i deployment/build/ssh/id_rsa ${REMOTE_USER}@${REMOTE_HOST} rm /tmp/${PACKAGE_NAME}_${TRAVIS_COMMIT}.deploy_remote_api
+
+    echo "`date -u `: deploy done"
+}
+
+function deploy_app {
+    echo "`date -u `: Starting deploy app module on ${REMOTE_HOST}"
+
+    echo -e "Host ${REMOTE_HOST}\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+    scp -i deployment/build/ssh/id_rsa deployment/build/artifacts/${PACKAGE_NAME}_${TRAVIS_COMMIT}.tgz ${REMOTE_USER}@${REMOTE_HOST}:/tmp/${PACKAGE_NAME}_app_${TRAVIS_COMMIT}.tgz
+    scp -i deployment/build/ssh/id_rsa deployment/build/scripts/deploy_remote ${REMOTE_USER}@${REMOTE_HOST}:/tmp/${PACKAGE_NAME}_${TRAVIS_COMMIT}.deploy_remote_app
+    ssh -i deployment/build/ssh/id_rsa ${REMOTE_USER}@${REMOTE_HOST} STRICT_VERSION_CHECK=${STRICT_VERSION_CHECK} BRANCHING_MODEL=${BRANCHING_MODEL} BRANCHING_MODULE=app TRAVIS_NODE_VERSION=${TRAVIS_NODE_VERSION} INIT_SCRIPT=${INIT_SCRIPT} PACKAGE_NAME=${PACKAGE_NAME} TRAVIS_COMMIT=${TRAVIS_COMMIT} REMOTE_DIR=${REMOTE_DIR_APP} /tmp/${PACKAGE_NAME}_${TRAVIS_COMMIT}.deploy_remote_app
+    ssh -i deployment/build/ssh/id_rsa ${REMOTE_USER}@${REMOTE_HOST} rm /tmp/${PACKAGE_NAME}_${TRAVIS_COMMIT}.deploy_remote_app
+
+    echo "`date -u `: deploy done"
+}
+
+# Special case: Do not deploy cleverbuild boilerplate
+if [ "${PACKAGE_NAME}" == "cleverbuild" ]; then
+    echo "Package cleverbuild. Not deploying"
+    exit 0
+fi
+
+# Do not deploy pull requests
+if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
+    echo "Pull Request. Not deploying"
+    exit 0
+fi
+
+echo "Branching model: ${BRANCHING_MODEL}"
+case ${BRANCHING_MODEL} in
+
+NO_DEPLOY)
+    echo "Not deploying"
+    exit 0
+    ;;
+WEB)
+    case ${TRAVIS_BRANCH} in
+        development)
+            REMOTE_HOST=${REMOTE_HOST_DEV}
+            deploy_web
+            exit 0
+            ;;
+        staging)
+            REMOTE_HOST=${REMOTE_HOST_STAG}
+            deploy_web
+            exit 0
+            ;;
+        master)
+            REMOTE_HOST=${REMOTE_HOST_PROD}
+            deploy_web
+            exit 0
+            ;;
+        *)
+            echo "Branch ${TRAVIS_BRANCH}. Not deploying"
+            exit 0
+    esac
+    exit 1
+    ;;
+API_APP)
+    case ${TRAVIS_BRANCH} in
+        development)
+            REMOTE_HOST=${REMOTE_HOST_DEV}
+            deploy_app
+            exit 0
+            ;;
+        staging)
+            REMOTE_HOST=${REMOTE_HOST_STAG}
+            deploy_app
+            exit 0
+            ;;
+        master)
+            REMOTE_HOST=${REMOTE_HOST_PROD}
+            deploy_app
+            exit 0
+            ;;
+        api/development)
+            REMOTE_HOST=${REMOTE_HOST_DEV}
+            deploy_api
+            exit 0
+            ;;
+        api/staging)
+            REMOTE_HOST=${REMOTE_HOST_STAG}
+            deploy_api
+            exit 0
+            ;;
+        api/master)
+            REMOTE_HOST=${REMOTE_HOST_PROD}
+            deploy_api
+            exit 0
+            ;;
+        *)
+            echo "Branch ${TRAVIS_BRANCH}. Not deploying"
+            exit 0
+    esac
+    exit 1
+    ;;
+*)
+    echo "Error. Branching model ${BRANCHING_MODEL} is unknown."
+    exit 1
+
+esac
+

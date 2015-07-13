@@ -1,0 +1,6 @@
+#!/bin/bash
+
+echo "$*" >> /tmp/mockup_node
+if [ "$*" == "-v" ]; then
+    cat /tmp/mockup_node_version
+fi

@@ -1,0 +1,11 @@
+#!/bin/bash
+# Exit status = 0 if success, non-zero if error
+
+
+# Exit at first failure
+set -e
+echo "`date -u `: Starting commit_analysis"
+
+echo Doing nothing!
+
+echo "`date -u `: commit_analysis done"

@@ -1,0 +1,19 @@
+{
+  "apps" : [{
+    "name"        : "waivecar",
+    "cwd"         : "/opt/waivecar-api/",
+    "out_file"    : "../waivecar-stag.log",
+    "error_file"  : "../waivecar-stag.log",
+    "pid_file"    : "../waivecar-dev.pid",
+    "script"      : "app.js",
+    "merge_logs"  : true,
+    "args"        : "",
+    "watch"       : false,
+    "node_args"   : "",
+    "instances"   : "1",
+    "exec_mode"   : "fork_mode",
+    "env": {
+        "NODE_ENV": "staging"
+    }
+  }]
+}
