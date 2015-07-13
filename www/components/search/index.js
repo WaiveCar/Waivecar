@@ -13,9 +13,9 @@ SearchController.prototype.showCarDetails = function(marker,data) {
   var self=this;
   var latLng={latitude:data.latitude,longitude:data.longitude};
   this.$rootScope.$broadcast(this.mapsEvents.destinyOnRouteChanged,latLng);
-  this.$rootScope.$broadcast(this.searchEvents.vehicleSelected,data);    
+  this.$rootScope.$broadcast(this.searchEvents.vehicleSelected,data);
 	this.state.go('vehicle-details',{vehicleDetails:data});
-	
+
 };
 function VehicleDetailsController(selectedService,$state){
   this.selectedService=selectedService;
@@ -35,7 +35,15 @@ VehicleDetailsController.prototype.cancelClick = function() {
 };
 
 VehicleDetailsController.prototype.getDirectionsClick = function() {
-  console.log("Get directions");
+    // TODO: use actual address.
+    var url= [
+      'comgooglemaps-x-callback://?',
+      '&daddr=International+Airport',
+      '&directionsmode=walking',
+      '&x-success=WaiveCar://?resume=true',
+      '&x-source=WaiveCar'
+    ].join('');
+    window.open(encodeURI(url), '_system');
 };
 
 function SelectedVehicleService($rootScope){
@@ -75,7 +83,7 @@ function vehicleChargeStatusDirective(searchEvents,$state){
 
 function timeToGetToCarDirective(searchEvents,$state){
   function link(scope,element,attrs,ctrl){
-    
+
     var durations={'timeToCar':15};
     ctrl.createTimer('getToWaiveCar',durations);
     ctrl.start();
@@ -114,7 +122,7 @@ function timeToGetToCarDirective(searchEvents,$state){
       controller:'TimerController',
       controllerAs:'timer'
     }
-  
+
 }
 function vehicleInformationDirective(searchEvents,$state){
       function link(scope,element,attrs,ctrl){
