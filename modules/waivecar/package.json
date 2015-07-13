@@ -4,7 +4,7 @@
   "description": "Module for managing cars and bookings for electric cars",
   "master": "jobs.js",
   "models": {
-    "Car": "models/car"
+    "Car": "models/car.js"
   },
   "routes": "routes.js"
 }
