@@ -37,7 +37,7 @@ module.exports = (function () {
    */
   S3.upload = function (files, bucket, done) {
     if (!S3.config) {
-      done('This API is not setup for S3 uploads');
+      done('The API is not setup for S3 services');
       return;
     }
 
@@ -51,6 +51,24 @@ module.exports = (function () {
   };
 
   /**
+   * Redirects client to the source location of the file.
+   * @method redirect
+   * @param  {Object} koa
+   * @param  {Object} file
+   */
+  S3.redirect = function (koa, file) {
+    if (!S3.config) {
+      badConfig(koa);
+    }
+    let client = knox.createClient({
+      key    : S3.config.key,
+      secret : S3.config.secret,
+      bucket : file.bucket
+    });
+    return koa.redirect(client.http(file.path));
+  };
+
+  /**
    * Streams the file content to from S3 bucket to the client.
    * @method stream
    * @param  {Object} koa
@@ -59,10 +77,7 @@ module.exports = (function () {
    */
   S3.stream = function (koa, file) {
     if (!S3.config) {
-      koa.throw({
-        code    : 'S3_BAD_CONFIG',
-        message : 'The API is not setup for S3 services'
-      }, 400);
+      badConfig(koa);
     }
 
     let stream = through();
@@ -111,7 +126,7 @@ module.exports = (function () {
       let bucket = client.put(file.path, {
         'content-length' : file.size,
         'content-type'   : file.mime,
-        'x-amz-acl'      : 'private'
+        'x-amz-acl'      : file.private ? 'private' : 'public-read'
       });
 
       target.pipe(bucket);
@@ -136,16 +151,15 @@ module.exports = (function () {
   }
 
   /**
-   * @method getFile
-   * @param  {Object} file
-   * @param  {Mixed}
+   * Throws a bad config error.
+   * @method badConfig
+   * @param  {Object} koa
    */
-  function *getFile(file) {
-    return yield File.find({
-      where : {
-        id : file.id
-      }, limit : 1
-    });
+  function badConfig(koa) {
+    koa.throw({
+      code    : 'S3_BAD_CONFIG',
+      message : 'The API is not setup for S3 services'
+    }, 400);
   }
 
   return S3;

@@ -36,9 +36,18 @@ module.exports = (function () {
       size    : 'INT(28) NOT NULL',
       store   : 'ENUM("local","s3") NOT NULL DEFAULT "local"',
       bucket  : 'VARCHAR(64) NULL',
-      private : 'TINYINT(1) DEFAULT 0'
+      private : 'TINYINT(1) NOT NULL DEFAULT 0'
     },
     primaryKey : 'id'
+  };
+
+  /**
+   * List of default values that are set instead of null when instancing a new model
+   * @property _defaults
+   * @type     Object
+   */
+  File.prototype._defaults = {
+    private : 0
   };
 
   /**

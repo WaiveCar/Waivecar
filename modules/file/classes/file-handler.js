@@ -48,10 +48,11 @@ module.exports = (function () {
 
       let stat = yield fs.stat(filepath);
       let file = new File({
-        path  : filename,
-        mime  : mime.lookup(filename),
-        size  : stat.size,
-        store : 'local'
+        path    : filename,
+        mime    : mime.lookup(filename),
+        size    : stat.size,
+        store   : 'local',
+        private : post.private
       });
 
       yield file.save();
@@ -88,12 +89,12 @@ module.exports = (function () {
 
   /**
    * Downstream a file to the client.
-   * @method stream
+   * @method fetch
    * @param  {Object} koa
    * @param  {Int}    id
    * @return {Mixed}
    */
-  FileHandler.stream = function *(koa, id) {
+  FileHandler.fetch = function *(koa, id) {
     let file = yield File.find({ where : { id : id }, limit : 1 });
 
     if (!file) {
@@ -109,7 +110,11 @@ module.exports = (function () {
     }
 
     if ('s3' === file.store) {
-      return S3.stream(koa, file);
+      if (file.private) {
+        return S3.stream(koa, file);
+      } else {
+        return S3.redirect(koa, file);
+      }
     }
 
     koa.throw({
