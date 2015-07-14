@@ -1,4 +1,4 @@
-xdescribe('Real Reach service',function(){
+describe('Real Reach service',function(){
     /**
     * @todo move to external fixture
     */
@@ -16,8 +16,8 @@ xdescribe('Real Reach service',function(){
     beforeEach(function(){
         L=mockLeaflet;//Global
         var self=this;
-        angular.module('app.modules.maps.main');
-        angular.mock.module('app.modules.maps.realReach');
+        angular.module('Maps');
+        angular.mock.module('Maps.realReach');
         angular.mock.module(function($provide){
             $provide.value("waiveCar_locationService", mockLocation);
             $provide.value("waiveCar_MapsLoader", mockMapsLoader);

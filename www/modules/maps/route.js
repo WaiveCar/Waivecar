@@ -150,12 +150,7 @@ function routeDistanceDirective(mapsEvents){
     return str.substring(0,str.indexOf('.')+digits);
   }
   function link(scope){
-    console.log("HERE");
     scope.$on(mapsEvents.routeDistanceChanged, function(ev,totalDistance) {
-      console.log("THEREE");
-      console.log(totalDistance);
-      console.log(arguments);
-      console.log(metersToMiles(totalDistance)+" miles away");
       scope.value=metersToMiles(totalDistance)+" miles away";
     });
   }
