@@ -16,14 +16,14 @@ describe('Route service',function(){
     beforeEach(function(){
         L=mockLeaflet;//Global
         var self=this;
-        angular.module('app.modules.maps.main',[]);
-        angular.mock.module('app.modules.maps.route');
+        angular.module('Maps',[]);
+        angular.mock.module('Maps.route');
         angular.mock.module(function($provide){
             $provide.value("waiveCar_MapsLoader", mockMapsLoader);
             $provide.constant("mapsEvents", mockEvents);
 
         });
-        angular.mock.inject(function(_$rootScope_,_$q_,_$httpBackend_,waiveCar_routeService){
+        angular.mock.inject(function(_$rootScope_,_$q_,_$httpBackend_,waiveCar_routeService,$injector){
             self.$q=_$q_;
             var defered=_$q_.defer();
             defered.resolve(L);
@@ -32,6 +32,7 @@ describe('Route service',function(){
             self.scope = self.$rootScope.$new();
             self.service=waiveCar_routeService;
             self.$httpBackend=_$httpBackend_;
+
             mockMapsLoader.getMap=defered.promise;
         });
     });
@@ -60,9 +61,9 @@ describe('Route service',function(){
             mockEvents.routeDurationChanged
 
             expect(self.scope.$broadcast)
-                .toHaveBeenCalledWith(mockEvents.routeDurationChanged,response.route.duration);
+                .toHaveBeenCalledWith(mockEvents.routeDurationChanged,response.route.duration,'pedestrian');
             expect(self.scope.$broadcast)
-                .toHaveBeenCalledWith(mockEvents.routeDistanceChanged,response.route.routelength);
+                .toHaveBeenCalledWith(mockEvents.routeDistanceChanged,response.route.routelength,'pedestrian');
 
             done();
         })

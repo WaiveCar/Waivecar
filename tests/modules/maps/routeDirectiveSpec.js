@@ -57,8 +57,8 @@ describe('Route directive',function(){
 
     beforeEach(function(){
         var self=this;
-        angular.module('app.modules.maps.main',[]);
-        angular.mock.module('app.modules.maps.route');
+        angular.module('Maps',[]);
+        angular.mock.module('Maps.route');
         angular.mock.module(function($provide,$controllerProvider,_$compileProvider_){
             self.$compileProvider=_$compileProvider_;
             $provide.value("waiveCar_MapsLoader", mockMapsLoader);

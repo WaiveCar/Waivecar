@@ -15,7 +15,7 @@ describe('Location controller',function(){
 	}
 	beforeEach(function(){
         angular.module('ngCordova',[]);
-		angular.mock.module('app.modules.maps.main');
+		angular.mock.module('Maps');
 		angular.mock.module(function($provide){
 			$provide.value("waiveCar_locationService", mockLocationService);
 		});

@@ -23,7 +23,7 @@ describe('Map directive',function(){
 		L=mockLeaflet;//Global
 		angular.module('ngCordova',[]);
 
-		angular.mock.module('app.modules.maps.main');
+		angular.mock.module('Maps');
 		angular.mock.module(function($provide,$controllerProvider){
 			$provide.value("waiveCar_MapsLoader", mockMapsLoader);
 			$provide.value("waiveCar_locationService", mockLocationService);
@@ -58,7 +58,7 @@ describe('Map directive',function(){
 		spyOn(mockLocationService, 'getLocation').and.callThrough();
 		spyOn(mockMapsLoader.getMap, 'then').and.callThrough();
 		var element = $compile('<map id="map"  ></map>')(scope);
-		$httpBackend.whenGET('js/modules/maps/templates/map.html').respond('<div class="mapsInstance" ng-transclude></div>');
+		$httpBackend.whenGET('modules/maps/templates/map.html').respond('<div class="mapsInstance" ng-transclude></div>');
 		$rootScope.$digest();
 		$httpBackend.flush();
 		expect(mockMapsLoader.getMap.then).toHaveBeenCalled();

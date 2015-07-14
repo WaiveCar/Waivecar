@@ -41,7 +41,7 @@ describe('Location service',function(){
 		spyOn(mockGeoLocation, 'watchPosition').and.callThrough();
 
 		angular.module('ngCordova',[]);
-		angular.mock.module('app.modules.maps.main');
+		angular.mock.module('Maps');
 		angular.mock.module(function($provide){
 			  $provide.value("$cordovaGeolocation", mockGeoLocation);
 		});

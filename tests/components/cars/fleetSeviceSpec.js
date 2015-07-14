@@ -1,4 +1,4 @@
-describe('Fleet service',function(){
+xdescribe('Fleet service',function(){
     /**
     * @todo move to external fixture
     */

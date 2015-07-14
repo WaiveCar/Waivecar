@@ -1,4 +1,4 @@
-fdescribe('Countdown Timer',function(){
+describe('Countdown Timer',function(){
 	var name="timer";
 	var durations={
 		'freeRide':105,
@@ -40,6 +40,7 @@ fdescribe('Countdown Timer',function(){
 			this.timeout.flush(firstStatusDuration*60000+10);
 			expect(this.countdownTimer.getStatus(name)).toEqual(statusOrders[1]);
 		});
+
 	});
 	describe('Timer events',function(){
 		it('When the counter starts it sends a new counter event and a counter state changed event',function(){

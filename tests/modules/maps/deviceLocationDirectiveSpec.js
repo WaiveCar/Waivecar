@@ -1,4 +1,4 @@
-fdescribe('Device location directive',function(){
+describe('Device location directive',function(){
     var solveLocationSpy=jasmine.createSpy('solveLocation')
     var mockMarker={
         addTo:function(){
@@ -31,7 +31,7 @@ fdescribe('Device location directive',function(){
     beforeEach(function(){
         var self=this;
         angular.module('ngCordova',[]);
-        angular.mock.module('app.modules.maps.main');
+        angular.mock.module('Maps');
         angular.mock.module(function($provide,$controllerProvider,_$compileProvider_){
             self.$compileProvider=_$compileProvider_;
             $provide.value("waiveCar_MapsLoader", mockMapsLoader);
