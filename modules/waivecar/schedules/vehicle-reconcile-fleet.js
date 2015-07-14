@@ -1,29 +1,39 @@
 'use strict';
 
-let queue = Reach.service('queue');
-let log   = Reach.Logger;
+let co             = require('co');
+let moment         = require('moment');
+let queue          = Reach.service('queue');
+let schedule       = Reach.service('queue/scheduler');
+let VehicleService = Reach.service('gm-api/vehicle-service');
+let Car            = Reach.model('Car');
+let log            = Reach.Log;
+let service        = new VehicleService();
 
-if ('test' !== Reach.ENV) { // We don't need this running during testing
+// ### The Job
 
-  // ### Fleet Process
+let jobSchedule = queue
+  .create('vehicle-reconcile-fleet', {
+    message : 'Hello World'
+  })
+;
 
-  queue.process('Vehicle Reconcile Fleet', function (job, done) {
-    console.log('Reconcile Fleet');
+// ### Schedule Job
+
+jobSchedule.save();
+
+// ### Job Process
+
+queue.process('vehicle-reconcile-fleet', function (job, done) {
+  log.info('Reconciling Vehicle Fleet');
+  co(function *() {
+    let vehicles = yield service.listVehicles();
+
+    for (let i = 0, len = vehicles.length; i < len; i++) {
+      let car = new Car(vehicles[i]);
+      yield car.upsert();
+    }
+
+    schedule(jobSchedule, moment().add(5, 'minute'));
     done();
   });
-
-  // ### Start Interval
-
-  setInterval(function () {
-    queue
-      .create('Vehicle Reconcile Fleet', {})
-      .removeOnComplete(true)
-      .save(function (err) {
-        if (err) {
-          log.error('Sample Job: Error', err);
-        }
-      })
-    ;
-  }, 60 * 1000);
-
-}
+});
