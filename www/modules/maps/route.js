@@ -115,9 +115,12 @@ function routeDurationDirective(mapsEvents){
             if(timeInHours<10){
               timeInHours='0'+timeInHours;
             }
-            timeToDisplay=timeInHours+'h'+timeInMinutes;
+            timeToDisplay=timeInHours+'h'+timeInMinutes+' hours';
           }
           else{
+           if(timeInMinutes<10){
+              timeInMinutes='0'+timeInMinutes;
+            }
             timeToDisplay=timeInMinutes+' minutes';
           }
         }
@@ -147,7 +150,12 @@ function routeDistanceDirective(mapsEvents){
     return str.substring(0,str.indexOf('.')+digits);
   }
   function link(scope){
+    console.log("HERE");
     scope.$on(mapsEvents.routeDistanceChanged, function(ev,totalDistance) {
+      console.log("THEREE");
+      console.log(totalDistance);
+      console.log(arguments);
+      console.log(metersToMiles(totalDistance)+" miles away");
       scope.value=metersToMiles(totalDistance)+" miles away";
     });
   }
