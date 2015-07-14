@@ -1,25 +1,25 @@
 function Config() {
-  var apiUri='https://api-waivecar-dev.cleverbuild.biz/v1';
+  var baseUrl='https://api-waivecar-dev.cleverbuild.biz/v1';
   return {
     uri: {
-      api: apiUri,
+      api: baseUrl+'/v1',
       auth: {
-        signin: 'https://api-waivecar-dev.cleverbuild.biz/auth/signin',
-        signup: 'https://api-waivecar-dev.cleverbuild.biz/auth/signup',
-        forgot: 'https://api-waivecar-dev.cleverbuild.biz/auth/forgot-password',
-        reset: 'https://api-waivecar-dev.cleverbuild.biz/auth/reset-password'
+        signin: baseUrl+'/auth/signin',
+        signup: baseUrl+'/auth/signup',
+        forgot: baseUrl+'/auth/forgot-password',
+        reset: baseUrl+'/auth/reset-password'
       },
       web: 'https://web-waivecar-dev.cleverbuild.biz',
       admin: 'https://admin-waivecar-dev.cleverbuild.biz',
       assets: '',
       vehicles:{
-        getNearby:apiUri+'/vehicles/'
+        getNearby:baseUrl+'/v1/vehicles/'
       }
     },
     satellizer: {
       facebook: {
         clientId: '783941098370564',
-        url: 'https://api-waivecar-dev.cleverbuild.biz/auth/facebook'
+        url: baseUrl+'/auth/facebook'
       }
     }
   };

@@ -165,6 +165,7 @@ function destinyLocationDirective(MapsLoader,$q,mapsEvents,$state){
       function link(scope,element,attrs,ctrl){
         MapsLoader.getMap.then(function(L){
               ctrl.mapInstance.then(function(mapInstance){
+                
                 var waiveCarIcon = L.icon({
                     iconUrl: 'img/waivecar-mark.svg',
                     iconRetinaUrl: 'img/waivecar-mark.svg',
@@ -172,26 +173,32 @@ function destinyLocationDirective(MapsLoader,$q,mapsEvents,$state){
                     iconAnchor: [12.5, 25],
                     popupAnchor: [0 , 0]
                 });
-                function handleMarker(vehicleData){
+                function handleMarker(destiny){
                   if(typeof scope.marker !='undefined'){
-                    scope.marker.setLatLng([vehicleData.latitude,vehicleData.longitude]);
+                    scope.marker.setLatLng([destiny.latitude,destiny.longitude]);
                   }
                   else{
-                    scope.marker=L.marker([vehicleData.latitude,vehicleData.longitude],{icon:waiveCarIcon}).addTo(mapInstance);
+                    scope.marker=L.marker([destiny.latitude,destiny.longitude],{icon:waiveCarIcon}).addTo(mapInstance);
                     ctrl.solveDestiny(scope.marker);
                   }
                 }
-                scope.$on(mapsEvents.destinyOnRouteChanged,function(ev,data){
-                  handleMarker($state.params.vehicleDetails)
+                var initialDestiny=scope.getInitialDestiny();
+                scope.$on(mapsEvents.destinyOnRouteChanged,function(ev,destiny){
+                  handleMarker(destiny);
                 });
-                handleMarker($state.params.vehicleDetails)
+                handleMarker(initialDestiny);
+              
             });
           });
       }
       return {
         restrict:'E',
         link:link,
-        require:'^map'
+        require:'^map',
+        scope:{
+          getInitialDestiny:'&'
+        }
+
       }
 }
 

@@ -44,11 +44,13 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
     // GET TO YOUR CAR
     .state('bookings-show', {
       url: '/bookings/:id',
-      templateUrl: '/components/bookings/templates/show.html'
+      templateUrl: '/components/bookings/templates/show.html',
+      params : { vehicleDetails: null}
     })
     .state('bookings-edit', {
       url: '/bookings/:id/edit',
-      templateUrl: '/components/bookings/templates/edit.html'
+      templateUrl: '/components/bookings/templates/edit.html',
+      params : { vehicleDetails: null}
     })
     .state('vision', {
       url: '/vision',
@@ -75,7 +77,6 @@ angular.module('app', [
   'ngResource',
   'Maps',
   'Maps.realReach',
-  'Maps.fleet',
   'Maps.route',
   'countdown'
 ])
