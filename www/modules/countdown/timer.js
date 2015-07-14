@@ -2,6 +2,7 @@
   function countdownFactory($timeout,countdownEvents){
      function CountdownTimer(name,durations,scope){
       console.log("HHHHHHHHHERE");
+      console.log($setTimeout(function, delay););
         this._setDurations(durations);
         this._timeout=$timeout;
         this._timer;
