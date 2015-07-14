@@ -30,8 +30,13 @@
     <script src="leaflet/leaflet-src.js"></script>
     <script src="js/skobbler-2.0.js"></script>
     <script src="js/leafletMakiMarkers.js"></script>
-    <!-- Countown -->
+	 	<!-- modules -->
     <script src="modules/countdown/timer.js"></script>
+    <script src="modules/maps/index.js"></script>
+    <script src="modules/maps/fleet.js"></script>
+    <script src="modules/maps/realReach.js"></script>
+    <script src="modules/maps/route.js"></script>
+
     <!-- app -->
     <script src="app.js"></script>
     <!-- services -->
@@ -41,24 +46,21 @@
     <!-- resources -->
     <script src="resources/bookings.js"></script>
     <script src="resources/users.js"></script>
-    <script src="resources/vehicles.js"></script>
+    <script src="resources/cars.js"></script>
     <!-- components -->
     <script src="components/application/index.js"></script>
     <script src="components/bookings/index.js"></script>
+    <script src="components/car-charge-status/index.js"></script>
+    <script src="components/car-information/index.js"></script>
+    <script src="components/cars/index.js"></script>
     <script src="components/contact/index.js"></script>
-    
-    <script src="modules/maps/index.js"></script>
-    <script src="modules/maps/fleet.js"></script>
-    <script src="modules/maps/realReach.js"></script>
-    <script src="modules/maps/route.js"></script>
-
-
     <script src="components/menu/index.js"></script>
     <script src="components/search/index.js"></script>
+    <script src="components/time-to-get-to-car/index.js"></script>
     <script src="components/users/index.js"></script>
     <script src="components/vision/index.js"></script>
   </head>
   <body ng-app="app" ng-controller="ApplicationController">
-    <ion-nav-view animation="no-animation"></ion-nav-view>
+    <ion-nav-view></ion-nav-view>
   </body>
 </html>

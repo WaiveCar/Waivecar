@@ -22,7 +22,7 @@ function BookingController($rootScope, $scope, $state, Bookings) {
 
   self.cancelBooking = function() {
     // TODO: actual API calls.
-    $state.go('search');
+    $state.go('cars');
   };
 
   self.openMap = function() {

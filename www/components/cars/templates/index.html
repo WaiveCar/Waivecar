@@ -1,4 +1,4 @@
-<ion-pane>
+<ion-pane ng-controller="CarsController as search">
   <ion-header-bar class="bar bar-header bar-light">
     <h1 class="title">Find WaiveCars</h1>
     <div class="buttons">
@@ -8,12 +8,10 @@
   <ion-content scroll="false">
     <div class="map-container">
       <map id="map" zoom="15" >
-        <div ng-controller="SearchController as search">
-
+        <div>
           <device-location></device-location>
-
-          <nearby-fleet  on-click-marker="search.showCarDetails(marker,info)"></nearby-fleet>
-          <!-- 
+          <nearby-fleet  on-click-marker="search.showCarDetails(marker, info)"></nearby-fleet>
+          <!--
           <route-to-nearest-car></route-to-nearest-car>
           <div ng-controller="RouteTimeController as route">
             <map-info></map-info>

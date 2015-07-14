@@ -1,10 +1,10 @@
-<ion-pane ng-controller="VehicleDetailsController as details">
+<ion-pane ng-controller="CarController as car">
   <ion-header-bar class="bar bar-header bar-light route-details">
     <div class="title">
       <route-information></route-information>
     </div>
     <div class="buttons">
-        <button ui-sref="search" class="button button-icon icon ion-close button-right"></button>
+      <button ui-sref="cars" class="button button-icon icon ion-close button-right"></button>
     </div>
   </ion-header-bar>
   <ion-content scroll="false">
@@ -20,6 +20,6 @@
     </div>
   </ion-content>
   <div class="bar bar-footer">
-    <button class="button button-balanced" ng-click="details.bookingClick()">Book WaiveCar</button>
+    <button class="button button-balanced" ng-click="car.book()">Book WaiveCar</button>
   </div>
 </ion-pane>

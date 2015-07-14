@@ -1,20 +1,26 @@
 <ion-pane class="bookings-component" ng-controller="BookingController as booking">
   <ion-header-bar class="bar bar-header bar-light">
-    <h1 class="title">Get To Your WaiveCar</h1>
+    <h1 class="title">Get to your WaiveCar</h1>
     <div class="buttons">
       <button class="button button-icon icon ion-navicon" ng-click="showNav()"></button>
     </div>
   </ion-header-bar>
   <ion-content scroll="false">
-    <div class="map placeholder placeholder-small"></div>
-    <div class="list pin-bottom pin-bottom-large">
-      <p>car image</p>
-      <p>car details</p>
-    </div>
+   <div class="map-container map-container-medium">
+    <map id="map" zoom="15" >
+      <device-location></device-location>
+      <destiny-location ></destiny-location>
+      <route-to-car></route-to-car>
+    </map>
+  </div>
+  <div class="vehicle-summary-container">
+    <vehicle-information></vehicle-information>
+    <time-to-get-to-car></time-to-get-to-car>
+  </div>
   </ion-content>
   <div class="bar bar-footer">
     <div class="footer-buttons">
-      <button class="button button-balanced" ng-click="booking.openMap()">Get Directions</button><button class="button button-assertive" ng-click="booking.cancelBooking()">Cancel</button>
+      <button class="button button-balanced" ng-click="details.getDirectionsClick()">Get Directions</button><button class="button button-assertive" ng-click="details.cancelClick()">Cancel</button>
     </div>
   </div>
 </ion-pane>

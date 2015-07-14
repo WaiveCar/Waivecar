@@ -1,7 +1,7 @@
 function Resource($resource, utils, config) {
 
   function getRoute(hasId) {
-    return utils.getRoute('vehicles', hasId);
+    return utils.getRoute('cars', hasId);
   }
 
   return $resource(null, null, {
@@ -34,7 +34,7 @@ function Resource($resource, utils, config) {
   });
 }
 
-angular.module('app').factory('Vehicles', [
+angular.module('app').factory('Cars', [
   '$resource',
   'utils',
   'config',

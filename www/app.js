@@ -18,16 +18,25 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
   $ionicConfigProvider.views.transition('platform');
   $stateProvider
     // FIND WAIVECARS
-    .state('search', {
-      url: '/find-waivecars',
-      templateUrl: '/components/search/templates/index.html'
+    .state('cars', {
+      url: '/cars',
+      templateUrl: '/components/cars/templates/index.html'
     })
+    // BOOK WAIVECAR
+    .state('cars-show', {
+      url: '/cars/:id',
+      templateUrl: '/components/cars/templates/show.html'
+    })
+    // .state('cars-edit', {
+    //   url: '/cars/:id/edit',
+    //   templateUrl: '/components/cars/templates/edit.html'
+    // })
     // PAST RIDES
     .state('bookings', {
       url: '/bookings',
       templateUrl: '/components/bookings/templates/index.html'
     })
-    // BOOK WAIVECAR
+    // details yet to be
     .state('bookings-new', {
       url: '/bookings/new',
       templateUrl: '/components/bookings/templates/new.html'
@@ -53,25 +62,12 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
       url: '/my-account',
       templateUrl: '/components/users/templates/index.html'
     })
-    .state('vehicle-details', {
-      url: '/vehicleDetails',
-      templateUrl: '/components/search/templates/vehicleDetails.html',
-      params : { vehicleDetails: null}
-
-    })
-
-    .state('get-to-waivecar',{
-      url: '/getToWaiveCar',
-      templateUrl: '/components/search/templates/getToWaiveCar.html',
-      params : { vehicleDetails: null}
-
-    })
     .state('points', {
       url: '/my-points',
       templateUrl: '/components/users/templates/reward-points.html'
     });
 
-  $urlRouterProvider.otherwise('/find-waivecars');
+  $urlRouterProvider.otherwise('/cars');
 }
 
 angular.module('app', [

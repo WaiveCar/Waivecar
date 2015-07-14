@@ -11,7 +11,7 @@
     FleetService.prototype.getNearbyFleet = function(numNearby) {
         var self=this;
         return this.locationService.getLocation().then(
-            function(deviceLocation){ 
+            function(deviceLocation){
                 var ret=[];
                 numNearby=numNearby || 10;
                 var maxDiff=0.005;
@@ -38,7 +38,8 @@
                                 },
                             },
                             name:'Chevrolet Spark',
-                            plate:'AUD 568'
+                            plate:'AUD 568',
+                            id: i
                         }
                     )
                 }
@@ -75,9 +76,9 @@ function nearbyFleetDirective(MapsLoader,$q,fleetService,realReachService,$windo
         onClickFn({marker:marker,info:info});
     });
   }
-  
+
   function link(scope, element, attrs,ctrl) {
-      fleetService.getNearbyFleet().then(function(fleet){ 
+      fleetService.getNearbyFleet().then(function(fleet){
         MapsLoader.getMap.then(function(L){
           ctrl.mapInstance.then(function(mapInstance){
 
