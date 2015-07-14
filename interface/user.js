@@ -1,11 +1,11 @@
 'use strict';
 
 var bcrypt = require('co-bcrypt');
-var _super = Reach.service('mysql/model');
+var mysql  = Reach.service('mysql/model');
 
 module.exports = (function () {
 
-  Reach.extends(User, _super);
+  Reach.extends(User, mysql);
 
   /**
    * @class User
@@ -13,7 +13,7 @@ module.exports = (function () {
    * @param {object} data
    */
   function User(data) {
-    _super.call(this, data);
+    mysql.call(this, data);
   }
 
   /**
