@@ -27,7 +27,7 @@ module.exports = function(config) {
       './www/services/*.js',
       './www/modules/**/*.js',
       './www/components/**/*.js',
-      './tests/**/*Spec.js'
+      './tests/countdown/**/*Spec.js'
     ],
     // list of files to exclude
     exclude: [

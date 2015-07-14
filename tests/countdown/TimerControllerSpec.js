@@ -1,57 +1,90 @@
 describe('Countdown timer controller',function(){
-
 	beforeEach(function(){
 		var self=this;
+
 		this.mockTimerService={
-			getEllapsedSeconds:function(){
-				return 0;
-			},
-			getEllapsedMinutes:function(){
-				return 0;
-			},
-			getEllapsedHours:function(){
-				return 0;
+			getRemainingTime:function(){
+				return {
+					hours:0,
+					minutes:15,
+					seconds:0
+				};
 			},
 			getStatus:function(){
 				return 'freeRide';
 			},
-			start:function(){
-				self.rootScope.$broadcast('waivecarCounterStarted','freeRide',105);
-			},
-			cancel:function(){
-				self.rootScope.$broadcast('waivecarCounterCancelled','freeRide',105);
-			}
+			start:jasmine.createSpy('start'),
+			cancel:jasmine.createSpy('cancel'),
+			createTimer:jasmine.createSpy('createTimer')
 		};
-		angular.mock.module('app.modules.countdown.service');
-		angular.mock.module('app.modules.countdown.controller');
-		angular.mock.inject(function($rootScope, $controller,_$interval_){
-			self.$interval=_$interval_;
+		angular.mock.module('countdown');
+		angular.mock.inject(function($rootScope, $controller,$interval,$injector){
+			self.$interval=$interval;
+			self.countdownEvents=$injector.get('countdownEvents');
 			//create an empty scope
 			self.scope = $rootScope.$new();
 			self.rootScope=$rootScope;
-			self.ctrl=$controller('timerController', {$scope: this.scope,$interval:this.$interval,timerService:this.mockTimerService});
+			self.ctrl=$controller('TimerController', {$scope: this.scope,$interval:this.$interval,TimerService:this.mockTimerService});
 		});
 	});
-	it('Starts a timer on count',function(){
-		spyOn(this.mockTimerService, 'start').and.callThrough();
-		this.ctrl.start();
-		expect(this.mockTimerService.start).toHaveBeenCalled();
-		this.$interval.flush(1200);
-		expect(this.ctrl.minutes).toEqual(0);
-		expect(this.ctrl.seconds).toEqual(1);
+	it('Creates a new timer and start listening for the relevant events',function(){
+		var name='getToCar';
+		var durations={'getToCar':15}
+		spyOn(this.scope,'$on').and.callThrough();
+
+		this.ctrl.createTimer(name,durations);
+		expect(this.mockTimerService.createTimer).toHaveBeenCalledWith(name,durations,this.scope);
+		var args=this.scope.$on.calls.allArgs();
+		var desiredCalls=[
+			this.countdownEvents.newCounter+'_'+name,
+			this.countdownEvents.counterStateChanged+'_'+name,
+			this.countdownEvents.counterCancelled+'_'+name
+		];
+		var self=this;
+		var actualCalls=[];
+		args.forEach(function(c){
+			actualCalls.push(c[0]);
+		});
+		expect(actualCalls).toEqual(desiredCalls);
+
+
 	});
-	it('Stops counting when cancel is reached',function(){
-		spyOn(this.mockTimerService,'cancel').and.callThrough();
-		this.ctrl.start();
-		this.$interval.flush(1200);
-		this.ctrl.cancel();
-		//_stopInterval
-		expect(this.mockTimerService.cancel).toHaveBeenCalled();
-		expect(this.ctrl._stopInterval).not.toBeDefined();
-	});
-	it('Changes status ',function(){
-		var newStatus='foo';
-		this.rootScope.$broadcast('waivecarCounterStateChanged',newStatus,105);
-		expect(this.ctrl.status).toEqual(newStatus);
+	describe('On usage',function(){
+		var eventName='getToCar';
+		var eventDurations={'getToCar':15};
+		beforeEach(function(){
+			this.ctrl.createTimer(eventName,eventDurations);
+		})
+		it('Starts a timer upon start event',function(){
+			spyOn(this.ctrl, 'startCount').and.callThrough();
+			this.ctrl.start();
+			expect(this.mockTimerService.start).toHaveBeenCalled();
+			this.scope.$broadcast(this.countdownEvents.newCounter+'_'+eventName);
+			expect(this.ctrl.startCount).toHaveBeenCalled();
+		});
+		it('Countdown the time',function(){
+			this.ctrl.start();
+			this.scope.$broadcast(this.countdownEvents.newCounter+'_'+eventName);
+			expect(this.ctrl.minutes).toEqual(15);
+			this.$interval.flush(1000);
+			expect(this.ctrl.minutes).toEqual(14);
+			expect(this.ctrl.seconds).toEqual(59);
+		});
+		it('Stops counting when cancel is reached',function(){
+			spyOn(this.ctrl,'stopCount').and.callThrough();
+			this.ctrl.start();
+			this.$interval.flush(1200);
+			this.ctrl.cancel();
+			expect(this.mockTimerService.cancel).toHaveBeenCalled();
+			this.scope.$broadcast(this.countdownEvents.counterCancelled+'_'+eventName);
+			expect(this.ctrl.stopCount).toHaveBeenCalled();
+			expect(this.ctrl._stopInterval).not.toBeDefined();
+		});
+		it('Changes status ',function(){
+			var newStatus='foo';
+			this.ctrl.start();
+			this.rootScope.$broadcast('waivecarCounterStateChanged'+'_'+eventName,newStatus,105);
+			expect(this.ctrl.status).toEqual(newStatus);
+		});
 	});
 });
