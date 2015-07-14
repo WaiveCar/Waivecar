@@ -2,6 +2,7 @@
 
 let changeCase = require('change-case');
 let moment     = require('moment');
+let util       = require('util');
 let query      = Reach.service('mysql/query');
 
 module.exports = (function () {
@@ -64,10 +65,19 @@ module.exports = (function () {
   /**
    * Performs a select query on the model.
    * @method select
+   * @param  {Mixed} options
    */
   MySQLModel.find = function *(options) {
     if (!this._table) { throw missingTableError(); }
-    options = options || {};
+
+    // ### Prepare Options
+    // A find option can either be a single user id or a larger query object
+
+    if ('string' === typeof options || isNumeric(options)) {
+      options = { where : { id : parseInt(options) }, limit : 1 };
+    } else {
+      options = options || {};
+    }
 
     let result = yield query.select(this._table, options);
     let Model  = this;
@@ -199,6 +209,16 @@ module.exports = (function () {
       }
     }
     return converted;
+  }
+
+  /**
+   * @private
+   * @method isNumberic
+   * @param  {Mixed} n
+   * @return {Boolean}
+   */
+  function isNumeric(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
   }
 
   return MySQLModel;
