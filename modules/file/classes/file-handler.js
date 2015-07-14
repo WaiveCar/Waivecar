@@ -18,7 +18,7 @@ let mime   = require('mimetype');
 let S3     = require('./S3');
 let queue  = Reach.service('queue');
 let File   = Reach.model('File');
-let log    = Reach.Logger;
+let log    = Reach.Log;
 
 module.exports = (function () {
 

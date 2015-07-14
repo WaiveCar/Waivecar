@@ -6,7 +6,7 @@ let co      = require('co');
 let knox    = require('knox'); // AWS S3
 let through = require('through2');
 let File    = Reach.model('File');
-let log     = Reach.Logger;
+let log     = Reach.Log;
 
 module.exports = (function () {
 

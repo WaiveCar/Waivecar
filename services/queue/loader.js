@@ -1,17 +1,18 @@
 'use strict';
 
-var fs    = require('fs');
-var path  = require('path');
-var queue = Reach.service('queue');
+let fs    = require('fs');
+let path  = require('path');
+let queue = Reach.service('queue');
+let log   = Reach.Log;
 
 module.exports = function (jobsDir) {
   if (!queue) {
-    Reach.Logger.silent('error')('Queue is missing [queue] in api configuration');
+    log.silent('error')('Queue is missing [queue] in api configuration');
     return;
   }
 
   if (!fs.existsSync(jobsDir)) {
-    Reach.Logger.silent('warn')(' - Queue: Could not find jobs folder [%s]', jobsDir);
+    log.silent('warn')(' - Queue: Could not find jobs folder [%s]', jobsDir);
     return;
   }
 

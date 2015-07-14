@@ -44,15 +44,6 @@ module.exports = (function () {
     primaryKey : 'id'
   };
 
-  /**
-   * Attributes to remove before returning model.toJSON()
-   * @property _blacklist
-   * @type     Array
-   */
-  ErrorLog.prototype._blacklist = [
-    'deletedAt'
-  ];
-
   return ErrorLog;
 
 })();
