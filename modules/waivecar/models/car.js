@@ -1,6 +1,8 @@
 'use strict';
 
+let moment = require('moment');
 let _super = Reach.service('mysql/model');
+let query  = Reach.service('mysql/query');
 
 module.exports = (function () {
 
@@ -29,7 +31,6 @@ module.exports = (function () {
    */
   Car.prototype._schema = Car._schema = {
     attributes : {
-      id                : 'INT(11) NOT  NULL AUTO_INCREMENT',
       vin               : 'VARCHAR(28)  NOT NULL',
       make              : 'VARCHAR(28)  NOT NULL',
       model             : 'VARCHAR(88)  NOT NULL',
@@ -43,10 +44,7 @@ module.exports = (function () {
       url               : 'VARCHAR(256) NULL',
       isInPreActivation : 'ENUM("true","false") DEFAULT "false"'
     },
-    primaryKey : 'id',
-    uniqueKeys : {
-      vin : ['vin']
-    }
+    primaryKey : 'vin'
   };
 
   /**
@@ -57,6 +55,19 @@ module.exports = (function () {
   Car.prototype._blacklist = [
     'deletedAt'
   ];
+
+  /**
+   * Attempts to insert data, if it already exists we attempt to update it instead.
+   * @method upsert
+   */
+  Car.prototype.upsert = function *() {
+    let result = yield query.upsert(this._table, this._data());
+
+    this.createdAt = this.createdAt || moment().format('YYYY-MM-DD HH-mm-ss');
+    this.updatedAt = this.createdAt ? moment().format('YYYY-MM-DD HH-mm-ss') : null;
+
+    return result;
+  };
 
   return Car;
 
