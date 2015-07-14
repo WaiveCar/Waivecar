@@ -6,7 +6,7 @@ let schemas = require('../schemas');
 let error   = Reach.ErrorHandler;
 
 module.exports = function *() {
-  let User = require(path.join(Reach.INTERFACE_PATH, 'models', 'user.js'));
+  let User = require(path.join(Reach.INTERFACE_PATH, 'user.js'));
   yield schemas.add(User._table, User._schema);
 
   // ### Register Module Models
