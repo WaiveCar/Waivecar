@@ -1,8 +1,7 @@
 (function() {
   function countdownFactory($timeout,countdownEvents){
      function CountdownTimer(name,durations,scope){
-      console.log("HHHHHHHHHERE");
-      console.log($setTimeout(function, delay););
+
         this._setDurations(durations);
         this._timeout=$timeout;
         this._timer;
@@ -56,7 +55,7 @@
       };
       CountdownTimer.prototype.start = function() {
         this._timeCounterStarted=new Date().getTime();
-        var eventName=this.countdownEvents.counterCancelled+"_"+this._name;
+        var eventName=this.countdownEvents.newCounter+"_"+this._name;
         this._currentDurationInSecods=this.getStatusDuration()*60;
 
         this._scope.$broadcast(eventName,this.getStatus(),this.getStatusDuration());
@@ -101,7 +100,7 @@
         return this.durations[this.getStatus()];
       };
       CountdownTimer.prototype.nextStatus=function(){
-        this._statusIndex=this._statusIndex++%this._statusLength;
+        this._statusIndex=(this._statusIndex+1)%this._statusLength;
         this._setStatus(this._statusNames[this._statusIndex]);
         this._currentDurationInSecods=this.getStatusDuration()*60;
         return this.getStatus();
@@ -239,7 +238,6 @@
       counterStateFinished:'waivecarCounterStateFinnished'
   })
   .factory('CountdownTimer',[
-    '$rootScope',
     '$timeout',
     'countdownEvents',
     countdownFactory
