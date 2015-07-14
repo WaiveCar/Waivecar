@@ -2,7 +2,6 @@
 
 let changeCase = require('change-case');
 let moment     = require('moment');
-let util       = require('util');
 let query      = Reach.service('mysql/query');
 
 module.exports = (function () {
@@ -56,7 +55,9 @@ module.exports = (function () {
 
     let result = yield query.insert(this._table, this._data());
 
-    this.id        = result.insertId;
+    if ('id' === this._schema.primaryKey) {
+      this.id = result.insertId;
+    }
     this.createdAt = moment().format('YYYY-MM-DD HH-mm-ss');
 
     return result;
