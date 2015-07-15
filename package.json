@@ -7,8 +7,8 @@
     "test-cov": "NODE_ENV=test node --harmony node_modules/istanbul-harmony/lib/cli.js cover --hook-run-in-context tests.js",
     "test-travis": "mkdir -p ./coverage; (NODE_ENV=test node --harmony node_modules/istanbul-harmony/lib/cli.js cover --hook-run-in-context tests.js; echo $? > retval) | tee coverage/coverage.txt; egrep '^0$' retval",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-    "local": "NODE_ENV=local DEBUG=socket:* nodemon --harmony run.js",
-    "start": "node --harmony run.js"
+    "local": "NODE_ENV=local DEBUG=socket:* nodemon --harmony app.js",
+    "start": "node --harmony app.js"
   },
   "dependencies": {
     "change-case": "2.3.0",
