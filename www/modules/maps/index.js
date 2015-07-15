@@ -113,7 +113,7 @@
             link: link,
             transclude: true,
             controllerAs:'mapController',
-            controller:'waiveCar_mapController'
+            controller:'mapController'
         };
       }
       
@@ -149,16 +149,16 @@
         car:'car'  ,
     })
 
-    .provider('waiveCar_MapsLoader',MapsLoader)
+    .provider('MapsLoader',MapsLoader)
     
-    .service('waiveCar_locationService',['$rootScope','$cordovaGeolocation','$q','mapsEvents',LocationService])
+    .service('locationService',['$rootScope','$cordovaGeolocation','$q','mapsEvents',LocationService])
   
-    .controller('waiveCar_mapController',['$scope','waiveCar_locationService','$q','mapsEvents',MapController])
+    .controller('mapController',['$scope','locationService','$q','mapsEvents',MapController])
     
-    .directive('map',['waiveCar_MapsLoader','$q','waiveCar_locationService',mapDirective])
-    .directive('deviceLocation',['waiveCar_MapsLoader','waiveCar_locationService','$q',deviceLocationDirective])
+    .directive('map',['MapsLoader','$q','locationService',mapDirective])
+    .directive('deviceLocation',['MapsLoader','locationService','$q',deviceLocationDirective])
 
 ;
 })();
 
-// controller:['$scope','waiveCar_locationService','$q',MapController]
+// controller:['$scope','locationService','$q',MapController]

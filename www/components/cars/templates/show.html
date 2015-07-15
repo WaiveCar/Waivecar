@@ -1,22 +1,28 @@
 <ion-pane ng-controller="CarController as car">
   <ion-header-bar class="bar bar-header bar-light route-details">
-    <div class="title">
+
+    <div class="iconContainer">
+      <i class="icon ion-android-locate item"></i>  
+    </div>
+    <div class="title item-icon-left has-big-header">
       <route-information></route-information>
+      <p><reverse-geo-coding  get-location="car.getDestiny()"></reverse-geo-coding></p>
+      
     </div>
     <div class="buttons">
       <button ui-sref="cars" class="button button-icon icon ion-close button-right"></button>
     </div>
   </ion-header-bar>
-  <ion-content scroll="false">
+  <ion-content scroll="false" class="has-big-header">
     <div class="map-container map-container-medium">
       <map id="map" zoom="15" >
         <device-location></device-location>
-        <destiny-location ></destiny-location>
+        <destiny-location  get-initial-destiny="car.getDestiny()"></destiny-location>
         <route-to-car></route-to-car>
       </map>
     </div>
     <div class="vehicle-summary-container">
-      <vehicle-charge-status></vehicle-charge-status>
+      <car-charge-status></car-charge-status>
     </div>
   </ion-content>
   <div class="bar bar-footer">

@@ -106,8 +106,17 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
   float:right;
   clear:both;
 }
-
-
-@import "www/components/search/style.scss";
+.iconContainer{
+}
+.iconContainer .icon{
+  font-size:4em;
+  padding:0;
+  border:none;
+  margin:0;
+}
+ion-content.has-big-header{
+  top:15%;
+}
+@import "www/components/cars/style.scss";
 @import "www/components/bookings/style.scss";
 @import "www/components/maps/style.scss";

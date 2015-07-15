@@ -115,9 +115,12 @@ function routeDurationDirective(mapsEvents){
             if(timeInHours<10){
               timeInHours='0'+timeInHours;
             }
-            timeToDisplay=timeInHours+'h'+timeInMinutes;
+            timeToDisplay=timeInHours+'h'+timeInMinutes+' hours';
           }
           else{
+           if(timeInMinutes<10){
+              timeInMinutes='0'+timeInMinutes;
+            }
             timeToDisplay=timeInMinutes+' minutes';
           }
         }
@@ -158,10 +161,11 @@ function routeDistanceDirective(mapsEvents){
       template:'<span ng-bind="value"></span>'
   }
 }
-function destinyLocationDirective(MapsLoader,$q,mapsEvents,$state){
+function destinyLocationDirective(MapsLoader,$q,mapsEvents){
       function link(scope,element,attrs,ctrl){
         MapsLoader.getMap.then(function(L){
               ctrl.mapInstance.then(function(mapInstance){
+                
                 var waiveCarIcon = L.icon({
                     iconUrl: 'img/waivecar-mark.svg',
                     iconRetinaUrl: 'img/waivecar-mark.svg',
@@ -169,26 +173,36 @@ function destinyLocationDirective(MapsLoader,$q,mapsEvents,$state){
                     iconAnchor: [12.5, 25],
                     popupAnchor: [0 , 0]
                 });
-                function handleMarker(vehicleData){
+                function handleMarker(destiny){
                   if(typeof scope.marker !='undefined'){
-                    scope.marker.setLatLng([vehicleData.latitude,vehicleData.longitude]);
+                    scope.marker.setLatLng([destiny.latitude,destiny.longitude]);
                   }
                   else{
-                    scope.marker=L.marker([vehicleData.latitude,vehicleData.longitude],{icon:waiveCarIcon}).addTo(mapInstance);
+                    scope.marker=L.marker([destiny.latitude,destiny.longitude],{icon:waiveCarIcon}).addTo(mapInstance);
+                
                     ctrl.solveDestiny(scope.marker);
                   }
                 }
-                scope.$on(mapsEvents.destinyOnRouteChanged,function(ev,data){
-                  handleMarker($state.params.vehicleDetails)
+                var initialDestiny=scope.getInitialDestiny();
+                if(!initialDestiny){
+                  return;
+                }
+                scope.$on(mapsEvents.destinyOnRouteChanged,function(ev,destiny){
+                  handleMarker(destiny);
                 });
-                handleMarker($state.params.vehicleDetails)
+                handleMarker(initialDestiny);
+              
             });
           });
       }
       return {
         restrict:'E',
         link:link,
-        require:'^map'
+        require:'^map',
+        scope:{
+          getInitialDestiny:'&'
+        }
+
       }
 }
 
@@ -205,11 +219,11 @@ function mapsInfoDirective(MapsLoader){
     }
   }
 angular.module('Maps.route', ['Maps'])
-.service('waiveCar_routeService',['$rootScope','waiveCar_MapsLoader','$q','$http','mapsEvents',RouteService])
+.service('routeService',['$rootScope','MapsLoader','$q','$http','mapsEvents',RouteService])
 
 .directive('routeDistance',['mapsEvents',routeDistanceDirective])
 .directive('routeDuration',['mapsEvents',routeDurationDirective])
 
 .directive('routeInformation',routeInformationDirective)
-.directive('destinyLocation',['waiveCar_MapsLoader','$q','mapsEvents','$state',destinyLocationDirective])
-.directive('routeToCar',['waiveCar_MapsLoader','$q','waiveCar_routeService','mapsEvents',routeToCarDirective])
+.directive('destinyLocation',['MapsLoader','$q','mapsEvents',destinyLocationDirective])
+.directive('routeToCar',['MapsLoader','$q','routeService','mapsEvents',routeToCarDirective])
