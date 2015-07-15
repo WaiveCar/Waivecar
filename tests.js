@@ -1,0 +1,1 @@
+require('reach-api').runTests();

@@ -1,0 +1,13 @@
+{
+  "name": "reach-logger",
+  "version": "0.1.0",
+  "private": true,
+  "author": "Christoffer Rødvik",
+  "description": "A logger module providing access to errors occuring in the system",
+  "license": "MIT",
+  "main": "logger.js",
+  "models": {
+    "ErrorLog" : "models/error-log.js"
+  },
+  "routes": "routes.js"
+}

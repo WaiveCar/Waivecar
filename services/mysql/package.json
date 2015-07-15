@@ -1,0 +1,15 @@
+{
+  "name": "reach-mysql",
+  "version": "0.1.1",
+  "private": true,
+  "author": "Christoffer Rødvik",
+  "license": "MIT",
+  "bootstrap": "bootstrap/init.js",
+  "tests": [
+    "test/service.test.js"
+  ],
+  "dependencies": {
+    "co-mysql": "1.0.0",
+    "mysql": "2.7.0"
+  }
+}

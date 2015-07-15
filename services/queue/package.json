@@ -1,0 +1,12 @@
+{
+  "name": "reach-queue",
+  "description": "A job service for reach",
+  "version": "0.1.1",
+  "private": true,
+  "author": "Christoffer Rødvik",
+  "license": "MIT",
+  "dependencies": {
+    "kue": "0.9.3",
+    "redis": "0.12.1"
+  }
+}
