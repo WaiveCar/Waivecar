@@ -1,0 +1,21 @@
+.nav-component {
+  background: #25C155;
+  color: #ffffff;
+  ion-content {
+    .row {
+      height: 33%;
+    }
+    .button {
+      &:before {
+        font-size: 50px;
+        line-height: 50px;
+      }
+    }
+  }
+}
+.vehicle-summary-container{
+  height:15%;
+}
+.route-details,.bar.route-details{
+  height:15%;
+}

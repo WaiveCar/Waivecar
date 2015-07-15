@@ -184,6 +184,9 @@ function destinyLocationDirective(MapsLoader,$q,mapsEvents){
                   }
                 }
                 var initialDestiny=scope.getInitialDestiny();
+                if(!initialDestiny){
+                  return;
+                }
                 scope.$on(mapsEvents.destinyOnRouteChanged,function(ev,destiny){
                   handleMarker(destiny);
                 });

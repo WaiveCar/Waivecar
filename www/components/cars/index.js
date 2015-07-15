@@ -183,8 +183,30 @@ function nearbyFleetDirective(MapsLoader,$q,fleetService,realReachService,$windo
         }
     }
 }
+function carChargeStatusDirective(searchEvents, selectedCar) {
+  function link(scope, element, attrs, ctrl) {
+     var selectedData=selectedCar.getSelected();
+    if (!selectedData) {
+      return;
+    }
+    var details =selectedData.status;
+    scope.chargeLevel=details.charge.current + '% full';
+    if (details.charge.charging) {
+      scope.chargeState = 'Parked at charging station';
+      scope.chargeLevel += ' - full in ' + details.charge.timeUntilFull + ' minutes';
+    } else {
+      scope.chargeState = 'Not charging';
+    }
 
+    scope.chargeReach = details.charge.reach + ' miles available on current charge';
+  }
 
+  return {
+    restrict: 'E',
+    link: link,
+    templateUrl: 'components/cars/templates/directives/carChargeStatus.html',
+  }
+}
 angular.module('app')
 .constant('searchEvents', {
   vehicleSelected:'vehicleSelected'
@@ -209,5 +231,10 @@ angular.module('app')
   'searchEvents',
   'mapsEvents',
   CarsController
+])
+.directive('carChargeStatus', [
+  'searchEvents',
+  'selectedCar',
+  carChargeStatusDirective
 ])
 .directive('nearbyFleet',['waiveCar_MapsLoader','$q','waiveCar_fleetService','waiveCar_realReachService','$window',nearbyFleetDirective]);
