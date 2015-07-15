@@ -22,7 +22,7 @@ let mockVehicles = {
 
 // ### Unit Tests
 
-describe('GM API > vehicle-service', function () {
+describe.skip('GM API > vehicle-service', function () {
   this.timeout(30000);
 
   let service = new VehicleService();
