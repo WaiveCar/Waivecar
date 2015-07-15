@@ -1,5 +1,5 @@
 function carInformationDirective(searchEvents, $state) {
-  function link(scope, element, attrs, ctrl){
+  function link(scope, element, attrs, ctrl) {
     if (!$state.params) {
       return;
     }
