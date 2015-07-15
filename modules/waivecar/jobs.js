@@ -1,5 +1,7 @@
 'use strict';
 
 module.exports = function *() {
-  require('./schedules/vehicle-reconcile-fleet');
+  if ('test' !== Reach.ENV) {
+    require('./schedules/vehicle-reconcile-fleet');
+  }
 };

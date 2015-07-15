@@ -5,6 +5,7 @@ var User   = Reach.model('User');
 var config = Reach.config;
 
 describe('Auth Module', function () {
+  this.timeout(10000);
 
   before(function *() {
     let user = new User({
