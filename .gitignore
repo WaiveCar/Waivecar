@@ -76,3 +76,7 @@ npm-debug.log
 nbproject
 .idea
 .node_history
+modules/**/cache.json
+services/**/cache.json
+coverage
+retval
