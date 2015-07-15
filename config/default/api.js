@@ -19,8 +19,8 @@ module.exports = {
   api : {
     name    : 'WAIVECAR API',
     version : '0.0.1',
-    port    : 8081,
-    uri     : 'http://localhost:8081',
+    port    : 3000,
+    uri     : 'http://localhost:3000',
     cors    : {
       origins : ['http://localhost:3081'],
       headers : ['Content-Type', 'Cache-Control', 'X-Requested-With', 'Authorization']
