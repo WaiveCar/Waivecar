@@ -215,7 +215,7 @@ angular.module('app')
   '$rootScope',
   SelectedCarService
 ])
-.service('waiveCar_fleetService',['$rootScope','$q','waiveCar_locationService','$http','config',FleetService])
+.service('fleetService',['$rootScope','$q','locationService','$http','config',FleetService])
 .controller('CarController', [
   '$state',
   '$q',
@@ -237,4 +237,4 @@ angular.module('app')
   'selectedCar',
   carChargeStatusDirective
 ])
-.directive('nearbyFleet',['waiveCar_MapsLoader','$q','waiveCar_fleetService','waiveCar_realReachService','$window',nearbyFleetDirective]);
+.directive('nearbyFleet',['MapsLoader','$q','fleetService','realReachService','$window',nearbyFleetDirective]);

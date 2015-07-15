@@ -19,18 +19,18 @@ describe('Route service',function(){
         angular.module('Maps',[]);
         angular.mock.module('Maps.route');
         angular.mock.module(function($provide){
-            $provide.value("waiveCar_MapsLoader", mockMapsLoader);
+            $provide.value("MapsLoader", mockMapsLoader);
             $provide.constant("mapsEvents", mockEvents);
 
         });
-        angular.mock.inject(function(_$rootScope_,_$q_,_$httpBackend_,waiveCar_routeService,$injector){
+        angular.mock.inject(function(_$rootScope_,_$q_,_$httpBackend_,routeService,$injector){
             self.$q=_$q_;
             var defered=_$q_.defer();
             defered.resolve(L);
             mockMapsLoader.getMap=defered.promise;
             self.$rootScope=_$rootScope_;
             self.scope = self.$rootScope.$new();
-            self.service=waiveCar_routeService;
+            self.service=routeService;
             self.$httpBackend=_$httpBackend_;
 
             mockMapsLoader.getMap=defered.promise;

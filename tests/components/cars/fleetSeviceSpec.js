@@ -69,7 +69,7 @@ xdescribe('Fleet service',function(){
         }
         timeoutTime=0;
         angular.mock.module(function($provide){
-            $provide.value("waiveCar_locationService", mockLocation);
+            $provide.value("locationService", mockLocation);
             $provide.value("$config", mockConfig);  
           
           
@@ -80,12 +80,12 @@ xdescribe('Fleet service',function(){
         });
         angular.mock.module('app.modules.maps.fleet');
         
-        angular.mock.inject(function(_$rootScope_,_$q_,_$httpBackend_,mapsEvents,_$interval_,waiveCar_fleetService){
+        angular.mock.inject(function(_$rootScope_,_$q_,_$httpBackend_,mapsEvents,_$interval_,fleetService){
            self.$q=_$q_;
            self.$rootScope=_$rootScope_;
            self.scope = self.$rootScope.$new();
            self.events=mapsEvents;
-           self.service=waiveCar_fleetService;
+           self.service=fleetService;
            self.$httpBackend=_$httpBackend_;
            self.$interval=_$interval_;
         });

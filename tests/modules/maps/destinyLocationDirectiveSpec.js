@@ -53,7 +53,7 @@ describe('Destiny location directive',function(){
         angular.mock.module('Maps.route');
         angular.mock.module(function($provide,$controllerProvider,$compileProvider){
             self.$compileProvider=$compileProvider;
-            $provide.value("waiveCar_MapsLoader", mockMapsLoader);
+            $provide.value("MapsLoader", mockMapsLoader);
             $provide.value('mapsEvents',mockEvents);
             self.$compileProvider.directive('map', function() {
                 return {

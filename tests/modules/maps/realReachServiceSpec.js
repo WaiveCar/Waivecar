@@ -19,10 +19,10 @@ describe('Real Reach service',function(){
         angular.module('Maps');
         angular.mock.module('Maps.realReach');
         angular.mock.module(function($provide){
-            $provide.value("waiveCar_locationService", mockLocation);
-            $provide.value("waiveCar_MapsLoader", mockMapsLoader);
+            $provide.value("locationService", mockLocation);
+            $provide.value("MapsLoader", mockMapsLoader);
         });
-        angular.mock.inject(function(_$rootScope_,_$q_,_$httpBackend_,waiveCar_realReachService){
+        angular.mock.inject(function(_$rootScope_,_$q_,_$httpBackend_,realReachService){
             self.$q=_$q_;
             var defered=_$q_.defer();
             defered.resolve(L);
@@ -34,7 +34,7 @@ describe('Real Reach service',function(){
             }
             self.$rootScope=_$rootScope_;
             self.scope = self.$rootScope.$new();
-            self.service=waiveCar_realReachService;
+            self.service=realReachService;
             self.$httpBackend=_$httpBackend_;
         });
     });

@@ -45,13 +45,13 @@ describe('Location service',function(){
 		angular.mock.module(function($provide){
 			  $provide.value("$cordovaGeolocation", mockGeoLocation);
 		});
-		angular.mock.inject(function(_$rootScope_,_$q_,mapsEvents,waiveCar_locationService){
+		angular.mock.inject(function(_$rootScope_,_$q_,mapsEvents,locationService){
 			$q=_$q_;
 			$rootScope=_$rootScope_;
 			spyOn($rootScope, '$broadcast');
 			scope = $rootScope.$new();
 			events=mapsEvents;
-			service=waiveCar_locationService;
+			service=locationService;
 		});
 
 	});

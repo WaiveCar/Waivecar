@@ -219,11 +219,11 @@ function mapsInfoDirective(MapsLoader){
     }
   }
 angular.module('Maps.route', ['Maps'])
-.service('waiveCar_routeService',['$rootScope','waiveCar_MapsLoader','$q','$http','mapsEvents',RouteService])
+.service('routeService',['$rootScope','MapsLoader','$q','$http','mapsEvents',RouteService])
 
 .directive('routeDistance',['mapsEvents',routeDistanceDirective])
 .directive('routeDuration',['mapsEvents',routeDurationDirective])
 
 .directive('routeInformation',routeInformationDirective)
-.directive('destinyLocation',['waiveCar_MapsLoader','$q','mapsEvents',destinyLocationDirective])
-.directive('routeToCar',['waiveCar_MapsLoader','$q','waiveCar_routeService','mapsEvents',routeToCarDirective])
+.directive('destinyLocation',['MapsLoader','$q','mapsEvents',destinyLocationDirective])
+.directive('routeToCar',['MapsLoader','$q','routeService','mapsEvents',routeToCarDirective])

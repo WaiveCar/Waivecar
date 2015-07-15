@@ -78,6 +78,7 @@ angular.module('app', [
   'Maps',
   'Maps.realReach',
   'Maps.route',
+  'Maps.geoCoding',
   'countdown'
 ])
 .run(['$ionicPlatform', Run])

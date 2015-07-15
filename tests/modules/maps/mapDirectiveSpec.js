@@ -25,9 +25,9 @@ describe('Map directive',function(){
 
 		angular.mock.module('Maps');
 		angular.mock.module(function($provide,$controllerProvider){
-			$provide.value("waiveCar_MapsLoader", mockMapsLoader);
-			$provide.value("waiveCar_locationService", mockLocationService);
-			$controllerProvider.register('waiveCar_mapController',function(){
+			$provide.value("MapsLoader", mockMapsLoader);
+			$provide.value("locationService", mockLocationService);
+			$controllerProvider.register('mapController',function(){
 				this.solveMap=function(){
 					mockController.solveMap();
 				}

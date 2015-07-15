@@ -34,8 +34,8 @@ describe('Device location directive',function(){
         angular.mock.module('Maps');
         angular.mock.module(function($provide,_$compileProvider_){
             self.$compileProvider=_$compileProvider_;
-            $provide.value("waiveCar_MapsLoader", mockMapsLoader);
-            $provide.value("waiveCar_locationService", mockLocationService);
+            $provide.value("MapsLoader", mockMapsLoader);
+            $provide.value("locationService", mockLocationService);
             $provide.factory('mapDirective', function(){
                     var directive={
                         priority:0,

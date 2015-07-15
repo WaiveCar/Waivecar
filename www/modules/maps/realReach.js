@@ -33,5 +33,5 @@
 		});
 	};
 	angular.module('Maps.realReach', ['Maps'])
-    .service('waiveCar_realReachService',['$rootScope','waiveCar_MapsLoader','$q','$http','waiveCar_locationService',RealReachService])
+    .service('realReachService',['$rootScope','MapsLoader','$q','$http','locationService',RealReachService])
 })();
