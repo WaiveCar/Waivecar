@@ -9,7 +9,7 @@
     "merge_logs"  : true,
     "args"        : "",
     "watch"       : false,
-    "node_args"   : "",
+    "node_args"   : "--harmony",
     "instances"   : "1",
     "exec_mode"   : "fork_mode",
     "env": {
