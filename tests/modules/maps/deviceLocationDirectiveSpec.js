@@ -32,7 +32,7 @@ describe('Device location directive',function(){
         var self=this;
         angular.module('ngCordova',[]);
         angular.mock.module('Maps');
-        angular.mock.module(function($provide,$controllerProvider,_$compileProvider_){
+        angular.mock.module(function($provide,_$compileProvider_){
             self.$compileProvider=_$compileProvider_;
             $provide.value("waiveCar_MapsLoader", mockMapsLoader);
             $provide.value("waiveCar_locationService", mockLocationService);

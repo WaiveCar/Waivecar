@@ -161,7 +161,7 @@ function routeDistanceDirective(mapsEvents){
       template:'<span ng-bind="value"></span>'
   }
 }
-function destinyLocationDirective(MapsLoader,$q,mapsEvents,$state){
+function destinyLocationDirective(MapsLoader,$q,mapsEvents){
       function link(scope,element,attrs,ctrl){
         MapsLoader.getMap.then(function(L){
               ctrl.mapInstance.then(function(mapInstance){
@@ -179,6 +179,7 @@ function destinyLocationDirective(MapsLoader,$q,mapsEvents,$state){
                   }
                   else{
                     scope.marker=L.marker([destiny.latitude,destiny.longitude],{icon:waiveCarIcon}).addTo(mapInstance);
+                
                     ctrl.solveDestiny(scope.marker);
                   }
                 }
@@ -221,5 +222,5 @@ angular.module('Maps.route', ['Maps'])
 .directive('routeDuration',['mapsEvents',routeDurationDirective])
 
 .directive('routeInformation',routeInformationDirective)
-.directive('destinyLocation',['waiveCar_MapsLoader','$q','mapsEvents','$state',destinyLocationDirective])
+.directive('destinyLocation',['waiveCar_MapsLoader','$q','mapsEvents',destinyLocationDirective])
 .directive('routeToCar',['waiveCar_MapsLoader','$q','waiveCar_routeService','mapsEvents',routeToCarDirective])
