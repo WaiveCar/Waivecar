@@ -1,20 +1,14 @@
-/*
-  Logger Module
-  =============
-  @author  Christoffer Rødvik
-  @license MIT
- */
-
 'use strict';
 
-var ErrorLog = Reach.model('ErrorLog');
+let event    = Reach.Event;
+let ErrorLog = Reach.model('ErrorLog');
 
 /**
  * Logs the error in the database.
  * @method logError
  * @param  {Object} err
  */
-Reach.event.on('error:500', function *(err) {
+event.on('error:500', function *(err) {
   let error = new ErrorLog({
     id            : err.id,
     errorStatus   : 500,

@@ -1,10 +1,10 @@
 'use strict';
 
-let _super = Reach.service('mysql/model');
+let MySQL = Reach.service('mysql/model');
 
 module.exports = (function () {
 
-  Reach.extends(ErrorLog, _super);
+  Reach.extends(ErrorLog, MySQL);
 
   /**
    * @class ErrorLog
@@ -12,7 +12,7 @@ module.exports = (function () {
    * @param {object} data
    */
   function ErrorLog(data) {
-    _super.call(this, data);
+    MySQL.call(this, data);
   }
 
   /**
@@ -30,6 +30,7 @@ module.exports = (function () {
   ErrorLog.prototype._schema = ErrorLog._schema = {
     attributes : {
       id            : 'VARCHAR(12) NOT NULL',
+      type          : 'ENUM("system","api","web") NOT NULL',
       github        : 'VARCHAR(128) NULL',
       errorStatus   : 'VARCHAR(12) NOT NULL',
       clientId      : 'VARCHAR(11) NULL',
@@ -42,6 +43,15 @@ module.exports = (function () {
       stack         : 'TEXT NULL'
     },
     primaryKey : 'id'
+  };
+
+  /**
+   * List of default values that are set instead of null when instancing a new model
+   * @property _defaults
+   * @type     Object
+   */
+  ErrorLog.prototype._defaults = {
+    type : 'system'
   };
 
   return ErrorLog;

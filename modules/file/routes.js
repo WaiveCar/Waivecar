@@ -11,8 +11,8 @@ Router.post('/files/:target', function *(target, post, query) {
   // ### Query
   // Check for possible query params to add to the post
 
-  post.private = query ? query.private : 0;
-  post.bucket  = query ? query.bucket  : null;
+  post.private = query.private || 0;
+  post.bucket  = query.bucket  || null;
 
   // ### Handle
   // Handle the the file upload

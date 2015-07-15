@@ -9,5 +9,8 @@
   "models": {
     "ErrorLog" : "models/error-log.js"
   },
-  "routes": "routes.js"
+  "routes": "routes.js",
+  "dependencies": {
+    "shortid" : "2.2.2"
+  }
 }
