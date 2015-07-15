@@ -44,4 +44,4 @@ sudo apt-get -y -q install \
   mongodb-org
 
 # npm packages
-sudo npm install -g jshint bower gulp anywhere
+sudo npm install -g jshint anywhere
