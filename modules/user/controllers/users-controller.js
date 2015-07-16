@@ -1,15 +1,6 @@
-/*
-  UsersController
-  ===============
-
-  Stability: 3 - Stable
-
-  @author  Christoffer Rødvik
-  @license MIT
- */
-
 'use strict';
 
+let flux = Reach.IO.flux;
 let User = Reach.model('User');
 
 module.exports = Reach.resource(function (_super) {
@@ -42,7 +33,7 @@ module.exports = Reach.resource(function (_super) {
     payload.actionType    = 'user:stored';
     payload[resourceName] = model.toJSON();
 
-    Reach.IO.flux(payload);
+    flux(payload);
 
     return model;
   };
@@ -53,7 +44,7 @@ module.exports = Reach.resource(function (_super) {
    * @return {object}
    */
   UsersController.prototype.me = function *() {
-    return this.user;
+    return this.auth.user;
   };
 
  return UsersController;

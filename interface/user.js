@@ -72,7 +72,7 @@ module.exports = (function () {
    * @return {boolean}
    */
   User.prototype._owner = function *(self) {
-    var user = self.user;
+    var user = self.auth.user;
     if (this.id.toString() !== user.id.toString() && 'admin' !== user.role) {
       self.throw({
         code    : 'ACCESS_DENIED',
