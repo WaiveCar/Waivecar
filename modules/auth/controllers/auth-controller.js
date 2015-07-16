@@ -1,14 +1,7 @@
-/*
-  AuthController
-  ==============
-  @author Christoffer Rødvik
-  @github https://github.com/kodemon/reach-api
- */
-
 'use strict';
 
-var Facebook = Reach.service('auth/facebook');
-var User     = Reach.model('User');
+let Facebook = Reach.Auth.Facebook;
+let User     = Reach.model('User');
 
 module.exports = (function () {
 
@@ -23,7 +16,9 @@ module.exports = (function () {
    * @return {object}
    */
   AuthController.prototype.login = function *(post) {
-    return yield this.auth.login(post.email, post.password);
+    yield this.auth.login(post.email, post.password);
+
+    return this.auth.user;
   };
 
   /**
@@ -31,6 +26,9 @@ module.exports = (function () {
    * @return {Object}
    */
   AuthController.prototype.logout = function *() {
+    if (!this.auth.check()) {
+      return null;
+    }
     return yield this.auth.logout();
   };
 
@@ -38,10 +36,10 @@ module.exports = (function () {
    * @method facebook
    */
   AuthController.prototype.facebook = function *(post) {
-    var facebook    = new Facebook(Reach.config.facebook);
-    var accessToken = yield facebook.accessToken(post.code, post.redirectUri);
-    var profile     = yield facebook.profile(accessToken);
-    var user        = yield User.findOne({ facebook : profile.id });
+    let facebook    = new Facebook(Reach.config.facebook);
+    let accessToken = yield facebook.accessToken(post.code, post.redirectUri);
+    let profile     = yield facebook.profile(accessToken);
+    let user        = yield User.findOne({ facebook : profile.id });
 
     // ### Handle Admin App
 
@@ -79,7 +77,10 @@ module.exports = (function () {
    * @return {void}
    */
   AuthController.prototype.remember = function *() {
-    return null;
+    if (!this.auth.check()) {
+      return null;
+    }
+    yield this.auth.remember();
   };
 
   /**
