@@ -1,13 +1,4 @@
-/*
-  User Module Tests
-  =================
-  @author Christoffer Rødvik
-  @github https://github.com/kodemon/reach-api
- */
-
 'use strict';
-
-// ### Dependencies
 
 let assert         = require('chai').assert;
 let VehicleService = Reach.service('gm-api/vehicle-service');
@@ -22,9 +13,7 @@ let mockVehicles = {
 
 // ### Unit Tests
 
-describe('GM API > vehicle-service', function () {
-  this.timeout(0);
-
+describe.skip('GM API > vehicle-service', function () {
   let service = new VehicleService();
 
   describe('Login', function () {
