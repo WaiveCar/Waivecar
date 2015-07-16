@@ -27,12 +27,12 @@ let mockEmail = {
 
 // ### Unit Tests
 
-describe.only('Email', function () {
+describe('Email Service', function () {
   this.timeout(30000);
   let service = new EmailService();
 
   describe('Send', function () {
-    it('should send an email', function *() {
+    it('should send an email with valid params', function *() {
       let result = yield service.send(mockEmail);
       assert.isDefined(result);
       assert.isDefined(result.messageId);
