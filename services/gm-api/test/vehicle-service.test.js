@@ -23,7 +23,7 @@ let mockVehicles = {
 // ### Unit Tests
 
 describe('GM API > vehicle-service', function () {
-  this.timeout(30000);
+  this.timeout(0);
 
   let service = new VehicleService();
 
