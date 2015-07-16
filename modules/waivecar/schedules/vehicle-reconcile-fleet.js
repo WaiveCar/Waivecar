@@ -33,7 +33,7 @@ queue.process('vehicle-reconcile-fleet', function (job, done) {
       yield car.upsert();
     }
 
-    schedule(jobSchedule, moment().add(5, 'minute'));
+    schedule(jobSchedule, moment().add(1, 'hour'));
     done();
   });
 });
