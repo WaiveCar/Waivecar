@@ -10,17 +10,27 @@ RouteService.prototype.getRoute = function(pointA, pointB, profile) {
     var self = this;
     profile = profile || 'pedestrian';
     return this.MapsLoader.getMap.then(function(maps) {
-      var url = "http://" + maps.skobbler.apiKey + ".tor.skobbler.net/tor/RSngx/calcroute/json/18_0/en/" + maps.skobbler.apiKey;
-      url += '?start=' + pointA.lat + "," + pointA.lng;
-      url += '&dest=' + pointB.lat + "," + pointB.lng;
+      var url = 'http://' + maps.skobbler.apiKey;
+      url += '.tor.skobbler.net/tor/RSngx/calcroute/json/18_0/en/';
+      url += maps.skobbler.apiKey;
+      url += '?start=' + pointA.lat + ',' + pointA.lng;
+      url += '&dest=' + pointB.lat + ',' + pointB.lng;
       url += '&profile=' + profile;
       url += '&advice=yes';
       url += '&points=yes';
       var defered = self.$q.defer();
       self.$http.get(url)
       .success(function(data, status, headers, config) {
-        self._scope.$broadcast(self.mapsEvents.routeDurationChanged, data.route.duration, profile);
-        self._scope.$broadcast(self.mapsEvents.routeDistanceChanged, data.route.routelength, profile);
+        self._scope.$broadcast(
+          self.mapsEvents.routeDurationChanged,
+          data.route.duration,
+          profile
+        );
+        self._scope.$broadcast(
+          self.mapsEvents.routeDistanceChanged,
+          data.route.routelength,
+          profile
+        );
         defered.resolve(data);
       })
       .error(function(data, status, headers, config) {
@@ -41,8 +51,8 @@ function routeToCarDirective(MapsLoader, $q, routeService, mapsEvents) {
           })
           var lines = [
             {
-              "type": "LineString",
-              "coordinates": coordinates
+              type: 'LineString',
+              coordinates: coordinates
             }
           ];
           if (scope.route) {
@@ -55,7 +65,7 @@ function routeToCarDirective(MapsLoader, $q, routeService, mapsEvents) {
             strokeOpacity: 0.8,
             strokeWeight: 2,
             fillColor: '#FF0000',
-            fillOpacity: 0.35,
+            fillOpacity: 0.35
           };
           var radius = 25;
           scope.unlockRadius = L.circle(destinyLocation.getLatLng(), radius, unlockRangeOptions).addTo(mapInstance);
@@ -66,7 +76,7 @@ function routeToCarDirective(MapsLoader, $q, routeService, mapsEvents) {
       drawRoute(maps, startLocation, destinyLocation, mapInstance, scope).then(function() {
           var deviceLocation = startLocation.getLatLng();
           if (scope.unlockRadius.getBounds().contains(deviceLocation)) {
-            alert("Car unlock");
+            alert('Car unlock');
           }
         });
     }
@@ -143,12 +153,11 @@ function routeDistanceDirective(mapsEvents) {
   function metersToMiles(meters) {
     var digits = 3;
     var str = meters * 0.00062137 + '';
-    
     return str.substring(0, str.indexOf('.') + digits);
   }
   function link(scope) {
     scope.$on(mapsEvents.routeDistanceChanged, function(ev, totalDistance) {
-      scope.value = metersToMiles(totalDistance) + " miles away";
+      scope.value = metersToMiles(totalDistance) + ' miles away';
     });
   }
   return {
@@ -162,7 +171,7 @@ function destinyLocationDirective(MapsLoader, $q, mapsEvents) {
   function link(scope, element, attrs, ctrl) {
         MapsLoader.getMap.then(function(L) {
           ctrl.mapInstance.then(function(mapInstance) {
-                
+
             var waiveCarIcon = L.icon({
               iconUrl: 'img/waivecar-mark.svg',
               iconRetinaUrl: 'img/waivecar-mark.svg',
@@ -175,7 +184,6 @@ function destinyLocationDirective(MapsLoader, $q, mapsEvents) {
                     scope.marker.setLatLng([destiny.latitude, destiny.longitude]);
                   } else {
                     scope.marker = L.marker([destiny.latitude, destiny.longitude], {icon: waiveCarIcon}).addTo(mapInstance);
-                
                     ctrl.solveDestiny(scope.marker);
                   }
                 }
@@ -184,10 +192,9 @@ function destinyLocationDirective(MapsLoader, $q, mapsEvents) {
               return;
             }
             scope.$on(mapsEvents.destinyOnRouteChanged, function(ev, destiny) {
-                  handleMarker(destiny);
-                });
+              handleMarker(destiny);
+            });
             handleMarker(initialDestiny);
-              
           });
         });
       }

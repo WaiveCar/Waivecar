@@ -14,7 +14,6 @@ describe('Device location directive',function(){
             return mockMarker;
         }
     };
-    L=mockLeaflet;//Global
     var mockMapsLoader={
     };
     var mockLocationService={

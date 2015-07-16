@@ -17,11 +17,12 @@
       }
     }
   }
-  function LocationService($rootScope, $cordovaGeolocation, $q, mapsEvents) {
+  function LocationService($rootScope, $cordovaGeolocation, $q, mapsEvents,$state) {
     this.$cordovaGeolocation = $cordovaGeolocation;
     this.$q = $q;
     this._scope = $rootScope;
     this.mapsEvents = mapsEvents;
+    this.$state=$state;
   }
   LocationService.prototype.init = function() {
     this._initPositionWatch();
@@ -43,21 +44,30 @@
     var posOptions = {maximumAge: 3000, timeout: 8000, enableHighAccuracy: true};
     var defered = this.$q.defer();
     var self = this;
-      
+    if(typeof this._pendingRequest !='undefined' && this._pendingRequest){
+      return this._pendingRequest;
+    }
     this.$cordovaGeolocation
       .getCurrentPosition(posOptions)
           .then(function(position) {
-              defered.resolve(
-                {
-                  latitude: position.coords.latitude,
-                  longitude: position.coords.longitude
-                }
-              )
-              
-            }
-          );
-    return defered.promise;
+            defered.resolve(
+              {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude
+              }
+            );
+            self._pendingRequest=null;
+          },
+      function(err) {
+        defered.reject(err);
+        self.$state.go('location-error');
+        self._pendingRequest=null;
+      }
+    );
+    this._pendingRequest=defered.promise;
+    return this._pendingRequest
   };
+
   function MapController($scope, locationService, $q, mapsEvents) {
     this._deferedMap = $q.defer();
     this.mapInstance = this._deferedMap.promise;
@@ -90,16 +100,19 @@
   };
   function mapDirective(MapsLoader, $q, locationService) {
         function link(scope, element, attrs, ctrl) {
+          var location;
           MapsLoader.getMap.then(function(maps) {
+
             locationService.getLocation().then(function(deviceLocation) {
+              location=deviceLocation;
               var mapOptions = {
                 center: [deviceLocation.latitude, deviceLocation.longitude],
-                apiKey: L.skobbler.apiKey,
+                apiKey: maps.skobbler.apiKey,
                 zoom: parseInt(scope.zoom, 10),
                 tap: true,
                 trackResize: false
               }
-              var mapInstance = L.skobbler.map(element[0].firstChild, mapOptions);
+              var mapInstance = maps.skobbler.map(element[0].firstChild, mapOptions);
               ctrl.solveMap(mapInstance);
             })
           });
@@ -151,7 +164,7 @@
 
     .provider('MapsLoader', MapsLoader)
     
-    .service('locationService', ['$rootScope', '$cordovaGeolocation', '$q', 'mapsEvents', LocationService])
+    .service('locationService', ['$rootScope', '$cordovaGeolocation', '$q', 'mapsEvents','$state', LocationService])
   
     .controller('mapController', ['$scope', 'locationService', '$q', 'mapsEvents', MapController])
     

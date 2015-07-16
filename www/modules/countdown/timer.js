@@ -116,7 +116,7 @@
     this.$rootScope = $rootScope;
     this.$timeout = $timeout;
     this.countdownEvents = countdownEvents;
-    this.CountdownTimer;
+    this.CountdownTimer=CountdownTimer;
   }
   TimerService.prototype.createTimer = function(timerName, durations, scope) {
     this._timerInstances[timerName] = new this.CountdownTimer(timerName, durations, scope);

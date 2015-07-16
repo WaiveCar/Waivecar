@@ -67,6 +67,11 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
     .state('points', {
       url: '/my-points',
       templateUrl: '/components/users/templates/reward-points.html'
+    })
+    .state('location-error', {
+      url: '/location-error',
+      templateUrl: '/components/errors/templates/location.html'
+
     });
 
   $urlRouterProvider.otherwise('/cars');

@@ -1,5 +1,5 @@
 describe('Destiny location directive',function(){
-	  var mockEvents={
+    var mockEvents={
         'destinyOnRouteChanged':'waiveCarDestinyOnRouteChanged'
     };
     var mockId=0;
@@ -7,31 +7,30 @@ describe('Destiny location directive',function(){
     var mockMapInstance={id:++mockId};
     var mockDestiny={latitude:50,longitude:50};
     var mocker={
-    	getInitialDestiny:function(){
-    		return mockDestiny;
-    	},
-    	solveDestiny:jasmine.createSpy('solveDestiny'),
-    	addToMap:jasmine.createSpy('addToMap'),
-    	setLatLng:jasmine.createSpy('setLatLng')
-   		 
+        getInitialDestiny:function(){
+            return mockDestiny;
+        },
+        solveDestiny:jasmine.createSpy('solveDestiny'),
+        addToMap:jasmine.createSpy('addToMap'),
+        setLatLng:jasmine.createSpy('setLatLng')
+         
     }
     var mockMarker={
-		addTo:function(map){
-			mocker.addToMap(map);
-			return this;
-		},
-		setLatLng:mocker.setLatLng
-	};
+        addTo:function(map){
+            mocker.addToMap(map);
+            return this;
+        },
+        setLatLng:mocker.setLatLng
+    };
 
     var mockLeaflet={
-    	icon:function(){
-    		return {};
-    	},
-    	marker:function(){
-    		return mockMarker;
-    	}
+        icon:function(){
+            return {};
+        },
+        marker:function(){
+            return mockMarker;
+        }
     };
-    L=mockLeaflet;//Global
     var mockMapsLoader={
     };
     var mockMapsController=function($scope){
@@ -41,11 +40,11 @@ describe('Destiny location directive',function(){
     var mockController=function($scope){
     }
     mockController.prototype.getInitialDestiny = function(destiny){
-    	return mocker.getInitialDestiny(destiny);
+        return mocker.getInitialDestiny(destiny);
     }
- 	
+    
     beforeEach(function(){
-		var self=this;
+        var self=this;
         angular.module('Maps',[]);
         angular.mock.module(function($provide){
             $provide.constant("mapsEvents", mockEvents);
@@ -66,7 +65,7 @@ describe('Destiny location directive',function(){
             });
             $controllerProvider.register('MockController',mockController);
         });
-     	angular.mock.inject(function(_$compile_,$rootScope,_$q_) {
+        angular.mock.inject(function(_$compile_,$rootScope,_$q_) {
             self.$compile = _$compile_;
             self.$rootScope = $rootScope;
             self.$q = _$q_;
@@ -80,22 +79,22 @@ describe('Destiny location directive',function(){
             mockMapsController.prototype.mapInstance=defered.promise;
         });
     });
-	it('Solves the destiny when it get\'s  it from the passed function',function(){
-		spyOn(mocker,'getInitialDestiny').and.callThrough();
+    it('Solves the destiny when it get\'s  it from the passed function',function(){
+        spyOn(mocker,'getInitialDestiny').and.callThrough();
 
         var element = this.$compile('<div ng-controller="MockController as ctrl"><map><destiny-location get-initial-destiny="ctrl.getInitialDestiny()" ></destiny-location></map></div>')(this.scope);
         this.$rootScope.$digest();
 
-		expect(mocker.getInitialDestiny).toHaveBeenCalled();
-		expect(mocker.solveDestiny).toHaveBeenCalledWith(mockMarker);
-		expect(mocker.addToMap).toHaveBeenCalledWith(mockMapInstance);
-	});
-	it('After rendering continues to listening for the destiny changes',function(){
+        expect(mocker.getInitialDestiny).toHaveBeenCalled();
+        expect(mocker.solveDestiny).toHaveBeenCalledWith(mockMarker);
+        expect(mocker.addToMap).toHaveBeenCalledWith(mockMapInstance);
+    });
+    it('After rendering continues to listening for the destiny changes',function(){
 
         var element = this.$compile('<div ng-controller="MockController as ctrl"><map><destiny-location get-initial-destiny="ctrl.getInitialDestiny()" ></destiny-location></map></div>')(this.scope);
         this.$rootScope.$digest();
         var newDestiny={latitude:101,longitude:102};
         this.$rootScope.$broadcast(mockEvents.destinyOnRouteChanged,newDestiny);
         expect(mocker.setLatLng).toHaveBeenCalledWith([newDestiny.latitude,newDestiny.longitude]);
-	})
+    })
 });

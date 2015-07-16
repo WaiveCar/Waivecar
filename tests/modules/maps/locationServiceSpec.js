@@ -72,7 +72,6 @@ describe('Location service',function(){
 			expect($rootScope.$broadcast).toHaveBeenCalled();
 			var lastArgs=$rootScope.$broadcast.calls.mostRecent().args;
 			expect(lastArgs[0]).toEqual(events.positionChanged);
-
 		});
 
 
