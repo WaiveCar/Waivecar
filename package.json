@@ -19,8 +19,7 @@
     "koa-cors": "0.0.16",
     "lodash": "3.10.0",
     "moment": "2.10.2",
-    "reach-api": "0.2.x",
-    "reach-auth": "0.0.6"
+    "reach-api": "0.2.x"
   },
   "devDependencies": {
     "chai": "2.3.0",
