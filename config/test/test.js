@@ -15,6 +15,7 @@ module.exports = {
       'user'
     ],
     services : [
+      'email',
       'mysql',
       'gm-api'
     ]
