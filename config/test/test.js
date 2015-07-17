@@ -12,7 +12,8 @@ module.exports = {
     ],
     modules : [
       'auth',
-      'user'
+      'user',
+      'logger'
     ],
     services : [
       'email',
