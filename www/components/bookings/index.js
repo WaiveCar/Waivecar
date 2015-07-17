@@ -44,7 +44,7 @@ function BookingsController($rootScope, $scope, $state, Bookings) {
 }
 
 
-function timeToGetToCarDirective(searchEvents, $state) {
+function timeToGetToCarDirective(searchEvents) {
   function link(scope, element, attrs, ctrl) {
     var durations = {'timeToCar': 15};
     ctrl.createTimer('getToWaiveCar', durations);
@@ -84,6 +84,23 @@ function timeToGetToCarDirective(searchEvents, $state) {
 
 }
 
+function carInformationDirective(searchEvents, selectedCar) {
+  function link(scope, element, attrs, ctrl) {
+    
+    var details = selectedCar.getSelected();
+    if(!details){
+      return;
+    }
+    scope.name = details.name;
+    scope.plate = details.plate;
+  }
+  return {
+    restrict: 'E',
+    link: link,
+    templateUrl: 'components/bookings/templates/directives/carInformation.html'
+  }
+}
+
 angular.module('app')
 .controller('BookingController', [
   '$rootScope',
@@ -101,6 +118,10 @@ angular.module('app')
 ])
 .directive('timeToGetToCar', [
   'searchEvents',
-  '$state',
   timeToGetToCarDirective
+])
+.directive('carInformation', [
+  'searchEvents',
+  'selectedCar',
+  carInformationDirective
 ]);

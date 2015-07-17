@@ -37,10 +37,10 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
       templateUrl: '/components/bookings/templates/index.html'
     })
     // details yet to be
-    .state('bookings-new', {
+  /*  .state('bookings-new', {
       url: '/bookings/new',
       templateUrl: '/components/bookings/templates/new.html'
-    })
+    })*/
     // GET TO YOUR CAR
     .state('bookings-show', {
       url: '/bookings/:id',

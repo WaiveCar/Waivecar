@@ -94,6 +94,8 @@ FleetService.prototype.getNearbyFleet = function(numNearby) {
                               charging: true
                             }
                           },
+                          name:'Chevrolet Spark',
+                          plate:'AUD 568',
                           id: idCount++
                         }
                     )
