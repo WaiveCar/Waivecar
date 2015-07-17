@@ -27,6 +27,11 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
       url: '/cars/:id',
       templateUrl: '/components/cars/templates/show.html'
     })
+    //Connect to car
+    .state('cars-connect', {
+      url: '/cars/connect/:id',
+      templateUrl: '/components/cars/templates/connect.html'
+    })
     // .state('cars-edit', {
     //   url: '/cars/:id/edit',
     //   templateUrl: '/components/cars/templates/edit.html'

@@ -117,6 +117,9 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 ion-content.has-big-header{
   top:15%;
 }
+.title.has-big-header{
+  height:100%;
+}
 @import "www/components/cars/style.scss";
 @import "www/components/bookings/style.scss";
 @import "www/components/maps/style.scss";

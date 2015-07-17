@@ -96,7 +96,8 @@ FleetService.prototype.getNearbyFleet = function(numNearby) {
                           },
                           name:'Chevrolet Spark',
                           plate:'AUD 568',
-                          id: idCount++
+                          id: idCount++,
+                          image:'/components/ads/templates/images/ad1.png'
                         }
                     )
               }
@@ -210,6 +211,26 @@ function carChargeStatusDirective(searchEvents, selectedCar) {
     templateUrl: 'components/cars/templates/directives/carChargeStatus.html'
   }
 }
+function carInformationDirective(searchEvents, selectedCar) {
+  function link(scope, element, attrs, ctrl) {
+    scope.$watch(function(){
+      return selectedCar.getSelected();
+    },
+    function(){
+      var details = selectedCar.getSelected();
+      if(details){
+        scope.name = details.name;
+        scope.plate = details.plate;
+        scope.image=details.image;
+      }
+    })
+  }
+  return {
+    restrict: 'E',
+    link: link,
+    templateUrl: 'components/bookings/templates/directives/carInformation.html'
+  }
+}
 angular.module('app')
 .constant('searchEvents', {
   vehicleSelected: 'vehicleSelected'
@@ -240,4 +261,9 @@ angular.module('app')
   'selectedCar',
   carChargeStatusDirective
 ])
-.directive('nearbyFleet', ['MapsLoader', '$q', 'fleetService', 'realReachService', '$window', nearbyFleetDirective]);
+.directive('nearbyFleet', ['MapsLoader', '$q', 'fleetService', 'realReachService', '$window', nearbyFleetDirective])
+.directive('carInformation', [
+  'searchEvents',
+  'selectedCar',
+  carInformationDirective
+]);

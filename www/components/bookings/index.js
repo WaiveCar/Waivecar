@@ -1,8 +1,13 @@
-function BookingController($rootScope, $scope, $state, Bookings,selectedCarService) {
+function BookingController($rootScope, $scope, $state, Bookings,selectedCarService,mapsEvents) {
   var self = this;
   this.selectedCarService=selectedCarService;
-  self.isEdit = $state.params.id ? true : false;
 
+  self.isEdit = $state.params.id ? true : false;
+  this.$state=$state;
+  $scope.$on(mapsEvents.withinUnlockRadius,function(){
+    var selectedData=selectedCarService.getSelected();
+    $state.go('cars-connect',{id:selectedData.id});
+  });
   if (self.isEdit) {
     self.booking = Bookings.get({ id: $state.params.id });
   } else {
@@ -36,9 +41,18 @@ function BookingController($rootScope, $scope, $state, Bookings,selectedCarServi
     ].join('');
     window.open(encodeURI(url), '_system');
   };
+  if(!selectedCarService.getSelected()){
+    $state.go('cars');
+  }
 }
+BookingController.prototype.cancelClick = function() {
+   this.$state.go('cars');
+};
 BookingController.prototype.getSelectedCarDestiny = function() {
   var carDetails=this.selectedCarService.getSelected();
+  if(!carDetails){
+    return null;
+  }
   return {
     latitude:carDetails.latitude,
     longitude:carDetails.longitude
@@ -91,24 +105,7 @@ function timeToGetToCarDirective(searchEvents) {
 
 }
 
-function carInformationDirective(searchEvents, selectedCar) {
-  function link(scope, element, attrs, ctrl) {
-    scope.$watch(function(){
-      return selectedCar.getSelected();
-    },
-    function(){
-      var details = selectedCar.getSelected();
-      scope.name = details.name;
-      scope.plate = details.plate;
-      
-    })
-  }
-  return {
-    restrict: 'E',
-    link: link,
-    templateUrl: 'components/bookings/templates/directives/carInformation.html'
-  }
-}
+
 angular.module('app')
 .controller('BookingController', [
   '$rootScope',
@@ -116,6 +113,7 @@ angular.module('app')
   '$state',
   'Bookings',
   'selectedCar',
+  'mapsEvents',
   BookingController
 ])
 .controller('BookingsController', [
@@ -128,9 +126,4 @@ angular.module('app')
 .directive('timeToGetToCar', [
   'searchEvents',
   timeToGetToCarDirective
-])
-.directive('carInformation', [
-  'searchEvents',
-  'selectedCar',
-  carInformationDirective
 ]);

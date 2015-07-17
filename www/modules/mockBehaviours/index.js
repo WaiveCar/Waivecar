@@ -2,7 +2,6 @@ function mockWalkingDirective(mapsEvents,$rootScope){
 	function link(scope, element, attrs, ctrl) {
 		ctrl.locationMarker.then(function(marker){
 			marker.on('dragend', function(event){
-				console.log('DragEnd');
 				 var deviceLocation=marker.getLatLng();
 	          	$rootScope.$broadcast(mapsEvents.positionChanged,{latitude:deviceLocation.lat,longitude:deviceLocation.lng});
 			});
