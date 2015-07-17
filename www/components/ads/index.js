@@ -23,7 +23,7 @@ function advertisementDirective($state,$timeout){
 		var timeOutFn=function(){
 			ctrl.goToRedirectUrl();
 		}
-		$timeout(timeOutFn, 5000);
+		$timeout(timeOutFn,2000);
 	}
 	return {
   		  templateUrl: 'components/ads/templates/directives/advertisement.html',

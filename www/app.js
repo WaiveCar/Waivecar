@@ -91,7 +91,8 @@ angular.module('app', [
   'Maps.route',
   'Maps.geoCoding',
   'countdown',
-  'ads'
+  'ads',
+  'mockBehaviours'
 ])
 .run(['$ionicPlatform', Run])
 .config([ '$stateProvider', '$urlRouterProvider', '$ionicConfigProvider', Config ]);

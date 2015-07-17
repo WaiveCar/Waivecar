@@ -102,7 +102,7 @@ function routeToCarDirective(MapsLoader, $q, routeService, mapsEvents) {
     return {
       restrict: 'E',
       require: '^map',
-      link: link
+      link: this.link
     }
   }
 

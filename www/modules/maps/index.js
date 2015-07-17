@@ -161,17 +161,11 @@
       pedestrian: 'pedestrian',
       car: 'car' 
     })
-
     .provider('MapsLoader', MapsLoader)
-    
     .service('locationService', ['$rootScope', '$cordovaGeolocation', '$q', 'mapsEvents','$state', LocationService])
-  
     .controller('mapController', ['$scope', 'locationService', '$q', 'mapsEvents', MapController])
-    
     .directive('map', ['MapsLoader', '$q', 'locationService', mapDirective])
-    .directive('deviceLocation', ['MapsLoader', 'locationService', '$q', deviceLocationDirective])
-
-;
+    .directive('deviceLocation', ['MapsLoader', 'locationService', '$q', deviceLocationDirective]);
 })();
 
 // controller:['$scope','locationService','$q',MapController]
