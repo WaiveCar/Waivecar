@@ -1,0 +1,14 @@
+{
+  "name": "reach-sms",
+  "version": "0.0.1",
+  "private": true,
+  "author": "Matt Ginty",
+  "license": "MIT",
+  "bootstrap": "bootstrap/validate.js",
+  "dependencies": {
+    "twilio": "^2.0.0"
+  },
+  "tests": [
+    "test/sms-service.test.js"
+  ]
+}
