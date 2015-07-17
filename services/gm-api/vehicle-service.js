@@ -5,6 +5,8 @@ let _          = require('lodash');
 let changeCase = require('change-case');
 let config     = Reach.config.gm;
 
+/* istanbul ignore next: extremely testing unfriendly */
+
 module.exports = (function () {
 
   let GM_ASYNC_SUCCESS     = 'success';
