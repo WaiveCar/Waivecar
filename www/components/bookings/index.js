@@ -1,6 +1,6 @@
-function BookingController($rootScope, $scope, $state, Bookings) {
+function BookingController($rootScope, $scope, $state, Bookings,selectedCarService) {
   var self = this;
-
+  this.selectedCarService=selectedCarService;
   self.isEdit = $state.params.id ? true : false;
 
   if (self.isEdit) {
@@ -37,6 +37,13 @@ function BookingController($rootScope, $scope, $state, Bookings) {
     window.open(encodeURI(url), '_system');
   };
 }
+BookingController.prototype.getSelectedCarDestiny = function() {
+  var carDetails=this.selectedCarService.getSelected();
+  return {
+    latitude:carDetails.latitude,
+    longitude:carDetails.longitude
+  }
+};
 
 function BookingsController($rootScope, $scope, $state, Bookings) {
   var self = this;
@@ -86,13 +93,15 @@ function timeToGetToCarDirective(searchEvents) {
 
 function carInformationDirective(searchEvents, selectedCar) {
   function link(scope, element, attrs, ctrl) {
-    
-    var details = selectedCar.getSelected();
-    if(!details){
-      return;
-    }
-    scope.name = details.name;
-    scope.plate = details.plate;
+    scope.$watch(function(){
+      return selectedCar.getSelected();
+    },
+    function(){
+      var details = selectedCar.getSelected();
+      scope.name = details.name;
+      scope.plate = details.plate;
+      
+    })
   }
   return {
     restrict: 'E',
@@ -100,13 +109,13 @@ function carInformationDirective(searchEvents, selectedCar) {
     templateUrl: 'components/bookings/templates/directives/carInformation.html'
   }
 }
-
 angular.module('app')
 .controller('BookingController', [
   '$rootScope',
   '$scope',
   '$state',
   'Bookings',
+  'selectedCar',
   BookingController
 ])
 .controller('BookingsController', [
