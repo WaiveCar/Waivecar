@@ -21,16 +21,7 @@ module.exports = (function () {
     return this.auth.user;
   };
 
-  /**
-   * @method logout
-   * @return {Object}
-   */
-  AuthController.prototype.logout = function *() {
-    if (!this.auth.check()) {
-      return null;
-    }
-    return yield this.auth.logout();
-  };
+  /* istanbul ignore next: domain restrictions makes it hard to test across multiple environments */
 
   /**
    * @method facebook
@@ -77,18 +68,7 @@ module.exports = (function () {
    * @return {void}
    */
   AuthController.prototype.remember = function *() {
-    if (!this.auth.check()) {
-      return null;
-    }
     yield this.auth.remember();
-  };
-
-  /**
-   * @method logout
-   * @return {void}
-   */
-  AuthController.prototype.logout = function *() {
-    return null;
   };
 
   /**
@@ -96,7 +76,15 @@ module.exports = (function () {
    * @return {void}
    */
   AuthController.prototype.validate = function *() {
-    return null;
+    // If we hit this method we are validated
+  };
+
+  /**
+   * @method logout
+   * @return {Object}
+   */
+  AuthController.prototype.logout = function *() {
+    return yield this.auth.logout();
   };
 
   return AuthController;

@@ -8,6 +8,8 @@ let through = require('through2');
 let File    = Reach.model('File');
 let log     = Reach.Log;
 
+/* istanbul ignore next: S3 does not have testing facilities */
+
 module.exports = (function () {
 
   /**

@@ -64,6 +64,8 @@ module.exports = (function () {
     'password'
   ];
 
+  /* istanbul ignore next: _owner needs koa instance only used by modules */
+
   /**
    * Verifies the ownership of the model with the provided user, if the user is not
    * owner or admin a 401 ERROR is produced.

@@ -9,7 +9,7 @@ Router.post('/logger', function *(post) {
   let log            = new ErrorLog(post);
       log.id         = shortid.generate();
       log.type       = 'web';
-      log.clientId   = (this.auth.user) ? this.auth.user.id : 'GUEST';
+      log.clientId   = this.auth.check() ? this.auth.user.id : 'GUEST';
       log.clientIp   = ip[ip.length - 1];
       log.detailData = JSON.stringify(log.detailData);
 

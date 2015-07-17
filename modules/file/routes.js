@@ -18,6 +18,7 @@ Router.post('/files/:target', function *(target, post, query) {
   // Handle the the file upload
 
   switch (target) {
+    /* istanbul ignore next: S3 does not have testing facilities */
     case 's3'    : return yield FileHandler.S3.call(this, post);
     case 'local' : return yield FileHandler.local(post);
     default:

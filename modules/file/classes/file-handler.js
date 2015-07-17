@@ -63,6 +63,8 @@ module.exports = (function () {
     return files;
   };
 
+  /* istanbul ignore next: S3 does not have testing facilities */
+
   /**
    * Upload a file to a AWS S3 Bucket
    * @method S3
@@ -108,6 +110,8 @@ module.exports = (function () {
       koa.type = file.mime;
       return oFs.createReadStream(path.join(Reach.STORAGE_PATH, file.path));
     }
+
+    /* istanbul ignore next */
 
     if ('s3' === file.store) {
       if (file.private) {
