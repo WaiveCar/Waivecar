@@ -12,6 +12,11 @@ router.post('/auth/facebook', {
   params : ['code', 'redirectUri']
 });
 
+router.get('/auth/remember', {
+  policy : 'authenticate',
+  uses   : 'AuthController@remember'
+});
+
 router.get('/auth/validate', {
   policy : 'authenticate',
   uses   : 'AuthController@validate'

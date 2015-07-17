@@ -21,5 +21,6 @@ event.on('error:500', function *(err) {
     detailData    : JSON.stringify(err.details.data),
     stack         : JSON.stringify(err.stack)
   });
-  yield error.save();
+  let res = yield error.save();
+  event.emit('logger:test', res);
 });

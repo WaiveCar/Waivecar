@@ -30,6 +30,8 @@ module.exports = function *() {
     }
   });
 
+  /* istanbul ignore next: ignore until we have standard functions checking admin policy */
+
   yield register.policy('admin', function *() {
     if ('admin' !== this.user.role) {
       this.throw({
