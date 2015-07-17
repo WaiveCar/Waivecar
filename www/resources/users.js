@@ -33,7 +33,7 @@ function Resource($resource, utils, config) {
 
     me: {
       method: 'GET',
-      url: utils.getCustomRoute('me')
+      url: utils.getCustomRoute('users/me')
     }
 
   });
