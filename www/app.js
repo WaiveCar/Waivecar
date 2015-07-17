@@ -73,16 +73,20 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
       url: '/my-points',
       templateUrl: '/components/users/templates/reward-points.html'
     })
+    .state('dashboard',{
+      url:'/ride-dashboard',
+      templateUrl: '/components/ride/templates/dashboard.html'
+    })
     //All purposes ads
     .state('ads',{
       url:'/ads',
       templateUrl: '/components/ads/templates/index.html',
       params:{redirectUrl:null,redirectParams:null}
     })
+    //Errors
     .state('location-error', {
       url: '/location-error',
       templateUrl: '/components/errors/templates/location.html'
-
     });
 
   $urlRouterProvider.otherwise('/cars');
@@ -97,7 +101,9 @@ angular.module('app', [
   'Maps.geoCoding',
   'countdown',
   'ads',
-  'mockBehaviours'
+  'mockBehaviours',
+  'ChargingStations',
+  'PointsOfInterest'
 ])
 .run(['$ionicPlatform', Run])
 .config([ '$stateProvider', '$urlRouterProvider', '$ionicConfigProvider', Config ]);
