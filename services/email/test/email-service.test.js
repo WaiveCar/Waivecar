@@ -1,19 +1,7 @@
-/*
-  Email Service Tests
-  =================
-  @author Matt Ginty
- */
-
 'use strict';
-
-// ### Dependencies
-
-let assert         = require('chai').assert;
-let EmailService   = Reach.service('email');
-
-// ### Mocks
-
-let mockEmail = {
+let assert       = require('chai').assert;
+let EmailService = Reach.service('email');
+let mockEmail    = {
   template : 'default',
   context  : {
     name    : 'user',
@@ -24,8 +12,6 @@ let mockEmail = {
   subject  : 'Hello',
   html     : '<p>How are you?</p>'
 };
-
-// ### Unit Tests
 
 describe('Email Service', function () {
   this.timeout(30000);
@@ -40,5 +26,4 @@ describe('Email Service', function () {
       assert.equal(result.accepted[0].status, 'sent');
     });
   });
-
 });
