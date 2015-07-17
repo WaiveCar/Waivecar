@@ -40,7 +40,7 @@ RouteService.prototype.getRoute = function(pointA, pointB, profile) {
     });
   };
 
-function routeToCarDirective(MapsLoader, $q, routeService, mapsEvents) {
+function routeToCarDirective(MapsLoader, $q, routeService, mapsEvents,$rootScope) {
     var self = this;
     this.drawRoute = function(L, startLocation, destinyLocation, mapInstance, scope) {
       return routeService.getRoute(startLocation.getLatLng(), destinyLocation.getLatLng())
@@ -76,7 +76,7 @@ function routeToCarDirective(MapsLoader, $q, routeService, mapsEvents) {
       drawRoute(maps, startLocation, destinyLocation, mapInstance, scope).then(function() {
           var deviceLocation = startLocation.getLatLng();
           if (scope.unlockRadius.getBounds().contains(deviceLocation)) {
-            alert('Car unlock');
+            $rootScope.$broadcast(mapsEvents.withinUnlockRadius);
           }
         });
     }
@@ -229,4 +229,4 @@ angular.module('Maps.route', ['Maps'])
 
 .directive('routeInformation', routeInformationDirective)
 .directive('destinyLocation', ['MapsLoader', '$q', 'mapsEvents', destinyLocationDirective])
-.directive('routeToCar', ['MapsLoader', '$q', 'routeService', 'mapsEvents', routeToCarDirective])
+.directive('routeToCar', ['MapsLoader', '$q', 'routeService', 'mapsEvents','$rootScope', routeToCarDirective])
