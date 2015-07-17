@@ -19,6 +19,9 @@ GeocodingService.prototype.getReverseGeoCoding = function(latitude, longitude) {
 function reverseGeoCodingDirective(geocodingService) {
   function link(scope, element, attrs, ctrl) {
     var latLng = scope.getLocation();
+    if(!latLng){
+      return;
+    }
     geocodingService.getReverseGeoCoding(latLng.latitude, latLng.longitude)
         .then(function(locationData) {
           scope.houseNumber = locationData.address.house_number || '';

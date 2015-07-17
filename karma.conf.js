@@ -27,8 +27,10 @@ module.exports = function(config) {
       './www/services/*.js',
       './www/modules/**/*.js',
       './www/components/**/*.js',
-      // './tests/**/*Spec.js'
-      './tests/fiddle.js'
+      './tests/**/*Spec.js'
+      // './tests/modules/maps/destinyLocationDirectiveSpec.js',
+      // './tests/modules/maps/deviceLocationDirectiveSpec.js'
+
     ],
     // list of files to exclude
     exclude: [

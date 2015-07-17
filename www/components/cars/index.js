@@ -49,7 +49,8 @@ CarController.prototype.getDestiny = function() {
 
 CarController.prototype.book = function() {
   var selectedData = this.selectedCar.getSelected();
-  this.state.go('bookings-new', { vehicleDetails: selectedData });
+  var carId=selectedData.id;
+  this.state.go('ads',{redirectUrl:'bookings-show',redirectParams:{'id':carId}});
 };
 
 CarController.prototype.cancel = function() {

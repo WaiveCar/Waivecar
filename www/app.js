@@ -68,6 +68,12 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
       url: '/my-points',
       templateUrl: '/components/users/templates/reward-points.html'
     })
+    //All purposes ads
+    .state('ads',{
+      url:'/ads',
+      templateUrl: '/components/ads/templates/index.html',
+      params:{redirectUrl:null,redirectParams:null}
+    })
     .state('location-error', {
       url: '/location-error',
       templateUrl: '/components/errors/templates/location.html'
@@ -84,7 +90,8 @@ angular.module('app', [
   'Maps.realReach',
   'Maps.route',
   'Maps.geoCoding',
-  'countdown'
+  'countdown',
+  'ads'
 ])
 .run(['$ionicPlatform', Run])
 .config([ '$stateProvider', '$urlRouterProvider', '$ionicConfigProvider', Config ]);

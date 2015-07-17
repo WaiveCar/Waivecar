@@ -1,4 +1,5 @@
 describe('Device location directive',function(){
+    console.log('Device location directive');
     var solveLocationSpy=jasmine.createSpy('solveLocation')
     var mockMarker={
         addTo:function(){
@@ -11,6 +12,7 @@ describe('Device location directive',function(){
             }
         },
         marker:function(){
+            console.log('device location marker');
             return mockMarker;
         }
     };
@@ -33,6 +35,7 @@ describe('Device location directive',function(){
         angular.mock.module('Maps');
         angular.mock.module(function($provide,_$compileProvider_){
             self.$compileProvider=_$compileProvider_;
+            console.log('Setting the value for device location');
             $provide.value("MapsLoader", mockMapsLoader);
             $provide.value("locationService", mockLocationService);
             $provide.factory('mapDirective', function(){
@@ -78,6 +81,7 @@ describe('Device location directive',function(){
         });
     });
     it('Solves the location with a marker  on compile',function(){
+       console.log('Testing device location');
         var element = this.$compile('<map><device-location></device-location></map>')(this.scope);
         spyOn(mockMarker,'addTo').and.callThrough();
         this.$rootScope.$digest();

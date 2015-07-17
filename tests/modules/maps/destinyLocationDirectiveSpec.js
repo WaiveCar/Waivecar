@@ -1,4 +1,5 @@
 describe('Destiny location directive',function(){
+    console.log('Destiny location directive');
     var mockEvents={
         'destinyOnRouteChanged':'waiveCarDestinyOnRouteChanged'
     };
@@ -28,6 +29,8 @@ describe('Destiny location directive',function(){
             return {};
         },
         marker:function(){
+            console.log('destiny location marker');
+
             return mockMarker;
         }
     };
@@ -52,6 +55,7 @@ describe('Destiny location directive',function(){
         angular.mock.module('Maps.route');
         angular.mock.module(function($provide,$controllerProvider,$compileProvider){
             self.$compileProvider=$compileProvider;
+            console.log('Setting the value for destiny location');
             $provide.value("MapsLoader", mockMapsLoader);
             $provide.value('mapsEvents',mockEvents);
             self.$compileProvider.directive('map', function() {
@@ -80,6 +84,7 @@ describe('Destiny location directive',function(){
         });
     });
     it('Solves the destiny when it get\'s  it from the passed function',function(){
+       console.log('Testing Destiny location 1');
         spyOn(mocker,'getInitialDestiny').and.callThrough();
 
         var element = this.$compile('<div ng-controller="MockController as ctrl"><map><destiny-location get-initial-destiny="ctrl.getInitialDestiny()" ></destiny-location></map></div>')(this.scope);
@@ -90,6 +95,7 @@ describe('Destiny location directive',function(){
         expect(mocker.addToMap).toHaveBeenCalledWith(mockMapInstance);
     });
     it('After rendering continues to listening for the destiny changes',function(){
+       console.log('Testing Destiny location 2');
 
         var element = this.$compile('<div ng-controller="MockController as ctrl"><map><destiny-location get-initial-destiny="ctrl.getInitialDestiny()" ></destiny-location></map></div>')(this.scope);
         this.$rootScope.$digest();

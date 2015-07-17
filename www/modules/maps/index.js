@@ -134,9 +134,9 @@
         function link(scope, element, attrs, ctrl) {
           MapsLoader.getMap.then(function(L) {
               locationService.getLocation().then(function(deviceLocation) {
+
                 ctrl.mapInstance.then(function(mapInstance) {
                   var icon = L.MakiMarkers.icon({icon: "pitch", size: "m"});
-                  
                   var marker = L.marker([deviceLocation.latitude, deviceLocation.longitude], {draggable: true, icon: icon}).addTo(mapInstance);
                   ctrl.solveLocation(marker);
                 });

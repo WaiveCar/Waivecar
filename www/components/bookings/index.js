@@ -27,7 +27,7 @@ function BookingController($rootScope, $scope, $state, Bookings) {
 
   self.openMap = function() {
     // TODO: use actual address.
-    var url= [
+    var url = [
       'comgooglemaps-x-callback://?',
       '&daddr=International+Airport',
       '&directionsmode=walking',
@@ -41,6 +41,47 @@ function BookingController($rootScope, $scope, $state, Bookings) {
 function BookingsController($rootScope, $scope, $state, Bookings) {
   var self = this;
   self.bookings = Bookings.query();
+}
+
+
+function timeToGetToCarDirective(searchEvents, $state) {
+  function link(scope, element, attrs, ctrl) {
+    var durations = {'timeToCar': 15};
+    ctrl.createTimer('getToWaiveCar', durations);
+    ctrl.start();
+    var watchExpressions = [
+      function() {
+        return ctrl.seconds;
+      },
+      function() {
+        return ctrl.minutes;
+      },
+      function() {
+        return ctrl.seconds;
+      }
+    ];
+    scope.$watchGroup(watchExpressions, function(newValues, oldValues, scope) {
+      if (typeof ctrl.hours != 'undefined' && ctrl.hours > 0) {
+        scope.timeLeftDisplay = ctrl.hours + ':' + ctrl.minutes + ' hours left';
+      }      else if (typeof ctrl.minutes != 'undefined' && ctrl.minutes > 0) {
+        scope.timeLeftDisplay = ctrl.minutes + ':' + ctrl.seconds + ' minutes left';
+      }      else if (typeof ctrl.seconds != 'undefined' && ctrl.seconds > 0) {
+        scope.timeLeftDisplay = ctrl.seconds + ' seconds left';
+      }      else {
+        scope.timeLeftDisplay = 'no time left';
+
+      }
+    });
+
+  }
+  return {
+      restrict: 'E',
+      templateUrl: 'components/bookings/templates/directives/timeToGetToCar.html',
+      link: link,
+      controller: 'TimerController',
+      controllerAs: 'timer'
+    }
+
 }
 
 angular.module('app')
@@ -57,4 +98,9 @@ angular.module('app')
   '$state',
   'Bookings',
   BookingsController
+])
+.directive('timeToGetToCar', [
+  'searchEvents',
+  '$state',
+  timeToGetToCarDirective
 ]);
