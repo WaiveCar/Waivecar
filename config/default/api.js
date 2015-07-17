@@ -22,11 +22,12 @@ module.exports = {
     port    : 3000,
     uri     : 'http://localhost:3000',
     cors    : {
-      origins : ['http://localhost:3081'],
-      headers : ['Content-Type', 'Cache-Control', 'X-Requested-With', 'Authorization']
+      origins : [ 'http://localhost:3081', 'http://localhost:8100' ],
+      headers : [ 'Content-Type', 'Cache-Control', 'X-Requested-With', 'Authorization' ]
     },
     sites : {
-      admin : ['http://localhost:3081']
+      admin : [ 'http://localhost:3081' ],
+      app   : [ 'http://localhost:8100' ]
     }
   }
 
