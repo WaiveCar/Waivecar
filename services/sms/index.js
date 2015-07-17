@@ -7,7 +7,7 @@
 
 'use strict';
 
-// ### Module
+let error = Reach.ErrorHandler;
 
 module.exports = (function () {
 
@@ -15,8 +15,13 @@ module.exports = (function () {
    * @class Sms
    */
   function Sms() {
-    this.config      = Reach.config.sms;
-    this.transporter = require(this.config.transportName)(this.config.transport.sid, this.config.transport.token);
+    this.config = Reach.config.sms;
+
+    try {
+      this.transporter = require(this.config.transportName)(this.config.transport.sid, this.config.transport.token);
+    } catch(err) {
+      this.transporter = null;
+    }
   }
 
   /**
