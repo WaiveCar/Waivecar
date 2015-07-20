@@ -61,9 +61,7 @@
       };
     CountdownTimer.prototype.start = function() {
         var eventName = this.countdownEvents.newCounter + "_" + this._name;
-        console.log("STARTING "+this._name+this._state);
         if(this._state=='started'){
-          console.log("Already started");
           this._rootScope.$broadcast(eventName, this.getStatus(), this.getStatusDuration());
           eventName = this.countdownEvents.counterStateChanged + "_" + this._name;
           this._rootScope.$broadcast(eventName, this.getStatus(), this.getStatusDuration());
@@ -96,7 +94,6 @@
       };
     CountdownTimer.prototype._timerFinished = function() {
         var eventName = this.countdownEvents.counterStateFinished + "_" + this._name;
-        console.log("TIMER FINISSHED BROADCASTING "+eventName);
         this._state='stopped';
         this._rootScope.$broadcast(eventName, this.getStatus(), this.getStatusDuration());
         this._startNewEvent();

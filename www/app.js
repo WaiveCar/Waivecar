@@ -81,6 +81,10 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
       url:'/ride-dashboard',
       templateUrl: '/components/ride/templates/dashboard.html'
     })
+   .state('end-ride',{
+      url:'/end-ride',
+      templateUrl: '/components/ride/templates/endRide.html'
+    })
     //All purposes ads
     .state('ads',{
       url:'/ads',

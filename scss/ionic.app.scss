@@ -24,6 +24,13 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     font-size: 20px;
   }
 }
+.button-padded,.bar-footer .button-padded{
+  width:90%;
+  height: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 1em;
+}
 .bar-footer {
   padding: 0;
   margin: 0;
@@ -41,12 +48,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     font-weight: 300;
     font-size: 20px;
   }
-    .button-padded{
-      width:90%;
-      height: 80%;
-      margin-left: auto;
-      margin-right: auto;
-    }
+
   .footer-buttons {
     width: 100%;
     .button {
@@ -133,6 +135,10 @@ ion-content.has-big-header{
   color:#FFF;
   text-align: center;
   font-size:1.3em;
+  .subtle-highlight{
+    text-decoration: underline;
+    text-transform: uppercase;
+  }
   .slider{
     height: 100%;
   }

@@ -12,9 +12,7 @@ SelectedCarService.prototype.getSelected = function() {
 function ConnectionController($state,countdownEvents,$scope){
   this.timerName="connectingTimeLeft";
   this.$state=$state;
-  console.log('Listenning to '+countdownEvents.counterStateFinished+'_'+this.timerName);
   $scope.$on(countdownEvents.counterStateFinished+'_'+this.timerName,function(){
-    console.log('HERE');
     $state.go('dashboard');
   });
 }

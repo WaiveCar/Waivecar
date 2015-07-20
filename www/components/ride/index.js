@@ -1,6 +1,7 @@
-function RideController($scope){
+function RideController($scope,$state){
   this.$scope=$scope;
   this.showingStation=false;
+  this.$state=$state;
 }
 RideController.prototype.showChargingStationDetails = function(marker,info) {
   this.showingStation=true;
@@ -12,7 +13,9 @@ RideController.prototype.showChargingStationDetails = function(marker,info) {
 RideController.prototype.hideChargingStationDetails = function(marker,info) {
   this.showingStation=false;
 }
-
+RideController.prototype.endRide = function() {
+  this.$state.go('end-ride');
+};
 function distanceTravelledDirective(){
 	function link(scope){
 		scope.value='100 miles'
@@ -84,6 +87,7 @@ function chargingStationInfoDirective(){
 angular.module('app')
 .controller('RideController', [
   '$scope',
+  '$state',
   RideController
 ])
 .directive('batteryCharge', [
