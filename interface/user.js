@@ -1,6 +1,5 @@
 'use strict';
 
-var bcrypt = require('co-bcrypt');
 var mysql  = Reach.service('mysql/model');
 
 module.exports = (function () {
@@ -82,15 +81,6 @@ module.exports = (function () {
       }, 401);
     }
     return true;
-  };
-
-  /**
-   * BCrypts the provided password and assigns it to the user.
-   * @method preparePassword
-   * @param  {String} password
-   */
-  User.prototype.preparePassword = function *(password) {
-    this.password = yield bcrypt.hash(password, 10);
   };
 
   return User;

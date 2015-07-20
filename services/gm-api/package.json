@@ -1,7 +1,3 @@
 {
-  "name": "gm-api",
-  "bootstrap": "bootstrap/validate.js",
-  "tests": [
-    "test/vehicle-service.test.js"
-  ]
+  "name": "gm-api"
 }

@@ -1,10 +1,3 @@
-/*
-  Auth Module Tests
-  =================
-  @author Christoffer Rødvik
-  @github https://github.com/kodemon/reach-api
- */
-
 'use strict';
 
 var assert = require('chai').assert;
@@ -26,10 +19,7 @@ describe('Interface', function () {
         lastName  : 'Interface',
         email     : 'john.interface@test.none'
       });
-
-      yield user.preparePassword('password');
       yield user.save();
-
       assert.isNumber(user.id, 'User was not assigned an id');
     });
   });

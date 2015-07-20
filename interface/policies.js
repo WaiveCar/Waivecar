@@ -16,6 +16,8 @@
 
 let register = Reach.Register;
 
+/* istanbul ignore next: reach-api does not include modules utilizing these features */
+
 module.exports = function *() {
 
   // ### Authenticate
@@ -29,8 +31,6 @@ module.exports = function *() {
       }, 401);
     }
   });
-
-  /* istanbul ignore next: ignore until we have standard functions checking admin policy */
 
   yield register.policy('admin', function *() {
     if ('admin' !== this.user.role) {

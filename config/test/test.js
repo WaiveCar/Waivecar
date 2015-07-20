@@ -16,8 +16,6 @@ module.exports = {
       'logger'
     ],
     services : [
-      'email',
-      'sms',
       'mysql',
       'gm-api'
     ]

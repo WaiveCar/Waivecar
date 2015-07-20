@@ -1,6 +1,6 @@
 'use strict';
 
-let VehicleService = require('../vehicle-service');
+let VehicleService = require('./vehicle-service');
 let config         = Reach.config;
 let errorHandler   = Reach.ErrorHandler;
 
