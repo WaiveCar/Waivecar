@@ -17,7 +17,9 @@ module.exports = {
     ],
     services : [
       'mysql',
-      'gm-api'
+      'gm-api',
+      'email',
+      'sms'
     ]
   }
 

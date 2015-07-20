@@ -43,6 +43,24 @@ sftp-config.json
 node_modules
 
 #===========================================================
+# Modules & Services
+#===========================================================
+#
+# By default all modules and services are ommited from
+# github uploads much like node_modules. If you have private
+# packages you can make them visible via the ! marker.
+# ex. !modules/private-module
+#
+#===========================================================
+
+modules
+services
+!services/waivecar
+!modules/gm-api
+modules/**/cache.json
+services/**/cache.json
+
+#===========================================================
 # Node.js / NPM
 #===========================================================
 #
@@ -74,7 +92,5 @@ npm-debug.log
 nbproject
 .idea
 .node_history
-modules/**/cache.json
-services/**/cache.json
 coverage
 retval
