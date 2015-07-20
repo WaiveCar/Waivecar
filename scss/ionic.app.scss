@@ -7,6 +7,7 @@ $energized:                       #ffc900 !default;
 $assertive:                       #D0021B !default;
 $royal:                           #886aea !default;
 $dark:                            #444 !default;
+$grayBg:                          rgb(30,30,30);
 
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;
@@ -28,6 +29,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
   margin: 0;
   border: 0;
   height: 60px;
+  text-align: center;
   .button {
     width: 100%;
     height: 60px;
@@ -39,6 +41,12 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     font-weight: 300;
     font-size: 20px;
   }
+    .button-padded{
+      width:90%;
+      height: 80%;
+      margin-left: auto;
+      margin-right: auto;
+    }
   .footer-buttons {
     width: 100%;
     .button {
@@ -119,6 +127,43 @@ ion-content.has-big-header{
 }
 .title.has-big-header{
   height:100%;
+}
+.info-window{
+  background-color: $grayBg;
+  color:#FFF;
+  text-align: center;
+  font-size:1.3em;
+  .slider{
+    height: 100%;
+  }
+  .slider-pager{
+    bottom:15%;
+  }
+  .slider-pager .slider-pager-page {
+    color: rgb(116,116,116);
+    opacity: 1;
+  }
+  .slider-pager-page.active {
+    color: $balanced;
+  }
+  .bar.bar-footer{
+    background-color: $grayBg;
+  }
+  .container{
+    width: 100%;
+    height: 100%;
+    padding: 3%;
+  }
+  .waiveCar-icon{
+    height: 10%;
+    margin:1em;
+  }
+  .highlight{
+    font-weight: bold;
+  }
+  .main-image{
+    height: 20%;
+  }
 }
 @import "www/components/cars/style.scss";
 @import "www/components/bookings/style.scss";

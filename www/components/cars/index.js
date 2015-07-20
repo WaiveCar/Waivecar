@@ -9,6 +9,21 @@ SelectedCarService.prototype.getSelected = function() {
   return this.selected;
 };
 
+function ConnectionController($state,countdownEvents,$scope){
+  this.timerName="connectingTimeLeft";
+  this.$state=$state;
+  console.log('Listenning to '+countdownEvents.counterStateFinished+'_'+this.timerName);
+  $scope.$on(countdownEvents.counterStateFinished+'_'+this.timerName,function(){
+    console.log('HERE');
+    $state.go('dashboard');
+  });
+}
+ConnectionController.prototype.getConnectionDurations = function() {
+  return {'timeToConnect':.1};
+};
+ConnectionController.prototype.goToConnecting = function($state) {
+  this.$state.go('cars-connecting',{'id':this.$state.params.id});
+};
 
 
 // Cars - List
@@ -246,6 +261,7 @@ angular.module('app')
   'selectedCar',
   CarController
 ])
+.controller('ConnectionController',['$state','countdownEvents','$scope',ConnectionController])
 .controller('CarsController', [
   '$rootScope',
   '$scope',

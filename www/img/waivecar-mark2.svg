@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="122px" height="122px" viewBox="0 0 122 122" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.3 (11970) - http://www.bohemiancoding.com/sketch -->
+    <title>waivecar-mark</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="checklist@2x" sketch:type="MSArtboardGroup" transform="translate(-314.000000, -107.000000)">
+            <g id="waivecar-mark" sketch:type="MSLayerGroup" transform="translate(314.274278, 106.037760)">
+                <g id="Group" transform="translate(0.000000, 0.526101)" sketch:type="MSShapeGroup">
+                    <ellipse id="Oval-1" fill="#1E1E1E" cx="60.6464735" cy="61.1725742" rx="60.6464735" ry="60.6464735"></ellipse>
+                    <path d="M42.4525314,49.3802044 L38.0725084,69.9326204 L72.1019185,43.6524819 L70.7542191,59.8248748 L111.185201,27.480089 C100.403606,11.307696 81.8727392,0.526100756 60.6464735,0.526100756 C27.2909131,0.526100756 0,27.8170138 0,61.1725742 C0,69.9326204 1.68462426,78.0188169 5.05387279,85.4311636 L42.4525314,49.3802044 L42.4525314,49.3802044 Z" id="Shape" fill="#25C155"></path>
+                    <path d="M117.249849,39.2724588 L57.277225,86.1050133 L57.9510747,69.5956956 L24.2585894,95.8758341 L25.269364,75.3234181 L5.05387279,85.7680885 C14.4877687,106.994354 35.7140344,121.819048 60.6464735,121.819048 C94.3389588,121.819048 121.292947,94.5281347 121.292947,61.1725742 C121.292947,53.4233026 119.945248,46.0109559 117.249849,39.2724588 L117.249849,39.2724588 Z" id="Shape" fill="#25C155"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

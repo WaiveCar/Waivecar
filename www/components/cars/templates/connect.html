@@ -1,4 +1,4 @@
-<ion-pane >
+<ion-pane  ng-controller="ConnectionController as connection">
   <ion-header-bar class="bar bar-header bar-light">
     <h1 class="title">Get to your WaiveCar</h1>
     <button class="button button-icon icon ion-navicon" ng-click="showNav()"></button>
@@ -16,6 +16,6 @@
     </div>
   </ion-content>
   <div class="bar bar-footer">
-    <button  ui-sref="dashboard" class="button button-balanced">Connect to car</button>
+    <button  ng-click="connection.goToConnecting()" class="button button-balanced">Connect to car</button>
   </div>
 </ion-pane>
