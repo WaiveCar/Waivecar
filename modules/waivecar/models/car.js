@@ -31,7 +31,8 @@ module.exports = (function () {
    */
   Car.prototype._schema = Car._schema = {
     attributes : {
-      vin               : 'VARCHAR(28)  NOT NULL',
+      id                : 'VARCHAR(28)  NOT NULL',
+      userId            : 'INT(11) DEFAULT NULL',
       make              : 'VARCHAR(28)  NOT NULL',
       model             : 'VARCHAR(88)  NOT NULL',
       year              : 'VARCHAR(4)   NOT NULL',
@@ -44,7 +45,7 @@ module.exports = (function () {
       url               : 'VARCHAR(256) NULL',
       isInPreActivation : 'ENUM("true","false") DEFAULT "false"'
     },
-    primaryKey : 'vin'
+    primaryKey : 'id'
   };
 
   /**
@@ -67,6 +68,26 @@ module.exports = (function () {
     this.updatedAt = this.createdAt ? moment().format('YYYY-MM-DD HH-mm-ss') : null;
 
     return result;
+  };
+
+  /* istanbul ignore next: _owner needs koa instance only used by modules */
+
+  /**
+   * Verifies the ownership of the model with the provided user, if the user is not
+   * owner or admin a 401 ERROR is produced.
+   * @method _owner
+   * @param  {object} self Koa request/response object
+   * @return {boolean}
+   */
+  Car.prototype._owner = function *(self) {
+    let user = self.auth.user;
+    if (this.userId.toString() !== user.id.toString() && 'admin' !== user.role) {
+      self.throw({
+        code    : 'ACCESS_DENIED',
+        message : 'You do not have the required privileges to edit this car'
+      }, 401);
+    }
+    return true;
   };
 
   return Car;

@@ -2,5 +2,7 @@
   "name": "clevertech-waivecar",
   "private": true,
   "description": "Module for managing cars and bookings for electric cars",
-  "master": "jobs.js"
+  "reach": {
+    "master": "jobs.js"
+  }
 }

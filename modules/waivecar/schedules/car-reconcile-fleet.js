@@ -12,7 +12,7 @@ let service        = new VehicleService();
 // ### The Job
 
 let jobSchedule = queue
-  .create('vehicle-reconcile-fleet', {
+  .create('car-reconcile-fleet', {
     message : 'Hello World'
   })
 ;
@@ -23,12 +23,13 @@ jobSchedule.save();
 
 // ### Job Process
 
-queue.process('vehicle-reconcile-fleet', function (job, done) {
-  log.info('Reconciling Vehicle Fleet');
+queue.process('car-reconcile-fleet', function (job, done) {
+  log.info('Reconciling Car Fleet');
   co(function *() {
     let vehicles = yield service.listVehicles();
-
+    log.debug(vehicles.length + ' cars to be reconciled.');
     for (let i = 0, len = vehicles.length; i < len; i++) {
+      vehicles[i].id = vehicles[i].vin;
       let car = new Car(vehicles[i]);
       yield car.upsert();
     }

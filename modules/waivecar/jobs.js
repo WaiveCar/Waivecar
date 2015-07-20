@@ -2,7 +2,7 @@
 
 module.exports = function *() {
   if ('test' !== Reach.ENV) {
-    require('./schedules/vehicle-reconcile-fleet');
-    require('./schedules/vehicle-reconcile-diagnostics');
+    require('./schedules/car-reconcile-fleet');
+    require('./schedules/car-reconcile-diagnostics');
   }
 };
