@@ -1,6 +1,6 @@
 'use strict';
 
-var mysql  = Reach.service('mysql/model');
+var mysql = Reach.service('mysql/model');
 
 module.exports = (function () {
 
