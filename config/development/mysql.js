@@ -14,8 +14,7 @@ module.exports = {
     host     : 'localhost',
     database : 'waivecar_development',
     user     : 'waivecar',
-    password : 'eNwlGGl6g6V0w0qX3vx0S5GKbGvTtR3X',
-    force    : true
+    password : 'eNwlGGl6g6V0w0qX3vx0S5GKbGvTtR3X'
   }
 
 };
