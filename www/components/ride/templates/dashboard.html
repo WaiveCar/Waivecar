@@ -1,4 +1,4 @@
-<ion-pane >
+<ion-pane  ng-controller="RideController as ride">
   <ion-header-bar class="bar bar-header bar-light">
     <h1 class="title">Dashboardr</h1>
     <button class="button button-icon icon ion-navicon" ng-click="showNav()"></button>
@@ -9,10 +9,10 @@
         <div>
           <device-location></device-location>
         </div>
-        <nearby-charging-stations></nearby-charging-stations>
+        <nearby-charging-stations  on-click-marker="ride.showChargingStationDetails(marker, info)" ></nearby-charging-stations>
       </map>
     </div>
-    <div class="row dashboard-information">
+    <div class="row dashboard-information" ng-hide="ride.showingStation" class="ng-hide">
       <div class="col">
           <i class="icon ion-battery-half"></i>
           <p class="big-title">
@@ -33,6 +33,12 @@
         <p class="big-title"><free-ride-time></free-ride-time></p>
         <p class="small-title">Remaining</p>
       </div>
+    </div>
+    <div class="charging-station-info" ng-show="ride.showingStation">
+      <div class="buttons">
+        <button  ng-click="ride.hideChargingStationDetails()" class="button button-icon icon ion-close button-right"></button>
+      </div>
+      <charging-station-info></charging-station-info>
     </div>
   </ion-content>
   <div class="bar bar-footer">

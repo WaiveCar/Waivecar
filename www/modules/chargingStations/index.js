@@ -12,6 +12,7 @@ ChargingStationsService.prototype.getNearbyChargingStations = function(numNearby
               numNearby = numNearby || 10;
               var maxDiff = 0.005;
               var idCount = 1;
+              var id=1;
               var minDiff = 0.0005;
               for (var i = 0; i < numNearby; i++) {
                 var diffA = Math.random() * (maxDiff - minDiff) + minDiff;
@@ -26,6 +27,9 @@ ChargingStationsService.prototype.getNearbyChargingStations = function(numNearby
                         {
                           latitude: deviceLocation.latitude + diffA,
                           longitude: deviceLocation.longitude + diffB,
+                          name:'Station '+(id++),
+                          address:"St Street - 42"+id,
+                          distance:id*3
                         }
                     )
               }

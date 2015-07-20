@@ -1,6 +1,18 @@
-function RideController(){
-
+function RideController($scope){
+  this.$scope=$scope;
+  this.showingStation=false;
 }
+RideController.prototype.showChargingStationDetails = function(marker,info) {
+  this.showingStation=true;
+ this.stationName=info.name;
+ this.stationAddress=info.address;
+ this.stationDistance=info.distance;
+  this.$scope.$digest();
+};
+RideController.prototype.hideChargingStationDetails = function(marker,info) {
+  this.showingStation=false;
+}
+
 function distanceTravelledDirective(){
 	function link(scope){
 		scope.value='100 miles'
@@ -62,9 +74,16 @@ function freeRideTimeDirective() {
     }
 
 }
+function chargingStationInfoDirective(){
+  return {
+    templateUrl: 'components/ride/templates/directives/chargingStationInfo.html',
+
+  }
+}
 
 angular.module('app')
 .controller('RideController', [
+  '$scope',
   RideController
 ])
 .directive('batteryCharge', [
@@ -73,4 +92,5 @@ angular.module('app')
 .directive('distanceTravelled', [
   distanceTravelledDirective
 ])
+.directive('chargingStationInfo',chargingStationInfoDirective)
 .directive('freeRideTime',freeRideTimeDirective);

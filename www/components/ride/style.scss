@@ -1,5 +1,11 @@
-.dashboard-information{
+.dashboard-information,.charging-station-info{
 	height: 30%;
+}
+.charging-station-info .buttons{
+	width: 100%;
+	display: block;
+	height: 14%;
+	position: relative;
 }
 .dashboard-information .col{
 	text-align: center;
@@ -20,5 +26,4 @@
 .dashboard-information .col .small-title{
 	font-size:1em;
 	margin-top: 10px;
-
 }
