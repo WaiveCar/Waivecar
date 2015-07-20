@@ -49,16 +49,16 @@ node_modules
 # By default all modules and services are ommited from
 # github uploads much like node_modules. If you have private
 # packages you can make them visible via the ! marker.
-# ex. !modules/private-module
+# ex. !**/private-module
 #
 #===========================================================
 
-modules
-services
-!services/waivecar
-!modules/gm-api
+modules/*
+services/*
 modules/**/cache.json
 services/**/cache.json
+!**/waivecar
+!**/gm-api
 
 #===========================================================
 # Node.js / NPM
