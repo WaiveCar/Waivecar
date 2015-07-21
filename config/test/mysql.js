@@ -11,10 +11,8 @@ module.exports = {
    */
 
   mysql : {
-    host     : 'localhost',
     database : 'waivecar_test',
     user     : 'root',
-    password : '',
     force    : true
   }
 
