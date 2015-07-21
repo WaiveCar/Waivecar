@@ -1,9 +1,10 @@
- function RouteService($rootScope, MapsLoader, $q, $http, mapsEvents) {
+ function RouteService($rootScope, MapsLoader, $q, $http, mapsEvents,skobblerApiCodes) {
     this.MapsLoader = MapsLoader;
     this.$q = $q;
     this.$http = $http;
     this._scope = $rootScope;
     this.mapsEvents = mapsEvents;
+    this.skobblerApiCodes=skobblerApiCodes;
   }
 
 RouteService.prototype.getRoute = function(pointA, pointB, profile) {
@@ -21,6 +22,9 @@ RouteService.prototype.getRoute = function(pointA, pointB, profile) {
       var defered = self.$q.defer();
       self.$http.get(url)
       .success(function(data, status, headers, config) {
+        if(data.status.apiCode==self.skobblerApiCodes.sourceSameAsDestination){
+          data.route={duration:0};
+        }
         self._scope.$broadcast(
           self.mapsEvents.routeDurationChanged,
           data.route.duration,
@@ -222,7 +226,10 @@ function mapsInfoDirective(MapsLoader) {
     }
   }
 angular.module('Maps.route', ['Maps'])
-.service('routeService', ['$rootScope', 'MapsLoader', '$q', '$http', 'mapsEvents', RouteService])
+.constant('skobblerApiCodes',{
+  'sourceSameAsDestination':'680'
+})
+.service('routeService', ['$rootScope', 'MapsLoader', '$q', '$http', 'mapsEvents','skobblerApiCodes', RouteService])
 
 .directive('routeDistance', ['mapsEvents', routeDistanceDirective])
 .directive('routeDuration', ['mapsEvents', routeDurationDirective])

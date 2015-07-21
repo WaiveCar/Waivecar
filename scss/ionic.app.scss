@@ -26,10 +26,16 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 }
 .button-padded,.bar-footer .button-padded{
   width:90%;
-  height: 80%;
+  height: 2em;
   margin-left: auto;
   margin-right: auto;
   margin-top: 1em;
+  text-transform: uppercase;
+  a{
+    text-decoration: none;
+    color: #FFF;
+
+  }
 }
 .bar-footer {
   padding: 0;
@@ -138,11 +144,70 @@ ion-content.has-big-header{
   background-color: $grayBg;
   color:#FFF;
   text-align: center;
-  font-size:1.3em;
-  .icon{
-    color:#FFF;
-    font-size: 3em;
+  font-size:2em;
+  line-height: 1.2em;
+  .top{
+    height: 20%;
+    .waiveCar-icon{
+       height:50%;
+       margin:1%;
+    }
+    i.icon.top-icon{
+        font-size:2em;
+        margin: 0.2em;
+        color:#FFF;
+    }
+
   }
+  .middle{
+    height: 50%;
+    p{
+      margin-top: 1.5em;
+    }
+  }
+  .middle-small{
+    height: 40%;
+    font-size:1.4em;
+  }
+  .bottom{
+    height: 30%;
+    bottom: 0;
+    position:absolute;
+    width: 100%;
+    font-size: 1.5em;
+
+    .button-padded{
+      width:90%;
+      height: auto;
+      font-size: 1em;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 0;
+      vertical-align: middle;
+      padding-top: 0.6em;
+      padding-bottom: 0.6em;
+
+    }
+    .line-2{
+      height: 50%;
+      margin-top: 0.2em;
+      position: relative;
+    }
+    .line-3{
+      height: 33%;
+      margin-top: 0.2em;
+      position: relative;
+    }
+  }
+  .bottom-big{
+      height: 40%;
+      font-size:1.4em;
+       .button-padded{
+          padding-top: 0.4em;
+          padding-bottom: 0.4em;
+       }
+  }
+
   .subtle-highlight{
     text-decoration: underline;
     text-transform: uppercase;
@@ -156,6 +221,7 @@ ion-content.has-big-header{
   .slider-pager .slider-pager-page {
     color: rgb(116,116,116);
     opacity: 1;
+    margin: 0 0.4em;
   }
   .slider-pager-page.active {
     color: $balanced;
@@ -166,12 +232,8 @@ ion-content.has-big-header{
   .container{
     width: 100%;
     height: 100%;
-    padding: 3%;
   }
-  .waiveCar-icon{
-    height: 10%;
-    margin:1em;
-  }
+  
   .highlight{
     font-weight: bold;
   }

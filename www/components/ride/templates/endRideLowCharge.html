@@ -1,13 +1,29 @@
 <ion-pane  class="info-window">
     <ion-content scroll="false">
         <div class="container">
-            <img src="img/waivecar-mark2.svg" class="waiveCar-icon"></img>
-            <p class="highlight">End Ride</p>
-            <p>Your charge level is bellow 65%.</p>
-            <p>Leave your Waivecar charging and avoid the $20.00 charging fee.</p>
-            <a ui-sref="search" class="button button-balanced button-padded">I'm charging end ride</a>
-            <a ui-sref="search" class="button button-balanced button-padded">View charging stations</a>
-            <p class="subtle-highlight">end ride here and pay fee</p>
+            <div class="top">
+                <img src="img/waivecar-mark2.svg" class="waiveCar-icon"></img>
+                <p class="highlight">End Ride</p>
+            </div>
+            <div class="middle middle-small">
+                <p>Your charge level is bellow 65%.</p>
+                <p>Leave your Waivecar charging and avoid the $20.00 charging fee.</p>
+            </div>
+            <div class="bottom bottom-big">
+                <div class="line-3">
+                    <div class="button button-balanced button-padded">
+                        <a ui-sref="cars" >I'm charging end ride</a>
+                    </div>
+                </div>
+                <div class="line-3">
+                    <div class="button button-balanced button-padded">
+                        <a ui-sref="cars" >View charging stations</a>
+                    </div>
+                </div>
+                <div class="line-3">
+                    <a class="subtle-highlight">end ride here and pay fee</a>
+                </div>
+            </div>
         </div>
     </ion-content>
 </ion-pane>

@@ -86,15 +86,15 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
       templateUrl: '/components/ride/templates/endRide.html'
     })
     .state('ride-end-low-charge',{
-      url:'/ride/end-with-low-charge',
+      url:'/ride/end/low-charge',
       templateUrl: '/components/ride/templates/endRideLowCharge.html'
     })
-    .state('ride-low-battery-alert',{
-      url:'/ride/low-battery',
+    .state('ride-alert-low-battery',{
+      url:'/ride/alert/low-battery',
       templateUrl: '/components/ride/templates/lowBatteryAlert.html'
     })
-    .state('ride-free-ride-ending',{
-        url:'/ride/free-ride-ending',
+    .state('ride-alert-free-ride',{
+        url:'/ride/alert/free-ride',
         templateUrl: '/components/ride/templates/freeRideAlert.html'
     })
     //All purposes ads
