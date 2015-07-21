@@ -25,7 +25,7 @@ module.exports = function *() {
         let model = data[i];
         if (model.latitude && model.longitude) {
           let location = new Location({
-            type: 'station',
+            type        : 'station',
             name        : model['station_name'],
             description : model['station_phone'],
             latitude    : model.latitude,
