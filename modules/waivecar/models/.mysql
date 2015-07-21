@@ -1,0 +1,8 @@
+{
+  "models" : [
+    "car.js",
+    "booking.js",
+    "booking-details.js",
+    "location.js"
+  ]
+}
