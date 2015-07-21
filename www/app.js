@@ -13,9 +13,25 @@ function Run($ionicPlatform) {
   });
 }
 
-function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider,$compileProvider) {
+function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpProvider) {
   'use strict';
-   $compileProvider.imgSrcSanitizationWhitelist(/^\s(https|file|blob|cdvfile):|data:image\//);
+
+  // TEMP CODE.
+  $httpProvider.interceptors.push([
+    '$q',
+    function($q) {
+      return {
+        request: function(httpConfig) {
+          httpConfig.headers['Authorization'] = 'nWmvVoPJFPlSxHcNqerob0klSXMMnCbB00MzDh9ohKodLZDAvdClSAfXsZDkKfzf';
+          return httpConfig;
+        },
+        responseError: function(response) {
+          return $q.reject(response);
+        }
+      };
+    }
+  ]);
+  // END TEMP CODE
 
   $ionicConfigProvider.views.transition('platform');
   $stateProvider
@@ -29,15 +45,6 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider,$compil
       url: '/cars/:id',
       templateUrl: '/components/cars/templates/show.html'
     })
-    //Connect to car
-    .state('cars-connect', {
-      url: '/cars/connect/:id',
-      templateUrl: '/components/cars/templates/connect.html'
-    })
-    .state('cars-connecting', {
-      url: '/cars/connecting/:id',
-      templateUrl: '/components/cars/templates/connecting.html'
-    })
     // .state('cars-edit', {
     //   url: '/cars/:id/edit',
     //   templateUrl: '/components/cars/templates/edit.html'
@@ -48,10 +55,10 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider,$compil
       templateUrl: '/components/bookings/templates/index.html'
     })
     // details yet to be
-  /*  .state('bookings-new', {
+    .state('bookings-new', {
       url: '/bookings/new',
       templateUrl: '/components/bookings/templates/new.html'
-    })*/
+    })
     // GET TO YOUR CAR
     .state('bookings-show', {
       url: '/bookings/:id',
@@ -79,40 +86,10 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider,$compil
       url: '/my-points',
       templateUrl: '/components/users/templates/reward-points.html'
     })
-    .state('dashboard',{
-      url:'/ride-dashboard',
-      templateUrl: '/components/ride/templates/dashboard.html'
-    })
-   .state('ride-end',{
-      url:'/ride/end',
-      templateUrl: '/components/ride/templates/endRide.html'
-    })
-    .state('ride-end-low-charge',{
-      url:'/ride/end/low-charge',
-      templateUrl: '/components/ride/templates/endRideLowCharge.html'
-    })
-    .state('ride-alert-low-battery',{
-      url:'/ride/alert/low-battery',
-      templateUrl: '/components/ride/templates/lowBatteryAlert.html'
-    })
-    .state('ride-alert-free-ride',{
-        url:'/ride/alert/free-ride',
-        templateUrl: '/components/ride/templates/freeRideAlert.html'
-    })
-    //All purposes ads
-    .state('ads',{
-      url:'/ads',
-      templateUrl: '/components/ads/templates/index.html',
-      params:{redirectUrl:null,redirectParams:null}
-    })
-    //Errors
     .state('location-error', {
       url: '/location-error',
-      templateUrl: '/components/errors/templates/index.html'
-    })
-    .state('unplugged-error', {
-      url: '/unplugged-error',
-      templateUrl: '/components/errors/templates/index.html'
+      templateUrl: '/components/errors/templates/location.html'
+
     });
 
   $urlRouterProvider.otherwise('/cars');
@@ -125,12 +102,7 @@ angular.module('app', [
   'Maps.realReach',
   'Maps.route',
   'Maps.geoCoding',
-  'countdown',
-  'ads',
-  'mockBehaviours',
-  'ChargingStations',
-  'PointsOfInterest'
+  'countdown'
 ])
-
 .run(['$ionicPlatform', Run])
-.config([ '$stateProvider', '$urlRouterProvider', '$ionicConfigProvider','$compileProvider', Config ]);
+.config([ '$stateProvider', '$urlRouterProvider', '$ionicConfigProvider', '$httpProvider', Config ]);
