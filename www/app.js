@@ -81,9 +81,21 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
       url:'/ride-dashboard',
       templateUrl: '/components/ride/templates/dashboard.html'
     })
-   .state('end-ride',{
-      url:'/end-ride',
+   .state('ride-end',{
+      url:'/ride/end',
       templateUrl: '/components/ride/templates/endRide.html'
+    })
+    .state('ride-end-low-charge',{
+      url:'/ride/end-with-low-charge',
+      templateUrl: '/components/ride/templates/endRideLowCharge.html'
+    })
+    .state('ride-low-battery-alert',{
+      url:'/ride/low-battery',
+      templateUrl: '/components/ride/templates/lowBatteryAlert.html'
+    })
+    .state('ride-free-ride-ending',{
+        url:'/ride/free-ride-ending',
+        templateUrl: '/components/ride/templates/freeRideAlert.html'
     })
     //All purposes ads
     .state('ads',{
@@ -94,7 +106,11 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
     //Errors
     .state('location-error', {
       url: '/location-error',
-      templateUrl: '/components/errors/templates/location.html'
+      templateUrl: '/components/errors/templates/index.html'
+    })
+    .state('unplugged-error', {
+      url: '/unplugged-error',
+      templateUrl: '/components/errors/templates/index.html'
     });
 
   $urlRouterProvider.otherwise('/cars');

@@ -14,7 +14,7 @@ RideController.prototype.hideChargingStationDetails = function(marker,info) {
   this.showingStation=false;
 }
 RideController.prototype.endRide = function() {
-  this.$state.go('end-ride');
+  this.$state.go('ride-end');
 };
 function distanceTravelledDirective(){
 	function link(scope){

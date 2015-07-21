@@ -1,0 +1,12 @@
+<ion-pane  class="info-window" ng-controller="ErrorController as error">
+	<ion-content scroll="false">
+		<div class="container">
+			<div class="buttons">
+			  <i  ui-sref="cars" class="icon ion-arrow-left-c button-left "></i>
+			</div>
+			<img src="img/waivecar-mark2.svg" class="waiveCar-icon"></img>
+			<p class="highlight">Error</p>
+			<p><span ng-bind="error.message"></span></p>
+		</div>
+	</ion-content>
+</ion-pane>

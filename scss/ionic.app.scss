@@ -116,6 +116,10 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
   float:right;
   clear:both;
 }
+.button-left{
+  float:left;
+}
+
 .iconContainer{
 }
 .iconContainer .icon{
@@ -135,6 +139,10 @@ ion-content.has-big-header{
   color:#FFF;
   text-align: center;
   font-size:1.3em;
+  .icon{
+    color:#FFF;
+    font-size: 3em;
+  }
   .subtle-highlight{
     text-decoration: underline;
     text-transform: uppercase;
