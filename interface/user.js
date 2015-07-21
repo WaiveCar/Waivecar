@@ -63,26 +63,6 @@ module.exports = (function () {
     'password'
   ];
 
-  /* istanbul ignore next: _owner needs koa instance only used by modules */
-
-  /**
-   * Verifies the ownership of the model with the provided user, if the user is not
-   * owner or admin a 401 ERROR is produced.
-   * @method _owner
-   * @param  {object} self Koa request/response object
-   * @return {boolean}
-   */
-  User.prototype._owner = function *(self) {
-    var user = self.auth.user;
-    if (this.id.toString() !== user.id.toString() && 'admin' !== user.role) {
-      self.throw({
-        code    : 'ACCESS_DENIED',
-        message : 'You do not have the required privileges to edit this user'
-      }, 401);
-    }
-    return true;
-  };
-
   return User;
 
 })();
