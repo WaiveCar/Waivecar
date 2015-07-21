@@ -9,11 +9,8 @@ WaiveCar API
 First download this repo and unpack it into your destination of choice, then open your terminal and run npm install to install all the dependencies for the api.
 
 ```sh
-# Install NPM packages
-$ npm install
-
-# Nodemon for local development
-$ npm install -g nodemon
+$ npm install -g reach
+$ reach install
 ```
 
 ### Startup
