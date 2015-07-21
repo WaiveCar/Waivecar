@@ -105,14 +105,17 @@
 
             locationService.getLocation().then(function(deviceLocation) {
               location=deviceLocation;
+              var centerPosition = [deviceLocation.latitude, deviceLocation.longitude];
+              
               var mapOptions = {
-                center: [deviceLocation.latitude, deviceLocation.longitude],
+                center: centerPosition,
                 apiKey: maps.skobbler.apiKey,
                 zoom: parseInt(scope.zoom, 10),
                 tap: true,
                 trackResize: false
               }
               var mapInstance = maps.skobbler.map(element[0].firstChild, mapOptions);
+              mapInstance.panTo(centerPosition);
               ctrl.solveMap(mapInstance);
             })
           });
@@ -134,9 +137,9 @@
         function link(scope, element, attrs, ctrl) {
           MapsLoader.getMap.then(function(L) {
               locationService.getLocation().then(function(deviceLocation) {
+
                 ctrl.mapInstance.then(function(mapInstance) {
                   var icon = L.MakiMarkers.icon({icon: "pitch", size: "m"});
-                  
                   var marker = L.marker([deviceLocation.latitude, deviceLocation.longitude], {draggable: true, icon: icon}).addTo(mapInstance);
                   ctrl.solveLocation(marker);
                 });
@@ -154,24 +157,18 @@
        'routeDurationChanged': 'waiveCarRouteDurationChanged',
        'routeDistanceChanged': 'waiveCarRouteDistanceChanged',
        'positionChanged': 'waiveCarPositionChanged',
-       'destinyOnRouteChanged': 'waiveCarDestinyOnRouteChanged'
-
+       'destinyOnRouteChanged': 'waiveCarDestinyOnRouteChanged',
+       'withinUnlockRadius':'waiveCarWithinUnlockRadius'
      })
     .constant('transports', {
       pedestrian: 'pedestrian',
       car: 'car' 
     })
-
     .provider('MapsLoader', MapsLoader)
-    
     .service('locationService', ['$rootScope', '$cordovaGeolocation', '$q', 'mapsEvents','$state', LocationService])
-  
     .controller('mapController', ['$scope', 'locationService', '$q', 'mapsEvents', MapController])
-    
     .directive('map', ['MapsLoader', '$q', 'locationService', mapDirective])
-    .directive('deviceLocation', ['MapsLoader', 'locationService', '$q', deviceLocationDirective])
-
-;
+    .directive('deviceLocation', ['MapsLoader', 'locationService', '$q', deviceLocationDirective]);
 })();
 
 // controller:['$scope','locationService','$q',MapController]

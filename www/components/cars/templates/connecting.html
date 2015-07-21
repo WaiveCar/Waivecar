@@ -1,0 +1,45 @@
+<ion-pane  class="info-window" ng-controller="ConnectionController as connection">
+  <ion-content scroll="false">
+  	<ion-slide-box>
+  		<ion-slide >
+		  	<div class="container box">
+				<img src="img/waivecar-mark2.svg" class="waiveCar-icon"></img>
+				<p>Connecting to WaiveCar</p>
+				<p><time-left  foo="bar" timer-name="{{connection.timerName}}" get-duration="connection.getConnectionDurations()"></time-left></p>
+				<img src="img/smartphone-danger.svg" alt="" class="main-image">
+				<p class="highlight">Please look around</p>
+				<p>If you see any damage on the car please take a picture and report the problem, thank you!</p>
+				<div class="bar bar-footer">
+					<a ui-sref="cars" class="button button-balanced button-padded">Back</a>
+				</div> 
+		  	</div>
+  		</ion-slide>
+  		<ion-slide>
+		  	<div class="container box">
+				<img src="img/waivecar-mark2.svg" class="waiveCar-icon"></img>
+				<p>Connecting to WaiveCar</p>
+				<p><time-left  foo="baz" timer-name="{{connection.timerName}}" get-duration="connection.getConnectionDurations()"></time-left></p>
+				<img src="img/smartphone-danger.svg" alt="" class="main-image">
+				<p class="highlight">Please look around</p>
+				<p>If you see any damage on the car please take a picture and report the problem, thank you!</p>
+				<div class="bar bar-footer">
+					<a ui-sref="cars" class="button button-balanced button-padded">Back</a>
+				</div> 
+		  	</div>
+  		</ion-slide>
+  		<ion-slide>
+		  	<div class="container box">
+				<img src="img/waivecar-mark2.svg" class="waiveCar-icon"></img>
+				<p>Connecting to WaiveCar</p>
+				<p><time-left  foo="zap" timer-name="{{connection.timerName}}" get-duration="connection.getConnectionDurations()"></time-left></p>
+				<img src="img/smartphone-danger.svg" alt="" class="main-image">
+				<p class="highlight">Please look around</p>
+				<p>If you see any damage on the car please take a picture and report the problem, thank you!</p>
+				<div class="bar bar-footer">
+					<a ui-sref="cars" class="button button-balanced button-padded">Back</a>
+				</div> 
+		  	</div>
+  		</ion-slide>
+  	</ion-slide-box>
+  </ion-content>
+</ion-pane>

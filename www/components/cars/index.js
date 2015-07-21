@@ -9,6 +9,19 @@ SelectedCarService.prototype.getSelected = function() {
   return this.selected;
 };
 
+function ConnectionController($state,countdownEvents,$scope){
+  this.timerName="connectingTimeLeft";
+  this.$state=$state;
+  $scope.$on(countdownEvents.counterStateFinished+'_'+this.timerName,function(){
+    $state.go('dashboard');
+  });
+}
+ConnectionController.prototype.getConnectionDurations = function() {
+  return {'timeToConnect':.1};
+};
+ConnectionController.prototype.goToConnecting = function($state) {
+  this.$state.go('cars-connecting',{'id':this.$state.params.id});
+};
 
 
 // Cars - List
@@ -49,7 +62,8 @@ CarController.prototype.getDestiny = function() {
 
 CarController.prototype.book = function() {
   var selectedData = this.selectedCar.getSelected();
-  this.state.go('bookings-new', { vehicleDetails: selectedData });
+  var carId=selectedData.id;
+  this.state.go('ads',{redirectUrl:'bookings-show',redirectParams:{'id':carId}});
 };
 
 CarController.prototype.cancel = function() {
@@ -93,7 +107,10 @@ FleetService.prototype.getNearbyFleet = function(numNearby) {
                               charging: true
                             }
                           },
-                          id: idCount++
+                          name:'Chevrolet Spark',
+                          plate:'AUD 568',
+                          id: idCount++,
+                          image:'/components/ads/templates/images/ad1.png'
                         }
                     )
               }
@@ -207,6 +224,27 @@ function carChargeStatusDirective(searchEvents, selectedCar) {
     templateUrl: 'components/cars/templates/directives/carChargeStatus.html'
   }
 }
+function carInformationDirective(searchEvents, selectedCar) {
+  function link(scope, element, attrs, ctrl) {
+    scope.$watch(function(){
+      return selectedCar.getSelected();
+    },
+    function(){
+      var details = selectedCar.getSelected();
+      if(details){
+        scope.name = details.name;
+        scope.plate = details.plate;
+        scope.image=details.image;
+      }
+    })
+  }
+  return {
+    restrict: 'E',
+    link: link,
+    transclude: true,
+    templateUrl: 'components/cars/templates/directives/carInformation.html'
+  }
+}
 angular.module('app')
 .constant('searchEvents', {
   vehicleSelected: 'vehicleSelected'
@@ -222,6 +260,7 @@ angular.module('app')
   'selectedCar',
   CarController
 ])
+.controller('ConnectionController',['$state','countdownEvents','$scope',ConnectionController])
 .controller('CarsController', [
   '$rootScope',
   '$scope',
@@ -237,4 +276,9 @@ angular.module('app')
   'selectedCar',
   carChargeStatusDirective
 ])
-.directive('nearbyFleet', ['MapsLoader', '$q', 'fleetService', 'realReachService', '$window', nearbyFleetDirective]);
+.directive('nearbyFleet', ['MapsLoader', '$q', 'fleetService', 'realReachService', '$window', nearbyFleetDirective])
+.directive('carInformation', [
+  'searchEvents',
+  'selectedCar',
+  carInformationDirective
+]);

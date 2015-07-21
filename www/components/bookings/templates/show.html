@@ -8,19 +8,21 @@
   <ion-content scroll="false">
    <div class="map-container map-container-medium">
     <map id="map" zoom="15" >
-      <device-location></device-location>
-      <destiny-location ></destiny-location>
+      <device-location mock-walking></device-location>
+      <destiny-location  get-initial-destiny="booking.getSelectedCarDestiny()"></destiny-location>
       <route-to-car></route-to-car>
     </map>
   </div>
   <div class="vehicle-summary-container">
-    <vehicle-information></vehicle-information>
-    <time-to-get-to-car></time-to-get-to-car>
+    <car-information>
+      <p><time-left timer-name="getToYourWaiveCar" get-duration="booking.getTimerDuration()"></time-left> to get to your WaiveCar</p>
+    </car-information>
+    
   </div>
-  </ion-content>
-  <div class="bar bar-footer">
-    <div class="footer-buttons">
-      <button class="button button-balanced" ng-click="details.getDirectionsClick()">Get Directions</button><button class="button button-assertive" ng-click="details.cancelClick()">Cancel</button>
+    <div class="bar bar-footer">
+      <div class="footer-buttons">
+        <button class="button button-balanced" ng-click="details.getDirectionsClick()">Get Directions</button><button class="button button-assertive" ng-click="booking.cancelClick()">Cancel</button>
+      </div>
     </div>
-  </div>
+  </ion-content>
 </ion-pane>
