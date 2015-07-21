@@ -29,11 +29,12 @@ module.exports = (function () {
    */
   Group.prototype._schema = Group._schema = {
     attributes : {
-      id     : 'INT(11) NOT NULL AUTO_INCREMENT',
-      userId : 'INT(11) NOT NULL',
-      name   : 'VARCHAR(88) NOT NULL'
+      id        : 'INT(11) NOT NULL AUTO_INCREMENT',
+      creatorId : 'INT(11) NOT NULL',
+      name      : 'VARCHAR(88) NOT NULL'
     },
-    primaryKey : 'id'
+    primaryKey  : 'id',
+    foreignKeys : 'FOREIGN KEY (creator_id) REFERENCES users(id)'
   };
 
   return Group;

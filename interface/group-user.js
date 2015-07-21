@@ -31,7 +31,11 @@ module.exports = (function () {
     attributes : {
       groupId : 'INT(11) NOT NULL',
       userId  : 'INT(11) NOT NULL'
-    }
+    },
+    foreignKeys : [
+      'FOREIGN KEY (group_id) REFERENCES groups(id)',
+      'FOREIGN KEY (user_id) REFERENCES users(id)'
+    ]
   };
 
   return GroupUser;
