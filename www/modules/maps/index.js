@@ -105,14 +105,17 @@
 
             locationService.getLocation().then(function(deviceLocation) {
               location=deviceLocation;
+              var centerPosition = [deviceLocation.latitude, deviceLocation.longitude];
+              
               var mapOptions = {
-                center: [deviceLocation.latitude, deviceLocation.longitude],
+                center: centerPosition,
                 apiKey: maps.skobbler.apiKey,
                 zoom: parseInt(scope.zoom, 10),
                 tap: true,
                 trackResize: false
               }
               var mapInstance = maps.skobbler.map(element[0].firstChild, mapOptions);
+              mapInstance.panTo(centerPosition);
               ctrl.solveMap(mapInstance);
             })
           });

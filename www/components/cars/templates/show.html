@@ -4,7 +4,7 @@
     <div class="iconContainer">
       <i class="icon ion-android-locate item"></i>  
     </div>
-    <div class="title item-icon-left has-big-header">
+    <div class="title item-icon-left has-big-header has-footer">
       <route-information></route-information>
       <p><reverse-geo-coding  get-location="car.getDestiny()"></reverse-geo-coding></p>
       
@@ -24,8 +24,8 @@
     <div class="vehicle-summary-container">
       <car-charge-status></car-charge-status>
     </div>
+    <div class="bar bar-footer">
+      <button class="button button-balanced" ng-click="car.book()">Book WaiveCar</button>
+    </div>
   </ion-content>
-  <div class="bar bar-footer">
-    <button class="button button-balanced" ng-click="car.book()">Book WaiveCar</button>
-  </div>
 </ion-pane>

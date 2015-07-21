@@ -241,7 +241,8 @@ function carInformationDirective(searchEvents, selectedCar) {
   return {
     restrict: 'E',
     link: link,
-    templateUrl: 'components/bookings/templates/directives/carInformation.html'
+    transclude: true,
+    templateUrl: 'components/cars/templates/directives/carInformation.html'
   }
 }
 angular.module('app')

@@ -14,13 +14,15 @@
     </map>
   </div>
   <div class="vehicle-summary-container">
-    <car-information></car-information>
-    <p><time-left timer-name="getToYourWaiveCar" get-duration="booking.getTimerDuration()"></time-left> to get to your WaiveCar</p>
+    <car-information>
+      <p><time-left timer-name="getToYourWaiveCar" get-duration="booking.getTimerDuration()"></time-left> to get to your WaiveCar</p>
+    </car-information>
+    
   </div>
-  </ion-content>
-  <div class="bar bar-footer">
-    <div class="footer-buttons">
-      <button class="button button-balanced" ng-click="details.getDirectionsClick()">Get Directions</button><button class="button button-assertive" ng-click="booking.cancelClick()">Cancel</button>
+    <div class="bar bar-footer">
+      <div class="footer-buttons">
+        <button class="button button-balanced" ng-click="details.getDirectionsClick()">Get Directions</button><button class="button button-assertive" ng-click="booking.cancelClick()">Cancel</button>
+      </div>
     </div>
-  </div>
+  </ion-content>
 </ion-pane>

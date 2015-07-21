@@ -1,7 +1,7 @@
 .nav-component {
   background: #25C155;
   color: #ffffff;
-  ion-content {
+  .ion-content {
     .row {
       height: 33%;
     }
@@ -14,8 +14,12 @@
   }
 }
 .vehicle-summary-container{
-  height:20%;
+  height:30%;
   text-align: center;
+  font-size: 2em;
+  .list{
+    text-align: left;
+  }
 }
 .route-details,.bar.route-details{
   height:15%;
@@ -24,9 +28,9 @@ img.carThumbnail{
   height:100%;
 }
 .thumbNailContainer{
-  height: 80%;
+  height: 70%;
 }
 .carInformationContainer{
   width: 100%;
-  height: 100%;
+  height: 90%;
 }
