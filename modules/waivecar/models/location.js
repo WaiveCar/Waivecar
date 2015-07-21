@@ -32,12 +32,12 @@ module.exports = (function () {
   Location.prototype._schema = Location._schema = {
     attributes : {
       id          : 'INT(11) NOT NULL AUTO_INCREMENT',
-      type        : 'VARCHAR(28) NOT NULL',
-      name        : 'VARCHAR(28) NOT NULL',
-      description : 'VARCHAR(28) NULL',
-      lat         : 'FLOAT(10, 6) NOT NULL',
-      long        : 'FLOAT(10, 6) NOT NULL',
-      address     : 'VARCHAR(28) NULL',
+      type        : 'ENUM("station","item-of-interest") DEFAULT "station"',
+      name        : 'VARCHAR(255) NOT NULL',
+      description : 'VARCHAR(255) NULL',
+      latitude    : 'DECIMAL(10, 8) NOT NULL',
+      longitude   : 'DECIMAL(11, 8) NOT NULL',
+      address     : 'VARCHAR(255) NULL'
     },
     primaryKey : 'id'
   };
