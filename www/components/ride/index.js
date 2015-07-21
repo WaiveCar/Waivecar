@@ -1,40 +1,40 @@
-function RideController($scope,$state){
-  this.$scope=$scope;
-  this.showingStation=false;
-  this.$state=$state;
+function RideController($scope, $state) {
+  this.$scope = $scope;
+  this.showingStation = false;
+  this.$state = $state;
 }
-RideController.prototype.showChargingStationDetails = function(marker,info) {
-  this.showingStation=true;
- this.stationName=info.name;
- this.stationAddress=info.address;
- this.stationDistance=info.distance;
+RideController.prototype.showChargingStationDetails = function(marker, info) {
+  this.showingStation = true;
+  this.stationName = info.name;
+  this.stationAddress = info.address;
+  this.stationDistance = info.distance;
   this.$scope.$digest();
 };
-RideController.prototype.hideChargingStationDetails = function(marker,info) {
-  this.showingStation=false;
+RideController.prototype.hideChargingStationDetails = function(marker, info) {
+  this.showingStation = false;
 }
 RideController.prototype.endRide = function() {
   this.$state.go('ride-end');
 };
-function distanceTravelledDirective(){
-	function link(scope){
-		scope.value='100 miles'
-	}
-	return {
-		link:link,
-		template:'<span ng-bind="value"></span>',
-		scope:true
-	}
+function distanceTravelledDirective() {
+  function link(scope) {
+    scope.value = '100 miles'
+  }
+  return {
+    link: link,
+    template: '<span ng-bind="value"></span>',
+    scope: true
+  }
 }
-function batteryChargeDirective(){
-	function link(scope){
-		scope.value='65%'
-	}
-	return {
-		link:link,
-		template:'<span ng-bind="value"></span>',
-		scope:true
-	}
+function batteryChargeDirective() {
+  function link(scope) {
+    scope.value = '65%'
+  }
+  return {
+    link: link,
+    template: '<span ng-bind="value"></span>',
+    scope: true
+  }
 }
 
 
@@ -73,14 +73,13 @@ function freeRideTimeDirective() {
       link: link,
       controller: 'TimerController',
       controllerAs: 'timer',
-      scope:false
+      scope: false
     }
 
 }
-function chargingStationInfoDirective(){
+function chargingStationInfoDirective() {
   return {
-    templateUrl: 'components/ride/templates/directives/chargingStationInfo.html',
-
+    templateUrl: 'components/ride/templates/directives/chargingStationInfo.html'
   }
 }
 
@@ -96,5 +95,5 @@ angular.module('app')
 .directive('distanceTravelled', [
   distanceTravelledDirective
 ])
-.directive('chargingStationInfo',chargingStationInfoDirective)
-.directive('freeRideTime',freeRideTimeDirective);
+.directive('chargingStationInfo', chargingStationInfoDirective)
+.directive('freeRideTime', freeRideTimeDirective);

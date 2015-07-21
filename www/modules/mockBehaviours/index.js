@@ -10,8 +10,7 @@ function mockWalkingDirective(mapsEvents,$rootScope){
 	return {
 		restrict: 'CAE',
 		link:link,
-        require: '^map',
-
+        require: '^map'
 	}
 }
 angular.module('mockBehaviours', [])

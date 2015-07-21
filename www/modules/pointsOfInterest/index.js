@@ -25,7 +25,7 @@ PointsOfInterestService.prototype.getPointsOfInterstNearby = function(numNearby)
                 ret.push(
                         {
                           latitude: deviceLocation.latitude + diffA,
-                          longitude: deviceLocation.longitude + diffB,
+                          longitude: deviceLocation.longitude + diffB
                         }
                     )
               }

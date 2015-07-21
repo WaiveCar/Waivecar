@@ -13,8 +13,10 @@ function Run($ionicPlatform) {
   });
 }
 
-function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
+function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider,$compileProvider) {
   'use strict';
+   $compileProvider.imgSrcSanitizationWhitelist(/^\s(https|file|blob|cdvfile):|data:image\//);
+
   $ionicConfigProvider.views.transition('platform');
   $stateProvider
     // FIND WAIVECARS
@@ -129,5 +131,6 @@ angular.module('app', [
   'ChargingStations',
   'PointsOfInterest'
 ])
+
 .run(['$ionicPlatform', Run])
-.config([ '$stateProvider', '$urlRouterProvider', '$ionicConfigProvider', Config ]);
+.config([ '$stateProvider', '$urlRouterProvider', '$ionicConfigProvider','$compileProvider', Config ]);
