@@ -7,12 +7,20 @@
     this.$http = $http;
     this.locationService = locationService;
   }
+  RealReachService.prototype.getUrl = function(apiKey) {
+    if (window.cordova) {
+      var url = 'http://' + apiKey + '.tor.skobbler.net/tor/RSngx/RealReach/json/18_0/en/' +apiKey;
+      return url;
+    } else {
+      return 'http://localhost:8100/skoblerRealReach';
+    }
+  };
   RealReachService.prototype.getReachInMinutes = function(minutes, transport) {
     var self = this;
     return this.MapsLoader.getMap.then(function(maps) {
       var defered = self.$q.defer();
       self.locationService.getLocation().then(function(location) {
-        var url = "http://" + maps.skobbler.apiKey + ".tor.skobbler.net/tor/RSngx/RealReach/json/18_0/en/" + maps.skobbler.apiKey;
+        var url = self.getUrl(maps.skobbler.apiKey);
         url += '?response_type=gps';
         url += '&units=sec';
         url += '&nonReachable=0';
@@ -22,10 +30,10 @@
 
         self.$http.get(url)
 		    .success(function(data, status, headers, config) {
-  defered.resolve(data);
+          defered.resolve(data);
 		    })
 		    .error(function(data, status, headers, config) {
-  defered.reject({data: data, status: status, header: headers, config: config});
+          defered.reject({data: data, status: status, header: headers, config: config});
 		    });
 
       });
