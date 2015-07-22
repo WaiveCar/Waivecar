@@ -14,6 +14,10 @@
       {
         "path": "/skoblerCalcRoute",
         "proxyUrl": "http://7ef929e2c765b1194804e5e8ca284c5a.tor.skobbler.net/tor/RSngx/calcroute/json/18_0/en/7ef929e2c765b1194804e5e8ca284c5a"
+      },
+      {
+        "path":"/skoblerRealReach",
+        "proxyUrl":"http://7ef929e2c765b1194804e5e8ca284c5a.tor.skobbler.net/tor/RSngx/RealReach/json/18_0/en/7ef929e2c765b1194804e5e8ca284c5a"
       }
     ]
 }
