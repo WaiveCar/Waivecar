@@ -30,7 +30,7 @@
     "request": "2.58.0"
   },
   "reach": {
-    "reach-mysql": "0.0.13",
+    "reach-mysql": "0.0.16",
     "reach-auth": "0.0.12",
     "reach-logger": "0.0.2",
     "reach-user": "0.0.3",
