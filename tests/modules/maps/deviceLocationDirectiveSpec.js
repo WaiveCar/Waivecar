@@ -31,11 +31,8 @@ describe('Device location directive',function(){
 
     beforeEach(function(){
         var self=this;
-        angular.module('ngCordova',[]);
-        angular.mock.module('Maps');
-        angular.mock.module(function($provide,_$compileProvider_){
+        angular.mock.module('Maps',function($provide,_$compileProvider_){
             self.$compileProvider=_$compileProvider_;
-            console.log('Setting the value for device location');
             $provide.value("MapsLoader", mockMapsLoader);
             $provide.value("locationService", mockLocationService);
             $provide.factory('mapDirective', function(){

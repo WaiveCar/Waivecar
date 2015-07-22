@@ -1,5 +1,4 @@
 describe('Destiny location directive',function(){
-    console.log('Destiny location directive');
     var mockEvents={
         'destinyOnRouteChanged':'waiveCarDestinyOnRouteChanged'
     };
@@ -52,8 +51,7 @@ describe('Destiny location directive',function(){
         angular.mock.module(function($provide){
             $provide.constant("mapsEvents", mockEvents);
         });
-        angular.mock.module('Maps.route');
-        angular.mock.module(function($provide,$controllerProvider,$compileProvider){
+        angular.mock.module('Maps.route',function($provide,$controllerProvider,$compileProvider){
             self.$compileProvider=$compileProvider;
             console.log('Setting the value for destiny location');
             $provide.value("MapsLoader", mockMapsLoader);

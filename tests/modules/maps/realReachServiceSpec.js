@@ -43,7 +43,7 @@ describe('Real Reach service',function(){
         var apiKey=mockLeaflet.skobbler.apiKey;
         var minutes=15;
         var transport='pedestrian';
-        var url='http://'+apiKey+'.tor.skobbler.net/tor/RSngx/RealReach/json/18_0/en/'+apiKey;
+        var url='http://localhost:8100/skoblerRealReach';
         url+='?response_type=gps';
         url+='&units=sec';
         url+='&nonReachable=0';

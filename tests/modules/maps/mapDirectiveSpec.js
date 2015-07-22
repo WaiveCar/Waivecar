@@ -16,11 +16,15 @@ describe('Map directive',function(){
 	var mockLeaflet={
 		skobbler:{
 			map:function(element){
+				return {
+					panTo:function(){
+
+					}
+				}
 			}
-		}
+		},
 	}
 	beforeEach(function(){
-		L=mockLeaflet;//Global
 		angular.module('ngCordova',[]);
 
 		angular.mock.module('Maps');
@@ -40,7 +44,7 @@ describe('Map directive',function(){
 			$q=_$q_;
 			scope = $rootScope.$new();
 			var defered=$q.defer();
-			defered.resolve(L);
+			defered.resolve(mockLeaflet);
 			mockMapsLoader.getMap=defered.promise;
 
 			mockLocationService.getLocation=function(){

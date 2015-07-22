@@ -39,7 +39,7 @@ describe('Route service',function(){
     it('Gets the route upon request and update the events when the data changes',function(done){
         spyOn(this.$rootScope, '$broadcast');
         var apiKey=mockLeaflet.skobbler.apiKey;
-        var url="http://"+apiKey+".tor.skobbler.net/tor/RSngx/calcroute/json/18_0/en/"+apiKey;
+        var url="http://localhost:8100/skoblerCalcRoute";
         url+='?start=50,50';
         url+='&dest=100,100';
         url+='&profile=pedestrian';
@@ -49,6 +49,9 @@ describe('Route service',function(){
             route:{
                 duration:10,
                 routelength:300
+            },
+            status:{
+                apiCode:'1'
             }
         };
         this.$httpBackend.expectGET(url).respond(response);
