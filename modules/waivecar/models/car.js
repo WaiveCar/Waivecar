@@ -30,7 +30,6 @@ module.exports = (function () {
   Car.prototype._schema = Car._schema = {
     attributes : {
       id                : 'VARCHAR(28)  NOT NULL',
-      userId            : 'INT(11) DEFAULT NULL',
       make              : 'VARCHAR(28)  NOT NULL',
       model             : 'VARCHAR(88)  NOT NULL',
       year              : 'VARCHAR(4)   NOT NULL',

@@ -1,6 +1,7 @@
 {
   "models" : [
     "car.js",
+    "car-status.js",
     "booking.js",
     "booking-details.js",
     "location.js"
