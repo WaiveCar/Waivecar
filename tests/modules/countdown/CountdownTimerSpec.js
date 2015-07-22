@@ -21,11 +21,11 @@ describe('Countdown Timer',function(){
 			self.scope  = $rootScope.$new();
 			self.timeout=$timeout;
 			self.countdownEvents=$injector.get('countdownEvents');
-
-			spyOn(this.scope, '$broadcast');
+			this.rootScope=$rootScope;
+			spyOn(this.rootScope, '$broadcast');
 
 			var CountdownTimer=$injector.get('CountdownTimer');
-			self.countdownTimer=new CountdownTimer(name,durations,self.scope);
+			self.countdownTimer=new CountdownTimer(name,durations,self.scope,$rootScope);
 			
 			newCounterEvent=this.countdownEvents.newCounter+'_'+name;
 			counterCancelledEvent=this.countdownEvents.counterCancelled+'_'+name;
@@ -46,20 +46,20 @@ describe('Countdown Timer',function(){
 		it('When the counter starts it sends a new counter event and a counter state changed event',function(){
 			this.countdownTimer.start();
 	
-			expect(this.scope.$broadcast).toHaveBeenCalledWith(newCounterEvent,firstStatus,firstStatusDuration);
-			expect(this.scope.$broadcast).toHaveBeenCalledWith(counterStateChangedEvent,firstStatus,firstStatusDuration);
+			expect(this.rootScope.$broadcast).toHaveBeenCalledWith(newCounterEvent,firstStatus,firstStatusDuration);
+			expect(this.rootScope.$broadcast).toHaveBeenCalledWith(counterStateChangedEvent,firstStatus,firstStatusDuration);
 		});
 		it('When a states finish it sends an state finished event ',function(){
 			this.countdownTimer.start();
 			
 			this.timeout.flush(firstStatusDuration*60000+10);
-			expect(this.scope.$broadcast).toHaveBeenCalledWith(counterStateFinishedEvent,firstStatus,firstStatusDuration);
+			expect(this.rootScope.$broadcast).toHaveBeenCalledWith(counterStateFinishedEvent,firstStatus,firstStatusDuration);
 		})
 		it('When it gets cancelled it sends an state cancelled event',function(){
 			this.countdownTimer.start();
 			this.countdownTimer.cancel();
 
-			var lastArgs=this.scope.$broadcast.calls.mostRecent().args;
+			var lastArgs=this.rootScope.$broadcast.calls.mostRecent().args;
 			expect(lastArgs[0]).toEqual(counterCancelledEvent);
 			expect(lastArgs[1]).toEqual(firstStatus);
 			expect(lastArgs[2]).toEqual(firstStatusDuration);
@@ -67,9 +67,9 @@ describe('Countdown Timer',function(){
 		});
 		it('When a state finishes the state changed event is sent',function(){
 			this.countdownTimer.start();
-			this.scope.$broadcast.calls.reset();
+			this.rootScope.$broadcast.calls.reset();
 			this.timeout.flush(firstStatusDuration*60000+10);
-			expect(this.scope.$broadcast).toHaveBeenCalledWith(counterStateChangedEvent,statusOrders[1],durations[statusOrders[1]]);
+			expect(this.rootScope.$broadcast).toHaveBeenCalledWith(counterStateChangedEvent,statusOrders[1],durations[statusOrders[1]]);
 
 
 		})
