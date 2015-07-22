@@ -9,12 +9,44 @@ $royal:                           #886aea !default;
 $dark:                            #444 !default;
 $grayBg:                          rgb(30,30,30);
 
+@mixin vertical-align {
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;
 
+$barHeight: 10;
+$mainTitleHeightPercent:  80;
+//On percent of container we need to calculat as VH is from the viewPort
+// $mainTitleVhSize: (($barHeight/100) * $mainTitleHeightPercent);  */
+
 // Include all of Ionic
 @import "www/lib/ionic/scss/ionic";
+.waiveCarContainer{
+  .bar{
+    height: $barHeight * 1%;
+    padding: 0;
+    display: block;
+  }
+  .bar-header h1.title {
+    font-size: 3vw;
+    height: $mainTitleHeightPercent *1%;
+    @include vertical-align;
+    text-align: center;
+   }
+  .has-header{
+    top: $barHeight * 1%;
 
+  }
+  .scroll-content.has-header{
+    height: (100-$barHeight) * 1%;
+  }
+
+}
 // Global styles
 .bar-header {
   h1.title {
