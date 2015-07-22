@@ -9,18 +9,11 @@ $royal:                           #886aea !default;
 $dark:                            #444 !default;
 $grayBg:                          rgb(30,30,30);
 
-@mixin vertical-align {
-  position: relative;
-  top: 50%;
-  -webkit-transform: translateY(-50%);
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
-}
+
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;
 
-$barHeight: 10;
-$mainTitleHeightPercent:  80;
+@import 'sizes';
 //On percent of container we need to calculat as VH is from the viewPort
 // $mainTitleVhSize: (($barHeight/100) * $mainTitleHeightPercent);  */
 
@@ -31,6 +24,9 @@ $mainTitleHeightPercent:  80;
     height: $barHeight * 1%;
     padding: 0;
     display: block;
+     &.bar-footer{
+       height: $barFooterHeight*1%;
+    }
   }
   .bar-header h1.title {
     font-size: 3vw;
@@ -38,14 +34,37 @@ $mainTitleHeightPercent:  80;
     @include vertical-align;
     text-align: center;
    }
+  .big-header{
+    height: $bigHeaderSize * 1%;
+  }
   .has-header{
     top: $barHeight * 1%;
-
+    &.has-big-header{
+      top: $bigHeaderSize * 1%;
+    }
   }
   .scroll-content.has-header{
     height: (100-$barHeight) * 1%;
+    &.has-big-header{
+      height: (100-$bigHeaderSize) * 1%;
+      &.has-footer-bar{
+        height: (100-($bigHeaderSize+$barFooterHeight)) * 1%;
+      }
+    }
+    &.has-footer-bar{
+      height: (100-($bigHeaderSize+$barFooterHeight)) * 1%;
+    }
   }
-
+  .info-card{
+    height:$infoCardHeight* 1%;
+  }
+  .map-container {
+    height: 100%;
+    width:100%;
+    &.has-info-card {
+      height: (100-$infoCardHeight)*1%
+    }
+  }
 }
 // Global styles
 .bar-header {
@@ -53,7 +72,6 @@ $mainTitleHeightPercent:  80;
     text-transform: uppercase;
     font-family: "Helvetica Neue";
     font-weight: 300;
-    font-size: 20px;
   }
 }
 .button-padded,.bar-footer .button-padded{

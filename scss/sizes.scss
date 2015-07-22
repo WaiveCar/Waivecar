@@ -1,0 +1,12 @@
+$barHeight: 10;
+$mainTitleHeightPercent:  80;
+$barFooterHeight:10;
+$bigHeaderSize: 15;
+$infoCardHeight: 30;
+@mixin vertical-align {
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
