@@ -6,14 +6,22 @@
     this.mapsEvents = mapsEvents;
     this.skobblerApiCodes=skobblerApiCodes;
   }
-
+RouteService.prototype.getRouteUrl = function() {
+  if (window.cordova) {
+      var url = 'http://' + maps.skobbler.apiKey;
+      url += '.tor.skobbler.net/tor/RSngx/calcroute/json/18_0/en/';
+      url += maps.skobbler.apiKey;
+    // running on device/emulator
+    return url;
+  } else {
+    return 'http://localhost:8100/skoblerCalcRoute';
+  }
+};
 RouteService.prototype.getRoute = function(pointA, pointB, profile) {
     var self = this;
     profile = profile || 'pedestrian';
     return this.MapsLoader.getMap.then(function(maps) {
-      var url = 'http://' + maps.skobbler.apiKey;
-      url += '.tor.skobbler.net/tor/RSngx/calcroute/json/18_0/en/';
-      url += maps.skobbler.apiKey;
+      var url = self.getRouteUrl();
       url += '?start=' + pointA.lat + ',' + pointA.lng;
       url += '&dest=' + pointB.lat + ',' + pointB.lng;
       url += '&profile=' + profile;
