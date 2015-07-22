@@ -1,8 +1,6 @@
 'use strict';
 
-let moment = require('moment');
 let _super = Reach.service('mysql/model');
-let query  = Reach.service('mysql/query');
 
 module.exports = (function () {
 
@@ -56,19 +54,6 @@ module.exports = (function () {
   Car.prototype._blacklist = [
     'deletedAt'
   ];
-
-  /**
-   * Attempts to insert data, if it already exists we attempt to update it instead.
-   * @method upsert
-   */
-  Car.prototype.upsert = function *() {
-    let result = yield query.upsert(this._table, this._data());
-
-    this.createdAt = this.createdAt || moment().format('YYYY-MM-DD HH-mm-ss');
-    this.updatedAt = this.createdAt ? moment().format('YYYY-MM-DD HH-mm-ss') : null;
-
-    return result;
-  };
 
   return Car;
 
