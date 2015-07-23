@@ -1,21 +1,23 @@
-<ion-pane  ng-controller="ConnectionController as connection">
+<ion-pane  ng-controller="ConnectionController as connection" class="waiveCarContainer">
   <ion-header-bar class="bar bar-header bar-light">
-    <h1 class="title">Get to your WaiveCar</h1>
-    <button class="button button-icon icon ion-navicon" ng-click="showNav()"></button>
+    <div class="header-text">
+      <h1 class="header-title">Get to your WaiveCar</h1>
+    </div>
+    <button class="button button-icon icon ion-navicon  button-right" ng-click="showNav()"></button>
   </ion-header-bar>
-  <ion-content scroll="false">
-    <div class="map-container  map-container-medium">
+  <ion-content scroll="false" class="has-footer-bar has-header">
+    <div class="map-container  has-info-footer">
       <map id="map" zoom="15" >
         <div>
           <device-location></device-location>
         </div>
       </map>
     </div>
-    <div class="vehicle-summary-container">
+    <div class="vehicle-summary-container info-footer">
       <car-information></car-information>
     </div>
   </ion-content>
   <div class="bar bar-footer">
-    <button  ng-click="connection.goToConnecting()" class="button button-balanced">Connect to car</button>
+    <button  ng-click="connection.goToConnecting()" class="button button-balanced">Connect to waivecar</button>
   </div>
 </ion-pane>
