@@ -22,17 +22,8 @@ Router.post('/bookings', {
   uses   : 'BookingsController@create'
 });
 
-Router.get('/bookings/:id/pending-arrival', {
-  policy : ['authenticate'],
-  uses   : 'BookingsController@pendingArrival'
-});
-
-Router.get('/bookings/:id/start', {
-  policy : ['authenticate'],
-  uses   : 'BookingsController@start'
-});
-
-Router.get('/bookings/:id/cancel', {
-  policy : ['authenticate'],
-  uses   : 'BookingsController@cancel'
-});
+Router.get('/bookings/:id',                 ['authenticate', 'BookingsController@show']);
+Router.get('/bookings/:id/pending-arrival', ['authenticate', 'BookingsController@pendingArrival']);
+Router.get('/bookings/:id/start',           ['authenticate', 'BookingsController@start']);
+Router.get('/bookings/:id/end',             ['authenticate', 'BookingsController@end']);
+Router.get('/bookings/:id/cancel',          ['authenticate', 'BookingsController@cancel']);

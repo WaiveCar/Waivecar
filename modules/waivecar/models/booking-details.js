@@ -29,14 +29,14 @@ module.exports = (function () {
    */
   BookingDetails.prototype._schema = BookingDetails._schema = {
     attributes : {
-      id           : 'INT(11) NOT NULL AUTO_INCREMENT',
-      bookingId    : 'INT(11) NOT NULL',
-      type         : 'ENUM("start", "end") DEFAULT "start"',
-      time         : 'DATETIME NULL',
-      locationLat  : 'FLOAT(10, 6) NULL',
-      locationLong : 'FLOAT(10, 6) NULL',
-      odometer     : 'INT(7) NULL',
-      charge       : 'TINYINT(3) NULL',
+      id        : 'INT(11) NOT NULL AUTO_INCREMENT',
+      bookingId : 'INT(11) NOT NULL',
+      type      : 'ENUM("start", "end") DEFAULT "start"',
+      time      : 'DATETIME NULL',
+      latitude  : 'FLOAT(10, 7) NULL',
+      longitude : 'FLOAT(10, 7) NULL',
+      odometer  : 'INT(7) NULL',
+      charge    : 'TINYINT(3) NULL',
     },
     primaryKey  : 'id',
     foreignKeys : 'FOREIGN KEY (booking_id) REFERENCES bookings(id)'
