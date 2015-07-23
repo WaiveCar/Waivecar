@@ -16,9 +16,14 @@ RideController.prototype.hideChargingStationDetails = function(marker, info) {
 RideController.prototype.endRide = function() {
   this.$state.go('ride-end');
 };
-function distanceTravelledDirective() {
+function distanceTravelledDirective($interval) {
   function link(scope) {
-    scope.value = '100 miles'
+    scope.mileage=0;
+    var stop=$interval(function(){
+      scope.mileage+=10;
+      scope.value=scope.mileage+' miles';
+    },1500);
+    scope.value = scope.mileage+' miles';
   }
   return {
     link: link,
@@ -26,9 +31,21 @@ function distanceTravelledDirective() {
     scope: true
   }
 }
-function batteryChargeDirective() {
+function batteryChargeDirective($interval,$state) {
   function link(scope) {
-    scope.value = '65%'
+    scope.battery=100;
+    scope.value=scope.battery+'%';
+    var stop=$interval(function(){
+      scope.battery-=5;
+      if(scope.battery<=0){
+        if(scope.battery<=15){
+          $state.go('ride-alert-low-battery');
+        }
+        $interval.cancel(stop);
+      }
+      scope.value=scope.battery+'%';
+    },2000)
+
   }
   return {
     link: link,
@@ -90,9 +107,12 @@ angular.module('app')
   RideController
 ])
 .directive('batteryCharge', [
+  '$interval',
+  '$state',
   batteryChargeDirective
 ])
 .directive('distanceTravelled', [
+  '$interval',
   distanceTravelledDirective
 ])
 .directive('chargingStationInfo', chargingStationInfoDirective)
