@@ -1,7 +1,7 @@
 function Resource($resource, Utils) {
 
   function getRoute(hasId) {
-    return Utils.getRoute('cars', hasId);
+    return Utils.getRoute('locations', hasId);
   }
 
   return $resource(null, null, {
@@ -29,12 +29,17 @@ function Resource($resource, Utils) {
       params: {
         id: '@id'
       }
+    },
+
+    delete: {
+      method: 'DELETE',
+      url: getRoute(true)
     }
 
   });
 }
 
-angular.module('app').factory('Cars', [
+angular.module('app').factory('Locations', [
   '$resource',
   'Utils',
   Resource

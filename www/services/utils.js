@@ -1,5 +1,5 @@
-function Utils(config) {
-  this.config = config;
+function Utils(Config) {
+  this.config = Config;
 }
 
 function transformPaginatedResponse(data) {
@@ -28,7 +28,7 @@ Utils.prototype.transformArrayResponse = function (data, headersGetter, status) 
 }
 
 angular.module('app')
-.service('utils', [
-  'config',
+.service('Utils', [
+  'Config',
   Utils
 ]);

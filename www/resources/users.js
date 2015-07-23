@@ -1,7 +1,7 @@
-function Resource($resource, utils, config) {
+function Resource($resource, Utils) {
 
   function getRoute(hasId) {
-    return utils.getRoute('users', hasId);
+    return Utils.getRoute('users', hasId);
   }
 
   return $resource(null, null, {
@@ -15,7 +15,7 @@ function Resource($resource, utils, config) {
       method: 'GET',
       url: getRoute(),
       isArray: true,
-      transformResponse: utils.transformArrayResponse
+      transformResponse: Utils.transformArrayResponse
     },
 
     get: {
@@ -33,7 +33,7 @@ function Resource($resource, utils, config) {
 
     me: {
       method: 'GET',
-      url: utils.getCustomRoute('users/me')
+      url: Utils.getCustomRoute('users/me')
     }
 
   });
@@ -41,7 +41,6 @@ function Resource($resource, utils, config) {
 
 angular.module('app').factory('Users', [
   '$resource',
-  'utils',
-  'config',
+  'Utils',
   Resource
 ]);
