@@ -96,8 +96,12 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpP
       templateUrl: '/components/users/templates/reward-points.html'
     })
     .state('dashboard',{
-      url:'/ride-dashboard',
+      url:'/ride/dashboard',
       templateUrl: '/components/ride/templates/dashboard.html'
+    })
+    .state('paid-ride',{
+      url:'/paid-ride',
+      templateUrl: '/components/ride/templates/paidDashboard.html'
     })
    .state('ride-end',{
       url:'/ride/end',
