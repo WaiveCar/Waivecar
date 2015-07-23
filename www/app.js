@@ -134,6 +134,31 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpP
   $urlRouterProvider.otherwise('/cars');
 }
 
+function dialogDirective(){
+  return {
+    restrict:'E',
+    scope:{
+      title:'@',
+      subtitle:'@',
+      buttonText:'@',
+      setDisplayFunction: '&',
+      setHideFunction: '&',
+      onButtonClick:'&'
+    },
+    link: function(scope, element, attrs){
+      scope.setDisplayFunction({'fn':function(){
+        console.log("A");
+        element[0].firstChild.style.display="block";
+
+      }});
+      scope.setHideFunction({'fn':function(){
+        console.log("V");
+        element[0].firstChild.style.display="none";
+      }});
+    },
+    templateUrl:'/templates/directives/dialog.html'
+  }
+}
 angular.module('app', [
   'ionic',
   'ngResource',
@@ -147,5 +172,6 @@ angular.module('app', [
   'ChargingStations',
   'PointsOfInterest'
 ])
+.directive('dialog',dialogDirective)
 .run(['$ionicPlatform', Run])
 .config([ '$stateProvider', '$urlRouterProvider', '$ionicConfigProvider', '$httpProvider', Config ]);

@@ -1,28 +1,36 @@
-<ion-pane class="bookings-component" ng-controller="BookingController as booking">
+<ion-pane class="bookings-component waiveCarContainer" ng-controller="BookingController as booking">
   <ion-header-bar class="bar bar-header bar-light">
     <h1 class="title">Get to your WaiveCar</h1>
     <div class="buttons">
       <button class="button button-icon icon ion-navicon" ng-click="showNav()"></button>
     </div>
   </ion-header-bar>
-  <ion-content scroll="false">
-   <div class="map-container map-container-medium">
+  <ion-content scroll="false"  class="has-header has-footer-bar">
+  <div class="map-container has-info-footer">
     <map id="map" zoom="15" >
       <device-location mock-walking></device-location>
       <destiny-location  get-initial-destiny="booking.getSelectedCarDestiny()"></destiny-location>
       <route-to-car></route-to-car>
     </map>
   </div>
-  <div class="vehicle-summary-container">
-    <car-information>
-      <p><time-left timer-name="getToYourWaiveCar" get-duration="booking.getTimerDuration()"></time-left> to get to your WaiveCar</p>
+  <div class="vehicle-summary-container  info-footer">
+    <car-information class="has-footer-information">
     </car-information>
+    <p class="footer-information"><time-left timer-name="getToYourWaiveCar" get-duration="booking.getTimerDuration()"></time-left> to get to your WaiveCar</p>
     
   </div>
-    <div class="bar bar-footer">
-      <div class="footer-buttons">
-        <button class="button button-balanced" ng-click="details.getDirectionsClick()">Get Directions</button><button class="button button-assertive" ng-click="booking.cancelClick()">Cancel</button>
-      </div>
-    </div>
   </ion-content>
+  <div class="bar bar-footer">
+    <div class="footer-buttons">
+      <button class="button button-balanced" ng-click="details.getDirectionsClick()">Get Directions</button><button class="button button-assertive" ng-click="booking.cancelClick()">Cancel</button>
+    </div>
+  </div>
+  <dialog 
+    title="you're in reach" 
+    subtitle="Now you can connect to your WaiveCar!" 
+    button-text="ok,take me there"
+    set-display-function="booking.dialogDisplay(fn)"
+    on-button-click="booking.dialogClick()"
+  >
+  </dialog>
 </ion-pane>

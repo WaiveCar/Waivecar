@@ -2,7 +2,10 @@ $barHeight: 10;
 $mainTitleHeightPercent:  80;
 $barFooterHeight:10;
 $bigHeaderSize: 15;
-$infoCardHeight: 30;
+$infoFooterHeight: 30;
+$headerTitleSize:1.6;
+$headerSubtitleSize:$headerTitleSize*0.8;
+
 @mixin vertical-align {
   position: relative;
   top: 50%;

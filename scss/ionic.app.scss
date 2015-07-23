@@ -19,7 +19,14 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 
 // Include all of Ionic
 @import "www/lib/ionic/scss/ionic";
+.vertical-aligned{
+   @include vertical-align;
+}
 .waiveCarContainer{
+  .modal,.modal-wrapper{
+    width: 100%;
+    height: 100%;
+  }
   .bar{
     height: $barHeight * 1%;
     padding: 0;
@@ -28,11 +35,30 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
        height: $barFooterHeight*1%;
     }
   }
-  .bar-header h1.title {
-    font-size: 3vw;
-    height: $mainTitleHeightPercent *1%;
+  .header-title{
+    text-transform: uppercase;
+    font-size: $headerTitleSize*1vw;
+  }
+  h1.header-title{
     @include vertical-align;
-    text-align: center;
+  }
+  .header-subtitle{
+    font-size: $headerSubtitleSize*1vw;
+  }
+  .bar-header{
+    .header-text{
+      float:left;
+      width: 90%;
+      text-align: center;
+      height: 95%;
+      @include vertical-align;
+
+    }
+    .button{
+      @include vertical-align;
+    }
+    
+
    }
   .big-header{
     height: $bigHeaderSize * 1%;
@@ -52,17 +78,47 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
       }
     }
     &.has-footer-bar{
-      height: (100-($bigHeaderSize+$barFooterHeight)) * 1%;
+      height: (100-($barHeight+$barFooterHeight)) * 1%;
     }
   }
-  .info-card{
-    height:$infoCardHeight* 1%;
+  .info-footer{
+    height:$infoFooterHeight* 1%;
+    .footer-information{
+      font-size: 1vw;
+      height: 10%;
+      margin: 0;
+    }
+    .has-footer-information{
+      height: 90%;
+    }
+    .info-card{
+      display: inline-block;
+      margin: 0;
+      border: 0;
+      height: 100%;
+      float: left;
+      p{
+        text-align: left;
+        &.title{
+          font-size: 1.8vw;
+        }
+        font-size: 1vw;
+      }
+      &.info-card-s{
+        width: 35%;
+
+      }
+      &.info-card-m{
+        width: 65%;
+      }
+      
+    }
   }
   .map-container {
     height: 100%;
     width:100%;
-    &.has-info-card {
-      height: (100-$infoCardHeight)*1%
+    &.has-info-footer {
+      height: (100-$infoFooterHeight)*1%
     }
   }
 }
@@ -170,19 +226,19 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 }
 .button-right{
   float:right;
-  clear:both;
 }
 .button-left{
   float:left;
 }
 
 .iconContainer{
-}
-.iconContainer .icon{
-  font-size:4em;
-  padding:0;
-  border:none;
-  margin:0;
+  display: inline-block;
+  .icon{
+      font-size:10vh;
+      padding:0;
+      border:none;
+      margin:0; 
+  }
 }
 ion-content.has-big-header{
   top:15%;
@@ -296,3 +352,19 @@ ion-content.has-big-header{
 @import "www/components/maps/style.scss";
 @import "www/components/ads/style.scss";
 @import "www/components/ride/style.scss";
+
+.dialog{
+  z-index: 2000;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  display: none;
+  background-color: rgba(0,0,0,0.8);
+  position: absolute;
+  top: 0;
+  left: 0;
+  .waiveCar-icon{
+    margin: 0 auto;
+    width: 5%;
+  }
+}

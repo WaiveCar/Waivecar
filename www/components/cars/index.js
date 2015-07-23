@@ -47,7 +47,6 @@ CarsController.prototype.showCarDetails = function(marker, data) {
   this.$rootScope.$broadcast(this.searchEvents.vehicleSelected, data);
   this.state.go('cars-show', { id: data.id});
 };
-
 // Cars - Show
 function CarController($state, $q, selectedCar) {
   this.selectedCar = selectedCar;

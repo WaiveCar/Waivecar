@@ -1,12 +1,19 @@
-function BookingController($rootScope, $scope, $state, Bookings,selectedCarService,mapsEvents) {
+function BookingController($rootScope, $scope, $state, Bookings,selectedCarService,mapsEvents,$ionicModal) {
   var self = this;
+
+   $ionicModal.fromTemplateUrl('my-modal.html', {
+    scope: $scope,
+    animation: 'slide-in-up'
+  }).then(function(modal) {
+    self.modal = modal;
+  });
   this.selectedCarService=selectedCarService;
 
   self.isEdit = $state.params.id ? true : false;
   this.$state=$state;
   $scope.$on(mapsEvents.withinUnlockRadius,function(){
-    var selectedData=selectedCarService.getSelected();
-    $state.go('cars-connect',{id:selectedData.id});
+    self.showDialog();
+
   });
   if (self.isEdit) {
     self.booking = Bookings.get({ id: $state.params.id });
@@ -67,7 +74,14 @@ function BookingsController($rootScope, $scope, $state, Bookings) {
   self.bookings = Bookings.query();
 }
 
+BookingController.prototype.dialogDisplay = function(fn) {
+  this.showDialog=fn;
+};
 
+BookingController.prototype.dialogClick = function() {
+  var selectedData=this.selectedCarService.getSelected();
+  this.$state.go('cars-connect',{id:selectedData.id});
+};
 angular.module('app')
 .controller('BookingController', [
   '$rootScope',
@@ -76,6 +90,7 @@ angular.module('app')
   'Bookings',
   'selectedCar',
   'mapsEvents',
+  '$ionicModal',
   BookingController
 ])
 .controller('BookingsController', [

@@ -1,27 +1,22 @@
 <ion-pane ng-controller="CarController as car"  class="waiveCarContainer">
-  <ion-header-bar class="bar bar-header bar-light big-header">
-
-    <div class="iconContainer">
-      <i class="icon ion-android-locate item"></i>  
+  <ion-header-bar class="bar bar-header bar-light">
+    <div class="header-text">
+        <div class="vertical-aligned">
+          <p class="header-title"><reverse-geo-coding  get-location="car.getDestiny()"></reverse-geo-coding></p>
+          <route-information class="header-subtitle"></route-information>
+        </div>
     </div>
-    <div class="title item-icon-left has-big-header has-footer">
-      <route-information></route-information>
-      <p><reverse-geo-coding  get-location="car.getDestiny()"></reverse-geo-coding></p>
-      
-    </div>
-    <div class="buttons">
-      <button ui-sref="cars" class="button button-icon icon ion-close button-right"></button>
-    </div>
+    <button ui-sref="cars" class="button button-icon icon ion-close button-right"></button>
   </ion-header-bar>
-  <ion-content scroll="false" class="has-big-header has-footer-bar">
-    <div class="map-container has-info-card">
+  <ion-content scroll="false" class="has-footer-bar">
+    <div class="map-container has-info-footer">
       <map id="map" zoom="15" >
         <device-location></device-location>
         <destiny-location  get-initial-destiny="car.getDestiny()"></destiny-location>
         <route-to-car></route-to-car>
       </map>
     </div>
-    <div class="vehicle-summary-container info-card">
+    <div class="vehicle-summary-container info-footer">
       <car-charge-status></car-charge-status>
     </div>
   </ion-content>

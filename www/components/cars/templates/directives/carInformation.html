@@ -1,7 +1,14 @@
-<div class="carInformationContainer">
-	<div class="thumbNailContainer">
+<div class="carInformationContainer" >
+	<div class="thumbNailContainer info-card info-card-m">
 		<img ng-src="{{image}}" class="carThumbnail"/>
 	</div>
-	<p><b><span ng-bind="name"></span></b>  <span ng-bind="plate"></span></p>
+	<div class="info-card info-card-s">
+		<div class="vertical-aligned">
+			<p class="title"><span ng-bind="name"></span></p>
+			<p><span ng-bind="plate"></span></p>
+		</div>
+	</div>
 	<ng-transclude></ng-transclude>
 </div>
+
+
