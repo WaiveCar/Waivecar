@@ -109,7 +109,7 @@ function freeRideTimeDirective(formatTime) {
   }
   return {
       restrict: 'E',
-      templateUrl: 'components/ride/templates/directives/freeRideTime.html',
+      templateUrl: 'components/ride/templates/directives/rideTime.html',
       link: link,
       controller: 'TimerController',
       controllerAs: 'timer',
@@ -128,7 +128,7 @@ function paidRideTimeDirective($interval,paidRideService,formatTime) {
   }
   return {
       restrict: 'E',
-      templateUrl: 'components/ride/templates/directives/freeRideTime.html',
+      templateUrl: 'components/ride/templates/directives/rideTime.html',
       link: link,
       controller: 'TimerController',
       controllerAs: 'timer',
