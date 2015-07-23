@@ -26,7 +26,7 @@ ConnectionController.prototype.goToConnecting = function($state) {
 
 // Cars - List
 
-function CarsController($rootScope, $scope, $state, selectedCar, Cars, searchEvents, mapsEvents) {
+function CarsController($rootScope, $scope, $state, selectedCar, Cars, searchEvents, mapsEvents, Data) {
   var self = this;
 
   this.state = $state;
@@ -50,7 +50,14 @@ CarsController.prototype.showCarDetails = function(marker, data) {
 };
 
 // Cars - Show
-function CarController($state, $q, selectedCar) {
+function CarController($state, $q, selectedCar, Data) {
+
+  var self = this;
+  Data.activate('cars', $state.params.id, function(err, activatedCar) {
+    if (err) console.log('huh');
+    self.car = Data.active.car;
+  });
+
   this.selectedCar = selectedCar;
   var selectedData = selectedCar.getSelected();
   this.state = $state;
@@ -71,23 +78,23 @@ CarController.prototype.cancel = function() {
   this.state.go('cars');
 };
 
-function FleetService($rootScope, $q, locationService, $http, Config) {
+function FleetService($rootScope, $q, locationService, $http, Config, Data) {
   this.$q = $q;
   this.locationService = locationService;
   this.$http = $http;
   this.$rootScope = $rootScope;
   this.url = Config.uri.vehicles.getNearby;
+  this.Data = Data;
 }
 
 FleetService.prototype.getNearbyFleet = function(numNearby) {
   var self = this;
   return this.locationService.getLocation().then(function(deviceLocation) {
     var ret = [];
-    numNearby = numNearby || 10;
     var maxDiff = 0.005;
     var idCount = 1;
     var minDiff = 0.0005;
-    for (var i = 0; i < numNearby; i++) {
+    var getRandomLocationInRange = function() {
       var diffA = Math.random() * (maxDiff - minDiff) + minDiff;
       var diffB = Math.random() * (maxDiff - minDiff) + minDiff
       if (Math.random() < .5) {
@@ -96,25 +103,50 @@ FleetService.prototype.getNearbyFleet = function(numNearby) {
       if (Math.random() < .5) {
         diffB = diffB * -1;
       }
-      ret.push({
+      return {
         latitude: deviceLocation.latitude + diffA,
-        longitude: deviceLocation.longitude + diffB,
-        status: {
-          charge: {
-            current: 69,
-            timeUntilFull: 20,
-            reach: 10,
-            charging: true
-          }
-        },
-        name:'Chevrolet Spark',
-        plate:'AUD 568',
-        id: idCount++,
-        image:'/components/ads/templates/images/ad1.png'
-      });
+        longitude: deviceLocation.longitude + diffB
+      };
     }
 
-    return ret;
+    _.each(self.Data.models.cars, function(car) {
+      var loc = getRandomLocationInRange();
+      car.latitude  = loc.latitude;
+      car.longitude = loc.longitude;
+      car.image     = '/components/ads/templates/images/ad1.png';
+      car.plate     = 'AUD 568';
+      car.status    = {
+        charge: {
+          current: 69,
+          timeUntilFull: 20,
+          reach: 10,
+          charging: true
+        }
+      };
+    });
+    // TODO: we should not be doing this as we want all 'things' to just observe Data.models.cars.
+    return self.Data.models.cars;
+
+    // for (var i = 0; i < numNearby; i++) {
+    //   ret.push({
+    //     latitude: deviceLocation.latitude + diffA,
+    //     longitude: deviceLocation.longitude + diffB,
+    //     status: {
+    //       charge: {
+    //         current: 69,
+    //         timeUntilFull: 20,
+    //         reach: 10,
+    //         charging: true
+    //       }
+    //     },
+    //     name:'Chevrolet Spark',
+    //     plate:'AUD 568',
+    //     id: idCount++,
+    //     image:'/components/ads/templates/images/ad1.png'
+    //   });
+    // }
+
+    // return ret;
 
     //HOlding until new API is up
     // var defered=self.$q.defer();
@@ -254,11 +286,20 @@ angular.module('app')
   '$rootScope',
   SelectedCarService
 ])
-.service('fleetService', ['$rootScope', '$q', 'locationService', '$http', 'Config', FleetService])
+.service('fleetService', [
+  '$rootScope',
+  '$q',
+  'locationService',
+  '$http',
+  'Config',
+  'Data',
+  FleetService
+])
 .controller('CarController', [
   '$state',
   '$q',
   'selectedCar',
+  'Data',
   CarController
 ])
 .controller('ConnectionController',['$state','countdownEvents','$scope',ConnectionController])
@@ -270,6 +311,7 @@ angular.module('app')
   'Cars',
   'searchEvents',
   'mapsEvents',
+  'Data',
   CarsController
 ])
 .directive('carChargeStatus', [
