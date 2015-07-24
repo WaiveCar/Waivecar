@@ -2,7 +2,7 @@
 
 module.exports = function *() {
   if ('test' !== Reach.ENV) {
-    require('./schedules/car-reconcile-fleet');
-    require('./schedules/car-reconcile-diagnostics');
+    yield require('./schedules/booking-timer-cancel');
+    yield require('./schedules/car-reconcile-fleet');
   }
 };
