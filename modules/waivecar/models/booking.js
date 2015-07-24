@@ -44,11 +44,20 @@ module.exports = (function () {
   };
 
   /**
+   * Attributes to keep before returning model.toJSON()
+   * @property _relations
+   * @type     Array
+   */
+  Booking.prototype._relations = Booking._relations = [
+    'details'
+  ];
+
+  /**
    * Attributes to remove before returning model.toJSON()
    * @property _blacklist
    * @type     Array
    */
-  Booking.prototype._blacklist = [
+  Booking.prototype._blacklist = Booking._blacklist = [
     'deletedAt'
   ];
 

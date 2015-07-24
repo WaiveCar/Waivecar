@@ -22,6 +22,7 @@ Router.post('/bookings', {
   uses   : 'BookingsController@create'
 });
 
+Router.get('/bookings',                                      'BookingsController@index');
 Router.get('/bookings/:id',                 ['authenticate', 'BookingsController@show']);
 Router.get('/bookings/:id/pending-arrival', ['authenticate', 'BookingsController@pendingArrival']);
 Router.get('/bookings/:id/start',           ['authenticate', 'BookingsController@start']);

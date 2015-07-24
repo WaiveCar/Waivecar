@@ -1,6 +1,7 @@
 'use strict';
 
 let moment         = require('moment');
+let q              = Reach.service('mysql/query');
 let Booking        = Reach.model('Booking');
 let BookingDetails = Reach.model('BookingDetails');
 let Car            = Reach.model('Car');
@@ -94,8 +95,29 @@ Bookings.end = function *(booking, user) {
 };
 
 /**
+ * Returns a list of bookings with related details.
+ * @method getBookings
+ * @return {Array}
+ */
+Bookings.getBookings = function *(query) {
+  let list = yield Booking.find({
+    where : q.parseWhere(query, {
+      customerId : '?',
+      carId      : '?',
+      paymentId  : '?',
+      state      : '?'
+    }),
+    limit  : query.limit  || 20,
+    offset : query.offset || 0
+  });
+
+  yield list.hasMany(BookingDetails, 'bookingId', 'details');
+
+  return list;
+};
+
+/**
  * Returns a booking based on the provided booking and user.
- * @private
  * @method getBooking
  * @param  {String}  id
  * @param  {Object}  user

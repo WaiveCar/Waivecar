@@ -43,6 +43,16 @@ module.exports = (function () {
   };
 
   /**
+   * Fetches a list of bookings.
+   *  This need to be ADMIN only
+   * @method index
+   * @return {Array} returns an array of Bookings
+   */
+  BookingsController.prototype.index = function *(query) {
+    return yield Booking.getBookings(query);
+  };
+
+  /**
    * Fetch basic information about the booking.
    * @method show
    * @param  {Int} id The booking id
