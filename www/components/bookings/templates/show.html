@@ -25,12 +25,12 @@
       <button class="button button-balanced" ng-click="details.getDirectionsClick()">Get Directions</button><button class="button button-assertive" ng-click="booking.cancelClick()">Cancel</button>
     </div>
   </div>
-  <dialog 
+  <overlay-dialog 
     title="you're in reach" 
     subtitle="Now you can connect to your WaiveCar!" 
     button-text="ok,take me there"
     set-display-function="booking.dialogDisplay(fn)"
     on-button-click="booking.dialogClick()"
   >
-  </dialog>
+  </overlay-dialog>
 </ion-pane>

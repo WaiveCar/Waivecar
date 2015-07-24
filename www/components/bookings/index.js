@@ -1,12 +1,6 @@
 function BookingController($rootScope, $scope, $state, Bookings,selectedCarService,mapsEvents,$ionicModal) {
   var self = this;
 
-   $ionicModal.fromTemplateUrl('my-modal.html', {
-    scope: $scope,
-    animation: 'slide-in-up'
-  }).then(function(modal) {
-    self.modal = modal;
-  });
   this.selectedCarService=selectedCarService;
 
   self.isEdit = $state.params.id ? true : false;
