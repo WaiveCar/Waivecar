@@ -7,7 +7,7 @@ module.exports = {
    */
 
   queue : {
-    prefix : 'q',
+    prefix : 'queue',
     redis  : {
       host : 'localhost',
       port : 6379
