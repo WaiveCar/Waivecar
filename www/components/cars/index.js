@@ -50,9 +50,13 @@ CarsController.prototype.showCarDetails = function(marker, data) {
 };
 
 // Cars - Show
-function CarController($state, $q, selectedCar, Data) {
+function CarController($state, $q, $session, selectedCar, Users, Bookings, Data) {
 
-  var self = this;
+  var self      = this;
+  self.Users    = Users;
+  self.Bookings = Bookings;
+  self.session  = $session;
+
   Data.activate('cars', $state.params.id, function(err, activatedCar) {
     if (err) console.log('huh');
     self.car = Data.active.car;
@@ -69,9 +73,33 @@ CarController.prototype.getDestiny = function() {
 };
 
 CarController.prototype.book = function() {
+  var self = this;
   var selectedData = this.selectedCar.getSelected();
-  var carId=selectedData.id;
-  this.state.go('ads',{redirectUrl:'bookings-show',redirectParams:{'id':carId}});
+  var carId = selectedData.id;
+
+  // TEMP CODE TO CREATE A DRIVER, LOG THEM IN, and CREATE BOOKING.
+  // NOTE: ONCE YOU HAVE CREATED A BOOKING ON A CAR, IT CANNOT BE BOOKED AGAIN...
+  var user = new self.Users({
+    firstName : 'Matt',
+    lastName  : 'Driver',
+    email     : 'matt.ginty+' + Math.random() + 'gmail.com',
+    password  : 'lollipop0'
+  });
+
+  user.$save(function(u) {
+    self.Users.login({ email: user.email, password: 'lollipop0' }, function(auth) {
+      self.session.set('auth', auth).save();
+      var booking = new self.Bookings({
+        userId: user.id,
+        carId: self.car.id
+      });
+
+      booking.$save(function(b) {
+        self.state.go('ads',{ redirectUrl:'bookings-show', redirectParams: { 'id': booking.id } });
+      });
+    })
+  });
+  // END TEMP CODE.
 };
 
 CarController.prototype.cancel = function() {
@@ -298,7 +326,10 @@ angular.module('app')
 .controller('CarController', [
   '$state',
   '$q',
+  '$session',
   'selectedCar',
+  'Users',
+  'Bookings',
   'Data',
   CarController
 ])

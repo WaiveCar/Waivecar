@@ -6,6 +6,11 @@ function Resource($resource, Utils) {
 
   return $resource(null, null, {
 
+    login: {
+      method: 'POST',
+      url: Utils.getCustomRoute('auth/login')
+    },
+
     save: {
       method: 'POST',
       url: getRoute()

@@ -1,18 +1,18 @@
 function BookingController($rootScope, $scope, $state, Bookings,selectedCarService,mapsEvents) {
   var self = this;
+
   this.selectedCarService=selectedCarService;
 
   self.isEdit = $state.params.id ? true : false;
-  this.$state=$state;
+
+  this.$state = $state;
+
   $scope.$on(mapsEvents.withinUnlockRadius,function(){
     var selectedData=selectedCarService.getSelected();
-    $state.go('cars-connect',{id:selectedData.id});
+    $state.go('cars-connect',{ id:selectedData.id });
   });
-  if (self.isEdit) {
-    self.booking = Bookings.get({ id: $state.params.id });
-  } else {
 
-  }
+  self.booking = Bookings.get({ id: $state.params.id });
 
   self.createBooking = function() {
     // TODO: actual API calls.
@@ -45,6 +45,7 @@ function BookingController($rootScope, $scope, $state, Bookings,selectedCarServi
     $state.go('cars');
   }
 }
+
 BookingController.prototype.cancelClick = function() {
    this.$state.go('cars');
 };
