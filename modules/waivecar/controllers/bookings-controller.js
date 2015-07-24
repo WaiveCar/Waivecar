@@ -1,6 +1,7 @@
 'use strict';
 
 let Booking = require('../lib/booking');
+let queue   = Reach.service('queue');
 let error   = Reach.ErrorHandler;
 
 module.exports = (function () {
@@ -71,7 +72,8 @@ module.exports = (function () {
    * @param  {Int} id
    */
   BookingsController.prototype.pendingArrival = function *(id) {
-    let booking = yield Booking.getBooking(id, this.auth.user);
+    let user    = this.auth.user;
+    let booking = yield Booking.getBooking(id, user);
 
     if ('pending-arrival' === booking.state) {
       throw error.parse({
@@ -84,7 +86,20 @@ module.exports = (function () {
       state : 'pending-arrival'
     });
 
-    // Start 15 minute arrival timer
+    // ### Time Limit
+    // The booking will automaticaly cancel itself after 15 minutes
+
+    yield queue.scheduler.add('booking-timer-cancel', {
+      uid    : 'booking-' + booking.id,
+      timer  : {
+        value : 15,
+        type  : 'minutes'
+      },
+      data : {
+        user    : user,
+        booking : id
+      }
+    });
 
     return booking;
   };
@@ -107,7 +122,10 @@ module.exports = (function () {
 
     yield Booking.start(booking, user);
 
-    // Remove 15 minute arrival timer
+    // ### Remove Time Limit
+    // Remove the auto cancel job on the booking
+
+    yield queue.scheduler.cancel('booking-timer-cancel', 'booking-' + booking.id);
 
     return booking;
   };
@@ -154,6 +172,11 @@ module.exports = (function () {
     yield booking.update({
       state : 'cancelled'
     });
+
+    // ### Remove Time Limit
+    // Remove the auto cancel job on the booking
+
+    yield queue.scheduler.cancel('booking-timer-cancel', 'booking-' + booking.id);
 
     return booking;
   };
