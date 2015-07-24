@@ -1,27 +1,22 @@
 'use strict';
 
 let co             = require('co');
-let moment         = require('moment');
 let queue          = Reach.service('queue');
-let schedule       = Reach.service('queue/scheduler');
+let log            = Reach.Log;
 let VehicleService = Reach.service('gm-api/vehicle-service');
 let Car            = Reach.model('Car');
-let log            = Reach.Log;
 let service        = new VehicleService();
 
-// ### The Job
-
-let jobSchedule = queue
-  .create('car-reconcile-fleet', {
-    message : 'Hello World'
-  })
-;
-
-// ### Schedule Job
-
-jobSchedule.save();
-
-// ### Job Process
+module.exports = function *() {
+  yield queue.scheduler.add('car-reconcile-fleet', {
+    init   : true,
+    repeat : true,
+    timer  : {
+      value : 1,
+      type  : 'hour'
+    }
+  });
+};
 
 queue.process('car-reconcile-fleet', function (job, done) {
   log.info('Reconciling Car Fleet');
@@ -33,8 +28,6 @@ queue.process('car-reconcile-fleet', function (job, done) {
       let car = new Car(vehicles[i]);
       yield car.upsert();
     }
-
-    schedule(jobSchedule, moment().add(1, 'hour'));
     done();
   });
 });
