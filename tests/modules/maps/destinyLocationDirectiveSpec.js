@@ -1,4 +1,4 @@
-describe('Destiny location directive',function(){
+fdescribe('Destiny location directive',function(){
     var mockEvents={
         'destinyOnRouteChanged':'waiveCarDestinyOnRouteChanged'
     };

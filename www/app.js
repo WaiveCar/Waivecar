@@ -99,6 +99,10 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpP
       url:'/ride/dashboard',
       templateUrl: '/components/ride/templates/dashboard.html'
     })
+    .state('summary',{
+      url:'/ride/summary',
+      templateUrl: '/components/ride/templates/summary.html'
+    })
     .state('paid-ride',{
       url:'/paid-ride',
       templateUrl: '/components/ride/templates/paidDashboard.html'
@@ -133,9 +137,14 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpP
     .state('unplugged-error', {
       url: '/unplugged-error',
       templateUrl: '/components/errors/templates/index.html'
-    });
+    })
 
-  $urlRouterProvider.otherwise('/cars');
+
+    .state('nav-menu', {
+      url: '/nav-menu',
+      templateUrl: '/components/menu/templates/index.html'
+    });
+  $urlRouterProvider.otherwise('/nav-menu');
 }
 
 function dialogDirective(){

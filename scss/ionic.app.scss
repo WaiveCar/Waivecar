@@ -23,9 +23,42 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
    @include vertical-align;
 }
 .waiveCarContainer{
+  color: #FFF;
   .modal,.modal-wrapper{
     width: 100%;
     height: 100%;
+  }
+  &.nav-component{
+    background-color: #1b1d1b;
+    .bar{
+        background-color: #1b1d1b;
+        border: none;
+        color: #FFF;
+        h1{
+          color: #FFF;
+        }
+    }
+    .button-container{
+      @include vertical-align;
+    }
+    .row{
+        margin-top: 2%;
+        margin-bottom: 2%;
+          .col{
+           text-align: center;
+          }
+          a,a:hover,a:visited{
+            color:#FFF;
+            text-decoration: none;
+            text-transform: capitalize;
+            display: block;
+          }
+          img{
+            display: block;
+            margin: 0 auto;
+          }
+      
+    }
   }
   .bar{
     height: $barHeight * 1%;
@@ -119,6 +152,13 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     width:100%;
     &.has-info-footer {
       height: (100-$infoFooterHeight)*1%
+    }
+  }
+  .button-right{
+    background-color: inherit;
+    border: none;
+    img{
+      height: 100%;
     }
   }
 }
