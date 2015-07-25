@@ -4,9 +4,9 @@ $positive:                        #387ef5 !default;
 $calm:                            #11c1f3 !default;
 $balanced:                        #25C155 !default;
 $energized:                       #ffc900 !default;
-$assertive:                       #D0021B !default;
+$assertive:                       #fa4838 !default;
 $royal:                           #886aea !default;
-$dark:                            #444 !default;
+$dark:                            #021207 !default;
 $grayBg:                          rgb(30,30,30);
 
 
@@ -63,6 +63,11 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
   .bar{
     height: $barHeight * 1%;
     padding: 0;
+    background-color: $dark;
+    color:#FFF;
+    h1{
+      color:#FFF;
+    }
     display: block;
      &.bar-footer{
        height: $barFooterHeight*1%;
@@ -116,6 +121,10 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
   }
   .info-footer{
     height:$infoFooterHeight* 1%;
+    color: $dark;
+    .list{
+      height: 100%;
+    }
     .footer-information{
       font-size: 1vw;
       height: 10%;
@@ -160,6 +169,23 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     img{
       height: 100%;
     }
+  }
+  .list{
+    border: none;
+    .item{
+      border: none;
+    }
+    &.size-3{
+      .item{
+        height: 33%;
+      }
+    }
+  }
+  .button-dark{
+    background-color: $dark;
+  }
+  .button-assertive{
+    background-color: $assertive;
   }
 }
 // Global styles

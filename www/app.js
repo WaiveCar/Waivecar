@@ -137,14 +137,8 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpP
     .state('unplugged-error', {
       url: '/unplugged-error',
       templateUrl: '/components/errors/templates/index.html'
-    })
-
-
-    .state('nav-menu', {
-      url: '/nav-menu',
-      templateUrl: '/components/menu/templates/index.html'
     });
-  $urlRouterProvider.otherwise('/nav-menu');
+  $urlRouterProvider.otherwise('/cars');
 }
 
 function dialogDirective(){
