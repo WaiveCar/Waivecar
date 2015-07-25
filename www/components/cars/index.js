@@ -153,10 +153,10 @@ function nearbyFleetDirective(MapsLoader, $q, fleetService, realReachService, $w
         ctrl.mapInstance.then(function(mapInstance) {
 
           var waiveCarIcon = L.icon({
-            iconUrl: 'img/waivecar-mark.svg',
-            iconRetinaUrl: 'img/waivecar-mark.svg',
-            iconSize: [25, 25],
-            iconAnchor: [12.5, 25],
+            iconUrl: 'img/active-waivecar.svg',
+            iconRetinaUrl: 'img/active-waivecar.svg',
+            iconSize: [40, 50],
+            iconAnchor: [20, 50],
             popupAnchor: [0 , 0]
           });
 

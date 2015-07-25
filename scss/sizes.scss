@@ -1,10 +1,14 @@
-$barHeight: 10;
-$mainTitleHeightPercent:  80;
-$barFooterHeight:10;
-$bigHeaderSize: 15;
-$infoFooterHeight: 30;
+//Vws
 $headerTitleSize:2.2;
 $headerSubtitleSize:$headerTitleSize*0.8;
+ //Percentages
+$menuRowSpacing:5;
+$infoFooterHeight: 30;
+$bigHeaderSize: 15;
+$mainTitleHeightPercent:  80;
+$barHeight: 10;
+$barFooterHeight:10;
+
 
 @mixin vertical-align {
   position: relative;

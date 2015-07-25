@@ -138,8 +138,15 @@
           MapsLoader.getMap.then(function(L) {
               locationService.getLocation().then(function(deviceLocation) {
 
-                ctrl.mapInstance.then(function(mapInstance) {
-                  var icon = L.MakiMarkers.icon({icon: "pitch", size: "m"});
+              ctrl.mapInstance.then(function(mapInstance) {
+                var icon = L.icon({
+                  iconUrl: 'img/user-location.svg',
+                  iconRetinaUrl: 'img/user-location.svg',
+                  iconSize: [50, 50],
+                  iconAnchor: [25, 50],
+                  popupAnchor: [0 , 0]
+                });
+
                   var marker = L.marker([deviceLocation.latitude, deviceLocation.longitude], {draggable: true, icon: icon}).addTo(mapInstance);
                   ctrl.solveLocation(marker);
                 });

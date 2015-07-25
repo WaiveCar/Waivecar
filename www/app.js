@@ -134,6 +134,7 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpP
       url: '/location-error',
       templateUrl: '/components/errors/templates/index.html'
     })
+
     .state('unplugged-error', {
       url: '/unplugged-error',
       templateUrl: '/components/errors/templates/index.html'

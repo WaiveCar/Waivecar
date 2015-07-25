@@ -37,13 +37,17 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
         h1{
           color: #FFF;
         }
+       
+
     }
     .button-container{
       @include vertical-align;
     }
+    .row-center{
+      margin-top: $menuRowSpacing*1%;
+      margin-bottom: $menuRowSpacing*1%;
+    }
     .row{
-        margin-top: 2%;
-        margin-bottom: 2%;
           .col{
            text-align: center;
           }
@@ -72,6 +76,10 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
      &.bar-footer{
        height: $barFooterHeight*1%;
     }
+     .button.active,.button.activated{
+        background-color: inherit;
+        border: none;
+      }
   }
   .header-title{
     text-transform: uppercase;
