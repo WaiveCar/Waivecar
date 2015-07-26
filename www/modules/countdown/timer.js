@@ -133,7 +133,10 @@
     this.CountdownTimer=CountdownTimer;
   }
   TimerService.prototype.createTimer = function(timerName, durations, scope) {
-    if(typeof this._timerInstances[timerName] !='undefined' && !!this._timerInstances[timerName]){
+    /**
+    *@todo better timer lifecycle
+    */
+    if(typeof this._timerInstances[timerName] !='undefined' && !!this._timerInstances[timerName] && this._timerInstances[timerName]._state=='started'){
       return this._timerInstances[timerName];
     }
     this._timerInstances[timerName] = new this.CountdownTimer(timerName, durations, scope,this.$rootScope);

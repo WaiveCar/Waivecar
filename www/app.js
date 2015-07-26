@@ -138,7 +138,7 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpP
     .state('unplugged-error', {
       url: '/unplugged-error',
       templateUrl: '/components/errors/templates/index.html'
-    });
+    })
   $urlRouterProvider.otherwise('/cars');
 }
 
