@@ -30,12 +30,13 @@
     "request": "2.58.0"
   },
   "reach": {
-    "reach-mysql": "0.0.20",
-    "reach-auth": "0.0.12",
-    "reach-logger": "0.0.2",
-    "reach-user": "0.0.4",
+    "reach-mysql": "0.1.0",
     "reach-queue": "0.0.4",
-    "reach-sms": "0.0.4",
-    "reach-email": "0.0.4"
+    "reach-auth": "0.0.12",
+    "reach-file": "0.0.7",
+    "reach-logger": "0.0.2",
+    "reach-user": "0.0.5",
+    "reach-email": "0.0.4",
+    "reach-sms": "0.0.4"
   }
 }
