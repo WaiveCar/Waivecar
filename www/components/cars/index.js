@@ -17,7 +17,7 @@ function ConnectionController($state,countdownEvents,$scope){
   });
 }
 ConnectionController.prototype.getConnectionDurations = function() {
-  return {'timeToConnect':.1};
+  return {'timeToConnect':1000};
 };
 ConnectionController.prototype.goToConnecting = function($state) {
   this.$state.go('cars-connecting',{'id':this.$state.params.id});
@@ -206,15 +206,15 @@ function carChargeStatusDirective(searchEvents, selectedCar) {
       return;
     }
     var details = selectedData.status;
-    scope.chargeLevel = details.charge.current + '% full';
+    scope.chargeLevel = details.charge.current + '%';
     if (details.charge.charging) {
       scope.chargeState = 'Parked at charging station';
-      scope.chargeLevel += ' - full in ' + details.charge.timeUntilFull + ' minutes';
+      scope.chargeFull =  details.charge.timeUntilFull + ' minutes';
     } else {
       scope.chargeState = 'Not charging';
     }
 
-    scope.chargeReach = details.charge.reach + ' miles available on current charge';
+    scope.chargeReach = details.charge.reach+' miles ';
   }
 
   return {

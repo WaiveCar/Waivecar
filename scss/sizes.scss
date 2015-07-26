@@ -3,12 +3,14 @@ $headerTitleSize:2.2;
 $headerSubtitleSize:$headerTitleSize*0.8;
  //Percentages
 $menuRowSpacing:5;
-$infoFooterHeight: 30;
+$infoFooterHeight: 21.4;
+$bigInfoFooterHeight:24.5;
 $bigHeaderSize: 15;
 $mainTitleHeightPercent:  80;
-$barHeight: 10;
-$barFooterHeight:10;
-
+$barHeight: 9.37;
+$barFooterHeight:9;
+$imgFooterIconHeight:31.68;
+$footerInformationSize:24.48;
 
 @mixin vertical-align {
   position: relative;

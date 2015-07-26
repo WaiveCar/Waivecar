@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="48px" height="27px" viewBox="0 0 48 27" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.3 (11970) - http://www.bohemiancoding.com/sketch -->
+    <title>battery icon</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="Book-waivecar@2x" sketch:type="MSArtboardGroup" transform="translate(-50.000000, -1012.000000)" fill="#A9B8AE">
+            <g id="CAR-INFO" sketch:type="MSLayerGroup" transform="translate(0.000000, 965.000000)">
+                <path d="M50,73.3529412 L91.0097087,73.3529412 L91.0097087,47 L50,47 L50,73.3529412 L50,73.3529412 Z M68.601165,59.8117459 L68.601165,53.2185035 L81.9693981,64.0875106 L72.6871068,61.08064 L72.6871068,67.1343059 L59.1693981,56.7248941 L68.601165,59.8117459 L68.601165,59.8117459 Z M98,56.3552941 L98,63.9976471 C98,65.1620518 97.1654757,66.1058824 96.1359223,66.1058824 L93.3398058,66.1058824 L93.3398058,54.2470588 L96.1359223,54.2470588 C97.1654757,54.2470588 98,55.1908894 98,56.3552941 L98,56.3552941 Z" id="battery-icon" sketch:type="MSShapeGroup"></path>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -3,20 +3,29 @@
     <div class="header-text">
       <h1 class="header-title">Get to your WaiveCar</h1>
     </div>
-    <button class="button button-icon icon ion-navicon  button-right" ng-click="showNav()"></button>
+    <button class="button button-right" ng-click="showNav()">
+      <img src="img/menu.svg" >
+    </button>
   </ion-header-bar>
   <ion-content scroll="false"  class="has-header has-footer-bar">
-  <div class="map-container has-info-footer">
+  <div class="map-container has-info-footer has-big-info-footer">
     <map id="map" zoom="15" >
       <device-location mock-walking></device-location>
       <destiny-location  get-initial-destiny="booking.getSelectedCarDestiny()"></destiny-location>
       <route-to-car></route-to-car>
     </map>
   </div>
-  <div class="vehicle-summary-container  info-footer">
-    <car-information class="has-footer-information">
-    </car-information>
-    <p class="footer-information"><time-left timer-name="getToYourWaiveCar" get-duration="booking.getTimerDuration()"></time-left> to get to your WaiveCar</p>
+  <div class="vehicle-summary-container  info-footer big-info-footer">
+    <div class="has-footer-information">
+      <car-information >
+      </car-information>
+      
+    </div>
+    <div class="footer-information">
+      <p>
+        <time-left timer-name="getToYourWaiveCar" get-duration="booking.getTimerDuration()"></time-left> to get to your WaiveCar
+      </p>
+    </div>
     
   </div>
   </ion-content>

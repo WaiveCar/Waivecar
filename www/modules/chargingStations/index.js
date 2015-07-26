@@ -49,10 +49,10 @@ function nearbyChargingStationsDirective(MapsLoader, $q, chargingStationsService
       MapsLoader.getMap.then(function(L) {
         ctrl.mapInstance.then(function(mapInstance) {
           var icon = L.icon({
-            iconUrl: 'img/chargingStation.svg',
-            iconRetinaUrl: 'img/chargingStation.svg',
-            iconSize: [16, 25],
-            iconAnchor: [8, 25],
+            iconUrl: 'img/charging-station.svg',
+            iconRetinaUrl: 'img/charging-station.svg',
+            iconSize: [40, 50],
+            iconAnchor: [20, 50],
             popupAnchor: [0 , 0]
           });
           var latLng;

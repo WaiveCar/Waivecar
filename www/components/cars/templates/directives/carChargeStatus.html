@@ -1,14 +1,14 @@
 <div class="list pin-bottom size-3">
   <div class="item item-icon-left">
-    <i class="icon ion-battery-full"></i>
-    <span ng-bind="chargeLevel"></span>
+    <img src="img/battery.svg" alt="" class="icon">
+    <span ng-bind="chargeLevel" class="highlight" >  </span><span class="highlight">&nbsp;charged -</span><span>Full in&nbsp;</span><span ng-bind="chargeFull"></span> 
   </div>
   <div class="item item-icon-left">
-    <i class="icon ion-paper-airplane"></i>
-    <span ng-bind="chargeReach"></span>
+    <img src="img/distance.svg" alt="" class="icon">
+    <span ng-bind="chargeReach" class="highlight"></span> <span>available on current charge</span>
   </div>
   <div class="item item-icon-left">
-    <i class="icon ion-power"></i>
+    <img src="img/charging.svg" alt="" class="icon">
     <span ng-bind="chargeState"></span>
   </div>
 </div>

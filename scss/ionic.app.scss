@@ -23,6 +23,27 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
    @include vertical-align;
 }
 .waiveCarContainer{
+ .button,.button.active,.button.activated{
+      background-color: inherit;
+      border: none;
+      &.button-balanced{
+        background-color: $balanced;
+      }
+      &.button-assertive{
+        background-color: $assertive;
+      }
+  }
+  .button-padded{
+    span,a{
+      @include vertical-align;
+      display: inline-block;
+    }
+  }
+    a,a:hover,a:visited{
+    color:inherit;
+    text-decoration: none;
+    text-transform: capitalize;
+  }
   color: #FFF;
   .modal,.modal-wrapper{
     width: 100%;
@@ -52,8 +73,6 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
            text-align: center;
           }
           a,a:hover,a:visited{
-            color:#FFF;
-            text-decoration: none;
             text-transform: capitalize;
             display: block;
           }
@@ -76,10 +95,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
      &.bar-footer{
        height: $barFooterHeight*1%;
     }
-     .button.active,.button.activated{
-        background-color: inherit;
-        border: none;
-      }
+     
   }
   .header-title{
     text-transform: uppercase;
@@ -129,17 +145,41 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
   }
   .info-footer{
     height:$infoFooterHeight* 1%;
-    color: $dark;
-    .list{
-      height: 100%;
+    &.big-info-footer{
+       height:$bigInfoFooterHeight* 1%;
     }
+    color: #545a56;
+    .list{
+      .item{
+        padding: 0;
+      }
+      height: 100%;
+      img.icon{
+        height: $imgFooterIconHeight * 1%;
+        @include vertical-align;
+        margin-left: 6.66%;
+        margin-right: 6.66%;
+        display: inline-block;
+
+      }
+      span{
+          @include vertical-align;
+          display: inline-block;
+      }
+    }
+
     .footer-information{
-      font-size: 1vw;
-      height: 10%;
+      font-size: 1.2vw;
+      height: $footerInformationSize*1%;
       margin: 0;
+      p{
+        @include vertical-align;
+      }
     }
     .has-footer-information{
-      height: 90%;
+      height: (100-$footerInformationSize)*1%;
+      width: 100%;
+      display: block;
     }
     .info-card{
       display: inline-block;
@@ -169,6 +209,10 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     width:100%;
     &.has-info-footer {
       height: (100-$infoFooterHeight)*1%
+
+    }
+    &.has-big-info-footer{
+        height: (100-$bigInfoFooterHeight)*1%
     }
   }
   .button-right{
@@ -205,17 +249,12 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
   }
 }
 .button-padded,.bar-footer .button-padded{
-  width:90%;
+  width:73.33%;
   height: 2em;
   margin-left: auto;
   margin-right: auto;
   margin-top: 1em;
   text-transform: uppercase;
-  a{
-    text-decoration: none;
-    color: #FFF;
-
-  }
 }
 .bar-footer {
   padding: 0;
@@ -332,12 +371,11 @@ ion-content.has-big-header{
        height:50%;
        margin:1%;
     }
-    i.icon.top-icon{
-        font-size:2em;
-        margin: 0.2em;
-        color:#FFF;
+    .top-icon{
+        position: absolute;
+        right: 0;
+        padding: 1%;
     }
-
   }
   .middle{
     height: 50%;
@@ -356,18 +394,7 @@ ion-content.has-big-header{
     width: 100%;
     font-size: 1.5em;
 
-    .button-padded{
-      width:90%;
-      height: auto;
-      font-size: 1em;
-      margin-left: auto;
-      margin-right: auto;
-      margin-top: 0;
-      vertical-align: middle;
-      padding-top: 0.6em;
-      padding-bottom: 0.6em;
-
-    }
+ 
     .line-2{
       height: 50%;
       margin-top: 0.2em;
@@ -378,14 +405,6 @@ ion-content.has-big-header{
       margin-top: 0.2em;
       position: relative;
     }
-  }
-  .bottom-big{
-      height: 40%;
-      font-size:1.4em;
-       .button-padded{
-          padding-top: 0.4em;
-          padding-bottom: 0.4em;
-       }
   }
 
   .subtle-highlight{
@@ -413,13 +432,12 @@ ion-content.has-big-header{
     width: 100%;
     height: 100%;
   }
-  
-  .highlight{
-    font-weight: bold;
-  }
   .main-image{
     height: 20%;
   }
+}
+.highlight{
+  font-weight: bold;
 }
 @import "www/components/cars/style.scss";
 @import "www/components/bookings/style.scss";
@@ -433,12 +451,25 @@ ion-content.has-big-header{
   width: 100%;
   height: 100%;
   display: none;
-  background-color: rgba(0,0,0,0.8);
+  background-color: rgba(0,0,0,0.96);
   position: absolute;
   top: 0;
   left: 0;
   .waiveCar-icon{
-    margin: 0 auto;
-    width: 5%;
+    margin-left: auto;
+    margin-right: auto;
+    height: 19%;
+    margin-bottom:4%;
+
+  }
+  .container{
+    height: 26.23%;
+  }
+  .button-padded{
+    margin-top:4%;
+    height: 33.14%;
+    span,a{
+      font-size: 3vh;
+    }
   }
 }

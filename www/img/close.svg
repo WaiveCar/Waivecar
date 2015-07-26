@@ -5,8 +5,10 @@
     <desc>Created with Sketch.</desc>
     <defs></defs>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <g id="nav@2x-" sketch:type="MSArtboardGroup" transform="translate(-645.000000, -75.000000)" fill="#FFFFFF">
-            <path d="M675,78 L672,75 L660,87 L648,75 L645,78 L657,90 L645,102 L648,105 L660,93 L672,105 L675,102 L663,90 L675,78" id="Imported-Layers" sketch:type="MSShapeGroup"></path>
+        <g id="Book-waivecar@2x" sketch:type="MSArtboardGroup" transform="translate(-690.000000, -94.000000)" fill="#FFFFFF">
+            <g id="HEADER" sketch:type="MSLayerGroup" transform="translate(0.000000, 5.000000)">
+                <path d="M720,92 L717,89 L705,101 L693,89 L690,92 L702,104 L690,116 L693,119 L705,107 L717,119 L720,116 L708,104 L720,92" id="Imported-Layers" sketch:type="MSShapeGroup"></path>
+            </g>
         </g>
     </g>
 </svg>
