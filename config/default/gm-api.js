@@ -11,7 +11,7 @@ module.exports = {
 
   gm : {
     host : null,
-    api : {
+    api  : {
       key    : null,
       secret : null,
     },
