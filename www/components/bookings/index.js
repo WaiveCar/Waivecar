@@ -6,6 +6,7 @@ function BookingController($rootScope, $scope, $state, Bookings,selectedCarServi
   self.isEdit = $state.params.id ? true : false;
   this.$state=$state;
   $scope.$on(mapsEvents.withinUnlockRadius,function(){
+    // alert("RECEIVED WITHIN UNLOCK RADIUS");
     self.showDialog();
 
   });
@@ -69,6 +70,7 @@ function BookingsController($rootScope, $scope, $state, Bookings) {
 }
 
 BookingController.prototype.dialogDisplay = function(fn) {
+  alert("DIALOG DISPLAY SET UP");
   this.showDialog=fn;
 };
 

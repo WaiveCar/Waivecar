@@ -138,7 +138,7 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpP
     .state('unplugged-error', {
       url: '/unplugged-error',
       templateUrl: '/components/errors/templates/index.html'
-    })
+    });
   $urlRouterProvider.otherwise('/cars');
 }
 
@@ -154,15 +154,21 @@ function dialogDirective(){
       onButtonClick:'&'
     },
     link: function(scope, element, attrs){
+      alert("ON LINK");
       scope.setDisplayFunction({'fn':function(){
+            // alert("On set dísplay");
+            // alert(element[0].firstChild);
+            //             alert(element[0].firstChild.style);
+
         element[0].firstChild.style.display="block";
+        // alert("Done");
 
       }});
       scope.setHideFunction({'fn':function(){
         element[0].firstChild.style.display="none";
       }});
     },
-    templateUrl:'/templates/directives/overlayDialog.html'
+    templateUrl:'/components/bookings/templates/connecting.html'
   }
 }
 angular.module('app', [
@@ -178,6 +184,7 @@ angular.module('app', [
   'ChargingStations',
   'PointsOfInterest'
 ])
-.directive('overlayDialog',dialogDirective)
+// .directive('overlayDialog',dialogDirective)
+.directive('connecting',dialogDirective)
 .run(['$ionicPlatform', Run])
 .config([ '$stateProvider', '$urlRouterProvider', '$ionicConfigProvider', '$httpProvider', Config ]);

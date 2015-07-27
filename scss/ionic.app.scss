@@ -110,7 +110,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
   .bar-header{
     .header-text{
       float:left;
-      width: 90%;
+      width: 100%;
       text-align: center;
       height: 95%;
       @include vertical-align;
@@ -118,6 +118,10 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     }
     .button{
       @include vertical-align;
+    }
+    .button-right{
+      position: absolute;
+      right: 0;
     }
     
 
@@ -218,8 +222,9 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
   .button-right{
     background-color: inherit;
     border: none;
+    z-index: 1000;
     img{
-      height: 100%;
+      height: 90%;
     }
   }
   .list{
@@ -445,7 +450,7 @@ ion-content.has-big-header{
 @import "www/components/ads/style.scss";
 @import "www/components/ride/style.scss";
 
-.dialog{
+.overlay-dialog{
   z-index: 2000;
   text-align: center;
   width: 100%;
