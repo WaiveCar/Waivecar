@@ -154,7 +154,7 @@ function dialogDirective(){
       onButtonClick:'&'
     },
     link: function(scope, element, attrs){
-      alert("ON LINK");
+      // alert("ON LINK");
       scope.setDisplayFunction({'fn':function(){
             // alert("On set dísplay");
             // alert(element[0].firstChild);
@@ -185,6 +185,6 @@ angular.module('app', [
   'PointsOfInterest'
 ])
 // .directive('overlayDialog',dialogDirective)
-.directive('something',dialogDirective)
+.directive('connecting',dialogDirective)
 .run(['$ionicPlatform', Run])
 .config([ '$stateProvider', '$urlRouterProvider', '$ionicConfigProvider', '$httpProvider', Config ]);

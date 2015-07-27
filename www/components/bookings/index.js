@@ -70,7 +70,7 @@ function BookingsController($rootScope, $scope, $state, Bookings) {
 }
 
 BookingController.prototype.dialogDisplay = function(fn) {
-  alert("DIALOG DISPLAY SET UP");
+  // alert("DIALOG DISPLAY SET UP");
   this.showDialog=fn;
 };
 
