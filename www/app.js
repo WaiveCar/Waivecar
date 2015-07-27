@@ -185,6 +185,6 @@ angular.module('app', [
   'PointsOfInterest'
 ])
 // .directive('overlayDialog',dialogDirective)
-.directive('connecting',dialogDirective)
+.directive('something',dialogDirective)
 .run(['$ionicPlatform', Run])
 .config([ '$stateProvider', '$urlRouterProvider', '$ionicConfigProvider', '$httpProvider', Config ]);
