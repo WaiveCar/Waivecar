@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
 
   /*
@@ -13,7 +15,7 @@ module.exports = {
     host : null,
     api  : {
       key    : null,
-      secret : null,
+      secret : null
     },
     initFleetOnStart : false
   }

@@ -11,12 +11,14 @@
     "start": "node --harmony app.js"
   },
   "dependencies": {
+    "babel-eslint": "^3.1.29",
     "change-case": "2.3.0",
     "co": "4.5.4",
     "co-bcrypt": "1.0.0",
-    "co-glob": "0.0.2",
     "co-fs": "1.2.0",
+    "co-glob": "0.0.2",
     "co-request": "0.2.1",
+    "eslint": "^0.24.1",
     "koa-cors": "0.0.16",
     "lodash": "3.10.0",
     "moment": "2.10.2",

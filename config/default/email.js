@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
 
   /*
@@ -9,7 +11,7 @@ module.exports = {
    |
    */
 
-  email: {
+  email : {
     templateFolder : 'templates',
     sender         : 'matt.ginty@gmail.com',
     transportName  : 'mandrill',

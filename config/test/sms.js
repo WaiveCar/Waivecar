@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
 
   /*
@@ -9,7 +11,7 @@ module.exports = {
    |
    */
 
-  sms: {
+  sms : {
     transportName : 'twilio',
     transport     : {
       phoneNumber : '+15005550006',
