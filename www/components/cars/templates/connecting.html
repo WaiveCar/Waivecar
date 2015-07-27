@@ -1,43 +1,52 @@
-<ion-pane  class="info-window" ng-controller="ConnectionController as connection">
+<ion-pane  class="info-window waiveCarContainer" ng-controller="ConnectionController as connection">
   <ion-content scroll="false">
   	<ion-slide-box>
   		<ion-slide >
 		  	<div class="container box">
-				<img src="img/waivecar-mark2.svg" class="waiveCar-icon"></img>
-				<p>Connecting to WaiveCar</p>
-				<p><time-left  foo="bar" timer-name="{{connection.timerName}}" get-duration="connection.getConnectionDurations()"></time-left></p>
-				<img src="img/smartphone-danger.svg" alt="" class="main-image">
-				<p class="highlight">Please look around</p>
-				<p>If you see any damage on the car please take a picture and report the problem, thank you!</p>
+		  		<div class="vertical-aligned">
+					<img src="img/waivecar-mark2.svg" class="waiveCar-icon"></img>
+					<p>Connecting to WaiveCar</p>
+					<p><time-left  foo="bar" timer-name="{{connection.timerName}}" get-duration="connection.getConnectionDurations()"></time-left></p>
+					<img src="img/smartphone-danger.svg" alt="" class="main-image">
+					<p class="highlight">Please look around</p>
+					<p>If you see any damage on the car please take a picture and report the problem, thank you!</p>
+					<p class="highlight">Don’t worry about time, we will give you 1 more hour free on your next ride. </p>
+				</div>
 				<div class="bar bar-footer">
-					<a ui-sref="cars" class="button button-balanced button-padded">Back</a>
+				  <button  ui-sref="cars" ng-click="connection.goToConnecting()" class="button button-balanced">Back</button>
 				</div> 
 		  	</div>
   		</ion-slide>
   		<ion-slide>
 		  	<div class="container box">
-				<img src="img/waivecar-mark2.svg" class="waiveCar-icon"></img>
-				<p>Connecting to WaiveCar</p>
-				<p><time-left  foo="baz" timer-name="{{connection.timerName}}" get-duration="connection.getConnectionDurations()"></time-left></p>
-				<img src="img/smartphone-danger.svg" alt="" class="main-image">
-				<p class="highlight">Please look around</p>
-				<p>If you see any damage on the car please take a picture and report the problem, thank you!</p>
+		  		<div class="vertical-aligned">
+					<img src="img/waivecar-mark2.svg" class="waiveCar-icon"></img>
+					<p>Connecting to WaiveCar</p>
+					<p><time-left  foo="baz" timer-name="{{connection.timerName}}" get-duration="connection.getConnectionDurations()"></time-left></p>
+					<img src="img/smartphone-danger.svg" alt="" class="main-image">
+					<p class="highlight">Please look around</p>
+					<p>If you see any damage on the car please take a picture and report the problem, thank you!</p>
+					<p class="highlight">Don’t worry about time, we will give you 1 more hour free on your next ride. </p>
+				</div>
 				<div class="bar bar-footer">
-					<a ui-sref="cars" class="button button-balanced button-padded">Back</a>
+					  <button  ui-sref="cars" ng-click="connection.goToConnecting()" class="button button-balanced">Back</button>
 				</div> 
 		  	</div>
   		</ion-slide>
   		<ion-slide>
 		  	<div class="container box">
-				<img src="img/waivecar-mark2.svg" class="waiveCar-icon"></img>
-				<p>Connecting to WaiveCar</p>
-				<p><time-left  foo="zap" timer-name="{{connection.timerName}}" get-duration="connection.getConnectionDurations()"></time-left></p>
-				<img src="img/smartphone-danger.svg" alt="" class="main-image">
-				<p class="highlight">Please look around</p>
-				<p>If you see any damage on the car please take a picture and report the problem, thank you!</p>
+		  		<div class="vertical-aligned">
+					<img src="img/waivecar-mark2.svg" class="waiveCar-icon"></img>
+					<p>Connecting to WaiveCar</p>
+					<p><time-left  foo="zap" timer-name="{{connection.timerName}}" get-duration="connection.getConnectionDurations()"></time-left></p>
+					<img src="img/smartphone-danger.svg" alt="" class="main-image">
+					<p class="highlight">Please look around</p>
+					<p>If you see any damage on the car please take a picture and report the problem, thank you!</p>
+					<p class="highlight">Don’t worry about time, we will give you 1 more hour free on your next ride. </p>
+		  		</div>
 				<div class="bar bar-footer">
 					<div class="button button-balanced">
-						<a ui-sref="cars" >Back</a>
+						  <button  ui-sref="cars" ng-click="connection.goToConnecting()" class="button button-balanced">Back</button>
 					</div>
 				</div> 
 		  	</div>

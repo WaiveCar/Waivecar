@@ -42,9 +42,9 @@ function distanceTravelledDirective($interval) {
     scope.mileage=0;
     var stop=$interval(function(){
       scope.mileage+=10;
-      scope.value=scope.mileage+' miles';
+      scope.value=scope.mileage+' mi';
     },1500);
-    scope.value = scope.mileage+' miles';
+    scope.value = scope.mileage+' mi';
   }
   return {
     link: link,

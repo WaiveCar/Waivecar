@@ -3,7 +3,9 @@
       <div class="header-text">
          <h1 class="header-title">Get to your WaiveCar</h1>
       </div>
-      <button class="button button-icon icon ion-navicon button-right" ng-click="showNav()"></button>
+      <button class="button button-right" ng-click="showNav()">
+          <img src="img/menu.svg" >
+      </button>
    </ion-header-bar>
    <ion-content scroll="false"  class="has-header has-footer-bar">
       <div class="map-container   has-info-footer">
@@ -17,21 +19,18 @@
       <div class="info-footer">
          <div class="row dashboard-information " ng-hide="ride.showingStation" class="ng-hide">
             <div class="col">
-               <i class="icon ion-battery-half"></i>
                <p class="big-title">
                   <battery-charge></battery-charge>
                </p>
                <p class="small-title">Charged</p>
             </div>
             <div class="col">
-               <i class="icon ion-ios-speedometer"></i>
                <p class="big-title">
                   <distance-travelled></distance-travelled>
                </p>
                <p class="small-title">Travelled</p>
             </div>
             <div class="col">
-               <i class="icon ion-clock item"></i>
                <p class="big-title">
                   <free-ride-time></free-ride-time>
                </p>
@@ -47,6 +46,6 @@
       </div>
    </ion-content>
    <div class="bar bar-footer">
-      <button class="button button-balanced" ng-click="ride.endRide()">end ride</button>
+      <button class="button button-assertive" ng-click="ride.endRide()">end ride</button>
    </div>
 </ion-pane>

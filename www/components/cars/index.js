@@ -17,7 +17,7 @@ function ConnectionController($state,countdownEvents,$scope){
   });
 }
 ConnectionController.prototype.getConnectionDurations = function() {
-  return {'timeToConnect':1000};
+  return {'timeToConnect':.1};
 };
 ConnectionController.prototype.goToConnecting = function($state) {
   this.$state.go('cars-connecting',{'id':this.$state.params.id});

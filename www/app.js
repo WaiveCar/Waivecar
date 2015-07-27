@@ -142,35 +142,6 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpP
   $urlRouterProvider.otherwise('/cars');
 }
 
-function dialogDirective(){
-  return {
-    restrict:'E',
-    scope:{
-      title:'@',
-      subtitle:'@',
-      buttonText:'@',
-      setDisplayFunction: '&',
-      setHideFunction: '&',
-      onButtonClick:'&'
-    },
-    link: function(scope, element, attrs){
-      // alert("ON LINK");
-      scope.setDisplayFunction({'fn':function(){
-            // alert("On set dísplay");
-            // alert(element[0].firstChild);
-            //             alert(element[0].firstChild.style);
-
-        element[0].firstChild.style.display="block";
-        // alert("Done");
-
-      }});
-      scope.setHideFunction({'fn':function(){
-        element[0].firstChild.style.display="none";
-      }});
-    },
-    templateUrl:'/components/bookings/templates/connecting.html'
-  }
-}
 angular.module('app', [
   'ionic',
   'ngResource',
@@ -185,6 +156,5 @@ angular.module('app', [
   'PointsOfInterest'
 ])
 // .directive('overlayDialog',dialogDirective)
-.directive('connecting',dialogDirective)
 .run(['$ionicPlatform', Run])
 .config([ '$stateProvider', '$urlRouterProvider', '$ionicConfigProvider', '$httpProvider', Config ]);
