@@ -1,34 +1,28 @@
-<ion-pane ng-controller="CarController as car">
-  <ion-header-bar class="bar bar-header bar-light route-details">
-
-    <div class="iconContainer">
-      <i class="icon ion-android-locate item"></i>
+<ion-pane ng-controller="CarController as car"  class="waiveCarContainer">
+  <ion-header-bar class="bar bar-header bar-light">
+    <div class="header-text">
+        <div class="vertical-aligned">
+          <p class="header-title"><reverse-geo-coding  get-location="car.getDestiny()"></reverse-geo-coding></p>
+          <route-information class="header-subtitle"></route-information>
+        </div>
     </div>
-    <div class="title item-icon-left has-big-header has-footer">
-      <route-information></route-information>
-      <p><reverse-geo-coding  get-location="car.getDestiny()"></reverse-geo-coding></p>
-
-    </div>
-    <div class="buttons">
-      <button ui-sref="cars" class="button button-icon icon ion-close button-right"></button>
-    </div>
+    <button ui-sref="cars" class="button button-right">
+      <img src="img/close.svg" alt="">
+    </button>
   </ion-header-bar>
-  <ion-content scroll="false" class="has-big-header">
-    <div class="map-container map-container-medium">
+  <ion-content scroll="false" class="has-footer-bar">
+    <div class="map-container has-info-footer">
       <map id="map" zoom="15" >
         <device-location></device-location>
         <destiny-location  get-initial-destiny="car.getDestiny()"></destiny-location>
         <route-to-car></route-to-car>
       </map>
     </div>
-    <div class="vehicle-summary-container">
+    <div class="vehicle-summary-container info-footer">
       <car-charge-status></car-charge-status>
     </div>
-    <!-- temp -->
-    <div style="position: absolute; bottom: 75px; left: 20px; z-index: 10000; font-size: 9px; line-height: 9px;">{{ car.car }}</div>
-    <!-- end-temp -->
-    <div class="bar bar-footer">
-      <button class="button button-balanced" ng-click="car.book()">Book WaiveCar</button>
-    </div>
   </ion-content>
+  <div class="bar bar-footer">
+    <button class="button button-balanced" ng-click="car.book()">Book WaiveCar</button>
+  </div>
 </ion-pane>

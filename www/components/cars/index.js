@@ -48,7 +48,6 @@ CarsController.prototype.showCarDetails = function(marker, data) {
   this.$rootScope.$broadcast(this.searchEvents.vehicleSelected, data);
   this.state.go('cars-show', { id: data.id});
 };
-
 // Cars - Show
 function CarController($state, $q, $session, selectedCar, Users, Bookings, Data) {
 
@@ -215,10 +214,10 @@ function nearbyFleetDirective(MapsLoader, $q, fleetService, realReachService, $w
         ctrl.mapInstance.then(function(mapInstance) {
 
           var waiveCarIcon = L.icon({
-            iconUrl: 'img/waivecar-mark.svg',
-            iconRetinaUrl: 'img/waivecar-mark.svg',
-            iconSize: [25, 25],
-            iconAnchor: [12.5, 25],
+            iconUrl: 'img/active-waivecar.svg',
+            iconRetinaUrl: 'img/active-waivecar.svg',
+            iconSize: [40, 50],
+            iconAnchor: [20, 50],
             popupAnchor: [0 , 0]
           });
 
@@ -268,15 +267,15 @@ function carChargeStatusDirective(searchEvents, selectedCar) {
       return;
     }
     var details = selectedData.status;
-    scope.chargeLevel = details.charge.current + '% full';
+    scope.chargeLevel = details.charge.current + '%';
     if (details.charge.charging) {
       scope.chargeState = 'Parked at charging station';
-      scope.chargeLevel += ' - full in ' + details.charge.timeUntilFull + ' minutes';
+      scope.chargeFull =  details.charge.timeUntilFull + ' minutes';
     } else {
       scope.chargeState = 'Not charging';
     }
 
-    scope.chargeReach = details.charge.reach + ' miles available on current charge';
+    scope.chargeReach = details.charge.reach+' miles ';
   }
 
   return {

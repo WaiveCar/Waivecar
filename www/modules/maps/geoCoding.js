@@ -9,9 +9,13 @@ GeocodingService.prototype.getReverseGeoCoding = function(latitude, longitude) {
   var defered = this.$q.defer();
   this.$http.get(url)
     .success(function(data, status, headers, config) {
+      console.log('success');
+      console.log(arguments);
       defered.resolve(data);
     })
     .error(function(data, status, headers, config) {
+      console.log('error');
+      console.log(arguments);
       defered.reject({data: data, status: status, header: headers, config: config});
     });
   return defered.promise;

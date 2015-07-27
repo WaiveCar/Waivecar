@@ -4,38 +4,273 @@ $positive:                        #387ef5 !default;
 $calm:                            #11c1f3 !default;
 $balanced:                        #25C155 !default;
 $energized:                       #ffc900 !default;
-$assertive:                       #D0021B !default;
+$assertive:                       #fa4838 !default;
 $royal:                           #886aea !default;
-$dark:                            #444 !default;
+$dark:                            #021207 !default;
 $grayBg:                          rgb(30,30,30);
+
 
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;
 
+@import 'sizes';
+//On percent of container we need to calculat as VH is from the viewPort
+// $mainTitleVhSize: (($barHeight/100) * $mainTitleHeightPercent);  */
+
 // Include all of Ionic
 @import "www/lib/ionic/scss/ionic";
+.vertical-aligned{
+   @include vertical-align;
+}
+.waiveCarContainer{
+ .button,.button.active,.button.activated{
+      background-color: inherit;
+      border: none;
+      &.button-balanced{
+        background-color: $balanced;
+      }
+      &.button-assertive{
+        background-color: $assertive;
+      }
+  }
+  .button-padded{
+    span,a{
+      @include vertical-align;
+      display: inline-block;
+    }
+  }
+    a,a:hover,a:visited{
+    color:inherit;
+    text-decoration: none;
+    text-transform: capitalize;
+  }
+  color: #FFF;
+  .modal,.modal-wrapper{
+    width: 100%;
+    height: 100%;
+  }
+  &.nav-component{
+    background-color: #1b1d1b;
+    .bar{
+        background-color: #1b1d1b;
+        border: none;
+        color: #FFF;
+        h1{
+          color: #FFF;
+        }
+       
 
+    }
+    .button-container{
+      @include vertical-align;
+    }
+    .row-center{
+      margin-top: $menuRowSpacing*1%;
+      margin-bottom: $menuRowSpacing*1%;
+    }
+    .row{
+          .col{
+           text-align: center;
+          }
+          a,a:hover,a:visited{
+            text-transform: capitalize;
+            display: block;
+          }
+          img{
+            display: block;
+            margin: 0 auto;
+          }
+      
+    }
+  }
+  .bar{
+    height: $barHeight * 1%;
+    padding: 0;
+    background-color: $dark;
+    color:#FFF;
+    h1{
+      color:#FFF;
+    }
+    display: block;
+   &.bar-footer{
+     height: $barFooterHeight*1%;
+  }
+     
+  }
+  .header-title{
+    text-transform: uppercase;
+    font-size: $headerTitleSize*1rem;
+    padding-right: $headerTitleSize*1rem;
+
+  }
+  h1.header-title{
+    @include vertical-align;
+  }
+  .header-subtitle{
+    font-size: $headerSubtitleSize*1rem;
+  }
+  .bar-header{
+    .header-text{
+      float:left;
+      width: 100%;
+      text-align: center;
+      height: 95%;
+      @include vertical-align;
+
+    }
+    .button{
+      @include vertical-align;
+    }
+    .button-right{
+      position: absolute;
+      right: 0;
+    }
+    .button-left{
+      position: absolute;
+      left: 0;
+    }
+    
+
+   }
+  .big-header{
+    height: $bigHeaderSize * 1%;
+  }
+  .has-header{
+    top: $barHeight * 1%;
+    &.has-big-header{
+      top: $bigHeaderSize * 1%;
+    }
+  }
+  .scroll-content.has-header{
+    height: (100-$barHeight) * 1%;
+    &.has-big-header{
+      height: (100-$bigHeaderSize) * 1%;
+      &.has-footer-bar{
+        height: (100-($bigHeaderSize+$barFooterHeight)) * 1%;
+      }
+    }
+    &.has-footer-bar{
+      height: (100-($barHeight+$barFooterHeight)) * 1%;
+    }
+  }
+  .info-footer{
+    height:$infoFooterHeight* 1%;
+    &.big-info-footer{
+       height:$bigInfoFooterHeight* 1%;
+    }
+    color: #545a56;
+    .list{
+      .item{
+        padding: 0;
+        font-size: 1rem;
+      }
+      height: 100%;
+      img.icon{
+        height: $imgFooterIconHeight * 1%;
+        @include vertical-align;
+        margin-left: 6.66%;
+        margin-right: 6.66%;
+        display: inline-block;
+
+      }
+      span{
+          @include vertical-align;
+          display: inline-block;
+      }
+    }
+
+    .footer-information{
+      font-size: $headerTitleSize * 0.6rem;
+
+      height: $footerInformationSize*1%;
+      margin: 0;
+      p{
+        @include vertical-align;
+      }
+    }
+    .has-footer-information{
+      height: (100-$footerInformationSize)*1%;
+      width: 100%;
+      display: block;
+    }
+    .info-card{
+      display: inline-block;
+      margin: 0;
+      border: 0;
+      height: 100%;
+      float: left;
+      p{
+        text-align: left;
+        &.title{
+          font-size: $headerTitleSize*0.8rem;
+        }
+        font-size: $headerTitleSize*0.7rem;
+        span{
+          font-size: $headerTitleSize*0.7rem;
+        }
+      }
+      &.info-card-s{
+        width: 35%;
+
+      }
+      &.info-card-m{
+        width: 65%;
+      }
+      
+    }
+  }
+  .map-container {
+    height: 100%;
+    width:100%;
+    &.has-info-footer {
+      height: (100-$infoFooterHeight)*1%
+
+    }
+    &.has-big-info-footer{
+        height: (100-$bigInfoFooterHeight)*1%
+    }
+  }
+  .button-right,.button-left{
+    background-color: inherit;
+    border: none;
+    z-index: 1000;
+    img{
+      height: $headerTitleSize*1rem;
+    }
+  }
+  .list{
+    border: none;
+    .item{
+      border: none;
+    }
+    &.size-3{
+      .item{
+        height: 33%;
+      }
+    }
+  }
+  .button-dark{
+    background-color: $dark;
+  }
+  .button-assertive{
+    background-color: $assertive;
+  }
+}
 // Global styles
 .bar-header {
   h1.title {
     text-transform: uppercase;
     font-family: "Helvetica Neue";
     font-weight: 300;
-    font-size: 20px;
   }
 }
 .button-padded,.bar-footer .button-padded{
-  width:90%;
+  width:73.33%;
   height: 2em;
   margin-left: auto;
   margin-right: auto;
   margin-top: 1em;
   text-transform: uppercase;
-  a{
-    text-decoration: none;
-    color: #FFF;
-
-  }
 }
 .bar-footer {
   padding: 0;
@@ -120,19 +355,19 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 }
 .button-right{
   float:right;
-  clear:both;
 }
 .button-left{
   float:left;
 }
 
 .iconContainer{
-}
-.iconContainer .icon{
-  font-size:4em;
-  padding:0;
-  border:none;
-  margin:0;
+  display: inline-block;
+  .icon{
+      font-size:10vh;
+      padding:0;
+      border:none;
+      margin:0; 
+  }
 }
 ion-content.has-big-header{
   top:15%;
@@ -144,68 +379,54 @@ ion-content.has-big-header{
   background-color: $grayBg;
   color:#FFF;
   text-align: center;
-  font-size:2em;
-  line-height: 1.2em;
+  font-size:1rem;
+  p{
+    line-height: 1.2rem;
+  }
+  .waiveCar-icon{
+       width:2rem;
+       margin:1%;
+  }
   .top{
     height: 20%;
     .waiveCar-icon{
        height:50%;
        margin:1%;
     }
-    i.icon.top-icon{
-        font-size:2em;
-        margin: 0.2em;
-        color:#FFF;
+    .top-icon{
+        position: absolute;
+        right: 0;
+        padding: 1%;
     }
-
   }
   .middle{
     height: 50%;
     p{
-      margin-top: 1.5em;
+      margin-top: 1.5rem;
     }
   }
   .middle-small{
     height: 40%;
-    font-size:1.4em;
+    font-size:1.4rem;
   }
   .bottom{
     height: 30%;
     bottom: 0;
     position:absolute;
     width: 100%;
-    font-size: 1.5em;
+    font-size: 1.5rem;
 
-    .button-padded{
-      width:90%;
-      height: auto;
-      font-size: 1em;
-      margin-left: auto;
-      margin-right: auto;
-      margin-top: 0;
-      vertical-align: middle;
-      padding-top: 0.6em;
-      padding-bottom: 0.6em;
-
-    }
+ 
     .line-2{
       height: 50%;
-      margin-top: 0.2em;
+      margin-top: 0.2rem;
       position: relative;
     }
     .line-3{
       height: 33%;
-      margin-top: 0.2em;
+      margin-top: 0.2rem;
       position: relative;
     }
-  }
-  .bottom-big{
-      height: 40%;
-      font-size:1.4em;
-       .button-padded{
-          padding-top: 0.4em;
-          padding-bottom: 0.4em;
-       }
   }
 
   .subtle-highlight{
@@ -216,7 +437,7 @@ ion-content.has-big-header{
     height: 100%;
   }
   .slider-pager{
-    bottom:15%;
+    bottom:12%;
   }
   .slider-pager .slider-pager-page {
     color: rgb(116,116,116);
@@ -233,16 +454,45 @@ ion-content.has-big-header{
     width: 100%;
     height: 100%;
   }
-  
-  .highlight{
-    font-weight: bold;
-  }
   .main-image{
-    height: 20%;
+    width: 80%;
+    max-height: 20%;
   }
+}
+.highlight{
+  font-weight: bold;
 }
 @import "www/components/cars/style.scss";
 @import "www/components/bookings/style.scss";
 @import "www/components/maps/style.scss";
 @import "www/components/ads/style.scss";
 @import "www/components/ride/style.scss";
+
+.overlay-dialog{
+  z-index: 2000;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  display: none;
+  background-color: rgba(0,0,0,0.96);
+  position: absolute;
+  top: 0;
+  left: 0;
+  .waiveCar-icon{
+    margin-left: auto;
+    margin-right: auto;
+    height: 19%;
+    margin-bottom:4%;
+
+  }
+  .container{
+    height: 26.23%;
+  }
+  .button-padded{
+    margin-top:4%;
+    height: 33.14%;
+    span,a{
+      font-size: 3vh;
+    }
+  }
+}

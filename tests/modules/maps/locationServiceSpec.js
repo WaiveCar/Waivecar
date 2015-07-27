@@ -4,6 +4,9 @@ describe('Location service',function(){
 	var scope;
 	var $q;
 	var events;
+	var mockState={
+
+	}
 	var mockGeoLocation={
 		_thenTrigger:function(){
 			if(typeof this._successCb != 'undefined'){
@@ -41,9 +44,10 @@ describe('Location service',function(){
 		spyOn(mockGeoLocation, 'watchPosition').and.callThrough();
 
 		angular.module('ngCordova',[]);
-		angular.mock.module('Maps');
-		angular.mock.module(function($provide){
+		angular.mock.module('Maps',function($provide){
 			  $provide.value("$cordovaGeolocation", mockGeoLocation);
+  			  $provide.value("$state", mockState);
+
 		});
 		angular.mock.inject(function(_$rootScope_,_$q_,mapsEvents,locationService){
 			$q=_$q_;
@@ -55,6 +59,7 @@ describe('Location service',function(){
 		});
 
 	});
+
 
 	describe('Geolocation',function(){
 		it('Gets the location upon request',function(){

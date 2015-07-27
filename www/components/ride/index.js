@@ -16,9 +16,35 @@ RideController.prototype.hideChargingStationDetails = function(marker, info) {
 RideController.prototype.endRide = function() {
   this.$state.go('ride-end');
 };
-function distanceTravelledDirective() {
+
+function PaidRideService(){
+
+}
+PaidRideService.prototype.startRide = function() {
+  this.startTime=new Date().getTime();
+};
+PaidRideService.prototype.getRideTime = function() {
+    var currentRemainingTime = (new Date().getTime() - this.startTime)/1000;
+    var hours = Math.floor(currentRemainingTime / 3600);
+    currentRemainingTime -= (hours * 3600);
+    var minutes = Math.floor(currentRemainingTime / 60);
+    currentRemainingTime -= (minutes * 60);
+    var seconds = Math.floor(currentRemainingTime);
+    return {
+      hours: hours,
+      minutes: minutes,
+      seconds: seconds
+    }
+  
+};
+function distanceTravelledDirective($interval) {
   function link(scope) {
-    scope.value = '100 miles'
+    scope.mileage=0;
+    var stop=$interval(function(){
+      scope.mileage+=10;
+      scope.value=scope.mileage+' mi';
+    },1500);
+    scope.value = scope.mileage+' mi';
   }
   return {
     link: link,
@@ -26,9 +52,21 @@ function distanceTravelledDirective() {
     scope: true
   }
 }
-function batteryChargeDirective() {
+function batteryChargeDirective($interval,$state) {
   function link(scope) {
-    scope.value = '65%'
+    scope.battery=100;
+    scope.value=scope.battery+'%';
+    var stop=$interval(function(){
+      scope.battery-=5;
+      if(scope.battery<=0){
+        if(scope.battery<=15){
+          $state.go('ride-alert-low-battery');
+        }
+        $interval.cancel(stop);
+      }
+      scope.value=scope.battery+'%';
+    },2000)
+
   }
   return {
     link: link,
@@ -36,9 +74,19 @@ function batteryChargeDirective() {
     scope: true
   }
 }
+function formatTime(hours,minutes,seconds){
+   if (typeof hours != 'undefined' && hours > 0) {
+      return hours + ':' + minutes + 'h';
+    }      else if (typeof minutes != 'undefined' && minutes > 0) {
+      return minutes + ':' + seconds + 'm';
+    }      else if (typeof seconds != 'undefined' && seconds > 0) {
+      return seconds + 's';
+    }      else {
+      return '0:0:0';
+    }
+}
 
-
-function freeRideTimeDirective() {
+function freeRideTimeDirective(formatTime) {
   function link(scope, element, attrs, ctrl) {
     var durations = {'freeRide': 120};
     ctrl.createTimer('freeRide', durations);
@@ -55,21 +103,32 @@ function freeRideTimeDirective() {
       }
     ];
     scope.$watchGroup(watchExpressions, function(newValues, oldValues, scope) {
-      if (typeof ctrl.hours != 'undefined' && ctrl.hours > 0) {
-        scope.timeLeftDisplay = ctrl.hours + ':' + ctrl.minutes + 'h';
-      }      else if (typeof ctrl.minutes != 'undefined' && ctrl.minutes > 0) {
-        scope.timeLeftDisplay = ctrl.minutes + ':' + ctrl.seconds + 'm';
-      }      else if (typeof ctrl.seconds != 'undefined' && ctrl.seconds > 0) {
-        scope.timeLeftDisplay = ctrl.seconds + 's';
-      }      else {
-        scope.timeLeftDisplay = '0:0:0';
-      }
+      scope.timeLeftDisplay = formatTime(ctrl.hours,ctrl.minutes,ctrl.seconds);
     });
 
   }
   return {
       restrict: 'E',
-      templateUrl: 'components/ride/templates/directives/freeRideTime.html',
+      templateUrl: 'components/ride/templates/directives/rideTime.html',
+      link: link,
+      controller: 'TimerController',
+      controllerAs: 'timer',
+      scope: false
+    }
+
+}
+function paidRideTimeDirective($interval,paidRideService,formatTime) {
+  function link(scope, element, attrs, ctrl) {
+    paidRideService.startRide();
+    $interval(function(){
+      var time=paidRideService.getRideTime();
+      scope.timeLeftDisplay = formatTime(time.hours,time.minutes,time.seconds);
+    },1000);
+
+  }
+  return {
+      restrict: 'E',
+      templateUrl: 'components/ride/templates/directives/rideTime.html',
       link: link,
       controller: 'TimerController',
       controllerAs: 'timer',
@@ -84,16 +143,22 @@ function chargingStationInfoDirective() {
 }
 
 angular.module('app')
+.service('PaidRideService',PaidRideService)
 .controller('RideController', [
   '$scope',
   '$state',
   RideController
 ])
 .directive('batteryCharge', [
+  '$interval',
+  '$state',
   batteryChargeDirective
 ])
 .directive('distanceTravelled', [
+  '$interval',
   distanceTravelledDirective
 ])
+.value('formatTime',formatTime)
 .directive('chargingStationInfo', chargingStationInfoDirective)
-.directive('freeRideTime', freeRideTimeDirective);
+.directive('freeRideTime',['formatTime', freeRideTimeDirective])
+.directive('paidRideTime',['$interval','PaidRideService','formatTime',paidRideTimeDirective]);

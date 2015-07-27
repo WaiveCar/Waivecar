@@ -1,0 +1,21 @@
+//Vws
+$headerTitleSize:1.3;
+$headerSubtitleSize:$headerTitleSize*0.8;
+ //Percentages
+$menuRowSpacing:5;
+$infoFooterHeight: 21.4;
+$bigInfoFooterHeight:24.5;
+$bigHeaderSize: 15;
+$mainTitleHeightPercent:  80;
+$barHeight: 9.37;
+$barFooterHeight:9;
+$imgFooterIconHeight:31.68;
+$footerInformationSize:24.48;
+
+@mixin vertical-align {
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}

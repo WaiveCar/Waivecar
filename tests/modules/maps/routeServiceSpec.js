@@ -17,11 +17,9 @@ describe('Route service',function(){
         L=mockLeaflet;//Global
         var self=this;
         angular.module('Maps',[]);
-        angular.mock.module('Maps.route');
-        angular.mock.module(function($provide){
+        angular.mock.module('Maps.route',function($provide){
             $provide.value("MapsLoader", mockMapsLoader);
             $provide.constant("mapsEvents", mockEvents);
-
         });
         angular.mock.inject(function(_$rootScope_,_$q_,_$httpBackend_,routeService,$injector){
             self.$q=_$q_;

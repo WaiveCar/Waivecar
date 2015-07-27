@@ -81,8 +81,16 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpP
       templateUrl: '/components/users/templates/reward-points.html'
     })
     .state('dashboard',{
-      url:'/ride-dashboard',
+      url:'/ride/dashboard',
       templateUrl: '/components/ride/templates/dashboard.html'
+    })
+    .state('summary',{
+      url:'/ride/summary',
+      templateUrl: '/components/ride/templates/summary.html'
+    })
+    .state('paid-ride',{
+      url:'/paid-ride',
+      templateUrl: '/components/ride/templates/paidDashboard.html'
     })
    .state('ride-end',{
       url:'/ride/end',
@@ -111,11 +119,11 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpP
       url: '/location-error',
       templateUrl: '/components/errors/templates/index.html'
     })
+
     .state('unplugged-error', {
       url: '/unplugged-error',
       templateUrl: '/components/errors/templates/index.html'
     });
-
   $urlRouterProvider.otherwise('/cars');
 }
 
@@ -132,5 +140,6 @@ angular.module('app', [
   'ChargingStations',
   'PointsOfInterest'
 ])
+// .directive('overlayDialog',dialogDirective)
 .run(['$ionicPlatform', Run])
 .config([ '$stateProvider', '$urlRouterProvider', '$ionicConfigProvider', '$httpProvider', Config ]);

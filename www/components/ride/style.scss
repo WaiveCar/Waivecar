@@ -1,6 +1,3 @@
-.dashboard-information,.charging-station-info{
-	height: 30%;
-}
 .charging-station-info .buttons{
 	width: 100%;
 	display: block;
@@ -26,4 +23,33 @@
 .dashboard-information .col .small-title{
 	font-size:1em;
 	margin-top: 10px;
+}
+.charging-station-info .close-button{
+	z-index:2;
+}
+$rideSize:12;
+$timeAndDistanceSize:10;
+$feeInfoDifference:5;
+.summary-container{
+	width: 100%;
+	height: 100%;
+	div{
+		width: 100%;
+		border: 1px black solid;
+	}
+	.ride-info{
+		height: 12%;
+	}
+	.time-and-distance-info{
+		height:10%;
+	}
+	.fees-info{
+		height: 36%;
+	}
+	.points-info{
+		height: 42%;
+	}
+
+
+		
 }

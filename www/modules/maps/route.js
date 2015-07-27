@@ -55,6 +55,9 @@ function routeToCarDirective(MapsLoader, $q, routeService, mapsEvents,$rootScope
       return routeService.getRoute(startLocation.getLatLng(), destinyLocation.getLatLng())
         .then(function(result) {
           var coordinates = [];
+          if(typeof result.route.routePoints =='undefined'){
+            return;
+          }
           result.route.routePoints.forEach(function(p) {
             coordinates.push([p.x, p.y]);
           })
@@ -70,21 +73,18 @@ function routeToCarDirective(MapsLoader, $q, routeService, mapsEvents,$rootScope
           scope.route = L.geoJson(lines);
           scope.route.addTo(mapInstance);
           var unlockRangeOptions = {
-            strokeColor: '#FF0000',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
-            fillColor: '#FF0000',
-            fillOpacity: 0.35
+            strokeOpacity: 0.0,
+            fillOpacity: 0.0,
+            strokeWeight:0
           };
           var radius = 25;
-          scope.unlockRadius = L.circle(destinyLocation.getLatLng(), radius, unlockRangeOptions).addTo(mapInstance);
           mapInstance.fitBounds(scope.route.getBounds());
         });
     }
     this.reDrawRoute = function(maps, startLocation, destinyLocation, mapInstance, scope) {
       drawRoute(maps, startLocation, destinyLocation, mapInstance, scope).then(function() {
           var deviceLocation = startLocation.getLatLng();
-          if (scope.unlockRadius.getBounds().contains(deviceLocation)) {
+          if (destinyLocation.getLatLng().distanceTo(deviceLocation)<=25) {
             $rootScope.$broadcast(mapsEvents.withinUnlockRadius);
           }
         });
@@ -181,13 +181,13 @@ function destinyLocationDirective(MapsLoader, $q, mapsEvents) {
         MapsLoader.getMap.then(function(L) {
           ctrl.mapInstance.then(function(mapInstance) {
 
-            var waiveCarIcon = L.icon({
-              iconUrl: 'img/waivecar-mark.svg',
-              iconRetinaUrl: 'img/waivecar-mark.svg',
-              iconSize: [25, 25],
-              iconAnchor: [12.5, 25],
-              popupAnchor: [0 , 0]
-            });
+           var waiveCarIcon = L.icon({
+            iconUrl: 'img/active-waivecar.svg',
+            iconRetinaUrl: 'img/active-waivecar.svg',
+            iconSize: [40, 50],
+            iconAnchor: [20, 50],
+            popupAnchor: [0 , 0]
+          });
             function handleMarker(destiny) {
                   if (typeof scope.marker != 'undefined') {
                     scope.marker.setLatLng([destiny.latitude, destiny.longitude]);

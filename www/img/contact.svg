@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="80px" height="81px" viewBox="0 0 80 81" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.3 (11970) - http://www.bohemiancoding.com/sketch -->
+    <title>email-9-icon</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="nav@2x-" sketch:type="MSArtboardGroup" transform="translate(-174.000000, -908.000000)" fill="#25C155" opacity="0.9">
+            <g id="items" sketch:type="MSLayerGroup" transform="translate(140.000000, 291.500000)">
+                <g id="contact" transform="translate(15.000000, 617.000000)" sketch:type="MSShapeGroup">
+                    <path d="M59,0 C36.9085437,0 19,17.9085437 19,40 C19,62.0914563 36.9085437,80 59,80 C81.0914563,80 99,62.0914563 99,40 C99,17.9085437 81.0914563,0 59,0 L59,0 Z M83.0691262,22.2221359 L59.1951456,40.532233 L35.3592233,22.2221359 L83.0691262,22.2221359 L83.0691262,22.2221359 Z M35.1939806,27.2372816 L49.2380583,38.0254369 L35.1939806,52.0695146 L35.1939806,27.2372816 L35.1939806,27.2372816 Z M35.2524272,57.7776699 L52.4992233,40.5308738 L59.1932039,45.6726214 L65.8763107,40.5471845 L83.1069903,57.7774757 L35.2524272,57.7774757 L35.2524272,57.7776699 Z M83.1941748,52.0984466 L69.1398058,38.0440777 L83.1941748,27.2652427 L83.1941748,52.0984466 L83.1941748,52.0984466 Z" id="email-9-icon"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
