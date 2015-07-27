@@ -1,7 +1,7 @@
-function Resource($resource, utils, config) {
+function Resource($resource, Utils) {
 
   function getRoute(hasId) {
-    return utils.getRoute('bookings', hasId);
+    return Utils.getRoute('bookings', hasId);
   }
 
   return $resource(null, null, {
@@ -15,7 +15,7 @@ function Resource($resource, utils, config) {
       method: 'GET',
       url: getRoute(),
       isArray: true,
-      transformResponse: utils.transformArrayResponse
+      transformResponse: Utils.transformArrayResponse
     },
 
     get: {
@@ -41,7 +41,6 @@ function Resource($resource, utils, config) {
 
 angular.module('app').factory('Bookings', [
   '$resource',
-  'utils',
-  'config',
+  'Utils',
   Resource
 ]);

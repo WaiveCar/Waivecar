@@ -26,7 +26,7 @@ ConnectionController.prototype.goToConnecting = function($state) {
 
 // Cars - List
 
-function CarsController($rootScope, $scope, $state, selectedCar, Cars, searchEvents, mapsEvents) {
+function CarsController($rootScope, $scope, $state, selectedCar, Cars, searchEvents, mapsEvents, Data) {
   var self = this;
 
   this.state = $state;
@@ -35,7 +35,8 @@ function CarsController($rootScope, $scope, $state, selectedCar, Cars, searchEve
   this.selectedCar = selectedCar;
   this.searchEvents = searchEvents;
   this.mapsEvents = mapsEvents;
-  // self.cars = Cars.query();
+  this.cars = Data.models.cars; // this is a cached listing of cars, populated by application controlller.
+  this.user = Data.active.user; // this is a cached listing of active user, populated by auth.
 }
 
 CarsController.prototype.showCarDetails = function(marker, data) {
@@ -48,7 +49,18 @@ CarsController.prototype.showCarDetails = function(marker, data) {
   this.state.go('cars-show', { id: data.id});
 };
 // Cars - Show
-function CarController($state, $q, selectedCar) {
+function CarController($state, $q, $session, selectedCar, Users, Bookings, Data) {
+
+  var self      = this;
+  self.Users    = Users;
+  self.Bookings = Bookings;
+  self.session  = $session;
+
+  Data.activate('cars', $state.params.id, function(err, activatedCar) {
+    if (err) console.log('huh');
+    self.car = Data.active.car;
+  });
+
   this.selectedCar = selectedCar;
   var selectedData = selectedCar.getSelected();
   this.state = $state;
@@ -60,95 +72,144 @@ CarController.prototype.getDestiny = function() {
 };
 
 CarController.prototype.book = function() {
+  var self = this;
   var selectedData = this.selectedCar.getSelected();
-  var carId=selectedData.id;
-  this.state.go('ads',{redirectUrl:'bookings-show',redirectParams:{'id':carId}});
+  var carId = selectedData.id;
+
+  // TEMP CODE TO CREATE A DRIVER, LOG THEM IN, and CREATE BOOKING.
+  // NOTE: ONCE YOU HAVE CREATED A BOOKING ON A CAR, IT CANNOT BE BOOKED AGAIN...
+  var user = new self.Users({
+    firstName : 'Matt',
+    lastName  : 'Driver',
+    email     : 'matt.ginty+' + Math.random() + 'gmail.com',
+    password  : 'lollipop0'
+  });
+
+  user.$save(function(u) {
+    self.Users.login({ email: user.email, password: 'lollipop0' }, function(auth) {
+      self.session.set('auth', auth).save();
+      var booking = new self.Bookings({
+        userId: user.id,
+        carId: self.car.id
+      });
+
+      booking.$save(function(b) {
+        self.state.go('ads',{ redirectUrl:'bookings-show', redirectParams: { 'id': booking.id } });
+      });
+    })
+  });
+  // END TEMP CODE.
 };
 
 CarController.prototype.cancel = function() {
   this.state.go('cars');
 };
 
-function FleetService($rootScope, $q, locationService, $http, config) {
+function FleetService($rootScope, $q, locationService, $http, Config, Data) {
   this.$q = $q;
   this.locationService = locationService;
   this.$http = $http;
   this.$rootScope = $rootScope;
-  this.url = config.uri.vehicles.getNearby;
+  this.url = Config.uri.vehicles.getNearby;
+  this.Data = Data;
 }
+
 FleetService.prototype.getNearbyFleet = function(numNearby) {
   var self = this;
-  return this.locationService.getLocation().then(
-            function(deviceLocation) { 
-              var ret = [];
-              numNearby = numNearby || 10;
-              var maxDiff = 0.005;
-              var idCount = 1;
-              var minDiff = 0.0005;
-              for (var i = 0; i < numNearby; i++) {
-                var diffA = Math.random() * (maxDiff - minDiff) + minDiff;
-                var diffB = Math.random() * (maxDiff - minDiff) + minDiff
-                if (Math.random() < .5) {
-                  diffA = diffA * -1;
-                }
-                if (Math.random() < .5) {
-                  diffB = diffB * -1;
-                }
-                ret.push(
-                        {
-                          latitude: deviceLocation.latitude + diffA,
-                          longitude: deviceLocation.longitude + diffB,
-                          status: {
-                            charge: {
-                              current: 69,
-                              timeUntilFull: 20,
-                              reach: 10,
-                              charging: true
-                            }
-                          },
-                          name:'Chevrolet Spark',
-                          plate:'AUD 568',
-                          id: idCount++,
-                          image:'/components/ads/templates/images/ad1.png'
-                        }
-                    )
-              }
-              return ret;
-              //HOlding until new API is up
-              // var defered=self.$q.defer();
-              // var config={
-              //     timeout:TIMEOUT_REQUEST,
-              //     method:"POST",
-              //     data:{location:deviceLocation,numNearby:numNearby},
-              //     url:self.url
-              // }
-              // var startTime = new Date().getTime();
-              // self.$http(config)
-              // .success(function(response, status, headers, config) {
-              //     defered.resolve(response.data)
-              // })
-              // .error(function(response, status, headers, config) {
-              //     var respTime = new Date().getTime() - startTime;
-              //     if(respTime >= TIMEOUT_REQUEST){
-              //         defered.resolve([]);
-              //     }
-              //     else{
-              //         defered.reject({response:response,status:status,headers:headers});
-              //     }
-              // });
-              // return defered.promise;
-            }
-        );
+  return this.locationService.getLocation().then(function(deviceLocation) {
+    var ret = [];
+    var maxDiff = 0.005;
+    var idCount = 1;
+    var minDiff = 0.0005;
+    var getRandomLocationInRange = function() {
+      var diffA = Math.random() * (maxDiff - minDiff) + minDiff;
+      var diffB = Math.random() * (maxDiff - minDiff) + minDiff
+      if (Math.random() < .5) {
+        diffA = diffA * -1;
+      }
+      if (Math.random() < .5) {
+        diffB = diffB * -1;
+      }
+      return {
+        latitude: deviceLocation.latitude + diffA,
+        longitude: deviceLocation.longitude + diffB
+      };
+    }
+
+    _.each(self.Data.models.cars, function(car) {
+      var loc = getRandomLocationInRange();
+      car.latitude  = loc.latitude;
+      car.longitude = loc.longitude;
+      car.image     = '/components/ads/templates/images/ad1.png';
+      car.plate     = 'AUD 568';
+      car.status    = {
+        charge: {
+          current: 69,
+          timeUntilFull: 20,
+          reach: 10,
+          charging: true
+        }
+      };
+    });
+    // TODO: we should not be doing this as we want all 'things' to just observe Data.models.cars.
+    return self.Data.models.cars;
+
+    // for (var i = 0; i < numNearby; i++) {
+    //   ret.push({
+    //     latitude: deviceLocation.latitude + diffA,
+    //     longitude: deviceLocation.longitude + diffB,
+    //     status: {
+    //       charge: {
+    //         current: 69,
+    //         timeUntilFull: 20,
+    //         reach: 10,
+    //         charging: true
+    //       }
+    //     },
+    //     name:'Chevrolet Spark',
+    //     plate:'AUD 568',
+    //     id: idCount++,
+    //     image:'/components/ads/templates/images/ad1.png'
+    //   });
+    // }
+
+    // return ret;
+
+    //HOlding until new API is up
+    // var defered=self.$q.defer();
+    // var config={
+    //     timeout:TIMEOUT_REQUEST,
+    //     method:"POST",
+    //     data:{location:deviceLocation,numNearby:numNearby},
+    //     url:self.url
+    // }
+    // var startTime = new Date().getTime();
+    // self.$http(config)
+    // .success(function(response, status, headers, config) {
+    //     defered.resolve(response.data)
+    // })
+    // .error(function(response, status, headers, config) {
+    //     var respTime = new Date().getTime() - startTime;
+    //     if(respTime >= TIMEOUT_REQUEST){
+    //         defered.resolve([]);
+    //     }
+    //     else{
+    //         defered.reject({response:response,status:status,headers:headers});
+    //     }
+    // });
+    // return defered.promise;
+  });
 }
+
 function nearbyFleetDirective(MapsLoader, $q, fleetService, realReachService, $window) {
   function addMarkerClick(marker, info, onClickFn) {
     marker.on('mousedown', function(e) {
       onClickFn({marker: marker, info: info});
     });
   }
-  
+
   function link(scope, element, attrs, ctrl) {
-    fleetService.getNearbyFleet().then(function(fleet) { 
+    fleetService.getNearbyFleet().then(function(fleet) {
       MapsLoader.getMap.then(function(L) {
         ctrl.mapInstance.then(function(mapInstance) {
 
@@ -252,11 +313,23 @@ angular.module('app')
   '$rootScope',
   SelectedCarService
 ])
-.service('fleetService', ['$rootScope', '$q', 'locationService', '$http', 'config', FleetService])
+.service('fleetService', [
+  '$rootScope',
+  '$q',
+  'locationService',
+  '$http',
+  'Config',
+  'Data',
+  FleetService
+])
 .controller('CarController', [
   '$state',
   '$q',
+  '$session',
   'selectedCar',
+  'Users',
+  'Bookings',
+  'Data',
   CarController
 ])
 .controller('ConnectionController',['$state','countdownEvents','$scope',ConnectionController])
@@ -268,6 +341,7 @@ angular.module('app')
   'Cars',
   'searchEvents',
   'mapsEvents',
+  'Data',
   CarsController
 ])
 .directive('carChargeStatus', [

@@ -16,22 +16,7 @@ function Run($ionicPlatform) {
 function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpProvider) {
   'use strict';
 
-  // TEMP CODE.
-  $httpProvider.interceptors.push([
-    '$q',
-    function($q) {
-      return {
-        request: function(httpConfig) {
-          httpConfig.headers['Authorization'] = 'nWmvVoPJFPlSxHcNqerob0klSXMMnCbB00MzDh9ohKodLZDAvdClSAfXsZDkKfzf';
-          return httpConfig;
-        },
-        responseError: function(response) {
-          return $q.reject(response);
-        }
-      };
-    }
-  ]);
-  // END TEMP CODE
+  $httpProvider.interceptors.push('AuthInterceptor');
 
   $ionicConfigProvider.views.transition('platform');
    $stateProvider

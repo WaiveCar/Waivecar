@@ -1,5 +1,6 @@
 function Config() {
-  var baseUrl='https://api-waivecar-dev.cleverbuild.biz';
+  var baseUrl = 'https://api-waivecar-dev.cleverbuild.biz';
+
   return {
     uri: {
       api: baseUrl,
@@ -26,6 +27,6 @@ function Config() {
 }
 
 angular.module('app')
-.factory('config', [
+.factory('Config', [
   Config
 ]);

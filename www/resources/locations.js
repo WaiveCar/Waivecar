@@ -1,15 +1,10 @@
 function Resource($resource, Utils) {
 
   function getRoute(hasId) {
-    return Utils.getRoute('users', hasId);
+    return Utils.getRoute('locations', hasId);
   }
 
   return $resource(null, null, {
-
-    login: {
-      method: 'POST',
-      url: Utils.getCustomRoute('auth/login')
-    },
 
     save: {
       method: 'POST',
@@ -36,15 +31,15 @@ function Resource($resource, Utils) {
       }
     },
 
-    me: {
-      method: 'GET',
-      url: Utils.getCustomRoute('users/me')
+    delete: {
+      method: 'DELETE',
+      url: getRoute(true)
     }
 
   });
 }
 
-angular.module('app').factory('Users', [
+angular.module('app').factory('Locations', [
   '$resource',
   'Utils',
   Resource

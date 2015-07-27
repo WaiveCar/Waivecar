@@ -1,4 +1,5 @@
-function ApplicationController($rootScope, $scope, $ionicPopover) {
+function ApplicationController($rootScope, $scope, $ionicPopover, Cars, Data) {
+  var self = this;
 
   $ionicPopover.fromTemplateUrl('components/menu/templates/index.html', {
     scope: $scope
@@ -13,6 +14,12 @@ function ApplicationController($rootScope, $scope, $ionicPopover) {
   $scope.hideNav = function() {
     $scope.popover.hide();
   }
+
+  self.init = function() {
+    Data.models.cars = Cars.query();
+  }
+
+  self.init();
 }
 
 angular.module('app')
@@ -20,5 +27,7 @@ angular.module('app')
   '$rootScope',
   '$scope',
   '$ionicPopover',
+  'Cars',
+  'Data',
   ApplicationController
 ]);
