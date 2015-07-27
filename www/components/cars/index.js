@@ -134,26 +134,23 @@ FleetService.prototype.getNearbyFleet = function(numNearby) {
         longitude: deviceLocation.longitude + diffB
       };
     }
-   return self.Data.models.cars.then(function(cars){
-        _.each(cars, function(car) {
-          var loc = getRandomLocationInRange();
-          car.latitude  = loc.latitude;
-          car.longitude = loc.longitude;
-          car.image     = '/components/ads/templates/images/ad1.png';
-          car.plate     = 'AUD 568';
-          car.name      = 'Chevrolet Spark',
-          car.status    = {
-            charge: {
-              current: 69,
-              timeUntilFull: 20,
-              reach: 10,
-              charging: true
-            }
-          };
-        });
-        return cars;
-
+    _.each(self.Data.models.cars, function(car) {
+      var loc = getRandomLocationInRange();
+      car.latitude  = loc.latitude;
+      car.longitude = loc.longitude;
+      car.image     = '/components/ads/templates/images/ad1.png';
+      car.plate     = 'AUD 568';
+      car.name      = 'Chevrolet Spark',
+      car.status    = {
+        charge: {
+          current: 69,
+          timeUntilFull: 20,
+          reach: 10,
+          charging: true
+        }
+      };
     });
+    return self.Data.models.cars;
 
     // for (var i = 0; i < numNearby; i++) {
     //   ret.push({
@@ -233,8 +230,11 @@ function nearbyFleetDirective(MapsLoader, $q, fleetService, realReachService, $w
             addMarkerClick(marker, f, scope.onClickMarker);
             markers.push(marker);
           });
-          var group = new L.featureGroup(markers);
-          mapInstance.fitBounds(group.getBounds().pad(0.5))
+          if(markers.length>0){
+            var group = new L.featureGroup(markers);
+            mapInstance.fitBounds(group.getBounds().pad(0.5))
+            
+          }
           // realReachService.getReachInMinutes(15,TRANSPORT_PEDESTRIAN).then(function(reach){
           //   var numPoints=reach.realReach.gpsPoints.length;
           //   var polygonPoints=[];

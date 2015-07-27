@@ -17,10 +17,7 @@ function ApplicationController($rootScope, $scope, $ionicPopover, Cars, Data,$q)
 
   self.init = function() {
     var defered=$q.defer();
-    Data.models.cars=defered.promise;
-    var cars=Cars.query(function(){
-      defered.resolve(cars);
-    });
+    Data.models.cars=Cars.query();
   }
 
   self.init();
