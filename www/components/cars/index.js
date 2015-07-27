@@ -75,8 +75,6 @@ CarController.prototype.book = function() {
   var self = this;
   var selectedData = this.selectedCar.getSelected();
   var carId = selectedData.id;
- this.state.go('ads',{redirectUrl:'bookings-show',redirectParams:{'id':carId}},{reload: true});
-/*
 
   // TEMP CODE TO CREATE A DRIVER, LOG THEM IN, and CREATE BOOKING.
   // NOTE: ONCE YOU HAVE CREATED A BOOKING ON A CAR, IT CANNOT BE BOOKED AGAIN...
@@ -94,13 +92,12 @@ CarController.prototype.book = function() {
         userId: user.id,
         carId: self.car.id
       });
-
       booking.$save(function(b) {
         self.state.go('ads',{ redirectUrl:'bookings-show', redirectParams: { 'id': booking.id } });
       });
     })
   });
-  // END TEMP CODE.*/
+  // END TEMP CODE.
 };
 
 CarController.prototype.cancel = function() {
@@ -144,6 +141,7 @@ FleetService.prototype.getNearbyFleet = function(numNearby) {
           car.longitude = loc.longitude;
           car.image     = '/components/ads/templates/images/ad1.png';
           car.plate     = 'AUD 568';
+          car.name      = 'Chevrolet Spark',
           car.status    = {
             charge: {
               current: 69,
@@ -229,11 +227,14 @@ function nearbyFleetDirective(MapsLoader, $q, fleetService, realReachService, $w
           var latLng;
           var markers = [];
           var marker;
+
           fleet.forEach(function(f) {
             marker = L.marker([f.latitude, f.longitude], {icon: waiveCarIcon}).addTo(mapInstance);
             addMarkerClick(marker, f, scope.onClickMarker);
             markers.push(marker);
           });
+          var group = new L.featureGroup(markers);
+          mapInstance.fitBounds(group.getBounds().pad(0.5))
           // realReachService.getReachInMinutes(15,TRANSPORT_PEDESTRIAN).then(function(reach){
           //   var numPoints=reach.realReach.gpsPoints.length;
           //   var polygonPoints=[];

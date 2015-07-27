@@ -17,7 +17,6 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpP
   'use strict';
 
   $httpProvider.interceptors.push('AuthInterceptor');
-
   $ionicConfigProvider.views.transition('platform');
    $stateProvider
     // FIND WAIVECARS
