@@ -63,6 +63,14 @@ module.exports = (function () {
     'password'
   ];
 
+  /**
+   * @method name
+   * @return {String}
+   */
+  User.prototype.name = function () {
+    return this.firstName + ' ' + this.lastName;
+  };
+
   return User;
 
 })();

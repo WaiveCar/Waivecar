@@ -12,9 +12,9 @@ queue.process('booking-timer-cancel', function (job, done) {
     let booking = yield Booking.getBooking(id, user);
 
     yield Booking.setCarStatus('available', booking.carId, user);
-    yield booking.update({
-      state : 'cancelled'
-    });
+
+    booking.state = 'cancelled';
+    yield booking.update();
 
     socket.io.user(user.id).emit('booking:cancelled', booking.toJSON());
 

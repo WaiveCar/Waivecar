@@ -82,9 +82,10 @@ module.exports = (function () {
       }, 409);
     }
 
-    yield booking.update({
-      state : 'pending-arrival'
-    });
+    // ### Update Booking
+
+    booking.state = 'pending-arrival';
+    yield booking.update();
 
     // ### Time Limit
     // The booking will automaticaly cancel itself after 15 minutes
@@ -169,9 +170,12 @@ module.exports = (function () {
     }
 
     yield Booking.setCarStatus('available', booking.carId, user);
-    yield booking.update({
-      state : 'cancelled'
-    });
+
+    // ### Update Booking
+
+    booking._actor = this._actor;
+    booking.state  = 'cancelled';
+    yield booking.update();
 
     // ### Remove Time Limit
     // Remove the auto cancel job on the booking

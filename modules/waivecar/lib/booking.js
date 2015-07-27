@@ -52,9 +52,8 @@ Bookings.start = function *(booking, user) {
   });
   details._actor = user;
   yield details.save();
-  yield booking.update({
-    state : 'in-progress'
-  });
+  booking.state = 'in-progress';
+  yield booking.update();
 };
 
 /**
@@ -84,9 +83,8 @@ Bookings.end = function *(booking, user) {
   // Set the booking to pending payment, a future payment job will update the
   // booking to completed at earliest convenience.
 
-  yield booking.update({
-    state : 'pending-payment'
-  });
+  booking.state = 'pending-payment';
+  yield booking.update();
 
   // ### Car Status
   // Set the car status back to available.
