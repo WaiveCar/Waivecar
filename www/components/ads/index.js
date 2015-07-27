@@ -1,5 +1,15 @@
-function AdsController($scope,$state){
+function AdsController($scope,$state,$timeout){
 	this.$state=$state;
+	this.handleStateValidity();
+	var self=this;
+	$scope.$on('$stateChangeStart', function(event, toState, toParams) {
+		console.log(toState);
+         // call event.preventDefault() to prevent from transition.
+    });
+	var timeOutFn=function(){
+		self.goToRedirectUrl();
+	}
+	$timeout(timeOutFn,2000);
 }
 //Redirect if the redirect url is not valid
 
@@ -18,28 +28,21 @@ AdsController.prototype.goToRedirectUrl = function() {
 	this.$state.go(redirectUrl,redirectParams);
 };
 function advertisementDirective($state,$timeout){
-	var link=function(scope, element, attrs, ctrl){
-		ctrl.handleStateValidity();
-		var timeOutFn=function(){
-			ctrl.goToRedirectUrl();
-		}
-		$timeout(timeOutFn,2000);
-	}
+
 	return {
-  		  templateUrl: 'components/ads/templates/directives/advertisement.html',
-  		  controller:'AdsController',
-  		  controllerAs:'ads',
-  		  link:link
+		templateUrl: 'components/ads/templates/directives/advertisement.html',
+		controller:'AdsController',
+		controllerAs:'ads'
 	}
 }
 angular.module('ads',[])
 .directive('advertisement', [
 	'$state',
-	'$timeout',
 	advertisementDirective
 ])
 .controller('AdsController', [
   '$scope',
   '$state',
+'$timeout',
   AdsController
 ]);

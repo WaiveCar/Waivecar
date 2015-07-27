@@ -75,6 +75,8 @@ CarController.prototype.book = function() {
   var self = this;
   var selectedData = this.selectedCar.getSelected();
   var carId = selectedData.id;
+ this.state.go('ads',{redirectUrl:'bookings-show',redirectParams:{'id':carId}},{reload: true});
+/*
 
   // TEMP CODE TO CREATE A DRIVER, LOG THEM IN, and CREATE BOOKING.
   // NOTE: ONCE YOU HAVE CREATED A BOOKING ON A CAR, IT CANNOT BE BOOKED AGAIN...
@@ -98,7 +100,7 @@ CarController.prototype.book = function() {
       });
     })
   });
-  // END TEMP CODE.
+  // END TEMP CODE.*/
 };
 
 CarController.prototype.cancel = function() {
@@ -135,24 +137,25 @@ FleetService.prototype.getNearbyFleet = function(numNearby) {
         longitude: deviceLocation.longitude + diffB
       };
     }
+   return self.Data.models.cars.then(function(cars){
+        _.each(cars, function(car) {
+          var loc = getRandomLocationInRange();
+          car.latitude  = loc.latitude;
+          car.longitude = loc.longitude;
+          car.image     = '/components/ads/templates/images/ad1.png';
+          car.plate     = 'AUD 568';
+          car.status    = {
+            charge: {
+              current: 69,
+              timeUntilFull: 20,
+              reach: 10,
+              charging: true
+            }
+          };
+        });
+        return cars;
 
-    _.each(self.Data.models.cars, function(car) {
-      var loc = getRandomLocationInRange();
-      car.latitude  = loc.latitude;
-      car.longitude = loc.longitude;
-      car.image     = '/components/ads/templates/images/ad1.png';
-      car.plate     = 'AUD 568';
-      car.status    = {
-        charge: {
-          current: 69,
-          timeUntilFull: 20,
-          reach: 10,
-          charging: true
-        }
-      };
     });
-    // TODO: we should not be doing this as we want all 'things' to just observe Data.models.cars.
-    return self.Data.models.cars;
 
     // for (var i = 0; i < numNearby; i++) {
     //   ret.push({
@@ -210,9 +213,11 @@ function nearbyFleetDirective(MapsLoader, $q, fleetService, realReachService, $w
 
   function link(scope, element, attrs, ctrl) {
     fleetService.getNearbyFleet().then(function(fleet) {
+      console.log("NEARBY FLEET");
       MapsLoader.getMap.then(function(L) {
+        console.log("MAP");
         ctrl.mapInstance.then(function(mapInstance) {
-
+          console.log("MAP INSTANCE");
           var waiveCarIcon = L.icon({
             iconUrl: 'img/active-waivecar.svg',
             iconRetinaUrl: 'img/active-waivecar.svg',

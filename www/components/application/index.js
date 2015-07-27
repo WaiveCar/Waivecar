@@ -1,4 +1,4 @@
-function ApplicationController($rootScope, $scope, $ionicPopover, Cars, Data) {
+function ApplicationController($rootScope, $scope, $ionicPopover, Cars, Data,$q) {
   var self = this;
 
   $ionicPopover.fromTemplateUrl('components/menu/templates/index.html', {
@@ -16,7 +16,12 @@ function ApplicationController($rootScope, $scope, $ionicPopover, Cars, Data) {
   }
 
   self.init = function() {
-    Data.models.cars = Cars.query();
+    var defered=$q.defer();
+    Data.models.cars=defered.promise;
+    var cars=Cars.query(function(){
+      defered.resolve(cars);
+    });
+    // Data.models.cars = Cars.query();
   }
 
   self.init();
@@ -29,5 +34,6 @@ angular.module('app')
   '$ionicPopover',
   'Cars',
   'Data',
+  '$q',
   ApplicationController
 ]);

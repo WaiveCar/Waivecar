@@ -14,7 +14,7 @@ function Config() {
       admin: 'https://admin-waivecar-dev.cleverbuild.biz',
       assets: '',
       vehicles:{
-        getNearby: baseUrl + '/cars'
+           getNearby: baseUrl + '/cars'
       }
     },
     satellizer: {

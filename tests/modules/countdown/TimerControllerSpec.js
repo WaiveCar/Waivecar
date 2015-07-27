@@ -21,7 +21,6 @@ describe('Countdown timer controller',function(){
 		angular.mock.inject(function($rootScope, $controller,$interval,$injector){
 			self.$interval=$interval;
 			self.countdownEvents=$injector.get('countdownEvents');
-			//create an empty scope
 			self.scope = $rootScope.$new();
 			self.rootScope=$rootScope;
 			self.ctrl=$controller('TimerController', {$scope: this.scope,$interval:this.$interval,TimerService:this.mockTimerService});

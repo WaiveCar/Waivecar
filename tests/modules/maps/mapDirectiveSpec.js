@@ -27,8 +27,7 @@ describe('Map directive',function(){
 	beforeEach(function(){
 		angular.module('ngCordova',[]);
 
-		angular.mock.module('Maps');
-		angular.mock.module(function($provide,$controllerProvider){
+		angular.mock.module('Maps',function($provide,$controllerProvider){
 			$provide.value("MapsLoader", mockMapsLoader);
 			$provide.value("locationService", mockLocationService);
 			$controllerProvider.register('mapController',function(){

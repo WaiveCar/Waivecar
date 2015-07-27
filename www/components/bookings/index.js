@@ -126,4 +126,4 @@ angular.module('app')
   'Bookings',
   BookingsController
 ])
-.directive('connecting',dialogDirective);
+.directive('overlayDialog',dialogDirective);

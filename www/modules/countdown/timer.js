@@ -137,8 +137,11 @@
     *@todo better timer lifecycle
     */
     if(typeof this._timerInstances[timerName] !='undefined' && !!this._timerInstances[timerName] && this._timerInstances[timerName]._state=='started'){
+      console.log("Giving the same timer "+timerName);
       return this._timerInstances[timerName];
     }
+          console.log("Creating new "+timerName);
+
     this._timerInstances[timerName] = new this.CountdownTimer(timerName, durations, scope,this.$rootScope);
   }
   TimerService.prototype.getRemainingTime = function(timerName) {
