@@ -91,35 +91,6 @@ BookingController.prototype.dialogDisplay = function(fn) {
 };
 
 
-function dialogDirective(){
-  return {
-    restrict:'E',
-    scope:{
-      title:'@',
-      subtitle:'@',
-      buttonText:'@',
-      setDisplayFunction: '&',
-      setHideFunction: '&',
-      onButtonClick:'&'
-    },
-    link: function(scope, element, attrs){
-      // alert("ON LINK");
-      scope.setDisplayFunction({'fn':function(){
-            // alert("On set dísplay");
-            // alert(element[0].firstChild);
-            //             alert(element[0].firstChild.style);
-
-        element[0].firstChild.style.display="block";
-        // alert("Done");
-
-      }});
-      scope.setHideFunction({'fn':function(){
-        element[0].firstChild.style.display="none";
-      }});
-    },
-    templateUrl:'/components/bookings/templates/overlay-dialog.html'
-  }
-}
 BookingController.prototype.dialogClick = function() {
   var selectedData=this.selectedCarService.getSelected();
   this.$state.go('cars-connect',{id:selectedData.id});
@@ -141,5 +112,4 @@ angular.module('app')
   '$state',
   'DataService',
   BookingsController
-])
-.directive('overlayDialog',dialogDirective);
+]);

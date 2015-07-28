@@ -1,5 +1,5 @@
 (function() {
-  function countdownFactory($timeout, countdownEvents) {
+  function countdownFactory($timeout, countdownEvents,timerStates) {
     function CountdownTimer(name, durations, scope,rootScope) {
 
       this._setDurations(durations);
@@ -10,9 +10,12 @@
       this._scope = scope;
       this._currentDurationInSecods;
       this.countdownEvents = countdownEvents;
-      this._state='stopped';
+      this._state=timerStates.stopped;
       this._rootScope=rootScope;
-    }
+    }CountdownTimer.prototype.isStarted = function() {
+      return this._state===timerStates.started;
+    };
+
     CountdownTimer.prototype._setDurations = function(durations) {
         this._statusNames = Object.keys(durations);
         this.currentStatus = this._statusNames[0];
@@ -50,24 +53,24 @@
       };
      
     CountdownTimer.prototype.cancel = function() {
-        if(this._state=='stopped'){
+        if(!this.isStarted()){
           return;
         }
         this.cancelTimer();
-        this._state='stopped';
+        this._state=timerStates.stopped;
         var ellapsedSeconds = (new Date().getTime() - this._timeCounterStarted) / 1000;
         var eventName = this.countdownEvents.counterCancelled + "_" + this._name;
         this._rootScope.$broadcast(eventName, this.getStatus(), this.getStatusDuration(), ellapsedSeconds);
       };
     CountdownTimer.prototype.start = function() {
         var eventName = this.countdownEvents.newCounter + "_" + this._name;
-        if(this._state=='started'){
+        if(this.isStarted()){
           this._rootScope.$broadcast(eventName, this.getStatus(), this.getStatusDuration());
           eventName = this.countdownEvents.counterStateChanged + "_" + this._name;
           this._rootScope.$broadcast(eventName, this.getStatus(), this.getStatusDuration());
           return;
         }
-        this._state='started';
+        this._state=timerStates.started;
         this._timeCounterStarted = new Date().getTime();
         this._currentDurationInSecods = this.getStatusDuration() * 60;
 
@@ -94,7 +97,7 @@
       };
     CountdownTimer.prototype._timerFinished = function() {
         var eventName = this.countdownEvents.counterStateFinished + "_" + this._name;
-        this._state='stopped';
+        this._state=timerStates.stopped;
         this._rootScope.$broadcast(eventName, this.getStatus(), this.getStatusDuration());
         this._startNewEvent();
       };
@@ -125,7 +128,7 @@
     return CountdownTimer;
   }
 
-  function TimerService($rootScope, $timeout, countdownEvents, CountdownTimer) {
+  function TimerService($rootScope, $timeout, countdownEvents, CountdownTimer,timerStates) {
     this._timerInstances = {};
     this.$rootScope = $rootScope;
     this.$timeout = $timeout;
@@ -136,7 +139,7 @@
     /**
     *@todo better timer lifecycle
     */
-    if(typeof this._timerInstances[timerName] !='undefined' && !!this._timerInstances[timerName] && this._timerInstances[timerName]._state=='started'){
+    if(typeof this._timerInstances[timerName] !='undefined' && !!this._timerInstances[timerName] && this._timerInstances[timerName].isStarted()){
       console.log("Giving the same timer "+timerName);
       return this._timerInstances[timerName];
     }
@@ -260,9 +263,14 @@
     counterStateChanged: 'waivecarCounterStateChanged',
     counterStateFinished: 'waivecarCounterStateFinnished'
   })
+  .constant('timerStates',{
+    'started':'started',
+    'stopped':'stopped'
+  })
   .factory('CountdownTimer', [
     '$timeout',
     'countdownEvents',
+    'timerStates',
     countdownFactory
   ])
   .service('TimerService', [

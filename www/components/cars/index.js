@@ -86,20 +86,6 @@ CarController.prototype.chooseCar = function() {
       includeAd : true
     }
   });
-
-  // user.$save(function(u) {
-  //   self.Users.login({ email: user.email, password: 'lollipop0' }, function(auth) {
-  //     self.session.set('auth', auth).save();
-  //     var booking = new self.Bookings({
-  //       userId: user.id,
-  //       carId: self.car.id
-  //     });
-  //     booking.$save(function(b) {
-  //       self.state.go('ads',{ redirectUrl:'bookings-show', redirectParams: { 'id': booking.id } });
-  //     });
-  //   })
-  // });
-  // END TEMP CODE.
 };
 
 CarController.prototype.cancel = function() {
@@ -166,23 +152,28 @@ function nearbyFleetDirective(MapsLoader, $q, fleetService, realReachService, lo
 
       MapsLoader.getMap.then(function(L) {
         self.L=L;
+        console.log('maps');
         return ctrl.mapInstance;
       })
       .then(function(mapInstance){
         self.mapInstance=mapInstance;
+        console.log('mapInstance');
         return locationService.getLocation();
       })
       .then(function(deviceLocation){
+        console.log('Location');
         self.deviceLocation=deviceLocation;
       })
       .then(function(){
          var waiveCarIcon = self.L.icon({
           iconUrl: 'img/active-waivecar.svg',
           iconRetinaUrl: 'img/active-waivecar.svg',
-          iconSize: [40, 50],
-          iconAnchor: [20, 50],
+          iconSize: [20, 25],
+          iconAnchor: [10, 25],
           popupAnchor: [0 , 0]
         });
+         console.log('Starting watch of ');
+         console.log(DataService.all.cars);
         scope.$watch(function(){
           return DataService.all.cars;
         },

@@ -43,3 +43,21 @@
   angular.module('Maps.realReach', ['Maps'])
       .service('realReachService', ['$rootScope', 'MapsLoader', '$q', '$http', 'locationService', RealReachService])
 })();
+
+ // realReachService.getReachInMinutes(15,TRANSPORT_PEDESTRIAN).then(function(reach){
+ //   var numPoints=reach.realReach.gpsPoints.length;
+ //   var polygonPoints=[];
+ //   var latLng;
+ //       //No idea why we have to skip the first 8
+ //       for(var i=8; i<numPoints; i+=2){
+ //         //No idea why they invert this also
+ //         latLng=new L.LatLng(reach.realReach.gpsPoints[i+1], reach.realReach.gpsPoints[i]);
+ //         polygonPoints.push(latLng);
+ //     }
+ //     var polygon = new L.Polygon(polygonPoints);
+ //     mapInstance.addLayer(polygon);
+ //     scope.reachPolygon=polygon;
+ //     marker=L.marker(latLng,{icon:waiveCarIcon}).addTo(mapInstance);
+ //     ctrl.solveDestiny(marker);
+ //     addMarkerClick(marker);
+ // });

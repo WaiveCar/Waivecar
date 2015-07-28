@@ -136,6 +136,7 @@ function paidRideTimeDirective($interval,paidRideService,formatTime) {
     }
 
 }
+
 function chargingStationInfoDirective() {
   return {
     templateUrl: 'components/ride/templates/directives/chargingStationInfo.html'

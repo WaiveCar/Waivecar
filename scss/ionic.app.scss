@@ -33,6 +33,18 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
         background-color: $assertive;
       }
   }
+  dt,dd{
+    display: inline-block;
+  }
+  dt{
+    text-align: left;
+    float: left;
+    clear: both;
+  }
+  dd{
+    text-align: right;
+    float: right;
+  }
   .button-padded{
     span,a{
       @include vertical-align;
@@ -44,7 +56,6 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     text-decoration: none;
     text-transform: capitalize;
   }
-  color: #FFF;
   .modal,.modal-wrapper{
     width: 100%;
     height: 100%;

@@ -21,8 +21,38 @@ function ApplicationController($rootScope, $scope, $ionicPopover, AuthService, D
 
   DataService.initialize('cars');
 }
+function dialogDirective(){
+  return {
+    restrict:'E',
+    scope:{
+      title:'@',
+      subtitle:'@',
+      buttonText:'@',
+      setDisplayFunction: '&',
+      setHideFunction: '&',
+      onButtonClick:'&'
+    },
+    link: function(scope, element, attrs){
+      // alert("ON LINK");
+      scope.setDisplayFunction({'fn':function(){
+            // alert("On set dísplay");
+            // alert(element[0].firstChild);
+            //             alert(element[0].firstChild.style);
+
+        element[0].firstChild.style.display="block";
+        // alert("Done");
+
+      }});
+      scope.setHideFunction({'fn':function(){
+        element[0].firstChild.style.display="none";
+      }});
+    },
+    templateUrl:'/components/application/templates/overlay-dialog.html'
+  }
+}
 
 angular.module('app')
+.directive('overlayDialog',dialogDirective)
 .controller('ApplicationController', [
   '$rootScope',
   '$scope',

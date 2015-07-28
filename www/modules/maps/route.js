@@ -184,8 +184,8 @@ function destinyLocationDirective(MapsLoader, $q, mapsEvents) {
            var waiveCarIcon = L.icon({
             iconUrl: 'img/active-waivecar.svg',
             iconRetinaUrl: 'img/active-waivecar.svg',
-            iconSize: [40, 50],
-            iconAnchor: [20, 50],
+            iconSize: [20, 25],
+            iconAnchor: [10, 25],
             popupAnchor: [0 , 0]
           });
             function handleMarker(destiny) {

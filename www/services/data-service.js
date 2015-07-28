@@ -1,4 +1,4 @@
-function DataService($rootScope, Bookings, Cars, Locations, Users, locationService, mapEvents) {
+function DataService($rootScope, Bookings, Cars, Locations, Users, mapEvents) {
 
   var service = {
 
@@ -113,7 +113,6 @@ angular.module('app')
   'Cars',
   'Locations',
   'Users',
-  'locationService',
   'mapsEvents',
   DataService
 ]);
