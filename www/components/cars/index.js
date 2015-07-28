@@ -106,37 +106,20 @@ CarController.prototype.cancel = function() {
   this.state.go('cars');
 };
 
-function FleetService($rootScope, $q, locationService, DataService) {
+function FleetService($rootScope, $q, locationService) {
   this.$q = $q;
   this.locationService = locationService;
   this.$rootScope = $rootScope;
-  this.DataService = DataService;
-  this.all = DataService.all;
+
 }
 
-FleetService.prototype.getNearbyFleet = function(numNearby) {
+FleetService.prototype.getNearbyFleet = function(location,cars) {
   var self = this;
-  return this.locationService.getLocation().then(function(deviceLocation) {
     var ret = [];
-    var maxDiff = 0.005;
     var idCount = 1;
-    var minDiff = 0.0005;
-    var getRandomLocationInRange = function() {
-      var diffA = Math.random() * (maxDiff - minDiff) + minDiff;
-      var diffB = Math.random() * (maxDiff - minDiff) + minDiff
-      if (Math.random() < .5) {
-        diffA = diffA * -1;
-      }
-      if (Math.random() < .5) {
-        diffB = diffB * -1;
-      }
-      return {
-        latitude: deviceLocation.latitude + diffA,
-        longitude: deviceLocation.longitude + diffB
-      };
-    }
-    _.each(self.all.cars, function(car) {
-      var loc = getRandomLocationInRange();
+    var ret=[];
+    _.each(cars, function(car) {
+      var loc = self.getRandomLocationInRange(location);
       car.latitude  = loc.latitude;
       car.longitude = loc.longitude;
       car.image     = '/components/ads/templates/images/ad1.png';
@@ -150,57 +133,29 @@ FleetService.prototype.getNearbyFleet = function(numNearby) {
           charging: true
         }
       };
+      ret.push(car);
     });
-    return self.all.cars;
-
-    // for (var i = 0; i < numNearby; i++) {
-    //   ret.push({
-    //     latitude: deviceLocation.latitude + diffA,
-    //     longitude: deviceLocation.longitude + diffB,
-    //     status: {
-    //       charge: {
-    //         current: 69,
-    //         timeUntilFull: 20,
-    //         reach: 10,
-    //         charging: true
-    //       }
-    //     },
-    //     name:'Chevrolet Spark',
-    //     plate:'AUD 568',
-    //     id: idCount++,
-    //     image:'/components/ads/templates/images/ad1.png'
-    //   });
-    // }
-
-    // return ret;
-
-    //HOlding until new API is up
-    // var defered=self.$q.defer();
-    // var config={
-    //     timeout:TIMEOUT_REQUEST,
-    //     method:"POST",
-    //     data:{location:deviceLocation,numNearby:numNearby},
-    //     url:self.url
-    // }
-    // var startTime = new Date().getTime();
-    // self.$http(config)
-    // .success(function(response, status, headers, config) {
-    //     defered.resolve(response.data)
-    // })
-    // .error(function(response, status, headers, config) {
-    //     var respTime = new Date().getTime() - startTime;
-    //     if(respTime >= TIMEOUT_REQUEST){
-    //         defered.resolve([]);
-    //     }
-    //     else{
-    //         defered.reject({response:response,status:status,headers:headers});
-    //     }
-    // });
-    // return defered.promise;
-  });
+    return ret;
 }
+FleetService.prototype.getRandomLocationInRange = function(location) {
+  var maxDiff = 0.005;
+  var minDiff = 0.0005;
+  var diffA = Math.random() * (maxDiff - minDiff) + minDiff;
+    var diffB = Math.random() * (maxDiff - minDiff) + minDiff
+    if (Math.random() < .5) {
+      diffA = diffA * -1;
+    }
+    if (Math.random() < .5) {
+      diffB = diffB * -1;
+    }
+    return {
+      latitude: location.latitude + diffA,
+      longitude: location.longitude + diffB
+    };
+};
 
-function nearbyFleetDirective(MapsLoader, $q, fleetService, realReachService, $window) {
+function nearbyFleetDirective(MapsLoader, $q, fleetService, realReachService, locationService,DataService) {
+  var self=this;
   function addMarkerClick(marker, info, onClickFn) {
     marker.on('mousedown', function(e) {
       onClickFn({marker: marker, info: info});
@@ -208,58 +163,58 @@ function nearbyFleetDirective(MapsLoader, $q, fleetService, realReachService, $w
   }
 
   function link(scope, element, attrs, ctrl) {
-    fleetService.getNearbyFleet().then(function(fleet) {
-      console.log("NEARBY FLEET");
-      MapsLoader.getMap.then(function(L) {
-        console.log("MAP");
-        ctrl.mapInstance.then(function(mapInstance) {
-          console.log("MAP INSTANCE");
-          var waiveCarIcon = L.icon({
-            iconUrl: 'img/active-waivecar.svg',
-            iconRetinaUrl: 'img/active-waivecar.svg',
-            iconSize: [40, 50],
-            iconAnchor: [20, 50],
-            popupAnchor: [0 , 0]
-          });
 
-          var latLng;
+      MapsLoader.getMap.then(function(L) {
+        self.L=L;
+        return ctrl.mapInstance;
+      })
+      .then(function(mapInstance){
+        self.mapInstance=mapInstance;
+        return locationService.getLocation();
+      })
+      .then(function(deviceLocation){
+        self.deviceLocation=deviceLocation;
+      })
+      .then(function(){
+         var waiveCarIcon = self.L.icon({
+          iconUrl: 'img/active-waivecar.svg',
+          iconRetinaUrl: 'img/active-waivecar.svg',
+          iconSize: [40, 50],
+          iconAnchor: [20, 50],
+          popupAnchor: [0 , 0]
+        });
+        scope.$watch(function(){
+          return DataService.all.cars;
+        },
+        function(cars){
+          if(scope.group){
+            self.mapInstance.removeLayer(scope.group);
+            scope.markers.forEach(function(marker){
+              self.mapInstance.removeLayer(marker);
+            });
+          }
+          
+          var fleet=fleetService.getNearbyFleet(self.deviceLocation,cars);
+
           var markers = [];
           var marker;
-
           fleet.forEach(function(f) {
-            marker = L.marker([f.latitude, f.longitude], {icon: waiveCarIcon}).addTo(mapInstance);
+            marker = L.marker([f.latitude, f.longitude], {icon: waiveCarIcon}).addTo(self.mapInstance);
             addMarkerClick(marker, f, scope.onClickMarker);
             markers.push(marker);
           });
           if(markers.length>0){
             var group = new L.featureGroup(markers);
-            mapInstance.fitBounds(group.getBounds().pad(0.5))
-
+            self.mapInstance.fitBounds(group.getBounds().pad(0.5))
+            scope.group=group;
+            scope.markers=markers;
           }
-          // realReachService.getReachInMinutes(15,TRANSPORT_PEDESTRIAN).then(function(reach){
-          //   var numPoints=reach.realReach.gpsPoints.length;
-          //   var polygonPoints=[];
-          //   var latLng;
-          //       //No idea why we have to skip the first 8
-          //       for(var i=8; i<numPoints; i+=2){
-          //         //No idea why they invert this also
-          //         latLng=new L.LatLng(reach.realReach.gpsPoints[i+1], reach.realReach.gpsPoints[i]);
-          //         polygonPoints.push(latLng);
-          //     }
-          //     var polygon = new L.Polygon(polygonPoints);
-          //     mapInstance.addLayer(polygon);
-          //     scope.reachPolygon=polygon;
-          //     marker=L.marker(latLng,{icon:waiveCarIcon}).addTo(mapInstance);
-          //     ctrl.solveDestiny(marker);
-          //     addMarkerClick(marker);
-          // });
-        });
-      });
 
-    });
+        });
+      })
   }
   return {
-    restrict: 'CE',
+    restrict: 'E',
     link: link,
     require: '^map',
     scope: {
@@ -267,6 +222,7 @@ function nearbyFleetDirective(MapsLoader, $q, fleetService, realReachService, $w
     }
   }
 }
+
 function carChargeStatusDirective(searchEvents, selectedCar) {
   function link(scope, element, attrs, ctrl) {
     var selectedData = selectedCar.getSelected();
@@ -327,7 +283,6 @@ angular.module('app')
   '$rootScope',
   '$q',
   'locationService',
-  'DataService',
   FleetService
 ])
 .controller('CarController', [
@@ -363,7 +318,8 @@ angular.module('app')
   '$q',
   'fleetService',
   'realReachService',
-  '$window',
+  'locationService',
+  'DataService',
   nearbyFleetDirective
 ])
 .directive('carInformation', [
