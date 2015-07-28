@@ -2,17 +2,15 @@
 	<ion-content scroll="false">
 		<div class="container">
 		 	<div class="top">
-			 	 <i  ui-sref="cars" class="icon ion-arrow-left-c button-left top-icon"></i>
-				<img src="img/waivecar-mark2.svg" class="waiveCar-icon"></img>
+			 	<i  ui-sref="cars" class="icon ion-arrow-left-c button-left top-icon"></i>
+				<img src="img/waivecar-mark2.svg" class="waiveCar-icon" />
 				<p class="highlight">Error</p>
 		 	</div>
 		 	<div class="middle">
 				<p><span ng-bind="error.message"></span></p>
 		 	</div>
 		 	<div class="bottom">
-		 		<div class="button button-balanced button-padded">
-                    <a ui-sref="cars" >ok</a>
-                </div>
+        <a class="button button-balanced button-padded" ui-sref="cars">ok</a>
 		 	</div>
 		</div>
 	</ion-content>

@@ -1,10 +1,11 @@
-
 function SelectedCarService($rootScope) {
   this.$rootScope;
 }
+
 SelectedCarService.prototype.setSelected = function(selected) {
   this.selected = selected;
 };
+
 SelectedCarService.prototype.getSelected = function() {
   return this.selected;
 };
@@ -16,9 +17,11 @@ function ConnectionController($state,countdownEvents,$scope){
     $state.go('dashboard');
   });
 }
+
 ConnectionController.prototype.getConnectionDurations = function() {
   return {'timeToConnect':.1};
 };
+
 ConnectionController.prototype.goToConnecting = function($state) {
   this.$state.go('cars-connecting',{'id':this.$state.params.id});
 };
@@ -26,17 +29,16 @@ ConnectionController.prototype.goToConnecting = function($state) {
 
 // Cars - List
 
-function CarsController($rootScope, $scope, $state, selectedCar, Cars, searchEvents, mapsEvents, Data) {
-  var self = this;
-
-  this.state = $state;
-  this.$rootScope = $rootScope;
-  this.$scope = $scope;
-  this.selectedCar = selectedCar;
+function CarsController($rootScope, $scope, $state, selectedCar, searchEvents, mapsEvents, DataService) {
+  var self          = this;
+  this.$state        = $state;
+  this.$rootScope   = $rootScope;
+  this.$scope       = $scope;
+  this.all          = DataService.all;
+  this.active       = DataService.active;
+  this.selectedCar  = selectedCar;
   this.searchEvents = searchEvents;
-  this.mapsEvents = mapsEvents;
-  this.cars = Data.models.cars; // this is a cached listing of cars, populated by application controlller.
-  this.user = Data.active.user; // this is a cached listing of active user, populated by auth.
+  this.mapsEvents   = mapsEvents;
 }
 
 CarsController.prototype.showCarDetails = function(marker, data) {
@@ -46,57 +48,57 @@ CarsController.prototype.showCarDetails = function(marker, data) {
   this.selectedCar.setSelected(data);
   this.$rootScope.$broadcast(this.mapsEvents.destinyOnRouteChanged, latLng);
   this.$rootScope.$broadcast(this.searchEvents.vehicleSelected, data);
-  this.state.go('cars-show', { id: data.id});
+  this.$state.go('cars-show', { id: data.id });
 };
+
 // Cars - Show
-function CarController($state, $q, $session, selectedCar, Users, Bookings, Data) {
+function CarController($state, $q, selectedCar, DataService) {
 
-  var self      = this;
-  self.Users    = Users;
-  self.Bookings = Bookings;
-  self.session  = $session;
+  var self          = this;
+  self.$state        = $state;
+  self.$q           = $q;
+  self.DataService  = DataService;
+  self.UserResource = DataService.resources.users;
+  self.car          = DataService.active;
 
-  Data.activate('cars', $state.params.id, function(err, activatedCar) {
-    if (err) console.log('huh');
-    self.car = Data.active.car;
+  self.DataService.activate('cars', $state.params.id, function(err, activatedCar) {
+    if (err) console.log(err);
   });
 
   this.selectedCar = selectedCar;
   var selectedData = selectedCar.getSelected();
-  this.state = $state;
-  this.$q = $q;
   if (angular.isUndefined(selectedData)) $state.go('cars');
 }
+
 CarController.prototype.getDestiny = function() {
   return this.selectedCar.getSelected();
 };
 
-CarController.prototype.book = function() {
-  var self = this;
+CarController.prototype.chooseCar = function() {
+  var self         = this;
   var selectedData = this.selectedCar.getSelected();
-  var carId = selectedData.id;
+  var carId        = selectedData.id;
 
-  // TEMP CODE TO CREATE A DRIVER, LOG THEM IN, and CREATE BOOKING.
-  // NOTE: ONCE YOU HAVE CREATED A BOOKING ON A CAR, IT CANNOT BE BOOKED AGAIN...
-  var user = new self.Users({
-    firstName : 'Matt',
-    lastName  : 'Driver',
-    email     : 'matt.ginty+' + Math.random() + 'gmail.com',
-    password  : 'lollipop0'
+  self.$state.go('users-new', {
+    redirectUrl    :'bookings-new',
+    redirectParams : {
+      carId     : self.DataService.active.cars.id,
+      includeAd : true
+    }
   });
 
-  user.$save(function(u) {
-    self.Users.login({ email: user.email, password: 'lollipop0' }, function(auth) {
-      self.session.set('auth', auth).save();
-      var booking = new self.Bookings({
-        userId: user.id,
-        carId: self.car.id
-      });
-      booking.$save(function(b) {
-        self.state.go('ads',{ redirectUrl:'bookings-show', redirectParams: { 'id': booking.id } });
-      });
-    })
-  });
+  // user.$save(function(u) {
+  //   self.Users.login({ email: user.email, password: 'lollipop0' }, function(auth) {
+  //     self.session.set('auth', auth).save();
+  //     var booking = new self.Bookings({
+  //       userId: user.id,
+  //       carId: self.car.id
+  //     });
+  //     booking.$save(function(b) {
+  //       self.state.go('ads',{ redirectUrl:'bookings-show', redirectParams: { 'id': booking.id } });
+  //     });
+  //   })
+  // });
   // END TEMP CODE.
 };
 
@@ -104,13 +106,12 @@ CarController.prototype.cancel = function() {
   this.state.go('cars');
 };
 
-function FleetService($rootScope, $q, locationService, $http, Config, Data) {
+function FleetService($rootScope, $q, locationService, DataService) {
   this.$q = $q;
   this.locationService = locationService;
-  this.$http = $http;
   this.$rootScope = $rootScope;
-  this.url = Config.uri.vehicles.getNearby;
-  this.Data = Data;
+  this.DataService = DataService;
+  this.all = DataService.all;
 }
 
 FleetService.prototype.getNearbyFleet = function(numNearby) {
@@ -134,7 +135,7 @@ FleetService.prototype.getNearbyFleet = function(numNearby) {
         longitude: deviceLocation.longitude + diffB
       };
     }
-    _.each(self.Data.models.cars, function(car) {
+    _.each(self.all.cars, function(car) {
       var loc = getRandomLocationInRange();
       car.latitude  = loc.latitude;
       car.longitude = loc.longitude;
@@ -150,7 +151,7 @@ FleetService.prototype.getNearbyFleet = function(numNearby) {
         }
       };
     });
-    return self.Data.models.cars;
+    return self.all.cars;
 
     // for (var i = 0; i < numNearby; i++) {
     //   ret.push({
@@ -233,7 +234,7 @@ function nearbyFleetDirective(MapsLoader, $q, fleetService, realReachService, $w
           if(markers.length>0){
             var group = new L.featureGroup(markers);
             mapInstance.fitBounds(group.getBounds().pad(0.5))
-            
+
           }
           // realReachService.getReachInMinutes(15,TRANSPORT_PEDESTRIAN).then(function(reach){
           //   var numPoints=reach.realReach.gpsPoints.length;
@@ -273,10 +274,11 @@ function carChargeStatusDirective(searchEvents, selectedCar) {
       return;
     }
     var details = selectedData.status;
+
     scope.chargeLevel = details.charge.current + '%';
     if (details.charge.charging) {
       scope.chargeState = 'Parked at charging station';
-      scope.chargeFull =  details.charge.timeUntilFull + ' minutes';
+      scope.chargeFull  = details.charge.timeUntilFull + ' minutes';
     } else {
       scope.chargeState = 'Not charging';
     }
@@ -285,11 +287,12 @@ function carChargeStatusDirective(searchEvents, selectedCar) {
   }
 
   return {
-    restrict: 'E',
-    link: link,
-    templateUrl: 'components/cars/templates/directives/carChargeStatus.html'
+    restrict    : 'E',
+    link        : link,
+    templateUrl : 'components/cars/templates/directives/carChargeStatus.html'
   }
 }
+
 function carInformationDirective(searchEvents, selectedCar) {
   function link(scope, element, attrs, ctrl) {
     scope.$watch(function(){
@@ -297,20 +300,21 @@ function carInformationDirective(searchEvents, selectedCar) {
     },
     function(){
       var details = selectedCar.getSelected();
-      if(details){
-        scope.name = details.name;
+      if (details) {
+        scope.name  = details.name;
         scope.plate = details.plate;
-        scope.image=details.image;
+        scope.image = details.image;
       }
     })
   }
   return {
-    restrict: 'E',
-    link: link,
-    transclude: true,
-    templateUrl: 'components/cars/templates/directives/carInformation.html'
+    restrict    : 'E',
+    link        : link,
+    transclude  : true,
+    templateUrl : 'components/cars/templates/directives/carInformation.html'
   }
 }
+
 angular.module('app')
 .constant('searchEvents', {
   vehicleSelected: 'vehicleSelected'
@@ -323,31 +327,30 @@ angular.module('app')
   '$rootScope',
   '$q',
   'locationService',
-  '$http',
-  'Config',
-  'Data',
+  'DataService',
   FleetService
 ])
 .controller('CarController', [
   '$state',
   '$q',
-  '$session',
   'selectedCar',
-  'Users',
-  'Bookings',
-  'Data',
+  'DataService',
   CarController
 ])
-.controller('ConnectionController',['$state','countdownEvents','$scope',ConnectionController])
+.controller('ConnectionController', [
+  '$state',
+  'countdownEvents',
+  '$scope',
+  ConnectionController
+])
 .controller('CarsController', [
   '$rootScope',
   '$scope',
   '$state',
   'selectedCar',
-  'Cars',
   'searchEvents',
   'mapsEvents',
-  'Data',
+  'DataService',
   CarsController
 ])
 .directive('carChargeStatus', [
@@ -355,7 +358,14 @@ angular.module('app')
   'selectedCar',
   carChargeStatusDirective
 ])
-.directive('nearbyFleet', ['MapsLoader', '$q', 'fleetService', 'realReachService', '$window', nearbyFleetDirective])
+.directive('nearbyFleet', [
+  'MapsLoader',
+  '$q',
+  'fleetService',
+  'realReachService',
+  '$window',
+  nearbyFleetDirective
+])
 .directive('carInformation', [
   'searchEvents',
   'selectedCar',
