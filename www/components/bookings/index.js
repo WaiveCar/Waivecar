@@ -14,20 +14,13 @@ function BookingController($rootScope, $scope, $state, DataService, selectedCarS
 
   if (self.isEdit) {
     DataService.activate('bookings', $state.params.id, function(err) {
-      if (err) {
-        console.log(err);
-      }
+      if (err) console.log(err);
     });
   }
 
   self.updateBooking = function() {
     // TODO: actual API calls.
     $state.go('bookings-show', { id: 1 });
-  };
-
-  self.cancelBooking = function() {
-    // TODO: actual API calls.
-    $state.go('cars');
   };
 
   self.openMap = function() {

@@ -5,11 +5,11 @@ function UserController($rootScope, $scope, $state, AuthService, DataService) {
   self.DataService = DataService;
   self.active      = DataService.active;
   self.forms       = {
-    // prefill for testing easier ;)
+    // prefill for easier testing ;)
     userForm     : {
-      firstName : 'Frank',
-      lastName  : 'Driver',
-      email     : 'matt.ginty+' + Math.random() + 'gmail.com',
+      firstName : 'Michael',
+      lastName  : 'Schumacher',
+      email     : 'matt.ginty+' + Math.random() + '@clevertech.biz',
       password  : 'lollipop0'
     },
     licenceForm  : {},
