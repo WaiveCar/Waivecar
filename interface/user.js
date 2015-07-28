@@ -35,9 +35,16 @@ module.exports = (function () {
       lastName   : 'VARCHAR(28) NOT NULL',
       email      : 'VARCHAR(128) NOT NULL',
       password   : 'VARCHAR(64) NULL',
+
+      // ### Social IDs
+
       facebook   : 'VARCHAR(64) NULL',
       twitter    : 'VARCHAR(64) NULL',
-      linkedin   : 'VARCHAR(64) NULL'
+      linkedin   : 'VARCHAR(64) NULL',
+
+      // ### Payment IDs
+
+      stripeId : 'VARCHAR(64) NULL'
     },
     primaryKey : 'id',
     uniqueKeys : {

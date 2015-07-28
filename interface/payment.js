@@ -38,15 +38,6 @@ module.exports = (function () {
     foreignKeys : 'FOREIGN KEY (customer_id) REFERENCES users(id)'
   };
 
-  /**
-   * List of default values that are set instead of null when instancing a new model
-   * @property _defaults
-   * @type     Object
-   */
-  Payment.prototype._defaults = {
-    private : 0
-  };
-
   return Payment;
 
 })();
