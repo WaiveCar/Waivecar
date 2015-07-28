@@ -8,17 +8,17 @@ function AuthInterceptor($rootScope, $q, $session) {
       }
 
       if (/\/1\//.test(response.url)) {
-        response.headers['x-referer'] = document.location.origin + '/' + $rootScope.$state.href($rootScope.$state.current)
+        response.headers['x-referer'] = document.location.origin + '/' + $rootScope.$state.href($rootScope.$state.current);
       }
 
-      return response
+      return response;
     },
     responseError: function (rejection) {
       if (401 === rejection.status || 403 === rejection.status) {
-        $rootScope.$emit('authError')
+        $rootScope.$emit('authError');
       }
 
-      return $q.reject(rejection)
+      return $q.reject(rejection);
     }
   };
 }

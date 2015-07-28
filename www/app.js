@@ -24,10 +24,22 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpP
       url: '/cars',
       templateUrl: '/components/cars/templates/index.html'
     })
-    // BOOK WAIVECAR
+    // SHOW WAIVECAR
     .state('cars-show', {
       url: '/cars/:id',
       templateUrl: '/components/cars/templates/show.html'
+    })
+    .state('users-new', {
+      url         : '/users/new',
+      templateUrl : '/components/users/templates/new.html',
+      params      : {
+        redirectUrl    : null,
+        redirectParams : null
+      }
+    })
+    .state('users-show', {
+      url: '/users/:id',
+      templateUrl: '/components/users/templates/show.html'
     })
     //Connect to car
     .state('cars-connect', {
@@ -45,13 +57,20 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpP
     // PAST RIDES
     .state('bookings', {
       url: '/bookings',
-      templateUrl: '/components/bookings/templates/index.html'
+      templateUrl: '/components/bookings/templates/index.html',
+      params      : {
+        redirectUrl    : null,
+        redirectParams : null
+      }
     })
-    // details yet to be
-  /*  .state('bookings-new', {
+    .state('bookings-new', {
       url: '/bookings/new',
-      templateUrl: '/components/bookings/templates/new.html'
-    })*/
+      templateUrl: '/components/bookings/templates/new.html',
+      params      : {
+        redirectUrl    : null,
+        redirectParams : null
+      }
+    })
     // GET TO YOUR CAR
     .state('bookings-show', {
       url: '/bookings/:id',
@@ -70,10 +89,6 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpP
     .state('contact', {
       url: '/contact',
       templateUrl: '/components/contact/templates/index.html'
-    })
-    .state('account', {
-      url: '/my-account',
-      templateUrl: '/components/users/templates/index.html'
     })
     .state('points', {
       url: '/my-points',

@@ -27,8 +27,45 @@ Utils.prototype.transformArrayResponse = function (data, headersGetter, status) 
   return data;
 }
 
+Utils.prototype.createResource = function(resourceName, additionalMethods) {
+  additionalMethods = additionalMethods || {};
+
+  var resource = {
+    save   : {
+      method : 'POST',
+      url    : this.getRoute(resourceName)
+    },
+    query  : {
+      method            : 'GET',
+      url               : this.getRoute(resourceName),
+      isArray           : true,
+      transformResponse : this.transformArrayResponse
+    },
+    get    : {
+      method : 'GET',
+      url    : this.getRoute(resourceName, true)
+    },
+    update : {
+      method : 'PUT',
+      url    : this.getRoute(resourceName, true),
+      params : {
+        id : '@id'
+      }
+    },
+    remove : {
+      method : 'DELETE',
+      url    : this.getRoute(resourceName, true),
+      params : {
+        id : '@id'
+      }
+    }
+  };
+
+  return angular.extend(additionalMethods, resource);
+}
+
 angular.module('app')
-.service('Utils', [
-  'Config',
+.service('$utils', [
+  '$config',
   Utils
 ]);

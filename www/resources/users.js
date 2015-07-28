@@ -1,51 +1,27 @@
-function Resource($resource, Utils) {
+function Resource($resource, $utils) {
 
   function getRoute(hasId) {
-    return Utils.getRoute('users', hasId);
+    return $utils.getRoute('users', hasId);
   }
 
-  return $resource(null, null, {
-
-    login: {
-      method: 'POST',
-      url: Utils.getCustomRoute('auth/login')
+  return $resource(null, null, $utils.createResource('users', {
+    login  : {
+      method : 'POST',
+      url    : $utils.getCustomRoute('auth/login')
     },
-
-    save: {
-      method: 'POST',
-      url: getRoute()
+    logout : {
+      method : 'POST',
+      url    : $utils.getCustomRoute('auth/logout')
     },
-
-    query: {
-      method: 'GET',
-      url: getRoute(),
-      isArray: true,
-      transformResponse: Utils.transformArrayResponse
-    },
-
-    get: {
-      method: 'GET',
-      url: getRoute(true)
-    },
-
-    update: {
-      method: 'PUT',
-      url: getRoute(true),
-      params: {
-        id: '@id'
-      }
-    },
-
-    me: {
-      method: 'GET',
-      url: Utils.getCustomRoute('users/me')
+    me     : {
+      method : 'GET',
+      url    : $utils.getCustomRoute('users/me')
     }
-
-  });
+  }));
 }
 
 angular.module('app').factory('Users', [
   '$resource',
-  'Utils',
+  '$utils',
   Resource
 ]);
