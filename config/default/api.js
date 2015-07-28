@@ -19,7 +19,7 @@ module.exports = {
    */
 
   api : {
-    name    : 'WAIVECAR API',
+    name    : 'WaiveCar',
     version : '0.0.1',
     port    : 3000,
     uri     : 'http://localhost:3000',
