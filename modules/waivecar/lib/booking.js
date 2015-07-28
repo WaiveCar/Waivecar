@@ -108,9 +108,9 @@ Bookings.getBookings = function *(query) {
     limit  : query.limit  || 20,
     offset : query.offset || 0
   });
-
-  yield list.hasMany(BookingDetails, 'bookingId', 'details');
-
+  if (list) {
+    yield list.hasMany(BookingDetails, 'bookingId', 'details');
+  }
   return list;
 };
 
@@ -164,7 +164,7 @@ Bookings.getBookingDetails = function *(id) {
  */
 Bookings.isUserAvailable = function *(id) {
   let count = yield CarStatus.count({ driverId : id });
-  if (0 !== count) {
+  if (count !== 0) {
     throw error.parse({
       code    : 'CAR_IN_PROGRESS',
       message : 'You are already assigned to another waivecar'
@@ -180,14 +180,14 @@ Bookings.isUserAvailable = function *(id) {
  */
 Bookings.isCarAvailable = function *(id) {
   let count = yield Car.count({ id : id });
-  if (0 === count) {
+  if (count === 0) {
     throw error.parse({
       code    : 'CAR_INVALID',
       message : 'The requested car does not exist'
     }, 409);
   }
   let state  = yield CarStatus.find({ where : { carId : id }, limit : 1 });
-  if (state && 'unavailable' === state.status) {
+  if (state && state.status === 'unavailable') {
     throw error.parse({
       code    : 'CAR_UNAVAILABLE',
       message : 'The selected car is unavailable for booking'
