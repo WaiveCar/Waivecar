@@ -1,30 +1,28 @@
 'use strict';
 
-var Router = Reach.Router;
-
 // ### Cars Resource
 
-Router.resource('cars', 'CarsController', {
+Route.resource('cars', 'CarsController', {
   params : [ ] // no fields currently stored are updatable via resource.
 });
 
 // ### Locations Resource
 
-Router.resource('locations', 'LocationsController', {
+Route.resource('locations', 'LocationsController', {
   params : [ ] // no fields currently stored are updatable via resource.
 });
 
 // ### Booking Routes
 
-Router.post('/bookings', {
+Route.post('/bookings', {
   policy : ['authenticate'],
   params : ['carId'],
   uses   : 'BookingsController@create'
 });
 
-Router.get('/bookings',                                      'BookingsController@index');
-Router.get('/bookings/:id',                 ['authenticate', 'BookingsController@show']);
-Router.get('/bookings/:id/pending-arrival', ['authenticate', 'BookingsController@pendingArrival']);
-Router.get('/bookings/:id/start',           ['authenticate', 'BookingsController@start']);
-Router.get('/bookings/:id/end',             ['authenticate', 'BookingsController@end']);
-Router.get('/bookings/:id/cancel',          ['authenticate', 'BookingsController@cancel']);
+Route.get('/bookings',                                      'BookingsController@index');
+Route.get('/bookings/:id',                 ['authenticate', 'BookingsController@show']);
+Route.get('/bookings/:id/pending-arrival', ['authenticate', 'BookingsController@pendingArrival']);
+Route.get('/bookings/:id/start',           ['authenticate', 'BookingsController@start']);
+Route.get('/bookings/:id/end',             ['authenticate', 'BookingsController@end']);
+Route.get('/bookings/:id/cancel',          ['authenticate', 'BookingsController@cancel']);
