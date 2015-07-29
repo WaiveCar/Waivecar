@@ -245,8 +245,10 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     background-color: inherit;
     border: none;
     z-index: 1000;
+    vertical-align: middle;
     img{
       height: $headerTitleSize*1rem;
+      @include vertical-align;
     }
   }
   .list{
