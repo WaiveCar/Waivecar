@@ -30,7 +30,7 @@ module.exports = (function () {
   User.prototype._schema = User._schema = {
     attributes : {
       id         : 'INT(11) NOT NULL AUTO_INCREMENT',
-      role       : 'ENUM("user","admin") NOT NULL',
+      role       : 'ENUM("user","admin") DEFAULT "user"',
       firstName  : 'VARCHAR(28) NOT NULL',
       lastName   : 'VARCHAR(28) NOT NULL',
       email      : 'VARCHAR(128) NOT NULL',
@@ -53,22 +53,11 @@ module.exports = (function () {
   };
 
   /**
-   * List of default values that are set instead of null when instancing a new model
-   * @property _defaults
-   * @type     Object
-   */
-  User.prototype._defaults = {
-    role : 'user'
-  };
-
-  /**
    * Attributes to remove before returning model.toJSON()
    * @property _blacklist
    * @type     Array
    */
-  User.prototype._blacklist = [
-    'password'
-  ];
+  User.prototype._blacklist = [ 'password', 'deletedBy', 'deletedAt' ];
 
   /**
    * @method name
