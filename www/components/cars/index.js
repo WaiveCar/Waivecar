@@ -177,14 +177,16 @@ function nearbyFleetDirective(MapsLoader, $q, fleetService, realReachService, lo
         scope.$watch(function(){
           return DataService.all.cars;
         },
-        function(cars){
+        function(cars,oldCars){
           if(scope.group){
             self.mapInstance.removeLayer(scope.group);
             scope.markers.forEach(function(marker){
               self.mapInstance.removeLayer(marker);
             });
           }
-          
+          console.log("EXECUTING WATCH FUNCTION");
+          console.log(cars);
+          console.log(oldCars);
           var fleet=fleetService.getNearbyFleet(self.deviceLocation,cars);
 
           var markers = [];
