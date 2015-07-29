@@ -184,9 +184,7 @@ function nearbyFleetDirective(MapsLoader, $q, fleetService, realReachService, lo
               self.mapInstance.removeLayer(marker);
             });
           }
-          console.log("EXECUTING WATCH FUNCTION");
-          console.log(cars);
-          console.log(oldCars);
+          
           var fleet=fleetService.getNearbyFleet(self.deviceLocation,cars);
 
           var markers = [];

@@ -16,23 +16,30 @@ function DataService($rootScope, Bookings, Cars, Locations, Users, mapEvents) {
     active : {},
 
     initialize : function(modelName, next) {
-      service.all[modelName] = service.resources[modelName].query();
+      service.all[modelName] = [];
+      return service.fetch(modelName, {}, next);
     },
 
-    filterAll: function(modelName, filter, next) {
-      angular.extend(service.all[modelName], service.resources[modelName].query());
+    fetch: function(modelName, filter, next) {
+      // todo: add support for filter query params.
+      var items = service.resources[modelName].query(function() {
+        _.each(items, function(item) {
+          var model = item.toJSON();
+          service.merge(modelName, model);
+        });
+      });
     },
 
     create: function(modelName, data, next) {
       var instance = new service.resources[modelName](data);
       instance.$save(function(model) {
-        service.merge(modelName, model);
+        service.merge(modelName, model.toJSON());
         service.activateKnownModel(modelName, model.id, next);
       });
     },
 
     update: function(modelName, data, next) {
-        return next();
+      return next();
     },
 
     remove: function(modelName, id, next) {
@@ -70,7 +77,7 @@ function DataService($rootScope, Bookings, Cars, Locations, Users, mapEvents) {
         return next(null, service.active[modelName]);
       }
 
-      service.filterAll(modelName, {}, function(err) {
+      service.fetch(modelName, {}, function(err) {
         service.active[modelName] = _.findWhere(service.all[modelName], { id: id });
         return next(null, service.active[modelName]);
       });
@@ -96,7 +103,7 @@ function DataService($rootScope, Bookings, Cars, Locations, Users, mapEvents) {
     console.log('refreshing cars');
     service.userLocation = position;
     if (service.userLocation.latitude && service.userLocation.longitude) {
-      service.filterAll('cars', service.userLocation);
+      service.fetch('cars', service.userLocation);
     }
   });
 
