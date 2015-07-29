@@ -27,6 +27,7 @@ function DataService($rootScope, Bookings, Cars, Locations, Users, mapEvents) {
           var model = item.toJSON();
           service.merge(modelName, model);
         });
+        console.log('Fetch finished');
       });
     },
 

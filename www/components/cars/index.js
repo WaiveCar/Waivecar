@@ -140,7 +140,7 @@ FleetService.prototype.getRandomLocationInRange = function(location) {
     };
 };
 
-function nearbyFleetDirective(MapsLoader, $q, fleetService, realReachService, locationService,DataService) {
+function nearbyFleetDirective(MapsLoader, $q, fleetService, realReachService, locationService,DataService,$rootScope) {
   var self=this;
   function addMarkerClick(marker, info, onClickFn) {
     marker.on('mousedown', function(e) {
@@ -172,12 +172,17 @@ function nearbyFleetDirective(MapsLoader, $q, fleetService, realReachService, lo
           iconAnchor: [10, 25],
           popupAnchor: [0 , 0]
         });
-         console.log('Starting watch of ');
-         console.log(DataService.all.cars);
-        scope.$watch(function(){
-          return DataService.all.cars;
+        $rootScope.$watch(function(){
+          var str='';
+          DataService.all.cars.forEach(function(c){
+            str+=c.id;
+          });
+          return str;
         },
         function(cars,oldCars){
+          console.log("Cars");
+          console.log(DataService.all.cars.length);
+   
           if(scope.group){
             self.mapInstance.removeLayer(scope.group);
             scope.markers.forEach(function(marker){
@@ -185,7 +190,7 @@ function nearbyFleetDirective(MapsLoader, $q, fleetService, realReachService, lo
             });
           }
           
-          var fleet=fleetService.getNearbyFleet(self.deviceLocation,cars);
+          var fleet=fleetService.getNearbyFleet(self.deviceLocation,DataService.all.cars);
 
           var markers = [];
           var marker;
@@ -311,6 +316,7 @@ angular.module('app')
   'realReachService',
   'locationService',
   'DataService',
+  '$rootScope',
   nearbyFleetDirective
 ])
 .directive('carInformation', [

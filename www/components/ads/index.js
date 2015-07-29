@@ -11,6 +11,7 @@ function AdsController($rootScope,$scope,$state,$timeout){
             $timeout(timeOutFn,2000);
         }
     });
+     $timeout(timeOutFn,2000);
 }
 //Redirect if the redirect url is not valid
 
