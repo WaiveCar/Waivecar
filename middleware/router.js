@@ -1,5 +1,5 @@
 'use strict';
 
 module.exports = function (app) {
-  app.use(Reach.Router());
+  app.use(Route());
 };
