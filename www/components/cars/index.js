@@ -178,13 +178,14 @@ function nearbyFleetDirective(MapsLoader, $q, fleetService, realReachService, lo
           return DataService.all.cars;
         },
         function(cars){
+          console.log(DataService.all.cars.length);
           if(scope.group){
             self.mapInstance.removeLayer(scope.group);
             scope.markers.forEach(function(marker){
               self.mapInstance.removeLayer(marker);
             });
           }
-          
+
           var fleet=fleetService.getNearbyFleet(self.deviceLocation,cars);
 
           var markers = [];
@@ -202,7 +203,7 @@ function nearbyFleetDirective(MapsLoader, $q, fleetService, realReachService, lo
           }
 
         });
-      })
+      }, true)
   }
   return {
     restrict: 'E',
