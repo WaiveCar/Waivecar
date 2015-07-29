@@ -1,16 +1,9 @@
 'use strict';
 
-// ### Cars Resource
+// ### Resources
 
-Route.resource('cars', 'CarsController', {
-  params : [ ] // no fields currently stored are updatable via resource.
-});
-
-// ### Locations Resource
-
-Route.resource('locations', 'LocationsController', {
-  params : [ ] // no fields currently stored are updatable via resource.
-});
+Route.resource('cars',      'CarsController');
+Route.resource('locations', 'LocationsController');
 
 // ### Booking Routes
 
