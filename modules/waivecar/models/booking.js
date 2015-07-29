@@ -29,10 +29,10 @@ module.exports = (function () {
    */
   Booking.prototype._schema = Booking._schema = {
     attributes : {
-      id         : 'INT(11) NOT NULL AUTO_INCREMENT',
-      customerId : 'INT(11) NOT NULL',
+      id         : 'INT(11)     NOT NULL AUTO_INCREMENT',
+      customerId : 'INT(11)     NOT NULL',
       carId      : 'VARCHAR(28) NOT NULL',
-      paymentId  : 'INT(11) NULL',
+      paymentId  : 'INT(11)     NULL',
       state      : 'ENUM("new-booking", "pending-arrival", "in-progress", "pending-payment", "cancelled", "completed") DEFAULT "new-booking"'
     },
     primaryKey  : 'id',
