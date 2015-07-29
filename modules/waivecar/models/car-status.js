@@ -30,7 +30,7 @@ module.exports = (function () {
   CarStatus.prototype._schema = CarStatus._schema = {
     attributes : {
       carId    : 'VARCHAR(28) NOT NULL',
-      driverId : 'INT(11) NULL',
+      driverId : 'INT(11)     NULL',
       status   : 'ENUM("available", "unavailable") DEFAULT "available"'
     },
     foreignKeys : [
