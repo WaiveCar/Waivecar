@@ -13,5 +13,13 @@ function mockWalkingDirective(mapsEvents,$rootScope){
         require: '^map'
 	}
 }
+function mockSanFranLocationService(locationService){
+	this.locationService=locationService;
+}
+mockSanFranLocationService.prototype.mockLocation = function() {
+	this.locationService.setManualPosition(37.422292, -122.148153);
+	
+};
 angular.module('mockBehaviours', [])
+.service('mockSanFranLocationService',['locationService',mockSanFranLocationService])
 .directive('mockWalking', ['mapsEvents','$rootScope',mockWalkingDirective]);

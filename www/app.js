@@ -152,7 +152,8 @@ angular.module('app', [
   'ads',
   'mockBehaviours',
   'ChargingStations',
-  'PointsOfInterest'
+  'PointsOfInterest',
+  'ngFitText'
 ])
 // .directive('overlayDialog',dialogDirective)
 .run(['$ionicPlatform', Run])

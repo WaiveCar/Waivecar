@@ -24,6 +24,14 @@
     this.mapsEvents = mapsEvents;
     this.$state=$state;
   }
+  LocationService.prototype.setManualPosition = function(latitude,longitude) {
+    this.manualPosition= {
+      latitude: latitude,
+      longitude: longitude
+    };
+    this._scope.$broadcast(this.mapsEvents.positionChanged,this.manualPosition);
+
+  };
   LocationService.prototype.init = function() {
     this._initPositionWatch();
   };
@@ -41,6 +49,9 @@
         });
   };
   LocationService.prototype.getLocation = function() {
+    if(typeof this.manualPosition !='undefined' && !!this.manualPosition){
+      return this.manualPosition;
+    }
     var posOptions = {maximumAge: 3000, timeout: 8000, enableHighAccuracy: true};
     var defered = this.$q.defer();
     var self = this;
@@ -98,7 +109,7 @@
     this._locationMarker = locationMarker;
     this._deferedLocation.resolve(locationMarker);
   };
-  function mapDirective(MapsLoader, $q, locationService) {
+  function mapDirective(MapsLoader, $q, locationService,mapsEvents) {
         function link(scope, element, attrs, ctrl) {
           var location;
           MapsLoader.getMap.then(function(maps) {
@@ -117,6 +128,9 @@
               var mapInstance = maps.skobbler.map(element[0].firstChild, mapOptions);
               mapInstance.panTo(centerPosition);
               ctrl.solveMap(mapInstance);
+              scope.$on(mapsEvents.positionChanged, function(ev, position) {
+                mapInstance.panTo([position.latitude, position.longitude]);
+              });
             })
           });
         }
@@ -132,7 +146,50 @@
           controller: 'mapController'
         };
       }
+  function locateMeDirective(MapsLoader){
+      var self=this;
+       function link(scope, element, attrs, ctrl) {
+        
+          MapsLoader.getMap.then(function(L) {
+            self.L=L;
+            return   ctrl.mapInstance;
+          })
+          .then(function(mapInstance){
+              var LocateMeControl=self.L.Control.extend({
+                options:{
+                  position:'bottomright'
+                },
+                onAdd: function (map) {
+                  var img = L.DomUtil.create('img','locateMeButton');
+                  img.src=scope.imgSource;
+                   L.DomEvent.addListener(img, 'click', L.DomEvent.stopPropagation)
+                  .addListener(img, 'click', L.DomEvent.preventDefault)
+                  .addListener(img, 'click', function () {
+                    scope.imgOnClick();
+                  });
+                  
+                  return img;
+                }
+              });
+              var locateMe = new LocateMeControl();
+              mapInstance.addControl(locateMe);
+
+          });
+       
+        };
+        return {
+          restrict:'E',
+          link:link,
+          scope:{
+            'imgSource':'@',
+            'imgOnClick': '&'
+
+
+          },
+          require: '^map'
+        }
       
+  }
   function deviceLocationDirective(MapsLoader, locationService, $q) {
         function link(scope, element, attrs, ctrl) {
           MapsLoader.getMap.then(function(L) {
@@ -172,7 +229,8 @@
     .provider('MapsLoader', MapsLoader)
     .service('locationService', ['$rootScope', '$cordovaGeolocation', '$q', 'mapsEvents','$state', LocationService])
     .controller('mapController', ['$scope', 'locationService', '$q', 'mapsEvents', MapController])
-    .directive('map', ['MapsLoader', '$q', 'locationService', mapDirective])
+    .directive('locateMe',['MapsLoader',locateMeDirective])
+    .directive('map', ['MapsLoader', '$q', 'locationService','mapsEvents', mapDirective])
     .directive('deviceLocation', ['MapsLoader', 'locationService', '$q', deviceLocationDirective]);
 })();
 

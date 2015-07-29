@@ -29,7 +29,7 @@ ConnectionController.prototype.goToConnecting = function($state) {
 
 // Cars - List
 
-function CarsController($rootScope, $scope, $state, selectedCar, searchEvents, mapsEvents, DataService) {
+function CarsController($rootScope, $scope, $state, selectedCar, searchEvents, mapsEvents, DataService,mockLocation) {
   var self          = this;
   this.$state        = $state;
   this.$rootScope   = $rootScope;
@@ -39,6 +39,7 @@ function CarsController($rootScope, $scope, $state, selectedCar, searchEvents, m
   this.selectedCar  = selectedCar;
   this.searchEvents = searchEvents;
   this.mapsEvents   = mapsEvents;
+  this.mockLocation = mockLocation;
 }
 
 CarsController.prototype.showCarDetails = function(marker, data) {
@@ -49,6 +50,10 @@ CarsController.prototype.showCarDetails = function(marker, data) {
   this.$rootScope.$broadcast(this.mapsEvents.destinyOnRouteChanged, latLng);
   this.$rootScope.$broadcast(this.searchEvents.vehicleSelected, data);
   this.$state.go('cars-show', { id: data.id });
+};
+CarsController.prototype.locateMe = function() {
+  console.log("LOCATE ME !");
+  this.mockLocation.mockLocation();
 };
 
 // Cars - Show
@@ -106,8 +111,8 @@ FleetService.prototype.getNearbyFleet = function(location,cars) {
     var ret=[];
     _.each(cars, function(car) {
       var loc = self.getRandomLocationInRange(location);
-      car.latitude  = loc.latitude;
-      car.longitude = loc.longitude;
+      car.latitude  = car.location.latitude;
+      car.longitude = car.location.longitude;
       car.image     = '/components/ads/templates/images/ad1.png';
       car.plate     = 'AUD 568';
       car.name      = 'Chevrolet Spark',
@@ -201,7 +206,7 @@ function nearbyFleetDirective(MapsLoader, $q, fleetService, realReachService, lo
           });
           if(markers.length>0){
             var group = new L.featureGroup(markers);
-            self.mapInstance.fitBounds(group.getBounds().pad(0.5))
+            // self.mapInstance.fitBounds(group.getBounds().pad(0.5))
             scope.group=group;
             scope.markers=markers;
           }
@@ -302,6 +307,7 @@ angular.module('app')
   'searchEvents',
   'mapsEvents',
   'DataService',
+  'mockSanFranLocationService',
   CarsController
 ])
 .directive('carChargeStatus', [

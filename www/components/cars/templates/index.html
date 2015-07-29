@@ -1,7 +1,7 @@
 <ion-pane ng-controller="CarsController as cars" class="waiveCarContainer">
   <ion-header-bar class="bar bar-header bar-light">
     <div class="header-text">
-        <h1 class="header-title">Find WaiveCars</h1>
+        <h1 class="header-title" >Find WaiveCars</h1>
     </div>
     <button class="button button-right" ng-click="showNav()">
       <img src="img/menu.svg" >
@@ -12,6 +12,7 @@
       <map id="map" zoom="15" >
           <device-location></device-location>
           <nearby-fleet  on-click-marker="cars.showCarDetails(marker, info)"></nearby-fleet>
+          <locate-me img-source="img/locate-me.svg" img-on-click="cars.locateMe()"></locate-me>
       </map>
     </div>
   </ion-content>
