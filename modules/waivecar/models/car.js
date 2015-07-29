@@ -47,12 +47,17 @@ module.exports = (function () {
 
   /**
    * Attributes to remove before returning model.toJSON()
+   * @property _relations
+   * @type     Array
+   */
+  Car.prototype._relations = [ 'location' ];
+
+  /**
+   * Attributes to remove before returning model.toJSON()
    * @property _blacklist
    * @type     Array
    */
-  Car.prototype._blacklist = [
-    'deletedAt'
-  ];
+  Car.prototype._blacklist = [ 'deletedBy', 'deletedAt' ];
 
   return Car;
 
