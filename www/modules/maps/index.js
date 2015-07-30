@@ -49,11 +49,12 @@
         });
   };
   LocationService.prototype.getLocation = function() {
+    var defered = this.$q.defer();
     if(typeof this.manualPosition !='undefined' && !!this.manualPosition){
-      return this.manualPosition;
+      defered.resolve(this.manualPosition);
+      return defered.promise;
     }
     var posOptions = {maximumAge: 3000, timeout: 8000, enableHighAccuracy: true};
-    var defered = this.$q.defer();
     var self = this;
     if(typeof this._pendingRequest !='undefined' && this._pendingRequest){
       return this._pendingRequest;
