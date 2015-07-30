@@ -4,18 +4,18 @@ function Config() {
 
   return {
     uri: {
-      api    : baseUrl,
-      auth   : {
+      api      : baseUrl,
+      auth     : {
         login  : baseUrl +'/auth/login',
         logout : baseUrl +'/auth/logout',
         forgot : baseUrl +'/auth/forgot-password',
         reset  : baseUrl +'/auth/reset-password'
       },
-      web    : 'https://web-waivecar-dev.cleverbuild.biz',
-      admin  : 'https://admin-waivecar-dev.cleverbuild.biz',
-      assets : '',
-      vehicles :{
-           getNearby : baseUrl + '/cars'
+      web      : 'https://web-waivecar-dev.cleverbuild.biz',
+      admin    : 'https://admin-waivecar-dev.cleverbuild.biz',
+      assets   : '',
+      vehicles : {
+        getNearby : baseUrl + '/cars'
       }
     // },
     // satellizer: {

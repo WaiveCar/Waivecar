@@ -153,7 +153,8 @@ angular.module('app', [
   'mockBehaviours',
   'ChargingStations',
   'PointsOfInterest',
-  'ngFitText'
+  'ngFitText',
+  'btford.socket-io'
 ])
 // .directive('overlayDialog',dialogDirective)
 .run(['$ionicPlatform', Run])

@@ -11,6 +11,12 @@ function ApplicationController($rootScope, $scope, $ionicPopover, AuthService, D
     AuthService.logout();
   });
 
+  $rootScope.$on('socket:error', function (ev, data) {
+    console.log('TODO: handle socket error:');
+    console.log(ev);
+    console.log(data);
+  });
+
   $scope.showNav = function($event) {
     $scope.popover.show($event);
   }

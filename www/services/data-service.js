@@ -1,4 +1,4 @@
-function DataService($rootScope, Bookings, Cars, Locations, Users, mapEvents) {
+function DataService($rootScope, $socket, Bookings, Cars, Locations, Users, mapEvents) {
 
   var service = {
 
@@ -15,6 +15,8 @@ function DataService($rootScope, Bookings, Cars, Locations, Users, mapEvents) {
 
     active : {},
 
+    isSubscribed: false,
+
     initialize : function(modelName, next) {
       service.all[modelName] = [];
       return service.fetch(modelName, {}, next);
@@ -23,11 +25,7 @@ function DataService($rootScope, Bookings, Cars, Locations, Users, mapEvents) {
     fetch: function(modelName, filter, next) {
       // todo: add support for filter query params.
       var items = service.resources[modelName].query(function() {
-        _.each(items, function(item) {
-          var model = item.toJSON();
-          service.merge(modelName, model);
-        });
-        console.log('Fetch finished');
+        service.mergeAll(modelName, items);
       });
     },
 
@@ -45,18 +43,19 @@ function DataService($rootScope, Bookings, Cars, Locations, Users, mapEvents) {
 
     remove: function(modelName, id, next) {
       service.resources[modelName].remove(id);
-
-      if (service.active[modelName] && service.active[modelName].id === id) {
-        service.deactivate(modelName);
-      }
-
-      var item = _.findWhere(service.all[modelName], { id: id });
-      if (item) {
-        service.all[modelName].splice(_.indexOf(service.all[modelName], item), 1);
-      }
+      service.purge(modelName, id);
       return next();
     },
 
+    // client-side manipulation only
+    mergeAll: function(modelName, models) {
+      _.each(models, function(item) {
+        var model = item.toJSON();
+        service.merge(modelName, model);
+      });
+    },
+
+    // client-side manipulation only
     merge: function(modelName, model) {
       if (!model) return null;
       if (!service.all[modelName]) service.all[modelName] = [];
@@ -71,6 +70,19 @@ function DataService($rootScope, Bookings, Cars, Locations, Users, mapEvents) {
       return model;
     },
 
+    // client-side manipulation only
+    purge: function(modelName, id) {
+      if (service.active[modelName] && service.active[modelName].id === id) {
+        service.deactivate(modelName);
+      }
+
+      var item = _.findWhere(service.all[modelName], { id: id });
+      if (item) {
+        service.all[modelName].splice(_.indexOf(service.all[modelName], item), 1);
+      }
+    },
+
+    // client-side manipulation only
     activateKnownModel : function(modelName, id, next) {
       var existing = _.findWhere(service.all[modelName], { id: id });
       if (existing) {
@@ -84,6 +96,7 @@ function DataService($rootScope, Bookings, Cars, Locations, Users, mapEvents) {
       });
     },
 
+    // client-side manipulations only
     activate : function(modelName, id, next) {
       if (!service.all[modelName]) {
         service.initialize(modelName, function(err) {
@@ -95,8 +108,30 @@ function DataService($rootScope, Bookings, Cars, Locations, Users, mapEvents) {
       }
     },
 
+    // client-side manipulations only
     deactivate: function(modelName, id) {
       delete service.active[modelName];
+    },
+
+    subscribe: function() {
+      $socket.emit('subscribe', {}, function(err) {
+        if (err) {
+          console.error('error', err);
+        } else {
+          service.isSubscribed = true;
+        }
+      });
+    },
+
+    unsubscribe: function() {
+      if (service.isSubscribed) {
+        $socket.emit('unsubscribe', {}, function(err) {
+          if (err) {
+            console.error('error', err);
+          }
+          service.isSubscribed = false;
+        });
+      }
     }
   };
 
@@ -108,15 +143,39 @@ function DataService($rootScope, Bookings, Cars, Locations, Users, mapEvents) {
     }
   });
 
+  $socket.on('flux', function(data) {
+    var meta      = data.actionType.split(':');
+    var modelName = meta[0];
+    var action    = meta[1];
+    var model     = data[modelName];
+
+    console.log([ modelName, action, model.id ].join(' '));
+    switch(action) {
+      case 'show':
+      case 'stored':
+      case 'updated':
+        service.merge(modelName, model);
+        break;
+      case 'index':
+        service.mergeAll(modelName, model);
+        break;
+      case 'deleted':
+        service.purge(modelName, model);
+        break;
+    }
+  });
+
   // this causes a lot of "not able to find your location" errors
   // via laptop at present.
   // locationService.init();
+
   return service;
 }
 
 angular.module('app')
 .factory('DataService', [
   '$rootScope',
+  '$socket',
   'Bookings',
   'Cars',
   'Locations',
