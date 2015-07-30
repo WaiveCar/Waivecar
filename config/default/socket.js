@@ -25,7 +25,7 @@ module.exports = {
 
   socket : {
     port    : 5000,
-    origins : 'http://localhost:3000 http://localhost:3001 http://localhost:8100',
+    //origins : 'http://localhost:3000 http://localhost:3001 http://localhost:8100',
     redis   : {
       host : 'localhost',
       port : 6379
