@@ -6,7 +6,6 @@ function AdsController($rootScope,$scope,$state,$timeout){
         self.goToRedirectUrl();
     }
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams) {
-        console.log(toState);
         if(toState.name=='ads'){
             $timeout(timeOutFn,2000);
         }

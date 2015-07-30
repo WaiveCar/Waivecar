@@ -178,11 +178,7 @@ function nearbyFleetDirective(MapsLoader, $q, fleetService, realReachService, lo
           popupAnchor: [0 , 0]
         });
         $rootScope.$watch(function(){
-          var str='';
-          DataService.all.cars.forEach(function(c){
-            str+=c.id;
-          });
-          return str;
+          return DataService.all.cars;
         },
         function(cars,oldCars){
           console.log("Cars");
@@ -211,7 +207,8 @@ function nearbyFleetDirective(MapsLoader, $q, fleetService, realReachService, lo
             scope.markers=markers;
           }
 
-        });
+        },
+        true);
       })
   }
   return {
