@@ -162,9 +162,9 @@
                 onAdd: function (map) {
                   var img = L.DomUtil.create('img','locateMeButton');
                   img.src=scope.imgSource;
-                   L.DomEvent.addListener(img, 'click', L.DomEvent.stopPropagation)
-                  .addListener(img, 'click', L.DomEvent.preventDefault)
-                  .addListener(img, 'click', function () {
+                   L.DomEvent.addListener(img, 'mousedown', L.DomEvent.stopPropagation)
+                  .addListener(img, 'mousedown', L.DomEvent.preventDefault)
+                  .addListener(img, 'mousedown', function () {
                     scope.imgOnClick();
                   });
                   
