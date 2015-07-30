@@ -1,9 +1,10 @@
-<dl>
-	<div ng-repeat="point in points">
-		<dt><span ng-bind="point.title"></span></dt>	
-		<dd><span ng-bind="point.ammount"></span></dd>
-	</div>
-	<dt>total</dt>
-	<dd ><span ng-bind="total"></span></dd>
-	
-</dl>
+<table>
+	<tr ng-repeat="point in points">
+		<td class="title" ng-bind="point.title"></td>	
+		<td class="value" ng-bind="point.ammount"></td>
+	</tr>
+	<tr>
+		<td class="title">total</td>
+		<td class="value" ng-bind="total"></td>	
+	</tr>
+</table>

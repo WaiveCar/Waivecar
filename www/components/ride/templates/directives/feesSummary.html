@@ -1,9 +1,10 @@
-<dl>
-	<div ng-repeat="fee in fees">
-		<dt><span ng-bind="fee.title"></span></dt>	
-		<dd>$<span ng-bind="fee.ammount"></span></dd>
-	</div>
-	<dt>total</dt>
-	<dd >$<span ng-bind="total"></span></dd>
-	
-</dl>
+<table>
+	<tr ng-repeat="fee in fees">
+		<td class="title" ng-bind="fee.title"></td>	
+		<td class="value">$<span ng-bind="fee.ammount"></span></td>
+	</tr>
+	<tr>
+		<td class="title">total</td>
+		<td class="value">$<span ng-bind="total"></span></td>
+	</tr>
+</table>
