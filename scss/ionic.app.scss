@@ -23,6 +23,17 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
    @include vertical-align;
 }
 .waiveCarContainer{
+  .dashed:after {
+    content:"";
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    bottom: 0;
+    left: 46%;
+    width: 4%;
+    border-bottom: 1px solid #25c155;
+}
+
  .button,.button.active,.button.activated{
       background-color: inherit;
       border: none;
