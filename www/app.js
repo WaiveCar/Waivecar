@@ -41,6 +41,38 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpP
       url: '/users/:id',
       templateUrl: '/components/users/templates/show.html'
     })
+    .state('credit-cards', {
+      url         : '/users/cards',
+      templateUrl : '/components/credit-cards/templates/index.html',
+      params      : {
+        redirectUrl    : null,
+        redirectParams : null
+      }
+    })
+    .state('credit-cards-new', {
+      url         : '/users/cards/new',
+      templateUrl : '/components/credit-cards/templates/new.html',
+      params      : {
+        redirectUrl    : null,
+        redirectParams : null
+      }
+    })
+    .state('licenses', {
+      url         : '/users/licenses',
+      templateUrl : '/components/licenses/templates/index.html',
+      params      : {
+        redirectUrl    : null,
+        redirectParams : null
+      }
+    })
+    .state('licenses-new', {
+      url         : '/users/licenses/new',
+      templateUrl : '/components/licenses/templates/new.html',
+      params      : {
+        redirectUrl    : null,
+        redirectParams : null
+      }
+    })
     //Connect to car
     .state('cars-connect', {
       url: '/cars/connect/:id',

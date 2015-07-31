@@ -1,0 +1,52 @@
+<ion-pane class="credit-cards-component" ng-controller="LicenseController as licenseCtrl">
+  <ion-header-bar class="bar bar-header bar-light">
+     <div class="header-text">
+        <h1 class="header-title">Driver's License</h1>
+    </div>
+    <button class="button button-right" ng-click="showNav()">
+      <img src="img/menu.svg" >
+    </button>
+  </ion-header-bar>
+  <ion-content scroll="false">
+    <div class="pre-data-collection-message">
+      <p>TODO: Your driver's license must be validated by our insurance company to confirm that may drive a vehicle in the state of California.</p>
+    </div>
+    <form ng-submit="licenseCtrl.create()">
+      <div class="list">
+        <label class="item item-input item-floating-label">
+          <span class="input-label">Driver's License Number</span>
+          <input type="text" placeholder="Driver's License Number" ng-model="licenseCtrl.forms.new.id">
+        </label>
+        <label class="item item-input item-floating-label">
+          <span class="input-label">Expiry</span>
+          <input type="text" placeholder="Expiry" ng-model="licenseCtrl.forms.new.expiry">
+        </label>
+        <label class="item item-input item-floating-label">
+          <span class="input-label">First Name</span>
+          <input type="text" placeholder="First Name" ng-model="licenseCtrl.forms.new.firstName">
+        </label>
+        <label class="item item-input item-floating-label">
+          <span class="input-label">Last Name</span>
+          <input type="text" placeholder="Last Name" ng-model="licenseCtrl.forms.new.lastName">
+        </label>
+        <label class="item item-input item-floating-label">
+          <span class="input-label">Address</span>
+          <input type="text" placeholder="Address" ng-model="licenseCtrl.forms.new.address">
+        </label>
+        <label class="item item-input item-floating-label">
+          <span class="input-label">Date Of Birth</span>
+          <input type="text" placeholder="Date of Birth" ng-model="licenseCtrl.forms.new.dob">
+        </label>
+      </div>
+      <button type="submit" class="button">Verify License</button>
+    </form>
+    <div class="post-data-collection-message">
+      <p>
+        <small>TODO: Your license details will be stored on file.</small>
+      </p>
+    </div>
+  </ion-content>
+  <div class="bar bar-footer">
+    <button class="button button-balanced" ui-sref="cars">Back</button>
+  </div>
+</ion-pane>

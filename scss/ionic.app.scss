@@ -22,7 +22,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 .vertical-aligned{
    @include vertical-align;
 }
-.waiveCarContainer{
+.pane{
   .dashed:after {
     content:"";
     position: absolute;

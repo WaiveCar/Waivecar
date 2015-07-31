@@ -1,13 +1,12 @@
 <ion-pane class="bookings-component" ng-controller="BookingController as booking">
   <ion-header-bar class="bar bar-header bar-light">
-    <h1 class="title">Confirm Booking</h1>
-    <button class="buttons">
-      <a ui-sref="cars" class="button button-icon icon ion-close"></a>
-    </button>
+    <div class="header-text">
+      <h1 class="header-title">Confirm Booking</h1>
+    </div>
+    <a ui-sref="cars" class="button button-right button-icon icon ion-close"></a>
   </ion-header-bar>
   <ion-content scroll="false">
-    <p class="text-center">
-    </p>
+    <p class="text-center">TODO: You are agreeing to proceed with a booking</p>
   </ion-content>
   <div class="bar bar-footer">
     <button class="button button-balanced" ng-click="booking.create()">Confirm Details</button>

@@ -1,4 +1,4 @@
-function DataService($rootScope, $socket, Bookings, Cars, Locations, Users, mapEvents) {
+function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, Users, mapEvents) {
 
   var service = {
 
@@ -47,6 +47,26 @@ function DataService($rootScope, $socket, Bookings, Cars, Locations, Users, mapE
       return next();
     },
 
+    createCreditCard: function(data, next) {
+      // TODO: $http.post('') // need endpoint
+      return next(null, data);
+    },
+
+    removeCreditCard: function(data, next) {
+      // TODO: $http.post('') // need endpoint
+      return next(null, data);
+    },
+
+    createLicense: function(data, next) {
+      // TODO: $http.post('') // need endpoint
+      return next(null, data);
+    },
+
+    removeLicense: function(data, next) {
+      // TODO: $http.post('') // need endpoint
+      return next(null, data);
+    },
+
     // client-side manipulation only
     mergeAll: function(modelName, models) {
       _.each(models, function(item) {
@@ -62,8 +82,23 @@ function DataService($rootScope, $socket, Bookings, Cars, Locations, Users, mapE
 
       var existing = _.findWhere(service.all[modelName], { id: model.id });
       if (existing) {
-        _.merge(existing, model);
+        angular.copy(model, existing);
+        //_.merge(existing, model);
       } else {
+        // VERY TEMP CODE
+        if (modelName === 'cars') {
+          model.image  = '/components/ads/templates/images/ad1.png';
+          model.plate  = 'AUD 568';
+          model.status = {
+            charge: {
+              current: 69,
+              timeUntilFull: 20,
+              reach: 10,
+              charging: true
+            }
+          };
+        }
+        // END TEMP CODE
         service.all[modelName].push(model);
       }
 
@@ -149,7 +184,7 @@ function DataService($rootScope, $socket, Bookings, Cars, Locations, Users, mapE
     var action    = meta[1];
     var model     = data[modelName];
 
-    console.log([ modelName, action, model.id ].join(' '));
+    // console.log([ modelName, action, model.id ].join(' '));
     switch(action) {
       case 'show':
       case 'stored':
@@ -175,6 +210,7 @@ function DataService($rootScope, $socket, Bookings, Cars, Locations, Users, mapE
 angular.module('app')
 .factory('DataService', [
   '$rootScope',
+  '$http',
   '$socket',
   'Bookings',
   'Cars',

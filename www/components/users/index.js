@@ -12,8 +12,6 @@ function UserController($rootScope, $scope, $state, AuthService, DataService) {
       email     : 'matt.ginty+' + Math.random() + '@clevertech.biz',
       password  : 'lollipop0'
     },
-    licenceForm  : {},
-    paymentForm  : {},
     passwordForm : {}
   };
 
@@ -33,9 +31,12 @@ UserController.prototype.create = function() {
       password : self.forms.userForm.password
     }, function(auth) {
       if (redirectUrl) {
-        self.$state.go(redirectUrl, redirectParams);
+        self.$state.go('licenses-new', {
+          redirectUrl    : redirectUrl,
+          redirectParams : redirectParams
+        });
       } else {
-        self.$state.go('users-show', { id: self.active.users.id });
+        //self.$state.go('credit-cards');
       }
     });
   });
