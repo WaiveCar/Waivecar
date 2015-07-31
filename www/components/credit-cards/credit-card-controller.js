@@ -7,7 +7,8 @@ function CreditCardController($rootScope, $scope, $state, DataService) {
     new  : {
       firstName  : 'Travis',
       lastName   : 'Kalanick',
-      cardNumber : '4000-0000-0000-0001'
+      cardNumber : '4000-0000-0000-0001',
+      expiry     : 20160101
     },
     edit : self.active.users
   };

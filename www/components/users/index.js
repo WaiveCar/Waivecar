@@ -12,8 +12,6 @@ function UserController($rootScope, $scope, $state, AuthService, DataService) {
       email     : 'matt.ginty+' + Math.random() + '@clevertech.biz',
       password  : 'lollipop0'
     },
-    licenceForm  : {},
-    paymentForm  : {},
     passwordForm : {}
   };
 
