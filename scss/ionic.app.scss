@@ -37,6 +37,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
  .button,.button.active,.button.activated{
       background-color: inherit;
       border: none;
+      color:white;
       &.button-balanced{
         background-color: $balanced;
       }
