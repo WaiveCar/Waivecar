@@ -12,7 +12,7 @@ module.exports = function *() {
     repeat : true,
     silent : true,
     timer  : {
-      value : 30,
+      value : 10,
       type  : 'seconds'
     }
   });
