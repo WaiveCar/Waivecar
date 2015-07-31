@@ -82,8 +82,7 @@ function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, User
 
       var existing = _.findWhere(service.all[modelName], { id: model.id });
       if (existing) {
-        angular.copy(model, existing);
-        //_.merge(existing, model);
+        _.merge(existing, model);
       } else {
         // VERY TEMP CODE
         if (modelName === 'cars') {
