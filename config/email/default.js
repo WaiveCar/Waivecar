@@ -12,7 +12,7 @@ module.exports = {
    */
 
   email : {
-    templateFolder : 'templates',
+    templateFolder : 'config/email/templates',
     sender         : 'matt.ginty@gmail.com',
     transportName  : 'mandrill',
     transport      : {

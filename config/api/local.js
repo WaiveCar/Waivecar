@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = {
 
   /*
@@ -19,8 +17,15 @@ module.exports = {
    */
 
   api : {
-    port : 8082,
-    uri  : 'http://localhost:8082'
+    uri  : 'http://local.io:8081',
+    port : 8081,
+    cors : {
+      origins : ['http://local.io:3081'],
+      headers : ['Content-Type', 'Cache-Control', 'X-Requested-With', 'Authorization']
+    },
+    sites : {
+      admin : ['http://local.io:3001']
+    }
   }
 
 };
