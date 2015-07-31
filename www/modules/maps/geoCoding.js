@@ -28,8 +28,10 @@ function reverseGeoCodingDirective(geocodingService) {
     }
     geocodingService.getReverseGeoCoding(latLng.latitude, latLng.longitude)
         .then(function(locationData) {
-          scope.houseNumber = locationData.address.house_number || '';
-          scope.road = locationData.address.road;
+          if(locationData.address){
+            scope.houseNumber = locationData.address.house_number || '';
+            scope.road = locationData.address.road;
+          }
         });
   }
   return {

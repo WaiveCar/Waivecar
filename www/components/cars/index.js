@@ -77,7 +77,8 @@ function CarController($state, $q, selectedCar, DataService) {
 }
 
 CarController.prototype.getDestiny = function() {
-  return this.selectedCar.getSelected();
+
+  return this.selectedCar.getSelected().location;
 };
 
 CarController.prototype.chooseCar = function() {
