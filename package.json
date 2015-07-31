@@ -11,14 +11,14 @@
     "start": "node --harmony app.js"
   },
   "dependencies": {
-    "babel-eslint": "^3.1.29",
+    "babel-eslint": "3.1.29",
     "change-case": "2.3.0",
     "co": "4.5.4",
     "co-bcrypt": "1.0.0",
     "co-fs": "1.2.0",
     "co-glob": "0.0.2",
     "co-request": "0.2.1",
-    "eslint": "^0.24.1",
+    "eslint": "0.24.1",
     "koa-cors": "0.0.16",
     "lodash": "3.10.0",
     "moment": "2.10.2",
@@ -32,10 +32,10 @@
     "request": "2.58.0"
   },
   "reach": {
-    "reach-mysql": "0.1.3",
+    "reach-mysql": "0.1.4",
     "reach-queue": "0.0.5",
     "reach-auth": "0.0.13",
-    "reach-file": "0.0.8",
+    "reach-file": "0.0.9",
     "reach-logger": "0.0.3",
     "reach-user": "0.0.8",
     "reach-email": "0.0.4",
