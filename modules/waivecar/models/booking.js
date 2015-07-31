@@ -38,8 +38,7 @@ module.exports = (function () {
     primaryKey  : 'id',
     foreignKeys : [
       'FOREIGN KEY (customer_id) REFERENCES users(id)',
-      'FOREIGN KEY (car_id) REFERENCES cars(id)',
-      'FOREIGN KEY (payment_id) REFERENCES payments(id)'
+      'FOREIGN KEY (car_id) REFERENCES cars(id)'
     ]
   };
 
