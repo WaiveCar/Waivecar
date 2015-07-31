@@ -22,8 +22,8 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 .vertical-aligned{
    @include vertical-align;
 }
-.waiveCarContainer{
- .button,.button.active,.button.activated{
+.pane {
+ .button,.button.active,.button.activated {
       background-color: inherit;
       border: none;
       &.button-balanced{
