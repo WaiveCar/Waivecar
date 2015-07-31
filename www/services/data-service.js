@@ -1,4 +1,4 @@
-function DataService($rootScope, $socket, Bookings, Cars, Locations, Users, mapEvents) {
+function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, Users, mapEvents) {
 
   var service = {
 
@@ -45,6 +45,26 @@ function DataService($rootScope, $socket, Bookings, Cars, Locations, Users, mapE
       service.resources[modelName].remove(id);
       service.purge(modelName, id);
       return next();
+    },
+
+    createCreditCard: function(data, next) {
+      // TODO: $http.post('') // need endpoint
+      return next(null, data);
+    },
+
+    removeCreditCard: function(data, next) {
+      // TODO: $http.post('') // need endpoint
+      return next(null, data);
+    },
+
+    createLicense: function(data, next) {
+      // TODO: $http.post('') // need endpoint
+      return next(null, data);
+    },
+
+    removeLicense: function(data, next) {
+      // TODO: $http.post('') // need endpoint
+      return next(null, data);
     },
 
     // client-side manipulation only
@@ -149,7 +169,7 @@ function DataService($rootScope, $socket, Bookings, Cars, Locations, Users, mapE
     var action    = meta[1];
     var model     = data[modelName];
 
-    console.log([ modelName, action, model.id ].join(' '));
+    // console.log([ modelName, action, model.id ].join(' '));
     switch(action) {
       case 'show':
       case 'stored':
@@ -175,6 +195,7 @@ function DataService($rootScope, $socket, Bookings, Cars, Locations, Users, mapE
 angular.module('app')
 .factory('DataService', [
   '$rootScope',
+  '$http',
   '$socket',
   'Bookings',
   'Cars',
