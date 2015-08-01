@@ -179,7 +179,14 @@ function nearbyFleetDirective(MapsLoader, $q, fleetService, realReachService, lo
         popupAnchor   : [0 , 0]
       });
 
-      scope.$watch('cars', function(cars, oldCars) {
+      scope.$watch(function(){
+          var str='';
+          scope.cars.forEach(function(c){
+            str+=c.id+c.location.latitude+c.location.longitude;
+          });
+          return str;
+      }, function() {
+        var cars=scope.cars;
         if (!waiveCarIcon || !cars || cars.length === 0) {
           return;
         }

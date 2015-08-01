@@ -1,10 +1,5 @@
 <ion-pane class="bookings-component" ng-controller="BookingsController as bookings">
-  <ion-header-bar class="bar bar-header bar-light">
-    <h1 class="title">Past Rides</h1>
-    <div class="buttons">
-      <button class="button button-icon icon ion-navicon" ng-click="showNav()"></button>
-    </div>
-  </ion-header-bar>
+  <header-bar type="nav" on-button-click="showNav()">Past Rides</header-bar>
   <ion-content scroll="false">
     <div class="list">
       <div class="list-item" ng-repeat="booking in bookings.data">{{ booking }}</div>

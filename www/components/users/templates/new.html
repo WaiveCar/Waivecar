@@ -1,12 +1,5 @@
 <ion-pane class="bookings-component waiveCarContainer" ng-controller="UserController as userCtrl">
-  <ion-header-bar class="bar bar-header bar-light">
-     <div class="header-text">
-        <h1 class="header-title">Find WaiveCars</h1>
-    </div>
-    <button class="button button-right" ng-click="showNav()">
-      <img src="img/menu.svg" >
-    </button>
-  </ion-header-bar>
+  <header-bar type="nav" on-button-click="showNav()">Find WaiveCars</header-bar>
   <ion-content scroll="false">
     <form ng-submit="userCtrl.create()">
       <div class="list">

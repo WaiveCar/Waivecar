@@ -1,12 +1,6 @@
 <ion-pane ng-controller="CarsController as carsCtrl" class="waiveCarContainer">
-  <ion-header-bar class="bar bar-header bar-light">
-    <div class="header-text">
-        <h1 class="header-title" >Find WaiveCars</h1>
-    </div>
-    <button class="button button-right  button-icon icon ion-navicon" ng-click="showNav()">    
-    </button>
-  </ion-header-bar>
-  <ion-content scroll="false">
+  <header-bar type="nav" on-button-click="showNav()">Find WaiveCars</header-bar>
+  <ion-content scroll="false" class="has-header">
     <div class="map-container">
       <map id="map" zoom="15" >
           <device-location></device-location>

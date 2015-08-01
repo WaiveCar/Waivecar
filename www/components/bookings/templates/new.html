@@ -1,10 +1,6 @@
 <ion-pane class="bookings-component" ng-controller="BookingController as booking">
-  <ion-header-bar class="bar bar-header bar-light">
-    <div class="header-text">
-      <h1 class="header-title">Confirm Booking</h1>
-    </div>
-    <a ui-sref="cars" class="button button-right button-icon icon ion-close"></a>
-  </ion-header-bar>
+  <header-bar type="close" on-button-click="booking.cancel()">Confirm Booking<</header-bar>
+
   <ion-content scroll="false">
     <p class="text-center">TODO: You are agreeing to proceed with a booking</p>
   </ion-content>

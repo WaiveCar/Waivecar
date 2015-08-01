@@ -186,7 +186,8 @@ angular.module('app', [
   'ChargingStations',
   'PointsOfInterest',
   'ngFitText',
-  'btford.socket-io'
+  'btford.socket-io',
+  'layout'
 ])
 // .directive('overlayDialog',dialogDirective)
 .run(['$ionicPlatform', Run])
