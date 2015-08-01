@@ -69,8 +69,8 @@ BookingController.prototype.getSelectedCarDestiny = function() {
   }
 
   return {
-    latitude:carDetails.latitude,
-    longitude:carDetails.longitude
+    latitude:carDetails.location.latitude,
+    longitude:carDetails.location.longitude
   }
 };
 
