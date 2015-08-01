@@ -403,36 +403,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 .highlight{
   font-weight: bold;
 }
-
-.overlay-dialog{
-  z-index: 2000;
-  text-align: center;
-  width: 100%;
-  height: 100%;
-  display: none;
-  color:#FFF;
-  background-color: rgba(0,0,0,0.96);
-  position: absolute;
-  top: 0;
-  left: 0;
-  .waiveCar-icon{
-    margin-left: auto;
-    margin-right: auto;
-    height: 19%;
-    margin-bottom:4%;
-
-  }
-  .container{
-    height: 26.23%;
-  }
-  .button-padded{
-    margin-top:4%;
-    height: 33.14%;
-    span,a{
-      font-size: 3vh;
-    }
-  }
-}
+@import "www/components/layout/layout.scss";
 @import "www/components/cars/style.scss";
 @import "www/components/bookings/style.scss";
 @import "www/components/maps/style.scss";

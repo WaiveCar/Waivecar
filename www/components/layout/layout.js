@@ -1,3 +1,6 @@
+/**
+* Provides reusable directives for layout pieces
+*/
 function headerBarDirective(layoutIcons){
 	var link=function(scope, element, attrs, ctrl) {
 		var button=element.find('button');
