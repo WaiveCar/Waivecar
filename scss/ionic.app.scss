@@ -26,23 +26,34 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
  .button,.button.active,.button.activated{
       background-color: inherit;
       border: none;
-      color:white;
+      &.button-icon{
+        color:#FFF;
+      }
       &.button-balanced{
         background-color: $balanced;
+        color:#FFF;
       }
       &.button-assertive{
         background-color: $assertive;
+        color:#FFF;
+
       }
       &.button-padded{
         span,a{
         @include vertical-align;
         display: inline-block;
+        color:#FFF;
+
       }
       &.button-dark{
        background-color: $dark;
+         color:#FFF;
+
       }
       &.button-assertive{
        background-color: $assertive;
+       color:#FFF;
+
       }
     }
   }
@@ -296,35 +307,6 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     }
   }
 }
-.action-button{
-  height:10%;
-  color:#FFF;
-  text-transform:uppercase;
-  text-align:center;
-  vertical-align: middle;
-  width:100%;
-  font-size: 2em;
-}
-.action-button.left-button{
-  width:50%;
-  float:left;
-}
-.action-button.right-button{
-  width:50%;
-  float:right;
-}
-.action-button.confirm{
-
-  background-color:rgb(37,193,85);
-}
-.action-button.cancel{
-  background-color:rgb(208,2,27);
-}
-
-.action-button p{
- 
-  transform: translate(0%, 100%);
-}
 .iconContainer{
   display: inline-block;
   .icon{
@@ -333,12 +315,6 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
       border:none;
       margin:0; 
   }
-}
-ion-content.has-big-header{
-  top:15%;
-}
-.title.has-big-header{
-  height:100%;
 }
 .info-window{
   background-color: $grayBg;
@@ -434,6 +410,7 @@ ion-content.has-big-header{
   width: 100%;
   height: 100%;
   display: none;
+  color:#FFF;
   background-color: rgba(0,0,0,0.96);
   position: absolute;
   top: 0;
