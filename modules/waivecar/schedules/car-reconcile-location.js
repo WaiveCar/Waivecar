@@ -3,17 +3,16 @@
 let scheduler   = Reach.service('queue').scheduler;
 let Car         = Reach.model('Car');
 let CarLocation = Reach.model('CarLocation');
-let io          = Reach.IO;
 let log         = Reach.Log;
 
 module.exports = function *() {
   scheduler.add('car-reconcile-location', {
     init   : true,
     repeat : true,
-    // silent : true,
+    silent : true,
     timer  : {
-      value : 5,
-      type  : 'minutes'
+      value : 30,
+      type  : 'seconds'
     }
   });
 };
