@@ -1,6 +1,7 @@
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;
 @import 'colors';
+
 @import 'sizes';
 //On percent of container we need to calculat as VH is from the viewPort
 // $mainTitleVhSize: (($barHeight/100) * $mainTitleHeightPercent);  */
@@ -32,14 +33,51 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
       &.button-assertive{
         background-color: $assertive;
       }
-  }
-  .button-padded{
-    span,a{
-      @include vertical-align;
-      display: inline-block;
+      &.button-padded{
+        span,a{
+        @include vertical-align;
+        display: inline-block;
+      }
+      &.button-dark{
+       background-color: $dark;
+      }
+      &.button-assertive{
+       background-color: $assertive;
+      }
     }
   }
-    a,a:hover,a:visited{
+
+  .button-right,.button-left{
+    z-index: 1000;
+    vertical-align: middle;
+    height: 100%;
+    min-height: 1rem;
+    min-width: initial;
+    width: 3rem;
+    img{
+      height: 60%;
+      margin-top:20%;
+    }
+  }
+  .bar-header{
+    min-height: 2rem;
+    .header-text{
+      float:left;
+      width: 100%;
+      text-align: center;
+      height: 95%;
+      @include vertical-align;
+    }
+    .button-right{
+      position: absolute;
+      right: 0;
+    }
+    .button-left{
+      position: absolute;
+      left: 0;
+    }
+  }
+  a,a:hover,a:visited{
     color:inherit;
     text-decoration: none;
     text-transform: capitalize;
@@ -82,7 +120,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
       
     }
   }
-  .bar{
+.bar{
     height: $barHeight * 1%;
     padding: 0;
     background-color: $dark;
@@ -94,8 +132,12 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
    &.bar-footer{
      height: $barFooterHeight*1%;
   }
-     
+  &.bar-balanced {
+    border-color: $balanced;
+    background: $balanced;
   }
+   
+}
   .header-title{
     text-transform: uppercase;
     font-size: $headerTitleSize*1rem;
@@ -108,48 +150,8 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
   .header-subtitle{
     font-size: $headerSubtitleSize*1rem;
   }
-  .bar-header{
-    min-height: 2rem;
-    .header-text{
-      float:left;
-      width: 100%;
-      text-align: center;
-      height: 95%;
-      @include vertical-align;
 
-    }
-    .button{
-      @include vertical-align;
-      &.img-button{
-        height: 80%;
-        margin-right: 1rem;
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center center;     
-        &.close-button{
-          background-image: url("/img/close.svg");
-        }
-        &.menu-button{
-          background-image: url("/img/menu.svg");
 
-        }
-        
-      }
-    }
-    .button-right{
-      position: absolute;
-      right: 0;
-    }
-    .button-left{
-      position: absolute;
-      left: 0;
-    }
-    
-
-   }
-  .big-header{
-    height: $bigHeaderSize * 1%;
-  }
   .has-header{
     top: $barHeight * 1%;
     &.has-big-header{
@@ -245,23 +247,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
         height: (100-$bigInfoFooterHeight)*1%
     }
   }
-  .button-right,.button-left{
-    background-color: inherit;
-    border: none;
-    z-index: 1000;
-    vertical-align: middle;
-    height: 100%;
-    min-height: 1rem;
-    min-width: initial;
-    width: 3rem;
 
-
-    img{
-      height: 60%;
-      margin-top:20%;
-
-    }
-  }
   .list{
     border: none;
     .item{
@@ -273,21 +259,9 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
       }
     }
   }
-  .button-dark{
-    background-color: $dark;
-  }
-  .button-assertive{
-    background-color: $assertive;
-  }
 }
 // Global styles
-.bar-header {
-  h1.title {
-    text-transform: uppercase;
-    font-family: "Helvetica Neue";
-    font-weight: 300;
-  }
-}
+
 .button-padded,.bar-footer .button-padded{
   width:73.33%;
   height: 2em;
@@ -322,32 +296,6 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     }
   }
 }
-.bar.bar-balanced {
-  border-color: $balanced;
-  background: $balanced;
-}
-.bar {
-  .button.button-icon.icon.ion-close {
-    height: 20px;
-    line-height: 20px;
-    font-size: 20px;
-    &:before {
-      font-size: 20px;
-      line-height: 20px;
-      height: 20px;
-    }
-  }
-}
-
-.button-icon {
-  .button-icon-label {
-    display: block;
-    padding-top: 10px;
-    line-height: 20px;
-    font-size: 20px;
-  }
-}
-
 .action-button{
   height:10%;
   color:#FFF;
@@ -377,13 +325,6 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
  
   transform: translate(0%, 100%);
 }
-.button-right{
-  float:right;
-}
-.button-left{
-  float:left;
-}
-
 .iconContainer{
   display: inline-block;
   .icon{
