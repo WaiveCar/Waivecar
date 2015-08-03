@@ -1,6 +1,7 @@
 <ion-pane class="bookings-component waiveCarContainer" ng-controller="UserController as userCtrl">
   <header-bar type="nav" on-button-click="showNav()">Find WaiveCars</header-bar>
-  <ion-content scroll="false">
+  <ion-content scroll="false" class="has-header">
+
     <form ng-submit="userCtrl.create()">
       <div class="list">
         <label class="item item-input item-floating-label">

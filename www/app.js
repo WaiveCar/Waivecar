@@ -22,7 +22,7 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpP
     // FIND WAIVECARS
     .state('cars', {
       url: '/cars',
-      templateUrl: '/components/cars/templates/index.html'
+      templateUrl: '/components/cars/templates/fleet.html'
     })
     // SHOW WAIVECAR
     .state('cars-show', {
