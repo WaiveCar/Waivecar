@@ -1,5 +1,9 @@
-function ApplicationController($rootScope, $scope, $ionicPopover, AuthService, DataService) {
+function ApplicationController($rootScope, $scope, $ionicPopover, AuthService, DataService, LocationService) {
   var self = this;
+
+  $rootScope.all    = DataService.all;
+  $rootScope.active = DataService.active;
+
 
   $ionicPopover.fromTemplateUrl('components/menu/templates/index.html', {
     scope: $scope
@@ -25,7 +29,12 @@ function ApplicationController($rootScope, $scope, $ionicPopover, AuthService, D
     $scope.popover.hide();
   }
 
+  $scope.locateMe = function() {
+    LocationService.mockLocation();
+  };
+
   DataService.initialize('cars');
+  DataService.initialize('locations');
 }
 angular.module('app')
 .controller('ApplicationController', [
@@ -34,5 +43,6 @@ angular.module('app')
   '$ionicPopover',
   'AuthService',
   'DataService',
+  'mockCityLocationService',
   ApplicationController
 ]);

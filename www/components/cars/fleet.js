@@ -14,54 +14,7 @@ SelectedCarService.prototype.getSelected = function() {
   return this.selected;
 };
 
-function FleetService($rootScope, $q, locationService) {
-  this.$q = $q;
-  this.locationService = locationService;
-  this.$rootScope = $rootScope;
-}
-
-FleetService.prototype.getNearbyFleet = function(location,cars) {
-  var self = this;
-    var ret = [];
-    var idCount = 1;
-    var ret=[];
-    _.each(cars, function(car) {
-      var loc = self.getRandomLocationInRange(location);
-      car.latitude  = car.location.latitude;
-      car.longitude = car.location.longitude;
-      car.image     = '/components/ads/templates/images/ad1.png';
-      car.plate     = 'AUD 568';
-      car.name      = 'Chevrolet Spark',
-      car.status    = {
-        charge: {
-          current: 69,
-          timeUntilFull: 20,
-          reach: 10,
-          charging: true
-        }
-      };
-      ret.push(car);
-    });
-    return ret;
-}
-FleetService.prototype.getRandomLocationInRange = function(location) {
-  var maxDiff = 0.005;
-  var minDiff = 0.0005;
-  var diffA = Math.random() * (maxDiff - minDiff) + minDiff;
-    var diffB = Math.random() * (maxDiff - minDiff) + minDiff
-    if (Math.random() < .5) {
-      diffA = diffA * -1;
-    }
-    if (Math.random() < .5) {
-      diffB = diffB * -1;
-    }
-    return {
-      latitude: location.latitude + diffA,
-      longitude: location.longitude + diffB
-    };
-};
-
-function nearbyFleetDirective(MapsLoader, $q, fleetService, realReachService, locationService) {
+function nearbyFleetDirective(MapsLoader, $q, locationService) {
 
   function addMarkerClick(marker, info, onClickFn) {
     marker.on('mousedown', function(e) {
@@ -94,9 +47,9 @@ function nearbyFleetDirective(MapsLoader, $q, fleetService, realReachService, lo
       });
 
       scope.$watch(function(){
-          var str='';
+          var str = '';
           scope.cars.forEach(function(c){
-            str+=c.id+c.location.latitude+c.location.longitude;
+            str += c.id + c.location.latitude + c.location.longitude;
           });
           return str;
       }, function() {
@@ -141,13 +94,11 @@ function nearbyFleetDirective(MapsLoader, $q, fleetService, realReachService, lo
   }
 }
 
-function FleetController($rootScope, $scope, $state, selectedCar, searchEvents, mapsEvents, DataService,mockLocation) {
+function FleetController($rootScope, $scope, $state, selectedCar, searchEvents, mapsEvents, mockLocation) {
   var self          = this;
   this.$state       = $state;
   this.$rootScope   = $rootScope;
   this.$scope       = $scope;
-  this.all          = DataService.all;
-  this.active       = DataService.active;
   this.selectedCar  = selectedCar;
   this.searchEvents = searchEvents;
   this.mapsEvents   = mapsEvents;
@@ -164,22 +115,10 @@ FleetController.prototype.showCarDetails = function(marker, data) {
   this.$state.go('cars-show', { id: data.id });
 };
 
-FleetController.prototype.locateMe = function() {
-  this.mockLocation.mockLocation();
-};
-
 angular.module('app')
-.service('fleetService', [
-  '$rootScope',
-  '$q',
-  'locationService',
-  FleetService
-])
 .directive('nearbyFleet', [
   'MapsLoader',
   '$q',
-  'fleetService',
-  'realReachService',
   'locationService',
   nearbyFleetDirective
 ])
@@ -194,7 +133,6 @@ angular.module('app')
   'selectedCar',
   'searchEvents',
   'mapsEvents',
-  'DataService',
   'mockCityLocationService',
   FleetController
-])
+]);

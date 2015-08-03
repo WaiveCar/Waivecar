@@ -1,18 +1,25 @@
-function RideController($scope, $state) {
-  this.$scope = $scope;
+function RideController($scope, $state, DataService) {
+  this.$scope         = $scope;
+  this.$state         = $state;
+  this.DataService    = DataService;
+  // TODO: could drop this variable and just test for active.locations
   this.showingStation = false;
-  this.$state = $state;
 }
+
 RideController.prototype.showChargingStationDetails = function(marker, info) {
-  this.showingStation = true;
-  this.stationName = info.name;
-  this.stationAddress = info.address;
-  this.stationDistance = info.distance;
-  this.$scope.$digest();
+  var self = this;
+  self.DataService.activate('locations', info.id, function() {
+    self.showingStation = true;
+  });
 };
+
 RideController.prototype.hideChargingStationDetails = function(marker, info) {
-  this.showingStation = false;
-}
+  var self = this;
+  self.DataService.deactivate('locations', function() {
+    self.showingStation = false;
+  });
+};
+
 RideController.prototype.endRide = function() {
   this.$state.go('ride-end');
 };
@@ -35,7 +42,7 @@ PaidRideService.prototype.getRideTime = function() {
       minutes: minutes,
       seconds: seconds
     }
-  
+
 };
 function distanceTravelledDirective($interval) {
   function link(scope) {
@@ -139,6 +146,9 @@ function paidRideTimeDirective($interval,paidRideService,formatTime) {
 
 function chargingStationInfoDirective() {
   return {
+    scope: {
+      location: '='
+    },
     templateUrl: 'components/ride/templates/directives/chargingStationInfo.html'
   }
 }
@@ -148,6 +158,7 @@ angular.module('app')
 .controller('RideController', [
   '$scope',
   '$state',
+  'DataService',
   RideController
 ])
 .directive('batteryCharge', [
