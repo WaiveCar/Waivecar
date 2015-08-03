@@ -310,7 +310,7 @@ angular.module('app')
   'searchEvents',
   'mapsEvents',
   'DataService',
-  'mockSanFranLocationService',
+  'mockCityLocationService',
   CarsController
 ])
 .directive('carChargeStatus', [

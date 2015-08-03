@@ -13,13 +13,20 @@ function mockWalkingDirective(mapsEvents,$rootScope){
         require: '^map'
 	}
 }
-function mockSanFranLocationService(locationService){
+function mockCityLocationService(locationService){
 	this.locationService=locationService;
 }
-mockSanFranLocationService.prototype.mockLocation = function() {
-	this.locationService.setManualPosition(37.422292, -122.148153);
-	
+mockCityLocationService.prototype.mockLocation = function() {
+  // Mock location:
+  // "latitude": 34.0604643,
+  // "longitude": -118.4186743,
+  // "city": "Los Angeles",
+  // "state": "CA",
+  // "street_address": "10250 Santa Monica Blvd",
+  // "zip": "90067",
+	this.locationService.setManualPosition(34.0604643, -118.4186743);
 };
+
 angular.module('mockBehaviours', [])
-.service('mockSanFranLocationService',['locationService',mockSanFranLocationService])
-.directive('mockWalking', ['mapsEvents','$rootScope',mockWalkingDirective]);
+.service('mockCityLocationService', [ 'locationService',mockCityLocationService ])
+.directive('mockWalking', [ 'mapsEvents','$rootScope',mockWalkingDirective ]);
