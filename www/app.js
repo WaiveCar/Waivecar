@@ -13,9 +13,9 @@ function Run($ionicPlatform) {
   });
 }
 
-function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpProvider) {
+function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpProvider,$compileProvider) {
   'use strict';
-
+  $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|tel):/);
   $httpProvider.interceptors.push('AuthInterceptor');
   $ionicConfigProvider.views.transition('platform');
    $stateProvider
@@ -165,12 +165,15 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpP
       url: '/location-error',
       templateUrl: '/components/errors/templates/index.html'
     })
-
     .state('unplugged-error', {
       url: '/unplugged-error',
       templateUrl: '/components/errors/templates/index.html'
+    })
+    .state('car-damage', {
+      url: '/car/damage',
+      templateUrl: '/components/cars/templates/damage.html'
     });
-  $urlRouterProvider.otherwise('/cars');
+  $urlRouterProvider.otherwise('/car/damage');
 }
 
 angular.module('app', [
@@ -187,8 +190,9 @@ angular.module('app', [
   'PointsOfInterest',
   'ngFitText',
   'btford.socket-io',
-  'layout'
+  'layout',
+  'Camera'
 ])
 // .directive('overlayDialog',dialogDirective)
 .run(['$ionicPlatform', Run])
-.config([ '$stateProvider', '$urlRouterProvider', '$ionicConfigProvider', '$httpProvider', Config ]);
+.config([ '$stateProvider', '$urlRouterProvider', '$ionicConfigProvider', '$httpProvider','$compileProvider', Config ]);
