@@ -143,8 +143,9 @@ function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, User
     },
 
     // client-side manipulations only
-    deactivate: function(modelName, id) {
+    deactivate: function(modelName, next) {
       delete service.active[modelName];
+      if (next && _.isFunction(next)) return next();
     },
 
     subscribe: function() {
