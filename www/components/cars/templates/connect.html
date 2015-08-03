@@ -1,12 +1,5 @@
 <ion-pane  ng-controller="ConnectionController as connection" class="waiveCarContainer">
-  <ion-header-bar class="bar bar-header bar-light">
-    <div class="header-text">
-      <h1 class="header-title">Get to your WaiveCar</h1>
-    </div>
-    <button class="button button-right" ng-click="showNav()">
-      <img src="img/menu.svg" >
-    </button>
-  </ion-header-bar>
+  <header-bar type="nav" on-button-click="showNav()">Get to your WaiveCar</header-bar>
   <ion-content scroll="false" class="has-footer-bar has-header">
     <div class="map-container  has-info-footer">
       <map id="map" zoom="15" >
