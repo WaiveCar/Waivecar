@@ -1,6 +1,5 @@
-function CreditCardsController($rootScope, $scope, DataService) {
-  var self         = this;
-  self.active      = DataService.active;
+function CreditCardsController($rootScope, $scope) {
+  var self = this;
 }
 
 angular.module('app')
@@ -8,6 +7,5 @@ angular.module('app')
   '$rootScope',
   '$scope',
   '$state',
-  'DataService',
   CreditCardsController
 ]);

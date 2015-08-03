@@ -10,7 +10,7 @@ function CreditCardController($rootScope, $scope, $state, DataService) {
       cardNumber : '4000-0000-0000-0001',
       expiry     : 20160101
     },
-    edit : self.active.users
+    edit : DataService.active.users
   };
 }
 
