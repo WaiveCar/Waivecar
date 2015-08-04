@@ -4,7 +4,7 @@ let VehicleService = require('./vehicle-service');
 let config         = Reach.config;
 let error          = Reach.ErrorHandler;
 let log            = Reach.Log;
-/*
+
 module.exports = function *() {
   if (!config.gm || !config.gm.host || !config.gm.api.key || !config.gm.api.secret) {
     throw error.parse({
@@ -23,4 +23,3 @@ module.exports = function *() {
     });
   }
 };
-*/
