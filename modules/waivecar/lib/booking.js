@@ -333,10 +333,10 @@ Bookings.setCarStatus = function *(status, car, user) {
       yield carStatus.upsert();
       break;
     case 'available':
-      carStatus         = yield CarStatus.find({ where : { carId : car }, limit : 1 });
-      carStatus.diverId = null;
-      carStatus.status  = status;
-      carStatus._actor  = user;
+      carStatus          = yield CarStatus.find({ where : { carId : car }, limit : 1 });
+      carStatus._actor   = user;
+      carStatus.driverId = null;
+      carStatus.status   = status;
       yield carStatus.update('carId');
       break;
     default:
