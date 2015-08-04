@@ -5,7 +5,7 @@ function headerBarDirective(layoutIcons){
 	var link=function(scope, element, attrs, ctrl) {
 		var button=element.find('button');
 		var icon=scope.icon;
-		if(typeof icon =='undefned' || !icon ){
+		if(typeof icon =='undefined' || !icon ){
 			icon=layoutIcons[scope.type];
 		}
 		button.addClass(icon);
