@@ -60,7 +60,14 @@ DamageController.prototype.takePictureOfDamage = function() {
 	})
 };
 DamageController.prototype.sendReport = function() {
-	this.CameraService.savePicture(this.pictureURI);
+	this.CameraService.savePicture(this.pictureURI).then(
+		function(fileData){
+			alert("File successfully uploaded");
+		},
+		function(errorData){
+			alert("Error while uploading file");
+		}
+	)
 };
 
 angular.module('app')

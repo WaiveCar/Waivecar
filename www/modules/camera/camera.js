@@ -28,14 +28,12 @@ CameraService.prototype.savePicture = function(fileUri) {
 	var ft = new FileTransfer();
 	var defered=this.$q.defer();
 	var successCb=function(data){
-		alert(arguments);
 		defered.resolve(data);
 	}
 	var errorCb=function(data){
-		alert(arguments);
 		defered.reject(data);
 	}
-    ft.upload(imageURI, encodeURI(this.fileUploadURL), successCb, errorCb, options);
+    ft.upload(fileUri, encodeURI(this.fileUploadURL), successCb, errorCb, options);
     return defered.promise;
 };
 angular.module('Camera',[])
