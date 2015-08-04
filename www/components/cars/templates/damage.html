@@ -1,7 +1,8 @@
-<ion-pane ng-controller="damageController as damage" class="waiveCarContainer">
+<ion-pane ng-controller="damageController as damage" class="damageContainer">
   <header-bar type="nav" on-button-click="showNav()">Car damage</header-bar>
   <ion-content  class="has-header" >
-    <picture-container get-set-picture-function="damage.setPicture(setFn)"></picture-container>
+    <damage-info-container get-set-picture-function="damage.setPicture(setFn)" damage-description="damage.description"></damage-info-container>
     <take-picture on-take-picture="damage.takePictureOfDamage()"></take-picture>
+    <send-report on-send-report="damage.sendReport()"></send-report>
   </ion-content>
 </ion-pane>
