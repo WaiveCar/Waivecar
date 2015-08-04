@@ -45,6 +45,9 @@ DamageController.prototype.takePictureOfDamage = function() {
 	this.CameraService.getPicture().then(function(picture){
 		self.setPictureFunction(picture);
 	})
+	.catch(function(error){
+		alert(error);
+	})
 };
 angular.module('app')
 .controller('damageController',['$rootScope','$scope','CameraService',DamageController])

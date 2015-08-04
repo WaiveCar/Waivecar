@@ -4,7 +4,7 @@ function CameraService($cordovaCamera,$q){
 }
 CameraService.prototype.getPicture = function(width,height) {
 	if(typeof Camera =='undefined'){
-		this.$q.reject("This feature just works on mobile");
+		return this.$q.reject("This feature just works on mobile");
 	}
 	var options = {
 		quality : 75,
