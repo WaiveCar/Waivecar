@@ -76,7 +76,8 @@ function carInformationDirective(searchEvents, selectedCar) {
     function(){
       var details = selectedCar.getSelected();
       if (details) {
-        scope.name  = details.name;
+        scope.make = details.make;
+        scope.model = details.model;
         scope.plate = details.plate;
         scope.image = details.image;
       }

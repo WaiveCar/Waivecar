@@ -13,6 +13,7 @@ function headerBarDirective(layoutIcons){
 	}
 	return {
 		link:link,
+    // template:'<ion-header-bar class="bar bar-header bar-light  disable-user-behavior">  <div class="header-text">    <h1 class="header-title"  ng-transclude></h1>  </div>  <button class="button button-right  button-icon icon" ng-click="showNav()">      </button></ion-header-bar>',
 		templateUrl:'/components/layout/templates/directives/headerBar.html',
 		scope:{
 			icon:'@',
