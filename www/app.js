@@ -173,7 +173,7 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpP
       url: '/car/damage',
       templateUrl: '/components/cars/templates/damage.html'
     });
-  $urlRouterProvider.otherwise('/car/damage');
+  $urlRouterProvider.otherwise('/cars');
 }
 
 angular.module('app', [
