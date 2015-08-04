@@ -60,129 +60,33 @@ module.exports = (function () {
    * @return {Booking}
    */
   BookingsController.prototype.show = function *(id) {
-    let booking         = yield Booking.getBooking(id, this.auth.user);
-        booking         = booking.toJSON();
-        booking.details = yield Booking.getBookingDetails(id);
-    return booking;
-  };
+    let booking = yield Booking.getBooking(id, this.auth.user);
 
-  /**
-   * Set the booking state to pending arrival.
-   * @method pendingArrival
-   * @param  {Int} id
-   */
-  BookingsController.prototype.pendingArrival = function *(id) {
-    let user    = this.auth.user;
-    let booking = yield Booking.getBooking(id, user);
-
-    if ('pending-arrival' === booking.state) {
-      throw error.parse({
-        code    : 'BOOKING_INVALID_ACTION',
-        message : 'This booking is already in pending arrival state'
-      }, 409);
-    }
-
-    // ### Update Booking
-
-    booking.state = 'pending-arrival';
-    yield booking.update();
-
-    // ### Time Limit
-    // The booking will automaticaly cancel itself after 15 minutes
-
-    yield queue.scheduler.add('booking-timer-cancel', {
-      uid    : 'booking-' + booking.id,
-      timer  : {
-        value : 15,
-        type  : 'minutes'
-      },
-      data : {
-        user    : user,
-        booking : id
-      }
-    });
+    booking         = booking.toJSON();
+    booking.details = yield Booking.getBookingDetails(id);
 
     return booking;
   };
 
   /**
-   * Start the ride.
-   * @method start
+   * Updates the booking state.
+   * @method update
    * @param  {Int} id
    */
-  BookingsController.prototype.start = function *(id) {
-    let user    = this.auth.user;
-    let booking = yield Booking.getBooking(id, user);
-
-    if ('pending-arrival' !== booking.state) {
-      throw error.parse({
-        code    : 'BOOKING_INVALID_ACTION',
-        message : 'This action can only be performed when pending arrival'
-      }, 409);
+  BookingsController.prototype.update = function *(id, post) {
+    let user = this.auth.user;
+    switch (post.state) {
+      case 'cancel'          : return yield Booking.setCancelled(id, user);
+      case 'pending-arrival' : return yield Booking.setPendingArrival(id, user);
+      case 'start'           : return yield Booking.setInProgress(id, user);
+      case 'end'             : return yield Booking.setPendingPayment(id, user);
+      default:
+        throw error.parse({
+          code     : 'BOOKING_BAD_STATE',
+          message  : 'The state provided is invalid',
+          solution : 'Make sure the state provided with your request is a valid booking state'
+        }, 403);
     }
-
-    yield Booking.start(booking, user);
-
-    // ### Remove Time Limit
-    // Remove the auto cancel job on the booking
-
-    yield queue.scheduler.cancel('booking-timer-cancel', 'booking-' + booking.id);
-
-    return booking;
-  };
-
-  /**
-   * End the ride.
-   * @method end
-   * @param  {Int} id
-   */
-  BookingsController.prototype.end = function *(id) {
-    let user    = this.auth.user;
-    let booking = yield Booking.getBooking(id, user);
-
-    if ('in-progress' !== booking.state) {
-      throw error.parse({
-        code    : 'BOOKING_INVALID_ACTION',
-        message : 'You can only end a ride that is in progress'
-      }, 409);
-    }
-
-    yield Booking.end(booking, user);
-
-    return booking;
-  };
-
-  /**
-   * Attempts to cancel the booking, can only be done before the ride has started.
-   * @method cancel
-   * @param  {Int} id
-   */
-  BookingsController.prototype.cancel = function *(id) {
-    let user    = this.auth.user;
-    let booking = yield Booking.getBooking(id, user);
-
-    if ('in-progress' === booking.state || 'completed' === booking.state || 'cancelled' === booking.state) {
-      throw error.parse({
-        code     : 'BOOKING_INVALID_ACTION',
-        message  : 'You cannot cancel a booking which is already ' + booking.state.replace('-', ' '),
-        solution : 'cancelled' === booking.state ? undefined : 'Use the end ride feature to end your booking'
-      }, 409);
-    }
-
-    yield Booking.setCarStatus('available', booking.carId, user);
-
-    // ### Update Booking
-
-    booking._actor = this._actor;
-    booking.state  = 'cancelled';
-    yield booking.update();
-
-    // ### Remove Time Limit
-    // Remove the auto cancel job on the booking
-
-    yield queue.scheduler.cancel('booking-timer-cancel', 'booking-' + booking.id);
-
-    return booking;
   };
 
   return BookingsController;

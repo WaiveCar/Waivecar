@@ -1,11 +1,13 @@
 'use strict';
 
 let moment         = require('moment');
+let queue          = Reach.service('queue');
 let q              = Reach.service('mysql/query');
 let Booking        = Reach.model('Booking');
 let BookingDetails = Reach.model('BookingDetails');
 let Car            = Reach.model('Car');
 let CarStatus      = Reach.model('CarStatus');
+let CarLocation    = Reach.model('CarLocation');
 let error          = Reach.ErrorHandler;
 
 /**
@@ -13,8 +15,6 @@ let error          = Reach.ErrorHandler;
  * @static
  */
 let Bookings = module.exports = {};
-
-// ### Booking Methods
 
 /**
  * Creates a new booking with the assigned car and customer.
@@ -35,40 +35,158 @@ Bookings.create = function *(car, customer) {
 };
 
 /**
- * Starts the booking logging location, time, odometer and charge level.
- * @method start
- * @param  {Booking} booking
- * @param  {User}    user
+ * Updates the booking state to pending-arrival.
+ * @method setPendingArrival
+ * @param  {Int}  id
+ * @param  {User} user
  */
-Bookings.start = function *(booking, user) {
-  let details = new BookingDetails({
-    bookingId : booking.id,
-    type      : 'start',
-    time      : moment().format('YYYY-MM-DD HH-mm-ss'),
-    latitude  : '37.645972',
-    longitude : '-122.426251',
-    odometer  : 28000,
-    charge    : 78
-  });
-  details._actor = user;
-  yield details.save();
-  booking.state = 'in-progress';
+Bookings.setPendingArrival = function *(id, user) {
+  let booking = yield this.getBooking(id, user);
+
+  if (booking.state !== 'new-booking') {
+    throw error.parse({
+      code    : 'BOOKING_INVALID_ACTION',
+      message : 'You cannot set pending arrival on a booking which is ' + booking.state.replace('-', ' ')
+    }, 409);
+  }
+
+  // ### Update Booking
+
+  booking._actor = user;
+  booking.state  = 'pending-arrival';
   yield booking.update();
+
+  // ### Time Limit
+  // The booking will automaticaly cancel itself after 15 minutes
+
+  queue.scheduler.add('booking-timer-cancel', {
+    uid    : 'booking-' + booking.id,
+    timer  : {
+      value : 15,
+      type  : 'minutes'
+    },
+    data : {
+      user    : user,
+      booking : id
+    }
+  });
+
+  return booking;
 };
 
 /**
- * Ends a booking logging location, time, odometer and charge level.
- * @method start
- * @param  {Booking} booking
- * @param  {User}    user
+ * Updates the booking state to pending-arrival.
+ * @method setCancelled
+ * @param  {Int}  id
+ * @param  {User} user
  */
-Bookings.end = function *(booking, user) {
+Bookings.setCancelled = function *(id, user) {
+  let booking = yield this.getBooking(id, user);
+  let allowed = [ 'new-booking', 'pending-arrival' ];
+
+  if (allowed.indexOf(booking.state) === -1) {
+    throw error.parse({
+      code    : 'BOOKING_INVALID_ACTION',
+      message : 'You cannot cancel a booking which is ' + booking.state.replace('-', ' ')
+    }, 409);
+  }
+
+  yield Booking.setCarStatus('available', booking.carId, user);
+
+  // ### Update Booking
+
+  booking._actor = user;
+  booking.state  = 'cancelled';
+  yield booking.update();
+
+  // ### Remove Time Limit
+  // Remove the auto cancel job on the booking
+
+  queue.scheduler.cancel('booking-timer-cancel', 'booking-' + booking.id);
+
+  return booking;
+};
+
+/**
+ * Updates the booking state to in-progress.
+ * @method setInProgress
+ * @param  {Int}  id
+ * @param  {User} user
+ */
+Bookings.setInProgress = function *(id, user) {
+  let booking   = yield this.getBooking(id, user);
+  let carCoords = yield CarLocation.find({ where : { carId : booking.carId }, limit : 1 });
+
+  if (booking.state !== 'new-booking' && booking.state !== 'pending-arrival') {
+    throw error.parse({
+      code    : 'BOOKING_INVALID_ACTION',
+      message : 'You cannot start a ride which is ' + booking.state.replace('-', ' ')
+    }, 409);
+  }
+
+  if (!carCoords) {
+    throw error.parse({
+      code    : 'CAR_NO_LOCATION',
+      message : 'The location of the booked car is unknown'
+    }, 409);
+  }
+
+  // ### Start Ride
+
+  let details  = new BookingDetails({
+    bookingId : booking.id,
+    type      : 'start',
+    time      : moment().format('YYYY-MM-DD HH-mm-ss'),
+    latitude  : carCoords.latitude,
+    longitude : carCoords.longitude,
+    odometer  : 28000,
+    charge    : 78
+  });
+
+  details._actor = user;
+  yield details.save();
+
+  booking.state = 'in-progress';
+  yield booking.update();
+
+  // ### Remove Time Limit
+  // Remove the auto cancel job on the booking
+
+  queue.scheduler.cancel('booking-timer-cancel', 'booking-' + booking.id);
+
+  return booking;
+};
+
+/**
+ * Updates the booking state to pending-payment.
+ * @method setPendingPayment
+ * @param  {Int}  id
+ * @param  {User} user
+ */
+Bookings.setPendingPayment = function *(id, user) {
+  let booking   = yield this.getBooking(id, user);
+  let carCoords = yield CarLocation.find({ where : { carId : booking.carId }, limit : 1 });
+
+  if (booking.state !== 'in-progress') {
+    throw error.parse({
+      code    : 'BOOKING_INVALID_ACTION',
+      message : 'You cannot end a ride which is ' + booking.state.replace('-', ' ')
+    }, 409);
+  }
+
+  if (!carCoords) {
+    throw error.parse({
+      code    : 'CAR_NO_LOCATION',
+      message : 'The location of the booked car is unknown'
+    }, 409);
+  }
+
   let details = new BookingDetails({
     bookingId : booking.id,
     type      : 'end',
-    time      : moment().add(1, 'hour').format('YYYY-MM-DD HH-mm-ss'),
-    latitude  : '37.764566',
-    longitude : '-122.496265',
+    time      : moment().format('YYYY-MM-DD HH-mm-ss'),
+    latitude  : carCoords.latitude,
+    longitude : carCoords.longitude,
     odometer  : 28010,
     charge    : 48
   });
@@ -90,6 +208,8 @@ Bookings.end = function *(booking, user) {
   // Set the car status back to available.
 
   yield this.setCarStatus('available', booking.carId, user);
+
+  return booking;
 };
 
 /**
