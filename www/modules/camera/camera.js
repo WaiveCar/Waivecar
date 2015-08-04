@@ -8,7 +8,7 @@ CameraService.prototype.getPicture = function(width,height) {
 	}
 	var options = {
 		quality : 75,
-		destinationType : Camera.DestinationType.DATA_URL,
+		destinationType : Camera.DestinationType.FILE_URI,
 		sourceType : Camera.PictureSourceType.CAMERA,
 		encodingType: Camera.EncodingType.JPEG,
 		targetWidth: width || 800,
@@ -17,9 +17,7 @@ CameraService.prototype.getPicture = function(width,height) {
 		correctOrientation: true,
 		cameraDirection : Camera.Direction.BACK,
 	}
-	return  this.$cordovaCamera.getPicture(options).then(function(picture){
-		return "data:image/jpeg;base64,"+picture;
-	})
+	return  this.$cordovaCamera.getPicture(options);
 };
 angular.module('Camera',[])
 .service('CameraService',['$cordovaCamera','$q',CameraService]);

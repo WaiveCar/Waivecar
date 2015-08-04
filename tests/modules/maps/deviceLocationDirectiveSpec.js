@@ -1,4 +1,4 @@
-describe('Device location directive',function(){
+fdescribe('Device location directive',function(){
     var solveLocationSpy=jasmine.createSpy('solveLocation')
     var mockMarker={
         addTo:function(){

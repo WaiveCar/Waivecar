@@ -1,6 +1,6 @@
 <ion-pane ng-controller="damageController as damage" class="waiveCarContainer">
   <header-bar type="nav" on-button-click="showNav()">Car damage</header-bar>
-  <ion-content scroll="false" class="has-header" >
+  <ion-content  class="has-header" >
     <picture-container get-set-picture-function="damage.setPicture(setFn)"></picture-container>
     <take-picture on-take-picture="damage.takePictureOfDamage()"></take-picture>
   </ion-content>
