@@ -15,7 +15,7 @@ var paths = {
     './www/components/**/*.scss'
   ],
   templates: [
-    './www/components/**/templates/*.html'
+    './www/components/**/*.html'
   ],
   scripts: [
     './www/**/*.js',
