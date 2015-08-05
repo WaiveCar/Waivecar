@@ -36,7 +36,7 @@ StateService.prototype.next = function(flowName) {
 	var flow = this._getFlow(flowName);
 	var nextIndex=flow.currentStateIndex+1;
 	if(nextIndex>=flow.states.length){
-		throw new Error("Can\'t go to the next state the current state is the last");
+		throw new Error('Can\'t go to the next state the current state is the last');
 	}
 	flow.currentStateIndex = nextIndex;
 	var stateName=this.getCurrentState(flowName);

@@ -36,7 +36,9 @@ fdescribe('State service',function(){
 			
 		];
 		var self=this;
-		expect( function(){ 		self.service.setStateFlow(flowName,states);} ).toThrow(new Error('The state '+states[0].name+' already exists'));
+		var expectedError=new Error('The state '+states[0].name+' already exists');
+		expect( function(){ self.service.setStateFlow(flowName,states);} )
+		.toThrow(expectedError);
 	});
 	describe('State flow',function(){
 		var flowName='testFlow';
@@ -90,6 +92,13 @@ fdescribe('State service',function(){
 			var currentState=this.service.getCurrentState(flowName);
 			expect(currentState).toEqual(expectedName);
 			expect(mockState.go.calls.mostRecent().args).toEqual([expectedName])
+		});
+		it('The user can\'t go to the next state if it\'s the last',function(){
+			this.service.goTo(flowName,rules[rules.length-1].name);
+
+			var expectedError=new Error('Can\'t go to the next state the current state is the last');
+			expect( function(){ self.service.next(flowName);} )
+			.toThrow(expectedError);
 		});
 		describe('Flow rules',function(){
 			it('Can set rules to a state flow');
