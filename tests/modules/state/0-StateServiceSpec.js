@@ -152,12 +152,13 @@ fdescribe('State service',function(){
 				this.service.setStateFlow(flowName,states);
 			});
 			describe('Arrival',function(){
-				var expectedErrorFromFirst=new Error('The rules of arriveIfFlag doesn\'t allow the arrival, current state: first');
+				var desiredState='arriveIfFlag';
+				var expectedErrorFromFirst=new Error('The rules of '+desiredState+' doesn\'t allow the arrival, current state: first');
 				// var expectedArrivalError= new Error ("The rules doesn't allow the arrival of ")
 				it('Can\'t go to a state if the rule doesn\'t allow',function(){
 					var self=this;
 					flag=false;
-					expect( function(){ self.service.goTo(flowName,'arriveIfFlag');} )
+					expect( function(){ self.service.goTo(flowName,desiredState);} )
 					.toThrow(expectedErrorFromFirst);
 				});
 				it('Can\'t forward to a state if the rule doesn\'t allow',function(){
@@ -168,12 +169,29 @@ fdescribe('State service',function(){
 				});
 				it('Can\'t return to a state if the rule doesn\'t allow',function(){
 					this.service.goTo(flowName,'neutral_1');
-					var expectedError=new Error('The rules of arriveIfFlag doesn\'t allow the arrival, current state: neutral_1');
+					var expectedError=new Error('The rules of '+desiredState+' doesn\'t allow the arrival, current state: neutral_1');
 					flag=false;
 					var self=this;
 					expect( function(){ self.service.previous(flowName);} )
 					.toThrow(expectedError);
 				});
+				it('Can go to a state if the rule  allow',function(){
+					flag=true;
+					this.service.goTo(flowName,desiredState);
+					expect(this.service.getCurrentState(flowName)).toEqual(desiredState);
+				});
+				it('Can orward to a state if the rule allow',function(){
+					flag=true;
+					this.service.next(flowName);
+					expect(this.service.getCurrentState(flowName)).toEqual(desiredState);
+				});
+				it('Can return to a state if the rule allow',function(){
+					flag= true;
+					this.service.goTo(flowName,'neutral_1');
+					this.service.previous(flowName);
+					expect(this.service.getCurrentState(flowName)).toEqual(desiredState);
+				});
+
 
 			});
 
