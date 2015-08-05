@@ -43,11 +43,11 @@ Bookings.create = function *(car, customer) {
 Bookings.setPendingArrival = function *(id, user) {
   let booking = yield this.getBooking(id, user);
 
-  if (booking.state !== 'new-booking') {
+  if (booking.state !== 'payment-authorized') {
     throw error.parse({
       code    : 'BOOKING_INVALID_ACTION',
       message : 'You cannot set pending arrival on a booking which is ' + booking.state.replace('-', ' ')
-    }, 409);
+    }, 400);
   }
 
   // ### Update Booking
@@ -88,7 +88,7 @@ Bookings.setCancelled = function *(id, user) {
     throw error.parse({
       code    : 'BOOKING_INVALID_ACTION',
       message : 'You cannot cancel a booking which is ' + booking.state.replace('-', ' ')
-    }, 409);
+    }, 400);
   }
 
   yield Booking.setCarStatus('available', booking.carId, user);
@@ -117,18 +117,18 @@ Bookings.setInProgress = function *(id, user) {
   let booking   = yield this.getBooking(id, user);
   let carCoords = yield CarLocation.find({ where : { carId : booking.carId }, limit : 1 });
 
-  if (booking.state !== 'new-booking' && booking.state !== 'pending-arrival') {
+  if (booking.state !== 'pending-arrival') {
     throw error.parse({
       code    : 'BOOKING_INVALID_ACTION',
       message : 'You cannot start a ride which is ' + booking.state.replace('-', ' ')
-    }, 409);
+    }, 400);
   }
 
   if (!carCoords) {
     throw error.parse({
       code    : 'CAR_NO_LOCATION',
       message : 'The location of the booked car is unknown'
-    }, 409);
+    }, 400);
   }
 
   // ### Start Ride
@@ -171,14 +171,14 @@ Bookings.setPendingPayment = function *(id, user) {
     throw error.parse({
       code    : 'BOOKING_INVALID_ACTION',
       message : 'You cannot end a ride which is ' + booking.state.replace('-', ' ')
-    }, 409);
+    }, 400);
   }
 
   if (!carCoords) {
     throw error.parse({
       code    : 'CAR_NO_LOCATION',
       message : 'The location of the booked car is unknown'
-    }, 409);
+    }, 400);
   }
 
   let details = new BookingDetails({
@@ -253,7 +253,7 @@ Bookings.getBooking = function *(id, user) {
     throw error.parse({
       code    : 'BOOKING_INVALID_USER',
       message : 'You do not have access to the provided booking'
-    }, 409);
+    }, 400);
   }
   booking._actor = user;
   return booking;
@@ -288,7 +288,7 @@ Bookings.isUserAvailable = function *(id) {
     throw error.parse({
       code    : 'CAR_IN_PROGRESS',
       message : 'You are already assigned to another waivecar'
-    }, 409);
+    }, 400);
   }
 };
 
@@ -304,14 +304,14 @@ Bookings.isCarAvailable = function *(id) {
     throw error.parse({
       code    : 'CAR_INVALID',
       message : 'The requested car does not exist'
-    }, 409);
+    }, 400);
   }
   let state  = yield CarStatus.find({ where : { carId : id }, limit : 1 });
   if (state && state.status === 'unavailable') {
     throw error.parse({
       code    : 'CAR_UNAVAILABLE',
       message : 'The selected car is unavailable for booking'
-    }, 409);
+    }, 400);
   }
 };
 

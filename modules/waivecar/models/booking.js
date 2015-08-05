@@ -33,7 +33,7 @@ module.exports = (function () {
       customerId : 'INT(11)     NOT NULL',
       carId      : 'VARCHAR(28) NOT NULL',
       paymentId  : 'INT(11)     NULL',
-      state      : 'ENUM("new-booking", "pending-arrival", "in-progress", "pending-payment", "cancelled", "completed") DEFAULT "new-booking"'
+      state      : 'ENUM("new-booking", "payment-authorized", "pending-arrival", "in-progress", "pending-payment", "cancelled", "completed") DEFAULT "new-booking"'
     },
     primaryKey  : 'id',
     foreignKeys : [
