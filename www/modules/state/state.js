@@ -1,3 +1,7 @@
+/**
+* State service that allows the control of multiple state checks
+* Each set of linear states must be registered as a flow using setStateFlow
+*/
 function StateService($state) {
 	this.$state = $state;
 	this._flows = {};

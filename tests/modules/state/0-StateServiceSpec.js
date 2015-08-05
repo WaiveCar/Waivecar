@@ -114,14 +114,6 @@ fdescribe('State service',function(){
 				},
 				{name:'neutral_1'},
 				{
-					name:'arriveIfNotFlag',
-					rules:{
-						arrive:function(){
-							return !flag;
-						}
-					}
-				},
-				{
 					name:'leaveIfFlag',
 					rules:{
 						leave:function(){
@@ -129,20 +121,18 @@ fdescribe('State service',function(){
 						}
 					}
 				},
-				{
-				name:'leaveIfNotFlag',
-					rules:{
-						leave:function(){
-							return !flag;
-						}
-					}
-				},
 				{name:'neutral_Before'},
 				{
-					name:'CantComeFromNeutral',
+					name:'neutralCheck',
 					rules:{
 						arrive:function(fromState){
-							return fromState.indexOf('neutral')!==0;
+							var isNeutral=fromState.indexOf('neutral')===0;
+							if(flag){
+								return isNeutral;
+							}
+							else{
+								return !isNeutral;
+							}
 						}
 					}
 				},
@@ -200,9 +190,10 @@ fdescribe('State service',function(){
 					expect(this.service.getCurrentState(flowName)).toEqual(desiredState);
 				});
 				describe('Previous state check',function(){
-					var desiredState = 'CantComeFromNeutral';
+					var desiredState = 'neutralCheck';
 					it('Can\'t go to a state if the rule doesn\'t allow',function(){
 						var self=this;
+						flag = false;
 						this.service.goTo(flowName,'neutral_1');
 						var expectedError = getArriveError(desiredState,'neutral_1');
 						expect( function(){ self.service.goTo(flowName,desiredState);} )
@@ -210,6 +201,7 @@ fdescribe('State service',function(){
 					});
 					it('Can\'t forward to a state if the rule doesn\'t allow',function(){
 						var self=this;
+						flag = false;
 						this.service.goTo(flowName,'neutral_Before');
 						var expectedError = getArriveError(desiredState,'neutral_Before');
 						expect( function(){ self.service.next(flowName);} )
@@ -217,12 +209,30 @@ fdescribe('State service',function(){
 					});
 					it('Can\'t return to a state if the rule doesn\'t allow',function(){
 						var self=this;
+						flag = false;
 						this.service.goTo(flowName,'neutral_After');
 						var expectedError = getArriveError(desiredState,'neutral_After');
 						expect( function(){ self.service.previous(flowName);} )
 						.toThrow(expectedError);
 					});
-
+					it('Can go to a state if the rule allow',function(){
+						flag = true;
+						this.service.goTo(flowName,'neutral_1');
+						this.service.goTo(flowName,desiredState);
+						expect(this.service.getCurrentState(flowName)).toEqual(desiredState);
+					});
+					it('Can\forward to a state if the rule allow',function(){
+						flag = true;
+						this.service.goTo(flowName,'neutral_Before');
+						this.service.next(flowName);
+						expect(this.service.getCurrentState(flowName)).toEqual(desiredState);
+					});
+					it('Can return to a state if the rule allow',function(){
+						flag = true;
+						this.service.goTo(flowName,'neutral_After');
+						this.service.previous(flowName);
+						expect(this.service.getCurrentState(flowName)).toEqual(desiredState);
+					});
 				});
 
 			});
