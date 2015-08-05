@@ -112,6 +112,7 @@ fdescribe('State service',function(){
 						}
 					}
 				},
+				{name:'neutral_1'},
 				{
 					name:'arriveIfNotFlag',
 					rules:{
@@ -136,7 +137,6 @@ fdescribe('State service',function(){
 						}
 					}
 				},
-				{name:'neutral'},
 				{
 					name:'CantComeFromNeutral',
 					rules:{
@@ -161,12 +161,19 @@ fdescribe('State service',function(){
 					.toThrow(expectedErrorFromFirst);
 				});
 				it('Can\'t forward to a state if the rule doesn\'t allow',function(){
-						var self=this;
+					var self=this;
 					flag=false;
 					expect( function(){ self.service.next(flowName);} )
 					.toThrow(expectedErrorFromFirst);
 				});
-				it('Can\'t return to a state if the rule doesn\'t allow');
+				it('Can\'t return to a state if the rule doesn\'t allow',function(){
+					this.service.goTo(flowName,'neutral_1');
+					var expectedError=new Error('The rules of arriveIfFlag doesn\'t allow the arrival, current state: neutral_1');
+					flag=false;
+					var self=this;
+					expect( function(){ self.service.previous(flowName);} )
+					.toThrow(expectedError);
+				});
 
 			});
 

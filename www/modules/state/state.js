@@ -17,6 +17,7 @@ StateService.prototype.setStateFlow = function(flowName, states) {
 	this._flows[flowName] = {
 		states: states,
 		currentStateIndex: 0,
+		previousStateIndex: 0,
 		_nameMap: stateNameMap
 	}
 }
@@ -30,7 +31,8 @@ StateService.prototype.goTo = function(flowName, stateName) {
 	var flow = this._getFlow(flowName);
 	var stateIndex = this.getStateIndexByName(flowName,stateName)
 	if(!this.canGoToState(flowName,stateName)){
-		throw new Error ('The rules of '+stateName+' doesn\'t allow the arrival, current state: '+this.getCurrentState(flowName));
+		flow.currentStateIndex=flow.previousStateIndex;
+		throw new Error ('The rules of '+stateName+' doesn\'t allow the arrival, current state: '+flow.states[flow.previousStateIndex].name);
 	}
 	flow.currentStateIndex = stateIndex;
 	this.$state.go(stateName);
@@ -50,14 +52,12 @@ StateService.prototype.canGoToState = function(flowName,stateName) {
 };
 StateService.prototype.next = function(flowName) {
 	var flow = this._getFlow(flowName);
+	flow.previousStateIndex=flow.currentStateIndex;
 	var nextIndex=flow.currentStateIndex+1;
 	if(nextIndex>=flow.states.length){
 		throw new Error('Can\'t go to the next state the current state is the last');
 	}
 	var stateName=flow.states[nextIndex].name;
-	if(!this.canGoToState(flowName,stateName)){
-		throw new Error ('The rules of '+stateName+' doesn\'t allow the arrival, current state: '+this.getCurrentState(flowName));
-	}
 	flow.currentStateIndex = nextIndex;
 	this.goTo(flowName,stateName);
 
@@ -69,6 +69,7 @@ StateService.prototype.getStateIndexByName = function(flowName,stateName) {
 
 StateService.prototype.previous = function(flowName) {
 	var flow = this._getFlow(flowName);
+	flow.previousStateIndex=flow.currentStateIndex;
 	if(flow.currentStateIndex==0){
 		throw new Error('Can\'t go to the previous state the current state is the first one');
 	}
