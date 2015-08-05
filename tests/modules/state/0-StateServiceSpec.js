@@ -137,7 +137,7 @@ fdescribe('State service',function(){
 						}
 					}
 				},
-				{name:'neutral_2'},
+				{name:'neutral_Before'},
 				{
 					name:'CantComeFromNeutral',
 					rules:{
@@ -146,7 +146,7 @@ fdescribe('State service',function(){
 						}
 					}
 				},
-				{name:'neutral_3'}
+				{name:'neutral_After'}
 
 				
 			];
@@ -156,23 +156,28 @@ fdescribe('State service',function(){
 			});
 			describe('Arrival',function(){
 				var desiredState='arriveIfFlag';
-				var expectedErrorFromFirst=new Error('The rules of '+desiredState+' doesn\'t allow the arrival, current state: first');
+				function getArriveError(fromState,toState){
+					return new Error('The rules of '+fromState+' doesn\'t allow the arrival, current state: '+toState);
+				}
 				// var expectedArrivalError= new Error ("The rules doesn't allow the arrival of ")
 				it('Can\'t go to a state if the rule doesn\'t allow',function(){
 					var self=this;
 					flag=false;
+					var expectedError = getArriveError(desiredState,'first');
 					expect( function(){ self.service.goTo(flowName,desiredState);} )
-					.toThrow(expectedErrorFromFirst);
+					.toThrow(expectedError);
 				});
 				it('Can\'t forward to a state if the rule doesn\'t allow',function(){
 					var self=this;
 					flag=false;
+					var expectedError = getArriveError(desiredState,'first');
+
 					expect( function(){ self.service.next(flowName);} )
-					.toThrow(expectedErrorFromFirst);
+					.toThrow(expectedError);
 				});
 				it('Can\'t return to a state if the rule doesn\'t allow',function(){
 					this.service.goTo(flowName,'neutral_1');
-					var expectedError=new Error('The rules of '+desiredState+' doesn\'t allow the arrival, current state: neutral_1');
+					var expectedError = getArriveError(desiredState,'neutral_1');
 					flag=false;
 					var self=this;
 					expect( function(){ self.service.previous(flowName);} )
@@ -183,7 +188,7 @@ fdescribe('State service',function(){
 					this.service.goTo(flowName,desiredState);
 					expect(this.service.getCurrentState(flowName)).toEqual(desiredState);
 				});
-				it('Can orward to a state if the rule allow',function(){
+				it('Can forward to a state if the rule allow',function(){
 					flag=true;
 					this.service.next(flowName);
 					expect(this.service.getCurrentState(flowName)).toEqual(desiredState);
@@ -199,10 +204,18 @@ fdescribe('State service',function(){
 					it('Can\'t go to a state if the rule doesn\'t allow',function(){
 						var self=this;
 						this.service.goTo(flowName,'neutral_1');
-						var expectedError=new Error('The rules of '+desiredState+' doesn\'t allow the arrival, current state: neutral_1');
+						var expectedError = getArriveError(desiredState,'neutral_1');
 						expect( function(){ self.service.goTo(flowName,desiredState);} )
 						.toThrow(expectedError);
 					});
+					it('Can\'t forward to a state if the rule doesn\'t allow',function(){
+						var self=this;
+						this.service.goTo(flowName,'neutral_Before');
+						var expectedError = getArriveError(desiredState,'neutral_Before');
+						expect( function(){ self.service.next(flowName);} )
+						.toThrow(expectedError);
+					});
+
 				});
 
 			});
