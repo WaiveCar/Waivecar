@@ -1,4 +1,4 @@
-describe('State service',function(){
+fdescribe('State service',function(){
 	var mockState={
 		go:jasmine.createSpy('go')
 	}

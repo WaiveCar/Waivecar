@@ -1,4 +1,4 @@
-fdescribe('State Flow',function(){
+describe('State Flow',function(){
 	var mockState={
 		go:jasmine.createSpy('go')
 	}
@@ -20,12 +20,11 @@ fdescribe('State Flow',function(){
 		this.service.init();
 		var lastArgs=this.$rootScope.$on.calls.mostRecent().args;
 		expect(lastArgs[0]).toEqual('$stateChangeStart');
-	});
+ 	});
 	describe('Fleet',function(){
 		it('Doesn\'t show the fleet if we don\'t have the location');
-		it('Shoes the fleet with we have the location');
+		it('Shoes the fleet if we have the location');
 		it('If everything is ok goes to car info after fleet');
-
 	});
 	describe('Car info',function(){
 		it('Shows if the car is available');
