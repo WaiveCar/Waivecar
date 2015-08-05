@@ -1,4 +1,26 @@
-describe('State Flow',function(){
+fdescribe('State Flow',function(){
+	var mockState={
+		go:jasmine.createSpy('go')
+	}
+	 beforeEach(function(){
+		var self=this;
+		
+		angular.mock.module('WaiveCar.state',function($provide){
+			$provide.value("$state", mockState);
+		});
+		angular.mock.inject(function(StateService,$rootScope,WaiveCarStateService){
+			self.stateService=StateService;
+			self.$rootScope=$rootScope;
+			self.scope  = $rootScope.$new();
+			spyOn(this.$rootScope, '$on');
+			self.service=WaiveCarStateService;
+		});
+	});
+	it('Initializes by listening to the state provider changes and preventing the flow',function(){
+		this.service.init();
+		var lastArgs=this.$rootScope.$on.calls.mostRecent().args;
+		expect(lastArgs[0]).toEqual('$stateChangeStart');
+	});
 	describe('Fleet',function(){
 		it('Doesn\'t show the fleet if we don\'t have the location');
 		it('Shoes the fleet with we have the location');

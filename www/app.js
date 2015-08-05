@@ -1,5 +1,6 @@
 
-function Run($ionicPlatform) {
+function Run($ionicPlatform,$rootScope) {
+
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -174,6 +175,7 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpP
       templateUrl: '/components/cars/templates/damage.html'
     });
   $urlRouterProvider.otherwise('/cars');
+ 
 }
 
 angular.module('app', [
@@ -192,8 +194,8 @@ angular.module('app', [
   'btford.socket-io',
   'layout',
   'Camera',
-  'State'
+  'WaiveCar.state'
 ])
 // .directive('overlayDialog',dialogDirective)
-.run(['$ionicPlatform', Run])
-.config([ '$stateProvider', '$urlRouterProvider', '$ionicConfigProvider', '$httpProvider','$compileProvider', Config ]);
+.config([ '$stateProvider', '$urlRouterProvider', '$ionicConfigProvider', '$httpProvider','$compileProvider', Config ])
+.run(['$ionicPlatform','$rootScope',Run]);
