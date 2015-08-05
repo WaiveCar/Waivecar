@@ -100,6 +100,12 @@ fdescribe('State service',function(){
 			expect( function(){ self.service.next(flowName);} )
 			.toThrow(expectedError);
 		});
+		it('The user can\'t go to previous state if it\'s the first',function(){
+			var self=this;
+			var expectedError=new Error('Can\'t go to the previous state the current state is the first one');
+			expect( function(){ self.service.previous(flowName);} )
+			.toThrow(expectedError);
+		});
 		describe('Flow rules',function(){
 			it('Can set rules to a state flow');
 			it('Can\'t arrive at a state if the rule doesn\'t allow');

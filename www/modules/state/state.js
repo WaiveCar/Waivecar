@@ -47,7 +47,7 @@ StateService.prototype.next = function(flowName) {
 StateService.prototype.previous = function(flowName) {
 	var flow = this._getFlow(flowName);
 	if(flow.currentStateIndex==0){
-		throw new Error("Can\'t go to the previous state the current state is the first one");
+		throw new Error('Can\'t go to the previous state the current state is the first one');
 	}
 	flow.currentStateIndex--;
 	var stateName=this.getCurrentState(flowName);
