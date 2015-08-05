@@ -152,15 +152,20 @@ fdescribe('State service',function(){
 				this.service.setStateFlow(flowName,states);
 			});
 			describe('Arrival',function(){
+				var expectedErrorFromFirst=new Error('The rules of arriveIfFlag doesn\'t allow the arrival, current state: first');
 				// var expectedArrivalError= new Error ("The rules doesn't allow the arrival of ")
 				it('Can\'t go to a state if the rule doesn\'t allow',function(){
 					var self=this;
-					var expectedError= new Error('The rules of arriveIfFlag doesn\'t allow the arrival, current state: first');
 					flag=false;
 					expect( function(){ self.service.goTo(flowName,'arriveIfFlag');} )
-					.toThrow(expectedError);
+					.toThrow(expectedErrorFromFirst);
 				});
-				it('Can\'t forward to a state if the rule doesn\'t allow');
+				it('Can\'t forward to a state if the rule doesn\'t allow',function(){
+						var self=this;
+					flag=false;
+					expect( function(){ self.service.next(flowName);} )
+					.toThrow(expectedErrorFromFirst);
+				});
 				it('Can\'t return to a state if the rule doesn\'t allow');
 
 			});
