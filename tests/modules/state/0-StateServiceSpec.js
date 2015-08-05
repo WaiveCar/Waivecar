@@ -215,6 +215,13 @@ fdescribe('State service',function(){
 						expect( function(){ self.service.next(flowName);} )
 						.toThrow(expectedError);
 					});
+					it('Can\'t return to a state if the rule doesn\'t allow',function(){
+						var self=this;
+						this.service.goTo(flowName,'neutral_After');
+						var expectedError = getArriveError(desiredState,'neutral_After');
+						expect( function(){ self.service.previous(flowName);} )
+						.toThrow(expectedError);
+					});
 
 				});
 
