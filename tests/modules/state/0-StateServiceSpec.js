@@ -137,14 +137,17 @@ fdescribe('State service',function(){
 						}
 					}
 				},
+				{name:'neutral_2'},
 				{
 					name:'CantComeFromNeutral',
 					rules:{
 						arrive:function(fromState){
-							return fromState!=='neutral';
+							return fromState.indexOf('neutral')!==0;
 						}
 					}
-				}
+				},
+				{name:'neutral_3'}
+
 				
 			];
 			beforeEach(function(){
@@ -191,7 +194,16 @@ fdescribe('State service',function(){
 					this.service.previous(flowName);
 					expect(this.service.getCurrentState(flowName)).toEqual(desiredState);
 				});
-
+				describe('Previous state check',function(){
+					var desiredState = 'CantComeFromNeutral';
+					it('Can\'t go to a state if the rule doesn\'t allow',function(){
+						var self=this;
+						this.service.goTo(flowName,'neutral_1');
+						var expectedError=new Error('The rules of '+desiredState+' doesn\'t allow the arrival, current state: neutral_1');
+						expect( function(){ self.service.goTo(flowName,desiredState);} )
+						.toThrow(expectedError);
+					});
+				});
 
 			});
 
