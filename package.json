@@ -40,6 +40,6 @@
     "reach-user": "0.0.8",
     "reach-email": "0.0.4",
     "reach-sms": "0.0.4",
-    "reach-payments": "0.0.4"
+    "reach-payments": "0.0.5"
   }
 }
