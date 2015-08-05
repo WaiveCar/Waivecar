@@ -8,8 +8,8 @@ module.exports = {
 
   payment : {
     stripe : {
-      secret : 'sk_test_6SPOd8ewJr28nVuojgE5sS1v',
-      pub    : 'pk_test_5VJOIyX52ObraYu7rNbbbGZg'
+      secret : 'sk_test_HgvD2NV6Okva9KpRgDYxNWkR',
+      pub    : 'pk_test_olwmNxeFPL77Rmq0t7Fq3plL'
     }
   }
 
