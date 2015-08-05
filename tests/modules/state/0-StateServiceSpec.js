@@ -42,17 +42,9 @@ fdescribe('State service',function(){
 	});
 	describe('State flow',function(){
 		var flowName='testFlow';
-		var rules=[
+		var states=[
 			{
 				name:'first',
-				rules:{
-					arrive:function(fromStte){
-
-					},
-					leave:function(nextState){
-
-					}
-				}
 			},
 			{
 				name:'second'
@@ -63,38 +55,38 @@ fdescribe('State service',function(){
 			
 		];
 		beforeEach(function(){
-			this.service.setStateFlow(flowName,rules);
+			this.service.setStateFlow(flowName,states);
 		})	
 
 		it('The flow should start on the first state',function(){
 			var currentState=this.service.getCurrentState(flowName);
-			expect(currentState).toEqual(rules[0].name);
+			expect(currentState).toEqual(states[0].name);
 
 		});
 		it('The user can skip to a given state',function(){
-			var expectedName=rules[1].name;
+			var expectedName=states[1].name;
 			this.service.goTo(flowName,expectedName);
 			var currentState=this.service.getCurrentState(flowName);
 			expect(currentState).toEqual(expectedName);
 			expect(mockState.go).toHaveBeenCalledWith(expectedName);
 		})
 		it('The user can go to the next stage if it\'s not the last',function(){
-			var expectedName=rules[1].name;
+			var expectedName=states[1].name;
 			this.service.next(flowName);
 			var currentState=this.service.getCurrentState(flowName);
 			expect(currentState).toEqual(expectedName);
 			expect(mockState.go).toHaveBeenCalledWith(expectedName);
 		});
 		it('The user can go to the previous state if it\s not the first',function(){
-			var expectedName=rules[1].name;
-			this.service.goTo(flowName,rules[2].name);
+			var expectedName=states[1].name;
+			this.service.goTo(flowName,states[2].name);
 			this.service.previous(flowName);
 			var currentState=this.service.getCurrentState(flowName);
 			expect(currentState).toEqual(expectedName);
 			expect(mockState.go.calls.mostRecent().args).toEqual([expectedName])
 		});
 		it('The user can\'t go to the next state if it\'s the last',function(){
-			this.service.goTo(flowName,rules[rules.length-1].name);
+			this.service.goTo(flowName,states[states.length-1].name);
 			var self=this;
 			var expectedError=new Error('Can\'t go to the next state the current state is the last');
 			expect( function(){ self.service.next(flowName);} )
@@ -107,8 +99,72 @@ fdescribe('State service',function(){
 			.toThrow(expectedError);
 		});
 		describe('Flow rules',function(){
-			it('Can set rules to a state flow');
-			it('Can\'t arrive at a state if the rule doesn\'t allow');
+			var flag=null;
+			var states=[
+				{
+					name:'first'
+				},
+				{
+					name:'arriveIfFlag',
+					rules:{
+						arrive:function(){
+							return flag;
+						}
+					}
+				},
+				{
+					name:'arriveIfNotFlag',
+					rules:{
+						arrive:function(){
+							return !flag;
+						}
+					}
+				},
+				{
+					name:'leaveIfFlag',
+					rules:{
+						leave:function(){
+							return flag;
+						}
+					}
+				},
+				{
+				name:'leaveIfNotFlag',
+					rules:{
+						leave:function(){
+							return !flag;
+						}
+					}
+				},
+				{name:'neutral'},
+				{
+					name:'CantComeFromNeutral',
+					rules:{
+						arrive:function(fromState){
+							return fromState!=='neutral';
+						}
+					}
+				}
+				
+			];
+			beforeEach(function(){
+				flag =null;
+				this.service.setStateFlow(flowName,states);
+			});
+			describe('Arrival',function(){
+				// var expectedArrivalError= new Error ("The rules doesn't allow the arrival of ")
+				it('Can\'t go to a state if the rule doesn\'t allow',function(){
+					var self=this;
+					var expectedError= new Error('The rules of arriveIfFlag doesn\'t allow the arrival, current state: first');
+					flag=false;
+					expect( function(){ self.service.goTo(flowName,'arriveIfFlag');} )
+					.toThrow(expectedError);
+				});
+				it('Can\'t forward to a state if the rule doesn\'t allow');
+				it('Can\'t return to a state if the rule doesn\'t allow');
+
+			});
+
 			it('Can\'t go to the next state if the rule doesn\'t allow');
 			it('Can\'t go to the previous state if the rule doesn\'t allow');
 

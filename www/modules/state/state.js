@@ -28,9 +28,25 @@ StateService.prototype.getCurrentState = function(flowName) {
 };
 StateService.prototype.goTo = function(flowName, stateName) {
 	var flow = this._getFlow(flowName);
-	var stateIndex = flow._nameMap[stateName];
+	var stateIndex = this.getStateIndexByName(flowName,stateName)
+	if(!this.canGoToState(flowName,stateName)){
+		throw new Error ('The rules of '+stateName+' doesn\'t allow the arrival, current state: '+this.getCurrentState(flowName));
+	}
 	flow.currentStateIndex = stateIndex;
 	this.$state.go(stateName);
+};
+StateService.prototype.canGoToState = function(flowName,stateName) {
+	var flow = this._getFlow(flowName);
+	var desiredStateIndex=this.getStateIndexByName(flowName,stateName);
+	var currentStateName=this.getCurrentState(flowName);
+	var stateRules=flow.states[desiredStateIndex].rules;
+	if(typeof stateRules=='undefined'){
+		return true;
+	}
+	if(typeof stateRules.arrive =='undefined'){
+		return true;
+	}
+	return stateRules.arrive(currentStateName);
 };
 StateService.prototype.next = function(flowName) {
 	var flow = this._getFlow(flowName);
@@ -42,6 +58,10 @@ StateService.prototype.next = function(flowName) {
 	var stateName=this.getCurrentState(flowName);
 	this.goTo(flowName,stateName);
 
+};
+StateService.prototype.getStateIndexByName = function(flowName,stateName) {
+	var flow = this._getFlow(flowName);
+	return flow._nameMap[stateName];
 };
 
 StateService.prototype.previous = function(flowName) {
