@@ -1,4 +1,4 @@
-describe('Destiny location directive',function(){
+fdescribe('Destiny location directive',function(){
     var mockEvents={
         'destinyOnRouteChanged':'waiveCarDestinyOnRouteChanged'
     };
@@ -47,9 +47,14 @@ describe('Destiny location directive',function(){
     
     beforeEach(function(){
         var self=this;
-        angular.module('Maps',[]);
         angular.mock.module(function($provide){
             $provide.constant("mapsEvents", mockEvents);
+            $provide.provider("$state", function() {
+                this.$get = function() {
+                }                                                                                                                                                       
+            });     
+
+
         });
         angular.mock.module('Maps.route',function($provide,$controllerProvider,$compileProvider){
             self.$compileProvider=$compileProvider;
