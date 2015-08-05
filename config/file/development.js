@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = {
 
   /*
@@ -21,11 +19,10 @@ module.exports = {
   file : {
     fileTypes : [ 'jpg', 'png' ],
     s3 : {
-      key    : null,
-      secret : null,
-      bucket : null,
-      region : null
+      key    : 'AKIAJ6QDZ6GTKEUAYN5A',
+      secret : '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',
+      bucket : 'waivecar-dev'
     }
   }
-
+  
 };
