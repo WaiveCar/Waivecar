@@ -83,7 +83,14 @@ fdescribe('State service',function(){
 			expect(currentState).toEqual(expectedName);
 			expect(mockState.go).toHaveBeenCalledWith(expectedName);
 		});
-		it('The user can go to the previous state if it\s not the first');
+		it('The user can go to the previous state if it\s not the first',function(){
+			var expectedName=rules[1].name;
+			this.service.goTo(flowName,rules[2].name);
+			this.service.previous(flowName);
+			var currentState=this.service.getCurrentState(flowName);
+			expect(currentState).toEqual(expectedName);
+			expect(mockState.go.calls.mostRecent().args).toEqual([expectedName])
+		});
 		describe('Flow rules',function(){
 			it('Can set rules to a state flow');
 			it('Can\'t arrive at a state if the rule doesn\'t allow');
