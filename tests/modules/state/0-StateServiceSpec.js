@@ -95,7 +95,7 @@ fdescribe('State service',function(){
 		});
 		it('The user can\'t go to the next state if it\'s the last',function(){
 			this.service.goTo(flowName,rules[rules.length-1].name);
-
+			var self=this;
 			var expectedError=new Error('Can\'t go to the next state the current state is the last');
 			expect( function(){ self.service.next(flowName);} )
 			.toThrow(expectedError);
