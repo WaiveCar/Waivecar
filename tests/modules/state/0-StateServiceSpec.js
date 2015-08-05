@@ -6,28 +6,51 @@ fdescribe('State service',function(){
         	self.service=StateService;
         });
     });
-	 describe('State flow',function(){
-	 	it('Should be able to initialize a state flow',function(){
-	 		var flowName='testFlow';
-	 		var rules=[
-	 			{
-	 				name:'firts',
-	 				rules:{
-	 					arrive:function(fromStte){
+	it('Should be able to initialize a state flow',function(){
+		var flowName='testFlow';
+		var rules=[
+			{
+				name:'firts',
+				rules:{
+					arrive:function(fromStte){
 
-	 					},
-	 					leave:function(nextState){
+					},
+					leave:function(nextState){
 
-	 					}
-	 				}
-	 			},
-	 			
-	 		];
-	 		this.service.setStateFlow(flowName,rules);
-	 		
-	 		expect(this.service._flows[flowName]).toEqual(rules);
+					}
+				}
+			},
+			
+		];
+		this.service.setStateFlow(flowName,rules);
+
+		expect(this.service._flows[flowName].rules).toEqual(rules);
+	});
+	describe('State flow',function(){
+		var flowName='testFlow';
+		var rules=[
+			{
+				name:'firts',
+				rules:{
+					arrive:function(fromStte){
+
+					},
+					leave:function(nextState){
+
+					}
+				}
+			},
+			
+		];
+	 	beforeEach(function(){
+			this.service.setStateFlow(flowName,rules);
+	 	})	
+
+	 	it('The flow should start on the first state',function(){
+	 		var currentState=this.service.getCurrentState(flowName);
+	 		expect(currentState).toEqual(rules[0].name);
+
 	 	});
-	 	it('The flow should start on the first state');
 	 	it('The user can go to the next stage if it\'s not the last');
 	 	it('The user can go to the previous state if it\s not the first');
 	 	describe('Flow rules',function(){
