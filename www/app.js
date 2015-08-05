@@ -191,7 +191,8 @@ angular.module('app', [
   'ngFitText',
   'btford.socket-io',
   'layout',
-  'Camera'
+  'Camera',
+  'State'
 ])
 // .directive('overlayDialog',dialogDirective)
 .run(['$ionicPlatform', Run])

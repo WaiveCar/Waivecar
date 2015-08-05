@@ -1,4 +1,4 @@
-describe('State service',function(){
+describe('State Flow',function(){
 	describe('Fleet',function(){
 		it('Doesn\'t show the fleet if we don\'t have the location');
 		it('Shoes the fleet with we have the location');

@@ -6,8 +6,7 @@ describe('Route duration directive',function(){
     beforeEach(function(){
         var self=this;
         angular.module('Maps',[]);
-        angular.mock.module('Maps.route');
-        angular.mock.module(function($provide){
+        angular.mock.module('Maps.route',function($provide){
             $provide.value('mapsEvents',mockEvents);
         });
         angular.mock.inject(function(_$compile_,_$rootScope_) {
