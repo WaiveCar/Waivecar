@@ -31,6 +31,7 @@ StateService.prototype.getCurrentState = function(flowName) {
 	var index = flow.currentStateIndex;
 	return states[index].name || index;
 };
+
 StateService.prototype.goTo = function(flowName, stateName) {
 	var index=this.getStateIndexByName(flowName,stateName);
 	this._goToByIndex(flowName,index);
@@ -38,6 +39,10 @@ StateService.prototype.goTo = function(flowName, stateName) {
 StateService.prototype._goToByIndex = function(flowName,desiredIndex) {
 	var flow = this._getFlow(flowName);
 	var stateName= flow.states[desiredIndex].name;
+	if(!this._canLeaveStateIndex(flowName,desiredIndex)){
+		var currentStateName=this.getCurrentState(flowName);
+		throw new Error ('The rules of '+currentStateName+' doesn\'t allow leaving it right now');
+	}
 	if(!this._canGoToStateIndex(flowName,desiredIndex)){
 		throw new Error ('The rules of '+stateName+' doesn\'t allow the arrival, current state: '+flow.states[flow.currentStateIndex].name);
 	}
@@ -45,6 +50,17 @@ StateService.prototype._goToByIndex = function(flowName,desiredIndex) {
 	flow.currentStateIndex = desiredIndex;
 	this.$state.go(stateName);
 	
+};
+StateService.prototype._canLeaveStateIndex = function(flowName) {
+	var flow = this._getFlow(flowName);
+	var stateRules=flow.states[flow.currentStateIndex].rules;
+	if(typeof stateRules=='undefined'){
+		return true;
+	}
+	if(typeof stateRules.leave =='undefined'){
+		return true;
+	}
+	return stateRules.leave();
 };
 StateService.prototype._canGoToStateIndex = function(flowName,desiredStateIndex) {
 	var currentStateName=this.getCurrentState(flowName);

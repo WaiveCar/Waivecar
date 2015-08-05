@@ -234,11 +234,22 @@ fdescribe('State service',function(){
 						expect(this.service.getCurrentState(flowName)).toEqual(desiredState);
 					});
 				});
-
 			});
+			describe('Leaving',function(){
+				function getLeaveError(desiredState){
+					return new Error('The rules of '+desiredState+' doesn\'t allow leaving it right now');
+				}
+				var desiredState='leaveIfFlag';
+				it('Can\'t leave a state if the rule doesn\'t allow',function(){
+					this.service.goTo(flowName,'leaveIfFlag');
 
-			it('Can\'t go to the next state if the rule doesn\'t allow');
-			it('Can\'t go to the previous state if the rule doesn\'t allow');
+					var self=this;
+					flag=false;
+					var expectedError = getLeaveError(desiredState);
+					expect( function(){ self.service.goTo(flowName,'neutral_1');} )
+					.toThrow(expectedError);
+				});
+			});
 
 		});
 	 });
