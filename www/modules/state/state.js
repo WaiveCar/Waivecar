@@ -1,35 +1,50 @@
 function StateService($state) {
-  this.$state = $state;
-  this._flows = {};
+	this.$state = $state;
+	this._flows = {};
 }
 StateService.prototype.setStateFlow = function(flowName, states) {
-  var stateNameMap = {};
-  var count = 0;
-  var name;
-  states.forEach(function(s) {
-    name = s.name || count;
-    if (typeof stateNameMap[name] != 'undefined') {
-      throw new Error('The state ' + name + ' already exists');
-    }
-    stateNameMap[name] = count;
-    count ++ ;
-  });
-  this._flows[flowName] = {
-    states: states,
-    currentStateIndex: 0,
-    _nameMap: stateNameMap
-  }
+	var stateNameMap = {};
+	var count = 0;
+	var name;
+	states.forEach(function(s) {
+	name = s.name || count;
+	if (typeof stateNameMap[name] != 'undefined') {
+		throw new Error('The state ' + name + ' already exists');
+	}
+	stateNameMap[name] = count;
+	count ++ ;
+	});
+	this._flows[flowName] = {
+		states: states,
+		currentStateIndex: 0,
+		_nameMap: stateNameMap
+	}
 }
 StateService.prototype.getCurrentState = function(flowName) {
-  var states = this._flows[flowName].states;
-  var index = this._flows[flowName].currentStateIndex;
-  return states[index].name || index;
+	var flow = this._getFlow(flowName);
+	var states = flow.states;
+	var index = flow.currentStateIndex;
+	return states[index].name || index;
 };
 StateService.prototype.goTo = function(flowName, stateName) {
-  var flow = this._flows[flowName];
-  var stateIndex = flow._nameMap[stateName];
-  this._flows[flowName].currentStateIndex = stateIndex;
-  this.$state.go(stateName);
+	var flow = this._getFlow(flowName);
+	var stateIndex = flow._nameMap[stateName];
+	flow.currentStateIndex = stateIndex;
+	this.$state.go(stateName);
+};
+StateService.prototype.next = function(flowName) {
+	var flow = this._getFlow(flowName);
+	var nextIndex=flow.currentStateIndex+1;
+	if(nextIndex>=flow.states.length){
+		throw new Error("Can\'t go to the next index the current state is the last");
+	}
+	flow.currentStateIndex = nextIndex;
+	var stateName=this.getCurrentState(flowName);
+	this.goTo(flowName,stateName);
+
+};
+StateService.prototype._getFlow = function(flowName) {
+	return this._flows[flowName];
 };
 angular.module('State', [])
 .service('StateService', ['$state', StateService]);
