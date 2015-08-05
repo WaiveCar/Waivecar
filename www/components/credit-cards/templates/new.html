@@ -22,11 +22,19 @@
         </label>
         <label class="item item-input item-floating-label">
           <span class="input-label">Card Number</span>
-          <input type="text" placeholder="XXXX-XXXX-XXXX-XXXX" ng-model="cardCtrl.forms.new.cardNumber">
+          <input type="text" placeholder="XXXX-XXXX-XXXX-XXXX" ng-model="cardCtrl.forms.new.number">
         </label>
         <label class="item item-input item-floating-label">
-          <span class="input-label">Expiry</span>
-          <input type="text" placeholder="Expiry" ng-model="cardCtrl.forms.new.expiry">
+          <span class="input-label">CVC</span>
+          <input type="text" placeholder="CVC" ng-model="cardCtrl.forms.new.cvc">
+        </label>
+        <label class="item item-input item-floating-label">
+          <span class="input-label">Expiry Month</span>
+          <input type="text" placeholder="Expiry Month" ng-model="cardCtrl.forms.new.exp_month">
+        </label>
+        <label class="item item-input item-floating-label">
+          <span class="input-label">Expiry Year</span>
+          <input type="text" placeholder="Expiry Year" ng-model="cardCtrl.forms.new.exp_year">
         </label>
       </div>
       <button type="submit" class="button">Add Credit Card</button>

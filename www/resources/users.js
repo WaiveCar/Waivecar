@@ -16,6 +16,14 @@ function Resource($resource, $utils) {
     me     : {
       method : 'GET',
       url    : $utils.getCustomRoute('users/me')
+    },
+    createCustomer : {
+      method : 'POST',
+      url    : $utils.getCustomRoute('payments/customer')
+    },
+    createCard : {
+      method : 'POST',
+      url    : $utils.getCustomRoute('payments/cards')
     }
   }));
 }

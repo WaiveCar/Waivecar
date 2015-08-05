@@ -48,8 +48,15 @@ function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, User
     },
 
     createCreditCard: function(data, next) {
-      // TODO: $http.post('') // need endpoint
-      return next(null, data);
+      var customer = {
+        "data" : {
+          "metadata" : {}
+        }
+      };
+
+      service.resources.users.createCustomer(customer, function(err) {
+        service.resources.users.createCard(data, next);
+      });
     },
 
     removeCreditCard: function(data, next) {
