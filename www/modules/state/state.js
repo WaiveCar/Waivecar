@@ -96,7 +96,6 @@ StateService.prototype._canGoToStateIndex = function(flowName,desiredStateIndex)
 		return this.$q.resolve(true);
 	}
 	return this.$q.when(stateRules.arrive(currentStateName)).then(function(isAccepted){
-
 		if(isAccepted===true || typeof isAccepted ==='string'){
 			return isAccepted;
 		}

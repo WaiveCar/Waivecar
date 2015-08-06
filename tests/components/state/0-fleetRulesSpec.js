@@ -17,29 +17,36 @@ describe('Fleet state rules',function(){
 		});
 		angular.mock.inject(function($rootScope,FleetRulesService,_$q_){
 			self.service=FleetRulesService;
+			self.rules = this.service.getRules();
 			this.$rootScope=$rootScope;
 			$q = _$q_;
 		});
 	});
-	it('Doesn\'t allow if we don\'t have the location',function(){
-		flag = false;
-		this.service.getRules().arrive().then(function(){
-			fail();
-		})
-		.catch(function(){
-			expect(true).toEqual(true);
+	describe('Arrival',function(){
+		it('Doesn\'t allow if we don\'t have the location',function(){
+			flag = false;
+			this.rules.arrive().then(function(){
+				fail();
+			})
+			.catch(function(){
+				expect(true).toEqual(true);
+			});
+			this.$rootScope.$digest();
 		});
-		this.$rootScope.$digest();
+		it('Allows if we have the location',function(){
+			flag = true;
+			this.rules.arrive().then(function(){
+				expect(true).toEqual(true);
+			})
+			.catch(function(){
+				fail();
+			});
+			this.$rootScope.$digest();
+		});
 	});
-	it('Allows if we have the location',function(){
-		flag = true;
-		this.service.getRules().arrive().then(function(){
-			expect(true).toEqual(true);
-		})
-		.catch(function(){
-			fail();
-		});
-		this.$rootScope.$digest();
+	describe('Leaving',function(){
+		it('Dosn\'t allow us to leave if the car is not selected',function(){
 
+		});
 	});
 });

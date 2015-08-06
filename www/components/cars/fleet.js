@@ -25,16 +25,13 @@ function nearbyFleetDirective(MapsLoader, $q, locationService) {
   function link(scope, element, attrs, ctrl) {
     MapsLoader.getMap.then(function(L) {
       self.L = L;
-      console.log('maps');
       return ctrl.mapInstance;
     })
     .then(function(mapInstance){
       self.mapInstance = mapInstance;
-      console.log('mapInstance');
       return locationService.getLocation();
     })
     .then(function(deviceLocation){
-      console.log('Location');
       self.deviceLocation = deviceLocation;
     })
     .then(function(){
@@ -58,7 +55,6 @@ function nearbyFleetDirective(MapsLoader, $q, locationService) {
           return;
         }
 
-        console.log('car watch ' + cars.length);
 
         if (scope.group) {
           self.mapInstance.removeLayer(scope.group);
