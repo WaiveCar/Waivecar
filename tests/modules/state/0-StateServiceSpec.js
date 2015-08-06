@@ -1,5 +1,5 @@
 fdescribe('State service',function(){
-	
+	var $q;
 	var mockState={
 		go:jasmine.createSpy('go')
 	}
@@ -14,13 +14,18 @@ fdescribe('State service',function(){
 				fail();
 			})
 		};
-		this.testPromiseFailure=function(promise,expectedError){
+		this.testPromiseFailure=function(promise,expectedErrorOrFunction){
 			this.$rootScope.$digest();
 			promise.then(function(){
 				fail();
 			})
 			.catch(function(error){
-				expect(error).toEqual(expectedError);
+				if (typeof expectedErrorOrFunction === "function") {
+					expectedErrorOrFunction();
+				}
+				else{
+					expect(error).toEqual(expectedErrorOrFunction);
+				}
 			})
 		};
 
@@ -28,9 +33,10 @@ fdescribe('State service',function(){
 			$provide.value("$state", mockState);
 
 		});
-		angular.mock.inject(function(StateService,$rootScope){
+		angular.mock.inject(function(StateService,$rootScope,_$q_){
 			self.service = StateService;
 			self.$rootScope = $rootScope;
+			$q=_$q_;
 		});
 	});
 	it('Should be able to initialize a state flow',function(){
@@ -169,7 +175,18 @@ fdescribe('State service',function(){
 						}
 					}
 				},
-				{name:'neutral_After'}
+				{name:'neutral_After'},
+				{
+					name:'promise',
+					rules:{
+						arrive:function(){
+							if(flag){
+								return $q.resolve(flag);
+							}
+							return $q.reject(flag);
+						}
+					}
+				}
 
 				
 			];
@@ -231,6 +248,20 @@ fdescribe('State service',function(){
 					this.testPromiseSuccess(p,function(){
 						expect(self.service.getCurrentState(flowName)).toEqual(desiredState);		
 					});
+				});
+				it('Can handle a rule that returns a successful promise',function(){
+					flag=true;
+					var p=this.service.goTo(flowName,'promise');
+					this.testPromiseSuccess(p,function(value){
+						expect(value).toEqual(flag);
+					})
+				});
+				it('Can handle a rule that returns a rejectedk promise',function(){
+					flag=true;
+					var p=this.service.goTo(flowName,'promise');
+					this.testPromiseFailure(p,function(value){
+						expect(value).toEqual(flag);
+					})
 				});
 				describe('Previous state check',function(){
 					var desiredState = 'neutralCheck';
