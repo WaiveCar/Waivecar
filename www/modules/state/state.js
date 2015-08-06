@@ -44,10 +44,17 @@ StateService.prototype._goToByIndex = function(flowName,desiredIndex) {
 	return this._canLeaveStateIndex(flowName,desiredIndex)
 	.then(function(){
 		return self._canGoToStateIndex(flowName,desiredIndex)
-		.then(function(){
+		.then(function(redirectState){
 			flow.previousStateIndex = flow.currentStateIndex;
 			flow.currentStateIndex = desiredIndex;
-			self.$state.go(stateName);
+			if(redirectState!==true){
+				flow.previousStateIndex =desiredIndex;
+				flow.currentStateIndex = self.getStateIndexByName(flowName,redirectState);
+				self.$state.go(redirectState);
+			}
+			else{
+				self.$state.go(stateName);
+			}
 			return stateName;
 		},
 		function(){
@@ -89,8 +96,9 @@ StateService.prototype._canGoToStateIndex = function(flowName,desiredStateIndex)
 		return this.$q.resolve(true);
 	}
 	return this.$q.when(stateRules.arrive(currentStateName)).then(function(isAccepted){
-		if(isAccepted){
-			return true;
+
+		if(isAccepted===true || typeof isAccepted ==='string'){
+			return isAccepted;
 		}
 		return self.$q.reject(isAccepted);
 	});

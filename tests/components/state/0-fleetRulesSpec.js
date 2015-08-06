@@ -1,4 +1,4 @@
-fdescribe('Fleet state rules',function(){
+describe('Fleet state rules',function(){
 	var flag=null;
 	var $q;
 	var mockLocationService={
@@ -42,5 +42,4 @@ fdescribe('Fleet state rules',function(){
 		this.$rootScope.$digest();
 
 	});
-	it('If everything is ok goes to car info after fleet');
 });

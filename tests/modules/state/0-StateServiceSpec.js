@@ -1,4 +1,4 @@
-describe('State service',function(){
+fdescribe('State service',function(){
 	var $q;
 	var mockState={
 		go:jasmine.createSpy('go')
@@ -6,16 +6,15 @@ describe('State service',function(){
 	 beforeEach(function(){
 		var self=this;
 		this.testPromiseSuccess=function(promise,testFn){
-			this.$rootScope.$digest();
 			promise.then(function(){
 				testFn.apply(this, arguments);
 			})
 			.catch(function(){
 				fail();
 			})
+			this.$rootScope.$digest();
 		};
 		this.testPromiseFailure=function(promise,expectedErrorOrFunction){
-			this.$rootScope.$digest();
 			promise.then(function(){
 				fail();
 			})
@@ -27,6 +26,7 @@ describe('State service',function(){
 					expect(error).toEqual(expectedErrorOrFunction);
 				}
 			})
+			this.$rootScope.$digest();
 		};
 
 		angular.mock.module('State',function($provide){
@@ -186,7 +186,16 @@ describe('State service',function(){
 							return $q.reject(flag);
 						}
 					}
-				}
+				},
+				{
+					name:'stateChange',
+					rules:{
+						arrive:function(){
+							return 'toBeRedirected';
+						}
+					}
+				},
+				{name:'toBeRedirected'}
 
 				
 			];
@@ -256,12 +265,21 @@ describe('State service',function(){
 						expect(value).toEqual(flag);
 					})
 				});
-				it('Can handle a rule that returns a rejectedk promise',function(){
+				it('Can handle a rule that returns a rejected promise',function(){
 					flag=true;
 					var p=this.service.goTo(flowName,'promise');
 					this.testPromiseFailure(p,function(value){
 						expect(value).toEqual(flag);
 					})
+				});
+				fit('Goes to a state if a string is retured on arrive',function(){
+					var self=this;
+					var p=this.service.goTo(flowName,'stateChange');
+					this.testPromiseSuccess(p,function(value){
+						expect(self.service.getCurrentState(flowName)).toEqual('toBeRedirected');	
+						expect(mockState.go).toHaveBeenCalledWith('toBeRedirected');
+	
+					});
 				});
 				describe('Previous state check',function(){
 					var desiredState = 'neutralCheck';
