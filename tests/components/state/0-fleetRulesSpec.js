@@ -1,4 +1,4 @@
-fdescribe('Fleet state rules',function(){
+describe('Fleet state rules',function(){
 	var flag=null;
 	var flags={};
 	var $q;
@@ -48,7 +48,7 @@ fdescribe('Fleet state rules',function(){
 
 		});
 	});
-	fdescribe('Leaving',function(){
+	describe('Leaving',function(){
 		it('Doesn\'t allow  to leave if the car is not selected',function(){
 			flags.selection = false;
 			expect(this.rules.leave()).toEqual(false);

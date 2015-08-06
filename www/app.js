@@ -21,8 +21,8 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpP
   $ionicConfigProvider.views.transition('platform');
    $stateProvider
     // FIND WAIVECARS
-    .state('cars', {
-      url: '/cars',
+    .state('fleet', {
+      url: '/fleet',
       templateUrl: '/components/cars/templates/fleet.html'
     })
     // SHOW WAIVECAR
@@ -174,7 +174,7 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpP
       url: '/car/damage',
       templateUrl: '/components/cars/templates/damage.html'
     });
-  $urlRouterProvider.otherwise('/cars');
+  $urlRouterProvider.otherwise('/fleet');
  
 }
 
