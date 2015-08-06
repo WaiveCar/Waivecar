@@ -13,6 +13,9 @@ SelectedCarService.prototype.setSelected = function(selected) {
 SelectedCarService.prototype.getSelected = function() {
   return this.selected;
 };
+SelectedCarService.prototype.hasCarSelection = function() {
+  return !!this.selected;
+};
 
 function nearbyFleetDirective(MapsLoader, $q, locationService) {
 

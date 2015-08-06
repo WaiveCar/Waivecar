@@ -4,7 +4,6 @@ describe('State Flow',function(){
 	}
 	 beforeEach(function(){
 		var self=this;
-		
 		angular.mock.module('WaiveCar.state',function($provide){
 			$provide.value("$state", mockState);
 		});
