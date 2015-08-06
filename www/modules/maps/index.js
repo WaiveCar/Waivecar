@@ -70,11 +70,11 @@
             );
             self._pendingRequest=null;
           },
-      function(err) {
-        defered.reject(err);
-        self.$state.go('location-error');
-        self._pendingRequest=null;
-      }
+          function(err) {
+            defered.reject(err);
+            self.$state.go('location-error');
+            self._pendingRequest=null;
+          }
     );
     this._pendingRequest=defered.promise;
     return this._pendingRequest
