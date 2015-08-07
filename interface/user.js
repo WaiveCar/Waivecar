@@ -1,72 +1,58 @@
 'use strict';
 
-var mysql = Reach.service('mysql/model');
-
-module.exports = (function () {
-
-  Reach.extends(User, mysql);
-
+Reach.Register.Model('User', 'sequelize', function (model, Sequelize) {
+  
   /**
-   * @class User
-   * @constructor
-   * @param {object} data
-   */
-  function User(data) {
-    mysql.call(this, data);
-  }
-
-  /**
-   * The name of the table to use for this model.
-   * @property _table
+   * The identity of the table created in your database.
+   * @property table
    * @type     String
    */
-  User.prototype._table = User._table = 'users';
+  model.table = 'users';
 
   /**
-   * Your models database schema.
-   * @property _schema
+   * The sequelize schema definition of your model.
+   * @property schema
    * @type     Object
    */
-  User.prototype._schema = User._schema = {
-    attributes : {
-      id         : 'INT(11) NOT NULL AUTO_INCREMENT',
-      role       : 'ENUM("user","admin") DEFAULT "user"',
-      firstName  : 'VARCHAR(28) NOT NULL',
-      lastName   : 'VARCHAR(28) NOT NULL',
-      email      : 'VARCHAR(128) NOT NULL',
-      password   : 'VARCHAR(64) NULL',
+  model.schema = {
+    role      : { type : Sequelize.ENUM('user', 'admin'), defaultValue : 'user' },
+    firstName : { type : Sequelize.STRING(28), allowNull : false },
+    lastName  : { type : Sequelize.STRING(28), allowNull : false },
+    email     : { type : Sequelize.STRING(128), unique : true },
+    password  : { type : Sequelize.STRING(64) },
+    facebook  : { type : Sequelize.STRING(64) },
+    twitter   : { type : Sequelize.STRING(64) },
+    linkedin  : { type : Sequelize.STRING(64) },
+    stripeId  : { type : Sequelize.STRING(64) }
+  };
 
-      // ### Social IDs
+  /**
+   * The relation definitions of your model.
+   * @property relations
+   * @type     Array
+   */
+  model.relations = ['Group', function (Group) {
+    this.belongsToMany(Group, { as : 'groups', through : 'user_groups', foreignKey : 'userId' })
+  }];
 
-      facebook   : 'VARCHAR(64) NULL',
-      twitter    : 'VARCHAR(64) NULL',
-      linkedin   : 'VARCHAR(64) NULL',
+  /**
+   * Attributes to remove before returning the model as JSON.
+   * @property blacklist
+   * @type     Array
+   */
+  model.blacklist = [ 'password', 'linkedin', 'deletedAt' ];
 
-      // ### Payment IDs
-
-      stripeId : 'VARCHAR(64) NULL'
-    },
-    primaryKey : 'id',
-    uniqueKeys : {
-      email : ['email']
+  /**
+   * A list of model methods.
+   * @property methods
+   * @type     Object
+   */
+  model.methods = {
+    name: function () {
+      return this.firstName + ' ' + this.lastName;
     }
   };
 
-  /**
-   * Attributes to remove before returning model.toJSON()
-   * @property _blacklist
-   * @type     Array
-   */
-  User.prototype._blacklist = [ 'password', 'deletedBy', 'deletedAt' ];
+  return model;
 
-  /**
-   * @method name
-   * @return {String}
-   */
-  User.prototype.name = function () {
-    return this.firstName + ' ' + this.lastName;
-  };
-
-  return User;
-
-})();
+});

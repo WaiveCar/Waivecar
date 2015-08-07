@@ -23,11 +23,15 @@ module.exports = function *() {
 // external API's to lessen the complication of transactions.
 
 scheduler.process('car-update-client', function *(job) {
-  let cars = yield Car.find();
+  let cars = yield Car.find({
+    include : [{
+      model : CarLocation,
+      as    : 'location'
+    }]
+  });
   if (!cars) {
     return;
   }
-  yield cars.hasOne(CarLocation, 'carId', 'location', [ 'latitude', 'longitude' ]);
   io.flux({
     actionType : 'cars:update',
     cars       : cars

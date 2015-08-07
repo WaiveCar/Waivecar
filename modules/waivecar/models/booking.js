@@ -1,65 +1,67 @@
 'use strict';
 
-let _super = Reach.service('mysql/model');
-
-module.exports = (function () {
-
-  Reach.extends(Booking, _super);
-
+Reach.Register.Model('Booking', 'sequelize', function (model, Sequelize) {
+  
   /**
-   * @class Booking
-   * @constructor
-   * @param {object} data
-   */
-  function Booking(data) {
-    _super.call(this, data);
-  }
-
-  /**
-   * The name of the table to use for this model.
-   * @property _table
+   * The identity of the table created in your database.
+   * @property table
    * @type     String
    */
-  Booking.prototype._table = Booking._table = 'bookings';
+  model.table = 'bookings';
 
   /**
-   * Your models database schema.
-   * @property _schema
+   * The sequelize schema definition of your model.
+   * @property schema
    * @type     Object
    */
-  Booking.prototype._schema = Booking._schema = {
-    attributes : {
-      id         : 'INT(11)     NOT NULL AUTO_INCREMENT',
-      customerId : 'INT(11)     NOT NULL',
-      carId      : 'VARCHAR(28) NOT NULL',
-      paymentId  : 'INT(11)     NULL',
-      state      : 'ENUM("new-booking", "payment-authorized", "pending-arrival", "in-progress", "pending-payment", "cancelled", "completed") DEFAULT "new-booking"'
+  model.schema = {
+    customerId : {
+      type       : Sequelize.INTEGER,
+      allowNull  : false,
+      references : {
+        model : 'users',
+        key   : 'id'
+      }
     },
-    primaryKey  : 'id',
-    foreignKeys : [
-      'FOREIGN KEY (customer_id) REFERENCES users(id)',
-      'FOREIGN KEY (car_id) REFERENCES cars(id)'
-    ]
+    carId : {
+      type       : Sequelize.STRING(28),
+      allowNull  : false,
+      references : {
+        model : 'cars',
+        key   : 'id'
+      }
+    },
+    paymentId : { type : Sequelize.INTEGER },
+    state     : {
+      type : Sequelize.ENUM(
+        'new-booking',
+        'payment-authorized',
+        'pending-arrival',
+        'in-progress',
+        'pending-payment',
+        'cancelled',
+        'completed'
+      ),
+      defaultValue : 'new-booking'
+    }
   };
 
   /**
-   * Attributes to keep before returning model.toJSON()
-   * @property _relations
+   * The relation definitions of your model.
+   * @property relations
    * @type     Array
    */
-  Booking.prototype._relations = Booking._relations = [
-    'details'
-  ];
+  model.relations = ['BookingDetails', function (BookingDetails) {
+    this.hasMany(BookingDetails, { as : 'details', foreignKey : 'bookingId' });
+  }];
 
   /**
-   * Attributes to remove before returning model.toJSON()
-   * @property _blacklist
+   * Attributes that can be provided that is not part of the model schema.
+   * @property attributes
    * @type     Array
    */
-  Booking.prototype._blacklist = Booking._blacklist = [
-    'deletedAt'
-  ];
+  model.attributes = [ 'details' ];
 
-  return Booking;
+  return model;
 
-})();
+});

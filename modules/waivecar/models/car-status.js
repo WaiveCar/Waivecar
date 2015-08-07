@@ -1,65 +1,41 @@
 'use strict';
 
-let _super = Reach.service('mysql/model');
-
-module.exports = (function () {
-
-  Reach.extends(CarStatus, _super);
-
+Reach.Register.Model('CarStatus', 'sequelize', function (model, Sequelize) {
+  
   /**
-   * @class CarStatus
-   * @constructor
-   * @param {object} data
-   */
-  function CarStatus(data) {
-    _super.call(this, data);
-  }
-
-  /**
-   * The name of the table to use for this model.
-   * @property _table
+   * The identity of the table created in your database.
+   * @property table
    * @type     String
    */
-  CarStatus.prototype._table = CarStatus._table = 'car_status';
+  model.table = 'car_status';
 
   /**
-   * Your models database schema.
-   * @property _schema
+   * The sequelize schema definition of your model.
+   * @property schema
    * @type     Object
    */
-  CarStatus.prototype._schema = CarStatus._schema = {
-    attributes : {
-      carId    : 'VARCHAR(28) NOT NULL',
-      driverId : 'INT(11)     NULL',
-      status   : 'ENUM("available", "unavailable") DEFAULT "available"'
+  model.schema = {
+    carId : { 
+      type       : Sequelize.STRING(28), 
+      primaryKey : true,
+      references : {
+        model : 'cars',
+        key   : 'id'
+      }
     },
-    foreignKeys : [
-      'FOREIGN KEY (car_id) REFERENCES cars(id)',
-      'FOREIGN KEY (driver_id) REFERENCES users(id)'
-    ],
-    uniqueKeys : {
-      carId : ['car_id']
+    driverId : {
+      type         : Sequelize.INTEGER,
+      references   : {
+        model : 'users',
+        key   : 'id'
+      }
+    },
+    status : { 
+      type         : Sequelize.ENUM('available', 'unavailable'), 
+      defaultValue : 'available'
     }
   };
 
-  /**
-   * List of default values that are set instead of null when instancing a new model
-   * @property _defaults
-   * @type     Object
-   */
-  CarStatus.prototype._defaults = {
-    status : 'available'
-  };
+  return model;
 
-  /**
-   * Attributes to remove before returning model.toJSON()
-   * @property _blacklist
-   * @type     Array
-   */
-  CarStatus.prototype._blacklist = [
-    'deletedAt'
-  ];
-
-  return CarStatus;
-
-})();
+});

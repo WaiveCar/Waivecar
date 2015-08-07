@@ -2,7 +2,7 @@
 
 let moment         = require('moment');
 let queue          = Reach.service('queue');
-let q              = Reach.service('mysql/query');
+let helpers        = Reach.service('sequelize/helpers');
 let Booking        = Reach.model('Booking');
 let BookingDetails = Reach.model('BookingDetails');
 let Car            = Reach.model('Car');
@@ -115,7 +115,7 @@ Bookings.setCancelled = function *(id, user) {
  */
 Bookings.setInProgress = function *(id, user) {
   let booking   = yield this.getBooking(id, user);
-  let carCoords = yield CarLocation.find({ where : { carId : booking.carId }, limit : 1 });
+  let carCoords = yield CarLocation.findById(booking.carId);
 
   if (booking.state !== 'pending-arrival') {
     throw error.parse({
@@ -136,7 +136,7 @@ Bookings.setInProgress = function *(id, user) {
   let details  = new BookingDetails({
     bookingId : booking.id,
     type      : 'start',
-    time      : moment().format('YYYY-MM-DD HH-mm-ss'),
+    time      : new Date(),
     latitude  : carCoords.latitude,
     longitude : carCoords.longitude,
     odometer  : 28000,
@@ -165,7 +165,7 @@ Bookings.setInProgress = function *(id, user) {
  */
 Bookings.setPendingPayment = function *(id, user) {
   let booking   = yield this.getBooking(id, user);
-  let carCoords = yield CarLocation.find({ where : { carId : booking.carId }, limit : 1 });
+  let carCoords = yield CarLocation.findById(booking.carId);
 
   if (booking.state !== 'in-progress') {
     throw error.parse({
@@ -184,7 +184,7 @@ Bookings.setPendingPayment = function *(id, user) {
   let details = new BookingDetails({
     bookingId : booking.id,
     type      : 'end',
-    time      : moment().format('YYYY-MM-DD HH-mm-ss'),
+    time      : new Date(),
     latitude  : carCoords.latitude,
     longitude : carCoords.longitude,
     odometer  : 28010,
@@ -219,18 +219,19 @@ Bookings.setPendingPayment = function *(id, user) {
  */
 Bookings.getBookings = function *(query) {
   let list = yield Booking.find({
-    where : q.parseWhere(query, {
+    where : helpers.prepareWhere(query, {
       customerId : '?',
       carId      : '?',
       paymentId  : '?',
       state      : '?'
     }),
+    include : [{
+      model : BookingDetails,
+      as    : 'details'
+    }],
     limit  : query.limit  || 20,
     offset : query.offset || 0
   });
-  if (list) {
-    yield list.hasMany(BookingDetails, 'bookingId', 'details');
-  }
   return list;
 };
 
@@ -242,12 +243,11 @@ Bookings.getBookings = function *(query) {
  * @return {Booking} res
  */
 Bookings.getBooking = function *(id, user) {
-  let booking = yield Booking.find({
+  let booking = yield Booking.findOne({
     where : {
       id         : id,
       customerId : user.id
-    },
-    limit : 1
+    }
   });
   if (!booking) {
     throw error.parse({
@@ -333,7 +333,7 @@ Bookings.setCarStatus = function *(status, car, user) {
       yield carStatus.upsert();
       break;
     case 'available':
-      carStatus          = yield CarStatus.find({ where : { carId : car }, limit : 1 });
+      carStatus          = yield CarStatus.findById(car);
       carStatus._actor   = user;
       carStatus.driverId = null;
       carStatus.status   = status;

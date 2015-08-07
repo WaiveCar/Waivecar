@@ -4,29 +4,21 @@ let Car            = Reach.model('Car');
 let CarLocation    = Reach.model('CarLocation');
 let CarDiagnostics = Reach.model('CarDiagnostics');
 
-module.exports = Reach.resource(function (_super) {
-
-  Reach.extends(CarsController, _super);
-
-  /**
-   * @class CarsController
-   */
-  function CarsController() {
-    _super.call(this, 'Car');
-  }
+Reach.Register.ResourceController('Car', 'CarsController', function (controller) {
 
   /**
    * @method index
    * @param  {Object} options
+   * @return {Array}
    */
-  CarsController.prototype.index = function *(options) {
-    let cars = yield Car.find(options);
-    if (cars) {
-      yield cars.hasOne(CarLocation, 'carId', 'location', ['longitude', 'latitude']);
-    }
-    return cars;
+  controller.index = function *(options) {
+    options.include = [{
+      model : CarLocation,
+      as    : 'location'
+    }]
+    return yield Car.find(options);
   };
 
-  return CarsController;
+  return controller;
 
 });

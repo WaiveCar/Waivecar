@@ -1,49 +1,32 @@
 'use strict';
 
-let _super = Reach.service('mysql/model');
-
-module.exports = (function () {
-
-  Reach.extends(CarLocation, _super);
-
+Reach.Register.Model('CarLocation', 'sequelize', function (model, Sequelize) {
+  
   /**
-   * @class CarLocation
-   * @constructor
-   * @param {object} data
-   */
-  function CarLocation(data) {
-    _super.call(this, data);
-  }
-
-  /**
-   * The name of the table to use for this model.
-   * @property _table
+   * The identity of the table created in your database.
+   * @property table
    * @type     String
    */
-  CarLocation.prototype._table = CarLocation._table = 'car_location';
+  model.table = 'car_locations';
 
   /**
-   * Your models database schema.
-   * @property _schema
+   * The sequelize schema definition of your model.
+   * @property schema
    * @type     Object
    */
-  CarLocation.prototype._schema = CarLocation._schema = {
-    attributes : {
-      carId     : 'VARCHAR(28)    NOT NULL',
-      latitude  : 'DECIMAL(10, 8) NOT NULL',
-      longitude : 'DECIMAL(11, 8) NOT NULL'
+  model.schema = {
+    carId : {
+      type       : Sequelize.STRING(28),
+      primaryKey : true,
+      references : {
+        model : 'cars',
+        key   : 'id'
+      }
     },
-    primaryKey  : 'car_id',
-    foreignKeys : 'FOREIGN KEY (car_id) REFERENCES cars(id)'
+    latitude  : { type : Sequelize.DECIMAL(10, 8), allowNull : false },
+    longitude : { type : Sequelize.DECIMAL(11, 8), allowNull : false }
   };
 
-  /**
-   * Attributes to remove before returning model.toJSON()
-   * @property _blacklist
-   * @type     Array
-   */
-  CarLocation.prototype._blacklist = [ 'deletedBy', 'deletedAt' ];
+  return model;
 
-  return CarLocation;
-
-})();
+});

@@ -1,13 +1,13 @@
 'use strict';
 
-Reach.Register.Model('Group', 'sequelize', function (model, Sequelize) {
+Reach.Register.Model('UserGroup', 'sequelize', function (model, Sequelize) {
   
   /**
    * The identity of the table created in your database.
    * @property table
    * @type     String
    */
-  model.table = 'groups';
+  model.table = 'user_groups';
 
   /**
    * The sequelize schema definition of your model.
@@ -15,15 +15,24 @@ Reach.Register.Model('Group', 'sequelize', function (model, Sequelize) {
    * @type     Object
    */
   model.schema = {
-    creatorId : { 
-      type       : Sequelize.INTEGER, 
+    userId : { 
+      type       : Sequelize.INTEGER,
+      primaryKey : true,
       allowNull  : false,
       references : {
         model : 'users',
         key   : 'id'
       }
     },
-    name : { type : Sequelize.STRING(88), allowNull : false }
+    groupId : { 
+      type       : Sequelize.INTEGER,
+      primaryKey : true,
+      allowNull  : false,
+      references : {
+        model : 'groups',
+        key   : 'id'
+      }
+    }
   };
 
   /**
@@ -31,7 +40,7 @@ Reach.Register.Model('Group', 'sequelize', function (model, Sequelize) {
    * @property blacklist
    * @type     Array
    */
-  model.blacklist = [ 'password', 'linkedin', 'deletedAt' ];
+  model.blacklist = [ 'deletedAt' ];
 
   return model;
 

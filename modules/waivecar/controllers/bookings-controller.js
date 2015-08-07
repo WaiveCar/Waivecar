@@ -4,19 +4,14 @@ let Booking = require('../lib/booking');
 let queue   = Reach.service('queue');
 let error   = Reach.ErrorHandler;
 
-module.exports = (function () {
-
-  /**
-   * @class BookingsController
-   */
-  function BookingsController() {}
+Reach.Register.Controller('BookingsController', function (controller) {
 
   /**
    * Attempt to create a new booking using the provided information.
    * @method create
    * @param  {Object} post
    */
-  BookingsController.prototype.create = function *(post) {
+  controller.create = function *(post) {
     let carId = post.carId;
     let user  = this.auth.user;
 
@@ -49,7 +44,7 @@ module.exports = (function () {
    * @method index
    * @return {Array} returns an array of Bookings
    */
-  BookingsController.prototype.index = function *(query) {
+  controller.index = function *(query) {
     return yield Booking.getBookings(query);
   };
 
@@ -59,7 +54,7 @@ module.exports = (function () {
    * @param  {Int} id The booking id
    * @return {Booking}
    */
-  BookingsController.prototype.show = function *(id) {
+  controller.show = function *(id) {
     let booking = yield Booking.getBooking(id, this.auth.user);
 
     booking         = booking.toJSON();
@@ -73,7 +68,7 @@ module.exports = (function () {
    * @method update
    * @param  {Int} id
    */
-  BookingsController.prototype.update = function *(id, post) {
+  controller.update = function *(id, post) {
     let user = this.auth.user;
     switch (post.state) {
       case 'cancel'          : return yield Booking.setCancelled(id, user);
@@ -89,6 +84,6 @@ module.exports = (function () {
     }
   };
 
-  return BookingsController;
+  return controller;
 
-})();
+});

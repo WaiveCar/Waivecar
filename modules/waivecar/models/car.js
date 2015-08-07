@@ -1,64 +1,49 @@
 'use strict';
 
-let _super = Reach.service('mysql/model');
-
-module.exports = (function () {
-
-  Reach.extends(Car, _super);
-
+Reach.Register.Model('Car', 'sequelize', function (model, Sequelize) {
+  
   /**
-   * @class Car
-   * @constructor
-   * @param {object} data
-   */
-  function Car(data) {
-    _super.call(this, data);
-  }
-
-  /**
-   * The name of the table to use for this model.
-   * @property _table
+   * The identity of the table created in your database.
+   * @property table
    * @type     String
    */
-  Car.prototype._table = Car._table = 'cars';
+  model.table = 'cars';
 
   /**
-   * Your models database schema.
-   * @property _schema
+   * The sequelize schema definition of your model.
+   * @property schema
    * @type     Object
    */
-  Car.prototype._schema = Car._schema = {
-    attributes : {
-      id                : 'VARCHAR(28)  NOT NULL',
-      make              : 'VARCHAR(28)  NOT NULL',
-      model             : 'VARCHAR(88)  NOT NULL',
-      year              : 'VARCHAR(4)   NOT NULL',
-      manufacturer      : 'VARCHAR(28)  NOT NULL',
-      phone             : 'VARCHAR(28)  NULL',
-      unitType          : 'VARCHAR(28)  NULL', // Should convert to enum if we can get full list of unit types
-      onstarStatus      : 'VARCHAR(28)  NULL', // SHould convert to enum if we can get full list of onstar status
-      primaryDriverId   : 'VARCHAR(28)  NULL',
-      primaryDriverUrl  : 'VARCHAR(256) NULL',
-      url               : 'VARCHAR(256) NULL',
-      isInPreActivation : 'ENUM("true","false") DEFAULT "false"'
-    },
-    primaryKey : 'id'
+  model.schema = {
+    id                : { type : Sequelize.STRING(28), primaryKey : true },
+    make              : { type : Sequelize.STRING(28), allowNull : false },
+    year              : { type : Sequelize.STRING(88), allowNull : false },
+    manufacturer      : { type : Sequelize.STRING(88), allowNull : false },
+    phone             : { type : Sequelize.STRING(28) },
+    unitType          : { type : Sequelize.STRING(28) },
+    onstarStatus      : { type : Sequelize.STRING(28) },
+    primaryDriverId   : { type : Sequelize.STRING(28) },
+    primaryDriverUrl  : { type : Sequelize.STRING },
+    url               : { type : Sequelize.STRING },
+    isInPreActivation : { type : Sequelize.BOOLEAN, defaultValue : false },
   };
 
   /**
-   * Attributes to remove before returning model.toJSON()
-   * @property _relations
+   * The relation definitions of your model.
+   * @property relations
    * @type     Array
    */
-  Car.prototype._relations = [ 'location' ];
+  model.relations = ['CarLocation', function (CarLocation) {
+    this.hasOne(CarLocation, { as : 'location', foreignKey : 'carId' });
+  }];
 
   /**
-   * Attributes to remove before returning model.toJSON()
-   * @property _blacklist
+   * Attributes that can be provided that is not part of the model schema.
+   * @property attributes
    * @type     Array
    */
-  Car.prototype._blacklist = [ 'deletedBy', 'deletedAt' ];
+  model.attributes = [ 'location' ];
 
-  return Car;
+  return model;
 
-})();
+});

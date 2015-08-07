@@ -54,10 +54,9 @@ module.exports = {
     modules : [
       'auth',
       'user',
-      'logger'
+      'log'
     ],
     services : [
-      'mysql',
       'gm-api',
       'email',
       'sms'

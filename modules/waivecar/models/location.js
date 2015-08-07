@@ -1,54 +1,31 @@
 'use strict';
 
-let _super = Reach.service('mysql/model');
-
-module.exports = (function () {
-
-  Reach.extends(Location, _super);
-
+Reach.Register.Model('Location', 'sequelize', function (model, Sequelize) {
+  
   /**
-   * @class Car
-   * @constructor
-   * @param {object} data
-   */
-  function Location(data) {
-    _super.call(this, data);
-  }
-
-  /**
-   * The name of the table to use for this model.
-   * @property _table
+   * The identity of the table created in your database.
+   * @property table
    * @type     String
    */
-  Location.prototype._table = Location._table = 'locations';
+  model.table = 'locations';
 
   /**
-   * Your models database schema.
-   * @property _schema
+   * The sequelize schema definition of your model.
+   * @property schema
    * @type     Object
    */
-  Location.prototype._schema = Location._schema = {
-    attributes : {
-      id          : 'INT(11) NOT NULL AUTO_INCREMENT',
-      type        : 'ENUM("station","item-of-interest") DEFAULT "station"',
-      name        : 'VARCHAR(255) NOT NULL',
-      description : 'VARCHAR(255) NULL',
-      latitude    : 'DECIMAL(10, 8) NOT NULL',
-      longitude   : 'DECIMAL(11, 8) NOT NULL',
-      address     : 'VARCHAR(255) NULL'
+  model.schema = {
+    type : {
+      type         : Sequelize.ENUM('station', 'item-of-interest'),
+      defaultValue : 'station'
     },
-    primaryKey : 'id'
+    name        : { type : Sequelize.STRING, allowNull : false },
+    description : { type : Sequelize.STRING, },
+    latitude    : { type : Sequelize.DECIMAL(10, 8), allowNull : false },
+    longitude   : { type : Sequelize.DECIMAL(11, 8), allowNull : false },
+    address     : { type : Sequelize.STRING }
   };
 
-  /**
-   * Attributes to remove before returning model.toJSON()
-   * @property _blacklist
-   * @type     Array
-   */
-  Location.prototype._blacklist = [
-    'deletedAt'
-  ];
+  return model;
 
-  return Location;
-
-})();
+});

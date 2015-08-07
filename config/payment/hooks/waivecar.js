@@ -14,7 +14,7 @@ PaymentModule.hook('waivecar', {
    * @param {Boolean} type Is this a new charge or a capture request
    */
   preload : function *(data, user, isNew) {
-    let booking = yield Booking.find(data.bookingId);
+    let booking = yield Booking.findById(data.bookingId);
     if (!booking) {
       throw error.parse({
         code    : 'BOOKING_NOT_FOUND',
@@ -34,7 +34,7 @@ PaymentModule.hook('waivecar', {
       }, 400);
     }
     if (booking.paymentId) {
-      let payment = yield Payment.find(booking.paymentId);
+      let payment = yield Payment.findById(booking.paymentId);
       if (payment && (isNew || payment.captured === 1)) {
         throw error.parse({
           code     : 'PAYMENT_INVALID',
@@ -51,7 +51,7 @@ PaymentModule.hook('waivecar', {
    * @param {Payment} payment The stripe charge object
    */
   authenticate: function *(data, payment) {
-    let booking       = yield Booking.find(data.bookingId);
+    let booking       = yield Booking.findById(data.bookingId);
     booking.paymentId = payment.id;
     booking.state     = 'payment-authorized';
     yield booking.update();
@@ -63,7 +63,7 @@ PaymentModule.hook('waivecar', {
    * @param {Payment} payment The stripe charge object
    */
   capture: function *(data, payment) {
-    let booking       = yield Booking.find(data.bookingId);
+    let booking       = yield Booking.findById(data.bookingId);
     booking.paymentId = payment.id;
     booking.state     = 'completed';
     yield booking.update();

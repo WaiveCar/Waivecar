@@ -8,8 +8,8 @@ Route.resource('locations', 'LocationsController');
 // ### Booking Routes
 
 Route.post('/bookings', {
-  policy : ['authenticate'],
-  params : ['carId'],
+  policy : [ 'authenticate' ],
+  params : [ 'carId' ],
   uses   : 'BookingsController@create'
 });
 

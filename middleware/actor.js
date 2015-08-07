@@ -1,6 +1,6 @@
 'use strict';
 
-let config = Reach.config.mysql;
+let config = Reach.config.sequelize;
 let User   = Reach.model('User');
 
 module.exports = function (app) {
@@ -8,11 +8,10 @@ module.exports = function (app) {
     if (this.auth.check()) {
       this._actor = this.auth.user;
     } else {
-      this._actor = yield User.find({
+      this._actor = yield User.findOne({
         where : {
           email : config._super.email,
-        },
-        limit : 1
+        }
       });
     }
     yield next;

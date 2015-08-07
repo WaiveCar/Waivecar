@@ -1,56 +1,39 @@
 'use strict';
 
-let _super = Reach.service('mysql/model');
-
-module.exports = (function () {
-
-  Reach.extends(BookingDetails, _super);
-
+Reach.Register.Model('BookingDetails', 'sequelize', function (model, Sequelize) {
+  
   /**
-   * @class BookingDetails
-   * @constructor
-   * @param {object} data
-   */
-  function BookingDetails(data) {
-    _super.call(this, data);
-  }
-
-  /**
-   * The name of the table to use for this model.
-   * @property _table
+   * The identity of the table created in your database.
+   * @property table
    * @type     String
    */
-  BookingDetails.prototype._table = BookingDetails._table = 'booking_details';
+  model.table = 'booking_details';
 
   /**
-   * Your models database schema.
-   * @property _schema
+   * The sequelize schema definition of your model.
+   * @property schema
    * @type     Object
    */
-  BookingDetails.prototype._schema = BookingDetails._schema = {
-    attributes : {
-      id        : 'INT(11) NOT NULL AUTO_INCREMENT',
-      bookingId : 'INT(11) NOT NULL',
-      type      : 'ENUM("start", "end") DEFAULT "start"',
-      time      : 'DATETIME     NULL',
-      latitude  : 'FLOAT(10, 7) NULL',
-      longitude : 'FLOAT(10, 7) NULL',
-      odometer  : 'INT(7)       NULL',
-      charge    : 'TINYINT(3)   NULL',
+  model.schema = {
+    bookingId : {
+      type       : Sequelize.INTEGER,
+      allowNull  : false,
+      references : {
+        model : 'bookings',
+        key   : 'id'
+      }
     },
-    primaryKey  : 'id',
-    foreignKeys : 'FOREIGN KEY (booking_id) REFERENCES bookings(id)'
+    type : {
+      type         : Sequelize.ENUM('start', 'end'),
+      defaultValue : 'start'
+    },
+    time      : { type : Sequelize.DATE },
+    latitude  : { type : Sequelize.FLOAT(10, 7) },
+    longitude : { type : Sequelize.FLOAT(10, 7) },
+    odometer  : { type : Sequelize.INTEGER },
+    charge    : { type : Sequelize.INTEGER }
   };
 
-  /**
-   * Attributes to remove before returning model.toJSON()
-   * @property _blacklist
-   * @type     Array
-   */
-  BookingDetails.prototype._blacklist = [
-    'deletedAt'
-  ];
+  return model;
 
-  return BookingDetails;
-
-})();
+});

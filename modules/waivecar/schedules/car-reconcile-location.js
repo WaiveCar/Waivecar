@@ -29,19 +29,23 @@ module.exports = function *() {
 // "zip": "90025",
 
 scheduler.process('car-reconcile-location', function *(job) {
-  let cars = yield Car.find();
+  let cars = yield Car.find({
+    include : [{
+      model : CarLocation,
+      as    : 'location'
+    }]
+  });
   if (!cars) {
     return;
   }
-  yield cars.hasOne(CarLocation, 'carId', 'location', [ 'latitude', 'longitude' ]);
   for (let i = 0, len = cars.length; i < len; i++) {
     let car          = cars[i];
     let prevLocation = car.location;
     let coords       = prevLocation ? getRandomLocation(prevLocation.latitude, prevLocation.longitude, 100) : getRandomLocation(34.0464846, -118.4442262, 5000);
     let location     = new CarLocation({
       carId     : car.id,
-      latitude  : coords[1].toFixed(8),
-      longitude : coords[0].toFixed(8),
+      latitude  : coords[1],
+      longitude : coords[0]
     });
     yield location.upsert();
   }
