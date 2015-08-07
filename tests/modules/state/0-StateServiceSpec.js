@@ -1,15 +1,10 @@
-describe('State service',function(){
+fdescribe('State service',function(){
 	var $q;
-	var mockState={
-		go:jasmine.createSpy('go')
-	}
+
 	 beforeEach(function(){
 		var self=this;
 		addPromiseTests(this);
-		angular.mock.module('State',function($provide){
-			$provide.value("$state", mockState);
-
-		});
+		angular.mock.module('State');
 		angular.mock.inject(function(StateService,$rootScope,_$q_){
 			self.service = StateService;
 			self.$rootScope = $rootScope;
@@ -74,7 +69,6 @@ describe('State service',function(){
 			this.testPromiseSuccess(p,function(){
 				var currentState=self.service.getCurrentState(flowName);
 				expect(currentState).toEqual(expectedName);
-				expect(mockState.go).toHaveBeenCalledWith(expectedName);
 			});
 		})
 		it('The user can go to the next stage if it\'s not the last',function(){
@@ -84,7 +78,6 @@ describe('State service',function(){
 			this.testPromiseSuccess(p,function(){
 				var currentState=self.service.getCurrentState(flowName);
 				expect(currentState).toEqual(expectedName);
-				expect(mockState.go).toHaveBeenCalledWith(expectedName);
 			});
 		});
 		it('The user can go to the previous state if it\s not the first',function(){
@@ -96,7 +89,6 @@ describe('State service',function(){
 			this.testPromiseSuccess(p,function(){
 				var currentState=self.service.getCurrentState(flowName);
 				expect(currentState).toEqual(expectedName);
-				expect(mockState.go.calls.mostRecent().args).toEqual([expectedName]);
 			});
 		});
 		it('The user can\'t go to the next state if it\'s the last',function(){
@@ -256,9 +248,7 @@ describe('State service',function(){
 					var self=this;
 					var p=this.service.goTo(flowName,'stateChange');
 					this.testPromiseSuccess(p,function(value){
-						expect(self.service.getCurrentState(flowName)).toEqual('toBeRedirected');	
-						expect(mockState.go).toHaveBeenCalledWith('toBeRedirected');
-	
+						expect(self.service.getCurrentState(flowName)).toEqual('toBeRedirected');		
 					});
 				});
 				describe('Previous state check',function(){

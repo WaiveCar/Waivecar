@@ -40,7 +40,7 @@ describe('Fleet state rules',function(){
 			});
 		});
 		it('Allows if we have the location',function(){
-			flags.location = ftrue;
+			flags.location = true;
 			var p=this.rules.arrive();
 			this.testPromiseSuccess(p,function(){
 				expect(true).toEqual(true);

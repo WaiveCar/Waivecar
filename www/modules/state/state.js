@@ -2,8 +2,7 @@
 * State service that allows the control of multiple state checks
 * Each set of linear states must be registered as a flow using setStateFlow
 */
-function StateService($state,$q) {
-	this.$state = $state;
+function StateService($q) {
 	this.$q = $q;
 	this._flows = {};
 }
@@ -45,16 +44,13 @@ StateService.prototype._goToByIndex = function(flowName,desiredIndex) {
 	.then(function(){
 		return self._canGoToStateIndex(flowName,desiredIndex)
 		.then(function(redirectState){
-			flow.previousStateIndex = flow.currentStateIndex;
-			flow.currentStateIndex = desiredIndex;
 			if(redirectState!==true){
 				flow.previousStateIndex =desiredIndex;
 				flow.currentStateIndex = self.getStateIndexByName(flowName,redirectState);
-				self.$state.go(redirectState);
+				return redirectState;
 			}
-			else{
-				self.$state.go(stateName);
-			}
+			flow.previousStateIndex = flow.currentStateIndex;
+			flow.currentStateIndex = desiredIndex;
 			return stateName;
 		},
 		function(){
@@ -134,4 +130,4 @@ StateService.prototype._getFlow = function(flowName) {
 	return this._flows[flowName];
 };
 angular.module('State', [])
-.service('StateService', ['$state','$q', StateService]);
+.service('StateService', ['$q', StateService]);
