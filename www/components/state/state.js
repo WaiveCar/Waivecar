@@ -1,5 +1,5 @@
-function WaiveCarStateService(stateService,$rootScope,$urlRouter,$state,fleetRule){
-	this.stateService=stateService;
+function WaiveCarStateService(flowControl,$rootScope,$urlRouter,$state,fleetRule){
+	this.flowControl=flowControl;
 	this.$rootScope = $rootScope;
 	this.$urlRouter = $urlRouter;
 	this.$state 	= $state;
@@ -13,7 +13,7 @@ WaiveCarStateService.prototype.init = function() {
 			rules:self.fleetRule.getRules()
 		}
 	];
-	self.stateService.setStateFlow('main',states);
+	self.flowControl.setStateFlow('main',states);
 	this.$rootScope.$on('$stateChangeStart', 
 		function(event, toState, toParams, fromState, fromParams){ 
 
@@ -21,30 +21,30 @@ WaiveCarStateService.prototype.init = function() {
 				self.accept=null;
 				return;
 			}
-			if(self.stateService.hasRulesForTransition('main',toState.name)){
+			if(self.flowControl.hasRulesForTransition('main',toState.name)){
 				event.preventDefault();
-				self.stateService.goTo('main',toState.name).then(
+				self.flowControl.goTo('main',toState.name).then(
 					function(redirectState){
 						self.accept = toState.name;
 						self.$urlRouter.sync();
 					}
 				)
 				.catch(function(error){
-					
+
 				});
 			}
 		}
 	);
 };
 angular.module('WaiveCar.state',[
-	'State',
+	'FlowControl',
 	'WaiveCar.state.rules'
 ])
 .service('WaiveCarStateService', [
-  'StateService',
+  'FlowControlService',
   '$rootScope',
   '$urlRouter',
   '$state',
   'FleetRulesService',
   WaiveCarStateService
-])
+]);

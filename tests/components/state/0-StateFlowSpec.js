@@ -12,7 +12,7 @@ fdescribe('State Flow',function(){
 	var mockUrlRouter={
 		sync:jasmine.createSpy('sync')
 	};
-	var mockStateService={
+	var mockFlowService={
 		setStateFlow:jasmine.createSpy('setStateFlow'),
 		goTo:function(flowName,stateName){
 			if(flags.goTo===true){
@@ -31,16 +31,16 @@ fdescribe('State Flow',function(){
 	}
 	beforeEach(function(){
 		var self=this;
-		angular.module('State',[]);
+
+		angular.module('FlowControl',[]);
 		angular.module('WaiveCar.state.rules',[]);
 		angular.mock.module('WaiveCar.state',function($provide){
 			$provide.value('$state', mockState);
-			$provide.value('StateService', mockStateService);
+			$provide.value('FlowControlService', mockFlowService);
 			$provide.value('$urlRouter',mockUrlRouter);
 			$provide.value('FleetRulesService',mockFleetRules);
 		});
-		angular.mock.inject(function(StateService,$rootScope,_$q_,WaiveCarStateService){
-			self.stateService=StateService;
+		angular.mock.inject(function($rootScope,_$q_,WaiveCarStateService){
 			self.$q=_$q_;
 			$q=_$q_;
 
@@ -66,7 +66,7 @@ fdescribe('State Flow',function(){
 
  		};
  		beforeEach(function(){
-			spyOn(mockStateService, 'goTo').and.callThrough();
+			spyOn(mockFlowService, 'goTo').and.callThrough();
 			flags.hasRulesForTransition=true;
  			this.$rootScope.$on('$stateChangeStart',beforeEventSpy);
 			this.service.init();
@@ -80,7 +80,7 @@ fdescribe('State Flow',function(){
 		});
 		it('Check for state upon arrival  ',function(){
 			this.$rootScope.$emit('$stateChangeStart', {name:'fleet'});
-			expect(mockStateService.goTo.calls.mostRecent().args).toEqual(['main','fleet']);
+			expect(mockFlowService.goTo.calls.mostRecent().args).toEqual(['main','fleet']);
 		});
 		it('Proceeds with the state if a promise is suceeded',function(){
 			resetCalls(mockUrlRouter.sync);

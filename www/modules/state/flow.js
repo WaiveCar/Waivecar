@@ -2,11 +2,11 @@
 * State service that allows the control of multiple state checks
 * Each set of linear states must be registered as a flow using setStateFlow
 */
-function StateService($q) {
+function FlowControlService($q) {
 	this.$q = $q;
 	this._flows = {};
 }
-StateService.prototype.setStateFlow = function(flowName, states) {
+FlowControlService.prototype.setStateFlow = function(flowName, states) {
 	var stateNameMap = {};
 	var count = 0;
 	var name;
@@ -25,7 +25,7 @@ StateService.prototype.setStateFlow = function(flowName, states) {
 		_nameMap: stateNameMap
 	}
 }
-StateService.prototype.getCurrentState = function(flowName) {
+FlowControlService.prototype.getCurrentState = function(flowName) {
 	var flow = this._getFlow(flowName);
 	var states = flow.states;
 	var index = flow.currentStateIndex;
@@ -35,11 +35,11 @@ StateService.prototype.getCurrentState = function(flowName) {
 	return states[index].name || index;
 };
 
-StateService.prototype.goTo = function(flowName, stateName) {
+FlowControlService.prototype.goTo = function(flowName, stateName) {
 	var index=this.getStateIndexByName(flowName,stateName);
 	return this._goToByIndex(flowName,index);
 };
-StateService.prototype.hasRulesForTransition = function(flowName,stateName) {
+FlowControlService.prototype.hasRulesForTransition = function(flowName,stateName) {
 	var flow = this._getFlow(flowName);
 	var currentStateIndex=flow.currentStateIndex;
 	var hasLeaveRule = true;
@@ -61,7 +61,7 @@ StateService.prototype.hasRulesForTransition = function(flowName,stateName) {
 	}
 	return true;
 };
-StateService.prototype._goToByIndex = function(flowName,desiredIndex) {
+FlowControlService.prototype._goToByIndex = function(flowName,desiredIndex) {
 	var flow = this._getFlow(flowName);
 	var self=this;
 	var stateName= flow.states[desiredIndex].name;
@@ -89,7 +89,7 @@ StateService.prototype._goToByIndex = function(flowName,desiredIndex) {
 	});
 	
 };
-StateService.prototype._canLeaveStateIndex = function(flowName) {
+FlowControlService.prototype._canLeaveStateIndex = function(flowName) {
 	var flow = this._getFlow(flowName);
 	var currentStateIndex=flow.currentStateIndex;
 	if(currentStateIndex==-1){
@@ -110,7 +110,7 @@ StateService.prototype._canLeaveStateIndex = function(flowName) {
 		return self.$q.reject(isAccepted);
 	});
 };
-StateService.prototype._canGoToStateIndex = function(flowName,desiredStateIndex) {
+FlowControlService.prototype._canGoToStateIndex = function(flowName,desiredStateIndex) {
 	var currentStateName=this.getCurrentState(flowName);
 	var flow = this._getFlow(flowName);
 	var stateRules=flow.states[desiredStateIndex].rules;
@@ -128,12 +128,12 @@ StateService.prototype._canGoToStateIndex = function(flowName,desiredStateIndex)
 		return self.$q.reject(isAccepted);
 	});
 };
-StateService.prototype.canGoToState = function(flowName,stateName) {
+FlowControlService.prototype.canGoToState = function(flowName,stateName) {
 	var flow = this._getFlow(flowName);
 	var desiredStateIndex=this.getStateIndexByName(flowName,stateName);
 	return this._canGoToStateIndex(flowName,desiredStateIndex);
 };
-StateService.prototype.next = function(flowName) {
+FlowControlService.prototype.next = function(flowName) {
 	var flow = this._getFlow(flowName);
 	flow.previousStateIndex=flow.currentStateIndex;
 	var nextIndex=flow.currentStateIndex+1;
@@ -143,12 +143,12 @@ StateService.prototype.next = function(flowName) {
 	return this._goToByIndex(flowName,nextIndex);
 
 };
-StateService.prototype.getStateIndexByName = function(flowName,stateName) {
+FlowControlService.prototype.getStateIndexByName = function(flowName,stateName) {
 	var flow = this._getFlow(flowName);
 	return flow._nameMap[stateName];
 };
 
-StateService.prototype.previous = function(flowName) {
+FlowControlService.prototype.previous = function(flowName) {
 	var flow = this._getFlow(flowName);
 	flow.previousStateIndex=flow.currentStateIndex;
 	if(flow.currentStateIndex==-1){
@@ -159,8 +159,8 @@ StateService.prototype.previous = function(flowName) {
 	}
 	return this._goToByIndex(flowName,flow.currentStateIndex-1);
 };
-StateService.prototype._getFlow = function(flowName) {
+FlowControlService.prototype._getFlow = function(flowName) {
 	return this._flows[flowName];
 };
-angular.module('State', [])
-.service('StateService', ['$q', StateService]);
+angular.module('FlowControl', [])
+.service('FlowControlService', ['$q', FlowControlService]);
