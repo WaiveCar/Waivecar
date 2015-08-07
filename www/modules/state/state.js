@@ -71,14 +71,14 @@ StateService.prototype._canLeaveStateIndex = function(flowName) {
 	var flow = this._getFlow(flowName);
 	var currentStateIndex=flow.currentStateIndex;
 	if(currentStateIndex==-1){
-		return this.$q.resolve(true);
+		return this.$q.when(true);
 	}
 	var stateRules=flow.states[currentStateIndex].rules;
 	if(typeof stateRules=='undefined'){
-		return this.$q.resolve(true);
+		return this.$q.when(true);
 	}
 	if(typeof stateRules.leave =='undefined'){
-		return this.$q.resolve(true);
+		return this.$q.when(true);
 	}
 	var self=this;
 	return this.$q.when(stateRules.leave()).then(function(isAccepted){
@@ -94,10 +94,10 @@ StateService.prototype._canGoToStateIndex = function(flowName,desiredStateIndex)
 	var stateRules=flow.states[desiredStateIndex].rules;
 	var self=this;
 	if(typeof stateRules=='undefined'){
-		return this.$q.resolve(true);
+		return this.$q.when(true);
 	}
 	if(typeof stateRules.arrive =='undefined'){
-		return this.$q.resolve(true);
+		return this.$q.when(true);
 	}
 	return this.$q.when(stateRules.arrive(currentStateName)).then(function(isAccepted){
 		if(isAccepted===true || typeof isAccepted ==='string'){
