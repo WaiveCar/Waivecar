@@ -1,4 +1,4 @@
-fdescribe('State Flow',function(){
+describe('State Flow',function(){
 	var $q;
 	var flags={
 		hasRulesForTransition : true
@@ -74,7 +74,7 @@ fdescribe('State Flow',function(){
 
  		});
 
-		it('Prevents a state change on every change',function(){
+		it('Prevents a state change if the transition has some rule to apply',function(){
 			this.$rootScope.$emit('$stateChangeStart', {name:'fleet'});
 			expect(eventBeingBroadcast.preventDefault).toHaveBeenCalled();
 		});

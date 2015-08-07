@@ -22,22 +22,30 @@ FlowControlService.prototype.setStateFlow = function(flowName, states) {
 		states: states,
 		currentStateIndex: -1,
 		previousStateIndex: 0,
-		_nameMap: stateNameMap
+		_nameMap: stateNameMap,
+		currentStateParams:{},
+		previousStateParams:{}
 	}
 }
-FlowControlService.prototype.getCurrentState = function(flowName) {
+FlowControlService.prototype.getCurrentStateName = function(flowName) {
 	var flow = this._getFlow(flowName);
-	var states = flow.states;
 	var index = flow.currentStateIndex;
 	if(index<0){
 		return null;
 	}
-	return states[index].name || index;
+	return flow.states[index].name || index;
 };
-
-FlowControlService.prototype.goTo = function(flowName, stateName) {
+FlowControlService.prototype.getCurrentStateParams = function(flowName) {
+	var flow = this._getFlow(flowName);
+	return flow.currentStateParams;
+};
+FlowControlService.prototype.getPreviousStatParams = function(flowName) {
+	var flow = this._getFlow(flowName);
+	return flow.previousStateParams;
+};
+FlowControlService.prototype.goTo = function(flowName, stateName,params) {
 	var index=this.getStateIndexByName(flowName,stateName);
-	return this._goToByIndex(flowName,index);
+	return this._goToByIndex(flowName,index,params);
 };
 FlowControlService.prototype.hasRulesForTransition = function(flowName,stateName) {
 	var flow = this._getFlow(flowName);
@@ -46,10 +54,12 @@ FlowControlService.prototype.hasRulesForTransition = function(flowName,stateName
 	if(currentStateIndex==-1){
 		hasLeaveRule = false;
 	}
-	var stateRules=flow.states[currentStateIndex].rules;
-	if(typeof stateRules=='undefined'
-		&& typeof stateRules.leave =='undefined'){
-		hasLeaveRule = false;
+	else{
+		var stateRules=flow.states[currentStateIndex].rules;
+		if(typeof stateRules=='undefined'
+			&& typeof stateRules.leave =='undefined'){
+			hasLeaveRule = false;
+		}
 	}
 	if(!hasLeaveRule){
 		var desiredStateIndex = this.getStateIndexByName(flowName,stateName);
@@ -61,13 +71,13 @@ FlowControlService.prototype.hasRulesForTransition = function(flowName,stateName
 	}
 	return true;
 };
-FlowControlService.prototype._goToByIndex = function(flowName,desiredIndex) {
+FlowControlService.prototype._goToByIndex = function(flowName,desiredIndex,params) {
 	var flow = this._getFlow(flowName);
 	var self=this;
 	var stateName= flow.states[desiredIndex].name;
-	return this._canLeaveStateIndex(flowName)
+	return this._canLeaveStateIndex(flowName,flow.previousStateParams)
 	.then(function(){
-		return self._canGoToStateIndex(flowName,desiredIndex)
+		return self._canGoToStateIndex(flowName,desiredIndex,params)
 		.then(function(redirectState){
 			if(redirectState!==true){
 				flow.previousStateIndex =desiredIndex;
@@ -75,21 +85,23 @@ FlowControlService.prototype._goToByIndex = function(flowName,desiredIndex) {
 				return redirectState;
 			}
 			flow.previousStateIndex = flow.currentStateIndex;
+			flow.previousStateParams = flow.currentStateParams;
 			flow.currentStateIndex = desiredIndex;
+			flow.currentStateParams = params || {};
 
-			return stateName;
+			return {name:stateName,params:params};
 		},
 		function(){
-			return self.$q.reject(new Error ('The rules of '+stateName+' doesn\'t allow the arrival, current state: '+self.getCurrentState(flowName)));
+			return self.$q.reject(new Error ('The rules of '+stateName+' doesn\'t allow the arrival, current state: '+self.getCurrentStateName(flowName)));
 		})
 
 	},function(error){
-		var currentStateName=self.getCurrentState(flowName);
+		var currentStateName=self.getCurrentStateName(flowName);
 		return self.$q.reject(new Error ('The rules of '+currentStateName+' doesn\'t allow leaving it right now'));
 	});
 	
 };
-FlowControlService.prototype._canLeaveStateIndex = function(flowName) {
+FlowControlService.prototype._canLeaveStateIndex = function(flowName,params) {
 	var flow = this._getFlow(flowName);
 	var currentStateIndex=flow.currentStateIndex;
 	if(currentStateIndex==-1){
@@ -103,15 +115,15 @@ FlowControlService.prototype._canLeaveStateIndex = function(flowName) {
 		return this.$q.when(true);
 	}
 	var self=this;
-	return this.$q.when(stateRules.leave()).then(function(isAccepted){
+	return this.$q.when(stateRules.leave(params)).then(function(isAccepted){
 		if(isAccepted){
 			return true;
 		}
 		return self.$q.reject(isAccepted);
 	});
 };
-FlowControlService.prototype._canGoToStateIndex = function(flowName,desiredStateIndex) {
-	var currentStateName=this.getCurrentState(flowName);
+FlowControlService.prototype._canGoToStateIndex = function(flowName,desiredStateIndex,params) {
+	var currentStateName=this.getCurrentStateName(flowName);
 	var flow = this._getFlow(flowName);
 	var stateRules=flow.states[desiredStateIndex].rules;
 	var self=this;
@@ -121,26 +133,26 @@ FlowControlService.prototype._canGoToStateIndex = function(flowName,desiredState
 	if(typeof stateRules.arrive =='undefined'){
 		return this.$q.when(true);
 	}
-	return this.$q.when(stateRules.arrive(currentStateName)).then(function(isAccepted){
+	return this.$q.when(stateRules.arrive(currentStateName,params)).then(function(isAccepted){
 		if(isAccepted===true || typeof isAccepted ==='string'){
 			return isAccepted;
 		}
 		return self.$q.reject(isAccepted);
 	});
 };
-FlowControlService.prototype.canGoToState = function(flowName,stateName) {
+FlowControlService.prototype.canGoToState = function(flowName,stateName,params) {
 	var flow = this._getFlow(flowName);
 	var desiredStateIndex=this.getStateIndexByName(flowName,stateName);
-	return this._canGoToStateIndex(flowName,desiredStateIndex);
+	return this._canGoToStateIndex(flowName,desiredStateIndex,params);
 };
-FlowControlService.prototype.next = function(flowName) {
+FlowControlService.prototype.next = function(flowName,params) {
 	var flow = this._getFlow(flowName);
 	flow.previousStateIndex=flow.currentStateIndex;
 	var nextIndex=flow.currentStateIndex+1;
 	if(nextIndex>=flow.states.length){
 		return this.$q.reject(new Error('Can\'t go to the next state the current state is the last'));
 	}
-	return this._goToByIndex(flowName,nextIndex);
+	return this._goToByIndex(flowName,nextIndex,params);
 
 };
 FlowControlService.prototype.getStateIndexByName = function(flowName,stateName) {
@@ -148,7 +160,7 @@ FlowControlService.prototype.getStateIndexByName = function(flowName,stateName) 
 	return flow._nameMap[stateName];
 };
 
-FlowControlService.prototype.previous = function(flowName) {
+FlowControlService.prototype.previous = function(flowName,params) {
 	var flow = this._getFlow(flowName);
 	flow.previousStateIndex=flow.currentStateIndex;
 	if(flow.currentStateIndex==-1){
@@ -157,7 +169,8 @@ FlowControlService.prototype.previous = function(flowName) {
 	if(flow.currentStateIndex==0){
 		return this.$q.reject(new Error('Can\'t go to the previous state the current state is the first one'));
 	}
-	return this._goToByIndex(flowName,flow.currentStateIndex-1);
+	params = params || flow.previousStateParams;
+	return this._goToByIndex(flowName,flow.currentStateIndex-1,params);
 };
 FlowControlService.prototype._getFlow = function(flowName) {
 	return this._flows[flowName];
