@@ -16,17 +16,16 @@ WaiveCarStateService.prototype.init = function() {
 			name:'cars-show',
 		}
 	];
-	self.flowControl.setStateFlow('main',states);
+	this.mainFlow=this.flowControl.setStateFlow('main',states);
 	this.$rootScope.$on('$stateChangeStart', 
 		function(event, toState, toParams, fromState, fromParams){ 
-
 			if(toState.name===self.accept){
 				self.accept=null;
 				return;
 			}
-			if(self.flowControl.hasRulesForTransition('main',toState.name)){
+			if(self.mainFlow.hasRulesForTransition(toState.name)){
 				event.preventDefault();
-				self.flowControl.goTo('main',toState.name).then(
+				self.mainFlow.goTo(toState.name).then(
 					function(redirectState){
 						self.accept = toState.name;
 						self.$state.go(toState,toParams);

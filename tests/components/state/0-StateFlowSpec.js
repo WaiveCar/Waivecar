@@ -11,8 +11,7 @@ fdescribe('State Flow',function(){
 	};
 	var mockUrlRouter={
 	};
-	var mockFlowService={
-		setStateFlow:jasmine.createSpy('setStateFlow'),
+	var mockFlow={
 		goTo:function(flowName,stateName){
 			if(flags.goTo===true){
 				return $q.resolve(stateName);
@@ -21,6 +20,11 @@ fdescribe('State Flow',function(){
 		},
 		hasRulesForTransition:function(flowName,stateName){
 			return flags.hasRulesForTransition;
+		}
+	};
+	var mockFlowService={
+		setStateFlow:function(name,states){
+			return mockFlow;
 		}
 	}
 	function resetCalls(spy){
@@ -65,7 +69,7 @@ fdescribe('State Flow',function(){
 
  		};
  		beforeEach(function(){
-			spyOn(mockFlowService, 'goTo').and.callThrough();
+			spyOn(mockFlow, 'goTo').and.callThrough();
 			flags.hasRulesForTransition=true;
  			this.$rootScope.$on('$stateChangeStart',beforeEventSpy);
 			this.service.init();
@@ -79,7 +83,7 @@ fdescribe('State Flow',function(){
 		});
 		it('Check for state upon arrival  ',function(){
 			this.$rootScope.$emit('$stateChangeStart', {name:'fleet'});
-			expect(mockFlowService.goTo.calls.mostRecent().args).toEqual(['main','fleet']);
+			expect(mockFlow.goTo.calls.mostRecent().args).toEqual(['fleet']);
 		});
 		it('Proceeds with the state if a promise is suceeded',function(){
 			resetCalls(mockState.go);

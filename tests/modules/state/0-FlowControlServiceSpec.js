@@ -1,8 +1,7 @@
-describe('State service',function(){
+describe('Flow control',function(){
 	var $q;
-	var flowName='testFlow';
-
-	 beforeEach(function(){
+	var flowName = 'testFlow';
+	beforeEach(function(){
 		var self=this;
 		addPromiseTests(this);
 		angular.mock.module('FlowControl');
@@ -20,7 +19,6 @@ describe('State service',function(){
 			
 		];
 		this.service.setStateFlow(flowName,states);
-
 		expect(this.service._flows[flowName].states).toEqual(states);
 	});
 	it('Should not be able to have a state with the same name',function(){
@@ -44,8 +42,8 @@ describe('State service',function(){
 				name:'first',
 			}
 		];
-		this.service.setStateFlow(flowName,states);
-		var currentState=this.service.getCurrentStateName(flowName);
+		var flow = this.service.setStateFlow(flowName,states);
+		var currentState=flow.getCurrentStateName();
 		expect(currentState).toEqual(null);
 
 	});
@@ -55,10 +53,10 @@ describe('State service',function(){
 				name:'first',
 			}
 		];
-		this.service.setStateFlow(flowName,states);
-		this.service.goTo(flowName,'first');
+		var flow = this.service.setStateFlow(flowName,states);
+		flow.goTo('first');
 		this.$rootScope.$digest();
-		var currentState=this.service.getCurrentStateName(flowName);
+		var currentState=flow.getCurrentStateName();
 		expect(currentState).toEqual('first');
 	});
 	it('Goes to the first state from the null using next',function(){
@@ -67,10 +65,10 @@ describe('State service',function(){
 				name:'first',
 			}
 		];
-		this.service.setStateFlow(flowName,states);
-		this.service.next(flowName);
+		var flow = this.service.setStateFlow(flowName,states);
+		flow.next();
 		this.$rootScope.$digest();
-		var currentState=this.service.getCurrentStateName(flowName);
+		var currentState=flow.getCurrentStateName();
 		expect(currentState).toEqual('first');
 	});
 	it('Can\'t go back to the initial state (nullable)',function(){
@@ -79,10 +77,9 @@ describe('State service',function(){
 				name:'first',
 			}
 		];
-		this.service.setStateFlow(flowName,states);
-		var self=this;
-		var p=this.service.next(flowName).then(function(){
-			return self.service.previous(flowName);
+		var flow = this.service.setStateFlow(flowName,states);
+		var p=flow.next().then(function(){
+			return flow.previous();
 		});
 		this.$rootScope.$digest();
 		p.then(function(){
@@ -93,7 +90,7 @@ describe('State service',function(){
 		})
 	});
 	describe('State flow',function(){
-		var flowName='testFlow';
+		var flow;
 		var states=[
 			{
 				name:'first',
@@ -107,55 +104,51 @@ describe('State service',function(){
 			
 		];
 		beforeEach(function(){
-			this.service.setStateFlow(flowName,states);
-			this.service.goTo(flowName,states[0].name);
+			flow=this.service.setStateFlow('testFlow',states);
+			flow.goTo(states[0].name);
 			this.$rootScope.$digest();
 		})	
 
 		it('The user can skip to a given state',function(){
 			var expectedName=states[1].name;
-			var self=this;
-			var p=this.service.goTo(flowName,expectedName);
+			var p=flow.goTo(expectedName);
 			this.testPromiseSuccess(p,function(){
-				var currentState=self.service.getCurrentStateName(flowName);
+				var currentState=flow.getCurrentStateName();
 				expect(currentState).toEqual(expectedName);
 			});
 		})
 		it('The user can go to the next stage if it\'s not the last',function(){
 			var expectedName=states[1].name;
-			var p=this.service.next(flowName);
-			var self=this;
+			var p=flow.next();
 			this.testPromiseSuccess(p,function(){
-				var currentState=self.service.getCurrentStateName(flowName);
+				var currentState=flow.getCurrentStateName();
 				expect(currentState).toEqual(expectedName);
 			});
 		});
 		it('The user can go to the previous state if it\s not the first ',function(){
 			var expectedName=states[1].name;
-			var self=this;
-			var p=this.service.goTo(flowName,states[2].name).then(function(){
-				return self.service.previous(flowName);
+			var p=flow.goTo(states[2].name).then(function(){
+				return flow.previous();
 			});
 			this.testPromiseSuccess(p,function(){
-				var currentState=self.service.getCurrentStateName(flowName);
+				var currentState=flow.getCurrentStateName();
 				expect(currentState).toEqual(expectedName);
 			});
 		});
 		it('The user can\'t go to the next state if it\'s the last',function(){
-			var self=this;
 			var expectedError=new Error('Can\'t go to the next state the current state is the last');
-			var p=this.service.goTo(flowName,states[states.length-1].name).then(function(){
-				return self.service.next(flowName);
+			var p=flow.goTo(states[states.length-1].name).then(function(){
+				return flow.next();
 			})
 			this.testPromiseFailure(p,expectedError);
 		});
 		it('The user can\'t go to previous state if it\'s the first',function(){
-			var self=this;
 			var expectedError=new Error('Can\'t go to the previous state the current state is the first one');
-			var p = self.service.previous(flowName);
+			var p = flow.previous();
 			this.testPromiseFailure(p,expectedError);
 		});
 		describe('With params',function(){
+			var flow;
 			var states=[
 				{
 					name:'first',
@@ -177,19 +170,18 @@ describe('State service',function(){
 			];
 			var expectedParams= {'foo':'bar','baz':'xpto'};
 			beforeEach(function(){
-				this.service.setStateFlow(flowName,states);
-				this.service.goTo(flowName,'middle');
+				flow=this.service.setStateFlow(flowName,states);
+				flow.goTo('middle');
 				this.$rootScope.$digest();
 			});
 			it('Passes a parameter to be evaluated on goTo',function(){
 
 				var desiredState = states[0];
-				var self=this;
-				this.service.goTo(flowName,desiredState.name,expectedParams).then(function(data){
+				flow.goTo(desiredState.name,expectedParams).then(function(data){
 					expect(data.name).toEqual(desiredState.name)
 					expect(data.params).toEqual(expectedParams);
 					expect(desiredState.rules.arrive).toHaveBeenCalledWith('middle',expectedParams);
-					expect(self.service.getCurrentStateParams(flowName)).toEqual(expectedParams);
+					expect(flow.getCurrentStateParams()).toEqual(expectedParams);
 				})
 				.catch(function(){
 					fail();
@@ -198,12 +190,11 @@ describe('State service',function(){
 			});		
 			it('Passes a parameter to be evaluated on previous',function(){
 				var desiredState = states[0];
-				var self=this;
-				this.service.previous(flowName,expectedParams).then(function(data){
+				flow.previous(expectedParams).then(function(data){
 					expect(data.name).toEqual(desiredState.name)
 					expect(data.params).toEqual(expectedParams);
 					expect(desiredState.rules.arrive).toHaveBeenCalledWith('middle',expectedParams);
-					expect(self.service.getCurrentStateParams(flowName)).toEqual(expectedParams);
+					expect(flow.getCurrentStateParams()).toEqual(expectedParams);
 				})
 				.catch(function(){
 					fail();
@@ -213,12 +204,11 @@ describe('State service',function(){
 			});	
 			it('Passes a parameter to be evaluated on next',function(){
 				var desiredState = states[2];
-				var self=this;
-				this.service.next(flowName,expectedParams).then(function(data){
+				flow.next(expectedParams).then(function(data){
 					expect(data.name).toEqual(desiredState.name)
 					expect(data.params).toEqual(expectedParams);
 					expect(desiredState.rules.arrive).toHaveBeenCalledWith('middle',expectedParams);
-					expect(self.service.getCurrentStateParams(flowName)).toEqual(expectedParams);
+					expect(flow.getCurrentStateParams()).toEqual(expectedParams);
 				})
 				.catch(function(){
 					fail();
@@ -226,12 +216,11 @@ describe('State service',function(){
 				this.$rootScope.$digest();
 			});
 			it('Register the previous state params ',function(){
-				var self=this;
-				this.service.next(flowName,expectedParams).then(function(data){
-					return self.service.previous(flowName);
+				flow.next(expectedParams).then(function(data){
+					return flow.previous();
 				})
 				.then(function(data){
-					expect(self.service.getPreviousStateParams(flowName)).toEqual(expectedParams);
+					expect(flow.getPreviousStateParams()).toEqual(expectedParams);
 				})
 				.catch(function(){
 					fail();
@@ -240,6 +229,7 @@ describe('State service',function(){
 			})
 		});
 		describe('Flow rules',function(){
+			var flow;
 			var flag=null;
 			var states=[
 				{
@@ -305,8 +295,8 @@ describe('State service',function(){
 			];
 			beforeEach(function(){
 				flag =null;
-				this.service.setStateFlow(flowName,states);
-				this.service.goTo(flowName,states[0].name);
+				flow=this.service.setStateFlow(flowName,states);
+				flow.goTo(states[0].name);
 				this.$rootScope.$digest();
 			});
 			describe('Arrival',function(){
@@ -316,24 +306,21 @@ describe('State service',function(){
 				}
 				// var expectedArrivalError= new Error ("The rules doesn't allow the arrival of ")
 				it('Can\'t go to a state if the rule doesn\'t allow',function(){
-					var self=this;
 					flag=false;
 					var expectedError = getArriveError(desiredState,'first');
-					var p=self.service.goTo(flowName,desiredState);
+					var p=flow.goTo(desiredState);
 					this.testPromiseFailure(p,expectedError);
 				});
 				it('Can\'t forward to a state if the rule doesn\'t allow',function(){
-					var self=this;
 					flag=false;
 					var expectedError = getArriveError(desiredState,'first');
-					var p =self.service.next(flowName);
+					var p =flow.next();
 					this.testPromiseFailure(p,expectedError);
 				});
 				it('Can\'t return to a state if the rule doesn\'t allow',function(){
 					flag=false;
-					var self=this;
-					var p=this.service.goTo(flowName,'neutral_1').then(function(){
-						return self.service.previous(flowName);
+					var p=flow.goTo('neutral_1').then(function(){
+						return flow.previous();
 					});
 					var expectedError = getArriveError(desiredState,'neutral_1');
 					this.testPromiseFailure(p,expectedError);
@@ -341,109 +328,97 @@ describe('State service',function(){
 				});
 				it('Can go to a state if the rule  allow',function(){
 					flag=true;
-					var self=this;
-					var p=this.service.goTo(flowName,desiredState);
+					var p=flow.goTo(desiredState);
 					this.testPromiseSuccess(p,function(){
-						expect(self.service.getCurrentStateName(flowName)).toEqual(desiredState);		
+						expect(flow.getCurrentStateName()).toEqual(desiredState);		
 					})
 				});
 				it('Can forward to a state if the rule allow',function(){
 					flag=true;
-					var self=this;
-					var p=this.service.next(flowName);
+					var p=flow.next();
 					this.testPromiseSuccess(p,function(){
-						expect(self.service.getCurrentStateName(flowName)).toEqual(desiredState);		
+						expect(flow.getCurrentStateName()).toEqual(desiredState);		
 					});
 				});
 				it('Can return to a state if the rule allow',function(){
 					flag= true;
-					var self=this;
-					var p=this.service.goTo(flowName,'neutral_1').then(function(){
-						return self.service.previous(flowName);
+					var p=flow.goTo('neutral_1').then(function(){
+						return flow.previous();
 					})
 					this.testPromiseSuccess(p,function(){
-						expect(self.service.getCurrentStateName(flowName)).toEqual(desiredState);		
+						expect(flow.getCurrentStateName(flow)).toEqual(desiredState);		
 					});
 				});
 				it('Can handle a rule that returns a successful promise',function(){
 					flag=true;
-					var self=this;
-					var p=this.service.goTo(flowName,'promise');
+					var p=flow.goTo('promise');
 					this.testPromiseSuccess(p,function(){
-						expect(self.service.getCurrentStateName(flowName)).toEqual('promise');		
+						expect(flow.getCurrentStateName(flow)).toEqual('promise');		
 					})
 				});
 				it('Can handle a rule that returns a rejected promise',function(){
 					flag=false;
-					var p=this.service.goTo(flowName,'promise');
+					var p=flow.goTo('promise');
 					var expectedError = getArriveError('promise','first');
 
 					this.testPromiseFailure(p,expectedError);
 				});
 				it('Goes to a state if a string is retured on arrive',function(){
-					var self=this;
-					var p=this.service.goTo(flowName,'stateChange');
+					var p=flow.goTo('stateChange');
 					this.testPromiseSuccess(p,function(value){
-						expect(self.service.getCurrentStateName(flowName)).toEqual('toBeRedirected');		
+						expect(flow.getCurrentStateName(flow)).toEqual('toBeRedirected');		
 					});
 				});
 				describe('Previous state check',function(){
 					var desiredState = 'neutralCheck';
 					it('Can\'t go to a state if the rule doesn\'t allow',function(){
-						var self=this;
-						flag = false;
-						var p=this.service.goTo(flowName,'neutral_1').then(function(){
-							return self.service.goTo(flowName,desiredState);
+						var p=flow.goTo('neutral_1').then(function(){
+							return flow.goTo(desiredState);
 						})
 						var expectedError = getArriveError(desiredState,'neutral_1');
 						this.testPromiseFailure(p,expectedError);
 					});
 					it('Can\'t forward to a state if the rule doesn\'t allow',function(){
-						var self=this;
 						flag = false;
-						var p=this.service.goTo(flowName,'neutral_Before').then(function(){
-							return self.service.next(flowName);
+						var p=flow.goTo('neutral_Before').then(function(){
+							return flow.next();
 						})
 						var expectedError = getArriveError(desiredState,'neutral_Before');
 						this.testPromiseFailure(p,expectedError);
 					});
 					it('Can\'t return to a state if the rule doesn\'t allow',function(){
-						var self=this;
 						flag = false;
-						var p=this.service.goTo(flowName,'neutral_After').then(function(){
-							return self.service.previous(flowName);
+						var p=flow.goTo('neutral_After').then(function(){
+							return flow.previous();
 						});
 						var expectedError = getArriveError(desiredState,'neutral_After');
 						this.testPromiseFailure(p,expectedError);
 					});
 					it('Can go to a state if the rule allow',function(){
 						flag = true;
-						var self=this;
-						var p=this.service.goTo(flowName,'neutral_1').then(function(){
-							return  self.service.goTo(flowName,desiredState);
+						var p=flow.goTo('neutral_1').then(function(){
+							return  flow.goTo(desiredState);
 						})
 						this.testPromiseSuccess(p,function(){
-							expect(self.service.getCurrentStateName(flowName)).toEqual(desiredState);
+							expect(flow.getCurrentStateName()).toEqual(desiredState);
 						})
 					});
 					it('Can\forward to a state if the rule allow',function(){
 						flag = true;
-						var self=this;
-						var p = this.service.goTo(flowName,'neutral_Before').then(function(){
-							return self.service.next(flowName);
+						var p = flow.goTo('neutral_Before').then(function(){
+							return flow.next();
 						})
 						this.testPromiseSuccess(p,function(){
-							expect(self.service.getCurrentStateName(flowName)).toEqual(desiredState);
+							expect(flow.getCurrentStateName()).toEqual(desiredState);
 						});
 					});
 					it('Can return to a state if the rule allow',function(){
 						flag = true;
-						var self=this;
-						var p = this.service.goTo(flowName,'neutral_After').then(function(){
-							return self.service.previous(flowName);
+						var p = flow.goTo('neutral_After').then(function(){
+							return flow.previous();
 						})
 						this.testPromiseSuccess(p,function(){
-							expect(self.service.getCurrentStateName(flowName)).toEqual('neutralCheck');
+							expect(flow.getCurrentStateName()).toEqual('neutralCheck');
 						});
 					});
 				});
@@ -455,50 +430,47 @@ describe('State service',function(){
 				}
 				var desiredState= 'leaveIfFlag';
 				beforeEach(function(){
-					this.service.goTo(flowName,desiredState);
+					flow.goTo(desiredState);
 					this.$rootScope.$digest();
 					
 				});
 				it('Can\'t leave a state if the rule doesn\'t allow',function(){
-					var self=this;
 					flag=false;
 					var expectedError = getLeaveError(desiredState);
-					var p=  self.service.goTo(flowName,'neutral_1');
+					var p=  flow.goTo('neutral_1');
 					this.testPromiseFailure(p,expectedError);
 				});
 				it('Can\'t forward to a state if the rule doesn\'t allow',function(){
-					var self=this;
 					flag=false;
 					var expectedError = getLeaveError(desiredState);
-					var p = self.service.next(flowName);
+					var p = flow.next();
 					this.testPromiseFailure(p,expectedError);
 				});
 				it('Can\'t previous to a state if the rule doesn\'t allow',function(){
-					var self=this;
 					flag=false;
 					var expectedError = getLeaveError(desiredState);
-					var p = self.service.previous(flowName);
+					var p = flow.previous();
 					this.testPromiseFailure(p,expectedError);
 				});
 				it('Can leave a state if the rule  allow',function(){
 					flag=true;
-					var p=this.service.goTo(flowName,'neutral_1');
+					var p=flow.goTo('neutral_1');
 					this.testPromiseSuccess(p,function(){
-						expect(this.service.getCurrentStateName(flowName)).toEqual('neutral_1');
+						expect(flow.getCurrentStateName()).toEqual('neutral_1');
 					});
 				});
 				it('Can forward to a state if the rule allow',function(){
 					flag=true;
-					var p = this.service.next(flowName);
+					var p = flow.next();
 					this.testPromiseSuccess(p,function(){
-						expect(this.service.getCurrentStateName(flowName)).toEqual('neutral_2');
+						expect(flow.getCurrentStateName()).toEqual('neutral_2');
 					});
 				});
 				it('Can previous to a state if the rule  allow',function(){
 					flag=true;
-					var p = this.service.previous(flowName);
+					var p = flow.previous();
 					this.testPromiseSuccess(p,function(){
-						expect(this.service.getCurrentStateName(flowName)).toEqual('neutral_1');
+						expect(flow.getCurrentStateName()).toEqual('neutral_1');
 					});
 				});
 			});
