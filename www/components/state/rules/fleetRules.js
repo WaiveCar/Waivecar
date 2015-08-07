@@ -20,4 +20,4 @@ angular.module('WaiveCar.state.rules',['Maps'])
 	'locationService',
 	'selectedCar',
   	FleetRulesService
-])
+]);

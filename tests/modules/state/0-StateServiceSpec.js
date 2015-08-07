@@ -1,5 +1,6 @@
-describe('State service',function(){
+fdescribe('State service',function(){
 	var $q;
+	var flowName='testFlow';
 
 	 beforeEach(function(){
 		var self=this;
@@ -12,7 +13,6 @@ describe('State service',function(){
 		});
 	});
 	it('Should be able to initialize a state flow',function(){
-		var flowName='testFlow';
 		var states=[
 			{
 				name:'first',
@@ -24,7 +24,6 @@ describe('State service',function(){
 		expect(this.service._flows[flowName].states).toEqual(states);
 	});
 	it('Should not be able to have a state with the same name',function(){
-		var flowName='testFlow';
 		var states=[
 			{
 				name:'first',
@@ -38,6 +37,60 @@ describe('State service',function(){
 		var expectedError=new Error('The state '+states[0].name+' already exists');
 		expect( function(){ self.service.setStateFlow(flowName,states);} )
 		.toThrow(expectedError);
+	});
+	it('The flow should start on a null state',function(){
+		var states=[
+			{
+				name:'first',
+			}
+		];
+		this.service.setStateFlow(flowName,states);
+		var currentState=this.service.getCurrentState(flowName);
+		expect(currentState).toEqual(null);
+
+	});
+	it('Goes to ne first state from the null using goTo',function(){
+		var states=[
+			{
+				name:'first',
+			}
+		];
+		this.service.setStateFlow(flowName,states);
+		this.service.goTo(flowName,'first');
+		this.$rootScope.$digest();
+		var currentState=this.service.getCurrentState(flowName);
+		expect(currentState).toEqual('first');
+	});
+	it('Goes to the first state from the null using next',function(){
+		var states=[
+			{
+				name:'first',
+			}
+		];
+		this.service.setStateFlow(flowName,states);
+		this.service.next(flowName);
+		this.$rootScope.$digest();
+		var currentState=this.service.getCurrentState(flowName);
+		expect(currentState).toEqual('first');
+	});
+	it('Can\'t go back to the initial state (nullable)',function(){
+		var states=[
+			{
+				name:'first',
+			}
+		];
+		this.service.setStateFlow(flowName,states);
+		var self=this;
+		var p=this.service.next(flowName).then(function(){
+			return self.service.previous(flowName);
+		});
+		this.$rootScope.$digest();
+		p.then(function(){
+			fail();
+		})
+		.catch(function(error){
+			console.log(error);
+		})
 	});
 	describe('State flow',function(){
 		var flowName='testFlow';
@@ -55,13 +108,10 @@ describe('State service',function(){
 		];
 		beforeEach(function(){
 			this.service.setStateFlow(flowName,states);
+			this.service.goTo(flowName,states[0].name);
+			this.$rootScope.$digest();
 		})	
 
-		it('The flow should start on the first state',function(){
-			var currentState=this.service.getCurrentState(flowName);
-			expect(currentState).toEqual(states[0].name);
-
-		});
 		it('The user can skip to a given state',function(){
 			var expectedName=states[1].name;
 			var self=this;
@@ -80,7 +130,7 @@ describe('State service',function(){
 				expect(currentState).toEqual(expectedName);
 			});
 		});
-		it('The user can go to the previous state if it\s not the first',function(){
+		it('The user can go to the previous state if it\s not the first ',function(){
 			var expectedName=states[1].name;
 			var self=this;
 			var p=this.service.goTo(flowName,states[2].name).then(function(){
@@ -172,6 +222,8 @@ describe('State service',function(){
 			beforeEach(function(){
 				flag =null;
 				this.service.setStateFlow(flowName,states);
+				this.service.goTo(flowName,states[0].name);
+				this.$rootScope.$digest();
 			});
 			describe('Arrival',function(){
 				var desiredState='arriveIfFlag';

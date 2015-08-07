@@ -16,10 +16,10 @@ WaiveCarStateService.prototype.init = function() {
 	self.stateService.setStateFlow('main',states);
 	this.$rootScope.$on('$stateChangeStart', 
 		function(event, toState, toParams, fromState, fromParams){ 
-
 			event.preventDefault();
-			self.stateService.goTo('main',toState).then(
-				function(state){
+			self.stateService.goTo('main',toState.name).then(
+				function(redirectState){
+					console.log("The state was accepted");
 					self.$urlRouter.sync();
 				}
 			)

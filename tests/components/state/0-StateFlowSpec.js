@@ -1,4 +1,4 @@
-fdescribe('State Flow',function(){
+describe('State Flow',function(){
 	var $q;
 	var flags={};
 	var mockState={
@@ -69,17 +69,17 @@ fdescribe('State Flow',function(){
  		});
 
 		it('Prevents a state change on every change',function(){
-			this.$rootScope.$emit('$stateChangeStart', 'fleet');
+			this.$rootScope.$emit('$stateChangeStart', {name:'fleet'});
 			expect(eventBeingBroadcast.preventDefault).toHaveBeenCalled();
 		});
 		it('Check for state upon arrival  ',function(){
-			this.$rootScope.$emit('$stateChangeStart', 'fleet');
+			this.$rootScope.$emit('$stateChangeStart', {name:'fleet'});
 			expect(mockStateService.goTo.calls.mostRecent().args).toEqual(['main','fleet']);
 		});
 		it('Proceeds with the state if a promise is suceeded',function(){
 			resetCalls(mockUrlRouter.sync);
 			flags.goTo=true;
-			this.$rootScope.$emit('$stateChangeStart', 'fleet');
+			this.$rootScope.$emit('$stateChangeStart', {name:'fleet'});
 			this.$rootScope.$digest();
 			expect(mockUrlRouter.sync).toHaveBeenCalled();
 
@@ -87,7 +87,7 @@ fdescribe('State Flow',function(){
 		it('Doesn\'t procced  with the state if the state is rejected',function(){
 			resetCalls(mockUrlRouter.sync);
 			flags.goTo=false;
-			this.$rootScope.$emit('$stateChangeStart', 'fleet');
+			this.$rootScope.$emit('$stateChangeStart', {name:'fleet'});
 			this.$rootScope.$digest();
 			expect(mockUrlRouter.sync).not.toHaveBeenCalled();
 

@@ -20,7 +20,7 @@ StateService.prototype.setStateFlow = function(flowName, states) {
 	});
 	this._flows[flowName] = {
 		states: states,
-		currentStateIndex: 0,
+		currentStateIndex: -1,
 		previousStateIndex: 0,
 		_nameMap: stateNameMap
 	}
@@ -29,6 +29,9 @@ StateService.prototype.getCurrentState = function(flowName) {
 	var flow = this._getFlow(flowName);
 	var states = flow.states;
 	var index = flow.currentStateIndex;
+	if(index<0){
+		return null;
+	}
 	return states[index].name || index;
 };
 
@@ -40,7 +43,7 @@ StateService.prototype._goToByIndex = function(flowName,desiredIndex) {
 	var flow = this._getFlow(flowName);
 	var self=this;
 	var stateName= flow.states[desiredIndex].name;
-	return this._canLeaveStateIndex(flowName,desiredIndex)
+	return this._canLeaveStateIndex(flowName)
 	.then(function(){
 		return self._canGoToStateIndex(flowName,desiredIndex)
 		.then(function(redirectState){
@@ -51,10 +54,11 @@ StateService.prototype._goToByIndex = function(flowName,desiredIndex) {
 			}
 			flow.previousStateIndex = flow.currentStateIndex;
 			flow.currentStateIndex = desiredIndex;
+
 			return stateName;
 		},
 		function(){
-			return self.$q.reject(new Error ('The rules of '+stateName+' doesn\'t allow the arrival, current state: '+flow.states[flow.currentStateIndex].name));
+			return self.$q.reject(new Error ('The rules of '+stateName+' doesn\'t allow the arrival, current state: '+self.getCurrentState(flowName)));
 		})
 
 	},function(error){
@@ -65,7 +69,11 @@ StateService.prototype._goToByIndex = function(flowName,desiredIndex) {
 };
 StateService.prototype._canLeaveStateIndex = function(flowName) {
 	var flow = this._getFlow(flowName);
-	var stateRules=flow.states[flow.currentStateIndex].rules;
+	var currentStateIndex=flow.currentStateIndex;
+	if(currentStateIndex==-1){
+		return this.$q.resolve(true);
+	}
+	var stateRules=flow.states[currentStateIndex].rules;
 	if(typeof stateRules=='undefined'){
 		return this.$q.resolve(true);
 	}
@@ -121,6 +129,9 @@ StateService.prototype.getStateIndexByName = function(flowName,stateName) {
 StateService.prototype.previous = function(flowName) {
 	var flow = this._getFlow(flowName);
 	flow.previousStateIndex=flow.currentStateIndex;
+	if(flow.currentStateIndex==-1){
+		return this.$q.reject(new Error('Can\'t go to the previous state the current state is the initial one (null)'));
+	}
 	if(flow.currentStateIndex==0){
 		return this.$q.reject(new Error('Can\'t go to the previous state the current state is the first one'));
 	}
