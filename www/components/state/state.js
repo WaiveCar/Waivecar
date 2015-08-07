@@ -34,6 +34,9 @@ WaiveCarStateService.prototype.init = function() {
 				.catch(function(error){
 				});
 			}
+			else{
+				self.mainFlow.setState(toState.name,toParams);
+			}
 		
 		}
 	);

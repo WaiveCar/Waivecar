@@ -1,4 +1,4 @@
-fdescribe('State Flow',function(){
+describe('State Flow',function(){
 	var $q;
 	var flags={
 		hasRulesForTransition : true

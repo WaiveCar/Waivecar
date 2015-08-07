@@ -66,14 +66,15 @@ Flow.prototype._goToByIndex = function(desiredIndex,params) {
 		.then(function(redirectState){
 			if(redirectState!==true){
 				self.previousStateIndex =desiredIndex;
-				self.currentStateIndex = self.getStateIndexByName(redirectState);
+				if(typeof redirectState ==='string'){
+					redirectState={name:redirectState,params:{}};
+				}
+				var redirectIndex = self.getStateIndexByName(redirectState.name);
+				var redirectParams=redirectState.params || {};
+				self.setStateIndex(redirectIndex,{},desiredIndex,params || {});
 				return redirectState;
 			}
-			self.previousStateIndex = self.currentStateIndex;
-			self.previousStateParams = self.currentStateParams;
-			self.currentStateIndex = desiredIndex;
-			self.currentStateParams = params || {};
-
+			self.setStateIndex(desiredIndex,params);
 			return {name:stateName,params:params};
 		},
 		function(){
@@ -85,6 +86,16 @@ Flow.prototype._goToByIndex = function(desiredIndex,params) {
 		return self.$q.reject(new Error ('The rules of '+currentStateName+' doesn\'t allow leaving it right now'));
 	});
 	
+};
+Flow.prototype.setState = function(stateName,stateParams) {
+	var stateIndex = this.getStateIndexByName(stateName);
+	this.setStateIndex(stateName,stateParams);
+};
+Flow.prototype.setStateIndex = function(desiredIndex,params,previousIndex,previousParams) {
+	this.previousStateIndex = previousIndex || this.currentStateIndex;
+	this.previousStateParams = previousParams || this.currentStateParams;
+	this.currentStateIndex = desiredIndex;
+	this.currentStateParams = params || {};
 };
 Flow.prototype._canLeaveStateIndex = function(params) {
 	var currentStateIndex=this.currentStateIndex;
