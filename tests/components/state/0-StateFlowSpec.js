@@ -1,17 +1,47 @@
-describe('State Flow',function(){
+fdescribe('State Flow',function(){
+	var $q;
+	var flags={};
 	var mockState={
 		go:jasmine.createSpy('go')
+	};
+	var mockFleetRules={
+		getRules:jasmine.createSpy('getRules')
+	};
+	var mockUrlRouter={
+		sync:jasmine.createSpy('sync')
+	};
+	var mockStateService={
+		setStateFlow:jasmine.createSpy('setStateFlow'),
+		goTo:function(flowName,stateName){
+			if(flags.goTo===true){
+				return $q.resolve(stateName);
+			}
+			return $q.reject(new Error());
+		}
 	}
-	 beforeEach(function(){
+	function resetCalls(spy){
+		if(spy.calls){
+			spy.calls.reset();
+		}
+	}
+	beforeEach(function(){
 		var self=this;
+		angular.module('State',[]);
+		angular.module('WaiveCar.state.rules',[]);
 		angular.mock.module('WaiveCar.state',function($provide){
-			$provide.value("$state", mockState);
+			$provide.value('$state', mockState);
+			$provide.value('StateService', mockStateService);
+			$provide.value('$urlRouter',mockUrlRouter);
+			$provide.value('FleetRulesService',mockFleetRules);
 		});
-		angular.mock.inject(function(StateService,$rootScope,WaiveCarStateService){
+		angular.mock.inject(function(StateService,$rootScope,_$q_,WaiveCarStateService){
 			self.stateService=StateService;
+			self.$q=_$q_;
+			$q=_$q_;
+
 			self.$rootScope=$rootScope;
 			self.scope  = $rootScope.$new();
-			spyOn(this.$rootScope, '$on');
+			spyOn(this.$rootScope, '$on').and.callThrough();
 			self.service=WaiveCarStateService;
 		});
 	});
@@ -20,10 +50,53 @@ describe('State Flow',function(){
 		var lastArgs=this.$rootScope.$on.calls.mostRecent().args;
 		expect(lastArgs[0]).toEqual('$stateChangeStart');
  	});
+ 	describe('State controle',function(){
+ 		var eventBeingBroadcast;
+ 		var beforeEventSpy=function(event){
+ 			eventBeingBroadcast=event;
+			spyOn(eventBeingBroadcast, 'preventDefault').and.callThrough();
+			spyOn(mockStateService, 'goTo').and.callThrough();
+
+ 		};
+ 		var afterEventSpy=function(){
+
+ 		};
+ 		beforeEach(function(){
+ 			this.$rootScope.$on('$stateChangeStart',beforeEventSpy);
+			this.service.init();
+			this.$rootScope.$on('$stateChangeStart',afterEventSpy);
+
+ 		});
+
+		it('Prevents a state change on every change',function(){
+			this.$rootScope.$emit('$stateChangeStart', 'fleet');
+			expect(eventBeingBroadcast.preventDefault).toHaveBeenCalled();
+		});
+		it('Check for state upon arrival  ',function(){
+			this.$rootScope.$emit('$stateChangeStart', 'fleet');
+			expect(mockStateService.goTo.calls.mostRecent().args).toEqual(['main','fleet']);
+		});
+		it('Proceeds with the state if a promise is suceeded',function(){
+			resetCalls(mockUrlRouter.sync);
+			flags.goTo=true;
+			this.$rootScope.$emit('$stateChangeStart', 'fleet');
+			this.$rootScope.$digest();
+			expect(mockUrlRouter.sync).toHaveBeenCalled();
+
+		});
+		it('Doesn\'t procced  with the state if the state is rejected',function(){
+			resetCalls(mockUrlRouter.sync);
+			flags.goTo=false;
+			this.$rootScope.$emit('$stateChangeStart', 'fleet');
+			this.$rootScope.$digest();
+			expect(mockUrlRouter.sync).not.toHaveBeenCalled();
+
+		});
+ 	});
 	describe('Fleet',function(){
-		it('Doesn\'t show the fleet if we don\'t have the location');
+	/*	it('Doesn\'t show the fleet if we don\'t have the location');
 		it('Shoes the fleet if we have the location');
-		it('If everything is ok goes to car info after fleet');
+		it('If everything is ok goes to car info after fleet');*/
 	});
 	describe('Car info',function(){
 		it('Shows if the car is available');

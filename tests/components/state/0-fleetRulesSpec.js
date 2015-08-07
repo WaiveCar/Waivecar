@@ -15,7 +15,6 @@ describe('Fleet state rules',function(){
 			return flags.selection;
 		}
 	}
-
 	beforeEach(function(){
 		var self=this;
 		addPromiseTests(this);
