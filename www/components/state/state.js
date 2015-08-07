@@ -21,17 +21,18 @@ WaiveCarStateService.prototype.init = function() {
 				self.accept=null;
 				return;
 			}
-			event.preventDefault();
-			self.stateService.goTo('main',toState.name).then(
-				function(redirectState){
-					self.accept = toState.name;
-					self.$urlRouter.sync();
-				}
-			)
-			.catch(function(error){
-				console.log("Could not transition");
-				console.log(error);
-			})
+			if(self.stateService.hasRulesForTransition('main',toState.name)){
+				event.preventDefault();
+				self.stateService.goTo('main',toState.name).then(
+					function(redirectState){
+						self.accept = toState.name;
+						self.$urlRouter.sync();
+					}
+				)
+				.catch(function(error){
+					
+				});
+			}
 		}
 	);
 };

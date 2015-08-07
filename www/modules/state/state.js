@@ -39,6 +39,28 @@ StateService.prototype.goTo = function(flowName, stateName) {
 	var index=this.getStateIndexByName(flowName,stateName);
 	return this._goToByIndex(flowName,index);
 };
+StateService.prototype.hasRulesForTransition = function(flowName,stateName) {
+	var flow = this._getFlow(flowName);
+	var currentStateIndex=flow.currentStateIndex;
+	var hasLeaveRule = true;
+	if(currentStateIndex==-1){
+		hasLeaveRule = false;
+	}
+	var stateRules=flow.states[currentStateIndex].rules;
+	if(typeof stateRules=='undefined'
+		&& typeof stateRules.leave =='undefined'){
+		hasLeaveRule = false;
+	}
+	if(!hasLeaveRule){
+		var desiredStateIndex = this.getStateIndexByName(flowName,stateName);
+		stateRules=flow.states[desiredStateIndex].rules;
+		if(typeof stateRules=='undefined'
+			&& typeof stateRules.arrive =='undefined'){
+			return false;
+		}
+	}
+	return true;
+};
 StateService.prototype._goToByIndex = function(flowName,desiredIndex) {
 	var flow = this._getFlow(flowName);
 	var self=this;

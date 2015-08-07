@@ -1,6 +1,8 @@
-describe('State Flow',function(){
+fdescribe('State Flow',function(){
 	var $q;
-	var flags={};
+	var flags={
+		hasRulesForTransition : true
+	};
 	var mockState={
 		go:jasmine.createSpy('go')
 	};
@@ -17,6 +19,9 @@ describe('State Flow',function(){
 				return $q.resolve(stateName);
 			}
 			return $q.reject(new Error());
+		},
+		hasRulesForTransition:function(flowName,stateName){
+			return flags.hasRulesForTransition;
 		}
 	}
 	function resetCalls(spy){
@@ -55,13 +60,14 @@ describe('State Flow',function(){
  		var beforeEventSpy=function(event){
  			eventBeingBroadcast=event;
 			spyOn(eventBeingBroadcast, 'preventDefault').and.callThrough();
-			spyOn(mockStateService, 'goTo').and.callThrough();
 
  		};
  		var afterEventSpy=function(){
 
  		};
  		beforeEach(function(){
+			spyOn(mockStateService, 'goTo').and.callThrough();
+			flags.hasRulesForTransition=true;
  			this.$rootScope.$on('$stateChangeStart',beforeEventSpy);
 			this.service.init();
 			this.$rootScope.$on('$stateChangeStart',afterEventSpy);
@@ -82,7 +88,20 @@ describe('State Flow',function(){
 			this.$rootScope.$emit('$stateChangeStart', {name:'fleet'});
 			this.$rootScope.$digest();
 			expect(mockUrlRouter.sync).toHaveBeenCalled();
-
+			//For some reason sync reemits $stateChangeStart right now
+			resetCalls(eventBeingBroadcast.preventDefault);
+			resetCalls(mockUrlRouter.sync);
+			this.$rootScope.$emit('$stateChangeStart', {name:'fleet'});
+			this.$rootScope.$digest();
+			expect(eventBeingBroadcast.preventDefault).not.toHaveBeenCalled();
+			expect(mockUrlRouter.sync).not.toHaveBeenCalled();
+		});
+		it('Does\'t prevents the state if there are no rules for the state',function(){
+			flags.hasRulesForTransition=false;
+			this.$rootScope.$emit('$stateChangeStart', {name:'fleet'});
+			this.$rootScope.$digest();
+			expect(eventBeingBroadcast.preventDefault).not.toHaveBeenCalled();
+			expect(mockUrlRouter.sync).not.toHaveBeenCalled();
 		});
 		it('Doesn\'t procced  with the state if the state is rejected',function(){
 			resetCalls(mockUrlRouter.sync);
