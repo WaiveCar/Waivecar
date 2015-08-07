@@ -11,6 +11,9 @@ WaiveCarStateService.prototype.init = function() {
 		{
 			name:'fleet',
 			rules:self.fleetRule.getRules()
+		},
+		{
+			name:'cars-show',
 		}
 	];
 	self.flowControl.setStateFlow('main',states);
@@ -26,15 +29,18 @@ WaiveCarStateService.prototype.init = function() {
 				self.flowControl.goTo('main',toState.name).then(
 					function(redirectState){
 						self.accept = toState.name;
-						self.$urlRouter.sync();
+						self.$state.go(toState,toParams);
 					}
 				)
 				.catch(function(error){
-
 				});
 			}
+		
 		}
 	);
+};
+WaiveCarStateService.prototype.go = function(name,params) {
+	this.$state.go(name,params);
 };
 angular.module('WaiveCar.state',[
 	'FlowControl',

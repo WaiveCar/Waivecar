@@ -1,4 +1,4 @@
-describe('State Flow',function(){
+fdescribe('State Flow',function(){
 	var $q;
 	var flags={
 		hasRulesForTransition : true
@@ -10,7 +10,6 @@ describe('State Flow',function(){
 		getRules:jasmine.createSpy('getRules')
 	};
 	var mockUrlRouter={
-		sync:jasmine.createSpy('sync')
 	};
 	var mockFlowService={
 		setStateFlow:jasmine.createSpy('setStateFlow'),
@@ -83,32 +82,32 @@ describe('State Flow',function(){
 			expect(mockFlowService.goTo.calls.mostRecent().args).toEqual(['main','fleet']);
 		});
 		it('Proceeds with the state if a promise is suceeded',function(){
-			resetCalls(mockUrlRouter.sync);
+			resetCalls(mockState.go);
 			flags.goTo=true;
 			this.$rootScope.$emit('$stateChangeStart', {name:'fleet'});
 			this.$rootScope.$digest();
-			expect(mockUrlRouter.sync).toHaveBeenCalled();
+			expect(mockState.go).toHaveBeenCalled();
 			//For some reason sync reemits $stateChangeStart right now
 			resetCalls(eventBeingBroadcast.preventDefault);
-			resetCalls(mockUrlRouter.sync);
+			resetCalls(mockState.go);
 			this.$rootScope.$emit('$stateChangeStart', {name:'fleet'});
 			this.$rootScope.$digest();
 			expect(eventBeingBroadcast.preventDefault).not.toHaveBeenCalled();
-			expect(mockUrlRouter.sync).not.toHaveBeenCalled();
+			expect(mockState.go).not.toHaveBeenCalled();
 		});
 		it('Does\'t prevents the state if there are no rules for the state',function(){
 			flags.hasRulesForTransition=false;
 			this.$rootScope.$emit('$stateChangeStart', {name:'fleet'});
 			this.$rootScope.$digest();
 			expect(eventBeingBroadcast.preventDefault).not.toHaveBeenCalled();
-			expect(mockUrlRouter.sync).not.toHaveBeenCalled();
+			expect(mockState.go).not.toHaveBeenCalled();
 		});
 		it('Doesn\'t procced  with the state if the state is rejected',function(){
-			resetCalls(mockUrlRouter.sync);
+			resetCalls(mockState.go);
 			flags.goTo=false;
 			this.$rootScope.$emit('$stateChangeStart', {name:'fleet'});
 			this.$rootScope.$digest();
-			expect(mockUrlRouter.sync).not.toHaveBeenCalled();
+			expect(mockState.go).not.toHaveBeenCalled();
 
 		});
  	});

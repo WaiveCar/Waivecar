@@ -93,9 +93,9 @@ function nearbyFleetDirective(MapsLoader, $q, locationService) {
   }
 }
 
-function FleetController($rootScope, $scope, $state, selectedCar, searchEvents, mapsEvents, mockLocation) {
+function FleetController($rootScope, $scope, stateService, selectedCar, searchEvents, mapsEvents, mockLocation) {
   var self          = this;
-  this.$state       = $state;
+  this.stateService       = stateService;
   this.$rootScope   = $rootScope;
   this.$scope       = $scope;
   this.selectedCar  = selectedCar;
@@ -107,11 +107,11 @@ function FleetController($rootScope, $scope, $state, selectedCar, searchEvents, 
 FleetController.prototype.showCarDetails = function(marker, data) {
   var self = this;
   var latLng = {latitude: data.latitude, longitude: data.longitude};
-
   this.selectedCar.setSelected(data);
   this.$rootScope.$broadcast(this.mapsEvents.destinyOnRouteChanged, latLng);
   this.$rootScope.$broadcast(this.searchEvents.vehicleSelected, data);
-  this.$state.go('cars-show', { id: data.id });
+  console.log("ON SHOW CAR DETAILS!");
+  this.stateService.go('cars-show',{ id: data.id });
 };
 
 angular.module('app')
@@ -128,7 +128,7 @@ angular.module('app')
 .controller('FleetController', [
   '$rootScope',
   '$scope',
-  '$state',
+  'WaiveCarStateService',
   'selectedCar',
   'searchEvents',
   'mapsEvents',
