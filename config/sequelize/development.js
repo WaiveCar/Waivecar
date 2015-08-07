@@ -22,7 +22,8 @@ module.exports = {
 
   sequelize : {
     database : 'waivecar_dev',
-    username : 'root'
+    username : 'waivecar',
+    password : 'eNwlGGl6g6V0w0qX3vx0S5GKbGvTtR3X'
   }
 
 };
