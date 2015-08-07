@@ -39,7 +39,8 @@ FlowControlService.prototype.getCurrentStateParams = function(flowName) {
 	var flow = this._getFlow(flowName);
 	return flow.currentStateParams;
 };
-FlowControlService.prototype.getPreviousStatParams = function(flowName) {
+
+FlowControlService.prototype.getPreviousStateParams = function(flowName) {
 	var flow = this._getFlow(flowName);
 	return flow.previousStateParams;
 };

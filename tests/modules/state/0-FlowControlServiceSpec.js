@@ -1,4 +1,4 @@
-describe('State service',function(){
+fdescribe('State service',function(){
 	var $q;
 	var flowName='testFlow';
 
@@ -160,35 +160,35 @@ describe('State service',function(){
 				{
 					name:'first',
 					rules:{
-						arrive:jasmine.createSpy('firstParam').and.returnValue(true)
-					}
-				},
-				{
-					name:'second',
-					rules:{
-						arrive:jasmine.createSpy('secondParam').and.returnValue(true)
+						arrive:jasmine.createSpy('secondWithParam').and.returnValue(true)
 					}
 
 				},
 				{
+					name:'middle',
+					
+				},
+				{
 					name:'last',
 					rules:{
-						arrive:jasmine.createSpy('lastParam').and.returnValue(true)
+						arrive:jasmine.createSpy('lastWithParam').and.returnValue(true)
 					}
 				}
 			];
 			var expectedParams= {'foo':'bar','baz':'xpto'};
 			beforeEach(function(){
 				this.service.setStateFlow(flowName,states);
+				this.service.goTo(flowName,'middle');
 				this.$rootScope.$digest();
 			});
-			fit('Passes a parameter to be evaluated on goTo',function(){
-				var desiredState = states[0].name;
+			it('Passes a parameter to be evaluated on goTo',function(){
+
+				var desiredState = states[0];
 				var self=this;
-				this.service.goTo(flowName,states[0].name,expectedParams).then(function(data){
-					expect(data.name).toEqual(desiredState)
+				this.service.goTo(flowName,desiredState.name,expectedParams).then(function(data){
+					expect(data.name).toEqual(desiredState.name)
 					expect(data.params).toEqual(expectedParams);
-					expect(states[0].rules.arrive).toHaveBeenCalledWith(null,expectedParams);
+					expect(desiredState.rules.arrive).toHaveBeenCalledWith('middle',expectedParams);
 					expect(self.service.getCurrentStateParams(flowName)).toEqual(expectedParams);
 				})
 				.catch(function(){
@@ -196,8 +196,48 @@ describe('State service',function(){
 				});
 				this.$rootScope.$digest();
 			});		
-			it('Passes a parameter to be evaluated on previous');	
-			it('Passes a parameter to be evaluated on next');
+			it('Passes a parameter to be evaluated on previous',function(){
+				var desiredState = states[0];
+				var self=this;
+				this.service.previous(flowName,expectedParams).then(function(data){
+					expect(data.name).toEqual(desiredState.name)
+					expect(data.params).toEqual(expectedParams);
+					expect(desiredState.rules.arrive).toHaveBeenCalledWith('middle',expectedParams);
+					expect(self.service.getCurrentStateParams(flowName)).toEqual(expectedParams);
+				})
+				.catch(function(){
+					fail();
+				});
+				this.$rootScope.$digest();
+
+			});	
+			it('Passes a parameter to be evaluated on next',function(){
+				var desiredState = states[2];
+				var self=this;
+				this.service.next(flowName,expectedParams).then(function(data){
+					expect(data.name).toEqual(desiredState.name)
+					expect(data.params).toEqual(expectedParams);
+					expect(desiredState.rules.arrive).toHaveBeenCalledWith('middle',expectedParams);
+					expect(self.service.getCurrentStateParams(flowName)).toEqual(expectedParams);
+				})
+				.catch(function(){
+					fail();
+				});
+				this.$rootScope.$digest();
+			});
+			it('Register the previous state params ',function(){
+				var self=this;
+				this.service.next(flowName,expectedParams).then(function(data){
+					return self.service.previous(flowName);
+				})
+				.then(function(data){
+					expect(self.service.getPreviousStateParams(flowName)).toEqual(expectedParams);
+				})
+				.catch(function(){
+					fail();
+				});
+				this.$rootScope.$digest();
+			})
 		});
 		describe('Flow rules',function(){
 			var flag=null;
