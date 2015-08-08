@@ -1,8 +1,7 @@
 'use strict';
 
-let Car            = Reach.model('Car');
-let CarLocation    = Reach.model('CarLocation');
-let CarDiagnostics = Reach.model('CarDiagnostics');
+let query = Reach.service('sequelize/helpers').query;
+let Car   = Reach.model('Car');
 
 Reach.Register.ResourceController('Car', 'CarsController', function (controller) {
 
@@ -12,11 +11,12 @@ Reach.Register.ResourceController('Car', 'CarsController', function (controller)
    * @return {Array}
    */
   controller.index = function *(options) {
-    options.include = [{
-      model : CarLocation,
-      as    : 'location'
-    }]
-    return yield Car.find(options);
+    return yield Car.find(query(options, {
+      include : [{
+        model : 'CarLocation',
+        as    : 'location'
+      }]
+    }));
   };
 
   return controller;

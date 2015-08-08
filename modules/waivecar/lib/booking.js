@@ -1,13 +1,11 @@
 'use strict';
 
 let moment         = require('moment');
+let car            = require('./car-handler');
 let queue          = Reach.service('queue');
-let helpers        = Reach.service('sequelize/helpers');
+let query          = Reach.service('sequelize/helpers').query;
 let Booking        = Reach.model('Booking');
 let BookingDetails = Reach.model('BookingDetails');
-let Car            = Reach.model('Car');
-let CarStatus      = Reach.model('CarStatus');
-let CarLocation    = Reach.model('CarLocation');
 let error          = Reach.ErrorHandler;
 
 /**
@@ -91,7 +89,7 @@ Bookings.setCancelled = function *(id, user) {
     }, 400);
   }
 
-  yield Booking.setCarStatus('available', booking.carId, user);
+  yield car.setStatus('available', booking.carId, user);
 
   // ### Update Booking
 
@@ -114,8 +112,8 @@ Bookings.setCancelled = function *(id, user) {
  * @param  {User} user
  */
 Bookings.setInProgress = function *(id, user) {
-  let booking   = yield this.getBooking(id, user);
-  let carCoords = yield CarLocation.findById(booking.carId);
+  let booking = yield this.getBooking(id, user);
+  let coords  = yield car.getLocation(booking.carId);
 
   if (booking.state !== 'pending-arrival') {
     throw error.parse({
@@ -137,8 +135,8 @@ Bookings.setInProgress = function *(id, user) {
     bookingId : booking.id,
     type      : 'start',
     time      : new Date(),
-    latitude  : carCoords.latitude,
-    longitude : carCoords.longitude,
+    latitude  : coords.latitude,
+    longitude : coords.longitude,
     odometer  : 28000,
     charge    : 78
   });
@@ -165,7 +163,7 @@ Bookings.setInProgress = function *(id, user) {
  */
 Bookings.setPendingPayment = function *(id, user) {
   let booking   = yield this.getBooking(id, user);
-  let carCoords = yield CarLocation.findById(booking.carId);
+  let coords = yield car.getLocation(booking.carId);
 
   if (booking.state !== 'in-progress') {
     throw error.parse({
@@ -174,7 +172,7 @@ Bookings.setPendingPayment = function *(id, user) {
     }, 400);
   }
 
-  if (!carCoords) {
+  if (!coords) {
     throw error.parse({
       code    : 'CAR_NO_LOCATION',
       message : 'The location of the booked car is unknown'
@@ -185,8 +183,8 @@ Bookings.setPendingPayment = function *(id, user) {
     bookingId : booking.id,
     type      : 'end',
     time      : new Date(),
-    latitude  : carCoords.latitude,
-    longitude : carCoords.longitude,
+    latitude  : coords.latitude,
+    longitude : coords.longitude,
     odometer  : 28010,
     charge    : 48
   });
@@ -207,7 +205,7 @@ Bookings.setPendingPayment = function *(id, user) {
   // ### Car Status
   // Set the car status back to available.
 
-  yield this.setCarStatus('available', booking.carId, user);
+  yield car.setStatus('available', booking.carId, user);
 
   return booking;
 };
@@ -215,24 +213,23 @@ Bookings.setPendingPayment = function *(id, user) {
 /**
  * Returns a list of bookings with related details.
  * @method getBookings
+ * @param  {Object} options
  * @return {Array}
  */
-Bookings.getBookings = function *(query) {
-  let list = yield Booking.find({
-    where : helpers.prepareWhere(query, {
-      customerId : '?',
-      carId      : '?',
-      paymentId  : '?',
-      state      : '?'
-    }),
+Bookings.getBookings = function *(options) {
+  options.limit = options.limit || 20;
+  return yield Booking.find(query(options, {
+    where : {
+      customerId : query.NUMBER,
+      carId      : query.STRING,
+      paymentId  : query.NUMBER,
+      state      : query.STRING
+    },
     include : [{
-      model : BookingDetails,
+      model : 'BookingDetails',
       as    : 'details'
-    }],
-    limit  : query.limit  || 20,
-    offset : query.offset || 0
-  });
-  return list;
+    }]
+  }));
 };
 
 /**
@@ -271,79 +268,4 @@ Bookings.getBookingDetails = function *(id) {
       bookingId : id
     }
   });
-};
-
-// ### Customer Methods
-
-/**
- * Check if the user is available to create a new booking, if a user is
- * already in another car then we cannot create a new booking.
- * @private
- * @method isUserAvailable
- * @param  {Int} id
- */
-Bookings.isUserAvailable = function *(id) {
-  let count = yield CarStatus.count({ driverId : id });
-  if (count !== 0) {
-    throw error.parse({
-      code    : 'CAR_IN_PROGRESS',
-      message : 'You are already assigned to another waivecar'
-    }, 400);
-  }
-};
-
-// ### Car Methods
-
-/**
- * @method isCarAvailable
- * @param  {String} id
- */
-Bookings.isCarAvailable = function *(id) {
-  let count = yield Car.count({ id : id });
-  if (count === 0) {
-    throw error.parse({
-      code    : 'CAR_INVALID',
-      message : 'The requested car does not exist'
-    }, 400);
-  }
-  let state  = yield CarStatus.find({ where : { carId : id }, limit : 1 });
-  if (state && state.status === 'unavailable') {
-    throw error.parse({
-      code    : 'CAR_UNAVAILABLE',
-      message : 'The selected car is unavailable for booking'
-    }, 400);
-  }
-};
-
-/**
- * @method setCarStatus
- * @param  {String} status
- * @param  {String} car
- * @param  {Object} user
- */
-Bookings.setCarStatus = function *(status, car, user) {
-  let carStatus = null;
-  switch (status) {
-    case 'unavailable':
-      carStatus = new CarStatus({
-        carId    : car,
-        driverId : user.id,
-        status   : status
-      });
-      yield carStatus.upsert();
-      break;
-    case 'available':
-      carStatus          = yield CarStatus.findById(car);
-      carStatus._actor   = user;
-      carStatus.driverId = null;
-      carStatus.status   = status;
-      yield carStatus.update('carId');
-      break;
-    default:
-      throw error.parse({
-        code     : 'BOOKING_BAD_STATUS',
-        message  : 'You must set a valid booking status',
-        solution : 'Check callers of the setCarStatus method on Bookings class and make sure it is setting valid states'
-      });
-  }
 };

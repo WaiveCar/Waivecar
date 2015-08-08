@@ -1,6 +1,7 @@
 'use strict';
 
 let Booking = require('../lib/booking');
+let car     = require('../lib/car-handler');
 let queue   = Reach.service('queue');
 let error   = Reach.ErrorHandler;
 
@@ -15,25 +16,11 @@ Reach.Register.Controller('BookingsController', function (controller) {
     let carId = post.carId;
     let user  = this.auth.user;
 
-    // ### Check
-    // First we want to check if the selected car is available for booking
-    // Once that is confirmed we check if the user is available for a new
-    // booking or if they are already in another active booking.
-
-    yield Booking.isCarAvailable(carId);
-    yield Booking.isUserAvailable(user.id);
-
-    // ### Create Booking
+    yield car.isAvailable(carId); // Is the car available for booking?
+    yield car.hasDriver(user.id); // Is the user a driver of another car?
 
     let booking = yield Booking.create(carId, user);
-
-    // ### Update Car Status
-    // Set the booked car to unavailable and assign the user as the driver.
-
-    yield Booking.setCarStatus('unavailable', carId, user);
-
-    // ### Booking Details
-    // Send booking details back to the client.
+    yield car.setStatus('unavailable', carId, user);
 
     return booking;
   };
@@ -71,10 +58,10 @@ Reach.Register.Controller('BookingsController', function (controller) {
   controller.update = function *(id, post) {
     let user = this.auth.user;
     switch (post.state) {
-      case 'cancel'          : return yield Booking.setCancelled(id, user);
-      case 'pending-arrival' : return yield Booking.setPendingArrival(id, user);
-      case 'start'           : return yield Booking.setInProgress(id, user);
-      case 'end'             : return yield Booking.setPendingPayment(id, user);
+      case 'cancel'  : return yield Booking.setCancelled(id, user);
+      case 'pending' : return yield Booking.setPendingArrival(id, user);
+      case 'start'   : return yield Booking.setInProgress(id, user);
+      case 'end'     : return yield Booking.setPendingPayment(id, user);
       default:
         throw error.parse({
           code     : 'BOOKING_BAD_STATE',

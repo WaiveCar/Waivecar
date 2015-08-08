@@ -31,7 +31,7 @@ module.exports = function *() {
 scheduler.process('car-reconcile-location', function *(job) {
   let cars = yield Car.find({
     include : [{
-      model : CarLocation,
+      model : 'CarLocation',
       as    : 'location'
     }]
   });

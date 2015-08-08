@@ -1,9 +1,8 @@
 'use strict';
 
-let scheduler   = Reach.service('queue').scheduler;
-let Car         = Reach.model('Car');
-let CarLocation = Reach.model('CarLocation');
-let io          = Reach.IO;
+let scheduler = Reach.service('queue').scheduler;
+let Car       = Reach.model('Car');
+let io        = Reach.IO;
 
 module.exports = function *() {
   scheduler.add('car-update-client', {
@@ -25,7 +24,7 @@ module.exports = function *() {
 scheduler.process('car-update-client', function *(job) {
   let cars = yield Car.find({
     include : [{
-      model : CarLocation,
+      model : 'CarLocation',
       as    : 'location'
     }]
   });
