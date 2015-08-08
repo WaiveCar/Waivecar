@@ -31,7 +31,7 @@ Reach.Register.Model('Group', 'sequelize', function (model, Sequelize) {
    * @property blacklist
    * @type     Array
    */
-  model.blacklist = [ 'password', 'linkedin', 'deletedAt' ];
+  model.blacklist = [ 'deletedAt' ];
 
   return model;
 

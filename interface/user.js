@@ -40,7 +40,7 @@ Reach.Register.Model('User', 'sequelize', function (model, Sequelize) {
    * @property blacklist
    * @type     Array
    */
-  model.blacklist = [ 'password', 'linkedin', 'deletedAt' ];
+  model.blacklist = [ 'password', 'deletedAt' ];
 
   /**
    * A list of model methods.
