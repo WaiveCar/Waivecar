@@ -3,6 +3,7 @@
 let Car         = Reach.model('Car');
 let CarStatus   = Reach.model('CarStatus');
 let CarLocation = Reach.model('CarLocation');
+let error       = Reach.ErrorHandler;
 
 /**
  * @class CarHandler
@@ -18,7 +19,7 @@ let CarHandler = module.exports = {};
  */
 CarHandler.hasDriver = function *(id) {
   let count = yield CarStatus.count({ driverId : id });
-  if (count !== 0) {
+  if (count === 0) {
     throw error.parse({
       code    : 'CAR_IN_PROGRESS',
       message : 'You are already assigned to another waivecar'
@@ -78,7 +79,6 @@ CarHandler.setStatus = function *(status, carId, user) {
       break;
     case 'available':
       carStatus          = yield CarStatus.findById(carId);
-      carStatus._actor   = user;
       carStatus.driverId = null;
       carStatus.status   = status;
       yield carStatus.update('carId');
