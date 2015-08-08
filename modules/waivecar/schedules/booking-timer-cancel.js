@@ -1,6 +1,6 @@
 'use strict';
 
-let Booking   = require('../lib/booking');
+let Booking   = require('../lib/booking-handler');
 let scheduler = Reach.service('queue').scheduler;
 let io        = Reach.IO;
 
