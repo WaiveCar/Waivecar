@@ -40,6 +40,6 @@
     "reach-email": "0.0.4",
     "reach-sms": "0.0.4",
     "reach-payments": "0.0.7",
-    "reach-sequelize": "0.0.3"
+    "reach-sequelize": "0.0.4"
   }
 }
