@@ -9,10 +9,9 @@ let BookingDetails = Reach.model('BookingDetails');
 let error          = Reach.ErrorHandler;
 
 /**
- * @class Booking
- * @static
+ * @class BookingHandler
  */
-let Bookings = module.exports = {};
+let BookingHandler = module.exports = {};
 
 /**
  * Creates a new booking with the assigned car and customer.
@@ -21,7 +20,7 @@ let Bookings = module.exports = {};
  * @param  {Object} customer
  * @return {Booking}
  */
-Bookings.create = function *(car, customer) {
+BookingHandler.create = function *(car, customer) {
   let booking = new Booking({
     carId      : car,
     customerId : customer.id,
@@ -34,11 +33,44 @@ Bookings.create = function *(car, customer) {
 
 /**
  * Updates the booking state to pending-arrival.
- * @method setPendingArrival
+ * @method cancel
  * @param  {Int}  id
  * @param  {User} user
  */
-Bookings.setPendingArrival = function *(id, user) {
+BookingHandler.cancel = function *(id, user) {
+  let booking = yield this.getBooking(id, user);
+  let allowed = [ 'new-booking', 'pending-arrival' ];
+
+  if (allowed.indexOf(booking.state) === -1) {
+    throw error.parse({
+      code    : 'BOOKING_INVALID_ACTION',
+      message : 'You cannot cancel a booking which is ' + booking.state.replace('-', ' ')
+    }, 400);
+  }
+
+  yield car.setStatus('available', booking.carId, user);
+
+  // ### Update Booking
+
+  booking._actor = user;
+  booking.state  = 'cancelled';
+  yield booking.update();
+
+  // ### Remove Time Limit
+  // Remove the auto cancel job on the booking
+
+  queue.scheduler.cancel('booking-timer-cancel', 'booking-' + booking.id);
+
+  return booking;
+};
+
+/**
+ * Updates the booking state to pending-arrival.
+ * @method pending
+ * @param  {Int}  id
+ * @param  {User} user
+ */
+BookingHandler.pending = function *(id, user) {
   let booking = yield this.getBooking(id, user);
 
   if (booking.state !== 'payment-authorized') {
@@ -73,45 +105,12 @@ Bookings.setPendingArrival = function *(id, user) {
 };
 
 /**
- * Updates the booking state to pending-arrival.
- * @method setCancelled
- * @param  {Int}  id
- * @param  {User} user
- */
-Bookings.setCancelled = function *(id, user) {
-  let booking = yield this.getBooking(id, user);
-  let allowed = [ 'new-booking', 'pending-arrival' ];
-
-  if (allowed.indexOf(booking.state) === -1) {
-    throw error.parse({
-      code    : 'BOOKING_INVALID_ACTION',
-      message : 'You cannot cancel a booking which is ' + booking.state.replace('-', ' ')
-    }, 400);
-  }
-
-  yield car.setStatus('available', booking.carId, user);
-
-  // ### Update Booking
-
-  booking._actor = user;
-  booking.state  = 'cancelled';
-  yield booking.update();
-
-  // ### Remove Time Limit
-  // Remove the auto cancel job on the booking
-
-  queue.scheduler.cancel('booking-timer-cancel', 'booking-' + booking.id);
-
-  return booking;
-};
-
-/**
  * Updates the booking state to in-progress.
- * @method setInProgress
+ * @method start
  * @param  {Int}  id
  * @param  {User} user
  */
-Bookings.setInProgress = function *(id, user) {
+BookingHandler.start = function *(id, user) {
   let booking = yield this.getBooking(id, user);
   let coords  = yield car.getLocation(booking.carId);
 
@@ -122,7 +121,7 @@ Bookings.setInProgress = function *(id, user) {
     }, 400);
   }
 
-  if (!carCoords) {
+  if (!coords) {
     throw error.parse({
       code    : 'CAR_NO_LOCATION',
       message : 'The location of the booked car is unknown'
@@ -157,11 +156,11 @@ Bookings.setInProgress = function *(id, user) {
 
 /**
  * Updates the booking state to pending-payment.
- * @method setPendingPayment
+ * @method end
  * @param  {Int}  id
  * @param  {User} user
  */
-Bookings.setPendingPayment = function *(id, user) {
+BookingHandler.end = function *(id, user) {
   let booking   = yield this.getBooking(id, user);
   let coords = yield car.getLocation(booking.carId);
 
@@ -216,7 +215,7 @@ Bookings.setPendingPayment = function *(id, user) {
  * @param  {Object} options
  * @return {Array}
  */
-Bookings.getBookings = function *(options) {
+BookingHandler.getBookings = function *(options) {
   options.limit = options.limit || 20;
   return yield Booking.find(query(options, {
     where : {
@@ -239,7 +238,7 @@ Bookings.getBookings = function *(options) {
  * @param  {Object}  user
  * @return {Booking} res
  */
-Bookings.getBooking = function *(id, user) {
+BookingHandler.getBooking = function *(id, user) {
   let booking = yield Booking.findOne({
     where : {
       id         : id,
@@ -262,7 +261,7 @@ Bookings.getBooking = function *(id, user) {
  * @param  {Int} id
  * @return {BookingDetails}
  */
-Bookings.getBookingDetails = function *(id) {
+BookingHandler.getBookingDetails = function *(id) {
   return yield BookingDetails.find({
     where : {
       bookingId : id
