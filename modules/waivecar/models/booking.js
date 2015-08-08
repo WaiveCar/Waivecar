@@ -32,6 +32,7 @@ Reach.Register.Model('Booking', 'sequelize', function (model, Sequelize) {
       }
     },
     paymentId : { type : Sequelize.INTEGER },
+    filesId   : { type : Sequelize.STRING },
     state     : {
       type : Sequelize.ENUM(
         'new-booking',
