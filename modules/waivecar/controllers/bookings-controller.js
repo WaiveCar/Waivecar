@@ -1,9 +1,9 @@
 'use strict';
 
-let Booking = require('../lib/booking');
-let car     = require('../lib/car-handler');
-let queue   = Reach.service('queue');
-let error   = Reach.ErrorHandler;
+let bookingHandler = require('../lib/booking-handler');
+let carHandler     = require('../lib/car-handler');
+let queue          = Reach.service('queue');
+let error          = Reach.ErrorHandler;
 
 Reach.Register.Controller('BookingsController', function (controller) {
 
@@ -16,11 +16,11 @@ Reach.Register.Controller('BookingsController', function (controller) {
     let carId = post.carId;
     let user  = this.auth.user;
 
-    yield car.isAvailable(carId); // Is the car available for booking?
-    yield car.hasDriver(user.id); // Is the user a driver of another car?
+    yield carHandler.isAvailable(carId); // Is the car available for booking?
+    yield carHandler.hasDriver(user.id); // Is the user a driver of another car?
 
-    let booking = yield Booking.create(carId, user);
-    yield car.setStatus('unavailable', carId, user);
+    let booking = yield bookingHandler.create(carId, user);
+    yield carHandler.setStatus('unavailable', carId, user);
 
     return booking;
   };
@@ -29,10 +29,11 @@ Reach.Register.Controller('BookingsController', function (controller) {
    * Fetches a list of bookings.
    *  This need to be ADMIN only
    * @method index
-   * @return {Array} returns an array of Bookings
+   * @param  {Object} options
+   * @return {Array}
    */
-  controller.index = function *(query) {
-    return yield Booking.getBookings(query);
+  controller.index = function *(options) {
+    return yield bookingHandler.getBookings(options);
   };
 
   /**
@@ -42,10 +43,10 @@ Reach.Register.Controller('BookingsController', function (controller) {
    * @return {Booking}
    */
   controller.show = function *(id) {
-    let booking = yield Booking.getBooking(id, this.auth.user);
+    let booking = yield bookingHandler.getBooking(id, this.auth.user);
 
     booking         = booking.toJSON();
-    booking.details = yield Booking.getBookingDetails(id);
+    booking.details = yield bookingHandler.getBookingDetails(id);
 
     return booking;
   };
@@ -58,10 +59,10 @@ Reach.Register.Controller('BookingsController', function (controller) {
   controller.update = function *(id, post) {
     let user = this.auth.user;
     switch (post.state) {
-      case 'cancel'  : return yield Booking.setCancelled(id, user);
-      case 'pending' : return yield Booking.setPendingArrival(id, user);
-      case 'start'   : return yield Booking.setInProgress(id, user);
-      case 'end'     : return yield Booking.setPendingPayment(id, user);
+      case 'cancel'  : return yield bookingHandler.cancel(id, user);
+      case 'pending' : return yield bookingHandler.pending(id, user);
+      case 'start'   : return yield bookingHandler.start(id, user);
+      case 'end'     : return yield bookingHandler.end(id, user);
       default:
         throw error.parse({
           code     : 'BOOKING_BAD_STATE',
