@@ -19,7 +19,7 @@ let CarHandler = module.exports = {};
  */
 CarHandler.hasDriver = function *(id) {
   let count = yield CarStatus.count({ driverId : id });
-  if (count === 0) {
+  if (count !== 0) {
     throw error.parse({
       code    : 'CAR_IN_PROGRESS',
       message : 'You are already assigned to another waivecar'
