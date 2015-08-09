@@ -19,8 +19,8 @@ module.exports = {
   file : {
     fileTypes : [ 'jpg', 'png' ],
     s3 : {
-      key    : 'AKIAJ6QDZ6GTKEUAYN5A',
-      secret : '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',
+      key    : 'AKIAIL22H244BMQLWNDQ',
+      secret : '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',
       bucket : 'waivecar-dev'
     }
   }
