@@ -15,8 +15,32 @@ Reach.Register.ResourceController('Car', 'CarsController', function (controller)
       include : [{
         model : 'CarLocation',
         as    : 'location'
+      }, {
+        model : 'CarStatus',
+        as    : 'status'
       }]
     }));
+  };
+
+  /**
+   * @method show
+   * @param  {String} id
+   * @param  {Object} options
+   * @return {Car}
+   */
+  controller.show = function *(id, options) {
+    return yield Car.findOne({
+      where : {
+        id : id
+      },
+      include : [{
+        model : 'CarLocation',
+        as    : 'location'
+      }, {
+        model : 'CarStatus',
+        as    : 'status'
+      }]
+    });
   };
 
   return controller;

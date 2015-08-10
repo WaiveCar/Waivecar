@@ -33,8 +33,9 @@ Reach.Register.Model('Car', 'sequelize', function (model, Sequelize) {
    * @property relations
    * @type     Array
    */
-  model.relations = ['CarLocation', function (CarLocation) {
+  model.relations = ['CarLocation', 'CarStatus', function (CarLocation, CarStatus) {
     this.hasOne(CarLocation, { as : 'location', foreignKey : 'carId' });
+    this.hasOne(CarStatus,   { as : 'status',   foreignKey : 'carId' });
   }];
 
   /**
@@ -42,7 +43,7 @@ Reach.Register.Model('Car', 'sequelize', function (model, Sequelize) {
    * @property attributes
    * @type     Array
    */
-  model.attributes = [ 'location' ];
+  model.attributes = [ 'location', 'status' ];
 
   return model;
 
