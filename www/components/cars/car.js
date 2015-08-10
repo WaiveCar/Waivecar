@@ -70,10 +70,6 @@ function carChargeStatusDirective(searchEvents, selectedCar) {
 
 function carInformationDirective(searchEvents, selectedCar) {
   function link(scope, element, attrs, ctrl) {
-    scope.$watch(function(){
-      return selectedCar.getSelected();
-    },
-    function(){
       var details = selectedCar.getSelected();
       if (details) {
         scope.make = details.make;
@@ -81,7 +77,6 @@ function carInformationDirective(searchEvents, selectedCar) {
         scope.plate = details.plate;
         scope.image = details.image;
       }
-    })
   }
   return {
     restrict    : 'E',

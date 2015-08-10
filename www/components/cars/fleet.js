@@ -2,20 +2,6 @@
 * Responsible for everything related to a cluster of cars
 */
 
-function SelectedCarService($rootScope) {
-  this.$rootScope;
-}
-
-SelectedCarService.prototype.setSelected = function(selected) {
-  this.selected = selected;
-};
-
-SelectedCarService.prototype.getSelected = function() {
-  return this.selected;
-};
-SelectedCarService.prototype.hasCarSelection = function() {
-  return !!this.selected;
-};
 
 function nearbyFleetDirective(MapsLoader, $q, locationService) {
 
@@ -120,10 +106,6 @@ angular.module('app')
   '$q',
   'locationService',
   nearbyFleetDirective
-])
-.service('selectedCar', [
-  '$rootScope',
-  SelectedCarService
 ])
 .controller('FleetController', [
   '$rootScope',
