@@ -1,9 +1,10 @@
-function WaiveCarStateService(flowControl,$rootScope,$urlRouter,$state,fleetRule){
+function WaiveCarStateService(flowControl,$rootScope,$urlRouter,$state,fleetRule,carInfoRule){
 	this.flowControl=flowControl;
 	this.$rootScope = $rootScope;
 	this.$urlRouter = $urlRouter;
 	this.$state 	= $state;
-	this.fleetRule=fleetRule;
+	this.fleetRule = fleetRule;
+	this.carInfoRule = carInfoRule;
 }
 WaiveCarStateService.prototype.init = function() {
 	var self=this;
@@ -14,6 +15,7 @@ WaiveCarStateService.prototype.init = function() {
 		},
 		{
 			name:'cars-show',
+			rules:self.carInfoRule.getRules()
 		}
 	];
 	this.mainFlow=this.flowControl.setStateFlow('main',states);
@@ -49,9 +51,10 @@ WaiveCarStateService.prototype.init = function() {
 WaiveCarStateService.prototype.go = function(name,params) {
 	this.$state.go(name,params);
 };
+angular.module('WaiveCar.state.rules',['WaiveCar.state.carInfoRules','WaiveCar.state.fleetRules']);
 angular.module('WaiveCar.state',[
 	'FlowControl',
-	'WaiveCar.state.fleetRules'
+	'WaiveCar.state.rules'
 ])
 .service('WaiveCarStateService', [
   'FlowControlService',
@@ -59,5 +62,6 @@ angular.module('WaiveCar.state',[
   '$urlRouter',
   '$state',
   'FleetRulesService',
+  'CarInfoRulesService',
   WaiveCarStateService
 ]);

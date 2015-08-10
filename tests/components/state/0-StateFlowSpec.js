@@ -40,6 +40,7 @@ describe('State Flow',function(){
 
 		angular.module('FlowControl',[]);
 		angular.module('WaiveCar.state.fleetRules',[]);
+		angular.module('WaiveCar.state.carInfoRules',[]);
 		angular.mock.module('WaiveCar.state',function($provide){
 			$provide.value('$state', mockState);
 			$provide.value('FlowControlService', mockFlowService);
@@ -115,7 +116,7 @@ describe('State Flow',function(){
 			this.$rootScope.$digest();
 			expect(mockState.go).not.toHaveBeenCalled();
 		});
-		fit('Redirect to a state if a object is returned',function(){
+		it('Redirect to a state if a object is returned',function(){
 			flags.goTo={
 				params:{'foo':'baz'},
 				name:'bar'
