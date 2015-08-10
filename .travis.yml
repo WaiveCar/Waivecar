@@ -10,6 +10,8 @@ branches:
 cache:
   directories:
     - node_modules
+    - services
+    - modules
 env:
   global:
   - BRANCHING_MODEL=API_APP
