@@ -13,7 +13,7 @@ FileModule.hook('waivecar', {
    * @param  {Object} data
    */
   cid: function *(user, data) {
-    let booking = yield bookingHandler.getBooking(data.id, user);
+    let booking = yield bookingHandler.getBooking(data.booking, user);
     if (!booking.filesId) {
       booking.filesId = shortid.generate();
       yield booking.update();
