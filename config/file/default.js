@@ -7,7 +7,8 @@ module.exports = {
    |
    | Enter your Amazon S3 information in this file.
    |
-   | fileTypes : A list of allowed file types
+   | types : A list of allowed file types
+   | limit : The max file size allowed by the api in kilobytes
    | s3        : Amazon S3
    |   key    : aws_access_key_id
    |   secret : aws_secret_access_key
@@ -17,7 +18,8 @@ module.exports = {
    */
 
   file : {
-    fileTypes : [ 'jpg', 'png' ],
+    types : [ 'jpg', 'png' ],
+    limit : 2048,
     s3 : {
       key    : null,
       secret : null,
