@@ -43,12 +43,7 @@ Reach.Register.Controller('BookingsController', function (controller) {
    * @return {Booking}
    */
   controller.show = function *(id) {
-    let booking = yield bookingHandler.getBooking(id, this.auth.user);
-
-    booking         = booking.toJSON();
-    booking.details = yield bookingHandler.getBookingDetails(id);
-
-    return booking;
+    return yield bookingHandler.getBooking(id, this.auth.user);
   };
 
   /**

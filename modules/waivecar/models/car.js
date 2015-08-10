@@ -35,15 +35,8 @@ Reach.Register.Model('Car', 'sequelize', function (model, Sequelize) {
    */
   model.relations = ['CarLocation', 'CarStatus', function (CarLocation, CarStatus) {
     this.hasOne(CarLocation, { as : 'location', foreignKey : 'carId' });
-    this.hasOne(CarStatus,   { as : 'status',   foreignKey : 'carId' });
+    this.hasOne(CarStatus,   { as : 'booking',  foreignKey : 'carId' });
   }];
-
-  /**
-   * Attributes that can be provided that is not part of the model schema.
-   * @property attributes
-   * @type     Array
-   */
-  model.attributes = [ 'location', 'status' ];
 
   return model;
 

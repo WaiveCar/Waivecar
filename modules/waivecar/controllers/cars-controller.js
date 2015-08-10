@@ -14,10 +14,12 @@ Reach.Register.ResourceController('Car', 'CarsController', function (controller)
     return yield Car.find(query(options, {
       include : [{
         model : 'CarLocation',
-        as    : 'location'
+        as    : 'location',
+        attr  : [ 'latitude', 'longitude' ]
       }, {
         model : 'CarStatus',
-        as    : 'status'
+        as    : 'booking',
+        attr  : [ 'status' ]
       }]
     }));
   };
@@ -29,16 +31,15 @@ Reach.Register.ResourceController('Car', 'CarsController', function (controller)
    * @return {Car}
    */
   controller.show = function *(id, options) {
-    return yield Car.findOne({
-      where : {
-        id : id
-      },
+    return yield Car.findById(id, {
       include : [{
         model : 'CarLocation',
-        as    : 'location'
+        as    : 'location',
+        attr  : [ 'latitude', 'longitude' ]
       }, {
         model : 'CarStatus',
-        as    : 'status'
+        as    : 'booking',
+        attr  : [ 'status' ]
       }]
     });
   };

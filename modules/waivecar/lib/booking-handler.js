@@ -226,7 +226,8 @@ BookingHandler.getBookings = function *(options) {
     },
     include : [{
       model : 'BookingDetails',
-      as    : 'details'
+      as    : 'details',
+      attr  : [ 'type', 'time', 'latitude', 'longitude', 'odometer', 'charge' ]
     }]
   }));
 };
@@ -243,7 +244,12 @@ BookingHandler.getBooking = function *(id, user) {
     where : {
       id         : id,
       customerId : user.id
-    }
+    },
+    include : [{
+      model : 'BookingDetails',
+      as    : 'details',
+      attr  : [ 'type', 'time', 'latitude', 'longitude', 'odometer', 'charge' ]
+    }]
   });
   if (!booking) {
     throw error.parse({
@@ -253,18 +259,4 @@ BookingHandler.getBooking = function *(id, user) {
   }
   booking._actor = user;
   return booking;
-};
-
-/**
- * Returns a list of details for the given booking.
- * @method getBookingDetails
- * @param  {Int} id
- * @return {BookingDetails}
- */
-BookingHandler.getBookingDetails = function *(id) {
-  return yield BookingDetails.find({
-    where : {
-      bookingId : id
-    }
-  });
 };

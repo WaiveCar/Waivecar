@@ -56,13 +56,6 @@ Reach.Register.Model('Booking', 'sequelize', function (model, Sequelize) {
     this.hasMany(BookingDetails, { as : 'details', foreignKey : 'bookingId' });
   }];
 
-  /**
-   * Attributes that can be provided that is not part of the model schema.
-   * @property attributes
-   * @type     Array
-   */
-  model.attributes = [ 'details' ];
-
   return model;
 
 });

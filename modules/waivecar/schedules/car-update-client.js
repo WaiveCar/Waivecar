@@ -25,7 +25,12 @@ scheduler.process('car-update-client', function *(job) {
   let cars = yield Car.find({
     include : [{
       model : 'CarLocation',
-      as    : 'location'
+      as    : 'location',
+      attr  : [ 'latitude', 'longitude' ]
+    }, {
+      model : 'CarStatus',
+      as    : 'booking',
+      attr  : [ 'status' ]
     }]
   });
   if (!cars) {
