@@ -1,4 +1,4 @@
-describe('Car info state rules',function(){
+fdescribe('Car info state rules',function(){
 	var flags={};
 	var $q;
 	var mockDataService={

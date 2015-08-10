@@ -8,7 +8,8 @@ CarInfoRulesService.prototype.getRules = function() {
 	var self=this;
 	return {
 		arrive:function(){
-			var carId = self.DataService.active.cars.id;
+
+			var carId =10;//self.DataService.active.cars.id;
 			return self.CarAvailabilityService.isCarAvailable(carId)
 				.then(function(isCarAvailable){
 					if(isCarAvailable){

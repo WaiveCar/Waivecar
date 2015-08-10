@@ -2,7 +2,7 @@
 * Handles maily functions related to a single car
 */
 // Cars - Show
-function CarController($state, $q, selectedCar, DataService) {
+function CarController($state, $q, selectedCar,WaiveCarStateService. DataService) {
 
   var self          = this;
   self.$state        = $state;
@@ -10,9 +10,11 @@ function CarController($state, $q, selectedCar, DataService) {
   self.DataService  = DataService;
   self.UserResource = DataService.resources.users;
   self.car          = DataService.active;
+  self.WaiveCarStateService = WaiveCarStateService;
 
   self.DataService.activate('cars', $state.params.id, function(err, activatedCar) {
     if (err) console.log(err);
+    
   });
 
   this.selectedCar = selectedCar;
@@ -29,8 +31,7 @@ CarController.prototype.chooseCar = function() {
   var self         = this;
   var selectedData = this.selectedCar.getSelected();
   var carId        = selectedData.id;
-
-  self.$state.go('users-new', {
+  this.WaiveCarStateService.next({
     redirectUrl    :'bookings-new',
     redirectParams : {
       carId     : self.DataService.active.cars.id,
@@ -94,6 +95,7 @@ angular.module('app')
   '$state',
   '$q',
   'selectedCar',
+  'WaiveCarStateService',
   'DataService',
   CarController
 ])

@@ -16,6 +16,9 @@ WaiveCarStateService.prototype.init = function() {
 		{
 			name:'cars-show',
 			rules:self.carInfoRule.getRules()
+		},
+		{
+			name:'users-new'
 		}
 	];
 	this.mainFlow=this.flowControl.setStateFlow('main',states);

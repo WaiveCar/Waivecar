@@ -7,6 +7,7 @@ function nearbyFleetDirective(MapsLoader, $q, locationService) {
 
   function addMarkerClick(marker, info, onClickFn) {
     marker.on('mousedown', function(e) {
+
       onClickFn({ marker: marker, info: info });
     });
   }
@@ -79,9 +80,10 @@ function nearbyFleetDirective(MapsLoader, $q, locationService) {
   }
 }
 
-function FleetController($rootScope, $scope, stateService, selectedCar, searchEvents, mapsEvents, mockLocation) {
+function FleetController($rootScope, $scope, stateService, selectedCar, searchEvents, mapsEvents, DataService,mockLocation) {
   var self          = this;
   this.stateService       = stateService;
+  this.DataService = DataService;
   this.$rootScope   = $rootScope;
   this.$scope       = $scope;
   this.selectedCar  = selectedCar;
@@ -93,11 +95,17 @@ function FleetController($rootScope, $scope, stateService, selectedCar, searchEv
 FleetController.prototype.showCarDetails = function(marker, data) {
   var self = this;
   var latLng = {latitude: data.latitude, longitude: data.longitude};
-  this.selectedCar.setSelected(data);
-  this.$rootScope.$broadcast(this.mapsEvents.destinyOnRouteChanged, latLng);
-  this.$rootScope.$broadcast(this.searchEvents.vehicleSelected, data);
-  console.log("ON SHOW CAR DETAILS!");
-  this.stateService.go('cars-show',{ id: data.id });
+  this.DataService.activate('cars', data.id, function(err, activatedCar) {
+    if (err){
+      console.log(err);
+      return;
+    } 
+ 
+    self.selectedCar.setSelected(data);
+    self.$rootScope.$broadcast(self.mapsEvents.destinyOnRouteChanged, latLng);
+    self.$rootScope.$broadcast(self.searchEvents.vehicleSelected, data);
+    self.stateService.go('cars-show',{ id: data.id });
+  });
 };
 
 angular.module('app')
@@ -114,6 +122,7 @@ angular.module('app')
   'selectedCar',
   'searchEvents',
   'mapsEvents',
+  'DataService',
   'mockCityLocationService',
   FleetController
 ]);

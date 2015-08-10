@@ -152,7 +152,7 @@ describe('State Flow',function(){
 	});
 	describe('Booking',function(){
 		it('The user can\'t book if he\'s  not logged in');
-		it('The user can\'t book if he\'s paying methos is not active');
+		it('The user can\'t book if he\'s paying method is not active');
 		it('The user can\'t book if the car is unavailable');
 		describe('Connect to car',function(){
 			it('Can only connect if the user owns the booking relative to this car');
