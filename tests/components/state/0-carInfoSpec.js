@@ -1,4 +1,4 @@
-fdescribe('Car info state rules',function(){
+describe('Car info state rules',function(){
 	var flags={};
 	var $q;
 	var mockDataService={
@@ -20,7 +20,6 @@ fdescribe('Car info state rules',function(){
 		angular.mock.module('WaiveCar.state.carInfoRules',function($provide){
 			$provide.value('DataService',mockDataService);
 			$provide.value('CarAvailabilityService',mockCarAvailabilityService);
-
 		});
 		angular.mock.inject(function($rootScope,CarInfoRulesService,_$q_){
 			self.service=CarInfoRulesService;
@@ -29,8 +28,6 @@ fdescribe('Car info state rules',function(){
 			$q = _$q_;
 		});
 	});
-
-
 	describe('Arrival',function(){
 		it('Shows if the car is available',function(){
 			flags.carAvailable =true;
@@ -53,9 +50,5 @@ fdescribe('Car info state rules',function(){
 				);
 			});
 		});
-	});
-	describe('Leaving',function(){
-		it('If the user is not logged he goes to signIn/signUp');
-		it('If the user is logged it goes to booking');
 	});
 });

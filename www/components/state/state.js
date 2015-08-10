@@ -27,8 +27,13 @@ WaiveCarStateService.prototype.init = function() {
 				event.preventDefault();
 				self.mainFlow.goTo(toState.name).then(
 					function(redirectState){
-						self.accept = toState.name;
-						self.$state.go(toState,toParams);
+						if(redirectState===true){
+							self.accept = toState.name;
+							self.$state.go(toState,toParams);
+						}
+						else{
+							self.$state.go(redirectState.name,redirectState.params);
+						}
 					}
 				)
 				.catch(function(error){

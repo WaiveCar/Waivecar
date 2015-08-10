@@ -14,7 +14,10 @@ describe('State Flow',function(){
 	var mockFlow={
 		goTo:function(flowName,stateName){
 			if(flags.goTo===true){
-				return $q.resolve(stateName);
+				return $q.resolve(true);
+			}
+			else if(typeof flags.goTo !='undefined' && !!flags.goTo){
+				return $q.resolve(flags.goTo);
 			}
 			return $q.reject(new Error());
 		},
@@ -58,7 +61,7 @@ describe('State Flow',function(){
 		var lastArgs=this.$rootScope.$on.calls.mostRecent().args;
 		expect(lastArgs[0]).toEqual('$stateChangeStart');
  	});
- 	describe('State controle',function(){
+ 	describe('State control',function(){
  		var eventBeingBroadcast;
  		var beforeEventSpy=function(event){
  			eventBeingBroadcast=event;
@@ -111,7 +114,17 @@ describe('State Flow',function(){
 			this.$rootScope.$emit('$stateChangeStart', {name:'fleet'});
 			this.$rootScope.$digest();
 			expect(mockState.go).not.toHaveBeenCalled();
-
+		});
+		fit('Redirect to a state if a object is returned',function(){
+			flags.goTo={
+				params:{'foo':'baz'},
+				name:'bar'
+			};
+			this.$rootScope.$emit('$stateChangeStart', {name:'fleet'});
+			this.$rootScope.$digest();
+			var mostRecent= mockState.go.calls.mostRecent().args;
+			expect(mostRecent).toEqual([flags.goTo.name,flags.goTo.params]);
+			resetCalls(mockState.go);
 		});
  	});
 	describe('Fleet',function(){
