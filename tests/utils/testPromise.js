@@ -2,7 +2,9 @@ function addPromiseTests(testObj){
 	testObj.testPromiseSuccess=function(promise,testFn){
 		promise.then(function(){
 			var args = Array.prototype.slice.call(arguments);
-			testFn.apply(testObj, args);
+			if (typeof testFn === "function") {
+				testFn.apply(testObj, args);
+			}
 		})
 		.catch(function(){
 			fail();
@@ -18,7 +20,7 @@ function addPromiseTests(testObj){
 			if (typeof expectedErrorOrFunction === "function") {
 				expectedErrorOrFunction.apply(testObj, args);
 			}
-			else{
+			else if(expectedErrorOrFunction){
 				expect(error).toEqual(expectedErrorOrFunction);
 			}
 		})

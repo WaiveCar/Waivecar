@@ -36,7 +36,7 @@ describe('State Flow',function(){
 		var self=this;
 
 		angular.module('FlowControl',[]);
-		angular.module('WaiveCar.state.rules',[]);
+		angular.module('WaiveCar.state.fleetRules',[]);
 		angular.mock.module('WaiveCar.state',function($provide){
 			$provide.value('$state', mockState);
 			$provide.value('FlowControlService', mockFlowService);
@@ -91,7 +91,6 @@ describe('State Flow',function(){
 			this.$rootScope.$emit('$stateChangeStart', {name:'fleet'});
 			this.$rootScope.$digest();
 			expect(mockState.go).toHaveBeenCalled();
-			//For some reason sync reemits $stateChangeStart right now
 			resetCalls(eventBeingBroadcast.preventDefault);
 			resetCalls(mockState.go);
 			this.$rootScope.$emit('$stateChangeStart', {name:'fleet'});
@@ -116,16 +115,10 @@ describe('State Flow',function(){
 		});
  	});
 	describe('Fleet',function(){
-	/*	it('Doesn\'t show the fleet if we don\'t have the location');
-		it('Shoes the fleet if we have the location');
-		it('If everything is ok goes to car info after fleet');*/
+	
 	});
 	describe('Car info',function(){
-		it('Shows if the car is available');
-		it('Do not show if the car is booked');
-		it('Do not show if the car is not available');
-		it('If the user is not logged he goes to signIn/signUp');
-		it('If the user is logged it goes to booking');
+
 	});
 	describe('Sign in',function(){
 		it('The user can sign in coming from any screen');

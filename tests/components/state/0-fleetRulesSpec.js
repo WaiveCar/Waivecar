@@ -19,7 +19,7 @@ describe('Fleet state rules',function(){
 		var self=this;
 		addPromiseTests(this);
 		angular.module('Maps',[]);
-		angular.mock.module('WaiveCar.state.rules',function($provide){
+		angular.mock.module('WaiveCar.state.fleetRules',function($provide){
 			$provide.value('locationService',mockLocationService);
 			$provide.value('selectedCar',mockSelectedService);
 		});

@@ -1,4 +1,4 @@
-fdescribe('Flow control',function(){
+describe('Flow control',function(){
 	var $q;
 	var flowName = 'testFlow';
 	beforeEach(function(){

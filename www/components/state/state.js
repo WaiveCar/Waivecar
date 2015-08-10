@@ -46,7 +46,7 @@ WaiveCarStateService.prototype.go = function(name,params) {
 };
 angular.module('WaiveCar.state',[
 	'FlowControl',
-	'WaiveCar.state.rules'
+	'WaiveCar.state.fleetRules'
 ])
 .service('WaiveCarStateService', [
   'FlowControlService',

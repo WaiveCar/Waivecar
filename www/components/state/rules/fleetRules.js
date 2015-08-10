@@ -15,7 +15,7 @@ FleetRulesService.prototype.getRules = function() {
 		}
 	}
 };
-angular.module('WaiveCar.state.rules',['Maps'])
+angular.module('WaiveCar.state.fleetRules',['Maps'])
 .service('FleetRulesService', [
 	'locationService',
 	'selectedCar',
