@@ -1,10 +1,12 @@
 'use strict';
 
-let scheduler     = Reach.service('queue').scheduler;
-let Car           = Reach.model('Car');
-let CarDiagnostic = Reach.model('CarDiagnostic');
-let log           = Reach.Log;
-
+let scheduler       = Reach.service('queue').scheduler;
+let Car             = Reach.model('Car');
+let CarDiagnostic   = Reach.model('CarDiagnostic');
+let log             = Reach.Log;
+let maxRange        = 37;
+let maxPercent      = 100;
+let minPercent      = 30;
 let diagnosticItems = [
   'evBatteryLevel', // %
   'evChargeState', // 'Complete'
@@ -67,11 +69,11 @@ scheduler.process('car-reconcile-diagnostics', function *(job) {
           type    : diagnosticItems[d],
           status  : 'active',
           message : 'NA',
-          value   : '100',
+          value   : maxPercent.toString(),
           unit    : '%'
         });
         if ([ 'evRange', 'totalRange' ].indexOf(diagnosticItems[d]) > -1) {
-          newDiagnostic.value = '37';
+          newDiagnostic.value = maxRange.toString();
           newDiagnostic.unit = 'Mi';
         } else if (diagnosticItems[d] === 'evChargeState') {
           newDiagnostic.value = 'Complete';
@@ -88,14 +90,15 @@ scheduler.process('car-reconcile-diagnostics', function *(job) {
       let totalRange     = new CarDiagnostic(car.diagnostics.find(d => d.type === 'totalRange'));
       let currentValue   = parseInt(evBatteryLevel.value);
 
-      if (currentValue > 30) {
-        currentValue = Math.random() * (currentValue - 30) + 30;
+      if (currentValue >= minPercent) {
+        let nextMin = currentValue > 35 ? currentValue - 5 : minPercent;
+        currentValue = Math.round((Math.random() * (currentValue - nextMin) + nextMin) * 100) / 100;
         evChargeState.value = 'Not Charged';
-        evRange.value = (37 * currentValue / 100).toString();
+        evRange.value = Math.round(((maxRange * currentValue / 100) * 100) / 100).toString();
       } else {
-        currentValue = 100;
+        currentValue = maxPercent.toString();
         evChargeState.value = 'Complete';
-        evRange.value = '37';
+        evRange.value = maxRange.toString();
       }
 
       evBatteryLevel.value = currentValue.toString();
