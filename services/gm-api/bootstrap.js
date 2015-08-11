@@ -13,6 +13,12 @@ module.exports = function *() {
       solution : 'Make sure you set up your config in the [./config/' + Reach.ENV + '] folder'
     });
   }
+
+  // ### Connection
+  // Check if the connection to GM-API is good
+
+  log.master('info')('Checking gm-api connection state');
+
   let service = new VehicleService();
   let result  = yield service.connect();
   if ('string' !== typeof result) {
