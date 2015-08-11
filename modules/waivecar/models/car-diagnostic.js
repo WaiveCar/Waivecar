@@ -1,7 +1,7 @@
 'use strict';
 
-Reach.Register.Model('CarDiagnostics', 'sequelize', function (model, Sequelize) {
-  
+Reach.Register.Model('CarDiagnostic', 'sequelize', function (model, Sequelize) {
+
   /**
    * The identity of the table created in your database.
    * @property table
@@ -16,9 +16,9 @@ Reach.Register.Model('CarDiagnostics', 'sequelize', function (model, Sequelize) 
    */
   model.schema = {
     carId : {
-      type         : Sequelize.STRING(28),
-      primaryKey   : true,
-      references   : {
+      type       : Sequelize.STRING(28),
+      allowNull  : false,
+      references : {
         model : 'cars',
         key   : 'id'
       }
