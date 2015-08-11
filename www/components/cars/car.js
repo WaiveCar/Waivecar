@@ -2,7 +2,7 @@
 * Handles maily functions related to a single car
 */
 // Cars - Show
-function CarController($state, $q, selectedCar,WaiveCarStateService. DataService) {
+function CarController($state, $q, selectedCar,WaiveCarStateService,DataService) {
 
   var self          = this;
   self.$state        = $state;
@@ -49,17 +49,21 @@ function carChargeStatusDirective(searchEvents, selectedCar) {
     if (!selectedData) {
       return;
     }
-    var details = selectedData.status;
+    var diagnosticsData={}
+    selectedData.diagnostics.forEach(function(d){
+      diagnosticsData[d.type]=d.value;
+    });
 
-    scope.chargeLevel = details.charge.current + '%';
-    if (details.charge.charging) {
-      scope.chargeState = 'Parked at charging station';
-      scope.chargeFull  = details.charge.timeUntilFull + ' minutes';
-    } else {
+    // var details = selectedData.status;
+
+    scope.chargeLevel = diagnosticsData.evBatteryLevel + '%';
+    if (diagnosticsData.evChargeState==="Not Charged") {
       scope.chargeState = 'Not charging';
+      
+    } else {
+      scope.chargeState = 'Parked at charging station';
     }
-
-    scope.chargeReach = details.charge.reach+' miles ';
+    scope.chargeReach = diagnosticsData.totalRange+' miles ';
   }
 
   return {

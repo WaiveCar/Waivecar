@@ -91,23 +91,8 @@ function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, User
       if (existing) {
         _.merge(existing, model);
       } else {
-        // VERY TEMP CODE
-        if (modelName === 'cars') {
-          model.image  = '/components/ads/templates/images/ad1.png';
-          model.plate  = 'AUD 568';
-          model.status = {
-            charge: {
-              current: 69,
-              timeUntilFull: 20,
-              reach: 10,
-              charging: true
-            }
-          };
-        }
-        // END TEMP CODE
         service.all[modelName].push(model);
       }
-
       return model;
     },
 
