@@ -1,7 +1,7 @@
 'use strict';
 
 Reach.Register.Model('CarStatus', 'sequelize', function (model, Sequelize) {
-  
+
   /**
    * The identity of the table created in your database.
    * @property table
@@ -15,8 +15,8 @@ Reach.Register.Model('CarStatus', 'sequelize', function (model, Sequelize) {
    * @type     Object
    */
   model.schema = {
-    carId : { 
-      type       : Sequelize.STRING(28), 
+    carId : {
+      type       : Sequelize.STRING(28),
       primaryKey : true,
       references : {
         model : 'cars',
@@ -24,14 +24,14 @@ Reach.Register.Model('CarStatus', 'sequelize', function (model, Sequelize) {
       }
     },
     driverId : {
-      type         : Sequelize.INTEGER,
-      references   : {
+      type       : Sequelize.INTEGER,
+      references : {
         model : 'users',
         key   : 'id'
       }
     },
-    status : { 
-      type         : Sequelize.ENUM('available', 'unavailable'), 
+    status : {
+      type         : Sequelize.ENUM('available', 'unavailable'),
       defaultValue : 'available'
     }
   };
