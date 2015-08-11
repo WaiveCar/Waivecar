@@ -6,7 +6,7 @@ let CarDiagnostic   = Reach.model('CarDiagnostic');
 let log             = Reach.Log;
 let maxRange        = 37;
 let maxPercent      = 100;
-let minPercent      = 30;
+let minPercent      = 10;
 let diagnosticItems = [
   'evBatteryLevel', // %
   'evChargeState', // 'Complete'
@@ -58,7 +58,7 @@ scheduler.process('car-reconcile-diagnostics', function *(job) {
   if (!cars) {
     return;
   }
-
+  log.debug('Reconciling Diagnostics for ' + cars.length + ' Cars');
   for (let i = 0, len = cars.length; i < len; i++) {
     let car = cars[i];
 
@@ -72,6 +72,7 @@ scheduler.process('car-reconcile-diagnostics', function *(job) {
           value   : maxPercent.toString(),
           unit    : '%'
         });
+
         if ([ 'evRange', 'totalRange' ].indexOf(diagnosticItems[d]) > -1) {
           newDiagnostic.value = maxRange.toString();
           newDiagnostic.unit = 'Mi';
@@ -90,8 +91,8 @@ scheduler.process('car-reconcile-diagnostics', function *(job) {
       let totalRange     = new CarDiagnostic(car.diagnostics.find(d => d.type === 'totalRange'));
       let currentValue   = parseInt(evBatteryLevel.value);
 
-      if (currentValue >= minPercent) {
-        let nextMin = currentValue > 35 ? currentValue - 5 : minPercent;
+      if (currentValue > minPercent) {
+        let nextMin = currentValue > (minPercent + 5) ? currentValue - 5 : minPercent;
         currentValue = Math.round((Math.random() * (currentValue - nextMin) + nextMin) * 100) / 100;
         evChargeState.value = 'Not Charged';
         evRange.value = Math.round(((maxRange * currentValue / 100) * 100) / 100).toString();
