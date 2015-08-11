@@ -159,7 +159,7 @@
     "no-trailing-spaces"        : 2,
     "no-underscore-dangle": 0,      // disallow dangling underscores in identifiers
     "no-wrap-func": 0,              // disallow wrapping of non-IIFE statements in parens
-    "padded-blocks"             : [ 2, "never" ],
+    "padded-blocks"             : 0,
     "quote-props"               : [ 2, "as-needed" ],
     "quotes"                    : [ 2, "single", "avoid-escape" ],
     "semi"                      : [ 2, "always" ],
