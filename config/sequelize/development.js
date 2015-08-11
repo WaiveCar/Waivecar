@@ -11,7 +11,7 @@ module.exports = {
    | password : The password to use for the connection
    | dialect  : mysql | mariadb | sqlite | postgres | mssql
    | pool     : Connection pool settings
-   |   max  : Max number of active pools 
+   |   max  : Max number of active pools
    |   min  : Min number of pools
    |   idle : Idle setting
    | debug  : Log sequelize output to the terminal
@@ -23,7 +23,8 @@ module.exports = {
   sequelize : {
     database : 'waivecar_development',
     username : 'waivecar',
-    password : 'eNwlGGl6g6V0w0qX3vx0S5GKbGvTtR3X'
+    password : 'eNwlGGl6g6V0w0qX3vx0S5GKbGvTtR3X',
+    force    : true
   }
 
 };
