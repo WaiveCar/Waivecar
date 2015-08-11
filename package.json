@@ -22,7 +22,7 @@
     "koa-cors": "0.0.16",
     "lodash": "3.10.0",
     "moment": "2.10.2",
-    "reach-api": "0.3.11",
+    "reach-api": "0.3.12",
     "shortid" : "2.2.2"
   },
   "devDependencies": {
@@ -35,7 +35,7 @@
   "reach": {
     "reach-queue": "0.0.7",
     "reach-auth": "0.0.16",
-    "reach-file": "0.1.6",
+    "reach-file": "0.1.7",
     "reach-log": "0.0.11",
     "reach-user": "0.1.5",
     "reach-email": "0.0.4",
