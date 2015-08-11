@@ -17,7 +17,7 @@ module.exports = function *() {
   // ### Connection
   // Check if the connection to GM-API is good
 
-  log.master('info')('Checking gm-api connection state');
+  log.debug('Checking gm-api connection state');
 
   let service = new VehicleService();
   let result  = yield service.connect();
