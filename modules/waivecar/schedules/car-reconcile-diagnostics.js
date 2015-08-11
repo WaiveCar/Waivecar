@@ -6,8 +6,8 @@ let CarDiagnostic = Reach.model('CarDiagnostic');
 let log           = Reach.Log;
 
 let diagnosticItems = [
-  'evBatteryLevel',
-  'evChargeState',
+  'evBatteryLevel', // %
+  'evChargeState', // 'Complete'
   // 'priorityChargeStatus',
   // 'estChgEnd120V',
   // 'estChgEnd240V',
@@ -16,7 +16,7 @@ let diagnosticItems = [
   // 'fuelCapacity',
   // 'fuelLevel',
   // 'fuelLevelInGal',
-  'odometer',
+  // 'odometer',
   // 'oilLife',
   // 'tirePressureLf',
   // 'tirePressureLr',
@@ -67,25 +67,44 @@ scheduler.process('car-reconcile-diagnostics', function *(job) {
           type    : diagnosticItems[d],
           status  : 'active',
           message : 'NA',
-          value   : '10',
-          unit    : '90'
+          value   : '100',
+          unit    : '%'
         });
+        if ([ 'evRange', 'totalRange' ].indexOf(diagnosticItems[d]) > -1) {
+          newDiagnostic.value = '37';
+          newDiagnostic.unit = 'Mi';
+        } else if (diagnosticItems[d] === 'evChargeState') {
+          newDiagnostic.value = 'Complete';
+          newDiagnostic.unit = 'Text';
+        }
+
         yield newDiagnostic.upsert();
       }
     } else {
-      for (let d = 0, len = car.diagnostics.length; d < len; d++) {
-        let previousDiagnostic = car.diagnostics[d];
-        let diagnostic = new CarDiagnostic({
-          id      : previousDiagnostic.id,
-          carId   : car.id,
-          type    : previousDiagnostic.type,
-          status  : previousDiagnostic.status,
-          message : previousDiagnostic.message,
-          value   : previousDiagnostic.value,
-          unit    : (parseInt(previousDiagnostic.unit) + 1).toString()
-        });
-        yield diagnostic.upsert();
+
+      let evBatteryLevel = new CarDiagnostic(car.diagnostics.find(d => d.type === 'evBatteryLevel'));
+      let evChargeState  = new CarDiagnostic(car.diagnostics.find(d => d.type === 'evChargeState'));
+      let evRange        = new CarDiagnostic(car.diagnostics.find(d => d.type === 'evRange'));
+      let totalRange     = new CarDiagnostic(car.diagnostics.find(d => d.type === 'totalRange'));
+      let currentValue   = parseInt(evBatteryLevel.value);
+
+      if (currentValue > 30) {
+        currentValue = Math.random() * (currentValue - 30) + 30;
+        evChargeState.value = 'Not Charged';
+        evRange.value = (37 * currentValue / 100).toString();
+      } else {
+        currentValue = 100;
+        evChargeState.value = 'Complete';
+        evRange.value = '37';
       }
+
+      evBatteryLevel.value = currentValue.toString();
+      totalRange.value = evRange.value;
+
+      yield evBatteryLevel.upsert();
+      yield evChargeState.upsert();
+      yield evRange.upsert();
+      yield totalRange.upsert();
     }
   }
 });
