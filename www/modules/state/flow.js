@@ -70,6 +70,7 @@ Flow.prototype._goToByIndex = function(desiredIndex,params) {
 				redirectState.params= redirectState.params || {};
 				redirectState.isRedirect = true;
 				var redirectIndex = self.getStateIndexByName(redirectState.name);
+
 				self.setStateIndex(redirectIndex,redirectState.params,desiredIndex,params || {});
 				return redirectState;
 			}

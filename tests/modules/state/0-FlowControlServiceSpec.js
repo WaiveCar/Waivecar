@@ -93,18 +93,20 @@ fdescribe('Flow control',function(){
 	});
 	fdescribe('State redirection',function(){
 		var expectedParams = {'bar':'baz'};
-		var expectedName = 'foo';
+		var expectedName = 'toBeRedirected';
 		var rule=function(){
 			return {
 				name:expectedName,
 				params:expectedParams
 			}
 		};
-		function testStateRedirection(promise){
+		function testStateRedirection(promise,flow){
 			promise.then(function(redirectData){
 				expect(redirectData.name).toEqual(expectedName);
 				expect(redirectData.params).toEqual(expectedParams);
 				expect(redirectData.isRedirect).toEqual(true);
+				expect(flow.getCurrentStateName()).toEqual(expectedName);
+				expect(flow.getCurrentStateParams()).toEqual(expectedParams);
 			})
 			.catch(function(){
 				fail();
@@ -119,13 +121,14 @@ fdescribe('Flow control',function(){
 						leave:rule
 					}
 				},
-				{name:'toTest'}
+				{name:'toTest'},
+				{name:expectedName}
 			];
 			var flow = this.service.setStateFlow(flowName,states);
 			var p=flow.goTo('first').then(function(){
 				return flow.next();
 			});
-			testStateRedirection(p);
+			testStateRedirection(p,flow);
 		});
 		it('Can redirect to a state using next on the arrive of the next',function(){
 			var states=[
@@ -137,13 +140,15 @@ fdescribe('Flow control',function(){
 					rules:{
 						arrive:rule
 					}
-				}
+				},
+				{name:expectedName}
+
 			];
 			var flow = this.service.setStateFlow(flowName,states);
 			var p=flow.goTo('first').then(function(){
 				return flow.next();
 			});
-			testStateRedirection(p);
+			testStateRedirection(p,flow);
 		});
 
 		it('Can redirect to a state using previous on the  arrive of the previous state',function(){
@@ -156,13 +161,15 @@ fdescribe('Flow control',function(){
 				},
 				{
 					name:'second',
-				}
+				},
+				{name:expectedName}
+
 			];
 			var flow = this.service.setStateFlow(flowName,states);
 			var p=flow.goTo('second').then(function(){
 				return flow.previous();
 			});
-			testStateRedirection(p);
+			testStateRedirection(p,flow);
 		});
 		it('Can redirect to a state using previous on the leave of the current state',function(){
 			var states=[
@@ -174,13 +181,15 @@ fdescribe('Flow control',function(){
 					rules:{
 						leave:rule
 					}
-				}
+				},
+				{name:expectedName}
+
 			];
 			var flow = this.service.setStateFlow(flowName,states);
 			var p=flow.goTo('second').then(function(){
 				return flow.previous();
 			});
-			testStateRedirection(p);
+			testStateRedirection(p,flow);
 		});
 
 		it('Can redirect to a state using goTo on the leave of the current state',function(){
@@ -195,13 +204,15 @@ fdescribe('Flow control',function(){
 				{
 					name:'toTest',
 					
-				}
+				},
+				{name:expectedName}
+
 			];
 			var flow = this.service.setStateFlow(flowName,states);
 			var p=flow.goTo('first').then(function(){
 				return flow.goTo('toTest');
 			});
-			testStateRedirection(p);
+			testStateRedirection(p,flow);
 		});
 		it('Can redirect to a state using goTo on the arrive of the desired state',function(){
 			var states=[
@@ -214,14 +225,15 @@ fdescribe('Flow control',function(){
 					rules:{
 						arrive:rule
 					}
-					
-				}
+				},
+				{name:expectedName}
+
 			];
 			var flow = this.service.setStateFlow(flowName,states);
 			var p=flow.goTo('first').then(function(){
 				return flow.goTo('toTest');
 			});
-			testStateRedirection(p);
+			testStateRedirection(p,flow);
 		});
 
 	});
