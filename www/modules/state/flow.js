@@ -61,7 +61,19 @@ Flow.prototype._goToByIndex = function(desiredIndex,params) {
 	var self=this;
 	var stateName= this.states[desiredIndex].name;
 	return this._canLeaveStateIndex(this.previousStateParams)
-	.then(function(){
+	.then(function(redirectState){
+		if(redirectState!==true){
+			if(typeof redirectState ==='string'){
+				redirectState={name:redirectState,params:{}};
+			}
+			if(typeof redirectState==='object' && !!redirectState.name){
+				redirectState.params= redirectState.params || {};
+				redirectState.isRedirect = true;
+				var redirectIndex = self.getStateIndexByName(redirectState.name);
+				self.setStateIndex(redirectIndex,redirectState.params,desiredIndex,params || {});
+				return redirectState;
+			}
+		}
 		return self._canGoToStateIndex(desiredIndex,params)
 		.then(function(redirectState){
 			if(redirectState!==true){
@@ -69,9 +81,10 @@ Flow.prototype._goToByIndex = function(desiredIndex,params) {
 				if(typeof redirectState ==='string'){
 					redirectState={name:redirectState,params:{}};
 				}
+				redirectState.params= redirectState.params || {};
 				var redirectIndex = self.getStateIndexByName(redirectState.name);
-				var redirectParams=redirectState.params || {};
-				self.setStateIndex(redirectIndex,{},desiredIndex,params || {});
+				redirectState.isRedirect=true;
+				self.setStateIndex(redirectIndex,redirectState.params,desiredIndex,params || {});
 				return redirectState;
 			}
 			self.setStateIndex(desiredIndex,params);
@@ -111,8 +124,8 @@ Flow.prototype._canLeaveStateIndex = function(params) {
 	}
 	var self=this;
 	return this.$q.when(stateRules.leave(params)).then(function(isAccepted){
-		if(isAccepted){
-			return true;
+		if(isAccepted!==false){
+			return isAccepted;
 		}
 		return self.$q.reject(isAccepted);
 	});
@@ -128,7 +141,7 @@ Flow.prototype._canGoToStateIndex = function(desiredStateIndex,params) {
 		return this.$q.when(true);
 	}
 	return this.$q.when(stateRules.arrive(currentStateName,params)).then(function(isAccepted){
-		if(isAccepted===true || typeof isAccepted ==='string'){
+		if(isAccepted!==false){
 			return isAccepted;
 		}
 		return self.$q.reject(isAccepted);

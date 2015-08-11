@@ -17,8 +17,6 @@ CarInfoRulesService.prototype.getRules = function() {
 					}
 					return {params:{id:carId},name:'cars/notAvailable'}
 				})
-		},
-		leave:function(){
 		}
 	}
 };

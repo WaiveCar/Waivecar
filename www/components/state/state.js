@@ -18,6 +18,9 @@ WaiveCarStateService.prototype.init = function() {
 			rules:self.carInfoRule.getRules()
 		},
 		{
+			name:'bookings-new'
+		},
+		{
 			name:'users-new'
 		}
 	];
@@ -50,6 +53,14 @@ WaiveCarStateService.prototype.init = function() {
 		
 		}
 	);
+};
+WaiveCarStateService.prototype.previous = function(params) {
+	
+};
+WaiveCarStateService.prototype.next = function(params) {
+	this.mainFlow.next(function(redirectState){
+
+	});
 };
 WaiveCarStateService.prototype.go = function(name,params) {
 	this.$state.go(name,params);

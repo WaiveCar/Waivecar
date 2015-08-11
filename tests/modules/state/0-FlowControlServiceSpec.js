@@ -1,13 +1,15 @@
-describe('Flow control',function(){
+fdescribe('Flow control',function(){
 	var $q;
+	var $rootScope;
 	var flowName = 'testFlow';
 	beforeEach(function(){
 		var self=this;
 		addPromiseTests(this);
 		angular.mock.module('FlowControl');
-		angular.mock.inject(function(FlowControlService,$rootScope,_$q_){
+		angular.mock.inject(function(FlowControlService,_$rootScope_,_$q_){
 			self.service = FlowControlService;
-			self.$rootScope = $rootScope;
+			self.$rootScope = _$rootScope_;
+			$rootScope= _$rootScope_;
 			$q=_$q_;
 		});
 	});
@@ -47,7 +49,7 @@ describe('Flow control',function(){
 		expect(currentState).toEqual(null);
 
 	});
-	it('Goes to ne first state from the null using goTo',function(){
+	it('Goes to the first state from the null using goTo',function(){
 		var states=[
 			{
 				name:'first',
@@ -88,6 +90,140 @@ describe('Flow control',function(){
 		.catch(function(error){
 			console.log(error);
 		})
+	});
+	fdescribe('State redirection',function(){
+		var expectedParams = {'bar':'baz'};
+		var expectedName = 'foo';
+		var rule=function(){
+			return {
+				name:expectedName,
+				params:expectedParams
+			}
+		};
+		function testStateRedirection(promise){
+			promise.then(function(redirectData){
+				expect(redirectData.name).toEqual(expectedName);
+				expect(redirectData.params).toEqual(expectedParams);
+				expect(redirectData.isRedirect).toEqual(true);
+			})
+			.catch(function(){
+				fail();
+			})
+			$rootScope.$digest();
+		}
+		it('Can redirect to a state using next on the leave of the currentState',function(){
+			var states=[
+				{
+					name:'first',
+					rules:{
+						leave:rule
+					}
+				},
+				{name:'toTest'}
+			];
+			var flow = this.service.setStateFlow(flowName,states);
+			var p=flow.goTo('first').then(function(){
+				return flow.next();
+			});
+			testStateRedirection(p);
+		});
+		it('Can redirect to a state using next on the arrive of the next',function(){
+			var states=[
+				{
+					name:'first',
+				},
+				{
+					name:'toTest',
+					rules:{
+						arrive:rule
+					}
+				}
+			];
+			var flow = this.service.setStateFlow(flowName,states);
+			var p=flow.goTo('first').then(function(){
+				return flow.next();
+			});
+			testStateRedirection(p);
+		});
+
+		it('Can redirect to a state using previous on the  arrive of the previous state',function(){
+			var states=[
+				{
+					name:'toTest',
+					rules:{
+						arrive:rule
+					}
+				},
+				{
+					name:'second',
+				}
+			];
+			var flow = this.service.setStateFlow(flowName,states);
+			var p=flow.goTo('second').then(function(){
+				return flow.previous();
+			});
+			testStateRedirection(p);
+		});
+		it('Can redirect to a state using previous on the leave of the current state',function(){
+			var states=[
+				{
+					name:'toTest'
+				},
+				{
+					name:'second',
+					rules:{
+						leave:rule
+					}
+				}
+			];
+			var flow = this.service.setStateFlow(flowName,states);
+			var p=flow.goTo('second').then(function(){
+				return flow.previous();
+			});
+			testStateRedirection(p);
+		});
+
+		it('Can redirect to a state using goTo on the leave of the current state',function(){
+			var states=[
+				{
+					name:'first',
+					rules:{
+						leave:rule
+					}
+				},
+				{name:'neutral'},
+				{
+					name:'toTest',
+					
+				}
+			];
+			var flow = this.service.setStateFlow(flowName,states);
+			var p=flow.goTo('first').then(function(){
+				return flow.goTo('toTest');
+			});
+			testStateRedirection(p);
+		});
+		it('Can redirect to a state using goTo on the arrive of the desired state',function(){
+			var states=[
+				{
+					name:'first'
+				},
+				{name:'neutral'},
+				{
+					name:'toTest',
+					rules:{
+						arrive:rule
+					}
+					
+				}
+			];
+			var flow = this.service.setStateFlow(flowName,states);
+			var p=flow.goTo('first').then(function(){
+				return flow.goTo('toTest');
+			});
+			testStateRedirection(p);
+		});
+
 	});
 	describe('State flow',function(){
 		var flow;
@@ -289,9 +425,20 @@ describe('Flow control',function(){
 						}
 					}
 				},
-				{name:'toBeRedirected'}
-
-				
+				{name:'toBeRedirected'},
+				{name:'ruleCheckOne'},
+				{
+					name:'withArrive',
+					arrive:function(){
+						return true;
+					}
+				},
+				{
+					name:'ruleCheckWithLeave',
+					leave:function(){
+						return true;
+					}
+				},				
 			];
 			beforeEach(function(){
 				flag =null;
@@ -299,6 +446,14 @@ describe('Flow control',function(){
 				flow.goTo(states[0].name);
 				this.$rootScope.$digest();
 			});
+			// fdescribe('Rule check',function(){
+			// 	it('Has rule when it just has a arrive rule',function(){
+			// 		expect(true).toEqual(true);
+			// 	});
+			// 	it('Has rule when it just have a leave rule');
+			// 	it('Has rule when it have both a arrive and leave rule');
+			// 	it('Has no rule when it doesn\'t have a arrive and a leave rule');
+			// });
 			describe('Arrival',function(){
 				var desiredState='arriveIfFlag';
 				function getArriveError(fromState,toState){

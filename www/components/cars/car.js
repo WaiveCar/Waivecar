@@ -21,27 +21,22 @@ function CarController($state, $q, selectedCar,WaiveCarStateService,DataService)
   var selectedData = selectedCar.getSelected();
   if (angular.isUndefined(selectedData)) $state.go('cars');
 }
-
 CarController.prototype.getDestiny = function() {
-
   return this.selectedCar.getSelected().location;
 };
-
 CarController.prototype.chooseCar = function() {
   var self         = this;
   var selectedData = this.selectedCar.getSelected();
   var carId        = selectedData.id;
-  this.WaiveCarStateService.next({
-    redirectUrl    :'bookings-new',
-    redirectParams : {
+  this.WaiveCarStateService.next(
+    {
       carId     : self.DataService.active.cars.id,
       includeAd : true
     }
-  });
+  );
 };
-
 CarController.prototype.cancel = function() {
-  this.state.go('cars');
+  this.WaiveCarStateService.previous();
 };
 function carChargeStatusDirective(searchEvents, selectedCar) {
   function link(scope, element, attrs, ctrl) {
