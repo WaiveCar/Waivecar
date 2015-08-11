@@ -76,6 +76,7 @@ scheduler.process('car-reconcile-diagnostics', function *(job) {
       for (let d = 0, len = car.diagnostics.length; d < len; d++) {
         let previousDiagnostic = car.diagnostics[d];
         let diagnostic = new CarDiagnostic({
+          id      : previousDiagnostic.id,
           carId   : car.id,
           type    : previousDiagnostic.type,
           status  : previousDiagnostic.status,
