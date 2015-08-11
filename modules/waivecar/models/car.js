@@ -38,9 +38,9 @@ Reach.Register.Model('Car', 'sequelize', function (model, Sequelize) {
     'CarStatus',
     'CarDiagnostic',
     function (CarLocation, CarStatus, CarDiagnostic) {
-      this.hasOne(CarLocation,    { as : 'location', foreignKey : 'carId' });
-      this.hasOne(CarStatus,      { as : 'booking',  foreignKey : 'carId' });
-      this.hasMany(CarDiagnostic, { as : 'diagnostics',  foreignKey : 'carId' });
+      this.hasOne(CarLocation,    { as : 'location',    foreignKey : 'carId' });
+      this.hasOne(CarStatus,      { as : 'booking',     foreignKey : 'carId' });
+      this.hasMany(CarDiagnostic, { as : 'diagnostics', foreignKey : 'carId' });
     }
   ];
 

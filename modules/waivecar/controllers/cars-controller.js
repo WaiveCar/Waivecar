@@ -22,6 +22,11 @@ Reach.Register.ResourceController('Car', 'CarsController', function (controller)
           model : 'CarStatus',
           as    : 'booking',
           attr  : [ 'status' ]
+        },
+        {
+          model : 'CarDiagnostic',
+          as    : 'diagnostics',
+          attr  : [ 'type', 'status', 'value', 'unit' ]
         }
       ]
     }));
@@ -48,7 +53,8 @@ Reach.Register.ResourceController('Car', 'CarsController', function (controller)
         },
         {
           model : 'CarDiagnostic',
-          as    : 'diagnostics'
+          as    : 'diagnostics',
+          attr  : [ 'type', 'status', 'value', 'unit' ]
         }
       ]
     });
