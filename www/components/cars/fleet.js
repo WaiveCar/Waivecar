@@ -104,7 +104,7 @@ FleetController.prototype.showCarDetails = function(marker, data) {
     self.selectedCar.setSelected(data);
     self.$rootScope.$broadcast(self.mapsEvents.destinyOnRouteChanged, latLng);
     self.$rootScope.$broadcast(self.searchEvents.vehicleSelected, data);
-    self.stateService.go('cars-show',{ id: data.id });
+    self.stateService.next({ id: data.id });
   });
 };
 

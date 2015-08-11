@@ -55,12 +55,30 @@ WaiveCarStateService.prototype.init = function() {
 	);
 };
 WaiveCarStateService.prototype.previous = function(params) {
-	
+	var self=this;
+	this.mainFlow.previous().then(function(redirectState){
+		if(!redirectState.isRedirect){
+			self.accept=redirectState.name;
+		}
+		self.$state.go(redirectState.name,redirectState.params)
+	});
+
 };
 WaiveCarStateService.prototype.next = function(params) {
-	this.mainFlow.next(function(redirectState){
+	console.log('HERE');
+	var self=this;
+	this.mainFlow.next().then(function(redirectState){
+		console.log(redirectState);
+		if(!redirectState.isRedirect){
+			self.accept=redirectState.name;
+		}
+		self.$state.go(redirectState.name,redirectState.params)
 
+	})
+	.catch(function(error){
+		console.log(error);
 	});
+	
 };
 WaiveCarStateService.prototype.go = function(name,params) {
 	this.$state.go(name,params);

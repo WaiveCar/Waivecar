@@ -18,8 +18,7 @@ function CarController($state, $q, selectedCar,WaiveCarStateService,DataService)
   });
 
   this.selectedCar = selectedCar;
-  var selectedData = selectedCar.getSelected();
-  if (angular.isUndefined(selectedData)) $state.go('cars');
+
 }
 CarController.prototype.getDestiny = function() {
   return this.selectedCar.getSelected().location;
