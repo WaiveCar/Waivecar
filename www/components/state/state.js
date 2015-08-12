@@ -21,6 +21,9 @@ WaiveCarStateService.prototype.init = function() {
 			name:'bookings-new'
 		},
 		{
+			name:'ads'
+		},
+		{
 			name:'users-new'
 		}
 	];

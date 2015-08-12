@@ -13,10 +13,6 @@ FlowControlService.prototype.setStateFlow = function(flowName,states) {
 FlowControlService.prototype._getFlow = function(flowName) {
 	return this._flows[flowName];
 };
-
-
-
-
 Flow.prototype.getCurrentStateName = function() {
 	var index = this.currentStateIndex;
 	if(index<0){
