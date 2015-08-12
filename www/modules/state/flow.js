@@ -56,18 +56,21 @@ Flow.prototype.hasRulesForTransition = function(stateName) {
 Flow.prototype._goToByIndex = function(desiredIndex,params) {
 	var self=this;
 	var stateName= this.states[desiredIndex].name;
-	return this._canLeaveStateIndex(this.previousStateParams)
+	if(typeof params =='undefined'){
+		params = this.currentStateParams || {};
+	}
+	return this._canLeaveStateIndex(this.currentStateParams)
 	.then(function(redirectState){
 		if(redirectState!==true){
 			if(typeof redirectState ==='string'){
-				redirectState={name:redirectState,params:{}};
+				redirectState={name:redirectState,params:self.currentStateParams};
 			}
 			if(typeof redirectState==='object' && !!redirectState.name){
-				redirectState.params= redirectState.params || {};
+				redirectState.params= redirectState.params || self.currentStateParams;
 				redirectState.isRedirect = true;
 				var redirectIndex = self.getStateIndexByName(redirectState.name);
 
-				self.setStateIndex(redirectIndex,redirectState.params,desiredIndex,params || {});
+				self.setStateIndex(redirectIndex,redirectState.params,desiredIndex,params);
 				return redirectState;
 			}
 		}
@@ -76,12 +79,12 @@ Flow.prototype._goToByIndex = function(desiredIndex,params) {
 			if(redirectState!==true){
 				self.previousStateIndex =desiredIndex;
 				if(typeof redirectState ==='string'){
-					redirectState={name:redirectState,params:{}};
+					redirectState={name:redirectState,params:self.currentStateParams};
 				}
-				redirectState.params= redirectState.params || {};
+				redirectState.params= redirectState.params || self.currentStateParams;
 				var redirectIndex = self.getStateIndexByName(redirectState.name);
 				redirectState.isRedirect=true;
-				self.setStateIndex(redirectIndex,redirectState.params,desiredIndex,params || {});
+				self.setStateIndex(redirectIndex,redirectState.params,desiredIndex,params);
 				return redirectState;
 			}
 			self.setStateIndex(desiredIndex,params);

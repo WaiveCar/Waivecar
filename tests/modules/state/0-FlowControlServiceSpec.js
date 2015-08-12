@@ -91,7 +91,7 @@ fdescribe('Flow control',function(){
 			console.log(error);
 		})
 	});
-	fdescribe('State redirection',function(){
+	describe('State redirection',function(){
 		var expectedParams = {'bar':'baz'};
 		var expectedName = 'toBeRedirected';
 		var rule=function(){
@@ -301,25 +301,34 @@ fdescribe('Flow control',function(){
 				{
 					name:'first',
 					rules:{
-						arrive:jasmine.createSpy('secondWithParam').and.returnValue(true)
+						arrive:jasmine.createSpy('firstWithParam').and.returnValue(true)
 					}
 
 				},
 				{
-					name:'middle',
+					name:'second',
 					
 				},
 				{
-					name:'last',
+					name:'third',
 					rules:{
-						arrive:jasmine.createSpy('lastWithParam').and.returnValue(true)
+						arrive:jasmine.createSpy('thirdWithParam').and.returnValue(true)
 					}
-				}
+				},
+				{
+					name:'fourth'
+				},
+				{
+					name:'fifth'
+				},
+				{
+					name:'sixth'
+				},
 			];
 			var expectedParams= {'foo':'bar','baz':'xpto'};
 			beforeEach(function(){
 				flow=this.service.setStateFlow(flowName,states);
-				flow.goTo('middle');
+				flow.goTo('second');
 				this.$rootScope.$digest();
 			});
 			it('Passes a parameter to be evaluated on goTo',function(){
@@ -328,7 +337,7 @@ fdescribe('Flow control',function(){
 				flow.goTo(desiredState.name,expectedParams).then(function(data){
 					expect(data.name).toEqual(desiredState.name)
 					expect(data.params).toEqual(expectedParams);
-					expect(desiredState.rules.arrive).toHaveBeenCalledWith('middle',expectedParams);
+					expect(desiredState.rules.arrive).toHaveBeenCalledWith('second',expectedParams);
 					expect(flow.getCurrentStateParams()).toEqual(expectedParams);
 				})
 				.catch(function(){
@@ -341,7 +350,7 @@ fdescribe('Flow control',function(){
 				flow.previous(expectedParams).then(function(data){
 					expect(data.name).toEqual(desiredState.name)
 					expect(data.params).toEqual(expectedParams);
-					expect(desiredState.rules.arrive).toHaveBeenCalledWith('middle',expectedParams);
+					expect(desiredState.rules.arrive).toHaveBeenCalledWith('second',expectedParams);
 					expect(flow.getCurrentStateParams()).toEqual(expectedParams);
 				})
 				.catch(function(){
@@ -355,7 +364,7 @@ fdescribe('Flow control',function(){
 				flow.next(expectedParams).then(function(data){
 					expect(data.name).toEqual(desiredState.name)
 					expect(data.params).toEqual(expectedParams);
-					expect(desiredState.rules.arrive).toHaveBeenCalledWith('middle',expectedParams);
+					expect(desiredState.rules.arrive).toHaveBeenCalledWith('second',expectedParams);
 					expect(flow.getCurrentStateParams()).toEqual(expectedParams);
 				})
 				.catch(function(){
@@ -374,7 +383,39 @@ fdescribe('Flow control',function(){
 					fail();
 				});
 				this.$rootScope.$digest();
-			})
+			});
+			it('Propagates a param  on next if no new param is passed',function(){
+				flow.goTo('fourth',expectedParams).then(function(){
+					expect(flow.getCurrentStateParams()).toEqual(expectedParams);
+					return flow.next();
+				}).then(function(data){
+					expect(flow.getCurrentStateParams()).toEqual(expectedParams);
+					expect(flow.getPreviousStateParams()).toEqual(flow.getCurrentStateParams());
+					
+				});
+				this.$rootScope.$digest();
+
+			});
+			it('Uses the previous param on previous if no new param is passed',function(){
+				flow.goTo('fifth',expectedParams).then(function(){
+					expect(flow.getCurrentStateParams()).toEqual(expectedParams);
+					flow.next({}).then(function(){
+						return flow.previous();
+					})
+				}).then(function(data){
+					expect(flow.getCurrentStateParams()).toEqual(expectedParams);					
+				});
+				this.$rootScope.$digest();
+			});
+			it('Propagates a param  on previous goTo if no new param is passed',function(){
+				flow.goTo('fifth',expectedParams).then(function(){
+					return flow.goTo('fourth')
+				})
+				.then(function(data){
+					expect(flow.getCurrentStateParams()).toEqual(expectedParams);
+				})
+			});
+
 		});
 		describe('Flow rules',function(){
 			var flow;
@@ -458,7 +499,7 @@ fdescribe('Flow control',function(){
 				flow.goTo(states[0].name);
 				this.$rootScope.$digest();
 			});
-			// fdescribe('Rule check',function(){
+			// describe('Rule check',function(){
 			// 	it('Has rule when it just has a arrive rule',function(){
 			// 		expect(true).toEqual(true);
 			// 	});
