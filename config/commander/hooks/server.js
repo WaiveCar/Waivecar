@@ -5,14 +5,14 @@ let exec      = require('child_process').exec;
 let commander = Reach.module('commander');
 let log       = Reach.Log;
 
-commander.hook('process', function *(command) {
+commander.hook('server', function *(command) {
   switch (command) {
     case 'reload' : return yield reload(); break;
   }
 });
 
 function *reload() {
-  log.debug('Commander > Reload Server');
+  log.debug('Commander > Reloading Server');
   return yield new Promise(function (resolve, reject) {
     exec('pm2 reload all', function (err, stdout, stderr) {
       if (err !== null) {
