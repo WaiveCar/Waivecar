@@ -221,7 +221,8 @@
        'routeDistanceChanged': 'waiveCarRouteDistanceChanged',
        'positionChanged': 'waiveCarPositionChanged',
        'destinyOnRouteChanged': 'waiveCarDestinyOnRouteChanged',
-       'withinUnlockRadius':'waiveCarWithinUnlockRadius'
+       'withinUnlockRadius':'waiveCarWithinUnlockRadius',
+       'markersChanged':'waiveCarMarkersChanged'
      })
     .constant('transports', {
       pedestrian: 'pedestrian',

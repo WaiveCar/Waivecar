@@ -3,7 +3,7 @@
 */
 
 
-function nearbyFleetDirective(MapsLoader, $q, locationService) {
+function nearbyFleetDirective(MapsLoader, $q, locationService,mapsEvents) {
 
   function addMarkerClick(marker, info, onClickFn) {
     marker.on('mousedown', function(e) {
@@ -33,40 +33,36 @@ function nearbyFleetDirective(MapsLoader, $q, locationService) {
         popupAnchor   : [0 , 0]
       });
 
-      scope.$watch(function(){
-          var str = '';
-          scope.cars.forEach(function(c){
-            str += c.id + c.location.latitude + c.location.longitude;
-          });
-          return str;
-      }, function() {
-        var cars=scope.cars;
-        if (!waiveCarIcon || !cars || cars.length === 0) {
-          return;
-        }
+      scope.$on(mapsEvents.markersChanged,function(event,type){
+        if(type=='fleet'){
+          var cars=scope.cars;
+          if (!waiveCarIcon || !cars || cars.length === 0) {
+            return;
+          }
 
 
-        if (scope.group) {
-          self.mapInstance.removeLayer(scope.group);
-          scope.markers.forEach(function(marker){
+          if (scope.group) {
+            self.mapInstance.removeLayer(scope.group);
+            scope.markers.forEach(function(marker){
             self.mapInstance.removeLayer(marker);
           });
-        }
+          }
 
-        var markers = [];
-        cars.forEach(function(f) {
-          var marker = L.marker([ f.location.latitude, f.location.longitude ], { icon: waiveCarIcon }).addTo(self.mapInstance);
-          addMarkerClick(marker, f, scope.onClickMarker);
-          markers.push(marker);
-        });
+          var markers = [];
+          cars.forEach(function(f) {
+            var marker = L.marker([ f.location.latitude, f.location.longitude ], { icon: waiveCarIcon }).addTo(self.mapInstance);
+            addMarkerClick(marker, f, scope.onClickMarker);
+            markers.push(marker);
+          });
 
-        if (markers.length>0) {
-          var group = new L.featureGroup(markers);
-          // self.mapInstance.fitBounds(group.getBounds().pad(0.5))
-          scope.group   = group;
-          scope.markers = markers;
+          if (markers.length>0) {
+            var group = new L.featureGroup(markers);
+            // self.mapInstance.fitBounds(group.getBounds().pad(0.5))
+            scope.group   = group;
+            scope.markers = markers;
+          }
         }
-      }, true);
+      });
     })
   }
   return {
@@ -113,6 +109,7 @@ angular.module('app')
   'MapsLoader',
   '$q',
   'locationService',
+  'mapsEvents',
   nearbyFleetDirective
 ])
 .controller('FleetController', [
