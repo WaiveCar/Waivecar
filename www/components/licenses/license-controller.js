@@ -1,9 +1,10 @@
 // Fun Fact: http://grammarist.com/spelling/licence-license/
-function LicenseController($rootScope, $scope, $state, DataService) {
+function LicenseController($rootScope, $scope, $state, DataService,WaiveCarStateService) {
   var self         = this;
   self.$state      = $state;
   self.DataService = DataService;
   self.active      = DataService.active;
+  self.WaiveCarStateService=WaiveCarStateService;
   self.forms       = {
     new  : {
       firstName : 'Travis',
@@ -30,7 +31,8 @@ LicenseController.prototype.create = function() {
         redirectParams : redirectParams
       });
     } else {
-      self.$state.go('users-show', { id: self.active.users.id });
+      self.WaiveCarStateService.next({id: self.active.users.id});
+      // self.$state.go('users-show', { id: self.active.users.id });
     }
   });
 }
@@ -56,5 +58,6 @@ angular.module('app')
   '$scope',
   '$state',
   'DataService',
+  'WaiveCarStateService',
   LicenseController
 ]);

@@ -21,7 +21,7 @@ AdsController.prototype.handleStateValidity = function() {
     }
 };
 AdsController.prototype.goBackToState = function() {
-    this.$state.go('cars');
+    this.$state.go('fleet');
 };
 AdsController.prototype.goToRedirectUrl = function() {
     var redirectUrl=this.$state.params.redirectUrl;

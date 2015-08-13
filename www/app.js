@@ -48,7 +48,10 @@ angular.module('app', [
     'intro':{
       'url':'/',
       templateUrl: '/components/layout/templates/intro.html'
-
+    },
+    'loginSignUp':{
+      'url':'/login-sign-up',
+      templateUrl: '/components/layout/templates/loginSignUp.html'
     },
     // FIND WAIVECARS
     'fleet':{

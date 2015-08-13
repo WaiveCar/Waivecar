@@ -1,6 +1,7 @@
-function UserController($rootScope, $scope, $state, AuthService, DataService) {
+function UserController($rootScope, $scope, $state, AuthService, DataService,WaiveCarStateService) {
   var self         = this;
   self.$state      = $state;
+  self.WaiveCarStateService = WaiveCarStateService;
   self.AuthService = AuthService;
   self.DataService = DataService;
   self.active      = DataService.active;
@@ -36,6 +37,7 @@ UserController.prototype.create = function() {
           redirectParams : redirectParams
         });
       } else {
+        self.WaiveCarStateService.next();
         //self.$state.go('credit-cards');
       }
     });
@@ -49,5 +51,6 @@ angular.module('app')
   '$state',
   'AuthService',
   'DataService',
+  'WaiveCarStateService',
   UserController
 ]);

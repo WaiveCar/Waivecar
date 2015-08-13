@@ -29,7 +29,6 @@ Flow.prototype.getPreviousStateParams = function() {
 };
 Flow.prototype.goTo = function(stateName,params) {
 	var index=this.getStateIndexByName(stateName);
-	console.log("AAA "+index);
 	return this._goToByIndex(index,params);
 };
 Flow.prototype.hasRulesForTransition = function(stateName) {
@@ -46,6 +45,7 @@ Flow.prototype.hasRulesForTransition = function(stateName) {
 	}
 	if(!hasLeaveRule){
 		var desiredStateIndex = this.getStateIndexByName(stateName);
+
 		stateRules=this.states[desiredStateIndex].rules;
 		if(typeof stateRules=='undefined'
 			|| typeof stateRules.arrive =='undefined'){
@@ -164,6 +164,9 @@ Flow.prototype.next = function(params) {
 
 };
 Flow.prototype.getStateIndexByName = function(stateName) {
+	if(typeof this._nameMap[stateName]=='undefined'){
+		throw new Error('The state '+stateName+' is not on the flow');
+	}
 	return this._nameMap[stateName];
 };
 

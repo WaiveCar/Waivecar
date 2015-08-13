@@ -44,7 +44,7 @@ BookingController.prototype.create = function() {
     carId  : self.active.cars.id,
     // userId : self.active.users.id
   }, function(err, booking) {
-    self.WaiveCarStateService.next();
+    self.WaiveCarStateService.next({ redirectUrl:'bookings-show',redirectParams : {'id' : self.active.bookings.id}});
   /*  self.$state.go('ads', {
       redirectUrl    :'bookings-show',
       redirectParams : {
