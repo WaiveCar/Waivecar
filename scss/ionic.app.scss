@@ -26,6 +26,8 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
  .button,.button.active,.button.activated{
       background-color: inherit;
       border: none;
+      color:#FFF;
+
       &.button-icon{
         color:#FFF;
       }
@@ -33,28 +35,39 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
         background-color: $balanced;
         color:#FFF;
       }
+      &.button-blue{
+        background-color: $blue;
+        color:#FFF;
+      }
       &.button-assertive{
         background-color: $assertive;
         color:#FFF;
 
       }
+       &.button-dark{
+           background-color: $dark;
+      }
       &.button-padded{
+        text-transform: uppercase;
+        line-height: 2rem;
+        font-size: 1rem;
+        vertical-align: middle;
         span,a{
-        @include vertical-align;
-        display: inline-block;
-        color:#FFF;
+          @include vertical-align;
+          display: inline-block;
+          color:#FFF;
 
-      }
-      &.button-dark{
-       background-color: $dark;
-         color:#FFF;
+         }
+          &.button-dark{
+           background-color: $dark;
+             color:#FFF;
 
-      }
-      &.button-assertive{
-       background-color: $assertive;
-       color:#FFF;
+          }
+          &.button-assertive{
+           background-color: $assertive;
+           color:#FFF;
 
-      }
+          }
     }
   }
 
@@ -135,6 +148,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     height: $barHeight * 1%;
     padding: 0;
     background-color: $dark;
+    text-align: left;
     color:#FFF;
     h1{
       color:#FFF;
@@ -302,7 +316,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     width: 100%;
     height: 100%;
     .button {
-     
+      float:left;
       width: 50%;
     }
   }
@@ -404,7 +418,53 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
   font-weight: bold;
 }
 body .scroll-content{
+    background-color: $grayBg;
+    color:white;
+}
+h1.page-title{
+  text-transform: uppercase;
+  color:white;
+  text-align: center;
+  margin-top: 1rem;
+}
+.full-page{
+  text-align: center;
+}
+.strike {
+        display: block;
+        text-align: center;
+        overflow: hidden;
+        white-space: nowrap; 
+    }
 
+    .strike > span {
+        position: relative;
+        display: inline-block;
+    }
+  
+    .strike > span:before,
+    .strike > span:after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        width: 80%;
+        height: 1px;
+        background: #000;
+    }
+
+    .strike > span:before {
+        right: 100%;
+        margin-right: 1em;
+    }
+
+    .strike > span:after {
+        left: 100%;
+        margin-left: 1em;
+    }
+label.item.item-input{
+  width: 80%;
+  margin: 0 auto;
+  text-align: left;
 }
 @import "www/components/layout/layout.scss";
 @import "www/components/cars/style.scss";
