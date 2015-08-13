@@ -29,6 +29,7 @@ Flow.prototype.getPreviousStateParams = function() {
 };
 Flow.prototype.goTo = function(stateName,params) {
 	var index=this.getStateIndexByName(stateName);
+	console.log("AAA "+index);
 	return this._goToByIndex(index,params);
 };
 Flow.prototype.hasRulesForTransition = function(stateName) {
@@ -39,7 +40,7 @@ Flow.prototype.hasRulesForTransition = function(stateName) {
 	else{
 		var stateRules=this.states[this.currentStateIndex].rules;
 		if(typeof stateRules=='undefined'
-			&& typeof stateRules.leave =='undefined'){
+			|| typeof stateRules.leave =='undefined'){
 			hasLeaveRule = false;
 		}
 	}
@@ -47,7 +48,7 @@ Flow.prototype.hasRulesForTransition = function(stateName) {
 		var desiredStateIndex = this.getStateIndexByName(stateName);
 		stateRules=this.states[desiredStateIndex].rules;
 		if(typeof stateRules=='undefined'
-			&& typeof stateRules.arrive =='undefined'){
+			|| typeof stateRules.arrive =='undefined'){
 			return false;
 		}
 	}
@@ -102,7 +103,7 @@ Flow.prototype._goToByIndex = function(desiredIndex,params) {
 };
 Flow.prototype.setState = function(stateName,stateParams) {
 	var stateIndex = this.getStateIndexByName(stateName);
-	this.setStateIndex(stateName,stateParams);
+	this.setStateIndex(stateIndex,stateParams);
 };
 Flow.prototype.setStateIndex = function(desiredIndex,params,previousIndex,previousParams) {
 	this.previousStateIndex = previousIndex || this.currentStateIndex;
@@ -158,6 +159,7 @@ Flow.prototype.next = function(params) {
 	if(nextIndex>=this.states.length){
 		return this.$q.reject(new Error('Can\'t go to the next state the current state is the last'));
 	}
+
 	return this._goToByIndex(nextIndex,params);
 
 };

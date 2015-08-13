@@ -9,6 +9,7 @@ function WaiveCarStateService(flowControl,$rootScope,$urlRouter,$state,fleetRule
 WaiveCarStateService.prototype.init = function() {
 	var self=this;
 	var states=[
+		{name :'intro'},
 		{
 			name:'fleet',
 			rules:self.fleetRule.getRules()
@@ -68,10 +69,8 @@ WaiveCarStateService.prototype.previous = function(params) {
 
 };
 WaiveCarStateService.prototype.next = function(params) {
-	console.log('HERE');
 	var self=this;
 	this.mainFlow.next().then(function(redirectState){
-		console.log(redirectState);
 		if(!redirectState.isRedirect){
 			self.accept=redirectState.name;
 		}

@@ -22,7 +22,7 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpP
   for(var state in appStates){
     $stateProvider.state(state,appStates[state]);
   }
-  $urlRouterProvider.otherwise('/fleet');
+  $urlRouterProvider.otherwise('/');
 }
 
 angular.module('app', [
@@ -45,6 +45,11 @@ angular.module('app', [
   'WaiveCar.state'
 ])
 .constant('appStates',{
+    'intro':{
+      'url':'/',
+      templateUrl: '/components/layout/templates/intro.html'
+
+    },
     // FIND WAIVECARS
     'fleet':{
       url: '/fleet',
