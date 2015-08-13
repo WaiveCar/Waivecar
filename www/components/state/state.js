@@ -67,8 +67,8 @@ WaiveCarStateService.prototype.init = function() {
 					self.mainFlow.setState(toState.name,toParams);
 				}
 			}
-			catch(error e){
-				//Ignoring states unMapped for convenience
+			catch(e){
+				//Ignoring error from now
 			}
 		}
 	);
