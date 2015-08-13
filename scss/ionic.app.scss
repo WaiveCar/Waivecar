@@ -10,6 +10,8 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 @import "www/lib/ionic/scss/ionic";
 .vertical-aligned{
    @include vertical-align;
+   display: inline-block;
+   vertical-align: middle;
 }
 .pane{
   .dashed:after {
@@ -26,6 +28,12 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
  .button,.button.active,.button.activated{
       background-color: inherit;
       border: none;
+      vertical-align: middle;
+      img.service-icon{
+        height: 2em;
+        margin-right: 1.5em;
+        display: inline-block;
+      }
       color:#FFF;
 
       &.button-icon{
@@ -435,32 +443,35 @@ h1.page-title{
         text-align: center;
         overflow: hidden;
         white-space: nowrap; 
-    }
-
-    .strike > span {
-        position: relative;
-        display: inline-block;
-    }
-  
-    .strike > span:before,
-    .strike > span:after {
-        content: "";
-        position: absolute;
-        top: 50%;
         width: 80%;
-        height: 1px;
-        background: #000;
-    }
+        margin: 0 auto;
+}
 
-    .strike > span:before {
-        right: 100%;
-        margin-right: 1em;
-    }
 
-    .strike > span:after {
-        left: 100%;
-        margin-left: 1em;
-    }
+.strike > span {
+    position: relative;
+    display: inline-block;
+}
+  
+.strike > span:before,
+.strike > span:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 1000px;
+    height: 1px;
+    background: #000;
+}
+
+.strike > span:before {
+    right: 100%;
+    margin-right: 1em;
+}
+
+.strike > span:after {
+    left: 100%;
+    margin-left: 1em;
+}
 label.item.item-input{
   width: 80%;
   margin: 0 auto;
@@ -472,3 +483,4 @@ label.item.item-input{
 @import "www/components/maps/style.scss";
 @import "www/components/ads/style.scss";
 @import "www/components/ride/style.scss";
+@import "www/components/login/login.scss";

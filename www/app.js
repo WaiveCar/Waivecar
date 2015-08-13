@@ -55,7 +55,7 @@ angular.module('app', [
     },
     'loginSignUp':{
       'url':'/login-sign-up',
-      templateUrl: '/components/layout/templates/loginSignUp.html'
+      templateUrl: '/components/login/templates/loginSignUp.html'
     },
     // FIND WAIVECARS
     'fleet':{
