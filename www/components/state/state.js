@@ -11,6 +11,8 @@ WaiveCarStateService.prototype.init = function() {
 	var states=[
 		{name :'intro'},
 		{name:'loginSignUp'},
+		//Sign In flow
+		{name:'signIn'},
 		//Registering flow, maybe move it to a flow
 		{
 			name:'users-new'

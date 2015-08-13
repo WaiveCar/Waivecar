@@ -8,6 +8,9 @@ function headerBarDirective(layoutIcons){
 		if(typeof icon =='undefined' || !icon ){
 			icon=layoutIcons[scope.type];
 		}
+		if(scope.showNav!==false){
+			scope.showNav=true;
+		}
 		button.addClass(icon);
 		button.on('click',scope.onButtonClick)
 	}
@@ -18,7 +21,8 @@ function headerBarDirective(layoutIcons){
 		scope:{
 			icon:'@',
 			type:'@',
-			onButtonClick:'&'
+			onButtonClick:'&',
+			showNav:'@'
 		},
 		transclude: true,
 		replace: true

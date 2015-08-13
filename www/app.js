@@ -49,6 +49,10 @@ angular.module('app', [
       'url':'/',
       templateUrl: '/components/layout/templates/intro.html'
     },
+    'signIn':{
+      'url':'/signIn',
+      templateUrl: '/components/login/templates/signIn.html'
+    },
     'loginSignUp':{
       'url':'/login-sign-up',
       templateUrl: '/components/layout/templates/loginSignUp.html'

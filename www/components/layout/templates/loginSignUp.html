@@ -1,7 +1,10 @@
-<ion-pane   class="waiveCarContainer splash-screen">
+<ion-pane   class="signIn">
   <ion-content scroll="false" >
-		<a class="button button-balanced button-padded" >Sign in</a>
-		<a class="button button-balanced button-padded"  go-to-state name="users-new">Register</a>
+	    <img src="img/logo.svg" class="logo">
+	    <div id="buttonsContainer">
+			<a class="button button-balanced button-padded" ui-sref="signIn">Sign in</a>
+			<a class="button button-blue button-padded"  ui-sref="users-new">Register</a>
+	    </div>
 
   </ion-content>
 </ion-pane>

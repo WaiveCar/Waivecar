@@ -41,3 +41,22 @@
     margin: auto;
   }
 }
+.signIn{
+  vertical-align: middle;
+  text-align: center;
+  .logo{
+    width: 80%;
+    position:absolute;
+    top:0;
+    bottom:0;
+    left: 0;  
+    right: 0;  
+    margin: auto;
+  }
+  #buttonsContainer{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding-bottom: 2em;
+  }
+}
