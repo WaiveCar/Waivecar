@@ -13,7 +13,7 @@ function headerBarDirective(layoutIcons){
 	}
 	return {
 		link:link,
-    // template:'<ion-header-bar class="bar bar-header bar-light  disable-user-behavior">  <div class="header-text">    <h1 class="header-title"  ng-transclude></h1>  </div>  <button class="button button-right  button-icon icon" ng-click="showNav()">      </button></ion-header-bar>',
+		// template:'<ion-header-bar class="bar bar-header bar-light  disable-user-behavior">  <div class="header-text">    <h1 class="header-title"  ng-transclude></h1>  </div>  <button class="button button-right  button-icon icon" ng-click="showNav()">      </button></ion-header-bar>',
 		templateUrl:'/components/layout/templates/directives/headerBar.html',
 		scope:{
 			icon:'@',
@@ -26,35 +26,89 @@ function headerBarDirective(layoutIcons){
 }
 
 function dialogDirective(){
-  return {
-    restrict:'E',
-    scope:{
-      title:'@',
-      subtitle:'@',
-      buttonText:'@',
-      setDisplayFunction: '&',
-      setHideFunction: '&',
-      onButtonClick:'&'
-    },
-    link: function(scope, element, attrs){
-      // alert("ON LINK");
-      scope.setDisplayFunction({'fn':function(){
-            // alert("On set dísplay");
-            // alert(element[0].firstChild);
-            //             alert(element[0].firstChild.style);
+	return {
+		restrict:'E',
+		scope:{
+			title:'@',
+			subtitle:'@',
+			buttonText:'@',
+			setDisplayFunction: '&',
+			setHideFunction: '&',
+			onButtonClick:'&'
+		},
+		link: function(scope, element, attrs){
+			// alert("ON LINK");
+			scope.setDisplayFunction({'fn':function(){
+						// alert("On set dísplay");
+						// alert(element[0].firstChild);
+						//             alert(element[0].firstChild.style);
 
-        element[0].firstChild.style.display="block";
-        // alert("Done");
+				element[0].firstChild.style.display="block";
+				// alert("Done");
 
-      }});
-      scope.setHideFunction({'fn':function(){
-        element[0].firstChild.style.display="none";
-      }});
-    },
-    templateUrl:'/components/layout/templates/directives/overlay-dialog.html'
-  }
+			}});
+			scope.setHideFunction({'fn':function(){
+				element[0].firstChild.style.display="none";
+			}});
+		},
+		templateUrl:'/components/layout/templates/directives/overlay-dialog.html'
+	}
 }
-angular.module('layout',[])
+function bestFitTextDirective(){
+	return {
+				restrict: 'A',
+				link:function(scope, element, attrs, ctrl){
+						var text=element[0].firstChild.textContent.trim();
+						var width=element[0].clientWidth;
+						var height=element[0].clientHeight;
+						var numChars=text.length;
+						var desiredFontSize=height;
+						if(desiredFontSize*numChars>width ){
+								var minFontSize=numChars/width;
+								var maxFontSize=desiredFontSize;
+								var ratio=height/width;
+								var wordsSizes=[];
+								var words=text.split(' ');
+								words.forEach(function(w){
+								wordsSizes.push(w.length);
+								});
+								var numLines=1;
+								var numActualLines;
+								var expectedSize;
+								while(numActualLines>numLines || typeof(numActualLines)=='undefined'){
+									numActualLines=0;
+									expectedSize=height/numLines;
+									var charsPerLine=width/expectedSize;
+									var numChars=0;
+									wordsSizes.forEach(function(w){
+										numChars+=w+1;
+										while(numChars>charsPerLine){
+											numChars=numChars-(charsPerLine+1);
+											numActualLines++;
+										}
+									});                
+									numLines++;
+								}
+								desiredFontSize=expectedSize;
+
+						}
+
+					var str=element
+					element[0].style.fontSize=desiredFontSize+"px";
+				},
+	 }
+}
+function SplashScreenController(WaiveCarStateService,$timeout){
+	$timeout(function(){WaiveCarStateService.next()}, 1500);
+}
+
+angular.module('layout',['WaiveCar.state'])
+.controller('SplashScreenController', [
+	'WaiveCarStateService',
+	'$timeout',
+	SplashScreenController
+])
+
 .directive('overlayDialog',dialogDirective)
 .constant('layoutIcons',{
 	'close':'ion-close',
@@ -63,4 +117,7 @@ angular.module('layout',[])
 .directive('headerBar', [
 	'layoutIcons',
 	headerBarDirective
+])
+.directive('bestFit', [
+	bestFitTextDirective
 ]);

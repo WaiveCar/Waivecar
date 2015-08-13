@@ -16,6 +16,12 @@ function mockWalkingDirective(mapsEvents,$rootScope){
 function mockCityLocationService(locationService){
 	this.locationService=locationService;
 }
+function mockCarAvailabilityService($q){
+	this.$q=$q;
+}
+mockCarAvailabilityService.prototype.isCarAvailable = function() {
+	return this.$q.when(true);
+};
 mockCityLocationService.prototype.mockLocation = function() {
   // Mock location:
   // "latitude": 34.0604643,
@@ -29,4 +35,5 @@ mockCityLocationService.prototype.mockLocation = function() {
 
 angular.module('mockBehaviours', [])
 .service('mockCityLocationService', [ 'locationService',mockCityLocationService ])
+.service('CarAvailabilityService',['$q',mockCarAvailabilityService])
 .directive('mockWalking', [ 'mapsEvents','$rootScope',mockWalkingDirective ]);

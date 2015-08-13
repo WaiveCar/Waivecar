@@ -2,22 +2,12 @@
 * Responsible for everything related to a cluster of cars
 */
 
-function SelectedCarService($rootScope) {
-  this.$rootScope;
-}
 
-SelectedCarService.prototype.setSelected = function(selected) {
-  this.selected = selected;
-};
-
-SelectedCarService.prototype.getSelected = function() {
-  return this.selected;
-};
-
-function nearbyFleetDirective(MapsLoader, $q, locationService) {
+function nearbyFleetDirective(MapsLoader, $q, locationService,mapsEvents) {
 
   function addMarkerClick(marker, info, onClickFn) {
     marker.on('mousedown', function(e) {
+
       onClickFn({ marker: marker, info: info });
     });
   }
@@ -25,16 +15,13 @@ function nearbyFleetDirective(MapsLoader, $q, locationService) {
   function link(scope, element, attrs, ctrl) {
     MapsLoader.getMap.then(function(L) {
       self.L = L;
-      console.log('maps');
       return ctrl.mapInstance;
     })
     .then(function(mapInstance){
       self.mapInstance = mapInstance;
-      console.log('mapInstance');
       return locationService.getLocation();
     })
     .then(function(deviceLocation){
-      console.log('Location');
       self.deviceLocation = deviceLocation;
     })
     .then(function(){
@@ -46,41 +33,36 @@ function nearbyFleetDirective(MapsLoader, $q, locationService) {
         popupAnchor   : [0 , 0]
       });
 
-      scope.$watch(function(){
-          var str = '';
-          scope.cars.forEach(function(c){
-            str += c.id + c.location.latitude + c.location.longitude;
-          });
-          return str;
-      }, function() {
-        var cars=scope.cars;
-        if (!waiveCarIcon || !cars || cars.length === 0) {
-          return;
-        }
+      scope.$on(mapsEvents.markersChanged,function(event,type){
+        if(type=='fleet'){
+          var cars=scope.cars;
+          if (!waiveCarIcon || !cars || cars.length === 0) {
+            return;
+          }
 
-        console.log('car watch ' + cars.length);
 
-        if (scope.group) {
-          self.mapInstance.removeLayer(scope.group);
-          scope.markers.forEach(function(marker){
+          if (scope.group) {
+            self.mapInstance.removeLayer(scope.group);
+            scope.markers.forEach(function(marker){
             self.mapInstance.removeLayer(marker);
           });
-        }
+          }
 
-        var markers = [];
-        cars.forEach(function(f) {
-          var marker = L.marker([ f.location.latitude, f.location.longitude ], { icon: waiveCarIcon }).addTo(self.mapInstance);
-          addMarkerClick(marker, f, scope.onClickMarker);
-          markers.push(marker);
-        });
+          var markers = [];
+          cars.forEach(function(f) {
+            var marker = L.marker([ f.location.latitude, f.location.longitude ], { icon: waiveCarIcon }).addTo(self.mapInstance);
+            addMarkerClick(marker, f, scope.onClickMarker);
+            markers.push(marker);
+          });
 
-        if (markers.length>0) {
-          var group = new L.featureGroup(markers);
-          // self.mapInstance.fitBounds(group.getBounds().pad(0.5))
-          scope.group   = group;
-          scope.markers = markers;
+          if (markers.length>0) {
+            var group = new L.featureGroup(markers);
+            // self.mapInstance.fitBounds(group.getBounds().pad(0.5))
+            scope.group   = group;
+            scope.markers = markers;
+          }
         }
-      }, true);
+      });
     })
   }
   return {
@@ -94,9 +76,10 @@ function nearbyFleetDirective(MapsLoader, $q, locationService) {
   }
 }
 
-function FleetController($rootScope, $scope, $state, selectedCar, searchEvents, mapsEvents, mockLocation) {
+function FleetController($rootScope, $scope, stateService, selectedCar, searchEvents, mapsEvents, DataService,mockLocation) {
   var self          = this;
-  this.$state       = $state;
+  this.stateService       = stateService;
+  this.DataService = DataService;
   this.$rootScope   = $rootScope;
   this.$scope       = $scope;
   this.selectedCar  = selectedCar;
@@ -108,11 +91,17 @@ function FleetController($rootScope, $scope, $state, selectedCar, searchEvents, 
 FleetController.prototype.showCarDetails = function(marker, data) {
   var self = this;
   var latLng = {latitude: data.latitude, longitude: data.longitude};
-
-  this.selectedCar.setSelected(data);
-  this.$rootScope.$broadcast(this.mapsEvents.destinyOnRouteChanged, latLng);
-  this.$rootScope.$broadcast(this.searchEvents.vehicleSelected, data);
-  this.$state.go('cars-show', { id: data.id });
+  this.DataService.activate('cars', data.id, function(err, activatedCar) {
+    if (err){
+      console.log(err);
+      return;
+    } 
+ 
+    self.selectedCar.setSelected(data);
+    self.$rootScope.$broadcast(self.mapsEvents.destinyOnRouteChanged, latLng);
+    self.$rootScope.$broadcast(self.searchEvents.vehicleSelected, data);
+    self.stateService.next({ id: data.id });
+  });
 };
 
 angular.module('app')
@@ -120,19 +109,17 @@ angular.module('app')
   'MapsLoader',
   '$q',
   'locationService',
+  'mapsEvents',
   nearbyFleetDirective
-])
-.service('selectedCar', [
-  '$rootScope',
-  SelectedCarService
 ])
 .controller('FleetController', [
   '$rootScope',
   '$scope',
-  '$state',
+  'WaiveCarStateService',
   'selectedCar',
   'searchEvents',
   'mapsEvents',
+  'DataService',
   'mockCityLocationService',
   FleetController
 ]);

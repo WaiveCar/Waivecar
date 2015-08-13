@@ -2,7 +2,7 @@
 * Handles maily functions related to a single car
 */
 // Cars - Show
-function CarController($state, $q, selectedCar, DataService) {
+function CarController($state, $q, selectedCar,WaiveCarStateService,DataService) {
 
   var self          = this;
   self.$state        = $state;
@@ -10,37 +10,32 @@ function CarController($state, $q, selectedCar, DataService) {
   self.DataService  = DataService;
   self.UserResource = DataService.resources.users;
   self.car          = DataService.active;
+  self.WaiveCarStateService = WaiveCarStateService;
 
   self.DataService.activate('cars', $state.params.id, function(err, activatedCar) {
     if (err) console.log(err);
+    
   });
 
   this.selectedCar = selectedCar;
-  var selectedData = selectedCar.getSelected();
-  if (angular.isUndefined(selectedData)) $state.go('cars');
+
 }
-
 CarController.prototype.getDestiny = function() {
-
   return this.selectedCar.getSelected().location;
 };
-
 CarController.prototype.chooseCar = function() {
   var self         = this;
   var selectedData = this.selectedCar.getSelected();
   var carId        = selectedData.id;
-
-  self.$state.go('users-new', {
-    redirectUrl    :'bookings-new',
-    redirectParams : {
+  this.WaiveCarStateService.next(
+    {
       carId     : self.DataService.active.cars.id,
       includeAd : true
     }
-  });
+  );
 };
-
 CarController.prototype.cancel = function() {
-  this.state.go('cars');
+  this.WaiveCarStateService.previous();
 };
 function carChargeStatusDirective(searchEvents, selectedCar) {
   function link(scope, element, attrs, ctrl) {
@@ -48,17 +43,21 @@ function carChargeStatusDirective(searchEvents, selectedCar) {
     if (!selectedData) {
       return;
     }
-    var details = selectedData.status;
+    var diagnosticsData={}
+    selectedData.diagnostics.forEach(function(d){
+      diagnosticsData[d.type]=d.value;
+    });
 
-    scope.chargeLevel = details.charge.current + '%';
-    if (details.charge.charging) {
-      scope.chargeState = 'Parked at charging station';
-      scope.chargeFull  = details.charge.timeUntilFull + ' minutes';
-    } else {
+    // var details = selectedData.status;
+
+    scope.chargeLevel = diagnosticsData.evBatteryLevel + '%';
+    if (diagnosticsData.evChargeState==="Not Charged") {
       scope.chargeState = 'Not charging';
+      
+    } else {
+      scope.chargeState = 'Parked at charging station';
     }
-
-    scope.chargeReach = details.charge.reach+' miles ';
+    scope.chargeReach = diagnosticsData.totalRange+' miles ';
   }
 
   return {
@@ -70,10 +69,6 @@ function carChargeStatusDirective(searchEvents, selectedCar) {
 
 function carInformationDirective(searchEvents, selectedCar) {
   function link(scope, element, attrs, ctrl) {
-    scope.$watch(function(){
-      return selectedCar.getSelected();
-    },
-    function(){
       var details = selectedCar.getSelected();
       if (details) {
         scope.make = details.make;
@@ -81,7 +76,6 @@ function carInformationDirective(searchEvents, selectedCar) {
         scope.plate = details.plate;
         scope.image = details.image;
       }
-    })
   }
   return {
     restrict    : 'E',
@@ -99,6 +93,7 @@ angular.module('app')
   '$state',
   '$q',
   'selectedCar',
+  'WaiveCarStateService',
   'DataService',
   CarController
 ])

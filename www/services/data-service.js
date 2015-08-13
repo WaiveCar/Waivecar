@@ -1,4 +1,4 @@
-function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, Users, mapEvents) {
+function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, Users, mapsEvents) {
 
   var service = {
 
@@ -80,6 +80,10 @@ function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, User
         var model = item.toJSON();
         service.merge(modelName, model);
       });
+      if(modelName==='cars'){
+        console.log('broadcasting');
+        $rootScope.$broadcast(mapsEvents.markersChanged,'fleet');
+      }
     },
 
     // client-side manipulation only
@@ -91,23 +95,8 @@ function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, User
       if (existing) {
         _.merge(existing, model);
       } else {
-        // VERY TEMP CODE
-        if (modelName === 'cars') {
-          model.image  = '/components/ads/templates/images/ad1.png';
-          model.plate  = 'AUD 568';
-          model.status = {
-            charge: {
-              current: 69,
-              timeUntilFull: 20,
-              reach: 10,
-              charging: true
-            }
-          };
-        }
-        // END TEMP CODE
         service.all[modelName].push(model);
       }
-
       return model;
     },
 
@@ -177,7 +166,7 @@ function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, User
     }
   };
 
-  $rootScope.$on(mapEvents.positionChanged, function(e, position) {
+  $rootScope.$on(mapsEvents.positionChanged, function(e, position) {
     console.log('refreshing cars');
     service.userLocation = position;
     if (service.userLocation.latitude && service.userLocation.longitude) {

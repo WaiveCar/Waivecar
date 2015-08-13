@@ -27,6 +27,7 @@ module.exports = function(config) {
       './www/services/*.js',
       './www/modules/**/*.js',
       './www/components/**/*.js',
+      './tests/utils/**/*.js',
       './tests/**/*Spec.js'
       // './tests/modules/maps/destinyLocationDirectiveSpec.js',
       // './tests/modules/maps/deviceLocationDirectiveSpec.js'

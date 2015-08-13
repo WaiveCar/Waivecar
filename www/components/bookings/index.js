@@ -1,10 +1,11 @@
-function BookingController($rootScope, $scope, $state, DataService, selectedCarService, mapsEvents, $ionicModal) {
+function BookingController($rootScope, $scope, $state, DataService, selectedCarService, mapsEvents, $ionicModal,WaiveCarStateService) {
   var self                = this;
   this.selectedCarService = selectedCarService;
   self.isEdit             = $state.params.id ? true : false;
   self.$state             = $state;
   self.DataService        = DataService;
   self.active             = DataService.active;
+  this.WaiveCarStateService = WaiveCarStateService;
 
   $scope.$on(mapsEvents.withinUnlockRadius,function(){
     // alert("RECEIVED WITHIN UNLOCK RADIUS");
@@ -34,23 +35,22 @@ function BookingController($rootScope, $scope, $state, DataService, selectedCarS
     ].join('');
     window.open(encodeURI(url), '_system');
   };
-  if(!selectedCarService.getSelected()){
-    $state.go('cars');
-  }
 }
 
 BookingController.prototype.create = function() {
   var self = this;
+  console.log(self.active);
   self.DataService.create('bookings', {
     carId  : self.active.cars.id,
-    userId : self.active.users.id
+    // userId : self.active.users.id
   }, function(err, booking) {
-    self.$state.go('ads', {
+    self.WaiveCarStateService.next({ redirectUrl:'bookings-show',redirectParams : {'id' : self.active.bookings.id}});
+  /*  self.$state.go('ads', {
       redirectUrl    :'bookings-show',
       redirectParams : {
         'id' : self.active.bookings.id
       }
-    });
+    });*/
   })
 }
 
@@ -104,6 +104,7 @@ angular.module('app')
   'selectedCar',
   'mapsEvents',
   '$ionicModal',
+  'WaiveCarStateService',
   BookingController
 ])
 .controller('BookingsController', [

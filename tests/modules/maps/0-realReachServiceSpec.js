@@ -16,9 +16,8 @@ describe('Real Reach service',function(){
     beforeEach(function(){
         L=mockLeaflet;//Global
         var self=this;
-        angular.module('Maps');
-        angular.mock.module('Maps.realReach');
-        angular.mock.module(function($provide){
+        angular.module('Maps',[]);
+        angular.mock.module('Maps.realReach',function($provide){
             $provide.value("locationService", mockLocation);
             $provide.value("MapsLoader", mockMapsLoader);
         });
