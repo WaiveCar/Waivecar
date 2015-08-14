@@ -1,31 +1,31 @@
 <ion-pane class="bookings-component waiveCarContainer" ng-controller="UserController as userCtrl">
-  <header-bar type="nav" on-button-click="showNav()">Find WaiveCars</header-bar>
-  <ion-content scroll="false" class="has-header">
+  <ion-content  class="full-page  has-footer-bar" >
+    <h1 class="page-title">Register</h1>
+    <a class="button button-blue button-padded"  > <img src="img/facebook.svg" class="service-icon vertical-aligned"  ><span class="vertical-aligned">connect with facebook</span></a>
+    <p class="strike"><span>Or</span></p>
 
-    <form ng-submit="userCtrl.create()">
-      <div class="list">
-        <label class="item item-input item-floating-label">
-          <span class="input-label">First Name</span>
-          <input type="text" placeholder="First Name" ng-model="userCtrl.forms.userForm.firstName">
-        </label>
-        <label class="item item-input item-floating-label">
-          <span class="input-label">Last Name</span>
-          <input type="text" placeholder="Last Name" ng-model="userCtrl.forms.userForm.lastName">
-        </label>
-        <label class="item item-input item-floating-label">
-          <span class="input-label">Email</span>
-          <input type="text" placeholder="Email" ng-model="userCtrl.forms.userForm.email">
-        </label>
-        <label class="item item-input item-floating-label">
-          <span class="input-label">Password</span>
-          <input type="password" placeholder="Password" ng-model="userCtrl.forms.userForm.password">
-        </label>
-      </div>
-      <button type="button" class="button" ng-click="login()">Already have an account?</button>
-      <button type="submit" class="button">Register</button>
+    <form >
+      <label class="item item-input">
+        <span class="input-label">Full Name</span>
+        <input type="text" ng-model="userCtrl.forms.userForm.fullName">
+      </label>
+      <label class="item item-input">
+        <span class="input-label">Email</span>
+        <input type="text" placeholder="Email" ng-model="userCtrl.forms.userForm.email">
+      </label>
+      <label class="item item-input">
+        <span class="input-label">Mobile</span>
+        <input type="text" ng-model="userCtrl.forms.userForm.mobile">
+      </label>
+      <label class="item item-input">
+        <span class="input-label">Password</span>
+        <input type="password" placeholder="Password" ng-model="userCtrl.forms.userForm.password">
+      </label>
     </form>
+    <p>You won't receive any spam from us</p>
+
   </ion-content>
   <div class="bar bar-footer">
-    <button class="button button-balanced"  previous-state>Back</button>
+    <button class="button button-balanced"  previous-state ng-click="userCtrl.create()">Continue</button>
   </div>
 </ion-pane>

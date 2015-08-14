@@ -8,10 +8,10 @@ function UserController($rootScope, $scope, $state, AuthService, DataService,Wai
   self.forms       = {
     // prefill for easier testing ;)
     userForm     : {
-      firstName : 'Travis',
-      lastName  : 'Kalanick',
+      fullName : 'Travis Kalanick',
       email     : 'matt.ginty+' + Math.random() + '@clevertech.biz',
-      password  : 'lollipop0'
+      password  : 'lollipop0',
+      mobile    :  '+555 555 555'
     },
     passwordForm : {}
   };
@@ -43,7 +43,6 @@ UserController.prototype.create = function() {
     });
   });
 }
-
 angular.module('app')
 .controller('UserController', [
   '$rootScope',
