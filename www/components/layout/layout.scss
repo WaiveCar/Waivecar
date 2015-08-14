@@ -60,3 +60,15 @@
     padding-bottom: 2em;
   }
 }
+.step-by-step{
+  margin-top: 1rem;
+  line{
+    stroke-width:0.5rem;
+    stroke: $gray;
+    &.passed{
+      stroke: $green;
+    }
+   
+    
+  }
+}

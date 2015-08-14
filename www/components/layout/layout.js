@@ -27,7 +27,13 @@ function headerBarDirective(layoutIcons){
 		replace: true
 	}
 }
-
+function stepByStepDirective(){
+	return {
+		restrict:'E',
+		replace: true,
+		templateUrl:'/components/layout/templates/directives/stepByStep.html'
+	}
+}
 function dialogDirective(){
 	return {
 		restrict:'E',
@@ -123,4 +129,7 @@ angular.module('layout',['WaiveCar.state'])
 ])
 .directive('bestFit', [
 	bestFitTextDirective
+])
+.directive('stepByStep',[
+	stepByStepDirective
 ]);
