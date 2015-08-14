@@ -22,7 +22,6 @@ function headerBarDirective(layoutIcons){
 			icon:'@',
 			type:'@',
 			onButtonClick:'&',
-			showNav:'@'
 		},
 		transclude: true,
 		replace: true
