@@ -61,6 +61,7 @@ angular.module('app', [
       'url':'/login-sign-up',
       templateUrl: '/components/login/templates/loginSignUp.html'
     },
+
     // FIND WAIVECARS
     'fleet':{
       url: '/fleet',
@@ -86,6 +87,10 @@ angular.module('app', [
     'credit-cards-new':{
       url         : '/users/cards/new',
       templateUrl : '/components/credit-cards/templates/new.html'
+    },
+    'licensePhoto':{
+      url         : '/licenses/photo',
+      templateUrl : '/components/licenses/templates/photo.html'
     },
     'licenses':{
       url         : '/users/licenses',
