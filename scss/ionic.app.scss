@@ -438,40 +438,6 @@ h1.page-title{
 .full-page{
   text-align: center;
 }
-.strike {
-        display: block;
-        text-align: center;
-        overflow: hidden;
-        white-space: nowrap; 
-        width: 80%;
-        margin: 0 auto;
-}
-
-
-.strike > span {
-    position: relative;
-    display: inline-block;
-}
-  
-.strike > span:before,
-.strike > span:after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    width: 1000px;
-    height: 1px;
-    background: #000;
-}
-
-.strike > span:before {
-    right: 100%;
-    margin-right: 1em;
-}
-
-.strike > span:after {
-    left: 100%;
-    margin-left: 1em;
-}
 label.item.item-input{
   width: 80%;
   margin: 0 auto;

@@ -49,6 +49,10 @@ angular.module('app', [
       'url':'/',
       templateUrl: '/components/layout/templates/intro.html'
     },
+    'facebookCalback':{
+      'url':'/facebookCalback',
+      templateUrl: '/components/login/templates/facebookCallback.html'
+    },
     'signIn':{
       'url':'/signIn',
       templateUrl: '/components/login/templates/signIn.html'

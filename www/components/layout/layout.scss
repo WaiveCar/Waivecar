@@ -62,6 +62,9 @@
 }
 .step-by-step{
   margin-top: 1rem;
+  svg{
+    height: 0.5rem;
+  }
   line{
     stroke-width:0.5rem;
     stroke: $gray;
@@ -70,5 +73,29 @@
     }
    
     
+  }
+}
+.strike{
+  line{
+    stroke: $green;
+    stroke-width:0.5rem;
+  }
+  height: 0.5rem;
+  width: 10rem;
+}
+.lineOnTheSides{
+  svg{
+    display: inline-block;
+    height: 0.5rem;
+    
+      line{
+        stroke: $gray;
+        stroke-width:0.5rem;
+      }
+    
+  }
+  .content{
+    display: inline-block;
+    width: 5%;
   }
 }

@@ -36,6 +36,7 @@ function stepByStepDirective(){
 			scope.currentStep=4;
 		}
 		for(var i=0;i<scope.currentStep;i++){
+			console.log(" A "+i);
 			scope['step'+(i+1)]='passed';
 		}
 	}
@@ -125,7 +126,21 @@ function bestFitTextDirective(){
 function SplashScreenController(WaiveCarStateService,$timeout){
 	$timeout(function(){WaiveCarStateService.next()}, 1500);
 }
+function strikeDirective(){
+	return {
+		restrict:'E',
+		templateUrl:'/components/layout/templates/directives/strike.html'
 
+	}
+}
+function lineOnTheSidesDirective(){
+	return{
+		restrict:'E',
+		transclude:true,
+		templateUrl:'/components/layout/templates/directives/lineOnTheSides.html'
+
+	}
+}
 angular.module('layout',['WaiveCar.state'])
 .controller('SplashScreenController', [
 	'WaiveCarStateService',
@@ -147,4 +162,10 @@ angular.module('layout',['WaiveCar.state'])
 ])
 .directive('stepByStep',[
 	stepByStepDirective
+])
+.directive('lineOnTheSides',[
+	lineOnTheSidesDirective
+])
+.directive('strike',[
+	strikeDirective
 ]);
