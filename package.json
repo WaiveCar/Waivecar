@@ -22,7 +22,7 @@
     "koa-cors": "0.0.16",
     "lodash": "3.10.0",
     "moment": "2.10.2",
-    "reach-api": "0.3.13",
+    "reach-api": "0.3.15",
     "shortid" : "2.2.2"
   },
   "devDependencies": {
@@ -33,14 +33,14 @@
     "request": "2.58.0"
   },
   "reach": {
-    "reach-auth": "0.0.16",
+    "reach-auth": "0.1.0",
     "reach-commander": "0.0.3",
     "reach-email": "0.0.4",
     "reach-file": "0.1.8",
     "reach-log": "0.0.11",
     "reach-payments": "0.0.7",
     "reach-queue": "0.0.7",
-    "reach-sequelize": "0.0.8",
+    "reach-sequelize": "0.0.10",
     "reach-sms": "0.0.4",
     "reach-user": "0.1.5"
   }
