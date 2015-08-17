@@ -34,6 +34,13 @@ WaiveCarStateService.prototype.init = function() {
 		{
 			name:'credit-cards',
 		},
+		//Password revoery flow
+		{
+			name:'passwordRecovery'
+		},
+		{
+			name:'passwordEmailInfo'
+		},
 		//Flow prior to this is on the right order
 		{
 			name:'licenses-new'

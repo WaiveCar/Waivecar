@@ -61,7 +61,14 @@ angular.module('app', [
       'url':'/login-sign-up',
       templateUrl: '/components/login/templates/loginSignUp.html'
     },
-
+    'passwordRecovery':{
+      'url':'/password-recovery',
+      templateUrl: '/components/login/templates/passwordRecovery.html'
+    },
+    'passwordEmailInfo':{
+      'url':'/password-information',
+      templateUrl: '/components/login/templates/passwordInformation.html'
+    },
     // FIND WAIVECARS
     'fleet':{
       url: '/fleet',
