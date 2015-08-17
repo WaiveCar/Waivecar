@@ -36,7 +36,6 @@ function stepByStepDirective(){
 			scope.currentStep=4;
 		}
 		for(var i=0;i<scope.currentStep;i++){
-			console.log(" A "+i);
 			scope['step'+(i+1)]='passed';
 		}
 	}

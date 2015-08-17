@@ -8,7 +8,8 @@ function UserController($rootScope, $scope, $state, AuthService, DataService,Wai
   self.forms       = {
     // prefill for easier testing ;)
     userForm     : {
-      fullName : 'Travis Kalanick',
+      firstName : 'Travis',
+      lastName  : 'Kalanick',
       email     : 'matt.ginty+' + Math.random() + '@clevertech.biz',
       password  : 'lollipop0',
       mobile    :  '+555 555 555'
@@ -31,15 +32,7 @@ UserController.prototype.create = function() {
       email    : self.forms.userForm.email,
       password : self.forms.userForm.password
     }, function(auth) {
-      if (redirectUrl) {
-        self.$state.go('licenses-new', {
-          redirectUrl    : redirectUrl,
-          redirectParams : redirectParams
-        });
-      } else {
-        self.WaiveCarStateService.next();
-        //self.$state.go('credit-cards');
-      }
+       self.WaiveCarStateService.next();
     });
   });
 }

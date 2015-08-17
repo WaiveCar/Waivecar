@@ -94,11 +94,11 @@ angular.module('app', [
       url         : '/users/cards/new',
       templateUrl : '/components/credit-cards/templates/new.html'
     },*/
-    'licensePhoto':{
+    'license-photo':{
       url         : '/licenses/photo',
       templateUrl : '/components/licenses/templates/photo.html'
     },
-    'licenseDetails':{
+    'license-details':{
       url         : '/licenses/details',
       templateUrl : '/components/licenses/templates/details.html'
     },

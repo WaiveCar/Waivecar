@@ -43,6 +43,10 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
         background-color: $balanced;
         color:#FFF;
       }
+      &.button-light-gray{
+        background-color: $lightGray;
+        color:#FFF;
+      }
       &.button-blue{
         background-color: $blue;
         color:#FFF;
