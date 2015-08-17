@@ -36,8 +36,8 @@ module.exports = function *() {
     repeat : true,
     silent : true,
     timer  : {
-      value : 30,
-      type  : 'seconds'
+      value : 5,
+      type  : 'minutes'
     }
   });
 };
