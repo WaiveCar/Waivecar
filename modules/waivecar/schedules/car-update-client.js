@@ -36,8 +36,8 @@ scheduler.process('car-update-client', function *(job) {
   if (!cars) {
     return;
   }
-  io.flux({
-    actionType : 'cars:update',
-    cars       : cars
+  io.redux({
+    type : 'cars:update',
+    cars : cars
   });
 });
