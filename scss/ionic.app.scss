@@ -450,6 +450,11 @@ h1.page-title{
   color:white;
   text-align: center;
   margin-top: 1rem;
+  position: relative;
+  i{
+    position: absolute;
+    left:1em;
+  }
 }
 .full-page{
   text-align: center;

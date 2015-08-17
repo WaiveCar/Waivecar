@@ -140,6 +140,17 @@ function lineOnTheSidesDirective(){
 
 	}
 }
+function pageTitleDirective(){
+	return {
+		restrict:'E',
+		transclude:true,
+		scope:{
+			'backButton':'@'
+		},
+		templateUrl:'/components/layout/templates/directives/pageTitle.html'
+
+	}
+}
 angular.module('layout',['WaiveCar.state'])
 .controller('SplashScreenController', [
 	'WaiveCarStateService',
@@ -167,4 +178,7 @@ angular.module('layout',['WaiveCar.state'])
 ])
 .directive('strike',[
 	strikeDirective
+])
+.directive('pageTitle',[
+	pageTitleDirective
 ]);
