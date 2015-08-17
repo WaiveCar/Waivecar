@@ -21,6 +21,7 @@ function headerBarDirective(layoutIcons){
 		scope:{
 			icon:'@',
 			type:'@',
+			avatar:'@',
 			onButtonClick:'&',
 		},
 		transclude: true,
@@ -151,6 +152,15 @@ function pageTitleDirective(){
 
 	}
 }
+function bottomToastDirective(){
+	return {
+		restrict:'E',
+		transclude:true,
+		
+		templateUrl:'/components/layout/templates/directives/bottomToast.html'
+
+	}
+}
 angular.module('layout',['WaiveCar.state'])
 .controller('SplashScreenController', [
 	'WaiveCarStateService',
@@ -178,6 +188,9 @@ angular.module('layout',['WaiveCar.state'])
 ])
 .directive('strike',[
 	strikeDirective
+])
+.directive('bottomToast',
+	[bottomToastDirective
 ])
 .directive('pageTitle',[
 	pageTitleDirective

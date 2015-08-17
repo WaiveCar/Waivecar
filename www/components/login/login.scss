@@ -2,4 +2,10 @@
 	background-repeat: no-repeat;
 	background-image: url("../img/background.png");
 	background-size:cover;
+.buttonsContainer{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding-bottom: 2em;
+  }
 }

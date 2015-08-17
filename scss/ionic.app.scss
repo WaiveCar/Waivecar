@@ -13,6 +13,10 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
    display: inline-block;
    vertical-align: middle;
 }
+.img-avatar{
+  border-radius: 50%;
+  height: 100%;
+}
 .pane{
   .dashed:after {
     content:"";
@@ -24,7 +28,6 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     width: 4%;
     border-bottom: 1px solid #25c155;
 }
-
  .button,.button.active,.button.activated{
       background-color: inherit;
       border: none;
@@ -97,6 +100,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
   }
   .bar-header{
     min-height: 2rem;
+    border: none;
     .header-text{
       float:left;
       width: 100%;
@@ -111,6 +115,11 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     .button-left{
       position: absolute;
       left: 0;
+    }
+    .img-avatar{
+      position: absolute;
+      left: 0;
+   
     }
   }
   a,a:hover,a:visited{
@@ -463,6 +472,21 @@ label.item.item-input{
   width: 80%;
   margin: 0 auto;
   text-align: left;
+}
+
+.signIn{
+  vertical-align: middle;
+  text-align: center;
+  .logo{
+    width: 80%;
+    position:absolute;
+    top:0;
+    bottom:0;
+    left: 0;  
+    right: 0;  
+    margin: auto;
+  }
+  
 }
 @import "www/components/layout/layout.scss";
 @import "www/components/cars/style.scss";
