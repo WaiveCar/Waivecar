@@ -174,8 +174,8 @@ function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, User
     }
   });
 
-  $socket.on('flux', function(data) {
-    var meta      = data.actionType.split(':');
+  $socket.on('redux', function(data) {
+    var meta      = data.type.split(':');
     var modelName = meta[0];
     var action    = meta[1];
     var model     = data[modelName];
