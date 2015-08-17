@@ -81,13 +81,19 @@ angular.module('app', [
       templateUrl: '/components/users/templates/show.html'
     },
     'credit-cards':{
+      url         : '/cards/register',
+      templateUrl : '/components/credit-cards/templates/register.html'
+    },
+  /*  
+    Port this forms to the layouted one
+    'credit-cards':{
       url         : '/users/cards',
       templateUrl : '/components/credit-cards/templates/index.html'
     },
     'credit-cards-new':{
       url         : '/users/cards/new',
       templateUrl : '/components/credit-cards/templates/new.html'
-    },
+    },*/
     'licensePhoto':{
       url         : '/licenses/photo',
       templateUrl : '/components/licenses/templates/photo.html'
@@ -96,14 +102,18 @@ angular.module('app', [
       url         : '/licenses/details',
       templateUrl : '/components/licenses/templates/details.html'
     },
+    //Port this to details + photo
+    /*
     'licenses':{
       url         : '/users/licenses',
       templateUrl : '/components/licenses/templates/index.html'
     },
+
     'licenses-new':{
       url         : '/users/licenses/new',
       templateUrl : '/components/licenses/templates/new.html'
     },
+    */
     //Connect to car
     'cars-connect':{
       url: '/cars/connect/:id',
