@@ -92,6 +92,10 @@ angular.module('app', [
       url         : '/licenses/photo',
       templateUrl : '/components/licenses/templates/photo.html'
     },
+    'licenseDetails':{
+      url         : '/licenses/details',
+      templateUrl : '/components/licenses/templates/details.html'
+    },
     'licenses':{
       url         : '/users/licenses',
       templateUrl : '/components/licenses/templates/index.html'
