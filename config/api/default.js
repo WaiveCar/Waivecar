@@ -26,11 +26,6 @@ module.exports = {
     cors    : {
       origins : [ 'http://localhost:3000', 'http://localhost:8080', 'http://localhost:8100' ],
       headers : [ 'Content-Type', 'Cache-Control', 'X-Requested-With', 'Authorization' ]
-    },
-    sites : {
-      site  : [ 'http://localhost:3000' ],
-      admin : [ 'http://localhost:8080' ],
-      app   : [ 'http://localhost:8100' ]
     }
   },
 
