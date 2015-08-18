@@ -15,7 +15,7 @@ module.exports = {
    | uri     : The full url address including port to your API service
    | cors    : Origins and headers allowed to access the API service
    | sites   : The application type of incoming requests
-   |
+   | NB      : Recommend ports: Website @ 3000, Admin @ 8080, API @ 8081, & App @ 8100.
    */
 
   api : {
@@ -24,11 +24,12 @@ module.exports = {
     port    : 3000,
     uri     : 'http://localhost:3000',
     cors    : {
-      origins : [ 'http://localhost:3081', 'http://localhost:8100' ],
+      origins : [ 'http://localhost:3000', 'http://localhost:8080', 'http://localhost:8100' ],
       headers : [ 'Content-Type', 'Cache-Control', 'X-Requested-With', 'Authorization' ]
     },
     sites : {
-      admin : [ 'http://localhost:3081' ],
+      site  : [ 'http://localhost:3000' ],
+      admin : [ 'http://localhost:8080' ],
       app   : [ 'http://localhost:8100' ]
     }
   },
