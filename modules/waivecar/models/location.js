@@ -1,7 +1,7 @@
 'use strict';
 
 Reach.Register.Model('Location', 'sequelize', function (model, Sequelize) {
-  
+
   /**
    * The identity of the table created in your database.
    * @property table
@@ -20,7 +20,7 @@ Reach.Register.Model('Location', 'sequelize', function (model, Sequelize) {
       defaultValue : 'station'
     },
     name        : { type : Sequelize.STRING, allowNull : false },
-    description : { type : Sequelize.STRING, },
+    description : { type : Sequelize.STRING },
     latitude    : { type : Sequelize.DECIMAL(10, 8), allowNull : false },
     longitude   : { type : Sequelize.DECIMAL(11, 8), allowNull : false },
     address     : { type : Sequelize.STRING }
