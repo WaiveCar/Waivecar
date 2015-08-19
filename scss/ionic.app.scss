@@ -204,14 +204,16 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
   .header-subtitle{
     font-size: $headerSubtitleSize*1rem;
   }
+.scroll{
+  height: 100%;
+}
 
-
-  .has-header{
-    top: $barHeight * 1%;
-    &.has-big-header{
-      top: $bigHeaderSize * 1%;
-    }
+.has-header{
+  top: $barHeight * 1%;
+  &.has-big-header{
+    top: $bigHeaderSize * 1%;
   }
+}
   .scroll-content.has-header{
     height: (100-$barHeight) * 1%;
     &.has-big-header{
@@ -325,7 +327,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
   text-transform: uppercase;
 }
 .double-buttons{
-  width: 80%;
+  width: 90%;
   margin: 0 auto;
   button{
     display: inline-block;
@@ -471,7 +473,7 @@ body .scroll-content{
     background-color: $grayBg;
     color:white;
 }
-h1.page-title{
+.page-title{
   text-transform: uppercase;
   color:white;
   text-align: center;
@@ -487,7 +489,7 @@ h1.page-title{
   text-align: center;
 }
 label.item.item-input{
-  width: 80%;
+  width: 90%;
   margin: 0 auto;
   text-align: left;
 }
@@ -498,4 +500,5 @@ label.item.item-input{
 @import "www/components/maps/style.scss";
 @import "www/components/ads/style.scss";
 @import "www/components/ride/style.scss";
+@import "www/components/licenses/style.scss";
 @import "www/components/login/login.scss";

@@ -60,7 +60,7 @@
 .strike{
   line{
     stroke: $green;
-    stroke-width:0.5rem;
+    stroke-width:10%;
   }
   height: 0.5rem;
   width: 6.22%;
@@ -68,19 +68,32 @@
   margin: 0 auto;
 }
 .lineOnTheSides{
+  height: 3%;
+  margin-top: 9.4%;
+  margin-bottom: 9.2%;
   svg{
     display: inline-block;
-    height: 0.5rem;
-    
+
+    height: 100%;
       line{
-        stroke: $gray;
-        stroke-width:0.5rem;
+        stroke: $gray2;
+        stroke-width:1.2%;
       }
     
   }
   .content{
     display: inline-block;
     width: 5%;
+    height: 100%;
+    margin-left: 6%;
+    margin-right: 6%;
+
+    span{
+      height: 100%;
+      display: inline-block;
+      width: 100%;
+
+    }
   }
 }
 .bottomToast{

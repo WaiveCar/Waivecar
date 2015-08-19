@@ -28,4 +28,30 @@
 }
 .button.button-padded.facebook-button{
 	height: 8.69%;
+	width: 90%;
+	padding: 0;
+	span{
+		height: 33%;
+		
+	}
+	
 }
+.bottomTextInfo{
+	margin-top: 5.3%;
+	display: block;
+	width: 75.2%;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.facebookContainer{
+	.formSectionTitle{
+		margin-bottom: 5.17%;
+		width: 75.2%;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	.nameAndEmailContainer{
+		margin-bottom: 9%;
+	}
+} 

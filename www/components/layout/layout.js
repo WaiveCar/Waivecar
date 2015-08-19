@@ -88,6 +88,7 @@ function bestFitTextDirective(){
 						var height=element[0].clientHeight;
 						var numChars=text.length;
 						var desiredFontSize=height;
+						var numLines=1;
 						if(desiredFontSize*numChars>width ){
 								var minFontSize=numChars/width;
 								var maxFontSize=desiredFontSize;
@@ -95,9 +96,8 @@ function bestFitTextDirective(){
 								var wordsSizes=[];
 								var words=text.split(' ');
 								words.forEach(function(w){
-								wordsSizes.push(w.length);
+									wordsSizes.push(w.length);
 								});
-								var numLines=1;
 								var numActualLines;
 								var expectedSize;
 								while(numActualLines>numLines || typeof(numActualLines)=='undefined'){
@@ -114,12 +114,18 @@ function bestFitTextDirective(){
 									});                
 									numLines++;
 								}
+								numLines--;
 								desiredFontSize=expectedSize;
 
 						}
 
 					var str=element
 					element[0].style.fontSize=desiredFontSize+"px";
+					element[0].style.lineHeight=((height)/numLines)+"px";
+					console.log("HEIUH "+((height)/numLines)+"px");
+					console.log(height);
+					console.log(numLines);
+					element[0].style.verticalAlign = "middle";
 				},
 	 }
 }
@@ -137,6 +143,7 @@ function lineOnTheSidesDirective(){
 	return{
 		restrict:'E',
 		transclude:true,
+		replace:true,
 		templateUrl:'/components/layout/templates/directives/lineOnTheSides.html'
 
 	}

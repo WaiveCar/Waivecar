@@ -1,17 +1,18 @@
 <ion-pane   class="waiveCarContainer " ng-controller="LoginController as login">
-    <ion-content  class="full-page  has-footer-bar" >
+    <ion-content  class="full-page  has-footer-bar" scroll="false" >
 		<page-title>sign in</page-title>
-		<a class="button button-blue button-padded facebook-button"  ng-click="login.connectWithFacebook()" > <img src="img/facebook.svg" class="service-icon"  ><span >connect with facebook</span></a>
-		<line-on-the-sides>or</line-on-the-sides>
+		<a class="button button-blue button-padded facebook-button"  ng-click="login.connectWithFacebook()" > <img src="img/facebook.svg" class="service-icon"  ><span 
+		>connect with facebook</span></a>
+		<line-on-the-sides>Or</line-on-the-sides>
 		<label class="item item-input">
 			<span class="input-label">Email or Mobile</span>
 			<input type="email">
 		</label>
 		<label class="item item-input">
 			<span class="input-label">Password</span>
-			<input type="password">
+			<input type="password" placeholder="6 characters or more">
 		</label>
-		<a ui-sref="passwordRecovery">Forgot your password?</a>
+		<a ui-sref="passwordRecovery" class="bottomTextInfo">Forgot your password?</a>
   </ion-content>
 	<div class="bar bar-footer">
 		<div class="footer-buttons">
