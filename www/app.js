@@ -42,7 +42,9 @@ angular.module('app', [
   'layout',
   'Camera',
   'WaiveCar.state.rules',
-  'WaiveCar.state'
+  'WaiveCar.state',
+  'config',
+  'social'
 ])
 .constant('appStates',{
     'intro':{

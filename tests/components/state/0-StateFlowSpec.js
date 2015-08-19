@@ -115,9 +115,9 @@ describe('State Flow',function(){
 			this.$rootScope.$emit('$stateChangeStart', {name:'fleet'});
 			this.$rootScope.$digest();
 			expect(mockState.go).not.toHaveBeenCalled();
-		});
-		it('Redirect to a state if a object is returned',function(){
-			flags.goTo={
+			});
+			it('Redirect to a state if a object is returned',function(){
+				flags.goTo={
 				params:{'foo':'baz'},
 				name:'bar'
 			};
@@ -128,10 +128,10 @@ describe('State Flow',function(){
 			resetCalls(mockState.go);
 		});
  	});
-	describe('Fleet',function(){
-	
-	});
-	describe('Car info',function(){
+	describe('State build ',function(){
+		it('Can set the state rules as an array');
+		it('Can set a rule for a state by name');
+		it('Can set a state rule by a function');
 
 	});
 	describe('Sign in',function(){
