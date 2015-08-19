@@ -2,10 +2,27 @@
 	background-repeat: no-repeat;
 	background-image: url("../img/background.png");
 	background-size:cover;
-.buttonsContainer{
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    padding-bottom: 2em;
+	.buttonsContainer{
+	    position: absolute;
+	    bottom: 0;
+	    width: 100%;
+	    padding-bottom: 8%;
+	    .button.button-padded{
+	    	height: 8.69%;
+	    }
+	  }
+}
+
+.signIn{
+  vertical-align: middle;
+  text-align: center;
+  .logo{
+    width: 86%;;
+    position:absolute;
+  	top:36%;
+  	left: 0;
+  	right: 0;
+    margin:0  auto;
   }
+  
 }
