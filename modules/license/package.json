@@ -3,5 +3,7 @@
   "private": true,
   "description": "Module for managing driver's licenses",
   "reach": {
+    "name": "license",
+    "type": "module"
   }
 }
