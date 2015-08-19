@@ -57,6 +57,7 @@ modules/*
 services/*
 modules/**/cache.json
 services/**/cache.json
+!**/license
 !**/waivecar
 !**/gm-api
 
