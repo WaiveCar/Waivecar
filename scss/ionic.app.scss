@@ -1,7 +1,7 @@
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;
 @import 'colors';
-
+@import 'fonts';
 @import 'sizes';
 //On percent of container we need to calculat as VH is from the viewPort
 // $mainTitleVhSize: (($barHeight/100) * $mainTitleHeightPercent);  */
@@ -32,10 +32,20 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
       background-color: inherit;
       border: none;
       vertical-align: middle;
-      img.service-icon{
-        height: 2em;
-        margin-right: 1.5em;
+      .svg-container{
         display: inline-block;
+        height: 100%;
+        width: auto;
+      }
+      img{
+        height: 2rem;      
+        margin-right: 1.5em;
+        position: absolute;
+        left: 1em;
+        top:0;
+        bottom:0;
+        margin-top: auto;
+        margin-bottom: auto;
       }
       color:#FFF;
 
@@ -64,11 +74,9 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
       }
       &.button-padded{
         text-transform: uppercase;
-        line-height: 2rem;
-        font-size: 1rem;
+        
         vertical-align: middle;
         span,a{
-          @include vertical-align;
           display: inline-block;
           color:#FFF;
 
@@ -311,9 +319,9 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 .button-padded,.bar-footer .button-padded{
   width:73.33%;
   height: 2em;
+
   margin-left: auto;
   margin-right: auto;
-  margin-top: 1em;
   text-transform: uppercase;
 }
 .double-buttons{
@@ -340,7 +348,6 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     border-radius: 0;
     border: 0;
     text-transform: uppercase;
-    font-family: "Helvetica Neue";
     font-weight: 300;
     font-size: 20px;
   }
@@ -474,6 +481,7 @@ h1.page-title{
     position: absolute;
     left:1em;
   }
+  margin-bottom: 5.25%;
 }
 .full-page{
   text-align: center;
