@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="125px" height="125px" viewBox="0 0 125 125" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.3.3 (12072) - http://www.bohemiancoding.com/sketch -->
+    <title>Fill 1 + Fill 2</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Contact" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="34-Contact@2x" sketch:type="MSArtboardGroup" transform="translate(-391.000000, -1129.000000)">
+            <g id="Imported-Layers" sketch:type="MSLayerGroup" transform="translate(236.000000, 1129.000000)">
+                <g id="Fill-1-+-Fill-2" transform="translate(155.000000, 0.000000)" sketch:type="MSShapeGroup">
+                    <path d="M0,62.1136228 C0,96.4174201 27.9817188,124.227246 62.500707,124.227246 C97.0182812,124.227246 125,96.4174201 125,62.1136228 C125,27.8098256 97.0182812,0 62.500707,0 C27.9817188,0 0,27.8098256 0,62.1136228" id="Fill-1" fill="#5071AA"></path>
+                    <path d="M73.1875349,53.6720674 L65.9723436,53.6720674 L65.9723436,48.9687865 C65.9723436,47.2036292 67.1497479,46.791236 67.9782386,46.791236 L73.0697944,46.791236 L73.0697944,39.0271124 L66.0584951,39 C58.2732678,39 56.5014179,44.7906292 56.5014179,48.4964607 L56.5014179,53.6720674 L52,53.6720674 L52,61.6730674 L56.5014179,61.6730674 L56.5014179,84.3118876 L65.9723436,84.3118876 L65.9723436,61.6730674 L72.3604801,61.6730674 L73.1875349,53.6720674" id="Fill-2" fill="#FFFFFF"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

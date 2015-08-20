@@ -1,0 +1,39 @@
+body{
+
+	.scroll-content.visionContainer{
+		background-color: #FFF;
+		color:#021207;
+		.visionWrapper{
+			width: 80%;
+			margin: 0 auto;
+			height: 100%;
+			position: relative;
+		}
+		text-align: center;
+		.visionLongText{
+			color:#545a56;
+			margin-top: 22%;
+		}
+		.visionConlusion{
+			margin-top: 9%;
+		}
+		.dataContainer{
+			height: 25%;
+			width: 100%;
+			position: absolute;
+			bottom: 0;
+			margin-bottom: 10%;
+			.dataItem{
+				display: inline-block;
+				width: 32%;
+				height: 100%;
+				margin:0;
+				bottom: 0;
+				padding: 0;
+				img{
+					width: 60%;
+				}
+			}
+		}
+	}
+}
