@@ -1,16 +1,30 @@
-<ion-pane class="bookings-component">
-  <ion-header-bar class="bar bar-header bar-light">
-    <h1 class="title">Vision</h1>
-    <div class="buttons">
-      <button class="button button-icon icon ion-navicon" ng-click="showNav()"></button>
+<ion-pane   ng-controller="SplashScreenController as splash">
+  <header-bar type="nav" on-button-click="showNav()">Our vision</header-bar>
+  <ion-content scroll="false" class="visionContainer has-header">
+    <div class="visionWrapper">
+        <div class="visionLongText">
+          <p>We believe in breaking paradigms and trying new systems to solve the big problems.</p>
+          <p> We believe in sharing resources.</p>
+          <p>We believe that renewable energy must reach as many people as possible in order to create a sustainable future.</p>  
+          <br/>
+          <p>Drive an ecological car for free. Thank you for helping.</p>
+        </div>
+        <p class="visionConlusion">We’re all helping this much!</p>
+        <div class="dataContainer">
+          <div class="dataItem">
+            <img src="img/tree-icon.svg" />
+            <p>3.500 PPM (CO2)</p>
+          </div>
+          <div class="dataItem">
+            <img src="img/gasoline-icon.svg" />
+            <p>50.000 galons of gasoline</p>
+          </div>
+           <div class="dataItem">
+            <img src="img/clock-icon.svg" />
+            <p>360 hours of city traffic</p>
+          </div>
+          
+        </div>
     </div>
-  </ion-header-bar>
-  <ion-content scroll="false">
-    <p class="text-center">
-      Copy required.
-    </p>
   </ion-content>
-  <div class="bar bar-footer">
-    <a ui-sref="cars" class="button button-balanced">Back</a>
-  </div>
 </ion-pane>

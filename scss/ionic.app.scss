@@ -17,6 +17,14 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
   border-radius: 50%;
   height: 100%;
 }
+.message-page{
+  h1,h2,h3,h4,h5,h6{
+    color:#FFF;
+  }
+  .waiveCarIcon{
+    width: 9%;
+  }
+}
 .pane{
   .dashed:after {
     content:"";
@@ -502,3 +510,5 @@ label.item.item-input{
 @import "www/components/ride/style.scss";
 @import "www/components/licenses/style.scss";
 @import "www/components/login/login.scss";
+@import "www/components/vision/style.scss";
+@import "www/components/contact/style.scss";

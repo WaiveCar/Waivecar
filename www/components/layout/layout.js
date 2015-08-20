@@ -130,7 +130,7 @@ function bestFitTextDirective(){
 	 }
 }
 function SplashScreenController(WaiveCarStateService,$timeout){
-	$timeout(function(){WaiveCarStateService.next()}, 1500);
+	// $timeout(function(){WaiveCarStateService.next()}, 1500);
 }
 function strikeDirective(){
 	return {
