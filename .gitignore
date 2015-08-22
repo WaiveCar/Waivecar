@@ -60,6 +60,7 @@ services/**/cache.json
 !**/license
 !**/waivecar
 !**/gm-api
+!**/admin
 
 #===========================================================
 # Node.js / NPM

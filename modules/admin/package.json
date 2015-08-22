@@ -1,0 +1,11 @@
+{
+  "name": "reach-admin",
+  "version": "0.0.1",
+  "author": "Christoffer Rødvik",
+  "description": "Administration module for 3rd party services.",
+  "license": "MIT",
+  "reach": {
+    "name": "admin",
+    "type": "module"
+  }
+}
