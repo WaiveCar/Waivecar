@@ -1,37 +1,17 @@
-function FaceBookService ($q,$auth) {
+function FaceBookService ($q,$cordovaOauth,$config) {
 	this.$q=$q;
-	this.$auth=$auth;
+	this.$cordovaOauth=$cordovaOauth;
+  this.$config = $config;
 }
 FaceBookService.prototype.getFacebookInfo = function() {
- this.$auth.authenticate('facebook')
-  .then(function(){
-    alert('FB OK');
-  })
-  .catch(function(response){
-    alert("ERROR");
-    alert(JSON.stringify(response));
-  })
+
+  this.$cordovaOauth.facebook(this.$config.facebook.clientId,['email']).then(function(result) {
+        alert(JSON.stringify(result));
+    }, function(error) {
+        alert(error);
+    });
+  
+
 };
-angular.module('social',['satellizer','config'])
-.config(function($authProvider,$configProvider){
-	this.$authProvider=$authProvider;
-	var socialConfig={
-      popupOptions: {
-        location: 'no',
-        toolbar: 'no',
-        width: window.screen.width,
-        height: window.screen.height,
-      },
-      redirectUri:'http://localhost/'
-    };
-    if (ionic.Platform.isIOS() || ionic.Platform.isAndroid()) {
-      $authProvider.platform = 'mobile';
-      socialConfig.redirectUri = 'http://localhost/';
-    }
-    var clientId= $configProvider.configData.satellizer.facebook.clientId;
-    $authProvider.facebook(angular.extend({}, socialConfig, {
-      clientId: clientId,
-      responseType: 'token'
-    }));
-})
-.service('FaceBookService',['$q','$auth',FaceBookService]);
+angular.module('social',['ngCordova','config'])
+.service('FaceBookService',['$q','$cordovaOauth','$config',FaceBookService]);

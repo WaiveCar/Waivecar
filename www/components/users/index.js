@@ -1,10 +1,11 @@
-function UserController($rootScope, $scope, $state, AuthService, DataService,WaiveCarStateService) {
-  var self         = this;
-  self.$state      = $state;
+function UserController($rootScope, $scope, $state, AuthService, DataService,WaiveCarStateService,FaceBookService) {
+  var self                  = this;
+  self.$state               = $state;
   self.WaiveCarStateService = WaiveCarStateService;
-  self.AuthService = AuthService;
-  self.DataService = DataService;
-  self.active      = DataService.active;
+  self.AuthService          = AuthService;
+  self.DataService          = DataService;
+  self.FaceBookService      = FaceBookService;
+  self.active               = DataService.active;
   self.forms       = {
     // prefill for easier testing ;)
     userForm     : {
@@ -21,7 +22,9 @@ function UserController($rootScope, $scope, $state, AuthService, DataService,Wai
     DataService.activate('users', $state.params.id);
   }
 }
-
+UserController.prototype.connectWithFacebook = function($auth) {
+  this.FaceBookService.getFacebookInfo();
+};
 UserController.prototype.create = function() {
   var self           = this;
   var redirectUrl    = self.$state.params.redirectUrl;
@@ -44,5 +47,6 @@ angular.module('app')
   'AuthService',
   'DataService',
   'WaiveCarStateService',
+  'FaceBookService',
   UserController
 ]);

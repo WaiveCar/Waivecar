@@ -37,7 +37,6 @@ angular.module('app', [
   'mockBehaviours',
   'ChargingStations',
   'PointsOfInterest',
-  'ngFitText',
   'btford.socket-io',
   'layout',
   'Camera',

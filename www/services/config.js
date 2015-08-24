@@ -16,12 +16,11 @@ function Config() {
         getNearby : baseUrl + '/cars'
       }
     },
-    satellizer: {
-      facebook: {
-        clientId: '1022707721082213',// '783941098370564',
-        url: baseUrl+'/auth/facebook'
-      }
+    facebook: {
+      clientId: '1022707721082213',// '783941098370564',
+      url: baseUrl+'/auth/facebook'
     }
+    
   };
   var self=this;
   this.$get=[
