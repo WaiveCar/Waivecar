@@ -162,10 +162,10 @@ angular.module('app', [
       url: '/contact-message',
       templateUrl: '/components/contact/templates/messageSent.html'
     },
-    'points':{
-      url: '/my-points',
-      templateUrl: '/components/users/templates/reward-points.html'
-    },
+    // 'points':{
+    //   url: '/my-points',
+    //   templateUrl: '/components/users/templates/reward-points.html'
+    // },
     'dashboard':{
       url:'/ride/dashboard',
       templateUrl: '/components/ride/templates/dashboard.html'

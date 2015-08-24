@@ -12,6 +12,9 @@
 			<span class="input-label">Password</span>
 			<input type="password" placeholder="6 characters or more">
 		</label>
+		<div class="errorContainer" ng-if="error">
+			<p><img src="img/warning-icon.svg" ></p>
+		</div>
 		<a ui-sref="passwordRecovery" class="bottomTextInfo">Forgot your password?</a>
   </ion-content>
 	<div class="bar bar-footer">

@@ -502,8 +502,22 @@ label.item.item-input{
   text-align: left;
 }
 .mobileFlag{
-  height: 80%;
+  height: 1em;
   
+}
+.errorContainer{
+
+  width: 90%;
+  margin: 0 auto;
+  padding-top: 1em;
+  p{
+    text-align: left;
+  }
+  img{
+    height: 1rem;
+    margin-right: 1rem;
+
+  }
 }
 @import "www/components/layout/layout.scss";
 @import "www/components/cars/style.scss";
