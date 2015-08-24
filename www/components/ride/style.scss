@@ -42,19 +42,26 @@
 	}
 	.summary-container{
 		div{
-			padding-top: 2.5%;
-			padding-bottom: 2.5%;
+			padding-top: 2.6%;
+			padding-bottom: 2.6%;
 		}
-		.rideTables{
-			div.tableContainer{
-				border-bottom:0.05rem solid $gray5;
-				width: 90%;
-				margin: 0 auto;
-			}
-			div.tableContainer:last-child{
-				border:none;
+		div.tableContainer{
+			border-bottom:0.005rem solid $gray5;
+			width: 92%;
+			margin: 0 auto;
+			tr.totalRow{
+				border-top:0.001rem solid $gray5;
+				td{
+					padding-top: 0.5rem;
+				}
+
+
 			}
 		}
+		div.tableContainer:last-child{
+			border:none;
+		}
+		
 		.ride-info{
 			height: 18%;
 			background-color: $gray3;
@@ -67,7 +74,7 @@
 		background-color: #FFF;
 		
 		.time-and-distance-info{
-			height:10%;
+			height:15%;
 		}
 		.title{
 			color:$gray5;
@@ -84,14 +91,16 @@
 	table{
 		width: 100%;
 		td{
+			padding-bottom: 0.5rem;
+			&:first-child{
+				padding-bottom: 0rem;
+			}
 			&.value{
 				text-align: right;
-				padding-right: 1rem;
 			}
 			&.title{
 				text-align: left;
 				font-weight: bold;
-				padding-left: 1rem;
 			}
 		}
 	}
