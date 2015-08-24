@@ -1,3 +1,4 @@
+var baseUrl = 'https://api-waivecar-dev.cleverbuild.biz';
 function Config() {
   this.configData={
     uri: {
@@ -22,7 +23,6 @@ function Config() {
       }
     }
   };
-  var baseUrl = 'https://api-waivecar-dev.cleverbuild.biz';
   var self=this;
   this.$get=[
     function(){

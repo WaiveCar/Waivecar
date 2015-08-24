@@ -194,7 +194,7 @@ function Flow(states,$q){
 			throw new Error('The state ' + name + ' already exists');
 		}
 		stateNameMap[name] = count;
-		count ++ ;
+		count ++;
 	});
 	this.states=  states;
 	this.currentStateIndex=  -1;
