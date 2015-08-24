@@ -129,8 +129,15 @@ function bestFitTextDirective(){
 				},
 	 }
 }
-function SplashScreenController(WaiveCarStateService,$timeout){
-	// $timeout(function(){WaiveCarStateService.next()}, 1500);
+function SplashScreenController(WaiveCarStateService,$timeout,$rootScope,$state){
+	$rootScope.$on('$stateChangeStart', function(event, toState, toParams) {
+        if(toState.name=='intro'){
+			$timeout(function(){WaiveCarStateService.next()}, 1500);
+        }
+    });
+    if($state.current.name=='intro'){
+		$timeout(function(){WaiveCarStateService.next()}, 1500);
+    }
 }
 function strikeDirective(){
 	return {
@@ -172,6 +179,8 @@ angular.module('layout',['WaiveCar.state'])
 .controller('SplashScreenController', [
 	'WaiveCarStateService',
 	'$timeout',
+	'$rootScope',
+	'$state',
 	SplashScreenController
 ])
 
