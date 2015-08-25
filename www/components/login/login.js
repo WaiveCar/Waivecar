@@ -1,42 +1,50 @@
-function LoginController(FaceBookService,DataService,WaiveCarStateService) {
+function LoginController(FaceBookService,DataService,WaiveCarStateService,AuthService) {
 	this.FaceBookService = FaceBookService;
 	this.DataService = DataService;
 	this.UsersResource  = DataService.resources.users;
+	this.AuthService	= AuthService;
 	this.WaiveCarStateService = WaiveCarStateService;
+	this.form={
+		email:null,
+		password:null
+	}
 }
 LoginController.prototype.connectWithFacebook = function($auth) {
 	var self=this;
 	function loginUserByFacebook(code){
-		var data={
-			type:'login',
-			code:code,
-			redirectUri:'http://localhost/'
-		};
-    	self.UsersResource.facebook(data,function(result){
-			self.DataService.merge('users', result);
-			self.DataService.activateKnownModel('users', result.id, function(err,data){
+		self.AuthService.facebookLogin(code,function(err,data){
+			if(err){
+				console.log(err);
+				return;
+			}
 			self.WaiveCarStateService.next();
-		});
-		},
-		function(error){
-			prompt("",JSON.stringify(error));
-			alert(arguments);
-			alert(error);
+			
 		});
 	}
-	
-	var self=this;
 	self.FaceBookService.getFacebookInfo().then(function(code){
 		loginUserByFacebook(code);
 	},
 	function(error){
 		alert(error);
-	});
+	});	
 };
+LoginController.prototype.login = function() {
+	var self=this;
+	this.AuthService.login(this.form,function(err,user){
+		if(err){
+			console.log(err);
+			return;
+		}
+		console.log('HERRASA');
+		self.WaiveCarStateService.next();
+	})
+};
+
 angular.module('app')
 .controller('LoginController', [
   'FaceBookService',
   'DataService',
   'WaiveCarStateService',
+  'AuthService',
   LoginController
 ]);

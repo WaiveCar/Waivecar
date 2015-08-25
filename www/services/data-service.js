@@ -1,4 +1,4 @@
-function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, Users, mapsEvents) {
+function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, Users, mapsEvents,Licenses) {
 
   var service = {
 
@@ -6,7 +6,8 @@ function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, User
       bookings  : Bookings,
       cars      : Cars,
       locations : Locations,
-      users     : Users
+      users     : Users,
+      licenses  : Licenses
     },
 
     userLocation : {},
@@ -23,6 +24,7 @@ function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, User
     },
 
     fetch: function(modelName, filter, next) {
+      console.log('On fetch');
       // todo: add support for filter query params.
       var items = service.resources[modelName].query(function() {
         service.mergeAll(modelName, items);
@@ -63,12 +65,6 @@ function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, User
       // TODO: $http.post('') // need endpoint
       return next(null, data);
     },
-
-    createLicense: function(data, next) {
-      // TODO: $http.post('') // need endpoint
-      return next(null, data);
-    },
-
     removeLicense: function(data, next) {
       // TODO: $http.post('') // need endpoint
       return next(null, data);
@@ -128,12 +124,17 @@ function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, User
 
     // client-side manipulations only
     activate : function(modelName, id, next) {
+      console.log("HEREEEE");
       if (!service.all[modelName]) {
+        console.log("HEREASASS");
         service.initialize(modelName, function(err) {
+          console.log("HEREF");
           if (err) return next(err);
+          console.log("HEREG");
           service.activateKnownModel(modelName, id, next);
         });
       } else {
+        console.log('HEREL');
         service.activateKnownModel(modelName, id, next);
       }
     },
@@ -213,5 +214,6 @@ angular.module('app')
   'Locations',
   'Users',
   'mapsEvents',
+  'Licenses',
   DataService
 ]);
