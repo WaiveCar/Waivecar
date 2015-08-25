@@ -17,20 +17,24 @@ module.exports = {
    |
    | Settings for general motors api
    |
-   | host             : The api endpoint for the gm api
-   | key              : The key used when authenticating requests
-   | secret           : The secret used when authenticating request
-   | initFleetOnStart : ????
-   |
+   | host    : The api endpoint for the gm api
+   | key     : The key used when authenticating requests
+   | secret  : The secret used when authenticating request
+   | onStart :
+   |   testConnection : Invoke the service on app start to test GM connectivity.
+   |   initFleet      : Invoke the service on app start to initialize the local cache of cars.
    */
 
   gm : {
     host : null,
-    api : {
+    api  : {
       key    : null,
-      secret : null,
+      secret : null
     },
-    initFleetOnStart : false
+    onStart : {
+      testConnection : true,
+      initFleet      : false
+    }
   }
 
 };
