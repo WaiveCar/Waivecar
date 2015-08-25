@@ -24,10 +24,10 @@ function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, User
     },
 
     fetch: function(modelName, filter, next) {
-      console.log('On fetch');
       // todo: add support for filter query params.
       var items = service.resources[modelName].query(function() {
         service.mergeAll(modelName, items);
+        next();
       });
     },
 
@@ -77,7 +77,6 @@ function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, User
         service.merge(modelName, model);
       });
       if(modelName==='cars'){
-        console.log('broadcasting');
         $rootScope.$broadcast(mapsEvents.markersChanged,'fleet');
       }
     },
@@ -124,17 +123,12 @@ function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, User
 
     // client-side manipulations only
     activate : function(modelName, id, next) {
-      console.log("HEREEEE");
       if (!service.all[modelName]) {
-        console.log("HEREASASS");
         service.initialize(modelName, function(err) {
-          console.log("HEREF");
           if (err) return next(err);
-          console.log("HEREG");
           service.activateKnownModel(modelName, id, next);
         });
       } else {
-        console.log('HEREL');
         service.activateKnownModel(modelName, id, next);
       }
     },
@@ -168,7 +162,6 @@ function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, User
   };
 
   $rootScope.$on(mapsEvents.positionChanged, function(e, position) {
-    console.log('refreshing cars');
     service.userLocation = position;
     if (service.userLocation.latitude && service.userLocation.longitude) {
       service.fetch('cars', service.userLocation);
@@ -181,7 +174,6 @@ function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, User
     var action    = meta[1];
     var model     = data[modelName];
 
-    // console.log([ modelName, action, model.id ].join(' '));
     switch(action) {
       case 'show':
       case 'stored':

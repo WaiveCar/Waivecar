@@ -27,11 +27,8 @@ function AuthService($session, DataService) {
     },
     login: function(data, next) {
       var self = this;
-      console.log('HEREA');
       DataService.resources.users.login(data, angular.bind(this, function(user) {
-        console.log('HEREB');
         DataService.activate('users', user.id, function(err) {
-          console.log("JEREC");
           $session.set('auth', { token: user.token }).save();
           next(false, user);
         });
