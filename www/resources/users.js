@@ -24,6 +24,10 @@ function Resource($resource, $utils) {
     createCard : {
       method : 'POST',
       url    : $utils.getCustomRoute('payments/cards')
+    },
+    facebook : {
+      method : 'POST',
+      url    : $utils.getCustomRoute('auth/facebook')
     }
   }));
 }
