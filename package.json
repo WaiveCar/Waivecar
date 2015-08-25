@@ -34,7 +34,7 @@
     "request": "2.58.0"
   },
   "reach": {
-    "reach-auth": "0.1.2",
+    "reach-auth": "0.1.3",
     "reach-commander": "0.0.3",
     "reach-email": "0.0.4",
     "reach-file": "0.1.8",
