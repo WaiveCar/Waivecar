@@ -14,9 +14,10 @@ module.exports = {
    */
 
   commander : {
-    access : [ 
-      'matt.ginty@clevertech.biz', 
-      'christoffer@clevertech.biz'
+    access : [
+      'matt.ginty@clevertech.biz',
+      'christoffer@clevertech.biz',
+      'fabio@clevertech.biz'
     ]
   }
 
