@@ -26,17 +26,17 @@ function UserController($rootScope, $scope, $state, AuthService, DataService,Wai
 }
 UserController.prototype.connectWithFacebook = function($auth) {
   var self=this;
-  // var savedCode="AQCu-OwWQKcqVM1fJuYslhgnCAFX-mgIfZL0xh9gYEskWKuyzclXzhIxUc-e9s4066tSc4m72L33ch-glzRNFy1-BI12g182HOXptibUAYpK5DsdWyI9t5mK-G-l7UdEYpTz6nKjzcacNmXZsvS-HbUSjxIICBRW5y3HmZGtlXpzp4TPWMxtHsdUmi4rpNqxqt7MSjNL8s01jwj_z8h9-bzTm3JWLD0k3ilx_pVRdWkXFSYO0xP55GolJoJqJAQYgBbO43bF21X3MPO24dQC5dl9yiPq8Kx6J15bYzk2uKpxH1luaeqYKiqs4Twi_ii2i_4jBGBRIAGHFiJsL1r-z8gm-kms7_QwAm6xxdeJohmlvg#_=_";
   function registerUserByFacebook(code){
       var data={
         type:'register',
         code:code,
         redirectUri:'http://localhost/'
       };
-      prompt("SENDING",JSON.stringify(data));
       self.UsersResource.facebook(data,function(result){
-        prompt("",JSON.stringify(result));
-        prompt("",arguments);
+        self.DataService.merge('users', result);
+        self.DataService.activateKnownModel('users', result.id, function(err,data){
+           self.WaiveCarStateService.next();
+        });
       },
       function(error){
         prompt("",JSON.stringify(error));
@@ -45,13 +45,7 @@ UserController.prototype.connectWithFacebook = function($auth) {
       });
 
   };
-  // registerUserByFacebook(savedCode);
-  // return;
-  
-  
   self.FaceBookService.getFacebookInfo().then(function(code){
-    prompt("RECEBI",code);
-    alert("HERE");
     registerUserByFacebook(code);
   },
   function(error){
