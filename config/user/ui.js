@@ -26,8 +26,8 @@ module.exports = {
           uri    : '/users/:id'
         }
       },
-      views : {
-        list : {
+      views : [
+        {
           route       : '/users',
           type        : 'table',
           name        : 'Users',
@@ -41,13 +41,14 @@ module.exports = {
           },
           menus : {
             sidebar : {
+              id     : 'list',
               name   : 'Users',
               icon   : 'people',
               parent : null
             }
           }
         },
-        new : {
+        {
           route   : '/users/new',
           type    : 'form',
           name    : 'Add User',
@@ -60,13 +61,14 @@ module.exports = {
           },
           menus : {
             sidebar : {
+              id     : 'new',
               name   : 'Add User',
               icon   : 'plus',
               parent : 'list'
             }
           }
         },
-        show : {
+        {
           route   : '/users/:id',
           type    : 'form',
           name    : 'User',
@@ -77,8 +79,8 @@ module.exports = {
             update  : true,
             destroy : true
           }
-        },
-      },
+        }
+      ],
       fields : {
         role : {
           component : 'select',

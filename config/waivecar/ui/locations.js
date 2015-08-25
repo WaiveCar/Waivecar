@@ -24,8 +24,8 @@ module.exports = {
       uri    : '/locations/:id'
     }
   },
-  views : {
-    list : {
+  views : [
+    {
       route       : '/locations',
       type        : 'table',
       name        : 'Known Locations',
@@ -39,13 +39,14 @@ module.exports = {
       },
       menus : {
         sidebar : {
+          id     : 'list',
           name   : 'Known Locations',
           icon   : 'local_gas_station',
           parent : null
         }
       }
     },
-    new : {
+    {
       route   : '/locations/new',
       type    : 'form',
       name    : 'Add New Location',
@@ -58,13 +59,14 @@ module.exports = {
       },
       menus : {
         sidebar : {
+          id     : 'new',
           name   : 'Add Locations',
           icon   : 'plus',
           parent : 'list'
         }
       }
     },
-    show : {
+    {
       route   : '/locations/:id',
       type    : 'form',
       name    : 'Location',
@@ -76,7 +78,7 @@ module.exports = {
         destroy : true
       }
     },
-    map : {
+    {
       route       : '/maps/locations',
       type        : 'map',
       name        : 'Known Locations',
@@ -89,13 +91,14 @@ module.exports = {
       },
       menus : {
         sidebar : {
+          id     : 'map',
           name   : 'Known Locations',
           icon   : 'local_gas_station',
           parent : 'list'
         }
       }
     }
-  },
+  ],
   fields : {
     id : {
       component : 'input',
