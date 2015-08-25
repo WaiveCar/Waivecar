@@ -1,92 +1,129 @@
-module.exports = {
-  
-  /*
-   |--------------------------------------------------------------------------------
-   | UI
-   |--------------------------------------------------------------------------------
-   |
-   | The UI is the modules settings being passed down to a front end so that the
-   | service can produce proper interaction layout for interacting with the module.
-   |
-   | The UI serves to present models to an administration interface and is
-   | specificaly made with reach-admin in mind.
-   |
-   | active : Boolean > Setting this to false will result in the module not being
-   |                    visible in the administrator front end.
-   | icon   : String  > The icon id that represents the module.
-   | views  : Array   > The settings used to create dynamic admin views.
-   | fields : Array   > A list of fields representing the model.
-   |
-   */
+'use strict';
 
+module.exports = {
   ui : {
     users : {
-      active : true,
-      icon   : 'people',
-      path   : '/users',
-      views  : [
-        {
-          type   : 'list',
-          name   : 'Users',
-          uri    : '/users',
-          form   : 'user',
-          fields : [ 'firstName', 'lastName', 'role', 'email' ]
+      active   : true,
+      resource : {
+        list : {
+          method : 'GET',
+          uri    : '/users'
         },
-        {
-          type : 'crud',
-          childRoutes : [
-            {
-              name       : 'Create User',
-              path       : '/create',
-              type       : 'form',
-              categories : [
-                {
-                  name   : 'Create User',
-                  fields : [ 'firstName', 'lastName', 'role', 'email', 'password' ]
-                }
-              ]
-            }
-          ]
+        show : {
+          method : 'GET',
+          uri    : '/users/:id'
+        },
+        create : {
+          method : 'POST',
+          uri    : '/users'
+        },
+        update : {
+          method : 'PUT',
+          uri    : '/users/:id'
+        },
+        destroy : {
+          method : 'DELETE',
+          uri    : '/users/:id'
         }
-      ],
-      forms : {
-        user : {
-          role : {
-            component : 'select',
-            options   : [
-              {
-                name  : 'User',
-                value : 'user'
-              },
-              {
-                name  : 'Admin',
-                value : 'admin'
-              }
-            ]
+      },
+      views : {
+        list : {
+          route       : '/users',
+          type        : 'table',
+          name        : 'Users',
+          description : null,
+          fields      : [ 'id', 'firstName', 'lastName', 'role', 'email' ],
+          actions     : {
+            cancel  : true,
+            create  : true,
+            update  : true,
+            destroy : true
           },
-          firstName : {
-            component : 'input',
-            type      : 'text',
-            required  : true
-          },
-          lastName : {
-            component : 'input',
-            type      : 'text',
-            required  : true
-          },
-          email : {
-            component : 'input',
-            type      : 'email',
-            required  : true
-          },
-          password :  {
-            component : 'input',
-            type      : 'password',
-            required  : true
+          menus : {
+            sidebar : {
+              name   : 'Users',
+              icon   : 'people',
+              parent : null
+            }
           }
+        },
+        new : {
+          route   : '/users/new',
+          type    : 'form',
+          name    : 'Add User',
+          fields  : [ 'firstName', 'lastName', 'role', 'email', 'password' ],
+          actions : {
+            cancel  : true,
+            create  : true,
+            update  : false,
+            destroy : false
+          },
+          menus : {
+            sidebar : {
+              name   : 'Add User',
+              icon   : 'plus',
+              parent : 'list'
+            }
+          }
+        },
+        show : {
+          route   : '/users/:id',
+          type    : 'form',
+          name    : 'User',
+          fields  : [ 'id', 'firstName', 'lastName', 'role', 'email' ],
+          actions : {
+            cancel  : true,
+            create  : false,
+            update  : true,
+            destroy : true
+          }
+        },
+      },
+      fields : {
+        role : {
+          component : 'select',
+          options   : [
+            {
+              name  : 'User',
+              value : 'user'
+            },
+            {
+              name  : 'Admin',
+              value : 'admin'
+            }
+          ],
+          label    : 'Role',
+          helpText : 'Select a Role'
+        },
+        firstName : {
+          component : 'input',
+          type      : 'text',
+          required  : true,
+          label     : 'First Name',
+          helpText  : null
+        },
+        lastName : {
+          component : 'input',
+          type      : 'text',
+          required  : true,
+          label     : 'Last Name',
+          helpText  : null
+        },
+        email : {
+          component : 'input',
+          type      : 'email',
+          required  : true,
+          label     : 'Email Address',
+          helpText  : null
+        },
+        password : {
+          component : 'input',
+          type      : 'password',
+          required  : true,
+          label     : 'Password',
+          helpText  : 'choose a password longer than 6 characters'
         }
       }
     }
   }
-
 }
