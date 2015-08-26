@@ -1,7 +1,7 @@
 'use strict';
 
 Reach.Register.Model('Booking', 'sequelize', function (model, Sequelize) {
-  
+
   /**
    * The identity of the table created in your database.
    * @property table
@@ -52,9 +52,12 @@ Reach.Register.Model('Booking', 'sequelize', function (model, Sequelize) {
    * @property relations
    * @type     Array
    */
-  model.relations = ['BookingDetails', function (BookingDetails) {
-    this.hasMany(BookingDetails, { as : 'details', foreignKey : 'bookingId' });
-  }];
+  model.relations = [
+    'BookingDetails',
+    function (BookingDetails) {
+      this.hasMany(BookingDetails, { as : 'details', foreignKey : 'bookingId' });
+    }
+  ];
 
   return model;
 
