@@ -22,7 +22,6 @@ FleetRulesService.prototype.getRules = function() {
 	var self=this;
 	return {
 		arrive:function(){
-			console.log("FLEET ARRIVE");
 			return self.locationService.getLocation().then(function(){
 				return true;
 			});

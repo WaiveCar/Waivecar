@@ -70,6 +70,12 @@ WaiveCarStateService.prototype.init = function() {
 		{
 			name:'ads'
 		},
+		{
+			name:'vision'
+		},
+		{
+			name:'contact'
+		},
 	];
 	this.mainFlow=this.flowControl.setStateFlow('main',states);
 	this.$rootScope.$on('$stateChangeStart', 
