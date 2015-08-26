@@ -109,10 +109,14 @@ WaiveCarStateService.prototype.previous = function(params) {
 };
 WaiveCarStateService.prototype.next = function(params) {
 	var self=this;
+	console.log('NEXT');
+	console.log(params);
 	this.mainFlow.next(params).then(function(redirectState){
 		if(!redirectState.isRedirect){
 			self.accept=redirectState.name;
 		}
+		console.log('REDIRECT STATE PARAMS');
+		console.log(redirectState);
 		self.$state.go(redirectState.name,redirectState.params)
 
 	})

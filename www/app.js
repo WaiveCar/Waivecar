@@ -143,8 +143,7 @@ angular.module('app', [
     // GET TO YOUR CAR
     'bookings-show':{
       url: '/bookings/:id',
-      templateUrl: '/components/bookings/templates/show.html',
-      params : { vehicleDetails: null},
+      templateUrl: '/components/bookings/templates/show.html'
     },
     'bookings-edit':{
       url: '/bookings/:id/edit',

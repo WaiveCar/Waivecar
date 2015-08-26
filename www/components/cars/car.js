@@ -27,9 +27,11 @@ CarController.prototype.chooseCar = function() {
   var self         = this;
   var selectedData = this.selectedCar.getSelected();
   var carId        = selectedData.id;
+  console.log("THE CHOSEN CAR");
+  console.log(self.DataService.active.cars);
   this.WaiveCarStateService.next(
     {
-      carId     : self.DataService.active.cars.id,
+      id     : self.DataService.active.cars.id,
       includeAd : true
     }
   );
@@ -67,9 +69,10 @@ function carChargeStatusDirective(searchEvents, selectedCar) {
   }
 }
 
-function carInformationDirective(searchEvents, selectedCar) {
+function carInformationDirective(searchEvents, DataService) {
   function link(scope, element, attrs, ctrl) {
-      var details = selectedCar.getSelected();
+      var details = DataService.active.cars;
+
       if (details) {
         scope.make = details.make;
         scope.model = details.model;
@@ -104,6 +107,6 @@ angular.module('app')
 ])
 .directive('carInformation', [
   'searchEvents',
-  'selectedCar',
+  'DataService',
   carInformationDirective
 ]);

@@ -39,18 +39,11 @@ function BookingController($rootScope, $scope, $state, DataService, selectedCarS
 
 BookingController.prototype.create = function() {
   var self = this;
-  console.log(self.active);
   self.DataService.create('bookings', {
     carId  : self.active.cars.id,
-    // userId : self.active.users.id
   }, function(err, booking) {
     self.WaiveCarStateService.next({ redirectUrl:'bookings-show',redirectParams : {'id' : self.active.bookings.id}});
-  /*  self.$state.go('ads', {
-      redirectUrl    :'bookings-show',
-      redirectParams : {
-        'id' : self.active.bookings.id
-      }
-    });*/
+
   })
 }
 
