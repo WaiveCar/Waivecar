@@ -70,15 +70,22 @@ function carChargeStatusDirective(searchEvents, selectedCar) {
 }
 
 function carInformationDirective(searchEvents, DataService) {
+  /**
+  *@todo remove mocks
+  */
   function link(scope, element, attrs, ctrl) {
       var details = DataService.active.cars;
+      scope.$watch(function(){
+        return  DataService.active.cars;
+      },function(){
+        if (details) {
+          scope.make = details.make;
+          scope.model = details.model || 'Spark';
+          scope.plate = details.plate || 'AUD 568';
+          scope.image = details.image || '/img/car.jpg';
+        }
 
-      if (details) {
-        scope.make = details.make;
-        scope.model = details.model;
-        scope.plate = details.plate;
-        scope.image = details.image;
-      }
+      })
   }
   return {
     restrict    : 'E',
