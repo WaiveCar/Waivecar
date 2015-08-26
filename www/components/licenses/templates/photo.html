@@ -1,17 +1,17 @@
 <ion-pane   class="waiveCarContainer " id="licensePhoto">
-    <ion-content  class="full-page" >
+    <ion-content  class="full-page" ng-controller="LicenseController as licenseCtrl">
     	<step-by-step current-step="3"></step-by-step>
 		<page-title back-button="true">Driver's License </page-title>
 		<p>We need to verify your age and driving.</p>
 		<p>We won't share your information in any way</p>
 	    <div id="buttonsContainer">
 			<a class="button button-balanced button-padded" next-state>Take photo</a>
-			<a class="button button-blue button-padded"  next-state>Upload from mobile</a>
+			<a class="button button-blue button-padded" next-state>Upload from mobile</a>
 	    </div>
 	    <div id="skipInformation">
 		    <p>Your driver's license is required to book WaiveCar.</p>
-		    <p>However you can <span style="text-decoration:underline">skip this step</span> and do it later on your account settings</p>
+		    <p>However you can <a href="#" ng-click="licenseCtrl.skipRequiredDetails()">skip this step</a> and do it later on your account settings</p>
 	    </div>
   </ion-content>
-	
+
 </ion-pane>
