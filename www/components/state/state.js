@@ -5,7 +5,8 @@ function WaiveCarStateService(flowControl,
 							fleetRule,
 							carInfoRule,
 							registerRule,
-							signInRules){
+							signInRules,
+							creditCardRules){
 	this.flowControl=flowControl;
 	this.$rootScope = $rootScope;
 	this.$urlRouter = $urlRouter;
@@ -14,6 +15,7 @@ function WaiveCarStateService(flowControl,
 	this.carInfoRule = carInfoRule;
 	this.registerRule=registerRule;
 	this.signInRules=signInRules;
+	this.creditCardRules = creditCardRules;
 }
 WaiveCarStateService.prototype.init = function() {
 	var self=this;
@@ -38,6 +40,7 @@ WaiveCarStateService.prototype.init = function() {
 		},
 		{
 			name:'credit-cards',
+			rules:self.creditCardRules.getRules()
 		},
 		//Password revoery flow
 		{
@@ -182,7 +185,7 @@ function goToStateDirective(WaiveCarStateService){
 }
 
 
-angular.module('WaiveCar.state.rules',['WaiveCar.state.carInfoRules','WaiveCar.state.fleetRules','WaiveCar.state.registerRules','WaiveCar.state.signInRules']);
+angular.module('WaiveCar.state.rules',['WaiveCar.state.carInfoRules','WaiveCar.state.fleetRules','WaiveCar.state.registerRules','WaiveCar.state.signInRules','WaiveCar.state.creditCardRules']);
 angular.module('WaiveCar.state',[
 	'FlowControl',
 	'WaiveCar.state.rules'
@@ -208,5 +211,6 @@ angular.module('WaiveCar.state',[
   'CarInfoRulesService',
   'RegisterRulesService',
   'SignInRulesService',
+  'CreditCardRules',
   WaiveCarStateService
 ]);
