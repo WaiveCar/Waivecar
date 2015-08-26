@@ -7,13 +7,28 @@ let bookingHandler = Reach.module('waivecar/lib/booking-handler');
 FileModule.hook('waivecar', {
 
   /**
-   * Validates the booking and returns a custom identifier for the file.
-   * @method cid
-   * @param  {User}   user
-   * @param  {Object} data
+   * Validate that the required record exists before attempting file upload.
+   * @method validate
+   * @param  {User} _user
    */
-  cid : function *(user, data) {
-    let booking = yield bookingHandler.getBooking(data.booking, user);
+  validate : function *(_user) {
+    let model = bookingHandler.getBooking(this.booking, _user);
+    if (!model) {
+      throw error.parse({
+        code    : 'FILE_UPLOAD_FAILED',
+        message : 'The booking id provided for file upload does not exist'
+      }, 400);
+    }
+  },
+
+  /**
+   * Create a shared collection id for files that belongs to a single record.
+   * @method collection
+   * @param  {User} _user
+   * @return {String}
+   */
+  collection : function *(_user) {
+    let booking = yield bookingHandler.getBooking(this.booking, _user);
     if (!booking.filesId) {
       booking.filesId = shortid.generate();
       yield booking.update();

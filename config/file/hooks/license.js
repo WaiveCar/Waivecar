@@ -7,13 +7,28 @@ let licenseService = Reach.module('license/lib/license-service');
 FileModule.hook('license', {
 
   /**
-   * Validates the license and returns a custom identifier for the file.
-   * @method cid
-   * @param  {User}   user
-   * @param  {Object} data
+   * Validate that the required record exists before attempting file upload.
+   * @method validate
+   * @param  {User} _user
    */
-  cid : function *(user, data) {
-    let license = yield licenseService.get(data.license, user);
+  validate : function *(_user) {
+    let model = yield licenseService.get(this.license, _user);
+    if (!model) {
+      throw error.parse({
+        code    : 'FILE_UPLOAD_FAILED',
+        message : 'The license your are attempting to attach your image to does not exist'
+      }, 400);
+    }
+  },
+
+  /**
+   * Create a shared collection id for files that belongs to a single record.
+   * @method collection
+   * @param  {User} _user
+   * @return {String}
+   */
+  collection : function *(_user) {
+    let license = yield licenseService.get(this.license, _user);
     if (!license.fileId) {
       license.fileId = shortid.generate();
       yield license.update();
