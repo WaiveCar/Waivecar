@@ -4,7 +4,8 @@ function WaiveCarStateService(flowControl,
 							$state,
 							fleetRule,
 							carInfoRule,
-							registerRule){
+							registerRule,
+							signInRules){
 	this.flowControl=flowControl;
 	this.$rootScope = $rootScope;
 	this.$urlRouter = $urlRouter;
@@ -12,6 +13,7 @@ function WaiveCarStateService(flowControl,
 	this.fleetRule = fleetRule;
 	this.carInfoRule = carInfoRule;
 	this.registerRule=registerRule;
+	this.signInRules=signInRules;
 }
 WaiveCarStateService.prototype.init = function() {
 	var self=this;
@@ -19,7 +21,10 @@ WaiveCarStateService.prototype.init = function() {
 		{name :'intro'},
 		{name:'loginSignUp'},
 		//Sign In flow
-		{name:'signIn'},
+		{
+			name:'signIn',
+			rules:self.signInRules.getRules()
+		},
 		//Registering flow, maybe move it to a flow
 		{
 			name:'users-new',
@@ -73,8 +78,11 @@ WaiveCarStateService.prototype.init = function() {
 			try{
 				if(self.mainFlow.hasRulesForTransition(toState.name)){
 					event.preventDefault();
+					console.log("CHECKING STATE "+toState.name);
 					self.mainFlow.goTo(toState.name).then(
 						function(redirectState){
+							console.log('Result :');
+							console.log(redirectState);
 							if(redirectState===true || toState.name == redirectState.name){
 								self.accept = toState.name;
 								self.$state.go(toState,toParams);
@@ -174,7 +182,7 @@ function goToStateDirective(WaiveCarStateService){
 }
 
 
-angular.module('WaiveCar.state.rules',['WaiveCar.state.carInfoRules','WaiveCar.state.fleetRules','WaiveCar.state.registerRules']);
+angular.module('WaiveCar.state.rules',['WaiveCar.state.carInfoRules','WaiveCar.state.fleetRules','WaiveCar.state.registerRules','WaiveCar.state.signInRules']);
 angular.module('WaiveCar.state',[
 	'FlowControl',
 	'WaiveCar.state.rules'
@@ -199,5 +207,6 @@ angular.module('WaiveCar.state',[
   'FleetRulesService',
   'CarInfoRulesService',
   'RegisterRulesService',
+  'SignInRulesService',
   WaiveCarStateService
 ]);

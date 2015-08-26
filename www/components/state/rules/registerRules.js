@@ -1,4 +1,4 @@
-function RegisterRulesService(DataService,CarAvailabilityService,$q){
+function RegisterRulesService($q){
 	this.$q=$q;
 
 }
