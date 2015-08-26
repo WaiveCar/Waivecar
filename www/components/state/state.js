@@ -99,7 +99,7 @@ WaiveCarStateService.prototype.init = function() {
 };
 WaiveCarStateService.prototype.previous = function(params) {
 	var self=this;
-	this.mainFlow.previous().then(function(redirectState){
+	this.mainFlow.previous(params).then(function(redirectState){
 		if(!redirectState.isRedirect){
 			self.accept=redirectState.name;
 		}
