@@ -52,6 +52,11 @@ LicenseController.prototype.remove = function() {
   });
 }
 
+LicenseController.prototype.skipRequiredDetails = function() {
+  var self = this;
+  self.$state.go('fleet');
+}
+
 angular.module('app')
 .controller('LicenseController', [
   '$rootScope',
