@@ -25,7 +25,7 @@ Reach.Register.Model('Car', 'sequelize', function (model, Sequelize) {
     primaryDriverId   : { type : Sequelize.STRING(28) },
     primaryDriverUrl  : { type : Sequelize.STRING },
     url               : { type : Sequelize.STRING },
-    isInPreActivation : { type : Sequelize.BOOLEAN, defaultValue : false },
+    isInPreActivation : { type : Sequelize.BOOLEAN, defaultValue : false }
   };
 
   /**
