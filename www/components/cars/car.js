@@ -25,10 +25,6 @@ CarController.prototype.getDestiny = function() {
 };
 CarController.prototype.chooseCar = function() {
   var self         = this;
-  var selectedData = this.selectedCar.getSelected();
-  var carId        = selectedData.id;
-  console.log("THE CHOSEN CAR");
-  console.log(self.DataService.active.cars);
   this.WaiveCarStateService.next(
     {
       id     : self.DataService.active.cars.id,

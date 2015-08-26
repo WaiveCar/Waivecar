@@ -6,7 +6,8 @@ function WaiveCarStateService(flowControl,
 							carInfoRule,
 							registerRule,
 							signInRules,
-							creditCardRules){
+							creditCardRules,
+							bookingRules){
 	this.flowControl=flowControl;
 	this.$rootScope = $rootScope;
 	this.$urlRouter = $urlRouter;
@@ -16,6 +17,7 @@ function WaiveCarStateService(flowControl,
 	this.registerRule=registerRule;
 	this.signInRules=signInRules;
 	this.creditCardRules = creditCardRules;
+	this.bookingRules = bookingRules;
 }
 WaiveCarStateService.prototype.init = function() {
 	var self=this;
@@ -67,6 +69,10 @@ WaiveCarStateService.prototype.init = function() {
 		{
 			name:'bookings-show'
 		},
+		/*{
+			name:'bookings-new',
+			rules:self.bookingRules.getRules()
+		},*/
 		{
 			name:'ads'
 		},
@@ -190,8 +196,16 @@ function goToStateDirective(WaiveCarStateService){
 	}
 }
 
+var rulesModules=[
+	'WaiveCar.state.carInfoRules',
+	'WaiveCar.state.fleetRules',
+	'WaiveCar.state.registerRules',
+	'WaiveCar.state.signInRules',
+	'WaiveCar.state.creditCardRules',
+	'WaiveCar.state.bookingRules'
+];
 
-angular.module('WaiveCar.state.rules',['WaiveCar.state.carInfoRules','WaiveCar.state.fleetRules','WaiveCar.state.registerRules','WaiveCar.state.signInRules','WaiveCar.state.creditCardRules']);
+angular.module('WaiveCar.state.rules',rulesModules);
 angular.module('WaiveCar.state',[
 	'FlowControl',
 	'WaiveCar.state.rules'
@@ -218,5 +232,6 @@ angular.module('WaiveCar.state',[
   'RegisterRulesService',
   'SignInRulesService',
   'CreditCardRules',
+  'BookingRulesService',
   WaiveCarStateService
 ]);
