@@ -36,6 +36,12 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     width: 4%;
     border-bottom: 1px solid #25c155;
 }
+
+.scroll-content > a, .scroll-content > a:hover, .scroll-content > a:visited{
+  color:inherit;
+  text-decoration: none;
+  text-transform: capitalize;
+}
  .button,.button.active,.button.activated{
       background-color: inherit;
       border: none;
@@ -138,11 +144,11 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
    
     }
   }
-  a,a:hover,a:visited{
-    color:inherit;
-    text-decoration: none;
-    text-transform: capitalize;
-  }
+  // a,a:hover,a:visited{
+  //   color:inherit;
+  //   text-decoration: none;
+  //   text-transform: capitalize;
+  // }
   .modal,.modal-wrapper{
     width: 100%;
     height: 100%;
@@ -236,6 +242,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
   }
   .info-footer{
     height:$infoFooterHeight* 1%;
+    background-color: #FFF;
     &.big-info-footer{
        height:$bigInfoFooterHeight* 1%;
     }

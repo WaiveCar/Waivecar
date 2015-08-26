@@ -57,7 +57,7 @@ WaiveCarStateService.prototype.init = function() {
 			rules:self.carInfoRule.getRules()
 		},
 		{
-			name:'bookings-new'
+			name:'bookings-show'
 		},
 		{
 			name:'ads'
@@ -109,7 +109,7 @@ WaiveCarStateService.prototype.previous = function(params) {
 };
 WaiveCarStateService.prototype.next = function(params) {
 	var self=this;
-	this.mainFlow.next().then(function(redirectState){
+	this.mainFlow.next(params).then(function(redirectState){
 		if(!redirectState.isRedirect){
 			self.accept=redirectState.name;
 		}

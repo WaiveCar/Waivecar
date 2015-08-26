@@ -64,10 +64,10 @@ Flow.prototype._goToByIndex = function(desiredIndex,params) {
 	.then(function(redirectState){
 		if(redirectState!==true){
 			if(typeof redirectState ==='string'){
-				redirectState={name:redirectState,params:self.currentStateParams};
+				redirectState={name:redirectState,params:params};
 			}
 			if(typeof redirectState==='object' && !!redirectState.name){
-				redirectState.params= redirectState.params || self.currentStateParams;
+				redirectState.params= redirectState.params || params;
 				redirectState.isRedirect = true;
 				var redirectIndex = self.getStateIndexByName(redirectState.name);
 
@@ -80,9 +80,9 @@ Flow.prototype._goToByIndex = function(desiredIndex,params) {
 			if(redirectState!==true){
 				self.previousStateIndex =desiredIndex;
 				if(typeof redirectState ==='string'){
-					redirectState={name:redirectState,params:self.currentStateParams};
+					redirectState={name:redirectState,params:params};
 				}
-				redirectState.params= redirectState.params || self.currentStateParams;
+				redirectState.params= redirectState.params || params;
 				var redirectIndex = self.getStateIndexByName(redirectState.name);
 				redirectState.isRedirect=true;
 				self.setStateIndex(redirectIndex,redirectState.params,desiredIndex,params);

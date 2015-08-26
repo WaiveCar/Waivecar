@@ -27,7 +27,9 @@ function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, User
       // todo: add support for filter query params.
       var items = service.resources[modelName].query(function() {
         service.mergeAll(modelName, items);
-        next();
+        if(typeof next =='function'){
+            next();
+        }
       });
     },
 
