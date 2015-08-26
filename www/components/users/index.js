@@ -11,8 +11,8 @@ function UserController($rootScope, $scope, $state, AuthService, DataService,Wai
   self.forms       = {
     // prefill for easier testing ;)
     userForm     : {
-      firstName : 'Travis',
-      lastName  : 'Kalanick',
+      firstName : 'Matt',
+      lastName  : 'Ginty',
       email     : 'matt.ginty+' + Math.random() + '@clevertech.biz',
       password  : 'lollipop0',
       mobile    :  '+555 555 555'

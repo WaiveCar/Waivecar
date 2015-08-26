@@ -5,8 +5,8 @@ function CreditCardController($rootScope, $scope, $state, DataService) {
   self.active      = DataService.active;
   self.forms       = {
     new  : {
-      firstName : 'Travis',
-      lastName  : 'Kalanick',
+      firstName : 'Matt',
+      lastName  : 'Ginty',
       number    : "5555555555554444",
       cvc       : "237",
       exp_month : 8,
