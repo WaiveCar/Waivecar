@@ -5,9 +5,9 @@ function SignInRulesService($q){
 SignInRulesService.prototype.getRules = function() {
 	var self=this;
 	return {
-		// leave:function(){
-		// 	return 'fleet';
-		// }
+		leave:function(){
+			return 'fleet';
+		}
 	}
 };
 

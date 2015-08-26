@@ -60,7 +60,7 @@ Flow.prototype._goToByIndex = function(desiredIndex,params) {
 	if(typeof params =='undefined'){
 		params = this.currentStateParams || {};
 	}
-	return this._canLeaveStateIndex(this.currentStateParams)
+	return this._canLeaveStateIndex(this.currentStateParams,desiredIndex)
 	.then(function(redirectState){
 		if(redirectState!==true){
 			if(typeof redirectState ==='string'){
@@ -70,7 +70,6 @@ Flow.prototype._goToByIndex = function(desiredIndex,params) {
 				redirectState.params= redirectState.params || params;
 				redirectState.isRedirect = true;
 				var redirectIndex = self.getStateIndexByName(redirectState.name);
-
 				self.setStateIndex(redirectIndex,redirectState.params,desiredIndex,params);
 				return redirectState;
 			}
@@ -111,9 +110,9 @@ Flow.prototype.setStateIndex = function(desiredIndex,params,previousIndex,previo
 	this.currentStateIndex = desiredIndex;
 	this.currentStateParams = params || {};
 };
-Flow.prototype._canLeaveStateIndex = function(params) {
+Flow.prototype._canLeaveStateIndex = function(params,desiredStateIndex) {
 	var currentStateIndex=this.currentStateIndex;
-	if(currentStateIndex==-1){
+	if(currentStateIndex==-1 || currentStateIndex==desiredStateIndex){
 		return this.$q.when(true);
 	}
 	var stateRules=this.states[currentStateIndex].rules;
