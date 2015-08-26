@@ -28,6 +28,7 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpP
 angular.module('app', [
   'ionic',
   'ngResource',
+  'ngFitText',
   'Maps',
   'Maps.realReach',
   'Maps.route',
@@ -92,7 +93,7 @@ angular.module('app', [
       url         : '/cards/register',
       templateUrl : '/components/credit-cards/templates/register.html'
     },
-  /*  
+  /*
     Port this forms to the layouted one
     'credit-cards':{
       url         : '/users/cards',

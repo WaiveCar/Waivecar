@@ -52,7 +52,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
         width: auto;
       }
       img{
-        height: 2rem;      
+        height: 2rem;
         margin-right: 1.5em;
         position: absolute;
         left: 1em;
@@ -88,7 +88,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
       }
       &.button-padded{
         text-transform: uppercase;
-        
+
         vertical-align: middle;
         span,a{
           display: inline-block;
@@ -141,7 +141,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     .img-avatar{
       position: absolute;
       left: 0;
-   
+
     }
   }
   // a,a:hover,a:visited{
@@ -162,7 +162,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
         h1{
           color: #FFF;
         }
-       
+
 
     }
     .button-container{
@@ -184,7 +184,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
             display: block;
             margin: 0 auto;
           }
-      
+
     }
   }
 .bar{
@@ -204,13 +204,29 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     border-color: $balanced;
     background: $balanced;
   }
-   
+
 }
+
+.header-text {
+  width: 100%;
+  .vertical-aligned {
+    width: 100%;
+    h6 {
+      color: $light;
+      width: 100%;
+    }
+  }
+}
+
+.full-width {
+  width: 100%;
+}
+
   .header-title{
     text-transform: uppercase;
     font-size: $headerTitleSize*1rem;
     padding-right: $headerTitleSize*1rem;
-
+    width: 90%;
   }
   h1.header-title{
     @include vertical-align;
@@ -304,7 +320,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
       &.info-card-m{
         width: 65%;
       }
-      
+
     }
   }
   .map-container {
@@ -384,7 +400,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
       font-size:10vh;
       padding:0;
       border:none;
-      margin:0; 
+      margin:0;
   }
 }
 .buttonsContainer{
@@ -438,7 +454,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     width: 100%;
     font-size: 1.5rem;
 
- 
+
     .line-2{
       height: 50%;
       margin-top: 0.2rem;
@@ -510,7 +526,7 @@ label.item.item-input{
 }
 .mobileFlag{
   height: 1em;
-  
+
 }
 .errorContainer{
 

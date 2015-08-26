@@ -28,9 +28,11 @@ function reverseGeoCodingDirective(geocodingService) {
     }
     geocodingService.getReverseGeoCoding(latLng.latitude, latLng.longitude)
         .then(function(locationData) {
-          if(locationData.address){
-            scope.houseNumber = locationData.address.house_number || '';
-            scope.road = locationData.address.road;
+          if (locationData.address) {
+            scope.location = locationData.address.road;
+            if (locationData.address.house_number) {
+              scope.location = locationData.address.house_number + ' ' + scope.location;
+            }
           }
         });
   }
@@ -40,7 +42,7 @@ function reverseGeoCodingDirective(geocodingService) {
     scope: {
           getLocation: '&'
         },
-    template: '<span ng-bind="road"></span>,<span ng-bind="houseNumber"></span>'
+    template: '<span ng-bind="location"></span>'
   }
 }
 angular.module('Maps.geoCoding', ['Maps'])
