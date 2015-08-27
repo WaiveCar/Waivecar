@@ -22,19 +22,19 @@ LicenseController.prototype.create = function() {
   var self           = this;
   var redirectUrl    = self.$state.params.redirectUrl;
   var redirectParams = self.$state.params.redirectParams;
-
-  self.DataService.createLicense(self.forms.new, function(err, data) {
-    if (err) console.log(err);
-    if (redirectUrl) {
-      self.$state.go('credit-cards-new', {
-        redirectUrl    : redirectUrl,
-        redirectParams : redirectParams
-      });
-    } else {
-      self.WaiveCarStateService.next({id: self.active.users.id});
-      // self.$state.go('users-show', { id: self.active.users.id });
-    }
-  });
+  console.log(this.forms.new);
+  // self.DataService.createLicense(self.forms.new, function(err, data) {
+  //   if (err) console.log(err);
+  //   if (redirectUrl) {
+  //     self.$state.go('credit-cards-new', {
+  //       redirectUrl    : redirectUrl,
+  //       redirectParams : redirectParams
+  //     });
+  //   } else {
+  //     self.WaiveCarStateService.next({id: self.active.users.id});
+  //     // self.$state.go('users-show', { id: self.active.users.id });
+  //   }
+  // });
 }
 
 LicenseController.prototype.remove = function() {
@@ -50,6 +50,11 @@ LicenseController.prototype.remove = function() {
       self.$state.go('users-show', { id: self.active.users.id });
     }
   });
+}
+
+LicenseController.prototype.skipRequiredDetails = function() {
+  var self = this;
+  self.$state.go('fleet');
 }
 
 angular.module('app')

@@ -1,10 +1,23 @@
-function WaiveCarStateService(flowControl,$rootScope,$urlRouter,$state,fleetRule,carInfoRule){
+function WaiveCarStateService(flowControl,
+							$rootScope,
+							$urlRouter,
+							$state,
+							fleetRule,
+							carInfoRule,
+							registerRule,
+							signInRules,
+							creditCardRules,
+							bookingRules){
 	this.flowControl=flowControl;
 	this.$rootScope = $rootScope;
 	this.$urlRouter = $urlRouter;
 	this.$state 	= $state;
 	this.fleetRule = fleetRule;
 	this.carInfoRule = carInfoRule;
+	this.registerRule=registerRule;
+	this.signInRules=signInRules;
+	this.creditCardRules = creditCardRules;
+	this.bookingRules = bookingRules;
 }
 WaiveCarStateService.prototype.init = function() {
 	var self=this;
@@ -12,19 +25,38 @@ WaiveCarStateService.prototype.init = function() {
 		{name :'intro'},
 		{name:'loginSignUp'},
 		//Sign In flow
-		{name:'signIn'},
+		{
+			name:'signIn',
+			rules:self.signInRules.getRules()
+		},
 		//Registering flow, maybe move it to a flow
 		{
-			name:'users-new'
+			name:'users-new',
+			rules:self.registerRule.getRules()
 		},
+		{
+			name: 'license-photo'
+		},
+		{
+			name: 'license-details'
+		},
+		{
+			name:'credit-cards',
+			rules:self.creditCardRules.getRules()
+		},
+		//Password revoery flow
+		{
+			name:'passwordRecovery'
+		},
+		{
+			name:'passwordEmailInfo'
+		},
+		//Flow prior to this is on the right order
 		{
 			name:'licenses-new'
 		},
 		{
 			name:'users-show'
-		},
-		{
-			name:'credit-cards',
 		},
 		{
 			name:'fleet',
@@ -35,10 +67,20 @@ WaiveCarStateService.prototype.init = function() {
 			rules:self.carInfoRule.getRules()
 		},
 		{
-			name:'bookings-new'
+			name:'bookings-show'
 		},
+		/*{
+			name:'bookings-new',
+			rules:self.bookingRules.getRules()
+		},*/
 		{
 			name:'ads'
+		},
+		{
+			name:'vision'
+		},
+		{
+			name:'contact'
 		},
 	];
 	this.mainFlow=this.flowControl.setStateFlow('main',states);
@@ -51,8 +93,11 @@ WaiveCarStateService.prototype.init = function() {
 			try{
 				if(self.mainFlow.hasRulesForTransition(toState.name)){
 					event.preventDefault();
+					console.log("CHECKING STATE "+toState.name);
 					self.mainFlow.goTo(toState.name).then(
 						function(redirectState){
+							console.log('Result :');
+							console.log(redirectState);
 							if(redirectState===true || toState.name == redirectState.name){
 								self.accept = toState.name;
 								self.$state.go(toState,toParams);
@@ -77,7 +122,7 @@ WaiveCarStateService.prototype.init = function() {
 };
 WaiveCarStateService.prototype.previous = function(params) {
 	var self=this;
-	this.mainFlow.previous().then(function(redirectState){
+	this.mainFlow.previous(params).then(function(redirectState){
 		if(!redirectState.isRedirect){
 			self.accept=redirectState.name;
 		}
@@ -87,10 +132,14 @@ WaiveCarStateService.prototype.previous = function(params) {
 };
 WaiveCarStateService.prototype.next = function(params) {
 	var self=this;
-	this.mainFlow.next().then(function(redirectState){
+	console.log('NEXT');
+	console.log(params);
+	this.mainFlow.next(params).then(function(redirectState){
 		if(!redirectState.isRedirect){
 			self.accept=redirectState.name;
 		}
+		console.log('REDIRECT STATE PARAMS');
+		console.log(redirectState);
 		self.$state.go(redirectState.name,redirectState.params)
 
 	})
@@ -147,8 +196,16 @@ function goToStateDirective(WaiveCarStateService){
 	}
 }
 
+var rulesModules=[
+	'WaiveCar.state.carInfoRules',
+	'WaiveCar.state.fleetRules',
+	'WaiveCar.state.registerRules',
+	'WaiveCar.state.signInRules',
+	'WaiveCar.state.creditCardRules',
+	'WaiveCar.state.bookingRules'
+];
 
-angular.module('WaiveCar.state.rules',['WaiveCar.state.carInfoRules','WaiveCar.state.fleetRules']);
+angular.module('WaiveCar.state.rules',rulesModules);
 angular.module('WaiveCar.state',[
 	'FlowControl',
 	'WaiveCar.state.rules'
@@ -172,5 +229,9 @@ angular.module('WaiveCar.state',[
   '$state',
   'FleetRulesService',
   'CarInfoRulesService',
+  'RegisterRulesService',
+  'SignInRulesService',
+  'CreditCardRules',
+  'BookingRulesService',
   WaiveCarStateService
 ]);

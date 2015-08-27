@@ -7,9 +7,8 @@ function CarInfoRulesService(DataService,CarAvailabilityService,$q){
 CarInfoRulesService.prototype.getRules = function() {
 	var self=this;
 	return {
-		arrive:function(){
-
-			var carId =self.DataService.active.cars.id;
+		arrive:function(params){
+			var carId =params.id;
 			return self.CarAvailabilityService.isCarAvailable(carId)
 				.then(function(isCarAvailable){
 					if(isCarAvailable){

@@ -1,4 +1,4 @@
-function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, Users, mapsEvents) {
+function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, Users, mapsEvents,Licenses) {
 
   var service = {
 
@@ -6,7 +6,8 @@ function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, User
       bookings  : Bookings,
       cars      : Cars,
       locations : Locations,
-      users     : Users
+      users     : Users,
+      licenses  : Licenses
     },
 
     userLocation : {},
@@ -26,6 +27,9 @@ function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, User
       // todo: add support for filter query params.
       var items = service.resources[modelName].query(function() {
         service.mergeAll(modelName, items);
+        if(typeof next =='function'){
+            next();
+        }
       });
     },
 
@@ -63,12 +67,6 @@ function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, User
       // TODO: $http.post('') // need endpoint
       return next(null, data);
     },
-
-    createLicense: function(data, next) {
-      // TODO: $http.post('') // need endpoint
-      return next(null, data);
-    },
-
     removeLicense: function(data, next) {
       // TODO: $http.post('') // need endpoint
       return next(null, data);
@@ -81,7 +79,6 @@ function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, User
         service.merge(modelName, model);
       });
       if(modelName==='cars'){
-        console.log('broadcasting');
         $rootScope.$broadcast(mapsEvents.markersChanged,'fleet');
       }
     },
@@ -167,20 +164,18 @@ function DataService($rootScope, $http, $socket, Bookings, Cars, Locations, User
   };
 
   $rootScope.$on(mapsEvents.positionChanged, function(e, position) {
-    console.log('refreshing cars');
     service.userLocation = position;
     if (service.userLocation.latitude && service.userLocation.longitude) {
       service.fetch('cars', service.userLocation);
     }
   });
 
-  $socket.on('flux', function(data) {
-    var meta      = data.actionType.split(':');
+  $socket.on('redux', function(data) {
+    var meta      = data.type.split(':');
     var modelName = meta[0];
     var action    = meta[1];
     var model     = data[modelName];
 
-    // console.log([ modelName, action, model.id ].join(' '));
     switch(action) {
       case 'show':
       case 'stored':
@@ -213,5 +208,6 @@ angular.module('app')
   'Locations',
   'Users',
   'mapsEvents',
+  'Licenses',
   DataService
 ]);

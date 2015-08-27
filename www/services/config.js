@@ -1,8 +1,6 @@
+var baseUrl = 'https://api-waivecar-dev.cleverbuild.biz';
 function Config() {
-
-  var baseUrl = 'https://api-waivecar-dev.cleverbuild.biz';
-
-  return {
+  this.configData={
     uri: {
       api      : baseUrl,
       auth     : {
@@ -17,17 +15,23 @@ function Config() {
       vehicles : {
         getNearby : baseUrl + '/cars'
       }
-    // },
-    // satellizer: {
-    //   facebook: {
-    //     clientId: '783941098370564',
-    //     url: baseUrl+'/auth/facebook'
-    //   }
+    },
+    facebook: {
+      clientId: '1022707721082213',// '783941098370564',
+      url: baseUrl+'/auth/facebook'
     }
+    
   };
-}
+  var self=this;
+  this.$get=[
+    function(){
+        return self.configData;
+      
+    }
+  ];
 
-angular.module('app')
-.factory('$config', [
+}
+angular.module('config',[])
+.provider('$config', [
   Config
 ]);

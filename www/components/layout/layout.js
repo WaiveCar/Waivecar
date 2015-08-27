@@ -21,13 +21,35 @@ function headerBarDirective(layoutIcons){
 		scope:{
 			icon:'@',
 			type:'@',
+			avatar:'@',
 			onButtonClick:'&',
 		},
 		transclude: true,
 		replace: true
 	}
 }
-
+function stepByStepDirective(){
+	function link(scope){
+		if(typeof scope.currentStep=='undefined' || scope.currentStep<=0){
+			scope.currentStep=1;
+		}
+		if(scope.currentStep>4){
+			scope.currentStep=4;
+		}
+		for(var i=0;i<scope.currentStep;i++){
+			scope['step'+(i+1)]='passed';
+		}
+	}
+	return {
+		restrict:'E',
+		replace: true,
+		link:link,
+		scope:{
+			currentStep:'@',
+		},
+		templateUrl:'/components/layout/templates/directives/stepByStep.html'
+	}
+}
 function dialogDirective(){
 	return {
 		restrict:'E',
@@ -66,6 +88,7 @@ function bestFitTextDirective(){
 						var height=element[0].clientHeight;
 						var numChars=text.length;
 						var desiredFontSize=height;
+						var numLines=1;
 						if(desiredFontSize*numChars>width ){
 								var minFontSize=numChars/width;
 								var maxFontSize=desiredFontSize;
@@ -73,9 +96,8 @@ function bestFitTextDirective(){
 								var wordsSizes=[];
 								var words=text.split(' ');
 								words.forEach(function(w){
-								wordsSizes.push(w.length);
+									wordsSizes.push(w.length);
 								});
-								var numLines=1;
 								var numActualLines;
 								var expectedSize;
 								while(numActualLines>numLines || typeof(numActualLines)=='undefined'){
@@ -92,23 +114,73 @@ function bestFitTextDirective(){
 									});                
 									numLines++;
 								}
+								numLines--;
 								desiredFontSize=expectedSize;
 
 						}
 
 					var str=element
 					element[0].style.fontSize=desiredFontSize+"px";
+					element[0].style.lineHeight=((height)/numLines)+"px";
+					console.log("HEIUH "+((height)/numLines)+"px");
+					console.log(height);
+					console.log(numLines);
+					element[0].style.verticalAlign = "middle";
 				},
 	 }
 }
-function SplashScreenController(WaiveCarStateService,$timeout){
-	$timeout(function(){WaiveCarStateService.next()}, 1500);
+function SplashScreenController(WaiveCarStateService,$timeout,$rootScope,$state){
+	$rootScope.$on('$stateChangeStart', function(event, toState, toParams) {
+        if(toState.name=='intro'){
+			$timeout(function(){WaiveCarStateService.next()}, 1500);
+        }
+    });
+    if($state.current.name=='intro'){
+		$timeout(function(){WaiveCarStateService.next()}, 1500);
+    }
 }
+function strikeDirective(){
+	return {
+		restrict:'E',
+		templateUrl:'/components/layout/templates/directives/strike.html'
 
+	}
+}
+function lineOnTheSidesDirective(){
+	return{
+		restrict:'E',
+		transclude:true,
+		replace:true,
+		templateUrl:'/components/layout/templates/directives/lineOnTheSides.html'
+
+	}
+}
+function pageTitleDirective(){
+	return {
+		restrict:'E',
+		transclude:true,
+		scope:{
+			'backButton':'@'
+		},
+		templateUrl:'/components/layout/templates/directives/pageTitle.html'
+
+	}
+}
+function bottomToastDirective(){
+	return {
+		restrict:'E',
+		transclude:true,
+		
+		templateUrl:'/components/layout/templates/directives/bottomToast.html'
+
+	}
+}
 angular.module('layout',['WaiveCar.state'])
 .controller('SplashScreenController', [
 	'WaiveCarStateService',
 	'$timeout',
+	'$rootScope',
+	'$state',
 	SplashScreenController
 ])
 
@@ -123,4 +195,19 @@ angular.module('layout',['WaiveCar.state'])
 ])
 .directive('bestFit', [
 	bestFitTextDirective
+])
+.directive('stepByStep',[
+	stepByStepDirective
+])
+.directive('lineOnTheSides',[
+	lineOnTheSidesDirective
+])
+.directive('strike',[
+	strikeDirective
+])
+.directive('bottomToast',
+	[bottomToastDirective
+])
+.directive('pageTitle',[
+	pageTitleDirective
 ]);

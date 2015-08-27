@@ -1,14 +1,18 @@
-function UserController($rootScope, $scope, $state, AuthService, DataService,WaiveCarStateService) {
-  var self         = this;
-  self.$state      = $state;
+function UserController($rootScope, $scope, $state, AuthService, DataService,WaiveCarStateService,FaceBookService) {
+  var self                  = this;
+  self.$state               = $state;
   self.WaiveCarStateService = WaiveCarStateService;
-  self.AuthService = AuthService;
-  self.DataService = DataService;
-  self.active      = DataService.active;
+  self.AuthService          = AuthService;
+  self.DataService          = DataService;
+  self.FaceBookService      = FaceBookService;
+  self.active               = DataService.active;
+  self.UsersResource        = DataService.resources.users;
+
   self.forms       = {
     // prefill for easier testing ;)
     userForm     : {
-      fullName : 'Travis Kalanick',
+      firstName : 'Matt',
+      lastName  : 'Ginty',
       email     : 'matt.ginty+' + Math.random() + '@clevertech.biz',
       password  : 'lollipop0',
       mobile    :  '+555 555 555'
@@ -20,7 +24,34 @@ function UserController($rootScope, $scope, $state, AuthService, DataService,Wai
     DataService.activate('users', $state.params.id);
   }
 }
+UserController.prototype.connectWithFacebook = function($auth) {
+  var self=this;
+  function registerUserByFacebook(code){
+      var data={
+        type:'register',
+        code:code,
+        redirectUri:'http://localhost/'
+      };
+      self.UsersResource.facebook(data,function(result){
+        self.DataService.merge('users', result);
+        self.DataService.activateKnownModel('users', result.id, function(err,data){
+           self.WaiveCarStateService.next();
+        });
+      },
+      function(error){
+        prompt("",JSON.stringify(error));
+        alert(arguments);
+        alert(error);
+      });
 
+  };
+  self.FaceBookService.getFacebookInfo().then(function(code){
+    registerUserByFacebook(code);
+  },
+  function(error){
+    alert(error);
+  })
+};
 UserController.prototype.create = function() {
   var self           = this;
   var redirectUrl    = self.$state.params.redirectUrl;
@@ -31,15 +62,7 @@ UserController.prototype.create = function() {
       email    : self.forms.userForm.email,
       password : self.forms.userForm.password
     }, function(auth) {
-      if (redirectUrl) {
-        self.$state.go('licenses-new', {
-          redirectUrl    : redirectUrl,
-          redirectParams : redirectParams
-        });
-      } else {
-        self.WaiveCarStateService.next();
-        //self.$state.go('credit-cards');
-      }
+       self.WaiveCarStateService.next();
     });
   });
 }
@@ -51,5 +74,6 @@ angular.module('app')
   'AuthService',
   'DataService',
   'WaiveCarStateService',
+  'FaceBookService',
   UserController
 ]);

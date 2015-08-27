@@ -9,7 +9,22 @@ function AuthService($session, DataService) {
       this.token = false;
       return this;
     },
-
+    facebookLogin: function(code,next){
+        var data={
+          type:'login',
+          code:code,
+          redirectUri:'http://localhost/'
+        };
+        DataService.resources.users.facebook(data,function(user){
+           DataService.activate('users', user.id, function(err) {
+            $session.set('auth', { token: user.token }).save();
+            next(false, user);
+          });
+        },
+        function(error){
+          next(error)
+        });
+    },
     login: function(data, next) {
       var self = this;
       DataService.resources.users.login(data, angular.bind(this, function(user) {

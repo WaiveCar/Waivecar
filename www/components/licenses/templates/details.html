@@ -1,0 +1,28 @@
+<ion-pane   class="licenseDetailsContainer">
+    <ion-content  class="full-page" >
+    	<step-by-step current-step="3"></step-by-step>
+		<page-title back-button="true">Driver's License</page-title>
+		<p>Your license looks good!.</p>
+		<p>Please enter your details</p>
+		<form  >
+			<label class="item item-input">
+				<span class="input-label">License Number</span>
+				<input type="text" >
+			</label>
+			<label class="item item-input">
+				<span class="input-label">State</span>
+				<input type="text" >
+			</label>
+		</form>
+		<p>Have you received any tickets in the past year?</p>
+		<div class="double-buttons">
+			<button class="button button-light-gray" next-state>Yes</button>
+			<button class="button button-balanced" next-state>No</button>
+		</div>
+  </ion-content>
+		
+	<div class="bar bar-footer">
+		<button class="button button-balanced" next-state>Continue</button>
+	</div>
+
+</ion-pane>

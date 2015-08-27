@@ -25,11 +25,9 @@ CarController.prototype.getDestiny = function() {
 };
 CarController.prototype.chooseCar = function() {
   var self         = this;
-  var selectedData = this.selectedCar.getSelected();
-  var carId        = selectedData.id;
   this.WaiveCarStateService.next(
     {
-      carId     : self.DataService.active.cars.id,
+      id     : self.DataService.active.cars.id,
       includeAd : true
     }
   );
@@ -67,15 +65,23 @@ function carChargeStatusDirective(searchEvents, selectedCar) {
   }
 }
 
-function carInformationDirective(searchEvents, selectedCar) {
+function carInformationDirective(searchEvents, DataService) {
+  /**
+  *@todo remove mocks
+  */
   function link(scope, element, attrs, ctrl) {
-      var details = selectedCar.getSelected();
-      if (details) {
-        scope.make = details.make;
-        scope.model = details.model;
-        scope.plate = details.plate;
-        scope.image = details.image;
-      }
+      var details = DataService.active.cars;
+      scope.$watch(function(){
+        return  DataService.active.cars;
+      },function(){
+        if (details) {
+          scope.make = details.make;
+          scope.model = details.model || 'Spark';
+          scope.plate = details.plate || 'AUD 568';
+          scope.image = details.image || '/img/car.jpg';
+        }
+
+      })
   }
   return {
     restrict    : 'E',
@@ -104,6 +110,6 @@ angular.module('app')
 ])
 .directive('carInformation', [
   'searchEvents',
-  'selectedCar',
+  'DataService',
   carInformationDirective
 ]);

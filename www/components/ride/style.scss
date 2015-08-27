@@ -27,43 +27,82 @@
 .charging-station-info .close-button{
 	z-index:2;
 }
-$rideSize:12;
-$timeAndDistanceSize:10;
-$feeInfoDifference:5;
-.summary-container{
+.rideSummary{
 	width: 100%;
 	height: 100%;
-	div{
-		width: 100%;
-		border: 1px black solid;
-	}
-	.ride-info{
-		height: 12%;
-	}
-	.time-and-distance-info{
-		height:10%;
-	}
+	
 	.fees-info{
 		height: 36%;
 	}
 	.points-info{
 		height: 42%;
-	}		
-}
+	}	
+	.page-title{
+		color:$dark;
+	}
+	.summary-container{
+		div{
+			padding-top: 2.6%;
+			padding-bottom: 2.6%;
+		}
+		div.tableContainer{
+			border-bottom:0.005rem solid $gray5;
+			width: 92%;
+			margin: 0 auto;
+			tr.totalRow{
+				border-top:0.0001rem solid $gray5;
+				td{
+					padding-top: 0.5rem;
+				}
 
-.rideSummary{
+
+			}
+		}
+		div.tableContainer:last-child{
+			border:none;
+		}
+		
+		.ride-info{
+			height: 18%;
+			background-color: $gray3;
+			color:$gray4;
+			p{
+				width: 88%;
+				margin: 0 auto;
+			}
+		}
+		background-color: #FFF;
+		
+		.time-and-distance-info{
+			height:15%;
+		}
+		.title{
+			color:$gray5;
+			&.total{
+				font-family: "LatoWebBold";
+				text-transform: uppercase
+			}
+		}
+		.value{
+			color:$dark;
+			font-family: "LatoWebBold";
+		}
+	}
 	table{
 		width: 100%;
 		td{
+			padding-bottom: 0.5rem;
+			&:first-child{
+				padding-bottom: 0rem;
+			}
 			&.value{
 				text-align: right;
-				padding-right: 1rem;
 			}
 			&.title{
 				text-align: left;
 				font-weight: bold;
-				padding-left: 1rem;
 			}
 		}
 	}
 }
+

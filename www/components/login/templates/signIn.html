@@ -1,22 +1,26 @@
-<ion-pane   class="waiveCarContainer ">
-    <ion-content  class="full-page  has-footer-bar" >
-		<h1 class="page-title">sign in</h1>
-		<a class="button button-blue button-padded"  > <img src="img/facebook.svg" class="service-icon vertical-aligned"  ><span class="vertical-aligned">connect with facebook</span></a>
-		<p class="strike"><span>Or</span></p>
+<ion-pane   class="waiveCarContainer " ng-controller="LoginController as login">
+    <ion-content  class="full-page  has-footer-bar" scroll="false" >
+		<page-title>sign in</page-title>
+		<a class="button button-blue button-padded facebook-button"  ng-click="login.connectWithFacebook()" > <img src="img/facebook.svg" class="service-icon"  ><span 
+		>connect with facebook</span></a>
+		<line-on-the-sides>Or</line-on-the-sides>
 		<label class="item item-input">
 			<span class="input-label">Email or Mobile</span>
-			<input type="email">
+			<input type="email"  ng-model="login.form.email">
 		</label>
 		<label class="item item-input">
 			<span class="input-label">Password</span>
-			<input type="password">
+			<input type="password" placeholder="6 characters or more" ng-model="login.form.password">
 		</label>
-		<p>Forgot your password?</p>
+		<div class="errorContainer" ng-if="error">
+			<p><img src="img/warning-icon.svg" ></p>
+		</div>
+		<a ui-sref="passwordRecovery" class="bottomTextInfo">Forgot your password?</a>
   </ion-content>
 	<div class="bar bar-footer">
 		<div class="footer-buttons">
-			<button class="button button-dark">Cancel</button>
-			<button class="button button-balanced" >Continue</button>
+			<button class="button button-dark" ui-sref="loginSignUp">Cancel</button>
+			<button class="button button-balanced"  ng-click="login.login()">Continue</button>
 		</div>
 	</div>
 </ion-pane>

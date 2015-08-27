@@ -28,6 +28,7 @@ function Config($stateProvider, $urlRouterProvider, $ionicConfigProvider, $httpP
 angular.module('app', [
   'ionic',
   'ngResource',
+  'ngFitText',
   'Maps',
   'Maps.realReach',
   'Maps.route',
@@ -37,17 +38,22 @@ angular.module('app', [
   'mockBehaviours',
   'ChargingStations',
   'PointsOfInterest',
-  'ngFitText',
   'btford.socket-io',
   'layout',
   'Camera',
   'WaiveCar.state.rules',
-  'WaiveCar.state'
+  'WaiveCar.state',
+  'config',
+  'social'
 ])
 .constant('appStates',{
     'intro':{
       'url':'/',
       templateUrl: '/components/layout/templates/intro.html'
+    },
+    'facebookCalback':{
+      'url':'/facebookCalback',
+      templateUrl: '/components/login/templates/facebookCallback.html'
     },
     'signIn':{
       'url':'/signIn',
@@ -56,6 +62,14 @@ angular.module('app', [
     'loginSignUp':{
       'url':'/login-sign-up',
       templateUrl: '/components/login/templates/loginSignUp.html'
+    },
+    'passwordRecovery':{
+      'url':'/password-recovery',
+      templateUrl: '/components/login/templates/passwordRecovery.html'
+    },
+    'passwordEmailInfo':{
+      'url':'/password-information',
+      templateUrl: '/components/login/templates/passwordInformation.html'
     },
     // FIND WAIVECARS
     'fleet':{
@@ -76,21 +90,39 @@ angular.module('app', [
       templateUrl: '/components/users/templates/show.html'
     },
     'credit-cards':{
+      url         : '/cards/register',
+      templateUrl : '/components/credit-cards/templates/register.html'
+    },
+  /*
+    Port this forms to the layouted one
+    'credit-cards':{
       url         : '/users/cards',
       templateUrl : '/components/credit-cards/templates/index.html'
     },
     'credit-cards-new':{
       url         : '/users/cards/new',
       templateUrl : '/components/credit-cards/templates/new.html'
+    },*/
+    'license-photo':{
+      url         : '/licenses/photo',
+      templateUrl : '/components/licenses/templates/photo.html'
     },
+    'license-details':{
+      url         : '/licenses/details',
+      templateUrl : '/components/licenses/templates/details.html'
+    },
+    //Port this to details + photo
+    /*
     'licenses':{
       url         : '/users/licenses',
       templateUrl : '/components/licenses/templates/index.html'
     },
+
     'licenses-new':{
       url         : '/users/licenses/new',
       templateUrl : '/components/licenses/templates/new.html'
     },
+    */
     //Connect to car
     'cars-connect':{
       url: '/cars/connect/:id',
@@ -112,8 +144,7 @@ angular.module('app', [
     // GET TO YOUR CAR
     'bookings-show':{
       url: '/bookings/:id',
-      templateUrl: '/components/bookings/templates/show.html',
-      params : { vehicleDetails: null},
+      templateUrl: '/components/bookings/templates/show.html'
     },
     'bookings-edit':{
       url: '/bookings/:id/edit',
@@ -127,10 +158,14 @@ angular.module('app', [
       url: '/contact',
       templateUrl: '/components/contact/templates/index.html'
     },
-    'points':{
-      url: '/my-points',
-      templateUrl: '/components/users/templates/reward-points.html'
+   'contactMessage':{
+      url: '/contact-message',
+      templateUrl: '/components/contact/templates/messageSent.html'
     },
+    // 'points':{
+    //   url: '/my-points',
+    //   templateUrl: '/components/users/templates/reward-points.html'
+    // },
     'dashboard':{
       url:'/ride/dashboard',
       templateUrl: '/components/ride/templates/dashboard.html'

@@ -1,4 +1,4 @@
-fdescribe('Flow control',function(){
+describe('Flow control',function(){
 	var $q;
 	var $rootScope;
 	var flowName = 'testFlow';
@@ -681,6 +681,9 @@ fdescribe('Flow control',function(){
 						expect(flow.getCurrentStateName()).toEqual('neutral_1');
 					});
 				});
+			});
+			describe('Redirect',function(){
+				
 			});
 
 		});

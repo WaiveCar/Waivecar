@@ -1,21 +1,19 @@
-<ion-pane  ng-controller="RideController as ride" class="waiveCarContainer rideSummary">
+<ion-pane  ng-controller="RideController as ride" class="rideSummary">
     <header-bar type="nav" on-button-click="showNav()">Summary</header-bar>
-    <ion-content  class="has-header">
-        <div class="summary-container">
+    <ion-content  class="has-header summary-container">
             <div class="ride-info">
                 <ride-summary></ride-summary>
             </div>
-            <div class="time-and-distance-info">
-                <time-and-distance-summary></time-and-distance-summary>
-            </div>
-            <div class="fees-info">
-                <h1>fees</h1>
-                <fees-summary></fees-summary>
-            </div>
-            <div class="points-info">
-                <h1>points</h1>
-                <points-summary></points-summary>
-            </div>
-        </div>
+                <div class="time-and-distance-info tableContainer">
+                    <time-and-distance-summary></time-and-distance-summary>
+                </div>
+                <div class="fees-info tableContainer">
+                    <page-title>fees</page-title>
+                    <fees-summary></fees-summary>
+                </div>
+                <div class="points-info tableContainer">
+                    <page-title>points</page-title>
+                    <points-summary></points-summary>
+                </div>
     </ion-content>
 </ion-pane>

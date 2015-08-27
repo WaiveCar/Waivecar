@@ -1,0 +1,32 @@
+#messageSentPage{
+	.waiveCarIcon{
+		margin-top: 40%;
+	}
+}
+.contactContainer{
+	text-align: center;
+	#fillInstructions{
+		margin-top: 2.5%;
+		width: 90%;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	text-align: center;
+	.scroll-content{
+		background-color: #f2f4f2;
+		color:#545a56;
+		.social-icon{
+			width: 16%;
+		}
+		form{
+			margin-top: 2.5%;
+		}
+		.buttonsContainer{
+			margin-top:2.5%;
+			.button.button-padded{
+				width: 90%;
+				margin-bottom: 2.5%;
+			}
+		}
+	}
+}
