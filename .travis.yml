@@ -10,6 +10,16 @@ branches:
 cache:
   directories:
     - node_modules
+    - modules/auth
+    - modules/commander
+    - modules/file
+    - modules/log
+    - modules/payment
+    - modules/user
+    - services/queue
+    - services/sequelize
+    - services/sms
+    - services/email
 env:
   global:
   - BRANCHING_MODEL=API_APP
