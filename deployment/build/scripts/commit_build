@@ -4,15 +4,15 @@
 set -e
 echo "`date -u `: Starting commit_build"
 
-if [ "${TRAVIS_BRANCH}" == "admin/development" ]; then
+if [ "${TRAVIS_BRANCH}" == "web/development" ]; then
   export NODE_ENV=development
-  gulp build:app
-elif [ "${TRAVIS_BRANCH}" == "admin/staging" ]; then
-  gulp build:dist
+  npm run build
+elif [ "${TRAVIS_BRANCH}" == "web/staging" ]; then
   export NODE_ENV=staging
-elif [ "${TRAVIS_BRANCH}" == "admin/master" ]; then
-  gulp build:dist
+  npm run build
+elif [ "${TRAVIS_BRANCH}" == "web/master" ]; then
   export NODE_ENV=production
+  npm run build
 fi
 
 echo "`date -u `: commit_build done"

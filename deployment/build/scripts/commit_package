@@ -53,7 +53,7 @@ fi
 
 echo "`date -u `: Packaging $NAME, commit $COMMIT"
 
-if [ "${TRAVIS_BRANCH}" == "admin/development" ]; then
+if [ "${TRAVIS_BRANCH}" == "web/development" ]; then
     DIR=app
 else
     DIR=dist

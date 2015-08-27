@@ -23,15 +23,15 @@ function deploy {
 if [ "${TRAVIS_PULL_REQUEST}" != "false" ]; then
     # Pull requests
     DEPLOY=false
-elif [ "${TRAVIS_BRANCH}" == "admin/development" ]; then
+elif [ "${TRAVIS_BRANCH}" == "web/development" ]; then
     REMOTE_HOST=${REMOTE_HOST_DEV}
     DEPLOY=true
     DIR=app
-elif [ "${TRAVIS_BRANCH}" == "admin/staging" ]; then
+elif [ "${TRAVIS_BRANCH}" == "web/staging" ]; then
     REMOTE_HOST=${REMOTE_HOST_STAG}
     DEPLOY=true
     DIR=dist
-elif [ "${TRAVIS_BRANCH}" == "admin/master" ]; then
+elif [ "${TRAVIS_BRANCH}" == "web/master" ]; then
     REMOTE_HOST=${REMOTE_HOST_PROD}
     DEPLOY=true
     DIR=dist
@@ -45,6 +45,6 @@ if [ "${DEPLOY}" == "false" ]; then
 fi
 
 echo "`date -u `: Starting deploy"
-deploy 
+deploy
 echo "`date -u `: deploy done"
 
