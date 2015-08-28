@@ -30,7 +30,7 @@ export default {
         require('modules/auth'),
         require('modules/site'),
         require('modules/admin'),
-        require('modules/redux')
+        require('modules/relay')
       ]
     }
   ]

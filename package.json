@@ -47,7 +47,6 @@
     "lodash": "^3.10.1",
     "node-sass": "3.2.0",
     "react-hot-loader": "1.2.8",
-    "redux-devtools": "1.0.2",
     "sass-loader": "2.0.0",
     "style-loader": "0.12.3",
     "superagent": "1.3.0",
@@ -59,9 +58,7 @@
     "md5": "2.0.0",
     "react": "http://react.zpao.com/builds/master/latest/react.tgz",
     "react-dom": "http://react.zpao.com/builds/master/latest/react-dom.tgz",
-    "react-redux": "0.8.2",
     "react-router": "1.0.0-beta3",
-    "redux": "1.0.0-rc",
     "socket.io-client": "1.3.6"
   }
 }

@@ -34,46 +34,15 @@ export default class LoginView extends React.Component {
       }
     ];
 
-    this._handleSuccess = this._handleSuccess.bind(this);
-    this._handleError   = this._handleError.bind(this);
+    this.onSuccess = this.onSuccess.bind(this);
+    this.onError   = this.onError.bind(this);
   }
 
   /**
-   * Handle the change event for form inputs.
-   * @method _handleChange
-   * @param  {Object} event
-   *
-  _handleChange(event) {
-    let input = this.state.form;
-    input[event.target.name] = event.target.value;
-    this.setState({
-      form : input
-    });
-  }
-
-  /**
-   * @method _handleLogin
-   *
-  _handleLogin(event) {
-    let self = this;
-    event.preventDefault();
-    Reach.API.post('/auth/login', this.state.form, function (err, user) {
-      if (err) {
-        return self._handleError(err);
-      }
-      Reach.Auth.set(user);
-      // TODO: needs to go to either /admin or /app
-      // depending upon what user is attempting to login to (and what they have access to)
-      window.location = '#/admin';
-    });
-  }
-  */
-
-  /**
-   * @method _handleSuccess
+   * @method onSuccess
    * @param  {Object} user
    */
-  _handleSuccess(user) {
+  onSuccess(user) {
     Reach.Auth.set(user);
     // TODO: needs to go to either /admin or /app
     // depending upon what user is attempting to login to (and what they have access to)
@@ -81,9 +50,9 @@ export default class LoginView extends React.Component {
   }
 
   /**
-   * @method _handleError
+   * @method onError
    */
-  _handleError(error) {
+  onError(error) {
     alert(error.message);
   }
 
@@ -102,8 +71,8 @@ export default class LoginView extends React.Component {
           action    = "/auth/login"
           method    = "POST"
           fields    = { this.fields }
-          onSuccess = { this._handleSuccess } 
-          onError   = { this._handleError }
+          onSuccess = { this.onSuccess } 
+          onError   = { this.onError }
           formClass = {{
             'form'       : true,
             'reach-form' : true
@@ -121,11 +90,3 @@ export default class LoginView extends React.Component {
   }
 
 }
-
-/*
-<form className="form reach-form" onSubmit={ this._handleLogin }>
-  <FormGroup field={ fields.email }    onChange={ this._handleChange } />
-  <FormGroup field={ fields.password } onChange={ this._handleChange } />
-  <button type="submit" tabIndex="3" className="btn btn-block btn-primary">Login</button>
-</form>
-*/

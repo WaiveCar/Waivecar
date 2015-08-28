@@ -1,21 +1,32 @@
 'use strict';
 
+// ### Polyfill
+// Import babel-core polyfill for access to the entire ES6 suite of features.
+
 import 'babel-core/polyfill';
-import React        from 'react';
-import ReactDOM     from 'react-dom';
-import { Provider } from 'react-redux';
-import Router       from 'react-router';
-import { history }  from 'react-router/lib/HashHistory';
-import routes       from './routes';
-import store        from './store';
+
+// ### React
+// Load in react for the react-router and initial required react features.
+
+import React    from 'react';
+import ReactDOM from 'react-dom';
+
+// ### Router
+// Current implementation uses react-router for routing react applications.
+
+import Router      from 'react-router';
+import { history } from 'react-router/lib/HashHistory';
+import routes      from './routes';
+
+// ### Stores
+// Load initial interface reducer stores
+
+import 'interface/reducers';
+
+// ### Render
+// Application starts its rendering process at this point.
 
 ReactDOM.render(
-  <Provider store={ store }>
-    {
-      function() {
-        return <Router history={ history } routes={ routes } />
-      }
-    }
-  </Provider>,
+  <Router history={ history } routes={ routes } />,
   document.getElementById('react')
 );

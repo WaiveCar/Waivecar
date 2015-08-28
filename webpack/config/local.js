@@ -15,11 +15,9 @@ module.exports = {
     vendors : [
       'react',
       'react-dom',
-      'react-redux',
       'react-router',
       'reach-react',
       'reach-components',
-      'redux',
       'md5',
       'socket.io-client'
     ]
