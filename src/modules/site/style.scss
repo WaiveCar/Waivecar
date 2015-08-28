@@ -1,6 +1,14 @@
 @import '~styles/variables';
 
 #site {
+  .navbar-brand {
+    img {
+      width: 324px;
+    }
+  }
+  .bg-transparent {
+    background : none;
+  }
   background-color : $app-color-white;
   color            : $app-color-black;
   .tinted {
@@ -12,22 +20,28 @@
   }
   .section {
     &.section-1 {
-      height : 845px;
+      min-height : 845px;
+      background: url('/images/site/bg-section-1.png') center center / cover;
+      .tag {
+        margin-top:292px;
+      }
     }
     &.section-2 {
-      height : 358px;
+      min-height : 358px;
     }
     &.section-3 {
-      height : 458px;
+      background: url('/images/site/bg-green.png') center center / cover;
+      min-height : 458px;
     }
     &.section-4 {
-      height : 700px;
+      min-height : 700px;
     }
     &.section-5 {
-      height : 504px;
+      background: url('/images/site/bg-green.png') center center / cover;
+      min-height : 504px;
     }
     &.section-6 {
-      height : 318px;
+      min-height : 318px;
     }
     &.section-7 {
       background-color : $app-color-black;

@@ -15,7 +15,7 @@ export default class Column extends React.Component {
    */
   render() {
     let width = this.props.width || 12;
-    let className = 'col-xs-' + width;
+    let className = (this.props.responsive ? 'col-lg-' : 'col-xs-') + width;
     if (this.props.className) {
       className = this.props.className + ' ' + className;
     }
