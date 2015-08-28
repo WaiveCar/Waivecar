@@ -1,4 +1,7 @@
 export default {
-  Layout : require('./lib/layout'),
-  Grid   : require('./lib/grid')
+  Button    : require('./lib/button'),
+  Form      : require('./lib/form'),
+  Grid      : require('./lib/grid'),
+  Hamburger : require('./lib/hamburger'),
+  Layout    : require('./lib/layout')
 };

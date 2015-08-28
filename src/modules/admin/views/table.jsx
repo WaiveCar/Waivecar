@@ -67,7 +67,7 @@ export default function (view, fields, resource) {
         customComponent : React.createClass({
           render : function() {
             return (
-              <Link className="btn btn-icon command-edit" to={ view.route + '/' + this.props.rowData.id }>
+              <Link className="btn btn-icon command-edit" to={ '/admin' + view.route + '/' + this.props.rowData.id }>
                 <i className="material-icons" role="edit">edit</i>
               </Link>
             );
@@ -78,7 +78,7 @@ export default function (view, fields, resource) {
       return (
         <div className="container">
           { self.state.actions.create &&
-            <Link className="btn btn-icon btn-primary command-primary-action" to={ view.route + '/new' }>
+            <Link className="btn btn-icon btn-primary command-primary-action" to={ '/admin' + view.route + '/new' }>
               <i className="material-icons" role="edit">add</i>
             </Link>
           }

@@ -1,9 +1,10 @@
-import React     from 'react';
-import Reach     from 'reach-react';
-import config    from 'config';
-import FormGroup from 'components/form/form-group';
-import { Layout } from 'reach-components';
+import React            from 'react';
+import Reach            from 'reach-react';
+import config           from 'config';
+import { Form, Layout } from 'reach-components';
+
 let { Container, Row, Column } = Layout;
+let { FormGroup }              = Form;
 
 export default class HomeView extends React.Component {
 

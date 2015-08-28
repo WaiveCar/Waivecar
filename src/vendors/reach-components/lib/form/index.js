@@ -1,9 +1,9 @@
 'use strict';
 
-import React     from 'react';
-import Reach     from 'reach-react';
-import Button    from 'components/button';
-import FormGroup from './form-group';
+import React      from 'react';
+import Reach      from 'reach-react';
+import Button     from '../button';
+import FormGroup  from './form-group';
 import './style.scss';
 
 export default class Form extends React.Component {

@@ -1,8 +1,8 @@
 'use strict';
 
-import React from 'react';
-import Reach from 'reach-react';
-import Form  from 'components/form';
+import React    from 'react';
+import Reach    from 'reach-react';
+import { Form } from 'reach-components';
 
 export default class ProfileView extends React.Component {
 

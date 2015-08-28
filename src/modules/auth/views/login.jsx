@@ -1,7 +1,9 @@
 import React     from 'react';
 import Reach     from 'reach-react';
 import config    from 'config';
-import FormGroup from 'components/form/form-group';
+import { Form }  from 'reach-components';
+
+let { FormGroup } = Form;
 
 export default class LoginView extends React.Component {
 

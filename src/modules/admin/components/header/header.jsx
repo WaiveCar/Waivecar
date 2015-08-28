@@ -1,8 +1,8 @@
 'use strict';
 
-import React     from 'react';
-import config    from 'config';
-import Hamburger from 'components/hamburger';
+import React         from 'react';
+import config        from 'config';
+import { Hamburger } from 'reach-components';
 import './style.scss';
 
 export default class Header extends React.Component {

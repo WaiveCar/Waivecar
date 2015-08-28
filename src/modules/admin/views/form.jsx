@@ -1,9 +1,9 @@
 'use strict';
 
-import React   from 'react';
-import Reach   from 'reach-react';
-import Form    from '../components/form';
-import UI      from '../ui';
+import React    from 'react';
+import Reach    from 'reach-react';
+import { Form } from 'reach-components';
+import UI       from '../ui';
 
 export default function (view, fields, resource) {
 
@@ -13,7 +13,7 @@ export default function (view, fields, resource) {
   if (view.menus) {
     // UI.addMenus(view.route, view.menus);
   }
-  
+
   /**
    * @class FormView
    */
@@ -111,12 +111,12 @@ export default function (view, fields, resource) {
           </div>
           <section className="card">
             <div className="card-body">
-              <Form 
-                key    = { this.state.id } 
+              <Form
+                key    = { this.state.id }
                 method = { this.state.method }
                 action = { this.state.action }
-                fields = { this.getFields() } 
-                record = { this.state.record } 
+                fields = { this.getFields() }
+                record = { this.state.record }
               />
             </div>
           </section>
