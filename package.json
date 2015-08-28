@@ -7,7 +7,7 @@
     "test-cov": "NODE_ENV=test node --harmony node_modules/istanbul-harmony/lib/cli.js cover --hook-run-in-context tests.js",
     "test-travis": "mkdir -p ./coverage; (NODE_ENV=test node --harmony node_modules/istanbul-harmony/lib/cli.js cover --hook-run-in-context tests.js; echo $? > retval) | tee coverage/coverage.txt; egrep '^0$' retval",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-    "local": "NODE_ENV=local DEBUG=socket:* nodemon --harmony --no-crankshaft app.js",
+    "local": "NODE_ENV=local nodemon --harmony --no-crankshaft app.js",
     "start": "node --harmony --no-crankshaft app.js"
   },
   "dependencies": {
@@ -23,7 +23,7 @@
     "koa-cors": "0.0.16",
     "lodash": "3.10.0",
     "moment": "2.10.2",
-    "reach-api": "0.3.18",
+    "reach-api": "0.3.19",
     "shortid" : "2.2.2"
   },
   "devDependencies": {
@@ -43,6 +43,6 @@
     "reach-queue": "0.0.7",
     "reach-sequelize": "0.0.10",
     "reach-sms": "0.0.4",
-    "reach-user": "0.1.7"
+    "reach-user": "0.1.8"
   }
 }
