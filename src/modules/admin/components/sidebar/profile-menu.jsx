@@ -67,7 +67,7 @@ export default class ProfileMenu extends React.Component {
       <div className="profile-menu">
         <button onClick={ this._showMenu }>
           <div className="profile-avatar">
-            <div className="image" style={{ background : 'url(http://www.gravatar.com/avatar/'+ md5(Reach.Auth.user.email) +') center center / cover' }}></div>
+            <div className="image" style={{ background : 'url(//www.gravatar.com/avatar/'+ md5(Reach.Auth.user.email) +') center center / cover' }}></div>
           </div>
           <div className="profile-info">
             { Reach.Auth.user.firstName } { Reach.Auth.user.lastName }
