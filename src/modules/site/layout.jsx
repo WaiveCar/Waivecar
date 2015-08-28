@@ -2,7 +2,7 @@ import React  from 'react';
 import config from 'config';
 import './style.scss';
 
-export default class AppLayout {
+export default class SiteLayout extends React.Component {
 
   render() {
     return (
