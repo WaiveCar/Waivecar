@@ -13,9 +13,10 @@ export default class Form extends React.Component {
    */
   constructor(...args) {
     super(...args);
-    this._handleChange = this._handleChange.bind(this);
-    this._handleSubmit = this._handleSubmit.bind(this);
-    this.state = {
+    this.inputChange = this.inputChange.bind(this);
+    this.submit      = this.submit.bind(this);
+    this.formClass   = this.formClass.bind(this);
+    this.state       = {
       record : null
     };
   }
@@ -25,16 +26,16 @@ export default class Form extends React.Component {
    */
   componentDidMount() {
     this.setState({
-      record : this.props.record
+      record : this.props.record || {}
     });
   }
 
   /**
    * Handle the change event for form inputs.
-   * @method _handleChange
+   * @method inputChange
    * @param  {Object} event
    */
-  _handleChange(event) {
+  inputChange(event) {
     let input = this.state.record;
     input[event.target.name] = event.target.value;
     this.setState({
@@ -43,16 +44,41 @@ export default class Form extends React.Component {
   }
 
   /**
-   * @method _handleSubmit
+   * @method submit
    */
-  _handleSubmit(event) {
+  submit(event) {
     event.preventDefault();
-    Reach.API[this.props.method.toLowerCase()](this.props.action, this.state.record, function (err, record) {
+    Reach.API[this.props.method.toLowerCase()](this.props.action, this.state.record, function (err, res) {
       if (err) {
-        return console.log(err);
+        if (this.props.onError) {
+          this.props.onError(err);
+        } else {
+          alert('Error');
+          console.log(err);
+        }
+        return;
       }
-      alert('Update Success!');
-    });
+      if (this.props.onSuccess) {
+        this.props.onSuccess(res);
+      } else {
+        alert('Success');
+        console.log(res);
+      }
+      // TODO
+      // Add global notification response when onSuccess or onError is not defined
+    }.bind(this));
+  }
+
+  formClass() {
+    return Reach.DOM.setClass(Object.assign({
+      'form-component' : true
+    }, this.props.formClass || {}));
+  }
+
+  submitClass() {
+    return Reach.DOM.setClass(Object.assign({
+      'btn' : true
+    }, this.props.submitClass || {}));
   }
 
   /**
@@ -60,16 +86,16 @@ export default class Form extends React.Component {
    */
   render() {
     return (
-      <form className="form-component" onSubmit={ this._handleSubmit }>
+      <form className={ this.formClass() } onSubmit={ this.submit }>
         {
           this.props.fields.map(function (field, i) {
             if (field.readOnly && field.hideEmpty) {
               return;
             }
-            return <FormGroup key={ i } field={ field } value={ this.state.record ? this.state.record[field.name] : '' } onChange={ this._handleChange } />
+            return <FormGroup key={ i } field={ field } value={ this.state.record ? this.state.record[field.name] : '' } onChange={ this.inputChange } />
           }.bind(this))
         }
-        <Button className="btn btn-primary" type="submit" value="Submit" />
+        <Button className={ this.submitClass() } type="submit" value="Submit" />
       </form>
     );
   }
