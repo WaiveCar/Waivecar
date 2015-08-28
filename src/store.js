@@ -21,12 +21,12 @@ let reducers = {};
 
 // ### Store
 
-let store = createStore(combineReducers(reducers), undefined); // Second param later would be window.STATE_FROM_SERVER when doing
+let store = createStore(combineReducers(reducers), undefined); // Second param later would be window.STATE_FROM_SERVER when doing isomorphic setups
 
 // ### Socket
 
-if (config.app.socket) {
-  connect(config.app.socket);
+if (config.api.socket) {
+  connect(config.api.socket);
 }
 
 /**
