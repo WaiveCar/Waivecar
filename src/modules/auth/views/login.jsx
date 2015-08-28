@@ -62,9 +62,9 @@ export default class LoginView extends React.Component {
         return self._handleError(err);
       }
       Reach.Auth.set(user);
-      // TODO: needs to go to either Admin or App
+      // TODO: needs to go to either /admin or /app
       // depending upon what user is attempting to login to (and what they have access to)
-      window.location = '#/admin/dashboard';
+      window.location = '#/admin';
     });
   }
 
