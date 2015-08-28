@@ -1,0 +1,44 @@
+@import '~styles/mixins';
+
+#admin {
+  background : #eee;
+  height     : 100%;
+  left       : 0;
+  position   : fixed;
+  top        : 0;
+  width      : 100%;
+
+  .content {
+    height      : calc(100% - 65px);
+    left        : 0;
+    overflow-y  : scroll;
+    padding-top : 30px;
+    position    : fixed;
+    top         : 65px;
+    width       : 100%;
+    @include transition(all .3s ease);
+    &.open {
+      left  : 268px;
+      width : calc(100% - 268px);
+      @include transition(all .3s ease);
+    }
+  }
+
+  .container {
+    box-sizing : border-box;
+    max-width  : 1070px;
+    width      : 100%;
+    .header {
+      margin-bottom  : 25px;
+      padding        : 0 25px;
+      position       : relative;
+      h2 {
+        color          : #777;
+        font-size      : 15px;
+        font-weight    : 400;
+        margin         : 0;
+        text-transform : uppercase;
+      }
+    }
+  }
+}

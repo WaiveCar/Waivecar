@@ -1,0 +1,84 @@
+@import '~styles/variables';
+
+.form-component {
+  .form-group {
+    position      : relative;
+    margin-bottom : 45px;
+    input.form-control {
+      font-size        : 18px;
+      padding          : 10px 10px 10px 5px;
+      display          : block;
+      width            : 100%;
+      border           : none;
+      border-bottom    : 1px solid #e0e0e0;
+      border-radius    : 0;
+      box-shadow       : none;
+      color            : $app-color-black;
+      background-color : transparent;
+      &:focus,
+      &:valid {
+        outline:none;
+        ~ label {
+          top       : -20px;
+          font-size : 14px;
+          color     : $gray-dark;
+        }
+      }
+      &:focus {
+        ~ .bar:before,
+        ~ .bar:after {
+          width : 50%;
+        }
+        ~ .highlight {
+          animation : inputHighlighter 0.3s ease;
+        }
+      }
+    }
+    label {
+      padding        : initial;
+      margin         : initial;
+      color          : $gray;
+      font-size      : 18px;
+      position       : absolute;
+      pointer-events : none;
+      left           : 5px;
+      top            : 10px;
+      transition     : 0.2s ease all;
+      font-weight    : 300;
+      max-width      : 100%;
+    }
+    .bar {
+      position : relative;
+      display  : block;
+      width    : 100%;
+      &:before,
+      &:after {
+        content    : '';
+        height     : 2px;
+        width      : 0;
+        bottom     : 1px;
+        position   : absolute;
+        background : $brand-primary;
+        transition : 0.2s ease all;
+      }
+      &:before {
+        left : 50%;
+      }
+      &:after {
+        right : 50%;
+      }
+    }
+    .highlight {
+      position       : absolute;
+      height         : 60%;
+      width          : 100px;
+      top            : 25%;
+      left           : 0;
+      pointer-events : none;
+      opacity        : .5;
+    }
+    .help-text {
+      display : none;
+    }
+  }
+}

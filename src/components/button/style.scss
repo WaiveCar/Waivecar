@@ -1,0 +1,32 @@
+@import '~styles/variables';
+
+.btn-wave {
+  display  : block;
+  position : relative;
+  overflow : hidden;
+
+  &:focus {
+    border  : none;
+    outline : none;
+  }
+}
+
+@keyframes wave {
+  from {
+    background-color : rgba(255,255,255, 0.3);
+    transform        : scale(0);
+  }
+  to {
+    transform : scale(2);
+    opacity   : 0;
+  }
+}
+
+.wave {
+  position      : absolute;
+  border-radius : 100%;
+}
+
+.anim {
+  animation : wave .5s ease-out;
+}

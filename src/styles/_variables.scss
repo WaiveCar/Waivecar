@@ -1,0 +1,42 @@
+$gray-dark:                 #373a3c !default;
+$gray:                      #55595c !default;
+$gray-light:                #818a91 !default;
+$gray-lighter:              #eceeef !default;
+$gray-lightest:             #f7f7f9 !default;
+$brand-primary:             #25C155 !default;
+$brand-success:             #5cb85c !default;
+$brand-info:                #5bc0de !default;
+$brand-warning:             #f0ad4e !default;
+$brand-danger:              #d9534f !default;
+
+$enable-flex:               true !default;
+$enable-rounded:            false !default;
+$enable-shadows:            false !default;
+$enable-gradients:          false !default;
+$enable-transitions:        true  !default;
+$enable-hover-media-query:  false !default;
+
+$app-color-black : #021207;
+$app-color-white : #fff;
+
+$login-width : 420px;
+
+@keyframes inputHighlighter {
+  from {
+    background : $brand-primary;
+  }
+  to {
+    width      : 0;
+    background : transparent;
+  }
+}
+
+@keyframes inputHighlighterWhite {
+  from {
+    background : $app-color-white;
+  }
+  to {
+    width      : 0;
+    background : transparent;
+  }
+}

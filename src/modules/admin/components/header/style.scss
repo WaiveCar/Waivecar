@@ -1,0 +1,25 @@
+@import '~styles/variables';
+
+header.admin-header {
+  background-color : darken($brand-primary, 10%);
+  box-shadow       : 0 1px 4px rgba(0, 0, 0, .3);
+  color            : $app-color-white;
+  height           : 65px;
+  left             : 0;
+  line-height      : 65px;
+  position         : fixed;
+  top              : 0;
+  width            : 100%;
+  z-index          : 10;
+
+  .header-title {
+    color           : $app-color-white;
+    font-size       : 18px;
+    font-weight     : 300;
+    text-decoration : none;
+  }
+
+  .hamburger {
+    float : left;
+  }
+}

@@ -1,0 +1,116 @@
+.griddle {
+  .card-body & {
+    .top-section {
+      padding: 0 26px 20px;
+    }
+  }
+}
+
+.griddle-container{
+  border:0;
+}
+
+.griddle .top-section {
+  clear:both;
+  display:table;
+  width:100%;
+}
+
+.griddle .griddle-filter {
+  float:left;
+  width:50%;
+  text-align:left;
+  color:#222;
+  min-height:1px;
+}
+
+.griddle .griddle-settings-toggle {
+  float:left;
+  width:50%;
+  text-align:right;
+}
+
+.griddle .griddle-settings {
+  background-color:#FFF;
+  border:1px solid #DDD;
+  color:#222;
+  padding:10px;
+  margin-bottom:10px;
+  .griddle-columns {
+    clear:both;
+    display:table;
+    width:100%;
+    border-bottom:1px solid #EDEDED;
+    margin-bottom:10px;
+  }
+  .griddle-column-selection {
+    float:left;
+    width:20%;
+  }
+}
+
+.griddle table {
+  width:100%;
+  table-layout:fixed;
+  background-color: #FFF;
+  margin-bottom: 0;
+}
+
+.griddle th {
+  background-color: #FFF;
+  vertical-align: middle;
+  font-weight: 500;
+  color: #333;
+  border: 0;
+  text-transform: uppercase;
+  padding: 10px;
+}
+
+.griddle thead {
+  border: 0;
+  tr {
+    border: 0;
+    td, th {
+      border: 0;
+    }
+  }
+}
+
+.griddle tbody > tr:nth-of-type(odd) {
+  background-color: #F4F4F4;
+}
+
+.griddle td {
+  overflow: hidden;
+  -ms-text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border: 0 !important;
+  vertical-align: middle !important;
+  padding: 10px;
+  line-height: 1.42857143;
+  border-top: 1px solid #F0F0F0;
+}
+
+.griddle .footer-container{
+  padding:0px;
+  background-color:#EDEDED;
+  border:0px;
+  color:#222;
+}
+
+.griddle .griddle-previous, .griddle .griddle-page, .griddle .griddle-next{
+  float:left;
+  width:33%;
+  min-height:1px;
+  margin-top:5px;
+}
+
+.griddle .griddle-page{
+  text-align:center;
+}
+
+.griddle .griddle-next{
+  text-align:right;
+}
