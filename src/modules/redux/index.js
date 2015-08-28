@@ -1,6 +1,6 @@
 'use strict';
 
 export default {
-  path      : 'redux',
+  path      : '/redux',
   component : require('./views/redux')
 };
