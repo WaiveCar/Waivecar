@@ -1,0 +1,12 @@
+<ion-pane class="cars-index" ng-controller="CarsController">
+  <header-bar type="nav" on-button-click="showNav()">Find WaiveCars</header-bar>
+  <ion-content scroll="false" class="has-header">
+    <div class="map-container">
+      <map id="map" zoom="15" >
+        <nearby-fleet cars="models.cars" on-click-marker="showCar(marker, info)"></nearby-fleet>
+        <device-location></device-location>
+        <locate-me img-source="img/locate-me.svg" img-on-click="locateMe()"></locate-me>
+      </map>
+    </div>
+  </ion-content>
+</ion-pane>

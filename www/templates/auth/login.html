@@ -1,0 +1,30 @@
+<ion-pane ng-controller="AuthController">
+  <ion-content class="full-page  has-footer-bar" scroll="false">
+    <page-title>sign in</page-title>
+    <a class="button button-blue button-padded facebook-button" ng-click="connectWithFacebook()">
+      <img src="img/facebook.svg" class="service-icon"/>
+      <span>connect with facebook</span>
+    </a>
+    <div class="lined">Or</div>
+    <form>
+      <label class="item item-input">
+        <span class="input-label">Email Address</span>
+        <input type="email"  ng-model="forms.loginForm.email">
+      </label>
+      <label class="item item-input">
+        <span class="input-label">Password</span>
+        <input type="password" placeholder="6 characters or more" ng-model="forms.loginForm.password">
+      </label>
+      <div class="errorContainer" ng-if="error">
+        <p><img src="img/warning-icon.svg" ></p>
+      </div>
+    </form>
+    <a ui-sref="auth-forgot-password" class="bottomTextInfo">Forgot your password?</a>
+  </ion-content>
+  <div class="bar bar-footer">
+    <div class="footer-buttons">
+      <button class="button button-dark" ui-sref="auth">Cancel</button>
+      <button class="button button-balanced" ng-click="login()">Continue</button>
+    </div>
+  </div>
+</ion-pane>

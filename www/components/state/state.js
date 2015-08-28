@@ -84,8 +84,8 @@ WaiveCarStateService.prototype.init = function() {
 		},
 	];
 	this.mainFlow=this.flowControl.setStateFlow('main',states);
-	this.$rootScope.$on('$stateChangeStart', 
-		function(event, toState, toParams, fromState, fromParams){ 
+	this.$rootScope.$on('$stateChangeStart',
+		function(event, toState, toParams, fromState, fromParams){
 			if(toState.name===self.accept){
 				self.accept=null;
 				return;
@@ -146,7 +146,7 @@ WaiveCarStateService.prototype.next = function(params) {
 	.catch(function(error){
 		console.log(error);
 	});
-	
+
 };
 WaiveCarStateService.prototype.go = function(name,params) {
 	this.$state.go(name,params);
@@ -176,7 +176,7 @@ function previousStateDirective(WaiveCarStateService){
 		link:link,
 		scope:{
 			params:'=',
-			
+
 		}
 	}
 }

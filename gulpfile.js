@@ -15,11 +15,11 @@ var paths = {
     './www/components/**/*.scss'
   ],
   templates: [
-    './www/components/**/*.html'
+    './www/templates/**/*.html'
   ],
   scripts: [
     './www/**/*.js',
-    '!./www/services/templates.min.js',
+    '!./www/js/services/templates.min.js',
     '!./www/lib/**/*.*',
     '!./www/js/**/*.*'
   ]
@@ -38,12 +38,12 @@ gulp.task('templates', function () {
   return gulp.src(paths.templates)
     .pipe(ngTemplates({
       path: function(path, base) {
-        return path.replace(base, '/components/');
+        return path.replace(base, '/templates/');
       },
       standalone: false,
-      module: 'app'
+      module: 'app.services'
     }))
-    .pipe(gulp.dest('./www/services'));
+    .pipe(gulp.dest('./www/js/services'));
 });
 
 gulp.task('sass', function(done) {

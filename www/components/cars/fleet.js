@@ -95,8 +95,8 @@ FleetController.prototype.showCarDetails = function(marker, data) {
     if (err){
       console.log(err);
       return;
-    } 
- 
+    }
+
     self.selectedCar.setSelected(data);
     self.$rootScope.$broadcast(self.mapsEvents.destinyOnRouteChanged, latLng);
     self.$rootScope.$broadcast(self.searchEvents.vehicleSelected, data);
@@ -104,14 +104,6 @@ FleetController.prototype.showCarDetails = function(marker, data) {
   });
 };
 
-angular.module('app')
-.directive('nearbyFleet', [
-  'MapsLoader',
-  '$q',
-  'locationService',
-  'mapsEvents',
-  nearbyFleetDirective
-])
 .controller('FleetController', [
   '$rootScope',
   '$scope',
@@ -123,3 +115,13 @@ angular.module('app')
   'mockCityLocationService',
   FleetController
 ]);
+
+
+angular.module('app')
+.directive('nearbyFleet', [
+  'MapsLoader',
+  '$q',
+  'locationService',
+  'mapsEvents',
+  nearbyFleetDirective
+])
