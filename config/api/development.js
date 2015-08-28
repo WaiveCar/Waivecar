@@ -18,7 +18,7 @@ module.exports = {
     port   : 443,
     socket : {
       uri     : 'https://api-waivecar-dev.cleverbuild.biz',
-        options : {
+      options : {
         path : '/socket/socket.io'
       }
     }
