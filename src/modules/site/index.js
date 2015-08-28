@@ -6,12 +6,12 @@ import policies from 'interface/policies';
 let routes = null;
 
 export default  {
-
+  
   component : require('./layout'),
 
   /**
    * @method getChildRoutes
-   * @param  {} state
+   * @param  {Object}   state
    * @param  {Function} cb
    */
   getChildRoutes(state, cb) {
@@ -22,4 +22,5 @@ export default  {
       }
     ]);
   }
+
 };

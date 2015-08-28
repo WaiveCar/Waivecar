@@ -1,3 +1,5 @@
+'use strict';
+
 import React            from 'react';
 import Reach            from 'reach-react';
 import config           from 'config';
@@ -17,11 +19,8 @@ export default class HomeView extends React.Component {
   }
 
   /**
-   * @method componentWillMount
+   * @method renderNavigation
    */
-  componentWillMount() {
-  }
-
   renderNavigation() {
     return (
       <nav className="navbar navbar-dark bg-transparent">
@@ -56,7 +55,6 @@ export default class HomeView extends React.Component {
    * @method render
    */
   render() {
-
     return (
       <Container isFluid={ true }>
         <Row id="download" className="section section-1 inverted">
