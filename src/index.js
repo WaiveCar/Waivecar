@@ -4,7 +4,7 @@ import React        from 'react';
 import ReactDOM     from 'react-dom';
 import { Provider } from 'react-redux';
 import Router       from 'react-router';
-import { history }  from 'react-router/lib/HashHistory'
+import { history }  from 'react-router/lib/HashHistory';
 import routes       from './routes';
 import store        from './store';
 
