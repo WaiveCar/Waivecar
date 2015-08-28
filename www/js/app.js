@@ -29,9 +29,6 @@ window.app = angular.module('app', [
   // 'PointsOfInterest',
   // 'layout',
   // 'Camera',
-  // 'WaiveCar.state.rules',
-  // 'WaiveCar.state',
-  // 'config',
   // 'social'
 ]);
 
@@ -80,19 +77,31 @@ window.app.config([
       /* BOOKINGS */
       .state('bookings', {
         url         : '/bookings',
-        templateUrl : '/templates/bookings/index.html'
+        templateUrl : '/templates/bookings/index.html',
+        data        : {
+          auth : true
+        }
       })
       .state('bookings-new', {
         url         : '/bookings/new',
-        templateUrl : '/templates/bookings/new.html'
+        templateUrl : '/templates/bookings/new.html',
+        data        : {
+          auth : true
+        }
       })
       .state('bookings-show', {
         url         : '/bookings/:id',
-        templateUrl : '/templates/bookings/show.html'
+        templateUrl : '/templates/bookings/show.html',
+        data        : {
+          auth : true
+        }
       })
       .state('bookings-edit', {
         url         : '/bookings/:id/edit',
-        templateUrl : '/templates/bookings/edit.html'
+        templateUrl : '/templates/bookings/edit.html',
+        data        : {
+          auth : true
+        }
       })
       /* CARS */
       .state('cars', {
@@ -103,6 +112,25 @@ window.app.config([
         url         : '/cars/:id',
         templateUrl : '/templates/cars/show.html'
       })
+      .state('messages-new', {
+        url         : '/messages/new',
+        templateUrl : '/templates/messages/new.html'
+      })
+      /* CREDIT CARDS */
+      .state('credit-cards', {
+        url         : '/credit-cards',
+        templateUrl : '/templates/credit-cards/index.html',
+        data        : {
+          auth : true
+        }
+      })
+      .state('credit-cards-new', {
+        url         : '/credit-cards/new',
+        templateUrl : '/templates/credit-cards/new.html',
+        data        : {
+          auth : true
+        }
+      })
       /* USERS */
       .state('users-new', {
         url         : '/users/new',
@@ -110,24 +138,58 @@ window.app.config([
       })
       .state('users-show', {
         url         : '/users/:id',
-        templateUrl : '/templates/users/show.html'
+        templateUrl : '/templates/users/show.html',
+        data        : {
+          auth : true
+        }
       })
       .state('users-edit', {
         url         : '/users/:id/edit',
-        templateUrl : '/templates/users/edit.html'
+        templateUrl : '/templates/users/edit.html',
+        data        : {
+          auth : true
+        }
       })
       /* LICENSES */
       .state('licenses-new', {
         url         : '/licenses/new',
-        templateUrl : '/templates/licenses/new.html'
+        templateUrl : '/templates/licenses/new.html',
+        data        : {
+          auth : true
+        }
       })
       .state('licenses-show', {
         url         : '/licenses/:id',
-        templateUrl : '/templates/licenses/show.html'
+        templateUrl : '/templates/licenses/show.html',
+        data        : {
+          auth : true
+        }
       })
       .state('licenses-edit', {
         url         : '/licenses/:id/edit',
-        templateUrl : '/templates/licenses/edit.html'
+        templateUrl : '/templates/licenses/edit.html',
+        data        : {
+          auth : true
+        }
+      })
+      .state('vision', {
+        url         : '/vision',
+        templateUrl : '/templates/vision/index.html',
+        data        : {
+          auth : true
+        }
+      })
+      .state('ads', {
+        url         : '/ads',
+        templateUrl : '/templates/ads/index.html',
+        params : {
+          redirectUrl    : null,
+          redirectParams : null
+        }
+      })
+      .state('errors-show', {
+        url         : '/errors/:id',
+        templateUrl : '/templates/errors/show.html'
       });
 
     $urlRouterProvider.otherwise('/');

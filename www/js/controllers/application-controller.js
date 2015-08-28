@@ -26,6 +26,39 @@ angular.module('app.controllers').controller('ApplicationController', [
       console.log(data);
     });
 
+    $rootScope.$on('$stateChangeStart', function(event, toState, toParams /*, fromState, fromParams */) {
+      var authRequired;
+      if (toState && _.has(toState, 'data') && _.has(toState.data, 'auth')) {
+        authRequired = toState.data.auth;
+      }
+      if ($auth.token) {
+        if (authRequired === undefined) {
+          // authenticated but not necessary, pass through.
+        } else if (authRequired) {
+          // authenticated and required, pass through.
+        } else {
+          // authenticated but meant to be anon, redirect to / to force logout.
+          $state.go('/');
+        }
+      } else {
+        if (authRequired === undefined) {
+          // not authenticated and not necessary, pass through.
+        } else if (authRequired) {
+          // not authenticated and required
+          $state.go('auth');
+        } else {
+          // not authenticated and not meant to be, pass through
+        }
+      }
+    });
+
+    $scope.logout = function() {
+      $auth.logout($scope.active.users, function(err) {
+        $scope.popover.hide();
+        $state.go('/');
+      });
+    };
+
     $scope.showNav = function($event) {
       $scope.popover.show($event);
     }

@@ -1,5 +1,30 @@
-<ion-pane class="app-index">
-  <ion-content scroll="false">
-    <img src="img/logo.svg" class="logo" />
+<ion-pane ng-controller="CarController">
+  <ion-header-bar class="bar bar-header bar-light">
+    <div class="header-text">
+        <div class="vertical-aligned">
+          <h6 class="header-title" data-fittext data-fittext-min="20">
+            <reverse-geo-coding get-location="getDestiny()">
+            </reverse-geo-coding>
+          </h6>
+          <route-information class="header-subtitle"></route-information>
+        </div>
+    </div>
+    <button ui-sref="cars" class="button button-right button-icon icon ion-close">
+    </button>
+  </ion-header-bar>
+  <ion-content scroll="false" class="has-footer-bar">
+    <div class="map-container has-info-footer">
+      <map id="map" zoom="15" >
+        <device-location></device-location>
+        <destiny-location get-initial-destiny="getDestiny()"></destiny-location>
+        <route-to-car></route-to-car>
+      </map>
+    </div>
+    <div class="vehicle-summary-container info-footer">
+      <car-charge-status></car-charge-status>
+    </div>
   </ion-content>
+  <div class="bar bar-footer">
+    <button class="button button-balanced" ui-sref="bookings-new({ carId : active.cars.id })">Book WaiveCar</button>
+  </div>
 </ion-pane>

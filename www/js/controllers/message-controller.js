@@ -1,4 +1,4 @@
-angular.module('app.controllers').controller('CarController', [
+angular.module('app.controllers').controller('MessageController', [
   '$rootScope',
   '$scope',
   '$state',
@@ -9,9 +9,6 @@ angular.module('app.controllers').controller('CarController', [
     $scope.active = $data.active;
 
     $scope.init = function() {
-      $data.activate('cars', $state.params.id, function(err) {
-
-      });
     };
 
     $scope.init();

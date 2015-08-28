@@ -1,4 +1,4 @@
-<ion-pane class="nav-component waiveCarContainer" >
+<ion-pane class="nav-component">
   <header-bar type="close" on-button-click="hideNav()">Find WaiveCars</header-bar>
   <ion-content scroll="false" class="has-header">
   <div class="button-container">
@@ -32,13 +32,13 @@
       </div>
       <div class="row row-bottom">
         <div class="col col-center text-center">
-          <a ui-sref="contact" ng-click="hideNav()">
+          <a ui-sref="messages-new" ng-click="hideNav()">
             <img src="img/contact.svg" alt="">
             <span class="button-icon-label">Contact</span>
           </a>
         </div>
         <div class="col col-center text-center">
-          <a ng-click="hideNav()" >
+          <a ng-if="active.users" ng-click="logout()">
             <img src="img/logout.svg" alt="">
             <span class="button-icon-label">logout</span>
           </a>

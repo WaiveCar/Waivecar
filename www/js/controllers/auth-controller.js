@@ -13,12 +13,8 @@ angular.module('app.controllers').controller('AuthController', [
 
     $scope.login = function() {
       $auth.login($scope.forms.loginForm, function(err) {
-        $state.go('licenses-new');
+        $state.go('cars');
       });
-    };
-
-    $scope.logout = function() {
-
     };
 
     $scope.init = function() {
