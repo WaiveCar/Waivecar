@@ -24,29 +24,9 @@ export default {
    */
   childRoutes: [
     {
-      component   : require('interface/components/app'),
+      component   : require('interface/app'),
       childRoutes : [
-        // {
-        //   path    : '/',
-        //   onEnter : function (nextState, transition) {
-        //     transition.to('/dashboard', null);
-        //   }
-        // },
-        {
-          path    : '/logout',
-          onEnter : function (nextState, transition) {
-            Reach.Auth.del();
-            transition.to('/login', null);
-          }
-        },
-        {
-          path      : '/404',
-          component : require('interface/components/404')
-        },
-        {
-          path      : '/500',
-          component : require('interface/components/500')
-        },
+        require('modules/error'),
         require('modules/auth'),
         require('modules/site'),
         require('modules/admin'),
