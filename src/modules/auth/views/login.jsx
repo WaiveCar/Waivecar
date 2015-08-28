@@ -1,9 +1,9 @@
 import React     from 'react';
 import Reach     from 'reach-react';
 import config    from 'config';
-import { Form }  from 'reach-components';
-
-let { FormGroup } = Form;
+// TODO: Figure out how to handle this.
+// Ideally, FormGroup should remain inaccessible and Login should just use { Form }
+import FormGroup from 'reach-components/lib/form/form-group';
 
 export default class LoginView extends React.Component {
 
