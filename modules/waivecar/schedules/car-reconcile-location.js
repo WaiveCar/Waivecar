@@ -11,8 +11,8 @@ module.exports = function *() {
     repeat : true,
     silent : true,
     timer  : {
-      value : 20,
-      type  : 'seconds'
+      value : 2,
+      type  : 'minutes'
     }
   });
 };
