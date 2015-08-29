@@ -9,8 +9,8 @@ module.exports = function *() {
     init   : true,
     repeat : true,
     timer  : {
-      value : 20,
-      type  : 'seconds'
+      value : 5,
+      type  : 'minutes'
     }
   });
 };
@@ -36,8 +36,8 @@ scheduler.process('car-update-client', function *(job) {
   if (!cars) {
     return;
   }
-  io.redux({
-    type : 'cars:update',
+  io.relay('cars', {
+    type : 'update',
     cars : cars
   });
 });
