@@ -5,7 +5,7 @@ angular.module('app.controllers').controller('LicenseController', [
   '$auth',
   '$data',
   function ($rootScope, $scope, $state, $auth, $data) {
-    $scope.data   = $data.models;
+    $scope.models = $data.models;
     $scope.active = $data.active;
     $scope.forms = {
       licenseForm: {}

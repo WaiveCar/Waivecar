@@ -5,7 +5,7 @@ angular.module('app.controllers').controller('UserController', [
   '$auth',
   '$data',
   function ($rootScope, $scope, $state, $auth, $data) {
-    $scope.data   = $data.models;
+    $scope.models = $data.models;
     $scope.active = $data.active;
 
     $scope.forms = {
@@ -18,7 +18,7 @@ angular.module('app.controllers').controller('UserController', [
           email    : $scope.forms.userForm.email,
           password : $scope.forms.userForm.password
         }, function(auth) {
-          $state.go('/');
+          $state.go('landing');
         });
       });
     };

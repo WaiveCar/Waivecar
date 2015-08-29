@@ -1,0 +1,31 @@
+.lined {
+  height        : 3%;
+  margin-top    : 9.4%;
+  margin-bottom : 9.2%;
+  svg {
+    display : inline-block;
+    height  : 100%;
+    line {
+      stroke : $gray2;
+      stroke-width : 1.2%;
+    }
+  }
+  .content {
+    display : inline-block;
+    width   : 40px;
+  }
+}
+
+.wizard {
+  margin-top : 1rem;
+  svg {
+    height : 0.5rem;
+  }
+  line {
+    stroke-width : 0.5rem;
+    stroke       : $gray;
+    &.passed {
+      stroke : $green;
+    }
+  }
+}

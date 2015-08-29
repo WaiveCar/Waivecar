@@ -5,7 +5,7 @@ angular.module('app.controllers').controller('AdController', [
   '$auth',
   '$data',
   function ($rootScope, $scope, $state, $auth, $data) {
-    $scope.data   = $data.models;
+    $scope.models = $data.models;
     $scope.active = $data.active;
 
     $scope.fetch = function() {

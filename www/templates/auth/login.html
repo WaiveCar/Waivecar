@@ -1,30 +1,35 @@
-<ion-pane ng-controller="AuthController">
-  <ion-content class="full-page  has-footer-bar" scroll="false">
-    <page-title>sign in</page-title>
-    <a class="button button-blue button-padded facebook-button" ng-click="connectWithFacebook()">
-      <img src="img/facebook.svg" class="service-icon"/>
-      <span>connect with facebook</span>
-    </a>
-    <div class="lined">Or</div>
-    <form>
-      <label class="item item-input">
-        <span class="input-label">Email Address</span>
-        <input type="email"  ng-model="forms.loginForm.email">
-      </label>
-      <label class="item item-input">
-        <span class="input-label">Password</span>
-        <input type="password" placeholder="6 characters or more" ng-model="forms.loginForm.password">
-      </label>
-      <div class="errorContainer" ng-if="error">
-        <p><img src="img/warning-icon.svg" ></p>
+<ion-pane class="auth auth-login" ng-controller="AuthController">
+    <form name="form" ng-submit="login()">
+    <ion-content class="full-page  has-footer-bar" scroll="false">
+      <page-title>sign in</page-title>
+      <button type="button" class="button button-blue button-padded facebook-button" ng-click="connectWithFacebook()">
+        <img src="img/facebook.svg" class="service-icon">
+        <span>Login with Facebook</span>
+      </button>
+      <lined>Or</lined>
+      <div class="list">
+        <label class="item item-input">
+          <span class="input-label">Email</span>
+          <input type="email" placeholder="john@example.com" name="email" ng-model="forms.loginForm.email" required />
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Password</span>
+          <input type="password" placeholder="* * * * * *" name="password" ng-model="forms.loginForm.password" required>
+        </label>
+        <div class="validations" ng-show="form.$dirty && form.$invalid">
+          <div class="help-block" ng-show="form.email.$dirty && form.email.$error.required">An Email Address is required</div>
+          <div class="help-block" ng-show="form.email.$dirty && form.email.$error.email">A valid Email Address is required</div>
+          <div class="help-block" ng-show="form.password.$dirty && form.password.$error.required">Password is required</div>
+          <div class="help-block" ng-show="form.password.$dirty && form.password.$error.minlength">Password must be greater than 5 characters</div>
+        </div>
       </div>
-    </form>
-    <a ui-sref="auth-forgot-password" class="bottomTextInfo">Forgot your password?</a>
-  </ion-content>
-  <div class="bar bar-footer">
-    <div class="footer-buttons">
-      <button class="button button-dark" ui-sref="auth">Cancel</button>
-      <button class="button button-balanced" ng-click="login()">Continue</button>
+      <a ui-sref="auth-forgot-password" class="bottomTextInfo">Forgot your password?</a>
+    </ion-content>
+    <div class="bar bar-footer">
+      <div class="footer-buttons">
+        <button class="button button-gray" ui-sref="auth">Cancel</button>
+        <button type="submit" class="button button-balanced" ng-class="{ 'btn-disabled' : form.$pristine || form.$invalid }" ng-disabled="form.$pristine || form.$invalid">Continue</button>
+      </div>
     </div>
-  </div>
+  </form>
 </ion-pane>

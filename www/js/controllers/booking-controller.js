@@ -5,14 +5,14 @@ angular.module('app.controllers').controller('BookingController', [
   '$auth',
   '$data',
   function ($rootScope, $scope, $state, $auth, $data) {
-    $scope.data   = $data.models;
+    $scope.models = $data.models;
     $scope.active = $data.active;
 
     $scope.fetch = function() {
     };
 
     $scope.init = function() {
-      if (!$data.active.users) {
+      if (!$auth.isAuthenticated()) {
         $state.go('auth');
       }
     };

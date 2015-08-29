@@ -22,14 +22,14 @@ angular.module('app.services').factory('$data', [
 
       userLocation : {},
 
-      all : {},
+      models : {},
 
       active : {},
 
       isSubscribed: false,
 
       initialize : function(modelName, next) {
-        service.all[modelName] = [];
+        service.models[modelName] = [];
         return service.fetch(modelName, {}, next);
       },
 
@@ -80,10 +80,11 @@ angular.module('app.services').factory('$data', [
       // client-side manipulation only
       mergeAll: function(modelName, models) {
         _.each(models, function(item) {
-          var model = item.toJSON();
+          var model = item.toJSON ? item.toJSON() : item;
           service.merge(modelName, model);
         });
-        if(modelName==='cars'){
+        if (modelName === 'cars') {
+          console.log(models.length);
           //$rootScope.$broadcast(mapsEvents.markersChanged,'fleet');
         }
       },
@@ -91,13 +92,13 @@ angular.module('app.services').factory('$data', [
       // client-side manipulation only
       merge: function(modelName, model) {
         if (!model) return null;
-        if (!service.all[modelName]) service.all[modelName] = [];
+        if (!service.models[modelName]) service.models[modelName] = [];
 
-        var existing = _.findWhere(service.all[modelName], { id: model.id });
+        var existing = _.findWhere(service.models[modelName], { id: model.id });
         if (existing) {
-          _.merge(existing, model);
+          angular.extend(existing, model);
         } else {
-          service.all[modelName].push(model);
+          service.models[modelName].push(model);
         }
         return model;
       },
@@ -108,29 +109,29 @@ angular.module('app.services').factory('$data', [
           service.deactivate(modelName);
         }
 
-        var item = _.findWhere(service.all[modelName], { id: id });
+        var item = _.findWhere(service.models[modelName], { id: id });
         if (item) {
-          service.all[modelName].splice(_.indexOf(service.all[modelName], item), 1);
+          service.models[modelName].splice(_.indexOf(service.models[modelName], item), 1);
         }
       },
 
       // client-side manipulation only
       activateKnownModel : function(modelName, id, next) {
-        var existing = _.findWhere(service.all[modelName], { id: id });
+        var existing = _.findWhere(service.models[modelName], { id: id });
         if (existing) {
           service.active[modelName] = existing;
           return next(null, service.active[modelName]);
         }
 
         service.fetch(modelName, {}, function(err) {
-          service.active[modelName] = _.findWhere(service.all[modelName], { id: id });
+          service.active[modelName] = _.findWhere(service.models[modelName], { id: id });
           return next(null, service.active[modelName]);
         });
       },
 
       // client-side manipulations only
       activate : function(modelName, id, next) {
-        if (!service.all[modelName]) {
+        if (!service.models[modelName]) {
           service.initialize(modelName, function(err) {
             if (err) return next(err);
             service.activateKnownModel(modelName, id, next);
@@ -175,23 +176,22 @@ angular.module('app.services').factory('$data', [
     //   }
     // });
 
-    $socket.on('redux', function(data) {
-      var meta      = data.type.split(':');
-      var modelName = meta[0];
-      var action    = meta[1];
-      var model     = data[modelName];
+    $socket.on('relay', function(resource, action) {
+      var model = action[resource];
 
-      switch(action) {
+      switch(action.type) {
         case 'show':
-        case 'stored':
-        case 'updated':
-          service.merge(modelName, model);
-          break;
+        case 'store':
+        case 'update':
         case 'index':
-          service.mergeAll(modelName, model);
+          if (_.isArray(model)) {
+            service.mergeAll(resource, model);
+          } else {
+            service.merge(resource, model);
+          }
           break;
-        case 'deleted':
-          service.purge(modelName, model);
+        case 'delete':
+          service.purge(resource, model);
           break;
       }
     });

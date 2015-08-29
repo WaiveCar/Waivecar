@@ -182,8 +182,8 @@ function destinyLocationDirective(MapsLoader, $q, mapsEvents) {
           ctrl.mapInstance.then(function(mapInstance) {
 
            var waiveCarIcon = L.icon({
-            iconUrl: 'img/active-waivecar.svg',
-            iconRetinaUrl: 'img/active-waivecar.svg',
+            iconUrl: '/img/active-waivecar.svg',
+            iconRetinaUrl: '/img/active-waivecar.svg',
             iconSize: [20, 25],
             iconAnchor: [10, 25],
             popupAnchor: [0 , 0]
@@ -220,7 +220,7 @@ function destinyLocationDirective(MapsLoader, $q, mapsEvents) {
 
 function routeInformationDirective() {
   return {
-    templateUrl: 'modules/maps/templates/routeInformation.html'
+    templateUrl: 'modules/maps/templates/route-information.html'
   }
 
 }

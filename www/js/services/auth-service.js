@@ -5,6 +5,11 @@ angular.module('app.services').factory('$auth', [
 
     return {
 
+      isAuthenticated : function() {
+        this.token = $session.has('auth') ? $session.get('auth') : false;
+        return this.token !== false;
+      },
+
       token: $session.has('auth') ? $session.get('auth') : false,
 
       purge: function() {
@@ -22,7 +27,6 @@ angular.module('app.services').factory('$auth', [
           $data.resources.users.facebook(data,function(user){
              $data.activate('users', user.id, function(err) {
               $session.set('auth', { token: user.token }).save();
-              next(false, user);
             });
           },
           function(error){
@@ -35,7 +39,8 @@ angular.module('app.services').factory('$auth', [
         $data.resources.users.login(data, angular.bind(this, function(user) {
           $data.activate('users', user.id, function(err) {
             $session.set('auth', { token: user.token }).save();
-            next(false, user);
+            self.token = $session.get('auth');
+            return next(err, user);
           });
         }), function(error) {
           if (error.status === 401) {

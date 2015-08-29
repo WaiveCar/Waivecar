@@ -21,7 +21,20 @@
       </map>
     </div>
     <div class="vehicle-summary-container info-footer">
-      <car-charge-status></car-charge-status>
+      <div class="list pin-bottom size-3">
+        <div class="item item-icon-left">
+          <img src="img/battery.svg" alt="charge" class="icon" />
+          <span ng-bind="carDiagnostic('evBatteryLevel')" class="highlight"></span><span class="highlight">&nbsp;charged |</span>
+        </div>
+        <div class="item item-icon-left">
+          <img src="img/distance.svg" alt="" class="icon">
+          <span ng-bind="chargeReach" class="highlight"></span> <span>available on current charge</span>
+        </div>
+        <div class="item item-icon-left">
+          <img src="img/charging.svg" alt="" class="icon">
+          <span ng-bind="chargeState"></span>
+        </div>
+      </div>
     </div>
   </ion-content>
   <div class="bar bar-footer">

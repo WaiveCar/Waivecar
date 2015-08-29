@@ -118,7 +118,7 @@
             locationService.getLocation().then(function(deviceLocation) {
               location=deviceLocation;
               var centerPosition = [deviceLocation.latitude, deviceLocation.longitude];
-              
+
               var mapOptions = {
                 center: centerPosition,
                 apiKey: maps.skobbler.apiKey,
@@ -150,7 +150,7 @@
   function locateMeDirective(MapsLoader){
       var self=this;
        function link(scope, element, attrs, ctrl) {
-        
+
           MapsLoader.getMap.then(function(L) {
             self.L=L;
             return   ctrl.mapInstance;
@@ -161,14 +161,14 @@
                   position:'bottomright'
                 },
                 onAdd: function (map) {
-                  var img = L.DomUtil.create('img','locateMeButton');
+                  var img = L.DomUtil.create('img','locate-me');
                   img.src=scope.imgSource;
                    L.DomEvent.addListener(img, 'mousedown', L.DomEvent.stopPropagation)
                   .addListener(img, 'mousedown', L.DomEvent.preventDefault)
                   .addListener(img, 'mousedown', function () {
                     scope.imgOnClick();
                   });
-                  
+
                   return img;
                 }
               });
@@ -176,7 +176,7 @@
               mapInstance.addControl(locateMe);
 
           });
-       
+
         };
         return {
           restrict:'E',
@@ -189,7 +189,7 @@
           },
           require: '^map'
         }
-      
+
   }
   function deviceLocationDirective(MapsLoader, locationService, $q) {
         function link(scope, element, attrs, ctrl) {
@@ -197,8 +197,8 @@
               locationService.getLocation().then(function(deviceLocation) {
               ctrl.mapInstance.then(function(mapInstance) {
                   var icon = L.icon({
-                    iconUrl: 'img/user-location.svg',
-                    iconRetinaUrl: 'img/user-location.svg',
+                    iconUrl: '/img/user-location.svg',
+                    iconRetinaUrl: '/img/user-location.svg',
                     iconSize: [25, 25],
                     iconAnchor: [12.5, 25],
                     popupAnchor: [0 , 0]
@@ -226,7 +226,7 @@
      })
     .constant('transports', {
       pedestrian: 'pedestrian',
-      car: 'car' 
+      car: 'car'
     })
     .provider('MapsLoader', MapsLoader)
     .service('locationService', ['$rootScope', '$cordovaGeolocation', '$q', 'mapsEvents','$state', LocationService])

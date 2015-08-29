@@ -5,13 +5,27 @@ angular.module('app.controllers').controller('AuthController', [
   '$auth',
   '$data',
   function ($rootScope, $scope, $state, $auth, $data) {
-    $scope.data   = $data.models;
+    $scope.models = $data.models;
     $scope.active = $data.active;
-    $scope.forms = {
-      loginForm: {}
+    $scope.forms  = {
+      loginForm  : {},
+      forgotForm : {},
+      resetForm  : {}
     };
 
     $scope.login = function() {
+      $auth.login($scope.forms.loginForm, function(err) {
+        $state.go('cars');
+      });
+    };
+
+    $scope.forgot = function() {
+      $auth.login($scope.forms.loginForm, function(err) {
+        $state.go('cars');
+      });
+    };
+
+    $scope.reset = function() {
       $auth.login($scope.forms.loginForm, function(err) {
         $state.go('cars');
       });

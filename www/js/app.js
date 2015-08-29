@@ -57,22 +57,34 @@ window.app.config([
       /* AUTH */
       .state('auth', {
         url         : '/auth',
-        templateUrl : '/templates/auth/index.html'
+        templateUrl : '/templates/auth/index.html',
+        data        : {
+          auth : false
+        }
       })
       .state('auth-login', {
         cache       : false,
         url         : '/auth/login',
-        templateUrl : '/templates/auth/login.html'
+        templateUrl : '/templates/auth/login.html',
+        data        : {
+          auth : false
+        }
       })
       .state('auth-forgot-password', {
         cache       : false,
         url         : '/auth/forgot-password',
-        templateUrl : '/templates/auth/forgot-password.html'
+        templateUrl : '/templates/auth/forgot-password.html',
+        data        : {
+          auth : false
+        }
       })
       .state('auth-reset-password', {
         cache       : false,
         url         : '/auth/reset-password',
-        templateUrl : '/templates/auth/reset-password.html'
+        templateUrl : '/templates/auth/reset-password.html',
+        data        : {
+          auth : false
+        }
       })
       /* BOOKINGS */
       .state('bookings', {
@@ -134,7 +146,10 @@ window.app.config([
       /* USERS */
       .state('users-new', {
         url         : '/users/new',
-        templateUrl : '/templates/users/new.html'
+        templateUrl : '/templates/users/new.html',
+        data        : {
+          auth : false
+        }
       })
       .state('users-show', {
         url         : '/users/:id',

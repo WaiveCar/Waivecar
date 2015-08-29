@@ -8,7 +8,7 @@ angular.module('app.controllers').controller('LandingController', [
 
     $scope.init = function() {
 
-      if ($auth.token) {
+      if ($auth.isAuthenticated()) {
         $state.go('cars');
       } else {
         $state.go('auth');
