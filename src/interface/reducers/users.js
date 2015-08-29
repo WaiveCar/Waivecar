@@ -2,23 +2,90 @@
 
 import { Relay } from 'reach-react';
 
-Relay.store('users', function (state = [], action) {
+// ### Actions
+
+Relay.actions({
+
+  /**
+   * Adds newly created user to the state.
+   * @method USERS_STORE
+   * @param  {Object} user
+   * @return {Object}
+   */
+  USERS_STORE: (user) => {
+    return {
+      type : 'store',
+      user : user
+    }
+  },
+
+  /**
+   * Replaces the current state with the new state.
+   * @method USERS_INDEX
+   * @param  {Array} users
+   * @return {Object}
+   */
+  USERS_INDEX: (users) => {
+    return {
+      type  : 'index',
+      users : users
+    }
+  },
+
+  /**
+   * Updates user in current state if defined.
+   * @method USERS_UPDATE
+   * @param  {Object} user
+   * @return {Object}
+   */
+  USERS_UPDATE: (user) => {
+    return {
+      type : 'update',
+      user : user
+    }
+  },
+
+  /**
+   * Removes user from current state if defined.
+   * @method USERS_DELETE
+   * @param  {Object} user
+   * @return {Object}
+   */
+  USERS_DELETE: (user) => {
+    return {
+      type : 'delete',
+      user : user
+    }
+  }
+
+});
+
+// ### Resource Reducer
+
+Relay.resource('users', function (state = [], action) {
   switch (action.type) {
-    case 'user:stored' :
+    case 'store':
       return [
         ...state,
         action.user
       ];
-    case 'user:list' :
+    case 'index':
       return action.users;
-    case 'user:updated' :
+    case 'update':
       return state.map(function (user) {
         if (user.id === action.user.id) {
           user = action.user;
         }
         return user;
       });
-    default :
+    case 'delete':
+      return state.map(function (user) {
+        if (user.id === action.user.id) {
+          return;
+        }
+        return user;
+      });
+    default:
       return state;
   }
 });

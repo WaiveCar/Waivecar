@@ -9,32 +9,38 @@ import io     from 'socket.io-client';
 let Relay = module.exports = {};
 
 /**
- * @property states
+ * The store storing states, reducers, actions and listeners.
+ * @property store
  * @type     Object
  */
-Relay.states = {};
+Relay.store = {
+  states    : {},
+  reducers  : {},
+  actions   : {},
+  listeners : {}
+};
 
 /**
- * @property reducers
- * @type     Object
- */
-Relay.reducers = {};
-
-/**
- * @property listeners
- * @type     Object
- */
-Relay.listeners = {};
-
-/**
- * @method store
- * @param  {String}   id
+ * @method resource
+ * @param  {String}   resource
  * @param  {Function} reducer
  */
-Relay.store = function (id, reducer) {
-  this.states[id]    = reducer(undefined, {});
-  this.reducers[id]  = reducer;
-  this.listeners[id] = {};
+Relay.resource = function (resource, reducer) {
+  if (this.store.reducers[resource]) {
+    return; // Lets not define the same resource multiple times.
+  }
+  this.store.states    [resource] = reducer(undefined, {});
+  this.store.reducers  [resource] = reducer;
+  this.store.listeners [resource] = {};
+};
+
+/**
+ * Store a list of relay actions.
+ * @method actions
+ * @param  {Object} actions
+ */
+Relay.actions = function (actions) {
+  Object.assign(this.store.actions, actions);
 };
 
 /**
@@ -73,20 +79,20 @@ Relay.unsubscribe = function (component, id) {
 
 /**
  * @method dispatch
- * @param  {String} id
- * @param  {Object} action
+ * @param  {String} resource
+ * @param  {Object} payload
  */
-Relay.dispatch = function (id, action) {
-  if (!this.reducers[id]) {
-    throw new Error(`Reach Relay > You cannot dispatch reducer ${ id } as it has not been exist.`);
+Relay.dispatch = function (resource, payload) {
+  if (!this.store.reducers[resource]) {
+    throw new Error(`Reach Relay > You cannot dispatch reducer ${ resource } as it has not been exist.`);
   }
 
-  let reducer   = this.reducers[id];
-  let listeners = this.listeners[id];
+  let reducer   = this.store.reducers[resource];
+  let listeners = this.store.listeners[resource];
 
   // ### Update State
 
-  this.states[id] = reducer(this.states[id], action);
+  this.store.states[resource] = reducer(this.store.states[resource], payload);
 
   // ### Inform Listeners
 
@@ -96,23 +102,39 @@ Relay.dispatch = function (id, action) {
 };
 
 /**
+ * @method getState
+ * @return {Object}
+ */
+Relay.getState = function () {
+  return this.store.states;
+};
+
+/**
+ * @method getActions
+ * @return {Object}
+ */
+Relay.getActions = function () {
+  return this.store.actions;
+};
+
+/**
  * @private
  * @method addListener
  * @param  {Component} component
  * @param  {String}    id
  */
 function addListener(component, id) {
-  if (!this.states[id]) {
+  if (!this.store.states[id]) {
     throw new Error(`Reach Relay > You cannot subscribe to '${ id }' as it has not been defined.`)
   }
   let name = component.constructor.name;
-  if (!this.listeners[id][name]) {
-    this.listeners[id][name] = [];
+  if (!this.store.listeners[id][name]) {
+    this.store.listeners[id][name] = [];
   }
-  this.listeners[id][name].push(() => {
-    component.setState(prepareState(id, this.states[id]));
+  this.store.listeners[id][name].push(() => {
+    component.setState(prepareState(id, this.store.states[id]));
   });
-  component.state[id] = this.states[id];
+  component.state[id] = this.store.states[id];
 }
 
 /**
@@ -122,11 +144,11 @@ function addListener(component, id) {
  * @param  {String} name The constructor name of the component
  */
 function removeListener(id, name) {
-  if (!this.states[id]) {
+  if (!this.store.states[id]) {
     throw new Error(`Reach Relay > You cannot unsubscribe to '${ id }' as it has not been defined.`)
   }
-  if (this.listeners[id][name]) {
-    delete this.listeners[id][name];
+  if (this.store.listeners[id][name]) {
+    delete this.store.listeners[id][name];
   }
 }
 

@@ -1,7 +1,9 @@
 'use strict';
 
-import React from 'react';
+import React          from 'react';
 import { API, Relay } from 'reach-react';
+
+let actions = Relay.getActions();
 
 // ### RelayView
 
@@ -15,7 +17,7 @@ export default class RelayView extends React.Component {
    */
   constructor(...args) {
     super(...args);
-    Relay.subscribe(this, [ 'users' ]);
+    Relay.subscribe(this, 'users');
   }
 
   /**
@@ -26,10 +28,7 @@ export default class RelayView extends React.Component {
       if (err) {
         return;
       }
-      Relay.dispatch('users', {
-        type  : 'user:list',
-        users : list
-      });
+      Relay.dispatch('users', actions.USERS_INDEX(list));
     }.bind(this));
   }
 
