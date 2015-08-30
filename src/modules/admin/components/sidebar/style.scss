@@ -14,11 +14,11 @@ $sidebar-width : 268px;
   width      : $sidebar-width;
   z-index    : 5;
 
-  @include transition(all .3s ease);
+  @include transition(all .2s ease);
 
   .sidebar-inner {
     height   : 100%;
-    overflow : hidden; 
+    overflow : hidden;
     width    : $sidebar-width;
   }
 
@@ -136,6 +136,6 @@ $sidebar-width : 268px;
   &.open {
     left    : 0;
     opacity : 1;
-    @include transition(all .3s ease);
+    @include transition(all .2s ease);
   }
 }
