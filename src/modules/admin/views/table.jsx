@@ -89,6 +89,7 @@ export default function (view, fields, resource) {
             <div className="card-body">
               <Grid
                 useGriddleStyles = { false }
+                resultsPerPage   = { 25 }
                 results          = { self.state.records }
                 showFilter       = { true }
                 showSettings     = { true }
