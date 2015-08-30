@@ -238,7 +238,7 @@ var GridTable = React.createClass({
       var pagingStyles = this.props.useGriddleStyles ?
         {
           "padding" : "0",
-          backgroundColor: "#EDEDED",
+          backgroundColor: "#FFFFFF",
           border: "0",
           color: "#222"
         }

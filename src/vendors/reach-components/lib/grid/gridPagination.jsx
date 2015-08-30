@@ -20,19 +20,32 @@ var GridPagination = React.createClass({
         }
     },
     pageChange: function(event){
-        this.props.setPage(parseInt(event.target.value, 10)-1);
+        this.props.setPage(parseInt(event.target.value, 10) -1);
     },
+
     render: function(){
-        var previous = "";
-        var next = "";
+        let prevClass = 'btn btn-icon';
+        let nextClass = 'btn btn-icon';
+        let prevIsDisabled = false;
+        let nextIsDisabled = false;
 
-        if(this.props.currentPage > 0){
-            previous = <button type="button" onClick={this.props.previous} style={this.props.useGriddleStyles ? {"color": "#222", border: "none", background: "none", margin: "0 0 0 10px"} : null}>{this.props.previousIconComponent}{this.props.previousText}</button>
+        if (this.props.currentPage < 1) {
+            prevClass += ' btn-disabled';
+            prevIsDisabled = true;
         }
 
-        if(this.props.currentPage !== (this.props.maxPage -1)){
-            next = <button type="button" onClick={this.props.next} style={this.props.useGriddleStyles ? {"color":"#222", border: "none", background: "none", margin: "0 10px 0 0"} : null}>{this.props.nextText}{this.props.nextIconComponent}</button>
+        if (this.props.currentPage === (this.props.maxPage -1)) {
+            nextClass += ' btn-disabled';
+            nextIsDisabled = true;
         }
+
+        let prev = <button type="button" className={ prevClass } disabled={ prevIsDisabled } onClick={this.props.previous}>
+                 <i className="material-icons">chevron_left</i>
+               </button>
+
+        let next = <button type="button" className={ nextClass } disabled={ nextIsDisabled } onClick={this.props.next}>
+                 <i className="material-icons">chevron_right</i>
+               </button>
 
         var leftStyle = null;
         var middleStyle = null;
@@ -53,18 +66,20 @@ var GridPagination = React.createClass({
         var options = [];
 
         for(var i = 1; i<= this.props.maxPage; i++){
-            options.push(<option value={i} key={i}>{i}</option>);
+            let className = 'btn btn-icon';
+            if (i === this.props.currentPage + 1) {
+                className += ' btn-primary';
+            }
+            options.push(<button className={ className } onClick={this.pageChange} value={i} key={i}>{i}</button>);
         }
 
         return (
             <div style={this.props.useGriddleStyles ? { minHeight: "35px" } : null }>
-                <div className={this.props.previousClassName} style={leftStyle}>{previous}</div>
                 <div className="griddle-page" style={middleStyle}>
-                    <select value={this.props.currentPage+1} onChange={this.pageChange}>
-                        {options}
-                    </select> / {this.props.maxPage}
+                    { prev }
+                    { options }
+                    { next}
                 </div>
-                <div className={this.props.nextClassName} style={rightStyle}>{next}</div>
             </div>
         )
     }
