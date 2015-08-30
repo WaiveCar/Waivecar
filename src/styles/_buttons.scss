@@ -306,7 +306,7 @@ fieldset[disabled] .btn-inverse.active {
 }
 
 .command-primary-action {
-  position: absolute;
+  position: fixed;
   bottom: 40px;
   right: 40px;
   z-index: 10000;
