@@ -49,10 +49,6 @@ function prepareUi(ui, cb) {
       component : require('./views/dashboard')
     }
   ];
-
-
-
-
   for (let key in ui) {
     let module = ui[key];
     if (module.active) {
