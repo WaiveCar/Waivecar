@@ -53,7 +53,7 @@ module.exports = {
       }
     },
     {
-      route   : '/locations/new',
+      route   : '/locations/create',
       type    : 'form',
       name    : 'Add New Location',
       fields  : [ 'type', 'name', 'description', 'latitude', 'longitude', 'address' ],
@@ -65,7 +65,7 @@ module.exports = {
       },
       menus : {
         sidebar : {
-          id     : 'new',
+          id     : 'create',
           name   : 'Add Locations',
           icon   : 'plus',
           parent : 'list'

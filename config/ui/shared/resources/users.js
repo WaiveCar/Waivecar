@@ -53,7 +53,7 @@ module.exports = {
       }
     },
     {
-      route   : '/users/new',
+      route   : '/users/create',
       type    : 'form',
       name    : 'Add User',
       fields  : [ 'firstName', 'lastName', 'role', 'email', 'password' ],
@@ -65,7 +65,7 @@ module.exports = {
       },
       menus : {
         sidebar : {
-          id     : 'new',
+          id     : 'create',
           name   : 'Add User',
           icon   : 'plus',
           parent : 'list'
