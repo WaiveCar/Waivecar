@@ -63,8 +63,8 @@ export default function (view, fields, resource) {
         this.setState({
           ready  : true,
           id     : null,
-          method : resource.create.method,
-          action : resource.create.uri
+          method : resource.store.method,
+          action : resource.store.uri
         });
       } else {
         let recordUri = resource.show.uri.replace(':id', id);
@@ -159,7 +159,6 @@ export default function (view, fields, resource) {
         </div>
       );
     }
-
   }
 
   return FormView;
