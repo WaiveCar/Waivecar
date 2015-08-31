@@ -1,7 +1,7 @@
-import React    from 'react';
-import Reach    from 'reach-react';
-import config   from 'config';
-import { Form } from 'reach-components';
+import React              from 'react';
+import Reach              from 'reach-react';
+import config             from 'config';
+import { Form, Snackbar } from 'reach-components';
 // TODO: Figure out how to handle this.
 // Ideally, FormGroup should remain inaccessible and Login should just use { Form }
 import FormGroup from 'reach-components/lib/form/form-group';
@@ -53,7 +53,7 @@ export default class LoginView extends React.Component {
    * @method onError
    */
   onError(error) {
-    alert(error.message);
+    Snackbar.notify(error.message);
   }
 
   /**

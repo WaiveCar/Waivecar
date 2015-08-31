@@ -1,6 +1,7 @@
 'use strict';
 
 import React          from 'react';
+import { Snackbar }   from 'reach-components';
 import { API, Relay } from 'reach-react';
 
 let actions = Relay.getActions();
@@ -39,6 +40,10 @@ export default class RelayView extends React.Component {
     Relay.unsubscribe(this, 'users');
   }
 
+  handleClick() {
+    Snackbar.notify('Sample snackbar notification.');
+  }
+
   /**
    * Render the component.
    * @method render
@@ -46,6 +51,7 @@ export default class RelayView extends React.Component {
   render() {
     return (
       <div>
+        <button onClick={ this.handleClick }>Click Me!</button>
         {
           this.state.users.map(function (user) {
             return <pre key={ user.id }>{ JSON.stringify(user, null, 2) }</pre>

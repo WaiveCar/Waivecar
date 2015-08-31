@@ -1,29 +1,43 @@
 'use strict';
 
-import React    from 'react';
-import { Link } from 'react-router';
+import React        from 'react';
+import { Snackbar } from 'reach-components';
+import { Link }     from 'react-router';
 import './style.scss';
 
 export default class App extends React.Component {
 
   /**
-   * Set the current server state to true.
-   * @method componentWillMount
+   * @constrcutor
    */
-  componentWillMount() {
-    this.setState({
-      server : true
-    });
+  constructor(...args) {
+    super(...args);
+    this.state = {
+      snackbar : null
+    };
+    Snackbar.hook(this);
   }
 
   /**
-   * Set the current server state to false.
-   * @method componentDidMount
+   * We only update the root component when a notification has been added.
+   * @method shouldComponentUpdate
+   * @param  {Object} props The next props
+   * @param  {Object} state The next state
    */
-  componentDidMount() {
-    this.setState({
-      server : false
-    });
+  shouldComponentUpdate(props, state) {
+    let oldPath  = this.props.location.pathname;
+    let newPath  = props.location.pathname;
+    if (oldPath !== newPath || this.snackbarUpdated(state.snackbar, this.state.snackbar)) {
+      return true;
+    }
+    return false;
+  }
+
+  snackbarUpdated(newSnack, oldSnack) {
+    if (newSnack === oldSnack) {
+      return false;
+    }
+    return true;
   }
 
   /**
@@ -34,6 +48,7 @@ export default class App extends React.Component {
     return (
       <div className="main">
         { this.props.children }
+        { !this.state.snackbar || Snackbar.render() }
       </div>
     );
   }
