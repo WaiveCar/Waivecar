@@ -2,6 +2,10 @@
 
 import Reach from 'reach-react';
 
+let menus = {
+  sidebar : []
+};
+
 /**
  * @class UI
  */
@@ -27,16 +31,36 @@ UI.menu = {
  */
 UI.addMenus = function (path, menus) {
   for (let key in menus) {
-    if (!UI.menu[key]) {
-      continue; // Only set menus that exists
+    if (UI.menu[key] && !this.hasMenu(key, menus[key])) {
+      this.addMenu(key, path, menus[key]);
     }
-    let menu = menus[key];
-    UI.menu[key].push({
-      name : menu.name,
-      icon : menu.icon || 'add_circle_outline',
-      href : '/admin' + path
-    });
   }
+};
+
+/**
+ * Check if a menu item by name has been defined in the target navigation.
+ * @method hasMenu
+ * @param  {String} target The target menu we are looking at
+ * @param  {Object} menu
+ */
+UI.hasMenu = function (target, menu) {
+  return (menus[target].indexOf(menu.name) !== -1);
+};
+
+/**
+ * Adds a new menu item to the target location.
+ * @method addMenu
+ * @param  {String} target The target menu we are looking at
+ * @param  {String} path   The uri path
+ * @param  {Object} menu
+ */
+UI.addMenu = function (target, path, menu) {
+  this.menu[target].push({
+    name : menu.name,
+    icon : menu.icon || 'add_circle_outline',
+    href : '/admin' + path
+  });
+  menus[target].push(menu.name);
 };
 
 /**
