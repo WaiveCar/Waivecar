@@ -1,10 +1,10 @@
-import React from 'react';
-
+import React              from 'react';
+import ReactDom           from 'react-dom';
 import { Charts, Layout } from 'reach-components';
 import { Link }           from 'react-router';
 
 let { Container, Row, Column } = Layout;
-let { MiniChart } = Charts;
+let { Chart, MiniChart } = Charts;
 
 let users = {
   title : 'User Registrations',
@@ -17,9 +17,28 @@ for(let i = 0; i < 21; i++) {
 };
 
 export default class DashboardView extends React.Component {
+
+  constructor(...args) {
+    super(...args);
+    this.state = {
+      width : 0
+    };
+  }
+
+  componentDidMount() {
+    this.setState({
+      width : ReactDom.findDOMNode(this).offsetWidth
+    });
+  }
+
   render() {
     return (
       <Container>
+        <Row>
+          <Column>
+            <Chart title={ users.title } data={ users.data } total={ users.count } chartType={ 'line' } width={ this.state.width } className="chart-yellow"></Chart>
+          </Column>
+        </Row>
         <Row>
           <Column width={ 3 }>
             <MiniChart title={ users.title } data={ users.data } total={ users.count } chartType={ 'bar' } className="chart-pink"></MiniChart>
@@ -28,10 +47,10 @@ export default class DashboardView extends React.Component {
             <MiniChart title={ users.title } data={ users.data } total={ users.count } chartType={ 'bar' } className="chart-bluegray"></MiniChart>
           </Column>
           <Column width={ 3 }>
-            <MiniChart title={ users.title } data={ users.data } total={ users.count } className="chart-info"></MiniChart>
+            <MiniChart title={ users.title } data={ users.data } total={ users.count } chartType={ 'line' } className="chart-info"></MiniChart>
           </Column>
           <Column width={ 3 }>
-            <MiniChart title={ users.title } data={ users.data } total={ users.count } className="chart-warning"></MiniChart>
+            <MiniChart title={ users.title } data={ users.data } total={ users.count } chartType={ 'line' } className="chart-warning"></MiniChart>
           </Column>
         </Row>
       </Container>

@@ -6,7 +6,7 @@ import './style.scss';
 
 export default class MiniChart extends React.Component {
   render() {
-    let chartContainerClass = 'mini-chart ' + this.props.className;
+    let chartContainerClass = 'mini-chart-container ' + this.props.className;
     let chartClass          = 'chart';
 
     let lineRender = this.props.chartType === 'bar' ? <SparklinesBars style={{ fill : '#ffffff' }} /> : <SparklinesLine color="#ffffff" />;

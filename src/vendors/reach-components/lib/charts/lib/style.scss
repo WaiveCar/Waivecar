@@ -1,4 +1,17 @@
-.mini-chart {
+@import '~styles/variables';
+
+.chart-container {
+  position      : relative;
+  background    : $app-color-white;
+  .chart {
+    padding    : 0;
+    svg {
+      margin: 0 0 -2px -2px;
+    }
+  }
+}
+
+.mini-chart-container {
   position      : relative;
   box-shadow    : 0 1px 1px rgba(0, 0, 0, .15);
   margin-bottom : 30px;
