@@ -43,6 +43,7 @@
     "reach-queue": "0.0.7",
     "reach-sequelize": "0.0.10",
     "reach-sms": "0.0.4",
-    "reach-user": "0.1.9"
+    "reach-user": "0.1.9",
+    "reach-ui": "0.0.1"
   }
 }
