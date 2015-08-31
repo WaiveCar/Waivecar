@@ -1,4 +1,5 @@
 export default {
+  Anchor    : require('./lib/anchor'),
   Button    : require('./lib/button'),
   Form      : require('./lib/form'),
   Grid      : require('./lib/grid'),
