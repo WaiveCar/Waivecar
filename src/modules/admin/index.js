@@ -21,7 +21,7 @@ export default  {
     if (routes) {
       return cb(null, routes); // Lets not
     }
-    Reach.API.get('/admin', function (err, res) {
+    Reach.API.get('/ui/admin', function (err, res) {
       if (err) {
         return cb(err);
       }
