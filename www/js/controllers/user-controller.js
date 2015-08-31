@@ -24,7 +24,7 @@ angular.module('app.controllers').controller('UserController', [
     };
 
     $scope.init = function() {
-      if ($data.active.users) $state.go('intro');
+      if ($data.active.users) $state.go('landing');
     };
 
     $scope.init();

@@ -115,67 +115,6 @@ function routeToLocationDirective(MapsLoader, $q, routeService, mapsEvents,$root
     }
   }
 
-function routeDurationDirective(mapsEvents) {
-  function link(scope, element, attrs, ctrl) {
-    scope.$on(mapsEvents.routeDurationChanged, function(ev, totalTime, profile) {
-        var timeInHours = 0;
-        var timeToDisplay;
-        var timeInMinutes = Math.floor(totalTime / 60);
-        if (timeInMinutes <= 0) {
-          timeToDisplay = '< 1m';
-        } else {
-          if (timeInMinutes > 60) {
-            timeInHours = Math.floor(timeInMinutes / 60);
-            timeInMinutes = timeInMinutes - timeInHours * 60;
-            if (timeInMinutes < 10) {
-              timeInMinutes = '0' + timeInMinutes;
-            }
-            if (timeInHours < 10) {
-              timeInHours = '0' + timeInHours;
-            }
-            timeToDisplay = timeInHours + 'h' + timeInMinutes + ' hours';
-          } else {
-            if (timeInMinutes < 10) {
-              timeInMinutes = '0' + timeInMinutes;
-            }
-            timeToDisplay = timeInMinutes + ' minutes';
-          }
-        }
-        scope.value = timeToDisplay;
-        if (profile == 'pedestrian') {
-          scope.value += ' walking';
-        } else {
-          scope.value += ' driving';
-        }
-
-      });
-
-  }
-  return {
-    restrict: 'E',
-    link: link,
-    scope: true,
-    template: '<span ng-bind="value"></span>'
-  }
-}
-function routeDistanceDirective(mapsEvents) {
-  function metersToMiles(meters) {
-    var digits = 3;
-    var str = meters * 0.00062137 + '';
-    return str.substring(0, str.indexOf('.') + digits);
-  }
-  function link(scope) {
-    scope.$on(mapsEvents.routeDistanceChanged, function(ev, totalDistance) {
-      scope.value = metersToMiles(totalDistance) + ' miles away';
-    });
-  }
-  return {
-    restrict: 'E',
-    link: link,
-    scope: true,
-    template: '<span ng-bind="value"></span>'
-  }
-}
 function destinyLocationDirective(MapsLoader, $q, mapsEvents) {
 
   function link($scope, element, attrs, ctrl) {

@@ -3,21 +3,19 @@
     <div class="header-text">
         <div class="vertical-aligned">
           <h6 class="header-title" data-fittext data-fittext-min="20">
-            <reverse-geo-coding get-location="getDestiny()">
-            </reverse-geo-coding>
+            <reverse-geo-coding get-location="active.cars.location"></reverse-geo-coding>
           </h6>
           <route-information class="header-subtitle"></route-information>
         </div>
     </div>
-    <button ui-sref="cars" class="button button-right button-icon icon ion-close">
-    </button>
+    <button ui-sref="cars" class="button button-right button-icon icon ion-close"></button>
   </ion-header-bar>
   <ion-content scroll="false" class="has-footer-bar">
     <div class="map-container has-info-footer">
       <map id="map" zoom="15" >
         <device-location></device-location>
-        <destiny-location get-initial-destiny="getDestiny()"></destiny-location>
-        <route-to-car></route-to-car>
+        <destiny-location location="active.cars.location"></destiny-location>
+        <route-to-location></route-to-location>
       </map>
     </div>
     <div class="vehicle-summary-container info-footer">
