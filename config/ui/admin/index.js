@@ -1,5 +1,5 @@
 'use strict';
 
 module.exports = {
-  admin : require('../shared')
+  ui : require('../shared')
 };
