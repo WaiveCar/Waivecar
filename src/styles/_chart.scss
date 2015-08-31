@@ -1,0 +1,23 @@
+@import 'variables';
+
+.chart-primary {
+  background : $brand-primary;
+}
+.chart-info {
+  background : $brand-info;
+}
+.chart-warning {
+  background : $brand-warning;
+}
+.chart-success {
+  background : $brand-success;
+}
+.chart-danger {
+  background : $brand-danger;
+}
+.chart-pink {
+  background : #E91E63 !important
+}
+.chart-bluegray {
+ background : #607D8B !important
+}

@@ -26,9 +26,14 @@
     }
   }
   &:before {
-    // .transition(width);
-    // .transition-duration(500ms);
-    // .backface-visibility(hidden);
+    -webkit-transition: 'width';
+    -o-transition: 'width';
+    transition: 'width';
+    -webkit-transition-duration: 500ms;
+    transition-duration: 500ms;
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    backface-visibility: hidden;
     content: "";
     width: 113px;
     height: 100%;
