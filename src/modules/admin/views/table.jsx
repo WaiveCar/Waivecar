@@ -53,7 +53,6 @@ export default function (view, fields, resource) {
      * @method componentWillUnmount
      */
     componentWillUnmount() {
-      console.log('unsubscribe %s', resource.name);
       Relay.unsubscribe(this, resource.name);
     }
 
