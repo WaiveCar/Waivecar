@@ -23,25 +23,25 @@ export default class ProfileMenu extends React.Component {
         {
           name     : 'View Profile',
           icon     : 'perm_identity',
-          href     : '/#/profile',
+          href     : '/admin/profile',
           isActive : false
         },
         {
           name     : 'Privacy Settings',
           icon     : 'settings_input_antenna',
-          href     : '/#/profile/privacy',
+          href     : '/admin/profile/privacy',
           isActive : false
         },
         {
           name     : 'Settings',
           icon     : 'settings',
-          href     : '/#/profile/settings',
+          href     : '/admin/profile/settings',
           isActive : false
         },
         {
           name     : 'Logout',
           icon     : 'power_settings_new',
-          href     : '/#/logout',
+          href     : '/admin/logout',
           isActive : false
         }
       ]

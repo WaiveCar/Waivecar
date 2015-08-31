@@ -26,12 +26,11 @@ Relay.store = {
  * @param  {Function} reducer
  */
 Relay.resource = function (resource, reducer) {
-  if (this.store.reducers[resource]) {
-    return; // Lets not define the same resource multiple times.
+  if (!this.store.reducers[resource]) {
+    this.store.states    [resource] = reducer(undefined, {});
+    this.store.reducers  [resource] = reducer;
+    this.store.listeners [resource] = {};
   }
-  this.store.states    [resource] = reducer(undefined, {});
-  this.store.reducers  [resource] = reducer;
-  this.store.listeners [resource] = {};
 };
 
 /**

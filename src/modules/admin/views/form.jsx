@@ -30,6 +30,9 @@ export default function (view, fields, resource) {
       };
     }
 
+    /**
+     * @method componentDidMount
+     */
     componentDidMount() {
       this.componentLoad(this.props.params.id);
     }

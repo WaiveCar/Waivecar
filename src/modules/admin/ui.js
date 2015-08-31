@@ -16,7 +16,7 @@ UI.menu = {
     {
       name : 'Dashboard',
       icon : 'dashboard',
-      href : '/admin'
+      href : '/admin/dashboard'
     }
   ]
 }

@@ -6,6 +6,8 @@ import { Grid } from 'reach-components';
 import { Link } from 'react-router';
 import UI       from '../ui';
 
+let Relay = Reach.Relay;
+
 export default function (view, fields, resource) {
 
   // ### Create Menus
@@ -20,42 +22,55 @@ export default function (view, fields, resource) {
    */
   class ListView extends React.Component {
 
+    /**
+     * @constructor
+     */
     constructor(...args) {
       super(...args);
-      this.state = {
-        records          : [],
-        actions          : view.actions,
-        fields           : view.fields,
-        fieldDefinitions : fields
-      };
+      Relay.subscribe(this, resource.name);
     }
 
+    /**
+     * @method componentDidMount
+     */
     componentDidMount() {
-      if (resource.list) {
-        Reach.API.get(resource.list.uri, function (err, list) {
+      if (resource.index) {
+        Reach.API.get(resource.index.uri, function (err, list) {
           if (err) {
             return console.log(err);
           }
-          this.setState({
-            records : list
-          });
+          let action            = {};
+          action.type           = 'index';
+          action[resource.name] = list;
+          Relay.dispatch(resource.name, action);
         }.bind(this));
       } else {
         console.log('Admin Error > "%s" is missing list resource', view.name);
       }
     }
 
+    /**
+     * @method componentWillUnmount
+     */
+    componentWillUnmount() {
+      console.log('unsubscribe %s', resource.name);
+      Relay.unsubscribe(this, resource.name);
+    }
+
+    /**
+     * @method render
+     */
     render() {
-      let self = this;
-      let columns = self.state.fields.map(function(field, i) {
+      let columns = view.fields.map(function(field, i) {
         return field;
       });
-      let columnHeadings = self.state.fields.map(function(field) {
+
+      let columnHeadings = view.fields.map(function(field) {
         return {
           columnName  : field,
-          displayName : self.state.fieldDefinitions[field] ? self.state.fieldDefinitions[field].label : field
+          displayName : fields[field] ? fields[field].label : field
         };
-      });
+      }.bind(this));
 
       columns.push('actions');
       columnHeadings.push({
@@ -77,8 +92,8 @@ export default function (view, fields, resource) {
 
       return (
         <div className="container">
-          { self.state.actions.create &&
-            <Link className="btn btn-icon btn-primary command-primary-action" to={ '/admin' + view.route + '/new' }>
+          { view.actions.create &&
+            <Link className="btn btn-icon btn-primary command-primary-action" to={ '/admin' + view.route + '/create' }>
               <i className="material-icons" role="edit">add</i>
             </Link>
           }
@@ -90,7 +105,7 @@ export default function (view, fields, resource) {
               <Grid
                 useGriddleStyles = { false }
                 resultsPerPage   = { 25 }
-                results          = { self.state.records }
+                results          = { this.state[resource.name] }
                 showFilter       = { true }
                 showSettings     = { true }
                 columns          = { columns }

@@ -4,12 +4,11 @@ import Reach    from 'reach-react';
 import policies from 'interface/policies';
 import UI       from './ui';
 
+let Relay  = Reach.Relay;
 let routes = null;
 
 export default  {
-
   onEnter   : policies.isAuthenticated,
-
   component : require('./layout'),
 
   /**
@@ -25,17 +24,24 @@ export default  {
       if (err) {
         return cb(err);
       }
-      getRoutes(res.ui, cb);
+      prepareUi(res.ui, cb);
     });
   }
 
 };
 
-function getRoutes(ui, cb) {
-  routes = [ { path : '/admin', component : require('./views/dashboard') } ];
+/**
+ * @private
+ * @method prepareUi
+ * @param  {Object}   ui
+ * @param  {Function} cb
+ */
+function prepareUi(ui, cb) {
+  routes = [ { path : '/admin/dashboard', component : require('./views/dashboard') } ];
   for (let key in ui) {
     let module = ui[key];
     if (module.active) {
+      setResource(module.resource);
       routes.push({
         component   : require('./views/dynamic'),
         childRoutes : require('./routes')(key, module)
@@ -43,4 +49,40 @@ function getRoutes(ui, cb) {
     }
   }
   cb(null, routes);
+}
+
+/**
+ * Creates a relay resource with the provided resource.
+ * @private
+ * @method setResource
+ * @param  {Object} resource
+ */
+function setResource(resource) {
+  Relay.resource(resource.name, function (state = [], action) {
+    switch (action.type) {
+      case 'store':
+        return [
+          ...state,
+          action[resource.store.key]
+        ];
+      case 'index':
+        return action[resource.index.key];
+      case 'update':
+        return state.map(function (obj) {
+          if (obj.id === action[resource.update.key].id) {
+            return action[resource.update.key];
+          }
+          return obj;
+        });
+      case 'delete':
+        return state.map(function (obj) {
+          if (obj.id === action[resource.delete.key].id) {
+            return;
+          }
+          return obj;
+        });
+      default:
+        return state;
+    }
+  });
 }
