@@ -30,7 +30,8 @@ module.exports = {
       config             : path.join(__dirname, '../../', 'src', 'config.js'),
       styles             : path.join(__dirname, '../../', 'src', 'styles'),
       'reach-react'      : path.join(__dirname, '../../', 'src', 'vendors', 'reach-react'),
-      'reach-components' : path.join(__dirname, '../../', 'src', 'vendors', 'reach-components')
+      'reach-components' : path.join(__dirname, '../../', 'src', 'vendors', 'reach-components'),
+      'react-sparklines' : path.join(__dirname, '../../', 'src', 'vendors', 'react-sparklines')
     }
   },
   module : {
