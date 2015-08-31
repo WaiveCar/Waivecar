@@ -37,7 +37,7 @@ scheduler.process('car-update-client', function *(job) {
     return;
   }
   io.relay('cars', {
-    type : 'update',
+    type : 'index',
     cars : cars
   });
 });
