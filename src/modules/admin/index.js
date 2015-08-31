@@ -37,7 +37,22 @@ export default  {
  * @param  {Function} cb
  */
 function prepareUi(ui, cb) {
-  routes = [ { path : '/admin/dashboard', component : require('./views/dashboard') } ];
+  routes = [
+    {
+      path    : '/admin',
+      onEnter : (nextState, transition) => {
+        transition.to('/admin/dashboard');
+      }
+    },
+    { 
+      path      : '/admin/dashboard', 
+      component : require('./views/dashboard')
+    }
+  ];
+
+
+
+
   for (let key in ui) {
     let module = ui[key];
     if (module.active) {
