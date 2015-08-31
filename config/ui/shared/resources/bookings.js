@@ -3,23 +3,29 @@
 module.exports = {
   active   : true,
   resource : {
-    list : {
+    name : 'bookings',
+    store : {
+      key    : 'booking',
+      method : 'POST',
+      uri    : '/bookings'
+    },
+    index : {
+      key    : 'bookings',
       method : 'GET',
       uri    : '/bookings'
     },
     show : {
+      key    : 'booking',
       method : 'GET',
       uri    : '/bookings/:id'
     },
-    create : {
-      method : 'POST',
-      uri    : '/bookings'
-    },
     update : {
+      key    : 'booking',
       method : 'PUT',
       uri    : '/bookings/:id'
     },
-    destroy : {
+    delete : {
+      key    : 'booking',
       method : 'DELETE',
       uri    : '/bookings/:id'
     }
@@ -32,10 +38,10 @@ module.exports = {
       description : null,
       fields      : [ 'id', 'customerId', 'carId', 'paymentId', 'filesId', 'state' ],
       actions     : {
-        cancel  : true,
-        create  : true,
-        update  : true,
-        destroy : true
+        cancel : true,
+        create : true,
+        update : true,
+        delete : true
       },
       menus : {
         sidebar : {
@@ -52,10 +58,10 @@ module.exports = {
       name    : 'Booking',
       fields  : [ 'customerId', 'carId', 'paymentId', 'filesId', 'state' ],
       actions : {
-        cancel  : true,
-        create  : true,
-        update  : false,
-        destroy : false
+        cancel : true,
+        create : true,
+        update : false,
+        delete : false
       }
     },
     {
@@ -64,10 +70,10 @@ module.exports = {
       name    : 'Booking',
       fields  : [ 'id', 'customerId', 'carId', 'paymentId', 'filesId', 'state' ],
       actions : {
-        cancel  : true,
-        create  : false,
-        update  : true,
-        destroy : true
+        cancel : true,
+        create : false,
+        update : true,
+        delete : true
       }
     }
   ],

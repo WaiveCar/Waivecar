@@ -3,23 +3,29 @@
 module.exports = {
   active   : true,
   resource : {
-    list : {
+    name : 'users',
+    store : {
+      key    : 'user',
+      method : 'POST',
+      uri    : '/users'
+    },
+    index : {
+      key    : 'users',
       method : 'GET',
       uri    : '/users'
     },
     show : {
+      key    : 'user',
       method : 'GET',
       uri    : '/users/:id'
     },
-    create : {
-      method : 'POST',
-      uri    : '/users'
-    },
     update : {
+      key    : 'user',
       method : 'PUT',
       uri    : '/users/:id'
     },
-    destroy : {
+    delete : {
+      key    : 'user',
       method : 'DELETE',
       uri    : '/users/:id'
     }
@@ -32,10 +38,10 @@ module.exports = {
       description : null,
       fields      : [ 'id', 'firstName', 'lastName', 'role', 'email' ],
       actions     : {
-        cancel  : true,
-        create  : true,
-        update  : true,
-        destroy : true
+        cancel : true,
+        create : true,
+        update : true,
+        delete : true
       },
       menus : {
         sidebar : {
@@ -52,10 +58,10 @@ module.exports = {
       name    : 'Add User',
       fields  : [ 'firstName', 'lastName', 'role', 'email', 'password' ],
       actions : {
-        cancel  : true,
-        create  : true,
-        update  : false,
-        destroy : false
+        cancel : true,
+        create : true,
+        update : false,
+        delete : false
       },
       menus : {
         sidebar : {
@@ -72,10 +78,10 @@ module.exports = {
       name    : 'User',
       fields  : [ 'id', 'firstName', 'lastName', 'role', 'email' ],
       actions : {
-        cancel  : true,
-        create  : false,
-        update  : true,
-        destroy : true
+        cancel : true,
+        create : false,
+        update : true,
+        delete : true
       }
     }
   ],

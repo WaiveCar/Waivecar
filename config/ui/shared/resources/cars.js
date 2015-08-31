@@ -3,23 +3,29 @@
 module.exports = {
   active   : true,
   resource : {
-    list : {
+    name : 'cars',
+    store : {
+      key    : 'car',
+      method : 'POST',
+      uri    : '/cars'
+    },
+    index : {
+      key    : 'cars',
       method : 'GET',
       uri    : '/cars'
     },
     show : {
+      key    : 'car',
       method : 'GET',
       uri    : '/cars/:id'
     },
-    create : {
-      method : 'POST',
-      uri    : '/cars'
-    },
     update : {
+      key    : 'car',
       method : 'PUT',
       uri    : '/cars/:id'
     },
-    destroy : {
+    delete : {
+      key    : 'car',
       method : 'DELETE',
       uri    : '/cars/:id'
     }
@@ -32,10 +38,10 @@ module.exports = {
       description : 'WaiveCar Fleet',
       fields      : [ 'id', 'make', 'year', 'manufacturer' ],
       actions     : {
-        cancel  : true,
-        create  : false,
-        update  : true,
-        destroy : false
+        cancel : true,
+        create : false,
+        update : true,
+        delete : false
       },
       menus : {
         sidebar : {
@@ -52,10 +58,10 @@ module.exports = {
       name    : 'Car',
       fields  : [ 'id', 'make', 'year', 'manufacturer', 'phone', 'unitType', 'onstarStatus', 'primaryDriverId', 'primaryDriverUrl', 'url', 'isInPreActivation' ],
       actions : {
-        cancel  : true,
-        create  : false,
-        update  : true,
-        destroy : false
+        cancel : true,
+        create : false,
+        update : true,
+        delete : false
       }
     },
     {
@@ -64,10 +70,10 @@ module.exports = {
       name        : 'Current Locations',
       description : 'Mapped locations of Fleet',
       actions     : {
-        cancel  : true,
-        create  : false,
-        update  : true,
-        destroy : false
+        cancel : true,
+        create : false,
+        update : true,
+        delete : false
       },
       menus : {
         sidebar : {

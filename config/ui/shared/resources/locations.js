@@ -3,23 +3,29 @@
 module.exports = {
   active   : true,
   resource : {
-    list : {
+    name : 'locations',
+    store : {
+      key    : 'location',
+      method : 'POST',
+      uri    : '/locations'
+    },
+    index : {
+      key    : 'locations',
       method : 'GET',
       uri    : '/locations'
     },
     show : {
+      key    : 'location',
       method : 'GET',
       uri    : '/locations/:id'
     },
-    create : {
-      method : 'POST',
-      uri    : '/locations'
-    },
     update : {
+      key    : 'location',
       method : 'PUT',
       uri    : '/locations/:id'
     },
-    destroy : {
+    delete : {
+      key    : 'location',
       method : 'DELETE',
       uri    : '/locations/:id'
     }
@@ -32,10 +38,10 @@ module.exports = {
       description : 'Charging Stations and Points of Interest',
       fields      : [ 'id', 'type', 'name', 'description', 'latitude', 'longitude', 'address' ],
       actions     : {
-        cancel  : true,
-        create  : true,
-        update  : true,
-        destroy : true
+        cancel : true,
+        create : true,
+        update : true,
+        delete : true
       },
       menus : {
         sidebar : {
@@ -52,10 +58,10 @@ module.exports = {
       name    : 'Add New Location',
       fields  : [ 'type', 'name', 'description', 'latitude', 'longitude', 'address' ],
       actions : {
-        cancel  : true,
-        create  : true,
-        update  : false,
-        destroy : false
+        cancel : true,
+        create : true,
+        update : false,
+        delete : false
       },
       menus : {
         sidebar : {
@@ -72,10 +78,10 @@ module.exports = {
       name    : 'Location',
       fields  : [ 'id', 'type', 'name', 'description', 'latitude', 'longitude', 'address' ],
       actions : {
-        cancel  : true,
-        create  : false,
-        update  : true,
-        destroy : true
+        cancel : true,
+        create : false,
+        update : true,
+        delete : true
       }
     },
     {
@@ -84,10 +90,10 @@ module.exports = {
       name        : 'Known Locations',
       description : 'Charging Stations and Points of Interest',
       actions     : {
-        cancel  : true,
-        create  : true,
-        update  : true,
-        destroy : true
+        cancel : true,
+        create : true,
+        update : true,
+        delete : true
       },
       menus : {
         sidebar : {
