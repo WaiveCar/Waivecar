@@ -19,7 +19,7 @@ export default class Container extends React.Component {
       className = this.props.className + ' ' + className;
     }
     return (
-      <div className={ className }>
+      <div id={ this.props.id } className={ className }>
         { this.props.children }
       </div>
     );
