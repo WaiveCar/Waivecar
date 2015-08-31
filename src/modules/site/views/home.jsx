@@ -3,7 +3,8 @@
 import React            from 'react';
 import Reach            from 'reach-react';
 import config           from 'config';
-import { Form, Layout } from 'reach-components';
+import { Anchor, Form, Layout } from 'reach-components';
+import { Link }         from 'react-router';
 
 let { Container, Row, Column } = Layout;
 let { FormGroup }              = Form;
@@ -24,27 +25,30 @@ export default class HomeView extends React.Component {
   renderNavigation() {
     return (
       <nav className="navbar navbar-dark bg-transparent">
-        <a className="navbar-brand" href="/">
+        <Link className="navbar-brand" to="home">
           <img src="/images/brand.svg" alt="WaiveCar" />
-        </a>
+        </Link>
         <ul className="nav navbar-nav pull-right">
           <li className="nav-item active">
-            <a className="nav-link" /*href="#download"*/ target="_self">Download</a>
+            <Anchor className="nav-link" href="#download">Download</Anchor>
           </li>
           <li className="nav-item">
-            <a className="nav-link" /*href="#create-an-account"*/ target="_self">Register</a>
+            <Anchor className="nav-link" href="#create-an-account">Register</Anchor>
           </li>
           <li className="nav-item">
-            <a className="nav-link" /*href="#our-vision"*/ target="_self">Vision</a>
+            <Anchor className="nav-link" href="#our-vision">Vision</Anchor>
           </li>
           <li className="nav-item">
-            <a className="nav-link" /*href="#how-it-works"*/ target="_self">How It Works?</a>
+            <Anchor className="nav-link" href="#how-it-works">How It Works?</Anchor>
           </li>
           <li className="nav-item">
-            <a className="nav-link" /*href="#pricing"*/ target="_self">Pricing</a>
+            <Anchor className="nav-link" href="#pricing">Pricing</Anchor>
           </li>
           <li className="nav-item">
-            <a className="nav-link" /*href="#about-us"*/ target="_self">About Us</a>
+            <Anchor className="nav-link" href="#about-us">About Us</Anchor>
+          </li>
+          <li className="nav-item">
+            <Link to="login" className="nav-link">Login</Link>
           </li>
         </ul>
       </nav>
