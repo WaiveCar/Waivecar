@@ -33,7 +33,8 @@ export default class Snackbar extends React.Component {
     this.setState({
       style : {
         ...this.state.style,
-        marginLeft : -(this.refs.snackbar.offsetWidth / 2)
+        marginLeft   : -(this.refs.snackbar.offsetWidth / 2),
+        paddingRight : this.refs.action ? (this.refs.action.offsetWidth + 48) : 0
       }
     });
   }
@@ -63,7 +64,7 @@ export default class Snackbar extends React.Component {
     let action = this.props.action;
     if (action) {
       return (
-        <button type="button" className="btn-snackbar" onClick={ action.click }>{ action.title }</button>
+        <button type="button" className="btn-snackbar" onClick={ action.click } ref="action">{ action.title }</button>
       );
     }
   }

@@ -53,7 +53,9 @@ SnackbarService.notify = function (snack) {
  */
 SnackbarService.dismiss = function () {
   clearTimeout(this.timer);
-  this.slideOut();
+  if (this.component.state.snackbar) {
+    this.slideOut();
+  }
 }
 
 /**

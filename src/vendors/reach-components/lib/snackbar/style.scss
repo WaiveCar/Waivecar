@@ -10,6 +10,7 @@
   min-height         : 48px;
   line-height        : 1.65em;
   padding            : 15px 24px;
+  position           : relative;
   min-width          : 288px;
   max-width          : 568px;
 
@@ -17,6 +18,11 @@
     background  : none;
     border      : none;
     font-weight : 600;
+    height      : 100%;
+    line-height : 100%;
+    position    : absolute;
+    right       : 24px;
+    top         : 0;
   }
 
   &.primary { background : rgba($brand-primary, 0.9); }
