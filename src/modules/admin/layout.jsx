@@ -14,8 +14,8 @@ export default class AdminLayout extends React.Component {
     this.setState({
       sidebar : {
         toggle : this._toggleSidebar.bind(this),
-        button : this._hamburgerClass(false),
-        state  : null
+        button : this._hamburgerClass(true),
+        state  : 'open'
       }
     });
   }
