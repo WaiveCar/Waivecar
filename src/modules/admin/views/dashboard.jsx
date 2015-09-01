@@ -20,6 +20,9 @@ for(let i = 0; i < 21; i++) {
 
 export default class DashboardView extends React.Component {
 
+  /**
+   * @constructor
+   */
   constructor(...args) {
     super(...args);
     this.state = {
@@ -28,6 +31,9 @@ export default class DashboardView extends React.Component {
     Relay.subscribe(this, 'cars');
   }
 
+  /**
+   * @method componentDidMount
+   */
   componentDidMount() {
     this.setState({
       width : ReactDom.findDOMNode(this).offsetWidth
@@ -43,10 +49,16 @@ export default class DashboardView extends React.Component {
     });
   }
 
+  /**
+   * @method componentWillUnmount
+   */
   componentWillUnmount() {
     Relay.unsubscribe(this, 'cars');
   }
 
+  /**
+   * @method render
+   */
   render() {
     return (
       <Container>
