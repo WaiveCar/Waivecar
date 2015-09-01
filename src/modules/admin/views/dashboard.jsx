@@ -36,7 +36,7 @@ export default class DashboardView extends React.Component {
    */
   componentDidMount() {
     this.setState({
-      width : ReactDom.findDOMNode(this).offsetWidth
+      width  : this.refs.dashboard.offsetWidth
     });
     Reach.API.get('/cars', function (err, cars) {
       if (err) {
@@ -61,7 +61,7 @@ export default class DashboardView extends React.Component {
    */
   render() {
     return (
-      <Container>
+      <div className="container" ref="dashboard">
         <Row>
           <Column>
             <Chart title={ users.title } data={ users.data } total={ users.count } chartType={ 'line' } width={ this.state.width } className="chart-yellow"></Chart>
@@ -82,7 +82,7 @@ export default class DashboardView extends React.Component {
           </Column>
         </Row>
         <Mapping markerIcon="/images/admin/map-icon-waivecar.svg" markers={ this.state.cars } />
-      </Container>
+      </div>
     );
   }
 }
