@@ -1,8 +1,6 @@
 'use strict';
 
 import React from 'react';
-import Leaflet from 'leaflet';
-import 'skobbler';
 
 export default class Mapping extends React.Component {
 
@@ -15,14 +13,19 @@ export default class Mapping extends React.Component {
 
   componentDidMount() {
     const position = [ 34.0604643, -118.4186743 ];
-
-    this.setState({
-      map : L.skobbler.map('map', {
-        apiKey : '7ef929e2c765b1194804e5e8ca284c5a',
-        center : position,
-        zoom   : 11
-      })
+    this.mapElement = L.skobbler.map('map', {
+      apiKey : '7ef929e2c765b1194804e5e8ca284c5a',
+      center : position,
+      zoom   : 11
     });
+    this.setState({
+      map : this.mapElement
+    });
+  }
+
+  componentWillUnmount() {
+    //super.componentWillUnmount();
+    this.mapElement.remove();
   }
 
   render() {
@@ -40,6 +43,8 @@ export default class Mapping extends React.Component {
         L.marker([ m.location.latitude, m.location.longitude ], { icon : waiveCarIcon }).addTo(self.state.map);
       });
     }
+
+    const map = this.mapElement;
 
     return (
       <section className="card card-body-map">

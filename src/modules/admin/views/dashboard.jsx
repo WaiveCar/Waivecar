@@ -2,7 +2,6 @@ import React              from 'react';
 import ReactDom           from 'react-dom';
 import { Charts, Layout } from 'reach-components';
 import { Link }           from 'react-router';
-import map                from './map';
 
 let { Container, Row, Column } = Layout;
 let { Chart, MiniChart } = Charts;
@@ -16,31 +15,6 @@ let users = {
 for(let i = 0; i < 21; i++) {
   users.data.push(Math.random(1, 100));
 };
-
-let resource = {
-  name : 'cars',
-  index : {
-    method : 'GET',
-    uri    : '/cars'
-  },
-  show : {
-    method : 'GET',
-    uri    : '/cars/:id'
-  },
-  create : {
-    method : 'POST',
-    uri    : '/cars'
-  },
-  update : {
-    method : 'PUT',
-    uri    : '/cars/:id'
-  },
-  destroy : {
-    method : 'DELETE',
-    uri    : '/cars/:id'
-  }
-};
-
 
 export default class DashboardView extends React.Component {
 
@@ -58,7 +32,6 @@ export default class DashboardView extends React.Component {
   }
 
   render() {
-    let Map = map('map', null, resource);
     return (
       <Container>
         <Row>
@@ -78,11 +51,6 @@ export default class DashboardView extends React.Component {
           </Column>
           <Column width={ 3 }>
             <MiniChart title={ users.title } data={ users.data } total={ users.count } chartType={ 'line' } className="chart-warning"></MiniChart>
-          </Column>
-        </Row>
-        <Row>
-          <Column>
-            <Map />
           </Column>
         </Row>
       </Container>
