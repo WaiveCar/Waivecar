@@ -1,10 +1,11 @@
 import React              from 'react';
+import mixin              from 'react-mixin';
 import Reach              from 'reach-react';
+import { Navigation }     from 'react-router';
 import config             from 'config';
 import { Form, Snackbar } from 'reach-components';
-// TODO: Figure out how to handle this.
-// Ideally, FormGroup should remain inaccessible and Login should just use { Form }
-import FormGroup from 'reach-components/lib/form/form-group';
+
+@mixin.decorate(Navigation)
 
 export default class LoginView extends React.Component {
 
@@ -14,7 +15,6 @@ export default class LoginView extends React.Component {
    */
   constructor(...args) {
     super(...args);
-
     this.fields = [
       {
         type         : 'text',
@@ -33,9 +33,8 @@ export default class LoginView extends React.Component {
         required     : true
       }
     ];
-
-    this.onSuccess = this.onSuccess.bind(this);
-    this.onError   = this.onError.bind(this);
+    this.onSuccess  = this.onSuccess.bind(this);
+    this.onError    = this.onError.bind(this);
   }
 
   /**
@@ -44,9 +43,8 @@ export default class LoginView extends React.Component {
    */
   onSuccess(user) {
     Reach.Auth.set(user);
-    // TODO: needs to go to either /admin or /app
-    // depending upon what user is attempting to login to (and what they have access to)
-    window.location = '#/admin';
+    console.log(this);
+    this.transitionTo('/');
   }
 
   /**

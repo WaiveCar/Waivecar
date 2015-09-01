@@ -2,8 +2,12 @@
 
 import React              from 'react';
 import Reach              from 'reach-react';
+import mixin              from 'react-mixin';
+import { Navigation }     from 'react-router';
 import { Form, Snackbar } from 'reach-components';
 import UI                 from '../ui';
+
+@mixin.decorate(Navigation)
 
 export default function (view, fields, resource) {
 
@@ -114,8 +118,8 @@ export default function (view, fields, resource) {
           action  : {
             title : 'EDIT',
             click : () => {
-              window.location = '#/admin' + resource.show.uri.replace(':id', data.id);
-            }
+              this.transitionTo('/admin' + resource.show.uri.replace(':id', data.id));
+            }.bind(this)
           }
         });
       } else {

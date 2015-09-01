@@ -8,12 +8,14 @@ export default {
   childRoutes : [
     {
       path      : '/login',
-      onEnter   : policies.isAnonymous,
-      component : require('./views/login')
+      component : require('./views/login'),
+      onEnter   : (nextState, transition) => {
+        policies.isAnonymous(nextState, transition);
+      }
     },
     {
-      path      : '/logout',
-      onEnter   : function (nextState, transition) {
+      path    : '/logout',
+      onEnter : (nextState, transition) => {
         Reach.Auth.logout();
         transition.to('/', null);
       }

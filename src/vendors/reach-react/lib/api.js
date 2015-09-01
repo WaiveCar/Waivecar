@@ -81,7 +81,7 @@ function _handleResult(callback, err, res) {
   if (!res.ok) {
     if (res.status === 401 || res.status === 403) {
       auth.logout();
-      window.location = '#/login';
+      window.location = '/login';
     }
     return callback({
       status  : res.status,

@@ -17,7 +17,7 @@ module.exports = {
       'react-dom',
       'react-router',
       'reach-react',
-      'reach-components',
+      'react-mixin',
       'md5',
       'socket.io-client'
     ]
@@ -36,8 +36,7 @@ module.exports = {
       styles             : path.join(__dirname, '../../', 'src', 'styles'),
       'reach-react'      : path.join(__dirname, '../../', 'src', 'vendors', 'reach-react'),
       'reach-components' : path.join(__dirname, '../../', 'src', 'vendors', 'reach-components'),
-      'react-sparklines' : path.join(__dirname, '../../', 'src', 'vendors', 'react-sparklines'),
-      'skobbler'         : path.join(__dirname, '../../', 'src', 'vendors', 'skobbler')
+      'react-sparklines' : path.join(__dirname, '../../', 'src', 'vendors', 'react-sparklines')
     }
   },
   module : {
