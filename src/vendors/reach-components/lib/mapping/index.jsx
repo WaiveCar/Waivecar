@@ -4,6 +4,9 @@ import React from 'react';
 
 export default class Mapping extends React.Component {
 
+  /**
+   * @constructor
+   */
   constructor(...args) {
     super(...args);
     this.state = {
@@ -11,6 +14,9 @@ export default class Mapping extends React.Component {
     };
   }
 
+  /**
+   * @method componentDidMount
+   */
   componentDidMount() {
     const position = [ 34.0604643, -118.4186743 ];
     this.mapElement = L.skobbler.map('map', {
@@ -23,38 +29,40 @@ export default class Mapping extends React.Component {
     });
   }
 
+  /**
+   * @method componentWillUnmount
+   */
   componentWillUnmount() {
-    //super.componentWillUnmount();
     this.mapElement.remove();
   }
 
+  /**
+   * Returns leaflet marker icon.
+   * @method getMarkerIcon
+   * @return {Object}
+   */
+  getMarkerIcon() {
+    return L.icon({
+      iconUrl       : this.props.markerIcon,
+      iconRetinaUrl : this.props.markerIcon,
+      iconSize      : [ 16, 20 ],
+      iconAnchor    : [ 16, 20 ],
+      popupAnchor   : [ 0 , 0 ]
+    });
+  }
+
+  /**
+   * @render
+   */
   render() {
-    let self = this;
     if (this.props.markers) {
-      let waiveCarIcon = L.icon({
-        iconUrl       : this.props.markerIcon,
-        iconRetinaUrl : this.props.markerIcon,
-        iconSize      : [ 16, 20 ],
-        iconAnchor    : [ 16, 20 ],
-        popupAnchor   : [ 0 , 0 ]
-      });
-
-      this.props.markers.forEach(function(m) {
-        L.marker([ m.location.latitude, m.location.longitude ], { icon : waiveCarIcon }).addTo(self.state.map);
-      });
+      this.props.markers.forEach(function(marker) {
+        L.marker([ marker.location.latitude, marker.location.longitude ], { icon : this.getMarkerIcon() }).addTo(this.state.map);
+      }.bind(this));
     }
-
-    const map = this.mapElement;
-
     return (
       <section className="card card-body-map">
-        <div className="card-header">
-          <h2>{ this.props.title }</h2>
-          <p>{ this.props.description }</p>
-        </div>
-        <div className="card-body">
-          <div id="map" style={{ height : '600px', width : '100%' }} />
-        </div>
+        <div id="map" style={{ height : '600px', width : '100%' }} />
       </section>
     );
   }
