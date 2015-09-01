@@ -34,7 +34,7 @@ export default class Snackbar extends React.Component {
       style : {
         ...this.state.style,
         marginLeft   : -(this.refs.snackbar.offsetWidth / 2),
-        paddingRight : this.refs.action ? (this.refs.action.offsetWidth + 48) : 0
+        paddingRight : this.refs.action ? (this.refs.action.offsetWidth + 48) : 24
       }
     });
   }
