@@ -89,9 +89,9 @@ export default class Mapping extends React.Component {
    * @method getMapStyle
    */
   getMapStyle() {
-    return { 
-      height : '600px', 
-      width  : '100%' 
+    return {
+      height : '600px',
+      width  : '100%'
     };
   }
 
@@ -100,9 +100,9 @@ export default class Mapping extends React.Component {
    */
   render() {
     return (
-      <section className="card card-body-map">
+      <div className="map-container">
         <div id="map" style={ this.getMapStyle() } />
-      </section>
+      </div>
     );
   }
 
