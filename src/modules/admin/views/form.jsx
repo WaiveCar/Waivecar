@@ -1,9 +1,9 @@
 'use strict';
 
-import React    from 'react';
-import Reach    from 'reach-react';
-import { Form } from 'reach-components';
-import UI       from '../ui';
+import React              from 'react';
+import Reach              from 'reach-react';
+import { Form, Snackbar } from 'reach-components';
+import UI                 from '../ui';
 
 export default function (view, fields, resource) {
 
@@ -25,7 +25,9 @@ export default function (view, fields, resource) {
     constructor(...args) {
       super(...args);
       this.componentLoad = this.componentLoad.bind(this);
-      this.state = {
+      this.handleSuccess = this.handleSuccess.bind(this);
+      this.handleError   = this.handleError.bind(this);
+      this.state         = {
         ready : false
       };
     }
@@ -100,6 +102,41 @@ export default function (view, fields, resource) {
     }
 
     /**
+     * Executed when the form is successfully submitted.
+     * @method handleSuccess
+     */
+    handleSuccess(data) {
+      if (view.actions.create) {
+        this.setState({ record : null });
+        Snackbar.notify({
+          type    : 'success',
+          message : `${ view.name } was successfully created.`,
+          action  : {
+            title : 'EDIT',
+            click : () => {
+              window.location = '#/admin' + resource.show.uri.replace(':id', data.id);
+            }
+          }
+        });
+      } else {
+        Snackbar.notify({
+          type    : 'success',
+          message : `${ view.name } was successfully updated.`
+        });
+      }
+    }
+
+    /**
+     * Executed when the form encounters an error.
+     */
+    handleError(data) {
+      Snackbar.notify({
+        type    : 'danger',
+        message : data.message
+      });
+    }
+
+    /**
      * Render the record form.
      * @method render
      */
@@ -115,11 +152,13 @@ export default function (view, fields, resource) {
           <section className="card">
             <div className="card-body">
               <Form
-                key    = { this.state.id }
-                method = { this.state.method }
-                action = { this.state.action }
-                fields = { this.getFields() }
-                record = { this.state.record }
+                key       = { this.state.id }
+                method    = { this.state.method }
+                action    = { this.state.action }
+                fields    = { this.getFields() }
+                record    = { this.state.record }
+                onSuccess = { this.handleSuccess }
+                onError   = { this.handleError }
               />
             </div>
           </section>
