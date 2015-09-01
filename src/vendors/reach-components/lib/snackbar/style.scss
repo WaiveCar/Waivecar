@@ -1,23 +1,27 @@
+@import '~styles/variables';
+
 .snackbar {
   animation-duration : .5s;
-  background         : rgba(#262626, 0.9);
-  border-radius      : 2px;
+  background         : rgba($app-color-black, 0.9);
+  border-radius      : 4px;
+  box-shadow         : 0 0 5px rgba($app-color-black, 0.1);
   color              : #fff;
   font-size          : 14px;
   min-height         : 48px;
   line-height        : 1.65em;
-  padding            : 18px 24px;
+  padding            : 15px 24px;
   min-width          : 288px;
   max-width          : 568px;
-  width              : 100%;
-}
 
-.btn-snackbar {
-  background : none;
-  border     : none;
-  &.danger {
-    color       : red;
+  .btn-snackbar {
+    background  : none;
+    border      : none;
     font-weight : 600;
-    padding     : 0 24px;
   }
+
+  &.primary { background : rgba($brand-primary, 0.9); }
+  &.success { background : rgba($brand-success, 0.9); }
+  &.info    { background : rgba($brand-info, 0.9); }
+  &.warning { background : rgba($brand-warning, 0.9); }
+  &.danger  { background : rgba($brand-danger, 0.9); }
 }

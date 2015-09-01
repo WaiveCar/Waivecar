@@ -4,9 +4,9 @@ import React    from 'react';
 import Snackbar from './snackbar';
 
 /**
- * @class SnackbarHandler
+ * @class SnackbarService
  */
-let SnackbarHandler = module.exports = {};
+let SnackbarService = module.exports = {};
 
 /**
  * The hooked component where notifications are rendered.
@@ -14,29 +14,29 @@ let SnackbarHandler = module.exports = {};
  * @type     Component
  * @default  null
  */
-SnackbarHandler.component = null;
+SnackbarService.component = null;
 
 /**
  * @property timer
  * @type     Timeout
  * @default  null
  */
-SnackbarHandler.timer = null;
+SnackbarService.timer = null;
 
 /**
  * Hook snackbar onto the provided component.
  * @method hook
  * @param  {Component} component
  */
-SnackbarHandler.hook = function (component) {
-  SnackbarHandler.component = component;
+SnackbarService.hook = function (component) {
+  SnackbarService.component = component;
 };
 
 /**
  * @method notify
  * @param  {String} snack The notification object
  */
-SnackbarHandler.notify = function (snack) {
+SnackbarService.notify = function (snack) {
   clearTimeout(this.timer);
   if (this.component.state.snackbar) {
     this.slideOut(function () {
@@ -48,30 +48,41 @@ SnackbarHandler.notify = function (snack) {
 };
 
 /**
+ * Clears the timeout and removed the notification.
+ * @method dismiss
+ */
+SnackbarService.dismiss = function () {
+  clearTimeout(this.timer);
+  this.slideOut();
+}
+
+/**
  * @method slideIn
  * @param  {String} snack The notification object
  */
-SnackbarHandler.slideIn = function (snack) {
+SnackbarService.slideIn = function (snack) {
   this.component.setState({
     snackbar : {
       ...snack,
-      animation : 'slideInUp'
+      animation : 'fadeInUp'
     }
   });
-  this.timer = setTimeout(function () {
-    this.slideOut();
-  }.bind(this), 5000);
+  if (snack.persist !== true) {
+    this.timer = setTimeout(function () {
+      this.slideOut();
+    }.bind(this), 5000);
+  }
 }
 
 /**
  * @method slideOut
  * @param  {Function} done
  */
-SnackbarHandler.slideOut = function (done) {
+SnackbarService.slideOut = function (done) {
   this.component.setState({
     snackbar : {
       ...this.component.state.snackbar,
-      animation : 'slideOutDown'
+      animation : 'fadeOutDown'
     }
   });
   this.timer = setTimeout(function () {
@@ -85,10 +96,11 @@ SnackbarHandler.slideOut = function (done) {
 /**
  * @method render
  */
-SnackbarHandler.render = function () {
+SnackbarService.render = function () {
   let snack = this.component.state.snackbar;
   return (
     <Snackbar 
+      type      = { snack.type }
       message   = { snack.message }
       action    = { snack.action }
       animation = { snack.animation }

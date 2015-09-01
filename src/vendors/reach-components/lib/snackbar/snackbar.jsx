@@ -15,7 +15,7 @@ export default class Snackbar extends React.Component {
     super(...args);
     this.state = {
       style : {
-        bottom     : 0,
+        bottom     : 50,
         display    : 'inline-block',
         left       : '50%',
         marginLeft : 0,
@@ -45,24 +45,13 @@ export default class Snackbar extends React.Component {
    */
   getClass() {
     let className = {};
+    let type      = this.props.type;
     let animation = this.props.animation;
 
     className.snackbar   = true;
-    className.animated   = true;
-    className[animation] = true;
-
-    return DOM.setClass(className);
-  }
-
-  /**
-   * @method getButtonClass
-   * @param  {String} classState
-   */
-  getButtonClass(classState) {
-    let className = {};
-
-    className['btn-snackbar'] = true;
-    className[classState]     = true;
+    className[type]      = type      ? true : false;
+    className.animated   = animation ? true : false;
+    className[animation] = animation ? true : false;
 
     return DOM.setClass(className);
   }
@@ -74,11 +63,14 @@ export default class Snackbar extends React.Component {
     let action = this.props.action;
     if (action) {
       return (
-        <button type="button" className={ this.getButtonClass(action.class) } onClick={ action.click }>{ action.title }</button>
+        <button type="button" className="btn-snackbar" onClick={ action.click }>{ action.title }</button>
       );
     }
   }
 
+  /**
+   * @method render
+   */
   render() {
     return (
       <div className={ this.getClass() } style={ this.state.style } ref="snackbar">
@@ -87,4 +79,5 @@ export default class Snackbar extends React.Component {
       </div>
     );
   }
+
 }
