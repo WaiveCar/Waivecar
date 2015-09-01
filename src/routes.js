@@ -8,12 +8,10 @@ import { Route } from 'react-router';
 export default {
 
   /**
-   * Render loading screen while the app is firing up.
-   * @method renderInitialLoad
+   * @property component
+   * @type     Component
    */
-  renderInitialLoad() {
-    return <div>Loading...</div>
-  },
+  component : require('interface/app'),
 
   /**
    * List of modules we want to load into the app, modules loads their own
@@ -22,17 +20,20 @@ export default {
    * @property childRoutes
    * @type     Array
    */
-  childRoutes: [
-    {
-      component   : require('interface/app'),
-      childRoutes : [
-        require('modules/error'),
-        require('modules/auth'),
-        require('modules/site'),
-        require('modules/admin'),
-        require('modules/relay')
-      ]
-    }
-  ]
+  childRoutes : [
+    require('modules/error'),
+    require('modules/auth'),
+    require('modules/site'),
+    require('modules/admin'),
+    require('modules/relay')
+  ],
+
+  /**
+   * Render loading screen while the app is firing up.
+   * @method renderInitialLoad
+   */
+  renderInitialLoad() {
+    return <div>Loading...</div>
+  }
 
 };
