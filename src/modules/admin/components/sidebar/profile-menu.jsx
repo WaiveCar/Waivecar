@@ -41,7 +41,7 @@ export default class ProfileMenu extends React.Component {
         {
           name     : 'Logout',
           icon     : 'power_settings_new',
-          href     : '/admin/logout',
+          href     : '/logout',
           isActive : false
         }
       ]

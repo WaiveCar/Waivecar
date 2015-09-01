@@ -27,7 +27,11 @@ export default class App extends React.Component {
   shouldComponentUpdate(props, state) {
     let oldPath  = this.props.location.pathname;
     let newPath  = props.location.pathname;
-    if (oldPath !== newPath || this.snackbarUpdated(state.snackbar, this.state.snackbar)) {
+    if (oldPath !== newPath) {
+      Snackbar.dismiss();
+      return true;
+    }
+    if (this.snackbarUpdated(state.snackbar, this.state.snackbar)) {
       return true;
     }
     return false;

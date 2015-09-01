@@ -53,7 +53,17 @@ export default class LoginView extends React.Component {
    * @method onError
    */
   onError(error) {
-    Snackbar.notify(error.message);
+    Snackbar.notify({
+      type    : 'danger',
+      message : error.message,
+      persist : true,
+      action  : {
+        title : 'DISMISS',
+        click : () => {
+          Snackbar.dismiss();
+        }
+      }
+    });
   }
 
   /**
