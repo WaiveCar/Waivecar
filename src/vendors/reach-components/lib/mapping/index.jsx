@@ -67,7 +67,7 @@ export default class Mapping extends React.Component {
    * @method componentWillUnmount
    */
   componentWillUnmount() {
-    this.mapElement.remove();
+    this.state.map.remove();
   }
 
   /**
