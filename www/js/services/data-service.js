@@ -6,19 +6,20 @@ angular.module('app.services').factory('$data', [
   'Cars',
   'Locations',
   'Users',
-  //'mapsEvents',
   'Licenses',
-  function ($rootScope, $http, $socket, Bookings, Cars, Locations, Users, /*mapsEvents,*/ Licenses) {
+  function ($rootScope, $http, $socket, Bookings, Cars, Locations, Users, Licenses) {
 
     var service = {
 
       resources : {
         bookings  : Bookings,
         cars      : Cars,
+        licenses  : Licenses,
         locations : Locations,
-        users     : Users,
-        licenses  : Licenses
+        users     : Users
       },
+
+      me : undefined,
 
       userLocation : {},
 
@@ -178,6 +179,12 @@ angular.module('app.services').factory('$data', [
 
     $socket.on('relay', function(resource, action) {
       var model = action[resource];
+
+      if (resource === 'users') {
+        console.log(resouce);
+        console.log(action);
+        return;
+      }
 
       switch(action.type) {
         case 'show':

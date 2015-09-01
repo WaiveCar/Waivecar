@@ -19,27 +19,31 @@ angular.module('app.services').factory('$auth', [
       },
 
       facebookLogin: function(code,next){
-          var data={
-            type:'login',
-            code:code,
-            redirectUri:'http://localhost/'
-          };
-          $data.resources.users.facebook(data,function(user){
-             $data.activate('users', user.id, function(err) {
-              $session.set('auth', { token: user.token }).save();
-            });
-          },
-          function(error){
-            next(error)
+        var self = this;
+        var data={
+          type:'login',
+          code:code,
+          redirectUri:'http://localhost/'
+        };
+        $data.resources.users.facebook(data,function(user) {
+          $data.resources.users.me(function(me) {
+            $session.set('auth', { token: user.token }).save();
+            $data.me = me;
+            self.token = $session.get('auth');
           });
+        },
+        function(error){
+          next(error)
+        });
       },
 
       login: function(data, next) {
         var self = this;
         $data.resources.users.login(data, angular.bind(this, function(user) {
-          $data.activate('users', user.id, function(err) {
-            $session.set('auth', { token: user.token }).save();
-            self.token = $session.get('auth');
+          $session.set('auth', { token: user.token }).save();
+          self.token = $session.get('auth');
+          $data.resources.users.me(function(err, me) {
+            $data.me = me;
             return next(err, user);
           });
         }), function(error) {
@@ -61,7 +65,7 @@ angular.module('app.services').factory('$auth', [
           return;
         }
 
-        $data.resources.users.logout(data, angular.bind(this, function (user) {
+        $data.resources.users.logout($data.me, angular.bind(this, function (user) {
           // $session.purge();
         }), function(error) {
           if (error) {
@@ -72,35 +76,35 @@ angular.module('app.services').factory('$auth', [
         });
 
         return this;
-      },
-
-      forgot: function(data, next) {
-        Users.forgot(data, function (data) {
-          next(false, data);
-        }, function(error) {
-          if (error.data.status === 404) {
-            next('The email you provided was not found in our database');
-          } else {
-            next('An error occured!');
-          }
-        });
-
-        return this;
-      },
-
-      resetPassword: function(data, next) {
-        Users.resetPassword(data, function () {
-          next(false);
-        }, function(error) {
-          if (error.data.status === 400) {
-            next(error.data.error);
-          } else {
-            next('An error occured!');
-          }
-        });
-
-        return this;
       }
+
+      // forgot: function(data, next) {
+      //   Users.forgot(data, function (data) {
+      //     next(false, data);
+      //   }, function(error) {
+      //     if (error.data.status === 404) {
+      //       next('The email you provided was not found in our database');
+      //     } else {
+      //       next('An error occured!');
+      //     }
+      //   });
+
+      //   return this;
+      // },
+
+      // resetPassword: function(data, next) {
+      //   Users.resetPassword(data, function () {
+      //     next(false);
+      //   }, function(error) {
+      //     if (error.data.status === 400) {
+      //       next(error.data.error);
+      //     } else {
+      //       next('An error occured!');
+      //     }
+      //   });
+
+      //   return this;
+      // }
     };
   }
 ]);

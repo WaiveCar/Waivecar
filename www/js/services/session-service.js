@@ -19,10 +19,16 @@ angular.module('app.services').factory('$session', [
       },
 
       has: function (key) {
+        if (_.isEmpty(this.data)) {
+          this.load();
+        }
         return undefined === this.data[key] ? false : true;
       },
 
       get: function (key) {
+        if (_.isEmpty(this.data)) {
+          this.load();
+        }
         return undefined === this.data[key] ? {} : this.data[key];
       },
 

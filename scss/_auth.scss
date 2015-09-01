@@ -1,30 +1,28 @@
-.text-info-title {
-  margin-bottom : 9%;
-}
-
-.auth-index {
-  .logo {
-    width    : 86%;;
-    position : absolute;
-    top      : 36%;
-    left     : 0;
-    right    : 0;
-    margin   : 0 auto;
-  }
-  .scroll-content {
-    background-repeat : no-repeat;
-    background-image  : url('/img/background.png');
-    background-size   : cover;
-    text-align        : center;
-    .button-group {
-      position       : absolute;
-      bottom         : 0;
-      width          : 100%;
-      padding-bottom : 5%;
-      .button.button-padded {
-        margin-bottom : 3%;
-        width         : 75%;
-        height        : 8.69%;
+.auth {
+  &.auth-index {
+    .logo {
+      width    : 86%;;
+      position : absolute;
+      top      : 36%;
+      left     : 0;
+      right    : 0;
+      margin   : 0 auto;
+    }
+    .scroll-content {
+      background-repeat : no-repeat;
+      background-image  : url('/img/background.png');
+      background-size   : cover;
+      text-align        : center;
+      .button-group {
+        position       : absolute;
+        bottom         : 0;
+        width          : 100%;
+        padding-bottom : 5%;
+        .button.button-padded {
+          margin-bottom : 3%;
+          width         : 75%;
+          height        : 8.69%;
+        }
       }
     }
   }
@@ -33,7 +31,9 @@
 
 
 
-
+.text-info-title {
+  margin-bottom : 9%;
+}
 
 
 

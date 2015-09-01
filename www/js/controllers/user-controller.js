@@ -5,8 +5,6 @@ angular.module('app.controllers').controller('UserController', [
   '$auth',
   '$data',
   function ($rootScope, $scope, $state, $auth, $data) {
-    $scope.models = $data.models;
-    $scope.active = $data.active;
 
     $scope.forms = {
       userForm: {}
@@ -24,7 +22,7 @@ angular.module('app.controllers').controller('UserController', [
     };
 
     $scope.init = function() {
-      if ($data.active.users) $state.go('landing');
+      if ($auth.isAuthenticated()) $state.go('landing');
     };
 
     $scope.init();

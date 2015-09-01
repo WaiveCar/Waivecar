@@ -7,8 +7,8 @@ angular.module('app.controllers').controller('ApplicationController', [
   '$auth',
   '$data',
   function ($rootScope, $scope, $state, $ionicPopover, LocationService, $auth, $data) {
-    $scope.models = $data.models;
-    $scope.active = $data.active;
+    $rootScope.models = $data.models;
+    $rootScope.active = $data.active;
 
     $ionicPopover.fromTemplateUrl('/templates/common/menu.html', {
       scope: $scope
@@ -22,8 +22,6 @@ angular.module('app.controllers').controller('ApplicationController', [
 
     $rootScope.$on('socket:error', function (ev, data) {
       console.log('TODO: handle socket error:');
-      console.log(ev);
-      console.log(data);
     });
 
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams /*, fromState, fromParams */) {
@@ -42,7 +40,7 @@ angular.module('app.controllers').controller('ApplicationController', [
     });
 
     $scope.logout = function() {
-      $auth.logout($scope.active.users, function(err) {
+      $auth.logout(function(err) {
         $scope.popover.hide();
         $state.go('landing');
       });
@@ -61,28 +59,12 @@ angular.module('app.controllers').controller('ApplicationController', [
     };
 
     $scope.fetch = function() {
-      // $data.initialize('licenses');
-      // $data.initialize('bookings');
       $data.initialize('cars');
       $data.initialize('locations');
     };
 
     $scope.init = function() {
       $scope.fetch();
-      // if ($data.active.users) {
-      //   return $scope.fetch();
-      // } else if ($auth.isAuthenticated()) {
-      //   $data.resources.users.me(function(me) {
-      //     $data.activate('users', me.id, function(err) {
-      //       $scope.fetch();
-      //     });
-      //   });
-      // } else {
-      //   $scope.$watch(function() { return $data.active.users; }, function(activeUser) {
-      //     if (activeUser) $scope.fetch();
-      //   });
-      // }
-
     };
 
     $scope.init();

@@ -3,10 +3,7 @@ angular.module('app.controllers').controller('AuthController', [
   '$scope',
   '$state',
   '$auth',
-  '$data',
-  function ($rootScope, $scope, $state, $auth, $data) {
-    $scope.models = $data.models;
-    $scope.active = $data.active;
+  function ($rootScope, $scope, $state, $auth) {
     $scope.forms  = {
       loginForm  : {},
       forgotForm : {},
@@ -32,7 +29,7 @@ angular.module('app.controllers').controller('AuthController', [
     };
 
     $scope.init = function() {
-      if ($data.active.users) $state.go('landing');
+      if ($auth.isAuthenticated()) $state.go('landing');
     };
 
     $scope.init();

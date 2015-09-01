@@ -5,8 +5,6 @@ angular.module('app.controllers').controller('MessageController', [
   '$auth',
   '$data',
   function ($rootScope, $scope, $state, $auth, $data) {
-    $scope.models = $data.models;
-    $scope.active = $data.active;
 
     $scope.init = function() {
     };

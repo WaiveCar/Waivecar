@@ -120,6 +120,7 @@
               var centerPosition = [deviceLocation.latitude, deviceLocation.longitude];
 
               var mapOptions = {
+                mapStyle : 'outdoor',
                 center: centerPosition,
                 apiKey: maps.skobbler.apiKey,
                 zoom: parseInt(scope.zoom, 10),

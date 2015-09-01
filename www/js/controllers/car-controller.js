@@ -5,16 +5,14 @@ angular.module('app.controllers').controller('CarController', [
   '$auth',
   '$data',
   function ($rootScope, $scope, $state, $auth, $data) {
-    $scope.models = $data.models;
-    $scope.active = $data.active;
 
     $scope.carDiagnostic = function(type) {
       var na = 'Unavailable';
-      if (!$scope.active || !$scope.active.cars || !$scope.active.cars.diagnostics) {
+      if (!$data.active || !$data.active.cars || !$data.active.cars.diagnostics) {
         return na;
       }
 
-      var diagnostic = _.findWhere($scope.active.cars.diagnostics, { type: type });
+      var diagnostic = _.findWhere($data.active.cars.diagnostics, { type: type });
       if (diagnostic) {
         return diagnostic.value + diagnostic.unit;
       }
@@ -22,9 +20,19 @@ angular.module('app.controllers').controller('CarController', [
       return na;
     }
 
+    $scope.book = function() {
+      if ($auth.isAuthenticated() && $data.me) {
+        $data.create('bookings', { carId : $state.params.id, userId : $data.me }, function(err, booking) {
+          $state.go('bookings-edit', { id : booking.id });
+        });
+      } else {
+        $state.go('auth', { redirectState : 'bookings-new', redirectParams : { carId : $state.params.id } });
+      }
+    };
+
     $scope.init = function() {
       $data.activate('cars', $state.params.id, function(err) {
-
+        console.log('active car set to ' + $data.active.cars.id);
       });
     };
 
