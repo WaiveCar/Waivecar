@@ -83,7 +83,7 @@ Relay.unsubscribe = function (component, id) {
  */
 Relay.dispatch = function (resource, payload) {
   if (!this.store.reducers[resource]) {
-    throw new Error(`Reach Relay > You cannot dispatch reducer ${ resource } as it has not been exist.`);
+    return console.log(`'${ resource }' resource has not been defined, ignoring dispatch request.`);
   }
 
   let reducer   = this.store.reducers[resource];
@@ -124,7 +124,7 @@ Relay.getActions = function () {
  */
 function addListener(component, id) {
   if (!this.store.states[id]) {
-    throw new Error(`Reach Relay > You cannot subscribe to '${ id }' as it has not been defined.`)
+    return console.log(`'${ id }' state has not been defined, ignoring subscription request.`);
   }
   let name = component.constructor.name;
   if (!this.store.listeners[id][name]) {
@@ -143,8 +143,8 @@ function addListener(component, id) {
  * @param  {String} name The constructor name of the component
  */
 function removeListener(id, name) {
-  if (!this.store.states[id]) {
-    throw new Error(`Reach Relay > You cannot unsubscribe to '${ id }' as it has not been defined.`)
+  if (!this.store.listeners[id] || !this.store.listeners[id][name]) {
+    return console.log(`'${ id }.${ name }' listener does not exist, ignoring unsubscribe request.`);
   }
   if (this.store.listeners[id][name]) {
     delete this.store.listeners[id][name];
@@ -185,11 +185,9 @@ function connect(config) {
   } else {
     socket = io(config);
   }
-
   if (!socket) {
     throw new Error('Socket has not been defined');
   }
-
   socket.on('relay', function (id, payload) {
     Relay.dispatch(id, payload);
   });
