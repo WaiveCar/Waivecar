@@ -2,6 +2,8 @@
 
 import React from 'react';
 
+let markers = [];
+
 export default class Mapping extends React.Component {
 
   /**
@@ -10,7 +12,7 @@ export default class Mapping extends React.Component {
   constructor(...args) {
     super(...args);
     this.state = {
-      map : 0
+      map : null
     };
   }
 
@@ -18,15 +20,47 @@ export default class Mapping extends React.Component {
    * @method componentDidMount
    */
   componentDidMount() {
-    const position = [ 34.0604643, -118.4186743 ];
-    this.mapElement = L.skobbler.map('map', {
-      apiKey : '7ef929e2c765b1194804e5e8ca284c5a',
-      center : position,
-      zoom   : 11
-    });
+    this.clearMarkers = this.clearMarkers.bind(this);
     this.setState({
-      map : this.mapElement
+      map : L.skobbler.map('map', {
+        apiKey : '7ef929e2c765b1194804e5e8ca284c5a',
+        center : [ 34.0604643, -118.4186743 ],
+        zoom   : 11
+      })
     });
+  }
+
+  /**
+   * By default we never want to re-render the skobbler map once it has been loaded.
+   * Marker locations are manually added to the map via componentWillReceiveProps.
+   * @method shouldComponentUpdate
+   */
+  shouldComponentUpdate() {
+    return false;
+  }
+
+  /**
+   * @method componentWillReceiveProps
+   * @param  {Object} props
+   */
+  componentWillReceiveProps(props) {
+    this.clearMarkers();
+    let markerIcon = this.getMarkerIcon();
+    props.markers.forEach(function(car) {
+      let marker = L.marker([ car.location.latitude, car.location.longitude ], { icon : markerIcon });
+      markers.push(marker);
+      marker.addTo(this.state.map);
+    }.bind(this));
+  }
+
+  /**
+   * Clears any added marker from the map.
+   * @method clearMarkers
+   */
+  clearMarkers() {
+    markers.forEach(function (marker) {
+      this.map.removeLayer(marker);
+    }.bind(this));
   }
 
   /**
@@ -52,17 +86,22 @@ export default class Mapping extends React.Component {
   }
 
   /**
+   * @method getMapStyle
+   */
+  getMapStyle() {
+    return { 
+      height : '600px', 
+      width  : '100%' 
+    };
+  }
+
+  /**
    * @render
    */
   render() {
-    if (this.props.markers) {
-      this.props.markers.forEach(function(marker) {
-        L.marker([ marker.location.latitude, marker.location.longitude ], { icon : this.getMarkerIcon() }).addTo(this.state.map);
-      }.bind(this));
-    }
     return (
       <section className="card card-body-map">
-        <div id="map" style={{ height : '600px', width : '100%' }} />
+        <div id="map" style={ this.getMapStyle() } />
       </section>
     );
   }
