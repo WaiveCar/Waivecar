@@ -61,7 +61,19 @@ export default function (view, fields, resource) {
      */
     render() {
       return (
-        <Mapping title={ 'Fleet' } description={ 'Current location of all WaiveCars'} markers={ this.state[resource.name] } markerIcon={ '/images/admin/map-icon-waivecar.svg' } />
+        <div className="container">
+          <div className="header">
+            <h2>{ view.name }</h2>
+          </div>
+          <section className="card card-body-map">
+            <div className="card-header">
+              <p>{ view.description }</p>
+            </div>
+            <div className="card-body">
+              <Mapping markers={ this.state[resource.name] } markerIcon={ '/images/admin/map-icon-waivecar.svg' } />
+            </div>
+          </section>
+        </div>
       );
     }
 

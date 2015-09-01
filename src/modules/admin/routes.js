@@ -2,6 +2,7 @@
 
 import table from './views/table';
 import form  from './views/form';
+import map   from './views/map';
 
 /**
  * @param {String} id
@@ -29,5 +30,6 @@ function getComponent(view, module) {
   switch (view.type) {
     case 'table' : return table(view, module.fields, module.resource);
     case 'form'  : return form(view, module.fields, module.resource);
+    case 'map'   : return map(view, module.fields, module.resource);
   }
 }
