@@ -67,8 +67,8 @@ module.exports = {
     {
       route       : '/maps/cars',
       type        : 'map',
-      name        : 'Current Locations',
-      description : 'Mapped locations of Fleet',
+      name        : 'Cars',
+      description : 'Current Location of Fleet',
       actions     : {
         cancel : true,
         create : false,
