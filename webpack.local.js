@@ -7,7 +7,7 @@ var webpackConfig    = require('./webpack/config/local.js');
 
 new WebpackDevServer(webpack(webpackConfig), {
   contentBase        : './app',
-  publicPath         : '/scripts/',
+  publicPath         : '/',
   hot                : true,
   historyApiFallback : true
 }).listen(config.app.port, '0.0.0.0', function (err, result) {
