@@ -41,7 +41,18 @@ export default class RelayView extends React.Component {
   }
 
   handleClick() {
-    Snackbar.notify('Sample snackbar notification.');
+    Snackbar.notify({
+      message : 'Sample snackbar notification.',
+      action  : {
+        title : 'CLOSE',
+        class : 'danger',
+        click : () => {
+          Snackbar.notify({
+            message : 'You did it!'
+          });
+        }
+      }
+    });
   }
 
   /**

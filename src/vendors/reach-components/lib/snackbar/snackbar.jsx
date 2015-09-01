@@ -54,10 +54,36 @@ export default class Snackbar extends React.Component {
     return DOM.setClass(className);
   }
 
+  /**
+   * @method getButtonClass
+   * @param  {String} classState
+   */
+  getButtonClass(classState) {
+    let className = {};
+
+    className['btn-snackbar'] = true;
+    className[classState]     = true;
+
+    return DOM.setClass(className);
+  }
+
+  /**
+   * @method getAction
+   */
+  getAction() {
+    let action = this.props.action;
+    if (action) {
+      return (
+        <button type="button" className={ this.getButtonClass(action.class) } onClick={ action.click }>{ action.title }</button>
+      );
+    }
+  }
+
   render() {
     return (
       <div className={ this.getClass() } style={ this.state.style } ref="snackbar">
         { this.props.message }
+        { this.getAction() }
       </div>
     );
   }

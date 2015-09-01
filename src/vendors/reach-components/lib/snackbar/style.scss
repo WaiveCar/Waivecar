@@ -11,3 +11,13 @@
   max-width          : 568px;
   width              : 100%;
 }
+
+.btn-snackbar {
+  background : none;
+  border     : none;
+  &.danger {
+    color       : red;
+    font-weight : 600;
+    padding     : 0 24px;
+  }
+}

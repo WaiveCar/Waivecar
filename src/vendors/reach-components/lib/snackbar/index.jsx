@@ -4,9 +4,9 @@ import React    from 'react';
 import Snackbar from './snackbar';
 
 /**
- * @class Handler
+ * @class SnackbarHandler
  */
-let Handler = module.exports = {};
+let SnackbarHandler = module.exports = {};
 
 /**
  * The hooked component where notifications are rendered.
@@ -14,46 +14,47 @@ let Handler = module.exports = {};
  * @type     Component
  * @default  null
  */
-Handler.component = null;
+SnackbarHandler.component = null;
 
 /**
  * @property timer
  * @type     Timeout
  * @default  null
  */
-Handler.timer = null;
+SnackbarHandler.timer = null;
 
 /**
  * Hook snackbar onto the provided component.
  * @method hook
+ * @param  {Component} component
  */
-Handler.hook = function (component) {
-  Handler.component = component;
+SnackbarHandler.hook = function (component) {
+  SnackbarHandler.component = component;
 };
 
 /**
  * @method notify
- * @param  {String} message
+ * @param  {String} snack The notification object
  */
-Handler.notify = function (message) {
+SnackbarHandler.notify = function (snack) {
   clearTimeout(this.timer);
   if (this.component.state.snackbar) {
     this.slideOut(function () {
-      this.slideIn(message);
+      this.slideIn(snack);
     }.bind(this));
   } else {
-    this.slideIn(message);
+    this.slideIn(snack);
   }
 };
 
 /**
  * @method slideIn
- * @param  {String} message
+ * @param  {String} snack The notification object
  */
-Handler.slideIn = function (message) {
+SnackbarHandler.slideIn = function (snack) {
   this.component.setState({
     snackbar : {
-      message   : message,
+      ...snack,
       animation : 'slideInUp'
     }
   });
@@ -66,7 +67,7 @@ Handler.slideIn = function (message) {
  * @method slideOut
  * @param  {Function} done
  */
-Handler.slideOut = function (done) {
+SnackbarHandler.slideOut = function (done) {
   this.component.setState({
     snackbar : {
       ...this.component.state.snackbar,
@@ -84,11 +85,12 @@ Handler.slideOut = function (done) {
 /**
  * @method render
  */
-Handler.render = function () {
+SnackbarHandler.render = function () {
   let snack = this.component.state.snackbar;
   return (
     <Snackbar 
       message   = { snack.message }
+      action    = { snack.action }
       animation = { snack.animation }
     />
   );
