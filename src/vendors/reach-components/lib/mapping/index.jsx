@@ -59,7 +59,7 @@ export default class Mapping extends React.Component {
    */
   clearMarkers() {
     markers.forEach(function (marker) {
-      this.map.removeLayer(marker);
+      this.state.map.removeLayer(marker);
     }.bind(this));
   }
 
