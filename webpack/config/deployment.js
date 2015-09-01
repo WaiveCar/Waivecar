@@ -18,8 +18,8 @@ module.exports = {
     ]
   },
   output : {
-    path     : path.join(__dirname, '../../', 'app', 'scripts'),
-    filename : 'bundle.js'
+    path     : path.join(__dirname, '../../', 'app'),
+    filename : 'scripts/bundle.js'
   },
   resolve : {
     extensions : [ '', '.js', '.jsx' ],
@@ -49,6 +49,6 @@ module.exports = {
     ]
   },
   plugins : [
-    new webpack.optimize.CommonsChunkPlugin('vendors', 'vendors.js')
+    new webpack.optimize.CommonsChunkPlugin('vendors', 'scripts/vendors.js')
   ]
 }
