@@ -5,17 +5,31 @@
   border-bottom : 1px solid #cecece;
   margin-bottom : 30px;
   padding       : 20px 25px;
-  width : 100%;
+  width         : 100%;
   &.card-body-table {
-    padding : 20px 0 0 0;
+    padding : 20px 0 0;
     .card-body {
-      padding: 23px 0 0 0;
+      padding : 23px 0 0;
     }
   }
   &.card-body-chart {
     padding : 0;
     .card-body {
-      padding: 0;
+      padding : 0;
+    }
+  }
+  &.card-body-map {
+    padding : 0;
+    .card-header {
+      p {
+        margin-bottom : 0;
+        font-size     : 1rem;
+      }
+    }
+    .card-body {
+      padding     : 25px;
+      padding-top : 0;
+      overflow    : hidden;
     }
   }
 }

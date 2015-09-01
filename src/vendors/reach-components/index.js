@@ -6,5 +6,6 @@ export default {
   Grid      : require('./lib/grid'),
   Hamburger : require('./lib/hamburger'),
   Layout    : require('./lib/layout'),
+  Mapping   : require('./lib/mapping'),
   Snackbar  : require('./lib/snackbar')
 };
