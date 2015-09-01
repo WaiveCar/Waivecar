@@ -22,7 +22,6 @@ export default class Chart extends React.Component {
 
     let lineRender = this.props.chartType === 'bar' ? <SparklinesBars style={ barStyle } /> : <SparklinesLine style={ lineStyle } />;
 
-    console.log(this.props.width);
     let width = this.props.width > 0 ? this.props.width - 28 : 0; // we know there is 15px padding, and we want 1px less. (x2)
 
     return (
