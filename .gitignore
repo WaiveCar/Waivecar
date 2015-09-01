@@ -77,5 +77,5 @@ nbproject
 .node_history
 coverage
 retval
-app/scripts
-
+app/scripts/vendor.js
+app/scripts/bundle.js
