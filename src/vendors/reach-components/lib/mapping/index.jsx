@@ -2,8 +2,6 @@
 
 import React from 'react';
 
-let markers = [];
-
 export default class Mapping extends React.Component {
 
   /**
@@ -12,15 +10,17 @@ export default class Mapping extends React.Component {
   constructor(...args) {
     super(...args);
     this.state = {
-      map : null
+      map     : null,
+      markers : []
     };
+    this.addMarkers   = this.addMarkers.bind(this);
+    this.clearMarkers = this.clearMarkers.bind(this);
   }
 
   /**
    * @method componentDidMount
    */
   componentDidMount() {
-    this.clearMarkers = this.clearMarkers.bind(this);
     this.setState({
       map : L.skobbler.map('map', {
         apiKey : '7ef929e2c765b1194804e5e8ca284c5a',
@@ -44,11 +44,22 @@ export default class Mapping extends React.Component {
    * @param  {Object} props
    */
   componentWillReceiveProps(props) {
-    this.clearMarkers();
+    if (this.state.map) {
+      this.clearMarkers();
+      this.addMarkers(props.markers);
+    }
+  }
+
+  /**
+   * Adds any markers defined in the current state.
+   * @method addMarkers
+   * @param  {Array} markers
+   */
+  addMarkers(markers) {
     let markerIcon = this.getMarkerIcon();
-    props.markers.forEach(function(car) {
-      let marker = L.marker([ car.location.latitude, car.location.longitude ], { icon : markerIcon });
-      markers.push(marker);
+    markers.forEach((val) => {
+      let marker = L.marker([ val.location.latitude, val.location.longitude ], { icon : markerIcon });
+      this.state.markers.push(marker);
       marker.addTo(this.state.map);
     }.bind(this));
   }
@@ -58,16 +69,9 @@ export default class Mapping extends React.Component {
    * @method clearMarkers
    */
   clearMarkers() {
-    markers.forEach(function (marker) {
+    this.state.markers.forEach(function (marker) {
       this.state.map.removeLayer(marker);
     }.bind(this));
-  }
-
-  /**
-   * @method componentWillUnmount
-   */
-  componentWillUnmount() {
-    this.state.map.remove();
   }
 
   /**
