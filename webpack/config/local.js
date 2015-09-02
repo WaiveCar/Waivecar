@@ -23,8 +23,8 @@ module.exports = {
     ]
   },
   output : {
-    path     : path.join(__dirname, '../../', 'app'),
-    filename : 'scripts/bundle.js',
+    path       : path.join(__dirname, '../../', 'app'),
+    filename   : 'scripts/bundle.js',
     publicPath : '/'
   },
   resolve : {
