@@ -5,7 +5,8 @@ import Reach       from 'reach-react';
 import { Mapping } from 'reach-components';
 import UI          from '../ui';
 
-let Relay = Reach.Relay;
+let Relay   = Reach.Relay;
+let Actions = Relay.getActions();
 
 export default function (view, fields, resource) {
 
@@ -15,6 +16,8 @@ export default function (view, fields, resource) {
   if (view.menus) {
     UI.addMenus(view.route, view.menus);
   }
+
+  const RESOURCE = resource.name.toUpperCase();
 
   /**
    * @class ListView
@@ -38,10 +41,7 @@ export default function (view, fields, resource) {
           if (err) {
             return console.log(err);
           }
-          let action            = {};
-          action.type           = 'index';
-          action[resource.name] = list;
-          Relay.dispatch(resource.name, action);
+          Relay.dispatch(resource.name, Actions[RESOURCE + '_INDEX'](list));
         }.bind(this));
       } else {
         console.log('Admin Error > "%s" is missing list resource', view.name);
@@ -52,7 +52,6 @@ export default function (view, fields, resource) {
      * @method componentWillUnmount
      */
     componentWillUnmount() {
-      console.log('unsubscribe %s', resource.name);
       Relay.unsubscribe(this, resource.name);
     }
 

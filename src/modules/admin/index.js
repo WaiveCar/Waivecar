@@ -96,4 +96,37 @@ function setResource(resource) {
         return state;
     }
   });
+
+  let actions = {};
+  let name    = resource.name.toUpperCase();
+
+  actions[name + '_STORE'] = (val) => {
+    let action                 = {};
+    action.type                = 'store';
+    action[resource.store.key] = val;
+    return action;
+  }
+
+  actions[name + '_INDEX'] = (val) => {
+    let action                 = {};
+    action.type                = 'index';
+    action[resource.index.key] = val;
+    return action;
+  }
+
+  actions[name + '_UPDATE'] = (val) => {
+    let action                  = {};
+    action.type                 = 'update';
+    action[resource.update.key] = val;
+    return action;
+  }
+
+  actions[name + '_DELETE'] = (val) => {
+    let action                  = {};
+    action.type                 = 'delete';
+    action[resource.delete.key] = val;
+    return action;
+  }
+
+  Relay.actions(actions);
 }
