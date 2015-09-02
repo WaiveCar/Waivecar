@@ -6,38 +6,6 @@
   position : fixed;
   top      : 0;
   width    : 100%;
-  .bg-vid {
-    position        : fixed;
-    top             : 50%;
-    left            : 50%;
-    min-width       : 100%;
-    min-height      : 100%;
-    width           : auto;
-    height          : auto;
-    z-index         : -100;
-    transform       : translateX(-50%) translateY(-50%);
-    background      : #000;
-    background-size : cover;
-    transition      : 1s opacity;
-  }
-  .vid-overlay {
-    position   : fixed;
-    top        : 50%;
-    left       : 50%;
-    min-width  : 100%;
-    min-height : 100%;
-    width      : auto;
-    height     : auto;
-    z-index    : -99;
-    transform  : translateX(-50%) translateY(-50%);
-    background : -moz-radial-gradient(center, ellipse cover,  rgba(0,0,0,0) 0%, rgba(0,0,0,.8) 90%);
-    background : -webkit-gradient(radial, center center, 0px, center center, 90%, color-stop(0%,rgba(0,0,0,0)), color-stop(90%,rgba(0,0,0,.8)));
-    background : -webkit-radial-gradient(center, ellipse cover,  rgba(0,0,0,0) 0%,rgba(0,0,0,.8) 90%);
-    background : -o-radial-gradient(center, ellipse cover,  rgba(0,0,0,0) 0%,rgba(0,0,0,.8) 90%);
-    background : -ms-radial-gradient(center, ellipse cover,  rgba(0,0,0,0) 0%,rgba(0,0,0,.8) 90%);
-    background : radial-gradient(ellipse at center,  rgba(0,0,0,0) 0%,rgba(0,0,0,.8) 90%);
-    filter     : progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#a6000000',GradientType=1 );
-  }
 }
 
 .login {

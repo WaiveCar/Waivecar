@@ -62,10 +62,16 @@ export default class HomeView extends React.Component {
     return (
       <Container isFluid={ true }>
         <Row id="download" className="section section-1 inverted">
+          <video autoPlay className="bg-vid" loop poster="/images/auth/login.jpg">
+            <source src="/images/auth/login.webm" type="video/webm" />
+            <source src="/images/auth/login.mp4" type="video/mp4" />
+          </video>
+          <div className="vid-overlay"></div>
           <Column>
             { this.renderNavigation() }
             <Row>
-              <Column width={ 7 }>
+              <Column width={ 1 } />
+              <Column width={ 6 }>
                 <div className="tag">
                   <h1>Need to go somewhere?</h1>
                   <p className="lead">Use one of our electric cars <strong>for free</strong>.
@@ -74,20 +80,21 @@ export default class HomeView extends React.Component {
                   <ul className="list-inline">
                     <li className="store-item">
                       <a href="#">
-                        <img src="/apple-download.svg" />
+                        <img src="/images/site/btn-app-store.svg" />
                       </a>
                     </li>
                     <li className="store-item">
                       <a href="#">
-                        <img src="/android-download.svg" />
+                        <img src="/images/site/btn-google-play.svg" />
                       </a>
                     </li>
                   </ul>
                 </div>
               </Column>
-              <Column width={ 5 }>
-                <img src="/phone-view.svg" />
+              <Column width={ 4 }>
+                <img className="app-sample pull-right" src="/images/site/iphone.png" />
               </Column>
+              <Column width={ 1 } />
             </Row>
             <Row>
               <Column>
