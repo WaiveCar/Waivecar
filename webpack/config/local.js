@@ -24,7 +24,8 @@ module.exports = {
   },
   output : {
     path     : path.join(__dirname, '../../', 'app'),
-    filename : 'scripts/bundle.js'
+    filename : 'scripts/bundle.js',
+    publicPath : '/'
   },
   resolve : {
     extensions : [ '', '.js', '.jsx' ],
