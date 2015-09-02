@@ -28,17 +28,19 @@ export default class Chart extends React.Component {
 
   render() {
     let data  = [];
+    let count = 0;
     let width = this.props.width > 0 ? this.props.width - 28 : 0; // we know there is 15px padding, and we want 1px less. (x2)
 
     if (this.props.data) {
-      let days = Math.groupByDay(this.props.data);
-      data = Object.keys(days).map(function (key) { return days[key] });
+      data  = Math.groupByDay(this.props.data);
+      count = this.props.data.length;
     }
 
     return (
       <section className="card card-body-chart">
         <div className="card-header">
           <h2>{ this.props.title }</h2>
+          <span className="card-counter">{ count }</span>
         </div>
         <div className="card-body">
           <div className="chart-container">

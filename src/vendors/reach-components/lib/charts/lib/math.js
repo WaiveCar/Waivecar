@@ -1,6 +1,6 @@
 export default {
 
-  groupByDay : (array, field = 'createdAt') => {
+  groupByDay : (array, returnCountAsArray = true, field = 'createdAt') => {
     let days = {};
     let group = (value, index, array) => {
       let day = new Date(value[field]);
@@ -10,6 +10,11 @@ export default {
     }
 
     array.map(group);
+
+    if (returnCountAsArray) {
+      return Object.keys(days).map(function (key) { return days[key] });
+    }
+
     return days;
   }
 

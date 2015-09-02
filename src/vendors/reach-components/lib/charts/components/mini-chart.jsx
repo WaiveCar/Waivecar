@@ -20,8 +20,7 @@ export default class MiniChart extends React.Component {
     let chartContainerClass = 'mini-chart-container ' + this.props.className;
 
     if (this.props.data) {
-      let days = Math.groupByDay(this.props.data);
-      data = Object.keys(days).map(function (key) { return days[key] });
+      data  = Math.groupByDay(this.props.data);
       count = this.props.data.length;
     }
 
