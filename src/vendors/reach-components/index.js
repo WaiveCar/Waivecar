@@ -7,5 +7,6 @@ export default {
   Hamburger : require('./lib/hamburger'),
   Layout    : require('./lib/layout'),
   Mapping   : require('./lib/mapping'),
+  Navbar    : require('./lib/navbar'),
   Snackbar  : require('./lib/snackbar')
 };
