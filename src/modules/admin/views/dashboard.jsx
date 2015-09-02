@@ -1,12 +1,15 @@
+'use strict';
+
 import React                       from 'react';
 import ReactDom                    from 'react-dom';
 import Reach                       from 'reach-react';
 import { Charts, Layout, Mapping } from 'reach-components';
 import { Link }                    from 'react-router';
 
-let { Container, Row, Column } = Layout;
-let { Chart, MiniChart }       = Charts;
-let Relay                      = Reach.Relay;
+let { Row, Column }      = Layout;
+let { Chart, MiniChart } = Charts;
+let Relay                = Reach.Relay;
+let actions              = Relay.getActions();
 
 export default class DashboardView extends React.Component {
 
@@ -15,40 +18,29 @@ export default class DashboardView extends React.Component {
    */
   constructor(...args) {
     super(...args);
-    this.state = {
-      width : 0
-    };
-    Relay.subscribe(this, 'cars');
-    Relay.subscribe(this, 'users'); // testing out charting with real data
+    this.state = { width : 0 };
+    Relay.subscribe(this, [ 'cars', 'users' ]);
   }
 
   /**
    * @method componentDidMount
    */
   componentDidMount() {
-    this.setState({
-      width  : this.refs.dashboard.offsetWidth
-    });
+    this.setState({ width : this.refs.dashboard.offsetWidth });
+    this.dispatch('users', actions.USERS_INDEX);
+    this.dispatch('cars',  actions.CARS_INDEX);
+  }
 
-    // TODO: What is our approach for async parallel requests in react?
-    // Typically i would use `async` and do `async.parallel([], fn)`;
-    Reach.API.get('/cars', function (err, cars) {
-      if (err) {
-        return;
-      }
-      Relay.dispatch('cars', {
-        type : 'index',
-        cars : cars
-      });
-      Reach.API.get('/users', function (err, users) {
-        if (err) {
-          return;
-        }
-        Relay.dispatch('users', {
-          type  : 'index',
-          users : users
-        });
-      });
+  /**
+   * Fetches the resource form the API and dispatches the result to the Relay.
+   * @method dispatch
+   * @param  {String}   resource
+   * @param  {Function} action
+   */
+  dispatch(resource, action) {
+    Reach.API.get('/' + resource, function (err, cars) {
+      if (err) { return console.log(err); }
+      Relay.dispatch(resource, action(cars));
     });
   }
 
@@ -56,8 +48,7 @@ export default class DashboardView extends React.Component {
    * @method componentWillUnmount
    */
   componentWillUnmount() {
-    Relay.unsubscribe(this, 'cars');
-    Relay.unsubscribe(this, 'users');
+    Relay.unsubscribe(this, [ 'cars', 'users' ]);
   }
 
   /**
