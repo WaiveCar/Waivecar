@@ -1,4 +1,4 @@
 export default {
-  Chart     : require('./lib/chart'),
-  MiniChart : require('./lib/mini-chart')
+  Chart     : require('./components/chart'),
+  MiniChart : require('./components/mini-chart')
 };

@@ -1,13 +1,13 @@
 'use strict';
 
-import React from 'react';
+import React                                          from 'react';
+import Math                                           from '../lib/math';
 import { Sparklines, SparklinesBars, SparklinesLine } from 'react-sparklines';
 import './style.scss';
 
 export default class Chart extends React.Component {
-  render() {
-    let chartContainerClass = 'chart-container ' + this.props.className;
-    let chartClass          = 'chart';
+
+  renderLine() {
     let barStyle = {
       fill : '#ffffff'
     };
@@ -20,9 +20,20 @@ export default class Chart extends React.Component {
       fill           : '#F0DD2F'
     };
 
-    let lineRender = this.props.chartType === 'bar' ? <SparklinesBars style={ barStyle } /> : <SparklinesLine style={ lineStyle } />;
+    switch (this.props.chartType) {
+      case 'bar' : return (<SparklinesBars style={ barStyle } />);
+      default    : return (<SparklinesLine style={ lineStyle } />);
+    }
+  }
 
+  render() {
+    let data  = [];
     let width = this.props.width > 0 ? this.props.width - 28 : 0; // we know there is 15px padding, and we want 1px less. (x2)
+
+    if (this.props.data) {
+      let days = Math.groupByDay(this.props.data);
+      data = Object.keys(days).map(function (key) { return days[key] });
+    }
 
     return (
       <section className="card card-body-chart">
@@ -30,10 +41,10 @@ export default class Chart extends React.Component {
           <h2>{ this.props.title }</h2>
         </div>
         <div className="card-body">
-          <div className={ chartContainerClass }>
-            <div className={ chartClass }>
-              <Sparklines data={ this.props.data } width={ width } height={ 152 } key={ width }>
-                { lineRender }
+          <div className="chart-container">
+            <div className="chart">
+              <Sparklines data={ data } width={ width } height={ 152 } key={ width }>
+                { this.renderLine() }
               </Sparklines>
             </div>
           </div>

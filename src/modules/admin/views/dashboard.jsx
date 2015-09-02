@@ -8,16 +8,6 @@ let { Container, Row, Column } = Layout;
 let { Chart, MiniChart }       = Charts;
 let Relay                      = Reach.Relay;
 
-let users = {
-  title : 'User Registrations',
-  count : 1234,
-  data  : []
-};
-
-for(let i = 0; i < 21; i++) {
-  users.data.push(Math.random(1, 100));
-};
-
 export default class DashboardView extends React.Component {
 
   /**
@@ -29,6 +19,7 @@ export default class DashboardView extends React.Component {
       width : 0
     };
     Relay.subscribe(this, 'cars');
+    Relay.subscribe(this, 'users'); // testing out charting with real data
   }
 
   /**
@@ -38,6 +29,9 @@ export default class DashboardView extends React.Component {
     this.setState({
       width  : this.refs.dashboard.offsetWidth
     });
+
+    // TODO: What is our approach for async parallel requests in react?
+    // Typically i would use `async` and do `async.parallel([], fn)`;
     Reach.API.get('/cars', function (err, cars) {
       if (err) {
         return;
@@ -45,6 +39,15 @@ export default class DashboardView extends React.Component {
       Relay.dispatch('cars', {
         type : 'index',
         cars : cars
+      });
+      Reach.API.get('/users', function (err, users) {
+        if (err) {
+          return;
+        }
+        Relay.dispatch('users', {
+          type  : 'index',
+          users : users
+        });
       });
     });
   }
@@ -54,6 +57,7 @@ export default class DashboardView extends React.Component {
    */
   componentWillUnmount() {
     Relay.unsubscribe(this, 'cars');
+    Relay.unsubscribe(this, 'users');
   }
 
   /**
@@ -64,21 +68,21 @@ export default class DashboardView extends React.Component {
       <div className="container" ref="dashboard">
         <Row>
           <Column>
-            <Chart title={ users.title } data={ users.data } total={ users.count } chartType={ 'line' } width={ this.state.width } className="chart-yellow"></Chart>
+            <Chart title={ 'Users' } data={ this.state.users } chartType={ 'line' } width={ this.state.width } className="chart-yellow"></Chart>
           </Column>
         </Row>
         <Row>
           <Column width={ 3 }>
-            <MiniChart title={ users.title } data={ users.data } total={ users.count } chartType={ 'bar' } className="chart-pink" />
+            <MiniChart title={ 'Users' } data={ this.state.users } chartType={ 'bar' } className="chart-pink" />
           </Column>
           <Column width={ 3 }>
-            <MiniChart title={ users.title } data={ users.data } total={ users.count } chartType={ 'bar' } className="chart-bluegray" />
+            <MiniChart title={ 'Users' } data={ this.state.users } chartType={ 'bar' } className="chart-bluegray" />
           </Column>
           <Column width={ 3 }>
-            <MiniChart title={ users.title } data={ users.data } total={ users.count } chartType={ 'line' } className="chart-info" />
+            <MiniChart title={ 'Users' } data={ this.state.users } chartType={ 'line' } className="chart-info" />
           </Column>
           <Column width={ 3 }>
-            <MiniChart title={ users.title } data={ users.data } total={ users.count } chartType={ 'line' } className="chart-warning" />
+            <MiniChart title={ 'Users' } data={ this.state.users } chartType={ 'line' } className="chart-warning" />
           </Column>
         </Row>
         <Mapping markerIcon="/images/admin/map-icon-waivecar.svg" markers={ this.state.cars } />
