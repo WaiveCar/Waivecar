@@ -73,7 +73,7 @@ export default class LoginView extends React.Component {
         <i className="app-brand"></i>
         <div className="title">
           { config.app.name }
-          <span className="title-site">&nbsp;Admin</span>
+          <span className="title-site">&nbsp;Login</span>
         </div>
         <Form 
           action    = "/auth/login"
@@ -91,7 +91,7 @@ export default class LoginView extends React.Component {
           }}
         />
         <div className="footer">
-          Forgot your password? <a tabIndex="4" href="#/reset-password">Reset</a>
+          Forgot your password? <a tabIndex="4" href="/reset-password">Reset</a>
         </div>
       </div>
     );
