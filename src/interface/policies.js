@@ -24,7 +24,7 @@ export default {
    */
   isAnonymous: function (nextState, transition) {
     if (Auth.check()) {
-      transition.to('/admin', null);
+      transition.to('/profile', null);
     }
   }
 

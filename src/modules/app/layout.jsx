@@ -4,7 +4,7 @@ import { Header }  from './components/header';
 import { Sidebar } from './components/sidebar';
 import './style.scss';
 
-export default class AdminLayout extends React.Component {
+export default class AppLayout extends React.Component {
 
   /**
    * Mount the shared components.
@@ -13,8 +13,8 @@ export default class AdminLayout extends React.Component {
   componentWillMount() {
     this.setState({
       sidebar : {
-        toggle : this._toggleSidebar.bind(this),
-        button : this._hamburgerClass(true),
+        toggle : this.toggleSidebar.bind(this),
+        button : this.hamburgerClass(true),
         state  : 'open'
       }
     });
@@ -22,19 +22,19 @@ export default class AdminLayout extends React.Component {
 
   /**
    * Toggles the sidebar and adjusts the sidebar state.
-   * @method _toggleSidebar
+   * @method toggleSidebar
    */
-  _toggleSidebar() {
+  toggleSidebar() {
     let self    = this;
     let current = this.state.sidebar.button;
     if (Reach.DOM.hasClass(current, 'active')) {
       return setState({
-        button : self._hamburgerClass(false),
+        button : self.hamburgerClass(false),
         state  : null
       });
     }
     return setState({
-      button : self._hamburgerClass(true),
+      button : self.hamburgerClass(true),
       state  : 'open'
     });
     function setState(state) {
@@ -52,11 +52,11 @@ export default class AdminLayout extends React.Component {
 
   /**
    * Returns the hamburger class state.
-   * @method _hamburgerClass
+   * @method hamburgerClass
    * @param  {Boolean} state
    * @return {String}
    */
-  _hamburgerClass(state) {
+  hamburgerClass(state) {
     return Reach.DOM.setClass({
       'hamburger'       : true,
       'hamburger--htla' : true,
@@ -66,9 +66,9 @@ export default class AdminLayout extends React.Component {
 
   /**
    * Returns the content containers class state.
-   * @method _contentClass
+   * @method contentClass
    */
-  _contentClass() {
+  contentClass() {
     return Reach.DOM.setClass({
       'content' : true,
       'open'    : this.state.sidebar.state
@@ -81,10 +81,10 @@ export default class AdminLayout extends React.Component {
    */
   render() {
     return (
-      <div id="admin">
+      <div id="app">
         <Header sidebar={ this.state.sidebar } />
         <Sidebar state={ this.state.sidebar.state } />
-        <div className={ this._contentClass() }>
+        <div className={ this.contentClass() }>
           { this.props.children }
         </div>
       </div>

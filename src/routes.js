@@ -24,7 +24,7 @@ export default {
     require('modules/error'),
     require('modules/auth'),
     require('modules/site'),
-    require('modules/admin'),
+    require('modules/app'),
     require('modules/relay')
   ],
 
