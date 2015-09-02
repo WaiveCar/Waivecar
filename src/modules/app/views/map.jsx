@@ -59,6 +59,8 @@ export default function (view, fields, resource) {
      * @method render
      */
     render() {
+      return <Mapping markers={ this.state[resource.name] } markerIcon={ '/images/admin/map-icon-waivecar.svg' } />
+      /*
       return (
         <div className="container">
           <div className="header">
@@ -74,6 +76,7 @@ export default function (view, fields, resource) {
           </section>
         </div>
       );
+      */
     }
 
   }

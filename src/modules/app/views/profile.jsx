@@ -4,6 +4,10 @@ import React from 'react';
 
 export default class ProfileView extends React.Component {
   render() {
-    return <div>Profile</div>
+    return (
+      <div>
+        Profile
+      </div>
+    )
   }
 }

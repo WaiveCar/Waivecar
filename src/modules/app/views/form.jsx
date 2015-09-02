@@ -118,7 +118,7 @@ export default function (view, fields, resource) {
           action  : {
             title : 'EDIT',
             click : () => {
-              this.transitionTo('/admin' + resource.show.uri.replace(':id', data.id));
+              this.transitionTo(resource.show.uri.replace(':id', data.id));
             }.bind(this)
           }
         });

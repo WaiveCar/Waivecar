@@ -82,6 +82,13 @@ export default class AppLayout extends React.Component {
   render() {
     return (
       <div id="app">
+        <Header />
+        { this.props.children }
+      </div>
+    );
+    /*
+    return (
+      <div id="app">
         <Header sidebar={ this.state.sidebar } />
         <Sidebar state={ this.state.sidebar.state } />
         <div className={ this.contentClass() }>
@@ -89,5 +96,6 @@ export default class AppLayout extends React.Component {
         </div>
       </div>
     );
+    */
   }
 }
