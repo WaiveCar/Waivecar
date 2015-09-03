@@ -26,6 +26,7 @@
     "socket.io-client": "~1.3.6",
     "satellizer": "~0.12.1",
     "ng-cordova-oauth": "~0.1.4",
-    "ngFitText": "~3.3.3"
+    "ngFitText": "~3.3.3",
+    "async": "~1.4.2"
   }
 }

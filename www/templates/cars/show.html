@@ -12,10 +12,10 @@
   </ion-header-bar>
   <ion-content scroll="false" class="has-footer-bar">
     <div class="map-container has-info-footer">
-      <map id="map" zoom="15" >
-        <device-location></device-location>
-        <destiny-location location="active.cars.location"></destiny-location>
-        <route-to-location></route-to-location>
+      <map id="map" zoom="15" center="active.cars.location">
+        <location-marker location="currentLocation" icon="device"></location-marker>
+        <location-marker location="active.cars.location" icon="car"></location-marker>
+        <route-to-location start="currentLocation" destiny="active.cars.location"></route-to-location>
       </map>
     </div>
     <div class="vehicle-summary-container info-footer">

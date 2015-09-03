@@ -3,12 +3,14 @@ angular.module('app.controllers').controller('ApplicationController', [
   '$scope',
   '$state',
   '$ionicPopover',
-  'mockCityLocationService',
+  'MockCityLocationService',
   '$auth',
   '$data',
   function ($rootScope, $scope, $state, $ionicPopover, LocationService, $auth, $data) {
+    $rootScope.isInitialized = false;
     $rootScope.models = $data.models;
     $rootScope.active = $data.active;
+    $rootScope.currentLocation;
 
     $ionicPopover.fromTemplateUrl('/templates/common/menu.html', {
       scope: $scope
@@ -55,12 +57,38 @@ angular.module('app.controllers').controller('ApplicationController', [
     }
 
     $scope.locateMe = function() {
-      LocationService.mockLocation();
+      LocationService.getLocation().then(function(deviceLocation) {
+        $rootScope.currentLocation = deviceLocation;
+      })
     };
 
     $scope.fetch = function() {
-      $data.initialize('cars');
-      $data.initialize('locations');
+      async.parallel([
+        function(nextTask) {
+          LocationService.getLocation().then(function(deviceLocation) {
+            $rootScope.currentLocation = deviceLocation;
+            return nextTask();
+          });
+        },
+        function(nextTask) {
+          if ($auth.isAuthenticated()) {
+            $data.resources.users.me(function(me) {
+              $data.me = me;
+              return nextTask();
+            });
+          } else {
+            return nextTask();
+          }
+        },
+        function(nextTask) {
+          $data.initialize('cars', nextTask);
+        },
+        function(nextTask) {
+          $data.initialize('locations', nextTask);
+        }
+      ], function(err) {
+        $rootScope.isInitialized = true;
+      });
     };
 
     $scope.init = function() {

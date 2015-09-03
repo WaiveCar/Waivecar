@@ -19,12 +19,9 @@ window.app = angular.module('app', [
   'app.services',
   'config',
   'Maps',
-  'Maps.realReach',
-  'Maps.route',
-  'Maps.geoCoding',
+  'MockBehaviors'
   // 'countdown',
   // 'ads',
-  'mockBehaviours'
   // 'ChargingStations',
   // 'PointsOfInterest',
   // 'layout',
@@ -52,6 +49,7 @@ window.app.config([
     // 9-Connect with facebook@2x.png
     // guide only:
     // 10-Inline-errors@2x.png
+
     // not states:
     // 13-Nav@2x.png (a template found in /common)
     // 17-Reach-notification@2x.png (not moved yet in to /common - it is a notification)
@@ -118,13 +116,6 @@ window.app.config([
       .state('bookings', {
         url         : '/bookings',
         templateUrl : '/templates/bookings/index.html',
-        data        : {
-          auth : true
-        }
-      })
-      .state('bookings-new', {
-        url         : '/bookings/new',
-        templateUrl : '/templates/bookings/new.html',
         data        : {
           auth : true
         }

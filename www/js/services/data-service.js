@@ -84,10 +84,6 @@ angular.module('app.services').factory('$data', [
           var model = item.toJSON ? item.toJSON() : item;
           service.merge(modelName, model);
         });
-        if (modelName === 'cars') {
-          console.log(models.length);
-          //$rootScope.$broadcast(mapsEvents.markersChanged,'fleet');
-        }
       },
 
       // client-side manipulation only

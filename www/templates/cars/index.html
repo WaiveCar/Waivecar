@@ -2,9 +2,9 @@
   <header-bar type="nav" on-button-click="showNav()">Find WaiveCars</header-bar>
   <ion-content scroll="false" class="has-header">
     <div class="map-container">
-      <map id="map" zoom="15" >
+      <map id="map" zoom="15" center="currentLocation">
+        <location-marker location="currentLocation" icon="device"></location-marker>
         <mapped-cars cars="models.cars" on-click-marker="showCar(marker, id)"></mapped-cars>
-        <device-location></device-location>
         <locate-me img-source="/img/locate-me.svg" img-on-click="locateMe()"></locate-me>
       </map>
     </div>

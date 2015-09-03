@@ -1,7 +1,7 @@
-angular.module('app.directives').directive('mappedCars', [
+angular.module('Maps').directive('mappedCars', [
   'MapsLoader',
-  'locationService',
-  'mapsEvents',
+  'LocationService',
+  'MapsEvents',
   function (MapsLoader, locationService, mapsEvents) {
 
     function addMarkerClick(marker, id, onClickFn) {
@@ -17,7 +17,9 @@ angular.module('app.directives').directive('mappedCars', [
         }
 
         MapsLoader.getMap.then(function(lib) {
-          ctrl.mapInstance.then(function(mapInstance) {
+          // TODO: figure out parent scope.
+          var parentMapInstance = $scope.$parent.mapInstance || $scope.$parent.$parent.mapInstance;
+          parentMapInstance.then(function(mapInstance) {
             var location     = locationService.getLocation();
             var waiveCarIcon = lib.icon({
               iconUrl       : '/img/active-waivecar.svg',
@@ -51,13 +53,14 @@ angular.module('app.directives').directive('mappedCars', [
         });
       }, true);
     }
+
     return {
-      restrict: 'E',
-      link: link,
-      require: '^map',
-      scope: {
-        cars: '=',
-        onClickMarker: '&'
+      restrict : 'E',
+      link     : link,
+      require  : '^map',
+      scope    : {
+        cars          : '=',
+        onClickMarker : '&'
       }
     }
   }
