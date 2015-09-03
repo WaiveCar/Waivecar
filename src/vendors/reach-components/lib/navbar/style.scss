@@ -41,23 +41,33 @@ $navbar-height : 50px;
 }
 
 .r-nav-profile {
-  float       : right;
-  font-size   : 13px;
-  height      : $navbar-height;
-  padding     : 0 0 24px 0;
-  line-height : $navbar-height;
+  background   : #1f1f1f;
+  border-right : 1px solid #1c1c1c;
+  border-left  : 1px solid #2c2c2c;
+  float        : right;
+  font-size    : 13px;
+  height       : $navbar-height;
+  padding      : 0 24px;
+  line-height  : $navbar-height;
 
   .r-nav-profile-name {
-    float   : right;
-    padding : 0 12px 0 24px;
+    float        : right;
+    margin-right : 10px;
   }
 
   .r-nav-profile-image {
     border-radius : 180px;
     float         : right;
-    margin-top    : 10px;
-    height        : $navbar-height - 20;
-    width         : $navbar-height - 20;
+    margin-top    : 7px;
+    height        : $navbar-height - 15;
+    width         : $navbar-height - 15;
+  }
+
+  &:hover {
+    background   : #2f2f2f;
+    border-right : 1px solid #222;
+    border-left  : 1px solid #222;
+    cursor       : pointer;
   }
 }
 

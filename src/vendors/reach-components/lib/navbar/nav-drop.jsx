@@ -1,6 +1,7 @@
 'use strict';
 
-import React from 'react';
+import React    from 'react';
+import { DOM }  from 'reach-react';
 import { Link } from 'react-router';
 
 export default class NavDrop extends React.Component {
@@ -11,8 +12,9 @@ export default class NavDrop extends React.Component {
   constructor(...args) {
     super(...args);
     this.state = {
+      class    : 'r-nav-drop',
       position : {
-        left : this.getPosition()
+        left : 0
       }
     }
   }
@@ -22,6 +24,20 @@ export default class NavDrop extends React.Component {
    */
   componentDidMount() {
     window.addEventListener("resize", this.updatePosition.bind(this));
+    this.updatePosition();
+  }
+
+  /**
+   * Check if the parent has changed and re-calculate position of the
+   * nav box if it has.
+   * @method componentDidUpdate
+   * @param  {Object} prevProps
+   * @param  {Object} prevState
+   */
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.parent !== this.props.parent) {
+      this.updatePosition();
+    }
   }
 
   /**
@@ -34,21 +50,38 @@ export default class NavDrop extends React.Component {
   /**
    * @method updatePosition
    */
-  updatePosition(left) {
+  updatePosition() {
     this.setState({
+      class : DOM.setClass({
+        'r-nav-drop' : true,
+        'animated'   : true,
+        'flipInY'    : true
+      }),
       position : {
         left : this.getPosition()
       }
     });
+    setTimeout(() => {
+      this.setState({
+        class : DOM.setClass({
+          'r-nav-drop' : true
+        })
+      });
+    }.bind(this), 500);
   }
 
   /**
    * @method getPosition
    */
   getPosition() {
-    let { offsetLeft, offsetWidth } = this.props.parent;
-    let left = Math.ceil(offsetLeft - (offsetWidth / 2));
-    return left > 20 ? left + 3 : 20;
+    let parent     = this.props.parent;
+    let box        = this.refs.box;
+    let adjustment = Math.floor((parent.offsetWidth - box.offsetWidth) / 2);
+    if (adjustment < 0) {
+      let left = Math.ceil(parent.offsetLeft - Math.abs(adjustment));
+      return left > 20 ? left : 20;
+    }
+    return parent.offsetLeft + adjustment;
   }
 
   /**
@@ -56,7 +89,7 @@ export default class NavDrop extends React.Component {
    */
   render() {
     return (
-      <div className="r-nav-drop animated flipInY" style={ this.state.position }>
+      <div className={ this.state.class } ref="box" style={ this.state.position }>
         {
           this.props.menu.map((link, i) => {
             return (

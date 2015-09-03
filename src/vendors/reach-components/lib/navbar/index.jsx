@@ -7,7 +7,20 @@ import md5      from 'md5';
 import NavDrop  from './nav-drop';
 import './style.scss';
 
-let menus = {};
+let menus = {
+  account : [
+    {
+      name : 'My Profile',
+      icon : 'account_box',
+      href : '/profile'
+    },
+    {
+      name : 'Logout',
+      icon : 'exit_to_app',
+      href : '/logout'
+    }
+  ]
+};
 
 export default class Nav extends React.Component {
 
@@ -19,7 +32,7 @@ export default class Nav extends React.Component {
         show : false
       }
     };
-    this.nav = this.nav.bind(this);
+    this.nav           = this.nav.bind(this);
     this.closeDropdown = this.closeDropdown.bind(this);
   }
 
@@ -69,19 +82,24 @@ export default class Nav extends React.Component {
   render() {
     return (
       <div className="r-navbar">
+
         <div className="r-nav-brand">
           <img src="/images/brand.svg" alt="WaiveCars" />
         </div>
-        <div className="r-nav-profile">
+
+        <div className="r-nav-profile" onClick={ this.openDropdown.bind(this, 'account') } ref="account">
           <div className="r-nav-profile-image" style={{ background : 'url(//www.gravatar.com/avatar/'+ md5(Auth.user.email) +') center center / cover' }}></div>
           <div className="r-nav-profile-name">
             Hi, { Auth.user.firstName }
           </div>
         </div>
+
         <ul className="r-nav">
           { this.nav(this.props.menu) }
         </ul>
+
         { this.dropdown() }
+
       </div>
     );
   }
