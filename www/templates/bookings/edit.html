@@ -2,10 +2,10 @@
   <header-bar type="nav" on-button-click="showNav()">Get to your WaiveCar</header-bar>
   <ion-content scroll="false" class="has-header has-footer-bar">
   <div class="map-container has-info-footer has-big-info-footer">
-    <map id="map" zoom="15" >
-      <device-location mock-walking></device-location>
-      <destiny-location get-initial-destiny="active.cars.location"></destiny-location>
-      <route-to-car></route-to-car>
+    <map id="map" zoom="15" center="currentLocation">
+      <location-marker location="currentLocation" icon="device" mock-walking></location-marker>
+      <location-marker location="active.cars.location" icon="car"></location-marker>
+      <route-to-location start="currentLocation" destiny="active.cars.location"></route-to-location>
     </map>
   </div>
   <div class="vehicle-summary-container  info-footer big-info-footer">
