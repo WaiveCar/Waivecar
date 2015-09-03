@@ -12,19 +12,19 @@ angular.module('app.controllers').controller('AuthController', [
 
     $scope.login = function() {
       $auth.login($scope.forms.loginForm, function(err) {
-        $state.go('cars');
+        $state.go('landing');
       });
     };
 
     $scope.forgot = function() {
       $auth.login($scope.forms.loginForm, function(err) {
-        $state.go('cars');
+        $state.go('landing');
       });
     };
 
     $scope.reset = function() {
       $auth.login($scope.forms.loginForm, function(err) {
-        $state.go('cars');
+        $state.go('landing');
       });
     };
 
