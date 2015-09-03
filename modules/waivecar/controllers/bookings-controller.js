@@ -54,7 +54,6 @@ Reach.Register.Controller('BookingsController', function (controller) {
   controller.update = function *(id, post) {
     let user = this.auth.user;
     switch (post.state) {
-      case 'cancel'  : return yield bookingHandler.cancel(id, user);
       case 'pending' : return yield bookingHandler.pending(id, user);
       case 'start'   : return yield bookingHandler.start(id, user);
       case 'end'     : return yield bookingHandler.end(id, user);
@@ -67,9 +66,13 @@ Reach.Register.Controller('BookingsController', function (controller) {
     }
   };
 
-  controller.destroy = function *(id, post) {
-    let user = this.auth.user;
-    return yield bookingHandler.cancel(id, user);
+  /**
+   * @method destroy
+   * @param  {Int} id
+   * @return {Booking}
+   */
+  controller.destroy = function *(id) {
+    return yield bookingHandler.cancel(id, this.auth.user);
   };
 
   return controller;

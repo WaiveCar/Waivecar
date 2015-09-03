@@ -13,7 +13,7 @@ Route.post('/bookings', {
   uses   : 'BookingsController@create'
 });
 
-Route.get('/bookings', 'BookingsController@index');
+Route.get('/bookings',                       'BookingsController@index');
 Route.get('/bookings/:id', [ 'authenticate', 'BookingsController@show' ]);
 Route.put('/bookings/:id', [ 'authenticate', 'BookingsController@update' ]);
-Route.delete('/bookings/:id', [ 'authenticate', 'BookingsController@destroy' ]);
+Route.del('/bookings/:id', [ 'authenticate', 'BookingsController@destroy' ]);
