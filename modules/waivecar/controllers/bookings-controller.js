@@ -67,6 +67,11 @@ Reach.Register.Controller('BookingsController', function (controller) {
     }
   };
 
+  controller.destroy = function *(id, post) {
+    let user = this.auth.user;
+    return yield bookingHandler.cancel(id, user);
+  };
+
   return controller;
 
 });
