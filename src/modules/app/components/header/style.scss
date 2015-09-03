@@ -6,8 +6,11 @@
   width      : 100%;
 }
 
-header {
-  background    : #282828;
-  border-bottom : 1px solid #fff;
-  color         : #fff;
+header.nav-header {
+  background : #282828;
+  border-top : 2px solid rgba(#25C155, .8);
+  box-shadow : 0 0 10px rgba(#000, .3);
+  color      : #fff;
+  position   : relative;
+  z-index    : 10;
 }

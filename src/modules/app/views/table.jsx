@@ -56,10 +56,20 @@ export default function (view, fields, resource) {
       Relay.unsubscribe(this, resource.name);
     }
 
+    delete(id) {
+      Reach.API.delete(resource.delete.uri.replace(':id', id), function (err) {
+        if (err) {
+          return console.log(err);
+        }
+      });
+    }
+
     /**
      * @method render
      */
     render() {
+      let self = this;
+
       let columns = view.fields.map(function(field, i) {
         return field;
       });
@@ -81,9 +91,14 @@ export default function (view, fields, resource) {
         customComponent : React.createClass({
           render : function() {
             return (
-              <Link className="btn btn-icon command-edit" to={ view.route + '/' + this.props.rowData.id }>
-                <i className="material-icons" role="edit">edit</i>
-              </Link>
+              <div>
+                <Link className="btn btn-icon command-edit" to={ view.route + '/' + this.props.rowData.id }>
+                  <i className="material-icons" role="edit">edit</i>
+                </Link>
+                <button onClick={ self.delete.bind(self, this.props.rowData.id) }>
+                  Delete
+                </button>
+              </div>
             );
           }
         })

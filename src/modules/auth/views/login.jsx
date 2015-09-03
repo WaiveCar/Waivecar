@@ -43,8 +43,7 @@ export default class LoginView extends React.Component {
    */
   onSuccess(user) {
     Reach.Auth.set(user);
-    console.log(this);
-    this.transitionTo('/');
+    this.transitionTo('/profile');
   }
 
   /**

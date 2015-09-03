@@ -21,7 +21,7 @@ export default class Header extends React.Component {
 
   render() {
     return (
-      <header>
+      <header className="nav-header">
         <div className="container">
           <Navbar menu={ this.state.menu } />
         </div>
