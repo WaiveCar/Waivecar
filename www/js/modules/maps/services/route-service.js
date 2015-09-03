@@ -5,7 +5,7 @@ angular.module('Maps').service('RouteService', [
   '$http',
   'MapsEvents',
   'skobblerApiCodes',
-  function ($rootScope, MapsLoader, $q, $http, MapsEvents,skobblerApiCodes) {
+  function ($rootScope, MapsLoader, $q, $http, MapsEvents, skobblerApiCodes) {
     var service = {
 
       getUrl : function(apiKey) {
