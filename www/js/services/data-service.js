@@ -90,8 +90,7 @@ angular.module('app.services').factory('$data', [
       merge: function(modelName, model) {
         if (!model) return null;
         if (!service.models[modelName]) service.models[modelName] = [];
-
-        var existing = _.findWhere(service.models[modelName], { id: model.id });
+        var existing = service.getExisting(modelName, model.id);
         if (existing) {
           angular.extend(existing, model);
         } else {
@@ -102,11 +101,11 @@ angular.module('app.services').factory('$data', [
 
       // client-side manipulation only
       purge: function(modelName, id) {
-        if (service.active[modelName] && service.active[modelName].id === id) {
+        if (service.active[modelName] && service.active[modelName].id.toString() === id.toString()) {
           service.deactivate(modelName);
         }
 
-        var item = _.findWhere(service.models[modelName], { id: id });
+        var item = service.getExisting(modelName, id);
         if (item) {
           service.models[modelName].splice(_.indexOf(service.models[modelName], item), 1);
         }
@@ -114,16 +113,25 @@ angular.module('app.services').factory('$data', [
 
       // client-side manipulation only
       activateKnownModel : function(modelName, id, next) {
-        var existing = _.findWhere(service.models[modelName], { id: id });
+        var existing = service.getExisting(modelName, id);
         if (existing) {
           service.active[modelName] = existing;
           return next(null, service.active[modelName]);
         }
 
         service.fetch(modelName, {}, function(err) {
-          service.active[modelName] = _.findWhere(service.models[modelName], { id: id });
+          var existing = service.getExisting(modelName, id);
+          service.active[modelName] = existing;
           return next(null, service.active[modelName]);
         });
+      },
+
+      getExisting : function(modelName, id) {
+        var existing = _.find(service.models[modelName], function(m) {
+          return m.id.toString() === id.toString();
+        });
+
+        return existing;
       },
 
       // client-side manipulations only
