@@ -303,6 +303,16 @@ fieldset[disabled] .btn-inverse.active {
 .command-edit, .command-delete {
   background: #FFF;
   border: 1px solid #EEE !important;
+  &.btn-danger {
+    .material-icons {
+      color: $brand-danger;
+    }
+    &:hover, &:active, &:visited, &:focus {
+      .material-icons {
+        color : $app-color-white;
+      }
+    }
+  }
 }
 
 .command-primary-action {

@@ -95,8 +95,8 @@ export default function (view, fields, resource) {
                 <Link className="btn btn-icon command-edit" to={ view.route + '/' + this.props.rowData.id }>
                   <i className="material-icons" role="edit">edit</i>
                 </Link>
-                <button onClick={ self.delete.bind(self, this.props.rowData.id) }>
-                  Delete
+                <button className="btn btn-icon btn-danger command-edit" onClick={ self.delete.bind(self, this.props.rowData.id) }>
+                  <i className="material-icons" role="delete">delete</i>
                 </button>
               </div>
             );
