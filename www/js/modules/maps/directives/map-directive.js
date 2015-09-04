@@ -17,7 +17,6 @@ angular.module('Maps').directive('map', [
 
         var mapInstance = maps.skobbler.map(element[0].firstChild, mapOptions);
         $scope.$watch('center', function(newValue, oldValue) {
-          console.log('h');
           if (!$scope.center || !$scope.center.latitude) return;
           mapInstance.setView([ $scope.center.latitude, $scope.center.longitude ]);
           $scope.solveMap(mapInstance);
