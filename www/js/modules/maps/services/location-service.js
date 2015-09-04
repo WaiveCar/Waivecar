@@ -7,6 +7,7 @@ angular.module('Maps').service('LocationService', [
   function($rootScope, $cordovaGeolocation, $q, MapsEvents, $state) {
 
     var service = {
+
       setManualPosition : function(latitude,longitude) {
         service.manualPosition = {
           latitude  : latitude,
@@ -16,27 +17,31 @@ angular.module('Maps').service('LocationService', [
         $rootScope.$broadcast(MapsEvents.positionChanged, service.manualPosition);
       },
 
-      init : function() {
-        service.initPositionWatch();
-      },
+      watch : null,
 
       initPositionWatch : function() {
         var posOptions = {
-          maximumAge         : 3000,
-          timeout            : 8000,
-          enableHighAccuracy : true
+          maximumAge         : 2000,
+          timeout            : 6000,
+          enableHighAccuracy : false
         };
 
-        var watch = $cordovaGeolocation.watchPosition(posOptions);
+        service.watch = $cordovaGeolocation.watchPosition(posOptions);
 
-        watch.then(null, function(err) {}, function(position) {
-          var positionEvent = {
+        service.watch.then(null, function(err) {
+          console.log('error in retrieving current location');
+          console.log(err);
+        }, function(position) {
+          console.log('updating location to ' + position.coords.latitude + ', ' + position.coords.longitude);
+          $rootScope.currentLocation = {
             latitude  : position.coords.latitude,
             longitude : position.coords.longitude
           };
-
-          $rootScope.$broadcast(MapsEvents.positionChanged, positionEvent);
         });
+      },
+
+      clearWatch : function() {
+        service.watch.clearWatch();
       },
 
       getLocation : function() {
@@ -78,5 +83,3 @@ angular.module('Maps').service('LocationService', [
 
   }
 ])
-
-
