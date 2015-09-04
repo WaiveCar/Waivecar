@@ -3,7 +3,7 @@
   <ion-content scroll="false" class="has-header has-footer-bar">
   <div class="map-container has-info-footer has-big-info-footer">
     <map id="map" zoom="15" center="currentLocation">
-      <location-marker location="currentLocation" icon="device" mock-walking></location-marker>
+      <location-marker location="currentLocation" icon="device"></location-marker>
       <location-marker location="active.cars.location" icon="car"></location-marker>
       <route-to-location start="currentLocation" destiny="active.cars.location"></route-to-location>
     </map>
@@ -12,6 +12,9 @@
     <div class="has-footer-information">
       <car-information >
       </car-information>
+    </div>
+    <div class="text-center">
+      <button class="button button-energized" ng-click="mockArrival()">Mock Arrival</button>
     </div>
     <div class="footer-information">
       <p>

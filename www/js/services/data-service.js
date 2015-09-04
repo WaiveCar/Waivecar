@@ -57,7 +57,8 @@ angular.module('app.services').factory('$data', [
       },
 
       remove: function(modelName, id, next) {
-        service.resources[modelName].remove(id);
+        console.log(id);
+        service.resources[modelName].remove({ id: id });
         service.purge(modelName, id);
         return next();
       },

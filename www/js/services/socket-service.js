@@ -3,7 +3,13 @@ angular.module('app')
   '$config',
   'socketFactory',
   function ($config, socketFactory) {
-    var remote = io.connect($config.uri.api, { path: '/socket/socket.io' });
+    var remote;
+    if ($config.uri.api.indexOf('localhost') > 0) {
+      remote = io.connect('http://localhost:5000');
+    } else {
+      remote = io.connect($config.uri.api, { path: '/socket/socket.io' });
+    }
+
     console.log('connecting to ' +  $config.uri.api);
 
     var socket = socketFactory({

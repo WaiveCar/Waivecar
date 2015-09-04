@@ -3,7 +3,7 @@ angular.module('app.controllers').controller('ApplicationController', [
   '$scope',
   '$state',
   '$ionicPopover',
-  'MockCityLocationService',
+  'MockLocationService',
   '$auth',
   '$data',
   function ($rootScope, $scope, $state, $ionicPopover, LocationService, $auth, $data) {
@@ -16,6 +16,10 @@ angular.module('app.controllers').controller('ApplicationController', [
       scope: $scope
     }).then(function(popover) {
       $scope.popover = popover;
+    });
+
+    $rootScope.$watch('currentLocation', function() {
+      console.log($rootScope.currentLocation);
     });
 
     $rootScope.$on('authError', function() {
@@ -65,10 +69,12 @@ angular.module('app.controllers').controller('ApplicationController', [
     $scope.fetch = function() {
       async.parallel([
         function(nextTask) {
-          LocationService.getLocation().then(function(deviceLocation) {
-            $rootScope.currentLocation = deviceLocation;
-            return nextTask();
-          });
+          LocationService.initPositionWatch();
+          return nextTask();
+          // getLocation().then(function(deviceLocation) {
+          //   $rootScope.currentLocation = deviceLocation;
+          //   return nextTask();
+          // });
         },
         function(nextTask) {
           if ($auth.isAuthenticated()) {

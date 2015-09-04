@@ -135,6 +135,15 @@ window.app.config([
           auth : true
         }
       })
+      // 16-Get-your-waivecar@2x.png
+      .state('bookings-edit-state', {
+        url         : '/bookings/:id/edit-state',
+        templateUrl : '/templates/bookings/edit-state.html',
+        data        : {
+          auth : true
+        }
+      })
+
       // 14-Find-waivecar@2x .png
       .state('cars', {
         url         : '/cars',
@@ -148,7 +157,7 @@ window.app.config([
       // 18-WaiveCar-connect@2x.png
       .state('cars-edit', {
         url         : '/cars/:id/edit',
-        templateUrl : '/templates/cars/show.html'
+        templateUrl : '/templates/cars/edit.html'
       })
       // 34-Contact@2x.png / 35-Message-confirmation@2x.png
       .state('messages-new', {
