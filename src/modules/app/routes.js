@@ -9,10 +9,16 @@ import map   from './views/map';
  * @param {Object} module
  */
 export default function (id, module) {
-  let routes = [{
-    path      : '/profile',
-    component : require('./views/profile')
-  }];
+  let routes = [
+    {
+      path      : '/dashboard',
+      component : require('./views/dashboard')
+    },
+    {
+      path      : '/profile',
+      component : require('./views/profile')
+    }
+  ];
   module.views.forEach(function (view) {
     routes.push({
       path      : view.route,
