@@ -15,11 +15,17 @@ $button-transistion-duration : 0.3s; // The transition duration
  * class that acts as a reset for all versions of the icon.
  */
 
+.hamburger-container {
+  position : absolute;
+  left : 4px;
+  top  : 2px;
+}
+
 .hamburger {
   display            : block;
   position           : relative;
   overflow           : hidden;
-  margin             : 9px;
+  margin             : 0;
   padding            : 0;
   width              : $button-width;
   height             : $button-height;
