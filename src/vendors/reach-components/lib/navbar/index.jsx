@@ -82,9 +82,10 @@ export default class Nav extends React.Component {
   render() {
     return (
       <div className="r-navbar">
-
         <div className="r-nav-brand">
-          <img src="/images/brand.svg" alt="WaiveCars" />
+          <Link to="/">
+            <img src="/images/brand.svg" alt="WaiveCars" />
+          </Link>
         </div>
 
         <div className="r-nav-profile" onClick={ this.openDropdown.bind(this, 'account') } ref="account">
