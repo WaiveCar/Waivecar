@@ -10,6 +10,7 @@ export default class Mapping extends React.Component {
   constructor(...args) {
     super(...args);
     this.state = {
+      mapId   : 'map-' + Math.ceil(Math.random() * 100), // TODO: use ShortId or something.
       map     : null,
       markers : []
     };
@@ -22,7 +23,7 @@ export default class Mapping extends React.Component {
    */
   componentDidMount() {
     this.setState({
-      map : L.skobbler.map('map', {
+      map   : L.skobbler.map(this.state.mapId, {
         apiKey : '7ef929e2c765b1194804e5e8ca284c5a',
         center : [ 34.0604643, -118.4186743 ],
         zoom   : 11
@@ -105,7 +106,7 @@ export default class Mapping extends React.Component {
   render() {
     return (
       <div className="map-container">
-        <div id="map" style={ this.getMapStyle() } />
+        <div id={ this.state.mapId } style={ this.getMapStyle() } />
       </div>
     );
   }
