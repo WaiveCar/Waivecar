@@ -18,7 +18,7 @@ let CarHandler = module.exports = {};
  * @param  {Int} id
  */
 CarHandler.hasDriver = function *(id) {
-  let count = yield CarStatus.count({ driverId : id });
+  let count = yield CarStatus.count({ where : { driverId : id } });
   if (count !== 0) {
     throw error.parse({
       code    : 'CAR_IN_PROGRESS',
@@ -33,7 +33,7 @@ CarHandler.hasDriver = function *(id) {
  * @return {Boolean}
  */
 CarHandler.isAvailable = function *(id) {
-  let count = yield Car.count({ id : id });
+  let count = yield Car.count({ where : { id : id }});
   if (count === 0) {
     throw error.parse({
       code    : 'CAR_INVALID',
