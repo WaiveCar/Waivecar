@@ -3,21 +3,45 @@ body {
 }
 
 #app {
-  .container {
-    box-sizing : border-box;
-    max-width  : 1070px;
+  display           : -webkit-box;
+  display           : -moz-box;
+  display           : -ms-flexbox;
+  display           : -moz-flex;
+  display           : -webkit-flex;
+  display           : flex;
+  -webkit-flex-flow : row wrap;
+  flex-flow         : row wrap;
+  min-height        : 100vh;
+  padding-top       : 52px;
+
+  // ### App Layout
+
+  #header {
+    background : #282828;
+    border-top : 2px solid rgba(#25C155, .8);
+    color      : #fff;
+    height     : 52px;
+    position   : fixed;
+    top        : 0;
     width      : 100%;
-    .header {
-      margin   : 25px 0;
-      padding  : 0 25px;
-      position : relative;
-      h2 {
-        color          : #777;
-        font-size      : 15px;
-        font-weight    : 400;
-        margin         : 0;
-        text-transform : uppercase;
-      }
-    }
+    z-index    : 10;
   }
+
+  #sidebar {
+    background   : #fff;
+    border-right : 1px solid #eee;
+    flex-basis   : 250px;
+  }
+
+  #content {
+    background : #fff;
+    flex       : 1;
+  }
+
+  #events {
+    background  : #eee;
+    border-left : 1px solid #e9e9e9;
+    flex-basis  : 250px;
+  }
+
 }

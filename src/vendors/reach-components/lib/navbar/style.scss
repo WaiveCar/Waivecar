@@ -10,6 +10,7 @@ $navbar-height : 50px;
 
 .r-nav-brand {
   float       : left;
+  margin-left : 24px;
   line-height : $navbar-height - 5;
   img {
     height : $navbar-height - 30;

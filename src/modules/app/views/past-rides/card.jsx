@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-export default class CardRide extends React.Component {
+export default class Card extends React.Component {
   render() {
     let { title, image, stats } = this.props.ride;
     return (

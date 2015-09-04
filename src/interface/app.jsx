@@ -50,7 +50,7 @@ export default class App extends React.Component {
    */
   render() {
     return (
-      <div className="main">
+      <div id="main">
         { this.props.children }
         { !this.state.snackbar || Snackbar.render() }
       </div>

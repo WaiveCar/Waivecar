@@ -4,21 +4,26 @@ import table from './views/table';
 import form  from './views/form';
 import map   from './views/map';
 
+let routes = [
+  {
+    path      : '/dashboard',
+    component : require('./views/dashboard')
+  },
+  {
+    path      : '/profile',
+    component : require('./views/profile')
+  },
+  {
+    path      : '/past-rides',
+    component : require('./views/past-rides')
+  }
+];
+
 /**
  * @param {String} id
  * @param {Object} module
  */
 export default function (id, module) {
-  let routes = [
-    {
-      path      : '/dashboard',
-      component : require('./views/dashboard')
-    },
-    {
-      path      : '/profile',
-      component : require('./views/profile')
-    }
-  ];
   module.views.forEach(function (view) {
     routes.push({
       path      : view.route,

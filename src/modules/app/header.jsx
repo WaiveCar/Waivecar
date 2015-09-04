@@ -1,9 +1,8 @@
 'use strict';
 
 import React      from 'react';
-import { Hamburger, Navbar } from 'reach-components';
-import UI         from '../../ui';
-import './style.scss';
+import { Navbar } from 'reach-components';
+import UI         from './ui';
 
 export default class Header extends React.Component {
 
@@ -21,11 +20,8 @@ export default class Header extends React.Component {
 
   render() {
     return (
-      <header className="nav-header">
-        <Hamburger button={ this.props.sidebar.button } trigger={ this.props.sidebar.toggle } />
-        <div className="container">
-          <Navbar menu={ this.state.menu } />
-        </div>
+      <header id="header">
+        <Navbar menu={ this.state.menu } />
       </header>
     );
   }
