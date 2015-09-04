@@ -14,6 +14,10 @@ body {
   min-height        : 100vh;
   padding-top       : 52px;
 
+  .container-fluid {
+    padding : 24px;
+  }
+
   // ### App Layout
 
   #header {

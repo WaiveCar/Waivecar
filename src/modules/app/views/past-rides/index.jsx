@@ -82,12 +82,13 @@ export default class Rides extends React.Component {
   
   render() {
     return (
-      <div id="rides">
+      <div id="past-rides" className="container-fluid">
+        <h1>Past Rides</h1>
         <Row>
           {
             this.state.rides.map((ride, i) => {
               return (
-                <Column key={ i } width={ 6 }>
+                <Column key={ i } width={ 4 }>
                   <Card ride={ ride } />
                 </Column>
               )
