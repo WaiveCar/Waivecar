@@ -88,7 +88,10 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
       &.button-assertive{
         background-color: $assertive;
         color:#FFF;
-
+      }
+      &.button-energized{
+        background-color: $energized;
+        color:#FFF;
       }
       &.button-dark{
            background-color: $dark;
