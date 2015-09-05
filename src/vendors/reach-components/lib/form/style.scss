@@ -1,5 +1,46 @@
 @import '~styles/variables';
+@import '~styles/mixins';
 
+$form-input-height : 30px;
+
+.reach-form {
+
+  .form-group {
+    position : relative;
+
+    label {
+      color       : #777;
+      left        : 0;
+      height      : $form-input-height;
+      line-height : $form-input-height;
+      position    : absolute;
+      top         : 0;
+    }
+
+    input.form-control {
+      border        : none;
+      border-bottom : 1px solid #f4f4f4;
+      height        : $form-input-height;
+      line-height   : $form-input-height;
+      padding-left  : 0;
+    }
+
+    &.valid, &.focus {
+      transition  : 0.2s ease all;
+      padding-top : $form-input-height;
+      label {
+        transition  : 0.2s ease all;
+        font-size : 13px;
+      }
+    }
+
+    transition  : 0.2s ease all;
+
+  }
+
+}
+
+/* Material Forms
 .form-component {
   .form-group {
     position      : relative;
@@ -82,3 +123,4 @@
     }
   }
 }
+*/

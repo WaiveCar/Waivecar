@@ -300,35 +300,3 @@ fieldset[disabled] .btn-inverse.active {
     vertical-align: top;
   }
 }
-.command-edit, .command-delete {
-  background: #FFF;
-  border: 1px solid #EEE !important;
-  &.btn-danger {
-    .material-icons {
-      color: $brand-danger;
-    }
-    &:hover, &:active, &:visited, &:focus {
-      .material-icons {
-        color : $app-color-white;
-      }
-    }
-  }
-}
-
-.command-primary-action {
-  position: fixed;
-  bottom: 40px;
-  right: 40px;
-  z-index: 10000;
-  width: 56px;
-  height: 56px;
-  .material-icons {
-    font-size: 27px;
-    line-height: 56px;
-  }
-
-  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
-  &:hover {
-    box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
-  }
-}

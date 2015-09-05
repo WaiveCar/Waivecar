@@ -27,6 +27,7 @@ export default function (view, fields, resource) {
      */
     constructor(...args) {
       super(...args);
+      this.tableActions = this.tableActions.bind(this);
       Relay.subscribe(this, resource.name);
     }
 
@@ -56,6 +57,10 @@ export default function (view, fields, resource) {
       Relay.unsubscribe(this, resource.name);
     }
 
+    /**
+     * @method delete
+     * @param  {Int} id
+     */
     delete(id) {
       Reach.API.delete(resource.delete.uri.replace(':id', id), function (err) {
         if (err) {
@@ -65,24 +70,35 @@ export default function (view, fields, resource) {
     }
 
     /**
-     * @method render
+     * @method tableActions
+     * @param  {Int} id
      */
-    render() {
-      let self = this;
+    tableActions(id) {
+      return (
+        <div>
+          <Link className="grid-action" to={ view.route + '/' + id }>
+            <i className="material-icons" role="edit">edit</i>
+          </Link>
+          <button className="grid-action danger" onClick={ this.delete.bind(this, id) }>
+            <i className="material-icons" role="delete">delete</i>
+          </button>
+        </div>
+      );
+    }
 
-      let columns = view.fields.map(function(field, i) {
-        return field;
-      });
-
-      let columnHeadings = view.fields.map(function(field) {
+    /**
+     * @method getHeadings
+     */
+    getHeadings() {
+      let self     = this;
+      let headings = view.fields.map(function(field) {
         return {
           columnName  : field,
           displayName : fields[field] ? fields[field].label : field
         };
       }.bind(this));
 
-      columns.push('actions');
-      columnHeadings.push({
+      headings.push({
         name            : 'id',
         columnName      : 'actions',
         displayName     : 'Actions',
@@ -90,43 +106,48 @@ export default function (view, fields, resource) {
         visible         : true,
         customComponent : React.createClass({
           render : function() {
-            return (
-              <div>
-                <Link className="btn btn-icon command-edit" to={ view.route + '/' + this.props.rowData.id }>
-                  <i className="material-icons" role="edit">edit</i>
-                </Link>
-                <button className="btn btn-icon btn-danger command-edit" onClick={ self.delete.bind(self, this.props.rowData.id) }>
-                  <i className="material-icons" role="delete">delete</i>
-                </button>
-              </div>
-            );
+            return self.tableActions(this.props.rowData.id);
           }
         })
       });
 
+      return headings;
+    }
+
+    /**
+     * @method getColumns
+     */
+    getColumns() {
+      let columns = view.fields.map(function(field, i) {
+        return field;
+      });
+      columns.push('actions');
+      return columns;
+    }
+
+    /**
+     * @method render
+     */
+    render() {
+      let columnHeadings = this.getHeadings();
+      let columns        = this.getColumns();
       return (
-        <div className="container">
+        <div className="container-fluid">
           { view.actions.create &&
             <Link className="btn btn-icon btn-primary command-primary-action" to={ view.route + '/create' }>
               <i className="material-icons" role="edit">add</i>
             </Link>
           }
-          <div className="header">
-            <h2>{ view.name }</h2>
-          </div>
-          <section className="card card-body-table">
-            <div className="card-body">
-              <Grid
-                useGriddleStyles = { false }
-                resultsPerPage   = { 25 }
-                results          = { this.state[resource.name] }
-                showFilter       = { true }
-                showSettings     = { true }
-                columns          = { columns }
-                columnMetadata   = { columnHeadings }
-              />
-            </div>
-          </section>
+          <h1>{ view.name }</h1>
+          <Grid
+            useGriddleStyles = { false }
+            resultsPerPage   = { 25 }
+            results          = { this.state[resource.name] }
+            showFilter       = { true }
+            showSettings     = { true }
+            columns          = { columns }
+            columnMetadata   = { columnHeadings }
+          />
         </div>
       );
     }

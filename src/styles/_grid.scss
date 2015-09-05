@@ -4,11 +4,6 @@
   font-size   : 13px;
   line-height : 1.42857143;
   color       : #5E5E5E;
-  .card-body & {
-    .top-section {
-      padding : 0 26px 20px;
-    }
-  }
   .top-section {
     clear   : both;
     display : table;
@@ -18,9 +13,9 @@
     border : 0;
   }
   .griddle-page {
-    margin: 10px;
+    margin : 10px;
     .btn-icon {
-      margin: 0 5px 0 0;
+      margin : 0 5px 0 0;
       &:not(.btn-primary) {
         background-color : $gray-lighter;
         border-color     : $gray-lighter;
@@ -33,70 +28,68 @@
   }
 }
 
-
-
 .griddle .griddle-filter {
-  float:left;
-  width:50%;
-  text-align:left;
-  color:#222;
-  min-height:1px;
+  float      : left;
+  width      : 50%;
+  text-align : left;
+  color      : #222;
+  min-height : 1px;
 }
 
 .griddle .griddle-settings-toggle {
-  float:left;
-  width:50%;
-  text-align:right;
+  float      : left;
+  width      : 50%;
+  text-align : right;
 }
 
 .griddle .griddle-settings {
-  background-color:#FFF;
-  border:1px solid #DDD;
-  color:#222;
-  padding:10px;
-  margin-bottom:10px;
+  background-color : #FFF;
+  border           : 1px solid #DDD;
+  color            : #222;
+  padding          : 10px;
+  margin-bottom    : 10px;
   .griddle-columns {
-    clear:both;
-    display:table;
-    width:100%;
-    border-bottom:1px solid #EDEDED;
-    margin-bottom:10px;
+    clear         : both;
+    display       : table;
+    width         : 100%;
+    border-bottom : 1px solid #EDEDED;
+    margin-bottom : 10px;
   }
   .griddle-column-selection {
-    float:left;
-    width:20%;
+    float : left;
+    width : 20%;
   }
 }
 
 .griddle table {
-  width:100%;
-  table-layout:fixed;
-  background-color: #FFF;
-  margin-bottom: 0;
+  width            : 100%;
+  table-layout     : fixed;
+  background-color : #FFF;
+  margin-bottom    : 0;
 }
 
 .griddle th {
-  background-color: #FFF;
-  vertical-align: middle;
-  font-weight: 500;
-  color: #333;
-  border: 0;
-  text-transform: uppercase;
-  padding: 10px;
+  background-color : #FFF;
+  vertical-align   : middle;
+  font-weight      : 500;
+  color            : #333;
+  border           : 0;
+  text-transform   : uppercase;
+  padding          : 10px;
 }
 
 .griddle thead {
-  border: 0;
+  border : 0;
   tr {
-    border: 0;
+    border : 0;
     td, th {
-      border: 0;
+      border : 0;
     }
   }
 }
 
-.griddle tbody > tr:nth-of-type(odd) {
-  background-color: #F4F4F4;
+.griddle tbody > tr {
+  border-bottom : 1px solid #F4F4F4;
 }
 
 .griddle td {
@@ -117,4 +110,14 @@
   color            : #222;
 }
 
-
+.grid-action {
+  background : none;
+  border     : none;
+  margin     : 0 2px;
+  i {
+    font-size : 1.15rem;
+  }
+  &.danger {
+    color : $brand-danger;
+  }
+}

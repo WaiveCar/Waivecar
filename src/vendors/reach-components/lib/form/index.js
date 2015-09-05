@@ -69,16 +69,40 @@ export default class Form extends React.Component {
     }.bind(this));
   }
 
+  /**
+   * Returns the classes for the form.
+   * @method formClass
+   * @return {String}
+   */
   formClass() {
     return Reach.DOM.setClass(Object.assign({
-      'form-component' : true
+      'reach-form' : true
     }, this.props.formClass || {}));
   }
 
+  /**
+   * Returns the classes for the submit button.
+   * @method submitClass
+   * @return {String}
+   */
   submitClass() {
     return Reach.DOM.setClass(Object.assign({
       'btn' : true
     }, this.props.submitClass || {}));
+  }
+
+  /**
+   * Returns a list of form groups based on the fields props.
+   * @method getFormGroups
+   * @return {Array}
+   */
+  getFormGroups() {
+    return this.props.fields.map((field, i) => {
+      if (field.readOnly && field.hideEmpty) {
+        return;
+      }
+      return <FormGroup key={ i } field={ field } value={ this.state.record ? this.state.record[field.name] : '' } onChange={ this.inputChange } />
+    }.bind(this));
   }
 
   /**
@@ -87,14 +111,9 @@ export default class Form extends React.Component {
   render() {
     return (
       <form className={ this.formClass() } onSubmit={ this.submit }>
-        {
-          this.props.fields.map(function (field, i) {
-            if (field.readOnly && field.hideEmpty) {
-              return;
-            }
-            return <FormGroup key={ i } field={ field } value={ this.state.record ? this.state.record[field.name] : '' } onChange={ this.inputChange } />
-          }.bind(this))
-        }
+        <div className="row">
+          { this.getFormGroups() }
+        </div>
         <Button className={ this.submitClass() } type="submit" value="Submit" />
       </form>
     );

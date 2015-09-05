@@ -149,56 +149,17 @@ export default function (view, fields, resource) {
         return <div className="container">Loading...</div>
       }
       return (
-        <div className="container">
-          <div className="header">
-            <h2>Form</h2>
-          </div>
-          <section className="card">
-            <div className="card-body">
-              <Form
-                key       = { this.state.id }
-                method    = { this.state.method }
-                action    = { this.state.action }
-                fields    = { this.getFields() }
-                record    = { this.state.record }
-                onSuccess = { this.handleSuccess }
-                onError   = { this.handleError }
-              />
-            </div>
-          </section>
-
-          <div className="header">
-            <h2>View</h2>
-          </div>
-          <section className="card">
-            <div className="card-body">
-              <pre>
-                { JSON.stringify(view, null, 2) }
-              </pre>
-            </div>
-          </section>
-
-          <div className="header">
-            <h2>Fields</h2>
-          </div>
-          <section className="card">
-            <div className="card-body">
-              <pre>
-                { JSON.stringify(fields, null, 2) }
-              </pre>
-            </div>
-          </section>
-
-          <div className="header">
-            <h2>Resource</h2>
-          </div>
-          <section className="card">
-            <div className="card-body">
-              <pre>
-                { JSON.stringify(resource, null, 2) }
-              </pre>
-            </div>
-          </section>
+        <div className="container-fluid">
+          <h2>Form</h2>
+          <Form
+            key       = { this.state.id }
+            method    = { this.state.method }
+            action    = { this.state.action }
+            fields    = { this.getFields() }
+            record    = { this.state.record }
+            onSuccess = { this.handleSuccess }
+            onError   = { this.handleError }
+          />
         </div>
       );
     }
