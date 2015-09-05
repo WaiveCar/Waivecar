@@ -73,12 +73,14 @@ BookingHandler.cancel = function *(id, user) {
 BookingHandler.pending = function *(id, user) {
   let booking = yield this.getBooking(id, user);
 
-  if (booking.state !== 'payment-authorized') {
-    throw error.parse({
-      code    : 'BOOKING_INVALID_ACTION',
-      message : 'You cannot set pending arrival on a booking which is ' + booking.state.replace('-', ' ')
-    }, 400);
-  }
+  // TODO: payments!!!!!!!
+  console.log('skipping authorization on payments');
+  // if (booking.state !== 'payment-authorized') {
+  //   throw error.parse({
+  //     code    : 'BOOKING_INVALID_ACTION',
+  //     message : 'You cannot set pending arrival on a booking which is ' + booking.state.replace('-', ' ')
+  //   }, 400);
+  // }
 
   // ### Update Booking
 
