@@ -14,7 +14,8 @@
       </car-information>
     </div>
     <div class="text-center">
-      <button class="button button-energized" ng-click="mockArrival()">Mock Arrival</button>
+      <button class="button button-energized" ng-click="mockInRange()">Mock Arrival</button>
+      <button class="button button-energized" ng-click="mockOutOfRange()">Mock Out Of Range</button>
     </div>
     <div class="footer-information">
       <p>
@@ -24,16 +25,10 @@
   </div>
   </ion-content>
   <div class="bar bar-footer">
-    <div class="footer-buttons">
+    <button ng-show="showConnect" ng-click="connect()" class="button button-balanced">Connect to waivecar</button>
+    <div ng-hide="showConnect" class="footer-buttons">
       <button class="button button-dark" ng-click="getDirections()">Get Directions</button>
       <button class="button button-assertive" ng-click="cancel()">Cancel</button>
     </div>
   </div>
- <overlay-dialog
-  title="you're in reach"
-  subtitle="Now you can connect to your WaiveCar!"
-  button-text="ok,take me there"
-  set-display-function="dialogDisplay(fn)"
-  on-button-click="dialogClick()"
- ></overlay-dialog>
 </ion-pane>

@@ -24,7 +24,11 @@ angular.module('app.controllers').controller('CarController', [
     $scope.book = function() {
       if ($auth.isAuthenticated() && $data.me) {
         $data.create('bookings', { carId : $state.params.id, userId : $data.me.id }, function(err, booking) {
-          $state.go('bookings-edit', { id : booking.id });
+          if (err) {
+            alert(err.message || err);
+          } else {
+            $state.go('bookings-edit', { id : booking.id });
+          }
         });
       } else {
         $state.go('auth', { redirectState : 'cars-show', redirectParams : { carId : $state.params.id } });

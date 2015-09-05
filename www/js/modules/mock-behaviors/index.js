@@ -36,6 +36,11 @@ mockCityLocationService.prototype.mockLocation = function() {
   // "state": "CA",
   // "street_address": "10250 Santa Monica Blvd",
   // "zip": "90067",
+  this.$rootScope.currentLocation = {
+    latitude  : 34.0604643,
+    longitude : -118.4186743
+  };
+
 	this.LocationService.setManualPosition(34.0604643, -118.4186743);
 };
 

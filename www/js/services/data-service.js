@@ -49,18 +49,28 @@ angular.module('app.services').factory('$data', [
         instance.$save(function(model) {
           service.merge(modelName, model.toJSON());
           service.activateKnownModel(modelName, model.id, next);
+        }, function(error) {
+          return next(error.data || error);
         });
       },
 
       update: function(modelName, data, next) {
-        return next();
+        var instance = new service.resources[modelName](data);
+        instance.$update(function(model) {
+          service.merge(modelName, model.toJSON());
+          service.activateKnownModel(modelName, model.id, next);
+          return next();
+        }, function(error) {
+          return next(error.data || error);
+        });
       },
 
       remove: function(modelName, id, next) {
-        console.log(id);
-        service.resources[modelName].remove({ id: id });
-        service.purge(modelName, id);
-        return next();
+        service.resources[modelName].remove({ id: id }, function(res) {
+          service.purge(modelName, id);
+        }, function(error) {
+          return next(error.data || error);
+        });
       },
 
       createCreditCard: function(data, next) {

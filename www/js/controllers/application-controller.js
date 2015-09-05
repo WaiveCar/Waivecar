@@ -10,6 +10,7 @@ angular.module('app.controllers').controller('ApplicationController', [
     $rootScope.isInitialized = false;
     $rootScope.models = $data.models;
     $rootScope.active = $data.active;
+    $rootScope.me = $data.me;
     $rootScope.currentLocation;
 
     $ionicPopover.fromTemplateUrl('/templates/common/menu.html', {
@@ -53,6 +54,7 @@ angular.module('app.controllers').controller('ApplicationController', [
     };
 
     $scope.showNav = function($event) {
+      console.log('asd')
       $scope.popover.show($event);
     }
 

@@ -9,11 +9,9 @@ angular.module('app.controllers').controller('BookingController', [
 
     $scope.showConnect = false;
 
-    // $scope.update = function() {
-    //   $data.create('bookings', { carId : $state.params.carId, userId : $data.me.id }, function(err, booking) {
-    //     $state.go('bookings-edit', { id : booking.id });
-    //   });
-    // };
+    $scope.connect = function() {
+      $state.go('bookings-prepare', { id : $data.active.bookings.id });
+    };
 
     $scope.getDirections = function() {
       // TODO: use actual address.
@@ -33,10 +31,33 @@ angular.module('app.controllers').controller('BookingController', [
       });
     };
 
-    $scope.mockArrival = function() {
+    $scope.mockInRange = function() {
       LocationService.setLocation($data.active.cars.location);
-    }
+    };
 
+    $scope.mockOutOfRange = function() {
+      LocationService.mockLocation();
+      $scope.watchForWithinRange();
+    };
+
+    $scope.watchForWithinRange = function() {
+      $scope.showConnect = false;
+      var located = $scope.$watch(function() {
+        if (!$rootScope.currentLocation) return false;
+        if (!$data.active.cars) return false
+        var from = L.latLng($rootScope.currentLocation.latitude, $rootScope.currentLocation.longitude);
+        var to = L.latLng($data.active.cars.location.latitude, $data.active.cars.location.longitude);
+        var distance = from.distanceTo(to);
+        console.log(distance);
+        return distance <= 25;
+      }, function(newValue, oldValue) {
+        if (newValue && newValue !== oldValue) {
+          located();
+          $scope.showConnect = true;
+          // we are now close enough to activate the car.
+        }
+      });
+    }
 
     $scope.init = function() {
       if (!$auth.isAuthenticated()) {
@@ -45,19 +66,17 @@ angular.module('app.controllers').controller('BookingController', [
 
       $data.activate('bookings', $state.params.id, function(err) {
         $data.activate('cars', $data.active.bookings.carId, function(err) {
-          var located = $scope.$watch(function() {
-            if (!$rootScope.currentLocation) return false;
-            if (!$data.active.cars) return false
-            var from = L.latLng($rootScope.currentLocation.latitude, $rootScope.currentLocation.longitude);
-            var to = L.latLng($data.active.cars.location.latitude, $data.active.cars.location.longitude);
-            var distance = from.distanceTo(to);
-            console.log(distance);
-            return distance <= 25;
-          }, function(newValue, oldValue) {
-            if (newValue && newValue !== oldValue) {
-              located();
-              // we are now close enough to activate the car.
-              $state.go('bookings-edit-state', { id : $data.active.bookings.id });
+          if ($state.current.name === 'bookings-show') {
+            return;
+          }
+
+          var booking = angular.copy($data.active.bookings);
+          booking.state = 'pending-arrival';
+          $data.update('bookings', booking, function(err) {
+            if (err) {
+              alert(err.message || err);
+            } else {
+              $scope.watchForWithinRange();
             }
           });
         })

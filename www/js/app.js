@@ -55,9 +55,6 @@ window.app.config([
     // 17-Reach-notification@2x.png (not moved yet in to /common - it is a notification)
 
     // yet to sift through:
-    // 19-Connecting-to-waivecar@2x .png
-    // 19.1-Reporta-problem@2x.png
-    // 19.2-Report-problem-success@2x.png
     // 20-Dashboard@2x.png
     // 21-Selected-charging-station@2x.png
     // 22-Dashboard-paying-user@2x.png
@@ -128,6 +125,7 @@ window.app.config([
         }
       })
       // 16-Get-your-waivecar@2x.png
+      // 18-WaiveCar-connect@2x.png
       .state('bookings-edit', {
         url         : '/bookings/:id/edit',
         templateUrl : '/templates/bookings/edit.html',
@@ -135,15 +133,23 @@ window.app.config([
           auth : true
         }
       })
-      // 16-Get-your-waivecar@2x.png
-      .state('bookings-edit-state', {
-        url         : '/bookings/:id/edit-state',
-        templateUrl : '/templates/bookings/edit-state.html',
+      // 19-Connecting-to-waivecar@2x .png
+      // 19.1-Reporta-problem@2x.png
+      // 19.2-Report-problem-success@2x.png
+      .state('bookings-prepare', {
+        url         : '/bookings/:id/prepare',
+        templateUrl : '/templates/bookings/prepare.html',
         data        : {
           auth : true
         }
       })
-
+      .state('bookings-in-progress', {
+        url         : '/bookings/:id/in-progress',
+        templateUrl : '/templates/bookings/in-progress.html',
+        data        : {
+          auth : true
+        }
+      })
       // 14-Find-waivecar@2x .png
       .state('cars', {
         url         : '/cars',
@@ -153,11 +159,6 @@ window.app.config([
       .state('cars-show', {
         url         : '/cars/:id',
         templateUrl : '/templates/cars/show.html'
-      })
-      // 18-WaiveCar-connect@2x.png
-      .state('cars-edit', {
-        url         : '/cars/:id/edit',
-        templateUrl : '/templates/cars/edit.html'
       })
       // 34-Contact@2x.png / 35-Message-confirmation@2x.png
       .state('messages-new', {
