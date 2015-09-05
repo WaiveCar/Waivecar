@@ -14,8 +14,55 @@ body {
   min-height        : 100vh;
   padding-top       : 52px;
 
-  .container-fluid {
+  h1 {
+    font-size      : 1.85rem;
+    margin         : 35px auto 0;
+    position       : relative;
+    text-align     : center;
+    text-transform : uppercase;
+    width          : 500px;
+    > span {
+      background : #fff;
+      padding    : 0 24px;
+      position   : relative;
+      z-index    : 1;
+    }
+    &:before {
+      background  : #25C155;
+      content     : "";
+      display     : block;
+      height      : 2px;
+      left        : 0;
+      position    : absolute;
+      top         : 50%;
+      width       : 100%;
+    }
+  }
+
+  .container, .container-fluid, .container-form {
     padding : 24px;
+  }
+
+  .container-fluid, .container-form {
+    margin : 0 auto;
+  }
+
+  .container-form {
+    min-width : 320px;
+    max-width : 560px;
+    width     : 100%;
+    form {
+      margin-top : 24px;
+    }
+    .form-actions {
+      margin-top : 48px;
+      text-align : center;
+    }
+  }
+
+  .content-header {
+    border-bottom : 1px solid #f4f4f4;
+    height        : 75px;
   }
 
   // ### App Layout

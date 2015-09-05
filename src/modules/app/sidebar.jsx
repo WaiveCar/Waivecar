@@ -29,7 +29,7 @@ export default class Sidebar extends React.Component {
   getLink(link, i) {
     return (
       <li>
-        <Link to={ link.path } className="nav-link">
+        <Link to={ link.path } className="nav-link animated fadeInDown">
           <i className="material-icons" role={ link.name }>{ link.icon }</i>
           { link.name }
         </Link>
@@ -41,13 +41,13 @@ export default class Sidebar extends React.Component {
     return (
       <div id="sidebar">
         <div className="sidebar-meta">
-          <div className="sidebar-avatar">
+          <div className="sidebar-avatar animated flipInX">
             <div 
               className = "sidebar-avatar-img" 
               style     = {{ background : 'url(//www.gravatar.com/avatar/'+ md5(user.email) +'?s=125) center center / cover' }}
             />
           </div>
-          <div className="sidebar-name">
+          <div className="sidebar-name animated flipInY">
             <small>Account</small>
             <span>{ user.firstName } { user.lastName }</span>
           </div>

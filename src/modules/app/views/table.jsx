@@ -132,22 +132,26 @@ export default function (view, fields, resource) {
       let columnHeadings = this.getHeadings();
       let columns        = this.getColumns();
       return (
-        <div className="container-fluid">
-          { view.actions.create &&
-            <Link className="btn btn-icon btn-primary command-primary-action" to={ view.route + '/create' }>
-              <i className="material-icons" role="edit">add</i>
-            </Link>
-          }
-          <h1>{ view.name }</h1>
-          <Grid
-            useGriddleStyles = { false }
-            resultsPerPage   = { 25 }
-            results          = { this.state[resource.name] }
-            showFilter       = { true }
-            showSettings     = { true }
-            columns          = { columns }
-            columnMetadata   = { columnHeadings }
-          />
+        <div id="table">
+          <div className="content-header">
+            <h1><span>{ view.name }</span></h1>
+          </div>
+          <div className="container-fluid">
+            { view.actions.create &&
+              <Link className="btn btn-icon btn-primary command-primary-action" to={ view.route + '/create' }>
+                <i className="material-icons" role="edit">add</i>
+              </Link>
+            }
+            <Grid
+              useGriddleStyles = { false }
+              resultsPerPage   = { 25 }
+              results          = { this.state[resource.name] }
+              showFilter       = { true }
+              showSettings     = { true }
+              columns          = { columns }
+              columnMetadata   = { columnHeadings }
+            />
+          </div>
         </div>
       );
     }

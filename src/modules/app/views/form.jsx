@@ -50,11 +50,9 @@ export default function (view, fields, resource) {
       let prevId = this.props.params.id;
       let nextId = next.params.id;
       if (this.state.key === undefined) {
-        console.log('Rendering form: %s', nextId);
         this.componentLoad(nextId);
       }
       if (prevId !== nextId) {
-        console.log('Re-rendering form: %s', nextId);
         this.componentLoad(nextId);
       }
     }
@@ -141,6 +139,48 @@ export default function (view, fields, resource) {
     }
 
     /**
+     * Retuns a list of available buttons for this form.
+     * @method buttons
+     * @return {Array}
+     */
+    buttons() {
+      let buttons = [];
+      if (view.actions.cancel) {
+        buttons.push({
+          value : 'cancel',
+          class : 'btn',
+          click : () => {
+            this.goBack();
+          }.bind(this)
+        });
+      }
+      if (view.actions.delete) {
+        buttons.push({
+          value : 'delete',
+          class : 'btn btn-danger',
+          click : () => {
+            console.log('Delete: %s!', this.state.id);
+          }.bind(this)
+        });
+      }
+      if (view.actions.update) {
+        buttons.push({
+          value : 'update',
+          type  : 'submit',
+          class : 'btn btn-primary'
+        });
+      }
+      if (view.actions.create) {
+        buttons.push({
+          value : 'submit',
+          type  : 'submit',
+          class : 'btn btn-primary'
+        });
+      }
+      return buttons;
+    }
+
+    /**
      * Render the record form.
      * @method render
      */
@@ -149,17 +189,22 @@ export default function (view, fields, resource) {
         return <div className="container">Loading...</div>
       }
       return (
-        <div className="container-fluid">
-          <h2>Form</h2>
-          <Form
-            key       = { this.state.id }
-            method    = { this.state.method }
-            action    = { this.state.action }
-            fields    = { this.getFields() }
-            record    = { this.state.record }
-            onSuccess = { this.handleSuccess }
-            onError   = { this.handleError }
-          />
+        <div id="form">
+          <div className="content-header">
+            <h1><span>{ view.name }</span></h1>
+          </div>
+          <div className="container-form">
+            <Form
+              key       = { this.state.id }
+              method    = { this.state.method }
+              action    = { this.state.action }
+              fields    = { this.getFields() }
+              record    = { this.state.record }
+              onSuccess = { this.handleSuccess }
+              onError   = { this.handleError }
+              buttons   = { this.buttons() }
+            />
+          </div>
         </div>
       );
     }

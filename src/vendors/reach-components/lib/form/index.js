@@ -15,7 +15,6 @@ export default class Form extends React.Component {
     super(...args);
     this.inputChange = this.inputChange.bind(this);
     this.submit      = this.submit.bind(this);
-    this.formClass   = this.formClass.bind(this);
     this.state       = {
       record : null
     };
@@ -70,51 +69,43 @@ export default class Form extends React.Component {
   }
 
   /**
-   * Returns the classes for the form.
-   * @method formClass
-   * @return {String}
-   */
-  formClass() {
-    return Reach.DOM.setClass(Object.assign({
-      'reach-form' : true
-    }, this.props.formClass || {}));
-  }
-
-  /**
-   * Returns the classes for the submit button.
-   * @method submitClass
-   * @return {String}
-   */
-  submitClass() {
-    return Reach.DOM.setClass(Object.assign({
-      'btn' : true
-    }, this.props.submitClass || {}));
-  }
-
-  /**
-   * Returns a list of form groups based on the fields props.
-   * @method getFormGroups
-   * @return {Array}
-   */
-  getFormGroups() {
-    return this.props.fields.map((field, i) => {
-      if (field.readOnly && field.hideEmpty) {
-        return;
-      }
-      return <FormGroup key={ i } field={ field } value={ this.state.record ? this.state.record[field.name] : '' } onChange={ this.inputChange } />
-    }.bind(this));
-  }
-
-  /**
    * @method render
    */
   render() {
     return (
-      <form className={ this.formClass() } onSubmit={ this.submit }>
+      <form className={ this.props.className || 'reach-form' } onSubmit={ this.submit }>
         <div className="row">
-          { this.getFormGroups() }
+        {
+          this.props.fields.map((field, i) => {
+            return (
+              <FormGroup 
+                key      = { i } 
+                field    = { field } 
+                value    = { this.state.record ? this.state.record[field.name] : '' } 
+                onChange = { this.inputChange } 
+              />
+            )
+          }.bind(this))
+        }
         </div>
-        <Button className={ this.submitClass() } type="submit" value="Submit" />
+        <div className="form-actions">
+          <div className="btn-group" role="group">
+          {
+            this.props.buttons.map((btn, i) => {
+              return (
+                <Button 
+                  key       = { i } 
+                  className = { btn.class } 
+                  type      = { btn.type || 'button' } 
+                  value     = { btn.value } 
+                  style     = { btn.style || null } 
+                  onClick   = { btn.click }
+                />
+              );
+            })
+          }
+          </div>
+        </div>
       </form>
     );
   }

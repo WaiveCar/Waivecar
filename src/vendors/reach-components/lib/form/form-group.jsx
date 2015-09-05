@@ -12,24 +12,30 @@ export default class FormGroup extends React.Component {
     this.onFocus = this.onFocus.bind(this);
     this.onBlur  = this.onBlur.bind(this);
     this.state   = {
+      focus     : false,
       formGroup : 'form-group'
     }
   }
 
-  componentDidMount() {
-    this.setState({
-      formGroup : this.getClass()
-    });
+  componentDidUpdate(prevProps, prevState) {
+    let formGroup = this.getClass();
+    if (this.state.formGroup !== formGroup) {
+      this.setState({
+        formGroup : formGroup
+      });
+    }
   }
 
   onFocus() {
     this.setState({
+      focus     : true,
       formGroup : this.getClass(true)
     });
   }
 
   onBlur() {
     this.setState({
+      focus     : false,
       formGroup : this.getClass()
     });
   }
@@ -37,14 +43,13 @@ export default class FormGroup extends React.Component {
   /**
    * Returns current state for the form group.
    * @method getClass
-   * @param  {Boolean} [focus] Default: false
    * @return {String}
    */
-  getClass(focus = false) {
+  getClass() {
     let result = {};
     result['form-group'] = true;
-    result.focus         = focus;
-    result.valid         = this.refs.input && this.refs.input.value ? true : false;
+    result.active        = (this.refs.input && this.refs.input.value) || this.state.focus;
+    result.focus         = this.state.focus;
     return DOM.setClass(result);
   }
 
@@ -71,6 +76,7 @@ export default class FormGroup extends React.Component {
             onBlur       = { this.onBlur }
             ref          = "input"
           />
+          <div className="focus-bar"></div>
           <span className="help-text">{ helpText }</span>
         </div>
       </div>

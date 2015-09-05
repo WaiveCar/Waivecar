@@ -76,6 +76,9 @@ export default class NavDrop extends React.Component {
   getPosition() {
     let parent     = this.props.parent;
     let box        = this.refs.box;
+    if (!parent || !box) {
+      return 0;
+    }
     let adjustment = Math.floor((parent.offsetWidth - box.offsetWidth) / 2);
     if (adjustment < 0) {
       let left = Math.ceil(parent.offsetLeft - Math.abs(adjustment));
