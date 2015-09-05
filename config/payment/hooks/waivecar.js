@@ -50,7 +50,7 @@ PaymentModule.hook('waivecar', {
    * @param {Object}  data    The hook data provided for payment
    * @param {Payment} payment The stripe charge object
    */
-  authenticate: function *(data, payment) {
+  authenticate : function *(data, payment) {
     let booking       = yield Booking.findById(data.bookingId);
     booking.paymentId = payment.id;
     booking.state     = 'payment-authorized';
@@ -62,7 +62,7 @@ PaymentModule.hook('waivecar', {
    * @param {Object}  data    The hook data provided for payment
    * @param {Payment} payment The stripe charge object
    */
-  capture: function *(data, payment) {
+  capture : function *(data, payment) {
     let booking       = yield Booking.findById(data.bookingId);
     booking.paymentId = payment.id;
     booking.state     = 'completed';
