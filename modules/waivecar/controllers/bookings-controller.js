@@ -54,9 +54,9 @@ Reach.Register.Controller('BookingsController', function (controller) {
   controller.update = function *(id, post) {
     let user = this.auth.user;
     switch (post.state) {
-      case 'pending' : return yield bookingHandler.pending(id, user);
-      case 'start'   : return yield bookingHandler.start(id, user);
-      case 'end'     : return yield bookingHandler.end(id, user);
+      case 'pending-arrival' : return yield bookingHandler.pending(id, user);
+      case 'start'           : return yield bookingHandler.start(id, user);
+      case 'end'             : return yield bookingHandler.end(id, user);
       default:
         throw error.parse({
           code     : 'BOOKING_BAD_STATE',
