@@ -30,6 +30,16 @@ Auth.set = function (user) {
 };
 
 /**
+ * Update the authenticated user object.
+ * @method put
+ * @param  {Object} user
+ */
+Auth.put = function (user) {
+  Object.assign(this.user, user);
+  storage.set('auth', this.user);
+};
+
+/**
  * @method check
  * @return {Boolean}
  */
