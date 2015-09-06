@@ -17,6 +17,7 @@ export default class LoginView extends React.Component {
     super(...args);
     this.fields = [
       {
+        component    : 'input',
         type         : 'text',
         name         : 'email',
         label        : 'Email Address',
@@ -25,6 +26,7 @@ export default class LoginView extends React.Component {
         required     : true
       },
       {
+        component    : 'input',
         type         : 'password',
         name         : 'password',
         label        : 'Password',
