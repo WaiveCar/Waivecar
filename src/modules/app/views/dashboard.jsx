@@ -56,27 +56,27 @@ export default class DashboardView extends React.Component {
    */
   render() {
     return (
-      <div className="container" ref="dashboard">
-        <Row>
-          <Column>
-            <Chart title={ 'Users' } data={ this.state.users } chartType={ 'line' } width={ this.state.width } className="chart-yellow"></Chart>
-          </Column>
-        </Row>
-        <Row>
-          <Column width={ 3 }>
-            <MiniChart title={ 'Users' } data={ this.state.users } chartType={ 'bar' } className="chart-pink" />
-          </Column>
-          <Column width={ 3 }>
-            <MiniChart title={ 'Users' } data={ this.state.users } chartType={ 'bar' } className="chart-bluegray" />
-          </Column>
-          <Column width={ 3 }>
-            <MiniChart title={ 'Users' } data={ this.state.users } chartType={ 'line' } className="chart-info" />
-          </Column>
-          <Column width={ 3 }>
-            <MiniChart title={ 'Users' } data={ this.state.users } chartType={ 'line' } className="chart-warning" />
-          </Column>
-        </Row>
-        <Mapping markerIcon="/images/admin/map-icon-waivecar.svg" markers={ this.state.cars } />
+      <div id="dashboard">
+        <div className="content-header">
+          <h1><span>Dashboard</span></h1>
+        </div>
+        <div className="container" ref="dashboard">
+          <Row>
+            <Column width={ 3 }>
+              <MiniChart title={ 'Users' } data={ this.state.users } chartType={ 'bar' } className="chart-pink" />
+            </Column>
+            <Column width={ 3 }>
+              <MiniChart title={ 'Users' } data={ this.state.users } chartType={ 'bar' } className="chart-bluegray" />
+            </Column>
+            <Column width={ 3 }>
+              <MiniChart title={ 'Users' } data={ this.state.users } chartType={ 'line' } className="chart-info" />
+            </Column>
+            <Column width={ 3 }>
+              <MiniChart title={ 'Users' } data={ this.state.users } chartType={ 'line' } className="chart-warning" />
+            </Column>
+          </Row>
+          <Mapping markerIcon="/images/admin/map-icon-waivecar.svg" markers={ this.state.cars } />
+        </div>
       </div>
     );
   }

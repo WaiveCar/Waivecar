@@ -45,7 +45,11 @@ export default class LoginView extends React.Component {
    */
   success(user) {
     Reach.Auth.set(user);
-    this.transitionTo('/profile');
+    if (user.role === 'admin') {
+      return this.transitionTo('/dashboard');
+    }
+
+    return this.transitionTo('/profile');
   }
 
   /**
@@ -79,12 +83,12 @@ export default class LoginView extends React.Component {
           { config.app.name }
           <span className="title-site">&nbsp;Login</span>
         </div>
-        <Form 
+        <Form
           className = "r-form r-form-center"
           action    = "/auth/login"
           method    = "POST"
           fields    = { this.fields }
-          onSuccess = { this.success } 
+          onSuccess = { this.success }
           onError   = { this.error }
           buttons   = {[
             {
