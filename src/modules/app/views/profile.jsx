@@ -4,7 +4,7 @@ import React              from 'react';
 import Reach              from 'reach-react';
 import { Form, Snackbar } from 'reach-components';
 
-let user   = Reach.Auth.user;
+let auth   = Reach.Auth;
 let fields = {
   role : {
     component : 'select',
@@ -75,14 +75,15 @@ export default class ProfileView extends React.Component {
     ];
   }
 
-  handleSuccess(user) {
+  success(user) {
+    auth.put(user);
     Snackbar.notify({
       type    : 'success',
       message : 'Your details was successfully updated.'
     });
   }
 
-  handleError(error) {
+  error(error) {
     Snackbar.notify({
       type    : 'danger',
       message : error.message
@@ -97,13 +98,13 @@ export default class ProfileView extends React.Component {
         </div>
         <div className="container-form">
           <Form
-            key       = { user.id }
+            key       = { auth.user.id }
             method    = "PUT"
-            action    = { '/users/' + user.id }
+            action    = { '/users/' + auth.user.id }
             fields    = { this.fields() }
-            record    = { user }
-            onSuccess = { this.handleSuccess }
-            onError   = { this.handleError }
+            record    = { auth.user }
+            onSuccess = { this.success }
+            onError   = { this.error }
             buttons   = { this.buttons() }
           />
         </div>
