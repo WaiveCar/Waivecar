@@ -1,0 +1,77 @@
+@import '~styles/variables';
+@import '~styles/mixins';
+
+/**
+ * Returns styling for forms using the reach-components form setup.
+ * @mixin reach-form
+ * @param {Mixed} $input-height The height of your input
+ * @param {Mixed} $font-size    The font size of your input
+ */
+@mixin reach-form($input-height, $font-size) {
+  .form-group {
+    padding-top : $input-height;
+    position    : relative;
+
+    label {
+      color       : #777;
+      left        : 0;
+      font-size   : $font-size;
+      height      : $input-height;
+      line-height : $input-height;
+      position    : absolute;
+      transition  : 0.2s ease all;
+      top         : $input-height;
+    }
+
+    input.form-control {
+      background    : none;
+      border        : none;
+      border-bottom : 1px solid #f4f4f4;
+      font-size     : $font-size;
+      height        : $input-height;
+      line-height   : $input-height;
+      padding       : 0;
+      position      : relative;
+      z-index       : 100;
+    }
+
+    .focus-bar {
+      background : $brand-primary;
+      height     : 2px;
+      margin     : -1px auto 0;
+      transition : 0.2s ease all;
+      width      : 0;
+    }
+
+    .help-text {
+      display : none;
+    }
+
+    &.active {
+      transition  : 0.2s ease all;
+      label {
+        font-size  : .8rem;
+        top        : 0;
+        transition : 0.2s ease all;
+      }
+    }
+
+    &.focus {
+      .focus-bar {
+        position   : relative;
+        transition : 0.2s ease all;
+        width      : 100%;
+        z-index    : 101;
+      }
+    }
+
+    &.has-error {
+      .help-text {
+        display : block;
+        color   : $brand-danger;
+      }
+    }
+
+    transition : 0.2s ease all;
+  }
+}
