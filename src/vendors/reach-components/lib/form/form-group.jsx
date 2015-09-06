@@ -7,6 +7,9 @@ let DOM = Reach.DOM;
 
 export default class FormGroup extends React.Component {
 
+  /**
+   * @constructor
+   */
   constructor(...args) {
     super(...args);
     this.onFocus = this.onFocus.bind(this);
@@ -17,6 +20,11 @@ export default class FormGroup extends React.Component {
     }
   }
 
+  /**
+   * @method componentDidUpdate
+   * @param  {Object} prevProps
+   * @param  {Object} prevState
+   */
   componentDidUpdate(prevProps, prevState) {
     let formGroup = this.getClass();
     if (this.state.formGroup !== formGroup) {
@@ -26,6 +34,9 @@ export default class FormGroup extends React.Component {
     }
   }
 
+  /**
+   * @method onFocus
+   */
   onFocus() {
     this.setState({
       focus     : true,
@@ -33,6 +44,9 @@ export default class FormGroup extends React.Component {
     });
   }
 
+  /**
+   * @method onBlur
+   */
   onBlur() {
     this.setState({
       focus     : false,
@@ -54,31 +68,76 @@ export default class FormGroup extends React.Component {
   }
 
   /**
+   * @method getField
+   * @param  {Object} field
+   * @return {Component}
+   */
+  getField(field) {
+    switch (field.component) {
+      case 'input'  : return this.getInput(field);
+      case 'select' : return this.getSelect(field);
+    }
+    return null;
+  }
+
+  /**
+   * @method getInput
+   * @param  {Object} field
+   */
+  getInput(field) {
+    let { autoComplete, label, name, type, helpText, required } = field;
+    return (
+      <div className={ this.state.formGroup }>
+        <label>{ label }</label>
+        <input
+          name         = { name }
+          className    = "form-control"
+          onChange     = { this.props.onChange }
+          required     = { required }
+          type         = { type }
+          tabIndex     = { this.props.tabIndex }
+          placeholder  = { this.props.placeholder || '' }
+          autoComplete = { autoComplete }
+          value        = { this.props.value }
+          onFocus      = { this.onFocus }
+          onBlur       = { this.onBlur }
+          ref          = "input"
+        />
+        <div className="focus-bar"></div>
+        <span className="help-text">{ helpText }</span>
+      </div>
+    );
+  }
+
+  /**
+   * @method getSelect
+   * @param  {Object} field
+   */
+  getSelect(field) {
+    let { autoComplete, label, name, type, helpText, options, required } = field;
+    return (
+      <div className="form-group active">
+        <label>{ label }</label>
+        <select name={ name } value={ this.props.value } onChange={ this.props.onChange }>
+        {
+          options.map((option, i) => {
+            return <option key={ i } value={ option.value }>{ option.name }</option>
+          })
+        }
+        </select>
+      </div>
+    );
+  }
+
+  /**
    * @method render
    */
   render() {
-    let { autoComplete, label, name, component, type, helpText, required } = this.props.field;
     return (
       <div className="col-md-12">
-        <div className={ this.state.formGroup }>
-          <label>{ label }</label>
-          <input
-            name         = { name }
-            className    = "form-control"
-            onChange     = { this.props.onChange }
-            required     = { required }
-            type         = { type }
-            tabIndex     = { this.props.tabIndex }
-            placeholder  = { this.props.placeholder || '' }
-            autoComplete = { autoComplete }
-            value        = { this.props.value }
-            onFocus      = { this.onFocus }
-            onBlur       = { this.onBlur }
-            ref          = "input"
-          />
-          <div className="focus-bar"></div>
-          <span className="help-text">{ helpText }</span>
-        </div>
+      {
+        this.getField(this.props.field)
+      }
       </div>
     );
   }

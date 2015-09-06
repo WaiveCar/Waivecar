@@ -35,6 +35,15 @@
       z-index       : 100;
     }
 
+    select {
+      border        : none;
+      border-bottom : 1px solid #f4f4f4;
+      height        : $input-height;
+      line-height   : $input-height;
+      padding       : 0;
+      width         : 100%;
+    }
+
     .focus-bar {
       background : $brand-primary;
       height     : 2px;
