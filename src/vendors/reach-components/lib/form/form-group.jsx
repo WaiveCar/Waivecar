@@ -57,7 +57,7 @@ export default class FormGroup extends React.Component {
    * @method render
    */
   render() {
-    let { autoComplete, tabIndex, label, name, component, type, helpText, required } = this.props.field;
+    let { autoComplete, label, name, component, type, helpText, required } = this.props.field;
     return (
       <div className="col-md-12">
         <div className={ this.state.formGroup }>
@@ -68,7 +68,7 @@ export default class FormGroup extends React.Component {
             onChange     = { this.props.onChange }
             required     = { required }
             type         = { type }
-            tabIndex     = { tabIndex }
+            tabIndex     = { this.props.tabIndex }
             placeholder  = { this.props.placeholder || '' }
             autoComplete = { autoComplete }
             value        = { this.props.value }

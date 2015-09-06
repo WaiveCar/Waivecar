@@ -73,13 +73,14 @@ export default class Form extends React.Component {
    */
   render() {
     return (
-      <form className={ this.props.className || 'reach-form' } onSubmit={ this.submit }>
+      <form className={ this.props.className || 'r-form' } onSubmit={ this.submit }>
         <div className="row">
         {
           this.props.fields.map((field, i) => {
             return (
               <FormGroup 
-                key      = { i } 
+                key      = { i }
+                tabIndex = { i + 1 } 
                 field    = { field } 
                 value    = { this.state.record ? this.state.record[field.name] : '' } 
                 onChange = { this.inputChange } 
