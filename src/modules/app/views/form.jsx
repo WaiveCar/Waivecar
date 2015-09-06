@@ -106,13 +106,15 @@ export default function (view, fields, resource) {
     /**
      * Executed when the form is successfully submitted.
      * @method handleSuccess
+     * @param  {Object}   data
+     * @param  {Function} reset
      */
-    handleSuccess(data) {
+    handleSuccess(data, reset) {
       if (view.actions.create) {
-        this.setState({ record : null });
+        reset();
         Snackbar.notify({
           type    : 'success',
-          message : `${ view.name } was successfully created.`,
+          message : 'Record was successfully added.',
           action  : {
             title : 'EDIT',
             click : () => {
@@ -123,7 +125,7 @@ export default function (view, fields, resource) {
       } else {
         Snackbar.notify({
           type    : 'success',
-          message : `${ view.name } was successfully updated.`
+          message : 'Record was successfully updated.'
         });
       }
     }

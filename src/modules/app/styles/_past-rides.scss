@@ -1,6 +1,83 @@
+@import '~styles/variables';
+
 #past-rides {
-  .ride-card-img {
-    height : 180px;
+  .container-rides {
+    margin    : 0 auto;
+    padding   : 24px;
+    max-width : 980px;
+    width     : 100%;
+  }
+
+  .ride {
+    border        : 1px solid #e9e9e9;
+    border-radius : 5px;
+    margin-top    : 24px;
+    overflow      : hidden;
+  }
+
+  .ride-img {
+    height : 120px;
     width  : 100%;
+  }
+
+  .ride-rating {
+    border-bottom : 1px solid #e9e9e9;
+    margin        : 0;
+    padding       : 10px 0 6px;
+    text-align    : center;
+    li {
+      color      : $brand-primary;
+      display    : inline;
+      list-style : none;
+    }
+  }
+
+  .ride-stats {
+    margin  : 0;
+    padding : 10px 0 34px;
+    li {
+      margin-top : 10px;
+      list-style : none;
+      text-align : center;
+      .ride-stat-title {
+        font-size    : .75rem;
+        font-weight  : 500;
+      }
+      i {
+        color     : #767676;
+      }
+      .ride-stat-value {
+        font-size : 1.1rem;
+      }
+    }
+  }
+
+  .ride-footer {
+    border-top : 1px solid #e9e9e9;
+    margin     : 0;
+    padding    : 0;
+    li {
+      background   : #f4f4f4;
+      border-right : 1px solid #e9e9e9;
+      color        : #767676;
+      float        : left;
+      font-size    : 1rem;
+      list-style   : none;
+      padding      : 10px 24px;
+      text-align   : center;
+      width        : 25%;
+      .ride-footer-title {
+        color       : #363636;
+        font-size   : .8rem;
+        font-weight : 600;
+      }
+      &.ride-footer-green {
+        background : $brand-primary;
+        color      : #fff;
+        .ride-footer-title {
+          color : #fff;
+        }
+      }
+    }
   }
 }

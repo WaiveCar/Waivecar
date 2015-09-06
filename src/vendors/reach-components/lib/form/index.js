@@ -72,7 +72,7 @@ export default class Form extends React.Component {
         return;
       }
       if (this.props.onSuccess) {
-        this.props.onSuccess(res);
+        this.props.onSuccess(res, this.flush.bind(this));
       } else {
         Snackbar.notify({
           message : 'Success'

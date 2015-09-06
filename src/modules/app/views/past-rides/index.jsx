@@ -13,68 +13,104 @@ export default class Rides extends React.Component {
     this.state = {
       rides : [
         {
-          title : 'June 13th, 2015 @ 9:55pm',
-          image : 'ride-dusk.jpg',
-          stats : [
+          image  : 'ride-dusk.jpg',
+          rating : 3,
+          points : 120,
+          stats  : [
             {
               title : 'From',
-              value : 'E Olympic Blvd',
-              icon  : 'directions_car'
+              value : 'Sample Street #1',
             },
             {
               title : 'To',
-              value : 'James M Wood Blvd',
-              icon  : 'directions_car'
+              value : 'Sample Street #2',
             }
-          ]
+          ],
+          timestamp : {
+            start : {
+              day  : 'June 17th',
+              time : '9:55pm'
+            },
+            end : {
+              day  : 'June 17th',
+              time : '11:02pm'
+            }
+          }
         },
         {
-          title : 'March 22nd, 2015 @ 1:40am',
-          image : 'ride-night.jpg',
-          stats : [
+          image  : 'ride-day.jpg',
+          rating : 4,
+          points : 180,
+          stats  : [
             {
               title : 'From',
-              value : 'E Olympic Blvd',
-              icon  : 'directions_car'
+              value : 'Sample Street #1',
             },
             {
               title : 'To',
-              value : 'James M Wood Blvd',
-              icon  : 'directions_car'
+              value : 'Sample Street #2',
             }
-          ]
+          ],
+          timestamp : {
+            start : {
+              day  : 'June 15th',
+              time : '3:38pm'
+            },
+            end : {
+              day  : 'June 15th',
+              time : '4:48pm'
+            }
+          }
         },
         {
-          title : 'February 3rd, 2015 @ 2:54pm',
-          image : 'ride-day.jpg',
-          stats : [
+          image  : 'ride-night.jpg',
+          rating : 5,
+          points : 320,
+          stats  : [
             {
               title : 'From',
-              value : 'E Olympic Blvd',
-              icon  : 'directions_car'
+              value : 'Sample Street #1',
             },
             {
               title : 'To',
-              value : 'James M Wood Blvd',
-              icon  : 'directions_car'
+              value : 'Sample Street #2',
             }
-          ]
+          ],
+          timestamp : {
+            start : {
+              day  : 'June 8th',
+              time : '11:32pm'
+            },
+            end : {
+              day  : 'June 9th',
+              time : '1:28am'
+            }
+          }
         },
         {
-          title : 'January 2nd, 2015 @ 6:38am',
-          image : 'ride-dawn.jpg',
-          stats : [
+          image  : 'ride-dawn.jpg',
+          rating : 2,
+          points : 200,
+          stats  : [
             {
               title : 'From',
-              value : 'E Olympic Blvd',
-              icon  : 'directions_car'
+              value : 'Sample Street #1',
             },
             {
               title : 'To',
-              value : 'James M Wood Blvd',
-              icon  : 'directions_car'
+              value : 'Sample Street #2',
             }
-          ]
+          ],
+          timestamp : {
+            start : {
+              day  : 'June 1st',
+              time : '6:00am'
+            },
+            end : {
+              day  : 'June 1st',
+              time : '7:02am'
+            }
+          }
         }
       ]
     }
@@ -82,19 +118,23 @@ export default class Rides extends React.Component {
   
   render() {
     return (
-      <div id="past-rides" className="container-fluid">
-        <h1>Past Rides</h1>
-        <Row>
-          {
-            this.state.rides.map((ride, i) => {
-              return (
-                <Column key={ i } width={ 4 }>
-                  <Card ride={ ride } />
-                </Column>
-              )
-            })
-          }
-        </Row>
+      <div id="past-rides">
+        <div className="content-header">
+          <h1><span>Past Rides</span></h1>
+        </div>
+        <div className="container-rides">
+          <Row>
+            {
+              this.state.rides.map((ride, i) => {
+                return (
+                  <Column key={ i } width={ 6 }>
+                    <Card ride={ ride } />
+                  </Column>
+                )
+              })
+            }
+          </Row>
+        </div>
       </div>
     );
   }

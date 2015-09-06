@@ -118,7 +118,7 @@ export default class FormGroup extends React.Component {
     return (
       <div className="form-group active">
         <label>{ label }</label>
-        <select name={ name } value={ this.props.value } onChange={ this.props.onChange }>
+        <select name={ name } value={ this.props.value } onChange={ this.props.onChange } tabIndex={ this.props.tabIndex }>
         {
           options.map((option, i) => {
             return <option key={ i } value={ option.value }>{ option.name }</option>

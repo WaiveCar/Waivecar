@@ -17,11 +17,6 @@ let nav  = [
     name : 'Past Rides',
     path : '/past-rides',
     icon : 'directions_car'
-  },
-  {
-    name : 'Invoices',
-    path : '/invoices',
-    icon : 'description'
   }
 ];
 
