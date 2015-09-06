@@ -52,7 +52,7 @@ UI.addMenu = function (target, path, menu) {
   this.menu[target].push({
     name : menu.name,
     icon : menu.icon || 'add_circle_outline',
-    href : path
+    path : path
   });
   menus[target].push(menu.name);
 };
@@ -70,7 +70,7 @@ UI.set = function (ui) {
     this.menu.push({
       name : module.displayName || key,
       icon : module.icon        || 'add_circle_outline',
-      href : module.path
+      path : module.path
     });
   }
 };

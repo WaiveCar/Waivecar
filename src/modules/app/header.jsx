@@ -9,12 +9,7 @@ export default class Header extends React.Component {
   constructor(...args) {
     super(...args);
     this.state = {
-      menu : [
-        {
-          name     : 'Admin',
-          children : UI.menu.sidebar
-        }
-      ]
+      menu : []
     };
   }
 
