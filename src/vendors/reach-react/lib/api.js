@@ -80,8 +80,9 @@ API.delete = function (uri, callback) {
 function _handleResult(callback, err, res) {
   if (!res.ok) {
     if (res.status === 401 || res.status === 403) {
-      auth.logout();
-      window.location = '/login';
+      if (auth.check()) {
+        auth.logout();
+      }
     }
     return callback({
       status  : res.status,
