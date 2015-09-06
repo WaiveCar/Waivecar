@@ -5,7 +5,7 @@ import Reach    from 'reach-react';
 import { Link } from 'react-router';
 import md5      from 'md5';
 
-let user = Reach.Auth.user;
+let auth = Reach.Auth;
 let nav  = [
   {
     name : 'Profile',
@@ -44,12 +44,12 @@ export default class Sidebar extends React.Component {
           <div className="sidebar-avatar animated flipInX">
             <div 
               className = "sidebar-avatar-img" 
-              style     = {{ background : 'url(//www.gravatar.com/avatar/'+ md5(user.email) +'?s=125) center center / cover' }}
+              style     = {{ background : 'url(//www.gravatar.com/avatar/'+ md5(auth.user.email) +'?s=125) center center / cover' }}
             />
           </div>
           <div className="sidebar-name animated flipInY">
             <small>Account</small>
-            <span>{ user.firstName } { user.lastName }</span>
+            <span>{ auth.user.firstName } { auth.user.lastName }</span>
           </div>
         </div>
         <ul>
