@@ -8,7 +8,9 @@ let Relay  = Reach.Relay;
 let routes = null;
 
 export default  {
+
   onEnter   : policies.isAuthenticated,
+
   component : require('./layout'),
 
   /**
@@ -20,6 +22,11 @@ export default  {
     if (routes) {
       return cb(null, routes); // Lets not
     }
+
+    if (!Reach.Auth.check()) {
+      return cb(null, routes);
+    }
+
     Reach.API.get('/ui/admin', function (err, res) {
       if (err) {
         return cb(err);
@@ -44,6 +51,7 @@ function prepareUi(ui, cb) {
       setResource(module.resource);
       routes.push({
         component   : require('./views/dynamic'),
+        onEnter     : policies.isAuthenticated,
         childRoutes : require('./routes')(key, module)
       });
     }
