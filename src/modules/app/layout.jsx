@@ -19,7 +19,7 @@ export default class AppLayout extends React.Component {
           { this.props.children }
         </div>
         <div id="events">
-          Hello World
+          <div className="brand" />
         </div>
       </div>
     );
