@@ -22,11 +22,7 @@
     background-color : $app-color-white;
     &.section-1 {
       min-height : 845px;
-      &.inverted {
-        background: none;
-      }
-      /*background : url('/images/site/bg-section-1.png') center center / cover;*/
-      /*background : url('/images/auth/login-splash.png') center center / cover;*/
+      background : url('/images/site/bg-section-1.png') center center / cover;
       .tag {
         margin-top :292px;
       }
