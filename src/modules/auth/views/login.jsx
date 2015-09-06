@@ -75,19 +75,19 @@ export default class LoginView extends React.Component {
           <span className="title-site">&nbsp;Login</span>
         </div>
         <Form 
+          className = "r-form r-form-center"
           action    = "/auth/login"
           method    = "POST"
           fields    = { this.fields }
           onSuccess = { this.onSuccess } 
           onError   = { this.onError }
-          formClass = {{
-            'form'       : true,
-            'reach-form' : true
-          }}
-          submitClass = {{
-            'btn-block'   : true,
-            'btn-primary' : true
-          }}
+          buttons   = {[
+            {
+              value : 'login',
+              type  : 'submit',
+              class : 'btn btn-login'
+            }
+          ]}
         />
         <div className="footer">
           Forgot your password? <a tabIndex="4" href="/reset-password">Reset</a>
