@@ -1,9 +1,10 @@
 'use strict';
 
-import React      from 'react';
-import Reach      from 'reach-react';
-import Button     from '../button';
-import FormGroup  from './form-group';
+import React     from 'react';
+import Reach     from 'reach-react';
+import Button    from '../button';
+import FormGroup from './form-group';
+import Snackbar  from '../snackbar';
 import './style.scss';
 
 export default class Form extends React.Component {
@@ -43,6 +44,17 @@ export default class Form extends React.Component {
   }
 
   /**
+   * Flush the form by emptying the entire form.
+   * @method flush 
+   */
+  flush() {
+    document.getElementsByClassName('focus')[0].children[1].blur();
+    this.setState({
+      record : {}
+    });
+  }
+
+  /**
    * @method submit
    */
   submit(event) {
@@ -50,21 +62,22 @@ export default class Form extends React.Component {
     Reach.API[this.props.method.toLowerCase()](this.props.action, this.state.record, function (err, res) {
       if (err) {
         if (this.props.onError) {
-          this.props.onError(err);
+          this.props.onError(err, this.flush.bind(this));
         } else {
-          alert('Error');
-          console.log(err);
+          Snackbar.notify({
+            type    : 'danger',
+            message : err.message
+          });
         }
         return;
       }
       if (this.props.onSuccess) {
         this.props.onSuccess(res);
       } else {
-        alert('Success');
-        console.log(res);
+        Snackbar.notify({
+          message : 'Success'
+        });
       }
-      // TODO
-      // Add global notification response when onSuccess or onError is not defined
     }.bind(this));
   }
 

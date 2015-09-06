@@ -35,23 +35,26 @@ export default class LoginView extends React.Component {
         required     : true
       }
     ];
-    this.onSuccess  = this.onSuccess.bind(this);
-    this.onError    = this.onError.bind(this);
+    this.success = this.success.bind(this);
+    this.error   = this.error.bind(this);
   }
 
   /**
-   * @method onSuccess
+   * @method success
    * @param  {Object} user
    */
-  onSuccess(user) {
+  success(user) {
     Reach.Auth.set(user);
     this.transitionTo('/profile');
   }
 
   /**
-   * @method onError
+   * @method error
+   * @param  {Object}   error
+   * @param  {Function} reset
    */
-  onError(error) {
+  error(error, reset) {
+    reset();
     Snackbar.notify({
       type    : 'danger',
       message : error.message,
@@ -81,8 +84,8 @@ export default class LoginView extends React.Component {
           action    = "/auth/login"
           method    = "POST"
           fields    = { this.fields }
-          onSuccess = { this.onSuccess } 
-          onError   = { this.onError }
+          onSuccess = { this.success } 
+          onError   = { this.error }
           buttons   = {[
             {
               value : 'login',
