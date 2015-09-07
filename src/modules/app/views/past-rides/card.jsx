@@ -21,7 +21,7 @@ export default class Card extends React.Component {
   render() {
     let { image, rating, points, stats, timestamp } = this.props.ride;
     return (
-      <div className="ride animated zoomIn">
+      <div className="ride animated fadeIn">
         <div className="ride-img" style={{ background : 'url(/images/profile/'+ image +') center center / cover' }} />
         <div className="ride-body">
           <div className="ride-meta">
