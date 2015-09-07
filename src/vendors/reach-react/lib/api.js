@@ -83,6 +83,7 @@ function _handleResult(callback, err, res) {
       if (auth.check()) {
         auth.logout();
       }
+      window.location = '/login';
     }
     return callback({
       status  : res.status,
