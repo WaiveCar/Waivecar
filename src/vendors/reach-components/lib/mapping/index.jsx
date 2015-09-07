@@ -91,22 +91,12 @@ export default class Mapping extends React.Component {
   }
 
   /**
-   * @method getMapStyle
-   */
-  getMapStyle() {
-    return {
-      height : '600px',
-      width  : '100%'
-    };
-  }
-
-  /**
    * @render
    */
   render() {
     return (
-      <div className="map-container">
-        <div id={ this.state.mapId } style={ this.getMapStyle() } />
+      <div className="map-wrapper">
+        <div id={ this.state.mapId } className="map-container" />
       </div>
     );
   }

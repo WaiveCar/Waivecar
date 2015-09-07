@@ -86,7 +86,13 @@ body {
 
   #content {
     background : #fff;
+    display    : flex;
     flex       : 1;
+  }
+
+  #content-wrapper {
+    flex     : 1;
+    position : relative;
   }
 
   #events {
