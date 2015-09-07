@@ -27,6 +27,7 @@
     "satellizer": "~0.12.1",
     "ng-cordova-oauth": "~0.1.4",
     "ngFitText": "~3.3.3",
-    "async": "~1.4.2"
+    "async": "~1.4.2",
+    "moment": "~2.10.6"
   }
 }
