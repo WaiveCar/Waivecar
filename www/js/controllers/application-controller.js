@@ -75,11 +75,6 @@ angular.module('app.controllers').controller('ApplicationController', [
           return nextTask();
         },
         function(nextTask) {
-          if ($auth.isAuthenticated()) {
-
-          }
-        },
-        function(nextTask) {
           $data.initialize('cars', nextTask);
         },
         function(nextTask) {
