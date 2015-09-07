@@ -5,11 +5,11 @@ let log = Reach.Log;
 
 module.exports = function *() {
   let count = yield Car.count();
-  if (count > 100) {
+  if (count > 20) {
     return;
   }
-  log.debug('importing 90 mock cars');
-  for (let i = 0, len = 90; i < len; i++) {
+  log.debug('importing 20 mock cars');
+  for (let i = 0, len = 20; i < len; i++) {
     let carId = 'MOCK_' + i;
     let car   = new Car({
       id           : carId,
