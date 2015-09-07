@@ -18,7 +18,7 @@ let diagnosticItems = [
   // 'fuelCapacity',
   // 'fuelLevel',
   // 'fuelLevelInGal',
-  // 'odometer',
+  'odometer',
   // 'oilLife',
   // 'tirePressureLf',
   // 'tirePressureLr',
@@ -73,7 +73,7 @@ scheduler.process('car-reconcile-diagnostics', function *(job) {
           unit    : '%'
         });
 
-        if ([ 'evRange', 'totalRange' ].indexOf(diagnosticItems[d]) > -1) {
+        if ([ 'evRange', 'totalRange', 'odometer' ].indexOf(diagnosticItems[d]) > -1) {
           newDiagnostic.value = maxRange.toString();
           newDiagnostic.unit = 'Mi';
         } else if (diagnosticItems[d] === 'evChargeState') {
@@ -89,6 +89,7 @@ scheduler.process('car-reconcile-diagnostics', function *(job) {
       let evChargeState  = new CarDiagnostic(car.diagnostics.find(d => d.type === 'evChargeState'));
       let evRange        = new CarDiagnostic(car.diagnostics.find(d => d.type === 'evRange'));
       let totalRange     = new CarDiagnostic(car.diagnostics.find(d => d.type === 'totalRange'));
+      let odometer       = new CarDiagnostic(car.diagnostics.find(d => d.type === 'odometer'));
       let currentValue   = parseInt(evBatteryLevel.value);
 
       if (currentValue > minPercent) {
@@ -104,11 +105,13 @@ scheduler.process('car-reconcile-diagnostics', function *(job) {
 
       evBatteryLevel.value = currentValue.toString();
       totalRange.value = evRange.value;
+      odometer = odometer + 100;
 
       yield evBatteryLevel.upsert();
       yield evChargeState.upsert();
       yield evRange.upsert();
       yield totalRange.upsert();
+      yield odometer.upsert();
     }
   }
 });
