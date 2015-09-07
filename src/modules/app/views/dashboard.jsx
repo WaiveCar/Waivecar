@@ -38,9 +38,9 @@ export default class DashboardView extends React.Component {
    * @param  {Function} action
    */
   dispatch(resource, action) {
-    Reach.API.get('/' + resource, function (err, cars) {
+    Reach.API.get('/' + resource, function (err, models) {
       if (err) { return console.log(err); }
-      Relay.dispatch(resource, action(cars));
+      Relay.dispatch(resource, action(models));
     });
   }
 
