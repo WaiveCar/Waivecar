@@ -105,7 +105,7 @@ scheduler.process('car-reconcile-diagnostics', function *(job) {
 
       evBatteryLevel.value = currentValue.toString();
       totalRange.value = evRange.value;
-      odometer = odometer + 100;
+      odometer.value = (parseInt(odometer.value) + 100).toString();
 
       yield evBatteryLevel.upsert();
       yield evChargeState.upsert();

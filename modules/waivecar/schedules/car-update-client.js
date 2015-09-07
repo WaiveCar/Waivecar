@@ -2,7 +2,7 @@
 
 let scheduler = Reach.service('queue').scheduler;
 let Car       = Reach.model('Car');
-let io        = Reach.IO;
+let relay     = Reach.IO.relay;
 
 module.exports = function *() {
   scheduler.add('car-update-client', {
@@ -23,20 +23,24 @@ module.exports = function *() {
 
 scheduler.process('car-update-client', function *(job) {
   let cars = yield Car.find({
-    include : [{
-      model : 'CarLocation',
-      as    : 'location',
-      attr  : [ 'latitude', 'longitude' ]
-    }, {
-      model : 'CarStatus',
-      as    : 'booking',
-      attr  : [ 'status' ]
-    }]
+    include : [
+      {
+        model : 'CarLocation',
+        as    : 'location',
+        attr  : [ 'latitude', 'longitude' ]
+      },
+      {
+        model : 'CarStatus',
+        as    : 'booking',
+        attr  : [ 'status' ]
+      }
+    ]
   });
+
   if (!cars) {
     return;
   }
-  io.relay('cars', {
+  relay('cars', {
     type : 'index',
     cars : cars
   });
