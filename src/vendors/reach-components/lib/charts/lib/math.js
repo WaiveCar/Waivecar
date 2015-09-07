@@ -5,14 +5,20 @@ export default {
     let group = (value, index, array) => {
       let day = new Date(value[field]);
       day = Math.floor(day.getTime() / (1000 * 60 * 60 * 24));
-      days[day] = days[day] || 1;
+      days[day] = days[day] || 0;
       days[day] = days[day] + 1;
     }
 
     array.map(group);
 
     if (returnCountAsArray) {
-      return Object.keys(days).map(function (key) { return days[key] });
+      let result = Object.keys(days).map(function (key) { return days[key] });
+      if (result.length < 3) {
+        result.unshift(0);
+        result.push(0);
+      }
+
+      return result;
     }
 
     return days;
