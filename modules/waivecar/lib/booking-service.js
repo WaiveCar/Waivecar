@@ -1,17 +1,18 @@
 'use strict';
 
 let moment         = require('moment');
-let car            = require('./car-handler');
+let CarService     = require('./car-service');
 let queue          = Reach.service('queue');
 let query          = Reach.service('sequelize/helpers').query;
 let Booking        = Reach.model('Booking');
 let BookingDetails = Reach.model('BookingDetails');
 let error          = Reach.ErrorHandler;
+let relay          = Reach.IO.relay;
 
 /**
- * @class BookingHandler
+ * @class BookingService
  */
-let BookingHandler = module.exports = {};
+let BookingService = module.exports = {};
 
 /**
  * Creates a new booking with the assigned car and customer.
@@ -20,7 +21,7 @@ let BookingHandler = module.exports = {};
  * @param  {Object} customer
  * @return {Booking}
  */
-BookingHandler.create = function *(car, customer) {
+BookingService.create = function *(car, customer) {
   let booking = new Booking({
     carId      : car,
     customerId : customer.id,
@@ -28,6 +29,10 @@ BookingHandler.create = function *(car, customer) {
   });
   booking._actor = customer;
   yield booking.save();
+  relay('bookings', {
+    type    : 'store',
+    booking : booking.toJSON()
+  });
   return booking;
 };
 
@@ -37,29 +42,39 @@ BookingHandler.create = function *(car, customer) {
  * @param  {Int}  id
  * @param  {User} user
  */
-BookingHandler.cancel = function *(id, user) {
+BookingService.cancel = function *(id, user) {
   let booking = yield this.getBooking(id, user);
   let allowed = [ 'new-booking', 'pending-arrival' ];
-
-  if (allowed.indexOf(booking.state) === -1) {
+  let isAdmin = user.role === 'admin';
+  if (!isAdmin && allowed.indexOf(booking.state) === -1) {
     throw error.parse({
       code    : 'BOOKING_INVALID_ACTION',
       message : 'You cannot cancel a booking which is ' + booking.state.replace('-', ' ')
     }, 400);
   }
 
-  yield car.setStatus('available', booking.carId, user);
+  yield CarService.setStatus('available', booking.carId, user);
 
   // ### Update Booking
 
   booking._actor = user;
-  booking.state  = 'cancelled';
-  yield booking.update();
+
+  if (isAdmin) {
+    yield booking.delete();
+  } else {
+    booking.state  = 'cancelled';
+    yield booking.update();
+  }
 
   // ### Remove Time Limit
   // Remove the auto cancel job on the booking
 
   queue.scheduler.cancel('booking-timer-cancel', 'booking-' + booking.id);
+
+  relay('bookings', {
+    type    : isAdmin ? 'delete' : 'update',
+    booking : booking.toJSON()
+  });
 
   return booking;
 };
@@ -70,7 +85,7 @@ BookingHandler.cancel = function *(id, user) {
  * @param  {Int}  id
  * @param  {User} user
  */
-BookingHandler.pending = function *(id, user) {
+BookingService.pending = function *(id, user) {
   let booking = yield this.getBooking(id, user);
 
   // TODO: payments!!!!!!!
@@ -92,8 +107,8 @@ BookingHandler.pending = function *(id, user) {
   // The booking will automaticaly cancel itself after 15 minutes
 
   queue.scheduler.add('booking-timer-cancel', {
-    uid    : 'booking-' + booking.id,
-    timer  : {
+    uid   : 'booking-' + booking.id,
+    timer : {
       value : 15,
       type  : 'minutes'
     },
@@ -101,6 +116,11 @@ BookingHandler.pending = function *(id, user) {
       user    : user,
       booking : id
     }
+  });
+
+  relay('bookings', {
+    type    : 'update',
+    booking : booking.toJSON()
   });
 
   return booking;
@@ -112,9 +132,12 @@ BookingHandler.pending = function *(id, user) {
  * @param  {Int}  id
  * @param  {User} user
  */
-BookingHandler.start = function *(id, user) {
-  let booking = yield this.getBooking(id, user);
-  let coords  = yield car.getLocation(booking.carId);
+BookingService.start = function *(id, user) {
+  let booking     = yield this.getBooking(id, user);
+  let coords      = yield CarService.getLocation(booking.carId);
+  let diagnostics = yield CarService.getDiagnostics(booking.carId);
+  let charge      = diagnostics.find(d => d.type === 'evBatteryLevel');
+  let odometer    = diagnostics.find(d => d.type === 'odometer');
 
   if (booking.state !== 'pending-arrival') {
     throw error.parse({
@@ -138,8 +161,8 @@ BookingHandler.start = function *(id, user) {
     time      : new Date(),
     latitude  : coords.latitude,
     longitude : coords.longitude,
-    odometer  : 28000,
-    charge    : 78
+    odometer  : odometer || 0,
+    charge    : charge || 0
   });
 
   details._actor = user;
@@ -153,6 +176,11 @@ BookingHandler.start = function *(id, user) {
 
   queue.scheduler.cancel('booking-timer-cancel', 'booking-' + booking.id);
 
+  relay('bookings', {
+    type    : 'update',
+    booking : booking.toJSON()
+  });
+
   return booking;
 };
 
@@ -162,9 +190,12 @@ BookingHandler.start = function *(id, user) {
  * @param  {Int}  id
  * @param  {User} user
  */
-BookingHandler.end = function *(id, user) {
-  let booking   = yield this.getBooking(id, user);
-  let coords = yield car.getLocation(booking.carId);
+BookingService.end = function *(id, user) {
+  let booking     = yield this.getBooking(id, user);
+  let coords      = yield CarService.getLocation(booking.carId);
+  let diagnostics = yield CarService.getDiagnostics(booking.carId);
+  let charge      = diagnostics.find(d => d.type === 'evBatteryLevel');
+  let odometer    = diagnostics.find(d => d.type === 'odometer');
 
   if (booking.state !== 'in-progress') {
     throw error.parse({
@@ -186,8 +217,8 @@ BookingHandler.end = function *(id, user) {
     time      : new Date(),
     latitude  : coords.latitude,
     longitude : coords.longitude,
-    odometer  : 28010,
-    charge    : 48
+    odometer  : odometer || 0,
+    charge    : charge || 0
   });
   details._actor = user;
 
@@ -206,7 +237,12 @@ BookingHandler.end = function *(id, user) {
   // ### Car Status
   // Set the car status back to available.
 
-  yield car.setStatus('available', booking.carId, user);
+  yield CarService.setStatus('available', booking.carId, user);
+
+  relay('bookings', {
+    type    : 'update',
+    booking : booking.toJSON()
+  });
 
   return booking;
 };
@@ -217,7 +253,7 @@ BookingHandler.end = function *(id, user) {
  * @param  {Object} options
  * @return {Array}
  */
-BookingHandler.getBookings = function *(options) {
+BookingService.getBookings = function *(options) {
   options.limit = options.limit || 20;
   return yield Booking.find(query(options, {
     where : {
@@ -241,17 +277,23 @@ BookingHandler.getBookings = function *(options) {
  * @param  {Object}  user
  * @return {Booking} res
  */
-BookingHandler.getBooking = function *(id, user) {
+BookingService.getBooking = function *(id, user) {
+  let where = {
+    id : id
+  };
+  if (user.role !== 'admin') {
+    where.customerId = user.id;
+  }
+
   let booking = yield Booking.findOne({
-    where : {
-      id         : id,
-      customerId : user.id
-    },
-    include : [{
-      model : 'BookingDetails',
-      as    : 'details',
-      attr  : [ 'type', 'time', 'latitude', 'longitude', 'odometer', 'charge' ]
-    }]
+    where   : where,
+    include : [
+      {
+        model : 'BookingDetails',
+        as    : 'details',
+        attr  : [ 'type', 'time', 'latitude', 'longitude', 'odometer', 'charge' ]
+      }
+    ]
   });
   if (!booking) {
     throw error.parse({

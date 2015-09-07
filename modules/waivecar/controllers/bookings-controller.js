@@ -1,7 +1,7 @@
 'use strict';
 
-let bookingHandler = require('../lib/booking-handler');
-let carHandler     = require('../lib/car-handler');
+let BookingService = require('../lib/booking-service');
+let CarService     = require('../lib/car-service');
 let queue          = Reach.service('queue');
 let error          = Reach.ErrorHandler;
 
@@ -16,11 +16,11 @@ Reach.Register.Controller('BookingsController', function (controller) {
     let carId = post.carId;
     let user  = this.auth.user;
 
-    yield carHandler.isAvailable(carId); // Is the car available for booking?
-    yield carHandler.hasDriver(user.id); // Is the user a driver of another car?
+    yield CarService.isAvailable(carId); // Is the car available for booking?
+    yield CarService.hasDriver(user.id); // Is the user a driver of another car?
 
-    let booking = yield bookingHandler.create(carId, user);
-    yield carHandler.setStatus('unavailable', carId, user);
+    let booking = yield BookingService.create(carId, user);
+    yield CarService.setStatus('unavailable', carId, user);
 
     return booking;
   };
@@ -33,7 +33,7 @@ Reach.Register.Controller('BookingsController', function (controller) {
    * @return {Array}
    */
   controller.index = function *(options) {
-    return yield bookingHandler.getBookings(options);
+    return yield BookingService.getBookings(options);
   };
 
   /**
@@ -43,7 +43,7 @@ Reach.Register.Controller('BookingsController', function (controller) {
    * @return {Booking}
    */
   controller.show = function *(id) {
-    return yield bookingHandler.getBooking(id, this.auth.user);
+    return yield BookingService.getBooking(id, this.auth.user);
   };
 
   /**
@@ -54,9 +54,9 @@ Reach.Register.Controller('BookingsController', function (controller) {
   controller.update = function *(id, post) {
     let user = this.auth.user;
     switch (post.state) {
-      case 'pending-arrival' : return yield bookingHandler.pending(id, user);
-      case 'start'           : return yield bookingHandler.start(id, user);
-      case 'end'             : return yield bookingHandler.end(id, user);
+      case 'pending-arrival' : return yield BookingService.pending(id, user);
+      case 'start'           : return yield BookingService.start(id, user);
+      case 'end'             : return yield BookingService.end(id, user);
       default:
         throw error.parse({
           code     : 'BOOKING_BAD_STATE',
@@ -72,7 +72,7 @@ Reach.Register.Controller('BookingsController', function (controller) {
    * @return {Booking}
    */
   controller.destroy = function *(id) {
-    return yield bookingHandler.cancel(id, this.auth.user);
+    return yield BookingService.cancel(id, this.auth.user);
   };
 
   return controller;

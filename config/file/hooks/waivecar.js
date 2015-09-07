@@ -2,7 +2,7 @@
 
 let shortid        = require('shortid');
 let FileModule     = Reach.module('file');
-let bookingHandler = Reach.module('waivecar/lib/booking-handler');
+let bookingService = Reach.module('waivecar/lib/booking-service');
 
 FileModule.hook('waivecar', {
 
@@ -12,7 +12,7 @@ FileModule.hook('waivecar', {
    * @param  {User} _user
    */
   validate : function *(_user) {
-    let model = bookingHandler.getBooking(this.booking, _user);
+    let model = bookingService.getBooking(this.booking, _user);
     if (!model) {
       throw error.parse({
         code    : 'FILE_UPLOAD_FAILED',
@@ -28,7 +28,7 @@ FileModule.hook('waivecar', {
    * @return {String}
    */
   collection : function *(_user) {
-    let booking = yield bookingHandler.getBooking(this.booking, _user);
+    let booking = yield bookingService.getBooking(this.booking, _user);
     if (!booking.filesId) {
       booking.filesId = shortid.generate();
       yield booking.update();

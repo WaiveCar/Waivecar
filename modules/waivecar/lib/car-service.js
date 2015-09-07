@@ -1,14 +1,15 @@
 'use strict';
 
-let Car         = Reach.model('Car');
-let CarStatus   = Reach.model('CarStatus');
-let CarLocation = Reach.model('CarLocation');
-let error       = Reach.ErrorHandler;
+let Car           = Reach.model('Car');
+let CarStatus     = Reach.model('CarStatus');
+let CarLocation   = Reach.model('CarLocation');
+let CarDiagnostic = Reach.model('CarDiagnostic');
+let error         = Reach.ErrorHandler;
 
 /**
- * @class CarHandler
+ * @class CarService
  */
-let CarHandler = module.exports = {};
+let CarService = module.exports = {};
 
 /**
  * Check if the provided user is the driver of a car, if a user is already
@@ -17,7 +18,7 @@ let CarHandler = module.exports = {};
  * @method hasDriver
  * @param  {Int} id
  */
-CarHandler.hasDriver = function *(id) {
+CarService.hasDriver = function *(id) {
   let count = yield CarStatus.count({ where : { driverId : id } });
   if (count !== 0) {
     throw error.parse({
@@ -32,7 +33,7 @@ CarHandler.hasDriver = function *(id) {
  * @param  {String} id
  * @return {Boolean}
  */
-CarHandler.isAvailable = function *(id) {
+CarService.isAvailable = function *(id) {
   let count = yield Car.count({ where : { id : id }});
   if (count === 0) {
     throw error.parse({
@@ -48,7 +49,7 @@ CarHandler.isAvailable = function *(id) {
     }, 400);
   }
   return true;
-}
+};
 
 /**
  * Returns a cars current latitude and longitude.
@@ -56,8 +57,16 @@ CarHandler.isAvailable = function *(id) {
  * @param  {String} carId
  * @return {CarLocation}
  */
-CarHandler.getLocation = function *(carId) {
+CarService.getLocation = function *(carId) {
   return yield CarLocation.findById(carId);
+};
+
+CarService.getDiagnostics = function *(carId) {
+  return yield CarDiagnostic.find({
+    where : {
+      carId : carId
+    }
+  });
 };
 
 /**
@@ -66,7 +75,7 @@ CarHandler.getLocation = function *(carId) {
  * @param  {String} carId
  * @param  {Object} user
  */
-CarHandler.setStatus = function *(status, carId, user) {
+CarService.setStatus = function *(status, carId, user) {
   let carStatus = null;
   switch (status) {
     case 'unavailable':
