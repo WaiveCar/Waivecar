@@ -48,7 +48,12 @@ export default class Form extends React.Component {
    * @method flush 
    */
   flush() {
-    document.getElementsByClassName('focus')[0].children[1].blur();
+    let focusedInputs = document.getElementsByClassName('focus');
+    if (focusedInputs.length) {
+      for (let i = 0, len = focusedInputs.length; i < len; i++) {
+        focusedInputs[i].children[1].blur();
+      }
+    }
     this.setState({
       record : {}
     });
