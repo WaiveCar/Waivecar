@@ -73,19 +73,10 @@ angular.module('app.controllers').controller('ApplicationController', [
         function(nextTask) {
           LocationService.initPositionWatch();
           return nextTask();
-          // getLocation().then(function(deviceLocation) {
-          //   $rootScope.currentLocation = deviceLocation;
-          //   return nextTask();
-          // });
         },
         function(nextTask) {
           if ($auth.isAuthenticated()) {
-            $data.resources.users.me(function(me) {
-              $data.me = me;
-              return nextTask();
-            });
-          } else {
-            return nextTask();
+
           }
         },
         function(nextTask) {

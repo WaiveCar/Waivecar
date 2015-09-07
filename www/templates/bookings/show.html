@@ -1,19 +1,19 @@
-<ion-pane class="rideSummary" ng-controller="BookingController">
+<ion-pane class="bookings-show" ng-controller="BookingController">
   <header-bar type="nav" on-button-click="showNav()">Summary</header-bar>
   <ion-content  class="has-header summary-container">
     <div class="ride-info">
-      <p>This ride took place on <span ng-bind="active.bookings.start.createdAt" class="highlight"></span></p>
-      <p>The WaiveCar  was picked at <span ng-bind="active.bookings.start.location" class="highlight"></span></p>
+      <p>This ride took place on <span ng-bind="bookingDetail('start', 'createdAt') | date : 'EEEE, MMMM d, yyyy'" class="highlight"></span>.</p>
+      <p>The WaiveCar  was picked at <span ng-bind="bookingDetail('start', 'address')" class="highlight"></span></p>
     </div>
     <div class="time-and-distance-info tableContainer">
       <table>
         <tr>
           <td class="title">Time</td>
-          <td class="value" ng-bind="active.bookings.duration"></td>
+          <td class="value" ng-bind="duration()"></td>
         </tr>
         <tr>
           <td class="title">Distance</td>
-          <td class="value" ng-bind="active.bookings.distance"></td>
+          <td class="value" ng-bind="distance()"></td>
         </tr>
       </table>
     </div>

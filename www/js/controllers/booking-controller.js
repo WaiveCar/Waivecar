@@ -9,6 +9,39 @@ angular.module('app.controllers').controller('BookingController', [
 
     $scope.showConnect = false;
 
+    $scope.bookingDetail = function(type, detail) {
+      var na = 'Unavailable';
+      if (!$data.active || !$data.active.bookings || !$data.active.bookings.details) {
+        return na;
+      }
+
+      var bookingDetail = _.find($data.active.bookings.details, { type: type });
+
+      if (bookingDetail) {
+        return bookingDetail[detail];
+      }
+
+      return na;
+    }
+
+    $scope.distance = function() {
+      var from = $scope.bookingDetail('start', 'odometer');
+      var to = $scope.bookingDetail('end', 'odometer');
+      if (from === 'Unavailable' || to === 'Unavailable') return from;
+
+      if (from && to) {
+        return (to - from) + ' miles';
+      }
+    }
+
+    $scope.duration = function() {
+      var from = $scope.bookingDetail('start', 'time');
+      var to = $scope.bookingDetail('end', 'time');
+      if (from === 'Unavailable' || to === 'Unavailable') return from;
+
+      return moment(from).from(to, true);
+    }
+
     $scope.connect = function() {
       $state.go('bookings-prepare', { id : $data.active.bookings.id });
     };
