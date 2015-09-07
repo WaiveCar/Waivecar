@@ -111,17 +111,7 @@ export default function (view, fields, resource) {
      */
     handleSuccess(data, reset) {
       if (view.actions.create) {
-        reset();
-        Snackbar.notify({
-          type    : 'success',
-          message : 'Record was successfully added.',
-          action  : {
-            title : 'EDIT',
-            click : () => {
-              this.transitionTo(resource.show.uri.replace(':id', data.id));
-            }.bind(this)
-          }
-        });
+        this.goBack();
       } else {
         Snackbar.notify({
           type    : 'success',
