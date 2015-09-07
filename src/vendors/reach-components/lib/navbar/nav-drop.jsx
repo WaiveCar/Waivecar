@@ -17,13 +17,14 @@ export default class NavDrop extends React.Component {
         left : 0
       }
     }
+    this.updatePosition = this.updatePosition.bind(this);
   }
 
   /**
    * @method componentDidMount
    */
   componentDidMount() {
-    window.addEventListener("resize", this.updatePosition.bind(this));
+    window.addEventListener('resize', this.updatePosition);
     this.updatePosition();
   }
 
@@ -44,7 +45,7 @@ export default class NavDrop extends React.Component {
    * @method componentWillUnmount
    */
   componentWillUnmount() {
-    window.removeEventListener("resize", this.updatePosition.bind(this));
+    window.removeEventListener('resize', this.updatePosition);
   }
 
   /**
