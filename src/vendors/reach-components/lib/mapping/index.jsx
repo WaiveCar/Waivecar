@@ -95,7 +95,7 @@ export default class Mapping extends React.Component {
    */
   render() {
     return (
-      <div className="map-wrapper">
+      <div className="map-wrapper animated fadeIn">
         <div id={ this.state.mapId } className="map-container" />
       </div>
     );

@@ -75,7 +75,9 @@ export default class DashboardView extends React.Component {
               <MiniChart title={ 'Users' } data={ this.state.users } chartType={ 'line' } className="chart-warning" />
             </Column>
           </Row>
-          <Mapping markerIcon="/images/admin/map-icon-waivecar.svg" markers={ this.state.cars } />
+          <div style={{ height : 600, position : 'relative' }}>
+            <Mapping markerIcon="/images/admin/map-icon-waivecar.svg" markers={ this.state.cars } />
+          </div>
         </div>
       </div>
     );
