@@ -161,8 +161,8 @@ BookingService.start = function *(id, user) {
     time      : new Date(),
     latitude  : coords.latitude,
     longitude : coords.longitude,
-    odometer  : odometer || 0,
-    charge    : charge || 0
+    odometer  : Math.floor(odometer.value) || 0,
+    charge    : Math.ceil(charge.value) || 0
   });
 
   details._actor = user;
@@ -217,8 +217,8 @@ BookingService.end = function *(id, user) {
     time      : new Date(),
     latitude  : coords.latitude,
     longitude : coords.longitude,
-    odometer  : odometer || 0,
-    charge    : charge || 0
+    odometer  : Math.floor(odometer.value) || 0,
+    charge    : Math.ceil(charge.value) || 0
   });
   details._actor = user;
 
