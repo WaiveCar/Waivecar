@@ -16,10 +16,10 @@ cache:
     - modules/log
     - modules/payment
     - modules/user
-    - services/queue
-    - services/sequelize
-    - services/sms
-    - services/email
+    - providers/queue
+    - providers/sequelize
+    - providers/sms
+    - providers/email
 env:
   global:
   - BRANCHING_MODEL=API_APP

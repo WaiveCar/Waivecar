@@ -1,7 +1,7 @@
 'use strict';
 
 let Booking   = require('../lib/booking-service');
-let scheduler = Reach.service('queue').scheduler;
+let scheduler = Reach.provider('queue').scheduler;
 let io        = Reach.IO;
 
 scheduler.process('booking-timer-cancel', function *(job) {

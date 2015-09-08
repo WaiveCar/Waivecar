@@ -1,7 +1,7 @@
 'use strict';
 
-let scheduler      = Reach.service('queue').scheduler;
-let VehicleService = Reach.service('gm-api/vehicle-service');
+let scheduler      = Reach.provider('queue').scheduler;
+let VehicleService = Reach.provider('gm-api/vehicle-service');
 let Car            = Reach.model('Car');
 let log            = Reach.Log;
 let service        = new VehicleService();

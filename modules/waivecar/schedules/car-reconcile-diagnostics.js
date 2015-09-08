@@ -1,6 +1,6 @@
 'use strict';
 
-let scheduler       = Reach.service('queue').scheduler;
+let scheduler       = Reach.provider('queue').scheduler;
 let Car             = Reach.model('Car');
 let CarDiagnostic   = Reach.model('CarDiagnostic');
 let log             = Reach.Log;

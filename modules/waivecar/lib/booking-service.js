@@ -2,8 +2,8 @@
 
 let moment         = require('moment');
 let CarService     = require('./car-service');
-let queue          = Reach.service('queue');
-let query          = Reach.service('sequelize/helpers').query;
+let queue          = Reach.provider('queue');
+let query          = Reach.provider('sequelize/helpers').query;
 let Booking        = Reach.model('Booking');
 let BookingDetails = Reach.model('BookingDetails');
 let error          = Reach.ErrorHandler;

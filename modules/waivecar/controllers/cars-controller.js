@@ -1,6 +1,6 @@
 'use strict';
 
-let query = Reach.service('sequelize/helpers').query;
+let query = Reach.provider('sequelize/helpers').query;
 let Car   = Reach.model('Car');
 
 Reach.Register.ResourceController('Car', 'CarsController', function (controller) {

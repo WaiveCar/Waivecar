@@ -1,7 +1,7 @@
 'use strict';
 
 let assert         = require('chai').assert;
-let VehicleService = Reach.service('gm-api/vehicle-service');
+let VehicleService = Reach.provider('gm-api/vehicle-service');
 
 // ### Mocks
 

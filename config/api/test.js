@@ -56,7 +56,7 @@ module.exports = {
       'user',
       'log'
     ],
-    services : [
+    providers : [
       'gm-api',
       'email',
       'sms'

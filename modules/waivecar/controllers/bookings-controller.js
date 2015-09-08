@@ -2,7 +2,7 @@
 
 let BookingService = require('../lib/booking-service');
 let CarService     = require('../lib/car-service');
-let queue          = Reach.service('queue');
+let queue          = Reach.provider('queue');
 let error          = Reach.ErrorHandler;
 
 Reach.Register.Controller('BookingsController', function (controller) {
