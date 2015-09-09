@@ -6,68 +6,28 @@
     <title>WaiveCar</title>
     <!-- compiled css output -->
     <link href="css/ionic.app.css" rel="stylesheet">
-    <link rel="stylesheet" href="leaflet/leaflet.css">
- <!--    <link rel="stylesheet" href="lib/leaflet.markercluster/dist/MarkerCluster.css" />
-    <link rel="stylesheet" href="lib/leaflet.markercluster/dist/MarkerCluster.Default.css" />
- -->
+    <link rel="stylesheet" href="vendors/leaflet/leaflet.css">
+    <!-- local libs -->
+    <script src="vendors/leaflet/leaflet-src.js"></script>
+    <script src="vendors/skobbler/skobbler-2.0.js"></script>
+    <!-- lib js -->
     <script src="lib/async/dist/async.js"></script>
     <script src="lib/moment/min/moment.min.js"></script>
     <script src="lib/lodash/lodash.min.js"></script>
-    <!-- ionic/angularjs js -->
+    <script src="lib/socket.io-client/socket.io.js"></script>
     <script src="lib/ionic/js/ionic.bundle.js"></script>
-
-<!--    <script src="lib/angular/angular.js"></script>
-    <script src="lib/angular-animate/angular-animate.js"></script>
-    <script src="lib/angular-sanitize/angular-sanitize.js"></script>
-    <script src="lib/angular-resource/angular-resource.js"></script>
-    <script src="lib/angular-mocks/angular-mocks.js"></script>
-    <script src="lib/angular-ui-router/release/angular-ui-router.js"></script>
-    <script src="lib/ionic/js/ionic.min.js"></script>
-    <script src="lib/ionic/js/ionic-angular.min.js"></script>
--->
-
     <script src="lib/ngCordova/dist/ng-cordova.min.js"></script>
-    <!-- cordova script (this will be a 404 during development) -->
-    <script src="cordova.js"></script>
-    <!-- lib js -->
     <script src="lib/angular-messages/angular-messages.js"></script>
     <script src="lib/angular-resource/angular-resource.js"></script>
-    <script src="lib/socket.io-client/socket.io.js"></script>
     <script src="lib/ng-cordova-oauth/dist/ng-cordova-oauth.min.js"></script>
     <script src="lib/angular-ui-router/release/angular-ui-router.js"></script>
-
     <script src="lib/angular-socket-io/socket.js"></script>
     <script src="lib/ngFitText/src/ng-FitText.js"></script>
-    <!-- local libraries -->
-    <script src="leaflet/leaflet-src.js"></script>
-    <script src="js/skobbler-2.0.js"></script>
-   <!--<script src="lib/leaflet.markercluster/dist/leaflet.markercluster-src.js"></script>-->
-	 	<!-- modules -->
-    <!--<script src="modules/countdown/timer.js"></script>
-    <script src="modules/chargingStations/index.js"></script>
-    <script src="modules/pointsOfInterest/index.js"></script>
-    <script src="modules/camera/camera.js"></script>
-    <script src="modules/state/flow.js"></script>
-    <script src="modules/social/facebook.js"></script>
--->
-
-    <!--Mock functionalities for tests and presentations
-    <script src="modules/mockBehaviours/index.js"></script>
-    -->
-
-    <!-- modules
-    <script src="js/modules/config.js"></script>
-    <script src="modules/maps/index.js"></script>
-    <script src="modules/maps/realReach.js"></script>
-    <script src="modules/maps/route.js"></script>
-    <script src="modules/maps/geoCoding.js"></script>
-
-    <script src="modules/mockBehaviours/index.js"></script>-->
-
+    <!-- cordova script (this will be a 404 during development) -->
+    <script src="cordova.js"></script>
     <!-- modules -->
     <script src="js/modules/config.js"></script>
     <script src="js/modules/mock-behaviors/index.js"></script>
-
     <script src="js/modules/maps/index.js"></script>
     <script src="js/modules/maps/services/location-service.js"></script>
     <script src="js/modules/maps/services/route-service.js"></script>
@@ -81,6 +41,7 @@
     <script src="js/modules/maps/directives/route-to-location-directive.js"></script>
     <!-- app -->
     <script src="js/app.js"></script>
+    <!-- providers -->
     <script src="js/providers/maps-loader-provider.js"></script>
     <!-- services -->
     <script src="js/services/facebook-service.js"></script>
@@ -123,42 +84,6 @@
     <script src="js/directives/lined-directive.js"></script>
     <script src="js/directives/wizard-directive.js"></script>
     <script src="js/directives/reverse-geocoding-directive.js"></script>
-
-    <!-- components
-    <script src="components/application/index.js"></script>
-    <script src="components/bookings/index.js"></script>
-    <script src="components/cars/connection.js"></script>
-    <script src="components/cars/car.js"></script>
-    <script src="components/cars/fleet.js"></script>
-    <script src="components/cars/damage.js"></script>
-    <script src="components/login/login.js"></script>
-
-
-    <script src="components/contact/index.js"></script>
-    <script src="components/countdown/index.js"></script>
-    <script src="components/menu/index.js"></script>
-    <script src="components/users/index.js"></script>
-    <script src="components/vision/index.js"></script>
-    <script src="components/ads/index.js"></script>
-    <script src="components/ride/index.js"></script>
-    <script src="components/ride/pastRides.js"></script>
-    <script src="components/errors/index.js"></script>
-    <script src="components/state/rules/fleetRules.js"></script>
-    <script src="components/state/rules/registerRules.js"></script>
-    <script src="components/state/rules/carInfoRules.js"></script>
-    <script src="components/state/rules/signInRules.js"></script>
-    <script src="components/state/rules/creditCardRules.js"></script>
-    <script src="components/state/rules/bookingRules.js"></script>
-
-    <script src="components/state/state.js"></script>
-
-    <script src="components/credit-cards/credit-card-controller.js"></script>
-    <script src="components/licenses/license-controller.js"></script>
-    <script src="components/layout/layout.js"></script>
-    -->
-
-
-
   </head>
   <body ng-app="app" ng-controller="ApplicationController">
     <ion-nav-view></ion-nav-view>
