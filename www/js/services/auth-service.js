@@ -2,77 +2,100 @@ angular.module('app.services').factory('$auth', [
   '$session',
   '$data',
   function ($session, $data) {
+    'use strict';
 
     return {
 
-      isAuthenticated : function() {
+      isAuthenticated: function () {
         this.token = $session.has('auth') ? $session.get('auth') : false;
         return this.token !== false;
       },
 
       token: $session.has('auth') ? $session.get('auth') : false,
 
-      purge: function() {
+      purge: function () {
         $session.purge();
         this.token = false;
         return this;
       },
 
-      facebookLogin: function(code,next){
-        var self = this;
-        var data={
-          type:'login',
-          code:code,
-          redirectUri:'http://localhost/'
+      facebookLogin: function (code, next) {
+        var _this = this;
+        var data = {
+          type: 'login',
+          code: code,
+          redirectUri: 'http://localhost/'
         };
-        $data.resources.users.facebook(data,function(user) {
-          $data.resources.users.me(function(me) {
-            $session.set('auth', { token: user.token }).save();
-            $data.me = me;
-            self.token = $session.get('auth');
-          });
-        },
-        function(error){
-          next(error)
-        });
+
+        $data.resources.users.facebook(data, function (user) {
+            $data.resources.users.me(function (me) {
+              $session.set('auth', {
+                token: user.token
+              }).save();
+
+              $data.me = me;
+
+              _this.token = $session.get('auth');
+
+            });
+          },
+          next);
+
       },
 
-      login: function(data, next) {
-        var self = this;
-        $data.resources.users.login(data, angular.bind(this, function(user) {
-          $session.set('auth', { token: user.token }).save();
-          self.token = $session.get('auth');
-          $data.resources.users.me(function(err, me) {
+      login: function (data, next) {
+        var _this = this;
+        var _user;
+
+        $data.resources.users.login(data).$promise
+          .then(function (user) {
+            _user = user;
+
+            $session.set('auth', {
+              token: user.token
+            }).save();
+
+            _this.token = $session.get('auth');
+
+            return $data.resources.users.me().$promise;
+
+          })
+          .then(function (me) {
             $data.me = me;
-            return next(err, user);
+            return next(null, _user);
+
+          })
+          .catch(function (response) {
+            if (response.status === 0) {
+              return next('Unable to reach the server. CORS issue!');
+            }
+            if (response.data.code === 'AUTH_INVALID_CREDENTIALS') {
+              return next('Your e-mail or password is incorrect. Please try again.');
+            }
+            return next('An error occured! ' + response.data.message);
+
           });
-        }), function(error) {
-          if (error.status === 401) {
-            next('Your e-mail or password is incorrect. Please try again.');
-          } else {
-            next('An error occured!');
-          }
-        });
 
         return this;
+
       },
 
-      logout: function(data, next) {
+      logout: function (data, next) {
         $session.purge();
 
         if (!data) {
-          if (next) return next();
-          return;
+          return (next || angular.identity)();
         }
 
         $data.resources.users.logout($data.me, angular.bind(this, function (user) {
           // $session.purge();
-        }), function(error) {
+        }), function (error) {
           if (error) {
-            next('An error occured whilst attempting to logout. Please try again.');
-          } else {
-            next('An error occured!');
+            return next('An error occured whilst attempting to logout. Please try again.');
           }
+
+          return next('An error occured!');
+
         });
 
         return this;

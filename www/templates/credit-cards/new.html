@@ -1,11 +1,16 @@
 <ion-pane class="credit-cards-new" ng-controller="CreditCardController">
   <ion-content class="full-page has-footer-bar">
+
     <step-by-step current-step="4"></step-by-step>
+
     <page-title back-button="true">Payment method</page-title>
+
     <p>Don't worry, the majority of rides are free!</p>
     <p>However, fees could apply in some cases.</p>
+
     <a href="/">Check out fees Guidelines</a>
-    <form ng-submit="createCreditCard()">
+
+    <form ng-submit="createCreditCard()" name="form">
       <label class="item item-input">
         <span class="input-label">Card Number</span>
         <input type="text" placeholder="XXXX-XXXX-XXXX-XXXX" ng-model="forms.creditCardForm.number">
@@ -22,8 +27,12 @@
         <span class="input-label">CVV</span>
         <input type="text" ng-model="forms.creditCardForm.cvc">
       </label>
+
       <button type="submit" class="button button-balanced button-padded">Add card and finish</button>
+
     </form>
+
     <p>By adding a credit card you are agreeing with our <a href="#">terms of services</a> and <a href="#">Fees Guidelines</a></p>
+
   </ion-content>
 </ion-pane>

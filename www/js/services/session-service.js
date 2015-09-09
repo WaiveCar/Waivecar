@@ -2,6 +2,7 @@ angular.module('app.services').factory('$session', [
   '$rootScope',
   '$window',
   function ($rootScope, $window) {
+    'use strict';
 
     var session = {
 
@@ -16,20 +17,23 @@ angular.module('app.services').factory('$session', [
           $rootScope.$emit('sessionParseError', err);
         }
         return this;
+
       },
 
       has: function (key) {
         if (_.isEmpty(this.data)) {
           this.load();
         }
-        return undefined === this.data[key] ? false : true;
+        return !_(this.data[key]).isUndefined();
+
       },
 
       get: function (key) {
         if (_.isEmpty(this.data)) {
           this.load();
         }
-        return undefined === this.data[key] ? {} : this.data[key];
+        return _(this.data[key]).isUndefined() ? {} : this.data[key];
+
       },
 
       set: function (key, value) {
@@ -43,6 +47,7 @@ angular.module('app.services').factory('$session', [
         });
 
         return this;
+
       },
 
       purge: function (key) {
@@ -55,9 +60,13 @@ angular.module('app.services').factory('$session', [
         }
 
         return this;
+
       }
+
     };
 
     return session.load();
+
   }
+
 ]);

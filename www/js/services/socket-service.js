@@ -1,39 +1,43 @@
 angular.module('app')
-.factory('$socket', [
-  '$config',
-  'socketFactory',
-  function ($config, socketFactory) {
-    var remote = io.connect($config.uri.api, { path: '/socket/socket.io' });
-    console.log('connecting to ' +  $config.uri.api);
+  .factory('$socket', [
+    '$config',
+    'socketFactory',
+    function ($config, socketFactory) {
+      'use strict';
 
-    var socket = socketFactory({
-      ioSocket: remote
-    });
+      var remote = io.connect($config.uri.api, {
+        path: '/socket/socket.io'
+      });
 
-    socket.forward('error');
+      console.log('connecting to ' + $config.uri.api);
 
-    socket.on('subscribed', function() {
-      console.log('subscribed');
-    });
+      var socket = socketFactory({
+        ioSocket: remote
+      });
 
-    socket.on('unsubscribed', function() {
-      console.log('unsubscribed');
-    });
+      socket.forward('error');
 
-    socket.on('event', function() {
-      console.log('event');
-    });
+      socket.on('subscribed', function () {
+        console.log('subscribed');
+      });
 
-    socket.on('connect', function() {
-      console.log('connected');
-    });
+      socket.on('unsubscribed', function () {
+        console.log('unsubscribed');
+      });
 
-    socket.on('disconnect', function() {
-      console.log('disconnected');
-    });
+      socket.on('event', function () {
+        console.log('event');
+      });
 
-    return socket;
+      socket.on('connect', function () {
+        console.log('connected');
+      });
 
-  }
-]);
+      socket.on('disconnect', function () {
+        console.log('disconnected');
+      });
 
+      return socket;
+
+    }
+  ]);

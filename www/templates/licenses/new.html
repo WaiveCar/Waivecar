@@ -42,14 +42,21 @@
 </ion-pane>
  -->
 
-
 <ion-pane class="licenses-new" ng-controller="LicenseController">
-  <form ng-submit="createLicense()">
-    <ion-content  class="full-page" >
-      <step-by-step current-step="3"></step-by-step>
-      <page-title back-button="true">Driver's License</page-title>
-      <p>Your license looks good!.</p>
-      <p>Please enter your details</p>
+
+  <ion-content class="full-page">
+
+    <step-by-step current-step="3"></step-by-step>
+
+    <page-title back-button="true">Driver's License</page-title>
+
+    <p>
+      Your license looks good!.
+      <br>
+      Please enter your details
+    </p>
+
+    <form ng-submit="createLicense()" name="licenseForm" id="form">
       <div class="list list-inset">
         <label class="item item-input">
           <span class="input-label">License Number</span>
@@ -76,14 +83,19 @@
           <input type="text" placeholder="Date of Birth" ng-model="forms.licenseForm.dob">
         </label>
       </div>
-      <p>Have you received any tickets in the past year?</p>
-      <div class="double-buttons">
-        <button class="button button-light-gray">Yes</button>
-        <button class="button button-balanced">No</button>
-      </div>
-    </ion-content>
-    <div class="bar bar-footer">
-      <button type="subit" class="button button-balanced" next-state>Continue</button>
+    </form>
+
+    <p>Have you received any tickets in the past year?</p>
+
+    <div class="double-buttons">
+      <button class="button button-light-gray">Yes</button>
+      <button class="button button-balanced">No</button>
     </div>
-  </form>
+
+  </ion-content>
+
+  <div class="bar bar-footer">
+    <button type="submit" form="form" class="button button-balanced">Continue</button>
+  </div>
+
 </ion-pane>
