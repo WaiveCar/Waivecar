@@ -1,0 +1,11 @@
+<ion-pane class="bookings-component" ng-controller="BookingsController">
+  <header-bar type="nav" on-button-click="showNav()">Past Rides</header-bar>
+  <ion-content scroll="false" class="has-header">
+    <div class="list">
+      <div class="list-item" ng-repeat="booking in data.bookings">{{ booking }}</div>
+    </div>
+  </ion-content>
+  <div class="bar bar-footer">
+    <button ui-sref="cars" class="button button-balanced">Back</button>
+  </div>
+</ion-pane>

@@ -1,0 +1,41 @@
+<ion-pane ng-controller="BookingInProgressController">
+  <header-bar type="nav" on-button-click="showNav()">Dashboard</header-bar>
+  <ion-content scroll="false" class="has-header has-footer-bar">
+    <div class="map-container has-info-footer">
+      <map id="map" zoom="15" center="currentLocation">
+        <location-markers locations="models.locations" on-click-marker="showChargingStationDetails(marker, info)"></location-markers>
+      </map>
+    </div>
+    <div class="info-footer">
+      <div class="row dashboard-information" ng-hide="ride.showingStation" class="ng-hide">
+        <div class="col">
+          <p class="big-title">
+            <battery-charge></battery-charge>
+          </p>
+          <p class="small-title">Charged</p>
+        </div>
+        <div class="col">
+          <p class="big-title">
+            <distance-travelled></distance-travelled>
+          </p>
+          <p class="small-title">Travelled</p>
+        </div>
+        <div class="col">
+          <p class="big-title">
+            <free-ride-time></free-ride-time>
+          </p>
+          <p class="small-title">Remaining</p>
+        </div>
+      </div>
+      <div class="charging-station-info" ng-show="ride.showingStation">
+        <button ng-click="ride.hideChargingStationDetails()" class="button button-right close-button">
+          <img src="img/close.svg" alt="">
+        </button>
+        <charging-station-info location="active.locations"></charging-station-info>
+      </div>
+    </div>
+  </ion-content>
+  <div class="bar bar-footer">
+    <button class="button button-assertive" ng-click="end()">end ride</button>
+  </div>
+</ion-pane>

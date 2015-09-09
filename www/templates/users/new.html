@@ -1,0 +1,64 @@
+<ion-pane class="users-new" ng-controller="UserController">
+
+  <ion-content class="full-page has-footer-bar">
+
+    <wizard></wizard>
+
+    <page-title>Register</page-title>
+
+    <button type="button" class="button button-blue button-padded facebook-button" ng-click="connectWithFacebook()">
+      <img src="img/facebook.svg" class="service-icon">
+      <span>Connect with Facebook</span>
+    </button>
+
+    <lined>Or</lined>
+
+    <form ng-submit="createUser()" name="form" id="form">
+      <div class="list">
+        <label class="item item-input">
+          <span class="input-label">First Name</span>
+          <input type="text" name="firstName" placeholder="John" ng-model="forms.userForm.firstName" required />
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Last Name</span>
+          <input type="text" name="lastName" placeholder="Smith" ng-model="forms.userForm.lastName" required />
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Email</span>
+          <input type="email" placeholder="john@example.com" name="email" ng-model="forms.userForm.email" required />
+        </label>
+        <label class="item item-input">
+          <span class="input-label mobile-label">Mobile </span>
+          <i class="icon placeholder-icon">
+              <img src="img/flag-icon.svg" alt="flag" class="icon-flag">
+            </i>
+          <input type="text" name="mobile" placeholder="0411 099 110" ng-model="forms.userForm.mobile" required />
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Password</span>
+          <input type="text" placeholder="* * * * * *" name="password" ng-model="forms.userForm.password" required ng-minlength="6">
+        </label>
+        <div class="validations" ng-show="form.$dirty && form.$invalid">
+          <div class="help-block" ng-show="form.firtName.$dirty && form.firstName.$error.required">First Name is required</div>
+          <div class="help-block" ng-show="form.lastName.$dirty && form.lastName.$error.required">Last Name is required</div>
+          <div class="help-block" ng-show="form.email.$dirty && form.email.$error.required">An Email Address is required</div>
+          <div class="help-block" ng-show="form.email.$dirty && form.email.$error.email">A valid Email Address is required</div>
+          <div class="help-block" ng-show="form.mobile.$dirty && form.mobile.$error.required">A Cell Phone Number is required</div>
+          <div class="help-block" ng-show="form.password.$dirty && form.password.$error.required">Password is required</div>
+          <div class="help-block" ng-show="form.password.$dirty && form.password.$error.minlength">Password must be greater than 5 characters</div>
+        </div>
+      </div>
+    </form>
+
+    <p class="bottomTextInfo">You won't receive any spam from us</p>
+
+  </ion-content>
+
+  <div class="bar bar-footer">
+    <div class="footer-buttons">
+      <button class="button button-gray" ui-sref="auth">Cancel</button>
+      <button type="submit" form="form" class="button button-balanced" ng-class="{ 'btn-disabled' : form.$pristine || form.$invalid }" ng-disabled="form.$pristine || form.$invalid">Continue</button>
+    </div>
+  </div>
+
+</ion-pane>

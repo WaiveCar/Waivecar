@@ -1,0 +1,89 @@
+<!--     <div class="pre-data-collection-message">
+      <p>TODO: Your driver's license must be validated by our insurance company to confirm that may drive a vehicle in the state of California.</p>
+    </div>
+    <form ng-submit="createLicense()">
+      <div class="list">
+        <label class="item item-input item-floating-label">
+          <span class="input-label">Driver's License Number</span>
+          <input type="text" placeholder="Driver's License Number" ng-model="licenseCtrl.forms.new.id">
+        </label>
+        <label class="item item-input item-floating-label">
+          <span class="input-label">Expiry</span>
+          <input type="text" placeholder="Expiry" ng-model="licenseCtrl.forms.new.expiry">
+        </label>
+        <label class="item item-input item-floating-label">
+          <span class="input-label">First Name</span>
+          <input type="text" placeholder="First Name" ng-model="licenseCtrl.forms.new.firstName">
+        </label>
+        <label class="item item-input item-floating-label">
+          <span class="input-label">Last Name</span>
+          <input type="text" placeholder="Last Name" ng-model="licenseCtrl.forms.new.lastName">
+        </label>
+        <label class="item item-input item-floating-label">
+          <span class="input-label">Address</span>
+          <input type="text" placeholder="Address" ng-model="licenseCtrl.forms.new.address">
+        </label>
+        <label class="item item-input item-floating-label">
+          <span class="input-label">Date Of Birth</span>
+          <input type="text" placeholder="Date of Birth" ng-model="licenseCtrl.forms.new.dob">
+        </label>
+      </div>
+      <button type="submit" class="button">Verify License</button>
+    </form>
+    <div class="post-data-collection-message">
+      <p>
+        <small>TODO: Your license details will be stored on file.</small>
+      </p>
+    </div>
+  </ion-content>
+  <div class="bar bar-footer">
+    <button class="button button-balanced" ui-sref="cars">Back</button>
+  </div>
+</ion-pane>
+ -->
+
+
+<ion-pane class="licenses-new" ng-controller="LicenseController">
+  <form ng-submit="createLicense()">
+    <ion-content  class="full-page" >
+      <step-by-step current-step="3"></step-by-step>
+      <page-title back-button="true">Driver's License</page-title>
+      <p>Your license looks good!.</p>
+      <p>Please enter your details</p>
+      <div class="list list-inset">
+        <label class="item item-input">
+          <span class="input-label">License Number</span>
+          <input type="text" placeholder="Driver's License Number" ng-model="forms.licenseForm.id">
+        </label>
+        <label class="item item-input">
+          <span class="input-label">State</span>
+          <input type="text" placeholder="State" ng-model="forms.licenseForm.state">
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Expiry</span>
+          <input type="text" placeholder="Expiry" ng-model="forms.licenseForm.expiry">
+        </label>
+        <label class="item item-input">
+          <span class="input-label">First Name</span>
+          <input type="text" placeholder="First Name" ng-model="forms.licenseForm.firstName">
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Last Name</span>
+          <input type="text" placeholder="Last Name" ng-model="forms.licenseForm.lastName">
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Date Of Birth</span>
+          <input type="text" placeholder="Date of Birth" ng-model="forms.licenseForm.dob">
+        </label>
+      </div>
+      <p>Have you received any tickets in the past year?</p>
+      <div class="double-buttons">
+        <button class="button button-light-gray">Yes</button>
+        <button class="button button-balanced">No</button>
+      </div>
+    </ion-content>
+    <div class="bar bar-footer">
+      <button type="subit" class="button button-balanced" next-state>Continue</button>
+    </div>
+  </form>
+</ion-pane>

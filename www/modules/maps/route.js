@@ -32,12 +32,12 @@ RouteService.prototype.getRoute = function(pointA, pointB, profile) {
         }
         self._scope.$broadcast(
           self.mapsEvents.routeDurationChanged,
-          data.route.duration,
+          data.route ? data.route.duration : 0,
           profile
         );
         self._scope.$broadcast(
           self.mapsEvents.routeDistanceChanged,
-          data.route.routelength,
+          data.route ? data.route.routelength : 0,
           profile
         );
         defered.resolve(data);
@@ -49,13 +49,13 @@ RouteService.prototype.getRoute = function(pointA, pointB, profile) {
     });
   };
 
-function routeToCarDirective(MapsLoader, $q, routeService, mapsEvents,$rootScope) {
+function routeToLocationDirective(MapsLoader, $q, routeService, mapsEvents,$rootScope) {
     var self = this;
     this.drawRoute = function(L, startLocation, destinyLocation, mapInstance, scope) {
       return routeService.getRoute(startLocation.getLatLng(), destinyLocation.getLatLng())
         .then(function(result) {
           var coordinates = [];
-          if(typeof result.route.routePoints =='undefined'){
+          if (_.isUndefined(result.route) || _.isUndefined(result.route.routePoints)) {
             return;
           }
           result.route.routePoints.forEach(function(p) {
@@ -177,50 +177,55 @@ function routeDistanceDirective(mapsEvents) {
   }
 }
 function destinyLocationDirective(MapsLoader, $q, mapsEvents) {
-  function link(scope, element, attrs, ctrl) {
-        MapsLoader.getMap.then(function(L) {
-          ctrl.mapInstance.then(function(mapInstance) {
 
-           var waiveCarIcon = L.icon({
-            iconUrl: 'img/active-waivecar.svg',
-            iconRetinaUrl: 'img/active-waivecar.svg',
+  function link($scope, element, attrs, ctrl) {
+
+    function setRoute() {
+      console.log('display');
+      MapsLoader.getMap.then(function(L) {
+        ctrl.mapInstance.then(function(mapInstance) {
+
+          var waiveCarIcon = L.icon({
+            iconUrl: '/img/active-waivecar.svg',
+            iconRetinaUrl: '/img/active-waivecar.svg',
             iconSize: [20, 25],
             iconAnchor: [10, 25],
             popupAnchor: [0 , 0]
           });
-            function handleMarker(destiny) {
-                  if (typeof scope.marker != 'undefined') {
-                    scope.marker.setLatLng([destiny.latitude, destiny.longitude]);
-                  } else {
-                    scope.marker = L.marker([destiny.latitude, destiny.longitude], {icon: waiveCarIcon}).addTo(mapInstance);
-                    ctrl.solveDestiny(scope.marker);
-                  }
-                }
-            var initialDestiny = scope.getInitialDestiny();
-            if (!initialDestiny) {
-              return;
-            }
-            scope.$on(mapsEvents.destinyOnRouteChanged, function(ev, destiny) {
-              handleMarker(destiny);
-            });
-            handleMarker(initialDestiny);
-          });
-        });
-      }
-  return {
-        restrict: 'E',
-        link: link,
-        require: '^map',
-        scope: {
-          getInitialDestiny: '&'
-        }
 
+          if ($scope.marker) {
+            $scope.marker.setLatLng([ $scope.location.latitude, $scope.location.longitude ]);
+          } else {
+            $scope.marker = L.marker([ $scope.location.latitude, $scope.location.longitude ], { icon: waiveCarIcon }).addTo(mapInstance);
+          }
+        });
+      });
+    };
+
+    $scope.$watch('location', function(newValue, oldValue) {
+      if (!newValue || newValue === oldValue) {
+        return;
       }
+      setRoute();
+
+    }, true);
+
+    if ($scope.location) setRoute();
+  };
+
+  return {
+    restrict : 'E',
+    link     : link,
+    require  : '^map',
+    scope    : {
+      location : '='
+    }
+  }
 }
 
 function routeInformationDirective() {
   return {
-    templateUrl: 'modules/maps/templates/routeInformation.html'
+    templateUrl: 'modules/maps/templates/route-information.html'
   }
 
 }
@@ -241,4 +246,4 @@ angular.module('Maps.route', ['Maps'])
 
 .directive('routeInformation', routeInformationDirective)
 .directive('destinyLocation', ['MapsLoader', '$q', 'mapsEvents', destinyLocationDirective])
-.directive('routeToCar', ['MapsLoader', '$q', 'routeService', 'mapsEvents','$rootScope', routeToCarDirective])
+.directive('routeToLocation', ['MapsLoader', '$q', 'routeService', 'mapsEvents','$rootScope', routeToLocationDirective])

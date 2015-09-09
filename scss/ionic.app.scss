@@ -3,11 +3,19 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 @import 'colors';
 @import 'fonts';
 @import 'sizes';
+@import "www/lib/ionic/scss/ionic";
+@import 'layout';
+@import 'auth';
+@import 'directives';
+@import 'form';
+@import 'map';
+@import 'bookings';
+
 //On percent of container we need to calculat as VH is from the viewPort
 // $mainTitleVhSize: (($barHeight/100) * $mainTitleHeightPercent);  */
 
 // Include all of Ionic
-@import "www/lib/ionic/scss/ionic";
+
 .vertical-aligned{
    @include vertical-align;
    display: inline-block;
@@ -81,10 +89,16 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
       &.button-assertive{
         background-color: $assertive;
         color:#FFF;
-
       }
-       &.button-dark{
+      &.button-energized{
+        background-color: $energized;
+        color:#FFF;
+      }
+      &.button-dark{
            background-color: $dark;
+      }
+      &.button-gray {
+        background-color: $gray2;
       }
       &.button-padded{
         text-transform: uppercase;
@@ -519,36 +533,13 @@ body .scroll-content{
 .full-page{
   text-align: center;
 }
-label.item.item-input{
-  width: 90%;
-  margin: 0 auto;
-  text-align: left;
-}
-.mobileFlag{
-  height: 1em;
-
-}
-.errorContainer{
-
-  width: 90%;
-  margin: 0 auto;
-  padding-top: 1em;
-  p{
-    text-align: left;
-  }
-  img{
-    height: 1rem;
-    margin-right: 1rem;
-
-  }
-}
-@import "www/components/layout/layout.scss";
-@import "www/components/cars/style.scss";
-@import "www/components/bookings/style.scss";
-@import "www/components/maps/style.scss";
-@import "www/components/ads/style.scss";
-@import "www/components/ride/style.scss";
-@import "www/components/licenses/style.scss";
-@import "www/components/login/login.scss";
-@import "www/components/vision/style.scss";
-@import "www/components/contact/style.scss";
+// @import "www/components/layout/layout.scss";
+// @import "www/components/cars/style.scss";
+// @import "www/components/bookings/style.scss";
+// @import "www/components/maps/style.scss";
+// @import "www/components/ads/style.scss";
+// @import "www/components/ride/style.scss";
+// @import "www/components/licenses/style.scss";
+// @import "www/components/login/login.scss";
+// @import "www/components/vision/style.scss";
+// @import "www/components/contact/style.scss";
