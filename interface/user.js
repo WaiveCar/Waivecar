@@ -1,7 +1,7 @@
 'use strict';
 
 Reach.Register.Model('User', 'sequelize', function (model, Sequelize) {
-  
+
   /**
    * The identity of the table created in your database.
    * @property table
@@ -23,7 +23,8 @@ Reach.Register.Model('User', 'sequelize', function (model, Sequelize) {
     facebook  : { type : Sequelize.STRING(64) },
     twitter   : { type : Sequelize.STRING(64) },
     linkedin  : { type : Sequelize.STRING(64) },
-    stripeId  : { type : Sequelize.STRING(64) }
+    stripeId  : { type : Sequelize.STRING(64) },
+    status    : { type : Sequelize.ENUM('active', 'suspended'), defaultValue : 'active' }
   };
 
   /**
