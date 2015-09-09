@@ -9,6 +9,7 @@ angular.module('app.services', []);
 window.app = angular.module('app', [
   'ionic',
   'ngResource',
+  'ngMessages',
   'ngFitText',
   'ui.router',
   'btford.socket-io',
@@ -36,7 +37,9 @@ window.app.config([
   '$httpProvider',
   '$urlRouterProvider',
   '$compileProvider',
-  function($ionicConfigProvider, $stateProvider, $locationProvider, $httpProvider, $urlRouterProvider, $compileProvider) {
+  '$provide',
+  '$injector',
+  function ($ionicConfigProvider, $stateProvider, $locationProvider, $httpProvider, $urlRouterProvider, $compileProvider, $provide, $injector) {
 
     $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|tel):/);
 
@@ -44,6 +47,78 @@ window.app.config([
 
     $ionicConfigProvider.views.transition('platform');
 
+    $provide.decorator("$exceptionHandler", [
+      '$delegate',
+      '$window',
+      function ($delegate, $window) {
+
+        return function (exception, cause) {
+          var $message = $injector.get("$messageProvider").$get();
+          $delegate(exception, cause);
+
+          var data = {
+            type: 'angular',
+            url: window.location.hash,
+            localtime: Date.now()
+          };
+          if (cause) {
+            data.cause = cause;
+          }
+
+          if (exception) {
+            if (exception.message) {
+              data.message = exception.message;
+            }
+            if (exception.name) {
+              data.name = exception.name;
+            }
+            if (exception.stack) {
+              data.stack = exception.stack;
+            }
+          }
+
+          $message.error(data.message);
+
+          // catch exceptions out of angular
+          window.onerror = function (message, url, line, col, error) {
+            var $message = $injector.get("$messageProvider").$get();
+
+            // var stopPropagation = debug ? false : true;
+            var data = {
+              type: 'javascript',
+              url: window.location.hash,
+              localtime: Date.now()
+            };
+            if (message) {
+              data.message = message;
+            }
+            if (url) {
+              data.fileName = url;
+            }
+            if (line) {
+              data.lineNumber = line;
+            }
+            if (col) {
+              data.columnNumber = col;
+            }
+            if (error) {
+              if (error.name) {
+                data.name = error.name;
+              }
+              if (error.stack) {
+                data.stack = error.stack;
+              }
+            }
+
+            // $message.error(data.message);
+            // console.log(data.message);
+            return true;
+            // return stopPropagation;
+
+          };
+        }
+      }
+    ]);
 
     // not required:
     // 9-Connect with facebook@2x.png
@@ -65,7 +140,6 @@ window.app.config([
     // 27-Low-battery@2x.png
     // 28-Low-time@2x.png
     // 33-Summary@2x.png
-
 
     $stateProvider
       // 1-Intro@2x.png
@@ -206,40 +280,42 @@ window.app.config([
         }
       })
       .state('licenses-show', {
-        url         : '/licenses/:id',
-        templateUrl : '/templates/licenses/show.html',
-        data        : {
-          auth : true
+        url: '/licenses/:id',
+        templateUrl: '/templates/licenses/show.html',
+        data: {
+          auth: true
         }
       })
-      // 11-Drivers-id@2x.png / 11.05-Drivers-id-uploading-photo@2x.png / 11.06-Drivers-id-photo-uploaded@2x.png //     / 30-Drivers-license@2x.png
-      .state('licenses-edit', {
-        url         : '/licenses/:id/edit',
-        templateUrl : '/templates/licenses/edit.html',
-        data        : {
-          auth : true
-        }
-      })
-      // 36-Our-vision@2x.png
-      .state('vision', {
-        url         : '/vision',
-        templateUrl : '/templates/vision/index.html',
-        data        : {
-          auth : true
-        }
-      })
-      .state('ads', {
-        url         : '/ads',
-        templateUrl : '/templates/ads/index.html',
-        params : {
-          redirectUrl    : null,
-          redirectParams : null
-        }
-      })
-      .state('errors-show', {
-        url         : '/errors/:id',
-        templateUrl : '/templates/errors/show.html'
-      });
+    // 11-Drivers-id@2x.png / 11.05-Drivers-id-uploading-photo@2x.png / 11.06-Drivers-id-photo-uploaded@2x.png //     / 30-Drivers-license@2x.png
+    .state('licenses-edit', {
+      url: '/licenses/:id/edit',
+      templateUrl: '/templates/licenses/edit.html',
+      data: {
+        auth: true
+      }
+    })
+    // 36-Our-vision@2x.png
+    .state('vision', {
+      url: '/vision',
+      templateUrl: '/templates/vision/index.html',
+      data: {
+        auth: true
+      }
+    })
+
+    .state('ads', {
+      url: '/ads',
+      templateUrl: '/templates/ads/index.html',
+      params: {
+        redirectUrl: null,
+        redirectParams: null
+      }
+    })
+
+    .state('errors-show', {
+      url: '/errors/:id',
+      templateUrl: '/templates/errors/show.html'
+    });
 
     $urlRouterProvider.otherwise('/');
 
@@ -250,7 +326,7 @@ window.app.run([
   '$ionicPlatform',
   '$rootScope',
   function Run($ionicPlatform, $rootScope) {
-    $ionicPlatform.ready(function() {
+    $ionicPlatform.ready(function () {
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard for form inputs)
       if (window.cordova && window.cordova.plugins.Keyboard) {
         cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);

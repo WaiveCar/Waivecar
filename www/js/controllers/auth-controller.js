@@ -3,7 +3,8 @@ angular.module('app.controllers').controller('AuthController', [
   '$scope',
   '$state',
   '$auth',
-  function ($rootScope, $scope, $state, $auth) {
+  '$message',
+  function ($rootScope, $scope, $state, $auth, $message) {
     $scope.forms  = {
       loginForm  : {
         from : 'app'
