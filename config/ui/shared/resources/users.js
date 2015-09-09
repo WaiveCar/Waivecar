@@ -36,7 +36,7 @@ module.exports = {
       type        : 'table',
       name        : 'Users',
       description : null,
-      fields      : [ 'id', 'firstName', 'lastName', 'role', 'email' ],
+      fields      : [ 'id', 'email', 'firstName', 'lastName', 'role', 'status' ],
       actions     : {
         cancel : true,
         create : true,
@@ -76,7 +76,7 @@ module.exports = {
       route   : '/users/:id',
       type    : 'form',
       name    : 'User',
-      fields  : [ 'id', 'firstName', 'lastName', 'role', 'email' ],
+      fields  : [ 'id', 'firstName', 'lastName', 'role', 'email', 'status' ],
       actions : {
         cancel : true,
         create : false,
@@ -100,6 +100,21 @@ module.exports = {
       ],
       label    : 'Role',
       helpText : 'Select a Role'
+    },
+    status : {
+      component : 'select',
+      options   : [
+        {
+          name  : 'Active',
+          value : 'active'
+        },
+        {
+          name  : 'Suspended',
+          value : 'suspended'
+        }
+      ],
+      label    : 'Status',
+      helpText : 'Select a Status'
     },
     firstName : {
       component : 'input',
