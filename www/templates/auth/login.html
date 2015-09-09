@@ -1,16 +1,21 @@
 <ion-pane class="auth auth-login" ng-controller="AuthController">
-    <form name="form" ng-submit="login()">
-    <ion-content class="full-page  has-footer-bar" scroll="false">
-      <page-title>sign in</page-title>
-      <button type="button" class="button button-blue button-padded facebook-button" ng-click="connectWithFacebook()">
-        <img src="img/facebook.svg" class="service-icon">
-        <span>Login with Facebook</span>
-      </button>
-      <lined>Or</lined>
+
+  <ion-content class="full-page has-footer-bar" scroll="false">
+
+    <page-title>sign in</page-title>
+
+    <button type="button" class="button button-blue button-padded facebook-button" ng-click="connectWithFacebook()">
+      <img src="img/facebook.svg" class="service-icon">
+      <span>Login with Facebook</span>
+    </button>
+
+    <lined>Or</lined>
+
+    <form name="form" ng-submit="login(form)" id="form" novalidate>
       <div class="list">
         <label class="item item-input">
           <span class="input-label">Email</span>
-          <input type="email" placeholder="john@example.com" name="email" ng-model="forms.loginForm.email" required />
+          <input type="email" placeholder="john@example.com" name="email" ng-model="forms.loginForm.email" required autofocus />
         </label>
         <label class="item item-input">
           <span class="input-label">Password</span>
@@ -23,13 +28,17 @@
           <div class="help-block" ng-show="form.password.$dirty && form.password.$error.minlength">Password must be greater than 5 characters</div>
         </div>
       </div>
-      <a ui-sref="auth-forgot-password" class="bottomTextInfo">Forgot your password?</a>
-    </ion-content>
-    <div class="bar bar-footer">
-      <div class="footer-buttons">
-        <button class="button button-gray" ui-sref="auth">Cancel</button>
-        <button type="submit" class="button button-balanced" ng-class="{ 'btn-disabled' : form.$pristine || form.$invalid }" ng-disabled="form.$pristine || form.$invalid">Continue</button>
-      </div>
+    </form>
+
+    <a ui-sref="auth-forgot-password" class="padding-top">Forgot your password?</a>
+
+  </ion-content>
+
+  <div class="bar bar-footer">
+    <div class="footer-buttons">
+      <button class="button button-gray" ui-sref="auth">Cancel</button>
+      <button type="submit" form="form" class="button button-balanced" ng-class="{ 'btn-disabled' : form.$pristine || form.$invalid }" ng-disabled="form.$pristine || form.$invalid">Continue</button>
     </div>
-  </form>
+  </div>
+
 </ion-pane>
