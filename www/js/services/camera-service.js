@@ -9,8 +9,6 @@ angular.module('app.services').factory('CameraService', [
     var fileUploadURL = $config.uri.api + '/files/local';
 
     function getPicture(width, height, upload) {
-      console.log('$window.Camera', JSON.stringify(window.Camera));
-      // console.log('navigator.Camera', window.Camera, navigator.Camera, navigator.camera, window.cordova);
 
       if (!$window.Camera) {
         return $q.reject('This feature works only on mobile');
@@ -47,13 +45,9 @@ angular.module('app.services').factory('CameraService', [
         Connection: 'close'
       };
       options.fileKey = 'file';
-      // options.fileName = fileUri.substr(fileUri.lastIndexOf('/') + 1);
-      options.fileName = 'license';
+      options.fileName = fileUri.substr(fileUri.lastIndexOf('/') + 1);
       options.mimeType = 'image/jpeg';
       options.withCredentials = true;
-
-      // fileUri = $window.FileEntry.toURL(fileUri);
-      // console.log('Uploading', fileUri, 'with', JSON.stringify(options), fileUploadURL);
 
       var ft = new $window.FileTransfer();
 
@@ -70,17 +64,20 @@ angular.module('app.services').factory('CameraService', [
 
       var errorCb = function (response) {
         console.log('File upload error', JSON.stringify(response));
-        defered.reject(response);
+        return $cordovaCamera.cleanup()
+          .then(function () {
+            defered.reject(response);
+          });
       };
 
-    // window.resolveLocalFileSystemURL(fileUri, function (fileEntry) {
-    //   console.log('fileEntry', JSON.stringify(fileEntry));
-    //   var url = fileEntry.toURL();
-    //   console.log('url', url);
+      // window.resolveLocalFileSystemURL(fileUri, function (fileEntry) {
+      //   console.log('fileEntry', JSON.stringify(fileEntry));
+      //   var url = fileEntry.toURL();
+      //   console.log('url', url);
 
-    //   url = url.replace('/storage/emulated/0', '/sdcard');
+      //   url = url.replace('/storage/emulated/0', '/sdcard');
 
-    // }, defered.reject);
+      // }, defered.reject);
       ft.upload(fileUri, encodeURI(fileUploadURL), successCb, errorCb, options, true);
 
       return defered.promise;

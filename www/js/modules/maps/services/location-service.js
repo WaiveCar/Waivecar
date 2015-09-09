@@ -86,5 +86,4 @@ angular.module('Maps').service('LocationService', [
     return service;
 
   }
-
 ]);

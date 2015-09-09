@@ -38,6 +38,7 @@ angular.module('app.controllers').controller('LicenseController', [
 
     };
 
+
     $scope.createLicense = function () {
       $data.create('licenses', $scope.forms.licenseForm, function (err) {
         if (err) {

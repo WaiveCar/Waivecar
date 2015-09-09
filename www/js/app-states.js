@@ -102,24 +102,6 @@ window.app.config([
         auth: true
       }
     })
-    // 19-Connecting-to-waivecar@2x .png
-    // 19.1-Reporta-problem@2x.png
-    // 19.2-Report-problem-success@2x.png
-    .state('bookings-prepare', {
-      url: '/bookings/:id/prepare',
-      templateUrl: '/templates/bookings/prepare.html',
-      data: {
-        auth: true
-      }
-    })
-      .state('bookings-in-progress', {
-        url: '/bookings/:id/in-progress',
-        templateUrl: '/templates/bookings/in-progress.html',
-        data: {
-          auth: true
-        }
-      })
-
     // 14-Find-waivecar@2x .png
     .state('cars', {
       url: '/cars',
