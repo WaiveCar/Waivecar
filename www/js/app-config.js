@@ -103,12 +103,21 @@ window.app.config([
 window.app.run([
   '$cordovaKeyboard',
   '$cordovaStatusbar',
-  function Run($cordovaKeyboard, $cordovaStatusbar) {
+  '$ionicPlatform',
+  function Run($cordovaKeyboard, $cordovaStatusbar, $ionicPlatform) {
     'use strict';
 
-    $cordovaKeyboard.hideAccessoryBar(true);
-    // styles: Default : 0, LightContent: 1, BlackTranslucent: 2, BlackOpaque: 3
-    $cordovaStatusbar.style(0);
+    $ionicPlatform.ready(function () {
+
+      if (ionic.Platform.isWebView()) {
+
+        $cordovaKeyboard.hideAccessoryBar(true);
+        // styles: Default : 0, LightContent: 1, BlackTranslucent: 2, BlackOpaque: 3
+        $cordovaStatusbar.style(0);
+
+      }
+
+    });
 
   }
 ]);
