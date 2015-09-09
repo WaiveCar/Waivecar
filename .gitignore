@@ -43,10 +43,10 @@ sftp-config.json
 node_modules
 
 #===========================================================
-# Modules & Services
+# Modules & Providers
 #===========================================================
 #
-# By default all modules and services are ommited from
+# By default all modules and providers are ommited from
 # github uploads much like node_modules. If you have private
 # packages you can make them visible via the ! marker.
 # ex. !**/private-module
@@ -54,9 +54,9 @@ node_modules
 #===========================================================
 
 modules/*
-services/*
+providers/*
 modules/**/cache.json
-services/**/cache.json
+providers/**/cache.json
 !**/license
 !**/waivecar
 !**/gm-api
