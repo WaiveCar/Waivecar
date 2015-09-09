@@ -5,7 +5,9 @@ angular.module('app.controllers').controller('AuthController', [
   '$auth',
   function ($rootScope, $scope, $state, $auth) {
     $scope.forms  = {
-      loginForm  : {},
+      loginForm  : {
+        from : 'app'
+      },
       forgotForm : {},
       resetForm  : {}
     };
