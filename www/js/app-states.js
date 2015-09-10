@@ -122,6 +122,10 @@ window.app.config([
       url: '/messages/new',
       templateUrl: '/templates/messages/new.html'
     })
+    .state('messages-sent', {
+      url: '/messages/sent',
+      templateUrl: '/templates/messages/sent.html'
+    })
     // 31-Payment-method@2x.png BUT SHOULD SHOW LAST 4 Digits (and perhaps even a List of all registered cards)
     .state('credit-cards', {
       url: '/credit-cards',

@@ -2,6 +2,7 @@ angular.module('app.directives')
   .directive('advertisement', [
 
     function advertisementDirective() {
+      'use strict';
 
       return {
         templateUrl: 'templates/directives/advertisement.html',
@@ -17,14 +18,14 @@ angular.module('app.directives')
               if ($state.params.redirectUrl == null) {
                 $state.go('fleet');
               }
-            }
+            };
 
             var timeOutFn = function () {
               $state.go($state.params.redirectUrl, $state.params.redirectParams);
-            }
+            };
 
             $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
-              if (toState.name == 'ads') {
+              if (toState.name === 'ads') {
                 $timeout(timeOutFn, 2000);
               }
             });

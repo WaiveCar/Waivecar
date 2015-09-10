@@ -1,7 +1,10 @@
-<ion-pane class="credit-cards-component" ng-controller="CreditCardsController as cardsCtrl">
+<!--
+  Port this screen to the ones already layouted
+-->
+<ion-pane class="credit-cards-component" ng-controller="LicensesController as licensesCtrl">
   <ion-header-bar class="bar bar-header bar-light">
      <div class="header-text">
-        <h1 class="header-title">Credit Cards</h1>
+        <h1 class="header-title">Driver's License</h1>
     </div>
     <button class="button button-right" ng-click="showNav()">
       <img src="img/menu.svg" >
@@ -9,11 +12,11 @@
   </ion-header-bar>
   <ion-content scroll="false">
     <ion-list show-delete="true" show-reorder="true" can-swipe="true">
-      <ion-item ng-repeat="card in cardsCtrl.active.users.creditCards" class="item-thumbnail-left" ng-controller="CreditCardController as cardCtrl">
+      <ion-item ng-repeat="license in licensesCtrl.active.users.licenses" class="item-thumbnail-left" ng-controller="LicenseController as licenseCtrl">
         <img />
-        <h2>{{ card.last4Digits }}</h2>
-        <p>{{ card.expiry }}</p>
-        <ion-delete-button class="ion-minus-circled" ng-click="cardCtrl.remove()">
+        <h2>{{ license.id }}</h2>
+        <p>{{ license.expiry }}</p>
+        <ion-delete-button class="ion-minus-circled" ng-click="licenseCtrl.remove()">
         </ion-delete-button>
       </ion-item>
     </ion-list>

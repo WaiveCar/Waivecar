@@ -10,7 +10,9 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 @import 'form';
 @import 'map';
 @import 'bookings';
-@import '_license';
+@import '_licenses';
+@import '_ads';
+@import '_messages';
 
 //On percent of container we need to calculat as VH is from the viewPort
 // $mainTitleVhSize: (($barHeight/100) * $mainTitleHeightPercent);  */

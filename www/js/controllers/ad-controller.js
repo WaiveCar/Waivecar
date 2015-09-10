@@ -1,12 +1,12 @@
 angular.module('app.controllers').controller('AdController', [
-  '$rootScope',
   '$scope',
-  '$state',
-  function ($rootScope, $scope, $state) {
+  function ($scope) {
+    'use strict';
 
-    $scope.init = function() {
-    };
+    $scope.init = function () {};
 
     $scope.init();
+
   }
+
 ]);
