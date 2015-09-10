@@ -11,12 +11,12 @@ label.item.item-input{
   }
 }
 
-.validations {
+.validations, [ng-messages] {
   width       : 90%;
   margin      : 0 auto;
   padding-top : 1em;
   text-align  : left;
-  .help-block {
+  .help-block, [ng-message] {
     display     : block;
     margin      : 0;
     padding     : 0;

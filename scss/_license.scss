@@ -1,0 +1,36 @@
+.license-details-container {
+  form {
+    margin-bottom: 9.33%;
+    margin-top: 9.33%;
+  }
+
+  .double-buttons {
+    margin-top: 9.33%;
+  }
+}
+
+#license-photo {
+  #buttons-container {
+    margin-top: 5.25%;
+
+    .button:first-child {
+      margin-bottom: 2.25%;
+    }
+  }
+
+  #skip-information {
+    position: absolute;
+    bottom: 0;
+    margin-bottom: 5.25%;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+
+    a {
+      text-decoration: underline;
+    }
+
+  }
+
+}

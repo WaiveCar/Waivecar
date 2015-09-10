@@ -8,45 +8,46 @@ angular.module('app.services').factory('$data', [
   'Users',
   'Licenses',
   function ($rootScope, $http, $socket, Bookings, Cars, Locations, Users, Licenses) {
+    'use strict';
 
     var service = {
 
-      resources : {
-        bookings  : Bookings,
-        cars      : Cars,
-        licenses  : Licenses,
-        locations : Locations,
-        users     : Users
+      resources: {
+        bookings: Bookings,
+        cars: Cars,
+        licenses: Licenses,
+        locations: Locations,
+        users: Users
       },
 
-      me : undefined,
+      me: void 0,
 
-      userLocation : {},
+      userLocation: {},
 
-      models : {},
+      models: {},
 
-      active : {},
+      active: {},
 
       isSubscribed: false,
 
-      initialize : function(modelName, next) {
+      initialize: function (modelName, next) {
         service.models[modelName] = [];
         return service.fetch(modelName, {}, next);
       },
 
-      fetch: function(modelName, filter, next) {
+      fetch: function (modelName, filter, next) {
         // todo: add support for filter query params.
-        var items = service.resources[modelName].query(function() {
+        var items = service.resources[modelName].query(function () {
           service.mergeAll(modelName, items);
-          if(typeof next =='function'){
-              next();
+          if (typeof next === 'function') {
+            next();
           }
         });
       },
 
-      create: function(modelName, data, next) {
+      create: function (modelName, data, next) {
         var instance = new service.resources[modelName](data);
-        instance.$save(function(model) {
+        instance.$save(function (model) {
           service.merge(modelName, model.toJSON());
           service.activateKnownModel(modelName, model.id, next);
         }, function(error) {
@@ -54,7 +55,7 @@ angular.module('app.services').factory('$data', [
         });
       },
 
-      update: function(modelName, data, next) {
+      update: function (modelName, data, next) {
         var instance = new service.resources[modelName](data);
         instance.$update(function(model) {
           service.merge(modelName, model.toJSON());
@@ -65,7 +66,7 @@ angular.module('app.services').factory('$data', [
         });
       },
 
-      remove: function(modelName, id, next) {
+      remove: function (modelName, id, next) {
         service.resources[modelName].remove({ id: id }, function(res) {
           service.purge(modelName, id);
         }, function(error) {
@@ -73,32 +74,32 @@ angular.module('app.services').factory('$data', [
         });
       },
 
-      createCreditCard: function(data, next) {
+      createCreditCard: function (data, next) {
         var customer = {
-          "data" : {
-            "metadata" : {}
+          data: {
+            metadata: {}
           }
         };
 
-        service.resources.users.createCustomer(customer, function(err) {
+        service.resources.users.createCustomer(customer, function (err) {
           service.resources.users.createCard(data, next);
         });
       },
 
-      removeCreditCard: function(data, next) {
+      removeCreditCard: function (data, next) {
         return next(null, data);
       },
 
       // client-side manipulation only
-      mergeAll: function(modelName, models) {
-        _.each(models, function(item) {
+      mergeAll: function (modelName, models) {
+        _.each(models, function (item) {
           var model = item.toJSON ? item.toJSON() : item;
           service.merge(modelName, model);
         });
       },
 
       // client-side manipulation only
-      merge: function(modelName, model) {
+      merge: function (modelName, model) {
         if (!model) return null;
         if (!service.models[modelName]) service.models[modelName] = [];
         var existing = service.getExisting(modelName, model.id);
@@ -111,7 +112,7 @@ angular.module('app.services').factory('$data', [
       },
 
       // client-side manipulation only
-      purge: function(modelName, id) {
+      purge: function (modelName, id) {
         if (service.active[modelName] && service.active[modelName].id.toString() === id.toString()) {
           service.deactivate(modelName);
         }
@@ -123,22 +124,22 @@ angular.module('app.services').factory('$data', [
       },
 
       // client-side manipulation only
-      activateKnownModel : function(modelName, id, next) {
+      activateKnownModel: function (modelName, id, next) {
         var existing = service.getExisting(modelName, id);
         if (existing) {
           service.active[modelName] = existing;
           return next(null, service.active[modelName]);
         }
 
-        service.fetch(modelName, {}, function(err) {
+        service.fetch(modelName, {}, function (err) {
           var existing = service.getExisting(modelName, id);
           service.active[modelName] = existing;
           return next(null, service.active[modelName]);
         });
       },
 
-      getExisting : function(modelName, id) {
-        var existing = _.find(service.models[modelName], function(m) {
+      getExisting: function (modelName, id) {
+        var existing = _.find(service.models[modelName], function (m) {
           return m.id.toString() === id.toString();
         });
 
@@ -146,9 +147,9 @@ angular.module('app.services').factory('$data', [
       },
 
       // client-side manipulations only
-      activate : function(modelName, id, next) {
+      activate: function (modelName, id, next) {
         if (!service.models[modelName]) {
-          service.initialize(modelName, function(err) {
+          service.initialize(modelName, function (err) {
             if (err) return next(err);
             service.activateKnownModel(modelName, id, next);
           });
@@ -158,29 +159,29 @@ angular.module('app.services').factory('$data', [
       },
 
       // client-side manipulations only
-      deactivate: function(modelName, next) {
+      deactivate: function (modelName, next) {
         delete service.active[modelName];
         if (next && _.isFunction(next)) return next();
       },
 
-      subscribe: function() {
-        $socket.emit('subscribe', {}, function(err) {
-          if (err) {
-            console.error('error', err);
-          } else {
-            service.isSubscribed = true;
-          }
-        });
+      subscribe: function () {
+        // $socket.emit('subscribe', {}, function (err) {
+        //   if (err) {
+        //     console.error('error', err);
+        //   } else {
+        //     service.isSubscribed = true;
+        //   }
+        // });
       },
 
-      unsubscribe: function() {
+      unsubscribe: function () {
         if (service.isSubscribed) {
-          $socket.emit('unsubscribe', {}, function(err) {
-            if (err) {
-              console.error('error', err);
-            }
-            service.isSubscribed = false;
-          });
+          // $socket.emit('unsubscribe', {}, function (err) {
+          //   if (err) {
+          //     console.error('error', err);
+          //   }
+          //   service.isSubscribed = false;
+          // });
         }
       }
     };
@@ -192,7 +193,7 @@ angular.module('app.services').factory('$data', [
     //   }
     // });
 
-    $socket.on('relay', function(resource, action) {
+    $socket.on('relay', function (resource, action) {
       var model = action[resource];
 
       if (resource === 'users') {
@@ -202,20 +203,20 @@ angular.module('app.services').factory('$data', [
         return;
       }
 
-      switch(action.type) {
-        case 'show':
-        case 'store':
-        case 'update':
-        case 'index':
-          if (_.isArray(model)) {
-            service.mergeAll(resource, model);
-          } else {
-            service.merge(resource, model);
-          }
-          break;
-        case 'delete':
-          service.purge(resource, model);
-          break;
+      switch (action.type) {
+      case 'show':
+      case 'store':
+      case 'update':
+      case 'index':
+        if (_.isArray(model)) {
+          service.mergeAll(resource, model);
+        } else {
+          service.merge(resource, model);
+        }
+        break;
+      case 'delete':
+        service.purge(resource, model);
+        break;
       }
     });
 

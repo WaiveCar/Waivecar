@@ -4,47 +4,51 @@ angular.module('Maps').service('LocationService', [
   '$q',
   'MapsEvents',
   '$state',
-  function($rootScope, $cordovaGeolocation, $q, MapsEvents, $state) {
+  '$message',
+  function ($rootScope, $cordovaGeolocation, $q, MapsEvents, $state, $message) {
+    'use strict';
 
     var service = {
 
-      setManualPosition : function(latitude,longitude) {
+      setManualPosition: function (latitude, longitude) {
         service.manualPosition = {
-          latitude  : latitude,
-          longitude : longitude
+          latitude: latitude,
+          longitude: longitude
         };
 
         $rootScope.$broadcast(MapsEvents.positionChanged, service.manualPosition);
       },
 
-      watch : null,
+      init: function () {
+        service.initPositionWatch();
+      },
 
-      initPositionWatch : function() {
+      initPositionWatch: function () {
         var posOptions = {
-          maximumAge         : 2000,
-          timeout            : 6000,
-          enableHighAccuracy : false
+          maximumAge: 3000,
+          timeout: 8000,
+          enableHighAccuracy: true
         };
 
         service.watch = $cordovaGeolocation.watchPosition(posOptions);
 
-        service.watch.then(null, function(err) {
+        service.watch.then(null, function (err) {
           console.log('error in retrieving current location');
           console.log(err);
-        }, function(position) {
+        }, function (position) {
           console.log('updating location to ' + position.coords.latitude + ', ' + position.coords.longitude);
           $rootScope.currentLocation = {
-            latitude  : position.coords.latitude,
-            longitude : position.coords.longitude
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
           };
         });
       },
 
-      clearWatch : function() {
+      clearWatch: function () {
         service.watch.clearWatch();
       },
 
-      getLocation : function() {
+      getLocation: function () {
         var defered = $q.defer();
         if (typeof service.manualPosition !== 'undefined' && !!service.manualPosition) {
           defered.resolve(service.manualPosition);
@@ -52,24 +56,24 @@ angular.module('Maps').service('LocationService', [
         }
 
         var posOptions = {
-          maximumAge         : 3000,
-          timeout            : 8000,
-          enableHighAccuracy : true
+          maximumAge: 3000,
+          timeout: 8000,
+          enableHighAccuracy: true
         };
 
-        if (typeof service.pendingRequest !='undefined' && service.pendingRequest) {
+        if (typeof service.pendingRequest != 'undefined' && service.pendingRequest) {
           return service.pendingRequest;
         }
 
-        $cordovaGeolocation.getCurrentPosition(posOptions).then(function(position) {
+        $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
           defered.resolve({
             latitude: position.coords.latitude,
             longitude: position.coords.longitude
           });
           service.pendingRequest = null;
-        }, function(err) {
+        }, function (err) {
           defered.reject(err);
-          $state.go('location-error');
+          $message.error('We were not able to find your location, please reconnect.');
           service.pendingRequest = null;
         });
 
@@ -82,4 +86,4 @@ angular.module('Maps').service('LocationService', [
     return service;
 
   }
-])
+]);

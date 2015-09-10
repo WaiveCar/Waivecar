@@ -10,11 +10,18 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 @import 'form';
 @import 'map';
 @import 'bookings';
+@import '_license';
 
 //On percent of container we need to calculat as VH is from the viewPort
 // $mainTitleVhSize: (($barHeight/100) * $mainTitleHeightPercent);  */
 
 // Include all of Ionic
+
+.required:after {
+  content: "*";
+  vertical-align: top;
+  color: red;
+}
 
 .vertical-aligned{
    @include vertical-align;

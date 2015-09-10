@@ -1,29 +1,44 @@
 <ion-pane class="credit-cards-new" ng-controller="CreditCardController">
   <ion-content class="full-page has-footer-bar">
+
     <step-by-step current-step="4"></step-by-step>
+
     <page-title back-button="true">Payment method</page-title>
+
     <p>Don't worry, the majority of rides are free!</p>
     <p>However, fees could apply in some cases.</p>
+
     <a href="/">Check out fees Guidelines</a>
-    <form ng-submit="createCreditCard()">
-      <label class="item item-input">
-        <span class="input-label">Card Number</span>
-        <input type="text" placeholder="XXXX-XXXX-XXXX-XXXX" ng-model="forms.creditCardForm.number">
-      </label>
-      <label class="item item-input">
-        <span class="input-label">Name on Card</span>
-        <input type="text" placeholder="Cardholder Name" ng-model="forms.creditCardForm.name">
-      </label>
-      <label class="item item-input">
-        <span class="input-label">Expiry Date</span>
-        <input type="date" ng-model="forms.creditCardForm.expiry">
-      </label>
-      <label class="item item-input">
-        <span class="input-label">CVV</span>
-        <input type="text" ng-model="forms.creditCardForm.cvc">
-      </label>
+
+    <form ng-submit="createCreditCard()" name="form">
+
+      <div class="list">
+        <label class="item item-input">
+          <span class="input-label">Card Number</span>
+          <input type="text" placeholder="XXXX-XXXX-XXXX-XXXX" ng-model="forms.creditCardForm.number">
+        </label>
+
+        <label class="item item-input">
+          <span class="input-label">Name on Card</span>
+          <input type="text" placeholder="Cardholder Name" ng-model="forms.creditCardForm.name">
+        </label>
+
+        <label class="item item-input">
+          <span class="input-label">Expiry Date</span>
+          <input type="date" ng-model="forms.creditCardForm.expiry">
+        </label>
+
+        <label class="item item-input">
+          <span class="input-label">CVV</span>
+          <input type="text" ng-model="forms.creditCardForm.cvc">
+        </label>
+      </div>
+
       <button type="submit" class="button button-balanced button-padded">Add card and finish</button>
+
     </form>
+
     <p>By adding a credit card you are agreeing with our <a href="#">terms of services</a> and <a href="#">Fees Guidelines</a></p>
+
   </ion-content>
 </ion-pane>

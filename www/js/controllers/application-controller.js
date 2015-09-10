@@ -6,24 +6,27 @@ angular.module('app.controllers').controller('ApplicationController', [
   'MockLocationService',
   '$auth',
   '$data',
-  function ($rootScope, $scope, $state, $ionicPopover, LocationService, $auth, $data) {
+  '$message',
+  '$session',
+  function ($rootScope, $scope, $state, $ionicPopover, LocationService, $auth, $data, $message, $session) {
+    'use strict';
     $rootScope.isInitialized = false;
     $rootScope.models = $data.models;
     $rootScope.active = $data.active;
     $rootScope.me = $data.me;
-    $rootScope.currentLocation;
+    // $rootScope.currentLocation;
 
     $ionicPopover.fromTemplateUrl('/templates/common/menu.html', {
       scope: $scope
-    }).then(function(popover) {
+    }).then(function (popover) {
       $scope.popover = popover;
     });
 
-    $rootScope.$watch('currentLocation', function() {
+    $rootScope.$watch('currentLocation', function () {
       console.log($rootScope.currentLocation);
     });
 
-    $rootScope.$on('authError', function() {
+    $rootScope.$on('authError', function () {
       $auth.logout();
     });
 
@@ -31,7 +34,7 @@ angular.module('app.controllers').controller('ApplicationController', [
       console.log('TODO: handle socket error:');
     });
 
-    $rootScope.$on('$stateChangeStart', function(event, toState, toParams /*, fromState, fromParams */) {
+    $rootScope.$on('$stateChangeStart', function (event, toState, toParams /*, fromState, fromParams */ ) {
       var authRequired;
       if (toState && _.has(toState, 'data') && _.has(toState.data, 'auth')) {
         authRequired = toState.data.auth;
@@ -44,51 +47,81 @@ angular.module('app.controllers').controller('ApplicationController', [
       } else if (!isAuthenticated && authRequired) {
         $state.go('auth');
       }
+
     });
 
-    $scope.logout = function() {
-      $auth.logout(function(err) {
+    $scope.logout = function () {
+      $auth.logout(function (err) {
+        if (err) {
+          return $message.error(err);
+        }
         $scope.popover.hide();
         $state.go('landing');
       });
+
     };
 
-    $scope.showNav = function($event) {
-      console.log('asd')
+    $scope.showNav = function ($event) {
       $scope.popover.show($event);
-    }
+    };
 
-    $scope.hideNav = function() {
+    $scope.hideNav = function () {
       $scope.popover.hide();
-    }
+    };
 
-    $scope.locateMe = function() {
-      LocationService.getLocation().then(function(deviceLocation) {
+    $scope.locateMe = function () {
+      LocationService.getLocation().then(function (deviceLocation) {
         $rootScope.currentLocation = deviceLocation;
-      })
-    };
-
-    $scope.fetch = function() {
-      async.parallel([
-        function(nextTask) {
-          LocationService.initPositionWatch();
-          return nextTask();
-        },
-        function(nextTask) {
-          $data.initialize('cars', nextTask);
-        },
-        function(nextTask) {
-          $data.initialize('locations', nextTask);
-        }
-      ], function(err) {
-        $rootScope.isInitialized = true;
       });
+
     };
 
-    $scope.init = function() {
+    $scope.fetch = function () {
+      async.parallel([
+
+          function (nextTask) {
+            LocationService.initPositionWatch();
+            return nextTask();
+          },
+
+          function (nextTask) {
+            if (!$auth.isAuthenticated()) {
+              return nextTask();
+            }
+
+            $data.resources.users.me(function (me) {
+              $session.set('me', me).save();
+              $data.me = $session.get('me');
+              return nextTask();
+            });
+
+          },
+
+          function (nextTask) {
+            $data.initialize('cars', nextTask);
+          },
+
+          function (nextTask) {
+            $data.initialize('locations', nextTask);
+          }
+
+        ],
+        function (err) {
+          if (err) {
+            return $message.error(err);
+          }
+          $rootScope.isInitialized = true;
+
+        });
+
+    };
+
+    $scope.init = function () {
       $scope.fetch();
     };
 
     $scope.init();
+
   }
+
 ]);
