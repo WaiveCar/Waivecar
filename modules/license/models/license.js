@@ -15,7 +15,6 @@ Reach.Register.Model('License', 'sequelize', function (model, Sequelize) {
    * @type     Object
    */
   model.schema = {
-    id     : { type : Sequelize.STRING(64), primaryKey : true },
     userId : {
       type       : Sequelize.INTEGER,
       allowNull  : false,
@@ -31,7 +30,7 @@ Reach.Register.Model('License', 'sequelize', function (model, Sequelize) {
     birthDate  : { type : Sequelize.DATEONLY(), allowNull : false },
     country    : { type : Sequelize.STRING(80), allowNull : false },
     state      : { type : Sequelize.STRING(20), allowNull : false },
-    fileId     : { type : Sequelize.STRING }
+    fileId     : { type : Sequelize.STRING(20), allowNull : true }
   };
 
   return model;

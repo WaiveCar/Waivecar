@@ -9,7 +9,7 @@ Reach.Register.Controller('LicensesController', function (controller) {
    * @param  {Object} post
    * @return {Void}
    */
-  controller.create = function *(post) {
+  controller.store = function *(post) {
     return yield LicenseService.create(post, this.auth.user);
   };
 
@@ -37,7 +37,7 @@ Reach.Register.Controller('LicensesController', function (controller) {
    * @return {Void}
    */
   controller.update = function *(id, data) {
-    return yield LicenseService.save(id, this.auth.user, data);
+    return yield LicenseService.update(id, this.auth.user, data);
   };
 
   /**

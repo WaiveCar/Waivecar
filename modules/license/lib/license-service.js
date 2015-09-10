@@ -1,8 +1,9 @@
 'use strict';
 
-let License = Reach.model('License');
-let error   = Reach.ErrorHandler;
-let flux    = Reach.IO.flux;
+let License  = Reach.model('License');
+let error    = Reach.ErrorHandler;
+let relay    = Reach.IO.relay;
+let resource = 'licenses';
 
 /**
  * @class LicenseService
@@ -10,19 +11,12 @@ let flux    = Reach.IO.flux;
 let LicenseService = module.exports = {};
 
 /**
- * @method create
- * @param  {Object} data
- * @param  {User}   _user
+ * @method getAll
  * @return {License}
  */
-LicenseService.create = function *(data, _user) {
-  let model = new License(data);
-  yield model.save();
-  flux({
-    actionType : 'license:stored',
-    license    : model.toJSON()
-  });
-  return model;
+LicenseService.getAll = function *() {
+  let models = yield License.find();
+  return models;
 };
 
 /**
@@ -37,29 +31,36 @@ LicenseService.get = function *(id, _user) {
   if (!model) {
     throw error.parse({
       code    : 'LICENSE_NOT_FOUND',
-      message : 'The requested license was not found in our records'
+      message : 'The requested license was not found'
     }, 404);
   }
   return model;
 };
 
 /**
- * @method getAll
+ * @method create
+ * @param  {Object} data
+ * @param  {User}   _user
  * @return {License}
  */
-LicenseService.getAll = function *() {
-  let models = yield License.find();
-  return models;
+LicenseService.create = function *(data, _user) {
+  let model = new License(data);
+  yield model.save();
+  relay(resource, {
+    type    : 'store',
+    license : model.toJSON()
+  });
+  return model;
 };
 
 /**
- * @method save
+ * @method update
  * @param  {Integer} id
  * @param  {Object}  data
  * @param  {User}    _user
  * @return {License}
  */
-LicenseService.save = function *(id, data, _user) {
+LicenseService.update = function *(id, data, _user) {
   let model = yield this.get(id);
   hasAccess(model, _user);
   for (let key in data) {
@@ -68,15 +69,15 @@ LicenseService.save = function *(id, data, _user) {
     }
   }
   yield model.update();
-  flux({
-    actionType : 'license:updated',
-    license    : model.toJSON()
+  relay(resource, {
+    type    : 'update',
+    license : model.toJSON()
   });
   return model;
 };
 
 /**
- * @method delete
+ * @method destroy
  * @param  {Integer} id
  * @param  {User}    _user
  * @return {License}
@@ -85,9 +86,9 @@ LicenseService.destroy = function *(id, _user) {
   let model = yield this.get(id);
   hasAccess(model, _user);
   yield model.delete();
-  flux({
-    actionType : 'license:destroyed',
-    license    : model.toJSON()
+  relay(resource, {
+    type    : 'delete',
+    license : model.toJSON()
   });
   return model;
 };
