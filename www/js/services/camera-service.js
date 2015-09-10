@@ -3,10 +3,11 @@ angular.module('app.services').factory('CameraService', [
   '$q',
   '$config',
   '$window',
-  function ($cordovaCamera, $q, $config, $window) {
+  '$auth',
+  function ($cordovaCamera, $q, $config, $window, $auth) {
     'use strict';
 
-    var fileUploadURL = $config.uri.api + '/files/local';
+    var fileUploadURL = $config.uri.api + '/files';
 
     function getPicture(width, height, upload) {
 
@@ -35,49 +36,37 @@ angular.module('app.services').factory('CameraService', [
 
     }
 
-    function uploadFile(width, height) {
+    function pickFile(width, height) {
       return getPicture(width, height, true);
     }
 
-    function savePicture(fileUri) {
+    function uploadPicture(fileUri) {
       var options = new $window.FileUploadOptions();
       options.headers = {
-        Connection: 'close'
+        Connection: 'close',
+        Authorization: $auth.token.token
       };
-      options.fileKey = 'file';
-      options.fileName = fileUri.substr(fileUri.lastIndexOf('/') + 1);
+      options.fileKey = 'files';
+      // options.fileName = fileUri.substr(fileUri.lastIndexOf('/') + 1);
+      options.fileName = $auth.token.token.substr(0, 10) + '_license.jpg';
       options.mimeType = 'image/jpeg';
-      options.withCredentials = true;
 
       var ft = new $window.FileTransfer();
 
       var defered = $q.defer();
 
       var successCb = function (response) {
-        console.log('File upload success', JSON.stringify(response));
-        return $cordovaCamera.cleanup()
-          .then(function () {
-            defered.resolve(response);
-          });
+        $cordovaCamera.cleanup();
+        return defered.resolve(response);
 
       };
 
       var errorCb = function (response) {
-        console.log('File upload error', JSON.stringify(response));
-        return $cordovaCamera.cleanup()
-          .then(function () {
-            defered.reject(response);
-          });
+        $cordovaCamera.cleanup();
+        return defered.reject(response);
+
       };
 
-      // window.resolveLocalFileSystemURL(fileUri, function (fileEntry) {
-      //   console.log('fileEntry', JSON.stringify(fileEntry));
-      //   var url = fileEntry.toURL();
-      //   console.log('url', url);
-
-      //   url = url.replace('/storage/emulated/0', '/sdcard');
-
-      // }, defered.reject);
       ft.upload(fileUri, encodeURI(fileUploadURL), successCb, errorCb, options, true);
 
       return defered.promise;
@@ -86,8 +75,8 @@ angular.module('app.services').factory('CameraService', [
 
     return {
       getPicture: getPicture,
-      savePicture: savePicture,
-      uploadFile: uploadFile
+      uploadPicture: uploadPicture,
+      pickFile: pickFile
     };
 
   }

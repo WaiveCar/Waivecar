@@ -8,15 +8,19 @@ angular.module('app.services').factory('$auth', [
 
       isAuthenticated: function () {
         this.token = $session.has('auth') ? $session.get('auth') : false;
-        return this.token !== false;
+        this.me = $session.has('me') ? $session.get('me') : false;
+        return !!(this.token && this.me);
       },
 
       token: $session.has('auth') ? $session.get('auth') : false,
+      me: $session.has('me') ? $session.get('me') : false,
 
       purge: function () {
         $session.purge();
         this.token = false;
+        this.me = false;
         return this;
+
       },
 
       facebookLogin: function (code, next) {
@@ -33,9 +37,10 @@ angular.module('app.services').factory('$auth', [
                 token: user.token
               }).save();
 
-              $data.me = me;
+              $session.set('me', me).save();
 
               _this.token = $session.get('auth');
+              _this.me = $data.me = $session.get('me');
 
             });
           },
@@ -61,7 +66,8 @@ angular.module('app.services').factory('$auth', [
 
           })
           .then(function (me) {
-            $data.me = me;
+            $session.set('me', me).save();
+            _this.me = $data.me = $session.get('me');
             return next(null, _user);
 
           })

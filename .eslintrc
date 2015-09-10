@@ -10,7 +10,9 @@ globals:
     ionic: true,
     cordova: true,
     StatusBar: true,
-    io: true
+    io: true,
+    async: true,
+    moment: true
 
 env:
     browser: true

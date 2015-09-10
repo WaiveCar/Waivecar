@@ -16,6 +16,12 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 
 // Include all of Ionic
 
+.required:after {
+  content: "*";
+  vertical-align: top;
+  color: red;
+}
+
 .vertical-aligned{
    @include vertical-align;
    display: inline-block;

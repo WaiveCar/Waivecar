@@ -72,7 +72,7 @@ angular.module('app.services').service('$utils', [
           }
         };
 
-        return angular.extend(additionalMethods, resource);
+        return angular.extend(resource, additionalMethods);
       }
 
     };

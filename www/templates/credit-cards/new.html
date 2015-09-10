@@ -11,22 +11,28 @@
     <a href="/">Check out fees Guidelines</a>
 
     <form ng-submit="createCreditCard()" name="form">
-      <label class="item item-input">
-        <span class="input-label">Card Number</span>
-        <input type="text" placeholder="XXXX-XXXX-XXXX-XXXX" ng-model="forms.creditCardForm.number">
-      </label>
-      <label class="item item-input">
-        <span class="input-label">Name on Card</span>
-        <input type="text" placeholder="Cardholder Name" ng-model="forms.creditCardForm.name">
-      </label>
-      <label class="item item-input">
-        <span class="input-label">Expiry Date</span>
-        <input type="date" ng-model="forms.creditCardForm.expiry">
-      </label>
-      <label class="item item-input">
-        <span class="input-label">CVV</span>
-        <input type="text" ng-model="forms.creditCardForm.cvc">
-      </label>
+
+      <div class="list">
+        <label class="item item-input">
+          <span class="input-label">Card Number</span>
+          <input type="text" placeholder="XXXX-XXXX-XXXX-XXXX" ng-model="forms.creditCardForm.number">
+        </label>
+
+        <label class="item item-input">
+          <span class="input-label">Name on Card</span>
+          <input type="text" placeholder="Cardholder Name" ng-model="forms.creditCardForm.name">
+        </label>
+
+        <label class="item item-input">
+          <span class="input-label">Expiry Date</span>
+          <input type="date" ng-model="forms.creditCardForm.expiry">
+        </label>
+
+        <label class="item item-input">
+          <span class="input-label">CVV</span>
+          <input type="text" ng-model="forms.creditCardForm.cvc">
+        </label>
+      </div>
 
       <button type="submit" class="button button-balanced button-padded">Add card and finish</button>
 

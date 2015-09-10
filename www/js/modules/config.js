@@ -1,4 +1,4 @@
-var baseUrl = 'https://api-waivecar-dev.cleverbuild.biz';
+// var baseUrl = 'https://api-waivecar-dev.cleverbuild.biz';
 
 angular.module('config', [])
   .provider('$config', [
@@ -6,7 +6,7 @@ angular.module('config', [])
     function Config() {
       'use strict';
 
-      // var baseUrl = ionic.Platform.isWebView() ? 'http://10.0.3.2:3000' : 'http://localhost:3000';
+      var baseUrl = ionic.Platform.isWebView() ? 'http://10.0.3.2:3000' : 'http://localhost:3000';
       var self = this;
 
       self.config = {

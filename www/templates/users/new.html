@@ -1,32 +1,37 @@
 <ion-pane class="users-new" ng-controller="UserController">
 
-  <ion-content class="full-page has-footer-bar">
+  <form ng-submit="createUser()" name="form" id="form" novalidate>
 
-    <wizard></wizard>
+    <ion-content class="full-page has-footer-bar">
 
-    <page-title>Register</page-title>
+      <wizard></wizard>
 
-    <button type="button" class="button button-blue button-padded facebook-button" ng-click="connectWithFacebook()">
-      <img src="img/facebook.svg" class="service-icon">
-      <span>Connect with Facebook</span>
-    </button>
+      <page-title>Register</page-title>
 
-    <lined>Or</lined>
+      <button type="button" class="button button-blue button-padded facebook-button" ng-click="connectWithFacebook()">
+        <img src="img/facebook.svg" class="service-icon">
+        <span>Connect with Facebook</span>
+      </button>
 
-    <form ng-submit="createUser()" name="form" id="form">
+      <lined>Or</lined>
+
       <div class="list">
+
         <label class="item item-input">
           <span class="input-label">First Name</span>
           <input type="text" name="firstName" placeholder="John" ng-model="forms.userForm.firstName" required />
         </label>
+
         <label class="item item-input">
           <span class="input-label">Last Name</span>
           <input type="text" name="lastName" placeholder="Smith" ng-model="forms.userForm.lastName" required />
         </label>
+
         <label class="item item-input">
           <span class="input-label">Email</span>
           <input type="email" placeholder="john@example.com" name="email" ng-model="forms.userForm.email" required />
         </label>
+
         <label class="item item-input">
           <span class="input-label mobile-label">Mobile </span>
           <i class="icon placeholder-icon">
@@ -34,10 +39,12 @@
             </i>
           <input type="text" name="mobile" placeholder="0411 099 110" ng-model="forms.userForm.mobile" required />
         </label>
+
         <label class="item item-input">
           <span class="input-label">Password</span>
           <input type="text" placeholder="* * * * * *" name="password" ng-model="forms.userForm.password" required ng-minlength="6">
         </label>
+
         <div class="validations" ng-show="form.$dirty && form.$invalid">
           <div class="help-block" ng-show="form.firtName.$dirty && form.firstName.$error.required">First Name is required</div>
           <div class="help-block" ng-show="form.lastName.$dirty && form.lastName.$error.required">Last Name is required</div>
@@ -47,18 +54,20 @@
           <div class="help-block" ng-show="form.password.$dirty && form.password.$error.required">Password is required</div>
           <div class="help-block" ng-show="form.password.$dirty && form.password.$error.minlength">Password must be greater than 5 characters</div>
         </div>
+
       </div>
-    </form>
 
-    <p class="bottomTextInfo">You won't receive any spam from us</p>
+      <p class="bottomTextInfo">You won't receive any spam from us</p>
 
-  </ion-content>
+    </ion-content>
 
-  <div class="bar bar-footer">
-    <div class="footer-buttons">
-      <button class="button button-gray" ui-sref="auth">Cancel</button>
-      <button type="submit" form="form" class="button button-balanced" ng-class="{ 'btn-disabled' : form.$pristine || form.$invalid }" ng-disabled="form.$pristine || form.$invalid">Continue</button>
+    <div class="bar bar-footer">
+      <div class="footer-buttons">
+        <button type="button" class="button button-gray" ui-sref="auth">Cancel</button>
+        <button type="submit" form="form" class="button button-balanced" ng-class="{ 'btn-disabled' : form.$pristine || form.$invalid }" ng-disabled="form.$pristine || form.$invalid">Continue</button>
+      </div>
     </div>
-  </div>
+
+  </form>
 
 </ion-pane>

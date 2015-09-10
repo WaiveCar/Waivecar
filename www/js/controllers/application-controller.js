@@ -6,7 +6,10 @@ angular.module('app.controllers').controller('ApplicationController', [
   'MockLocationService',
   '$auth',
   '$data',
-  function ($rootScope, $scope, $state, $ionicPopover, LocationService, $auth, $data) {
+  '$message',
+  '$session',
+  function ($rootScope, $scope, $state, $ionicPopover, LocationService, $auth, $data, $message, $session) {
+    'use strict';
     $rootScope.isInitialized = false;
     $rootScope.models = $data.models;
     $rootScope.active = $data.active;
@@ -15,23 +18,23 @@ angular.module('app.controllers').controller('ApplicationController', [
 
     $ionicPopover.fromTemplateUrl('/templates/common/menu.html', {
       scope: $scope
-    }).then(function(popover) {
+    }).then(function (popover) {
       $scope.popover = popover;
     });
 
-    $rootScope.$watch('currentLocation', function() {
+    $rootScope.$watch('currentLocation', function () {
       console.log($rootScope.currentLocation);
     });
 
-    $rootScope.$on('authError', function() {
+    $rootScope.$on('authError', function () {
       $auth.logout();
     });
 
-    $rootScope.$on('socket:error', function (ev, data) {
-      console.log('TODO: handle socket error:');
-    });
+    // $rootScope.$on('socket:error', function (ev, data) {
+    //   console.log('TODO: handle socket error:');
+    // });
 
-    $rootScope.$on('$stateChangeStart', function(event, toState, toParams /*, fromState, fromParams */) {
+    $rootScope.$on('$stateChangeStart', function (event, toState, toParams /*, fromState, fromParams */ ) {
       var authRequired;
       if (toState && _.has(toState, 'data') && _.has(toState.data, 'auth')) {
         authRequired = toState.data.auth;
@@ -44,33 +47,39 @@ angular.module('app.controllers').controller('ApplicationController', [
       } else if (!isAuthenticated && authRequired) {
         $state.go('auth');
       }
+
     });
 
-    $scope.logout = function() {
-      $auth.logout(function(err) {
+    $scope.logout = function () {
+      $auth.logout(function (err) {
+        if (err) {
+          return $message.error(err);
+        }
         $scope.popover.hide();
         $state.go('landing');
       });
+
     };
 
-    $scope.showNav = function($event) {
-      console.log('asd')
+    $scope.showNav = function ($event) {
       $scope.popover.show($event);
-    }
-
-    $scope.hideNav = function() {
-      $scope.popover.hide();
-    }
-
-    $scope.locateMe = function() {
-      LocationService.getLocation().then(function(deviceLocation) {
-        $rootScope.currentLocation = deviceLocation;
-      })
     };
 
-    $scope.fetch = function() {
+    $scope.hideNav = function () {
+      $scope.popover.hide();
+    };
+
+    $scope.locateMe = function () {
+      LocationService.getLocation().then(function (deviceLocation) {
+        $rootScope.currentLocation = deviceLocation;
+      });
+
+    };
+
+    $scope.fetch = function () {
       async.parallel([
-        function(nextTask) {
+
+        function (nextTask) {
           LocationService.initPositionWatch();
           return nextTask();
           // getLocation().then(function(deviceLocation) {
@@ -78,31 +87,40 @@ angular.module('app.controllers').controller('ApplicationController', [
           //   return nextTask();
           // });
         },
-        function(nextTask) {
-          if ($auth.isAuthenticated()) {
-            $data.resources.users.me(function(me) {
-              $data.me = me;
-              return nextTask();
-            });
-          } else {
+        function (nextTask) {
+          if (!$auth.isAuthenticated()) {
             return nextTask();
           }
+
+          $data.resources.users.me(function (me) {
+            $session.set('me', me).save();
+            $data.me = $session.get('me');
+            return nextTask();
+          });
+
         },
-        function(nextTask) {
+        function (nextTask) {
           $data.initialize('cars', nextTask);
         },
-        function(nextTask) {
+        function (nextTask) {
           $data.initialize('locations', nextTask);
         }
-      ], function(err) {
-        $rootScope.isInitialized = true;
+      ], function (err) {
+        if (err) {
+          return $message.error(err);
+        }
+        $rootScope.isInitialized = !err;
+
       });
+
     };
 
-    $scope.init = function() {
+    $scope.init = function () {
       $scope.fetch();
     };
 
     $scope.init();
+
   }
+
 ]);

@@ -2,24 +2,29 @@ angular.module('app.services').factory('AuthInterceptor', [
   '$rootScope',
   '$q',
   '$session',
-  function ($rootScope, $q, $session) {
+  '$config',
+  function ($rootScope, $q, $session, $config) {
+    'use strict';
+
     return {
 
-      request: function (response) {
+      request: function (httpConfig) {
         var token = $session.get('auth').token;
 
-        if (undefined !== token) {
-          response.headers['Authorization'] = token;
+        var isLoginRequest = httpConfig.url === $config.uri.auth.login;
+
+        if (token && !isLoginRequest) {
+          httpConfig.headers.Authorization = token;
         }
 
-        if (/\/1\//.test(response.url)) {
-          response.headers['x-referer'] = document.location.origin + '/' + $rootScope.$state.href($rootScope.$state.current);
+        if (/\/1\//.test(httpConfig.url)) {
+          httpConfig.headers['x-referer'] = document.location.origin + '/' + $rootScope.$state.href($rootScope.$state.current);
         }
 
-        return response;
+        return httpConfig;
       },
 
-      responseError: function (rejection) {
+      httpConfigError: function (rejection) {
         if (401 === rejection.status || 403 === rejection.status) {
           $rootScope.$emit('authError');
         }

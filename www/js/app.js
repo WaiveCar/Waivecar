@@ -14,6 +14,7 @@
     'ngFitText',
     'ui.router',
     'btford.socket-io',
+    'ionic-datepicker',
     'app.controllers',
     'app.directives',
     'app.filters',
