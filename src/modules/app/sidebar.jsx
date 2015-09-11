@@ -32,7 +32,7 @@ export default class Sidebar extends React.Component {
 
   getLink(link, i) {
     return (
-      <li key={ i }>
+      <li key={ i } className={ link.parent ? "has-parent" : "parent" }>
         <Link to={ link.path } className="nav-link animated fadeInDown">
           <i className="material-icons" role={ link.name }>{ link.icon }</i>
           { link.name }

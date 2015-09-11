@@ -8,7 +8,7 @@ $sidebar-link-height : 40px;
 // ### Sidebar
 
 #sidebar {
-  
+
   .sidebar-meta {
     border-bottom  : 1px solid #eee;
     padding-bottom : 24px;
@@ -50,6 +50,21 @@ $sidebar-link-height : 40px;
     padding : 0;
     li {
       list-style : none;
+      &.has-parent {
+        a {
+          height : $sidebar-link-height - 5;
+          line-height : $sidebar-link-height - 5;
+          font-size : 0.9rem;
+          padding-left : 78px;
+          background : rgba($brand-primary, .03);
+          i {
+            left : 54px;
+          }
+          &:hover {
+            background : rgba($brand-primary, .8);
+          }
+        }
+      }
       a {
         color        : #363636;
         font-size    : 1.02rem;

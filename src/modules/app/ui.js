@@ -50,9 +50,10 @@ UI.hasMenu = function (target, menu) {
  */
 UI.addMenu = function (target, path, menu) {
   this.menu[target].push({
-    name : menu.name,
-    icon : menu.icon || 'add_circle_outline',
-    path : path
+    name   : menu.name,
+    icon   : menu.icon || 'add_circle_outline',
+    path   : path,
+    parent : menu.parent
   });
   menus[target].push(menu.name);
 };
