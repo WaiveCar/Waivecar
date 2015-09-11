@@ -1,6 +1,6 @@
 'use strict';
 
-import layout   from './components/layout';
+import layout from './components/layout';
 
 let routes = [
   {

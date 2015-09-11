@@ -31,25 +31,13 @@ export default function (view) {
     }
 
     /**
-     * @method componentDidMount
-     */
-    componentDidMount() {
-    }
-
-    /**
-     * @method componentWillUnmount
-     */
-    componentWillUnmount() {
-    }
-
-    /**
      * @method renderColumn
      */
     renderColumn(componentName, columnIndex, columnWidth) {
       let Component = Components.list[componentName];
       return (
         <Column key={ columnIndex } width={ columnWidth }>
-          <Component>
+          <Component { ...this.props }>
             { this.props.children }
           </Component>
         </Column>
@@ -77,7 +65,7 @@ export default function (view) {
      */
     render() {
       return (
-        <div id="layout">
+        <div id="content-wrapper">
           <div className="content-header">
             <h1><span>{ view.name }</span></h1>
           </div>

@@ -39,9 +39,9 @@ export default function (view, fields, resource) {
     /**
      * @method componentWillReceiveProps
      */
-    componentWillReceiveProps(next, state) {
+    componentWillReceiveProps(nextProps, nextState) {
       let prevId = this.props.params.id;
-      let nextId = next.params.id;
+      let nextId = nextProps.params.id;
       if (this.state.key === undefined) {
         this.componentLoad(nextId);
       }
