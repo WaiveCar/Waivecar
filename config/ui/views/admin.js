@@ -1,6 +1,29 @@
 'use strict';
 
 module.exports = [
+  /* ----------------- DASHBOARD ------------------ */
+  {
+    route       : '/dashboard2',
+    name        : 'Dashboard',
+    description : null,
+    layout      : [
+      [
+        { component : 'UsersChart',     options : { chartType : 'line', className : 'chart-pink'     } },
+        { component : 'BookingsChart',  options : { chartType : 'line', className : 'chart-bluegray' } },
+        { component : 'LocationsChart', options : { chartType : 'bar',  className : 'chart-info'     } },
+        { component : 'CarsChart',      options : { chartType : 'bar',  className : 'chart-warning'  } }
+      ],
+      [ 'CarsMap' ]
+    ],
+    menus : {
+      sidebar : {
+        id     : 'dashboard',
+        name   : 'Dashboard',
+        icon   : 'dashboard',
+        parent : null
+      }
+    }
+  },
   /* ----------------- BOOKINGS  ------------------ */
   {
     route       : '/bookings',

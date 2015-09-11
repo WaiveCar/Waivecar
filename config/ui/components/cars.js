@@ -3,7 +3,8 @@
 module.exports = [
   {
     name    : 'CarsList',
-    type    : 'table',
+    title   : 'Cars',
+    type    : 'Table',
     fields  : [ 'id', 'make', 'year', 'manufacturer' ],
     actions : {
       cancel : true,
@@ -14,7 +15,8 @@ module.exports = [
   },
   {
     name    : 'CarsShow',
-    type    : 'form',
+    title   : 'Car',
+    type    : 'Form',
     fields  : [ 'id', 'make', 'year', 'manufacturer', 'phone', 'unitType', 'onstarStatus', 'primaryDriverId', 'primaryDriverUrl', 'url', 'isInPreActivation' ],
     actions : {
       cancel : true,
@@ -25,9 +27,22 @@ module.exports = [
   },
   {
     name    : 'CarsMap',
-    type    : 'map',
+    title   : 'Cars',
+    type    : 'Map',
     actions : {
       cancel : true,
+      create : false,
+      update : false,
+      delete : false
+    }
+  },
+  {
+    name    : 'CarsChart',
+    title   : 'Cars',
+    type    : 'MiniChart',
+    fields  : [ 'id', 'createdAt' ],
+    actions : {
+      cancel : false,
       create : false,
       update : false,
       delete : false

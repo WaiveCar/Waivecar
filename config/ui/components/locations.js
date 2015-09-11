@@ -3,7 +3,8 @@
 module.exports = [
   {
     name    : 'LocationsList',
-    type    : 'table',
+    title   : 'Locations',
+    type    : 'Table',
     fields  : [ 'id', 'type', 'name', 'description', 'latitude', 'longitude', 'address' ],
     actions : {
       cancel : true,
@@ -14,7 +15,8 @@ module.exports = [
   },
   {
     name    : 'LocationsCreate',
-    type    : 'form',
+    title   : 'Add Location',
+    type    : 'Form',
     fields  : [ 'type', 'name', 'description', 'latitude', 'longitude', 'address' ],
     actions : {
       cancel : true,
@@ -25,7 +27,8 @@ module.exports = [
   },
   {
     name    : 'LocationsShow',
-    type    : 'form',
+    title   : 'Location',
+    type    : 'Form',
     fields  : [ 'id', 'type', 'name', 'description', 'latitude', 'longitude', 'address' ],
     actions : {
       cancel : true,
@@ -36,12 +39,25 @@ module.exports = [
   },
   {
     name    : 'LocationsMap',
-    type    : 'map',
+    title   : 'Locations',
+    type    : 'Map',
     actions : {
       cancel : true,
       create : true,
       update : true,
       delete : true
+    }
+  },
+  {
+    name    : 'LocationsChart',
+    title   : 'Locations',
+    type    : 'MiniChart',
+    fields  : [ 'id', 'createdAt' ],
+    actions : {
+      cancel : false,
+      create : false,
+      update : false,
+      delete : false
     }
   }
 ];

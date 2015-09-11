@@ -3,7 +3,8 @@
 module.exports = [
   {
     name    : 'ViewsList',
-    type    : 'table',
+    type    : 'Table',
+    title   : 'Views',
     fields  : [ 'id', 'userId', 'name', 'route', 'menus', 'role', 'status', 'layout' ],
     actions : {
       cancel : true,
@@ -14,7 +15,8 @@ module.exports = [
   },
   {
     name    : 'ViewsCreate',
-    type    : 'form',
+    title   : 'Add View',
+    type    : 'Form',
     fields  : [ 'name', 'route', 'layout', 'menus', 'role', 'status' ],
     actions : {
       cancel : true,
@@ -25,7 +27,8 @@ module.exports = [
   },
   {
     name    : 'ViewsShow',
-    type    : 'form',
+    title   : 'View',
+    type    : 'Form',
     fields  : [ 'id', 'userId', 'name', 'route', 'menus', 'role', 'status', 'layout' ],
     actions : {
       cancel : true,

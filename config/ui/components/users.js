@@ -3,7 +3,8 @@
 module.exports = [
   {
     name    : 'UsersList',
-    type    : 'table',
+    title   : 'Users',
+    type    : 'Table',
     fields  : [ 'id', 'email', 'firstName', 'lastName', 'role', 'status' ],
     actions : {
       cancel : true,
@@ -14,7 +15,8 @@ module.exports = [
   },
   {
     name    : 'UsersCreate',
-    type    : 'form',
+    title   : 'Add User',
+    type    : 'Form',
     fields  : [ 'firstName', 'lastName', 'role', 'email', 'password' ],
     actions : {
       cancel : true,
@@ -25,13 +27,26 @@ module.exports = [
   },
   {
     name    : 'UsersShow',
-    type    : 'form',
+    title   : 'User',
+    type    : 'Form',
     fields  : [ 'id', 'firstName', 'lastName', 'role', 'email', 'status' ],
     actions : {
       cancel : true,
       create : false,
       update : true,
       delete : true
+    }
+  },
+  {
+    name    : 'UsersChart',
+    title   : 'Users',
+    type    : 'MiniChart',
+    fields  : [ 'id', 'createdAt' ],
+    actions : {
+      cancel : false,
+      create : false,
+      update : false,
+      delete : false
     }
   }
 ];

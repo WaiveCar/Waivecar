@@ -3,7 +3,8 @@
 module.exports = [
   {
     name    : 'BookingsList',
-    type    : 'table',
+    title   : 'Bookings',
+    type    : 'Table',
     fields  : [ 'id', 'customerId', 'carId', 'paymentId', 'filesId', 'state' ],
     actions : {
       cancel : true,
@@ -14,7 +15,8 @@ module.exports = [
   },
   {
     name    : 'BookingsCreate',
-    type    : 'form',
+    title   : 'Add Booking',
+    type    : 'Form',
     fields  : [ 'customerId', 'carId', 'paymentId', 'filesId', 'state' ],
     actions : {
       cancel : true,
@@ -25,13 +27,26 @@ module.exports = [
   },
   {
     name    : 'BookingsShow',
-    type    : 'form',
+    title   : 'Booking',
+    type    : 'Form',
     fields  : [ 'id', 'customerId', 'carId', 'paymentId', 'filesId', 'state' ],
     actions : {
       cancel : true,
       create : false,
       update : true,
       delete : true
+    }
+  },
+  {
+    name    : 'BookingsChart',
+    title   : 'Bookings',
+    type    : 'MiniChart',
+    fields  : [ 'id', 'createdAt' ],
+    actions : {
+      cancel : false,
+      create : false,
+      update : false,
+      delete : false
     }
   }
 ];
