@@ -59,7 +59,9 @@ export default class Mapping extends React.Component {
   addMarkers(markers) {
     let markerIcon = this.getMarkerIcon();
     markers.forEach((val) => {
-      let marker = L.marker([ val.location.latitude, val.location.longitude ], { icon : markerIcon });
+      let lat = val.location ? val.location.latitude : val.latitude;
+      let long = val.location ? val.location.longitude : val.longitude;
+      let marker = L.marker([ lat, long ], { icon : markerIcon });
       this.state.markers.push(marker);
       marker.addTo(this.state.map);
     }.bind(this));
