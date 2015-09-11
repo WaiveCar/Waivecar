@@ -10,19 +10,12 @@ let Actions = Relay.getActions();
 
 export default function (view, fields, resource) {
 
-  // ### Create Menus
-  // If menus are provided we tell the UI to handle menu construction.
-
-  if (view.menus) {
-    UI.addMenus(view.route, view.menus);
-  }
-
   const RESOURCE = resource.name.toUpperCase();
 
   /**
    * @class ListView
    */
-  class MapView extends React.Component {
+  class MapComponent extends React.Component {
 
     /**
      * @constructor
@@ -64,6 +57,6 @@ export default function (view, fields, resource) {
 
   }
 
-  return MapView;
+  return MapComponent;
 
 };

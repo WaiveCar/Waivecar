@@ -11,17 +11,10 @@ import UI                 from '../ui';
 
 export default function (view, fields, resource) {
 
-  // ### Create Menus
-  // If menus are provided we tell the UI to handle menu construction.
-
-  if (view.menus) {
-    // UI.addMenus(view.route, view.menus);
-  }
-
   /**
    * @class FormView
    */
-  class FormView extends React.Component {
+  class FormComponent extends React.Component {
 
     /**
      * @constructor
@@ -202,6 +195,6 @@ export default function (view, fields, resource) {
     }
   }
 
-  return FormView;
+  return FormComponent;
 
 }

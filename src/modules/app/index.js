@@ -1,8 +1,9 @@
 'use strict';
 
-import Reach    from 'reach-react';
-import policies from 'interface/policies';
-import UI       from './ui';
+import Reach      from 'reach-react';
+import policies   from 'interface/policies';
+import UI         from './ui';
+import Components from './components';
 
 let Relay  = Reach.Relay;
 let routes = null;
@@ -27,11 +28,12 @@ export default  {
       return cb(null, routes);
     }
 
-    Reach.API.get('/ui/admin', function (err, res) {
+    Reach.API.get('/ui', function (err, res) {
       if (err) {
         return cb(err);
       }
-      prepareUi(res.ui, cb);
+
+      prepareUi(res, cb);
     });
   }
 
@@ -45,17 +47,28 @@ export default  {
  */
 function prepareUi(ui, cb) {
   routes = [];
-  for (let key in ui) {
-    let module = ui[key];
-    if (module.active) {
-      setResource(module.resource);
-      routes.push({
-        component   : require('./views/dynamic'),
-        onEnter     : policies.isAuthenticated,
-        childRoutes : require('./routes')(key, module)
-      });
+  for (let key in ui.resources) {
+    setResource(ui.resources[key]);
+  }
+
+  for (let key in ui.components) {
+    let components = ui.components[key];
+    let resource   = ui.resources[key];
+    let fields     = ui.fields[key];
+    for (let componentKey in components) {
+      let component = components[componentKey];
+      Components.add(component, fields, resource);
     }
   }
+
+  for (let key in ui.views) {
+    let module = ui.views[key];
+    routes.push({
+      component   : require('./views/dynamic'),
+      childRoutes : require('./routes')(module)
+    });
+  }
+
   cb(null, routes);
 }
 

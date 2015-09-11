@@ -10,17 +10,10 @@ let Relay = Reach.Relay;
 
 export default function (view, fields, resource) {
 
-  // ### Create Menus
-  // If menus are provided we tell the UI to handle menu construction.
-
-  if (view.menus) {
-    UI.addMenus(view.route, view.menus);
-  }
-
   /**
    * @class ListView
    */
-  class ListView extends React.Component {
+  class ListComponent extends React.Component {
 
     /**
      * @constructor
@@ -76,7 +69,7 @@ export default function (view, fields, resource) {
     tableActions(id) {
       return (
         <div>
-          <Link className="grid-action" to={ view.route + '/' + id }>
+          <Link className="grid-action" to={ resource.name + '/' + id }>
             <i className="material-icons" role="edit">edit</i>
           </Link>
           <button className="grid-action danger" onClick={ this.delete.bind(this, id) }>
@@ -132,32 +125,27 @@ export default function (view, fields, resource) {
       let columnHeadings = this.getHeadings();
       let columns        = this.getColumns();
       return (
-        <div id="table">
-          <div className="content-header">
-            <h1><span>{ view.name }</span></h1>
-          </div>
-          <div className="container-fluid">
-            { view.actions.create &&
-              <Link className="btn btn-icon btn-primary command-primary-action" to={ view.route + '/create' }>
-                <i className="material-icons" role="edit">add</i>
-              </Link>
-            }
-            <Grid
-              useGriddleStyles = { false }
-              resultsPerPage   = { 25 }
-              results          = { this.state[resource.name] }
-              showFilter       = { true }
-              showSettings     = { true }
-              columns          = { columns }
-              columnMetadata   = { columnHeadings }
-            />
-          </div>
+        <div id="table-component" className="component-container">
+          { view.actions.create &&
+            <Link className="btn btn-icon btn-primary command-primary-action" to={ resource.name + '/create' }>
+              <i className="material-icons" role="edit">add</i>
+            </Link>
+          }
+          <Grid
+            useGriddleStyles = { false }
+            resultsPerPage   = { 25 }
+            results          = { this.state[resource.name] }
+            showFilter       = { true }
+            showSettings     = { true }
+            columns          = { columns }
+            columnMetadata   = { columnHeadings }
+          />
         </div>
       );
     }
 
   }
 
-  return ListView;
+  return ListComponent;
 
 };

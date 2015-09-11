@@ -1,8 +1,6 @@
 'use strict';
 
-import table from './views/table';
-import form  from './views/form';
-import map   from './views/map';
+import layout   from './components/layout';
 
 let routes = [
   {
@@ -23,27 +21,12 @@ let routes = [
  * @param {String} id
  * @param {Object} module
  */
-export default function (id, module) {
-  module.views.forEach(function (view) {
+export default function (views) {
+  views.forEach(function (view) {
     routes.push({
       path      : view.route,
-      component : getComponent(view, module)
+      component : layout(view)
     });
   });
   return routes;
-}
-
-/**
- * @private
- * @method getComponent
- * @param  {Object} view
- * @param  {Object} module
- * @return {Component}
- */
-function getComponent(view, module) {
-  switch (view.type) {
-    case 'table' : return table(view, module.fields, module.resource);
-    case 'form'  : return form(view, module.fields, module.resource);
-    case 'map'   : return map(view, module.fields, module.resource);
-  }
 }
