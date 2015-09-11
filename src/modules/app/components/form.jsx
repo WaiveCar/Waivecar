@@ -175,9 +175,6 @@ export default function (view, fields, resource) {
       }
       return (
         <div id="form">
-          <div className="content-header">
-            <h1><span>{ view.name }</span></h1>
-          </div>
           <div className="container-form">
             <Form
               key       = { this.state.id }

@@ -30,10 +30,28 @@ export default function (view) {
       super(...args);
     }
 
+    renderComponent(component) {
+      let componentName = component.component || component;
+      let Component = Components.list[componentName];
+      return (
+        <Component { ...this.props }>
+          { this.props.children }
+        </Component>
+      );
+    }
+
     /**
      * @method renderColumn
      */
-    renderColumn(componentName, columnIndex, columnWidth) {
+    renderColumn(component, columnIndex, columnWidth) {
+      let componentName;
+      if (typeof component === 'string' || component instanceof String) {
+        componentName = component;
+      } else {
+        componentName = component.component;
+        columnWidth = component.width || columnWidth;
+      }
+
       let Component = Components.list[componentName];
       return (
         <Column key={ columnIndex } width={ columnWidth }>
@@ -52,8 +70,8 @@ export default function (view) {
       return (
         <Row key={ rowIndex }>
           {
-            row.map((componentName, columnIndex) => {
-              return this.renderColumn(componentName, columnIndex, columnWidth)
+            row.map((component, columnIndex) => {
+              return this.renderColumn(component, columnIndex, columnWidth)
             }.bind(this))
           }
         </Row>
@@ -71,7 +89,9 @@ export default function (view) {
           </div>
           <div className="container-fluid">
             {
-              view.layout.map(this.renderRow.bind(this))
+              Array.isArray(view.layout)
+                ? view.layout.map(this.renderRow.bind(this))
+                : this.renderComponent(view.layout)
             }
           </div>
         </div>
