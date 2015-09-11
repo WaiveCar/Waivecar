@@ -1,34 +1,13 @@
 'use strict';
 
 module.exports = [
-  /* ----------------- SANDPIT  ------------------ */
-  {
-    route       : '/playground',
-    name        : 'Playground',
-    description : null,
-    layout      : [
-      [ 'UsersList', 'CarsMap', 'BookingsList' ],
-      [ 'LocationsMap', 'LocationsList' ],
-      [ 'ViewsList' ]
-    ],
-    menus : {
-      sidebar : {
-        id     : 'play',
-        name   : 'Playground',
-        icon   : 'whatshot',
-        parent : null
-      }
-    }
-  },
   /* ----------------- BOOKINGS  ------------------ */
   {
     route       : '/bookings',
     name        : 'Bookings',
     description : null,
-    layout      : [
-      [ 'BookingsList' ]
-    ],
-    menus : {
+    layout      : 'BookingsList',
+    menus       : {
       sidebar : {
         id     : 'bookings',
         name   : 'Bookings',
@@ -41,10 +20,8 @@ module.exports = [
     route       : '/bookings/create',
     name        : 'Add Booking',
     description : null,
-    layout      : [
-      [ 'BookingsCreate' ]
-    ],
-    menus : {
+    layout      : { component : 'BookingsCreate' },
+    menus       : {
       sidebar : {
         id     : 'bookings-create',
         name   : 'Add Booking',
@@ -83,10 +60,8 @@ module.exports = [
     route       : '/maps/cars',
     name        : 'Current Locations',
     description : null,
-    layout      : [
-      [ 'CarsMap' ]
-    ],
-    menus : {
+    layout      : 'CarsMap',
+    menus       : {
       sidebar : {
         id     : 'cars-map',
         name   : 'Current Locations',
@@ -119,6 +94,20 @@ module.exports = [
         name   : 'Locations',
         icon   : 'place',
         parent : null
+      }
+    }
+  },
+  {
+    route       : '/maps/locations',
+    name        : 'Locations',
+    description : null,
+    layout      : 'LocationsMap',
+    menus       : {
+      sidebar : {
+        id     : 'locations-map',
+        name   : 'View on Map',
+        icon   : 'map',
+        parent : 'locations'
       }
     }
   },
@@ -175,7 +164,7 @@ module.exports = [
       sidebar : {
         id     : 'users-create',
         name   : 'Add User',
-        icon   : 'add',
+        icon   : 'person_add',
         parent : 'users'
       }
     }
@@ -201,7 +190,7 @@ module.exports = [
       sidebar : {
         id     : 'views',
         name   : 'Views',
-        icon   : 'web',
+        icon   : 'view_quilt',
         parent : null
       }
     }
@@ -217,7 +206,7 @@ module.exports = [
       sidebar : {
         id     : 'views-create',
         name   : 'Add View',
-        icon   : 'add',
+        icon   : 'view_module',
         parent : 'views'
       }
     }
