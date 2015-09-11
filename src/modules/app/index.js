@@ -9,9 +9,7 @@ let Relay  = Reach.Relay;
 let routes = null;
 
 export default  {
-
   onEnter   : policies.isAuthenticated,
-
   component : require('./layout'),
 
   /**
@@ -64,7 +62,6 @@ function prepareUi(ui, cb) {
   for (let key in ui.views) {
     let module = ui.views[key];
     routes.push({
-      component   : require('./views/dynamic'),
       childRoutes : require('./routes')(module)
     });
   }

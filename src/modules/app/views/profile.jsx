@@ -92,7 +92,7 @@ export default class ProfileView extends React.Component {
 
   render() {
     return (
-      <div id="profile">
+      <div id="content-wrapper">
         <div className="content-header">
           <h1><span>My Profile</span></h1>
         </div>

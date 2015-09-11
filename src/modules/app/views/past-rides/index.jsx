@@ -118,7 +118,7 @@ export default class Rides extends React.Component {
   
   render() {
     return (
-      <div id="past-rides">
+      <div id="content-wrapper" className="past-rides">
         <div className="content-header">
           <h1><span>Past Rides</span></h1>
         </div>
