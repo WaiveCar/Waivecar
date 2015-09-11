@@ -2,7 +2,9 @@
 
 module.exports = {
   ui : {
-    admin : require('./admin'),
-    web   : require('./web')
+    components : require('./components'),
+    fields     : require('./fields'),
+    resources  : require('./resources'),
+    views      : require('./views')
   }
 };
