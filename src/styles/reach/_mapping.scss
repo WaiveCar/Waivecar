@@ -5,3 +5,14 @@
   top      : 0;
   width    : 100%;
 }
+
+.map-wrapper {
+  .col-xs-12 & {
+    position   : relative;
+    left       : auto;
+    right      : auto;
+    min-height : 600px;
+  }
+}
+
+

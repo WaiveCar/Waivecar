@@ -31,10 +31,16 @@ export default function (view) {
     }
 
     renderComponent(component) {
-      let componentName = component.component || component;
+      let componentName;
+      if (typeof component === 'string' || component instanceof String) {
+        componentName = component;
+      } else {
+        componentName = component.component;
+      }
+
       let Component = Components.list[componentName];
       return (
-        <Component { ...this.props }>
+        <Component { ...this.props } { ...component.options }>
           { this.props.children }
         </Component>
       );
@@ -44,20 +50,13 @@ export default function (view) {
      * @method renderColumn
      */
     renderColumn(component, columnIndex, columnWidth) {
-      let componentName;
-      if (typeof component === 'string' || component instanceof String) {
-        componentName = component;
-      } else {
-        componentName = component.component;
-        columnWidth = component.width || columnWidth;
+      if (component && component.width) {
+        columnWidth = component.width;
       }
 
-      let Component = Components.list[componentName];
       return (
         <Column key={ columnIndex } width={ columnWidth }>
-          <Component { ...this.props }>
-            { this.props.children }
-          </Component>
+          { this.renderComponent(component) }
         </Column>
       );
     }

@@ -20,14 +20,6 @@ let nav  = [
   }
 ];
 
-let adminNav  = [
-  {
-    name : 'Dashboard',
-    path : '/dashboard',
-    icon : 'dashboard'
-  }
-];
-
 export default class Sidebar extends React.Component {
 
   getLink(link, i) {
@@ -48,7 +40,6 @@ export default class Sidebar extends React.Component {
           <li style={{ borderBottom : '1px solid #f4f4f4', color : '#363636', fontSize : 16, fontWeight : 500, margin : '15px 0 6px', padding : '0 24px 6px' }}>
             Admin
           </li>
-          { adminNav.map(this.getLink) }
           { UI.menu.sidebar.map(this.getLink) }
         </ul>
       );

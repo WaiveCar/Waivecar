@@ -4,10 +4,6 @@ import layout from './components/layout';
 
 let routes = [
   {
-    path      : '/dashboard',
-    component : require('./views/dashboard')
-  },
-  {
     path      : '/profile',
     component : require('./views/profile')
   },

@@ -1,8 +1,9 @@
 'use strict';
 
-import table from './components/table';
-import form  from './components/form';
-import map   from './components/map';
+import table     from './components/table';
+import form      from './components/form';
+import map       from './components/map';
+import miniChart from './components/mini-chart';
 
 /**
  * @class Components
@@ -24,8 +25,9 @@ Components.add = function (component, fields, resource) {
 
 function getComponent(component, fields, resource) {
   switch (component.type) {
-    case 'table' : return table(component, fields, resource);
-    case 'form'  : return form(component, fields, resource);
-    case 'map'   : return map(component, fields, resource);
+    case 'Table'     : return table(component, fields, resource);
+    case 'Form'      : return form(component, fields, resource);
+    case 'Map'       : return map(component, fields, resource);
+    case 'MiniChart' : return miniChart(component, fields, resource);
   }
 }
