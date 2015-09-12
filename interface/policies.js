@@ -1,17 +1,3 @@
-/*
-  Policies
-  ========
-
-  Stability: 4 - Locked
-
-  Policies defined here are designed to be available to all api modules. You can
-  edit the implementation of policies defined here but do not remove or rename
-  them as it can break the system.
-
-  @author  Christoffer Rødvik
-  @license MIT
- */
-
 'use strict';
 
 let register = Reach.Register;
