@@ -105,6 +105,48 @@ module.exports = [
     ],
     menus : null
   },
+  /* ----------------- LICENSES  ------------------ */
+  {
+    route       : '/licenses',
+    name        : 'Licenses',
+    description : null,
+    layout      : [
+      [ 'LicensesList' ]
+    ],
+    menus : {
+      sidebar : {
+        id     : 'licenses',
+        name   : 'Licenses',
+        icon   : 'picture_in_picture',
+        parent : null
+      }
+    }
+  },
+  {
+    route       : '/licenses/create',
+    name        : 'Add License',
+    description : null,
+    layout      : [
+      [ 'LicensesCreate' ]
+    ],
+    menus : {
+      sidebar : {
+        id     : 'licenses-create',
+        name   : 'Add License',
+        icon   : 'add',
+        parent : 'licenses'
+      }
+    }
+  },
+  {
+    route       : '/licenses/:id',
+    name        : 'License',
+    description : null,
+    layout      : [
+      [ 'LicensesShow' ]
+    ],
+    menus : null
+  },
   /* ----------------- LOCATIONS  ------------------ */
   {
     route       : '/locations',
@@ -158,6 +200,116 @@ module.exports = [
     description : null,
     layout      : [
       [ 'LocationsShow' ]
+    ],
+    menus : null
+  },
+  /* ----------------- LOGS  ------------------ */
+  {
+    route       : '/logs',
+    name        : 'Logs',
+    description : null,
+    layout      : [
+      [ 'LogsList' ]
+    ],
+    menus : {
+      sidebar : {
+        id     : 'logs',
+        name   : 'Logs',
+        icon   : 'confirmation_number',
+        parent : null
+      }
+    }
+  },
+  {
+    route       : '/logs/:id',
+    name        : 'Log',
+    description : null,
+    layout      : [
+      [ 'LogsShow' ]
+    ],
+    menus : null
+  },
+  /* ----------------- PAYMENTS  ------------------ */
+  {
+    route       : '/payments',
+    name        : 'Payments',
+    description : null,
+    layout      : [
+      [ 'PaymentsList' ]
+    ],
+    menus : {
+      sidebar : {
+        id     : 'payments',
+        name   : 'Payments',
+        icon   : 'payment',
+        parent : null
+      }
+    }
+  },
+  {
+    route       : '/payments/create',
+    name        : 'Add Payment',
+    description : null,
+    layout      : [
+      [ 'PaymentsCreate' ]
+    ],
+    menus : {
+      sidebar : {
+        id     : 'payments-create',
+        name   : 'Add Payment',
+        icon   : 'add',
+        parent : 'payments'
+      }
+    }
+  },
+  {
+    route       : '/payments/:id',
+    name        : 'Payment',
+    description : null,
+    layout      : [
+      [ 'PaymentsShow' ]
+    ],
+    menus : null
+  },
+  /* ----------------- PAYMENT-CARDS  ------------------ */
+  {
+    route       : '/cards',
+    name        : 'Cards',
+    description : null,
+    layout      : [
+      [ 'PaymentCardsList' ]
+    ],
+    menus : {
+      sidebar : {
+        id     : 'cards',
+        name   : 'Credit Cards',
+        icon   : 'payment',
+        parent : null
+      }
+    }
+  },
+  {
+    route       : '/cards/create',
+    name        : 'Add Credit Card',
+    description : null,
+    layout      : [
+      [ 'PaymentCardsCreate' ]
+    ],
+    menus : {
+      sidebar : {
+        id     : 'cards-create',
+        name   : 'Add Card',
+        icon   : 'add',
+        parent : 'cards'
+      }
+    }
+  },
+  {
+    route       : '/cards/:id',
+    name        : 'Credit Card',
+    description : null,
+    layout      : [
+      [ 'PaymentCardsShow' ]
     ],
     menus : null
   },
