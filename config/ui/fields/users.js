@@ -1,6 +1,13 @@
 'use strict';
 
 module.exports = {
+  id : {
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Id',
+    helpText  : null
+  },
   role : {
     component : 'select',
     options   : [
