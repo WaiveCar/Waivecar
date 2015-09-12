@@ -1,7 +1,6 @@
 'use strict';
 
 import config from 'config';
-import io     from 'socket.io-client';
 
 /**
  * @class Relay
@@ -188,7 +187,7 @@ function connect(config) {
   if (!socket) {
     throw new Error('Socket has not been defined');
   }
-  socket.on('relay', function (id, payload) {
-    Relay.dispatch(id, payload);
+  socket.on('relay', (resource, payload) => {
+    Relay.dispatch(resource, payload);
   });
 }

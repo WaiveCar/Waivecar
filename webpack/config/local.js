@@ -18,8 +18,7 @@ module.exports = {
       'react-router',
       'reach-react',
       'react-mixin',
-      'md5',
-      'socket.io-client'
+      'md5'
     ]
   },
   output : {
