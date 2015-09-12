@@ -16,11 +16,13 @@ module.exports = function *() {
 
   // ### Connection
   // Check if the connection to GM-API is good
+
   if (config.gm.onStart.testConnection) {
     log.debug('Checking gm-api connection state');
 
     let service = new VehicleService();
     let result  = yield service.connect();
+
     if (typeof result !== 'string') {
       throw error.parse({
         code     : 'GM_API_BAD_CONNECTION',

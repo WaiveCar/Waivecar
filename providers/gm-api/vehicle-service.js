@@ -2,7 +2,7 @@
 
 let request    = require('co-request');
 let _          = require('lodash');
-let changeCase = require('change-case');
+let changeCase = Reach.Helpers.Case;
 let config     = Reach.config.gm;
 
 /* istanbul ignore next: extremely testing unfriendly */
@@ -47,10 +47,11 @@ module.exports = (function () {
     };
 
     var defaultOptions = {
-      url: options.url || (this._host + path),
-      headers: {
-        'Accept':'application/json',
-      }
+      url     : options.url || (this._host + path),
+      headers : {
+        Accept : 'application/json',
+      },
+      rejectUnauthorized : false
     };
 
     options = options ? _.merge(defaultOptions, options) : defaultHeaders;
@@ -283,7 +284,7 @@ module.exports = (function () {
    * @param  {Object} ret
    */
   function parseDiagnosticItem(item, ret) {
-    let name = changeCase.camelCase(item.name);
+    let name = changeCase.toCamel(item.name);
     delete item.name;
     ret[name] = item;
   }
