@@ -9,7 +9,6 @@
     "merge_logs"  : true,
     "args"        : "",
     "watch"       : false,
-    "node_args"   : "--harmony --no-crankshaft",
     "instances"   : "1",
     "exec_mode"   : "fork_mode",
     "env": {
