@@ -1,13 +1,5 @@
 language: node_js
 sudo: false
-env:
-  - CXX=g++-4.8
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - g++-4.8
 node_js:
   - 'stable'
 branches:
@@ -54,7 +46,7 @@ before_install:
     -in deployment/build/ssh/id_rsa.enc -out deployment/build/ssh/id_rsa -d
   - chmod 400 deployment/build/ssh/id_rsa
 install:
-  - npm install
+  - $SCR/commit_dependencies --fast
   - reach install
 script:
   - $SCR/commit_build && $SCR/commit_analysis && $SCR/commit_test && $SCR/commit_package
