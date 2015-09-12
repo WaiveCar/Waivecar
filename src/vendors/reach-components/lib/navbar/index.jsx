@@ -12,12 +12,20 @@ let menus = {
     {
       name : 'My Profile',
       icon : 'account_box',
-      href : '/profile'
+      href : '/profile',
+      role : 'user'
+    },
+    {
+      name : 'Admin',
+      icon : 'dashboard',
+      href : '/dashboard',
+      role : 'admin'
     },
     {
       name : 'Logout',
       icon : 'exit_to_app',
-      href : '/logout'
+      href : '/logout',
+      role : 'user'
     }
   ]
 };
@@ -38,6 +46,10 @@ export default class Nav extends React.Component {
 
   nav(menu) {
     return menu.map((item, i) => {
+      if (item.role === 'admin' && Auth.user.role !== 'admin') {
+        return;
+      }
+
       if (item.children) {
         menus[item.name] = item.children;
         return (
@@ -87,7 +99,6 @@ export default class Nav extends React.Component {
             <img src="/images/brand.svg" alt="WaiveCars" />
           </Link>
         </div>
-
         <div className="r-nav-profile" onClick={ this.openDropdown.bind(this, 'account') } ref="account">
           <div className="r-nav-profile-image" style={{ background : 'url(//www.gravatar.com/avatar/'+ md5(Auth.user.email) +') center center / cover' }}></div>
           <div className="r-nav-profile-name">
