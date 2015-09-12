@@ -3,7 +3,7 @@
 module.exports = [
   /* ----------------- DASHBOARD ------------------ */
   {
-    route       : '/dashboard2',
+    route       : '/dashboard',
     name        : 'Dashboard',
     description : null,
     layout      : [
@@ -13,7 +13,9 @@ module.exports = [
         { component : 'LocationsChart', options : { chartType : 'bar',  className : 'chart-info'     } },
         { component : 'CarsChart',      options : { chartType : 'bar',  className : 'chart-warning'  } }
       ],
-      [ 'CarsMap' ]
+      [
+        { component : 'CarsMap' }
+      ]
     ],
     menus : {
       sidebar : {
