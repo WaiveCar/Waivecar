@@ -9,12 +9,12 @@ addons:
     packages:
       - g++-4.8
 node_js:
-  - '4'
+  - 'stable'
 branches:
   only:
-  - api/master
-  - api/staging
-  - api/development
+    - api/master
+    - api/staging
+    - api/development
 cache:
   directories:
     - node_modules
@@ -30,19 +30,19 @@ cache:
     - providers/email
 env:
   global:
-  - BRANCHING_MODEL=API_APP
-  - PACKAGE_NAME=waivecar
-  - REMOTE_USER=travis
-  - COVERAGE_TOKEN=Prejal3413sfJsad43jadasd431
-  - INIT_SCRIPT=/etc/init.d/node-${PACKAGE_NAME}
-  - STRICT_VERSION_CHECK=false
-  - REMOTE_DIR_WEB=/opt/${PACKAGE_NAME}-web
-  - REMOTE_DIR_APP=/opt/${PACKAGE_NAME}-admin
-  - REMOTE_DIR_API=/opt/${PACKAGE_NAME}-api
-  - REMOTE_HOST_DEV=${PACKAGE_NAME}-dev.cleverbuild.biz
-  - REMOTE_HOST_STAG=${PACKAGE_NAME}-stag.cleverbuild.biz
-  - REMOTE_HOST_PROD=${PACKAGE_NAME}-prod.cleverbuild.biz
-  - SCR=deployment/build/scripts
+    - BRANCHING_MODEL=API_APP
+    - PACKAGE_NAME=waivecar
+    - REMOTE_USER=travis
+    - COVERAGE_TOKEN=Prejal3413sfJsad43jadasd431
+    - INIT_SCRIPT=/etc/init.d/node-${PACKAGE_NAME}
+    - STRICT_VERSION_CHECK=false
+    - REMOTE_DIR_WEB=/opt/${PACKAGE_NAME}-web
+    - REMOTE_DIR_APP=/opt/${PACKAGE_NAME}-admin
+    - REMOTE_DIR_API=/opt/${PACKAGE_NAME}-api
+    - REMOTE_HOST_DEV=${PACKAGE_NAME}-dev.cleverbuild.biz
+    - REMOTE_HOST_STAG=${PACKAGE_NAME}-stag.cleverbuild.biz
+    - REMOTE_HOST_PROD=${PACKAGE_NAME}-prod.cleverbuild.biz
+    - SCR=deployment/build/scripts
 services:
   - mongodb
   - redis-server
