@@ -301,12 +301,15 @@ fieldset[disabled] .btn-inverse.active {
 }
 
 .command-primary-action {
-  position: fixed;
-  bottom: 32px;
-  right: 282px;
-  z-index: 10000;
-  width: 45px;
-  height: 45px;
+  // position: fixed;
+  // bottom: 32px;
+  // right: 282px;
+  position : absolute;
+  bottom   : 10px;
+  right    : 10px;
+  z-index  : 10000;
+  width    : 45px;
+  height   : 45px;
   .material-icons {
     font-size: 27px;
     line-height: 45px;
