@@ -7,7 +7,7 @@ let query          = Reach.provider('sequelize/helpers').query;
 let Booking        = Reach.model('Booking');
 let BookingDetails = Reach.model('BookingDetails');
 let error          = Reach.ErrorHandler;
-let relay          = Reach.IO.relay;
+let relay          = Reach.Relay;
 
 /**
  * @class BookingService
@@ -29,7 +29,7 @@ BookingService.create = function *(car, customer) {
   });
   booking._actor = customer;
   yield booking.save();
-  relay('bookings', {
+  relay.emit('bookings', {
     type    : 'store',
     booking : booking.toJSON()
   });
@@ -71,7 +71,7 @@ BookingService.cancel = function *(id, user) {
 
   queue.scheduler.cancel('booking-timer-cancel', 'booking-' + booking.id);
 
-  relay('bookings', {
+  relay.emit('bookings', {
     type    : isAdmin ? 'delete' : 'update',
     booking : booking.toJSON()
   });
@@ -118,7 +118,7 @@ BookingService.pending = function *(id, user) {
     }
   });
 
-  relay('bookings', {
+  relay.emit('bookings', {
     type    : 'update',
     booking : booking.toJSON()
   });
@@ -176,7 +176,7 @@ BookingService.start = function *(id, user) {
 
   queue.scheduler.cancel('booking-timer-cancel', 'booking-' + booking.id);
 
-  relay('bookings', {
+  relay.emit('bookings', {
     type    : 'update',
     booking : booking.toJSON()
   });
@@ -239,7 +239,7 @@ BookingService.end = function *(id, user) {
 
   yield CarService.setStatus('available', booking.carId, user);
 
-  relay('bookings', {
+  relay.emit('bookings', {
     type    : 'update',
     booking : booking.toJSON()
   });

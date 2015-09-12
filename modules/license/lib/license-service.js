@@ -2,7 +2,7 @@
 
 let License  = Reach.model('License');
 let error    = Reach.ErrorHandler;
-let relay    = Reach.IO.relay;
+let relay    = Reach.Relay;
 let resource = 'licenses';
 
 /**
@@ -46,7 +46,7 @@ LicenseService.get = function *(id, _user) {
 LicenseService.create = function *(data, _user) {
   let model = new License(data);
   yield model.save();
-  relay(resource, {
+  relay.emit(resource, {
     type    : 'store',
     license : model.toJSON()
   });
@@ -69,7 +69,7 @@ LicenseService.update = function *(id, data, _user) {
     }
   }
   yield model.update();
-  relay(resource, {
+  relay.emit(resource, {
     type    : 'update',
     license : model.toJSON()
   });
@@ -86,7 +86,7 @@ LicenseService.destroy = function *(id, _user) {
   let model = yield this.get(id);
   hasAccess(model, _user);
   yield model.delete();
-  relay(resource, {
+  relay.emit(resource, {
     type    : 'delete',
     license : model.toJSON()
   });

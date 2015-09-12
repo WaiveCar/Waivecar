@@ -2,7 +2,7 @@
 
 let scheduler = Reach.provider('queue').scheduler;
 let Car       = Reach.model('Car');
-let relay     = Reach.IO.relay;
+let relay     = Reach.Relay;
 
 module.exports = function *() {
   scheduler.add('car-update-client', {
@@ -40,7 +40,7 @@ scheduler.process('car-update-client', function *(job) {
   if (!cars) {
     return;
   }
-  relay('cars', {
+  relay.emit('cars', {
     type : 'index',
     cars : cars
   });
