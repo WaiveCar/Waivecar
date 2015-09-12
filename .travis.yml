@@ -24,6 +24,7 @@ cache:
     - modules/log
     - modules/payment
     - modules/user
+    - modules/ui
     - providers/queue
     - providers/sequelize
     - providers/sms
@@ -44,7 +45,6 @@ env:
     - REMOTE_HOST_PROD=${PACKAGE_NAME}-prod.cleverbuild.biz
     - SCR=deployment/build/scripts
 services:
-  - mongodb
   - redis-server
 before_install:
   - npm install -g reach
@@ -54,7 +54,7 @@ before_install:
     -in deployment/build/ssh/id_rsa.enc -out deployment/build/ssh/id_rsa -d
   - chmod 400 deployment/build/ssh/id_rsa
 install:
-  - $SCR/commit_dependencies --fast
+  - npm install
   - reach install
 script:
   - $SCR/commit_build && $SCR/commit_analysis && $SCR/commit_test && $SCR/commit_package
