@@ -9,8 +9,9 @@ angular.module('app.controllers').controller('MessageController', [
     $scope.init();
 
     $scope.send = function () {
-      console.error('Not implemented');
+      console.warn('Not implemented');
       $state.go('messages-sent');
+
     };
 
   }

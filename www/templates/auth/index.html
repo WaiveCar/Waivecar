@@ -1,9 +1,16 @@
-<ion-pane class="auth auth-index">
-  <ion-content scroll="false">
-    <img src="img/logo.svg" class="logo" />
+<ion-view hide-nav-bar="true" class="auth auth-index">
+
+  <ion-content scroll="false" padding="true" class="ion-content--center dark-bg">
+
+    <span class="logo">
+      <img src="img/logo.svg" />
+    </span>
+
     <div class="button-group">
-      <a class="button button-balanced button-padded" ui-sref="auth-login">Sign in</a>
-      <a class="button button-blue button-padded"  ui-sref="users-new">Register</a>
+      <button class="button button-balanced button-padded button-full" ui-sref="auth-login">Sign in</button>
+      <button class="button button-positive button-padded button-full" ui-sref="users-new({step: 1})" >Register</button>
     </div>
+
   </ion-content>
-</ion-pane>
+
+</ion-view>

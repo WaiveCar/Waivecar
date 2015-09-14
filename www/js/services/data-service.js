@@ -31,45 +31,54 @@ angular.module('app.services').factory('$data', [
       isSubscribed: false,
 
       initialize: function (modelName, next) {
+        next = _(next).isFunction(next) ? next : angular.identity;
         service.models[modelName] = [];
         return service.fetch(modelName, {}, next);
+
       },
 
       fetch: function (modelName, filter, next) {
+        next = _(next).isFunction(next) ? next : angular.identity;
         // todo: add support for filter query params.
         var items = service.resources[modelName].query(function () {
           service.mergeAll(modelName, items);
-          if (typeof next === 'function') {
-            next();
-          }
+          next();
         });
+        return items;
+
       },
 
       create: function (modelName, data, next) {
+        next = _(next).isFunction() ? next : angular.identity;
         var instance = new service.resources[modelName](data);
-        instance.$save(function (model) {
+
+        return instance.$save(function (model) {
           service.merge(modelName, model.toJSON());
-          service.activateKnownModel(modelName, model.id, next);
-        }, function(error) {
+          return service.activateKnownModel(modelName, model.id, next);
+
+        }, function (error) {
           return next(error.data || error);
         });
+
       },
 
       update: function (modelName, data, next) {
         var instance = new service.resources[modelName](data);
-        instance.$update(function(model) {
+        instance.$update(function (model) {
           service.merge(modelName, model.toJSON());
           service.activateKnownModel(modelName, model.id, next);
           return next();
-        }, function(error) {
+        }, function (error) {
           return next(error.data || error);
         });
       },
 
       remove: function (modelName, id, next) {
-        service.resources[modelName].remove({ id: id }, function(res) {
+        service.resources[modelName].remove({
+          id: id
+        }, function (res) {
           service.purge(modelName, id);
-        }, function(error) {
+        }, function (error) {
           return next(error.data || error);
         });
       },

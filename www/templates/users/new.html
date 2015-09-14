@@ -1,20 +1,21 @@
-<ion-pane class="users-new" ng-controller="UserController">
+<ion-view ng-controller="UserController">
 
-  <form ng-submit="createUser()" name="form" id="form" novalidate>
+  <ion-nav-title>
+    <page-title class="dark-bg">Register</page-title>
+  </ion-nav-title>
 
-    <ion-content class="full-page has-footer-bar">
+  <ion-content padding="true" class="ion-content--center dark-bg">
 
-      <wizard></wizard>
+    <button type="button" class="button button-block button-positive button-padded" ng-click="connectWithFacebook()">
+      <span class="fa-stack">
+        <i class="fa fa-circle fa-stack-2x"></i>
+        <i class="fa fa-facebook fa-stack-1x positive"></i>
+      </span> Connect with Facebook
+    </button>
 
-      <page-title>Register</page-title>
+    <lined>Or</lined>
 
-      <button type="button" class="button button-blue button-padded facebook-button" ng-click="connectWithFacebook()">
-        <img src="img/facebook.svg" class="service-icon">
-        <span>Connect with Facebook</span>
-      </button>
-
-      <lined>Or</lined>
-
+    <form ng-submit="createUser(form)" name="form" id="form" novalidate>
       <div class="list">
 
         <label class="item item-input">
@@ -35,8 +36,8 @@
         <label class="item item-input">
           <span class="input-label mobile-label">Mobile </span>
           <i class="icon placeholder-icon">
-              <img src="img/flag-icon.svg" alt="flag" class="icon-flag">
-            </i>
+            <img src="img/flag-icon.svg" alt="flag" class="icon-flag">
+          </i>
           <input type="text" name="mobile" placeholder="0411 099 110" ng-model="forms.userForm.mobile" required />
         </label>
 
@@ -56,18 +57,17 @@
         </div>
 
       </div>
+    </form>
 
-      <p class="bottomTextInfo">You won't receive any spam from us</p>
+    <p class="padding-top">You won't receive any spam from us</p>
 
-    </ion-content>
+  </ion-content>
 
-    <div class="bar bar-footer">
-      <div class="footer-buttons">
-        <button type="button" class="button button-gray" ui-sref="auth">Cancel</button>
-        <button type="submit" form="form" class="button button-balanced" ng-class="{ 'btn-disabled' : form.$pristine || form.$invalid }" ng-disabled="form.$pristine || form.$invalid">Continue</button>
-      </div>
+  <ion-footer-bar class="no-padding">
+    <div class="button-bar">
+      <button type="button" class="button button-gray" go-back>Cancel</button>
+      <button type="submit" form="form" class="button button-balanced">Continue</button>
     </div>
+  </ion-footer-bar>
 
-  </form>
-
-</ion-pane>
+</ion-view>

@@ -15,7 +15,7 @@ angular.module('app')
         });
       }
 
-      console.log('connecting to ' + $config.uri.api);
+      // console.log('connecting to ' + $config.uri.api);
 
       var socket = socketFactory({
         ioSocket: remote

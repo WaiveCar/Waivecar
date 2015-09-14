@@ -1,13 +1,18 @@
-<ion-pane class="credit-cards-index" ng-controller="CreditCardsController">
-  <ion-header-bar class="bar bar-header bar-light">
-    <div class="header-text">
-      <h1 class="header-title">Credit Cards</h1>
+<ion-view hide-nav-bar="true" ng-controller="CreditCardsController">
+
+  <ion-nav-title>
+    <page-title class="dark-bg">Credit Cards</page-title>
+  </ion-nav-title>
+
+  <ion-content padding="true" class="ion-content--center dark-bg">
+
+    <div class="alert alert-info" ng-if="!active.users.creditCards.length">
+      You don't have any credit cards stored.
+      <br>
+
+      <button type="button" class="button button-block button-balanced" ui-sref="credit-cards-new">Create one?</button>
     </div>
-    <button class="button button-right" ng-click="showNav()">
-      <img src="img/menu.svg">
-    </button>
-  </ion-header-bar>
-  <ion-content scroll="false">
+
     <ion-list show-delete="true" show-reorder="true" can-swipe="true">
       <ion-item ng-repeat="card in active.users.creditCards" class="item-thumbnail-left" ng-controller="CreditCardController">
         <img />
@@ -17,8 +22,13 @@
         </ion-delete-button>
       </ion-item>
     </ion-list>
+
   </ion-content>
-  <div class="bar bar-footer">
-    <button class="button button-balanced" ui-sref="cars">Back</button>
-  </div>
-</ion-pane>
+
+  <ion-footer-bar class="no-padding">
+    <div class="button-bar">
+      <button type="button" class="button button-gray" go-back>Cancel</button>
+    </div>
+  </ion-footer-bar>
+
+</ion-view>

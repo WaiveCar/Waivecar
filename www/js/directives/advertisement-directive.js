@@ -32,7 +32,7 @@ angular.module('app.directives')
 
             $timeout(timeOutFn, 2000);
 
-            init();
+            // init();
 
           }
         ]

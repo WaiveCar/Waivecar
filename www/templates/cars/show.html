@@ -1,5 +1,18 @@
-<ion-pane ng-controller="CarController">
-  <ion-header-bar class="bar bar-header bar-light">
+<ion-view ng-controller="CarController">
+
+  <ion-nav-title>
+    <page-title class="dark-bg title-plain">Find WaiveCars</page-title>
+    <!-- <h6 class="header-title" data-fittext data-fittext-min="20">
+      <reverse-geo-coding get-location="active.cars.location"></reverse-geo-coding>
+    </h6>
+    <route-information class="header-subtitle"></route-information> -->
+  </ion-nav-title>
+
+  <ion-nav-buttons side="primary">
+    <button menu-toggle="right" class="button button-icon icon ion-navicon"></button>
+  </ion-nav-buttons>
+
+  <!-- <ion-header-bar class="bar bar-header bar-light">
     <div class="header-text">
         <div class="vertical-aligned">
           <h6 class="header-title" data-fittext data-fittext-min="20">
@@ -9,8 +22,10 @@
         </div>
     </div>
     <button ui-sref="cars" class="button button-right button-icon icon ion-close"></button>
-  </ion-header-bar>
-  <ion-content scroll="false" class="has-footer-bar">
+  </ion-header-bar> -->
+
+  <ion-content scroll="false" padding="false" class="dark-bg has-header has-footer">
+
     <div class="map-container has-info-footer">
       <map id="map" zoom="15" center="active.cars.location">
         <location-marker location="currentLocation" icon="device"></location-marker>
@@ -18,6 +33,7 @@
         <route-to-location start="currentLocation" destiny="active.cars.location"></route-to-location>
       </map>
     </div>
+
     <div class="vehicle-summary-container info-footer">
       <div class="list pin-bottom size-3">
         <div class="item item-icon-left">
@@ -34,8 +50,13 @@
         </div>
       </div>
     </div>
+
   </ion-content>
-  <div class="bar bar-footer">
-    <button class="button button-balanced" ng-click="book()">Book WaiveCar</button>
-  </div>
-</ion-pane>
+
+  <ion-footer-bar class="no-padding">
+    <div class="button-bar">
+      <button type="button" class="button button-balanced" ng-click="book()">Book WaiveCar</button>
+    </div>
+  </ion-footer-bar>
+
+</ion-view>
