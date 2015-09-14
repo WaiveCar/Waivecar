@@ -3,7 +3,7 @@
 let PaymentModule = Reach.module('payment');
 let Booking       = Reach.model('Booking');
 let Payment       = Reach.model('Payment');
-let error         = Reach.ErrorHandler;
+let error         = Reach.Error;
 
 PaymentModule.hook('waivecar', {
 

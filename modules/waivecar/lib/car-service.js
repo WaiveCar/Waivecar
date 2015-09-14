@@ -4,7 +4,7 @@ let Car           = Reach.model('Car');
 let CarStatus     = Reach.model('CarStatus');
 let CarLocation   = Reach.model('CarLocation');
 let CarDiagnostic = Reach.model('CarDiagnostic');
-let error         = Reach.ErrorHandler;
+let error         = Reach.Error;
 
 /**
  * @class CarService

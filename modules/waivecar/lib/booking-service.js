@@ -6,7 +6,7 @@ let queue          = Reach.provider('queue');
 let query          = Reach.provider('sequelize/helpers').query;
 let Booking        = Reach.model('Booking');
 let BookingDetails = Reach.model('BookingDetails');
-let error          = Reach.ErrorHandler;
+let error          = Reach.Error;
 let relay          = Reach.Relay;
 
 /**

@@ -2,7 +2,7 @@
 
 let VehicleService = require('./vehicle-service');
 let config         = Reach.config;
-let error          = Reach.ErrorHandler;
+let error          = Reach.Error;
 let log            = Reach.Log;
 
 module.exports = function *() {

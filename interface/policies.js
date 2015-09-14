@@ -1,7 +1,7 @@
 'use strict';
 
 let register = Reach.Register;
-let error    = Reach.ErrorHandler;
+let error    = Reach.Error;
 
 /* istanbul ignore next: reach-api does not include modules utilizing these features */
 

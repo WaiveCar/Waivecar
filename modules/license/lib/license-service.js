@@ -1,7 +1,7 @@
 'use strict';
 
 let License  = Reach.model('License');
-let error    = Reach.ErrorHandler;
+let error    = Reach.Error;
 let relay    = Reach.Relay;
 let resource = 'licenses';
 
