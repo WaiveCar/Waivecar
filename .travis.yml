@@ -1,14 +1,11 @@
 language: node_js
 sudo: false
-env:
-  - CXX='g++-4.8'
 addons:
   apt:
     sources:
     - ubuntu-toolchain-r-test
     packages:
     - g++-4.8
-    - gcc-4.8
 node_js:
   - 'stable'
 branches:
@@ -48,6 +45,8 @@ env:
 services:
   - redis-server
 before_install:
+  - npm install -g node-gyp
+  - rm -rf ~/.node-gyp/
   - npm install -g reach
   - curl 'http://cistats.clevertech.biz/logstat/?&project=Waivecar&type=3'
   - deployment/build/scripts/trigger_coverage
