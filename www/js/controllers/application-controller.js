@@ -8,7 +8,8 @@ angular.module('app.controllers').controller('ApplicationController', [
   '$data',
   '$message',
   '$session',
-  function ($rootScope, $scope, $state, $ionicPopover, LocationService, $auth, $data, $message, $session) {
+  '$document',
+  function ($rootScope, $scope, $state, $ionicPopover, LocationService, $auth, $data, $message, $session, $document) {
     'use strict';
     $rootScope.isInitialized = false;
     $rootScope.models = $data.models;
@@ -16,11 +17,21 @@ angular.module('app.controllers').controller('ApplicationController', [
     $rootScope.me = $data.me;
     // $rootScope.currentLocation;
 
-    $ionicPopover.fromTemplateUrl('/templates/common/menu.html', {
-      scope: $scope
-    }).then(function (popover) {
-      $scope.popover = popover;
+    // $ionicPopover.fromTemplateUrl('/templates/common/menu.html', {
+    //   scope: $scope
+    // }).then(function (popover) {
+    //   $scope.popover = popover;
+    // });
+
+    function getWindowWidth() {
+      return $document.width();
+    }
+
+    $document.on('resize', function () {
+      $scope.windowWidth = getWindowWidth();
     });
+
+    $scope.windowWidth = getWindowWidth();
 
     $rootScope.$watch('currentLocation', function () {
       console.log($rootScope.currentLocation);
@@ -61,12 +72,12 @@ angular.module('app.controllers').controller('ApplicationController', [
 
     };
 
-    $scope.showNav = function ($event) {
-      $scope.popover.show($event);
-    };
+    $scope.toggleNav = function () {
+      if ($scope.popover.isShown()) {
+        return $scope.popover.hide();
+      }
+      $scope.popover.show();
 
-    $scope.hideNav = function () {
-      $scope.popover.hide();
     };
 
     $scope.locateMe = function () {

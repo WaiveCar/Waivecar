@@ -1,27 +1,29 @@
-<ion-pane class="waiveCarContainer" id="license-photo">
+<ion-view>
 
-  <ion-content class="full-page" ng-controller="LicenseController">
+  <ion-nav-title>
+    <page-title class="dark-bg">Driver's License</page-title>
+  </ion-nav-title>
 
-    <step-by-step current-step="3"></step-by-step>
+  <ion-content padding="true" class="ion-content--center dark-bg" ng-controller="LicenseController">
 
-    <page-title back-button="true">Driver's License </page-title>
+    <p class="padding-bottom">
+      We need to verify your age and driving.<br>
+      We won't share your information in any way.
+    </p>
 
-    <p>We need to verify your age and driving.</p>
-    <p>We won't share your information in any way</p>
-
-    <div id="buttons-container">
-      <button class="button button-balanced button-padded" on-tap="takePhoto()">Take photo</button>
-      <button class="button button-blue button-padded" on-tap="uploadPhoto()">Upload from mobile</button>
+    <div id="padding-top padding-bottom">
+      <button class="button button-balanced button-block" on-tap="takePhoto()">Take photo</button>
+      <button class="button button-positive button-block" on-tap="uploadPhoto()">Upload from mobile</button>
     </div>
 
-    <div id="skip-information">
-      <p>
-        Your driver's license is required to book WaiveCar.
-        <br>
-        However you can <a ui-sref="fleet">skip this step</a> and do it later on your account settings
-      </p>
-    </div>
+    <p class="padding-top">
+      Your driver's license is required to book WaiveCar.
+      <br>
+      However you can skip this step and do it later on your account settings
+    </p>
+
+    <button type="button" class="button button-small button-clear button-balanced" ui-sref="credit-cards">Skip this step</button>
 
   </ion-content>
 
-</ion-pane>
+</ion-view>

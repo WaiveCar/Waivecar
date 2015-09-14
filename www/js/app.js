@@ -22,7 +22,9 @@
     'app.services',
     'config',
     'Maps',
-    'MockBehaviors'
+    'MockBehaviors',
+    'ngMaterial',
+    'angularPayments'
     // 'countdown',
     // 'ads',
     // 'ChargingStations',

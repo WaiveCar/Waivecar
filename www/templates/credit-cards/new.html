@@ -1,44 +1,71 @@
-<ion-pane class="credit-cards-new" ng-controller="CreditCardController">
-  <ion-content class="full-page has-footer-bar">
+<ion-view>
 
-    <step-by-step current-step="4"></step-by-step>
+  <ion-nav-title>
+    <page-title class="dark-bg">Payment method</page-title>
+  </ion-nav-title>
 
-    <page-title back-button="true">Payment method</page-title>
+  <ion-content padding="true" class="ion-content--center dark-bg" ng-controller="CreditCardController">
 
-    <p>Don't worry, the majority of rides are free!</p>
-    <p>However, fees could apply in some cases.</p>
+    <p>
+      Don't worry, the majority of rides are free!
+      <br> However, fees could apply in some cases.
+    </p>
 
-    <a href="/">Check out fees Guidelines</a>
+    <p class="padding-bottom"><a href>Check out fees Guidelines</a></p>
 
-    <form ng-submit="createCreditCard()" name="form">
+    <form ng-submit="createCreditCard(form)" name="form" id="form" novalidate>
+      <div class="list padding-top">
 
-      <div class="list">
         <label class="item item-input">
-          <span class="input-label">Card Number</span>
-          <input type="text" placeholder="XXXX-XXXX-XXXX-XXXX" ng-model="forms.creditCardForm.number">
+          <span class="input-label required">Card Number</span>
+          <input name="number" type="text" placeholder="#### #### #### ####" ng-model="forms.creditCardForm.number" required payments-validate="card" payments-format="card" payments-type-model="type" autofocus>
         </label>
 
         <label class="item item-input">
-          <span class="input-label">Name on Card</span>
-          <input type="text" placeholder="Cardholder Name" ng-model="forms.creditCardForm.name">
+          <span class="input-label required">Name on Card</span>
+          <input name="name" type="text" placeholder="Cardholder Name" ng-model="forms.creditCardForm.name" required>
         </label>
 
         <label class="item item-input">
-          <span class="input-label">Expiry Date</span>
-          <input type="date" ng-model="forms.creditCardForm.expiry">
+          <span class="input-label required">Expiry Date</span>
+          <input name="expiry" type="text" ng-model="forms.creditCardForm.expiry" required payments-validate="expiry" payments-format="expiry">
         </label>
 
         <label class="item item-input">
-          <span class="input-label">CVV</span>
-          <input type="text" ng-model="forms.creditCardForm.cvc">
+          <span class="input-label required">CVC</span>
+          <input name="cvc" type="text" ng-model="forms.creditCardForm.cvc" required payments-validate="cvc" payments-format="cvc" payments-type-model="type">
         </label>
+
       </div>
 
-      <button type="submit" class="button button-balanced button-padded">Add card and finish</button>
+      <div ng-messages="form.number.$error" ng-if="form.$submitted && form.number.$invalid" role="alert">
+        <div ng-message="required">Credit Card number is required</div>
+        <div ng-message="card">Credit Card number is invalid</div>
+      </div>
 
+      <div ng-messages="form.name.$error" ng-if="form.$submitted && form.name.$invalid" role="alert">
+        <div ng-message="required">Name is required</div>
+      </div>
+
+      <div ng-messages="form.expiry.$error" ng-if="form.$submitted && form.expiry.$invalid" role="alert">
+        <div ng-message="required">Expiry month is required</div>
+        <div ng-message="expiry">Expiry month is invalid</div>
+      </div>
+
+      <div ng-messages="form.cvc.$error" ng-if="form.$submitted && form.cvc.$invalid" role="alert">
+        <div ng-message="required">CVC is required</div>
+        <div ng-message="cvc">CVC is invalid</div>
+      </div>
     </form>
 
-    <p>By adding a credit card you are agreeing with our <a href="#">terms of services</a> and <a href="#">Fees Guidelines</a></p>
+    <p class="padding-top">By adding a credit card you are agreeing with our <a href>terms of services</a> and <a href>Fees Guidelines</a></p>
 
   </ion-content>
-</ion-pane>
+
+  <ion-footer-bar class="no-padding">
+    <div class="button-bar">
+      <button type="submit" form="form" class="button button-balanced">Save &amp; finish</button>
+    </div>
+  </ion-footer-bar>
+
+</ion-view>

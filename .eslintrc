@@ -12,7 +12,8 @@ globals:
     StatusBar: true,
     io: true,
     async: true,
-    moment: true
+    moment: true,
+    sprintf: true
 
 env:
     browser: true

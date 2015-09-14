@@ -1,10 +1,20 @@
-<ion-pane class="bookings-show" ng-controller="BookingController">
-  <header-bar type="nav" on-button-click="showNav()">Summary</header-bar>
-  <ion-content  class="has-header summary-container">
+<ion-view class="bookings-show" ng-controller="BookingController">
+
+  <ion-nav-title>
+    <page-title class="dark-bg">Summary</page-title>
+  </ion-nav-title>
+  <ion-nav-buttons side="primary">
+    <button menu-toggle="right" class="button button-icon icon ion-navicon"></button>
+  </ion-nav-buttons>
+
+
+  <ion-content padding="true" class="ion-content--center dark-bg">
+  <!-- <ion-content  class="has-header summary-container"> -->
     <div class="ride-info">
       <p>This ride took place on <span ng-bind="bookingDetail('start', 'createdAt') | date : 'EEEE, MMMM d, yyyy'" class="highlight"></span>.</p>
       <p>The WaiveCar  was picked at <span ng-bind="bookingDetail('start', 'address')" class="highlight"></span></p>
     </div>
+
     <div class="time-and-distance-info tableContainer">
       <table>
         <tr>
@@ -17,6 +27,7 @@
         </tr>
       </table>
     </div>
+
     <div class="fees-info tableContainer">
       <page-title>fees</page-title>
       <table>
@@ -30,6 +41,7 @@
         </tr>
       </table>
     </div>
+
     <div class="points-info tableContainer">
       <page-title>points</page-title>
       <table>
@@ -43,5 +55,7 @@
         </tr>
       </table>
     </div>
+
   </ion-content>
-</ion-pane>
+
+</ion-view>

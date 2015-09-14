@@ -11,7 +11,14 @@ angular.module('app.controllers').controller('CreditCardController', [
       creditCardForm: {}
     };
 
-    $scope.createCreditCard = function () {
+    $scope.createCreditCard = function (form) {
+      if (form.$pristine) {
+        return $message.info('Please fill in your credentials first.');
+      }
+      if (form.$invalid) {
+        return $message.error('Please resolve form errors and try again.');
+      }
+
       $data.createCreditCard($scope.forms.creditCardForm, function (err) {
         if (err) {
           return $message.error(err);
@@ -20,7 +27,7 @@ angular.module('app.controllers').controller('CreditCardController', [
         if ($scope.redirection.redirectState) {
           return $state.go('cars', $scope.redirection);
         }
-        $state.go('users-show', {
+        $state.go('users-edit', {
           id: $data.me.id
         });
 
