@@ -15,6 +15,7 @@ fi
 if [ $FAST -eq  "0" ]; then
     echo "`date -u `: Cleaning node_modules"
     rm -rf node_modules/
+    rm -rf ~/.node-gyp
 fi
 
 echo "`date -u `: Installing dependencies"

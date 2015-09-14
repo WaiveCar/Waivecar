@@ -46,7 +46,7 @@ before_install:
     -in deployment/build/ssh/id_rsa.enc -out deployment/build/ssh/id_rsa -d
   - chmod 400 deployment/build/ssh/id_rsa
 install:
-  - $SCR/commit_dependencies --fast
+  - $SCR/commit_dependencies
   - reach install
 script:
   - $SCR/commit_build && $SCR/commit_analysis && $SCR/commit_test && $SCR/commit_package
