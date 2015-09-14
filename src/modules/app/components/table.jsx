@@ -67,25 +67,18 @@ export default function (view, fields, resource) {
      * @param  {Int} id
      */
     tableActions(id) {
-      let editAction = view.actions.update
-        ? (
+      return (
+        <div className="text-center">
+          { view.actions.update &&
             <Link className="grid-action" to={ resource.name + '/' + id }>
               <i className="material-icons" role="edit">edit</i>
             </Link>
-          )
-        : null;
-      let deleteAction = view.actions.delete
-        ? (
+          }
+          { view.actions.delete &&
             <button className="grid-action danger" onClick={ this.delete.bind(this, id) }>
               <i className="material-icons" role="delete">delete</i>
             </button>
-          )
-        : null;
-
-      return (
-        <div className="text-center">
-          { editAction }
-          { deleteAction }
+          }
         </div>
       );
     }
