@@ -20,7 +20,7 @@
     "koa-cors": "0.0.16",
     "lodash": "3.10.1",
     "moment": "2.10.6",
-    "reach-api": "0.4.9",
+    "reach-api": "0.4.10",
     "request": "2.61.0",
     "shortid" : "2.2.2"
   },
