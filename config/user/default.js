@@ -10,6 +10,15 @@ module.exports = {
    */
 
   user : {
+    admins : [
+      {
+        firstName : 'John',
+        lastName  : 'Doe',
+        email     : 'admin@fixture.none',
+        password  : 'admin',
+        validated : true
+      }
+    ],
     filter : function (query, options) {
       return query(options, {
         where : {
