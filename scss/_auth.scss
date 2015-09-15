@@ -1,83 +1,23 @@
 .auth {
-  &.auth-index {
+  &.auth-index ion-content {
+    background-repeat: no-repeat;
+    background-image: url('/img/background.png');
+    background-size: cover;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
     .logo {
-      width    : 86%;;
-      position : absolute;
-      top      : 36%;
-      left     : 0;
-      right    : 0;
-      margin   : 0 auto;
-    }
-    .scroll-content {
-      background-repeat : no-repeat;
-      background-image  : url('/img/background.png');
-      background-size   : cover;
-      text-align        : center;
-      .button-group {
-        position       : absolute;
-        bottom         : 0;
-        width          : 100%;
-        padding-bottom : 5%;
-        .button.button-padded {
-          margin-bottom : 3%;
-          width         : 75%;
-          height        : 8.69%;
-        }
+      min-height: 45%;
+      img {
+        width: 86%;
       }
+    }
+
+    .button-group {
+      min-width: 100%;
+      margin: 0 auto;
     }
   }
 }
-
-
-
-
-.text-info-title {
-  margin-bottom : 9%;
-}
-
-
-
-
-
-// .signIn{
-//   vertical-align: middle;
-//   text-align: center;
-//   .logo{
-//     width: 86%;;
-//     position:absolute;
-//     top:36%;
-//     left: 0;
-//     right: 0;
-//     margin:0  auto;
-//   }
-
-// }
-// .button.button-padded.facebook-button{
-//   height: 8.69%;
-//   width: 90%;
-//   padding: 0;
-//   span{
-//     height: 33%;
-
-//   }
-
-// }
-// .bottomTextInfo{
-//   margin-top: 5.3%;
-//   display: block;
-//   width: 75.2%;
-//   margin-left: auto;
-//   margin-right: auto;
-// }
-
-// .facebookContainer{
-//   .formSectionTitle{
-//     margin-bottom: 5.17%;
-//     width: 75.2%;
-//     margin-left: auto;
-//     margin-right: auto;
-//   }
-//   .nameAndEmailContainer{
-//     margin-bottom: 9%;
-//   }
-// }

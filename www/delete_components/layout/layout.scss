@@ -1,125 +1,122 @@
-.overlay-dialog{
+.overlay-dialog {
   z-index: 2000;
   text-align: center;
   width: 100%;
   height: 100%;
   display: none;
-  color:#FFF;
-  background-color: rgba(0,0,0,0.96);
+  color: #FFF;
+  background-color: rgba(0, 0, 0, 0.96);
   position: absolute;
   top: 0;
   left: 0;
-  .waiveCar-icon{
+  .waiveCar-icon {
     margin-left: auto;
     margin-right: auto;
     height: 19%;
-    margin-bottom:4%;
-
+    margin-bottom: 4%;
   }
-  .container{
+  .container {
     height: 26.23%;
   }
-  .button-padded{
-    margin-top:4%;
+  .button-padded {
+    margin-top: 4%;
     height: 33.14%;
-    span,a{
+    span,
+    a {
       font-size: 3vh;
     }
   }
-
 }
-.splash-screen{
+
+.splash-screen {
   vertical-align: middle;
   text-align: center;
-  .logo{
+  .logo {
     width: 86%;
-    position:absolute;
-    top:0;
-    bottom:0;
-    left: 0;  
-    right: 0;  
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
     margin: auto;
   }
 }
-.step-by-step{
+
+.step-by-step {
   margin-top: 1rem;
-  svg{
+  svg {
     height: 0.5rem;
   }
-  line{
-    stroke-width:0.5rem;
+  line {
+    stroke-width: 0.5rem;
     stroke: $gray;
-    &.passed{
+    &.passed {
       stroke: $green;
     }
-   
-    
   }
 }
 
-.strike{
-  line{
+.strike {
+  line {
     stroke: $green;
-    stroke-width:10%;
+    stroke-width: 10%;
   }
   height: 0.5rem;
   width: 6.22%;
   display: block;
   margin: 0 auto;
 }
-.lineOnTheSides{
+
+.lineOnTheSides {
   height: 3%;
   margin-top: 9.4%;
   margin-bottom: 9.2%;
-  svg{
+  svg {
     display: inline-block;
-
     height: 100%;
-      line{
-        stroke: $gray2;
-        stroke-width:1.2%;
-      }
-    
+    line {
+      stroke: $gray2;
+      stroke-width: 1.2%;
+    }
   }
-  .content{
+  .content {
     display: inline-block;
     width: 5%;
     height: 100%;
     margin-left: 6%;
     margin-right: 6%;
-
-    span{
+    span {
       height: 100%;
       display: inline-block;
       width: 100%;
-
     }
   }
 }
-.bottomToast{
+
+.bottomToast {
   z-index: 500;
   display: block;
   width: 100%;
   height: 100%;
   position: absolute;
-  top:0;
-  left:0;
-  background-color: rgba(190,190,190,0.6);
-  ul{
+  top: 0;
+  left: 0;
+  background-color: rgba(190, 190, 190, 0.6);
+  ul {
     background-color: #FFF;
     width: 95%;
     border-radius: .5em;
-    li{
+    li {
       border-bottom: 1px solid;
     }
-    li:last-child{
+    li:last-child {
       border-bottom: 0px;
     }
     margin-bottom: 1em;
     margin-left: auto;
     margin-right: auto;
   }
-  .contentWrapper{
+  .contentWrapper {
     position: absolute;
     bottom: 0px;
     width: 100%;

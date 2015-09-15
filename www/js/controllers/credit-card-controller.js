@@ -4,40 +4,63 @@ angular.module('app.controllers').controller('CreditCardController', [
   '$state',
   '$auth',
   '$data',
-  function ($rootScope, $scope, $state, $auth, $data) {
+  '$message',
+  function ($rootScope, $scope, $state, $auth, $data, $message) {
+    'use strict';
     $scope.forms = {
       creditCardForm: {}
     };
 
-    $scope.createCreditCard = function() {
-      $data.createCreditCard($scope.forms.creditCardForm, function(err, data) {
-        if (err) console.log(err);
-        if ($scope.redirection.redirectState) {
-          $state.go('cars', $scope.redirection);
-        } else {
-          $state.go('users-show', { id: $data.me.id });
+    $scope.createCreditCard = function (form) {
+      if (form.$pristine) {
+        return $message.info('Please fill in your credentials first.');
+      }
+      if (form.$invalid) {
+        return $message.error('Please resolve form errors and try again.');
+      }
+
+      $data.createCreditCard($scope.forms.creditCardForm, function (err) {
+        if (err) {
+          return $message.error(err);
         }
+
+        if ($scope.redirection.redirectState) {
+          return $state.go('cars', $scope.redirection);
+        }
+        $state.go('users-edit', {
+          id: $data.me.id
+        });
+
       });
+
     };
 
-    $scope.removeCreditCard = function() {
-      $data.removeCreditCard($scope.forms.creditCardForm, function(err, data) {
-        if (err) console.log(err);
+    $scope.removeCreditCard = function () {
+      $data.removeCreditCard($scope.forms.creditCardForm, function (err) {
+        if (err) {
+          return $message.error(err);
+        }
+
         if ($scope.redirection.redirectState) {
           $state.go($scope.redirection.redirectState, $scope.redirection.redirectParams);
-        } else {
-          $state.go('users-show', { id: $data.me.id });
         }
+        $state.go('users-show', {
+          id: $data.me.id
+        });
+
       });
+
     };
 
-    $scope.init = function() {
+    $scope.init = function () {
       $scope.redirection = {
-        redirectState  : $state.params.redirectState,
-        redirectParams : $state.params.redirectParams
+        redirectState: $state.params.redirectState,
+        redirectParams: $state.params.redirectParams
       };
     };
 
     $scope.init();
+
   }
+
 ]);

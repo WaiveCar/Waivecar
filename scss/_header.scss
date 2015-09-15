@@ -1,0 +1,36 @@
+.page-title {
+  @include center-block;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  span {
+    margin-bottom: 0.2rem;
+    display: block;
+  }
+}
+
+page-title {
+  &.dark-bg {
+    .page-title {
+      color: $light;
+    }
+  }
+  &.title-plain .strike{
+    display: none;
+  }
+}
+
+ion-nav-bar .bar-header {
+  // height: ($bigHeaderSize*1%) !important;
+  color: $light;
+  .button.back-button {
+    // margin-top: 18px;
+  }
+  .title {
+    // top: 17px;
+    &+.buttons {
+      // top: 17px;
+    }
+  }
+}

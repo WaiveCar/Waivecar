@@ -2,34 +2,43 @@ angular.module('app.services').factory('$session', [
   '$rootScope',
   '$window',
   function ($rootScope, $window) {
+    'use strict';
 
     var session = {
 
       data: {},
 
       load: function () {
-        try {
-          angular.forEach($window.localStorage, function (value, key) {
-            session.data[key] = JSON.parse(value);
-          });
-        } catch (err) {
-          $rootScope.$emit('sessionParseError', err);
-        }
+        angular.forEach($window.localStorage, function (value, key) {
+
+          if ($window.localStorage.hasOwnProperty(key)) {
+            try {
+              session.data[key] = value && JSON.parse(value);
+            } catch (err) {
+              $rootScope.$emit('sessionParseError', err);
+            }
+          }
+
+        });
+
         return this;
+
       },
 
       has: function (key) {
         if (_.isEmpty(this.data)) {
           this.load();
         }
-        return undefined === this.data[key] ? false : true;
+        return !_(this.data[key]).isUndefined();
+
       },
 
       get: function (key) {
         if (_.isEmpty(this.data)) {
           this.load();
         }
-        return undefined === this.data[key] ? {} : this.data[key];
+        return _(this.data[key]).isUndefined() ? {} : this.data[key];
+
       },
 
       set: function (key, value) {
@@ -39,10 +48,13 @@ angular.module('app.services').factory('$session', [
 
       save: function () {
         angular.forEach(this.data, function (value, key) {
-          $window.localStorage[key] = JSON.stringify(value);
+          // stripped of angular-specific $$ properties
+          var val = angular.fromJson(angular.toJson(value));
+          $window.localStorage[key] = JSON.stringify(val);
         });
 
         return this;
+
       },
 
       purge: function (key) {
@@ -55,9 +67,13 @@ angular.module('app.services').factory('$session', [
         }
 
         return this;
+
       }
+
     };
 
     return session.load();
+
   }
+
 ]);

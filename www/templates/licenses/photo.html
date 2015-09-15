@@ -1,0 +1,29 @@
+<ion-view>
+
+  <ion-nav-title>
+    <page-title class="dark-bg">Driver's License</page-title>
+  </ion-nav-title>
+
+  <ion-content padding="true" class="ion-content--center dark-bg" ng-controller="LicenseController">
+
+    <p class="padding-bottom">
+      We need to verify your age and driving.<br>
+      We won't share your information in any way.
+    </p>
+
+    <div id="padding-top padding-bottom">
+      <button class="button button-balanced button-block" on-tap="takePhoto()">Take photo</button>
+      <button class="button button-positive button-block" on-tap="uploadPhoto()">Upload from mobile</button>
+    </div>
+
+    <p class="padding-top">
+      Your driver's license is required to book WaiveCar.
+      <br>
+      However you can skip this step and do it later on your account settings
+    </p>
+
+    <button type="button" class="button button-small button-clear button-balanced" ui-sref="credit-cards">Skip this step</button>
+
+  </ion-content>
+
+</ion-view>
