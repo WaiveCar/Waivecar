@@ -1,7 +1,25 @@
 'use strict';
 
 module.exports = [
-  /* ----------------- DASHBOARD ------------------ */
+  /* ----------------- USER DASHBOARD ------------------ */
+  {
+    route       : '/dashboard',
+    name        : 'My Dashboard',
+    description : null,
+    layout      : [
+      [
+        { component : 'CarsMap' }
+      ]
+    ],
+    menus : {
+      sidebar : {
+        id     : 'dashboard',
+        name   : 'My Dashboard',
+        icon   : 'dashboard',
+        parent : null
+      }
+    }
+  },
   {
     route       : '/profile',
     name        : 'My Profile',
@@ -20,6 +38,7 @@ module.exports = [
       }
     }
   },
+  /* ----------------- ADMIN DASHBOARD ------------------ */
   {
     route       : '/admin',
     name        : 'Dashboard',
