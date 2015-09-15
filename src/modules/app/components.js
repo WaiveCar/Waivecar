@@ -4,7 +4,7 @@ import table     from './components/table';
 import form      from './components/form';
 import map       from './components/map';
 import miniChart from './components/mini-chart';
-
+import profile   from './components/profile';
 /**
  * @class Components
  */
@@ -25,6 +25,7 @@ Components.add = function (component, fields, resource) {
 
 function getComponent(component, fields, resource) {
   switch (component.type) {
+    case 'Profile'   : return profile(component, fields, resource);
     case 'Table'     : return table(component, fields, resource);
     case 'Form'      : return form(component, fields, resource);
     case 'Map'       : return map(component, fields, resource);

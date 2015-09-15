@@ -9,11 +9,6 @@ import UI       from './ui';
 let auth = Reach.Auth;
 let nav  = [
   {
-    name : 'Profile',
-    path : '/profile',
-    icon : 'person'
-  },
-  {
     name : 'Past Rides',
     path : '/past-rides',
     icon : 'directions_car'

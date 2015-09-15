@@ -4,10 +4,6 @@ import layout from './components/layout';
 
 let routes = [
   {
-    path      : '/profile',
-    component : require('./views/profile')
-  },
-  {
     path      : '/past-rides',
     component : require('./views/past-rides')
   }
