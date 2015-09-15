@@ -63,12 +63,7 @@ LicenseService.create = function *(data, _user) {
 LicenseService.update = function *(id, data, _user) {
   let model = yield this.get(id);
   hasAccess(model, _user);
-  for (let key in data) {
-    if (model.hasOwnProperty(key)) {
-      model[key] = data[key];
-    }
-  }
-  yield model.update();
+  yield model.update(data);
   relay.emit(resource, {
     type    : 'update',
     license : model.toJSON()

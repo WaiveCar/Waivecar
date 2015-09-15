@@ -87,10 +87,11 @@ CarService.setStatus = function *(status, carId, user) {
       yield carStatus.upsert();
       break;
     case 'available':
-      carStatus          = yield CarStatus.findById(carId);
-      carStatus.driverId = null;
-      carStatus.status   = status;
-      yield carStatus.update('carId');
+      carStatus = yield CarStatus.findById(carId);
+      yield carStatus.update({
+        driverId : null,
+        status   : status
+      }, 'carId');
       break;
     default:
       throw error.parse({

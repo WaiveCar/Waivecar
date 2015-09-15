@@ -57,13 +57,12 @@ BookingService.cancel = function *(id, user) {
 
   // ### Update Booking
 
-  booking._actor = user;
-
   if (isAdmin) {
     yield booking.delete();
   } else {
-    booking.state  = 'cancelled';
-    yield booking.update();
+    yield booking.update({
+      state : 'cancelled'
+    });
   }
 
   // ### Remove Time Limit
@@ -99,9 +98,9 @@ BookingService.pending = function *(id, user) {
 
   // ### Update Booking
 
-  booking._actor = user;
-  booking.state  = 'pending-arrival';
-  yield booking.update();
+  yield booking.update({
+    state : 'pending-arrival'
+  });
 
   // ### Time Limit
   // The booking will automaticaly cancel itself after 15 minutes
@@ -165,11 +164,10 @@ BookingService.start = function *(id, user) {
     charge    : Math.ceil(charge.value) || 0
   });
 
-  details._actor = user;
   yield details.save();
-
-  booking.state = 'in-progress';
-  yield booking.update();
+  yield booking.update({
+    state : 'in-progress'
+  });
 
   // ### Remove Time Limit
   // Remove the auto cancel job on the booking
@@ -231,8 +229,9 @@ BookingService.end = function *(id, user) {
   // Set the booking to pending payment, a future payment job will update the
   // booking to completed at earliest convenience.
 
-  booking.state = 'pending-payment';
-  yield booking.update();
+  yield booking.update({
+    state : 'pending-payment'
+  });
 
   // ### Car Status
   // Set the car status back to available.
