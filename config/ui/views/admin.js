@@ -3,7 +3,25 @@
 module.exports = [
   /* ----------------- DASHBOARD ------------------ */
   {
-    route       : '/dashboard',
+    route       : '/profile',
+    name        : 'My Profile',
+    description : null,
+    layout      : [
+      [
+        { component : 'Profile' }
+      ]
+    ],
+    menus : {
+      sidebar : {
+        id     : 'profile',
+        name   : 'My Profile',
+        icon   : 'person',
+        parent : null
+      }
+    }
+  },
+  {
+    route       : '/admin',
     name        : 'Dashboard',
     description : null,
     layout      : [
@@ -19,7 +37,7 @@ module.exports = [
     ],
     menus : {
       sidebar : {
-        id     : 'dashboard',
+        id     : 'admin',
         name   : 'Dashboard',
         icon   : 'dashboard',
         parent : null

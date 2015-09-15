@@ -38,6 +38,18 @@ module.exports = [
     }
   },
   {
+    name    : 'Profile',
+    title   : 'My Profile',
+    type    : 'Profile',
+    fields  : [ 'firstName', 'lastName', 'email' ],
+    actions : {
+      cancel : true,
+      create : false,
+      update : true,
+      delete : false
+    }
+  },
+  {
     name    : 'UsersChart',
     title   : 'Users',
     type    : 'MiniChart',
