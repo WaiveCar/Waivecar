@@ -6,10 +6,7 @@ let error    = Reach.Error;
 /* istanbul ignore next: reach-api does not include modules utilizing these features */
 
 module.exports = function *() {
-
-  // ### Authenticate
-  // Authenticates the incoming request before allowing access to the route
-
+  
   yield register.policy('authenticate', function *() {
     if (!this.auth.check()) {
       throw error.parse({
@@ -27,10 +24,5 @@ module.exports = function *() {
       }, 401);
     }
   });
-
-  // ### Custom Policies
-  // Add your custom policies, usually modules will register their own
-  // policies if needed but there should be no issue registering your
-  // policies in the interface.
 
 };
