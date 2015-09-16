@@ -5,6 +5,7 @@ import form      from './components/form';
 import map       from './components/map';
 import miniChart from './components/mini-chart';
 import profile   from './components/profile';
+
 /**
  * @class Components
  */

@@ -5,6 +5,7 @@ import Reach      from 'reach-react';
 import { Layout } from 'reach-components';
 import Components from '../components';
 import UI         from '../ui';
+import Wizard     from './wizard';
 
 let { Container, Row, Column } = Layout;
 let Relay = Reach.Relay;
@@ -33,10 +34,17 @@ export default function (view) {
     renderComponent(component) {
       let componentName;
       if (typeof component === 'string' || component instanceof String) {
+        // simple / no options.
         componentName = component;
+      } else if (component.name) {
+        // object (potentially with options)
+        componentName = component.name;
       } else {
-        componentName = component.component;
+        console.log(component);
+        throw new Error('Component not well defined', component);
       }
+
+      console.log(Components);
 
       let Component = Components.list[componentName];
       return (
@@ -47,16 +55,26 @@ export default function (view) {
     }
 
     /**
+     * @method renderType
+     */
+    renderType(column) {
+      switch (column.type) {
+        case 'Wizard' : return <Wizard { ...column } />;
+        default       : return this.renderComponent(column.component);
+      }
+    }
+
+    /**
      * @method renderColumn
      */
-    renderColumn(component, columnIndex, columnWidth) {
-      if (component && component.width) {
-        columnWidth = component.width;
+    renderColumn(column, columnIndex, columnWidth) {
+      if (column.width) {
+        columnWidth = column.width;
       }
 
       return (
-        <Column key={ columnIndex } width={ columnWidth }>
-          { this.renderComponent(component) }
+        <Column key={ columnIndex } width={ columnWidth } classNames={ column.classNames }>
+          { this.renderType(column) }
         </Column>
       );
     }
@@ -65,12 +83,12 @@ export default function (view) {
      * @method renderRow
      */
     renderRow(row, rowIndex) {
-      let columnWidth = Math.floor(12 / row.length) || 12;
+      let columnWidth = Math.floor(12 / row.columns.length) || 12;
       return (
-        <Row key={ rowIndex }>
+        <Row key={ rowIndex } classNames={ row.classNames }>
           {
-            row.map((component, columnIndex) => {
-              return this.renderColumn(component, columnIndex, columnWidth)
+            row.columns.map((column, columnIndex) => {
+              return this.renderColumn(column, columnIndex, columnWidth)
             }.bind(this))
           }
         </Row>
@@ -88,8 +106,8 @@ export default function (view) {
           </div>
           <div className="container-fluid">
             {
-              Array.isArray(view.layout)
-                ? view.layout.map(this.renderRow.bind(this))
+              Array.isArray(view.layout.rows)
+                ? view.layout.rows.map(this.renderRow.bind(this))
                 : this.renderComponent(view.layout)
             }
           </div>
