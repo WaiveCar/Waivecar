@@ -16,6 +16,7 @@ module.exports = {
         lastName  : 'Doe',
         email     : 'admin@fixture.none',
         password  : 'admin',
+        role      : 'admin',
         validated : true
       },
       {
@@ -23,6 +24,7 @@ module.exports = {
         lastName  : 'Ginty',
         email     : 'matt.ginty@clevertech.biz',
         password  : 'lollipop0',
+        role      : 'admin',
         validated : true
       }
     ],
