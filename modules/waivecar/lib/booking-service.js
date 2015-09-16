@@ -25,7 +25,7 @@ BookingService.create = function *(car, customer) {
   let booking = new Booking({
     carId      : car,
     customerId : customer.id,
-    state      : 'new-booking'
+    status     : 'new-booking'
   });
   booking._actor = customer;
   yield booking.save();
@@ -37,7 +37,7 @@ BookingService.create = function *(car, customer) {
 };
 
 /**
- * Updates the booking state to pending-arrival.
+ * Updates the booking status to pending-arrival.
  * @method cancel
  * @param  {Int}  id
  * @param  {User} user
@@ -46,10 +46,10 @@ BookingService.cancel = function *(id, user) {
   let booking = yield this.getBooking(id, user);
   let allowed = [ 'new-booking', 'pending-arrival' ];
   let isAdmin = user.role === 'admin';
-  if (!isAdmin && allowed.indexOf(booking.state) === -1) {
+  if (!isAdmin && allowed.indexOf(booking.status) === -1) {
     throw error.parse({
       code    : 'BOOKING_INVALID_ACTION',
-      message : 'You cannot cancel a booking which is ' + booking.state.replace('-', ' ')
+      message : 'You cannot cancel a booking which is ' + booking.status.replace('-', ' ')
     }, 400);
   }
 
@@ -61,7 +61,7 @@ BookingService.cancel = function *(id, user) {
     yield booking.delete();
   } else {
     yield booking.update({
-      state : 'cancelled'
+      status : 'cancelled'
     });
   }
 
@@ -79,7 +79,7 @@ BookingService.cancel = function *(id, user) {
 };
 
 /**
- * Updates the booking state to pending-arrival.
+ * Updates the booking status to pending-arrival.
  * @method pending
  * @param  {Int}  id
  * @param  {User} user
@@ -89,17 +89,17 @@ BookingService.pending = function *(id, user) {
 
   // TODO: payments!!!!!!!
   console.log('skipping authorization on payments');
-  // if (booking.state !== 'payment-authorized') {
+  // if (booking.status !== 'payment-authorized') {
   //   throw error.parse({
   //     code    : 'BOOKING_INVALID_ACTION',
-  //     message : 'You cannot set pending arrival on a booking which is ' + booking.state.replace('-', ' ')
+  //     message : 'You cannot set pending arrival on a booking which is ' + booking.status.replace('-', ' ')
   //   }, 400);
   // }
 
   // ### Update Booking
 
   yield booking.update({
-    state : 'pending-arrival'
+    status : 'pending-arrival'
   });
 
   // ### Time Limit
@@ -126,7 +126,7 @@ BookingService.pending = function *(id, user) {
 };
 
 /**
- * Updates the booking state to in-progress.
+ * Updates the booking status to in-progress.
  * @method start
  * @param  {Int}  id
  * @param  {User} user
@@ -138,10 +138,10 @@ BookingService.start = function *(id, user) {
   let charge      = diagnostics.find(d => d.type === 'evBatteryLevel');
   let odometer    = diagnostics.find(d => d.type === 'odometer');
 
-  if (booking.state !== 'pending-arrival') {
+  if (booking.status !== 'pending-arrival') {
     throw error.parse({
       code    : 'BOOKING_INVALID_ACTION',
-      message : 'You cannot start a ride which is ' + booking.state.replace('-', ' ')
+      message : 'You cannot start a ride which is ' + booking.status.replace('-', ' ')
     }, 400);
   }
 
@@ -166,7 +166,7 @@ BookingService.start = function *(id, user) {
 
   yield details.save();
   yield booking.update({
-    state : 'in-progress'
+    status : 'in-progress'
   });
 
   // ### Remove Time Limit
@@ -183,7 +183,7 @@ BookingService.start = function *(id, user) {
 };
 
 /**
- * Updates the booking state to pending-payment.
+ * Updates the booking status to pending-payment.
  * @method end
  * @param  {Int}  id
  * @param  {User} user
@@ -195,10 +195,10 @@ BookingService.end = function *(id, user) {
   let charge      = diagnostics.find(d => d.type === 'evBatteryLevel');
   let odometer    = diagnostics.find(d => d.type === 'odometer');
 
-  if (booking.state !== 'in-progress') {
+  if (booking.status !== 'in-progress') {
     throw error.parse({
       code    : 'BOOKING_INVALID_ACTION',
-      message : 'You cannot end a ride which is ' + booking.state.replace('-', ' ')
+      message : 'You cannot end a ride which is ' + booking.status.replace('-', ' ')
     }, 400);
   }
 
@@ -230,7 +230,7 @@ BookingService.end = function *(id, user) {
   // booking to completed at earliest convenience.
 
   yield booking.update({
-    state : 'pending-payment'
+    status : 'pending-payment'
   });
 
   // ### Car Status
@@ -259,7 +259,7 @@ BookingService.getBookings = function *(options) {
       customerId : query.NUMBER,
       carId      : query.STRING,
       paymentId  : query.NUMBER,
-      state      : query.STRING
+      status     : query.STRING
     },
     include : [{
       model : 'BookingDetails',

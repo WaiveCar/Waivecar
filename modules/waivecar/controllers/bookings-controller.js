@@ -47,21 +47,21 @@ Reach.Register.Controller('BookingsController', function (controller) {
   };
 
   /**
-   * Updates the booking state.
+   * Updates the booking status.
    * @method update
    * @param  {Int} id
    */
   controller.update = function *(id, post) {
     let user = this.auth.user;
-    switch (post.state) {
+    switch (post.status) {
       case 'pending-arrival' : return yield BookingService.pending(id, user);
       case 'start'           : return yield BookingService.start(id, user);
       case 'end'             : return yield BookingService.end(id, user);
       default:
         throw error.parse({
           code     : 'BOOKING_BAD_STATE',
-          message  : 'The state provided is invalid',
-          solution : 'Make sure the state provided with your request is a valid booking state'
+          message  : 'The status provided is invalid',
+          solution : 'Make sure the status provided with your request is a valid booking status'
         }, 403);
     }
   };

@@ -33,7 +33,7 @@ Reach.Register.Model('Booking', 'sequelize', function (model, Sequelize) {
     },
     paymentId : { type : Sequelize.INTEGER },
     filesId   : { type : Sequelize.STRING },
-    state     : {
+    status    : {
       type : Sequelize.ENUM(
         'new-booking',
         'payment-authorized',

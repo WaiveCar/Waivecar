@@ -10,7 +10,7 @@ scheduler.process('booking-timer-cancel', function *(job) {
   let booking = yield Booking.getBooking(id, user);
   yield Booking.setCarStatus('available', booking.carId, user);
   yield booking.update({
-    state : 'cancelled'
+    status : 'cancelled'
   });
   io.user(user.id).emit('booking:cancelled', booking.toJSON());
 });
