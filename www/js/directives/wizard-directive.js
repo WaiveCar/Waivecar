@@ -1,7 +1,10 @@
-angular.module('app.directives').directive('wizard', [
+'use strict';
+var angular = require('angular');
+var _ = require('lodash');
+
+module.exports = angular.module('app.directives').directive('wizard', [
   '$location',
   function ($location) {
-    'use strict';
 
     function link(scope) {
       if (_(scope.currentStep).isUndefined() || scope.currentStep < 0) {

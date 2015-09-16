@@ -1,7 +1,9 @@
-angular.module('app.directives').directive('pageTitle', [
+'use strict';
+var angular = require('angular');
+
+module.exports = angular.module('app.directives').directive('pageTitle', [
 
   function () {
-    'use strict';
 
     return {
       restrict: 'E',

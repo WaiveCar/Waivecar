@@ -1,4 +1,12 @@
-angular.module('app.controllers').controller('LandingController', [
+'use strict';
+var angular = require('angular');
+require('angular-ui-router');
+require('../services/auth-service');
+require('../services/data-service');
+require('../services/message-service');
+var _ = require('lodash');
+
+module.exports = angular.module('app.controllers').controller('LandingController', [
   '$rootScope',
   '$scope',
   '$state',
@@ -6,7 +14,6 @@ angular.module('app.controllers').controller('LandingController', [
   '$data',
   '$message',
   function ($rootScope, $scope, $state, $auth, $data, $message) {
-    'use strict';
 
     $scope.init = function () {
 
@@ -14,7 +21,7 @@ angular.module('app.controllers').controller('LandingController', [
         return $state.go('auth');
       }
 
-      return $data.initialize('bookings').$promise
+      return $data.initialize('bookings')
         .then(function () {
           if (!$data.models.bookings) {
             return false;

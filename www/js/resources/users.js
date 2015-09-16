@@ -1,8 +1,11 @@
-angular.module('app').factory('Users', [
+'use strict';
+var angular = require('angular');
+require('../services/utils.js');
+
+module.exports = angular.module('app').factory('Users', [
   '$resource',
   '$utils',
   function ($resource, $utils) {
-    'use strict';
 
     return $resource(null, null, $utils.createResource('users', {
       login: {
@@ -30,5 +33,6 @@ angular.module('app').factory('Users', [
         url: $utils.getCustomRoute('auth/facebook')
       }
     }));
+
   }
 ]);

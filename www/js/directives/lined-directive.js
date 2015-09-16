@@ -1,7 +1,9 @@
-angular.module('app.directives').directive('lined', [
+'use strict';
+var angular = require('angular');
+
+module.exports = angular.module('app.directives').directive('lined', [
 
   function () {
-    'use strict';
 
     return {
       restrict: 'E',

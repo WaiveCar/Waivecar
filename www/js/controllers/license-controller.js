@@ -1,4 +1,12 @@
-angular.module('app.controllers').controller('LicenseController', [
+'use strict';
+var angular = require('angular');
+require('angular-ui-router');
+require('../services/auth-service');
+require('../services/data-service');
+require('../services/message-service');
+require('../services/camera-service');
+
+module.exports = angular.module('app.controllers').controller('LicenseController', [
   '$rootScope',
   '$scope',
   '$state',
@@ -7,9 +15,7 @@ angular.module('app.controllers').controller('LicenseController', [
   '$message',
   'CameraService',
   '$location',
-  '$stateParams',
-  function ($rootScope, $scope, $state, $auth, $data, $message, CameraService, $location, $stateParams) {
-    'use strict';
+  function ($rootScope, $scope, $state, $auth, $data, $message, CameraService, $location) {
 
     $scope.forms = {
       licenseForm: {

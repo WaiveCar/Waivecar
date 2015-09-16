@@ -1,7 +1,11 @@
-angular.module('app.services').factory('$message', [
+'use strict';
+var angular = require('angular');
+require('ionic-angular');
+var _ = require('lodash');
+
+module.exports = angular.module('app.services').factory('$message', [
   '$ionicPopup',
   function ($ionicPopup) {
-    'use strict';
     var existingMessage;
 
     function launchPopup(title, message) {

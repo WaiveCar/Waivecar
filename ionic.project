@@ -4,6 +4,7 @@
   "gulpStartupTasks": [
     "sass",
     "templates",
+    "js",
     "watch"
   ],
   "watchPatterns": [

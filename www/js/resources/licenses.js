@@ -1,8 +1,11 @@
-angular.module('app').factory('Licenses', [
+'use strict';
+var angular = require('angular');
+require('../services/utils.js');
+
+module.exports = angular.module('app').factory('Licenses', [
   '$resource',
   '$utils',
   function Resource($resource, $utils) {
-    'use strict';
 
     var resourceName = 'licenses';
 

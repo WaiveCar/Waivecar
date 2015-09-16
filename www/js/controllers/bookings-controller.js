@@ -1,14 +1,13 @@
-angular.module('app.controllers').controller('BookingsController', [
-  '$rootScope',
-  '$scope',
-  '$state',
-  '$auth',
-  '$data',
-  function ($rootScope, $scope, $state, $auth, $data) {
+'use strict';
+var angular = require('angular');
 
-    $scope.init = function() {
-    };
+module.exports = angular.module('app.controllers').controller('BookingsController', [
+  '$scope',
+  function ($scope) {
+
+    $scope.init = function () {};
 
     $scope.init();
+
   }
 ]);

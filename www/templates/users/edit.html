@@ -1,12 +1,25 @@
+
 <ion-view ng-controller="UserController">
 
   <ion-nav-title>
-    <page-title class="dark-bg">My Account</page-title>
+    <page-title class="dark-bg">Account</page-title>
   </ion-nav-title>
 
-  <ion-content padding="true" croll="false" class="ion-content--center dark-bg">
-    <div class="alert alert-warning">Not implemented</div>
+  <ion-content padding="true" class="ion-content--center gray-bg">
+
+    <form ng-submit="updateUser(form)" name="form" id="form" novalidate>
+      <div ng-include="'/templates/users/_form.html'"></div>
+    </form>
+
+    <p class="padding-top">You won't receive any spam from us</p>
+
   </ion-content>
 
+  <ion-footer-bar class="no-padding">
+    <div class="button-bar">
+      <button type="button" class="button button-gray" go-back>Cancel</button>
+      <button type="submit" form="form" class="button button-balanced">Continue</button>
+    </div>
+  </ion-footer-bar>
 
 </ion-view>

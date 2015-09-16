@@ -1,12 +1,15 @@
-angular.module('app.services').service('$utils', [
-  '$config',
-  function ($config) {
-    'use strict';
+'use strict';
+var angular = require('angular');
+require('../app-settings.js');
+
+module.exports = angular.module('app.services').service('$utils', [
+  '$settings',
+  function ($settings) {
 
     var service = {
 
       getRoute: function (primaryRoute, hasId) {
-        var fragments = [$config.uri.api, primaryRoute];
+        var fragments = [$settings.uri.api, primaryRoute];
         if (hasId) {
           fragments.push(':id');
         }
@@ -16,7 +19,7 @@ angular.module('app.services').service('$utils', [
       },
 
       getCustomRoute: function (endpoint) {
-        var fragments = [$config.uri.api, endpoint];
+        var fragments = [$settings.uri.api, endpoint];
         return fragments.join('/');
 
       },

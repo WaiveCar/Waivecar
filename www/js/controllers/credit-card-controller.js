@@ -1,4 +1,11 @@
-angular.module('app.controllers').controller('CreditCardController', [
+'use strict';
+var angular = require('angular');
+require('angular-ui-router');
+require('../services/auth-service');
+require('../services/data-service');
+require('../services/message-service');
+
+module.exports = angular.module('app.controllers').controller('CreditCardController', [
   '$rootScope',
   '$scope',
   '$state',
@@ -6,7 +13,6 @@ angular.module('app.controllers').controller('CreditCardController', [
   '$data',
   '$message',
   function ($rootScope, $scope, $state, $auth, $data, $message) {
-    'use strict';
     $scope.forms = {
       creditCardForm: {}
     };

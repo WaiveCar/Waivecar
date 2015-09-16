@@ -1,7 +1,9 @@
-angular.module('app.directives').directive('timeLeft', [
+'use strict';
+var angular = require('angular');
+
+module.exports = angular.module('app.directives').directive('timeLeft', [
 
   function () {
-    'use strict';
 
     function link(scope, element, attrs, ctrl) {
       var durations = scope.getDuration();

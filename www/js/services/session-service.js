@@ -1,8 +1,11 @@
+'use strict';
+var angular = require('angular');
+var _ = require('lodash');
+
 angular.module('app.services').factory('$session', [
   '$rootScope',
   '$window',
   function ($rootScope, $window) {
-    'use strict';
 
     var session = {
 

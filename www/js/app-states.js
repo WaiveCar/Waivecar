@@ -1,8 +1,10 @@
-window.app.config([
+'use strict';
+require('angular-ui-router');
+
+module.exports = [
   '$stateProvider',
   '$urlRouterProvider',
   function ($stateProvider, $urlRouterProvider) {
-    'use strict';
 
     // not required:
     // 9-Connect with facebook@2x.png
@@ -180,6 +182,7 @@ window.app.config([
         templateUrl: '/templates/messages/sent.html'
       });
 
+    // ACCOUNT
     $stateProvider
       .state('credit-cards', {
         // 31-Payment-method@2x.png BUT SHOULD SHOW LAST 4 Digits (and perhaps even a List of all registered cards)
@@ -190,9 +193,8 @@ window.app.config([
         }
       })
       .state('users-edit', {
-        // 29-Account-editing@2x.png / 29-Account-saved@2x.png / 29-Account@2x.png / 29.1-Account@2x.png / 29.2-Account@2x.png
+        // 29-Account-editing / 29-Account-saved@2x.png / 29-Account@2x.png / 29.1-Account@2x.png / 29.2-Account@2x.png
         url: '/users/:id/edit',
-        // TODO: Not implemented
         templateUrl: '/templates/users/edit.html',
         data: {
           auth: true
@@ -239,4 +241,4 @@ window.app.config([
 
   }
 
-]);
+];

@@ -1,0 +1,41 @@
+<div class="list">
+
+  <label class="item item-input">
+    <span class="input-label">First Name</span>
+    <input type="text" name="firstName" placeholder="John" ng-model="forms.userForm.firstName" required />
+  </label>
+
+  <label class="item item-input">
+    <span class="input-label">Last Name</span>
+    <input type="text" name="lastName" placeholder="Smith" ng-model="forms.userForm.lastName" required />
+  </label>
+
+  <label class="item item-input">
+    <span class="input-label">Email</span>
+    <input type="email" placeholder="john@example.com" name="email" ng-model="forms.userForm.email" required />
+  </label>
+
+  <label class="item item-input">
+    <span class="input-label mobile-label">Mobile </span>
+    <i class="icon placeholder-icon">
+            <img src="img/flag-icon.svg" alt="flag" class="icon-flag">
+          </i>
+    <input type="text" name="mobile" placeholder="0411 099 110" ng-model="forms.userForm.mobile" required />
+  </label>
+
+  <label class="item item-input">
+    <span class="input-label">Password</span>
+    <input type="text" placeholder="* * * * * *" name="password" ng-model="forms.userForm.password" required ng-minlength="6">
+  </label>
+
+  <div class="validations" ng-if="form.$submitted && form.$invalid">
+    <div class="help-block" ng-if="form.firstName.$error.required">First Name is required</div>
+    <div class="help-block" ng-if="form.lastName.$error.required">Last Name is required</div>
+    <div class="help-block" ng-if="form.email.$error.required">An Email Address is required</div>
+    <div class="help-block" ng-if="form.email.$error.email">A valid Email Address is required</div>
+    <div class="help-block" ng-if="form.mobile.$error.required">A Cell Phone Number is required</div>
+    <div class="help-block" ng-if="form.password.$error.required">Password is required</div>
+    <div class="help-block" ng-if="form.password.$error.minlength">Password must be greater than 5 characters</div>
+  </div>
+
+</div>

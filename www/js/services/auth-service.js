@@ -1,8 +1,12 @@
-angular.module('app.services').factory('$auth', [
+'use strict';
+var angular = require('angular');
+require('./session-service.js');
+require('./data-service.js');
+
+module.exports = angular.module('app.services').factory('$auth', [
   '$session',
   '$data',
   function ($session, $data) {
-    'use strict';
 
     return {
 

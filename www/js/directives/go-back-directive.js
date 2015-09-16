@@ -1,7 +1,9 @@
-angular.module('app.directives').directive('goBack', [
+'use strict';
+var angular = require('angular');
+
+module.exports = angular.module('app.directives').directive('goBack', [
   '$ionicHistory',
   function ($ionicHistory) {
-    'use strict';
 
     return {
       restrict: 'A',

@@ -1,8 +1,11 @@
-angular.module('app.controllers').controller('MessageController', [
+'use strict';
+var angular = require('angular');
+require('angular-ui-router');
+
+module.exports = angular.module('app.controllers').controller('MessageController', [
   '$scope',
   '$state',
   function ($scope, $state) {
-    'use strict';
 
     $scope.init = function () {};
 

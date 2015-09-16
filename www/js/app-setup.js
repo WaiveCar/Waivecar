@@ -1,10 +1,11 @@
-// document.addEventListener("deviceready", onDeviceReady, false);
+/* global window: false */
+'use strict';
+require('ionic-angular');
+require('ngCordova');
+require('./services/auth-interceptor');
+var ionic = require('ionic');
 
-// function onDeviceReady() {
-//   console.log('nav.cam', JSON.stringify(navigator.camera));
-// }
-
-window.app.config([
+var config = [
   '$ionicConfigProvider',
   '$stateProvider',
   '$locationProvider',
@@ -14,7 +15,6 @@ window.app.config([
   '$provide',
   '$injector',
   function ($ionicConfigProvider, $stateProvider, $locationProvider, $httpProvider, $urlRouterProvider, $compileProvider, $provide, $injector) {
-    'use strict';
 
     $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|tel):/);
 
@@ -98,14 +98,13 @@ window.app.config([
     ]);
 
   }
-]);
+];
 
-window.app.run([
+var run = [
   '$cordovaKeyboard',
   '$cordovaStatusbar',
   '$ionicPlatform',
   function Run($cordovaKeyboard, $cordovaStatusbar, $ionicPlatform) {
-    'use strict';
 
     $ionicPlatform.ready(function () {
 
@@ -120,4 +119,9 @@ window.app.run([
     });
 
   }
-]);
+];
+
+module.exports = {
+  config: config,
+  run: run
+};

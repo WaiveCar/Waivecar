@@ -1,4 +1,15 @@
-angular.module('app.services').factory('$data', [
+'use strict';
+var angular = require('angular');
+require('./socket-service.js');
+require('../resources/bookings.js');
+require('../resources/cars.js');
+require('../resources/locations.js');
+require('../resources/users.js');
+require('../resources/licenses.js');
+var when = require('when');
+var _ = require('lodash');
+
+module.exports = angular.module('app.services').factory('$data', [
   '$rootScope',
   '$http',
   '$socket',
@@ -8,7 +19,6 @@ angular.module('app.services').factory('$data', [
   'Users',
   'Licenses',
   function ($rootScope, $http, $socket, Bookings, Cars, Locations, Users, Licenses) {
-    'use strict';
 
     var service = {
 
@@ -21,30 +31,31 @@ angular.module('app.services').factory('$data', [
       },
 
       me: void 0,
-
       userLocation: {},
-
       models: {},
-
       active: {},
-
       isSubscribed: false,
 
-      initialize: function (modelName, next) {
-        next = _(next).isFunction(next) ? next : angular.identity;
+      initialize: function (modelName) {
         service.models[modelName] = [];
-        return service.fetch(modelName, {}, next);
+        return service.fetch(modelName, {});
 
       },
 
-      fetch: function (modelName, filter, next) {
-        next = _(next).isFunction(next) ? next : angular.identity;
-        // todo: add support for filter query params.
-        var items = service.resources[modelName].query(function () {
-          service.mergeAll(modelName, items);
-          next();
+      fetch: function (modelName, filter) {
+        return when.promise(function (resolve, reject) {
+
+          service.resources[modelName].query().$promise
+            .then(function (items) {
+              service.mergeAll(modelName, items);
+              resolve();
+            })
+            .catch(function (response) {
+              console.log(response);
+              reject(response);
+            });
+
         });
-        return items;
 
       },
 
@@ -133,18 +144,25 @@ angular.module('app.services').factory('$data', [
       },
 
       // client-side manipulation only
-      activateKnownModel: function (modelName, id, next) {
-        var existing = service.getExisting(modelName, id);
-        if (existing) {
-          service.active[modelName] = existing;
-          return next(null, service.active[modelName]);
-        }
+      activateKnownModel: function (modelName, id) {
+        return when.promise(function (resolve, reject) {
 
-        service.fetch(modelName, {}, function (err) {
           var existing = service.getExisting(modelName, id);
-          service.active[modelName] = existing;
-          return next(null, service.active[modelName]);
+          if (existing) {
+            service.active[modelName] = existing;
+            return resolve(service.active[modelName]);
+          }
+
+          return service.fetch(modelName, {})
+            .then(function () {
+              existing = service.getExisting(modelName, id);
+              service.active[modelName] = existing;
+              return resolve(service.active[modelName]);
+            })
+            .catch(reject);
+
         });
+
       },
 
       getExisting: function (modelName, id) {
@@ -156,21 +174,23 @@ angular.module('app.services').factory('$data', [
       },
 
       // client-side manipulations only
-      activate: function (modelName, id, next) {
-        if (!service.models[modelName]) {
-          service.initialize(modelName, function (err) {
-            if (err) return next(err);
-            service.activateKnownModel(modelName, id, next);
-          });
-        } else {
-          service.activateKnownModel(modelName, id, next);
+      activate: function (modelName, id) {
+
+        if (service.models[modelName]) {
+          return service.activateKnownModel(modelName, id);
         }
+
+        return service.initialize(modelName)
+          .then(function () {
+            return service.activateKnownModel(modelName, id);
+          });
+
       },
 
       // client-side manipulations only
-      deactivate: function (modelName, next) {
+      deactivate: function (modelName) {
         delete service.active[modelName];
-        if (next && _.isFunction(next)) return next();
+
       },
 
       subscribe: function () {

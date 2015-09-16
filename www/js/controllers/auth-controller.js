@@ -1,12 +1,16 @@
-angular.module('app.controllers').controller('AuthController', [
+'use strict';
+var angular = require('angular');
+require('angular-ui-router');
+require('../services/auth-service');
+require('../services/message-service');
+
+module.exports = angular.module('app.controllers').controller('AuthController', [
   '$rootScope',
   '$scope',
   '$state',
   '$auth',
   '$message',
-  '$loading',
-  function ($rootScope, $scope, $state, $auth, $message, $loading) {
-    'use strict';
+  function ($rootScope, $scope, $state, $auth, $message) {
 
     $scope.forms = {
       loginForm: {

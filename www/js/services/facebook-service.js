@@ -1,8 +1,13 @@
-angular.module('app.services').factory('FaceBookService', [
+/* global window: false */
+'use strict';
+var angular = require('angular');
+require('../app-settings');
+var sprintf = require('sprintf').sprintf;
+
+module.exports = angular.module('app.services').factory('FaceBookService', [
   '$q',
-  '$config',
-  function ($q, $config) {
-    'use strict';
+  '$settings',
+  function ($q, $settings) {
 
     function getFacebookCode(clientId, appScope, options) {
       var deferred = $q.defer();
@@ -49,7 +54,7 @@ angular.module('app.services').factory('FaceBookService', [
     }
 
     function getFacebookInfo() {
-      return getFacebookCode($config.facebook.clientId);
+      return getFacebookCode($settings.facebook.clientId);
 
     }
 

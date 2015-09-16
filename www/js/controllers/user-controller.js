@@ -1,4 +1,12 @@
-angular.module('app.controllers').controller('UserController', [
+'use strict';
+var angular = require('angular');
+require('angular-ui-router');
+require('../services/auth-service');
+require('../services/data-service');
+require('../services/facebook-service');
+require('../services/message-service');
+
+module.exports = angular.module('app.controllers').controller('UserController', [
   '$rootScope',
   '$scope',
   '$state',
@@ -7,7 +15,6 @@ angular.module('app.controllers').controller('UserController', [
   'FaceBookService',
   '$message',
   function ($rootScope, $scope, $state, $auth, $data, FaceBookService, $message) {
-    'use strict';
 
     $scope.forms = {
       userForm: {}
