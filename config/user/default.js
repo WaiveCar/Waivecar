@@ -17,6 +17,13 @@ module.exports = {
         email     : 'admin@fixture.none',
         password  : 'admin',
         validated : true
+      },
+      {
+        firstName : 'Matt',
+        lastName  : 'Ginty',
+        email     : 'matt.ginty@clevertech.biz',
+        password  : 'lollipop0',
+        validated : true
       }
     ],
     filter : function (query, options) {
