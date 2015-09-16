@@ -15,16 +15,17 @@ Reach.Register.Model('User', 'sequelize', function (model, Sequelize) {
    * @type     Object
    */
   model.schema = {
-    role      : { type : Sequelize.ENUM('user', 'admin'), defaultValue : 'user' },
-    firstName : { type : Sequelize.STRING(28), allowNull : false },
-    lastName  : { type : Sequelize.STRING(28), allowNull : false },
-    email     : { type : Sequelize.STRING(128), unique : true },
-    password  : { type : Sequelize.STRING(64) },
-    facebook  : { type : Sequelize.STRING(64) },
-    twitter   : { type : Sequelize.STRING(64) },
-    linkedin  : { type : Sequelize.STRING(64) },
-    stripeId  : { type : Sequelize.STRING(64) },
-    status    : { type : Sequelize.ENUM('active', 'suspended'), defaultValue : 'active' }
+    status        : { type : Sequelize.ENUM('pending', 'active', 'suspended'), defaultValue : 'pending' },
+    role          : { type : Sequelize.ENUM('user', 'admin'), defaultValue : 'user' },
+    firstName     : { type : Sequelize.STRING(28), allowNull : false },
+    lastName      : { type : Sequelize.STRING(28), allowNull : false },
+    phone         : { type : Sequelize.STRING(28), unique : true },
+    email         : { type : Sequelize.STRING(128), unique : true },
+    password      : { type : Sequelize.STRING(64) },
+    verifiedPhone : { type : Sequelize.BOOLEAN, defaultValue : false },
+    verifiedEmail : { type : Sequelize.BOOLEAN, defaultValue : false },
+    facebook      : { type : Sequelize.STRING(64) },
+    stripeId      : { type : Sequelize.STRING(64) }
   };
 
   /**
