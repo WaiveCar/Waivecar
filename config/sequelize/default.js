@@ -16,7 +16,6 @@ module.exports = {
    |   idle : Idle setting
    | debug  : Log sequelize output to the terminal
    | force  : Drop all the tables when syncing tables
-   | _super : The system batch user use when there is no authorized actor
    |
    */
 
@@ -32,14 +31,7 @@ module.exports = {
       idle : 10000
     },
     debug  : false,
-    force  : false,
-    _super : {
-      role      : 'admin',
-      firstName : 'John',
-      lastName  : 'Doe',
-      email     : 'admin@batch.none',
-      password  : 'password'
-    }
+    force  : false
   }
 
 };
