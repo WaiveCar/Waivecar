@@ -6,7 +6,7 @@ let config = Reach.config;
 
 // ### Reigstration Hook
 
-hooks.set('user:register', function *(user) {
+hooks.set('user:registered', function *(user) {
   let job = queue
     .create('email:user:registration', {
       to       : user.email,
