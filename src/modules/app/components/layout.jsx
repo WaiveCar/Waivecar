@@ -3,7 +3,7 @@
 import React      from 'react';
 import Reach      from 'reach-react';
 import { Layout } from 'reach-components';
-import Components from '../components';
+import components from '../components';
 import UI         from '../ui';
 import Wizard     from './wizard';
 
@@ -32,26 +32,7 @@ export default function (view) {
     }
 
     renderComponent(component) {
-      let componentName;
-      if (typeof component === 'string' || component instanceof String) {
-        // simple / no options.
-        componentName = component;
-      } else if (component.name) {
-        // object (potentially with options)
-        componentName = component.name;
-      } else {
-        console.log(component);
-        throw new Error('Component not well defined', component);
-      }
-
-      console.log(Components);
-
-      let Component = Components.list[componentName];
-      return (
-        <Component { ...this.props } { ...component.options }>
-          { this.props.children }
-        </Component>
-      );
+      return components.renderComponent(component, this.props);
     }
 
     /**

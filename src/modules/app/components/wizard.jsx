@@ -19,23 +19,7 @@ export default class WizardComponent extends React.Component {
   }
 
   renderComponent(component) {
-    let componentName;
-    if (typeof component === 'string' || component instanceof String) {
-      // simple / no options.
-      componentName = component;
-    } else if (component.name) {
-      // object (potentially with options)
-      componentName = component.name;
-    } else {
-      throw new Error('Component not well defined', component);
-    }
-
-    let Component = components.list[componentName];
-    return (
-      <Component { ...this.props } { ...component.options }>
-        { this.props.children }
-      </Component>
-    );
+    return components.renderComponent(component, this.props);
   }
 
   /**
