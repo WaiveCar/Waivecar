@@ -31,7 +31,8 @@
     "node-random-name": "1.0.1"
   },
   "reach": {
-    "reach-auth": "0.2.4",
+    "reach-auth": "0.2.5",
+    "reach-bcrypt": "1.0.0",
     "reach-commander": "0.0.5",
     "reach-email": "0.0.8",
     "reach-file": "0.3.3",
@@ -41,6 +42,6 @@
     "reach-sequelize": "0.1.4",
     "reach-sms": "0.0.7",
     "reach-ui": "0.0.4",
-    "reach-user": "0.2.3"
+    "reach-user": "0.2.7"
   }
 }
