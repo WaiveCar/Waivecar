@@ -3,6 +3,7 @@
   "private": true,
   "description": "Module for managing cars and bookings for electric cars",
   "reach": {
-    "master": "jobs.js"
+    "name": "waivecar",
+    "type": "module"
   }
 }
