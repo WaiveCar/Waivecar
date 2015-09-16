@@ -12,7 +12,7 @@ export default {
     array.map(group);
 
     if (returnCountAsArray) {
-      let result = Object.keys(days).map(function (key) { return days[key] });
+      let result = Object.keys(days).map((key) => { return days[key] });
       if (result.length < 3) {
         result.unshift(0);
         result.push(0);

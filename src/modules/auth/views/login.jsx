@@ -46,10 +46,10 @@ export default class LoginView extends React.Component {
   success(user) {
     Reach.Auth.set(user);
     if (user.role === 'admin') {
-      return this.transitionTo('/dashboard');
+      return this.transitionTo('/admin');
     }
 
-    return this.transitionTo('/profile');
+    return this.transitionTo('/dashboard');
   }
 
   /**
