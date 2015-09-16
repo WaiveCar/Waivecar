@@ -16,7 +16,6 @@ module.exports = {
    |   idle : Idle setting
    | debug  : Log sequelize output to the terminal
    | force  : Drop all the tables when syncing tables
-   | _super : The system batch user use when there is no authorized actor
    |
    */
 
