@@ -12,8 +12,6 @@ export default class Content extends React.Component {
    */
   constructor(...args) {
     super(...args);
-    this.editorChange = this.editorChange.bind(this);
-    this.submit = this.submit.bind(this);
     this.state = {
       record : null,
       editor : null
@@ -53,8 +51,7 @@ export default class Content extends React.Component {
       record : record
     }, () => {
       this.submit();
-      // HACK: Reselect the region DOM elements for the editor
-      // (required because React will re-render after state change.
+      // HACK: Reselect the region DOM elements for the editor after state change.
       this.state.editor._domRegions = document.querySelectorAll('[data-editable]');
     });
   }
@@ -66,22 +63,14 @@ export default class Content extends React.Component {
     Reach.API[this.props.method.toLowerCase()](this.props.action, this.state.record, function (err, res) {
       if (err) {
         if (this.props.onError) {
-          this.props.onError(err, res);
-        } else {
-          Snackbar.notify({
-            type    : 'danger',
-            message : err.message
-          });
+          return this.props.onError(err, res);
         }
-        return;
+        return Snackbar.notify({ type : 'danger', message : err.message });
       }
       if (this.props.onSuccess) {
-        this.props.onSuccess(res);
-      } else {
-        Snackbar.notify({
-          message : 'Success'
-        });
+        return this.props.onSuccess(res);
       }
+      return Snackbar.notify({ message : 'Success' });
     }.bind(this));
   }
 
