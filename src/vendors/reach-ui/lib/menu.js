@@ -51,6 +51,7 @@ Menu.addMenus = function (path, menus) {
  * @param  {Object} menu
  */
 Menu.addMenu = function (target, path, menu) {
+  Menu.list[target].index.push(menu.name);
   Menu.list[target].store.push({
     name   : menu.name,
     icon   : menu.icon || 'add_circle_outline',
