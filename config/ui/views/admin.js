@@ -202,6 +202,25 @@ module.exports = [
     }
   },
   {
+    route       : '/contents/create',
+    name        : 'Add Content',
+    description : null,
+    layout      : {
+      rows: [
+        {
+          columns : [
+            {
+              component : {
+                name : 'ContentsCreate'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    menus : null
+  },
+  {
     route       : '/contents/:id',
     name        : 'Content',
     description : null,

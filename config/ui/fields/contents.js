@@ -6,6 +6,13 @@ module.exports = {
     label     : 'Id',
     helpText  : null
   },
+  userId : {
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'User',
+    helpText  : null
+  },
   html : {
     component : 'input',
     type      : 'text',

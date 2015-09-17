@@ -8,9 +8,21 @@ module.exports = [
     fields  : [ 'id', 'html' ],
     actions : {
       cancel : true,
-      create : false,
+      create : true,
       update : true,
       delete : true
+    }
+  },
+  {
+    name    : 'ContentsCreate',
+    title   : 'Add Content',
+    type    : 'Form',
+    fields  : [ 'userId', 'html' ],
+    actions : {
+      cancel : true,
+      create : true,
+      update : false,
+      delete : false
     }
   },
   {
