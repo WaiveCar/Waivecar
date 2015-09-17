@@ -7,6 +7,9 @@ import './style.scss';
 
 export default class Content extends React.Component {
 
+  /**
+   * @constructor
+   */
   constructor(...args) {
     super(...args);
     this.editorChange = this.editorChange.bind(this);
@@ -17,28 +20,30 @@ export default class Content extends React.Component {
     };
   }
 
+  /**
+   * @method componentDidMount
+   */
   componentDidMount() {
-    // When the react component is mounted initialize ContentTools
     this.setState({
       record : this.props.record || {},
       editor : new ContentTools.EditorApp.get()
     }, () => {
       this.state.editor.init('[data-editable]', 'data-editable');
-
-      // Capture save events and update the react component
       this.state.editor.bind('save', (regions) => {
         this.editorChange(regions['text-component']);
       });
     });
   }
 
+  /**
+   * @method componentWillUnmount
+   */
   componentWillUnmount() {
     this.state.editor.destroy();
   }
 
   /**
-   * Handle the change event
-   * @method inputChange
+   * @method editorChange
    * @param  {Object} event
    */
   editorChange(value) {
@@ -80,12 +85,12 @@ export default class Content extends React.Component {
     }.bind(this));
   }
 
+  /**
+   * @method render
+   */
   render() {
-
     let innerHtml = {
-      __html : '<div data-editable="text-component">' +
-                 (this.state.record ? this.state.record.html : '') +
-               '</div>'
+      __html : `<div data-editable="text-component">${ this.state.record ? this.state.record.html : '' }</div>`
     };
 
     return (
@@ -98,5 +103,3 @@ export default class Content extends React.Component {
     );
   }
 }
-
-//      __html : '<div data-editable="text-component">${ this.state.content }</div>'
