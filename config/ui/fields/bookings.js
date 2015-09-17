@@ -42,5 +42,19 @@ module.exports = {
     required  : true,
     label     : 'Status',
     helpText  : null
+  },
+  createdAt : {
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Created At',
+    helpText  : null
+  },
+  updatedAt : {
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Updated At',
+    helpText  : null
   }
 };

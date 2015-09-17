@@ -14,6 +14,12 @@ module.exports = [
     }
   },
   {
+    name   : 'CarsSelect',
+    title  : 'Car',
+    type   : 'Form',
+    fields : [ 'make', 'year' ]
+  },
+  {
     name    : 'CarsShow',
     title   : 'Car',
     type    : 'Form',

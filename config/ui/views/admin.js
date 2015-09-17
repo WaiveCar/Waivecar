@@ -14,7 +14,6 @@ module.exports = [
               type  : 'Wizard',
               steps : [
                 {
-                  step      : 1,
                   title     : 'Find WaiveCar',
                   component : {
                     name    : 'CarsMap',
@@ -24,21 +23,35 @@ module.exports = [
                   },
                   actions : {
                     previous : 'Previous',
-                    next     : false,
+                    next     : 'Confirm Selection',
                     cancel   : 'Cancel'
                   }
                 },
                 {
-                  step      : 2,
-                  title     : 'Select WaiveCar',
+                  title     : 'Book WaiveCar',
                   component : {
-                    name    : 'CarsMap',
+                    name    : 'CarsSelect',
                     options : {
+
                     }
                   },
                   actions : {
                     previous : 'Previous',
                     next     : 'Confirm Selection',
+                    cancel   : 'Cancel'
+                  }
+                },
+                {
+                  title     : 'Confirm Booking',
+                  component : {
+                    name    : 'WizardBookingsCreate',
+                    options : {
+
+                    }
+                  },
+                  actions : {
+                    previous : 'Previous',
+                    next     : 'Proceed With Booking',
                     cancel   : 'Cancel'
                   }
                 }
@@ -104,33 +117,60 @@ module.exports = [
         parent : null
       }
     }
+  },
+  /* ----------------- ADMIN DASHBOARD ------------------ */
+  {
+    route       : '/admin',
+    name        : 'Dashboard',
+    description : null,
+    layout      : {
+      rows : [
+        {
+          columns : [
+            {
+              component : {
+                name    : 'UsersChart',
+                options : { chartType : 'line', className : 'chart-pink'     }
+              }
+            },
+            {
+              component : {
+                name    : 'BookingsChart',
+                options : { chartType : 'line', className : 'chart-bluegray' }
+              }
+            },
+            {
+              component : {
+                name    : 'LocationsChart',
+                options : { chartType : 'bar',  className : 'chart-info' }
+              }
+            },
+            {
+              component : {
+                name    : 'CarsChart',
+                options : { chartType : 'bar',  className : 'chart-warning' }
+              }
+            }
+          ],
+        },
+        {
+          columns : [
+            { component : 'CarsMap' }
+          ]
+        }
+      ]
+    },
+    menus : {
+      sidebar : {
+        id     : 'admin',
+        name   : 'Dashboard',
+        icon   : 'dashboard',
+        parent : null
+      }
+    }
   }
-  ];
-  // /* ----------------- ADMIN DASHBOARD ------------------ */
-  // {
-  //   route       : '/admin',
-  //   name        : 'Dashboard',
-  //   description : null,
-  //   layout      : [
-  //     [
-  //       { component : 'UsersChart',     options : { chartType : 'line', className : 'chart-pink'     } },
-  //       { component : 'BookingsChart',  options : { chartType : 'line', className : 'chart-bluegray' } },
-  //       { component : 'LocationsChart', options : { chartType : 'bar',  className : 'chart-info'     } },
-  //       { component : 'CarsChart',      options : { chartType : 'bar',  className : 'chart-warning'  } }
-  //     ],
-  //     [
-  //       { component : 'CarsMap' }
-  //     ]
-  //   ],
-  //   menus : {
-  //     sidebar : {
-  //       id     : 'admin',
-  //       name   : 'Dashboard',
-  //       icon   : 'dashboard',
-  //       parent : null
-  //     }
-  //   }
-  // },
+];
+
   // /* ----------------- BOOKINGS  ------------------ */
   // {
   //   route       : '/bookings',

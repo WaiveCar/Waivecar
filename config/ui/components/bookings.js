@@ -26,6 +26,12 @@ module.exports = [
     }
   },
   {
+    name   : 'WizardBookingsCreate',
+    title  : 'Add Booking',
+    type   : 'WizardForm',
+    fields : [ 'customerId', 'carId', 'createdAt' ]
+  },
+  {
     name    : 'BookingsShow',
     title   : 'Booking',
     type    : 'Form',
