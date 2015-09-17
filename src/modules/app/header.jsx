@@ -2,7 +2,6 @@
 
 import React      from 'react';
 import { Navbar } from 'reach-components';
-import UI         from './ui';
 
 export default class Header extends React.Component {
 
