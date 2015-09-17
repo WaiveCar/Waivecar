@@ -1,8 +1,8 @@
 'use strict';
 
-import React from 'react';
-import Reach     from 'reach-react';
-import Snackbar  from '../snackbar';
+import React    from 'react';
+import Reach    from 'reach-react';
+import Snackbar from '../snackbar';
 import './style.scss';
 
 export default class Content extends React.Component {
