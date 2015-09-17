@@ -49,6 +49,10 @@ UI.menu = require('./lib/menu');
  * @param  {Function} done
  */
 UI.load = function (done) {
+  if (this.loaded) {
+    return done(null, this.views.getRoutes());
+  }
+  
   API.get('/ui', (err, res) => {
     if (err) {
       return done(err);
@@ -71,24 +75,3 @@ UI.load = function (done) {
     done(null, this.views.getRoutes());
   }.bind(this));
 };
-
-/**
- * @private
- * @method prepareUi
- * @param  {Object}   ui
- * @param  {Function} done
- */
-function prepareUi(ui, done) {
-
-  /*
-  for (let key in ui.views) {
-    let module = ui.views[key];
-    routes.push({
-      childRoutes : routes(module)
-    });
-  }
-  done(null, routes);
-  */
-
-  done(null, []);
-}
