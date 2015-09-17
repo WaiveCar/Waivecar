@@ -16,42 +16,77 @@ export default class WizardComponent extends React.Component {
    */
   constructor(...args) {
     super(...args);
+    this.state = {
+      step : 0,
+      max  : this.props.steps.length - 1
+    };
+  }
+
+  cancel() {
+    this.setState({
+      step : 0
+    })
+  }
+
+  nextStep() {
+    if (this.state.step < this.state.max) {
+      this.setState({
+        step : this.state.step + 1
+      });
+    }
+  }
+
+  previousStep() {
+    if (this.state.step > 0) {
+      this.setState({
+        step : this.state.step - 1
+      });
+    }
   }
 
   renderComponent(component) {
-    return components.renderComponent(component, this.props);
+    let props = { params : { id : 'MOCK_1' } };
+
+    return components.renderComponent(component, props);
   }
 
   /**
    * @method render
    */
   render() {
+    let step          = this.props.steps[this.state.step];
+    let progressValue = (this.state.step / this.state.max) * 100;
+    let progressStyle = {
+      width : progressValue + '%'
+    };
+
     return (
       <div className="wizard">
-        {
-          this.props.steps.map((step, stepIndex) => {
-            return this.renderWizardStep(step, stepIndex)
-          }.bind(this))
-        }
+        <h3 className="wizard-progress text-center">{ step.title }</h3>
+        <progress className="progress" value={ progressValue } max="100">
+          <div className="progress">
+            <span className="progress-bar" style={ progressStyle }>{ progressStyle.width }</span>
+          </div>
+        </progress>
+        { this.renderWizardStep(step) }
       </div>
     );
   }
 
-  renderWizardStep(step, stepIndex) {
+  renderWizardStep(step) {
     return (
-      <div key={ stepIndex }>
-        <h3>{ step.step } : { step.title}</h3>
+      <div className="wizard-step" key={ this.state.step }>
         { this.renderComponent(step.component) }
         <div className="text-center">
           <div className="btn-group text-center" role="group" aria-label="Actions">
             { step.actions.cancel &&
-              <button type="button" className="btn btn-danger-outline">{ step.actions.cancel }</button>
+              <button type="button" onClick={ this.cancel.bind(this) } className="btn btn-danger-outline">{ step.actions.cancel }</button>
             }
             { step.actions.previous &&
-              <button type="button" className="btn btn-secondary">{ step.actions.previous }</button>
+              <button type="button" onClick={ this.previousStep.bind(this) } className="btn btn-secondary">{ step.actions.previous }</button>
             }
             { step.actions.next &&
-              <button type="button" className="btn btn-primary-outline">{ step.actions.next }</button>
+              <button type="button" onClick={ this.nextStep.bind(this) } className="btn btn-primary-outline">{ step.actions.next }</button>
             }
           </div>
         </div>
