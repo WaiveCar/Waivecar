@@ -7,13 +7,13 @@ module.exports = {
    |
    | admins : Array    > List of admin users to create if user table is empty.
    | params : Array    > List of required parameters when creating a new user.
-   | filter : Function > Function providing the available filtering options for the 
+   | filter : Function > Function providing the available filtering options for the
    |                     user.
    |
    */
 
   user : {
-    admins : [
+    users : [
       {
         firstName : 'Matt',
         lastName  : 'Ginty',
@@ -28,7 +28,7 @@ module.exports = {
         email     : 'christoffer@clevertech.biz',
         password  : 'password',
         role      : 'admin',
-        validated : true 
+        validated : true
       },
       {
         firstName : 'Zoli',

@@ -79,7 +79,12 @@ module.exports = [
         {
           columns : [
             {
-              component : 'CarsMap'
+              component : {
+                name : 'ContentsShow',
+                options : {
+                  id : 1
+                }
+              }
             }
           ]
         }
@@ -168,6 +173,52 @@ module.exports = [
         parent : null
       }
     }
+  },
+  /* ----------------- BOOKINGS  ------------------ */
+  {
+    route       : '/contents',
+    name        : 'Contents',
+    description : null,
+    layout      : {
+      rows: [
+        {
+          columns : [
+            {
+              component : {
+                name : 'ContentsList'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    menus       : {
+      sidebar : {
+        id     : 'contents',
+        name   : 'Contents',
+        icon   : 'event',
+        parent : null
+      }
+    }
+  },
+  {
+    route       : '/contents/:id',
+    name        : 'Content',
+    description : null,
+    layout      : {
+      rows: [
+        {
+          columns : [
+            {
+              component : {
+                name : 'ContentsShow'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    menus : null
   }
 ];
 
