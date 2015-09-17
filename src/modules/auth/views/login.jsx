@@ -19,7 +19,7 @@ export default class LoginView extends React.Component {
       {
         component    : 'input',
         type         : 'text',
-        name         : 'email',
+        name         : 'identifier',
         label        : 'Email Address',
         tabIndex     : "1",
         autoComplete : "off",
