@@ -9,7 +9,7 @@ export default {
    * @param  {Object} nextState
    * @param  {Object} transition
    */
-  isAuthenticated: function (nextState, transition) {
+  isAuthenticated : (nextState, transition) => {
     if (!Auth.check()) {
       transition.to('/login', null, {
         nextPathname : nextState.location.pathname
@@ -22,7 +22,7 @@ export default {
    * @param  {Object} nextState
    * @param  {Object} transition
    */
-  isAnonymous: function (nextState, transition) {
+  isAnonymous : (nextState, transition) => {
     if (Auth.check()) {
       if (Auth.user.role === 'admin') {
         return transition.to('/dashboard', null);
@@ -30,6 +30,26 @@ export default {
 
       return transition.to('/profile', null);
     }
+  },
+
+  /**
+   * @method canBook
+   * @param  {Object} nextState
+   * @param  {Object} transition
+   */
+  canBook : (nextState, transition) => {
+    // user needs to be authed, verified, valid license, valid payment.
+
+    if (!Auth.check()) {
+      transition.to('/', null);
+      // TODO: show an alert 'you need to be registered to perform this action'.
+    }
+
+    if (Auth.user.status !== 'active') {
+      transition.to('/', null);
+      // TODO: show an alert 'you need to be verified to perform this action'.
+    }
+
   }
 
 }

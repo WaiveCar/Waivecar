@@ -1,20 +1,20 @@
 'use strict';
 
-import React              from 'react';
-import Reach              from 'reach-react';
-import mixin              from 'react-mixin';
-import { Navigation }     from 'react-router';
-import { Form, Snackbar } from 'reach-components';
-import UI                 from '../ui';
+import React          from 'react';
+import Reach          from 'reach-react';
+import mixin          from 'react-mixin';
+import { Navigation } from 'react-router';
+import { Content, Snackbar }    from 'reach-components';
+import UI             from '../ui';
 
 @mixin.decorate(Navigation)
 
 export default function (view, fields, resource) {
 
   /**
-   * @class FormView
+   * @class ContentComponent
    */
-  class FormComponent extends React.Component {
+  class ContentComponent extends React.Component {
 
     /**
      * @constructor
@@ -33,7 +33,7 @@ export default function (view, fields, resource) {
      * @method componentDidMount
      */
     componentDidMount() {
-      this.componentLoad(this.props.params.id);
+      this.componentLoad(this.props.id || this.props.params.id);
     }
 
     /**
@@ -81,22 +81,6 @@ export default function (view, fields, resource) {
     }
 
     /**
-     * @method getFields
-     * @return {Array}
-     */
-    getFields() {
-      let result = [];
-      view.fields.forEach(function (value) {
-        if (fields[value]) {
-          let field = fields[value];
-          field.name = value;
-          result.push(field);
-        }
-      });
-      return result;
-    }
-
-    /**
      * Executed when the form is successfully submitted.
      * @method handleSuccess
      * @param  {Object}   data
@@ -124,78 +108,25 @@ export default function (view, fields, resource) {
     }
 
     /**
-     * Retuns a list of available buttons for this form.
-     * @method buttons
-     * @return {Array}
-     */
-    buttons() {
-      let buttons = [];
-      if (!view.actions) {
-        return buttons;
-      }
-
-      if (view.actions.cancel) {
-        buttons.push({
-          value : 'cancel',
-          class : 'btn',
-          click : () => {
-            this.goBack();
-          }.bind(this)
-        });
-      }
-      if (view.actions.delete) {
-        buttons.push({
-          value : 'delete',
-          class : 'btn btn-danger',
-          click : () => {
-            console.log('Delete: %s!', this.state.id);
-          }.bind(this)
-        });
-      }
-      if (view.actions.update) {
-        buttons.push({
-          value : 'update',
-          type  : 'submit',
-          class : 'btn btn-primary'
-        });
-      }
-      if (view.actions.create) {
-        buttons.push({
-          value : 'submit',
-          type  : 'submit',
-          class : 'btn btn-primary'
-        });
-      }
-      return buttons;
-    }
-
-    /**
-     * Render the record form.
      * @method render
      */
     render() {
       if (!this.state.ready) {
-        return <div className="container">Loading...</div>
+        return <div>Loading...</div>
       }
       return (
-        <div id="form">
-          <div className="container-form">
-            <Form
-              key       = { this.state.id }
-              method    = { this.state.method }
-              action    = { this.state.action }
-              fields    = { this.getFields() }
-              record    = { this.state.record }
-              onSuccess = { this.handleSuccess }
-              onError   = { this.handleError }
-              buttons   = { this.buttons() }
-            />
-          </div>
-        </div>
+        <Content
+          key       = { this.state.id }
+          method    = { this.state.method }
+          action    = { this.state.action }
+          record    = { this.state.record }
+          onSuccess = { this.handleSuccess }
+          onError   = { this.handleError }
+        />
       );
     }
   }
 
-  return FormComponent;
+  return ContentComponent;
 
 }

@@ -6,6 +6,7 @@ import form      from './components/form';
 import map       from './components/map';
 import miniChart from './components/mini-chart';
 import profile   from './components/profile';
+import content   from './components/content';
 
 /**
  * @class Components
@@ -50,6 +51,7 @@ function getComponent(component, fields, resource) {
   switch (component.type) {
     case 'Profile'   : return profile(component, fields, resource);
     case 'Table'     : return table(component, fields, resource);
+    case 'Content'   : return content(component, fields, resource);
     case 'Form'      : return form(component, fields, resource);
     case 'Map'       : return map(component, fields, resource);
     case 'MiniChart' : return miniChart(component, fields, resource);
