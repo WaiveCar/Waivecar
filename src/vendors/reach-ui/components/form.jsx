@@ -24,7 +24,11 @@ export default function (view, fields, resource) {
       this.handleSuccess = this.handleSuccess.bind(this);
       this.handleError   = this.handleError.bind(this);
       this.state         = {
-        ready : false
+        ready : false,
+        id     : null,
+        method : null,
+        action : null,
+        record : this.props.record
       };
     }
 
@@ -32,14 +36,26 @@ export default function (view, fields, resource) {
      * @method componentDidMount
      */
     componentDidMount() {
-      this.componentLoad(this.props.params.id);
+      this.componentLoad(this.getId());
+    }
+
+    getId() {
+      if (this.props.params && this.props.params.id) {
+        return this.props.params.id;
+      }
+
+      if (this.props.record && this.props.filters && this.props.filters.id) {
+        return this.props.record[this.props.filters.id];
+      }
+
+      return null;
     }
 
     /**
      * @method componentWillReceiveProps
      */
     componentWillReceiveProps(nextProps, nextState) {
-      let prevId = this.props.params.id;
+      let prevId = this.getId();
       let nextId = nextProps.params.id;
       if (this.state.key === undefined) {
         this.componentLoad(nextId);
@@ -58,9 +74,8 @@ export default function (view, fields, resource) {
       if (view.actions && view.actions.create) {
         this.setState({
           ready  : true,
-          id     : null,
           method : resource.store.method,
-          action : resource.store.uri
+          action : resource.store.uri,
         });
       } else {
         let recordUri = resource.show.uri.replace(':id', id);

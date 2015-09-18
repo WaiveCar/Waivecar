@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-export default class Mapping extends React.Component {
+export default class Map extends React.Component {
 
   /**
    * @constructor
@@ -64,6 +64,7 @@ export default class Mapping extends React.Component {
       let marker = L.marker([ lat, long ], { icon : markerIcon });
       this.state.markers.push(marker);
       marker.addTo(this.state.map);
+      this.addMarkerClick(marker, val.id);
     }.bind(this));
   }
 
@@ -75,6 +76,17 @@ export default class Mapping extends React.Component {
     this.state.markers.forEach(function (marker) {
       this.state.map.removeLayer(marker);
     }.bind(this));
+  }
+
+  addMarkerClick(marker, id) {
+    let handler = this.props.markerHandler;
+    let key     = this.props.markerHandlerKey;
+    let data    = {};
+    data[key]   = id;
+    marker.on('mousedown', function(e) {
+      console.log('moused down');
+      handler(data);
+    });
   }
 
   /**

@@ -16,8 +16,9 @@ export default class WizardComponent extends React.Component {
   constructor(...args) {
     super(...args);
     this.state = {
-      step : 0,
-      max  : this.props.steps.length - 1
+      step   : 0,
+      max    : this.props.steps.length - 1,
+      record : this.props.record || {}
     };
   }
 
@@ -43,8 +44,22 @@ export default class WizardComponent extends React.Component {
     }
   }
 
+  setData(data) {
+    console.log(data);
+    this.setState({
+      record : Object.assign(this.state.record, data)
+    }, () => {
+      this.nextStep();
+    });
+  }
+
   renderComponent(component) {
-    let props = { params : { id : 'MOCK_1' } };
+    let props = {
+      record : this.state.record,
+      actions : {
+        submit : this.setData.bind(this)
+      }
+    };
 
     return components.renderComponent(component, props);
   }

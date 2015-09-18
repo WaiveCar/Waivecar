@@ -2,7 +2,7 @@
 
 import React       from 'react';
 import Reach       from 'reach-react';
-import { Mapping } from 'reach-components';
+import { Map }     from 'reach-components';
 
 let Relay   = Reach.Relay;
 let Actions = Relay.getActions();
@@ -51,7 +51,9 @@ export default function (view, fields, resource) {
      * @method render
      */
     render() {
-      return <Mapping markers={ this.state[resource.name] } markerIcon={ '/images/admin/map-icon-waivecar.svg' } />
+      return (
+        <Map markers={ this.state[resource.name] } markerHandlerKey={ this.props.filters.id } markerHandler={ this.props.actions.submit } markerIcon={ '/images/admin/map-icon-waivecar.svg' } />
+      );
     }
 
   }
