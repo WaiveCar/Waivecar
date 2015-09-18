@@ -80,7 +80,7 @@ export default class Map extends React.Component {
 
   addMarkerClick(marker, id) {
     let handler = this.props.markerHandler;
-    let key     = this.props.markerHandlerKey;
+    let key     = this.props.markerHandlerKey || 'id';
     let data    = {};
     data[key]   = id;
     marker.on('mousedown', function(e) {

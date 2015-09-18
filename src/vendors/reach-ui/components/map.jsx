@@ -1,11 +1,15 @@
 'use strict';
 
-import React       from 'react';
-import Reach       from 'reach-react';
-import { Map }     from 'reach-components';
+import React          from 'react';
+import Reach          from 'reach-react';
+import mixin          from 'react-mixin';
+import { Navigation } from 'react-router';
+import { Map }        from 'reach-components';
 
 let Relay   = Reach.Relay;
 let Actions = Relay.getActions();
+
+@mixin.decorate(Navigation)
 
 export default function (view, fields, resource) {
 
@@ -51,8 +55,15 @@ export default function (view, fields, resource) {
      * @method render
      */
     render() {
+      let submit =  this.props.actions
+        ? this.props.actions.submit
+        : (data) => {
+          console.log(data);
+          this.transitionTo(`/${ resource.name }/${ data.id }`);
+        };
+
       return (
-        <Map markers={ this.state[resource.name] } markerHandlerKey={ this.props.filters.id } markerHandler={ this.props.actions.submit } markerIcon={ '/images/admin/map-icon-waivecar.svg' } />
+        <Map markers={ this.state[resource.name] } markerHandlerKey={ this.props.filters.id } markerHandler={ submit } markerIcon={ '/images/admin/map-icon-waivecar.svg' } />
       );
     }
 
