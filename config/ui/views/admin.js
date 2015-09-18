@@ -11,19 +11,25 @@ module.exports = [
         {
           columns : [
             {
-              type  : 'Wizard',
+              type : 'Wizard',
+              data : {
+                carId  : null
+              },
               steps : [
                 {
                   title     : 'Find WaiveCar',
                   component : {
                     name    : 'CarsMap',
                     options : {
-                      showCurrentLocation : true
+                      showCurrentLocation : true,
+                      filters             : {
+                        id : 'carId'
+                      }
                     }
                   },
                   actions : {
-                    previous : 'Previous',
-                    next     : 'Confirm Selection',
+                    previous : false,
+                    next     : false,
                     cancel   : 'Cancel'
                   }
                 },
@@ -32,7 +38,9 @@ module.exports = [
                   component : {
                     name    : 'CarsSelect',
                     options : {
-
+                      filters : {
+                        id : 'carId'
+                      }
                     }
                   },
                   actions : {
@@ -46,7 +54,6 @@ module.exports = [
                   component : {
                     name    : 'WizardBookingsCreate',
                     options : {
-
                     }
                   },
                   actions : {
@@ -80,7 +87,7 @@ module.exports = [
           columns : [
             {
               component : {
-                name : 'ContentsShow',
+                name    : 'ContentsShow',
                 options : {
                   id : 1
                 }
@@ -174,7 +181,7 @@ module.exports = [
       }
     }
   },
-  /* ----------------- BOOKINGS  ------------------ */
+  /* ----------------- CONTENTS  ------------------ */
   {
     route       : '/contents',
     name        : 'Contents',
@@ -226,6 +233,71 @@ module.exports = [
     description : null,
     layout      : {
       rows: [
+        {
+          columns : [
+            {
+              component : {
+                name : 'ContentsShow'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    menus : null
+  },
+  // /* ----------------- BOOKINGS  ------------------ */
+  {
+    route       : '/bookings',
+    name        : 'Bookings',
+    description : null,
+    layout      : {
+      rows : [
+        {
+          columns : [
+            {
+              component : {
+                name : 'BookingsList'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    menus : {
+      sidebar : {
+        id     : 'bookings',
+        name   : 'Bookings',
+        icon   : 'event',
+        parent : null
+      }
+    }
+  },
+  {
+    route       : '/bookings/create',
+    name        : 'Add Bookings',
+    description : null,
+    layout      : {
+      rows : [
+        {
+          columns : [
+            {
+              component : {
+                name : 'BookingsCreate'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    menus : null
+  },
+  {
+    route       : '/contents/:id',
+    name        : 'Content',
+    description : null,
+    layout      : {
+      rows : [
         {
           columns : [
             {
