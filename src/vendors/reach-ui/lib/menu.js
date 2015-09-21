@@ -8,56 +8,44 @@ import { Auth } from 'reach-react';
 let Menu = module.exports = {};
 
 /**
- * @property list
+ * @property locations
+ * @type     Array
+ */
+Menu.locations = [];
+
+/**
+ * @property store
  * @type     Object
  */
-Menu.list = {};
-
-/**
- * Check if a menu item by name has been defined in the target navigation.
- * @method hasMenu
- * @param  {String} target The target menu we are looking at
- * @param  {Object} menu
- */
-Menu.hasMenu = function (target, menu) {
-  return (Menu.list[target].index.indexOf(menu.name) !== -1);
-};
-
-/**
- * Check if a menu item by name has been defined in the target navigation.
- * @method hasMenu
- * @param  {String} target The target menu we are looking at
- * @param  {Object} menu
- */
-Menu.addMenus = function (path, menus) {
-  for (let key in menus) {
-    if (!Menu.list[key]) {
-      Menu.list[key] = {
-        index : [],
-        store : []
-      };
-    }
-    if (!Menu.hasMenu(key, menus[key])) {
-      Menu.addMenu(key, path, menus[key]);
-    }
-  }
-};
+Menu.store = {};
 
 /**
  * Adds a new menu item to the target location.
  * @method addMenu
- * @param  {String} target The target menu we are looking at
- * @param  {String} path   The uri path
- * @param  {Object} menu
+ * @param  {Object} settings
  */
-Menu.addMenu = function (target, path, menu) {
-  Menu.list[target].index.push(menu.name);
-  Menu.list[target].store.push({
-    name   : menu.name,
-    icon   : menu.icon || 'add_circle_outline',
-    path   : path,
-    parent : menu.parent
-  });
+Menu.addMenu = function (settings) {
+
+  // ### Store Locations
+  // Store the menu in each assigned location.
+
+  settings.locations.forEach((location) => {
+    if (!this.locations[location]) {
+      this.locations[location] = [];
+    }
+    this.locations[location].push(settings.title);
+  }.bind(this));
+
+  // ### Store Menu
+  // Store the menu configuration in the menu store.
+
+  this.store[settings.title] = {
+    title  : settings.title,
+    icon   : settings.icon || 'add_circle_outline',
+    path   : settings.path,
+    parent : settings.parent
+  };
+
 };
 
 /**
@@ -67,5 +55,7 @@ Menu.addMenu = function (target, path, menu) {
  * @return {Array}
  */
 Menu.get = function (section) {
-  return Menu.list[section].store;
+  return this.locations[section].map((title) => {
+    return this.store[title];
+  }.bind(this));
 };

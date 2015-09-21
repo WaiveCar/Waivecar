@@ -28,6 +28,7 @@ module.exports = {
       components         : path.join(__dirname, '../../', 'src', 'components'),
       config             : path.join(__dirname, '../../', 'src', 'config.js'),
       styles             : path.join(__dirname, '../../', 'src', 'styles'),
+      views              : path.join(__dirname, '../../', 'src', 'views'),
       'reach-react'      : path.join(__dirname, '../../', 'src', 'vendors', 'reach-react'),
       'reach-components' : path.join(__dirname, '../../', 'src', 'vendors', 'reach-components'),
       'reach-ui'         : path.join(__dirname, '../../', 'src', 'vendors', 'reach-ui'),

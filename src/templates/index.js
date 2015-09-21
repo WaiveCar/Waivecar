@@ -3,7 +3,6 @@
 import React        from 'react';
 import { Snackbar } from 'reach-components';
 import { Link }     from 'react-router';
-import './style.scss';
 
 export default class App extends React.Component {
 

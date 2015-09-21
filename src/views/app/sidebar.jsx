@@ -9,7 +9,7 @@ import md5      from 'md5';
 let auth = Reach.Auth;
 let nav  = [
   {
-    name : 'Past Rides',
+    title : 'Past Rides',
     path : '/past-rides',
     icon : 'directions_car'
   }
@@ -21,8 +21,8 @@ export default class Sidebar extends React.Component {
     return (
       <li key={ i } className={ link.parent ? "has-parent" : "parent" }>
         <Link to={ link.path } className="nav-link animated fadeInDown">
-          <i className="material-icons" role={ link.name }>{ link.icon }</i>
-          { link.name }
+          <i className="material-icons" role={ link.title }>{ link.icon }</i>
+          { link.title }
         </Link>
       </li>
     );

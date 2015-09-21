@@ -21,7 +21,11 @@ import routes      from './routes';
 // ### Stores
 // Load initial interface reducer stores
 
-import 'interface/reducers';
+import './reducers';
+
+// ### Style
+
+import 'styles/index.scss';
 
 // ### Render
 // Application starts its rendering process at this point.

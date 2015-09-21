@@ -1,10 +1,10 @@
 'use strict';
 
-import React            from 'react';
-import Reach            from 'reach-react';
-import config           from 'config';
+import React                    from 'react';
+import Reach                    from 'reach-react';
+import config                   from 'config';
 import { Anchor, Form, Layout } from 'reach-components';
-import { Link }         from 'react-router';
+import { Link }                 from 'react-router';
 
 let { Container, Row, Column } = Layout;
 let { FormGroup }              = Form;

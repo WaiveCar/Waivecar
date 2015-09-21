@@ -1,10 +1,10 @@
 'use strict';
 
-import { Relay } from 'reach-react';
+import { relay } from 'reach-react';
 
 // ### Actions
 
-Relay.actions({
+relay.actions({
 
   /**
    * Adds newly created user to the state.
@@ -62,7 +62,7 @@ Relay.actions({
 
 // ### Resource Reducer
 
-Relay.resource('users', function (state = [], action) {
+relay.resource('users', function (state = [], action) {
   switch (action.type) {
     case 'store':
       return [
