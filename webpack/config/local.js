@@ -29,11 +29,11 @@ module.exports = {
   resolve : {
     extensions : [ '', '.js', '.jsx' ],
     alias      : {
-      interface          : path.join(__dirname, '../../', 'src', 'interface'),
       modules            : path.join(__dirname, '../../', 'src', 'modules'),
       components         : path.join(__dirname, '../../', 'src', 'components'),
       config             : path.join(__dirname, '../../', 'src', 'config.js'),
       styles             : path.join(__dirname, '../../', 'src', 'styles'),
+      policies           : path.join(__dirname, '../../', 'src', 'policies'),
       views              : path.join(__dirname, '../../', 'src', 'views'),
       'reach-react'      : path.join(__dirname, '../../', 'src', 'vendors', 'reach-react'),
       'reach-components' : path.join(__dirname, '../../', 'src', 'vendors', 'reach-components'),

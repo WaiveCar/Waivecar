@@ -1,13 +1,13 @@
 'use strict';
 
-import React      from 'react';
-import Reach      from 'reach-react';
-import { Layout } from 'reach-components';
-import components from './lib/components';
+import React            from 'react';
+import Reach, { relay } from 'reach-react';
+import { Layout }       from 'reach-components';
+import components       from './lib/components';
 
 // ### Layout
 
-let Relay                      = Reach.Relay;
+let actions                    = relay.getActions();
 let { Container, Row, Column } = Layout;
 
 export default (view) => {
@@ -22,7 +22,24 @@ export default (view) => {
      */
     constructor(...args) {
       super(...args);
+      relay.subscribe(this, 'app');
       this.renderRow = this.renderRow.bind(this);
+    }
+
+    /**
+     * @method componentDidMount
+     */
+    componentDidMount() {
+      relay.dispatch('app', actions.APP_UPDATE({
+        title : view.title
+      }));
+    }
+
+    /**
+     * @method componentDidUnmount
+     */
+    componentWillUnmount() {
+      relay.unsubscribe(this, 'app');
     }
 
     /**

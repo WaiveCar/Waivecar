@@ -1,7 +1,5 @@
 'use strict';
 
-// ### Reach UI
-
 export default {
   templates  : require('./lib/templates'),
   resources  : require('./lib/resources'),

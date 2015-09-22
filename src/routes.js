@@ -2,13 +2,9 @@
 
 import React         from 'react';
 import Reach         from 'reach-react';
-import policies      from 'interface/policies';
-import { Route }     from 'react-router';
 import { templates } from 'reach-ui';
-
-// ### Load UI
-
-import 'reach-ui/load';
+import loader        from 'reach-ui/loader';
+import { Route }     from 'react-router';
 
 // ### Import Templates
 
@@ -33,7 +29,11 @@ export default {
    * @property childRoutes
    * @type     Array
    */
-  childRoutes : templates.getAll(),
+  getChildRoutes(state, done) {
+    loader((error) => {
+      done(error, templates.getAll());
+    });
+  },
 
   /**
    * Render loading screen while the app is firing up.

@@ -1,7 +1,7 @@
 'use strict';
 
 import { api }  from 'reach-react';
-import policies from 'interface/policies';
+import policies from 'policies';
 import menu     from './menu';
 import layout   from '../layout';
 
@@ -49,7 +49,10 @@ Views.get = function (template, done) {
     // ### Register Menus
 
     views.forEach((view) => {
-      menu.addMenu(view.menu);
+      if (view.menu) {
+        view.menu.path = view.path;
+        menu.addMenu(view.menu);
+      }
     });
 
     done(null, views);
@@ -71,7 +74,7 @@ Views.getRoutes = function (template, done) {
     views.forEach((view) => {
       routes.push({
         component : layout(view),
-        path      : view.menu.path,
+        path      : view.path,
         onEnter   : view.policy ? policies[view.policy] : undefined
       });
     });

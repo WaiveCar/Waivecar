@@ -2,7 +2,7 @@
 
 import React         from 'react';
 import { templates } from 'reach-ui';
-import policies      from 'interface/policies';
+import policies      from 'policies';
 import 'styles/auth.scss';
 
 /**

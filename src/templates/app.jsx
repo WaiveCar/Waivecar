@@ -4,7 +4,7 @@ import React                from 'react';
 import Reach, { relay }     from 'reach-react';
 import UI                   from 'reach-ui';
 import { templates, views } from 'reach-ui';
-import policies             from 'interface/policies';
+import policies             from 'policies';
 import Sidebar              from 'views/app/sidebar';
 import Header               from 'views/app/header';
 import 'styles/app/style.scss';
