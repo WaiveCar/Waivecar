@@ -85,7 +85,7 @@ module.exports = {
    */
 
   support : {
-    email : 'support@your.domain.com',
+    email : 'info@waivecar.com',
     phone : '555 55 555'
   },
 
