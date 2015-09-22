@@ -1,30 +1,27 @@
-'use strict';
-
 module.exports = {
-  name  : 'contents',
   store : {
     key    : 'content',
     method : 'POST',
-    uri    : '/contents'
+    uri    : '/ui/contents'
   },
   index : {
     key    : 'contents',
     method : 'GET',
-    uri    : '/contents'
+    uri    : '/ui/contents'
   },
   show : {
     key    : 'content',
     method : 'GET',
-    uri    : '/contents/:id'
+    uri    : '/ui/contents/:id'
   },
   update : {
     key    : 'content',
     method : 'PUT',
-    uri    : '/contents/:id'
+    uri    : '/ui/contents/:id'
   },
   delete : {
     key    : 'content',
     method : 'DELETE',
-    uri    : '/contents/:id'
+    uri    : '/ui/contents/:id'
   }
 };

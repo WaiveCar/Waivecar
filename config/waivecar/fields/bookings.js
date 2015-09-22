@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = {
   id : {
     component : 'input',
@@ -8,46 +6,53 @@ module.exports = {
     label     : 'Id',
     helpText  : null
   },
-  type : {
+  customerId : {
     component : 'input',
     type      : 'text',
     required  : true,
-    label     : 'Type',
+    label     : 'User',
     helpText  : null
   },
-  name : {
+  carId : {
     component : 'input',
     type      : 'text',
     required  : true,
-    label     : 'Name',
+    label     : 'Car',
     helpText  : null
   },
-  description : {
+  paymentId : {
     component : 'input',
     type      : 'text',
     required  : true,
-    label     : 'Description',
-    helpText  : 'Phone Number, Opening Hours, etc.'
-  },
-  latitude : {
-    component : 'input',
-    type      : 'text',
-    required  : true,
-    label     : 'Latitude',
+    label     : 'Payment',
     helpText  : null
   },
-  longitude : {
+  filesId : {
     component : 'input',
     type      : 'text',
     required  : true,
-    label     : 'Longitude',
+    label     : 'Photos',
     helpText  : null
   },
-  address : {
+  state : {
     component : 'input',
     type      : 'text',
     required  : true,
-    label     : 'Address',
+    label     : 'Status',
+    helpText  : null
+  },
+  createdAt : {
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Created At',
+    helpText  : null
+  },
+  updatedAt : {
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Updated At',
     helpText  : null
   }
 };

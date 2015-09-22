@@ -52,6 +52,14 @@ module.exports = {
       'lastName',
       'password'
     ],
+    ui : {
+      resources : {
+        users : require('./resources/users')
+      },
+      fields : {
+        users : require('./fields/users')
+      }
+    },
     filter : function (query, options) {
       return query(options, {
         where : {

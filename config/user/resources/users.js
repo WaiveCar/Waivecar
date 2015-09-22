@@ -1,7 +1,4 @@
-'use strict';
-
 module.exports = {
-  name  : 'users',
   store : {
     key    : 'user',
     method : 'POST',
