@@ -36,7 +36,6 @@ scheduler.process('car-update-client', function *(job) {
       }
     ]
   });
-
   if (!cars) {
     return;
   }
