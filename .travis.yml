@@ -23,6 +23,8 @@ cache:
     - modules/payment
     - modules/user
     - modules/ui
+    - providers/bcrypt
+    - providers/mongo
     - providers/queue
     - providers/sequelize
     - providers/sms
