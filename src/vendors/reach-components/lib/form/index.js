@@ -15,7 +15,7 @@ export default class Form extends React.Component {
   constructor(...args) {
     super(...args);
     this.state = {
-      data : this.props.data
+      data : this.props.data || {}
     };
     this.inputChange = this.inputChange.bind(this);
     this.submit      = this.submit.bind(this);
@@ -41,6 +41,7 @@ export default class Form extends React.Component {
    */
   inputChange(event) {
     let input = this.state.data;
+    console.log(this.state.data);
     input[event.target.name] = event.target.value;
     this.setState({
       data : input
