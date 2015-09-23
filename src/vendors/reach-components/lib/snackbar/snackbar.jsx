@@ -2,7 +2,7 @@
 
 import React    from 'react';
 import ReactDOM from 'react-dom';
-import { DOM }  from 'reach-react';
+import { dom }  from 'reach-react';
 import './style.scss';
 
 export default class Snackbar extends React.Component {
@@ -54,7 +54,7 @@ export default class Snackbar extends React.Component {
     className.animated   = animation ? true : false;
     className[animation] = animation ? true : false;
 
-    return DOM.setClass(className);
+    return dom.setClass(className);
   }
 
   /**

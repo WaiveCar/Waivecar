@@ -1,8 +1,8 @@
 'use strict';
 
-import React    from 'react';
-import Reach    from 'reach-react';
-import Snackbar from '../snackbar';
+import React          from 'react';
+import Reach, { api } from 'reach-react';
+import Snackbar       from '../snackbar';
 import './style.scss';
 
 export default class Content extends React.Component {
@@ -13,27 +13,43 @@ export default class Content extends React.Component {
   constructor(...args) {
     super(...args);
     this.state = {
-      record : null,
-      editor : null
-    };
+      key    : null,
+      editor : null,
+      html   : {
+        __html : ''
+      }
+    }
+    this.submit = this.submit.bind(this);
   }
 
   /**
+   * Load the component content from the api and update state.
    * @method componentDidMount
    */
   componentDidMount() {
-    this.setState({
-      record : this.props.record || {},
-      editor : new ContentTools.EditorApp.get()
-    }, () => {
-      this.state.editor.init('[data-editable]', 'data-editable');
-      this.state.editor.bind('save', (regions) => {
-        this.editorChange(regions['text-component']);
+    api.get(this.props.resource.show.uri.replace(':id', this.props.id), (error, result) => {
+      if (error) {
+        throw new Error(error);
+      }
+      this.setState({
+        key    : result.id,
+        html   : {
+          __html : `
+            <div data-editable="html">
+              ${ result.html ? result.html : '' }
+            </div>
+          `
+        },
+        editor : new ContentTools.EditorApp.get()
+      }, () => {
+        this.state.editor.init('[data-editable]', 'data-editable');
+        this.state.editor.bind('save', this.submit);
       });
     });
   }
 
   /**
+   * Destroy the editor when leaving the component.
    * @method componentWillUnmount
    */
   componentWillUnmount() {
@@ -41,36 +57,23 @@ export default class Content extends React.Component {
   }
 
   /**
-   * @method editorChange
-   * @param  {Object} event
-   */
-  editorChange(value) {
-    let record = this.state.record;
-    record.html = value;
-    this.setState({
-      record : record
-    }, () => {
-      this.submit();
-      // HACK: Reselect the region DOM elements for the editor after state change.
-      this.state.editor._domRegions = document.querySelectorAll('[data-editable]');
-    });
-  }
-
-  /**
    * @method submit
+   * @param  {Object} region
    */
-  submit() {
-    Reach.API[this.props.method.toLowerCase()](this.props.action, this.state.record, function (err, res) {
-      if (err) {
-        if (this.props.onError) {
-          return this.props.onError(err, res);
-        }
-        return Snackbar.notify({ type : 'danger', message : err.message });
+  submit(region) {
+    api.put(this.props.resource.update.uri.replace(':id', this.props.id), {
+      html : region.html
+    }, (error, res) => {
+      if (error) {
+        return Snackbar.notify({ 
+          type    : 'danger', 
+          message : error.message 
+        });
       }
-      if (this.props.onSuccess) {
-        return this.props.onSuccess(res);
-      }
-      return Snackbar.notify({ message : 'Success' });
+      Snackbar.notify({
+        type    : 'success',
+        message : 'Content was successfully updated' 
+      });
     }.bind(this));
   }
 
@@ -78,17 +81,13 @@ export default class Content extends React.Component {
    * @method render
    */
   render() {
-    let innerHtml = {
-      __html : `<div data-editable="text-component">${ this.state.record ? this.state.record.html : '' }</div>`
-    };
-
     return (
-      <div
-        key                     = 'text-component'
+      <div 
+        key                     = { this.state.key }
+        dangerouslySetInnerHTML = { this.state.html }
         className               = 'text-component'
-        dangerouslySetInnerHTML = { innerHtml }
-      >
-      </div>
-    );
+      />
+    )
   }
+
 }

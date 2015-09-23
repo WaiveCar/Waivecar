@@ -4,23 +4,23 @@
  * @class Fields
  * @param {Object} fields
  */
-let Fields = module.exports = function (list) {
-  Fields.list = list;
-};
+let Fields = module.exports = {};
 
 /**
  * List of form fields.
- * @property list
+ * @property store
  * @type     Object
  */
-Fields.list = {};
+Fields.store = {};
 
 /**
- * @method set
- * @param  {Object} field
+ * @method addFields
+ * @param  {Object} fields
  */
-Fields.set = function (field) {
-  Fields.list = Object.assign(Field.list, { field });
+Fields.addFields = function (fields) {
+  for (let key in fields) {
+    this.store[key] = fields[key];
+  }
 };
 
 /**
@@ -28,5 +28,5 @@ Fields.set = function (field) {
  * @param  {String} key
  */
 Fields.get = function (key) {
-  return Fields.list[key];
+  return this.store[key];
 };

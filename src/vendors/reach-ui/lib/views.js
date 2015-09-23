@@ -1,57 +1,83 @@
 'use strict';
 
-import layout from '../components/layout';
+import { api }  from 'reach-react';
+import policies from 'policies';
+import menu     from './menu';
+import layout   from '../layout';
 
 /**
  * @class Views
  * @param {Object} Views
  */
-let Views = module.exports = function (list) {
-  for (let key in list) {
-    let views = list[key];
-    Views.addRoute({
-      childRoutes : () => {
-        let routes = [];
-        views.forEach(function (view) {
-          routes.push({
-            path      : view.route,
-            component : layout(view)
-          });
-        });
-        return routes;
-      }()
-    });
+let Views = module.exports = {};
+
+/**
+ * Stores a list of fetched views.
+ * @property store
+ * @type     Object
+ */
+Views.store = {};
+
+/**
+ * Returns all views registered under the provided template.
+ * TODO: The view store needs to be registered as a reducer so that
+ *       we can update it via reach-relay.
+ *
+ * @method get
+ * @param  {String}   template
+ * @param  {Function} done
+ */
+Views.get = function (template, done) {
+  if (this.store[template]) {
+    return done(null, this.store[template]);
   }
+
+  // ### Fetch Views
+  // If views have not yet been loaded we request them from the API.
+
+  api.get(`/ui/views/${template}`, (error, views) => {
+    if (error) {
+      return done(error);
+    }
+
+    // ### Store Template
+    // Add the template views to the views store, all views must
+    // belong to a template which serves are the primary layout.
+
+    this.store[template] = views;
+
+    // ### Register Menus
+
+    views.forEach((view) => {
+      if (view.menu) {
+        view.menu.path = view.path;
+        menu.addMenu(view.menu);
+      }
+    });
+
+    done(null, views);
+  }.bind(this));
 };
 
 /**
- * List of view routes.
- */
-Views.routes = [];
-
-/**
- * Concatonates a list of provided routes to the current routes list.
- * @method addRoutes
- * @param  {Array} routes
- */
-Views.addRoutes = function (routes) {
-  Views.routes = Views.routes.concat(routes);
-};
-
-/**
- * Adds a new route to the routes list.
- * @method addRoute
- * @param  {Object} route
- */
-Views.addRoute = function (route) {
-  Views.routes.push(route);
-};
-
-/**
- * Returns the list of routes.
+ * Gets a list of routes that has been defined under the provided template views.
  * @method getRoutes
- * @return {Array}
+ * @param  {String}   template
+ * @param  {Function} done
  */
-Views.getRoutes = function () {
-  return Views.routes;
+Views.getRoutes = function (template, done) {
+  this.get(template, (error, views) => {
+    if (error) {
+      return done(error);
+    }
+    let routes = [];
+    views.forEach((view) => {
+      routes.push({
+        component : layout(view),
+        path      : view.path,
+        onEnter   : view.policy ? policies[view.policy] : undefined
+      });
+    });
+    done(null, routes);
+  });
 };

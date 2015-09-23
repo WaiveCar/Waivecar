@@ -1,0 +1,32 @@
+{
+    "_id" : ObjectId("5600115a0eabf3f9401a945f"),
+    "template" : "app",
+    "title" : "Dashboard",
+    "class" : "dashboard",
+    "policy" : "isAuthenticated",
+    "menu" : {
+        "parent" : null,
+        "title" : "Dashboard",
+        "path" : "/dashboard",
+        "icon" : "dashboard",
+        "locations" : [ 
+            "sidebar"
+        ]
+    },
+    "layout" : {
+        "rows" : [ 
+            {
+                "columns" : [ 
+                    {
+                        "component" : {
+                            "type" : "content",
+                            "options" : {
+                                "id" : 1
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

@@ -1,215 +1,221 @@
 'use strict';
 
-import React              from 'react';
-import Reach              from 'reach-react';
-import mixin              from 'react-mixin';
-import { Navigation }     from 'react-router';
-import { Form, Snackbar } from 'reach-components';
+import React                             from 'react';
+import { api }                           from 'reach-react';
+import mixin                             from 'react-mixin';
+import { Navigation }                    from 'react-router';
+import { Form, Snackbar }                from 'reach-components';
+import { components, fields, resources } from 'reach-ui';
 
 @mixin.decorate(Navigation)
 
-export default function (view, fields, resource) {
+class UIForm extends React.Component {
 
   /**
-   * @class FormView
+   * @constructor
    */
-  class FormComponent extends React.Component {
-
-    /**
-     * @constructor
-     */
-    constructor(...args) {
-      super(...args);
-      this.componentLoad = this.componentLoad.bind(this);
-      this.handleSuccess = this.handleSuccess.bind(this);
-      this.handleError   = this.handleError.bind(this);
-      this.state         = {
-        ready : false,
-        id     : null,
-        method : null,
-        action : null,
-        record : this.props.record
-      };
+  constructor(...args) {
+    super(...args);
+    this.state = {
+      data : {}
     }
+  }
 
-    /**
-     * @method componentDidMount
-     */
-    componentDidMount() {
-      this.componentLoad(this.getId());
+  /**
+   * Returns the id defined in the route.
+   * @method id
+   * @return {Mixed}
+   */
+  id() {
+    return this.props.params.id;
+  }
+
+  /**
+   * Checks if the form is of type update and requests data if it is.
+   * @method componentDidMount
+   */
+  componentDidMount() {
+    if (!this.isCreate()) {
+      this.setData(this.id());
     }
+  }
 
-    getId() {
-      if (this.props.params && this.props.params.id) {
-        return this.props.params.id;
-      }
-
-      if (this.props.record && this.props.filters && this.props.filters.id) {
-        return this.props.record[this.props.filters.id];
-      }
-
-      return null;
+  /**
+   * Executes when component is receiving new properties allowing
+   * us to load in new data.
+   * @method componentWillReceiveProps
+   */
+  componentWillReceiveProps(nextProps, nextState) {
+    let prevId = this.id();
+    let nextId = nextProps.params.id;
+    if (prevId !== nextId) {
+      this.setData(nextId);
     }
+  }
 
-    /**
-     * @method componentWillReceiveProps
-     */
-    componentWillReceiveProps(nextProps, nextState) {
-      let prevId = this.getId();
-      let nextId = nextProps.params.id;
-      if (this.state.key === undefined) {
-        this.componentLoad(nextId);
-      }
-      if (prevId !== nextId) {
-        this.componentLoad(nextId);
-      }
+  /**
+   * @method isCreate
+   * @return {Boolean}
+   */
+  isCreate() {
+    return this.id() === 'create';
+  }
+
+  /**
+   * Returns the resource resource for the current instance.
+   * @method resource
+   * @return {Object}
+   */
+  resource() {
+    let resource = resources.get(this.props.resource);
+    if (this.id() === 'create') {
+      return resource.store;
     }
+    return resource.update;
+  }
 
-    /**
-     * @method componentLoad
-     * @param  {Mixed} id
-     */
-    componentLoad(id) {
-      this.state.key = id;
-      if (view.actions && view.actions.create) {
-        this.setState({
-          ready  : true,
-          method : resource.store.method,
-          action : resource.store.uri,
-        });
-      } else {
-        let recordUri = resource.show.uri.replace(':id', id);
-        Reach.API.get(recordUri, function (err, record) {
-          if (err) {
-            return console.log(err);
-          }
-          this.setState({
-            ready  : true,
-            id     : id,
-            method : resource.update.method,
-            action : resource.update.uri.replace(':id', id),
-            record : record
-          });
-        }.bind(this));
+  /**
+   * Updates the data state based on the provided id.
+   * @method setData
+   * @param  {Mixed} id
+   */
+  setData(id) {
+    let resource = this.resource();
+    api.get(resource.uri.replace(':id', id), (error, data) => {
+      if (error) {
+        throw new Error(error);
       }
-    }
-
-    /**
-     * @method getFields
-     * @return {Array}
-     */
-    getFields() {
-      let result = [];
-      view.fields.forEach(function (value) {
-        if (fields[value]) {
-          let field = fields[value];
-          field.name = value;
-          result.push(field);
-        }
+      this.setState({
+        data : data
       });
-      return result;
-    }
+    }.bind(this));
+  }
 
-    /**
-     * Executed when the form is successfully submitted.
-     * @method handleSuccess
-     * @param  {Object}   data
-     * @param  {Function} reset
-     */
-    handleSuccess(data, reset) {
-      if (view.actions.create) {
-        this.goBack();
-      } else {
-        Snackbar.notify({
-          type    : 'success',
-          message : 'Record was successfully updated.'
-        });
+  /**
+   * @method fields
+   * @return {Array}
+   */
+  fields() {
+    let list   = fields.get(this.props.fields.id);
+    let action = this.isCreate() ? 'create' : 'update';
+    return this.props.fields[action].map((value) => {
+      if (list.hasOwnProperty(value)) {
+        list[value].name = value;
+        return list[value];
       }
-    }
+    });
+  }
 
-    /**
-     * Executed when the form encounters an error.
-     */
-    handleError(data) {
-      Snackbar.notify({
-        type    : 'danger',
-        message : data.message
+  /**
+   * @method buttons
+   * @return {Array}
+   */
+  buttons() {
+    let buttons = [];
+    let actions = this.props.actions;
+
+    if (actions.cancel) {
+      buttons.push({
+        value : 'cancel',
+        class : 'btn',
+        click : () => {
+          this.goBack();
+        }.bind(this)
       });
     }
 
-    /**
-     * Retuns a list of available buttons for this form.
-     * @method buttons
-     * @return {Array}
-     */
-    buttons() {
-      let buttons = [];
-      if (!view.actions) {
-        return buttons;
-      }
-
-      if (view.actions.cancel) {
-        buttons.push({
-          value : 'cancel',
-          class : 'btn',
-          click : () => {
-            this.goBack();
-          }.bind(this)
-        });
-      }
-      if (view.actions.delete) {
+    if (this.isCreate()) {
+      buttons.push({
+        value : 'submit',
+        type  : 'submit',
+        class : 'btn btn-primary'
+      });
+    } else {
+      if (actions.delete) {
         buttons.push({
           value : 'delete',
           class : 'btn btn-danger',
           click : () => {
-            console.log('Delete: %s!', this.state.id);
+            console.log('Delete: %s!', this.id());
           }.bind(this)
         });
       }
-      if (view.actions.update) {
+      if (actions.update) {
         buttons.push({
           value : 'update',
           type  : 'submit',
           class : 'btn btn-primary'
         });
       }
-      if (view.actions.create) {
-        buttons.push({
-          value : 'submit',
-          type  : 'submit',
-          class : 'btn btn-primary'
-        });
-      }
-      return buttons;
     }
 
-    /**
-     * Render the record form.
-     * @method render
-     */
-    render() {
-      if (!this.state.ready) {
-        return <div className="container">Loading...</div>
-      }
-      return (
-        <div id="form">
-          <div className="container-form">
-            <Form
-              key       = { this.state.id }
-              method    = { this.state.method }
-              action    = { this.state.action }
-              fields    = { this.getFields() }
-              record    = { this.state.record }
-              onSuccess = { this.handleSuccess }
-              onError   = { this.handleError }
-              buttons   = { this.buttons() }
-            />
-          </div>
-        </div>
-      );
+    return buttons;
+  }
+
+  /**
+   * Returns the form method.
+   * @method method
+   * @return {String}
+   */
+  method() {
+    let resource = this.resource();
+    if (this.isCreate()) {
+      return resource.method;
+    }
+    return resource.method;
+  }
+
+  /**
+   * Returns the uri action to perform on this form.
+   * @method action
+   * @return {String}
+   */
+  action() {
+    let resource = this.resource();
+    if (this.isCreate()) {
+      return resource.uri;
+    }
+    return resource.uri.replace(':id', this.id());
+  }
+
+  /**
+   * Executed when the form is successfully submitted.
+   * @method success
+   * @param  {Object}   data
+   * @param  {Function} reset
+   */
+  success(data, reset) {
+    if (view.actions.create) {
+      this.goBack();
+    } else {
+      Snackbar.notify({
+        type    : 'success',
+        message : 'Record was successfully updated.'
+      });
     }
   }
 
-  return FormComponent;
+  /**
+   * @method render
+   */
+  render() {
+    return (
+      <Form 
+        key     = { this.id() }
+        method  = { this.method() }
+        action  = { this.action() }
+        fields  = { this.fields() }
+        data    = { this.state.data }
+        buttons = { this.buttons() }
+      />
+    );
+  }
 
 }
+
+// ### Register Component
+
+components.register({
+  type  : 'form',
+  class : UIForm
+});

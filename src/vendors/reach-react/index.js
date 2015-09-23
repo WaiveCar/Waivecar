@@ -1,6 +1,6 @@
 export default {
-  Auth  : require('./lib/auth'),
-  API   : require('./lib/api'),
-  DOM   : require('./lib/dom'),
-  Relay : require('./lib/relay')
+  auth  : require('./lib/auth'),
+  api   : require('./lib/api'),
+  dom   : require('./lib/dom'),
+  relay : require('./lib/relay')
 };

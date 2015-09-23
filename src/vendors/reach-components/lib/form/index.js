@@ -1,7 +1,7 @@
 'use strict';
 
 import React     from 'react';
-import Reach     from 'reach-react';
+import { api }   from 'reach-react';
 import Button    from '../button';
 import FormGroup from './form-group';
 import Snackbar  from '../snackbar';
@@ -14,20 +14,24 @@ export default class Form extends React.Component {
    */
   constructor(...args) {
     super(...args);
+    this.state = {
+      data : this.props.data
+    };
     this.inputChange = this.inputChange.bind(this);
     this.submit      = this.submit.bind(this);
-    this.state       = {
-      record : null
-    };
   }
 
   /**
-   * @method componentDidMount
+   * @method componentWillReceiveProps
    */
-  componentDidMount() {
-    this.setState({
-      record : this.props.record || {}
-    });
+  componentWillReceiveProps(nextProps, nextState) {
+    let prevData = this.state.data;
+    let nextData = nextProps.data;
+    if (prevData.id !== nextData.id) {
+      this.setState({
+        data : nextData
+      });
+    }
   }
 
   /**
@@ -36,10 +40,10 @@ export default class Form extends React.Component {
    * @param  {Object} event
    */
   inputChange(event) {
-    let input = this.state.record;
+    let input = this.state.data;
     input[event.target.name] = event.target.value;
     this.setState({
-      record : input
+      data : input
     });
   }
 
@@ -55,7 +59,7 @@ export default class Form extends React.Component {
       }
     }
     this.setState({
-      record : {}
+      data : {}
     });
   }
 
@@ -64,7 +68,7 @@ export default class Form extends React.Component {
    */
   submit(event) {
     event.preventDefault();
-    Reach.API[this.props.method.toLowerCase()](this.props.action, this.state.record, function (err, res) {
+    api[this.props.method.toLowerCase()](this.props.action, this.state.data, function (err, res) {
       if (err) {
         if (this.props.onError) {
           this.props.onError(err, this.flush.bind(this));
@@ -100,7 +104,7 @@ export default class Form extends React.Component {
                 key      = { i }
                 tabIndex = { i + 1 } 
                 field    = { field } 
-                value    = { this.state.record ? this.state.record[field.name] : '' } 
+                value    = { this.state.data ? this.state.data[field.name] : '' } 
                 onChange = { this.inputChange } 
               />
             )
