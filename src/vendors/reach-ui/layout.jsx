@@ -43,14 +43,6 @@ export default (view) => {
     }
 
     /**
-     * Returns the assigned component className.
-     * @method getClassName
-     */
-    getClassName() {
-      return `view-${ view.class }`;
-    }
-
-    /**
      * Renders the components that has been defined in the view.
      * @method renderView
      */
@@ -118,7 +110,7 @@ export default (view) => {
      */
     render() {
       return (
-        <div className={ this.getClassName() }>
+        <div className={ view.class }>
           { this.renderView() }
         </div>
       );

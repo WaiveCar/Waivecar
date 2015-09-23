@@ -33,7 +33,7 @@ class AppTemplate extends React.Component {
    * @method render
    */
   render() {
-    let { title } = this.state.app;
+    let { title, classes } = this.state.app;
     return (
       <div id="app">
         <Header />
@@ -43,9 +43,7 @@ class AppTemplate extends React.Component {
             <div className="content-header">
               <h1><span>{ title }</span></h1>
             </div>
-            <div className="container-fluid">
-              { this.props.children }
-            </div>
+            { this.props.children }
           </div>
         </div>
         <div id="events">

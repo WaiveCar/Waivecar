@@ -29,7 +29,10 @@ export default class Content extends React.Component {
   componentDidMount() {
     api.get(this.props.resource.show.uri.replace(':id', this.props.id), (error, result) => {
       if (error) {
-        throw new Error(error);
+        return Snackbar.notify({
+          type    : `danger`,
+          message : `Could not retrieve content [ID: ${ this.props.id }]`
+        });
       }
       this.setState({
         key    : result.id,
@@ -53,7 +56,9 @@ export default class Content extends React.Component {
    * @method componentWillUnmount
    */
   componentWillUnmount() {
-    this.state.editor.destroy();
+    if (this.state.editor) {
+      this.state.editor.destroy();
+    }
   }
 
   /**

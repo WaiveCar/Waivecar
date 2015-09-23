@@ -10,6 +10,8 @@ import fields    from './lib/fields';
 
 import './components/content';
 import './components/form';
+import './components/mini-chart';
+import './components/table';
 
 // ### Loader
 

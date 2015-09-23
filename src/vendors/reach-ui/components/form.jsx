@@ -19,6 +19,7 @@ class UIForm extends React.Component {
     this.state = {
       data : {}
     }
+    this.success = this.success.bind(this);
   }
 
   /**
@@ -185,7 +186,7 @@ class UIForm extends React.Component {
    * @param  {Function} reset
    */
   success(data, reset) {
-    if (view.actions.create) {
+    if (this.isCreate()) {
       this.goBack();
     } else {
       Snackbar.notify({
@@ -201,12 +202,13 @@ class UIForm extends React.Component {
   render() {
     return (
       <Form 
-        key     = { this.id() }
-        method  = { this.method() }
-        action  = { this.action() }
-        fields  = { this.fields() }
-        data    = { this.state.data }
-        buttons = { this.buttons() }
+        key       = { this.id() }
+        method    = { this.method() }
+        action    = { this.action() }
+        fields    = { this.fields() }
+        data      = { this.state.data }
+        buttons   = { this.buttons() }
+        onSuccess = { this.success }
       />
     );
   }

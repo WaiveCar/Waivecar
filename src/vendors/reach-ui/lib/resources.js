@@ -23,7 +23,7 @@ Resources.store = {};
 Resources.addResources = function (list) {
   for (let key in list) {
     let resource = list[key];
-    this.prepare(key, resource);
+    this.prepare(key);
     this.store[key] = resource;
   }
 };
@@ -41,28 +41,27 @@ Resources.get = function (key) {
  * Prepares all the resources by creating relay reducers.
  * @method prepare
  * @param  {String} id
- * @param  {Object} resource
  */
-Resources.prepare = function (id, resource) {
+Resources.prepare = function (id) {
   relay.resource(id, (state = [], action) => {
     switch (action.type) {
       case 'store':
         return [
           ...state,
-          action[resource.store.key]
+          action.data
         ];
       case 'index':
-        return action[resource.index.key];
+        return action.data;
       case 'update':
         return state.map(function (obj) {
-          if (obj.id === action[resource.update.key].id) {
-            return action[resource.update.key];
+          if (obj.id === action.data.id) {
+            return action.data;
           }
           return obj;
         });
       case 'delete':
         return state.map(function (obj) {
-          if (obj.id === action[resource.delete.key].id) {
+          if (obj.id === action.data.id) {
             return;
           }
           return obj;

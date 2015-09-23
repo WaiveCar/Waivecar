@@ -18,7 +18,11 @@ relay.actions({
 // ### Resource Reducer
 
 let defaultState = {
-  title : 'No Title'
+  title   : 'No Title',
+  classes : {
+    view      : null,
+    container : 'container-fuid'
+  }
 };
 
 relay.resource('app', function (state = defaultState, action) {
