@@ -38,7 +38,7 @@
     "reach-file": "0.3.3",
     "reach-log": "0.0.13",
     "reach-mongo": "0.0.2",
-    "reach-payments": "0.1.3",
+    "reach-payments": "0.1.4",
     "reach-queue": "0.0.10",
     "reach-sequelize": "0.1.5",
     "reach-sms": "0.0.7",
