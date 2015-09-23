@@ -1,12 +1,12 @@
 'use strict';
 
 let VehicleService = require('./vehicle-service');
-let config         = Reach.config;
+let config         = Reach.config.gm;
 let error          = Reach.Error;
 let log            = Reach.Log;
 
 module.exports = function *() {
-  if (!config.gm || !config.gm.host || !config.gm.api.key || !config.gm.api.secret || !config.gm.onStart) {
+  if (!config || !config.host || !config.api.key || !config.api.secret || !config.onStart) {
     throw error.parse({
       code     : 'GM_API_BAD_CONFIG',
       message  : 'Your general motors configuration is invalid',
@@ -17,18 +17,18 @@ module.exports = function *() {
   // ### Connection
   // Check if the connection to GM-API is good
 
-  if (config.gm.onStart.testConnection) {
+  if (config.onStart.testConnection) {
     log.debug('Checking gm-api connection state');
-
-    let service = new VehicleService();
-    let result  = yield service.connect();
-
-    if (typeof result !== 'string') {
-      throw error.parse({
-        code     : 'GM_API_BAD_CONNECTION',
-        message  : 'Could not retrieve a bearerToken from the vehicle-service',
-        solution : 'Make sure your GM host, key, and/or secret is correct'
-      });
+    try {
+      let service = new VehicleService();
+      let result  = yield service.connect();
+    } catch (err) {
+      if (err.code === 'ECONNREFUSED') {
+        log.error({
+          code    : 'GM_API_BAD_CONNECTION',
+          message : 'Could not establish a connection with the GM api'
+        })
+      }
     }
   }
 };
