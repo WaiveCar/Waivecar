@@ -1,25 +1,32 @@
-<ion-view hide-nav-bar="true" ng-controller="CreditCardsController">
+<ion-view ng-controller="CreditCardsController">
 
   <ion-nav-title>
     <page-title class="dark-bg">Credit Cards</page-title>
   </ion-nav-title>
 
+  <ion-nav-buttons side="primary">
+    <button menu-toggle="right" class="button button-icon icon ion-navicon"></button>
+  </ion-nav-buttons>
+
   <ion-content padding="true" class="ion-content--center dark-bg">
 
-    <div class="alert alert-info" ng-if="!active.users.creditCards.length">
+    <div class="alert alert-info" ng-if="!cards.length">
       You don't have any credit cards stored.
-      <br>
-
-      <button type="button" class="button button-block button-balanced" ui-sref="credit-cards-new">Create one?</button>
     </div>
 
+    <button type="button" class="button button-clear button-positive" ui-sref="credit-cards-new">
+      <span ng-if="!cards.length">Add Credit Card</span>
+      <span ng-if="cards.length">Add New Credit Card</span>
+    </button>
+
     <ion-list show-delete="true" show-reorder="true" can-swipe="true">
-      <ion-item ng-repeat="card in active.users.creditCards" class="item-thumbnail-left" ng-controller="CreditCardController">
-        <img />
-        <h2>{{ card.last4Digits }}</h2>
-        <p>{{ card.expiry }}</p>
-        <ion-delete-button class="ion-minus-circled" ng-click="removeCreditCard()">
-        </ion-delete-button>
+      <ion-item ng-repeat="card in cards" class="text-left">
+        <h2>
+          <i class="fa fa-lg" ng-class="{'fa-cc-visa': card.brand === 'Visa'}"></i>
+          {{ card.last4 }}
+        </h2>
+        <p>{{ card.expMonth }} / {{ card.expYear }}</p>
+        <ion-delete-button class="ion-minus-circled" ng-click="removeCreditCard(card, $index)"></ion-delete-button>
       </ion-item>
     </ion-list>
 

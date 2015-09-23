@@ -5,20 +5,26 @@ $fa-font-path: "../lib/font-awesome/fonts" !default;
 @import 'colors';
 @import 'fonts';
 @import 'sizes';
-@import "www/lib/bootstrap-sass/assets/stylesheets/_bootstrap";
+// @import "www/lib/bootstrap-sass/assets/stylesheets/_bootstrap";
+@import "www/lib/bootstrap-sass/assets/stylesheets/bootstrap/variables";
+@import "www/lib/bootstrap-sass/assets/stylesheets/bootstrap/mixins";
+@import "www/lib/bootstrap-sass/assets/stylesheets/bootstrap/thumbnails";
+@import "www/lib/bootstrap-sass/assets/stylesheets/bootstrap/type";
 @import "www/lib/ionic/scss/ionic";
 @import "www/lib/font-awesome/scss/font-awesome";
 // @import 'layout';
+@import 'ads';
 @import 'auth';
+@import 'bookings';
 @import 'directives';
 @import 'form';
+@import 'header';
+@import 'licenses';
+@import 'loading';
 @import 'map';
-@import 'bookings';
-@import '_ads';
-@import '_messages';
-@import '_menu';
-@import '_header';
-@import '_loading';
+@import 'menu';
+@import 'messages';
+@import 'vision';
 
 .highlight {
   font-weight: bold;
@@ -41,7 +47,6 @@ $fa-font-path: "../lib/font-awesome/fonts" !default;
 
 .ion-content--center {
   text-align: center;
-
   form {
     text-align: left;
   }
@@ -51,7 +56,6 @@ ion-content {
   &.dark-bg {
     color: $light;
     background-color: $dark;
-
     h1,
     h2,
     h3,
@@ -61,8 +65,29 @@ ion-content {
       color: $light;
       text-transform: uppercase;
     }
+    a,
+    a:link,
+    a:hover,
+    a:visited,
+    a:active {
+      color: $light;
+    }
+    ion-list {
+      color: inherit;
+      a,
+      a:link,
+      a:hover,
+      a:visited,
+      a:active h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        color: inherit;
+      }
+    }
   }
-
   &.gray-bg {
     color: $dark;
     background-color: $gray3;
@@ -110,7 +135,6 @@ ion-view {
   .scroll {
     height: 100%;
   }
-
   .info-footer {
     height: $infoFooterHeight* 1%;
     background-color: #FFF;

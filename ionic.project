@@ -8,7 +8,7 @@
     "watch"
   ],
   "watchPatterns": [
-    "www/**/*",
+    "www/dist/bundle.js",
     "!www/lib/**/*"
   ],
   "proxies": [

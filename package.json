@@ -9,11 +9,11 @@
     "ionic": "driftyco/ionic-bower#v1.0.0"
   },
   "browser": {
-    "ionic": "./node_modules/ionic/js/ionic.js",
+    "ionic": "./www/lib/ionic/js/ionic.js",
     "angular": "./node_modules/angular/angular.js",
     "angular-resource": "./node_modules/angular-resource/angular-resource.js",
     "angular-sanitize": "./node_modules/angular-sanitize/angular-sanitize.js",
-    "ionic-angular": "./node_modules/ionic/js/ionic-angular.js",
+    "ionic-angular": "./www/lib/ionic/js/ionic-angular.js",
     "angular-ui-router": "./node_modules/angular-ui-router/release/angular-ui-router.js",
     "angular-animate": "./node_modules/angular-animate/angular-animate.js",
     "angular-messages": "./node_modules/angular-messages/angular-messages.js",
@@ -122,8 +122,7 @@
     "cordova-plugin-device",
     "cordova-plugin-console",
     "cordova-plugin-splashscreen",
-    "com.ionic.keyboard",
-    {
+    "com.ionic.keyboard", {
       "locator": "https://github.com/EddyVerbruggen/LaunchMyApp-PhoneGap-Plugin.git",
       "id": "nl.x-services.plugins.launchmyapp",
       "variables": {

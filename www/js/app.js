@@ -18,12 +18,14 @@ require('angular-payments');
 // Components (We first define angular modules which are dependencies to main 'app' module)
 angular.module('app.settings', []);
 angular.module('app.controllers', []);
+angular.module('app.models', []);
 angular.module('app.directives', []);
 angular.module('app.filters', []);
 angular.module('app.providers', []);
 angular.module('app.services', []);
 angular.module('app.providers', []);
 require('./modules/maps/index');
+require('./services/templates.min');
 
 // 'app' definition
 var app = angular.module('app', [
@@ -33,10 +35,12 @@ var app = angular.module('app', [
   'ngMessages',
   'ui.router',
   'btford.socket-io',
+  'angularPayments',
 
   'Maps',
   'app.settings',
   'app.controllers',
+  'app.models',
   'app.directives',
   'app.filters',
   'app.providers',
@@ -65,9 +69,11 @@ require('./controllers/credit-cards-controller');
 require('./controllers/inspection-controller');
 require('./controllers/landing-controller');
 require('./controllers/license-controller');
+require('./controllers/license-photo-controller');
 require('./controllers/message-controller');
 require('./controllers/user-controller');
 require('./controllers/timer-controller');
+require('./controllers/menu-controller');
 
 // Directives
 require('./directives/advertisement-directive');

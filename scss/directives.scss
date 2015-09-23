@@ -1,0 +1,44 @@
+.lined {
+  height: 3%;
+  margin-top: 9.4%;
+  margin-bottom: 9.2%;
+  svg {
+    display: inline-block;
+    height: 1rem;
+    line {
+      stroke: $gray4;
+      stroke-width: 1.2%;
+    }
+  }
+  .content {
+    display: inline-block;
+    width: 40px;
+  }
+}
+
+.wizard {
+
+  svg {
+    height: 0.5rem;
+  }
+
+  line {
+    stroke-width: 0.4rem;
+    stroke: $gray;
+    &.passed {
+      stroke: $green;
+    }
+  }
+
+}
+
+.strike {
+  line {
+    stroke: $green;
+    stroke-width: 10%;
+  }
+  height: 0.5rem;
+  width: 10.22%;
+  display: block;
+  margin: 0 auto;
+}

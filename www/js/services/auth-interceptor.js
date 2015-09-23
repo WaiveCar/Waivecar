@@ -31,7 +31,7 @@ module.exports = angular.module('app.services').factory('AuthInterceptor', [
       },
 
       responseError: function (rejection) {
-        if (_([401, 403], rejection.status)) {
+        if (_.contains([401, 403], rejection.status)) {
           $rootScope.$emit('authError');
         }
 

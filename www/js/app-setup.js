@@ -21,10 +21,12 @@ var config = [
     $httpProvider.interceptors.push('AuthInterceptor');
 
     $ionicConfigProvider.views.transition('platform');
+    $ionicConfigProvider.views.maxCache(0);
+    $ionicConfigProvider.templates.maxPrefetch(1);
 
     $provide.decorator('$exceptionHandler', [
       '$delegate',
-      function ($delegate) {
+      function exceptionHAndlerDecorator($delegate) {
 
         return function (exception, cause) {
           var $message = $injector.get('$messageProvider').$get();
@@ -94,7 +96,6 @@ var config = [
         };
 
       }
-
     ]);
 
   }

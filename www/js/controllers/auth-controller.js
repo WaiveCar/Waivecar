@@ -10,11 +10,13 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
   '$state',
   '$auth',
   '$message',
-  function ($rootScope, $scope, $state, $auth, $message) {
+  '$data',
+  function ($rootScope, $scope, $state, $auth, $message, $data) {
 
     $scope.forms = {
       loginForm: {
-        from: 'app'
+        from: 'app',
+        identifier: 'adibih@gmail.com',
       },
       forgotForm: {},
       resetForm: {}
@@ -24,7 +26,9 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
       if (err) {
         return $message.error(err);
       }
-      $state.go('landing');
+      $state.go('users-edit', {
+        id: $data.me.id
+      });
 
     };
 
@@ -35,6 +39,7 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
       if (form.$invalid) {
         return $message.error('Please resolve form errors and try again.');
       }
+
       $auth.login($scope.forms.loginForm, sharedCallback);
 
     };

@@ -1,0 +1,17 @@
+.social-icon {
+  width: 16%;
+}
+
+.messages-sent {
+  ion-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+
+    img {
+      width: 20%;
+    }
+  }
+}

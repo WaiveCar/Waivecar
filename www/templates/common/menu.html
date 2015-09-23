@@ -5,7 +5,7 @@
   </div>
 </header>
 
-<ion-content has-header="true" padding="true" class="ion-content--center main-menu dark-bg" menu-close="true">
+<ion-content has-header="true" padding="true" class="ion-content--center main-menu dark-bg" menu-close="true" ng-controller="MenuController">
 
   <div class="text-center">
     <a ui-sref="cars">
@@ -15,7 +15,7 @@
   </div>
 
   <div class="text-center">
-    <a ui-sref="users-edit({id: me.id})">
+    <a ui-sref="users-edit({id: $auth.me.id})">
       <img src="img/account.svg" alt="" />
       <span class="button-icon-label">Account</span>
     </a>
@@ -43,7 +43,7 @@
   </div>
 
   <div class="text-center">
-    <a ng-if="me" ng-click="logout()">
+    <a ng-if="$auth.isAuthenticated()" ng-click="logout()">
       <img src="img/logout.svg" alt="" />
       <span class="button-icon-label">logout</span>
     </a>

@@ -7,9 +7,9 @@
   <title>WaiveCar</title>
 
   <meta http-equiv="Content-Security-Policy" content="
-      default-src 'self' http:;
+      default-src 'self' http: https:;
       script-src 'self' 'unsafe-inline' 'unsafe-eval' localhost:* 192.168.56.1:*;
-      connect-src localhost:* ws: 10.0.3.2:* 192.168.56.1:* http:;
+      connect-src localhost:* ws: 10.0.3.2:* 192.168.56.1:* http: https:;
       style-src 'self' 'unsafe-inline';
       img-src 'self' data: http: https:;
       font-src 'self';
@@ -60,7 +60,7 @@
     </ion-side-menu-content>
 
     <ion-side-menu side="right" width="{{windowWidth}}">
-      <div ng-include="'templates/common/menu.html'"></div>
+      <div ng-include="'/templates/common/menu.html'"></div>
     </ion-side-menu>
 
   </ion-side-menus>

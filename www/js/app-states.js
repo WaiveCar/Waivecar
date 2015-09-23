@@ -69,7 +69,7 @@ module.exports = [
         // 6-Forgot-password-success
         cache: false,
         url: '/auth/forgot-password-success',
-        templateUrl: '/templates/auth/forgot-password-success.html?34',
+        templateUrl: '/templates/auth/forgot-password-success.html',
         data: {
           auth: false
         }
@@ -92,10 +92,17 @@ module.exports = [
           auth: false
         }
       })
-      .state('licenses-photo', {
+      .state('licenses-photo-new', {
         // 11-Drivers-id
-        url: '/licenses/photo?{step:int}',
-        templateUrl: '/templates/licenses/photo.html',
+        url: '/licenses/photo/new?step&licenseId',
+        templateUrl: '/templates/licenses/photo-new.html',
+        data: {
+          auth: true
+        }
+      })
+      .state('licenses-photo-edit', {
+        url: '/licenses/:licenseId/photo/:fileId/edit',
+        templateUrl: '/templates/licenses/photo-edit.html',
         data: {
           auth: true
         }
@@ -112,6 +119,14 @@ module.exports = [
         // 12-Payment-method@2x.png
         url: '/credit-cards/new',
         templateUrl: '/templates/credit-cards/new.html',
+        data: {
+          auth: true
+        }
+      })
+      .state('credit-cards-edit', {
+        // 12-Payment-method@2x.png
+        url: '/credit-cards/:id/edit',
+        templateUrl: '/templates/credit-cards/edit.html',
         data: {
           auth: true
         }

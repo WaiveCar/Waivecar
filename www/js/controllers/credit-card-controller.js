@@ -4,6 +4,7 @@ require('angular-ui-router');
 require('../services/auth-service');
 require('../services/data-service');
 require('../services/message-service');
+var when = require('when');
 
 module.exports = angular.module('app.controllers').controller('CreditCardController', [
   '$rootScope',
@@ -12,57 +13,68 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
   '$auth',
   '$data',
   '$message',
-  function ($rootScope, $scope, $state, $auth, $data, $message) {
-    $scope.forms = {
-      creditCardForm: {}
-    };
+  '$stateParams',
+  function ($rootScope, $scope, $state, $auth, $data, $message, $stateParams) {
 
-    $scope.createCreditCard = function (form) {
+    $scope.save = function(form) {
       if (form.$pristine) {
-        return $message.info('Please fill in your credentials first.');
+        return $message.info('Please fill in the form fields first.');
       }
       if (form.$invalid) {
         return $message.error('Please resolve form errors and try again.');
       }
 
-      $data.createCreditCard($scope.forms.creditCardForm, function (err) {
-        if (err) {
-          return $message.error(err);
-        }
+      return when.promise(function(resolve, reject) {
+          if ($data.me.stripeId) {
+            return resolve();
+          }
 
-        if ($scope.redirection.redirectState) {
-          return $state.go('cars', $scope.redirection);
-        }
-        $state.go('users-edit', {
-          id: $data.me.id
-        });
+          return $data.resources.users.createCustomer({
+              data: {
+                metadata: {}
+              }
+            }).$promise
+            .then(resolve)
+            .catch(reject);
 
-      });
+        })
+        .then(function() {
+          return $auth.reload();
+        })
+        .then(function() {
+          var card = angular.copy($scope.card);
+          return card.$save();
+        })
+        .then(function() {
+          if ($scope.redirection.redirectState) {
+            return $state.go('cars', $scope.redirection);
+          }
+          $state.go('credit-cards');
+
+        })
+        .catch($message.error);
 
     };
 
-    $scope.removeCreditCard = function () {
-      $data.removeCreditCard($scope.forms.creditCardForm, function (err) {
-        if (err) {
-          return $message.error(err);
-        }
-
-        if ($scope.redirection.redirectState) {
-          $state.go($scope.redirection.redirectState, $scope.redirection.redirectParams);
-        }
-        $state.go('users-show', {
-          id: $data.me.id
-        });
-
-      });
-
-    };
-
-    $scope.init = function () {
+    $scope.init = function() {
       $scope.redirection = {
         redirectState: $state.params.redirectState,
         redirectParams: $state.params.redirectParams
       };
+
+      if (!$stateParams.id) {
+        $scope.card = new $data.resources.Card();
+
+      } else {
+        return $data.resources.Card.get({
+            id: $stateParams.id
+          }).$promise
+          .then(function(card) {
+            $scope.card = card;
+          })
+          .catch($message.error);
+      }
+
     };
 
     $scope.init();

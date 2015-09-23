@@ -6,6 +6,9 @@ require('../resources/cars.js');
 require('../resources/locations.js');
 require('../resources/users.js');
 require('../resources/licenses.js');
+require('../resources/card');
+require('../resources/file');
+
 var when = require('when');
 var _ = require('lodash');
 
@@ -18,7 +21,9 @@ module.exports = angular.module('app.services').factory('$data', [
   'Locations',
   'Users',
   'Licenses',
-  function ($rootScope, $http, $socket, Bookings, Cars, Locations, Users, Licenses) {
+  'Card',
+  'File',
+  function ($rootScope, $http, $socket, Bookings, Cars, Locations, Users, Licenses, Card, File) {
 
     var service = {
 
@@ -27,17 +32,19 @@ module.exports = angular.module('app.services').factory('$data', [
         cars: Cars,
         licenses: Licenses,
         locations: Locations,
-        users: Users
+        users: Users,
+        Card: Card,
+        File: File
       },
 
       me: void 0,
       userLocation: {},
-      models: {},
+      instances: {},
       active: {},
       isSubscribed: false,
 
       initialize: function (modelName) {
-        service.models[modelName] = [];
+        service.instances[modelName] = [];
         return service.fetch(modelName, {});
 
       },
@@ -48,12 +55,9 @@ module.exports = angular.module('app.services').factory('$data', [
           service.resources[modelName].query().$promise
             .then(function (items) {
               service.mergeAll(modelName, items);
-              resolve();
+              resolve(service.instances[modelName]);
             })
-            .catch(function (response) {
-              console.log(response);
-              reject(response);
-            });
+            .catch(reject);
 
         });
 
@@ -111,8 +115,8 @@ module.exports = angular.module('app.services').factory('$data', [
       },
 
       // client-side manipulation only
-      mergeAll: function (modelName, models) {
-        _.each(models, function (item) {
+      mergeAll: function (modelName, instances) {
+        _.each(instances, function (item) {
           var model = item.toJSON ? item.toJSON() : item;
           service.merge(modelName, model);
         });
@@ -121,12 +125,12 @@ module.exports = angular.module('app.services').factory('$data', [
       // client-side manipulation only
       merge: function (modelName, model) {
         if (!model) return null;
-        if (!service.models[modelName]) service.models[modelName] = [];
+        if (!service.instances[modelName]) service.instances[modelName] = [];
         var existing = service.getExisting(modelName, model.id);
         if (existing) {
           angular.extend(existing, model);
         } else {
-          service.models[modelName].push(model);
+          service.instances[modelName].push(model);
         }
         return model;
       },
@@ -139,7 +143,7 @@ module.exports = angular.module('app.services').factory('$data', [
 
         var item = service.getExisting(modelName, id);
         if (item) {
-          service.models[modelName].splice(_.indexOf(service.models[modelName], item), 1);
+          service.instances[modelName].splice(_.indexOf(service.instances[modelName], item), 1);
         }
       },
 
@@ -166,7 +170,7 @@ module.exports = angular.module('app.services').factory('$data', [
       },
 
       getExisting: function (modelName, id) {
-        var existing = _.find(service.models[modelName], function (m) {
+        var existing = _.find(service.instances[modelName], function (m) {
           return m.id.toString() === id.toString();
         });
 
@@ -176,7 +180,7 @@ module.exports = angular.module('app.services').factory('$data', [
       // client-side manipulations only
       activate: function (modelName, id) {
 
-        if (service.models[modelName]) {
+        if (service.instances[modelName]) {
           return service.activateKnownModel(modelName, id);
         }
 

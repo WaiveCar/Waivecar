@@ -25,7 +25,7 @@ module.exports = angular.module('app')
         ioSocket: remote
       });
 
-      // socket.disconnect();
+      socket.disconnect();
 
       socket.forward('error');
 

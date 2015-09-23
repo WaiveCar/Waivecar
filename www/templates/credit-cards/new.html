@@ -13,49 +13,8 @@
 
     <p class="padding-bottom"><a href>Check out fees Guidelines</a></p>
 
-    <form ng-submit="createCreditCard(form)" name="form" id="form" novalidate>
-      <div class="list padding-top">
-
-        <label class="item item-input">
-          <span class="input-label required">Card Number</span>
-          <input name="number" type="text" placeholder="#### #### #### ####" ng-model="forms.creditCardForm.number" required payments-validate="card" payments-format="card" payments-type-model="type" autofocus>
-        </label>
-
-        <label class="item item-input">
-          <span class="input-label required">Name on Card</span>
-          <input name="name" type="text" placeholder="Cardholder Name" ng-model="forms.creditCardForm.name" required>
-        </label>
-
-        <label class="item item-input">
-          <span class="input-label required">Expiry Date</span>
-          <input name="expiry" type="text" ng-model="forms.creditCardForm.expiry" required payments-validate="expiry" payments-format="expiry">
-        </label>
-
-        <label class="item item-input">
-          <span class="input-label required">CVC</span>
-          <input name="cvc" type="text" ng-model="forms.creditCardForm.cvc" required payments-validate="cvc" payments-format="cvc" payments-type-model="type">
-        </label>
-
-      </div>
-
-      <div ng-messages="form.number.$error" ng-if="form.$submitted && form.number.$invalid" role="alert">
-        <div ng-message="required">Credit Card number is required</div>
-        <div ng-message="card">Credit Card number is invalid</div>
-      </div>
-
-      <div ng-messages="form.name.$error" ng-if="form.$submitted && form.name.$invalid" role="alert">
-        <div ng-message="required">Name is required</div>
-      </div>
-
-      <div ng-messages="form.expiry.$error" ng-if="form.$submitted && form.expiry.$invalid" role="alert">
-        <div ng-message="required">Expiry month is required</div>
-        <div ng-message="expiry">Expiry month is invalid</div>
-      </div>
-
-      <div ng-messages="form.cvc.$error" ng-if="form.$submitted && form.cvc.$invalid" role="alert">
-        <div ng-message="required">CVC is required</div>
-        <div ng-message="cvc">CVC is invalid</div>
-      </div>
+    <form ng-submit="save(form)" name="form" id="form" novalidate>
+      <div ng-include="'./templates/credit-cards/_form.html'"></div>
     </form>
 
     <p class="padding-top">By adding a credit card you are agreeing with our <a href>terms of services</a> and <a href>Fees Guidelines</a></p>
@@ -64,7 +23,7 @@
 
   <ion-footer-bar class="no-padding">
     <div class="button-bar">
-      <button type="submit" form="form" class="button button-balanced">Save &amp; finish</button>
+      <button type="submit" form="form" class="button button-balanced" ng-bind="isWizard ? 'Save &amp; finish' : 'Save'"></button>
     </div>
   </ion-footer-bar>
 

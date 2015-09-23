@@ -23,17 +23,9 @@ module.exports =
     '$session',
     '$document',
     function ($rootScope, $scope, $state, $ionicPopover, LocationService, $auth, $data, $message, $session, $document) {
-      $rootScope.isInitialized = false;
-      $rootScope.models = $data.models;
-      $rootScope.active = $data.active;
-      $rootScope.me = $data.me;
-      // $rootScope.currentLocation;
-
-      // $ionicPopover.fromTemplateUrl('/templates/common/menu.html', {
-      //   scope: $scope
-      // }).then(function (popover) {
-      //   $scope.popover = popover;
-      // });
+      $scope.isInitialized = false;
+      $scope.models = $data.models;
+      $scope.active = $data.active;
 
       function getWindowWidth() {
         return $document.width();
@@ -50,7 +42,9 @@ module.exports =
       });
 
       $rootScope.$on('authError', function () {
+        console.log('authError');
         $auth.logout();
+        $state.go('auth-login');
       });
 
       $rootScope.$on('socket:error', function (ev, data) {
@@ -84,14 +78,6 @@ module.exports =
 
       };
 
-      $scope.toggleNav = function () {
-        if ($scope.popover.isShown()) {
-          return $scope.popover.hide();
-        }
-        $scope.popover.show();
-
-      };
-
       $scope.locateMe = function () {
         LocationService.getLocation().then(function (deviceLocation) {
           $rootScope.currentLocation = deviceLocation;
@@ -122,7 +108,9 @@ module.exports =
 
             function (nextTask) {
               $data.initialize('cars')
-                .then(nextTask)
+                .then(function () {
+                  nextTask();
+                })
                 .catch(function (err) {
                   console.log('err', err);
                   nextTask(err);
@@ -131,7 +119,9 @@ module.exports =
 
             function (nextTask) {
               $data.initialize('locations')
-                .then(nextTask)
+                .then(function () {
+                  nextTask();
+                })
                 .catch(nextTask);
             }
 

@@ -20,7 +20,7 @@
   var paths = {
     sass: [
       './scss/**/*.scss',
-      './www/components/**/*.scss'
+      // './www/components/**/*.scss'
     ],
     templates: [
       './www/templates/**/*.html'

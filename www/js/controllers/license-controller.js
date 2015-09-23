@@ -5,6 +5,7 @@ require('../services/auth-service');
 require('../services/data-service');
 require('../services/message-service');
 require('../services/camera-service');
+var _ = require('lodash');
 
 module.exports = angular.module('app.controllers').controller('LicenseController', [
   '$rootScope',
@@ -15,17 +16,18 @@ module.exports = angular.module('app.controllers').controller('LicenseController
   '$message',
   'CameraService',
   '$location',
-  function ($rootScope, $scope, $state, $auth, $data, $message, CameraService, $location) {
+  '$stateParams',
+  function ($rootScope, $scope, $state, $auth, $data, $message, CameraService, $location, $stateParams) {
 
-    $scope.forms = {
-      licenseForm: {
-        country: 'USA',
-        firstName: $auth.me.firstName,
-        lastName: $auth.me.lastName,
-        userId: $auth.me.id,
-        fileId: $location.search().fileId
-      }
-    };
+    // $scope.forms = {
+    //   licenseForm: {
+    //     country: 'USA',
+    //     firstName: $auth.me.firstName,
+    //     lastName: $auth.me.lastName,
+    //     userId: $auth.me.id,
+    //     fileId: $location.search().fileId
+    //   }
+    // };
 
     $scope.datepickerObject = {
       callback: function (date) {
@@ -36,59 +38,28 @@ module.exports = angular.module('app.controllers').controller('LicenseController
       }
     };
 
-    $scope.takePhoto = function () {
-
-      CameraService.getPicture()
-        .then(function (picture) {
-          return CameraService.uploadPicture(picture);
-        })
-        .then(function (uploadResponse) {
-          $state.go('licenses-new', {
-            fileId: uploadResponse.id,
-            redirectTo: 'credit-cards-new'
-          });
-
-        })
-        .catch($message.error);
-
-    };
-
-    $scope.uploadPhoto = function () {
-
-      CameraService.pickFile()
-        .then(function (picture) {
-          return CameraService.uploadPicture(picture);
-        })
-        .then(function (uploadResponse) {
-          $state.go('licenses-new', {
-            fileId: uploadResponse.id,
-            redirectTo: 'credit-cards-new'
-          });
-
-        })
-        .catch($message.error);
-
-    };
-
-    $scope.createLicense = function (form) {
+    $scope.save = function (form) {
       if (form.$invalid) {
         return $message.error('Please fix form errors and try again.');
       }
 
-      $data.create('licenses', $scope.forms.licenseForm, function (err) {
-        if (err) {
-          return $message.error(err);
-        }
+      $scope.license.$save()
+        .then(function () {
 
-        if ($location.search().redirectTo) {
-          return $state.go($location.search().redirectTo);
-        }
+          $message.success('Saved!');
 
-        $state.go('landing', {
-          id: $data.me.id
-        });
+          if ($location.search().redirectTo) {
+            return $state.go($location.search().redirectTo);
+          }
 
-      });
+          if (!$stateParams.id) {
+            $state.go('landing', {
+              id: $data.me.id
+            });
+          }
+
+        })
+        .catch($message.error);
 
     };
 
@@ -111,10 +82,32 @@ module.exports = angular.module('app.controllers').controller('LicenseController
     };
 
     $scope.init = function () {
+      // console.log('LicenseController init');
+
       $scope.redirection = {
         redirectState: $state.params.redirectState,
         redirectParams: $state.params.redirectParams
       };
+
+      if ($stateParams.id) {
+        $data.resources.licenses.get({
+          id: $stateParams.id
+        }).$promise
+          .then(function (license) {
+            $scope.license = license;
+          })
+          .catch($message.error);
+
+      } else {
+
+        $scope.license = new $data.resources.licenses({
+          firstName: $auth.me.firstName,
+          lastName: $auth.me.lastName,
+          userId: $auth.me.id,
+          country: 'USA'
+        });
+
+      }
 
     };
 

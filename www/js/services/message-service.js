@@ -5,7 +5,8 @@ var _ = require('lodash');
 
 module.exports = angular.module('app.services').factory('$message', [
   '$ionicPopup',
-  function ($ionicPopup) {
+  '$log',
+  function ($ionicPopup, $log) {
     var existingMessage;
 
     function launchPopup(title, message) {
@@ -18,6 +19,8 @@ module.exports = angular.module('app.services').factory('$message', [
       if (!_(message).isString()) {
         message = JSON.stringify(message);
       }
+
+      $log.log(message);
 
       if (existingMessage === message) {
         // Prevent opening another popup with the same exact message
@@ -36,18 +39,20 @@ module.exports = angular.module('app.services').factory('$message', [
 
     }
 
+    var debouncedPopup = _.debounce(launchPopup, 100);
+
     return {
 
       error: function (message) {
-        launchPopup('Error', message);
+        debouncedPopup('Error', message);
       },
 
       info: function (message) {
-        launchPopup('Info', message);
+        debouncedPopup('Info', message);
       },
 
       success: function (message) {
-        launchPopup('Success!', message);
+        debouncedPopup('Success!', message);
       }
     };
 

@@ -5,6 +5,7 @@ require('../services/auth-service');
 require('../services/data-service');
 require('../services/facebook-service');
 require('../services/message-service');
+var _ = require('lodash');
 
 module.exports = angular.module('app.controllers').controller('UserController', [
   '$rootScope',
@@ -14,29 +15,33 @@ module.exports = angular.module('app.controllers').controller('UserController', 
   '$data',
   'FaceBookService',
   '$message',
-  function ($rootScope, $scope, $state, $auth, $data, FaceBookService, $message) {
+  '$log',
+  function ($rootScope, $scope, $state, $auth, $data, FaceBookService, $message, $log) {
 
-    $scope.forms = {
-      userForm: {}
-    };
-
-    $scope.createUser = function (form) {
+    $scope.save = function (form) {
       if (form.$invalid) {
         return $message.error('Please fix form errors and try again.');
       }
 
-      $data.create('users', $scope.forms.userForm)
+      var identifier = $scope.user.email;
+      var pass = $scope.user.password;
+      $scope.user.$save()
         .then(function () {
-          return $auth.login({
-            email: $scope.forms.userForm.email,
-            password: $scope.forms.userForm.password
-          });
+          if ($auth.isAuthenticated()) {
+            return $message.success('Saved!');
+          }
 
-        })
-        .then(function () {
-          return $state.go('licenses-photo', {
-            step: 3
-          });
+          console.log('User saved. Doing login ...', identifier, pass);
+          return $auth.login({
+              identifier: identifier,
+              password: pass
+            })
+            .then(function () {
+              return $state.go('licenses-photo-new', {
+                step: 3
+              });
+            });
+
         })
         .catch($message.error);
 
@@ -70,13 +75,25 @@ module.exports = angular.module('app.controllers').controller('UserController', 
     };
 
     $scope.init = function () {
-      if ($auth.isAuthenticated()) {
-        $state.go('landing');
+
+      if (!$state.params.id) {
+        $scope.user = new $data.resources.users();
+        return false;
       }
 
-      if ($state.params.id) {
-        $data.activate('users', $state.params.id);
-      }
+      return $data.resources.users.get({
+          id: $state.params.id
+        }).$promise
+        .then(function (user) {
+          $scope.user = user;
+          return $data.resources.licenses.query().$promise;
+
+        })
+        .then(function (licenses) {
+          $scope.latestLicense = _.chain(licenses).sortBy('createdAt').last().value();
+
+        })
+        .catch($message.error);
 
     };
 

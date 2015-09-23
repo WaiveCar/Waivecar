@@ -1,24 +1,31 @@
-
 <ion-view ng-controller="UserController">
 
   <ion-nav-title>
     <page-title class="dark-bg">Account</page-title>
   </ion-nav-title>
 
+  <ion-nav-buttons side="primary">
+    <button menu-toggle="right" class="button button-icon icon ion-navicon"></button>
+  </ion-nav-buttons>
+
   <ion-content padding="true" class="ion-content--center gray-bg">
 
-    <form ng-submit="updateUser(form)" name="form" id="form" novalidate>
+    <form ng-submit="save(form)" name="form" id="form" novalidate>
       <div ng-include="'/templates/users/_form.html'"></div>
     </form>
 
-    <p class="padding-top">You won't receive any spam from us</p>
+    <div class="padding-top padding-bottom">
+      <button class="button button-balanced button-block" ui-sref="credit-cards">Update Payment Method</button>
+      <button class="button button-positive button-block" ui-sref="licenses-edit({id: latestLicense.id})" ng-if="latestLicense">Update Driver's License</button>
+      <button class="button button-positive button-block" ui-sref="licenses-new" ng-if="!latestLicense">Add Driver's License</button>
+    </div>
 
   </ion-content>
 
   <ion-footer-bar class="no-padding">
     <div class="button-bar">
-      <button type="button" class="button button-gray" go-back>Cancel</button>
-      <button type="submit" form="form" class="button button-balanced">Continue</button>
+      <!-- <button type="button" class="button button-gray" go-back>Cancel</button> -->
+      <button type="submit" form="form" class="button button-balanced">Update</button>
     </div>
   </ion-footer-bar>
 
