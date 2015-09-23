@@ -41,7 +41,6 @@ export default class Form extends React.Component {
    */
   inputChange(event) {
     let input = this.state.data;
-    console.log(this.state.data);
     input[event.target.name] = event.target.value;
     this.setState({
       data : input
