@@ -44,7 +44,7 @@ Auth.put = function (user) {
  * @return {Boolean}
  */
 Auth.check = function () {
-  return Auth.user ? true : false;
+  return this.user ? true : false;
 };
 
 /**

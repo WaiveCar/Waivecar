@@ -1,10 +1,9 @@
 'use strict';
 
 import React              from 'react';
-import Reach              from 'reach-react';
+import Reach, { auth }    from 'reach-react';
 import { Form, Snackbar } from 'reach-components';
 
-let auth   = Reach.Auth;
 let fields = {
   role : {
     component : 'select',

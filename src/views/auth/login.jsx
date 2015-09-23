@@ -1,6 +1,6 @@
 import React              from 'react';
 import mixin              from 'react-mixin';
-import Reach              from 'reach-react';
+import Reach, { auth }    from 'reach-react';
 import { Navigation }     from 'react-router';
 import config             from 'config';
 import { Form, Snackbar } from 'reach-components';
@@ -44,12 +44,8 @@ export default class LoginView extends React.Component {
    * @param  {Object} user
    */
   success(user) {
-    Reach.Auth.set(user);
-    if (user.role === 'admin') {
-      return this.transitionTo('/admin');
-    }
-
-    return this.transitionTo('/dashboard');
+    auth.set(user);
+    this.transitionTo('/dashboard');
   }
 
   /**

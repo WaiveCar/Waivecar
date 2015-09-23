@@ -1,9 +1,7 @@
 'use strict';
 
-import React from 'react';
-import Reach from 'reach-react';
-
-let DOM = Reach.DOM;
+import React          from 'react';
+import Reach, { dom } from 'reach-react';
 
 export default class FormGroup extends React.Component {
 
@@ -64,7 +62,7 @@ export default class FormGroup extends React.Component {
     result['form-group'] = true;
     result.active        = (this.refs.input && this.refs.input.value) || this.state.focus;
     result.focus         = this.state.focus;
-    return DOM.setClass(result);
+    return dom.setClass(result);
   }
 
   /**

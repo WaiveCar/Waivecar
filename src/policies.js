@@ -1,6 +1,6 @@
 'use strict';
 
-import { Auth } from 'reach-react';
+import { auth } from 'reach-react';
 
 export default {
 
@@ -10,7 +10,7 @@ export default {
    * @param  {Object} transition
    */
   isAuthenticated : (nextState, transition) => {
-    if (!Auth.check()) {
+    if (!auth.check()) {
       transition.to('/login', null, {
         nextPathname : nextState.location.pathname
       });
@@ -23,8 +23,8 @@ export default {
    * @param  {Object} transition
    */
   isAnonymous : (nextState, transition) => {
-    if (Auth.check()) {
-      if (Auth.user.role === 'admin') {
+    if (auth.check()) {
+      if (auth.user.role === 'admin') {
         return transition.to('/dashboard', null);
       }
 
@@ -40,12 +40,12 @@ export default {
   canBook : (nextState, transition) => {
     // user needs to be authed, verified, valid license, valid payment.
 
-    if (!Auth.check()) {
+    if (!auth.check()) {
       transition.to('/', null);
       // TODO: show an alert 'you need to be registered to perform this action'.
     }
 
-    if (Auth.user.status !== 'active') {
+    if (auth.user.status !== 'active') {
       transition.to('/', null);
       // TODO: show an alert 'you need to be verified to perform this action'.
     }

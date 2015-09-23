@@ -1,6 +1,6 @@
 'use strict';
 
-import { Auth } from 'reach-react';
+import { auth } from 'reach-react';
 
 /**
  * @class Menu

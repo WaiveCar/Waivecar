@@ -1,7 +1,7 @@
 'use strict';
 
 import React    from 'react';
-import { Auth } from 'reach-react';
+import { auth } from 'reach-react';
 import { Link } from 'react-router';
 import md5      from 'md5';
 import NavDrop  from './nav-drop';
@@ -46,7 +46,7 @@ export default class Nav extends React.Component {
 
   nav(menu) {
     return menu.map((item, i) => {
-      if (item.role === 'admin' && Auth.user.role !== 'admin') {
+      if (item.role === 'admin' && auth.user.role !== 'admin') {
         return;
       }
 
@@ -100,9 +100,9 @@ export default class Nav extends React.Component {
           </Link>
         </div>
         <div className="r-nav-profile" onClick={ this.openDropdown.bind(this, 'account') } ref="account">
-          <div className="r-nav-profile-image" style={{ background : 'url(//www.gravatar.com/avatar/'+ md5(Auth.user.email) +') center center / cover' }}></div>
+          <div className="r-nav-profile-image" style={{ background : 'url(//www.gravatar.com/avatar/'+ md5(auth.user.email) +') center center / cover' }}></div>
           <div className="r-nav-profile-name">
-            Hi, { Auth.user.firstName }
+            Hi, { auth.user.firstName }
           </div>
         </div>
 

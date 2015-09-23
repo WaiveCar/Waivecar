@@ -1,7 +1,7 @@
 'use strict';
 
 import React              from 'react';
-import Reach              from 'reach-react';
+import Reach, { api }     from 'reach-react';
 import mixin              from 'react-mixin';
 import { Navigation }     from 'react-router';
 import { Form, Snackbar } from 'reach-components';
@@ -39,15 +39,16 @@ export default function (view, fields, resource) {
       this.componentLoad(this.getId());
     }
 
+    /**
+     * @method getId
+     */
     getId() {
       if (this.props.params && this.props.params.id) {
         return this.props.params.id;
       }
-
       if (this.props.record && this.props.filters && this.props.filters.id) {
         return this.props.record[this.props.filters.id];
       }
-
       return null;
     }
 
@@ -79,7 +80,7 @@ export default function (view, fields, resource) {
         });
       } else {
         let recordUri = resource.show.uri.replace(':id', id);
-        Reach.API.get(recordUri, function (err, record) {
+        api.get(recordUri, function (err, record) {
           if (err) {
             return console.log(err);
           }
@@ -147,7 +148,6 @@ export default function (view, fields, resource) {
       if (!view.actions) {
         return buttons;
       }
-
       if (view.actions.cancel) {
         buttons.push({
           value : 'cancel',

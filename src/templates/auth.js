@@ -1,6 +1,7 @@
 'use strict';
 
 import React         from 'react';
+import { auth }      from 'reach-react';
 import { templates } from 'reach-ui';
 import policies      from 'policies';
 import 'styles/auth.scss';
@@ -39,7 +40,7 @@ templates.register('auth', {
     {
       path    : '/logout',
       onEnter : (nextState, transition) => {
-        Reach.Auth.logout();
+        auth.logout();
         transition.to('/', null);
       }
     }

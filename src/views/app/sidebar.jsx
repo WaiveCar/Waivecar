@@ -1,12 +1,11 @@
 'use strict';
 
-import React    from 'react';
-import Reach    from 'reach-react';
-import { Link } from 'react-router';
-import { menu } from 'reach-ui';
-import md5      from 'md5';
+import React           from 'react';
+import Reach, { auth } from 'reach-react';
+import { Link }        from 'react-router';
+import { menu }        from 'reach-ui';
+import md5             from 'md5';
 
-let auth = Reach.Auth;
 let nav  = [
   {
     title : 'Past Rides',

@@ -1,7 +1,7 @@
 'use strict';
 
 import React    from 'react';
-import { DOM }  from 'reach-react';
+import { dom }  from 'reach-react';
 import { Link } from 'react-router';
 
 export default class NavDrop extends React.Component {
@@ -53,7 +53,7 @@ export default class NavDrop extends React.Component {
    */
   updatePosition() {
     this.setState({
-      class : DOM.setClass({
+      class : dom.setClass({
         'r-nav-drop' : true,
         'animated'   : true,
         'flipInY'    : true
@@ -64,7 +64,7 @@ export default class NavDrop extends React.Component {
     });
     setTimeout(() => {
       this.setState({
-        class : DOM.setClass({
+        class : dom.setClass({
           'r-nav-drop' : true
         })
       });
