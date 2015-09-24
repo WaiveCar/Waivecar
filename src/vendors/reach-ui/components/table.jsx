@@ -180,5 +180,6 @@ class UITable extends React.Component {
 
 components.register({
   type  : 'table',
+  icon  : 'view_list',
   class : UITable
 });

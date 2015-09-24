@@ -1,8 +1,9 @@
 'use strict';
 
-import React     from 'react';
-import resources from './resources';
-import fields    from './fields';
+import React       from 'react';
+import { helpers } from 'reach-react';
+import resources   from './resources';
+import fields      from './fields';
 
 // ### Components
 
@@ -24,7 +25,7 @@ Components.store = {};
  * @param  {Objects} components
  */
 Components.register = function (component) {
-  this.store[component.type] = component.class;
+  this.store[component.type] = component;
 };
 
 /**
@@ -44,7 +45,18 @@ Components.get = function (type) {
  * @return {Object}
  */
 Components.getAll = function () {
-  return this.store;
+  let map = [];
+  for (let key in this.store) {
+    map.push({
+      name     : helpers.Case.toCapital(helpers.Case.toSentence(key)),
+      type     : key,
+      category : 'Component',
+      accepts  : [],
+      ...this.store[key]
+    });
+  }
+
+  return map;
 };
 
 /**
@@ -54,6 +66,6 @@ Components.getAll = function () {
  * @param  {Object} props
  */
 Components.render = function (type, options, props) {
-  let Component = this.get(type);
+  let Component = this.get(type).class;
   return <Component { ...props } { ...options } />
 };

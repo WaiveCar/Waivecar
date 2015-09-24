@@ -63,11 +63,11 @@ class UIMiniChart extends React.Component {
    */
   render() {
     return (
-      <MiniChart 
-        title     = { this.props.title } 
-        data      = { this.state[this.resourceName()] } 
-        chartType = { this.props.type } 
-        className = { this.props.class } 
+      <MiniChart
+        title     = { this.props.title }
+        data      = { this.state[this.resourceName()] }
+        chartType = { this.props.type }
+        className = { this.props.class }
       />
     );
   }
@@ -78,5 +78,6 @@ class UIMiniChart extends React.Component {
 
 components.register({
   type  : 'mini-chart',
+  icon  : 'insert_chart',
   class : UIMiniChart
 });

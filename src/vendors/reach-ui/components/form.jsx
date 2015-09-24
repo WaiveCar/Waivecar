@@ -201,7 +201,7 @@ class UIForm extends React.Component {
    */
   render() {
     return (
-      <Form 
+      <Form
         key       = { this.id() }
         method    = { this.method() }
         action    = { this.action() }
@@ -219,5 +219,6 @@ class UIForm extends React.Component {
 
 components.register({
   type  : 'form',
+  icon  : 'apps',
   class : UIForm
 });

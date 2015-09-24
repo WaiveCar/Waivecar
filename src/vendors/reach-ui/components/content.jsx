@@ -18,6 +18,10 @@ class UIContent extends React.Component {
 // ### Register Component
 
 components.register({
-  type  : 'content',
-  class : UIContent
+  type    : 'content',
+  class   : UIContent,
+  icon    : 'editor',
+  options : {
+    id : null
+  }
 });

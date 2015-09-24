@@ -5,6 +5,7 @@ import HTML5Backend        from 'react-dnd/modules/backends/HTML5';
 import ViewContainer       from './view-container';
 import Item                from './item';
 import ItemCategories      from './item-categories';
+import { components }      from 'reach-ui';
 
 @DragDropContext(HTML5Backend)
 export default class ViewLayout extends React.Component {
@@ -19,14 +20,9 @@ export default class ViewLayout extends React.Component {
         components : null
       },
       items : [
-        { type : 'Row',     icon : 'border_horizontal', category : ItemCategories.ROW,       accepts : [ ItemCategories.COLUMN ], options : {} },
-        { type : 'Column',  icon : 'border_vertical',   category : ItemCategories.COLUMN,    accepts : [ ItemCategories.ROW, ItemCategories.COMPONENT ], options : {} },
-        { type : 'Map',     icon : 'map',               category : ItemCategories.COMPONENT, accepts : [ ], options : {} },
-        { type : 'Form',    icon : 'apps',              category : ItemCategories.COMPONENT, accepts : [ ], options : {} },
-        { type : 'Chart',   icon : 'insert_chart',      category : ItemCategories.COMPONENT, accepts : [ ], options : {} },
-        { type : 'Profile', icon : 'account_circle',    category : ItemCategories.COMPONENT, accepts : [ ], options : {} },
-        { type : 'List',    icon : 'view_list',         category : ItemCategories.COMPONENT, accepts : [ ], options : {} }
-      ],
+        { name : 'Row',    type : 'row',     icon : 'border_horizontal', category : ItemCategories.ROW,       accepts : [ ItemCategories.COLUMN ],                        options : {} },
+        { name : 'Column', type : 'column',  icon : 'border_vertical',   category : ItemCategories.COLUMN,    accepts : [ ItemCategories.ROW, ItemCategories.COMPONENT ], options : {} }
+      ].concat(components.getAll()),
       lastDroppedItem : null
     };
   }
@@ -54,6 +50,7 @@ export default class ViewLayout extends React.Component {
                 <Item
                   key      = { index }
                   id       = { `item-${ index }`}
+                  name     = { item.name }
                   type     = { item.type }
                   icon     = { item.icon }
                   category = { item.category }
