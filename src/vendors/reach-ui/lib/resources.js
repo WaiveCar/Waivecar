@@ -17,10 +17,10 @@ Resources.store = {};
 /**
  * Set is currently responsible for creating a relays resource and default
  * actions based on the provided resource.
- * @method addResources
+ * @method add
  * @param  {Array} list
  */
-Resources.addResources = function (list) {
+Resources.add = function (list) {
   for (let key in list) {
     let resource = list[key];
     this.prepare(key);

@@ -19,65 +19,54 @@ let Views = module.exports = {};
 Views.store = {};
 
 /**
- * Returns all views registered under the provided template.
- * TODO: The view store needs to be registered as a reducer so that
- *       we can update it via reach-relay.
- *
- * @method get
- * @param  {String}   template
- * @param  {Function} done
+ * @method add
+ * @param {Array} views
  */
-Views.get = function (template, done) {
-  if (this.store[template]) {
-    return done(null, this.store[template]);
-  }
+Views.add = function (views) {
+  views.forEach((view) => {
 
-  // ### Fetch Views
-  // If views have not yet been loaded we request them from the API.
+    // ### Template
+    // If template array does not exist create it.
 
-  api.get(`/ui/views/${template}`, (error, views) => {
-    if (error) {
-      return done(error);
+    if (!this.store[view.template]) {
+      this.store[view.template] = [];
     }
 
-    // ### Store Template
-    // Add the template views to the views store, all views must
-    // belong to a template which serves are the primary layout.
+    // ### Store View
+    // Add the view to the view store under assigned template.
 
-    this.store[template] = views;
+    this.store[view.template].push(view);
 
-    // ### Register Menus
+    // ### Menu
 
-    views.forEach((view) => {
-      if (view.menu) {
-        view.menu.path = view.path;
-        menu.addMenu(view.menu);
-      }
-    });
+    if (view.menu) {
+      view.menu.path = view.path;
+      menu.add(view.menu);
+    }
 
-    done(null, views);
   }.bind(this));
+};
+
+/**
+ * Returns all views registered under the provided template.
+ * @method get
+ * @param  {String} template
+ */
+Views.get = function (template) {
+  return this.store[template] || [];
 };
 
 /**
  * Gets a list of routes that has been defined under the provided template views.
  * @method getRoutes
- * @param  {String}   template
- * @param  {Function} done
+ * @param  {String} template
  */
-Views.getRoutes = function (template, done) {
-  this.get(template, (error, views) => {
-    if (error) {
-      return done(error);
+Views.getRoutes = function (template) {
+  return this.get(template).map((view) => {
+    return {
+      component : layout(view),
+      path      : view.path,
+      onEnter   : view.policy ? policies[view.policy] : undefined
     }
-    let routes = [];
-    views.forEach((view) => {
-      routes.push({
-        component : layout(view),
-        path      : view.path,
-        onEnter   : view.policy ? policies[view.policy] : undefined
-      });
-    });
-    done(null, routes);
   });
 };

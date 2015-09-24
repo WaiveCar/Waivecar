@@ -1,6 +1,7 @@
 'use strict';
 
 import { api }   from 'reach-react';
+import views     from './lib/views';
 import resources from './lib/resources';
 import fields    from './lib/fields';
 
@@ -21,15 +22,19 @@ export default function (done) {
       return done(error);
     }
 
+    // ### Load Views
+
+    views.add(result.views);
+
     // ### Load Resources
     // Loads all the available resources defined via config in the api.
 
-    resources.addResources(result.resources);
+    resources.add(result.resources);
 
     // ### Load Fields
     // Loads all the available fields defined via config in the api.
 
-    fields.addFields(result.fields);
+    fields.add(result.fields);
 
     done(null);
   });

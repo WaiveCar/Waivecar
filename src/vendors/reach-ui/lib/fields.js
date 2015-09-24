@@ -14,10 +14,10 @@ let Fields = module.exports = {};
 Fields.store = {};
 
 /**
- * @method addFields
+ * @method add
  * @param  {Object} fields
  */
-Fields.addFields = function (fields) {
+Fields.add = function (fields) {
   for (let key in fields) {
     this.store[key] = fields[key];
   }

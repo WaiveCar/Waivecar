@@ -222,6 +222,5 @@ components.register({
   type    : 'form',
   icon    : 'apps',
   class   : UIForm,
-  options : {
-  }
+  options : {}
 });

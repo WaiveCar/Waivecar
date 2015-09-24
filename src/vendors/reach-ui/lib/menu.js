@@ -21,10 +21,10 @@ Menu.store = {};
 
 /**
  * Adds a new menu item to the target location.
- * @method addMenu
+ * @method add
  * @param  {Object} settings
  */
-Menu.addMenu = function (settings) {
+Menu.add = function (settings) {
 
   // ### Store Locations
   // Store the menu in each assigned location.
