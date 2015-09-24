@@ -11,12 +11,14 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
   '$auth',
   '$message',
   '$data',
-  function ($rootScope, $scope, $state, $auth, $message, $data) {
+  '$ionicHistory',
+  function ($rootScope, $scope, $state, $auth, $message, $data, $ionicHistory) {
+    $scope.$ionicHistory = $ionicHistory;
 
     $scope.forms = {
       loginForm: {
         from: 'app',
-        identifier: 'adibih@gmail.com',
+        // identifier: 'adibih@gmail.com',
       },
       forgotForm: {},
       resetForm: {}

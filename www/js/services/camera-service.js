@@ -61,7 +61,6 @@ module.exports = angular.module('app.services').factory('CameraService', [
       var defered = $q.defer();
 
       var successCb = function (response) {
-        console.log('fileupload success', response);
         $cordovaCamera.cleanup();
         if(response && response.responseCode === 200){
           response = angular.fromJson(response.response);

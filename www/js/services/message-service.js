@@ -14,6 +14,9 @@ module.exports = angular.module('app.services').factory('$message', [
         if (message.data && _(message.data).isString()) {
           message = message.data;
         }
+        if (message.message && _(message.message).isString()) {
+          message = message.message;
+        }
       }
 
       if (!_(message).isString()) {

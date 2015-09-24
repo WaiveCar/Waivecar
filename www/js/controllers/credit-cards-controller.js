@@ -10,7 +10,9 @@ module.exports = angular.module('app.controllers').controller('CreditCardsContro
   '$message',
   '$auth',
   '$stateParams',
-  function ($scope, $data, $message, $auth, $stateParams) {
+  '$ionicHistory',
+  function ($scope, $data, $message, $auth, $stateParams, $ionicHistory) {
+    $scope.$ionicHistory = $ionicHistory;
 
     $scope.removeCreditCard = function (card, $index) {
       return card.$delete()

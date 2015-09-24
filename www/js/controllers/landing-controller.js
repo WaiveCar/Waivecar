@@ -23,11 +23,11 @@ module.exports = angular.module('app.controllers').controller('LandingController
 
       return $data.initialize('bookings')
         .then(function () {
-          if (!$data.models.bookings) {
+          if (!$data.instances.bookings) {
             return false;
           }
 
-          var active = _.find($data.models.bookings, function (booking) {
+          var active = _.find($data.instances.bookings, function (booking) {
             return _.contains([
               'new-booking',
               'payment-authorized',
@@ -62,7 +62,10 @@ module.exports = angular.module('app.controllers').controller('LandingController
           }
 
         })
-        .catch($message.error);
+        .catch(function(err){
+          $message.error(err);
+          throw err;
+        });
 
     };
 

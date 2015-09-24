@@ -31,7 +31,6 @@ module.exports = angular.module('app.controllers').controller('UserController', 
             return $message.success('Saved!');
           }
 
-          console.log('User saved. Doing login ...', identifier, pass);
           return $auth.login({
               identifier: identifier,
               password: pass

@@ -5,20 +5,26 @@ $fa-font-path: "../lib/font-awesome/fonts" !default;
 @import 'colors';
 @import 'fonts';
 @import 'sizes';
+
+
 // @import "www/lib/bootstrap-sass/assets/stylesheets/_bootstrap";
+
+// Twitter Bootstrap grid clashes with ionic grid so we're importing only what we need
 @import "www/lib/bootstrap-sass/assets/stylesheets/bootstrap/variables";
 @import "www/lib/bootstrap-sass/assets/stylesheets/bootstrap/mixins";
 @import "www/lib/bootstrap-sass/assets/stylesheets/bootstrap/thumbnails";
 @import "www/lib/bootstrap-sass/assets/stylesheets/bootstrap/type";
+
 @import "www/lib/ionic/scss/ionic";
 @import "www/lib/font-awesome/scss/font-awesome";
-// @import 'layout';
+
 @import 'ads';
 @import 'auth';
 @import 'bookings';
 @import 'directives';
 @import 'form';
 @import 'header';
+@import 'landing';
 @import 'licenses';
 @import 'loading';
 @import 'map';

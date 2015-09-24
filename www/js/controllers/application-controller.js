@@ -24,7 +24,7 @@ module.exports =
     '$document',
     function ($rootScope, $scope, $state, $ionicPopover, LocationService, $auth, $data, $message, $session, $document) {
       $scope.isInitialized = false;
-      $scope.models = $data.models;
+      $scope.models = $data.instances;
       $scope.active = $data.active;
 
       function getWindowWidth() {
@@ -42,7 +42,6 @@ module.exports =
       });
 
       $rootScope.$on('authError', function () {
-        console.log('authError');
         $auth.logout();
         $state.go('auth-login');
       });
@@ -60,9 +59,11 @@ module.exports =
 
         if (isAuthenticated && !_.isUndefined(authRequired) && authRequired === false) {
           $auth.logout();
+          event.preventDefault();
           $state.go('landing');
         } else if (!isAuthenticated && authRequired) {
-          $state.go('auth');
+          event.preventDefault();
+          $state.go('auth-login');
         }
 
       });

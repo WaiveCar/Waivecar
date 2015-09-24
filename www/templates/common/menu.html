@@ -42,8 +42,8 @@
     </a>
   </div>
 
-  <div class="text-center">
-    <a ng-if="$auth.isAuthenticated()" ng-click="logout()">
+  <div class="text-center" ng-if="$auth.isAuthenticated()">
+    <a ng-click="logout()">
       <img src="img/logout.svg" alt="" />
       <span class="button-icon-label">logout</span>
     </a>

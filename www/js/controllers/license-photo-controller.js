@@ -19,10 +19,9 @@ module.exports = angular.module('app.controllers').controller('LicensePhotoContr
   function ($rootScope, $scope, $state, $auth, $data, $message, CameraService, $location, $stateParams) {
 
     function updateLicense(uploadResponse) {
-      console.log('updateLicense', $scope.license.fileId, uploadResponse);
       var oldFileId = $scope.license.fileId;
       $scope.license.fileId = uploadResponse.id;
-      console.log('Updating license with', $scope.license);
+
       return $scope.license.$save()
         .then(function () {
           if(!oldFileId){

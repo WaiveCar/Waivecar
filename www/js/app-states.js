@@ -137,12 +137,18 @@ module.exports = [
       .state('cars', {
         // 14-Find-waivecar
         url: '/cars',
-        templateUrl: '/templates/cars/index.html'
+        templateUrl: '/templates/cars/index.html',
+        data: {
+          auth: true
+        }
       })
       .state('cars-show', {
         // 15-Book-waivecar
         url: '/cars/:id',
-        templateUrl: '/templates/cars/show.html'
+        templateUrl: '/templates/cars/show.html',
+        data: {
+          auth: true
+        }
       })
       .state('bookings-edit', {
         // 16-Get-your-waivecar
@@ -155,7 +161,10 @@ module.exports = [
       .state('cars-edit', {
         // 18-WaiveCar-connect
         url: '/cars/:id/edit',
-        templateUrl: '/templates/cars/show.html'
+        templateUrl: '/templates/cars/show.html',
+        data: {
+          auth: true
+        }
       });
 
     // NOT SURE
@@ -234,10 +243,7 @@ module.exports = [
       .state('vision', {
         // 36-Our-vision@2x.png
         url: '/vision',
-        templateUrl: '/templates/vision/index.html',
-        data: {
-          auth: true
-        }
+        templateUrl: '/templates/vision/index.html'
       })
       .state('ads', {
         url: '/ads',
@@ -246,10 +252,6 @@ module.exports = [
           redirectUrl: null,
           redirectParams: null
         }
-      })
-      .state('errors-show', {
-        url: '/errors/:id',
-        templateUrl: '/templates/errors/show.html'
       });
 
     $urlRouterProvider.otherwise('/');

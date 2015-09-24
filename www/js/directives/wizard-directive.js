@@ -3,16 +3,16 @@ var angular = require('angular');
 var _ = require('lodash');
 
 module.exports = angular.module('app.directives').directive('wizard', [
-  '$location',
-  function ($location) {
+  '$stateParams',
+  function ($stateParams) {
 
     function link(scope) {
       if (_(scope.currentStep).isUndefined() || scope.currentStep < 0) {
         scope.currentStep = 0;
       }
 
-      if ($location.search().step) {
-        scope.currentStep = $location.search().step;
+      if ($stateParams.step) {
+        scope.currentStep = parseInt($stateParams.step, 10);
       }
 
       if (scope.currentStep > 4) {
@@ -31,7 +31,6 @@ module.exports = angular.module('app.directives').directive('wizard', [
 
     return {
       restrict: 'E',
-      // replace: true,
       link: link,
       scope: {
         currentStep: '@'

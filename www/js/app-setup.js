@@ -26,11 +26,12 @@ var config = [
 
     $provide.decorator('$exceptionHandler', [
       '$delegate',
-      function exceptionHAndlerDecorator($delegate) {
+      function exceptionHandlerDecorator($delegate) {
 
         return function (exception, cause) {
           var $message = $injector.get('$messageProvider').$get();
           $delegate(exception, cause);
+          throw exception;
 
           var data = {
             type: 'angular',

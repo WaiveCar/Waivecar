@@ -33,6 +33,7 @@
 
   <ion-footer-bar class="no-padding">
     <div class="button-bar">
+      <button type="button" class="button button-gray" go-back ng-if="$ionicHistory.backView()">Cancel</button>
       <button type="submit" form="form" class="button button-balanced">Save</button>
     </div>
   </ion-footer-bar>

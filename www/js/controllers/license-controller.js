@@ -17,7 +17,9 @@ module.exports = angular.module('app.controllers').controller('LicenseController
   'CameraService',
   '$location',
   '$stateParams',
-  function ($rootScope, $scope, $state, $auth, $data, $message, CameraService, $location, $stateParams) {
+  '$ionicHistory',
+  function ($rootScope, $scope, $state, $auth, $data, $message, CameraService, $location, $stateParams, $ionicHistory) {
+    $scope.$ionicHistory = $ionicHistory;
 
     // $scope.forms = {
     //   licenseForm: {
