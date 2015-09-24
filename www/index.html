@@ -6,14 +6,18 @@
   <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
   <title>WaiveCar</title>
 
-  <meta http-equiv="Content-Security-Policy" content="
+  <!-- <meta http-equiv="Content-Security-Policy" content="
       default-src 'self' http: https:;
       script-src 'self' 'unsafe-inline' 'unsafe-eval' localhost:* 192.168.56.1:*;
-      connect-src localhost:* ws: 10.0.3.2:* 192.168.56.1:* http: https:;
+      connect-src localhost:* ws: 10.0.3.2:* 192.168.56.1:* http: https: wss:;
       style-src 'self' 'unsafe-inline';
       img-src 'self' data: http: https:;
       font-src 'self';
       frame-ancestors 'self'">
+ -->
+  <!-- <meta http-equiv="Content-Security-Policy" content="default-src *;
+ style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'
+ 'unsafe-eval'"> -->
 
   <!-- compiled css output -->
   <link href="css/ionic.app.css" rel="stylesheet">
@@ -22,9 +26,8 @@
   <link rel="stylesheet" href="lib/angular-material/angular-material.css">
   <link rel="stylesheet" href="vendors/leaflet/leaflet.css">
 
-
-  <script  src="vendors/leaflet/leaflet-src.js"></script>
-  <script  src="vendors/skobbler/skobbler-2.0.js"></script>
+  <script src="vendors/leaflet/leaflet-src.js"></script>
+  <script src="vendors/skobbler/skobbler-2.0.js"></script>
 
   <!--
   <script src="lib/ng-cordova-oauth/dist/ng-cordova-oauth.min.js"></script>
@@ -51,7 +54,9 @@
     <ion-side-menu-content>
 
       <ion-nav-bar class="bar-dark" align-title="center">
-        <div class="nav-bar-block" nav-bar="active"><wizard></wizard></div>
+        <div class="nav-bar-block" nav-bar="active">
+          <wizard></wizard>
+        </div>
         <ion-nav-back-button class="button-clear"></ion-nav-back-button>
       </ion-nav-bar>
 

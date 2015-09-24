@@ -12,7 +12,7 @@
   var eslint = require('gulp-eslint');
   var browserify = require('browserify');
   var watchify = require('watchify');
-  var assign = require('lodash/object/assign');
+  var _ = require('lodash');
   var source = require('vinyl-source-stream');
   var buffer = require('vinyl-buffer');
   var sourcemaps = require('gulp-sourcemaps');
@@ -78,7 +78,7 @@
       entries: ['./www/js/app.js'],
       debug: true
     };
-    var opts = assign({}, watchify.args, customOpts);
+    var opts = _.assign({}, watchify.args, customOpts);
     var b = watchify(browserify(opts));
 
     // add transformations here
