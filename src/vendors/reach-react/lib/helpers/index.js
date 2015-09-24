@@ -6,54 +6,26 @@
  */
 let Helpers = module.exports = {};
 
-let lastId = 0;
-
 /**
- * @method nextId
- * @return {String}
- */
-Helpers.nextId = function(prefix='id') {
-  lastId++;
-  return `${prefix}${lastId}`;
-}
-
-/**
- * @property Case
+ * @property type
  * @type     Object
  */
-Helpers.Case = require('./change-case/case');
+Helpers.type = require('./type');
 
 /**
- * @property Random
+ * @property case
  * @type     Object
  */
-Helpers.Random = require('./random');
+Helpers.case = require('./change-case');
 
 /**
- * @method parseStack
- * @param  {String} stack
- * @return {Array}
+ * @property random
+ * @type     Object
  */
-Helpers.parseStack = (stack) => {
-  var result = [];
-  stack = stack.match(/\((.*?)\)/g);
-  stack.forEach(function (line) {
-    if (!line.match(/module\.js|native|co\/index\.js/g)) {
-      result.push(line.replace('(', '').replace(')', ''));
-    }
-  });
-  return result;
-};
+Helpers.random = require('./random');
 
 /**
- * @method printTitle
- * @param  {String} value
- * @param  {String} seperator
+ * @property errors
+ * @type     Object
  */
-Helpers.printTitle = (value, seperator) => {
-  console.log('\n  ' + value);
-  if (seperator) {
-    console.log('  ' + new Array(value.length + 1).join(seperator));
-  }
-  console.log();
-};
+Helpers.errors = require('./errors');
