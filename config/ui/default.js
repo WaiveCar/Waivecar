@@ -14,10 +14,12 @@ module.exports = {
   waivecar : {
     ui : {
       resources : {
-        contents : require('./resources/contents')
+        contents : require('./resources/contents'),
+        views    : require('./resources/views')
       },
       fields : {
-        contents : require('./fields/contents')
+        contents : require('./fields/contents'),
+        views    : require('./fields/views')
       }
     }
   }
