@@ -65,7 +65,12 @@ templates.register('app', {
       if (error) {
         return done(error);
       }
-      done(null, routes);
+      done(null, [
+        {
+          path      : '/view-editor',
+          component : require('views/app/editor/index')
+        }
+      ].concat(routes));
     });
   }
 });

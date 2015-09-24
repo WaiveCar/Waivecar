@@ -6,6 +6,14 @@ import { Link }        from 'react-router';
 import { menu }        from 'reach-ui';
 import md5             from 'md5';
 
+let nav  = [
+  {
+    title : 'View Editor',
+    path : '/view-editor',
+    icon : 'create'
+  }
+];
+
 export default class Sidebar extends React.Component {
 
   getLink(link, i) {
@@ -47,6 +55,9 @@ export default class Sidebar extends React.Component {
             <span>{ auth.user.firstName } { auth.user.lastName }</span>
           </div>
         </div>
+        <ul>
+          { nav.map(this.getLink) }
+        </ul>
         { this.admin() }
       </div>
     );
