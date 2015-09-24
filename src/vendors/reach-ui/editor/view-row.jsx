@@ -35,8 +35,10 @@ export default class ViewRow extends Component {
 
   static propTypes = {
     id                : PropTypes.string.isRequired,
+    name              : PropTypes.string.isRequired,
     type              : PropTypes.string.isRequired,
     category          : PropTypes.string.isRequired,
+    options           : PropTypes.object.isRequired,
     connectDropTarget : PropTypes.func.isRequired,
     isOver            : PropTypes.bool.isRequired,
     canDrop           : PropTypes.bool.isRequired,
@@ -57,7 +59,7 @@ export default class ViewRow extends Component {
   }
 
   render() {
-    const { id, type, components, isOver, canDrop, onDrop, connectDropTarget, lastDroppedItem } = this.props;
+    const { id, name, type, components, isOver, canDrop, onDrop, connectDropTarget, lastDroppedItem } = this.props;
     const isActive = isOver && canDrop;
 
     let activeStyle = 'untouched';
@@ -71,7 +73,7 @@ export default class ViewRow extends Component {
 
     return connectDropTarget(
       <div className={ className }>
-        <h6>{ id }: { type }</h6>
+        <h6>{ id }: { name }</h6>
         { isActive && <p>Drag Columns on to this Row</p> }
         { lastDroppedItem && <p>Last dropped: {JSON.stringify(lastDroppedItem)}</p> }
         <div className="container-fluid">
@@ -81,8 +83,10 @@ export default class ViewRow extends Component {
               return <ViewColumn
                 key             = { componentIndex }
                 id              = { component.id }
+                name            = { component.name }
                 type            = { component.type }
                 category        = { component.category }
+                options         = { component.options }
                 components      = { component.components }
                 accepts         = { component.accepts }
                 lastDroppedItem = { component.lastDroppedItem }

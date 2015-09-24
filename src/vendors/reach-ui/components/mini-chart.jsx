@@ -77,8 +77,10 @@ class UIMiniChart extends React.Component {
 // ### Register Component
 
 components.register({
-  name  : 'Mini Chart',
-  type  : 'mini-chart',
-  icon  : 'insert_chart',
-  class : UIMiniChart
+  name    : 'Mini Chart',
+  type    : 'mini-chart',
+  icon    : 'insert_chart',
+  class   : UIMiniChart,
+  options : {
+  }
 });

@@ -10,7 +10,7 @@ export default class ViewComponent extends Component {
   };
 
   render() {
-    const { id, type, icon, options } = this.props;
+    const { id, name, type, icon, options } = this.props;
     let className = `view-component ${ type.toLowerCase() }-component`;
     return (
       <div className={ className }>
@@ -18,7 +18,7 @@ export default class ViewComponent extends Component {
           <i className="material-icons" role={ type }>{ icon }</i>
         </div>
         <div className="view-component-options" style={{ display: 'none' }}>
-          <h6>{ type }</h6>
+          <h6>{ name }</h6>
           <form className="form">
             <fieldset className="form-group">
               <label htmlFor="Name">Name</label>

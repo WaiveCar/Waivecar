@@ -179,8 +179,10 @@ class UITable extends React.Component {
 // ### Register Component
 
 components.register({
-  name  : 'Table',
-  type  : 'table',
-  icon  : 'view_list',
-  class : UITable
+  name    : 'Table',
+  type    : 'table',
+  icon    : 'view_list',
+  class   : UITable,
+  options : {
+  }
 });

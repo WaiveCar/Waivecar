@@ -9,7 +9,6 @@ const target = {
   drop(props, monitor, component) {
     if (monitor.didDrop()) return; // don't be greedy.
     let item = monitor.getItem();
-    console.log(item);
     item.id = newId();
     if (item.category === ItemCategories.ROW) {
       item.components = [];
@@ -43,6 +42,7 @@ export default class ViewContainer extends Component {
     return (
       <ViewComponent
         id       = { component.id }
+        name     = { component.name }
         type     = { component.type }
         icon     = { component.icon }
         category = { component.category }
@@ -56,6 +56,7 @@ export default class ViewContainer extends Component {
       <ViewRow
         id              = { row.id }
         type            = { row.type }
+        name            = { row.name }
         category        = { row.category }
         key             = { rowIndex }
         components      = { row.components }

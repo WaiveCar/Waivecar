@@ -32,6 +32,7 @@ export default class ViewColumn extends Component {
 
   static propTypes = {
     id                : PropTypes.string.isRequired,
+    name              : PropTypes.string.isRequired,
     type              : PropTypes.string.isRequired,
     category          : PropTypes.string.isRequired,
     connectDropTarget : PropTypes.func.isRequired,
@@ -56,7 +57,7 @@ export default class ViewColumn extends Component {
   }
 
   render() {
-    const { id, type, components, accepts, width, onDrop, isOver, canDrop, connectDropTarget, lastDroppedItem } = this.props;
+    const { id, name, type, components, accepts, width, onDrop, isOver, canDrop, connectDropTarget, lastDroppedItem } = this.props;
     const isActive = isOver && canDrop;
     let activeStyle = 'untouched';
 
@@ -70,7 +71,7 @@ export default class ViewColumn extends Component {
 
     return connectDropTarget(
       <div className={ className }>
-        <h6>{ id }: { type }</h6>
+        <h6>{ id }: { name }</h6>
         { isActive
           ? 'Release to drop'
           : 'Add a ' + accepts.join(' or ')
@@ -85,6 +86,7 @@ export default class ViewColumn extends Component {
                 <ViewRow
                   key             = { componentIndex }
                   id              = { component.id }
+                  name            = { component.name }
                   type            = { component.type }
                   category        = { component.category }
                   components      = { component.components }
@@ -97,6 +99,7 @@ export default class ViewColumn extends Component {
                 <ViewComponent
                   key      = { componentIndex }
                   id       = { component.id }
+                  name     = { component.name }
                   type     = { component.type }
                   icon     = { component.icon }
                   category = { component.category }
