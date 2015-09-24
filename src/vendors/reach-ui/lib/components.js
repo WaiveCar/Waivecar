@@ -38,6 +38,16 @@ Components.get = function (type) {
 };
 
 /**
+ * Returns a component from the components store.
+ * @method get
+ * @param  {String} type
+ * @return {Object}
+ */
+Components.getAll = function () {
+  return this.store;
+};
+
+/**
  * @method render
  * @param  {String} component
  * @param  {Object} options
