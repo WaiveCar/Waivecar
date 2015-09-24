@@ -47,8 +47,8 @@ LicenseService.create = function *(data, _user) {
   let model = new License(data);
   yield model.save();
   relay.emit(resource, {
-    type    : 'store',
-    license : model.toJSON()
+    type : 'store',
+    data : model.toJSON()
   });
   return model;
 };
@@ -65,8 +65,8 @@ LicenseService.update = function *(id, data, _user) {
   hasAccess(model, _user);
   yield model.update(data);
   relay.emit(resource, {
-    type    : 'update',
-    license : model.toJSON()
+    type : 'update',
+    data : model.toJSON()
   });
   return model;
 };
@@ -82,8 +82,8 @@ LicenseService.destroy = function *(id, _user) {
   hasAccess(model, _user);
   yield model.delete();
   relay.emit(resource, {
-    type    : 'delete',
-    license : model.toJSON()
+    type : 'delete',
+    data : model.toJSON()
   });
   return model;
 };

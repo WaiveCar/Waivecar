@@ -30,8 +30,8 @@ BookingService.create = function *(car, customer) {
   booking._actor = customer;
   yield booking.save();
   relay.emit('bookings', {
-    type    : 'store',
-    booking : booking.toJSON()
+    type : 'store',
+    data : booking.toJSON()
   });
   return booking;
 };
@@ -71,8 +71,8 @@ BookingService.cancel = function *(id, user) {
   queue.scheduler.cancel('booking-timer-cancel', 'booking-' + booking.id);
 
   relay.emit('bookings', {
-    type    : isAdmin ? 'delete' : 'update',
-    booking : booking.toJSON()
+    type : isAdmin ? 'delete' : 'update',
+    data : booking.toJSON()
   });
 
   return booking;
@@ -118,8 +118,8 @@ BookingService.pending = function *(id, user) {
   });
 
   relay.emit('bookings', {
-    type    : 'update',
-    booking : booking.toJSON()
+    type : 'update',
+    data : booking.toJSON()
   });
 
   return booking;
@@ -175,8 +175,8 @@ BookingService.start = function *(id, user) {
   queue.scheduler.cancel('booking-timer-cancel', 'booking-' + booking.id);
 
   relay.emit('bookings', {
-    type    : 'update',
-    booking : booking.toJSON()
+    type : 'update',
+    data : booking.toJSON()
   });
 
   return booking;
@@ -239,8 +239,8 @@ BookingService.end = function *(id, user) {
   yield CarService.setStatus('available', booking.carId, user);
 
   relay.emit('bookings', {
-    type    : 'update',
-    booking : booking.toJSON()
+    type : 'update',
+    data : booking.toJSON()
   });
 
   return booking;
@@ -283,7 +283,6 @@ BookingService.getBooking = function *(id, user) {
   if (user.role !== 'admin') {
     where.customerId = user.id;
   }
-
   let booking = yield Booking.findOne({
     where   : where,
     include : [
