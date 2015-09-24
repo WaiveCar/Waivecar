@@ -1,47 +1,50 @@
 'use strict';
 
 import React                     from 'react';
-import { relay }                 from 'reach-react';
+import { relay, api }            from 'reach-react';
 import { Content }               from 'reach-components';
 import { components, resources } from 'reach-ui';
 
-class UIContent extends React.Component {
+class UIMap extends React.Component {
   
   /**
    * @constructor
    */
   constructor(...args) {
     super(...args);
-    Relay.subscribe(this, resource.name);
+    relay.subscribe(this, this.props.resource);
   }
 
   /**
    * @method componentDidMount
    */
   componentDidMount() {
+    /*
     if (resource.index) {
-      Reach.API.get(resource.index.uri, function (err, list) {
+      api.get(resource.index.uri, function (err, list) {
         if (err) {
           return console.log(err);
         }
-        Relay.dispatch(resource.name, Actions[RESOURCE + '_INDEX'](list));
+        relay.dispatch(resource.name, Actions[RESOURCE + '_INDEX'](list));
       }.bind(this));
     } else {
       console.log('Admin Error > "%s" is missing list resource', view.name);
     }
+    */
   }
 
   /**
    * @method componentWillUnmount
    */
   componentWillUnmount() {
-    Relay.unsubscribe(this, resource.name);
+    relay.unsubscribe(this, this.props.resource);
   }
 
   /**
    * @method render
    */
   render() {
+    /*
     let submit =  this.props.actions
       ? this.props.actions.submit
       : (data) => {
@@ -52,6 +55,8 @@ class UIContent extends React.Component {
     return (
       <Map markers={ this.state[resource.name] } markerHandlerKey={ this.props.filters.id } markerHandler={ submit } markerIcon={ '/images/admin/map-icon-waivecar.svg' } />
     );
+    */
+    return <div>MAP</div>
   }
 
 }
@@ -59,10 +64,10 @@ class UIContent extends React.Component {
 // ### Register Component
 
 components.register({
-  name    : 'Content',
-  type    : 'content',
-  class   : UIContent,
-  icon    : 'editor',
+  name    : 'Map',
+  type    : 'map',
+  class   : UIMap,
+  icon    : 'map',
   options : {
     id : null
   }

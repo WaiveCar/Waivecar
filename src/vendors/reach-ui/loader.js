@@ -11,15 +11,27 @@ import fields    from './lib/fields';
 
 import './components/content';
 import './components/form';
+import './components/map';
 import './components/mini-chart';
 import './components/table';
+
+/**
+ * @property hasLoaded
+ * @type     Boolean
+ * @default  false
+ */
+let hasLoaded = false;
 
 // ### Loader
 
 export default function (done) {
+  if (hasLoaded) {
+    return done(null);
+  }
+
   api.get('/ui', (error, result) => {
-    if (error) {
-      return done(error);
+    if (error) { 
+      return done(error); 
     }
 
     // ### Load Views
@@ -35,6 +47,10 @@ export default function (done) {
     // Loads all the available fields defined via config in the api.
 
     fields.add(result.fields);
+
+    // ### Load State
+
+    hasLoaded = true;
 
     done(null);
   });
