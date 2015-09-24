@@ -37,12 +37,12 @@
     "reach-email": "0.0.8",
     "reach-file": "0.3.3",
     "reach-log": "0.0.13",
-    "reach-mongo": "0.0.2",
+    "reach-mongo": "0.0.3",
     "reach-payments": "0.1.4",
     "reach-queue": "0.0.10",
     "reach-sequelize": "0.1.5",
     "reach-sms": "0.0.7",
-    "reach-ui": "0.0.11",
+    "reach-ui": "0.0.12",
     "reach-user": "0.2.10"
   }
 }
