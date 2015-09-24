@@ -68,7 +68,7 @@ templates.register('app', {
       done(null, [
         {
           path      : '/view-editor',
-          component : require('views/app/editor/index')
+          component : require('views/app/editor')
         }
       ].concat(routes));
     });

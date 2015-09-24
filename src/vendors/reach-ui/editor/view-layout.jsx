@@ -5,7 +5,7 @@ import HTML5Backend        from 'react-dnd/modules/backends/HTML5';
 import ViewContainer       from './view-container';
 import Item                from './item';
 import ItemCategories      from './item-categories';
-import { components }      from 'reach-ui';
+import components          from '../lib/components';
 
 @DragDropContext(HTML5Backend)
 export default class ViewLayout extends React.Component {

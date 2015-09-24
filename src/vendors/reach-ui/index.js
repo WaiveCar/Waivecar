@@ -6,5 +6,6 @@ export default {
   fields     : require('./lib/fields'),
   components : require('./lib/components'),
   views      : require('./lib/views'),
-  menu       : require('./lib/menu')
+  menu       : require('./lib/menu'),
+  editor     : require('./editor')
 }

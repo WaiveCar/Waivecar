@@ -1,5 +1,6 @@
 import React, { PropTypes, Component } from 'react';
-import ViewLayout from './view-layout';
+import { editor } from 'reach-ui';
+let { ViewLayout } = editor;
 
 export default class ViewEditor extends Component {
   render() {
