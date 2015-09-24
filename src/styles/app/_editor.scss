@@ -1,0 +1,122 @@
+@import '~styles/variables';
+
+.view-editor {
+  width: 100%;
+  position : relative;
+  .view-editor-container {
+    width: 100%;
+    padding: 10px;
+  }
+  .view-layout {
+    padding : 20px;
+    color : $gray;
+    background : $gray-lightest;
+    .view-container {
+      width : 100%;
+      min-height: 100px;
+      background: #fff;
+      padding: 5px;
+      border : 1px solid $gray-lighter;
+    }
+    .view-row {
+      margin: 5px 0;
+      width : 100%;
+      min-height: 100px;
+      background: #fff;
+      padding: 10px;
+      border : 1px solid $gray-lighter;
+      &:hover {
+        background: $gray-lightest;
+      }
+    }
+    .view-column {
+      min-height: 100px;
+      padding : 5px;
+      font-size : 12px;
+      text-align: center;
+      background: #fff;
+      border : 1px solid $gray-lighter;
+      &:hover {
+        background: $gray-lightest;
+      }
+    }
+    .view-component {
+      position : relative;
+      min-height: 200px;
+      padding : 5px;
+      font-size : 12px;
+      text-align: center;
+      vertical-align: middle;
+      background: lighten($brand-primary, 50%);
+      border : 1px solid $gray-light;
+      &:hover {
+        background: $gray-lightest;
+      }
+      .view-component-icon {
+        position : absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateY(-50%) translateX(-50%);
+        z-index : 1;
+        width         : 130px;
+        height        : 130px;
+        border-radius : 100%;
+        padding       : 15px;
+        background    : $app-color-white;
+        .material-icons {
+          font-size : 100px;
+          color     : $gray-lighter;
+        }
+      }
+      .view-component-options {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateY(-50%) translateX(-50%);
+        z-index: 2;
+      }
+    }
+  }
+
+  .pinned-right {
+    position : fixed;
+    top      : 100px;
+    right    : 40px;
+    width    : 170px;
+  }
+}
+
+
+.view-editor-item {
+  text-align : left;
+  cursor     : move;
+  padding    : 5px 0;
+  .material-icons {
+    padding-right: 10px;
+    vertical-align: bottom;
+    color : $gray;
+  }
+}
+
+
+
+.drop-zone {
+  width: 300px;
+  height: 300px;
+  border: 1px solid green;
+}
+
+.temp-foot {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right : 0;
+  min-height: 60px;
+  background : $gray-light;
+  color : #333;
+  font-family : 'Courier';
+  font-size: 10px;
+}
+
+
+
