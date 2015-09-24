@@ -218,6 +218,7 @@ class UIForm extends React.Component {
 // ### Register Component
 
 components.register({
+  name  : 'Form',
   type  : 'form',
   icon  : 'apps',
   class : UIForm

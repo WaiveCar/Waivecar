@@ -1,7 +1,6 @@
 'use strict';
 
 import React       from 'react';
-import { helpers } from 'reach-react';
 import resources   from './resources';
 import fields      from './fields';
 
@@ -48,8 +47,6 @@ Components.getAll = function () {
   let map = [];
   for (let key in this.store) {
     map.push({
-      name     : helpers.Case.toCapital(helpers.Case.toSentence(key)),
-      type     : key,
       category : 'Component',
       accepts  : [],
       ...this.store[key]
