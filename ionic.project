@@ -4,10 +4,11 @@
   "gulpStartupTasks": [
     "sass",
     "templates",
+    "js",
     "watch"
   ],
   "watchPatterns": [
-    "www/**/*",
+    "www/dist/bundle.js",
     "!www/lib/**/*"
   ],
   "proxies": [

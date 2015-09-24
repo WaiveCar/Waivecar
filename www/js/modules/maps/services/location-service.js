@@ -1,4 +1,7 @@
-angular.module('Maps').service('LocationService', [
+'use strict';
+var angular = require('angular');
+
+module.exports = angular.module('Maps').service('LocationService', [
   '$rootScope',
   '$cordovaGeolocation',
   '$q',
@@ -6,7 +9,6 @@ angular.module('Maps').service('LocationService', [
   '$state',
   '$message',
   function ($rootScope, $cordovaGeolocation, $q, MapsEvents, $state, $message) {
-    'use strict';
 
     var service = {
 
@@ -61,7 +63,7 @@ angular.module('Maps').service('LocationService', [
           enableHighAccuracy: true
         };
 
-        if (typeof service.pendingRequest != 'undefined' && service.pendingRequest) {
+        if (service.pendingRequest) {
           return service.pendingRequest;
         }
 

@@ -1,7 +1,10 @@
-angular.module('app.services').factory('$loading', [
+'use strict';
+var angular = require('angular');
+require('ionic');
+
+module.exports = angular.module('app.services').factory('$loader', [
   '$ionicLoading',
   function ($ionicLoading) {
-    'use strict';
 
     var defaultOptions = {
       templateUrl: '/templates/common/loading.html',

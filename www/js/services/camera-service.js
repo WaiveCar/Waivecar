@@ -1,13 +1,18 @@
-angular.module('app.services').factory('CameraService', [
+'use strict';
+var angular = require('angular');
+require('ngCordova');
+require('../app-settings.js');
+require('./auth-service.js');
+
+module.exports = angular.module('app.services').factory('CameraService', [
   '$cordovaCamera',
   '$q',
-  '$config',
+  '$settings',
   '$window',
   '$auth',
-  function ($cordovaCamera, $q, $config, $window, $auth) {
-    'use strict';
+  function ($cordovaCamera, $q, $settings, $window, $auth) {
 
-    var fileUploadURL = $config.uri.api + '/files';
+    var fileUploadURL = $settings.uri.api + '/files';
 
     function getPicture(width, height, upload) {
 
@@ -57,6 +62,9 @@ angular.module('app.services').factory('CameraService', [
 
       var successCb = function (response) {
         $cordovaCamera.cleanup();
+        if(response && response.responseCode === 200){
+          response = angular.fromJson(response.response);
+        }
         return defered.resolve(response);
 
       };

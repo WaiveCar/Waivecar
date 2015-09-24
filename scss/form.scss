@@ -17,6 +17,10 @@ label.item.item-input {
   margin: 0 auto;
   padding-top: 1em;
   text-align: left;
+
+  &.ng-inactive {
+    display: none;
+  }
   .help-block,
   [ng-message] {
     display: block;

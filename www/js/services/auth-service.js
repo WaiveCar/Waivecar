@@ -1,8 +1,13 @@
-angular.module('app.services').factory('$auth', [
+'use strict';
+var angular = require('angular');
+require('./session-service.js');
+require('./data-service.js');
+var _ = require('lodash');
+
+module.exports = angular.module('app.services').factory('$auth', [
   '$session',
   '$data',
   function ($session, $data) {
-    'use strict';
 
     return {
 
@@ -20,6 +25,16 @@ angular.module('app.services').factory('$auth', [
         this.token = false;
         this.me = false;
         return this;
+
+      },
+
+      reload: function () {
+        var _this = this;
+        return $data.resources.users.me().$promise
+          .then(function (me) {
+            $session.set('me', me).save();
+            _this.me = $data.me = $session.get('me');
+          });
 
       },
 
@@ -51,8 +66,9 @@ angular.module('app.services').factory('$auth', [
       login: function (data, next) {
         var _this = this;
         var _user;
+        next = _(next).isFunction() ? next : angular.identity;
 
-        $data.resources.users.login(data).$promise
+        return $data.resources.users.login(data).$promise
           .then(function (user) {
             _user = user;
 
@@ -82,29 +98,10 @@ angular.module('app.services').factory('$auth', [
 
           });
 
-        return this;
-
       },
 
-      logout: function (data, next) {
+      logout: function () {
         $session.purge();
-
-        if (!data) {
-          return (next || angular.identity)();
-        }
-
-        $data.resources.users.logout($data.me, angular.bind(this, function (user) {
-          // $session.purge();
-        }), function (error) {
-          if (error) {
-            return next('An error occured whilst attempting to logout. Please try again.');
-          }
-
-          return next('An error occured!');
-
-        });
-
-        return this;
       }
 
       // forgot: function(data, next) {

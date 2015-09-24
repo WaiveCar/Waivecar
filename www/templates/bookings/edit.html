@@ -8,7 +8,7 @@
     <button menu-toggle="right" class="button button-icon icon ion-navicon"></button>
   </ion-nav-buttons>
 
-  <ion-content scroll="false" padding="false" class="dark-bg has-header has-footer">
+  <ion-content scroll="false" padding="false" class="gray-bg has-header has-footer">
 
     <div class="map-container has-info-footer has-big-info-footer">
       <map id="map" zoom="15" center="currentLocation">
@@ -29,7 +29,7 @@
           <button class="button button-small button-energized" ng-click="mockOutOfRange()">Mock Out Of Range</button>
         </div>
         <p>
-          <time-left timer-name="getToYourWaiveCar" get-duration="getTimerDuration()"></time-left> to get to your WaiveCar
+          <time-left timer-name="getToYourWaiveCar" get-duration="duration()"></time-left> to get to your WaiveCar
         </p>
       </div>
     </div>

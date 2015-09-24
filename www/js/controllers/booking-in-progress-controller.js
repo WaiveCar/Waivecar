@@ -1,36 +1,47 @@
-angular.module('app.controllers').controller('BookingInProgressController', [
+'use strict';
+var angular = require('angular');
+require('angular-ui-router');
+require('../services/auth-service');
+require('../services/data-service');
+require('../services/message-service');
+
+module.exports = angular.module('app.controllers').controller('BookingInProgressController', [
   '$rootScope',
   '$scope',
   '$state',
   '$auth',
   '$data',
-  'MapsEvents',
-  function ($rootScope, $scope, $state, $auth, $data, MapsEvents) {
+  '$message',
+  function ($rootScope, $scope, $state, $auth, $data, $message) {
 
-    $scope.end = function() {
+    $scope.end = function () {
       var booking = angular.copy($data.active.bookings);
       booking.state = 'end';
-      $data.update('bookings', booking, function(err) {
+      $data.update('bookings', booking, function (err) {
         if (err) {
-          alert(err.message || err);
-        } else {
-          $state.go('bookings-show', { id : $data.active.bookings.id });
+          return $message.error(err.message || err);
         }
+        $state.go('bookings-show', {
+          id: $data.active.bookings.id
+        });
+
       });
     };
 
-    $scope.init = function() {
+    $scope.init = function () {
       if (!$auth.isAuthenticated()) {
         $state.go('auth');
       }
 
-      $data.activate('bookings', $state.params.id, function(err) {
-        $data.activate('cars', $data.active.bookings.carId, function(err) {
+      $data.activate('bookings', $state.params.id, function (err) {
+        $data.activate('cars', $data.active.bookings.carId, function (err) {
 
         });
       });
     };
 
     $scope.init();
+
   }
+
 ]);

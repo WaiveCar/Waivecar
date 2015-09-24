@@ -1,4 +1,12 @@
-angular.module('app.controllers').controller('LandingController', [
+'use strict';
+var angular = require('angular');
+require('angular-ui-router');
+require('../services/auth-service');
+require('../services/data-service');
+require('../services/message-service');
+var _ = require('lodash');
+
+module.exports = angular.module('app.controllers').controller('LandingController', [
   '$rootScope',
   '$scope',
   '$state',
@@ -6,7 +14,6 @@ angular.module('app.controllers').controller('LandingController', [
   '$data',
   '$message',
   function ($rootScope, $scope, $state, $auth, $data, $message) {
-    'use strict';
 
     $scope.init = function () {
 
@@ -14,13 +21,13 @@ angular.module('app.controllers').controller('LandingController', [
         return $state.go('auth');
       }
 
-      return $data.initialize('bookings').$promise
+      return $data.initialize('bookings')
         .then(function () {
-          if (!$data.models.bookings) {
+          if (!$data.instances.bookings) {
             return false;
           }
 
-          var active = _.find($data.models.bookings, function (booking) {
+          var active = _.find($data.instances.bookings, function (booking) {
             return _.contains([
               'new-booking',
               'payment-authorized',
@@ -55,7 +62,10 @@ angular.module('app.controllers').controller('LandingController', [
           }
 
         })
-        .catch($message.error);
+        .catch(function(err){
+          $message.error(err);
+          throw err;
+        });
 
     };
 

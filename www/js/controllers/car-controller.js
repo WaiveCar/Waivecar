@@ -1,4 +1,12 @@
-angular.module('app.controllers').controller('CarController', [
+'use strict';
+var angular = require('angular');
+require('angular-ui-router');
+require('../services/auth-service');
+require('../services/data-service');
+require('../services/message-service');
+var _ = require('lodash');
+
+module.exports = angular.module('app.controllers').controller('CarController', [
   '$rootScope',
   '$scope',
   '$state',
@@ -6,7 +14,6 @@ angular.module('app.controllers').controller('CarController', [
   '$data',
   '$message',
   function ($rootScope, $scope, $state, $auth, $data, $message) {
-    'use strict';
 
     $scope.carDiagnostic = function (type) {
       var na = 'Unavailable';

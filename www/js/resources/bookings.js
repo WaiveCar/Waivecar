@@ -1,9 +1,11 @@
-function Resource($resource, $utils) {
-  return $resource(null, null, $utils.createResource('bookings'));
-}
+'use strict';
+var angular = require('angular');
+require('../services/utils.js');
 
-angular.module('app').factory('Bookings', [
+module.exports = angular.module('app').factory('Bookings', [
   '$resource',
   '$utils',
-  Resource
+  function ($resource, $utils) {
+    return $resource(null, null, $utils.createResource('bookings'));
+  }
 ]);

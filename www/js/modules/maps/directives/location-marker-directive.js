@@ -1,60 +1,74 @@
-angular.module('Maps').directive('locationMarker', [
+'use strict';
+var angular = require('angular');
+require('../../../providers/maps-loader-provider');
+
+module.exports = angular.module('Maps').directive('locationMarker', [
   'MapsLoader',
   function (MapsLoader) {
     return {
-      restrict : 'E',
-      require  : '^map',
-      scope    : {
-        location : '=',
-        icon     : '@'
+      restrict: 'E',
+      require: '^map',
+      scope: {
+        location: '=',
+        icon: '@'
       },
-      link : function($scope, element, attrs, ctrl) {
+      link: function ($scope, element, attrs, ctrl) {
 
         function getIcon() {
           switch ($scope.icon) {
-            case 'car' : {
+          case 'car':
+            {
               return {
-                iconUrl       : '/img/active-waivecar.svg',
-                iconRetinaUrl : '/img/active-waivecar.svg',
-                iconSize      : [ 20, 25 ],
-                iconAnchor    : [ 10, 25 ],
-                popupAnchor   : [ 0 , 0 ]
+                iconUrl: '/img/active-waivecar.svg',
+                iconRetinaUrl: '/img/active-waivecar.svg',
+                iconSize: [20, 25],
+                iconAnchor: [10, 25],
+                popupAnchor: [0, 0]
               };
             }
-            default : {
+          default:
+            {
               return {
-                iconUrl       : '/img/user-location.svg',
-                iconRetinaUrl : '/img/user-location.svg',
-                iconSize      : [ 25, 25 ],
-                iconAnchor    : [ 12.5, 25 ],
-                popupAnchor   : [ 0 , 0 ]
+                iconUrl: '/img/user-location.svg',
+                iconRetinaUrl: '/img/user-location.svg',
+                iconSize: [25, 25],
+                iconAnchor: [12.5, 25],
+                popupAnchor: [0, 0]
               };
             }
           }
         }
 
         function setMarker() {
-          MapsLoader.getMap.then(function(L) {
+          MapsLoader.getMap.then(function (L) {
             // TODO: figure out how to access mapInstance properly. (e.g. transclude?)
             var parentMapInstance = $scope.$parent.mapInstance || $scope.$parent.$parent.mapInstance;
-            parentMapInstance.then(function(mapInstance) {
+            parentMapInstance.then(function (mapInstance) {
               if ($scope.marker) {
-                $scope.marker.setLatLng([ $scope.location.latitude, $scope.location.longitude ]);
+                $scope.marker.setLatLng([$scope.location.latitude, $scope.location.longitude]);
               } else {
                 var icon = L.icon(getIcon());
-                $scope.marker = L.marker([ $scope.location.latitude, $scope.location.longitude ], { icon: icon }).addTo(mapInstance);
+                $scope.marker = L.marker([$scope.location.latitude, $scope.location.longitude], {
+                  icon: icon
+                }).addTo(mapInstance);
               }
             });
           });
         }
 
-        $scope.$watch('location', function(newValue, oldValue) {
-          if (!newValue || newValue === oldValue) return;
+        $scope.$watch('location', function (newValue, oldValue) {
+          if (!newValue || newValue === oldValue) {
+            return false;
+          }
           setMarker();
         }, true);
 
-        if ($scope.location) setMarker();
+        if ($scope.location) {
+          setMarker();
+        }
       }
-    }
+
+    };
+
   }
 ]);

@@ -1,31 +1,47 @@
-<ion-view hide-nav-bar="true" ng-controller="CreditCardsController">
+<ion-view ng-controller="CreditCardsController">
 
   <ion-nav-title>
-    <page-title class="dark-bg">Credit Cards</page-title>
+    <page-title class="dark-bg title-plain">Credit Cards</page-title>
   </ion-nav-title>
 
-  <ion-content padding="true" class="ion-content--center dark-bg">
+  <ion-nav-buttons side="primary">
+    <button menu-toggle="right" class="button button-icon icon ion-navicon"></button>
+  </ion-nav-buttons>
 
-    <div class="alert alert-info" ng-if="!active.users.creditCards.length">
+  <ion-content padding="true" class="ion-content--center gray-bg">
+
+    <div class="alert alert-info" ng-if="!cards.length">
       You don't have any credit cards stored.
-      <br>
-
-      <button type="button" class="button button-block button-balanced" ui-sref="credit-cards-new">Create one?</button>
     </div>
 
-    <ion-list show-delete="true" show-reorder="true" can-swipe="true">
-      <ion-item ng-repeat="card in active.users.creditCards" class="item-thumbnail-left" ng-controller="CreditCardController">
-        <img />
-        <h2>{{ card.last4Digits }}</h2>
-        <p>{{ card.expiry }}</p>
-        <ion-delete-button class="ion-minus-circled" ng-click="removeCreditCard()">
-        </ion-delete-button>
+    <button type="button" class="button button-clear button-balanced" ui-sref="credit-cards-new">
+      <span ng-if="!cards.length">Add Credit Card</span>
+      <span ng-if="cards.length">Add New Credit Card</span>
+    </button>
+
+    <ion-list show-delete="true" show-reorder="true" can-swipe="true" class="padding-top">
+      <ion-item ng-repeat="card in cards" class="text-left">
+        <div class="row">
+
+          <div class="col col-25 col-center">
+            <i class="fa fa-lg fa-2x" ng-class="{'Visa':'fa-cc-visa', 'MasterCard': 'fa-cc-mastercard', 'American Express': 'fa-cc-amex', 'Discover': 'fa-cc-discover', 'JCB': 'fa-cc-jcb'}[card.brand]"></i>
+          </div>
+          <div class="col col-75 col-center">
+            <h2>
+              {{ card.last4 }}
+            </h2>
+            <p>{{ card.expMonth }} / {{ card.expYear }}</p>
+          </div>
+        </div>
+
+        <ion-delete-button class="ion-minus-circled" ng-click="removeCreditCard(card, $index)"></ion-delete-button>
+
       </ion-item>
     </ion-list>
 
   </ion-content>
 
-  <ion-footer-bar class="no-padding">
+  <ion-footer-bar class="no-padding" ng-if="$ionicHistory.backView()">
     <div class="button-bar">
       <button type="button" class="button button-gray" go-back>Cancel</button>
     </div>

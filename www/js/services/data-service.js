@@ -1,4 +1,18 @@
-angular.module('app.services').factory('$data', [
+'use strict';
+var angular = require('angular');
+require('./socket-service.js');
+require('../resources/bookings.js');
+require('../resources/cars.js');
+require('../resources/locations.js');
+require('../resources/users.js');
+require('../resources/licenses.js');
+require('../resources/card');
+require('../resources/file');
+
+var when = require('when');
+var _ = require('lodash');
+
+module.exports = angular.module('app.services').factory('$data', [
   '$rootScope',
   '$http',
   '$socket',
@@ -7,8 +21,9 @@ angular.module('app.services').factory('$data', [
   'Locations',
   'Users',
   'Licenses',
-  function ($rootScope, $http, $socket, Bookings, Cars, Locations, Users, Licenses) {
-    'use strict';
+  'Card',
+  'File',
+  function ($rootScope, $http, $socket, Bookings, Cars, Locations, Users, Licenses, Card, File) {
 
     var service = {
 
@@ -17,34 +32,34 @@ angular.module('app.services').factory('$data', [
         cars: Cars,
         licenses: Licenses,
         locations: Locations,
-        users: Users
+        users: Users,
+        Card: Card,
+        File: File
       },
 
       me: void 0,
-
       userLocation: {},
-
-      models: {},
-
+      instances: {},
       active: {},
-
       isSubscribed: false,
 
-      initialize: function (modelName, next) {
-        next = _(next).isFunction(next) ? next : angular.identity;
-        service.models[modelName] = [];
-        return service.fetch(modelName, {}, next);
+      initialize: function (modelName) {
+        service.instances[modelName] = [];
+        return service.fetch(modelName, {});
 
       },
 
-      fetch: function (modelName, filter, next) {
-        next = _(next).isFunction(next) ? next : angular.identity;
-        // todo: add support for filter query params.
-        var items = service.resources[modelName].query(function () {
-          service.mergeAll(modelName, items);
-          next();
+      fetch: function (modelName, filter) {
+        return when.promise(function (resolve, reject) {
+
+          service.resources[modelName].query().$promise
+            .then(function (items) {
+              service.mergeAll(modelName, items);
+              resolve(service.instances[modelName]);
+            })
+            .catch(reject);
+
         });
-        return items;
 
       },
 
@@ -100,8 +115,8 @@ angular.module('app.services').factory('$data', [
       },
 
       // client-side manipulation only
-      mergeAll: function (modelName, models) {
-        _.each(models, function (item) {
+      mergeAll: function (modelName, instances) {
+        _.each(instances, function (item) {
           var model = item.toJSON ? item.toJSON() : item;
           service.merge(modelName, model);
         });
@@ -110,12 +125,12 @@ angular.module('app.services').factory('$data', [
       // client-side manipulation only
       merge: function (modelName, model) {
         if (!model) return null;
-        if (!service.models[modelName]) service.models[modelName] = [];
+        if (!service.instances[modelName]) service.instances[modelName] = [];
         var existing = service.getExisting(modelName, model.id);
         if (existing) {
           angular.extend(existing, model);
         } else {
-          service.models[modelName].push(model);
+          service.instances[modelName].push(model);
         }
         return model;
       },
@@ -128,27 +143,34 @@ angular.module('app.services').factory('$data', [
 
         var item = service.getExisting(modelName, id);
         if (item) {
-          service.models[modelName].splice(_.indexOf(service.models[modelName], item), 1);
+          service.instances[modelName].splice(_.indexOf(service.instances[modelName], item), 1);
         }
       },
 
       // client-side manipulation only
-      activateKnownModel: function (modelName, id, next) {
-        var existing = service.getExisting(modelName, id);
-        if (existing) {
-          service.active[modelName] = existing;
-          return next(null, service.active[modelName]);
-        }
+      activateKnownModel: function (modelName, id) {
+        return when.promise(function (resolve, reject) {
 
-        service.fetch(modelName, {}, function (err) {
           var existing = service.getExisting(modelName, id);
-          service.active[modelName] = existing;
-          return next(null, service.active[modelName]);
+          if (existing) {
+            service.active[modelName] = existing;
+            return resolve(service.active[modelName]);
+          }
+
+          return service.fetch(modelName, {})
+            .then(function () {
+              existing = service.getExisting(modelName, id);
+              service.active[modelName] = existing;
+              return resolve(service.active[modelName]);
+            })
+            .catch(reject);
+
         });
+
       },
 
       getExisting: function (modelName, id) {
-        var existing = _.find(service.models[modelName], function (m) {
+        var existing = _.find(service.instances[modelName], function (m) {
           return m.id.toString() === id.toString();
         });
 
@@ -156,21 +178,23 @@ angular.module('app.services').factory('$data', [
       },
 
       // client-side manipulations only
-      activate: function (modelName, id, next) {
-        if (!service.models[modelName]) {
-          service.initialize(modelName, function (err) {
-            if (err) return next(err);
-            service.activateKnownModel(modelName, id, next);
-          });
-        } else {
-          service.activateKnownModel(modelName, id, next);
+      activate: function (modelName, id) {
+
+        if (service.instances[modelName]) {
+          return service.activateKnownModel(modelName, id);
         }
+
+        return service.initialize(modelName)
+          .then(function () {
+            return service.activateKnownModel(modelName, id);
+          });
+
       },
 
       // client-side manipulations only
-      deactivate: function (modelName, next) {
+      deactivate: function (modelName) {
         delete service.active[modelName];
-        if (next && _.isFunction(next)) return next();
+
       },
 
       subscribe: function () {

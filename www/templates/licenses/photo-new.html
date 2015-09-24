@@ -1,17 +1,17 @@
-<ion-view>
+<ion-view ng-controller="LicensePhotoController">
 
   <ion-nav-title>
     <page-title class="dark-bg">Driver's License</page-title>
   </ion-nav-title>
 
-  <ion-content padding="true" class="ion-content--center dark-bg" ng-controller="LicenseController">
+  <ion-content padding="true" class="ion-content--center dark-bg">
 
     <p class="padding-bottom">
       We need to verify your age and driving.<br>
       We won't share your information in any way.
     </p>
 
-    <div id="padding-top padding-bottom">
+    <div class="padding-top padding-bottom">
       <button class="button button-balanced button-block" on-tap="takePhoto()">Take photo</button>
       <button class="button button-positive button-block" on-tap="uploadPhoto()">Upload from mobile</button>
     </div>

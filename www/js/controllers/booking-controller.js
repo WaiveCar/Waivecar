@@ -1,4 +1,14 @@
-angular.module('app.controllers').controller('BookingController', [
+/* global window: false */
+'use strict';
+var angular = require('angular');
+require('angular-ui-router');
+require('../services/mock-city-location-service.js');
+require('../services/auth-service');
+require('../services/data-service');
+var _ = require('lodash');
+var moment = require('moment');
+
+module.exports = angular.module('app.controllers').controller('BookingController', [
   '$rootScope',
   '$scope',
   '$state',
@@ -9,44 +19,54 @@ angular.module('app.controllers').controller('BookingController', [
 
     $scope.showConnect = false;
 
-    $scope.bookingDetail = function(type, detail) {
+    $scope.bookingDetail = function (type, detail) {
       var na = 'Unavailable';
       if (!$data.active || !$data.active.bookings || !$data.active.bookings.details) {
         return na;
       }
 
-      var bookingDetail = _.find($data.active.bookings.details, { type: type });
+      var bookingDetail = _.find($data.active.bookings.details, {
+        type: type
+      });
 
       if (bookingDetail) {
         return bookingDetail[detail];
       }
 
       return na;
-    }
+    };
 
-    $scope.distance = function() {
+    $scope.distance = function () {
       var from = $scope.bookingDetail('start', 'odometer');
       var to = $scope.bookingDetail('end', 'odometer');
-      if (from === 'Unavailable' || to === 'Unavailable') return from;
+      if (from === 'Unavailable' || to === 'Unavailable') {
+        return from;
+      }
 
       if (from && to) {
         return (to - from) + ' miles';
       }
-    }
 
-    $scope.duration = function() {
-      var from = $scope.bookingDetail('start', 'time');
-      var to = $scope.bookingDetail('end', 'time');
-      if (from === 'Unavailable' || to === 'Unavailable') return from;
-
-      return moment(from).from(to, true);
-    }
-
-    $scope.connect = function() {
-      $state.go('bookings-prepare', { id : $data.active.bookings.id });
     };
 
-    $scope.getDirections = function() {
+    $scope.duration = function () {
+      var from = $scope.bookingDetail('start', 'time');
+      var to = $scope.bookingDetail('end', 'time');
+      if (from === 'Unavailable' || to === 'Unavailable') {
+        return from;
+      }
+
+      return moment(from).from(to, true);
+
+    };
+
+    $scope.connect = function () {
+      $state.go('bookings-prepare', {
+        id: $data.active.bookings.id
+      });
+    };
+
+    $scope.getDirections = function () {
       // TODO: use actual address.
       var url = [
         'comgooglemaps-x-callback://?',
@@ -58,54 +78,60 @@ angular.module('app.controllers').controller('BookingController', [
       window.open(encodeURI(url), '_system');
     };
 
-    $scope.cancel = function() {
-      $data.remove('bookings', $data.active.bookings.id, function(err) {
+    $scope.cancel = function () {
+      $data.remove('bookings', $data.active.bookings.id, function (err) {
         $state.go('cars');
       });
     };
 
-    $scope.mockInRange = function() {
+    $scope.mockInRange = function () {
       LocationService.setLocation($data.active.cars.location);
     };
 
-    $scope.mockOutOfRange = function() {
+    $scope.mockOutOfRange = function () {
       LocationService.mockLocation();
       $scope.watchForWithinRange();
     };
 
-    $scope.watchForWithinRange = function() {
+    $scope.watchForWithinRange = function () {
       $scope.showConnect = false;
-      var located = $scope.$watch(function() {
-        if (!$rootScope.currentLocation) return false;
-        if (!$data.active.cars) return false
+      var located = $scope.$watch(function () {
+        if (!$rootScope.currentLocation) {
+          return false;
+        }
+        if (!$data.active.cars) {
+          return false;
+        }
+
         var from = L.latLng($rootScope.currentLocation.latitude, $rootScope.currentLocation.longitude);
         var to = L.latLng($data.active.cars.location.latitude, $data.active.cars.location.longitude);
         var distance = from.distanceTo(to);
         console.log(distance);
         return distance <= 25;
-      }, function(newValue, oldValue) {
+      }, function (newValue, oldValue) {
         if (newValue && newValue !== oldValue) {
           located();
           $scope.showConnect = true;
           // we are now close enough to activate the car.
         }
       });
-    }
 
-    $scope.init = function() {
+    };
+
+    $scope.init = function () {
       if (!$auth.isAuthenticated()) {
         $state.go('auth');
       }
 
-      $data.activate('bookings', $state.params.id, function(err) {
-        $data.activate('cars', $data.active.bookings.carId, function(err) {
+      $data.activate('bookings', $state.params.id, function (err) {
+        $data.activate('cars', $data.active.bookings.carId, function (err) {
           if ($state.current.name === 'bookings-show') {
             return;
           }
 
           var booking = angular.copy($data.active.bookings);
           booking.state = 'pending-arrival';
-          $data.update('bookings', booking, function(err) {
+          $data.update('bookings', booking, function (err) {
             if (err) {
               alert(err.message || err);
             } else {

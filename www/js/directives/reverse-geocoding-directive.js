@@ -1,4 +1,8 @@
-angular.module('app.directives').directive('reverseGeoCoding', [
+'use strict';
+var angular = require('angular');
+require('../services/geocoding-service');
+
+module.exports = angular.module('app.directives').directive('reverseGeoCoding', [
   '$geocoding',
   function ($geocoding) {
     function link($scope, element, attrs, ctrl) {
@@ -6,7 +10,8 @@ angular.module('app.directives').directive('reverseGeoCoding', [
       if (!latLng) {
         return;
       }
-      $geocoding.getReverseGeoCoding(latLng.latitude, latLng.longitude).then(function(locationData) {
+
+      $geocoding.getReverseGeoCoding(latLng.latitude, latLng.longitude).then(function (locationData) {
         if (locationData.address) {
           $scope.location = locationData.address.road;
           if (locationData.address.house_number) {
@@ -14,15 +19,17 @@ angular.module('app.directives').directive('reverseGeoCoding', [
           }
         }
       });
+
     }
 
     return {
-      restrict : 'E',
-      link     : link,
-      template : '<span ng-bind="location"></span>',
-      scope    : {
-        getLocation : '&'
+      restrict: 'E',
+      link: link,
+      template: '<span ng-bind="location"></span>',
+      scope: {
+        getLocation: '&'
       }
     };
+
   }
 ]);

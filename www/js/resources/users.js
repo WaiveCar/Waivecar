@@ -1,10 +1,39 @@
-angular.module('app').factory('Users', [
+'use strict';
+var angular = require('angular');
+require('../services/utils.js');
+var _ = require('lodash');
+
+module.exports = angular.module('app').factory('Users', [
   '$resource',
   '$utils',
   function ($resource, $utils) {
-    'use strict';
 
-    return $resource(null, null, $utils.createResource('users', {
+    var transformRequest = function (data) {
+      if (!data) {
+        return data;
+      }
+      data = angular.copy(data);
+      data = _.pick(data, ['email', 'firstName', 'lastName', 'phone', 'password']);
+
+      return angular.toJson(data);
+
+    };
+
+    var resource = $resource(null, null, $utils.createResource('users', {
+      create: {
+        method: 'POST',
+        url: $utils.getRoute('users', true),
+        isArray: false,
+        transformRequest: transformRequest,
+      },
+      update: {
+        method: 'PUT',
+        url: $utils.getRoute('users', true),
+        params: {
+          id: '@id'
+        },
+        transformRequest: transformRequest,
+      },
       login: {
         method: 'POST',
         url: $utils.getCustomRoute('auth/login')
@@ -30,5 +59,16 @@ angular.module('app').factory('Users', [
         url: $utils.getCustomRoute('auth/facebook')
       }
     }));
+
+    resource.prototype.$save = function () {
+      if (!this.id) {
+        return this.$create();
+      } else {
+        return this.$update();
+      }
+    };
+
+    return resource;
+
   }
 ]);

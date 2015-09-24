@@ -1,16 +1,24 @@
-angular.module('app.controllers').controller('AuthController', [
+'use strict';
+var angular = require('angular');
+require('angular-ui-router');
+require('../services/auth-service');
+require('../services/message-service');
+
+module.exports = angular.module('app.controllers').controller('AuthController', [
   '$rootScope',
   '$scope',
   '$state',
   '$auth',
   '$message',
-  '$loading',
-  function ($rootScope, $scope, $state, $auth, $message, $loading) {
-    'use strict';
+  '$data',
+  '$ionicHistory',
+  function ($rootScope, $scope, $state, $auth, $message, $data, $ionicHistory) {
+    $scope.$ionicHistory = $ionicHistory;
 
     $scope.forms = {
       loginForm: {
-        from: 'app'
+        from: 'app',
+        // identifier: 'adibih@gmail.com',
       },
       forgotForm: {},
       resetForm: {}
@@ -20,7 +28,9 @@ angular.module('app.controllers').controller('AuthController', [
       if (err) {
         return $message.error(err);
       }
-      $state.go('landing');
+      $state.go('users-edit', {
+        id: $data.me.id
+      });
 
     };
 
@@ -31,6 +41,7 @@ angular.module('app.controllers').controller('AuthController', [
       if (form.$invalid) {
         return $message.error('Please resolve form errors and try again.');
       }
+
       $auth.login($scope.forms.loginForm, sharedCallback);
 
     };

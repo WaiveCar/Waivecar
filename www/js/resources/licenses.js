@@ -1,24 +1,60 @@
-angular.module('app').factory('Licenses', [
-  '$resource',
+'use strict';
+var angular = require('angular');
+require('../services/utils.js');
+var moment = require('moment');
+
+module.exports = angular.module('app').factory('Licenses', [
+  'Resource',
   '$utils',
-  function Resource($resource, $utils) {
-    'use strict';
+  '$settings',
+  function (Resource, $utils, $settings) {
 
     var resourceName = 'licenses';
 
-    var birthDateTransform = function (data) {
+    var transformRequest = function (data) {
+      if (!data) {
+        return data;
+      }
+      data = angular.copy(data);
       if (data.birthDate) {
         data.birthDate = moment(data.birthDate).format('YYYY-MM-DD');
       }
+      delete data.createdAt;
+      delete data.updatedAt;
+      delete data.deletedAt;
+
       return angular.toJson(data);
 
     };
 
+    var transformResponse = function (data) {
+      if (!data) {
+        return data;
+      }
+      data = angular.fromJson(data);
+      if (data.birthDate) {
+        data.birthDate = moment(data.birthDate).toDate();
+      }
+      return data;
+
+    };
+
     var customMethods = {
-      save: {
+      create: {
         method: 'POST',
         url: $utils.getRoute(resourceName),
-        transformRequest: birthDateTransform
+        isArray: false,
+        transformRequest: transformRequest,
+        transformResponse: transformResponse
+      },
+      save: {
+        method: 'POST',
+        url: $utils.getRoute(resourceName, true),
+        params: {
+          id: '@id'
+        },
+        transformRequest: transformRequest,
+        transformResponse: transformResponse
       },
       update: {
         method: 'PUT',
@@ -26,11 +62,26 @@ angular.module('app').factory('Licenses', [
         params: {
           id: '@id'
         },
-        transformRequest: birthDateTransform
+        transformRequest: transformRequest,
+        transformResponse: transformResponse
+      },
+      get: {
+        method: 'GET',
+        url: $utils.getRoute(resourceName, true),
+        transformRequest: transformRequest,
+        transformResponse: transformResponse
       },
     };
 
-    return $resource(null, null, $utils.createResource(resourceName, customMethods));
+    var resource = Resource(null, {
+      id: '@id'
+    }, $utils.createResource(resourceName, customMethods));
+
+    resource.prototype.filePath = function(){
+      return this.fileId ? ($settings.uri.api + '/files/' + this.fileId) : null;
+    };
+
+    return resource;
 
   }
 

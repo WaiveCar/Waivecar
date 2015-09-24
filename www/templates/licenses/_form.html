@@ -1,0 +1,35 @@
+<div class="list list-inset">
+
+  <label class="item item-input">
+    <span class="input-label required">License #</span>
+    <input name="number" type="text" placeholder="Driver's License Number" ng-model="license.number" autofocus required>
+  </label>
+
+  <label class="item item-input">
+    <span class="input-label required">State</span>
+    <input name="state" type="text" placeholder="State" ng-model="license.state" required>
+  </label>
+
+  <label class="item item-input">
+    <span class="input-label required">First Name</span>
+    <input name="firstName" type="text" placeholder="First Name" ng-model="license.firstName" required>
+  </label>
+
+  <label class="item item-input">
+    <span class="input-label required">Last Name</span>
+    <input name="lastName" type="text" placeholder="Last Name" ng-model="license.lastName" required>
+  </label>
+
+  <label class="item item-input">
+    <span class="input-label required">Date Of Birth</span>
+    <input name="birthDate" type="date" value="" placeholder="Date of Birth" ng-model="license.birthDate" required>
+  </label>
+
+</div>
+
+<div class="validations" ng-if="form.$submitted && form.$invalid">
+  <div class="help-block" ng-if="form.number.$error.required">Driver's Licence Number is required</div>
+  <div class="help-block" ng-if="form.firstName.$error.required">First Name is required</div>
+  <div class="help-block" ng-if="form.lastName.$error.required">Last Name is required</div>
+  <div class="help-block" ng-if="form.birthDate.$error.required">Date of Birth is required</div>
+</div>

@@ -1,41 +1,54 @@
-angular.module('app.controllers').controller('BookingPrepareController', [
+'use strict';
+var angular = require('angular');
+require('angular-ui-router');
+require('../services/mock-city-location-service.js');
+require('../services/auth-service');
+require('../services/data-service');
+require('../services/message-service');
+
+module.exports = angular.module('app.controllers').controller('BookingPrepareController', [
   '$rootScope',
   '$scope',
   '$state',
   '$auth',
   '$data',
-  'MapsEvents',
-  function ($rootScope, $scope, $state, $auth, $data, MapsEvents) {
+  '$message',
+  function ($rootScope, $scope, $state, $auth, $data, $message) {
 
-    $scope.inspect = function() {
+    $scope.inspect = function () {
       // TODO: show booking-inspection modal.
-      alert('problem reported');
+      $message.error('problem reported');
+
     };
 
-    $scope.init = function() {
+    $scope.init = function () {
       if (!$auth.isAuthenticated()) {
         $state.go('auth');
       }
 
-      $data.activate('bookings', $state.params.id, function(err) {
+      $data.activate('bookings', $state.params.id, function (err) {
         if ($data.active.bookings.state === 'in-progress') {
-          $state.go('bookings-in-progress', { id : $data.active.bookings.id });
+          $state.go('bookings-in-progress', {
+            id: $data.active.bookings.id
+          });
           return;
         }
 
         var booking = angular.copy($data.active.bookings);
         booking.state = 'start';
-        $data.update('bookings', booking, function(err, updated) {
+        $data.update('bookings', booking, function (err, updated) {
           if (err) {
-            alert(err.message || err);
+            $message.error(err.message || err);
           } else {
-            var connected = $scope.$watch(function() {
+            var connected = $scope.$watch(function () {
               console.log($data.active.bookings.state);
               return $data.active.bookings.state === 'in-progress';
-            }, function(newValue, oldValue) {
+            }, function (newValue, oldValue) {
               if ($data.active.bookings.state === 'in-progress') {
                 connected();
-                $state.go('bookings-in-progress', { id : $data.active.bookings.id });
+                $state.go('bookings-in-progress', {
+                  id: $data.active.bookings.id
+                });
               }
             });
           }
