@@ -230,8 +230,6 @@ module.exports = angular.module('app.services').factory('$data', [
       var model = action[resource];
 
       if (resource === 'users') {
-        console.log(resource);
-        console.log(action);
         service.me = resource;
         return;
       }
