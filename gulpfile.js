@@ -44,8 +44,8 @@
 
   gulp.task('default', ['sass', 'templates', 'lint', 'js', 'fonts']);
 
-  gulp.task('sass', function(done) {
-    gulp.src('./scss/ionic.app.scss')
+  gulp.task('sass', function() {
+    return gulp.src('./scss/ionic.app.scss')
       .pipe(sass({
         errLogToConsole: true
       }))
@@ -56,8 +56,8 @@
       .pipe(rename({
         extname: '.min.css'
       }))
-      .pipe(gulp.dest('./www/css/'))
-      .on('end', done);
+      .pipe(gulp.dest('./www/css/'));
+
   });
 
   gulp.task('templates', function() {
@@ -70,11 +70,13 @@
         module: 'app.services'
       }))
       .pipe(gulp.dest('./www/js/services'));
+
   });
 
   gulp.task('fonts', function() {
     return gulp.src(paths.fonts)
       .pipe(gulp.dest('./www/fonts/'));
+
   });
 
   gulp.task('lint', function() {
@@ -82,6 +84,7 @@
       .pipe(eslint())
       .pipe(eslint.format())
       .pipe(eslint.failAfterError());
+
   });
 
   (function browserifyWatch() {
@@ -111,9 +114,10 @@
         // Add transformation tasks to the pipeline here.
         .pipe(sourcemaps.write('./')) // writes .map file
         .pipe(gulp.dest('./www/dist'));
+
     }
 
-    gulp.task('js', bundle); // so you can run `gulp js` to build the file
+    gulp.task('js', ['templates'], bundle); // so you can run `gulp js` to build the file
     b.on('update', bundle); // on any dep update, runs the bundler
     b.on('log', gutil.log); // output build logs to terminal
 
