@@ -2,6 +2,7 @@
 
 import React            from 'react';
 import Reach, { relay } from 'reach-react';
+import { Link }         from 'react-router';
 import { Layout }       from 'reach-components';
 import components       from './lib/components';
 
@@ -47,8 +48,8 @@ export default (view) => {
      * @method renderView
      */
     renderView() {
-      if (Array.isArray(view.layout.rows)) {
-        return view.layout.rows.map(this.renderRow);
+      if (Array.isArray(view.layout.components)) {
+        return view.layout.components.map(this.renderRow);
       }
       return this.renderComponent(view.layout);
     }
@@ -59,11 +60,11 @@ export default (view) => {
      * @param  {Number} rowIndex
      */
     renderRow(row, rowIndex) {
-      let columnWidth = Math.floor(12 / row.columns.length) || 12;
+      let columnWidth = Math.floor(12 / row.components.length) || 12;
       return (
         <Row key={ rowIndex } classNames={ row.classNames }>
           {
-            row.columns.map((column, columnIndex) => {
+            row.components.map((column, columnIndex) => {
               return this.renderColumn(column, columnIndex, columnWidth)
             }.bind(this))
           }
@@ -78,8 +79,8 @@ export default (view) => {
      * @param  {Number} columnWidth
      */
     renderColumn(column, columnIndex, columnWidth) {
-      if (column.width) {
-        columnWidth = column.width;
+      if (column.options && column.options.width) {
+        columnWidth = column.options.width;
       }
       return (
         <Column key={ columnIndex } width={ columnWidth } classNames={ column.classNames }>
@@ -92,8 +93,10 @@ export default (view) => {
      * @method renderType
      */
     renderType(column) {
-      switch (column.type) {
-        default : return this.renderComponent(column.component);
+      if (column.components && column.components.length > 0) {
+        switch (column.type) {
+          default : return this.renderComponent(column.components[0]);
+        }
       }
     }
 
@@ -105,6 +108,16 @@ export default (view) => {
       return components.render(component.type, component.options, this.props);
     }
 
+    renderActions() {
+      // TODO: maybwe we want like an edit toggle,
+      // otherwise admins will constantly have an edit button
+      if (Reach.auth.user.role !== 'admin') return;
+
+      return (
+        <Link className="btn btn-sm btn-info" to={ `view-editor/${ view.id }` }>Ugly Edit View</Link>
+      )
+    }
+
     /**
      * @method render
      */
@@ -112,6 +125,7 @@ export default (view) => {
       return (
         <div className={ view.class }>
           { this.renderView() }
+          { this.renderActions() }
         </div>
       );
     }

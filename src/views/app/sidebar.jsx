@@ -7,11 +7,6 @@ import { menu }        from 'reach-ui';
 import md5             from 'md5';
 
 let nav  = [
-  {
-    title : 'View Editor',
-    path : '/view-editor',
-    icon : 'create'
-  }
 ];
 
 export default class Sidebar extends React.Component {

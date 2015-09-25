@@ -35,13 +35,13 @@ export default class ViewColumn extends Component {
     name              : PropTypes.string.isRequired,
     type              : PropTypes.string.isRequired,
     category          : PropTypes.string.isRequired,
+    options           : PropTypes.object,
     connectDropTarget : PropTypes.func.isRequired,
     isOver            : PropTypes.bool.isRequired,
     canDrop           : PropTypes.bool.isRequired,
     accepts           : PropTypes.arrayOf(PropTypes.string).isRequired,
     lastDroppedItem   : PropTypes.object,
     components        : PropTypes.array,
-    width             : PropTypes.number.isRequired,
     onDrop            : PropTypes.func.isRequired
   };
 
@@ -57,8 +57,9 @@ export default class ViewColumn extends Component {
   }
 
   render() {
-    const { id, name, type, components, accepts, width, onDrop, isOver, canDrop, connectDropTarget, lastDroppedItem } = this.props;
+    const { id, name, type, components, accepts, options, onDrop, isOver, canDrop, connectDropTarget, lastDroppedItem } = this.props;
     const isActive = isOver && canDrop;
+    let width = options && options.width ? options.wdith : 12;
     let activeStyle = 'untouched';
 
     if (isActive) {
@@ -67,7 +68,7 @@ export default class ViewColumn extends Component {
       activeStyle = 'can-drop';
     }
 
-    let className = `view-column col-xs-${ width || 12 } ${ activeStyle }`;
+    let className = `view-column col-xs-${ width } ${ activeStyle }`;
 
     return connectDropTarget(
       <div className={ className }>
@@ -75,9 +76,6 @@ export default class ViewColumn extends Component {
         { isActive
           ? 'Release to drop'
           : 'Add a ' + accepts.join(' or ')
-        }
-        { lastDroppedItem &&
-          <p>Last dropped: {JSON.stringify(lastDroppedItem)}</p>
         }
         {
           components.map((component, componentIndex) => {
@@ -89,6 +87,7 @@ export default class ViewColumn extends Component {
                   name            = { component.name }
                   type            = { component.type }
                   category        = { component.category }
+                  options         = { component.options }
                   components      = { component.components }
                   accepts         = { component.accepts }
                   lastDroppedItem = { component.lastDroppedItem }

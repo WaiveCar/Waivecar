@@ -61,10 +61,14 @@ templates.register('app', {
   component : AppTemplate,
   onEnter   : policies.isAuthenticated,
   getChildRoutes(state, done) {
-    done(null, 
+    done(null,
       [
         {
-          path      : '/view-editor',
+          path      : '/view-editor/create',
+          component : require('views/app/editor')
+        },
+        {
+          path      : '/view-editor/:id',
           component : require('views/app/editor')
         }
       ].concat(views.getRoutes('app'))
