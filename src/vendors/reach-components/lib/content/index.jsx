@@ -70,14 +70,14 @@ export default class Content extends React.Component {
       html : region.html
     }, (error, res) => {
       if (error) {
-        return Snackbar.notify({ 
-          type    : 'danger', 
-          message : error.message 
+        return Snackbar.notify({
+          type    : 'danger',
+          message : error.message
         });
       }
       Snackbar.notify({
         type    : 'success',
-        message : 'Content was successfully updated' 
+        message : 'Content was successfully updated'
       });
     }.bind(this));
   }
@@ -87,10 +87,10 @@ export default class Content extends React.Component {
    */
   render() {
     return (
-      <div 
+      <div
         key                     = { this.state.key }
         dangerouslySetInnerHTML = { this.state.html }
-        className               = 'text-component'
+        className               = 'content-component'
       />
     )
   }
