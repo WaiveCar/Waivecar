@@ -37,13 +37,13 @@
   }
   @-moz-keyframes $animation-name {
     @content;
-  }  
+  }
   @-ms-keyframes $animation-name {
     @content;
   }
   @-o-keyframes $animation-name {
     @content;
-  }  
+  }
   @keyframes $animation-name {
     @content;
   }
@@ -54,10 +54,10 @@
   -moz-animation    : #{$str};
   -ms-animation     : #{$str};
   -o-animation      : #{$str};
-  animation         : #{$str};      
+  animation         : #{$str};
 }
 
-/* 
+/*
   3. Transitions
 
   a {
@@ -106,4 +106,14 @@
   &:after {
     clear: both;
   }
+}
+
+@mixin gradient($from, $to) {
+  background: -moz-linear-gradient(top,  $from 0%, $to 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,$from), color-stop(100%,$to));
+  background: -webkit-linear-gradient(top,  $from 0%,$to 100%);
+  background: -o-linear-gradient(top,  $from 0%,$to 100%);
+  background: -ms-linear-gradient(top,  $from 0%,$to 100%);
+  background: linear-gradient(to bottom,  $from 0%,$to 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#00000000',GradientType=0 );
 }
