@@ -1,5 +1,6 @@
 'use strict';
 
+let co    = require('co');
 let queue = Reach.provider('queue');
 let Email = Reach.provider('email');
 let log   = Reach.Log;
