@@ -1,4 +1,4 @@
-(function () {
+(function() {
   'use strict';
 
   var gulp = require('gulp');
@@ -31,12 +31,17 @@
       '!./www/lib/**/*.*',
       '!./www/js/**/*.*',
       '!./www/dist/**/*.*'
+    ],
+    fonts: [
+      './node_modules/font-awesome/fonts/*.*',
+      './node_modules/bootstrap-sass/assets/fonts/bootstrap/*.*',
+      './node_modules/ionic/fonts/*.*'
     ]
   };
 
-  gulp.task('default', ['sass', 'templates', 'lint', 'js']);
+  gulp.task('default', ['sass', 'templates', 'lint', 'js', 'fonts']);
 
-  gulp.task('sass', function (done) {
+  gulp.task('sass', function(done) {
     gulp.src('./scss/ionic.app.scss')
       .pipe(sass({
         errLogToConsole: true
@@ -52,10 +57,10 @@
       .on('end', done);
   });
 
-  gulp.task('templates', function () {
+  gulp.task('templates', function() {
     return gulp.src(paths.templates)
       .pipe(ngTemplates({
-        path: function (path, base) {
+        path: function(path, base) {
           return path.replace(base, '/templates/');
         },
         standalone: false,
@@ -64,7 +69,12 @@
       .pipe(gulp.dest('./www/js/services'));
   });
 
-  gulp.task('lint', function () {
+  gulp.task('fonts', function() {
+    return gulp.src(paths.fonts)
+      .pipe(gulp.dest('./www/fonts/'));
+  });
+
+  gulp.task('lint', function() {
     return gulp.src(paths.scripts)
       .pipe(eslint())
       .pipe(eslint.format())
@@ -106,20 +116,20 @@
 
   }());
 
-  gulp.task('watch', function () {
+  gulp.task('watch', function() {
     gulp.watch(paths.sass, ['sass']);
     gulp.watch(paths.templates, ['templates']);
     gulp.watch(paths.scripts, ['lint']);
   });
 
-  gulp.task('install', ['git-check'], function () {
+  gulp.task('install', ['git-check'], function() {
     return bower.commands.install()
-      .on('log', function (data) {
+      .on('log', function(data) {
         gutil.log('bower', gutil.colors.cyan(data.id), data.message);
       });
   });
 
-  gulp.task('git-check', function (done) {
+  gulp.task('git-check', function(done) {
     if (!sh.which('git')) {
       console.log(
         '  ' + gutil.colors.red('Git is not installed.'),

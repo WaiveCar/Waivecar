@@ -1,7 +1,7 @@
 'use strict';
 var angular = require('angular');
 var ionic = require('ionic');
-var baseUrl = 'https://api-waivecar-dev.cleverbuild.biz';
+// var baseUrl = 'https://api-waivecar-dev.cleverbuild.biz';
 
 var appSettings = angular.module('app.settings', []);
 module.exports = appSettings;

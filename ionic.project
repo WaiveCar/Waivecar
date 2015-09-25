@@ -5,6 +5,7 @@
     "sass",
     "templates",
     "js",
+    "lint",
     "watch"
   ],
   "watchPatterns": [
