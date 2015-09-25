@@ -26,7 +26,7 @@ module.exports = angular.module('app.directives')
               $state.go($state.params.redirectUrl, $state.params.redirectParams);
             };
 
-            $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
+            $rootScope.$on('$stateChangeStart', function (event, toState) {
               if (toState.name === 'ads') {
                 $timeout(timeOutFn, 2000);
               }

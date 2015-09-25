@@ -49,7 +49,7 @@ module.exports = angular.module('app.services').factory('$data', [
 
       },
 
-      fetch: function (modelName, filter) {
+      fetch: function (modelName) {
         return when.promise(function (resolve, reject) {
 
           service.resources[modelName].query().$promise
@@ -91,7 +91,7 @@ module.exports = angular.module('app.services').factory('$data', [
       remove: function (modelName, id, next) {
         service.resources[modelName].remove({
           id: id
-        }, function (res) {
+        }, function () {
           service.purge(modelName, id);
         }, function (error) {
           return next(error.data || error);
@@ -105,7 +105,7 @@ module.exports = angular.module('app.services').factory('$data', [
           }
         };
 
-        service.resources.users.createCustomer(customer, function (err) {
+        service.resources.users.createCustomer(customer, function () {
           service.resources.users.createCard(data, next);
         });
       },
@@ -124,8 +124,12 @@ module.exports = angular.module('app.services').factory('$data', [
 
       // client-side manipulation only
       merge: function (modelName, model) {
-        if (!model) return null;
-        if (!service.instances[modelName]) service.instances[modelName] = [];
+        if (!model) {
+          return null;
+        }
+        if (!service.instances[modelName]) {
+          service.instances[modelName] = [];
+        }
         var existing = service.getExisting(modelName, model.id);
         if (existing) {
           angular.extend(existing, model);
@@ -248,6 +252,8 @@ module.exports = angular.module('app.services').factory('$data', [
       case 'delete':
         service.purge(resource, model);
         break;
+      default:
+        throw new Error('Undetermined socket relay action.type handler');
       }
     });
 

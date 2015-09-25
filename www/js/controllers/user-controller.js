@@ -15,8 +15,7 @@ module.exports = angular.module('app.controllers').controller('UserController', 
   '$data',
   'FaceBookService',
   '$message',
-  '$log',
-  function ($rootScope, $scope, $state, $auth, $data, FaceBookService, $message, $log) {
+  function ($rootScope, $scope, $state, $auth, $data, FaceBookService, $message) {
 
     $scope.save = function (form) {
       if (form.$invalid) {

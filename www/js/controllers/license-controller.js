@@ -5,7 +5,6 @@ require('../services/auth-service');
 require('../services/data-service');
 require('../services/message-service');
 require('../services/camera-service');
-var _ = require('lodash');
 
 module.exports = angular.module('app.controllers').controller('LicenseController', [
   '$rootScope',

@@ -35,7 +35,7 @@ module.exports = angular.module('Maps').service('RouteService', [
           url += '&points=yes';
 
           var defered = $q.defer();
-          $http.get(url).success(function (data, status, headers, config) {
+          $http.get(url).success(function (data) {
             if (data.status.apiCode === skobblerApiCodes.sourceSameAsDestination) {
               data.route = {
                 duration: 0

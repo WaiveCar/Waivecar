@@ -13,10 +13,10 @@ module.exports = angular.module('Maps').directive('locationMarkers', [
         icon: '@',
         onClickMarker: '&'
       },
-      link: function ($scope, element, attrs, ctrl) {
+      link: function ($scope) {
 
         function addMarkerClick(marker, id, onClickFn) {
-          marker.on('mousedown', function (e) {
+          marker.on('mousedown', function () {
             onClickFn({
               marker: marker,
               id: id

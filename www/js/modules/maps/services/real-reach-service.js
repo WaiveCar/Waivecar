@@ -34,7 +34,7 @@ module.exports = angular.module('Maps').service('RealReachService', [
             url += '&transport=' + transport;
             url += '&start=' + location.latitude + ',' + location.longitude;
 
-            $http.get(url).success(function (data, status, headers, config) {
+            $http.get(url).success(function (data) {
               defered.resolve(data);
             })
               .error(function (data, status, headers, config) {

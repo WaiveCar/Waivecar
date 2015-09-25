@@ -12,8 +12,9 @@ module.exports = angular.module('Maps').directive('locateMe', [
         'imgOnClick': '&'
       },
       require: '^map',
-      link: function ($scope, element, attrs, ctrl) {
+      link: function ($scope) {
         var L;
+
         MapsLoader.getMap.then(function (mapL) {
           L = mapL;
           return $scope.$parent.mapInstance || $scope.$parent.$parent.mapInstance;
@@ -23,7 +24,7 @@ module.exports = angular.module('Maps').directive('locateMe', [
               options: {
                 position: 'bottomright'
               },
-              onAdd: function (map) {
+              onAdd: function () {
                 var img = L.DomUtil.create('img', 'locate-me');
                 img.src = $scope.imgSource;
                 L.DomEvent.addListener(img, 'mousedown', L.DomEvent.stopPropagation)

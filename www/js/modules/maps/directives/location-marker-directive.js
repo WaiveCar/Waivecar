@@ -12,7 +12,7 @@ module.exports = angular.module('Maps').directive('locationMarker', [
         location: '=',
         icon: '@'
       },
-      link: function ($scope, element, attrs, ctrl) {
+      link: function ($scope) {
 
         function getIcon() {
           switch ($scope.icon) {

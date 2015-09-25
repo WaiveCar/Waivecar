@@ -10,7 +10,8 @@ module.exports = angular.module('app.controllers').controller('InspectionControl
   '$state',
   '$auth',
   '$data',
-  function ($rootScope, $scope, $state, $auth, $data) {
+  '$message',
+  function ($rootScope, $scope, $state, $auth, $data, $message) {
 
     $scope.init = function () {
       if (!$auth.isAuthenticated()) {
@@ -18,7 +19,13 @@ module.exports = angular.module('app.controllers').controller('InspectionControl
       }
 
       $data.activate('bookings', $state.params.id, function (err) {
-        $data.activate('cars', $data.active.bookings.carId, function (err) {
+        if(err){
+          return $message.error(err);
+        }
+        $data.activate('cars', $data.active.bookings.carId, function (_err) {
+          if(_err){
+            return $message.error(err);
+          }
           var connected = $scope.$watch(function () {
             return true;
           }, function (newValue, oldValue) {
