@@ -25,10 +25,10 @@ export default class HomeView extends React.Component {
   renderNavigation() {
     return (
       <nav className="navbar navbar-dark bg-transparent">
-        <Link className="navbar-brand" to="home">
-          <img src="/images/brand.svg" alt="WaiveCar" />
-        </Link>
         <ul className="nav navbar-nav pull-right">
+          <li className="nav-item active">
+            <Link to="terms" className="nav-link">Terms</Link>
+          </li>
           <li className="nav-item active">
             <Anchor className="nav-link" href="#download">Download</Anchor>
           </li>

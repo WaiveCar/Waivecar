@@ -6,26 +6,26 @@ import UI                   from 'reach-ui';
 import { templates, views } from 'reach-ui';
 import policies             from 'policies';
 import Header               from 'views/app/header';
-import 'styles/site/style.scss';
+import 'styles/home/style.scss';
 
 /**
  * @class AppTemplate
  */
-class SiteTemplate extends React.Component {
+class HomeTemplate extends React.Component {
 
   /**
    * @constructor
    */
   constructor(...args) {
     super(...args);
-    relay.subscribe(this, 'site');
+    relay.subscribe(this, 'home');
   }
 
   /**
    * @method componentWillUnmount
    */
   componentWillUnmount() {
-    relay.unsubscribe(this, 'site');
+    relay.unsubscribe(this, 'home');
   }
 
   /**
@@ -33,7 +33,7 @@ class SiteTemplate extends React.Component {
    */
   render() {
     return (
-      <div id="site">
+      <div id="home">
         <Header />
         <div id="content">
           <div id="content-wrapper">
@@ -46,9 +46,16 @@ class SiteTemplate extends React.Component {
 }
 
 // ### Register Template
-templates.register('site', {
-  component : SiteTemplate,
+templates.register('home', {
+  component : HomeTemplate,
   getChildRoutes(state, done) {
-    done(null, views.getRoutes('site'));
+    done(null,
+      [
+        {
+          path      : '/',
+          component : require('views/home/home')
+        }
+      ].concat(views.getRoutes('home'))
+    );
   }
 });

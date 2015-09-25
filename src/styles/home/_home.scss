@@ -1,16 +1,4 @@
-@import '~styles/variables';
-
-#site {
-  .navbar-brand {
-    img {
-      width: 324px;
-    }
-  }
-  .bg-transparent {
-    background : none;
-  }
-  //background-color : $app-color-white;
-  color            : $app-color-black;
+#home {
   .tinted {
     background-color : rgba($app-color-black, .8);
   }
