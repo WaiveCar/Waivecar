@@ -2,6 +2,7 @@ import React, { PropTypes, Component } from 'react';
 import { DropTarget }                  from 'react-dnd';
 import ViewRow                         from './view-row';
 import ViewComponent                   from './view-component';
+import ViewOptions                     from './view-options';
 import ItemCategories                  from './item-categories';
 import newId                           from './newid';
 
@@ -56,6 +57,12 @@ export default class ViewColumn extends Component {
     this.props.onDrop(column);
   }
 
+  updateOptions(value) {
+    let column = this.props;
+    column.options = value;
+    this.props.onDrop(column);
+  }
+
   render() {
     const { id, name, type, components, accepts, options, onDrop, isOver, canDrop, connectDropTarget, lastDroppedItem } = this.props;
     const isActive = isOver && canDrop;
@@ -72,11 +79,9 @@ export default class ViewColumn extends Component {
 
     return connectDropTarget(
       <div className={ className }>
-        <h6>{ id }: { name }</h6>
-        { isActive
-          ? 'Release to drop'
-          : 'Add a ' + accepts.join(' or ')
-        }
+        <h6>{ name }</h6>
+        <ViewOptions options={ this.props.options } update={ this.updateOptions } />
+        { isActive && <p>Drag Rows or Components in to this Column</p> }
         {
           components.map((component, componentIndex) => {
             switch (component.category) {

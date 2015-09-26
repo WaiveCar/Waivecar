@@ -2,6 +2,7 @@ import React, { PropTypes, Component } from 'react';
 import { DropTarget }                  from 'react-dnd';
 import ItemCategories                  from './item-categories';
 import ViewColumn                      from './view-column';
+import ViewOptions                     from './view-options';
 import newId                           from './newid';
 
 const target = {
@@ -58,6 +59,12 @@ export default class ViewRow extends Component {
     this.props.onDrop(row);
   }
 
+  updateOptions(value) {
+    let row = this.props;
+    row.options = value;
+    this.props.onDrop(row);
+  }
+
   render() {
     const { id, name, type, components, isOver, canDrop, onDrop, connectDropTarget, lastDroppedItem } = this.props;
     const isActive = isOver && canDrop;
@@ -73,9 +80,9 @@ export default class ViewRow extends Component {
 
     return connectDropTarget(
       <div className={ className }>
-        <h6>{ id }: { name }</h6>
+        <h6>{ name }</h6>
         { isActive && <p>Drag Columns on to this Row</p> }
-        { lastDroppedItem && <p>Last dropped: {JSON.stringify(lastDroppedItem)}</p> }
+        <ViewOptions options={ this.props.options } update={ this.updateOptions } />
         <div className="container-fluid">
           <div className="row">
           {

@@ -29,7 +29,7 @@ export default class ViewLayout extends React.Component {
       },
       items : [
         { name : 'Row',    type : 'row',     icon : 'border_horizontal', category : ItemCategories.ROW,    accepts : [ ItemCategories.COLUMN ],                        options : {} },
-        { name : 'Column', type : 'column',  icon : 'border_vertical',   category : ItemCategories.COLUMN, accepts : [ ItemCategories.ROW, ItemCategories.COMPONENT ], options : {} }
+        { name : 'Column', type : 'column',  icon : 'border_vertical',   category : ItemCategories.COLUMN, accepts : [ ItemCategories.ROW, ItemCategories.COMPONENT ], options : { width : 12 } }
       ].concat(components.getAll()),
       lastDroppedItem : null
     };
@@ -99,32 +99,6 @@ export default class ViewLayout extends React.Component {
     }.bind(this));
   }
 
-  /**
-   * Returns the form method.
-   * @method method
-   * @return {String}
-   */
-  method() {
-    let resource = this.resource();
-    if (this.isCreate()) {
-      return resource.method.toLowerCase();
-    }
-    return resource.method.toLowerCase();
-  }
-
-  /**
-   * Returns the uri action to perform on this form.
-   * @method action
-   * @return {String}
-   */
-  action() {
-    let resource = this.resource();
-    if (this.isCreate()) {
-      return resource.uri;
-    }
-    return resource.uri.replace(':id', this.id());
-  }
-
   transformToViewComponent(component, index) {
     let defaults = this.state.items.find(f => f.type === component.type);
     component.id = newId();
@@ -157,6 +131,65 @@ export default class ViewLayout extends React.Component {
     delete viewComponent.accepts;
     delete viewComponent.name;
     return viewComponent;
+  }
+
+  /**
+   * @method submit
+   */
+  submit(event) {
+    event.preventDefault();
+    let resource = this.resource();
+    let method = resource.method.toLowerCase();
+    let action = resource.uri.replace(':id', this.id());
+    let data = this.state.data;
+
+    if (this.isCreate()) {
+      action = resource.uri;
+    }
+
+    data.layout = {
+      components : this.state.layout.components.map(this.transformToComponent.bind(this))
+    };
+
+    api[method](action, data, function (err, res) {
+      if (err) {
+        Snackbar.notify({
+          type    : 'danger',
+          message : err.message
+        });
+        return;
+      }
+
+      // Snackbar.notify({
+      //   type    : 'success',
+      //   message : 'Record was successfully updated.'
+      // });
+      this.goBack();
+    }.bind(this));
+  }
+
+  handleDrop(item) {
+    const { id, type, category, components, lastDroppedItem } = item;
+    let layout = this.state.layout;
+    if (!layout.components) {
+      if (item.category === ItemCategories.COMPONENT) {
+        layout.components = item;
+      } else {
+        layout.components = [ item ];
+      }
+    } else {
+      let existing = layout.components.find(l => l.id === item.id);
+      if (existing) {
+        existing = item;
+      } else {
+        layout.components.push(item);
+      }
+    }
+
+    this.setState({
+      layout          : layout,
+      lastDroppedItem : item
+    });
   }
 
   renderFormActions() {
@@ -213,57 +246,6 @@ export default class ViewLayout extends React.Component {
         </div>
       </div>
     );
-  }
-
-  /**
-   * @method submit
-   */
-  submit(event) {
-    event.preventDefault();
-    let data = this.state.data;
-    data.layout = {
-      components : this.state.layout.components.map(this.transformToComponent.bind(this))
-    };
-
-    api[this.method()](this.action(), data, function (err, res) {
-      if (err) {
-        Snackbar.notify({
-          type    : 'danger',
-          message : err.message
-        });
-        return;
-      }
-
-      // Snackbar.notify({
-      //   type    : 'success',
-      //   message : 'Record was successfully updated.'
-      // });
-      this.goBack();
-    }.bind(this));
-  }
-
-  handleDrop(item) {
-    const { id, type, category, components, lastDroppedItem } = item;
-    let layout = this.state.layout;
-    if (!layout.components) {
-      if (item.category === ItemCategories.COMPONENT) {
-        layout.components = item;
-      } else {
-        layout.components = [ item ];
-      }
-    } else {
-      let existing = layout.components.find(l => l.id === item.id);
-      if (existing) {
-        existing = item;
-      } else {
-        layout.components.push(item);
-      }
-    }
-
-    this.setState({
-      layout          : layout,
-      lastDroppedItem : item
-    });
   }
 
   renderItems() {
