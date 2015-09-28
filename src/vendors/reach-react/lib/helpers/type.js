@@ -177,6 +177,15 @@ Type.isArray = (value) => {
 };
 
 /**
+ * @method isBoolean
+ * @param  {Any} value
+ * @return {Boolean}
+ */
+Type.isBoolean = (value) => {
+  return Type.getObjectType(value) === '[object Boolean]';
+};
+
+/**
  * @method isNumber
  * @param  {Any} value
  * @return {Boolean}

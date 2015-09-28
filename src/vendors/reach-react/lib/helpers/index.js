@@ -7,6 +7,12 @@
 let Helpers = module.exports = {};
 
 /**
+ * @property object
+ * @type     Object
+ */
+Helpers.object = require('./object');
+
+/**
  * @property type
  * @type     Object
  */
