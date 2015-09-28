@@ -26,7 +26,7 @@ let Type = module.exports = {};
  * @param  {String} value
  * @return {Mixed}
  */
-Type.getObjectType = (value) => {
+Type.getObjectType = function (value) {
   return Object.prototype.toString.call(value);
 };
 
@@ -36,9 +36,9 @@ Type.getObjectType = (value) => {
  * @param  {Any} value
  * @return {String}
  */
-Type.getType = (value) => {
+Type.getType = function (value) {
   for (let type of types) {
-    if (Type['is' + type](value)) {
+    if (this['is' + type](value)) {
       return type.toLowerCase();
     }
   }
@@ -51,8 +51,8 @@ Type.getType = (value) => {
  * @param  {Any} value
  * @return {Boolean}
  */
-Type.isPlainObject = (value) => {
-  return Type.isObject(value) && value.__proto__ === Object.prototype;
+Type.isPlainObject = function (value) {
+  return this.isObject(value) && value.__proto__ === Object.prototype;
 };
 
 /**
@@ -61,7 +61,7 @@ Type.isPlainObject = (value) => {
  * @param  {Any} value
  * @return {Boolean}
  */
-Type.isEmpty = (value) => {
+Type.isEmpty = function (value) {
   return value == null;
 };
 
@@ -71,7 +71,7 @@ Type.isEmpty = (value) => {
  * @param  {Object} value
  * @return {Boolean}
  */
-Type.isEmptyObject = (value) => {
+Type.isEmptyObject = function (value) {
   for (let key in value) {
     if (value.hasOwnProperty(key)) {
       return false;
@@ -86,7 +86,7 @@ Type.isEmptyObject = (value) => {
  * @param  {Any} value
  * @return {Boolean}
  */
-Type.isNativeClass = (value) => {
+Type.isNativeClass = function (value) {
   return typeof value === 'function' && value.toString().indexOf('class') === 0;
 };
 
@@ -98,7 +98,7 @@ Type.isNativeClass = (value) => {
  * @param  {Any} value
  * @return {Boolean}
  */
-Type.isConventionalClass = (value) => {
+Type.isConventionalClass = function (value) {
   let c; return typeof value === 'function' && (c = value.toString().charCodeAt(9)) >= 65 && c <= 90
 };
 
@@ -107,7 +107,7 @@ Type.isConventionalClass = (value) => {
  * @param  {Any} value
  * @return {Boolean}
  */
-Type.isClass = (value) => {
+Type.isClass = function (value) {
   let s, c; return typeof value == 'function' && (
     (s = value.toString()).indexOf('class') === 0 || ((c = s.charCodeAt(9)) >= 64 && c <= 90) 
   );
@@ -118,7 +118,7 @@ Type.isClass = (value) => {
  * @param  {Any} value
  * @return {Boolean}
  */
-Type.isObject = (value) => {
+Type.isObject = function (value) {
   return value && typeof value === 'object';
 };
 
@@ -127,7 +127,7 @@ Type.isObject = (value) => {
  * @param  {Any} value
  * @return {Boolean}
  */
-Type.isError = (value) => {
+Type.isError = function (value) {
   return value instanceof Error;
 };
 
@@ -136,8 +136,8 @@ Type.isError = (value) => {
  * @param  {Any} value
  * @return {Boolean}
  */
-Type.isDate = (value) => {
-  return Type.getObjectType(value) === '[object Date]';
+Type.isDate = function (value) {
+  return this.getObjectType(value) === '[object Date]';
 };
 
 /**
@@ -145,8 +145,8 @@ Type.isDate = (value) => {
  * @param  {Any} value
  * @return {Boolean}
  */
-Type.isArguments = (value) => {
-  return Type.getObjectType(value) === '[object Arguments]';
+Type.isArguments = function (value) {
+  return this.getObjectType(value) === '[object Arguments]';
 };
 
 /**
@@ -154,8 +154,8 @@ Type.isArguments = (value) => {
  * @param  {Any} value
  * @return {Boolean}
  */
-Type.isFunction = (value) => {
-  return Type.getObjectType(value) === '[object Function]';
+Type.isFunction = function (value) {
+  return this.getObjectType(value) === '[object Function]';
 };
 
 /**
@@ -163,8 +163,8 @@ Type.isFunction = (value) => {
  * @param  {Any} value
  * @return {Boolean}
  */
-Type.isRegExp = (value) => {
-  return Type.getObjectType(value) === '[object RegExp]';
+Type.isRegExp = function (value) {
+  return this.getObjectType(value) === '[object RegExp]';
 };
 
 /**
@@ -172,8 +172,8 @@ Type.isRegExp = (value) => {
  * @param  {Any} value
  * @return {Boolean}
  */
-Type.isArray = (value) => {
-  return Array.isArray && Array.isArray(value) || Type.getObjectType(value) === '[object Array]';
+Type.isArray = function (value) {
+  return Array.isArray && Array.isArray(value) || this.getObjectType(value) === '[object Array]';
 };
 
 /**
@@ -181,8 +181,8 @@ Type.isArray = (value) => {
  * @param  {Any} value
  * @return {Boolean}
  */
-Type.isBoolean = (value) => {
-  return Type.getObjectType(value) === '[object Boolean]';
+Type.isBoolean = function (value) {
+  return this.getObjectType(value) === '[object Boolean]';
 };
 
 /**
@@ -190,8 +190,8 @@ Type.isBoolean = (value) => {
  * @param  {Any} value
  * @return {Boolean}
  */
-Type.isNumber = (value) => {
-  return typeof value === 'number' || Type.getObjectType(value) === '[object Number]';
+Type.isNumber = function (value) {
+  return typeof value === 'number' || this.getObjectType(value) === '[object Number]';
 };
 
 /**
@@ -199,8 +199,8 @@ Type.isNumber = (value) => {
  * @param  {Any} value
  * @return {Boolean}
  */
-Type.isString = (value) => {
-  return typeof value === 'string' || Type.getObjectType(value) === '[object String]';
+Type.isString = function (value) {
+  return typeof value === 'string' || this.getObjectType(value) === '[object String]';
 };
 
 /**
@@ -208,7 +208,7 @@ Type.isString = (value) => {
  * @param  {Any} value
  * @return {Boolean}
  */
-Type.isNull = (value) => {
+Type.isNull = function (value) {
   return value === null;
 };
 
@@ -217,6 +217,6 @@ Type.isNull = (value) => {
  * @param  {Any} value
  * @return {Boolean}
  */
-Type.isUndefined = (value) => {
+Type.isUndefined = function (value) {
   return typeof value === 'undefined';
 };
