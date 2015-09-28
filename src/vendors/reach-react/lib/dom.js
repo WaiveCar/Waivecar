@@ -1,5 +1,7 @@
 'use strict';
 
+import { type } from 'reach-react/lib/helpers';
+
 /**
  * @class DOM
  */
@@ -23,8 +25,11 @@ DOM.hasClass = function (classes, className) {
 DOM.setClass = function (options) {
   let result = [];
   for (let key in options) {
-    if (options[key]) {
+    let name = options[key];
+    if (type.isBoolean(name) && name) {
       result.push(key);
+    } else if (type.isString(name)) {
+      result.push(name);
     }
   }
   return result.join(' ');
