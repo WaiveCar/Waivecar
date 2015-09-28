@@ -47,6 +47,7 @@ export default class ViewContainer extends Component {
         icon     = { component.icon }
         category = { component.category }
         options  = { component.options }
+        onUpdate = { this.props.onDrop }
       />
     );
   }

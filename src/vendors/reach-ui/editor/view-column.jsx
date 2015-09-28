@@ -80,7 +80,7 @@ export default class ViewColumn extends Component {
     return connectDropTarget(
       <div className={ className }>
         <h6>{ name }</h6>
-        <ViewOptions options={ this.props.options } update={ this.updateOptions } />
+        <ViewOptions componentName={ name } options={ this.props.options } update={ this.updateOptions.bind(this) } />
         { isActive && <p>Drag Rows or Components in to this Column</p> }
         {
           components.map((component, componentIndex) => {
@@ -108,6 +108,7 @@ export default class ViewColumn extends Component {
                   icon     = { component.icon }
                   category = { component.category }
                   options  = { component.options }
+                  onUpdate = { this.handleChildUpdated.bind(this) }
                 />
               )
             }

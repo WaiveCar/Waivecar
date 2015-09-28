@@ -169,7 +169,6 @@ export default class ViewLayout extends React.Component {
   }
 
   handleDrop(item) {
-    const { id, type, category, components, lastDroppedItem } = item;
     let layout = this.state.layout;
     if (!layout.components) {
       if (item.category === ItemCategories.COMPONENT) {

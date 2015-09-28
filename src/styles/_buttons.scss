@@ -198,6 +198,9 @@ fieldset[disabled] .btn-inverse.active {
   padding: 0;
   text-align: center;
   position: relative;
+  background: transparent;
+  opacity : 0.3;
+  color : $app-color-black;
   &:before {
     left: 0;
     top: 0;
@@ -238,6 +241,12 @@ fieldset[disabled] .btn-inverse.active {
   }
   &.btn-default:hover {
     background: #fff;
+  }
+  &:hover {
+    opacity : 1;
+  }
+  &:active, &:focus {
+    background : $app-color-white;
   }
 }
 

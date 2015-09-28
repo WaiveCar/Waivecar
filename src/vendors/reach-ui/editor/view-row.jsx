@@ -82,7 +82,7 @@ export default class ViewRow extends Component {
       <div className={ className }>
         <h6>{ name }</h6>
         { isActive && <p>Drag Columns on to this Row</p> }
-        <ViewOptions options={ this.props.options } update={ this.updateOptions } />
+        <ViewOptions componentName={ name } options={ this.props.options } update={ this.updateOptions.bind(this) } />
         <div className="container-fluid">
           <div className="row">
           {
