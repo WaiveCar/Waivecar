@@ -82,7 +82,7 @@ Relay.unsubscribe = function (component, id) {
  */
 Relay.dispatch = function (resource, payload) {
   if (!this.store.reducers[resource]) {
-    return console.log(`'${ resource }' resource has not been defined, ignoring dispatch request.`);
+    return console.warn(`Relay > Ignoring dispatch request, '${ resource }' reducer has not been defined.`);
   }
 
   let reducer   = this.store.reducers[resource];
@@ -101,9 +101,13 @@ Relay.dispatch = function (resource, payload) {
 
 /**
  * @method getState
+ * @param  {String} target
  * @return {Object}
  */
-Relay.getState = function () {
+Relay.getState = function (target) {
+  if (target) {
+    return this.store.states[target];
+  }
   return this.store.states;
 };
 
@@ -123,7 +127,7 @@ Relay.getActions = function () {
  */
 function addListener(component, id) {
   if (!this.store.states[id]) {
-    return console.log(`'${ id }' state has not been defined, ignoring subscription request.`);
+    return console.warn(`Relay > Ignoring subscription request, '${ id }' has not been defined.`);
   }
   let name = component.constructor.name;
   if (!this.store.listeners[id][name]) {
@@ -143,7 +147,7 @@ function addListener(component, id) {
  */
 function removeListener(id, name) {
   if (!this.store.listeners[id] || !this.store.listeners[id][name]) {
-    return console.log(`'${ id }.${ name }' listener does not exist, ignoring unsubscribe request.`);
+    return console.warn(`Relay > Ignoring unsubscribe request, '${ id }.${ name }' listener has not been defined.`);
   }
   if (this.store.listeners[id][name]) {
     delete this.store.listeners[id][name];
