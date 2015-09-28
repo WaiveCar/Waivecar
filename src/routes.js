@@ -12,6 +12,7 @@ import './templates/home';
 import './templates/site';
 import './templates/auth';
 import './templates/app';
+import './templates/sandbox';
 
 // ### Export App
 
