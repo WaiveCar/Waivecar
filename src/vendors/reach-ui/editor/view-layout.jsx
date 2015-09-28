@@ -12,6 +12,28 @@ import newId                from './newid';
 import Item                 from './item';
 import ItemCategories       from './item-categories';
 import ViewContainer        from './view-container';
+import async                from 'async';
+
+function createContentOrReturn(viewComponent, next) {
+  if (viewComponent.type === 'content') {
+    if (!viewComponent.options) {
+      viewComponent.options = {};
+    }
+    if (!viewComponent.options.id) {
+      let resource = resources.get('contents').store;
+      let method = resource.method.toLowerCase();
+      let action = resource.uri;
+      api[method](action, {}, function(err, res) {
+        viewComponent.options = { id : res.id };
+        return next(err, viewComponent);
+      });
+    } else {
+      return next(null, viewComponent);
+    }
+  } else {
+    return next(null, viewComponent);
+  }
+}
 
 @DragDropContext(HTML5Backend)
 @mixin.decorate(Navigation)
@@ -19,6 +41,9 @@ export default class ViewLayout extends React.Component {
 
   constructor(...args) {
     super(...args);
+    this.transformToComponent     = this.transformToComponent.bind(this);
+    this.transformToViewComponent = this.transformToViewComponent.bind(this);
+
     this.state = {
       data : null,
       layout : {
@@ -89,7 +114,7 @@ export default class ViewLayout extends React.Component {
 
       let layout = this.state.layout;
       if (data.layout && data.layout.components) {
-        layout.components = data.layout.components.map(this.transformToViewComponent.bind(this));
+        layout.components = data.layout.components.map(this.transformToViewComponent);
       }
 
       this.setState({
@@ -103,34 +128,28 @@ export default class ViewLayout extends React.Component {
     let defaults = this.state.items.find(f => f.type === component.type);
     component.id = newId();
     if (component.components) {
-      component.components = component.components.map(this.transformToViewComponent.bind(this));
+      component.components = component.components.map(this.transformToViewComponent);
     } else if (component.category !== ItemCategories.COMPONENT) {
       component.components = [];
     }
     return { ...defaults, ...component };
   }
 
-  transformToComponent(viewComponent) {
-    if (viewComponent.components) {
-      viewComponent.components = viewComponent.components.map(this.transformToComponent.bind(this));
-    }
-
-    // TODO: TEMP HACK
-    if (viewComponent.type === 'content') {
-      if (!viewComponent.options) {
-        viewComponent.options = {};
-      }
-      if (!viewComponent.options.id) {
-        viewComponent.options = { id : 1 };
-      }
-    }
-
+  transformToComponent(viewComponent, next) {
     delete viewComponent.id;
     delete viewComponent.icon;
     delete viewComponent.category;
     delete viewComponent.accepts;
     delete viewComponent.name;
-    return viewComponent;
+
+    if (viewComponent.components) {
+      async.map(viewComponent.components, this.transformToComponent, function(err, components) {
+        viewComponent.components  = components;
+        createContentOrReturn(viewComponent, next);
+      })
+    } else {
+      createContentOrReturn(viewComponent, next);
+    }
   }
 
   /**
@@ -147,24 +166,27 @@ export default class ViewLayout extends React.Component {
       action = resource.uri;
     }
 
-    data.layout = {
-      components : this.state.layout.components.map(this.transformToComponent.bind(this))
-    };
+    async.map(this.state.layout.components, this.transformToComponent, function(err, transformedComponents) {
 
-    api[method](action, data, function (err, res) {
-      if (err) {
-        Snackbar.notify({
-          type    : 'danger',
-          message : err.message
-        });
-        return;
-      }
+      data.layout = {
+        components : transformedComponents
+      };
 
-      // Snackbar.notify({
-      //   type    : 'success',
-      //   message : 'Record was successfully updated.'
-      // });
-      this.goBack();
+      api[method](action, data, function (err, res) {
+        if (err) {
+          Snackbar.notify({
+            type    : 'danger',
+            message : err.message
+          });
+          return;
+        }
+
+        // Snackbar.notify({
+        //   type    : 'success',
+        //   message : 'Record was successfully updated.'
+        // });
+        this.goBack();
+      }.bind(this));
     }.bind(this));
   }
 
