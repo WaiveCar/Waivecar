@@ -1,10 +1,10 @@
 'use strict';
 
-let request = require('superagent');
-let storage = require('local-storage');
-let auth    = require('./auth');
-let config  = require('../../../config');
-let api     = config.api.uri + ':' + config.api.port;
+import request  from 'superagent';
+import storage  from 'local-storage';
+import config   from 'config';
+import auth     from './auth';
+import { type } from './helpers';
 
 /**
  * @class API
@@ -12,22 +12,30 @@ let api     = config.api.uri + ':' + config.api.port;
 let API = module.exports = {};
 
 /**
+ * @property api
+ * @type     String
+ */
+let api = config.api.uri + (config.api.port ? ':' + config.api.port : '');
+
+/**
  * @method get
  * @param  {String}   uri
  * @param  {Object}   [qs]
- * @param  {Function} [callback]
+ * @param  {Function} [done]
+ * @param  {String}   [role]
  */
-API.get = function (uri, qs, callback) {
-  if (typeof qs === 'function') {
-    callback = qs;
-    qs       = {};
-  }
+API.get = function (uri, qs, done, role) {
   let req = request.get(api + uri);
+  if (type.isFunction(qs)) {
+    done = qs;
+    qs   = {};
+  }
   req.query(qs);
   if (auth.check()) {
     req.set('Authorization', auth.user.token);
   }
-  req.end(_handleResult.bind(this, callback));
+  req.set('Role', role || 'guest');
+  req.end(_handleResult.bind(this, done));
 };
 
 /**
@@ -35,12 +43,14 @@ API.get = function (uri, qs, callback) {
  * @param  {String}   url
  * @param  {Object}   data
  * @param  {Function} callback
+ * @param  {String}   [role]
  */
-API.post = function (uri, data, callback) {
+API.post = function (uri, data, callback, role) {
   let req = request.post(api + uri);
   if (auth.check()) {
     req.set('Authorization', auth.user.token);
   }
+  req.set('Role', role || 'guest');
   req.send(data);
   req.end(_handleResult.bind(this, callback));
 };
@@ -50,12 +60,31 @@ API.post = function (uri, data, callback) {
  * @param  {String}   uri
  * @param  {Object}   data
  * @param  {Function} [callback]
+ * @param  {String}   [role]
  */
-API.put = function (uri, data, callback) {
+API.put = function (uri, data, callback, role) {
   let req = request.put(api + uri);
   if (auth.check()) {
     req.set('Authorization', auth.user.token);
   }
+  req.set('Role', role || 'guest');
+  req.send(data);
+  req.end(_handleResult.bind(this, callback));
+};
+
+/**
+ * @method patch
+ * @param  {String}   uri
+ * @param  {Object}   data
+ * @param  {Function} [callback]
+ * @param  {String}   [role]
+ */
+API.patch = function (uri, data, callback, role) {
+  let req = request.patch(api + uri);
+  if (auth.check()) {
+    req.set('Authorization', auth.user.token);
+  }
+  req.set('Role', role || 'guest');
   req.send(data);
   req.end(_handleResult.bind(this, callback));
 };
@@ -64,12 +93,14 @@ API.put = function (uri, data, callback) {
  * @method delete
  * @param  {String}   uri
  * @param  {Function} [callback]
+ * @param  {String}   [role]
  */
-API.delete = function (uri, callback) {
+API.delete = function (uri, callback, role) {
   let req = request.del(api + uri);
   if (auth.check()) {
     req.set('Authorization', auth.user.token);
   }
+  req.set('Role', role || 'guest');
   req.end(_handleResult.bind(this, callback));
 };
 
