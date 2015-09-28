@@ -4,7 +4,7 @@ import React                             from 'react';
 import { api }                           from 'reach-react';
 import mixin                             from 'react-mixin';
 import { Navigation }                    from 'react-router';
-import { Form, Snackbar }                from 'reach-components';
+import { Form, snackbar }                from 'reach-components';
 import { components, fields, resources } from 'reach-ui';
 
 @mixin.decorate(Navigation)
@@ -189,7 +189,7 @@ class UIForm extends React.Component {
     if (this.isCreate()) {
       this.goBack();
     } else {
-      Snackbar.notify({
+      snackbar.notify({
         type    : 'success',
         message : 'Record was successfully updated.'
       });

@@ -7,6 +7,10 @@ import md5      from 'md5';
 import NavDrop  from './nav-drop';
 import './style.scss';
 
+/**
+ * @property menus
+ * @type     Array
+ */
 let menus = {
   account : [
     {
@@ -32,6 +36,9 @@ let menus = {
 
 export default class Nav extends React.Component {
 
+  /**
+   * @constructor
+   */
   constructor(...args) {
     super(...args);
     this.state = {
@@ -44,12 +51,14 @@ export default class Nav extends React.Component {
     this.closeDropdown = this.closeDropdown.bind(this);
   }
 
+  /**
+   * @method nav
+   */
   nav(menu) {
     return menu.map((item, i) => {
       if (item.role === 'admin' && auth.user.role !== 'admin') {
         return;
       }
-
       if (item.children) {
         menus[item.name] = item.children;
         return (
@@ -62,6 +71,9 @@ export default class Nav extends React.Component {
     }.bind(this));
   }
 
+  /**
+   * @method openDropdown
+   */
   openDropdown(name) {
     if (this.state.dropdown.menu === name) {
       this.closeDropdown();
@@ -75,6 +87,9 @@ export default class Nav extends React.Component {
     }
   }
 
+  /**
+   * @method closeDropdown
+   */
   closeDropdown() {
     this.setState({
       dropdown : {
@@ -84,6 +99,10 @@ export default class Nav extends React.Component {
     });
   }
 
+  /**
+   * @method dropdown
+   * @return {NavDrop}
+   */
   dropdown() {
     let { show, menu } = this.state.dropdown;
     if (show) {
@@ -91,6 +110,28 @@ export default class Nav extends React.Component {
     }
   }
 
+  /**
+   * Render profile if there is an authenticated user signed into the system.
+   * @method profile
+   * @return {Mixed}
+   */
+  profile() {
+    if (!auth.check()) {
+      return;
+    }
+    return (
+      <div className="r-nav-profile" onClick={ this.openDropdown.bind(this, 'account') } ref="account">
+        <div className="r-nav-profile-image" style={{ background : 'url(//www.gravatar.com/avatar/'+ md5(auth.user.email) +') center center / cover' }}></div>
+        <div className="r-nav-profile-name">
+          Hi, { auth.user.firstName }
+        </div>
+      </div>
+    );
+  }
+
+  /**
+   * @method render
+   */
   render() {
     return (
       <div className="r-navbar">
@@ -99,19 +140,11 @@ export default class Nav extends React.Component {
             <img src="/images/brand.svg" alt="WaiveCars" />
           </Link>
         </div>
-        <div className="r-nav-profile" onClick={ this.openDropdown.bind(this, 'account') } ref="account">
-          <div className="r-nav-profile-image" style={{ background : 'url(//www.gravatar.com/avatar/'+ md5(auth.user.email) +') center center / cover' }}></div>
-          <div className="r-nav-profile-name">
-            Hi, { auth.user.firstName }
-          </div>
-        </div>
-
+        { this.profile() }
         <ul className="r-nav">
           { this.nav(this.props.menu) }
         </ul>
-
         { this.dropdown() }
-
       </div>
     );
   }

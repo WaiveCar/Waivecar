@@ -63,6 +63,10 @@ Components.getAll = function () {
  * @param  {Object} props
  */
 Components.render = function (type, options, props) {
-  let Component = this.get(type).class;
+  let component = this.get(type);
+  if (!component) {
+    return console.error(`Reach UI > Invalid component requested [${ type }]`);
+  }
+  let Component = component.class;
   return <Component { ...props } { ...options } />
 };

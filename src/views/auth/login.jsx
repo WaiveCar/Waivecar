@@ -3,7 +3,7 @@ import mixin              from 'react-mixin';
 import Reach, { auth }    from 'reach-react';
 import { Navigation }     from 'react-router';
 import config             from 'config';
-import { Form, Snackbar } from 'reach-components';
+import { Form, snackbar } from 'reach-components';
 
 @mixin.decorate(Navigation)
 
@@ -55,14 +55,14 @@ export default class LoginView extends React.Component {
    */
   error(error, reset) {
     reset();
-    Snackbar.notify({
+    snackbar.notify({
       type    : 'danger',
       message : error.message,
       persist : true,
       action  : {
         title : 'DISMISS',
-        click : () => {
-          Snackbar.dismiss();
+        click : function () {
+          this.dismiss();
         }
       }
     });

@@ -5,7 +5,7 @@ import { Navigation }       from 'react-router';
 import { DragDropContext }  from 'react-dnd';
 import HTML5Backend         from 'react-dnd/modules/backends/HTML5';
 import { api }              from 'reach-react';
-import { Snackbar, Button } from 'reach-components';
+import { snackbar, Button } from 'reach-components';
 import components           from '../lib/components';
 import resources            from '../lib/resources';
 import newId                from './newid';
@@ -174,14 +174,14 @@ export default class ViewLayout extends React.Component {
 
       api[method](action, data, function (err, res) {
         if (err) {
-          Snackbar.notify({
+          snackbar.notify({
             type    : 'danger',
             message : err.message
           });
           return;
         }
 
-        // Snackbar.notify({
+        // snackbar.notify({
         //   type    : 'success',
         //   message : 'Record was successfully updated.'
         // });

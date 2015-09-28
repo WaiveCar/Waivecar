@@ -1,49 +1,51 @@
 'use strict';
 
-import React    from 'react';
-import Snackbar from './snackbar';
+import React       from 'react';
+import { relay }   from 'reach-react';
+import Component   from './snackbar';
+import { update }  from './actions';
+import './reducer';
 
 /**
- * @class SnackbarService
+ * @class Snackbar
  */
-let SnackbarService = module.exports = {};
-
-/**
- * The hooked component where notifications are rendered.
- * @property component
- * @type     Component
- * @default  null
- */
-SnackbarService.component = null;
+let Snackbar = module.exports = {};
 
 /**
  * @property timer
  * @type     Timeout
  * @default  null
  */
-SnackbarService.timer = null;
-
-/**
- * Hook snackbar onto the provided component.
- * @method hook
- * @param  {Component} component
- */
-SnackbarService.hook = function (component) {
-  SnackbarService.component = component;
-};
+Snackbar.timer = null;
 
 /**
  * @method notify
- * @param  {String} snack The notification object
+ * @param  {String} notification The notification object
  */
-SnackbarService.notify = function (snack) {
+Snackbar.notify = function (notification) {
+  let { active } = relay.getState('snackbar');
+
+  // ### Timer
+  // We need to reset the timer since this is a new notification.
+
   clearTimeout(this.timer);
-  if (this.component.state.snackbar) {
+
+  // ### Action
+  // Bind snackbar to the click method of the action.
+
+  if (notification.action) {
+    notification.action.click = notification.action.click.bind(this);
+  }
+
+  // ### Present
+  // Present the new notification.
+
+  if (active) {
     this.slideOut(function () {
-      this.slideIn(snack);
+      this.slideIn(notification);
     }.bind(this));
   } else {
-    this.slideIn(snack);
+    this.slideIn(notification);
   }
 };
 
@@ -51,9 +53,18 @@ SnackbarService.notify = function (snack) {
  * Clears the timeout and removed the notification.
  * @method dismiss
  */
-SnackbarService.dismiss = function () {
+Snackbar.dismiss = function () {
+  let { active } = relay.getState('snackbar');
+
+  // ### Timer
+  // We need to reset the timer since this is a new notification.
+
   clearTimeout(this.timer);
-  if (this.component.state.snackbar) {
+
+  // ### Dismiss
+  // Dismiss the notification if its currently in an active state.
+
+  if (active) {
     this.slideOut();
   }
 }
@@ -62,14 +73,13 @@ SnackbarService.dismiss = function () {
  * @method slideIn
  * @param  {String} snack The notification object
  */
-SnackbarService.slideIn = function (snack) {
-  this.component.setState({
-    snackbar : {
-      ...snack,
-      animation : 'fadeInUp'
-    }
-  });
-  if (snack.persist !== true) {
+Snackbar.slideIn = function (notification) {
+  relay.dispatch('snackbar', update({
+    active    : true,
+    animation : 'fadeInUp',
+    ...notification
+  }));
+  if (!notification.persist) {
     this.timer = setTimeout(function () {
       this.slideOut();
     }.bind(this), 5000);
@@ -80,32 +90,33 @@ SnackbarService.slideIn = function (snack) {
  * @method slideOut
  * @param  {Function} done
  */
-SnackbarService.slideOut = function (done) {
-  this.component.setState({
-    snackbar : {
-      ...this.component.state.snackbar,
-      animation : 'fadeOutDown'
-    }
-  });
+Snackbar.slideOut = function (done) {
+  relay.dispatch('snackbar', update({
+    animation : 'fadeOutDown'
+  }));
+
+  // ### Reset State
+  // Once the fadeOut animation has completed we reset the snackbar
+  // state to its default parameters.
+
   this.timer = setTimeout(function () {
-    this.component.setState({
-      snackbar : null
-    });
-    if (done) { done(); }
+    relay.dispatch('snackbar', update({
+      active  : false,
+      type    : null,
+      message : null,
+      persist : false,
+      action  : null
+    }));
+    if (done) {
+      done();
+    }
   }.bind(this), 500);
 }
 
 /**
  * @method render
+ * @return {Component}
  */
-SnackbarService.render = function () {
-  let snack = this.component.state.snackbar;
-  return (
-    <Snackbar 
-      type      = { snack.type }
-      message   = { snack.message }
-      action    = { snack.action }
-      animation = { snack.animation }
-    />
-  );
+Snackbar.render = function () {
+  return <Component />
 };

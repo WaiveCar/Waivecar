@@ -2,7 +2,7 @@
 
 import React                     from 'react';
 import { relay, api }            from 'reach-react';
-import { Charts, Snackbar }      from 'reach-components';
+import { Charts, snackbar }      from 'reach-components';
 import { components, resources } from 'reach-ui';
 
 let { MiniChart } = Charts;
@@ -23,14 +23,14 @@ class UIMiniChart extends React.Component {
   componentDidMount() {
     let { index } = resources.get(this.resourceName());
     if (!index) {
-      return Snackbar.notify({
+      return snackbar.notify({
         type    : 'danger',
         message : `MiniChart component is missing ${ this.resourceName() }`
       });
     }
     api.get(index.uri, (err, data) => {
       if (err) {
-        return Snackbar.notify({
+        return snackbar.notify({
           type    : 'danger',
           message : `Could not fetch mini chart data ${ index.uri }`
         });

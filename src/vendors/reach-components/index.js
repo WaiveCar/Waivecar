@@ -9,5 +9,5 @@ export default {
   Layout    : require('./lib/layout'),
   Map       : require('./lib/map'),
   Navbar    : require('./lib/navbar'),
-  Snackbar  : require('./lib/snackbar')
+  snackbar  : require('./lib/snackbar')
 };
