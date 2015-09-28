@@ -1,6 +1,6 @@
 'use strict';
 
-let storage = require('local-storage');
+import storage from 'local-storage';
 
 /**
  * @class Auth
