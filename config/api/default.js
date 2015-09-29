@@ -25,7 +25,7 @@ module.exports = {
     uri     : 'http://localhost:3000',
     cors    : {
       origins : [ 'https://waivecar-dev.cleverbuild.biz', 'https://admin-waivecar-dev.cleverbuild.biz', 'http://localhost:3000', 'http://localhost:8080', 'http://localhost:8100' ],
-      headers : [ 'Content-Type', 'Cache-Control', 'X-Requested-With', 'Authorization' ]
+      headers : [ 'Content-Type', 'Cache-Control', 'X-Requested-With', 'Authorization', 'Role' ]
     }
   },
 

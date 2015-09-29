@@ -5,26 +5,26 @@ module.exports = {
   store : {
     key    : 'view',
     method : 'POST',
-    uri    : '/views'
+    uri    : '/ui/views'
   },
   index : {
     key    : 'views',
     method : 'GET',
-    uri    : '/views'
+    uri    : '/ui/views'
   },
   show : {
     key    : 'view',
     method : 'GET',
-    uri    : '/views/:id'
+    uri    : '/ui/views/:id'
   },
   update : {
     key    : 'view',
     method : 'PUT',
-    uri    : '/views/:id'
+    uri    : '/ui/views/:id'
   },
   delete : {
     key    : 'view',
     method : 'DELETE',
-    uri    : '/views/:id'
+    uri    : '/ui/views/:id'
   }
 };

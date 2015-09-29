@@ -41,6 +41,6 @@ scheduler.process('car-update-client', function *(job) {
   }
   relay.emit('cars', {
     type : 'index',
-    cars : cars
+    data : cars
   });
 });
