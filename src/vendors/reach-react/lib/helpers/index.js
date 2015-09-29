@@ -7,6 +7,12 @@
 let Helpers = module.exports = {};
 
 /**
+ * @property array
+ * @type     Object
+ */
+Helpers.array = require('./array');
+
+/**
  * @property object
  * @type     Object
  */
