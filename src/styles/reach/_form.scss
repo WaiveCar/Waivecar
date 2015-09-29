@@ -8,22 +8,24 @@
  * @param {Mixed} $font-size    The font size of your input
  */
 @mixin reach-form($input-height, $font-size) {
-  .form-group {
+  .r-input {
     padding-top : $input-height;
     position    : relative;
 
     label {
-      color       : #777;
-      left        : 0;
-      font-size   : $font-size;
-      height      : $input-height;
-      line-height : $input-height;
-      position    : absolute;
-      transition  : 0.2s ease all;
-      top         : $input-height;
+      color        : #777;
+      left         : 0;
+      font-size    : $font-size;
+      height       : $input-height;
+      line-height  : $input-height;
+      padding      : 0 15px;
+      position     : absolute;
+      transition   : 0.2s ease all;
+      top          : $input-height;
+      width        : 100%;
     }
 
-    input.form-control {
+    input {
       background    : none;
       border        : none;
       border-bottom : 1px solid #f4f4f4;
@@ -35,15 +37,6 @@
       z-index       : 100;
     }
 
-    select {
-      border        : none;
-      border-bottom : 1px solid #f4f4f4;
-      height        : $input-height;
-      line-height   : $input-height;
-      padding       : 0;
-      width         : 100%;
-    }
-
     .focus-bar {
       background : $brand-primary;
       height     : 2px;
@@ -52,11 +45,7 @@
       width      : 0;
     }
 
-    .help-text {
-      display : none;
-    }
-
-    &.active {
+    &.active, &.focus {
       transition  : 0.2s ease all;
       label {
         font-size  : .8rem;
@@ -74,13 +63,26 @@
       }
     }
 
-    &.has-error {
-      .help-text {
-        display : block;
-        color   : $brand-danger;
-      }
+    .help-text {
+      color     : #777;
+      font-size : .8rem;
     }
+  }
 
-    transition : 0.2s ease all;
+  .r-input-center {
+    label, input {
+      text-align : center;
+    }
+  }
+
+  .r-select {
+    select {
+      border        : none;
+      border-bottom : 1px solid #f4f4f4;
+      height        : $input-height;
+      line-height   : $input-height;
+      padding       : 0;
+      width         : 100%;
+    }
   }
 }

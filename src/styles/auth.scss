@@ -51,8 +51,17 @@
     }
 
     .r-form {
+      color   : #fff;
       padding : 10px 50px;
-      label, input {
+      .r-input {
+        label, input {
+          color : #eee;
+        }
+        input {
+          border-bottom : 1px dashed rgba(#fff, .65);
+        }
+      }
+      pre {
         color : #fff;
       }
     }
