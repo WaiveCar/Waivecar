@@ -1,6 +1,6 @@
 import React              from 'react';
 import mixin              from 'react-mixin';
-import Reach, { auth }    from 'reach-react';
+import { auth, api }      from 'reach-react';
 import { Navigation }     from 'react-router';
 import config             from 'config';
 import { Form, snackbar } from 'reach-components';
@@ -17,55 +17,48 @@ export default class LoginView extends React.Component {
     super(...args);
     this.fields = [
       {
-        component    : 'input',
-        type         : 'text',
-        name         : 'identifier',
-        label        : 'Email Address',
-        tabIndex     : "1",
-        autoComplete : "off",
-        required     : true
+        label     : 'Email Address',
+        component : 'input',
+        type      : 'text',
+        name      : 'identifier',
+        className : 'col-xs-12 r-input r-input-center',
+        tabIndex  : 1
       },
       {
-        component    : 'input',
-        type         : 'password',
-        name         : 'password',
-        label        : 'Password',
-        tabIndex     : "2",
-        autoComplete : "off",
-        required     : true
+        label     : 'Password',
+        component : 'input',
+        type      : 'password',
+        name      : 'password',
+        className : 'col-xs-12 r-input r-input-center',
+        tabIndex  : 2
       }
     ];
-    this.success = this.success.bind(this);
-    this.error   = this.error.bind(this);
   }
 
   /**
-   * @method success
-   * @param  {Object} user
-   */
-  success(user) {
-    auth.set(user);
-    this.transitionTo('/dashboard');
-  }
-
-  /**
-   * @method error
-   * @param  {Object}   error
+   * @method submit
+   * @param  {Object}   data
    * @param  {Function} reset
    */
-  error(error, reset) {
-    reset();
-    snackbar.notify({
-      type    : 'danger',
-      message : error.message,
-      persist : true,
-      action  : {
-        title : 'DISMISS',
-        click : function () {
-          this.dismiss();
-        }
+  submit(data, reset) {
+    api.post('/auth/login', data, function (error, user) {
+      if (error) {
+        reset();
+        return snackbar.notify({
+          type    : 'danger',
+          message : error.message,
+          persist : true,
+          action  : {
+            title : 'DISMISS',
+            click : function () {
+              this.dismiss();
+            }
+          }
+        });
       }
-    });
+      auth.set(user);
+      window.location = '/dashboard';
+    }.bind(this));
   }
 
   /**
@@ -80,12 +73,9 @@ export default class LoginView extends React.Component {
           <span className="title-site">&nbsp;Login</span>
         </div>
         <Form
-          className = "r-form r-form-center"
-          action    = "/auth/login"
-          method    = "POST"
+          className = "r-form"
           fields    = { this.fields }
-          onSuccess = { this.success }
-          onError   = { this.error }
+          submit    = { this.submit }
           buttons   = {[
             {
               value : 'login',

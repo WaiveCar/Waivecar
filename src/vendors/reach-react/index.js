@@ -3,5 +3,6 @@ export default {
   api     : require('./lib/api'),
   dom     : require('./lib/dom'),
   relay   : require('./lib/relay'),
+  logger  : require('./lib/logger'),
   helpers : require('./lib/helpers')
 };
