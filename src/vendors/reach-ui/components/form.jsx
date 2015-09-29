@@ -19,7 +19,7 @@ class UIForm extends React.Component {
     this.state = {
       data : {}
     }
-    this.success = this.success.bind(this);
+    this.submit = this.submit.bind(this);
   }
 
   /**
@@ -99,9 +99,11 @@ class UIForm extends React.Component {
   fields() {
     let list   = fields.get(this.props.fields.id);
     let action = this.isCreate() ? 'create' : 'update';
-    return this.props.fields[action].map((value) => {
+    return this.props.fields[action].map((value, index) => {
       if (list.hasOwnProperty(value)) {
-        list[value].name = value;
+        list[value].name      = value;
+        list[value].className = 'col-xs-12 r-input';
+        list[value].tabIndex  = index + 1;
         return list[value];
       }
     });
@@ -180,12 +182,14 @@ class UIForm extends React.Component {
   }
 
   /**
-   * Executed when the form is successfully submitted.
-   * @method success
+   * Executed when the form is submitted.
+   * @method submit
    * @param  {Object}   data
    * @param  {Function} reset
    */
-  success(data, reset) {
+  submit(data, reset) {
+    console.log(data);
+    /*
     if (this.isCreate()) {
       this.goBack();
     } else {
@@ -194,6 +198,7 @@ class UIForm extends React.Component {
         message : 'Record was successfully updated.'
       });
     }
+    */
   }
 
   /**
@@ -203,12 +208,13 @@ class UIForm extends React.Component {
     return (
       <Form
         key       = { this.id() }
+        className = "r-form"
         method    = { this.method() }
         action    = { this.action() }
         fields    = { this.fields() }
-        data      = { this.state.data }
+        default   = { this.state.data }
         buttons   = { this.buttons() }
-        onSuccess = { this.success }
+        submit    = { this.submit }
       />
     );
   }
