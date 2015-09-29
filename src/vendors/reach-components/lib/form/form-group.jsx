@@ -1,143 +1,80 @@
 'use strict';
 
-import React          from 'react';
-import Reach, { dom } from 'reach-react';
+import React      from 'react';
+import { logger } from 'reach-react';
+import { type }   from 'reach-react/lib/helpers';
 
+// ### Form Components
+
+import Input    from './input';
+import Select   from './select';
+import Checkbox from './checkbox';
+import Radio    from './radio';
+import Textarea from './textarea';
+
+/**
+ * @class FormGroup
+ */
 export default class FormGroup extends React.Component {
-
+  
   /**
-   * @constructor
-   */
-  constructor(...args) {
-    super(...args);
-    this.onFocus = this.onFocus.bind(this);
-    this.onBlur  = this.onBlur.bind(this);
-    this.state   = {
-      focus     : false,
-      formGroup : 'form-group'
-    }
-  }
-
-  /**
-   * @method componentDidUpdate
-   * @param  {Object} prevProps
-   * @param  {Object} prevState
-   */
-  componentDidUpdate(prevProps, prevState) {
-    let formGroup = this.getClass();
-    if (this.state.formGroup !== formGroup) {
-      this.setState({
-        formGroup : formGroup
-      });
-    }
-  }
-
-  /**
-   * @method onFocus
-   */
-  onFocus() {
-    this.setState({
-      focus     : true,
-      formGroup : this.getClass(true)
-    });
-  }
-
-  /**
-   * @method onBlur
-   */
-  onBlur() {
-    this.setState({
-      focus     : false,
-      formGroup : this.getClass()
-    });
-  }
-
-  /**
-   * Returns current state for the form group.
-   * @method getClass
-   * @return {String}
-   */
-  getClass() {
-    let result = {};
-    result['form-group'] = true;
-    result.active        = (this.refs.input && this.refs.input.value) || this.state.focus;
-    result.focus         = this.state.focus;
-    return dom.setClass(result);
-  }
-
-  /**
-   * @method getField
-   * @param  {Object} field
+   * @method prepare
+   * @param  {Mixed} data
    * @return {Component}
    */
-  getField(field) {
-    switch (field.component) {
-      case 'input'  : return this.getInput(field);
-      case 'select' : return this.getSelect(field);
+  prepare(data) {
+    if (type.isArray(data)) {
+      return this.group(data.map((options, index) => {
+        return this.field(options, index);
+      }.bind(this)));
     }
-    return null;
+    switch (data.component) {
+      case 'input'    : 
+      case 'select'   : 
+      case 'textarea' :
+        return this.group(this.field(data));
+      default :
+        return this.field(data);
+    }
   }
 
   /**
-   * @method getInput
-   * @param  {Object} field
+   * @method group
+   * @param  {Mixed} content
+   * @return {Component}
    */
-  getInput(field) {
-    let { autoComplete, label, name, type, helpText, required } = field;
+  group(content) {
     return (
-      <div className={ this.state.formGroup }>
-        <label>{ label }</label>
-        <input
-          name         = { name }
-          className    = "form-control"
-          onChange     = { this.props.onChange }
-          required     = { required }
-          type         = { type }
-          tabIndex     = { this.props.tabIndex }
-          placeholder  = { this.props.placeholder || '' }
-          autoComplete = { autoComplete }
-          value        = { this.props.value }
-          onFocus      = { this.onFocus }
-          onBlur       = { this.onBlur }
-          ref          = "input"
-        />
-        <div className="focus-bar"></div>
-        <span className="help-text">{ helpText }</span>
+      <div className="form-group row">
+        { content }
       </div>
     );
   }
 
   /**
-   * @method getSelect
-   * @param  {Object} field
+   * @method field
+   * @param  {Object} options
+   * @param  {Number} [index]
+   * @return {Component}
    */
-  getSelect(field) {
-    let { autoComplete, label, name, type, helpText, options, required } = field;
-    return (
-      <div className="form-group active">
-        <label>{ label }</label>
-        <select name={ name } value={ this.props.value } onChange={ this.props.onChange } tabIndex={ this.props.tabIndex }>
-        {
-          options.map((option, i) => {
-            return <option key={ i } value={ option.value }>{ option.name }</option>
-          })
-        }
-        </select>
-      </div>
-    );
+  field(options, index) {
+    switch (options.component) {
+      case 'input'    : return <Input    key={ index } options={ options } value={ this.props.data[options.name] } input={ this.props.input } />;
+      case 'select'   : return <Select   key={ index } options={ options } value={ this.props.data[options.name] } input={ this.props.input } />;
+      case 'checkbox' : return <Checkbox key={ index } options={ options } value={ this.props.data }               input={ this.props.input } />;
+      case 'radio'    : return <Radio    key={ index } options={ options } value={ this.props.data[options.name] } input={ this.props.input } />;
+      case 'textarea' : return <Textarea key={ index } options={ options } value={ this.props.data[options.name] } input={ this.props.input } />;
+      default : 
+        logger.warn(`Form > Cannot render unknown component [${ options.component }]`);
+    }
   }
 
   /**
    * @method render
+   * @return {Component}
    */
   render() {
-    return (
-      <div className="col-md-12">
-      {
-        this.getField(this.props.field)
-      }
-      </div>
-    );
+    return this.prepare(this.props.field);
   }
 
 }
