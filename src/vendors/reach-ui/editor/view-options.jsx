@@ -26,7 +26,7 @@ export default class ViewOptions extends Component {
           name      : 'width',
           label     : 'Width (1-12)',
           component : 'input',
-          type      : 'text'
+          type      : 'number'
         }
       ];
       default :
