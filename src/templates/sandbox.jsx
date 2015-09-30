@@ -18,16 +18,17 @@ class SandboxTemplate extends React.Component {
     this.state = {
 
       // ### Default Data
-      /*
-      default : {
-        firstName    : 'Christoffer',
-        lastName     : 'Rødvik',
-        role         : 'admin',
-        subscription : 30,
-        hiking       : true,
-        bio          : 'Full Stack Developer @ CleverTech'
-      },
-      */
+
+      // default : {
+      //   firstName    : 'Christoffer',
+      //   lastName     : 'Rødvik',
+      //   role         : 'admin',
+      //   subscription : 30,
+      //   hiking       : true,
+      //   colors       : [ 'red', 'yellow' ],
+      //   bio          : 'Full Stack Developer @ CleverTech'
+      // },
+
 
       // ### Form Fields
 
