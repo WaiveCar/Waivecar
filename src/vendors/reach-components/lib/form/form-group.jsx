@@ -29,10 +29,10 @@ export default class FormGroup extends React.Component {
       }.bind(this)));
     }
     switch (data.component) {
-      case 'input'       :
-      case 'select'      :
-      case 'multiselect' :
-      case 'textarea'    :
+      case 'input'        :
+      case 'select'       :
+      case 'multi-select' :
+      case 'textarea'     :
         return this.group(this.field(data));
       default :
         return this.field(data);
@@ -60,12 +60,12 @@ export default class FormGroup extends React.Component {
    */
   field(options, index) {
     switch (options.component) {
-      case 'input'       : return <Input       key={ index } options={ options } value={ this.props.data[options.name] } onChange={ this.props.onChange } />;
-      case 'select'      : return <Select      key={ index } options={ options } value={ this.props.data[options.name] } onChange={ this.props.onChange } />;
-      case 'multiselect' : return <Select      key={ index } options={ options } value={ this.props.data[options.name] } onChange={ this.props.onChange } multi={ true } />;
-      case 'checkbox'    : return <Checkbox    key={ index } options={ options } value={ this.props.data }               onChange={ this.props.onChange } />;
-      case 'radio'       : return <Radio       key={ index } options={ options } value={ this.props.data[options.name] } onChange={ this.props.onChange } />;
-      case 'textarea'    : return <Textarea    key={ index } options={ options } value={ this.props.data[options.name] } onChange={ this.props.onChange } />;
+      case 'input'        : return <Input       key={ index } options={ options } value={ this.props.data[options.name] } onChange={ this.props.onChange } />;
+      case 'select'       : return <Select      key={ index } options={ options } value={ this.props.data[options.name] } onChange={ this.props.onChange } multi={ false } />;
+      case 'multi-select' : return <Select      key={ index } options={ options } value={ this.props.data[options.name] } onChange={ this.props.onChange } multi={ true } />;
+      case 'checkbox'     : return <Checkbox    key={ index } options={ options } value={ this.props.data }               onChange={ this.props.onChange } />;
+      case 'radio'        : return <Radio       key={ index } options={ options } value={ this.props.data[options.name] } onChange={ this.props.onChange } />;
+      case 'textarea'     : return <Textarea    key={ index } options={ options } value={ this.props.data[options.name] } onChange={ this.props.onChange } />;
       default :
         logger.warn(`Form > Cannot render unknown component [${ options.component }]`);
     }

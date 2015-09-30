@@ -37,6 +37,10 @@ Resources.get = function (key) {
   return Resources.store[key];
 };
 
+/**
+ * @method getKeys
+ * @return {Array}
+ */
 Resources.getKeys = function () {
   return Object.keys(Resources.store);
 };

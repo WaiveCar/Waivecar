@@ -1,11 +1,161 @@
 'use strict';
 
-import React         from 'react';
-import { relay }     from 'reach-react';
-import { templates } from 'reach-ui';
-import { Form }      from 'reach-components';
+import React                            from 'react';
+import { relay }                        from 'reach-react';
+import { type, case }                   from 'reach-react/lib/helpers';
+import { templates, resources, fields } from 'reach-ui';
+import { Form }                         from 'reach-components';
 
-let index = 0;
+let index      = 0;
+let formFields = {
+
+  firstName : {
+    label        : 'First name',
+    component    : 'input',
+    type         : 'text',
+    name         : 'firstName',
+    className    : 'col-md-6 r-input',
+    helpText     : 'Enter your first name'
+  },
+
+  lastName : {
+    label        : 'Last name',
+    component    : 'input',
+    type         : 'text',
+    name         : 'lastName',
+    className    : 'col-md-6 r-input',
+    helpText     : 'Enter your last name'
+  },
+
+  role : {
+    label        : 'User Role (Select)',
+    component    : 'select',
+    name         : 'role',
+    className    : 'col-xs-12 r-select',
+    options      : [
+      {
+        name : 'User',
+        value : 'user'
+      },
+      {
+        name : 'Administrator',
+        value : 'admin'
+      }
+    ],
+    helpText : 'Select the users system role.'
+  },
+
+  gender : {
+    label        : 'Gender (Select)',
+    component    : 'select',
+    name         : 'gender',
+    className    : 'col-xs-12 r-select',
+    options      : [
+      {
+        name  : 'Male',
+        value : 'male'
+      },
+      {
+        name  : 'Female',
+        value : 'female'
+      }
+    ],
+    helpText : 'Selecting gender should change the interests choices.'
+  },
+
+  colors : {
+    label        : 'Colors (Multi Select)',
+    component    : 'multi-select',
+    name         : 'colors',
+    className    : 'col-xs-12 r-select',
+    options   : [
+      {
+        name  : 'Red',
+        value : 'red'
+      },
+      {
+        name  : 'Green',
+        value : 'green'
+      },
+      {
+        name  : 'Yellow',
+        value : 'yellow'
+      }
+    ],
+    helpText : 'Select fav. colors.'
+  },
+
+  interests : {
+    label     : 'Interests (Checkboxes)',
+    component : 'checkbox',
+    name      : 'interests',
+    className : 'col-md-2',
+    helpText  : 'Check of each of your interests',
+    options   : {
+      connector : 'gender',
+      values    : {
+        male : [
+          {
+            name  : 'Games',
+            value : 'games'
+          },
+          {
+            name  : 'Hiking',
+            value : 'hiking'
+          },
+          {
+            name  : 'Programming',
+            value : 'programming'
+          }
+        ],
+        female : [
+          {
+            name  : 'Fashion',
+            value : 'fashion'
+          },
+          {
+            name  : 'Hiking',
+            value : 'hiking'
+          },
+          {
+            name  : 'Shopping',
+            value : 'shopping'
+          }
+        ]
+      }
+    }
+  },
+
+  subscription : {
+    label     : 'Subscription Period (Radio)',
+    component : 'radio',
+    name      : 'subscription',
+    options   : [
+      {
+        name  : '30 Days',
+        value : 30
+      },
+      {
+        name  : '60 Days',
+        value : 60
+      },
+      {
+        name  : '90 Days',
+        value : 90
+      }
+    ],
+    helpText : 'Select a subscription period.'
+  },
+
+  bio : {
+    label        : 'Bio (Textarea)',
+    component    : 'textarea',
+    name         : 'bio',
+    placeholder  : 'Enter some text about the user',
+    helpText     : 'Enter some text about the user.'
+  }
+
+}
 
 /**
  * Renders the authentication layout for the application.
@@ -16,146 +166,78 @@ class SandboxTemplate extends React.Component {
   constructor(...args) {
     super(...args);
     this.state = {
+      fields : arrayToFields([ [ 'firstName', 'lastName' ], 'role', 'gender', 'colors', 'interests', 'subscription', 'bio' ])
+    };
+    this.change = this.change.bind(this);
+    this.submit = this.submit.bind(this);
+  }
 
-      // ### Default Data
-
-      // default : {
-      //   firstName    : 'Christoffer',
-      //   lastName     : 'Rødvik',
-      //   role         : 'admin',
-      //   subscription : 30,
-      //   hiking       : true,
-      //   colors       : [ 'red', 'yellow' ],
-      //   bio          : 'Full Stack Developer @ CleverTech'
-      // },
-
-
-      // ### Form Fields
-
-      fields : [
-
-        // ### Inputs
-
-        [
+  fields() {
+    let res    = resources.getKeys();
+    let values = {};
+    for (let key in fields.store) {
+      values[key] = Object.keys(fields.store[key]).map((value) => {
+        return {
+          name  : value,
+          value : value
+        }
+      });
+    }
+    let result = [
+      {
+        label     : 'Resource',
+        component : 'select',
+        name      : 'resource',
+        className : 'col-xs-12 r-select',
+        options   : res.map((value) => {
+          return {
+            name  : value,
+            value : value
+          }
+        }),
+        helpText : 'Select resource for this form'
+      },
+      {
+        label     : 'Fields',
+        component : 'checkbox',
+        name      : 'fields',
+        helpText  : 'Select resource fields to appear in table',
+        options   : {
+          connector : 'resource',
+          values    : values
+        }
+      },
+      {
+        label     : 'Sample',
+        component : 'checkbox',
+        name      : 'sample',
+        helpText  : 'Just a sample when working with checkbox component update checks',
+        options   : [
           {
-            label        : 'First name',
-            component    : 'input',
-            type         : 'text',
-            name         : 'firstName',
-            className    : 'col-md-6 r-input',
-            helpText     : 'Enter your first name'
+            name  : 'Games',
+            value : 'games'
           },
           {
-            label        : 'Last name',
-            component    : 'input',
-            type         : 'text',
-            name         : 'lastName',
-            className    : 'col-md-6 r-input',
-            helpText     : 'Enter your last name'
+            name  : 'Hiking',
+            value : 'hiking'
+          },
+          {
+            name  : 'Programming',
+            value : 'programming'
           }
-        ],
+        ]
+      }
+    ];
+    return result;
+  }
 
-        // ### Select Sample
-
-        {
-          label        : 'User Role (Select)',
-          component    : 'select',
-          name         : 'role',
-          className    : 'col-xs-12 r-select',
-          options      : [
-            {
-              name : 'User',
-              value : 'user'
-            },
-            {
-              name : 'Administrator',
-              value : 'admin'
-            }
-          ],
-          helpText : 'Select the users system role.'
-        },
-
-        {
-          label        : 'Colors (Multi Select)',
-          component    : 'multiselect',
-          name         : 'colors',
-          className    : 'col-xs-12 r-select',
-          options   : [
-            {
-              name  : 'Red',
-              value : 'red'
-            },
-            {
-              name  : 'Green',
-              value : 'green'
-            },
-            {
-              name  : 'Yellow',
-              value : 'yellow'
-            }
-          ],
-          helpText : 'Select fav. colors.'
-        },
-
-        // ### Checkbox
-
-        {
-          label     : 'Interests (Checkboxes)',
-          component : 'checkbox',
-          name      : 'interests',
-          className : 'col-md-2',
-          options   : [
-            {
-              name  : 'Games',
-              value : 'games'
-            },
-            {
-              name  : 'Hiking',
-              value : 'hiking'
-            },
-            {
-              name  : 'Programming',
-              value : 'programming'
-            }
-          ],
-          helpText : 'Check of each of your interests.'
-        },
-
-        // ### Radio
-
-        {
-          label     : 'Subscription Period (Radio)',
-          component : 'radio',
-          name      : 'subscription',
-          options   : [
-            {
-              name  : '30 Days',
-              value : 30
-            },
-            {
-              name  : '60 Days',
-              value : 60
-            },
-            {
-              name  : '90 Days',
-              value : 90
-            }
-          ],
-          helpText : 'Select a subscription period.'
-        },
-
-        // ### Textarea
-
-        {
-          label        : 'Bio (Textarea)',
-          component    : 'textarea',
-          name         : 'bio',
-          placeholder  : 'Enter some text about the user',
-          helpText     : 'Enter some text about the user.'
-        }
-
-      ]
-    }
+  /**
+   * Event handler for input updates on the form.
+   * @method change
+   * @param  {Object} target
+   */
+  change(target) {
+    // ... 
   }
 
   /**
@@ -176,8 +258,9 @@ class SandboxTemplate extends React.Component {
         <h3 style={{ margin : '30px 0' }}>Forms</h3>
         <Form
           className = "r-form"
-          fields    = { this.state.fields }
+          fields    = { this.fields() }
           default   = { this.state.default }
+          change    = { this.change }
           submit    = { this.submit }
           buttons   = {[
             {
@@ -206,6 +289,20 @@ class SandboxTemplate extends React.Component {
     );
   }
 
+}
+
+/**
+ * @method arrayToFields
+ * @param  {Array} list
+ * @return {Array}
+ */
+function arrayToFields(list) {
+  return list.map((value, index) => {
+    if (type.isArray(value)) {
+      return arrayToFields(value);
+    }
+    return formFields[value];
+  });
 }
 
 // ### Register Template

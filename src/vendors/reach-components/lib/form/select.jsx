@@ -33,7 +33,7 @@ export default class Select extends React.Component {
       target : {
         type  : 'select',
         name  : this.props.options.name,
-        value : newValue ? newValue.split(',') : []
+        value : this.props.multi ? (newValue ? newValue.split(',') : []) : newValue
       }
     });
   }
@@ -44,17 +44,17 @@ export default class Select extends React.Component {
    */
   render() {
     let { label, name, className, helpText, options } = this.props.options;
-    logger.debug(`Form > Render multi-select component [${ name }] [${ this.props.value }]`);
+    logger.debug(`Form > Render select component [${ name }] [${ this.props.value }]`);
     return (
       <div className={ className || 'col-md-12' }>
         <label>{ label }</label>
         <ReactSelect
-          name={ name }
-          value={ this.props.value }
-          options={ options.map((o) => { return { label : o.name, value : o.value }; }) }
-          onChange={ this.onChange.bind(this) }
-          multi={ this.props.multi }
-          placeholder={ helpText }
+          name        = { name }
+          value       = { this.props.value }
+          options     = { options.map((o) => { return { label : o.name, value : o.value }; }) }
+          onChange    = { this.onChange.bind(this) }
+          multi       = { this.props.multi }
+          placeholder = { helpText }
         />
       </div>
     );

@@ -53,22 +53,39 @@ export default class Form extends React.Component {
    * @param  {Object} event
    */
   onChange(event) {
-    let target = event.target;
-    let data   = this.state.data;
+    let target     = event.target;
+    let data       = this.state.data;
+    let { change } = this.props;
+
+    // ### Update Target
+
     switch (target.type) {
       case 'number' :
         data[target.name] = +target.value;
         break;
       case 'checkbox' :
-        data[target.name] = target.checked;
+        if (target.reset) {
+          data[target.category] = [];
+        } else {
+          data[target.category] = checkbox(data[target.category], event.target);
+        }
         break;
       default :
         data[target.name] = target.value;
         break;
     }
+
+    // ### Update Data
+
     this.setState({
       data : data
     });
+
+    // ### External Event Handler
+
+    if (change) {
+      change(target);
+    }
   }
 
   /**
@@ -170,4 +187,30 @@ export default class Form extends React.Component {
     }
   }
 
+}
+
+// ### Input Cases
+
+/**
+ * @method checkbox
+ * @param  {Array}  data
+ * @param  {Object} target
+ */
+function checkbox(data, target) {
+  let result = [];
+  
+  if (data) {
+    data.forEach((value) => {
+      if (value === target.name && !target.checked) {
+        return;
+      }
+      result.push(value);
+    });
+  }
+
+  if (target.checked) {
+    result.push(target.name);
+  }
+
+  return result;
 }
