@@ -37,6 +37,10 @@ Resources.get = function (key) {
   return Resources.store[key];
 };
 
+Resources.getKeys = function () {
+  return Object.keys(Resources.store);
+};
+
 /**
  * Prepares all the resources by creating relay reducers.
  * @method prepare
