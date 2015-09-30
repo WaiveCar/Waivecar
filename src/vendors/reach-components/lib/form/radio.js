@@ -54,7 +54,7 @@ export default class Radio extends React.Component {
               <div key={ index } className={ className || 'col-md-12' }>
                 <div className="radio">
                   <label>
-                    <input type="radio" name={ name } value={ radio.value } onChange={ this.props.input } checked={ this.checked(this.props.value, radio.value) } /> { radio.name }
+                    <input type="radio" name={ name } value={ radio.value } onChange={ this.props.onChange } checked={ this.checked(this.props.value, radio.value) } /> { radio.name }
                   </label>
                 </div>
               </div>

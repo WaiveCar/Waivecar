@@ -17,9 +17,9 @@ export default class Form extends React.Component {
     this.state = {
       data : {}
     };
-    this.input  = this.input.bind(this);
-    this.reset  = this.reset.bind(this);
-    this.submit = this.submit.bind(this);
+    this.onChange = this.onChange.bind(this);
+    this.reset    = this.reset.bind(this);
+    this.submit   = this.submit.bind(this);
   }
 
   /**
@@ -36,10 +36,10 @@ export default class Form extends React.Component {
 
   /**
    * Input event updating the data state of the form.
-   * @method input
+   * @method onChange
    * @param  {Object} event
    */
-  input(event) {
+  onChange(event) {
     let target = event.target;
     let data   = this.state.data;
     switch (target.type) {
@@ -112,15 +112,15 @@ export default class Form extends React.Component {
           this.props.fields.map((field, index) => {
             return (
               <FormGroup 
-                key   = { index }
-                field = { field }
-                data  = { this.data() }
-                input = { this.input }
+                key      = { index }
+                field    = { field }
+                data     = { this.data() }
+                onChange = { this.onChange }
               />
             )
           }.bind(this))
         }
-        <div className="form-actions">
+        <div className="form-actions text-center">
           <div className="btn-group" role="group">
             {
               this.buttons(this.props.buttons)

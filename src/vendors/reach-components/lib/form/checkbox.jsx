@@ -64,7 +64,7 @@ export default class Checkbox extends React.Component {
               <div key={ index } className={ className || 'col-md-12' }>
                 <div className="checkbox">
                   <label>
-                    <input type="checkbox" name={ box.value } onChange={ this.props.input } checked={ this.props.value[box.value] } /> { box.name }
+                    <input type="checkbox" name={ box.value } onChange={ this.props.onChange } checked={ this.props.value[box.value] } /> { box.name }
                   </label>
                 </div>
               </div>

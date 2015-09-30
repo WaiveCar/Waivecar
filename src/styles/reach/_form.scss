@@ -7,7 +7,7 @@
  * @param {Mixed} $input-height The height of your input
  * @param {Mixed} $font-size    The font size of your input
  */
-@mixin reach-form($input-height, $font-size) {
+@mixin reach-form($input-height, $font-size, $border-color) {
   .r-input {
     padding-top : $input-height;
     position    : relative;
@@ -28,7 +28,7 @@
     input {
       background    : none;
       border        : none;
-      border-bottom : 1px solid #f4f4f4;
+      border-bottom : 1px solid $border-color;
       font-size     : $font-size;
       height        : $input-height;
       line-height   : $input-height;
@@ -78,7 +78,7 @@
   .r-select {
     select {
       border        : none;
-      border-bottom : 1px solid #f4f4f4;
+      border-bottom : 1px solid $border-color;
       height        : $input-height;
       line-height   : $input-height;
       padding       : 0;

@@ -22,8 +22,14 @@ export default class MultiSelect extends React.Component {
     return false;
   }
 
+  /**
+   * Sends input to the form state handler.
+   * @method onChange
+   * @param  {String} newValue
+   * @param  {Object} selectedOptions
+   */
   onChange(newValue, selectedOptions) {
-    this.props.input({
+    this.props.onChange({
       target : {
         type  : 'select',
         name  : this.props.options.name,
@@ -38,7 +44,7 @@ export default class MultiSelect extends React.Component {
    */
   render() {
     let { label, name, className, helpText, options } = this.props.options;
-    logger.debug(`Form > Render select component [${ name }] [${ this.props.value }]`);
+    logger.debug(`Form > Render multi-select component [${ name }] [${ this.props.value }]`);
     return (
       <div className={ className || 'col-md-12' }>
         <label>{ label }</label>

@@ -2,17 +2,21 @@
 @import './styles/select/select';
 
 .r-form {
-  @include reach-form(28px, 1.1rem);
-}
+  @include reach-form(28px, 1.1rem, #ccc);
 
-.r-form-center {
-  .form-group {
-    label {
-      text-align : center;
-      width : 100%;
-    }
-    input.form-control {
-      text-align : center;
-    }
+  // ### React Select
+  
+  .Select-control {
+    border        : none;
+    border-bottom : 1px solid #ccc;
+    border-radius : 0;
+  }
+
+  .Select-arrow {
+    top : 17px;
+  }
+
+  .Select-clear {
+    padding : 8px 10px;
   }
 }

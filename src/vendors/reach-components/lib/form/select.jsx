@@ -31,7 +31,7 @@ export default class Select extends React.Component {
     return (
       <div className={ className || 'col-md-12' }>
         <label>{ label }</label>
-        <select className="form-control" name={ name } value={ this.props.value } onChange={ this.props.input }>
+        <select className="form-control" name={ name } value={ this.props.value } onChange={ this.props.onChange }>
           {
             options.map((option, i) => {
               return <option key={ i } value={ option.value }>{ option.label }</option>

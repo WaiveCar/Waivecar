@@ -116,7 +116,7 @@ export default class Input extends React.Component {
           name        = { name }
           placeholder = { placeholder }
           value       = { this.props.value }
-          onChange    = { this.props.input }
+          onChange    = { this.props.onChange }
           onFocus     = { this.focus }
           onBlur      = { this.blur }
           tabIndex    = { tabIndex }

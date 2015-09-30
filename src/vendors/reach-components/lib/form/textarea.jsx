@@ -36,7 +36,7 @@ export default class Textarea extends React.Component {
           name        = { name }
           placeholder = { placeholder }
           value       = { this.props.value }
-          onChange    = { this.props.input }
+          onChange    = { this.props.onChange }
         />
       </div>
     );
