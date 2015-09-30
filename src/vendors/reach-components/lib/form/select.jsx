@@ -1,7 +1,8 @@
 'use strict';
 
-import React      from 'react';
-import { logger } from 'reach-react';
+import React       from 'react';
+import { logger }  from 'reach-react';
+import ReactSelect from 'react-select';
 
 export default class Select extends React.Component {
 
@@ -22,22 +23,39 @@ export default class Select extends React.Component {
   }
 
   /**
+   * Sends input to the form state handler.
+   * @method onChange
+   * @param  {String} newValue
+   * @param  {Object} selectedOptions
+   */
+  onChange(newValue, selectedOptions) {
+    this.props.onChange({
+      target : {
+        type  : 'select',
+        name  : this.props.options.name,
+        value : newValue ? newValue.split(',') : []
+      }
+    });
+  }
+
+  /**
    * @method render
    * @return {Component}
    */
   render() {
-    let { label, name, className, options } = this.props.options;
-    logger.debug(`Form > Render select component [${ name }] [${ this.props.value }]`);
+    let { label, name, className, helpText, options } = this.props.options;
+    logger.debug(`Form > Render multi-select component [${ name }] [${ this.props.value }]`);
     return (
       <div className={ className || 'col-md-12' }>
         <label>{ label }</label>
-        <select className="form-control" name={ name } value={ this.props.value } onChange={ this.props.onChange }>
-          {
-            options.map((option, i) => {
-              return <option key={ i } value={ option.value }>{ option.label }</option>
-            })
-          }
-        </select>
+        <ReactSelect
+          name={ name }
+          value={ this.props.value }
+          options={ options.map((o) => { return { label : o.name, value : o.value }; }) }
+          onChange={ this.onChange.bind(this) }
+          multi={ this.props.multi }
+          placeholder={ helpText }
+        />
       </div>
     );
   }

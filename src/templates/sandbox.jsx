@@ -64,11 +64,11 @@ class SandboxTemplate extends React.Component {
           className    : 'col-xs-12 r-select',
           options      : [
             {
-              label : 'User',
+              name : 'User',
               value : 'user'
             },
             {
-              label : 'Administrator',
+              name : 'Administrator',
               value : 'admin'
             }
           ],
@@ -82,15 +82,15 @@ class SandboxTemplate extends React.Component {
           className    : 'col-xs-12 r-select',
           options   : [
             {
-              label  : 'Red',
+              name  : 'Red',
               value : 'red'
             },
             {
-              label  : 'Green',
+              name  : 'Green',
               value : 'green'
             },
             {
-              label  : 'Yellow',
+              name  : 'Yellow',
               value : 'yellow'
             }
           ],

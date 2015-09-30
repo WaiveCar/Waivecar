@@ -220,6 +220,10 @@ components.register({
         {
           name : 'Cars',
           value : 'cars'
+        },
+        {
+          name : 'Views',
+          value : 'views'
         }
       ],
       helpText  : 'Select a Resource'
@@ -227,7 +231,7 @@ components.register({
     {
       name      : 'actions',
       label     : 'Actions',
-      component : 'select',
+      component : 'multiselect',
       options   : [
         {
           name : 'Create',
