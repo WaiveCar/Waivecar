@@ -23,19 +23,11 @@ export default class MultiSelect extends React.Component {
   }
 
   onChange(newValue, selectedOptions) {
-    if (!newValue) {
-      newValue = [];
-    } else if (newValue.indexOf(',') > -1) {
-      newValue = newValue.split(',');
-    } else {
-      newValue = [ newValue ];
-    }
-
     this.props.input({
       target : {
         type  : 'select',
         name  : this.props.options.name,
-        value : newValue
+        value : newValue ? newValue.split(',') : []
       }
     });
   }
