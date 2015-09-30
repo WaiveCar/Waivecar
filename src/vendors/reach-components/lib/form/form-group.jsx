@@ -7,16 +7,17 @@ import { type }   from 'reach-react/lib/helpers';
 // ### Form Components
 
 import Input    from './input';
-import Select   from './select';
-import Checkbox from './checkbox';
-import Radio    from './radio';
-import Textarea from './textarea';
+import Select      from './select';
+import Checkbox    from './checkbox';
+import MultiSelect from './multi-select';
+import Radio       from './radio';
+import Textarea    from './textarea';
 
 /**
  * @class FormGroup
  */
 export default class FormGroup extends React.Component {
-  
+
   /**
    * @method prepare
    * @param  {Mixed} data
@@ -29,9 +30,10 @@ export default class FormGroup extends React.Component {
       }.bind(this)));
     }
     switch (data.component) {
-      case 'input'    : 
-      case 'select'   : 
-      case 'textarea' :
+      case 'input'       :
+      case 'select'      :
+      case 'multiselect' :
+      case 'textarea'    :
         return this.group(this.field(data));
       default :
         return this.field(data);
@@ -59,12 +61,13 @@ export default class FormGroup extends React.Component {
    */
   field(options, index) {
     switch (options.component) {
-      case 'input'    : return <Input    key={ index } options={ options } value={ this.props.data[options.name] } input={ this.props.input } />;
-      case 'select'   : return <Select   key={ index } options={ options } value={ this.props.data[options.name] } input={ this.props.input } />;
-      case 'checkbox' : return <Checkbox key={ index } options={ options } value={ this.props.data }               input={ this.props.input } />;
-      case 'radio'    : return <Radio    key={ index } options={ options } value={ this.props.data[options.name] } input={ this.props.input } />;
-      case 'textarea' : return <Textarea key={ index } options={ options } value={ this.props.data[options.name] } input={ this.props.input } />;
-      default : 
+      case 'input'       : return <Input       key={ index } options={ options } value={ this.props.data[options.name] } input={ this.props.input } />;
+      case 'select'      : return <Select      key={ index } options={ options } value={ this.props.data[options.name] } input={ this.props.input } />;
+      case 'multiselect' : return <MultiSelect key={ index } options={ options } value={ this.props.data[options.name] } input={ this.props.input } />;
+      case 'checkbox'    : return <Checkbox    key={ index } options={ options } value={ this.props.data }               input={ this.props.input } />;
+      case 'radio'       : return <Radio       key={ index } options={ options } value={ this.props.data[options.name] } input={ this.props.input } />;
+      case 'textarea'    : return <Textarea    key={ index } options={ options } value={ this.props.data[options.name] } input={ this.props.input } />;
+      default :
         logger.warn(`Form > Cannot render unknown component [${ options.component }]`);
     }
   }

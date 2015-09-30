@@ -65,6 +65,7 @@
     "react-dom": "0.14.0-rc1",
     "react-mixin": "1.7.0",
     "react-modal": "git@github.com:ayarulin/react-modal.git",
-    "react-router": "1.0.0-beta3"
+    "react-router": "1.0.0-beta3",
+    "react-select": "^0.6.11"
   }
 }

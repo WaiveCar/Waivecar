@@ -1,4 +1,5 @@
 @import '~styles/reach';
+@import './styles/select/select';
 
 .r-form {
   @include reach-form(28px, 1.1rem);

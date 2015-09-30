@@ -74,6 +74,28 @@ class SandboxTemplate extends React.Component {
           helpText : 'Select the users system role.'
         },
 
+        {
+          label        : 'Colors (Multi Select)',
+          component    : 'multiselect',
+          name         : 'colors',
+          className    : 'col-xs-12 r-select',
+          options   : [
+            {
+              label  : 'Red',
+              value : 'red'
+            },
+            {
+              label  : 'Green',
+              value : 'green'
+            },
+            {
+              label  : 'Yellow',
+              value : 'yellow'
+            }
+          ],
+          helpText : 'Select fav. colors.'
+        },
+
         // ### Checkbox
 
         {
@@ -151,10 +173,10 @@ class SandboxTemplate extends React.Component {
     return (
       <div className="container">
         <h3 style={{ margin : '30px 0' }}>Forms</h3>
-        <Form 
+        <Form
           className = "r-form"
-          fields    = { this.state.fields } 
-          default   = { this.state.default } 
+          fields    = { this.state.fields }
+          default   = { this.state.default }
           submit    = { this.submit }
           buttons   = {[
             {
