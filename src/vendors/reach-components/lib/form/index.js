@@ -56,6 +56,9 @@ export default class Form extends React.Component {
     let target = event.target;
     let data   = this.state.data;
     switch (target.type) {
+      case 'number' :
+        data[target.name] = +target.value;
+        break;
       case 'checkbox' :
         data[target.name] = target.checked;
         break;
@@ -77,13 +80,13 @@ export default class Form extends React.Component {
     if (list) {
       return list.map((btn, i) => {
         return (
-          <Button 
-            key       = { i } 
-            className = { btn.class } 
-            type      = { btn.type || 'button' } 
-            value     = { btn.value } 
-            style     = { btn.style || null } 
-            onClick   = { 
+          <Button
+            key       = { i }
+            className = { btn.class }
+            type      = { btn.type || 'button' }
+            value     = { btn.value }
+            style     = { btn.style || null }
+            onClick   = {
               type.isFunction(btn.click) ? btn.click : this[btn.click]
             }
           />
@@ -103,7 +106,7 @@ export default class Form extends React.Component {
   }
 
   /**
-   * Executes a submit action on the form, if a submit method has been 
+   * Executes a submit action on the form, if a submit method has been
    * defined we ignore the submit event and pass it to the defined submit.
    * @method submit
    * @param  {Object} event
@@ -126,7 +129,7 @@ export default class Form extends React.Component {
         {
           this.props.fields.map((field, index) => {
             return (
-              <FormGroup 
+              <FormGroup
                 key      = { index }
                 field    = { field }
                 data     = { this.data() }
