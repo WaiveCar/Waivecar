@@ -42,7 +42,8 @@ export default class Checkbox extends React.Component {
    * @method label
    */
   label() {
-    if (this.props.options.label) {
+    let { label } = this.props.options;
+    if (label) {
       return <label className="col-xs-12">{ label }</label>
     }
   }
@@ -52,7 +53,7 @@ export default class Checkbox extends React.Component {
    * @return {Component}
    */
   render() {
-    let { label, name, className, options } = this.props.options;
+    let { name, className, options } = this.props.options;
     logger.debug(`Form > Render checkbox component [${ name }] [${ options.map((opt) => `${opt.value}=${this.props.value[opt.value]}`) }]`);
     return (
       <div className="form-group row">
