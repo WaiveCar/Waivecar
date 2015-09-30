@@ -1,6 +1,7 @@
 'use strict';
 
 import React            from 'react';
+import { logger }       from 'reach-react';
 import { type, object } from 'reach-react/lib/helpers';
 import { app }          from 'config';
 import FormGroup        from './form-group';
@@ -20,6 +21,18 @@ export default class Form extends React.Component {
     this.onChange = this.onChange.bind(this);
     this.reset    = this.reset.bind(this);
     this.submit   = this.submit.bind(this);
+  }
+
+  /**
+   * @method componentWillReceiveProps
+   */
+  componentWillReceiveProps(nextProps, nextState) {
+    this.setState({
+      data : {
+        ...nextProps.default,
+        ...this.state.data
+      }
+    });
   }
 
   /**
@@ -96,9 +109,10 @@ export default class Form extends React.Component {
    * @param  {Object} event
    */
   submit(event) {
-    if (type.isFunction(this.props.submit)) {
+    let { submit } = this.props;
+    if (type.isFunction(submit)) {
       event.preventDefault();
-      this.props.submit(this.data(), this.reset);
+      submit(this.data(), this.reset);
     }
   }
 
@@ -106,6 +120,7 @@ export default class Form extends React.Component {
    * @method render
    */
   render() {
+    logger.debug(`Form > Rendering form`);
     return (
       <form className={ this.props.className } role={ this.props.role || 'form' } action={ this.props.action } method={ this.props.method } onSubmit={ this.submit }>
         {

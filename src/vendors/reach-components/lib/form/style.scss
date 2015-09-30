@@ -2,13 +2,13 @@
 @import './styles/select/select';
 
 .r-form {
-  @include reach-form(28px, 1.1rem, #ccc);
+  @include reach-form(28px, 1.1rem, #eee);
 
   // ### React Select
   
   .Select-control {
     border        : none;
-    border-bottom : 1px solid #ccc;
+    border-bottom : 1px solid #eee;
     border-radius : 0;
   }
 

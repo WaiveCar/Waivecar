@@ -33,6 +33,7 @@ export default class LoginView extends React.Component {
         tabIndex  : 2
       }
     ];
+    this.submit = this.submit.bind(this);
   }
 
   /**
@@ -41,7 +42,7 @@ export default class LoginView extends React.Component {
    * @param  {Function} reset
    */
   submit(data, reset) {
-    api.post('/auth/login', data, function (error, user) {
+    api.post('/auth/login', data, (error, user) => {
       if (error) {
         reset();
         return snackbar.notify({
@@ -57,7 +58,7 @@ export default class LoginView extends React.Component {
         });
       }
       auth.set(user);
-      window.location = '/dashboard';
+      this.transitionTo('/dashboard');
     }.bind(this));
   }
 

@@ -9,6 +9,9 @@ import { components, fields, resources } from 'reach-ui';
 
 @mixin.decorate(Navigation)
 
+/**
+ * @class UIForm
+ */
 class UIForm extends React.Component {
 
   /**
@@ -17,18 +20,9 @@ class UIForm extends React.Component {
   constructor(...args) {
     super(...args);
     this.state = {
-      data : {}
+      default : {}
     }
     this.submit = this.submit.bind(this);
-  }
-
-  /**
-   * Returns the id defined in the route.
-   * @method id
-   * @return {Mixed}
-   */
-  id() {
-    return this.props.params.id;
   }
 
   /**
@@ -37,21 +31,44 @@ class UIForm extends React.Component {
    */
   componentDidMount() {
     if (!this.isCreate()) {
-      this.setData(this.id());
+      this.setDefault(this.id());
     }
   }
 
   /**
-   * Executes when component is receiving new properties allowing
-   * us to load in new data.
    * @method componentWillReceiveProps
+   * @param  {Object} nextProps
+   * @param  {Object} nextState
    */
   componentWillReceiveProps(nextProps, nextState) {
-    let prevId = this.id();
-    let nextId = nextProps.params.id;
-    if (prevId !== nextId) {
-      this.setData(nextId);
+    let prev = this.id();
+    let next = nextProps.params.id;
+    if (next !== prev) {
+      this.setDefault(nextProps.params.id);
     }
+  }
+
+  /**
+   * @method shouldComponentUpdate
+   * @param  {Object} nextProps
+   * @param  {Object} nextState
+   * @return {Boolean}
+   */
+  shouldComponentUpdate(nextProps, nextState) {
+    let prev = this.state.default.id;
+    let next = nextState.default.id;
+    if (next !== prev) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * @method id
+   * @return {String}
+   */
+  id() {
+    return this.props.params.id;
   }
 
   /**
@@ -63,33 +80,33 @@ class UIForm extends React.Component {
   }
 
   /**
-   * Returns the resource resource for the current instance.
-   * @method resource
-   * @return {Object}
-   */
-  resource() {
-    let resource = resources.get(this.props.resource);
-    if (this.id() === 'create') {
-      return resource.store;
-    }
-    return resource.update;
-  }
-
-  /**
    * Updates the data state based on the provided id.
-   * @method setData
+   * @method setDefault
    * @param  {Mixed} id
    */
-  setData(id) {
+  setDefault(id) {
     let resource = this.resource();
     api.get(resource.uri.replace(':id', id), (error, data) => {
       if (error) {
         throw new Error(error);
       }
       this.setState({
-        data : data
+        default : data
       });
     }.bind(this));
+  }
+
+  /**
+   * Returns the resource resource for the current instance.
+   * @method resource
+   * @return {Object}
+   */
+  resource() {
+    let resource = resources.get(this.props.resource);
+    if (this.isCreate()) {
+      return resource.store;
+    }
+    return resource.update;
   }
 
   /**
@@ -97,14 +114,13 @@ class UIForm extends React.Component {
    * @return {Array}
    */
   fields() {
-    let list   = fields.get(this.props.fields.id);
+    let list  = fields.get(this.props.fields.id);
     let action = this.isCreate() ? 'create' : 'update';
     return this.props.fields[action].map((value, index) => {
       if (list.hasOwnProperty(value)) {
-        list[value].name      = value;
-        list[value].className = 'col-xs-12 r-input';
-        list[value].tabIndex  = index + 1;
-        return list[value];
+        let field       = list[value];
+        field.className = 'col-xs-12 r-input';
+        return field;
       }
     });
   }
@@ -156,49 +172,45 @@ class UIForm extends React.Component {
   }
 
   /**
-   * Returns the form method.
-   * @method method
-   * @return {String}
-   */
-  method() {
-    let resource = this.resource();
-    if (this.isCreate()) {
-      return resource.method;
-    }
-    return resource.method;
-  }
-
-  /**
-   * Returns the uri action to perform on this form.
-   * @method action
-   * @return {String}
-   */
-  action() {
-    let resource = this.resource();
-    if (this.isCreate()) {
-      return resource.uri;
-    }
-    return resource.uri.replace(':id', this.id());
-  }
-
-  /**
-   * Executed when the form is submitted.
    * @method submit
    * @param  {Object}   data
    * @param  {Function} reset
    */
   submit(data, reset) {
-    console.log(data);
-    /*
+    let resource = this.resource();
+
+    // ### Submit Data
+    // Submits the data to api either via post or put depending on the
+    // form type being create or update.
+    
     if (this.isCreate()) {
-      this.goBack();
+      api.post(resource.uri, data, (error, data) => {
+        if (error) {
+          return handleError(error.message);
+        }
+        this.goBack();
+      }.bind(this));
     } else {
-      snackbar.notify({
-        type    : 'success',
-        message : 'Record was successfully updated.'
+      api.put(resource.uri.replace(':id', this.id()), data, (error) => {
+        if (error) {
+          return handleError(error.message);
+        }
+        snackbar.notify({
+          type    : 'success',
+          message : 'Record was successfully updated.'
+        });
       });
     }
-    */
+
+    // ### Error
+    // Handle incoming errors.
+
+    function handleError(message) {
+      snackbar.notify({
+        type    : 'danger',
+        message : message
+      });
+    }
   }
 
   /**
@@ -207,12 +219,9 @@ class UIForm extends React.Component {
   render() {
     return (
       <Form
-        key       = { this.id() }
         className = "r-form"
-        method    = { this.method() }
-        action    = { this.action() }
+        default   = { this.state.default }
         fields    = { this.fields() }
-        default   = { this.state.data }
         buttons   = { this.buttons() }
         submit    = { this.submit }
       />
