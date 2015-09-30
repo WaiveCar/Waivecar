@@ -48,13 +48,11 @@ export default class ViewRow extends Component {
     onDrop            : PropTypes.func.isRequired
   };
 
-  handleChildUpdated(column) {
+  handleChildUpdated(item) {
     let row = this.props;
-    let existing = row.components.find(i => i.id === column.id);
-    if (existing) {
-      existing = column;
-    } else {
-      console.log('hmm, a column should be updated without first existing.');
+    let existing = row.components.findIndex(i => i.id === item.id);
+    if (existing > -1) {
+      row.components[existing] = item;
     }
     this.props.onDrop(row);
   }
@@ -66,7 +64,7 @@ export default class ViewRow extends Component {
   }
 
   render() {
-    const { id, name, type, components, isOver, canDrop, onDrop, connectDropTarget, lastDroppedItem } = this.props;
+    const { id, name, type, category, components, options, isOver, canDrop, onDrop, connectDropTarget, lastDroppedItem } = this.props;
     const isActive = isOver && canDrop;
 
     let activeStyle = 'untouched';
@@ -82,7 +80,7 @@ export default class ViewRow extends Component {
       <div className={ className }>
         <h6>{ name }</h6>
         { isActive && <p>Drag Columns on to this Row</p> }
-        <ViewOptions componentName={ name } options={ this.props.options } update={ this.updateOptions.bind(this) } />
+        <ViewOptions componentCategory={ category } componentName={ name } componentType={ type } options={ options } update={ this.updateOptions.bind(this) } />
         <div className="container-fluid">
           <div className="row">
           {

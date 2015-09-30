@@ -22,7 +22,13 @@ components.register({
   type    : 'content',
   class   : UIContent,
   icon    : 'editor',
-  options : {
-    id : null
-  }
+  options : [
+    {
+      name      : 'id',
+      label     : 'Content Id',
+      component : 'input',
+      type      : 'number',
+      helpText  : 'Enter a known Id'
+    }
+  ]
 });

@@ -41,13 +41,13 @@ export default class ViewContainer extends Component {
     if (!component) return;
     return (
       <ViewComponent
-        id       = { component.id }
-        name     = { component.name }
-        type     = { component.type }
-        icon     = { component.icon }
-        category = { component.category }
-        options  = { component.options }
-        onUpdate = { this.props.onDrop }
+        id           = { component.id }
+        name         = { component.name }
+        type         = { component.type }
+        icon         = { component.icon }
+        category     = { component.category }
+        options      = { component.options }
+        onUpdate     = { this.props.onDrop }
       />
     );
   }

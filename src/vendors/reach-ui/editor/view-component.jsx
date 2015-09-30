@@ -17,12 +17,12 @@ export default class ViewComponent extends Component {
   }
 
   render() {
-    const { id, name, type, icon, options } = this.props;
+    const { id, name, type, category, icon, options } = this.props;
     let className = `view-component ${ type.toLowerCase() }-component`;
     return (
       <div className={ className }>
         <h6>{ name }</h6>
-        <ViewOptions componentName={ name } options={ this.props.options } update={ this.updateOptions.bind(this) } />
+        <ViewOptions componentCategory={ category } componentName={ name } componentType={ type } options={ options } update={ this.updateOptions.bind(this) } />
         <div className="view-component-icon" style={{ marginTop : '20px' }}>
           <i className="material-icons" role={ type }>{ icon }</i>
         </div>

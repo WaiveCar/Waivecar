@@ -36,7 +36,7 @@ export default class ViewColumn extends Component {
     name              : PropTypes.string.isRequired,
     type              : PropTypes.string.isRequired,
     category          : PropTypes.string.isRequired,
-    options           : PropTypes.object,
+    options           : PropTypes.object.isRequired,
     connectDropTarget : PropTypes.func.isRequired,
     isOver            : PropTypes.bool.isRequired,
     canDrop           : PropTypes.bool.isRequired,
@@ -48,25 +48,22 @@ export default class ViewColumn extends Component {
 
   handleChildUpdated(item) {
     let column = this.props;
-    let existing = column.components.find(i => i.id === item.id);
-    if (existing) {
-      existing = item;
-    } else {
-      console.log('hmm');
+    let existing = column.components.findIndex(i => i.id === item.id);
+    if (existing > -1) {
+      column.components[existing] = item;
     }
     this.props.onDrop(column);
   }
 
   updateOptions(value) {
-    let column = this.props;
-    column.options = value;
-    this.props.onDrop(column);
+    let updatedComponent = { ...this.props, ...{ options : value } };
+    this.props.onDrop(updatedComponent);
   }
 
   render() {
-    const { id, name, type, components, accepts, options, onDrop, isOver, canDrop, connectDropTarget, lastDroppedItem } = this.props;
+    const { id, name, type, category, components, accepts, options, onDrop, isOver, canDrop, connectDropTarget, lastDroppedItem } = this.props;
     const isActive = isOver && canDrop;
-    let width = options && options.width ? options.wdith : 12;
+    let width = options && options.width && options.width.value ? options.width.value : 12;
     let activeStyle = 'untouched';
 
     if (isActive) {
@@ -80,7 +77,7 @@ export default class ViewColumn extends Component {
     return connectDropTarget(
       <div className={ className }>
         <h6>{ name }</h6>
-        <ViewOptions componentName={ name } options={ this.props.options } update={ this.updateOptions.bind(this) } />
+        <ViewOptions componentCategory={ category } componentName={ name } componentType={ type } options={ options } update={ this.updateOptions.bind(this) } />
         { isActive && <p>Drag Rows or Components in to this Column</p> }
         {
           components.map((component, componentIndex) => {
@@ -101,14 +98,14 @@ export default class ViewColumn extends Component {
               )
               case ItemCategories.COMPONENT : return (
                 <ViewComponent
-                  key      = { componentIndex }
-                  id       = { component.id }
-                  name     = { component.name }
-                  type     = { component.type }
-                  icon     = { component.icon }
-                  category = { component.category }
-                  options  = { component.options }
-                  onUpdate = { this.handleChildUpdated.bind(this) }
+                  key          = { componentIndex }
+                  id           = { component.id }
+                  name         = { component.name }
+                  type         = { component.type }
+                  icon         = { component.icon }
+                  category     = { component.category }
+                  options      = { component.options }
+                  onUpdate     = { this.handleChildUpdated.bind(this) }
                 />
               )
             }

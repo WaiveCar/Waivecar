@@ -82,5 +82,52 @@ components.register({
   icon    : 'insert_chart',
   class   : UIMiniChart,
   options : {
+    resource : {
+      label     : 'Resource',
+      component : 'select',
+      options   : [
+        {
+          name : 'Cars',
+          value : 'cars'
+        }
+      ],
+      helpText  : 'Select a Resource'
+    },
+    title : {
+      label     : 'Title',
+      component : 'input',
+      type      : 'text',
+      helpText  : 'Select a Resource'
+    },
+    type : {
+      label     : 'Chart Type',
+      component : 'select',
+      options   : [
+        {
+          name : 'Bar',
+          value : 'bar'
+        },
+        {
+          name : 'Line',
+          value : 'line'
+        }
+      ],
+      helpText  : 'Select a Chart Type'
+    },
+    class : {
+      label     : 'Chart Color',
+      component : 'select',
+      options   : [
+        {
+          name : 'Pink',
+          value : 'chart-pink'
+        },
+        {
+          name : 'Yellow',
+          value : 'chart-yellow'
+        },
+      ],
+      helpText  : 'Select a Chart Color'
+    }
   }
 });

@@ -53,7 +53,7 @@ export default class ViewLayout extends React.Component {
         components : null
       },
       items : [
-        { name : 'Row',    type : 'row',     icon : 'border_horizontal', category : ItemCategories.ROW,    accepts : [ ItemCategories.COLUMN ],                        options : {} },
+        { name : 'Row',    type : 'row',     icon : 'border_horizontal', category : ItemCategories.ROW,    accepts : [ ItemCategories.COLUMN ], options : {} },
         { name : 'Column', type : 'column',  icon : 'border_vertical',   category : ItemCategories.COLUMN, accepts : [ ItemCategories.ROW, ItemCategories.COMPONENT ], options : { width : 12 } }
       ].concat(components.getAll()),
       lastDroppedItem : null
@@ -132,23 +132,26 @@ export default class ViewLayout extends React.Component {
     } else if (component.category !== ItemCategories.COMPONENT) {
       component.components = [];
     }
+
     return { ...defaults, ...component };
   }
 
   transformToComponent(viewComponent, next) {
-    delete viewComponent.id;
-    delete viewComponent.icon;
-    delete viewComponent.category;
-    delete viewComponent.accepts;
-    delete viewComponent.name;
+    let component = {
+      type : viewComponent.type,
+      options : viewComponent.options
+    }
+    if (viewComponent.category !== ItemCategories.COMPONENT) {
+      component.components = viewComponent.components;
+    }
 
-    if (viewComponent.components) {
-      async.map(viewComponent.components, this.transformToComponent, function(err, components) {
-        viewComponent.components  = components;
-        createContentOrReturn(viewComponent, next);
+    if (component.components) {
+      async.map(component.components, this.transformToComponent, function(err, components) {
+        component.components = components;
+        createContentOrReturn(component, next);
       })
     } else {
-      createContentOrReturn(viewComponent, next);
+      createContentOrReturn(component, next);
     }
   }
 
@@ -166,7 +169,9 @@ export default class ViewLayout extends React.Component {
       action = resource.uri;
     }
 
-    async.map(this.state.layout.components, this.transformToComponent, function(err, transformedComponents) {
+    let comps = Object.assign({}, this.state.layout.components);
+
+    async.map(comps, this.transformToComponent, function(err, transformedComponents) {
 
       data.layout = {
         components : transformedComponents
@@ -181,10 +186,10 @@ export default class ViewLayout extends React.Component {
           return;
         }
 
-        // snackbar.notify({
-        //   type    : 'success',
-        //   message : 'Record was successfully updated.'
-        // });
+        snackbar.notify({
+          type    : 'success',
+          message : 'Record was successfully updated.'
+        });
         this.goBack();
       }.bind(this));
     }.bind(this));

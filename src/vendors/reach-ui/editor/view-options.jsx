@@ -1,44 +1,45 @@
 import React, { PropTypes, Component } from 'react';
 import Modal                           from 'react-modal';
-
-// const customStyles = {
-//   overlay : {
-//     position          : 'fixed',
-//     top               : 0,
-//     left              : 0,
-//     right             : 0,
-//     bottom            : 0,
-//     backgroundColor   : 'rgba(0, 0, 0, .75)',
-//     zIndex            : 99999
-//   },
-//   content : {
-//     top                   : '50%',
-//     left                  : '50%',
-//     right                 : 'auto',
-//     bottom                : 'auto',
-//     marginRight           : '-50%',
-//     transform             : 'translate(-50%, -50%)',
-//     zIndex            : 99999
-//   }
-// };
+import { Form }                        from 'reach-components';
+import components                      from '../lib/components';
+import ItemCategories                  from './item-categories';
 
 export default class ViewOptions extends Component {
 
   constructor(...args) {
     super(...args);
-    // this.open = this.open.bind(this);
-    // this.close = this.close.bind(this);
-    // this.save = this.open.bind(this);
+    this.open = this.open.bind(this);
+    this.close = this.close.bind(this);
+    this.save = this.open.bind(this);
     this.state = {
-      options : JSON.stringify(this.props.options),
-      show    : false
+      show   : false,
+      fields : this.getFields()
+    }
+  }
+
+  getFields() {
+    switch (this.props.componentCategory) {
+      case ItemCategories.ROW    : return [
+      ];
+      case ItemCategories.COLUMN : return [
+        {
+          name      : 'width',
+          label     : 'Width (1-12)',
+          component : 'input',
+          type      : 'text'
+        }
+      ];
+      default :
+        return components.getOptions(this.props.componentType);
     }
   }
 
   static propTypes = {
-    componentName : PropTypes.string.isRequired,
-    options       : PropTypes.object.isRequired,
-    update        : PropTypes.func.isRequired
+    componentName     : PropTypes.string.isRequired,
+    componentType     : PropTypes.string.isRequired,
+    componentCategory : PropTypes.string.isRequired,
+    options           : PropTypes.object.isRequired,
+    update            : PropTypes.func.isRequired
   };
 
   open() {
@@ -53,19 +54,13 @@ export default class ViewOptions extends Component {
     });
   }
 
-  update(event) {
-    console.log(event.target.value);
-    this.setState({ options : event.target.value });
-  }
-
-  save() {
-    let options = JSON.parse(this.state.options);
+  submit(options) {
     this.props.update(options);
     this.close();
   }
 
   renderModal() {
-    const { componentName, options } = this.props;
+    const { componentName } = this.props;
     return (
       <Modal
         className      ="Modal__Bootstrap modal-dialog"
@@ -80,19 +75,36 @@ export default class ViewOptions extends Component {
             <h5>{ componentName } Options</h5>
           </div>
           <div className="modal-body">
-            <p>{ JSON.stringify(options) }</p>
-            <form>
-              <input type="text" value={ this.state.options } onChange={ this.update.bind(this) } />
-            </form>
-          </div>
-          <div className="modal-footer">
-            <div className="btn-group modal-actions">
-              <button className="btn btn-danger-outline" onClick={ this.close.bind(this) }>Cancel</button>
-              <button className="btn btn-primary-outline" onClick={ this.save.bind(this) }>Apply</button>
-            </div>
+            { this.renderForm() }
           </div>
         </div>
       </Modal>
+    );
+  }
+
+  renderForm() {
+    const { fields, options } = this.props;
+    return (
+      <Form
+        className = "r-form"
+        fields    = { this.state.fields }
+        default   = { options }
+        submit    = { this.submit.bind(this) }
+        buttons   = {[
+          {
+            type  : 'button',
+            value : 'Reset',
+            class : 'btn btn-info',
+            click : 'reset'
+          },
+          {
+            type  : 'submit',
+            value : 'Submit',
+            class : 'btn btn-success',
+            click : 'submit'
+          }
+        ]}
+      />
     );
   }
 

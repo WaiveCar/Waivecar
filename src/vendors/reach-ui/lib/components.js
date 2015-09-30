@@ -56,6 +56,14 @@ Components.getAll = function () {
   return map;
 };
 
+Components.getOptions = function(type) {
+  let component = this.get(type);
+  if (!component) {
+    return console.error(`Reach UI > Invalid component requested [${ type }]`);
+  }
+  return component.options || [];
+};
+
 /**
  * @method render
  * @param  {String} component

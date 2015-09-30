@@ -81,7 +81,7 @@ class UITable extends React.Component {
    * @return {JSX}
    */
   getEditAction(id) {
-    if (this.props.actions.update) {
+    if (this.props.actions.indexOf('update') > -1) {
       return (
         <Link className="grid-action" to={ this.resourceName() + '/' + id }>
           <i className="material-icons" role="edit">edit</i>
@@ -96,7 +96,7 @@ class UITable extends React.Component {
    * @return {JSX}
    */
   getDeleteAction(id) {
-    if (this.props.actions.delete) {
+    if (this.props.actions.indexOf('delete') > -1) {
       return (
         <button className="grid-action danger" onClick={ this.delete.bind(this, id) }>
           <i className="material-icons" role="delete">delete</i>
@@ -112,7 +112,7 @@ class UITable extends React.Component {
     let headings = this.props.fields.map((field) => {
       return {
         displayName : field.label,
-        columnName  : field.value
+        columnName  : field.name
       };
     });
 
@@ -138,7 +138,7 @@ class UITable extends React.Component {
    */
   getColumns() {
     let columns = this.props.fields.map((field) => {
-      return field.value;
+      return field;
     });
     columns.push('actions');
     return columns;
@@ -177,12 +177,92 @@ class UITable extends React.Component {
 }
 
 // ### Register Component
+// perhaps what we are working towards:
+// components.register({
+//   name    : 'Table',
+//   type    : 'table',
+//   icon    : 'view_list',
+//   class   : UITable,
+//   options : [
+//     {
+//       name      : 'resource',
+//       label     : 'Resource',
+//       component : 'select',
+//       options   : () => { return resources.getAll().map((r) => { return { name : r.name, value : r.name }; }) },
+//       helpText  : 'Select a Resource'
+//     },
+//     {
+//       name      : 'fields',
+//       label     : 'Fields',
+//       component : 'select',
+//       options   : (resource) => { return fields.get(resource).map((f) => { return { name : f.label, value : f.name }; }) },
+//       helpText  : 'Select Fields to display'
+//     }
+//   ]
+// });
+
+
+
+
+
 
 components.register({
   name    : 'Table',
   type    : 'table',
   icon    : 'view_list',
   class   : UITable,
-  options : {
-  }
+  options : [
+    {
+      name      : 'resource',
+      label     : 'Resource',
+      component : 'select',
+      options   : [
+        {
+          name : 'Cars',
+          value : 'cars'
+        }
+      ],
+      helpText  : 'Select a Resource'
+    },
+    {
+      name      : 'actions',
+      label     : 'Actions',
+      component : 'select',
+      options   : [
+        {
+          name : 'Create',
+          value : 'create'
+        },
+        {
+          name : 'Update',
+          value : 'update'
+        },
+        {
+          name : 'Delete',
+          value : 'delete'
+        }
+      ],
+      helpText  : 'Select Actions'
+    },
+    {
+      name      : 'fields',
+      label     : 'Fields',
+      component : 'select',
+      options   : [
+        {
+          name : 'Id',
+          value : 'id'
+        },
+        {
+          name : 'Created At',
+          value : 'createdAt'
+        },
+        {
+          name : 'Updated At',
+          value : 'updatedAt'
+        }
+      ],
+      helpText  : 'Select Fields to display'
+    }
+  ]
 });
