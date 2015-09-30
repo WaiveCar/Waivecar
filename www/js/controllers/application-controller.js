@@ -46,11 +46,11 @@ module.exports =
         $state.go('auth-login');
       });
 
-      $rootScope.$on('socket:error', function (ev, data) {
-        console.log('TODO: handle socket error:');
-      });
+      // $rootScope.$on('socket:error', function (ev, data) {
+      //   console.log('TODO: handle socket error:');
+      // });
 
-      $rootScope.$on('$stateChangeStart', function (event, toState, toParams /*, fromState, fromParams */ ) {
+      $rootScope.$on('$stateChangeStart', function (event, toState) {
         var authRequired;
         if (toState && _.has(toState, 'data') && _.has(toState.data, 'auth')) {
           authRequired = toState.data.auth;

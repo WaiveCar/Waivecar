@@ -34,7 +34,14 @@ module.exports = angular.module('app.controllers').controller('BookingInProgress
       }
 
       $data.activate('bookings', $state.params.id, function (err) {
-        $data.activate('cars', $data.active.bookings.carId, function (err) {
+        if(err){
+          return $message.error(err);
+        }
+        $data.activate('cars', $data.active.bookings.carId, function (_err) {
+          if(_err){
+            return $message.error(_err);
+          }
+
 
         });
       });

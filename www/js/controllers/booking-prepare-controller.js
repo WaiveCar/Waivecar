@@ -27,31 +27,37 @@ module.exports = angular.module('app.controllers').controller('BookingPrepareCon
       }
 
       $data.activate('bookings', $state.params.id, function (err) {
+        if(err){
+          return $message.error(err);
+        }
+
         if ($data.active.bookings.state === 'in-progress') {
           $state.go('bookings-in-progress', {
             id: $data.active.bookings.id
           });
-          return;
+          return false;
         }
 
         var booking = angular.copy($data.active.bookings);
         booking.state = 'start';
-        $data.update('bookings', booking, function (err, updated) {
-          if (err) {
-            $message.error(err.message || err);
-          } else {
-            var connected = $scope.$watch(function () {
-              console.log($data.active.bookings.state);
-              return $data.active.bookings.state === 'in-progress';
-            }, function (newValue, oldValue) {
-              if ($data.active.bookings.state === 'in-progress') {
-                connected();
-                $state.go('bookings-in-progress', {
-                  id: $data.active.bookings.id
-                });
-              }
-            });
+
+        $data.update('bookings', booking, function (_err) {
+          if (_err) {
+            return $message.error(err);
           }
+
+          var connected = $scope.$watch(function () {
+            console.log($data.active.bookings.state);
+            return $data.active.bookings.state === 'in-progress';
+          }, function () {
+            if ($data.active.bookings.state === 'in-progress') {
+              connected();
+              $state.go('bookings-in-progress', {
+                id: $data.active.bookings.id
+              });
+            }
+          });
+
 
           // TODO: b) TRIGGER CALL TO UNLOCK CAR
           // TODO: c) TRIGGER CALL TO ENABLE START

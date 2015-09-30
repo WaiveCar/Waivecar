@@ -59,6 +59,9 @@ module.exports = angular.module('app.controllers').controller('CarController', [
 
     $scope.init = function () {
       $data.activate('cars', $state.params.id, function (err) {
+        if(err){
+          return $message.error(err);
+        }
         console.log('active car set to ' + $data.active.cars.id);
 
         // $rootScope.$broadcast(MapsEvents.destinyOnRouteChanged, $data.active.cars.location);

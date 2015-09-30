@@ -1,4 +1,4 @@
-/* global window: false */
+/* global window: false, L: true */
 'use strict';
 var angular = require('angular');
 require('angular-ui-router');
@@ -15,7 +15,8 @@ module.exports = angular.module('app.controllers').controller('BookingController
   'MockLocationService',
   '$auth',
   '$data',
-  function ($rootScope, $scope, $state, LocationService, $auth, $data) {
+  '$message',
+  function ($rootScope, $scope, $state, LocationService, $auth, $data, $message) {
 
     $scope.showConnect = false;
 
@@ -80,6 +81,9 @@ module.exports = angular.module('app.controllers').controller('BookingController
 
     $scope.cancel = function () {
       $data.remove('bookings', $data.active.bookings.id, function (err) {
+        if(err){
+          return $message.error(err);
+        }
         $state.go('cars');
       });
     };
@@ -124,22 +128,32 @@ module.exports = angular.module('app.controllers').controller('BookingController
       }
 
       $data.activate('bookings', $state.params.id, function (err) {
-        $data.activate('cars', $data.active.bookings.carId, function (err) {
+        if(err){
+          return $message.error(err);
+        }
+
+        $data.activate('cars', $data.active.bookings.carId, function (_err) {
+          if(_err){
+            return $message.error(_err);
+          }
           if ($state.current.name === 'bookings-show') {
-            return;
+            return false;
           }
 
           var booking = angular.copy($data.active.bookings);
           booking.state = 'pending-arrival';
-          $data.update('bookings', booking, function (err) {
-            if (err) {
-              alert(err.message || err);
-            } else {
-              $scope.watchForWithinRange();
+          $data.update('bookings', booking, function (__err) {
+            if (__err) {
+              return $message.error(__err);
             }
+            $scope.watchForWithinRange();
+
           });
-        })
+
+        });
+
       });
+
     };
 
     $scope.init();

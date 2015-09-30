@@ -53,11 +53,11 @@ module.exports = angular.module('Maps').directive('routeToLocation', [
 
     }
 
-    function link($scope, element, attrs, ctrl) {
+    function link($scope) {
       MapsLoader.getMap.then(function (L) {
         var mapControllerScope = $scope.$parent.mapInstance ? $scope.$parent : $scope.$parent.$parent; // <-- HOLY FUCK!
         mapControllerScope.mapInstance.then(function (map) {
-          function handleMove(newValue, oldValue) {
+          function handleMove() {
             if ($scope.start && $scope.destiny) {
               drawRoute(L, $scope.start, $scope.destiny, map, $scope);
             }

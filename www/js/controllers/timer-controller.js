@@ -11,7 +11,7 @@ module.exports = angular.module('app.controllers').controller('TimerController',
     var minutes = 0;
     var seconds = 0;
     var hours = 0;
-    var status;
+    // var status;
     var unbindList = [];
     var _timerName;
     var _stopInterval;
@@ -27,7 +27,7 @@ module.exports = angular.module('app.controllers').controller('TimerController',
 
     function startCount() {
       stopCount();
-      status = TimerService.getStatus(_timerName);
+      // status = TimerService.getStatus(_timerName);
       var remainingTime = TimerService.getRemainingTime(_timerName);
 
       hours = remainingTime.hours;
@@ -68,9 +68,11 @@ module.exports = angular.module('app.controllers').controller('TimerController',
       unbind = $scope.$on(countdownEvents.newCounter + '_' + name, startCount);
       unbindList.push(unbind);
 
-      unbind = $scope.$on(countdownEvents.counterStateChanged + '_' + name, function (ev, _status) {
-        status = _status;
-      });
+      // unbind = $scope.$on(countdownEvents.counterStateChanged + '_' + name, function (ev, _status) {
+      //   // status = _status;
+      // });
+
+      unbind = $scope.$on(countdownEvents.counterStateChanged + '_' + name, angular.identity);
 
       unbindList.push(unbind);
 

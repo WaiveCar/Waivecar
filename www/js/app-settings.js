@@ -10,7 +10,7 @@ appSettings.provider('$settings', [
 
   function Config() {
 
-    var baseUrl = ionic.Platform.isWebView() ? 'http://10.0.3.2:3000' : 'http://localhost:3000';
+    // var baseUrl = ionic.Platform.isWebView() ? 'http://10.0.3.2:3000' : 'http://localhost:3000';
     var _this = this;
 
     this.settings = {

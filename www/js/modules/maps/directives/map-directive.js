@@ -6,7 +6,7 @@ module.exports = angular.module('Maps').directive('map', [
   'MapsLoader',
   function (MapsLoader) {
 
-    function link($scope, element, attrs, ctrl) {
+    function link($scope, element) {
       MapsLoader.getMap.then(function (maps) {
 
         var mapOptions = {
@@ -18,7 +18,7 @@ module.exports = angular.module('Maps').directive('map', [
         };
 
         var mapInstance = maps.skobbler.map(element[0].firstChild, mapOptions);
-        $scope.$watch('center', function (newValue, oldValue) {
+        $scope.$watch('center', function () {
           if (!$scope.center || !$scope.center.latitude) {
             return false;
           }

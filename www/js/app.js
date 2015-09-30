@@ -14,6 +14,7 @@ require('ngCordova');
 require('angular-messages');
 require('angular-socket-io');
 require('angular-payments');
+require('ng-FitText');
 
 // Components (We first define angular modules which are dependencies to main 'app' module)
 angular.module('app.settings', []);
@@ -36,6 +37,7 @@ var app = angular.module('app', [
   'ui.router',
   'btford.socket-io',
   'angularPayments',
+  'ngFitText',
 
   'Maps',
   'app.settings',

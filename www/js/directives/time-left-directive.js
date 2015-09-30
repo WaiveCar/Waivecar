@@ -25,18 +25,18 @@ module.exports = angular.module('app.directives').directive('timeLeft', [
         }
       ];
 
-      scope.$watchGroup(watchExpressions, function (newValues, oldValues, scope) {
+      scope.$watchGroup(watchExpressions, function (newValues, oldValues, _scope) {
         if (ctrl.hours > 0) {
-          scope.timeLeftDisplay = ctrl.hours + ':' + ctrl.minutes + ' hours left';
+          _scope.timeLeftDisplay = ctrl.hours + ':' + ctrl.minutes + ' hours left';
 
         } else if (ctrl.minutes > 0) {
-          scope.timeLeftDisplay = ctrl.minutes + ':' + ctrl.seconds + ' minutes left';
+          _scope.timeLeftDisplay = ctrl.minutes + ':' + ctrl.seconds + ' minutes left';
 
         } else if (ctrl.seconds > 0) {
-          scope.timeLeftDisplay = ctrl.seconds + ' seconds left';
+          _scope.timeLeftDisplay = ctrl.seconds + ' seconds left';
 
         } else {
-          scope.timeLeftDisplay = 'no time left';
+          _scope.timeLeftDisplay = 'no time left';
 
         }
 

@@ -1,22 +1,20 @@
-// The path for our ionicons font files, relative to the built CSS in www/css
-$ionicons-font-path: "../lib/ionic/fonts" !default;
-// The path for our font-awesome font files, relative to the built CSS in www/css
-$fa-font-path: "../lib/font-awesome/fonts" !default;
+// The path for our font files, relative to the built CSS in www/css
+// All fonts are copied from /node-modules to www/fonts by gulp
+$ionicons-font-path: "../fonts" !default;
+$fa-font-path: "../fonts" !default;
 @import 'colors';
 @import 'fonts';
 @import 'sizes';
 
-
 // @import "www/lib/bootstrap-sass/assets/stylesheets/_bootstrap";
-
 // Twitter Bootstrap grid clashes with ionic grid so we're importing only what we need
-@import "www/lib/bootstrap-sass/assets/stylesheets/bootstrap/variables";
-@import "www/lib/bootstrap-sass/assets/stylesheets/bootstrap/mixins";
-@import "www/lib/bootstrap-sass/assets/stylesheets/bootstrap/thumbnails";
-@import "www/lib/bootstrap-sass/assets/stylesheets/bootstrap/type";
+@import "./node_modules/bootstrap-sass/assets/stylesheets/bootstrap/variables";
+@import "./node_modules/bootstrap-sass/assets/stylesheets/bootstrap/mixins";
+@import "./node_modules/bootstrap-sass/assets/stylesheets/bootstrap/thumbnails";
+@import "./node_modules/bootstrap-sass/assets/stylesheets/bootstrap/type";
 
-@import "www/lib/ionic/scss/ionic";
-@import "www/lib/font-awesome/scss/font-awesome";
+@import "./node_modules/ionic/scss/ionic";
+@import "./node_modules/font-awesome/scss/font-awesome";
 
 @import 'ads';
 @import 'auth';

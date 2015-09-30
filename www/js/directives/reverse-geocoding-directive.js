@@ -5,7 +5,8 @@ require('../services/geocoding-service');
 module.exports = angular.module('app.directives').directive('reverseGeoCoding', [
   '$geocoding',
   function ($geocoding) {
-    function link($scope, element, attrs, ctrl) {
+
+    function link($scope) {
       var latLng = $scope.getLocation();
       if (!latLng) {
         return;
