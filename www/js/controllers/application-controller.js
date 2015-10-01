@@ -22,7 +22,8 @@ module.exports =
     '$message',
     '$session',
     '$document',
-    function ($rootScope, $scope, $state, $ionicPopover, LocationService, $auth, $data, $message, $session, $document) {
+    '$cordovaFacebook',
+    function($rootScope, $scope, $state, $ionicPopover, LocationService, $auth, $data, $message, $session, $document, $cordovaFacebook) {
       $scope.isInitialized = false;
       $scope.models = $data.instances;
       $scope.active = $data.active;
@@ -31,17 +32,17 @@ module.exports =
         return $document.width();
       }
 
-      $document.on('resize', function () {
+      $document.on('resize', function() {
         $scope.windowWidth = getWindowWidth();
       });
 
       $scope.windowWidth = getWindowWidth();
 
-      $rootScope.$watch('currentLocation', function () {
+      $rootScope.$watch('currentLocation', function() {
         console.log($rootScope.currentLocation);
       });
 
-      $rootScope.$on('authError', function () {
+      $rootScope.$on('authError', function() {
         $auth.logout();
         $state.go('auth-login');
       });
@@ -50,7 +51,7 @@ module.exports =
       //   console.log('TODO: handle socket error:');
       // });
 
-      $rootScope.$on('$stateChangeStart', function (event, toState) {
+      $rootScope.$on('$stateChangeStart', function(event, toState) {
         var authRequired;
         if (toState && _.has(toState, 'data') && _.has(toState.data, 'auth')) {
           authRequired = toState.data.auth;
@@ -68,8 +69,8 @@ module.exports =
 
       });
 
-      $scope.logout = function () {
-        $auth.logout(function (err) {
+      $scope.logout = function() {
+        $auth.logout(function(err) {
           if (err) {
             return $message.error(err);
           }
@@ -79,27 +80,27 @@ module.exports =
 
       };
 
-      $scope.locateMe = function () {
-        LocationService.getLocation().then(function (deviceLocation) {
+      $scope.locateMe = function() {
+        LocationService.getLocation().then(function(deviceLocation) {
           $rootScope.currentLocation = deviceLocation;
         });
 
       };
 
-      $scope.fetch = function () {
+      $scope.fetch = function() {
         async.parallel([
 
-            function (nextTask) {
+            function(nextTask) {
               LocationService.initPositionWatch();
               return nextTask();
             },
 
-            function (nextTask) {
+            function(nextTask) {
               if (!$auth.isAuthenticated()) {
                 return nextTask();
               }
 
-              $data.resources.users.me(function (me) {
+              $data.resources.users.me(function(me) {
                 $session.set('me', me).save();
                 $data.me = $session.get('me');
                 return nextTask();
@@ -107,27 +108,27 @@ module.exports =
 
             },
 
-            function (nextTask) {
+            function(nextTask) {
               $data.initialize('cars')
-                .then(function () {
+                .then(function() {
                   nextTask();
                 })
-                .catch(function (err) {
+                .catch(function(err) {
                   console.log('err', err);
                   nextTask(err);
                 });
             },
 
-            function (nextTask) {
+            function(nextTask) {
               $data.initialize('locations')
-                .then(function () {
+                .then(function() {
                   nextTask();
                 })
                 .catch(nextTask);
             }
 
           ],
-          function (err) {
+          function(err) {
             if (err) {
               return $message.error(err);
             }
@@ -137,7 +138,7 @@ module.exports =
 
       };
 
-      $scope.init = function () {
+      $scope.init = function() {
         $scope.fetch();
       };
 

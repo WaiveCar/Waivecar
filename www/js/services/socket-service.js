@@ -1,6 +1,5 @@
 'use strict';
 var angular = require('angular');
-require('../app-settings.js');
 var io = require('socket.io-client');
 
 module.exports = angular.module('app')

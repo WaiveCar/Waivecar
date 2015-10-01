@@ -15,9 +15,10 @@ module.exports = angular.module('app.controllers').controller('UserController', 
   '$data',
   'FaceBookService',
   '$message',
-  function ($rootScope, $scope, $state, $auth, $data, FaceBookService, $message) {
+  'ezfb',
+  function($rootScope, $scope, $state, $auth, $data, FaceBookService, $message, ezfb) {
 
-    $scope.save = function (form) {
+    $scope.save = function(form) {
       if (form.$invalid) {
         return $message.error('Please fix form errors and try again.');
       }
@@ -25,7 +26,7 @@ module.exports = angular.module('app.controllers').controller('UserController', 
       var identifier = $scope.user.email;
       var pass = $scope.user.password;
       $scope.user.$save()
-        .then(function () {
+        .then(function() {
           if ($auth.isAuthenticated()) {
             return $message.success('Saved!');
           }
@@ -34,7 +35,7 @@ module.exports = angular.module('app.controllers').controller('UserController', 
               identifier: identifier,
               password: pass
             })
-            .then(function () {
+            .then(function() {
               return $state.go('licenses-photo-new', {
                 step: 3
               });
@@ -52,27 +53,60 @@ module.exports = angular.module('app.controllers').controller('UserController', 
     //     redirectUri: 'http://localhost/'
     //   };
 
-    //   $data.resources.users.facebook(data, function (result) {
-    //       $data.merge('users', result);
-    //       $data.activateKnownModel('users', result.id, function () {
-    //         $state.go('landing');
-    //       });
-    //     },
-    //     $message.error);
+    //   return $data.resources.users.storeFacebook(data).$promise
+    //     .then(function(){
+    //       $message.success('Connected!');
+    //     })
+    //     .catch($message.error);
+
+    //   // $data.resources.users.facebook(data, function (result) {
+    //   //     $data.merge('users', result);
+    //   //     $data.activateKnownModel('users', result.id, function () {
+    //   //       $state.go('landing');
+    //   //     });
+    //   //   },
+    //   //   $message.error);
 
     // }
 
-    $scope.connectWithFacebook = function () {
+    // $scope.connectWithFacebook = function () {
 
-      throw new Error('UserController.connectWithFacebook not implemented!');
+    //   // throw new Error('UserController.connectWithFacebook not implemented!');
 
-      // FaceBookService.getFacebookInfo()
-      //   .then(registerUserByFacebook)
-      //   .catch($message.error);
+    //   FaceBookService.getFacebookInfo()
+    //     .then(registerUserByFacebook)
+    //     .catch($message.error);
+
+    // };
+
+    $scope.registerWithFacebook = function() {
+      return ezfb.getLoginStatus()
+        .then(function(response){
+          if (response.status !== 'connected') {
+            console.log('User not authorized with FB. Logging in ...');
+            return ezfb.login();
+          }
+          console.log('User is already authorized with FB');
+          return response;
+
+        })
+        .then(function(res) {
+          if (res.status === 'connected') {
+            console.log('Registering with FB ...');
+            return $auth.registerWithFacebook(res.authResponse);
+          }
+        })
+        .then(function() {
+          return $state.go('licenses-photo-new', {
+            step: 3
+          });
+
+        })
+        .catch($message.error);
 
     };
 
-    $scope.init = function () {
+    $scope.init = function() {
 
       if (!$state.params.id) {
         $scope.user = new $data.resources.users();
@@ -82,12 +116,12 @@ module.exports = angular.module('app.controllers').controller('UserController', 
       return $data.resources.users.get({
           id: $state.params.id
         }).$promise
-        .then(function (user) {
+        .then(function(user) {
           $scope.user = user;
           return $data.resources.licenses.query().$promise;
 
         })
-        .then(function (licenses) {
+        .then(function(licenses) {
           $scope.latestLicense = _.chain(licenses).sortBy('createdAt').last().value();
 
         })

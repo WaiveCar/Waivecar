@@ -2,7 +2,6 @@
 'use strict';
 
 // TODO: Install these modules
-//   'ngFitText',
 //   'ionic-datepicker',
 
 // Vendor modules (... which are dependencies to main 'app' module)
@@ -15,6 +14,8 @@ require('angular-messages');
 require('angular-socket-io');
 require('angular-payments');
 require('ng-FitText');
+require('easyfb');
+// require('ng-cordova-oauth');
 
 // Components (We first define angular modules which are dependencies to main 'app' module)
 angular.module('app.settings', []);
@@ -38,6 +39,7 @@ var app = angular.module('app', [
   'btford.socket-io',
   'angularPayments',
   'ngFitText',
+  'ezfb',
 
   'Maps',
   'app.settings',
@@ -50,9 +52,11 @@ var app = angular.module('app', [
   'app.providers',
 ]);
 
+require('./config/app-settings');
+
 // App config (angular configuring stage)
-var states = require('./app-states');
-var setup = require('./app-setup');
+var states = require('./config/app-states');
+var setup = require('./config/app-setup');
 app.config(states);
 app.config(setup.config);
 app.run(setup.run);

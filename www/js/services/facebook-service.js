@@ -1,7 +1,6 @@
 /* global window: false */
 'use strict';
 var angular = require('angular');
-require('../app-settings');
 var sprintf = require('sprintf').sprintf;
 
 module.exports = angular.module('app.services').factory('FaceBookService', [

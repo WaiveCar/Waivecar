@@ -12,7 +12,11 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
   '$message',
   '$data',
   '$ionicHistory',
-  function ($rootScope, $scope, $state, $auth, $message, $data, $ionicHistory) {
+  '$cordovaOauth',
+  '$settings',
+  'FaceBookService',
+  'ezfb',
+  function($rootScope, $scope, $state, $auth, $message, $data, $ionicHistory, $cordovaOauth, $settings, FaceBookService, ezfb) {
     $scope.$ionicHistory = $ionicHistory;
 
     $scope.forms = {
@@ -24,7 +28,7 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
       resetForm: {}
     };
 
-    var sharedCallback = function (err) {
+    var sharedCallback = function(err) {
       if (err) {
         return $message.error(err);
       }
@@ -34,7 +38,7 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
 
     };
 
-    $scope.login = function (form) {
+    $scope.login = function(form) {
       if (form.$pristine) {
         return $message.info('Please fill in your credentials first.');
       }
@@ -46,7 +50,7 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
 
     };
 
-    $scope.forgot = function (form) {
+    $scope.forgot = function(form) {
       if (form.$pristine) {
         return $message.info('Please fill in your email first.');
       }
@@ -59,13 +63,57 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
 
     };
 
-    $scope.reset = function () {
-      $auth.login($scope.forms.loginForm, sharedCallback);
+
+    $scope.loginWithFacebook = function() {
+      // $cordovaOauth.facebook($settings.facebook.clientId, ['email', 'public_profile'], {
+      //   redirect_uri: 'http://localhost:8100/callback'
+      // })
+      //   .then(function(result) {
+      //     console.log(result);
+      //   })
+      //   .catch($message.error);
+
+      // FaceBookService.getFacebookInfo()
+      //   .then(function(rs){
+      //     console.log(rs);
+      //   })
+      //   .catch($message.error);
+
+      // OAuth.initialize('1022707721082213');
+      // OAuth.popup('facebook')
+      //   .done(function(result) {
+      //     console.log(result);
+      //     //use result.access_token in your API request
+      //     //or use result.get|post|put|del|patch|me methods (see below)
+      //   })
+      //   .fail($message.error);
+
+      // ezfb.getLoginStatus(function(res) {
+      //   console.log(res);
+      // });
+
+      ezfb.login(null, {
+          scope: 'email,public_profile'
+        })
+        .then(function(res) {
+          console.log(res);
+          if (res.status === 'connected') {
+            return $auth.loginWithFacebook(res.authResponse);
+          }
+        })
+        .then(function() {
+          $state.go('users-edit', {
+            id: $data.me.id
+          });
+        })
+        .catch($message.error);
+
     };
 
-    $scope.init = function () {
+
+    $scope.init = function() {
       if ($auth.isAuthenticated()) {
-        $state.go('landing');
+        $state.go('cars');
       }
 
     };

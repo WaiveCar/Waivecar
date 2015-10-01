@@ -11,11 +11,13 @@ module.exports = angular.module('app.services').factory('$message', [
 
     function launchPopup(title, message) {
       if (_(message).isObject()) {
-        if (message.data && _(message.data).isString()) {
-          message = message.data;
-        }
-        if (message.message && _(message.message).isString()) {
-          message = message.message;
+        if (message.data) {
+          if(_(message.data).isString()) {
+            message = message.data;
+          } else if( _(message.data).isObject() && _(message.data.message).isString() ) {
+            message = message.data.message;
+          }
+
         }
       }
 

@@ -54,7 +54,7 @@ module.exports = angular.module('app').factory('Users', [
         method: 'POST',
         url: $utils.getCustomRoute('payments/cards')
       },
-      facebook: {
+      storeFacebook: {
         method: 'POST',
         url: $utils.getCustomRoute('auth/facebook')
       }
