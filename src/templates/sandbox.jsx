@@ -1,10 +1,10 @@
 'use strict';
 
-import React                            from 'react';
-import { relay }                        from 'reach-react';
-import { type, case }                   from 'reach-react/lib/helpers';
-import { templates, resources, fields } from 'reach-ui';
-import { Form }                         from 'reach-components';
+import React     from 'react';
+import UI        from 'reach-ui';
+import { relay } from 'reach-react';
+import { type }  from 'reach-react/lib/helpers';
+import { Form }  from 'reach-components';
 
 let index      = 0;
 let formFields = {
@@ -173,28 +173,13 @@ class SandboxTemplate extends React.Component {
   }
 
   fields() {
-    let res    = resources.getKeys();
-    let values = {};
-    for (let key in fields.store) {
-      values[key] = Object.keys(fields.store[key]).map((value) => {
-        return {
-          name  : value,
-          value : value
-        }
-      });
-    }
-    let result = [
+    return [
       {
         label     : 'Resource',
         component : 'select',
         name      : 'resource',
         className : 'col-xs-12 r-select',
-        options   : res.map((value) => {
-          return {
-            name  : value,
-            value : value
-          }
-        }),
+        options   : UI.resources.getSelectList(),
         helpText : 'Select resource for this form'
       },
       {
@@ -204,7 +189,7 @@ class SandboxTemplate extends React.Component {
         helpText  : 'Select resource fields to appear in table',
         options   : {
           connector : 'resource',
-          values    : values
+          values    : UI.fields.getSelectList()
         }
       },
       {
@@ -228,7 +213,6 @@ class SandboxTemplate extends React.Component {
         ]
       }
     ];
-    return result;
   }
 
   /**
@@ -307,7 +291,7 @@ function arrayToFields(list) {
 
 // ### Register Template
 
-templates.register('sandbox', {
+UI.templates.register('sandbox', {
   component : SandboxTemplate,
   path      : '/sandbox'
 });

@@ -6,6 +6,9 @@ import { array, type } from 'reach-react/lib/helpers';
 
 export default class Checkbox extends React.Component {
 
+  /**
+   * @constructor
+   */
   constructor(...args) {
     super(...args);
     this.onChange = this.onChange.bind(this);

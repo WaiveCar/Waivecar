@@ -25,10 +25,10 @@ Helpers.object = require('./object');
 Helpers.type = require('./type');
 
 /**
- * @property case
+ * @property changeCase
  * @type     Object
  */
-Helpers.case = require('./change-case');
+Helpers.changeCase = require('./change-case');
 
 /**
  * @property random

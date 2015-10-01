@@ -7,10 +7,10 @@ let LANGUAGES_UPPERCASE   = require('./vendor/languages-uppercase.js');
 let LANGUAGES_LOWERCASE   = require('./vendor/languages-lowercase.js');
 
 /**
- * @class Case
+ * @class ChangeCase
  * @static
  */
-let Case = module.exports = {};
+let ChangeCase = module.exports = {};
 
 /**
  * Changes the case of the string values in the provided array.
@@ -19,9 +19,9 @@ let Case = module.exports = {};
  * @param  {Array}  arr
  * @return {Array}
  */
-Case.array = (caseType, arr) => {
+ChangeCase.array = function (caseType, arr) {
   return arr.reduce((store, value) => {
-    store.push(Case[caseType](value));
+    store.push(ChangeCase[caseType](value));
     return store;
   }, []);
 };
@@ -32,10 +32,10 @@ Case.array = (caseType, arr) => {
  * @param  {Object} obj
  * @return {Object}
  */
-Case.objectKeys = (caseType, obj) => {
+ChangeCase.objectKeys = function (caseType, obj) {
   let result = {};
   for (let key in obj) {
-    result[Case[caseType](key)] = obj[key];
+    result[this[caseType](key)] = obj[key];
   }
   return result;
 };
@@ -46,12 +46,12 @@ Case.objectKeys = (caseType, obj) => {
  * @param  {String} [locale]
  * @return {String}
  */
-Case.toCapital = (value, locale) => {
+ChangeCase.toCapital = function (value, locale) {
   if (value == null) {
     return '';
   }
   value = String(value);
-  return Case.toUpper(value.charAt(0), locale) + value.substr(1);
+  return this.toUpper(value.charAt(0), locale) + value.substr(1);
 };
 
 /**
@@ -60,7 +60,7 @@ Case.toCapital = (value, locale) => {
  * @param  {String} [locale]
  * @return {String}
  */
-Case.toUpper = (value, locale) => {
+ChangeCase.toUpper = function (value, locale) {
   var lang = LANGUAGES_UPPERCASE[locale];
   value = (value == null) ? '' : String(value);
   if (lang) {
@@ -75,7 +75,7 @@ Case.toUpper = (value, locale) => {
  * @param  {String} [locale]
  * @return {String}
  */
-Case.toLower = (value, locale) => {
+ChangeCase.toLower = function (value, locale) {
   var lang = LANGUAGES_LOWERCASE[locale]
   value = (value == null) ? '' : String(value);
   if (lang) {
@@ -90,11 +90,13 @@ Case.toLower = (value, locale) => {
  * @param  {String} [locale]
  * @return {String}
  */
-Case.toCamel = (value, locale) => {
-  return Case
+ChangeCase.toCamel = function (value, locale) {
+  return this
     .toSentence(value, locale)
     .replace(/(\d) (?=\d)/g, '$1_')
-    .replace(/ (.)/g, (m, $1) => Case.toUpper($1, locale));
+    .replace(/ (.)/g, (m, $1) => {
+      return this.toUpper($1, locale)
+    }.bind(this));
 };
 
 /**
@@ -103,8 +105,8 @@ Case.toCamel = (value, locale) => {
  * @param  {String} [locale]
  * @return {String}
  */
-Case.toSnake = (value, locale) => {
-  return Case.toSentence(value, locale, '_');
+ChangeCase.toSnake = function (value, locale) {
+  return this.toSentence(value, locale, '_');
 };
 
 /**
@@ -113,8 +115,8 @@ Case.toSnake = (value, locale) => {
  * @param  {String} [locale]
  * @return {String}
  */
-Case.toPascal = (value, locale) => {
-  return Case.toCapital(Case.toCamel(value, locale), locale);
+ChangeCase.toPascal = function (value, locale) {
+  return this.toCapital(this.toCamel(value, locale), locale);
 };
 
 /**
@@ -123,8 +125,8 @@ Case.toPascal = (value, locale) => {
  * @param  {String} [locale]
  * @return {String}
  */
-Case.toParam = (value, locale) => {
-  return Case.toSentence(value, locale, '-');
+ChangeCase.toParam = function (value, locale) {
+  return this.toSentence(value, locale, '-');
 };
 
 /**
@@ -134,7 +136,7 @@ Case.toParam = (value, locale) => {
  * @param  {String} [replacement]
  * @return {String}
  */
-Case.toSentence = (value, locale, replacement) => {
+ChangeCase.toSentence = function (value, locale, replacement) {
   if (value == null) {
     return '';
   }
@@ -149,5 +151,5 @@ Case.toSentence = (value, locale, replacement) => {
     .replace(CAMEL_CASE_REGEXP, '$1 $2')
     .replace(TRAILING_DIGIT_REGEXP, '$1 $2')
     .replace(NON_WORD_REGEXP, replace);
-  return Case.toLower(value, locale);
+  return this.toLower(value, locale);
 };

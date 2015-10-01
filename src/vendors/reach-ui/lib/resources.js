@@ -1,6 +1,7 @@
 'use strict';
 
-import { relay } from 'reach-react';
+import { relay }      from 'reach-react';
+import { changeCase } from 'reach-react/lib/helpers';
 
 /**
  * @class Resources
@@ -44,6 +45,26 @@ Resources.get = function (key) {
 Resources.getKeys = function () {
   return Object.keys(Resources.store);
 };
+
+/**
+ * @method getSelectList
+ * @param  {Array} [targets]
+ * @return {Array}
+ */
+Resources.getSelectList = function (targets) {
+  return (targets ? targets : this.getKeys()).map((value) => {
+    return {
+      name  : changeCase.toCapital(value),
+      value : value
+    };
+  });
+};
+
+/*
+         resources.map((value) => {
+          
+        }),
+ */
 
 /**
  * Prepares all the resources by creating relay reducers.
