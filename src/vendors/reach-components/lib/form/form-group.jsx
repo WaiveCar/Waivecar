@@ -62,7 +62,7 @@ export default class FormGroup extends React.Component {
     switch (options.component) {
       case 'input'        : return <Input       key={ index } options={ options } value={ this.props.data[options.name] } onChange={ this.props.onChange } />;
       case 'select'       : return <Select      key={ index } options={ options } value={ this.props.data[options.name] } onChange={ this.props.onChange } multi={ false } />;
-      case 'multi-select' : return <Select      key={ index } options={ options } value={ this.props.data[options.name] } onChange={ this.props.onChange } multi={ true } />;
+      case 'multi-select' : return <Select      key={ index } options={ options } value={ this.props.data }               onChange={ this.props.onChange } multi={ true } />;
       case 'checkbox'     : return <Checkbox    key={ index } options={ options } value={ this.props.data }               onChange={ this.props.onChange } />;
       case 'radio'        : return <Radio       key={ index } options={ options } value={ this.props.data[options.name] } onChange={ this.props.onChange } />;
       case 'textarea'     : return <Textarea    key={ index } options={ options } value={ this.props.data[options.name] } onChange={ this.props.onChange } />;

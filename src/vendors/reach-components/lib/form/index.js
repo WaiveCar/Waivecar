@@ -63,6 +63,11 @@ export default class Form extends React.Component {
       case 'number' :
         data[target.name] = +target.value;
         break;
+      case 'multi-select' :
+        if (target.reset) {
+          data[target.name] = [];
+          break;
+        }
       case 'checkbox' :
         if (target.reset) {
           data[target.category] = [];
@@ -140,7 +145,6 @@ export default class Form extends React.Component {
    * @method render
    */
   render() {
-    logger.debug(`Form > Rendering form`);
     return (
       <form className={ this.props.className } role={ this.props.role || 'form' } action={ this.props.action } method={ this.props.method } onSubmit={ this.submit }>
         {

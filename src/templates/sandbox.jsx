@@ -184,33 +184,13 @@ class SandboxTemplate extends React.Component {
       },
       {
         label     : 'Fields',
-        component : 'checkbox',
+        component : 'multi-select',
         name      : 'fields',
         helpText  : 'Select resource fields to appear in table',
         options   : {
           connector : 'resource',
           values    : UI.fields.getSelectList()
         }
-      },
-      {
-        label     : 'Sample',
-        component : 'checkbox',
-        name      : 'sample',
-        helpText  : 'Just a sample when working with checkbox component update checks',
-        options   : [
-          {
-            name  : 'Games',
-            value : 'games'
-          },
-          {
-            name  : 'Hiking',
-            value : 'hiking'
-          },
-          {
-            name  : 'Programming',
-            value : 'programming'
-          }
-        ]
       }
     ];
   }
