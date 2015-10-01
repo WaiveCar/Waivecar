@@ -133,7 +133,7 @@ class UIForm extends React.Component {
     let buttons = [];
     let actions = this.props.actions;
 
-    if (actions.cancel) {
+    if (actions.indexOf('cancel') > -1) {
       buttons.push({
         value : 'cancel',
         class : 'btn',
@@ -150,7 +150,7 @@ class UIForm extends React.Component {
         class : 'btn btn-primary'
       });
     } else {
-      if (actions.delete) {
+      if (actions.indexOf('delete') > -1) {
         buttons.push({
           value : 'delete',
           class : 'btn btn-danger',
@@ -159,7 +159,7 @@ class UIForm extends React.Component {
           }.bind(this)
         });
       }
-      if (actions.update) {
+      if (actions.indexOf('update') > -1) {
         buttons.push({
           value : 'update',
           type  : 'submit',
@@ -182,7 +182,7 @@ class UIForm extends React.Component {
     // ### Submit Data
     // Submits the data to api either via post or put depending on the
     // form type being create or update.
-    
+
     if (this.isCreate()) {
       api.post(resource.uri, data, (error, data) => {
         if (error) {
@@ -237,5 +237,62 @@ components.register({
   type    : 'form',
   icon    : 'apps',
   class   : UIForm,
-  options : {}
+  options : [
+    {
+      name      : 'resource',
+      label     : 'Resource',
+      component : 'select',
+      options   : [
+        {
+          name : 'Cars',
+          value : 'cars'
+        },
+        {
+          name : 'Views',
+          value : 'views'
+        }
+      ],
+      helpText  : 'Select a Resource'
+    },
+    {
+      name      : 'actions',
+      label     : 'Actions',
+      component : 'multiselect',
+      options   : [
+        {
+          name : 'Create',
+          value : 'create'
+        },
+        {
+          name : 'Update',
+          value : 'update'
+        },
+        {
+          name : 'Delete',
+          value : 'delete'
+        }
+      ],
+      helpText  : 'Select Actions'
+    },
+    {
+      name      : 'fields',
+      label     : 'Fields',
+      component : 'select',
+      options   : [
+        {
+          name : 'Id',
+          value : 'id'
+        },
+        {
+          name : 'Created At',
+          value : 'createdAt'
+        },
+        {
+          name : 'Updated At',
+          value : 'updatedAt'
+        }
+      ],
+      helpText  : 'Select Fields to display'
+    }
+  ]
 });

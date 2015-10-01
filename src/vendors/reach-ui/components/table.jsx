@@ -231,7 +231,7 @@ components.register({
     {
       name      : 'actions',
       label     : 'Actions',
-      component : 'multiselect',
+      component : 'multi-select',
       options   : [
         {
           name : 'Create',

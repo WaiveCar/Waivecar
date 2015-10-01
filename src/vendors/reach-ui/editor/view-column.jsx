@@ -3,6 +3,8 @@ import { DropTarget }                  from 'react-dnd';
 import ViewRow                         from './view-row';
 import ViewComponent                   from './view-component';
 import ViewOptions                     from './view-options';
+import ViewItemIcon                    from './view-item-icon';
+import ViewItemDropzone                from './view-item-dropzone';
 import ItemCategories                  from './item-categories';
 import newId                           from './newid';
 
@@ -61,24 +63,16 @@ export default class ViewColumn extends Component {
   }
 
   render() {
-    const { id, name, type, category, components, accepts, options, onDrop, isOver, canDrop, connectDropTarget, lastDroppedItem } = this.props;
-    const isActive = isOver && canDrop;
-    let width = options && options.width && options.width.value ? options.width.value : 12;
-    let activeStyle = 'untouched';
-
-    if (isActive) {
-      activeStyle = 'is-active';
-    } else if (canDrop) {
-      activeStyle = 'can-drop';
-    }
-
-    let className = `view-column col-xs-${ width } ${ activeStyle }`;
+    const { id, name, type, category, icon, components, accepts, options, onDrop, isOver, canDrop, connectDropTarget, lastDroppedItem } = this.props;
+    let width = options && options.width ? options.width : 12;
+    let className = `view-column col-xs-${ width }`;
 
     return connectDropTarget(
       <div className={ className }>
-        <h6>{ name }</h6>
-        <ViewOptions componentCategory={ category } componentName={ name } componentType={ type } options={ options } update={ this.updateOptions.bind(this) } />
-        { isActive && <p>Drag Rows or Components in to this Column</p> }
+        <div className="view-header">
+          <ViewItemIcon type={ type } icon={ icon} />
+          <ViewOptions componentCategory={ category } componentName={ name } componentType={ type } options={ options } update={ this.updateOptions.bind(this) } />
+        </div>
         {
           components.map((component, componentIndex) => {
             switch (component.category) {
@@ -89,6 +83,7 @@ export default class ViewColumn extends Component {
                   name            = { component.name }
                   type            = { component.type }
                   category        = { component.category }
+                  icon            = { component.icon }
                   options         = { component.options }
                   components      = { component.components }
                   accepts         = { component.accepts }
@@ -111,6 +106,7 @@ export default class ViewColumn extends Component {
             }
           })
         }
+        <ViewItemDropzone isOver={ isOver } canDrop={ canDrop } accepts={ accepts } />
       </div>
     );
   }

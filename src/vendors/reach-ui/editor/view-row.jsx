@@ -3,6 +3,8 @@ import { DropTarget }                  from 'react-dnd';
 import ItemCategories                  from './item-categories';
 import ViewColumn                      from './view-column';
 import ViewOptions                     from './view-options';
+import ViewItemIcon                    from './view-item-icon';
+import ViewItemDropzone                from './view-item-dropzone';
 import newId                           from './newid';
 
 const target = {
@@ -11,12 +13,12 @@ const target = {
     let item = monitor.getItem();
     item.id = newId();
     item.components = [];
-    item.width = 12;
+    item.options.width = 12;
     let row = props;
     row.components.push(item);
     if (row.components.length > 0) {
       let width = Math.floor(12 / row.components.length);
-      row.components.forEach(c => c.width = width);
+      row.components.forEach(c => c.options.width = width);
     }
 
     props.onDrop(row);
@@ -54,6 +56,11 @@ export default class ViewRow extends Component {
     if (existing > -1) {
       row.components[existing] = item;
     }
+
+    if (row.components.length > 0) {
+      let width = Math.floor(12 / row.components.length);
+      row.components.forEach(c => c.options.width = width);
+    }
     this.props.onDrop(row);
   }
 
@@ -64,23 +71,15 @@ export default class ViewRow extends Component {
   }
 
   render() {
-    const { id, name, type, category, components, options, isOver, canDrop, onDrop, connectDropTarget, lastDroppedItem } = this.props;
-    const isActive = isOver && canDrop;
-
-    let activeStyle = 'untouched';
-    if (isActive) {
-      activeStyle = 'is-active';
-    } else if (canDrop) {
-      activeStyle = 'can-drop';
-    }
-
-    let className = `view-row ${ activeStyle }`;
+    const { id, name, accepts, type, category, icon, components, options, isOver, canDrop, onDrop, connectDropTarget, lastDroppedItem } = this.props;
+    let className = 'view-row';
 
     return connectDropTarget(
       <div className={ className }>
-        <h6>{ name }</h6>
-        { isActive && <p>Drag Columns on to this Row</p> }
-        <ViewOptions componentCategory={ category } componentName={ name } componentType={ type } options={ options } update={ this.updateOptions.bind(this) } />
+        <div className="view-header">
+          <ViewItemIcon type={ type } icon={ icon} />
+          <ViewOptions componentCategory={ category } componentName={ name } componentType={ type } options={ options } update={ this.updateOptions.bind(this) } />
+        </div>
         <div className="container-fluid">
           <div className="row">
           {
@@ -91,6 +90,7 @@ export default class ViewRow extends Component {
                 name            = { component.name }
                 type            = { component.type }
                 category        = { component.category }
+                icon            = { component.icon }
                 options         = { component.options }
                 components      = { component.components }
                 accepts         = { component.accepts }
@@ -102,6 +102,7 @@ export default class ViewRow extends Component {
           }
           </div>
         </div>
+        <ViewItemDropzone isOver={ isOver } canDrop={ canDrop } accepts={ accepts } />
       </div>
     );
   }

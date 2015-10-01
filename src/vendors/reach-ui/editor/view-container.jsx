@@ -2,6 +2,7 @@ import React, { PropTypes, Component } from 'react';
 import { DropTarget }                  from 'react-dnd';
 import ViewRow                         from './view-row';
 import ViewComponent                   from './view-component';
+import ViewItemDropzone                from './view-item-dropzone';
 import ItemCategories                  from './item-categories';
 import newId                           from './newid';
 
@@ -61,6 +62,7 @@ export default class ViewContainer extends Component {
         category        = { row.category }
         key             = { rowIndex }
         components      = { row.components }
+        icon            = { row.icon }
         accepts         = { row.accepts }
         options         = { row.options }
         lastDroppedItem = { row.lastDroppedItem }
@@ -70,29 +72,16 @@ export default class ViewContainer extends Component {
   }
 
   render() {
-    const { components, accepts, onDrop, isOver, canDrop, connectDropTarget } = this.props;
-    const isActive = isOver && canDrop;
-    let activeStyle = 'untouched';
-
-    if (isActive) {
-      activeStyle = 'is-active';
-    } else if (canDrop) {
-      activeStyle = 'can-drop';
-    }
-
-    let className = `view-container ${ activeStyle }`;
-    let showInstructions = components ? null : <p className="text-info text-center">Drag to add a { accepts.join(' or ') }</p>;
+    const { components, accepts, isOver, canDrop, connectDropTarget } = this.props;
+    let containerClassName = 'view-container';
     return connectDropTarget(
-      <div className={ className }>
-        { isActive
-          ? <p className="text-info text-center">Release to drop</p>
-          : showInstructions
-        }
+      <div className={ containerClassName }>
         {
           Array.isArray(components)
             ? components.map(this.renderRow.bind(this))
             : this.renderComponent(components)
         }
+        <ViewItemDropzone isOver={ isOver } canDrop={ canDrop } accepts={ accepts } />
       </div>
     );
   }

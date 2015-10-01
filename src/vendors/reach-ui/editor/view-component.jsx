@@ -1,5 +1,6 @@
 import React, { PropTypes, Component } from 'react';
 import ViewOptions                     from './view-options';
+import ViewItemIcon                    from './view-item-icon';
 
 export default class ViewComponent extends Component {
 
@@ -21,10 +22,9 @@ export default class ViewComponent extends Component {
     let className = `view-component ${ type.toLowerCase() }-component`;
     return (
       <div className={ className }>
-        <h6>{ name }</h6>
-        <ViewOptions componentCategory={ category } componentName={ name } componentType={ type } options={ options } update={ this.updateOptions.bind(this) } />
-        <div className="view-component-icon" style={{ marginTop : '20px' }}>
-          <i className="material-icons" role={ type }>{ icon }</i>
+        <div className="view-header">
+          <ViewItemIcon type={ type } icon={ icon} />
+          <ViewOptions componentCategory={ category } componentName={ name } componentType={ type } options={ options } update={ this.updateOptions.bind(this) } />
         </div>
       </div>
     );
