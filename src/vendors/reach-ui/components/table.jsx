@@ -145,7 +145,7 @@ class UITable extends React.Component {
   }
 
   createButton() {
-    if (this.props.actions.create) {
+    if (this.props.actions.indexOf('create') > -1) {
       return (
         <Link className="btn btn-icon btn-primary command-primary-action" to={ this.resourceName() + '/create' }>
           <i className="material-icons" role="edit">add</i>

@@ -61,17 +61,6 @@ templates.register('app', {
   component : AppTemplate,
   onEnter   : policies.isAuthenticated,
   getChildRoutes(state, done) {
-    done(null,
-      [
-        {
-          path      : '/view-editor/create',
-          component : require('views/app/editor')
-        },
-        {
-          path      : '/view-editor/:id',
-          component : require('views/app/editor')
-        }
-      ].concat(views.getRoutes('app'))
-    );
+    done(null, views.getRoutes('app'));
   }
 });

@@ -114,7 +114,7 @@ export default (view) => {
       if (Reach.auth.user.role !== 'admin') return;
 
       return (
-        <Link className="btn btn-sm btn-info" to={ `/editor/${ view.id }` }>Ugly Edit View</Link>
+        <Link className="btn btn-sm btn-info" to={ `/views/${ view.id }` }>Ugly Edit View</Link>
       )
     }
 

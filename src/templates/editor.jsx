@@ -47,6 +47,6 @@ class EditorTemplate extends React.Component {
 
 templates.register('editor', {
   component : EditorTemplate,
-  path      : '/editor/:id',
+  path      : '/views/:id',
   onEnter   : policies.isAuthenticated
 });
