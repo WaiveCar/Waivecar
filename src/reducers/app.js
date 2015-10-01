@@ -21,7 +21,7 @@ let defaultState = {
   title   : 'No Title',
   classes : {
     view      : null,
-    container : 'container-fuid'
+    container : 'container-fluid'
   }
 };
 

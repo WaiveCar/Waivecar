@@ -22,6 +22,11 @@ $app-color-white : #fff;
 
 $login-width : 420px;
 
+$btn-default-color:              #fff !default;
+$btn-default-bg:                 $gray !default;
+$btn-default-border:             $btn-default-bg !default;
+
+
 @keyframes inputHighlighter {
   from {
     background : $brand-primary;

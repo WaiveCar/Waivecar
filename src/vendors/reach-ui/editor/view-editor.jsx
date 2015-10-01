@@ -5,7 +5,7 @@ import { Navigation }       from 'react-router';
 import { DragDropContext }  from 'react-dnd';
 import HTML5Backend         from 'react-dnd/modules/backends/HTML5';
 import { api }              from 'reach-react';
-import { snackbar, Button } from 'reach-components';
+import { Form, snackbar, Button } from 'reach-components';
 import components           from '../lib/components';
 import resources            from '../lib/resources';
 import newId                from './newid';
@@ -223,7 +223,7 @@ export default class ViewLayout extends React.Component {
 
     buttons.push({
       value : 'cancel',
-      class : 'btn',
+      class : 'btn btn-default-outline',
       click : () => {
         this.goBack();
       }.bind(this)
@@ -233,13 +233,13 @@ export default class ViewLayout extends React.Component {
       buttons.push({
         value : 'submit',
         type  : 'submit',
-        class : 'btn btn-primary',
+        class : 'btn btn-primary-outline',
         click : this.submit.bind(this)
       });
     } else {
       buttons.push({
         value : 'delete',
-        class : 'btn btn-danger',
+        class : 'btn btn-danger-outline',
         click : () => {
           console.log('Delete: %s!', this.id());
         }.bind(this)
@@ -247,7 +247,7 @@ export default class ViewLayout extends React.Component {
       buttons.push({
         value : 'update',
         type  : 'button',
-        class : 'btn btn-primary',
+        class : 'btn btn-primary-outline',
         click : this.submit.bind(this)
       });
     }
@@ -271,6 +271,19 @@ export default class ViewLayout extends React.Component {
         }
         </div>
       </div>
+    );
+  }
+
+  renderForm() {
+    return (
+      <Form
+        className = "r-form"
+        fields    = { [] }
+        default   = { this.state.data }
+        change    = { this.change }
+        submit    = { this.submit }
+        buttons   = { [ ] }
+      />
     );
   }
 
@@ -300,23 +313,39 @@ export default class ViewLayout extends React.Component {
     );
   }
 
-  render() {
+  renderViewContainer() {
     const { layout, lastDroppedItem } = this.state;
-
     return (
-      <div className="view-layout">
-        <ViewContainer
-          key             = { 'container' }
-          type            = { layout.type }
-          category        = { layout.category }
-          components      = { layout.components }
-          accepts         = { layout.accepts }
-          lastDroppedItem = { lastDroppedItem }
-          onDrop          = { this.handleDrop.bind(this) }
-        />
-        { this.renderFormActions() }
-        <div className="temp-foot">{ JSON.stringify(this.state.layout) }</div>
-        { this.renderItems() }
+      <ViewContainer
+        key             = { 'container' }
+        type            = { layout.type }
+        category        = { layout.category }
+        components      = { layout.components }
+        accepts         = { layout.accepts }
+        lastDroppedItem = { lastDroppedItem }
+        onDrop          = { this.handleDrop.bind(this) }
+      />
+    );
+  }
+
+  render() {
+    return (
+      <div id="view-editor">
+        <div className="view-content">
+          <div className="view-layout">
+            <div className="content-header">
+              <h1><span>Vew Editor</span></h1>
+            </div>
+            { this.renderViewContainer() }
+          </div>
+          <div className="view-settings">
+            { this.renderItems() }
+            { this.renderForm() }
+          </div>
+        </div>
+        <div className="view-actions">
+          { this.renderFormActions() }
+        </div>
       </div>
     );
   }

@@ -1,0 +1,93 @@
+@import '~styles/variables';
+
+body {
+  background : #eee;
+}
+
+#editor {
+  display           : -webkit-box;
+  display           : -moz-box;
+  display           : -ms-flexbox;
+  display           : -moz-flex;
+  display           : -webkit-flex;
+  display           : flex;
+  -webkit-flex-flow : row wrap;
+  flex-flow         : row wrap;
+  min-height        : 100vh;
+  padding-top       : 52px;
+
+  h1 {
+    font-size      : 1.85rem;
+    margin         : 35px auto 0;
+    position       : relative;
+    text-align     : center;
+    text-transform : uppercase;
+    width          : 500px;
+    > span {
+      background : #fff;
+      padding    : 0 24px;
+      position   : relative;
+      z-index    : 1;
+    }
+    &:before {
+      background  : #25C155;
+      content     : "";
+      display     : block;
+      height      : 2px;
+      left        : 0;
+      position    : absolute;
+      top         : 50%;
+      width       : 100%;
+    }
+  }
+
+  .content-header {
+    border-bottom : 1px solid #f4f4f4;
+    height        : 75px;
+  }
+
+  // ### App Layout
+
+  #header {
+    background : #282828;
+    border-top : 2px solid rgba(#25C155, .8);
+    color      : #fff;
+    height     : 52px;
+    position   : fixed;
+    top        : 0;
+    width      : 100%;
+    z-index    : 10;
+  }
+
+  #view-editor {
+    background : #fff;
+    display    : flex;
+    flex       : 1;
+    flex-direction : column;
+    .view-content {
+      position : relative;
+      display    : flex;
+      flex       : 1;
+      .view-layout {
+        flex     : 1;
+        position : relative;
+      }
+      .view-settings {
+        flex-basis  : 300px;
+        border-left : 1px solid #e9e9e9;
+        background  : #eee;
+      }
+    }
+    .view-actions {
+      background : #282828;
+      border-top : 2px solid rgba(#25C155, .8);
+      color      : #fff;
+      height     : 52px;
+      position   : fixed;
+      bottom     : 0;
+      width      : 100%;
+      z-index    : 10;
+      text-align : right;
+    }
+  }
+}
