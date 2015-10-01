@@ -40,7 +40,7 @@
     "reach-mongo": "0.0.5",
     "reach-payments": "0.1.4",
     "reach-queue": "0.0.10",
-    "reach-sequelize": "0.1.5",
+    "reach-sequelize": "0.1.6",
     "reach-sms": "0.0.7",
     "reach-ui": "0.0.13",
     "reach-user": "0.2.12"
