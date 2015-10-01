@@ -1,10 +1,13 @@
 'use strict';
 
 let queue  = Reach.provider('queue');
+let User   = Reach.model('User');
 let hooks  = Reach.Hooks;
 let config = Reach.config; 
 
 // ### Get Hook
+// Triggers when the module needs to retrieve a user based
+// on the provided identifier.
 
 hooks.set('user:get', function *(identifier) {
   return yield User.findOne({
@@ -14,9 +17,10 @@ hooks.set('user:get', function *(identifier) {
   });
 });
 
-// ### Reigstration Hook
+// ### Store Hook
+// Triggers when a new user has been added to the database.
 
-hooks.set('user:registered', function *(user) {
+hooks.set('user:stored', function *(user) {
   let job = queue
     .create('email:user:registration', {
       to       : user.email,
@@ -36,7 +40,23 @@ hooks.set('user:registered', function *(user) {
   });
 });
 
+// ### Update Hook
+// Triggers when a user has completed an update request.
+
+hooks.set('user:updated', function *(user) {
+  // ... 
+});
+
+// ### Delete Hook
+// Triggers when a user has performed a delete request.
+
+hooks.set('user:deleted', function *(user) {
+  // ... 
+});
+
 // ### Password Reset Hook
+// Triggered when a password reset token has been generated and
+// ready to be sent to the user.
 
 hooks.set('user:send-password-token', function *(user, token) {
   let job = queue
