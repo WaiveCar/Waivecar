@@ -68,7 +68,7 @@ class UIForm extends React.Component {
    * @return {String}
    */
   id() {
-    return this.props.params.id;
+    return this.props.params.id || 'create';
   }
 
   /**
