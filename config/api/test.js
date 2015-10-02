@@ -25,8 +25,8 @@ module.exports = {
     ],
     providers : [
       'gm-api',
-      'email',
-      'sms'
+      'email'
+      // 'sms'
     ]
   }
 };
