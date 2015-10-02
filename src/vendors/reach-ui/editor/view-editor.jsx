@@ -219,7 +219,7 @@ export default class ViewLayout extends React.Component {
     });
   }
 
-  renderFormActions() {
+  renderActions() {
     let buttons = [];
 
     buttons.push({
@@ -305,6 +305,7 @@ export default class ViewLayout extends React.Component {
     return (
       <div className="container">
         <Form
+          ref       = "form"
           className = "r-form"
           fields    = { currentFields }
           default   = { this.state.data }
@@ -373,7 +374,7 @@ export default class ViewLayout extends React.Component {
           </div>
         </div>
         <div className="view-actions">
-          { this.renderFormActions() }
+          { this.renderActions() }
         </div>
       </div>
     );
