@@ -1,6 +1,7 @@
 'use strict';
 
 let queue  = Reach.provider('queue');
+let tokens = Reach.module('user/lib/token-service');
 let User   = Reach.model('User');
 let hooks  = Reach.Hooks;
 let config = Reach.config; 
@@ -52,6 +53,13 @@ hooks.set('user:updated', function *(user) {
 
 hooks.set('user:deleted', function *(user) {
   // ... 
+});
+
+// ### Verify Hook
+// Triggers when a verification request has been made.
+
+hooks.set('user:verify', function *(user, purpose) {
+  // ...
 });
 
 // ### Password Reset Hook
