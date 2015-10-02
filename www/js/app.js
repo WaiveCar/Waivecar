@@ -89,6 +89,7 @@ require('./directives/page-title-directive');
 require('./directives/reverse-geocoding-directive');
 require('./directives/time-left-directive');
 require('./directives/wizard-directive');
+require('./directives/equal-to-directive');
 
 ionic.Platform.ready(function () {
   angular.bootstrap(document, ['app']);

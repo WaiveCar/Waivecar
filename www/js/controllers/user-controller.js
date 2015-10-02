@@ -53,12 +53,6 @@ module.exports = angular.module('app.controllers').controller('UserController', 
     //     redirectUri: 'http://localhost/'
     //   };
 
-    //   return $data.resources.users.storeFacebook(data).$promise
-    //     .then(function(){
-    //       $message.success('Connected!');
-    //     })
-    //     .catch($message.error);
-
     //   // $data.resources.users.facebook(data, function (result) {
     //   //     $data.merge('users', result);
     //   //     $data.activateKnownModel('users', result.id, function () {
@@ -83,16 +77,13 @@ module.exports = angular.module('app.controllers').controller('UserController', 
       return ezfb.getLoginStatus()
         .then(function(response){
           if (response.status !== 'connected') {
-            console.log('User not authorized with FB. Logging in ...');
             return ezfb.login();
           }
-          console.log('User is already authorized with FB');
           return response;
 
         })
         .then(function(res) {
           if (res.status === 'connected') {
-            console.log('Registering with FB ...');
             return $auth.registerWithFacebook(res.authResponse);
           }
         })

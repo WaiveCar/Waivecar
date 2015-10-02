@@ -77,9 +77,18 @@ module.exports = [
       .state('auth-reset-password', {
         // Screen not in Invision, but required. (enter reset code to reset password)
         cache: false,
-        url: '/auth/reset-password',
+        url: '/auth/reset-password?token',
         // TODO: Implement this
         templateUrl: '/templates/auth/reset-password.html',
+        data: {
+          auth: false
+        }
+      })
+      .state('auth-reset-password-success', {
+        // Screen not in Invision, but required.
+        cache: false,
+        url: '/auth/reset-password-success',
+        templateUrl: '/templates/auth/reset-password-success.html?1',
         data: {
           auth: false
         }

@@ -3,6 +3,7 @@ var angular = require('angular');
 require('angular-ui-router');
 require('../services/auth-service');
 require('../services/message-service');
+var _ = require('lodash');
 
 module.exports = angular.module('app.controllers').controller('AuthController', [
   '$rootScope',
@@ -16,7 +17,8 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
   '$settings',
   'FaceBookService',
   'ezfb',
-  function($rootScope, $scope, $state, $auth, $message, $data, $ionicHistory, $cordovaOauth, $settings, FaceBookService, ezfb) {
+  '$stateParams',
+  function($rootScope, $scope, $state, $auth, $message, $data, $ionicHistory, $cordovaOauth, $settings, FaceBookService, ezfb, $stateParams) {
     $scope.$ionicHistory = $ionicHistory;
 
     $scope.forms = {
@@ -25,7 +27,9 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
         // identifier: 'adibih@gmail.com',
       },
       forgotForm: {},
-      resetForm: {}
+      resetForm: {
+        token: $stateParams.token
+      }
     };
 
     var sharedCallback = function(err) {
@@ -50,7 +54,7 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
 
     };
 
-    $scope.forgot = function(form) {
+    $scope.initPasswordReset = function(form) {
       if (form.$pristine) {
         return $message.info('Please fill in your email first.');
       }
@@ -58,45 +62,43 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
         return $message.error('Please resolve form errors and try again.');
       }
 
-      console.warn('AuthController.forgot not implemented');
-      $state.go('auth-forgot-password-success');
+      $data.resources.User.initPasswordReset($scope.forms.forgotForm).$promise
+        .then(function(){
+          $state.go('auth-forgot-password-success');
+        })
+        .catch($message.error);
 
     };
 
+    $scope.submitNewPassword = function(form){
+      if (form.$pristine) {
+        return $message.info('Please fill in your email first.');
+      }
+      if (form.$invalid) {
+        return $message.error('Please resolve form errors and try again.');
+      }
+
+      var data = _.omit($scope.forms.resetForm, 'passwordConfirm');
+      $data.resources.User.submitNewPassword(data).$promise
+        .then(function(){
+          $state.go('auth-reset-password-success');
+        })
+        .catch($message.error);
+
+      };
+
 
     $scope.loginWithFacebook = function() {
-      // $cordovaOauth.facebook($settings.facebook.clientId, ['email', 'public_profile'], {
-      //   redirect_uri: 'http://localhost:8100/callback'
-      // })
-      //   .then(function(result) {
-      //     console.log(result);
-      //   })
-      //   .catch($message.error);
 
-      // FaceBookService.getFacebookInfo()
-      //   .then(function(rs){
-      //     console.log(rs);
-      //   })
-      //   .catch($message.error);
+      return ezfb.getLoginStatus()
+        .then(function(response) {
+          if (response.status !== 'connected') {
+            return ezfb.login();
+          }
+          return response;
 
-      // OAuth.initialize('1022707721082213');
-      // OAuth.popup('facebook')
-      //   .done(function(result) {
-      //     console.log(result);
-      //     //use result.access_token in your API request
-      //     //or use result.get|post|put|del|patch|me methods (see below)
-      //   })
-      //   .fail($message.error);
-
-      // ezfb.getLoginStatus(function(res) {
-      //   console.log(res);
-      // });
-
-      ezfb.login(null, {
-          scope: 'email,public_profile'
         })
         .then(function(res) {
-          console.log(res);
           if (res.status === 'connected') {
             return $auth.loginWithFacebook(res.authResponse);
           }
