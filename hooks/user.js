@@ -6,6 +6,46 @@ let User   = Reach.model('User');
 let hooks  = Reach.Hooks;
 let config = Reach.config;
 
+function *requestPhoneVerification(userId, phone) {
+  let token = yield tokens.get({
+    id      : userId,
+    purpose : 'phone-verification'
+  });
+
+  let job = queue.create('sms:user:request-phone-verification', {
+    to      : phone,
+    message : `WaiveCar: Your verification code is ${ token }. Do not reply by SMS.`
+  }).save();
+
+  job.on('complete', () => {
+    job.remove();
+  });
+}
+
+function *requestEmailVerification(userId, email, name) {
+  let token = yield tokens.get({
+    id      : userId,
+    purpose : 'email-verification'
+  });
+
+  let job = queue.create('sms:user:request-email-verification', {
+    to       : email,
+    from     : config.email.sender,
+    subject  : 'Email Verificaton Required',
+    template : 'request-email-verification',
+    context  : {
+      name    : name,
+      token   : token,
+      company : config.api.name,
+      confirm : `${ config.api.uri }/users/verify`
+    }
+  }).save();
+
+  job.on('complete', () => {
+    job.remove();
+  });
+}
+
 // ### Get Hook
 // Triggers when the module needs to retrieve a user based
 // on the provided identifier.
@@ -39,13 +79,22 @@ hooks.set('user:stored', function *(user) {
   job.on('complete', () => {
     job.remove();
   });
+
+  if (user.phone && !user.verifiedPhone) {
+    yield requestPhoneVerification(user.id, user.phone);
+  }
 });
 
 // ### Update Hook
 // Triggers when a user has completed an update request.
 
 hooks.set('user:updated', function *(user) {
-  // ...
+  if (user.phone && !user.verifiedPhone) {
+    yield requestPhoneVerification(user.id, user.phone);
+  }
+  if (user.email && !user.verifiedEmail) {
+    yield requestEmailVerification(user.id, user.email, user.name());
+  }
 });
 
 // ### Delete Hook
