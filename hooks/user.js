@@ -5,7 +5,6 @@ let tokens = Reach.module('user/lib/token-service');
 let User   = Reach.model('User');
 let hooks  = Reach.Hooks;
 let config = Reach.config;
-let User   = Reach.model('User');
 
 // ### Get Hook
 // Triggers when the module needs to retrieve a user based
@@ -46,14 +45,14 @@ hooks.set('user:stored', function *(user) {
 // Triggers when a user has completed an update request.
 
 hooks.set('user:updated', function *(user) {
-  // ... 
+  // ...
 });
 
 // ### Delete Hook
 // Triggers when a user has performed a delete request.
 
 hooks.set('user:deleted', function *(user) {
-  // ... 
+  // ...
 });
 
 // ### Verify Hook
