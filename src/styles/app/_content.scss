@@ -1,19 +1,12 @@
-.ct-widget.ct-ignition {
-  position : fixed;
-  right    : 68px;
-  left     : auto;
-  top      : auto;
-  bottom   : 68px;
-  .ct-ignition__button--cancel {
-    left   : 0;
-    bottom : 8px;
-  }
-}
-
 .content-component {
   img, iframe, video {
     display: block;
     margin-left: auto;
     margin-right: auto;
   }
+}
+
+.ct-widget.ct-ignition {
+  display    : none;
+  visibility : hidden;
 }
