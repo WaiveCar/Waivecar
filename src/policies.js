@@ -4,6 +4,9 @@ import { auth } from 'reach-react';
 
 export default {
 
+  isAnyone : (nextState, transition) => {
+  },
+
   /**
    * @method isAuthenticated
    * @param  {Object} nextState

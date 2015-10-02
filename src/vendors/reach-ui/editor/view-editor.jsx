@@ -8,6 +8,7 @@ import { api }              from 'reach-react';
 import { Form, snackbar, Button } from 'reach-components';
 import components           from '../lib/components';
 import resources            from '../lib/resources';
+import fields               from '../lib/fields';
 import newId                from './newid';
 import Item                 from './item';
 import ItemCategories       from './item-categories';
@@ -275,15 +276,43 @@ export default class ViewLayout extends React.Component {
   }
 
   renderForm() {
+    let viewfields = {
+      create : [
+        'template',
+        'path',
+        'title',
+        'class',
+        'policy'
+      ],
+      update : [
+        'template',
+        'path',
+        'title',
+        'class',
+        'policy'
+      ]
+    };
+    let list  = fields.get('views');
+    let action = this.isCreate() ? 'create' : 'update';
+    let currentFields = viewfields[action].map((value, index) => {
+      if (list.hasOwnProperty(value)) {
+        let field = list[value];
+        field.className = 'col-sx-12 r-input';
+        return field;
+      }
+    });
+
     return (
-      <Form
-        className = "r-form"
-        fields    = { [] }
-        default   = { this.state.data }
-        change    = { this.change }
-        submit    = { this.submit }
-        buttons   = { [ ] }
-      />
+      <div className="container">
+        <Form
+          className = "r-form"
+          fields    = { currentFields }
+          default   = { this.state.data }
+          change    = { this.change }
+          submit    = { this.submit }
+          buttons   = { [ ] }
+        />
+      </div>
     );
   }
 

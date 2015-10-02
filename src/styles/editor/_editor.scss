@@ -73,9 +73,13 @@ body {
         position : relative;
       }
       .view-settings {
-        flex-basis  : 300px;
+        flex-basis  : 375px;
         border-left : 1px solid #e9e9e9;
         background  : #eee;
+        padding: 10px;
+        form {
+          background : $app-color-white;
+        }
       }
     }
     .view-actions {
