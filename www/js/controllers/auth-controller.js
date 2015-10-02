@@ -3,6 +3,7 @@ var angular = require('angular');
 require('angular-ui-router');
 require('../services/auth-service');
 require('../services/message-service');
+var _ = require('lodash');
 
 module.exports = angular.module('app.controllers').controller('AuthController', [
   '$rootScope',
@@ -12,7 +13,12 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
   '$message',
   '$data',
   '$ionicHistory',
-  function ($rootScope, $scope, $state, $auth, $message, $data, $ionicHistory) {
+  '$cordovaOauth',
+  '$settings',
+  'FaceBookService',
+  'ezfb',
+  '$stateParams',
+  function($rootScope, $scope, $state, $auth, $message, $data, $ionicHistory, $cordovaOauth, $settings, FaceBookService, ezfb, $stateParams) {
     $scope.$ionicHistory = $ionicHistory;
 
     $scope.forms = {
@@ -21,10 +27,12 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
         // identifier: 'adibih@gmail.com',
       },
       forgotForm: {},
-      resetForm: {}
+      resetForm: {
+        token: $stateParams.token
+      }
     };
 
-    var sharedCallback = function (err) {
+    var sharedCallback = function(err) {
       if (err) {
         return $message.error(err);
       }
@@ -34,7 +42,7 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
 
     };
 
-    $scope.login = function (form) {
+    $scope.login = function(form) {
       if (form.$pristine) {
         return $message.info('Please fill in your credentials first.');
       }
@@ -46,7 +54,7 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
 
     };
 
-    $scope.forgot = function (form) {
+    $scope.initPasswordReset = function(form) {
       if (form.$pristine) {
         return $message.info('Please fill in your email first.');
       }
@@ -54,18 +62,60 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
         return $message.error('Please resolve form errors and try again.');
       }
 
-      console.warn('AuthController.forgot not implemented');
-      $state.go('auth-forgot-password-success');
+      $data.resources.User.initPasswordReset($scope.forms.forgotForm).$promise
+        .then(function(){
+          $state.go('auth-forgot-password-success');
+        })
+        .catch($message.error);
 
     };
 
-    $scope.reset = function () {
-      $auth.login($scope.forms.loginForm, sharedCallback);
+    $scope.submitNewPassword = function(form){
+      if (form.$pristine) {
+        return $message.info('Please fill in your email first.');
+      }
+      if (form.$invalid) {
+        return $message.error('Please resolve form errors and try again.');
+      }
+
+      var data = _.omit($scope.forms.resetForm, 'passwordConfirm');
+      $data.resources.User.submitNewPassword(data).$promise
+        .then(function(){
+          $state.go('auth-reset-password-success');
+        })
+        .catch($message.error);
+
+      };
+
+
+    $scope.loginWithFacebook = function() {
+
+      return ezfb.getLoginStatus()
+        .then(function(response) {
+          if (response.status !== 'connected') {
+            return ezfb.login();
+          }
+          return response;
+
+        })
+        .then(function(res) {
+          if (res.status === 'connected') {
+            return $auth.loginWithFacebook(res.authResponse);
+          }
+        })
+        .then(function() {
+          $state.go('users-edit', {
+            id: $data.me.id
+          });
+        })
+        .catch($message.error);
+
     };
 
-    $scope.init = function () {
+
+    $scope.init = function() {
       if ($auth.isAuthenticated()) {
-        $state.go('landing');
+        $state.go('cars');
       }
 
     };

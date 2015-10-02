@@ -1,7 +1,6 @@
 'use strict';
 var angular = require('angular');
 require('ngCordova');
-require('../app-settings.js');
 require('./auth-service.js');
 
 module.exports = angular.module('app.services').factory('CameraService', [

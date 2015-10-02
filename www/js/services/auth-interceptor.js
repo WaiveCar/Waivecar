@@ -1,7 +1,6 @@
 'use strict';
 var angular = require('angular');
 require('./session-service.js');
-require('../app-settings.js');
 var _ = require('lodash');
 
 module.exports = angular.module('app.services').factory('AuthInterceptor', [

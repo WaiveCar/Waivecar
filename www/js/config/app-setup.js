@@ -2,7 +2,7 @@
 'use strict';
 require('ionic-angular');
 require('ngCordova');
-require('./services/auth-interceptor');
+require('../services/auth-interceptor');
 var ionic = require('ionic');
 
 var config = [
@@ -14,7 +14,15 @@ var config = [
   '$compileProvider',
   '$provide',
   '$injector',
-  function ($ionicConfigProvider, $stateProvider, $locationProvider, $httpProvider, $urlRouterProvider, $compileProvider, $provide, $injector) {
+  '$cordovaFacebookProvider',
+  '$settingsProvider',
+  'ezfbProvider',
+  function ($ionicConfigProvider, $stateProvider, $locationProvider, $httpProvider, $urlRouterProvider, $compileProvider, $provide, $injector, $cordovaFacebookProvider, $settingsProvider, ezfbProvider) {
+
+    ezfbProvider.setInitParams({
+      appId: $settingsProvider.settings.facebook.clientId,
+    });
+    // $cordovaFacebookProvider.browserInit($settingsProvider.settings.facebook.clientId);
 
     $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|tel):/);
 

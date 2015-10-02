@@ -96,9 +96,6 @@ module.exports = angular.module('app.controllers').controller('LicensePhotoContr
     $scope.init = function () {
       $scope.isWizard = $stateParams.step;
 
-      console.log('$stateParams', $stateParams);
-      console.log('$scope.isWizard', $scope.isWizard);
-
       if ($stateParams.licenseId) {
         $data.resources.licenses.get({
           id: $stateParams.licenseId

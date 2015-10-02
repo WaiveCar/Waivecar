@@ -1,6 +1,5 @@
 'use strict';
 var angular = require('angular');
-require('../app-settings.js');
 
 module.exports = angular.module('app.services').service('$utils', [
   '$settings',

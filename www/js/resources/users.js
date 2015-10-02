@@ -54,10 +54,6 @@ module.exports = angular.module('app').factory('Users', [
         method: 'POST',
         url: $utils.getCustomRoute('payments/cards')
       },
-      facebook: {
-        method: 'POST',
-        url: $utils.getCustomRoute('auth/facebook')
-      }
     }));
 
     resource.prototype.$save = function () {
