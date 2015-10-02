@@ -13,13 +13,17 @@ export default class Content extends React.Component {
   constructor(...args) {
     super(...args);
     this.state = {
+      id     : null,
       key    : null,
       editor : null,
       html   : {
         __html : ''
-      }
+      },
+      isEditing : false
     }
-    this.submit = this.submit.bind(this);
+    this.submit    = this.submit.bind(this);
+    this.startEdit = this.startEdit.bind(this);
+    this.stopEdit  = this.stopEdit.bind(this);
   }
 
   /**
@@ -34,19 +38,19 @@ export default class Content extends React.Component {
           message : `Could not retrieve content [ID: ${ this.props.id }]`
         });
       }
+      let id = `content-${ result.id }`;
       this.setState({
+        id     : id,
         key    : result.id,
         html   : {
           __html : `
-            <div data-editable="html">
+            <div id="${ id }" data-editable="html">
               ${ result.html ? result.html : '' }
             </div>
           `
         },
         editor : new ContentTools.EditorApp.get()
       }, () => {
-        this.state.editor.init('[data-editable]', 'data-editable');
-        this.state.editor.bind('save', this.submit);
       });
     });
   }
@@ -56,9 +60,9 @@ export default class Content extends React.Component {
    * @method componentWillUnmount
    */
   componentWillUnmount() {
-    if (this.state.editor) {
-      this.state.editor.destroy();
-    }
+    // if (this.state.editor) {
+    //   this.state.editor.destroy();
+    // }
   }
 
   /**
@@ -67,7 +71,7 @@ export default class Content extends React.Component {
    */
   submit(region) {
     api.put(this.props.resource.update.uri.replace(':id', this.props.id), {
-      html : region.html
+      html : region[this.state.id]
     }, (error, res) => {
       if (error) {
         return Snackbar.notify({
@@ -79,19 +83,58 @@ export default class Content extends React.Component {
         type    : 'success',
         message : 'Content was successfully updated'
       });
+      this.state.editor.busy(false);
+      this.state.editor.stop();
+      this.state.editor.unbind('save', this.submit);
+      this.state.editor.destroy();
     }.bind(this));
   }
 
+  startEdit() {
+    if (this.state.editor) {
+      this.setState({
+        isEditing : true
+      });
+
+      this.state.editor.init(`#${ this.state.id }[data-editable]`, 'id');
+      this.state.editor.bind('save', this.submit);
+      this.state.editor.start();
+    }
+  }
+
+  stopEdit() {
+    if (this.state.editor) {
+      this.setState({
+        isEditing : false
+      });
+      this.state.editor.busy(true);
+      this.state.editor.save();
+    }
+  }
   /**
    * @method render
    */
   render() {
     return (
-      <div
-        key                     = { this.state.key }
-        dangerouslySetInnerHTML = { this.state.html }
-        className               = 'content-component'
-      />
+      <div className="edcontent-component">
+        <div
+          key                     = { this.state.key }
+          dangerouslySetInnerHTML = { this.state.html }
+          className               = 'content-component'
+        />
+        <div className="content-actions">
+          { !this.state.isEditing &&
+            <button type="button" className="btn btn-icon" onClick={ this.startEdit }>
+              <i className="material-icons" role="edit">mode_edit</i>
+            </button>
+          }
+          { this.state.isEditing &&
+            <button type="button" className="btn btn-icon" onClick={ this.stopEdit }>
+              <i className="material-icons" role="done">done</i>
+            </button>
+          }
+        </div>
+      </div>
     )
   }
 
