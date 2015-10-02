@@ -94,9 +94,7 @@ export default (view) => {
      */
     renderType(column) {
       if (column.components && column.components.length > 0) {
-        switch (column.type) {
-          default : return this.renderComponent(column.components[0]);
-        }
+        return this.renderComponent(column.components[0]);
       }
     }
 
@@ -111,6 +109,7 @@ export default (view) => {
     renderActions() {
       // TODO: maybwe we want like an edit toggle,
       // otherwise admins will constantly have an edit button
+      if (!Reach.auth.user) return
       if (Reach.auth.user.role !== 'admin') return;
 
       return (
