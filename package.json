@@ -41,7 +41,7 @@
     "reach-payments": "0.1.4",
     "reach-queue": "0.0.10",
     "reach-sequelize": "0.1.6",
-    "reach-sms": "0.0.7",
+    "reach-sms": "0.0.8",
     "reach-ui": "0.0.13",
     "reach-user": "0.3.0"
   }
