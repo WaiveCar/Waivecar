@@ -2,7 +2,8 @@
 
 let queue  = Reach.provider('queue');
 let hooks  = Reach.Hooks;
-let config = Reach.config; 
+let config = Reach.config;
+let User   = Reach.model('User');
 
 // ### Get Hook
 
@@ -38,7 +39,7 @@ hooks.set('user:registered', function *(user) {
 
 // ### Password Reset Hook
 
-hooks.set('user:send-password-token', function *(user, token) {
+hooks.set('user:send-password-token', function *(user, token, resetUrl) {
   let job = queue
     .create('email:user:password-reset', {
       to       : user.email,
@@ -46,9 +47,10 @@ hooks.set('user:send-password-token', function *(user, token) {
       subject  : 'Password Reset',
       template : 'user-password-reset',
       context  : {
-        name    : user.name(),
-        service : config.api.name,
-        token   : token
+        name      : user.name(),
+        service   : config.api.name,
+        token     : token,
+        resetUrl  : resetUrl
       }
     })
     .save()
