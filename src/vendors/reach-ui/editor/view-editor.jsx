@@ -23,7 +23,7 @@ function createContentOrReturn(viewComponent, next) {
       let resource = resources.get('contents').store;
       let method = resource.method.toLowerCase();
       let action = resource.uri;
-      api[method](action, {}, function(err, res) {
+      api[method](action, { html : '<p>Awaiting Text</p>' }, function(err, res) {
         viewComponent.options = { id : res.id };
         return next(err, viewComponent);
       });
