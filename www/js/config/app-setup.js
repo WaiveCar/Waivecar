@@ -19,10 +19,23 @@ var config = [
   'ezfbProvider',
   function ($ionicConfigProvider, $stateProvider, $locationProvider, $httpProvider, $urlRouterProvider, $compileProvider, $provide, $injector, $cordovaFacebookProvider, $settingsProvider, ezfbProvider) {
 
+    var baseUrl;
+    if(ionic.Platform.isWebView()){
+      baseUrl = 'http://10.0.3.2:3000';
+    } else {
+      if(window.location.hostname === 'localhost'){
+        baseUrl = 'http://localhost:3000';
+      } else {
+        throw new Error('baseUrl undefined for hostname ' + window.location.hostname);
+      }
+    }
+    console.log('$settingsProvider.baseUrl', $settingsProvider.baseUrl);
+    $settingsProvider.setBaseUrl(baseUrl);
+    console.log('$settingsProvider.baseUrl', $settingsProvider.baseUrl);
+
     ezfbProvider.setInitParams({
-      appId: $settingsProvider.settings.facebook.clientId,
+      appId: $settingsProvider.facebook.clientId,
     });
-    // $cordovaFacebookProvider.browserInit($settingsProvider.settings.facebook.clientId);
 
     $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|tel):/);
 

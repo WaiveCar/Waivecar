@@ -1,8 +1,5 @@
 'use strict';
 var angular = require('angular');
-var ionic = require('ionic');
-// var baseUrl = 'https://api-waivecar-dev.cleverbuild.biz';
-
 var appSettings = angular.module('app.settings');
 module.exports = appSettings;
 
@@ -10,34 +7,48 @@ appSettings.provider('$settings', [
 
   function Config() {
 
-    var baseUrl = ionic.Platform.isWebView() ? 'http://10.0.3.2:3000' : 'http://localhost:3000';
     var _this = this;
 
-    this.settings = {
+    // Overriden in app-setup
+    this.baseUrl = 'https://api-waivecar-dev.cleverbuild.biz';
+    this.facebook = {
+      clientId: '1022707721082213', // '783941098370564',
+    };
 
-      uri: {
-        api: baseUrl,
-        auth: {
-          login: baseUrl + '/auth/login',
-          logout: baseUrl + '/auth/logout',
-          forgot: baseUrl + '/auth/forgot-password',
-          reset: baseUrl + '/auth/reset-password'
-        }
-      },
+    function getBaseUrl() {
+      return _this.baseUrl;
+    }
 
-      facebook: {
-        clientId: '1022707721082213', // '783941098370564',
-        url: baseUrl + '/auth/facebook'
-      }
+    function getFacebook(){
+      return _this.facebook;
+    }
 
+    this.setBaseUrl = function(baseUrl) {
+      _this.baseUrl = baseUrl;
     };
 
     this.$get = [
 
-      function () {
-        return _this.settings;
+      function() {
+        return {
+          uri: {
+            api: getBaseUrl(),
+            auth: {
+              login: getBaseUrl() + '/auth/login',
+              logout: getBaseUrl() + '/auth/logout',
+              forgot: getBaseUrl() + '/auth/forgot-password',
+              reset: getBaseUrl() + '/auth/reset-password'
+            }
+          },
+
+          facebook: getFacebook()
+
+        };
+
       }
+
     ];
+
   }
 
 ]);
