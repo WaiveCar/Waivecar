@@ -64,10 +64,10 @@ let formFields = {
   },
 
   colors : {
-    label        : 'Colors (Multi Select)',
-    component    : 'multi-select',
-    name         : 'colors',
-    className    : 'col-xs-12 r-select',
+    label     : 'Colors (Multi Select)',
+    component : 'multi-select',
+    name      : 'colors',
+    className : 'col-xs-12 r-select',
     options   : [
       {
         name  : 'Red',
@@ -168,7 +168,7 @@ class SandboxTemplate extends React.Component {
     this.state = {
       fields : arrayToFields([ [ 'firstName', 'lastName' ], 'role', 'gender', 'colors', 'interests', 'subscription', 'bio' ])
     };
-    this.change = this.change.bind(this);
+    this.reset  = this.reset.bind(this);
     this.submit = this.submit.bind(this);
   }
 
@@ -196,12 +196,12 @@ class SandboxTemplate extends React.Component {
   }
 
   /**
-   * Event handler for input updates on the form.
-   * @method change
-   * @param  {Object} target
+   * Form submission test.
+   * @method reset
    */
-  change(target) {
-    // ... 
+  reset(data) {
+    let { form } = this.refs;
+    console.log(form.reset());
   }
 
   /**
@@ -209,7 +209,8 @@ class SandboxTemplate extends React.Component {
    * @method submit
    */
   submit(data) {
-    console.log(data);
+    let { form } = this.refs;
+    console.log(form.data());
   }
 
   /**
@@ -221,34 +222,14 @@ class SandboxTemplate extends React.Component {
       <div className="container">
         <h3 style={{ margin : '30px 0' }}>Forms</h3>
         <Form
+          ref       = "form"
           className = "r-form"
-          fields    = { this.fields() }
+          fields    = { this.state.fields }
           default   = { this.state.default }
           change    = { this.change }
-          submit    = { this.submit }
-          buttons   = {[
-            {
-              type  : 'button',
-              value : 'Reset',
-              class : 'btn btn-info',
-              click : 'reset'
-            },
-            {
-              type  : 'button',
-              value : 'Custom',
-              class : 'btn btn-default',
-              click : () => {
-                console.log('test');
-              }
-            },
-            {
-              type  : 'submit',
-              value : 'Submit',
-              class : 'btn btn-success',
-              click : 'submit'
-            }
-          ]}
         />
+        <button type="button" onClick={ this.reset }>External Reset</button>
+        <button type="button" onClick={ this.submit }>External Submit</button>
       </div>
     );
   }

@@ -25,11 +25,38 @@ export default class Checkbox extends React.Component {
    * @return {Boolean}
    */
   shouldComponentUpdate(nextProps, nextState) {
-    if (this.didConnectorUpdate(this.props, nextProps)) {
-      this.reset();
+    let prev, next;
+
+    // ### Connector
+    // If selector is basing itself on a connector we need to make special value checks.
+
+    if (this.isConnector(this.props)) {
+      if (this.didConnectorUpdate(this.props, nextProps)) {
+        this.reset();
+        return true;
+      }
     }
-    return true;
+
+    // ### Values
+    // Check if the values has changed.
+
+    prev = this.props.value[this.props.options.name];
+    next = nextProps.value[this.props.options.name];
+    if (!prev || !next || prev.length !== next.length || !array.equals(prev, next)) {
+      return true;
+    }
+
+    return false;
   }
+
+  /**
+   * @method isConnector
+   * @param  {Object} prev
+   * @return {Boolean}
+   */
+  isConnector(prev) {
+    return type.isPlainObject(prev.options.options);
+  };
 
   /**
    * @method didConnectorUpdate

@@ -32,8 +32,14 @@ export default class Select extends React.Component {
 
     // ### Value Checks
 
+    name = this.props.options.name;
     prev = this.props.value;
     next = nextProps.value;
+    if (this.props.multi) {
+      prev = prev[name];
+      next = next[name];
+    }
+
     if (next !== prev) {
       return true;
     }
@@ -110,10 +116,13 @@ export default class Select extends React.Component {
 
     if (type.isPlainObject(options)) {
       options = options.values[this.props.value[options.connector]];
-      value   = value[name];
       if (!options) {
         return <div />
       }
+    }
+
+    if (multi) {
+      value = value[name];
     }
 
     // ### Debug
