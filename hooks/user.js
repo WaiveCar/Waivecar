@@ -46,10 +46,12 @@ function *requestEmailVerification(userId, email, name) {
   });
 }
 
-// ### Get Hook
-// Triggers when the module needs to retrieve a user based
-// on the provided identifier.
-
+/**
+ * Return a user based on the provided identifier.
+ * @hook   user:get
+ * @param  {Mixed} identifier
+ * @return {User}
+ */
 hooks.set('user:get', function *(identifier) {
   return yield User.findOne({
     where : {
@@ -58,9 +60,13 @@ hooks.set('user:get', function *(identifier) {
   });
 });
 
-// ### Store Hook
-// Triggers when a new user has been added to the database.
-
+/** 
+ * Triggers after a user has been successfully stored, this hook
+ * is generaly usefull for sending notifications to the user
+ * such as a welcome or further account instructions.
+ * @hook  user:stored
+ * @param {User} user
+ */
 hooks.set('user:stored', function *(user) {
   let job = queue
     .create('email:user:registration', {
@@ -85,9 +91,12 @@ hooks.set('user:stored', function *(user) {
   }
 });
 
-// ### Update Hook
-// Triggers when a user has completed an update request.
-
+/**
+ * Triggers after a user has successfully updated their account
+ * with new information.
+ * @hook  user:updated
+ * @param {User} user
+ */
 hooks.set('user:updated', function *(user) {
   if (user.phone && !user.verifiedPhone) {
     yield requestPhoneVerification(user.id, user.phone);
@@ -97,24 +106,35 @@ hooks.set('user:updated', function *(user) {
   }
 });
 
-// ### Delete Hook
-// Triggers when a user has performed a delete request.
-
+/**
+ * Triggers after a user was successfully deleted, by default
+ * the system soft-deletes data.
+ * @hook  user:deleted
+ * @param {User} user
+ */
 hooks.set('user:deleted', function *(user) {
   // ...
 });
 
-// ### Verify Hook
-// Triggers when a verification request has been made.
-
-hooks.set('user:verify', function *(user, purpose) {
+/**
+ * Triggers when a token has been verified passing the user
+ * and verification purpose.
+ * @hook  user:verified
+ * @param {User}   user
+ * @param {String} purpose
+ */
+hooks.set('user:verified', function *(user, purpose) {
   // ...
 });
 
-// ### Password Reset Hook
-// Triggered when a password reset token has been generated and
-// ready to be sent to the user.
-
+/**
+ * Hook for sending out password reset tokens when password
+ * reset request has been successfully placed.
+ * @hook  user:send-password-token
+ * @param {User}   user
+ * @param {String} token
+ * @param {String} resetUrl
+ */
 hooks.set('user:send-password-token', function *(user, token, resetUrl) {
   let job = queue
     .create('email:user:password-reset', {
