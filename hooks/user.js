@@ -127,7 +127,7 @@ hooks.set('user:verified', function *(user, purpose) {
   yield user.update(() => {
     switch (purpose) {
       case 'phone-verification' : {
-        return { verifiedPhone : true }
+        return { verifiedPhone : true, status : (user.status === 'pending' ? 'active' : user.status) }
       }
       case 'email-verification' : {
         return { verifiedEmail : true }
