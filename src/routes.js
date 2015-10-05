@@ -13,7 +13,6 @@ import './templates/site';
 import './templates/auth';
 import './templates/app';
 import './templates/sandbox';
-import './templates/editor';
 
 // ### Export App
 

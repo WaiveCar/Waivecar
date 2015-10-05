@@ -100,20 +100,28 @@ export default class Form extends React.Component {
    */
   buttons(list) {
     if (list) {
-      return list.map((btn, i) => {
-        return (
-          <Button
-            key       = { i }
-            className = { btn.class }
-            type      = { btn.type || 'button' }
-            value     = { btn.value }
-            style     = { btn.style || null }
-            onClick   = {
-              type.isFunction(btn.click) ? btn.click : this[btn.click]
-            }
-          />
-        );
-      });
+      return (
+        <div className="form-actions text-center">
+          <div className="btn-group" role="group">
+          {
+            list.map((btn, i) => {
+              return (
+                <Button
+                  key       = { i }
+                  className = { btn.class }
+                  type      = { btn.type || 'button' }
+                  value     = { btn.value }
+                  style     = { btn.style || null }
+                  onClick   = {
+                    type.isFunction(btn.click) ? btn.click : this[btn.click]
+                  }
+                />
+              )
+            })
+          }
+          </div>
+        </div>
+      );
     }
   }
 
@@ -159,36 +167,11 @@ export default class Form extends React.Component {
             )
           }.bind(this))
         }
-        <div className="form-actions text-center">
-          <div className="btn-group" role="group">
-            {
-              this.buttons(this.props.buttons)
-            }
-          </div>
-        </div>
         {
-          this.toJSON()
+          this.buttons(this.props.buttons)
         }
       </form>
     );
-  }
-
-  /**
-   * Setting the application log level to silly will render a pre tag with
-   * the forms current data state in the bottom of the form.
-   * @method toJSON
-   * @return {Component}
-   */
-  toJSON() {
-    if (app.log.silly) {
-      return (
-        <pre style={{ borderTop : '1px dashed #e3e3e3', marginTop : 30, paddingTop : 30 }}>
-          {
-            JSON.stringify(this.data(), null, 2)
-          }
-        </pre>
-      );
-    }
   }
 
 }

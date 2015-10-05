@@ -1,4 +1,5 @@
 import React                from 'react';
+import UI                   from 'reach-ui';
 import mixin                from 'react-mixin';
 import update               from 'react/lib/update';
 import { Navigation }       from 'react-router';
@@ -15,6 +16,11 @@ import ItemCategories       from './item-categories';
 import ViewContainer        from './view-container';
 import async                from 'async';
 
+/**
+ * @param  {Object}
+ * @param  {Function}
+ * @return {Mixed}
+ */
 function createContentOrReturn(viewComponent, next) {
   if (viewComponent.type === 'content') {
     if (!viewComponent.options) {
@@ -46,7 +52,7 @@ export default class ViewLayout extends React.Component {
     this.transformToViewComponent = this.transformToViewComponent.bind(this);
 
     this.state = {
-      data : null,
+      data   : null,
       layout : {
         type       : 'Container',
         category   : ItemCategories.CONTAINER,
@@ -62,8 +68,8 @@ export default class ViewLayout extends React.Component {
   }
 
   /**
-   * Checks if the View is of type update and requests data if it is.
-   * @method componentDidMount
+   * Updates data if view is of type create.
+   * @return {Void}
    */
   componentDidMount() {
     if (!this.isCreate()) {
@@ -72,7 +78,6 @@ export default class ViewLayout extends React.Component {
   }
 
   /**
-   * @method isCreate
    * @return {Boolean}
    */
   isCreate() {
@@ -81,7 +86,6 @@ export default class ViewLayout extends React.Component {
 
   /**
    * Returns the id defined in the route.
-   * @method id
    * @return {Mixed}
    */
   id() {
@@ -90,7 +94,6 @@ export default class ViewLayout extends React.Component {
 
   /**
    * Returns the resource for the current instance.
-   * @method resource
    * @return {Object}
    */
   resource() {
@@ -103,7 +106,6 @@ export default class ViewLayout extends React.Component {
 
   /**
    * Updates the data state based on the provided id.
-   * @method setData
    * @param  {Mixed} id
    */
   setData(id) {
@@ -125,6 +127,10 @@ export default class ViewLayout extends React.Component {
     }.bind(this));
   }
 
+  /**
+   * @param {Component} component
+   * @param {Number}    index
+   */
   transformToViewComponent(component, index) {
     let defaults = this.state.items.find(f => f.type === component.type);
     component.id = newId();
@@ -133,10 +139,14 @@ export default class ViewLayout extends React.Component {
     } else if (component.category !== ItemCategories.COMPONENT) {
       component.components = [];
     }
-
     return { ...defaults, ...component };
   }
 
+  /**
+   * @param  {Object}
+   * @param  {Function}
+   * @return {Mixed}
+   */
   transformToComponent(viewComponent, next) {
     let component = {
       type : viewComponent.type,
@@ -145,7 +155,6 @@ export default class ViewLayout extends React.Component {
     if (viewComponent.category !== ItemCategories.COMPONENT) {
       component.components = viewComponent.components;
     }
-
     if (component.components) {
       async.map(component.components, this.transformToComponent, function(err, components) {
         component.components = components;
@@ -157,26 +166,26 @@ export default class ViewLayout extends React.Component {
   }
 
   /**
-   * @method submit
+   * @param  {Object}
+   * @return {Void}
    */
-  submit(event) {
-    event.preventDefault();
+  submit() {
     let resource = this.resource();
-    let method = resource.method.toLowerCase();
-    let action = resource.uri.replace(':id', this.id());
-    let data = this.state.data;
+    let data     = this.refs.form.data();
+    let comps    = Object.assign({}, this.state.layout.components);
+    let method   = resource.method.toLowerCase();
+    let action   = resource.uri.replace(':id', this.id());
 
     if (this.isCreate()) {
       action = resource.uri;
     }
 
-    let comps = Object.assign({}, this.state.layout.components);
-
     async.map(comps, this.transformToComponent, function(err, transformedComponents) {
-
       data.layout = {
         components : transformedComponents
       };
+
+      console.log(data);
 
       api[method](action, data, function (err, res) {
         if (err) {
@@ -186,16 +195,21 @@ export default class ViewLayout extends React.Component {
           });
           return;
         }
-
         snackbar.notify({
           type    : 'success',
           message : 'Record was successfully updated.'
         });
-        this.goBack();
+        // I think when youre in the editor you don't want to go back, I click save alot when
+        // making changes as a reflex and being removed from the editor feels unatural.
+        // this.goBack();
       }.bind(this));
     }.bind(this));
   }
 
+  /**
+   * @param  {String} item
+   * @return {String}
+   */
   handleDrop(item) {
     let layout = this.state.layout;
     if (!layout.components) {
@@ -219,130 +233,34 @@ export default class ViewLayout extends React.Component {
     });
   }
 
-  renderActions() {
-    let buttons = [];
-
-    buttons.push({
-      value : 'cancel',
-      class : 'btn btn-default-outline',
-      click : () => {
-        this.goBack();
-      }.bind(this)
-    });
-
-    if (this.isCreate()) {
-      buttons.push({
-        value : 'submit',
-        type  : 'submit',
-        class : 'btn btn-primary-outline',
-        click : this.submit.bind(this)
-      });
-    } else {
-      buttons.push({
-        value : 'delete',
-        class : 'btn btn-danger-outline',
-        click : () => {
-          console.log('Delete: %s!', this.id());
-        }.bind(this)
-      });
-      buttons.push({
-        value : 'update',
-        type  : 'button',
-        class : 'btn btn-primary-outline',
-        click : this.submit.bind(this)
-      });
-    }
-
+  /**
+   * @return {Object}
+   */
+  render() {
     return (
-      <div className="form-actions">
-        <div className="btn-group" role="group">
-        {
-          buttons.map((btn, i) => {
-            return (
-              <Button
-                key       = { i }
-                className = { btn.class }
-                type      = { btn.type || 'button' }
-                value     = { btn.value }
-                style     = { btn.style || null }
-                onClick   = { btn.click }
-              />
-            );
-          })
-        }
+      <div id="ui-editor">
+        <div className="ui-content">
+          { this.renderViewContainer() }
+        </div>
+        <div className="ui-toolbar">
+          { this.renderToolbarTitle('View Settings') }
+          <div className="container">
+            { this.renderSettings() }
+          </div>
+          { this.renderToolbarTitle('Components') }
+          { this.renderItems() }
+          { this.renderActions() }
+          {
+            this.state.data && this.state.data.path ? <a className="ui-toolbar-view-link" href={ this.state.data.path }>Go to view</a> : ''
+          }
         </div>
       </div>
     );
   }
 
-  renderForm() {
-    let viewfields = {
-      create : [
-        'template',
-        'path',
-        'title',
-        'class',
-        'policy'
-      ],
-      update : [
-        'template',
-        'path',
-        'title',
-        'class',
-        'policy'
-      ]
-    };
-    let list  = fields.get('views');
-    let action = this.isCreate() ? 'create' : 'update';
-    let currentFields = viewfields[action].map((value, index) => {
-      if (list.hasOwnProperty(value)) {
-        let field = list[value];
-        field.className = 'col-sx-12 r-input';
-        return field;
-      }
-    });
-
-    return (
-      <div className="container">
-        <Form
-          ref       = "form"
-          className = "r-form"
-          fields    = { currentFields }
-          default   = { this.state.data }
-          change    = { this.change }
-          submit    = { this.submit }
-          buttons   = { [ ] }
-        />
-      </div>
-    );
-  }
-
-  renderItems() {
-    const { items } = this.state;
-    return (
-      <div className="pinned-right">
-        <ul className="list-group">
-        {
-          items.map((item, index) =>
-            <li className="list-group-item" key={ index }>
-              <Item
-                key      = { index }
-                id       = { `item-${ index }`}
-                name     = { item.name }
-                type     = { item.type }
-                icon     = { item.icon }
-                category = { item.category }
-                accepts  = { item.accepts }
-                options  = { item.options }
-              />
-            </li>
-          )
-        }
-        </ul>
-      </div>
-    );
-  }
-
+  /**
+   * @return {Object} ViewContainer
+   */
   renderViewContainer() {
     const { layout, lastDroppedItem } = this.state;
     return (
@@ -358,25 +276,148 @@ export default class ViewLayout extends React.Component {
     );
   }
 
-  render() {
+  /**
+   * @param  {String}
+   * @return {Object} div
+   */
+  renderToolbarTitle(title) {
+    return <div className="ui-toolbar-title">{ title }</div>
+  }
+
+  /**
+   * @return {Object} Form
+   */
+  renderSettings() {
+    let list   = UI.fields.get('views');
+    let action = this.isCreate() ? 'create' : 'update';
+    let fields = [
+      {
+        label     : 'Template',
+        component : 'select',
+        name      : 'template',
+        options   : [
+          {
+            name  : 'App',
+            value : 'app'
+          }
+        ]
+      },
+      {
+        label     : 'Title',
+        component : 'input',
+        type      : 'text',
+        name      : 'title'
+      },
+      {
+        label     : 'Class',
+        component : 'input',
+        type      : 'text',
+        name      : 'class'
+      },
+      {
+        label     : 'Path',
+        component : 'input',
+        type      : 'text',
+        name      : 'path'
+      },
+      {
+        label     : 'Policy',
+        component : 'input',
+        type      : 'text',
+        name      : 'policy'
+      }
+    ];
+
     return (
-      <div id="view-editor">
-        <div className="view-content">
-          <div className="view-layout">
-            <div className="content-header">
-              <h1><span>Vew Editor</span></h1>
-            </div>
-            { this.renderViewContainer() }
-          </div>
-          <div className="view-settings">
-            { this.renderItems() }
-            { this.renderForm() }
-          </div>
-        </div>
-        <div className="view-actions">
-          { this.renderActions() }
-        </div>
+      <Form
+        ref       = "form"
+        className = "form-inline ui-view-settings"
+        default   = { this.state.data }
+        fields    = { fields }
+      />
+    );
+  }
+
+  /**
+   * @return {Object} ul
+   */
+  renderItems() {
+    const { items } = this.state;
+    return (
+      <ul className="ui-component-list">
+      {
+        items.map((item, index) => {
+          return <li className="ui-component" key={ index }>
+            <Item
+              key      = { index }
+              id       = { `item-${ index }`}
+              name     = { item.name }
+              type     = { item.type }
+              icon     = { item.icon }
+              category = { item.category }
+              accepts  = { item.accepts }
+              options  = { item.options }
+            />
+          </li>
+        })
+      }
+      </ul>
+    );
+  }
+
+  /**
+   * @return {Object} div
+   */
+  renderActions() {
+    let buttons = [];
+
+    buttons.push({
+      value : 'Cancel',
+      class : 'ui-action-btn',
+      click : () => {
+        this.goBack();
+      }.bind(this)
+    });
+
+    if (this.isCreate()) {
+      buttons.push({
+        value : 'Create',
+        class : 'ui-action-btn',
+        click : this.submit.bind(this)
+      });
+    } else {
+      buttons.push({
+        value : 'Delete',
+        class : 'ui-action-btn',
+        click : () => {
+          console.log('Delete: %s!', this.id());
+        }.bind(this)
+      });
+      buttons.push({
+        value : 'Save',
+        class : 'ui-action-btn',
+        click : this.submit.bind(this)
+      });
+    }
+
+    return (
+      <div className="ui-toolbox-actions">
+      {
+        buttons.map((btn, i) => {
+          return (
+            <Button
+              key       = { i }
+              className = { btn.class }
+              type      = { btn.type || 'button' }
+              value     = { btn.value }
+              style     = { btn.style || null }
+              onClick   = { btn.click }
+            />
+          )
+        })
+      }
       </div>
     );
   }
+
 }

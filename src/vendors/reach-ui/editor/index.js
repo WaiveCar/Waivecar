@@ -1,5 +1,3 @@
-'use strict';
-
 export default {
-  ViewEditor     : require('./view-editor')
+  ViewEditor : require('./view-editor')
 }

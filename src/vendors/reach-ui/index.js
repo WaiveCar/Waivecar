@@ -1,5 +1,3 @@
-'use strict';
-
 export default {
   templates  : require('./lib/templates'),
   resources  : require('./lib/resources'),
@@ -7,5 +5,5 @@ export default {
   components : require('./lib/components'),
   views      : require('./lib/views'),
   menu       : require('./lib/menu'),
-  editor     : require('./editor')
+  editor     : require('./editor/index')
 }

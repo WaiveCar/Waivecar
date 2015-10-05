@@ -3,8 +3,9 @@
 import React           from 'react';
 import { logger }      from 'reach-react';
 import { array, type } from 'reach-react/lib/helpers';
+import Select          from 'react-select';
 
-export default class Select extends React.Component {
+export default class ReactSelect extends React.Component {
 
   /**
    * Only update the component if the input value has changed.
@@ -93,18 +94,12 @@ export default class Select extends React.Component {
    * @param  {String} value
    * @param  {Object} options
    */
-  onChange(event) {
-    let value;
-    if (this.props.multi) {
-      value = [...event.target.options].filter(o => o.selected).map(o => o.value);
-    } else {
-      value = event.target.value;
-    }
+  onChange(value, options) {
     this.props.onChange({
       target : {
         type  : 'select',
         name  : this.props.options.name,
-        value : value
+        value : this.props.multi ? (value ? value.split(',') : []) : value
       }
     });
   }
@@ -137,13 +132,21 @@ export default class Select extends React.Component {
     return (
       <div className={ className || 'col-md-12' }>
         <label>{ label }</label>
-        <select className="form-control" name={ name } value={ value } onChange={ this.onChange.bind(this) } multiple={ this.props.multi }>
-        {
-          options.map((option, i) => {
-            return <option key={ i } value={ option.value }>{ option.name }</option>
-          })
-        }
-        </select>
+        <Select
+          name        = { name }
+          value       = { value }
+          options     = { options.map(
+            (o) => {
+              return { 
+                label : o.name, 
+                value : o.value 
+              };
+            })
+          }
+          onChange    = { this.onChange.bind(this) }
+          multi       = { this.props.multi }
+          placeholder = { helpText }
+        />
       </div>
     );
   }

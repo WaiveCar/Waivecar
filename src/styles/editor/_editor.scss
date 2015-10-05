@@ -1,10 +1,6 @@
 @import '~styles/variables';
 
-body {
-  background : #eee;
-}
-
-#editor {
+#ui-editor {
   display           : -webkit-box;
   display           : -moz-box;
   display           : -ms-flexbox;
@@ -14,84 +10,130 @@ body {
   -webkit-flex-flow : row wrap;
   flex-flow         : row wrap;
   min-height        : 100vh;
-  padding-top       : 52px;
 
-  h1 {
-    font-size      : 1.85rem;
-    margin         : 35px auto 0;
-    position       : relative;
-    text-align     : center;
+  .ui-content {
+    flex : 1;
+  }
+
+  $toolbar-background : #fefefe;
+  $toolbar-border     : #f3f3f3;
+  $toolbar-color      : #363636;
+  $toolbar-icon-color : #a7a7a7;
+
+  .ui-toolbar {
+    background  : $toolbar-background;
+    border-left : 1px solid #f0f0f0;
+    color       : $toolbar-color;
+    flex-basis  : 300px;
+    text-shadow : 1px 1px 0 #fff;
+  }
+
+  .ui-toolbar-title {
+    border-bottom : 1px solid $toolbar-border;
+    font-size     : .8rem;
+    font-weight   : 500;
+    padding       : 6px 12px;
+  }
+
+  .ui-component-list {
+    margin  : 0;
+    padding : 0;
+  }
+
+  .ui-component {
+    border-bottom : 1px dashed $toolbar-border;
+    font-size     : .8rem;
+    list-style    : none;
+    height        : 43px;
+    line-height   : 43px;
+    i {
+      color          : $toolbar-icon-color;
+      font-size      : 1.1rem;
+      text-align     : center;
+      vertical-align : middle;
+    }
+  }
+
+  .ui-component-item {
+    cursor     : move;
+    padding    : 0;
+    text-align : left;
+    .material-icons {
+      color : $toolbar-icon-color;
+      width : 35px;
+    }
+  }
+
+  .ui-view-settings {
+    .form-group {
+      border-bottom : 1px solid $toolbar-border;
+      box-sizing    : border-box;
+      margin-bottom : 0;
+      padding       : 0;
+      width         : 299px;
+    }
+
+    label {
+      border-right : 1px solid $toolbar-border;
+      font-size    : .8rem;
+      //font-weight  : 500;
+      margin       : 0;
+      padding      : 6px 0;
+      width        : 75px;
+    }
+
+    input, select {
+      background  : none;
+      border      : none;
+      color       : $toolbar-color;
+      font-size   : .8rem;
+      margin-left : 10px;
+      padding     : 0;
+      width       : 184px;
+    }
+
+    .Select {
+      width : 100px !important;
+      .Select-control {
+        border : none;
+      }
+    }
+  }
+
+  .ui-toolbox-actions {
+    text-align : center;
+  }
+
+  .ui-action-btn {
+    background     : none;
+    border         : none;
+    border-bottom  : 1px dashed $toolbar-border;
+    border-right   : 1px dashed $toolbar-border;
+    color          : #767676;
+    display        : inline-block;
+    font-size      : .8rem;
+    font-weight    : 500;
+    padding        : 12px 0;
     text-transform : uppercase;
-    width          : 500px;
-    > span {
-      background : #fff;
-      padding    : 0 24px;
-      position   : relative;
-      z-index    : 1;
-    }
-    &:before {
-      background  : #25C155;
-      content     : "";
-      display     : block;
-      height      : 2px;
-      left        : 0;
-      position    : absolute;
-      top         : 50%;
-      width       : 100%;
+    width          : 33.33%;
+    &:hover {
+      background : #f6f6f6;
+      color      : #363636;
     }
   }
 
-  .content-header {
-    border-bottom : 1px solid #f4f4f4;
-    height        : 75px;
-  }
-
-  // ### App Layout
-
-  #header {
-    background : #282828;
-    border-top : 2px solid rgba(#25C155, .8);
-    color      : #fff;
-    height     : 52px;
-    position   : fixed;
-    top        : 0;
-    width      : 100%;
-    z-index    : 10;
-  }
-
-  #view-editor {
-    background : #fff;
-    display    : flex;
-    flex       : 1;
-    flex-direction : column;
-    .view-content {
-      position : relative;
-      display    : flex;
-      flex       : 1;
-      .view-layout {
-        flex     : 1;
-        position : relative;
-      }
-      .view-settings {
-        flex-basis  : 375px;
-        border-left : 1px solid #e9e9e9;
-        background  : #eee;
-        padding: 10px;
-        form {
-          background : $app-color-white;
-        }
-      }
-    }
-    .view-actions {
-      background : #282828;
-      border-top : 2px solid rgba(#25C155, .8);
-      color      : #fff;
-      height     : 52px;
-      position   : fixed;
-      bottom     : 0;
-      width      : 100%;
-      z-index    : 10;
-      text-align : right;
+  .ui-toolbar-view-link {
+    border-bottom : 1px dashed $toolbar-border;
+    color         : #767676;
+    display       : block;
+    font-size     : .9rem;
+    font-weight   : 500;
+    padding       : 12px 0;
+    text-align    : center;
+    &:hover {
+      background      : #f6f6f6;
+      color           : #262626;
+      text-decoration : none;
     }
   }
 }

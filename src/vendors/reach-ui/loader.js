@@ -5,6 +5,10 @@ import views     from './lib/views';
 import resources from './lib/resources';
 import fields    from './lib/fields';
 
+// ### UI Editor
+
+import './editor.jsx';
+
 // ### UI Components
 // Import list of available reach-ui components, these are loaded into
 // the ui components store in the component files.

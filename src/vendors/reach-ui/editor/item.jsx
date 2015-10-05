@@ -34,7 +34,7 @@ export default class Item extends Component {
     let icon = this.props.icon || 'developer_board';
 
     return connectDragSource(
-      <div className="view-editor-item" style={{ opacity }}>
+      <div className="ui-component-item" style={{ opacity }}>
         <i className="material-icons" role={ type }>{ icon }</i>
         { name }
       </div>

@@ -184,7 +184,7 @@ class SandboxTemplate extends React.Component {
       },
       {
         label     : 'Fields',
-        component : 'multi-select',
+        component : 'react-multi-select',
         name      : 'fields',
         helpText  : 'Select resource fields to appear in table',
         options   : {
@@ -196,21 +196,29 @@ class SandboxTemplate extends React.Component {
   }
 
   /**
-   * Form submission test.
-   * @method reset
+   * @return {Void}
    */
-  reset(data) {
+  reset() {
     let { form } = this.refs;
     console.log(form.reset());
   }
 
   /**
-   * Form submission test.
-   * @method submit
+   * @return {Void}
    */
-  submit(data) {
+  submit() {
     let { form } = this.refs;
     console.log(form.data());
+  }
+
+  /**
+   * @return {Object}
+   */
+  data() {
+    let { form } = this.refs;
+    if (form) {
+      return form.data();
+    }
   }
 
   /**
@@ -218,18 +226,22 @@ class SandboxTemplate extends React.Component {
    * @return {Form}
    */
   render() {
+    console.log('Render');
     return (
       <div className="container">
         <h3 style={{ margin : '30px 0' }}>Forms</h3>
         <Form
           ref       = "form"
           className = "r-form"
-          fields    = { this.state.fields }
+          fields    = { this.fields() }
           default   = { this.state.default }
           change    = { this.change }
         />
         <button type="button" onClick={ this.reset }>External Reset</button>
         <button type="button" onClick={ this.submit }>External Submit</button>
+        <pre>
+          { JSON.stringify(this.data(), null, 2) }
+        </pre>
       </div>
     );
   }
