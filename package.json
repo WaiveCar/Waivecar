@@ -31,7 +31,7 @@
     "node-random-name": "1.0.1"
   },
   "reach": {
-    "reach-auth": "0.2.7",
+    "reach-auth": "0.2.9",
     "reach-bcrypt": "1.0.0",
     "reach-commander": "0.0.5",
     "reach-email": "0.0.8",
