@@ -60,7 +60,7 @@ hooks.set('user:get', function *(identifier) {
   });
 });
 
-/** 
+/**
  * Triggers after a user has been successfully stored, this hook
  * is generaly usefull for sending notifications to the user
  * such as a welcome or further account instructions.
@@ -124,7 +124,16 @@ hooks.set('user:deleted', function *(user) {
  * @param {String} purpose
  */
 hooks.set('user:verified', function *(user, purpose) {
-  // ...
+  yield user.update(() => {
+    switch (purpose) {
+      case 'phone-verification' : {
+        return { verifiedPhone : true }
+      }
+      case 'email-verification' : {
+        return { verifiedEmail : true }
+      }
+    }
+  });
 });
 
 /**
