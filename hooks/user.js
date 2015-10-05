@@ -133,7 +133,7 @@ hooks.set('user:verified', function *(user, purpose) {
         return { verifiedEmail : true }
       }
     }
-  });
+  }());
 });
 
 /**
