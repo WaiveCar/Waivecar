@@ -21,8 +21,8 @@ module.exports = {
   api : {
     name    : 'WaiveCar',
     version : '0.4.0',
-    port    : 8081,
-    uri     : 'http://localhost:8081',
+    port    : 3000,
+    uri     : 'http://localhost:3000',
     cors    : {
       origins : [ 'https://waivecar-dev.cleverbuild.biz', 'http://localhost:8080', 'http://localhost:8100' ],
       headers : [ 'Content-Type', 'Cache-Control', 'X-Requested-With', 'Authorization', 'Role' ]
