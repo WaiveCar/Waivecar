@@ -28,7 +28,7 @@ function *requestEmailVerification(userId, email, name) {
     purpose : 'email-verification'
   });
 
-  let job = queue.create('sms:user:request-email-verification', {
+  let job = queue.create('email:user:request-email-verification', {
     to       : email,
     from     : config.email.sender,
     subject  : 'Email Verificaton Required',
@@ -88,6 +88,10 @@ hooks.set('user:stored', function *(user) {
 
   if (user.phone && !user.verifiedPhone) {
     yield requestPhoneVerification(user.id, user.phone);
+  }
+
+  if (user.email && !user.verifiedEmail) {
+    yield requestEmailVerification(user.id, user.email, user.name());
   }
 });
 
