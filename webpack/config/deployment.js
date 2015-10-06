@@ -23,16 +23,14 @@ module.exports = {
   resolve : {
     extensions : [ '', '.js', '.jsx' ],
     alias      : {
-      modules            : path.join(__dirname, '../../', 'src', 'modules'),
-      components         : path.join(__dirname, '../../', 'src', 'components'),
       config             : path.join(__dirname, '../../', 'src', 'config.js'),
       styles             : path.join(__dirname, '../../', 'src', 'styles'),
       policies           : path.join(__dirname, '../../', 'src', 'policies'),
       views              : path.join(__dirname, '../../', 'src', 'views'),
-      'reach-react'      : path.join(__dirname, '../../', 'src', 'vendors', 'reach-react'),
-      'reach-components' : path.join(__dirname, '../../', 'src', 'vendors', 'reach-components'),
-      'reach-ui'         : path.join(__dirname, '../../', 'src', 'vendors', 'reach-ui'),
-      'react-sparklines' : path.join(__dirname, '../../', 'src', 'vendors', 'react-sparklines')
+      'reach-react'      : path.join(__dirname, '../../', 'src', 'modules', 'reach-react'),
+      'reach-components' : path.join(__dirname, '../../', 'src', 'modules', 'reach-components'),
+      'reach-ui'         : path.join(__dirname, '../../', 'src', 'modules', 'reach-ui'),
+      'react-sparklines' : path.join(__dirname, '../../', 'src', 'modules', 'react-sparklines')
     }
   },
   module : {
