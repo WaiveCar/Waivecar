@@ -299,7 +299,15 @@ export default class ViewLayout extends React.Component {
           {
             name  : 'App',
             value : 'app'
-          }
+          },
+          {
+            name  : 'Home',
+            value : 'home'
+          },
+          {
+            name  : 'Site',
+            value : 'site'
+          },
         ]
       },
       {
@@ -321,10 +329,28 @@ export default class ViewLayout extends React.Component {
         name      : 'path'
       },
       {
-        label     : 'Policy',
-        component : 'input',
+        label     : 'Limited To',
+        component : 'select',
         type      : 'text',
-        name      : 'policy'
+        name      : 'policy',
+        options   : [
+          {
+            name  : 'Anyone',
+            value : 'isAnyone'
+          },
+          {
+            name  : 'Authenticated Users',
+            value : 'isAuthenticated'
+          },
+          {
+            name  : 'Active Users',
+            value : 'isPending'
+          },
+          {
+            name  : 'Administrators',
+            value : 'isAdministrator'
+          }
+        ]
       }
     ];
 

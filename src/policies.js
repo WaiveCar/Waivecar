@@ -21,6 +21,43 @@ export default {
   },
 
   /**
+   * @method isActive
+   * @param  {Object} nextState
+   * @param  {Object} transition
+   */
+  isActive : (nextState, transition) => {
+    if (!auth.check()) {
+      transition.to('/login', null, {
+        nextPathname : nextState.location.pathname
+      });
+    }
+    if (auth.user.status !== 'active') {
+      transition.to('/forbidden', null, {
+        nextPathname : nextState.location.pathname
+      });
+    }
+  },
+
+  /**
+   * @method isAdministrator
+   * @param  {Object} nextState
+   * @param  {Object} transition
+   */
+  isAdministrator : (nextState, transition) => {
+    if (!auth.check()) {
+      transition.to('/login', null, {
+        nextPathname : nextState.location.pathname
+      });
+    }
+
+    if (auth.user.role !== 'admin') {
+      transition.to('/forbidden', null, {
+        nextPathname : nextState.location.pathname
+      });
+    }
+  },
+
+  /**
    * @method isAnonymous
    * @param  {Object} nextState
    * @param  {Object} transition
@@ -33,26 +70,6 @@ export default {
 
       return transition.to('/profile', null);
     }
-  },
-
-  /**
-   * @method canBook
-   * @param  {Object} nextState
-   * @param  {Object} transition
-   */
-  canBook : (nextState, transition) => {
-    // user needs to be authed, verified, valid license, valid payment.
-
-    if (!auth.check()) {
-      transition.to('/', null);
-      // TODO: show an alert 'you need to be registered to perform this action'.
-    }
-
-    if (auth.user.status !== 'active') {
-      transition.to('/', null);
-      // TODO: show an alert 'you need to be verified to perform this action'.
-    }
-
   }
 
 }
