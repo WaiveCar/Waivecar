@@ -122,6 +122,8 @@ export default class Form extends React.Component {
           </div>
         </div>
       );
+    } else if (this.props.submit) {
+      return <button type="submit" style={{ display : 'none' }}>Submit</button>;
     }
   }
 

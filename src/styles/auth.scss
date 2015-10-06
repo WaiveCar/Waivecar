@@ -8,8 +8,8 @@
   width    : 100%;
 
   .login {
+    background    : rgba(#000, .6);
     box-shadow    : 0 0 10px rgba(0, 0, 0, .3);
-    border-bottom : 3px solid rgba(0, 0, 0, .25);
     border-top    : 3px solid $brand-primary;
     border-radius : 0;
     left          : 50%;
@@ -18,7 +18,6 @@
     top           : 50%;
     transform     : translateY(-50%);
     width         : $login-width;
-    background    : rgba(0, 0, 0, .6);
     
     .app-brand {
       position            : absolute;
@@ -58,7 +57,7 @@
           color : #eee;
         }
         input {
-          border-bottom : 1px dashed rgba(#fff, .65);
+          border-bottom : 1px dashed rgba(#fff, .6);
         }
       }
       pre {
@@ -66,8 +65,23 @@
       }
     }
 
-    .form-actions {
-      text-align : center;
+    .actions {
+      clear   : both;
+      padding : 0 50px;
+
+      label {
+        color        : #fff;
+        float        : left;
+        margin-top   : 10px;
+
+        input {
+          margin-right : 5px;
+        }
+
+        &:hover {
+          cursor : pointer;
+        }
+      }
     }
 
     .btn-group {
@@ -78,12 +92,12 @@
       background     : rgba(37, 193, 85,0.6);
       border         : none;
       color          : #fff;
+      float          : right;
       font-size      : 14px;
       font-weight    : 600;
-      height         : 54px;
-      margin-top     : 20px;
+      height         : 45px;
       text-transform : uppercase;
-      width          : 100%;
+      width          : 150px;
       &:hover {
         background : rgba(37, 193, 85,0.8);
         cursor     : pointer;
@@ -111,6 +125,7 @@
     }
 
     .footer {
+      clear       : both;
       color       : #f5f5f5;
       font-weight : 300;
       height      : 69px;

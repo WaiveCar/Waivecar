@@ -42,6 +42,11 @@ export default class LoginView extends React.Component {
    * @param  {Function} reset
    */
   submit(data, reset) {
+    let remember = this.refs.remember.checked;
+    if (data.target) {
+      data  = this.refs.form.data();
+      reset = this.refs.form.reset;
+    }
     api.post('/auth/login', data, (error, user) => {
       if (error) {
         reset();
@@ -58,7 +63,13 @@ export default class LoginView extends React.Component {
         });
       }
       auth.set(user);
-      this.transitionTo('/dashboard');
+      if (remember) {
+        api.get('/auth/remember', (error) => {
+          this.transitionTo('/dashboard');
+        }.bind(this));
+      } else {
+        this.transitionTo('/dashboard');
+      }
     }.bind(this));
   }
 
@@ -74,17 +85,17 @@ export default class LoginView extends React.Component {
           <span className="title-site">&nbsp;Login</span>
         </div>
         <Form
+          ref       = "form"
           className = "r-form"
           fields    = { this.fields }
           submit    = { this.submit }
-          buttons   = {[
-            {
-              value : 'login',
-              type  : 'submit',
-              class : 'btn btn-login'
-            }
-          ]}
         />
+        <div className="actions">
+          <label>
+            <input type="checkbox" ref="remember" /> Remember me
+          </label>
+          <button className="btn btn-login" onClick={ this.submit }>Login</button>
+        </div>
         <div className="footer">
           Forgot your password? <a tabIndex="4" href="/reset-password">Reset</a>
         </div>
