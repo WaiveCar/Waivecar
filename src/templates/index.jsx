@@ -6,11 +6,22 @@ import { Link }     from 'react-router';
 
 export default class App extends React.Component {
 
-  /**
-   * @constrcutor
-   */
   constructor(...args) {
     super(...args);
+  }
+
+  /**
+   * Remove the snackbar when the router changes views.
+   * @param  {Object} nextProps
+   * @param  {Object} nextState
+   * @return {Void}
+   */
+  componentWillReceiveProps(nextProps, nextState) {
+    let prev = this.props.location.pathname;
+    let next = nextProps.location.pathname;
+    if (prev !== next) {
+      snackbar.dismiss();
+    }
   }
 
   /**
