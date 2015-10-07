@@ -14,18 +14,10 @@ import './style.scss';
 let width = 0;
 
 /**
- *
- */
-
-/**
  * @class Snackbar
  */
 export default class Snackbar extends React.Component {
 
-  /**
-   * Set the initial style state of the component.
-   * @constructor
-   */
   constructor(...args) {
     super(...args);
     this.state = {
@@ -43,7 +35,6 @@ export default class Snackbar extends React.Component {
 
   /**
    * Center the snackbar.
-   * @method componentDidMount
    */
   componentDidMount() {
     this.align();
@@ -83,7 +74,6 @@ export default class Snackbar extends React.Component {
   /**
    * When component has updated we need to check if we also need to
    * re-align the position of the notification.
-   * @method componentDidUpdate
    * @param  {Object} prevOrops
    * @param  {Object} prevState
    */
@@ -99,7 +89,8 @@ export default class Snackbar extends React.Component {
   }
 
   /**
-   * @method align
+   * Centers the snackbar object.
+   * @return {Void}
    */
   align() {
     let cWidth = this.refs.snackbar.offsetWidth;
@@ -120,7 +111,7 @@ export default class Snackbar extends React.Component {
       style : {
         ...this.state.style,
         marginLeft   : -(cWidth / 2),
-        paddingRight : 116
+        paddingRight : aWidth
       }
     });
 
@@ -132,7 +123,6 @@ export default class Snackbar extends React.Component {
 
   /**
    * Returns the current class names for the snackbar.
-   * @method getClass
    * @return {String}
    */
   getClass() {
@@ -146,7 +136,6 @@ export default class Snackbar extends React.Component {
   }
 
   /**
-   * @method getStyle
    * @return {Object}
    */
   getStyle() {
@@ -158,7 +147,6 @@ export default class Snackbar extends React.Component {
   }
 
   /**
-   * @method getAction
    * @return {button}
    */
   getAction() {
@@ -171,7 +159,8 @@ export default class Snackbar extends React.Component {
   }
 
   /**
-   * @method render
+   * Renders the snackbar components.
+   * @return {Object}
    */
   render() {
     let { message } = this.state.snackbar;
