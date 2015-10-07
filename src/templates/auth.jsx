@@ -1,15 +1,13 @@
 'use strict';
 
 import React         from 'react';
-import { auth }      from 'reach-react';
+import { auth, api } from 'reach-react';
 import { templates } from 'reach-ui';
 import policies      from 'policies';
-import 'styles/auth.scss';
+import 'styles/auth/style.scss';
 
-/**
- * Renders the authentication layout for the application.
- * @class AuthTemplate
- */
+// ### Identifier Authentication Template
+
 class AuthTemplate extends React.Component {
   render() {
     return (
@@ -25,8 +23,6 @@ class AuthTemplate extends React.Component {
   }
 }
 
-// ### Register Template
-
 templates.register('auth', {
   component   : AuthTemplate,
   childRoutes : [
@@ -38,10 +34,42 @@ templates.register('auth', {
       }
     },
     {
+      path      : '/register',
+      component : require('views/auth/register'),
+      onEnter   : (nextState, transition) => {
+        policies.isAnonymous(nextState, transition);
+      }
+    },
+    {
       path    : '/logout',
       onEnter : (nextState, transition) => {
         auth.logout();
         transition.to('/', null);
+      }
+    }
+  ]
+});
+
+// ### Social Authentication Template
+
+class SocialAuthTemplate extends React.Component {
+  render() {
+    return (
+      <div id="social-auth">
+        { this.props.children }
+      </div>
+    );
+  }
+}
+
+templates.register('social-auth', {
+  component   : SocialAuthTemplate,
+  childRoutes : [
+    {
+      path      : '/auth/facebook',
+      component : require('views/auth/social'),
+      onEnter   : (nextState, transition) => {
+        policies.isAnonymous(nextState, transition);
       }
     }
   ]
