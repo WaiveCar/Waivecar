@@ -3,6 +3,7 @@
 let queue  = Reach.provider('queue');
 let tokens = Reach.module('user/lib/token-service');
 let User   = Reach.model('User');
+let error  = Reach.Error;
 let hooks  = Reach.Hooks;
 let config = Reach.config;
 
@@ -53,11 +54,18 @@ function *requestEmailVerification(userId, email, name) {
  * @return {User}
  */
 hooks.set('user:get', function *(identifier) {
-  return yield User.findOne({
+  let user = yield User.findOne({
     where : {
       email : identifier
     }
   });
+  if (!user) {
+    throw error.parse({
+      code    : 'INVALID_CREDENTIALS',
+      message : 'The provided credentials does not match any record in our database'
+    }, 404);
+  }
+  return user;
 });
 
 /**

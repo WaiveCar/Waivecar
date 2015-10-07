@@ -43,6 +43,6 @@
     "reach-sequelize": "0.1.6",
     "reach-sms": "0.0.9",
     "reach-ui": "0.0.13",
-    "reach-user": "0.3.3"
+    "reach-user": "0.3.4"
   }
 }
