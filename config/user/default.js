@@ -30,7 +30,8 @@ module.exports = {
         password      : 'password',
         role          : 'admin',
         verifiedEmail : true,
-        status        : 'active'
+        status        : 'active',
+        facebook      : '10153354349045449'
       },
       {
         firstName     : 'Zoli',
