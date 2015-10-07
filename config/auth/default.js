@@ -1,16 +1,14 @@
-'use strict';
-
 module.exports = {
+  auth : {
 
-  /*
-   |--------------------------------------------------------------------------------
-   | Facebook
-   |--------------------------------------------------------------------------------
-   */
+    /**
+     * Facebook credential details.
+     * @type {Object}
+     */
+    facebook : {
+      appId     : null,
+      appSecret : null
+    }
 
-  facebook : {
-    appId     : null,
-    appSecret : null
   }
-
 };
