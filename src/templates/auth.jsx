@@ -34,6 +34,13 @@ templates.register('auth', {
       }
     },
     {
+      path      : '/reset-password',
+      component : require('views/auth/reset-password'),
+      onEnter   : (nextState, transition) => {
+        policies.isAnonymous(nextState, transition);
+      }
+    },
+    {
       path      : '/register',
       component : require('views/auth/register'),
       onEnter   : (nextState, transition) => {

@@ -127,6 +127,16 @@ $login-width : 420px;
     }
   }
 
+  .token-request {
+    padding : 0 50px 30px;
+  }
+
+  .message-success {
+    color      : #fff;
+    padding    : 20px 50px;
+    text-align : center;
+  }
+
   .r-btn {
     border        : none;
     border-radius : 3px;
