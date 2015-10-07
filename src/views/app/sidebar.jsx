@@ -42,7 +42,7 @@ export default class Sidebar extends React.Component {
           <div className="sidebar-avatar animated flipInX">
             <div
               className = "sidebar-avatar-img"
-              style     = {{ background : 'url(//www.gravatar.com/avatar/'+ md5(auth.user.email) +'?s=125) center center / cover' }}
+              style     = {{ background : auth.user.email ? `url(//www.gravatar.com/avatar/${ md5(auth.user.email) }) center center / cover` : '#fff' }}
             />
           </div>
           <div className="sidebar-name animated flipInY">
