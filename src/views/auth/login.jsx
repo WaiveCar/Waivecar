@@ -1,9 +1,11 @@
-import React              from 'react';
-import mixin              from 'react-mixin';
-import { auth, api }      from 'reach-react';
-import { Navigation }     from 'react-router';
-import config             from 'config';
-import { Form, snackbar } from 'reach-components';
+'use strict';
+
+import React                from 'react';
+import mixin                from 'react-mixin';
+import { auth, api }        from 'reach-react';
+import { Navigation, Link } from 'react-router';
+import config               from 'config';
+import { Form, snackbar }   from 'reach-components';
 
 @mixin.decorate(Navigation)
 
@@ -52,14 +54,7 @@ export default class LoginView extends React.Component {
         reset();
         return snackbar.notify({
           type    : 'danger',
-          message : error.message,
-          persist : true,
-          action  : {
-            title : 'DISMISS',
-            click : function () {
-              this.dismiss();
-            }
-          }
+          message : error.message
         });
       }
       auth.set(user);
@@ -79,25 +74,36 @@ export default class LoginView extends React.Component {
   render() {
     return (
       <div className="login">
-        <i className="app-brand"></i>
+
         <div className="title">
-          { config.app.name }
-          <span className="title-site">&nbsp;Login</span>
+          { config.app.name }&nbsp;
+          <span className="title-site">Log in</span>
         </div>
+
         <Form
           ref       = "form"
           className = "r-form"
           fields    = { this.fields }
           submit    = { this.submit }
         />
-        <div className="actions">
+
+        <div className="login-options clearfix">
           <label>
-            <input type="checkbox" ref="remember" /> Remember me
+            <input type="checkbox" ref="remember" tabIndex="4" /> Remember me
           </label>
-          <button className="btn btn-login" onClick={ this.submit }>Login</button>
+          <Link tabIndex="5" to="/reset-password">Forgot your password?</Link>
         </div>
+
+        <div className="actions">
+          <button type="button" className="r-btn btn-login" onClick={ this.submit }>Log in</button>
+          <a className="r-btn btn-facebook" href="https://www.facebook.com/dialog/oauth?client_id=783941098370564&redirect_uri=http://local.io:8080/auth/facebook&state=login">
+            <i className="fa fa-facebook" />
+            Log in with Facebook
+          </a>
+        </div>
+
         <div className="footer">
-          Forgot your password? <a tabIndex="4" href="/reset-password">Reset</a>
+          Don't have a WaiveCar account? <Link to="/register">Register</Link>
         </div>
       </div>
     );

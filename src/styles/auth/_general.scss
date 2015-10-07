@@ -1,0 +1,174 @@
+@import '~styles/variables';
+
+$login-width : 420px;
+
+#auth {
+  left     : 0;
+  height   : 100%;
+  position : fixed;
+  top      : 0;
+  width    : 100%;
+
+  .login {
+    background    : rgba(#000, .6);
+    box-shadow    : 0 0 10px rgba(0, 0, 0, .3);
+    //border-top    : 3px solid $brand-primary;
+    border-radius : 0;
+    left          : 50%;
+    margin-left   : -($login-width / 2);
+    position      : fixed;
+    top           : 50%;
+    transform     : translateY(-50%);
+    width         : $login-width;
+    
+    .app-brand {
+      position            : absolute;
+      display             : block;
+      margin              : -28px auto;
+      width               : 100%;
+      height              : 50px;
+      background-image    : url('/images/logo.svg');
+      background-repeat   : no-repeat;
+      background-size     : 50px;
+      background-position : center center;
+    }
+    
+    .title {
+      box-sizing : border-box;
+      color      : #fcfcfc;
+      font-size  : 22px;
+      padding    : 30px 20px 0;
+      text-align : center;
+      width      : $login-width;
+      small {
+        display        : block;
+        font-size      : 14px;
+        margin         : 0 auto 6px auto;
+        text-transform : uppercase;
+      }
+      .title-site {
+        color: #25C155;
+      }
+    }
+
+    .r-form {
+      color   : #fff;
+      padding : 0 50px 10px;
+      .form-group {
+        margin-bottom : 0;
+      }
+      .r-input {
+        label, input {
+          color : #eee;
+          height: 40px;
+          line-height: 40px;
+        }
+        input {
+          border-bottom : 1px solid #767676;
+        }
+      }
+      pre {
+        color : #fff;
+      }
+    }
+
+    .login-options {
+      font-size : .88rem;
+      padding   : 25px 50px;
+
+      label {
+        color         : #fff;
+        float         : left;
+        margin-bottom : 0;
+
+        input {
+          margin-top   : 2px;
+          margin-right : 5px;
+        }
+
+        &:hover {
+          cursor : pointer;
+        }
+      }
+
+      a {
+        color : #fff;
+        float : right;
+        &:hover {
+          color           : $brand-primary;
+          text-decoration : none;
+        }
+      }
+    }
+
+    .actions {
+      padding : 0 50px;
+    }
+
+    .error {
+      background-color : rgba(#000, .5);
+      border-radius    : 5px;
+      color            : #fff;
+      display          : none;
+      margin           : 20px auto 0 auto;
+      padding          : 15px;
+      text-align       : center;
+      width            : 300px;
+      &.show {
+        display : block;
+      }
+    }
+
+    .footer {
+      color      : #fff;
+      font-size  : .88rem;
+      padding    : 20px 0 30px;
+      text-align : center;
+    }
+  }
+
+  .r-btn {
+    border        : none;
+    border-radius : 3px;
+    display       : block;
+    font-weight   : 400;
+    height        : 48px;
+    line-height   : 48px;
+    margin        : 10px auto;
+    transition    : .2s all;
+    text-align    : center;
+    width         : 100%;
+    &:hover {
+      text-decoration : none;
+    }
+  }
+
+  .btn-login {
+    background : darken($brand-primary, 10%);
+    color      : #fff;
+    &:hover {
+      background : $brand-primary;
+      cursor     : pointer;
+      transition : .2s all;
+    }
+    &:focus,
+    &:active,
+    &:active:focus,
+    &.active:focus {
+      outline:none;
+    }
+  }
+
+  .btn-facebook {
+    background : #3b5998;
+    color      : #fff;
+    i {
+      margin-right : 8px;
+    }
+    &:hover {
+      background : lighten(#3b5998, 10%);
+      transition : .2s all;
+    }
+  }
+
+}
