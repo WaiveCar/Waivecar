@@ -1,0 +1,32 @@
+#!/bin/bash
+# Exit status = 0 if success, non-zero if error
+
+
+# Exit at first failure
+set -e
+echo "`date -u `: Starting commit_test"
+
+if [ "${PACKAGE_NAME}" == "cleverbuild" ]; then
+    echo "`date -u `: Testing Ansible syntax"
+##    ansible-playbook --syntax-check --list-task -i deployment/ansible/inventory deployment/ansible/main.yml
+    echo "`date -u `: Testing Ansible syntax done"
+
+    echo "`date -u `: Testing Cleverbuild scripts"
+    deployment/build/test/bin/bats deployment/build/test/
+    echo "`date -u `: Testing Cleverbuild scripts done"
+fi
+
+echo "`date -u `: Testing app"
+
+if [ "${TRAVIS}" == "true" ]; then
+    echo "Doing nothing"
+    npm run-script test-travis
+    echo "Sending report to Clever Coverage...."
+    deployment/build/scripts/coverage
+else
+    npm test
+fi
+
+echo "`date -u `: Testing app done"
+
+echo "`date -u `: commit_test done"

@@ -1,0 +1,20 @@
+<h3>Hello, {{ name }}</h3>
+<p>
+  A request to reset your password for your {{ service }} account was requested.
+</p>
+<p>
+  Here is your token <strong>{{ token }}</strong>
+</p>
+<p>
+  <a href="{{ resetUrl }}?token={{ token }}">
+    Click here to reset your {{ service }} password
+  </a>
+</p>
+<p>
+  <strong>Don't recognize this activity?</strong><br>
+  If you did not submit a request for a password reset, please ignore this email.
+</p>
+<p>
+  Best,<br>
+  The {{ service }} Team
+</p>

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Exit at first failure
+# set -e
+# echo "`date -u `: Starting commit_build"
+
+# gulp postinstall
+
+echo "No PostInstall Required."
+# echo "`date -u `: commit_build done"

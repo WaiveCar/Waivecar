@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# Exit at first failure
+set -e
+
+deployment/build/scripts/commit_analysis --fast
+deployment/build/scripts/commit_test --fast
+
