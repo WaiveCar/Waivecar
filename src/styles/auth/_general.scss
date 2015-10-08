@@ -1,6 +1,7 @@
 @import '~styles/variables';
 
-$login-width : 420px;
+$login-width     : 420px;
+$subscribe-width : 600px;
 
 #auth {
   left     : 0;
@@ -12,7 +13,6 @@ $login-width : 420px;
   .login {
     background    : rgba(#000, .6);
     box-shadow    : 0 0 10px rgba(0, 0, 0, .3);
-    //border-top    : 3px solid $brand-primary;
     border-radius : 0;
     left          : 50%;
     margin-left   : -($login-width / 2);
@@ -20,7 +20,22 @@ $login-width : 420px;
     top           : 50%;
     transform     : translateY(-50%);
     width         : $login-width;
-    
+
+    &.subscribe {
+      border-top    : 3px solid $brand-primary;
+      width       : $subscribe-width;
+      margin-left : -($subscribe-width / 2);
+      .title {
+        width : $subscribe-width;
+        .title-detail {
+          margin : 10px;
+        }
+      }
+      .actions {
+        margin-bottom : 30px;
+      }
+    }
+
     .app-brand {
       position            : absolute;
       display             : block;
@@ -32,7 +47,7 @@ $login-width : 420px;
       background-size     : 50px;
       background-position : center center;
     }
-    
+
     .title {
       box-sizing : border-box;
       color      : #fcfcfc;

@@ -52,7 +52,7 @@ templates.register('home', {
     done(null,
       [
         {
-          path      : '/',
+          path      : '/draft',
           component : require('views/home/home')
         }
       ].concat(views.getRoutes('home'))
