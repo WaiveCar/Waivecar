@@ -27,13 +27,6 @@ templates.register('auth', {
   component   : AuthTemplate,
   childRoutes : [
     {
-      path      : '/',
-      component : require('views/auth/subscribe'),
-      onEnter   : (nextState, transition) => {
-        policies.isAnonymous(nextState, transition);
-      }
-    },
-    {
       path      : '/login',
       component : require('views/auth/login'),
       onEnter   : (nextState, transition) => {

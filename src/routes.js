@@ -8,6 +8,7 @@ import { Route }     from 'react-router';
 
 // ### Import Templates
 
+import './templates/placeholder';
 import './templates/home';
 import './templates/site';
 import './templates/auth';
