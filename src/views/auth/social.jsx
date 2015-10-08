@@ -5,6 +5,7 @@ import mixin          from 'react-mixin';
 import { auth, api }  from 'reach-react';
 import { Navigation } from 'react-router';
 import { snackbar }   from 'reach-components';
+import config         from 'config';
 
 @mixin.decorate(Navigation)
 
@@ -37,7 +38,7 @@ export default class Social extends React.Component {
     api.post('/auth/facebook', {
       type        : 'register',
       code        : code,
-      redirectUri : 'http://local.io:8080/auth/facebook'
+      redirectUri : config.auth.facebook.redirect
     }, (error, user) => {
       if (error) {
         this.setState({
@@ -64,7 +65,7 @@ export default class Social extends React.Component {
     api.post('/auth/facebook', {
       type        : 'connect',
       code        : code,
-      redirectUri : 'http://local.io:8080/auth/facebook'
+      redirectUri : config.auth.facebook.redirect
     }, (error, result) => {
       if (error) {
         this.setState({
@@ -90,7 +91,7 @@ export default class Social extends React.Component {
     api.post('/auth/facebook', {
       type        : 'login',
       code        : code,
-      redirectUri : 'http://local.io:8080/auth/facebook'
+      redirectUri : config.auth.facebook.redirect
     }, (error, user) => {
       if (error) {
         this.setState({

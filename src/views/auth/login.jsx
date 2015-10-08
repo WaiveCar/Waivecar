@@ -96,7 +96,7 @@ export default class LoginView extends React.Component {
 
         <div className="actions">
           <button type="button" className="r-btn btn-login" onClick={ this.submit }>Log in</button>
-          <a className="r-btn btn-facebook" href="https://www.facebook.com/dialog/oauth?client_id=783941098370564&redirect_uri=http://local.io:8080/auth/facebook&state=login">
+          <a className="r-btn btn-facebook" href={ `https://www.facebook.com/dialog/oauth?client_id=${ config.auth.facebook.appId }&redirect_uri=${ config.auth.facebook.redirect }&state=login` }>
             <i className="fa fa-facebook" />
             Log in with Facebook
           </a>
