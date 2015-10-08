@@ -66,9 +66,10 @@ API_APP)
             tar -xzf /tmp/${PACKAGE_NAME}_api_${TRAVIS_COMMIT}.tgz -C ${REMOTE_DIR}
             rm -f /tmp/${PACKAGE_NAME}_api_${TRAVIS_COMMIT}.tgz
             rebuild
-		    ${INIT_SCRIPT} reload || {
-		    	${INIT_SCRIPT} restart
-			}
+            ${INIT_SCRIPT} reload || {
+                ${INIT_SCRIPT} restart
+            }
+            ${SOCKET_SCRIPT} restart
         ;;
         app)
             find ${REMOTE_DIR} -mindepth 1 -delete
