@@ -36,6 +36,7 @@ env:
     - REMOTE_USER=travis
     - COVERAGE_TOKEN=Prejal3413sfJsad43jadasd431
     - INIT_SCRIPT=/etc/init.d/node-${PACKAGE_NAME}
+    - SOCKET_SCRIPT=/etc/init.d/node-${PACKAGE_NAME}-socket
     - STRICT_VERSION_CHECK=false
     - REMOTE_DIR_WEB=/opt/${PACKAGE_NAME}-web
     - REMOTE_DIR_APP=/opt/${PACKAGE_NAME}-admin
