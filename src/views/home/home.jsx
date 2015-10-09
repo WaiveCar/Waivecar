@@ -27,7 +27,7 @@ export default class HomeView extends React.Component {
       <nav className="navbar navbar-dark bg-transparent">
         <ul className="nav navbar-nav pull-right">
           <li className="nav-item active">
-            <Link to="terms" className="nav-link">Terms</Link>
+            <Link to="/terms" className="nav-link">Terms</Link>
           </li>
           <li className="nav-item active">
             <Anchor className="nav-link" href="#download">Download</Anchor>
@@ -48,7 +48,7 @@ export default class HomeView extends React.Component {
             <Anchor className="nav-link" href="#about-us">About Us</Anchor>
           </li>
           <li className="nav-item">
-            <Link to="login" className="nav-link">Login</Link>
+            <Link to="/login" className="nav-link">Login</Link>
           </li>
         </ul>
       </nav>
