@@ -7,6 +7,13 @@ let error  = Reach.Error;
 let hooks  = Reach.Hooks;
 let config = Reach.config;
 
+// ### Register Jobs
+
+require('./jobs/password-reset');
+require('./jobs/registration');
+require('./jobs/request-email-verification');
+require('./jobs/request-phone-verification');
+
 function *requestPhoneVerification(userId, phone) {
   let token = yield tokens.get({
     id      : userId,
