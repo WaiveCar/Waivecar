@@ -30,3 +30,19 @@ $ npm run stag
 $ npm run prod
 $ NODE_ENV=env node --harmony server.js
 ```
+
+### View Import/Export
+
+Views reside in a mongo database in a View collection.
+
+To import existing views in to your database:
+
+```sh
+mongoimport --db waivecar_local --collection views --upsert --file ./fixtures/views.json
+```
+
+To update the export with what you have locally:
+
+```sh
+mongoexport --db waivecar_local --collection views --out ./fixtures/views.json
+```
