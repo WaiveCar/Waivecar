@@ -21,14 +21,16 @@ $ reach install
 
 ### Startup
 
-After installing the npm dependencies, reach modules and services you can startup your server.
+After installing the npm dependencies, reach modules and providers startup your local development server:
 
 ```sh
 $ npm run local
-$ npm run dev
-$ npm run stag
-$ npm run prod
-$ NODE_ENV=env node --harmony server.js
+```
+
+To enable socket support you will need to open a new terminal and run the following command from the API location:
+
+```sh
+$ NODE_ENV=local node socket
 ```
 
 ### View Import/Export
