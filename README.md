@@ -21,16 +21,16 @@ $ reach install
 
 ### Startup
 
-After installing the npm dependencies, reach modules and providers startup your local development server:
+Start your local development by opening a terminal and run:
 
 ```sh
 $ npm run local
 ```
 
-To enable socket support you will need to open a new terminal and run the following command from the API location:
+To enable socket support you will need to open a new terminal and run:
 
 ```sh
-$ NODE_ENV=local node socket
+$ npm run socket
 ```
 
 ### View Import/Export
