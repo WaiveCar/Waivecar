@@ -7,7 +7,7 @@ addons:
     packages:
     - g++-4.8
 node_js:
-  - 'stable'
+  - '4.1.2'
 branches:
   only:
     - api/master
@@ -16,13 +16,14 @@ branches:
 cache:
   directories:
     - node_modules
+    - config
     - modules/auth
-    - modules/commander
     - modules/file
     - modules/log
     - modules/payment
     - modules/user
     - modules/ui
+    - modules/subscription
     - providers/bcrypt
     - providers/mongo
     - providers/queue

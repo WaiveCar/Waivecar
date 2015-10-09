@@ -21,7 +21,7 @@
     "koa-cors": "0.0.16",
     "lodash": "3.10.1",
     "moment": "2.10.6",
-    "reach-api": "0.4.25",
+    "reach-api": "0.5.1",
     "reach-socket": "0.3.0",
     "request": "2.61.0",
     "shortid" : "2.2.2"
@@ -33,19 +33,18 @@
     "node-random-name": "1.0.1"
   },
   "reach": {
-    "reach-auth": "0.2.10",
+    "reach-auth": "0.2.11",
     "reach-bcrypt": "1.0.0",
-    "reach-commander": "0.0.5",
-    "reach-email": "0.0.8",
-    "reach-file": "0.3.3",
-    "reach-log": "0.0.13",
-    "reach-mongo": "0.0.5",
-    "reach-payments": "0.1.4",
-    "reach-queue": "0.0.10",
-    "reach-sequelize": "0.1.6",
-    "reach-sms": "0.0.9",
+    "reach-email": "0.0.10",
+    "reach-file": "0.3.4",
+    "reach-log": "0.0.15",
+    "reach-mongo": "0.0.7",
+    "reach-payments": "0.1.5",
+    "reach-queue": "0.0.11",
+    "reach-sequelize": "0.1.8",
+    "reach-sms": "0.0.11",
     "reach-subscription": "0.0.3",
-    "reach-ui": "0.0.13",
-    "reach-user": "0.3.4"
+    "reach-ui": "0.0.15",
+    "reach-user": "0.3.5"
   }
 }
