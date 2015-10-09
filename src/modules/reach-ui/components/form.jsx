@@ -3,11 +3,11 @@
 import React                             from 'react';
 import { api }                           from 'reach-react';
 import mixin                             from 'react-mixin';
-import { Navigation }                    from 'react-router';
+import { History }                       from 'react-router';
 import { Form, snackbar }                from 'reach-components';
 import { components, fields, resources } from 'reach-ui';
 
-@mixin.decorate(Navigation)
+@mixin.decorate(History)
 
 /**
  * @class UIForm

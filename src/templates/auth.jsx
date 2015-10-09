@@ -29,29 +29,29 @@ templates.register('auth', {
     {
       path      : '/login',
       component : require('views/auth/login'),
-      onEnter   : (nextState, transition) => {
-        policies.isAnonymous(nextState, transition);
+      onEnter   : (nextState, replaceState) => {
+        policies.isAnonymous(nextState, replaceState);
       }
     },
     {
       path      : '/reset-password',
       component : require('views/auth/reset-password'),
-      onEnter   : (nextState, transition) => {
-        policies.isAnonymous(nextState, transition);
+      onEnter   : (nextState, replaceState) => {
+        policies.isAnonymous(nextState, replaceState);
       }
     },
     {
       path      : '/register',
       component : require('views/auth/register'),
-      onEnter   : (nextState, transition) => {
-        policies.isAnonymous(nextState, transition);
+      onEnter   : (nextState, replaceState) => {
+        policies.isAnonymous(nextState, replaceState);
       }
     },
     {
       path    : '/logout',
-      onEnter : (nextState, transition) => {
+      onEnter : (nextState, replaceState) => {
         auth.logout();
-        transition.to('/', null);
+        replaceState(null, '/');
       }
     }
   ]
@@ -75,8 +75,8 @@ templates.register('social-auth', {
     {
       path      : '/auth/facebook',
       component : require('views/auth/social'),
-      onEnter   : (nextState, transition) => {
-        policies.isAnonymous(nextState, transition);
+      onEnter   : (nextState, replaceState) => {
+        policies.isAnonymous(nextState, replaceState);
       }
     }
   ]

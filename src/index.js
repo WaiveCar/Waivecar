@@ -14,9 +14,9 @@ import ReactDOM from 'react-dom';
 // ### Router
 // Current implementation uses react-router for routing react applications.
 
-import Router      from 'react-router';
-import { history } from 'react-router/lib/BrowserHistory';
-import routes      from './routes';
+import Router               from 'react-router';
+import createBrowserHistory from 'history/lib/createBrowserHistory'
+import routes               from './routes';
 
 // ### Stores
 // Load initial interface reducer stores
@@ -31,6 +31,6 @@ import 'styles/index.scss';
 // Application starts its rendering process at this point.
 
 ReactDOM.render(
-  <Router history={ history } routes={ routes } />,
+  <Router history={ createBrowserHistory() } routes={ routes } />,
   document.getElementById('react')
 );

@@ -3,11 +3,11 @@
 import React          from 'react';
 import mixin          from 'react-mixin';
 import { auth, api }  from 'reach-react';
-import { Navigation } from 'react-router';
+import { History } from 'react-router';
 import { snackbar }   from 'reach-components';
 import config         from 'config';
 
-@mixin.decorate(Navigation)
+@mixin.decorate(History)
 
 export default class Social extends React.Component {
 
@@ -51,13 +51,13 @@ export default class Social extends React.Component {
           action  : {
             title : 'Back to login',
             click : () => {
-              this.transitionTo('/login');
+              this.history.pushState(null, '/login');
             }.bind(this)
           }
         });
       }
       auth.set(user);
-      this.transitionTo('/dashboard');
+      this.history.pushState(null, '/dashboard');
     }.bind(this));
   }
 
@@ -78,7 +78,7 @@ export default class Social extends React.Component {
           action  : {
             title : 'Back to login',
             click : () => {
-              this.transitionTo('/login');
+              this.history.pushState(null, '/login');
             }.bind(this)
           }
         });
@@ -104,13 +104,13 @@ export default class Social extends React.Component {
           action  : {
             title : 'Back to login',
             click : () => {
-              this.transitionTo('/login');
+              this.history.pushState(null, '/login');
             }.bind(this)
           }
         });
       }
       auth.set(user);
-      this.transitionTo('/dashboard');
+      this.history.pushState(null, '/dashboard');
     }.bind(this));
   }
 

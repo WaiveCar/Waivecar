@@ -3,14 +3,14 @@
 import React                     from 'react';
 import mixin                     from 'react-mixin';
 import { relay, api }            from 'reach-react';
-import { Navigation }            from 'react-router';
+import { History }               from 'react-router';
 import { Map }                   from 'reach-components';
 import { components, resources } from 'reach-ui';
 
-@mixin.decorate(Navigation)
+@mixin.decorate(History)
 
 class UIMap extends React.Component {
-  
+
   /**
    * @constructor
    */
@@ -49,7 +49,7 @@ class UIMap extends React.Component {
    */
   render() {
     let submit = this.props.actions ? this.props.actions.submit : (data) => {
-      this.transitionTo(`/${ this.props.resource }/${ data.id }`);
+      this.history.pushState(null, `/${ this.props.resource }/${ data.id }`);
     };
     return (
       <Map markers={ this.state[this.props.resource] } markerHandlerKey={ this.props.filters.id } markerHandler={ submit } markerIcon={ '/images/admin/map-icon-waivecar.svg' } />

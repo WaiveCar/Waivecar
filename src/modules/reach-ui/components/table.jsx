@@ -83,7 +83,7 @@ class UITable extends React.Component {
   getEditAction(id) {
     if (this.props.actions.indexOf('update') > -1) {
       return (
-        <Link className="grid-action" to={ this.resourceName() + '/' + id }>
+        <Link className="grid-action" to={ `/${ this.resourceName() }/${ id }` }>
           <i className="material-icons" role="edit">edit</i>
         </Link>
       );
@@ -147,7 +147,7 @@ class UITable extends React.Component {
   createButton() {
     if (this.props.actions.indexOf('create') > -1) {
       return (
-        <Link className="btn btn-icon btn-primary command-primary-action" to={ this.resourceName() + '/create' }>
+        <Link className="btn btn-icon btn-primary command-primary-action" to={ `/${ this.resourceName() }/create` }>
           <i className="material-icons" role="edit">add</i>
         </Link>
       );

@@ -3,11 +3,11 @@
 import React                from 'react';
 import mixin                from 'react-mixin';
 import { auth, api }        from 'reach-react';
-import { Navigation, Link } from 'react-router';
+import { History, Link } from 'react-router';
 import config               from 'config';
 import { Form, snackbar }   from 'reach-components';
 
-@mixin.decorate(Navigation)
+@mixin.decorate(History)
 
 export default class ResetPasswordView extends React.Component {
 

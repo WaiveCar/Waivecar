@@ -6,8 +6,6 @@ import UI        from './index';
 import policies  from 'policies';
 import 'styles/editor/style.scss';
 
-console.log(UI);
-
 let { ViewEditor } = UI.editor;
 
 /**
@@ -40,7 +38,7 @@ class EditorTemplate extends React.Component {
       </div>
     );
   }
-  
+
 }
 
 // ### Register Template

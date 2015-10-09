@@ -4,7 +4,7 @@ import { auth } from 'reach-react';
 
 export default {
 
-  isAnyone : (nextState, transition) => {
+  isAnyone : (nextState, replaceState) => {
   },
 
   /**
@@ -12,9 +12,9 @@ export default {
    * @param  {Object} nextState
    * @param  {Object} transition
    */
-  isAuthenticated : (nextState, transition) => {
+  isAuthenticated : (nextState, replaceState) => {
     if (!auth.check()) {
-      transition.to('/login', null, {
+      return replaceState(null, '/login', {
         nextPathname : nextState.location.pathname
       });
     }
@@ -25,14 +25,14 @@ export default {
    * @param  {Object} nextState
    * @param  {Object} transition
    */
-  isActive : (nextState, transition) => {
+  isActive : (nextState, replaceState) => {
     if (!auth.check()) {
-      transition.to('/login', null, {
+      return replaceState(null, '/login', {
         nextPathname : nextState.location.pathname
       });
     }
     if (auth.user.status !== 'active') {
-      transition.to('/forbidden', null, {
+      return replaceState(null, '/forbidden', {
         nextPathname : nextState.location.pathname
       });
     }
@@ -43,15 +43,15 @@ export default {
    * @param  {Object} nextState
    * @param  {Object} transition
    */
-  isAdministrator : (nextState, transition) => {
+  isAdministrator : (nextState, replaceState) => {
     if (!auth.check()) {
-      transition.to('/login', null, {
+      return replaceState(null, '/login', {
         nextPathname : nextState.location.pathname
       });
     }
 
     if (auth.user.role !== 'admin') {
-      transition.to('/forbidden', null, {
+      return replaceState(null, '/forbidden', {
         nextPathname : nextState.location.pathname
       });
     }
@@ -62,13 +62,12 @@ export default {
    * @param  {Object} nextState
    * @param  {Object} transition
    */
-  isAnonymous : (nextState, transition) => {
+  isAnonymous : (nextState, replaceState) => {
     if (auth.check()) {
       if (auth.user.role === 'admin') {
-        return transition.to('/dashboard', null);
+        return replaceState(null, '/dashboard');
       }
-
-      return transition.to('/profile', null);
+      return replaceState(null, '/profile');
     }
   }
 

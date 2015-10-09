@@ -2,7 +2,7 @@ import React                from 'react';
 import UI                   from 'reach-ui';
 import mixin                from 'react-mixin';
 import update               from 'react/lib/update';
-import { Navigation }       from 'react-router';
+import { History }       from 'react-router';
 import { DragDropContext }  from 'react-dnd';
 import HTML5Backend         from 'react-dnd/modules/backends/HTML5';
 import { api }              from 'reach-react';
@@ -43,7 +43,7 @@ function createContentOrReturn(viewComponent, next) {
 }
 
 @DragDropContext(HTML5Backend)
-@mixin.decorate(Navigation)
+@mixin.decorate(History)
 export default class ViewLayout extends React.Component {
 
   constructor(...args) {
