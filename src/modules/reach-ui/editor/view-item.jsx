@@ -9,16 +9,22 @@ const source = {
       accepts  : props.accepts,
       category : props.category,
       icon     : props.icon,
-      options  : props.options,
+      options  : {}
     };
   }
+
+  // endDrag(props, monitor, component) {
+  //   const item = monitor.getItem();
+  //   const dropResult = monitor.getDropResult();
+
+  // }
 };
 
 @DragSource(props => props.category, source, (connect, monitor) => ({
   connectDragSource : connect.dragSource(),
   isDragging        : monitor.isDragging()
 }))
-export default class Item extends Component {
+export default class ViewItem extends Component {
 
   static propTypes = {
     connectDragSource : PropTypes.func.isRequired,
@@ -35,6 +41,7 @@ export default class Item extends Component {
 
     return connectDragSource(
       <div className="ui-component-item" style={{ opacity }}>
+        { isDragging && '(being dragged)' }
         <i className="material-icons" role={ type }>{ icon }</i>
         { name }
       </div>

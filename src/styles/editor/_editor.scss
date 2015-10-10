@@ -93,9 +93,29 @@
     }
 
     .Select {
-      width : 100px !important;
+      width : 194px;
+      display : inline-block;
+      &.is-multi {
+        .Select-input {
+          margin : 0;
+        }
+      }
+      .Select-menu-outer {
+        font-size : 0.8rem;
+      }
       .Select-control {
-        border : none;
+        border   : none;
+        overflow : initial;
+        .Select-placeholder {
+          font-size : 0.8rem;
+          padding : 10px 20px;
+        }
+        .Select-item {
+          font-size : 0.8rem;
+          .Select-item-icon {
+            padding : 2px;
+          }
+        }
       }
     }
   }

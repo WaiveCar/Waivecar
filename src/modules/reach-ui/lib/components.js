@@ -48,7 +48,7 @@ Components.getAll = function () {
   for (let key in this.store) {
     map.push({
       category : 'Component',
-      accepts  : [],
+      accepts  : [ 'Component' ],
       ...this.store[key]
     });
   }

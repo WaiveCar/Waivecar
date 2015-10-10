@@ -42,9 +42,9 @@ class UIForm extends React.Component {
    */
   componentWillReceiveProps(nextProps, nextState) {
     let prev = this.id();
-    let next = nextProps.params.id;
-    if (next !== prev) {
-      this.setDefault(nextProps.params.id);
+    let nextId = nextProps.params ? nextProps.params.id : nextProps.id;
+    if (nextId && nextId !== prev) {
+      this.setDefault(nextId);
     }
   }
 
@@ -68,7 +68,7 @@ class UIForm extends React.Component {
    * @return {String}
    */
   id() {
-    return this.props.params.id || 'create';
+    return this.props.params && this.props.params.id || 'create';
   }
 
   /**
@@ -114,9 +114,13 @@ class UIForm extends React.Component {
    * @return {Array}
    */
   fields() {
-    let list  = fields.get(this.props.fields.id);
+    let list  = fields.get(this.props.resource);
     let action = this.isCreate() ? 'create' : 'update';
-    return this.props.fields[action].map((value, index) => {
+    let fieldList = this.props.fields;
+    if (!Array.isArray(this.props.fields)) {
+      fieldList = this.props.fields[action];
+    }
+    return fieldList.map((value, index) => {
       if (list.hasOwnProperty(value)) {
         let field       = list[value];
         field.className = 'col-xs-12 r-input';
@@ -217,6 +221,7 @@ class UIForm extends React.Component {
    * @method render
    */
   render() {
+    if (!this.props.fields) return <div className="component-requires-options" />;
     return (
       <Form
         className = "r-form"
@@ -231,68 +236,52 @@ class UIForm extends React.Component {
 }
 
 // ### Register Component
-
-components.register({
-  name    : 'Form',
-  type    : 'form',
-  icon    : 'apps',
-  class   : UIForm,
-  options : [
-    {
-      name      : 'resource',
-      label     : 'Resource',
-      component : 'select',
-      options   : [
+export default {
+  build : function() {
+    return {
+      name    : 'Form',
+      type    : 'form',
+      icon    : 'apps',
+      class   : UIForm,
+      options : [
         {
-          name : 'Cars',
-          value : 'cars'
+          label     : 'Resource',
+          component : 'react-select',
+          name      : 'resource',
+          options   : resources.getSelectList(),
+          helpText : 'Select resource for this form'
         },
         {
-          name : 'Views',
-          value : 'views'
+          label     : 'Fields',
+          component : 'react-multi-select',
+          name      : 'fields',
+          helpText  : 'Select resource fields to appear in the form',
+          options   : {
+            connector : 'resource',
+            values    : fields.getSelectList()
+          }
+        },
+        {
+          name      : 'actions',
+          label     : 'Actions',
+          component : 'react-multi-select',
+          options   : [
+            {
+              name : 'Create',
+              value : 'create'
+            },
+            {
+              name : 'Update',
+              value : 'update'
+            },
+            {
+              name : 'Delete',
+              value : 'delete'
+            }
+          ],
+          helpText  : 'Select Actions'
         }
-      ],
-      helpText  : 'Select a Resource'
-    },
-    {
-      name      : 'actions',
-      label     : 'Actions',
-      component : 'multiselect',
-      options   : [
-        {
-          name : 'Create',
-          value : 'create'
-        },
-        {
-          name : 'Update',
-          value : 'update'
-        },
-        {
-          name : 'Delete',
-          value : 'delete'
-        }
-      ],
-      helpText  : 'Select Actions'
-    },
-    {
-      name      : 'fields',
-      label     : 'Fields',
-      component : 'select',
-      options   : [
-        {
-          name : 'Id',
-          value : 'id'
-        },
-        {
-          name : 'Created At',
-          value : 'createdAt'
-        },
-        {
-          name : 'Updated At',
-          value : 'updatedAt'
-        }
-      ],
-      helpText  : 'Select Fields to display'
-    }
-  ]
-});
+      ]
+    };
+  }
+}

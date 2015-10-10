@@ -1,11 +1,11 @@
 'use strict';
 
-import React                     from 'react';
-import mixin                     from 'react-mixin';
-import { relay, api }            from 'reach-react';
-import { History }               from 'react-router';
-import { Map }                   from 'reach-components';
-import { components, resources } from 'reach-ui';
+import React                             from 'react';
+import mixin                             from 'react-mixin';
+import { relay, api }                    from 'reach-react';
+import { History }                       from 'react-router';
+import { Map }                           from 'reach-components';
+import { components, fields, resources } from 'reach-ui';
 
 @mixin.decorate(History)
 
@@ -59,13 +59,16 @@ class UIMap extends React.Component {
 }
 
 // ### Register Component
-
-components.register({
-  name    : 'Map',
-  type    : 'map',
-  class   : UIMap,
-  icon    : 'map',
-  options : {
-    id : null
+export default {
+  build : function() {
+    return {
+      name    : 'Map',
+      type    : 'map',
+      class   : UIMap,
+      icon    : 'map',
+      options : {
+        id : null
+      }
+    };
   }
-});
+}

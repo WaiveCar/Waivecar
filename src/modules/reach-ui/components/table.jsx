@@ -1,10 +1,10 @@
 'use strict';
 
-import React                     from 'react';
-import { relay, api }            from 'reach-react';
-import { Grid }                  from 'reach-components';
-import { Link }                  from 'react-router';
-import { components, resources } from 'reach-ui';
+import React                             from 'react';
+import { relay, api }                    from 'reach-react';
+import { Grid }                          from 'reach-components';
+import { Link }                          from 'react-router';
+import { components, fields, resources } from 'reach-ui';
 
 class UITable extends React.Component {
 
@@ -173,100 +173,55 @@ class UITable extends React.Component {
       </div>
     );
   }
-
 }
 
 // ### Register Component
-// perhaps what we are working towards:
-// components.register({
-//   name    : 'Table',
-//   type    : 'table',
-//   icon    : 'view_list',
-//   class   : UITable,
-//   options : [
-//     {
-//       name      : 'resource',
-//       label     : 'Resource',
-//       component : 'select',
-//       options   : () => { return resources.getAll().map((r) => { return { name : r.name, value : r.name }; }) },
-//       helpText  : 'Select a Resource'
-//     },
-//     {
-//       name      : 'fields',
-//       label     : 'Fields',
-//       component : 'select',
-//       options   : (resource) => { return fields.get(resource).map((f) => { return { name : f.label, value : f.name }; }) },
-//       helpText  : 'Select Fields to display'
-//     }
-//   ]
-// });
-
-
-
-
-
-
-components.register({
-  name    : 'Table',
-  type    : 'table',
-  icon    : 'view_list',
-  class   : UITable,
-  options : [
-    {
-      name      : 'resource',
-      label     : 'Resource',
-      component : 'select',
-      options   : [
+export default {
+  build : function() {
+    return {
+      name    : 'Table',
+      type    : 'table',
+      icon    : 'view_list',
+      class   : UITable,
+      options : [
         {
-          name : 'Cars',
-          value : 'cars'
+          label     : 'Resource',
+          component : 'react-select',
+          name      : 'resource',
+          options   : resources.getSelectList(),
+          helpText : 'Select resource for this table'
         },
         {
-          name : 'Views',
-          value : 'views'
+          label     : 'Fields',
+          component : 'react-multi-select',
+          name      : 'fields',
+          helpText  : 'Select resource fields to appear in table',
+          options   : {
+            connector : 'resource',
+            values    : fields.getSelectList()
+          }
+        },
+        {
+          name      : 'actions',
+          label     : 'Actions',
+          component : 'react-multi-select',
+          options   : [
+            {
+              name : 'Create',
+              value : 'create'
+            },
+            {
+              name : 'Update',
+              value : 'update'
+            },
+            {
+              name : 'Delete',
+              value : 'delete'
+            }
+          ],
+          helpText  : 'Select Actions'
         }
-      ],
-      helpText  : 'Select a Resource'
-    },
-    {
-      name      : 'actions',
-      label     : 'Actions',
-      component : 'multi-select',
-      options   : [
-        {
-          name : 'Create',
-          value : 'create'
-        },
-        {
-          name : 'Update',
-          value : 'update'
-        },
-        {
-          name : 'Delete',
-          value : 'delete'
-        }
-      ],
-      helpText  : 'Select Actions'
-    },
-    {
-      name      : 'fields',
-      label     : 'Fields',
-      component : 'select',
-      options   : [
-        {
-          name : 'Id',
-          value : 'id'
-        },
-        {
-          name : 'Created At',
-          value : 'createdAt'
-        },
-        {
-          name : 'Updated At',
-          value : 'updatedAt'
-        }
-      ],
-      helpText  : 'Select Fields to display'
-    }
-  ]
-});
+      ]
+    };
+  }
+}

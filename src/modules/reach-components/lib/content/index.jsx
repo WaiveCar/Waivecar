@@ -1,11 +1,16 @@
 'use strict';
 
-import React          from 'react';
-import Reach, { api } from 'reach-react';
-import Snackbar       from '../snackbar';
+import React, { PropTypes } from 'react';
+import Reach, { api }       from 'reach-react';
+import Snackbar             from '../snackbar';
 import './style.scss';
 
 export default class Content extends React.Component {
+
+  static propTypes = {
+    canEdit : PropTypes.bool,
+    id      : PropTypes.number
+  };
 
   /**
    * @constructor
@@ -31,11 +36,28 @@ export default class Content extends React.Component {
    * @method componentDidMount
    */
   componentDidMount() {
-    api.get(this.props.resource.show.uri.replace(':id', this.props.id), (error, result) => {
+    if (this.props.id) {
+      this.setDefault(this.props.id);
+    }
+  }
+
+  /**
+   * @method componentWillReceiveProps
+   * @param  {Object} nextProps
+   * @param  {Object} nextState
+   */
+  componentWillReceiveProps(nextProps, nextState) {
+    if (this.props.id !== nextProps.id) {
+      this.setDefault(nextProps.id);
+    }
+  }
+
+  setDefault(id) {
+    api.get(this.props.resource.show.uri.replace(':id', id), (error, result) => {
       if (error) {
         return Snackbar.notify({
           type    : `danger`,
-          message : `Could not retrieve content [ID: ${ this.props.id }]`
+          message : `Could not retrieve content [ID: ${ id }]`
         });
       }
       let id = `content-${ result.id }`;
@@ -90,15 +112,32 @@ export default class Content extends React.Component {
     }.bind(this));
   }
 
-  startEdit() {
-    if (this.state.editor) {
-      this.setState({
-        isEditing : true
-      });
+  createContent(next) {
+    api.post(this.props.resource.create.uri, { html : '<p>Awaiting Text</p>' }, function(err, res) {
+      this.setDefault(res.id);
+      if (next) {
+        return next();
+      }
+    });
+  }
 
-      this.state.editor.init(`#${ this.state.id }[data-editable]`, 'id');
-      this.state.editor.bind('save', this.submit);
-      this.state.editor.start();
+  startEdit() {
+    let edit = function() {
+      if (this.state.editor) {
+        this.setState({
+          isEditing : true
+        });
+
+        this.state.editor.init(`#${ this.state.id }[data-editable]`, 'id');
+        this.state.editor.bind('save', this.submit);
+        this.state.editor.start();
+      }
+    }.bind(this);
+
+    if (!this.props.id) {
+      this.createContent(edit);
+    } else {
+      edit();
     }
   }
 
@@ -111,31 +150,42 @@ export default class Content extends React.Component {
       this.state.editor.save();
     }
   }
+
+  renderActions() {
+    return (
+      <div className="content-actions">
+        { !this.state.isEditing &&
+          <button type="button" className="btn btn-icon" onClick={ this.startEdit }>
+            <i className="material-icons" role="edit">mode_edit</i>
+          </button>
+        }
+        { this.state.isEditing &&
+          <button type="button" className="btn btn-icon" onClick={ this.stopEdit }>
+            <i className="material-icons" role="done">done</i>
+          </button>
+        }
+      </div>
+    );
+  }
   /**
    * @method render
    */
   render() {
+    if (!this.props.id) {
+      return (<div className="content-component" />)
+    }
     return (
-      <div className="edcontent-component">
+      <div className="content-component">
         <div
           key                     = { this.state.key }
           dangerouslySetInnerHTML = { this.state.html }
           className               = 'content-component'
         />
-        <div className="content-actions">
-          { !this.state.isEditing &&
-            <button type="button" className="btn btn-icon" onClick={ this.startEdit }>
-              <i className="material-icons" role="edit">mode_edit</i>
-            </button>
-          }
-          { this.state.isEditing &&
-            <button type="button" className="btn btn-icon" onClick={ this.stopEdit }>
-              <i className="material-icons" role="done">done</i>
-            </button>
-          }
-        </div>
+        { this.props.canEdit && this.renderActions() }
       </div>
     )
   }
 
 }
+
+Content.defaultProps = { canEdit : false };

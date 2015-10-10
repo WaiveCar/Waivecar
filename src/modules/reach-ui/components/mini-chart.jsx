@@ -1,9 +1,9 @@
 'use strict';
 
-import React                     from 'react';
-import { relay, api }            from 'reach-react';
-import { Charts, snackbar }      from 'reach-components';
-import { components, resources } from 'reach-ui';
+import React                             from 'react';
+import { relay, api }                    from 'reach-react';
+import { Charts, snackbar }              from 'reach-components';
+import { components, fields, resources } from 'reach-ui';
 
 let { MiniChart } = Charts;
 
@@ -75,59 +75,62 @@ class UIMiniChart extends React.Component {
 }
 
 // ### Register Component
-
-components.register({
-  name    : 'Mini Chart',
-  type    : 'mini-chart',
-  icon    : 'insert_chart',
-  class   : UIMiniChart,
-  options : {
-    resource : {
-      label     : 'Resource',
-      component : 'select',
-      options   : [
-        {
-          name : 'Cars',
-          value : 'cars'
+export default {
+  build : function() {
+    return {
+      name    : 'Mini Chart',
+      type    : 'mini-chart',
+      icon    : 'insert_chart',
+      class   : UIMiniChart,
+      options : {
+        resource : {
+          label     : 'Resource',
+          component : 'select',
+          options   : [
+            {
+              name : 'Cars',
+              value : 'cars'
+            }
+          ],
+          helpText  : 'Select a Resource'
+        },
+        title : {
+          label     : 'Title',
+          component : 'input',
+          type      : 'text',
+          helpText  : 'Select a Resource'
+        },
+        type : {
+          label     : 'Chart Type',
+          component : 'select',
+          options   : [
+            {
+              name : 'Bar',
+              value : 'bar'
+            },
+            {
+              name : 'Line',
+              value : 'line'
+            }
+          ],
+          helpText  : 'Select a Chart Type'
+        },
+        class : {
+          label     : 'Chart Color',
+          component : 'select',
+          options   : [
+            {
+              name : 'Pink',
+              value : 'chart-pink'
+            },
+            {
+              name : 'Yellow',
+              value : 'chart-yellow'
+            },
+          ],
+          helpText  : 'Select a Chart Color'
         }
-      ],
-      helpText  : 'Select a Resource'
-    },
-    title : {
-      label     : 'Title',
-      component : 'input',
-      type      : 'text',
-      helpText  : 'Select a Resource'
-    },
-    type : {
-      label     : 'Chart Type',
-      component : 'select',
-      options   : [
-        {
-          name : 'Bar',
-          value : 'bar'
-        },
-        {
-          name : 'Line',
-          value : 'line'
-        }
-      ],
-      helpText  : 'Select a Chart Type'
-    },
-    class : {
-      label     : 'Chart Color',
-      component : 'select',
-      options   : [
-        {
-          name : 'Pink',
-          value : 'chart-pink'
-        },
-        {
-          name : 'Yellow',
-          value : 'chart-yellow'
-        },
-      ],
-      helpText  : 'Select a Chart Color'
-    }
+      }
+    };
   }
-});
+}

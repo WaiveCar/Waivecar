@@ -94,6 +94,11 @@ export default (view) => {
      */
     renderType(column) {
       if (column.components && column.components.length > 0) {
+        let first = column.components[0];
+        if (first.type === 'row') {
+          return column.components.map(this.renderRow.bind(this));
+        }
+
         return this.renderComponent(column.components[0]);
       }
     }
@@ -124,7 +129,6 @@ export default (view) => {
       return (
         <div className={ view.class }>
           { this.renderView() }
-          { this.renderActions() }
         </div>
       );
     }

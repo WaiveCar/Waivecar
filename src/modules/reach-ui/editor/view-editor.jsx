@@ -1,46 +1,22 @@
-import React                from 'react';
-import UI                   from 'reach-ui';
-import mixin                from 'react-mixin';
-import update               from 'react/lib/update';
-import { History }       from 'react-router';
-import { DragDropContext }  from 'react-dnd';
-import HTML5Backend         from 'react-dnd/modules/backends/HTML5';
-import { api }              from 'reach-react';
+import React                      from 'react';
+import UI                         from 'reach-ui';
+import mixin                      from 'react-mixin';
+import update                     from 'react/lib/update';
+import { History }                from 'react-router';
+import { DragDropContext }        from 'react-dnd';
+import HTML5Backend               from 'react-dnd/modules/backends/HTML5';
+import { api }                    from 'reach-react';
 import { Form, snackbar, Button } from 'reach-components';
-import components           from '../lib/components';
-import resources            from '../lib/resources';
-import fields               from '../lib/fields';
-import newId                from './newid';
-import Item                 from './item';
-import ItemCategories       from './item-categories';
-import ViewContainer        from './view-container';
-import async                from 'async';
-
-/**
- * @param  {Object}
- * @param  {Function}
- * @return {Mixed}
- */
-function createContentOrReturn(viewComponent, next) {
-  if (viewComponent.type === 'content') {
-    if (!viewComponent.options) {
-      viewComponent.options = {};
-    }
-    if (!viewComponent.options.id) {
-      let resource = resources.get('contents').store;
-      let method = resource.method.toLowerCase();
-      let action = resource.uri;
-      api[method](action, { html : '<p>Awaiting Text</p>' }, function(err, res) {
-        viewComponent.options = { id : res.id };
-        return next(err, viewComponent);
-      });
-    } else {
-      return next(null, viewComponent);
-    }
-  } else {
-    return next(null, viewComponent);
-  }
-}
+import components                 from '../lib/components';
+import resources                  from '../lib/resources';
+import fields                     from '../lib/fields';
+import Item                       from './view-item';
+import ItemCategories             from './item-categories';
+import ViewContainer              from './view-container';
+import async                      from 'async';
+import { helpers  }               from 'reach-react';
+import search                     from './lib/search';
+import transform                  from './lib/transform';
 
 @DragDropContext(HTML5Backend)
 @mixin.decorate(History)
@@ -48,16 +24,22 @@ export default class ViewLayout extends React.Component {
 
   constructor(...args) {
     super(...args);
-    this.transformToComponent     = this.transformToComponent.bind(this);
-    this.transformToViewComponent = this.transformToViewComponent.bind(this);
 
     this.state = {
-      data   : null,
-      layout : {
-        type       : 'Container',
+      data     : {
+        template : 'app',
+        title    : null,
+        class    : null,
+        path     : null,
+        policy   : 'isAnyone',
+        menus    : []
+      },
+      layout   : {
+        editorId   : 0,
+        type       : 'container',
         category   : ItemCategories.CONTAINER,
-        accepts    : [ ItemCategories.ROW, ItemCategories.COMPONENT ],
-        components : null
+        accepts    : [ ItemCategories.COMPONENT ],
+        components : [ ]
       },
       items : [
         { name : 'Row',    type : 'row',     icon : 'border_horizontal', category : ItemCategories.ROW,    accepts : [ ItemCategories.COLUMN ], options : {} },
@@ -117,7 +99,7 @@ export default class ViewLayout extends React.Component {
 
       let layout = this.state.layout;
       if (data.layout && data.layout.components) {
-        layout.components = data.layout.components.map(this.transformToViewComponent);
+        layout.components = data.layout.components.map(transform.toViewComponent);
       }
 
       this.setState({
@@ -125,44 +107,6 @@ export default class ViewLayout extends React.Component {
         layout : layout
       });
     }.bind(this));
-  }
-
-  /**
-   * @param {Component} component
-   * @param {Number}    index
-   */
-  transformToViewComponent(component, index) {
-    let defaults = this.state.items.find(f => f.type === component.type);
-    component.id = newId();
-    if (component.components) {
-      component.components = component.components.map(this.transformToViewComponent);
-    } else if (component.category !== ItemCategories.COMPONENT) {
-      component.components = [];
-    }
-    return { ...defaults, ...component };
-  }
-
-  /**
-   * @param  {Object}
-   * @param  {Function}
-   * @return {Mixed}
-   */
-  transformToComponent(viewComponent, next) {
-    let component = {
-      type : viewComponent.type,
-      options : viewComponent.options
-    }
-    if (viewComponent.category !== ItemCategories.COMPONENT) {
-      component.components = viewComponent.components;
-    }
-    if (component.components) {
-      async.map(component.components, this.transformToComponent, function(err, components) {
-        component.components = components;
-        createContentOrReturn(component, next);
-      })
-    } else {
-      createContentOrReturn(component, next);
-    }
   }
 
   /**
@@ -180,12 +124,19 @@ export default class ViewLayout extends React.Component {
       action = resource.uri;
     }
 
-    async.map(comps, this.transformToComponent, function(err, transformedComponents) {
+    async.map(comps, transform.toComponent, function(err, transformedComponents) {
       data.layout = {
         components : transformedComponents
       };
 
-      console.log(data);
+      if (data.menus) {
+        data.menu = {
+          parent    : null,
+          title     : data.title,
+          icon      : 'dashboard',
+          locations : data.menus
+        }
+      }
 
       api[method](action, data, function (err, res) {
         if (err) {
@@ -195,6 +146,7 @@ export default class ViewLayout extends React.Component {
           });
           return;
         }
+        console.log(res);
         snackbar.notify({
           type    : 'success',
           message : 'Record was successfully updated.'
@@ -207,29 +159,59 @@ export default class ViewLayout extends React.Component {
   }
 
   /**
+   * Updated a ViewComponent in-place and saves it to State
+   * @param  {Object} viewComponent
+   */
+  handleUpdate(viewComponent) {
+    let layout = this.state.layout;
+    let found = search.findViewComponent(null, 0, layout, viewComponent.editorId);
+    Object.assign(found.component, viewComponent);
+    this.setState({
+      layout : layout
+    });
+  }
+
+  /**
    * @param  {String} item
-   * @return {String}
    */
   handleDrop(item) {
     let layout = this.state.layout;
-    if (!layout.components) {
-      if (item.category === ItemCategories.COMPONENT) {
-        layout.components = item;
-      } else {
-        layout.components = [ item ];
-      }
+    let row    = this.state.items.find((i) => i.type == 'row');
+    let column = this.state.items.find((i) => i.type == 'column');
+    row.editorId     = helpers.random(10);
+    column.editorId  = helpers.random(10);
+
+    if (item.zone === 'all' && !item.nearest) {
+      column.components = [ item.viewComponent ];
+      row.components    = [ column ];
+      layout.components = [ row ];
     } else {
-      let existing = layout.components.find(l => l.id === item.id);
-      if (existing) {
-        existing = item;
-      } else {
-        layout.components.push(item);
+      let parentType = [ 'top', 'bottom' ].indexOf(item.zone) > -1 ? 'row' : 'column';
+      let container = search.findViewComponent(null, 0, layout, parentType == 'row' ? item.row : item.column);
+      switch (item.zone) {
+        case 'right'  :
+          container.index   = container.index + 1;
+        case 'left'   :
+          column.components = [ item.viewComponent ];
+          container.parent.components.splice(container.index, 0, column);
+          let columnWidth = Math.floor(12 / container.parent.components.length) || 12;
+          container.parent.components.forEach((c) => {
+            c.options.width = columnWidth;
+          });
+          break;
+        case 'bottom' :
+          container.index   = container.index + 1;
+        case 'top'    :
+          column.components = [ item.viewComponent ];
+          row.components    = [ column ]
+          container.parent.components.splice(container.index, 0, row);
+          break;
       }
     }
 
     this.setState({
       layout          : layout,
-      lastDroppedItem : item
+      lastDroppedItem : item.viewComponent
     });
   }
 
@@ -238,20 +220,20 @@ export default class ViewLayout extends React.Component {
    */
   render() {
     return (
-      <div id="ui-editor">
-        <div className="ui-content">
+      <div id='ui-editor'>
+        <div className='ui-content'>
           { this.renderViewContainer() }
         </div>
-        <div className="ui-toolbar">
+        <div className='ui-toolbar'>
           { this.renderToolbarTitle('View Settings') }
-          <div className="container">
+          <div className='container'>
             { this.renderSettings() }
           </div>
           { this.renderToolbarTitle('Components') }
           { this.renderItems() }
           { this.renderActions() }
           {
-            this.state.data && this.state.data.path ? <a className="ui-toolbar-view-link" href={ this.state.data.path }>Go to view</a> : ''
+            this.state.data && this.state.data.path ? <a className='ui-toolbar-view-link' href={ this.state.data.path }>Go to view</a> : ''
           }
         </div>
       </div>
@@ -272,6 +254,7 @@ export default class ViewLayout extends React.Component {
         accepts         = { layout.accepts }
         lastDroppedItem = { lastDroppedItem }
         onDrop          = { this.handleDrop.bind(this) }
+        onUpdate        = { this.handleUpdate.bind(this) }
       />
     );
   }
@@ -281,7 +264,7 @@ export default class ViewLayout extends React.Component {
    * @return {Object} div
    */
   renderToolbarTitle(title) {
-    return <div className="ui-toolbar-title">{ title }</div>
+    return <div className='ui-toolbar-title'>{ title }</div>
   }
 
   /**
@@ -344,11 +327,26 @@ export default class ViewLayout extends React.Component {
           },
           {
             name  : 'Active Users',
-            value : 'isPending'
+            value : 'isActive'
           },
           {
             name  : 'Administrators',
             value : 'isAdministrator'
+          }
+        ]
+      },
+      {
+        label     : 'Menus',
+        name      : 'menus',
+        component : 'react-multi-select',
+        options : [
+          {
+            name  : 'Sidebar',
+            value : 'sidebar'
+          },
+          {
+            name  : 'Nav',
+            value : 'nav'
           }
         ]
       }
@@ -356,8 +354,8 @@ export default class ViewLayout extends React.Component {
 
     return (
       <Form
-        ref       = "form"
-        className = "form-inline ui-view-settings"
+        ref       = 'form'
+        className = 'form-inline ui-view-settings'
         default   = { this.state.data }
         fields    = { fields }
       />
@@ -369,11 +367,12 @@ export default class ViewLayout extends React.Component {
    */
   renderItems() {
     const { items } = this.state;
+    const components = items.filter((f) => { return f.category === ItemCategories.COMPONENT; });
     return (
-      <ul className="ui-component-list">
+      <ul className='ui-component-list'>
       {
-        items.map((item, index) => {
-          return <li className="ui-component" key={ index }>
+        components.map((item, index) => {
+          return <li className='ui-component' key={ index }>
             <Item
               key      = { index }
               id       = { `item-${ index }`}
@@ -427,7 +426,7 @@ export default class ViewLayout extends React.Component {
     }
 
     return (
-      <div className="ui-toolbox-actions">
+      <div className='ui-toolbox-actions'>
       {
         buttons.map((btn, i) => {
           return (
@@ -445,5 +444,4 @@ export default class ViewLayout extends React.Component {
       </div>
     );
   }
-
 }

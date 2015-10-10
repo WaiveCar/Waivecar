@@ -1,0 +1,8 @@
+@-webkit-keyframes wiggle {
+  0% {
+    -webkit-transform: scale(0.9, 0.9) rotate(.5deg);
+  }
+  100% {
+    -webkit-transform: scale(0.9, 0.9) rotate(-.5deg);
+  }
+}
