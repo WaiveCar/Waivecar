@@ -59,15 +59,15 @@ export default class ViewComponent extends Component {
     return (
       <div className="view-component-container container-fluid">
         <div className="row">
-          <div className="col-md-12">
+          <div className="col-xs-12">
             <ViewDropzone ref="topZone" zone={ 'top' } accepts={ accepts } onDrop={ this.onDrop.bind(this) } onActive={ this.onActive.bind(this) } />
           </div>
         </div>
         <div className="row">
-          <div className="col-md-1 vertical-align">
+          <div className="col-xs-1 vertical-align vertical-dropzone">
             <ViewDropzone ref="left-zone" zone={ 'left' } accepts={ accepts } onDrop={ this.onDrop.bind(this) } onActive={ this.onActive.bind(this) } />
           </div>
-          <div className="col-md-10">
+          <div className="col-xs-10">
             <div className={ className }>
               <div className="view-component-header">
                 <ViewItemIcon type={ type } icon={ icon} />
@@ -78,12 +78,12 @@ export default class ViewComponent extends Component {
               </div>
             </div>
           </div>
-          <div className="col-md-1 vertical-align">
+          <div className="col-xs-1 vertical-align vertical-dropzone">
             <ViewDropzone zone={ 'right' } accepts={ accepts } onDrop={ this.onDrop.bind(this) } onActive={ this.onActive.bind(this) } />
           </div>
         </div>
         <div className="row">
-          <div className="col-md-12">
+          <div className="col-xs-12">
             <ViewDropzone zone={ 'bottom' } accepts={ accepts } onDrop={ this.onDrop.bind(this) } onActive={ this.onActive.bind(this) } />
           </div>
         </div>

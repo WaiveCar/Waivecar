@@ -6,11 +6,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    > div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   }
   .view-dropzone {
-    text-align: center;
-    vertical-align: middle;
-    visibility : hidden;
+    text-align     : center;
+    vertical-align : middle;
+    visibility     : hidden;
     .material-icons {
       color : $gray-lighter;
     }
@@ -18,13 +23,14 @@
      color : $gray-lighter;
     }
     &.view-dropzone-left {
-
+      min-height : 300px;
     }
     &.view-dropzone-right {
+      min-height : 300px;
     }
     &.view-dropzone-top,
     &.view-dropzone-bottom {
-      height : 60px;
+      height : 30px;
     }
   }
   .ui-content {
@@ -61,6 +67,9 @@
             animation : wiggle 0.1s linear 0s infinite alternate;
             min-height: 300px;
           }
+          .vertical-dropzone {
+            background : $gray-lightest;
+          }
           .view-dropzone {
             visibility : visible;
             background : $gray-lightest;
@@ -72,7 +81,6 @@
           .view-component {
           }
           .view-dropzone {
-            background : $gray;
           }
         }
       }

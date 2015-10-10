@@ -176,8 +176,8 @@ export default class ViewLayout extends React.Component {
    */
   handleDrop(item) {
     let layout = this.state.layout;
-    let row    = this.state.items.find((i) => i.type == 'row');
-    let column = this.state.items.find((i) => i.type == 'column');
+    let row    = Object.assign({}, this.state.items.find((i) => i.type == 'row'));
+    let column = Object.assign({}, this.state.items.find((i) => i.type == 'column'));
     row.editorId     = helpers.random(10);
     column.editorId  = helpers.random(10);
 
@@ -395,12 +395,11 @@ export default class ViewLayout extends React.Component {
    */
   renderActions() {
     let buttons = [];
-
     buttons.push({
       value : 'Cancel',
       class : 'ui-action-btn',
       click : () => {
-        this.goBack();
+        this.history.goBack();
       }.bind(this)
     });
 
