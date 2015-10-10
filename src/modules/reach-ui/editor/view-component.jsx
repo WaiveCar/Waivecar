@@ -69,11 +69,13 @@ export default class ViewComponent extends Component {
           </div>
           <div className="col-md-10">
             <div className={ className }>
-              <div className="view-header">
+              <div className="view-component-header">
                 <ViewItemIcon type={ type } icon={ icon} />
                 <ViewOptions componentCategory={ category } componentName={ name } componentType={ type } options={ options } update={ this.updateOptions.bind(this) } />
               </div>
-              { this.renderType() }
+              <div className="view-component-content">
+                { this.renderType() }
+              </div>
             </div>
           </div>
           <div className="col-md-1 vertical-align">
