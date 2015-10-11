@@ -30,6 +30,19 @@ $fa-font-path: "../fonts" !default;
 @import 'messages';
 @import 'vision';
 
+.padding-top-10 {
+  @include custom-padding (10, 'top');
+}
+.padding-top-20 {
+  @include custom-padding (20, 'top');
+}
+.margin-top-10 {
+  @include custom-margin (10, 'top');
+}
+.margin-top-20 {
+  @include custom-margin (20, 'top');
+}
+
 .highlight {
   font-weight: bold;
 }
