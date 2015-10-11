@@ -1,47 +1,31 @@
 'use strict';
 
-import React                from 'react';
-import mixin                from 'react-mixin';
-import { auth, api }        from 'reach-react';
-import { History, Link } from 'react-router';
-import config               from 'config';
-import { Form, snackbar }   from 'reach-components';
+import React                 from 'react';
+import mixin                 from 'react-mixin';
+import { auth, api, socket } from 'reach-react';
+import { History, Link }     from 'react-router';
+import { Form, snackbar }    from 'reach-components';
+import config                from 'config';
 
 @mixin.decorate(History)
 
 export default class LoginView extends React.Component {
 
   /**
-   * @class LoginView
-   * @constructor
+   * Prepare the submit method.
+   * @param  {...Mixed} args
+   * @return {Void}
    */
   constructor(...args) {
     super(...args);
-    this.fields = [
-      {
-        label     : 'Email Address',
-        component : 'input',
-        type      : 'text',
-        name      : 'identifier',
-        className : 'col-xs-12 r-input r-input-center',
-        tabIndex  : 1
-      },
-      {
-        label     : 'Password',
-        component : 'input',
-        type      : 'password',
-        name      : 'password',
-        className : 'col-xs-12 r-input r-input-center',
-        tabIndex  : 2
-      }
-    ];
     this.submit = this.submit.bind(this);
   }
 
   /**
-   * @method submit
+   * Submits a login request to the API.
    * @param  {Object}   data
    * @param  {Function} reset
+   * @return {Void}
    */
   submit(data, reset) {
     let remember = this.refs.remember.checked;
@@ -57,7 +41,21 @@ export default class LoginView extends React.Component {
           message : error.message
         });
       }
+
+      // ### Store Credentials
+      // Stores the user with the local store via the auth object.
+
       auth.set(user);
+
+      // ### Authenticate Socket
+      // Sends the user token for authentication with the socket.
+      
+      socket.authenticate(user.token);
+
+      // ### Remember
+      // Check if remember check was requested and send a remember request
+      // back to the API.
+
       if (remember) {
         api.get('/auth/remember', (error) => {
           this.history.pushState(null, '/dashboard');
@@ -69,7 +67,8 @@ export default class LoginView extends React.Component {
   }
 
   /**
-   * @method render
+   * Render the login view to the client.
+   * @return {Object}
    */
   render() {
     return (
@@ -83,8 +82,25 @@ export default class LoginView extends React.Component {
         <Form
           ref       = "form"
           className = "r-form"
-          fields    = { this.fields }
-          submit    = { this.submit }
+          fields    = {[
+            {
+              label     : 'Email Address',
+              component : 'input',
+              type      : 'text',
+              name      : 'identifier',
+              className : 'col-xs-12 r-input r-input-center',
+              tabIndex  : 1
+            },
+            {
+              label     : 'Password',
+              component : 'input',
+              type      : 'password',
+              name      : 'password',
+              className : 'col-xs-12 r-input r-input-center',
+              tabIndex  : 2
+            }
+          ]}
+          submit = { this.submit }
         />
 
         <div className="login-options clearfix">
