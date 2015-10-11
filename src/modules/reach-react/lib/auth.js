@@ -2,55 +2,64 @@
 
 import storage from 'local-storage';
 
-/**
- * @class Auth
- */
-let Auth = module.exports = {};
+class Auth {
+
+  /**
+   * Assign the authenticated user.
+   * @return {Void}
+   */
+  constructor() {
+    this.user = user();
+  }
+
+  /**
+   * Returns a boolean value determining the existence of a user.
+   * @return {Boolean}
+   */
+  check() {
+    return this.user ? true : false;
+  }
+
+  /**
+   * Stores the provided user with the auth class, and local store.
+   * @param {Object} user
+   */
+  set(user) {
+    storage.set('auth', user);
+    this.user = user;
+  }
+
+  /**
+   * Updates the authenticated user object.
+   * @param  {Obejct} user
+   * @return {Void}
+   */
+  put(user) {
+    Object.assign(this.user, user);
+    storage.set('auth', this.user);
+  }
+
+  /**
+   * Terminates the authenticated user.
+   * @return {Void}
+   */
+  logout() {
+    storage.remove('auth');
+    this.user = null;
+  }
+
+}
 
 /**
- * @property user
- * @type     Object
- * @default  null
+ * Returns the user currently stored under the local auth key.
+ * @return {Object}
  */
-Auth.user = (function () {
+function user() {
   let user = storage.get('auth');
   if (user) {
     return user;
   }
   return null;
-})();
+}
 
-/**
- * @method set
- * @param  {Object} user
- */
-Auth.set = function (user) {
-  storage.set('auth', user);
-  this.user = user;
-};
-
-/**
- * Update the authenticated user object.
- * @method put
- * @param  {Object} user
- */
-Auth.put = function (user) {
-  Object.assign(this.user, user);
-  storage.set('auth', this.user);
-};
-
-/**
- * @method check
- * @return {Boolean}
- */
-Auth.check = function () {
-  return this.user ? true : false;
-};
-
-/**
- * @method logout
- */
-Auth.logout = function () {
-  storage.remove('auth');
-  this.user = null;
-};
+module.exports = new Auth();
