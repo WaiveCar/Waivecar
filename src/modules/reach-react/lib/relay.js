@@ -1,6 +1,6 @@
 'use strict';
 
-import config from 'config';
+import socket from './socket';
 
 /**
  * @class Relay
@@ -167,31 +167,8 @@ function prepareState(id, state) {
   return result;
 }
 
-// ### Socket
+// ### Relay Events
 
-if (config.api.socket) {
-  connect(config.api.socket);
-}
-
-/**
- * @method connect
- * @param  {Mixed} config
- */
-function connect(config) {
-  let socket;
-  if (typeof config === 'object') {
-    if (config.uri && config.options) {
-      socket = io(config.uri, config.options);
-    } else if (config.uri) {
-      socket = io(config.uri);
-    }
-  } else {
-    socket = io(config);
-  }
-  if (!socket) {
-    throw new Error('Socket has not been defined');
-  }
-  socket.on('relay', (resource, payload) => {
-    Relay.dispatch(resource, payload);
-  });
-}
+socket.on('relay', (resource, payload) => {
+  Relay.dispatch(resource, payload);
+});
