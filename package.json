@@ -56,17 +56,17 @@
     "webpack-dev-server": "1.11.0"
   },
   "dependencies": {
-    "assert": "^1.3.0",
-    "async": "^1.4.2",
+    "assert": "1.3.0",
+    "async": "1.4.2",
     "express": "4.13.3",
-    "history": "^1.12.3",
+    "history": "1.12.3",
     "md5": "2.0.0",
     "react": "0.14.0",
-    "react-dnd": "^1.1.8",
+    "react-dnd": "1.1.8",
     "react-dom": "0.14.0",
     "react-mixin": "3.0.0",
     "react-modal": "git@github.com:ayarulin/react-modal.git",
     "react-router": "1.0.0-rc3",
-    "react-select": "^0.6.11"
+    "react-select": "0.6.11"
   }
 }
