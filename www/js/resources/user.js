@@ -14,7 +14,7 @@ module.exports = angular.module('app').factory('User', [
   '$location',
   function(Resource, $utils, $settings, $location) {
 
-    return Resource('/users/:id', {
+    return Resource('/users/:id/:action', {
       id: '@id'
     }, {
       create: {
@@ -42,6 +42,12 @@ module.exports = angular.module('app').factory('User', [
         method: 'PUT',
         isArray: false,
         url: $utils.getCustomRoute('users/password')
+      },
+      verify: {
+        method: 'POST',
+        params: {
+          action: 'verify'
+        }
       }
     });
 

@@ -1,0 +1,44 @@
+<ion-view class="auth" ng-controller="AuthController">
+
+  <ion-nav-title>
+    <page-title class="dark-bg">Enter Code</page-title>
+  </ion-nav-title>
+
+  <ion-content scroll="false" padding="true" class="ion-content--center dark-bg">
+
+    <p class="margin-top-10">We have just sent you an email and SMS with verification code.</p>
+    <p>Please enter it below.</p>
+
+    <form name="form" id="form" ng-submit="verify(form)" novalidate class="margin-top-20">
+      <div class="list">
+
+        <label class="item item-input">
+          <span class="input-label required">Code</span>
+          <input type="text" name="token" ng-model="forms.verifyForm.token" required autofocus />
+        </label>
+
+        <div ng-messages="form.token.$error" ng-if="form.token.$dirty || form.$submitted" role="alert">
+          <div ng-message="required">Verification Code is required</div>
+        </div>
+
+      </div>
+    </form>
+
+    <button
+      type="button"
+      class="button button-small button-clear button-block button-balanced margin-top-10"
+      ui-sref="licenses-photo-new({step: 3})"
+      ng-if="isWizard"
+    >Skip this step</button>
+
+    <button type="button" class="button button-clear button-block button-positive button-small margin-top-20">Re-send the code</button>
+
+  </ion-content>
+
+  <ion-footer-bar class="no-padding">
+    <div class="button-bar">
+      <button type="submit" form="form" class="button button-balanced">Verify</button>
+    </div>
+  </ion-footer-bar>
+
+</ion-view>

@@ -47,10 +47,10 @@ module.exports = angular.module('app.controllers').controller('LicenseController
       $scope.license.$save()
         .then(function () {
 
-          $message.success('Saved!');
-
-          if ($location.search().redirectTo) {
-            return $state.go($location.search().redirectTo);
+          if ($scope.isWizard) {
+            return $state.go('credit-cards-new', {
+              step: 4
+            });
           }
 
           if (!$stateParams.id) {
@@ -83,7 +83,8 @@ module.exports = angular.module('app.controllers').controller('LicenseController
     };
 
     $scope.init = function () {
-      // console.log('LicenseController init');
+
+      $scope.isWizard = $stateParams.step;
 
       $scope.redirection = {
         redirectState: $state.params.redirectState,

@@ -18,11 +18,13 @@
 
     <p class="padding-top">
       Your driver's license is required to book WaiveCar.
-      <br>
-      However you can skip this step and do it later on your account settings
+      <span ng-if="isWizard">
+        <br>
+        However you can skip this step and do it later on your account settings
+      </span>
     </p>
 
-    <button type="button" class="button button-small button-clear button-balanced" ui-sref="credit-cards">Skip this step</button>
+    <button type="button" class="button button-small button-clear button-balanced" ui-sref="licenses-new({step: 3})" ng-if="isWizard">Skip this step</button>
 
   </ion-content>
 

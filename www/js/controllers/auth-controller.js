@@ -29,6 +29,9 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
       forgotForm: {},
       resetForm: {
         token: $stateParams.token
+      },
+      verifyForm: {
+        token: $stateParams.token
       }
     };
 
@@ -64,7 +67,8 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
 
       $data.resources.User.initPasswordReset($scope.forms.forgotForm).$promise
         .then(function(){
-          $state.go('auth-forgot-password-success');
+          // $state.go('auth-forgot-password-success');
+          $state.go('auth-reset-password');
         })
         .catch($message.error);
 
@@ -72,7 +76,7 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
 
     $scope.submitNewPassword = function(form){
       if (form.$pristine) {
-        return $message.info('Please fill in your email first.');
+        return $message.info('Please fill in required fields first.');
       }
       if (form.$invalid) {
         return $message.error('Please resolve form errors and try again.');
@@ -113,9 +117,37 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
     };
 
 
+    $scope.verify = function(form){
+      if (form.$pristine) {
+        return $message.info('Please fill in verification code first.');
+      }
+      if (form.$invalid) {
+        return $message.error('Please resolve form errors and try again.');
+      }
+
+      $data.resources.User.verify($scope.forms.verifyForm).$promise
+        .then(function(){
+          if($scope.isWizard){
+            return $state.go('licenses-photo-new', {step: 3});
+          }
+          $message.success('Your account is now verified!');
+          $state.go('users-edit', {id: $auth.me.id});
+
+        })
+        .catch($message.error);
+
+    };
+
+
     $scope.init = function() {
-      if ($auth.isAuthenticated()) {
-        $state.go('cars');
+      $scope.isWizard = $stateParams.step;
+
+      // if ($auth.isAuthenticated()) {
+      //   $state.go('cars');
+      // }
+
+      if($state.includes('auth-reset-password')){
+        $scope.forms.resetForm.tokenProvided = !!$stateParams.token;
       }
 
     };

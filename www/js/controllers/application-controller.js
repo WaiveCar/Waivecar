@@ -22,8 +22,7 @@ module.exports =
     '$message',
     '$session',
     '$document',
-    '$cordovaFacebook',
-    function($rootScope, $scope, $state, $ionicPopover, LocationService, $auth, $data, $message, $session, $document, $cordovaFacebook) {
+    function($rootScope, $scope, $state, $ionicPopover, LocationService, $auth, $data, $message, $session, $document) {
       $scope.isInitialized = false;
       $scope.models = $data.instances;
       $scope.active = $data.active;
@@ -109,17 +108,22 @@ module.exports =
             },
 
             function(nextTask) {
+              if (!$auth.isAuthenticated()) {
+                return nextTask();
+              }
+
               $data.initialize('cars')
                 .then(function() {
                   nextTask();
                 })
-                .catch(function(err) {
-                  console.log('err', err);
-                  nextTask(err);
-                });
+                .catch(nextTask);
             },
 
             function(nextTask) {
+              if (!$auth.isAuthenticated()) {
+                return nextTask();
+              }
+
               $data.initialize('locations')
                 .then(function() {
                   nextTask();

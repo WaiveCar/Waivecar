@@ -49,6 +49,9 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
           if ($scope.redirection.redirectState) {
             return $state.go('cars', $scope.redirection);
           }
+          if($scope.isWizard){
+            return $state.go('cars');
+          }
           $state.go('credit-cards');
 
         })
@@ -61,6 +64,8 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
         redirectState: $state.params.redirectState,
         redirectParams: $state.params.redirectParams
       };
+
+      $scope.isWizard = $stateParams.step;
 
       if (!$stateParams.id) {
         $scope.card = new $data.resources.Card();

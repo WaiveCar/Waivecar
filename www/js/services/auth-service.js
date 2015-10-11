@@ -80,10 +80,10 @@ module.exports = angular.module('app.services').factory('$auth', [
 
       },
 
-      loginWithFacebook: function(authResponse) {
+      loginWithFacebook: function(token) {
         var _this = this;
         var data = {
-          token: authResponse.accessToken,
+          token: token,
           type: 'login'
         };
 
@@ -92,15 +92,25 @@ module.exports = angular.module('app.services').factory('$auth', [
 
       },
 
-      registerWithFacebook: function(authResponse) {
+      registerWithFacebook: function(token) {
         var _this = this;
         var data = {
-          token: authResponse.accessToken,
+          token: token,
           type: 'register'
         };
 
         return $data.resources.Auth.facebook(data).$promise
           .then(_this.createSession.bind(_this));
+
+      },
+
+      connectWithFacebook: function(token) {
+        var data = {
+          token: token,
+          type: 'connect'
+        };
+
+        return $data.resources.Auth.facebook(data).$promise;
 
       },
 

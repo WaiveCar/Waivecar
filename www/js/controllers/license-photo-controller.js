@@ -44,7 +44,7 @@ module.exports = angular.module('app.controllers').controller('LicensePhotoContr
           if ($scope.isWizard) {
             return $state.go('licenses-new', {
               fileId: uploadResponse.id,
-              redirectTo: 'credit-cards-new'
+              step: 3
             });
 
           }
@@ -74,7 +74,7 @@ module.exports = angular.module('app.controllers').controller('LicensePhotoContr
           if ($scope.isWizard) {
             return $state.go('licenses-new', {
               fileId: uploadResponse.id,
-              redirectTo: 'credit-cards-new'
+              step: 3
             });
           }
 
