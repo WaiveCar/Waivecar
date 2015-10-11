@@ -65,10 +65,6 @@
     <splash height="960" src="resources/ios/splash/Default@2x~iphone.png" width="640"/>
     <splash height="480" src="resources/ios/splash/Default~iphone.png" width="320"/>
   </platform>
-  <plugin name="com.phonegap.plugins.facebookconnect" spec="~0.11.0">
-    <variable name="APP_ID" value="1022707721082213"/>
-    <variable name="APP_NAME" value="WaiveCar"/>
-  </plugin>
   <plugin name="org.apache.cordova.device" spec="~0.3.0"/>
   <plugin name="org.apache.cordova.console" spec="~0.2.13"/>
   <plugin name="ionic-plugin-keyboard" spec="~1.0.7"/>
