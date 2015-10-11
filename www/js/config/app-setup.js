@@ -21,17 +21,15 @@ var config = [
 
     var baseUrl;
     if(ionic.Platform.isWebView()){
-      baseUrl = 'http://10.0.3.2:3000';
+      baseUrl = 'http://10.0.3.2:8081';
     } else {
       if(window.location.hostname === 'localhost'){
-        baseUrl = 'http://localhost:3000';
+        baseUrl = 'http://localhost:8081';
       } else {
         throw new Error('baseUrl undefined for hostname ' + window.location.hostname);
       }
     }
-    console.log('$settingsProvider.baseUrl', $settingsProvider.baseUrl);
     $settingsProvider.setBaseUrl(baseUrl);
-    console.log('$settingsProvider.baseUrl', $settingsProvider.baseUrl);
 
     ezfbProvider.setInitParams({
       appId: $settingsProvider.facebook.clientId,
