@@ -11,7 +11,6 @@ module.exports = angular.module('app.directives')
         link: function($scope, $elm, $attrs, ngModelCtrl) {
           function validator(value) {
             var compareAgainst = compareAgainst || $scope.$eval($attrs.equalTo);
-            console.log('compareAgainst', compareAgainst, 'value', value);
             ngModelCtrl.$setValidity('equalTo', compareAgainst === value);
             return compareAgainst === value ? value : void 0;
           }
