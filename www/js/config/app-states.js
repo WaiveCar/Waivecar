@@ -88,15 +88,26 @@ module.exports = [
         // Screen not in Invision, but required.
         cache: false,
         url: '/auth/reset-password-success',
-        templateUrl: '/templates/auth/reset-password-success.html?1',
+        templateUrl: '/templates/auth/reset-password-success.html',
         data: {
           auth: false
         }
       })
       .state('users-new', {
         // 8-Register
-        url: '/users/new?{step:int}',
+        url: '/users/new?step',
         templateUrl: '/templates/users/new.html',
+        data: {
+          auth: false
+        }
+      })
+      .state('users-new-facebook', {
+        // 8-Register
+        url: '/users/new/facebook?step',
+        templateUrl: '/templates/users/new-facebook.html',
+        params: {
+          fbUser: null
+        },
         data: {
           auth: false
         }
@@ -118,7 +129,7 @@ module.exports = [
       })
       .state('licenses-new', {
         // 11.1-Drivers-id
-        url: '/licenses/new',
+        url: '/licenses/new?step',
         templateUrl: '/templates/licenses/new.html',
         data: {
           auth: true
@@ -126,7 +137,7 @@ module.exports = [
       })
       .state('credit-cards-new', {
         // 12-Payment-method@2x.png
-        url: '/credit-cards/new',
+        url: '/credit-cards/new?step',
         templateUrl: '/templates/credit-cards/new.html',
         data: {
           auth: true
@@ -136,6 +147,14 @@ module.exports = [
         // 12-Payment-method@2x.png
         url: '/credit-cards/:id/edit',
         templateUrl: '/templates/credit-cards/edit.html',
+        data: {
+          auth: true
+        }
+      })
+      .state('auth-account-verify', {
+        // 10.1-Verification
+        url: '/auth/account-verify?step&token',
+        templateUrl: '/templates/auth/account-verify.html',
         data: {
           auth: true
         }
