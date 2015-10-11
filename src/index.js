@@ -15,7 +15,7 @@ import ReactDOM from 'react-dom';
 // Current implementation uses react-router for routing react applications.
 
 import Router               from 'react-router';
-import createBrowserHistory from 'history/lib/createBrowserHistory'
+import createBrowserHistory from 'history/lib/createBrowserHistory';
 import routes               from './routes';
 
 // ### Stores
