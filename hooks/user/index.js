@@ -1,58 +1,17 @@
 'use strict';
 
-let queue  = Reach.provider('queue');
-let tokens = Reach.module('user/lib/token-service');
-let User   = Reach.model('User');
-let error  = Reach.Error;
-let hooks  = Reach.Hooks;
-let config = Reach.config;
+let queue        = Reach.provider('queue');
+let tokens       = Reach.provider('token');
+let verification = Reach.provider('user-verification');
+let User         = Reach.model('User');
+let error        = Reach.Error;
+let hooks        = Reach.Hooks;
+let config       = Reach.config;
 
 // ### Register Jobs
 
 require('./jobs/password-reset');
 require('./jobs/registration');
-require('./jobs/request-email-verification');
-require('./jobs/request-phone-verification');
-
-function *requestPhoneVerification(userId, phone) {
-  let token = yield tokens.get({
-    id      : userId,
-    purpose : 'phone-verification'
-  });
-
-  let job = queue.create('sms:user:request-phone-verification', {
-    to      : phone,
-    message : `WaiveCar: Your verification code is ${ token }. Do not reply by SMS.`
-  }).save();
-
-  job.on('complete', () => {
-    job.remove();
-  });
-}
-
-function *requestEmailVerification(userId, email, name) {
-  let token = yield tokens.get({
-    id      : userId,
-    purpose : 'email-verification'
-  });
-
-  let job = queue.create('email:user:request-email-verification', {
-    to       : email,
-    from     : config.email.sender,
-    subject  : 'Email Verificaton Required',
-    template : 'request-email-verification',
-    context  : {
-      name    : name,
-      token   : token,
-      company : config.api.name,
-      confirm : `${ config.api.uri }/users/verify`
-    }
-  }).save();
-
-  job.on('complete', () => {
-    job.remove();
-  });
-}
 
 /**
  * Return a user based on the provided identifier.
@@ -102,11 +61,11 @@ hooks.set('user:stored', function *(user) {
   });
 
   if (user.phone && !user.verifiedPhone) {
-    yield requestPhoneVerification(user.id, user.phone);
+    yield verification.requestPhoneVerification(user.id, user.phone);
   }
 
   if (user.email && !user.verifiedEmail) {
-    yield requestEmailVerification(user.id, user.email, user.name());
+    yield verification.requestEmailVerification(user.id, user.email, user.name());
   }
 });
 
@@ -118,10 +77,10 @@ hooks.set('user:stored', function *(user) {
  */
 hooks.set('user:updated', function *(user) {
   if (user.phone && !user.verifiedPhone) {
-    yield requestPhoneVerification(user.id, user.phone);
+    yield verification.requestPhoneVerification(user.id, user.phone);
   }
   if (user.email && !user.verifiedEmail) {
-    yield requestEmailVerification(user.id, user.email, user.name());
+    yield verification.requestEmailVerification(user.id, user.email, user.name());
   }
 });
 
@@ -133,26 +92,6 @@ hooks.set('user:updated', function *(user) {
  */
 hooks.set('user:deleted', function *(user) {
   // ...
-});
-
-/**
- * Triggers when a token has been verified passing the user
- * and verification purpose.
- * @hook  user:verified
- * @param {User}   user
- * @param {String} purpose
- */
-hooks.set('user:verified', function *(user, purpose) {
-  yield user.update(() => {
-    switch (purpose) {
-      case 'phone-verification' : {
-        return { verifiedPhone : true, status : (user.status === 'pending' ? 'active' : user.status) }
-      }
-      case 'email-verification' : {
-        return { verifiedEmail : true }
-      }
-    }
-  }());
 });
 
 /**
