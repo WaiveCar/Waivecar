@@ -1,0 +1,9 @@
+{
+  "name": "user-verification",
+  "private": true,
+  "description": "A user verification provider",
+  "reach": {
+    "name": "user-verification",
+    "type": "provider"
+  }
+}
