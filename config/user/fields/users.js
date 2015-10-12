@@ -7,8 +7,8 @@ module.exports = {
     helpText  : null
   },
   role : {
-    component : 'select',
-    options   : [
+    component : 'react-select',
+    [
       {
         name  : 'User',
         value : 'user'
@@ -22,8 +22,12 @@ module.exports = {
     helpText : 'Select a Role'
   },
   status : {
-    component : 'select',
+    component : 'react-select',
     options   : [
+      {
+        name  : 'Pending',
+        value : 'pending'
+      },
       {
         name  : 'Active',
         value : 'active'
