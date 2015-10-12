@@ -1,5 +1,6 @@
 module.exports = {
   id : {
+    name      : 'id',
     component : 'input',
     type      : 'text',
     required  : true,
@@ -7,6 +8,7 @@ module.exports = {
     helpText  : null
   },
   customerId : {
+    name      : 'customerId',
     component : 'input',
     type      : 'text',
     required  : true,
@@ -14,13 +16,19 @@ module.exports = {
     helpText  : null
   },
   carId : {
-    component : 'input',
-    type      : 'text',
+    name      : 'carId',
+    component : 'react-select',
+    options   : {
+      lookup : 'cars',
+      name   : 'id',
+      value  : 'id'
+    },
     required  : true,
-    label     : 'Car',
+    label     : 'Select Car',
     helpText  : null
   },
   paymentId : {
+    name      : 'paymentId',
     component : 'input',
     type      : 'text',
     required  : true,
@@ -28,6 +36,7 @@ module.exports = {
     helpText  : null
   },
   filesId : {
+    name      : 'fileId',
     component : 'input',
     type      : 'text',
     required  : true,
@@ -35,6 +44,7 @@ module.exports = {
     helpText  : null
   },
   state : {
+    name      : 'state',
     component : 'input',
     type      : 'text',
     required  : true,
@@ -42,6 +52,7 @@ module.exports = {
     helpText  : null
   },
   createdAt : {
+    name      : 'createdAt',
     component : 'input',
     type      : 'text',
     required  : true,
@@ -49,6 +60,7 @@ module.exports = {
     helpText  : null
   },
   updatedAt : {
+    name      : 'updatedAt',
     component : 'input',
     type      : 'text',
     required  : true,

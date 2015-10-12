@@ -8,7 +8,7 @@ module.exports = {
   },
   role : {
     component : 'react-select',
-    [
+    options : [
       {
         name  : 'User',
         value : 'user'
