@@ -1,11 +1,35 @@
 'use strict';
 
-import React           from 'react';
-import { logger }      from 'reach-react';
-import { array, type } from 'reach-react/lib/helpers';
-import Select          from 'react-select';
+import React                  from 'react';
+import { logger, api, relay } from 'reach-react';
+import { array, type }        from 'reach-react/lib/helpers';
+import Select                 from 'react-select';
+import resources              from 'reach-ui/lib/resources';
+//TODO: why couldn't I go { resources } from 'reach-ui'; ???
 
 export default class ReactSelect extends React.Component {
+
+  /**
+   * @constructor
+   */
+  constructor(...args) {
+    super(...args);
+    this.state = {};
+  }
+
+  componentDidMount() {
+    if (this.isLookup(this.props)) {
+      let options = this.props.options.options;
+      let { index } = resources.get(options.lookup);
+      api.get(index.uri, (error, data) => {
+        relay.subscribe(this, options.lookup);
+        relay.dispatch(options.lookup, {
+          type : 'index',
+          data : data
+        });
+      }.bind(this));
+    }
+  }
 
   /**
    * Only update the component if the input value has changed.
@@ -30,6 +54,11 @@ export default class ReactSelect extends React.Component {
       return true;
     }
 
+    if (this.isLookup(this.props)) {
+      // TODO: for now, always update.
+      return true;
+    }
+
     // ### Value Checks
 
     name = this.props.options.name;
@@ -48,12 +77,22 @@ export default class ReactSelect extends React.Component {
   }
 
   /**
-   * @method isConnector
-   * @param  {Object} prev
+   * @method isLookup
+   * @param  {Object} props
    * @return {Boolean}
    */
-  isConnector(prev) {
-    return type.isPlainObject(prev.options.options);
+  isLookup(props) {
+    if (!props) return;
+    return type.isPlainObject(props.options.options) && props.options.options.lookup;
+  };
+
+  /**
+   * @method isConnector
+   * @param  {Object} props
+   * @return {Boolean}
+   */
+  isConnector(props) {
+    return type.isPlainObject(props.options.options) && props.options.options.connector;
   };
 
   /**
@@ -113,12 +152,35 @@ export default class ReactSelect extends React.Component {
     let { value, multi }                              = this.props;
 
     // ### Dynamic Values
-
-    if (type.isPlainObject(options)) {
+    //
+    if (this.isLookup(this.props) && this.state[options.lookup]) {
+      options = this.state[options.lookup].map((item) => {
+        return {
+          label  : item[options.name],
+          value : item[options.value]
+        }
+      });
+    } else if (this.isConnector(this.props)) {
       options = options.values[this.props.value[options.connector]];
-      if (!options) {
-        return <div />
-      }
+      options = options.map((o) => {
+        return {
+          label : o.name,
+          value : o.value
+        };
+      }) ;
+    } else if (type.isPlainObject(options)) {
+      return <div />
+    } else if (Array.isArray(options)) {
+      options = options.map((o) => {
+        return {
+          label : o.name,
+          value : o.value
+        };
+      });
+    }
+
+    if (!options) {
+      return <div />
     }
 
     if (multi) {
@@ -135,14 +197,7 @@ export default class ReactSelect extends React.Component {
         <Select
           name        = { name }
           value       = { value }
-          options     = { options.map(
-            (o) => {
-              return { 
-                label : o.name, 
-                value : o.value 
-              };
-            })
-          }
+          options     = { options }
           onChange    = { this.onChange.bind(this) }
           multi       = { this.props.multi }
           placeholder = { helpText }
