@@ -2,6 +2,6 @@
 # .nodemonignore
 #===========================================================
 
-node_modules
+#node_modules
 modules/**/node_modules
 services/**/node_modules

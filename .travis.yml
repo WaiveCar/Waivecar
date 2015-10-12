@@ -23,12 +23,14 @@ cache:
     - modules/user
     - modules/ui
     - modules/subscription
+    - modules/verification
     - providers/bcrypt
     - providers/mongo
     - providers/queue
     - providers/sequelize
     - providers/sms
     - providers/email
+    - providers/token
 env:
   global:
     - BRANCHING_MODEL=API_APP
