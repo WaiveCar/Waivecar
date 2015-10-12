@@ -21,6 +21,8 @@ export default class ReactSelect extends React.Component {
     if (this.isLookup(this.props)) {
       let options = this.props.options.options;
       let { index } = resources.get(options.lookup);
+      // TODO: it would be nice to not have to hit the API each time..
+      // shouldn't the store already have items?
       api.get(index.uri, (error, data) => {
         relay.subscribe(this, options.lookup);
         relay.dispatch(options.lookup, {
@@ -144,40 +146,43 @@ export default class ReactSelect extends React.Component {
   }
 
   /**
-   * @method render
-   * @return {Component}
+   * Determines Options source and populates an array with expected values.
+   * @return {Array} Array with { label, value } objects
    */
-  render() {
-    let { label, name, className, helpText, options } = this.props.options;
-    let { value, multi }                              = this.props;
+  getOptions() {
+    let { options } = this.props.options;
+    let mapNameToLabel = (item) => {
+      return {
+        label : item.name,
+        value : item.value
+      }
+    };
 
-    // ### Dynamic Values
-    //
     if (this.isLookup(this.props) && this.state[options.lookup]) {
-      options = this.state[options.lookup].map((item) => {
+      return this.state[options.lookup].map((item) => {
         return {
-          label  : item[options.name],
+          label : item[options.name],
           value : item[options.value]
         }
       });
     } else if (this.isConnector(this.props)) {
-      options = options.values[this.props.value[options.connector]];
-      options = options.map((o) => {
-        return {
-          label : o.name,
-          value : o.value
-        };
-      }) ;
+      let items = options.values[this.props.value[options.connector]];
+      return items.map(mapNameToLabel);
     } else if (type.isPlainObject(options)) {
-      return <div />
+      return [];
     } else if (Array.isArray(options)) {
-      options = options.map((o) => {
-        return {
-          label : o.name,
-          value : o.value
-        };
-      });
+      return options.map(mapNameToLabel);
     }
+  }
+
+  /**
+   * @method render
+   * @return {Component}
+   */
+  render() {
+    let { label, name, className, helpText } = this.props.options;
+    let { value, multi } = this.props;
+    let options = this.getOptions();
 
     if (!options) {
       return <div />
@@ -187,9 +192,11 @@ export default class ReactSelect extends React.Component {
       value = value[name];
     }
 
-    // ### Debug
-
     logger.debug(`Form > Render select component [${ name }] [${ value }]`);
+
+    if (value) {
+      className = className + ' active';
+    }
 
     return (
       <div className={ className || 'col-md-12' }>
