@@ -5,6 +5,7 @@ let Payment = Reach.model('Payment');
 let hooks   = Reach.Hooks;
 let error   = Reach.Error;
 
+/*
 hooks.set('payment:waivecar', {
 
   /**
@@ -12,7 +13,7 @@ hooks.set('payment:waivecar', {
    * @param {Object}  data The hook data provided for payment
    * @param {User}    user The user attempting to perform the payment
    * @param {Boolean} type Is this a new charge or a capture request
-   */
+   *
   preload : function *(data, user, isNew) {
     let booking = yield Booking.findById(data.bookingId);
 
@@ -53,7 +54,7 @@ hooks.set('payment:waivecar', {
    * @method authenticate
    * @param {Object}  data    The hook data provided for payment
    * @param {Payment} payment The stripe charge object
-   */
+   *
   authenticate : function *(data, payment) {
     let booking = yield Booking.findById(data.bookingId);
     yield booking.update({
@@ -66,7 +67,7 @@ hooks.set('payment:waivecar', {
    * @method capture
    * @param {Object}  data    The hook data provided for payment
    * @param {Payment} payment The stripe charge object
-   */
+   *
   capture : function *(data, payment) {
     let booking = yield Booking.findById(data.bookingId);
     yield booking.update({
@@ -76,3 +77,4 @@ hooks.set('payment:waivecar', {
   }
 
 });
+*/
