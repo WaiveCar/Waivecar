@@ -12,16 +12,18 @@ module.exports = function *() {
       message  : 'Your general motors configuration is invalid',
       solution : 'Make sure you set up your config in the [./config/' + Reach.ENV + '] folder'
     });
+  } else {
+    log.info(' - GM configuration passed!');
   }
 
   // ### Connection
   // Check if the connection to GM-API is good
 
   if (config.onStart.testConnection) {
-    log.debug('Checking gm-api connection state');
     try {
       let service = new VehicleService();
       let result  = yield service.connect();
+      log.info(' - GM connection success!');
     } catch (err) {
       if (err.code === 'ECONNREFUSED') {
         log.error({

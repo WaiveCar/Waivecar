@@ -60,6 +60,7 @@ providers/**/cache.json
 !**/license
 !**/waivecar
 !**/gm-api
+!**/user-verification
 !**/admin
 
 #===========================================================

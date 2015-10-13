@@ -8,14 +8,14 @@ let hooks          = Reach.Hooks;
 let error          = Reach.Error;
 
 // ### Booking Hook
-
+/*
 hooks.set('file:booking', {
 
   /**
    * Validate that the required record exists before attempting file upload.
    * @method validate
    * @param  {User} _user
-   */
+   *
   validate : function *(_user) {
     let model = bookingService.getBooking(this.booking, _user);
     if (!model) {
@@ -31,7 +31,7 @@ hooks.set('file:booking', {
    * @method collection
    * @param  {User} _user
    * @return {String}
-   */
+   *
   collection : function *(_user) {
     let booking = yield bookingService.getBooking(this.booking, _user);
     if (!booking.filesId) {
@@ -52,7 +52,7 @@ hooks.set('file:license', {
    * Validate that the required record exists before attempting file upload.
    * @method validate
    * @param  {User} _user
-   */
+   *
   validate : function *(_user) {
     let model = yield licenseService.get(this.license, _user);
     if (!model) {
@@ -68,7 +68,7 @@ hooks.set('file:license', {
    * @method collection
    * @param  {User} _user
    * @return {String}
-   */
+   *
   collection : function *(_user) {
     let license = yield licenseService.get(this.license, _user);
     if (!license.fileId) {
@@ -80,3 +80,4 @@ hooks.set('file:license', {
   }
 
 });
+*/

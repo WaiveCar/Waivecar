@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = {
 
   /*
@@ -20,7 +18,7 @@ module.exports = {
 
   api : {
     name    : 'WaiveCar',
-    version : '0.4.0',
+    version : '0.5.3',
     port    : 8081,
     uri     : 'http://localhost:8081',
     cors    : {
@@ -45,35 +43,6 @@ module.exports = {
 
   /*
    |--------------------------------------------------------------------------------
-   | Socket Settings
-   |--------------------------------------------------------------------------------
-   |
-   | Reach API runs with a seperate socket server using socket.io-emitter to support
-   | running the API on a cluster. All socket.io events are passed through a single
-   | socket.io server.
-   |
-   | port    : number > The port number for the socket server to listen on
-   | origins : string > A list of url origins allowed to access the server
-   | redis   : object > Redis settings for use with communicating between cluster
-   |                     instances and socket server.
-   |
-   | For more information on reach-socket go to the github page for reach-socket
-   |
-   | @author Christoffer Rødvik
-   | @github https://github.com/kodemon/reach-socket
-   |
-   */
-
-  socket : {
-    port  : 5000,
-    redis : {
-      host : 'localhost',
-      port : 6379
-    }
-  },
-
-  /*
-   |--------------------------------------------------------------------------------
    | Support Settings
    |--------------------------------------------------------------------------------
    |
@@ -87,33 +56,6 @@ module.exports = {
   support : {
     email : 'info@waivecar.com',
     phone : '555 55 555'
-  },
-
-  /*
-   |--------------------------------------------------------------------------------
-   | SSL Settings
-   |--------------------------------------------------------------------------------
-   |
-   | If you are running your server using HTTPS you will need to set up your
-   | certificates. Add your certifications to the server and add the paths in the
-   | ssl settings.
-   |
-   | Both the socket and server will make use of these settings.
-   |
-   */
-
-  ssl : {
-    active : false, // If set to false the server will run in http
-    certs  : {
-      path : 'path/to/ssl',
-      key  : 'certification.key',
-      cert : 'certification.crt',
-      ca   : [
-        'certification.crt',
-        'certification.crt',
-        'certification.crt'
-      ]
-    }
   },
 
   /*

@@ -8,6 +8,7 @@
     "test-travis": "mkdir -p ./coverage; (NODE_ENV=test node node_modules/istanbul-harmony/lib/cli.js cover --hook-run-in-context tests.js; echo $? > retval) | tee coverage/coverage.txt; egrep '^0$' retval",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "local": "NODE_ENV=local nodemon app.js",
+    "socket": "NODE_ENV=local node socket",
     "start": "node app.js"
   },
   "dependencies": {
@@ -20,7 +21,8 @@
     "koa-cors": "0.0.16",
     "lodash": "3.10.1",
     "moment": "2.10.6",
-    "reach-api": "0.4.23",
+    "reach-api": "0.5.3",
+    "reach-socket": "0.3.1",
     "request": "2.61.0",
     "shortid" : "2.2.2"
   },
@@ -31,18 +33,20 @@
     "node-random-name": "1.0.1"
   },
   "reach": {
-    "reach-auth": "0.2.10",
+    "reach-auth": "0.2.11",
     "reach-bcrypt": "1.0.0",
-    "reach-commander": "0.0.5",
-    "reach-email": "0.0.8",
-    "reach-file": "0.3.3",
-    "reach-log": "0.0.13",
-    "reach-mongo": "0.0.5",
-    "reach-payments": "0.1.4",
-    "reach-queue": "0.0.10",
-    "reach-sequelize": "0.1.6",
-    "reach-sms": "0.0.9",
-    "reach-ui": "0.0.13",
-    "reach-user": "0.3.4"
+    "reach-email": "0.0.10",
+    "reach-file": "0.3.4",
+    "reach-log": "0.1.0",
+    "reach-mongo": "0.0.7",
+    "reach-payments": "0.1.5",
+    "reach-queue": "0.0.11",
+    "reach-sequelize": "0.1.8",
+    "reach-sms": "0.0.11",
+    "reach-subscription": "0.0.3",
+    "reach-token": "1.0.0",
+    "reach-ui": "0.0.15",
+    "reach-user": "0.3.6",
+    "reach-verification": "0.0.2"
   }
 }

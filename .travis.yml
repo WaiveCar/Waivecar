@@ -7,7 +7,7 @@ addons:
     packages:
     - g++-4.8
 node_js:
-  - 'stable'
+  - '4.1.2'
 branches:
   only:
     - api/master
@@ -17,18 +17,20 @@ cache:
   directories:
     - node_modules
     - modules/auth
-    - modules/commander
     - modules/file
     - modules/log
     - modules/payment
     - modules/user
     - modules/ui
+    - modules/subscription
+    - modules/verification
     - providers/bcrypt
     - providers/mongo
     - providers/queue
     - providers/sequelize
     - providers/sms
     - providers/email
+    - providers/token
 env:
   global:
     - BRANCHING_MODEL=API_APP
@@ -36,6 +38,7 @@ env:
     - REMOTE_USER=travis
     - COVERAGE_TOKEN=Prejal3413sfJsad43jadasd431
     - INIT_SCRIPT=/etc/init.d/node-${PACKAGE_NAME}
+    - SOCKET_SCRIPT=/etc/init.d/node-${PACKAGE_NAME}-socket
     - STRICT_VERSION_CHECK=false
     - REMOTE_DIR_WEB=/opt/${PACKAGE_NAME}-web
     - REMOTE_DIR_APP=/opt/${PACKAGE_NAME}-admin
