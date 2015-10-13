@@ -33,7 +33,7 @@ class PlaceholderTemplate extends React.Component {
     if (!data.email) {
       return snackbar.notify({
         type    : 'danger',
-        message : 'You must provide a email to subscribe'
+        message : 'You must provide an email to subscribe'
       });
     }
 
