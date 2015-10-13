@@ -40,8 +40,8 @@ module.exports = angular.module('app')
         console.log('event');
       });
 
-      socket.on('connect', function () {
-        console.log('connected');
+      socket.on('connect', function (e) {
+        console.log('connected', e);
       });
 
       socket.on('disconnect', function () {

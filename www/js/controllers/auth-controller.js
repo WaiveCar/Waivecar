@@ -125,7 +125,8 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
         return $message.error('Please resolve form errors and try again.');
       }
 
-      $data.resources.User.verify($scope.forms.verifyForm).$promise
+      $data.resources.Verification.verify($scope.forms.verifyForm).$promise
+      // $data.resources.User.verify($scope.forms.verifyForm).$promise
         .then(function(){
           if($scope.isWizard){
             return $state.go('licenses-photo-new', {step: 3});
