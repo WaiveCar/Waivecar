@@ -53,11 +53,7 @@ fi
 
 echo "`date -u `: Packaging $NAME, commit $COMMIT"
 
-if [ "${TRAVIS_BRANCH}" == "web/development" ]; then
-    DIR=app
-else
-    DIR=dist
-fi
+DIR=app
 
 cd ${DIR}
 tar czf ../deployment/build/artifacts/$NAME\_$COMMIT.tgz .
