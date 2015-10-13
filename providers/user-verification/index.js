@@ -20,7 +20,7 @@ module.exports = class UserVerification {
   static *requestPhoneVerification(id, phone) {
     let token = yield tokens.create({
       user        : id,
-      purpose     : 'phone-verification',
+      type        : 'phone-verification',
       tokenType   : 'base10',
       tokenLength : 6
     });
@@ -45,7 +45,7 @@ module.exports = class UserVerification {
   static *requestEmailVerification(id, email, name) {
     let token = yield tokens.create({
       user        : id,
-      purpose     : 'email-verification',
+      type        : 'email-verification',
       tokenType   : 'base10',
       tokenLength : 6
     });
