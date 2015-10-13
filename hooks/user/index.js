@@ -42,6 +42,16 @@ hooks.set('user:get', function *(identifier) {
  * @param {User} user
  */
 hooks.set('user:stored', function *(user) {
+
+  // ### Test Accounts
+  // Ignore accounts created as a fixture.
+
+  if (user.email.match(/fixture\.none/gi)) {
+    return;
+  }
+
+  // ### Registration Job
+
   let job = queue
     .create('email:user:registration', {
       to       : user.email,
@@ -56,13 +66,18 @@ hooks.set('user:stored', function *(user) {
     })
     .save()
   ;
+
   job.on('complete', () => {
     job.remove();
   });
 
+  // ### Verify Phone
+
   if (user.phone && !user.verifiedPhone) {
     yield verification.requestPhoneVerification(user.id, user.phone);
   }
+
+  // ### Verify Email
 
   if (user.email && !user.verifiedEmail) {
     yield verification.requestEmailVerification(user.id, user.email, user.name());

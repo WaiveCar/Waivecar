@@ -7,77 +7,62 @@ let licenseService = Reach.module('license/lib/license-service');
 let hooks          = Reach.Hooks;
 let error          = Reach.Error;
 
-// ### Booking Hook
+/**
+  Validates the file before allowing further file operations to take place.
+  This should throw an error if the file transfer is invalid.
+  
+  @hook   file:validate
+  @param  {Object} qs
+  @param  {Object} _user
+ */
+hooks.set('file:validate', function *(qs, _user) {
+  let model = yield getModel(qs, _user);
+  if (!model) {
+    throw error.parse({
+      code    : `UPLOAD_FAILED`,
+      message : `The id provided for ${ qs.type } does not exist`
+    }, 400);
+  }
+});
+
 /*
-hooks.set('file:booking', {
-
-  /**
-   * Validate that the required record exists before attempting file upload.
-   * @method validate
-   * @param  {User} _user
-   *
-  validate : function *(_user) {
-    let model = bookingService.getBooking(this.booking, _user);
-    if (!model) {
-      throw error.parse({
-        code    : 'FILE_UPLOAD_FAILED',
-        message : 'The booking id provided for file upload does not exist'
-      }, 400);
-    }
-  },
-
-  /**
-   * Create a shared collection id for files that belongs to a single record.
-   * @method collection
-   * @param  {User} _user
-   * @return {String}
-   *
-  collection : function *(_user) {
-    let booking = yield bookingService.getBooking(this.booking, _user);
-    if (!booking.filesId) {
-      yield booking.update({
-        fileId : shortid.generate()
-      });
-    }
-    return booking.filesId;
+  Creates a shared collection id for files that should be accessible with
+  a single identifier.
+  @hook   file:collection
+  @param  {Object} qs
+  @param  {Object} _user
+  @return {String} Default: null
+ */
+hooks.set('file:collection', function *(qs, _user) {
+  let model = yield getModel(qs, _user);
+  if (!model.collectionId) {
+    yield model.update({
+      collectionId : shortid.generate()
+    });
   }
-
+  return model.collectionId;
 });
 
-// ### License Hook
-
-hooks.set('file:license', {
-
-  /**
-   * Validate that the required record exists before attempting file upload.
-   * @method validate
-   * @param  {User} _user
-   *
-  validate : function *(_user) {
-    let model = yield licenseService.get(this.license, _user);
-    if (!model) {
-      throw error.parse({
-        code    : 'FILE_UPLOAD_FAILED',
-        message : 'The license your are attempting to attach your image to does not exist'
-      }, 400);
-    }
-  },
-
-  /**
-   * Create a shared collection id for files that belongs to a single record.
-   * @method collection
-   * @param  {User} _user
-   * @return {String}
-   *
-  collection : function *(_user) {
-    let license = yield licenseService.get(this.license, _user);
-    if (!license.fileId) {
-      yield license.update({
-        fileId : shortid.generate()
-      });
-    }
-    return license.fileId;
-  }
-
+/*
+  Captures the newly created file.
+  @hook  file:capture
+  @param {Object} file
+  @param {Object} options
+  @param {Object} _user
+ */
+hooks.set('file:capture', function *(file, options, _user) {
+  // ...
 });
-*/
+
+/**
+ * Returns a model based on the requested type.
+ * @param {Object} qs
+ * @param {Object} _user
+ * @yield {Object}
+ */
+function *getModel(qs, _user) {
+  switch (qs.type) {
+    case 'license' : return yield licenseService(qs.id, _user);
+    case 'booking' : return yield bookingService(qs.id, _user);
+  }
+}
