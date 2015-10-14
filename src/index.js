@@ -18,10 +18,13 @@ import Router               from 'react-router';
 import createBrowserHistory from 'history/lib/createBrowserHistory';
 import routes               from './routes';
 
-// ### Stores
-// Load initial interface reducer stores
+// ### Reducers
+// Loads in all non dynamic reducers defined in the ./reducers directory.
 
-import './reducers';
+let reducers = require.context('./reducers', true, /\.js$/);
+reducers.keys().forEach((key) => {
+  reducers(key);
+});
 
 // ### Style
 

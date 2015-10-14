@@ -60,12 +60,6 @@ Resources.getSelectList = function (targets) {
   });
 };
 
-/*
-         resources.map((value) => {
-          
-        }),
- */
-
 /**
  * Prepares all the resources by creating relay reducers.
  * @method prepare

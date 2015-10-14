@@ -8,7 +8,6 @@ import components       from './lib/components';
 
 // ### Layout
 
-let actions                    = relay.getActions();
 let { Container, Row, Column } = Layout;
 
 export default (view) => {
@@ -31,9 +30,10 @@ export default (view) => {
      * @method componentDidMount
      */
     componentDidMount() {
-      relay.dispatch('app', actions.APP_UPDATE({
+      let app = relay.getActions('app');
+      app.update({
         title : view.title
-      }));
+      });
     }
 
     /**

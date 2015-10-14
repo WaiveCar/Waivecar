@@ -8,12 +8,13 @@ import { Route }     from 'react-router';
 
 // ### Import Templates
 
-import './templates/placeholder';
-import './templates/home';
-import './templates/site';
-import './templates/auth';
-import './templates/app';
-import './templates/sandbox';
+let tmpl = require.context('./templates', true, /\.jsx$/);
+tmpl.keys().forEach((key) => {
+  if (key === './index.jsx') {
+    return;
+  }
+  tmpl(key);
+});
 
 // ### Export App
 
@@ -23,7 +24,7 @@ export default {
    * @property component
    * @type     Component
    */
-  component : require('./templates/index'),
+  component : tmpl('./index.jsx'),
 
   /**
    * List of modules we want to load into the app, modules loads their own

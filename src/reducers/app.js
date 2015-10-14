@@ -2,19 +2,6 @@
 
 import { relay } from 'reach-react';
 
-// ### Actions
-
-relay.actions({
-
-  APP_UPDATE: (data) => {
-    return {
-      type : 'update',
-      data : data
-    }
-  }
-
-});
-
 // ### Resource Reducer
 
 let defaultState = {
@@ -28,8 +15,22 @@ let defaultState = {
 relay.resource('app', function (state = defaultState, action) {
   switch (action.type) {
     case 'update':
-      return Object.assign(defaultState, action.data);
+      return {
+        ...defaultState,
+        ...action.data
+      };
     default:
       return state;
+  }
+});
+
+// ### Resource Actions
+
+relay.actions('app', {
+  update : (data) => {
+    relay.dispatch('app', {
+      type : 'update',
+      data : data
+    });
   }
 });
