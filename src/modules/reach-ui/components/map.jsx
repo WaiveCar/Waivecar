@@ -52,7 +52,7 @@ class UIMap extends React.Component {
       this.history.pushState(null, `/${ this.props.resource }/${ data.id }`);
     };
     return (
-      <Map markers={ this.state[this.props.resource] } markerHandlerKey={ this.props.filters.id } markerHandler={ submit } markerIcon={ '/images/admin/map-icon-waivecar.svg' } />
+      <Map markers={ this.state[this.props.resource] } markerHandlerKey={ this.props.key } markerHandler={ submit } markerIcon={ '/images/admin/map-icon-waivecar.svg' } />
     );
   }
 
@@ -66,9 +66,25 @@ export default {
       type    : 'map',
       class   : UIMap,
       icon    : 'map',
-      options : {
-        id : null
-      }
+      options : [
+        {
+          label     : 'Resource',
+          component : 'react-select',
+          name      : 'resource',
+          options   : resources.getSelectList(),
+          helpText : 'Select resource for this Map'
+        },
+        {
+          label     : 'Key',
+          component : 'react-select',
+          name      : 'key',
+          helpText  : 'Select resource field to be used as selection key',
+          options   : {
+            connector : 'resource',
+            values    : fields.getSelectList()
+          }
+        }
+      ]
     };
   }
 }

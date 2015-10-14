@@ -58,6 +58,10 @@ export default class Map extends React.Component {
    */
   addMarkers(markers) {
     let markerIcon = this.getMarkerIcon();
+    if (!markers) {
+      return;
+    }
+
     markers.forEach((val) => {
       let lat = val.location ? val.location.latitude : val.latitude;
       let long = val.location ? val.location.longitude : val.longitude;
