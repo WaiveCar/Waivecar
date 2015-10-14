@@ -30,8 +30,7 @@ export default (view) => {
      * @method componentDidMount
      */
     componentDidMount() {
-      let app = relay.getActions('app');
-      app.update({
+      this.app.update({
         title : view.title
       });
     }
@@ -108,7 +107,10 @@ export default (view) => {
      * @param  {Object} component { type, options }
      */
     renderComponent(component) {
-      return components.render(component.type, component.options, this.props);
+      return components.render(component.type, {
+        ...component.options, 
+        ...this.props
+      });
     }
 
     renderActions() {
