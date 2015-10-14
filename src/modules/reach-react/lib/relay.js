@@ -64,9 +64,11 @@ class Relay {
     if (type.isArray(id)) {
       id.forEach(id => {
         addListener.call(this, context, id);
+        addActions.call(this, context, id);
       }.bind(this));
     } else {
       addListener.call(this, context, id);
+      addActions.call(this, context, id);
     }
   }
 
@@ -155,6 +157,18 @@ function addListener(component, id) {
     component.setState(prepareState(id, this.store.states[id]));
   });
   component.state[id] = this.store.states[id];
+}
+
+/**
+ * Adds reducer actions to the provided context.
+ * @param {Object} context
+ * @param {String} id
+ */
+function addActions(context, id) {
+  let actions = this.store.actions[id];
+  if (actions) {
+    context[id] = actions;
+  }
 }
 
 /**
