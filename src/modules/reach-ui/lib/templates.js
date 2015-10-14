@@ -1,5 +1,7 @@
 'use strict';
 
+import config from 'config';
+
 /**
  * Templates
  * =========
@@ -29,6 +31,10 @@ Templates.store = {};
  * @param  {Object} template
  */
 Templates.register = function (id, template) {
+  if (config.app.environment === 'production' && id !== 'placeholder') {
+    return;
+  }
+
   Templates.store[id] = template;
 };
 
