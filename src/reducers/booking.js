@@ -21,3 +21,14 @@ relay.resource('booking', function (state = defaultState, action) {
       return state;
   }
 });
+
+// ### Resource Actions
+
+relay.actions('booking', {
+  update : (data) => {
+    relay.dispatch('booking', {
+      type : 'update',
+      data : data
+    });
+  }
+});

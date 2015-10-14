@@ -1,3 +1,5 @@
+@import '~styles/variables';
+
 #booking {
   background        : #262626;
   display           : -webkit-box;
@@ -9,4 +11,71 @@
   -webkit-flex-flow : row wrap;
   flex-flow         : row wrap;
   min-height        : 100vh;
+
+  .overlay {
+    background : rgba(#000, .3);
+    height     : 100%;
+    position   : fixed;
+    width      : 100%;
+    &:hover {
+      cursor : zoom-out;
+    }
+  }
+
+  .booking-car {
+    background    : #fff;
+    border-radius : 5px;
+    left          : 50%;
+    position      : absolute;
+    top           : 50%;
+    transform     : translate(-50%, -50%);
+    width         : 450px;
+
+    h4 {
+      color      : $brand-primary;
+      margin-top : 24px;
+      text-align : center;
+      width      : 100%;
+      small {
+        color       : #363636;
+        display     : block;
+        font-weight : 600;
+      }
+    }
+
+    .car-img {
+      background-repeat   : no-repeat;
+      background-size     : contain;
+      background-position : center center;
+      height              : 180px;
+      width               : 100%;
+    }
+
+    .car-status {
+      font-size : .94rem;
+      padding   : 20px 80px;
+
+      table {
+        margin : 0 auto;
+        width  : 100%;
+        .icon {
+          text-align : center;
+          width      : 30px;
+          i {
+            color      : #565656;
+            margin-top : 4px;
+          }
+        }
+        .value {
+          text-align : right;
+        }
+      }
+
+      button {
+        display : block;
+        margin  : 20px auto 10px;
+        width   : 220px;
+      }
+    }
+  }
 }
