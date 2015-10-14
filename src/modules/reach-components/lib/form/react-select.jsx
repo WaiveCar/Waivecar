@@ -166,6 +166,9 @@ export default class ReactSelect extends React.Component {
         }
       });
     } else if (this.isConnector(this.props)) {
+      if (!this.props.value || !this.props.value[options.connector]) {
+        return [];
+      }
       let items = options.values[this.props.value[options.connector]];
       return items.map(mapNameToLabel);
     } else if (type.isPlainObject(options)) {
