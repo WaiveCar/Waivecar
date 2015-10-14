@@ -5,11 +5,10 @@ import views      from './lib/views';
 import resources  from './lib/resources';
 import fields     from './lib/fields';
 import components from './lib/components';
-import content   from './components/content';
-import form      from './components/form';
-import map       from './components/map';
-import miniChart from './components/mini-chart';
-import table     from './components/table';
+
+// ### Component List
+
+let list = require.context('./components', true, /\.jsx$/);
 
 // ### UI Editor
 
@@ -47,11 +46,10 @@ export default function (done) {
     // ### UI Components
     // Import list of available reach-ui components, these are loaded into
     // the ui components store in the component files.
-    components.register(content.build());
-    components.register(form.build());
-    components.register(map.build());
-    components.register(miniChart.build());
-    components.register(table.build());
+
+    list.keys().forEach((key) => {
+      components.register(list(key).build());
+    });
 
     // ### Load Views
 
