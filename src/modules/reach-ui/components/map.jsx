@@ -12,7 +12,8 @@ import { components, fields, resources } from 'reach-ui';
 class UIMap extends React.Component {
 
   /**
-   * @constructor
+   * Sets up relay for the provided resrouce.
+   * @param  {...Mixed} args
    */
   constructor(...args) {
     super(...args);
@@ -20,7 +21,7 @@ class UIMap extends React.Component {
   }
 
   /**
-   * @method componentDidMount
+   * Prepare resource and update the relay.
    */
   componentDidMount() {
     let resource = resources.get(this.props.resource);
@@ -38,29 +39,33 @@ class UIMap extends React.Component {
   }
 
   /**
-   * @method componentWillUnmount
+   * Remove any event listeners from the relay within the component context.
    */
   componentWillUnmount() {
     relay.unsubscribe(this, this.props.resource);
   }
 
   /**
-   * @method render
+   * Renders the UI map.
+   * @return {Object}
    */
   render() {
-    let submit = this.props.actions ? this.props.actions.submit : (data) => {
-      this.history.pushState(null, `/${ this.props.resource }/${ data.id }`);
-    };
     return (
-      <Map markers={ this.state[this.props.resource] } markerHandlerKey={ this.props.key } markerHandler={ submit } markerIcon={ '/images/admin/map-icon-waivecar.svg' } />
+      <Map 
+        markers          = { this.state[this.props.resource] } 
+        markerHandlerKey = { this.props.key } 
+        markerHandler    = { this.props.handler } 
+        markerIcon       = { '/images/admin/map-icon-waivecar.svg' } 
+      />
     );
   }
 
 }
 
 // ### Register Component
+
 export default {
-  build : function() {
+  build : () => {
     return {
       name    : 'Map',
       type    : 'map',
