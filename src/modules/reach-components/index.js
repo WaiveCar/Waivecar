@@ -9,6 +9,7 @@ export default {
   File      : require('./lib/file'),
   Layout    : require('./lib/layout'),
   Map       : require('./lib/map'),
+  Modal     : require('./lib/modal'),
   Navbar    : require('./lib/navbar'),
   snackbar  : require('./lib/snackbar')
 };

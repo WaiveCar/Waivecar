@@ -1,6 +1,5 @@
 import React, { PropTypes, Component } from 'react';
-import Modal                           from 'react-modal';
-import { Form }                        from 'reach-components';
+import { Form, Modal }                 from 'reach-components';
 import components                      from '../lib/components';
 import ItemCategories                  from './item-categories';
 
@@ -84,6 +83,9 @@ export default class ViewOptions extends Component {
 
   renderForm() {
     const { fields, options } = this.props;
+    console.dir(options);
+    console.dir(this.state.fields);
+
     return (
       <Form
         className = "r-form"

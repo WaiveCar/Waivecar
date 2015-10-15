@@ -105,7 +105,6 @@ class UIImage extends React.Component {
    * @param  {Function} reset
    */
   onChange(files, reset) {
-    // TODO: should we ever update a File? It would be more delete/create I believe.
     let resource = this.resource();
     let data = {
       private : false,

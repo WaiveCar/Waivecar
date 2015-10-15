@@ -187,7 +187,7 @@ export default class Form extends React.Component {
  */
 function checkbox(data, target) {
   let result = [];
-  
+
   if (data) {
     data.forEach((value) => {
       if (value === target.name && !target.checked) {
