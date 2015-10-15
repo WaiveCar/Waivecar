@@ -121,11 +121,14 @@ class PlaceholderTemplate extends React.Component {
   render() {
     return (
       <div id="placeholder">
-        <video autoPlay className="bg-vid" loop poster="/images/auth/login.jpg">
-          <source src="/images/auth/login.webm" type="video/webm" />
-          <source src="/images/auth/login.mp4" type="video/mp4" />
-        </video>
-        <div className="vid-overlay"></div>
+        <div className="video-container">
+          <video autoPlay className="bg-vid hidden-md-down" loop poster="/images/auth/login.jpg">
+            <source src="/images/auth/login.webm" type="video/webm" />
+            <source src="/images/auth/login.mp4" type="video/mp4" />
+          </video>
+          <div className="vid-overlay hidden-md-down"></div>
+          <div className="vid-fallback hidden-lg-up"></div>
+        </div>
         { this.get() }
       </div>
     );
