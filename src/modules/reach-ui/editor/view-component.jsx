@@ -48,9 +48,10 @@ export default class ViewComponent extends Component {
   }
 
   renderType() {
-    const { type } = this.props;
-    let props = { canEdit : true, ...this.props };
-    return components.render(type, props);
+    return components.render(this.props.type, {
+      canEdit : true,
+      ...this.props.options
+    });
   }
 
   render() {
