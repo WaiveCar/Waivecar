@@ -1,9 +1,5 @@
 import React, { PropTypes } from 'react';
 import { DropTarget }       from 'react-dnd';
-import HTML5Backend         from 'react-dnd-html5-backend';
-import ViewOptions          from './view-options';
-import ViewItemIcon         from './view-item-icon';
-import ItemCategories       from './item-categories';
 import { helpers  }         from 'reach-react';
 
 const target = {
