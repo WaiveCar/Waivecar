@@ -65,7 +65,7 @@ var Modal = module.exports = React.createClass({
       ariaAppHider.toggle(props.isOpen, props.appElement);
     }
     sanitizeProps(props);
-    this.portal = React.render(ModalPortal(props), this.node);
+    this.portal = ReactDOM.render(ModalPortal(props), this.node);
   },
 
   render: function () {
