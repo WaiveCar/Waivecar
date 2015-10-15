@@ -114,27 +114,17 @@ class UIImage extends React.Component {
 
     // ### Submit Data
     // Submits the data to api either for create/update
-    if (this.isCreate()) {
-      api.post(resource.uri, data, (error, data) => {
-        if (error) {
-          return handleError(error.message);
-        }
-        this.goBack();
-      }.bind(this));
-    } else {
-      api.put(resource.uri.replace(':id', this.id()), data, (error) => {
-        if (error) {
-          return handleError(error.message);
-        }
-        snackbar.notify({
-          type    : 'success',
-          message : 'File was successfully updated.'
-        });
-      });
-    }
+
+    api.file(resource.uri, data, (error, data) => {
+      if (error) {
+        return handleError(error.message);
+      }
+      this.goBack();
+    }.bind(this));
 
     // ### Error
     // Handle incoming errors.
+    
     function handleError(message) {
       snackbar.notify({
         type    : 'danger',
