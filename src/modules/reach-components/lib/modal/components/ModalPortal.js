@@ -3,8 +3,6 @@ var div = React.DOM.div;
 var focusManager = require('../helpers/focusManager');
 var scopeTab = require('../helpers/scopeTab');
 
-console.log(div);
-
 // so that our CSS is statically analyzable
 var CLASS_NAMES = {
   overlay: {
