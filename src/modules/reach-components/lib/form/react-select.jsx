@@ -197,12 +197,13 @@ export default class ReactSelect extends React.Component {
 
     logger.debug(`Form > Render select component [${ name }] [${ value }]`);
 
+    className = className || 'col-md-12';
     if (value) {
       className = className + ' active';
     }
 
     return (
-      <div className={ className || 'col-md-12' }>
+      <div className={ className }>
         <label>{ label }</label>
         <Select
           name        = { name }
