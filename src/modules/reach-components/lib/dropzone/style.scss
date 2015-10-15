@@ -1,0 +1,66 @@
+.dropzone {
+  background    : #fcfcfc;
+  border        : 1px dashed #e3e3e3;
+  border-radius : 5px;
+  min-height    : 200px;
+  padding       : 10px;
+  position      : relative;
+  width         : 100%;
+
+  .dropzone-drop {
+    height      : 100%;
+    left        : 0;
+    position    : absolute;
+    top         : 0;
+    width       : 100%;
+    z-index     : 1;
+
+    .dropzone-drop-title {
+      background    : #f7f7f7;
+      border-radius : 5px;
+      color         : #b3b3b3;
+      left          : 50%;
+      padding       : 10px 20px;
+      position      : absolute;
+      text-align    : center;
+      top           : 50%;
+      transform     : translate(-50%, -50%);
+      small {
+        display    : block;
+        font-style : italic;
+      }
+    }
+
+    &:hover {
+      cursor : pointer;
+    }
+  }
+  
+  .dropzone-file {
+    border        : 1px solid #e3e3e3;
+    border-radius : 5px;
+    float         : left;
+    height        : 180px;
+    margin        : 1%;
+    position      : relative;
+    width         : 18%;
+    z-index       : 100;
+
+    .dropzone-file-overlay {
+      background : rgba(#000, .75);
+      display    : none;
+      height     : 100%;
+      left       : 0;
+      position   : absolute;
+      top        : 0;
+      width      : 100%;
+    }
+
+    &:hover {
+      .dropzone-file-overlay {
+        border-radius : 5px;
+        display       : block;
+      }
+    }
+  }
+}
