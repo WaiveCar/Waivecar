@@ -28,6 +28,8 @@ export default class Map extends React.Component {
         center : [ 34.0604643, -118.4186743 ],
         zoom   : 11
       })
+    }, function() {
+      this.state.map.scrollWheelZoom.disable();
     });
   }
 
