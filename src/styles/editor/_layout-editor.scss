@@ -23,17 +23,18 @@
      color : $gray-lighter;
     }
     &.view-dropzone-left {
-      min-height : 300px;
+     // min-height : 300px;
     }
     &.view-dropzone-right {
-      min-height : 300px;
+      //min-height : 300px;
     }
     &.view-dropzone-top,
     &.view-dropzone-bottom {
-      height : 30px;
+      //height : 30px;
     }
   }
   .ui-content {
+    padding : 10px;
     .view-dropzone {
     }
     .view-container {
@@ -65,10 +66,18 @@
           .view-component {
             border    : 2px dashed $gray-light;
             animation : wiggle 0.1s linear 0s infinite alternate;
-            min-height: 300px;
+            width     : 94%;
           }
           .vertical-dropzone {
-            background : $gray-lightest;
+            background  : $gray-lightest;
+            display     : inline-block;
+            width       : 2%;
+            min-height  : 300px;
+          }
+          .horizontal-dropzone {
+            display : block;
+            width   : 100%;
+            height  : 30px;
           }
           .view-dropzone {
             visibility : visible;
@@ -86,6 +95,16 @@
       }
     }
     .view-component-container {
+      .vertical-dropzone {
+        width : 0;
+        height : 0;
+        display : none;
+      }
+      .horizontal-dropzone {
+        width : 0;
+        height : 0;
+        display : none;
+      }
       .view-component {
         margin     : 0 auto;
         border     : 1px solid $gray-lighter;

@@ -153,7 +153,7 @@ export default class Content extends React.Component {
 
   renderActions() {
     return (
-      <div className="content-actions">
+      <div className="component-actions">
         { !this.state.isEditing &&
           <button type="button" className="btn btn-icon" onClick={ this.startEdit }>
             <i className="material-icons" role="edit">mode_edit</i>

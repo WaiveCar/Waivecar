@@ -56,18 +56,19 @@ export default class ViewComponent extends Component {
   render() {
     const { accepts, name, type, category, icon, options } = this.props;
     let className = `view-component ${ type.toLowerCase() }-component ${ this.state.isActive ? 'is-active' : '' }`;
+    let containerClass = `view-component-container container-fluid ${ this.state.isActive ? 'is-active' : '' }`;
     return (
-      <div className="view-component-container container-fluid">
-        <div className="row">
+      <div className={ containerClass }>
+        <div className="row horizontal-dropzone">
           <div className="col-xs-12">
             <ViewDropzone ref="topZone" zone={ 'top' } accepts={ accepts } onDrop={ this.onDrop.bind(this) } onActive={ this.onActive.bind(this) } />
           </div>
         </div>
         <div className="row">
-          <div className="col-xs-1 vertical-align vertical-dropzone">
-            <ViewDropzone ref="left-zone" zone={ 'left' } accepts={ accepts } onDrop={ this.onDrop.bind(this) } onActive={ this.onActive.bind(this) } />
-          </div>
-          <div className="col-xs-10">
+          <div className="col-xs-12">
+            <div className="vertical-align vertical-dropzone">
+              <ViewDropzone ref="left-zone" zone={ 'left' } accepts={ accepts } onDrop={ this.onDrop.bind(this) } onActive={ this.onActive.bind(this) } />
+            </div>
             <div className={ className }>
               <div className="view-component-header">
                 <ViewItemIcon type={ type } icon={ icon} />
@@ -77,12 +78,12 @@ export default class ViewComponent extends Component {
                 { this.renderType() }
               </div>
             </div>
-          </div>
-          <div className="col-xs-1 vertical-align vertical-dropzone">
-            <ViewDropzone zone={ 'right' } accepts={ accepts } onDrop={ this.onDrop.bind(this) } onActive={ this.onActive.bind(this) } />
+            <div className="vertical-align vertical-dropzone">
+              <ViewDropzone zone={ 'right' } accepts={ accepts } onDrop={ this.onDrop.bind(this) } onActive={ this.onActive.bind(this) } />
+            </div>
           </div>
         </div>
-        <div className="row">
+        <div className="row horizontal-dropzone">
           <div className="col-xs-12">
             <ViewDropzone zone={ 'bottom' } accepts={ accepts } onDrop={ this.onDrop.bind(this) } onActive={ this.onActive.bind(this) } />
           </div>

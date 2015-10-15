@@ -22,7 +22,7 @@ export default {
       name    : 'Content',
       type    : 'content',
       class   : UIContent,
-      icon    : 'editor',
+      icon    : 'format_align_justify',
       options : [
         {
           name      : 'id',
