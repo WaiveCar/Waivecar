@@ -1,9 +1,9 @@
 import React, { PropTypes } from 'react';
-import { DropTarget }                  from 'react-dnd';
-import ViewOptions                     from './view-options';
-import ViewItemIcon                    from './view-item-icon';
-import ItemCategories                  from './item-categories';
-import { helpers  }                     from 'reach-react';
+import { DropTarget }       from 'react-dnd';
+import ViewOptions          from './view-options';
+import ViewItemIcon         from './view-item-icon';
+import ItemCategories       from './item-categories';
+import { helpers  }         from 'reach-react';
 
 const target = {
   drop(props, monitor, component) {
@@ -38,7 +38,6 @@ export default class ViewDropzone extends React.Component {
     const { zone, accepts, isOver, canDrop, connectDropTarget } = this.props;
     let dropzoneClassName = `view-dropzone view-dropzone-${ zone} ${ isOver ? 'is-over' : '' } ${ canDrop ? 'is-active' : '' } ${ this.props.className }`;
     let message = `drop a ${ accepts.join(' or ') } to get started`;
-
     return connectDropTarget(
       <div className={ dropzoneClassName }>
         <div className="view-dropzone-title">

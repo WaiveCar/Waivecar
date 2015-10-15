@@ -4,7 +4,7 @@ import mixin                      from 'react-mixin';
 import update                     from 'react/lib/update';
 import { History }                from 'react-router';
 import { DragDropContext }        from 'react-dnd';
-import HTML5Backend               from 'react-dnd/modules/backends/HTML5';
+import HTML5Backend               from 'react-dnd-html5-backend';
 import { api }                    from 'reach-react';
 import { Form, snackbar, Button } from 'reach-components';
 import components                 from '../lib/components';

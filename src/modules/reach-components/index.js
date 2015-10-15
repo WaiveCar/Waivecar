@@ -6,6 +6,7 @@ export default {
   Form      : require('./lib/form'),
   Grid      : require('./lib/grid'),
   Hamburger : require('./lib/hamburger'),
+  File      : require('./lib/file'),
   Layout    : require('./lib/layout'),
   Map       : require('./lib/map'),
   Navbar    : require('./lib/navbar'),
