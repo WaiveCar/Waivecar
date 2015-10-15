@@ -64,6 +64,7 @@
     "react": "0.14.0",
     "react-dnd": "1.1.8",
     "react-dom": "0.14.0",
+    "react-dropzone": "^2.2.1",
     "react-mixin": "3.0.0",
     "react-modal": "git@github.com:ayarulin/react-modal.git",
     "react-router": "1.0.0-rc3",
