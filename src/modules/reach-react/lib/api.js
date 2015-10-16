@@ -6,135 +6,132 @@ import config   from 'config';
 import auth     from './auth';
 import { type } from './helpers';
 
-/**
- * @class API
- */
-let API = module.exports = {};
+class API {
 
-/**
- * @property api
- * @type     String
- */
-let api = config.api.uri + (config.api.port ? ':' + config.api.port : '');
+  /**
+   * Prepares the api uri.
+   */
+  constructor() {
+    this.uri = config.api.uri + (config.api.port ? ':' + config.api.port : '');
+  }
 
-/**
- * @method get
- * @param  {String}   uri
- * @param  {Object}   [qs]
- * @param  {Function} [done]
- * @param  {String}   [role]
- */
-API.get = function (uri, qs, done, role) {
-  let req = request.get(api + uri);
-  if (type.isFunction(qs)) {
-    done = qs;
-    qs   = {};
+  /**
+   * Submits a post request to the api.
+   * @param  {String}   uri
+   * @param  {Object}   data
+   * @param  {Function} callback
+   * @param  {String}   role
+   */
+  post(uri, data, callback, role) {
+    let req = this.prepare('post', uri, role);
+    req.send(data);
+    req.end(_handleResult.bind(this, callback));
   }
-  req.query(qs);
-  if (auth.check()) {
-    req.set('Authorization', auth.user.token);
-  }
-  req.set('Role', role || 'guest');
-  req.end(_handleResult.bind(this, done));
-};
 
-/**
- * @method post
- * @param  {String}   url
- * @param  {Object}   data
- * @param  {Function} callback
- * @param  {String}   [role]
- */
-API.post = function (uri, data, callback, role) {
-  let req = request.post(api + uri);
-  if (auth.check()) {
-    req.set('Authorization', auth.user.token);
-  }
-  req.set('Role', role || 'guest');
-  req.send(data);
-  req.end(_handleResult.bind(this, callback));
-};
+  /**
+   * Submits a new file upload to the api.
+   * @param  {String}   uri
+   * @param  {Object}   data
+   * @param  {Function} callback
+   * @param  {String}   role
+   */
+  file(uri, data, callback, role) {
+    let req      = this.prepare('post', uri, role);
+    let formData = new FormData();
 
-/**
- * @method post
- * @param  {String}   url
- * @param  {Object}   data
- * @param  {Function} callback
- * @param  {String}   [role]
- */
-API.file = function (uri, data, callback, role) {
-  let req = request.post(api + uri);
-  if (auth.check()) {
-    req.set('Authorization', auth.user.token);
-  }
-  req.set('Role', role || 'guest');
-  let formData = new FormData();
-  for (let key in data.files) {
-    if (data.files.hasOwnProperty(key) && data.files[key] instanceof File) {
-      formData.append(key, data.files[key]);
+    // ### Append Files
+
+    for (let key in data.files) {
+      if (data.files.hasOwnProperty(key) && data.files[key] instanceof File) {
+        formData.append(key, data.files[key]);
+      }
     }
-  }
-  for (let key in data) {
-    if (key !== 'files' && data.hasOwnProperty(key)) {
-      formData.append(key, data[key]);
+
+    for (let key in data) {
+      if (key !== 'files' && data.hasOwnProperty(key)) {
+        formData.append(key, data[key]);
+      }
     }
+
+    // ### Send Request
+
+    req.send(formData);
+    req.end(_handleResult.bind(this, callback));
   }
-  req.send(formData);
-  req.end(_handleResult.bind(this, callback));
-};
+
+  /**
+   * Submits a new get request to the api.
+   * @param  {String}   uri
+   * @param  {Object}   qs
+   * @param  {Function} done
+   * @param  {String}   role
+   */
+  get(uri, qs, done, role) {
+    if (!done) { role = done; done = qs; }
+    let req = this.prepare('get', uri, role);
+    req.query(qs);
+    req.end(_handleResult.bind(this, done));
+  }
+
+  /**
+   * Submits a new put request to the api.
+   * @param  {String}   uri
+   * @param  {Object}   data
+   * @param  {Function} callback
+   * @param  {String}   role
+   */
+  put(uri, data, callback, role) {
+    let req = this.prepare('put', uri, role);
+    req.send(data);
+    req.end(_handleResult.bind(this, callback));
+  }
+
+  /**
+   * Submits a new patch request to the api.
+   * @param  {String}   uri
+   * @param  {Object}   data
+   * @param  {Function} callback
+   * @param  {String}   role
+   */
+  patch(uri, data, callback, role) {
+    let req = this.prepare('patch', uri, role);
+    req.send(data);
+    req.end(_handleResult.bind(this, callback));
+  }
+
+  /**
+   * Sends a new delete request to the api.
+   * @param  {String}   uri
+   * @param  {Function} callback
+   * @param  {String}   role
+   */
+  delete(uri, callback, role) {
+    let req = this.prepare('delete', uri, role);
+    req.end(_handleResult.bind(this, callback));
+  }
+
+  /**
+   * Prepares the request headers.
+   * @param {String} method
+   * @param {String} uri
+   * @param {String} role
+   */
+  prepare(method, uri, role) {
+    let req = request[method](this.uri + uri);
+    if (auth.check()) {
+      req.set('Authorization', auth.user.token);
+    }
+    req.set('Role', role || 'guest');
+    return req;
+  }
+
+}
 
 /**
- * @method put
- * @param  {String}   uri
- * @param  {Object}   data
- * @param  {Function} [callback]
- * @param  {String}   [role]
- */
-API.put = function (uri, data, callback, role) {
-  let req = request.put(api + uri);
-  if (auth.check()) {
-    req.set('Authorization', auth.user.token);
-  }
-  req.set('Role', role || 'guest');
-  req.send(data);
-  req.end(_handleResult.bind(this, callback));
-};
-
-/**
- * @method patch
- * @param  {String}   uri
- * @param  {Object}   data
- * @param  {Function} [callback]
- * @param  {String}   [role]
- */
-API.patch = function (uri, data, callback, role) {
-  let req = request.patch(api + uri);
-  if (auth.check()) {
-    req.set('Authorization', auth.user.token);
-  }
-  req.set('Role', role || 'guest');
-  req.send(data);
-  req.end(_handleResult.bind(this, callback));
-};
-
-/**
- * @method delete
- * @param  {String}   uri
- * @param  {Function} [callback]
- * @param  {String}   [role]
- */
-API.delete = function (uri, callback, role) {
-  let req = request.del(api + uri);
-  if (auth.check()) {
-    req.set('Authorization', auth.user.token);
-  }
-  req.set('Role', role || 'guest');
-  req.end(_handleResult.bind(this, callback));
-};
-
-/**
- * @private
- * @method _handleResult
+ * Executes the callback with the err and res of the api request.
+ * @param  {Function} callback
+ * @param  {Object}   err
+ * @param  {Object}   res
  */
 function _handleResult(callback, err, res) {
   if (!res.ok) {
@@ -153,3 +150,5 @@ function _handleResult(callback, err, res) {
   }
   callback(null, res.body || res.text);
 }
+
+module.exports = new API();
