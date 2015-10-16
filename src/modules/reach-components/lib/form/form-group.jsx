@@ -12,7 +12,7 @@ import Checkbox    from './checkbox';
 import Radio       from './radio';
 import Textarea    from './textarea';
 import ReactSelect from './react-select';
-
+import FileField   from './file';
 /**
  * @class FormGroup
  */
@@ -30,7 +30,7 @@ export default class FormGroup extends React.Component {
       }.bind(this)));
     }
     switch (data.component) {
-      case 'input' : case 'select' : case 'multi-select' : case 'react-select' : case 'react-multi-select' : case 'textarea' :
+      case 'input' : case 'select' : case 'multi-select' : case 'react-select' : case 'react-multi-select' : case 'textarea' : case 'file' :
         return this.group(this.field(data));
       default :
         return this.field(data);
@@ -65,7 +65,8 @@ export default class FormGroup extends React.Component {
       case 'radio'              : return <Radio       key={ index } options={ options } value={ this.props.data[options.name] } onChange={ this.props.onChange } />;
       case 'textarea'           : return <Textarea    key={ index } options={ options } value={ this.props.data[options.name] } onChange={ this.props.onChange } />;
       case 'react-select'       : return <ReactSelect key={ index } options={ options } value={ this.props.data[options.name] } onChange={ this.props.onChange } multi={ false } />;
-      case 'react-multi-select' : return <ReactSelect key={ index } options={ options } value={ this.props.data }               onChange={ this.props.onChange } multi={ true } />;
+      case 'react-multi-select' : return <ReactSelect key={ index } options={ options } value={ this.props.data[options.name] } onChange={ this.props.onChange } multi={ true } />;
+      case 'file'               : return <FileField   key={ index } options={ options } value={ this.props.data[options.name] } onChange={ this.props.onChange } />;
       default :
         logger.warn(`Form > Cannot render unknown component [${ options.component }]`);
     }

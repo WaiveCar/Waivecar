@@ -1,7 +1,7 @@
 'use strict';
 import React, { PropTypes }              from 'react';
 import { type, object }                  from 'reach-react/lib/helpers';
-import { auth }                          from 'reach-react';
+import { auth, api }                          from 'reach-react';
 import { components, fields, resources } from 'reach-ui';
 import { Link }                          from 'react-router';
 import FileDropzone                      from 'reach-ui/editor/file-dropzone';
@@ -9,66 +9,33 @@ import FileDropzone                      from 'reach-ui/editor/file-dropzone';
 
 export default class File extends React.Component {
 
-  //TODO: handle non-image file renders
-
   static propTypes = {
     id       : PropTypes.string,
-    link     : PropTypes.string,
-    canEdit  : PropTypes.bool,
+    name     : PropTypes.string,
+    default  : PropTypes.object,
     onChange : PropTypes.func
   };
 
   constructor(...args) {
     super(...args);
-    this.state = {
-      droppedFiles : null,
-      data         : null,
-      link         : null
-    };
     this.onChange = this.onChange.bind(this);
     this.reset    = this.reset.bind(this);
+    this.remove = this.remove.bind(this);
+
+    this.state = {
+      droppedFiles : null,
+      file         : null
+    };
   }
 
   /**
    * @method componentWillReceiveProps
    */
   componentWillReceiveProps(nextProps, nextState) {
-    if (nextProps.link) {
-      this.setState({
-        link : nextProps.link
-      });
-    }
-
     this.setState({
-      data : {
-        ...nextProps.default,
-        ...this.state.data
-      }
+      ...nextProps.default,
+      ...this.state
     });
-  }
-
-  /**
-   * Returns the current data state of the form.
-   * @method data
-   * @return {Object}
-   */
-  data() {
-    return {
-      ...this.props.default,
-      ...this.state.data
-    }
-  }
-
-  /**
-   * @method onChange
-   * @param  {Object} event
-   */
-  onChange() {
-    let files        = this.state.droppedFiles;
-    let { onChange } = this.props;
-    if (type.isFunction(onChange)) {
-      onChange(files, this.reset);
-    }
   }
 
   /**
@@ -77,8 +44,15 @@ export default class File extends React.Component {
    */
   reset() {
     this.setState({
-      data : this.props.default ? object.clone(this.props.default) : {},
-      link : null
+      file : this.props.default ? object.clone(this.props.default) : {}
+    });
+  }
+
+  remove() {
+    this.setState({
+      file : null
+    }, function() {
+      this.onChange()
     });
   }
 
@@ -86,8 +60,51 @@ export default class File extends React.Component {
     this.setState({
       droppedFiles : files
     }, function() {
-      this.onChange();
+      this.persistFiles();
     });
+  }
+
+  /**
+   * @method onChange
+   * @param  {String} value
+   * @param  {Object} options
+   */
+  onChange() {
+    this.props.onChange({
+      target : {
+        type  : 'file',
+        name  : this.props.name,
+        value : this.state.file ? this.state.file.id : null
+      }
+    });
+  }
+
+  persistFiles() {
+    let files = this.state.droppedFiles;
+    let resource = resources.get('files').store;
+    let data = {
+      private : false,
+      target  : 'local',
+      files   : files
+    };
+
+    api.file(resource.uri, data, (error, data) => {
+      if (error) {
+        return handleError(error.message);
+      }
+      this.setState({
+        file : data
+      }, function() {
+        this.onChange();
+      });
+    }.bind(this));
+
+    function handleError(message) {
+      snackbar.notify({
+        type    : 'danger',
+        message : message
+      });
+    }
   }
 
   onActive() {
@@ -95,9 +112,7 @@ export default class File extends React.Component {
   }
 
   renderDropzone() {
-
-    if (!this.props.canEdit) return false;
-    if (this.state.data) {
+    if (this.props.id) {
       return false;
     }
 
@@ -107,8 +122,6 @@ export default class File extends React.Component {
   }
 
   renderImagePreview() {
-    if (!this.props.canEdit) return false;
-
     let files = this.state.droppedFiles;
     if (!files || files.length === 0) return false;
 
@@ -123,29 +136,21 @@ export default class File extends React.Component {
   }
 
   renderImage() {
-    if (!this.state.data) return false;
-
+    if (!this.props.id) return false;
     return (
-      <img className="image" src={ this.data.path } />
-    );
-  }
-
-  renderEditActions() {
-    if (!this.props.canEdit) return false;
-
-    return (
-      <div className="component-actions">
+      <div>
+        <input type="text" readOnly={ true } value={ this.props.id } />
+        <button type="button" className="btn btn-sm" onClick={ this.remove }>X</button>
       </div>
     );
   }
 
   render() {
-    console.log('render');
+    console.log(this.props);
     return (
-      <div className="image-component">
+      <div className="file-component">
         { this.renderDropzone() }
         { this.renderImagePreview() }
-        { this.renderEditActions() }
         { this.renderImage() }
       </div>
     );

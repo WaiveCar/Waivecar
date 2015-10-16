@@ -1,141 +1,16 @@
 'use strict';
 
-import React                             from 'react';
-import { auth, api }                     from 'reach-react';
-import { File }                          from 'reach-components';
-import { components, fields, resources } from 'reach-ui';
+import React         from 'react';
+import { Image }     from 'reach-components';
+import { resources } from 'reach-ui';
 
 class UIImage extends React.Component {
-
-  constructor(...args) {
-    super(...args);
-    this.state = {
-      default : {}
-    };
-    this.onChange = this.onChange.bind(this);
-  }
-
-  /**
-   * Checks if the Image is of type update and requests data if it is.
-   * @method componentDidMount
-   */
-  componentDidMount() {
-    if (!this.isCreate()) {
-      this.setDefault(this.id());
-    }
-  }
-
-  /**
-   * @method componentWillReceiveProps
-   * @param  {Object} nextProps
-   * @param  {Object} nextState
-   */
-  componentWillReceiveProps(nextProps, nextState) {
-    let prev = this.id();
-    let nextId = nextProps.params ? nextProps.params.id : nextProps.id;
-    if (nextId && nextId !== prev) {
-      this.setDefault(nextId);
-    }
-  }
-
-  /**
-   * @method shouldComponentUpdate
-   * @param  {Object} nextProps
-   * @param  {Object} nextState
-   * @return {Boolean}
-   */
-  shouldComponentUpdate(nextProps, nextState) {
-    let prev = this.state.default.id;
-    let next = nextState.default.id;
-    if (next !== prev) {
-      return true;
-    }
-    return false;
-  }
-
-  /**
-   * @method id
-   * @return {String}
-   */
-  id() {
-    return this.props.id || 'create';
-  }
-
-  /**
-   * @method isCreate
-   * @return {Boolean}
-   */
-  isCreate() {
-    return this.id() === 'create';
-  }
-
-  /**
-   * Updates the data state based on the provided id.
-   * @method setDefault
-   * @param  {Mixed} id
-   */
-  setDefault(id) {
-    let resource = this.resource();
-    api.get(resource.uri.replace(':id', id), (error, data) => {
-      if (error) {
-        throw new Error(error);
-      }
-      this.setState({
-        default : data
-      });
-    }.bind(this));
-  }
-
-  /**
-   * Returns the resource resource for the current instance.
-   * @method resource
-   * @return {Object}
-   */
-  resource() {
-    let resource = resources.get('files');
-    if (this.isCreate()) {
-      return resource.store;
-    }
-    return resource.update;
-  }
-
-  /**
-   * @method submit
-   * @param  {Object}   data
-   * @param  {Function} reset
-   */
-  onChange(files, reset) {
-    let resource = this.resource();
-    let data = {
-      private : false,
-      target  : 'local',
-      files   : files
-    };
-
-    // ### Submit Data
-    // Submits the data to api either for create/update
-
-    api.file(resource.uri, data, (error, data) => {
-      if (error) {
-        return handleError(error.message);
-      }
-      this.setDefault(data.id);
-    }.bind(this));
-
-    // ### Error
-    // Handle incoming errors.
-
-    function handleError(message) {
-      snackbar.notify({
-        type    : 'danger',
-        message : message
-      });
-    }
-  }
-
   render() {
     return (
-      <File className="r-image" default={ this.state.default } link={ this.props.link } onChange={ this.onChange } { ...this.props } />
+      <Image
+        resource = { resources.get('files') }
+        { ...this.props }
+      />
     );
   }
 }
@@ -145,7 +20,7 @@ export default {
   build : function() {
     return {
       name    : 'Image',
-      type    : 'file',
+      type    : 'image',
       class   : UIImage,
       icon    : 'image',
       options : [
@@ -163,7 +38,8 @@ export default {
               value : 'document'
             }
           ],
-          helpText  : 'Select the File Type to be displayed'
+          helpText  : 'Select the File Type to be displayed',
+          required  : true
         },
         {
           name      : 'link',
@@ -175,9 +51,9 @@ export default {
         {
           name      : 'id',
           label     : 'Image',
-          component : 'input',
-          type      : 'text',
-          helpText  : 'File Id'
+          component : 'file',
+          helpText  : 'Add a file',
+          required  : true
         }
       ]
     };
