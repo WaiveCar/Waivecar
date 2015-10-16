@@ -20,7 +20,7 @@ export default class Chart extends React.Component {
       fill           : '#F0DD2F'
     };
 
-    switch (this.props.chartType) {
+    switch (this.props.type) {
       case 'bar' : return (<SparklinesBars style={ barStyle } />);
       default    : return (<SparklinesLine style={ lineStyle } />);
     }

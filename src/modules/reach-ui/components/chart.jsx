@@ -5,9 +5,9 @@ import { relay, api }                    from 'reach-react';
 import { Charts, snackbar }           from 'reach-components';
 import { components, fields, resources } from 'reach-ui';
 
-let { MiniChart } = Charts;
+let { Chart } = Charts;
 
-class UIMiniChart extends React.Component {
+class UIChart extends React.Component {
 
   /**
    * @constructor
@@ -63,7 +63,7 @@ class UIMiniChart extends React.Component {
    */
   render() {
     return (
-      <MiniChart
+      <Chart
         title     = { this.props.title }
         data      = { this.state[this.resourceName()] }
         type      = { this.props.type }
@@ -78,17 +78,17 @@ class UIMiniChart extends React.Component {
 export default {
   build : function() {
     return {
-      name    : 'Mini Chart',
-      type    : 'mini-chart',
+      name    : 'Chart',
+      type    : 'chart',
       icon    : 'insert_chart',
-      class   : UIMiniChart,
+      class   : UIChart,
       options : [
         {
           label     : 'Title',
           component : 'input',
           type      : 'text',
           name      : 'title',
-          helpText  : 'Enter a Title for the Chart'
+          helpText  : 'Enter a Title for the Chart',
         },
         {
           label     : 'Resource',
