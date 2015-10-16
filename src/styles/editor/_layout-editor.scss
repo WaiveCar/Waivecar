@@ -274,14 +274,43 @@
           }
         }
         .options-menu {
-          display  : inline-block;
-          height   : 24px;
           visibility: hidden;
+          position : absolute;
+          right : 0;
+          top : -4px;
+          height   : 24px;
+          -webkit-border-radius: 3px;
+          border-radius: 3px;
+          background: #fff;
+          -webkit-box-shadow: 0 2px 4px rgba(0,0,0,0.25), 0 0 33px rgba(0,0,0,0.12);
+          box-shadow: 0 2px 4px rgba(0,0,0,0.25), 0 0 33px rgba(0,0,0,0.12);
+          pointer-events: auto;
+          padding: 0 2px 0;
+          -webkit-transition: opacity 120ms ease;
+          -moz-transition: opacity 120ms ease;
+          -o-transition: opacity 120ms ease;
+          -ms-transition: opacity 120ms ease;
+          transition: opacity 120ms ease;
+          z-index: 1500;
+          .btn {
+            -webkit-transition-duration: 120ms;
+            transition-duration: 120ms;
+            -webkit-transition: none;
+            -o-transition: none;
+            transition: none;
+          }
+          .btn-xs {
+            padding: 2px 5px;
+            font-size: 11px;
+            line-height: 1.5;
+            //border-radius
+          }
           .btn-icon {
             width    : 24px;
             height   : 24px;
             .material-icons {
-              line-height: 24px;
+              line-height : 25px;
+              font-size   : 25px;
             }
           }
         }

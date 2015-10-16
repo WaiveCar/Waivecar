@@ -135,15 +135,11 @@ export default class ViewComponent extends Component {
       <div className={ containerClass }>
         <div className="view-component-header">
           <ViewItemIcon type={ type } icon={ icon} />
-          <div className="options-menu pull-right">
-            <div className="btn-group">
-              <button type="button" className="btn btn-icon" onClick={ this.onRemove }>
-                <i className="material-icons" role="edit">delete</i>
-              </button>
-              <button type="button" className="btn btn-icon" onClick={ this.toggleSettings }>
-                <i className="material-icons" role="edit">more_horiz</i>
-              </button>
-            </div>
+          <div className="options-menu">
+            <button type="button" className="btn btn-danger-outline btn-xs" onClick={ this.onRemove }>Remove</button>
+            <button type="button" className="btn btn-icon" onClick={ this.toggleSettings }>
+              <i className="material-icons" role="edit">more_horiz</i>
+            </button>
           </div>
         </div>
         { this.renderSettings() }
