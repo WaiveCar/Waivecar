@@ -23,14 +23,41 @@ Reach.Register.Model('License', 'sequelize', function (model, Sequelize) {
         key   : 'id'
       }
     },
-    number     : { type : Sequelize.STRING(80), allowNull : false },
-    firstName  : { type : Sequelize.STRING(80), allowNull : false },
-    middleName : { type : Sequelize.STRING(80), allowNull : true },
-    lastName   : { type : Sequelize.STRING(80), allowNull : false },
-    birthDate  : { type : Sequelize.DATEONLY(), allowNull : false },
-    country    : { type : Sequelize.STRING(80), allowNull : false },
-    state      : { type : Sequelize.STRING(20), allowNull : false },
-    fileId     : { type : Sequelize.STRING(36), allowNull : true }
+
+    number : { 
+      type : Sequelize.STRING(80), allowNull : false 
+    },
+
+    firstName : { 
+      type : Sequelize.STRING(80), allowNull : false 
+    },
+
+    middleName : { 
+      type : Sequelize.STRING(80), allowNull : true 
+    },
+
+    lastName : { 
+      type : Sequelize.STRING(80), allowNull : false 
+    },
+
+    birthDate : { 
+      type : Sequelize.DATEONLY(), allowNull : false 
+    },
+
+    country : { 
+      type : Sequelize.STRING(80), allowNull : false 
+    },
+
+    state : { 
+      type : Sequelize.STRING(20), allowNull : false 
+    },
+
+    // ### License File
+    // A collection id refering to the file that carries the license image.
+
+    collectionId : { 
+      type : Sequelize.STRING(36), allowNull : true 
+    }
   };
 
   return model;

@@ -55,6 +55,8 @@ module.exports = {
     params : [
       'firstName',
       'lastName',
+      'email',
+      'phone',
       'password'
     ],
     ui : {

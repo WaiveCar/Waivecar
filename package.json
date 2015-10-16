@@ -36,7 +36,7 @@
     "reach-auth": "0.2.11",
     "reach-bcrypt": "1.0.0",
     "reach-email": "0.0.10",
-    "reach-file": "0.3.4",
+    "reach-file": "0.3.7",
     "reach-log": "0.1.0",
     "reach-mongo": "0.0.7",
     "reach-payments": "0.1.5",
@@ -46,7 +46,7 @@
     "reach-subscription": "0.0.3",
     "reach-token": "1.0.0",
     "reach-ui": "0.0.15",
-    "reach-user": "0.3.6",
-    "reach-verification": "0.0.2"
+    "reach-user": "0.3.7",
+    "reach-verification": "0.0.3"
   }
 }

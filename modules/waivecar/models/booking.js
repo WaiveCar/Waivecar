@@ -23,6 +23,7 @@ Reach.Register.Model('Booking', 'sequelize', function (model, Sequelize) {
         key   : 'id'
       }
     },
+
     carId : {
       type       : Sequelize.STRING(28),
       allowNull  : false,
@@ -31,9 +32,20 @@ Reach.Register.Model('Booking', 'sequelize', function (model, Sequelize) {
         key   : 'id'
       }
     },
-    paymentId : { type : Sequelize.INTEGER },
-    filesId   : { type : Sequelize.STRING },
-    status    : {
+
+    paymentId : { 
+      type : Sequelize.INTEGER 
+    },
+
+    // ### File Collection
+    // The collectionId represents a unified id for the files that
+    // has been attached to the booking.
+
+    collectionId : { 
+      type : Sequelize.STRING 
+    },
+
+    status : {
       type : Sequelize.ENUM(
         'new-booking',
         'payment-authorized',
