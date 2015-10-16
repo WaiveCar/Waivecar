@@ -52,7 +52,6 @@ export default {
           name      : 'id',
           label     : 'Image',
           component : 'file',
-          helpText  : 'Add a file',
           required  : true
         }
       ]
