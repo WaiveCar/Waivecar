@@ -151,5 +151,5 @@ function _handleResult(callback, err, res) {
       data    : res.body.data
     });
   }
-  callback(null, res.body);
+  callback(null, res.body || res.text);
 }

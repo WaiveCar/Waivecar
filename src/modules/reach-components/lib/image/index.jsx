@@ -27,7 +27,6 @@ export default class Image extends React.Component {
    * @method componentDidMount
    */
   componentDidMount() {
-    console.log(this.props);
     if (this.props.id) {
       this.setDefault(this.props.id);
     }
@@ -45,23 +44,27 @@ export default class Image extends React.Component {
   }
 
   setDefault(id) {
-    this.setState({ id : id });
-    // api.get(this.props.resource.show.uri.replace(':id', id), (error, result) => {
-    //   if (error) {
-    //     return Snackbar.notify({
-    //       type    : `danger`,
-    //       message : `Could not retrieve image [ID: ${ id }]`
-    //     });
-    //   }
-    //   let id = `image-${ result.id }`;
-    //   this.setState({
-    //     id     : id,
-    //     data   : result,
-    //     key    : result.id,
-    //   }, () => {
-    //   });
-    // });
+    function hexToBase64(str) {
+      return btoa(String.fromCharCode.apply(null, str.replace(/\r|\n/g, "").replace(/([\da-fA-F]{2}) ?/g, "0x$1 ").replace(/ +$/, "").split(" ")));
+    }
+
+    api.get(this.props.resource.show.uri.replace(':id', id), (error, result) => {
+      if (error) {
+        return Snackbar.notify({
+          type    : `danger`,
+          message : `Could not retrieve image [ID: ${ id }]`
+        });
+      }
+      let key = `image-${ id }`;
+      this.setState({
+        id     : id,
+        key    : key,
+        data   : hexToBase64(result),
+      }, () => {
+      });
+    });
   }
+
 
   /**
    * @method render
@@ -70,12 +73,13 @@ export default class Image extends React.Component {
     if (!this.props.id || !this.state.id) {
       return (<div className="image-component" />)
     }
+    let data = `data:image/jpeg;base64,${ this.state.data }`;
     return (
       <div className="image-component">
         <img
           id = { this.state.id}
           key = { this.state.key }
-          src = { this.props.resource.show.uri.replace(':id', this.state.id) }
+          src= { data }
           className = 'image'
         />
       </div>
