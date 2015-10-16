@@ -119,12 +119,12 @@ class UIImage extends React.Component {
       if (error) {
         return handleError(error.message);
       }
-      this.goBack();
+      this.setDefault(data.id);
     }.bind(this));
 
     // ### Error
     // Handle incoming errors.
-    
+
     function handleError(message) {
       snackbar.notify({
         type    : 'danger',

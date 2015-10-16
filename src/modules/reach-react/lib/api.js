@@ -56,6 +56,34 @@ API.post = function (uri, data, callback, role) {
 };
 
 /**
+ * @method post
+ * @param  {String}   url
+ * @param  {Object}   data
+ * @param  {Function} callback
+ * @param  {String}   [role]
+ */
+API.file = function (uri, data, callback, role) {
+  let req = request.post(api + uri);
+  if (auth.check()) {
+    req.set('Authorization', auth.user.token);
+  }
+  req.set('Role', role || 'guest');
+  let formData = new FormData();
+  for (var key in data.files) {
+    if (data.files.hasOwnProperty(key) && data.files[key] instanceof File) {
+      formData.append(key, data.files[key]);
+    }
+  }
+  for (var key in data) {
+    if (key !== 'files' && data.hasOwnProperty(key)) {
+      formData.append(key, data[key]);
+    }
+  }
+  req.send(formData);
+  req.end(_handleResult.bind(this, callback));
+};
+
+/**
  * @method put
  * @param  {String}   uri
  * @param  {Object}   data
