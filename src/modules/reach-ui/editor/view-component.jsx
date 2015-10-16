@@ -17,6 +17,7 @@ export default class ViewComponent extends Component {
     column   : PropTypes.string.isRequired,
     onUpdate : PropTypes.func.isRequired,
     onDrop   : PropTypes.func.isRequired,
+    onRemove : PropTypes.func.isRequired
   };
 
   /**
@@ -25,10 +26,11 @@ export default class ViewComponent extends Component {
   constructor(...args) {
     super(...args);
 
-    this.updateOptions = this.updateOptions.bind(this);
+    this.updateOptions        = this.updateOptions.bind(this);
     this.getMandatorySettings = this.getMandatorySettings.bind(this);
-    this.toggleSettings = this.toggleSettings.bind(this);
-    this.onDrop = this.onDrop.bind(this);
+    this.toggleSettings       = this.toggleSettings.bind(this);
+    this.onDrop               = this.onDrop.bind(this);
+    this.onRemove             = this.onRemove.bind(this);
 
     this.state = {
       isActive     : false,
@@ -75,6 +77,11 @@ export default class ViewComponent extends Component {
     this.props.onDrop(item);
   }
 
+  onRemove() {
+    let component = this.props;
+    this.props.onRemove(component);
+  }
+
   onActive(zone) {
     this.setState({
       isActive : true
@@ -110,7 +117,7 @@ export default class ViewComponent extends Component {
             },
             {
               type  : 'submit',
-              value : 'Save',
+              value : 'Ok',
               class : 'btn btn-success-outline btn-xs',
               click : 'submit'
             }
@@ -128,10 +135,15 @@ export default class ViewComponent extends Component {
       <div className={ containerClass }>
         <div className="view-component-header">
           <ViewItemIcon type={ type } icon={ icon} />
-          <div className="options-menu">
-            <button type="button" className="btn btn-icon" onClick={ this.toggleSettings }>
-              <i className="material-icons" role="edit">more_vert</i>
-            </button>
+          <div className="options-menu pull-right">
+            <div className="btn-group">
+              <button type="button" className="btn btn-icon" onClick={ this.onRemove }>
+                <i className="material-icons" role="edit">delete</i>
+              </button>
+              <button type="button" className="btn btn-icon" onClick={ this.toggleSettings }>
+                <i className="material-icons" role="edit">more_horiz</i>
+              </button>
+            </div>
           </div>
         </div>
         { this.renderSettings() }

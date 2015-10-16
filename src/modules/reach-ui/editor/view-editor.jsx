@@ -171,6 +171,26 @@ export default class ViewLayout extends React.Component {
     });
   }
 
+  handleRemove(viewComponent) {
+    let layout = this.state.layout;
+    // relative to components Columns
+    let container = search.findViewComponent(null, 0, layout, viewComponent.column);
+
+    if (container.parent.components.length > 1) {
+      container.parent.components.splice(container.index, 1);
+      let columnWidth = Math.floor(12 / container.parent.components.length) || 12;
+      container.parent.components.forEach((c) => {
+        c.options.width = columnWidth;
+      });
+    } else {
+      let parentContainer = search.findViewComponent(null, 0, layout, viewComponent.row);
+      parentContainer.parent.components.splice(container.index, 1);
+    }
+    this.setState({
+      layout : layout
+    });
+  }
+
   /**
    * @param  {String} item
    */
@@ -222,6 +242,7 @@ export default class ViewLayout extends React.Component {
     return (
       <div id='ui-editor'>
         <div className='ui-content'>
+          { this.state.data.title && <h1>{ this.state.data.title }</h1> }
           { this.renderViewContainer() }
         </div>
         <div className='ui-toolbar'>
@@ -255,6 +276,7 @@ export default class ViewLayout extends React.Component {
         lastDroppedItem = { lastDroppedItem }
         onDrop          = { this.handleDrop.bind(this) }
         onUpdate        = { this.handleUpdate.bind(this) }
+        onRemove        = { this.handleRemove.bind(this) }
       />
     );
   }

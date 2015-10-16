@@ -168,8 +168,7 @@
       text-align: center;
       vertical-align: middle;
       margin          : 20px;
-      border          : 3px dashed $gray;
-      border-radius   : 6px;
+      border          : 4px solid #f3f3f3;
       height          : 600px;
       align-items     : center;
       display         : flex;
@@ -256,26 +255,19 @@
       }
       &:hover {
         .view-component-header {
-          visibility: visible;
+          .options-menu {
+            visibility: visible;
+          }
         }
       }
       .view-component-header {
-        visibility: hidden;
         width         : 100%;
-        height        : 33px;
-        padding       : 2px;
-        border-bottom    : 3px solid $gray-lighter;
-        margin-right : 8px;
+        height        : 25px;
         .view-component-icon {
           display  : inline-block;
-          width    : 24px;
-          height   : 24px;
+          width    : 18px;
+          height   : 18px;
           vertical-align: middle;
-          opacity: 0.3;
-          border-radius: 100%;
-          background: $gray;
-          color: #FFF;
-          padding: 3px;
           .material-icons {
             line-height: 18px;
             font-size: 18px;
@@ -283,8 +275,8 @@
         }
         .options-menu {
           display  : inline-block;
-          width    : 24px;
           height   : 24px;
+          visibility: hidden;
           .btn-icon {
             width    : 24px;
             height   : 24px;
@@ -318,10 +310,12 @@
   }
 }
 
-        // .view-options {
-        //   position : absolute;
-        //   top      : 3px;
-        //   right    : 18px;
-        //   width    : 24px;
-        //   height   : 24px;
-        //   vertical-align: middle;
+.file-dropzone {
+  border     : 4px solid #f6f6f6;
+  background : #e8e8e8;
+  .file-dropzone-title {
+    padding: 16px 0 0;
+    text-align : center;
+    color : $gray-light;
+  }
+}

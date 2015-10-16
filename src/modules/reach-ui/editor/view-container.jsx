@@ -99,6 +99,7 @@ export default class ViewContainer extends React.Component {
         column       = { columnId }
         onUpdate     = { this.props.onUpdate }
         onDrop       = { this.props.onDrop }
+        onRemove     = { this.props.onRemove }
       />
     );
   }
