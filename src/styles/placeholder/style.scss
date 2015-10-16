@@ -1,6 +1,6 @@
 @import '~styles/variables';
+
 #placeholder {
-  align-items       : center;
   display           : -webkit-box;
   display           : -moz-box;
   display           : -ms-flexbox;
@@ -8,8 +8,8 @@
   display           : -webkit-flex;
   display           : flex;
   flex-flow         : row wrap;
-  justify-content   : center;
   min-height        : 100vh;
+  position          : relative;
   -webkit-flex-flow : row wrap;
 
   .notification-container {
@@ -21,6 +21,11 @@
     border-top    : 2px solid $brand-primary;
     border-radius : 0;
     color         : #fcfcfc;
+
+    left          : 50%;
+    position      : absolute;
+    top           : 50%;
+    transform     : translate(-50%, -50%);
 
     img {
       display : block;

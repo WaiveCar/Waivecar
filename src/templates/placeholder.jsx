@@ -88,7 +88,7 @@ class PlaceholderTemplate extends React.Component {
     }
 
     return (
-      <div className="notification-container animated zoomIn">
+      <div className="notification-container animated fadeIn">
         <img src="/images/logo.svg" height="50" width="50" />
         <h5>WaiveCar is launching soon</h5>
         <Form
