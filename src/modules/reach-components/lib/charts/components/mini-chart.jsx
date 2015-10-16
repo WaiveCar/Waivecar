@@ -8,7 +8,7 @@ import './style.scss';
 export default class MiniChart extends React.Component {
 
   renderLine() {
-    switch (this.props.chartType) {
+    switch (this.props.type) {
       case 'bar' : return (<SparklinesBars style={{ fill : '#ffffff' }} />);
       default    : return (<SparklinesLine color="#ffffff" />);
     }
@@ -32,7 +32,7 @@ export default class MiniChart extends React.Component {
           </Sparklines>
         </div>
         <div className="count">
-          <small>{ this.props.title}</small>
+          <small>{ this.props.title }</small>
           <h2>{ count }</h2>
         </div>
       </div>

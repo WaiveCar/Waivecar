@@ -52,7 +52,7 @@ export default class ViewComponent extends Component {
     if (mandatoryCount === 0) return false;
     if (!this.props.options) return true;
     // TODO: actually test each key by name.
-    if (mandatoryCount === Object.keys(this.props.options).length) return false;
+    if (mandatoryCount <= Object.keys(this.props.options).length) return false;
     return true;
   }
 

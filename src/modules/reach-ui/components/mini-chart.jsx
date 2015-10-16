@@ -2,7 +2,7 @@
 
 import React                             from 'react';
 import { relay, api }                    from 'reach-react';
-import { Charts, snackbar }              from 'reach-components';
+import { Charts, snackbar }           from 'reach-components';
 import { components, fields, resources } from 'reach-ui';
 
 let { MiniChart } = Charts;
@@ -66,8 +66,8 @@ class UIMiniChart extends React.Component {
       <MiniChart
         title     = { this.props.title }
         data      = { this.state[this.resourceName()] }
-        chartType = { this.props.type }
-        className = { this.props.class }
+        type      = { this.props.type }
+        className = { this.props.color }
       />
     );
   }
@@ -82,28 +82,37 @@ export default {
       type    : 'mini-chart',
       icon    : 'insert_chart',
       class   : UIMiniChart,
-      options : {
-        resource : {
-          label     : 'Resource',
-          component : 'select',
-          options   : [
-            {
-              name : 'Cars',
-              value : 'cars'
-            }
-          ],
-          helpText  : 'Select a Resource',
-          required  : true
-        },
-        title : {
+      options : [
+        {
           label     : 'Title',
           component : 'input',
           type      : 'text',
+          name      : 'title',
           helpText  : 'Select a Resource'
         },
-        type : {
+        {
+          label     : 'Resource',
+          component : 'react-select',
+          name      : 'resource',
+          options   : resources.getSelectList(),
+          helpText : 'Select resource for this Chart',
+          required  : true
+        },
+        {
+          label     : 'Fields',
+          component : 'react-select',
+          name      : 'field',
+          helpText  : 'Select field to sum',
+          options   : {
+            connector : 'resource',
+            values    : fields.getSelectList()
+          },
+          required  : true
+        },
+        {
           label     : 'Chart Type',
-          component : 'select',
+          name      : 'type',
+          component : 'react-select',
           options   : [
             {
               name : 'Bar',
@@ -116,9 +125,10 @@ export default {
           ],
           helpText  : 'Select a Chart Type'
         },
-        class : {
+        {
+          name      : 'color',
           label     : 'Chart Color',
-          component : 'select',
+          component : 'react-select',
           options   : [
             {
               name : 'Pink',
@@ -131,7 +141,7 @@ export default {
           ],
           helpText  : 'Select a Chart Color'
         }
-      }
+      ]
     };
   }
 }
