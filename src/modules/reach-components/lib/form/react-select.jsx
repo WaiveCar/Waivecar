@@ -191,9 +191,7 @@ export default class ReactSelect extends React.Component {
       return <div />
     }
 
-    if (multi) {
-      value = value[name];
-    }
+    value = value[name];
 
     logger.debug(`Form > Render select component [${ name }] [${ value }]`);
 

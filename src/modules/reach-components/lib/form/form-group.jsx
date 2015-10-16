@@ -64,8 +64,8 @@ export default class FormGroup extends React.Component {
       case 'checkbox'           : return <Checkbox    key={ index } options={ options } value={ this.props.data }               onChange={ this.props.onChange } />;
       case 'radio'              : return <Radio       key={ index } options={ options } value={ this.props.data[options.name] } onChange={ this.props.onChange } />;
       case 'textarea'           : return <Textarea    key={ index } options={ options } value={ this.props.data[options.name] } onChange={ this.props.onChange } />;
-      case 'react-select'       : return <ReactSelect key={ index } options={ options } value={ this.props.data[options.name] } onChange={ this.props.onChange } multi={ false } />;
-      case 'react-multi-select' : return <ReactSelect key={ index } options={ options } value={ this.props.data[options.name] } onChange={ this.props.onChange } multi={ true } />;
+      case 'react-select'       : return <ReactSelect key={ index } options={ options } value={ this.props.data } onChange={ this.props.onChange } multi={ false } />;
+      case 'react-multi-select' : return <ReactSelect key={ index } options={ options } value={ this.props.data } onChange={ this.props.onChange } multi={ true } />;
       case 'file'               : return <FileField   key={ index } options={ options } value={ this.props.data[options.name] } onChange={ this.props.onChange } />;
       default :
         logger.warn(`Form > Cannot render unknown component [${ options.component }]`);
