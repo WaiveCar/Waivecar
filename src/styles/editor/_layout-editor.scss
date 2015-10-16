@@ -254,13 +254,18 @@
           }
         }
       }
+      &:hover {
+        .view-component-header {
+          visibility: visible;
+        }
+      }
       .view-component-header {
+        visibility: hidden;
         width         : 100%;
         height        : 33px;
         padding       : 2px;
-        background    : $gray-lightest;
-        border-bottom : 1px solid $gray-lighter;
-        border-top    : 3px solid $gray-lighter;
+        border-bottom    : 3px solid $gray-lighter;
+        margin-right : 8px;
         .view-component-icon {
           display  : inline-block;
           width    : 24px;
@@ -293,7 +298,9 @@
         background : #f8f8f8;
         font-size  : 0.8rem;
         padding    : 8px;
-        label {
+        margin     : 8px 8px 8px 0;
+        border     : 4px solid #f3f3f3;
+          label {
           color : $gray;
         }
         input {
