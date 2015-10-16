@@ -32,6 +32,7 @@ export default class SandboxUpload extends React.Component {
   render() {
     return (
       <div className="container">
+      
         <h3 style={{ margin : '30px 0' }}>Files</h3>
         <div className="clearfix">
         {
@@ -40,7 +41,7 @@ export default class SandboxUpload extends React.Component {
               <div
                 key   = { key }
                 style = {{
-                  background : `url('http://local.io:8081/files/${ file.id }') center center / cover`,
+                  background : `url('${ config.api.uri }:${ config.api.port }/file/${ file.id }') center center / cover`,
                   float      : 'left',
                   height     : 100,
                   width      : 100
@@ -50,6 +51,7 @@ export default class SandboxUpload extends React.Component {
           })
         }
         </div>
+
         <h3 style={{ margin : '30px 0' }}>DropZone</h3>
         <Dropzone
           options = {{
@@ -57,6 +59,7 @@ export default class SandboxUpload extends React.Component {
             maxFilesize : 2
           }}
         />
+
       </div>
     );
   }
