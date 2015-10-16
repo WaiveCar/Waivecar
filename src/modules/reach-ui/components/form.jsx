@@ -249,7 +249,8 @@ export default {
           component : 'react-select',
           name      : 'resource',
           options   : resources.getSelectList(),
-          helpText : 'Select resource for this form'
+          helpText : 'Select resource for this form',
+          required  : true
         },
         {
           label     : 'Fields',
@@ -259,7 +260,8 @@ export default {
           options   : {
             connector : 'resource',
             values    : fields.getSelectList()
-          }
+          },
+          required  : true
         },
         {
           name      : 'actions',
@@ -279,7 +281,8 @@ export default {
               value : 'delete'
             }
           ],
-          helpText  : 'Select Actions'
+          helpText  : 'Select Actions',
+          required  : true
         }
       ]
     };

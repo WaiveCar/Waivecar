@@ -29,7 +29,8 @@ export default {
           label     : 'Content Id',
           component : 'input',
           type      : 'number',
-          helpText  : 'Enter a known Id'
+          helpText  : 'Enter a known Id',
+          required  : true
         }
       ]
     };

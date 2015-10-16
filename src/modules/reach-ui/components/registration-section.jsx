@@ -7,11 +7,8 @@ import { components, fields, resources } from 'reach-ui';
 import { Link }                          from 'react-router';
 
 class UIRegistrationSection extends React.Component {
-    // if (auth.check()) {
-    //   return false;
-    // }
-  render() {
 
+  renderRegistration() {
     return (
       <div className="text-center">
         <h1>Create an account</h1>
@@ -19,6 +16,23 @@ class UIRegistrationSection extends React.Component {
         <Link className="btn btn-primary btn-lg" to="/register">Register</Link>
       </div>
     );
+  }
+
+  renderLogin() {
+    return (
+      <div className="text-center">
+        <p>Welcome back <strong>{ auth.user.firstName }</strong></p>
+        <Link className="btn btn-primary btn-lg" to="/dashboard">My Dashboard</Link>
+      </div>
+    );
+  }
+
+  render() {
+    if (auth.check()) {
+      return this.renderLogin();
+    }
+
+    return this.renderRegistration();
   }
 }
 
@@ -29,7 +43,16 @@ export default {
       name    : 'Registration Section',
       type    : 'meta-registration',
       class   : UIRegistrationSection,
-      icon    : 'email'
+      icon    : 'email',
+      options : [
+        {
+          label     : 'Background Image',
+          component : 'file',
+          name      : 'fileId',
+          helpText  : 'Set a background image',
+          required  : false
+        }
+      ]
     };
   }
 }

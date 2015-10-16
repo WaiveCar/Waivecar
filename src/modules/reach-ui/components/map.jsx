@@ -51,11 +51,11 @@ class UIMap extends React.Component {
    */
   render() {
     return (
-      <Map 
-        markers          = { this.state[this.props.resource] } 
-        markerHandlerKey = { this.props.key } 
-        markerHandler    = { this.props.handler } 
-        markerIcon       = { '/images/admin/map-icon-waivecar.svg' } 
+      <Map
+        markers          = { this.state[this.props.resource] }
+        markerHandlerKey = { this.props.key }
+        markerHandler    = { this.props.handler }
+        markerIcon       = { '/images/admin/map-icon-waivecar.svg' }
       />
     );
   }
@@ -77,7 +77,8 @@ export default {
           component : 'react-select',
           name      : 'resource',
           options   : resources.getSelectList(),
-          helpText : 'Select resource for this Map'
+          helpText : 'Select resource for this Map',
+          required  : true
         },
         {
           label     : 'Key',
@@ -87,7 +88,8 @@ export default {
           options   : {
             connector : 'resource',
             values    : fields.getSelectList()
-          }
+          },
+          required  : true
         }
       ]
     };

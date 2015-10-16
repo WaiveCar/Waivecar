@@ -92,7 +92,8 @@ export default {
               value : 'cars'
             }
           ],
-          helpText  : 'Select a Resource'
+          helpText  : 'Select a Resource',
+          required  : true
         },
         title : {
           label     : 'Title',
