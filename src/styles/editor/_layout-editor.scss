@@ -289,6 +289,24 @@
           }
         }
       }
+      .view-options {
+        background : #f8f8f8;
+        font-size  : 0.8rem;
+        padding    : 8px;
+        label {
+          color : $gray;
+        }
+        input {
+          padding : 2px;
+          font-size : 0.8rem;
+        }
+        .form-actions {
+          text-align : right;
+          .btn {
+            width : 60px;
+          }
+        }
+      }
     }
   }
 }

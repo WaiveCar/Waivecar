@@ -96,25 +96,27 @@ export default class ViewComponent extends Component {
 
     const { name, type, category, options } = this.props;
     return (
-      <Form
-        fields    = { this.state.settings }
-        default   = { options }
-        submit    = { this.updateOptions }
-        buttons   = {[
-          {
-            type  : 'button',
-            value : 'Reset',
-            class : 'btn btn-info btn-sm',
-            click : 'reset'
-          },
-          {
-            type  : 'submit',
-            value : 'Save',
-            class : 'btn btn-success btn-sm',
-            click : 'submit'
-          }
-        ]}
-      />
+      <div className="view-options">
+        <Form
+          fields    = { this.state.settings }
+          default   = { options }
+          submit    = { this.updateOptions }
+          buttons   = {[
+            {
+              type  : 'button',
+              value : 'Reset',
+              class : 'btn btn-info-outline btn-xs',
+              click : 'reset'
+            },
+            {
+              type  : 'submit',
+              value : 'Save',
+              class : 'btn btn-success-outline btn-xs',
+              click : 'submit'
+            }
+          ]}
+        />
+      </div>
     );
   }
 
