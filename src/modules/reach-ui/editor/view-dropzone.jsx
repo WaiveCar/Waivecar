@@ -37,13 +37,21 @@ export default class ViewDropzone extends React.Component {
   render() {
     const { zone, accepts, isOver, canDrop, connectDropTarget } = this.props;
     let dropzoneClassName = `view-dropzone view-dropzone-${ zone} ${ isOver ? 'is-over' : '' } ${ canDrop ? 'is-active' : '' } ${ this.props.className }`;
-    let message = `drop a ${ accepts.join(' or ') } to get started`;
+    if (zone === 'all') {
+      let message = `drop a ${ accepts.join(' or ') } to get started`;
+      return connectDropTarget(
+        <div className={ dropzoneClassName }>
+          <div className="view-dropzone-title">
+            <i title="{ message }" className="material-icons">add_circle_outline</i>
+            <h6>{ message }</h6>
+          </div>
+        </div>
+      );
+    }
+
     return connectDropTarget(
       <div className={ dropzoneClassName }>
-        <div className="view-dropzone-title">
-          <i title="{ message }" className="material-icons">add_circle_outline</i>
-          { zone === 'all' && <h6>{ message }</h6> }
-        </div>
+        <div className="dropzone-separator" />
       </div>
     );
   }

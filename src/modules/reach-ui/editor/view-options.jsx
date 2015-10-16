@@ -55,29 +55,19 @@ export default class ViewOptions extends Component {
 
   submit(options) {
     this.props.update(options);
-    this.close();
   }
 
-  renderModal() {
+  renderOptions() {
     const { componentName } = this.props;
     return (
-      <Modal
-        className      ="Modal__Bootstrap modal-dialog"
-        isOpen         ={ this.state.show }
-        onRequestClose ={ this.close.bind(this) }
-      >
-        <div className="modal-content">
-          <div className="modal-header">
-            <button type="button" className="btn btn-icon close" onClick={ this.close.bind(this) }>
-              <i className="material-icons" role="edit">close</i>
-            </button>
-            <h5>{ componentName } Options</h5>
-          </div>
-          <div className="modal-body">
-            { this.renderForm() }
-          </div>
+      <div className="options-container">
+        <div className="options-header">
+          <h5>{ componentName } Options</h5>
         </div>
-      </Modal>
+        <div className="options-content">
+          { this.renderForm() }
+        </div>
+      </div>
     );
   }
 
@@ -118,7 +108,7 @@ export default class ViewOptions extends Component {
             <i className="material-icons" role="edit">more_vert</i>
           </button>
         </div>
-        { this.state.show && this.renderModal() }
+        { this.state.show && this.renderOptions() }
       </div>
     );
   }

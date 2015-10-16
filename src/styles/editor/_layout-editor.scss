@@ -1,361 +1,302 @@
 @import '~styles/variables';
 @import 'animations';
-#editor {
-  .vertical-align {
-    align-items: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    > div {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-  }
-  .view-dropzone {
-    text-align     : center;
-    vertical-align : middle;
-    visibility     : hidden;
-    .material-icons {
-      color : $gray-lighter;
-    }
-    h6 {
-     color : $gray-lighter;
-    }
-    &.view-dropzone-left {
-     // min-height : 300px;
-    }
-    &.view-dropzone-right {
-      //min-height : 300px;
-    }
-    &.view-dropzone-top,
-    &.view-dropzone-bottom {
-      //height : 30px;
-    }
-  }
-  .ui-content {
-    padding : 10px;
-    .view-dropzone {
-    }
-    .view-container {
-      > .view-dropzone {
-        margin          : 20px;
-        border          : 3px dashed $gray;
-        border-radius   : 6px;
-        visibility      : visible;
-        height          : 600px;
-        align-items     : center;
-        display         : flex;
-        align-items     : center;
-        justify-content : center;
-        background      : $gray-lightest url('/images/editor/arrow-component-list.svg') center right no-repeat;
-        background-size : 20%;
-        .material-icons {
-          height         : 100px;
-          font-size      : 100px;
-          color          : $gray-lighter;
-          pointer-events : none;
-        }
-        h6 {
-         color          : $gray;
-         pointer-events : none;
-        }
+
+// #editor {
+//   .vertical-align {
+//     align-items: center;
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+//     > div {
+//       display: flex;
+//       align-items: center;
+//       justify-content: center;
+//     }
+//   }
+//   .view-dropzone {
+//     text-align     : center;
+//     vertical-align : middle;
+//     visibility     : hidden;
+//     .material-icons {
+//       color : $gray-lighter;
+//     }
+//     h6 {
+//      color : $gray-lighter;
+//     }
+//     &.view-dropzone-left {
+//      // min-height : 300px;
+//     }
+//     &.view-dropzone-right {
+//       //min-height : 300px;
+//     }
+//     &.view-dropzone-top,
+//     &.view-dropzone-bottom {
+//       //height : 30px;
+//     }
+//   }
+//   .ui-content {
+//     padding : 10px;
+//     .view-dropzone {
+//     }
+//     .view-container {
+//       > .view-dropzone {
+//         margin          : 20px;
+//         border          : 3px dashed $gray;
+//         border-radius   : 6px;
+//         visibility      : visible;
+//         height          : 600px;
+//         align-items     : center;
+//         display         : flex;
+//         align-items     : center;
+//         justify-content : center;
+//         background      : $gray-lightest url('/images/editor/arrow-component-list.svg') center right no-repeat;
+//         background-size : 20%;
+//         .material-icons {
+//           height         : 100px;
+//           font-size      : 100px;
+//           color          : $gray-lighter;
+//           pointer-events : none;
+//         }
+//         h6 {
+//          color          : $gray;
+//          pointer-events : none;
+//         }
+//       }
+//       &.is-active {
+//         .view-component-container {
+//           .view-component {
+//             border    : 2px dashed $gray-light;
+//             animation : wiggle 0.1s linear 0s infinite alternate;
+//             width     : 94%;
+//           }
+//           .vertical-dropzone {
+//             background  : $gray-lightest;
+//             display     : inline-block;
+//             width       : 2%;
+//             min-height  : 300px;
+//           }
+//           .horizontal-dropzone {
+//             display : block;
+//             width   : 100%;
+//             height  : 30px;
+//           }
+//           .view-dropzone {
+//             visibility : visible;
+//             background : $gray-lightest;
+//           }
+//         }
+//       }
+//       &.is-over {
+//         .view-component-container {
+//           .view-component {
+//           }
+//           .view-dropzone {
+//           }
+//         }
+//       }
+//     }
+//     .view-component-container {
+//       .vertical-dropzone {
+//         width : 0;
+//         height : 0;
+//         display : none;
+//       }
+//       .horizontal-dropzone {
+//         width : 0;
+//         height : 0;
+//         display : none;
+//       }
+//       .view-component {
+//         margin     : 0 auto;
+//         border     : 1px solid $gray-lighter;
+//         min-height : 200px;
+//         .view-component-content {
+//           padding    : 10px;
+//         }
+//         .view-component-header {
+//           width         : 100%;
+//           height        : 30px;
+//           padding       : 2px;
+//           background    : $gray-lightest;
+//           border-bottom : 1px solid $gray-lighter;
+//           .view-component-icon {
+//             display  : inline-block;
+//             width    : 24px;
+//             height   : 24px;
+//             vertical-align: middle;
+//             opacity: 0.3;
+//             border-radius: 100%;
+//             background: $gray;
+//             color: #FFF;
+//             padding: 3px;
+//             .material-icons {
+//               line-height: 18px;
+//               font-size: 18px;
+//             }
+
+//           }
+//           .view-options {
+//             position : absolute;
+//             top      : 3px;
+//             right    : 18px;
+//             width    : 24px;
+//             height   : 24px;
+//             vertical-align: middle;
+//             .view-options-menu {
+//               width    : 24px;
+//               height   : 24px;
+//               .btn-icon {
+//                 width    : 24px;
+//                 height   : 24px;
+//                 .material-icons {
+//                   line-height: 24px;
+//                 }
+//               }
+//             }
+//           }
+//         }
+//       }
+//     }
+//   }
+// }
+
+
+.ui-content {
+  padding : 20px;
+  .view-container {
+    > .view-dropzone {
+      text-align: center;
+      vertical-align: middle;
+      margin          : 20px;
+      border          : 3px dashed $gray;
+      border-radius   : 6px;
+      height          : 600px;
+      align-items     : center;
+      display         : flex;
+      align-items     : center;
+      justify-content : center;
+      background      : $gray-lightest url('/images/editor/arrow-component-list.svg') center right no-repeat;
+      background-size : 20%;
+      .material-icons {
+        height         : 100px;
+        font-size      : 100px;
+        color          : $gray-lighter;
+        pointer-events : none;
       }
-      &.is-active {
-        .view-component-container {
-          .view-component {
-            border    : 2px dashed $gray-light;
-            animation : wiggle 0.1s linear 0s infinite alternate;
-            width     : 94%;
-          }
-          .vertical-dropzone {
-            background  : $gray-lightest;
-            display     : inline-block;
-            width       : 2%;
-            min-height  : 300px;
-          }
-          .horizontal-dropzone {
-            display : block;
-            width   : 100%;
-            height  : 30px;
-          }
-          .view-dropzone {
-            visibility : visible;
-            background : $gray-lightest;
-          }
-        }
-      }
-      &.is-over {
-        .view-component-container {
-          .view-component {
-          }
-          .view-dropzone {
-          }
-        }
+      h6 {
+       color          : $gray;
+       pointer-events : none;
       }
     }
     .view-component-container {
-      .vertical-dropzone {
-        width : 0;
-        height : 0;
-        display : none;
-      }
-      .horizontal-dropzone {
-        width : 0;
-        height : 0;
-        display : none;
-      }
-      .view-component {
-        margin     : 0 auto;
-        border     : 1px solid $gray-lighter;
-        min-height : 200px;
-        .view-component-content {
-          padding    : 10px;
+      .view-dropzone {
+        text-align: center;
+        vertical-align: middle;
+        visibility: hidden;
+        position: absolute;
+        z-index: 1000;
+        > .dropzone-separator {
+          visibility: hidden;
+          position: absolute;
+          border : 1px solid $brand-primary;
         }
-        .view-component-header {
-          width         : 100%;
-          height        : 30px;
-          padding       : 2px;
-          background    : $gray-lightest;
-          border-bottom : 1px solid $gray-lighter;
-          .view-component-icon {
-            display  : inline-block;
-            width    : 24px;
-            height   : 24px;
-            vertical-align: middle;
-            opacity: 0.3;
-            border-radius: 100%;
-            background: $gray;
-            color: #FFF;
-            padding: 3px;
-            .material-icons {
-              line-height: 18px;
-              font-size: 18px;
-            }
-
+        &.view-dropzone-top {
+          height : 20px;
+          top: -10px;
+          left : 0;
+          right: 0;
+          > .dropzone-separator {
+            top : 8px;
+            left : 0;
+            right : 0;
           }
-          .view-options {
-            position : absolute;
-            top      : 3px;
-            right    : 18px;
+        }
+        &.view-dropzone-right {
+          width: 20px;
+          top: 0;
+          right: -10px;
+          bottom: 0;
+          > .dropzone-separator {
+            top    : 0;
+            bottom : 0;
+            left : 8px;
+          }
+        }
+        &.view-dropzone-bottom {
+          height : 20px;
+          bottom: -10px;
+          left : 0;
+          right: 0;
+          > .dropzone-separator {
+            top : 8px;
+            left : 0;
+            right : 0;
+          }
+        }
+        &.view-dropzone-left {
+          width: 20px;
+          top: 0;
+          left: -10px;
+          bottom: 0;
+          > .dropzone-separator {
+            top    : 0;
+            bottom : 0;
+            left : 8px;
+          }
+        }
+        &.is-active {
+          visibility: visible;
+          &.is-over {
+            background : rgba(0,0,0,.0125);
+            > .dropzone-separator {
+              visibility: visible;
+            }
+          }
+        }
+      }
+      .view-component-header {
+        width         : 100%;
+        height        : 33px;
+        padding       : 2px;
+        background    : $gray-lightest;
+        border-bottom : 1px solid $gray-lighter;
+        border-top    : 3px solid $gray-lighter;
+        .view-component-icon {
+          display  : inline-block;
+          width    : 24px;
+          height   : 24px;
+          vertical-align: middle;
+          opacity: 0.3;
+          border-radius: 100%;
+          background: $gray;
+          color: #FFF;
+          padding: 3px;
+          .material-icons {
+            line-height: 18px;
+            font-size: 18px;
+          }
+        }
+        .options-menu {
+          display  : inline-block;
+          width    : 24px;
+          height   : 24px;
+          .btn-icon {
             width    : 24px;
             height   : 24px;
-            vertical-align: middle;
-            .view-options-menu {
-              width    : 24px;
-              height   : 24px;
-              .btn-icon {
-                width    : 24px;
-                height   : 24px;
-                .material-icons {
-                  line-height: 24px;
-                }
-              }
+            .material-icons {
+              line-height: 24px;
             }
           }
         }
       }
     }
   }
-  // .view-component {
-  //   width : 96%;
-  //   min-width : 280px;
-  //   display : inline-block;
-  // }
-  // .view-dropzone {
-  //   text-align: center;
-  //   vertical-align: middle;
-  //   width : 0;
-  //   height : 0;
-  //   visibility : hidden;
-  //   background-color : rgba(160,100,100,0);
-  //   &.can-drop {
-  //     width  : 100%;
-  //     height : 300px;
-  //     visibility : visible;
-  //     background-color : rgba(160,100,100,1);
-  //     -webkit-transition          : all;
-  //     -o-transition               : all;
-  //     transition                  : all;
-  //     -webkit-transition-duration : 500ms;
-  //     transition-duration         : 500ms;
-  //     &.view-dropzone-top {
-  //       height  : 30px;
-  //     }
-  //     &.view-dropzone-right {
-  //       width   : 2%;
-  //       min-width : 20px;
-  //       display : inline-block;
-  //       .material-icons {
-  //         line-height : 300px;
-  //       }
-  //     }
-  //     &.view-dropzone-bottom {
-  //       height  : 30px;
-  //     }
-  //     &.view-dropzone-left {
-  //       width : 2%;
-  //       min-width : 20px;
-  //       display : inline-block;
-  //       .material-icons {
-  //         line-height : 300px;
-  //       }
-  //     }
-  //   }
-  // }
 }
-//   .view-layout {
-//     color : $gray;
-//     .view-container {
-//       width : 100%;
-//       padding: 20px;
-//       min-height: 300px;
-//       background: $app-color-white;
-//     }
-//     .view-row, .view-column, .view-component {
-//       width : 100%;
-//       min-height: 24px;
-//       border : 0;
-//       padding : 0 10px 10px;
-//       border     : 1px solid $gray-lighter;
-//     }
-//     .view-row {
-//       border-bottom : 1px dotted $gray;
-//       position  : relative;
-//       .container-fluid {
-//         margin-right: auto;
-//         margin-left: auto;
-//         padding : 0;
-//         padding-left: 0.9375rem;
-//         padding-right: 0.9375rem;
-//         [class*="col-xs-"] {
-//         //  padding : 0;
-//         }
-//       }
-//       > .view-dropzone {
-//         position: absolute;
-//         margin: 0;
-//         top: 140px;
-//         right: -73px;
-//         transform: rotate(90deg);
-//         width: 200px;
-//       }
-//     }
-//     .view-column {
-//       border-left : 1px dotted $gray;
-//     }
-//     .view-component {
-//       border : 1px solid $gray-lighter;
-//       width : 100%;
-//       height: 200px;
-//       &.content-component {
-//         &:before {
-//           position : absolute;
-//           padding : 20px;
-//           top : 20px;
-//           right : 20px;
-//           bottom : 20px;
-//           left : 20px;
-//           color : $gray-lightest;
-//           content   : 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
-//           overflow-y : hidden;
-//           font-size : 12px;
-//         }
-//       }
-//     }
-//     // //   width : 100%;
-//     // //   min-height: 100px;
-//     // //   background: #fff;
-//     // //   border : 1px solid $gray-lighter;
-//     // //   &:hover {
-//     // //     background: $gray-lightest;
-//     // //   }
-//     // // }
-//     // // .view-column {
-//     // //   min-height: 100px;
-//     // //   padding : 5px;
-//     // //   font-size : 12px;
-//     // //   text-align: left;
-//     // //   background: #fff;
-//     // //   border : 1px solid $gray-lighter;
-//     // //   &:hover {
-//     // //     background: $gray-lightest;
-//     // //   }
-//     // // }
-//     // // .view-component {
-//     // //   position : relative;
-//     // //   min-height: 200px;
-//     // //   padding : 5px;
-//     // //   font-size : 12px;
-//     // //   text-align: center;
-//     // //   vertical-align: middle;
-//     // //   background: lighten($brand-primary, 50%);
-//     // //   border : 1px solid $gray-light;
-//     // //   &:hover {
-//     // //     background: $gray-lightest;
-//     // //   }
-//     // //   .view-component-icon {
-//     // //     position : absolute;
-//     // //     top: 50%;
-//     // //     left: 50%;
-//     // //     transform: translateY(-50%) translateX(-50%);
-//     // //     z-index : 1;
-//     // //     width         : 130px;
-//     // //     height        : 130px;
-//     // //     border-radius : 100%;
-//     // //     padding       : 15px;
-//     // //     background    : $app-color-white;
-//     // //     .material-icons {
-//     // //       font-size : 100px;
-//     // //       color     : $gray-lighter;
-//     // //     }
-//     // //   }
-//     // }
-//   }
 
-// }
-
-// .view-editor-item {
-//   text-align : left;
-//   cursor     : move;
-//   padding    : 5px 0;
-//   .material-icons {
-//     width          : 35px;
-//     vertical-align : bottom;
-//     color          : $gray;
-//   }
-// }
-
-// .drop-zone {
-//   width: 300px;
-//   height: 300px;
-//   border: 1px solid green;
-// }
-
-// .temp-foot {
-//   position: fixed;
-//   bottom: 0;
-//   left: 0;
-//   right : 0;
-//   min-height: 60px;
-//   background : $gray-light;
-//   color : #333;
-//   font-family : 'Courier';
-//   font-size: 10px;
-// }
-
-
-// .view-dropzone {
-//   margin     : 0 24px;
-//   padding    : 5px;
-//   background : $gray-lightest;
-//   .text-info {
-//     margin : 0;
-//   }
-//   &.is-active {
-//     background : $brand-info;
-//     .text-info {
-//       color : $gray-lightest;
-//     }
-//   }
-// }
+        // .view-options {
+        //   position : absolute;
+        //   top      : 3px;
+        //   right    : 18px;
+        //   width    : 24px;
+        //   height   : 24px;
+        //   vertical-align: middle;
