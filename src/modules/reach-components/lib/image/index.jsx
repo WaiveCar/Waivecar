@@ -3,13 +3,16 @@
 import React, { PropTypes } from 'react';
 import Reach, { api }       from 'reach-react';
 import Snackbar             from '../snackbar';
+import config               from 'config';
+
 // import './style.scss';
 
 export default class Image extends React.Component {
 
   static propTypes = {
-    canEdit : PropTypes.bool,
-    id      : PropTypes.string
+    resource : PropTypes.object,
+    canEdit  : PropTypes.bool,
+    id       : PropTypes.string
   };
 
   /**
@@ -18,7 +21,8 @@ export default class Image extends React.Component {
   constructor(...args) {
     super(...args);
     this.state = {
-      id     : null,
+      id  : null,
+      api : config.api.uri + (config.api.port ? ':' + config.api.port : '')
     }
   }
 
@@ -44,10 +48,6 @@ export default class Image extends React.Component {
   }
 
   setDefault(id) {
-    function hexToBase64(str) {
-      return btoa(String.fromCharCode.apply(null, str.replace(/\r|\n/g, "").replace(/([\da-fA-F]{2}) ?/g, "0x$1 ").replace(/ +$/, "").split(" ")));
-    }
-
     api.get(this.props.resource.show.uri.replace(':id', id), (error, result) => {
       if (error) {
         return Snackbar.notify({
@@ -57,14 +57,12 @@ export default class Image extends React.Component {
       }
       let key = `image-${ id }`;
       this.setState({
-        id     : id,
-        key    : key,
-        data   : hexToBase64(result),
-      }, () => {
+        id : id,
+        key  : key,
+        data : result,
       });
     });
   }
-
 
   /**
    * @method render
@@ -73,7 +71,7 @@ export default class Image extends React.Component {
     if (!this.props.id || !this.state.id) {
       return (<div className="image-component" />)
     }
-    let data = `data:image/jpeg;base64,${ this.state.data }`;
+    let data = `${ this.state.api }/file/${ this.state.id }`;
     return (
       <div className="image-component">
         <img
