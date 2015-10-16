@@ -69,12 +69,12 @@ API.file = function (uri, data, callback, role) {
   }
   req.set('Role', role || 'guest');
   let formData = new FormData();
-  for (var key in data.files) {
+  for (let key in data.files) {
     if (data.files.hasOwnProperty(key) && data.files[key] instanceof File) {
       formData.append(key, data.files[key]);
     }
   }
-  for (var key in data) {
+  for (let key in data) {
     if (key !== 'files' && data.hasOwnProperty(key)) {
       formData.append(key, data[key]);
     }
