@@ -12,7 +12,7 @@ module.exports = {
     },
     fixtures : {
       contents : path.join(Reach.ROOT_PATH, 'fixtures', 'contents.json'),
-      views    : path.join(Reach.ROOT_PATH, 'fixtures', 'views.json')
+      views    : path.join(Reach.ROOT_PATH, 'fixtures', 'views.json'),
     }
   }
 };
