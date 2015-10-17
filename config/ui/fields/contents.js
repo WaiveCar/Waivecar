@@ -48,7 +48,7 @@ module.exports = {
     helpText  : null,
     tabIndex  : 5,
     required  : false
-  }
+  },
 
   deletedAt : {
     name      : 'deletedAt',

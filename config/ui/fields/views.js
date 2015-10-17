@@ -39,7 +39,7 @@ module.exports = {
     tabIndex  : 4
   },
 
-  class : {
+  className : {
     name      : 'class',
     label     : 'Class',
     component : 'input',
@@ -66,11 +66,11 @@ module.exports = {
     type      : 'text',
     tabIndex  : 7,
     required  : true
-  }
+  },
 
   userId : {
     name      : 'userId',
-    label     : 'Created By',
+    label     : 'User',
     component : 'input',
     type      : 'text',
     required  : false,
@@ -95,7 +95,7 @@ module.exports = {
     helpText  : null,
     tabIndex  : 10,
     required  : false
-  }
+  },
 
   deletedAt : {
     name      : 'deletedAt',
