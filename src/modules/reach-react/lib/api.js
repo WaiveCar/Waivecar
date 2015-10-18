@@ -106,7 +106,7 @@ class API {
    * @param  {String}   role
    */
   delete(uri, callback, role) {
-    let req = this.prepare('delete', uri, role);
+    let req = this.prepare('del', uri, role);
     req.end(_handleResult.bind(this, callback));
   }
 
