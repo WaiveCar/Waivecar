@@ -95,6 +95,7 @@ export default class Content extends React.Component {
   }
 
   startEdit() {
+    if (this.state.isEditing) return false;
     if (this.state.editor) {
       this.setState({
         isEditing : true
@@ -107,6 +108,8 @@ export default class Content extends React.Component {
   }
 
   stopEdit() {
+    if (!this.state.isEditing) return false;
+
     if (this.state.editor) {
       this.setState({
         isEditing : false
@@ -117,8 +120,9 @@ export default class Content extends React.Component {
   }
 
   renderActions() {
+    let classNames = this.state.isEditing ? 'content-actions is-active' : 'content-actions';
     return (
-      <div className="component-actions">
+      <div className={ classNames }>
         { !this.state.isEditing &&
           <button type="button" className="btn btn-icon" onClick={ this.startEdit }>
             <i className="material-icons" role="edit">mode_edit</i>
@@ -132,6 +136,7 @@ export default class Content extends React.Component {
       </div>
     );
   }
+
   /**
    * @method render
    */
@@ -139,14 +144,27 @@ export default class Content extends React.Component {
     if (!this.props.html) {
       return (<div className="content-component" />)
     }
+    if (!this.props.canEdit) {
+      return (
+        <div className="content-component">
+          <div
+            key                     = { this.state.key }
+            dangerouslySetInnerHTML = { this.state.html }
+            className               = 'content-component'
+          />
+        </div>
+      );
+    }
+
     return (
       <div className="content-component">
         <div
           key                     = { this.state.key }
           dangerouslySetInnerHTML = { this.state.html }
           className               = 'content-component'
+          onClick                 = { this.startEdit }
         />
-        { this.props.canEdit && this.renderActions() }
+        { this.renderActions() }
       </div>
     )
   }
