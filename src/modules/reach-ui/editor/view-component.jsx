@@ -31,6 +31,7 @@ export default class ViewComponent extends Component {
     this.toggleSettings       = this.toggleSettings.bind(this);
     this.onDrop               = this.onDrop.bind(this);
     this.onRemove             = this.onRemove.bind(this);
+    this.updateOptions        = this.updateOptions.bind(this);
 
     this.state = {
       isActive     : false,
@@ -67,7 +68,9 @@ export default class ViewComponent extends Component {
   updateOptions(value) {
     let component = { ...this.props, ...{ options : value } };
     this.props.onUpdate(component);
-    this.toggleSettings();
+    if (this.state.showSettings) {
+      this.toggleSettings();
+    }
   }
 
   onDrop(item) {
@@ -94,6 +97,7 @@ export default class ViewComponent extends Component {
 
     return components.render(this.props.type, {
       canEdit : true,
+      onUpdate : this.updateOptions,
       ...this.props.options
     });
   }

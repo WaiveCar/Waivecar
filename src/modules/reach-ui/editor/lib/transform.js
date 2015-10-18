@@ -3,7 +3,6 @@
 import async          from 'async';
 import { helpers  }   from 'reach-react';
 import components     from '../../lib/components';
-import contentCreator from './content-creator';
 import ItemCategories from '../item-categories';
 
 /**
@@ -57,9 +56,9 @@ Transform.toComponent = function(viewComponent, next) {
   if (component.components) {
     async.map(component.components, Transform.toComponent, function(err, components) {
       component.components = components;
-      contentCreator.createContentOrReturn(component, next);
+      return next(null, component);
     })
   } else {
-    contentCreator.createContentOrReturn(component, next);
+    return next(null, component);
   }
 }

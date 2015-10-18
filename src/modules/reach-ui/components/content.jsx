@@ -25,11 +25,11 @@ export default {
       icon    : 'format_align_justify',
       options : [
         {
-          name      : 'id',
-          label     : 'Content Id',
+          name      : 'html',
+          label     : 'Content',
           component : 'input',
-          type      : 'number',
-          helpText  : 'Enter a known Id',
+          type      : 'string',
+          helpText  : 'Enter HTML',
           required  : true
         }
       ]
