@@ -25,6 +25,10 @@ UI.templates.register('sandbox', {
     {
       path      : '/sandbox/upload',
       component : require('views/sandbox/upload')
+    },
+    {
+      path      : '/sandbox/relay',
+      component : require('views/sandbox/relay')
     }
   ]
 });
