@@ -48,9 +48,11 @@ Transform.toComponent = function(viewComponent, next) {
     type    : viewComponent.type,
     options : viewComponent.options
   }
-  delete component.options.canEdit;
+  if (component.options && component.options.canEdit) {
+    delete component.options.canEdit;
+  }
 
-  if (viewComponent.category !== ItemCategories.COMPONENT) {
+  if (viewComponent.type === 'container') {
     component.components = viewComponent.components;
   }
   if (component.components) {

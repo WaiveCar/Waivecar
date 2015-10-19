@@ -1,32 +1,86 @@
 import React, { PropTypes } from 'react';
 import { DropTarget }       from 'react-dnd';
 import { helpers  }         from 'reach-react';
-import { Layout }           from 'reach-components';
+import { Form, Layout }     from 'reach-components';
+import components           from '../lib/components';
 import ViewComponent        from './view-component';
 import ViewDropzone         from './view-dropzone';
 import ItemCategories       from './item-categories';
 
-let { Row, Column } = Layout;
+let { Container, Row, Column } = Layout;
 
-const target = {
-};
-
-function collect(connect, monitor) {
-  return {
-    connectDropTarget : connect.dropTarget(),
-    isOver            : monitor.isOver(),
-    canDrop           : monitor.canDrop()
-  }
-}
-
-@DropTarget(props => props.accepts, target, collect)
 export default class ViewContainer extends React.Component {
 
   static propTypes = {
-    accepts  : PropTypes.arrayOf(PropTypes.string).isRequired,
-    onDrop   : PropTypes.func.isRequired,
-    onUpdate : PropTypes.func.isRequired,
+    accepts     : PropTypes.arrayOf(PropTypes.string).isRequired,
+    options     : PropTypes.object.isRequired,
+    hasSiblings : PropTypes.bool.isRequired,
+    onDrop      : PropTypes.func.isRequired,
+    onUpdate    : PropTypes.func.isRequired,
   };
+
+  /**
+   * @constructor
+   */
+  constructor(...args) {
+    super(...args);
+
+    this.updateOptions        = this.updateOptions.bind(this);
+    this.getMandatorySettings = this.getMandatorySettings.bind(this);
+    this.toggleSettings       = this.toggleSettings.bind(this);
+    this.onRemove             = this.onRemove.bind(this);
+    this.updateOptions        = this.updateOptions.bind(this);
+
+    this.state = {
+      isActive     : false,
+    };
+    this.state.settings = components.getOptions(this.props.type);
+    this.state.showSettings = this.requiresOptions();
+  }
+
+  getMandatorySettings() {
+    if (!(this.state && this.state.settings)) {
+      return false;
+    }
+
+    let mandatorySettings = this.state.settings.filter((f) => f.hasOwnProperty('required') && f.required === true);
+    return mandatorySettings;
+  }
+
+  requiresOptions() {
+    let mandatoryOptions = this.getMandatorySettings();
+    let mandatoryCount= mandatoryOptions.length;
+    if (mandatoryCount === 0) return false;
+    if (!this.props.options) return true;
+    // TODO: actually test each key by name.
+    if (mandatoryCount <= Object.keys(this.props.options).length) return false;
+    return true;
+  }
+
+  toggleSettings() {
+    this.setState({
+      showSettings : !this.state.showSettings
+    });
+  }
+
+  updateOptions(value) {
+    let component = { ...this.props, ...{ options : value } };
+    this.props.onUpdate(component);
+    if (this.state.showSettings) {
+      this.toggleSettings();
+    }
+  }
+
+  onRemove() {
+    let component = this.props;
+    this.props.onRemove(component);
+  }
+
+  onDrop(item) {
+    item.nearest = this.props.editorId;
+    item.onContainer = true;
+    this.props.onDrop(item);
+  }
 
   /**
    * @method renderRow
@@ -60,6 +114,7 @@ export default class ViewContainer extends React.Component {
     }
     return (
       <Column key={ columnIndex } width={ columnWidth } { ...options }>
+        <h6>{ options.width }</h6>
         { this.renderColumnComponents(components, rowId, column.editorId) }
       </Column>
     );
@@ -104,16 +159,67 @@ export default class ViewContainer extends React.Component {
     );
   }
 
-  render() {
-    const { components, accepts, isOver, canDrop, connectDropTarget } = this.props;
-    let containerClassName = `view-container${ isOver ? ' is-over' : '' }${ canDrop ? ' is-active' : '' }${ this.props.className ? ' ' + this.props.className : '' }`;
-    return connectDropTarget(
-      <div className={ containerClassName }>
+  renderType() {
+    if (this.requiresOptions()) return false;
+    if (this.state.showSettings) return false;
+    const { components, accepts } = this.props;
+    let containerClassName = `view-container${ this.props.className ? ' ' + this.props.className : '' }`;
+
+    return (
+      <Container className={ containerClassName }>
         {
           Array.isArray(components) && components.length > 0
             ? components.map(this.renderRow.bind(this))
-            : <ViewDropzone zone={ 'all' } accepts={ accepts } onDrop={ this.props.onDrop.bind(this) } />
+            : <ViewDropzone zone={ 'all' } accepts={ accepts } onDrop={ this.onDrop.bind(this) } />
         }
+      </Container>
+    );
+  }
+
+  renderSettings() {
+    if (!this.state.showSettings) return false;
+
+    const { name, type, category, options } = this.props;
+    return (
+      <div className="view-options">
+        <Form
+          fields    = { this.state.settings }
+          default   = { options }
+          submit    = { this.updateOptions }
+          buttons   = {[
+            {
+              type  : 'button',
+              value : 'Reset',
+              class : 'btn btn-info-outline btn-xs',
+              click : 'reset'
+            },
+            {
+              type  : 'submit',
+              value : 'Ok',
+              class : 'btn btn-success-outline btn-xs',
+              click : 'submit'
+            }
+          ]}
+        />
+      </div>
+    );
+  }
+
+  render() {
+    const { components, accepts, isOver, type, hasSiblings } = this.props;
+    let containerType = this.props.options && this.props.options.type ? this.props.options.type : 'Container';
+    return (
+      <div className="view-container-container">
+        <div className="view-component-header">
+          <div className="options-menu">
+            { hasSiblings && <button type="button" className="btn btn-danger-outline btn-xs" onClick={ this.onRemove }>Remove { containerType }</button> }
+            <button type="button" className="btn btn-icon" onClick={ this.toggleSettings }>
+              <i className="material-icons" role="edit">more_horiz</i>
+            </button>
+          </div>
+        </div>
+        { this.renderSettings() }
+        { this.renderType() }
       </div>
     );
   }

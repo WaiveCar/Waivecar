@@ -5,6 +5,14 @@
  */
 let Search = module.exports = {};
 
+Search.findWithinContainers = function(parent, index, layout, editorId) {
+  let result = null;
+  for (let i = 0; !result && i < layout.length; i++) {
+    result = Search.findViewComponent(parent, i, layout[i], editorId);
+  }
+  return result;
+}
+
   /**
    * findViewComponent  Given an Id, return a ViewComponent and it's location in the Tree
    * @param  {Object}   parent

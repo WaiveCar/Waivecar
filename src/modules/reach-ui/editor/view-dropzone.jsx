@@ -1,15 +1,28 @@
 import React, { PropTypes } from 'react';
 import { DropTarget }       from 'react-dnd';
+import { helpers  }         from 'reach-react';
 import ViewOptions          from './view-options';
 import ViewItemIcon         from './view-item-icon';
 import ItemCategories       from './item-categories';
-import { helpers  }         from 'reach-react';
+import components           from '../lib/components';
 
 const target = {
   drop(props, monitor, component) {
     if (monitor.didDrop()) return;
     let viewComponent = monitor.getItem();
     viewComponent.editorId = helpers.random(10);
+
+    let defaults = {};
+    let defaultOptions = components.getOptions(viewComponent.type).filter((f) => { return f.default; });
+    defaultOptions.forEach((option, index) => {
+      defaults[option.name] =option.default;
+    });
+
+    viewComponent.options = defaults;
+    if (viewComponent.type === 'container') {
+      viewComponent.components = [];
+    }
+
     props.onDrop({ zone : props.zone, viewComponent : viewComponent });
   }
 };

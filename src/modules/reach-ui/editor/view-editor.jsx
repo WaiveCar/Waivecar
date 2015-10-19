@@ -24,6 +24,7 @@ export default class ViewLayout extends React.Component {
 
   constructor(...args) {
     super(...args);
+    this.renderViewContainer = this.renderViewContainer.bind(this);
 
     this.state = {
       data     : {
@@ -34,13 +35,18 @@ export default class ViewLayout extends React.Component {
         policy   : 'isAnyone',
         menus    : []
       },
-      layout   : {
-        editorId   : 0,
-        type       : 'container',
-        category   : ItemCategories.CONTAINER,
-        accepts    : [ ItemCategories.COMPONENT ],
-        components : [ ]
-      },
+      layout   : [
+        {
+          editorId   : 'NEW',
+          type       : 'container',
+          category   : ItemCategories.CONTAINER,
+          accepts    : [ ItemCategories.COMPONENT ],
+          options    : {
+            type : 'section'
+          },
+          components : [ ]
+        }
+      ],
       items : [
         { name : 'Row',    type : 'row',     icon : 'border_horizontal', category : ItemCategories.ROW,    accepts : [ ItemCategories.COLUMN ], options : {} },
         { name : 'Column', type : 'column',  icon : 'border_vertical',   category : ItemCategories.COLUMN, accepts : [ ItemCategories.ROW, ItemCategories.COMPONENT ], options : { width : 12 } }
@@ -98,8 +104,8 @@ export default class ViewLayout extends React.Component {
       }
 
       let layout = this.state.layout;
-      if (data.layout && data.layout.components) {
-        layout.components = data.layout.components.map(transform.toViewComponent);
+      if (data.layout) {
+        layout = data.layout.map(transform.toViewComponent);
       }
 
       this.setState({
@@ -116,7 +122,7 @@ export default class ViewLayout extends React.Component {
   submit() {
     let resource = this.resource();
     let data     = this.refs.form.data();
-    let comps    = Object.assign({}, this.state.layout.components);
+    let comps    = Object.assign({}, this.state.layout);
     let method   = resource.method.toLowerCase();
     let action   = resource.uri.replace(':id', this.id());
 
@@ -125,9 +131,7 @@ export default class ViewLayout extends React.Component {
     }
 
     async.map(comps, transform.toComponent, function(err, transformedComponents) {
-      data.layout = {
-        components : transformedComponents
-      };
+      data.layout = transformedComponents;
 
       if (data.menus) {
         data.menu = {
@@ -136,6 +140,7 @@ export default class ViewLayout extends React.Component {
           icon      : 'dashboard',
           locations : data.menus
         }
+        delete data.menus;
       }
 
       api[method](action, data, function (err, res) {
@@ -146,14 +151,13 @@ export default class ViewLayout extends React.Component {
           });
           return;
         }
-        console.log(res);
+        if (this.isCreate() && res.id) {
+          this.history.pushState(null, `/views/${ res.id }`);
+        }
         snackbar.notify({
           type    : 'success',
           message : 'Record was successfully updated.'
         });
-        // I think when youre in the editor you don't want to go back, I click save alot when
-        // making changes as a reflex and being removed from the editor feels unatural.
-        // this.goBack();
       }.bind(this));
     }.bind(this));
   }
@@ -164,7 +168,7 @@ export default class ViewLayout extends React.Component {
    */
   handleUpdate(viewComponent) {
     let layout = this.state.layout;
-    let found = search.findViewComponent(null, 0, layout, viewComponent.editorId);
+    let found = search.findWithinContainers(null, 0, layout, viewComponent.editorId);
     Object.assign(found.component, viewComponent);
     this.setState({
       layout : layout
@@ -174,40 +178,58 @@ export default class ViewLayout extends React.Component {
   handleRemove(viewComponent) {
     let layout = this.state.layout;
     // relative to components Columns
-    let container = search.findViewComponent(null, 0, layout, viewComponent.column);
-
-    if (container.parent.components.length > 1) {
-      container.parent.components.splice(container.index, 1);
-      let columnWidth = Math.floor(12 / container.parent.components.length) || 12;
-      container.parent.components.forEach((c) => {
-        c.options.width = columnWidth;
+    if (viewComponent.type === 'container') {
+      let container = search.findWithinContainers(null, 0, layout, viewComponent.editorId);
+      layout.splice(container.index, 1);
+      this.setState({
+        layout : layout
+      }, function() {
+        return;
       });
     } else {
-      let parentContainer = search.findViewComponent(null, 0, layout, viewComponent.row);
-      parentContainer.parent.components.splice(container.index, 1);
+      let container = search.findWithinContainers(null, 0, layout, viewComponent.column);
+      if (container.parent.components.length > 1) {
+        container.parent.components.splice(container.index, 1);
+        let columnWidth = Math.floor(12 / container.parent.components.length) || 12;
+        container.parent.components.forEach((c) => {
+          c.options.width = columnWidth;
+        });
+      } else {
+        let parentContainer = search.findWithinContainers(null, 0, layout, viewComponent.row);
+        parentContainer.parent.components.splice(container.index, 1);
+      }
+      this.setState({
+        layout : layout
+      });
     }
-    this.setState({
-      layout : layout
-    });
   }
 
   /**
    * @param  {String} item
    */
   handleDrop(item) {
-    let layout = this.state.layout;
-    let row    = Object.assign({}, this.state.items.find((i) => i.type == 'row'));
-    let column = Object.assign({}, this.state.items.find((i) => i.type == 'column'));
-    row.editorId     = helpers.random(10);
-    column.editorId  = helpers.random(10);
+    let layout      = this.state.layout;
+    let row         = Object.assign({}, this.state.items.find((i) => i.type == 'row'));
+    let column      = Object.assign({}, this.state.items.find((i) => i.type == 'column'));
+    column.options  = Object.assign({}, column.options);
+    row.editorId    = helpers.random(10);
+    column.editorId = helpers.random(10);
 
-    if (item.zone === 'all' && !item.nearest) {
+    if (item.viewComponent.type === 'container') {
+      if (item.zone === 'top') {
+        // we want to add one before current.
+        layout.push(item.viewComponent);
+      } else {
+        layout.push(item.viewComponent);
+      }
+    } else if (item.onContainer) {
       column.components = [ item.viewComponent ];
       row.components    = [ column ];
-      layout.components = [ row ];
+      let container = search.findWithinContainers(null, 0, layout, item.nearest);
+      layout[container.index].components = [ row ];
     } else {
       let parentType = [ 'top', 'bottom' ].indexOf(item.zone) > -1 ? 'row' : 'column';
-      let container = search.findViewComponent(null, 0, layout, parentType == 'row' ? item.row : item.column);
+      let container = search.findWithinContainers(null, 0, layout, parentType == 'row' ? item.row : item.column);
       switch (item.zone) {
         case 'right'  :
           container.index   = container.index + 1;
@@ -243,7 +265,7 @@ export default class ViewLayout extends React.Component {
       <div id='ui-editor'>
         <div className='ui-content'>
           { this.state.data.title && <h1>{ this.state.data.title }</h1> }
-          { this.renderViewContainer() }
+          { this.state.layout.map(this.renderViewContainer) }
         </div>
         <div className='ui-toolbar'>
           { this.renderToolbarTitle('View Settings') }
@@ -264,15 +286,20 @@ export default class ViewLayout extends React.Component {
   /**
    * @return {Object} ViewContainer
    */
-  renderViewContainer() {
-    const { layout, lastDroppedItem } = this.state;
+  renderViewContainer(container, containerIndex) {
+    const { lastDroppedItem } = this.state;
+    const hasSiblings = this.state.layout.length > 1;
+
     return (
       <ViewContainer
-        key             = { 'container' }
-        type            = { layout.type }
-        category        = { layout.category }
-        components      = { layout.components }
-        accepts         = { layout.accepts }
+        hasSiblings     = { hasSiblings }
+        editorId        = { container.editorId }
+        key             = { `container-${ containerIndex }` }
+        type            = { container.type }
+        category        = { container.category }
+        options         = { container.options }
+        components      = { container.components }
+        accepts         = { container.accepts }
         lastDroppedItem = { lastDroppedItem }
         onDrop          = { this.handleDrop.bind(this) }
         onUpdate        = { this.handleUpdate.bind(this) }

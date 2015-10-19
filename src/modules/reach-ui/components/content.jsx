@@ -30,6 +30,7 @@ export default {
           component : 'input',
           type      : 'string',
           helpText  : 'Enter HTML',
+          default   : '<p>Awaiting Content</p>',
           required  : true
         }
       ]

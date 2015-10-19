@@ -163,175 +163,178 @@
 
 .ui-content {
   padding : 20px;
-  .view-container {
-    > .view-dropzone {
-      text-align: center;
-      vertical-align: middle;
-      margin          : 20px;
-      border          : 4px solid #f3f3f3;
-      height          : 600px;
-      align-items     : center;
-      display         : flex;
-      align-items     : center;
-      justify-content : center;
-      background      : $gray-lightest url('/images/editor/arrow-component-list.svg') center right no-repeat;
-      background-size : 20%;
-      .material-icons {
-        height         : 100px;
-        font-size      : 100px;
-        color          : $gray-lighter;
-        pointer-events : none;
-      }
-      h6 {
-       color          : $gray;
-       pointer-events : none;
-      }
-    }
-    .view-component-container {
-      .view-dropzone {
+  .view-container-container {
+    border-left : 2px solid #f6f6f6;
+    .view-container {
+      > .view-dropzone {
         text-align: center;
         vertical-align: middle;
-        visibility: hidden;
-        position: absolute;
-        z-index: 1000;
-        > .dropzone-separator {
+        margin          : 20px;
+        border          : 4px solid #f3f3f3;
+        height          : 600px;
+        align-items     : center;
+        display         : flex;
+        align-items     : center;
+        justify-content : center;
+        background      : $gray-lightest url('/images/editor/arrow-component-list.svg') center right no-repeat;
+        background-size : 20%;
+        .material-icons {
+          height         : 100px;
+          font-size      : 100px;
+          color          : $gray-lighter;
+          pointer-events : none;
+        }
+        h6 {
+         color          : $gray;
+         pointer-events : none;
+        }
+      }
+      .view-component-container {
+        .view-dropzone {
+          text-align: center;
+          vertical-align: middle;
           visibility: hidden;
           position: absolute;
-          border : 1px solid $brand-primary;
-        }
-        &.view-dropzone-top {
-          height : 20px;
-          top: -10px;
-          left : 0;
-          right: 0;
+          z-index: 1000;
           > .dropzone-separator {
-            top : 8px;
+            visibility: hidden;
+            position: absolute;
+            border : 1px solid $brand-primary;
+          }
+          &.view-dropzone-top {
+            height : 20px;
+            top: -10px;
             left : 0;
-            right : 0;
-          }
-        }
-        &.view-dropzone-right {
-          width: 20px;
-          top: 0;
-          right: -10px;
-          bottom: 0;
-          > .dropzone-separator {
-            top    : 0;
-            bottom : 0;
-            left : 8px;
-          }
-        }
-        &.view-dropzone-bottom {
-          height : 20px;
-          bottom: -10px;
-          left : 0;
-          right: 0;
-          > .dropzone-separator {
-            top : 8px;
-            left : 0;
-            right : 0;
-          }
-        }
-        &.view-dropzone-left {
-          width: 20px;
-          top: 0;
-          left: -10px;
-          bottom: 0;
-          > .dropzone-separator {
-            top    : 0;
-            bottom : 0;
-            left : 8px;
-          }
-        }
-        &.is-active {
-          visibility: visible;
-          &.is-over {
-            background : rgba(0,0,0,.0125);
+            right: 0;
             > .dropzone-separator {
+              top : 8px;
+              left : 0;
+              right : 0;
+            }
+          }
+          &.view-dropzone-right {
+            width: 20px;
+            top: 0;
+            right: -10px;
+            bottom: 0;
+            > .dropzone-separator {
+              top    : 0;
+              bottom : 0;
+              left : 8px;
+            }
+          }
+          &.view-dropzone-bottom {
+            height : 20px;
+            bottom: -10px;
+            left : 0;
+            right: 0;
+            > .dropzone-separator {
+              top : 8px;
+              left : 0;
+              right : 0;
+            }
+          }
+          &.view-dropzone-left {
+            width: 20px;
+            top: 0;
+            left: -10px;
+            bottom: 0;
+            > .dropzone-separator {
+              top    : 0;
+              bottom : 0;
+              left : 8px;
+            }
+          }
+          &.is-active {
+            visibility: visible;
+            &.is-over {
+              background : rgba(0,0,0,.0125);
+              > .dropzone-separator {
+                visibility: visible;
+              }
+            }
+          }
+        }
+        &:hover {
+          .view-component-header {
+            .options-menu {
               visibility: visible;
             }
           }
         }
-      }
-      &:hover {
         .view-component-header {
-          .options-menu {
-            visibility: visible;
-          }
-        }
-      }
-      .view-component-header {
-        width         : 100%;
-        height        : 25px;
-        .view-component-icon {
-          display  : inline-block;
-          width    : 18px;
-          height   : 18px;
-          vertical-align: middle;
-          .material-icons {
-            line-height: 18px;
-            font-size: 18px;
-          }
-        }
-        .options-menu {
-          visibility: hidden;
-          position : absolute;
-          right : 0;
-          top : -4px;
-          height   : 24px;
-          -webkit-border-radius: 3px;
-          border-radius: 3px;
-          background: #fff;
-          -webkit-box-shadow: 0 2px 4px rgba(0,0,0,0.25), 0 0 33px rgba(0,0,0,0.12);
-          box-shadow: 0 2px 4px rgba(0,0,0,0.25), 0 0 33px rgba(0,0,0,0.12);
-          pointer-events: auto;
-          padding: 0 2px 0;
-          -webkit-transition: opacity 120ms ease;
-          -moz-transition: opacity 120ms ease;
-          -o-transition: opacity 120ms ease;
-          -ms-transition: opacity 120ms ease;
-          transition: opacity 120ms ease;
-          z-index: 1500;
-          .btn {
-            -webkit-transition-duration: 120ms;
-            transition-duration: 120ms;
-            -webkit-transition: none;
-            -o-transition: none;
-            transition: none;
-          }
-          .btn-xs {
-            padding: 2px 5px;
-            font-size: 11px;
-            line-height: 1.5;
-            //border-radius
-          }
-          .btn-icon {
-            width    : 24px;
-            height   : 24px;
+          width         : 100%;
+          height        : 25px;
+          .view-component-icon {
+            display  : inline-block;
+            width    : 18px;
+            height   : 18px;
+            vertical-align: middle;
             .material-icons {
-              line-height : 25px;
-              font-size   : 25px;
+              line-height: 18px;
+              font-size: 18px;
+            }
+          }
+          .options-menu {
+            visibility: hidden;
+            position : absolute;
+            right : 0;
+            top : -4px;
+            height   : 24px;
+            -webkit-border-radius: 3px;
+            border-radius: 3px;
+            background: #fff;
+            -webkit-box-shadow: 0 2px 4px rgba(0,0,0,0.25), 0 0 33px rgba(0,0,0,0.12);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.25), 0 0 33px rgba(0,0,0,0.12);
+            pointer-events: auto;
+            padding: 0 2px 0;
+            -webkit-transition: opacity 120ms ease;
+            -moz-transition: opacity 120ms ease;
+            -o-transition: opacity 120ms ease;
+            -ms-transition: opacity 120ms ease;
+            transition: opacity 120ms ease;
+            z-index: 1500;
+            .btn {
+              -webkit-transition-duration: 120ms;
+              transition-duration: 120ms;
+              -webkit-transition: none;
+              -o-transition: none;
+              transition: none;
+            }
+            .btn-xs {
+              padding: 2px 5px;
+              font-size: 11px;
+              line-height: 1.5;
+              //border-radius
+            }
+            .btn-icon {
+              width    : 24px;
+              height   : 24px;
+              .material-icons {
+                line-height : 25px;
+                font-size   : 25px;
+              }
             }
           }
         }
-      }
-      .view-options {
-        background : #f8f8f8;
-        font-size  : 0.8rem;
-        padding    : 8px;
-        margin     : 8px 8px 8px 0;
-        border     : 4px solid #f3f3f3;
-          label {
-          color : $gray;
-        }
-        input {
-          padding : 2px;
-          font-size : 0.8rem;
-        }
-        .form-actions {
-          text-align : right;
-          .btn {
-            width : 60px;
+        .view-options {
+          background : #f8f8f8;
+          font-size  : 0.8rem;
+          padding    : 8px;
+          margin     : 8px 8px 8px 0;
+          border     : 4px solid #f3f3f3;
+            label {
+            color : $gray;
+          }
+          input {
+            padding : 2px;
+            font-size : 0.8rem;
+          }
+          .form-actions {
+            text-align : right;
+            .btn {
+              width : 60px;
+            }
           }
         }
       }

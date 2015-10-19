@@ -3,21 +3,17 @@ import { DragSource }                  from 'react-dnd';
 
 const source = {
   beginDrag(props) {
-    return {
+    let viewComponent = {
       name     : props.name,
       type     : props.type,
       accepts  : props.accepts,
       category : props.category,
       icon     : props.icon,
       options  : {}
-    };
+    }
+
+    return viewComponent;
   }
-
-  // endDrag(props, monitor, component) {
-  //   const item = monitor.getItem();
-  //   const dropResult = monitor.getDropResult();
-
-  // }
 };
 
 @DragSource(props => props.category, source, (connect, monitor) => ({

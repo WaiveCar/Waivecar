@@ -39,6 +39,7 @@ export default {
             }
           ],
           helpText  : 'Select the File Type to be displayed',
+          default   : 'image',
           required  : true
         },
         {
