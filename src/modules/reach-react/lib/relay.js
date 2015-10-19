@@ -9,8 +9,6 @@ class Relay {
    * Constructs the relay store and initates a relay socket handler.
    */
   constructor() {
-    let self = this;
-
     this.store = {
       states    : {},
       reducers  : {},
@@ -18,9 +16,11 @@ class Relay {
       listeners : {}
     };
 
+    // ### Relay Handler
+    
     socket.on('relay', (resource, payload) => {
-      self.dispatch(resource, payload);
-    });
+      this.dispatch(resource, payload);
+    }.bind(this));
   }
 
   // ### Registration Methods
