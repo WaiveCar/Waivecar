@@ -22,7 +22,7 @@ var config = [
 
     var baseUrl;
     if (ionic.Platform.isWebView()) {
-      baseUrl = 'http://10.0.3.2:8081';
+      baseUrl = 'http://192.168.57.1:8081';
     } else {
       if (window.location.hostname === 'localhost') {
         baseUrl = 'http://localhost:8081';
