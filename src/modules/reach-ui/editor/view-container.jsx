@@ -114,7 +114,6 @@ export default class ViewContainer extends React.Component {
     }
     return (
       <Column key={ columnIndex } width={ columnWidth } { ...options }>
-        <h6>{ options.width }</h6>
         { this.renderColumnComponents(components, rowId, column.editorId) }
       </Column>
     );
@@ -165,14 +164,18 @@ export default class ViewContainer extends React.Component {
     const { components, accepts } = this.props;
     let containerClassName = `view-container${ this.props.className ? ' ' + this.props.className : '' }`;
 
+    if (Array.isArray(components) && components.length > 0) {
+      return (
+        <Container className={ containerClassName }>
+          { components.map(this.renderRow.bind(this)) }
+        </Container>
+      );
+    }
+
     return (
-      <Container className={ containerClassName }>
-        {
-          Array.isArray(components) && components.length > 0
-            ? components.map(this.renderRow.bind(this))
-            : <ViewDropzone zone={ 'all' } accepts={ accepts } onDrop={ this.onDrop.bind(this) } />
-        }
-      </Container>
+      <div className={ containerClassName }>
+        <ViewDropzone zone={ 'all' } accepts={ accepts } onDrop={ this.onDrop.bind(this) } />
+      </div>
     );
   }
 

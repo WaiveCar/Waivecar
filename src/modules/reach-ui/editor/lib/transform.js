@@ -52,7 +52,7 @@ Transform.toComponent = function(viewComponent, next) {
     delete component.options.canEdit;
   }
 
-  if (viewComponent.type === 'container') {
+  if (viewComponent.type === 'container' || viewComponent.category !== ItemCategories.COMPONENT) {
     component.components = viewComponent.components;
   }
   if (component.components) {

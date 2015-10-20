@@ -26,10 +26,10 @@ class UITable extends React.Component {
       throw new Error(`Table component is missing ${ this.resourceName() }`);
     }
     api.get(index.uri, (error, data) => {
-      relay.dispatch(this.resourceName(), {
-        type : 'index',
-        data : data
-      });
+      if (error) {
+        return console.log(error);
+      }
+      this[this.resourceName()].index(data);
     }.bind(this));
   }
 
