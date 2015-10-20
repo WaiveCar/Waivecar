@@ -21,8 +21,8 @@
     "koa-cors": "0.0.16",
     "lodash": "3.10.1",
     "moment": "2.10.6",
-    "reach-api": "0.5.4",
-    "reach-socket": "0.3.1",
+    "reach-api": "0.5.5",
+    "reach-socket": "0.3.2",
     "request": "2.61.0",
     "shortid" : "2.2.2"
   },
