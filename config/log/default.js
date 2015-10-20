@@ -14,7 +14,15 @@ module.exports = {
     email      : false,
     developers : [
       'snapgravy@gmail.com'
-    ]
+    ],
+    ui : {
+      resources : {
+        logs : require('./resources/logs')
+      },
+      fields : {
+        logs : require('./fields/logs')
+      }
+    }
   }
 
 };
