@@ -23,7 +23,10 @@ export default class Container extends React.Component {
   }
 
   getClassName() {
-    return this.props.className ? `container-component ${ this.props.className }` : 'container-component';
+    let className = 'container-component';
+    if (this.props.className) className = className + ' ' + this.props.className;
+    if (this.props.fileId) className = className + ' ' + 'has-background';
+    return className;
   }
 
   getStyle() {

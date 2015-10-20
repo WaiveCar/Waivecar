@@ -210,7 +210,7 @@ export default class ViewContainer extends React.Component {
 
   render() {
     const { components, accepts, isOver, type, hasSiblings } = this.props;
-    let containerType = this.props.options && this.props.options.type ? this.props.options.type : 'Container';
+    let containerType = this.props.options && this.props.options.containerType ? this.props.options.containerType : 'Container';
     return (
       <div className="view-container-container">
         <div className="view-component-header">
