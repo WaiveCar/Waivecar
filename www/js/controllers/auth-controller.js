@@ -67,7 +67,6 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
 
       $data.resources.User.initPasswordReset($scope.forms.forgotForm).$promise
         .then(function(){
-          // $state.go('auth-forgot-password-success');
           $state.go('auth-reset-password');
         })
         .catch($message.error);
@@ -94,17 +93,17 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
 
     $scope.loginWithFacebook = function() {
 
-      return ezfb.getLoginStatus()
+      return FaceBookService.getLoginStatus()
         .then(function(response) {
           if (response.status !== 'connected') {
-            return ezfb.login();
+            return FaceBookService.login();
           }
           return response;
 
         })
         .then(function(res) {
           if (res.status === 'connected') {
-            return $auth.loginWithFacebook(res.authResponse);
+            return $auth.loginWithFacebook(res.authResponse.accessToken);
           }
         })
         .then(function() {
@@ -125,7 +124,7 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
         return $message.error('Please resolve form errors and try again.');
       }
 
-      $data.resources.User.verify($scope.forms.verifyForm).$promise
+      $data.resources.Verification.verify($scope.forms.verifyForm).$promise
         .then(function(){
           if($scope.isWizard){
             return $state.go('licenses-photo-new', {step: 3});

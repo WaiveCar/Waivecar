@@ -1,4 +1,4 @@
-/* global document:false */
+/* global document:false, window: false */
 'use strict';
 
 // TODO: Install these modules
@@ -15,7 +15,6 @@ require('angular-socket-io');
 require('angular-payments');
 require('ng-FitText');
 require('easyfb');
-// require('ng-cordova-oauth');
 
 // Components (We first define angular modules which are dependencies to main 'app' module)
 angular.module('app.settings', []);
@@ -93,7 +92,15 @@ require('./directives/wizard-directive');
 require('./directives/equal-to-directive');
 
 ionic.Platform.ready(function () {
-  angular.bootstrap(document, ['app']);
+
+  if(window.cordova){
+    document.addEventListener('deviceready', function(){
+      angular.bootstrap(document, ['app']);
+    }, false);
+  } else {
+    angular.bootstrap(document, ['app']);
+  }
+
 });
 
 module.exports = app;

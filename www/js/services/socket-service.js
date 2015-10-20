@@ -1,6 +1,7 @@
 'use strict';
 var angular = require('angular');
 var io = require('socket.io-client');
+var ionic = require('ionic');
 
 module.exports = angular.module('app')
   .factory('$socket', [
@@ -12,13 +13,13 @@ module.exports = angular.module('app')
 
       if ($settings.uri.api.indexOf('localhost') > 0) {
         remote = io.connect('http://localhost:5000');
+      } else if(ionic.Platform.isWebView()){
+        remote = io.connect('http://192.168.57.1:5000');
       } else {
         remote = io.connect($settings.uri.api, {
           path: '/socket/socket.io'
         });
       }
-
-      // console.log('connecting to ' + $settings.uri.api);
 
       var socket = socketFactory({
         ioSocket: remote
@@ -40,8 +41,8 @@ module.exports = angular.module('app')
         console.log('event');
       });
 
-      socket.on('connect', function () {
-        console.log('connected');
+      socket.on('connect', function (e) {
+        console.log('connected', e);
       });
 
       socket.on('disconnect', function () {

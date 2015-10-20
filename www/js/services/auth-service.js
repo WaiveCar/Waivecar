@@ -155,33 +155,6 @@ module.exports = angular.module('app.services').factory('$auth', [
         $session.purge();
       }
 
-      // forgot: function(data, next) {
-      //   Users.forgot(data, function (data) {
-      //     next(false, data);
-      //   }, function(error) {
-      //     if (error.data.status === 404) {
-      //       next('The email you provided was not found in our database');
-      //     } else {
-      //       next('An error occured!');
-      //     }
-      //   });
-
-      //   return this;
-      // },
-
-      // resetPassword: function(data, next) {
-      //   Users.resetPassword(data, function () {
-      //     next(false);
-      //   }, function(error) {
-      //     if (error.data.status === 400) {
-      //       next(error.data.error);
-      //     } else {
-      //       next('An error occured!');
-      //     }
-      //   });
-
-      //   return this;
-      // }
     };
   }
 ]);

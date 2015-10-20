@@ -4,8 +4,11 @@
   <description>WaiveCar Mobile Application</description>
   <author email="info@waivecar.com" href="http://waivecar.com/">WaiveCar</author>
   <content src="index.html"/>
-  <access origin="*"/>
+  <access origin="*" subdomains="true"/>
   <allow-navigation href="*"/>
+  <allow-navigation href="http://*/*"/>
+  <allow-navigation href="https://*/*"/>
+  <allow-navigation href="data:*"/>
   <preference name="webviewbounce" value="false"/>
   <preference name="UIWebViewBounce" value="false"/>
   <preference name="DisallowOverscroll" value="true"/>
@@ -68,4 +71,5 @@
   <plugin name="org.apache.cordova.device" spec="~0.3.0"/>
   <plugin name="org.apache.cordova.console" spec="~0.2.13"/>
   <plugin name="ionic-plugin-keyboard" spec="~1.0.7"/>
+  <plugin name="cordova-plugin-statusbar" spec="~1.0.1"/>
 </widget>
