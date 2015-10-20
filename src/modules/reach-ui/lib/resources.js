@@ -71,7 +71,7 @@ Resources.prepare = function (id) {
 
   relay.resource(id, (state = [], action) => {
     switch (action.type) {
-      case 'store'  : return reduserStore(state, action.data);
+      case 'store'  : return reducerStore(state, action.data);
       case 'index'  : return action.data;
       case 'update' : return reducerUpdate(state, action.data);
       case 'delete' : return reducerDelete(state, action.data);
@@ -82,7 +82,7 @@ Resources.prepare = function (id) {
   // ### Resource Actions
 
   relay.actions(id, {
-    
+
     /**
      * Adds the provided data to the state.
      * @param {Object} data
