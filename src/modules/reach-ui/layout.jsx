@@ -57,7 +57,7 @@ export default (view) => {
      */
     renderContainer(container, containerIndex) {
       return (
-        <Container key={ containerIndex } classNames={ container.classNames }>
+        <Container key={ containerIndex } classNames={ container.classNames } { ...container.options }>
           { Array.isArray(container.components) && container.components.map(this.renderRow) }
         </Container>
       );
