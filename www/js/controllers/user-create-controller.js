@@ -5,7 +5,6 @@ require('../services/auth-service');
 require('../services/data-service');
 require('../services/facebook-service');
 require('../services/message-service');
-var _ = require('lodash');
 var async = require('async');
 
 module.exports = angular.module('app.controllers').controller('UserCreateController', [
@@ -69,7 +68,6 @@ module.exports = angular.module('app.controllers').controller('UserCreateControl
           return $message.error(err);
         }
 
-        console.log('auth-account-verify');
         return $state.go('auth-account-verify', {
           step: 2
         });
@@ -82,8 +80,10 @@ module.exports = angular.module('app.controllers').controller('UserCreateControl
     $scope.registerWithFacebook = function() {
 
       async.waterfall([
-        function(done){
-          return ezfb.getLoginStatus()
+
+        function checkIfAlreadyLoggedIn(done){
+
+          return FaceBookService.getLoginStatus()
             .then(function(getLoginStatusResponse){
               done(null, getLoginStatusResponse);
             }).
@@ -91,22 +91,22 @@ module.exports = angular.module('app.controllers').controller('UserCreateControl
 
         },
 
-        function(getLoginStatusResponse, done){
+        function login(getLoginStatusResponse, done){
           if (getLoginStatusResponse.status === 'connected') {
             return done(null, getLoginStatusResponse);
           }
-          return ezfb.login(null, {scope: 'public_profile,email'})
+
+          return FaceBookService.login('public_profile,email')
             .then(function(loginResponse){
               done(null, loginResponse);
-            }).
-            catch(done);
+            })
+            .catch(done);
 
         },
 
-        function(response, done){
-          return ezfb.api('/me?fields=email,first_name,last_name')
+        function fetchBasicInfo(response, done){
+          return FaceBookService.api('/me?fields=email,first_name,last_name')
             .then(function(fbUser){
-              console.log('fbUser', fbUser);
               fbUser.token = response.authResponse.accessToken;
               return done(null, fbUser);
             })
