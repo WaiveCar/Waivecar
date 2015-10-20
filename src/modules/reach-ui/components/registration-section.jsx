@@ -42,6 +42,7 @@ export default {
     return {
       name    : 'Registration Section',
       type    : 'meta-registration',
+      order   : 9,
       class   : UIRegistrationSection,
       icon    : 'email',
       options : [

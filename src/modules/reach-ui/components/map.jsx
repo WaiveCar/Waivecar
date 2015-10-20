@@ -73,6 +73,7 @@ export default {
     return {
       name    : 'Map',
       type    : 'map',
+      order   : 6,
       class   : UIMap,
       icon    : 'map',
       options : [

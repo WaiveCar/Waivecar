@@ -181,6 +181,7 @@ export default {
     return {
       name    : 'Table',
       type    : 'table',
+      order   : 4,
       icon    : 'view_list',
       class   : UITable,
       options : [

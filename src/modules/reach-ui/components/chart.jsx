@@ -81,6 +81,7 @@ export default {
       name    : 'Chart',
       type    : 'chart',
       icon    : 'insert_chart',
+      order   : 8,
       class   : UIChart,
       options : [
         {

@@ -21,6 +21,7 @@ export default {
     return {
       name    : 'Container',
       type    : 'container',
+      order   : 1,
       class   : UIContainer,
       icon    : 'border_outer',
       options : [

@@ -21,6 +21,7 @@ export default {
     return {
       name    : 'Content',
       type    : 'content',
+      order   : 2,
       class   : UIContent,
       icon    : 'format_align_justify',
       options : [

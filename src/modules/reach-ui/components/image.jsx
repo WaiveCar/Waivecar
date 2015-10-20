@@ -21,6 +21,7 @@ export default {
     return {
       name    : 'Image',
       type    : 'image',
+      order   : 5,
       class   : UIImage,
       icon    : 'image',
       options : [

@@ -40,7 +40,7 @@ class Components {
         ...this.store[key]
       });
     }
-    return map;
+    return map.sort((a, b) => { return a.order > b.order });
   }
 
   /**

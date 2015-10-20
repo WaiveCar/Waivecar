@@ -241,6 +241,7 @@ export default {
     return {
       name    : 'Form',
       type    : 'form',
+      order   : 3,
       icon    : 'apps',
       class   : UIForm,
       options : [

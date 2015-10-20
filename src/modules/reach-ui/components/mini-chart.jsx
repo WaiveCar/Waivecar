@@ -80,6 +80,7 @@ export default {
     return {
       name    : 'Mini Chart',
       type    : 'mini-chart',
+      order   : 7,
       icon    : 'insert_chart',
       class   : UIMiniChart,
       options : [
