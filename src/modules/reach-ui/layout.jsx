@@ -24,6 +24,7 @@ export default (view) => {
       super(...args);
       relay.subscribe(this, 'app');
       this.renderRow = this.renderRow.bind(this);
+      this.renderContainer = this.renderContainer.bind(this);
     }
 
     /**
@@ -47,10 +48,19 @@ export default (view) => {
      * @method renderView
      */
     renderView() {
-      if (Array.isArray(view.layout.components)) {
-        return view.layout.components.map(this.renderRow);
-      }
-      return this.renderComponent(view.layout);
+      return view.layout.map(this.renderContainer);
+    }
+
+    /**
+     * Renders the components that has been defined in the view.
+     * @method renderView
+     */
+    renderContainer(container, containerIndex) {
+      return (
+        <Container key={ containerIndex } classNames={ container.classNames }>
+          { Array.isArray(container.components) && container.components.map(this.renderRow) }
+        </Container>
+      );
     }
 
     /**
@@ -108,20 +118,9 @@ export default (view) => {
      */
     renderComponent(component) {
       return components.render(component.type, {
-        ...component.options, 
+        ...component.options,
         ...this.props
       });
-    }
-
-    renderActions() {
-      // TODO: maybwe we want like an edit toggle,
-      // otherwise admins will constantly have an edit button
-      if (!Reach.auth.user) return
-      if (Reach.auth.user.role !== 'admin') return;
-
-      return (
-        <Link className="btn btn-sm btn-info" to={ `/views/${ view.id }` }>Ugly Edit View</Link>
-      )
     }
 
     /**
