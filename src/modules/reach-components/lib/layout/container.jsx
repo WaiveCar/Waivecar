@@ -1,13 +1,33 @@
 'use strict';
 
-import React from 'react';
+import React  from 'react';
+import config from 'config';
+import './style.scss';
 
 export default class Container extends React.Component {
+
+  /**
+   * @constructor
+   */
+  constructor(...args) {
+    super(...args);
+    this.state = {
+      api : config.api.uri + (config.api.port ? ':' + config.api.port : '')
+    }
+  }
 
   /**
    * @method componentDidMount
    */
   componentDidMount() {
+  }
+
+  getClassName() {
+    return this.props.className ? `container-component ${ this.props.className }` : 'container-component';
+  }
+
+  getStyle() {
+    return this.props.height ? { height : this.props.height } : {}
   }
 
   /**
@@ -16,7 +36,8 @@ export default class Container extends React.Component {
    */
   renderSection() {
     return (
-      <section id={ this.props.id } className={ this.props.className }>
+      <section id={ this.props.id } className={ this.getClassName() }>
+        { this.renderBackground() }
         <div className={ this.props.contentClassName }>
         { this.props.children }
         </div>
@@ -30,7 +51,8 @@ export default class Container extends React.Component {
    */
   renderHeader() {
     return (
-      <header id={ this.props.id } className={ this.props.className }>
+      <header id={ this.props.id } className={ this.getClassName() } style={ this.getStyle() }>
+        { this.renderBackground() }
         <div className={ this.props.contentClassName }>
         { this.props.children }
         </div>
@@ -44,11 +66,28 @@ export default class Container extends React.Component {
    */
   renderFooter() {
     return (
-      <footer id={ this.props.id } className={ this.props.className }>
+      <footer id={ this.props.id } className={ this.getClassName() }>
+        { this.renderBackground() }
         <div className={ this.props.contentClassName }>
           { this.props.children }
         </div>
       </footer>
+    );
+  }
+
+  renderBackground() {
+    if (!this.props.fileId) return false;
+
+    let data = `${ this.state.api }/file/${ this.props.fileId }`;
+    return (
+      <div className="container-background">
+        <picture className="container-picture">
+          <source media="(min-aspect-ratio: 1/1)" srcSet={ data } />
+          <img src={ data } />
+        </picture>
+        <div className="background-overlay">
+        </div>
+      </div>
     );
   }
 
@@ -57,7 +96,7 @@ export default class Container extends React.Component {
    * @return {[type]} [description]
    */
   render() {
-    switch (this.props.type) {
+    switch (this.props.containerType) {
       case 'header' : return this.renderHeader();
       case 'footer' : return this.renderFooter();
       default       : return this.renderSection();

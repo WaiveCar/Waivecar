@@ -25,7 +25,7 @@ export default {
       icon    : 'border_outer',
       options : [
         {
-          name      : 'type',
+          name      : 'containerType',
           label     : 'Container Type',
           component : 'select',
           options   : [

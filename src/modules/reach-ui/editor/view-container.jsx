@@ -166,7 +166,7 @@ export default class ViewContainer extends React.Component {
 
     if (Array.isArray(components) && components.length > 0) {
       return (
-        <Container className={ containerClassName }>
+        <Container className={ containerClassName } {...this.props.options }>
           { components.map(this.renderRow.bind(this)) }
         </Container>
       );
