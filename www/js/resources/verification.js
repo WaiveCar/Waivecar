@@ -1,5 +1,9 @@
-
 'use strict';
+
+// POST /verifications/:type will send a verification request of the assigned type.
+// PUT /verifications/:token will attempt to verify the provided token.
+// GET /verifications/:token will return a token payload if exists.
+
 var angular = require('angular');
 require('../services/resource-service');
 
