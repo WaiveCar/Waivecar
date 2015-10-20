@@ -2,7 +2,7 @@
 import React, { PropTypes }              from 'react';
 import { type, object }                  from 'reach-react/lib/helpers';
 import { auth, api }                          from 'reach-react';
-import { components, fields, resources } from 'reach-ui';
+import resources from 'reach-ui/lib/resources';
 import { Link }                          from 'react-router';
 import FileDropzone                      from 'reach-ui/editor/file-dropzone';
 // import './style.scss';
