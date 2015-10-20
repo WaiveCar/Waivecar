@@ -135,9 +135,33 @@ export default {
               value : 'chart-pink'
             },
             {
-              name : 'Yellow',
-              value : 'chart-yellow'
+              name : 'Blue Gray',
+              value : 'chart-bluegray'
             },
+            {
+              name : 'Yellow Green',
+              value : 'chart-yellowgreen'
+            },
+            {
+              name : 'Primary',
+              value : 'chart-primary'
+            },
+            {
+              name : 'Info',
+              value : 'chart-info'
+            },
+            {
+              name : 'Warning',
+              value : 'chart-warning'
+            },
+            {
+              name : 'Succcess',
+              value : 'chart-success'
+            },
+            {
+              name : 'Danger',
+              value : 'chart-danger'
+            }
           ],
           helpText  : 'Select a Chart Color'
         }

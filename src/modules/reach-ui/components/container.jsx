@@ -59,6 +59,24 @@ export default {
           label     : 'Background Image',
           component : 'file',
           required  : false
+        },
+        {
+          name      : 'contentClassName',
+          label     : 'Content Width',
+          component : 'radio',
+          options   : [
+            {
+              name  : 'Expand Components to fill the Container?',
+              value : 'container-fluid'
+            },
+            {
+              name  : 'Standard Width for Components',
+              value : 'container'
+            }
+          ],
+          helpText  : 'Should the Content expand to fill the container?',
+          required  : true,
+          default   : 'container'
         }
       ]
     };
