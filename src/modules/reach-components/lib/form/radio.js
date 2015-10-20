@@ -44,7 +44,8 @@ export default class Radio extends React.Component {
    */
   render() {
     let { label, name, className, options } = this.props.options;
-    logger.debug(`Form > Render radio component [${ name }] [${ this.props.value }]`);
+    let currentValue = this.props.value ? this.props.value : this.props.options.default;
+    logger.debug(`Form > Render radio component [${ name }] [${ currentValue }]`);
     return (
       <div className="form-group row">
         <label className="col-xs-12">{ label }</label>
@@ -54,7 +55,7 @@ export default class Radio extends React.Component {
               <div key={ index } className={ className || 'col-md-12' }>
                 <div className="radio">
                   <label>
-                    <input type="radio" name={ name } value={ radio.value } onChange={ this.props.onChange } checked={ this.checked(this.props.value, radio.value) } /> { radio.name }
+                    <input type="radio" name={ name } value={ radio.value } onChange={ this.props.onChange } checked={ this.checked(currentValue, radio.value) } /> { radio.name }
                   </label>
                 </div>
               </div>
