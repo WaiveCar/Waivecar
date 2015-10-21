@@ -23,11 +23,27 @@ Reach.Register.Model('CarDiagnostic', 'sequelize', function (model, Sequelize) {
         key   : 'id'
       }
     },
-    type    : { type : Sequelize.STRING(64), allowNull : false },
-    status  : { type : Sequelize.STRING(28) },
-    message : { type : Sequelize.STRING(28) },
-    value   : { type : Sequelize.STRING(128) },
-    unit    : { type : Sequelize.STRING(28) }
+
+    type : { 
+      type : Sequelize.STRING(64), 
+      allowNull : false 
+    },
+
+    status : { 
+      type : Sequelize.STRING(28) 
+    },
+
+    message : { 
+      type : Sequelize.STRING(28) 
+    },
+
+    value : { 
+      type : Sequelize.STRING(128) 
+    },
+
+    unit : { 
+      type : Sequelize.STRING(28) 
+    }
   };
 
   return model;

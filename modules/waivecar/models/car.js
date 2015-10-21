@@ -15,17 +15,61 @@ Reach.Register.Model('Car', 'sequelize', function (model, Sequelize) {
    * @type     Object
    */
   model.schema = {
-    id                : { type : Sequelize.STRING(28), primaryKey : true },
-    make              : { type : Sequelize.STRING(28), allowNull : false },
-    year              : { type : Sequelize.STRING(88), allowNull : false },
-    manufacturer      : { type : Sequelize.STRING(88), allowNull : false },
-    phone             : { type : Sequelize.STRING(28) },
-    unitType          : { type : Sequelize.STRING(28) },
-    onstarStatus      : { type : Sequelize.STRING(28) },
-    primaryDriverId   : { type : Sequelize.STRING(28) },
-    primaryDriverUrl  : { type : Sequelize.STRING },
-    url               : { type : Sequelize.STRING },
-    isInPreActivation : { type : Sequelize.BOOLEAN, defaultValue : false }
+    id : { 
+      type       : Sequelize.STRING(28), 
+      primaryKey : true 
+    },
+
+    // ### Car Details
+
+    make : { 
+      type      : Sequelize.STRING(28), 
+      allowNull : false 
+    },
+
+    model : {
+      type      : Sequelize.STRING(88),
+      allowNull : false
+    },
+
+    year : { 
+      type      : Sequelize.STRING(4), 
+      allowNull : false 
+    },
+
+    manufacturer : { 
+      type      : Sequelize.STRING(88), 
+      allowNull : false 
+    },
+
+    // ### Car Location
+    // Stores the cars current longitude and latitude coordinates.
+
+    latitude  : { 
+      type : Sequelize.DECIMAL(10, 8),
+    },
+
+    longitude : { 
+      type : Sequelize.DECIMAL(11, 8),
+    },
+
+    // ### Car Status
+    // This holds information such as the availability of the car
+    // and the current user who is occupying the car.
+
+    userId : {
+      type       : Sequelize.INTEGER,
+      references : {
+        model : 'users',
+        key   : 'id'
+      }
+    },
+
+    available : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : true
+    }
+
   };
 
   /**
@@ -34,12 +78,8 @@ Reach.Register.Model('Car', 'sequelize', function (model, Sequelize) {
    * @type     Array
    */
   model.relations = [
-    'CarLocation',
-    'CarStatus',
     'CarDiagnostic',
-    function (CarLocation, CarStatus, CarDiagnostic) {
-      this.hasOne(CarLocation,    { as : 'location',    foreignKey : 'carId' });
-      this.hasOne(CarStatus,      { as : 'booking',     foreignKey : 'carId' });
+    function (CarDiagnostic) {
       this.hasMany(CarDiagnostic, { as : 'diagnostics', foreignKey : 'carId' });
     }
   ];

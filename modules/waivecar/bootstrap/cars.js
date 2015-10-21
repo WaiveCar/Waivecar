@@ -5,7 +5,7 @@ let log = Reach.Log;
 
 module.exports = function *() {
   let count = yield Car.count();
-  if (count > 20) {
+  if (count > 0) {
     return;
   }
   log.debug('importing 20 mock cars');

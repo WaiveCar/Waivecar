@@ -1,9 +1,8 @@
 'use strict';
 
-let scheduler   = Reach.provider('queue').scheduler;
-let Car         = Reach.model('Car');
-let CarLocation = Reach.model('CarLocation');
-let log         = Reach.Log;
+let scheduler = Reach.provider('queue').scheduler;
+let Car       = Reach.model('Car');
+let log       = Reach.Log;
 
 module.exports = function *() {
   scheduler.add('car-reconcile-location', {
@@ -29,25 +28,17 @@ module.exports = function *() {
 // "zip": "90025",
 
 scheduler.process('car-reconcile-location', function *(job) {
-  let cars = yield Car.find({
-    include : [{
-      model : 'CarLocation',
-      as    : 'location'
-    }]
-  });
+  let cars = yield Car.find();
   if (!cars) {
     return;
   }
   for (let i = 0, len = cars.length; i < len; i++) {
-    let car          = cars[i];
-    let prevLocation = car.location;
-    let coords       = prevLocation ? getRandomLocation(prevLocation.latitude, prevLocation.longitude, 100) : getRandomLocation(34.0464846, -118.4442262, 5000);
-    let location     = new CarLocation({
-      carId     : car.id,
+    let car    = cars[i];
+    let coords = (car.latitude && car.longitude) ? getRandomLocation(car.latitude, car.longitude, 100) : getRandomLocation(34.0464846, -118.4442262, 5000);
+    yield car.update({
       latitude  : coords[1],
       longitude : coords[0]
     });
-    yield location.upsert();
   }
 });
 

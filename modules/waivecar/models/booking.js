@@ -15,7 +15,7 @@ Reach.Register.Model('Booking', 'sequelize', function (model, Sequelize) {
    * @type     Object
    */
   model.schema = {
-    customerId : {
+    userId : {
       type       : Sequelize.INTEGER,
       allowNull  : false,
       references : {
@@ -31,10 +31,6 @@ Reach.Register.Model('Booking', 'sequelize', function (model, Sequelize) {
         model : 'cars',
         key   : 'id'
       }
-    },
-
-    paymentId : { 
-      type : Sequelize.INTEGER 
     },
 
     // ### File Collection
@@ -66,8 +62,10 @@ Reach.Register.Model('Booking', 'sequelize', function (model, Sequelize) {
    */
   model.relations = [
     'BookingDetails',
-    function (BookingDetails) {
-      this.hasMany(BookingDetails, { as : 'details', foreignKey : 'bookingId' });
+    'BookingPayment',
+    function (BookingDetails, BookingPayment) {
+      this.hasMany(BookingDetails, { as : 'details',  foreignKey : 'bookingId' });
+      this.hasMany(BookingPayment, { as : 'payments', foreignKey : 'bookingId' });
     }
   ];
 

@@ -13,16 +13,6 @@ Reach.Register.ResourceController('Car', 'CarsController', function (controller)
     return yield Car.find(queryParser(this.query, {
       include : [
         {
-          model : 'CarLocation',
-          as    : 'location',
-          attr  : [ 'latitude', 'longitude' ]
-        },
-        {
-          model : 'CarStatus',
-          as    : 'booking',
-          attr  : [ 'status' ]
-        },
-        {
           model : 'CarDiagnostic',
           as    : 'diagnostics',
           attr  : [ 'type', 'status', 'value', 'unit' ]
@@ -39,16 +29,6 @@ Reach.Register.ResourceController('Car', 'CarsController', function (controller)
   controller.show = function *(id) {
     return yield Car.findById(id, {
       include : [
-        {
-          model : 'CarLocation',
-          as    : 'location',
-          attr  : [ 'latitude', 'longitude' ]
-        },
-        {
-          model : 'CarStatus',
-          as    : 'booking',
-          attr  : [ 'status' ]
-        },
         {
           model : 'CarDiagnostic',
           as    : 'diagnostics',

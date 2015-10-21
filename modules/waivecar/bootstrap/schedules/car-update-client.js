@@ -22,20 +22,7 @@ module.exports = function *() {
 // external API's to lessen the complication of transactions.
 
 scheduler.process('car-update-client', function *(job) {
-  let cars = yield Car.find({
-    include : [
-      {
-        model : 'CarLocation',
-        as    : 'location',
-        attr  : [ 'latitude', 'longitude' ]
-      },
-      {
-        model : 'CarStatus',
-        as    : 'booking',
-        attr  : [ 'status' ]
-      }
-    ]
-  });
+  let cars = yield Car.find();
   if (!cars) {
     return;
   }

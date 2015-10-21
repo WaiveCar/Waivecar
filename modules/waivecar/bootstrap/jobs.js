@@ -2,7 +2,7 @@
 
 module.exports = function *() {
   if (Reach.ENV !== 'test') {
-    yield require('./schedules/booking-timer-cancel');
+    yield require('./schedules/booking-auto-cancel');
     yield require('./schedules/car-reconcile-fleet');
     yield require('./schedules/car-reconcile-location');
     yield require('./schedules/car-reconcile-diagnostics');
