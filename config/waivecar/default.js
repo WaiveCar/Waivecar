@@ -1,17 +1,26 @@
-'use strict';
-
 module.exports = {
-
-  /*
-   |--------------------------------------------------------------------------------
-   | WaiveCar
-   |--------------------------------------------------------------------------------
-   |
-   | ui : Object > WaiveCar resources and field settings.
-   |
-   */
-
   waivecar : {
+
+    // ### Booking
+    // Contains setting for how booking behaves.
+
+    booking : {
+
+      // ### Timer
+      // Timer set the auto cancellation of an order, it basicaly defines the
+      // amount of time the user has to get to their car and start the drive.
+
+      timer : {
+        value : 15,
+        type  : 'minutes'
+      }
+
+    },
+
+    // ### UI
+    // Utilized by the reach-ui module to provide dynamic functionality to the
+    // front end UI consumer.
+
     ui : {
       resources : {
         bookings  : require('./resources/bookings'),
@@ -24,7 +33,7 @@ module.exports = {
         locations : require('./fields/locations')
       }
     }
-  }
 
+  }
 };
 
