@@ -135,7 +135,9 @@ module.exports =
           $scope.fetch();
         } else {
           // after account has been initialized
-          $scope.$watch(function() { return $auth.isAuthenticated(); }, function(data) {
+          $scope.$watch(function() {
+            return $auth.isAuthenticated();
+          }, function(data) {
             if (data === true) {
               $scope.fetch();
             }
