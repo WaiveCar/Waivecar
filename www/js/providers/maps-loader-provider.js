@@ -5,7 +5,7 @@ var angular = require('angular');
 module.exports = angular.module('app.providers').provider('MapsLoader', [
 
   function () {
-    var apiKey = '7ef929e2c765b1194804e5e8ca284c5a';
+    var apiKey = '8698d318586c58a1f8ca1e88ecfac299';
 
     return {
       $get: function ($q) {

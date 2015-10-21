@@ -14,7 +14,7 @@
 
         <label class="item item-input">
           <span class="input-label required">Code</span>
-          <input type="text" name="token" ng-model="forms.verifyForm.token" required autofocus />
+          <input type="text" name="token" ng-model="forms.verifyForm.token" required autofocus autocapitalize="off" autocorrect="off" />
         </label>
 
         <div ng-messages="form.token.$error" ng-if="form.token.$dirty || form.$submitted" role="alert">

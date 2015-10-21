@@ -39,10 +39,7 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
       if (err) {
         return $message.error(err);
       }
-      $state.go('users-edit', {
-        id: $data.me.id
-      });
-
+      $state.go('cars');
     };
 
     $scope.login = function(form) {
@@ -107,9 +104,7 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
           }
         })
         .then(function() {
-          $state.go('users-edit', {
-            id: $data.me.id
-          });
+          $state.go('cars');
         })
         .catch($message.error);
 
@@ -130,7 +125,7 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
             return $state.go('licenses-photo-new', {step: 3});
           }
           $message.success('Your account is now verified!');
-          $state.go('users-edit', {id: $auth.me.id});
+          $state.go('cars');
 
         })
         .catch($message.error);

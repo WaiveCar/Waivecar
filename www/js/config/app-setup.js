@@ -62,7 +62,7 @@ var config = [
 
     $httpProvider.interceptors.push('AuthInterceptor');
 
-    $ionicConfigProvider.views.transition('platform');
+    $ionicConfigProvider.views.transition('none');
     $ionicConfigProvider.views.maxCache(0);
     $ionicConfigProvider.templates.maxPrefetch(1);
 

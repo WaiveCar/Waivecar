@@ -95,10 +95,6 @@ module.exports =
             },
 
             function(nextTask) {
-              if (!$auth.isAuthenticated()) {
-                return nextTask();
-              }
-
               $data.resources.users.me(function(me) {
                 $session.set('me', me).save();
                 $data.me = $session.get('me');
@@ -108,10 +104,6 @@ module.exports =
             },
 
             function(nextTask) {
-              if (!$auth.isAuthenticated()) {
-                return nextTask();
-              }
-
               $data.initialize('cars')
                 .then(function() {
                   nextTask();
@@ -120,10 +112,6 @@ module.exports =
             },
 
             function(nextTask) {
-              if (!$auth.isAuthenticated()) {
-                return nextTask();
-              }
-
               $data.initialize('locations')
                 .then(function() {
                   nextTask();
@@ -143,7 +131,18 @@ module.exports =
       };
 
       $scope.init = function() {
-        $scope.fetch();
+        if ($auth.isAuthenticated()) {
+          $scope.fetch();
+        } else {
+          // after account has been initialized
+          $scope.$watch(function() {
+            return $auth.isAuthenticated();
+          }, function(data) {
+            if (data === true) {
+              $scope.fetch();
+            }
+          });
+        }
       };
 
       $scope.init();
