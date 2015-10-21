@@ -18,7 +18,7 @@ module.exports = {
 
   api : {
     name    : 'WaiveCar',
-    version : '0.5.3',
+    version : '0.6.1',
     port    : 8081,
     uri     : 'http://localhost:8081',
     cors    : {
