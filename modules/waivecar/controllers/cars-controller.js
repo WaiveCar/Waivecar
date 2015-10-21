@@ -1,17 +1,16 @@
 'use strict';
 
-let query = Reach.provider('sequelize/helpers').query;
-let Car   = Reach.model('Car');
+let queryParser = Reach.provider('sequelize/helpers').query;
+let Car         = Reach.model('Car');
 
 Reach.Register.ResourceController('Car', 'CarsController', function (controller) {
 
   /**
    * @method index
-   * @param  {Object} options
    * @return {Array}
    */
-  controller.index = function *(options) {
-    return yield Car.find(query(options, {
+  controller.index = function *() {
+    return yield Car.find(queryParser(this.query, {
       include : [
         {
           model : 'CarLocation',
@@ -35,10 +34,9 @@ Reach.Register.ResourceController('Car', 'CarsController', function (controller)
   /**
    * @method show
    * @param  {String} id
-   * @param  {Object} options
    * @return {Car}
    */
-  controller.show = function *(id, options) {
+  controller.show = function *(id) {
     return yield Car.findById(id, {
       include : [
         {

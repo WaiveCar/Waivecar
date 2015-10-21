@@ -9,11 +9,9 @@ Reach.Register.Controller('BookingsController', function (controller) {
 
   /**
    * Attempt to create a new booking using the provided information.
-   * @method create
-   * @param  {Object} post
    */
-  controller.create = function *(post) {
-    let carId = post.carId;
+  controller.create = function *() {
+    let carId = this.payload.carId;
     let user  = this.auth.user;
 
     yield CarService.isAvailable(carId); // Is the car available for booking?
@@ -28,17 +26,14 @@ Reach.Register.Controller('BookingsController', function (controller) {
   /**
    * Fetches a list of bookings.
    *  This need to be ADMIN only
-   * @method index
-   * @param  {Object} options
    * @return {Array}
    */
-  controller.index = function *(options) {
-    return yield BookingService.getBookings(options);
+  controller.index = function *() {
+    return yield BookingService.getBookings(this.query);
   };
 
   /**
    * Fetch basic information about the booking.
-   * @method show
    * @param  {Int} id The booking id
    * @return {Booking}
    */
@@ -48,12 +43,11 @@ Reach.Register.Controller('BookingsController', function (controller) {
 
   /**
    * Updates the booking status.
-   * @method update
    * @param  {Int} id
    */
-  controller.update = function *(id, post) {
+  controller.update = function *(id) {
     let user = this.auth.user;
-    switch (post.status) {
+    switch (this.payload.status) {
       case 'pending-arrival' : return yield BookingService.pending(id, user);
       case 'start'           : return yield BookingService.start(id, user);
       case 'end'             : return yield BookingService.end(id, user);

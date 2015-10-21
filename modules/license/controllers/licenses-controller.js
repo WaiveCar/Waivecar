@@ -5,16 +5,13 @@ let LicenseService = require('../lib/license-service');
 Reach.Register.Controller('LicensesController', function (controller) {
 
   /**
-   * @method create
-   * @param  {Object} post
    * @return {Void}
    */
-  controller.store = function *(post) {
-    return yield LicenseService.create(post, this.auth.user);
+  controller.store = function *() {
+    return yield LicenseService.create(this.payload, this.auth.user);
   };
 
   /**
-   * @method index
    * @return {Void}
    */
   controller.index = function *() {
@@ -31,23 +28,19 @@ Reach.Register.Controller('LicensesController', function (controller) {
   };
 
   /**
-   * @method update
    * @param  {Mixed}  id
-   * @param  {Object} data
    * @return {Void}
    */
-  controller.update = function *(id, data) {
-    return yield LicenseService.update(id, this.auth.user, data);
+  controller.update = function *(id) {
+    return yield LicenseService.update(id, this.auth.user, this.payload);
   };
 
   /**
-   * @method destroy
    * @param  {Mixed}  id
-   * @param  {Object} data
    * @return {Void}
    */
   controller.destroy = function *(id, data) {
-    return yield LicenseService.destroy(id, this.auth.user, data);
+    return yield LicenseService.destroy(id, this.auth.user, this.payload);
   };
 
   return controller;
