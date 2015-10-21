@@ -170,7 +170,7 @@ function reducerUpdate(state, data) {
 function reducerDelete(state, data) {
   let result = [];
   for (let i = 0, len = state.length; i < len; i++) {
-    if (state.id !== data.id) {
+    if (state[i].id !== data.id) {
       result.push(state[i]);
     }
   }
