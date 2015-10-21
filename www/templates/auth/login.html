@@ -20,12 +20,12 @@
 
         <label class="item item-input">
           <span class="input-label">Login</span>
-          <input type="text" placeholder="phone or email" name="identifier" ng-model="forms.loginForm.identifier" required autofocus />
+          <input type="text" placeholder="phone or email" name="identifier" ng-model="forms.loginForm.identifier" required autofocus autocapitalize="off" autocorrect="off" />
         </label>
 
         <label class="item item-input">
           <span class="input-label">Password</span>
-          <input type="password" placeholder="* * * * * *" name="password" ng-model="forms.loginForm.password" required>
+          <input type="password" placeholder="* * * * * *" name="password" ng-model="forms.loginForm.password" required autocapitalize="off" autocorrect="off">
         </label>
 
         <div class="validations" ng-show="form.$dirty && form.$invalid">
