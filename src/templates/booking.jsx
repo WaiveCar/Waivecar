@@ -21,7 +21,7 @@ UI.templates.register('booking', {
   component   : BookingTemplate,
   childRoutes : [
     {
-      path      : '/booking/car',
+      path      : '/booking',
       component : require('views/booking/car')
     }
   ]

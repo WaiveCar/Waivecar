@@ -24,16 +24,14 @@ class UIMap extends React.Component {
    * Prepare resource and update the relay.
    */
   componentDidMount() {
-    let resource = resources.get(this.props.resource);
+    let target   = this.props.resource;
+    let resource = resources.get(target);
     if (resource && resource.index) {
       api.get(resource.index.uri, function (err, data) {
         if (err) {
           return console.log(err);
         }
-        relay.dispatch(this.props.resource, {
-          type : 'index',
-          data : data
-        });
+        this[target].index(data);
       }.bind(this));
     }
   }
