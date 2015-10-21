@@ -129,7 +129,7 @@ module.exports = [
       })
       .state('licenses-new', {
         // 11.1-Drivers-id
-        url: '/licenses/new?step',
+        url: '/licenses/new?step&fileId',
         templateUrl: '/templates/licenses/new.html',
         data: {
           auth: true

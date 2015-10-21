@@ -109,6 +109,10 @@ module.exports = angular.module('app.controllers').controller('LicenseController
           country: 'USA'
         });
 
+        if($stateParams.fileId){
+          $scope.license.fileId = $stateParams.fileId;
+        }
+
       }
 
     };
