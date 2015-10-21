@@ -168,11 +168,5 @@ function reducerUpdate(state, data) {
  * @return {Array}
  */
 function reducerDelete(state, data) {
-  let result = [];
-  for (let i = 0, len = state.length; i < len; i++) {
-    if (state[i].id !== data.id) {
-      result.push(state[i]);
-    }
-  }
-  return result;
+  return state.filter(m => m.id !== data.id);
 }
