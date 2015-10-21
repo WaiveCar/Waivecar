@@ -5,8 +5,6 @@ let Payment = Reach.model('Payment');
 let hooks   = Reach.Hooks;
 let error   = Reach.Error;
 
-let hooks = Reach.Hooks;
-
 /*
   Prepare provided customer data, this hook is reuquired by the customer service
   and acts as a filter to make sure that unwanted data is not being processed.
