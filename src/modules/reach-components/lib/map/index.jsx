@@ -24,7 +24,7 @@ export default class Map extends React.Component {
   componentDidMount() {
     this.setState({
       map   : L.skobbler.map(this.state.mapId, {
-        apiKey : '7ef929e2c765b1194804e5e8ca284c5a',
+        apiKey : '8698d318586c58a1f8ca1e88ecfac299',
         center : [ 34.0604643, -118.4186743 ],
         zoom   : 11
       })
