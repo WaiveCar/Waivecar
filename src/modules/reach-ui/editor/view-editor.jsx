@@ -151,8 +151,11 @@ export default class ViewLayout extends React.Component {
           });
           return;
         }
+        this.setState({
+          data : res
+        });
         if (this.isCreate() && res.id) {
-          this.history.pushState(null, `/views/${ res.id }`);
+          this.history.replaceState(null, `/views/${ res.id }`);
         }
         snackbar.notify({
           type    : 'success',
@@ -275,9 +278,7 @@ export default class ViewLayout extends React.Component {
           { this.renderToolbarTitle('Components') }
           { this.renderItems() }
           { this.renderActions() }
-          {
-            this.state.data && this.state.data.path ? <a className='ui-toolbar-view-link' href={ this.state.data.path }>Go to view</a> : ''
-          }
+          { this.state.data && this.state.data.path && <a className='ui-toolbar-view-link' href={ this.state.data.path }>Go to View</a> }
         </div>
       </div>
     );
@@ -448,7 +449,7 @@ export default class ViewLayout extends React.Component {
       value : 'Cancel',
       class : 'ui-action-btn',
       click : () => {
-        this.history.goBack();
+        this.history.pushState('views', '/views');
       }.bind(this)
     });
 
@@ -459,13 +460,6 @@ export default class ViewLayout extends React.Component {
         click : this.submit.bind(this)
       });
     } else {
-      buttons.push({
-        value : 'Delete',
-        class : 'ui-action-btn',
-        click : () => {
-          console.log('Delete: %s!', this.id());
-        }.bind(this)
-      });
       buttons.push({
         value : 'Save',
         class : 'ui-action-btn',
