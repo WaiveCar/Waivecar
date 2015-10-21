@@ -13,11 +13,11 @@ module.exports = {
 
   email : {
     templateFolder : 'config/email/templates',
-    sender         : 'matt.ginty@gmail.com',
+    sender         : 'dev@waivecar.com',
     transportName  : 'mandrill',
     transport      : {
       auth : {
-        apiKey : 'atA-wM7O5PXJn7hg38e4kA'
+        apiKey : 'gHCYiqaKVIzJqfPqbrtPOA'
       }
     }
   }
