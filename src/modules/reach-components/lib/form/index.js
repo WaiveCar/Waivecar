@@ -28,10 +28,7 @@ export default class Form extends React.Component {
    */
   componentWillReceiveProps(nextProps, nextState) {
     this.setState({
-      data : {
-        ...nextProps.default,
-        ...this.state.data
-      }
+      data : nextProps.default
     });
   }
 
