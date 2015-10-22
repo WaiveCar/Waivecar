@@ -19,8 +19,8 @@ module.exports = angular.module('Maps').directive('locationMarker', [
           case 'car':
             {
               return {
-                iconUrl: '/img/active-waivecar.svg',
-                iconRetinaUrl: '/img/active-waivecar.svg',
+                iconUrl: 'img/active-waivecar.svg',
+                iconRetinaUrl: 'img/active-waivecar.svg',
                 iconSize: [20, 25],
                 iconAnchor: [10, 25],
                 popupAnchor: [0, 0]
@@ -29,8 +29,8 @@ module.exports = angular.module('Maps').directive('locationMarker', [
           default:
             {
               return {
-                iconUrl: '/img/user-location.svg',
-                iconRetinaUrl: '/img/user-location.svg',
+                iconUrl: 'img/user-location.svg',
+                iconRetinaUrl: 'img/user-location.svg',
                 iconSize: [25, 25],
                 iconAnchor: [12.5, 25],
                 popupAnchor: [0, 0]

@@ -29,8 +29,8 @@ module.exports = angular.module('Maps').directive('locationMarkers', [
           case 'car':
             {
               return {
-                iconUrl: '/img/active-waivecar.svg',
-                iconRetinaUrl: '/img/active-waivecar.svg',
+                iconUrl: 'img/active-waivecar.svg',
+                iconRetinaUrl: 'img/active-waivecar.svg',
                 iconSize: [20, 25],
                 iconAnchor: [10, 25],
                 popupAnchor: [0, 0]
