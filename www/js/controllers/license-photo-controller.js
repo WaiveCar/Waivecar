@@ -71,18 +71,18 @@ module.exports = angular.module('app.controllers').controller('LicensePhotoContr
           return CameraService.uploadPicture(picture);
         })
         .then(function (uploadResponse) {
-          if ($scope.isWizard) {
+          console.log(uploadResponse);
+          if ($scope.isWizard || !$scope.license) {
             return $state.go('licenses-new', {
               fileId: uploadResponse.id,
               step: 3
             });
+          } else {
+            return updateLicense(uploadResponse);
           }
-
-          return updateLicense(uploadResponse);
-
         })
         .then(function () {
-          if (!$scope.isWizard) {
+          if (!$scope.isWizard && $scope.license) {
             $state.go('licenses-edit', {
               id: $scope.license.id
             });
