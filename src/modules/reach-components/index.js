@@ -11,7 +11,6 @@ export default {
   Image     : require('./lib/image'),
   Layout    : require('./lib/layout'),
   Map       : require('./lib/map'),
-  Modal     : require('./lib/modal'),
   Navbar    : require('./lib/navbar'),
   snackbar  : require('./lib/snackbar')
 };
