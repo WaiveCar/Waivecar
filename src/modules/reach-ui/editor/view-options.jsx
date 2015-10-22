@@ -1,5 +1,5 @@
 import React, { PropTypes, Component } from 'react';
-import { Form, Modal }                 from 'reach-components';
+import { Form }                 from 'reach-components';
 import components                      from '../lib/components';
 import ItemCategories                  from './item-categories';
 
