@@ -23,9 +23,9 @@ module.exports = {
       name   : 'id',
       value  : 'id'
     },
-    required  : true,
-    label     : 'Select Car',
-    helpText  : null
+    required : true,
+    label    : 'Select Car',
+    helpText : null
   },
   paymentId : {
     name      : 'paymentId',

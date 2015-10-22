@@ -1,5 +1,6 @@
 module.exports = {
   id : {
+    name      : 'id',
     component : 'input',
     type      : 'text',
     required  : true,
@@ -7,6 +8,7 @@ module.exports = {
     helpText  : null
   },
   type : {
+    name      : 'type',
     component : 'input',
     type      : 'text',
     required  : true,
@@ -14,6 +16,7 @@ module.exports = {
     helpText  : null
   },
   name : {
+    name      : 'name',
     component : 'input',
     type      : 'text',
     required  : true,
@@ -21,6 +24,7 @@ module.exports = {
     helpText  : null
   },
   description : {
+    name      : 'description',
     component : 'input',
     type      : 'text',
     required  : true,
@@ -28,6 +32,7 @@ module.exports = {
     helpText  : 'Phone Number, Opening Hours, etc.'
   },
   latitude : {
+    name      : 'latitude',
     component : 'input',
     type      : 'text',
     required  : true,
@@ -35,6 +40,7 @@ module.exports = {
     helpText  : null
   },
   longitude : {
+    name      : 'longitude',
     component : 'input',
     type      : 'text',
     required  : true,
@@ -42,6 +48,7 @@ module.exports = {
     helpText  : null
   },
   address : {
+    name      : 'address',
     component : 'input',
     type      : 'text',
     required  : true,

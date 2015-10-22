@@ -3,14 +3,15 @@
 module.exports = {
 
   id : {
+    name      : 'id',
     label     : 'ID',
     component : 'input',
     type      : 'text',
-    name      : 'id',
     required  : true,
     tabIndex  : 1
   },
   userId : {
+    name      : 'userId',
     label     : 'User',
     component : 'reach-select',
     options   : {
@@ -18,9 +19,8 @@ module.exports = {
       name   : 'email',
       value  : 'id'
     },
-    name      : 'userId',
-    required  : true,
-    tabIndex  : 2
+    required : true,
+    tabIndex : 2
   },
   number : {
     name      : 'number',

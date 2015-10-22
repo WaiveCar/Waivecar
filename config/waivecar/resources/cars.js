@@ -1,4 +1,5 @@
 module.exports = {
+  name  : 'cars',
   store : {
     key    : 'car',
     method : 'POST',

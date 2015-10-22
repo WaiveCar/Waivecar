@@ -1,5 +1,6 @@
 module.exports = {
   id : {
+    name      : 'id',
     component : 'input',
     type      : 'text',
     required  : true,
@@ -7,6 +8,7 @@ module.exports = {
     helpText  : null
   },
   make : {
+    name      : 'make',
     component : 'input',
     type      : 'text',
     required  : true,
@@ -14,6 +16,7 @@ module.exports = {
     helpText  : null
   },
   year : {
+    name      : 'year',
     component : 'input',
     type      : 'text',
     required  : true,
@@ -21,6 +24,7 @@ module.exports = {
     helpText  : null
   },
   manufacturer : {
+    name      : 'manufacturer',
     component : 'input',
     type      : 'text',
     required  : true,
@@ -28,6 +32,7 @@ module.exports = {
     helpText  : null
   },
   phone : {
+    name      : 'phone',
     component : 'input',
     type      : 'text',
     required  : true,
@@ -35,6 +40,7 @@ module.exports = {
     helpText  : null
   },
   unitType : {
+    name      : 'unitType',
     component : 'input',
     type      : 'text',
     required  : true,
@@ -42,6 +48,7 @@ module.exports = {
     helpText  : null
   },
   onstarStatus : {
+    name      : 'onstarStatus',
     component : 'input',
     type      : 'text',
     required  : true,
@@ -49,6 +56,7 @@ module.exports = {
     helpText  : null
   },
   primaryDriverId : {
+    name      : 'primaryDriverId',
     component : 'input',
     type      : 'text',
     required  : true,
@@ -56,6 +64,7 @@ module.exports = {
     helpText  : null
   },
   primaryDriverUrl : {
+    name      : 'primaryDriverUrl',
     component : 'input',
     type      : 'text',
     required  : true,
@@ -63,6 +72,7 @@ module.exports = {
     helpText  : null
   },
   url : {
+    name      : 'url',
     component : 'input',
     type      : 'text',
     required  : true,
@@ -70,6 +80,7 @@ module.exports = {
     helpText  : null
   },
   isInPreActivation : {
+    name      : 'isInPreActivation',
     component : 'input',
     type      : 'text',
     required  : true,

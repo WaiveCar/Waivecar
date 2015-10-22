@@ -1,4 +1,5 @@
 module.exports = {
+  name  : 'bookings',
   store : {
     key    : 'booking',
     method : 'POST',

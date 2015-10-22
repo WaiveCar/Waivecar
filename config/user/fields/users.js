@@ -1,5 +1,6 @@
 module.exports = {
   id : {
+    name      : 'id',
     component : 'input',
     type      : 'text',
     required  : true,
@@ -7,8 +8,9 @@ module.exports = {
     helpText  : null
   },
   role : {
+    name      : 'role',
     component : 'react-select',
-    options : [
+    options   : [
       {
         name  : 'User',
         value : 'user'
@@ -22,6 +24,7 @@ module.exports = {
     helpText : 'Select a Role'
   },
   status : {
+    name      : 'status',
     component : 'react-select',
     options   : [
       {
@@ -41,6 +44,7 @@ module.exports = {
     helpText : 'Select a Status'
   },
   firstName : {
+    name      : 'firstName',
     component : 'input',
     type      : 'text',
     required  : true,
@@ -48,6 +52,7 @@ module.exports = {
     helpText  : null
   },
   lastName : {
+    name      : 'lastName',
     component : 'input',
     type      : 'text',
     required  : true,
@@ -55,6 +60,7 @@ module.exports = {
     helpText  : null
   },
   email : {
+    name      : 'email',
     component : 'input',
     type      : 'email',
     required  : true,
@@ -62,6 +68,7 @@ module.exports = {
     helpText  : null
   },
   password : {
+    name      : 'password',
     component : 'input',
     type      : 'password',
     required  : true,
