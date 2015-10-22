@@ -21,7 +21,7 @@
     "koa-cors": "0.0.16",
     "lodash": "3.10.1",
     "moment": "2.10.6",
-    "reach-api": "0.6.1",
+    "reach-api": "0.6.2",
     "reach-socket": "0.3.2",
     "request": "2.61.0",
     "shortid" : "2.2.2"
@@ -36,7 +36,7 @@
     "reach-auth": "0.2.12",
     "reach-bcrypt": "1.0.0",
     "reach-email": "0.0.10",
-    "reach-file": "0.3.8",
+    "reach-file": "0.3.10",
     "reach-log": "0.1.4",
     "reach-mongo": "0.0.11",
     "reach-payments": "0.2.1",
