@@ -7,18 +7,17 @@ module.exports = {
    |
    | The various API settings that define how your API reacts to incoming requests.
    |
-   | name    : The name of your API service
-   | version : The version of your API service
-   | port    : The port on which to run the API service
-   | uri     : The full url address including port to your API service
-   | cors    : Origins and headers allowed to access the API service
-   | sites   : The application type of incoming requests
-   | NB      : Recommend ports: Website @ 8080, API @ 8081, Test @ 8082, & App @ 8100.
+   | @param {String}  name    The identifier of your API service.
+   | @param {String}  version The version number of your API service.
+   | @param {Integer} port    The port number to run your API service on.
+   | @param {String}  uri     The uri to your API service.
+   | @param {Object}  cors    The cors setting of your API service.
+   |
    */
 
   api : {
     name    : 'WaiveCar',
-    version : '0.6.1',
+    version : '0.6.2',
     port    : 8081,
     uri     : 'http://localhost:8081',
     cors    : {
@@ -29,11 +28,30 @@ module.exports = {
 
   /*
    |--------------------------------------------------------------------------------
-   | Cluster Settings
+   | Roles
    |--------------------------------------------------------------------------------
-   | cpus : How many cpu's to cluster.
-   |        Note that when this setting is omitted it will use the number of
-   |        available CPUs on your server.
+   |
+   | A list of api roles from low to high determining access rights for modules
+   | utilizing the authenticated role class.
+   |
+   | @param {Array} roles
+   |
+   */
+
+  roles : [
+    'guest',
+    'user',
+    'admin'
+  ],
+
+  /*
+   |--------------------------------------------------------------------------------
+   | Cluster
+   |--------------------------------------------------------------------------------
+   |
+   | API cluster configuration properties.
+   |
+   | @param {Integer} cpus The amount of cpus spawn worker instances on.
    |
    */
 
@@ -43,28 +61,13 @@ module.exports = {
 
   /*
    |--------------------------------------------------------------------------------
-   | Support Settings
-   |--------------------------------------------------------------------------------
-   |
-   | Support settings are used in the reach-api error handler when the server hits
-   | a 500 INTERNAL ERROR. The support information is passed to the client and can
-   | be used in a 500 client side handler to provide contact information to remedy
-   | or report an issue.
-   |
-   */
-
-  support : {
-    email : 'info@waivecar.com',
-    phone : '555 55 555'
-  },
-
-  /*
-   |--------------------------------------------------------------------------------
    | Log Settings
    |--------------------------------------------------------------------------------
    |
    | This API by default uses winston to log events, here you can define at what
    | error levels the winston adapters should trigger a logging event.
+   |
+   | @param {Object} level The various log levels
    |
    */
 

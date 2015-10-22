@@ -1,18 +1,18 @@
 module.exports = {
-
-  /*
-   |--------------------------------------------------------------------------------
-   | User
-   |--------------------------------------------------------------------------------
-   |
-   | admins : Array    > List of admin users to create if user table is empty.
-   | params : Array    > List of required parameters when creating a new user.
-   | filter : Function > Function providing the available filtering options for the
-   |                     user.
-   |
-   */
-
   user : {
+
+    /*
+     |--------------------------------------------------------------------------------
+     | Users
+     |--------------------------------------------------------------------------------
+     |
+     | A list of users that gets inserted into the database by default if no user
+     | records has been created.
+     |
+     | @param {Array}
+     |
+     */
+
     users : [
       {
         firstName     : 'Matt',
@@ -59,6 +59,19 @@ module.exports = {
       'phone',
       'password'
     ],
+
+    /*
+     |--------------------------------------------------------------------------------
+     | UI
+     |--------------------------------------------------------------------------------
+     |
+     | The user resources, and fields settings for reach-ui utilized in react.
+     |
+     | @param {Object} resources List of user related resources
+     | @param {Object} fields    List of user related fields
+     |
+     */
+
     ui : {
       resources : {
         users : require('./resources/users')
@@ -67,21 +80,34 @@ module.exports = {
         users : require('./fields/users')
       }
     },
-    filter : function (query, options) {
-      return query(options, {
+
+    /*
+     |--------------------------------------------------------------------------------
+     | UI
+     |--------------------------------------------------------------------------------
+     |
+     | Customizable query filter, this is used when a client is indexing the user
+     | table.
+     |
+     | @param {Function} filter
+     |
+     */
+
+    filter : function (queryParser, query) {
+      return queryParser(query, {
         where : {
-          role          : query.STRING,
-          firstName     : { $like : query.STRING },
-          lastName      : { $like : query.STRING },
-          phone         : query.STRING,
-          email         : query.STRING,
-          verifiedPhone : query.BOOLEAN,
-          verifiedEmail : query.BOOLEAN,
-          facebook      : query.STRING,
-          stripeId      : query.STRING
+          role          : queryParser.STRING,
+          firstName     : { $like : queryParser.STRING },
+          lastName      : { $like : queryParser.STRING },
+          phone         : queryParser.STRING,
+          email         : queryParser.STRING,
+          verifiedPhone : queryParser.BOOLEAN,
+          verifiedEmail : queryParser.BOOLEAN,
+          facebook      : queryParser.STRING,
+          stripeId      : queryParser.STRING
         }
       });
     }
-  }
 
+  }
 };
