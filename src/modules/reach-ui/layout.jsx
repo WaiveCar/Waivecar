@@ -1,10 +1,12 @@
 'use strict';
 
-import React            from 'react';
-import Reach, { relay } from 'reach-react';
-import { Link }         from 'react-router';
-import { Layout }       from 'reach-components';
-import components       from './lib/components';
+import React             from 'react';
+import mixin             from 'react-mixin';
+import Reach, { relay }  from 'reach-react';
+import { History, Link } from 'react-router';
+import { Layout }        from 'reach-components';
+import components        from './lib/components';
+
 
 // ### Layout
 
@@ -15,7 +17,8 @@ export default (view) => {
   /**
    * @class LayoutTemplate
    */
-  return class LayoutTemplate extends React.Component {
+  @mixin.decorate(History)
+  class LayoutTemplate extends React.Component {
 
     /**
      * @constructor
@@ -136,4 +139,5 @@ export default (view) => {
 
   }
 
+  return LayoutTemplate;
 }
