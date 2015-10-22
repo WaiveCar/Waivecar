@@ -1,46 +1,50 @@
 'use strict';
 
-let LicenseService = require('../lib/license-service');
+let service = require('../lib/license-service');
 
 Reach.Register.Controller('LicensesController', function (controller) {
 
   /**
-   * @return {Void}
+   * Stores a new license record.
+   * @return {Object}
    */
   controller.store = function *() {
-    return yield LicenseService.create(this.payload, this.auth.user);
+    return yield service.store(this.payload, this.auth.user);
   };
 
   /**
-   * @return {Void}
+   * Returns a license index.
+   * @return {Array}
    */
   controller.index = function *() {
-    return yield LicenseService.getAll(this.auth.user);
+    return yield service.index(this.query, this.auth.role, this.auth.user);
   };
 
   /**
-   * @method show
+   * Returns a single license record.
    * @param  {Mixed}  id
-   * @return {Void}
+   * @return {Object}
    */
   controller.show = function *(id) {
-    return yield LicenseService.get(id, this.auth.user);
+    return yield service.show(id, this.auth.user);
   };
 
   /**
+   * Updates a single license based on the provided id.
    * @param  {Mixed}  id
-   * @return {Void}
+   * @return {Object}
    */
   controller.update = function *(id) {
-    return yield LicenseService.update(id, this.auth.user, this.payload);
+    return yield service.update(id, this.payload, this.auth.user);
   };
 
   /**
+   * Deletes a license record.
    * @param  {Mixed}  id
-   * @return {Void}
+   * @return {Object}
    */
-  controller.destroy = function *(id, data) {
-    return yield LicenseService.destroy(id, this.auth.user, this.payload);
+  controller.delete = function *(id) {
+    return yield service.delete(id, this.auth.user);
   };
 
   return controller;
