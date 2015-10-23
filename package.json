@@ -142,9 +142,13 @@
     "when": "^3.7.3"
   },
   "cordovaPlugins": [
-    "cordova-plugin-device",
+    "cordova-plugin-camera",
     "cordova-plugin-console",
-    "cordova-plugin-splashscreen",
+    "cordova-plugin-device",
+    "cordova-plugin-file",
+    "cordova-plugin-file-transfer",
+    "cordova-plugin-geolocation",
+    "cordova-plugin-statusbar",
     {
       "locator": "https://github.com/EddyVerbruggen/LaunchMyApp-PhoneGap-Plugin.git",
       "id": "nl.x-services.plugins.launchmyapp",
@@ -153,13 +157,7 @@
       }
     },
     "cordova-plugin-whitelist",
-    "cordova-plugin-geolocation",
-    "cordova-plugin-camera",
-    "cordova-plugin-file-transfer",
-    "org.apache.cordova.inappbrowser",
-    "org.apache.cordova.device",
-    "org.apache.cordova.console",
-    "cordova-plugin-statusbar"
+    "org.apache.cordova.inappbrowser"
   ],
   "cordovaPlatforms": [
     "android",

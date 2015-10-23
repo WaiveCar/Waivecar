@@ -23,7 +23,8 @@
       // './www/components/**/*.scss'
     ],
     templates: [
-      './www/templates/**/*.html'
+      './www/templates/**/*.html',
+      './www/js/modules/maps/templates/*.html'
     ],
     scripts: [
       './www/**/*.js',

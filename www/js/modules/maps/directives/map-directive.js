@@ -33,7 +33,7 @@ module.exports = angular.module('Maps').directive('map', [
 
     return {
       restrict: 'CE',
-      templateUrl: '/js/modules/maps/templates/map.html',
+      templateUrl: '/templates/map.html',
       link: link,
       transclude: true,
       controller: 'MapController',
