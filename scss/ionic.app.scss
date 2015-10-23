@@ -6,7 +6,7 @@ $fa-font-path: "../fonts" !default;
 @import 'fonts';
 @import 'sizes';
 
-// @import "www/lib/bootstrap-sass/assets/stylesheets/_bootstrap";
+//// @import "www/lib/bootstrap-sass/assets/stylesheets/_bootstrap";
 // Twitter Bootstrap grid clashes with ionic grid so we're importing only what we need
 @import "./node_modules/bootstrap-sass/assets/stylesheets/bootstrap/variables";
 @import "./node_modules/bootstrap-sass/assets/stylesheets/bootstrap/mixins";

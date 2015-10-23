@@ -30,6 +30,9 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
           }
 
           return $data.resources.users.createCustomer({
+              id: $auth.me.id,
+              service: 'stripe'
+            }, {
               data: {
                 metadata: {}
               }
@@ -68,7 +71,7 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
       $scope.isWizard = $stateParams.step;
 
       if (!$stateParams.id) {
-        $scope.card = new $data.resources.Card();
+        $scope.card = new $data.resources.Card({userId: $auth.me.id, service: 'stripe'});
 
       } else {
         return $data.resources.Card.get({
