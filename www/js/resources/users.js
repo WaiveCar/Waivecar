@@ -48,7 +48,7 @@ module.exports = angular.module('app').factory('Users', [
       },
       createCustomer: {
         method: 'POST',
-        url: $utils.getCustomRoute('payments/customer')
+        url: $utils.getCustomRoute('payments/customers')
       },
       createCard: {
         method: 'POST',
