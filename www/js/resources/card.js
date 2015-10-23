@@ -10,7 +10,8 @@ require('../services/resource-service');
 
 module.exports = angular.module('app').factory('Card', [
   'Resource',
-  function(Resource) {
+  '$utils',
+  function(Resource, $utils) {
 
     function transformRequest(data) {
       if (data && data.expiry) {
@@ -25,6 +26,10 @@ module.exports = angular.module('app').factory('Card', [
       id: '@id'
     }, {
       create: {
+        url: $utils.getCustomRoute('payments/cards?id=:userId&service=stripe'),
+        params: {
+          userId: '@userId'
+        },
         method: 'POST',
         isArray: false,
         transformRequest: transformRequest
