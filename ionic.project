@@ -21,5 +21,12 @@
       "path": "/skoblerRealReach",
       "proxyUrl": "http://8698d318586c58a1f8ca1e88ecfac299.tor.skobbler.net/tor/RSngx/RealReach/json/18_0/en/8698d318586c58a1f8ca1e88ecfac299"
     }
+  ],
+  "browsers": [
+    {
+      "platform": "android",
+      "browser": "crosswalk",
+      "version": "12.41.296.5"
+    }
   ]
 }
