@@ -15,11 +15,11 @@
   "proxies": [
     {
       "path": "/skoblerCalcRoute",
-      "proxyUrl": "http://7ef929e2c765b1194804e5e8ca284c5a.tor.skobbler.net/tor/RSngx/calcroute/json/18_0/en/7ef929e2c765b1194804e5e8ca284c5a"
+      "proxyUrl": "http://8698d318586c58a1f8ca1e88ecfac299.tor.skobbler.net/tor/RSngx/calcroute/json/18_0/en/8698d318586c58a1f8ca1e88ecfac299"
     },
     {
       "path": "/skoblerRealReach",
-      "proxyUrl": "http://7ef929e2c765b1194804e5e8ca284c5a.tor.skobbler.net/tor/RSngx/RealReach/json/18_0/en/7ef929e2c765b1194804e5e8ca284c5a"
+      "proxyUrl": "http://8698d318586c58a1f8ca1e88ecfac299.tor.skobbler.net/tor/RSngx/RealReach/json/18_0/en/8698d318586c58a1f8ca1e88ecfac299"
     }
   ]
 }
