@@ -11,10 +11,8 @@ let hooks   = Reach.Hooks;
   @param  {Object} _user
  */
 hooks.set('file:validate', function *(query, _user) {
-  switch (query.type) {
-    case 'booking' : return yield booking.validate(query);
-    case 'license' : return yield license.validate(query);
-  }
+  if (query.bookingId) { return yield booking.validate(query.bookingId); }
+  if (query.licenseId) { return yield license.validate(query.licenseId); }
 });
 
 /*
@@ -25,8 +23,8 @@ hooks.set('file:validate', function *(query, _user) {
   @return {String} Default: null
  */
 hooks.set('file:collection', function *(query, _user) {
-  switch (query.type) {
-    case 'booking' : return yield booking.collection(query);
+  if (query.bookingId) { 
+    return yield booking.collection(query.bookingId); 
   }
   return null;
 });
@@ -38,8 +36,8 @@ hooks.set('file:collection', function *(query, _user) {
   @param {Object} _user
  */
 hooks.set('file:capture', function *(query, file, _user) {
-  switch (query.type) {
-    case 'license' : return yield license.capture(query, file);
+  if (query.licenseId) {
+    return yield license.capture(query.licenseId, file);
   }
 });
 
@@ -49,8 +47,7 @@ hooks.set('file:capture', function *(query, file, _user) {
   @param {Object} _user
  */
 hooks.set('file:delete', function *(query, _user) {
-  console.log(query);
-  switch (query.type) {
-    case 'license' : return yield license.delete(query);
+  if (query.licenseId) {
+    return yield license.delete(query.licenseId);
   }
 });

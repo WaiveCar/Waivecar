@@ -7,10 +7,10 @@ class LicenseFile {
   
   /**
    * Validates the license by verifying that it has been defined.
-   * @param {Object} query
+   * @param {Number} licenseId
    */
-  *validate(query) {
-    let license = yield License.findById(query.id);
+  *validate(licenseId) {
+    let license = yield License.findById(licenseId);
     if (!license) {
       throw error.parse({
         code    : `INVALID_LICENSE`,
@@ -21,11 +21,11 @@ class LicenseFile {
 
   /**
    * Attaches the file to the license.
-   * @param {Object} query
+   * @param {Number} licenseId
    * @param {Object} file
    */
-  *capture(query, file) {
-    let license = yield License.findById(query.id);
+  *capture(licenseId, file) {
+    let license = yield License.findById(licenseId);
     yield license.update({
       fileId : file.id
     });
@@ -33,10 +33,10 @@ class LicenseFile {
 
   /**
    * Remove the fileId from the license record.
-   * @param {Object} query
+   * @param {Number} licenseId
    */
-  *delete(query) {
-    let license = yield License.findById(query.id);
+  *delete(licenseId) {
+    let license = yield License.findById(licenseId);
     yield license.update({
       fileId : null
     });

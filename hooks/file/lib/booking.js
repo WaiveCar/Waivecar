@@ -8,10 +8,10 @@ class BookingFile {
   
   /**
    * Validates the booking by verifying that it has been defined.
-   * @param {Object} query
+   * @param {Number} bookingId
    */
-  *validate(query) {
-    let booking = yield Booking.findById(query.id);
+  *validate(bookingId) {
+    let booking = yield Booking.findById(bookingId);
     if (!booking) {
       throw error.parse({
         code    : `INVALID_BOOKING`,
@@ -22,11 +22,11 @@ class BookingFile {
 
   /**
    * Returns a collection id to assign to file.
-   * @param  {Object} query
+   * @param  {Number} bookingId
    * @return {String}
    */
-  *collection(query) {
-    let booking = yield Booking.findById(query.id);
+  *collection(bookingId) {
+    let booking = yield Booking.findById(bookingId);
     if (!booking.collectionId) {
       yield booking.update({
         collectionId : shortid.generate()
