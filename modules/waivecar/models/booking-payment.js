@@ -38,6 +38,18 @@ Reach.Register.Model('BookingPayment', 'sequelize', function (model, Sequelize) 
 
   };
 
+  /**
+   * The relation definitions of your model.
+   * @property relations
+   * @type     Array
+   */
+  model.relations = [
+    'BookingPaymentItem',
+    function (BookingPaymentItem) {
+      this.hasMany(BookingPaymentItem, { as : 'items',  foreignKey : 'paymentId' });
+    }
+  ];
+
   return model;
 
 });
