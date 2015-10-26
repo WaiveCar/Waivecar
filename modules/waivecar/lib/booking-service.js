@@ -1,24 +1,27 @@
 'use strict';
 
+let Service        = require('./classes/service');
+let Payment        = require('./classes/payment');
 let queue          = Reach.provider('queue');
 let queryParser    = Reach.provider('sequelize/helpers').query;
 let User           = Reach.model('User');
 let Car            = Reach.model('Car');
 let Booking        = Reach.model('Booking');
 let BookingDetails = Reach.model('BookingDetails');
+let BookingPayment = Reach.model('BookingPayment');
 let error          = Reach.Error;
 let relay          = Reach.Relay;
 let config         = Reach.config.waivecar;
 
-class BookingService {
+module.exports = class BookingService extends Service {
 
   /**
    * Creates a new booking.
    * @return {Object}
    */
-  *create(data, _user) {
-    let user = yield this.getUser(data.user);
-    let car  = yield this.getCar(data.car, data.user, true);
+  static *create(data, _user) {
+    let user = yield this.getUser(data.userId);
+    let car  = yield this.getCar(data.carId, data.userId, true);
 
     // ### Access Check
     // Check if the user can create a new booking, and verify that the
@@ -29,8 +32,8 @@ class BookingService {
     // ### Create Booking
 
     let booking = new Booking({
-      carId  : data.car,
-      userId : data.user
+      carId  : data.carId,
+      userId : data.userId
     });
     yield booking.save();
 
@@ -38,7 +41,7 @@ class BookingService {
     // Updates the car by setting it as unavailable and assigning the user.
 
     yield car.update({
-      userId    : data.user,
+      userId    : data.userId,
       available : false
     });
 
@@ -77,8 +80,8 @@ class BookingService {
    * @param  {Object} _user
    * @return {Array}
    */
-  *index(query, role, _user) {
-    if (role === 'admin') {
+  static *index(query, role, _user) {
+    if (role.isAdmin()) {
       return yield Booking.find(queryParser(query, {
         where : {
           userId : queryParser.NUMBER,
@@ -100,7 +103,7 @@ class BookingService {
    * @param  {Object} _user
    * @return {Object}
    */
-  *show(id, _user) {
+  static *show(id, _user) {
     let booking = yield Booking.findById(id, {
       include : [{
         model : 'BookingDetails',
@@ -124,7 +127,7 @@ class BookingService {
    * @param  {Object} _user
    * @return {Object}
    */
-  *start(id, _user) {
+  static *start(id, _user) {
     let booking   = yield Booking.findById(id);
     let car       = yield this.getCar(booking.carId);
     let user      = yield this.getUser(booking.userId);
@@ -154,9 +157,9 @@ class BookingService {
       }, 400);
     }
 
-    // ------------------------------------------------
-    // TODO: UNLOCK THE CAR BEFORE INITIATING THE RIDE!
-    // ------------------------------------------------
+    // -----------------------------------------------
+    // TODO: UNLOCK THE CAR BEFORE INITIATING THE RIDE
+    // -----------------------------------------------
 
     // ### Create Details
     // Creates a detail record of the start of the ride.
@@ -191,98 +194,45 @@ class BookingService {
    * @param  {Object} _user
    * @return {Object}
    */
-  *end(id, _user) {
-    /*
-      TODO:
-        - Create ending booking details.
-        - Calculate cost of ride if any.
-        - Set the booking to pending-payment status.
-        - Return the booking-payment object with each item charged.
-     */
-  }
+  static *end(id, paymentId, _user) {
+    let booking        = yield Booking.findById(id);
+    let bookingPayment = yield BookingPayment.findById(paymentId);
+    let car            = yield this.getCar(booking.carId);
+    let user           = yield this.getUser(booking.userId);
 
-  // ### HELPER METHODS
+    // ### Verify Payment
 
-  /**
-   * Attempts to return the car.
-   * @param  {String}  carId     The car id to retrieve.
-   * @param  {Number}  userId    The user being assigned to the car if isBooking.
-   * @param  {Boolean} isBooking We have special cases when isBooking is true.
-   * @return {Object}
-   */
-  *getCar(carId, userId, isBooking) {
-    let car = yield Car.findById(carId);
-
-    if (!car) {
+    if (!bookingPayment) {
       throw error.parse({
-        code    : `CAR_NOT_FOUND`,
-        message : `The requested car does not exist.`
+        code    : `INVALID_PAYMENT`,
+        message : `The provided paymentId is invalid`
       }, 400);
     }
 
-    // ### Booking
-    // If we are booking we need to make sure that the car is available, and that
-    // the user is eligible to retrieve a car for booking.
+    // ### Status Check
+    // Only bookings which are in a progress state can be ended through this endpoint.
 
-    if (isBooking) {
-      let hasCar = yield Car.findOne({ where : { userId : userId } });
-      if (hasCar) {
-        throw error.parse({
-          code    : `CAR_IN_PROGRESS`,
-          message : `The user is already assigned to another car.`,
-          data    : hasCar
-        }, 400);
-      }
-    }
-
-    if (isBooking && !car.available) {
-      if (parseInt(car.userId) === parseInt(userId)) {
-        throw error.parse({
-          code    : `CAR_UNAVAILBLE`,
-          message : `The user is already assigned to this car.`
-        }, 400);
-      } else {
-        throw error.parse({
-          code    : `CAR_UNAVAILBLE`,
-          message : `The requested car is currently not available.`
-        }, 400);
-      }
-    }
-
-    return car;
-  }
-
-  /**
-   * Attempts to return the user with the provided id or throws an error.
-   * @param  {Number} id
-   * @return {Object}
-   */
-  *getUser(id) {
-    let user = yield User.findById(id);
-    if (!user) {
+    if (booking.status !== 'in-progress') {
       throw error.parse({
-        code    : `INVALID_USER`,
-        message : `The user was not found in our records.`
+        code    : `INVALID_REQUEST`,
+        message : `You can only end a booking that is in-progress.`
       }, 400);
     }
-    return user;
-  }
 
-  /**
-   * Only allow access if the requesting user is the actor or is administrator.
-   * @param  {Object}  user  The user to be modified.
-   * @param  {Object}  _user The user requesting modification.
-   * @return {Boolean}
-   */
-  hasAccess(user, _user) {
-    if (user.id !== _user.id && _user.role !== 'admin') {
-      throw error.parse({
-        error   : `INVALID_PRIVILEGES`,
-        message : `You do not have the required privileges to perform this operation.`
-      }, 400);
-    }
+    // ### Create Payment
+
+    let payment = new Payment(booking, bookingPayment);
+
+    // -----------------------------------------------------------------------------
+    // TODO: CALCULATE RIDE COST
+    //       - Create a new payment (done)
+    //       - Add payment items for each charge that occured during the ride.
+    //         - Need a list of possible charges that can occur.
+    // -----------------------------------------------------------------------------
+
+    yield booking.update({ status : 'pending-payment' });
+
+    return payment;
   }
 
 }
-
-module.exports = new BookingService();
