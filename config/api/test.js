@@ -24,7 +24,6 @@ module.exports = {
       'log'
     ],
     providers : [
-      'gm-api',
       'email',
       'sms'
     ]
