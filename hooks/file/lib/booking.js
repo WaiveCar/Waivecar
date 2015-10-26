@@ -4,13 +4,13 @@ let shortid = require('shortid');
 let Booking = Reach.model('Booking');
 let error   = Reach.Error;
 
-class BookingFile {
+module.exports = class Booking {
   
   /**
    * Validates the booking by verifying that it has been defined.
    * @param {Number} bookingId
    */
-  *validate(bookingId) {
+  static *validate(bookingId) {
     let booking = yield Booking.findById(bookingId);
     if (!booking) {
       throw error.parse({
@@ -25,7 +25,7 @@ class BookingFile {
    * @param  {Number} bookingId
    * @return {String}
    */
-  *collection(bookingId) {
+  static *collection(bookingId) {
     let booking = yield Booking.findById(bookingId);
     if (!booking.collectionId) {
       yield booking.update({
@@ -36,5 +36,3 @@ class BookingFile {
   }
 
 }
-
-module.exports = new BookingFile();

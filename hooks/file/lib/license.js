@@ -3,13 +3,13 @@
 let License = Reach.model('License');
 let error   = Reach.Error;
 
-class LicenseFile {
+module.exports = class LicenseFile {
   
   /**
    * Validates the license by verifying that it has been defined.
    * @param {Number} licenseId
    */
-  *validate(licenseId) {
+  static *validate(licenseId) {
     let license = yield License.findById(licenseId);
     if (!license) {
       throw error.parse({
@@ -24,7 +24,7 @@ class LicenseFile {
    * @param {Number} licenseId
    * @param {Object} file
    */
-  *capture(licenseId, file) {
+  static *capture(licenseId, file) {
     let license = yield License.findById(licenseId);
     yield license.update({
       fileId : file.id
@@ -35,7 +35,7 @@ class LicenseFile {
    * Remove the fileId from the license record.
    * @param {Number} licenseId
    */
-  *delete(licenseId) {
+  static *delete(licenseId) {
     let license = yield License.findById(licenseId);
     yield license.update({
       fileId : null
@@ -43,5 +43,3 @@ class LicenseFile {
   }
 
 }
-
-module.exports = new LicenseFile();
