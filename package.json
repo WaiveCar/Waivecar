@@ -9,7 +9,8 @@
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "local": "NODE_ENV=local nodemon app.js",
     "socket": "NODE_ENV=local node socket",
-    "start": "node app.js"
+    "start": "node app.js",
+    "all-local": "NODE_ENV=local node socket & nodemon app.js"
   },
   "dependencies": {
     "babel-eslint": "4.1.1",

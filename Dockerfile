@@ -27,4 +27,4 @@ ADD . /api
 
 WORKDIR /api
 EXPOSE 8081
-CMD ["npm", "run", "local"]
+CMD ["npm", "run", "all-local"]

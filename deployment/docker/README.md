@@ -1,3 +1,8 @@
+###
+
+add an ENV Variable to the VM's exposed Docker location
+export DOCKER_HOST=tcp://192.168.10.10:2375
+
 ### Vagrant
 `Vagrantfile` should be used to create a VM.
 
@@ -17,6 +22,9 @@ Important settings include:
 ```
   config.vm.synced_folder
 ```
+
+
+
 
 To start VM run the following:
 
