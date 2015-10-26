@@ -29,7 +29,7 @@ hooks.set('payment:customer', function *(type, data) {
 hooks.set('payment:validate', function *(data) {
   switch (data.type) {
     case 'booking' : {
-      yield validateBooking(data.id);
+      yield validateBooking(data.bookingId);
       break;
     }
   }
@@ -43,7 +43,7 @@ hooks.set('payment:validate', function *(data) {
 hooks.set('payment:authorized', function *(data, payment) {
   switch (data.type) {
     case 'booking' : {
-      yield authorizeBooking(data.id, payment);
+      yield authorizeBooking(data.bookingId, payment);
       break;
     }
   }
