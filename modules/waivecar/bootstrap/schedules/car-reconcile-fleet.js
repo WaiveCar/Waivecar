@@ -1,10 +1,8 @@
 'use strict';
 
-let scheduler      = Reach.provider('queue').scheduler;
-let VehicleService = Reach.provider('gm-api/vehicle-service');
-let Car            = Reach.model('Car');
-let log            = Reach.Log;
-let service        = new VehicleService();
+let scheduler = Reach.provider('queue').scheduler;
+let Car       = Reach.model('Car');
+let log       = Reach.Log;
 
 module.exports = function *() {
   scheduler.add('car-reconcile-fleet', {
@@ -22,6 +20,7 @@ module.exports = function *() {
 // This is done to ensure faster responses to client applications from our API.
 // NOTE! On a live build this job should run once or twice a day.
 
+/*
 scheduler.process('car-reconcile-fleet', function *(job) {
   log.info('Reconciling Car Fleet');
   let vehicles = yield service.listVehicles();
@@ -32,3 +31,4 @@ scheduler.process('car-reconcile-fleet', function *(job) {
     yield car.upsert();
   }
 });
+*/
