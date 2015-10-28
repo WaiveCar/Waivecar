@@ -10,14 +10,14 @@ require('../services/resource-service');
 
 module.exports = angular.module('app').factory('Card', [
   'Resource',
-  '$utils',
-  function(Resource, $utils) {
+  function(Resource) {
 
     function transformRequest(data) {
-      if (data && data.expiry) {
+      if (data && data.card) {
         data = angular.copy(data);
-        data.exp_month = data.expiry.getMonth() + 1;
-        data.exp_year = data.expiry.getFullYear();
+        data.card.exp_month = data.card.expiry.getMonth() + 1;
+        data.card.exp_year = data.card.expiry.getFullYear();
+        delete data.card.expiry;
       }
       return angular.toJson(data);
     }
@@ -26,10 +26,6 @@ module.exports = angular.module('app').factory('Card', [
       id: '@id'
     }, {
       create: {
-        url: $utils.getCustomRoute('payments/cards?id=:userId&service=stripe'),
-        params: {
-          userId: '@userId'
-        },
         method: 'POST',
         isArray: false,
         transformRequest: transformRequest

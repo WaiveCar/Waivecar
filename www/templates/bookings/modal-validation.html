@@ -1,0 +1,57 @@
+<ion-modal-view>
+
+  <ion-content scroll="false" padding="true" class="ion-content--center dark-bg">
+
+    <img src="/img/waivecar-mark.svg">
+    <h3 class="margin-bottom-10">Booking requirements</h3>
+
+    <div ng-if="hasActiveBooking">
+      <p>Hi! You already have an active booking. <br>You can't have two at the same time. Sorry.</p>
+
+      <button type="button" class="button button-balanced button-block" ui-sref="cars-edit({id: activeBooking.id})">Go to my active booking</button>
+    </div>
+
+    <div ng-if="!hasActiveBooking">
+
+      <div ng-if="numberOfOpenItems > 0">
+        <p>Hello! We'll need you to complete your profile before booking a car.</p>
+        <p class="margin-bottom-10">Click on the item in the list below to complete it:</p>
+      </div>
+
+      <div ng-if="numberOfOpenItems === 0">
+        <p>
+          <strong>Great news!</strong>
+          You're all set to book this car.
+        </p>
+      </div>
+
+      <ul class="list-unstyled text-left margin-bottom-20">
+
+        <li ng-repeat="(key, item) in status">
+
+          <button type="button" class="button button-block button-positive" ng-if="item.valid">
+            <i class="fa fa-check fa-lg fa-fw"></i>
+            {{item.description.valid}}
+          </button>
+
+          <button type="button" class="button button-block button-assertive" ui-sref="{{item.path}}" ng-if="!item.valid">
+            <i class="fa fa-warning fa-lg fa-fw"></i>
+            {{item.description.invalid}}
+          </button>
+
+        </li>
+      </ul>
+
+      <button type="button" class="button button-balanced button-block" ng-click="book()" ng-if="numberOfOpenItems === 0">Book waivecar</button>
+
+    </div>
+
+  </ion-content>
+
+  <ion-footer-bar class="no-padding">
+    <div class="button-bar">
+      <button type="button" class="button button-gray" ng-click="close()">Close</button>
+    </div>
+  </ion-footer-bar>
+
+</ion-modal-view>

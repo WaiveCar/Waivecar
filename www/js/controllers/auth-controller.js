@@ -18,7 +18,8 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
   'FaceBookService',
   'ezfb',
   '$stateParams',
-  function($rootScope, $scope, $state, $auth, $message, $data, $ionicHistory, $cordovaOauth, $settings, FaceBookService, ezfb, $stateParams) {
+  'BookingService',
+  function($rootScope, $scope, $state, $auth, $message, $data, $ionicHistory, $cordovaOauth, $settings, FaceBookService, ezfb, $stateParams, BookingService) {
     $scope.$ionicHistory = $ionicHistory;
 
     $scope.forms = {
@@ -111,6 +112,15 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
     };
 
 
+    $scope.resend = function(){
+      $data.resources.Verification.sendSMS({}).$promise
+        .then(function(){
+          $message.success('Verification code sent to ' + $auth.me.phone);
+        })
+        .catch($message.error);
+
+    };
+
     $scope.verify = function(form){
       if (form.$pristine) {
         return $message.info('Please fill in verification code first.');
@@ -121,8 +131,14 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
 
       $data.resources.Verification.verify($scope.forms.verifyForm).$promise
         .then(function(){
+          return $auth.reload();
+        })
+        .then(function(){
           if($scope.isWizard){
             return $state.go('licenses-photo-new', {step: 3});
+          }
+          if($scope.fromBooking){
+            return $state.go('cars-show', BookingService.getReturnParams());
           }
           $message.success('Your account is now verified!');
           $state.go('cars');
@@ -135,10 +151,7 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
 
     $scope.init = function() {
       $scope.isWizard = $stateParams.step;
-
-      // if ($auth.isAuthenticated()) {
-      //   $state.go('cars');
-      // }
+      $scope.fromBooking = $stateParams.fromBooking;
 
       if($state.includes('auth-reset-password')){
         $scope.forms.resetForm.tokenProvided = !!$stateParams.token;

@@ -2,17 +2,17 @@
 
   <label class="item item-input">
     <span class="input-label required">Card Number</span>
-    <input name="number" type="text" placeholder="#### #### #### ####" ng-model="card.number" required payments-validate="card" payments-format="card" payments-type-model="type" autofocus>
+    <input name="number" type="text" placeholder="#### #### #### ####" ng-model="card.card.number" required payments-validate="card" payments-format="card" payments-type-model="type" autofocus>
   </label>
 
   <label class="item item-input">
     <span class="input-label required">CVC</span>
-    <input name="cvc" type="text" ng-model="card.cvc" required payments-validate="cvc" payments-format="cvc" payments-type-model="type">
+    <input name="cvc" type="text" ng-model="card.card.cvc" required payments-validate="cvc" payments-format="cvc" payments-type-model="type">
   </label>
 
   <label class="item item-input">
     <span class="input-label required">Expiry Date</span>
-    <input name="expiry" type="month" ng-model="card.expiry" required>
+    <input name="expiry" type="month" ng-model="card.card.expiry" required>
   </label>
 
 

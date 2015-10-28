@@ -1,4 +1,4 @@
-<ion-view class="auth" ng-controller="AuthController">
+<ion-view hide-back-button="{{!fromBooking}}" class="auth" ng-controller="AuthController">
 
   <ion-nav-title>
     <page-title class="dark-bg">Enter Code</page-title>
@@ -6,10 +6,21 @@
 
   <ion-content scroll="false" padding="true" class="ion-content--center dark-bg">
 
-    <p class="margin-top-10">We have just sent you an email and SMS with verification code.</p>
-    <p>Please enter it below.</p>
+    <div ng-if="fromBooking">
+      <p class="margin-top-10">You must verify your account before booking a car.</p>
+      <p>
+        We have previously sent you an SMS with verification code.
+        (<button type="button" class="button button-small button-clear button-energized" ng-click="resend()">Resend</button>)
+      </p>
+      <p>Please enter it below to verify your account.</p>
+    </div>
 
-    <form name="form" id="form" ng-submit="verify(form)" novalidate class="margin-top-20">
+    <div ng-if="isWizard">
+      <p class="margin-top-10">We have just sent you SMS with verification code.</p>
+      <p>Please enter it below.</p>
+    </div>
+
+    <form name="form" id="form" ng-submit="verify(form)" novalidate class="margin-top-10">
       <div class="list">
 
         <label class="item item-input">
@@ -31,12 +42,13 @@
       ng-if="isWizard"
     >Skip this step</button>
 
-    <button type="button" class="button button-clear button-block button-positive button-small margin-top-20">Re-send the code</button>
+    <!-- <button ng-click="resend()" type="button" class="button button-clear button-block button-positive button-small margin-top-20">Re-send the code</button> -->
 
   </ion-content>
 
   <ion-footer-bar class="no-padding">
     <div class="button-bar">
+      <button type="button" class="button button-stable" ng-if="fromBooking" go-back>Cancel</button>
       <button type="submit" form="form" class="button button-balanced">Verify</button>
     </div>
   </ion-footer-bar>

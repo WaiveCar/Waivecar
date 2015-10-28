@@ -14,7 +14,9 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
   '$data',
   '$message',
   '$stateParams',
-  function ($rootScope, $scope, $state, $auth, $data, $message, $stateParams) {
+  '$ionicHistory',
+  'BookingService',
+  function ($rootScope, $scope, $state, $auth, $data, $message, $stateParams, $ionicHistory, BookingService) {
 
     $scope.save = function(form) {
       if (form.$pristine) {
@@ -24,21 +26,19 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
         return $message.error('Please resolve form errors and try again.');
       }
 
-      return when.promise(function(resolve, reject) {
+      return when()
+        .then(function(){
           if ($data.me.stripeId) {
-            return resolve();
+            return false;
           }
 
-          return $data.resources.users.createCustomer({
-              id: $auth.me.id,
-              service: 'stripe'
-            }, {
+          return $data.resources.users.createCustomer({}, {
               data: {
-                metadata: {}
+                userId: 1,
+                service: 'stripe',
+                customer: {}
               }
-            }).$promise
-            .then(resolve)
-            .catch(reject);
+            }).$promise;
 
         })
         .then(function() {
@@ -49,12 +49,14 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
           return card.$save();
         })
         .then(function() {
-          if ($scope.redirection.redirectState) {
-            return $state.go('cars', $scope.redirection);
+          if($scope.fromBooking){
+            return $state.go('cars-show', BookingService.getReturnParams());
           }
+
           if($scope.isWizard){
             return $state.go('cars');
           }
+
           $state.go('credit-cards');
 
         })
@@ -63,15 +65,16 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
     };
 
     $scope.init = function() {
-      $scope.redirection = {
-        redirectState: $state.params.redirectState,
-        redirectParams: $state.params.redirectParams
-      };
 
       $scope.isWizard = $stateParams.step;
+      $scope.fromBooking = $stateParams.fromBooking;
 
       if (!$stateParams.id) {
-        $scope.card = new $data.resources.Card({userId: $auth.me.id, service: 'stripe'});
+        $scope.card = new $data.resources.Card({
+          userId: $auth.me.id,
+          service: 'stripe',
+          card: {}
+        });
 
       } else {
         return $data.resources.Card.get({

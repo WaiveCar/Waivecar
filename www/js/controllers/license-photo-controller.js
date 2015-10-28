@@ -41,12 +41,21 @@ module.exports = angular.module('app.controllers').controller('LicensePhotoContr
           return CameraService.uploadPicture(picture);
         })
         .then(function (uploadResponse) {
+
           if ($scope.isWizard) {
             return $state.go('licenses-new', {
               fileId: uploadResponse.id,
-              step: 3
+              step: 3,
+              fromBooking: $state.params.fromBooking
             });
 
+          }
+
+          if($scope.fromBooking){
+            return $state.go('licenses-new', {
+              fileId: uploadResponse.id,
+              fromBooking: true
+            });
           }
 
           return updateLicense(uploadResponse);
@@ -71,15 +80,25 @@ module.exports = angular.module('app.controllers').controller('LicensePhotoContr
           return CameraService.uploadPicture(picture);
         })
         .then(function (uploadResponse) {
-          console.log(uploadResponse);
-          if ($scope.isWizard || !$scope.license) {
-            return $state.go('licenses-new', {
-              fileId: uploadResponse.id,
-              step: 3
-            });
-          } else {
+
+          if($scope.license){
             return updateLicense(uploadResponse);
           }
+
+          if ($scope.isWizard) {
+            return $state.go('licenses-new', {
+              fileId: uploadResponse.id,
+              step: 3,
+            });
+          }
+
+          if($scope.fromBooking){
+            return $state.go('licenses-new', {
+              fileId: uploadResponse.id,
+              fromBooking: true
+            });
+          }
+
         })
         .then(function () {
           if (!$scope.isWizard && $scope.license) {
@@ -95,6 +114,7 @@ module.exports = angular.module('app.controllers').controller('LicensePhotoContr
 
     $scope.init = function () {
       $scope.isWizard = $stateParams.step;
+      $scope.fromBooking = $stateParams.fromBooking;
 
       if ($stateParams.licenseId) {
         $data.resources.licenses.get({

@@ -37,4 +37,5 @@ $margin50: 50;
 }
 @mixin custom-margin ($size, $direction){
   margin-#{$direction}: $size*1%;
+  display: block;
 }

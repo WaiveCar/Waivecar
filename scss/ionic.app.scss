@@ -42,6 +42,12 @@ $fa-font-path: "../fonts" !default;
 .margin-top-20 {
   @include custom-margin (20, 'top');
 }
+.margin-bottom-10 {
+  @include custom-margin (10, 'bottom');
+}
+.margin-bottom-20 {
+  @include custom-margin (20, 'bottom');
+}
 
 .highlight {
   font-weight: bold;

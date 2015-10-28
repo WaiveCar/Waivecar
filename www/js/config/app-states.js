@@ -114,7 +114,7 @@ module.exports = [
       })
       .state('licenses-photo-new', {
         // 11-Drivers-id
-        url: '/licenses/photo/new?step&licenseId',
+        url: '/licenses/photo/new?step&licenseId&fromBooking',
         templateUrl: '/templates/licenses/photo-new.html',
         data: {
           auth: true
@@ -129,7 +129,7 @@ module.exports = [
       })
       .state('licenses-new', {
         // 11.1-Drivers-id
-        url: '/licenses/new?step&fileId',
+        url: '/licenses/new?step&fileId&fromBooking',
         templateUrl: '/templates/licenses/new.html',
         data: {
           auth: true
@@ -137,7 +137,7 @@ module.exports = [
       })
       .state('credit-cards-new', {
         // 12-Payment-method@2x.png
-        url: '/credit-cards/new?step',
+        url: '/credit-cards/new?step&fromBooking',
         templateUrl: '/templates/credit-cards/new.html',
         data: {
           auth: true
@@ -153,7 +153,7 @@ module.exports = [
       })
       .state('auth-account-verify', {
         // 10.1-Verification
-        url: '/auth/account-verify?step&token',
+        url: '/auth/account-verify?step&token&fromBooking',
         templateUrl: '/templates/auth/account-verify.html',
         data: {
           auth: true
@@ -172,10 +172,16 @@ module.exports = [
       })
       .state('cars-show', {
         // 15-Book-waivecar
-        url: '/cars/:id',
+        url: '/cars/:id?displayRequirements',
         templateUrl: '/templates/cars/show.html',
+        controller: 'CarController',
         data: {
           auth: true
+        },
+        resolve: {
+          status: ['BookingService', '$stateParams', function(BookingService, $stateParams){
+            return BookingService.getCurrentStatus($stateParams.id);
+          }]
         }
       })
       .state('bookings-edit', {

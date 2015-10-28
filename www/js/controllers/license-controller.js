@@ -17,7 +17,8 @@ module.exports = angular.module('app.controllers').controller('LicenseController
   '$location',
   '$stateParams',
   '$ionicHistory',
-  function ($rootScope, $scope, $state, $auth, $data, $message, CameraService, $location, $stateParams, $ionicHistory) {
+  'BookingService',
+  function ($rootScope, $scope, $state, $auth, $data, $message, CameraService, $location, $stateParams, $ionicHistory, BookingService) {
     $scope.$ionicHistory = $ionicHistory;
 
     // $scope.forms = {
@@ -53,6 +54,10 @@ module.exports = angular.module('app.controllers').controller('LicenseController
             });
           }
 
+          if($scope.fromBooking){
+            return $state.go('cars-show', BookingService.getReturnParams());
+          }
+
           if (!$stateParams.id) {
             $state.go('landing', {
               id: $data.me.id
@@ -85,11 +90,8 @@ module.exports = angular.module('app.controllers').controller('LicenseController
     $scope.init = function () {
 
       $scope.isWizard = $stateParams.step;
+      $scope.fromBooking = $stateParams.fromBooking;
 
-      $scope.redirection = {
-        redirectState: $state.params.redirectState,
-        redirectParams: $state.params.redirectParams
-      };
 
       if ($stateParams.id) {
         $data.resources.licenses.get({
