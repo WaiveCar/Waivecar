@@ -1,7 +1,7 @@
 'use strict';
 
 module.exports = function *() {
-  if (Reach.ENV !== 'test') {
+  if (Reach.isTesting()) {
     yield require('./schedules/booking-auto-cancel');
     yield require('./schedules/car-reconcile-fleet');
     yield require('./schedules/car-reconcile-location');
