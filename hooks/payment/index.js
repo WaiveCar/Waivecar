@@ -42,11 +42,22 @@ hooks.set('payment:authorized', function *(data, payment) {
 
 /*
   Executes when a charge has been successfully processed.
-  @param  {Object} data
-  @param  {Object} payment
+  @param {Object} data
+  @param {Object} payment
  */
 hooks.set('payment:paid', function *(data, payment) {
   if (data.bookingId) {
-    yield booking.paid(data.bookingId);
+    yield booking.completed(data.bookingId);
+  }
+});
+
+/*
+  Executes when a charge has been successfully refunded.
+  @param {Object} data
+  @param {Object} payment
+ */
+hooks.set('payment:refunded', function *(data, payment) {
+  if (data.bookingId) {
+    yield booking.completed(data.bookingId);
   }
 });

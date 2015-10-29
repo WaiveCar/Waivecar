@@ -4,7 +4,7 @@ let shortid = require('shortid');
 let Booking = Reach.model('Booking');
 let error   = Reach.Error;
 
-module.exports = class Booking {
+module.exports = class BookingFile {
   
   /**
    * Validates the booking by verifying that it has been defined.

@@ -13,10 +13,26 @@ module.exports = class BookingService {
    */
   static *validate(bookingId) {
     let booking = yield Booking.findById(bookingId);
+
+    // ### Validate Booking
+
     if (!booking) {
       throw error.parse({
         code    : `BOOKING_NOT_FOUND`,
         message : `The booking for this payment request does not exist.`
+      }, 400);
+    }
+
+    // ### Validate Booking State
+
+    if (booking.status !== 'new-booking' && booking.status !== 'pending-payment') {
+      throw error.parse({
+        code     : `INVALID_PAYMENT_REQUEST`,
+        message  : `The payment request was made on a booking with an invalid payment state.`,
+        solution : `Make sure the booking is either 'new-booking' or 'pending-payment'`,
+        data     : {
+          status : booking.status
+        }
       }, 400);
     }
   }
@@ -46,7 +62,7 @@ module.exports = class BookingService {
    * Sets the booking state to complete upon completed payment.
    * @param  {Number} bookingId
    */
-  static *paid(bookingId) {
+  static *completed(bookingId) {
     let booking = yield Booking.findById(bookingId);
     yield booking.update({
       status : 'completed'
