@@ -21,11 +21,7 @@ Reach.Register.Model('BookingPaymentItem', 'sequelize', function (model, Sequeli
 
     paymentId : {
       type       : Sequelize.INTEGER,
-      allowNull  : false,
-      references : {
-        model : 'booking_payments',
-        key   : 'id'
-      }
+      allowNull  : false
     },
 
     name : {

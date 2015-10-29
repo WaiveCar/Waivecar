@@ -44,7 +44,7 @@ Reach.Register.Controller('BookingsController', function (controller) {
    * @return {Object}
    */
   controller.end = function *(id) {
-    return yield booking.end(id, this.auth.user);
+    return yield booking.end(id, this.payload.paymentId, this.auth.user);
   };
 
   /*

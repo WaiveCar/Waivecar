@@ -16,6 +16,14 @@ Reach.Register.Model('BookingPayment', 'sequelize', function (model, Sequelize) 
    */
   model.schema = {
 
+    // ### Payment ID
+    // The payment this payment belongs to.
+
+    paymentId : {
+      type       : Sequelize.INTEGER,
+      primaryKey : true
+    },
+
     // ### Booking ID
     // The booking this payment belongs to.
 
@@ -26,14 +34,6 @@ Reach.Register.Model('BookingPayment', 'sequelize', function (model, Sequelize) 
         model : 'bookings',
         key   : 'id'
       }
-    },
-
-    // ### Payment ID
-    // The payment this payment belongs to.
-
-    paymentId : {
-      type      : Sequelize.INTEGER,
-      allowNull : false
     }
 
   };

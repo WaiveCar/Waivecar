@@ -1,9 +1,11 @@
 'use strict';
 
 let Service        = require('./classes/service');
-let Payment        = require('./classes/payment');
+let PaymentHandler = require('./classes/payment');
 let queue          = Reach.provider('queue');
 let queryParser    = Reach.provider('sequelize/helpers').query;
+let File           = Reach.model('File');
+let Payment        = Reach.model('Payment');
 let User           = Reach.model('User');
 let Car            = Reach.model('Car');
 let Booking        = Reach.model('Booking');
@@ -105,18 +107,40 @@ module.exports = class BookingService extends Service {
    */
   static *show(id, _user) {
     let booking = yield Booking.findById(id, {
-      include : [{
-        model : 'BookingDetails',
-        as    : 'details'
-      }]
+      include : [
+        {
+          model : 'BookingDetails',
+          as    : 'details'
+        },
+        {
+          model      : 'BookingPayment',
+          as         : 'payments',
+          attributes : [ 'paymentId' ]
+        }
+      ]
     });
     let user = yield this.getUser(booking.userId);
 
-    // ### Access Check
-    // Check if the user can create a new booking, and verify that the
-    // car requested is available.
-
     this.hasAccess(user, _user);
+
+    // ### Prepare Booking
+    // Prepares a booking along with its payments and files.
+
+    booking = booking.toJSON();
+
+    booking.payments = yield Payment.find({
+      where : {
+        id : booking.payments.map((val) => {
+          return val.paymentId
+        })
+      }
+    });
+
+    booking.files = yield File.find({
+      where : {
+        collectionId : booking.collectionId
+      }
+    });
 
     return booking;
   }
@@ -219,9 +243,9 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
-    // ### Create Payment
+    // ### Payment
 
-    let payment = new Payment(booking, bookingPayment);
+    let payment = new PaymentHandler(booking, bookingPayment);
 
     // -----------------------------------------------------------------------------
     // TODO: CALCULATE RIDE COST
@@ -232,7 +256,13 @@ module.exports = class BookingService extends Service {
 
     yield booking.update({ status : 'pending-payment' });
 
-    return payment;
+    // ### Reset Car
+    // Remove the user from the car and make it available
+
+    yield car.update({
+      userId    : null,
+      available : true
+    });
   }
 
 }
