@@ -13,7 +13,7 @@ module.exports = {
   userId : {
     name      : 'userId',
     label     : 'User',
-    component : 'reach-select',
+    component : 'select',
     options   : {
       lookup : 'user',
       name   : 'email',

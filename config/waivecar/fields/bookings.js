@@ -17,7 +17,7 @@ module.exports = {
   },
   carId : {
     name      : 'carId',
-    component : 'react-select',
+    component : 'select',
     options   : {
       lookup : 'cars',
       name   : 'id',

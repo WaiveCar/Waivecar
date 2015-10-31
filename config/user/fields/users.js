@@ -9,7 +9,7 @@ module.exports = {
   },
   role : {
     name      : 'role',
-    component : 'react-select',
+    component : 'select',
     options   : [
       {
         name  : 'User',
@@ -25,7 +25,7 @@ module.exports = {
   },
   status : {
     name      : 'status',
-    component : 'react-select',
+    component : 'select',
     options   : [
       {
         name  : 'Pending',
