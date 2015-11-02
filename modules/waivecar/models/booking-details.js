@@ -1,6 +1,6 @@
 'use strict';
 
-Reach.Register.Model('BookingDetails', 'sequelize', function (model, Sequelize) {
+Bento.Register.Model('BookingDetails', 'sequelize', function (model, Sequelize) {
 
   /**
    * The identity of the table created in your database.

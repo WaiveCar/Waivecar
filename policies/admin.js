@@ -1,6 +1,6 @@
 'use strict';
 
-let error = Reach.Error;
+let error = Bento.Error;
 
 module.exports = function *admin() {
   if (this.auth.user.role !== 'admin') {

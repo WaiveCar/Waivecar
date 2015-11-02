@@ -2,9 +2,9 @@
 
 let fs       = require('co-fs');
 let path     = require('path');
-let Location = Reach.model('Location');
-let error    = Reach.Error;
-let log      = Reach.Log;
+let Location = Bento.model('Location');
+let error    = Bento.Error;
+let log      = Bento.Log;
 
 module.exports = function *() {
   let count = yield Location.count();

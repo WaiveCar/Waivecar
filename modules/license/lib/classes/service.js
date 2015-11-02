@@ -1,8 +1,8 @@
 'use strict';
 
-let License = Reach.model('License');
-let User    = Reach.model('User');
-let error   = Reach.Error;
+let License = Bento.model('License');
+let User    = Bento.model('User');
+let error   = Bento.Error;
 
 module.exports = class Service {
 

@@ -1,8 +1,8 @@
 'use strict';
 
-let scheduler = Reach.provider('queue').scheduler;
-let Car       = Reach.model('Car');
-let relay     = Reach.Relay;
+let scheduler = Bento.provider('queue').scheduler;
+let Car       = Bento.model('Car');
+let relay     = Bento.Relay;
 
 module.exports = function *() {
   scheduler.add('car-update-client', {

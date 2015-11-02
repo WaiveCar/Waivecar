@@ -5,17 +5,17 @@ module.exports = {
    | Log
    |--------------------------------------------------------------------------------
    |
-   | email      : The module with send out an email when a new error is logged
-   | developers : A list of developer emails allowed access to the logs
+   | @param {Boolean} email     Set if the module should send out error logs via 
+   |                            email.
+   | @param {Array}   developer A list of developer email to receive emails.
+   | @param {Object}  ui        The bentojs UI configuration.
    |
    */
 
   logger : {
     email      : false,
-    developers : [
-      'snapgravy@gmail.com'
-    ],
-    ui : {
+    developers : [],
+    ui         : {
       resources : {
         logs : require('./resources/logs')
       },
@@ -24,5 +24,5 @@ module.exports = {
       }
     }
   }
-
+  
 };

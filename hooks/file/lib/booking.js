@@ -1,8 +1,8 @@
 'use strict';
 
 let shortid = require('shortid');
-let Booking = Reach.model('Booking');
-let error   = Reach.Error;
+let Booking = Bento.model('Booking');
+let error   = Bento.Error;
 
 module.exports = class BookingFile {
   

@@ -2,7 +2,7 @@
 
 let booking = require('./lib/booking');
 let license = require('./lib/license');
-let hooks   = Reach.Hooks;
+let hooks   = Bento.Hooks;
 
 /**
   Validates the file before allowing further file operations to take place.

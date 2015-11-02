@@ -53,7 +53,7 @@ services:
 before_install:
   - npm install -g node-gyp
   - rm -rf ~/.node-gyp/
-  - npm install -g reach
+  - npm install -g bentojs
   - curl 'http://cistats.clevertech.biz/logstat/?&project=Waivecar&type=3'
   - deployment/build/scripts/trigger_coverage
   - openssl aes-256-cbc -K $encrypted_e155dc6b3053_key -iv $encrypted_e155dc6b3053_iv
@@ -61,7 +61,7 @@ before_install:
   - chmod 400 deployment/build/ssh/id_rsa
 install:
   - $SCR/commit_dependencies
-  - reach install
+  - bento package
 script:
   - $SCR/commit_build && $SCR/commit_analysis && $SCR/commit_test && $SCR/commit_package
     --name ${PACKAGE_NAME} --commit ${TRAVIS_COMMIT} && $SCR/deploy

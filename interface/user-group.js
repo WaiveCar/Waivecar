@@ -1,6 +1,6 @@
 'use strict';
 
-Reach.Register.Model('UserGroup', 'sequelize', function (model, Sequelize) {
+Bento.Register.Model('UserGroup', 'sequelize', function (model, Sequelize) {
   
   /**
    * The identity of the table created in your database.

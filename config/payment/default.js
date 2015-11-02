@@ -1,24 +1,22 @@
 module.exports = {
-
+  
   /*
    |--------------------------------------------------------------------------------
    | Payment
    |--------------------------------------------------------------------------------
    |
-   | services   : Array of available payment services
-   | currencies : Array of supported curriencies
-   | stripe     : Stripe service configuration
+   | The various API settings that define how your API reacts to incoming requests.
+   |
+   | @param {Array}  services   A list of available payment services.
+   | @param {Array}  currencies A list of available currencies.
+   | @param {Object} stripe     Stripe configuration.
    |
    */
-
+  
   payment : {
-    services : [ 
-      'stripe' 
-    ],
-    currencies : [
-      'usd'
-    ],
-    stripe : {
+    services   : [ 'stripe' ],
+    currencies : [ 'usd' ],
+    stripe     : {
       secret : null,
       pub    : null
     }

@@ -1,8 +1,8 @@
 'use strict';
 
-let Car   = Reach.model('Car');
-let User  = Reach.model('User');
-let error = Reach.Error;
+let Car   = Bento.model('Car');
+let User  = Bento.model('User');
+let error = Bento.Error;
 
 module.exports = class Service {
 

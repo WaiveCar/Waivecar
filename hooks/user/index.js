@@ -1,12 +1,12 @@
 'use strict';
 
-let queue        = Reach.provider('queue');
-let tokens       = Reach.provider('token');
-let verification = Reach.provider('user-verification');
-let User         = Reach.model('User');
-let error        = Reach.Error;
-let hooks        = Reach.Hooks;
-let config       = Reach.config;
+let queue        = Bento.provider('queue');
+let tokens       = Bento.provider('token');
+let verification = Bento.provider('user-verification');
+let User         = Bento.model('User');
+let error        = Bento.Error;
+let hooks        = Bento.Hooks;
+let config       = Bento.config;
 
 // ### Register Jobs
 

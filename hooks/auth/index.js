@@ -1,10 +1,10 @@
 'use strict';
 
-let bcrypt = Reach.provider('bcrypt');
-let User   = Reach.model('User');
-let auth   = Reach.Auth;
-let hooks  = Reach.Hooks;
-let error  = Reach.Error;
+let bcrypt = Bento.provider('bcrypt');
+let User   = Bento.model('User');
+let auth   = Bento.Auth;
+let hooks  = Bento.Hooks;
+let error  = Bento.Error;
 
 // ### User Hook
 

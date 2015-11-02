@@ -2,7 +2,7 @@
 
 let booking = require('../lib/booking-service');
 
-Reach.Register.Controller('BookingsController', function (controller) {
+Bento.Register.Controller('BookingsController', function (controller) {
 
   /**
    * Creates a new booking request.

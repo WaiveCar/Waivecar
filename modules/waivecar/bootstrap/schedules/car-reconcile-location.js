@@ -1,8 +1,8 @@
 'use strict';
 
-let scheduler = Reach.provider('queue').scheduler;
-let Car       = Reach.model('Car');
-let log       = Reach.Log;
+let scheduler = Bento.provider('queue').scheduler;
+let Car       = Bento.model('Car');
+let log       = Bento.Log;
 
 module.exports = function *() {
   scheduler.add('car-reconcile-location', {

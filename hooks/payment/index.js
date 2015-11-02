@@ -1,7 +1,7 @@
 'use strict';
 
 let booking = require('./lib/booking');
-let hooks   = Reach.Hooks;
+let hooks   = Bento.Hooks;
 
 /*
   Prepare provided customer data, this hook is reuquired by the customer service

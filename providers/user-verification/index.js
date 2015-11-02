@@ -1,8 +1,8 @@
 'use strict';
 
-let queue  = Reach.provider('queue');
-let tokens = Reach.provider('token');
-let config = Reach.config;
+let queue  = Bento.provider('queue');
+let tokens = Bento.provider('token');
+let config = Bento.config;
 
 // ### Require Verification Jobs
 

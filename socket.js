@@ -1,18 +1,13 @@
 'use strict';
 
-let Reach  = require('reach-api');
-let socket = require('reach-socket');
+let path   = require('path');
+let server = require('bentojs-socket');
+let config = require('bentojs-config');
 
-/*
-  Socket Server
-  =============
-  The reach-api uses reach-socket (stand alone socket.io server) to emmit all socket events
-  from back end to front end service.
+// ### Configuration
 
-  This is an optional file that can be executed seperately from the API if you wish to run
-  the socket server on the same server as the API.
+config = config(path.resolve('./config'));
 
-  This file uses the configuration defined in the ./config/socket directory.
- */
+// ### Server
 
-socket(Reach.config.socket);
+server(config.socket);

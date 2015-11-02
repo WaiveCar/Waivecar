@@ -1,9 +1,9 @@
 'use strict';
 
-let scheduler       = Reach.provider('queue').scheduler;
-let Car             = Reach.model('Car');
-let CarDiagnostic   = Reach.model('CarDiagnostic');
-let log             = Reach.Log;
+let scheduler       = Bento.provider('queue').scheduler;
+let Car             = Bento.model('Car');
+let CarDiagnostic   = Bento.model('CarDiagnostic');
+let log             = Bento.Log;
 let maxRange        = 37;
 let maxPercent      = 100;
 let minPercent      = 10;

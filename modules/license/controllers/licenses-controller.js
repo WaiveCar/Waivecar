@@ -2,7 +2,7 @@
 
 let service = require('../lib/license-service');
 
-Reach.Register.Controller('LicensesController', function (controller) {
+Bento.Register.Controller('LicensesController', function (controller) {
 
   /**
    * Stores a new license record.

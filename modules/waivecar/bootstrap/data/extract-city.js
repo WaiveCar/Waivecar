@@ -5,7 +5,7 @@ let fs   = require('co-fs');
 let path = require('path');
 
 module.exports = function *() {
-  let filePath = path.join(Reach.ROOT_PATH, 'modules', 'waivecar', 'bootstrap', 'data');
+  let filePath = path.join(Bento.ROOT_PATH, 'modules', 'waivecar', 'bootstrap', 'data');
   let all = path.join(filePath, 'charging-stations-us.json');
 
   if (yield fs.exists(all)) {

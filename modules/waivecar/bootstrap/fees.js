@@ -2,12 +2,12 @@
 
 let fs    = require('co-fs');
 let path  = require('path');
-let Fee   = Reach.model('BookingFee');
-let error = Reach.Error;
-let log   = Reach.Log;
+let Fee   = Bento.model('BookingFee');
+let error = Bento.Error;
+let log   = Bento.Log;
 
 module.exports = function *() {
-  let fees = JSON.parse(yield fs.readFile(path.join(Reach.MODULE_PATH, 'waivecar', 'bootstrap', 'data', 'fees.json')));
+  let fees = JSON.parse(yield fs.readFile(path.join(Bento.MODULE_PATH, 'waivecar', 'bootstrap', 'data', 'fees.json')));
 
   // ### Check Count
   // Check if the db and list is the same length or if db has

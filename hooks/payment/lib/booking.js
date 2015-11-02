@@ -1,9 +1,9 @@
 'use strict';
 
 let shortid        = require('shortid');
-let Booking        = Reach.model('Booking');
-let BookingPayment = Reach.model('BookingPayment');
-let error          = Reach.Error;
+let Booking        = Bento.model('Booking');
+let BookingPayment = Bento.model('BookingPayment');
+let error          = Bento.Error;
 
 module.exports = class BookingService {
 

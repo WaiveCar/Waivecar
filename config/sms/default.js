@@ -1,13 +1,12 @@
-'use strict';
-
 module.exports = {
 
   /*
    |--------------------------------------------------------------------------------
-   | Sms
+   | SMS
    |--------------------------------------------------------------------------------
    |
-   | Settings for sms providers
+   | @param {String} transportName
+   | @param {Object} transport
    |
    */
 

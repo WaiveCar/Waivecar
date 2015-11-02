@@ -4,7 +4,7 @@ var assert = require('chai').assert;
 
 describe('Interface', function () {
   describe('User', function () {
-    var User = Reach.model('User');
+    var User = Bento.model('User');
     var user = null;
 
     it('has been defined', function (done) {

@@ -1,5 +1,5 @@
 'use strict';
 
 module.exports = function (app) {
-  app.use(Reach.Auth);
+  app.use(Bento.Auth);
 };

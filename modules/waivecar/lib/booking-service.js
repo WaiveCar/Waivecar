@@ -2,18 +2,18 @@
 
 let Service        = require('./classes/service');
 let PaymentHandler = require('./classes/payment');
-let queue          = Reach.provider('queue');
-let queryParser    = Reach.provider('sequelize/helpers').query;
-let File           = Reach.model('File');
-let Payment        = Reach.model('Payment');
-let User           = Reach.model('User');
-let Car            = Reach.model('Car');
-let Booking        = Reach.model('Booking');
-let BookingDetails = Reach.model('BookingDetails');
-let BookingPayment = Reach.model('BookingPayment');
-let error          = Reach.Error;
-let relay          = Reach.Relay;
-let config         = Reach.config.waivecar;
+let queue          = Bento.provider('queue');
+let queryParser    = Bento.provider('sequelize/helpers').query;
+let File           = Bento.model('File');
+let Payment        = Bento.model('Payment');
+let User           = Bento.model('User');
+let Car            = Bento.model('Car');
+let Booking        = Bento.model('Booking');
+let BookingDetails = Bento.model('BookingDetails');
+let BookingPayment = Bento.model('BookingPayment');
+let error          = Bento.Error;
+let relay          = Bento.Relay;
+let config         = Bento.config.waivecar;
 
 module.exports = class BookingService extends Service {
 

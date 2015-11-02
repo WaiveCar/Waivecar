@@ -17,7 +17,7 @@ module.exports = {
 
   api : {
     name    : 'WaiveCar',
-    version : '0.6.5',
+    version : '0.6.6',
     port    : 8081,
     uri     : 'http://localhost:8081',
     cors    : {
@@ -26,9 +26,39 @@ module.exports = {
     }
   },
 
+  /*
+   |--------------------------------------------------------------------------------
+   | Redis
+   |--------------------------------------------------------------------------------
+   |
+   | @param {Object} redis
+   |
+   */
+
   redis  : {
     host : 'localhost',
     port : 6379
+  },
+
+  /*
+   |--------------------------------------------------------------------------------
+   | Socket
+   |--------------------------------------------------------------------------------
+   |
+   | The socket redis target that the API will be submitting socket events through.
+   |
+   | @param {Number} port
+   | @param {Object} redis
+   |
+   */
+
+  socket : {
+    port  : 5000,
+    auth  : null,
+    redis : {
+      host : 'localhost',
+      port : 6379
+    }
   },
 
   /*

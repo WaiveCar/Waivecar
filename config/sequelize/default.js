@@ -1,21 +1,18 @@
 module.exports = {
-
+  
   /*
    |--------------------------------------------------------------------------------
    | Sequelize
    |--------------------------------------------------------------------------------
    |
-   | host     : Server address
-   | database : Name of the database to connect to
-   | username : The username to use for the connection
-   | password : The password to use for the connection
-   | dialect  : mysql | mariadb | sqlite | postgres | mssql
-   | pool     : Connection pool settings
-   |   max  : Max number of active pools
-   |   min  : Min number of pools
-   |   idle : Idle setting
-   | debug  : Log sequelize output to the terminal
-   | force  : Drop all the tables when syncing tables
+   | @param {String}  host     Server address
+   | @param {String}  database Name of the database to connect to
+   | @param {String}  username Connection username
+   | @param {String}  password Connection password
+   | @param {String}  dialect  mysql | mariadb | sqlite | postgres | mssql
+   | @param {Object}  pool     Connection pool settings
+   | @param {Boolean} debug    Log sequelize output to the terminal
+   | @param {Boolean} force    Drop all the table when syncing
    |
    */
 
@@ -30,8 +27,8 @@ module.exports = {
       min  : 0,
       idle : 1000
     },
-    debug  : false,
-    force  : false
+    debug : false,
+    force : false
   }
 
 };

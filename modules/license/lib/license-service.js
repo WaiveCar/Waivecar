@@ -1,10 +1,10 @@
 'use strict';
 
 let Service     = require('./classes/service');
-let queryParser = Reach.provider('sequelize/helpers').query;
-let License     = Reach.model('License');
-let error       = Reach.Error;
-let relay       = Reach.Relay;
+let queryParser = Bento.provider('sequelize/helpers').query;
+let License     = Bento.model('License');
+let error       = Bento.Error;
+let relay       = Bento.Relay;
 let resource    = 'licenses';
 
 class LicenseService extends Service {

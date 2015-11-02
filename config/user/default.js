@@ -1,18 +1,18 @@
 module.exports = {
+
+  /*
+   |--------------------------------------------------------------------------------
+   | User
+   |--------------------------------------------------------------------------------
+   |
+   | @param {Array}    users  A list of users to register by default.
+   | @param {Array}    params A list of parameters required for user registration.
+   | @param {Object}   ui     The bentojs UI configuration.
+   | @param {Function} filter The query filter available on the user model.
+   |
+   */
+  
   user : {
-
-    /*
-     |--------------------------------------------------------------------------------
-     | Users
-     |--------------------------------------------------------------------------------
-     |
-     | A list of users that gets inserted into the database by default if no user
-     | records has been created.
-     |
-     | @param {Array}
-     |
-     */
-
     users : [
       {
         firstName     : 'Matt',
@@ -52,6 +52,7 @@ module.exports = {
         status        : 'active'
       }
     ],
+
     params : [
       'firstName',
       'lastName',
@@ -59,18 +60,6 @@ module.exports = {
       'phone',
       'password'
     ],
-
-    /*
-     |--------------------------------------------------------------------------------
-     | UI
-     |--------------------------------------------------------------------------------
-     |
-     | The user resources, and fields settings for reach-ui utilized in react.
-     |
-     | @param {Object} resources List of user related resources
-     | @param {Object} fields    List of user related fields
-     |
-     */
 
     ui : {
       resources : {
@@ -80,18 +69,6 @@ module.exports = {
         users : require('./fields/users')
       }
     },
-
-    /*
-     |--------------------------------------------------------------------------------
-     | UI
-     |--------------------------------------------------------------------------------
-     |
-     | Customizable query filter, this is used when a client is indexing the user
-     | table.
-     |
-     | @param {Function} filter
-     |
-     */
 
     filter : function (queryParser, query) {
       return queryParser(query, {
@@ -108,6 +85,6 @@ module.exports = {
         }
       });
     }
-
   }
+
 };

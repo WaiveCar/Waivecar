@@ -1,9 +1,9 @@
 'use strict';
 
-let scheduler = Reach.provider('queue').scheduler;
-let Booking   = Reach.model('Booking');
-let Car       = Reach.model('Car');
-let relay     = Reach.Relay;
+let scheduler = Bento.provider('queue').scheduler;
+let Booking   = Bento.model('Booking');
+let Car       = Bento.model('Car');
+let relay     = Bento.Relay;
 
 scheduler.process('booking-auto-cancel', function *(job) {
   let booking = yield Booking.findOne({ where : { id : job.data.bookingId } });

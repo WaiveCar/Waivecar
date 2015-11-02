@@ -1,13 +1,11 @@
-'use strict';
-
 module.exports = {
 
   /*
    |--------------------------------------------------------------------------------
-   | license
+   | License
    |--------------------------------------------------------------------------------
    |
-   | ui : resources and field settings.
+   | @param {Object} ui The bentojs UI configuration.
    |
    */
 

@@ -1,7 +1,7 @@
 'use strict';
 
-let BookingPayment     = Reach.model('BookingPayment');
-let BookingPaymentItem = Reach.model('BookingPaymentItem');
+let BookingPayment     = Bento.model('BookingPayment');
+let BookingPaymentItem = Bento.model('BookingPaymentItem');
 
 module.exports = class Payment {
   

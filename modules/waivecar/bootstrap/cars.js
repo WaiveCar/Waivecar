@@ -1,7 +1,7 @@
 'use strict';
 
-let Car = Reach.model('Car');
-let log = Reach.Log;
+let Car = Bento.model('Car');
+let log = Bento.Log;
 
 module.exports = function *() {
   let count = yield Car.count();

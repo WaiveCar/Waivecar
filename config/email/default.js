@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = {
 
   /*
@@ -7,7 +5,10 @@ module.exports = {
    | Email
    |--------------------------------------------------------------------------------
    |
-   | Settings for email providers
+   | @param {String} templateFolder
+   | @param {Object} sender
+   | @param {String} transportName
+   | @param {Object} transport
    |
    */
 

@@ -1,5 +1,5 @@
 'use strict';
 
 module.exports = function (app) {
-  app.use(Reach.Error());
+  app.use(Bento.Error());
 };

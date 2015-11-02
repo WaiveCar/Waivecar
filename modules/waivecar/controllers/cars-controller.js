@@ -1,9 +1,9 @@
 'use strict';
 
-let queryParser = Reach.provider('sequelize/helpers').query;
-let Car         = Reach.model('Car');
+let queryParser = Bento.provider('sequelize/helpers').query;
+let Car         = Bento.model('Car');
 
-Reach.Register.ResourceController('Car', 'CarsController', function (controller) {
+Bento.Register.ResourceController('Car', 'CarsController', function (controller) {
 
   /**
    * @method index

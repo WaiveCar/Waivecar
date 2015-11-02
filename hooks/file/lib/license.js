@@ -1,7 +1,7 @@
 'use strict';
 
-let License = Reach.model('License');
-let error   = Reach.Error;
+let License = Bento.model('License');
+let error   = Bento.Error;
 
 module.exports = class LicenseFile {
   
