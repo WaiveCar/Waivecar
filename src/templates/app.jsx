@@ -6,7 +6,6 @@ import UI, { templates, views } from 'bento-ui';
 import policies                 from 'policies';
 import Sidebar                  from 'views/app/sidebar';
 import Header                   from 'views/app/header';
-import 'styles/app/style.scss';
 
 /**
  * @class AppTemplate

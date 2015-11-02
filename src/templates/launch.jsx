@@ -6,7 +6,6 @@ import { auth, api }      from 'bento';
 import { templates }      from 'bento-ui';
 import { Form, snackbar } from 'bento-web';
 import policies           from 'policies';
-import 'styles/launch/style.scss';
 
 class LaunchTemplate extends React.Component {
 

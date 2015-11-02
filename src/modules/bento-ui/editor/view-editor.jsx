@@ -17,6 +17,7 @@ import search                     from './lib/search';
 import transform                  from './lib/transform';
 
 @DragDropContext(HTML5Backend)
+@mixin.decorate(History)
 class ViewLayout extends React.Component {
 
   constructor(...args) {

@@ -4,7 +4,6 @@ import React         from 'react';
 import { auth, api } from 'bento';
 import { templates } from 'bento-ui';
 import policies      from 'policies';
-import 'styles/auth/style.scss';
 
 // ### Identifier Authentication Template
 

@@ -5,7 +5,6 @@ import Reach, { relay }         from 'bento';
 import UI, { templates, views } from 'bento-ui';
 import policies                 from 'policies';
 import Header                   from 'views/app/header';
-import 'styles/home/style.scss';
 
 /**
  * @class AppTemplate

@@ -3,7 +3,6 @@
 import React         from 'react';
 import { relay }     from 'bento';
 import { templates } from 'bento-ui';
-import 'styles/booking/style.scss';
 
 class BookingTemplate extends React.Component {
   render() {
