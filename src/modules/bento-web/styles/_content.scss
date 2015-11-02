@@ -1,0 +1,28 @@
+.content-actions {
+  background : $gray-lightest;
+  text-align : right;
+  &.is-active {
+    border-bottom : 1px solid $brand-primary;
+    .btn {
+      opacity : 1;
+    }
+  }
+  .btn-icon {
+    width  : 20px;
+    height : 20px;
+    .material-icons {
+      line-height : 20px;
+      color       : $brand-primary;
+    }
+  }
+}
+.ct-toolbox__grip.ct-grip {
+  .ct-grip__bump {
+    display : none;
+  }
+}
+
+.ce-element--focused,
+.ce-element--over {
+  background-color : lighten($brand-primary, 50%);
+}

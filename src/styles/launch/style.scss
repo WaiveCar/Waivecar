@@ -1,0 +1,59 @@
+@import '~styles/variables';
+
+#launch {
+  display           : -webkit-box;
+  display           : -moz-box;
+  display           : -ms-flexbox;
+  display           : -moz-flex;
+  display           : -webkit-flex;
+  display           : flex;
+  flex-flow         : row wrap;
+  min-height        : 100vh;
+  position          : relative;
+  -webkit-flex-flow : row wrap;
+
+  .notification-container {
+    min-width     : 360px;
+    padding       : 0 40px 40px;
+    text-align    : center;
+    background    : rgba(#000, .6);
+    box-shadow    : 0 0 10px rgba(0, 0, 0, .3);
+    border-top    : 2px solid $brand-primary;
+    border-radius : 0;
+    color         : #fcfcfc;
+
+    left          : 50%;
+    position      : absolute;
+    top           : 50%;
+    transform     : translate(-50%, -50%);
+
+    img {
+      display : block;
+      margin  : -26px auto 20px;
+    }
+
+    label {
+      color : #fff;
+    }
+
+    .form-control {
+      border-bottom : 1px solid #565656;
+      color         : #fff;
+    }
+
+    .footer {
+      font-size : .78rem;
+      margin    : -10px auto 20px;
+    }
+
+    .s-btn {
+      background    : darken($brand-primary, 5%);
+      border        : none;
+      border-radius : 3px;
+      height        : 48px;
+      text-shadow   : 1px 1px 0 darken($brand-primary, 15%);
+      width         : 240px;
+    }
+  }
+
+}

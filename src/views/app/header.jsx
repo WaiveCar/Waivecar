@@ -1,7 +1,5 @@
-'use strict';
-
 import React      from 'react';
-import { Navbar } from 'reach-components';
+import { Navbar } from 'bento-web';
 
 export default class Header extends React.Component {
 

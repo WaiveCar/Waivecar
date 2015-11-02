@@ -1,14 +1,11 @@
-'use strict';
-
-import React                from 'react';
-import mixin                from 'react-mixin';
-import { auth, api }        from 'reach-react';
-import { History, Link } from 'react-router';
-import config               from 'config';
-import { Form, snackbar }   from 'reach-components';
+import React              from 'react';
+import mixin              from 'react-mixin';
+import { History, Link }  from 'react-router';
+import config             from 'config';
+import { auth, api }      from 'bento';
+import { Form, snackbar } from 'bento-web';
 
 @mixin.decorate(History)
-
 export default class ResetPasswordView extends React.Component {
 
   constructor(...args) {

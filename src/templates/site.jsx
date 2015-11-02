@@ -1,11 +1,10 @@
 'use strict';
 
-import React                from 'react';
-import Reach, { relay }     from 'reach-react';
-import UI                   from 'reach-ui';
-import { templates, views } from 'reach-ui';
-import policies             from 'policies';
-import Header               from 'views/app/header';
+import React                    from 'react';
+import Reach, { relay }         from 'bento';
+import UI, { templates, views } from 'bento-ui';
+import policies                 from 'policies';
+import Header                   from 'views/app/header';
 import 'styles/site/style.scss';
 
 /**

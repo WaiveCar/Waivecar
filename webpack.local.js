@@ -1,6 +1,5 @@
-'use strict';
-
-var config           = require('./config');
+var path             = require('path');
+var config           = require('bentojs-config')(path.resolve('./config'), path.resolve('./src/config.js'));
 var webpack          = require('webpack');
 var WebpackDevServer = require('webpack-dev-server');
 var webpackConfig    = require('./webpack/config/local.js');

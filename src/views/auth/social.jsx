@@ -1,11 +1,9 @@
-'use strict';
-
-import React          from 'react';
-import mixin          from 'react-mixin';
-import { auth, api }  from 'reach-react';
-import { History } from 'react-router';
-import { snackbar }   from 'reach-components';
-import config         from 'config';
+import React         from 'react';
+import mixin         from 'react-mixin';
+import { History }   from 'react-router';
+import config        from 'config';
+import { auth, api } from 'bento';
+import { snackbar }  from 'bento-web';
 
 @mixin.decorate(History)
 

@@ -1,5 +1,3 @@
-'use strict';
-
 var path    = require('path');
 var webpack = require('webpack');
 var config  = require('../../src/config.js');
@@ -13,12 +11,14 @@ module.exports = {
       './src/index'
     ],
     vendors : [
+      'bento',
+      'bento-ui',
+      'bento-web',
+      'md5',
       'react',
       'react-dom',
-      'react-router',
-      'reach-react',
       'react-mixin',
-      'md5'
+      'react-router'
     ]
   },
   output : {
@@ -29,14 +29,13 @@ module.exports = {
   resolve : {
     extensions : [ '', '.js', '.jsx' ],
     alias      : {
-      config             : path.join(__dirname, '../../', 'src', 'config.js'),
-      styles             : path.join(__dirname, '../../', 'src', 'styles'),
-      policies           : path.join(__dirname, '../../', 'src', 'policies'),
-      views              : path.join(__dirname, '../../', 'src', 'views'),
-      'reach-react'      : path.join(__dirname, '../../', 'src', 'modules', 'reach-react'),
-      'reach-components' : path.join(__dirname, '../../', 'src', 'modules', 'reach-components'),
-      'reach-ui'         : path.join(__dirname, '../../', 'src', 'modules', 'reach-ui'),
-      'react-sparklines' : path.join(__dirname, '../../', 'src', 'modules', 'react-sparklines')
+      'bento'     : path.join(__dirname, '../../', 'src', 'modules', 'bento'),
+      'bento-ui'  : path.join(__dirname, '../../', 'src', 'modules', 'bento-ui'),
+      'bento-web' : path.join(__dirname, '../../', 'src', 'modules', 'bento-web'),
+      'config'    : path.join(__dirname, '../../', 'src', 'config'),
+      styles      : path.join(__dirname, '../../', 'src', 'styles'),
+      policies    : path.join(__dirname, '../../', 'src', 'policies'),
+      views       : path.join(__dirname, '../../', 'src', 'views')
     }
   },
   module : {
@@ -49,10 +48,6 @@ module.exports = {
       {
         test    : /\.scss$/,
         loaders : [ 'style', 'css', 'sass' ]
-      },
-      {
-        test    : /\.json$/,
-        loaders : [ 'json' ]
       }
     ]
   },

@@ -1,10 +1,10 @@
 'use strict';
 
 import React          from 'react';
-import UI             from 'reach-ui';
-import { relay, api } from 'reach-react';
+import { relay, api } from 'bento';
+import { components } from 'bento-ui';
 
-let Map = UI.components.get('map');
+let Map = components.get('map');
 
 export default class BookingCar extends React.Component {
 

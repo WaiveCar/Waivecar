@@ -1,7 +1,5 @@
-'use strict';
-
-import React from 'react';
-import UI    from 'reach-ui';
+import React         from 'react';
+import { templates } from 'bento-ui';
 
 class SandboxTemplate extends React.Component {
   render() {
@@ -15,7 +13,7 @@ class SandboxTemplate extends React.Component {
 
 // ### Register Template
 
-UI.templates.register('sandbox', {
+templates.register('sandbox', {
   component   : SandboxTemplate,
   childRoutes : [
     {

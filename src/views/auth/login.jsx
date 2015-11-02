@@ -1,14 +1,11 @@
-'use strict';
-
 import React                 from 'react';
 import mixin                 from 'react-mixin';
-import { auth, api, socket } from 'reach-react';
 import { History, Link }     from 'react-router';
-import { Form, snackbar }    from 'reach-components';
 import config                from 'config';
+import { auth, api, socket } from 'bento';
+import { Form, snackbar }    from 'bento-web';
 
 @mixin.decorate(History)
-
 export default class LoginView extends React.Component {
 
   /**
@@ -49,7 +46,7 @@ export default class LoginView extends React.Component {
 
       // ### Authenticate Socket
       // Sends the user token for authentication with the socket.
-      
+
       socket.authenticate(user.token);
 
       // ### Remember
@@ -119,7 +116,7 @@ export default class LoginView extends React.Component {
         </div>
 
         <div className="footer">
-          Don't have a WaiveCar account? <Link to="/register">Register</Link>
+          Don't have an account? <Link to="/register">Register</Link>
         </div>
       </div>
     );

@@ -1,10 +1,7 @@
-'use strict';
-
-import React         from 'react';
-import Reach         from 'reach-react';
-import { templates } from 'reach-ui';
-import loader        from 'reach-ui/loader';
-import { Route }     from 'react-router';
+import React                 from 'react';
+import { Route }             from 'react-router';
+import Reach                 from 'bento';
+import { loader, templates } from 'bento-ui';
 
 // ### Import Templates
 

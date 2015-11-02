@@ -1,9 +1,9 @@
 'use strict';
 
 import React                    from 'react';
-import Reach                    from 'reach-react';
+import Reach                    from 'bento';
 import config                   from 'config';
-import { Anchor, Form, Layout } from 'reach-components';
+import { Anchor, Form, Layout } from 'bento-web';
 import { Link }                 from 'react-router';
 
 let { Container, Row, Column } = Layout;

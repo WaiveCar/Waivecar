@@ -1,8 +1,8 @@
 'use strict';
 
 import React         from 'react';
-import { auth, api } from 'reach-react';
-import { templates } from 'reach-ui';
+import { auth, api } from 'bento';
+import { templates } from 'bento-ui';
 import policies      from 'policies';
 import 'styles/auth/style.scss';
 

@@ -1,11 +1,10 @@
 'use strict';
 
-import React                from 'react';
-import Reach, { relay }     from 'reach-react';
-import UI                   from 'reach-ui';
-import { templates, views } from 'reach-ui';
-import policies             from 'policies';
-import Header               from 'views/app/header';
+import React                    from 'react';
+import Reach, { relay }         from 'bento';
+import UI, { templates, views } from 'bento-ui';
+import policies                 from 'policies';
+import Header                   from 'views/app/header';
 import 'styles/home/style.scss';
 
 /**
@@ -49,13 +48,6 @@ class HomeTemplate extends React.Component {
 templates.register('home', {
   component : HomeTemplate,
   getChildRoutes(state, done) {
-    done(null,
-      [
-        {
-          path      : '/draft',
-          component : require('views/home/home')
-        }
-      ].concat(views.getRoutes('home'))
-    );
+    done(null, views.getRoutes('home'));
   }
 });

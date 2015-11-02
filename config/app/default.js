@@ -32,6 +32,14 @@ module.exports = {
       'WaiveCar',
       'Fleet Management'
     ]
+  },
+
+  web : {
+    components : {
+      map : {
+        key : '8698d318586c58a1f8ca1e88ecfac299'
+      }
+    }
   }
 
 };

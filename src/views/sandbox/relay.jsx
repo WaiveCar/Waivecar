@@ -1,7 +1,7 @@
 'use strict';
 
 import React          from 'react';
-import { api, relay } from 'reach-react';
+import { api, relay } from 'bento';
 
 export default class SandboxRelay extends React.Component {
 

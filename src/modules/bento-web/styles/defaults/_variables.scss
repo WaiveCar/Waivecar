@@ -1,0 +1,48 @@
+$gray-dark:                 #373a3c !default;
+$gray:                      #bcbabe !default;
+$gray-light:                lighten($gray-dark, 35%) !default;
+$gray-lighter:              lighten($gray-dark, 55%) !default;
+$gray-lightest:             #f1f1f2 !default;
+
+$brand-primary:             #1995AD !default;
+$brand-secondary:           #A1D6E2 !default;
+$brand-success:             #5cb85c !default;
+$brand-info:                #5bc0de !default;
+$brand-warning:             #f0ad4e !default;
+$brand-danger:              #d9534f !default;
+
+$enable-flex:               true !default;
+$enable-rounded:            false !default;
+$enable-shadows:            false !default;
+$enable-gradients:          false !default;
+$enable-transitions:        true  !default;
+$enable-hover-media-query:  false !default;
+
+$app-color-black : #021207;
+$app-color-white : #fff;
+
+$btn-default-color:              #fff !default;
+$btn-default-bg:                 $gray !default;
+$btn-default-border:             $btn-default-bg !default;
+
+$grid-gutter-width: 0;
+
+@keyframes inputHighlighter {
+  from {
+    background : $brand-primary;
+  }
+  to {
+    width      : 0;
+    background : transparent;
+  }
+}
+
+@keyframes inputHighlighterWhite {
+  from {
+    background : $app-color-white;
+  }
+  to {
+    width      : 0;
+    background : transparent;
+  }
+}

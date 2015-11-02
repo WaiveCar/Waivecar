@@ -1,8 +1,8 @@
 'use strict';
 
 import React        from 'react';
-import { snackbar } from 'reach-components';
 import { Link }     from 'react-router';
+import { snackbar } from 'bento-web';
 
 export default class App extends React.Component {
 

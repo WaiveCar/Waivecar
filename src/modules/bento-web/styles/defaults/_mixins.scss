@@ -1,0 +1,206 @@
+/*
+  1. REM with Pixedl Fallback
+
+  p {
+    @include font-size(14px)
+  }
+ */
+@function calculateRem($size) {
+  $remSize: $size / 16px;
+  @return $remSize * 1rem;
+}
+
+@mixin font-size($size) {
+  font-size: $size;
+  font-size: calculateRem($size);
+}
+
+/*
+  2. Animations & Keyframes
+
+  @include keyframes(slide-down) {
+    0% { opacity: 1; }
+    90% { opacity: 0; }
+  }
+
+  .element {
+    width: 100px;
+    height: 100px;
+    background: black;
+    @include animation('slide-down 5s 3');
+  }
+ */
+
+@mixin keyframes($animation-name) {
+  @-webkit-keyframes $animation-name {
+    @content;
+  }
+  @-moz-keyframes $animation-name {
+    @content;
+  }
+  @-ms-keyframes $animation-name {
+    @content;
+  }
+  @-o-keyframes $animation-name {
+    @content;
+  }
+  @keyframes $animation-name {
+    @content;
+  }
+}
+
+@mixin animation($str) {
+  -webkit-animation : $str;
+  -moz-animation    : $str;
+  -ms-animation     : $str;
+  -o-animation      : $str;
+  animation         : $str;
+}
+
+/*
+  3. Transitions
+
+  a {
+    color: gray;
+    @include transition(color .3s ease);
+    &:hover {
+      color: black;
+    }
+  }
+*/
+
+@mixin transition($args...) {
+  -webkit-transition : $args;
+  -moz-transition    : $args;
+  -ms-transition     : $args;
+  -o-transition      : $args;
+  transition         : $args;
+}
+
+/*
+  4. Cross Browser Opacity
+
+  .faded-text {
+    @include opacity(0.8);
+  }
+ */
+@mixin opacity($opacity) {
+  opacity     : $opacity;
+  $opacity-ie : $opacity * 100;
+  filter      : alpha(opacity=$opacity-ie); //IE8
+}
+
+/*
+  5. Clearfix
+
+  .container-with-floated-children {
+    @extend %clearfix;
+  }
+ */
+%clearfix {
+  &:before,
+  &:after {
+    content: " ";
+    display: table;
+  }
+  &:after {
+    clear: both;
+  }
+}
+
+@mixin gradient($from, $to) {
+  background: -moz-linear-gradient(top,  $from 0%, $to 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,$from), color-stop(100%,$to));
+  background: -webkit-linear-gradient(top,  $from 0%,$to 100%);
+  background: -o-linear-gradient(top,  $from 0%,$to 100%);
+  background: -ms-linear-gradient(top,  $from 0%,$to 100%);
+  background: linear-gradient(to bottom,  $from 0%,$to 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000', endColorstr='#00000000',GradientType=0 );
+}
+
+
+/**
+ * Returns styling for forms using the reach-components form setup.
+ * @mixin reach-form
+ * @param {Mixed} $input-height The height of your input
+ * @param {Mixed} $font-size    The font size of your input
+ */
+@mixin reach-form($input-height, $font-size, $border-color) {
+  .r-input {
+    padding-top : $input-height;
+    position    : relative;
+
+    label {
+      color        : #777;
+      left         : 0;
+      font-size    : $font-size;
+      height       : $input-height;
+      line-height  : $input-height;
+      padding      : 0 15px;
+      position     : absolute;
+      transition   : 0.2s ease all;
+      top          : $input-height;
+      width        : 100%;
+    }
+
+    input {
+      background    : none;
+      border        : none;
+      border-bottom : 1px solid $border-color;
+      font-size     : $font-size;
+      height        : $input-height;
+      line-height   : $input-height;
+      padding       : 0;
+      position      : relative;
+      z-index       : 100;
+    }
+
+    .focus-bar {
+      background : $brand-primary;
+      height     : 2px;
+      margin     : -1px auto 0;
+      transition : 0.2s ease all;
+      width      : 0;
+    }
+
+    &.active, &.focus {
+      transition  : 0.2s ease all;
+      label {
+        font-size  : .8rem;
+        top        : 0;
+        transition : 0.2s ease all;
+      }
+    }
+
+    &.focus {
+      .focus-bar {
+        position   : relative;
+        transition : 0.2s ease all;
+        width      : 100%;
+        z-index    : 101;
+      }
+    }
+
+    .help-text {
+      color     : #777;
+      font-size : .8rem;
+    }
+  }
+
+  .r-input-center {
+    label, input {
+      text-align : center;
+    }
+  }
+
+  .r-select {
+    select {
+      border        : none;
+      border-bottom : 1px solid $border-color;
+      height        : $input-height;
+      line-height   : $input-height;
+      padding       : 0;
+      width         : 100%;
+    }
+  }
+}

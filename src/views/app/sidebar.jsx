@@ -1,10 +1,8 @@
-'use strict';
-
-import React           from 'react';
-import Reach, { auth } from 'reach-react';
-import { Link }        from 'react-router';
-import { menu }        from 'reach-ui';
 import md5             from 'md5';
+import React           from 'react';
+import { Link }        from 'react-router';
+import Reach, { auth } from 'bento';
+import { menu }        from 'bento-ui';
 
 let nav  = [
 ];

@@ -1,6 +1,4 @@
-'use strict';
-
-import { auth } from 'reach-react';
+import { auth } from 'bento';
 
 export default {
 

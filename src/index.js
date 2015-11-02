@@ -1,5 +1,3 @@
-'use strict';
-
 // ### Polyfill
 // Import babel-core polyfill for access to the entire ES6 suite of features.
 

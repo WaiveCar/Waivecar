@@ -1,8 +1,8 @@
 'use strict';
 
-import React     from 'react';
-import UI        from 'reach-ui';
-import { relay } from 'reach-react';
+import React         from 'react';
+import { relay }     from 'bento';
+import { templates } from 'bento-ui';
 import 'styles/booking/style.scss';
 
 class BookingTemplate extends React.Component {
@@ -17,7 +17,7 @@ class BookingTemplate extends React.Component {
 
 // ### Register Template
 
-UI.templates.register('booking', {
+templates.register('booking', {
   component   : BookingTemplate,
   childRoutes : [
     {

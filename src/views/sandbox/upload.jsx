@@ -1,8 +1,8 @@
 'use strict';
 
 import React        from 'react';
-import { api }      from 'reach-react';
-import { Dropzone } from 'reach-components';
+import { api }      from 'bento';
+import { Dropzone } from 'bento-web';
 import config       from 'config';
 
 export default class SandboxUpload extends React.Component {
@@ -32,7 +32,7 @@ export default class SandboxUpload extends React.Component {
   render() {
     return (
       <div className="container">
-      
+
         <h3 style={{ margin : '30px 0' }}>Files</h3>
         <div className="clearfix">
         {

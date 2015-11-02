@@ -1,6 +1,4 @@
-'use strict';
-
-import { relay } from 'reach-react';
+import { relay } from 'bento';
 
 // ### Resource Reducer
 

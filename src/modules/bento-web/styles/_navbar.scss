@@ -1,0 +1,126 @@
+$navbar-height : 50px;
+
+.r-navbar {
+  font-weight : 400;
+  height      : $navbar-height;
+  z-index     : 1001;
+}
+
+.r-nav-brand {
+  float       : left;
+  margin-left : 24px;
+  line-height : $navbar-height - 5;
+  img {
+    height : $navbar-height - 10;
+    width  : 100%;
+  }
+}
+
+.r-nav {
+  float   : right;
+  margin  : 0;
+  padding : 0;
+  li {
+    display    : inline;
+    list-style : none;
+  }
+  a {
+    box-sizing  : border-box;
+    color       : #fff;
+    float       : left;
+    font-weight : 400;
+    height      : $navbar-height;
+    padding     : 0 24px;
+    line-height : $navbar-height;
+    &:link, &:visited {
+      color           : #fff;
+      text-decoration : none;
+    }
+    &:hover, &:active, .active {
+      background : $brand-primary;
+    }
+  }
+}
+
+.r-nav-profile {
+  background   : #1f1f1f;
+  border-right : 1px solid #1c1c1c;
+  border-left  : 1px solid #2c2c2c;
+  float        : right;
+  font-size    : 13px;
+  height       : $navbar-height;
+  padding      : 0 24px;
+  line-height  : $navbar-height;
+
+  .r-nav-profile-name {
+    float        : right;
+    margin-right : 10px;
+  }
+
+  .r-nav-profile-image {
+    border-radius : 180px;
+    float         : right;
+    margin-top    : 7px;
+    height        : $navbar-height - 15;
+    width         : $navbar-height - 15;
+  }
+
+  &:hover {
+    background   : #2f2f2f;
+    border-right : 1px solid #222;
+    border-left  : 1px solid #222;
+    cursor       : pointer;
+  }
+}
+
+.r-nav-drop {
+  animation-duration : .5s;
+  background         : #fff;
+  box-shadow         : 0 3px 5px rgba(#262626, 0.1);
+  border-radius      : 3px;
+  left               : 0;
+  padding            : 5px 0;
+  position           : absolute;
+  top                : $navbar-height - 2;
+  z-index            : 1001;
+
+  $v-padding : 10px;
+  $h-padding : 24px;
+
+  a {
+    color           : #363636;
+    display         : block;
+    font-size       : 13px;
+    font-weight     : 400;
+    padding         : $v-padding $h-padding $v-padding 40px;
+    position        : relative;
+    text-decoration : none;
+    i {
+      color     : #797979;
+      font-size : 18px;
+      left      : 12px;
+      position  : absolute;
+      top       : $v-padding;
+    }
+    &:hover {
+      background      : #eee;
+      color           : #363636;
+      text-decoration : none;
+    }
+  }
+}
+
+.r-nav-drop:after {
+  bottom: 100%;
+  left: 50%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  border-color: rgba(255, 255, 255, 0);
+  border-bottom-color: #fff;
+  border-width: 5px;
+  margin-left: -5px;
+}
