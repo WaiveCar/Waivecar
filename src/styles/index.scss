@@ -5,6 +5,7 @@
 @import 'bootstrap';
 
 @import '~bento-web/styles/styles';
+@import '~bento-ui/styles/styles';
 
 @import 'common';
 @import 'buttons';
@@ -16,7 +17,6 @@
 @import 'app/style';
 @import 'auth/style';
 @import 'booking/style';
-@import 'editor/style';
 @import 'home/style';
 @import 'launch/style';
 @import 'site/style';
