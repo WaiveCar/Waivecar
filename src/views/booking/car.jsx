@@ -19,7 +19,6 @@ export default class BookingCar extends React.Component {
     };
     relay.subscribe(this, 'booking');
     this.close = this.close.bind(this);
-    this.next  = this.next.bind(this);
   }
 
   /**
@@ -34,7 +33,7 @@ export default class BookingCar extends React.Component {
    * @return {Object}
    */
   map() {
-    return UI.components.render('map', {
+    return components.render('map', {
       resource : 'cars',
       handler  : (data) => {
         this.showCar(data.id);
@@ -66,9 +65,6 @@ export default class BookingCar extends React.Component {
     if (!car) {
       return false;
     }
-
-    let battery = this.diagnostic('evBatteryLevel');
-
     return (
       <div>
         <div className="overlay" onClick={ this.close } />
@@ -81,7 +77,7 @@ export default class BookingCar extends React.Component {
                 <tr>
                   <td className="icon"><i className="material-icons">battery_charging_full</i></td>
                   <td>Battery Level</td>
-                  <td className="value">{ battery.value }{ battery.unit }</td>
+                  <td className="value">{ car.fuel }%</td>
                 </tr>
               </tbody>
             </table>
@@ -93,34 +89,11 @@ export default class BookingCar extends React.Component {
   }
 
   /**
-   * Returns diagnostics object.
-   * @param  {String} type
-   * @return {Object}
-   */
-  diagnostic(type) {
-    let { diagnostics } = this.state.car;
-    for (let i = 0, len = diagnostics.length; i < len; i++) {
-      if (diagnostics[i].type === type) {
-        return diagnostics[i];
-      }
-    }
-  }
-
-  /**
    * Close car popup.
    */
   close() {
     this.setState({
       car : null
-    });
-  }
-
-  /**
-   * Go to the next stage of booking.
-   */
-  next() {
-    this.booking.update({
-      car : this.state.car
     });
   }
 
