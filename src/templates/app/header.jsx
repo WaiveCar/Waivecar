@@ -1,4 +1,6 @@
 import React      from 'react';
+import { Link }   from 'react-router';
+import { relay }  from 'bento';
 import { Navbar } from 'bento-web';
 
 export default class Header extends React.Component {
@@ -13,7 +15,11 @@ export default class Header extends React.Component {
   render() {
     return (
       <header id="header">
-        <Navbar menu={ this.state.menu } />
+        <div className="header-brand">
+          <Link to="/">
+            <img src="/images/brand.svg" />
+          </Link>
+        </div>
       </header>
     );
   }

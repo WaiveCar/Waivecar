@@ -3,8 +3,10 @@ import { relay } from 'bento';
 // ### Resource Reducer
 
 let defaultState = {
-  title   : 'No Title',
-  classes : {
+  title       : 'No Title',
+  description : 'No description added yet...',
+  sidebar     : false,
+  classes     : {
     view      : null,
     container : 'container-fluid'
   }

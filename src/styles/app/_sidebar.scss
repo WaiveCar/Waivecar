@@ -1,17 +1,61 @@
 
 // ### Variables
 
-$avatar-size         : 125px;
+$avatar-size         : 100px;
 $sidebar-width       : 250px;
-$sidebar-link-height : 40px;
+$sidebar-link-height : 35px;
+$sidebar-button-size : 35px;
 
 // ### Sidebar
 
 #sidebar {
+  background : #fff;
+  box-shadow : 0 0 10px rgba(#000, .3);
+  left       : -$sidebar-width;
+  position   : fixed;
+  height     : 100%;
+  top        : 0;
+  width      : $sidebar-width;
+  z-index    : 999;
+  transition : left .4s ease;
+
+  .btn-sidebar {
+    background    : $brand-primary;
+    border        : none;
+    border-radius : 50%;
+    box-shadow    : 0 0 5px rgba(#262626, .3);
+    color         : #fff;
+    height        : $sidebar-button-size;
+    position      : absolute;
+    right         : -47px;
+    top           : 62px;
+    width         : $sidebar-button-size;
+    z-index       : 999;
+    transition    : all .4s ease;
+    i {
+      font-size  : 1.25rem;
+      margin-top : 5px;
+    }
+  }
+
+  &.show {
+    left       : 0;
+    transition : left .4s ease;
+
+    .btn-sidebar {
+      box-shadow : none;
+      right      : -($sidebar-button-size / 2);
+      transition : right .4s ease;
+      i {
+        font-size   : 1.65rem;
+        margin-top  : 4px;
+        margin-left : -2px;
+      }
+    }
+  }
 
   .sidebar-meta {
     border-bottom  : 1px solid #eee;
-    padding-bottom : 24px;
   }
 
   .sidebar-avatar {
@@ -23,6 +67,7 @@ $sidebar-link-height : 40px;
     overflow      : hidden;
     padding       : 3px;
     width         : $avatar-size;
+
     .sidebar-avatar-img {
       border        : 2px solid #fff;
       border-radius : 100%;
@@ -46,42 +91,30 @@ $sidebar-link-height : 40px;
   }
 
   ul {
-    margin  : 24px 0 0 0;
+    margin  : 0;
     padding : 0;
     li {
       list-style : none;
-      &.has-parent {
-        a {
-          height : $sidebar-link-height - 5;
-          line-height : $sidebar-link-height - 5;
-          font-size : 0.9rem;
-          padding-left : 78px;
-          background : rgba($brand-primary, .03);
-          i {
-            left : 54px;
-          }
-          &:hover {
-            background : rgba($brand-primary, .8);
-          }
-        }
-      }
+
       a {
         color        : #363636;
-        font-size    : 1.02rem;
-        font-weight  : 400;
+        font-size    : .9rem;
+        font-weight  : 300;
         height       : $sidebar-link-height;
         line-height  : $sidebar-link-height;
-        padding-left : 58px;
+        padding-left : 50px;
         position     : relative;
         width        : $sidebar-width;
+
         i {
-          color     : #ccc;
-          font-size : 1.1rem;
-          left      : 24px;
-          position  : absolute;
-          top       : 50%;
-          margin-top : -.58rem;
+          color      : #ccc;
+          font-size  : 1.02rem;
+          left       : 24px;
+          position   : absolute;
+          top        : 50%;
+          margin-top : -.54rem;
         }
+
         &:hover {
           background : $brand-primary;
           color      : #fff;
@@ -90,6 +123,77 @@ $sidebar-link-height : 40px;
           }
         }
       }
+
+      &.has-parent {
+        a {
+          background   : rgba($brand-primary, .03);
+          font-size    : 0.9rem;
+          height       : $sidebar-link-height - 5;
+          line-height  : $sidebar-link-height - 5;
+          padding-left : 78px;
+          i {
+            left : 54px;
+          }
+          &:hover {
+            background : rgba($brand-primary, .8);
+          }
+        }
+      }
+    }
+  }
+
+  .btn-account {
+    background  : none;
+    border      : none;
+    color       : #a6a6a6;
+    display     : block;
+    font-size   : .9rem;
+    font-weight : 300;
+    margin      : 0 auto 10px;
+    text-align  : center;
+    i {
+      float      : right;
+      margin-top : -2px;
+    }
+  }
+
+  .sidebar-account,
+  .sidebar-nav,
+  .sidebar-admin {
+    padding-bottom : 15px;
+    h5 {
+      font-size   : 1.05rem;
+      font-weight : 300;
+      margin      : 0;
+      padding     : 15px;
+      small {
+        color     : #bbb;
+        font-size : 65%;
+      }
+    }
+  }
+
+  .sidebar-account {
+    background    : #eee;
+    border-bottom : 1px solid #e6e6e6;
+    display       : none;
+    overflow-y    : hidden;
+    &.show {
+      display : block;
+    }
+  }
+
+  .sidebar-admin {
+    background    : #262626;
+    border-bottom : 1px solid #000;
+    h5 {
+      color : #fcfcfc;
+    }
+    a {
+      color : #fcfcfc;
+    }
+    i {
+      color : #fff;
     }
   }
 }

@@ -17,27 +17,13 @@ body {
   padding-top       : 52px;
 
   .content-header h1 {
-    font-size      : 1.85rem;
-    margin         : 35px auto 0;
-    position       : relative;
-    text-align     : center;
-    text-transform : uppercase;
-    width          : 500px;
-    > span {
-      background : #fff;
-      padding    : 0 24px;
-      position   : relative;
-      z-index    : 1;
-    }
-    &:before {
-      background  : #25C155;
-      content     : "";
-      display     : block;
-      height      : 2px;
-      left        : 0;
-      position    : absolute;
-      top         : 50%;
-      width       : 100%;
+    color     : #464646;
+    font-size : 1.3rem;
+    margin    : 15px 0;
+    small {
+      color       : #a6a6a6;
+      font-size   : 65%;
+      margin-left : 5px;
     }
   }
 
@@ -62,52 +48,11 @@ body {
     }
   }
 
-  .content-header {
-    border-bottom : 1px solid #f4f4f4;
-    height        : 75px;
-  }
-
   // ### App Layout
-
-  #header {
-    background : #282828;
-    border-top : 2px solid rgba(#25C155, .8);
-    color      : #fff;
-    height     : 52px;
-    position   : fixed;
-    top        : 0;
-    width      : 100%;
-    z-index    : 10;
-  }
-
-  #sidebar {
-    background   : #fff;
-    border-right : 1px solid #eee;
-    flex-basis   : 250px;
-  }
 
   #content {
     background : #fff;
     display    : flex;
     flex       : 1;
-  }
-
-  #content-wrapper {
-    flex     : 1;
-    position : relative;
-  }
-
-  #events {
-    flex-basis  : 250px;
-    align-self  : flex-end;
-    border-left : 1px solid #e9e9e9;
-    background  : #eee;
-    // .brand {
-    //   height              : 120px;
-    //   background-image    : url('/images/app/oscar.jpg');
-    //   background-size     : 250px;
-    //   background-repeat   : no-repeat;
-    //   background-position : center center;
-    // }
   }
 }

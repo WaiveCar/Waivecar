@@ -4,8 +4,8 @@ import React                    from 'react';
 import Reach, { relay }         from 'bento';
 import UI, { templates, views } from 'bento-ui';
 import policies                 from 'policies';
-import Sidebar                  from 'views/app/sidebar';
-import Header                   from 'views/app/header';
+import Sidebar                  from './sidebar';
+import Header                   from './header';
 
 /**
  * @class AppTemplate
@@ -31,21 +31,23 @@ class AppTemplate extends React.Component {
    * @method render
    */
   render() {
-    let { title } = this.state.app;
+    let { title, description } = this.state.app;
     return (
       <div id="app">
         <Header />
         <Sidebar />
         <div id="content">
-          <div id="content-wrapper">
+          <div className="content-wrapper">
             <div className="content-header">
-              <h1><span>{ title }</span></h1>
+              <h1>
+                { title }
+                <small>
+                  { description }
+                </small>
+              </h1>
             </div>
             { this.props.children }
           </div>
-        </div>
-        <div id="events">
-          <div className="brand" />
         </div>
       </div>
     );

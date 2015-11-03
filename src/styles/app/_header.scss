@@ -1,0 +1,27 @@
+
+// ### Variables
+
+$header-height : 52px;
+
+// ### Header
+
+#header {
+  background : #282828;
+  border-top : 2px solid rgba(#25C155, .8);
+  color      : #fff;
+  height     : $header-height;
+  position   : fixed;
+  top        : 0;
+  width      : 100%;
+  z-index    : 10;
+
+  .header-brand {
+    height      : $header-height - 30px;
+    margin-top  : 10px;
+    margin-left : 20px; 
+    img {
+      max-height : 100%;
+      max-width  : 100%;
+    }
+  }
+}
