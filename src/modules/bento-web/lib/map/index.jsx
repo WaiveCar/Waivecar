@@ -46,10 +46,34 @@ export default class Map extends React.Component {
    * @param  {Object} props
    */
   componentWillReceiveProps(props) {
-    if (this.state.map) {
+    if (this.state.map && props.markers && props.markers.length > 0) {
       this.clearMarkers();
-      this.addMarkers(props.markers);
+      let markers = this.getMarkers();
+      this.addMarkers(markers);
+      this.centerPosition(markers);
     }
+  }
+
+  getMarkers() {
+    return this.props.markers.map((val) => {
+      return {
+        lat  : val.location ? val.location.latitude : val.latitude,
+        long : val.location ? val.location.longitude : val.longitude,
+        ...val
+      }
+    });
+  }
+
+  centerPosition(markers) {
+    let markerPoints = this.getMarkerPoints(markers);
+    var bounds = new L.LatLngBounds(markerPoints);
+    this.state.map.fitBounds(bounds);
+  }
+
+  getMarkerPoints(markers) {
+    return markers.map((marker) => {
+      return L.latLng(marker.lat, marker.long);
+    })
   }
 
   /**
@@ -64,9 +88,7 @@ export default class Map extends React.Component {
     }
 
     markers.forEach((val) => {
-      let lat = val.location ? val.location.latitude : val.latitude;
-      let long = val.location ? val.location.longitude : val.longitude;
-      let marker = L.marker([ lat, long ], { icon : markerIcon });
+      let marker = L.marker([ val.lat, val.long ], { icon : markerIcon });
       this.state.markers.push(marker);
       marker.addTo(this.state.map);
       this.addMarkerClick(marker, val.id);
