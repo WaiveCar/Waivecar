@@ -22,10 +22,12 @@ export default class Map extends React.Component {
    */
   componentDidMount() {
     this.setState({
-      map   : L.skobbler.map(this.state.mapId, {
-        apiKey : config.web.components.map.key,
-        center : [ 34.0604643, -118.4186743 ],
-        zoom   : 11
+      map : L.skobbler.map(this.state.mapId, {
+        apiKey              : config.web.components.map.key,
+        center              : [ 34.0604643, -118.4186743 ],
+        zoom                : 11,
+        zoomControl         : true,
+        zoomControlPosition : 'top-right'
       })
     }, function() {
       this.state.map.scrollWheelZoom.disable();
