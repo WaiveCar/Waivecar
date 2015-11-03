@@ -1,42 +1,44 @@
 'use strict';
 
-let queryParser = Bento.provider('sequelize/helpers').query;
-let Car         = Bento.model('Car');
+let car = require('../lib/car-service');
 
-Bento.Register.ResourceController('Car', 'CarsController', function (controller) {
+Bento.Register.Controller('CarsController', function (controller) {
 
   /**
-   * @method index
-   * @return {Array}
+   * Returns a list of cars.
+   * @return {Object}
    */
   controller.index = function *() {
-    return yield Car.find(queryParser(this.query, {
-      include : [
-        {
-          model : 'CarDiagnostic',
-          as    : 'diagnostics',
-          attr  : [ 'type', 'status', 'value', 'unit' ]
-        }
-      ]
-    }));
+    return yield car.index(this.query, this.auth.role, this.auth.user);
   };
 
   /**
-   * @method show
-   * @param  {String} id
-   * @return {Car}
+   * Returns a single car.
+   * @param  {Number} id The Car Id.
+   * @return {Object}
    */
   controller.show = function *(id) {
-    return yield Car.findById(id, {
-      include : [
-        {
-          model : 'CarDiagnostic',
-          as    : 'diagnostics',
-          attr  : [ 'type', 'status', 'value', 'unit' ]
-        }
-      ]
-    });
+    return yield car.show(id, this.auth.user);
   };
+
+  /**
+   * Execute a command on a single car.
+   * @param  {Number} id The Car Id.
+   * @param  {String} command lock/unlock.
+   * @return {Object}
+   */
+  controller.update = function *(id, command) {
+    return yield car.executeCommand(id, command, this.auth.user);
+  }
+
+  /**
+   * Retrieve all events for a single car.
+   * @param  {Number} id The Car Id.
+   * @return {Object}
+   */
+  controller.events = function *(id) {
+    return yield car.events(id, this.auth.user);
+  }
 
   return controller;
 

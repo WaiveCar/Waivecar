@@ -28,5 +28,9 @@ Route.del('/bookings/:id', [ 'authenticate', 'BookingsController@cancel' ]);
 
 // ### Resources
 
-Route.resource('cars',      'CarsController');
+Route.get('/cars',              [ 'CarsController@index' ]);
+Route.get('/cars/:id',          [ 'CarsController@show' ]);
+Route.get('/cars/:id/events',   [ 'authenticate', 'CarsController@events' ]);
+Route.put('/cars/:id/:command', [ 'authenticate', 'CarsController@update' ]);
+
 Route.resource('locations', 'LocationsController');

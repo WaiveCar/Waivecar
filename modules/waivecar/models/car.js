@@ -15,48 +15,90 @@ Bento.Register.Model('Car', 'sequelize', function (model, Sequelize) {
    * @type     Object
    */
   model.schema = {
-    id : { 
-      type       : Sequelize.STRING(28), 
-      primaryKey : true 
+    id : {
+      type       : Sequelize.STRING(28),
+      primaryKey : true
     },
 
-    // ### Car Details
-
-    make : { 
-      type      : Sequelize.STRING(28), 
-      allowNull : false 
+    make : {
+      type : Sequelize.STRING(28)
     },
 
     model : {
-      type      : Sequelize.STRING(88),
-      allowNull : false
+      type : Sequelize.STRING(88)
     },
 
-    year : { 
-      type      : Sequelize.STRING(4), 
-      allowNull : false 
+    year : {
+      type : Sequelize.STRING(4)
     },
 
-    manufacturer : { 
-      type      : Sequelize.STRING(88), 
-      allowNull : false 
+    manufacturer : {
+      type : Sequelize.STRING(88)
     },
 
-    // ### Car Location
-    // Stores the cars current longitude and latitude coordinates.
-
-    latitude  : { 
+    latitude  : {
       type : Sequelize.DECIMAL(10, 8),
     },
 
-    longitude : { 
+    longitude : {
       type : Sequelize.DECIMAL(11, 8),
+    },
+
+    distanceSinceLastRead : {
+      type : Sequelize.DECIMAL(10, 2)
+    },
+
+    currentSpeed: {
+      type : Sequelize.DECIMAL(10, 2)
+    },
+
+    fuel: {
+      type : Sequelize.DECIMAL(10, 2)
+    },
+
+    immobilizer: {
+      type : Sequelize.STRING(28)
+    },
+
+    ignition: {
+      type : Sequelize.STRING(28)
+    },
+
+    lock: {
+      type : Sequelize.STRING(28)
+    },
+
+    lockLastCommand : {
+      type : Sequelize.STRING(28)
+    },
+
+    keyfob : {
+      type : Sequelize.STRING(28)
+    },
+
+    bluetooth : {
+      type : Sequelize.STRING(28)
+    },
+
+    alarmInput : {
+      type : Sequelize.STRING(28)
+    },
+
+    mileageSinceImmobilizerUnlock : {
+      type : Sequelize.INTEGER
+    },
+
+    totalMileage : {
+      type : Sequelize.DECIMAL(10, 2)
+    },
+
+    boardVoltage : {
+      type : Sequelize.DECIMAL(10, 2)
     },
 
     // ### Car Status
     // This holds information such as the availability of the car
     // and the current user who is occupying the car.
-
     userId : {
       type       : Sequelize.INTEGER,
       references : {
@@ -71,18 +113,6 @@ Bento.Register.Model('Car', 'sequelize', function (model, Sequelize) {
     }
 
   };
-
-  /**
-   * The relation definitions of your model.
-   * @property relations
-   * @type     Array
-   */
-  model.relations = [
-    'CarDiagnostic',
-    function (CarDiagnostic) {
-      this.hasMany(CarDiagnostic, { as : 'diagnostics', foreignKey : 'carId' });
-    }
-  ];
 
   return model;
 
