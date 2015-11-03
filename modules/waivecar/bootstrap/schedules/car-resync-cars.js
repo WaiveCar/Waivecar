@@ -10,7 +10,7 @@ module.exports = function *() {
     init   : true,
     repeat : true,
     timer  : {
-      value : 2,
+      value : 10,
       type  : 'minutes'
     }
   });
