@@ -36,6 +36,11 @@ export default class Sidebar extends React.Component {
         title : 'Update Email',
         path  : '/profile/email',
         icon  : 'email'
+      },
+      {
+        title : 'Logout',
+        path  : '/logout',
+        icon  : 'highlight_off'
       }
     ].map(this.getLink);
   }
