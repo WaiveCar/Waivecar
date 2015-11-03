@@ -1,14 +1,12 @@
-<ion-view>
+<ion-view class="cars cars-show">
 
   <ion-nav-title>
-    <page-title class="dark-bg title-plain">Find WaiveCars</page-title>
-    <!-- <h6 class="header-title" data-fittext data-fittext-min="20">
-      <reverse-geo-coding get-location="active.cars.location"></reverse-geo-coding>
-    </h6>
-    <route-information class="header-subtitle"></route-information> -->
+    <page-title class="dark-bg title-plain">
+      <reverse-geo-coding location="car.location"></reverse-geo-coding>
+    </page-title>
   </ion-nav-title>
 
-  <ion-nav-buttons side="primary">
+  <ion-nav-buttons side="right">
     <button menu-toggle="right" class="button button-icon icon ion-navicon"></button>
   </ion-nav-buttons>
 
@@ -26,29 +24,22 @@
 
   <ion-content scroll="false" padding="false" class="has-header has-footer">
 
-    <div class="map-container has-info-footer">
-      <map id="map" zoom="15" center="active.cars.location">
+    <div class="bar bar-dark bar-subheader route-distance">
+      <h5 class="text-center">
+        <route-distance></route-distance> - <route-duration></route-duration>
+      </h5>
+    </div>
+
+    <div class="map-container has-info-footer has-info-subheader">
+      <map id="map" zoom="15">
         <location-marker location="currentLocation" icon="device"></location-marker>
-        <location-marker location="active.cars.location" icon="car"></location-marker>
-        <route-to-location start="currentLocation" destiny="active.cars.location"></route-to-location>
+        <location-marker location="car.location" icon="car"></location-marker>
+        <route-to-location start="currentLocation" destiny="car.location"></route-to-location>
       </map>
     </div>
 
-    <div class="vehicle-summary-container info-footer">
-      <div class="list pin-bottom size-3">
-        <div class="item item-icon-left">
-          <img src="img/battery.svg" alt="charge" class="icon" />
-          <span ng-bind="carDiagnostic('evBatteryLevel')" class="highlight"></span><span class="highlight">&nbsp;charged |</span>
-        </div>
-        <div class="item item-icon-left">
-          <img src="img/distance.svg" alt="" class="icon">
-          <span ng-bind="chargeReach" class="highlight"></span> <span>available on current charge</span>
-        </div>
-        <div class="item item-icon-left">
-          <img src="img/charging.svg" alt="" class="icon">
-          <span ng-bind="chargeState"></span>
-        </div>
-      </div>
+    <div class="info-footer">
+      <car-charge-status car="car"></car-charge-status>
     </div>
 
   </ion-content>

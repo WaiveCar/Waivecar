@@ -12,7 +12,7 @@ module.exports = angular.module('Maps').directive('locationMarker', [
         location: '=',
         icon: '@'
       },
-      link: function ($scope) {
+      link: function ($scope, $element, $attrs, MapCtrl) {
 
         function getIcon() {
           switch ($scope.icon) {
@@ -41,18 +41,17 @@ module.exports = angular.module('Maps').directive('locationMarker', [
 
         function setMarker() {
           MapsLoader.getMap.then(function (L) {
-            // TODO: figure out how to access mapInstance properly. (e.g. transclude?)
-            var parentMapInstance = $scope.$parent.mapInstance || $scope.$parent.$parent.mapInstance;
-            parentMapInstance.then(function (mapInstance) {
-              if ($scope.marker) {
-                $scope.marker.setLatLng([$scope.location.latitude, $scope.location.longitude]);
-              } else {
-                var icon = L.icon(getIcon());
-                $scope.marker = L.marker([$scope.location.latitude, $scope.location.longitude], {
-                  icon: icon
-                }).addTo(mapInstance);
-              }
-            });
+
+            if ($scope.marker) {
+              $scope.marker.setLatLng([$scope.location.latitude, $scope.location.longitude]);
+              return false;
+            }
+
+            var icon = L.icon(getIcon());
+            $scope.marker = L.marker([$scope.location.latitude, $scope.location.longitude], {
+              icon: icon,
+            }).addTo(MapCtrl.mapInstance);
+
           });
         }
 

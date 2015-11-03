@@ -7,18 +7,22 @@ module.exports = angular.module('app.directives').directive('reverseGeoCoding', 
   function ($geocoding) {
 
     function link($scope) {
-      var latLng = $scope.getLocation();
-      if (!latLng) {
-        return;
-      }
 
-      $geocoding.getReverseGeoCoding(latLng.latitude, latLng.longitude).then(function (locationData) {
-        if (locationData.address) {
-          $scope.location = locationData.address.road;
-          if (locationData.address.house_number) {
-            $scope.location = locationData.address.house_number + ' ' + $scope.location;
-          }
+      $scope.$watch('location', function(newVal){
+        var latLng = newVal;
+        if (!latLng) {
+          return;
         }
+
+        $geocoding.getReverseGeoCoding(latLng.latitude, latLng.longitude).then(function (locationData) {
+          if (locationData.address) {
+            $scope.address = locationData.address.road;
+            if (locationData.address.house_number) {
+              $scope.address = locationData.address.house_number + ' ' + $scope.address;
+            }
+          }
+        });
+
       });
 
     }
@@ -26,9 +30,10 @@ module.exports = angular.module('app.directives').directive('reverseGeoCoding', 
     return {
       restrict: 'E',
       link: link,
-      template: '<span ng-bind="location"></span>',
+      replace: true,
+      template: '<div ng-bind="address"></div>',
       scope: {
-        getLocation: '&'
+        location: '='
       }
     };
 

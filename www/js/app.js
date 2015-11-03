@@ -92,6 +92,7 @@ require('./directives/reverse-geocoding-directive');
 require('./directives/time-left-directive');
 require('./directives/wizard-directive');
 require('./directives/equal-to-directive');
+require('./directives/car-charge-status-directive');
 
 ionic.Platform.ready(function () {
 

@@ -1,53 +1,53 @@
- function RouteService($rootScope, MapsLoader, $q, $http, mapsEvents,skobblerApiCodes) {
-    this.MapsLoader = MapsLoader;
-    this.$q = $q;
-    this.$http = $http;
-    this._scope = $rootScope;
-    this.mapsEvents = mapsEvents;
-    this.skobblerApiCodes=skobblerApiCodes;
-  }
-RouteService.prototype.getUrl = function(apiKey) {
-  if (window.cordova) {
-      var url = 'http://' + apiKey + '.tor.skobbler.net/tor/RSngx/calcroute/json/18_0/en/'+apiKey;
-      return url;
-  } else {
-    return 'http://localhost:8100/skoblerCalcRoute';
-  }
-};
-RouteService.prototype.getRoute = function(pointA, pointB, profile) {
-    var self = this;
-    profile = profile || 'pedestrian';
-    return this.MapsLoader.getMap.then(function(maps) {
-      var url = self.getUrl(maps.skobbler.apiKey);
-      url += '?start=' + pointA.lat + ',' + pointA.lng;
-      url += '&dest=' + pointB.lat + ',' + pointB.lng;
-      url += '&profile=' + profile;
-      url += '&advice=yes';
-      url += '&points=yes';
-      var defered = self.$q.defer();
-      self.$http.get(url)
-      .success(function(data, status, headers, config) {
-        if(data.status.apiCode==self.skobblerApiCodes.sourceSameAsDestination){
-          data.route={duration:0};
-        }
-        self._scope.$broadcast(
-          self.mapsEvents.routeDurationChanged,
-          data.route ? data.route.duration : 0,
-          profile
-        );
-        self._scope.$broadcast(
-          self.mapsEvents.routeDistanceChanged,
-          data.route ? data.route.routelength : 0,
-          profile
-        );
-        defered.resolve(data);
-      })
-      .error(function(data, status, headers, config) {
-        defered.reject({data: data, status: status, header: headers, config: config});
-      });
-      return defered.promise;
-    });
-  };
+//  function RouteService($rootScope, MapsLoader, $q, $http, mapsEvents,skobblerApiCodes) {
+//     this.MapsLoader = MapsLoader;
+//     this.$q = $q;
+//     this.$http = $http;
+//     this._scope = $rootScope;
+//     this.mapsEvents = mapsEvents;
+//     this.skobblerApiCodes=skobblerApiCodes;
+//   }
+// RouteService.prototype.getUrl = function(apiKey) {
+//   if (window.cordova) {
+//       var url = 'http://' + apiKey + '.tor.skobbler.net/tor/RSngx/calcroute/json/18_0/en/'+apiKey;
+//       return url;
+//   } else {
+//     return 'http://localhost:8100/skoblerCalcRoute';
+//   }
+// };
+// RouteService.prototype.getRoute = function(pointA, pointB, profile) {
+//     var self = this;
+//     profile = profile || 'pedestrian';
+//     return this.MapsLoader.getMap.then(function(maps) {
+//       var url = self.getUrl(maps.skobbler.apiKey);
+//       url += '?start=' + pointA.lat + ',' + pointA.lng;
+//       url += '&dest=' + pointB.lat + ',' + pointB.lng;
+//       url += '&profile=' + profile;
+//       url += '&advice=yes';
+//       url += '&points=yes';
+//       var defered = self.$q.defer();
+//       self.$http.get(url)
+//       .success(function(data, status, headers, config) {
+//         if(data.status.apiCode==self.skobblerApiCodes.sourceSameAsDestination){
+//           data.route={duration:0};
+//         }
+//         self._scope.$broadcast(
+//           self.mapsEvents.routeDurationChanged,
+//           data.route ? data.route.duration : 0,
+//           profile
+//         );
+//         self._scope.$broadcast(
+//           self.mapsEvents.routeDistanceChanged,
+//           data.route ? data.route.routelength : 0,
+//           profile
+//         );
+//         defered.resolve(data);
+//       })
+//       .error(function(data, status, headers, config) {
+//         defered.reject({data: data, status: status, header: headers, config: config});
+//       });
+//       return defered.promise;
+//     });
+//   };
 
 function routeToLocationDirective(MapsLoader, $q, routeService, mapsEvents,$rootScope) {
     var self = this;
@@ -115,67 +115,67 @@ function routeToLocationDirective(MapsLoader, $q, routeService, mapsEvents,$root
     }
   }
 
-function routeDurationDirective(mapsEvents) {
-  function link(scope, element, attrs, ctrl) {
-    scope.$on(mapsEvents.routeDurationChanged, function(ev, totalTime, profile) {
-        var timeInHours = 0;
-        var timeToDisplay;
-        var timeInMinutes = Math.floor(totalTime / 60);
-        if (timeInMinutes <= 0) {
-          timeToDisplay = '< 1m';
-        } else {
-          if (timeInMinutes > 60) {
-            timeInHours = Math.floor(timeInMinutes / 60);
-            timeInMinutes = timeInMinutes - timeInHours * 60;
-            if (timeInMinutes < 10) {
-              timeInMinutes = '0' + timeInMinutes;
-            }
-            if (timeInHours < 10) {
-              timeInHours = '0' + timeInHours;
-            }
-            timeToDisplay = timeInHours + 'h' + timeInMinutes + ' hours';
-          } else {
-            if (timeInMinutes < 10) {
-              timeInMinutes = '0' + timeInMinutes;
-            }
-            timeToDisplay = timeInMinutes + ' minutes';
-          }
-        }
-        scope.value = timeToDisplay;
-        if (profile == 'pedestrian') {
-          scope.value += ' walking';
-        } else {
-          scope.value += ' driving';
-        }
+// function routeDurationDirective(mapsEvents) {
+//   function link(scope, element, attrs, ctrl) {
+//     scope.$on(mapsEvents.routeDurationChanged, function(ev, totalTime, profile) {
+//         var timeInHours = 0;
+//         var timeToDisplay;
+//         var timeInMinutes = Math.floor(totalTime / 60);
+//         if (timeInMinutes <= 0) {
+//           timeToDisplay = '< 1m';
+//         } else {
+//           if (timeInMinutes > 60) {
+//             timeInHours = Math.floor(timeInMinutes / 60);
+//             timeInMinutes = timeInMinutes - timeInHours * 60;
+//             if (timeInMinutes < 10) {
+//               timeInMinutes = '0' + timeInMinutes;
+//             }
+//             if (timeInHours < 10) {
+//               timeInHours = '0' + timeInHours;
+//             }
+//             timeToDisplay = timeInHours + 'h' + timeInMinutes + ' hours';
+//           } else {
+//             if (timeInMinutes < 10) {
+//               timeInMinutes = '0' + timeInMinutes;
+//             }
+//             timeToDisplay = timeInMinutes + ' minutes';
+//           }
+//         }
+//         scope.value = timeToDisplay;
+//         if (profile == 'pedestrian') {
+//           scope.value += ' walking';
+//         } else {
+//           scope.value += ' driving';
+//         }
 
-      });
+//       });
 
-  }
-  return {
-    restrict: 'E',
-    link: link,
-    scope: true,
-    template: '<span ng-bind="value"></span>'
-  }
-}
-function routeDistanceDirective(mapsEvents) {
-  function metersToMiles(meters) {
-    var digits = 3;
-    var str = meters * 0.00062137 + '';
-    return str.substring(0, str.indexOf('.') + digits);
-  }
-  function link(scope) {
-    scope.$on(mapsEvents.routeDistanceChanged, function(ev, totalDistance) {
-      scope.value = metersToMiles(totalDistance) + ' miles away';
-    });
-  }
-  return {
-    restrict: 'E',
-    link: link,
-    scope: true,
-    template: '<span ng-bind="value"></span>'
-  }
-}
+//   }
+//   return {
+//     restrict: 'E',
+//     link: link,
+//     scope: true,
+//     template: '<span ng-bind="value"></span>'
+//   }
+// }
+// function routeDistanceDirective(mapsEvents) {
+//   function metersToMiles(meters) {
+//     var digits = 3;
+//     var str = meters * 0.00062137 + '';
+//     return str.substring(0, str.indexOf('.') + digits);
+//   }
+//   function link(scope) {
+//     scope.$on(mapsEvents.routeDistanceChanged, function(ev, totalDistance) {
+//       scope.value = metersToMiles(totalDistance) + ' miles away';
+//     });
+//   }
+//   return {
+//     restrict: 'E',
+//     link: link,
+//     scope: true,
+//     template: '<span ng-bind="value"></span>'
+//   }
+// }
 function destinyLocationDirective(MapsLoader, $q, mapsEvents) {
 
   function link($scope, element, attrs, ctrl) {

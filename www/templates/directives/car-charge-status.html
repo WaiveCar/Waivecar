@@ -1,0 +1,18 @@
+<ul>
+
+  <li>
+    <img src="img/battery.svg" alt="charge">
+    <strong> {{chargeLevel}} charged</strong>
+  </li>
+
+  <li>
+    <img src="img/distance.svg" alt="reach">
+    <span><strong ng-bind="chargeReach"></strong> available on current charge</span>
+  </li>
+
+  <li>
+    <img src="img/charging.svg" alt="charge status">
+    <span ng-bind="chargeState"></span>
+  </li>
+
+</ul>

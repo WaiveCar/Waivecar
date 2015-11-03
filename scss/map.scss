@@ -1,4 +1,4 @@
-.maps-instance {
+.map-instance {
   width: 100%;
   height: 100%;
 }
@@ -22,4 +22,21 @@
 
 .locate-me {
   width: 30%;
+}
+
+.map-container {
+  height: 100%;
+  width: 100%;
+  &.has-info-footer {
+    // height: (100-$infoFooterHeight)*1%
+    height: (100-$infoFooterHeight)*1%;
+
+    &.has-info-subheader {
+      height: (100 - $infoFooterHeight - $smallSubHeaderSize)*1%;
+
+    }
+  }
+  &.has-big-info-footer {
+    height: (100-$bigInfoFooterHeight)*1%
+  }
 }

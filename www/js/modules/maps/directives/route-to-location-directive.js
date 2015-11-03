@@ -9,7 +9,7 @@ module.exports = angular.module('Maps').directive('routeToLocation', [
   'RouteService',
   function ($rootScope, MapsLoader, RouteService) {
 
-    function drawRoute(L, startLocation, destinyLocation, mapInstance, $scope) {
+    function drawRoute(Leaflet, startLocation, destinyLocation, mapInstance, $scope) {
       if (!startLocation || !destinyLocation) {
         return false;
       }
@@ -33,7 +33,7 @@ module.exports = angular.module('Maps').directive('routeToLocation', [
           mapInstance.removeLayer($scope.route);
         }
 
-        $scope.route = L.geoJson(lines);
+        $scope.route = Leaflet.geoJson(lines);
         $scope.route.addTo(mapInstance);
 
         // var unlockRangeOptions = {
@@ -53,18 +53,18 @@ module.exports = angular.module('Maps').directive('routeToLocation', [
 
     }
 
-    function link($scope) {
-      MapsLoader.getMap.then(function (L) {
-        var mapControllerScope = $scope.$parent.mapInstance ? $scope.$parent : $scope.$parent.$parent; // <-- HOLY FUCK!
-        mapControllerScope.mapInstance.then(function (map) {
-          function handleMove() {
-            if ($scope.start && $scope.destiny) {
-              drawRoute(L, $scope.start, $scope.destiny, map, $scope);
-            }
+    function link($scope, $element, $attrs, MapCtrl) {
+
+      MapsLoader.getMap.then(function (Leaflet) {
+
+        function handleMove() {
+          if ($scope.start && $scope.destiny) {
+            drawRoute(Leaflet, $scope.start, $scope.destiny, MapCtrl.mapInstance, $scope);
           }
-          $scope.$watch('start', handleMove, true);
-          $scope.$watch('destiny', handleMove, true);
-        });
+        }
+        $scope.$watch('start', handleMove, true);
+        $scope.$watch('destiny', handleMove, true);
+
       });
     }
 

@@ -2,17 +2,9 @@
 var angular = require('angular');
 
 module.exports = angular.module('Maps').controller('MapController', [
-  '$scope',
-  '$q',
-  function ($scope, $q) {
-
-    var deferedMap = $q.defer();
-
-    $scope.mapInstance = deferedMap.promise;
-
-    $scope.solveMap = function (mapInstance) {
-      deferedMap.resolve(mapInstance);
-    };
+  function () {
+    // mapInstance is set from within the link function
+    this.mapInstance = null;
 
   }
 ]);

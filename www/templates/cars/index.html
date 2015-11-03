@@ -1,4 +1,4 @@
-<ion-view class="cars-index" ng-controller="CarsController">
+<ion-view hide-back-button="true" class="cars-index" ng-controller="CarsController">
 
   <ion-nav-title>
     <page-title class="dark-bg title-plain">Find WaiveCars</page-title>
@@ -11,10 +11,10 @@
   <ion-content scroll="false" padding="false" class="ion-content--center">
 
     <div class="map-container">
-      <map id="map" zoom="14" center="currentLocation">
+      <map id="map" zoom="10" center="currentLocation">
         <location-marker location="currentLocation" icon="device"></location-marker>
-        <location-markers locations="models.cars" on-click-marker="showCar(marker, id)" icon="car"></location-markers>
-        <locate-me img-source="img/locate-me.svg" img-on-click="locateMe()"></locate-me>
+        <location-markers locations="cars" on-click-marker="showCar(marker, id)" icon="car"></location-markers>
+        <locate-me img-source="img/locate-me.svg"></locate-me>
       </map>
     </div>
 

@@ -4,42 +4,49 @@ require('../../../providers/maps-loader-provider');
 
 module.exports = angular.module('Maps').directive('locateMe', [
   'MapsLoader',
-  function (MapsLoader) {
+  'LocationService',
+  '$rootScope',
+  function (MapsLoader, LocationService, $rootScope) {
     return {
       restrict: 'E',
       scope: {
         'imgSource': '@',
-        'imgOnClick': '&'
       },
       require: '^map',
-      link: function ($scope) {
-        var L;
+      link: function ($scope, $element, $attrs, MapCtrl) {
 
-        MapsLoader.getMap.then(function (mapL) {
-          L = mapL;
-          return $scope.$parent.mapInstance || $scope.$parent.$parent.mapInstance;
-        })
-          .then(function (mapInstance) {
-            var LocateMeControl = L.Control.extend({
-              options: {
-                position: 'bottomright'
-              },
-              onAdd: function () {
-                var img = L.DomUtil.create('img', 'locate-me');
-                img.src = $scope.imgSource;
-                L.DomEvent.addListener(img, 'mousedown', L.DomEvent.stopPropagation)
-                  .addListener(img, 'mousedown', L.DomEvent.preventDefault)
-                  .addListener(img, 'mousedown', function () {
-                    $scope.imgOnClick();
-                  });
-
-                return img;
-              }
-            });
-
-            var locateMe = new LocateMeControl();
-            mapInstance.addControl(locateMe);
+        function locateMeOnMap() {
+          LocationService.getLocation().then(function(deviceLocation) {
+            $rootScope.currentLocation = deviceLocation;
           });
+
+        };
+
+        MapsLoader.getMap.then(function (Leaflet) {
+
+          var LocateMeControl = Leaflet.Control.extend({
+            options: {
+              position: 'bottomright'
+            },
+            onAdd: function () {
+              var img = Leaflet.DomUtil.create('img', 'locate-me');
+              img.src = $scope.imgSource;
+
+              Leaflet.DomEvent.addListener(img, 'mousedown', Leaflet.DomEvent.stopPropagation)
+                .addListener(img, 'mousedown', Leaflet.DomEvent.preventDefault)
+                .addListener(img, 'mousedown', function () {
+                  locateMeOnMap();
+                });
+
+              return img;
+            }
+          });
+
+          var locateMeControl = new LocateMeControl();
+          MapCtrl.mapInstance.addControl(locateMeControl);
+
+        });
+
       }
     };
 

@@ -5,7 +5,6 @@ require('../services/auth-service');
 require('../services/data-service');
 require('../services/message-service');
 require('../services/booking-service');
-var _ = require('lodash');
 
 module.exports = angular.module('app.controllers').controller('CarController', [
   '$rootScope',
@@ -18,24 +17,6 @@ module.exports = angular.module('app.controllers').controller('CarController', [
   '$ionicModal',
   'status',
   function ($rootScope, $scope, $state, $auth, $data, $message, BookingService, $ionicModal, status) {
-
-    $scope.carDiagnostic = function (type) {
-      var na = 'Unavailable';
-      if (!$data.active || !$data.active.cars || !$data.active.cars.diagnostics) {
-        return na;
-      }
-
-      var diagnostic = _.findWhere($data.active.cars.diagnostics, {
-        type: type
-      });
-
-      if (diagnostic) {
-        return diagnostic.value + diagnostic.unit;
-      }
-
-      return na;
-
-    };
 
     function showRequirementsModal(_status){
 
@@ -104,13 +85,12 @@ module.exports = angular.module('app.controllers').controller('CarController', [
         showRequirementsModal(status);
       }
 
-      $data.activate('cars', $state.params.id, function (err) {
-        if(err){
-          return $message.error(err);
-        }
-        console.log('active car set to ' + $data.active.cars.id);
+      $data.resources.Car.get({id: $state.params.id}).$promise
+        .then(function(car){
+          $scope.car = car;
 
-      });
+        });
+
     };
 
     $scope.init();

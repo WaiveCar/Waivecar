@@ -11,6 +11,7 @@ require('../resources/file');
 require('../resources/auth');
 require('../resources/user');
 require('../resources/verification');
+require('../resources/car');
 
 var when = require('when');
 var _ = require('lodash');
@@ -29,7 +30,8 @@ module.exports = angular.module('app.services').factory('$data', [
   'Auth',
   'User',
   'Verification',
-  function ($rootScope, $http, $socket, Bookings, Cars, Locations, Users, Licenses, Card, File, Auth, User, Verification) {
+  'Car',
+  function ($rootScope, $http, $socket, Bookings, Cars, Locations, Users, Licenses, Card, File, Auth, User, Verification, Car) {
 
     var service = {
 
@@ -43,7 +45,8 @@ module.exports = angular.module('app.services').factory('$data', [
         File: File,
         Auth: Auth,
         User: User,
-        Verification: Verification
+        Verification: Verification,
+        Car: Car
       },
 
       me: void 0,

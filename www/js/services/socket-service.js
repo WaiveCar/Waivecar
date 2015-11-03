@@ -41,8 +41,8 @@ module.exports = angular.module('app')
         console.log('event');
       });
 
-      socket.on('connect', function (e) {
-        console.log('connected', e);
+      socket.on('connect', function () {
+        console.log('socket connected');
       });
 
       socket.on('disconnect', function () {

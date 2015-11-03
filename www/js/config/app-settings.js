@@ -66,3 +66,17 @@ appSettings
     started: 'started',
     stopped: 'stopped'
   });
+
+appSettings
+  .constant('mapsEvents', {
+    routeDurationChanged: 'waiveCarRouteDurationChanged',
+    routeDistanceChanged: 'waiveCarRouteDistanceChanged',
+    positionChanged: 'waiveCarPositionChanged',
+    destinyOnRouteChanged: 'waiveCarDestinyOnRouteChanged',
+    withinUnlockRadius: 'waiveCarWithinUnlockRadius',
+    markersChanged: 'waiveCarMarkersChanged'
+  })
+  .constant('transports', {
+    pedestrian: 'pedestrian',
+    car: 'car'
+  });

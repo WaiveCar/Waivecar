@@ -104,14 +104,6 @@ module.exports =
             },
 
             function(nextTask) {
-              $data.initialize('cars')
-                .then(function() {
-                  nextTask();
-                })
-                .catch(nextTask);
-            },
-
-            function(nextTask) {
               $data.initialize('locations')
                 .then(function() {
                   nextTask();

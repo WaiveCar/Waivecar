@@ -26,6 +26,8 @@ require('./directives/location-marker-directive');
 require('./directives/location-markers-directive');
 require('./directives/map-directive');
 require('./directives/route-to-location-directive');
+require('./directives/route-distance-directive');
+require('./directives/route-duration-directive');
 
 require('./services/location-service');
 require('./services/real-reach-service');
