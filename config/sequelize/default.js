@@ -1,5 +1,5 @@
 module.exports = {
-  
+
   /*
    |--------------------------------------------------------------------------------
    | Sequelize
@@ -28,7 +28,7 @@ module.exports = {
       idle : 1000
     },
     debug : false,
-    force : false
+    force : true
   }
 
 };
