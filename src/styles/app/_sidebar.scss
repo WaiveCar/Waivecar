@@ -8,6 +8,23 @@ $sidebar-button-size : 35px;
 
 // ### Sidebar
 
+.sidebar-overlay {
+  background : rgba(#262626, .12);
+  display    : none;
+  height     : 100%;
+  left       : 0;
+  position   : fixed;
+  top        : 0;
+  width      : 100%;
+  z-index    : 998;
+  &.show {
+    display : block;
+  }
+  &:hover {
+    cursor : pointer;
+  }
+}
+
 #sidebar {
   background : #fff;
   box-shadow : 0 0 10px rgba(#000, .3);
@@ -52,6 +69,10 @@ $sidebar-button-size : 35px;
         margin-left : -2px;
       }
     }
+  }
+
+  .animated {
+    animation-duration: .3s;
   }
 
   .sidebar-meta {
@@ -177,7 +198,6 @@ $sidebar-button-size : 35px;
     background    : #eee;
     border-bottom : 1px solid #e6e6e6;
     display       : none;
-    overflow-y    : hidden;
     &.show {
       display : block;
     }

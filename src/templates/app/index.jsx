@@ -38,14 +38,12 @@ class AppTemplate extends React.Component {
         <Sidebar />
         <div id="content">
           <div className="content-wrapper">
-            <div className="content-header">
-              <h1>
-                { title }
-                <small>
-                  { description }
-                </small>
-              </h1>
-            </div>
+            <h1>
+              { title }
+              <small>
+                { description }
+              </small>
+            </h1>
             { this.props.children }
           </div>
         </div>

@@ -16,17 +16,6 @@ body {
   min-height        : 100vh;
   padding-top       : 52px;
 
-  .content-header h1 {
-    color     : #464646;
-    font-size : 1.3rem;
-    margin    : 15px 0;
-    small {
-      color       : #a6a6a6;
-      font-size   : 65%;
-      margin-left : 5px;
-    }
-  }
-
   .container, .container-fluid, .container-form {
     padding : 24px;
   }

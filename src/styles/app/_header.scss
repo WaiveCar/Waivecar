@@ -6,7 +6,7 @@ $header-height : 52px;
 // ### Header
 
 #header {
-  background : #282828;
+  background : #262626;
   border-top : 2px solid rgba(#25C155, .8);
   color      : #fff;
   height     : $header-height;
@@ -19,6 +19,7 @@ $header-height : 52px;
     height      : $header-height - 30px;
     margin-top  : 10px;
     margin-left : 20px; 
+    text-align  : center;
     img {
       max-height : 100%;
       max-width  : 100%;
