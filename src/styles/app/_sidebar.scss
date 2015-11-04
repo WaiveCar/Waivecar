@@ -45,7 +45,7 @@ $sidebar-button-size : 35px;
     height        : $sidebar-button-size;
     position      : absolute;
     right         : -47px;
-    top           : 62px;
+    top           : 10px;
     width         : $sidebar-button-size;
     z-index       : 999;
     transition    : all .4s ease;
@@ -62,7 +62,8 @@ $sidebar-button-size : 35px;
     .btn-sidebar {
       box-shadow : none;
       right      : -($sidebar-button-size / 2);
-      transition : right .4s ease;
+      top        : 62px;
+      transition : all .4s ease;
       i {
         font-size   : 1.65rem;
         margin-top  : 4px;

@@ -35,7 +35,7 @@ class AppTemplate extends React.Component {
     return (
       <div id="app">
         <Header />
-        <Sidebar />
+        <Sidebar route={ this.props.location.pathname } />
         <div id="content">
           <div className="content-wrapper">
             <h1>

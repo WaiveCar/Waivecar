@@ -13,7 +13,19 @@ export default class Sidebar extends React.Component {
       open    : false,
       account : false
     };
-    relay.subscribe(this, 'app');
+  }
+
+  /**
+   * Check if route has changed, meaning a link has been activated.
+   * @param  {Object} nextProps
+   * @param  {Object} nextState
+   */
+  componentWillReceiveProps(nextProps, nextState) {
+    if (nextProps.route !== this.props.route) {
+      this.setState({
+        open : false
+      });
+    }
   }
 
   /**
@@ -26,16 +38,6 @@ export default class Sidebar extends React.Component {
         title : 'Profile',
         path  : '/profile',
         icon  : 'account_box'
-      },
-      {
-        title : 'Update Password',
-        path  : '/profile/password',
-        icon  : 'security'
-      },
-      {
-        title : 'Update Email',
-        path  : '/profile/email',
-        icon  : 'email'
       },
       {
         title : 'Logout',
