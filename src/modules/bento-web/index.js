@@ -5,7 +5,6 @@ export { default as Content }   from './lib/content';
 export { default as File }      from './lib/file';
 export { default as Form }      from './lib/form';
 export { default as Grid }      from './lib/grid';
-export { default as Hamburger } from './lib/hamburger';
 export { default as Image }     from './lib/image';
 export { default as Layout }    from './lib/layout';
 export { default as Map }       from './lib/map';

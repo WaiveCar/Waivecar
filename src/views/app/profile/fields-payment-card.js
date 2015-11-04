@@ -39,16 +39,10 @@ module.exports = [
       component    : 'select',
       name         : 'exp_year',
       className    : 'col-md-6 bento-form-select',
-      options      : [
-        {
-          name  : '2015',
-          value : '2015'
-        },
-        {
-          name  : '2016',
-          value : '2016'
-        }
-      ],
+      options      : () => {
+        let date = new Date();
+        return [];
+      }(),
     }
   ],
   {
