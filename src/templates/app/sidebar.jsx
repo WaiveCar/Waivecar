@@ -1,9 +1,9 @@
-import md5             from 'md5';
-import React           from 'react';
-import { Link }        from 'react-router';
-import { auth, relay } from 'bento';
-import { menu }        from 'bento-ui';
-import { Hamburger }   from 'bento-web';
+import md5                  from 'md5';
+import React                from 'react';
+import { Link }             from 'react-router';
+import { auth, relay, dom } from 'bento';
+import { menu }             from 'bento-ui';
+import { Hamburger }        from 'bento-web';
 
 export default class Sidebar extends React.Component {
 
@@ -13,6 +13,7 @@ export default class Sidebar extends React.Component {
       open    : false,
       account : false
     };
+    this.getLink = this.getLink.bind(this);
   }
 
   /**
@@ -26,45 +27,6 @@ export default class Sidebar extends React.Component {
         open : false
       });
     }
-  }
-
-  /**
-   * Returns the account related menu.
-   * @return {Array}
-   */
-  account() {
-    return [
-      {
-        title : 'Profile',
-        path  : '/profile',
-        icon  : 'account_box'
-      },
-      {
-        title : 'Logout',
-        path  : '/logout',
-        icon  : 'highlight_off'
-      }
-    ].map(this.getLink);
-  }
-
-  /**
-   * Returns a hard coded nav menu.
-   * TODO: Make the nav list defined in a seperate file.
-   * @return {Array}
-   */
-  nav() {
-    return [
-      {
-        title : 'Book a Car',
-        path  : '/booking',
-        icon  : 'directions_car'
-      },
-      {
-        title : 'Past Rides',
-        path  : '/rides',
-        icon  : 'navigation'
-      }
-    ].map(this.getLink);
   }
 
   /**
@@ -93,7 +55,7 @@ export default class Sidebar extends React.Component {
   getLink(link, i) {
     return (
       <li key={ i } className={ link.parent ? "has-parent" : "parent" }>
-        <Link to={ link.path } className="nav-link animated fadeInLeft">
+        <Link to={ link.path } className={ dom.setClass({ 'nav-link' : true, animated : true, fadeInLeft : true, active : link.path === this.props.route }) }>
           <i className="material-icons" role={ link.title }>{ link.icon }</i>
           { link.title }
         </Link>
@@ -137,14 +99,14 @@ export default class Sidebar extends React.Component {
           <div className={ `sidebar-account${ this.state.account ? ' show' : '' }` }>
             <h5 className="animated fadeInLeft">Account <small>Menu</small></h5>
             <ul>
-              { this.account() }
+              { menu.get('sidebar-account').map(this.getLink) }
             </ul>
           </div>
 
           <div className="sidebar-nav">
             <h5 className="animated fadeInLeft">Application <small>Menu</small></h5>
             <ul>
-              { this.nav() }
+              { menu.get('sidebar-user').map(this.getLink) }
             </ul>
           </div>
           
