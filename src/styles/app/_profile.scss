@@ -42,11 +42,18 @@
       }
     }
 
-    .profile-box-content {
-      background    : #fff;
-      border-bottom : 3px solid #f0f0f0;
-      padding       : 20px;
+    h4 {
+      border-bottom  : 1px solid #cecece;
+      font-size      : 1.2rem;
+      font-weight    : 300;
+      padding-bottom : 10px;
     }
+  }
+
+  .profile-box-content {
+    background    : #fff;
+    border-bottom : 3px solid #f0f0f0;
+    padding       : 20px;
   }
 
 }

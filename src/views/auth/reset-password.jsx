@@ -37,14 +37,14 @@ class ResetPasswordView extends React.Component {
       <div>
         <Form
           ref       = "requestTokenForm"
-          className = "r-form"
+          className = "bento-form"
           fields    = {[
             {
               label     : 'Enter your email or phone',
               component : 'input',
               type      : 'text',
               name      : 'identifier',
-              className : 'col-xs-12 r-input r-input-center',
+              className : 'col-xs-12 bento-form-input bento-form-input-center',
               tabIndex  : 1
             }
           ]}
@@ -83,14 +83,14 @@ class ResetPasswordView extends React.Component {
       <div>
         <Form
           ref       = "tokenInputForm"
-          className = "r-form"
+          className = "bento-form"
           fields    = {[
             {
               label     : 'Insert the reset token',
               component : 'input',
               type      : 'text',
               name      : 'token',
-              className : 'col-xs-12 r-input r-input-center',
+              className : 'col-xs-12 bento-form-input bento-form-input-center',
               tabIndex  : 1
             }
           ]}
@@ -119,14 +119,14 @@ class ResetPasswordView extends React.Component {
       <div>
         <Form
           ref       = "passwordForm"
-          className = "r-form"
+          className = "bento-form"
           fields    = {[
             {
               label     : 'Enter your new password',
               component : 'input',
               type      : 'password',
               name      : 'password',
-              className : 'col-xs-12 r-input r-input-center',
+              className : 'col-xs-12 bento-form-input bento-form-input-center',
               tabIndex  : 1
             },
             {
@@ -134,7 +134,7 @@ class ResetPasswordView extends React.Component {
               component : 'input',
               type      : 'password',
               name      : 'validate',
-              className : 'col-xs-12 r-input r-input-center',
+              className : 'col-xs-12 bento-form-input bento-form-input-center',
               tabIndex  : 2
             }
           ]}

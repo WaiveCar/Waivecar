@@ -14,7 +14,7 @@ let formFields = {
     component    : 'input',
     type         : 'text',
     name         : 'firstName',
-    className    : 'col-md-6 r-input',
+    className    : 'col-md-6 bento-form-input',
     helpText     : 'Enter your first name'
   },
 
@@ -23,7 +23,7 @@ let formFields = {
     component    : 'input',
     type         : 'text',
     name         : 'lastName',
-    className    : 'col-md-6 r-input',
+    className    : 'col-md-6 bento-form-input',
     helpText     : 'Enter your last name'
   },
 
@@ -31,7 +31,7 @@ let formFields = {
     label        : 'User Role (Select)',
     component    : 'select',
     name         : 'role',
-    className    : 'col-xs-12 r-select',
+    className    : 'col-xs-12 bento-form-select',
     options      : [
       {
         name : 'User',
@@ -49,7 +49,7 @@ let formFields = {
     label        : 'Gender (Select)',
     component    : 'select',
     name         : 'gender',
-    className    : 'col-xs-12 r-select',
+    className    : 'col-xs-12 bento-form-select',
     options      : [
       {
         name  : 'Male',
@@ -67,7 +67,7 @@ let formFields = {
     label     : 'Colors (Multi Select)',
     component : 'multi-select',
     name      : 'colors',
-    className : 'col-xs-12 r-select',
+    className : 'col-xs-12 bento-form-select',
     options   : [
       {
         name  : 'Red',
@@ -174,7 +174,7 @@ module.exports = class SandboxForm extends React.Component {
         label     : 'Resource',
         component : 'select',
         name      : 'resource',
-        className : 'col-xs-12 r-select',
+        className : 'col-xs-12 bento-form-select',
         options   : UI.resources.getSelectList(),
         helpText : 'Select resource for this form'
       },
@@ -228,7 +228,7 @@ module.exports = class SandboxForm extends React.Component {
         <h3 style={{ margin : '30px 0' }}>Forms</h3>
         <Form
           ref       = "form"
-          className = "r-form"
+          className = "bento-form"
           fields    = { this.fields() }
           default   = { this.state.default }
           change    = { this.change }

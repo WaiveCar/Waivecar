@@ -22,7 +22,7 @@ class SubscribeView extends React.Component {
         component : 'input',
         type      : 'text',
         name      : 'email',
-        className : 'col-xs-12 r-input r-input-center',
+        className : 'col-xs-12 bento-form-input bento-form-input-center',
         tabIndex  : 1
       }
     ];
@@ -68,7 +68,7 @@ class SubscribeView extends React.Component {
         </div>
         <Form
           ref       = "form"
-          className = "r-form"
+          className = "bento-form"
           fields    = { this.fields }
           submit    = { this.submit }
         />

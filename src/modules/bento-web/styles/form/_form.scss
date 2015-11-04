@@ -1,7 +1,9 @@
+@import '~styles/variables';
 @import './select/_select';
+@import './mixin';
 
-.r-form {
-  @include reach-form(28px, 1.1rem, #eee);
+.bento-form {
+  @include bento-form(28px, 1.1rem, #eee, $brand-primary);
 
   // ### React Select
 

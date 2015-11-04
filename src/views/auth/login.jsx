@@ -78,14 +78,14 @@ class LoginView extends React.Component {
 
         <Form
           ref       = "form"
-          className = "r-form"
+          className = "bento-form"
           fields    = {[
             {
               label     : 'Email Address',
               component : 'input',
               type      : 'text',
               name      : 'identifier',
-              className : 'col-xs-12 r-input r-input-center',
+              className : 'col-xs-12 bento-form-input bento-form-input-center',
               tabIndex  : 1
             },
             {
@@ -93,7 +93,7 @@ class LoginView extends React.Component {
               component : 'input',
               type      : 'password',
               name      : 'password',
-              className : 'col-xs-12 r-input r-input-center',
+              className : 'col-xs-12 bento-form-input bento-form-input-center',
               tabIndex  : 2
             }
           ]}

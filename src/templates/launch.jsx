@@ -93,14 +93,14 @@ class LaunchTemplate extends React.Component {
         <h5>{ config.app.name } is launching soon</h5>
         <Form
           ref       = "form"
-          className = "r-form"
+          className = "bento-form"
           fields    = {[
             {
               label     : 'Email Address',
               component : 'input',
               type      : 'text',
               name      : 'email',
-              className : 'col-xs-12 r-input r-input-center',
+              className : 'col-xs-12 bento-form-input bento-form-input-center',
               tabIndex  : 1
             }
           ]}

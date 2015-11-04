@@ -123,7 +123,7 @@ class UIForm extends React.Component {
     return fieldList.map((value, index) => {
       if (list.hasOwnProperty(value)) {
         let field       = list[value];
-        field.className = 'col-xs-12 r-input';
+        field.className = 'col-xs-12 bento-form-input';
         return field;
       }
     });
@@ -224,7 +224,7 @@ class UIForm extends React.Component {
     if (!this.props.fields) return <div className="component-requires-options" />;
     return (
       <Form
-        className = "r-form"
+        className = "bento-form"
         default   = { this.state.default }
         fields    = { this.fields() }
         buttons   = { this.buttons() }

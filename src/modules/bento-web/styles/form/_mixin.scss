@@ -1,14 +1,12 @@
-@import '~styles/variables';
-@import '~styles/mixins';
-
 /**
- * Returns styling for forms using the reach-components form setup.
- * @mixin reach-form
- * @param {Mixed} $input-height The height of your input
- * @param {Mixed} $font-size    The font size of your input
+ * Returns styling for forms using the bento-web components form setup.
+ * @param {Mixed} $input-height The height of your input.
+ * @param {Mixed} $font-size    The font size of your input.
+ * @param {Mixed} $border-color The color of the bottom border of the input.
+ * @param {Mixed} $focus-bar    The color of the focus bar animated for the active input.
  */
-@mixin reach-form($input-height, $font-size, $border-color) {
-  .r-input {
+@mixin bento-form($input-height, $font-size, $border-color, $focus-bar) {
+  .bento-form-input {
     padding-top : $input-height;
     position    : relative;
 
@@ -18,7 +16,7 @@
       font-size    : $font-size;
       height       : $input-height;
       line-height  : $input-height;
-      padding      : 0 15px;
+      padding      : 0;
       position     : absolute;
       transition   : 0.2s ease all;
       top          : $input-height;
@@ -38,7 +36,7 @@
     }
 
     .focus-bar {
-      background : $brand-primary;
+      background : $focus-bar;
       height     : 2px;
       margin     : -1px auto 0;
       transition : 0.2s ease all;
@@ -69,13 +67,13 @@
     }
   }
 
-  .r-input-center {
+  .bento-form-input-center {
     label, input {
       text-align : center;
     }
   }
 
-  .r-select {
+  .bento-form-select {
     select {
       border        : none;
       border-bottom : 1px solid $border-color;

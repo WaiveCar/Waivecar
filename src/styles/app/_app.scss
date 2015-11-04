@@ -16,15 +16,15 @@ body {
   min-height        : 100vh;
   padding-top       : 52px;
 
-  .container, .container-fluid, .container-form {
+  .container, .container-fluid, .containebento-form {
     padding : 24px;
   }
 
-  .container-fluid, .container-form {
+  .container-fluid, .containebento-form {
     margin : 0 auto;
   }
 
-  .container-form {
+  .containebento-form {
     min-width : 320px;
     max-width : 560px;
     width     : 100%;

@@ -27,6 +27,10 @@ module.exports = class ProfileView extends React.Component {
     return require('./fields-personal');
   }
 
+  paymentCardFields() {
+    return require('./fields-payment-card');
+  }
+
   render() {
     return (
       <div className="profile">
@@ -53,7 +57,7 @@ module.exports = class ProfileView extends React.Component {
           <div className="profile-box-content">
             <Form
               ref       = "personal"
-              className = "profile-form"
+              className = "bento-form"
               fields    = { this.personalFields() }
               default   = { auth.user }
             />
@@ -68,10 +72,11 @@ module.exports = class ProfileView extends React.Component {
             </small>
           </h3>
           <div className="profile-box-content">
+            <h4>Add Card</h4>
             <Form
               ref       = "personal"
-              className = "profile-form"
-              fields    = { [] }
+              className = "bento-form"
+              fields    = { this.paymentCardFields() }
               default   = { {} }
             />
           </div>

@@ -78,7 +78,7 @@ class ViewOptions extends React.Component {
 
     return (
       <Form
-        className = "r-form"
+        className = "bento-form"
         fields    = { this.state.fields }
         default   = { options }
         submit    = { this.submit.bind(this) }
