@@ -157,7 +157,7 @@ let formFields = {
 
 }
 
-export default class SandboxForm extends React.Component {
+module.exports = class SandboxForm extends React.Component {
 
   constructor(...args) {
     super(...args);

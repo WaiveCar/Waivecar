@@ -486,4 +486,4 @@ class ViewLayout extends React.Component {
   }
 }
 
-export default ViewLayout;
+module.exports = ViewLayout;

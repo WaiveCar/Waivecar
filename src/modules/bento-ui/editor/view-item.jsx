@@ -45,4 +45,4 @@ class ViewItem extends Component {
   }
 }
 
-export default ViewItem;
+module.exports = ViewItem;

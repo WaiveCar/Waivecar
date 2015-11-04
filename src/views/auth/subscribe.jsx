@@ -8,8 +8,7 @@ import config               from 'config';
 import { Form, snackbar }   from 'reach-components';
 
 @mixin.decorate(History)
-
-export default class SubscribeView extends React.Component {
+class SubscribeView extends React.Component {
 
   /**
    * @class LoginView
@@ -81,3 +80,5 @@ export default class SubscribeView extends React.Component {
   }
 
 }
+
+module.exports = SubscribeView;

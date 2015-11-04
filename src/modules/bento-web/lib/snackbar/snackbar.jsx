@@ -12,7 +12,7 @@ let width = 0;
 /**
  * @class Snackbar
  */
-export default class Snackbar extends React.Component {
+module.exports = class Snackbar extends React.Component {
 
   constructor(...args) {
     super(...args);

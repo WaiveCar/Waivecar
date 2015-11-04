@@ -4,7 +4,7 @@ import File                     from '../file';
 
 let { type } = helpers;
 
-export default class FileField extends React.Component {
+module.exports = class FileField extends React.Component {
 
   /**
    * @constructor

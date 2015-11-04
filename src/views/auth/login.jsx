@@ -6,7 +6,7 @@ import { auth, api, socket } from 'bento';
 import { Form, snackbar }    from 'bento-web';
 
 @mixin.decorate(History)
-export default class LoginView extends React.Component {
+class LoginView extends React.Component {
 
   /**
    * Prepare the submit method.
@@ -123,3 +123,5 @@ export default class LoginView extends React.Component {
   }
 
 }
+
+module.exports = LoginView;

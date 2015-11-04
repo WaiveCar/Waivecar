@@ -2,7 +2,7 @@ import React                                          from 'react';
 import Math                                           from '../lib/math';
 import { Sparklines, SparklinesBars, SparklinesLine } from 'react-sparklines';
 
-export default class Chart extends React.Component {
+module.exports = class Chart extends React.Component {
 
   renderLine() {
     let barStyle = {

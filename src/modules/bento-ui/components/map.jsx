@@ -68,7 +68,7 @@ class UIMap extends React.Component {
 
 // ### Register Component
 
-export default {
+module.exports = {
   build : () => {
     return {
       name    : 'Map',

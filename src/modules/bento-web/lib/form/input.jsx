@@ -3,7 +3,7 @@ import { dom, helpers, logger } from 'bento';
 
 let { type } = helpers;
 
-export default class Input extends React.Component {
+module.exports = class Input extends React.Component {
 
   /**
    * @constructor

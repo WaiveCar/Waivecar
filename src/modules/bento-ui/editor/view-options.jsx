@@ -114,4 +114,4 @@ class ViewOptions extends React.Component {
   }
 }
 
-export default ViewOptions;
+module.exports = ViewOptions;

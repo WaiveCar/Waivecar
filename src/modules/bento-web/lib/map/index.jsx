@@ -1,7 +1,7 @@
 import React  from 'react';
 import config from 'config';
 
-export default class Map extends React.Component {
+module.exports = class Map extends React.Component {
 
   /**
    * @constructor

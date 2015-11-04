@@ -16,7 +16,7 @@ class UIImage extends React.Component {
 }
 
 // ### Register Component
-export default {
+module.exports = {
   build : function() {
     return {
       name    : 'Image',

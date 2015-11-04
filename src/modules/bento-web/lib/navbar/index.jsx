@@ -31,7 +31,7 @@ let menus = {
   ]
 };
 
-export default class Nav extends React.Component {
+module.exports = class Nav extends React.Component {
 
   /**
    * @constructor

@@ -6,7 +6,7 @@ import { components } from 'bento-ui';
 
 let Map = components.get('map');
 
-export default class BookingCar extends React.Component {
+module.exports = class BookingCar extends React.Component {
 
   /**
    * Subscribes to booking state.

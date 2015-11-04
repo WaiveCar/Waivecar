@@ -7,7 +7,13 @@ class Auth {
    * @return {Void}
    */
   constructor() {
-    this.user = user();
+    this.user = () => {
+      let user = storage.get('auth');
+      if (user) {
+        return user;
+      }
+      return null;
+    }()
   }
 
   /**
@@ -46,18 +52,6 @@ class Auth {
     this.user = null;
   }
 
-}
-
-/**
- * Returns the user currently stored under the local auth key.
- * @return {Object}
- */
-function user() {
-  let user = storage.get('auth');
-  if (user) {
-    return user;
-  }
-  return null;
 }
 
 module.exports = new Auth();

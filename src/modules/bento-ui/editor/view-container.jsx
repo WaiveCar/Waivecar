@@ -228,4 +228,4 @@ class ViewContainer extends React.Component {
   }
 }
 
-export default ViewContainer;
+module.exports = ViewContainer;

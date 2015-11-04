@@ -1,4 +1,4 @@
-export default {
+module.exports = {
 
   groupByDay : (array, returnCountAsArray = true, field = 'createdAt') => {
     let days = {};

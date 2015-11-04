@@ -6,7 +6,7 @@ import Button              from '../button';
 
 let { type, object } = helpers;
 
-export default class Form extends React.Component {
+module.exports = class Form extends React.Component {
 
   /**
    * @constructor

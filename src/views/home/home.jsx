@@ -9,7 +9,7 @@ import { Link }                 from 'react-router';
 let { Container, Row, Column } = Layout;
 let { FormGroup }              = Form;
 
-export default class HomeView extends React.Component {
+module.exports = class HomeView extends React.Component {
 
   /**
    * @class HomeView

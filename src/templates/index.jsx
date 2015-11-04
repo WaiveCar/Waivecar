@@ -4,7 +4,7 @@ import React        from 'react';
 import { Link }     from 'react-router';
 import { snackbar } from 'bento-web';
 
-export default class App extends React.Component {
+module.exports = class App extends React.Component {
 
   constructor(...args) {
     super(...args);

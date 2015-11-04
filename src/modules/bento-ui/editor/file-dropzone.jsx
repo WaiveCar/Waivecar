@@ -52,4 +52,4 @@ class FileDropzone extends React.Component {
   }
 }
 
-export default FileDropzone;
+module.exports = FileDropzone;

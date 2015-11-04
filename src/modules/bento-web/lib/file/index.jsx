@@ -6,7 +6,7 @@ import FileDropzone from 'bento-ui/editor/file-dropzone';
 
 let { type, object } = helpers;
 
-export default class File extends React.Component {
+module.exports = class File extends React.Component {
 
   static propTypes = {
     id       : PropTypes.string,

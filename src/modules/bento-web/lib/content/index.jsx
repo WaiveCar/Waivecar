@@ -2,7 +2,7 @@ import React, { PropTypes } from 'react';
 import Reach, { helpers }   from 'bento';
 import Snackbar             from '../snackbar';
 
-export default class Content extends React.Component {
+class Content extends React.Component {
 
   static propTypes = {
     canEdit  : PropTypes.bool,
@@ -169,3 +169,5 @@ export default class Content extends React.Component {
 }
 
 Content.defaultProps = { canEdit : false };
+
+module.exports = Content;

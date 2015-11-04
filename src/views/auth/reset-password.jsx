@@ -6,7 +6,7 @@ import { auth, api }      from 'bento';
 import { Form, snackbar } from 'bento-web';
 
 @mixin.decorate(History)
-export default class ResetPasswordView extends React.Component {
+class ResetPasswordView extends React.Component {
 
   constructor(...args) {
     super(...args);
@@ -206,3 +206,5 @@ export default class ResetPasswordView extends React.Component {
   }
 
 }
+
+module.exports = ResetPasswordView;

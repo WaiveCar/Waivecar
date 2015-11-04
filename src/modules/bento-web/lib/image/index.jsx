@@ -3,7 +3,7 @@ import config               from 'config';
 import Reach, { api }       from 'bento';
 import Snackbar             from '../snackbar';
 
-export default class Image extends React.Component {
+module.exports = class Image extends React.Component {
 
   static propTypes = {
     resource : PropTypes.object,

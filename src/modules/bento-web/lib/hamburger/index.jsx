@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default class Hamburger extends React.Component {
+module.exports = class Hamburger extends React.Component {
   render() {
     return (
       <div className="hamburger-container">

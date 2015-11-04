@@ -21,7 +21,7 @@ let hasLoaded = false;
 
 // ### Loader
 
-export default function (done) {
+module.exports = function (done) {
   if (hasLoaded) {
     return done(null);
   }

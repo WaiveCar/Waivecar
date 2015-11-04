@@ -2,7 +2,7 @@ import React                                          from 'react';
 import Math                                           from '../lib/math';
 import { Sparklines, SparklinesBars, SparklinesLine } from 'react-sparklines';
 
-export default class MiniChart extends React.Component {
+module.exports = class MiniChart extends React.Component {
 
   renderLine() {
     switch (this.props.type) {

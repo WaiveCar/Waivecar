@@ -1,7 +1,7 @@
 import React  from 'react';
 import config from 'config';
 
-export default class Container extends React.Component {
+module.exports = class Container extends React.Component {
 
   /**
    * @constructor

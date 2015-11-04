@@ -2,7 +2,7 @@ import React    from 'react';
 import { Link } from 'react-router';
 import { dom }  from 'bento';
 
-export default class NavDrop extends React.Component {
+module.exports = class NavDrop extends React.Component {
 
   /**
    * @constructor

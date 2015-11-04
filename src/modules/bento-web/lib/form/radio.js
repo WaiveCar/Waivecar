@@ -3,7 +3,7 @@ import { helpers, logger } from 'bento';
 
 let { array } = helpers;
 
-export default class Radio extends React.Component {
+module.exports = class Radio extends React.Component {
 
   /**
    * Only update the component if the input value has changed.

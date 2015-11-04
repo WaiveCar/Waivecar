@@ -70,4 +70,4 @@ class ViewDropzone extends React.Component {
   }
 }
 
-export default ViewDropzone;
+module.exports = ViewDropzone;

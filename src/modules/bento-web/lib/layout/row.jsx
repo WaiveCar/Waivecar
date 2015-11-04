@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default class Row extends React.Component {
+module.exports = class Row extends React.Component {
 
   /**
    * @method componentDidMount

@@ -1,7 +1,7 @@
 import React      from 'react';
 import { logger } from 'bento';
 
-export default class Textarea extends React.Component {
+module.exports = class Textarea extends React.Component {
 
   /**
    * Only update the component if the input value has changed.

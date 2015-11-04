@@ -15,7 +15,7 @@ tmpl.keys().forEach((key) => {
 
 // ### Export App
 
-export default {
+module.exports = {
 
   /**
    * @property component

@@ -23,7 +23,7 @@ function LayoutBuilder(view) {
     constructor(...args) {
       super(...args);
       relay.subscribe(this, 'app');
-      this.renderRow = this.renderRow.bind(this);
+      this.renderRow       = this.renderRow.bind(this);
       this.renderContainer = this.renderContainer.bind(this);
     }
 
@@ -139,4 +139,4 @@ function LayoutBuilder(view) {
   return LayoutTemplate;
 }
 
-export default LayoutBuilder;
+module.exports = LayoutBuilder;

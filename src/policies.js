@@ -1,6 +1,6 @@
 import { auth } from 'bento';
 
-export default {
+module.exports = {
 
   isAnyone : (nextState, replaceState) => {
   },

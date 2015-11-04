@@ -5,7 +5,7 @@ import { api }      from 'bento';
 import { Dropzone } from 'bento-web';
 import config       from 'config';
 
-export default class SandboxUpload extends React.Component {
+module.exports = class SandboxUpload extends React.Component {
 
   constructor(...args) {
     super(...args);

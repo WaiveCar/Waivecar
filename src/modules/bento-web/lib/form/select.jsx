@@ -5,7 +5,7 @@ import { resources }                   from 'bento-ui';
 
 let { array, type } = helpers;
 
-export default class Select extends React.Component {
+module.exports = class Select extends React.Component {
 
   /**
    * @constructor

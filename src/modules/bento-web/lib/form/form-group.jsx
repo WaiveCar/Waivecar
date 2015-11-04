@@ -11,7 +11,7 @@ let { type } = helpers;
 /**
  * @class FormGroup
  */
-export default class FormGroup extends React.Component {
+module.exports = class FormGroup extends React.Component {
 
   /**
    * @method prepare

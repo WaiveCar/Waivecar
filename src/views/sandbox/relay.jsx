@@ -3,7 +3,7 @@
 import React          from 'react';
 import { api, relay } from 'bento';
 
-export default class SandboxRelay extends React.Component {
+module.exports = class SandboxRelay extends React.Component {
 
   constructor(...args) {
     super(...args);

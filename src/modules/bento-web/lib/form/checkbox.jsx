@@ -3,7 +3,7 @@ import { helpers, logger } from 'bento';
 
 let { array, type } = helpers;
 
-export default class Checkbox extends React.Component {
+module.exports = class Checkbox extends React.Component {
 
   /**
    * @constructor

@@ -6,7 +6,7 @@ import { auth, api }      from 'bento';
 import { Form, snackbar } from 'bento-web';
 
 @mixin.decorate(History)
-export default class LoginView extends React.Component {
+class RegisterView extends React.Component {
 
   constructor(...args) {
     super(...args);
@@ -135,3 +135,5 @@ export default class LoginView extends React.Component {
   }
 
 }
+
+module.exports = RegisterView;

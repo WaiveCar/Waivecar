@@ -1,7 +1,7 @@
 import React from 'react';
 import wave  from './wave';
 
-export default class Button extends React.Component {
+module.exports = class Button extends React.Component {
 
   /**
    * @method componentDidMount

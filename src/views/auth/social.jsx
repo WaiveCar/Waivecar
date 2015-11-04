@@ -6,8 +6,7 @@ import { auth, api } from 'bento';
 import { snackbar }  from 'bento-web';
 
 @mixin.decorate(History)
-
-export default class Social extends React.Component {
+class Social extends React.Component {
 
   constructor(...args) {
     super(...args);
@@ -159,3 +158,5 @@ export default class Social extends React.Component {
   }
 
 }
+
+module.exports = Social;

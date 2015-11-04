@@ -3,7 +3,7 @@ import { Link }   from 'react-router';
 import { relay }  from 'bento';
 import { Navbar } from 'bento-web';
 
-export default class Header extends React.Component {
+module.exports = class Header extends React.Component {
 
   constructor(...args) {
     super(...args);

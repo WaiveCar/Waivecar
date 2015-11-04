@@ -157,4 +157,4 @@ class ViewComponent extends React.Component {
   }
 }
 
-export default ViewComponent;
+module.exports = ViewComponent;

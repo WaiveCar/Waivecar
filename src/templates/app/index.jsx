@@ -1,35 +1,23 @@
 'use strict';
 
-import React                          from 'react';
-import Reach, { relay }               from 'bento';
-import UI, { templates, menu, views } from 'bento-ui';
-import policies                       from 'policies';
-import Sidebar                        from './sidebar';
-import Header                         from './header';
+import React                      from 'react';
+import Reach, { relay }           from 'bento';
+import { templates, menu, views } from 'bento-ui';
+import policies                   from 'policies';
+import Sidebar                    from './sidebar';
+import Header                     from './header';
 
-/**
- * @class AppTemplate
- */
 class AppTemplate extends React.Component {
 
-  /**
-   * @constructor
-   */
   constructor(...args) {
     super(...args);
     relay.subscribe(this, 'app');
   }
 
-  /**
-   * @method componentWillUnmount
-   */
   componentWillUnmount() {
     relay.unsubscribe(this, 'app');
   }
 
-  /**
-   * @method render
-   */
   render() {
     let { title, description } = this.state.app;
     return (

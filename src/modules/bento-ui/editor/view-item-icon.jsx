@@ -17,4 +17,4 @@ class ViewItemIcon extends Component {
   }
 }
 
-export default ViewItemIcon;
+module.exports = ViewItemIcon;

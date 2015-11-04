@@ -1,7 +1,7 @@
 import React from 'react';
 import Dom   from 'react-dom';
 
-export default class Anchor extends React.Component {
+module.exports = class Anchor extends React.Component {
 
   /**
    * @method componentDidMount

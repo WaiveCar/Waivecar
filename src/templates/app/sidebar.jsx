@@ -5,7 +5,7 @@ import { auth, relay, dom } from 'bento';
 import { menu }             from 'bento-ui';
 import { Hamburger }        from 'bento-web';
 
-export default class Sidebar extends React.Component {
+module.exports = class Sidebar extends React.Component {
 
   constructor(...args) {
     super(...args);
