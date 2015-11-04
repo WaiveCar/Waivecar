@@ -1,3 +1,52 @@
 .profile {
   
+  .profile-header {
+    margin-top : 50px;
+
+    $profile-image-size : 150px;
+
+    .profile-image {
+      height : $profile-image-size;
+      margin : 0 auto;
+      width  : $profile-image-size;
+      > div {
+        border-radius : 50%;
+        height        : 100%;
+        width         : 100%;
+      }
+    }
+
+    .profile-meta {
+      text-align : center;
+      .profile-name {
+        font-size   : 1.65rem;
+        font-weight : 300;
+        margin-top  : 10px;
+      }
+    }
+  }
+
+  .profile-box {
+    margin    : 25px auto;
+    max-width : 680px;
+
+    h3 {
+      font-size   : 1.45rem;
+      font-weight : 300;
+      margin-left : 10px;
+      small {
+        color       : #a6a6a6;
+        font-size   : 65%;
+        font-weight : 300;
+        margin-left : 8px;
+      }
+    }
+
+    .profile-box-content {
+      background    : #fff;
+      border-bottom : 3px solid #f0f0f0;
+      padding       : 20px;
+    }
+  }
+
 }

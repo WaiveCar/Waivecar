@@ -11,15 +11,9 @@ let { Container, Row, Column } = Layout;
 
 function LayoutBuilder(view) {
 
-  /**
-   * @class LayoutTemplate
-   */
   @mixin.decorate(History)
   class LayoutTemplate extends React.Component {
 
-    /**
-     * @constructor
-     */
     constructor(...args) {
       super(...args);
       relay.subscribe(this, 'app');
@@ -27,25 +21,18 @@ function LayoutBuilder(view) {
       this.renderContainer = this.renderContainer.bind(this);
     }
 
-    /**
-     * @method componentDidMount
-     */
     componentDidMount() {
       this.app.update({
         title : view.title
       });
     }
 
-    /**
-     * @method componentDidUnmount
-     */
     componentWillUnmount() {
       relay.unsubscribe(this, 'app');
     }
 
     /**
      * Renders the components that has been defined in the view.
-     * @method renderView
      */
     renderView() {
       return view.layout.map(this.renderContainer);
@@ -53,7 +40,6 @@ function LayoutBuilder(view) {
 
     /**
      * Renders the components that has been defined in the view.
-     * @method renderView
      */
     renderContainer(container, containerIndex) {
       return (
@@ -64,7 +50,6 @@ function LayoutBuilder(view) {
     }
 
     /**
-     * @method renderRow
      * @param  {Object} row
      * @param  {Number} rowIndex
      */
@@ -82,7 +67,6 @@ function LayoutBuilder(view) {
     }
 
     /**
-     * @method renderColumn
      * @param  {Object} column
      * @param  {Number} columnIndex
      * @param  {Number} columnWidth
@@ -98,9 +82,6 @@ function LayoutBuilder(view) {
       );
     }
 
-    /**
-     * @method renderType
-     */
     renderType(column) {
       if (column.components && column.components.length > 0) {
         let first = column.components[0];
@@ -113,7 +94,6 @@ function LayoutBuilder(view) {
     }
 
     /**
-     * @method renderComponent
      * @param  {Object} component { type, options }
      */
     renderComponent(component) {
@@ -123,9 +103,6 @@ function LayoutBuilder(view) {
       });
     }
 
-    /**
-     * @method render
-     */
     render() {
       return (
         <div className={ view.class }>

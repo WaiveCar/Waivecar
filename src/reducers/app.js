@@ -5,10 +5,7 @@ import { relay } from 'bento';
 let defaultState = {
   title       : 'No Title',
   description : 'No description added yet...',
-  classes     : {
-    view      : null,
-    container : 'container-fluid'
-  }
+  display     : true
 };
 
 relay.resource('app', function (state = defaultState, action) {

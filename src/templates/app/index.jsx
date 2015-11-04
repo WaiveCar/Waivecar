@@ -18,20 +18,28 @@ class AppTemplate extends React.Component {
     relay.unsubscribe(this, 'app');
   }
 
+  header() {
+    let { title, description, display } = this.state.app;
+    if (display) {
+      return (
+        <h1>
+          { title }
+          <small>
+            { description }
+          </small>
+        </h1>
+      );
+    }
+  }
+
   render() {
-    let { title, description } = this.state.app;
     return (
       <div id="app">
         <Header />
         <Sidebar route={ this.props.location.pathname } />
         <div id="content">
           <div className="content-wrapper">
-            <h1>
-              { title }
-              <small>
-                { description }
-              </small>
-            </h1>
+            { this.header() }
             { this.props.children }
           </div>
         </div>
