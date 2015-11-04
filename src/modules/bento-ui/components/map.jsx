@@ -50,13 +50,18 @@ class UIMap extends React.Component {
    * @return {Object}
    */
   render() {
+    let markers = this.state[this.props.resource];
     let handler = this.props.handler ? this.props.handler : (data) => {
       this.history.pushState(null, `/${ this.props.resource }/${ data.id }`);
     }.bind(this);
 
+    if (!markers.length) {
+      return <div />;
+    }
+
     return (
       <Map
-        markers          = { this.state[this.props.resource] }
+        markers          = { markers }
         markerHandlerKey = { this.props.key }
         markerIcon       = { '/images/admin/map-icon-waivecar.svg' }
         markerHandler    = { handler }

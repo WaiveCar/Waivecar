@@ -18,7 +18,7 @@ module.exports = class Map extends React.Component {
   }
 
   /**
-   * @method componentDidMount
+   * Creates a new skobbler map and adds it to the current map state.
    */
   componentDidMount() {
     this.setState({
@@ -31,31 +31,47 @@ module.exports = class Map extends React.Component {
       })
     }, function() {
       this.state.map.scrollWheelZoom.disable();
+      this.prepareMarkers();
     });
   }
 
   /**
    * By default we never want to re-render the skobbler map once it has been loaded.
    * Marker locations are manually added to the map via componentWillReceiveProps.
-   * @method shouldComponentUpdate
    */
   shouldComponentUpdate() {
     return false;
   }
 
   /**
-   * @method componentWillReceiveProps
-   * @param  {Object} props
+   * Triggers when changes have been made to the marker array.
+   * @param {Object} props
    */
-  componentWillReceiveProps(props) {
-    if (this.state.map && props.markers && props.markers.length > 0) {
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.markers && nextProps.markers.length !== this.props.markers.length) {
+      this.prepareMarkers();
+    }
+  }
+
+  /**
+   * Prepares a list of markers.
+   */
+  prepareMarkers() {
+    if (this.state.map) {
       this.clearMarkers();
+
       let markers = this.getMarkers();
+
       this.addMarkers(markers);
       this.centerPosition(markers);
     }
   }
 
+  /**
+   * Returns a list of skobbler friendly markers based on the markers defined in the
+   * component properties.
+   * @return {Array}
+   */
   getMarkers() {
     return this.props.markers.map((val) => {
       return {
@@ -66,16 +82,26 @@ module.exports = class Map extends React.Component {
     });
   }
 
+  /**
+   * Centers the position around the marker points.
+   * @param  {Array} markers
+   */
   centerPosition(markers) {
     let markerPoints = this.getMarkerPoints(markers);
-    var bounds = new L.LatLngBounds(markerPoints);
+    let bounds       = new L.LatLngBounds(markerPoints);
+
     this.state.map.fitBounds(bounds);
   }
 
+  /**
+   * Returns a map of marker points.
+   * @param  {Array} markers
+   * @return {Array}
+   */
   getMarkerPoints(markers) {
     return markers.map((marker) => {
       return L.latLng(marker.lat, marker.long);
-    })
+    });
   }
 
   /**
@@ -88,7 +114,6 @@ module.exports = class Map extends React.Component {
     if (!markers) {
       return;
     }
-
     markers.forEach((val) => {
       let marker = L.marker([ val.lat, val.long ], { icon : markerIcon });
       this.state.markers.push(marker);
@@ -99,7 +124,6 @@ module.exports = class Map extends React.Component {
 
   /**
    * Clears any added marker from the map.
-   * @method clearMarkers
    */
   clearMarkers() {
     this.state.markers.forEach(function (marker) {
@@ -107,6 +131,11 @@ module.exports = class Map extends React.Component {
     }.bind(this));
   }
 
+  /**
+   * Adds a marker click handler to the provided marker.
+   * @param {Object} marker
+   * @param {String} id
+   */
   addMarkerClick(marker, id) {
     let handler = this.props.markerHandler;
     let key     = this.props.markerHandlerKey || 'id';
@@ -120,7 +149,6 @@ module.exports = class Map extends React.Component {
 
   /**
    * Returns leaflet marker icon.
-   * @method getMarkerIcon
    * @return {Object}
    */
   getMarkerIcon() {
