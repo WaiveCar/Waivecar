@@ -1,3 +1,5 @@
+@import '~styles/variables';
+
 /**
  * Returns styling for forms using the bento-web components form setup.
  * @param {Mixed} $input-height The height of your input.
@@ -11,16 +13,16 @@
     position    : relative;
 
     label {
-      color        : #777;
-      left         : 0;
-      font-size    : $font-size;
-      height       : $input-height;
-      line-height  : $input-height;
-      padding      : 0;
-      position     : absolute;
-      transition   : 0.2s ease all;
-      top          : $input-height;
-      width        : 100%;
+      color       : #777;
+      left        : 0;
+      font-size   : $font-size;
+      height      : $input-height;
+      line-height : $input-height;
+      padding     : 0 ($grid-gutter-width / 2);
+      position    : absolute;
+      transition  : 0.2s ease all;
+      top         : $input-height;
+      width       : 100%;
     }
 
     input {

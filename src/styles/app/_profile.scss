@@ -27,7 +27,7 @@
   }
 
   .profile-box {
-    margin    : 25px auto;
+    margin    : 50px auto;
     max-width : 680px;
 
     h3 {
@@ -53,7 +53,18 @@
   .profile-box-content {
     background    : #fff;
     border-bottom : 3px solid #f0f0f0;
-    padding       : 20px;
+    padding       : 25px 40px;
+  }
+
+  .profile-box-spacer {
+    height : 30px;
+  }
+
+  .no-records {
+    background    : #eee;
+    border-radius : 5px;
+    padding       : 10px;
+    text-align    : center;
   }
 
 }
