@@ -3,10 +3,14 @@
 @import './mixin';
 
 .bento-form {
-  @include bento-form(28px, 1.1rem, #eee, $brand-primary);
+  @include bento-form-animated-label(28px, 1.1rem, #eee, $brand-primary);
+}
 
-  // ### React Select
+.bento-form-static {
+  @include bento-form-static-label(28px, 1.1rem, #eee, $brand-primary);
+}
 
+.bento-form, .bento-form-static {
   .Select-control {
     border        : none;
     border-bottom : 1px solid #eee;

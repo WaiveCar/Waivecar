@@ -60,6 +60,36 @@
     height : 30px;
   }
 
+  .profile-table {
+    width : 100%;
+
+    th {
+      font-size : .9rem;
+      padding   : 5px 0;
+    }
+
+    td {
+      font-size : .9rem;
+      padding   : 5px 10px;
+    }
+
+    button {
+      background : none;
+      border     : none;
+      i {
+        color     : red;
+        font-size : 1.1rem;
+      }
+      &.hide {
+        display : none;
+      }
+    }
+  }
+
+  .btn-profile-submit {
+    margin : 10px 0;
+  }
+
   .no-records {
     background    : #eee;
     border-radius : 5px;

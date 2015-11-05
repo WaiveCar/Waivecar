@@ -84,7 +84,7 @@ module.exports = class Sidebar extends React.Component {
             <div className="sidebar-avatar animated flipInX">
               <div
                 className = "sidebar-avatar-img"
-                style     = {{ background : auth.user.email ? `url(//www.gravatar.com/avatar/${ md5(auth.user.email) }) center center / cover` : '#fff' }}
+                style     = {{ background : auth.user.email ? `url(//www.gravatar.com/avatar/${ md5(auth.user.email) }?s=100) center center / cover` : '#fff' }}
               />
             </div>
             <div className="sidebar-name animated flipInY">
