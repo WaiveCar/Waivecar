@@ -56,16 +56,18 @@ Bento.Register.Model('Car', 'sequelize', function (model, Sequelize) {
       type : Sequelize.DECIMAL(10, 2)
     },
 
-    immobilizer: {
-      type : Sequelize.STRING(28)
+    isImmobilized: {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
     },
 
     ignition: {
       type : Sequelize.STRING(28)
     },
 
-    lock: {
-      type : Sequelize.STRING(28)
+    isLocked: {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
     },
 
     lockLastCommand : {
@@ -93,6 +95,25 @@ Bento.Register.Model('Car', 'sequelize', function (model, Sequelize) {
     },
 
     boardVoltage : {
+      type : Sequelize.DECIMAL(10, 2)
+    },
+
+    isCharging : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
+    isQuickCharging : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
+    isOnChargeAdapter : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
+    range : {
       type : Sequelize.DECIMAL(10, 2)
     },
 

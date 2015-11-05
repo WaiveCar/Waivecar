@@ -146,9 +146,9 @@ module.exports = class CarService extends Service {
       distanceSinceLastRead         : data['position']['meters_driven_since_last_fix'],
       currentSpeed                  : data['position']['speed_over_ground'],
       fuel                          : data['fuel_level'],
-      immobilizer                   : data['immobilizer'],
+      isImmobilized                 : getData(data, 'immobilizer', { locked : true, unlocked : false }),
       ignition                      : data['ignition'],
-      lock                          : data['central_lock'],
+      isLocked                      : getData(data, 'central_lock', { locked : true, unlocked : false }),
       lockLastCommand               : data['central_lock_last_command'],
       keyfob                        : data['keyfob'],
       bluetooth                     : data['bluetooth_connection'],
@@ -156,8 +156,28 @@ module.exports = class CarService extends Service {
       mileageSinceImmobilizerUnlock : data['mileage_since_immobilizer_unlock'],
       totalMileage                  : data['mileage'],
       boardVoltage                  : data['board_voltage'],
-      updatedAt                     : data['position']['timestamp']
+      isCharging                    : getData(data, 'electric_vehicle_state.charge', { on : true, off : false }),
+      isQuickCharging               : getData(data, 'electric_vehicle_state.quick_charge', { on : true, off : false }),
+      isOnChargeAdapter             : getData(data, 'electric_vehicle_state.charge_adapter', { in : true, out : false }),
+      range                         : getData(data, 'electric_vehicle_state.cruising_range'),
+      updatedAt                     : getData(data, 'position.timestamp')
     };
+  }
+
+  static getData(data, field, defaultValue) {
+    let isObject = typeof defaultValue === 'object';
+    defaultValue = defaultValue || null;
+    let fields = field.split('.');
+    if (fields.length > 1) {
+      return this.getData(data[fields[0]], fields[1], defaultValue);
+    }
+
+    let fieldValue = data[field];
+    if (isObject && defaultValue[fieldValue]) {
+      return defaultValue[fieldValue] || false;
+    }
+
+    return  fieldValue || defaultValue;
   }
 
 }
