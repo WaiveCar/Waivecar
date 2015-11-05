@@ -60,9 +60,6 @@ module.exports = class CarService extends Service {
     let result = yield request(options);
     let response = result.toJSON();
 
-    console.dir(options);
-    console.dir(response);
-
     if (!response || response.statusCode !== 200) {
       let error    = new Error(`CAR: ${ resource }`);
       error.code   = 'CAR_SERVICE';
@@ -122,14 +119,6 @@ module.exports = class CarService extends Service {
     let updatedCar = this.buildCar(id, status);
     yield car.update(updatedCar);
     return updatedCar;
-
-    // multiple request version:
-    // let newState = { state : `${ command }ed` };
-    // yield this.request(`/devices/${ id }/central-lock`, 'PUT', newState);
-    // yield this.request(`/devices/${ id }/immobilizer`, 'PUT', newState);
-    // let updatedCar = yield this.device(id, _user);
-    // yield car.update(updatedCar);
-    // return updatedCar;
   }
 
   /**
