@@ -15,4 +15,4 @@ module.exports = [
       className    : 'col-md-6 bento-form-input'
     }
   ]
-]
+];

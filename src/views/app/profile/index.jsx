@@ -2,7 +2,7 @@
 
 import React                     from 'react';
 import { auth, relay, api, dom } from 'bento';
-import { Form }                  from 'bento-web';
+import { Form, snackbar }        from 'bento-web';
 import { resources, fields }     from 'bento-ui';
 import md5                       from 'md5';
 import stripe                    from './classes/stripe';
@@ -11,7 +11,8 @@ import stripe                    from './classes/stripe';
 
 let formFields = {
   personal : require('./fields-personal'),
-  card     : require('./fields-card')
+  card     : require('./fields-card'),
+  password : require('./fields-password')
 };
 
 module.exports = class ProfileView extends React.Component {
@@ -69,6 +70,99 @@ module.exports = class ProfileView extends React.Component {
   }
 
   /**
+   * Send password update request to the api.
+   * @param  {Object}   data
+   * @param  {Function} reset
+   */
+  updatePassword(data, reset) {
+    if (data.password !== data.passwordVerify) {
+      return snackbar.notify({
+        type    : `danger`,
+        message : `Passwords does not match`
+      });
+    }
+    api.put(`/users/${ auth.user.id }`, {
+      password : data.password
+    }, function (err) {
+      if (err) {
+        return snackbar.notify({
+          type    : `danger`,
+          message : err.message
+        });
+      }
+      return snackbar.notify({
+        type    : `success`,
+        message : `Your password was successfully updated`
+      });
+    });
+  }
+
+  /**
+   * Attempts to delete a payment card.
+   * @param  {String} cardId
+   */
+  deleteCard(cardId) {
+    let btn = this.refs[`delete-card-${ cardId }`];
+    btn.className = dom.setClass({
+      hide : true
+    });
+    stripe.deleteCard(cardId, function (err) {
+      if (err) {
+        btn.className = dom.setClass({
+          hide : false
+        });
+        return snackbar.notify({
+          type    : `danger`,
+          message : err.message
+        });
+      }
+
+      // ### Remove Card
+      // Remove the payment card form the card list.
+
+      this.setState({
+        cards : function () {
+          let result = [];
+          this.state.cards.forEach((card) => {
+            if (card.id !== cardId) {
+              result.push(card);
+            }
+          });
+          return result;
+        }.call(this)
+      });
+
+      return snackbar.notify({
+        type    : `success`,
+        message : `Your payment card was successfully removed from your account`
+      });
+    }.bind(this));
+  }
+
+  /**
+   * Submits the card form.
+   * @param {Object}   data
+   * @param {Function} reset
+   */
+  submitCard(data, reset) {
+    stripe.addCard(auth.user, data, function (card) {
+      this.setState({
+        cards : [
+          ...this.state.cards,
+          card
+        ]
+      });
+
+      snackbar.notify({
+        type    : `success`,
+        message : `Your new payment card was added successfully`
+      });
+
+      reset();
+    }.bind(this));
+  }
+
+  /**
    * Renders the list of registered payment cards
    * @return {Object}
    */
@@ -107,58 +201,6 @@ module.exports = class ProfileView extends React.Component {
         </tbody>
       </table>
     );
-  }
-
-  /**
-   * Attempts to delete a payment card.
-   * @param  {String} cardId
-   */
-  deleteCard(cardId) {
-    let btn = this.refs[`delete-card-${ cardId }`];
-    btn.className = dom.setClass({
-      hide : true
-    });
-    stripe.deleteCard(cardId, function (err) {
-      if (err) {
-        btn.className = dom.setClass({
-          hide : false
-        });
-        console.log(err.message);
-        return;
-      }
-
-      // ### Remove Card
-      // Remove the payment card form the card list.
-
-      this.setState({
-        cards : function () {
-          let result = [];
-          this.state.cards.forEach((card) => {
-            if (card.id !== cardId) {
-              result.push(card);
-            }
-          });
-          return result;
-        }.call(this)
-      })
-    }.bind(this));
-  }
-
-  /**
-   * Submits the card form.
-   * @param  {Object}   data
-   * @param  {Function} reset
-   */
-  submitCard(data, reset) {
-    stripe.addCard(auth.user, data, function (card) {
-      this.setState({
-        cards : [
-          ...this.state.cards,
-          card
-        ]
-      });
-      reset();
-    }.bind(this));
   }
 
   /**
@@ -207,18 +249,40 @@ module.exports = class ProfileView extends React.Component {
 
         <div className="profile-box">
           <h3>
+            Change Password <small>Update your account password.</small>
+          </h3>
+          <div className="profile-box-content">
+            <Form
+              ref       = "personal"
+              className = "bento-form-static"
+              fields    = { formFields.password }
+              default   = { auth.user }
+              buttons   = {[
+                {
+                  value : 'Update Password',
+                  type  : 'submit',
+                  class : 'btn btn-primary btn-profile-submit'
+                }
+              ]}
+              submit = { this.updatePassword }
+            />
+          </div>
+        </div>
+
+        <div className="profile-box">
+          <h3>
             Payment Details
             <small>
               Review, and edit your payment details.
             </small>
           </h3>
           <div className="profile-box-content">
-            <h4>Your Cards</h4>
+            <h4>Your Cards <small>List of payment cards registered with your waivecar account.</small></h4>
             {
               this.renderCards()
             }
             <div className="profile-box-spacer" />
-            <h4>Add Card</h4>
+            <h4>Add Card <small>Fill out the card details.</small></h4>
             <Form
               ref       = "personal"
               className = "bento-form-static"
