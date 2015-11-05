@@ -1,7 +1,5 @@
 'use strict';
 
-let path = require('path');
-
 module.exports = {
 
   /*
@@ -24,8 +22,9 @@ module.exports = {
       }
     },
     fixtures : {
-      views : path.resolve('fixtures', 'views.json')
-    }
+      views : 'config/ui/fixtures/views.json'
+    },
+    force : true
   }
 
 };
