@@ -5,7 +5,7 @@ let Car       = Bento.model('Car');
 let log       = Bento.Log;
 
 module.exports = function *() {
-  scheduler.add('car-reconcile-location', {
+  scheduler.add('car-mock-locations', {
     init   : true,
     repeat : true,
     silent : true,
@@ -27,18 +27,21 @@ module.exports = function *() {
 // "street_address": "11100 Santa Monica Blvd.",
 // "zip": "90025",
 
-scheduler.process('car-reconcile-location', function *(job) {
+scheduler.process('car-mock-locations', function *(job) {
   let cars = yield Car.find();
   if (!cars) {
     return;
   }
+  log.debug('Updating Mock Locations');
   for (let i = 0, len = cars.length; i < len; i++) {
     let car    = cars[i];
-    let coords = (car.latitude && car.longitude) ? getRandomLocation(car.latitude, car.longitude, 100) : getRandomLocation(34.0464846, -118.4442262, 5000);
-    yield car.update({
-      latitude  : coords[1],
-      longitude : coords[0]
-    });
+    if (car.id.indexOf('MOCK') > -1) {
+      let coords = (car.latitude && car.longitude) ? getRandomLocation(car.latitude, car.longitude, 100) : getRandomLocation(34.0464846, -118.4442262, 5000);
+      yield car.update({
+        latitude  : coords[1],
+        longitude : coords[0]
+      });
+    }
   }
 });
 

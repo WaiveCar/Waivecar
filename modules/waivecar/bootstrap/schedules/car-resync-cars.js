@@ -18,7 +18,7 @@ module.exports = function *() {
 
 // Resync each car's record from Invers.
 scheduler.process('car-resync-cars', function *(job) {
-  log.info('Resyncing Cars');
+  log.debug('Resyncing Cars');
   let cars = yield Car.find();
   if (!cars) {
     return;
@@ -26,8 +26,10 @@ scheduler.process('car-resync-cars', function *(job) {
   log.debug(`${ cars.length } cars to be resynced.`);
   for (let i = 0, len = cars.length; i < len; i++) {
     let car    = cars[i];
-    let updatedCar = yield service.device(car.id);
-    yield car.update(updatedCar);
+    if (car.id.indexOf('MOCK') === -1) {
+      let updatedCar = yield service.device(car.id);
+      yield car.update(updatedCar);
+    }
   }
 
 });

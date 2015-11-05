@@ -21,7 +21,7 @@ module.exports = function *() {
 // This is done to ensure all active cars are known to the local API.
 
 scheduler.process('car-resync-fleet', function *(job) {
-  log.info('Resyncing Fleet');
+  log.debug('Resyncing Fleet');
   let cars = yield service.listDevices();
   log.debug(`${ cars.length } cars to be upserted.`);
   for (let i = 0, len = cars.length; i < len; i++) {

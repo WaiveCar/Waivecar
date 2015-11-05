@@ -5,11 +5,11 @@ let log = Bento.Log;
 
 module.exports = function *() {
   let count = yield Car.count();
-  if (count > 0) {
+  if (count > 9) {
     return;
   }
-  log.debug('importing 20 mock cars');
-  for (let i = 0, len = 20; i < len; i++) {
+  log.debug('importing 8 mock cars');
+  for (let i = 1, len = 9; i < len; i++) {
     let carId = 'MOCK_' + i;
     let car   = new Car({
       id           : carId,
