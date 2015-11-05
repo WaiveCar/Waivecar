@@ -17,10 +17,10 @@ module.exports = {
   ui : {
     ui : {
       resources : {
-        views    : require('./resources/views')
+        views : require('./resources/views')
       },
       fields : {
-        views    : require('./fields/views')
+        views : require('./fields/views')
       }
     },
     fixtures : {
