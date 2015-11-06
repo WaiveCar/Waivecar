@@ -15,6 +15,14 @@ module.exports = {
     label     : 'Make',
     helpText  : null
   },
+  model : {
+    name      : 'model',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Model',
+    helpText  : null
+  },
   year : {
     name      : 'year',
     component : 'input',
@@ -31,60 +39,172 @@ module.exports = {
     label     : 'manufacturer',
     helpText  : null
   },
-  phone : {
-    name      : 'phone',
+  latitude : {
+    name      : 'latitude',
     component : 'input',
     type      : 'text',
     required  : true,
-    label     : 'phone',
+    label     : 'Latitude',
     helpText  : null
   },
-  unitType : {
-    name      : 'unitType',
+  longitude : {
+    name      : 'longitude',
     component : 'input',
     type      : 'text',
     required  : true,
-    label     : 'unitType',
+    label     : 'Longitude',
     helpText  : null
   },
-  onstarStatus : {
-    name      : 'onstarStatus',
+  distanceSinceLastRead : {
+    name      : 'distanceSinceLastRead',
     component : 'input',
     type      : 'text',
     required  : true,
-    label     : 'onstarStatus',
+    label     : 'Distance Since Last Read',
     helpText  : null
   },
-  primaryDriverId : {
-    name      : 'primaryDriverId',
+  currentSpeed : {
+    name      : 'currentSpeed',
     component : 'input',
     type      : 'text',
     required  : true,
-    label     : 'primaryDriverId',
+    label     : 'Current Est. Speed',
     helpText  : null
   },
-  primaryDriverUrl : {
-    name      : 'primaryDriverUrl',
+  charge : {
+    name      : 'charge',
     component : 'input',
     type      : 'text',
     required  : true,
-    label     : 'primaryDriverUrl',
+    label     : 'Charge %',
     helpText  : null
   },
-  url : {
-    name      : 'url',
+  isImmobilized : {
+    name      : 'isImmobilized',
     component : 'input',
     type      : 'text',
     required  : true,
-    label     : 'url',
+    label     : 'Immobilized',
     helpText  : null
   },
-  isInPreActivation : {
-    name      : 'isInPreActivation',
+  ignition : {
+    name      : 'ignition',
     component : 'input',
     type      : 'text',
     required  : true,
-    label     : 'isInPreActivation',
+    label     : 'Ignition',
+    helpText  : null
+  },
+  isLocked : {
+    name      : 'isLocked',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Locked',
+    helpText  : null
+  },
+  lockLastCommand : {
+    name      : 'lockLastCommand',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Last Lock Command',
+    helpText  : null
+  },
+  keyfob : {
+    name      : 'keyfob',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Key Fob',
+    helpText  : null
+  },
+  bluetooth : {
+    name      : 'bluetooth',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Bluetooth',
+    helpText  : null
+  },
+  alarmInput : {
+    name      : 'alarmInput',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Alarm Input',
+    helpText  : null
+  },
+  mileageSinceImmobilizerUnlock : {
+    name      : 'mileageSinceImmobilizerUnlock',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Mileage Since Last Unlock',
+    helpText  : null
+  },
+  totalMileage : {
+    name      : 'totalMileage',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Total Mileage',
+    helpText  : null
+  },
+  boardVoltage : {
+    name      : 'boardVoltage',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Board Voltage',
+    helpText  : null
+  },
+  isCharging : {
+    name      : 'isCharging',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Charging',
+    helpText  : null
+  },
+  isQuickCharging : {
+    name      : 'isQuickCharging',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Quick Charging',
+    helpText  : null
+  },
+  isOnChargeAdapter : {
+    name      : 'isOnChargeAdapter',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'On Charge Adapter',
+    helpText  : null
+  },
+  range : {
+    name      : 'range',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Current Range',
+    helpText  : null
+  },
+  userId : {
+    name      : 'userId',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'User',
+    helpText  : null
+  },
+  isAvailable : {
+    name      : 'isAvailable',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'available',
     helpText  : null
   }
 };
