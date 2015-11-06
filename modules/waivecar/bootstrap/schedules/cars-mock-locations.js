@@ -5,7 +5,7 @@ let Car       = Bento.model('Car');
 let log       = Bento.Log;
 
 module.exports = function *() {
-  scheduler.add('car-mock-locations', {
+  scheduler.add('cars-mock-locations', {
     init   : true,
     repeat : true,
     silent : true,
@@ -27,7 +27,7 @@ module.exports = function *() {
 // "street_address": "11100 Santa Monica Blvd.",
 // "zip": "90025",
 
-scheduler.process('car-mock-locations', function *(job) {
+scheduler.process('cars-mock-locations', function *(job) {
   let cars = yield Car.find();
   if (!cars) {
     return;

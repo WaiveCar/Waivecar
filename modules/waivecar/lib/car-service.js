@@ -59,7 +59,6 @@ module.exports = class CarService extends Service {
 
     let result = yield request(options);
     let response = result.toJSON();
-
     if (!response || response.statusCode !== 200) {
       let error    = new Error(`CAR: ${ resource }`);
       error.code   = 'CAR_SERVICE';
@@ -79,7 +78,7 @@ module.exports = class CarService extends Service {
    * @return {Array}
    */
   static *listDevices(query, role, _user) {
-    let devices = yield this.request('/devices');
+    let devices = yield this.request('/devices?active=true&limit=100');
     return devices.data;
   }
 
@@ -139,16 +138,8 @@ module.exports = class CarService extends Service {
    * @return {Object}      WaiveCar car model
    */
   static buildCar(id, data) {
-    return {
+    let car = {
       id                            : id,
-      latitude                      : data['position']['lat'],
-      longitude                     : data['position']['lon'],
-      distanceSinceLastRead         : data['position']['meters_driven_since_last_fix'],
-      currentSpeed                  : data['position']['speed_over_ground'],
-      fuel                          : data['fuel_level'],
-      isImmobilized                 : getData(data, 'immobilizer', { locked : true, unlocked : false }),
-      ignition                      : data['ignition'],
-      isLocked                      : getData(data, 'central_lock', { locked : true, unlocked : false }),
       lockLastCommand               : data['central_lock_last_command'],
       keyfob                        : data['keyfob'],
       bluetooth                     : data['bluetooth_connection'],
@@ -156,28 +147,43 @@ module.exports = class CarService extends Service {
       mileageSinceImmobilizerUnlock : data['mileage_since_immobilizer_unlock'],
       totalMileage                  : data['mileage'],
       boardVoltage                  : data['board_voltage'],
-      isCharging                    : getData(data, 'electric_vehicle_state.charge', { on : true, off : false }),
-      isQuickCharging               : getData(data, 'electric_vehicle_state.quick_charge', { on : true, off : false }),
-      isOnChargeAdapter             : getData(data, 'electric_vehicle_state.charge_adapter', { in : true, out : false }),
-      range                         : getData(data, 'electric_vehicle_state.cruising_range'),
-      updatedAt                     : getData(data, 'position.timestamp')
+      charge                        : data['fuel_level'],
+      ignition                      : data['ignition'],
+      isImmobilized                 : this.convertToBoolean(data, 'immobilizer', { locked : true, unlocked : false }),
+      isLocked                      : this.convertToBoolean(data, 'central_lock', { locked : true, unlocked : false })
     };
+
+    if (data['position']) {
+      let position = data['position'];
+      car.latitude              = position['lat'];
+      car.longitude             = position['lon'];
+      car.distanceSinceLastRead = position['meters_driven_since_last_fix'];
+      car.currentSpeed          = position['speed_over_ground'];
+      car.updatedAt             = position['timestamp'];
+    }
+
+    if (data['electric_vehicle_state']) {
+      let elec = data['electric_vehicle_state'];
+      car.isCharging        = this.convertToBoolean(elec, 'charge', { on : true, off : false });
+      car.isQuickCharging   = this.convertToBoolean(elec, 'quick_charge', { on : true, off : false });
+      car.isOnChargeAdapter = this.convertToBoolean(elec, 'charge_adapter', { in : true, out : false });
+      car.range             = elec['cruising_range'];
+    }
+
+    if (!car.updatedAt) {
+      car.updatedAt = new Date();
+    }
+
+    return car;
   }
 
-  static getData(data, field, defaultValue) {
-    let isObject = typeof defaultValue === 'object';
-    defaultValue = defaultValue || null;
-    let fields = field.split('.');
-    if (fields.length > 1) {
-      return this.getData(data[fields[0]], fields[1], defaultValue);
-    }
-
+  static convertToBoolean(data, field, test) {
     let fieldValue = data[field];
-    if (isObject && defaultValue[fieldValue]) {
-      return defaultValue[fieldValue] || false;
+    if (Object.keys(test).indexOf(fieldValue) > -1) {
+      return test[fieldValue];
+    } else {
+      return false;
     }
-
-    return  fieldValue || defaultValue;
   }
 
 }

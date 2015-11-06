@@ -52,7 +52,7 @@ Bento.Register.Model('Car', 'sequelize', function (model, Sequelize) {
       type : Sequelize.DECIMAL(10, 2)
     },
 
-    fuel: {
+    charge: {
       type : Sequelize.DECIMAL(10, 2)
     },
 
