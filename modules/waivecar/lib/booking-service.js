@@ -43,8 +43,8 @@ module.exports = class BookingService extends Service {
     // Updates the car by setting it as unavailable and assigning the user.
 
     yield car.update({
-      userId    : data.userId,
-      available : false
+      userId      : data.userId,
+      isAvailable : false
     });
 
     // ### Auto Cancel
@@ -260,8 +260,8 @@ module.exports = class BookingService extends Service {
     // Remove the user from the car and make it available
 
     yield car.update({
-      userId    : null,
-      available : true
+      userId      : null,
+      isAvailable : true
     });
   }
 

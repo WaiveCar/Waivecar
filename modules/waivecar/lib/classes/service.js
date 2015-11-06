@@ -38,7 +38,7 @@ module.exports = class Service {
       }
     }
 
-    if (isBooking && !car.available) {
+    if (isBooking && !car.isAvailable) {
       if (parseInt(car.userId) === parseInt(userId)) {
         throw error.parse({
           code    : `CAR_UNAVAILBLE`,

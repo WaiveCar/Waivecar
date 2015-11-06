@@ -21,12 +21,12 @@ scheduler.process('booking-auto-cancel', function *(job) {
   });
 
   // ### Update Car
-  // Remove the user from the car and set it to available.
+  // Remove the user from the car and make it available again.
 
   let car = yield Car.findById(booking.carId);
   yield car.update({
-    userId    : null,
-    available : true
+    userId      : null,
+    isAvailable : true
   });
 
   // ### Emit Event

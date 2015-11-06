@@ -128,7 +128,7 @@ Bento.Register.Model('Car', 'sequelize', function (model, Sequelize) {
       }
     },
 
-    available : {
+    isAvailable : {
       type         : Sequelize.BOOLEAN,
       defaultValue : true
     }
