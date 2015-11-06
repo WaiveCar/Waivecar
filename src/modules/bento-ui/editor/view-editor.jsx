@@ -120,7 +120,7 @@ class ViewLayout extends React.Component {
   submit() {
     let resource = this.getResource();
     let data     = this.refs.form.data();
-    let comps    = Object.assign({}, this.state.layout);
+    let comps    = JSON.parse(JSON.stringify(this.state.layout));
     let method   = resource.method.toLowerCase();
     let action   = resource.uri.replace(':id', this.id());
 
