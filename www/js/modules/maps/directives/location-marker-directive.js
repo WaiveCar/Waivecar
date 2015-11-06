@@ -1,62 +1,30 @@
 'use strict';
 var angular = require('angular');
-require('../../../providers/maps-loader-provider');
 
 module.exports = angular.module('Maps').directive('locationMarker', [
-  'MapsLoader',
-  function (MapsLoader) {
-    return {
-      restrict: 'E',
-      require: '^map',
-      scope: {
-        location: '=',
-        icon: '@'
-      },
-      link: function ($scope, $element, $attrs, MapCtrl) {
+  function() {
 
-        function getIcon() {
-          switch ($scope.icon) {
-          case 'car':
-            {
-              return {
-                iconUrl: 'img/active-waivecar.svg',
-                iconRetinaUrl: 'img/active-waivecar.svg',
-                iconSize: [20, 25],
-                iconAnchor: [10, 25],
-                popupAnchor: [0, 0]
-              };
-            }
-          default:
-            {
-              return {
-                iconUrl: 'img/user-location.svg',
-                iconRetinaUrl: 'img/user-location.svg',
-                iconSize: [25, 25],
-                iconAnchor: [12.5, 25],
-                popupAnchor: [0, 0]
-              };
-            }
-          }
+    function link($scope, $element, $attrs, MapCtrl) {
+
+      function setMarker() {
+
+        if ($scope.marker) {
+          $scope.marker.setLatLng([$scope.location.latitude, $scope.location.longitude]);
+          MapCtrl.fitBounds();
+          return false;
         }
 
-        function setMarker() {
-          MapsLoader.getMap.then(function (L) {
+        var icon = MapCtrl.getIconInstance($scope.icon);
+        $scope.marker = MapCtrl.addMarker([$scope.location.latitude, $scope.location.longitude], {
+          icon: icon
+        });
 
-            if ($scope.marker) {
-              $scope.marker.setLatLng([$scope.location.latitude, $scope.location.longitude]);
-              return false;
-            }
+      }
 
-            var icon = L.icon(getIcon());
-            $scope.marker = L.marker([$scope.location.latitude, $scope.location.longitude], {
-              icon: icon,
-            }).addTo(MapCtrl.mapInstance);
+      function init() {
 
-          });
-        }
-
-        $scope.$watch('location', function (newValue, oldValue) {
-          if (!newValue || newValue === oldValue) {
+        $scope.$watch('location', function(newValue) {
+          if (!newValue) {
             return false;
           }
           setMarker();
@@ -65,8 +33,21 @@ module.exports = angular.module('Maps').directive('locationMarker', [
         if ($scope.location) {
           setMarker();
         }
+
       }
 
+      $scope.$on('map-ready', init);
+
+    };
+
+    return {
+      restrict: 'E',
+      require: '^map',
+      scope: {
+        location: '=',
+        icon: '@'
+      },
+      link: link
     };
 
   }

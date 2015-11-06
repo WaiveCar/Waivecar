@@ -6,12 +6,14 @@ require('../resources/cars.js');
 require('../resources/locations.js');
 require('../resources/users.js');
 require('../resources/licenses.js');
+
 require('../resources/card');
 require('../resources/file');
 require('../resources/auth');
 require('../resources/user');
 require('../resources/verification');
 require('../resources/car');
+require('../resources/booking');
 
 var when = require('when');
 var _ = require('lodash');
@@ -25,13 +27,15 @@ module.exports = angular.module('app.services').factory('$data', [
   'Locations',
   'Users',
   'Licenses',
+
   'Card',
   'File',
   'Auth',
   'User',
   'Verification',
   'Car',
-  function ($rootScope, $http, $socket, Bookings, Cars, Locations, Users, Licenses, Card, File, Auth, User, Verification, Car) {
+  'Booking',
+  function ($rootScope, $http, $socket, Bookings, Cars, Locations, Users, Licenses, Card, File, Auth, User, Verification, Car, Booking) {
 
     var service = {
 
@@ -41,12 +45,14 @@ module.exports = angular.module('app.services').factory('$data', [
         licenses: Licenses,
         locations: Locations,
         users: Users,
+
         Card: Card,
         File: File,
         Auth: Auth,
         User: User,
         Verification: Verification,
-        Car: Car
+        Car: Car,
+        Booking: Booking
       },
 
       me: void 0,

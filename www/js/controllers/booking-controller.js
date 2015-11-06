@@ -7,6 +7,8 @@ require('../services/auth-service');
 require('../services/data-service');
 var _ = require('lodash');
 var moment = require('moment');
+var ionic = require('ionic');
+var sprintf = require('sprintf-js').sprintf;
 
 module.exports = angular.module('app.controllers').controller('BookingController', [
   '$rootScope',
@@ -16,17 +18,15 @@ module.exports = angular.module('app.controllers').controller('BookingController
   '$auth',
   '$data',
   '$message',
-  function ($rootScope, $scope, $state, LocationService, $auth, $data, $message) {
+  'booking',
+  function ($rootScope, $scope, $state, LocationService, $auth, $data, $message, booking) {
 
     $scope.showConnect = false;
 
     $scope.bookingDetail = function (type, detail) {
       var na = 'Unavailable';
-      if (!$data.active || !$data.active.bookings || !$data.active.bookings.details) {
-        return na;
-      }
 
-      var bookingDetail = _.find($data.active.bookings.details, {
+      var bookingDetail = _.find($scope.booking.details, {
         type: type
       });
 
@@ -35,7 +35,9 @@ module.exports = angular.module('app.controllers').controller('BookingController
       }
 
       return na;
+
     };
+
 
     $scope.distance = function () {
       var from = $scope.bookingDetail('start', 'odometer');
@@ -50,71 +52,106 @@ module.exports = angular.module('app.controllers').controller('BookingController
 
     };
 
-    $scope.duration = function () {
-      var from = $scope.bookingDetail('start', 'time');
-      var to = $scope.bookingDetail('end', 'time');
-      if (from === 'Unavailable' || to === 'Unavailable') {
-        return from;
-      }
 
-      return moment(from).from(to, true);
+    $scope.duration = function () {
+      return {
+        timeToCar: 15
+      };
+
+      // var from = $scope.bookingDetail('start', 'time');
+      // var to = $scope.bookingDetail('end', 'time');
+      // if (from === 'Unavailable' || to === 'Unavailable') {
+      //   return from;
+      // }
+
+      // return moment(from).from(to, true);
 
     };
+
 
     $scope.connect = function () {
       $state.go('bookings-prepare', {
-        id: $data.active.bookings.id
+        id: $scope.booking.id
       });
     };
+
 
     $scope.getDirections = function () {
-      // TODO: use actual address.
-      var url = [
-        'comgooglemaps-x-callback://?',
-        '&daddr=International+Airport',
-        '&directionsmode=walking',
-        '&x-success=WaiveCar://?resume=true',
-        '&x-source=WaiveCar'
-      ].join('');
-      window.open(encodeURI(url), '_system');
+
+      LocationService.getLocation()
+        .then(function(location){
+
+          var url;
+          var sprintfOptions = {
+            startingLat: location.latitude,
+            startingLon: location.longitude,
+            targetLat: $scope.booking.car.latitude,
+            targetLon: $scope.booking.car.longitude
+          };
+
+          if(ionic.Platform.isWebView()){
+
+            url = [
+              'comgooglemaps-x-callback://?',
+              '&saddr=%(startingLat)s,%(startingLon)s',
+              '&daddr=%(targetLat)s,%(targetLon)s',
+              '&directionsmode=walking',
+              '&x-success=WaiveCar://?resume=true',
+              '&x-source=WaiveCar'
+            ].join('');
+            url = sprintf(url, sprintfOptions);
+
+            window.open(encodeURI(url), '_system');
+
+          } else {
+
+            url = 'http://maps.google.com/maps?saddr=%(startingLat)s,%(startingLon)s&daddr=%(targetLat)s,%(targetLon)s&mode=walking';
+            url = sprintf(url, sprintfOptions);
+            window.open(url);
+
+          }
+
+        });
+
+
     };
+
 
     $scope.cancel = function () {
-      $data.remove('bookings', $data.active.bookings.id, function (err) {
-        if(err){
-          return $message.error(err);
-        }
-        $state.go('cars');
-      });
+      $scope.booking.$remove()
+        .then(function(){
+          $message.success('Booking cancelled.');
+          $state.go('cars');
+        });
+
     };
 
+
     $scope.mockInRange = function () {
-      LocationService.setLocation($data.active.cars.location);
+      LocationService.setLocation($scope.booking.car.location);
     };
+
 
     $scope.mockOutOfRange = function () {
       LocationService.mockLocation();
       $scope.watchForWithinRange();
+
     };
+
 
     $scope.watchForWithinRange = function () {
       $scope.showConnect = false;
-      var located = $scope.$watch(function () {
-        if (!$rootScope.currentLocation) {
-          return false;
-        }
-        if (!$data.active.cars) {
-          return false;
-        }
+
+      var stopWatching = $scope.$watch(function () {
 
         var from = L.latLng($rootScope.currentLocation.latitude, $rootScope.currentLocation.longitude);
-        var to = L.latLng($data.active.cars.location.latitude, $data.active.cars.location.longitude);
+        var to = L.latLng($scope.booking.car.latitude, $scope.booking.car.longitude);
         var distance = from.distanceTo(to);
-        console.log(distance);
         return distance <= 25;
-      }, function (newValue, oldValue) {
-        if (newValue && newValue !== oldValue) {
-          located();
+
+      }, function (newValue) {
+        if (newValue) {
+          stopWatching();
           $scope.showConnect = true;
           // we are now close enough to activate the car.
         }
@@ -122,40 +159,22 @@ module.exports = angular.module('app.controllers').controller('BookingController
 
     };
 
+
     $scope.init = function () {
-      if (!$auth.isAuthenticated()) {
-        $state.go('auth');
-      }
 
-      $data.activate('bookings', $state.params.id, function (err) {
-        if(err){
-          return $message.error(err);
-        }
+      $scope.booking = booking;
 
-        $data.activate('cars', $data.active.bookings.carId, function (_err) {
-          if(_err){
-            return $message.error(_err);
-          }
-          if ($state.current.name === 'bookings-show') {
-            return false;
-          }
+      // var _booking = angular.copy($scope.booking);
+      // _booking.state = 'pending-arrival';
+      // _booking.$save()
+      //   .catch($message.error);
 
-          var booking = angular.copy($data.active.bookings);
-          booking.state = 'pending-arrival';
-          $data.update('bookings', booking, function (__err) {
-            if (__err) {
-              return $message.error(__err);
-            }
-            $scope.watchForWithinRange();
-
-          });
-
-        });
-
-      });
+      $scope.watchForWithinRange();
 
     };
 
     $scope.init();
+
   }
+
 ]);

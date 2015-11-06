@@ -61,7 +61,7 @@ module.exports = angular.module('app.controllers').controller('CarController', [
               userId: $auth.me.id
             })
             .then(function (booking) {
-              $state.go('bookings-edit', {
+              $state.go('bookings-active', {
                 id: booking.id
               });
             });

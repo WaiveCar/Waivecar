@@ -18,7 +18,10 @@ var config = [
   '$cordovaFacebookProvider',
   '$settingsProvider',
   'ezfbProvider',
-  function($ionicConfigProvider, $stateProvider, $locationProvider, $httpProvider, $urlRouterProvider, $compileProvider, $provide, $injector, $cordovaFacebookProvider, $settingsProvider, ezfbProvider) {
+  'MapsLoaderProvider',
+  function($ionicConfigProvider, $stateProvider, $locationProvider, $httpProvider, $urlRouterProvider, $compileProvider, $provide, $injector, $cordovaFacebookProvider, $settingsProvider, ezfbProvider, MapsLoaderProvider) {
+
+    MapsLoaderProvider.setApiKey('8698d318586c58a1f8ca1e88ecfac299');
 
     var baseUrl;
     if (ionic.Platform.isWebView()) {
@@ -31,6 +34,8 @@ var config = [
       }
     }
     $settingsProvider.setBaseUrl(baseUrl);
+
+    $settingsProvider.setSkobblerApiKey('8698d318586c58a1f8ca1e88ecfac299');
 
     ezfbProvider.setInitParams({
       appId: $settingsProvider.facebook.clientId,

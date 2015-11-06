@@ -8,64 +8,64 @@ module.exports = angular.module('app.controllers').controller('TimerController',
   'TimerService',
   'countdownEventsConstant',
   function TimerController($scope, $interval, TimerService, countdownEvents) {
-    var minutes = 0;
-    var seconds = 0;
-    var hours = 0;
+    var ctrl = this;
+
+    ctrl.minutes = 0;
+    ctrl.seconds = 0;
+    ctrl.hours = 0;
     // var status;
     var unbindList = [];
     var _timerName;
     var _stopInterval;
-    var ctrl = this;
 
-    function stopCount() {
+    ctrl.stopCount = function() {
       if (angular.isDefined(_stopInterval)) {
         $interval.cancel(_stopInterval);
         _stopInterval = void 0;
       }
-    }
-    ctrl.stopCount = stopCount;
+    };
 
-    function startCount() {
-      stopCount();
+    ctrl.startCount = function() {
+      ctrl.stopCount();
       // status = TimerService.getStatus(_timerName);
       var remainingTime = TimerService.getRemainingTime(_timerName);
 
-      hours = remainingTime.hours;
-      minutes = remainingTime.minutes;
-      seconds = remainingTime.seconds;
+      ctrl.hours = remainingTime.hours;
+      ctrl.minutes = remainingTime.minutes;
+      ctrl.seconds = remainingTime.seconds;
 
       var intervalFunction = function () {
-        seconds--;
-        if (seconds < 0) {
-          seconds = 59;
-          minutes--;
+        ctrl.seconds--;
+        if (ctrl.seconds < 0) {
+          ctrl.seconds = 59;
+          ctrl.minutes--;
         }
-        if (minutes < 0) {
-          minutes = 59;
-          hours--;
+        if (ctrl.minutes < 0) {
+          ctrl.minutes = 59;
+          ctrl.hours--;
         }
-        if (hours < 0) {
-          hours = 0;
-          minutes = 0;
-          seconds = 0;
-          stopCount();
+        if (ctrl.hours < 0) {
+          ctrl.hours = 0;
+          ctrl.minutes = 0;
+          ctrl.seconds = 0;
+          ctrl.stopCount();
         }
       };
+
       _stopInterval = $interval(intervalFunction, 1000);
 
-    }
-    ctrl.startCount = startCount;
+    };
 
     $scope.$on('$destroy', function () {
-      stopCount();
+      ctrl.stopCount();
       unbindList.map(function (u) {
         u();
       });
     });
 
-    function createTimer(name, durations) {
+    ctrl.createTimer = function(name, durations) {
       var unbind;
-      unbind = $scope.$on(countdownEvents.newCounter + '_' + name, startCount);
+      unbind = $scope.$on(countdownEvents.newCounter + '_' + name, ctrl.startCount);
       unbindList.push(unbind);
 
       // unbind = $scope.$on(countdownEvents.counterStateChanged + '_' + name, function (ev, _status) {
@@ -76,23 +76,20 @@ module.exports = angular.module('app.controllers').controller('TimerController',
 
       unbindList.push(unbind);
 
-      unbind = $scope.$on(countdownEvents.counterCancelled + '_' + name, stopCount);
+      unbind = $scope.$on(countdownEvents.counterCancelled + '_' + name, ctrl.stopCount);
 
       _timerName = name;
       TimerService.createTimer(name, durations, $scope);
 
-    }
-    ctrl.createTimer = createTimer;
+    };
 
-    function start() {
+    ctrl.start = function() {
       TimerService.start(_timerName);
-    }
-    ctrl.start = start;
+    };
 
-    function cancel() {
+    ctrl.cancel = function() {
       TimerService.cancel(_timerName);
-    }
-    ctrl.cancel = cancel;
+    };
 
   }
 

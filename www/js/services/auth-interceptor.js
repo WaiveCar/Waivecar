@@ -17,8 +17,9 @@ module.exports = angular.module('app.services').factory('AuthInterceptor', [
         var token = $session.get('auth').token;
 
         var isLoginRequest = httpConfig.url === $settings.uri.auth.login;
+        var isSkobblerRequest = httpConfig.url.indexOf($settings.skobbler.key) !== -1;
 
-        if (token && !isLoginRequest) {
+        if (token && !isLoginRequest && !isSkobblerRequest) {
           httpConfig.headers.Authorization = token;
         }
 

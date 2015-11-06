@@ -8,6 +8,7 @@ module.exports = angular.module('app.services').factory('CountdownTimer', [
   function countdownFactory($timeout, countdownEvents, timerStates) {
 
     function CountdownTimer(name, durations, scope, rootScope) {
+      console.log('CountdownTimer durations', durations);
 
       this._setDurations(durations);
       this._timeout = $timeout;

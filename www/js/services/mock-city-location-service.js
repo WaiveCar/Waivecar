@@ -10,6 +10,7 @@ module.exports = angular.module('app.services').factory('MockLocationService', [
       latitude: 34.0604643,
       longitude: -118.4186743
     };
+    var currentLocation;
 
     function getRandomLocation(x0, y0, radius) {
       var radiusInDegrees = radius / 111300;
@@ -28,9 +29,11 @@ module.exports = angular.module('app.services').factory('MockLocationService', [
     function update(prevLocation) {
       prevLocation = angular.copy(prevLocation);
       var newLocation = getRandomLocation(prevLocation.latitude, prevLocation.longitude, 20);
-      prevLocation.latitude = newLocation[1];
-      prevLocation.longitude = newLocation[0];
-      $rootScope.currentLocation = prevLocation;
+      currentLocation = {
+        latitude: newLocation[1],
+        longitude: newLocation[0]
+      };
+      $rootScope.currentLocation = currentLocation;
 
     }
 
@@ -38,14 +41,13 @@ module.exports = angular.module('app.services').factory('MockLocationService', [
 
     function initPositionWatch() {
       update(mockLocation);
-      //setInterval(update, 2000);
+      // setInterval(function(){
+      //   update(mockLocation);
+      // }, 2000);
     }
 
     function getLocation() {
-      return when.promise(function (resolve) {
-        return resolve(angular.copy(mockLocation));
-      });
-
+      return when(angular.copy(currentLocation));
     }
 
     function setLocation(location, isFuzzy) {

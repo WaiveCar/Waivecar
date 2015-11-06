@@ -13,7 +13,7 @@ module.exports = angular.module('Maps').directive('routeDistance', [
 
     function link(scope) {
       scope.$on(mapsEvents.routeDistanceChanged, function(ev, totalDistance) {
-        console.log('mapsEvents.routeDistanceChanged fired');
+        // console.log('mapsEvents.routeDistanceChanged fired');
         scope.value = metersToMiles(totalDistance) + ' miles away';
       });
     }

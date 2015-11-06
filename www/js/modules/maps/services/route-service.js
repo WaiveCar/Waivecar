@@ -14,11 +14,11 @@ module.exports = angular.module('Maps').service('RouteService', [
     var service = {
 
       getUrl: function (apiKey) {
-        if ($window.cordova) {
+        // if ($window.cordova) {
           var url = 'http://' + apiKey + '.tor.skobbler.net/tor/RSngx/calcroute/json/18_0/en/' + apiKey;
           return url;
-        }
-        return 'http://localhost:8100/skoblerCalcRoute';
+        // }
+        // return 'http://localhost:8100/skoblerCalcRoute';
 
       },
 

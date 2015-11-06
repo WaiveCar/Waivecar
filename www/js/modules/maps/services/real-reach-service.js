@@ -13,11 +13,11 @@ module.exports = angular.module('Maps').service('RealReachService', [
 
     var service = {
       getUrl: function (apiKey) {
-        if ($window.cordova) {
+        // if ($window.cordova) {
           var url = 'http://' + apiKey + '.tor.skobbler.net/tor/RSngx/RealReach/json/18_0/en/' + apiKey;
           return url;
-        }
-        return 'http://localhost:8100/skoblerRealReach';
+        // }
+        // return 'http://localhost:8100/skoblerRealReach';
 
       },
 

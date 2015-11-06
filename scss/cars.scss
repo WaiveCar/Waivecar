@@ -54,27 +54,27 @@
     width: 100%;
     display: block;
   }
-  .info-card {
-    display: inline-block;
-    margin: 0;
-    border: 0;
-    height: 100%;
-    float: left;
-    p {
-      text-align: left;
-      &.title {
-        font-size: $headerTitleSize*0.8rem;
-      }
-      font-size: $headerTitleSize*0.7rem;
-      span {
-        font-size: $headerTitleSize*0.7rem;
-      }
-    }
-    &.info-card-s {
-      width: 35%;
-    }
-    &.info-card-m {
-      width: 65%;
-    }
-  }
+  // .info-card {
+  //   display: inline-block;
+  //   margin: 0;
+  //   border: 0;
+  //   height: 100%;
+  //   float: left;
+  //   p {
+  //     text-align: left;
+  //     &.title {
+  //       font-size: $headerTitleSize*0.8rem;
+  //     }
+  //     font-size: $headerTitleSize*0.7rem;
+  //     span {
+  //       font-size: $headerTitleSize*0.7rem;
+  //     }
+  //   }
+  //   &.info-card-s {
+  //     width: 35%;
+  //   }
+  //   &.info-card-m {
+  //     width: 65%;
+  //   }
+  // }
 }

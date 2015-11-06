@@ -1,25 +1,33 @@
-/* global L: false */
+/* global L: true */
 'use strict';
 var angular = require('angular');
 
 module.exports = angular.module('app.providers').provider('MapsLoader', [
 
-  function () {
-    var apiKey = '8698d318586c58a1f8ca1e88ecfac299';
+  function() {
+    var apiKey;
 
-    return {
-      $get: function ($q) {
-        L.skobbler.apiKey = apiKey;
-        var deferred = $q.defer();
-        deferred.resolve(L);
-        return {
-          getMap: deferred.promise
-        };
-      },
+    this.setApiKey = function(key) {
+      apiKey = key;
+    };
 
-      setOption: function () {
-        //TBD
+    this.$get = function($q) {
+      if (!apiKey) {
+        throw 'Map api key not defined!';
       }
+
+      if(!L){
+        throw 'Leaflet plugin not initialized!';
+      }
+
+      L.skobbler.apiKey = apiKey;
+      var deferred = $q.defer();
+      deferred.resolve(L);
+
+      return {
+        getMap: deferred.promise,
+        leaflet: L
+      };
 
     };
 

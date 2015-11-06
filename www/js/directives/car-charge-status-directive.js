@@ -12,22 +12,12 @@ module.exports = angular.module('app.directives')
           if(!car){
             return;
           }
+          car.fuel = car.fuel || 0;
+          car.range = car.range || 0;
 
-          var diagnosticsData = {};
-
-          $scope.car.diagnostics.forEach(function(d) {
-            diagnosticsData[d.type] = d.value;
-          });
-
-          $scope.chargeLevel = diagnosticsData.evBatteryLevel + '%';
-
-          if (diagnosticsData.evChargeState === 'Not Charged') {
-            $scope.chargeState = 'Not charging';
-          } else {
-            $scope.chargeState = 'Parked at charging station';
-          }
-
-          $scope.chargeReach = diagnosticsData.totalRange + ' miles ';
+          $scope.chargeLevel = car.fuel + '%';
+          $scope.chargeState = car.charging ? 'Parked at charging station' : 'Not charging';
+          $scope.chargeReach = car.range + ' miles ';
 
         }
 

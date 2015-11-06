@@ -7,6 +7,7 @@ appSettings.provider('$settings', [
 
   function Config() {
 
+    var skobblerKey;
     var _this = this;
 
     // Overriden in app-setup
@@ -27,6 +28,10 @@ appSettings.provider('$settings', [
       _this.baseUrl = baseUrl;
     };
 
+    this.setSkobblerApiKey = function(key){
+      skobblerKey = key;
+    };
+
     this.$get = [
 
       function() {
@@ -41,7 +46,10 @@ appSettings.provider('$settings', [
             }
           },
 
-          facebook: getFacebook()
+          facebook: getFacebook(),
+          skobbler: {
+            key: skobblerKey
+          }
 
         };
 

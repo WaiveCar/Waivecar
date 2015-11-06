@@ -1,0 +1,49 @@
+<ion-view>
+
+  <ion-nav-title>
+    <page-title class="dark-bg title-plain">Get to your WaiveCar</page-title>
+  </ion-nav-title>
+
+  <ion-nav-buttons side="right">
+    <button menu-toggle="right" class="button button-icon icon ion-navicon"></button>
+  </ion-nav-buttons>
+
+  <ion-content scroll="false" padding="false" class="gray-bg has-header has-footer">
+
+    <div class="map-container has-info-footer has-big-info-footer">
+      <map id="map" zoom="15">
+        <location-marker location="currentLocation" icon="device"></location-marker>
+        <location-marker location="booking.car.location" icon="car"></location-marker>
+        <route-to-location start="currentLocation" destiny="booking.car.location"></route-to-location>
+      </map>
+    </div>
+
+    <div class="info-footer big-info-footer">
+
+      <div class="has-footer-information">
+        <car-info>
+          <p>
+            <time-left timer-name="getToYourWaiveCar" get-duration="duration()"></time-left> to get to your WaiveCar
+          </p>
+        </car-info>
+      </div>
+
+      <div class="footer-information">
+        <div class="button-bar">
+          <button class="button button-small button-energized" ng-click="mockInRange()">Mock Arrival</button>
+          <button class="button button-small button-energized" ng-click="mockOutOfRange()">Mock Out Of Range</button>
+        </div>
+      </div>
+    </div>
+
+  </ion-content>
+
+  <ion-footer-bar class="no-padding">
+    <div class="button-bar">
+      <button type="button" class="button button-balanced" ng-show="showConnect" ng-click="connect()">Connect to waivecar</button>
+      <button type="button" class="button button-dark" ng-click="getDirections()" ng-if="!showConnect">Get Directions</button>
+      <button type="button" class="button button-assertive" ng-click="cancel()" ng-if="!showConnect">Cancel</button>
+    </div>
+  </ion-footer-bar>
+
+</ion-view>

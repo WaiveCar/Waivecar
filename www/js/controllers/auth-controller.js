@@ -36,12 +36,6 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
       }
     };
 
-    var sharedCallback = function(err) {
-      if (err) {
-        return $message.error(err);
-      }
-      $state.go('cars');
-    };
 
     $scope.login = function(form) {
       if (form.$pristine) {
@@ -51,7 +45,11 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
         return $message.error('Please resolve form errors and try again.');
       }
 
-      $auth.login($scope.forms.loginForm, sharedCallback);
+      $auth.login($scope.forms.loginForm)
+        .then(function(){
+          $state.go('landing');
+        })
+        .catch($message.error);
 
     };
 
@@ -94,7 +92,7 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
       return FaceBookService.getLoginStatus()
         .then(function(response) {
           if (response.status !== 'connected') {
-            return FaceBookService.login();
+            return FaceBookService.login(['public_profile', 'email']);
           }
           return response;
 
@@ -105,7 +103,7 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
           }
         })
         .then(function() {
-          $state.go('cars');
+          $state.go('landing');
         })
         .catch($message.error);
 

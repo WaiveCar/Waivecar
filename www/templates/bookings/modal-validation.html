@@ -8,7 +8,7 @@
     <div ng-if="hasActiveBooking">
       <p>Hi! You already have an active booking. <br>You can't have two at the same time. Sorry.</p>
 
-      <button type="button" class="button button-balanced button-block" ui-sref="cars-edit({id: activeBooking.id})">Go to my active booking</button>
+      <button type="button" class="button button-balanced button-block" ui-sref="bookings-active({id: activeBooking.id})">Go to my active booking</button>
     </div>
 
     <div ng-if="!hasActiveBooking">

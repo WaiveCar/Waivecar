@@ -2,74 +2,51 @@
 var angular = require('angular');
 require('angular-ui-router');
 require('../services/auth-service');
-require('../services/data-service');
 require('../services/message-service');
-var _ = require('lodash');
+require('../services/booking-service');
 
 module.exports = angular.module('app.controllers').controller('LandingController', [
-  '$rootScope',
   '$scope',
   '$state',
   '$auth',
-  '$data',
   '$message',
-  function ($rootScope, $scope, $state, $auth, $data, $message) {
+  'BookingService',
+  function ($scope, $state, $auth, $message, BookingService) {
 
-    $scope.init = function () {
+    function init() {
 
       if (!$auth.isAuthenticated()) {
         return $state.go('auth');
       }
 
-      return $data.initialize('bookings')
-        .then(function () {
-          if (!$data.instances.bookings) {
-            return false;
-          }
+      BookingService.getActiveBooking()
+        .then(function(booking){
+          console.log('booking', booking);
 
-          var active = _.find($data.instances.bookings, function (booking) {
-            return _.contains([
-              'new-booking',
-              'payment-authorized',
-              'pending-arrival',
-              'in-progress',
-              'pending-payment'
-            ], booking.state);
-          });
-
-          if (!active) {
+          if(!booking){
             return $state.go('cars');
           }
 
-          console.log('active booking found (' + active.id + ' : ' + active.state + ').');
-
-          switch (active.state) {
+          switch (booking.state) {
           case 'in-progress':
-            return $state.go('bookings-in-progress', {
-              id: active.id
-            });
+            throw 'booking in-progress redirect not implemented';
           case 'pending-payment':
-            return $state.go('bookings-show', {
-              id: active.id
-            });
+            throw 'booking pending-payment redirect not implemented';
           case 'new-booking':
           case 'payment-authorized':
           case 'pending-arrival':
           default:
-            return $state.go('bookings-edit', {
-              id: active.id
+            return $state.go('bookings-active', {
+              id: booking.id
             });
           }
 
         })
-        .catch(function(err){
-          $message.error(err);
-          throw err;
-        });
+        .catch($message.error);
 
     };
 
-    $scope.init();
+    init();
 
   }
 

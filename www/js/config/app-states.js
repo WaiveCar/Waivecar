@@ -184,14 +184,14 @@ module.exports = [
           }]
         }
       })
-      .state('bookings-edit', {
-        // 16-Get-your-waivecar
-        url: '/bookings/:id/edit',
-        templateUrl: '/templates/bookings/edit.html',
-        data: {
-          auth: true
-        }
-      })
+      // .state('bookings-edit', {
+      //   // 16-Get-your-waivecar
+      //   url: '/bookings/:id/edit',
+      //   templateUrl: '/templates/bookings/edit.html',
+      //   data: {
+      //     auth: true
+      //   }
+      // })
       .state('cars-edit', {
         // 18-WaiveCar-connect
         url: '/cars/:id/edit',
@@ -220,6 +220,20 @@ module.exports = [
     //   }
     // })
 
+    .state('bookings-active', {
+      url: '/bookings/:id/active',
+      templateUrl: '/templates/bookings/active.html',
+      controller: 'BookingController',
+      data: {
+        auth: true
+      },
+      resolve: {
+        booking: ['BookingService', '$stateParams', function(BookingService, $stateParams){
+          return BookingService.getActiveBooking($stateParams.id);
+        }]
+      }
+    })
+
     .state('bookings-show', {
       url: '/bookings/:id',
       templateUrl: '/templates/bookings/show.html',
@@ -227,6 +241,7 @@ module.exports = [
         auth: true
       }
     });
+
 
     $stateProvider
       .state('messages-new', {

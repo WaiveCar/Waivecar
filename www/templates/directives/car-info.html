@@ -1,0 +1,23 @@
+<div>
+
+  <div class="row">
+
+    <div class="col col-67">
+      <img ng-src="{{image}}" width="80%">
+    </div>
+
+    <div class="col">
+      <p class="title">
+        <h3 ng-bind="make"></h3>
+        <h4 ng-bind="model"></h4>
+      </p>
+      <p><span ng-bind="plate"></span></p>
+    </div>
+
+  </div>
+
+  <div class="row text-center" ng-transclude></div>
+
+</div>
+
+

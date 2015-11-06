@@ -1,15 +1,21 @@
 'use strict';
 var angular = require('angular');
 require('ionic-angular');
+var ionic = require('ionic');
 var _ = require('lodash');
 
 module.exports = angular.module('app.services').factory('$message', [
   '$ionicPopup',
+  '$cordovaToast',
   '$log',
-  function ($ionicPopup, $log) {
+  function ($ionicPopup, $cordovaToast, $log) {
     var existingMessage;
 
     function launchPopup(title, message) {
+      if(message && _.contains([401, 403], message.status)){
+        return false;
+      }
+
       if (_(message).isObject()) {
         if (message.data) {
           if(_(message.data).isString()) {
@@ -34,10 +40,17 @@ module.exports = angular.module('app.services').factory('$message', [
 
       existingMessage = message;
 
-      $ionicPopup.alert({
-        title: title,
-        template: message
-      })
+      var promise;
+      if(ionic.Platform.isWebView()){
+        promise = $cordovaToast.show(message, 1000, 'top');
+      } else {
+        promise = $ionicPopup.alert({
+          title: title,
+          template: message
+        });
+      }
+
+      promise
         .then(function () {
           existingMessage = null;
         });

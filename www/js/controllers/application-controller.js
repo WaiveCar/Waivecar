@@ -79,12 +79,12 @@ module.exports =
 
       };
 
-      $scope.locateMe = function() {
-        LocationService.getLocation().then(function(deviceLocation) {
-          $rootScope.currentLocation = deviceLocation;
-        });
+      // $scope.locateMe = function() {
+      //   LocationService.getLocation().then(function(deviceLocation) {
+      //     $rootScope.currentLocation = deviceLocation;
+      //   });
 
-      };
+      // };
 
       $scope.fetch = function() {
         async.parallel([

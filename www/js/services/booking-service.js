@@ -65,16 +65,17 @@ module.exports = angular.module('app.services').factory('BookingService', [
 
           },
 
-          hasActiveBooking: function(done){
-            return $data.resources.bookings.query().$promise
-              .then(function(bookings){
-                var first = bookings[0];
-                if(first){
-                  s.activeBooking = first;
+          hasActiveBooking: function(done) {
+            return s.getActiveBooking()
+              .then(function(booking){
+                if (booking) {
+                  s.activeBooking = booking;
                 }
-                done(null, !!first);
+                done(null, !!booking);
+
               })
               .catch(done);
+
           }
 
         }, function(err, results) {
@@ -135,6 +136,37 @@ module.exports = angular.module('app.services').factory('BookingService', [
         id: cachedCarId,
         displayRequirements: s.getNumberOfOpenItems() > 1
       };
+
+    };
+
+    s.getActiveBooking = function(bookingId) {
+      var promise;
+
+      if(bookingId){
+        promise = $data.resources.Booking.get({id: bookingId}).$promise;
+      } else {
+        promise = $data.resources.bookings.query().$promise
+          .then(function(bookings) {
+            return _(bookings).findWhere({
+              status: 'new-booking'
+            });
+          });
+
+      }
+
+      return promise.then(function(booking){
+        if(!booking){
+          return null;
+        }
+
+        return $data.resources.Car.get({id: booking.carId}).$promise
+          .then(function(car){
+            booking.car = car;
+            return booking;
+          });
+
+      });
+
 
     };
 

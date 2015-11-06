@@ -29,14 +29,14 @@
   width: 100%;
   &.has-info-footer {
     // height: (100-$infoFooterHeight)*1%
-    height: (100-$infoFooterHeight)*1%;
+    height: (100 - $infoFooterHeight) * 1%;
 
     &.has-info-subheader {
-      height: (100 - $infoFooterHeight - $smallSubHeaderSize)*1%;
+      height: (100 - $infoFooterHeight - $smallSubHeaderSize) * 1%;
 
     }
   }
   &.has-big-info-footer {
-    height: (100-$bigInfoFooterHeight)*1%
+    height: (100 - $bigInfoFooterHeight) * 1%
   }
 }

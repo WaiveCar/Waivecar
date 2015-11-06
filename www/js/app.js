@@ -93,6 +93,7 @@ require('./directives/time-left-directive');
 require('./directives/wizard-directive');
 require('./directives/equal-to-directive');
 require('./directives/car-charge-status-directive');
+require('./directives/car-info-directive');
 
 ionic.Platform.ready(function () {
 
