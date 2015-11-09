@@ -57,14 +57,14 @@ module.exports = class CarService extends Service {
       options.body = JSON.stringify(data);
     }
 
-    let result = yield request(options);
+    let result   = yield request(options);
     let response = result.toJSON();
     if (!response || response.statusCode !== 200) {
-      let error    = new Error(`CAR: ${ resource }`);
-      error.code   = 'CAR_SERVICE';
-      error.status = response && response.statusCode ? response.statusCode : 400;
-      error.data   = response && response.body ? JSON.parse(response.body) : 'NA';
-      throw error;
+      throw error.parse({
+        code    : `CAR_SERIVCE`,
+        message : `CAR: ${ resource }`,
+        data    : JSON.parse(result.body)
+      }, response.statusCode || 400);
     }
 
     return JSON.parse(response.body);

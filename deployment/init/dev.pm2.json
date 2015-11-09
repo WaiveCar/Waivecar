@@ -5,7 +5,7 @@
     "out_file"    : "../waivecar-dev.log",
     "error_file"  : "../waivecar-dev.log",
     "pid_file"    : "../waivecar-dev.pid",
-    "script"      : "app.js",
+    "script"      : "run.js",
     "merge_logs"  : true,
     "args"        : "",
     "watch"       : false,
