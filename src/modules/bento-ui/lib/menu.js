@@ -41,7 +41,8 @@ Menu.add = function (settings) {
     title  : settings.title,
     icon   : settings.icon || 'add_circle_outline',
     path   : settings.path,
-    parent : settings.parent
+    parent : settings.parent,
+    order  : settings.order
   };
 
 };
@@ -53,7 +54,10 @@ Menu.add = function (settings) {
  * @return {Array}
  */
 Menu.get = function (section) {
-  return this.locations[section].map(function (title) {
-    return this.store[title];
-  }.bind(this));
+  let map = [];
+  for (let key in this.locations[section]) {
+    let item = this.locations[section][key];
+    map.push(this.store[item]);
+  }
+  return map.sort((a, b) => { return a.order > b.order });
 };
