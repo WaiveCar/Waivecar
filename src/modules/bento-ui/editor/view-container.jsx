@@ -212,7 +212,7 @@ class ViewContainer extends React.Component {
     const { components, accepts, isOver, type, hasSiblings } = this.props;
     let containerType = this.props.options && this.props.options.containerType ? this.props.options.containerType : 'Container';
     return (
-      <div className="view-container-container">
+      <div className="view-container-container container-fluid">
         <div className="view-component-header">
           <div className="options-menu">
             { hasSiblings && <button type="button" className="btn btn-danger-outline btn-xs" onClick={ this.onRemove }>Remove { containerType }</button> }
