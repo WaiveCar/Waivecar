@@ -37,7 +37,7 @@
   "bento": {
     "bentojs-api-auth": "0.2.15",
     "bentojs-api-bcrypt": "1.0.2",
-    "bentojs-api-email": "0.0.11",
+    "bentojs-api-email": "0.0.12",
     "bentojs-api-file": "0.3.12",
     "bentojs-api-log": "0.1.5",
     "bentojs-api-mongo": "0.0.11",
