@@ -1,30 +1,24 @@
-FROM ubuntu:14.04
+FROM node:4.2.1
+MAINTAINER Clevertech DevOps <support@clevertech.biz>
 
-RUN apt-get update \
- && apt-get install -y --force-yes --no-install-recommends\
-      apt-transport-https \
-      build-essential \
-      curl \
-      ca-certificates \
-      git \
-      lsb-release \
-      python-all \
-      rlwrap \
-      libkrb5-dev \
-      g++ \
-      gyp \
- && rm -rf /var/lib/apt/lists/*;
+# No further dependencies at the moment
+# RUN apt-get update
+# RUN apt-get -y install ...
 
-RUN curl https://deb.nodesource.com/node_4.x/pool/main/n/nodejs/nodejs_4.2.1-1nodesource1~trusty1_amd64.deb > node.deb \
- && dpkg -i node.deb \
- && rm node.deb
+RUN npm install bentojs nodemon -g --loglevel warn
 
-RUN npm install reach nodemon -g
+# Do not use cache when we change node dependencies in package.json
+ADD package.json /tmp/package.json
+RUN cd /tmp && npm install --loglevel warn
+RUN mkdir -p /opt/api && cp -a /tmp/node_modules /opt/api/
 
-ADD package.json /api/package.json
-RUN cd /api && npm install && reach install
-ADD . /api
+# TODO Do the same for gulp, bower, etc...
 
-WORKDIR /api
-EXPOSE 8081
-CMD ["npm", "run", "all-local"]
+# Node api lives on a layer on its own
+WORKDIR /opt/api
+ADD . /opt/api/
+RUN cd /opt/api && bento package
+
+EXPOSE 8080
+
+CMD ["npm", "run", "local"]
