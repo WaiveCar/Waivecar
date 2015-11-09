@@ -45,10 +45,11 @@ module.exports = [
         let result = [];
         for (let i = year, len = year + 20; i < len; i++) {
           result.push({
-            name  : new String(i),
-            value : new String(i)
+            name  : i.toString(),
+            value : i.toString()
           });
         }
+
         return result;
       }()
     }
