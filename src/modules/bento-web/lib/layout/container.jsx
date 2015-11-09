@@ -20,7 +20,7 @@ module.exports = class Container extends React.Component {
   }
 
   getClassName() {
-    let className = 'container-component ' + this.props.isFluid ? 'container-fluid' : 'container';
+    let className = 'container-component ' + this.props.isFixed ? 'container' : 'container-fluid';
     if (this.props.className) className = className + ' ' + this.props.className;
     if (this.props.fileId) className = className + ' ' + 'has-background';
 
