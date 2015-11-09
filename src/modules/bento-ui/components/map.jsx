@@ -28,14 +28,31 @@ class UIMap extends React.Component {
   componentDidMount() {
     let target   = this.props.resource;
     let resource = resources.get(target);
-    if (resource && resource.index) {
+    if (this.id() === 'index' && resource && resource.index) {
       api.get(resource.index.uri, function(err, data) {
         if (err) {
           return console.log(err);
         }
         this[target].index(data);
       }.bind(this));
+    } else {
+      api.get(resource.show.uri.replace(':id', this.id()), function(error, data) {
+        if (error) {
+          throw new Error(error);
+        }
+        this.setState({
+          default : data
+        });
+      }.bind(this));
     }
+  }
+
+  /**
+   * @method id
+   * @return {String}
+   */
+  id() {
+    return this.props.params && this.props.params.id || 'index';
   }
 
   /**
@@ -50,7 +67,7 @@ class UIMap extends React.Component {
    * @return {Object}
    */
   render() {
-    let markers = this.state[this.props.resource];
+    let markers = this.state.default ? [ this.state.default ] : this.state[this.props.resource];
     let handler = this.props.handler ? this.props.handler : (data) => {
       this.history.pushState(null, `/${ this.props.resource }/${ data.id }`);
     }.bind(this);
