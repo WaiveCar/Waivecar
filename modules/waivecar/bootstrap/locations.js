@@ -13,7 +13,8 @@ module.exports = function *() {
   }
 
   let data     = null;
-  let filePath = path.resolve('./data/charging-stations-la.json');
+  let filePath = path.join(Bento.ROOT_PATH, 'modules', 'waivecar', 'bootstrap', 'data', 'charging-stations-la.json');
+
   try {
     data = JSON.parse(yield fs.readFile(filePath));
   } catch (err) {
