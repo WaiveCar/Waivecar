@@ -98,3 +98,4 @@ nbproject
 coverage
 retval
 storage
+.env
