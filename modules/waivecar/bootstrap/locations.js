@@ -11,15 +11,9 @@ module.exports = function *() {
   if (count > 140) {
     return;
   }
-
-  let data     = null;
-  let filePath = path.join(Bento.ROOT_PATH, 'modules', 'waivecar', 'bootstrap', 'data', 'charging-stations-la.json');
-
-  try {
-    data = JSON.parse(yield fs.readFile(filePath));
-  } catch (err) {
-    error.check(err, [ 'ENOENT' ], filePath);
-  }
+  
+  let locations = yield fs.readFile(path.join(Bento.ROOT_PATH, 'modules', 'waivecar', 'bootstrap', 'data', 'charging-stations-la.json'));
+  let data      = JSON.parse(locations);
 
   // ### Import Location
   // If location data has been defined we import all locations.
