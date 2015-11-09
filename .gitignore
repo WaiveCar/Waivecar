@@ -79,3 +79,4 @@ coverage
 retval
 app/scripts/vendor.js
 app/scripts/bundle.js
+.env
