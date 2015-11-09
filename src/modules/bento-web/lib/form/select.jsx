@@ -194,7 +194,8 @@ module.exports = class Select extends React.Component {
     logger.debug(`Form > Render select component [${ name }] [${ value }]`);
 
     className = className || 'col-md-12';
-    if (value) {
+    let isDefined = !(value === undefined || value === null);
+    if (isDefined) {
       className = className + ' active';
     }
 

@@ -74,7 +74,7 @@ module.exports = class Input extends React.Component {
   className(value) {
     return dom.setClass({
       column : this.props.options.className || 'col-md-12',
-      active : value ? true : false,
+      active : !(value === undefined || value === null),
       focus  : this.hasFocus
     });
   }
