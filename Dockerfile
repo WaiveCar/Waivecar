@@ -1,30 +1,17 @@
-FROM ubuntu:14.04
+FROM node:4.2.1
+MAINTAINER Clevertech DevOps <support@clevertech.biz>
 
-RUN apt-get update \
- && apt-get install -y --force-yes --no-install-recommends\
-      apt-transport-https \
-      build-essential \
-      curl \
-      ca-certificates \
-      git \
-      lsb-release \
-      python-all \
-      rlwrap \
-      libkrb5-dev \
-      g++ \
-      gyp \
- && rm -rf /var/lib/apt/lists/*;
+RUN npm install nodemon -g --loglevel warn
 
-RUN curl https://deb.nodesource.com/node_4.x/pool/main/n/nodejs/nodejs_4.2.1-1nodesource1~trusty1_amd64.deb > node.deb \
- && dpkg -i node.deb \
- && rm node.deb
+# Do not use cache when we change node dependencies in package.json
+ADD package.json /tmp/package.json
+RUN cd /tmp && npm install --loglevel warn
+RUN mkdir -p /opt/web && cp -a /tmp/node_modules /opt/web/
 
-RUN npm install nodemon -g
+WORKDIR /opt/web
+ADD . /opt/web/
+RUN cd /opt/web
 
-ADD package.json /web/package.json
-RUN cd /web && npm install
-ADD . /web
-
-WORKDIR /web
 EXPOSE 8080
+
 CMD ["npm", "run", "local"]
