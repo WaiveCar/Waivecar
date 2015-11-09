@@ -6,15 +6,7 @@ module.exports = {
   },
   index : {
     method : 'GET',
-    uri    : '/logs'
-  },
-  show : {
-    method : 'GET',
-    uri    : '/logs/:id'
-  },
-  update : {
-    method : 'PUT',
-    uri    : '/logs/:id'
+    uri    : '/logs/koa'
   },
   delete : {
     method : 'DELETE',

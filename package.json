@@ -14,9 +14,9 @@
   },
   "dependencies": {
     "babel-eslint": "4.1.1",
-    "bentojs-api": "0.6.9",
+    "bentojs-api": "0.7.0",
     "bentojs-config": "0.0.5",
-    "bentojs-socket": "0.3.2",
+    "bentojs-socket": "0.3.3",
     "co": "4.6.0",
     "co-fs": "1.2.0",
     "co-glob": "0.0.2",

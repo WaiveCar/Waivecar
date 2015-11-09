@@ -15,6 +15,7 @@ module.exports = {
   logger : {
     email      : false,
     developers : [],
+    /* TODO: Has to be updated with the new log setup
     ui         : {
       resources : {
         logs : require('./resources/logs')
@@ -23,6 +24,7 @@ module.exports = {
         logs : require('./fields/logs')
       }
     }
+    */
   }
   
 };
