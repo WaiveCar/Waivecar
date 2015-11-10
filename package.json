@@ -3,17 +3,17 @@
   "private": true,
   "scripts": {
     "prepublish": "npm prune",
-    "test": "NODE_ENV=test node tests.js",
-    "test-cov": "NODE_ENV=test node node_modules/istanbul/lib/cli.js cover --hook-run-in-context tests.js",
+    "test": "NODE_ENV=test DEBUG=API:* node tests.js",
+    "test-cov": "NODE_ENV=test DEBUG=API:* node node_modules/istanbul/lib/cli.js cover --hook-run-in-context tests.js",
     "test-travis": "mkdir -p ./coverage; (NODE_ENV=test node node_modules/istanbul/lib/cli.js cover --hook-run-in-context tests.js; echo $? > retval) | tee coverage/coverage.txt; egrep '^0$' retval",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-    "local": "NODE_ENV=local nodemon run.js",
-    "socket": "NODE_ENV=local node socket",
-    "start": "node run.js"
+    "local": "NODE_ENV=local DEBUG=API:* nodemon run.js",
+    "socket": "NODE_ENV=local DEBUG=API:* node socket",
+    "start": " DEBUG=API:* node run.js"
   },
   "dependencies": {
     "babel-eslint": "4.1.1",
-    "bentojs-api": "0.7.1",
+    "bentojs-api": "0.7.2",
     "bentojs-config": "0.0.5",
     "bentojs-socket": "0.3.3",
     "co": "4.6.0",
