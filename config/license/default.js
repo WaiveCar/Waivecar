@@ -12,10 +12,10 @@ module.exports = {
   license : {
     ui : {
       resources : {
-        licenses  : require('./resources/licenses')
+        licenses : require('./resources/licenses')
       },
       fields : {
-        licenses  : require('./fields/licenses')
+        licenses : require('./fields/licenses')
       }
     }
   }

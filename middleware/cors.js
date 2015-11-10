@@ -12,7 +12,7 @@ module.exports = function (app) {
       let origin  = req.headers.origin;
       let origins = Bento.config.api.cors.origins;
       let index   = origins.indexOf(origin);
-      if (-1 !== index) {
+      if (index !== -1) {
         return origins[index];
       }
       return null;

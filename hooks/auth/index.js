@@ -19,7 +19,7 @@ hooks.set('auth:user', function *(id, group) {
 // ### Login Hook
 
 hooks.set('auth:login', function *(identifier, password, options) {
-  let user = yield User.findOne({ where : { email : identifier }});
+  let user = yield User.findOne({ where : { email : identifier } });
   if (!user) {
     errors.invalidCredentials();
   }

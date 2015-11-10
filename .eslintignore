@@ -1,0 +1,13 @@
+# node_modules ignored by default
+
+# module node_modules
+modules/**/node_modules
+
+#provider node_modules
+providers/**/node_modules
+
+providers
+modules
+!modules/license
+!modules/waivecar
+!providers/user-verification

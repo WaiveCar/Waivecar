@@ -11,7 +11,7 @@ module.exports = {
    | @param {Function} filter The query filter available on the user model.
    |
    */
-  
+
   user : {
     users : [
       {

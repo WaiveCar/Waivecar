@@ -1,11 +1,11 @@
 'use strict';
 
-var assert = require('chai').assert;
+let assert = require('chai').assert;
 
 describe('Interface', function () {
   describe('User', function () {
-    var User = Bento.model('User');
-    var user = null;
+    let User = Bento.model('User');
+    let user = null;
 
     it('has been defined', function (done) {
       assert.isDefined(User, 'User is not defined');

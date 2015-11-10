@@ -33,9 +33,12 @@ Bento.Register.Model('User', 'sequelize', function (model, Sequelize) {
    * @property relations
    * @type     Array
    */
-  model.relations = ['Group', function (Group) {
-    this.belongsToMany(Group, { as : 'groups', through : 'user_groups', foreignKey : 'userId' })
-  }];
+  model.relations = [
+    'Group',
+    function (Group) {
+      this.belongsToMany(Group, { as : 'groups', through : 'user_groups', foreignKey : 'userId' });
+    }
+  ];
 
   /**
    * Attributes to remove before returning the model as JSON.
@@ -50,7 +53,7 @@ Bento.Register.Model('User', 'sequelize', function (model, Sequelize) {
    * @type     Object
    */
   model.methods = {
-    name: function () {
+    name : function () {
       return this.firstName + ' ' + this.lastName;
     }
   };

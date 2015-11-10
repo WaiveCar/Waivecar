@@ -1,7 +1,7 @@
 'use strict';
 
 Bento.Register.Model('Group', 'sequelize', function (model, Sequelize) {
-  
+
   /**
    * The identity of the table created in your database.
    * @property table
@@ -15,8 +15,8 @@ Bento.Register.Model('Group', 'sequelize', function (model, Sequelize) {
    * @type     Object
    */
   model.schema = {
-    creatorId : { 
-      type       : Sequelize.INTEGER, 
+    creatorId : {
+      type       : Sequelize.INTEGER,
       allowNull  : false,
       references : {
         model : 'users',

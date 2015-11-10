@@ -7,7 +7,7 @@ let hooks   = Bento.Hooks;
   Prepare provided customer data, this hook is reuquired by the customer service
   and acts as a filter to make sure that unwanted data is not being processed.
   This is also where you can prepare back end driven data.
-  
+
   @param {String} type The type of customer interaction, create, or update.
   @param {Object} data
  */
@@ -15,8 +15,8 @@ hooks.set('payment:customer', function *(type, data) {
   return {
     description  : data.description,
     subscription : data.subscription,
-    metadata     : data.metadata 
-  }
+    metadata     : data.metadata
+  };
 });
 
 /*

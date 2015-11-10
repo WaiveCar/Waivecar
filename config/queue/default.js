@@ -9,7 +9,7 @@ module.exports = {
    | @param {Object} redis  The redis server configuration.
    |
    */
-  
+
   queue : {
     prefix : 'queue',
     redis  : {
@@ -17,5 +17,5 @@ module.exports = {
       port : 6379
     }
   }
-  
+
 };

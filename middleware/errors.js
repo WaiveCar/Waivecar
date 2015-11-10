@@ -60,8 +60,8 @@ module.exports = function (app) {
       let meta = {
         id   : errorId,
         from : {
-          id    : (this.user) ? this.user.id : 'GUEST',
-          ip    : ip[ip.length - 1]
+          id : (this.user) ? this.user.id : 'GUEST',
+          ip : ip[ip.length - 1]
         },
         details : {
           uri      : uri,
@@ -92,7 +92,7 @@ module.exports = function (app) {
             id : errorId
           }
         };
-        
+
       } else if (this.status === 501) {
         this.body = {
           code    : 'NOT_IMPLEMENTED',

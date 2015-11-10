@@ -1,5 +1,5 @@
 module.exports = {
-  
+
   /*
    |--------------------------------------------------------------------------------
    | Payment
@@ -12,7 +12,7 @@ module.exports = {
    | @param {Object} stripe     Stripe configuration.
    |
    */
-  
+
   payment : {
     services   : [ 'stripe' ],
     currencies : [ 'usd' ],

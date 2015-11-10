@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = {
   api : {
     port : 8082,

@@ -125,10 +125,10 @@ hooks.set('user:send-password-token', function *(user, token, resetUrl) {
       subject  : 'Password Reset',
       template : 'user-password-reset',
       context  : {
-        name      : user.name(),
-        service   : config.api.name,
-        token     : token,
-        resetUrl  : resetUrl
+        name     : user.name(),
+        service  : config.api.name,
+        token    : token,
+        resetUrl : resetUrl
       }
     })
     .save()

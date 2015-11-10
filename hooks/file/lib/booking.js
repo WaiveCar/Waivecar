@@ -5,12 +5,12 @@ let Booking = Bento.model('Booking');
 let error   = Bento.Error;
 
 module.exports = class BookingFile {
-  
+
   /**
    * Validates the booking by verifying that it has been defined.
    * @param {Number} bookingId
    */
-  static *validate(bookingId) {
+  static *validate (bookingId) {
     let booking = yield Booking.findById(bookingId);
     if (!booking) {
       throw error.parse({
@@ -25,7 +25,7 @@ module.exports = class BookingFile {
    * @param  {Number} bookingId
    * @return {String}
    */
-  static *collection(bookingId) {
+  static *collection (bookingId) {
     let booking = yield Booking.findById(bookingId);
     if (!booking.collectionId) {
       yield booking.update({
@@ -35,4 +35,4 @@ module.exports = class BookingFile {
     return booking.collectionId;
   }
 
-}
+};

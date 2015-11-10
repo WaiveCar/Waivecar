@@ -23,8 +23,8 @@ hooks.set('file:validate', function *(query, _user) {
   @return {String} Default: null
  */
 hooks.set('file:collection', function *(query, _user) {
-  if (query.bookingId) { 
-    return yield booking.collection(query.bookingId); 
+  if (query.bookingId) {
+    return yield booking.collection(query.bookingId);
   }
   return null;
 });
