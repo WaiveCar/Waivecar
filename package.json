@@ -5,7 +5,7 @@
     "prepublish": "npm prune",
     "test": "DEBUG=API:* NODE_ENV=test node tests.js",
     "test-cov": "DEBUG=API:* NODE_ENV=test node node_modules/istanbul/lib/cli.js cover --hook-run-in-context tests.js",
-    "test-travis": "DEBUG=API:* mkdir -p ./coverage; (NODE_ENV=test node node_modules/istanbul/lib/cli.js cover --hook-run-in-context tests.js; echo $? > retval) | tee coverage/coverage.txt; egrep '^0$' retval",
+    "test-travis": "mkdir -p ./coverage; (DEBUG=API:* NODE_ENV=test node node_modules/istanbul/lib/cli.js cover --hook-run-in-context tests.js; echo $? > retval) | tee coverage/coverage.txt; egrep '^0$' retval",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
     "local": "DEBUG=API:* NODE_ENV=local nodemon run.js",
     "socket": "DEBUG=API:* NODE_ENV=local node socket",
