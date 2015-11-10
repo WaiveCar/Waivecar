@@ -161,7 +161,7 @@ var run = [
 
         $cordovaKeyboard.hideAccessoryBar(true);
         // styles: Default : 0, LightContent: 1, BlackTranslucent: 2, BlackOpaque: 3
-        $cordovaStatusbar.style(0);
+        $cordovaStatusbar.style(1);
 
       }
 
