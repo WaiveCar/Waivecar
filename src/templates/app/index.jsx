@@ -67,8 +67,8 @@ templates.register('app', {
         onEnter   : policies.isAuthenticated
       },
       {
-        path      : '/account/payment',
-        component : require('../../views/app/profile/payment'),
+        path      : '/account/cards',
+        component : require('../../views/app/profile/cards'),
         onEnter   : policies.isAuthenticated
       }
     ].concat(views.getRoutes('app')));
@@ -93,9 +93,9 @@ templates.register('app', {
     locations : [ 'sidebar-account' ]
   },
   {
-    title     : 'Payment',
+    title     : 'Cards',
     icon      : 'credit_card',
-    path      : '/account/payment',
+    path      : '/account/cards',
     parent    : null,
     locations : [ 'sidebar-account' ]
   },

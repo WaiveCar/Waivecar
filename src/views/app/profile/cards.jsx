@@ -11,7 +11,7 @@ let formFields = {
   card : require('./form-fields/card')
 };
 
-module.exports = class ProfilePaymentView extends React.Component {
+module.exports = class ProfileCardsView extends React.Component {
 
   constructor(...args) {
     super(...args);
