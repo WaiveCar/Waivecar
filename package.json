@@ -7,10 +7,14 @@
     "test-cov": "DEBUG=API:* NODE_ENV=test node node_modules/istanbul/lib/cli.js cover --hook-run-in-context tests.js",
     "test-travis": "mkdir -p ./coverage; (DEBUG=API:* NODE_ENV=test node node_modules/istanbul/lib/cli.js cover --hook-run-in-context tests.js; echo $? > retval) | tee coverage/coverage.txt; egrep '^0$' retval",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-    "local": "eslint ./ && DEBUG=API:* NODE_ENV=local nodemon run.js",
+    "local": "DEBUG=API:* NODE_ENV=local nodemon run.js",
     "socket": "DEBUG=API:* NODE_ENV=local node socket",
-    "start": " DEBUG=API:* node run.js"
+    "start": " DEBUG=API:* node run.js",
+    "lint": "eslint ./"
   },
+  "pre-commit": [
+    "lint",
+  ],
   "dependencies": {
     "babel-eslint": "4.1.1",
     "bentojs-api": "0.7.3",
@@ -31,7 +35,8 @@
     "chai": "3.3.0",
     "coveralls": "2.11.4",
     "istanbul": "0.4.0",
-    "node-random-name": "1.0.1"
+    "node-random-name": "1.0.1",
+    "pre-commit": "^1.1.2"
   },
   "bento": {
     "bentojs-api-auth": "0.2.15",
