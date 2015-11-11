@@ -8,7 +8,7 @@ module.exports = function *() {
   if (count > 9) {
     return;
   }
-  log.debug('importing 8 mock cars');
+  log.debug(`Importing 8 mock cars`);
   for (let i = 1, len = 9; i < len; i++) {
     let carId = 'MOCK_' + i;
     let car   = new Car({

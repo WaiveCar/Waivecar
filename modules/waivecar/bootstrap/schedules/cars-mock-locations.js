@@ -32,7 +32,7 @@ scheduler.process('cars-mock-locations', function *(job) {
   if (!cars) {
     return;
   }
-  log.debug('Updating Mock Locations');
+  log.debug(`Updating Mock Locations`);
   for (let i = 0, len = cars.length; i < len; i++) {
     let car    = cars[i];
     if (car.id.indexOf('MOCK') > -1) {
