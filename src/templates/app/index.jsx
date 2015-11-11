@@ -60,6 +60,16 @@ templates.register('app', {
         path      : '/profile',
         component : require('../../views/app/profile'),
         onEnter   : policies.isAuthenticated
+      },
+      {
+        path      : '/account/password',
+        component : require('../../views/app/profile/password'),
+        onEnter   : policies.isAuthenticated
+      },
+      {
+        path      : '/account/payment',
+        component : require('../../views/app/profile/payment'),
+        onEnter   : policies.isAuthenticated
       }
     ].concat(views.getRoutes('app')));
   }
@@ -72,6 +82,20 @@ templates.register('app', {
     title     : 'Profile',
     icon      : 'account_box',
     path      : '/profile',
+    parent    : null,
+    locations : [ 'sidebar-account' ]
+  },
+  {
+    title     : 'Password',
+    icon      : 'security',
+    path      : '/account/password',
+    parent    : null,
+    locations : [ 'sidebar-account' ]
+  },
+  {
+    title     : 'Payment',
+    icon      : 'credit_card',
+    path      : '/account/payment',
     parent    : null,
     locations : [ 'sidebar-account' ]
   },
