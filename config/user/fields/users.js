@@ -74,5 +74,21 @@ module.exports = {
     required  : true,
     label     : 'Password',
     helpText  : 'choose a password longer than 6 characters'
+  },
+  createdAt : {
+    name      : 'createdAt',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Created At',
+    helpText  : null
+  },
+  updatedAt : {
+    name      : 'updatedAt',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Updated At',
+    helpText  : null
   }
 };

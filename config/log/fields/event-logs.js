@@ -7,59 +7,68 @@ module.exports = {
     label     : 'Id',
     helpText  : null
   },
+  origin : {
+    name      : 'origin',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Origin',
+    helpText  : null
+  },
+  userId : {
+    name      : 'userId',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'User',
+    helpText  : null
+  },
+  type : {
+    name      : 'type',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Type',
+    helpText  : null
+  },
+  value : {
+    name      : 'value',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Value',
+    helpText  : null
+  },
+  comment : {
+    name      : 'comment',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Comment',
+    helpText  : null
+  },
   resolved : {
     name      : 'resolved',
     component : 'input',
     type      : 'text',
+    required  : true,
     label     : 'Resolved',
     helpText  : null
   },
-  ip : {
-    name      : 'ip',
+  createdAt : {
+    name      : 'createdAt',
     component : 'input',
     type      : 'text',
     required  : true,
-    label     : 'IP Address',
+    label     : 'Created At',
     helpText  : null
   },
-  uri : {
-    name      : 'uri',
+  updatedAt : {
+    name      : 'updatedAt',
     component : 'input',
     type      : 'text',
     required  : true,
-    label     : 'Uri',
-    helpText  : null
-  },
-  code : {
-    name      : 'code',
-    component : 'input',
-    type      : 'text',
-    required  : true,
-    label     : 'Code',
-    helpText  : null
-  },
-  message : {
-    name      : 'message',
-    component : 'input',
-    type      : 'text',
-    required  : true,
-    label     : 'Message',
-    helpText  : null
-  },
-  data : {
-    name      : 'data',
-    component : 'input',
-    type      : 'text',
-    required  : true,
-    label     : 'Data',
-    helpText  : null
-  },
-  stack : {
-    name      : 'stack',
-    component : 'input',
-    type      : 'text',
-    required  : true,
-    label     : 'Stack',
+    label     : 'Updated At',
     helpText  : null
   }
 };

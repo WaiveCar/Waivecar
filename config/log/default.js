@@ -15,16 +15,16 @@ module.exports = {
   logger : {
     email      : false,
     developers : [],
-    /* TODO: Has to be updated with the new log setup
     ui         : {
       resources : {
-        logs : require('./resources/logs')
+        'error-logs' : require('./resources/error-logs'),
+        'event-logs' : require('./resources/event-logs')
       },
       fields : {
-        logs : require('./fields/logs')
+        'error-logs' : require('./fields/error-logs'),
+        'event-logs' : require('./fields/event-logs')
       }
     }
-    */
   }
 
 };
