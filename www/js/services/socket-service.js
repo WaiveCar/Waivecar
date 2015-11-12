@@ -13,8 +13,8 @@ module.exports = angular.module('app')
 
       if ($settings.uri.api.indexOf('localhost') > 0) {
         remote = io.connect('http://localhost:5000');
-      } else if(ionic.Platform.isWebView()){
-        remote = io.connect('http://192.168.57.1:5000');
+      // } else if(ionic.Platform.isWebView()){
+      //   remote = io.connect('http://192.168.57.1:5000');
       } else {
         remote = io.connect($settings.uri.api, {
           path: '/socket/socket.io'

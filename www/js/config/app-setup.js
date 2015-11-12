@@ -23,17 +23,17 @@ var config = [
 
     MapsLoaderProvider.setApiKey('8698d318586c58a1f8ca1e88ecfac299');
 
-    var baseUrl;
-    if (ionic.Platform.isWebView()) {
-      baseUrl = 'http://192.168.57.1:8081';
-    } else {
-      if (window.location.hostname === 'localhost') {
-        baseUrl = 'http://localhost:8081';
-      } else {
-        throw new Error('baseUrl undefined for hostname ' + window.location.hostname);
-      }
-    }
-    $settingsProvider.setBaseUrl(baseUrl);
+    // var baseUrl;
+    // if (ionic.Platform.isWebView()) {
+    //   baseUrl = 'http://192.168.57.1:8081';
+    // } else {
+    //   if (window.location.hostname === 'localhost') {
+    //     baseUrl = 'http://localhost:8081';
+    //   } else {
+    //     throw new Error('baseUrl undefined for hostname ' + window.location.hostname);
+    //   }
+    // }
+    // $settingsProvider.setBaseUrl(baseUrl);
 
     $settingsProvider.setSkobblerApiKey('8698d318586c58a1f8ca1e88ecfac299');
 

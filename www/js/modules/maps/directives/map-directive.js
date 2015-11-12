@@ -1,5 +1,6 @@
 'use strict';
 var angular = require('angular');
+var ionic = require('ionic');
 // MapsLoader is an angular provider which returns leaflet instance from 'getMap' call
 require('../../../providers/maps-loader-provider');
 var _ = require('lodash');
@@ -29,6 +30,10 @@ module.exports = angular.module('Maps').directive('map', [
             trackResize: false,
             dragging: true
           };
+
+          if (ionic.Platform.isWebView()) {
+            mapOptions.zoomControl = false;
+          }
 
           MapCtrl.map = MapCtrl.leaflet.skobbler.map($element[0].firstChild, mapOptions);
           $scope.$broadcast('map-ready');
