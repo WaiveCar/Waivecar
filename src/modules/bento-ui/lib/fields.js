@@ -34,6 +34,27 @@ Fields.get = function (key) {
 };
 
 /**
+ * Returns a list of fields in array form.
+ * @param  {String} resource
+ * @param  {Array}  filter
+ * @return {Array}
+ */
+Fields.getArray = function (resource, filter = []) {
+  let fields = this.get(resource);
+  let result = [];
+  if (filter.length) {
+    result = filter.map((val) => {
+      return fields[val];
+    });
+  } else {
+    for (let key in fields) {
+      result.push(fields[key]);
+    }
+  }
+  return result;
+};
+
+/**
  * Returns a list of stores based on the provided targets.
  * @method getSelectList
  * @param  {Array} targets

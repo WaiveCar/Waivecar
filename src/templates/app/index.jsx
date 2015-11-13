@@ -9,29 +9,6 @@ import Header                     from './header';
 
 class AppTemplate extends React.Component {
 
-  constructor(...args) {
-    super(...args);
-    relay.subscribe(this, 'app');
-  }
-
-  componentWillUnmount() {
-    relay.unsubscribe(this, 'app');
-  }
-
-  header() {
-    let { title, description, display } = this.state.app;
-    if (display) {
-      return (
-        <h1>
-          { title }
-          <small>
-            { description }
-          </small>
-        </h1>
-      );
-    }
-  }
-
   render() {
     return (
       <div id="app">
@@ -39,7 +16,6 @@ class AppTemplate extends React.Component {
         <Sidebar route={ this.props.location.pathname } />
         <div id="content">
           <div className="content-wrapper">
-            { this.header() }
             { this.props.children }
           </div>
         </div>
@@ -59,6 +35,11 @@ templates.register('app', {
       {
         path      : '/profile',
         component : require('../../views/app/profile'),
+        onEnter   : policies.isAuthenticated
+      },
+      {
+        path      : '/account/license',
+        component : require('../../views/app/profile/license'),
         onEnter   : policies.isAuthenticated
       },
       {
@@ -82,6 +63,13 @@ templates.register('app', {
     title     : 'Profile',
     icon      : 'account_box',
     path      : '/profile',
+    parent    : null,
+    locations : [ 'sidebar-account' ]
+  },
+  {
+    title     : 'License',
+    icon      : 'assignment_ind',
+    path      : '/account/license',
     parent    : null,
     locations : [ 'sidebar-account' ]
   },
