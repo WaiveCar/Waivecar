@@ -44,11 +44,19 @@ Bento.Register.Model('Car', 'sequelize', function (model, Sequelize) {
       type : Sequelize.DECIMAL(11, 8),
     },
 
+    locationQuality : {
+      type : Sequelize.INTEGER
+    },
+
     distanceSinceLastRead : {
       type : Sequelize.DECIMAL(10, 2)
     },
 
-    currentSpeed: {
+    currentSpeed : {
+      type : Sequelize.DECIMAL(10, 2)
+    },
+
+    calculatedSpeed : {
       type : Sequelize.DECIMAL(10, 2)
     },
 
@@ -113,6 +121,11 @@ Bento.Register.Model('Car', 'sequelize', function (model, Sequelize) {
       defaultValue : false
     },
 
+    isParked : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
     range : {
       type : Sequelize.DECIMAL(10, 2)
     },
@@ -131,6 +144,10 @@ Bento.Register.Model('Car', 'sequelize', function (model, Sequelize) {
     isAvailable : {
       type         : Sequelize.BOOLEAN,
       defaultValue : true
+    },
+
+    positionUpdatedAt : {
+      type : Sequelize.DATE
     }
 
   };
