@@ -14,5 +14,12 @@ module.exports = [
       name         : 'lastName',
       className    : 'col-md-6 bento-form-input'
     }
-  ]
+  ],
+  {
+    label        : 'Email',
+    component    : 'input',
+    type         : 'text',
+    name         : 'email',
+    className    : 'col-md-12 bento-form-input'
+  }
 ];
