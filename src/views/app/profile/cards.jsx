@@ -15,11 +15,8 @@ module.exports = class ProfileCardsView extends React.Component {
 
   constructor(...args) {
     super(...args);
-
     this.state   = {};
     this.payment = new Payment(this);
-
-    relay.subscribe(this, 'app');
   }
 
   /**
@@ -29,9 +26,6 @@ module.exports = class ProfileCardsView extends React.Component {
   componentDidMount() {
     this.payment.ensureCustomer(auth.user);
     this.payment.setCards();
-    this.app.update({
-      display : false
-    });
   }
 
   /**

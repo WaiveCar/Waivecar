@@ -55,6 +55,14 @@
     }
   }
 
+  .profile-box-info {
+    border-top  : 1px dashed #ccc;
+    color       : #767676;
+    font-size   : .82rem;
+    margin      : 8px;
+    padding-top : 12px;
+  }
+
   .profile-box-content {
     background    : #fff;
     border-bottom : 3px solid #f0f0f0;
@@ -89,6 +97,11 @@
         display : none;
       }
     }
+  }
+
+  .profile-status-check {
+    color      : green;
+    text-align : center;
   }
 
   .btn-profile-submit {
