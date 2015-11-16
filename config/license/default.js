@@ -13,8 +13,8 @@ module.exports = {
    */
 
   license : {
-    services : [ 'checkr' ],
-    checkr   : {
+    checkr : {
+      uri : 'https://api.checkr.com/v1',
       key : '84aaba691da7f191f5922c470a666d372d6d8b3b'
     },
     ui : {

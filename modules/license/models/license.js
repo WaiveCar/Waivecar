@@ -28,40 +28,69 @@ Bento.Register.Model('License', 'sequelize', function (model, Sequelize) {
       type : Sequelize.STRING
     },
 
-    number : { 
-      type      : Sequelize.STRING(80), 
-      allowNull : false 
+    number : {
+      type      : Sequelize.STRING(80),
+      allowNull : false
     },
 
-    firstName : { 
-      type      : Sequelize.STRING(80), 
-      allowNull : false 
+    firstName : {
+      type      : Sequelize.STRING(80),
+      allowNull : false
     },
 
-    middleName : { 
-      type      : Sequelize.STRING(80), 
-      allowNull : true 
+    middleName : {
+      type      : Sequelize.STRING(80),
+      allowNull : true
     },
 
-    lastName : { 
-      type      : Sequelize.STRING(80), 
-      allowNull : false 
+    lastName : {
+      type      : Sequelize.STRING(80),
+      allowNull : false
     },
 
-    birthDate : { 
-      type      : Sequelize.DATEONLY(), 
-      allowNull : false 
+    birthDate : {
+      type      : Sequelize.DATEONLY(),
+      allowNull : false
     },
 
-    country : { 
-      type      : Sequelize.STRING(80), 
-      allowNull : false 
+    state : {
+      type      : Sequelize.STRING(20),
+      allowNull : false
     },
 
-    state : { 
-      type      : Sequelize.STRING(20), 
-      allowNull : false 
+    zip : {
+      type      : Sequelize.STRING(80),
+      allowNull : false
+    },
+
+    ssn : {
+      type      : Sequelize.STRING(80),
+      allowNull : false
+    },
+
+    candidateId : {
+      type      : Sequelize.STRING(64),
+      allowNull : true
+    },
+
+    reportId : {
+      type      : Sequelize.STRING(64),
+      allowNull : true
+    },
+
+    status : {
+      type : Sequelize.ENUM(
+        'provided',
+        'pending',
+        'clear',
+        'consider',
+        'suspended',
+        'dispute',
+        'failed'
+      ),
+      defaultValue : 'provided'
     }
+
   };
 
   return model;

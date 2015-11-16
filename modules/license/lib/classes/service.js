@@ -11,23 +11,39 @@ module.exports = class Service {
    * @param  {Number} id
    * @return {Object}
    */
-  *getLicense(id) {
+  static *getLicense(id) {
     let license = yield License.findById(id);
     if (!license) {
       throw error.parse({
         code    : `INVALID_LICENSE`,
-        message : `The requested licsense does not exist`
+        message : `The requested license does not exist`
       }, 400);
     }
     return license;
   }
-  
+
+  /**
+   * Retrieves a license by Checkr's Candidate Id from the database.
+   * @param  {Number} id
+   * @return {Object}
+   */
+  static *getLicenseByCandidate(id) {
+    let license = yield License.find({ candidateId : id });
+    if (!license) {
+      throw error.parse({
+        code    : `INVALID_LICENSE`,
+        message : `A matching license for this candidate cannot be found`
+      }, 400);
+    }
+    return license;
+  }
+
   /**
    * Attempts to return the user with the provided id or throws an error.
    * @param  {Number} id
    * @return {Object}
    */
-  *getUser(id) {
+  static *getUser(id) {
     let user = yield User.findById(id);
     if (!user) {
       throw error.parse({
@@ -44,7 +60,7 @@ module.exports = class Service {
    * @param  {Object}  _user The user requesting modification.
    * @return {Boolean}
    */
-  hasAccess(user, _user) {
+  static hasAccess(user, _user) {
     if (user.id !== _user.id && _user.role !== 'admin') {
       throw error.parse({
         error   : `INVALID_PRIVILEGES`,
@@ -53,4 +69,4 @@ module.exports = class Service {
     }
   }
 
-}
+};

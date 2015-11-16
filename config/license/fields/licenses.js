@@ -62,20 +62,20 @@ module.exports = {
     label     : 'Date Of Birth',
     helpText  : null
   },
-  country : {
-    name      : 'country',
-    component : 'input',
-    type      : 'text',
-    required  : true,
-    label     : 'Country',
-    helpText  : null
-  },
   state : {
     state     : 'state',
     component : 'input',
     type      : 'text',
     required  : true,
     label     : 'State',
+    helpText  : null
+  },
+  zip : {
+    name      : 'zip',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Zip Code',
     helpText  : null
   },
   fileId : {

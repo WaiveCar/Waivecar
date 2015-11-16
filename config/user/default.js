@@ -19,6 +19,7 @@ module.exports = {
         lastName      : 'Ginty',
         email         : 'matt.ginty@clevertech.biz',
         password      : 'lollipop0',
+        phone         : '430099449',
         role          : 'admin',
         verifiedEmail : true,
         status        : 'active'

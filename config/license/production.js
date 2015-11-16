@@ -14,7 +14,7 @@ module.exports = {
 
   license : {
     checkr : {
-      key : '68f0b1098f2d0b2e99ca67bee946df9b365155b8'
+      key : '84aaba691da7f191f5922c470a666d372d6d8b3b'
     }
   }
 
