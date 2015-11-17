@@ -67,6 +67,14 @@ module.exports = {
     label     : 'Email Address',
     helpText  : null
   },
+  phone : {
+    name      : 'phone',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Cell Phone',
+    helpText  : null
+  },
   password : {
     name      : 'password',
     component : 'input',

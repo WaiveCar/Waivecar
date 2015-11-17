@@ -93,6 +93,13 @@ Bento.Register.Model('License', 'sequelize', function (model, Sequelize) {
 
   };
 
+  /**
+   * Attributes to remove before returning the model as JSON.
+   * @property blacklist
+   * @type     Array
+   */
+  model.blacklist = [ 'candidateId', 'reportId', 'ssn', 'deletedAt' ];
+
   return model;
 
 });
