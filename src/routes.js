@@ -39,7 +39,7 @@ module.exports = {
         if (!err) {
           auth.set(user);
         }
-        done(err, templates.getAll());
+        done((err.status === 404 ? null : err.message), templates.getAll());
       });
     });
   },
