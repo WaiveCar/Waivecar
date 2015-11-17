@@ -54,7 +54,7 @@ module.exports = class ProfileView extends React.Component {
                 class : 'btn btn-primary btn-profile-submit'
               }
             ]}
-            submit = { () => {} }
+            submit = { this.account.submitUser }
           />
         </div>
       </div>

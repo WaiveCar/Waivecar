@@ -1,25 +1,16 @@
-module.exports = [
+'use strict';
+
+import { fields } from 'bento-ui';
+
+let layout = fields.mergeFromLayout('users', [
   [
-    {
-      label        : 'First name',
-      component    : 'input',
-      type         : 'text',
-      name         : 'firstName',
-      className    : 'col-md-6 bento-form-input'
-    },
-    {
-      label        : 'Last name',
-      component    : 'input',
-      type         : 'text',
-      name         : 'lastName',
-      className    : 'col-md-6 bento-form-input'
-    }
+    { name : 'firstName', className : 'col-md-6 bento-form-input' },
+    { name : 'lastName',  className : 'col-md-6 bento-form-input' }
   ],
-  {
-    label        : 'Email',
-    component    : 'input',
-    type         : 'text',
-    name         : 'email',
-    className    : 'col-md-12 bento-form-input'
-  }
-];
+  [
+    { name : 'email', className : 'col-md-6 bento-form-input' },
+    { name : 'phone',  className : 'col-md-6 bento-form-input' }
+  ]
+]);
+
+module.exports = layout;

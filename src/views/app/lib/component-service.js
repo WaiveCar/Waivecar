@@ -3,7 +3,7 @@
 import { snackbar } from 'bento-web';
 
 module.exports = class Service {
-  
+
   /**
    * Handles context, service and default state assignment.
    * @param  {Object} ctx          The component context being tied to the service.

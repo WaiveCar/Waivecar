@@ -34,6 +34,26 @@ Fields.get = function (key) {
 };
 
 /**
+ * Fills in Layout with field values.
+ * @param  {String} resource
+ * @param  {Array}  filter
+ * @return {Array}
+ */
+Fields.mergeFromLayout = function(resource, layout) {
+  let fields = this.get(resource);
+  let getRow = (rowItem) => {
+    if (Array.isArray(rowItem)) {
+      return rowItem.map(getRow);
+    } else {
+      let field = fields[rowItem.name];
+      return { ...rowItem, ...field };
+    }
+  }
+
+  return layout.map(getRow);
+};
+
+/**
  * Returns a list of fields in array form.
  * @param  {String} resource
  * @param  {Array}  filter

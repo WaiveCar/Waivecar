@@ -4,12 +4,13 @@ import { api, auth, dom } from 'bento';
 import Service            from './component-service';
 
 module.exports = class AccountService extends Service {
-  
+
   constructor(ctx) {
     super(ctx, 'account', {
       status : []
     });
     this.submitPassword = this.submitPassword.bind(this);
+    this.submitUser = this.submitUser.bind(this);
   }
 
   /**
@@ -20,7 +21,8 @@ module.exports = class AccountService extends Service {
       { type : 'Email Verified',   isValid : false },
       { type : 'Phone Verified',   isValid : false },
       { type : 'Payment Card',     isValid : false },
-      { type : 'License Provided', isValid : false }
+      { type : 'License Provided', isValid : false },
+      { type : 'License Cleared',  isValid : false }
     ]);
     this.setGeneralStatus();
     this.setPaymentStatus();
@@ -79,7 +81,33 @@ module.exports = class AccountService extends Service {
    * Sets the license status for the account.
    */
   setLicenseStatus() {
-    // TODO: Awaiting license registration completion
+    api.get('/licenses', function (err, licenses) {
+      if (err) {
+        return this.error(err.message);
+      }
+      if (licenses.length) {
+        this.setState('status', this.getState('status').map((status) => {
+          switch (status.type) {
+            case 'License Provided' : return {
+              type    : 'License Provided',
+              isValid : true
+            };
+            default : return status;
+          }
+        }));
+        if (licenses[0].status === 'clear') {
+          this.setState('status', this.getState('status').map((status) => {
+            switch (status.type) {
+              case 'License Cleared' : return {
+                type    : 'License Cleared',
+                isValid : true
+              };
+              default : return status;
+            }
+          }));
+        }
+      }
+    }.bind(this));
   }
 
   /**
@@ -98,6 +126,26 @@ module.exports = class AccountService extends Service {
         return this.error(err.message);
       }
       this.success(`Your password was successfully updated`);
+    }.bind(this));
+  }
+
+  /**
+   * Send password update request to the api.
+   * @param  {Object}   data
+   * @param  {Function} reset
+   */
+  submitUser(data, reset) {
+    api.put(`/users/${ auth.user.id }`, {
+      firstName : data.firstName,
+      lastName  : data.lastName,
+      email     : data.email,
+      phone     : data.phone
+    }, function (err) {
+      if (err) {
+        return this.error(err.message);
+      }
+      console.log(this);
+      this.success(`Your details have been successfully updated`);
     }.bind(this));
   }
 

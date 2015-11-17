@@ -5,6 +5,10 @@ import { auth, api }      from 'bento';
 import { Form, snackbar } from 'bento-web';
 import { fields }         from 'bento-ui';
 
+let formFields = {
+  license : require('./form-fields/license')
+};
+
 module.exports = class ProfilePasswordView extends React.Component {
 
   constructor(...args) {
@@ -45,7 +49,7 @@ module.exports = class ProfilePasswordView extends React.Component {
           <Form
             ref       = "license"
             className = "bento-form-static"
-            fields    = { fields.getArray('licenses', [ 'number', 'firstName', 'middleName', 'lastName', 'birthDate', 'country', 'state' ]) }
+            fields    = { formFields.license }
             buttons   = {[
               {
                 value : 'Register License',
@@ -62,7 +66,19 @@ module.exports = class ProfilePasswordView extends React.Component {
 
   renderLicense() {
     return (
-      <div>License</div>
+      <div className="profile-box">
+        <h3>
+          License
+        </h3>
+        <div className="profile-box-content">
+          <Form
+            ref       = "license"
+            className = "bento-form-static"
+            fields    = { formFields.license }
+            default   = { this.state.license }
+          />
+        </div>
+      </div>
     )
   }
 
@@ -74,7 +90,7 @@ module.exports = class ProfilePasswordView extends React.Component {
       <div className="profile">
         {
           this.state.license
-            ? this.renderLicense() 
+            ? this.renderLicense()
             : this.renderLicenseRegistration()
         }
       </div>
