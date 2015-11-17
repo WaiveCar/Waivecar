@@ -23,6 +23,13 @@ class ResetPasswordView extends React.Component {
     this.submit       = this.submit.bind(this);
   }
 
+  /**
+   * Sets the document header SEO
+   */
+  componentDidMount() {
+    dom.setTitle('Password Reset');
+  }
+
   step() {
     switch (this.state.step) {
       case 1 : return this.renderTokenRequest();

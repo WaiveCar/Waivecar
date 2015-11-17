@@ -1,9 +1,11 @@
-import React                 from 'react';
-import mixin                 from 'react-mixin';
-import { History, Link }     from 'react-router';
-import config                from 'config';
-import { auth, api, socket } from 'bento';
-import { Form, snackbar }    from 'bento-web';
+'use strict';
+
+import React                      from 'react';
+import mixin                      from 'react-mixin';
+import { History, Link }          from 'react-router';
+import config                     from 'config';
+import { auth, api, socket, dom } from 'bento';
+import { Form, snackbar }         from 'bento-web';
 
 @mixin.decorate(History)
 class LoginView extends React.Component {
@@ -16,6 +18,13 @@ class LoginView extends React.Component {
   constructor(...args) {
     super(...args);
     this.submit = this.submit.bind(this);
+  }
+
+  /**
+   * Sets the document header SEO
+   */
+  componentDidMount() {
+    dom.setTitle('Login');
   }
 
   /**

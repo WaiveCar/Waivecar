@@ -1,8 +1,8 @@
 'use strict';
 
-import React          from 'react';
-import { relay, api } from 'bento';
-import { components } from 'bento-ui';
+import React               from 'react';
+import { relay, api, dom } from 'bento';
+import { components }      from 'bento-ui';
 
 let Map = components.get('map');
 
@@ -19,6 +19,10 @@ module.exports = class BookingCar extends React.Component {
     };
     relay.subscribe(this, 'booking');
     this.close = this.close.bind(this);
+  }
+
+  componentDidMount() {
+    dom.setTitle('Book a Car');
   }
 
   /**

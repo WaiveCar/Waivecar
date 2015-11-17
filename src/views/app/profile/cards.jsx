@@ -1,9 +1,9 @@
 'use strict';
 
-import React           from 'react';
-import { auth, relay } from 'bento';
-import { Form }        from 'bento-web';
-import Payment         from '../lib/payment-service';
+import React                from 'react';
+import { auth, relay, dom } from 'bento';
+import { Form }             from 'bento-web';
+import Payment              from '../lib/payment-service';
 
 // ### Form Fields
 
@@ -24,6 +24,7 @@ module.exports = class ProfileCardsView extends React.Component {
    * application view header.
    */
   componentDidMount() {
+    dom.setTitle('Cards');
     this.payment.ensureCustomer(auth.user);
     this.payment.setCards();
   }

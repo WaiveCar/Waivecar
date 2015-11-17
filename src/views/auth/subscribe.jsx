@@ -30,6 +30,13 @@ class SubscribeView extends React.Component {
   }
 
   /**
+   * Sets the document header SEO
+   */
+  componentDidMount() {
+    dom.setTitle('Subscribe');
+  }
+
+  /**
    * @method submit
    * @param  {Object}   data
    * @param  {Function} reset

@@ -1,9 +1,9 @@
 'use strict';
 
-import React           from 'react';
-import { auth, relay } from 'bento';
-import { Form }        from 'bento-web';
-import Account         from '../lib/account-service';
+import React                from 'react';
+import { auth, relay, dom } from 'bento';
+import { Form }             from 'bento-web';
+import Account              from '../lib/account-service';
 
 // ### Form Fields
 
@@ -27,9 +27,7 @@ module.exports = class ProfilePasswordView extends React.Component {
    * application view header.
    */
   componentDidMount() {
-    this.app.update({
-      display : false
-    });
+    dom.setTitle('Password');
   }
 
   /**

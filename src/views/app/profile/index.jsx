@@ -1,11 +1,11 @@
 'use strict';
 
-import React                 from 'react';
-import { auth, relay, api }  from 'bento';
-import { Form, snackbar }    from 'bento-web';
-import { resources, fields } from 'bento-ui';
-import md5                   from 'md5';
-import Account               from '../lib/account-service';
+import React                     from 'react';
+import { auth, relay, api, dom } from 'bento';
+import { Form, snackbar }        from 'bento-web';
+import { resources, fields }     from 'bento-ui';
+import md5                       from 'md5';
+import Account                   from '../lib/account-service';
 
 // ### Form Fields
 
@@ -27,6 +27,7 @@ module.exports = class ProfileView extends React.Component {
    */
   componentDidMount() {
     this.account.status();
+    dom.setTitle('Profile');
   }
 
   /**

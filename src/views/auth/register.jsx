@@ -56,6 +56,13 @@ class RegisterView extends React.Component {
   }
 
   /**
+   * Sets the document header SEO
+   */
+  componentDidMount() {
+    dom.setTitle('Register');
+  }
+
+  /**
    * Submits the registration data to the API.
    * @param  {Object}   data  The user data to be submitted.
    * @param  {Function} reset Empties the form.

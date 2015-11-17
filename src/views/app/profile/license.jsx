@@ -1,7 +1,7 @@
 'use strict';
 
 import React              from 'react';
-import { auth, api }      from 'bento';
+import { auth, api, dom } from 'bento';
 import { Form, snackbar } from 'bento-web';
 import { fields }         from 'bento-ui';
 
@@ -21,6 +21,7 @@ module.exports = class ProfilePasswordView extends React.Component {
   }
 
   componentDidMount() {
+    dom.setTitle('License');
     api.get('/licenses', function (err, list) {
       if (err) {
         return snackbar.notify({
