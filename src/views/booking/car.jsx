@@ -14,15 +14,12 @@ module.exports = class BookingCar extends React.Component {
    */
   constructor(...args) {
     super(...args);
+    dom.setTitle('Book a Car');
     this.state = {
       car : null
     };
     relay.subscribe(this, 'booking');
     this.close = this.close.bind(this);
-  }
-
-  componentDidMount() {
-    dom.setTitle('Book a Car');
   }
 
   /**

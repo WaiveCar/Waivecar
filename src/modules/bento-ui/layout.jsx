@@ -3,7 +3,7 @@
 import React             from 'react';
 import mixin             from 'react-mixin';
 import { History, Link } from 'react-router';
-import Reach, { relay }  from 'bento';
+import { relay, dom }    from 'bento';
 import { Layout }        from 'bento-web';
 import components        from './lib/components';
 
@@ -16,6 +16,9 @@ function LayoutBuilder(view) {
 
     constructor(...args) {
       super(...args);
+      
+      dom.setTitle(view.title);
+      
       this.renderRow       = this.renderRow.bind(this);
       this.renderContainer = this.renderContainer.bind(this);
     }
@@ -83,7 +86,7 @@ function LayoutBuilder(view) {
     }
 
     /**
-     * @param  {Object} component { type, options }
+     * @param {Object} component { type, options }
      */
     renderComponent(component) {
       return components.render(component.type, {

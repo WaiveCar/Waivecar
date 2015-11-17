@@ -15,19 +15,10 @@ module.exports = class ProfilePasswordView extends React.Component {
 
   constructor(...args) {
     super(...args);
-
+    dom.setTitle('Password');
     this.state   = {};
     this.account = new Account(this);
-
     relay.subscribe(this, 'app');
-  }
-
-  /**
-   * Sets up the profile with its stripe data and hides the default
-   * application view header.
-   */
-  componentDidMount() {
-    dom.setTitle('Password');
   }
 
   /**

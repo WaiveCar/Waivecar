@@ -17,6 +17,7 @@ module.exports = class ProfileView extends React.Component {
 
   constructor(...args) {
     super(...args);
+    dom.setTitle('Profile');
     this.state   = {};
     this.account = new Account(this);
     relay.subscribe(this, 'me');
@@ -27,7 +28,6 @@ module.exports = class ProfileView extends React.Component {
    */
   componentDidMount() {
     this.account.status();
-    dom.setTitle('Profile');
   }
 
   /**

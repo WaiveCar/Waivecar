@@ -17,14 +17,8 @@ class LoginView extends React.Component {
    */
   constructor(...args) {
     super(...args);
-    this.submit = this.submit.bind(this);
-  }
-
-  /**
-   * Sets the document header SEO
-   */
-  componentDidMount() {
     dom.setTitle('Login');
+    this.submit = this.submit.bind(this);
   }
 
   /**

@@ -10,6 +10,7 @@ class ResetPasswordView extends React.Component {
 
   constructor(...args) {
     super(...args);
+    dom.setTitle('Reset Password');
     let token = null;
     if (this.props.location.query) {
       token = this.props.location.query.token;
@@ -21,13 +22,6 @@ class ResetPasswordView extends React.Component {
     this.requestToken = this.requestToken.bind(this);
     this.inputToken   = this.inputToken.bind(this);
     this.submit       = this.submit.bind(this);
-  }
-
-  /**
-   * Sets the document header SEO
-   */
-  componentDidMount() {
-    dom.setTitle('Password Reset');
   }
 
   step() {

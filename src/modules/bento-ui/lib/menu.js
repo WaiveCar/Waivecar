@@ -1,8 +1,5 @@
-import { auth } from 'bento';
+'use strict';
 
-/**
- * @class Menu
- */
 let Menu = module.exports = {};
 
 /**

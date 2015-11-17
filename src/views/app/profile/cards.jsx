@@ -15,6 +15,7 @@ module.exports = class ProfileCardsView extends React.Component {
 
   constructor(...args) {
     super(...args);
+    dom.setTitle('Cards');
     this.state   = {};
     this.payment = new Payment(this);
   }
@@ -24,7 +25,6 @@ module.exports = class ProfileCardsView extends React.Component {
    * application view header.
    */
   componentDidMount() {
-    dom.setTitle('Cards');
     this.payment.ensureCustomer(auth.user);
     this.payment.setCards();
   }

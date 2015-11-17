@@ -16,6 +16,7 @@ class SubscribeView extends React.Component {
    */
   constructor(...args) {
     super(...args);
+    dom.setTitle('Subscribe');
     this.fields = [
       {
         label     : 'Email Address',
@@ -27,13 +28,6 @@ class SubscribeView extends React.Component {
       }
     ];
     this.submit = this.submit.bind(this);
-  }
-
-  /**
-   * Sets the document header SEO
-   */
-  componentDidMount() {
-    dom.setTitle('Subscribe');
   }
 
   /**

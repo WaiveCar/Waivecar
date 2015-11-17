@@ -13,6 +13,7 @@ module.exports = class ProfilePasswordView extends React.Component {
 
   constructor(...args) {
     super(...args);
+    dom.setTitle('License');
     this.state = {
       isLoading : true,
       license   : null
@@ -21,7 +22,6 @@ module.exports = class ProfilePasswordView extends React.Component {
   }
 
   componentDidMount() {
-    dom.setTitle('License');
     api.get('/licenses', function (err, list) {
       if (err) {
         return snackbar.notify({

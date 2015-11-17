@@ -10,6 +10,7 @@ class RegisterView extends React.Component {
 
   constructor(...args) {
     super(...args);
+    dom.setTitle('Register');
     this.fields = [
       {
         label     : 'First name',
@@ -53,13 +54,6 @@ class RegisterView extends React.Component {
       }
     ];
     this.submit = this.submit.bind(this);
-  }
-
-  /**
-   * Sets the document header SEO
-   */
-  componentDidMount() {
-    dom.setTitle('Register');
   }
 
   /**
