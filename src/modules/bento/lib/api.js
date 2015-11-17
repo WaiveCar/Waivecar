@@ -136,10 +136,8 @@ module.exports = class API {
 function _handleResult(callback, err, res) {
   if (!res.ok) {
     if (res.status === 401 || res.status === 403) {
-      if (auth.check()) {
-        auth.logout();
-      }
-      window.location = '/login';
+      auth.logout();
+      window.location = '/';
     }
     return callback({
       status  : res.status,
