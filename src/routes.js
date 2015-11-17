@@ -1,6 +1,6 @@
 import React                 from 'react';
 import { Route }             from 'react-router';
-import Reach                 from 'bento';
+import { api, auth }         from 'bento';
 import { loader, templates } from 'bento-ui';
 
 // ### Import Templates
@@ -31,8 +31,16 @@ module.exports = {
    * @type     Array
    */
   getChildRoutes(state, done) {
-    loader((error) => {
-      done(error, templates.getAll());
+    loader((err) => {
+      if (err) {
+        return done(err);
+      }
+      api.get('/users/me', function (err, user) {
+        if (!err) {
+          auth.set(user);
+        }
+        done(err, templates.getAll());
+      });
     });
   },
 

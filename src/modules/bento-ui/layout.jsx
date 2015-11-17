@@ -16,19 +16,8 @@ function LayoutBuilder(view) {
 
     constructor(...args) {
       super(...args);
-      relay.subscribe(this, 'app');
       this.renderRow       = this.renderRow.bind(this);
       this.renderContainer = this.renderContainer.bind(this);
-    }
-
-    componentDidMount() {
-      this.app.update({
-        title : view.title
-      });
-    }
-
-    componentWillUnmount() {
-      relay.unsubscribe(this, 'app');
     }
 
     /**

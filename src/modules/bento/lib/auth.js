@@ -1,57 +1,95 @@
-import storage from 'local-storage';
+'use strict';
 
-class Auth {
+let storage = require('local-storage');
+let relay   = require('./relay');
+
+// ### Relay
+// Create the authenticated user resource.
+
+relay.resource('me', function (state = null, payload) {
+  switch (payload.type) {
+    case 'login': {
+      return payload.data;
+    }
+    case 'update': {
+      return {
+        ...state,
+        ...payload.data
+      }
+    }
+    case 'logout': {
+      return null;
+    }
+    default: {
+      return state;
+    }
+  }
+});
+
+// ### Auth
+
+module.exports = class Auth {
 
   /**
-   * Assign the authenticated user.
-   * @return {Void}
+   * Returns the current authenticated user.
+   * @return {Object}
    */
-  constructor() {
-    this.user = () => {
-      let user = storage.get('auth');
-      if (user) {
-        return user;
-      }
-      return null;
-    }()
+  static user() {
+    return relay.getState('me');
   }
 
   /**
    * Returns a boolean value determining the existence of a user.
    * @return {Boolean}
    */
-  check() {
-    return this.user ? true : false;
+  static check() {
+    return relay.getState('me') ? true : false;
   }
 
   /**
-   * Stores the provided user with the auth class, and local store.
+   * Returns the auth token from the local storage.
+   * @param  {String} value Optional token value when wanting to set a token.
+   * @return {String}
+   */
+  static token(value) {
+    if (!value) {
+      return storage.get('auth_token');
+    }
+    storage.set('auth_token', value);
+  }
+
+  /**
+   * Sets the provided user data as the authenticated user and stores
+   * the authentication token in the local store.
    * @param {Object} user
    */
-  set(user) {
-    storage.set('auth', user);
-    this.user = user;
+  static set(user) {
+    if (user.token) {
+      this.token(user.token);
+      delete user.token;
+    }
+    relay.dispatch('me', {
+      type : 'login',
+      data : user
+    });
   }
 
   /**
-   * Updates the authenticated user object.
-   * @param  {Obejct} user
-   * @return {Void}
+   * !DEPRECATED
    */
-  put(user) {
-    Object.assign(this.user, user);
-    storage.set('auth', this.user);
+  static put() {
+    // This is now handled via relay...
   }
 
   /**
    * Terminates the authenticated user.
    * @return {Void}
    */
-  logout() {
-    storage.remove('auth');
-    this.user = null;
+  static logout() {
+    storage.remove('auth_token');
+    relay.dispatch('me', {
+      type : 'logout'
+    });
   }
 
 }
-
-module.exports = new Auth();

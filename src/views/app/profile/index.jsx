@@ -19,6 +19,7 @@ module.exports = class ProfileView extends React.Component {
     super(...args);
     this.state   = {};
     this.account = new Account(this);
+    relay.subscribe(this, 'me');
   }
 
   /**
@@ -46,7 +47,7 @@ module.exports = class ProfileView extends React.Component {
             ref       = "personal"
             className = "bento-form-static"
             fields    = { formFields.personal }
-            default   = { auth.user }
+            default   = { this.state.me }
             buttons   = {[
               {
                 value : 'Update Details',
@@ -111,16 +112,17 @@ module.exports = class ProfileView extends React.Component {
    * @return {Object}
    */
   render() {
+    let user = this.state.me;
     return (
       <div className="profile">
         <div className="profile-header">
           <div className="profile-image">
-            <div style={{ background : auth.user.email ? `url(//www.gravatar.com/avatar/${ md5(auth.user.email) }?s=150) center center / cover` : '#fff' }} />
+            <div style={{ background : user.email ? `url(//www.gravatar.com/avatar/${ md5(user.email) }?s=150) center center / cover` : '#fff' }} />
           </div>
 
           <div className="profile-meta">
             <div className="profile-name">
-              { auth.user.firstName } { auth.user.lastName }
+              { user.firstName } { user.lastName }
             </div>
           </div>
         </div>

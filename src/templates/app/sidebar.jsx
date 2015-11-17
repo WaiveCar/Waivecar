@@ -13,7 +13,12 @@ module.exports = class Sidebar extends React.Component {
       open    : false,
       account : false
     };
+    relay.subscribe(this, 'me');
     this.getLink = this.getLink.bind(this);
+  }
+
+  componentWillUnmount() {
+    relay.unsubscribe(this, 'me');
   }
 
   /**
@@ -68,6 +73,7 @@ module.exports = class Sidebar extends React.Component {
    * @return {Object}
    */
   render() {
+    let user = this.state.me;
     return (
       <div>
         <div className={ `sidebar-overlay${ this.state.open ? ' show' : '' }` }  onClick={ () => { this.setState({ open : false }) }.bind(this) } />
@@ -84,11 +90,11 @@ module.exports = class Sidebar extends React.Component {
             <div className="sidebar-avatar animated flipInX">
               <div
                 className = "sidebar-avatar-img"
-                style     = {{ background : auth.user.email ? `url(//www.gravatar.com/avatar/${ md5(auth.user.email) }?s=100) center center / cover` : '#fff' }}
+                style     = {{ background : user.email ? `url(//www.gravatar.com/avatar/${ md5(user.email) }?s=100) center center / cover` : '#fff' }}
               />
             </div>
             <div className="sidebar-name animated flipInY">
-              <span>{ auth.user.firstName } { auth.user.lastName }</span>
+              <span>{ user.firstName } { user.lastName }</span>
             </div>
             <button className="btn-account" onClick={ () => { this.setState({ account : !this.state.account }) }.bind(this) }>
               My Account

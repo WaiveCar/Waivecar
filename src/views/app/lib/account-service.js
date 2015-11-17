@@ -34,7 +34,7 @@ module.exports = class AccountService extends Service {
    * of the email and phone verification.
    */
   setGeneralStatus() {
-    api.get(`/users/${ auth.user.id }`, function(err, user) {
+    api.get(`/users/${ auth.user().id }`, function(err, user) {
       if (err) {
         return this.error(err.message);
       }
@@ -135,7 +135,7 @@ module.exports = class AccountService extends Service {
    * @param  {Function} reset
    */
   submitUser(data, reset) {
-    api.put(`/users/${ auth.user.id }`, {
+    api.put(`/users/${ auth.user().id }`, {
       firstName : data.firstName,
       lastName  : data.lastName,
       email     : data.email,

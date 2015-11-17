@@ -1,55 +1,22 @@
-import config from 'config';
-import auth   from './auth';
+'use strict';
+
+let config = require('config');
+let auth   = require('./auth');
+let relay  = require('./relay');
+let socket = getSocket();
 
 class Socket {
-
-  /**
-   * Sets up socket connection and events.
-   * @return {Void}
-   */
-  constructor() {
-    if (!config.api.socket) {
-      return;
-    }
-    this.connect(config.api.socket);
-
-    // ### Bind Events
-    // Bind all the event handlers to the socket.
-
-    this.connected = this.connected.bind(this);
-
-    // ### Assign Events
-    // Assign all the events to their appropriate socket methods.
-
-    this.socket.on('connect', this.connected);
-  }
-
-  /**
-   * Connect to a socket.
-   * @param  {Mixed} settings
-   * @return {Void}
-   */
-  connect(settings) {
-    if (typeof settings === 'object') {
-      if (settings.uri && settings.options) {
-        this.socket = io(settings.uri, settings.options);
-      } else if (settings.uri) {
-        this.socket = io(settings.uri);
-      }
-    } else {
-      this.socket = io(settings);
-    }
-  }
-
-  // ### Socket Methods
 
   /**
    * Event listener.
    * @param  {...Mixed} args
    * @return {Void}
    */
-  on(...args) {
-    this.socket.on(...args);
+  static on(...args) {
+    if (!socket) {
+      return console.warn(`Socket > Service has not been configured with this application.`);
+    }
+    socket.on(...args);
   }
 
   /**
@@ -57,8 +24,11 @@ class Socket {
    * @param  {...Mixed} args
    * @return {Void}
    */
-  emit(...args) {
-    this.socket.emit(...args);
+  static emit(...args) {
+    if (!socket) {
+      return console.warn(`Socket > Service has not been configured with this application.`);
+    }
+    socket.emit(...args);
   }
 
   /**
@@ -66,29 +36,70 @@ class Socket {
    * @param  {String} token
    * @return {Void}
    */
-  authenticate(token) {
+  static authenticate(token) {
     this.emit('authenticate', token, (error) => {
       if (error) {
-        return console.warn('Socket > An error occured when attempting to authenticate the socket.');
+        return console.warn(`Socket > An error occured when attempting to authenticate the socket.`);
       }
-      console.log('Socket > Successfully authenticated with the socket.');
+      console.log(`Socket > Successfully authenticated with the socket.`);
     });
-  }
-
-  // ### Socket Event Handlers
-
-  /**
-   * Triggers when socket connects to the server.
-   * @return {Void}
-   */
-  connected() {
-    if (auth.check()) {
-      this.authenticate(auth.user.token);
-    } else {
-      console.log('Socket > Connected as guest.');
-    }
   }
 
 }
 
-module.exports = new Socket();
+/**
+ * Returns a new socke tinstance base don the configuration set
+ * in the application.
+ * @return {Object}
+ */
+function getSocket() {
+  let settings = config.api.socket;
+
+  // ### Validate Config
+  // Check if socket configuration has been defined.
+
+  if (!settings) {
+    return null;
+  }
+
+  // ### Connect
+  // Attempt to connect to the socket with the socket configuration provided.
+
+  if (typeof settings === 'object') {
+    if (settings.uri && settings.options) {
+      return io(settings.uri, settings.options);
+    } else if (settings.uri) {
+      return io(settings.uri);
+    }
+  }
+  return io(settings);
+}
+
+// ### Socket Events
+
+if (socket) {
+
+  // ### Connect
+  // Check auth status on connection and attempt to authenticate the socket
+  // if a token was found.
+
+  socket.on('connect', () => {
+    if (auth.check()) {
+      Socket.authenticate(auth.token());
+    } else {
+      console.log(`Socket > Connected as guest.`);
+    }
+  });
+
+  // ### Relay
+  // Dispatch relay events.
+
+  socket.on('relay', (resource, payload) => {
+    relay.dispatch(resource, payload);
+  });
+
+}
+
+// Export Socket
+
+module.exports = Socket;

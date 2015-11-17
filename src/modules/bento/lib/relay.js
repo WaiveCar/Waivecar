@@ -1,25 +1,20 @@
-import type   from './helpers/type';
-import socket from './socket';
+import type from './helpers/type';
+
+// ### Containers
+// State, reducer, actions, and listener containers.
+
+/**
+ * A list of stored relay resources shared by all instances of the relay class.
+ * @type {Object}
+ */
+let stored = {
+  states    : {},
+  reducers  : {},
+  actions   : {},
+  listeners : {}
+};
 
 class Relay {
-
-  /**
-   * Constructs the relay store and initates a relay socket handler.
-   */
-  constructor() {
-    this.store = {
-      states    : {},
-      reducers  : {},
-      actions   : {},
-      listeners : {}
-    };
-
-    // ### Relay Handler
-
-    socket.on('relay', function(resource, payload) {
-      this.dispatch(resource, payload);
-    }.bind(this));
-  }
 
   // ### Registration Methods
   // A list of methods used when registering reducers and actions.
@@ -30,10 +25,10 @@ class Relay {
    * @param  {Function} reducer
    */
   resource(id, reducer) {
-    if (!this.store.reducers[id]) {
-      this.store.states[id]    = reducer(undefined, {});
-      this.store.reducers[id]  = reducer;
-      this.store.listeners[id] = {};
+    if (!stored.reducers[id]) {
+      stored.states[id]    = reducer(undefined, {});
+      stored.reducers[id]  = reducer;
+      stored.listeners[id] = {};
     }
   }
 
@@ -43,7 +38,7 @@ class Relay {
    * @param  {Object} actions
    */
   actions(key, actions) {
-    this.store.actions[key] = actions;
+    stored.actions[key] = actions;
   }
 
   // ### Component Methods
@@ -92,16 +87,16 @@ class Relay {
    * @param  {Object} payload
    */
   dispatch(resource, payload) {
-    if (!this.store.reducers[resource]) {
+    if (!stored.reducers[resource]) {
       return console.warn(`Relay > Ignoring dispatch request, '${ resource }' reducer has not been defined.`);
     }
 
-    let reducer   = this.store.reducers[resource];
-    let listeners = this.store.listeners[resource];
+    let reducer   = stored.reducers[resource];
+    let listeners = stored.listeners[resource];
 
     // ### Update State
 
-    this.store.states[resource] = reducer(this.store.states[resource], payload);
+    stored.states[resource] = reducer(stored.states[resource], payload);
 
     // ### Inform Listeners
 
@@ -117,9 +112,9 @@ class Relay {
    */
   getState(resource) {
     if (resource) {
-      return this.store.states[resource];
+      return stored.states[resource];
     }
-    return this.store.states;
+    return stored.states;
   }
 
   /**
@@ -129,9 +124,9 @@ class Relay {
    */
   getActions(resource) {
     if (resource) {
-      return this.store.actions[resource];
+      return stored.actions[resource];
     }
-    return this.store.actions;
+    return stored.actions;
   }
 
 }
@@ -144,17 +139,17 @@ module.exports = new Relay();
  * @param {String}    id
  */
 function addListener(component, id) {
-  if (!this.store.states[id]) {
+  if (!stored.states[id]) {
     return console.warn(`Relay > Ignoring subscription request, '${ id }' has not been defined.`);
   }
   let name = component.constructor.name;
-  if (!this.store.listeners[id][name]) {
-    this.store.listeners[id][name] = [];
+  if (!stored.listeners[id][name]) {
+    stored.listeners[id][name] = [];
   }
-  this.store.listeners[id][name].push(() => {
-    component.setState(prepareState(id, this.store.states[id]));
+  stored.listeners[id][name].push(() => {
+    component.setState(prepareState(id, stored.states[id]));
   });
-  component.state[id] = this.store.states[id];
+  component.state[id] = stored.states[id];
 }
 
 /**
@@ -163,7 +158,7 @@ function addListener(component, id) {
  * @param {String} id
  */
 function addActions(context, id) {
-  let actions = this.store.actions[id];
+  let actions = stored.actions[id];
   if (actions) {
     context[id] = actions;
   }
@@ -175,11 +170,11 @@ function addActions(context, id) {
  * @param {String} name The constructor name of the component
  */
 function removeListener(id, name) {
-  if (!this.store.listeners[id] || !this.store.listeners[id][name]) {
+  if (!stored.listeners[id] || !stored.listeners[id][name]) {
     return console.warn(`Relay > Ignoring unsubscribe request, '${ id }.${ name }' listener has not been defined.`);
   }
-  if (this.store.listeners[id][name]) {
-    delete this.store.listeners[id][name];
+  if (stored.listeners[id][name]) {
+    delete stored.listeners[id][name];
   }
 }
 

@@ -4,14 +4,15 @@ import config   from 'config';
 import auth     from './auth';
 import { type } from './helpers';
 
-class API {
+/**
+ * The configurated endpoint to the API.
+ * @type {String}
+ */
+const API_URI = config.api.uri + (config.api.port ? ':' + config.api.port : '');
 
-  /**
-   * Prepares the api uri.
-   */
-  constructor() {
-    this.uri = config.api.uri + (config.api.port ? ':' + config.api.port : '');
-  }
+// ### API
+
+module.exports = class API {
 
   /**
    * Submits a post request to the api.
@@ -20,7 +21,7 @@ class API {
    * @param  {Function} callback
    * @param  {String}   role
    */
-  post(uri, data, callback, role) {
+  static post(uri, data, callback, role) {
     let req = this.prepare('post', uri, role);
     req.send(data);
     req.end(_handleResult.bind(this, callback));
@@ -33,7 +34,7 @@ class API {
    * @param  {Function} callback
    * @param  {String}   role
    */
-  file(uri, data, callback, role) {
+  static file(uri, data, callback, role) {
     let req      = this.prepare('post', uri, role);
     let formData = new FormData();
 
@@ -64,7 +65,7 @@ class API {
    * @param  {Function} done
    * @param  {String}   role
    */
-  get(uri, qs, done, role) {
+  static get(uri, qs, done, role) {
     if (!done) { role = done; done = qs; }
     let req = this.prepare('get', uri, role);
     req.query(qs);
@@ -78,7 +79,7 @@ class API {
    * @param  {Function} callback
    * @param  {String}   role
    */
-  put(uri, data, callback, role) {
+  static put(uri, data, callback, role) {
     let req = this.prepare('put', uri, role);
     req.send(data);
     req.end(_handleResult.bind(this, callback));
@@ -91,7 +92,7 @@ class API {
    * @param  {Function} callback
    * @param  {String}   role
    */
-  patch(uri, data, callback, role) {
+  static patch(uri, data, callback, role) {
     let req = this.prepare('patch', uri, role);
     req.send(data);
     req.end(_handleResult.bind(this, callback));
@@ -103,7 +104,7 @@ class API {
    * @param  {Function} callback
    * @param  {String}   role
    */
-  delete(uri, callback, role) {
+  static delete(uri, callback, role) {
     let req = this.prepare('del', uri, role);
     req.end(_handleResult.bind(this, callback));
   }
@@ -114,10 +115,11 @@ class API {
    * @param {String} uri
    * @param {String} role
    */
-  prepare(method, uri, role) {
-    let req = request[method](this.uri + uri);
-    if (auth.check()) {
-      req.set('Authorization', auth.user.token);
+  static prepare(method, uri, role) {
+    let req   = request[method](API_URI + uri);
+    let token = auth.token();
+    if (token) {
+      req.set('Authorization', token);
     }
     req.set('Role', role || 'guest');
     return req;
@@ -148,5 +150,3 @@ function _handleResult(callback, err, res) {
   }
   callback(null, res.body || res.text);
 }
-
-module.exports = new API();
