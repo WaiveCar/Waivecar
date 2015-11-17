@@ -28,30 +28,22 @@ templates.register('auth', {
     {
       path      : '/login',
       component : require('views/auth/login'),
-      onEnter   : (nextState, replaceState) => {
-        policies.isAnonymous(nextState, replaceState);
-      }
+      onEnter   : policies.isAnonymous
     },
     {
       path      : '/reset-password',
       component : require('views/auth/reset-password'),
-      onEnter   : (nextState, replaceState) => {
-        policies.isAnonymous(nextState, replaceState);
-      }
+      onEnter   : policies.isAnonymous
     },
     {
       path      : '/register',
       component : require('views/auth/register'),
-      onEnter   : (nextState, replaceState) => {
-        policies.isAnonymous(nextState, replaceState);
-      }
+      onEnter   : policies.isAnonymous
     },
     {
-      path    : '/logout',
-      onEnter : (nextState, replaceState) => {
-        auth.logout();
-        replaceState(null, '/');
-      }
+      path      : '/logout',
+      component : require('views/auth/logout'),
+      onEnter   : policies.isAuthenticated 
     }
   ]
 });
