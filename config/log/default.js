@@ -15,16 +15,6 @@ module.exports = {
   logger : {
     email      : false,
     developers : [],
-    ui         : {
-      resources : {
-        'error-logs' : require('./resources/error-logs'),
-        'event-logs' : require('./resources/event-logs')
-      },
-      fields : {
-        'error-logs' : require('./fields/error-logs'),
-        'event-logs' : require('./fields/event-logs')
-      }
-    }
   }
 
 };

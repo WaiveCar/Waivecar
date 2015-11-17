@@ -62,15 +62,6 @@ module.exports = {
       'password'
     ],
 
-    ui : {
-      resources : {
-        users : require('./resources/users')
-      },
-      fields : {
-        users : require('./fields/users')
-      }
-    },
-
     filter : function (queryParser, query) {
       return queryParser(query, {
         where : {

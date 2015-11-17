@@ -15,10 +15,28 @@ module.exports = {
   ui : {
     ui : {
       resources : {
-        views : require('./resources/views')
+        bookings     : require('./resources/bookings'),
+        cards        : require('./resources/cards'),
+        cars         : require('./resources/cars'),
+        'error-logs' : require('./resources/error-logs'),
+        'event-logs' : require('./resources/event-logs'),
+        files        : require('./resources/files'),
+        licenses     : require('./resources/licenses'),
+        locations    : require('./resources/locations'),
+        users        : require('./resources/users'),
+        views        : require('./resources/views')
       },
       fields : {
-        views : require('./fields/views')
+        bookings     : require('./fields/bookings'),
+        cards        : require('./fields/cards'),
+        cars         : require('./fields/cars'),
+        'error-logs' : require('./fields/error-logs'),
+        'event-logs' : require('./fields/event-logs'),
+        files        : require('./fields/files'),
+        licenses     : require('./fields/licenses'),
+        locations    : require('./fields/locations'),
+        users        : require('./fields/users'),
+        views        : require('./fields/views')
       }
     },
     fixtures : {

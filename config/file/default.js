@@ -20,14 +20,6 @@ module.exports = {
       secret : null,
       bucket : null,
       region : null
-    },
-    ui : {
-      resources : {
-        files : require('./resources/files')
-      },
-      fields : {
-        files : require('./fields/files')
-      }
     }
   }
 

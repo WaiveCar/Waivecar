@@ -17,20 +17,6 @@ module.exports = {
         type  : 'minutes'
       }
     },
-
-    ui : {
-      resources : {
-        bookings  : require('./resources/bookings'),
-        cars      : require('./resources/cars'),
-        locations : require('./resources/locations')
-      },
-      fields : {
-        bookings  : require('./fields/bookings'),
-        cars      : require('./fields/cars'),
-        locations : require('./fields/locations')
-      }
-    },
-
     invers : {
       uri     : 'https://api.cloudboxx.invers.com/api',
       headers : {

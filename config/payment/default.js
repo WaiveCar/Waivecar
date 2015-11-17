@@ -19,14 +19,6 @@ module.exports = {
     stripe     : {
       secret : null,
       pub    : null
-    },
-    ui : {
-      resources : {
-        cards : require('./resources/cards')
-      },
-      fields : {
-        cards : require('./fields/cards')
-      }
     }
   }
 
