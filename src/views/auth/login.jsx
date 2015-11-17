@@ -39,15 +39,15 @@ class LoginView extends React.Component {
         });
       }
 
-      // ### Store Credentials
-      // Stores the user with the local store via the auth object.
-
-      auth.set(user);
-
       // ### Authenticate Socket
       // Sends the user token for authentication with the socket.
 
       socket.authenticate(user.token);
+
+      // ### Store Credentials
+      // Stores the user with the local store via the auth object.
+
+      auth.set(user);
 
       // ### Remember
       // Check if remember check was requested and send a remember request
