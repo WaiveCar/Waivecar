@@ -12,7 +12,6 @@ module.exports = angular.module('Maps').directive('map', [
   'MockLocationService',
   function(MapsLoader, $timeout, $rootScope, LocationService) {
 
-
     function link($scope, $element, $attrs, MapCtrl) {
 
       LocationService.getLocation()

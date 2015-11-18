@@ -1,4 +1,4 @@
-<ion-view hide-back-button="{{!fromBooking}}" class="auth" ng-controller="AuthController">
+<ion-view hide-back-button="{{!fromBooking}}" class="auth">
 
   <ion-nav-title>
     <page-title class="dark-bg">Enter Code</page-title>
@@ -15,17 +15,17 @@
       <p>Please enter it below to verify your account.</p>
     </div>
 
-    <div ng-if="isWizard">
+    <div ng-if="auth.isWizard">
       <p class="margin-top-10">We have just sent you SMS with verification code.</p>
       <p>Please enter it below.</p>
     </div>
 
-    <form name="form" id="form" ng-submit="verify(form)" novalidate class="margin-top-10">
+    <form name="form" id="form" ng-submit="auth.verify(form)" novalidate class="margin-top-10">
       <div class="list">
 
         <label class="item item-input">
           <span class="input-label required">Code</span>
-          <input type="text" name="token" ng-model="forms.verifyForm.token" required autofocus autocapitalize="off" autocorrect="off" />
+          <input type="text" name="token" ng-model="auth.forms.verifyForm.token" required autofocus autocapitalize="off" autocorrect="off" />
         </label>
 
         <div ng-messages="form.token.$error" ng-if="form.token.$dirty || form.$submitted" role="alert">
@@ -39,7 +39,7 @@
       type="button"
       class="button button-small button-clear button-block button-balanced margin-top-10"
       ui-sref="licenses-photo-new({step: 3})"
-      ng-if="isWizard"
+      ng-if="auth.isWizard"
     >Skip this step</button>
 
     <!-- <button ng-click="resend()" type="button" class="button button-clear button-block button-positive button-small margin-top-20">Re-send the code</button> -->
@@ -48,7 +48,7 @@
 
   <ion-footer-bar class="no-padding">
     <div class="button-bar">
-      <button type="button" class="button button-stable" ng-if="fromBooking" go-back>Cancel</button>
+      <button type="button" class="button button-stable" ng-if="auth.fromBooking" go-back>Cancel</button>
       <button type="submit" form="form" class="button button-balanced">Verify</button>
     </div>
   </ion-footer-bar>

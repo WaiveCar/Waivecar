@@ -1,4 +1,4 @@
-<ion-view hide-back-button="true" class="auth auth-login" ng-controller="AuthController">
+<ion-view hide-back-button="true" class="auth auth-login">
 
   <ion-nav-title>
     <page-title class="dark-bg">Sign In</page-title>
@@ -6,7 +6,7 @@
 
   <ion-content scroll="false" padding="true" class="ion-content--center dark-bg">
 
-    <button type="button" class="button button-block button-positive button-padded" ng-click="loginWithFacebook()">
+    <button type="button" class="button button-block button-positive button-padded" ng-click="auth.loginWithFacebook()">
       <span class="fa-stack">
         <i class="fa fa-circle fa-stack-2x"></i>
         <i class="fa fa-facebook fa-stack-1x positive"></i>
@@ -15,17 +15,17 @@
 
     <lined>Or</lined>
 
-    <form ng-submit="login(form)" name="form" id="form" novalidate class="padding-bottom">
+    <form ng-submit="auth.login(form)" name="form" id="form" novalidate class="padding-bottom">
       <div class="list">
 
         <label class="item item-input">
           <span class="input-label">Login</span>
-          <input type="text" placeholder="phone or email" name="identifier" ng-model="forms.loginForm.identifier" required autofocus autocapitalize="off" autocorrect="off" />
+          <input type="text" placeholder="phone or email" name="identifier" ng-model="auth.forms.loginForm.identifier" required autofocus autocapitalize="off" autocorrect="off" />
         </label>
 
         <label class="item item-input">
           <span class="input-label">Password</span>
-          <input type="password" placeholder="* * * * * *" name="password" ng-model="forms.loginForm.password" required autocapitalize="off" autocorrect="off">
+          <input type="password" placeholder="* * * * * *" name="password" ng-model="auth.forms.loginForm.password" required autocapitalize="off" autocorrect="off">
         </label>
 
         <div class="validations" ng-show="form.$dirty && form.$invalid">

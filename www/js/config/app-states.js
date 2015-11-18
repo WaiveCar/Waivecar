@@ -52,6 +52,7 @@ module.exports = [
         cache: false,
         url: '/auth/login',
         templateUrl: '/templates/auth/login.html',
+        controller: 'AuthController as auth',
         data: {
           auth: false
         }
@@ -61,6 +62,7 @@ module.exports = [
         cache: false,
         url: '/auth/forgot-password',
         templateUrl: '/templates/auth/forgot-password.html',
+        controller: 'AuthController as auth',
         data: {
           auth: false
         }
@@ -70,6 +72,7 @@ module.exports = [
         cache: false,
         url: '/auth/forgot-password-success',
         templateUrl: '/templates/auth/forgot-password-success.html',
+        controller: 'AuthController as auth',
         data: {
           auth: false
         }
@@ -80,6 +83,7 @@ module.exports = [
         url: '/auth/reset-password?token',
         // TODO: Implement this
         templateUrl: '/templates/auth/reset-password.html',
+        controller: 'AuthController as auth',
         data: {
           auth: false
         }
@@ -155,6 +159,7 @@ module.exports = [
         // 10.1-Verification
         url: '/auth/account-verify?step&token&fromBooking',
         templateUrl: '/templates/auth/account-verify.html',
+        controller: 'AuthController as auth',
         data: {
           auth: true
         }
