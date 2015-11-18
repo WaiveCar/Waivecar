@@ -5,7 +5,7 @@ require('../services/auth-service');
 require('../services/message-service');
 var _ = require('lodash');
 
-function AuthController ($rootScope, $scope, $state, $auth, $message, $data, $ionicHistory, $settings, FaceBookService, ezfb, $stateParams, BookingService) {
+function AuthController ($rootScope, $scope, $state, $auth, $message, $data, $ionicHistory, $settings, $stateParams, BookingService) {
   this.$ionicHistory = $ionicHistory;
 
   this.forms = {
@@ -156,8 +156,6 @@ module.exports = angular.module('app.controllers').controller('AuthController', 
   '$data',
   '$ionicHistory',
   '$settings',
-  'FaceBookService',
-  'ezfb',
   '$stateParams',
   'BookingService',
   AuthController

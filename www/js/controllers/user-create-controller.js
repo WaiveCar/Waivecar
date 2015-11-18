@@ -13,11 +13,9 @@ module.exports = angular.module('app.controllers').controller('UserCreateControl
   '$state',
   '$auth',
   '$data',
-  'FaceBookService',
   '$message',
-  'ezfb',
   '$stateParams',
-  function($rootScope, $scope, $state, $auth, $data, FaceBookService, $message, ezfb, $stateParams) {
+  function($rootScope, $scope, $state, $auth, $data, $message, $stateParams) {
 
     $scope.save = function(form) {
       if (form.$invalid) {

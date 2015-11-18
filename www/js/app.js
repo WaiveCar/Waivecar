@@ -14,7 +14,6 @@ require('angular-messages');
 require('angular-socket-io');
 require('angular-payments');
 require('ng-FitText');
-require('easyfb');
 require('./modules/ngIOS9UIWebViewPatch');
 
 // Components (We first define angular modules which are dependencies to main 'app' module)
@@ -40,7 +39,6 @@ var app = angular.module('app', [
   'btford.socket-io',
   'angularPayments',
   'ngFitText',
-  'ezfb',
 
   'Maps',
   'app.settings',

@@ -33,7 +33,6 @@
     "moment": "./node_modules/moment/moment.js",
     "sprintf": "./node_modules/sprintf-js/dist/sprintf.min.js",
     "jquery": "./node_modules/jquery/dist/jquery.js",
-    "easyfb": "./node_modules/angular-easyfb/build/angular-easyfb.js",
     "leaflet": "./www/vendors/leaflet/leaflet-src.js",
     "skobbler": "./www/vendors/skobbler/skobbler-2.0.js"
   },
@@ -95,7 +94,6 @@
   "devDependencies": {
     "angular": "^1.4.6",
     "angular-animate": "^1.4.6",
-    "angular-easyfb": "^1.4.1",
     "angular-gravatar": "^0.4.1",
     "angular-messages": "^1.4.6",
     "angular-mocks": "^1.4.6",
@@ -142,29 +140,48 @@
     "when": "^3.7.3"
   },
   "cordovaPlugins": [
+    "ionic-plugin-keyboard",
+    "cordova-plugin-statusbar",
+    {
+      "locator": "https://github.com/EddyVerbruggen/Toast-PhoneGap-Plugin.git",
+      "id": "cordova-plugin-x-toast"
+    },
     "cordova-plugin-camera",
     "cordova-plugin-console",
     "cordova-plugin-device",
     "cordova-plugin-file",
     "cordova-plugin-file-transfer",
     "cordova-plugin-geolocation",
-    "cordova-plugin-statusbar",
     {
+      "id": "cordova-plugin-customurlscheme",
       "locator": "https://github.com/EddyVerbruggen/LaunchMyApp-PhoneGap-Plugin.git",
-      "id": "nl.x-services.plugins.launchmyapp",
       "variables": {
         "URL_SCHEME": "WaiveCar"
       }
     },
     "cordova-plugin-whitelist",
-    "org.apache.cordova.inappbrowser",
+    "cordova-plugin-inappbrowser",
     {
-      "locator": "https://github.com/EddyVerbruggen/Toast-PhoneGap-Plugin.git",
-      "id": "cordova-plugin-x-toast"
+      "id": "cordova-plugin-facebook4",
+      "locator": "cordova-plugin-facebook4",
+      "variables": {
+        "APP_ID": "1022707721082213",
+        "APP_NAME": "WaiveCar"
+      }
     }
   ],
   "cordovaPlatforms": [
     "ios",
-    "android"
+    "android",
+    {
+      "platform": "android",
+      "version": "",
+      "locator": "android"
+    },
+    {
+      "platform": "ios",
+      "version": "",
+      "locator": "ios"
+    }
   ]
 }

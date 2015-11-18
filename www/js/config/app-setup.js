@@ -15,11 +15,9 @@ var config = [
   '$compileProvider',
   '$provide',
   '$injector',
-  '$cordovaFacebookProvider',
   '$settingsProvider',
-  'ezfbProvider',
   'MapsLoaderProvider',
-  function($ionicConfigProvider, $stateProvider, $locationProvider, $httpProvider, $urlRouterProvider, $compileProvider, $provide, $injector, $cordovaFacebookProvider, $settingsProvider, ezfbProvider, MapsLoaderProvider) {
+  function($ionicConfigProvider, $stateProvider, $locationProvider, $httpProvider, $urlRouterProvider, $compileProvider, $provide, $injector, $settingsProvider, MapsLoaderProvider) {
 
     MapsLoaderProvider.setApiKey('8698d318586c58a1f8ca1e88ecfac299');
 
@@ -36,32 +34,6 @@ var config = [
     // $settingsProvider.setBaseUrl(baseUrl);
 
     $settingsProvider.setSkobblerApiKey('8698d318586c58a1f8ca1e88ecfac299');
-
-    ezfbProvider.setInitParams({
-      appId: $settingsProvider.facebook.clientId,
-    });
-
-    ezfbProvider.setLoadSDKFunction([
-      '$window', '$document', 'ezfbAsyncInit', 'ezfbLocale',
-      function($window, $document, ezfbAsyncInit, ezfbLocale) {
-        // Load the SDK's source Asynchronously
-        (function(d) {
-          var js, id = 'facebook-jssdk',
-            ref = d.getElementsByTagName('script')[0];
-          if (d.getElementById(id)) {
-            return;
-          }
-          js = d.createElement('script');
-          js.id = id;
-          js.async = true;
-          js.src = sprintf('https://connect.facebook.net/%s/sdk.js', ezfbLocale);
-          // js.src = sprintf('https://connect.facebook.net/%s/sdk/debug.js', ezfbLocale);
-          ref.parentNode.insertBefore(js, ref);
-        }($document[0]));
-
-        $window.fbAsyncInit = ezfbAsyncInit;
-      }
-    ]);
 
     $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|tel):/);
 
