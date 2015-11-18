@@ -1,12 +1,12 @@
 'use strict';
 
-let queryParser = Bento.provider('sequelize/helpers').query;
-let License     = Bento.model('License');
-let error       = Bento.Error;
-let relay       = Bento.Relay;
-let Service     = require('./classes/service');
-let Checkr      = require('./checkr');
-let resource    = 'licenses';
+let queryParser  = Bento.provider('sequelize/helpers').query;
+let License      = Bento.model('License');
+let error        = Bento.Error;
+let relay        = Bento.Relay;
+let Service      = require('./classes/service');
+let Verification = require('./onfido');
+let resource     = 'licenses';
 
 module.exports = class LicenseService extends Service {
 
@@ -37,7 +37,7 @@ module.exports = class LicenseService extends Service {
       }
     });
 
-    [ 'zip', 'birthDate', 'number', 'state', 'ssn' ].forEach((val) => {
+    [ 'birthDate', 'number', 'state' ].forEach((val) => {
       let currentValue = license.hasOwnProperty(val) ? license[val] : undefined;
       if (!currentValue) {
         throw error.parse({
@@ -47,28 +47,29 @@ module.exports = class LicenseService extends Service {
       }
     });
 
-    // ### Create Checkr Candidate
+    // ### Create Verification Candidate
     let candidate = {
-      'first_name'            : user.firstName,
-      'middle_name'           : user.middleName,
-      'last_name'             : user.lastName,
-      email                   : user.email,
-      phone                   : user.phone,
-      zipcode                 : license.zip,
-      dob                     : license.birthDate,
-      'driver_license_number' : license.number,
-      'driver_license_state'  : license.state,
-      'format'                : 'ST',
-      'custom_id'             : license.id,
-      ssn                     : license.ssn
-    }
+      'first_name'  : user.firstName,
+      'middle_name' : user.middleName,
+      'last_name'   : user.lastName,
+      email         : user.email,
+      telephone     : user.phone,
+      country       : 'USA',
+      zipcode       : license.zip,
+      dob           : license.birthDate,
+      'id_numbers'  : [{
+        type         : 'driving_license',
+        value        : license.number,
+        'state_code' : license.state
+      }]
+    };
 
-    let createdCandidate = yield Checkr.createCandidate(candidate, _user);
+    let userLink = yield Verification.createUserLink(candidate, _user);
 
-    // ### Update License to store Checkr Candidate Id.
+    // ### Update License to store Candidate/Applicant Id.
     yield license.update({
-      status      : 'provided',
-      candidateId : createdCandidate.id
+      status       : 'provided',
+      linkedUserId : userLink.id
     });
 
     // ### Relay

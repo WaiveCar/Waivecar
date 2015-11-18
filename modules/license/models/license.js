@@ -68,7 +68,12 @@ Bento.Register.Model('License', 'sequelize', function (model, Sequelize) {
       allowNull : false
     },
 
-    candidateId : {
+    linkedUserId : {
+      type      : Sequelize.STRING(64),
+      allowNull : true
+    },
+
+    checkId : {
       type      : Sequelize.STRING(64),
       allowNull : true
     },

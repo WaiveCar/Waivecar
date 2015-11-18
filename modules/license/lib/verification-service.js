@@ -2,7 +2,7 @@
 
 let relay    = Bento.Relay;
 let Service  = require('./classes/service');
-let Checkr   = require('./checkr');
+let Verification = require('./onfido');
 let resource = 'licenses';
 
 module.exports = class LicenseVerificationService extends Service {
@@ -18,16 +18,19 @@ module.exports = class LicenseVerificationService extends Service {
     this.hasAccess(user, _user);
 
     let license = yield this.getLicense(id);
-    let report = {
-      package        : 'driver_standard',
-      'candidate_id' : license.candidateId
+    let payload = {
+      type    : 'express',
+      reports : [{
+        name : 'driving_record'
+      }]
     };
 
-    let candidate = yield Checkr.createReport(report, _user);
+    let check = yield Verification.createCheck(license.linkedUserId, payload, _user);
 
     yield license.update({
-      status   : candidate.status,
-      reportId : candidate['motor_vehicle_report_id']
+      status   : check.status,
+      checkId  : check.id,
+      reportId : check.reports[0].id
     });
 
     // ### Relay
@@ -50,7 +53,7 @@ module.exports = class LicenseVerificationService extends Service {
     //this.hasAccess(user, _user);
 
     let license = yield this.getLicense(id);
-    let report = yield Checkr.getReport(license.reportId, _user);
+    let report = yield Verification.getReport(license.reportId, _user);
     console.log(report);
     return report;
   }
