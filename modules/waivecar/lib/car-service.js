@@ -178,7 +178,31 @@ module.exports = class CarService extends Service {
    * @param  {Object} _user
    * @return {Object} updated Car
    */
-  static *executeCommand(id, command, _user) {
+  static *unlockCar(id, _user) {
+    return yield this.executeCommand(id, 'central_lock', 'unlock', user);
+  }
+
+  static *lockCar(id, _user) {
+    return yield this.executeCommand(id, 'central_lock', 'lock', user);
+  }
+
+  static *unlockImmobilzer(id, _user) {
+    return yield this.executeCommand(id, 'immobilizer', 'unlock', user);
+  }
+
+  static *lockImmobilzer(id, _user) {
+    return yield this.executeCommand(id, 'immobilizer', 'lock', user);
+  }
+
+  /**
+   * Execute a Command against a Device and update Car
+   * @param  {String} id
+   * @param  {String} part    central_lock || immobilizer
+   * @param  {String} command lock || unlock
+   * @param  {Object} _user
+   * @return {Object} updated Car
+   */
+  static *executeCommand(id, part, command, _user) {
     let existingCar = yield Car.findById(id);
     if (!existingCar) {
       let error    = new Error(`CAR: ${ id }`);
@@ -188,11 +212,9 @@ module.exports = class CarService extends Service {
       throw error;
     }
 
-    let status = yield this.request(`/devices/${ id }/status`, 'PATCH', {
-      immobilizer  : `${ command }ed`,
-      central_lock : `${ command }ed`
-    });
-
+    let payload = {};
+    payload[part] = `${ command }ed`;
+    let status = yield this.request(`/devices/${ id }/status`, 'PATCH', payload);
     let updatedCar = this.transformDeviceToCar(id, status);
     return yield this.update(id, updatedCar, existingCar, _user);
   }
