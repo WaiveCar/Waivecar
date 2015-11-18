@@ -5,7 +5,15 @@ require('../services/auth-service');
 require('../services/message-service');
 var _ = require('lodash');
 
-function AuthController ($rootScope, $scope, $state, $auth, $message, $data, $ionicHistory, $settings, $stateParams, BookingService) {
+function AuthController ($injector) {
+  var $state = $injector.get('$state');
+  var $auth = $injector.get('$auth');
+  var $message = $injector.get('$message');
+  var $data = $injector.get('$data');
+  var BookingService = $injector.get('BookingService');
+  var $stateParams = $injector.get('$stateParams');
+  var $ionicHistory = $injector.get('$ionicHistory');
+
   this.$ionicHistory = $ionicHistory;
 
   this.forms = {
@@ -57,7 +65,7 @@ function AuthController ($rootScope, $scope, $state, $auth, $message, $data, $io
 
   this.submitNewPassword = function submitNewPassword (form){
     if (form.$pristine) {
-      return $message.info('Please fill in required fields first.');
+      return $message.info('Please fill in requguired fields first.');
     }
     if (form.$invalid) {
       return $message.error('Please resolve form errors and try again.');
@@ -75,23 +83,23 @@ function AuthController ($rootScope, $scope, $state, $auth, $message, $data, $io
 
   this.loginWithFacebook = function loginWithFacebook () {
 
-    return FaceBookService.getLoginStatus()
-      .then(function(response) {
-        if (response.status !== 'connected') {
-          return FaceBookService.login(['public_profile', 'email']);
-        }
-        return response;
-
-      })
-      .then(function(res) {
-        if (res.status === 'connected') {
-          return $auth.loginWithFacebook(res.authResponse.accessToken);
-        }
-      })
-      .then(function() {
-        $state.go('landing');
-      })
-      .catch($message.error);
+    // return FaceBookService.getLoginStatus()
+    //   .then(function(response) {
+    //     if (response.status !== 'connected') {
+    //       return FaceBookService.login(['public_profile', 'email']);
+    //     }
+    //     return response;
+    //
+    //   })
+    //   .then(function(res) {
+    //     if (res.status === 'connected') {
+    //       return $auth.loginWithFacebook(res.authResponse.accessToken);
+    //     }
+    //   })
+    //   .then(function() {
+    //     $state.go('landing');
+    //   })
+    //   .catch($message.error);
 
   };
 
@@ -130,7 +138,7 @@ function AuthController ($rootScope, $scope, $state, $auth, $message, $data, $io
       })
       .catch($message.error);
 
-  };
+    };
 
 
   this.init = function init () {
@@ -147,17 +155,5 @@ function AuthController ($rootScope, $scope, $state, $auth, $message, $data, $io
 
 }
 
-module.exports = angular.module('app.controllers').controller('AuthController', [
-  '$rootScope',
-  '$scope',
-  '$state',
-  '$auth',
-  '$message',
-  '$data',
-  '$ionicHistory',
-  '$settings',
-  '$stateParams',
-  'BookingService',
-  AuthController
-
-]);
+module.exports = angular.module('app.controllers')
+.controller('AuthController', ['$injector', AuthController]);

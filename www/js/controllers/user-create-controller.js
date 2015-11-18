@@ -77,52 +77,52 @@ module.exports = angular.module('app.controllers').controller('UserCreateControl
 
     $scope.registerWithFacebook = function() {
 
-      async.waterfall([
-
-        function checkIfAlreadyLoggedIn(done){
-
-          return FaceBookService.getLoginStatus()
-            .then(function(getLoginStatusResponse){
-              done(null, getLoginStatusResponse);
-            }).
-            catch(done);
-
-        },
-
-        function login(getLoginStatusResponse, done){
-          if (getLoginStatusResponse.status === 'connected') {
-            return done(null, getLoginStatusResponse);
-          }
-
-          return FaceBookService.login('public_profile,email')
-            .then(function(loginResponse){
-              done(null, loginResponse);
-            })
-            .catch(done);
-
-        },
-
-        function fetchBasicInfo(response, done){
-          return FaceBookService.api('/me?fields=email,first_name,last_name')
-            .then(function(fbUser){
-              fbUser.token = response.authResponse.accessToken;
-              return done(null, fbUser);
-            })
-            .catch(done);
-
-        }
-
-      ], function(err, fbUser){
-        if(err){
-          return $message.error(err);
-        }
-
-        return $state.go('users-new-facebook', {
-          fbUser: angular.toJson(fbUser),
-          step: 2
-        });
-
-      });
+      // async.waterfall([
+      //
+      //   function checkIfAlreadyLoggedIn(done){
+      //
+      //     return FaceBookService.getLoginStatus()
+      //       .then(function(getLoginStatusResponse){
+      //         done(null, getLoginStatusResponse);
+      //       }).
+      //       catch(done);
+      //
+      //   },
+      //
+      //   function login(getLoginStatusResponse, done){
+      //     if (getLoginStatusResponse.status === 'connected') {
+      //       return done(null, getLoginStatusResponse);
+      //     }
+      //
+      //     return FaceBookService.login('public_profile,email')
+      //       .then(function(loginResponse){
+      //         done(null, loginResponse);
+      //       })
+      //       .catch(done);
+      //
+      //   },
+      //
+      //   function fetchBasicInfo(response, done){
+      //     return FaceBookService.api('/me?fields=email,first_name,last_name')
+      //       .then(function(fbUser){
+      //         fbUser.token = response.authResponse.accessToken;
+      //         return done(null, fbUser);
+      //       })
+      //       .catch(done);
+      //
+      //   }
+      //
+      // ], function(err, fbUser){
+      //   if(err){
+      //     return $message.error(err);
+      //   }
+      //
+      //   return $state.go('users-new-facebook', {
+      //     fbUser: angular.toJson(fbUser),
+      //     step: 2
+      //   });
+      //
+      // });
 
     };
 
