@@ -2,7 +2,7 @@
 
 let booking = require('../lib/booking-service');
 
-Bento.Register.Controller('BookingsController', function (controller) {
+Bento.Register.Controller('BookingsController', function(controller) {
 
   /**
    * Creates a new booking request.
@@ -22,7 +22,7 @@ Bento.Register.Controller('BookingsController', function (controller) {
 
   /**
    * Returns a single booking.
-   * @param  {Number} id The booking ID.
+   * @param  {Number} id
    * @return {Object}
    */
   controller.show = function *(id) {
@@ -31,7 +31,7 @@ Bento.Register.Controller('BookingsController', function (controller) {
 
   /**
    * Initiates the booking and starts the ride.
-   * @param  {Number} id The booking ID.
+   * @param  {Number} id
    * @return {Object}
    */
   controller.start = function *(id) {
@@ -40,18 +40,21 @@ Bento.Register.Controller('BookingsController', function (controller) {
 
   /**
    * Ends the current ride.
-   * @param  {Number} id The booking ID.
+   * @param  {Number} id
    * @return {Object}
    */
   controller.end = function *(id) {
     return yield booking.end(id, this.payload.paymentId, this.auth.user);
   };
 
-  /*
-  controller.destroy = function *(id) {
-    return yield BookingService.cancel(id, this.auth.user);
+  /**
+   * Cancels a booking.
+   * @param  {Number} id
+   * @return {Object}
+   */
+  controller.cancel = function *(id) {
+    return yield booking.cancel(id, this.auth.user);
   };
-  */
 
   return controller;
 

@@ -2,7 +2,7 @@
 
 let error = Bento.Error;
 
-module.exports = function *admin () {
+module.exports = function *admin() {
   if (this.auth.user.role !== 'admin') {
     throw error.parse({
       code    : `INVALID_CREDENTIALS`,

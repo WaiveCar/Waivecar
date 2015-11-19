@@ -2,7 +2,7 @@
 
 let service = require('../lib/verification-service');
 
-Bento.Register.Controller('LicenseVerificationsController', function (controller) {
+Bento.Register.Controller('LicenseVerificationsController', function(controller) {
 
   /**
    * Requests a new verification and updates license to pending.

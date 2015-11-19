@@ -28,7 +28,7 @@ module.exports = {
       idle : 1000
     },
     debug : false,
-    force : true
+    force : false
   }
 
 };

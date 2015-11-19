@@ -4,7 +4,7 @@ let BookingPayment     = Bento.model('BookingPayment');
 let BookingPaymentItem = Bento.model('BookingPaymentItem');
 
 module.exports = class Payment {
-  
+
   constructor(booking, payment) {
     this.booking = booking;
     this.payment = payment;
@@ -54,4 +54,4 @@ module.exports = class Payment {
     };
   }
 
-}
+};

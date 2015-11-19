@@ -1,6 +1,6 @@
 'use strict';
 
-let Sms         = Bento.provider('sms')
+let Sms         = Bento.provider('sms');
 let queryParser = Bento.provider('sequelize/helpers').query;
 let User        = Bento.model('User');
 let error       = Bento.Error;

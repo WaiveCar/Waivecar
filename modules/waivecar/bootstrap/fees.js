@@ -21,7 +21,7 @@ module.exports = function *() {
   // ### Import Fees
 
   log.debug(`Importing fees from './modules/waivecar/bootstrap/data/fees.json'`);
-  
+
   for (let i = 0, len = fees.length; i < len; i++) {
     let fee = new Fee(fees[i]);
     yield fee.upsert();

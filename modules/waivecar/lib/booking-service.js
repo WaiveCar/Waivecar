@@ -17,63 +17,98 @@ let config         = Bento.config.waivecar;
 
 module.exports = class BookingService extends Service {
 
+  /*
+   |--------------------------------------------------------------------------------
+   | Create Methods
+   |--------------------------------------------------------------------------------
+   |
+   | create() => POST /bookings
+   |
+   |  Creates a new booking by adding the provided userId to the provided carId.
+   |  Our system currently allows admins to create new bookings on behalf of the
+   |  user, hence the hasAccess check.
+   |
+   |  We have an additional try catch when saving a booking so that we can remove
+   |  the driver from the assigned car in case booking for some reason fails.
+   |
+   |  Once a booking has successfully been saved we start an auto cancelation timer
+   |  of X minutes.
+   |
+   */
+
   /**
    * Creates a new booking.
+   * @param  {Object} data  Data object containing carId, and userId.
+   * @param  {Object} _user User making the request.
    * @return {Object}
    */
   static *create(data, _user) {
     let user = yield this.getUser(data.userId);
     let car  = yield this.getCar(data.carId, data.userId, true);
 
-    // ### Access Check
-    // Check if the user can create a new booking, and verify that the
-    // car requested is available.
-
     this.hasAccess(user, _user);
 
+    yield this.hasBookingAccess(user);
+
+    // ### Add Driver
+    // Add the driver to the car so no simultaneous requests can book this car.
+
+    yield car.addDriver(user.id);
+
     // ### Create Booking
+    // Attempt to create a new booking, if booking fails to save we remove the
+    // driver before throwing the error.
 
     let booking = new Booking({
       carId  : data.carId,
       userId : data.userId
     });
-    yield booking.save();
 
-    // ### Update Car
-    // Updates the car by setting it as unavailable and assigning the user.
+    try {
+      yield booking.save();
+    } catch (err) {
+      yield car.removeDriver();
+      throw err;
+    }
 
-    yield car.update({
-      userId      : data.userId,
-      isAvailable : false
-    });
-
-    // ### Auto Cancel
-    // Set the booking to automatically cancel after x minutes of booking
-    // inactivity to free up the car other users.
-
-    queue.scheduler.add('booking-auto-cancel', {
-      uid   : `booking-${ booking.id }`,
-      timer : config.booking.timer,
-      data  : {
-        bookingId : booking.id
-      }
-    });
+    yield booking.setCancelTimer(config.booking.timer);
 
     // ### Relay Booking
-    // Submit the booking to administrative users.
 
     let payload = {
       type : 'store',
       data : booking.toJSON()
     };
 
-    relay.user(user.id, 'bookings', payload)
+    relay.user(user.id, 'bookings', payload);
     relay.admin('bookings', payload);
 
-    // Prepare Booking
+    // ### Return Booking
 
     return booking;
   }
+
+  /*
+   |--------------------------------------------------------------------------------
+   | Read Methods
+   |--------------------------------------------------------------------------------
+   |
+   | Booking allows for standard RESTful methods of indexing an array of records
+   | and viewing a single record.
+   |
+   | index() => GET /bookings
+   |
+   |  Depending on the request role we return all queries records, or all records
+   |  belonging to the requesting user. Only administrators has full access to all
+   |  booking records in the database.
+   |
+   | show() => GET /bookings/:id
+   |
+   |  Returns a single booking with attached payments and files. A record is only
+   |  available to the user if they are the owner of the record or if the requesting
+   |  user is an administrator.
+   |
+   */
 
   /**
    * Returns a list of bookings.
@@ -124,17 +159,20 @@ module.exports = class BookingService extends Service {
     this.hasAccess(user, _user);
 
     // ### Prepare Booking
-    // Prepares a booking along with its payments and files.
 
     booking = booking.toJSON();
+
+    // ### Append Payments
 
     booking.payments = yield Payment.find({
       where : {
         id : booking.payments.map((val) => {
-          return val.paymentId
+          return val.paymentId;
         })
       }
     });
+
+    // ### Append Files
 
     booking.files = yield File.find({
       where : {
@@ -145,6 +183,33 @@ module.exports = class BookingService extends Service {
     return booking;
   }
 
+  /*
+   |--------------------------------------------------------------------------------
+   | Update Methods
+   |--------------------------------------------------------------------------------
+   |
+   | Service update methods are used for triggering status updates on the booking
+   | via a collection of PUT endpoints.
+   |
+   | start() => PUT /bookings/:id/start
+   |
+   |  The user has arrived at the car and confirms that they want to start the
+   |  booking. At this point we unlock the car, and update the status of the
+   |  booking. From this point cancellation is no longer possible, and any
+   |  automatic cancelation timers are removed.
+   |
+   | ready() => PUT /bookings/:id/ready
+   |
+   |  The user has removed the key from the fob and is ready to start their drive.
+   |  We send a request to check if the key is out before unlocking the immobilizer
+   |  allowing the user to start the engine.
+   |
+   | end() => PUT /bookings/:id/end
+   |
+   |  The ride has ended, flow to be finalized...
+   |
+   */
+
   /**
    * Starts the booking and initiates the drive.
    * @param  {Number} id
@@ -152,14 +217,10 @@ module.exports = class BookingService extends Service {
    * @return {Object}
    */
   static *start(id, _user) {
-    let booking   = yield Booking.findById(id);
+    let booking   = yield this.getBooking(id);
     let car       = yield this.getCar(booking.carId);
     let user      = yield this.getUser(booking.userId);
     let checkList = [ 'in-progress', 'pending-payment', 'cancelled', 'completed' ];
-
-    // ### Access Check
-    // Check if the user can create a new booking, and verify that the
-    // car requested is available.
 
     this.hasAccess(user, _user);
 
@@ -169,21 +230,19 @@ module.exports = class BookingService extends Service {
 
     if (checkList.indexOf(booking.status) !== -1) {
       throw error.parse({
-        code    : `INVALID_REQUEST`,
-        message : `You cannot start a ride for a booking that is ${ booking.status.replace('-', ' ') }`
+        code    : `BOOKING_REQUEST_INVALID`,
+        message : `You cannot start a ride for a booking that is ${ booking.getStatus() }`
       }, 400);
     }
 
+    /* DEPRECATED? No longer need to pre-authorize payments (only need to validate that card is active)
     if (booking.status !== 'payment-authorized') {
       throw error.parse({
         code    : `MISSING_PAYMENT_AUTHORIZATION`,
         message : `The booking must be authorized for payment before we can start the ride.`
       }, 400);
     }
-
-    // -----------------------------------------------
-    // TODO: UNLOCK THE CAR BEFORE INITIATING THE RIDE
-    // -----------------------------------------------
+    */
 
     // ### Create Details
     // Creates a detail record of the start of the ride.
@@ -201,15 +260,8 @@ module.exports = class BookingService extends Service {
 
     // ### Update Booking Status
 
-    yield booking.update({ status : 'in-progress' });
-
-    // ### Remove Auto Cancel
-
-    queue.scheduler.cancel('booking-auto-cancel', `booking-${ booking.id }`);
-
-    // -----------------------
-    // TODO: START RIDE TIMERS
-    // -----------------------
+    yield booking.inProgress();
+    yield booking.delCancelTimer();
   }
 
   /**
@@ -219,7 +271,7 @@ module.exports = class BookingService extends Service {
    * @return {Object}
    */
   static *end(id, paymentId, _user) {
-    let booking        = yield Booking.findById(id);
+    let booking        = yield this.getBooking(id);
     let bookingPayment = yield BookingPayment.findById(paymentId);
     let car            = yield this.getCar(booking.carId);
     let user           = yield this.getUser(booking.userId);
@@ -228,8 +280,8 @@ module.exports = class BookingService extends Service {
 
     if (!bookingPayment) {
       throw error.parse({
-        code    : `INVALID_PAYMENT`,
-        message : `The provided paymentId is invalid`
+        code    : `BOOKING_PAYMENT_INVALID`,
+        message : `The provided payment identifier is invalid`
       }, 400);
     }
 
@@ -238,7 +290,7 @@ module.exports = class BookingService extends Service {
 
     if (booking.status !== 'in-progress') {
       throw error.parse({
-        code    : `INVALID_REQUEST`,
+        code    : `BOOKING_REQUEST_INVALID`,
         message : `You can only end a booking that is in-progress.`
       }, 400);
     }
@@ -259,10 +311,52 @@ module.exports = class BookingService extends Service {
     // ### Reset Car
     // Remove the user from the car and make it available
 
-    yield car.update({
-      userId      : null,
-      isAvailable : true
-    });
+    yield car.delDriver();
   }
 
-}
+  /*
+   |--------------------------------------------------------------------------------
+   | Delete Methods
+   |--------------------------------------------------------------------------------
+   |
+   | Service currently supports booking cancelation via RESTful delete endpoint.
+   |
+   | DEL /bookings/:id
+   |
+   |  Cancels a booking by updating the booking status, removing any automatic
+   |  cancelation timers and removes the driver from the booked car so that it
+   |  becomes available for future booking requests.
+   |
+   */
+
+  /**
+   * Attempts to cancel a booking.
+   * @param  {Number} bookingId
+   * @param  {Object} _user
+   * @return {Object}
+   */
+  static *cancel(bookingId, _user) {
+    let booking = yield this.getBooking(id);
+    let car     = yield this.getCar(booking.carId);
+    let user    = yield this.getUser(booking.userId);
+    let states  = [ 'new-booking', 'payment-authorized', 'pending-arrival' ];
+
+    this.hasAccess(user, _user);
+
+    // ### Verify Status
+
+    if (states.indexOf(booking.status) === -1) {
+      throw error.parse({
+        code    : `BOOKING_REQUEST_INVALID`,
+        message : `You cannot cancel a booking that is ${ booking.getStatus() }.`
+      }, 400);
+    }
+
+    // ### Cancel Booking
+
+    yield booking.cancel();
+    yield booking.delCancelTimer();
+    yield car.removeDriver();
+  }
+
+};

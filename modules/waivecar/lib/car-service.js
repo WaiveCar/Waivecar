@@ -316,4 +316,4 @@ module.exports = class CarService extends Service {
     return JSON.parse(response.body);
   }
 
-}
+};

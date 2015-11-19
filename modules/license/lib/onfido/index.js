@@ -127,9 +127,9 @@ module.exports = class OnfidoService {
       url     : config.onfido.uri + resource,
       method  : method || 'GET',
       headers : {
-        Accept          : 'application/json',
-        'Content-Type'  : 'application/json',
-        'Authorization' : `Token token=${ config.onfido.key }`
+        Accept         : 'application/json',
+        'Content-Type' : 'application/json',
+        Authorization  : `Token token=${ config.onfido.key }`
       }
     };
 
@@ -151,4 +151,4 @@ module.exports = class OnfidoService {
     return JSON.parse(response.body);
   }
 
-}
+};

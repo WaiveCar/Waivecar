@@ -20,9 +20,11 @@ module.exports = class LicenseVerificationService extends Service {
     let license = yield this.getLicense(id);
     let payload = {
       type    : 'express',
-      reports : [{
-        name : 'driving_record'
-      }]
+      reports : [
+        {
+          name : 'driving_record'
+        }
+      ]
     };
 
     let check = yield Verification.createCheck(license.linkedUserId, payload, _user);

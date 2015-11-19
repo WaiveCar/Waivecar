@@ -49,18 +49,20 @@ module.exports = class LicenseService extends Service {
 
     // ### Create Verification Candidate
     let candidate = {
-      'first_name'  : user.firstName,
-      'middle_name' : user.middleName,
-      'last_name'   : user.lastName,
-      email         : user.email,
-      telephone     : user.phone,
-      country       : 'USA',
-      dob           : license.birthDate,
-      'id_numbers'  : [{
-        type         : 'driving_license',
-        value        : license.number,
-        'state_code' : license.state
-      }]
+      first_name  : user.firstName,
+      middle_name : user.middleName,
+      last_name   : user.lastName,
+      email       : user.email,
+      telephone   : user.phone,
+      country     : 'USA',
+      dob         : license.birthDate,
+      id_numbers  : [
+        {
+          type       : 'driving_license',
+          value      : license.number,
+          state_code : license.state
+        }
+      ]
     };
 
     let userLink = yield Verification.createUserLink(candidate, _user);

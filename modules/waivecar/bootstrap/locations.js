@@ -11,7 +11,7 @@ module.exports = function *() {
   if (count > 140) {
     return;
   }
-  
+
   let locations = yield fs.readFile(path.join(Bento.ROOT_PATH, 'modules', 'waivecar', 'bootstrap', 'data', 'charging-stations-la.json'));
   let data      = JSON.parse(locations);
 

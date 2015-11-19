@@ -2,7 +2,7 @@
 
 let error = Bento.Error;
 
-module.exports = function *authenticate () {
+module.exports = function *authenticate() {
   if (!this.auth.check()) {
     throw error.parse({
       code    : `MISSING_CREDENTIALS`,

@@ -1,6 +1,6 @@
 'use strict';
 
-Bento.Register.Model('Location', 'sequelize', function (model, Sequelize) {
+Bento.Register.Model('Location', 'sequelize', function(model, Sequelize) {
 
   /**
    * The identity of the table created in your database.

@@ -2,7 +2,7 @@
 
 let car = require('../lib/car-service');
 
-Bento.Register.Controller('CarsController', function (controller) {
+Bento.Register.Controller('CarsController', function(controller) {
 
   /**
    * Returns a list of cars.
@@ -29,7 +29,7 @@ Bento.Register.Controller('CarsController', function (controller) {
    */
   controller.update = function *(id, command) {
     return yield car.executeCommand(id, command, this.auth.user);
-  }
+  };
 
   /**
    * Retrieve all events for a single car.
@@ -38,7 +38,7 @@ Bento.Register.Controller('CarsController', function (controller) {
    */
   controller.events = function *(id) {
     return yield car.events(id, this.auth.user);
-  }
+  };
 
   return controller;
 

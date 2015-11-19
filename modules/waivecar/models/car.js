@@ -133,6 +133,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     // ### Car Status
     // This holds information such as the availability of the car
     // and the current user who is occupying the car.
+
     userId : {
       type       : Sequelize.INTEGER,
       references : {
@@ -148,6 +149,51 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
     positionUpdatedAt : {
       type : Sequelize.DATE
+    }
+
+  };
+
+  // ### Model Methods
+
+  model.methods = {
+
+    /**
+     * Sets the car into unavailable mode.
+     */
+    unavailable : function *() {
+      yield this.update({
+        isAvailable : false
+      });
+    },
+
+    /**
+     * Sets the car into available mode.
+     */
+    available : function *() {
+      yield this.update({
+        isAvailable : true
+      });
+    },
+
+    /**
+     * Adds a driver to the car and sets the car to unavailable.
+     * @param {Number} userId
+     */
+    addDriver : function *(userId) {
+      yield this.update({
+        userId      : userId,
+        isAvailable : false
+      });
+    },
+
+    /**
+     * Removes driver from the car and sets the car to available.
+     */
+    removeDriver : function *() {
+      yield this.update({
+        userId      : null,
+        isAvailable : true
+      });
     }
 
   };

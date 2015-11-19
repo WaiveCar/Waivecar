@@ -2,7 +2,7 @@
 
 let hooks = require('../lib/hook-service');
 
-Bento.Register.Controller('LicenseHooksController', function (controller) {
+Bento.Register.Controller('LicenseHooksController', function(controller) {
 
   /**
    * Catches an inbound hook event.

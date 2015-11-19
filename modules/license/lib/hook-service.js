@@ -17,7 +17,7 @@ module.exports = class Webhook {
    * @return {Object}
    */
   static *catch(service, payload) {
-    switch(service) {
+    switch (service) {
       case 'checkr' : {
         return yield Webhook.checkr(payload);
       }
@@ -64,4 +64,4 @@ module.exports = class Webhook {
     yield webhooks.checkr[event[0]][event[1]](payload);
   }
 
-}
+};

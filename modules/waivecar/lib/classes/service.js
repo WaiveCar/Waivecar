@@ -1,10 +1,31 @@
 'use strict';
 
-let Car   = Bento.model('Car');
-let User  = Bento.model('User');
-let error = Bento.Error;
+let Booking = Bento.model('Booking');
+let Car     = Bento.model('Car');
+let User    = Bento.model('User');
+let License = Bento.model('License');
+let error   = Bento.Error;
 
 module.exports = class Service {
+
+  /**
+   * Attempts to return the request booking.
+   * @param  {Number} bookingId
+   * @return {Object}
+   */
+  static *getBooking(bookingId) {
+    let booking = yield Booking.findById(bookingId);
+    if (!booking) {
+      throw error.parse({
+        code    : `BOOKING_NOT_FOUND`,
+        message : `The requested booking does not exist.`,
+        data    : {
+          bookingId : parseInt(bookingId)
+        }
+      }, 400);
+    }
+    return booking;
+  }
 
   /**
    * Attempts to return the car.
@@ -72,10 +93,10 @@ module.exports = class Service {
   }
 
   /**
-   * Only allow access if the requesting user is the actor or is administrator.
+   * Only allow access if the requesting user owns the record or is an administrator.
    * @param  {Object}  user  The user to be modified.
    * @param  {Object}  _user The user requesting modification.
-   * @return {Boolean}
+   * @return {Void}
    */
   static hasAccess(user, _user) {
     if (user.id !== _user.id && _user.role !== 'admin') {
@@ -86,4 +107,39 @@ module.exports = class Service {
     }
   }
 
-}
+  /**
+   * Checks if the user account has been approved for booking.
+   * @param  {Object}  user
+   * @return {Void}
+   */
+  static *hasBookingAccess(user) {
+    let missing = [];
+    let license = yield License.findOne({
+      where : {
+        userId : user.id
+      }
+    });
+
+    // ### Check Status
+
+    if (!user.verifiedEmail) { missing.push('email'); }
+    if (!user.verifiedPhone) { missing.push('phone'); }
+
+    if (!license || license.status !== 'completed') {
+      missing.push('license');
+    }
+
+    // ### Throw Error
+
+    if (missing.length) {
+      throw error.parse({
+        code    : `BOOKING_INVALID_REQUEST`,
+        message : `Your account must be approved for booking before you can make this request.`,
+        data    : {
+          required : missing
+        }
+      }, 400);
+    }
+  }
+
+};
