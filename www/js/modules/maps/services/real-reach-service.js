@@ -8,8 +8,7 @@ module.exports = angular.module('Maps').service('RealReachService', [
   '$q',
   '$http',
   'LocationService',
-  '$window',
-  function ($rootScope, MapsLoader, $q, $http, LocationService, $window) {
+  function ($rootScope, MapsLoader, $q, $http, LocationService) {
 
     var service = {
       getUrl: function (apiKey) {

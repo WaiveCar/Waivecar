@@ -9,8 +9,7 @@ module.exports = angular.module('Maps').service('RouteService', [
   '$http',
   'MapsEvents',
   'skobblerApiCodes',
-  '$window',
-  function ($rootScope, MapsLoader, $q, $http, MapsEvents, skobblerApiCodes, $window) {
+  function ($rootScope, MapsLoader, $q, $http, MapsEvents, skobblerApiCodes) {
     var service = {
 
       getUrl: function (apiKey) {

@@ -3,7 +3,6 @@
 require('ionic-angular');
 require('ngCordova');
 require('../services/auth-interceptor');
-var sprintf = require('sprintf-js').sprintf;
 var ionic = require('ionic');
 
 var config = [

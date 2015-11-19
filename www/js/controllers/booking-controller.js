@@ -6,7 +6,6 @@ require('../services/mock-city-location-service.js');
 require('../services/auth-service');
 require('../services/data-service');
 var _ = require('lodash');
-var moment = require('moment');
 var ionic = require('ionic');
 var sprintf = require('sprintf-js').sprintf;
 

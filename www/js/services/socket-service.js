@@ -1,7 +1,6 @@
 'use strict';
 var angular = require('angular');
 var io = require('socket.io-client');
-var ionic = require('ionic');
 
 module.exports = angular.module('app')
   .factory('$socket', [
