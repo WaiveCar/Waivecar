@@ -6,8 +6,19 @@ modules/**/node_modules
 #provider node_modules
 providers/**/node_modules
 
-providers
-modules
-!modules/license
-!modules/waivecar
-!providers/user-verification
+modules/auth
+modules/file
+modules/log
+modules/payment
+modules/subscription
+modules/ui
+modules/user
+modules/verification
+providers/bcrypt
+providers/email
+providers/mongo
+providers/queue
+providers/sequelize
+providers/slack
+providers/sms
+providers/token
