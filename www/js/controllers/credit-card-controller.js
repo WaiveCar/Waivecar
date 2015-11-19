@@ -4,7 +4,6 @@ require('angular-ui-router');
 require('../services/auth-service');
 require('../services/data-service');
 require('../services/message-service');
-var when = require('when');
 
 module.exports = angular.module('app.controllers').controller('CreditCardController', [
   '$rootScope',
@@ -16,7 +15,8 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
   '$stateParams',
   '$ionicHistory',
   'BookingService',
-  function ($rootScope, $scope, $state, $auth, $data, $message, $stateParams, $ionicHistory, BookingService) {
+  '$q',
+  function ($rootScope, $scope, $state, $auth, $data, $message, $stateParams, $ionicHistory, BookingService, $q) {
 
     $scope.save = function(form) {
       if (form.$pristine) {
@@ -26,7 +26,7 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
         return $message.error('Please resolve form errors and try again.');
       }
 
-      return when()
+      return $q.when()
         .then(function(){
           if ($data.me.stripeId) {
             return false;

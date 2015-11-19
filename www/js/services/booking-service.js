@@ -1,13 +1,12 @@
 'use strict';
 var angular = require('angular');
-var async = require('async');
-var when = require('when');
 var _ = require('lodash');
 
 module.exports = angular.module('app.services').factory('BookingService', [
   '$auth',
   '$data',
-  function($auth, $data) {
+  '$q',
+  function($auth, $data, $q) {
     var s = {};
     var cachedCarId;
 
@@ -44,65 +43,51 @@ module.exports = angular.module('app.services').factory('BookingService', [
       cachedCarId = carId;
       status.userIsActive.valid = !!($auth.me && $auth.me.status === 'active');
 
-      return when.promise(function(resolve, reject) {
+      function hasValidLicense () {
+        return $data.resources.licenses.query().$promise
+          .then(function(licenses) {
+            var latestLicense = _.chain(licenses).sortBy('createdAt').last().value();
+            return !!latestLicense;
+          });
+      }
 
-        async.parallel({
-          hasValidLicense: function(done) {
-            return $data.resources.licenses.query().$promise
-              .then(function(licenses) {
-                var latestLicense = _.chain(licenses).sortBy('createdAt').last().value();
-                done(null, !!latestLicense);
-              })
-              .catch(done);
+      function hasValidCreditCard () {
+        return $data.resources.Card.query().$promise
+          .then(function(cards) {
+            return cards.length > 0;
+          });
+      }
 
-          },
-          hasValidCreditCard: function(done) {
-            return $data.resources.Card.query().$promise
-              .then(function(cards) {
-                done(null, cards.length > 0);
-              })
-              .catch(done);
+      function hasActiveBooking () {
+        return s.getActiveBooking()
+          .then(function(booking){
+            if (booking) {
+              s.activeBooking = booking;
+            }
+            return !!booking;
+          });
+      }
 
-          },
-
-          hasActiveBooking: function(done) {
-            return s.getActiveBooking()
-              .then(function(booking){
-                if (booking) {
-                  s.activeBooking = booking;
-                }
-                done(null, !!booking);
-
-              })
-              .catch(done);
-
-          }
-
-        }, function(err, results) {
-          if (err) {
-            return reject(err);
-          }
-
+      return $q.all({
+        hasValidLicense: hasValidLicense,
+        hasValidCreditCard: hasValidCreditCard,
+        hasActiveBooking: hasActiveBooking
+      })
+        .then(function (results) {
           status.hasValidLicense.valid = results.hasValidLicense;
           status.hasValidCreditCard.valid = results.hasValidCreditCard;
 
           s.hasActiveBooking = results.hasActiveBooking;
 
           isReadyToBook = _(status).every(function(item) {
-            return item.valid === true;
+            return item.valid;
           });
-
-          resolve();
-
         });
-
-      });
-
     }
 
     s.userCanBook = function(carId, fromCache) {
       if (fromCache) {
-        return when(isReadyToBook);
+        return $q.when(isReadyToBook);
       }
 
       return updateStatus(carId)
@@ -114,7 +99,7 @@ module.exports = angular.module('app.services').factory('BookingService', [
 
     s.getCurrentStatus = function(carId, fromCache) {
       if (fromCache) {
-        return when(status);
+        return $q.when(status);
       }
 
       return updateStatus(carId)

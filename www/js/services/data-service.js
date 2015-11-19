@@ -15,12 +15,12 @@ require('../resources/verification');
 require('../resources/car');
 require('../resources/booking');
 
-var when = require('when');
 var _ = require('lodash');
 
 module.exports = angular.module('app.services').factory('$data', [
   '$rootScope',
   '$http',
+  '$q',
   '$socket',
   'Bookings',
   'Cars',
@@ -35,7 +35,7 @@ module.exports = angular.module('app.services').factory('$data', [
   'Verification',
   'Car',
   'Booking',
-  function ($rootScope, $http, $socket, Bookings, Cars, Locations, Users, Licenses, Card, File, Auth, User, Verification, Car, Booking) {
+  function ($rootScope, $http, $q, $socket, Bookings, Cars, Locations, Users, Licenses, Card, File, Auth, User, Verification, Car, Booking) {
 
     var service = {
 
@@ -68,7 +68,7 @@ module.exports = angular.module('app.services').factory('$data', [
       },
 
       fetch: function (modelName) {
-        return when.promise(function (resolve, reject) {
+        return $q(function (resolve, reject) {
 
           service.resources[modelName].query().$promise
             .then(function (items) {
@@ -171,7 +171,7 @@ module.exports = angular.module('app.services').factory('$data', [
 
       // client-side manipulation only
       activateKnownModel: function (modelName, id) {
-        return when.promise(function (resolve, reject) {
+        return $q(function (resolve, reject) {
 
           var existing = service.getExisting(modelName, id);
           if (existing) {

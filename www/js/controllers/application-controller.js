@@ -8,7 +8,6 @@ require('../services/data-service.js');
 require('../services/message-service.js');
 require('../services/session-service.js');
 var _ = require('lodash');
-var async = require('async');
 
 module.exports =
   angular.module('app.controllers').controller('ApplicationController', [
@@ -22,7 +21,8 @@ module.exports =
     '$message',
     '$session',
     '$document',
-    function($rootScope, $scope, $state, $ionicPopover, LocationService, $auth, $data, $message, $session, $document) {
+    '$q',
+    function($rootScope, $scope, $state, $ionicPopover, LocationService, $auth, $data, $message, $session, $document, $q) {
       $scope.isInitialized = false;
       $scope.models = $data.instances;
       $scope.active = $data.active;
@@ -87,39 +87,34 @@ module.exports =
       // };
 
       $scope.fetch = function() {
-        async.parallel([
+        function positionWatch () {
+          LocationService.initPositionWatch();
+          return $q.when();
+        }
 
-            function(nextTask) {
-              LocationService.initPositionWatch();
-              return nextTask();
-            },
+        function saveSession () {
+          return $q(function (done) {
+            $data.resources.users.me(function(me) {
+              $session.set('me', me).save();
+              $data.me = $session.get('me');
+              done();
+            });
+          });
+        }
 
-            function(nextTask) {
-              $data.resources.users.me(function(me) {
-                $session.set('me', me).save();
-                $data.me = $session.get('me');
-                return nextTask();
-              });
+        function initializeLocations () {
+          return $data.initialize('locations');
+        }
 
-            },
-
-            function(nextTask) {
-              $data.initialize('locations')
-                .then(function() {
-                  nextTask();
-                })
-                .catch(nextTask);
-            }
-
-          ],
-          function(err) {
+        $q.all([positionWatch, saveSession, initializeLocations])
+          .then(function () {
+            $rootScope.isInitialized = true;
+          })
+          .catch(function (err) {
             if (err) {
               return $message.error(err);
             }
-            $rootScope.isInitialized = true;
-
           });
-
       };
 
       $scope.init = function() {

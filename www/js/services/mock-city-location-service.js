@@ -1,10 +1,10 @@
 'use strict';
 var angular = require('angular');
-var when = require('when');
 
 module.exports = angular.module('app.services').factory('MockLocationService', [
   '$rootScope',
-  function ($rootScope) {
+  '$q',
+  function ($rootScope, $q) {
 
     var mockLocation = {
       latitude: 34.0604643,
@@ -47,7 +47,7 @@ module.exports = angular.module('app.services').factory('MockLocationService', [
     }
 
     function getLocation() {
-      return when(angular.copy(currentLocation));
+      return $q.when(angular.copy(currentLocation));
     }
 
     function setLocation(location, isFuzzy) {
