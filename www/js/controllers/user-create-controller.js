@@ -3,65 +3,46 @@ var angular = require('angular');
 require('angular-ui-router');
 require('../services/auth-service');
 require('../services/data-service');
-require('../services/facebook-service');
 require('../services/message-service');
-var async = require('async');
 
-module.exports = angular.module('app.controllers').controller('UserCreateController', [
-  '$rootScope',
-  '$scope',
-  '$state',
-  '$auth',
-  '$data',
-  '$message',
-  '$stateParams',
-  function($rootScope, $scope, $state, $auth, $data, $message, $stateParams) {
+function UserCreateController ($injector, $stateParams) {
 
-    $scope.save = function(form) {
-      if (form.$invalid) {
-        return $message.error('Please fix form errors and try again.');
+  var $state = $injector.get('$state');
+  var $auth = $injector.get('$auth');
+  var $data = $injector.get('$data');
+  var $message = $injector.get('$message');
+  var $q = $injector.get('$q');
+  var FacebookService = {}; // stub
+
+  this.save = function saveUser (form) {
+    if (form.$invalid) {
+      return $message.error('Please fix form errors and try again.');
+    }
+
+    var identifier = this.user.email;
+    var pass = this.user.password;
+
+    function login () {
+      return $auth.login({
+        identifier: identifier,
+        password: pass
+      });
+    }
+
+    function connectWithFacebook () {
+      if(!$stateParams.fbUser){
+        return $q.reject('No Facebook user');
       }
 
-      var identifier = $scope.user.email;
-      var pass = $scope.user.password;
+      var fbUser = angular.fromJson($stateParams.fbUser);
 
-      return async.series([
-        function saveUser(done){
-          return $scope.user.$save()
-            .then(function(){
-              return done();
-            })
-            .catch(done);
+      return $auth.connectWithFacebook(fbUser.token);
+    }
 
-        },
-
-        function login(done){
-          return $auth.login({
-              identifier: identifier,
-              password: pass
-            })
-            .then(function() {
-              done();
-            })
-            .catch(done);
-
-        },
-
-        function connectWithFacebook(done){
-          if(!$stateParams.fbUser){
-            return done();
-          }
-          var fbUser = angular.fromJson($stateParams.fbUser);
-
-          return $auth.connectWithFacebook(fbUser.token)
-            .then(function(){
-              done();
-            })
-            .catch(done);
-
-        }
-
-      ], function(err){
+    return this.user.$save()
+      .then(login)
+      .then(connectWithFacebook)
+      .catch(function (err) {
         if(err){
           return $message.error(err);
         }
@@ -69,80 +50,60 @@ module.exports = angular.module('app.controllers').controller('UserCreateControl
         return $state.go('auth-account-verify', {
           step: 2
         });
-
       });
 
-    };
+  };
 
 
-    $scope.registerWithFacebook = function() {
+  this.registerWithFacebook = function registerWithFacebook () {
 
-      // async.waterfall([
-      //
-      //   function checkIfAlreadyLoggedIn(done){
-      //
-      //     return FaceBookService.getLoginStatus()
-      //       .then(function(getLoginStatusResponse){
-      //         done(null, getLoginStatusResponse);
-      //       }).
-      //       catch(done);
-      //
-      //   },
-      //
-      //   function login(getLoginStatusResponse, done){
-      //     if (getLoginStatusResponse.status === 'connected') {
-      //       return done(null, getLoginStatusResponse);
-      //     }
-      //
-      //     return FaceBookService.login('public_profile,email')
-      //       .then(function(loginResponse){
-      //         done(null, loginResponse);
-      //       })
-      //       .catch(done);
-      //
-      //   },
-      //
-      //   function fetchBasicInfo(response, done){
-      //     return FaceBookService.api('/me?fields=email,first_name,last_name')
-      //       .then(function(fbUser){
-      //         fbUser.token = response.authResponse.accessToken;
-      //         return done(null, fbUser);
-      //       })
-      //       .catch(done);
-      //
-      //   }
-      //
-      // ], function(err, fbUser){
-      //   if(err){
-      //     return $message.error(err);
-      //   }
-      //
-      //   return $state.go('users-new-facebook', {
-      //     fbUser: angular.toJson(fbUser),
-      //     step: 2
-      //   });
-      //
-      // });
+    return FacebookService.getLoginStatus()
+      .then(function (res) {
+        if (res.status === 'connected') {
+          return res;
+        }
+        return FacebookService.login(['public_profile', 'email']);
+      })
+      .then(function (response) {
+        return FacebookService.api('/me?fields=email,first_name,last_name')
+        .then(function (fbUser) {
+          fbUser.token = response.authResponse.accessToken;
+          return fbUser;
+        });
+      })
+      .then(function (fbUser) {
+        return $state.go('users-new-facebook', {
+          fbUser: angular.toJson(fbUser),
+          step: 2
+        });
+      })
+      .catch(function (err) {
+        return $message.error(err);
+      });
 
-    };
+  };
 
-    $scope.init = function() {
+  this.init = function() {
 
-      $scope.user = new $data.resources.users();
+    this.user = new $data.resources.users();
 
-      if($stateParams.fbUser){
-        var fbUser = angular.fromJson($stateParams.fbUser);
-        $scope.user.firstName = fbUser.first_name;
-        $scope.user.lastName = fbUser.last_name;
-        $scope.user.email = fbUser.email;
-        $scope.user.token = fbUser.token;
+    if($stateParams.fbUser){
+      var fbUser = angular.fromJson($stateParams.fbUser);
+      this.user.firstName = fbUser.first_name;
+      this.user.lastName = fbUser.last_name;
+      this.user.email = fbUser.email;
+      this.user.token = fbUser.token;
+    }
 
-      }
+  };
 
-    };
+  this.init();
 
-    $scope.init();
+}
 
-  }
-
+module.exports = angular.module('app.controllers')
+.controller('UserCreateController', [
+  '$injector',
+  '$stateParams',
+  UserCreateController
 ]);

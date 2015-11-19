@@ -3,7 +3,6 @@ var angular = require('angular');
 require('angular-ui-router');
 require('../services/auth-service');
 require('../services/data-service');
-require('../services/facebook-service');
 require('../services/message-service');
 var _ = require('lodash');
 
@@ -13,9 +12,8 @@ module.exports = angular.module('app.controllers').controller('UserEditControlle
   '$state',
   '$auth',
   '$data',
-  'FaceBookService',
   '$message',
-  function($rootScope, $scope, $state, $auth, $data, FaceBookService, $message) {
+  function($rootScope, $scope, $state, $auth, $data, $message) {
 
     $scope.save = function(form) {
       if (form.$invalid) {

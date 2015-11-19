@@ -1,4 +1,4 @@
-<ion-view ng-controller="UserCreateController">
+<ion-view>
 
   <ion-nav-title>
     <page-title class="dark-bg">Connect With Facebook</page-title>
@@ -7,24 +7,24 @@
   <ion-content padding="true" class="ion-content--center dark-bg">
 
 
-    <form ng-submit="save(form)" name="form" id="form" novalidate>
+    <form ng-submit="userCreate.save(form)" name="form" id="form" novalidate>
       <div class="list">
 
         <p>Review your information</p>
 
         <label class="item item-input">
           <span class="input-label required">First Name</span>
-          <input type="text" name="firstName" placeholder="John" ng-model="user.firstName" required autofocus />
+          <input type="text" name="firstName" placeholder="John" ng-model="userCreate.user.firstName" required autofocus />
         </label>
 
         <label class="item item-input">
           <span class="input-label required">Last Name</span>
-          <input type="text" name="lastName" placeholder="Smith" ng-model="user.lastName" required />
+          <input type="text" name="lastName" placeholder="Smith" ng-model="userCreate.user.lastName" required />
         </label>
 
         <label class="item item-input">
           <span class="input-label required">Email</span>
-          <input type="email" placeholder="john@example.com" name="email" ng-model="user.email" required />
+          <input type="email" placeholder="john@example.com" name="email" ng-model="userCreate.user.email" required />
         </label>
 
         <p class="padding-top">Enter your mobile number and password</p>
@@ -34,17 +34,17 @@
           <i class="icon placeholder-icon">
             <img src="img/flag-icon.svg" alt="flag" class="icon-flag">
           </i>
-          <input type="text" name="mobile" placeholder="0411 099 110" ng-model="user.phone" required />
+          <input type="text" name="mobile" placeholder="0411 099 110" ng-model="userCreate.user.phone" required />
         </label>
 
         <label class="item item-input">
           <span class="input-label required">Password</span>
-          <input type="password" placeholder="* * * * * *" name="password" ng-model="user.password" ng-minlength="6">
+          <input type="password" placeholder="* * * * * *" name="password" ng-model="userCreate.user.password" ng-minlength="6">
         </label>
 
         <label class="item item-input">
           <span class="input-label required">Confirm</span>
-          <input type="password" name="passwordConfirm" ng-model="user.passwordConfirm" required equal-to="user.password" />
+          <input type="password" name="passwordConfirm" ng-model="userCreate.user.passwordConfirm" required equal-to="userCreate.user.password" />
         </label>
 
         <div class="validations" ng-if="form.$submitted && form.$invalid">
