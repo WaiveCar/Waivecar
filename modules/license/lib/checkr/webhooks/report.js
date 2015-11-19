@@ -27,4 +27,4 @@ module.exports = class Handler {
     yield hooks.call('license:checked', report, license);
   }
 
-}
+};

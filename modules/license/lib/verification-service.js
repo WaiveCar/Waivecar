@@ -26,9 +26,18 @@ module.exports = class LicenseVerificationService extends Service {
     };
 
     let check = yield Verification.createCheck(license.linkedUserId, payload, _user);
+    console.log(check);
+
+    let status = 'unknown';
+    switch (check.status) {
+      case 'in_progress' : {
+        status = 'in-progress';
+        break;
+      }
+    }
 
     yield license.update({
-      status   : check.status,
+      status   : status,
       checkId  : check.id,
       reportId : check.reports[0].id
     });
@@ -53,7 +62,7 @@ module.exports = class LicenseVerificationService extends Service {
     //this.hasAccess(user, _user);
 
     let license = yield this.getLicense(id);
-    let report = yield Verification.getReport(license.reportId, _user);
+    let report = yield Verification.getChecks(license.linkedUserId, _user);
     console.log(report);
     return report;
   }

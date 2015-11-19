@@ -22,24 +22,46 @@ if (!config.onfido) {
 
 module.exports = class OnfidoService {
 
-
-
   /**
-   * Creates a Onfido Candidate.
+   * Create Applicant
    * @param  {Object} data
    * @param  {Object} _user
-   * @return {Object}        candidate
+   * @return {Object}
    */
   static *createUserLink(data, _user) {
+    data.email = `test-${ Math.ceil(Math.random() * 100) }@example.com`;
     let response = yield this.request('/applicants', 'POST', data);
+    console.log(response);
     return response;
   }
 
   /**
-   * Creates a Onfido Check
+   * Retrieves all Applicants
+   * @param  {Object} _user
+   * @return {Object}
+   */
+  static *getUserLinks(_user) {
+    let response = yield this.request(`/applicants`);
+    return response;
+  }
+
+  /**
+   * Retrieves an Applicant
+   * @param  {Object} applicantId
+   * @param  {Object} _user
+   * @return {Object}
+   */
+  static *getUserLink(applicantId, _user) {
+    let response = yield this.request(`/applicants/${ applicantId }`);
+    return response;
+  }
+
+  /**
+   * Creates a Check
+   * @param  {Object} applicantId
    * @param  {Object} data
    * @param  {Object} _user
-   * @return {Object}       applicant
+   * @return {Object}
    */
   static *createCheck(applicantId, data, _user) {
     let response = yield this.request(`/applicants/${ applicantId }/checks`, 'POST', data);
@@ -47,26 +69,51 @@ module.exports = class OnfidoService {
   }
 
   /**
-   * Retrieves a Onfido Check
-   * @param  {Object} data
+   * Retrieves Applicant's Checks
+   * @param  {Object} applicantId
    * @param  {Object} _user
-   * @return {Object}        candidate
+   * @return {Object}
    */
-  static *getCheck(data, _user) {
-    let response = yield this.request(`/applicants/${ data.applicantId }/checks`);
+  static *getChecks(applicantId, _user) {
+    let response = yield this.request(`/applicants/${ applicantId }/checks`);
     return response;
   }
 
-  // *
-  //  * Retrieves a Completed Onfido Report.
-  //  * @param  {Object} data
-  //  * @param  {Object} _user
-  //  * @return {Object}        candidate
+  /**
+   * Retrieves an Applicant's Check
+   * @param  {Object} applicantId
+   * @param  {Object} checkId
+   * @param  {Object} _user
+   * @return {Object}
+   */
+  static *getCheck(applicantId, checkId, _user) {
+    let response = yield this.request(`/applicants/${ applicantId }/checks/${ checkId }`);
+    return response;
+  }
 
-  // static *getReport(id, _user) {
-  //   let response = yield this.request(`/motor_vehicle_reports/${ id }`);
-  //   return response;
-  // }
+  /**
+   * Retrieves Check's Reports
+   * @param  {Object} applicantId
+   * @param  {Object} _user
+   * @return {Object}
+   */
+  static *getReport(applicantId, checkId, _user) {
+    let response = yield this.request(`/checks/${ checkId }/reports`);
+    return response;
+  }
+
+  /**
+   * Retrieves a Check's Report
+   * @param  {Object} applicantId
+   * @param  {Object} checkId
+   * @param  {Object} reportId
+   * @param  {Object} _user
+   * @return {Object}
+   */
+  static *getReport(applicantId, checkId, reportId, _user) {
+    let response = yield this.request(`/checks/${ checkId }/reports/${ reportId }`);
+    return response;
+  }
 
   /**
    * Returns the Response from a Request aginst the Onfido API
@@ -77,8 +124,8 @@ module.exports = class OnfidoService {
    */
   static *request(resource, method, data) {
     let options = {
-      url : config.onfido.uri + resource,
-      method : method || 'GET',
+      url     : config.onfido.uri + resource,
+      method  : method || 'GET',
       headers : {
         Accept          : 'application/json',
         'Content-Type'  : 'application/json',
@@ -92,7 +139,7 @@ module.exports = class OnfidoService {
 
     let result   = yield request(options);
     let response = result.toJSON();
-    console.log(response);
+
     if (!response || response.statusCode > 201) {
       throw error.parse({
         code    : `LICENSE_SERVICE`,

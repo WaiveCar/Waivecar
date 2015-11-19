@@ -22,15 +22,13 @@ if (!config.checkr) {
 
 module.exports = class CheckrService {
 
-
-
   /**
    * Creates a Checkr Candidate.
    * @param  {Object} data
    * @param  {Object} _user
    * @return {Object}        candidate
    */
-  static *createCandidate(data, _user) {
+  static *createCandidate (data, _user) {
     let response = yield this.request('/candidates', 'POST', data);
     return response;
   }
@@ -41,7 +39,7 @@ module.exports = class CheckrService {
    * @param  {Object} _user
    * @return {Object}        candidate
    */
-  static *createReport(data, _user) {
+  static *createReport (data, _user) {
     let response = yield this.request('/reports', 'POST', data);
     return response;
   }
@@ -52,7 +50,7 @@ module.exports = class CheckrService {
    * @param  {Object} _user
    * @return {Object}        candidate
    */
-  static *getReport(id, _user) {
+  static *getReport (id, _user) {
     let response = yield this.request(`/motor_vehicle_reports/${ id }`);
     return response;
   }
@@ -64,18 +62,18 @@ module.exports = class CheckrService {
    * @param  {Object} data
    * @return {Object}          Response Object
    */
-  static *request(resource, method, data) {
+  static *request (resource, method, data) {
     let headers = config.checkr.headers;
     let options = {
-      url : config.checkr.uri + resource,
+      url    : config.checkr.uri + resource,
       method : method || 'GET',
-      auth: {
-        user: config.checkr.key,
-        password: ''
+      auth   : {
+        user     : config.checkr.key,
+        password : ''
       },
       headers : {
-        Accept               : 'application/json',
-        'Content-Type'       : 'application/json'
+        Accept         : 'application/json',
+        'Content-Type' : 'application/json'
       }
     };
 
@@ -99,4 +97,4 @@ module.exports = class CheckrService {
     return JSON.parse(response.body);
   }
 
-}
+};

@@ -55,7 +55,6 @@ module.exports = class LicenseService extends Service {
       email         : user.email,
       telephone     : user.phone,
       country       : 'USA',
-      zipcode       : license.zip,
       dob           : license.birthDate,
       'id_numbers'  : [{
         type         : 'driving_license',
