@@ -12,7 +12,7 @@ function UserCreateController ($injector, $stateParams) {
   var $data = $injector.get('$data');
   var $message = $injector.get('$message');
   var $q = $injector.get('$q');
-  var FacebookService = {}; // stub
+  var $cordovaFacebook = $injector.get('$cordovaFacebook');
 
   this.save = function saveUser (form) {
     if (form.$invalid) {
@@ -42,14 +42,13 @@ function UserCreateController ($injector, $stateParams) {
     return this.user.$save()
       .then(login)
       .then(connectWithFacebook)
-      .catch(function (err) {
-        if(err){
-          return $message.error(err);
-        }
-
+      .then(function () {
         return $state.go('auth-account-verify', {
           step: 2
         });
+      })
+      .catch(function (err) {
+        return $message.error(err);
       });
 
   };
@@ -57,15 +56,15 @@ function UserCreateController ($injector, $stateParams) {
 
   this.registerWithFacebook = function registerWithFacebook () {
 
-    return FacebookService.getLoginStatus()
+    return $cordovaFacebook.getLoginStatus()
       .then(function (res) {
         if (res.status === 'connected') {
           return res;
         }
-        return FacebookService.login(['public_profile', 'email']);
+        return $cordovaFacebook.login(['public_profile', 'email']);
       })
       .then(function (response) {
-        return FacebookService.api('/me?fields=email,first_name,last_name')
+        return $cordovaFacebook.api('/me?fields=email,first_name,last_name')
         .then(function (fbUser) {
           fbUser.token = response.authResponse.accessToken;
           return fbUser;

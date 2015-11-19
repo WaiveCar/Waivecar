@@ -13,6 +13,7 @@ function AuthController ($injector) {
   var BookingService = $injector.get('BookingService');
   var $stateParams = $injector.get('$stateParams');
   var $ionicHistory = $injector.get('$ionicHistory');
+  var $cordovaFacebook = $injector.get('$cordovaFacebook');
 
   this.$ionicHistory = $ionicHistory;
 
@@ -83,23 +84,23 @@ function AuthController ($injector) {
 
   this.loginWithFacebook = function loginWithFacebook () {
 
-    // return FaceBookService.getLoginStatus()
-    //   .then(function(response) {
-    //     if (response.status !== 'connected') {
-    //       return FaceBookService.login(['public_profile', 'email']);
-    //     }
-    //     return response;
-    //
-    //   })
-    //   .then(function(res) {
-    //     if (res.status === 'connected') {
-    //       return $auth.loginWithFacebook(res.authResponse.accessToken);
-    //     }
-    //   })
-    //   .then(function() {
-    //     $state.go('landing');
-    //   })
-    //   .catch($message.error);
+    return $cordovaFacebook.getLoginStatus()
+      .then(function(response) {
+        if (response.status !== 'connected') {
+          return $cordovaFacebook.login(['public_profile', 'email']);
+        }
+        return response;
+
+      })
+      .then(function(res) {
+        if (res.status === 'connected') {
+          return $auth.loginWithFacebook(res.authResponse.accessToken);
+        }
+      })
+      .then(function() {
+        $state.go('landing');
+      })
+      .catch($message.error);
 
   };
 
