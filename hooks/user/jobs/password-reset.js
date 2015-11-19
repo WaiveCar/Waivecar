@@ -5,7 +5,7 @@ let queue = Bento.provider('queue');
 let Email = Bento.provider('email');
 let log   = Bento.Log;
 
-queue.process('email:user:password-reset', (job, done) => {
+queue.process('email:user:password-reset', function process(job, done) {
   if (Bento.ENV === 'test') { return done(); }
   log.debug('Sending password reset email to: ' + job.data.to);
   co(function *() {

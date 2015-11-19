@@ -7,7 +7,7 @@ let hooks = Bento.Hooks;
  * @param {Object} payload
  */
 hooks.set('log:error', function *(payload) {
-  // ... 
+  // ...
 });
 
 /**
@@ -15,5 +15,5 @@ hooks.set('log:error', function *(payload) {
  * @param {Object} payload
  */
 hooks.set('log:event', function *(payload) {
-  // ... 
+  // ...
 });

@@ -9,7 +9,7 @@ module.exports = class LicenseFile {
    * Validates the license by verifying that it has been defined.
    * @param {Number} licenseId
    */
-  static *validate (licenseId) {
+  static *validate(licenseId) {
     let license = yield License.findById(licenseId);
     if (!license) {
       throw error.parse({
@@ -24,7 +24,7 @@ module.exports = class LicenseFile {
    * @param {Number} licenseId
    * @param {Object} file
    */
-  static *capture (licenseId, file) {
+  static *capture(licenseId, file) {
     let license = yield License.findById(licenseId);
     yield license.update({
       fileId : file.id
@@ -35,7 +35,7 @@ module.exports = class LicenseFile {
    * Remove the fileId from the license record.
    * @param {Number} licenseId
    */
-  static *delete (licenseId) {
+  static *delete(licenseId) {
     let license = yield License.findById(licenseId);
     yield license.update({
       fileId : null

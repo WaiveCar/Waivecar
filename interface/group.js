@@ -1,6 +1,6 @@
 'use strict';
 
-Bento.Register.Model('Group', 'sequelize', function (model, Sequelize) {
+Bento.Register.Model('Group', 'sequelize', function register(model, Sequelize) {
 
   /**
    * The identity of the table created in your database.

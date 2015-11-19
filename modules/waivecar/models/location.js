@@ -24,7 +24,7 @@ Bento.Register.Model('Location', 'sequelize', function (model, Sequelize) {
     latitude    : { type : Sequelize.DECIMAL(10, 8), allowNull : false },
     longitude   : { type : Sequelize.DECIMAL(11, 8), allowNull : false },
     address     : { type : Sequelize.STRING },
-    status : {
+    status      : {
       type : Sequelize.ENUM(
         'available',
         'unavailable',

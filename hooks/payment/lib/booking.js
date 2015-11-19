@@ -11,7 +11,7 @@ module.exports = class BookingService {
    * Validates a booking by its id.
    * @param {Number} bookingId
    */
-  static *validate (bookingId) {
+  static *validate(bookingId) {
     let booking = yield Booking.findById(bookingId);
 
     // ### Validate Booking
@@ -43,7 +43,7 @@ module.exports = class BookingService {
    * @param {Number} bookingId
    * @param {String} paymentId
    */
-  static *authorized (bookingId, paymentId) {
+  static *authorized(bookingId, paymentId) {
     let booking = yield Booking.findById(bookingId);
     yield booking.update({
       status : 'payment-authorized'
@@ -62,7 +62,7 @@ module.exports = class BookingService {
    * Sets the booking state to complete upon completed payment.
    * @param  {Number} bookingId
    */
-  static *completed (bookingId) {
+  static *completed(bookingId) {
     let booking = yield Booking.findById(bookingId);
     yield booking.update({
       status : 'completed'

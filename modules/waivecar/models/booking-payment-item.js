@@ -1,6 +1,6 @@
 'use strict';
 
-Bento.Register.Model('BookingPaymentItem', 'sequelize', function (model, Sequelize) {
+Bento.Register.Model('BookingPaymentItem', 'sequelize', function register(model, Sequelize) {
 
   /**
    * The identity of the table created in your database.
@@ -20,8 +20,8 @@ Bento.Register.Model('BookingPaymentItem', 'sequelize', function (model, Sequeli
     // The booking this payment belongs to.
 
     paymentId : {
-      type       : Sequelize.INTEGER,
-      allowNull  : false
+      type      : Sequelize.INTEGER,
+      allowNull : false
     },
 
     name : {

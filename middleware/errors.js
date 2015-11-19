@@ -3,7 +3,7 @@
 let error = Bento.Error;
 let log   = Bento.Log;
 
-module.exports = function (app) {
+module.exports = function(app) {
   app.use(function *(next) {
     try {
       yield next;
@@ -47,9 +47,9 @@ module.exports = function (app) {
 
         // ### Log Error
 
-        log.error(Object.assign(response, { 
+        log.error(Object.assign(response, {
           route : route,
-          uri   : `${ this.method } ${ this.path }`, 
+          uri   : `${ this.method } ${ this.path }`,
           stack : err.stack
         }));
 

@@ -1,6 +1,6 @@
 'use strict';
 
-Bento.Register.Model('Car', 'sequelize', function (model, Sequelize) {
+Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
   /**
    * The identity of the table created in your database.
@@ -36,7 +36,7 @@ Bento.Register.Model('Car', 'sequelize', function (model, Sequelize) {
       type : Sequelize.STRING(88)
     },
 
-    latitude  : {
+    latitude : {
       type : Sequelize.DECIMAL(10, 8),
     },
 
@@ -60,20 +60,20 @@ Bento.Register.Model('Car', 'sequelize', function (model, Sequelize) {
       type : Sequelize.DECIMAL(10, 2)
     },
 
-    charge: {
+    charge : {
       type : Sequelize.DECIMAL(10, 2)
     },
 
-    isImmobilized: {
+    isImmobilized : {
       type         : Sequelize.BOOLEAN,
       defaultValue : false
     },
 
-    ignition: {
+    ignition : {
       type : Sequelize.STRING(28)
     },
 
-    isLocked: {
+    isLocked : {
       type         : Sequelize.BOOLEAN,
       defaultValue : false
     },

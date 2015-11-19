@@ -293,11 +293,10 @@ module.exports = class CarService extends Service {
    * @return {Object}          Response Object
    */
   static *request(resource, method, data) {
-    let headers = config.invers.headers;
     let options = {
-      url : config.invers.uri + resource,
-      method : method || 'GET',
-      headers : headers
+      url     : config.invers.uri + resource,
+      method  : method || 'GET',
+      headers : config.invers.headers
     };
 
     if (data) {

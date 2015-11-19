@@ -62,7 +62,7 @@ module.exports = {
       'password'
     ],
 
-    filter : function (queryParser, query) {
+    filter : function(queryParser, query) {
       return queryParser(query, {
         where : {
           role          : queryParser.STRING,

@@ -1,6 +1,6 @@
 'use strict';
 
-Bento.Register.Model('User', 'sequelize', function (model, Sequelize) {
+Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
 
   /**
    * The identity of the table created in your database.
@@ -35,7 +35,7 @@ Bento.Register.Model('User', 'sequelize', function (model, Sequelize) {
    */
   model.relations = [
     'Group',
-    function (Group) {
+    function relation(Group) {
       this.belongsToMany(Group, { as : 'groups', through : 'user_groups', foreignKey : 'userId' });
     }
   ];
@@ -53,7 +53,7 @@ Bento.Register.Model('User', 'sequelize', function (model, Sequelize) {
    * @type     Object
    */
   model.methods = {
-    name : function () {
+    name : function getName() {
       return this.firstName + ' ' + this.lastName;
     }
   };
