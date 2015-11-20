@@ -7,10 +7,11 @@ let error        = Bento.Error;
 let hooks        = Bento.Hooks;
 
 /**
-  @hook   verification:send
-  @param  {String} type
-  @param  {Object} user
-  @param  {Object} [payload]
+ * Sends verification requests.
+ * @param  {String} type
+ * @param  {Object} user
+ * @param  {Object} payload
+ * @return {Object}
  */
 hooks.set('verification:send', function *(type, user, payload) {
   switch (type) {
@@ -23,12 +24,13 @@ hooks.set('verification:send', function *(type, user, payload) {
   }
 });
 
-/*
-  @hook  verification:handle
-  @param {Object} payload
+/**
+ * Verification handler.
+ * @param {Object} user
+ * @param {Object} payload
  */
 hooks.set('verification:handle', function *(user, payload) {
-  yield user.update(() => {
+  yield user.update(function update() {
     switch (payload.type) {
       case 'phone-verification' : {
         return { verifiedPhone : true, status : (user.status === 'pending' ? 'active' : user.status) };
