@@ -13,8 +13,7 @@ appSettings.provider('$settings', [
     // Overriden in app-setup
     this.baseUrl = 'https://api-waivecar-dev.cleverbuild.biz';
     this.facebook = {
-      clientId: '1022707721082213', // local
-      //clientId: '1022704731082512', // production
+      clientId: '1022704731082512',
     };
 
     function getBaseUrl() {
