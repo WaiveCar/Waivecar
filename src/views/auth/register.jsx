@@ -2,7 +2,7 @@ import React              from 'react';
 import mixin              from 'react-mixin';
 import { History, Link }  from 'react-router';
 import config             from 'config';
-import { auth, api }      from 'bento';
+import { auth, api, dom } from 'bento';
 import { Form, snackbar } from 'bento-web';
 
 @mixin.decorate(History)
