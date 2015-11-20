@@ -160,9 +160,9 @@
     "cordova-plugin-inappbrowser",
     {
       "id": "cordova-plugin-facebook4",
-      "locator": "cordova-plugin-facebook4",
+      "locator": "https://github.com/jeduan/cordova-plugin-facebook4.git",
       "variables": {
-        "APP_ID": "1022707721082213",
+        "APP_ID": "1022704731082512",
         "APP_NAME": "WaiveCar"
       }
     }
