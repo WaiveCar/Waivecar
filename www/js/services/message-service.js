@@ -42,7 +42,7 @@ module.exports = angular.module('app.services').factory('$message', [
 
       var promise;
       if(ionic.Platform.isWebView()){
-        promise = $cordovaToast.show(message, 1000, 'top');
+        promise = $cordovaToast.show(message, 'short', 'top');
       } else {
         promise = $ionicPopup.alert({
           title: title,
@@ -51,7 +51,7 @@ module.exports = angular.module('app.services').factory('$message', [
       }
 
       promise
-        .then(function () {
+        .finally(function () {
           existingMessage = null;
         });
 
