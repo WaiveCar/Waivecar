@@ -17,10 +17,11 @@ const Waypoint = React.createClass({
   propTypes : {
     // threshold is percentage of the height of the visible part of the
     // scrollable ancestor (e.g. 0.1)
-    threshold : PropTypes.number,
-    tagName   : PropTypes.string,
-    onEnter   : PropTypes.func,
-    onLeave   : PropTypes.func
+    threshold        : PropTypes.number,
+    tagName          : PropTypes.string,
+    onEnter          : PropTypes.func,
+    onEnterClassName : PropTypes.string,
+    onLeave          : PropTypes.func
   },
 
   statics : {
@@ -123,7 +124,7 @@ const Waypoint = React.createClass({
     }
 
     if (currentPosition === POSITIONS.inside) {
-      this.props.onEnter.call(this, event, { position : previousPosition, id : this.props.id });
+      this.props.onEnter.call(this, event, { position : previousPosition, id : this.props.id, className : this.props.onEnterClassName });
     } else if (previousPosition === POSITIONS.inside) {
       this.props.onLeave.call(this, event, { position : currentPosition, id : this.props.id });
     }
@@ -135,7 +136,7 @@ const Waypoint = React.createClass({
     if (isRapidScrollDown || isRapidScrollUp) {
       // If the scroll event isn't fired often enough to occur while the
       // waypoint was visible, we trigger both callbacks anyway.
-      this.props.onEnter.call(this, event, { position : previousPosition, id : this.props.id });
+      this.props.onEnter.call(this, event, { position : previousPosition, id : this.props.id, className : this.props.onEnterClassName });
       this.props.onLeave.call(this, event, { position : currentPosition, id : this.props.id });
     }
   },
