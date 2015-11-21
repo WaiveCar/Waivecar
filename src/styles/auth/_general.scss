@@ -167,33 +167,4 @@ $subscribe-width : 600px;
       text-decoration : none;
     }
   }
-
-  .btn-login {
-    background : darken($brand-primary, 10%);
-    color      : #fff;
-    &:hover {
-      background : $brand-primary;
-      cursor     : pointer;
-      transition : .2s all;
-    }
-    &:focus,
-    &:active,
-    &:active:focus,
-    &.active:focus {
-      outline:none;
-    }
-  }
-
-  .btn-facebook {
-    background : #3b5998;
-    color      : #fff;
-    i {
-      margin-right : 8px;
-    }
-    &:hover {
-      background : lighten(#3b5998, 10%);
-      transition : .2s all;
-    }
-  }
-
 }
