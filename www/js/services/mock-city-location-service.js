@@ -10,7 +10,8 @@ module.exports = angular.module('app.services').factory('MockLocationService', [
       latitude: 34.0604643,
       longitude: -118.4186743
     };
-    var currentLocation;
+
+    var currentLocation = mockLocation;
 
     function getRandomLocation(x0, y0, radius) {
       var radiusInDegrees = radius / 111300;
