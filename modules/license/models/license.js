@@ -60,7 +60,7 @@ Bento.Register.Model('License', 'sequelize', function(model, Sequelize) {
 
     zip : {
       type      : Sequelize.STRING(80),
-      allowNull : false
+      allowNull : true
     },
 
     linkedUserId : {
