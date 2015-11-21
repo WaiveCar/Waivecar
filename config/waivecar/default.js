@@ -17,7 +17,7 @@ module.exports = {
         type  : 'minutes'
       }
     },
-    cars   : {
+    cars : {
       includeMock : false
     },
     invers : {
