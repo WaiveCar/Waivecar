@@ -13,9 +13,12 @@ module.exports = class Column extends React.Component {
    */
   render() {
     let width = this.props.width || 12;
-    let className = (this.props.responsive ? 'col-lg-' : 'col-xs-') + width;
+    let className = (this.props.responsive ? 'col-md-' : 'col-xs-') + width;
+    if (this.props.centerContent) {
+      className = `${ className } m-x-auto`;
+    }
     if (this.props.className) {
-      className = this.props.className + ' ' + className;
+      className = `${ this.props.className } ${ className }`;
     }
     return (
       <div id={ this.props.id } className={ className }>
