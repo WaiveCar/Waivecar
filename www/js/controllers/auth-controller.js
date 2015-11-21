@@ -14,6 +14,7 @@ function AuthController ($injector) {
   var $stateParams = $injector.get('$stateParams');
   var $ionicHistory = $injector.get('$ionicHistory');
   var $cordovaFacebook = $injector.get('$cordovaFacebook');
+  var $q = $injector.get('$q');
 
   this.$ionicHistory = $ionicHistory;
 
@@ -86,16 +87,16 @@ function AuthController ($injector) {
 
     return $cordovaFacebook.getLoginStatus()
       .then(function(response) {
-        if (response.status !== 'connected') {
-          return $cordovaFacebook.login(['public_profile', 'email']);
+        if (response.status === 'connected') {
+          return response;
         }
-        return response;
-
+        return $cordovaFacebook.login(['public_profile', 'email']);
       })
       .then(function(res) {
         if (res.status === 'connected') {
           return $auth.loginWithFacebook(res.authResponse.accessToken);
         }
+        return $q.reject('There was a problem logging you in');
       })
       .then(function() {
         $state.go('landing');

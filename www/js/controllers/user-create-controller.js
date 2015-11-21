@@ -29,23 +29,20 @@ function UserCreateController ($injector, $stateParams) {
       });
     }
 
-    function connectWithFacebook () {
+    function connectIfFacebook () {
       if(!$stateParams.fbUser){
-        return $q.reject('No Facebook user');
+        return $q.when();
       }
 
       var fbUser = angular.fromJson($stateParams.fbUser);
-
       return $auth.connectWithFacebook(fbUser.token);
     }
 
     return this.user.$save()
       .then(login)
-      .then(connectWithFacebook)
+      .then(connectIfFacebook)
       .then(function () {
-        return $state.go('auth-account-verify', {
-          step: 2
-        });
+        return $state.go('cars');
       })
       .catch(function (err) {
         return $message.error(err);
