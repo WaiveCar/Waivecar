@@ -9,131 +9,136 @@ require('../services/message-service.js');
 require('../services/session-service.js');
 var _ = require('lodash');
 
-module.exports =
-  angular.module('app.controllers').controller('ApplicationController', [
-    '$rootScope',
-    '$scope',
-    '$state',
-    '$ionicPopover',
-    'MockLocationService',
-    '$auth',
-    '$data',
-    '$message',
-    '$session',
-    '$document',
-    '$q',
-    function($rootScope, $scope, $state, $ionicPopover, LocationService, $auth, $data, $message, $session, $document, $q) {
-      $scope.isInitialized = false;
-      $scope.models = $data.instances;
-      $scope.active = $data.active;
+function ApplicationController ($rootScope, $scope, $injector) {
 
-      function getWindowWidth() {
-        return $document.width();
-      }
+  var $state = $injector.get('$state');
+  var LocationService = $injector.get('LocationService');
+  var $auth = $injector.get('$auth');
+  var $data = $injector.get('$data');
+  var $message = $injector.get('$message');
+  var $session = $injector.get('$session');
+  var $document = $injector.get('$document');
+  var $q = $injector.get('$q');
 
-      $document.on('resize', function() {
-        $scope.windowWidth = getWindowWidth();
-      });
+  $rootScope.isInitialized = false;
+  this.models = $data.instances;
+  this.active = $data.active;
 
-      $scope.windowWidth = getWindowWidth();
+  function getWindowWidth() {
+    return $document.width();
+  }
 
-      $rootScope.$watch('currentLocation', function() {
-        console.log($rootScope.currentLocation);
-      });
+  $document.on('resize', function() {
+    this.windowWidth = getWindowWidth();
+  });
 
-      $rootScope.$on('authError', function() {
-        $auth.logout();
-        $state.go('auth-login');
-      });
+  this.windowWidth = getWindowWidth();
 
-      // $rootScope.$on('socket:error', function (ev, data) {
-      //   console.log('TODO: handle socket error:');
-      // });
+  $rootScope.$watch('currentLocation', function() {
+    console.log($rootScope.currentLocation);
+  });
 
-      $rootScope.$on('$stateChangeStart', function(event, toState) {
-        var authRequired;
-        if (toState && _.has(toState, 'data') && _.has(toState.data, 'auth')) {
-          authRequired = toState.data.auth;
-        }
-        var isAuthenticated = $auth.isAuthenticated();
+  $rootScope.$on('authError', function() {
+    $auth.logout();
+    $state.go('auth-login');
+  });
 
-        if (isAuthenticated && !_.isUndefined(authRequired) && authRequired === false) {
-          $auth.logout();
-          event.preventDefault();
-          $state.go('landing');
-        } else if (!isAuthenticated && authRequired) {
-          event.preventDefault();
-          $state.go('auth-login');
-        }
+  // $rootScope.$on('socket:error', function (ev, data) {
+  //   console.log('TODO: handle socket error:');
+  // });
 
-      });
+  $rootScope.$on('$stateChangeStart', function(event, toState) {
+    var authRequired;
+    if (toState && _.has(toState, 'data') && _.has(toState.data, 'auth')) {
+      authRequired = toState.data.auth;
+    }
+    var isAuthenticated = $auth.isAuthenticated();
 
-      $scope.logout = function() {
-        $auth.logout(function(err) {
-          if (err) {
-            return $message.error(err);
-          }
-          $scope.popover.hide();
-          $state.go('landing');
-        });
-
-      };
-
-      // $scope.locateMe = function() {
-      //   LocationService.getLocation().then(function(deviceLocation) {
-      //     $rootScope.currentLocation = deviceLocation;
-      //   });
-
-      // };
-
-      $scope.fetch = function() {
-        function positionWatch () {
-          LocationService.initPositionWatch();
-          return $q.when();
-        }
-
-        function saveSession () {
-          return $q(function (done) {
-            $data.resources.users.me(function(me) {
-              $session.set('me', me).save();
-              $data.me = $session.get('me');
-              done();
-            });
-          });
-        }
-
-        function initializeLocations () {
-          return $data.initialize('locations');
-        }
-
-        $q.all([positionWatch, saveSession, initializeLocations])
-          .then(function () {
-            $rootScope.isInitialized = true;
-          })
-          .catch(function (err) {
-            if (err) {
-              return $message.error(err);
-            }
-          });
-      };
-
-      $scope.init = function() {
-        if ($auth.isAuthenticated()) {
-          $scope.fetch();
-        } else {
-          // after account has been initialized
-          $scope.$watch(function() {
-            return $auth.isAuthenticated();
-          }, function(data) {
-            if (data === true) {
-              $scope.fetch();
-            }
-          });
-        }
-      };
-
-      $scope.init();
-
+    if (isAuthenticated && !_.isUndefined(authRequired) && authRequired === false) {
+      $auth.logout();
+      event.preventDefault();
+      $state.go('landing');
+    } else if (!isAuthenticated && authRequired) {
+      event.preventDefault();
+      $state.go('auth-login');
     }
 
+  });
+
+  this.logout = function() {
+    $auth.logout(function(err) {
+      if (err) {
+        return $message.error(err);
+      }
+      this.popover.hide();
+      $state.go('landing');
+    });
+
+  };
+
+  // this.locateMe = function() {
+  //   LocationService.getLocation().then(function(deviceLocation) {
+  //     $rootScope.currentLocation = deviceLocation;
+  //   });
+
+  // };
+
+  this.fetch = function() {
+    function positionWatch () {
+      LocationService.initPositionWatch();
+      return $q.when();
+    }
+
+    function saveSession () {
+      return $q(function (done) {
+        $data.resources.users.me(function(me) {
+          $session.set('me', me).save();
+          $data.me = $session.get('me');
+          done();
+        });
+      });
+    }
+
+    function initializeLocations () {
+      return $data.initialize('locations');
+    }
+
+    $q.all([positionWatch, saveSession, initializeLocations])
+      .then(function () {
+        $rootScope.isInitialized = true;
+      })
+      .catch(function (err) {
+        if (err) {
+          return $message.error(err);
+        }
+      });
+  };
+
+  this.init = function() {
+    if ($auth.isAuthenticated()) {
+      this.fetch();
+      return;
+    }
+
+    // TODO kill this with fire
+    $scope.$watch(function() {
+      return $auth.isAuthenticated();
+    }, angular.bind(this, function(data) {
+      if (data === true) {
+        this.fetch();
+      }
+    }));
+  };
+
+  this.init();
+
+}
+
+module.exports =
+  angular.module('app.controllers')
+  .controller('ApplicationController', [
+    '$rootScope',
+    '$scope',
+    '$injector',
+    ApplicationController
   ]);

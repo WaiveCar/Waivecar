@@ -34,7 +34,7 @@
 
 </head>
 
-<body ng-controller="ApplicationController">
+<body ng-controller="ApplicationController as app">
 
   <ion-side-menus>
 
@@ -55,7 +55,7 @@
 
     </ion-side-menu-content>
 
-    <ion-side-menu side="right" width="{{windowWidth}}">
+    <ion-side-menu side="right" width="{{app.windowWidth}}">
       <div ng-include="'/templates/common/menu.html'"></div>
     </ion-side-menu>
 

@@ -3,7 +3,7 @@
   <ion-content scroll="false" class="has-header has-footer-bar">
     <div class="map-container has-info-footer">
       <map id="map" zoom="15" center="currentLocation">
-        <location-markers locations="models.locations" on-click-marker="showChargingStationDetails(marker, info)"></location-markers>
+        <location-markers locations="app.models.locations" on-click-marker="showChargingStationDetails(marker, info)"></location-markers>
       </map>
     </div>
     <div class="info-footer">
@@ -31,7 +31,7 @@
         <button ng-click="ride.hideChargingStationDetails()" class="button button-right close-button">
           <img src="img/close.svg" alt="">
         </button>
-        <charging-station-info location="active.locations"></charging-station-info>
+        <charging-station-info location="app.active.locations"></charging-station-info>
       </div>
     </div>
   </ion-content>
