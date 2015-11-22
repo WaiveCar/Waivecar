@@ -124,6 +124,7 @@ module.exports = class CarService extends Service {
       // If Device matches a Car in our filtered list for updates, update
       let device = devices[i];
       let existingCar = cars.find(c => c.id === device.id);
+
       if (existingCar) {
         let updatedCar = yield this.getDevice(device.id);
         log.debug(`Cars : Sync : updating ${ device.id }.`);
@@ -132,10 +133,15 @@ module.exports = class CarService extends Service {
         // If Device does not match any Car then add it to the database.
         let excludedCar = allCars.find(c => c.id === device.id);
         if (!excludedCar) {
-          let newCar = yield this.getDevice(device.id);
-          let car = new Car(newCar);
-          log.debug(`Cars : Sync : adding ${ device.id }.`);
-          yield car.upsert();
+          if (!config.cars.includeMock && device.id === 'C0000017DC247801') {
+            // this is a dev kit, ignore update.
+            log.debug(`Cars : Sync : skipping DevKit ${ device.id }.`);
+          } else  {
+            let newCar = yield this.getDevice(device.id);
+            let car = new Car(newCar);
+            log.debug(`Cars : Sync : adding ${ device.id }.`);
+            yield car.upsert();
+          }
         } else {
           // If Device was found in database but not in our filtered list, ignore.
           log.debug(`Cars : Sync : skipping ${ device.id }.`);

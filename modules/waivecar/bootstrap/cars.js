@@ -6,13 +6,14 @@ let log    = Bento.Log;
 
 module.exports = function *() {
   let cars = yield Car.find();
-  let count = cars.length - 1;
+  let count = cars.length;
   if (count > 3) {
     if (!config.cars.includeMock) {
       log.debug('removing mock cars');
       for (let carIndex = 0, len = count; carIndex < len; carIndex++) {
         let car = cars[carIndex];
         if (car.id === 'C0000017DC247801') {
+          log.debug(`removing ${ car.id }`);
           yield car.delete();
         }
       }
@@ -20,8 +21,9 @@ module.exports = function *() {
 
     return;
   }
-  log.debug(`Importing 8 mock cars`);
+
   if (config.cars.includeMock) {
+    log.debug(`Importing 8 mock cars`);
     for (let i = 1, len = 9; i < len; i++) {
       let carId = 'MOCK_' + i;
       let car   = new Car({
