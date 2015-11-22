@@ -137,6 +137,13 @@ hooks.set('user:store:after', function *(user) {
  * @return {Object}
  */
 hooks.set('user:update:before', function *(prevUser, nextUser) {
+  if (nextUser.phone && prevUser.phone !== nextUser.phone) {
+    nextUser.verifiedPhone = false;
+  }
+
+  if (nextUser.email && prevUser.email !== nextUser.email) {
+    nextUser.verifiedEmail = false;
+  }
   return nextUser;
 });
 
