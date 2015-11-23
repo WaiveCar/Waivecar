@@ -13,7 +13,7 @@ require('ngCordova');
 require('angular-messages');
 require('angular-socket-io');
 require('angular-payments');
-require('ng-FitText');
+require('ng-fittext');
 require('./modules/ngIOS9UIWebViewPatch');
 
 // Components (We first define angular modules which are dependencies to main 'app' module)
