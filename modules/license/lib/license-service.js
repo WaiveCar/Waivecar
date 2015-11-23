@@ -48,6 +48,7 @@ module.exports = class LicenseService extends Service {
     });
 
     // ### Create Verification Candidate
+    /*eslint-disable */
     let candidate = {
       first_name  : user.firstName,
       middle_name : user.middleName,
@@ -64,6 +65,7 @@ module.exports = class LicenseService extends Service {
         }
       ]
     };
+    /*eslint-enable */
 
     let userLink = yield Verification.createUserLink(candidate, _user);
 
