@@ -65,7 +65,7 @@ function AuthController ($injector) {
 
   };
 
-  this.submitNewPassword = function submitNewPassword (form){
+  this.submitNewPassword = function submitNewPassword (form) {
     if (form.$pristine) {
       return $message.info('Please fill in requguired fields first.');
     }
@@ -78,9 +78,23 @@ function AuthController ($injector) {
       .then(function(){
         $state.go('auth-reset-password-success');
       })
-      .catch($message.error);
+      .catch(angular.bind($message, $message.error));
 
-    };
+  };
+
+  function registerUserWithFacebook (token) {
+    return $cordovaFacebook.api('/me?fields=email,first_name,last_name')
+    .then(function (fbUser) {
+      fbUser.token = token;
+      return fbUser;
+    })
+    .then(function (fbUser) {
+      return $state.go('users-new-facebook', {
+        fbUser: angular.toJson(fbUser),
+        step: 2
+      });
+    });
+  }
 
 
   this.loginWithFacebook = function loginWithFacebook () {
@@ -93,16 +107,23 @@ function AuthController ($injector) {
         return $cordovaFacebook.login(['public_profile', 'email']);
       })
       .then(function(res) {
-        if (res.status === 'connected') {
-          return $auth.loginWithFacebook(res.authResponse.accessToken);
+        if (res.status !== 'connected') {
+          return $q.reject('There was a problem logging you in');
         }
-        return $q.reject('There was a problem logging you in');
-      })
-      .then(function() {
-        $state.go('landing');
+
+        var token = res.authResponse.accessToken;
+        return $auth.loginWithFacebook(token)
+          .then(function () {
+            return $state.go('landing');
+          })
+          .catch(function (err) {
+            if (err.status === 400 && err.data && err.data.code === 'FACEBOOK_LOGIN_FAILED') {
+              return registerUserWithFacebook(token);
+            }
+            return $q.reject(err);
+          });
       })
       .catch($message.error);
-
   };
 
 
