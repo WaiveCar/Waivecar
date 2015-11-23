@@ -4,6 +4,7 @@ import { History, Link }  from 'react-router';
 import config             from 'config';
 import { auth, api, dom } from 'bento';
 import { Form, snackbar } from 'bento-web';
+import facebook           from './facebook';
 
 @mixin.decorate(History)
 class RegisterView extends React.Component {
@@ -11,48 +12,7 @@ class RegisterView extends React.Component {
   constructor(...args) {
     super(...args);
     dom.setTitle('Register');
-    this.fields = [
-      {
-        label     : 'First name',
-        component : 'input',
-        type      : 'text',
-        name      : 'firstName',
-        className : 'col-xs-12 bento-form-input bento-form-input-center',
-        tabIndex  : 1
-      },
-      {
-        label     : 'Last name',
-        component : 'input',
-        type      : 'text',
-        name      : 'lastName',
-        className : 'col-xs-12 bento-form-input bento-form-input-center',
-        tabIndex  : 2
-      },
-      {
-        label     : 'Email address',
-        component : 'input',
-        type      : 'text',
-        name      : 'email',
-        className : 'col-xs-12 bento-form-input bento-form-input-center',
-        tabIndex  : 3
-      },
-      {
-        label     : 'Phone number',
-        component : 'input',
-        type      : 'string',
-        name      : 'phone',
-        className : 'col-xs-12 bento-form-input bento-form-input-center',
-        tabIndex  : 4
-      },
-      {
-        label     : 'Password',
-        component : 'input',
-        type      : 'password',
-        name      : 'password',
-        className : 'col-xs-12 bento-form-input bento-form-input-center',
-        tabIndex  : 5
-      }
-    ];
+    this.fields = require('./fields/register');
     this.submit = this.submit.bind(this);
   }
 
@@ -75,7 +35,7 @@ class RegisterView extends React.Component {
         });
       }
       this.login(data.email, data.password);
-    }.bind(this));
+    });
   }
 
   /**
@@ -96,8 +56,8 @@ class RegisterView extends React.Component {
         });
       }
       auth.set(user);
-      this.history.pushState(null, '/dashboard');
-    }.bind(this));
+      this.history.pushState(null, '/');
+    });
   }
 
   /**
@@ -122,10 +82,10 @@ class RegisterView extends React.Component {
 
         <div className="actions">
           <button type="button" className="r-btn btn-login" onClick={ this.submit }>Register</button>
-          <a className="r-btn btn-facebook" href={ `https://www.facebook.com/dialog/oauth?client_id=${ config.auth.facebook.appId }&redirect_uri=${ config.auth.facebook.redirect }&state=register` }>
+          <button className="r-btn btn-facebook" onClick={ facebook.register }>
             <i className="fa fa-facebook" />
             Register with Facebook
-          </a>
+          </button>
         </div>
 
         <div className="footer">
