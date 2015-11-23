@@ -144,6 +144,12 @@ hooks.set('user:update:before', function *(prevUser, nextUser) {
   if (nextUser.email && prevUser.email !== nextUser.email) {
     nextUser.verifiedEmail = false;
   }
+
+  // if the user's verification requirements have changed, they are no longer active.
+  if (!nextUser.verifiedEmail || !nextUser.verifiedEmail) {
+    nextUser.status = 'pending';
+  }
+
   return nextUser;
 });
 
