@@ -12,7 +12,6 @@ function UserCreateController ($injector, $stateParams) {
   var $data = $injector.get('$data');
   var $message = $injector.get('$message');
   var $q = $injector.get('$q');
-  var $cordovaFacebook = $injector.get('$cordovaFacebook');
 
   this.save = function saveUser (form) {
     if (form.$invalid) {
@@ -53,29 +52,18 @@ function UserCreateController ($injector, $stateParams) {
 
   this.registerWithFacebook = function registerWithFacebook () {
 
-    return $cordovaFacebook.getLoginStatus()
+    return $auth.facebookAuth()
       .then(function (res) {
-        if (res.status === 'connected') {
-          return res;
+        if (res.code === 'NEW_USER') {
+          return $state.go('users-new-facebook', {
+            fbUser: angular.toJson(res.fbUser),
+            step: 2
+          });
+        } else if (res.code === 'LOGGED_IN') {
+          return $state.go('cars');
         }
-        return $cordovaFacebook.login(['public_profile', 'email']);
       })
-      .then(function (response) {
-        return $cordovaFacebook.api('/me?fields=email,first_name,last_name')
-        .then(function (fbUser) {
-          fbUser.token = response.authResponse.accessToken;
-          return fbUser;
-        });
-      })
-      .then(function (fbUser) {
-        return $state.go('users-new-facebook', {
-          fbUser: angular.toJson(fbUser),
-          step: 2
-        });
-      })
-      .catch(function (err) {
-        return $message.error(err);
-      });
+      .catch($message.error.bind($message));
 
   };
 

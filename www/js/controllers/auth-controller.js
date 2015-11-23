@@ -13,8 +13,6 @@ function AuthController ($injector) {
   var BookingService = $injector.get('BookingService');
   var $stateParams = $injector.get('$stateParams');
   var $ionicHistory = $injector.get('$ionicHistory');
-  var $cordovaFacebook = $injector.get('$cordovaFacebook');
-  var $q = $injector.get('$q');
 
   this.$ionicHistory = $ionicHistory;
 
@@ -82,48 +80,20 @@ function AuthController ($injector) {
 
   };
 
-  function registerUserWithFacebook (token) {
-    return $cordovaFacebook.api('/me?fields=email,first_name,last_name')
-    .then(function (fbUser) {
-      fbUser.token = token;
-      return fbUser;
-    })
-    .then(function (fbUser) {
-      return $state.go('users-new-facebook', {
-        fbUser: angular.toJson(fbUser),
-        step: 2
-      });
-    });
-  }
-
-
   this.loginWithFacebook = function loginWithFacebook () {
 
-    return $cordovaFacebook.getLoginStatus()
-      .then(function(response) {
-        if (response.status === 'connected') {
-          return response;
-        }
-        return $cordovaFacebook.login(['public_profile', 'email']);
-      })
-      .then(function(res) {
-        if (res.status !== 'connected') {
-          return $q.reject('There was a problem logging you in');
-        }
-
-        var token = res.authResponse.accessToken;
-        return $auth.loginWithFacebook(token)
-          .then(function () {
-            return $state.go('landing');
-          })
-          .catch(function (err) {
-            if (err.status === 400 && err.data && err.data.code === 'FACEBOOK_LOGIN_FAILED') {
-              return registerUserWithFacebook(token);
-            }
-            return $q.reject(err);
+    return $auth.facebookAuth()
+      .then(function (res) {
+        if (res.code === 'NEW_USER') {
+          return $state.go('users-new-facebook', {
+            fbUser: angular.toJson(res.fbUser),
+            step: 2
           });
+        } else if (res.code === 'LOGGED_IN') {
+          return $state.go('cars');
+        }
       })
-      .catch($message.error);
+      .catch($message.error.bind($message));
   };
 
 

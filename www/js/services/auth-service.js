@@ -4,9 +4,11 @@ require('./session-service.js');
 require('./data-service.js');
 var _ = require('lodash');
 
-function AuthService ($session, $data) {
+function AuthService ($session, $data, $injector) {
   this.token = $session.get('auth') || false;
   this.me = $session.get('me') || false;
+  var $cordovaFacebook = $injector.get('$cordovaFacebook');
+  var $q = $injector.get('$q');
 
   this.createSession = function createSession (user) {
     var _this = this;
@@ -103,7 +105,44 @@ function AuthService ($session, $data) {
     };
 
     return $data.resources.Auth.facebook(data).$promise;
+  };
 
+  function registerUserWithFacebook (token) {
+    return $cordovaFacebook.api('/me?fields=email,first_name,last_name')
+    .then(function (fbUser) {
+      fbUser.token = token;
+      return fbUser;
+    })
+    .then(function (fbUser) {
+      return {code: 'NEW_USER', fbUser: fbUser};
+    });
+  }
+
+  this.facebookAuth = function facebookAuth () {
+    return $cordovaFacebook.getLoginStatus()
+      .then(function(response) {
+        if (response.status === 'connected') {
+          return response;
+        }
+        return $cordovaFacebook.login(['public_profile', 'email']);
+      })
+      .then(angular.bind(this, function(res) {
+        if (res.status !== 'connected') {
+          return $q.reject('There was a problem logging you in');
+        }
+
+        var token = res.authResponse.accessToken;
+        return this.loginWithFacebook(token)
+          .then(function () {
+            return {code: 'LOGGED_IN'};
+          })
+          .catch(function (err) {
+            if (err.status === 400 && err.data && err.data.code === 'FACEBOOK_LOGIN_FAILED') {
+              return registerUserWithFacebook(token);
+            }
+            return $q.reject(err);
+          });
+      }));
   };
 
   this.login = function login (data, next) {
@@ -151,5 +190,6 @@ function AuthService ($session, $data) {
 module.exports = angular.module('app.services').service('$auth', [
   '$session',
   '$data',
+  '$injector',
   AuthService
 ]);
