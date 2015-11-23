@@ -36,6 +36,14 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       type : Sequelize.STRING(88)
     },
 
+    license : {
+      type : Sequelize.STRING(88)
+    },
+
+    fileId : {
+      type : Sequelize.STRING
+    },
+
     latitude : {
       type : Sequelize.DECIMAL(10, 8),
     },
@@ -149,6 +157,14 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
     positionUpdatedAt : {
       type : Sequelize.DATE
+    },
+
+    lastServiceAt : {
+      type : Sequelize.DATE
+    },
+
+    comments : {
+      type : Sequelize.TEXT()
     }
 
   };

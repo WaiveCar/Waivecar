@@ -35,6 +35,10 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       }
     },
 
+    comments : {
+      type : Sequelize.TEXT()
+    },
+
     // ### File Collection
     // The collectionId represents a unified id for the files that
     // has been attached to the booking.

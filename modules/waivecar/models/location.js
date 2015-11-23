@@ -15,16 +15,25 @@ Bento.Register.Model('Location', 'sequelize', function(model, Sequelize) {
    * @type     Object
    */
   model.schema = {
+
     type : {
       type         : Sequelize.ENUM('station', 'valet', 'homebase', 'item-of-interest'),
       defaultValue : 'station'
     },
-    name        : { type : Sequelize.STRING, allowNull : false },
+
+    name : { type : Sequelize.STRING, allowNull : false },
+
     description : { type : Sequelize.STRING },
-    latitude    : { type : Sequelize.DECIMAL(10, 8), allowNull : false },
-    longitude   : { type : Sequelize.DECIMAL(11, 8), allowNull : false },
-    address     : { type : Sequelize.STRING },
-    status      : {
+
+    comments : { type : Sequelize.TEXT() },
+
+    latitude : { type : Sequelize.DECIMAL(10, 8), allowNull : false },
+
+    longitude : { type : Sequelize.DECIMAL(11, 8), allowNull : false },
+
+    address : { type : Sequelize.STRING },
+
+    status : {
       type : Sequelize.ENUM(
         'available',
         'unavailable',
