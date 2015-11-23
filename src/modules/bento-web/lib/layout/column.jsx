@@ -13,7 +13,8 @@ module.exports = class Column extends React.Component {
    */
   render() {
     let width = this.props.width || 12;
-    let className = (this.props.responsive ? 'col-md-' : 'col-xs-') + width;
+    let prefix = this.props.responsiveBreakpoint ? `col-${ this.props.responsiveBreakpoint }-` : 'col-md-';
+    let className = (this.props.responsive ? prefix : 'col-xs-') + width;
     if (this.props.centerContent) {
       className = `${ className } m-x-auto`;
     }

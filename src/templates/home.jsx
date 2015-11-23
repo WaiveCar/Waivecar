@@ -63,38 +63,36 @@ class HomeTemplate extends React.Component {
   renderNavItems(listClassName) {
     return this.state.navItems.map((n, i) => {
       switch (n.type) {
-        case 'link'   : return <Link key={ i } className="nav-item nav-link" to={ n.to }>{ n.title }</Link>
-        case 'anchor' : return <Anchor key={ i } className="nav-item nav-link" href={ n.to }>{ n.title }</Anchor>
+        case 'link'   : return <li key={ i }><Link className="nav-item nav-link" to={ n.to }>{ n.title }</Link></li>
+        case 'anchor' : return <li key={ i }><Anchor className="nav-item nav-link" href={ n.to }>{ n.title }</Anchor></li>
       }
     });
   }
 
   renderNav() {
     return (
-      <div className="navbar navbar-inverse navbar-static-top bd-navbar" role="banner">
-        <div className="clearfix">
-          <button className="navbar-toggler pull-right hidden-sm-up collapsed" type="button" data-toggle="collapse" data-target="#bd-main-nav" aria-expanded="false">☰</button>
-          <a className="navbar-brand hidden-lg-up" href="/">
-            WaiveCar
+      <nav>
+        <div>
+          <a className="navbar-brand" href="/">
+            <img src="/images/site/logo.svg" alt="WaiveCar" />
           </a>
         </div>
-        <div className="navbar-brand hidden-md-down">
-          <img src="/images/site/logo.svg" alt="WaiveCar" />
-        </div>
-        <div className="navbar-toggleable-sm collapse" id="bd-main-nav" aria-expanded="false" style={{ height: '0px' }}>
-          <nav className="nav navbar-nav pull-right">
+        <div>
+          <ul className="pull-right">
             { this.renderNavItems() }
-          </nav>
+          </ul>
         </div>
-      </div>
+      </nav>
     );
   }
 
   renderHeader() {
     return (
       <header className="section jumbotron bg-inverse" role="banner">
-        <Container>
-          { this.renderNav() }
+        <div className="container">
+          <Row>
+            { this.renderNav() }
+          </Row>
           <Row>
             <Column width={ 6 }>
               <div  className="valign">
@@ -120,7 +118,7 @@ class HomeTemplate extends React.Component {
               <img className="app-sample pull-right" src="/images/site/iphone.png" />
             </Column>
           </Row>
-        </Container>
+        </div>
         <div className="scroll text-center">
           Learn how
           <br />
@@ -190,7 +188,7 @@ class HomeTemplate extends React.Component {
             </Column>
           </Row>
           <Row>
-            <Column width={ 3 } responsive={ true } className="text-center">
+            <Column width={ 3 } responsive={ true } responsiveBreakpoint="lg" className="text-center">
               <Waypoint id="FeaturesFind" onEnter={ this.handleWaypointEnter } onEnterClassName="animated fadeInUp" className={ this.state.waypoints.FeaturesFind }>
                 <div className="card-block">
                   <img className="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="1" width="140" height="140" />
@@ -199,7 +197,7 @@ class HomeTemplate extends React.Component {
                 </div>
               </Waypoint>
             </Column>
-            <Column width={ 3 } responsive={ true } className="text-center">
+            <Column width={ 3 } responsive={ true } responsiveBreakpoint="lg" className="text-center">
               <Waypoint id="FeaturesBook" onEnter={ this.handleWaypointEnter } onEnterClassName="animated fadeInUp" className={ this.state.waypoints.FeaturesBook }>
                 <div className="card-block">
                   <img className="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="2" width="140" height="140" />
@@ -208,7 +206,7 @@ class HomeTemplate extends React.Component {
                 </div>
               </Waypoint>
             </Column>
-            <Column width={ 3 } responsive={ true } className="text-center">
+            <Column width={ 3 } responsive={ true } responsiveBreakpoint="lg" className="text-center">
               <Waypoint id="FeaturesStart" onEnter={ this.handleWaypointEnter } onEnterClassName="animated fadeInUp" className={ this.state.waypoints.FeaturesStart }>
                 <div className="card-block">
                   <img className="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="3" width="140" height="140" />
@@ -217,7 +215,7 @@ class HomeTemplate extends React.Component {
                 </div>
               </Waypoint>
             </Column>
-            <Column width={ 3 } responsive={ true } className="text-center">
+            <Column width={ 3 } responsive={ true } responsiveBreakpoint="lg" className="text-center">
               <Waypoint id="FeaturesEnd" onEnter={ this.handleWaypointEnter } onEnterClassName="animated fadeInUp" className={ this.state.waypoints.FeaturesEnd }>
                 <div className="card-block">
                   <img className="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="4" width="140" height="140" />
