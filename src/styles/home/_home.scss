@@ -9,8 +9,19 @@
 
 #home {
   background-color : $app-color-white;
+  h4 {
+    font-size : 1.25rem;
+  }
   .card {
     border : 0;
+    .card-block {
+      padding : 0;
+    }
+    .img-circle {
+      width         : 200px;
+      height        : 200px;
+      margin-bottom : 35px;
+    }
   }
   .tinted-half {
     position   : absolute;
