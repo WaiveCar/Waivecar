@@ -1,43 +1,32 @@
 'use strict';
 
-import React              from 'react';
-import { auth, api, dom } from 'bento';
-import { Form, snackbar } from 'bento-web';
-import { fields }         from 'bento-ui';
+import React                from 'react';
+import { auth, relay, dom } from 'bento';
+import { Form }             from 'bento-web';
+import License              from '../lib/license-service';
 
 let formFields = {
-  license : require('./form-fields/license')
+  new    : require('./form-fields/license'),
+  update : require('./form-fields/license'),
 };
 
-module.exports = class ProfilePasswordView extends React.Component {
+formFields.new.splice(2); // TODO Not accurate; we are guessing at fields.
+
+module.exports = class ProfileLicenseView extends React.Component {
 
   constructor(...args) {
     super(...args);
     dom.setTitle('License');
-    this.state = {
-      isLoading : true,
-      license   : null
-    };
-    this.submit = this.submit.bind(this);
+    this.state   = {};
+    this.license = new License(this);
   }
 
   componentDidMount() {
-    api.get('/licenses', function (err, list) {
-      if (err) {
-        return snackbar.notify({
-          type    : `danger`,
-          message : err.message
-        });
-      }
-      this.setState({
-        isLoading : false,
-        license   : list.length ? list[0] : null,
-      });
-    }.bind(this));
+    this.license.setLicenses();
   }
 
-  submit(data) {
-    console.log(data);
+  componentWillUnmount() {
+    relay.unsubscribe(this, 'app');
   }
 
   renderLicenseRegistration() {
@@ -50,7 +39,8 @@ module.exports = class ProfilePasswordView extends React.Component {
           <Form
             ref       = "license"
             className = "bento-form-static"
-            fields    = { formFields.license }
+            fields    = { formFields.new }
+            default   = { {} }
             buttons   = {[
               {
                 value : 'Register License',
@@ -58,7 +48,7 @@ module.exports = class ProfilePasswordView extends React.Component {
                 class : 'btn btn-primary btn-profile-submit'
               }
             ]}
-            submit = { this.submit }
+            submit = { this.license.submitLicense }
           />
         </div>
       </div>
@@ -75,7 +65,7 @@ module.exports = class ProfilePasswordView extends React.Component {
           <Form
             ref       = "license"
             className = "bento-form-static"
-            fields    = { formFields.license }
+            fields    = { formFields.update }
             default   = { this.state.license }
           />
         </div>
@@ -90,7 +80,7 @@ module.exports = class ProfilePasswordView extends React.Component {
     return (
       <div className="profile">
         {
-          this.state.license
+          this.state.licenses && this.state.licenses.length > 0
             ? this.renderLicense()
             : this.renderLicenseRegistration()
         }
