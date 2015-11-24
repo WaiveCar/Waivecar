@@ -127,7 +127,17 @@ module.exports = class DateField extends React.Component {
     return (
       <div className={ this.state.className }>
         <label>{ label }</label>
-        <span>{ this.props.value }</span>
+        <input
+          type        = { type }
+          className   = "form-control"
+          name        = { name }
+          placeholder = { placeholder }
+          value       = { this.props.value }
+          onChange    = { this.props.onChange }
+          onFocus     = { this.focus }
+          onBlur      = { this.blur }
+          tabIndex    = { tabIndex }
+        />
         <div className="focus-bar"></div>
         <span className="help-text">{ helpText }</span>
       </div>
