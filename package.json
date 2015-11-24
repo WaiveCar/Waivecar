@@ -46,7 +46,7 @@
     "bentojs-api-file": "0.3.17",
     "bentojs-api-log": "0.2.5",
     "bentojs-api-mongo": "0.0.12",
-    "bentojs-api-payment": "0.3.9",
+    "bentojs-api-payment": "0.3.10",
     "bentojs-api-queue": "0.0.17",
     "bentojs-api-sequelize": "0.1.13",
     "bentojs-api-slack": "0.0.2",
