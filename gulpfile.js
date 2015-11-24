@@ -29,11 +29,8 @@ var paths = {
     './www/**/*.js',
     '!./www/js/services/templates.min.js',
     '!./www/lib/**/*.*',
-    // '!./www/js/**/*.*',
     '!./www/dist/**/*.*',
-    '!./www/vendors/**/*.*',
-    '!./www/delete_modules/**/*.*',
-    '!./www/delete_components/**/*.*'
+    '!./www/vendors/**/*.*'
   ],
   fonts: [
     './node_modules/font-awesome/fonts/*.*',
