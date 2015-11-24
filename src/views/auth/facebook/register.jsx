@@ -2,66 +2,33 @@
 
 import React         from 'react';
 import mixin         from 'react-mixin';
-import { History }   from 'react-router';
 import config        from 'config';
 import { auth, api } from 'bento';
 import facebook      from './index';
+import Spinner       from './spinner';
 
-@mixin.decorate(History)
 class FacebookRegister extends React.Component {
 
   constructor(...args) {
     super(...args);
     this.state = {
-      loading : true
+      loading : true,
+      error   : null
     };
   }
 
   /**
-   * Send login request to the api with the provided facebook code.
+   * Send registration request to the API.
    * @return {Void}
    */
   componentDidMount() {
-    api.post('/auth/facebook', {
-      type        : 'register',
-      code        : this.props.location.query.code,
-      redirectUri : `${ config.auth.facebook.redirect }/register`
-    }, (error, user) => {
-      if (error) {
-        if (error.code === 'FB_ID_EXISTS') {
-          facebook.login();
-        } else {
-          this.setState({
-            loading : false,
-            error   : error.message
-          });
-        }
-      } else {
-        console.log(user);
-        // auth.set(user);
-        // this.history.pushState(null, '/dashboard');
-      }
+    facebook.setToken();
+    facebook.register((error) => {
+      this.setState({
+        loading : false,
+        error   : error.message
+      });
     });
-  }
-
-  /**
-   * Renders a loading spinner.
-   * @return {Object}
-   */
-  spinner() {
-    return (
-      <div className="sk-cube-grid">
-        <div className="sk-cube sk-cube1"></div>
-        <div className="sk-cube sk-cube2"></div>
-        <div className="sk-cube sk-cube3"></div>
-        <div className="sk-cube sk-cube4"></div>
-        <div className="sk-cube sk-cube5"></div>
-        <div className="sk-cube sk-cube6"></div>
-        <div className="sk-cube sk-cube7"></div>
-        <div className="sk-cube sk-cube8"></div>
-        <div className="sk-cube sk-cube9"></div>
-      </div>
-    );
   }
 
   /**
@@ -71,12 +38,13 @@ class FacebookRegister extends React.Component {
   result() {
     if (this.state.error) {
       return (
-        <div>
+        <div className="result">
+          <img src="/images/logo.svg" />
           { this.state.error }
         </div>
       );
     }
-    return this.spinner();
+    return <Spinner />;
   }
 
   /**
@@ -87,7 +55,7 @@ class FacebookRegister extends React.Component {
     return (
       <div>
         {
-          this.state.loading ? this.spinner() : this.result()
+          this.state.loading ? <Spinner /> : this.result()
         }
       </div>
     );

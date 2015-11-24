@@ -2,17 +2,18 @@
 
 import React         from 'react';
 import mixin         from 'react-mixin';
-import { History }   from 'react-router';
 import config        from 'config';
 import { auth, api } from 'bento';
+import facebook      from './index';
+import Spinner       from './spinner';
 
-@mixin.decorate(History)
 class FacebookLogin extends React.Component {
 
   constructor(...args) {
     super(...args);
     this.state = {
-      loading : true
+      loading : true,
+      error   : null
     };
   }
 
@@ -21,41 +22,13 @@ class FacebookLogin extends React.Component {
    * @return {Void}
    */
   componentDidMount() {
-    api.post('/auth/facebook', {
-      type        : 'login',
-      code        : this.props.location.query.code,
-      redirectUri : `${ config.auth.facebook.redirect }/login`
-    }, (error, user) => {
-      if (error) {
-        this.setState({
-          loading : false,
-          error   : error.message
-        });
-      } else {
-        auth.set(user);
-        this.history.pushState(null, '/');
-      }
+    facebook.setToken();
+    facebook.login((err) => {
+      this.setState({
+        loading : false,
+        error   : err.message
+      });
     });
-  }
-
-  /**
-   * Renders a loading spinner.
-   * @return {Object}
-   */
-  spinner() {
-    return (
-      <div className="sk-cube-grid">
-        <div className="sk-cube sk-cube1"></div>
-        <div className="sk-cube sk-cube2"></div>
-        <div className="sk-cube sk-cube3"></div>
-        <div className="sk-cube sk-cube4"></div>
-        <div className="sk-cube sk-cube5"></div>
-        <div className="sk-cube sk-cube6"></div>
-        <div className="sk-cube sk-cube7"></div>
-        <div className="sk-cube sk-cube8"></div>
-        <div className="sk-cube sk-cube9"></div>
-      </div>
-    );
   }
 
   /**
@@ -65,12 +38,16 @@ class FacebookLogin extends React.Component {
   result() {
     if (this.state.error) {
       return (
-        <div>
+        <div className="result">
+          <img src="/images/logo.svg" />
           { this.state.error }
+          <div className="result-actions">
+            Create an account? <Link to="/register">Register</Link>
+          </div>
         </div>
       );
     }
-    return this.spinner();
+    return <Spinner />;
   }
 
   /**
@@ -81,7 +58,7 @@ class FacebookLogin extends React.Component {
     return (
       <div>
         {
-          this.state.loading ? this.spinner() : this.result()
+          this.state.loading ? <Spinner /> : this.result()
         }
       </div>
     );

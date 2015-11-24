@@ -1,19 +1,16 @@
 'use strict';
 
-import React         from 'react';
-import mixin         from 'react-mixin';
-import { History }   from 'react-router';
-import config        from 'config';
-import { auth, api } from 'bento';
-import facebook      from './index';
+import React    from 'react';
+import facebook from './index';
+import Spinner  from './spinner';
 
-@mixin.decorate(History)
 class FacebookConnect extends React.Component {
 
   constructor(...args) {
     super(...args);
     this.state = {
-      loading : true
+      loading : true,
+      error   : null
     };
   }
 
@@ -22,52 +19,29 @@ class FacebookConnect extends React.Component {
    * @return {Void}
    */
   componentDidMount() {
-    api.post('/auth/facebook', {
-      type        : 'connect',
-      code        : this.props.location.query.code,
-      redirectUri : `${ config.auth.facebook.redirect }/connect`
-    }, (error, res) => {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log(res);
-      }
+    facebook.setToken();
+    facebook.connect((err) => {
+      this.setState({
+        loading : false,
+        error   : err.message
+      });
     });
   }
 
   /**
-   * Renders a loading spinner.
-   * @return {Object}
-   */
-  spinner() {
-    return (
-      <div className="sk-cube-grid">
-        <div className="sk-cube sk-cube1"></div>
-        <div className="sk-cube sk-cube2"></div>
-        <div className="sk-cube sk-cube3"></div>
-        <div className="sk-cube sk-cube4"></div>
-        <div className="sk-cube sk-cube5"></div>
-        <div className="sk-cube sk-cube6"></div>
-        <div className="sk-cube sk-cube7"></div>
-        <div className="sk-cube sk-cube8"></div>
-        <div className="sk-cube sk-cube9"></div>
-      </div>
-    );
-  }
-
-  /**
    * Renders result.
-   * @return {[type]} [description]
+   * @return {Void} [description]
    */
   result() {
     if (this.state.error) {
       return (
-        <div>
+        <div className="result">
+          <img src="/images/logo.svg" />
           { this.state.error }
         </div>
       );
     }
-    return this.spinner();
+    return <Spinner />;
   }
 
   /**
@@ -75,13 +49,7 @@ class FacebookConnect extends React.Component {
    * @return {Object}
    */
   render() {
-    return (
-      <div>
-        {
-          this.state.loading ? this.spinner() : this.result()
-        }
-      </div>
-    );
+    return <div>{ this.state.loading ? <Spinner /> : this.result() }</div>;
   }
 
 };

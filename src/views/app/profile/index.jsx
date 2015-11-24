@@ -6,6 +6,7 @@ import { Form, snackbar }        from 'bento-web';
 import { resources, fields }     from 'bento-ui';
 import md5                       from 'md5';
 import Account                   from '../lib/account-service';
+import facebook                  from '../../auth/facebook';
 
 // ### Form Fields
 
@@ -28,6 +29,47 @@ module.exports = class ProfileView extends React.Component {
    */
   componentDidMount() {
     this.account.status();
+  }
+
+  /**
+   * Render facebook connect button if no facebook ID exists on the user.
+   * @return {Object}
+   */
+  renderFacebookConnect() {
+    let user = this.state.me;
+    if (!user.facebook) {
+      return (
+        <button className="r-btn btn-facebook" onClick={ this.facebookConnect }>
+          <i className="fa fa-facebook" />
+          Connect with Facebook
+        </button>
+      );
+    }
+  }
+
+  /**
+   * Performs a facebook connect request.
+   * @return {Void} [description]
+   */
+  facebookConnect() {
+    facebook.connect((error) => {
+      if (error) {
+        return snackbar.notify({
+          type    : `danger`,
+          message : error.message
+        });
+      }
+      snackbar.notify({
+        type    : `success`,
+        message : 'Your facebook account was successfully connected.'
+      });
+      relay.dispatch('me', {
+        type : 'update',
+        data : {
+          facebook : true
+        }
+      });
+    });
   }
 
   /**
@@ -128,6 +170,7 @@ module.exports = class ProfileView extends React.Component {
           </div>
         </div>
 
+        { this.renderFacebookConnect() }
         { this.renderPersonalDetails() }
         { this.renderAccountStatus() }
       </div>
