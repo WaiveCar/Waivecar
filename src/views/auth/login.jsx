@@ -74,7 +74,6 @@ class LoginView extends React.Component {
   render() {
     return (
       <div className="login">
-
         <div className="title">
           { config.app.name }&nbsp;
           <span className="title-site">Log in</span>

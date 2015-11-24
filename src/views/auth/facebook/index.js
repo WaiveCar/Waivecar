@@ -77,7 +77,7 @@ let facebook = module.exports = {
           if (types.isFunction(errorHandler)) {
             return errorHandler(error);
           }
-          return facebook.register();
+          return facebook.error(error.message);
         }
         facebook.setAuth(user);
       });
