@@ -19,8 +19,9 @@ module.exports = class ProfileView extends React.Component {
   constructor(...args) {
     super(...args);
     dom.setTitle('Profile');
-    this.state   = {};
-    this.account = new Account(this);
+    this.state       = {};
+    this.account     = new Account(this);
+    this.submitToken = this.submitToken.bind(this);
     relay.subscribe(this, 'me');
   }
 
@@ -78,7 +79,18 @@ module.exports = class ProfileView extends React.Component {
    */
   submitToken() {
     let token = this.refs.verification.value;
-    console.log(token);
+    api.put(`/verifications/${ token }`, {}, (error, res) => {
+      if (error) {
+        return snackbar.notify({
+          type    : `danger`,
+          message : error.message
+        });
+      }
+      snackbar.notify({
+        type    : `success`,
+        message : `Verification request was successfull.`
+      });
+    });
   }
 
   /**
