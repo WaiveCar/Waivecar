@@ -1,8 +1,8 @@
 module.exports = {
   auth : {
     facebook : {
-      appId     : '1022707721082213',
-      appSecret : 'b0ab7f667101eeba62437994ddfe82c7'
+      appId     : '1022708504415468',
+      appSecret : '1112617da837aa59b2f096ca9e813dd3'
     }
   }
 };

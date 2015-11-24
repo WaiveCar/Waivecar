@@ -2,17 +2,15 @@ module.exports = {
 
   /*
    |--------------------------------------------------------------------------------
-   | Slack
+   | Web
    |--------------------------------------------------------------------------------
    |
-   | A provider interface for easy to use commands against the slack API.
-   |
-   | @param {Object} tokens The list of channels and their tokens.
+   | @param {String} uri The root endpoint of the webapp.
    |
    */
 
-  slack : {
-    channels : {}
+  web : {
+    uri : null
   }
 
 };

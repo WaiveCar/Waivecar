@@ -141,14 +141,41 @@ module.exports = class OnfidoService {
     let response = result.toJSON();
 
     if (!response || response.statusCode > 201) {
-      throw error.parse({
-        code    : `LICENSE_SERVICE`,
-        message : `LICENSE: ${ resource }`,
-        data    : result.body ? JSON.parse(result.body) : null
-      }, response.statusCode || 400);
+      throw error.parse(this.getError(resource, result), response.statusCode || 400);
     }
 
     return JSON.parse(response.body);
+  }
+
+  static getError(resource, result) {
+    let data = result.body ? JSON.parse(result.body) : null;
+    if (!data) {
+      return {
+        code    : `LICENSE_SERVICE_${ resource }`,
+        message : `LICENSE: ${ resource }`
+      };
+    }
+
+    if (data.error && data.error.type === 'validation_error') {
+      let errors = '';
+      for (let field in data.error.fields) {
+        let messages = data.error.fields[field];
+        let messageArray = messages.map((f) => { return f.value.join('\n'); });
+        errors += `${ messageArray.join('\n') }`;
+      }
+
+      return {
+        code    : 'LICENSE_SERVICE_VALIDATION_ERROR',
+        message : data.error.message,
+        data    : errors
+      };
+    }
+
+    return {
+      code    : `LICENSE_SERVICE_${ resource }`,
+      message : `LICENSE: ${ resource }`,
+      data    : result.body ? JSON.parse(result.body) : null
+    };
   }
 
 };

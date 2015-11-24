@@ -94,27 +94,6 @@ hooks.set('user:store:after', function *(user) {
     return; // Ignore test accounts...
   }
 
-  // ### Registration Job
-
-  let job = queue
-    .create('email:user:registration', {
-      to       : user.email,
-      from     : config.email.sender,
-      subject  : 'Registration complete',
-      template : 'user-welcome-email',
-      context  : {
-        name    : user.name(),
-        company : config.api.name,
-        confirm : 'http://local.io:8081/users/email-confirm/sample'
-      }
-    })
-    .save()
-  ;
-
-  job.on('complete', () => {
-    job.remove();
-  });
-
   // ### Verify Phone
 
   if (user.phone && !user.verifiedPhone) {
