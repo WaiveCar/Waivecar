@@ -25,7 +25,7 @@ module.exports = class ProfileCardsView extends React.Component {
    * application view header.
    */
   componentDidMount() {
-    this.payment.ensureCustomer(auth.user);
+    this.payment.ensureCustomer(auth.user());
     this.payment.setCards();
   }
 

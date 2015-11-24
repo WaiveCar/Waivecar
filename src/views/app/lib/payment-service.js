@@ -4,7 +4,7 @@ import { api, auth, dom } from 'bento';
 import Service            from './component-service';
 
 module.exports = class Payment extends Service {
-  
+
   /**
    * Stores the provided context.
    * @param {Object} ctx
@@ -33,7 +33,7 @@ module.exports = class Payment extends Service {
   /**
    * Registers the user with stripe via the api.
    * @param {Object}  user         The user to register with stripe.
-   * @param {Boolean} shouldNotify 
+   * @param {Boolean} shouldNotify
    */
   addCustomer(user, shouldNotify) {
     api.post('/payments/customers', {
@@ -42,8 +42,9 @@ module.exports = class Payment extends Service {
       customer : {
         description : 'WaiveCar customer registered via web.'
       }
-    }, function (err, res) {
+    }, (err, res) => {
       if (err) {
+        console.log(err);
         return this.error(err.message);
       }
 
@@ -72,14 +73,14 @@ module.exports = class Payment extends Service {
    * @param  {Function} reset
    */
   submitCard(data, reset) {
-    this.addCard(auth.user, data, function (card) {
+    this.addCard(auth.user(), data, (card) => {
       this.setState('cards', [
         ...this.getState('cards'),
         card
       ]);
       this.success(`Your new payment card was added successfully`);
       reset();
-    }.bind(this));
+    });
   }
 
   /**
@@ -99,24 +100,24 @@ module.exports = class Payment extends Service {
       userId  : user.id,
       service : 'stripe',
       card    : card
-    }, function (err, card) {
+    }, (err, card) => {
       if (err) {
         return this.error(err.message);
       }
       done(card);
-    }.bind(this));
+    });
   }
 
   /**
    * Loads cards from the api and adds them to the cards array on the ctx.
    */
   setCards() {
-    api.get('/payments/cards', function (err, cards) {
+    api.get('/payments/cards', (err, cards) => {
       if (err) {
         return this.error(err.message);
       }
       this.setState('cards', cards);
-    }.bind(this));
+    });
   }
 
   /**
@@ -136,7 +137,7 @@ module.exports = class Payment extends Service {
 
     // ### Submit Request
 
-    api.delete(`/payments/cards/${ cardId }`, function (err) {
+    api.delete(`/payments/cards/${ cardId }`, (err) => {
       if (err) {
         if (btn) {
           btn.className = dom.setClass({
@@ -164,7 +165,7 @@ module.exports = class Payment extends Service {
       // Notify client of successfull card removal.
 
       this.success(`Your payment card was successfully removed from your account`);
-    }.bind(this));
+    });
 
   }
 

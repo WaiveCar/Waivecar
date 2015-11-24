@@ -6,6 +6,7 @@ import { History, Link }          from 'react-router';
 import config                     from 'config';
 import { auth, api, socket, dom } from 'bento';
 import { Form, snackbar }         from 'bento-web';
+import facebook                   from './facebook';
 
 @mixin.decorate(History)
 class LoginView extends React.Component {
@@ -58,12 +59,12 @@ class LoginView extends React.Component {
 
       if (remember) {
         api.get('/auth/remember', (error) => {
-          this.history.pushState(null, '/dashboard');
-        }.bind(this));
+          this.history.pushState(null, '/');
+        });
       } else {
-        this.history.pushState(null, '/dashboard');
+        this.history.pushState(null, '/');
       }
-    }.bind(this));
+    });
   }
 
   /**
@@ -73,7 +74,6 @@ class LoginView extends React.Component {
   render() {
     return (
       <div className="login">
-
         <div className="title">
           { config.app.name }&nbsp;
           <span className="title-site">Log in</span>
@@ -112,10 +112,10 @@ class LoginView extends React.Component {
 
         <div className="actions">
           <button type="button" className="r-btn btn-login" onClick={ this.submit }>Log in</button>
-          <a className="r-btn btn-facebook" href={ `https://www.facebook.com/dialog/oauth?client_id=${ config.auth.facebook.appId }&redirect_uri=${ config.auth.facebook.redirect }&state=login` }>
+          <button className="r-btn btn-facebook" onClick={ facebook.login }>
             <i className="fa fa-facebook" />
             Log in with Facebook
-          </a>
+          </button>
         </div>
 
         <div className="footer">

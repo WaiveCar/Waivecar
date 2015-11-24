@@ -1,5 +1,5 @@
 .profile {
-  
+
   .profile-header {
     margin-top : 50px;
 
@@ -56,11 +56,9 @@
   }
 
   .profile-box-info {
-    border-top  : 1px dashed #ccc;
-    color       : #767676;
-    font-size   : .82rem;
-    margin      : 8px;
-    padding-top : 12px;
+    color      : #767676;
+    font-size  : .82rem;
+    margin-top : 30px;
   }
 
   .profile-box-content {
@@ -104,8 +102,37 @@
     text-align : center;
   }
 
+  .verification {
+    margin-top : 10px;
+    text-align : center;
+    button, input {
+      border  : 1px solid #cecece;
+      padding : 5px 10px;
+    }
+    input {
+      border-right : none;
+    }
+  }
+
   .btn-profile-submit {
     margin : 10px 0;
+  }
+
+  .r-btn {
+    border        : none;
+    border-radius : 3px;
+    display       : block;
+    font-weight   : 400;
+    height        : 48px;
+    line-height   : 48px;
+    margin        : 10px auto;
+    transition    : .2s all;
+    text-align    : center;
+    max-width     : 300px;
+    width         : 100%;
+    &:hover {
+      text-decoration : none;
+    }
   }
 
   .no-records {

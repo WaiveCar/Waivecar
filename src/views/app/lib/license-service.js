@@ -23,10 +23,10 @@ module.exports = class License extends Service {
    * @param  {Function} reset
    */
   submitLicense(data, reset) {
-    this.addLicense(auth.user, data, function (card) {
+    this.addLicense(auth.user, data, function (license) {
       this.setState('licenses', [
         ...this.getState('licenses'),
-        card
+        license
       ]);
       this.success(`Your license was added successfully. We will validate it at time of booking.`);
       reset();
@@ -49,11 +49,14 @@ module.exports = class License extends Service {
       birthDate : license.birthDate,
       state     : license.state,
       number    : license.number
-    }, function (err, card) {
+    }, function (err, license) {
       if (err) {
+        if (err.data) {
+          return this.error(err.data);
+        }
         return this.error(err.message);
       }
-      done(card);
+      done(license);
     }.bind(this));
   }
 

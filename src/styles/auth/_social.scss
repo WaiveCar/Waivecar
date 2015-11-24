@@ -18,8 +18,12 @@
     }
   }
 
+  .result-actions {
+    font-weight : 300;
+  }
+
   // ### Spinner
-  
+
   .sk-cube-grid {
     height   : 40px;
     left     : calc(50% - 20px);
@@ -34,7 +38,7 @@
     height           : 33%;
     width            : 33%;
     -webkit-animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out;
-            animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out; 
+            animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out;
   }
   .sk-cube-grid .sk-cube1 {
     -webkit-animation-delay: 0.2s;
@@ -70,7 +74,7 @@
               transform: scale3D(1, 1, 1);
     } 35% {
       -webkit-transform: scale3D(0, 0, 1);
-              transform: scale3D(0, 0, 1); 
+              transform: scale3D(0, 0, 1);
     }
   }
 
@@ -81,6 +85,6 @@
     } 35% {
       -webkit-transform: scale3D(0, 0, 1);
               transform: scale3D(0, 0, 1);
-    } 
+    }
   }
 }

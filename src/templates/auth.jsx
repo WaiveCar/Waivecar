@@ -43,7 +43,7 @@ templates.register('auth', {
     {
       path      : '/logout',
       component : require('views/auth/logout'),
-      onEnter   : policies.isAuthenticated 
+      onEnter   : policies.isAuthenticated
     }
   ]
 });
@@ -63,12 +63,30 @@ class SocialAuthTemplate extends React.Component {
 templates.register('social-auth', {
   component   : SocialAuthTemplate,
   childRoutes : [
+
+    // ### Facebook
+
     {
-      path      : '/auth/facebook',
-      component : require('views/auth/social'),
+      path      : '/auth/facebook/register',
+      component : require('views/auth/facebook/register'),
+      onEnter   : (nextState, replaceState) => {
+        policies.isAnonymous(nextState, replaceState);
+      }
+    },
+    {
+      path      : '/auth/facebook/connect',
+      component : require('views/auth/facebook/connect'),
+      onEnter   : (nextState, replaceState) => {
+        policies.isAuthenticated(nextState, replaceState);
+      }
+    },
+    {
+      path      : '/auth/facebook/login',
+      component : require('views/auth/facebook/login'),
       onEnter   : (nextState, replaceState) => {
         policies.isAnonymous(nextState, replaceState);
       }
     }
+
   ]
 });

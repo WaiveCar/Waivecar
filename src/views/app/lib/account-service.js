@@ -140,13 +140,12 @@ module.exports = class AccountService extends Service {
       lastName  : data.lastName,
       email     : data.email,
       phone     : data.phone
-    }, function (err) {
+    }, (err) => {
       if (err) {
         return this.error(err.message);
       }
-      console.log(this);
       this.success(`Your details have been successfully updated`);
-    }.bind(this));
+    });
   }
 
 }

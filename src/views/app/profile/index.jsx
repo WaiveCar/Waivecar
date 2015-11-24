@@ -6,6 +6,7 @@ import { Form, snackbar }        from 'bento-web';
 import { resources, fields }     from 'bento-ui';
 import md5                       from 'md5';
 import Account                   from '../lib/account-service';
+import facebook                  from '../../auth/facebook';
 
 // ### Form Fields
 
@@ -18,8 +19,9 @@ module.exports = class ProfileView extends React.Component {
   constructor(...args) {
     super(...args);
     dom.setTitle('Profile');
-    this.state   = {};
-    this.account = new Account(this);
+    this.state       = {};
+    this.account     = new Account(this);
+    this.submitToken = this.submitToken.bind(this);
     relay.subscribe(this, 'me');
   }
 
@@ -28,6 +30,67 @@ module.exports = class ProfileView extends React.Component {
    */
   componentDidMount() {
     this.account.status();
+  }
+
+  /**
+   * Render facebook connect button if no facebook ID exists on the user.
+   * @return {Object}
+   */
+  renderFacebookConnect() {
+    let user = this.state.me;
+    if (!user.facebook) {
+      return (
+        <button className="r-btn btn-facebook" onClick={ this.facebookConnect }>
+          <i className="fa fa-facebook" />
+          Connect with Facebook
+        </button>
+      );
+    }
+  }
+
+  /**
+   * Performs a facebook connect request.
+   * @return {Void} [description]
+   */
+  facebookConnect() {
+    facebook.connect((error) => {
+      if (error) {
+        return snackbar.notify({
+          type    : `danger`,
+          message : error.message
+        });
+      }
+      snackbar.notify({
+        type    : `success`,
+        message : 'Your facebook account was successfully connected.'
+      });
+      relay.dispatch('me', {
+        type : 'update',
+        data : {
+          facebook : true
+        }
+      });
+    });
+  }
+
+  /**
+   * Sends a verification token the API.
+   * @return {Void}
+   */
+  submitToken() {
+    let token = this.refs.verification.value;
+    api.put(`/verifications/${ token }`, {}, (error, res) => {
+      if (error) {
+        return snackbar.notify({
+          type    : `danger`,
+          message : error.message
+        });
+      }
+      snackbar.notify({
+        type    : `success`,
+        message : `Verification request was successfull.`
+      });
+    });
   }
 
   /**
@@ -100,9 +163,14 @@ module.exports = class ProfileView extends React.Component {
             }
             </tbody>
           </table>
-          <p className="profile-box-info">
-            WaiveCar requires the leading details to be verified before your account can place a new booking.
+
+          <p className="profile-box-info text-center">
+            To verify email or phone, enter the token received by email/sms.
           </p>
+          <div className="verification text-center">
+            <input type="text" ref="verification" />
+            <button type="button" onClick={ this.submitToken }>Submit Token</button>
+          </div>
         </div>
       </div>
     );
@@ -128,6 +196,7 @@ module.exports = class ProfileView extends React.Component {
           </div>
         </div>
 
+        { this.renderFacebookConnect() }
         { this.renderPersonalDetails() }
         { this.renderAccountStatus() }
       </div>
