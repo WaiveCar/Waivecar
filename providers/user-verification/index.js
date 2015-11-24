@@ -56,10 +56,9 @@ module.exports = class UserVerification {
       subject  : 'Email Verificaton Required',
       template : 'request-email-verification',
       context  : {
-        name    : name,
-        token   : token,
-        company : config.api.name,
-        confirm : `${ config.api.uri }/users/verify`
+        name  : name,
+        token : token,
+        link  : `${ config.web.uri }/profile`
       }
     }).save();
 
