@@ -56,11 +56,9 @@
   }
 
   .profile-box-info {
-    border-top  : 1px dashed #ccc;
-    color       : #767676;
-    font-size   : .82rem;
-    margin      : 8px;
-    padding-top : 12px;
+    color      : #767676;
+    font-size  : .82rem;
+    margin-top : 30px;
   }
 
   .profile-box-content {
@@ -102,6 +100,17 @@
   .profile-status-check {
     color      : green;
     text-align : center;
+  }
+
+  .verification {
+    margin-top : 10px;
+    button, input {
+      border  : 1px solid #cecece;
+      padding : 5px 10px;
+    }
+    input {
+      border-right : none;
+    }
   }
 
   .btn-profile-submit {

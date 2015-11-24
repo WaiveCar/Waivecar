@@ -73,6 +73,15 @@ module.exports = class ProfileView extends React.Component {
   }
 
   /**
+   * Sends a verification token the API.
+   * @return {Void}
+   */
+  submitToken() {
+    let token = this.refs.verification.value;
+    console.log(token);
+  }
+
+  /**
    * Render the personal details form.
    * @return {Object}
    */
@@ -142,8 +151,13 @@ module.exports = class ProfileView extends React.Component {
             }
             </tbody>
           </table>
-          <p className="profile-box-info">
-            WaiveCar requires the leading details to be verified before your account can place a new booking.
+
+          <p className="profile-box-info text-center">
+            To verify email or phone, enter the token received by email/sms.
+            <div className="verification">
+              <input type="text" ref="verification" />
+              <button type="button" onClick={ this.submitToken }>Submit Token</button>
+            </div>
           </p>
         </div>
       </div>
