@@ -2,7 +2,6 @@
 var angular = require('angular');
 require('./session-service.js');
 require('./data-service.js');
-var _ = require('lodash');
 
 function AuthService ($session, $data, $injector) {
   this.token = $session.get('auth') || false;
@@ -51,46 +50,10 @@ function AuthService ($session, $data, $injector) {
 
   };
 
-  this.facebookLogin = function facebookLogin (code, next) {
-    var _this = this;
-    var data = {
-      type: 'login',
-      code: code,
-      redirectUri: 'http://localhost/'
-    };
-
-    $data.resources.users.facebook(data, function(user) {
-        $data.resources.users.me(function(me) {
-          $session.set('auth', {
-            token: user.token
-          }).save();
-
-          $session.set('me', me).save();
-
-          _this.token = $session.get('auth');
-          _this.me = $data.me = $session.get('me');
-
-        });
-      },
-      next);
-
-  };
-
   this.loginWithFacebook = function loginWithFacebook (token) {
     var data = {
       token: token,
       type: 'login'
-    };
-
-    return $data.resources.Auth.facebook(data).$promise
-      .then(angular.bind(this, this.createSession));
-
-  };
-
-  this.registerWithFacebook = function registerWithFacebook (token) {
-    var data = {
-      token: token,
-      type: 'register'
     };
 
     return $data.resources.Auth.facebook(data).$promise
@@ -112,6 +75,16 @@ function AuthService ($session, $data, $injector) {
     .then(function (fbUser) {
       fbUser.token = token;
       return fbUser;
+    })
+    .then(function (fbUser) {
+      return $data.resources.Auth.facebook({
+        token: token,
+        type: 'register'
+      }).$promise
+      .then(angular.bind(this, this.createSession))
+      .then(function () {
+        return fbUser;
+      });
     })
     .then(function (fbUser) {
       return {code: 'NEW_USER', fbUser: fbUser};
@@ -145,10 +118,9 @@ function AuthService ($session, $data, $injector) {
       }));
   };
 
-  this.login = function login (data, next) {
+  this.login = function login (data) {
     var _this = this;
     var _user;
-    next = _(next).isFunction() ? next : angular.identity;
 
     return $data.resources.Auth.login(data).$promise
       .then(function(user) {
@@ -166,18 +138,16 @@ function AuthService ($session, $data, $injector) {
       .then(function(me) {
         $session.set('me', me).save();
         _this.me = $data.me = $session.get('me');
-        return next(null, _user);
-
+        return _user;
       })
       .catch(function(response) {
         if (response.status === 0) {
-          return next('Unable to reach the server. CORS issue!');
+          return $q.reject('Unable to reach the server. CORS issue!');
         }
         if (response.data.code === 'AUTH_INVALID_CREDENTIALS') {
-          return next('Your e-mail or password is incorrect. Please try again.');
+          return $q.reject('Your e-mail or password is incorrect. Please try again.');
         }
-        return next('An error occured! ' + response.data.message);
-
+        return $q.reject('An error occured! ' + response.data.message);
       });
 
   };

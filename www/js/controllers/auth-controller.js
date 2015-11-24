@@ -39,11 +39,11 @@ function AuthController ($injector) {
       return $message.error('Please resolve form errors and try again.');
     }
 
-    $auth.login(this.forms.loginForm)
+    return $auth.login(this.forms.loginForm)
       .then(function(){
         $state.go('landing');
       })
-      .catch($message.error);
+      .catch($message.error.bind($message));
 
   };
 
