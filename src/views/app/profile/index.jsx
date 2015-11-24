@@ -166,11 +166,11 @@ module.exports = class ProfileView extends React.Component {
 
           <p className="profile-box-info text-center">
             To verify email or phone, enter the token received by email/sms.
-            <div className="verification">
-              <input type="text" ref="verification" />
-              <button type="button" onClick={ this.submitToken }>Submit Token</button>
-            </div>
           </p>
+          <div className="verification text-center">
+            <input type="text" ref="verification" />
+            <button type="button" onClick={ this.submitToken }>Submit Token</button>
+          </div>
         </div>
       </div>
     );
