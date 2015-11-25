@@ -11,20 +11,9 @@ module.exports = (app) => {
     origin      : (req) => {
       let origin  = req.headers.origin;
       let origins = Bento.config.api.cors.origins;
-      
-      // ### Wildcard
-      
-      if (!origins || origins === '*') {
+      if (!origins || origins === '*' || origins.indexOf(origin) !== 1) {
         return origin;
       }
-      
-      // ### Verify Origin
-      
-      let index = origins.indexOf(origin);
-      if (index !== -1) {
-        return origins[index];
-      }
-      
       return null;
     }
   }));
