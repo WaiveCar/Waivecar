@@ -6,11 +6,8 @@ import { Form }             from 'bento-web';
 import License              from '../lib/license-service';
 
 let formFields = {
-  new    : require('./form-fields/license'),
-  update : require('./form-fields/license'),
+  license : require('./form-fields/license'),
 };
-
-formFields.new.splice(2); // TODO Not accurate; we are guessing at fields.
 
 module.exports = class ProfileLicenseView extends React.Component {
 
@@ -39,8 +36,8 @@ module.exports = class ProfileLicenseView extends React.Component {
           <Form
             ref       = "license"
             className = "bento-form-static"
-            fields    = { formFields.new }
-            default   = { {} }
+            fields    = { formFields.license }
+            default   = { auth.user() }
             buttons   = {[
               {
                 value : 'Register License',
@@ -55,7 +52,7 @@ module.exports = class ProfileLicenseView extends React.Component {
     );
   }
 
-  renderLicense() {
+  renderLicense(license) {
     return (
       <div className="profile-box">
         <h3>
@@ -65,23 +62,50 @@ module.exports = class ProfileLicenseView extends React.Component {
           <Form
             ref       = "license"
             className = "bento-form-static"
-            fields    = { formFields.update }
-            default   = { this.state.license }
+            fields    = { formFields.license }
+            default   = { license }
           />
+          { this.renderStatus(license.status) }
         </div>
       </div>
     )
   }
 
+    /**
+   * Render Verification CTA
+   * @return {Object}
+   */
+  renderStatus(status) {
+    if (status !== 'provided') {
+      return (
+        <div className="license-verification text-center">
+          <button className="btn btn-primary" type="button" readOnly disabled>Status : { status }</button>
+        </div>
+      );
+    }
+
+    return (
+      <div className="license-verification text-center">
+        <p className="profile-box-info text-center">
+          Your license must be verified before you can book a WaiveCar
+        </p>
+        <button type="button" onClick={ this.license.validateLicense }>Request Validation</button>
+      </div>
+    );
+  }
+
+
   render() {
+    let licenses = this.license.getState('licenses');
+
     if (this.state.isLoading) {
       return <div>Loading...</div>
     }
     return (
       <div className="profile">
         {
-          this.state.licenses && this.state.licenses.length > 0
-            ? this.renderLicense()
+          licenses && licenses.length > 0
+            ? this.renderLicense(licenses[0])
             : this.renderLicenseRegistration()
         }
       </div>

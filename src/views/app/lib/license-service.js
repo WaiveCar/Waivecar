@@ -14,6 +14,7 @@ module.exports = class License extends Service {
       licenses : []
     });
     this.submitLicense = this.submitLicense.bind(this);
+    this.validateLicense = this.validateLicense.bind(this);
     this.deleteLicense = this.deleteLicense.bind(this);
   }
 
@@ -33,6 +34,18 @@ module.exports = class License extends Service {
     }.bind(this));
   }
 
+  validateLicense() {
+    api.post(`/licenses/${ this.getState('licenses')[0].id }/verify`, {}, function(err, resp) {
+      if (err) {
+        if (err.data) {
+          return this.error(err.data);
+        }
+        return this.error(err.message);
+      }
+      done(license);
+    }.bind(this));
+  }
+
   /**
    * Adds a new license under the provided user.
    * @param {Object}   user
@@ -42,13 +55,14 @@ module.exports = class License extends Service {
   addLicense(user, license, done) {
     console.log(user());
     api.post('/licenses', {
-      userId    : user().id,
-      firstName : license.firstName,
-      otherName : license.otherName,
-      lastName  : license.lastName,
-      birthDate : license.birthDate,
-      state     : license.state,
-      number    : license.number
+      userId     : user().id,
+      firstName  : license.firstName,
+      middleName : license.middleName,
+      lastName   : license.lastName,
+      birthDate  : license.birthDate,
+      gender     : license.gender,
+      state      : license.state,
+      number     : license.number
     }, function (err, license) {
       if (err) {
         if (err.data) {

@@ -102,7 +102,8 @@
     text-align : center;
   }
 
-  .verification {
+  .verification,
+  .license-verification {
     margin-top : 10px;
     text-align : center;
     button, input {
@@ -112,6 +113,9 @@
     input {
       border-right : none;
     }
+  }
+  .license-verification {
+    margin-top : 30px;
   }
 
   .btn-profile-submit {
