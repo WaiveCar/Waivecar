@@ -9,14 +9,11 @@ function session ($rootScope, $window) {
   }
 
   Session.prototype.load = function load () {
-    angular.forEach($window.localStorage, function (value, key) {
-
-      if ($window.localStorage.hasOwnProperty(key)) {
-        try {
-          session.data[key] = value && JSON.parse(value);
-        } catch (err) {
-          $rootScope.$emit('sessionParseError', err);
-        }
+    this.data = _.mapValues($window.localStorage, function (value) {
+      try {
+        return value && JSON.parse(value);
+      } catch (err) {
+        $rootScope.$emit('sessionParseError', err);
       }
     });
   };
@@ -41,10 +38,12 @@ function session ($rootScope, $window) {
   };
 
   Session.prototype.save = function save () {
-    angular.forEach(this.data, function (value, key) {
+    _.forEach(this.data, function (value, key) {
       // stripped of angular-specific $$ properties
       var val = angular.fromJson(angular.toJson(value));
-      $window.localStorage[key] = JSON.stringify(val);
+      if (val !== undefined) {
+        $window.localStorage[key] = JSON.stringify(val);
+      }
     });
 
     return this;
