@@ -5,7 +5,7 @@ Route.post('/licenses/hooks/:service', 'LicenseHooksController@catch');
 Route.post('/licenses', {
   policy : [ 'authenticate' ],
   uses   : 'LicensesController@store',
-  params : [ 'number', 'firstName', 'lastName', 'birthDate', 'state' ]
+  params : [ 'firstName', 'lastName', 'birthDate', 'number', 'state' ]
 });
 
 Route.get('/licenses',     [ 'authenticate', 'LicensesController@index' ]);

@@ -25,57 +25,13 @@ module.exports = class LicenseService extends Service {
 
     // ### Create License.
     let license = new License(data);
+
+    // ### create user in verification provider and establish link.
+    let userLink = yield Verification.createUserLink(user, license, _user);
+    license.linkedUserId = userLink.id;
+
     yield license.save();
 
-    [ 'firstName', 'lastName', 'email', 'phone' ].forEach((val) => {
-      let currentValue = user.hasOwnProperty(val) ? user[val] : undefined;
-      if (!currentValue) {
-        throw error.parse({
-          code    : `MISSING_PARAMETER`,
-          message : `User object is missing [${ val }] parameter`
-        }, 400);
-      }
-    });
-
-    [ 'birthDate', 'number', 'state' ].forEach((val) => {
-      let currentValue = license.hasOwnProperty(val) ? license[val] : undefined;
-      if (!currentValue) {
-        throw error.parse({
-          code    : `MISSING_PARAMETER`,
-          message : `License object is missing [${ val }] parameter`
-        }, 400);
-      }
-    });
-
-    // ### Create Verification Candidate
-    /*eslint-disable */
-    let candidate = {
-      first_name  : user.firstName,
-      middle_name : user.middleName,
-      last_name   : user.lastName,
-      email       : user.email,
-      telephone   : user.phone,
-      country     : 'USA',
-      dob         : license.birthDate,
-      id_numbers  : [
-        {
-          type       : 'driving_license',
-          value      : license.number,
-          state_code : license.state
-        }
-      ]
-    };
-    /*eslint-enable */
-
-    let userLink = yield Verification.createUserLink(candidate, _user);
-
-    // ### Update License to store Candidate/Applicant Id.
-    yield license.update({
-      status       : 'provided',
-      linkedUserId : userLink.id
-    });
-
-    // ### Relay
     relay.admin(resource, {
       type : 'store',
       data : license

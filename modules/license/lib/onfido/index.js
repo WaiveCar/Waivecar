@@ -28,10 +28,52 @@ module.exports = class OnfidoService {
    * @param  {Object} _user
    * @return {Object}
    */
-  static *createUserLink(data, _user) {
-    data.email = `test-${ Math.ceil(Math.random() * 100) }@example.com`;
-    let response = yield this.request('/applicants', 'POST', data);
-    console.log(response);
+  static *createUserLink(user, license, _user) {
+
+    [ 'email', 'phone' ].forEach((val) => {
+      let currentValue = user.hasOwnProperty(val) ? user[val] : undefined;
+      if (!currentValue) {
+        throw error.parse({
+          code    : `MISSING_PARAMETER`,
+          message : `User object is missing [${ val }] parameter`
+        }, 400);
+      }
+    });
+
+    [ 'firstName', 'lastName', 'birthDate', 'number', 'state' ].forEach((val) => {
+      let currentValue = license.hasOwnProperty(val) ? license[val] : undefined;
+      if (!currentValue) {
+        throw error.parse({
+          code    : `MISSING_PARAMETER`,
+          message : `License object is missing [${ val }] parameter`
+        }, 400);
+      }
+    });
+
+    // ### Create Verification Candidate
+    /*eslint-disable */
+    let candidate = {
+      email       : user.email,
+      mobile      : user.phone,
+      first_name  : license.firstName,
+      last_name   : license.lastName,
+      dob         : license.birthDate,
+      country     : 'USA',
+      id_numbers  : [
+        {
+          type       : 'driving_license',
+          value      : license.number,
+          state_code : license.state
+        }
+      ]
+    };
+
+    // optional inclusions:
+    if (license.middleName) candidate['middle_name'] = license.middleName;
+    if (license.gender) candidate.gender = license.gender;
+    /*eslint-enable */
+
+    let response = yield this.request('/applicants', 'POST', candidate);
     return response;
   }
 
@@ -158,9 +200,16 @@ module.exports = class OnfidoService {
 
     if (data.error && data.error.type === 'validation_error') {
       let errors = '';
+      console.log(data.error);
       for (let field in data.error.fields) {
         let messages = data.error.fields[field];
-        let messageArray = messages.map((f) => { return f.value.join('\n'); });
+        let messageArray = messages.map((f) => {
+          if (f.value) {
+            return f.value.join('\n');
+          } else {
+            return f;
+          }
+        });
         errors += `${ messageArray.join('\n') }`;
       }
 

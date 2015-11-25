@@ -61,6 +61,17 @@ module.exports = {
     label     : 'Date Of Birth',
     helpText  : null
   },
+  gender : {
+    name      : 'gender',
+    component : 'select',
+    required  : false,
+    label     : 'Gender',
+    helpText  : null,
+    options   : [
+      { name : 'Male',   value : 'male' },
+      { name : 'Female', value : 'female' }
+    ]
+  },
   state : {
     name      : 'state',
     component : 'select',
@@ -129,22 +140,6 @@ module.exports = {
       { name : 'Wyoming',                        value : 'WY' }
     ]
   },
-  zip : {
-    name      : 'zip',
-    component : 'input',
-    type      : 'text',
-    required  : true,
-    label     : 'Zip Code',
-    helpText  : null
-  },
-  ssn : {
-    name      : 'ssn',
-    component : 'input',
-    type      : 'text',
-    required  : true,
-    label     : 'Social Security Number',
-    helpText  : null
-  },
   status : {
     name      : 'status',
     component : 'input',
@@ -159,6 +154,22 @@ module.exports = {
     type      : 'text',
     required  : false,
     label     : 'Photo',
+    helpText  : null
+  },
+  createdAt : {
+    name      : 'createdAt',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Created At',
+    helpText  : null
+  },
+  updatedAt : {
+    name      : 'updatedAt',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Updated At',
     helpText  : null
   }
 };
