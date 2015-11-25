@@ -35,6 +35,11 @@ function session ($rootScope, $window) {
     return _(this.data[key]).isUndefined() ? {} : this.data[key];
   };
 
+  Session.prototype.set = function set (key, value) {
+    this.data[key] = value;
+    return this;
+  };
+
   Session.prototype.save = function save () {
     angular.forEach(this.data, function (value, key) {
       // stripped of angular-specific $$ properties

@@ -11,42 +11,39 @@ function UserCreateController ($injector, $stateParams) {
   var $auth = $injector.get('$auth');
   var $data = $injector.get('$data');
   var $message = $injector.get('$message');
-  var $q = $injector.get('$q');
 
   this.save = function saveUser (form) {
     if (form.$invalid) {
       return $message.error('Please fix form errors and try again.');
     }
 
-    var identifier = this.user.email;
-    var pass = this.user.password;
-
-    function login () {
-      return $auth.login({
-        identifier: identifier,
-        password: pass
-      });
-    }
-
-    function connectIfFacebook () {
-      if(!$stateParams.fbUser){
-        return $q.when();
-      }
-
-      var fbUser = angular.fromJson($stateParams.fbUser);
-      return $auth.connectWithFacebook(fbUser.token);
-    }
+    var credentials = {
+      identifier: this.user.email,
+      password: this.user.password
+    };
 
     return this.user.$save()
-      .then(login)
-      .then(connectIfFacebook)
+      .then(function login () {
+        return $auth.login(credentials);
+      })
       .then(function () {
         return $state.go('cars');
       })
       .catch(function (err) {
         return $message.error(err);
       });
+  };
 
+  this.completeFacebookRegistration = function completeFacebookRegistration (form) {
+    if (form.$invalid) {
+      return $message.error('Please fix form errors and try again.');
+    }
+
+    return this.user.$save()
+      .then(function () {
+        return $state.go('cars');
+      })
+      .catch($message.error.bind($message));
   };
 
 

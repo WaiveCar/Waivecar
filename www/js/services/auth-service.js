@@ -70,7 +70,7 @@ function AuthService ($session, $data, $injector) {
     return $data.resources.Auth.facebook(data).$promise;
   };
 
-  function registerUserWithFacebook (token) {
+  this.registerUserWithFacebook = function registerUserWithFacebook (token) {
     return $cordovaFacebook.api('/me?fields=email,first_name,last_name')
     .then(function (fbUser) {
       fbUser.token = token;
@@ -81,7 +81,7 @@ function AuthService ($session, $data, $injector) {
         token: token,
         type: 'register'
       }).$promise
-      .then(angular.bind(this, this.createSession))
+      .then(this.createSession.bind(this))
       .then(function () {
         return fbUser;
       });
@@ -89,7 +89,7 @@ function AuthService ($session, $data, $injector) {
     .then(function (fbUser) {
       return {code: 'NEW_USER', fbUser: fbUser};
     });
-  }
+  };
 
   this.facebookAuth = function facebookAuth () {
     return $cordovaFacebook.getLoginStatus()
@@ -110,11 +110,11 @@ function AuthService ($session, $data, $injector) {
             return {code: 'LOGGED_IN'};
           })
           .catch(function (err) {
-            if (err.status === 400 && err.data && err.data.code === 'FACEBOOK_LOGIN_FAILED') {
-              return registerUserWithFacebook(token);
+            if (err.status === 400 && err.data && err.data.code === 'FB_LOGIN_FAILED') {
+              return this.registerUserWithFacebook(token);
             }
             return $q.reject(err);
-          });
+          }.bind(this));
       }));
   };
 

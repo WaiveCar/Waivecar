@@ -6,21 +6,23 @@
 
   <ion-content padding="true" class="ion-content--center dark-bg">
 
-    <button type="button" class="button button-block button-positive button-padded" ng-click="userCreate.registerWithFacebook()">
-      <span class="fa-stack">
-        <i class="fa fa-circle fa-stack-2x"></i>
-        <i class="fa fa-facebook fa-stack-1x positive"></i>
-      </span> Connect with Facebook
-    </button>
+    <div class="hide-on-keyboard-open">
+      <button type="button" class="button button-block button-positive button-padded" ng-click="userCreate.registerWithFacebook()">
+        <span class="fa-stack">
+          <i class="fa fa-circle fa-stack-2x"></i>
+          <i class="fa fa-facebook fa-stack-1x positive"></i>
+        </span> Connect with Facebook
+      </button>
 
-    <lined>Or</lined>
+      <lined>Or</lined>
+    </div>
 
     <form ng-submit="userCreate.save(form)" name="form" id="form" novalidate>
       <div class="list">
 
         <label class="item item-input">
           <span class="input-label required">First Name</span>
-          <input type="text" name="firstName" placeholder="John" ng-model="userCreate.user.firstName" required autofocus />
+          <input type="text" name="firstName" placeholder="John" ng-model="userCreate.user.firstName" required />
         </label>
 
         <label class="item item-input">
