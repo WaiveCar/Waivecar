@@ -213,6 +213,10 @@ module.exports = class OnfidoService {
         errors += `${ messageArray.join('\n') }`;
       }
 
+      if (errors === 'You have already entered this applicant into your Onfido system') {
+        data.error.message = 'Your Email Address has already been used to request validation of a License. Please contact us.';
+      }
+
       return {
         code    : 'LICENSE_SERVICE_VALIDATION_ERROR',
         message : data.error.message,
