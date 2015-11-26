@@ -18,37 +18,27 @@ module.exports = angular.module('Maps').directive('locateMe', [
 
       }
 
-      function init(){
-
+      MapCtrl.$ready.then(function () {
         var LocateMeControl = MapCtrl.leaflet.Control.extend({
           options: {
             position: 'bottomright'
           },
           onAdd: function() {
             var img = MapCtrl.leaflet.DomUtil.create('img', 'locate-me');
-            img.src = $scope.imgSource;
-
-            angular.element(img).on('click', focusOnMyPosition);
-
+            img.src = 'img/locate-me.svg';
+            img.addEventListener('click', focusOnMyPosition);
             return img;
           }
         });
 
         MapCtrl.map.addControl(new LocateMeControl());
-
-      }
-
-      $scope.$on('map-ready', init);
-
+      });
     }
 
 
     return {
-      restrict: 'E',
-      scope: {
-        'imgSource': '@',
-      },
-      require: '^map',
+      restrict: 'A',
+      require: '^skobblerMap',
       link: link
     };
 

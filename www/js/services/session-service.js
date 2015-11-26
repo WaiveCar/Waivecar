@@ -41,7 +41,7 @@ function session ($rootScope, $window) {
     _.forEach(this.data, function (value, key) {
       // stripped of angular-specific $$ properties
       var val = angular.fromJson(angular.toJson(value));
-      if (val !== undefined) {
+      if (val !== 'undefined') {
         $window.localStorage[key] = JSON.stringify(val);
       }
     });

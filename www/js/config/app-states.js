@@ -173,6 +173,7 @@ module.exports = [
         // 14-Find-waivecar
         url: '/cars',
         templateUrl: '/templates/cars/index.html',
+        controller: 'CarsController as cars',
         data: {
           auth: true
         }

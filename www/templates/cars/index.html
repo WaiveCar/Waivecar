@@ -1,4 +1,4 @@
-<ion-view hide-back-button="true" class="cars-index" ng-controller="CarsController">
+<ion-view hide-back-button="true" class="cars-index">
 
   <ion-nav-title>
     <page-title class="dark-bg title-plain">Find WaiveCars</page-title>
@@ -11,11 +11,14 @@
   <ion-content scroll="false" padding="false" class="ion-content--center">
 
     <div class="map-container">
-      <map id="map" zoom="10" center="currentLocation">
-        <location-marker location="currentLocation" icon="device"></location-marker>
-        <location-markers locations="cars" on-click-marker="showCar(marker, id)" icon="car"></location-markers>
-        <locate-me img-source="img/locate-me.svg"></locate-me>
-      </map>
+      <skobbler-map id="map" zoom="10"
+        center="$root.currentLocation"
+        location="$root.currentLocation"
+        cars="cars.cars"
+        on-car-tap="cars.showCar"
+        locate-me
+      >
+      </skobbler-map>
     </div>
 
   </ion-content>

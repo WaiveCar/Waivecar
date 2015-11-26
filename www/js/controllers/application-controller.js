@@ -9,10 +9,9 @@ require('../services/message-service.js');
 require('../services/session-service.js');
 var _ = require('lodash');
 
-function ApplicationController ($rootScope, $scope, $injector) {
+function ApplicationController ($rootScope, $scope, LocationService, $injector) {
 
   var $state = $injector.get('$state');
-  var LocationService = $injector.get('LocationService');
   var $auth = $injector.get('$auth');
   var $data = $injector.get('$data');
   var $message = $injector.get('$message');
@@ -35,7 +34,7 @@ function ApplicationController ($rootScope, $scope, $injector) {
   this.windowWidth = getWindowWidth();
 
   $rootScope.$watch('currentLocation', function() {
-    console.log($rootScope.currentLocation);
+    console.log('currentLocation', $rootScope.currentLocation);
   });
 
   $rootScope.$on('authError', function() {
@@ -76,13 +75,6 @@ function ApplicationController ($rootScope, $scope, $injector) {
 
   };
 
-  // this.locateMe = function() {
-  //   LocationService.getLocation().then(function(deviceLocation) {
-  //     $rootScope.currentLocation = deviceLocation;
-  //   });
-
-  // };
-
   this.fetch = function() {
     function positionWatch () {
       LocationService.initPositionWatch();
@@ -99,6 +91,12 @@ function ApplicationController ($rootScope, $scope, $injector) {
       });
     }
 
+    function locateMe () {
+      return LocationService.getLocation().then(function(deviceLocation) {
+        $rootScope.currentLocation = deviceLocation;
+      });
+    };
+
     function initializeLocations () {
       return $data.initialize('locations');
     }
@@ -107,6 +105,7 @@ function ApplicationController ($rootScope, $scope, $injector) {
       .then(function () {
         $rootScope.isInitialized = true;
       })
+      .then(locateMe)
       .catch(function (err) {
         if (err) {
           return $message.error(err);
@@ -139,6 +138,7 @@ module.exports =
   .controller('ApplicationController', [
     '$rootScope',
     '$scope',
+    'MockLocationService',
     '$injector',
     ApplicationController
   ]);
