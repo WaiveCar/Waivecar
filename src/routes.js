@@ -35,6 +35,18 @@ module.exports = {
       if (err) {
         return done(err);
       }
+
+      // ### Token
+      // Check if a token exists in the local resources.
+
+      let token = auth.token();
+      if (!token) {
+        return done(null, templates.getAll());
+      }
+
+      // ### User
+      // If token exists we attempt to fetch the user.
+
       api.get('/users/me', function (err, user) {
         if (!err) {
           auth.set(user);

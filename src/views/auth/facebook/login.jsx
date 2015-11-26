@@ -2,6 +2,7 @@
 
 import React         from 'react';
 import mixin         from 'react-mixin';
+import { Link }      from 'react-router';
 import config        from 'config';
 import { auth, api } from 'bento';
 import facebook      from './index';
