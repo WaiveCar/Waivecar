@@ -1,26 +1,40 @@
 #home {
-  .navbar-brand > img {
-    max-height: 100%; /* resize DOWN to height of container which is set to 50px */
-    height: 100%; /* resize UP to fit*/
-    max-width: 100%;  /*probably not necessary */
-    width: auto; /* resize based on height */
-    margin: 0 auto;
-    -o-object-fit: contain; /* Opera Support */
-    object-fit: contain; /* Resize down to fit container */
-  }
+  // .navbar-brand > img {
+  //   max-height: 100%; /* resize DOWN to height of container which is set to 50px */
+  //   height: 100%; /* resize UP to fit*/
+  //   max-width: 100%;  probably not necessary
+  //   width: auto; /* resize based on height */
+  //   margin: 0 auto;
+  //   -o-object-fit: contain; /* Opera Support */
+  //   object-fit: contain; /* Resize down to fit container */
+  // }
 
-  /* Default Navbar Brand Settings. Use this to resize or move your logo up and down */
-  .navbar-brand {
-    padding: 15px 15px; /*adjust the top/bottom padding if your logo looks too small */
-    margin-top: 0px; /* you can adjust this if your logo needs to be moved up or down but simply adjusting the padding is easier */
-    height: 50px; /* this should be equal to computed height of .navbar-nav>li>a */
-  }
+  // /* Default Navbar Brand Settings. Use this to resize or move your logo up and down */
+  // .navbar-brand {
+  //   padding: 15px 15px; /*adjust the top/bottom padding if your logo looks too small */
+  //   margin-top: 0px; you can adjust this if your logo needs to be moved up or down but simply adjusting the padding is easier
+  //   height: 50px; /* this should be equal to computed height of .navbar-nav>li>a */
+  // }
 
-  /* Example 2 (larger logo) - simply adjust top bottom padding to make logo larger */
-  .example2 .navbar-brand {
-      padding: 7px 15px;
+  // /* Example 2 (larger logo) - simply adjust top bottom padding to make logo larger */
+  // .example2 .navbar-brand {
+  //     padding: 7px 15px;
+  // }
+  nav {
+    .navbar-app {
+      overflow : hidden;
+      img {
+        height : 3.2rem;
+      }
+    }
+    .navbar-items {
+      ul {
+        li {
+          font-size : 1.06rem;
+        }
+      }
+    }
   }
-
 }
 
 // #home {

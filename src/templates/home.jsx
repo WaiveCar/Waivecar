@@ -35,7 +35,7 @@ class HomeTemplate extends React.Component {
       navItems : [
         { type: 'link',   to : '/terms',    title : 'Terms' },
         { type: 'anchor', to : '#Download', title : 'Download' },
-        { type: 'anchor', to : '#Register', title : 'Register' },
+        { type: 'link',   to : '/register', title : 'Register' },
         { type: 'anchor', to : '#Vision',   title : 'Our Vision' },
         { type: 'anchor', to : '#Features', title : 'How It Works' },
         { type: 'anchor', to : '#Pricing',  title : 'Pricing' },
@@ -64,21 +64,21 @@ class HomeTemplate extends React.Component {
     return this.state.navItems.map((n, i) => {
       switch (n.type) {
         case 'link'   : return <li key={ i }><Link className="nav-item nav-link" to={ n.to }>{ n.title }</Link></li>
-        case 'anchor' : return <li key={ i }><Anchor className="nav-item nav-link" href={ n.to }>{ n.title }</Anchor></li>
+        case 'anchor' : return <li key={ i }><Anchor className="nav-item nav-link hidden-sm-down" href={ n.to }>{ n.title }</Anchor></li>
       }
     });
   }
 
   renderNav() {
     return (
-      <nav>
-        <div>
-          <a className="navbar-brand" href="/">
+      <nav className="row">
+        <div className="navbar-app col-lg-4 col-md-6">
+          <Link to="/">
             <img src="/images/site/logo.svg" alt="WaiveCar" />
-          </a>
+          </Link>
         </div>
-        <div>
-          <ul className="pull-right">
+        <div className="navbar-items col-lg-8 col-md-6">
+          <ul className="pull-right list-inline">
             { this.renderNavItems() }
           </ul>
         </div>
@@ -90,9 +90,7 @@ class HomeTemplate extends React.Component {
     return (
       <header className="section jumbotron bg-inverse" role="banner">
         <div className="container">
-          <Row>
-            { this.renderNav() }
-          </Row>
+          { this.renderNav() }
           <Row>
             <Column width={ 6 }>
               <div  className="valign">
