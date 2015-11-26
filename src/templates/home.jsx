@@ -33,14 +33,17 @@ class HomeTemplate extends React.Component {
         FeaturesEnd   : 'card wp wp-features-end'
       },
       navItems : [
-        { type: 'link',   to : '/terms',    title : 'Terms' },
         { type: 'anchor', to : '#Download', title : 'Download' },
-        { type: 'link',   to : '/register', title : 'Register' },
-        { type: 'anchor', to : '#Vision',   title : 'Our Vision' },
+        { type: 'anchor', to : '#Vision',   title : 'Vision' },
         { type: 'anchor', to : '#Features', title : 'How It Works' },
         { type: 'anchor', to : '#Pricing',  title : 'Pricing' },
-        { type: 'anchor', to : '#About',    title : 'About Us' },
-        { type: 'link',   to : '/login',    title : 'Login' }
+        { type: 'anchor', to : '#About',    title : 'About Us' }
+      ],
+      footerItems : [
+        { type: 'link',   to : '/terms',   title : 'Terms' },
+        { type: 'link',   to : '/privacy', title : 'Privacy' },
+        { type: 'link',   to : '/support', title : 'Support' },
+        { type: 'link',   to : '/login',   title : 'Login' }
       ]
     };
 
@@ -60,11 +63,12 @@ class HomeTemplate extends React.Component {
     this.setState(state);
   }
 
-  renderNavItems(listClassName) {
-    return this.state.navItems.map((n, i) => {
+  renderNavItems(isFooter) {
+    let items = isFooter ? 'footerItems' : 'navItems';
+    return this.state[items].map((n, i) => {
       switch (n.type) {
         case 'link'   : return <li key={ i }><Link className="nav-item nav-link" to={ n.to }>{ n.title }</Link></li>
-        case 'anchor' : return <li key={ i }><Anchor className="nav-item nav-link hidden-sm-down" href={ n.to }>{ n.title }</Anchor></li>
+        case 'anchor' : return <li key={ i }><Anchor className="nav-item nav-link" href={ n.to }>{ n.title }</Anchor></li>
       }
     });
   }
@@ -72,13 +76,13 @@ class HomeTemplate extends React.Component {
   renderNav() {
     return (
       <nav className="row">
-        <div className="navbar-app col-lg-4 col-md-6">
+        <div className="navbar-app col-lg-5 col-md-6">
           <Link to="/">
             <img src="/images/site/logo.svg" alt="WaiveCar" />
           </Link>
         </div>
-        <div className="navbar-items col-lg-8 col-md-6">
-          <ul className="pull-right list-inline">
+        <div className="navbar-items col-lg-7 col-md-6">
+          <ul className="text-right list-inline  hidden-md-down">
             { this.renderNavItems() }
           </ul>
         </div>
@@ -91,30 +95,54 @@ class HomeTemplate extends React.Component {
       <header className="section jumbotron bg-inverse" role="banner">
         <div className="container">
           { this.renderNav() }
-          <Row>
-            <Column width={ 6 }>
-              <div  className="valign">
+          <Row className="m-t-lg hidden-md-up">
+            <div className="col-sm-12">
+              <div className="banner-container text-center">
                 <h1>Need to go somewhere?</h1>
                 <p className="lead">Use one of our electric cars <strong>for free</strong>.
                 <br />
                 It makes sense and a huge diffeence.</p>
                 <ul className="list-inline">
-                  <li className="store-item">
+                  <li className="store-item m-t">
                     <a href="#">
                       <img className="app-store" src="/images/site/btn-app-store.svg" />
                     </a>
                   </li>
-                  <li className="store-item">
+                  <li className="store-item m-t">
                     <a href="#">
                       <img className="app-store" src="/images/site/btn-google-play.svg" />
                     </a>
                   </li>
                 </ul>
               </div>
-            </Column>
-            <Column width={ 6 } className="hidden-sm-down">
+            </div>
+          </Row>
+          <Row className="m-t-lg hidden-sm-down">
+            <div className="col-md-6 col-sm-12">
+              <div className="banner-container">
+                <div  className="valign">
+                  <h1>Need to go somewhere?</h1>
+                  <p className="lead">Use one of our electric cars <strong>for free</strong>.
+                  <br />
+                  It makes sense and a huge diffeence.</p>
+                  <ul className="list-inline">
+                    <li className="store-item">
+                      <a href="#">
+                        <img className="app-store" src="/images/site/btn-app-store.svg" />
+                      </a>
+                    </li>
+                    <li className="store-item">
+                      <a href="#">
+                        <img className="app-store" src="/images/site/btn-google-play.svg" />
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div className="col-sm-6 hidden-sm-down">
               <img className="app-sample pull-right" src="/images/site/iphone.png" />
-            </Column>
+            </div>
           </Row>
         </div>
         <div className="scroll text-center">
@@ -251,10 +279,13 @@ class HomeTemplate extends React.Component {
       <section className="section section-about">
         <Container>
           <Row id="About">
-            <Column>
+            <div className="col-md-9 col-sm-12">
               <h2>About Us</h2>
               <p>WaiveCar is a revolutionary form of transportation for citizens, a smart advertising medium for companies and a powerful way of fostering green, renewable energy in our communities.</p>
-            </Column>
+            </div>
+            <div className="col-md-3 hidden-sm-down text-right">
+              <img src="/images/site/waivecar-logo.svg" alt="WaiveCar" />
+            </div>
           </Row>
         </Container>
       </section>
@@ -265,48 +296,16 @@ class HomeTemplate extends React.Component {
     return (
       <footer className="section section-footer bg-inverse" role="contentinfo">
         <div className="container">
+          { this.renderNav() }
           <div className="row">
-            <div className="col-md-6 col-lg-5">
-              <div className="media">
-                <div className="media-left">
-                  <span className="media-object icon-logo display-1"></span>
-                </div>
-                <small className="media-body media-bottom">
-                  &copy; WaiveCar.
-                </small>
-              </div>
+            <div className="col-md-3 col-xs-1">
             </div>
-            <div className="col-md-6 col-lg-7">
-              <ul className="list-inline m-b-0">
-                <li className="nav-item">
-                  <Link to="/terms" className="nav-link">Terms</Link>
-                </li>
-                <li className="nav-item">
-                  <Anchor className="nav-link" href="#download">Download</Anchor>
-                </li>
-                <li className="nav-item">
-                  <Anchor className="nav-link" href="#create-an-account">Register</Anchor>
-                </li>
-                <li className="nav-item">
-                  <Anchor className="nav-link" href="#our-vision">Vision</Anchor>
-                </li>
-                <li className="nav-item">
-                  <Anchor className="nav-link" href="#how-it-works">How It Works?</Anchor>
-                </li>
-                <li className="nav-item">
-                  <Anchor className="nav-link" href="#pricing">Pricing</Anchor>
-                </li>
-                <li className="nav-item">
-                  <Anchor className="nav-link" href="#about-us">About Us</Anchor>
-                </li>
-                <li className="nav-item">
-                  <Link to="/login" className="nav-link">Login</Link>
-                </li>
-                <li>
-                  <a className="scroll-top" href="#totop">Back to top <span className="icon-caret-up"></span>
-                  </a>
-                </li>
+            <div className="navbar-items footer-items col-md-6 col-xs-10">
+              <ul className="text-center list-inline">
+                { this.renderNavItems(true) }
               </ul>
+            </div>
+            <div className="col-md-3 col-xs-1">
             </div>
           </div>
         </div>

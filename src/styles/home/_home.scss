@@ -1,4 +1,5 @@
 .bg-inverse {
+  background : #021207;
   color: $app-color-white;
   a,
   a:focus,
@@ -150,10 +151,14 @@
       }
     }
     &.section-about {
-
+      img {
+        width  : 10rem;
+        height : 10rem;
+      }
     }
     &.section-footer {
-
+    padding-top    : 3.25rem;
+    padding-bottom : 1.5rem;
     }
   }
 }
