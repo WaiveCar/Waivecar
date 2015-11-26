@@ -29,7 +29,7 @@ Templates.store = {};
  * @param  {Object} template
  */
 Templates.register = function (id, template) {
-  if (config.app.environment === 'production' && id !== 'placeholder') {
+  if (config.app.environment === 'production' && id !== 'launch') {
     return;
   }
 
