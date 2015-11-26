@@ -2,9 +2,10 @@
   <header-bar type="nav" on-button-click="showNav()">Dashboard</header-bar>
   <ion-content scroll="false" class="has-header has-footer-bar">
     <div class="map-container has-info-footer">
-      <map id="map" zoom="15" center="currentLocation">
-        <location-markers locations="app.models.locations" on-click-marker="showChargingStationDetails(marker, info)"></location-markers>
-      </map>
+      <skobbler-map id="map" zoom="15" center="currentLocation"
+        cars="app.models.locations"
+        on-car-tap="showChargingStationDetails">
+      </skobbler-map>
     </div>
     <div class="info-footer">
       <div class="row dashboard-information" ng-hide="ride.showingStation" class="ng-hide">
