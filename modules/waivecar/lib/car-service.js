@@ -110,7 +110,7 @@ module.exports = class CarService extends Service {
     });
 
     // If cars exist but no updates are required, return
-    if (allCars.length > 1 && cars.length === 0) {
+    if (allCars.length > 8 && cars.length === 0) {
       log.debug('Cars : Sync : No cars to be synced.');
       return;
     }
@@ -133,7 +133,8 @@ module.exports = class CarService extends Service {
         // If Device does not match any Car then add it to the database.
         let excludedCar = allCars.find(c => c.id === device.id);
         if (!excludedCar) {
-          if (!config.cars.includeMock && device.id === 'C0000017DC247801') {
+          let isMockCar = [ 'EE000017DC652701', 'C0000017DC247801' ].indexOf(device.id) > -1;
+          if (!config.cars.includeMock && isMockCar) {
             // this is a dev kit, ignore update.
             log.debug(`Cars : Sync : skipping DevKit ${ device.id }.`);
           } else  {
@@ -311,12 +312,13 @@ module.exports = class CarService extends Service {
 
     let result   = yield request(options);
     let response = result.toJSON();
-    if (!response || response.statusCode !== 200) {
+    let statusCode = response ? response.statusCode : 400;
+    if (statusCode !== 200) {
       throw error.parse({
         code    : `CAR_SERVICE`,
         message : `CAR: ${ resource }`,
-        data    : JSON.parse(result.body)
-      }, response.statusCode || 400);
+        data    : response.body ? JSON.parse(response.body) : response
+      }, statusCode);
     }
 
     return JSON.parse(response.body);

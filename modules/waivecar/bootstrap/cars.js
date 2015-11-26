@@ -7,18 +7,16 @@ let log    = Bento.Log;
 module.exports = function *() {
   let cars = yield Car.find();
   let count = cars.length;
-  if (count > 3) {
-    if (!config.cars.includeMock) {
-      log.debug('removing mock cars');
-      for (let carIndex = 0, len = count; carIndex < len; carIndex++) {
-        let car = cars[carIndex];
-        if (car.id === 'C0000017DC247801') {
-          log.debug(`removing ${ car.id }`);
-          yield car.delete();
-        }
+  if (!config.cars.includeMock) {
+    log.debug('removing mock cars');
+    for (let carIndex = 0, len = count; carIndex < len; carIndex++) {
+      let car = cars[carIndex];
+      if ([ 'EE000017DC652701', 'C0000017DC247801' ].indexOf(car.id) > -1) {
+        log.debug(`removing ${ car.id }`);
+        yield car.delete();
       }
     }
-
+  } else if (count > 3) {
     return;
   }
 
