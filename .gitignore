@@ -27,6 +27,14 @@
 #===========================================================
 
 config/**/local.js
+config/auth/default.js
+config/file/default.js
+config/log/default.js
+config/mongo/default.js
+config/payment/default.js
+config/queue/default.js
+config/sequelize/default.js
+config/slack/default.js
 sftp-config.json
 
 #===========================================================
@@ -98,3 +106,4 @@ nbproject
 coverage
 retval
 storage
+.env

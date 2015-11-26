@@ -1,1 +1,0 @@
-require('reach-api').runServer();

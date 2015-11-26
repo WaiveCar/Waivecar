@@ -1,8 +1,8 @@
 'use strict';
 
-let queue  = Reach.provider('queue');
-let tokens = Reach.provider('token');
-let config = Reach.config;
+let queue  = Bento.provider('queue');
+let tokens = Bento.provider('token');
+let config = Bento.config;
 
 // ### Require Verification Jobs
 
@@ -23,7 +23,7 @@ module.exports = class UserVerification {
       type        : 'phone-verification',
       tokenType   : 'base10',
       tokenLength : 6
-    });
+    }, 60 * 48);
 
     let job = queue.create('sms:user:request-phone-verification', {
       to      : phone,
@@ -48,7 +48,7 @@ module.exports = class UserVerification {
       type        : 'email-verification',
       tokenType   : 'base10',
       tokenLength : 6
-    });
+    }, 60 * 48);
 
     let job = queue.create('email:user:request-email-verification', {
       to       : email,
@@ -56,10 +56,9 @@ module.exports = class UserVerification {
       subject  : 'Email Verificaton Required',
       template : 'request-email-verification',
       context  : {
-        name    : name,
-        token   : token,
-        company : config.api.name,
-        confirm : `${ config.api.uri }/users/verify`
+        name  : name,
+        token : token,
+        link  : `${ config.web.uri }/profile`
       }
     }).save();
 
@@ -68,4 +67,4 @@ module.exports = class UserVerification {
     });
   }
 
-}
+};

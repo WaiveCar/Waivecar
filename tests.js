@@ -1,1 +1,1 @@
-require('reach-api').runTests();
+require('bentojs-api').runTests();

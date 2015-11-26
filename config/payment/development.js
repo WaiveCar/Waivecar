@@ -1,16 +1,8 @@
 module.exports = {
-
-  /*
-   |--------------------------------------------------------------------------------
-   | Payment
-   |--------------------------------------------------------------------------------
-   */
-
   payment : {
     stripe : {
-      secret : 'sk_test_NW6CxXySDdbIal2GB20eHUad',
-      pub    : 'pk_test_1ksec0fRh6Q9OA8Jmt5qvgxP'
+      secret : 'sk_test_n9MTqk5eeeQeqwN19XVnTjhN',
+      pub    : 'pk_test_zO3lYXra7dNIcI4JyFBitshk'
     }
   }
-
 };

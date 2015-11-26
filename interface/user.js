@@ -1,6 +1,6 @@
 'use strict';
 
-Reach.Register.Model('User', 'sequelize', function (model, Sequelize) {
+Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
 
   /**
    * The identity of the table created in your database.
@@ -33,9 +33,12 @@ Reach.Register.Model('User', 'sequelize', function (model, Sequelize) {
    * @property relations
    * @type     Array
    */
-  model.relations = ['Group', function (Group) {
-    this.belongsToMany(Group, { as : 'groups', through : 'user_groups', foreignKey : 'userId' })
-  }];
+  model.relations = [
+    'Group',
+    function relation(Group) {
+      this.belongsToMany(Group, { as : 'groups', through : 'user_groups', foreignKey : 'userId' });
+    }
+  ];
 
   /**
    * Attributes to remove before returning the model as JSON.
@@ -50,7 +53,7 @@ Reach.Register.Model('User', 'sequelize', function (model, Sequelize) {
    * @type     Object
    */
   model.methods = {
-    name: function () {
+    name : function getName() {
       return this.firstName + ' ' + this.lastName;
     }
   };

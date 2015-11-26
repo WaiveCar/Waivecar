@@ -1,6 +1,6 @@
 'use strict';
 
-Reach.Register.Model('License', 'sequelize', function (model, Sequelize) {
+Bento.Register.Model('License', 'sequelize', function(model, Sequelize) {
 
   /**
    * The identity of the table created in your database.
@@ -24,41 +24,92 @@ Reach.Register.Model('License', 'sequelize', function (model, Sequelize) {
       }
     },
 
-    number : { 
-      type : Sequelize.STRING(80), allowNull : false 
+    fileId : {
+      type : Sequelize.STRING
     },
 
-    firstName : { 
-      type : Sequelize.STRING(80), allowNull : false 
+    number : {
+      type      : Sequelize.STRING(80),
+      allowNull : false
     },
 
-    middleName : { 
-      type : Sequelize.STRING(80), allowNull : true 
+    firstName : {
+      type      : Sequelize.STRING(80),
+      allowNull : false
     },
 
-    lastName : { 
-      type : Sequelize.STRING(80), allowNull : false 
+    middleName : {
+      type      : Sequelize.STRING(80),
+      allowNull : true
     },
 
-    birthDate : { 
-      type : Sequelize.DATEONLY(), allowNull : false 
+    lastName : {
+      type      : Sequelize.STRING(80),
+      allowNull : false
     },
 
-    country : { 
-      type : Sequelize.STRING(80), allowNull : false 
+    birthDate : {
+      type      : Sequelize.DATEONLY(),
+      allowNull : false
     },
 
-    state : { 
-      type : Sequelize.STRING(20), allowNull : false 
+    gender : {
+      type : Sequelize.ENUM(
+        'male',
+        'female'
+      ),
+      defaultValue : 'male'
     },
 
-    // ### License File
-    // A collection id refering to the file that carries the license image.
+    state : {
+      type      : Sequelize.STRING(20),
+      allowNull : false
+    },
 
-    collectionId : { 
-      type : Sequelize.STRING(36), allowNull : true 
+    zip : {
+      type      : Sequelize.STRING(80),
+      allowNull : true
+    },
+
+    linkedUserId : {
+      type      : Sequelize.STRING(64),
+      allowNull : true
+    },
+
+    checkId : {
+      type      : Sequelize.STRING(64),
+      allowNull : true
+    },
+
+    reportId : {
+      type      : Sequelize.STRING(64),
+      allowNull : true
+    },
+
+    status : {
+      type : Sequelize.ENUM(
+        'stored',
+        'provided',
+        'in-progress',
+        'completed',
+        'failed'
+      ),
+      defaultValue : 'provided'
+    },
+
+    outcome : {
+      type      : Sequelize.STRING(64),
+      allowNull : true
     }
+
   };
+
+  /**
+   * Attributes to remove before returning the model as JSON.
+   * @property blacklist
+   * @type     Array
+   */
+  model.blacklist = [ 'candidateId', 'reportId', 'ssn', 'deletedAt' ];
 
   return model;
 

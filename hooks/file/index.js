@@ -1,68 +1,53 @@
 'use strict';
 
-let shortid        = require('shortid');
-let FileModule     = Reach.module('file');
-let bookingService = Reach.module('waivecar/lib/booking-service');
-let licenseService = Reach.module('license/lib/license-service');
-let hooks          = Reach.Hooks;
-let error          = Reach.Error;
+let booking = require('./lib/booking');
+let license = require('./lib/license');
+let hooks   = Bento.Hooks;
 
 /**
   Validates the file before allowing further file operations to take place.
   This should throw an error if the file transfer is invalid.
-  
-  @hook   file:validate
-  @param  {Object} qs
+  @param  {Object} query
   @param  {Object} _user
  */
-hooks.set('file:validate', function *(qs, _user) {
-  let model = yield getModel(qs, _user);
-  if (!model) {
-    throw error.parse({
-      code    : `UPLOAD_FAILED`,
-      message : `The id provided for ${ qs.type } does not exist`
-    }, 400);
-  }
+hooks.set('file:validate', function *(query, _user) {
+  if (query.bookingId) { return yield booking.validate(query.bookingId); }
+  if (query.licenseId) { return yield license.validate(query.licenseId); }
 });
 
 /*
   Creates a shared collection id for files that should be accessible with
   a single identifier.
-  @hook   file:collection
-  @param  {Object} qs
+  @param  {Object} query
   @param  {Object} _user
   @return {String} Default: null
  */
-hooks.set('file:collection', function *(qs, _user) {
-  let model = yield getModel(qs, _user);
-  if (!model.collectionId) {
-    yield model.update({
-      collectionId : shortid.generate()
-    });
+hooks.set('file:collection', function *(query, _user) {
+  if (query.bookingId) {
+    return yield booking.collection(query.bookingId);
   }
-  return model.collectionId;
+  return null;
 });
 
 /*
   Captures the newly created file.
-  @hook  file:capture
+  @param {Object} query
   @param {Object} file
-  @param {Object} options
   @param {Object} _user
  */
-hooks.set('file:capture', function *(file, options, _user) {
-  // ...
+hooks.set('file:capture', function *(query, file, _user) {
+  if (query.licenseId) {
+    return yield license.capture(query.licenseId, file);
+  }
 });
 
-/**
- * Returns a model based on the requested type.
- * @param {Object} qs
- * @param {Object} _user
- * @yield {Object}
+/*
+  Handle deletion of files.
+  @param {Object} query
+  @param {Object} _user
  */
-function *getModel(qs, _user) {
-  switch (qs.type) {
-    case 'license' : return yield licenseService(qs.id, _user);
-    case 'booking' : return yield bookingService(qs.id, _user);
+hooks.set('file:delete', function *(query, _user) {
+  if (query.licenseId) {
+    return yield license.delete(query.licenseId);
   }
-}
+});

@@ -1,14 +1,12 @@
-'use strict';
-
 module.exports = {
 
   /*
    |--------------------------------------------------------------------------------
-   | Payment
+   | Subscription
    |--------------------------------------------------------------------------------
    |
-   | services  : Array of available subscription services
-   | mailchimp : Mailchimp service configuration
+   | @param {Array} services Array of available subscription services.
+   | @param {Object} mailchimp Mailchimp service configuration.
    |
    */
 

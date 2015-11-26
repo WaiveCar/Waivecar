@@ -1,0 +1,68 @@
+[
+  {
+    "code"        : "LOW_BATTERY",
+    "title"       : "Low Battery",
+    "description" : "Ended off charger with < 30% SOC.",
+    "amount"      : 2000
+  },
+  {
+    "code"        : "DEAD_BATTERY",
+    "title"       : "Dead Battery / Lights Left On",
+    "description" : "Ended with discharged 12v.",
+    "amount"      : 5000
+  },
+  {
+    "code"        : "MISSING_KEY",
+    "title"       : "Missing Key",
+    "description" : "Failure to return equipment.",
+    "amount"      : 30000
+  },
+  {
+    "code"        : "DISCHARGED_BATTERY",
+    "title"       : "Discharged Battery",
+    "description" : "HV battery discharged.",
+    "amount"      : 10000
+  },
+  {
+    "code"        : "PARKING_VIOLATION",
+    "title"       : "Parking Violation",
+    "description" : "Rental ended in restricted area.",
+    "amount"      : 4000
+  },
+  {
+    "code"        : "IMPOUND_FEES",
+    "title"       : "Impound Fees",
+    "description" : "Vehicle impounded.",
+    "amount"      : null
+  },
+  {
+    "code"        : "SPECIAL_CLEANING_GENERAL",
+    "title"       : "Special Cleaning",
+    "description" : "Excessive soiling.",
+    "amount"      : null
+  },
+  {
+    "code"        : "SPECIAL_CLEANING_SMOKE",
+    "title"       : "Special Cleaning (Smoke)",
+    "description" : "Smoking.",
+    "amount"      : 20000
+  },
+  {
+    "code"        : "SPECIAL_CLEANING_PET",
+    "title"       : "Special Cleaning (Pet)",
+    "description" : "Pet not in carrier.",
+    "amount"      : 5000
+  },
+  {
+    "code"        : "OPEN_RENTAL",
+    "title"       : "Open Rental",
+    "description" : "Failure to end rental.",
+    "amount"      : 5000
+  },
+  {
+    "code"        : "ACCIDENT",
+    "title"       : "Accident",
+    "description" : "Vehicle involved in an accident, fault attributed to the driver.",
+    "amount"      : 100000
+  }
+]

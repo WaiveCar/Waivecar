@@ -1,6 +1,6 @@
 'use strict';
 
-let error = Reach.Error;
+let error = Bento.Error;
 
 module.exports = function *authenticate() {
   if (!this.auth.check()) {
@@ -9,4 +9,4 @@ module.exports = function *authenticate() {
       message : `You must be signed in to gain access to this route.`
     }, 401);
   }
-}
+};

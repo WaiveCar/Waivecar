@@ -1,7 +1,7 @@
 'use strict';
 
-Reach.Register.Model('UserGroup', 'sequelize', function (model, Sequelize) {
-  
+Bento.Register.Model('UserGroup', 'sequelize', function register(model, Sequelize) {
+
   /**
    * The identity of the table created in your database.
    * @property table
@@ -15,7 +15,7 @@ Reach.Register.Model('UserGroup', 'sequelize', function (model, Sequelize) {
    * @type     Object
    */
   model.schema = {
-    userId : { 
+    userId : {
       type       : Sequelize.INTEGER,
       primaryKey : true,
       allowNull  : false,
@@ -24,7 +24,7 @@ Reach.Register.Model('UserGroup', 'sequelize', function (model, Sequelize) {
         key   : 'id'
       }
     },
-    groupId : { 
+    groupId : {
       type       : Sequelize.INTEGER,
       primaryKey : true,
       allowNull  : false,

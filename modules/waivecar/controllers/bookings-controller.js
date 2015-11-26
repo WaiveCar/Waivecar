@@ -1,78 +1,59 @@
 'use strict';
 
-let BookingService = require('../lib/booking-service');
-let CarService     = require('../lib/car-service');
-let queue          = Reach.provider('queue');
-let error          = Reach.Error;
+let booking = require('../lib/booking-service');
 
-Reach.Register.Controller('BookingsController', function (controller) {
+Bento.Register.Controller('BookingsController', function(controller) {
 
   /**
-   * Attempt to create a new booking using the provided information.
-   * @method create
-   * @param  {Object} post
+   * Creates a new booking request.
+   * @return {Object}
    */
-  controller.create = function *(post) {
-    let carId = post.carId;
-    let user  = this.auth.user;
-
-    yield CarService.isAvailable(carId); // Is the car available for booking?
-    yield CarService.hasDriver(user.id); // Is the user a driver of another car?
-
-    let booking = yield BookingService.create(carId, user);
-    yield CarService.setStatus('unavailable', carId, user);
-
-    return booking;
+  controller.create = function *() {
+    return yield booking.create(this.payload, this.auth.user);
   };
 
   /**
-   * Fetches a list of bookings.
-   *  This need to be ADMIN only
-   * @method index
-   * @param  {Object} options
-   * @return {Array}
+   * Returns a list of bookings.
+   * @return {Object}
    */
-  controller.index = function *(options) {
-    return yield BookingService.getBookings(options);
+  controller.index = function *() {
+    return yield booking.index(this.query, this.auth.role, this.auth.user);
   };
 
   /**
-   * Fetch basic information about the booking.
-   * @method show
-   * @param  {Int} id The booking id
-   * @return {Booking}
+   * Returns a single booking.
+   * @param  {Number} id
+   * @return {Object}
    */
   controller.show = function *(id) {
-    return yield BookingService.getBooking(id, this.auth.user);
+    return yield booking.show(id, this.auth.user);
   };
 
   /**
-   * Updates the booking status.
-   * @method update
-   * @param  {Int} id
+   * Initiates the booking and starts the ride.
+   * @param  {Number} id
+   * @return {Object}
    */
-  controller.update = function *(id, post) {
-    let user = this.auth.user;
-    switch (post.status) {
-      case 'pending-arrival' : return yield BookingService.pending(id, user);
-      case 'start'           : return yield BookingService.start(id, user);
-      case 'end'             : return yield BookingService.end(id, user);
-      default:
-        throw error.parse({
-          code     : 'BOOKING_BAD_STATE',
-          message  : 'The status provided is invalid',
-          solution : 'Make sure the status provided with your request is a valid booking status'
-        }, 403);
-    }
+  controller.start = function *(id) {
+    return yield booking.start(id, this.auth.user);
   };
 
   /**
-   * @method destroy
-   * @param  {Int} id
-   * @return {Booking}
+   * Ends the current ride.
+   * @param  {Number} id
+   * @return {Object}
    */
-  controller.destroy = function *(id) {
-    return yield BookingService.cancel(id, this.auth.user);
+  controller.end = function *(id) {
+    return yield booking.end(id, this.payload.paymentId, this.auth.user);
+  };
+
+  /**
+   * Cancels a booking.
+   * @param  {Number} id
+   * @return {Object}
+   */
+  controller.cancel = function *(id) {
+    return yield booking.cancel(id, this.auth.user);
   };
 
   return controller;

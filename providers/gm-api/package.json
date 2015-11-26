@@ -1,9 +1,0 @@
-{
-  "name": "gm-api",
-  "private": true,
-  "description": "General Motors API Provider",
-  "reach": {
-    "name": "gm-api",
-    "type": "provider"
-  }
-}

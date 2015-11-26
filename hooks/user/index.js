@@ -1,23 +1,23 @@
 'use strict';
 
-let queue        = Reach.provider('queue');
-let tokens       = Reach.provider('token');
-let verification = Reach.provider('user-verification');
-let User         = Reach.model('User');
-let error        = Reach.Error;
-let hooks        = Reach.Hooks;
-let config       = Reach.config;
+let queue        = Bento.provider('queue');
+let tokens       = Bento.provider('token');
+let verification = Bento.provider('user-verification');
+let User         = Bento.model('User');
+let error        = Bento.Error;
+let hooks        = Bento.Hooks;
+let config       = Bento.config;
 
 // ### Register Jobs
 
 require('./jobs/password-reset');
 require('./jobs/registration');
 
+// ### Custom Hooks
+
 /**
- * Return a user based on the provided identifier.
- * @hook   user:get
- * @param  {Mixed} identifier
- * @return {User}
+ * Retrieves a user based on provided identifier.
+ * @param {String} identifier
  */
 hooks.set('user:get', function *(identifier) {
   let user = yield User.findOne({
@@ -35,41 +35,64 @@ hooks.set('user:get', function *(identifier) {
 });
 
 /**
- * Triggers after a user has been successfully stored, this hook
- * is generaly usefull for sending notifications to the user
- * such as a welcome or further account instructions.
- * @hook  user:stored
- * @param {User} user
+ * Triggers when a token has been verified passing the user and verification purpose.
+ * @param  {Object} user
+ * @param  {String} purpose
+ * @return {Void}
  */
-hooks.set('user:stored', function *(user) {
+hooks.set('user:verified', function *(user, purpose) {
+  // ...
+});
 
-  // ### Test Accounts
-  // Ignore accounts created as a fixture.
-
-  if (user.email.match(/fixture\.none/gi)) {
-    return;
-  }
-
-  // ### Registration Job
-
+/**
+ * Hook for sending out password reset tokens when password reset request has been
+ * successfully placed.
+ * @param  {Object} user
+ * @param  {String} token
+ * @param  {String} resetUrl
+ * @return {Void} [description]
+ */
+hooks.set('user:send-password-token', function *(user, token, resetUrl) {
   let job = queue
-    .create('email:user:registration', {
+    .create('email:user:password-reset', {
       to       : user.email,
       from     : config.email.sender,
-      subject  : 'Registration complete',
-      template : 'user-welcome-email',
+      subject  : 'Password Reset',
+      template : 'user-password-reset',
       context  : {
-        name    : user.name(),
-        company : config.api.name,
-        confirm : 'http://local.io:8081/users/email-confirm/sample'
+        name     : user.name(),
+        service  : config.api.name,
+        token    : token,
+        resetUrl : resetUrl
       }
     })
     .save()
   ;
-
   job.on('complete', () => {
     job.remove();
   });
+});
+
+// ### Store Hooks
+
+/**
+ * Provides the data payload for filtering, adjustments etc. for storage requests.
+ * @param  {Object} payload
+ * @return {Object}
+ */
+hooks.set('user:store:before', function *(payload) {
+  return payload;
+});
+
+/**
+ * Executed after a new user has been sucessfully registered.
+ * @param  {Object} user
+ * @return {Void}
+ */
+hooks.set('user:store:after', function *(user) {
+  if (user.email.match(/fixture\.none/gi)) {
+    return; // Ignore test accounts...
+  }
 
   // ### Verify Phone
 
@@ -84,13 +107,37 @@ hooks.set('user:stored', function *(user) {
   }
 });
 
+// ### Update Hooks
+
 /**
- * Triggers after a user has successfully updated their account
- * with new information.
- * @hook  user:updated
- * @param {User} user
+ * Provides the data payload for filter, adjustments etc. for update requests.
+ * @param  {Object} prevUser The previous user data in our database.
+ * @param  {Object} nextUser The new user payload provided by client.
+ * @return {Object}
  */
-hooks.set('user:updated', function *(user) {
+hooks.set('user:update:before', function *(prevUser, nextUser) {
+  if (nextUser.phone && prevUser.phone !== nextUser.phone) {
+    nextUser.verifiedPhone = false;
+  }
+
+  if (nextUser.email && prevUser.email !== nextUser.email) {
+    nextUser.verifiedEmail = false;
+  }
+
+  // if the user's verification requirements have changed, they are no longer active.
+  if (!nextUser.verifiedEmail || !nextUser.verifiedEmail) {
+    nextUser.status = 'pending';
+  }
+
+  return nextUser;
+});
+
+/**
+ * Executed after a user has been successfully updated.
+ * @param  {Object} user
+ * @return {Void}
+ */
+hooks.set('user:update:after', function *(user) {
   if (user.phone && !user.verifiedPhone) {
     yield verification.requestPhoneVerification(user.id, user.phone);
   }
@@ -99,41 +146,14 @@ hooks.set('user:updated', function *(user) {
   }
 });
 
-/**
- * Triggers after a user was successfully deleted, by default
- * the system soft-deletes data.
- * @hook  user:deleted
- * @param {User} user
- */
-hooks.set('user:deleted', function *(user) {
-  // ...
-});
+// ### Delete Hooks
 
 /**
- * Hook for sending out password reset tokens when password
- * reset request has been successfully placed.
- * @hook  user:send-password-token
- * @param {User}   user
- * @param {String} token
- * @param {String} resetUrl
+ * Executed before the user is deleted.
+ * @param  {Object} user
+ * @param  {Object} query The query that was provided with the delete request.
+ * @return {Boolean}
  */
-hooks.set('user:send-password-token', function *(user, token, resetUrl) {
-  let job = queue
-    .create('email:user:password-reset', {
-      to       : user.email,
-      from     : config.email.sender,
-      subject  : 'Password Reset',
-      template : 'user-password-reset',
-      context  : {
-        name      : user.name(),
-        service   : config.api.name,
-        token     : token,
-        resetUrl  : resetUrl
-      }
-    })
-    .save()
-  ;
-  job.on('complete', () => {
-    job.remove();
-  });
+hooks.set('user:delete:before', function *(user, query) {
+  return true;
 });

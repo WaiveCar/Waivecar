@@ -1,4 +1,7 @@
+'use strict';
+
 module.exports = {
+  name  : 'contents',
   store : {
     key    : 'content',
     method : 'POST',

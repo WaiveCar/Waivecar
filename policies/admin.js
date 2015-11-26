@@ -1,6 +1,6 @@
 'use strict';
 
-let error = Reach.Error;
+let error = Bento.Error;
 
 module.exports = function *admin() {
   if (this.auth.user.role !== 'admin') {
@@ -9,4 +9,4 @@ module.exports = function *admin() {
       message : `Your account credentials does not allow access to this route.`
     }, 401);
   }
-}
+};

@@ -1,11 +1,8 @@
-'use strict';
-
 module.exports = {
   api : {
     port : 8082,
     uri  : 'http://localhost:8082'
   },
-  
   log : {
     level : {
       console : 'info',
@@ -13,7 +10,6 @@ module.exports = {
       email   : 'ignore'
     }
   },
-  
   test : {
     custom : [
       'interface/models/user'
@@ -24,7 +20,6 @@ module.exports = {
       'log'
     ],
     providers : [
-      'gm-api',
       'email',
       'sms'
     ]

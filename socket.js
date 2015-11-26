@@ -1,18 +1,31 @@
 'use strict';
 
-let Reach  = require('reach-api');
-let socket = require('reach-socket');
+let path   = require('path');
+let server = require('bentojs-socket');
+let config = require('bentojs-config');
 
-/*
-  Socket Server
-  =============
-  The reach-api uses reach-socket (stand alone socket.io server) to emmit all socket events
-  from back end to front end service.
+// ### Bento
+// Expose bento on the global scope.
 
-  This is an optional file that can be executed seperately from the API if you wish to run
-  the socket server on the same server as the API.
+GLOBAL.Bento = module.exports = {};
 
-  This file uses the configuration defined in the ./config/socket directory.
- */
+// ### Paths
+// Absolute paths to the various core concept folders of the bento api.
 
-socket(Reach.config.socket);
+Bento.ROOT_PATH      = path.join(__dirname);
+Bento.CONFIG_PATH    = path.join(Bento.ROOT_PATH, 'config');
+Bento.INTERFACE_PATH = path.join(Bento.ROOT_PATH, 'interface');
+Bento.MODULE_PATH    = path.join(Bento.ROOT_PATH, 'modules');
+Bento.POLICY_PATH    = path.join(Bento.ROOT_PATH, 'policies');
+Bento.PROVIDER_PATH  = path.join(Bento.ROOT_PATH, 'providers');
+Bento.HOOKS_PATH     = path.join(Bento.ROOT_PATH, 'hooks');
+Bento.STORAGE_PATH   = path.join(Bento.ROOT_PATH, 'storage');
+Bento.TEST_PATH      = path.join(Bento.ROOT_PATH, 'test');
+
+// ### Configuration
+
+config = config(path.resolve('./config'));
+
+// ### Server
+
+server(config.socket);

@@ -1,53 +1,50 @@
 'use strict';
 
-let LicenseService = require('../lib/license-service');
+let service = require('../lib/license-service');
 
-Reach.Register.Controller('LicensesController', function (controller) {
+Bento.Register.Controller('LicensesController', function(controller) {
 
   /**
-   * @method create
-   * @param  {Object} post
-   * @return {Void}
+   * Stores a new license record.
+   * @return {Object}
    */
-  controller.store = function *(post) {
-    return yield LicenseService.create(post, this.auth.user);
+  controller.store = function *() {
+    return yield service.store(this.payload, this.auth.user);
   };
 
   /**
-   * @method index
-   * @return {Void}
+   * Returns a license index.
+   * @return {Array}
    */
   controller.index = function *() {
-    return yield LicenseService.getAll(this.auth.user);
+    return yield service.index(this.query, this.auth.role, this.auth.user);
   };
 
   /**
-   * @method show
+   * Returns a single license record.
    * @param  {Mixed}  id
-   * @return {Void}
+   * @return {Object}
    */
   controller.show = function *(id) {
-    return yield LicenseService.get(id, this.auth.user);
+    return yield service.show(id, this.auth.user);
   };
 
   /**
-   * @method update
+   * Updates a single license based on the provided id.
    * @param  {Mixed}  id
-   * @param  {Object} data
-   * @return {Void}
+   * @return {Object}
    */
-  controller.update = function *(id, data) {
-    return yield LicenseService.update(id, this.auth.user, data);
+  controller.update = function *(id) {
+    return yield service.update(id, this.payload, this.auth.user);
   };
 
   /**
-   * @method destroy
+   * Deletes a license record.
    * @param  {Mixed}  id
-   * @param  {Object} data
-   * @return {Void}
+   * @return {Object}
    */
-  controller.destroy = function *(id, data) {
-    return yield LicenseService.destroy(id, this.auth.user, data);
+  controller.delete = function *(id) {
+    return yield service.delete(id, this.auth.user);
   };
 
   return controller;

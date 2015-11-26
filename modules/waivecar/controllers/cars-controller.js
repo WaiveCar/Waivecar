@@ -1,63 +1,43 @@
 'use strict';
 
-let query = Reach.provider('sequelize/helpers').query;
-let Car   = Reach.model('Car');
+let car = require('../lib/car-service');
 
-Reach.Register.ResourceController('Car', 'CarsController', function (controller) {
+Bento.Register.Controller('CarsController', function(controller) {
 
   /**
-   * @method index
-   * @param  {Object} options
-   * @return {Array}
+   * Returns a list of cars.
+   * @return {Object}
    */
-  controller.index = function *(options) {
-    return yield Car.find(query(options, {
-      include : [
-        {
-          model : 'CarLocation',
-          as    : 'location',
-          attr  : [ 'latitude', 'longitude' ]
-        },
-        {
-          model : 'CarStatus',
-          as    : 'booking',
-          attr  : [ 'status' ]
-        },
-        {
-          model : 'CarDiagnostic',
-          as    : 'diagnostics',
-          attr  : [ 'type', 'status', 'value', 'unit' ]
-        }
-      ]
-    }));
+  controller.index = function *() {
+    return yield car.index(this.query, this.auth.role, this.auth.user);
   };
 
   /**
-   * @method show
-   * @param  {String} id
-   * @param  {Object} options
-   * @return {Car}
+   * Returns a single car.
+   * @param  {Number} id The Car Id.
+   * @return {Object}
    */
-  controller.show = function *(id, options) {
-    return yield Car.findById(id, {
-      include : [
-        {
-          model : 'CarLocation',
-          as    : 'location',
-          attr  : [ 'latitude', 'longitude' ]
-        },
-        {
-          model : 'CarStatus',
-          as    : 'booking',
-          attr  : [ 'status' ]
-        },
-        {
-          model : 'CarDiagnostic',
-          as    : 'diagnostics',
-          attr  : [ 'type', 'status', 'value', 'unit' ]
-        }
-      ]
-    });
+  controller.show = function *(id) {
+    return yield car.show(id, this.auth.user);
+  };
+
+  /**
+   * Execute a command on a single car.
+   * @param  {Number} id The Car Id.
+   * @param  {String} command lock/unlock.
+   * @return {Object}
+   */
+  controller.update = function *(id, command) {
+    return yield car.executeCommand(id, command, this.auth.user);
+  };
+
+  /**
+   * Retrieve all events for a single car.
+   * @param  {Number} id The Car Id.
+   * @return {Object}
+   */
+  controller.events = function *(id) {
+    return yield car.events(id, this.auth.user);
   };
 
   return controller;
