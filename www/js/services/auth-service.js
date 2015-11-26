@@ -85,7 +85,7 @@ function AuthService ($session, $data, $injector) {
       .then(function () {
         return fbUser;
       });
-    })
+    }.bind(this))
     .then(function (fbUser) {
       return {code: 'NEW_USER', fbUser: fbUser};
     });
