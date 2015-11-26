@@ -142,12 +142,17 @@ module.exports = angular.module('app.controllers').controller('BookingController
       $scope.showConnect = false;
 
       var stopWatching = $scope.$watch(function () {
-
+        if (!$rootScope.currentLocation) {
+          return false;
+        }
+        var car = $scope.booking && $scope.booking.car;
+        if (!car) {
+          return false;
+        }
         var from = L.latLng($rootScope.currentLocation.latitude, $rootScope.currentLocation.longitude);
-        var to = L.latLng($scope.booking.car.latitude, $scope.booking.car.longitude);
+        var to = L.latLng(car.latitude, car.longitude);
         var distance = from.distanceTo(to);
         return distance <= 25;
-
       }, function (newValue) {
         if (newValue) {
           stopWatching();
