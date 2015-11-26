@@ -182,13 +182,16 @@ module.exports = [
         // 15-Book-waivecar
         url: '/cars/:id?displayRequirements',
         templateUrl: '/templates/cars/show.html',
-        controller: 'CarController',
+        controller: 'CarController as car',
         data: {
           auth: true
         },
         resolve: {
           status: ['BookingService', '$stateParams', function(BookingService, $stateParams){
             return BookingService.getCurrentStatus($stateParams.id);
+          }],
+          car: ['$data', '$stateParams', function ($data, $stateParams) {
+            return $data.resources.Car.get({id: $stateParams.id}).$promise;
           }]
         }
       })

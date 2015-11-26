@@ -33,27 +33,34 @@ module.exports = angular.module('Maps').service('RouteService', [
           url += '&advice=yes';
           url += '&points=yes';
 
-          var defered = $q.defer();
-          $http.get(url).success(function (data) {
-            if (data.status.apiCode === skobblerApiCodes.sourceSameAsDestination) {
-              data.route = {
-                duration: 0
-              };
-            }
+          return $http.get(url);
+        })
+        .then(function (response) {
+          var data = response.data;
+          if (data.status.apiCode === skobblerApiCodes.sourceSameAsDestination) {
+            data.route = {
+              duration: 0
+            };
+          }
 
-            $rootScope.$broadcast(MapsEvents.routeDurationChanged, data.route ? data.route.duration : 0, profile);
-            $rootScope.$broadcast(MapsEvents.routeDistanceChanged, data.route ? data.route.routelength : 0, profile);
-            defered.resolve(data);
-          }).error(function (data, status, headers, config) {
-            defered.reject({
-              data: data,
-              status: status,
-              header: headers,
-              config: config
-            });
+          $rootScope.$broadcast(MapsEvents.routeDurationChanged, data.route ? data.route.duration : 0, profile);
+          $rootScope.$broadcast(MapsEvents.routeDistanceChanged, data.route ? data.route.routelength : 0, profile);
+          return data;
+        })
+        .then(function (result) {
+          if (!(result.route && result.route.routePoints)) {
+            return $q.reject('Unable to resolve route from point A to point B');
+          }
+
+          var coordinates = result.route.routePoints.map(function (p) {
+            return [p.x, p.y];
           });
 
-          return defered.promise;
+          var lines = [{
+            type: 'LineString',
+            coordinates: coordinates
+          }];
+          return lines;
         });
       }
 

@@ -10,13 +10,15 @@ module.exports = angular.module('app.controllers').controller('CarController', [
   '$rootScope',
   '$scope',
   '$state',
-  '$auth',
-  '$data',
-  '$message',
-  'BookingService',
-  '$ionicModal',
+  '$injector',
   'status',
-  function ($rootScope, $scope, $state, $auth, $data, $message, BookingService, $ionicModal, status) {
+  'car',
+  function ($rootScope, $scope, $state, $injector, status, car) {
+    var BookingService = $injector.get('BookingService');
+    var $ionicModal = $injector.get('$ionicModal');
+    var $message = $injector.get('$message');
+    var $data = $injector.get('$data');
+    var $auth = $injector.get('$auth');
 
     function showRequirementsModal(_status){
 
@@ -41,10 +43,9 @@ module.exports = angular.module('app.controllers').controller('CarController', [
           modal.remove();
         });
       });
-
     }
 
-    $scope.book = function () {
+    this.book = function book () {
       if(BookingService.hasActiveBooking){
         return showRequirementsModal(status);
       }
@@ -69,31 +70,17 @@ module.exports = angular.module('app.controllers').controller('CarController', [
         })
         .catch($message.error);
 
-      // if (!$auth.isAuthenticated()) {
-      //   return $state.go('auth', {
-      //     redirectState: 'cars-show',
-      //     redirectParams: {
-      //       carId: $state.params.id
-      //     }
-      //   });
-      // }
-
     };
 
-    $scope.init = function () {
+    this.init = function init () {
       if($state.params.displayRequirements){
         showRequirementsModal(status);
       }
 
-      $data.resources.Car.get({id: $state.params.id}).$promise
-        .then(function(car){
-          $scope.car = car;
-
-        });
-
+      this.car = car;
     };
 
-    $scope.init();
+    this.init();
 
   }
 

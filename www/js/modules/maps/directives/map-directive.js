@@ -6,9 +6,11 @@ require('../../../providers/maps-loader-provider');
 var _ = require('lodash');
 
 module.exports = angular.module('Maps').directive('skobblerMap', [
+  '$rootScope',
   'MapsLoader',
+  'RouteService',
   '$q',
-  function(MapsLoader, $q) {
+  function($rootScope, MapsLoader, RouteService, $q) {
 
     function getIconOptions(iconType) {
       switch (iconType) {
@@ -36,8 +38,10 @@ module.exports = angular.module('Maps').directive('skobblerMap', [
     }
 
     function link ($scope, $elem, attrs, ctrl) {
+      var center = ctrl.center ? ctrl.center : $rootScope.currentLocation;
+
       var mapOptions = {
-        center: [ctrl.center.latitude, ctrl.center.longitude],
+        center: [center.latitude, center.longitude],
         apiKey: ctrl.leaflet.skobbler.apiKey,
         zoom: parseInt(ctrl.zoom, 10),
         tap: true,
@@ -53,6 +57,7 @@ module.exports = angular.module('Maps').directive('skobblerMap', [
 
       ctrl.setCurrentLocation(ctrl.location);
       ctrl.setCars(ctrl.cars);
+      ctrl.drawRoute();
       ctrl.$$ready.resolve();
     }
 
@@ -60,12 +65,16 @@ module.exports = angular.module('Maps').directive('skobblerMap', [
     function MapController ($scope) {
       this._group = null;
       this.carMarkers = [];
+      this.markers = [];
       this.leaflet = MapsLoader.leaflet;
       this.$$ready = $q.defer();
       this.$ready = this.$$ready.promise;
+      this.route = null;
 
       $scope.$watch('cars', this.setCars.bind(this), true);
       $scope.$watch('location', this.setCurrentLocation.bind(this), true);
+      $scope.$watch('routeStart', this.drawRoute.bind(this), true);
+      $scope.$watch('routeDestiny', this.drawRoute.bind(this), true);
 
       // map instance is set from within the link function
       this.map = null;
@@ -85,16 +94,33 @@ module.exports = angular.module('Maps').directive('skobblerMap', [
     };
 
     MapController.prototype.setCars = function setCars (locations) {
-      var cars = locations && locations.cars;
-      if (!(Array.isArray(cars))) {
+      if (locations === null || typeof locations === 'undefined') {
         return;
       }
+      var cars;
+      if (locations.$resolved === false) {
+        return;
+      }
+      if (Array.isArray(locations)) {
+        cars = locations;
+      } else if (locations.cars) {
+        cars = locations.cars;
+      } else {
+        cars = [locations];
+      }
+
+      if (!cars.length) {
+        return;
+      }
+
       var icon = this.getIconInstance('car');
 
       this.carMarkers = _(cars).filter(function (car) {
-        return car.latitude && car.longitude && car.isAvailable;
+        var location = car.location || car;
+        return location.latitude && location.longitude;
       }).map(function(car) {
-        var marker = this.addMarker([car.latitude, car.longitude], {icon: icon});
+        var location = car.location || car;
+        var marker = this.addMarker([location.latitude, location.longitude], {icon: icon});
         if (typeof this.onCarTap === 'function') {
           var fn = this.onCarTap;
           marker.on('mousedown', function () {
@@ -117,10 +143,10 @@ module.exports = angular.module('Maps').directive('skobblerMap', [
         .marker(location, options)
         .addTo(this.map);
 
+      this.markers.push(marker);
       this.fitBounds(null, 0.5);
 
       return marker;
-
     };
 
     MapController.prototype.fitBounds = function fitBounds (bounds, padding){
@@ -130,30 +156,25 @@ module.exports = angular.module('Maps').directive('skobblerMap', [
         padding = 0;
       }
 
-      if (this.carMarkers.length) {
-        this._group = new this.leaflet.featureGroup(this.carMarkers);
-      } else if (this.locationMarker) {
-        this._group = new this.leaflet.featureGroup([this.locationMarker]);
-      } else {
-        return;
-      }
+      this._group = new this.leaflet.featureGroup(this.markers);
       bounds = bounds || this._group.getBounds();
       this.map.fitBounds(bounds.pad(padding));
-
     };
 
-    MapController.prototype.removeRoute = function removeRoute (route){
-      this.map.removeLayer(route);
+    MapController.prototype.drawRoute = function () {
+      if (!(this.routeStart && this.routeDestiny)) {
+        return;
+      }
+      RouteService.getRoute(this.routeStart, this.routeDestiny)
+      .then(function (routeLines) {
+        if (this.route) {
+          this.map.removeLayer(this.route);
+        }
+        this.route = this.leaflet.geoJson(routeLines);
+        this.route.addTo(this.map);
 
-    };
-
-    MapController.prototype.addRoute = function addRoute (routeLines){
-      var route = this.leaflet.geoJson(routeLines);
-      route.addTo(this.map);
-
-      this.fitBounds(route.getBounds(), 0);
-
-      return route;
+        this.fitBounds(this.route.getBounds(), 0);
+      }.bind(this));
     };
 
     return {
@@ -167,7 +188,9 @@ module.exports = angular.module('Maps').directive('skobblerMap', [
         center: '=',
         location: '=',
         cars: '=',
-        onCarTap: '&'
+        onCarTap: '&',
+        routeStart: '=',
+        routeDestiny: '='
       },
       link: link
     };

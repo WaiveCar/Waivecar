@@ -2,7 +2,7 @@
 
   <ion-nav-title>
     <page-title class="dark-bg title-plain">
-      <reverse-geo-coding location="car.location"></reverse-geo-coding>
+      <reverse-geo-coding location="car.car.location"></reverse-geo-coding>
     </page-title>
   </ion-nav-title>
 
@@ -12,7 +12,6 @@
 
 
   <ion-content scroll="false" padding="false" class="has-header has-footer">
-
     <div class="bar bar-dark bar-subheader route-distance">
       <h5 class="text-center">
         <route-distance></route-distance> - <route-duration></route-duration>
@@ -20,22 +19,21 @@
     </div>
 
     <div class="map-container has-info-footer has-info-subheader">
-      <map id="map" zoom="15">
-        <location-marker location="currentLocation" icon="device"></location-marker>
-        <location-marker location="car.location" icon="car"></location-marker>
-        <route-to-location start="currentLocation" destiny="car.location"></route-to-location>
-      </map>
+      <skobbler-map id="map" zoom="15" location="$root.currentLocation" cars="::car.car"
+        route-start="$root.currentLocation" route-destiny="::car.car.location"
+      >
+      </skobbler-map>
     </div>
 
     <div class="info-footer">
-      <car-charge-status car="car"></car-charge-status>
+      <car-charge-status car="car.car"></car-charge-status>
     </div>
 
   </ion-content>
 
   <ion-footer-bar class="no-padding">
     <div class="button-bar">
-      <button type="button" class="button button-balanced" ng-click="book()">Book WaiveCar</button>
+      <button type="button" class="button button-balanced" ng-click="car.book()">Book WaiveCar</button>
     </div>
   </ion-footer-bar>
 

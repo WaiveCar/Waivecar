@@ -11,11 +11,13 @@
   <ion-content scroll="false" padding="false" class="gray-bg has-header has-footer">
 
     <div class="map-container has-info-footer has-big-info-footer">
-      <map id="map" zoom="15">
-        <location-marker location="currentLocation" icon="device"></location-marker>
-        <location-marker location="booking.car.location" icon="car"></location-marker>
-        <route-to-location start="currentLocation" destiny="booking.car.location"></route-to-location>
-      </map>
+      <skobbler-map id="map" zoom="15"
+        location="currentLocation"
+        cars="booking.car.location"
+        route-to-location
+        start="currentLocation"
+        destiny="booking.car.location"
+      ></skobbler-map>
     </div>
 
     <div class="info-footer big-info-footer">
