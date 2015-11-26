@@ -12,11 +12,10 @@
 
     <div class="map-container has-info-footer has-big-info-footer">
       <skobbler-map id="map" zoom="15"
-        location="currentLocation"
+        location="$root.currentLocation"
         cars="booking.car.location"
-        route-to-location
-        start="currentLocation"
-        destiny="booking.car.location"
+        route-start="currentLocation"
+        route-destiny="booking.car.location"
       ></skobbler-map>
     </div>
 
