@@ -27,6 +27,12 @@ module.exports = class ProfileLicenseView extends React.Component {
   }
 
   renderLicenseRegistration() {
+    const user = auth.user();
+    let license = {
+      firstName : user.firstName,
+      lasttName : user.lastName
+    };
+
     return (
       <div className="profile-box">
         <h3>
@@ -37,7 +43,7 @@ module.exports = class ProfileLicenseView extends React.Component {
             ref       = "license"
             className = "bento-form-static"
             fields    = { formFields.license }
-            default   = { auth.user() }
+            default   = { license }
             buttons   = {[
               {
                 value : 'Register License',

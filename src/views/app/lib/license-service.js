@@ -1,7 +1,8 @@
 'use strict';
 
-import { api, auth, dom } from 'bento';
-import Service            from './component-service';
+import { api, auth, dom, helpers } from 'bento';
+import Service                     from './component-service';
+import async                       from 'async';
 
 module.exports = class License extends Service {
 
@@ -10,7 +11,7 @@ module.exports = class License extends Service {
    * @param {Object} ctx
    */
   constructor(ctx) {
-    super(ctx, 'license', {
+    super(ctx, 'licenses', {
       licenses : []
     });
     this.submitLicense = this.submitLicense.bind(this);
@@ -24,7 +25,11 @@ module.exports = class License extends Service {
    * @param  {Function} reset
    */
   submitLicense(data, reset) {
-    this.addLicense(auth.user, data, function (license) {
+    this.addLicense(auth.user(), data, function (err, license) {
+      if (err) {
+        return this.error(err.data ? err.data : err.message);
+      }
+
       this.setState('licenses', [
         ...this.getState('licenses'),
         license
@@ -35,7 +40,7 @@ module.exports = class License extends Service {
   }
 
   validateLicense() {
-    api.post(`/licenses/${ this.getState('licenses')[0].id }/verify`, {}, function(err, resp) {
+    api.post(`/licenses/${ this.getState('licenses')[0].id }/verify`, { userId : auth.user().id }, function(err, resp) {
       if (err) {
         if (err.data) {
           return this.error(err.data);
@@ -53,25 +58,36 @@ module.exports = class License extends Service {
    * @param {Function} done
    */
   addLicense(user, license, done) {
-    console.log(user());
-    api.post('/licenses', {
-      userId     : user().id,
-      firstName  : license.firstName,
-      middleName : license.middleName,
-      lastName   : license.lastName,
-      birthDate  : license.birthDate,
-      gender     : license.gender,
-      state      : license.state,
-      number     : license.number
-    }, function (err, license) {
-      if (err) {
-        if (err.data) {
-          return this.error(err.data);
-        }
-        return this.error(err.message);
+    async.each([ 'state', 'number', 'birthDate', 'lastName', 'firstName' ], function(field, next) {
+      let currentValue = license.hasOwnProperty(field) ? license[field] : undefined;
+      let valueName = helpers.changeCase.toSentence(field);
+      if (!currentValue) {
+        let message = `A ${ valueName } is required.`;
+        return next(new Error(message));
+      } else {
+        return next();
       }
-      done(license);
-    }.bind(this));
+    }, function(err) {
+      if (err) {
+        return done(err);
+      }
+
+      api.post('/licenses', {
+        userId     : user.id,
+        firstName  : license.firstName,
+        middleName : license.middleName,
+        lastName   : license.lastName,
+        birthDate  : new Date(license.birthDate.split('/')),
+        gender     : license.gender,
+        state      : license.state,
+        number     : license.number
+      }, function (err, license) {
+        if (err) {
+          return done(err);
+        }
+        return done(license);
+      }.bind(this));
+    });
   }
 
   /**
