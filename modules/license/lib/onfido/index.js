@@ -73,7 +73,12 @@ module.exports = class OnfidoService {
     if (license.gender) candidate.gender = license.gender;
     /*eslint-enable */
 
+    log.debug('sending to onfido');
+    console.dir(candidate);
+
     let response = yield this.request('/applicants', 'POST', candidate);
+    log.debug('response from onfido');
+    console.dir(response);
     return response;
   }
 
@@ -217,10 +222,14 @@ module.exports = class OnfidoService {
         data.error.message = 'Your Email Address has already been used to request validation of a License. Please contact us.';
       }
 
+      if (errors === `Sorry, you don't have enough credit to make this purchase`) {
+        log.error('License - Onfido : ' + errors);
+      }
+
       return {
         code    : 'LICENSE_SERVICE_VALIDATION_ERROR',
         message : data.error.message,
-        data    : errors
+        data    : null
       };
     }
 

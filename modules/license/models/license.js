@@ -91,7 +91,7 @@ Bento.Register.Model('License', 'sequelize', function(model, Sequelize) {
         'stored',
         'provided',
         'in-progress',
-        'completed',
+        'complete',
         'failed'
       ),
       defaultValue : 'provided'
@@ -99,6 +99,11 @@ Bento.Register.Model('License', 'sequelize', function(model, Sequelize) {
 
     outcome : {
       type      : Sequelize.STRING(64),
+      allowNull : true
+    },
+
+    verifiedAt : {
+      type      : Sequelize.DATE(),
       allowNull : true
     }
 

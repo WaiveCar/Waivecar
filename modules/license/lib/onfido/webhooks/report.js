@@ -1,11 +1,12 @@
 'use strict';
 
-let Service     = require('../../classes/service');
-let License = Bento.model('License');
-let User    = Bento.model('User');
-let hooks   = Bento.Hooks;
-let error   = Bento.Error;
-let log     = Bento.Log;
+let Service      = require('../../classes/service');
+let Api          = require('../index');
+let License      = Bento.model('License');
+let User         = Bento.model('User');
+let hooks        = Bento.Hooks;
+let error        = Bento.Error;
+let log          = Bento.Log;
 
 module.exports = class Handler {
 
@@ -13,18 +14,22 @@ module.exports = class Handler {
    * Handles the receipt of a completed report from checkr
    * @param {Object} payload
    */
-  static *receive(payload) {
-    let report = payload.data.object;
-    let license = yield this.getLicenseByCandidate(report.id);
+  static *receive(data) {
+    let license = yield this.getLicenseByReport(data.id);
 
     yield license.update({
-      status : report.status
+      status : data.status
     });
 
-    log.debug(`License Hook #{ JSON.stringify(payload) }`);
-
-    // // ### Hook
-    yield hooks.call('license:checked', report, license);
+    let update = yield Api.getReport(license.linkedUserId, license.checkId, license.reportId);
+    if (update.status !== license.status) {
+      yield license.update({
+        status     : update.status,
+        outcome    : update.result,
+        verifiedAt : new Date()
+      });
+      log.info(`License ${ license.id } updated via webhook.`);
+    }
   }
 
 };

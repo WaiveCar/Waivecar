@@ -1,9 +1,10 @@
 'use strict';
 
-let relay    = Bento.Relay;
-let Service  = require('./classes/service');
+let relay        = Bento.Relay;
+let Service      = require('./classes/service');
 let Verification = require('./onfido');
-let resource = 'licenses';
+let log          = Bento.Log;
+let resource     = 'licenses';
 
 module.exports = class LicenseVerificationService extends Service {
 
@@ -28,7 +29,6 @@ module.exports = class LicenseVerificationService extends Service {
     };
 
     let check = yield Verification.createCheck(license.linkedUserId, payload, _user);
-    console.log(check);
 
     let status = 'unknown';
     switch (check.status) {
@@ -67,6 +67,23 @@ module.exports = class LicenseVerificationService extends Service {
     let report = yield Verification.getChecks(license.linkedUserId, _user);
     console.log(report);
     return report;
+  }
+
+  static *syncLicenses() {
+    let licenses = yield this.getLicensesInProgress();
+    let count = licenses.length;
+    log.info(`License : Checking ${ count } Licenses`);
+    for (let i = count - 1; i >= 0; i--) {
+      let license = licenses[i];
+      let update = yield Verification.getReport(license.linkedUserId, license.checkId, license.reportId);
+      if (update.status !== license.status) {
+        yield license.update({
+          status     : update.status,
+          outcome    : update.result,
+          verifiedAt : new Date()
+        });
+      }
+    }
   }
 
 };
