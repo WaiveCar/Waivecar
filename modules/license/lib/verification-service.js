@@ -73,7 +73,7 @@ module.exports = class LicenseVerificationService extends Service {
     let licenses = yield this.getLicensesInProgress();
     let count = licenses.length;
     log.info(`License : Checking ${ count } Licenses`);
-    for (var i = count - 1; i >= 0; i--) {
+    for (let i = count - 1; i >= 0; i--) {
       let license = licenses[i];
       let update = yield Verification.getReport(license.linkedUserId, license.checkId, license.reportId);
       if (update.status !== license.status) {
