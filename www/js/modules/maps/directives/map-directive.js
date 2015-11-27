@@ -38,10 +38,8 @@ module.exports = angular.module('Maps').directive('skobblerMap', [
     }
 
     function link ($scope, $elem, attrs, ctrl) {
-      var center = ctrl.center ? ctrl.center : $rootScope.currentLocation;
 
       var mapOptions = {
-        center: [center.latitude, center.longitude],
         apiKey: ctrl.leaflet.skobbler.apiKey,
         zoom: parseInt(ctrl.zoom, 10),
         tap: true,
@@ -53,12 +51,17 @@ module.exports = angular.module('Maps').directive('skobblerMap', [
         mapOptions.zoomControl = false;
       }
 
-      ctrl.map = ctrl.leaflet.skobbler.map($elem[0].firstChild, mapOptions);
+      if (ctrl.center) {
+        mapOptions.center = ctrl.center;
+      }
 
-      ctrl.setCurrentLocation(ctrl.location);
-      ctrl.setCars(ctrl.cars);
-      ctrl.drawRoute();
-      ctrl.$$ready.resolve();
+      ctrl.map = ctrl.leaflet.skobbler.map($elem[0].firstChild, mapOptions);
+      if (ctrl.map) {
+        ctrl.setCurrentLocation(ctrl.location);
+        ctrl.setCars(ctrl.cars);
+        ctrl.drawRoute();
+        ctrl.$$ready.resolve();
+      }
     }
 
 
@@ -71,6 +74,10 @@ module.exports = angular.module('Maps').directive('skobblerMap', [
       this.$ready = this.$$ready.promise;
       this.route = null;
 
+      if (!this.center && $rootScope.currentLocation) {
+          this.center = [$rootScope.currentLocation.latitude, $rootScope.currentLocation.longitude];
+      }
+
       $scope.$watch('cars', this.setCars.bind(this), true);
       $scope.$watch('location', this.setCurrentLocation.bind(this), true);
       $scope.$watch('routeStart', this.drawRoute.bind(this), true);
@@ -79,7 +86,7 @@ module.exports = angular.module('Maps').directive('skobblerMap', [
       // map instance is set from within the link function
       this.map = null;
     }
-
+;
     MapController.prototype.setCurrentLocation = function setCurrentLocation (location) {
       if (!(location && location.latitude && location.longitude)) {
         return;
