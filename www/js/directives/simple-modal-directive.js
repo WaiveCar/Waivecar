@@ -23,13 +23,18 @@ var directive = ['$ionicModal', function ($ionicModal) {
     .then(function (modal) {
       self.close = modal.remove.bind(modal);
       self.modal = modal;
+      if (self.actions) {
+        self.actions.close = self.close;
+      }
     });
 
     if (this.actions) {
       this.actions.$promise = this.$promise;
-      this.actions.show = this.$promise.then(function () {
-        this.modal.show();
-      }.bind(this));
+      this.actions.show = function modalShow () {
+        this.$promise.then(function () {
+          this.modal.show();
+        }.bind(this));
+      }.bind(this);
     }
 
   }
