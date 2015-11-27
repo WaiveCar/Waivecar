@@ -19,15 +19,15 @@ function CarsController ($rootScope, $scope, $state, $injector, cars) {
     var modalScope = $rootScope.$new();
     $ionicModal.fromTemplateUrl('/templates/cars/modal-no-cars.html', {
       scope: modalScope,
-      animation: 'slide-in-up'
+      animation: 'fade-in-up'
     })
     .then(function (modal) {
-      modal.show();
       modalScope.close = modal.remove.bind(modal);
 
       $scope.$on('$destroy', function () {
         modal.remove();
       });
+      return modal.show();
     });
   }
 
