@@ -14,9 +14,8 @@ module.exports = {
 
   license : {
     onfido : {
-      uri  : 'https://api.onfido.com/v1/',
       key  : 'live_as_IHLB4xIpsv281PmGRfg57U5welUN_',
-      hook : ''
+      hook : 'Yb4GSgSCxVPixBDw3VXaPH6GoPg_oPZW'
     }
   }
 
