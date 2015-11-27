@@ -11,7 +11,7 @@ module.exports = class License extends Service {
    * @param {Object} ctx
    */
   constructor(ctx) {
-    super(ctx, 'licenses', {
+    super(ctx, 'license', {
       licenses : []
     });
     this.submitLicense = this.submitLicense.bind(this);
