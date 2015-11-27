@@ -11,34 +11,7 @@ module.exports = angular.module('Maps').directive('skobblerMap', [
   'RouteService',
   '$q',
   function($rootScope, MapsLoader, RouteService, $q) {
-
-    function getIconOptions(iconType) {
-      switch (iconType) {
-        case 'car':
-          {
-            return {
-              iconUrl: 'img/active-waivecar.svg',
-              iconRetinaUrl: 'img/active-waivecar.svg',
-              iconSize: [20, 25],
-              iconAnchor: [10, 25],
-              popupAnchor: [0, 0]
-            };
-          }
-        default:
-          {
-            return {
-              iconUrl: 'img/user-location.svg',
-              iconRetinaUrl: 'img/user-location.svg',
-              iconSize: [25, 25],
-              iconAnchor: [12.5, 25],
-              popupAnchor: [0, 0]
-            };
-          }
-      }
-    }
-
     function link ($scope, $elem, attrs, ctrl) {
-
       var mapOptions = {
         apiKey: ctrl.leaflet.skobbler.apiKey,
         zoom: parseInt(ctrl.zoom, 10),
@@ -64,7 +37,6 @@ module.exports = angular.module('Maps').directive('skobblerMap', [
       }
     }
 
-
     function MapController ($scope) {
       this._group = null;
       this.carMarkers = [];
@@ -86,7 +58,7 @@ module.exports = angular.module('Maps').directive('skobblerMap', [
       // map instance is set from within the link function
       this.map = null;
     }
-;
+
     MapController.prototype.setCurrentLocation = function setCurrentLocation (location) {
       if (!(location && location.latitude && location.longitude)) {
         return;
@@ -183,6 +155,31 @@ module.exports = angular.module('Maps').directive('skobblerMap', [
         this.fitBounds(this.route.getBounds(), 0);
       }.bind(this));
     };
+
+    function getIconOptions(iconType) {
+      switch (iconType) {
+        case 'car':
+          {
+            return {
+              iconUrl: 'img/active-waivecar.svg',
+              iconRetinaUrl: 'img/active-waivecar.svg',
+              iconSize: [20, 25],
+              iconAnchor: [10, 25],
+              popupAnchor: [0, 0]
+            };
+          }
+        default:
+          {
+            return {
+              iconUrl: 'img/user-location.svg',
+              iconRetinaUrl: 'img/user-location.svg',
+              iconSize: [25, 25],
+              iconAnchor: [12.5, 25],
+              popupAnchor: [0, 0]
+            };
+          }
+      }
+    }
 
     return {
       restrict: 'E',

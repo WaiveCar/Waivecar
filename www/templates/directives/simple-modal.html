@@ -1,17 +1,18 @@
-<ion-modal-view class="modal-no-cars">
+<ion-modal-view class="simple-modal">
   <ion-content scroll="false" padding="true" class="ion-content--center dark-bg">
     <div class="modal-container">
       <div class="modal-header">
         <ng-include src="'/img/waivecar-mark.svg'" class="waivecar-mark"></ng-include>
-        <p class="text-uppercase modal-title">Bummer!</p>
+        <p class="text-uppercase modal-title">{{modal.title}}</p>
       </div>
       <div class="modal-content">
-        <p>WaiveCar is currently available just in LA. Check back when you're in the area</p>
+        <p>{{modal.message}}</p>
       </div>
       <div class="modal-actions">
-        <button type="button" class="button button-balanced button-block" ng-click="close()">Ok</button>
+        <button type="button" class="button button-balanced button-block" ng-click="modal.close()">Ok</button>
       </div>
     </div>
   </ion-content>
 
 </ion-modal-view>
+

@@ -92,6 +92,7 @@ require('./directives/wizard-directive');
 require('./directives/equal-to-directive');
 require('./directives/car-charge-status-directive');
 require('./directives/car-info-directive');
+require('./directives/simple-modal-directive');
 
 ionic.Platform.ready(function () {
 

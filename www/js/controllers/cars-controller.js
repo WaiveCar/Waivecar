@@ -12,23 +12,18 @@ module.exports = angular.module('app.controllers').controller('CarsController', 
 ]);
 
 function CarsController ($rootScope, $scope, $state, $injector, cars) {
-  var $ionicModal = $injector.get('$ionicModal');
-
   this.all = cars;
-  if (!this.all.length) {
-    var modalScope = $rootScope.$new();
-    $ionicModal.fromTemplateUrl('/templates/cars/modal-no-cars.html', {
-      scope: modalScope,
-      animation: 'fade-in-up'
-    })
-    .then(function (modal) {
-      modalScope.close = modal.remove.bind(modal);
+  this.currentLocation = $rootScope.currentLocation;
+  this.modal = {
+    title: 'Bummer',
+    actions: {}
+  };
 
-      $scope.$on('$destroy', function () {
-        modal.remove();
-      });
-      return modal.show();
-    });
+  if (!this.all.length) {
+    this.modal.message = 'There are no WaiveCars currently available for rental. Please check back later.';
+    if (typeof this.modal.actions.show === 'function') {
+      this.modal.actions.show();
+    }
   }
 
   this.showCar = function (car) {
