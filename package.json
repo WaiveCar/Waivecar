@@ -17,7 +17,7 @@
   ],
   "dependencies": {
     "babel-eslint": "4.1.1",
-    "bentojs-api": "0.7.5",
+    "bentojs-api": "0.7.6",
     "bentojs-config": "0.0.5",
     "bentojs-socket": "0.3.3",
     "co": "4.6.0",
@@ -46,15 +46,14 @@
     "bentojs-api-file": "0.3.17",
     "bentojs-api-log": "0.2.5",
     "bentojs-api-mongo": "0.0.12",
-    "bentojs-api-payment": "0.3.10",
     "bentojs-api-queue": "0.0.17",
-    "bentojs-api-sequelize": "0.1.13",
+    "bentojs-api-sequelize": "0.1.14",
     "bentojs-api-slack": "0.0.2",
     "bentojs-api-sms": "0.0.13",
     "bentojs-api-subscription": "0.0.7",
     "bentojs-api-token": "1.0.1",
     "bentojs-api-ui": "0.1.2",
     "bentojs-api-user": "0.3.18",
-    "bentojs-api-verification": "0.0.6"
+    "bentojs-api-verification": "0.0.7"
   }
 }
