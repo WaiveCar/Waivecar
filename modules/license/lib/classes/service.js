@@ -3,6 +3,7 @@
 let License = Bento.model('License');
 let User    = Bento.model('User');
 let error   = Bento.Error;
+let log     = Bento.Log;
 
 module.exports = class Service {
 
@@ -23,19 +24,51 @@ module.exports = class Service {
   }
 
   /**
+   * Retrieves a license by User Reference from the database.
+   * @param  {Number} id
+   * @return {Object}
+   */
+  static *getLicenseByUserLink(id) {
+    let license = yield License.find({ userLinkId : id });
+    if (!license) {
+      throw error.parse({
+        code    : `INVALID_LICENSE`,
+        message : `A matching license for this linked user cannot be found`
+      }, 400);
+    }
+    return license;
+  }
+
+  /**
+   * Retrieves a license by Report Reference from the database.
+   * @param  {Number} id
+   * @return {Object}
+   */
+  static *getLicenseByReport(id) {
+    let license = yield License.find({ reportId : id });
+    if (!license) {
+      throw error.parse({
+        code    : `INVALID_LICENSE`,
+        message : `A matching license for this report cannot be found`
+      }, 400);
+    }
+    return license;
+  }
+
+  /**
    * Retrieves a license by Checkr's Candidate Id from the database.
    * @param  {Number} id
    * @return {Object}
    */
-  static *getLicenseByCandidate(id) {
-    let license = yield License.find({ candidateId : id });
-    if (!license) {
-      throw error.parse({
-        code    : `INVALID_LICENSE`,
-        message : `A matching license for this candidate cannot be found`
-      }, 400);
-    }
-    return license;
+  static *getLicensesInProgress() {
+    return yield License.find({
+      where : {
+        status  : 'in-progress',
+        checkId : {
+          $ne : null
+        }
+      }
+    });
   }
 
   /**

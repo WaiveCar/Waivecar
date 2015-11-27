@@ -1,3 +1,3 @@
 module.exports = {
-  report : require('./report')
+  report  : require('./report')
 };

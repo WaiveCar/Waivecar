@@ -1,6 +1,6 @@
 'use strict';
 
-Route.post('/licenses/hooks/:service', 'LicenseHooksController@catch');
+Route.post('/licenses/hooks', 'LicenseHooksController@catch');
 
 Route.post('/licenses', {
   policy : [ 'authenticate' ],

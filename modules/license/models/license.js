@@ -91,7 +91,7 @@ Bento.Register.Model('License', 'sequelize', function(model, Sequelize) {
         'stored',
         'provided',
         'in-progress',
-        'completed',
+        'complete',
         'failed'
       ),
       defaultValue : 'provided'

@@ -73,7 +73,12 @@ module.exports = class OnfidoService {
     if (license.gender) candidate.gender = license.gender;
     /*eslint-enable */
 
+    log.debug('sending to onfido');
+    console.dir(candidate);
+
     let response = yield this.request('/applicants', 'POST', candidate);
+    log.debug('response from onfido');
+    console.dir(response);
     return response;
   }
 
