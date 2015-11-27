@@ -87,13 +87,8 @@ Bento.Register.Model('License', 'sequelize', function(model, Sequelize) {
     },
 
     status : {
-      type : Sequelize.ENUM(
-        'stored',
-        'provided',
-        'in-progress',
-        'complete',
-        'failed'
-      ),
+      type         : Sequelize.STRING(64),
+      allowNull    : false,
       defaultValue : 'provided'
     },
 
@@ -114,7 +109,7 @@ Bento.Register.Model('License', 'sequelize', function(model, Sequelize) {
    * @property blacklist
    * @type     Array
    */
-  model.blacklist = [ 'candidateId', 'reportId', 'ssn', 'deletedAt' ];
+  model.blacklist = [ 'linkedUserId', 'checkId', 'reportId', 'deletedAt' ];
 
   return model;
 
