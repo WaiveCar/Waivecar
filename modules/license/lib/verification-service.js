@@ -78,8 +78,9 @@ module.exports = class LicenseVerificationService extends Service {
       let update = yield Verification.getReport(license.linkedUserId, license.checkId, license.reportId);
       if (update.status !== license.status) {
         yield license.update({
-          status  : update.status,
-          outcome : update.result
+          status     : update.status,
+          outcome    : update.result,
+          verifiedAt : new Date()
         });
       }
     }
