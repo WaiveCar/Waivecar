@@ -47,7 +47,11 @@ module.exports = class License extends Service {
         }
         return this.error(err.message);
       }
-      done(license);
+      this.setState('licenses', [
+        ...this.getState('licenses'),
+        license
+      ]);
+      this.success(`Your request for verification has been submitted successfully. Please check back later.`);
     }.bind(this));
   }
 
