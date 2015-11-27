@@ -28,6 +28,7 @@ module.exports = class Handler {
         outcome    : update.result,
         verifiedAt : new Date()
       });
+      log.info(`License ${ license.id } updated via webhook.`);
     }
   }
 

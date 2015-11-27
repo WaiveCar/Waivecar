@@ -8,8 +8,8 @@ Bento.Register.Controller('LicenseHooksController', function(controller) {
    * Catches an inbound hook event.
    * @param {String} service
    */
-  controller.catch = function *(service) {
-    return yield hooks.catch('onfido', this.payload);
+  controller.catch = function *() {
+    return yield hooks.catch(this.payload);
   };
 
   return controller;

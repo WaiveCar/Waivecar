@@ -1,6 +1,7 @@
 'use strict';
 
 let error = Bento.Error;
+let log   = Bento.Log;
 
 // ### Webhooks
 // A dictionary of available webhooks for available license services.
@@ -16,7 +17,8 @@ module.exports = class Webhook {
    * @param  {Object} payload The body payload of the webhook.
    * @return {Object}
    */
-  static *catch(service, payload) {
+  static *catch(payload) {
+    log.debug(payload);
     if (payload['resource_type'] === 'report' && payload['action'] === 'completed') {
       yield webhooks.onfido.report.receive(payload.object);
     }
