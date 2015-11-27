@@ -85,7 +85,7 @@ module.exports = class License extends Service {
         if (err) {
           return done(err);
         }
-        return done(license);
+        return done(null, license);
       }.bind(this));
     });
   }

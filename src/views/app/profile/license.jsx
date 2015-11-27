@@ -30,7 +30,7 @@ module.exports = class ProfileLicenseView extends React.Component {
     const user = auth.user();
     let license = {
       firstName : user.firstName,
-      lasttName : user.lastName
+      lastName  : user.lastName
     };
 
     return (
