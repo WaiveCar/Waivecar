@@ -1,6 +1,6 @@
 'use strict';
 
-Route.post('/licenses/hooks', 'LicenseHooksController@catch');
+Route.post('/licenses/hooks', [ 'isOnfido', 'LicenseHooksController@catch' ]);
 
 Route.post('/licenses', {
   policy : [ 'authenticate' ],

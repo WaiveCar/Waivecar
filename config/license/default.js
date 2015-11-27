@@ -14,12 +14,9 @@ module.exports = {
 
   license : {
     onfido : {
-      uri : 'https://api.onfido.com/v1/',
-      key : 'test_jNkxF8-E4hfeUiHgNx_OZGtdl4F2ntpS'
-    },
-    checkr : {
-      uri : 'https://api.checkr.com/v1',
-      key : '84aaba691da7f191f5922c470a666d372d6d8b3b'
+      uri  : 'https://api.onfido.com/v1/',
+      key  : 'test_jNkxF8-E4hfeUiHgNx_OZGtdl4F2ntpS',
+      hook : '123'
     }
   }
 
