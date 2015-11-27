@@ -110,12 +110,9 @@ module.exports = [
         // 8-Register
         url: '/users/new/facebook?step',
         templateUrl: '/templates/users/new-facebook.html',
-        controller: 'UserCreateController as userCreate',
-        params: {
-          fbUser: null
-        },
+        controller: 'UserFacebookCreateController as userCreate',
         data: {
-          auth: false
+          auth: true
         }
       })
       .state('licenses-photo-new', {

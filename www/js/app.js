@@ -77,6 +77,7 @@ require('./controllers/license-controller');
 require('./controllers/license-photo-controller');
 require('./controllers/message-controller');
 require('./controllers/user-create-controller');
+require('./controllers/user-facebook-create-controller');
 require('./controllers/user-edit-controller');
 require('./controllers/timer-controller');
 require('./controllers/menu-controller');

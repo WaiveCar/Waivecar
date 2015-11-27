@@ -81,12 +81,10 @@ function AuthController ($injector) {
   };
 
   this.loginWithFacebook = function loginWithFacebook () {
-
     return $auth.facebookAuth()
       .then(function (res) {
         if (res.code === 'NEW_USER') {
           return $state.go('users-new-facebook', {
-            fbUser: angular.toJson(res.fbUser),
             step: 2
           });
         } else if (res.code === 'LOGGED_IN') {

@@ -10,8 +10,6 @@ function AuthService ($session, $data, $injector) {
   var $q = $injector.get('$q');
 
   this.createSession = function createSession (user) {
-    var _this = this;
-
     $session.set('auth', {
       token: user.token
     }).save();
@@ -21,8 +19,9 @@ function AuthService ($session, $data, $injector) {
     return $data.resources.users.me().$promise
       .then(function(me) {
         $session.set('me', me).save();
-        _this.me = $data.me = $session.get('me');
-      });
+        this.me = $data.me = $session.get('me');
+        return me;
+      }.bind(this));
 
   };
 
@@ -71,23 +70,13 @@ function AuthService ($session, $data, $injector) {
   };
 
   this.registerUserWithFacebook = function registerUserWithFacebook (token) {
-    return $cordovaFacebook.api('/me?fields=email,first_name,last_name')
-    .then(function (fbUser) {
-      fbUser.token = token;
-      return fbUser;
-    })
-    .then(function (fbUser) {
-      return $data.resources.Auth.facebook({
-        token: token,
-        type: 'register'
-      }).$promise
-      .then(this.createSession.bind(this))
-      .then(function () {
-        return fbUser;
-      });
-    }.bind(this))
-    .then(function (fbUser) {
-      return {code: 'NEW_USER', fbUser: fbUser};
+    return $data.resources.Auth.facebook({
+      token: token,
+      type: 'register'
+    }).$promise
+    .then(this.createSession.bind(this))
+    .then(function (user) {
+      return {code: 'NEW_USER', user: user};
     });
   };
 
@@ -97,13 +86,15 @@ function AuthService ($session, $data, $injector) {
         if (response.status === 'connected') {
           return response;
         }
-        return $cordovaFacebook.login(['public_profile', 'email']);
+        return $cordovaFacebook.login(['public_profile', 'email'])
+          .then(function (res) {
+            if (res.status !== 'connected') {
+              return $q.reject('There was a problem logging you in');
+            }
+            return res;
+          });
       })
       .then(angular.bind(this, function(res) {
-        if (res.status !== 'connected') {
-          return $q.reject('There was a problem logging you in');
-        }
-
         var token = res.authResponse.accessToken;
         return this.loginWithFacebook(token)
           .then(function () {
