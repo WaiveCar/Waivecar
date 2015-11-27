@@ -3,6 +3,5 @@
   "private": "true",
   "devDependencies": {},
   "dependencies": {
-    "facebook-connect-plugin": "https://cdn.rawgit.com/Wizcorp/phonegap-facebook-plugin/master/facebookConnectPlugin.js"
   }
 }
