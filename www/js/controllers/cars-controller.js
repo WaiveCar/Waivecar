@@ -3,15 +3,33 @@ var angular = require('angular');
 require('angular-ui-router');
 
 module.exports = angular.module('app.controllers').controller('CarsController', [
-  'MockLocationService',
+  '$rootScope',
+  '$scope',
   '$state',
-  '$data',
-  '$message',
+  '$injector',
+  'cars',
   CarsController
 ]);
 
-function CarsController (LocationService, $state, $data) {
-  this.cars = $data.resources.Car.query();
+function CarsController ($rootScope, $scope, $state, $injector, cars) {
+  var $ionicModal = $injector.get('$ionicModal');
+
+  this.all = cars;
+  if (!this.all.length) {
+    var modalScope = $rootScope.$new();
+    $ionicModal.fromTemplateUrl('/templates/cars/modal-no-cars.html', {
+      scope: modalScope,
+      animation: 'slide-in-up'
+    })
+    .then(function (modal) {
+      modal.show();
+      modalScope.close = modal.remove.bind(modal);
+
+      $scope.$on('$destroy', function () {
+        modal.remove();
+      });
+    });
+  }
 
   this.showCar = function (car) {
     $state.go('cars-show', {
@@ -19,3 +37,4 @@ function CarsController (LocationService, $state, $data) {
     });
   };
 }
+

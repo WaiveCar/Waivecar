@@ -20,7 +20,7 @@ module.exports = angular.module('app.controllers').controller('CarController', [
     var $data = $injector.get('$data');
     var $auth = $injector.get('$auth');
 
-    function showRequirementsModal(_status){
+    function showRequirementsModal (_status) {
 
       var scope = $scope.$new();
       scope.status = _status;

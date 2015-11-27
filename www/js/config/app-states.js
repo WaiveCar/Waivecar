@@ -176,6 +176,11 @@ module.exports = [
         controller: 'CarsController as cars',
         data: {
           auth: true
+        },
+        resolve: {
+          cars: ['$data', function ($data) {
+            return $data.resources.Car.query();
+          }]
         }
       })
       .state('cars-show', {
