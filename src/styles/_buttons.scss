@@ -301,38 +301,50 @@ fieldset[disabled] .btn-inverse.active {
   }
 }
 
-.btn-icon {
+.btn {
   .material-icons {
-    font-size: 17px;
-    line-height: 40px;
-    vertical-align: top;
+    margin-right   : 8px;
+    font-size      : inherit;
+    line-height    : inherit;
+    vertical-align : bottom;
   }
+  &.btn-icon {
+    .material-icons {
+      margin         : 0;
+      font-size      : 17px;
+      line-height    : 40px;
+      vertical-align : top;
+    }
+  }
+  &.command-primary-action {
+    // position: fixed;
+    // bottom: 32px;
+    // right: 282px;
+    position : absolute;
+    bottom   : 10px;
+    right    : 25px;
+    z-index  : 10000;
+    width    : 45px;
+    height   : 45px;
+    .material-icons {
+      font-size: 27px;
+      line-height: 45px;
+    }
+
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+    &:hover {
+      box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
+      -webkit-transform: rotate(360deg);
+      -ms-transform: rotate(360deg);
+      -o-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+  }
+
 }
 
-.command-primary-action {
-  // position: fixed;
-  // bottom: 32px;
-  // right: 282px;
-  position : absolute;
-  bottom   : 10px;
-  right    : 25px;
-  z-index  : 10000;
-  width    : 45px;
-  height   : 45px;
-  .material-icons {
-    font-size: 27px;
-    line-height: 45px;
-  }
 
-  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
-  &:hover {
-    box-shadow: 0 5px 11px 0 rgba(0, 0, 0, 0.18), 0 4px 15px 0 rgba(0, 0, 0, 0.15);
-    -webkit-transform: rotate(360deg);
-    -ms-transform: rotate(360deg);
-    -o-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
+
 
 .btn-default-outline {
   @include button-outline-variant($btn-default-bg);
@@ -352,15 +364,6 @@ fieldset[disabled] .btn-inverse.active {
   &:active:focus,
   &.active:focus {
     outline:none;
-  }
-}
-
-.btn {
-  .material-icons {
-    margin-right   : 8px;
-    font-size      : inherit;
-    line-height    : inherit;
-    vertical-align : bottom;
   }
 }
 
