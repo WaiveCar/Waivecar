@@ -73,7 +73,13 @@ class UIMap extends React.Component {
     }.bind(this);
 
     if (!markers.length) {
-      return <div />;
+      return (
+        <div className="map-wrapper animated fadeIn">
+          <div className="map-container map-placeholder">
+            <p className="lead text-center">No { this.props.resource } are currently recorded in the WaiveCar database.</p>
+          </div>
+        </div>
+      );
     }
 
     return (
