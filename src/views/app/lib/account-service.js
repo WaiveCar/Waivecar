@@ -24,6 +24,7 @@ module.exports = class AccountService extends Service {
       { type : 'License Provided', isValid : false },
       { type : 'License Cleared',  isValid : false }
     ]);
+
     this.setGeneralStatus();
     this.setPaymentStatus();
     this.setLicenseStatus();
@@ -42,11 +43,13 @@ module.exports = class AccountService extends Service {
         switch (status.type) {
           case 'Email Verified' : return {
             type    : 'Email Verified',
-            isValid : user.verifiedEmail
+            isValid : user.verifiedEmail,
+            validIcon : 'done'
           };
           case 'Phone Verified' : return {
             type    : 'Phone Verified',
-            isValid : user.verifiedPhone
+            isValid : user.verifiedPhone,
+            validIcon : 'done'
           };
           default : return status;
         }
@@ -68,7 +71,8 @@ module.exports = class AccountService extends Service {
           switch (status.type) {
             case 'Payment Card' : return {
               type    : 'Payment Card',
-              isValid : true
+              isValid : true,
+              validIcon : 'done'
             };
             default : return status;
           }
@@ -90,17 +94,20 @@ module.exports = class AccountService extends Service {
           switch (status.type) {
             case 'License Provided' : return {
               type    : 'License Provided',
-              isValid : true
+              isValid : true,
+              validIcon : 'done'
             };
             default : return status;
           }
         }));
-        if (licenses[0].status === 'clear') {
+        if (licenses[0].status === 'complete') {
           this.setState('status', this.getState('status').map((status) => {
             switch (status.type) {
               case 'License Cleared' : return {
                 type    : 'License Cleared',
-                isValid : true
+                isValid : licenses[0].outcome === 'clear' ? true : false,
+                validIcon : 'done',
+                invalidIcon : 'error_outline'
               };
               default : return status;
             }

@@ -155,7 +155,7 @@ module.exports = class ProfileView extends React.Component {
                   <tr key={ i }>
                     <td>{ status.type }</td>
                     <td className="profile-status-check">
-                      { status.isValid ? <i className="material-icons">done</i> : '' }
+                      { status.isValid ? <i className="material-icons text-success">{ status.validIcon }</i> : status.invalidIcon ?  <i className="material-icons text-danger">{ status.invalidIcon }</i> : ''}
                     </td>
                   </tr>
                 )
@@ -163,7 +163,6 @@ module.exports = class ProfileView extends React.Component {
             }
             </tbody>
           </table>
-
           <p className="profile-box-info text-center">
             To verify email or phone, enter the token received by email/sms.
           </p>
