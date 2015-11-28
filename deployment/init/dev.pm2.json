@@ -7,7 +7,7 @@
     "pid_file"    : "../waivecar-dev.pid",
     "script"      : "run.js",
     "merge_logs"  : true,
-    "args"        : "",
+    "args"        : "DEBUG=API:*",
     "watch"       : false,
     "instances"   : "1",
     "exec_mode"   : "fork_mode",
