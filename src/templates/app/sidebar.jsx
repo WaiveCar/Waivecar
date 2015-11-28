@@ -42,7 +42,7 @@ module.exports = class Sidebar extends React.Component {
     if (auth.user().role === 'admin') {
       return (
         <div className="sidebar-admin">
-          <h5 className="animated fadeInLeft">Admin <small>Menu</small></h5>
+          <h5 className="animated fadeInLeft">Administration</h5>
           <ul>
             { menu.get('sidebar').map(this.getLink) }
           </ul>
@@ -60,7 +60,7 @@ module.exports = class Sidebar extends React.Component {
   getLink(link, i) {
     return (
       <li key={ i } className={ link.parent ? "has-parent" : "parent" }>
-        <Link to={ link.path } className={ dom.setClass({ 'nav-link' : true, animated : true, fadeInLeft : true, active : link.path === this.props.route }) }>
+        <Link to={ link.path } className={ dom.setClass({ 'nav-link' : true, animated : true, fadeInDown : true, active : link.path === this.props.route }) }>
           <i className="material-icons" role={ link.title }>{ link.icon }</i>
           { link.title }
         </Link>
@@ -103,19 +103,19 @@ module.exports = class Sidebar extends React.Component {
           </div>
 
           <div className={ `sidebar-account${ this.state.account ? ' show' : '' }` }>
-            <h5 className="animated fadeInLeft">Account <small>Menu</small></h5>
+            <h5 className="animated fadeInTop">Account</h5>
             <ul>
               { menu.get('sidebar-account').map(this.getLink) }
             </ul>
           </div>
 
           <div className="sidebar-nav">
-            <h5 className="animated fadeInLeft">Application <small>Menu</small></h5>
+            <h5 className="animated fadeInLeft">Application</h5>
             <ul>
               { menu.get('sidebar-user').map(this.getLink) }
             </ul>
           </div>
-          
+
           { this.admin() }
         </div>
       </div>
