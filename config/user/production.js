@@ -47,6 +47,17 @@ module.exports = {
         role          : 'admin',
         verifiedEmail : true,
         status        : 'active'
+      },
+      {
+        firstName     : 'Generic',
+        lastName      : 'User',
+        email         : 'demo@example.com',
+        password      : 'lollipop0',
+        phone         : '+61430099449',
+        role          : 'user',
+        verifiedEmail : true,
+        verifiedPhone : true,
+        status        : 'active'
       }
     ]
   }
