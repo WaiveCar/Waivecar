@@ -36,9 +36,8 @@ module.exports = class Payment extends Service {
    * @param {Boolean} shouldNotify
    */
   addCustomer(user, shouldNotify) {
-    api.post('/payments/customers', {
+    api.post('/shop/customers', {
       userId   : user.id,
-      service  : 'stripe',
       customer : {
         description : 'WaiveCar customer registered via web.'
       }
@@ -96,10 +95,9 @@ module.exports = class Payment extends Service {
         message : `You are not yet registered with a payment service.`
       });
     }
-    api.post('/payments/cards', {
-      userId  : user.id,
-      service : 'stripe',
-      card    : card
+    api.post('/shop/cards', {
+      userId : user.id,
+      card   : card
     }, (err, card) => {
       if (err) {
         return this.error(err.message);
@@ -111,8 +109,10 @@ module.exports = class Payment extends Service {
   /**
    * Loads cards from the api and adds them to the cards array on the ctx.
    */
-  setCards() {
-    api.get('/payments/cards', (err, cards) => {
+  setCards(userId) {
+    api.get('/shop/cards', {
+      userId : userId
+    }, (err, cards) => {
       if (err) {
         return this.error(err.message);
       }
@@ -137,7 +137,7 @@ module.exports = class Payment extends Service {
 
     // ### Submit Request
 
-    api.delete(`/payments/cards/${ cardId }`, (err) => {
+    api.delete(`/shop/cards/${ cardId }`, (err) => {
       if (err) {
         if (btn) {
           btn.className = dom.setClass({
