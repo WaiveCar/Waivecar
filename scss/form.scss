@@ -16,7 +16,7 @@ label.item.item-input {
   width: 90%;
   margin: 0 auto;
   padding-top: 1em;
-  text-align: left;
+  text-align: center;
 
   &.ng-inactive {
     display: none;
@@ -27,7 +27,6 @@ label.item.item-input {
     margin: 0;
     padding: 0;
     height: 20px;
-    text-align: left;
     &:before {
       content: '';
       display: inline-block;
