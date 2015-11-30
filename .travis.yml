@@ -19,7 +19,7 @@ cache:
     - modules/auth
     - modules/file
     - modules/log
-    - modules/payment
+    - modules/shop
     - modules/user
     - modules/ui
     - modules/subscription
