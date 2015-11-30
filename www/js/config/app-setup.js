@@ -21,7 +21,7 @@ var config = [
     MapsLoaderProvider.setApiKey('8698d318586c58a1f8ca1e88ecfac299');
 
     var baseUrl;
-    baseUrl = 'https://api.waivecar.com'; // production
+    // baseUrl = 'https://api.waivecar.com'; // production
     // baseUrl = 'http://192.168.1.117:8081'; // local
     if (baseUrl) {
       $settingsProvider.setBaseUrl(baseUrl);
