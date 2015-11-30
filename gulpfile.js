@@ -23,6 +23,7 @@ var paths = {
   ],
   templates: [
     './www/templates/**/*.html',
+    './www/img/*.svg',
     './www/js/modules/maps/templates/*.html'
   ],
   scripts: [
@@ -61,6 +62,9 @@ gulp.task('templates', function() {
   return gulp.src(paths.templates)
     .pipe(ngTemplates({
       path: function(path, base) {
+        if (/img/.test(path)) {
+          return path.replace(base, '/img/');
+        }
         return path.replace(base, '/templates/');
       },
       standalone: false,
