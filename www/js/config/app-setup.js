@@ -21,17 +21,8 @@ var config = [
     MapsLoaderProvider.setApiKey('8698d318586c58a1f8ca1e88ecfac299');
 
     var baseUrl;
-    // if (ionic.Platform.isWebView()) {
-    //   baseUrl = 'http://192.168.57.1:8081';
-    // } else {
-    //   if (window.location.hostname === 'localhost') {
-    //     baseUrl = 'http://localhost:8081';
-    //   } else {
-    //     throw new Error('baseUrl undefined for hostname ' + window.location.hostname);
-    //   }
-    // }
-
     baseUrl = 'https://api.waivecar.com'; // production
+    // baseUrl = 'http://192.168.1.117:8081'; // local
     if (baseUrl) {
       $settingsProvider.setBaseUrl(baseUrl);
     }
