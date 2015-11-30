@@ -3,21 +3,21 @@
 import { api, auth, dom } from 'bento';
 import Service            from './component-service';
 
-module.exports = class Payment extends Service {
+module.exports = class ShopService extends Service {
 
   /**
    * Stores the provided context.
    * @param {Object} ctx
    */
   constructor(ctx) {
-    super(ctx, 'payment', {
+    super(ctx, 'shop', {
       cards : []
     });
     this.submitCard = this.submitCard.bind(this);
     this.deleteCard = this.deleteCard.bind(this);
   }
 
-  // ### Payment Customers
+  // ### Shop Customers
 
   /**
    * Ensuers a customer has been created with the stripe service to
@@ -64,7 +64,7 @@ module.exports = class Payment extends Service {
     });
   }
 
-  // ### Payment Cards
+  // ### Shop Cards
 
   /**
    * Form submission method for bento-web form component.
@@ -169,4 +169,4 @@ module.exports = class Payment extends Service {
 
   }
 
-}
+};

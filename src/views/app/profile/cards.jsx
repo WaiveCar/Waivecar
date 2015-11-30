@@ -3,7 +3,7 @@
 import React                from 'react';
 import { auth, relay, dom } from 'bento';
 import { Form }             from 'bento-web';
-import Payment              from '../lib/payment-service';
+import Shop                 from '../lib/shop-service';
 
 // ### Form Fields
 
@@ -16,8 +16,8 @@ module.exports = class ProfileCardsView extends React.Component {
   constructor(...args) {
     super(...args);
     dom.setTitle('Cards');
-    this.state   = {};
-    this.payment = new Payment(this);
+    this.state = {};
+    this.shop  = new Shop(this);
   }
 
   /**
@@ -26,8 +26,8 @@ module.exports = class ProfileCardsView extends React.Component {
    */
   componentDidMount() {
     let user = auth.user();
-    this.payment.ensureCustomer(user);
-    this.payment.setCards(user.id);
+    this.shop.ensureCustomer(user);
+    this.shop.setCards(user.id);
   }
 
   /**
@@ -42,7 +42,7 @@ module.exports = class ProfileCardsView extends React.Component {
    * @return {Object}
    */
   renderCards() {
-    let cards = this.payment.getState('cards');
+    let cards = this.shop.getState('cards');
     if (!cards.length) {
       return <div className="no-records">You have not registered any cards.</div>
     }
@@ -65,7 +65,7 @@ module.exports = class ProfileCardsView extends React.Component {
                 <td className="text-center">{ card.brand }</td>
                 <td className="text-center">{ card.expMonth } / { card.expYear }</td>
                 <td className="text-center">
-                  <button className="test" onClick={ this.payment.deleteCard.bind(this, card.id) } ref={ `delete-card-${ card.id }` }>
+                  <button className="test" onClick={ this.shop.deleteCard.bind(this, card.id) } ref={ `delete-card-${ card.id }` }>
                     <i className="material-icons">delete</i>
                   </button>
                 </td>
@@ -118,7 +118,7 @@ module.exports = class ProfileCardsView extends React.Component {
                   class : 'btn btn-primary btn-profile-submit'
                 }
               ]}
-              submit = { this.payment.submitCard }
+              submit = { this.shop.submitCard }
             />
           </div>
         </div>

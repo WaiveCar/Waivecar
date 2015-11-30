@@ -62,7 +62,7 @@ module.exports = class AccountService extends Service {
    * registered with the account.
    */
   setPaymentStatus() {
-    api.get('/payments/cards', function (err, cards) {
+    api.get('/shop/cards', { userId : auth.user().id }, function (err, cards) {
       if (err) {
         return this.error(err.message);
       }
