@@ -36,6 +36,10 @@ module.exports = class LicenseVerificationService extends Service {
         status = 'in-progress';
         break;
       }
+      case 'complete' : {
+        status = 'complete';
+        break;
+      }
     }
 
     yield license.update({
@@ -77,6 +81,7 @@ module.exports = class LicenseVerificationService extends Service {
       let license = licenses[i];
       let update = yield Verification.getReport(license.linkedUserId, license.checkId, license.reportId);
       if (update.status !== license.status) {
+        log.debug(`${ update.id } : ${ update.status }`);
         yield license.update({
           status     : update.status,
           outcome    : update.result,

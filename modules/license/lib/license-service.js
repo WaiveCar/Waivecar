@@ -97,8 +97,6 @@ module.exports = class LicenseService extends Service {
 
     this.hasAccess(user, _user);
 
-    data.status = 'provided';
-
     // ### Update License
     yield license.update(data);
 
