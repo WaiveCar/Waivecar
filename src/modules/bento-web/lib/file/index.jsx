@@ -1,8 +1,8 @@
 import React, { PropTypes }   from 'react';
 import { Link }               from 'react-router';
 import { auth, api, helpers } from 'bento';
-import { resources }  from 'bento-ui';
-import FileDropzone from 'bento-ui/editor/file-dropzone';
+import { resources }          from 'bento-ui';
+import FileDropzone           from 'bento-ui/editor/file-dropzone';
 
 let { type, object } = helpers;
 
@@ -153,4 +153,4 @@ module.exports = class File extends React.Component {
       </div>
     );
   }
-}
+};

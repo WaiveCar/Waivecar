@@ -4,7 +4,6 @@ import React                     from 'react';
 import { auth, relay, api, dom } from 'bento';
 import { Form, snackbar }        from 'bento-web';
 import { resources, fields }     from 'bento-ui';
-import md5                       from 'md5';
 import Account                   from '../lib/account-service';
 import facebook                  from '../../auth/facebook';
 
@@ -18,10 +17,23 @@ module.exports = class ProfileView extends React.Component {
 
   constructor(...args) {
     super(...args);
+
     dom.setTitle('Profile');
-    this.state       = {};
-    this.account     = new Account(this);
-    this.submitToken = this.submitToken.bind(this);
+
+    // ### State & Service
+
+    this.state        = {};
+    this.account      = new Account(this);
+
+    // ### Function Binds
+
+    this.submitToken  = this.submitToken.bind(this);
+    this.selectAvatar = this.selectAvatar.bind(this);
+    this.uploadAvatar = this.uploadAvatar.bind(this);
+    this.deleteAvatar = this.deleteAvatar.bind(this);
+
+    // ### Relay Subscriptions
+
     relay.subscribe(this, 'me');
   }
 
@@ -33,11 +45,57 @@ module.exports = class ProfileView extends React.Component {
   }
 
   /**
+   * Opens file selection box.
+   * @return {Void} [description]
+   */
+  selectAvatar() {
+    this.refs.avatar.click();
+  }
+
+  /**
+   * Attempts to upload a new avatar.
+   * @return {Void} [description]
+   */
+  uploadAvatar() {
+    let user = auth.user();
+    let prev = user.avatar;
+    api.file(`/files?isAvatar=true&userId=${ user.id }`, {
+      files : this.refs.avatar.files
+    }, (err, res) => {
+      if (err) {
+        return snackbar.notify({
+          type    : `danger`,
+          message : err.message
+        });
+      }
+      if (prev) {
+        this.deleteAvatar(prev); // Delete previous avatar, reduces bloat...
+      }
+    });
+  }
+
+  /**
+   * Attempts to delete an avatar.
+   * @param  {String} id
+   * @return {Void} [description]
+   */
+  deleteAvatar(id) {
+    api.delete(`/files/${ id }`, (err) => {
+      if (err) {
+        snackbar.notify({
+          type    : `danger`,
+          message : err.message
+        });
+      }
+    });
+  }
+
+  /**
    * Render facebook connect button if no facebook ID exists on the user.
    * @return {Object}
    */
   renderFacebookConnect() {
-    let user = this.state.me;
+    let user = auth.user();
     if (!user.facebook) {
       return (
         <button className="r-btn btn-facebook" onClick={ this.facebookConnect }>
@@ -180,12 +238,16 @@ module.exports = class ProfileView extends React.Component {
    * @return {Object}
    */
   render() {
-    let user = this.state.me;
+    let user = auth.user();
     return (
       <div className="profile">
         <div className="profile-header">
           <div className="profile-image">
-            <div style={{ background : user.email ? `url(//www.gravatar.com/avatar/${ md5(user.email) }?s=150) center center / cover` : '#fff' }} />
+            <input type="file" style={{ display : 'none' }} ref="avatar" onChange={ this.uploadAvatar } />
+            <div className="profile-image-selector" onClick={ this.selectAvatar }>
+              <i className="material-icons" role="avatar-upload">add_a_photo</i>
+            </div>
+            <div className="profile-image-view" style={{ background : `url(${ user.getAvatar() }) center center / cover` }} />
           </div>
 
           <div className="profile-meta">

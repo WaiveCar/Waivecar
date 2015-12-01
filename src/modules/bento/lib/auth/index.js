@@ -1,7 +1,8 @@
 'use strict';
 
 let storage = require('local-storage');
-let relay   = require('./relay');
+let relay   = require('../relay');
+let User    = require('./user');
 
 // ### Relay
 // Create the authenticated user resource.
@@ -35,7 +36,11 @@ module.exports = class Auth {
    * @return {Object}
    */
   static user() {
-    return relay.getState('me');
+    let state = relay.getState('me');
+    if (state) {
+      return new User(state);
+    }
+    return null;
   }
 
   /**

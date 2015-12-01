@@ -125,7 +125,7 @@ module.exports = class API {
     return req;
   }
 
-}
+};
 
 /**
  * Executes the callback with the err and res of the api request.
@@ -134,6 +134,14 @@ module.exports = class API {
  * @param  {Object}   res
  */
 function _handleResult(callback, err, res) {
+  if (!res) {
+    return callback({
+      status  : 500,
+      code    : `INTERNAL_SERVICE_ERROR`,
+      message : `An internal application service error occured during the request.`,
+      data    : err
+    });
+  }
   if (!res.ok) {
     if (res.status === 401 || res.status === 403) {
       auth.logout();

@@ -39,7 +39,8 @@ module.exports = class Sidebar extends React.Component {
    * @return {Object}
    */
   admin() {
-    if (auth.user().role === 'admin') {
+    let user = auth.user();
+    if (user.role === 'admin') {
       return (
         <div className="sidebar-admin">
           <h5 className="animated fadeInLeft">Administration</h5>
@@ -73,7 +74,7 @@ module.exports = class Sidebar extends React.Component {
    * @return {Object}
    */
   render() {
-    let user = this.state.me;
+    let user = auth.user();
     return (
       <div>
         <div className={ `sidebar-overlay${ this.state.open ? ' show' : '' }` }  onClick={ () => { this.setState({ open : false }) }.bind(this) } />
@@ -90,7 +91,7 @@ module.exports = class Sidebar extends React.Component {
             <div className="sidebar-avatar animated flipInX">
               <div
                 className = "sidebar-avatar-img"
-                style     = {{ background : user.email ? `url(//www.gravatar.com/avatar/${ md5(user.email) }?s=100) center center / cover` : '#fff' }}
+                style     = {{ background : `url(${ user.getAvatar() }) center center / cover` }}
               />
             </div>
             <div className="sidebar-name animated flipInY">

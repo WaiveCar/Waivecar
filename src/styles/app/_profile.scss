@@ -6,13 +6,40 @@
     $profile-image-size : 150px;
 
     .profile-image {
-      height : $profile-image-size;
-      margin : 0 auto;
-      width  : $profile-image-size;
-      > div {
+      height   : $profile-image-size;
+      margin   : 0 auto;
+      position : relative;
+      width    : $profile-image-size;
+
+      .profile-image-view {
         border-radius : 50%;
         height        : 100%;
         width         : 100%;
+      }
+
+      .profile-image-selector {
+        background    : rgba(#000, .3);
+        border-radius : 50%;
+        display       : none;
+        height        : 100%;
+        left          : 0;
+        position      : absolute;
+        text-align    : center;
+        top           : 0;
+        width         : 100%;
+        z-index       : 10;
+        i {
+          color      : #fff;
+          font-size  : 3.2rem;
+          margin-top : ($profile-image-size / 2) - 25px;
+        }
+      }
+
+      &:hover {
+        cursor : pointer;
+        .profile-image-selector {
+          display : block;
+        }
       }
     }
 

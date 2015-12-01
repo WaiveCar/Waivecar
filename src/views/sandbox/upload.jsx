@@ -1,65 +1,36 @@
 'use strict';
 
-import React        from 'react';
-import { api }      from 'bento';
-import { Dropzone } from 'bento-web';
-import config       from 'config';
+import React   from 'react';
+import { api } from 'bento';
+import config  from 'config';
 
 module.exports = class SandboxUpload extends React.Component {
 
   constructor(...args) {
     super(...args);
-    this.state = {
-      images : []
-    }
+    this.upload = this.upload.bind(this);
   }
 
-  componentDidMount() {
-    this.images();
-  }
-
-  images() {
-    api.get('/files', (err, res) => {
+  upload() {
+    let input = this.refs.files;
+    api.file('/files?isAvatar=true&userId=1', {
+      files : input.files
+    }, (err, res) => {
       if (err) {
         return console.log(err);
       }
-      this.setState({
-        images : res
-      });
-    }.bind(this));
+      console.log(res);
+    });
   }
 
   render() {
     return (
       <div className="container">
+        <h3 style={{ margin : '30px 0' }}>File Upload</h3>
 
-        <h3 style={{ margin : '30px 0' }}>Files</h3>
-        <div className="clearfix">
-        {
-          this.state.images.map((file, key) => {
-            return (
-              <div
-                key   = { key }
-                style = {{
-                  background : `url('${ config.api.uri }:${ config.api.port }/file/${ file.id }') center center / cover`,
-                  float      : 'left',
-                  height     : 100,
-                  width      : 100
-                }}
-              />
-            )
-          })
-        }
-        </div>
+        <input type="file" ref="files" multiple="true" />
 
-        <h3 style={{ margin : '30px 0' }}>DropZone</h3>
-        <Dropzone
-          options = {{
-            url         : `${ config.api.uri }:${ config.api.port }/files`,
-            maxFilesize : 2
-          }}
-        />
-
+        <button onClick={ this.upload }>Upload</button>
       </div>
     );
   }

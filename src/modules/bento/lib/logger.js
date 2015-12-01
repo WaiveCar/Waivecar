@@ -1,10 +1,7 @@
+'use strict';
+
 import { app } from 'config';
 
-/**
- * @class Logger
- * @param {String} type
- * @param {String} value
- */
 let Logger = module.exports = function (type, value) {
   if (app.log[type]) {
     Logger[type](value);
@@ -12,8 +9,8 @@ let Logger = module.exports = function (type, value) {
 };
 
 /**
- * @method log
  * @param  {String} value
+ * @return {Void}
  */
 Logger.log = function (value) {
   if (app.log.verbose) {
@@ -22,8 +19,8 @@ Logger.log = function (value) {
 };
 
 /**
- * @method info
  * @param  {String} value
+ * @return {Void}
  */
 Logger.info = function (value) {
   if (app.log.info) {
@@ -32,8 +29,8 @@ Logger.info = function (value) {
 };
 
 /**
- * @method warn
  * @param  {String} value
+ * @return {Void}
  */
 Logger.warn = function (value) {
   if (app.log.warn) {
@@ -42,8 +39,8 @@ Logger.warn = function (value) {
 };
 
 /**
- * @method debug
  * @param  {String} value
+ * @return {Void}
  */
 Logger.debug = function (value) {
   if (app.log.debug) {
