@@ -11,7 +11,7 @@ module.exports = function *() {
     init   : true,
     repeat : true,
     timer  : {
-      value : 30,
+      value : 5,
       type  : 'seconds'
     }
   });
