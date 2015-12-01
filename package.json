@@ -121,7 +121,6 @@
     "gulp-util": "^3.0.6",
     "jasmine-core": "^2.3.4",
     "jquery": "^2.1.4",
-    "leaflet.markercluster": "^0.4.0",
     "lodash": "^3.10.1",
     "moment": "^2.10.6",
     "napa": "^1.2.0",

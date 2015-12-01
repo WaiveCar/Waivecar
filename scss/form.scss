@@ -4,11 +4,9 @@ label.item.item-input {
   // text-align : left;
 }
 
-.placeholder-icon {
+.icon-flag {
   padding-right: 10px;
-  .icon-flag {
-    height: 1em;
-  }
+  width: 28px;
 }
 
 .validations,
@@ -34,7 +32,7 @@ label.item.item-input {
       margin: 0 5px 0 0;
       width: 14px;
       height: 14px;
-      background-image: url('/img/warning-icon.svg');
+      background-image: url('../img/warning-icon.svg');
       background-repeat: no-repeat;
       background-size: cover;
       background-position: 50% 50%;

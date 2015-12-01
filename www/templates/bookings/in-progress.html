@@ -29,8 +29,7 @@
         </div>
       </div>
       <div class="charging-station-info" ng-show="ride.showingStation">
-        <button ng-click="ride.hideChargingStationDetails()" class="button button-right close-button">
-          <img src="img/close.svg" alt="">
+        <button ng-click="ride.hideChargingStationDetails()" class="button button-right close-button" ng-include="'/img/close.svg'">
         </button>
         <charging-station-info location="app.active.locations"></charging-station-info>
       </div>
