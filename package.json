@@ -17,7 +17,7 @@
   ],
   "dependencies": {
     "babel-eslint": "4.1.1",
-    "bentojs-api": "0.7.6",
+    "bentojs-api": "0.7.7",
     "bentojs-config": "0.0.5",
     "bentojs-socket": "0.3.3",
     "co": "4.6.0",
@@ -44,7 +44,7 @@
     "bentojs-api-bcrypt": "1.0.3",
     "bentojs-api-email": "0.0.14",
     "bentojs-api-file": "0.3.17",
-    "bentojs-api-log": "0.2.5",
+    "bentojs-api-log": "0.2.7",
     "bentojs-api-mongo": "0.0.12",
     "bentojs-api-queue": "0.0.17",
     "bentojs-api-sequelize": "0.1.14",
