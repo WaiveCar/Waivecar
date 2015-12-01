@@ -138,7 +138,7 @@ module.exports = class CarService extends Service {
         let excludedCar = allCars.find(c => c.id === device.id);
         if (!excludedCar) {
           let isMockCar = [ 'EE000017DC652701', 'C0000017DC247801' ].indexOf(device.id) > -1;
-          if (!config.cars.includeMock && isMockCar) {
+          if (config.mock.cars && isMockCar) {
             // this is a dev kit, ignore update.
             log.debug(`Cars : Sync : skipping DevKit ${ device.id }.`);
           } else  {

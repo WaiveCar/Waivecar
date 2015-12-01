@@ -1,8 +1,11 @@
 module.exports = {
 
   waivecar : {
-    cars : {
-      includeMock : false
+    mock : {
+      cars     : false,
+      homebase : true,
+      stations : true,
+      valets   : true
     }
   }
 

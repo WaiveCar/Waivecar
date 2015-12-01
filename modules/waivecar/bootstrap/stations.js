@@ -5,8 +5,13 @@ let path     = require('path');
 let Location = Bento.model('Location');
 let error    = Bento.Error;
 let log      = Bento.Log;
+let config   = Bento.config.waivecar;
 
 module.exports = function *() {
+  if (!config.mock.stations) {
+    return;
+  }
+
   let count = yield Location.count();
   if (count > 140) {
     return;
@@ -17,7 +22,6 @@ module.exports = function *() {
 
   // ### Import Location
   // If location data has been defined we import all locations.
-
   if (data) {
     log.debug(`Importing ${ data.length } locations`);
     for (let i = 0, len = data.length; i < len; i++) {

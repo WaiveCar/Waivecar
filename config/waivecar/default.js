@@ -17,8 +17,11 @@ module.exports = {
         type  : 'minutes'
       }
     },
-    cars : {
-      includeMock : false
+    mock : {
+      cars     : false,
+      homebase : true,
+      stations : true,
+      valets   : true
     },
     invers : {
       uri     : 'https://api.cloudboxx.invers.com/api',
