@@ -2,6 +2,7 @@
 
 let booking = require('./lib/booking');
 let license = require('./lib/license');
+let avatar  = require('./lib/avatar');
 let hooks   = Bento.Hooks;
 
 /**
@@ -11,6 +12,7 @@ let hooks   = Bento.Hooks;
   @param  {Object} _user
  */
 hooks.set('file:validate', function *(query, _user) {
+  if (query.isAvatar)  { return yield avatar.validate(query.userId); }
   if (query.bookingId) { return yield booking.validate(query.bookingId); }
   if (query.licenseId) { return yield license.validate(query.licenseId); }
 });
@@ -36,9 +38,8 @@ hooks.set('file:collection', function *(query, _user) {
   @param {Object} _user
  */
 hooks.set('file:capture', function *(query, file, _user) {
-  if (query.licenseId) {
-    return yield license.capture(query.licenseId, file);
-  }
+  if (query.isAvatar)  { return yield avatar.assign(query.userId, file, _user); }
+  if (query.licenseId) { return yield license.capture(query.licenseId, file); }
 });
 
 /*
