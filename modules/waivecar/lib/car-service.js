@@ -127,8 +127,12 @@ module.exports = class CarService extends Service {
 
       if (existingCar) {
         let updatedCar = yield this.getDevice(device.id);
-        log.debug(`Cars : Sync : updating ${ device.id }.`);
-        yield this.update(existingCar.id, updatedCar, existingCar);
+        if (updatedCar) {
+          log.debug(`Cars : Sync : updating ${ device.id }.`);
+          yield this.update(existingCar.id, updatedCar, existingCar);
+        } else {
+          log.debug(`Cars : Sync : failed to retrieve ${ device.id }.`);
+        }
       } else {
         // If Device does not match any Car then add it to the database.
         let excludedCar = allCars.find(c => c.id === device.id);
@@ -163,7 +167,11 @@ module.exports = class CarService extends Service {
    */
   static *getDevices(_user) {
     let devices = yield this.request('/devices?active=true&limit=100');
-    return devices.data;
+    if (devices) {
+      return devices.data;
+    }
+
+    return null;
   }
 
   /**
@@ -175,7 +183,11 @@ module.exports = class CarService extends Service {
    */
   static *getDevice(id, _user) {
     let status = yield this.request(`/devices/${ id }/status`);
-    return this.transformDeviceToCar(id, status);
+    if (status) {
+      return this.transformDeviceToCar(id, status);
+    }
+
+    return null;
   }
 
   /**
@@ -314,11 +326,12 @@ module.exports = class CarService extends Service {
     let response = result.toJSON();
     let statusCode = response ? response.statusCode : 400;
     if (statusCode !== 200) {
-      throw error.parse({
+      log.error(error.parse({
         code    : `CAR_SERVICE`,
         message : `CAR: ${ resource }`,
         data    : response.body ? JSON.parse(response.body) : response
-      }, statusCode);
+      }, statusCode));
+      return null;
     }
 
     return JSON.parse(response.body);
