@@ -10,6 +10,7 @@ module.exports = {
       'bento',
       'bento-ui',
       'bento-web',
+      'bento-service',
       'md5',
       'react',
       'react-dom',
@@ -24,13 +25,14 @@ module.exports = {
   resolve : {
     extensions : [ '', '.js', '.jsx' ],
     alias      : {
-      'bento'     : path.join(__dirname, '../../', 'src', 'modules', 'bento'),
-      'bento-ui'  : path.join(__dirname, '../../', 'src', 'modules', 'bento-ui'),
-      'bento-web' : path.join(__dirname, '../../', 'src', 'modules', 'bento-web'),
-      'config'    : path.join(__dirname, '../../', 'src', 'config'),
-      styles      : path.join(__dirname, '../../', 'src', 'styles'),
-      policies    : path.join(__dirname, '../../', 'src', 'policies'),
-      views       : path.join(__dirname, '../../', 'src', 'views')
+      'bento'         : path.join(__dirname, '../../', 'src', 'modules', 'bento'),
+      'bento-service' : path.join(__dirname, '../../', 'src', 'modules', 'bento-service'),
+      'bento-ui'      : path.join(__dirname, '../../', 'src', 'modules', 'bento-ui'),
+      'bento-web'     : path.join(__dirname, '../../', 'src', 'modules', 'bento-web'),
+      'config'        : path.join(__dirname, '../../', 'src', 'config'),
+      styles          : path.join(__dirname, '../../', 'src', 'styles'),
+      policies        : path.join(__dirname, '../../', 'src', 'policies'),
+      views           : path.join(__dirname, '../../', 'src', 'views')
     }
   },
   module : {

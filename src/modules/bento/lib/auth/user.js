@@ -21,7 +21,7 @@ module.exports = class User {
    * Returns the users full name.
    * @return {String}
    */
-  getFullName() {
+  getName() {
     return `${ this.firstName } ${ this.lastName }`;
   }
 

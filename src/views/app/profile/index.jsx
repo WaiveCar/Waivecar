@@ -2,6 +2,7 @@
 
 import React                     from 'react';
 import { auth, relay, api, dom } from 'bento';
+import { Files }                 from 'bento-service';
 import { Form, snackbar }        from 'bento-web';
 import { resources, fields }     from 'bento-ui';
 import Account                   from '../lib/account-service';
@@ -22,15 +23,13 @@ module.exports = class ProfileView extends React.Component {
 
     // ### State & Service
 
-    this.state        = {};
-    this.account      = new Account(this);
+    this.state   = {};
+    this.account = new Account(this);
+    this.avatar  = new Files(this, 'avatar');
 
     // ### Function Binds
 
-    this.submitToken  = this.submitToken.bind(this);
-    this.selectAvatar = this.selectAvatar.bind(this);
-    this.uploadAvatar = this.uploadAvatar.bind(this);
-    this.deleteAvatar = this.deleteAvatar.bind(this);
+    this.submitToken = this.submitToken.bind(this);
 
     // ### Relay Subscriptions
 
@@ -42,52 +41,6 @@ module.exports = class ProfileView extends React.Component {
    */
   componentDidMount() {
     this.account.status();
-  }
-
-  /**
-   * Opens file selection box.
-   * @return {Void} [description]
-   */
-  selectAvatar() {
-    this.refs.avatar.click();
-  }
-
-  /**
-   * Attempts to upload a new avatar.
-   * @return {Void} [description]
-   */
-  uploadAvatar() {
-    let user = auth.user();
-    let prev = user.avatar;
-    api.file(`/files?isAvatar=true&userId=${ user.id }`, {
-      files : this.refs.avatar.files
-    }, (err, res) => {
-      if (err) {
-        return snackbar.notify({
-          type    : `danger`,
-          message : err.message
-        });
-      }
-      if (prev) {
-        this.deleteAvatar(prev); // Delete previous avatar, reduces bloat...
-      }
-    });
-  }
-
-  /**
-   * Attempts to delete an avatar.
-   * @param  {String} id
-   * @return {Void} [description]
-   */
-  deleteAvatar(id) {
-    api.delete(`/files/${ id }`, (err) => {
-      if (err) {
-        snackbar.notify({
-          type    : `danger`,
-          message : err.message
-        });
-      }
-    });
   }
 
   /**
@@ -243,8 +196,8 @@ module.exports = class ProfileView extends React.Component {
       <div className="profile">
         <div className="profile-header">
           <div className="profile-image">
-            <input type="file" style={{ display : 'none' }} ref="avatar" onChange={ this.uploadAvatar } />
-            <div className="profile-image-selector" onClick={ this.selectAvatar }>
+            <input type="file" style={{ display : 'none' }} ref="avatar" onChange={ this.avatar.upload(`/files?isAvatar=true&userId=${ user.id }`, user.avatar) } />
+            <div className="profile-image-selector" onClick={ this.avatar.select }>
               <i className="material-icons" role="avatar-upload">add_a_photo</i>
             </div>
             <div className="profile-image-view" style={{ background : `url(${ user.getAvatar() }) center center / cover` }} />
@@ -252,7 +205,7 @@ module.exports = class ProfileView extends React.Component {
 
           <div className="profile-meta">
             <div className="profile-name">
-              { user.firstName } { user.lastName }
+              { user.getName() }
             </div>
           </div>
         </div>
