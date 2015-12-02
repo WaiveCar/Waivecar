@@ -6,7 +6,7 @@ module.exports = angular.module('app.directives')
 
     function carChargeStatusDirective() {
 
-      function link($scope) {
+      function link ($scope) {
 
         function setInfo(car){
           if(!car){
