@@ -53,8 +53,10 @@ module.exports = class Service {
       if (hasCar) {
         throw error.parse({
           code    : `CAR_IN_PROGRESS`,
-          message : `The user is already assigned to another car.`,
-          data    : hasCar
+          message : `You are already assigned to another waivecar.`,
+          data    : {
+            id : hasCar.id
+          }
         }, 400);
       }
     }
@@ -63,12 +65,12 @@ module.exports = class Service {
       if (parseInt(car.userId) === parseInt(userId)) {
         throw error.parse({
           code    : `CAR_UNAVAILBLE`,
-          message : `The user is already assigned to this car.`
+          message : `You are already assigned to this waivecar.`
         }, 400);
       } else {
         throw error.parse({
           code    : `CAR_UNAVAILBLE`,
-          message : `The requested car is currently not available.`
+          message : `The requested waivecar is currently not available.`
         }, 400);
       }
     }
@@ -120,10 +122,12 @@ module.exports = class Service {
       }
     });
 
-    // ### Check Status
+    // ### Check User
 
     if (!user.verifiedEmail) { missing.push('email'); }
     if (!user.verifiedPhone) { missing.push('phone'); }
+
+    // ### Check License
 
     if (!license || license.status !== 'completed') {
       missing.push('license');

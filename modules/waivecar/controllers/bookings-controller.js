@@ -17,7 +17,7 @@ Bento.Register.Controller('BookingsController', function(controller) {
    * @return {Object}
    */
   controller.index = function *() {
-    return yield booking.index(this.query, this.auth.role, this.auth.user);
+    return yield booking.index(this.query, this.auth.user);
   };
 
   /**

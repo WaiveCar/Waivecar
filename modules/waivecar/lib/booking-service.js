@@ -1,7 +1,6 @@
 'use strict';
 
 let Service        = require('./classes/service');
-let PaymentHandler = require('./classes/payment');
 let queue          = Bento.provider('queue');
 let queryParser    = Bento.provider('sequelize/helpers').query;
 let File           = Bento.model('File');
@@ -67,7 +66,7 @@ module.exports = class BookingService extends Service {
     try {
       yield booking.save();
     } catch (err) {
-      yield car.removeDriver();
+      yield car.removeDriver(); // Remove driver if we failed to save the booking
       throw err;
     }
 
@@ -113,25 +112,28 @@ module.exports = class BookingService extends Service {
   /**
    * Returns a list of bookings.
    * @param  {Object} query
-   * @param  {String} role
    * @param  {Object} _user
    * @return {Array}
    */
-  static *index(query, role, _user) {
-    if (role.isAdmin()) {
-      return yield Booking.find(queryParser(query, {
-        where : {
-          userId : queryParser.NUMBER,
-          carId  : queryParser.STRING,
-          status : queryParser.STRING
-        }
-      }));
-    }
-    return yield Booking.find({
+  static *index(query, _user) {
+    query = queryParser(query, {
       where : {
-        userId : _user.id
+        userId : queryParser.NUMBER,
+        carId  : queryParser.STRING,
+        status : queryParser.STRING
       }
     });
+
+    // ### Admin Query
+
+    if (_user.isAdmin()) {
+      return yield Booking.find(query);
+    }
+
+    // ### User Query
+
+    query.where.userId = _user.id;
+    return yield Booking.find(query);
   }
 
   /**
@@ -141,7 +143,7 @@ module.exports = class BookingService extends Service {
    * @return {Object}
    */
   static *show(id, _user) {
-    let booking = yield Booking.findById(id, {
+    let relations = {
       include : [
         {
           model : 'BookingDetails',
@@ -150,11 +152,15 @@ module.exports = class BookingService extends Service {
         {
           model      : 'BookingPayment',
           as         : 'payments',
-          attributes : [ 'paymentId' ]
+          attributes : [ 'orderId' ]
         }
       ]
-    });
-    let user = yield this.getUser(booking.userId);
+    };
+
+    // ### Get Booking
+
+    let booking = yield Booking.findById(id, relations);
+    let user    = yield this.getUser(booking.userId);
 
     this.hasAccess(user, _user);
 
@@ -220,7 +226,7 @@ module.exports = class BookingService extends Service {
     let booking   = yield this.getBooking(id);
     let car       = yield this.getCar(booking.carId);
     let user      = yield this.getUser(booking.userId);
-    let checkList = [ 'in-progress', 'pending-payment', 'cancelled', 'completed' ];
+    let checkList = [ 'cancelled', 'started', 'ended', 'completed' ];
 
     this.hasAccess(user, _user);
 
@@ -235,32 +241,17 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
-    /* DEPRECATED? No longer need to pre-authorize payments (only need to validate that card is active)
-    if (booking.status !== 'payment-authorized') {
-      throw error.parse({
-        code    : `MISSING_PAYMENT_AUTHORIZATION`,
-        message : `The booking must be authorized for payment before we can start the ride.`
-      }, 400);
-    }
-    */
+    // ### Unlock Car
 
-    // ### Create Details
-    // Creates a detail record of the start of the ride.
+    // ...
 
-    let details = new BookingDetails({
-      bookingId : booking.id,
-      type      : 'start',
-      time      : new Date(),
-      latitude  : car.latitude,
-      longitude : car.longitude,
-      odometer  : 0,
-      charge    : 0
-    });
-    yield details.save();
+    // ### Booking Details
+
+    yield this.logDetails('start', booking, car);
 
     // ### Update Booking Status
 
-    yield booking.inProgress();
+    yield booking.start();
     yield booking.delCancelTimer();
   }
 
@@ -271,47 +262,32 @@ module.exports = class BookingService extends Service {
    * @return {Object}
    */
   static *end(id, paymentId, _user) {
-    let booking        = yield this.getBooking(id);
-    let bookingPayment = yield BookingPayment.findById(paymentId);
-    let car            = yield this.getCar(booking.carId);
-    let user           = yield this.getUser(booking.userId);
-
-    // ### Verify Payment
-
-    if (!bookingPayment) {
-      throw error.parse({
-        code    : `BOOKING_PAYMENT_INVALID`,
-        message : `The provided payment identifier is invalid`
-      }, 400);
-    }
+    let booking = yield this.getBooking(id);
+    let car     = yield this.getCar(booking.carId);
+    let user    = yield this.getUser(booking.userId);
 
     // ### Status Check
     // Only bookings which are in a progress state can be ended through this endpoint.
 
-    if (booking.status !== 'in-progress') {
+    if (booking.status !== 'started') {
       throw error.parse({
         code    : `BOOKING_REQUEST_INVALID`,
-        message : `You can only end a booking that is in-progress.`
+        message : `You can only end a booking that has already started.`
       }, 400);
     }
 
-    // ### Payment
+    // ### Booking Details
 
-    let payment = new PaymentHandler(booking, bookingPayment);
+    yield this.logDetails('end', booking, car);
 
-    // -----------------------------------------------------------------------------
-    // TODO: CALCULATE RIDE COST
-    //       - Create a new payment (done)
-    //       - Add payment items for each charge that occured during the ride.
-    //         - Need a list of possible charges that can occur.
-    // -----------------------------------------------------------------------------
+    // ### End Booking
 
-    yield booking.update({ status : 'pending-payment' });
+    yield booking.end();
 
     // ### Reset Car
     // Remove the user from the car and make it available
 
-    yield car.delDriver();
+    yield car.removeDriver();
   }
 
   /*
@@ -331,15 +307,15 @@ module.exports = class BookingService extends Service {
 
   /**
    * Attempts to cancel a booking.
-   * @param  {Number} bookingId
+   * @param  {Number} id
    * @param  {Object} _user
    * @return {Object}
    */
-  static *cancel(bookingId, _user) {
+  static *cancel(id, _user) {
     let booking = yield this.getBooking(id);
     let car     = yield this.getCar(booking.carId);
     let user    = yield this.getUser(booking.userId);
-    let states  = [ 'new-booking', 'payment-authorized', 'pending-arrival' ];
+    let states  = [ 'reserved', 'pending' ];
 
     this.hasAccess(user, _user);
 
@@ -357,6 +333,28 @@ module.exports = class BookingService extends Service {
     yield booking.cancel();
     yield booking.delCancelTimer();
     yield car.removeDriver();
+  }
+
+  // ### HELPERS
+
+  /**
+   * Logs the ride details.
+   * @param  {String} type    The detail type, start|end.
+   * @param  {Object} booking
+   * @param  {Object} car
+   * @return {Void}
+   */
+  static *logDetails(type, booking, car) {
+    let details = new BookingDetails({
+      bookingId : booking.id,
+      type      : 'end',
+      time      : new Date(),
+      latitude  : car.latitude,
+      longitude : car.longitude,
+      odometer  : 0,
+      charge    : 0
+    });
+    yield details.save();
   }
 
 };

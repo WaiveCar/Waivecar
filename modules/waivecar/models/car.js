@@ -20,6 +20,25 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       primaryKey : true
     },
 
+    // ### Car Status
+    // The current status of the car, if its available and what user is
+    // currenty in possession of the car.
+
+    userId : {
+      type       : Sequelize.INTEGER,
+      references : {
+        model : 'users',
+        key   : 'id'
+      }
+    },
+
+    isAvailable : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : true
+    },
+
+    // ### Car Details
+
     make : {
       type : Sequelize.STRING(28)
     },
@@ -136,23 +155,6 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
     range : {
       type : Sequelize.DECIMAL(10, 2)
-    },
-
-    // ### Car Status
-    // This holds information such as the availability of the car
-    // and the current user who is occupying the car.
-
-    userId : {
-      type       : Sequelize.INTEGER,
-      references : {
-        model : 'users',
-        key   : 'id'
-      }
-    },
-
-    isAvailable : {
-      type         : Sequelize.BOOLEAN,
-      defaultValue : true
     },
 
     positionUpdatedAt : {

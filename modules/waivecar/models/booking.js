@@ -49,15 +49,14 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
 
     status : {
       type : Sequelize.ENUM(
-        'new-booking',
-        'payment-authorized',
-        'pending-arrival',
-        'in-progress',
-        'pending-payment',
-        'cancelled',
-        'completed'
+        'reserved',  // The booking has been reserved and the car has been made unavailable.
+        'pending',   // The booking is pending arrival of the customer.
+        'cancelled', // The booking was cancelled and the car has been made available.
+        'started',   // The booking has started, cancellation is now unavailable.
+        'ended',     // The booking has ended, pending inspection and fees.
+        'completed'  // The booking has been inspected and payment has been requested/collected.
       ),
-      defaultValue : 'new-booking'
+      defaultValue : 'reserved'
     }
   };
 
@@ -80,20 +79,25 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
 
   model.methods = {
 
+    /*
+     |--------------------------------------------------------------------------------
+     | Booking Status
+     |--------------------------------------------------------------------------------
+     */
+
     /**
      * Returns the booking status in a human readable manner.
      * @return {String}
      */
-    getStatus : function() {
+    getStatus() {
       return this.status.replace('-', ' ');
     },
 
     /**
-     * Cancels the booking by updating the status to cancelled and removing
-     * any auto cancel jobs registered with queue provider.
+     * Cancels the booking by updating the status to cancelled.
      * @return {Void}
      */
-    cancel : function *() {
+    *cancel() {
       yield this.update({
         status : 'cancelled'
       });
@@ -103,9 +107,29 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
      * Sets the booking state to in progress.
      * @return {Void}
      */
-    inProgress : function *() {
+    *start() {
       yield this.update({
-        status : 'in-progress'
+        status : 'started'
+      });
+    },
+
+    /**
+     * Sets the booking state to in progress.
+     * @return {Void}
+     */
+    *end() {
+      yield this.update({
+        status : 'ended'
+      });
+    },
+
+    /**
+     * Sets the booking state to in progress.
+     * @return {Void}
+     */
+    *complete() {
+      yield this.update({
+        status : 'completed'
       });
     },
 
@@ -117,17 +141,6 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
      | List of booking timer methods used for automatic handling of booking based
      | on various timers set.
      |
-     | autoCancel()
-     |
-     |  When placing a booking in the system the user has a set amount of time to
-     |  get the booking into a confirmed state. If they do not perform the required
-     |  actions within the time alotted their booking will automaticaly be cancelled.
-     |
-     | setRideTimer()
-     |
-     |  Starts the ride timer which automaticaly informs the user of timed ride
-     |  events, most notably the sms notification of remaining time nears the end.
-     |
      */
 
     /**
@@ -135,7 +148,7 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
      * @param  {Number} time
      * @return {Void}
      */
-    setCancelTimer : function *(time) {
+    *setCancelTimer(time) {
       queue.scheduler.add('booking-auto-cancel', {
         uid   : `booking-${ this.id }`,
         timer : time,
@@ -149,7 +162,7 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
      * Removes the automatic cancellation of the booking.
      * @return {Void}
      */
-    delCancelTimer : function *() {
+    *delCancelTimer() {
       queue.scheduler.cancel('booking-auto-cancel', `booking-${ this.id }`);
     }
 
