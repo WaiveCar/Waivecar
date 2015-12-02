@@ -274,12 +274,14 @@ module.exports = class CarService extends Service {
 
     if (data['position']) {
       let position = data['position'];
-      car.latitude              = position['lat'];
-      car.longitude             = position['lon'];
-      car.distanceSinceLastRead = position['meters_driven_since_last_fix'];
-      car.locationQuality       = position['quality'];
-      car.calculatedSpeed       = position['speed_over_ground'];
-      car.positionUpdatedAt     = position['timestamp'];
+      if (position['lat']) {
+        car.latitude  = position['lat'];
+        car.longitude = position['lon'];
+        car.distanceSinceLastRead = position['meters_driven_since_last_fix'];
+        car.locationQuality       = position['quality'];
+        car.calculatedSpeed       = position['speed_over_ground'];
+        car.positionUpdatedAt     = position['timestamp'];
+      }
     }
 
     if (data['electric_vehicle_state']) {
