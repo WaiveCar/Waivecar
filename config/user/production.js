@@ -49,6 +49,15 @@ module.exports = {
         status        : 'active'
       },
       {
+        firstName     : 'Roy',
+        lastName      : 'Ryman',
+        email         : 'roy@waivecar.com',
+        password      : 'password',
+        role          : 'admin',
+        verifiedEmail : true,
+        status        : 'active'
+      },
+      {
         firstName     : 'Generic',
         lastName      : 'User',
         email         : 'demo@example.com',
