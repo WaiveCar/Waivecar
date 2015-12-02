@@ -16,7 +16,6 @@ function ApplicationController ($rootScope, $scope, LocationService, $injector) 
   var $data = $injector.get('$data');
   var $message = $injector.get('$message');
   var $document = $injector.get('$document');
-  var $q = $injector.get('$q');
 
   this.models = $data.instances;
   this.active = $data.active;
@@ -63,42 +62,16 @@ function ApplicationController ($rootScope, $scope, LocationService, $injector) 
 
   if ($auth.isAuthenticated()) {
     initLocation();
-    loadSession();
-    return;
+    $auth.loadSession();
   }
 
   function initLocation () {
-    function positionWatch () {
-      LocationService.initPositionWatch();
-      return $q.when();
-    }
-
-    function locateMe () {
-      return LocationService.getLocation().then(function(deviceLocation) {
-        $rootScope.currentLocation = deviceLocation;
-      });
-    };
-
-    function initializeLocations () {
-      return $data.initialize('locations');
-    }
-
-    return $q.all([positionWatch, initializeLocations])
-      .then(locateMe)
+    LocationService.initPositionWatch();
+    return $data.initialize('locations')
       .catch(function (err) {
-        if (err) {
-          return $message.error(err);
-        }
+        return $message.error(err);
       });
   };
-
-  function loadSession () {
-    return $auth.loadSession()
-    .then(function () {
-      initLocation();
-    });
-  };
-
 }
 
 module.exports =
