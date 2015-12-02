@@ -26,7 +26,7 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
     ctrl.map = ctrl.leaflet.skobbler.map($elem[0].firstChild, mapOptions);
     if (ctrl.map) {
       ctrl.setCurrentLocation(ctrl.location);
-      ctrl.setCars(ctrl.cars);
+      ctrl.setMarkers(ctrl.markers);
       ctrl.drawRoute();
       ctrl.$$ready.resolve();
     }
@@ -34,7 +34,6 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
 
   function MapController ($scope) {
     this._group = null;
-    this.carMarkers = [];
     this.markers = [];
     this.leaflet = MapsLoader.leaflet;
     this.$$ready = $q.defer();
@@ -45,7 +44,7 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
         this.center = [$rootScope.currentLocation.latitude, $rootScope.currentLocation.longitude];
     }
 
-    $scope.$watch('cars', this.setCars.bind(this), true);
+    $scope.$watch('markers', this.setMarkers.bind(this), true);
     $scope.$watch('location', this.setCurrentLocation.bind(this), true);
     $scope.$watch('routeStart', this.drawRoute.bind(this), true);
     $scope.$watch('routeDestiny', this.drawRoute.bind(this), true);
@@ -63,56 +62,62 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
       return;
     }
     this.locationMarker = this.addMarker([location.latitude, location.longitude], {
-      icon: this.getIconInstance('device')
+      icon: getIconInstance(this.leaflet, 'device')
     });
   };
 
-  MapController.prototype.setCars = function setCars (locations) {
+  MapController.prototype.setMarkers = function setMarkers (locations) {
     if (locations === null || typeof locations === 'undefined') {
       return;
     }
-    var cars;
+    var markers;
     if (locations.$resolved === false) {
       return;
     }
     if (Array.isArray(locations)) {
-      cars = locations;
+      markers = locations;
     } else if (locations.cars) {
-      cars = locations.cars;
+      markers = locations.cars;
     } else {
-      cars = [locations];
+      markers = [locations];
     }
 
-    if (!cars.length) {
+    if (!markers.length) {
       return;
     }
 
-    var icon = this.getIconInstance('car');
+    var icon = getIconInstance(this.leaflet, this.markerIcon || 'car');
 
-    this.carMarkers = _(cars).filter(function (car) {
-      var location = car.location || car;
+    _(markers).filter(function (marker) {
+      var location = marker.location || marker;
       return location.latitude && location.longitude;
-    }).map(function(car) {
-      var location = car.location || car;
+    }).map(function (mark) {
+      var location = mark.location || mark;
       var marker = this.addMarker([location.latitude, location.longitude], {icon: icon});
-      if (typeof this.onCarTap === 'function') {
-        var fn = this.onCarTap;
+      if (marker === null) {
+        return null;
+      }
+      if (typeof this.onMarkerTap === 'function') {
+        var fn = this.onMarkerTap;
         marker.on('mousedown', function () {
-          fn()(car);
+          fn()(mark);
         });
       }
       return marker;
     }, this)
     .value();
-
-    this.fitBounds();
-  };
-
-  MapController.prototype.getIconInstance = function getIconInstance (iconType){
-    return this.leaflet.icon(getIconOptions(iconType));
   };
 
   MapController.prototype.addMarker = function addMarker (location, options) {
+    if (!(this.map)) {
+      console.error('Bailing out of setting marker: Map not initialized');
+      return null;
+    }
+    if (!location) {
+      console.error('Bailing out of setting marker: Malformed location ', location);
+      return null;
+    }
+
     var marker = this.leaflet
       .marker(location, options)
       .addTo(this.map);
@@ -151,28 +156,29 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
     }.bind(this));
   };
 
+
+  function getIconInstance (leaflet, iconType){
+    return leaflet.icon(getIconOptions(iconType));
+  }
+
   function getIconOptions(iconType) {
     switch (iconType) {
-      case 'car':
-        {
-          return {
-            iconUrl: 'img/active-waivecar.svg',
-            iconRetinaUrl: 'img/active-waivecar.svg',
-            iconSize: [20, 25],
-            iconAnchor: [10, 25],
-            popupAnchor: [0, 0]
-          };
-        }
-      default:
-        {
-          return {
-            iconUrl: 'img/user-location.svg',
-            iconRetinaUrl: 'img/user-location.svg',
-            iconSize: [25, 25],
-            iconAnchor: [12.5, 25],
-            popupAnchor: [0, 0]
-          };
-        }
+    case 'car':
+      return {
+        iconUrl: 'img/active-waivecar.svg',
+        iconRetinaUrl: 'img/active-waivecar.svg',
+        iconSize: [20, 25],
+        iconAnchor: [10, 25],
+        popupAnchor: [0, 0]
+      };
+    default:
+      return {
+        iconUrl: 'img/user-location.svg',
+        iconRetinaUrl: 'img/user-location.svg',
+        iconSize: [25, 25],
+        iconAnchor: [12.5, 25],
+        popupAnchor: [0, 0]
+      };
     }
   }
 
@@ -186,8 +192,9 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
       zoom: '@',
       center: '=',
       location: '=',
-      cars: '=',
-      onCarTap: '&',
+      markers: '=',
+      onMarkerTap: '&',
+      markerIcon: '@',
       routeStart: '=',
       routeDestiny: '='
     },
