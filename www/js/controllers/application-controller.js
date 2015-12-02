@@ -15,11 +15,9 @@ function ApplicationController ($rootScope, $scope, LocationService, $injector) 
   var $auth = $injector.get('$auth');
   var $data = $injector.get('$data');
   var $message = $injector.get('$message');
-  var $session = $injector.get('$session');
   var $document = $injector.get('$document');
   var $q = $injector.get('$q');
 
-  $rootScope.isInitialized = false;
   this.models = $data.instances;
   this.active = $data.active;
 
@@ -29,13 +27,9 @@ function ApplicationController ($rootScope, $scope, LocationService, $injector) 
 
   $document.on('resize', function() {
     this.windowWidth = getWindowWidth();
-  });
+  }.bind(this));
 
   this.windowWidth = getWindowWidth();
-
-  $rootScope.$watch('currentLocation', function() {
-    console.log('currentLocation', $rootScope.currentLocation);
-  });
 
   $rootScope.$on('authError', function() {
     $auth.logout();
@@ -61,34 +55,22 @@ function ApplicationController ($rootScope, $scope, LocationService, $injector) 
       event.preventDefault();
       $state.go('auth-login');
     }
-
   });
 
-  this.logout = function() {
-    $auth.logout(function(err) {
-      if (err) {
-        return $message.error(err);
-      }
-      this.popover.hide();
-      $state.go('landing');
-    });
+  $rootScope.$on('authLogin', function () {
+    initLocation();
+  });
 
-  };
+  if ($auth.isAuthenticated()) {
+    initLocation();
+    loadSession();
+    return;
+  }
 
-  this.fetch = function() {
+  function initLocation () {
     function positionWatch () {
       LocationService.initPositionWatch();
       return $q.when();
-    }
-
-    function saveSession () {
-      return $q(function (done) {
-        $data.resources.users.me(function(me) {
-          $session.set('me', me).save();
-          $data.me = $session.get('me');
-          done();
-        });
-      });
     }
 
     function locateMe () {
@@ -101,10 +83,7 @@ function ApplicationController ($rootScope, $scope, LocationService, $injector) 
       return $data.initialize('locations');
     }
 
-    $q.all([positionWatch, saveSession, initializeLocations])
-      .then(function () {
-        $rootScope.isInitialized = true;
-      })
+    return $q.all([positionWatch, initializeLocations])
       .then(locateMe)
       .catch(function (err) {
         if (err) {
@@ -113,23 +92,12 @@ function ApplicationController ($rootScope, $scope, LocationService, $injector) 
       });
   };
 
-  this.init = function() {
-    if ($auth.isAuthenticated()) {
-      this.fetch();
-      return;
-    }
-
-    // TODO kill this with fire
-    $scope.$watch(function() {
-      return $auth.isAuthenticated();
-    }, angular.bind(this, function(data) {
-      if (data === true) {
-        this.fetch();
-      }
-    }));
+  function loadSession () {
+    return $auth.loadSession()
+    .then(function () {
+      initLocation();
+    });
   };
-
-  this.init();
 
 }
 

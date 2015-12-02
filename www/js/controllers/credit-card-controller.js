@@ -28,7 +28,7 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
 
       return $q.when()
         .then(function(){
-          if ($data.me.stripeId) {
+          if ($auth.me.stripeId) {
             return false;
           }
 

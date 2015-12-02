@@ -3,81 +3,23 @@ var angular = require('angular');
 require('./session-service.js');
 require('./data-service.js');
 
-function AuthService ($session, $data, $injector) {
+function AuthService ($rootScope, $session, $data, $injector) {
   this.token = $session.get('auth') || false;
   this.me = $session.get('me') || false;
   var $cordovaFacebook = $injector.get('$cordovaFacebook');
   var $q = $injector.get('$q');
 
-  this.createSession = function createSession (user) {
-    $session.set('auth', {
-      token: user.token
-    }).save();
+  this.isAuthenticated = function isAuthenticated () {
+    return !!(this.token && this.me);
+  };
 
-    this.token = $session.get('auth');
-
+  this.reload = function reload () {
     return $data.resources.users.me().$promise
       .then(function(me) {
         $session.set('me', me).save();
         this.me = $data.me = $session.get('me');
-        return me;
       }.bind(this));
 
-  };
-
-  this.isAuthenticated = function isAuthenticated () {
-    this.token = $session.has('auth') ? $session.get('auth') : false;
-    this.me = $session.has('me') ? $session.get('me') : false;
-    return !!(this.token && this.me);
-  };
-
-  this.purge = function purge () {
-    $session.purge();
-    this.token = false;
-    this.me = false;
-    return this;
-
-  };
-
-  this.reload = function reload () {
-    var _this = this;
-    return $data.resources.users.me().$promise
-      .then(function(me) {
-        $session.set('me', me).save();
-        _this.me = $data.me = $session.get('me');
-      });
-
-  };
-
-  this.loginWithFacebook = function loginWithFacebook (token) {
-    var data = {
-      token: token,
-      type: 'login'
-    };
-
-    return $data.resources.Auth.facebook(data).$promise
-      .then(angular.bind(this, this.createSession));
-
-  };
-
-  this.connectWithFacebook = function connectWithFacebook (token) {
-    var data = {
-      token: token,
-      type: 'connect'
-    };
-
-    return $data.resources.Auth.facebook(data).$promise;
-  };
-
-  this.registerUserWithFacebook = function registerUserWithFacebook (token) {
-    return $data.resources.Auth.facebook({
-      token: token,
-      type: 'register'
-    }).$promise
-    .then(this.createSession.bind(this))
-    .then(function (user) {
-      return {code: 'NEW_USER', user: user};
-    });
   };
 
   this.facebookAuth = function facebookAuth () {
@@ -96,41 +38,36 @@ function AuthService ($session, $data, $injector) {
       })
       .then(angular.bind(this, function(res) {
         var token = res.authResponse.accessToken;
-        return this.loginWithFacebook(token)
-          .then(function () {
-            return {code: 'LOGGED_IN'};
-          })
+        return loginWithFacebook(token)
           .catch(function (err) {
             if (err.status === 400 && err.data && err.data.code === 'FB_LOGIN_FAILED') {
-              return this.registerUserWithFacebook(token);
+              return registerUserWithFacebook(token);
             }
             return $q.reject(err);
+          });
+      }))
+      .then(function (code) {
+        return createSession(code)
+          .then(function () {
+            this.token = $session.get('auth');
+            this.me = $data.me = $session.get('me');
+            $rootScope.$emit('authLogin', code);
+            return code;
           }.bind(this));
-      }));
+      }.bind(this));
   };
 
   this.login = function login (data) {
-    var _this = this;
-    var _user;
-
     return $data.resources.Auth.login(data).$promise
       .then(function(user) {
-        _user = user;
-
-        $session.set('auth', {
-          token: user.token
-        }).save();
-
-        _this.token = $session.get('auth');
-
-        return $data.resources.users.me().$promise;
-
-      })
-      .then(function(me) {
-        $session.set('me', me).save();
-        _this.me = $data.me = $session.get('me');
-        return _user;
-      })
+        var code = {code: 'LOGGED_IN', method: 'EMAIL', user: user};
+        return createSession(code)
+        .then(function() {
+          this.token = $session.get('auth');
+          this.me = $data.me = $session.get('me');
+          $rootScope.$emit('authLogin', code);
+        }.bind(this));
+      }.bind(this))
       .catch(function(response) {
         if (response.status === 0) {
           return $q.reject('Unable to reach the server. CORS issue!');
@@ -140,15 +77,62 @@ function AuthService ($session, $data, $injector) {
         }
         return $q.reject('An error occured! ' + response.data.message);
       });
-
   };
 
   this.logout = function logout () {
     $session.purge();
+    this.token = false;
+    this.me = false;
+    $rootScope.$emit('authLogout');
+  };
+
+  this.loadSession = function loadSession () {
+    if (!this.isAuthenticated()) {
+      return $q.reject('User not authenticated');
+    }
+
+    return $data.resources.users.me().$promise
+      .then(function(me) {
+        this.me = $session.set('me', me).save();
+        return me;
+      }.bind(this));
+  };
+
+  function loginWithFacebook (token) {
+    return $data.resources.Auth.facebook({
+      token: token,
+      type: 'login'
+    }).$promise
+    .then(function (user) {
+      return {code: 'LOGGED_IN', method: 'FACEBOOK', user: user};
+    });
+  };
+
+  function registerUserWithFacebook (token) {
+    return $data.resources.Auth.facebook({
+      token: token,
+      type: 'register'
+    }).$promise
+    .then(function (user) {
+      return {code: 'NEW_USER', method: 'FACEBOOK', user: user};
+    });
+  };
+
+  function createSession (code) {
+    $session.set('auth', {
+      token: code.user.token
+    }).save();
+
+    return $data.resources.users.me().$promise
+      .then(function(me) {
+        $session.set('me', me).save();
+        return me;
+      });
   };
 }
 
 module.exports = angular.module('app.services').service('$auth', [
+  '$rootScope',
   '$session',
   '$data',
   '$injector',

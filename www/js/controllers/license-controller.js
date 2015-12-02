@@ -60,7 +60,7 @@ module.exports = angular.module('app.controllers').controller('LicenseController
 
           if (!$stateParams.id) {
             $state.go('landing', {
-              id: $data.me.id
+              id: $auth.me.id
             });
           }
 
@@ -80,7 +80,7 @@ module.exports = angular.module('app.controllers').controller('LicenseController
         }
 
         $state.go('users-show', {
-          id: $data.me.id
+          id: $auth.me.id
         });
 
       });
