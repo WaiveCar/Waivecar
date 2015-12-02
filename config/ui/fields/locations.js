@@ -9,11 +9,16 @@ module.exports = {
   },
   type : {
     name      : 'type',
-    component : 'input',
-    type      : 'text',
+    component : 'select',
     required  : true,
     label     : 'Type',
-    helpText  : null
+    helpText  : null,
+    options   : [
+      { name : 'Charging Station', value : 'station' },
+      { name : 'Valet',            value : 'valet' },
+      { name : 'HomeBase',         value : 'homebase' },
+      { name : 'Item Of Interest', value : 'item-of-interest' }
+    ]
   },
   name : {
     name      : 'name',
