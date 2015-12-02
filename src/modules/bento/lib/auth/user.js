@@ -3,11 +3,7 @@
 import md5    from 'md5';
 import config from 'config';
 
-/**
- * The configurated endpoint to the API.
- * @type {String}
- */
-const API_URI = config.api.uri + (config.api.port ? ':' + config.api.port : '');
+const apiUrl = config.api.uri + (config.api.port ? ':' + config.api.port : '');
 
 module.exports = class User {
 
@@ -32,7 +28,7 @@ module.exports = class User {
   getAvatar() {
     let url = null;
     if (this.avatar) {
-      url = `${ API_URI }/file/${ this.avatar }`;
+      url = `${ apiUrl }/file/${ this.avatar }`;
     } else {
       url = `//www.gravatar.com/avatar/${ md5(this.email) }?s=150`;
     }

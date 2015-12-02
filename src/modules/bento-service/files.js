@@ -17,9 +17,10 @@ module.exports = class Files {
 
     // ### Function Binders
 
-    this.select = this.select.bind(this);
-    this.upload = this.upload.bind(this);
-    this.delete = this.delete.bind(this);
+    this.select     = this.select.bind(this);
+    this.upload     = this.upload.bind(this);
+    this.delete     = this.delete.bind(this);
+    this.bindUpload = this.bindUpload.bind(this);
   }
 
   /**
@@ -37,21 +38,19 @@ module.exports = class Files {
    * @return {Void}
    */
   upload(url, prev) {
-    return () => {
-      api.file(url, {
-        files : this.ctx.refs[this.ref].files
-      }, (err) => {
-        if (err) {
-          return snackbar.notify({
-            type    : `danger`,
-            message : err.message
-          });
-        }
-        if (prev) {
-          this.delete(prev); // Delete previous avatar, reduces bloat...
-        }
-      });
-    }
+    api.file(url, {
+      files : this.ctx.refs[this.ref].files
+    }, (err) => {
+      if (err) {
+        return snackbar.notify({
+          type    : `danger`,
+          message : err.message
+        });
+      }
+      if (prev) {
+        this.delete(prev); // Delete previous avatar, reduces bloat...
+      }
+    });
   }
 
   /**
@@ -68,6 +67,18 @@ module.exports = class Files {
         });
       }
     });
+  }
+
+  // ### BIND METHODS
+
+  /**
+   * Returns a new upload method without bound url and prev values.
+   * @param  {String} url
+   * @param  {String} prev
+   * @return {Function}
+   */
+  bindUpload(url, prev) {
+    return this.upload.bind(this, url, prev);
   }
 
 };

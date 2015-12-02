@@ -196,7 +196,7 @@ module.exports = class ProfileView extends React.Component {
       <div className="profile">
         <div className="profile-header">
           <div className="profile-image">
-            <input type="file" style={{ display : 'none' }} ref="avatar" onChange={ this.avatar.upload(`/files?isAvatar=true&userId=${ user.id }`, user.avatar) } />
+            <input type="file" style={{ display : 'none' }} ref="avatar" onChange={ this.avatar.bindUpload(`/files?isAvatar=true&userId=${ user.id }`, user.avatar) } />
             <div className="profile-image-selector" onClick={ this.avatar.select }>
               <i className="material-icons" role="avatar-upload">add_a_photo</i>
             </div>
