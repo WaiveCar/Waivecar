@@ -3,8 +3,8 @@
   <ion-content scroll="false" class="has-header has-footer-bar">
     <div class="map-container has-info-footer">
       <skobbler-map id="map" zoom="15" center="currentLocation"
-        cars="app.models.locations"
-        on-car-tap="showChargingStationDetails">
+        markers="app.models.locations"
+        on-marker-tap="showChargingStationDetails">
       </skobbler-map>
     </div>
     <div class="info-footer">

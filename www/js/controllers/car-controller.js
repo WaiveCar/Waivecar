@@ -20,6 +20,12 @@ module.exports = angular.module('app.controllers').controller('CarController', [
     var $data = $injector.get('$data');
     var $auth = $injector.get('$auth');
 
+    if ($state.params.displayRequirements) {
+      showRequirementsModal(status);
+    }
+
+    this.car = angular.extend({}, car, {item: 'car'});
+
     function showRequirementsModal (_status) {
 
       var scope = $scope.$new();
@@ -71,17 +77,6 @@ module.exports = angular.module('app.controllers').controller('CarController', [
         .catch($message.error);
 
     };
-
-    this.init = function init () {
-      if($state.params.displayRequirements){
-        showRequirementsModal(status);
-      }
-
-      this.car = car;
-    };
-
-    this.init();
-
   }
 
 ]);

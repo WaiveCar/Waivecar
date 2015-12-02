@@ -1,5 +1,6 @@
 'use strict';
 var angular = require('angular');
+var _ = require('lodash');
 require('../services/distance-service');
 require('angular-ui-router');
 
@@ -15,8 +16,7 @@ module.exports = angular.module('app.controllers').controller('CarsController', 
 function CarsController ($rootScope, $scope, $state, $injector, cars) {
   var $distance = $injector.get('$distance');
 
-  this.all = cars;
-  this.currentLocation = $rootScope.currentLocation;
+  this.all = prepareCars(cars);
   this.modal = {
     title: 'Bummer',
     actions: {
@@ -37,6 +37,20 @@ function CarsController ($rootScope, $scope, $state, $injector, cars) {
     }
   }
 
+  function prepareCars (items) {
+    return _.map(items, function (item) {
+      if (!item.hasOwnProperty('isAvailable')) {
+        return item;
+      }
+      if (item.isAvailable) {
+        item.icon = 'car';
+      } else {
+        item.icon = 'unavailable';
+      }
+      return item;
+    });
+  };
+
   function showModal () {
     if (typeof this.modal.actions.show === 'function') {
       this.modal.actions.show();
@@ -54,9 +68,13 @@ function CarsController ($rootScope, $scope, $state, $injector, cars) {
   }
 
   this.showCar = function showCar (car) {
-    $state.go('cars-show', {
-      id: car.id
-    });
+    if (car.isAvailable === false) {
+      console.error('Should show car unavailable modal here');
+    } else {
+      $state.go('cars-show', {
+        id: car.id
+      });
+    }
   };
 }
 

@@ -176,7 +176,7 @@ module.exports = [
         },
         resolve: {
           cars: ['$data', function ($data) {
-            return $data.resources.Car.query();
+            return $data.fetch('Car');
           }]
         }
       })

@@ -29,25 +29,24 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
       ctrl.setMarkers(ctrl.markers);
       ctrl.drawRoute();
       ctrl.$$ready.resolve();
+      $scope.$watch('map.markers', ctrl.setMarkers.bind(ctrl), true);
+      $scope.$watch('map.routeStart', ctrl.drawRoute.bind(ctrl), true);
+      $scope.$watch('map.routeDestiny', ctrl.drawRoute.bind(ctrl), true);
+      $rootScope.$watch('currentLocation', ctrl.setCurrentLocation.bind(ctrl), true);
     }
   }
 
-  function MapController ($scope) {
+  function MapController () {
     this._group = null;
-    this.markers = [];
+    this.items = [];
     this.leaflet = MapsLoader.leaflet;
     this.$$ready = $q.defer();
     this.$ready = this.$$ready.promise;
     this.route = null;
 
     if (!this.center && $rootScope.currentLocation) {
-        this.center = [$rootScope.currentLocation.latitude, $rootScope.currentLocation.longitude];
+      this.center = [$rootScope.currentLocation.latitude, $rootScope.currentLocation.longitude];
     }
-
-    $scope.$watch('markers', this.setMarkers.bind(this), true);
-    $scope.$watch('location', this.setCurrentLocation.bind(this), true);
-    $scope.$watch('routeStart', this.drawRoute.bind(this), true);
-    $scope.$watch('routeDestiny', this.drawRoute.bind(this), true);
 
     // map instance is set from within the link function
     this.map = null;
@@ -86,14 +85,14 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
       return;
     }
 
-    var icon = getIconInstance(this.leaflet, this.markerIcon || 'car');
-
     _(markers).filter(function (marker) {
       var location = marker.location || marker;
       return location.latitude && location.longitude;
     }).map(function (mark) {
       var location = mark.location || mark;
-      var marker = this.addMarker([location.latitude, location.longitude], {icon: icon});
+      var marker = this.addMarker([location.latitude, location.longitude], {
+        icon: getIconInstance(this.leaflet, mark.icon || 'car')
+      });
       if (marker === null) {
         return null;
       }
@@ -122,7 +121,7 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
       .marker(location, options)
       .addTo(this.map);
 
-    this.markers.push(marker);
+    this.items.push(marker);
     this.fitBounds(null, 0.5);
 
     return marker;
@@ -135,7 +134,7 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
       padding = 0;
     }
 
-    this._group = new this.leaflet.featureGroup(this.markers);
+    this._group = new this.leaflet.featureGroup(this.items);
     bounds = bounds || this._group.getBounds();
     this.map.fitBounds(bounds.pad(padding));
   };
@@ -185,16 +184,14 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
   return {
     restrict: 'E',
     template: '<div class="map-instance"></div>',
-    controller: ['$scope', MapController],
+    controller: MapController,
     controllerAs: 'map',
     scope: true,
     bindToController: {
       zoom: '@',
       center: '=',
-      location: '=',
       markers: '=',
       onMarkerTap: '&',
-      markerIcon: '@',
       routeStart: '=',
       routeDestiny: '='
     },

@@ -275,9 +275,6 @@ module.exports = angular.module('app.services').factory('$data', [
       }
     });
 
-    // this causes a lot of "not able to find your location" errors
-    // via laptop at present.
-    // locationService.init();
     return service;
   }
 
