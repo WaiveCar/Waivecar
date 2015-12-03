@@ -249,7 +249,7 @@ module.exports = angular.module('app.services').factory('$data', [
     // });
 
     $socket.on('relay', function (resource, action) {
-      var model = action[resource];
+      var model = action.data;
 
       if (resource === 'users') {
         service.me = resource;
