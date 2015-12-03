@@ -125,7 +125,13 @@ module.exports = class API {
     return req;
   }
 
-};
+  static external(uri, qs, done) {
+    let req = request.get(uri);
+    req.query(qs);
+    req.end(_handleResult.bind(this, done));
+  }
+
+}
 
 /**
  * Executes the callback with the err and res of the api request.
@@ -133,7 +139,7 @@ module.exports = class API {
  * @param  {Object}   err
  * @param  {Object}   res
  */
-function _handleResult(callback, err, res) {
+function _handleResult(callback, err, res, isExternal) {
   if (!res) {
     return callback({
       status  : 500,
@@ -144,8 +150,10 @@ function _handleResult(callback, err, res) {
   }
   if (!res.ok) {
     if (res.status === 401 || res.status === 403) {
-      auth.logout();
-      window.location = '/';
+      if (!isExternal) {
+        auth.logout();
+        window.location = '/';
+      }
     }
     return callback({
       status  : res.status,
