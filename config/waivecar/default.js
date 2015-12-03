@@ -17,6 +17,12 @@ module.exports = {
         type  : 'minutes'
       }
     },
+    car : {
+      sync : {
+        value : 5,
+        type  : 'minutes'
+      }
+    },
     mock : {
       cars     : false,
       homebase : true,

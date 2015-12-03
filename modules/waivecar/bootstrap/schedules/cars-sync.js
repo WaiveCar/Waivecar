@@ -5,15 +5,13 @@ let scheduler = Bento.provider('queue').scheduler;
 let relay     = Bento.Relay;
 let log       = Bento.Log;
 let service   = require('../../lib/car-service');
+let config    = Bento.config.waivecar;
 
 module.exports = function *() {
   scheduler.add('cars-sync', {
     init   : true,
     repeat : true,
-    timer  : {
-      value : 5,
-      type  : 'seconds'
-    }
+    timer  : config.car.sync
   });
 };
 
