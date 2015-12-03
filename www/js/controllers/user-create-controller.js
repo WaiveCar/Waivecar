@@ -27,7 +27,7 @@ function UserCreateController ($injector) {
         return $auth.login(credentials);
       })
       .then(function () {
-        return $state.go('auth-account-verify', { step : 2 });
+        return $state.go('auth-account-verify', { step: 2 });
       })
       .catch(function (err) {
         return $message.error(err);

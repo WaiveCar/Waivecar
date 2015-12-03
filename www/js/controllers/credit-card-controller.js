@@ -34,8 +34,8 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
 
           return $data.resources.users.createCustomer({}, {
               userId: $scope.me.id,
-              customer : {
-                description : 'WaiveCar customer registered via app.'
+              customer: {
+                description: 'WaiveCar customer registered via app.'
               }
             }).$promise;
         })
