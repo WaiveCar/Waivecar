@@ -105,6 +105,7 @@ function AuthController ($injector) {
   };
 
   this.verify = function verify (form) {
+    var self = this;
     if (form.$pristine) {
       return $message.info('Please fill in verification code first.');
     }
@@ -117,10 +118,10 @@ function AuthController ($injector) {
         return $auth.reload();
       })
       .then(function(){
-        if(this.isWizard){
-          return $state.go('licenses-photo-new', {step: 3});
+        if(self.isWizard){
+          return $state.go('licenses-photo-new', { step: 3 });
         }
-        if(this.fromBooking){
+        if(self.fromBooking){
           return $state.go('cars-show', BookingService.getReturnParams());
         }
         $message.success('Your account is now verified!');

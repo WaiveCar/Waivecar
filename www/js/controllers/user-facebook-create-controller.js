@@ -21,7 +21,7 @@ function UserFacebookCreateController ($stateParams, $injector) {
 
     return this.user.$save()
       .then(function () {
-        return $state.go('cars');
+        return $state.go('auth-account-verify', { step : 2 });
       })
       .catch($message.error.bind($message));
   };
