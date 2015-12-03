@@ -7,6 +7,7 @@ import { Grid }       from 'bento-web';
 import components     from '../lib/components';
 import fields         from '../lib/fields';
 import resources      from '../lib/resources';
+import moment         from 'moment';
 
 class UITable extends React.Component {
 
@@ -108,18 +109,33 @@ class UITable extends React.Component {
   }
 
   /**
-   * @method getHeadings
+   * @method getMetadata
    */
-  getHeadings() {
-    let headings = this.props.fields.map((field) => {
-      return {
-        displayName : field.label,
-        columnName  : field.name
-      };
+  getMetadata() {
+    let list  = fields.get(this.props.resource);
+    let fieldList = this.props.fields;
+    let metadata = this.props.fields.map((value, index) => {
+      if (list.hasOwnProperty(value)) {
+        let field = list[value];
+        let meta = {
+          displayName : field.label,
+          columnName  : field.name
+        };
+        if (field.type === 'date') {
+          meta.cssClassName = 'table-col-lg';
+          meta.customComponent = React.createClass({
+            render : function() {
+              let date = moment(this.props.data).format('h:mm.ss YY-MM-DD');
+              return <span>{ date }</span>;
+            }
+          });
+        }
+        return meta;
+      }
     });
 
     let self = this;
-    headings.push({
+    metadata.push({
       name            : 'id',
       columnName      : 'actions',
       displayName     : 'Actions',
@@ -132,7 +148,7 @@ class UITable extends React.Component {
       })
     });
 
-    return headings;
+    return metadata;
   }
 
   /**
@@ -170,7 +186,7 @@ class UITable extends React.Component {
           showFilter       = { true }
           showSettings     = { true }
           columns          = { this.getColumns() }
-          columnMetadata   = { this.getHeadings() }
+          columnMetadata   = { this.getMetadata() }
         />
       </div>
     );
