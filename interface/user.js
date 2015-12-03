@@ -58,6 +58,11 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
     // to mark what modules are dependent on the value so you know if its safe
     // to remove it or not inside of your setup.
 
+    phone : {
+      type   : Sequelize.STRING(128),
+      unique : true
+    },
+
     // ### Avatar
     // The users profile image
     // Module: files
