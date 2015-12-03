@@ -22,7 +22,7 @@ module.exports = angular.module('app').factory('Card', [
       return angular.toJson(data);
     }
 
-    return Resource('/payments/cards/:id', {
+    return Resource('/shop/cards/:id', {
       id: '@id'
     }, {
       create: {
