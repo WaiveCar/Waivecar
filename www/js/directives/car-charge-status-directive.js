@@ -12,11 +12,11 @@ module.exports = angular.module('app.directives')
           if(!car){
             return;
           }
-          car.fuel = car.fuel || 0;
+          car.charge = car.charge || 0;
           car.range = car.range || 0;
 
-          $scope.chargeLevel = car.fuel + '%';
-          $scope.chargeState = car.charging ? 'Parked at charging station' : 'Not charging';
+          $scope.chargeLevel = car.charge + '%';
+          $scope.chargeState = car.isCharging ? 'Parked at charging station' : 'Not charging';
           $scope.chargeReach = car.range + ' miles ';
 
         }
