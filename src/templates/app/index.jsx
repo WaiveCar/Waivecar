@@ -33,6 +33,11 @@ templates.register('app', {
   getChildRoutes(state, done) {
     done(null, [
       {
+        path      : '/my-rides',
+        component : require('../../views/app/rides'),
+        onEnter   : policies.isAuthenticated
+      },
+      {
         path      : '/profile',
         component : require('../../views/app/profile'),
         onEnter   : policies.isAuthenticated
@@ -95,16 +100,16 @@ templates.register('app', {
     locations : [ 'sidebar-account' ]
   },
   {
-    title     : 'Book a Car',
-    icon      : 'directions_car',
-    path      : '/booking',
+    title     : 'My Rides',
+    icon      : 'navigation',
+    path      : '/my-rides',
     parent    : null,
     locations : [ 'sidebar-user' ]
   },
   {
-    title     : 'Past Rides',
-    icon      : 'navigation',
-    path      : '/past-rides',
+    title     : 'Book a Car',
+    icon      : 'directions_car',
+    path      : '/booking',
     parent    : null,
     locations : [ 'sidebar-user' ]
   },

@@ -1,0 +1,40 @@
+.rides {
+
+  .table-rides {
+    width : 100%;
+    thead {
+      th {
+        color       : #565656;
+        font-weight : 400;
+        padding     : 8px;
+      }
+    }
+    tbody {
+      border-top : 1px solid #eee;
+      td {
+        padding : 8px;
+      }
+      .ride-row, .ride-details {
+        font-weight : 300;
+      }
+      .ride-details {
+        background    : #f6f6f6;
+        border-top    : 1px solid #eee;
+        border-bottom : 1px solid #eee;
+        td {
+          padding : 20px;
+        }
+        .ride-map {
+
+        }
+        .ride-meta {
+
+        }
+        .ride-rating {
+
+        }
+      }
+    }
+  }
+
+}

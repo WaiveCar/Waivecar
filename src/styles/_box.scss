@@ -26,19 +26,30 @@
       font-weight : 300;
     }
   }
+
+  &.full {
+    max-width : 100%;
+  }
+
   .box-info {
     color      : #767676;
     font-size  : .82rem;
     margin-top : 30px;
   }
+
   .box-content {
     background    : #fff;
     border-bottom : 3px solid #f0f0f0;
     padding       : 25px 40px;
+    &.no-padding {
+      padding : 0;
+    }
   }
+
   .box-spacer {
     height : 30px;
   }
+
   .box-table {
     width : 100%;
 
@@ -64,6 +75,7 @@
       }
     }
   }
+
   .btn-group > .btn {
     margin: 0 10px;
     border-radius: 0;
