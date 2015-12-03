@@ -13,7 +13,7 @@ module.exports = {
   invalidCredentials() {
     throw error.parse({
       code    : `AUTH_INVALID_CREDENTIALS`,
-      message : `The email and/or password provided is invalid.`
+      message : `The credentials provided does not match any user in our database.`
     }, 400);
   }
 };

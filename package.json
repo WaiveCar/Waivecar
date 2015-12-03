@@ -40,7 +40,7 @@
     "pre-commit": "1.1.2"
   },
   "bento": {
-    "bentojs-api-auth": "0.2.18",
+    "bentojs-api-auth": "0.2.19",
     "bentojs-api-bcrypt": "1.0.3",
     "bentojs-api-email": "0.0.14",
     "bentojs-api-file": "0.3.17",
@@ -54,7 +54,7 @@
     "bentojs-api-subscription": "0.0.7",
     "bentojs-api-token": "1.0.1",
     "bentojs-api-ui": "0.1.2",
-    "bentojs-api-user": "0.3.18",
+    "bentojs-api-user": "0.3.19",
     "bentojs-api-verification": "0.0.7"
   }
 }
