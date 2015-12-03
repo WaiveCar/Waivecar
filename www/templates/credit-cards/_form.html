@@ -6,19 +6,27 @@
   </label>
 
   <label class="item item-input">
+    <span class="input-label required">Name on Card</span>
+    <input name="name" type="text" placeholder="MR JOHN SMITH" ng-model="card.card.name" required autofocus>
+  </label>
+
+  <label class="item item-input">
+    <span class="input-label required">Expiration Date</span>
+    <input name="expiry" type="month" ng-model="card.card.expiry" required>
+  </label>
+
+  <label class="item item-input">
     <span class="input-label required">CVC</span>
     <input name="cvc" type="text" ng-model="card.card.cvc" required payments-validate="cvc" payments-format="cvc" payments-type-model="type">
   </label>
 
-  <label class="item item-input">
-    <span class="input-label required">Expiry Date</span>
-    <input name="expiry" type="month" ng-model="card.card.expiry" required>
-  </label>
-
-
   <div ng-messages="form.number.$error" ng-if="form.$submitted && form.number.$invalid" role="alert">
     <div ng-message="required">Credit Card number is required</div>
     <div ng-message="card">Credit Card number is invalid</div>
+  </div>
+
+  <div ng-messages="form.name.$error" ng-if="form.$submitted && form.name.$invalid" role="alert">
+    <div ng-message="required">Card Holder Name is required</div>
   </div>
 
   <div ng-messages="form.expiry.$error" ng-if="form.$submitted && form.expiry.$invalid" role="alert">

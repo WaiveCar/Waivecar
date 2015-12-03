@@ -33,11 +33,11 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
           }
 
           return $data.resources.users.createCustomer({}, {
-              userId: $auth.me.id,
-              service: 'stripe',
-              customer: {}
+              userId: $scope.me.id,
+              customer : {
+                description : 'WaiveCar customer registered via app.'
+              }
             }).$promise;
-
         })
         .then(function() {
           return $auth.reload();
@@ -63,13 +63,13 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
     };
 
     $scope.init = function() {
-
       $scope.isWizard = $stateParams.step;
       $scope.fromBooking = $stateParams.fromBooking;
+      $scope.me = $auth.me;
 
       if (!$stateParams.id) {
         $scope.card = new $data.resources.Card({
-          userId: $auth.me.id,
+          userId: $scope.me.id,
           service: 'stripe',
           card: {}
         });
