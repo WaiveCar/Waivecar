@@ -8,12 +8,23 @@
 
     <p class="padding-bottom">
       We need to verify your age and driving.<br>
-      We won't share your information in any way.
+      Please enter your details and upload a photo of your license.
     </p>
 
+    <div class="list list-inset">
+      <label class="item item-input">
+        <span class="input-label required">License Number</span>
+        <input name="number" type="text" placeholder="Driver's License Number" ng-model="license.number" autofocus required>
+      </label>
+      <label class="item item-input">
+        <span class="input-label required">License State</span>
+        <input name="state" type="text" placeholder="State" ng-model="license.state" required>
+      </label>
+    </div>
+
     <div class="padding-top padding-bottom">
-      <button class="button button-balanced button-block" on-tap="takePhoto()">Take photo</button>
-      <button class="button button-positive button-block" on-tap="uploadPhoto()">Upload from mobile</button>
+      <button class="button button-balanced button-block" on-tap="takePhoto()">Take photo and Submit</button>
+      <button class="button button-positive button-block" on-tap="uploadPhoto()">Upload Existing Photo</button>
     </div>
 
     <p class="padding-top">
@@ -24,7 +35,7 @@
       </span>
     </p>
 
-    <button type="button" class="button button-small button-clear button-balanced" ui-sref="licenses-new({step: 3})" ng-if="isWizard">Skip this step</button>
+    <button type="button" class="button button-small button-clear button-balanced" ui-sref="credit-cards-new({ step: 4 })" ng-if="isWizard">Skip this step</button>
 
   </ion-content>
 
