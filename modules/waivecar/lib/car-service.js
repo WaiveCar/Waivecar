@@ -55,7 +55,7 @@ module.exports = class CarService extends Service {
     }
 
     // Is car stationary?
-    if (data.distanceSinceLastRead === 0) {
+    if (data.currentSpeed === 0) { // data.distanceSinceLastRead === 0) {
       log.debug('CarService : update : car appears to be stationary');
 
       // If the distance last read was also 0, the car is STILL stopped so dont treat this update as an update.
