@@ -42,11 +42,22 @@ module.exports = class LicenseVerificationService extends Service {
       }
     }
 
-    yield license.update({
-      status   : status,
-      checkId  : check.id,
-      reportId : check.reports[0].id
-    });
+    let report = yield Verification.getReport(license.linkedUserId, check.id, check.reports[0].id);
+    if (report.status === 'complete') {
+      log.debug(`${ report.id } : ${ report.status }`);
+      yield license.update({
+        status     : report.status,
+        outcome    : report.result,
+        report     : JSON.stringify(report),
+        verifiedAt : new Date()
+      });
+    } else {
+      yield license.update({
+        status   : status,
+        checkId  : check.id,
+        reportId : check.reports[0].id
+      });
+    }
 
     // ### Relay
     relay.admin(resource, {
