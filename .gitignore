@@ -4,6 +4,7 @@
 node_modules/
 platforms/
 plugins/
+releases/
 www/lib/
 www/css/
 www/services/templates.min.js
