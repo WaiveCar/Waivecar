@@ -198,19 +198,19 @@ module.exports = class CarService extends Service {
    * @return {Object} updated Car
    */
   static *unlockCar(id, _user) {
-    return yield this.executeCommand(id, 'central_lock', 'unlock', user);
+    return yield this.executeCommand(id, 'central_lock', 'unlock', _user);
   }
 
   static *lockCar(id, _user) {
-    return yield this.executeCommand(id, 'central_lock', 'lock', user);
+    return yield this.executeCommand(id, 'central_lock', 'lock', _user);
   }
 
   static *unlockImmobilzer(id, _user) {
-    return yield this.executeCommand(id, 'immobilizer', 'unlock', user);
+    return yield this.executeCommand(id, 'immobilizer', 'unlock', _user);
   }
 
   static *lockImmobilzer(id, _user) {
-    return yield this.executeCommand(id, 'immobilizer', 'lock', user);
+    return yield this.executeCommand(id, 'immobilizer', 'lock', _user);
   }
 
   /**

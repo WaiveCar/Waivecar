@@ -12,9 +12,15 @@ module.exports = {
 
   waivecar : {
     booking : {
-      timer : {
-        value : 15,
-        type  : 'minutes'
+      timers : {
+        autoCancel : {
+          value : 15,
+          type  : 'minutes'
+        },
+        freeRideReminder : {
+          value : 110,
+          type  : 'minutes'
+        }
       }
     },
     car : {

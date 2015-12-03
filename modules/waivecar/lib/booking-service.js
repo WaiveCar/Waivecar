@@ -1,6 +1,7 @@
 'use strict';
 
 let Service        = require('./classes/service');
+let CarService     = require('./car-service');
 let queue          = Bento.provider('queue');
 let queryParser    = Bento.provider('sequelize/helpers').query;
 let File           = Bento.model('File');
@@ -70,7 +71,7 @@ module.exports = class BookingService extends Service {
       throw err;
     }
 
-    yield booking.setCancelTimer(config.booking.timer);
+    yield booking.setCancelTimer(config.booking.timers.autoCancel);
 
     // ### Relay Booking
 
@@ -241,10 +242,6 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
-    // ### Unlock Car
-
-    // ...
-
     // ### Booking Details
 
     yield this.logDetails('start', booking, car);
@@ -253,6 +250,43 @@ module.exports = class BookingService extends Service {
 
     yield booking.start();
     yield booking.delCancelTimer();
+
+    // ### Unlock Car
+
+    return yield CarService.unlockCar(car.id, _user);
+  }
+
+  /**
+   * Unlocks the engine and starts ride timers.
+   * @param  {Number} id    The booking ID.
+   * @param  {Object} _user
+   * @return {Object}
+   */
+  static *ready(id, _user) {
+    let booking   = yield this.getBooking(id);
+    let car       = yield this.getCar(booking.carId);
+
+    // ### Check Status
+    // Only booking that is in started status and which car is not immobilized
+    // will go through the ride reminder and immobilizier unlock process.
+
+    if (booking.status !== 'started') {
+      throw error.parse({
+        code    : `BOOKING_REQUEST_INVALID`,
+        message : `You cannot ready a booking which is already ${ booking.getStatus() }`
+      }, 400);
+    }
+
+    if (booking.status === 'started' && !car.isImmobilized) {
+      throw error.parse({
+        code    : `BOOKING_REQUEST_INVALID`,
+        message : `Your ride is ready, start the engine.`
+      }, 400);
+    }
+
+    yield booking.setFreeRideReminder(config.booking.timers.freeRideReminder);
+
+    return yield CarService.unlockImmobilzer(car.id, _user);
   }
 
   /**
@@ -261,13 +295,16 @@ module.exports = class BookingService extends Service {
    * @param  {Object} _user
    * @return {Object}
    */
-  static *end(id, paymentId, _user) {
+  static *end(id, _user) {
     let booking = yield this.getBooking(id);
     let car     = yield this.getCar(booking.carId);
     let user    = yield this.getUser(booking.userId);
+    let errors  = [];
+
+    Object.assign(car, yield CarService.getDevice(car.id, _user));
 
     // ### Status Check
-    // Only bookings which are in a progress state can be ended through this endpoint.
+    // Go through end booking checklist.
 
     if (booking.status !== 'started') {
       throw error.parse({
@@ -276,18 +313,41 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
+    if (car.ignition === 'on') { errors.push('ignition'); }
+    if (car.keyfob === 'out')  { errors.push('keyfob'); }
+
+    if (errors.length) {
+      throw error.parse({
+        code    : `BOOKING_MISSING_END_STEPS`,
+        message : `Missing required steps to end a ride.`,
+        data    : errors
+      }, 400);
+    }
+
+    // ### Immobilize
+    // Immobilize the engine.
+
+    let status = yield CarService.lockImmobilzer(car.id, _user);
+    if (!status.isImmobilized) {
+      throw error.parse({
+        code    : `BOOKING_END_IMMOBILIZER`,
+        message : `Immobilizing the engine failed.`
+      }, 400);
+    }
+
+    // ### Reset Car
+    // Remove the driver from the vehicle.
+
+    yield car.removeDriver();
+
     // ### Booking Details
 
     yield this.logDetails('end', booking, car);
 
     // ### End Booking
 
+    yield booking.delFreeRideReminder();
     yield booking.end();
-
-    // ### Reset Car
-    // Remove the user from the car and make it available
-
-    yield car.removeDriver();
   }
 
   /*
@@ -347,7 +407,7 @@ module.exports = class BookingService extends Service {
   static *logDetails(type, booking, car) {
     let details = new BookingDetails({
       bookingId : booking.id,
-      type      : 'end',
+      type      : type,
       time      : new Date(),
       latitude  : car.latitude,
       longitude : car.longitude,

@@ -104,7 +104,7 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
     },
 
     /**
-     * Sets the booking state to in progress.
+     * Sets the booking state to started.
      * @return {Void}
      */
     *start() {
@@ -114,7 +114,7 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
     },
 
     /**
-     * Sets the booking state to in progress.
+     * Sets the booking state to ended.
      * @return {Void}
      */
     *end() {
@@ -124,7 +124,7 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
     },
 
     /**
-     * Sets the booking state to in progress.
+     * Sets the booking state to completed.
      * @return {Void}
      */
     *complete() {
@@ -164,6 +164,29 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
      */
     *delCancelTimer() {
       queue.scheduler.cancel('booking-auto-cancel', `booking-${ this.id }`);
+    },
+
+    /**
+     * Sets the ride free time end reminder timer.
+     * @param  {Number} time
+     * @return {Void}
+     */
+    *setFreeRideReminder(time) {
+      queue.scheduler.add('booking-free-timer', {
+        uid   : `booking-${ this.id }`,
+        timer : time,
+        data  : {
+          bookingId : this.id
+        }
+      });
+    },
+
+    /**
+     * Deletes the free ride timer schedule.
+     * @return {Void}
+     */
+    *delFreeRideReminder() {
+      queue.scheduler.cancel('booking-free-timer', `booking-${ this.id }`);
     }
 
   };

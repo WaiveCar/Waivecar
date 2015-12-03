@@ -8,16 +8,10 @@ Route.post('/bookings', {
   params : [ 'userId', 'carId' ]
 });
 
-Route.get('/bookings',           [ 'isAuthenticated', 'BookingsController@index' ]);
-Route.get('/bookings/:id',       [ 'isAuthenticated', 'BookingsController@show' ]);
-Route.put('/bookings/start/:id', [ 'isAuthenticated', 'BookingsController@start' ]);
-Route.put('/bookings/end/:id',   [ 'isAuthenticated', 'BookingsController@end' ]);
-Route.del('/bookings/:id',       [ 'isAuthenticated', 'BookingsController@cancel' ]);
-
-// ### DEPRECATED UPDATE!
-
-Route.put('/bookings/:id/start', [ 'isAuthenticated', 'BookingsController@start' ]);
-Route.put('/bookings/:id/end',   [ 'isAuthenticated', 'BookingsController@end' ]);
+Route.get('/bookings',             [ 'isAuthenticated', 'BookingsController@index' ]);
+Route.get('/bookings/:id',         [ 'isAuthenticated', 'BookingsController@show' ]);
+Route.put('/bookings/:id/:action', [ 'isAuthenticated', 'BookingsController@update' ]);
+Route.del('/bookings/:id',         [ 'isAuthenticated', 'BookingsController@cancel' ]);
 
 // ### Cars
 

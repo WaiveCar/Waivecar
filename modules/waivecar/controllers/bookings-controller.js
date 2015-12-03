@@ -1,6 +1,7 @@
 'use strict';
 
 let booking = require('../lib/booking-service');
+let error   = Bento.Error;
 
 Bento.Register.Controller('BookingsController', function(controller) {
 
@@ -32,19 +33,21 @@ Bento.Register.Controller('BookingsController', function(controller) {
   /**
    * Initiates the booking and starts the ride.
    * @param  {Number} id
+   * @param  {String} action
    * @return {Object}
    */
-  controller.start = function *(id) {
-    return yield booking.start(id, this.auth.user);
-  };
-
-  /**
-   * Ends the current ride.
-   * @param  {Number} id
-   * @return {Object}
-   */
-  controller.end = function *(id) {
-    return yield booking.end(id, this.payload.paymentId, this.auth.user);
+  controller.update = function *(id, action) {
+    switch (action) {
+      case 'start' : return yield booking.start(id, this.auth.user);
+      case 'ready' : return yield booking.ready(id, this.auth.user);
+      case 'end'   : return yield booking.end(id, this.auth.user);
+      default : {
+        throw error.parse({
+          code    : `BOOKING_INVALID_ACTION`,
+          message : `'${ action }' is not a valid booking action.`
+        }, 400);
+      }
+    }
   };
 
   /**

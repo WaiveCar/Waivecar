@@ -209,8 +209,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
      */
     removeDriver : function *() {
       yield this.update({
-        userId      : null,
-        isAvailable : true
+        userId : null
       });
     }
 
