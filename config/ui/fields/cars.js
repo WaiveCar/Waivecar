@@ -28,7 +28,7 @@ module.exports = {
     component : 'input',
     type      : 'text',
     required  : true,
-    label     : 'year',
+    label     : 'Year',
     helpText  : null
   },
   manufacturer : {
@@ -36,7 +36,23 @@ module.exports = {
     component : 'input',
     type      : 'text',
     required  : true,
-    label     : 'manufacturer',
+    label     : 'Manufacturer',
+    helpText  : null
+  },
+  license : {
+    name      : 'license',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'License',
+    helpText  : null
+  },
+  vin : {
+    name      : 'vin',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'VIN',
     helpText  : null
   },
   latitude : {
@@ -210,7 +226,7 @@ module.exports = {
   createdAt : {
     name      : 'createdAt',
     component : 'input',
-    type      : 'text',
+    type      : 'date',
     required  : true,
     label     : 'Created At',
     helpText  : null
@@ -218,7 +234,7 @@ module.exports = {
   updatedAt : {
     name      : 'updatedAt',
     component : 'input',
-    type      : 'text',
+    type      : 'date',
     required  : true,
     label     : 'Updated At',
     helpText  : null

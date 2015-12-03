@@ -54,7 +54,7 @@ module.exports = {
   createdAt : {
     name      : 'createdAt',
     component : 'input',
-    type      : 'text',
+    type      : 'date',
     required  : true,
     label     : 'Created At',
     helpText  : null
@@ -62,7 +62,7 @@ module.exports = {
   updatedAt : {
     name      : 'updatedAt',
     component : 'input',
-    type      : 'text',
+    type      : 'date',
     required  : true,
     label     : 'Updated At',
     helpText  : null

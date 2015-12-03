@@ -59,6 +59,10 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       type : Sequelize.STRING(88)
     },
 
+    vin : {
+      type : Sequelize.STRING(88)
+    },
+
     fileId : {
       type : Sequelize.STRING
     },
