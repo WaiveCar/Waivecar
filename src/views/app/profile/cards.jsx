@@ -84,28 +84,28 @@ module.exports = class ProfileCardsView extends React.Component {
   render() {
     return (
       <div className="profile">
-        <div className="profile-box">
+        <div className="box">
           <h3>
             Your Cards
             <small>
               List of payment cards registered with your waivecar account.
             </small>
           </h3>
-          <div className="profile-box-content">
+          <div className="box-content">
             {
               this.renderCards()
             }
           </div>
         </div>
 
-        <div className="profile-box">
+        <div className="box">
           <h3>
             Add Card
             <small>
               Add a new payment card to your waivecar account.
             </small>
           </h3>
-          <div className="profile-box-content">
+          <div className="box-content">
             <Form
               ref       = "personal"
               className = "bento-form-static"

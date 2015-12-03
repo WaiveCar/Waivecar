@@ -34,11 +34,11 @@ module.exports = class ProfilePasswordView extends React.Component {
   render() {
     return (
       <div className="profile">
-        <div className="profile-box">
+        <div className="box">
           <h3>
             Change Password <small>Update your account password.</small>
           </h3>
-          <div className="profile-box-content">
+          <div className="box-content">
             <Form
               ref       = "personal"
               className = "bento-form-static"

@@ -110,14 +110,14 @@ module.exports = class ProfileView extends React.Component {
    */
   renderPersonalDetails() {
     return (
-      <div className="profile-box">
+      <div className="box">
         <h3>
           Personal Details
           <small>
             Review, and edit your personal details.
           </small>
         </h3>
-        <div className="profile-box-content">
+        <div className="box-content">
           <Form
             ref       = "personal"
             className = "bento-form-static"
@@ -144,14 +144,14 @@ module.exports = class ProfileView extends React.Component {
    */
   renderAccountStatus() {
     return (
-      <div className="profile-box">
+      <div className="box">
         <h3>
           Account Status
           <small>
             Your current account status.
           </small>
         </h3>
-        <div className="profile-box-content">
+        <div className="box-content">
           <table className="table-striped profile-table">
             <thead>
               <tr>
@@ -174,7 +174,7 @@ module.exports = class ProfileView extends React.Component {
             }
             </tbody>
           </table>
-          <p className="profile-box-info text-center">
+          <p className="box-info text-center">
             To verify email or phone, enter the token received by email/sms.
           </p>
           <div className="verification text-center">

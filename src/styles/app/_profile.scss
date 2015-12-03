@@ -53,51 +53,6 @@
     }
   }
 
-  .profile-box {
-    margin    : 50px auto;
-    max-width : 680px;
-
-    h3 {
-      font-size   : 1.45rem;
-      font-weight : 300;
-      margin-left : 10px;
-      small {
-        color       : #a6a6a6;
-        font-size   : 65%;
-        font-weight : 300;
-        margin-left : 8px;
-      }
-    }
-
-    h4 {
-      border-bottom  : 1px solid #eee;
-      font-size      : 1.2rem;
-      font-weight    : 300;
-      padding-bottom : 10px;
-      small {
-        color       : #a6a6a6;
-        font-size   : 75%;
-        font-weight : 300;
-      }
-    }
-  }
-
-  .profile-box-info {
-    color      : #767676;
-    font-size  : .82rem;
-    margin-top : 30px;
-  }
-
-  .profile-box-content {
-    background    : #fff;
-    border-bottom : 3px solid #f0f0f0;
-    padding       : 25px 40px;
-  }
-
-  .profile-box-spacer {
-    height : 30px;
-  }
-
   .profile-table {
     width : 100%;
 

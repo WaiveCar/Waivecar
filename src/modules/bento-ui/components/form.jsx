@@ -217,22 +217,37 @@ class UIForm extends React.Component {
     }
   }
 
+  renderHeader() {
+    if (!this.props.title) return;
+
+    return (
+      <h3>
+        { this.props.title }
+        { this.props.description && <small>{ this.props.description}</small> }
+      </h3>
+    );
+  }
+
   /**
    * @method render
    */
   render() {
     if (!this.props.fields) return <div className="component-requires-options" />;
     return (
-      <Form
-        className = "bento-form"
-        default   = { this.state.default }
-        fields    = { this.fields() }
-        buttons   = { this.buttons() }
-        submit    = { this.submit }
-      />
+      <div className="box">
+        { this.renderHeader() }
+        <div className="box-content">
+          <Form
+            className = "bento-form"
+            default   = { this.state.default }
+            fields    = { this.fields() }
+            buttons   = { this.buttons() }
+            submit    = { this.submit }
+          />
+        </div>
+      </div>
     );
   }
-
 }
 
 // ### Register Component
@@ -245,6 +260,18 @@ module.exports = {
       icon    : 'apps',
       class   : UIForm,
       options : [
+        {
+          label     : 'Title',
+          component : 'input',
+          name      : 'title',
+          helpText  : 'a Title for this Form',
+        },
+        {
+          label     : 'Description',
+          component : 'input',
+          name      : 'description',
+          helpText  : 'Form Description',
+        },
         {
           label     : 'Resource',
           component : 'select',

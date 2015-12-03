@@ -34,11 +34,11 @@ module.exports = class ProfileLicenseView extends React.Component {
     };
 
     return (
-      <div className="profile-box">
+      <div className="box">
         <h3>
           License Registration <small>Register your license to gain access to the waivecar app.</small>
         </h3>
-        <div className="profile-box-content">
+        <div className="box-content">
           <Form
             ref       = "license"
             className = "bento-form-static"
@@ -60,11 +60,11 @@ module.exports = class ProfileLicenseView extends React.Component {
 
   renderLicense(license) {
     return (
-      <div className="profile-box">
+      <div className="box">
         <h3>
           License
         </h3>
-        <div className="profile-box-content">
+        <div className="box-content">
           <Form
             ref       = "license"
             className = "bento-form-static"
@@ -92,7 +92,7 @@ module.exports = class ProfileLicenseView extends React.Component {
 
     return (
       <div className="license-verification text-center">
-        <p className="profile-box-info text-center">
+        <p className="box-info text-center">
           Your license must be verified before you can book a WaiveCar
         </p>
         <button type="button" onClick={ this.license.validateLicense }>Request Validation</button>
