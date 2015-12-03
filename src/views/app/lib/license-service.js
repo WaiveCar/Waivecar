@@ -24,7 +24,7 @@ module.exports = class License extends Service {
    * @param  {Object}   data
    * @param  {Function} reset
    */
-  submitLicense(data, reset) {
+  submitLicense(data) {
     this.addLicense(auth.user(), data, function (err, license) {
       if (err) {
         return this.error(err.data ? err.data : err.message);
@@ -34,24 +34,29 @@ module.exports = class License extends Service {
         ...this.getState('licenses'),
         license
       ]);
-      this.success(`Your license was added successfully. We will validate it at time of booking.`);
-      reset();
+      this.success(`Your license was stored successfully. Request for it to be verified prior to booking a WaiveCar.`);
     }.bind(this));
   }
 
   validateLicense() {
-    api.post(`/licenses/${ this.getState('licenses')[0].id }/verify`, { userId : auth.user().id }, function(err, resp) {
+    api.post(`/licenses/${ this.getState('licenses')[0].id }/verify`, { userId : auth.user().id }, function(err, license) {
       if (err) {
         if (err.data) {
           return this.error(err.data);
         }
         return this.error(err.message);
       }
+
       this.setState('licenses', [
         ...this.getState('licenses'),
         license
       ]);
-      this.success(`Your request for verification has been submitted successfully. Please check back later.`);
+
+      if (license.status === 'complete') {
+        this.success(`Your request for verification has been completed.`);
+      } else {
+        this.success(`Your request for verification has been submitted successfully. Please check back later.`);
+      }
     }.bind(this));
   }
 
