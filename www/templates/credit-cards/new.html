@@ -1,30 +1,26 @@
 <ion-view>
-
   <ion-nav-title>
     <page-title class="dark-bg">Payment method</page-title>
   </ion-nav-title>
-
   <ion-content padding="true" class="ion-content--center dark-bg" ng-controller="CreditCardController">
-
-    <p>
-      Don't worry, the majority of rides are free!
-      <br> However, fees could apply in some cases.
+    <p class="padding-bottom">Don't worry, the majority of rides are free!
+      <br /> However, fees could apply in some cases.
+      <br />
+      <a href="https://waivecar.com/fee-schedule">Check our Fee Guidelines</a>
     </p>
-
-    <p class="padding-bottom"><a href>Check out fees Guidelines</a></p>
-
     <form ng-submit="save(form)" name="form" id="form" novalidate>
       <div ng-include="'./templates/credit-cards/_form.html'"></div>
     </form>
-
-    <p class="padding-top">By adding a credit card you are agreeing with our <a href>terms of services</a> and <a href>Fees Guidelines</a></p>
-
-    <ion-footer-bar class="no-padding">
-      <div class="button-bar">
-        <button type="button" class="button button-gray" go-back>Cancel</button>
-        <button type="submit" form="form" class="button button-balanced" ng-bind="isWizard ? 'Save &amp; finish' : 'Save'"></button>
-      </div>
-    </ion-footer-bar>
+    <div class="padding-top padding-bottom">
+      <button type="submit" form="form" class="button button-balanced button-block" ng-bind="isWizard ? 'Add Card and Finish' : 'Save'"></button>
+    </div>
+    <p class="padding-top">By adding a credit card you are agreeing with our <a href="https://waivecar.com/terms">terms of services</a> and <a href="https://waivecar.com/fee-schedule">Fee Guidelines</a>. Your credit card information is safe with us.</p>
+    <p class="padding-top">
+      Your credit card is required to book a WaiveCar.
+      <span ng-if="isWizard">
+        <br>
+        However you can <a ui-sref="cars">skip this step</a> and do it later on.
+      </span>
+    </p>
   </ion-content>
-
 </ion-view>
