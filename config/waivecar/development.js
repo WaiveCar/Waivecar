@@ -2,7 +2,8 @@ module.exports = {
 
   waivecar : {
     car : {
-      sync : {
+      staleLimit : 15,
+      sync       : {
         value : 5,
         type  : 'seconds'
       }
