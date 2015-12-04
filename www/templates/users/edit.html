@@ -16,8 +16,8 @@
 
     <div class="padding-top padding-bottom">
       <button class="button button-balanced button-block" ui-sref="credit-cards">Update Payment Method</button>
-      <button class="button button-positive button-block" ui-sref="licenses-edit({id: latestLicense.id})" ng-if="latestLicense">Update Driver's License</button>
-      <button class="button button-positive button-block" ui-sref="licenses-photo-new" ng-if="!latestLicense">Add Driver's License</button>
+      <button class="button button-positive button-block" ui-sref="licenses-edit({id: license.id})" ng-if="license.staus === 'provided'">Validate Driver's License</button>
+      <button class="button button-positive button-block" ui-sref="licenses-new" ng-if="!license">Add Driver's License</button>
     </div>
 
   </ion-content>

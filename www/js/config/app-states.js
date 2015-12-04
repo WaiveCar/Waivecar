@@ -115,27 +115,18 @@ module.exports = [
           auth: true
         }
       })
-      .state('licenses-photo-new', {
-        // 11-Drivers-id
-        url: '/licenses/photo/new?step&licenseId&fromBooking',
-        templateUrl: '/templates/licenses/photo-new.html',
-        controller: 'LicensePhotoController as licenseCtrl',
-        data: {
-          auth: true
-        }
-      })
-      .state('licenses-photo-edit', {
-        url: '/licenses/:licenseId/photo/:fileId/edit',
-        templateUrl: '/templates/licenses/photo-edit.html',
-        controller: 'LicensePhotoController as licenseCtrl',
-        data: {
-          auth: true
-        }
-      })
       .state('licenses-new', {
-        // 11.1-Drivers-id
-        url: '/licenses/new?step&fileId&fromBooking',
+        url: '/licenses/new?step&fromBooking',
         templateUrl: '/templates/licenses/new.html',
+        controller: 'LicenseController as licenseCtrl',
+        data: {
+          auth: true
+        }
+      })
+      .state('licenses-edit', {
+        url: '/licenses/:licenseId/edit?step&fromBooking',
+        templateUrl: '/templates/licenses/edit.html',
+        controller: 'LicenseController as licenseCtrl',
         data: {
           auth: true
         }
@@ -282,24 +273,8 @@ module.exports = [
       })
       .state('users-edit', {
         // 29-Account-editing / 29-Account-saved@2x.png / 29-Account@2x.png / 29.1-Account@2x.png / 29.2-Account@2x.png
-        url: '/users/:id/edit',
+        url: '/users/me/edit',
         templateUrl: '/templates/users/edit.html',
-        data: {
-          auth: true
-        }
-      })
-      .state('licenses-show', {
-        url: '/licenses/:id',
-        // TODO: Not implemented
-        templateUrl: '/templates/licenses/show.html',
-        data: {
-          auth: true
-        }
-      })
-      .state('licenses-edit', {
-        // 11-Drivers-id@2x.png / 11.05-Drivers-id-uploading-photo@2x.png / 11.06-Drivers-id-photo-uploaded@2x.png //     / 30-Drivers-license@2x.png
-        url: '/licenses/:id/edit',
-        templateUrl: '/templates/licenses/edit.html',
         data: {
           auth: true
         }

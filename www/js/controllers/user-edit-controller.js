@@ -31,20 +31,13 @@ module.exports = angular.module('app.controllers').controller('UserEditControlle
 
     $scope.init = function() {
 
-      return $data.resources.users.get({
-          id: $state.params.id
-        }).$promise
-        .then(function(user) {
-          $scope.user = user;
+      return $data.resources.users.me().$promise
+        .then(function(me) {
+          $scope.user = me;
           return $data.resources.licenses.query().$promise;
-
-        })
-        .then(function(licenses) {
-          $scope.latestLicense = _.chain(licenses).sortBy('createdAt').last().value();
-
-        })
-        .catch($message.error);
-
+        }).then(function(licenses) {
+          $scope.license = _.chain(licenses).sortBy('createdAt').last().value();
+        }).catch($message.error);
     };
 
     $scope.init();

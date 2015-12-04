@@ -28,7 +28,7 @@ function VerifyController ($injector, $stateParams) {
       })
       .then(function(){
         if(this.isWizard){
-          return $state.go('licenses-photo-new', { step: 3 });
+          return $state.go('licenses-new', { step: 3 });
         }
         if(this.fromBooking){
           return $state.go('cars-show', BookingService.getReturnParams());

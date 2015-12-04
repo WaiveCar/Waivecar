@@ -1,34 +1,37 @@
-<ion-view class="licenses-new" ng-controller="LicenseController">
-
+<ion-view>
   <ion-nav-title>
     <page-title class="dark-bg">Driver's License</page-title>
   </ion-nav-title>
-
-  <form ng-submit="save(form)" name="form" id="form" novalidate>
-    <ion-content padding="true" class="ion-content--center dark-bg">
-
-      <p>
-        Your license looks good!.
-        <br> Please enter your details
-      </p>
-
-      <div ng-include="'/templates/licenses/_form.html'"></div>
-
-      <!-- <p class="padding-top">Have you received any tickets in the past year?</p>
-
-    <div class="double-buttons">
-      <button class="button button-light-gray button-small">Yes</button>
-      <button class="button button-balanced button-small">No</button>
-    </div> -->
-
-    </ion-content>
-
-    <ion-footer-bar class="no-padding">
-      <div class="button-bar">
-        <button type="submit" form="form" class="button button-balanced">Continue</button>
-      </div>
-
-    </ion-footer-bar>
-  </form>
-
+  <ion-content padding="true" class="ion-content--center dark-bg">
+    <p class="padding-bottom">
+      We need to verify your age and driving.<br>
+      Please enter your details and upload a photo of your license.
+    </p>
+    <div class="list list-inset">
+      <label class="item item-input">
+        <span class="input-label required">License Number</span>
+        <input name="number" type="tel" placeholder="Driver's License Number" ng-model="licenseCtrl.license.number" autofocus required>
+      </label>
+      <label class="item item-input item-select">
+        <div class="input-label required">License State</div>
+        <select ng-model="licenseCtrl.license.state" name="state" required ng-options="state.abbreviation as state.name for state in licenseCtrl.states track by state.abbreviation">
+          <option value=""></option>
+        </select>
+      </label>
+    </div>
+    <div class="padding-top padding-bottom">
+      <button
+        class="button button-balanced button-block"
+        on-tap="licenseCtrl.showPicker()"
+        ng-disabled="!licenseCtrl.license.number || !licenseCtrl.license.state"
+      >Upload and Submit photo</button>
+    </div>
+    <p class="padding-top">
+      Your driver's license is required to book WaiveCar.
+      <span ng-if="::licenseCtrl.isWizard">
+        <br>
+        However you can <a ui-sref="credit-cards-new({ step: 4 })">skip this step</a> and do it later on your account settings
+      </span>
+    </p>
+  </ion-content>
 </ion-view>
