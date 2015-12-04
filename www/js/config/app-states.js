@@ -131,6 +131,14 @@ module.exports = [
           auth: true
         }
       })
+      .state('licenses-request-validation', {
+        url: '/licenses/:licenseId/validate',
+        templateUrl: '/templates/licenses/validate.html',
+        controller: 'LicenseRequestValidationController as ctrl',
+        data: {
+          auth: true
+        }
+      })
       .state('credit-cards-new', {
         // 12-Payment-method@2x.png
         url: '/credit-cards/new?step&fromBooking',

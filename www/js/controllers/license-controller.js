@@ -20,9 +20,7 @@ function LicenseController ($scope, $stateParams, $injector) {
   this.states = USStates;
 
   if ($stateParams.licenseId) {
-    $data.resources.licenses.get({
-      id: $stateParams.licenseId
-    }).$promise
+    $data.resources.licenses.get({ id: $stateParams.licenseId }).$promise
       .then(function (license) {
         this.license = license;
       }.bind(this));
