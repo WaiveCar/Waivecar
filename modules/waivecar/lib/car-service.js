@@ -54,6 +54,13 @@ module.exports = class CarService extends Service {
       existingCar = yield Car.findById(id);
     }
 
+    if (!existingCar.license) {
+      let meta = config.car.meta[existingCar.id];
+      if (meta) {
+        data.license = meta.license;
+      }
+    }
+
     // Is car stationary?
     if (data.currentSpeed === 0) { // data.distanceSinceLastRead === 0) {
       log.debug('CarService : update : car appears to be stationary');
