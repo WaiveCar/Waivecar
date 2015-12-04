@@ -1,139 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-   xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="39.15736"
-   height="50"
-   viewBox="0 0 39.15736 50"
-   version="1.1"
-   id="svg2"
-   inkscape:version="0.48.4 r9939"
-   sodipodi:docname="active-waivecar.svg">
-  <metadata
-     id="metadata27">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title>normal waivecar</dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <sodipodi:namedview
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1"
-     objecttolerance="10"
-     gridtolerance="10"
-     guidetolerance="10"
-     inkscape:pageopacity="0"
-     inkscape:pageshadow="2"
-     inkscape:window-width="1301"
-     inkscape:window-height="744"
-     id="namedview25"
-     showgrid="false"
-     fit-margin-top="0"
-     fit-margin-left="0"
-     fit-margin-right="0"
-     fit-margin-bottom="0"
-     inkscape:zoom="2.6818182"
-     inkscape:cx="-107.65025"
-     inkscape:cy="24.949298"
-     inkscape:window-x="65"
-     inkscape:window-y="24"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="svg2" />
-  <!-- Generator: Sketch 3.3 (11970) - http://www.bohemiancoding.com/sketch -->
-  <title
-     id="title4">normal waivecar</title>
-  <desc
-     id="desc6">Created with Sketch.</desc>
-  <defs
-     id="defs8" />
-  <g
-     id="Page-1"
-     sketch:type="MSPage"
-     transform="matrix(0.57477314,0,0,0.57477314,-0.08057797,-0.26087523)"
-     style="fill:none;stroke:none">
-    <g
-       id="Find-waivecar@2x-"
-       sketch:type="MSArtboardGroup"
-       transform="translate(-210,-341)">
-      <g
-         id="MAP"
-         sketch:type="MSLayerGroup"
-         transform="translate(0,41)">
-        <g
-           id="waivecars"
-           transform="translate(103.53529,218.47241)"
-           sketch:type="MSShapeGroup">
-          <g
-             id="waivecar-mark-copy"
-             transform="translate(105.99334,81.369828)">
-            <g
-               id="normal-waivecar">
-              <g
-                 id="waivecar-mark-copy-2">
-                <g
-                   id="Group">
-                  <ellipse
-                     id="Oval-1-Copy-2"
-                     cx="34.674877"
-                     cy="34.679268"
-                     rx="34.063316"
-                     ry="34.067631"
-                     sodipodi:cx="34.674877"
-                     sodipodi:cy="34.679268"
-                     sodipodi:rx="34.063316"
-                     sodipodi:ry="34.067631"
-                     style="fill:#20e25c"
-                     d="m 68.738194,34.679268 c 0,18.815033 -15.250667,34.067631 -34.063317,34.067631 -18.81265,0 -34.06331618,-15.252598 -34.06331618,-34.067631 0,-18.815033 15.25066618,-34.06763088 34.06331618,-34.06763088 18.81265,0 34.063317,15.25259788 34.063317,34.06763088 z" />
-                  <g
-                     id="Oval-1-+-Shape-+-Shape"
-                     transform="translate(7.910843,7.911845)">
-                    <ellipse
-                       id="Oval-1"
-                       cx="26.402357"
-                       cy="26.405701"
-                       rx="26.402357"
-                       ry="26.405701"
-                       sodipodi:cx="26.402357"
-                       sodipodi:cy="26.405701"
-                       sodipodi:rx="26.402357"
-                       sodipodi:ry="26.405701"
-                       style="fill:#ffffff"
-                       d="m 52.804714,26.405701 c 0,14.583465 -11.820738,26.4057 -26.402357,26.4057 C 11.820738,52.811401 0,40.989166 0,26.405701 0,11.822235 11.820738,0 26.402357,0 40.983976,0 52.804714,11.822235 52.804714,26.405701 z" />
-                    <path
-                       d="m 18.48165,21.27126 -1.906837,8.948598 14.814656,-11.44247 -0.586719,7.04152 17.601571,-14.083041 C 43.710568,4.6943469 35.643182,0 26.402357,0 11.881061,0 0,11.882566 0,26.405702 c 0,3.814156 0.7333988,7.334917 2.2001964,10.56228 L 18.48165,21.27126 l 0,0 z"
-                       id="Shape"
-                       inkscape:connector-curvature="0"
-                       style="fill:#09cb45" />
-                    <path
-                       d="m 51.044556,16.870309 -26.108997,20.39107 0.29336,-7.188219 -14.667976,11.442471 0.440039,-8.948599 -8.8007856,4.547648 c 4.1070333,9.241996 13.3478586,15.696723 24.2021606,15.696723 14.667976,0 26.402357,-11.882566 26.402357,-26.405701 0,-3.374062 -0.586719,-6.601426 -1.760158,-9.535393 l 0,0 z"
-                       id="path22"
-                       inkscape:connector-curvature="0"
-                       style="fill:#09cb45" />
-                  </g>
+<svg width="69px" height="88px" viewBox="0 0 69 88" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.3 (11970) - http://www.bohemiancoding.com/sketch -->
+    <title>normal waivecar</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="Find-waivecar@2x-" sketch:type="MSArtboardGroup" transform="translate(-210.000000, -341.000000)">
+            <g id="MAP" sketch:type="MSLayerGroup" transform="translate(0.000000, 41.000000)">
+                <g id="waivecars" transform="translate(103.535286, 218.472414)" sketch:type="MSShapeGroup">
+                    <g id="waivecar-mark-copy" transform="translate(105.993342, 81.369828)">
+                        <g id="normal-waivecar">
+                            <g id="waivecar-mark-copy-2">
+                                <g id="Group">
+                                    <ellipse id="Oval-1-Copy-2" fill="#20E25C" cx="34.6748761" cy="34.6792688" rx="34.0633146" ry="34.0676299"></ellipse>
+                                    <g id="Oval-1-+-Shape-+-Shape" transform="translate(7.910843, 7.911845)">
+                                        <ellipse id="Oval-1" fill="#FFFFFF" cx="26.4023568" cy="26.4057016" rx="26.4023568" ry="26.4057016"></ellipse>
+                                        <path d="M18.4816498,21.2712596 L16.5748129,30.2198585 L31.3894687,18.7773878 L30.8027496,25.8189082 L48.4043208,11.7358674 C43.7105685,4.69434695 35.6431817,3.55271368e-15 26.4023568,3.55271368e-15 C11.8810606,3.55271368e-15 -8.17124146e-14,11.8825657 -8.17124146e-14,26.4057016 C-8.17124146e-14,30.2198585 0.7333988,33.7406187 2.2001964,36.9679822 L18.4816498,21.2712596 L18.4816498,21.2712596 Z" id="Shape" fill="#09CB45"></path>
+                                        <path d="M51.0445565,16.8703093 L24.9355592,37.2613789 L25.2289187,30.0731601 L10.5609427,41.5156308 L11.000982,32.5670319 L2.2001964,37.1146805 C6.30722968,46.3566761 15.5480546,52.8114031 26.4023568,52.8114031 C41.0703328,52.8114031 52.8047136,40.9288374 52.8047136,26.4057016 C52.8047136,23.0316397 52.2179946,19.8042762 51.0445565,16.8703093 L51.0445565,16.8703093 Z" id="Shape" fill="#09CB45"></path>
+                                    </g>
+                                </g>
+                            </g>
+                            <path d="M44.7689278,87.6024769 L24.330939,87.6024769 L34.5499334,67.161899 L44.7689278,87.6024769 Z" id="Triangle-1" fill="#20E25C" transform="translate(34.549933, 77.382188) rotate(-180.000000) translate(-34.549933, -77.382188) "></path>
+                        </g>
+                    </g>
                 </g>
-              </g>
-              <path
-                 d="m 44.768928,87.602477 -20.437989,0 10.218994,-20.440578 10.218995,20.440578 z"
-                 id="Triangle-1"
-                 transform="matrix(-1,0,0,-1,69.099866,154.76438)"
-                 inkscape:connector-curvature="0"
-                 style="fill:#20e25c" />
             </g>
-          </g>
         </g>
-      </g>
     </g>
-  </g>
 </svg>
