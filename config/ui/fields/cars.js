@@ -84,7 +84,7 @@ module.exports = {
     component : 'input',
     type      : 'text',
     required  : true,
-    label     : 'Current Est. Speed',
+    label     : 'Speed',
     helpText  : null
   },
   charge : {
