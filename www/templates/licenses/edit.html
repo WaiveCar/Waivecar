@@ -1,41 +1,17 @@
 <ion-view ng-controller="LicenseController">
-
   <ion-nav-title>
     <page-title class="dark-bg">Driver's License</page-title>
   </ion-nav-title>
-
   <ion-nav-buttons side="primary">
     <button menu-toggle="right" class="button button-icon icon ion-navicon"></button>
   </ion-nav-buttons>
-
   <ion-content padding="true" class="ion-content--center dark-bg">
-
     <form ng-submit="save(form)" name="form" id="form" novalidate>
       <div ng-include="'/templates/licenses/_form.html'"></div>
+      <div class="padding-top padding-bottom">
+        <button type="submit" form="form" class="button button-balanced button-block">Validate</button>
+        <button type="button" class="button button-gray button-block" ng-click="cancel()">Cancel Booking</button>
+      </div>
     </form>
-
-    <div ng-if="license.fileId" class="row padding">
-      <div class="col col-35">
-        <a href class="thumbnail license-thumbnail">
-          <img ng-src="{{license.filePath()}}">
-        </a>
-      </div>
-      <div class="col col-65 col-center">
-        <button class="button button-positive button-block button-small" ui-sref="licenses-photo-edit({licenseId: license.id, fileId: license.fileId})">Upload new</button>
-      </div>
-    </div>
-
-    <div class="padding-top padding-bottom" ng-if="!license.fileId">
-      <button class="button button-positive button-small button-block" ui-sref="licenses-photo-new({licenseId: license.id})">Add license photo</button>
-    </div>
-
   </ion-content>
-
-  <ion-footer-bar class="no-padding">
-    <div class="button-bar">
-      <button type="button" class="button button-gray" go-back ng-if="$ionicHistory.backView()">Cancel</button>
-      <button type="submit" form="form" class="button button-balanced">Save</button>
-    </div>
-  </ion-footer-bar>
-
 </ion-view>
