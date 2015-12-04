@@ -33,7 +33,9 @@ module.exports = angular.module('app.controllers').controller('CarController', [
       scope.book = $scope.book;
 
       scope.numberOfOpenItems = BookingService.getNumberOfOpenItems();
-      scope.hasActiveBooking = BookingService.hasActiveBooking;
+      // TODO: this was failing so hard coded to false for now
+      scope.hasActiveBooking = false; // BookingService.hasActiveBooking;
+      // end TODO
       scope.activeBooking = BookingService.activeBooking;
 
       $ionicModal.fromTemplateUrl('/templates/bookings/modal-validation.html', {
