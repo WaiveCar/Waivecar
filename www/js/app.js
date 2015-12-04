@@ -81,6 +81,7 @@ require('./controllers/user-facebook-create-controller');
 require('./controllers/user-edit-controller');
 require('./controllers/timer-controller');
 require('./controllers/menu-controller');
+require('./controllers/verify-controller');
 
 // Directives
 require('./directives/advertisement-directive');

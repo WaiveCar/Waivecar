@@ -158,7 +158,7 @@ module.exports = [
         // 10.1-Verification
         url: '/auth/account-verify?step&token&fromBooking',
         templateUrl: '/templates/auth/account-verify.html',
-        controller: 'AuthController as auth',
+        controller: 'VerifyController as verify',
         data: {
           auth: true
         }

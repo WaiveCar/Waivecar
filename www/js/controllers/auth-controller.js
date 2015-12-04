@@ -10,7 +10,6 @@ function AuthController ($injector) {
   var $auth = $injector.get('$auth');
   var $message = $injector.get('$message');
   var $data = $injector.get('$data');
-  var BookingService = $injector.get('BookingService');
   var $stateParams = $injector.get('$stateParams');
   var $ionicHistory = $injector.get('$ionicHistory');
 
@@ -25,9 +24,6 @@ function AuthController ($injector) {
     resetForm: {
       token: $stateParams.token
     },
-    verifyForm: {
-      token: $stateParams.token
-    }
   };
 
 
@@ -59,8 +55,7 @@ function AuthController ($injector) {
       .then(function(){
         $state.go('auth-reset-password');
       })
-      .catch($message.error);
-
+      .catch($message.error.bind($message));
   };
 
   this.submitNewPassword = function submitNewPassword (form) {
@@ -94,52 +89,10 @@ function AuthController ($injector) {
       .catch($message.error.bind($message));
   };
 
-
-  this.resend = function resend () {
-    $data.resources.Verification.sendSMS({}).$promise
-      .then(function(){
-        $message.success('Verification code sent to ' + $auth.me.phone);
-      })
-      .catch($message.error);
-
-  };
-
-  this.verify = function verify (form) {
-    if (form.$pristine) {
-      return $message.info('Please fill in verification code first.');
-    }
-    if (form.$invalid) {
-      return $message.error('Please resolve form errors and try again.');
-    }
-
-    $data.resources.Verification.verify(this.forms.verifyForm).$promise
-      .then(function(){
-        return $auth.reload();
-      })
-      .then(function(){
-        if(this.isWizard){
-          return $state.go('licenses-photo-new', { step: 3 });
-        }
-        if(this.fromBooking){
-          return $state.go('cars-show', BookingService.getReturnParams());
-        }
-        $message.success('Your account is now verified!');
-        $state.go('cars');
-
-      }.bind(this))
-      .catch($message.error);
-
-    };
-
-
   this.init = function init () {
-    this.isWizard = $stateParams.step;
-    this.fromBooking = $stateParams.fromBooking;
-
     if($state.includes('auth-reset-password')){
       this.forms.resetForm.tokenProvided = !!$stateParams.token;
     }
-
   };
 
   this.init();
