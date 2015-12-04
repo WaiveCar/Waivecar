@@ -11,29 +11,29 @@ module.exports = angular.module('app.services').factory('BookingService', [
     var cachedCarId;
 
     var status = {
-      userIsActive: {
+      phoneVerified: {
         valid: false,
         description: {
-          valid: 'Account Activated',
-          invalid: 'Account Not Activated',
+          valid: 'Phone Number has been verified',
+          invalid: 'Verify Phone Number',
         },
-        path: 'auth-account-verify({fromBooking: true})'
+        path: 'auth-account-verify({ fromBooking: true })'
       },
       hasValidLicense: {
         valid: false,
         description: {
           valid: 'Valid Driver\'s License',
-          invalid: 'Missing Driver\'s License',
+          invalid: 'Add Driver\'s License',
         },
-        path: 'licenses-photo-new({fromBooking: true})'
+        path: 'licenses-new({ fromBooking: true })'
       },
       hasValidCreditCard: {
         valid: false,
         description: {
           valid: 'Valid Credit Card',
-          invalid: 'Missing Credit Card',
+          invalid: 'Add Payment Method',
         },
-        path: 'credit-cards-new({fromBooking: true})'
+        path: 'credit-cards-new({ fromBooking: true })'
       }
     };
 
@@ -41,7 +41,7 @@ module.exports = angular.module('app.services').factory('BookingService', [
 
     function updateStatus(carId) {
       cachedCarId = carId;
-      status.userIsActive.valid = !!($auth.me && $auth.me.status === 'active');
+      status.phoneVerified.valid = !!($auth.me && $auth.me.phoneVerified);
 
       function hasValidLicense () {
         return $data.resources.licenses.query().$promise

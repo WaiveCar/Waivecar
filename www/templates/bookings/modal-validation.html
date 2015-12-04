@@ -1,57 +1,29 @@
 <ion-modal-view>
-
   <ion-content scroll="false" padding="true" class="ion-content--center dark-bg">
-
-    <ng-include src="'/img/waivecar-mark.svg'"></ng-include>
-    <h3 class="margin-bottom-10">Booking requirements</h3>
-
-    <div ng-if="hasActiveBooking">
-      <p>Hi! You already have an active booking. <br>You can't have two at the same time. Sorry.</p>
-
-      <button type="button" class="button button-balanced button-block" ui-sref="bookings-active({id: activeBooking.id})">Go to my active booking</button>
-    </div>
-
-    <div ng-if="!hasActiveBooking">
-
-      <div ng-if="numberOfOpenItems > 0">
-        <p>Hello! We'll need you to complete your profile before booking a car.</p>
-        <p class="margin-bottom-10">Click on the item in the list below to complete it:</p>
+    <div  class="row row-center row-full-height">
+      <div class="col col-center">
+        <div class="lead-logo">
+          <ng-include class="logo-image" src="'/img/waivecar-mark2.svg'" />
+        </div>
+        <h3 class="margin-bottom-10">MISSING INFORMATION</h3>
+        <div ng-if="hasActiveBooking">
+          <p>We need your driver's license and credit card detailsHi! You already have an active booking. <br>You can't have two at the same time. Sorry.</p>
+          <button type="button" class="button button-balanced button-block" ui-sref="bookings-active({id: activeBooking.id})">Go to my active booking</button>
+        </div>
+        <div ng-if="!hasActiveBooking">
+          <div ng-if="numberOfOpenItems > 0">
+            <p>We need some additional details before you can book</p>
+          </div>
+          <ul class="list-unstyled text-left margin-top-10">
+            <li ng-repeat="(key, item) in status">
+              <button type="button" class="button button-block button-balanced" ui-sref="{{item.path}}" ng-if="!item.valid">
+                {{ item.description.invalid }}
+              </button>
+            </li>
+          </ul>
+          <button type="button" class="button button-gray button-block" ng-click="close()">Cancel</button>
+        </div>
       </div>
-
-      <div ng-if="numberOfOpenItems === 0">
-        <p>
-          <strong>Great news!</strong>
-          You're all set to book this car.
-        </p>
-      </div>
-
-      <ul class="list-unstyled text-left margin-bottom-20">
-
-        <li ng-repeat="(key, item) in status">
-
-          <button type="button" class="button button-block button-positive" ng-if="item.valid">
-            <i class="fa fa-check fa-lg fa-fw"></i>
-            {{item.description.valid}}
-          </button>
-
-          <button type="button" class="button button-block button-assertive" ui-sref="{{item.path}}" ng-if="!item.valid">
-            <i class="fa fa-warning fa-lg fa-fw"></i>
-            {{item.description.invalid}}
-          </button>
-
-        </li>
-      </ul>
-
-      <button type="button" class="button button-balanced button-block" ng-click="book()" ng-if="numberOfOpenItems === 0">Book waivecar</button>
-
     </div>
-
   </ion-content>
-
-  <ion-footer-bar class="no-padding">
-    <div class="button-bar">
-      <button type="button" class="button button-gray" ng-click="close()">Close</button>
-    </div>
-  </ion-footer-bar>
-
 </ion-modal-view>
