@@ -16,8 +16,9 @@
         <span class="input-label required">License Number</span>
         <input name="number" type="tel" placeholder="Driver's License Number" ng-model="licenseCtrl.license.number" autofocus required>
       </label>
-      <label class="item item-input">
-        <span class="input-label required">License State</span>
+
+      <label class="item item-input item-select">
+        <div class="input-label required">License State</div>
         <select ng-model="licenseCtrl.license.state" name="state" required ng-options="state.abbreviation as state.name for state in licenseCtrl.states track by state.abbreviation">
           <option value=""></option>
         </select>
