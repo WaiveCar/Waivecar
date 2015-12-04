@@ -1,4 +1,4 @@
-<ion-view ng-controller="LicensePhotoController">
+<ion-view>
 
   <ion-nav-title>
     <page-title class="dark-bg">Driver's License</page-title>
@@ -14,29 +14,31 @@
     <div class="list list-inset">
       <label class="item item-input">
         <span class="input-label required">License Number</span>
-        <input name="number" type="text" placeholder="Driver's License Number" ng-model="license.number" autofocus required>
+        <input name="number" type="tel" placeholder="Driver's License Number" ng-model="licenseCtrl.license.number" autofocus required>
       </label>
       <label class="item item-input">
         <span class="input-label required">License State</span>
-        <input name="state" type="text" placeholder="State" ng-model="license.state" required>
+        <select ng-model="licenseCtrl.license.state" name="state" required ng-options="state.abbreviation as state.name for state in licenseCtrl.states track by state.abbreviation">
+          <option value=""></option>
+        </select>
       </label>
     </div>
 
     <div class="padding-top padding-bottom">
-      <button class="button button-balanced button-block" on-tap="takePhoto()">Take photo and Submit</button>
-      <button class="button button-positive button-block" on-tap="uploadPhoto()">Upload Existing Photo</button>
+      <button
+        class="button button-balanced button-block"
+        on-tap="licenseCtrl.showPicker()"
+        ng-disabled="!licenseCtrl.license.number || !licenseCtrl.license.state"
+      >Upload and Submit photo</button>
     </div>
 
     <p class="padding-top">
       Your driver's license is required to book WaiveCar.
-      <span ng-if="isWizard">
+      <span ng-if="::licenseCtrl.isWizard">
         <br>
-        However you can skip this step and do it later on your account settings
+        However you can <a ui-sref="credit-cards-new({ step: 4 })">skip this step</a> and do it later on your account settings
       </span>
     </p>
-
-    <button type="button" class="button button-small button-clear button-balanced" ui-sref="credit-cards-new({ step: 4 })" ng-if="isWizard">Skip this step</button>
-
   </ion-content>
 
 </ion-view>

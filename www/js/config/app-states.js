@@ -119,6 +119,7 @@ module.exports = [
         // 11-Drivers-id
         url: '/licenses/photo/new?step&licenseId&fromBooking',
         templateUrl: '/templates/licenses/photo-new.html',
+        controller: 'LicensePhotoController as licenseCtrl',
         data: {
           auth: true
         }
@@ -126,6 +127,7 @@ module.exports = [
       .state('licenses-photo-edit', {
         url: '/licenses/:licenseId/photo/:fileId/edit',
         templateUrl: '/templates/licenses/photo-edit.html',
+        controller: 'LicensePhotoController as licenseCtrl',
         data: {
           auth: true
         }

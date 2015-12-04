@@ -4,7 +4,7 @@
     <page-title class="dark-bg">Driver's License</page-title>
   </ion-nav-title>
 
-  <ion-content padding="true" class="ion-content--center dark-bg" ng-controller="LicensePhotoController">
+  <ion-content padding="true" class="ion-content--center dark-bg">
 
 
     <p class="padding-bottom">
@@ -15,24 +15,19 @@
     <div class="row padding responsive-md">
       <div class="col col-50 col-offset-25">
         <a href class="thumbnail license-thumbnail">
-          <img ng-src="{{license.filePath()}}">
+          <img ng-src="{{licenseCtrl.license.filePath()}}">
         </a>
       </div>
     </div>
 
     <div class="padding-top padding-bottom">
-      <button class="button button-balanced button-block" on-tap="takePhoto()" ng-bind="license.fileId ? 'Take New Photo' : 'Take Photo'"></button>
-      <button class="button button-positive button-block" on-tap="uploadPhoto()" ng-bind="license.fileId ? 'Upload New' : 'Upload'"></button>
+      <button class="button button-balanced button-block" on-tap="licenseCtrl.takePhoto()" ng-bind="licenseCtrl.license.fileId ? 'Take New Photo' : 'Take Photo'"></button>
+      <button class="button button-positive button-block" on-tap="licenseCtrl.uploadPhoto()" ng-bind="licenseCtrl.license.fileId ? 'Upload New' : 'Upload'"></button>
     </div>
 
     <p class="padding-top">
       Your driver's license is required to book WaiveCar.
-      <span ng-if="isWizard">
-        <br> However you can skip this step and do it later on your account settings
-      </span>
     </p>
-
-    <button type="button" class="button button-small button-clear button-balanced" ui-sref="credit-cards" ng-if="isWizard">Skip this step</button>
 
   </ion-content>
 

@@ -25,6 +25,7 @@ angular.module('app.filters', []);
 angular.module('app.providers', []);
 angular.module('app.services', []);
 angular.module('app.providers', []);
+angular.module('app.constants', []);
 require('./modules/maps/index');
 require('./services/templates.min');
 
@@ -43,6 +44,7 @@ var app = angular.module('app', [
   'Maps',
   'app.settings',
   'app.controllers',
+  'app.constants',
   'app.models',
   'app.directives',
   'app.filters',
@@ -82,6 +84,7 @@ require('./controllers/user-edit-controller');
 require('./controllers/timer-controller');
 require('./controllers/menu-controller');
 require('./controllers/verify-controller');
+require('./constants/us-states');
 
 // Directives
 require('./directives/advertisement-directive');
