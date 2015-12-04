@@ -48,7 +48,7 @@ module.exports = class Map extends React.Component {
    * @param {Object} props
    */
   componentWillReceiveProps(nextProps) {
-    if (nextProps.markers && nextProps.markers.length !== this.props.markers.length) {
+    if (nextProps.markers) { //} && nextProps.markers.length !== this.props.markers.length) {
       this.prepareMarkers();
     }
   }
@@ -58,12 +58,15 @@ module.exports = class Map extends React.Component {
    */
   prepareMarkers() {
     if (this.state.map) {
-      this.clearMarkers();
-
-      let markers = this.getMarkers();
-
-      this.addMarkers(markers);
-      this.centerPosition(markers);
+      if (this.state.markers.length > 0) {
+        this.clearMarkers();
+        let markers = this.getMarkers();
+        this.addMarkers(markers);
+      } else {
+        let markers = this.getMarkers();
+        this.addMarkers(markers);
+        this.centerPosition(markers);
+      }
     }
   }
 
@@ -117,6 +120,8 @@ module.exports = class Map extends React.Component {
     markers.forEach((val) => {
       if (val.license) {
         markerIcon = this.getMarkerIcon(val.license);
+      } else if (val.type) {
+        markerIcon = this.getMarkerIcon(val.type);
       }
       let marker = L.marker([ val.lat, val.long ], { icon : markerIcon });
       this.state.markers.push(marker);
