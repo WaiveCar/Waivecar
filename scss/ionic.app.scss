@@ -162,3 +162,22 @@ ion-view {
 
 
 }
+.button-gray {
+  background-color : #353434;
+  color : #fff;
+  border : 1px solid #353434;
+  &:hover,
+  &.button.active,
+  &.button.activated {
+    background-color : #353434;
+    color : #fff;
+    border : 1px solid #353434;
+  }
+}
+
+.item-select select {
+  direction: ltr;
+  width: 100%;
+  text-align: left;
+  left: 200px;
+}
