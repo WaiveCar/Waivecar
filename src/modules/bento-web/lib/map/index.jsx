@@ -115,6 +115,9 @@ module.exports = class Map extends React.Component {
       return;
     }
     markers.forEach((val) => {
+      if (val.license) {
+        markerIcon = this.getMarkerIcon(val.license);
+      }
       let marker = L.marker([ val.lat, val.long ], { icon : markerIcon });
       this.state.markers.push(marker);
       marker.addTo(this.state.map);
@@ -151,10 +154,10 @@ module.exports = class Map extends React.Component {
    * Returns leaflet marker icon.
    * @return {Object}
    */
-  getMarkerIcon() {
+  getMarkerIcon(name) {
     return L.icon({
-      iconUrl       : this.props.markerIcon,
-      iconRetinaUrl : this.props.markerIcon,
+      iconUrl       : name ? `/images/map/icon-${ name }.svg` : this.props.markerIcon,
+      iconRetinaUrl : name ? `/images/map/icon-${ name }.svg` : this.props.markerIcon,
       iconSize      : [ 16, 20 ],
       iconAnchor    : [ 16, 20 ],
       popupAnchor   : [ 0 , 0 ]
