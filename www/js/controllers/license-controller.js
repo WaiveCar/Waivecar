@@ -17,19 +17,11 @@ module.exports = angular.module('app.controllers').controller('LicenseController
   '$location',
   '$stateParams',
   '$ionicHistory',
+  'USStates',
   'BookingService',
-  function ($rootScope, $scope, $state, $auth, $data, $message, CameraService, $location, $stateParams, $ionicHistory, BookingService) {
+  function ($rootScope, $scope, $state, $auth, $data, $message, CameraService, $location, $stateParams, $ionicHistory, USStates, BookingService) {
     $scope.$ionicHistory = $ionicHistory;
-
-    // $scope.forms = {
-    //   licenseForm: {
-    //     country: 'USA',
-    //     firstName: $auth.me.firstName,
-    //     lastName: $auth.me.lastName,
-    //     userId: $auth.me.id,
-    //     fileId: $location.search().fileId
-    //   }
-    // };
+    $scope.states = USStates;
 
     $scope.datepickerObject = {
       callback: function (date) {
@@ -88,10 +80,8 @@ module.exports = angular.module('app.controllers').controller('LicenseController
     };
 
     $scope.init = function () {
-
       $scope.isWizard = $stateParams.step;
       $scope.fromBooking = $stateParams.fromBooking;
-
 
       if ($stateParams.id) {
         $data.resources.licenses.get({
@@ -103,7 +93,6 @@ module.exports = angular.module('app.controllers').controller('LicenseController
           .catch($message.error);
 
       } else {
-
         $scope.license = new $data.resources.licenses({
           firstName: $auth.me.firstName,
           lastName: $auth.me.lastName,
