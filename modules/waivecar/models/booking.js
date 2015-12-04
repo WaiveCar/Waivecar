@@ -52,7 +52,8 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
         'reserved',  // The booking has been reserved and the car has been made unavailable.
         'pending',   // The booking is pending arrival of the customer.
         'cancelled', // The booking was cancelled and the car has been made available.
-        'started',   // The booking has started, cancellation is now unavailable.
+        'ready',     // The booking is ready to be started, cancellation is now unavailable.
+        'started',   // The booking has started, engine is unlocked and ride timers have been initiated.
         'ended',     // The booking has ended, pending inspection and fees.
         'completed'  // The booking has been inspected and payment has been requested/collected.
       ),
@@ -100,6 +101,16 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
     *cancel() {
       yield this.update({
         status : 'cancelled'
+      });
+    },
+
+    /**
+     * Sets the booking state to ready.
+     * @return {Void}
+     */
+    *ready() {
+      yield this.update({
+        status : 'ready'
       });
     },
 

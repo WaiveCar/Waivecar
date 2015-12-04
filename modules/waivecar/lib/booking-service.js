@@ -195,60 +195,37 @@ module.exports = class BookingService extends Service {
    | Update Methods
    |--------------------------------------------------------------------------------
    |
-   | Service update methods are used for triggering status updates on the booking
-   | via a collection of PUT endpoints.
-   |
-   | start() => PUT /bookings/:id/start
-   |
-   |  The user has arrived at the car and confirms that they want to start the
-   |  booking. At this point we unlock the car, and update the status of the
-   |  booking. From this point cancellation is no longer possible, and any
-   |  automatic cancelation timers are removed.
-   |
-   | ready() => PUT /bookings/:id/ready
-   |
-   |  The user has removed the key from the fob and is ready to start their drive.
-   |  We send a request to check if the key is out before unlocking the immobilizer
-   |  allowing the user to start the engine.
-   |
-   | end() => PUT /bookings/:id/end
-   |
-   |  The ride has ended, flow to be finalized...
+   | Updates the booking with the provided action.
+   | Endpoint : PUT /bookings/:id/:action
+   | Actions  : ready|start|end|complete
    |
    */
 
   /**
-   * Starts the booking and initiates the drive.
-   * @param  {Number} id
+   * Unlocks the car and lets the driver prepeare before starting the ride.
+   * @param  {Number} id    The booking ID.
    * @param  {Object} _user
    * @return {Object}
    */
-  static *start(id, _user) {
-    let booking   = yield this.getBooking(id);
-    let car       = yield this.getCar(booking.carId);
-    let user      = yield this.getUser(booking.userId);
-    let checkList = [ 'cancelled', 'started', 'ended', 'completed' ];
+  static *ready(id, _user) {
+    let booking = yield this.getBooking(id);
+    let user    = yield this.getUser(booking.userId);
+    let car     = yield this.getCar(booking.carId);
 
     this.hasAccess(user, _user);
 
-    // ### Check Status
-    // A booking can only be started once certain criterias are met, we need to ensure that
-    // the status is correct in corelation with the booking.
+    // ### Verify Status
 
-    if (checkList.indexOf(booking.status) !== -1) {
+    if (booking.status !== 'reserved') {
       throw error.parse({
         code    : `BOOKING_REQUEST_INVALID`,
-        message : `You cannot start a ride for a booking that is ${ booking.getStatus() }`
+        message : `You must be in 'reserved' status to start your ride, you are currently in '${ booking.getStatus() }' status.`
       }, 400);
     }
 
-    // ### Booking Details
+    // ### Update Status & Remove Cancel Timer
 
-    yield this.logDetails('start', booking, car);
-
-    // ### Update Booking Status
-
-    yield booking.start();
+    yield booking.ready();
     yield booking.delCancelTimer();
 
     // ### Unlock Car
@@ -257,34 +234,36 @@ module.exports = class BookingService extends Service {
   }
 
   /**
-   * Unlocks the engine and starts ride timers.
-   * @param  {Number} id    The booking ID.
+   * Starts the booking and initiates the drive.
+   * @param  {Number} id
    * @param  {Object} _user
    * @return {Object}
    */
-  static *ready(id, _user) {
-    let booking   = yield this.getBooking(id);
-    let car       = yield this.getCar(booking.carId);
+  static *start(id, _user) {
+    let booking = yield this.getBooking(id);
+    let user    = yield this.getUser(booking.userId);
+    let car     = yield this.getCar(booking.carId);
 
-    // ### Check Status
-    // Only booking that is in started status and which car is not immobilized
-    // will go through the ride reminder and immobilizier unlock process.
+    this.hasAccess(user, _user);
 
-    if (booking.status !== 'started') {
+    // ### Verify Status
+
+    if (booking.status !== 'ready') {
       throw error.parse({
         code    : `BOOKING_REQUEST_INVALID`,
-        message : `You cannot ready a booking which is already ${ booking.getStatus() }`
+        message : `You must be in 'ready' status to start your ride, you are currently in '${ booking.getStatus() }' status.`
       }, 400);
     }
 
-    if (booking.status === 'started' && !car.isImmobilized) {
-      throw error.parse({
-        code    : `BOOKING_REQUEST_INVALID`,
-        message : `Your ride is ready, start the engine.`
-      }, 400);
-    }
+    // ### Start Booking
+    // 1. Log the initial details of the booking and car details.
+    // 2. Start the free ride remind timer.
+    // 3. Update the booking status to 'started'.
+    // 4. Return the immobilizer unlock results.
 
+    yield this.logDetails('start', booking, car);
     yield booking.setFreeRideReminder(config.booking.timers.freeRideReminder);
+    yield booking.start();
 
     return yield CarService.unlockImmobilzer(car.id, _user);
   }

@@ -9,7 +9,7 @@ Bento.Register.Controller('CarsController', function(controller) {
    * @return {Object}
    */
   controller.index = function *() {
-    return yield car.index(this.query, this.auth.role, this.auth.user);
+    return yield car.index(this.query, this.auth.user);
   };
 
   /**
@@ -28,7 +28,18 @@ Bento.Register.Controller('CarsController', function(controller) {
    * @return {Object}
    */
   controller.update = function *(id, command) {
-    return yield car.executeCommand(id, command, this.auth.user);
+    switch (command) {
+      case 'lock'               : return yield car.executeCommand(id, 'central_lock', 'lock', this.auth.user);
+      case 'unlock'             : return yield car.executeCommand(id, 'central_lock', 'unlock', this.auth.user);
+      case 'lock-immobilizer'   : return yield car.executeCommand(id, 'immobilizer', 'lock', this.auth.user);
+      case 'unlock-immobilizer' : return yield car.executeCommand(id, 'immobilizer', 'unlock', this.auth.user);
+      default                   : {
+        throw error.parse({
+          code    : `CAR_UNRECOGNIZED_COMMAND`,
+          message : `The '${command}' is not supported/recognized.`
+        }, 400);
+      }
+    }
   };
 
   /**

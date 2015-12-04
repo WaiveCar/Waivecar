@@ -22,11 +22,12 @@ module.exports = class CarService extends Service {
    * @param  {Object} _user
    * @return {Array}
    */
-  static *index(query, role, _user) {
+  static *index(query, _user) {
     return yield Car.find(queryParser(query, {
       where : {
-        userId : queryParser.NUMBER,
-        status : queryParser.STRING
+        id          : queryParser.STRING,
+        userId      : queryParser.NUMBER,
+        isAvailable : queryParser.BOOLEAN
       }
     }));
   }
