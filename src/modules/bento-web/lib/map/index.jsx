@@ -76,13 +76,15 @@ module.exports = class Map extends React.Component {
    * @return {Array}
    */
   getMarkers() {
-    return this.props.markers.map((val) => {
+    let markers = this.props.markers.map((val) => {
       return {
         lat  : val.location ? val.location.latitude : val.latitude,
         long : val.location ? val.location.longitude : val.longitude,
         ...val
       }
     });
+
+    return markers.filter(x => x.lat !== null);
   }
 
   /**
