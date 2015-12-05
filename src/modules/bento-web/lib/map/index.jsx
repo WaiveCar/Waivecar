@@ -27,7 +27,7 @@ module.exports = class Map extends React.Component {
         center              : [ 34.0604643, -118.4186743 ],
         zoom                : 11,
         zoomControl         : true,
-        zoomControlPosition : 'top-right'
+        zoomControlPosition : 'bottom-right'
       })
     }, function() {
       this.state.map.scrollWheelZoom.disable();
