@@ -15,7 +15,7 @@ import ReactDOM from 'react-dom';
 import Router               from 'react-router';
 import createBrowserHistory from 'history/lib/createBrowserHistory';
 import routes               from './routes';
-
+import ToolboxApp           from 'react-toolbox/lib/app';
 // ### Reducers
 // Loads in all non dynamic reducers defined in the ./reducers directory.
 
@@ -32,6 +32,8 @@ import 'styles/index.scss';
 // Application starts its rendering process at this point.
 
 ReactDOM.render(
-  <Router history={ createBrowserHistory() } routes={ routes } />,
+  <ToolboxApp>
+    <Router history={ createBrowserHistory() } routes={ routes } />
+  </ToolboxApp>,
   document.getElementById('react')
 );

@@ -28,7 +28,11 @@ module.exports = {
     publicPath : '/'
   },
   resolve : {
-    extensions : [ '', '.js', '.jsx' ],
+    extensions : [ '', '.js', '.jsx', '.scss' ],
+    modulesDirectories: [
+      'node_modules',
+      path.resolve(__dirname, './node_modules')
+    ],
     alias      : {
       'bento'         : path.join(__dirname, '../../', 'src', 'modules', 'bento'),
       'bento-service' : path.join(__dirname, '../../', 'src', 'modules', 'bento-service'),
@@ -43,15 +47,18 @@ module.exports = {
   module : {
     loaders : [
       {
-        test    : /\.jsx?$/,
+        test    : /(\.js|\.jsx)$/,
         loaders : [ 'react-hot', 'babel' ],
         include : path.join(__dirname, '../../', 'src')
       },
       {
         test    : /\.scss$/,
-        loaders : [ 'style', 'css', 'sass' ]
+        loaders : [ 'style', 'css', 'sass', 'toolbox' ]
       }
     ]
+  },
+  toolbox : {
+    theme : path.join(__dirname, '../../', 'src', 'styles', 'toolbox-theme.scss')
   },
   plugins : [
     new webpack.HotModuleReplacementPlugin(),

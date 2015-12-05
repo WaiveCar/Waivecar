@@ -4,6 +4,12 @@ import React                from 'react';
 import { auth, relay, dom } from 'bento';
 import { Form }             from 'bento-web';
 import License              from '../lib/license-service';
+import DatePicker from 'react-toolbox/lib/date_picker';
+
+const datetime = new Date(2015, 10, 16);
+const min_datetime = new Date(new Date(datetime).setDate(8));
+datetime.setHours(17);
+datetime.setMinutes(28);
 
 let formFields = {
   license : require('./form-fields/license'),
@@ -14,8 +20,17 @@ module.exports = class ProfileLicenseView extends React.Component {
   constructor(...args) {
     super(...args);
     dom.setTitle('License');
-    this.state   = {};
+    this.state = {
+      date2 : datetime
+    };
     this.license = new License(this);
+  }
+
+  handleChange = (item, value) => {
+    console.log(item);
+    const newState = {};
+    newState[item] = value;
+    this.setState(newState);
   }
 
   componentDidMount() {
@@ -53,6 +68,15 @@ module.exports = class ProfileLicenseView extends React.Component {
             ]}
             submit = { this.license.submitLicense }
           />
+          <section>
+            <DatePicker
+              label='Expiration date'
+              minDate={min_datetime}
+              onChange={ this.handleChange.bind(this) }
+              onClick={ this.handleChange.bind(this, 'date2') }
+              value={ this.state.date2 }
+            />
+          </section>
         </div>
       </div>
     );

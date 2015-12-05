@@ -38,16 +38,17 @@ module.exports = {
   module : {
     loaders : [
       {
-        test    : /\.jsx?$/,
+        test    : /(\.js|\.jsx)$/,
         exclude : [ nodeModules ],
         loader  : 'babel'
       },
       {
         test    : /\.scss$/,
-        loaders : [ 'style', 'css', 'sass' ]
+        loaders : [ 'style', 'css', 'sass', 'toolbox' ]
       }
     ]
   },
+  toolboxTheme : path.join(__dirname, '../../', 'src', 'styles', 'toolbox-theme.scss'),
   plugins : [
     new webpack.optimize.CommonsChunkPlugin('vendors', 'scripts/vendors.js')
   ]
