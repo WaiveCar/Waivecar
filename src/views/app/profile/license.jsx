@@ -43,7 +43,7 @@ module.exports = class ProfileLicenseView extends React.Component {
     return (
       <div className="box">
         <h3>
-          License Registration <small>Register your license to gain access to the waivecar app.</small>
+          Driver's License Registration <small>Register your license to gain access to the waivecar app.</small>
         </h3>
         <div className="box-content">
           <Form
