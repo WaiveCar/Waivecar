@@ -92,13 +92,12 @@ module.exports = {
     component : 'input',
     type      : 'text',
     required  : true,
-    label     : 'Charge %',
+    label     : 'Charge',
     helpText  : null
   },
   isImmobilized : {
     name      : 'isImmobilized',
-    component : 'input',
-    type      : 'text',
+    component : 'checkbox',
     required  : true,
     label     : 'Immobilized',
     helpText  : null
@@ -113,8 +112,7 @@ module.exports = {
   },
   isLocked : {
     name      : 'isLocked',
-    component : 'input',
-    type      : 'text',
+    component : 'checkbox',
     required  : true,
     label     : 'Locked',
     helpText  : null
@@ -177,24 +175,21 @@ module.exports = {
   },
   isCharging : {
     name      : 'isCharging',
-    component : 'input',
-    type      : 'text',
+    component : 'checkbox',
     required  : true,
     label     : 'Charging',
     helpText  : null
   },
   isQuickCharging : {
     name      : 'isQuickCharging',
-    component : 'input',
-    type      : 'text',
+    component : 'checkbox',
     required  : true,
     label     : 'Quick Charging',
     helpText  : null
   },
   isOnChargeAdapter : {
     name      : 'isOnChargeAdapter',
-    component : 'input',
-    type      : 'text',
+    component : 'checkbox',
     required  : true,
     label     : 'On Charge Adapter',
     helpText  : null
@@ -217,8 +212,7 @@ module.exports = {
   },
   isAvailable : {
     name      : 'isAvailable',
-    component : 'input',
-    type      : 'text',
+    component : 'checkbox',
     required  : true,
     label     : 'available',
     helpText  : null
