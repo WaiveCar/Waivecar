@@ -1,8 +1,10 @@
 'use strict';
 
-import React                     from 'react';
-import moment                    from 'moment';
-import { auth, relay, api, dom } from 'bento';
+import React                              from 'react';
+import moment                             from 'moment';
+import { auth, relay, api, dom, helpers } from 'bento';
+import { Map }                            from 'bento-web';
+import RideDetails                        from './ride-details';
 
 module.exports = class ProfileView extends React.Component {
 
@@ -10,13 +12,21 @@ module.exports = class ProfileView extends React.Component {
     super(...args);
     dom.setTitle('My Rides');
     this.state = {
-      bookings : []
+      bookings : [],
+      details  : null
     };
     relay.subscribe(this, 'me');
   }
 
+  /**
+   * Retrieve list of bookings.
+   * @return {Void}
+   */
   componentDidMount() {
-    api.get('/bookings', (err, bookings) => {
+    api.get('/bookings', {
+      order   : 'id,DESC',
+      details : true
+    }, (err, bookings) => {
       if (err) {
         return console.log(err);
       }
@@ -26,46 +36,68 @@ module.exports = class ProfileView extends React.Component {
     });
   }
 
+  /**
+   * Returns a booking as tbody
+   * @param  {Object} data
+   * @return {Object}
+   */
   booking(data) {
+    let isOpen = this.state.details === data.id;
+
+    // ### Ride
+
+    let ride = {
+      start : data.details.find(val => val.type === 'start'),
+      end   : data.details.find(val => val.type === 'end'),
+      fee   : data.payments.reduce((value, payment) => { return value + (payment.amount - payment.refunded); }, 0) / 100,
+    };
+
+    // ### Duration
+
+    let duration  = moment.duration(moment(ride.end.time).diff(moment(ride.start.time)));
+    ride.duration = {
+      raw     : duration,
+      hours   : duration.hours(),
+      minutes : duration.minutes(),
+      seconds : duration.seconds()
+    };
+
     return (
       <tbody key={ data.id }>
-        <tr className="ride-row">
+        <tr className="ride-row" onClick={ this.viewDetails.bind(this, data.id) }>
           <td className="text-center">
-            <i className="material-icons">keyboard_arrow_right</i>
+            {
+              isOpen ? <i className="material-icons primary">keyboard_arrow_down</i> : <i className="material-icons">keyboard_arrow_right</i>
+            }
           </td>
           <td>
             { moment(data.createdAt).format('DD/MM/YYYY') }
           </td>
           <td>
-            Coming Soon
+            { ride.duration.hours ? `${ ride.duration.hours } hour${ ride.duration.hours > 1 ? 's' : '' }` : '' } { `${ ride.duration.minutes } minute${ ride.duration.minutes > 1 ? 's' : '' }` }
           </td>
           <td>
             { data.carId }
           </td>
           <td>
-            Coming Soon
+            ${ ride.fee }
           </td>
           <td>
-            { data.status }
+            { helpers.changeCase.toCapital(data.status) }
           </td>
         </tr>
-        <tr className="ride-details">
-          <td colSpan="6">
-            <div className="row">
-              <div className="col-md-4 ride-map">
-                Map
-              </div>
-              <div className="col-md-4 ride-meta">
-                Meta
-              </div>
-              <div className="col-md-4 ride-rating">
-                Rating
-              </div>
-            </div>
-          </td>
-        </tr>
+        {
+          isOpen ? <RideDetails { ...ride } /> : null
+        }
       </tbody>
     );
+
+  }
+
+  viewDetails(bookingId) {
+    this.setState({
+      details : bookingId === this.state.details ? null : bookingId
+    });
   }
 
   /**
@@ -74,32 +106,36 @@ module.exports = class ProfileView extends React.Component {
    */
   render() {
     return (
-      <div className="rides">
-        <div className="box full">
-          <h3>
-            My Rides
-            <small>
-              Your current, and past ride history.
-            </small>
-          </h3>
-          <div className="box-content no-padding">
-            <table className="table-rides">
-              <thead>
-                <tr>
-                  <th width="24"></th>
-                  <th>Date</th>
-                  <th>Duration</th>
-                  <th>Car</th>
-                  <th>Fee</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              {
-                this.state.bookings.map((data) => {
-                  return this.booking(data)
-                })
-              }
-            </table>
+      <div className="rides container">
+        <div className="row">
+          <div className="col-xs-12">
+            <div className="box full">
+              <h3>
+                My Rides
+                <small>
+                  Your current, and past ride history.
+                </small>
+              </h3>
+              <div className="box-content no-padding">
+                <table className="table-rides">
+                  <thead>
+                    <tr>
+                      <th width="24"></th>
+                      <th>Date</th>
+                      <th>Duration</th>
+                      <th>Car</th>
+                      <th>Fee</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  {
+                    this.state.bookings.map((data) => {
+                      return this.booking(data)
+                    })
+                  }
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       </div>

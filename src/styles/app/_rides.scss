@@ -13,9 +13,24 @@
       border-top : 1px solid #eee;
       td {
         padding : 8px;
+        i {
+          font-size   : 1.2rem;
+          font-weight : 600;
+          margin-top  : 6px;
+          &.primary {
+            color : #25C155;
+          }
+        }
       }
       .ride-row, .ride-details {
         font-weight : 300;
+      }
+      .ride-row {
+        &:hover {
+          background : #eee;
+          cursor     : pointer;
+          color      : #777;
+        }
       }
       .ride-details {
         background    : #f6f6f6;
@@ -25,10 +40,23 @@
           padding : 20px;
         }
         .ride-map {
-
+          border : 1px solid #cecece;
+          height : 320px;
         }
         .ride-meta {
-
+          .ride-fee {
+            font-size   : 1.8rem;
+            font-weight : 500;
+            margin-top  : 20px;
+            text-align  : center;
+          }
+          .ride-date {
+            border-top    : 1px solid #e6e6e6;
+            border-bottom : 1px solid #e6e6e6;
+            margin-top    : 20px;
+            text-align    : center;
+            padding       : 8px 0;
+          }
         }
         .ride-rating {
 
