@@ -31,15 +31,13 @@ page-title {
 }
 
 ion-nav-bar .bar-header {
-  // height: ($bigHeaderSize*1%) !important;
   color: $light;
   .button.back-button {
-    // margin-top: 18px;
+    width: 10%;
+    text-align: center;
   }
   .title {
-    // top: 17px;
     &+.buttons {
-      // top: 17px;
     }
   }
 

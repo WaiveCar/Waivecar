@@ -36,6 +36,7 @@ var config = [
     $ionicConfigProvider.views.transition('none');
     $ionicConfigProvider.views.maxCache(0);
     $ionicConfigProvider.templates.maxPrefetch(1);
+    $ionicConfigProvider.backButton.text('').icon('').previousTitleText(false);
 
     $provide.decorator('$exceptionHandler', [
       '$delegate',
