@@ -66,8 +66,10 @@ module.exports = class Form extends React.Component {
       case 'checkbox' :
         if (target.reset) {
           data[target.category] = [];
-        } else {
+        } else if (target.category) {
           data[target.category] = checkbox(data[target.category], event.target);
+        } else {
+          data[target.name] = target.value;
         }
         break;
       default :

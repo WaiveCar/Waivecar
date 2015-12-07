@@ -1,5 +1,6 @@
 import React               from 'react';
 import { helpers, logger } from 'bento';
+import TCheckbox           from 'react-toolbox/lib/checkbox';
 
 let { array, type } = helpers;
 
@@ -89,68 +90,43 @@ module.exports = class Checkbox extends React.Component {
     });
   }
 
-  /**
-   * @method label
-   */
-  label() {
-    let { label } = this.props.options;
-    if (label) {
-      return <label className="col-xs-12">{ label }</label>
-    }
-  }
-
-  /**
+    /**
+   * Sends input to the form state handler.
    * @method onChange
-   * @param  {Object} event
+   * @param  {String} value
+   * @param  {Object} options
    */
-  onChange(event) {
+  onChange(value, options) {
     this.props.onChange({
       target : {
-        type     : 'checkbox',
-        category : this.props.options.name,
-        name     : event.target.name,
-        checked  : event.target.checked
+        type  : 'checkbox',
+        name  : this.props.options.name,
+        value : value
       }
     });
   }
+
 
   /**
    * @method render
    * @return {Component}
    */
   render() {
-    let { name, className, options } = this.props.options;
-
-    // ### Dynamic Values
-
-    if (type.isPlainObject(options)) {
-      options = options.values[this.props.value[options.connector]];
-      if (!options) {
-        return <div />
-      }
-    }
+    let { name, label, className } = this.props.options;
+    let checked = this.props.value[name];
 
     // ### Debug
-
     logger.debug(`Form > Render checkbox component [${ name }] [${ this.props.value[name] }]`);
-
     return (
       <div className="form-group row">
-        { this.label() }
-        {
-          options.map((box, index) => {
-            let checked = this.props.value[name];
-            return (
-              <div key={ index } className={ className || 'col-md-12' }>
-                <div className="checkbox">
-                  <label>
-                    <input type="checkbox" name={ box.value } onChange={ this.onChange } checked={ checked ? checked.indexOf(box.value) !== -1 : false } /> { box.name }
-                  </label>
-                </div>
-              </div>
-            )
-          }.bind(this))
-        }
+        <div className={ className || 'col-md-12' }>
+          <TCheckbox
+            name      = { name }
+            label     = { label }
+            checked   = { checked }
+            onChange  = { this.onChange }
+          />
+        </div>
       </div>
     );
   }

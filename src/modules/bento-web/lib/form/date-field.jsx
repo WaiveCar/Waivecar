@@ -1,7 +1,8 @@
-import React                           from 'react';
+import React                                from 'react';
 import { dom, helpers, logger, api, relay } from 'bento';
-import { resources }                   from 'bento-ui';
-import moment                          from 'moment';
+import { resources }                        from 'bento-ui';
+import moment                               from 'moment';
+import DatePicker                           from 'react-toolbox/lib/date_picker';
 
 let { type } = helpers;
 
@@ -16,6 +17,7 @@ module.exports = class DateField extends React.Component {
     this.state    = {
       className : null
     };
+    this.onChange = this.onChange.bind(this);
     // this.focus = this.focus.bind(this);
     // this.blur  = this.blur.bind(this);
   }
@@ -108,6 +110,7 @@ module.exports = class DateField extends React.Component {
    * @param  {Object} options
    */
   onChange(value, options) {
+    console.log(value);
     this.props.onChange({
       target : {
         type  : 'date',
@@ -126,14 +129,13 @@ module.exports = class DateField extends React.Component {
     logger.debug(`Form > Render Date component [${ name }] [${ this.props.value }]`);
     return (
       <div className={ this.state.className }>
-        <label>{ label }</label>
-        <input
-          type        = { type }
+        <DatePicker
           className   = "form-control"
           name        = { name }
+          label       = { label }
+          onChange    = { this.onChange }
           placeholder = { placeholder }
           value       = { this.props.value }
-          onChange    = { this.props.onChange }
           onFocus     = { this.focus }
           onBlur      = { this.blur }
           tabIndex    = { tabIndex }
