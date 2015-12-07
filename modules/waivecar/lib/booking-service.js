@@ -117,6 +117,12 @@ module.exports = class BookingService extends Service {
    * @return {Array}
    */
   static *index(query, _user) {
+    let bookings    = [];
+    let order       = query.order   ? query.order.split(',') : null;
+    let showDetails = query.details ? true : false;
+
+    // ### Parse Query
+
     query = queryParser(query, {
       where : {
         userId : queryParser.NUMBER,
@@ -125,16 +131,29 @@ module.exports = class BookingService extends Service {
       }
     });
 
-    // ### Admin Query
-
-    if (_user.isAdmin()) {
-      return yield Booking.find(query);
+    if (order) {
+      query.order = [ order ];
     }
 
-    // ### User Query
+    // ### Query Bookings
 
-    query.where.userId = _user.id;
-    return yield Booking.find(query);
+    if (_user.isAdmin()) {
+      bookings = yield Booking.find(query);
+    } else {
+      query.where.userId = _user.id;
+      bookings = yield Booking.find(query);
+    }
+
+    // ### Prepare Bookings
+    // Prepares bookings with payment, and file details.
+
+    if (showDetails) {
+      for (let i = 0, len = bookings.length; i < len; i++) {
+        bookings[i] = yield this.show(bookings[i].id, _user);
+      }
+    }
+
+    return bookings;
   }
 
   /**
