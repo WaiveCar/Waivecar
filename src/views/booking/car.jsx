@@ -36,6 +36,7 @@ module.exports = class BookingCar extends React.Component {
   map() {
     return components.render('map', {
       resource : 'cars',
+      includeUser : true,
       handler  : (data) => {
         this.showCar(data.id);
       }.bind(this)

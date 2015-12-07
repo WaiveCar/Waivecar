@@ -85,6 +85,7 @@ class UIMap extends React.Component {
     return (
       <Map
         markers          = { markers }
+        includeUser      = { this.props.includeUser }
         markerHandlerKey = { this.props.key }
         markerIcon       = { '/images/admin/map-icon-waivecar.svg' }
         markerHandler    = { handler }
@@ -123,6 +124,13 @@ module.exports = {
             values    : fields.getSelectList()
           },
           required  : true
+        },
+        {
+          label     : 'Include User',
+          component : 'checkbox',
+          name      : 'includeUser',
+          helpText  : 'Indicate if user location should be shown',
+          required  : false
         }
       ]
     };

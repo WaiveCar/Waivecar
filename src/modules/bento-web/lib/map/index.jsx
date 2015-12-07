@@ -1,5 +1,6 @@
-import React  from 'react';
-import config from 'config';
+import { api } from 'bento';
+import React   from 'react';
+import config  from 'config';
 
 module.exports = class Map extends React.Component {
 
@@ -11,7 +12,7 @@ module.exports = class Map extends React.Component {
     this.state = {
       mapId   : 'map-' + Math.ceil(Math.random() * 100), // TODO: use ShortId or something.
       map     : null,
-      markers : []
+      markers : [],
     };
     this.addMarkers   = this.addMarkers.bind(this);
     this.clearMarkers = this.clearMarkers.bind(this);
@@ -48,7 +49,7 @@ module.exports = class Map extends React.Component {
    * @param {Object} props
    */
   componentWillReceiveProps(nextProps) {
-    if (nextProps.markers) { //} && nextProps.markers.length !== this.props.markers.length) {
+    if (nextProps.markers) {
       this.prepareMarkers();
     }
   }
@@ -57,17 +58,45 @@ module.exports = class Map extends React.Component {
    * Prepares a list of markers.
    */
   prepareMarkers() {
-    if (this.state.map) {
+    if (!this.state.map) {
+      return;
+    }
+    let markers = this.getMarkers();
+    this.getUser(function(err, userMarker) {
+      if (userMarker) {
+        markers.push(userMarker);
+      }
+
       if (this.state.markers.length > 0) {
         this.clearMarkers();
-        let markers = this.getMarkers();
         this.addMarkers(markers);
       } else {
-        let markers = this.getMarkers();
         this.addMarkers(markers);
         this.centerPosition(markers);
       }
+    }.bind(this));
+  }
+
+  getUser(next) {
+    if (!(this.props.includeUser && navigator)) {
+      return next();
     }
+
+    navigator.geolocation.getCurrentPosition(function(position) {
+      this.getAddress(position.coords.latitude, position.coords.longitude, function(err, address) {
+        return next(null, {
+          lat     : position.coords.latitude,
+          long    : position.coords.longitude,
+          address : address.display_name
+        });
+      }.bind(this));
+    }.bind(this));
+  }
+
+  getAddress(lat, long, next) {
+    let url = `http://nominatim.openstreetmap.org/reverse`;
+    let qs  = `format=json&zoom=18&addressdetails=1&lat=${ lat }&lon=${ long }`;
+    api.external(url, qs, next);
   }
 
   /**
@@ -94,7 +123,6 @@ module.exports = class Map extends React.Component {
   centerPosition(markers) {
     let markerPoints = this.getMarkerPoints(markers);
     let bounds       = new L.LatLngBounds(markerPoints);
-
     this.state.map.fitBounds(bounds);
   }
 
@@ -115,15 +143,18 @@ module.exports = class Map extends React.Component {
    * @param  {Array} markers
    */
   addMarkers(markers) {
-    let markerIcon = this.getMarkerIcon();
     if (!markers) {
       return;
     }
+
+    let markerIcon = this.getMarkerIcon();
     markers.forEach((val) => {
       if (val.license) {
         markerIcon = this.getMarkerIcon(val.license);
       } else if (val.type) {
         markerIcon = this.getMarkerIcon(val.type);
+      } else if (val.icon) {
+       markerIcon = val.icon;
       }
       let marker = L.marker([ val.lat, val.long ], { icon : markerIcon });
       this.state.markers.push(marker);
