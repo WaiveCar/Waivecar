@@ -13,9 +13,16 @@ module.exports = class ProfileLicenseView extends React.Component {
 
   constructor(...args) {
     super(...args);
+    this.state = {};
     dom.setTitle('License');
-    this.state   = {};
     this.license = new License(this);
+  }
+
+  handleChange = (item, value) => {
+    console.log(item);
+    const newState = {};
+    newState[item] = value;
+    this.setState(newState);
   }
 
   componentDidMount() {
