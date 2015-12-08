@@ -74,22 +74,26 @@ class UIMap extends React.Component {
 
     if (!markers.length) {
       return (
-        <div className="map-wrapper animated fadeIn">
-          <div className="map-container map-placeholder">
-            <p className="lead text-center">No { this.props.resource } are currently recorded in the WaiveCar database.</p>
+        <div className="map-dynamic">
+          <div className="map-wrapper animated fadeIn">
+            <div className="map-container map-placeholder">
+              <p className="lead text-center">No { this.props.resource } are currently recorded in the WaiveCar database.</p>
+            </div>
           </div>
         </div>
       );
     }
 
     return (
-      <Map
-        markers          = { markers }
-        includeUser      = { this.props.includeUser }
-        markerHandlerKey = { this.props.key }
-        markerIcon       = { '/images/admin/map-icon-waivecar.svg' }
-        markerHandler    = { handler }
-      />
+      <div className="map-dynamic">
+        <Map
+          markers          = { markers }
+          includeUser      = { this.props.includeUser }
+          markerHandlerKey = { this.props.key }
+          markerIcon       = { '/images/admin/map-icon-waivecar.svg' }
+          markerHandler    = { handler }
+        />
+      </div>
     );
   }
 

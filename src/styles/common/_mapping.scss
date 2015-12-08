@@ -6,12 +6,18 @@
   width    : 100%;
 }
 
+.map-dynamic {
+  min-height : 600px;
+  .map-wrapper {
+    min-height : 600px;
+  }
+}
+
 .map-wrapper {
   .col-xs-12 & {
     position   : relative;
     left       : auto;
     right      : auto;
-    min-height : 600px;
   }
 }
 
