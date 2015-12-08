@@ -129,6 +129,17 @@ class UITable extends React.Component {
               return <span>{ date }</span>;
             }
           });
+        } else if (field.component === 'checkbox') {
+          meta.cssClassName = 'table-col-xs';
+          meta.customComponent = React.createClass({
+            render : function() {
+              if (this.props.data === true) {
+                return <span className="text-success"><i className="material-icons" role="true">check</i></span>;
+              }
+
+              return <span className="text-muted"><i className="material-icons" role="true">close</i></span>;
+            }
+          });
         }
         return meta;
       }
