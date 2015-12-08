@@ -126,6 +126,7 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
     if (this.items[id]) {
       this.items[id].setLatLng(location).update();
       // return null when no new marker is added to avoid setting listeners
+      this.fitBounds(null, 0.5);
       return null;
     }
 

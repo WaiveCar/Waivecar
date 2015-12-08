@@ -1,7 +1,9 @@
 'use strict';
 var angular = require('angular');
 
-function LocationService ($rootScope, $q, MapsEvents) {
+function LocationService ($rootScope, $injector) {
+  var $q = $injector.get('$q');
+  var MapsEvents = $injector.get('MapsEvents');
 
   var mockLocation = {
     latitude: 34.0604643,
@@ -61,7 +63,6 @@ function getRandomLocation(x0, y0, radius) {
 
 module.exports = angular.module('app.services').service('MockLocationService', [
   '$rootScope',
-  '$q',
-  'MapsEvents',
+  '$injector',
   LocationService
 ]);

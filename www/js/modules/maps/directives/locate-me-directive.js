@@ -2,8 +2,8 @@
 var angular = require('angular');
 
 module.exports = angular.module('Maps').directive('locateMe', [
-  'MockLocationService',
-  function(LocationService) {
+  '$rootScope',
+  function ($rootScope) {
 
     function link($scope, $element, $attrs, MapCtrl) {
 
@@ -11,11 +11,8 @@ module.exports = angular.module('Maps').directive('locateMe', [
         event.preventDefault();
         event.stopPropagation();
 
-        LocationService.getLocation()
-          .then(function(loc){
-            MapCtrl.map.setView([loc.latitude, loc.longitude]);
-          });
-
+        var loc = $rootScope.currentLocation;
+        MapCtrl.map.setView([loc.latitude, loc.longitude]);
       }
 
       MapCtrl.$ready.then(function () {
