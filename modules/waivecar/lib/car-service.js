@@ -1,5 +1,6 @@
 'use strict';
 
+let co            = require('co');
 let request       = require('co-request');
 let moment        = require('moment');
 let queue         = Bento.provider('queue');
@@ -64,7 +65,6 @@ module.exports = class CarService extends Service {
 
     // Is car stationary?
     if (data.currentSpeed === 0) { // data.distanceSinceLastRead === 0) {
-      log.debug('CarService : update : car appears to be stationary');
 
       // If the distance last read was also 0, the car is STILL stopped so dont treat this update as an update.
       if (existingCar.distanceSinceLastRead === 0) {
@@ -101,9 +101,9 @@ module.exports = class CarService extends Service {
    * @param  {Integer}  refreshAfter How many minutes can a Car go without being resynced (defaults to 15).
    * @return {Array}    all cars.
    */
-  static *syncCars(refreshAfter) {
+  static *syncCars() {
     log.debug('CarService : syncCars : start');
-    refreshAfter = refreshAfter || 15;
+    let refreshAfter = config.car.staleLimit || 15;
 
     // Retrieve all local cars.
     let allCars = yield Car.find();
@@ -129,37 +129,45 @@ module.exports = class CarService extends Service {
     log.debug(`Cars : Sync : ${ devices.length } devices available for sync.`);
 
     for (let i = 0, len = devices.length; i < len; i++) {
-      // If Device matches a Car in our filtered list for updates, update
-      let device = devices[i];
-      let existingCar = cars.find(c => c.id === device.id);
-
-      if (existingCar) {
-        let updatedCar = yield this.getDevice(device.id);
-        if (updatedCar) {
-          log.debug(`Cars : Sync : updating ${ device.id }.`);
-          yield this.update(existingCar.id, updatedCar, existingCar);
-        } else {
-          log.debug(`Cars : Sync : failed to retrieve ${ device.id }.`);
-        }
-      } else {
-        // If Device does not match any Car then add it to the database.
-        let excludedCar = allCars.find(c => c.id === device.id);
-        if (!excludedCar) {
-          let isMockCar = [ 'EE000017DC652701', 'C0000017DC247801' ].indexOf(device.id) > -1;
-          if (!config.mock.cars && isMockCar) {
-            // this is a dev kit, ignore update.
-            log.debug(`Cars : Sync : skipping DevKit ${ device.id }.`);
-          } else  {
-            let newCar = yield this.getDevice(device.id);
-            let car = new Car(newCar);
-            log.debug(`Cars : Sync : adding ${ device.id }.`);
-            yield car.upsert();
+      co(function *() {
+        // If Device matches a Car in our filtered list for updates, update
+        let device = devices[i];
+        let existingCar = cars.find(c => c.id === device.id);
+        if (existingCar) {
+          let updatedCar = yield this.getDevice(device.id);
+          if (updatedCar) {
+            log.debug(`Cars : Sync : updating ${ device.id }.`);
+            yield this.update(existingCar.id, updatedCar, existingCar);
+          } else {
+            log.debug(`Cars : Sync : failed to retrieve ${ device.id }.`);
           }
         } else {
-          // If Device was found in database but not in our filtered list, ignore.
-          log.debug(`Cars : Sync : skipping ${ device.id }.`);
+          // If Device does not match any Car then add it to the database.
+          let excludedCar = allCars.find(c => c.id === device.id);
+          if (!excludedCar) {
+            let isMockCar = [ 'EE000017DC652701', 'C0000017DC247801' ].indexOf(device.id) > -1;
+            if (!config.mock.cars && isMockCar) {
+              // this is a dev kit, ignore update.
+              log.debug(`Cars : Sync : skipping DevKit ${ device.id }.`);
+            } else  {
+              let newCar = yield this.getDevice(device.id);
+              let car = new Car(newCar);
+              log.debug(`Cars : Sync : adding ${ device.id }.`);
+              yield car.upsert();
+            }
+          } else {
+            // If Device was found in database but not in our filtered list, ignore.
+            log.debug(`Cars : Sync : skipping ${ device.id }.`);
+          }
         }
-      }
+      }.bind(this)).catch(function(err) {
+        log.error({
+          code     : err.code,
+          message  : err.toString().replace('Error: ', ''),
+          solution : err.solution,
+          stack    : err.stack
+        });
+      });;
     }
 
     return yield Car.find();
