@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="69px" height="88px" viewBox="0 0 69 88" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.4.3 (16044) - http://www.bohemiancoding.com/sketch -->
+    <title>Untitled</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <filter x="-50%" y="-50%" width="200%" height="200%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="2" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="4" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.35 0" in="shadowBlurOuter1" type="matrix" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="active-waivecar" sketch:type="MSLayerGroup" transform="translate(-2.000000, -1.000000)">
+            <g id="Page-1" sketch:type="MSShapeGroup">
+                <g id="Find-waivecar@2x-">
+                    <g id="MAP">
+                        <g id="waivecars" transform="translate(0.535286, 0.472414)">
+                            <g id="waivecar-mark-copy" transform="translate(0.993342, 0.369828)">
+                                <g id="normal-waivecar">
+                                    <g id="waivecar-mark-copy-2">
+                                        <g id="Group">
+                                            <ellipse id="Oval-1-Copy-2" fill="#D9534F" cx="34.6748761" cy="34.6792688" rx="34.0633146" ry="34.0676299"></ellipse>
+                                            <g id="Oval-1-+-Shape-+-Shape" transform="translate(9.910843, 23.911845)" fill="#9B4542">
+                                                <path d="M49.0445565,0.8703093 L22.9355592,21.2613789 L23.2289187,14.0731601 L8.5609427,25.5156308 L9.000982,16.5670319 L0.2001964,21.1146805 C4.30722968,30.3566761 13.5480546,36.8114031 24.4023568,36.8114031 C39.0703328,36.8114031 50.8047136,24.9288374 50.8047136,10.4057016 C50.8047136,7.0316397 50.2179946,3.8042762 49.0445565,0.8703093 L49.0445565,0.8703093 L49.0445565,0.8703093 Z" id="Shape"></path>
+                                            </g>
+                                        </g>
+                                    </g>
+                                    <path d="M44.768927,87.602477 L24.3309382,87.602477 L34.5499326,67.1618991 L44.768927,87.602477 L44.768927,87.602477 Z" id="Triangle-1" fill="#D9534F" transform="translate(34.549933, 77.382188) rotate(180.000000) translate(-34.549933, -77.382188) "></path>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+        <text id="E" fill="white" filter="url(#filter-1)" sketch:type="MSTextLayer" font-family="Roboto" font-size="48" font-weight="normal" sketch:alignment="middle">
+            <tspan x="19.859375" y="51" fill="#FFFFFF">E</tspan>
+        </text>
+    </g>
+</svg>
