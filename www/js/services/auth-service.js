@@ -92,9 +92,9 @@ function AuthService ($rootScope, $session, $data, $injector) {
     }
 
     return $data.resources.users.me().$promise
-      .then(function(me) {
-        this.me = $session.set('me', me).save();
-        return me;
+      .then(function(res) {
+        this.me = $session.set('me', res.data).save();
+        return res.data;
       }.bind(this));
   };
 
@@ -124,9 +124,9 @@ function AuthService ($rootScope, $session, $data, $injector) {
     }).save();
 
     return $data.resources.users.me().$promise
-      .then(function(me) {
-        $session.set('me', me).save();
-        return me;
+      .then(function(res) {
+        $session.set('me', res.data).save();
+        return res.data;
       });
   };
 }
