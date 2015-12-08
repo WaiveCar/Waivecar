@@ -177,7 +177,7 @@ module.exports = [
         },
         resolve: {
           cars: ['$data', function ($data) {
-            return $data.fetch('Car');
+            return $data.initialize('cars');
           }]
         }
       })
@@ -194,7 +194,7 @@ module.exports = [
             return BookingService.getCurrentStatus($stateParams.id);
           }],
           car: ['$data', '$stateParams', function ($data, $stateParams) {
-            return $data.resources.Car.get({id: $stateParams.id}).$promise;
+            return $data.resources.cars.get({id: $stateParams.id}).$promise;
           }]
         }
       })

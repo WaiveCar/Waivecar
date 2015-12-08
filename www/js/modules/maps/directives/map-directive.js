@@ -29,16 +29,25 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
       ctrl.setMarkers(ctrl.markers);
       ctrl.drawRoute();
       ctrl.$$ready.resolve();
-      $scope.$watch('map.markers', ctrl.setMarkers.bind(ctrl), true);
-      $scope.$watch('map.routeStart', ctrl.drawRoute.bind(ctrl), true);
-      $scope.$watch('map.routeDestiny', ctrl.drawRoute.bind(ctrl), true);
-      $rootScope.$watch('currentLocation', ctrl.setCurrentLocation.bind(ctrl), true);
+      var watchers = [];
+      watchers[0] = $scope.$watch('map.markers', ctrl.setMarkers.bind(ctrl), true);
+      watchers[1] = $scope.$watch('map.routeStart', ctrl.drawRoute.bind(ctrl), true);
+      watchers[2] = $scope.$watch('map.routeDestiny', ctrl.drawRoute.bind(ctrl), true);
+      watchers[3] = $rootScope.$watch('currentLocation', ctrl.setCurrentLocation.bind(ctrl), true);
+      $scope.$on('$destroy', function () {
+        console.log('Destroying watchers');
+        watchers.forEach(function (watcher) {
+          if (typeof watcher === 'function') {
+            watcher();
+          }
+        });
+      });
     }
   }
 
   function MapController () {
     this._group = null;
-    this.items = [];
+    this.items = {};
     this.leaflet = MapsLoader.leaflet;
     this.$$ready = $q.defer();
     this.$ready = this.$$ready.promise;
@@ -56,16 +65,13 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
     if (!(location && location.latitude && location.longitude)) {
       return;
     }
-    if (this.locationMarker) {
-      this.locationMarker.setLatLng([location.latitude, location.longitude]);
-      return;
-    }
-    this.locationMarker = this.addMarker([location.latitude, location.longitude], {
+    this.addMarker('location', [location.latitude, location.longitude], {
       icon: getIconInstance(this.leaflet, 'device')
     });
   };
 
   MapController.prototype.setMarkers = function setMarkers (locations) {
+    console.log('Setting markers at ', locations);
     if (locations === null || typeof locations === 'undefined') {
       return;
     }
@@ -90,7 +96,7 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
       return location.latitude && location.longitude;
     }).map(function (mark) {
       var location = mark.location || mark;
-      var marker = this.addMarker([location.latitude, location.longitude], {
+      var marker = this.addMarker(mark.id, [location.latitude, location.longitude], {
         icon: getIconInstance(this.leaflet, mark.icon || 'car')
       });
       if (marker === null) {
@@ -107,7 +113,7 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
     .value();
   };
 
-  MapController.prototype.addMarker = function addMarker (location, options) {
+  MapController.prototype.addMarker = function addMarker (id, location, options) {
     if (!(this.map)) {
       console.error('Bailing out of setting marker: Map not initialized');
       return null;
@@ -117,11 +123,17 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
       return null;
     }
 
+    if (this.items[id]) {
+      this.items[id].setLatLng(location).update();
+      // return null when no new marker is added to avoid setting listeners
+      return null;
+    }
+
     var marker = this.leaflet
       .marker(location, options)
       .addTo(this.map);
 
-    this.items.push(marker);
+    this.items[id] = marker;
     this.fitBounds(null, 0.5);
 
     return marker;
@@ -134,7 +146,7 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
       padding = 0;
     }
 
-    this._group = new this.leaflet.featureGroup(this.items);
+    this._group = new this.leaflet.featureGroup(_.values(this.items));
     bounds = bounds || this._group.getBounds();
     this.map.fitBounds(bounds.pad(padding));
   };

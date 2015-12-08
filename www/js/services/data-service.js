@@ -33,9 +33,8 @@ module.exports = angular.module('app.services').factory('$data', [
   'Auth',
   'User',
   'Verification',
-  'Car',
   'Booking',
-  function ($rootScope, $http, $q, $socket, Bookings, Cars, Locations, Users, Licenses, Card, File, Auth, User, Verification, Car, Booking) {
+  function ($rootScope, $http, $q, $socket, Bookings, Cars, Locations, Users, Licenses, Card, File, Auth, User, Verification, Booking) {
 
     var service = {
 
@@ -51,7 +50,6 @@ module.exports = angular.module('app.services').factory('$data', [
         Auth: Auth,
         User: User,
         Verification: Verification,
-        Car: Car,
         Booking: Booking
       },
 

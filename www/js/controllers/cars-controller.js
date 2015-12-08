@@ -1,6 +1,6 @@
 'use strict';
-var angular = require('angular');
 var _ = require('lodash');
+var angular = require('angular');
 require('../services/distance-service');
 require('angular-ui-router');
 
@@ -9,20 +9,35 @@ module.exports = angular.module('app.controllers').controller('CarsController', 
   '$scope',
   '$state',
   '$injector',
+  '$data',
   'cars',
   CarsController
 ]);
 
-function CarsController ($rootScope, $scope, $state, $injector, cars) {
+function CarsController ($rootScope, $scope, $state, $injector, $data, cars) {
   var $distance = $injector.get('$distance');
 
-  this.all = prepareCars(cars);
+  this.clearCarWatcher = $scope.$watch(function () {
+    return $data.instances.cars;
+  }, function (value) {
+    if (!value) {
+      return false;
+    }
+    this.all = prepareCars(value);
+  }.bind(this), true);
+
+  $scope.$on('$destroy', function () {
+    this.clearCarWatcher();
+  }.bind(this));
+
   this.modal = {
     title: 'Bummer',
     actions: {
     }
   };
 
+  // First load
+  this.all = prepareCars(cars);
   if (!this.all.length) {
     this.modal.message = 'There are no WaiveCars currently available for rental. Please check back later.';
     showModal.call(this);
