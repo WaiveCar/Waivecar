@@ -17,6 +17,11 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
    * @type     Object
    */
   model.schema = {
+
+    /**
+     * The user that created the booking.
+     * @type {Integer}
+     */
     userId : {
       type       : Sequelize.INTEGER,
       allowNull  : false,
@@ -26,6 +31,10 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       }
     },
 
+    /**
+     * The id of the car used in the booking.
+     * @type {String}
+     */
     carId : {
       type       : Sequelize.STRING(28),
       allowNull  : false,
@@ -35,6 +44,10 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       }
     },
 
+    /**
+     * Booking comments.
+     * @type {Text}
+     */
     comments : {
       type : Sequelize.TEXT()
     },
@@ -47,6 +60,10 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       type : Sequelize.STRING
     },
 
+    /**
+     * The boooking status.
+     * @type {Enum}
+     */
     status : {
       type : Sequelize.ENUM(
         'reserved',  // The booking has been reserved and the car has been made unavailable.
@@ -59,6 +76,7 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       ),
       defaultValue : 'reserved'
     }
+
   };
 
   /**
@@ -69,7 +87,7 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
   model.relations = [
     'BookingDetails',
     'BookingPayment',
-    function(BookingDetails, BookingPayment) {
+    function relations(BookingDetails, BookingPayment) {
       this.hasMany(BookingDetails, { as : 'details',  foreignKey : 'bookingId' });
       this.hasMany(BookingPayment, { as : 'payments', foreignKey : 'bookingId' });
     }

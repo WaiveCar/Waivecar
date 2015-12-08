@@ -180,16 +180,15 @@ module.exports = class BookingService extends Service {
     // ### Get Booking
 
     let booking = yield Booking.findById(id, relations);
+    let car     = yield Car.findById(booking.carId);
     let user    = yield this.getUser(booking.userId);
 
     this.hasAccess(user, _user);
 
     // ### Prepare Booking
 
-    booking = booking.toJSON();
-
-    // ### Append Payments
-
+    booking          = booking.toJSON();
+    booking.car      = yield Car.findById(booking.carId);
     booking.payments = yield Payment.find({
       where : {
         id : booking.payments.map((val) => {
@@ -198,13 +197,13 @@ module.exports = class BookingService extends Service {
       }
     });
 
-    // ### Append Files
-
     booking.files = yield File.find({
       where : {
         collectionId : booking.collectionId
       }
     });
+
+    delete booking.carId;
 
     return booking;
   }
