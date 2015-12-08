@@ -54,7 +54,7 @@ module.exports = class ProfileView extends React.Component {
 
     // ### Duration
 
-    let duration  = moment.duration(moment(ride.end.time).diff(moment(ride.start.time)));
+    let duration  = moment.duration(moment(ride.end.createdAt).diff(moment(ride.start.createdAt)));
     ride.duration = {
       raw     : duration,
       hours   : duration.hours(),
@@ -77,10 +77,10 @@ module.exports = class ProfileView extends React.Component {
             { ride.duration.hours ? `${ ride.duration.hours } hour${ ride.duration.hours > 1 ? 's' : '' }` : '' } { `${ ride.duration.minutes } minute${ ride.duration.minutes > 1 ? 's' : '' }` }
           </td>
           <td>
-            { data.carId }
+            { data.car.license }
           </td>
           <td>
-            ${ ride.fee }
+            { ride.fee ? `$${ ride.fee }` : 'No Charge' }
           </td>
           <td>
             { helpers.changeCase.toCapital(data.status) }
