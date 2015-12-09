@@ -94,7 +94,7 @@ module.exports = class LicenseService extends Service {
     this.hasAccess(user, _user);
 
     // ### create user in verification provider and establish link.
-    let userLink = yield Verification.createUserLink(user, license, _user);
+    let userLink = yield Verification.createUserLink(user, data, _user);
     data.linkedUserId = userLink.id;
 
     // ### Update License

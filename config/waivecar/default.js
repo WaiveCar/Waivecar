@@ -30,22 +30,22 @@ module.exports = {
         type  : 'minutes'
       },
       meta : {
-        "2C000017DC44D001" : {
+        '2C000017DC44D001' : {
           license : 'WAIVE4'
         },
-        "2E000017DC47E801" : {
+        '2E000017DC47E801' : {
           license : 'WAIVE3'
         },
-        "D4000017DC3AD101" : {
+        D4000017DC3AD101 : {
           license : 'WAIVE5'
         },
-        "DB000017DC73EA01" : {
+        DB000017DC73EA01 : {
           license : 'WAIVE1'
         },
-        "E5000017DC1E8A01" : {
+        E5000017DC1E8A01 : {
           license : 'WAIVE2'
         },
-        "EE000017DC380D01" : {
+        EE000017DC380D01 : {
           license : 'WAIVE6'
         }
       }

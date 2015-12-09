@@ -44,11 +44,13 @@ module.exports = class LicenseVerificationService extends Service {
 
     let report = yield Verification.getReport(license.linkedUserId, check.id, check.reports[0].id);
     if (report.status === 'complete') {
-      log.debug(`${ report.id } : ${ report.status }`);
+      log.debug(`LICENSE VERIFICATION : ${ report.id } : ${ report.status }`);
       yield license.update({
         status     : report.status,
         outcome    : report.result,
         report     : JSON.stringify(report),
+        checkId    : check.id,
+        reportId   : report.id,
         verifiedAt : new Date()
       });
     } else {
