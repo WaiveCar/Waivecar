@@ -1,10 +1,10 @@
-import React              from 'react';
-import mixin              from 'react-mixin';
-import { History, Link }  from 'react-router';
-import config             from 'config';
-import { auth, api, dom } from 'bento';
-import { Form, snackbar } from 'bento-web';
-import facebook           from './facebook';
+import React                       from 'react';
+import mixin                       from 'react-mixin';
+import { History, Link }           from 'react-router';
+import config                      from 'config';
+import { auth, api, dom, helpers } from 'bento';
+import { Form, snackbar }          from 'bento-web';
+import facebook                    from './facebook';
 
 @mixin.decorate(History)
 class RegisterView extends React.Component {
@@ -31,7 +31,15 @@ class RegisterView extends React.Component {
       if (error) {
         return snackbar.notify({
           type    : 'danger',
-          message : error.message
+          message : () => {
+            if (error.code === 'MISSING_REQUIRED_PARAMETER') {
+              let params = error.data.params.map((val) => {
+                return helpers.changeCase.toCapital(helpers.changeCase.toSentence(val));
+              });
+              return `${ error.message } ${ params.join(', ') }`;
+            }
+            return error.message;
+          }()
         });
       }
       this.login(data.email, data.password);
