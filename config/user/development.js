@@ -7,7 +7,7 @@ module.exports = {
         email         : 'matt.ginty+admin@clevertech.biz',
         password      : 'lollipop0',
         phone         : '+61430099449',
-        role          : 'admin',
+        role          : 5, // Super
         verifiedEmail : true,
         verifiedPhone : true,
         status        : 'active'
@@ -17,7 +17,7 @@ module.exports = {
         lastName      : 'Rødvik',
         email         : 'christoffer@clevertech.biz',
         password      : 'password',
-        role          : 'admin',
+        role          : 5, // Super
         verifiedEmail : true,
         status        : 'active'
       },
@@ -26,7 +26,7 @@ module.exports = {
         lastName      : 'Cornejo',
         email         : 'jeduan+admin@clevertech.biz',
         password      : 'password',
-        role          : 'admin',
+        role          : 5, // Super
         verifiedEmail : true,
         status        : 'active'
       },
@@ -35,7 +35,7 @@ module.exports = {
         lastName      : 'Honig',
         email         : 'zoli@waivecar.com',
         password      : 'password',
-        role          : 'admin',
+        role          : 4, // Owner
         verifiedEmail : true,
         status        : 'active'
       },
@@ -44,7 +44,7 @@ module.exports = {
         lastName      : '',
         email         : 'ideutsch@waivecar.com',
         password      : 'password',
-        role          : 'admin',
+        role          : 4, // Owner
         verifiedEmail : true,
         status        : 'active'
       },
@@ -53,7 +53,7 @@ module.exports = {
         lastName      : 'Ryman',
         email         : 'roy@waivecar.com',
         password      : 'password',
-        role          : 'admin',
+        role          : 3, // Admin
         verifiedEmail : true,
         status        : 'active'
       },
@@ -63,7 +63,7 @@ module.exports = {
         email         : 'demo@example.com',
         password      : 'lollipop0',
         phone         : '+61430099449',
-        role          : 'user',
+        role          : 1, // User
         verifiedEmail : true,
         verifiedPhone : true,
         status        : 'active'

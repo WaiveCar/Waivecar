@@ -19,35 +19,37 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
     // ### Required Fields
     // These fields are locked and should not be removed or have its key changed.
 
-    role : {
-      type : Sequelize.ENUM(
-
-        // ### Roles
-        // Feel free to add new roles to this enum, just make sure not to remove
-        // or edit out the locked roles [ 'user', 'admin' ].
-
-        'user', // Lowest role for a registered user
-        'admin' // Highest role for a registered user
-
-      ),
-      defaultValue : 'user'
-    },
-
+    /**
+     * Users first name.
+     * @type {String}
+     */
     firstName : {
       type      : Sequelize.STRING(28),
       allowNull : false
     },
 
+    /**
+     * Users last name.
+     * @type {String}
+     */
     lastName : {
       type      : Sequelize.STRING(28),
       allowNull : false
     },
 
+    /**
+     * Users email address.
+     * @type {String}
+     */
     email : {
       type   : Sequelize.STRING(128),
       unique : true
     },
 
+    /**
+     * Users encrypted password
+     * @type {String}
+     */
     password : {
       type : Sequelize.STRING(64)
     },
@@ -58,38 +60,49 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
     // to mark what modules are dependent on the value so you know if its safe
     // to remove it or not inside of your setup.
 
+    /**
+     * Users phone number, user for SMS and identification purposes.
+     * @type {String}
+     */
     phone : {
       type   : Sequelize.STRING(128),
       unique : true
     },
 
-    // ### Avatar
-    // The users profile image
-    // Module: files
-
+    /**
+     * Users profile image.
+     * @type   {String}
+     * @module files
+     */
     avatar : {
       type : Sequelize.STRING
     },
 
-    // ### Status
-    // Module: waivecar
-
+    /**
+     * The user current account status.
+     * @type   {Enum}
+     * @module waivecar
+     */
     status : {
       type         : Sequelize.ENUM('pending', 'active', 'suspended'),
       defaultValue : 'pending'
     },
 
-    // ### Facebook
-    // Module: auth
-
+    /**
+     * The users facebook id.
+     * @type   {String}
+     * @module auth
+     */
     facebook : {
       type   : Sequelize.STRING,
       unique : true
     },
 
-    // ### Stripe ID
-    // Module: shop
-
+    /**
+     * The users stripe id.
+     * @type   {String}
+     * @module shop
+     */
     stripeId : {
       type   : Sequelize.STRING(64),
       unique : true
@@ -97,7 +110,7 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
 
     // ### Verification
     // Various verification parameters used to define the account status.
-    // Module: waivecar
+    // @module waivecar
 
     verifiedPhone : {
       type         : Sequelize.BOOLEAN,
@@ -112,48 +125,76 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
   };
 
   /**
-   * The relation definitions of your model.
-   * @property relations
-   * @type     Array
+   * List of custom out of schema attributes.
+   * @type {Array}
    */
-  model.relations = [
-    'Group',
-    function relation(Group) {
-      this.belongsToMany(Group, { as : 'groups', through : 'user_groups', foreignKey : 'userId' });
-    }
-  ];
+  model.attributes = [ 'email=>role', 'role=>group' ];
 
   /**
-   * Attributes to remove before returning the model as JSON.
-   * @property blacklist
-   * @type     Array
+   * A list of blacklisted public values.
+   * @type {Array}
    */
-  model.blacklist = [ 'password', 'deletedAt' ];
+  model.blacklist = [ 'password' ];
 
   /**
-   * A list of model methods.
-   * @property methods
-   * @type     Object
+   * A list of custom model methods.
+   * @type {Object}
    */
   model.methods = {
+
+    // ### Required Methods
+    // These methods are locked and should not be removed or have its key changed.
 
     /**
      * Returns the users full name.
      * @return {String}
      */
     name() {
-      return this.firstName + ' ' + this.lastName;
+      return `${ this.firstName } ${ this.lastName }`;
     },
 
     // ### Role Methods
     // A batch of methods that can determine the users access rights.
 
     /**
+     * Returns a boolean value if the users role is the provided value.
+     * @param  {String}  val
+     * @return {Boolean}
+     */
+    isRole(val) {
+      return this.role === val;
+    },
+
+    /**
+     * Returns a boolean value if the user is a moderator.
+     * @return {Boolean}
+     */
+    isModerator() {
+      return this.isRole('moderator');
+    },
+
+    /**
      * Returns a boolean value if the user is an administrator.
      * @return {Boolean}
      */
     isAdmin() {
-      return this.role === 'admin';
+      return this.isRole('admin');
+    },
+
+    /**
+     * Returns a boolean value if the user is an owner.
+     * @return {Boolean}
+     */
+    isOwner() {
+      return this.isRole('owner');
+    },
+
+    /**
+     * Returns a boolean value if the user is a super user.
+     * @return {Boolean}
+     */
+    isSuper() {
+      return this.isRole('super');
     },
 
     /**
@@ -161,34 +202,18 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
      * @param  {String}  role
      * @return {Boolean}
      */
-    hasAccess(role) {
-      let roles      = getRoles();
-      let checkIndex = roles.indexOf(role);
-      let authIndex  = roles.indexOf(this.role);
+    *hasAccess(role) {
+      let roles = yield Role.find();
+      let check = roles.find(val => val.name === role);
+      let auth  = roles.find(val => val.name === this.role.name);
 
       // ### Access Check
       // If provided role is less than authenticated role we have access.
 
-      return checkIndex < authIndex;
+      return check.position < auth.position;
     }
 
   };
-
-  /**
-   * Returns a list of available roles.
-   * @return {Array}
-   */
-  function getRoles() {
-    let roles = Bento.config.roles;
-    if (!roles) {
-      throw error.parse({
-        code     : `MISSING_ROLES_CONFIG`,
-        message  : `Missing required roles configuration.`,
-        solution : `Make sure you have defined roles array in ./config/api/*.js`
-      });
-    }
-    return roles;
-  }
 
   return model;
 
