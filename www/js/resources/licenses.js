@@ -71,6 +71,15 @@ module.exports = angular.module('app').factory('Licenses', [
         transformRequest: transformRequest,
         transformResponse: transformResponse
       },
+      verify: {
+        method: 'POST',
+        url: $settings.uri.api + '/licenses/:id/verify',
+        params: {
+          id: '@id'
+        },
+        transformRequest: transformRequest,
+        transformResponse: transformResponse
+      }
     };
 
     var resource = Resource(null, {

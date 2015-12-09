@@ -1,33 +1,29 @@
 <ion-view ng-controller="UserEditController">
-
   <ion-nav-title>
     <page-title class="dark-bg title-plain">Account</page-title>
   </ion-nav-title>
-
   <ion-nav-buttons side="primary">
     <button menu-toggle="right" class="button button-icon icon ion-navicon"></button>
   </ion-nav-buttons>
-
   <ion-content padding="true" class="ion-content--center gray-bg">
-
     <form ng-submit="save(form)" name="form" id="form" novalidate>
       <div ng-include="'/templates/users/_form.html'"></div>
     </form>
-
     <div class="padding-top padding-bottom">
       <button class="button button-balanced button-block" ui-sref="credit-cards">Update Payment Method</button>
-      <button class="button button-positive button-block" ui-sref="licenses-edit({ licenseId: license.id })" ng-if="license.status === 'provided'">Validate Driver's License</button>
-      <button class="button button-positive button-block" ui-sref="licenses-request-validation({ licenseId: license.id })" ng-if="license.status === 'complete'">Validate Driver's License</button>
       <button class="button button-positive button-block" ui-sref="licenses-new" ng-if="!license">Add Driver's License</button>
+      <button class="button button-positive button-block" ui-sref="licenses-edit({ licenseId: license.id })" ng-if="license.status === 'provided'">Validate Driver's License</button>
+      <div class="license-verification text-center" ng-if="license && license.status !== 'provided'">
+        <p ng-if="license.status !=='complete'">Your Driver's License is pending verification</p>
+        <p ng-if="license.status ==='complete' && license.outcome === 'consider'">Driver's License has failed verification.</p>
+        <p ng-if="license.status ==='complete' && license.outcome === 'clear'">Your Driver's License has been cleared.</p>
+      </div>
     </div>
-
+    <p ng-if="license.status ==='complete' && license.outcome !== 'clear'" class="padding-top content-disclaimer">Please contact us if you would like more information in relation to the status of your Driver's License.</p>
   </ion-content>
-
   <ion-footer-bar class="no-padding">
     <div class="button-bar">
-      <!-- <button type="button" class="button button-gray" go-back>Cancel</button> -->
       <button type="submit" form="form" class="button button-balanced">Update</button>
     </div>
   </ion-footer-bar>
-
 </ion-view>
