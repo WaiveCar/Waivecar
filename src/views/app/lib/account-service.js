@@ -85,7 +85,7 @@ module.exports = class AccountService extends Service {
    * Sets the license status for the account.
    */
   setLicenseStatus() {
-    api.get('/licenses', function (err, licenses) {
+    api.get('/licenses', (err, licenses) => {
       if (err) {
         return this.error(err.message);
       }
@@ -114,7 +114,7 @@ module.exports = class AccountService extends Service {
           }));
         }
       }
-    }.bind(this));
+    });
   }
 
   /**
@@ -126,14 +126,14 @@ module.exports = class AccountService extends Service {
     if (data.password !== data.passwordVerify) {
       return this.error(`Passwords does not match`);
     }
-    api.put(`/users/${ auth.user.id }`, {
+    api.put(`/users/${ auth.user().id }`, {
       password : data.password
-    }, function (err) {
+    }, (err) => {
       if (err) {
         return this.error(err.message);
       }
       this.success(`Your password was successfully updated`);
-    }.bind(this));
+    });
   }
 
   /**

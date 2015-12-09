@@ -84,7 +84,7 @@ class ResetPasswordView extends React.Component {
       <div>
         <Form
           ref       = "tokenInputForm"
-          className = "bento-form"
+          className = "bento-form-static"
           fields    = {[
             {
               label     : 'Insert the reset token',
@@ -120,7 +120,7 @@ class ResetPasswordView extends React.Component {
       <div>
         <Form
           ref       = "passwordForm"
-          className = "bento-form"
+          className = "bento-form-static"
           fields    = {[
             {
               label     : 'Enter your new password',

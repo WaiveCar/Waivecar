@@ -49,7 +49,7 @@ module.exports = class Form extends React.Component {
    */
   onChange(event) {
     let target     = event.target;
-    let data       = this.state.data;
+    let data       = this.data();
     let { change } = this.props;
 
     // ### Update Target
