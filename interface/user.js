@@ -1,7 +1,5 @@
 'use strict';
 
-let Role = Bento.model('Role');
-
 Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
 
   /**
@@ -204,8 +202,8 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
      * @param  {String}  role
      * @return {Boolean}
      */
-    *hasAccess(role) {
-      let roles = yield Role.find({ order : [ [ 'position', 'ASC' ] ] });
+    hasAccess(role) {
+      let roles = Bento.Interface.getRoles();
       let check = roles.findIndex(val => val.name === role);
       let auth  = roles.findIndex(val => val.name === this.role.name);
 

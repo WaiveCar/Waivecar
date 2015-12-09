@@ -137,7 +137,7 @@ module.exports = class BookingService extends Service {
 
     // ### Query Bookings
 
-    if (yield _user.hasAccess('admin')) {
+    if (_user.hasAccess('admin')) {
       bookings = yield Booking.find(query);
     } else {
       query.where.userId = _user.id;

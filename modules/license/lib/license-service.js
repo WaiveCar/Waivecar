@@ -57,7 +57,7 @@ module.exports = class LicenseService extends Service {
       }
     });
 
-    if (yield _user.hasAccess('admin')) {
+    if (_user.hasAccess('admin')) {
       return yield License.find(query);
     }
 
