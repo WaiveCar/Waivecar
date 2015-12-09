@@ -17,7 +17,7 @@ Bento.Register.Controller('LicensesController', function(controller) {
    * @return {Array}
    */
   controller.index = function *() {
-    return yield service.index(this.query, this.auth.role, this.auth.user);
+    return yield service.index(this.query, this.auth.user);
   };
 
   /**

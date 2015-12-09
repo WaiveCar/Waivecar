@@ -38,31 +38,31 @@ module.exports = class LicenseService extends Service {
 
   /**
    * Returns license index.
-   * @param  {Object} role
+   * @param  {Object} query
    * @param  {Object} _user
    * @return {Object}
    */
-  static *index(query, role, _user) {
-    if (role.isAdmin()) {
-      return yield License.find(queryParser(query, {
-        where : {
-          userId       : queryParser.NUMBER,
-          number       : queryParser.STRING,
-          firstName    : queryParser.STRING,
-          middleName   : queryParser.STRING,
-          lastName     : queryParser.STRING,
-          birthDate    : queryParser.DATE,
-          country      : queryParser.STRING,
-          state        : queryParser.STRING,
-          collectionId : queryParser.STRING
-        }
-      }));
-    }
-    return yield License.find({
+  static *index(query, _user) {
+    query = queryParser(query, {
       where : {
-        userId : _user.id
+        userId       : queryParser.NUMBER,
+        number       : queryParser.STRING,
+        firstName    : queryParser.STRING,
+        middleName   : queryParser.STRING,
+        lastName     : queryParser.STRING,
+        birthDate    : queryParser.DATE,
+        country      : queryParser.STRING,
+        state        : queryParser.STRING,
+        collectionId : queryParser.STRING
       }
     });
+
+    if (yield _user.hasAccess('admin')) {
+      return yield License.find(query);
+    }
+
+    query.where.userId = _user.id;
+    return yield License.find(query);
   }
 
   /**

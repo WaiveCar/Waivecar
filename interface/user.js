@@ -1,5 +1,7 @@
 'use strict';
 
+let Role = Bento.model('Role');
+
 Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
 
   /**
@@ -203,14 +205,14 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
      * @return {Boolean}
      */
     *hasAccess(role) {
-      let roles = yield Role.find();
-      let check = roles.find(val => val.name === role);
-      let auth  = roles.find(val => val.name === this.role.name);
+      let roles = yield Role.find({ order : [ [ 'position', 'ASC' ] ] });
+      let check = roles.findIndex(val => val.name === role);
+      let auth  = roles.findIndex(val => val.name === this.role.name);
 
       // ### Access Check
       // If provided role is less than authenticated role we have access.
 
-      return check.position < auth.position;
+      return check.position <= auth.position;
     }
 
   };
