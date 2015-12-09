@@ -29,7 +29,9 @@ function session ($rootScope, $window) {
     if (_.isEmpty(this.data)) {
       this.load();
     }
-    return _(this.data[key]).isUndefined() ? {} : this.data[key];
+    return _.isUndefined(this.data[key])
+      ? null
+      : this.data[key];
   };
 
   Session.prototype.set = function set (key, value) {
@@ -39,11 +41,12 @@ function session ($rootScope, $window) {
 
   Session.prototype.save = function save () {
     _.forEach(this.data, function (value, key) {
+      if (typeof value === 'undefined') {
+        return;
+      }
       // stripped of angular-specific $$ properties
       var val = angular.fromJson(angular.toJson(value));
-      if (val !== 'undefined') {
-        $window.localStorage[key] = JSON.stringify(val);
-      }
+      $window.localStorage[key] = JSON.stringify(val);
     });
 
     return this;

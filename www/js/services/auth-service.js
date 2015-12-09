@@ -4,8 +4,8 @@ require('./session-service.js');
 require('./data-service.js');
 
 function AuthService ($rootScope, $session, $data, $injector) {
-  this.token = $session.get('auth') || false;
-  this.me = $session.get('me') || false;
+  this.token = $session.get('auth');
+  this.me = $session.get('me');
   var $cordovaFacebook = $injector.get('$cordovaFacebook');
   var $q = $injector.get('$q');
 
@@ -82,7 +82,7 @@ function AuthService ($rootScope, $session, $data, $injector) {
   this.logout = function logout () {
     $session.purge();
     this.token = false;
-    this.me = false;
+    this.me = $data.me = false;
     $rootScope.$emit('authLogout');
   };
 
@@ -92,9 +92,10 @@ function AuthService ($rootScope, $session, $data, $injector) {
     }
 
     return $data.resources.users.me().$promise
-      .then(function(res) {
-        this.me = $session.set('me', res.data).save();
-        return res.data;
+      .then(function(user) {
+        $session.set('me', user).save();
+        this.me = $data.me = $session.get('me');
+        return user;
       }.bind(this));
   };
 
@@ -124,9 +125,9 @@ function AuthService ($rootScope, $session, $data, $injector) {
     }).save();
 
     return $data.resources.users.me().$promise
-      .then(function(res) {
-        $session.set('me', res.data).save();
-        return res.data;
+      .then(function(user) {
+        $session.set('me', user).save();
+        return user;
       });
   };
 }
