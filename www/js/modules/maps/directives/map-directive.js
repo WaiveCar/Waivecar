@@ -183,6 +183,14 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
         iconAnchor: [10, 25],
         popupAnchor: [0, 0]
       };
+    case 'unavailable':
+      return {
+        iconUrl: 'img/charging-waivecar.svg',
+        iconRetinaUrl: 'img/charging-waivecar.svg',
+        iconSize: [20, 25],
+        iconAnchor: [10, 25],
+        popupAnchor: [0, 0]
+      };
     default:
       return {
         iconUrl: 'img/user-location.svg',
