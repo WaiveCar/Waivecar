@@ -6,7 +6,6 @@ module.exports = {
   socket : {
     auth : 'http://localhost:3000/users/me'
   },
-
   log : {
     level : {
       console : 'debug',
@@ -14,5 +13,4 @@ module.exports = {
       email   : 'error'
     }
   }
-
 };
