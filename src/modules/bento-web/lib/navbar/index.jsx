@@ -53,7 +53,7 @@ module.exports = class Nav extends React.Component {
    */
   nav(menu) {
     return menu.map((item, i) => {
-      if (item.role === 'admin' && auth.user.role !== 'admin') {
+      if (item.role === 'admin' && !auth.user().hasAccess('admin')) {
         return;
       }
       if (item.children) {

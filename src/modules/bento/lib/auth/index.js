@@ -3,6 +3,7 @@
 let storage = require('local-storage');
 let relay   = require('../relay');
 let User    = require('./user');
+let roles   = [];
 
 // ### Relay
 // Create the authenticated user resource.
@@ -32,13 +33,22 @@ relay.resource('me', function (state = null, payload) {
 module.exports = class Auth {
 
   /**
+   * Sets the authentication roles defined in the api.
+   * @param  {Array} list
+   * @return {Void}
+   */
+  static roles(list) {
+    roles = list;
+  }
+
+  /**
    * Returns the current authenticated user.
    * @return {Object}
    */
   static user() {
     let state = relay.getState('me');
     if (state) {
-      return new User(state);
+      return new User(state, roles);
     }
     return null;
   }

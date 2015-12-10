@@ -3,14 +3,31 @@
 import md5    from 'md5';
 import config from 'config';
 
-const apiUrl = config.api.uri + (config.api.port ? ':' + config.api.port : '');
+let apiUrl   = config.api.uri + (config.api.port ? ':' + config.api.port : '');
+let apiRoles = [];
 
 module.exports = class User {
 
-  constructor(data) {
+  constructor(data, roles) {
+    apiRoles = roles;
     for (let key in data) {
       this[key] = data[key];
     }
+  }
+
+  /**
+   * Returns a boolean if the user has access based on provided role.
+   * @param  {String}  role
+   * @return {Boolean}
+   */
+  hasAccess(role) {
+    let check = apiRoles.find(val => val.name === role);
+    let auth  = apiRoles.find(val => val.name === this.role.name);
+
+    // ### Access Check
+    // If provided role is less than authenticated role we have access.
+
+    return check.position <= auth.position;
   }
 
   /**

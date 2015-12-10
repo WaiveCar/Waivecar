@@ -11,10 +11,12 @@ import ReactDOM from 'react-dom';
 
 // ### Router
 // Current implementation uses react-router for routing react applications.
+
 import Router               from 'react-router';
 import createBrowserHistory from 'history/lib/createBrowserHistory';
 import routes               from './routes';
 import ToolboxApp           from 'react-toolbox/lib/app';
+
 // ### Reducers
 // Loads in all non dynamic reducers defined in the ./reducers directory.
 
@@ -24,6 +26,7 @@ reducers.keys().forEach((key) => {
 });
 
 // ### Style
+
 import 'react-toolbox/lib/commons';
 import 'styles/index.scss';
 

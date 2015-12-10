@@ -1,4 +1,5 @@
 import React                 from 'react';
+import async                 from 'async';
 import { Route }             from 'react-router';
 import { api, auth }         from 'bento';
 import { loader, templates } from 'bento-ui';
@@ -31,28 +32,12 @@ module.exports = {
    * @type     Array
    */
   getChildRoutes(state, done) {
-    loader((err) => {
-      if (err) {
-        return done(err);
-      }
-
-      // ### Token
-      // Check if a token exists in the local resources.
-
-      let token = auth.token();
-      if (!token) {
-        return done(null, templates.getAll());
-      }
-
-      // ### User
-      // If token exists we attempt to fetch the user.
-
-      api.get('/users/me', function (err, user) {
-        if (!err) {
-          auth.set(user);
-        }
-        done(null, templates.getAll());
-      });
+    async.parallel([
+      loadRoles,
+      loadAuth,
+      loadUI
+    ], (err) => {
+      done(err, templates.getAll());
     });
   },
 
@@ -65,3 +50,46 @@ module.exports = {
   }
 
 };
+
+/**
+ * Loads the authentication roles and assigns to bento.
+ * @param  {Function} done
+ * @return {Void}
+ */
+function loadRoles(done) {
+  api.get('/roles', (err, roles) => {
+    if (err) {
+      return done(err);
+    }
+    auth.roles(roles);
+    done();
+  });
+}
+
+/**
+ * Checks if there is a auth token set and attempts to retireve the
+ * authenticated user session form the api.
+ * @param  {Function} done
+ * @return {Void}
+ */
+function loadAuth(done) {
+  let token = auth.token();
+  if (token) {
+    api.get('/users/me', (err, user) => {
+      if (!err) {
+        auth.set(user);
+      }
+      done();
+    });
+  } else {
+    done();
+  }
+}
+
+/**
+ * Loads the bento user interface, routes, etc.
+ * @return {Void}
+ */
+function loadUI(done) {
+  loader(done);
+}

@@ -51,7 +51,7 @@ module.exports = {
         nextPathname : nextState.location.pathname
       });
     }
-    if (user.role !== 'admin') {
+    if (!user.hasAccess('admin')) {
       return replaceState(null, '/forbidden', {
         nextPathname : nextState.location.pathname
       });
@@ -66,7 +66,7 @@ module.exports = {
   isAnonymous : (nextState, replaceState) => {
     let user = auth.user();
     if (user) {
-      if (user.role === 'admin') {
+      if (user.hasAccess('admin')) {
         return replaceState(null, '/dashboard');
       }
       return replaceState(null, '/profile');

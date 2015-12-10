@@ -40,7 +40,7 @@ module.exports = class Sidebar extends React.Component {
    */
   admin() {
     let user = auth.user();
-    if (user.role === 'admin') {
+    if (user.hasAccess('admin')) {
       return (
         <div className="sidebar-admin">
           <h5 className="animated fadeInLeft">Administration</h5>
