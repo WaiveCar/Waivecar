@@ -1,0 +1,343 @@
+{
+  "meta" : {
+    "view" : {
+      "id" : "vfwz-4ske",
+      "name" : "EV Charging Stations",
+      "attribution" : "Office of Sustainability and the Environment",
+      "attributionLink" : "http://www.smgov.net/departments/ose/",
+      "averageRating" : 0,
+      "category" : "Transportation",
+      "createdAt" : 1403130630,
+      "description" : "Location and quantity of Electric Vehicle Charging Stations",
+      "displayType" : "table",
+      "downloadCount" : 35,
+      "indexUpdatedAt" : 1414191106,
+      "newBackend" : false,
+      "numberOfComments" : 0,
+      "oid" : 8241676,
+      "publicationAppendEnabled" : false,
+      "publicationDate" : 1403133030,
+      "publicationGroup" : 1621269,
+      "publicationStage" : "published",
+      "rowClass" : "",
+      "rowsUpdatedAt" : 1403133028,
+      "rowsUpdatedBy" : "5rc3-qmu8",
+      "tableId" : 1621317,
+      "totalTimesRated" : 0,
+      "viewCount" : 127,
+      "viewLastModified" : 1409421101,
+      "viewType" : "tabular",
+      "columns" : [ {
+        "id" : -1,
+        "name" : "sid",
+        "dataTypeName" : "meta_data",
+        "fieldName" : ":sid",
+        "position" : 0,
+        "renderTypeName" : "meta_data",
+        "format" : { }
+      }, {
+        "id" : -1,
+        "name" : "id",
+        "dataTypeName" : "meta_data",
+        "fieldName" : ":id",
+        "position" : 0,
+        "renderTypeName" : "meta_data",
+        "format" : { }
+      }, {
+        "id" : -1,
+        "name" : "position",
+        "dataTypeName" : "meta_data",
+        "fieldName" : ":position",
+        "position" : 0,
+        "renderTypeName" : "meta_data",
+        "format" : { }
+      }, {
+        "id" : -1,
+        "name" : "created_at",
+        "dataTypeName" : "meta_data",
+        "fieldName" : ":created_at",
+        "position" : 0,
+        "renderTypeName" : "meta_data",
+        "format" : { }
+      }, {
+        "id" : -1,
+        "name" : "created_meta",
+        "dataTypeName" : "meta_data",
+        "fieldName" : ":created_meta",
+        "position" : 0,
+        "renderTypeName" : "meta_data",
+        "format" : { }
+      }, {
+        "id" : -1,
+        "name" : "updated_at",
+        "dataTypeName" : "meta_data",
+        "fieldName" : ":updated_at",
+        "position" : 0,
+        "renderTypeName" : "meta_data",
+        "format" : { }
+      }, {
+        "id" : -1,
+        "name" : "updated_meta",
+        "dataTypeName" : "meta_data",
+        "fieldName" : ":updated_meta",
+        "position" : 0,
+        "renderTypeName" : "meta_data",
+        "format" : { }
+      }, {
+        "id" : -1,
+        "name" : "meta",
+        "dataTypeName" : "meta_data",
+        "fieldName" : ":meta",
+        "position" : 0,
+        "renderTypeName" : "meta_data",
+        "format" : { }
+      }, {
+        "id" : 153387115,
+        "name" : "Location",
+        "dataTypeName" : "location",
+        "fieldName" : "location",
+        "position" : 2,
+        "renderTypeName" : "location",
+        "tableColumnId" : 20340707,
+        "width" : 196,
+        "cachedContents" : {
+          "non_null" : 9,
+          "smallest" : {
+            "longitude" : "-118.497811",
+            "latitude" : "34.03019",
+            "human_address" : "{\"address\":\"1111 Montana Ave\",\"city\":\"Santa Monica\",\"state\":\"CA\",\"zip\":\"90403\"}"
+          },
+          "null" : 0,
+          "largest" : {
+            "longitude" : "-118.489786",
+            "latitude" : "34.011416",
+            "human_address" : "{\"address\":\"333 Civic Center Drive\",\"city\":\"Santa Monica\",\"state\":\"CA\",\"zip\":\"90401\"}"
+          },
+          "top" : [ {
+            "count" : 20,
+            "item" : {
+              "longitude" : "-118.496007",
+              "latitude" : "34.009452",
+              "human_address" : "{\"address\":\"200 Santa Monica Pier\",\"city\":\"Santa Monica\",\"state\":\"CA\",\"zip\":\"90401\"}"
+            }
+          }, {
+            "count" : 19,
+            "item" : {
+              "longitude" : "-118.490015",
+              "latitude" : "34.010088",
+              "human_address" : "{\"address\":\"1855 Main St\",\"city\":\"Santa Monica\",\"state\":\"CA\",\"zip\":\"90401\"}"
+            }
+          }, {
+            "count" : 18,
+            "item" : {
+              "longitude" : "-118.489786",
+              "latitude" : "34.011416",
+              "human_address" : "{\"address\":\"333 Civic Center Drive\",\"city\":\"Santa Monica\",\"state\":\"CA\",\"zip\":\"90401\"}"
+            }
+          }, {
+            "count" : 17,
+            "item" : {
+              "longitude" : "-118.495896",
+              "latitude" : "34.014353",
+              "human_address" : "{\"address\":\"1431 2nd St\",\"city\":\"Santa Monica\",\"state\":\"CA\",\"zip\":\"90401\"}"
+            }
+          }, {
+            "count" : 16,
+            "item" : {
+              "longitude" : "-118.493774",
+              "latitude" : "34.014431",
+              "human_address" : "{\"address\":\"1526 4th St\",\"city\":\"Santa Monica\",\"state\":\"CA\",\"zip\":\"90401\"}"
+            }
+          }, {
+            "count" : 15,
+            "item" : {
+              "longitude" : "-118.497811",
+              "latitude" : "34.03019",
+              "human_address" : "{\"address\":\"1111 Montana Ave\",\"city\":\"Santa Monica\",\"state\":\"CA\",\"zip\":\"90403\"}"
+            }
+          }, {
+            "count" : 14,
+            "item" : {
+              "longitude" : "-118.468616",
+              "latitude" : "34.021071",
+              "human_address" : "{\"address\":\"2200 Virginia Ave\",\"city\":\"Santa Monica\",\"state\":\"CA\",\"zip\":\"90404\"}"
+            }
+          }, {
+            "count" : 13,
+            "item" : {
+              "longitude" : "-118.467278",
+              "latitude" : "34.021002",
+              "human_address" : "{\"address\":\"2200 Virginia Ave\",\"city\":\"Santa Monica\",\"state\":\"CA\",\"zip\":\"90404\"}"
+            }
+          }, {
+            "count" : 12,
+            "item" : {
+              "longitude" : "-118.447013",
+              "latitude" : "34.017076",
+              "human_address" : "{\"address\":\"3223 Donald Douglas Loop South\",\"city\":\"Santa Monica\",\"state\":\"CA\",\"zip\":\"90405\"}"
+            }
+          } ]
+        },
+        "format" : { },
+        "subColumnTypes" : [ "human_address", "latitude", "longitude", "machine_address", "needs_recoding" ]
+      }, {
+        "id" : 153387116,
+        "name" : "Location Notes",
+        "dataTypeName" : "text",
+        "fieldName" : "location_notes",
+        "position" : 3,
+        "renderTypeName" : "text",
+        "tableColumnId" : 20340708,
+        "width" : 268,
+        "cachedContents" : {
+          "non_null" : 9,
+          "smallest" : "Civic Center Parking Structure",
+          "null" : 0,
+          "largest" : "Virginia Ave. Park, Virgina Lot",
+          "top" : [ {
+            "count" : 20,
+            "item" : "Santa Monica Pier Deck parking lot"
+          }, {
+            "count" : 19,
+            "item" : "Solar Car Port at Civic Auditorium Parking Lot.  Additoinal chargers available but market City Vehicles only"
+          }, {
+            "count" : 18,
+            "item" : "Civic Center Parking Structure"
+          }, {
+            "count" : 17,
+            "item" : "Parking Structure 6"
+          }, {
+            "count" : 16,
+            "item" : "Santa Monica Place Structure 7 (enterance is on Broadway)"
+          }, {
+            "count" : 15,
+            "item" : "On street charger"
+          }, {
+            "count" : 14,
+            "item" : "Virginia Ave. Park, Virgina Lot"
+          }, {
+            "count" : 13,
+            "item" : "Virginia Ave. Park, Pico Lot"
+          }, {
+            "count" : 12,
+            "item" : "Santa Monica Airport Administration Building Parking Lot"
+          } ]
+        },
+        "format" : { }
+      }, {
+        "id" : 153387117,
+        "name" : "Quantity",
+        "dataTypeName" : "number",
+        "fieldName" : "quantity",
+        "position" : 4,
+        "renderTypeName" : "number",
+        "tableColumnId" : 20340709,
+        "width" : 196,
+        "cachedContents" : {
+          "non_null" : 9,
+          "smallest" : "1",
+          "sum" : "53",
+          "null" : 0,
+          "average" : "5.888888888888889",
+          "largest" : "30",
+          "top" : [ {
+            "count" : 20,
+            "item" : "3"
+          }, {
+            "count" : 19,
+            "item" : "2"
+          }, {
+            "count" : 18,
+            "item" : "7"
+          }, {
+            "count" : 17,
+            "item" : "30"
+          }, {
+            "count" : 16,
+            "item" : "4"
+          }, {
+            "count" : 15,
+            "item" : "1"
+          } ]
+        },
+        "format" : { }
+      }, {
+        "id" : 153387118,
+        "name" : "City Owned",
+        "dataTypeName" : "checkbox",
+        "fieldName" : "city_owned",
+        "position" : 5,
+        "renderTypeName" : "checkbox",
+        "tableColumnId" : 20340710,
+        "width" : 220,
+        "cachedContents" : {
+          "non_null" : 9,
+          "smallest" : true,
+          "null" : 0,
+          "largest" : true,
+          "top" : [ {
+            "count" : 20,
+            "item" : true
+          } ]
+        },
+        "format" : { }
+      } ],
+      "grants" : [ {
+        "inherited" : false,
+        "type" : "viewer",
+        "flags" : [ "public" ]
+      } ],
+      "metadata" : {
+        "custom_fields" : {
+          "Data Freshness" : {
+            "Update Frequency" : "As needed",
+            "Scope" : "All existing stations owned by the City of Santa Monica"
+          }
+        },
+        "renderTypeConfig" : {
+          "visible" : {
+            "table" : true
+          }
+        },
+        "availableDisplayTypes" : [ "table", "fatrow", "page" ],
+        "rdfSubject" : "0",
+        "rowIdentifier" : "0",
+        "rdfClass" : ""
+      },
+      "owner" : {
+        "id" : "uq7k-zpt9",
+        "displayName" : "Kegan Maher",
+        "profileImageUrlLarge" : "/api/users/uq7k-zpt9/profile_images/LARGE",
+        "profileImageUrlMedium" : "/api/users/uq7k-zpt9/profile_images/THUMB",
+        "profileImageUrlSmall" : "/api/users/uq7k-zpt9/profile_images/TINY",
+        "roleName" : "administrator",
+        "screenName" : "Kegan Maher",
+        "rights" : [ "create_datasets", "edit_others_datasets", "edit_sdp", "edit_site_theme", "moderate_comments", "manage_users", "chown_datasets", "edit_nominations", "approve_nominations", "feature_items", "federations", "manage_stories", "manage_approval", "change_configurations", "view_domain", "view_others_datasets", "edit_pages", "create_pages", "view_goals", "view_dashboards", "edit_goals", "edit_dashboards", "create_dashboards" ]
+      },
+      "query" : { },
+      "rights" : [ "read" ],
+      "tableAuthor" : {
+        "id" : "uq7k-zpt9",
+        "displayName" : "Kegan Maher",
+        "profileImageUrlLarge" : "/api/users/uq7k-zpt9/profile_images/LARGE",
+        "profileImageUrlMedium" : "/api/users/uq7k-zpt9/profile_images/THUMB",
+        "profileImageUrlSmall" : "/api/users/uq7k-zpt9/profile_images/TINY",
+        "roleName" : "administrator",
+        "screenName" : "Kegan Maher",
+        "rights" : [ "create_datasets", "edit_others_datasets", "edit_sdp", "edit_site_theme", "moderate_comments", "manage_users", "chown_datasets", "edit_nominations", "approve_nominations", "feature_items", "federations", "manage_stories", "manage_approval", "change_configurations", "view_domain", "view_others_datasets", "edit_pages", "create_pages", "view_goals", "view_dashboards", "edit_goals", "edit_dashboards", "create_dashboards" ]
+      },
+      "tags" : [ "sustainability", "electric vehicles" ],
+      "flags" : [ "default" ]
+    }
+  },
+  "data" : [ [ 1, "521E8E87-FEB1-4C12-B063-6089BB9D6286", 1, 1403130633, "880551", 1403130841, "880551", null, [ "{\"address\":\"200 Santa Monica Pier\",\"city\":\"Santa Monica\",\"state\":\"CA\",\"zip\":\"90401\"}", "34.009452", "-118.496007", null, false ], "Santa Monica Pier Deck parking lot", "3", true ]
+, [ 2, "9106A1D5-8212-414D-8A54-F57101433CCC", 2, 1403130633, "880551", 1403131738, "880550", null, [ "{\"address\":\"1855 Main St\",\"city\":\"Santa Monica\",\"state\":\"CA\",\"zip\":\"90401\"}", "34.010088", "-118.490015", null, false ], "Solar Car Port at Civic Auditorium Parking Lot.  Additoinal chargers available but market City Vehicles only", "2", true ]
+, [ 3, "1059F6D2-90C2-437A-9118-6AE311BF8477", 3, 1403130633, "880551", 1403131609, "880550", null, [ "{\"address\":\"333 Civic Center Drive\",\"city\":\"Santa Monica\",\"state\":\"CA\",\"zip\":\"90401\"}", "34.011416", "-118.489786", null, false ], "Civic Center Parking Structure", "7", true ]
+, [ 4, "1F233A8A-FCB5-41DA-A676-EC7C4D4A0228", 4, 1403130633, "880551", 1403131636, "880550", null, [ "{\"address\":\"1431 2nd St\",\"city\":\"Santa Monica\",\"state\":\"CA\",\"zip\":\"90401\"}", "34.014353", "-118.495896", null, false ], "Parking Structure 6", "30", true ]
+, [ 5, "E816B4EE-E54A-4094-AFD0-8FCBD21E1AF8", 5, 1403130633, "880551", 1403131817, "880550", null, [ "{\"address\":\"1526 4th St\",\"city\":\"Santa Monica\",\"state\":\"CA\",\"zip\":\"90401\"}", "34.014431", "-118.493774", null, false ], "Santa Monica Place Structure 7 (enterance is on Broadway)", "4", true ]
+, [ 6, "56B5E090-58C0-45DD-ADDF-3C3AE21C0245", 6, 1403130633, "880551", 1403132329, "880550", "{}", [ "{\"address\":\"1111 Montana Ave\",\"city\":\"Santa Monica\",\"state\":\"CA\",\"zip\":\"90403\"}", "34.03019", "-118.497811", null, false ], "On street charger", "1", true ]
+, [ 7, "0488A025-EFA1-452C-9C27-6AD4E927F8D5", 7, 1403130633, "880551", 1403132780, "880550", null, [ "{\"address\":\"2200 Virginia Ave\",\"city\":\"Santa Monica\",\"state\":\"CA\",\"zip\":\"90404\"}", "34.021071", "-118.468616", null, false ], "Virginia Ave. Park, Virgina Lot", "2", true ]
+, [ 8, "FD297335-B976-4439-A6EB-3023A2B9B078", 8, 1403130633, "880551", 1403132625, "880550", null, [ "{\"address\":\"2200 Virginia Ave\",\"city\":\"Santa Monica\",\"state\":\"CA\",\"zip\":\"90404\"}", "34.021002", "-118.467278", null, false ], "Virginia Ave. Park, Pico Lot", "2", true ]
+, [ 9, "A9CAB8BC-6FE0-4E0E-8AA9-CDF1ED808F33", 9, 1403130633, "880551", 1403133027, "880550", null, [ "{\"address\":\"3223 Donald Douglas Loop South\",\"city\":\"Santa Monica\",\"state\":\"CA\",\"zip\":\"90405\"}", "34.017076", "-118.447013", null, false ], "Santa Monica Airport Administration Building Parking Lot", "2", true ]
+ ]
+}
