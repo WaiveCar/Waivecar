@@ -55,7 +55,7 @@
     "bentojs-api-sms": "0.0.13",
     "bentojs-api-subscription": "0.0.7",
     "bentojs-api-token": "1.0.1",
-    "bentojs-api-ui": "1.0.0",
+    "bentojs-api-ui": "1.0.1",
     "bentojs-api-user": "1.0.3",
     "bentojs-api-verification": "1.0.0"
   }
