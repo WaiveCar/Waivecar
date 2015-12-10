@@ -31,6 +31,15 @@ module.exports = {
         status        : 'active'
       },
       {
+        firstName     : 'Adrian',
+        lastName      : 'Salazar',
+        email         : 'adrian+admin@clevertech.biz',
+        password      : 'password',
+        role          : 5, // Super
+        verifiedEmail : true,
+        status        : 'active'
+      },
+      {
         firstName     : 'Zoli',
         lastName      : 'Honig',
         email         : 'zoli@waivecar.com',
