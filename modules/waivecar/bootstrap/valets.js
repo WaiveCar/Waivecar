@@ -11,7 +11,7 @@ module.exports = function *() {
   }
 
   let count = yield Location.count();
-  if (count > 147) {
+  if (count > 12) {
     return;
   }
 

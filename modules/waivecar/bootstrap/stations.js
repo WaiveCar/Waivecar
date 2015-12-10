@@ -13,7 +13,7 @@ module.exports = function *() {
   }
 
   let count = yield Location.count();
-  if (count > 10) {
+  if (count > 9) {
     return;
   }
 
