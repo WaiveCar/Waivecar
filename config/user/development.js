@@ -62,7 +62,6 @@ module.exports = {
         lastName      : 'User',
         email         : 'demo@example.com',
         password      : 'lollipop0',
-        phone         : '+61430099449',
         role          : 1, // User
         verifiedEmail : true,
         verifiedPhone : true,
