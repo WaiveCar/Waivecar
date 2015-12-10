@@ -102,7 +102,8 @@ function AuthService ($rootScope, $session, $data, $injector) {
   function loginWithFacebook (token) {
     return $data.resources.Auth.facebook({
       token: token,
-      type: 'login'
+      type: 'login',
+      fields: 'first_name,last_name,email'
     }).$promise
     .then(function (user) {
       return {code: 'LOGGED_IN', method: 'FACEBOOK', user: user};
@@ -112,7 +113,8 @@ function AuthService ($rootScope, $session, $data, $injector) {
   function registerUserWithFacebook (token) {
     return $data.resources.Auth.facebook({
       token: token,
-      type: 'register'
+      type: 'register',
+      fields: 'first_name,last_name,email'
     }).$promise
     .then(function (user) {
       return {code: 'NEW_USER', method: 'FACEBOOK', user: user};
