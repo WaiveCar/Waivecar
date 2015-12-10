@@ -23,6 +23,8 @@ module.exports = function(app) {
 
       if (error.handlers[route] !== undefined) {
         err = error.handlers[route](err);
+      } else if (err.name && err.name.match(/sequelize/gi)) {
+        err = handleUncaughtSequelize(err);
       }
 
       // ### Status
@@ -71,3 +73,15 @@ module.exports = function(app) {
     }
   });
 };
+
+/**
+ * Attempt to make more sense of a uncaught sequelize error.
+ * @param  {Object} err
+ * @return {Object}
+ */
+function handleUncaughtSequelize(err) {
+  err.code    = 'SEQUELIZE_ERROR';
+  err.message = err.errors[0].message;
+  err.data    = err.errors[0];
+  return err;
+}
