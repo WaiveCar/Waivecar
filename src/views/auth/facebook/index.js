@@ -15,8 +15,9 @@ let facebook = module.exports = {
   register(errorHandler) {
     if (facebook.hasToken()) {
       api.post('/auth/facebook', {
-        type  : 'register',
-        token : facebook.getToken(),
+        type   : 'register',
+        token  : facebook.getToken(),
+        fields : 'first_name,last_name,email'
       }, (error, user) => {
         if (error) {
           switch (error.code) {
@@ -46,8 +47,9 @@ let facebook = module.exports = {
   connect(errorHandler) {
     if (facebook.hasToken()) {
       api.post('/auth/facebook', {
-        type  : 'connect',
-        token : facebook.getToken()
+        type   : 'connect',
+        token  : facebook.getToken(),
+        fields : 'first_name,last_name,email'
       }, (error) => {
         if (error) {
           if (types.isFunction(errorHandler)) {
@@ -70,8 +72,9 @@ let facebook = module.exports = {
   login(errorHandler) {
     if (facebook.hasToken()) {
       api.post('/auth/facebook', {
-        type  : 'login',
-        token : facebook.getToken()
+        type   : 'login',
+        token  : facebook.getToken(),
+        fields : 'first_name,last_name,email'
       }, (error, user) => {
         if (error) {
           if (types.isFunction(errorHandler)) {
