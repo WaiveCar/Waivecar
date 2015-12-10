@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="92px" height="115px" viewBox="0 0 92 115" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.4.3 (16044) - http://www.bohemiancoding.com/sketch -->
+    <title>homebase + Shape Copy 2 + Shape Copy</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Core-Flow" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="19.3-Dashboard-home-base@2x" sketch:type="MSArtboardGroup" transform="translate(-440.000000, -433.000000)">
+            <g id="homebase-+-Shape-Copy-2-+-Shape-Copy" sketch:type="MSLayerGroup" transform="translate(440.000000, 433.000000)">
+                <g id="homebase">
+                    <g id="Triangle-1-Copy-2-+-customer-service10-+-headset1">
+                        <g id="Triangle-1-Copy-2-+-customer-service10" fill="#25C155" sketch:type="MSShapeGroup">
+                            <path d="M61.858883,89.7369927 L46,115 L30.141117,89.7369927 C12.5498941,83.2367819 0,66.2331638 0,46.2804878 C0,20.7204802 20.5949015,0 46,0 C71.4050985,0 92,20.7204802 92,46.2804878 C92,66.2331638 79.4501059,83.2367819 61.858883,89.7369927 Z" id="Triangle-1-Copy-2"></path>
+                        </g>
+                        <g id="headset1">
+                            <g id="Capa_1">
+                                <g id="Group"></g>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+                <g id="Shape-Copy-2-+-Shape-Copy" transform="translate(23.000000, 24.000000)" fill="#FFFFFF" sketch:type="MSShapeGroup">
+                    <path d="M15.8824324,18.139199 L14.2437688,25.7701723 L26.9749249,16.0125343 L26.4707207,22.0172346 L41.5968468,10.0078339 C37.5632132,4.00313357 30.6304054,0 22.6891892,0 C10.2101351,0 0,10.1329318 0,22.5176263 C0,25.7701723 0.630255255,28.7725225 1.89076577,31.5246769 L15.8824324,18.139199 L15.8824324,18.139199 Z" id="Shape-Copy-2"></path>
+                    <path d="M43.9464286,14.3478261 L21.5093415,31.7364375 L21.7614436,25.6066392 L9.15633848,35.3642773 L9.53449163,27.733304 L1.97142857,31.6113396 C5.500858,39.4925088 13.4420742,44.9968175 22.769852,44.9968175 C35.3749571,44.9968175 45.4590412,34.8638856 45.4590412,22.4791911 C45.4590412,19.6019389 44.954837,16.8497846 43.9464286,14.3478261 L43.9464286,14.3478261 Z" id="Shape-Copy"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
