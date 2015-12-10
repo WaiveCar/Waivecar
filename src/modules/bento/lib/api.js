@@ -19,10 +19,9 @@ module.exports = class API {
    * @param  {String}   uri
    * @param  {Object}   data
    * @param  {Function} callback
-   * @param  {String}   role
    */
-  static post(uri, data, callback, role) {
-    let req = this.prepare('post', uri, role);
+  static post(uri, data, callback) {
+    let req = this.prepare('post', uri);
     req.send(data);
     req.end(_handleResult.bind(this, callback));
   }
@@ -32,10 +31,9 @@ module.exports = class API {
    * @param  {String}   uri
    * @param  {Object}   data
    * @param  {Function} callback
-   * @param  {String}   role
    */
-  static file(uri, data, callback, role) {
-    let req      = this.prepare('post', uri, role);
+  static file(uri, data, callback) {
+    let req      = this.prepare('post', uri);
     let formData = new FormData();
 
     // ### Append Files
@@ -63,11 +61,14 @@ module.exports = class API {
    * @param  {String}   uri
    * @param  {Object}   qs
    * @param  {Function} done
-   * @param  {String}   role
    */
-  static get(uri, qs, done, role) {
-    if (!done) { role = done; done = qs; }
-    let req = this.prepare('get', uri, role);
+  static get(uri, qs, done) {
+    if (typeof qs === 'function') {
+      done = qs;
+      qs   = {};
+    }
+
+    let req = this.prepare('get', uri);
     req.query(qs);
     req.end(_handleResult.bind(this, done));
   }
@@ -77,10 +78,9 @@ module.exports = class API {
    * @param  {String}   uri
    * @param  {Object}   data
    * @param  {Function} callback
-   * @param  {String}   role
    */
-  static put(uri, data, callback, role) {
-    let req = this.prepare('put', uri, role);
+  static put(uri, data, callback) {
+    let req = this.prepare('put', uri);
     req.send(data);
     req.end(_handleResult.bind(this, callback));
   }
@@ -90,10 +90,9 @@ module.exports = class API {
    * @param  {String}   uri
    * @param  {Object}   data
    * @param  {Function} callback
-   * @param  {String}   role
    */
-  static patch(uri, data, callback, role) {
-    let req = this.prepare('patch', uri, role);
+  static patch(uri, data, callback) {
+    let req = this.prepare('patch', uri);
     req.send(data);
     req.end(_handleResult.bind(this, callback));
   }
@@ -102,10 +101,9 @@ module.exports = class API {
    * Sends a new delete request to the api.
    * @param  {String}   uri
    * @param  {Function} callback
-   * @param  {String}   role
    */
-  static delete(uri, callback, role) {
-    let req = this.prepare('del', uri, role);
+  static delete(uri, callback) {
+    let req = this.prepare('del', uri);
     req.end(_handleResult.bind(this, callback));
   }
 
@@ -113,15 +111,13 @@ module.exports = class API {
    * Prepares the request headers.
    * @param {String} method
    * @param {String} uri
-   * @param {String} role
    */
-  static prepare(method, uri, role) {
+  static prepare(method, uri) {
     let req   = request[method](API_URI + uri);
     let token = auth.token();
     if (token) {
       req.set('Authorization', token);
     }
-    req.set('Role', role || 'guest');
     return req;
   }
 
