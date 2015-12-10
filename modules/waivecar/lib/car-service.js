@@ -1,6 +1,7 @@
 'use strict';
 
 let co            = require('co');
+let parallel      = require('co-parallel');
 let request       = require('co-request');
 let moment        = require('moment');
 let queue         = Bento.provider('queue');
@@ -96,6 +97,41 @@ module.exports = class CarService extends Service {
     return existingCar;
   }
 
+  static *syncCar(device, cars, allCars) {
+    let existingCar = cars.find(c => c.id === device.id);
+    if (existingCar) {
+      let updatedCar = yield this.getDevice(device.id);
+      if (updatedCar) {
+        log.debug(`Cars : Sync : updating ${ device.id }.`);
+        yield this.update(existingCar.id, updatedCar, existingCar);
+      } else {
+        log.debug(`Cars : Sync : failed to retrieve ${ device.id } to update database.`);
+      }
+    } else {
+      // If Device does not match any Car then add it to the database.
+      let excludedCar = allCars.find(c => c.id === device.id);
+      if (!excludedCar) {
+        let isMockCar = [ 'EE000017DC652701', 'C0000017DC247801' ].indexOf(device.id) > -1;
+        if (!config.mock.cars && isMockCar) {
+          // this is a dev kit, ignore update.
+          log.debug(`Cars : Sync : skipping DevKit ${ device.id }.`);
+        } else  {
+          let newCar = yield this.getDevice(device.id);
+          if (newCar) {
+            let car = new Car(newCar);
+            log.debug(`Cars : Sync : adding ${ device.id }.`);
+            yield car.upsert();
+          } else {
+            log.debug(`Cars : Sync : failed to retrieve ${ device.id } to add to database.`);
+          }
+        }
+      } else {
+        // If Device was found in database but not in our filtered list, ignore.
+        log.debug(`Cars : Sync : skipping ${ device.id }.`);
+      }
+    }
+  }
+
   /**
    * [syncCars description]
    * @param  {Integer}  refreshAfter How many minutes can a Car go without being resynced (defaults to 15).
@@ -128,47 +164,8 @@ module.exports = class CarService extends Service {
     let devices = yield this.getDevices();
     log.debug(`Cars : Sync : ${ devices.length } devices available for sync.`);
 
-    for (let i = 0, len = devices.length; i < len; i++) {
-      co(function *() {
-        // If Device matches a Car in our filtered list for updates, update
-        let device = devices[i];
-        let existingCar = cars.find(c => c.id === device.id);
-        if (existingCar) {
-          let updatedCar = yield this.getDevice(device.id);
-          if (updatedCar) {
-            log.debug(`Cars : Sync : updating ${ device.id }.`);
-            yield this.update(existingCar.id, updatedCar, existingCar);
-          } else {
-            log.debug(`Cars : Sync : failed to retrieve ${ device.id }.`);
-          }
-        } else {
-          // If Device does not match any Car then add it to the database.
-          let excludedCar = allCars.find(c => c.id === device.id);
-          if (!excludedCar) {
-            let isMockCar = [ 'EE000017DC652701', 'C0000017DC247801' ].indexOf(device.id) > -1;
-            if (!config.mock.cars && isMockCar) {
-              // this is a dev kit, ignore update.
-              log.debug(`Cars : Sync : skipping DevKit ${ device.id }.`);
-            } else  {
-              let newCar = yield this.getDevice(device.id);
-              let car = new Car(newCar);
-              log.debug(`Cars : Sync : adding ${ device.id }.`);
-              yield car.upsert();
-            }
-          } else {
-            // If Device was found in database but not in our filtered list, ignore.
-            log.debug(`Cars : Sync : skipping ${ device.id }.`);
-          }
-        }
-      }.bind(this)).catch(function(err) {
-        log.error({
-          code     : err.code,
-          message  : err.toString().replace('Error: ', ''),
-          solution : err.solution,
-          stack    : err.stack
-        });
-      });;
-    }
+    let syncs = devices.map(device => this.syncCar(device, cars, allCars));
+    let result = yield parallel(syncs, 20);
 
     return yield Car.find();
   }
@@ -198,7 +195,7 @@ module.exports = class CarService extends Service {
    * @return {Array}
    */
   static *getDevice(id, _user) {
-    let status = yield this.request(`/devices/${ id }/status`);
+    let status = yield this.request(`/devices/${ id }/status`, { timeout : 10000 });
     if (status) {
       return this.transformDeviceToCar(id, status);
     }
@@ -329,30 +326,48 @@ module.exports = class CarService extends Service {
    * @param  {Object} data
    * @return {Object}          Response Object
    */
-  static *request(resource, method, data) {
-    let options = {
+  static *request(resource, options, data) {
+    options = options || {};
+    if (typeof options === 'string') {
+      options = {
+        method : options
+      };
+    }
+
+    let baseOptions = {
       url     : config.invers.uri + resource,
-      method  : method || 'GET',
-      headers : config.invers.headers
+      method  : options.method || 'GET',
+      headers : config.invers.headers,
+      timeout : options.timeout || 600000
     };
 
     if (data) {
-      options.body = JSON.stringify(data);
+      baseOptions.body = JSON.stringify(data);
     }
 
-    let result   = yield request(options);
-    let response = result.toJSON();
-    let statusCode = response ? response.statusCode : 400;
-    if (statusCode !== 200) {
-      log.error(error.parse({
-        code    : `CAR_SERVICE`,
-        message : `CAR: ${ resource }`,
-        data    : response.body ? JSON.parse(response.body) : response
-      }, statusCode));
-      return null;
-    }
+    try {
+      let result   = yield request(baseOptions);
+      let response = result.toJSON();
+      let statusCode = response ? response.statusCode : 400;
+      if (statusCode !== 200) {
+        log.error(error.parse({
+          code    : `CAR_SERVICE`,
+          message : `CAR: ${ resource }`,
+          data    : response.body ? JSON.parse(response.body) : response
+        }, statusCode));
+        return null;
+      }
 
-    return JSON.parse(response.body);
+      return JSON.parse(response.body);
+    } catch(err) {
+        log.error(error.parse({
+          code    : `CAR_SERVICE`,
+          message : `CAR: ${ resource } - ${ err.message }`,
+          data    : { error : err.message },
+          stack   : err.stack
+        }, 503));
+        return null;
+    }
   }
 
 };
