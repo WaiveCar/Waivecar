@@ -2,6 +2,7 @@
 let config = Bento.config.waivecar;
 
 module.exports = function *() {
+  /*
   if (!Bento.isTesting()) {
     yield require('./schedules/booking-auto-cancel');
     yield require('./schedules/booking-free-timer');
@@ -10,4 +11,5 @@ module.exports = function *() {
       yield require('./schedules/cars-mock-locations');
     }
   }
+  */
 };
