@@ -35,6 +35,26 @@ Bento.Register.Model('Group', 'sequelize', (model, Sequelize) => {
 
   };
 
+  /**
+   * A list of custom model methods.
+   * @type {Object}
+   */
+  model.methods = {
+
+    // ### Required Methods
+    // These methods are locked and should not be removed or have its key changed.
+
+    /**
+     * Checks if the provided id belongs to this group.
+     * @param  {String}  id
+     * @return {Boolean}
+     */
+    hasAccess(id) {
+      return this.id === id;
+    }
+
+  };
+
   return model;
 
 });

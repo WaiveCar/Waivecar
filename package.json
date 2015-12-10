@@ -17,13 +17,13 @@
   ],
   "dependencies": {
     "babel-eslint": "4.1.1",
-    "bentojs-api": "1.0.1",
+    "bentojs-api": "1.0.3",
     "bentojs-config": "0.0.5",
     "bentojs-socket": "0.3.3",
     "co": "4.6.0",
     "co-fs": "1.2.0",
     "co-glob": "0.0.2",
-    "co-parallel": "^1.0.0",
+    "co-parallel": "1.0.0",
     "co-request": "1.0.0",
     "eslint": "1.3.1",
     "geolib": "2.0.18",
@@ -41,21 +41,22 @@
     "pre-commit": "1.1.2"
   },
   "bento": {
-    "bentojs-api-auth": "1.0.1",
+    "bentojs-api-auth": "1.0.2",
     "bentojs-api-bcrypt": "1.0.3",
     "bentojs-api-email": "0.0.14",
-    "bentojs-api-file": "0.3.17",
-    "bentojs-api-log": "0.2.7",
+    "bentojs-api-file": "1.0.0",
+    "bentojs-api-log": "1.0.0",
     "bentojs-api-mongo": "0.0.12",
     "bentojs-api-queue": "0.0.17",
-    "bentojs-api-sequelize": "1.0.1",
-    "bentojs-api-shop": "0.0.2",
+    "bentojs-api-role": "1.0.0",
+    "bentojs-api-sequelize": "1.0.2",
+    "bentojs-api-shop": "1.0.0",
     "bentojs-api-slack": "0.0.2",
     "bentojs-api-sms": "0.0.13",
     "bentojs-api-subscription": "0.0.7",
     "bentojs-api-token": "1.0.1",
-    "bentojs-api-ui": "0.1.2",
-    "bentojs-api-user": "1.0.2",
-    "bentojs-api-verification": "0.0.7"
+    "bentojs-api-ui": "1.0.0",
+    "bentojs-api-user": "1.0.3",
+    "bentojs-api-verification": "1.0.0"
   }
 }

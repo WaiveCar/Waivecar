@@ -46,19 +46,6 @@ Bento.Register.Model('GroupUser', 'sequelize', (model, Sequelize) => {
     },
 
     /**
-     * The role id for the user within the group.
-     * @type {Integer}
-     */
-    roleId : {
-      type       : Sequelize.INTEGER,
-      allowNull  : false,
-      references : {
-        model : 'roles',
-        key   : 'id'
-      }
-    },
-
-    /**
      * The custom role name for the user within the group.
      * @type {Integer}
      */

@@ -15,7 +15,6 @@ module.exports = {
   user : {
     users : [
       {
-        role      : 'admin',
         firstName : 'John',
         lastName  : 'Doe',
         email     : 'admin@fixture.none',

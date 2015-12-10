@@ -157,55 +157,14 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
     // A batch of methods that can determine the users access rights.
 
     /**
-     * Returns a boolean value if the users role is the provided value.
-     * @param  {String}  val
-     * @return {Boolean}
-     */
-    isRole(val) {
-      return this.role === val;
-    },
-
-    /**
-     * Returns a boolean value if the user is a moderator.
-     * @return {Boolean}
-     */
-    isModerator() {
-      return this.isRole('moderator');
-    },
-
-    /**
-     * Returns a boolean value if the user is an administrator.
-     * @return {Boolean}
-     */
-    isAdmin() {
-      return this.isRole('admin');
-    },
-
-    /**
-     * Returns a boolean value if the user is an owner.
-     * @return {Boolean}
-     */
-    isOwner() {
-      return this.isRole('owner');
-    },
-
-    /**
-     * Returns a boolean value if the user is a super user.
-     * @return {Boolean}
-     */
-    isSuper() {
-      return this.isRole('super');
-    },
-
-    /**
      * Checks if the user has access based on the provided role.
      * @param  {String}  role
      * @return {Boolean}
      */
     hasAccess(role) {
       let roles = Bento.Interface.getRoles();
-      let check = roles.findIndex(val => val.name === role);
-      let auth  = roles.findIndex(val => val.name === this.role.name);
+      let check = roles.find(val => val.name === role);
+      let auth  = roles.find(val => val.name === this.role.name);
 
       // ### Access Check
       // If provided role is less than authenticated role we have access.
