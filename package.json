@@ -8,7 +8,8 @@
   },
   "license": "UNLICENSED",
   "scripts": {
-    "install": "napa"
+    "install": "napa",
+    "android": "scripts/build-android.sh"
   },
   "napa": {
     "ionic": "driftyco/ionic-bower#v1.0.0"
