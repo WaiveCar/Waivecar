@@ -1,0 +1,11 @@
+  .cars {
+    .box {
+      max-width: 980px;
+    }
+    [data-react-toolbox="checkbox"] {
+      margin: 0;
+      :last-child {
+        font-size : 1rem;
+      }
+    }
+  }

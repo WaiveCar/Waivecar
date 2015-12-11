@@ -56,6 +56,11 @@ templates.register('app', {
         path      : '/account/cards',
         component : require('../../views/app/profile/cards'),
         onEnter   : policies.isAuthenticated
+      },
+      {
+        path      : '/cars/:id',
+        component : require('../../views/app/admin/cars/show'),
+        onEnter   : policies.isAuthenticated
       }
     ].concat(views.getRoutes('app')));
   }
