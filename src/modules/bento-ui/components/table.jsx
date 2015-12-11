@@ -183,6 +183,22 @@ class UITable extends React.Component {
     }
   }
 
+  renderListLinkItem(item, index) {
+    let route = `/${ this.resourceName() }/${ item.id }`;
+    let text = <span>{ item.id } <small className="pull-right">{ updated }</small></span>
+    let updated = moment(item.updatedAt).format('hh:mm.ss');
+
+    if (item.license) {
+      text = <span>{ item.license } ({ item.id }) <small className="pull-right">{ updated }</small></span>
+    }
+
+    return (
+      <Link key={ index } className="list-group-item" to={ route }>
+        { text }
+      </Link>
+    );
+  }
+
   /**
    * @method render
    */
@@ -190,15 +206,26 @@ class UITable extends React.Component {
     return (
       <div id="table-component" className="component-container">
         { this.createButton() }
-        <Grid
-          useGriddleStyles = { false }
-          resultsPerPage   = { 25 }
-          results          = { this.state[this.props.resource] }
-          showFilter       = { true }
-          showSettings     = { true }
-          columns          = { this.getColumns() }
-          columnMetadata   = { this.getMetadata() }
-        />
+        <div className="hidden-md-down">
+          <Grid
+            useGriddleStyles = { false }
+            resultsPerPage   = { 25 }
+            results          = { this.state[this.props.resource] }
+            showFilter       = { true }
+            showSettings     = { true }
+            columns          = { this.getColumns() }
+            columnMetadata   = { this.getMetadata() }
+          />
+        </div>
+        <div className="hidden-lg-up visible-md-down">
+          <div className="list-group">
+            {
+              this.state[this.props.resource]
+                ? this.state[this.props.resource].map(this.renderListLinkItem.bind(this))
+                : <div className="list-group-item">Loading</div>
+            }
+          </div>
+        </div>
       </div>
     );
   }
