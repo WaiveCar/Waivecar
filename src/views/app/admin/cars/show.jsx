@@ -66,12 +66,42 @@ class CarsShowView extends React.Component {
     return <span className="text-muted"><i className="material-icons" role="true">close</i></span>;
   }
 
+  renderCarMedia() {
+    let car = this.service.getState('car');
+    return (
+      <div className="box">
+        <h3>{ car.license }</h3>
+        <div className="container-fluid">
+          <div className="row">
+            <div className="col-md-6 hidden-xs-down">
+              <img style={{ width : '100%' }} src="/images/cars/chevy_spark.png" />
+            </div>
+            <div className="col-md-6 col-xs-12">
+              <div className="ride-map">
+                <Map
+                  markerIcon = { '/images/map/active-waivecar.svg' }
+                  markers    = {[
+                    {
+                      longitude : car.longitude,
+                      latitude  : car.latitude,
+                      type      : 'start'
+                    }
+                  ]}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   renderCarForm() {
     let car = this.service.getState('car');
 
     return (
-      <div className="box">
-        <h3>{ car.license }</h3>
+      <div className="box hidden-xs-down">
+        <h3>Details</h3>
         <div className="box-content">
           <Form
             ref       = "car"
@@ -97,95 +127,77 @@ class CarsShowView extends React.Component {
     return (
       <div className="box">
         <h3>
-          Car Diagnostics
+          Diagnostics
           <small>
-            Indicators
+            Current Indicators and Levels
           </small>
         </h3>
         <div className="box-content">
           <div className="container-fluid">
             <div className="row">
-              <div className="col-md-4">
-                <div className="ride-map">
-                  <Map
-                    markerIcon = { '/images/map/active-waivecar.svg' }
-                    markers    = {[
-                      {
-                        longitude : car.longitude,
-                        latitude  : car.latitude,
-                        type      : 'start'
-                      }
-                    ]}
-                  />
-                </div>
+              <div className="col-md-6">
+                <ul className="list-group">
+                  <li className="list-group-item">
+                    <span className="pull-right">{ car.charge }</span>
+                    Charge Level
+                  </li>
+                  <li className="list-group-item">
+                    <span className="pull-right">{ car.range }</span>
+                    Range
+                  </li>
+                  <li className="list-group-item">
+                    <span className="pull-right">{ car.currentSpeed }</span>
+                    Current Speed
+                  </li>
+                  <li className="list-group-item">
+                    <span className="pull-right">{ this.renderBoolean(car.isCharging) }</span>
+                    Charging
+                  </li>
+                  <li className="list-group-item">
+                    <span className="pull-right">{ this.renderBoolean(car.isAvailable) }</span>
+                    Available
+                  </li>
+                  <li className="list-group-item">
+                    <span className="pull-right">{ car.userId }</span>
+                    User
+                  </li>
+                  <li className="list-group-item">
+                    <span className="pull-right">{ car.totalMileage }</span>
+                    Total Miles
+                  </li>
+                </ul>
               </div>
-              <div className="col-md-8">
-                <div className="row">
-                  <div className="col-md-6">
-                    <ul className="list-group">
-                      <li className="list-group-item">
-                        <span className="pull-right">{ car.charge }</span>
-                        Charge Level
-                      </li>
-                      <li className="list-group-item">
-                        <span className="pull-right">{ car.range }</span>
-                        Range
-                      </li>
-                      <li className="list-group-item">
-                        <span className="pull-right">{ car.currentSpeed }</span>
-                        Current Speed
-                      </li>
-                      <li className="list-group-item">
-                        <span className="pull-right">{ this.renderBoolean(car.isCharging) }</span>
-                        Charging
-                      </li>
-                      <li className="list-group-item">
-                        <span className="pull-right">{ this.renderBoolean(car.isAvailable) }</span>
-                        Available
-                      </li>
-                      <li className="list-group-item">
-                        <span className="pull-right">{ car.userId }</span>
-                        User
-                      </li>
-                      <li className="list-group-item">
-                        <span className="pull-right">{ car.totalMileage }</span>
-                        Total Miles
-                      </li>
-                    </ul>
-                  </div>
-                  <div className="col-md-6">
-                    <ul className="list-group">
-                      <li className="list-group-item">
-                        <span className="pull-right">{ car.keyfob }</span>
-                        Key Fob
-                      </li>
-                      <li className="list-group-item">
-                        <span className="pull-right">{ this.renderBoolean(car.isLocked) }</span>
-                        Locked
-                      </li>
-                      <li className="list-group-item">
-                        <span className="pull-right">{ car.ignition }</span>
-                        Ignition
-                      </li>
-                      <li className="list-group-item">
-                        <span className="pull-right">{ this.renderBoolean(car.isImmobilized) }</span>
-                        Immobilized
-                      </li>
-                      <li className="list-group-item">
-                        <span className="pull-right">{ this.renderBoolean(car.isQuickCharging) }</span>
-                        Quick Charging
-                      </li>
-                      <li className="list-group-item">
-                        <span className="pull-right">{ this.renderBoolean(car.isOnChargeAdapter) }</span>
-                        On Charge Adapter
-                      </li>
-                      <li className="list-group-item">
-                        <span className="pull-right">{ car.boardVoltage }</span>
-                        CloudBoxx Voltage
-                      </li>
-                    </ul>
-                  </div>
-                </div>
+              <div className="col-md-6">
+                <ul className="list-group">
+                  <li className="list-group-item">
+                    <span className="pull-right">{ car.keyfob }</span>
+                    Key Fob
+                  </li>
+                  <li className="list-group-item">
+                    <span className="pull-right">{ this.renderBoolean(car.isLocked) }</span>
+                    Locked
+                  </li>
+                  <li className="list-group-item">
+                    <span className="pull-right">{ car.ignition }</span>
+                    Ignition
+                  </li>
+                  <li className="list-group-item">
+                    <span className="pull-right">{ this.renderBoolean(car.isImmobilized) }</span>
+                    Immobilized
+                  </li>
+                  <li className="list-group-item">
+                    <span className="pull-right">{ this.renderBoolean(car.isQuickCharging) }</span>
+                    Quick Charging
+                  </li>
+                  <li className="list-group-item">
+                    <span className="pull-right">{ this.renderBoolean(car.isOnChargeAdapter) }</span>
+                    On Charge Adapter
+                  </li>
+                  <li className="list-group-item">
+                    <span className="pull-right">{ car.boardVoltage }</span>
+                    CloudBoxx Voltage
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
@@ -212,9 +224,6 @@ class CarsShowView extends React.Component {
       <div className="box">
         <h3>
           Controls
-          <small>
-            <em className="text-danger">WARNING: these actions will be attempted against the car</em>
-          </small>
         </h3>
         <div className="box-content">
           <div className="container-fluid">
@@ -224,6 +233,13 @@ class CarsShowView extends React.Component {
               </div>
               <div className="col-md-6 text-center">
                 <Switch { ...switches[1] } />
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-md-12 text-center">
+                <div className="p-t">
+                  <small className="text-danger hidden-xs-down">WARNING: These actions will remotely access control the car</small>
+                </div>
               </div>
             </div>
           </div>
@@ -251,6 +267,7 @@ class CarsShowView extends React.Component {
     }
     return (
       <div className="cars cars-show">
+        { this.renderCarMedia() }
         { this.renderCarForm() }
         { this.renderCarIndicators() }
         { this.renderCarActions() }

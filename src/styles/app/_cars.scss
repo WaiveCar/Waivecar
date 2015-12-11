@@ -1,6 +1,12 @@
   .cars {
+    .ride-map {
+      height : 400px;
+    }
     .box {
       max-width: 980px;
+    }
+    .list-group {
+      min-width: 270px;
     }
     [data-react-toolbox="checkbox"] {
       margin: 0;
