@@ -56,7 +56,7 @@
     "bentojs-api-subscription": "0.0.7",
     "bentojs-api-token": "1.0.1",
     "bentojs-api-ui": "1.0.1",
-    "bentojs-api-user": "1.0.4",
+    "bentojs-api-user": "1.0.5",
     "bentojs-api-verification": "1.0.0"
   }
 }
