@@ -12,10 +12,14 @@ module.exports = class Car extends Service {
    */
   constructor(ctx) {
     super(ctx, 'car', {
-      cars : []
+      car : {}
     });
     this.update = this.update.bind(this);
     this.executeCommand = this.executeCommand(this)
+  }
+
+  executeCommand(command) {
+    return;
   }
 
   /**
@@ -70,14 +74,14 @@ module.exports = class Car extends Service {
   }
 
   /**
-   * Loads car from the api and adds them to the array on the ctx.
+   * Loads car from the api and adds it to ctx.
    */
   setCar(id) {
-    api.get(`/cars/${ id }`, function (err, cards) {
+    api.get(`/cars/${ id }`, function (err, cars) {
       if (err) {
         return this.error(err.message);
       }
-      this.setState('activeCar', cards);
+      this.setState('car', cars);
     }.bind(this));
   }
 }
