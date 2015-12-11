@@ -22,17 +22,26 @@ Bento.Register.Controller('CarsController', function(controller) {
   };
 
   /**
+   * Updates the provided user.
+   * @param  {Number} id
+   * @return {Object}
+   */
+  controller.update = function *(id) {
+    return yield car.update(id, this.payload, this.auth.user);
+  };
+
+  /**
    * Execute a command on a single car.
    * @param  {Number} id The Car Id.
    * @param  {String} command lock/unlock.
    * @return {Object}
    */
-  controller.update = function *(id, command) {
+  controller.command = function *(id, command) {
     switch (command) {
-      case 'lock'               : return yield car.executeCommand(id, 'central_lock', 'lock', this.auth.user);
-      case 'unlock'             : return yield car.executeCommand(id, 'central_lock', 'unlock', this.auth.user);
-      case 'lock-immobilizer'   : return yield car.executeCommand(id, 'immobilizer', 'lock', this.auth.user);
-      case 'unlock-immobilizer' : return yield car.executeCommand(id, 'immobilizer', 'unlock', this.auth.user);
+      case 'lock'               : return yield car.lockCar(id, this.auth.user);
+      case 'unlock'             : return yield car.unlockCar(id, this.auth.user);
+      case 'lock-immobilizer'   : return yield car.lockImmobilzer(id, this.auth.user);
+      case 'unlock-immobilizer' : return yield car.unlockImmobilzer(id, this.auth.user);
       default                   : {
         throw error.parse({
           code    : `CAR_UNRECOGNIZED_COMMAND`,

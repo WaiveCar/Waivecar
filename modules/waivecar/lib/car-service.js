@@ -45,6 +45,25 @@ module.exports = class CarService extends Service {
   }
 
   /**
+   * @param  {Number} id
+   * @param  {Object}  payload
+   * @param  {Object} _user
+   * @return {Mixed}
+   */
+  static *update(id, payload, _user) {
+    this.hasAccess(_user);
+    let model = yield Car.findById(id);
+    yield model.update(payload);
+
+    relay.emit('cars', {
+      type : 'update',
+      data : model.toJSON()
+    });
+
+    return model;
+  }
+
+  /**
    * A convenience method to update the local Car (to enable pre-save model transformations)
    * @param  {Number} id          car Id
    * @param  {Object} data        update data to persist
@@ -52,7 +71,7 @@ module.exports = class CarService extends Service {
    * @param  {Object} _user       user (optional)
    * @return {Object}             updated Car
    */
-  static *update(id, data, existingCar, _user) {
+  static *syncUpdate(id, data, existingCar, _user) {
     if (!existingCar) {
       existingCar = yield Car.findById(id);
     }
@@ -103,7 +122,7 @@ module.exports = class CarService extends Service {
       let updatedCar = yield this.getDevice(device.id);
       if (updatedCar) {
         log.debug(`Cars : Sync : updating ${ device.id }.`);
-        yield this.update(existingCar.id, updatedCar, existingCar);
+        yield this.syncUpdate(existingCar.id, updatedCar, existingCar);
       } else {
         log.debug(`Cars : Sync : failed to retrieve ${ device.id } to update database.`);
       }
@@ -248,7 +267,7 @@ module.exports = class CarService extends Service {
     payload[part] = `${ command }ed`;
     let status = yield this.request(`/devices/${ id }/status`, 'PATCH', payload);
     let updatedCar = this.transformDeviceToCar(id, status);
-    return yield this.update(id, updatedCar, existingCar, _user);
+    return yield this.syncUpdate(id, updatedCar, existingCar, _user);
   }
 
   /**
@@ -367,6 +386,21 @@ module.exports = class CarService extends Service {
           stack   : err.stack
         }, 503));
         return null;
+    }
+  }
+
+  /**
+   * Only allow access if the requesting user is the administrator.
+   * @param  {Object}  user  The user to be modified.
+   * @param  {Object}  _user The user requesting modification.
+   * @return {Boolean}
+   */
+  static hasAccess(user) {
+    if (!user.hasAccess('admin')) {
+      throw error.parse({
+        error   : `INVALID_PRIVILEGES`,
+        message : `You do not have the required privileges to perform this operation.`
+      }, 403);
     }
   }
 
