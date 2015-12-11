@@ -207,17 +207,44 @@ class CarsShowView extends React.Component {
   }
 
   renderCarActions() {
+    if (this.service.getState('isLoading')) {
+      return (
+        <div className="box">
+          <h3>
+            Controls
+          </h3>
+          <div className="box-content">
+            <div className="loading-panel">
+              <div className="sk-cube-grid">
+                <div className="sk-cube sk-cube1"></div>
+                <div className="sk-cube sk-cube2"></div>
+                <div className="sk-cube sk-cube3"></div>
+                <div className="sk-cube sk-cube4"></div>
+                <div className="sk-cube sk-cube5"></div>
+                <div className="sk-cube sk-cube6"></div>
+                <div className="sk-cube sk-cube7"></div>
+                <div className="sk-cube sk-cube8"></div>
+                <div className="sk-cube sk-cube9"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     let car = this.service.getState('car');
     let switches = [
       {
         ref : 1,
-        checked : car.isLocked,
-        label : car.isLocked ? 'Unlock Doors' : 'Lock Doors'
+        checked  : car.isLocked,
+        label    : car.isLocked ? 'Unlock Doors' : 'Lock Doors',
+        onChange : this.service.executeCommand.bind(this, car, car.isLocked ? 'unlock' : 'lock')
       },
       {
         ref : 2,
-        checked : car.isImmobilized,
-        label : car.isImmobilized ? 'Deactivate Immobilizer' : 'Activate Immobilizer'
+        checked  : car.isImmobilized,
+        label    : car.isImmobilized ? 'Deactivate Immobilizer' : 'Activate Immobilizer',
+        onChange : this.service.executeCommand.bind(this, car, car.isImmobilized ? 'unlock-immobilizer' : 'lock-immobilizer')
       }
     ];
     return (
@@ -238,7 +265,7 @@ class CarsShowView extends React.Component {
             <div className="row">
               <div className="col-md-12 text-center">
                 <div className="p-t">
-                  <small className="text-danger hidden-xs-down">WARNING: These actions will remotely access control the car</small>
+                  <small className="text-danger hidden-xs-down">WARNING: These actions will remotely access and control the car</small>
                 </div>
               </div>
             </div>
@@ -262,7 +289,7 @@ class CarsShowView extends React.Component {
   render() {
     let car = this.service.getState('car');
 
-    if (this.state.isLoading || !car.id) {
+    if (!car.id) {
       return <div className="text-center">Retrieving Car...</div>
     }
     return (

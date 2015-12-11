@@ -12,14 +12,24 @@ module.exports = class Car extends Service {
    */
   constructor(ctx) {
     super(ctx, 'car', {
-      car : {}
+      car       : {},
+      isLoading : false
     });
     this.update = this.update.bind(this);
-    this.executeCommand = this.executeCommand(this)
+    this.executeCommand = this.executeCommand.bind(this);
   }
 
-  executeCommand(command) {
-    return;
+  executeCommand(car, command) {
+    this.setState('isLoading', true);
+    api.put(`/cars/${ car.id }/${ command }`, { }, function (err, model) {
+      this.setState('isLoading', false);
+      if (err) {
+        return this.error(err.data ? err.data : err.message);
+      }
+
+      this.setState('car', model);
+      this.success(`Command completed successfully.`);
+    }.bind(this));
   }
 
   /**
@@ -33,19 +43,7 @@ module.exports = class Car extends Service {
         return this.error(err.data ? err.data : err.message);
       }
 
-      let models = this.getState('cars');
-      let cars = [ model ];
-      models.forEach((m) => {
-        if (m.id !== model.id) {
-          cars.push(model);
-        }
-      });
-
-
-      this.setState('car', [
-        ...this.getState('car'),
-        model
-      ]);
+      this.setState('car', model);
       this.success(`Car was updated successfully.`);
     }.bind(this));
   }
@@ -58,6 +56,7 @@ module.exports = class Car extends Service {
    */
   save(user, car, done) {
     api.put(`/cars/${ car.id }`, {
+      id           : car.id,
       make         : car.make,
       model        : car.model,
       year         : car.year,
