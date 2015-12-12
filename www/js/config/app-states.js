@@ -254,8 +254,15 @@ module.exports = [
       data: {
         auth: true
       }
-    });
+    })
 
+    .state('sandpit', {
+      url: '/sandpit',
+      templateUrl: '/templates/common/sandpit.html',
+      data: {
+        auth: true
+      }
+    });
 
     $stateProvider
       .state('messages-new', {

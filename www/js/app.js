@@ -84,6 +84,7 @@ require('./controllers/user-edit-controller');
 require('./controllers/timer-controller');
 require('./controllers/menu-controller');
 require('./controllers/verify-controller');
+require('./controllers/sandpit-controller');
 require('./constants/us-states');
 
 // Directives

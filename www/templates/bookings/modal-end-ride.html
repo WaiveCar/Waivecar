@@ -1,0 +1,31 @@
+<ion-modal-view>
+  <ion-content scroll="false" padding="true" class="ion-content--center dark-bg">
+    <div  class="row row-center row-full-height">
+      <div class="col col-center">
+        <div class="lead-logo">
+          <ng-include class="logo-image" src="'/img/waivecar-mark2.svg'" />
+        </div>
+        <h3 class="margin-bottom-10">END RIDE</h3>
+        <div>
+          <p>Where are you?</p>
+        </div>
+        <div>
+          <ul class="list-unstyled text-left margin-top-10">
+            <li>
+              <button type="button" class="button button-block button-balanced" ng-click="endAtChargingStation()">Charging Station</button>
+            </li>
+            <li>
+              <button type="button" class="button button-block button-balanced" ng-click="endAtHomebase()">WaiveCar Home Lot</button>
+            </li>
+            <li>
+              <button type="button" class="button button-block button-balanced" ng-click="endAtValet()">WaiveCar Valet</button>
+            </li>
+            <li>
+              <button type="button" class="button button-block button-balanced" ng-click="endAtOther()">Other</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </ion-content>
+</ion-modal-view>
