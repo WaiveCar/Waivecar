@@ -43,38 +43,3 @@
   margin: 0 auto;
 }
 
-
-.modal.simple-modal {
-  background: transparent;
-
-  .modal-title {
-    font-weight: 700;
-  }
-
-  .waivecar-mark {
-    display: block;
-    width: 25px;
-    height: 25px;
-    margin: 0 auto 20px;
-  }
-
-  ion-content {
-    &.dark-bg {
-      // reverting
-      background: transparent;
-    }
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .button.button-block {
-    margin-bottom: 0;
-  }
-
-  .modal-container {
-    background: rgba(0, 0, 0, 0.8);
-    padding: 35px;
-  }
-}
-

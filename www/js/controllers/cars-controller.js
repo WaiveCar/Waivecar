@@ -35,12 +35,12 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
   // First load
   this.all = prepareCars(cars);
   if (!this.all.length) {
-    $modal.setData({
+    $modal('simple-modal', {
       title: 'Bummer',
       message: 'There are no WaiveCars currently available for rental. Please check back later.'
-    });
-    $modal.$promise.then(function () {
-      $modal.show();
+    }).$promise
+    .then(function (modal) {
+      modal.show();
     });
   } else {
     this.closest = $distance.closest(cars);
@@ -48,12 +48,12 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
     // check for max miles
     // TODO don't hardcode this
     if (this.closest > 30) {
-      $modal.setData({
+      $modal('simple-modal', {
         title: 'Bummer',
         message: 'WaiveCar is currently available just in LA. Check back when you are in the area.'
-      });
-      $modal.$promise.then(function () {
-        $modal.show();
+      }).$promise
+      .then(function (modal) {
+        modal.show();
       });
     }
   }
