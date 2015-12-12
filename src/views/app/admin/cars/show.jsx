@@ -50,7 +50,6 @@ class CarsShowView extends React.Component {
   }
 
   componentWillUpdate() {
-    console.log(this.service.getState('cars'));
   }
 
   componentWillUnmount() {
@@ -276,7 +275,6 @@ class CarsShowView extends React.Component {
   }
 
   renderLastUpdate(car) {
-    console.log(car.updatedAt);
     let updated = moment(car.updatedAt).format('h:mm.ss YY-MM-DD');
 
     return (
