@@ -2,6 +2,7 @@
 var _ = require('lodash');
 var angular = require('angular');
 require('../services/distance-service');
+require('../services/modal-service');
 require('angular-ui-router');
 
 module.exports = angular.module('app.controllers').controller('CarsController', [
@@ -11,10 +12,11 @@ module.exports = angular.module('app.controllers').controller('CarsController', 
   '$injector',
   '$data',
   'cars',
+  '$modal',
   CarsController
 ]);
 
-function CarsController ($rootScope, $scope, $state, $injector, $data, cars) {
+function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $modal) {
   var $distance = $injector.get('$distance');
 
   this.clearCarWatcher = $scope.$watch(function () {
@@ -30,25 +32,29 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars) {
     this.clearCarWatcher();
   }.bind(this));
 
-  this.modal = {
-    title: 'Bummer',
-    actions: {
-    }
-  };
-
   // First load
   this.all = prepareCars(cars);
   if (!this.all.length) {
-    this.modal.message = 'There are no WaiveCars currently available for rental. Please check back later.';
-    showModal.call(this);
+    $modal.setData({
+      title: 'Bummer',
+      message: 'There are no WaiveCars currently available for rental. Please check back later.'
+    });
+    $modal.$promise.then(function () {
+      $modal.show();
+    });
   } else {
     this.closest = $distance.closest(cars);
     console.log('closest car at %d miles', this.closest);
     // check for max miles
     // TODO don't hardcode this
     if (this.closest > 30) {
-      this.modal.message = 'WaiveCar is currently available just in LA. Check back when you are in the area.';
-      showModal.call(this);
+      $modal.setData({
+        title: 'Bummer',
+        message: 'WaiveCar is currently available just in LA. Check back when you are in the area.'
+      });
+      $modal.$promise.then(function () {
+        $modal.show();
+      });
     }
   }
 
@@ -65,22 +71,6 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars) {
       return item;
     });
   };
-
-  function showModal () {
-    if (typeof this.modal.actions.show === 'function') {
-      this.modal.actions.show();
-    } else {
-      var watch = $scope.$watch('cars.modal.actions', function (actions) {
-        if (!actions) {
-          return false;
-        }
-        if (typeof actions.show === 'function') {
-          actions.show();
-          watch();
-        }
-      });
-    }
-  }
 
   this.showCar = function showCar (car) {
     if (car.isAvailable === false) {
