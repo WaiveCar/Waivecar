@@ -36,6 +36,7 @@ class CarsShowView extends React.Component {
     this.state = {};
     dom.setTitle('Car');
     this.service = new Service(this);
+    relay.subscribe(this, 'cars');
   }
 
   handleChange = (item, value) => {
@@ -46,6 +47,10 @@ class CarsShowView extends React.Component {
 
   componentDidMount() {
     this.service.setCar(this.id());
+  }
+
+  componentWillUpdate() {
+    console.log(this.service.getState('cars'));
   }
 
   componentWillUnmount() {
@@ -66,8 +71,7 @@ class CarsShowView extends React.Component {
     return <span className="text-muted"><i className="material-icons" role="true">close</i></span>;
   }
 
-  renderCarMedia() {
-    let car = this.service.getState('car');
+  renderCarMedia(car) {
     return (
       <div className="box">
         <h3>{ car.license }</h3>
@@ -96,9 +100,7 @@ class CarsShowView extends React.Component {
     );
   }
 
-  renderCarForm() {
-    let car = this.service.getState('car');
-
+  renderCarForm(car) {
     return (
       <div className="box hidden-xs-down">
         <h3>Details</h3>
@@ -122,8 +124,7 @@ class CarsShowView extends React.Component {
     );
   }
 
-  renderCarIndicators() {
-    let car = this.service.getState('car');
+  renderCarIndicators(car) {
     return (
       <div className="box">
         <h3>
@@ -206,7 +207,7 @@ class CarsShowView extends React.Component {
     );
   }
 
-  renderCarActions() {
+  renderCarActions(car) {
     if (this.service.getState('isLoading')) {
       return (
         <div className="box">
@@ -232,7 +233,6 @@ class CarsShowView extends React.Component {
       );
     }
 
-    let car = this.service.getState('car');
     let switches = [
       {
         ref : 1,
@@ -275,8 +275,8 @@ class CarsShowView extends React.Component {
     );
   }
 
-  renderLastUpdate() {
-    let car = this.service.getState('car');
+  renderLastUpdate(car) {
+    console.log(car.updatedAt);
     let updated = moment(car.updatedAt).format('h:mm.ss YY-MM-DD');
 
     return (
@@ -287,18 +287,19 @@ class CarsShowView extends React.Component {
   }
 
   render() {
-    let car = this.service.getState('car');
+    let car = this.service.getState('cars').find(c => c.id === this.id());
 
-    if (!car.id) {
+    if (!car || !car.id) {
       return <div className="text-center">Retrieving Car...</div>
     }
+
     return (
       <div className="cars cars-show">
-        { this.renderCarMedia() }
-        { this.renderCarForm() }
-        { this.renderCarIndicators() }
-        { this.renderCarActions() }
-        { this.renderLastUpdate() }
+        { this.renderCarMedia(car) }
+        { this.renderCarForm(car) }
+        { this.renderCarIndicators(car) }
+        { this.renderCarActions(car) }
+        { this.renderLastUpdate(car) }
       </div>
     );
   }

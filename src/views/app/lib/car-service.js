@@ -12,8 +12,8 @@ module.exports = class Car extends Service {
    */
   constructor(ctx) {
     super(ctx, 'car', {
-      car       : {},
-      isLoading : false
+      isLoading : false,
+      cars      : []
     });
     this.update = this.update.bind(this);
     this.executeCommand = this.executeCommand.bind(this);
@@ -27,7 +27,7 @@ module.exports = class Car extends Service {
         return this.error(err.data ? err.data : err.message);
       }
 
-      this.setState('car', model);
+      this.updateCarState(model);
       this.success(`Command completed successfully.`);
     }.bind(this));
   }
@@ -43,7 +43,7 @@ module.exports = class Car extends Service {
         return this.error(err.data ? err.data : err.message);
       }
 
-      this.setState('car', model);
+      this.updateCarState(model);
       this.success(`Car was updated successfully.`);
     }.bind(this));
   }
@@ -72,15 +72,31 @@ module.exports = class Car extends Service {
     }.bind(this));
   }
 
+  updateCarState(car) {
+    // ### Update State
+    this.setState('cars', function () {
+      let models  = this.getState('cars');
+      let result = [ car ];
+      models.forEach((model) => {
+        if (model.id !== car.id) {
+          result.push(model);
+        }
+      });
+      return result;
+    }.call(this));
+  }
+
   /**
    * Loads car from the api and adds it to ctx.
    */
   setCar(id) {
-    api.get(`/cars/${ id }`, function (err, cars) {
+    api.get(`/cars/${ id }`, function (err, car) {
       if (err) {
         return this.error(err.message);
       }
-      this.setState('car', cars);
+
+      this.updateCarState(car);
+
     }.bind(this));
   }
 }
