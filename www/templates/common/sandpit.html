@@ -10,9 +10,14 @@
     <div  class="row row-center row-full-height">
       <div class="col col-center">
         <div>
+          <p>outside zone : {{ outsideZone }}</p>
+          <p>outside zone confirmation: {{ outsideZoneConfirmed }}</p>
           <ul class="list-unstyled text-left margin-top-10">
             <li>
-              <button type="button" class="button button-block button-balanced" ng-click="end()">End Ride Flow</button>
+              <button type="button" class="button button-block button-gray" ng-click="toggleZone()">Toggle Zone Check</button>
+            </li>
+            <li>
+              <button type="button" class="button button-block button-balanced" ng-click="endRideOptions()">End Ride Flow</button>
             </li>
           </ul>
         </div>

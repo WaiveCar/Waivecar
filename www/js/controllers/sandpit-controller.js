@@ -15,14 +15,93 @@ module.exports = angular.module('app.controllers').controller('SandpitController
   '$message',
   function ($rootScope, $scope, $ionicModal, $state, $auth, $data, $message) {
 
-    $scope.end = function () {
+    $scope.outsideZone = false;
+    $scope.outsideZoneConfirmed = false;
 
+    $scope.toggleZone = function() {
+      $scope.outsideZoneConfirmed = false;
+      $scope.outsideZone = !$scope.outsideZone;
+    };
+
+    $scope.state = {
+      location: {
+        chargingStation: false,
+        homebase: false,
+        valet: false,
+        other: false
+      },
+      check: {
+        key: true,
+        ignition: true,
+        chargeCard: true,
+        charging: true
+      }
+    };
+
+    $scope.endWithZoneFee = function() {
+      $scope.outsideZoneConfirmed = true;
+    };
+
+    $scope.endAtChargingStation = function() {
+      $scope.state.location.chargingStation = true;
+      $scope.endRideLocation();
+    };
+
+    $scope.endAtHomebase = function() {
+      $scope.state.location.homebase = true;
+      $scope.endRideLocation();
+    };
+
+    $scope.endAtValet = function() {
+      $scope.state.location.valet = true;
+      $scope.endRideLocation();
+    };
+
+    $scope.endAtOther = function() {
+      $scope.state.location.other = true;
+      $scope.endRideLocation();
+    };
+
+    $scope.endRideLocation = function() {
+      $scope.closeEndRideOptions();
+      $ionicModal.fromTemplateUrl('/templates/bookings/modal-end-ride-location.html', {
+        scope: $scope,
+        animation: 'slide-in-up'
+      }).then(function(modal) {
+        modal.show();
+        $scope.closeEndRideLocation = function() {
+          modal.remove();
+        };
+        $scope.$on('$destroy', function() {
+          modal.remove();
+        });
+      });
+    };
+
+    $scope.endRideOptions = function() {
+      $ionicModal.fromTemplateUrl('/templates/bookings/modal-end-ride-options.html', {
+        scope: $scope,
+        animation: 'slide-in-up'
+      }).then(function(modal) {
+        modal.show();
+        $scope.closeEndRideOptions = function() {
+          modal.remove();
+        };
+        $scope.$on('$destroy', function() {
+          modal.remove();
+        });
+      });
+    };
+
+    $scope.endRide = function () {
+      debugger;
+      $scope.closeEndRideLocation();
       $ionicModal.fromTemplateUrl('/templates/bookings/modal-end-ride.html', {
         scope: $scope,
         animation: 'slide-in-up'
       }).then(function(modal) {
         modal.show();
-        $scope.close = function(){
+        $scope.closeEndRide = function() {
           modal.remove();
         };
         $scope.$on('$destroy', function() {

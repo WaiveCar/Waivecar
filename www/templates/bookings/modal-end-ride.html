@@ -5,25 +5,31 @@
         <div class="lead-logo">
           <ng-include class="logo-image" src="'/img/waivecar-mark2.svg'" />
         </div>
-        <h3 class="margin-bottom-10">END RIDE</h3>
         <div>
-          <p>Where are you?</p>
-        </div>
-        <div>
-          <ul class="list-unstyled text-left margin-top-10">
-            <li>
-              <button type="button" class="button button-block button-balanced" ng-click="endAtChargingStation()">Charging Station</button>
-            </li>
-            <li>
-              <button type="button" class="button button-block button-balanced" ng-click="endAtHomebase()">WaiveCar Home Lot</button>
-            </li>
-            <li>
-              <button type="button" class="button button-block button-balanced" ng-click="endAtValet()">WaiveCar Valet</button>
-            </li>
-            <li>
-              <button type="button" class="button button-block button-balanced" ng-click="endAtOther()">Other</button>
-            </li>
-          </ul>
+          <h3 class="margin-bottom-10">END RIDE</h3>
+          <div>
+            <p>Please complete these tasks before you leave.<br />The list will automatically update.</p>
+          </div>
+          <div>
+            <ul class="list-unstyled text-left margin-top-10">
+              <li ng-show="state.check.key">
+                <label class="pull-right"><i>x</i></label>
+                Key in holder
+              </li>
+              <li ng-show="state.check.ignition">
+                <label class="pull-right"><i>x</i></label>
+                Engine off
+              </li>
+              <li ng-show="state.check.chargeCard">
+                <label class="pull-right"><i>x</i></label>
+                Charging Card
+              </li>
+              <li ng-show="state.check.charging">
+                <label class="pull-right"><i>x</i></label>
+                Charging
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
