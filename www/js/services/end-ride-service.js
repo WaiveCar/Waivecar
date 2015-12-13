@@ -116,8 +116,14 @@ module.exports = angular.module('app.services').factory('$endRide', [
       $data.resources.bookings.end({ id: service.state.booking.id }).$promise.then(function() {
         $data.fetch('bookings');
         $data.deactivate('bookings');
-        $data.deactivate('cars');
         $message.success(service.state.booking.id + ' has been successfully ended');
+      }).catch($message.error);
+    };
+
+    service.lockCar = function(id) {
+      $data.resources.cars.lock({ id: id }).$promise.then(function() {
+        $data.deactivate('cars');
+        $message.success(id + ' has been successfully locked');
       }).catch($message.error);
     };
 
