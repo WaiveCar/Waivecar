@@ -43,14 +43,14 @@ module.exports = angular.module('app.controllers').controller('EndRideController
 
     //TEMP FOR SANDPIT
     $scope.ready = function() {
-      $data.resources.bookings.ready({ id: $scope.service.state.booking.id }).$promise.then(function(booking) {
+      $data.resources.bookings.ready({ id: $scope.service.state.booking.id }).$promise.then(function() {
         $data.fetch('bookings');
       }).catch($message.error);
     };
 
     //TEMP FOR SANDPIT
     $scope.start = function() {
-      $data.resources.bookings.start({ id: $scope.service.state.booking.id }).$promise.then(function(booking) {
+      $data.resources.bookings.start({ id: $scope.service.state.booking.id }).$promise.then(function() {
         $data.fetch('bookings');
       }).catch($message.error);
     };

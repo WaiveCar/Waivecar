@@ -1,7 +1,6 @@
 'use strict';
 var angular = require('angular');
 require('../services/utils.js');
-var _ = require('lodash');
 
 module.exports = angular.module('app').factory('Bookings', [
   '$resource',

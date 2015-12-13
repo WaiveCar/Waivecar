@@ -85,7 +85,7 @@ module.exports = angular.module('app.services').factory('$data', [
           return instance.$save().then(function(model) {
             service.merge(modelName, model.toJSON());
             service.activateKnownModel(modelName, model.id).then(function() {
-              return resolve(model.toJSON())
+              return resolve(model.toJSON());
             });
           }).catch(reject);
         });

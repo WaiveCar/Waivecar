@@ -1,6 +1,5 @@
 'use strict';
 var angular = require('angular');
-var _ = require('lodash');
 require('./message-service');
 
 module.exports = angular.module('app.services').factory('$endRide', [
@@ -114,7 +113,7 @@ module.exports = angular.module('app.services').factory('$endRide', [
     };
 
     service.processEndRide = function() {
-      $data.resources.bookings.end({ id: service.state.booking.id }).$promise.then(function(booking) {
+      $data.resources.bookings.end({ id: service.state.booking.id }).$promise.then(function() {
         $data.fetch('bookings');
         $data.deactivate('bookings');
         $data.deactivate('cars');
