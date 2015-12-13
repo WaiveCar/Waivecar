@@ -1,17 +1,51 @@
 <ion-view>
-  <ion-nav-buttons side="right">
-    <button menu-toggle="right" class="button button-icon icon ion-navicon"></button>
-  </ion-nav-buttons>
+  <ion-nav-title>
+    <page-title class="dark-bg">Parking Location</page-title>
+  </ion-nav-title>
   <ion-content scroll="false" padding="true" class="has-header ion-content--center dark-bg">
-    <div  class="row row-center row-full-height">
-      <div class="col col-center">
-        <div>
-          <h3 class="margin-bottom-10">PARKING STATION</h3>
-          <div>
-            <button type="button" class="button button-block button-balanced" ng-click="endRide()">Continue</button>
-          </div>
+    <form ng-submit="EndRideController.saveLocation(form)" name="form" id="form" novalidate>
+      <div class="list list-inset">
+        <label class="item item-input">
+          <span class="input-label required">Address</span>
+          <input name="addressLine1" type="text" ng-model="service.state.parking.addressLine1" autofocus required>
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Address line 2</span>
+          <input name="addressLine2" type="text" ng-model="service.state.parking.addressLine2" />
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Short Description</span>
+          <input name="shortDescription" type="text" ng-model="service.state.parking.shortDescription">
+        </label>
+      </div>
+      <div class="list list-inset dark-bg">
+        <div class="item item-toggle dark-bg">
+          Are you parked in a parking structure?
+          <label class="toggle toggle-balanced">
+            <input type="checkbox" ng-model="service.state.parking.isParkingStructure">
+            <div class="track">
+              <div class="handle"></div>
+            </div>
+          </label>
         </div>
       </div>
-    </div>
+      <div class="list list-inset" ng-show="service.state.parking.isParkingStructure">
+        <label class="item item-input">
+          <span class="input-label">Level</span>
+          <input name="level" type="text" ng-model="service.state.parking.level">
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Spot</span>
+          <input name="spot" type="text" ng-model="service.state.parking.spot">
+        </label>
+      </div>
+      <p class="text-lead text-center">If you have a parking ticket, please leave it in the glove box.</p>
+      <div class="validations" ng-if="form.$submitted && form.$invalid">
+        <div class="help-block" ng-if="form.addressLine1.$error.required">Address Line 1 is required</div>
+      </div>
+      <div class="padding-top padding-bottom">
+        <button type="submit" form="form" class="button button-balanced button-block">Continue</button>
+      </div>
+    </form>
   </ion-content>
-<ion-view>
+</ion-view>

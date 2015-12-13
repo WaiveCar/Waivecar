@@ -208,3 +208,12 @@ ion-view {
     margin-bottom: 10px;
   }
 }
+
+.list.dark-bg {
+  color: $light;
+  border-color: $dark;
+  .item {
+    color: $light;
+    border-color: $dark;
+  }
+}
