@@ -1,4 +1,4 @@
-<ion-view class="cars cars-show" ng-controller="SandpitController">
+<ion-view class="cars cars-show">
   <ion-nav-title>
     <page-title class="dark-bg title-plain">
     </page-title>
@@ -10,14 +10,13 @@
     <div  class="row row-center row-full-height">
       <div class="col col-center">
         <div>
-          <p>outside zone : {{ outsideZone }}</p>
-          <p>outside zone confirmation: {{ outsideZoneConfirmed }}</p>
+          <p>{{ service.state }}</p>
           <ul class="list-unstyled text-left margin-top-10">
             <li>
-              <button type="button" class="button button-block button-gray" ng-click="toggleZone()">Toggle Zone Check</button>
+              <button type="button" class="button button-block button-gray" ng-click="service.toggleZone()">Toggle Zone Check</button>
             </li>
             <li>
-              <button type="button" class="button button-block button-balanced" ng-click="endRideOptions()">End Ride Flow</button>
+              <button type="button" class="button button-block button-balanced" ui-sref="end-ride-options({ id: 1})">End Ride Flow</button>
             </li>
           </ul>
         </div>

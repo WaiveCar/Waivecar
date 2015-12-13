@@ -256,9 +256,35 @@ module.exports = [
       }
     })
 
+    .state('end-ride-options', {
+      url: '/bookings/:id/end-ride/options',
+      templateUrl: '/templates/bookings/end-ride-options.html',
+      controller: 'EndRideController',
+      data: {
+        auth: true
+      }
+    })
+    .state('end-ride-location', {
+      url: '/bookings/:id/end-ride/location',
+      templateUrl: '/templates/bookings/end-ride-location.html',
+      controller: 'EndRideController',
+      data: {
+        auth: true
+      }
+    })
+    .state('end-ride', {
+      url: '/bookings/:id/end-ride',
+      templateUrl: '/templates/bookings/end-ride.html',
+      controller: 'EndRideController',
+      data: {
+        auth: true
+      }
+    })
+
     .state('sandpit', {
       url: '/sandpit',
       templateUrl: '/templates/common/sandpit.html',
+      controller: 'EndRideController',
       data: {
         auth: true
       }
