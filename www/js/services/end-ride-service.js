@@ -21,6 +21,14 @@ module.exports = angular.module('app.services').factory('$endRide', [
         readyToEnd : false
       },
       zone            : { isOutside : false, confirmed : false },
+      parking         : {
+        addressLine1       : null,
+        addressLine2       : null,
+        shortDescription   : null,
+        isParkingStructure : false,
+        level              : null,
+        spot               : null
+      },
       parkingLocation : {
         chargingStation : { isVisible : true, confirmed : false, title : 'Charging Station' },
         homebase        : { isVisible : true, confirmed : false, title : 'WaiveCar Home Lot' },
@@ -65,7 +73,7 @@ module.exports = angular.module('app.services').factory('$endRide', [
           break;
         }
       }
-      $state.go('end-ride', { id: service.state.booking.id });
+      $state.go('end-ride-location', { id: service.state.booking.id });
     };
 
     service.toggleZone = function() {
