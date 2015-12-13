@@ -6,12 +6,29 @@
   <ion-nav-buttons side="right">
     <button menu-toggle="right" class="button button-icon icon ion-navicon"></button>
   </ion-nav-buttons>
-  <ion-content scroll="false" padding="false" class="has-header has-footer">
+  <ion-content scroll="false" padding="false" class="has-header has-footer dark-bg">
     <div  class="row row-center row-full-height">
       <div class="col col-center">
         <div>
-          <p>{{ service.state }}</p>
           <ul class="list-unstyled text-left margin-top-10">
+            <li>
+              <button type="button" class="button button-block" ng-class="{ 'disabled' : data.bookings.id, 'button-gray' : !data.bookings.id }" ng-click="create()">Booking - Create (Waive2)</button>
+            </li>
+            <li>
+              <button type="button" class="button button-block" ng-class="{ 'disabled' : data.bookings.status !== 'reserved', 'button-gray' : data.bookings.status === 'reserved' }" ng-click="ready()">Booking - Ready</button>
+            </li>
+            <li>
+              <button type="button" class="button button-block" ng-class="{ 'disabled' : data.bookings.status !== 'ready', 'button-gray' : data.bookings.status === 'ready' }" ng-click="start()">Booking - Start</button>
+            </li>
+            <li>
+              <button type="button" class="button button-block" ng-class="{ 'disabled' : data.bookings.status !== 'ready', 'button-gray' : data.bookings.status === 'ready' }" ng-click="service.processEndRide()">Booking - End From Ready</button>
+            </li>
+            <li>
+              <button type="button" class="button button-block" ng-class="{ 'disabled' : data.bookings.status !== 'started', 'button-gray' : data.bookings.status === 'started' }" ng-click="service.processEndRide()">Booking - End From Started</button>
+            </li>
+            <li>
+              <button type="button" class="button button-block" ng-class="{ 'disabled' : !data.bookings.id, 'button-assertive' : data.bookings.id }" ng-click="cancel()">Booking - Cancel</button>
+            </li>
             <li>
               <button type="button" class="button button-block button-gray" ng-click="service.toggleZone()">Toggle Zone Check</button>
             </li>
@@ -19,6 +36,11 @@
               <button type="button" class="button button-block button-balanced" ui-sref="end-ride-options({ id: 1})">End Ride Flow</button>
             </li>
           </ul>
+          <div class="padding">
+            <pre style="font-size: 10px; height: 30px; overflow: scroll">{{ data.cars }}</pre>
+            <pre style="font-size: 10px; height: 30px; overflow: scroll">{{ data.bookings }}</pre>
+            <pre style="font-size: 10px; height: 100px; overflow: scroll">{{ service.state }}</pre>
+          </div>
         </div>
       </div>
     </div>

@@ -79,18 +79,16 @@ module.exports = angular.module('app.services').factory('$data', [
 
       },
 
-      create: function (modelName, data, next) {
-        next = _(next).isFunction() ? next : angular.identity;
-        var instance = new service.resources[modelName](data);
-
-        return instance.$save(function (model) {
-          service.merge(modelName, model.toJSON());
-          return service.activateKnownModel(modelName, model.id, next);
-
-        }, function (error) {
-          return next(error.data || error);
+      create: function (modelName, data) {
+        return $q(function (resolve, reject) {
+          var instance = new service.resources[modelName](data);
+          return instance.$save().then(function(model) {
+            service.merge(modelName, model.toJSON());
+            service.activateKnownModel(modelName, model.id).then(function() {
+              return resolve(model.toJSON())
+            });
+          }).catch(reject);
         });
-
       },
 
       update: function (modelName, data, next) {
@@ -104,13 +102,16 @@ module.exports = angular.module('app.services').factory('$data', [
         });
       },
 
-      remove: function (modelName, id, next) {
-        service.resources[modelName].remove({
-          id: id
-        }, function () {
-          service.purge(modelName, id);
-        }, function (error) {
-          return next(error.data || error);
+      remove: function (modelName, id) {
+        return $q(function (resolve, reject) {
+          service.resources[modelName].remove({
+            id: id
+          }, function () {
+            service.purge(modelName, id);
+            return resolve(id);
+          }, function (error) {
+            return reject(error.data || error);
+          });
         });
       },
 

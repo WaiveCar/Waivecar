@@ -1,23 +1,21 @@
 'use strict';
 var angular = require('angular');
+var _ = require('lodash');
+require('./message-service');
 
 module.exports = angular.module('app.services').factory('$endRide', [
   '$auth',
   '$data',
   '$state',
-  function($auth, $data, $state) {
+  '$message',
+  function($auth, $data, $state, $message) {
 
     var service = {};
 
     /*eslint-disable */
     var defaultState = {
-      car : {
-        id     : null,
-        charge : 100   // NB. we want to record the charge when the user selects End Ride, not actual Charge.
-      },
       booking : {
         id         : null,
-        duration   : 0,    // NB. we want to remember duration when user hits End Ride, not actual elapsed time.
         readyToEnd : false
       },
       zone            : { isOutside : false, confirmed : false },
@@ -44,20 +42,13 @@ module.exports = angular.module('app.services').factory('$endRide', [
     };
     /*eslint-enable */
 
-    service.state = {};
-
     service.setState = function() {
+      service.state = {};
       angular.copy(defaultState, service.state);
-    }
-
-    service.setCar = function(id, charge) {
-      service.state.car.id = id;
-      service.state.car.charge = charge;
     };
 
-    service.setBooking = function(id, duration) {
+    service.setBooking = function(id) {
       service.state.booking.id = id;
-      service.state.booking.duration = duration;
     };
 
     service.setLocation = function(key) {
@@ -86,16 +77,12 @@ module.exports = angular.module('app.services').factory('$endRide', [
       if (isForm) {
         return $state.go('end-ride', { id: service.state.booking.id });
       }
-      if (location.addressLine1) service.state.parkingLocation.addressLine1 = location.addressLine1;
-      if (location.addressLine2) service.state.parkingLocation.addressLine2 = location.addressLine2;
-      if (location.shortDescription) service.state.parkingLocation.shortDescription = location.shortDescription;
-      if (location.isParkingStructure) service.state.parkingLocation.isParkingStructure = location.isParkingStructure;
-      if (location.level) service.state.parkingLocation.level = location.level;
-      if (location.spot) service.state.parkingLocation.spot = location.spot;
+
+      debugger; // not yet considered.
     };
 
     service.process = function(form) {
-
+      console.log(form);
     };
 
     service.toggleZone = function() {
@@ -124,6 +111,15 @@ module.exports = angular.module('app.services').factory('$endRide', [
       if (isReady !== service.state.readyToEnd) {
         service.this.state.readyToEnd = isReady;
       }
+    };
+
+    service.processEndRide = function() {
+      $data.resources.bookings.end({ id: service.state.booking.id }).$promise.then(function(booking) {
+        $data.fetch('bookings');
+        $data.deactivate('bookings');
+        $data.deactivate('cars');
+        $message.success(service.state.booking.id + ' has been successfully ended');
+      }).catch($message.error);
     };
 
     service.setState();
