@@ -250,6 +250,10 @@ module.exports = class BookingService extends Service {
     yield booking.ready();
     yield booking.delCancelTimer();
 
+    // ### Relay Update
+
+    this.relay(booking, user);
+
     // ### Unlock Car
 
     return yield cars.unlockCar(car.id, _user);
@@ -286,6 +290,10 @@ module.exports = class BookingService extends Service {
     yield this.logDetails('start', booking, car);
     yield booking.setFreeRideReminder(config.booking.timers.freeRideReminder);
     yield booking.start();
+
+    // ### Relay Update
+
+    this.relay(booking, user);
 
     return yield cars.unlockImmobilzer(car.id, _user);
   }
@@ -354,6 +362,10 @@ module.exports = class BookingService extends Service {
 
     yield booking.delFreeRideReminder();
     yield booking.end();
+
+    // ### Relay Update
+
+    this.relay(booking, user);
   }
 
   /*
@@ -400,6 +412,10 @@ module.exports = class BookingService extends Service {
     yield booking.delCancelTimer();
     yield car.removeDriver();
     yield car.available();
+
+    // ### Relay Update
+
+    this.relay(booking, user);
   }
 
   // ### HELPERS
@@ -422,6 +438,21 @@ module.exports = class BookingService extends Service {
       charge    : 0
     });
     yield details.save();
+  }
+
+  /**
+   * Sends a relay update to administrators and the booking user.
+   * @param  {Object} booking
+   * @param  {Object} user
+   * @return {Void}
+   */
+  static relay(booking, user) {
+    let payload = {
+      type : 'update',
+      data : booking
+    };
+    relay.user(user.id, 'bookings', payload);
+    relay.admin('bookings', payload);
   }
 
 };
