@@ -1,9 +1,16 @@
 'use strict';
 
-let Service        = require('./classes/service');
-let CarService     = require('./car-service');
-let queue          = Bento.provider('queue');
-let queryParser    = Bento.provider('sequelize/helpers').query;
+let Service     = require('./classes/service');
+let cars        = require('./car-service');
+let fees        = require('./fee-service');
+let queue       = Bento.provider('queue');
+let queryParser = Bento.provider('sequelize/helpers').query;
+let error       = Bento.Error;
+let relay       = Bento.Relay;
+let config      = Bento.config.waivecar;
+
+// ### Models
+
 let File           = Bento.model('File');
 let Payment        = Bento.model('Shop/Order');
 let User           = Bento.model('User');
@@ -11,9 +18,6 @@ let Car            = Bento.model('Car');
 let Booking        = Bento.model('Booking');
 let BookingDetails = Bento.model('BookingDetails');
 let BookingPayment = Bento.model('BookingPayment');
-let error          = Bento.Error;
-let relay          = Bento.Relay;
-let config         = Bento.config.waivecar;
 
 module.exports = class BookingService extends Service {
 
@@ -248,7 +252,7 @@ module.exports = class BookingService extends Service {
 
     // ### Unlock Car
 
-    return yield CarService.unlockCar(car.id, _user);
+    return yield cars.unlockCar(car.id, _user);
   }
 
   /**
@@ -283,7 +287,7 @@ module.exports = class BookingService extends Service {
     yield booking.setFreeRideReminder(config.booking.timers.freeRideReminder);
     yield booking.start();
 
-    return yield CarService.unlockImmobilzer(car.id, _user);
+    return yield cars.unlockImmobilzer(car.id, _user);
   }
 
   /**
@@ -298,7 +302,7 @@ module.exports = class BookingService extends Service {
     let user    = yield this.getUser(booking.userId);
     let errors  = [];
 
-    Object.assign(car, yield CarService.getDevice(car.id, _user));
+    Object.assign(car, yield cars.getDevice(car.id, _user));
 
     // ### Status Check
     // Go through end booking checklist.
@@ -324,7 +328,7 @@ module.exports = class BookingService extends Service {
     // ### Immobilize
     // Immobilize the engine.
 
-    let status = yield CarService.lockImmobilzer(car.id, _user);
+    let status = yield cars.lockImmobilzer(car.id, _user);
     if (!status.isImmobilized) {
       throw error.parse({
         code    : `BOOKING_END_IMMOBILIZER`,
@@ -340,6 +344,11 @@ module.exports = class BookingService extends Service {
     // ### Booking Details
 
     yield this.logDetails('end', booking, car);
+
+    // ### Create Order
+    // Create a shop cart with automated fees.
+
+    // yield fees.create(yield this.show(booking.id, _user));
 
     // ### End Booking
 
@@ -390,6 +399,7 @@ module.exports = class BookingService extends Service {
     yield booking.cancel();
     yield booking.delCancelTimer();
     yield car.removeDriver();
+    yield car.available();
   }
 
   // ### HELPERS

@@ -117,7 +117,7 @@ Bento.Register.Model('License', 'sequelize', function(model, Sequelize) {
      * @return {Boolean}
      */
     isValid() {
-      return this.status ==='complete' && this.outcome === 'clear';
+      return this.status === 'complete' && this.outcome === 'clear' && this.fileId;
     }
 
   };
