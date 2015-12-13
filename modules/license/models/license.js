@@ -105,7 +105,22 @@ Bento.Register.Model('License', 'sequelize', function(model, Sequelize) {
    * @property blacklist
    * @type     Array
    */
-  model.blacklist = [ 'linkedUserId', 'checkId', 'reportId', 'report', 'deletedAt' ];
+  model.blacklist = [ 'linkedUserId', 'checkId', 'reportId', 'report' ];
+
+  // ### Methods
+  // A list of methods attached to the model.
+
+  model.methods = {
+
+    /**
+     * Returns the validation status of the license.
+     * @return {Boolean}
+     */
+    isValid() {
+      return this.status ==='complete' && this.outcome === 'clear';
+    }
+
+  };
 
   return model;
 

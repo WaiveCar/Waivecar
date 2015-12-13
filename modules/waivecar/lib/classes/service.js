@@ -129,7 +129,7 @@ module.exports = class Service {
 
     // ### Check License
 
-    if (!license || license.status !== 'completed') {
+    if (!license || !license.isValid()) {
       missing.push('license');
     }
 
