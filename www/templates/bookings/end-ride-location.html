@@ -3,40 +3,40 @@
     <page-title class="dark-bg">Parking Location</page-title>
   </ion-nav-title>
   <ion-content scroll="false" padding="true" class="has-header ion-content--center dark-bg">
-    <form ng-submit="EndRideController.saveLocation(form)" name="form" id="form" novalidate>
+    <form ng-submit="service.setParkingLocation(form, true)" name="form" id="form" novalidate>
       <div class="list list-inset">
         <label class="item item-input">
           <span class="input-label required">Address</span>
-          <input name="addressLine1" type="text" ng-model="service.state.parking.addressLine1" autofocus required>
+          <input name="addressLine1" type="text" ng-model="service.state.parkingLocation.addressLine1" autofocus required>
         </label>
         <label class="item item-input">
           <span class="input-label">Address line 2</span>
-          <input name="addressLine2" type="text" ng-model="service.state.parking.addressLine2" />
+          <input name="addressLine2" type="text" ng-model="service.state.parkingLocation.addressLine2" />
         </label>
         <label class="item item-input">
           <span class="input-label">Short Description</span>
-          <input name="shortDescription" type="text" ng-model="service.state.parking.shortDescription">
+          <input name="shortDescription" type="text" ng-model="service.state.parkingLocation.shortDescription">
         </label>
       </div>
       <div class="list list-inset dark-bg">
         <div class="item item-toggle dark-bg">
           Are you parked in a parking structure?
           <label class="toggle toggle-balanced">
-            <input type="checkbox" ng-model="service.state.parking.isParkingStructure">
+            <input type="checkbox" ng-model="service.state.parkingLocation.isParkingStructure">
             <div class="track">
               <div class="handle"></div>
             </div>
           </label>
         </div>
       </div>
-      <div class="list list-inset" ng-show="service.state.parking.isParkingStructure">
+      <div class="list list-inset" ng-show="service.state.parkingLocation.isParkingStructure">
         <label class="item item-input">
           <span class="input-label">Level</span>
-          <input name="level" type="text" ng-model="service.state.parking.level">
+          <input name="level" type="text" ng-model="service.state.parkingLocation.level">
         </label>
         <label class="item item-input">
           <span class="input-label">Spot</span>
-          <input name="spot" type="text" ng-model="service.state.parking.spot">
+          <input name="spot" type="text" ng-model="service.state.parkingLocation.spot">
         </label>
       </div>
       <p class="text-lead text-center">If you have a parking ticket, please leave it in the glove box.</p>

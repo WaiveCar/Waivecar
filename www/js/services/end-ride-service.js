@@ -10,7 +10,7 @@ module.exports = angular.module('app.services').factory('$endRide', [
     var service = {};
 
     /*eslint-disable */
-    service.state = {
+    var defaultState = {
       car : {
         id     : null,
         charge : 100   // NB. we want to record the charge when the user selects End Ride, not actual Charge.
@@ -21,7 +21,7 @@ module.exports = angular.module('app.services').factory('$endRide', [
         readyToEnd : false
       },
       zone            : { isOutside : false, confirmed : false },
-      parking         : {
+      parkingLocation : {
         addressLine1       : null,
         addressLine2       : null,
         shortDescription   : null,
@@ -29,7 +29,7 @@ module.exports = angular.module('app.services').factory('$endRide', [
         level              : null,
         spot               : null
       },
-      parkingLocation : {
+      location : {
         chargingStation : { isVisible : true, confirmed : false, title : 'Charging Station' },
         homebase        : { isVisible : true, confirmed : false, title : 'WaiveCar Home Lot' },
         valet           : { isVisible : true, confirmed : false, title : 'WaiveCar Valet' },
@@ -44,6 +44,12 @@ module.exports = angular.module('app.services').factory('$endRide', [
     };
     /*eslint-enable */
 
+    service.state = {};
+
+    service.setState = function() {
+      angular.copy(defaultState, service.state);
+    }
+
     service.setCar = function(id, charge) {
       service.state.car.id = id;
       service.state.car.charge = charge;
@@ -55,7 +61,7 @@ module.exports = angular.module('app.services').factory('$endRide', [
     };
 
     service.setLocation = function(key) {
-      service.state.parkingLocation[key].confirmed = true;
+      service.state.location[key].confirmed = true;
       switch (key) {
         case 'chargingStation': {
           service.state.check.isCharging.isVisible = true;
@@ -74,6 +80,22 @@ module.exports = angular.module('app.services').factory('$endRide', [
         }
       }
       $state.go('end-ride-location', { id: service.state.booking.id });
+    };
+
+    service.setParkingLocation = function(location, isForm) {
+      if (isForm) {
+        return $state.go('end-ride', { id: service.state.booking.id });
+      }
+      if (location.addressLine1) service.state.parkingLocation.addressLine1 = location.addressLine1;
+      if (location.addressLine2) service.state.parkingLocation.addressLine2 = location.addressLine2;
+      if (location.shortDescription) service.state.parkingLocation.shortDescription = location.shortDescription;
+      if (location.isParkingStructure) service.state.parkingLocation.isParkingStructure = location.isParkingStructure;
+      if (location.level) service.state.parkingLocation.level = location.level;
+      if (location.spot) service.state.parkingLocation.spot = location.spot;
+    };
+
+    service.process = function(form) {
+
     };
 
     service.toggleZone = function() {
@@ -103,6 +125,8 @@ module.exports = angular.module('app.services').factory('$endRide', [
         service.this.state.readyToEnd = isReady;
       }
     };
+
+    service.setState();
 
     return service;
   }

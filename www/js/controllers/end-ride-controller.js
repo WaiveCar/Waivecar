@@ -19,6 +19,11 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     $scope.service = $endRide;
 
     $scope.init = function () {
+      if ($state.current.name === 'end-ride-options') {
+        // reset end ride state.
+        $scope.service.setState();
+      }
+
       if (!$auth.isAuthenticated()) {
         $state.go('auth');
       }
