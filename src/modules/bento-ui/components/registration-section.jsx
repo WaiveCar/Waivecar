@@ -23,7 +23,7 @@ class UIRegistrationSection extends React.Component {
   renderLogin() {
     return (
       <div className="text-center">
-        <p>Welcome back <strong>{ auth.user.firstName }</strong></p>
+        <p>Welcome back <strong>{ auth.user().firstName }</strong></p>
         <Link className="btn btn-primary btn-lg" to="/dashboard">My Dashboard</Link>
       </div>
     );

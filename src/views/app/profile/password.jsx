@@ -43,7 +43,7 @@ module.exports = class ProfilePasswordView extends React.Component {
               ref       = "personal"
               className = "bento-form-static"
               fields    = { formFields.password }
-              default   = { auth.user }
+              default   = { auth.user() }
               buttons   = {[
                 {
                   value : 'Update Password',

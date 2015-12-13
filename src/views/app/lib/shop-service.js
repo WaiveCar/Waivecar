@@ -51,7 +51,7 @@ module.exports = class ShopService extends Service {
       // If the authenticated user is being registered we update the localy
       // stored auth.user
 
-      if (auth.user.id === user.id) {
+      if (auth.user().id === user.id) {
         auth.put({ stripeId : res.stripeId });
       }
 

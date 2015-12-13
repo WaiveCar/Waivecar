@@ -120,7 +120,7 @@ module.exports = class Nav extends React.Component {
       <div className="r-nav-profile" onClick={ this.openDropdown.bind(this, 'account') } ref="account">
         <div className="r-nav-profile-image" style={{ background : auth.user.email ? `url(//www.gravatar.com/avatar/${ md5(auth.user.email) }) center center / cover` : '#fff' }}></div>
         <div className="r-nav-profile-name">
-          Hi, { auth.user.firstName }
+          Hi, { auth.user().firstName }
         </div>
       </div>
     );
