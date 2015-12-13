@@ -17,8 +17,7 @@ function AuthController ($injector) {
 
   this.forms = {
     loginForm: {
-      from: 'app',
-      // identifier: 'adibih@gmail.com',
+      source: 'app'
     },
     forgotForm: {},
     resetForm: {
