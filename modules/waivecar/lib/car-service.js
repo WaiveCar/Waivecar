@@ -245,6 +245,25 @@ module.exports = class CarService extends Service {
     return yield this.executeCommand(id, 'immobilizer', 'lock', _user);
   }
 
+  static *lockAndImmobilze(id, _user) {
+    let existingCar = yield Car.findById(id);
+    if (!existingCar) {
+      let error    = new Error(`CAR: ${ id }`);
+      error.code   = 'CAR_SERVICE';
+      error.status = 404;
+      error.data   = 'NA';
+      throw error;
+    }
+
+    let payload = {
+      'central_lock' : 'locked',
+      immobilizer    : 'locked'
+    };
+    let status = yield this.request(`/devices/${ id }/status`, 'PATCH', payload);
+    let updatedCar = this.transformDeviceToCar(id, status);
+    return yield this.syncUpdate(id, updatedCar, existingCar, _user);
+  }
+
   /**
    * Execute a Command against a Device and update Car
    * @param  {String} id
