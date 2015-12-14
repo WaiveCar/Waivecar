@@ -5,32 +5,63 @@
         <div class="lead-logo">
           <ng-include class="logo-image" src="'/img/waivecar-mark2.svg'" />
         </div>
-        <div>
+        <div class="padding">
           <h3 class="margin-bottom-10">END RIDE</h3>
           <div>
             <p>Please complete these tasks before you leave.<br />The list will automatically update.</p>
-            <p>{{ service.state }}</p>
           </div>
           <div>
             <ul class="list-unstyled text-left margin-top-10">
-              <li ng-show="service.state.check.keyIn.isVisible">
-                <label class="pull-right"><i>x</i></label>
+              <li ng-show="service.state.check.keySecure.isVisible">
+                <label class="pull-right">
+                  <span ng-show="data.cars.isKeySecure">
+                    Y
+                  </span>
+                  <span ng-hide="data.cars.isKeySecure">
+                    <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
+                  </span>
+                </label>
                 Key in holder
               </li>
               <li ng-show="service.state.check.ignitionOff.isVisible">
-                <label class="pull-right"><i>x</i></label>
+                <label class="pull-right">
+                  <span ng-hide="data.cars.isIgnitionOn">
+                    Y
+                  </span>
+                  <span ng-show="data.cars.isIgnitionOn">
+                    <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
+                  </span>
+                </label>
                 Engine off
               </li>
-              <li ng-show="service.state.check.chargeCardIn.isVisible">
-                <label class="pull-right"><i>x</i></label>
+              <li ng-show="service.state.check.chargeCardSecure.isVisible">
+                <label class="pull-right">
+                  <span>{{ data.cars.isChargeCardSecure }}</span>
+                </label>
                 Charging Card
               </li>
               <li ng-show="service.state.check.isCharging.isVisible">
-                <label class="pull-right"><i>x</i></label>
+                <label class="pull-right">
+                  <span>{{ data.cars.isCharging }}</span>
+                </label>
                 Charging
+              </li>
+              <li>
+                <label class="pull-right">
+                  <span>{{ data.cars.isImmobilized }}</span>
+                </label>
+                Immobilized (No Action)
+              </li>
+              <li>
+                <label class="pull-right">
+                  <span>{{ data.cars.isLocked }}</span>
+                </label>
+                Car Locked (No Action)
               </li>
             </ul>
           </div>
+          <button type="button" class="button button-block" ng-class="{ 'disabled' : !data.cars.id, 'button-balanced' : data.cars.id }" ng-click="service.lockCar(data.cars.id)">Car - Lock</button>
+
         </div>
       </div>
     </div>

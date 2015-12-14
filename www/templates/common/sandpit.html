@@ -9,40 +9,39 @@
   <ion-content scroll="false" padding="false" class="has-header has-footer dark-bg">
     <div  class="row row-center row-full-height">
       <div class="col col-center">
-        <div>
+        <div class="padding">
           <ul class="list-unstyled text-left margin-top-10">
             <li>
-              <button type="button" class="button button-block" ng-class="{ 'disabled' : data.bookings.id, 'button-gray' : !data.bookings.id }" ng-click="create()">Booking - Create (Waive2)</button>
+              <button type="button" class="button button-block" ng-class="{ 'disabled' : data.bookings.id, 'button-gray' : !data.bookings.id }" ng-click="ctrl.create()">Booking - Create (Waive2) [15, 15.9]</button>
             </li>
             <li>
-              <button type="button" class="button button-block" ng-class="{ 'disabled' : data.bookings.status !== 'reserved', 'button-gray' : data.bookings.status === 'reserved' }" ng-click="ready()">Booking - Ready</button>
+              <button type="button" class="button button-block" ng-class="{ 'disabled' : data.bookings.status !== 'reserved', 'button-gray' : data.bookings.status === 'reserved' }" ng-click="ctrl.ready()">Booking - Ready [17]</button>
             </li>
             <li>
-              <button type="button" class="button button-block" ng-class="{ 'disabled' : data.bookings.status !== 'ready', 'button-gray' : data.bookings.status === 'ready' }" ng-click="start()">Booking - Start</button>
+              <button type="button" class="button button-block" ng-class="{ 'disabled' : data.bookings.status !== 'ready', 'button-gray' : data.bookings.status === 'ready' }" ng-click="ctrl.start()">Booking - Start [17.6]</button>
             </li>
             <li>
-              <button type="button" class="button button-block" ng-class="{ 'disabled' : data.bookings.status !== 'ready', 'button-gray' : data.bookings.status === 'ready' }" ng-click="service.processEndRide()">Booking - End From Ready</button>
-            </li>
-            <li>
-              <button type="button" class="button button-block" ng-class="{ 'disabled' : data.bookings.status !== 'started', 'button-gray' : data.bookings.status === 'started' }" ng-click="service.processEndRide()">Booking - End From Started</button>
+              <button type="button" class="button button-block" ng-class="{ 'disabled' : data.bookings.status !== 'ready', 'button-gray' : data.bookings.status === 'ready' }" ng-click="service.processEndRide()">Booking - End From Ready [17.1]</button>
             </li>
             <li>
               <button type="button" class="button button-block" ng-class="{ 'disabled' : !data.cars.id, 'button-calm' : data.cars.id }" ng-click="service.lockCar(data.cars.id)">Car - Lock</button>
             </li>
             <li>
-              <button type="button" class="button button-block" ng-class="{ 'disabled' : !data.bookings.id, 'button-assertive' : data.bookings.id }" ng-click="cancel()">Booking - Cancel</button>
+              <button type="button" class="button button-block" ng-class="{ 'disabled' : !data.bookings.id, 'button-assertive' : data.bookings.id }" ng-click="ctrl.cancel()">Booking - Cancel [16]</button>
             </li>
             <li>
-              <button type="button" class="button button-block button-gray" ng-click="service.toggleZone()">Toggle Zone Check</button>
-            </li>
-            <li>
-              <button type="button" class="button button-block button-balanced" ui-sref="end-ride-options({ id: 1})">End Ride Flow</button>
+              <button type="button" class="button button-block" ng-class="{ 'disabled' : data.bookings.status !== 'started', 'button-gray' : data.bookings.status === 'started' }" ui-sref="end-ride-options({ id: 1})">End Ride</button>
             </li>
           </ul>
-          <div class="padding">
+          <div class="padding-vertical">
+            <ul class="list-unstyled text-left">
+              <li>
+                <button type="button" class="button button-block button-gray" ng-click="service.toggleZone()">Toggle Zone Check</button>
+              </li>
+            </ul>
+            <pre style="font-size: 10px; height: 100px; overflow: scroll">{{ service.state }}</pre>
             <pre style="font-size: 10px; height: 30px; overflow: scroll">{{ data.cars }}</pre>
             <pre style="font-size: 10px; height: 30px; overflow: scroll">{{ data.bookings }}</pre>
-            <pre style="font-size: 10px; height: 100px; overflow: scroll">{{ service.state }}</pre>
           </div>
         </div>
       </div>

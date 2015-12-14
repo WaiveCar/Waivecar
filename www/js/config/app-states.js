@@ -259,7 +259,7 @@ module.exports = [
     .state('end-ride-options', {
       url: '/bookings/:id/end-ride/options',
       templateUrl: '/templates/bookings/end-ride-options.html',
-      controller: 'EndRideController',
+      controller: 'EndRideController as ctrl',
       data: {
         auth: true
       }
@@ -267,7 +267,7 @@ module.exports = [
     .state('end-ride-location', {
       url: '/bookings/:id/end-ride/location',
       templateUrl: '/templates/bookings/end-ride-location.html',
-      controller: 'EndRideController',
+      controller: 'EndRideController as ctrl',
       data: {
         auth: true
       }
@@ -275,7 +275,7 @@ module.exports = [
     .state('end-ride', {
       url: '/bookings/:id/end-ride',
       templateUrl: '/templates/bookings/end-ride.html',
-      controller: 'EndRideController',
+      controller: 'EndRideController as ctrl',
       data: {
         auth: true
       }
@@ -284,7 +284,7 @@ module.exports = [
     .state('sandpit', {
       url: '/sandpit',
       templateUrl: '/templates/common/sandpit.html',
-      controller: 'EndRideController',
+      controller: 'EndRideController as ctrl',
       data: {
         auth: true
       }

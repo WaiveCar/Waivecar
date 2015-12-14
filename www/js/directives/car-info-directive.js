@@ -13,7 +13,7 @@ module.exports = angular.module('app.directives')
           $scope.make = car.make;
           $scope.model = car.model || 'Spark';
           $scope.plate = car.plate || 'AUD 568';
-          $scope.image = car.image || 'img/car.jpg';
+          $scope.image = car.fileId || 'img/car.jpg';
 
         });
 
