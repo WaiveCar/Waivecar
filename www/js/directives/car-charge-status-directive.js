@@ -18,7 +18,7 @@ module.exports = angular.module('app.directives')
           $scope.chargeLevel = car.charge + '%';
           $scope.chargeState = car.isCharging ? 'is Parked at Charging Station' : 'is not charging';
           $scope.chargeReach = car.range + ' miles ';
-          $scope.license = car.license ;
+          $scope.license = car.license;
 
         }
 
