@@ -8,8 +8,8 @@ module.exports = angular.module('app.services').factory('AuthInterceptor', [
   '$q',
   '$session',
   '$settings',
-  '$document',
-  function ($rootScope, $q, $session, $settings, $document) {
+  /* '$document', */
+  function ($rootScope, $q, $session, $settings/* , $document */) {
 
     return {
 
@@ -24,6 +24,7 @@ module.exports = angular.module('app.services').factory('AuthInterceptor', [
           httpConfig.headers.Authorization = token;
         }
 
+        // TODO: what was this for?
         // if (/\/1\//.test(httpConfig.url)) {
         //   httpConfig.headers['x-referer'] = $document.location.origin + '/' + $rootScope.$state.href($rootScope.$state.current);
         // }

@@ -123,6 +123,9 @@ ion-content {
   // top: ((100 - $bigHeaderSize) * 1%) !important;
 }
 
+.no-padding.bar.bar-footer {
+  background : $dark;
+}
 .vertical-aligned {
   @include vertical-align;
   display: inline-block;
@@ -162,6 +165,22 @@ ion-view {
   }
 
 
+}
+.button-bar {
+  .button {
+    border-radius : 0;
+    &:first-child,
+    &:last-child {
+      border-radius : 0;
+    }
+  }
+}
+.button-clear {
+  text-transform: none;
+  color : #fff;
+  &.button-clear {
+    color : #fff;
+  }
 }
 .button-gray {
   background-color : #353434;

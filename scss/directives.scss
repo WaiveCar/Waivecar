@@ -3,16 +3,18 @@
   margin-top: 9.4%;
   margin-bottom: 9.2%;
   svg {
+    width: 45%;
     display: inline-block;
     height: 1rem;
     line {
       stroke: $gray4;
-      stroke-width: 1.2%;
+      stroke-width: 1.5%;
     }
   }
   .content {
     display: inline-block;
-    width: 40px;
+    min-width: 8%;
+    text-align: center;
   }
 }
 
