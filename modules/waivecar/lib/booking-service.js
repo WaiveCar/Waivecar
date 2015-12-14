@@ -323,7 +323,7 @@ module.exports = class BookingService extends Service {
     }
 
     if (car.isIgnitionOn) { errors.push('isIgnitionOn'); }
-    if (!car.keySecure)  { errors.push('keySecure'); }
+    if (!car.isKeySecure)  { errors.push('isKeySecure'); }
 
     if (errors.length) {
       throw error.parse({
