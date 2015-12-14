@@ -16,7 +16,7 @@
     </div>
 
     <div ng-if="::verify.isWizard">
-      <p class="margin-top-10">We have just sent you SMS with verification code.</p>
+      <p class="margin-top-10">We just sent you SMS with a verification code.</p>
       <p>Please enter it below.</p>
     </div>
 
@@ -36,7 +36,7 @@
 
     <button
       type="button"
-      class="button button-small button-clear button-block button-balanced margin-top-10"
+      class="button button-small button-clear button-block margin-top-10"
       ui-sref="licenses-new({step: 3})"
       ng-if="::verify.isWizard"
     >Skip this step</button>
