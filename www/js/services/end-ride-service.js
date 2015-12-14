@@ -113,7 +113,18 @@ module.exports = angular.module('app.services').factory('$endRide', [
     };
 
     service.processEndRide = function() {
-      $data.resources.bookings.end({ id: service.state.booking.id }).$promise.then(function() {
+      var payload = angular.copy(service.state.parkingLocation);
+      for (var index in service.state.location) {
+        if (service.state.location.hasOwnProperty(index)) {
+          var item = service.state.location[index];
+          if (item.confirmed === true) {
+            payload.locationType = item.title;
+            break;
+          }
+        }
+      }
+
+      $data.resources.bookings.end({ id: service.state.booking.id, data: payload }).$promise.then(function() {
         $data.fetch('bookings');
         $data.deactivate('bookings');
         $message.success(service.state.booking.id + ' has been successfully ended');

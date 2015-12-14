@@ -36,13 +36,23 @@
               </li>
               <li ng-show="service.state.check.chargeCardSecure.isVisible">
                 <label class="pull-right">
-                  <span>{{ data.cars.isChargeCardSecure }}</span>
+                  <span ng-show="data.cars.isChargeCardSecure">
+                    Y
+                  </span>
+                  <span ng-hide="data.cars.isChargeCardSecure">
+                    <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
+                  </span>
                 </label>
                 Charging Card
               </li>
               <li ng-show="service.state.check.isCharging.isVisible">
                 <label class="pull-right">
-                  <span>{{ data.cars.isCharging }}</span>
+                  <span ng-show="data.cars.isCharging">
+                    Y
+                  </span>
+                  <span ng-hide="data.cars.isCharging">
+                    <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
+                  </span>
                 </label>
                 Charging
               </li>
@@ -60,8 +70,7 @@
               </li>
             </ul>
           </div>
-          <button type="button" class="button button-block" ng-class="{ 'disabled' : !data.cars.id, 'button-balanced' : data.cars.id }" ng-click="service.lockCar(data.cars.id)">Car - Lock</button>
-
+          <button type="button" class="button button-block" ng-class="{ 'disabled' : !data.cars.isImmobilized, 'button-balanced' : data.cars.isImmobilized }" ng-click="service.lockCar(data.cars.id)">Finish and Lock Car</button>
         </div>
       </div>
     </div>

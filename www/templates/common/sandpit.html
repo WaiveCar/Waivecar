@@ -12,7 +12,7 @@
         <div class="padding">
           <ul class="list-unstyled text-left margin-top-10">
             <li>
-              <button type="button" class="button button-block" ng-class="{ 'disabled' : data.bookings.id, 'button-gray' : !data.bookings.id }" ng-click="ctrl.create()">Booking - Create (Waive2) [15, 15.9]</button>
+              <button type="button" class="button button-block" ng-class="{ 'disabled' : data.bookings.id, 'button-calm' : !data.bookings.id }" ng-click="ctrl.create()">Booking - Create (Waive2) [15, 15.9]</button>
             </li>
             <li>
               <button type="button" class="button button-block" ng-class="{ 'disabled' : data.bookings.status !== 'reserved', 'button-gray' : data.bookings.status === 'reserved' }" ng-click="ctrl.ready()">Booking - Ready [17]</button>
@@ -30,7 +30,7 @@
               <button type="button" class="button button-block" ng-class="{ 'disabled' : !data.bookings.id, 'button-assertive' : data.bookings.id }" ng-click="ctrl.cancel()">Booking - Cancel [16]</button>
             </li>
             <li>
-              <button type="button" class="button button-block" ng-class="{ 'disabled' : data.bookings.status !== 'started', 'button-gray' : data.bookings.status === 'started' }" ui-sref="end-ride-options({ id: 1})">End Ride</button>
+              <button type="button" class="button button-block" ng-class="{ 'disabled' : data.bookings.status !== 'started', 'button-balanced' : data.bookings.status === 'started' }" ui-sref="end-ride-options({ id: 1})">End Ride</button>
             </li>
           </ul>
           <div class="padding-vertical">
