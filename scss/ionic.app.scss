@@ -32,6 +32,36 @@ $fa-font-path: "../fonts" !default;
 @import 'modals';
 @import 'vision';
 
+.icon-svg {
+  svg {
+    height: 15px;
+    width : 15px;
+  }
+}
+.padding {
+  padding: 10px 18px;;
+}
+
+.padding-top,
+.padding-vertical {
+  padding-top: 10px;
+}
+
+.padding-right,
+.padding-horizontal {
+  padding-right: 18px;
+}
+
+.padding-bottom,
+.padding-vertical {
+  padding-bottom: 10px;
+}
+
+.padding-left,
+.padding-horizontal {
+  padding-left: 18px;
+}
+
 .padding-top-10 {
   @include custom-padding (10, 'top');
 }
@@ -122,7 +152,6 @@ ion-content {
 .has-header {
   // top: ((100 - $bigHeaderSize) * 1%) !important;
 }
-
 .no-padding.bar.bar-footer {
   background : $dark;
 }
