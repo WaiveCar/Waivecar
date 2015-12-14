@@ -50,7 +50,7 @@
     "bentojs-api-mongo": "0.0.12",
     "bentojs-api-queue": "0.0.17",
     "bentojs-api-role": "1.0.0",
-    "bentojs-api-sequelize": "1.0.6",
+    "bentojs-api-sequelize": "1.1.0",
     "bentojs-api-shop": "1.0.0",
     "bentojs-api-slack": "0.0.2",
     "bentojs-api-sms": "0.0.13",

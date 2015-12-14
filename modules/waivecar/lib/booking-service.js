@@ -6,7 +6,6 @@ let fees        = require('./fee-service');
 let queue       = Bento.provider('queue');
 let queryParser = Bento.provider('sequelize/helpers').query;
 let error       = Bento.Error;
-let relay       = Bento.Relay;
 let config      = Bento.config.waivecar;
 
 // ### Models
@@ -79,13 +78,8 @@ module.exports = class BookingService extends Service {
 
     // ### Relay Booking
 
-    let payload = {
-      type : 'store',
-      data : booking.toJSON()
-    };
-
-    relay.user(user.id, 'bookings', payload);
-    relay.admin('bookings', payload);
+    car.relay('update');
+    booking.relay('store', user);
 
     // ### Return Booking
 
@@ -252,7 +246,8 @@ module.exports = class BookingService extends Service {
 
     // ### Relay Update
 
-    this.relay(booking, user);
+    car.relay('update');
+    booking.relay('update', user);
 
     // ### Unlock Car
 
@@ -293,7 +288,8 @@ module.exports = class BookingService extends Service {
 
     // ### Relay Update
 
-    this.relay(booking, user);
+    car.relay('update');
+    booking.relay('update', user);
 
     return yield cars.unlockImmobilzer(car.id, _user);
   }
@@ -310,17 +306,17 @@ module.exports = class BookingService extends Service {
     let user    = yield this.getUser(booking.userId);
     let errors  = [];
 
-    Object.assign(car, yield cars.getDevice(car.id, _user));
-
     // ### Status Check
     // Go through end booking checklist.
 
-    if (booking.status !== 'started') {
+    if (['ready', 'started'].indexOf(booking.status) === -1) {
       throw error.parse({
         code    : `BOOKING_REQUEST_INVALID`,
-        message : `You can only end a booking that has already started.`
+        message : `You can only end a booking which has been made ready or has already started.`
       }, 400);
     }
+
+    Object.assign(car, yield cars.getDevice(car.id, _user));
 
     if (car.isIgnitionOn) { errors.push('isIgnitionOn'); }
     if (!car.isKeySecure)  { errors.push('isKeySecure'); }
@@ -351,7 +347,9 @@ module.exports = class BookingService extends Service {
 
     // ### Booking Details
 
-    yield this.logDetails('end', booking, car);
+    if (booking.status === 'started') {
+      yield this.logDetails('end', booking, car);
+    }
 
     // ### Create Order
     // Create a shop cart with automated fees.
@@ -365,7 +363,8 @@ module.exports = class BookingService extends Service {
 
     // ### Relay Update
 
-    this.relay(booking, user);
+    car.relay('update');
+    booking.relay('update', user);
   }
 
   /*
@@ -415,7 +414,8 @@ module.exports = class BookingService extends Service {
 
     // ### Relay Update
 
-    this.relay(booking, user);
+    car.relay('update');
+    booking.relay('update', user);
   }
 
   // ### HELPERS
@@ -438,21 +438,6 @@ module.exports = class BookingService extends Service {
       charge    : 0
     });
     yield details.save();
-  }
-
-  /**
-   * Sends a relay update to administrators and the booking user.
-   * @param  {Object} booking
-   * @param  {Object} user
-   * @return {Void}
-   */
-  static relay(booking, user) {
-    let payload = {
-      type : 'update',
-      data : booking
-    };
-    relay.user(user.id, 'bookings', payload);
-    relay.admin('bookings', payload);
   }
 
 };
