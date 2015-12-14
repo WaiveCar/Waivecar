@@ -16,6 +16,7 @@ module.exports = class ProfileView extends React.Component {
       details  : null
     };
     relay.subscribe(this, 'me');
+    this.booking = this.booking.bind(this);
   }
 
   /**
@@ -105,6 +106,7 @@ module.exports = class ProfileView extends React.Component {
    * @return {Object}
    */
   render() {
+    let pastRides = this.state.bookings.filter(b => [ 'ended', 'completed', 'finalized'].includes(b.status));
     return (
       <div className="rides container">
         <div className="row">
@@ -128,11 +130,7 @@ module.exports = class ProfileView extends React.Component {
                       <th>Status</th>
                     </tr>
                   </thead>
-                  {
-                    this.state.bookings.map((data) => {
-                      return this.booking(data)
-                    })
-                  }
+                  { pastRides.map(this.booking) }
                 </table>
               </div>
             </div>
