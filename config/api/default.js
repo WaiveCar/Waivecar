@@ -49,15 +49,20 @@ module.exports = {
    |
    | @param {Number} port
    | @param {Object} redis
+   | @param {Object} api
    |
    */
 
   socket : {
-    port  : 5000,
-    auth  : null,
+    port : 5000,
     redis : {
       host : 'localhost',
       port : 6379
+    },
+    api  : {
+      url   : 'http://localhost:8081',
+      me    : '/users/me',
+      roles : '/roles'
     }
   },
 
