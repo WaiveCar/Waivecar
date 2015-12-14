@@ -54,12 +54,12 @@ module.exports = {
    */
 
   socket : {
-    port : 5000,
+    port  : 5000,
     redis : {
       host : 'localhost',
       port : 6379
     },
-    api  : {
+    api : {
       url   : 'http://localhost:8081',
       me    : '/users/me',
       roles : '/roles'

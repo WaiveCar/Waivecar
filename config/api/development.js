@@ -4,7 +4,11 @@ module.exports = {
     uri  : 'http://localhost:3000'
   },
   socket : {
-    auth : 'http://localhost:3000/users/me'
+    api : {
+      url   : 'http://localhost:3000',
+      me    : '/users/me',
+      roles : '/roles'
+    }
   },
   log : {
     level : {
