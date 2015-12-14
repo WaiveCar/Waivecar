@@ -8,7 +8,6 @@ module.exports = angular.module('app.directives').directive('lined', [
     return {
       restrict: 'E',
       transclude: true,
-      replace: true,
       templateUrl: '/templates/directives/lined.html'
     };
 
