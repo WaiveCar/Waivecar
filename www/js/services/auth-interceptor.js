@@ -24,9 +24,9 @@ module.exports = angular.module('app.services').factory('AuthInterceptor', [
           httpConfig.headers.Authorization = token;
         }
 
-        if (/\/1\//.test(httpConfig.url)) {
-          httpConfig.headers['x-referer'] = $document.location.origin + '/' + $rootScope.$state.href($rootScope.$state.current);
-        }
+        // if (/\/1\//.test(httpConfig.url)) {
+        //   httpConfig.headers['x-referer'] = $document.location.origin + '/' + $rootScope.$state.href($rootScope.$state.current);
+        // }
 
         return httpConfig;
       },
