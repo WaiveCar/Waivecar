@@ -138,6 +138,11 @@ module.exports = class CarService extends Service {
           let newCar = yield this.getDevice(device.id);
           if (newCar) {
             let car = new Car(newCar);
+            let meta = config.car.meta[car.id];
+            if (meta) {
+              car.license = meta.license;
+            }
+
             log.debug(`Cars : Sync : adding ${ device.id }.`);
             yield car.upsert();
           } else {
