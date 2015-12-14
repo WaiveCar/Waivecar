@@ -37,6 +37,51 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       defaultValue : true
     },
 
+    isLocked : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
+    isImmobilized : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
+    isIgnitionOn : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
+    isKeySecure : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
+    isChargeCardSecure : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
+    isCharging : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
+    isQuickCharging : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
+    isOnChargeAdapter : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
+    isParked : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
     // ### Car Details
 
     make : {
@@ -95,25 +140,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       type : Sequelize.DECIMAL(10, 2)
     },
 
-    isImmobilized : {
-      type         : Sequelize.BOOLEAN,
-      defaultValue : false
-    },
-
-    ignition : {
-      type : Sequelize.STRING(28)
-    },
-
-    isLocked : {
-      type         : Sequelize.BOOLEAN,
-      defaultValue : false
-    },
-
     lockLastCommand : {
-      type : Sequelize.STRING(28)
-    },
-
-    keyfob : {
       type : Sequelize.STRING(28)
     },
 
@@ -135,26 +162,6 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
     boardVoltage : {
       type : Sequelize.DECIMAL(10, 2)
-    },
-
-    isCharging : {
-      type         : Sequelize.BOOLEAN,
-      defaultValue : false
-    },
-
-    isQuickCharging : {
-      type         : Sequelize.BOOLEAN,
-      defaultValue : false
-    },
-
-    isOnChargeAdapter : {
-      type         : Sequelize.BOOLEAN,
-      defaultValue : false
-    },
-
-    isParked : {
-      type         : Sequelize.BOOLEAN,
-      defaultValue : false
     },
 
     range : {

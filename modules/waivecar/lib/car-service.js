@@ -99,7 +99,7 @@ module.exports = class CarService extends Service {
         delete data.calculatedSpeed;
       }
 
-      data.isParked = (data.currentSpeed === 0) && (data.ignition === 'off');
+      data.isParked = (data.currentSpeed === 0) && (!data.isIgnitionOn);
     }
 
     yield existingCar.update(data);
@@ -310,14 +310,14 @@ module.exports = class CarService extends Service {
     let car = {
       id                            : id,
       lockLastCommand               : data['central_lock_last_command'],
-      keyfob                        : data['keyfob'],
+      isKeySecure                   : this.convertToBoolean(data, 'keyfob', { in : true, out : false }),
       bluetooth                     : data['bluetooth_connection'],
       alarmInput                    : data['alarm_input'],
       mileageSinceImmobilizerUnlock : data['mileage_since_immobilizer_unlock'],
       totalMileage                  : data['mileage'],
       boardVoltage                  : data['board_voltage'],
       charge                        : data['fuel_level'],
-      ignition                      : data['ignition'],
+      isIgnitionOn                  : this.convertToBoolean(data, 'ignition', { on : true, off : false }),
       currentSpeed                  : data['speed'],
       isImmobilized                 : this.convertToBoolean(data, 'immobilizer', { locked : true, unlocked : false }),
       isLocked                      : this.convertToBoolean(data, 'central_lock', { locked : true, unlocked : false })

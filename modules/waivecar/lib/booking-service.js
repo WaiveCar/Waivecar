@@ -322,8 +322,8 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
-    if (car.ignition === 'on') { errors.push('ignition'); }
-    if (car.keyfob === 'out')  { errors.push('keyfob'); }
+    if (car.isIgnitionOn) { errors.push('isIgnitionOn'); }
+    if (!car.keySecure)  { errors.push('keySecure'); }
 
     if (errors.length) {
       throw error.parse({

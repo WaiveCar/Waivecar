@@ -7,6 +7,87 @@ module.exports = {
     label     : 'Id',
     helpText  : null
   },
+  userId : {
+    name      : 'userId',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'User',
+    helpText  : null
+  },
+  isAvailable : {
+    name      : 'isAvailable',
+    component : 'checkbox',
+    required  : true,
+    label     : 'available',
+    helpText  : null
+  },
+  isLocked : {
+    name      : 'isLocked',
+    component : 'checkbox',
+    required  : true,
+    label     : 'Locked',
+    helpText  : null
+  },
+  isImmobilized : {
+    name      : 'isImmobilized',
+    component : 'checkbox',
+    required  : true,
+    label     : 'Immobilized',
+    helpText  : null
+  },
+  isIgnitionOn : {
+    name      : 'isIgnitionOn',
+    component : 'checkbox',
+    type      : 'text',
+    required  : true,
+    label     : 'Ignition',
+    helpText  : null
+  },
+  isKeySecure : {
+    name      : 'isKeySecure',
+    component : 'checkbox',
+    type      : 'text',
+    required  : true,
+    label     : 'Key Secure',
+    helpText  : null
+  },
+  isChargeCardSecure : {
+    name      : 'isChargeCardSecure',
+    component : 'checkbox',
+    type      : 'text',
+    required  : true,
+    label     : 'Charge Card Secure',
+    helpText  : null
+  },
+  isCharging : {
+    name      : 'isCharging',
+    component : 'checkbox',
+    required  : true,
+    label     : 'Charging',
+    helpText  : null
+  },
+  isQuickCharging : {
+    name      : 'isQuickCharging',
+    component : 'checkbox',
+    required  : true,
+    label     : 'Quick Charging',
+    helpText  : null
+  },
+  isOnChargeAdapter : {
+    name      : 'isOnChargeAdapter',
+    component : 'checkbox',
+    required  : true,
+    label     : 'On Charge Adapter',
+    helpText  : null
+  },
+  isParked : {
+    name      : 'isParked',
+    component : 'checkbox',
+    required  : true,
+    label     : 'Parked',
+    helpText  : null
+  },
   make : {
     name      : 'make',
     component : 'input',
@@ -55,6 +136,14 @@ module.exports = {
     label     : 'VIN',
     helpText  : null
   },
+  fileId : {
+    name      : 'fileId',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Photo',
+    helpText  : null
+  },
   latitude : {
     name      : 'latitude',
     component : 'input',
@@ -69,6 +158,14 @@ module.exports = {
     type      : 'text',
     required  : true,
     label     : 'Longitude',
+    helpText  : null
+  },
+  locationQuality : {
+    name      : 'locationQuality',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : ':ocation Quality',
     helpText  : null
   },
   distanceSinceLastRead : {
@@ -87,6 +184,14 @@ module.exports = {
     label     : 'Speed',
     helpText  : null
   },
+  calculatedSpeed : {
+    name      : 'calculatedSpeed',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Calculated Speed',
+    helpText  : null
+  },
   charge : {
     name      : 'charge',
     component : 'input',
@@ -95,42 +200,12 @@ module.exports = {
     label     : 'Charge',
     helpText  : null
   },
-  isImmobilized : {
-    name      : 'isImmobilized',
-    component : 'checkbox',
-    required  : true,
-    label     : 'Immobilized',
-    helpText  : null
-  },
-  ignition : {
-    name      : 'ignition',
-    component : 'input',
-    type      : 'text',
-    required  : true,
-    label     : 'Ignition',
-    helpText  : null
-  },
-  isLocked : {
-    name      : 'isLocked',
-    component : 'checkbox',
-    required  : true,
-    label     : 'Locked',
-    helpText  : null
-  },
   lockLastCommand : {
     name      : 'lockLastCommand',
     component : 'input',
     type      : 'text',
     required  : true,
     label     : 'Last Lock Command',
-    helpText  : null
-  },
-  keyfob : {
-    name      : 'keyfob',
-    component : 'input',
-    type      : 'text',
-    required  : true,
-    label     : 'Key Fob',
     helpText  : null
   },
   bluetooth : {
@@ -173,27 +248,6 @@ module.exports = {
     label     : 'Board Voltage',
     helpText  : null
   },
-  isCharging : {
-    name      : 'isCharging',
-    component : 'checkbox',
-    required  : true,
-    label     : 'Charging',
-    helpText  : null
-  },
-  isQuickCharging : {
-    name      : 'isQuickCharging',
-    component : 'checkbox',
-    required  : true,
-    label     : 'Quick Charging',
-    helpText  : null
-  },
-  isOnChargeAdapter : {
-    name      : 'isOnChargeAdapter',
-    component : 'checkbox',
-    required  : true,
-    label     : 'On Charge Adapter',
-    helpText  : null
-  },
   range : {
     name      : 'range',
     component : 'input',
@@ -202,19 +256,28 @@ module.exports = {
     label     : 'Current Range',
     helpText  : null
   },
-  userId : {
-    name      : 'userId',
+  positionUpdatedAt : {
+    name      : 'positionUpdatedAt',
     component : 'input',
     type      : 'text',
     required  : true,
-    label     : 'User',
+    label     : 'Last Position Update',
     helpText  : null
   },
-  isAvailable : {
-    name      : 'isAvailable',
-    component : 'checkbox',
+  lastServiceAt : {
+    name      : 'lastServiceAt',
+    component : 'input',
+    type      : 'text',
     required  : true,
-    label     : 'available',
+    label     : 'Last Service',
+    helpText  : null
+  },
+  comments : {
+    name      : 'comments',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Comments',
     helpText  : null
   },
   createdAt : {
