@@ -36,6 +36,7 @@ module.exports = [
         // 1-Intro
         cache: false,
         url: '/',
+        controller: 'LandingController as landing',
         templateUrl: '/templates/landing/index.html'
       })
       .state('auth', {
