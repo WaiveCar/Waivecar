@@ -138,28 +138,29 @@ class CarsShowView extends React.Component {
               <div className="col-md-6">
                 <ul className="list-group">
                   <li className="list-group-item">
-                    <span className="pull-right">{ car.charge }</span>
-                    Charge Level
+                    <span className="pull-right">{ this.renderBoolean(car.isKeySecure) }</span>
+                    Key Secure
                   </li>
                   <li className="list-group-item">
-                    <span className="pull-right">{ car.range }</span>
-                    Range
+                    <span className="pull-right">{ this.renderBoolean(car.isChardCardSecure) }</span>
+                    Charge Card Secure
                   </li>
                   <li className="list-group-item">
-                    <span className="pull-right">{ car.currentSpeed }</span>
-                    Current Speed
+                    <span className="pull-right">{ this.renderBoolean(car.isLocked) }</span>
+                    Locked
                   </li>
                   <li className="list-group-item">
-                    <span className="pull-right">{ this.renderBoolean(car.isCharging) }</span>
-                    Charging
+                    <span className="pull-right">{ this.renderBoolean(car.isIgnitionOn) }</span>
+                    Ignition
+                  </li>
+                  <li className="list-group-item">
+                    <span className="pull-right">{ this.renderBoolean(car.isImmobilized) }</span>
+                    Immobilized
                   </li>
                   <li className="list-group-item">
                     <span className="pull-right">{ this.renderBoolean(car.isAvailable) }</span>
                     Available
-                  </li>
-                  <li className="list-group-item">
-                    <span className="pull-right">{ car.userId }</span>
-                    User
+                    { !car.isAvailable && <span className="user-link">User : { car.userId }</span> }
                   </li>
                   <li className="list-group-item">
                     <span className="pull-right">{ car.totalMileage }</span>
@@ -170,20 +171,20 @@ class CarsShowView extends React.Component {
               <div className="col-md-6">
                 <ul className="list-group">
                   <li className="list-group-item">
-                    <span className="pull-right">{ car.keyfob }</span>
-                    Key Fob
+                    <span className="pull-right">{ car.currentSpeed }</span>
+                    Current Speed
                   </li>
                   <li className="list-group-item">
-                    <span className="pull-right">{ this.renderBoolean(car.isLocked) }</span>
-                    Locked
+                    <span className="pull-right">{ car.charge }</span>
+                    Charge Level
                   </li>
                   <li className="list-group-item">
-                    <span className="pull-right">{ car.ignition }</span>
-                    Ignition
+                    <span className="pull-right">{ car.range }</span>
+                    Range
                   </li>
                   <li className="list-group-item">
-                    <span className="pull-right">{ this.renderBoolean(car.isImmobilized) }</span>
-                    Immobilized
+                    <span className="pull-right">{ this.renderBoolean(car.isCharging) }</span>
+                    Charging
                   </li>
                   <li className="list-group-item">
                     <span className="pull-right">{ this.renderBoolean(car.isQuickCharging) }</span>
@@ -295,8 +296,8 @@ class CarsShowView extends React.Component {
       <div className="cars cars-show">
         { this.renderCarMedia(car) }
         { this.renderCarForm(car) }
-        { this.renderCarIndicators(car) }
         { this.renderCarActions(car) }
+        { this.renderCarIndicators(car) }
         { this.renderLastUpdate(car) }
       </div>
     );
