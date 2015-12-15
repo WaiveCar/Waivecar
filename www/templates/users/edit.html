@@ -10,6 +10,7 @@
       <div ng-include="'/templates/users/_form.html'"></div>
     </form>
     <div class="padding-top padding-bottom">
+      <button class="button button-balanced button-block" ui-sref="auth-account-verify" ng-if="!user.verifiedPhone">Enter Phone Verification Code</button>
       <button class="button button-balanced button-block" ui-sref="credit-cards">Update Payment Method</button>
       <button class="button button-positive button-block" ui-sref="licenses-new" ng-if="!license">Add Driver's License</button>
       <button class="button button-positive button-block" ui-sref="licenses-edit({ licenseId: license.id })" ng-if="license.status === 'provided'">Validate Driver's License</button>

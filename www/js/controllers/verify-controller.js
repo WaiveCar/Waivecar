@@ -43,6 +43,7 @@ function VerifyController ($injector, $stateParams) {
             return $state.go('cars-show');
             // return $state.go('cars-show', BookingService.getReturnParams());
           }
+          return $state.go('users-edit');
         }.bind(this), 2000);
       }.bind(this))
       .catch(function (err) {

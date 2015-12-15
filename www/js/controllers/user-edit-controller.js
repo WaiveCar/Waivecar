@@ -22,14 +22,15 @@ module.exports = angular.module('app.controllers').controller('UserEditControlle
 
       $scope.user.$save()
         .then(function() {
-          return $message.success('Saved!');
+          $scope.init(function() {
+            return $message.success('Your details have been successfully updated');
+          });
         })
         .catch($message.error);
-
     };
 
 
-    $scope.init = function() {
+    $scope.init = function(next) {
 
       return $data.resources.users.me().$promise
         .then(function(me) {
@@ -37,6 +38,9 @@ module.exports = angular.module('app.controllers').controller('UserEditControlle
           return $data.resources.licenses.query().$promise;
         }).then(function(licenses) {
           $scope.license = _.chain(licenses).sortBy('createdAt').last().value();
+          if (next) {
+            return next();
+          }
         }).catch($message.error);
     };
 
