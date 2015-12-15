@@ -6,23 +6,24 @@
           <iframe src="http://www.youtube.com/embed/KBKXu3Kg4yg?rel=0" frameborder="0" allowfullscreen></iframe>
         </div>
  -->
-        <div class="hank">
+        <div class="content-container">
           <div class="lead-logo">
             <ng-include class="logo-image" src="'/img/waivecar-mark2.svg'" />
           </div>
           <div class="padding">
-            <h3 class="margin-bottom-10">ARE YOU READY</h3>
-            <div>
-              <p>Please confirm that you:</p>
-              <ul class="list-unstyled text-left margin-top-10">
-                <li>1. Are sitting in the WaiveCar.</li>
-                <li>2. Have taken the WaiveCar key.</li>
-                <li>3. The WaiveCar is problem free</li>
-              </ul>
-              <p>When you are ready, tap on "Continue" and start the car normally. Enjoy your ride!</p>
-            </div>
-            <button type="button" class="button button-block" ng-class="{ 'disabled' : data.cars.isKeySecure, 'button-balanced' : !data.cars.isKeySecure }">Continue</button>
-            <button type="button" class="button button-block" ng-click="ctrl.start()"> TEST Continue</button>
+            <h3>ARE YOU READY</h3>
+            <p>Please confirm that you:</p>
+            <ul class="list-unstyled text-left bold-list">
+              <li>1. Are sitting in the WaiveCar.</li>
+              <li>2. Have taken the WaiveCar key.</li>
+              <li>3. The WaiveCar is problem free.</li>
+            </ul>
+            <p class="text-center padding-vertical">When you are ready, tap on "Continue" and start the car normally. Enjoy your ride!</p>
+            <button type="button" class="button button-block" ng-class="{ 'disabled' : data.cars.isKeySecure, 'button-balanced' : !data.cars.isKeySecure }" ng-click="ctrl.start()">Continue</button>
+          </div>
+          <div class="footer-information">
+            <p class="text-center">If you need help, please watch our <a class="text-underline" href="" ng-click="toggleVideo()">video tutorial</a>.</p>
+            <p class="text-center">If you have a problem, please <a class="text-underline" ui-sref="problem">report the problem</a>.</p>
           </div>
         </div>
       </div>

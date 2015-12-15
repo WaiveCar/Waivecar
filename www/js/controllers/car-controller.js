@@ -80,6 +80,18 @@ module.exports = angular.module('app.controllers').controller('CarController', [
     //     .catch($message.error);
     // };
 
+    function formatArray(arr) {
+      var outStr = '';
+      if (arr.length === 1) {
+          outStr = arr[0];
+      } else if (arr.length === 2) {
+          outStr = arr.join(' and ');
+      } else if (arr.length > 2) {
+          outStr = arr.slice(0, -1).join(', ') + ', and ' + arr.slice(-1);
+      }
+      return outStr;
+    }
+
     this.book = function() {
       var model = { userId: $auth.me.id, carId: $state.params.id };
       // Create a Booking
@@ -93,7 +105,12 @@ module.exports = angular.module('app.controllers').controller('CarController', [
             $state.go('bookings-active', { id: booking.id });
           }).catch($message.error);
         }).catch($message.error);
-      }).catch($message.error);
+      }).catch(function(err) {
+        var message = (err.data && err.data.data && err.data.data.required)
+            ? 'You still need to verify your ' + formatArray(err.data.data.required) + ' before you can book a WaiveCar.'
+            : err;
+        $message.error(message);
+      });
     };
 
     this.cancel = function() {

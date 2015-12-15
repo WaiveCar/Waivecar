@@ -3,6 +3,7 @@
 var angular = require('angular');
 var _ = require('lodash');
 var moment = require('moment');
+var sprintf = require('sprintf-js').sprintf;
 
 require('angular-ui-router');
 require('../services/auth-service');
@@ -30,9 +31,10 @@ module.exports = angular.module('app.controllers').controller('BookingController
     // $data is used to interact with models, never directly. If direct is required, $data should be refreshed.
     $scope.data = $data.active;
 
-    $interval(function() {
-      if (this.expired) {
-        $scope.timeLeft = moment(this.expired).toNow(true);
+    var timer = $interval(function() {
+      if ($scope.expired) {
+        var time = moment($scope.expired).toNow(true);
+        $scope.timeLeft = time;
       }
     }.bind(this), 1000);
 
@@ -162,6 +164,45 @@ module.exports = angular.module('app.controllers').controller('BookingController
       }).catch($message.error);
     };
 
+    $scope.getDirections = function () {
+      LocationService.getLocation()
+        .then(function(location){
+          var url;
+          var sprintfOptions = {
+            startingLat: location.latitude,
+            startingLon: location.longitude,
+            targetLat: $data.active.cars.latitude,
+            targetLon: $data.active.cars.longitude
+          };
+
+          if(ionic.Platform.isWebView()){
+            url = [
+              'comgooglemaps-x-callback://?',
+              '&saddr=%(startingLat)s,%(startingLon)s',
+              '&daddr=%(targetLat)s,%(targetLon)s',
+              '&directionsmode=walking',
+              '&x-success=WaiveCar://?resume=true',
+              '&x-source=WaiveCar'
+            ].join('');
+            url = sprintf(url, sprintfOptions);
+
+            window.open(encodeURI(url), '_system');
+          } else {
+            url = 'http://maps.google.com/maps?saddr=%(startingLat)s,%(startingLon)s&daddr=%(targetLat)s,%(targetLon)s&mode=walking';
+            url = sprintf(url, sprintfOptions);
+            window.open(url);
+          }
+        });
+    };
+
+
+
+
+
+
+
+
+
     this.init = function () {
       if (!$auth.isAuthenticated()) {
         $state.go('auth');
@@ -176,8 +217,9 @@ module.exports = angular.module('app.controllers').controller('BookingController
           console.log(isInitialized);
           if (isInitialized === true) {
             rideServiceReady();
-            console.log('asd');
             $scope.watchForWithinRange();
+            console.log($scope.data.bookings);
+            $scope.expired = moment($scope.data.bookings.createdAt).add(15, 'm');
             $scope.image = $data.active.cars.fileId || 'img/car.jpg';
           }
         });

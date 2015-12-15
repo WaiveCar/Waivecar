@@ -20,9 +20,7 @@
     <div class="info-footer big-info-footer">
       <div class="has-footer-information">
         <div class="row">
-          <div class="col col-67">
-            <img ng-src="{{ image }}" width="80%">
-          </div>
+          <div class="col col-50 car-image" style="background-image: url('/{{ image }}');"></div>
           <div class="col">
             <p class="title">
               <h3 ng-bind="data.cars.make"></h3>
@@ -31,7 +29,11 @@
             <p><span ng-bind="data.cars.license"></span></p>
           </div>
         </div>
-        <p class="text-center" ng-show="timeLeft"><strong>{{ timeLeft }} left</strong> to get to your WaiveCar</p>
+        <div class="row">
+          <div class="col">
+            <p class="text-center" ng-show="timeLeft"><strong>{{ timeLeft }} left</strong> to get to your WaiveCar</p>
+          </div>
+        </div>
       </div>
       <div class="footer-information">
         <div class="button-bar">
