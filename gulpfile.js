@@ -15,6 +15,8 @@ var _ = require('lodash');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var sourcemaps = require('gulp-sourcemaps');
+var autoprefixer = require('autoprefixer');
+var postcss = require('gulp-postcss');
 
 var paths = {
   sass: [
@@ -43,10 +45,16 @@ var paths = {
 gulp.task('default', ['sass', 'templates', 'lint', 'js', 'fonts']);
 
 gulp.task('sass', function() {
+  var browsers = [
+    'last 1 ChromeAndroid versions', // Android >= Lollipop
+    'Chrome 44', // Crosswalk for >= KitKat
+    'iOS >= 7'
+  ];
   return gulp.src('./scss/ionic.app.scss')
     .pipe(sass({
       errLogToConsole: true
     }))
+    .pipe(postcss([autoprefixer({browsers: browsers})]))
     .pipe(gulp.dest('./www/css/'))
     .pipe(minifyCss({
       keepSpecialComments: 0
