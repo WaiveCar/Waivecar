@@ -387,13 +387,29 @@ module.exports = class BookingService extends Service {
     // Make sure all required car states are valid before allowing the booking to
     // be completed and released for next booking.
 
-    if (car.isIgnitionOn) { errors.push('isIgnitionOn'); }
-    if (!car.isKeySecure) { errors.push('isKeySecure'); }
+    if (car.isIgnitionOn) { errors.push('turn off Ignition'); }
+    //if (!car.isKeySecure) { errors.push('secure Key'); }
 
     if (errors.length) {
+      let message = `Your Ride cannot be completed until you `;
+      switch (errors.length) {
+        case 1: {
+          message = `${ message }${ errors[0] }.`;
+          break;
+        }
+        case 2: {
+          message = `${ message }${ errors.join(' and ') }.`;
+          break;
+        }
+        default: {
+          message = `${ message }${ errors.slice(0, -1).join(', ') } and ${ errors.slice(-1) }.`;
+          break;
+        }
+      }
+
       throw error.parse({
         code    : `BOOKING_COMPLETE_INVALID`,
-        message : `Ride cannot be completed before the required steps have been performed.`,
+        message : message,
         data    : errors
       }, 400);
     }
