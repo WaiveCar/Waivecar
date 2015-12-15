@@ -40,3 +40,10 @@ $margin50: 50;
   margin-#{$direction}: $size*1%;
   display: block;
 }
+
+.info-header {
+  height: 5%;
+}
+.has-info-header {
+  height: 95%;
+}
