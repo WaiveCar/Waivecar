@@ -84,8 +84,9 @@ if (socket) {
   // if a token was found.
 
   socket.on('connect', () => {
-    if (auth.check()) {
-      Socket.authenticate(auth.token());
+    let token = auth.token();
+    if (token) {
+      Socket.authenticate(token);
     } else {
       console.log(`Socket > Connected as guest.`);
     }

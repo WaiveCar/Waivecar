@@ -60,7 +60,12 @@ templates.register('app', {
       {
         path      : '/cars/:id',
         component : require('../../views/app/admin/cars/show'),
-        onEnter   : policies.isAuthenticated
+        onEnter   : policies.isAdministrator
+      },
+      {
+        path      : '/bookings/:id',
+        component : require('../../views/app/admin/bookings/show'),
+        onEnter   : policies.isAdministrator
       }
     ].concat(views.getRoutes('app')));
   }
