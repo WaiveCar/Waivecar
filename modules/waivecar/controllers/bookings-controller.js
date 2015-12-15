@@ -38,9 +38,11 @@ Bento.Register.Controller('BookingsController', function(controller) {
    */
   controller.update = function *(id, action) {
     switch (action) {
-      case 'start' : return yield booking.start(id, this.auth.user);
-      case 'ready' : return yield booking.ready(id, this.auth.user);
-      case 'end'   : return yield booking.end(id, this.auth.user);
+      case 'start'    : return yield booking.start(id, this.auth.user);
+      case 'ready'    : return yield booking.ready(id, this.auth.user);
+      case 'end'      : return yield booking.end(id, this.auth.user);
+      case 'complete' : return yield booking.complete(id, this.auth.user);
+      case 'close'    : return yield booking.close(id, this.auth.user);
       default : {
         throw error.parse({
           code    : `BOOKING_INVALID_ACTION`,

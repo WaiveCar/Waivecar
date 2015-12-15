@@ -71,8 +71,9 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
         'cancelled', // The booking was cancelled and the car has been made available.
         'ready',     // The booking is ready to be started, cancellation is now unavailable.
         'started',   // The booking has started, engine is unlocked and ride timers have been initiated.
-        'ended',     // The booking has ended, pending inspection and fees.
-        'completed'  // The booking has been inspected and payment has been requested/collected.
+        'ended',     // The booking has ended, fee cart created and awaiting completion by valet/customer.
+        'completed', // The booking has been completed by valet/customer and car is locked and released.
+        'closed'     // The booking has been closed and payment has been requested/collected.
       ),
       defaultValue : 'reserved'
     }
@@ -123,7 +124,7 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
     },
 
     /**
-     * Sets the booking state to ready.
+     * Sets the booking status to ready.
      * @return {Void}
      */
     *ready() {
@@ -133,7 +134,7 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
     },
 
     /**
-     * Sets the booking state to started.
+     * Sets the booking status to started.
      * @return {Void}
      */
     *start() {
@@ -143,7 +144,7 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
     },
 
     /**
-     * Sets the booking state to ended.
+     * Sets the booking status to ended.
      * @return {Void}
      */
     *end() {
@@ -153,12 +154,22 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
     },
 
     /**
-     * Sets the booking state to completed.
+     * Sets the booking status to completed.
      * @return {Void}
      */
     *complete() {
       yield this.update({
         status : 'completed'
+      });
+    },
+
+    /**
+     * Sets the booking status to closed.
+     * @return {Void}
+     */
+    *close() {
+      yield this.update({
+        status : 'closed'
       });
     },
 

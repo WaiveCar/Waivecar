@@ -213,7 +213,7 @@ module.exports = class BookingService extends Service {
    |
    | Updates the booking with the provided action.
    | Endpoint : PUT /bookings/:id/:action
-   | Actions  : ready|start|end|complete
+   | Actions  : ready|start|end|complete|close
    |
    */
 
@@ -304,7 +304,8 @@ module.exports = class BookingService extends Service {
     let booking = yield this.getBooking(id);
     let car     = yield this.getCar(booking.carId);
     let user    = yield this.getUser(booking.userId);
-    let errors  = [];
+
+    this.hasAccess(user, _user);
 
     // ### Status Check
     // Go through end booking checklist.
@@ -318,14 +319,10 @@ module.exports = class BookingService extends Service {
 
     Object.assign(car, yield cars.getDevice(car.id, _user));
 
-    if (car.isIgnitionOn) { errors.push('isIgnitionOn'); }
-    //TEMP. if (!car.isKeySecure)  { errors.push('isKeySecure'); }
-
-    if (errors.length) {
+    if (car.isIgnitionOn) {
       throw error.parse({
-        code    : `BOOKING_MISSING_END_STEPS`,
-        message : `Missing required steps to end a ride.`,
-        data    : errors
+        code    : `BOOKING_REQUEST_INVALID`,
+        message : `You must park, and turn off the engine before ending your booking.`
       }, 400);
     }
 
@@ -365,6 +362,73 @@ module.exports = class BookingService extends Service {
 
     car.relay('update');
     booking.relay('update', user);
+  }
+
+  /**
+   * Locks, and makes the car available for a new booking.
+   * @return {Object}
+   */
+  static *complete(id, _user) {
+    let booking = yield this.getBooking(id);
+    let car     = yield this.getCar(booking.carId);
+    let user    = yield this.getUser(booking.userId);
+    let errors  = [];
+
+    this.hasAccess(user, _user);
+
+    if (booking.status !== 'ended') {
+      throw error.parse({
+        code    : `BOOKING_REQUEST_INVALID`,
+        message : `You cannot complete a booking which has not yet ended.`
+      }, 400);
+    }
+
+    Object.assign(car, yield cars.getDevice(car.id, _user));
+
+    // ### Validate Complete Status
+    // Make sure all required car states are valid before allowing the booking to
+    // be completed and released for next booking.
+
+    if (car.isIgnitionOn) { errors.push('isIgnitionOn'); }
+    if (!car.isKeySecure) { errors.push('isKeySecure'); }
+
+    if (errors.length) {
+      throw error.parse({
+        code    : `BOOKING_COMPLETE_INVALID`,
+        message : `Ride cannot be completed before the required steps have been performed.`,
+        data    : errors
+      }, 400);
+    }
+
+    yield cars.lockCar(car.id, _user);
+
+    // ### Booking & Car Updates
+
+    yield booking.complete();
+    yield car.available();
+
+    // ### Relay
+
+    booking.relay('update', user);
+    car.relay('update');
+  }
+
+  /**
+   * Closes the ride and sends the fee cart if applicable for collection.
+   * @param  {Number} id
+   * @param  {Object} _user
+   * @return {Object}
+   */
+  static *close(id, _user) {
+    if (!_user.hasAccess('admin')) {
+      throw error.parse({
+        error   : `INVALID_PRIVILEGES`,
+        message : `You do not have the required privileges to perform this operation.`
+      });
+    }
+    let booking = yield this.getBooking(id);
+
+    // Payment stuff to be done...
   }
 
   /*
