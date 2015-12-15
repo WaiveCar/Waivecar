@@ -142,7 +142,7 @@ class CarsShowView extends React.Component {
                     Key Secure
                   </li>
                   <li className="list-group-item">
-                    <span className="pull-right">{ this.renderBoolean(car.isChardCardSecure) }</span>
+                    <span className="pull-right">{ this.renderBoolean(car.isChargeCardSecure) }</span>
                     Charge Card Secure
                   </li>
                   <li className="list-group-item">
