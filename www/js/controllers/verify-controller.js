@@ -6,7 +6,6 @@ function VerifyController ($injector, $stateParams) {
   var $data = $injector.get('$data');
   var $auth = $injector.get('$auth');
   var $state = $injector.get('$state');
-  var BookingService = $injector.get('BookingService');
   var $modal = $injector.get('$modal');
   var $timeout = $injector.get('$timeout');
 
@@ -41,7 +40,8 @@ function VerifyController ($injector, $stateParams) {
             return $state.go('licenses-new', { step: 3 });
           }
           if (this.fromBooking) {
-            return $state.go('cars-show', BookingService.getReturnParams());
+            return $state.go('cars-show');
+            // return $state.go('cars-show', BookingService.getReturnParams());
           }
         }.bind(this), 2000);
       }.bind(this))
@@ -55,11 +55,11 @@ function VerifyController ($injector, $stateParams) {
             className: 'button-balanced',
             text: 'Retry',
             handler: function () {
-              modal.hide();
+              modal.remove();
             }
           }]
-        }).
-        then(function (_modal) {
+        })
+        .then(function (_modal) {
           modal = _modal;
           modal.show();
         });

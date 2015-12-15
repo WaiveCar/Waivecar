@@ -6,27 +6,27 @@ require('../services/data-service');
 require('../services/message-service');
 
 module.exports = angular.module('app.controllers').controller('CreditCardController', [
-  '$rootScope',
   '$scope',
   '$state',
   '$auth',
   '$data',
   '$message',
   '$stateParams',
-  '$ionicHistory',
-  'BookingService',
   '$q',
-  function ($rootScope, $scope, $state, $auth, $data, $message, $stateParams, $ionicHistory, BookingService, $q) {
+  '$modal',
+  '$timeout',
+  function ($scope, $state, $auth, $data, $message, $stateParams, $q, $modal, $timeout) {
 
     $scope.save = function(form) {
       if (form.$pristine) {
         return $message.info('Please fill in the form fields first.');
       }
+
       if (form.$invalid) {
         return $message.error('Please resolve form errors and try again.');
       }
 
-      return $q.when()
+      return $q.resolve()
         .then(function(){
           if ($auth.me.stripeId) {
             return false;
@@ -47,19 +47,45 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
           return card.$save();
         })
         .then(function() {
-          if($scope.fromBooking){
-            return $state.go('cars-show', BookingService.getReturnParams());
-          }
+          $modal('result', {
+            icon: 'check-icon',
+            title: 'Your payment method looks okay.'
+          })
+          .then(function (modal) {
+            modal.show();
+            return $timeout(2000).then(function () {
+              modal.remove();
+              if ($scope.fromBooking) {
+                return $state.go('cars-show');
+                // return $state.go('cars-show', BookingService.getReturnParams());
+              }
 
-          if($scope.isWizard){
-            return $state.go('cars');
-          }
+              if ($scope.isWizard) {
+                return $state.go('cars');
+              }
 
-          $state.go('credit-cards');
-
+              $state.go('credit-cards');
+            });
+          });
         })
-        .catch($message.error);
-
+        .catch(function (err) {
+          var modal;
+          $modal('result', {
+            icon: 'x-icon',
+            title: 'Error adding your credit card',
+            message: err.message,
+            actions: [{
+              className: 'button-balanced',
+              text: 'Retry',
+              handler: function () {
+                modal.remove();
+              }
+            }]
+          }).then(function (_modal) {
+            modal = _modal;
+            modal.show();
+          });
+        });
     };
 
     $scope.init = function() {

@@ -147,6 +147,7 @@ module.exports = [
         // 12-Payment-method@2x.png
         url: '/credit-cards/new?step&fromBooking',
         templateUrl: '/templates/credit-cards/new.html',
+        controller: 'CreditCardController as ctrl',
         data: {
           auth: true
         }

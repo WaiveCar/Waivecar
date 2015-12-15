@@ -125,11 +125,7 @@ function LicenseController ($stateParams, $injector) {
         hideSheet = null;
       }
       if (buttonIndex === 2) {
-        return $q(function (done) {
-          $timeout(function () {
-            done('foo');
-          }, 2000);
-        });
+        return $timeout(2000);
       } else if (buttonIndex === 0) {
         return CameraService.getPicture()
           .then(upload);
@@ -155,10 +151,11 @@ function LicenseController ($stateParams, $injector) {
       return this.license.$save();
     }.bind(this))
     .then(function () {
-      $timeout(function () {
+      return $timeout(1000)
+      .then(function () {
         hideModal();
         self.nextState();
-      }, 1000);
+      });
     });
   };
 

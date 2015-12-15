@@ -76,6 +76,7 @@ require('./controllers/credit-cards-controller');
 require('./controllers/inspection-controller');
 require('./controllers/landing-controller');
 require('./controllers/license-controller');
+require('./controllers/license-edit-controller');
 require('./controllers/license-request-validation-controller');
 require('./controllers/message-controller');
 require('./controllers/user-create-controller');
