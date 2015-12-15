@@ -170,7 +170,6 @@ module.exports = angular.module('app.services').factory('$ride', [
             service.setBooking(current.id);
             $data.activate('bookings', current.id).then(function() {
               $data.activate('cars', current.carId).then(function() {
-                console.log(current.status);
                 service.isInitialized = true;
                 if (current.status === 'started' && $state.current.name !== 'dashboard') {
                   $state.go('dashboard', { id: current.id });
@@ -181,6 +180,9 @@ module.exports = angular.module('app.services').factory('$ride', [
                 }
               });
             });
+          } else {
+            $state.go('cars');
+            service.isInitialized = true;
           }
         }
       });

@@ -24,13 +24,10 @@ module.exports = angular.module('app.controllers').controller('BookingController
   '$modal',
   function ($rootScope, $scope, $interval, $state, $auth, LocationService, $data, $ride, $message, $modal) {
 
-    // Concepts:
-    // $scope is used to store ref. to the service and the active models in the data svc.
-    // $data is used to interact with models, never directly. If direct is required, $data should be refreshed.
-    // Controller is reused by Sanpit and all End Ride views as there is a lot of crossover, but they could each have their own.
-    // TEMP FOR SANDPIT section has the calls required for the Start ride flow. These relate to the buttons on the Sandpit view.
-
+    // $scope is used to store ref. to $ride and the active models in $data.
     $scope.service = $ride;
+
+    // $data is used to interact with models, never directly. If direct is required, $data should be refreshed.
     $scope.data = $data.active;
 
     $interval(function() {
@@ -44,7 +41,12 @@ module.exports = angular.module('app.controllers').controller('BookingController
     };
 
     $scope.mockOutOfRange = function () {
-      LocationService.setLocation();
+      var mock = {
+        latitude: 34.0604643,
+        longitude: -118.4186743
+      };
+
+      LocationService.setLocation(mock);
       $scope.watchForWithinRange();
     };
 
@@ -107,7 +109,7 @@ module.exports = angular.module('app.controllers').controller('BookingController
             });
           }.bind(this)
         }]
-      }).$promise.then(function (modal) {
+      }).then(function (modal) {
         this.modal = modal;
         modal.show();
       }.bind(this));
@@ -153,7 +155,6 @@ module.exports = angular.module('app.controllers').controller('BookingController
     // };
 
     this.start = function() {
-      debugger;
       var id = $ride.state.booking.id;
       $data.resources.bookings.start({ id: id }).$promise.then(function() {
         $data.fetch('bookings');
@@ -168,10 +169,14 @@ module.exports = angular.module('app.controllers').controller('BookingController
 
       $scope.showVideo = true;
 
+      console.log($state.current.name);
+
       if ($state.current.name === 'bookings-active') {
         var rideServiceReady = $scope.$watch('service.isInitialized', function(isInitialized) {
+          console.log(isInitialized);
           if (isInitialized === true) {
             rideServiceReady();
+            console.log('asd');
             $scope.watchForWithinRange();
             $scope.image = $data.active.cars.fileId || 'img/car.jpg';
           }

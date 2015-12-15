@@ -85,12 +85,14 @@ module.exports = angular.module('app.controllers').controller('CarController', [
       // Create a Booking
       $data.create('bookings', model).then(function(booking) {
         // Active the created Booking so any consumer of $data can access current booking via $data.active.bookings
-        $data.activate('bookings', booking.id);
-        // Active the Car used in the active Booking so any consumer of $data can access current car via $data.active.cars
-        $data.activate('cars', booking.carId);
-        // Set the $endRide service's ref to the booking id.
-        $ride.setBooking(booking.id);
-        $state.go('bookings-active', { id: booking.id });
+        $data.activate('bookings', booking.id).then(function() {
+          // Active the Car used in the active Booking so any consumer of $data can access current car via $data.active.cars
+          $data.activate('cars', booking.carId).then(function() {
+            // Set the $endRide service's ref to the booking id.
+            $ride.setBooking(booking.id);
+            $state.go('bookings-active', { id: booking.id });
+          }).catch($message.error);
+        }).catch($message.error);
       }).catch($message.error);
     };
 
@@ -101,6 +103,7 @@ module.exports = angular.module('app.controllers').controller('CarController', [
         $scope.service.setState();
         $data.deactivate('cars');
         $data.deactivate('bookings');
+        $state.go('cars');
       }).catch($message.error);
     };
 
