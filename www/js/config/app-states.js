@@ -127,9 +127,12 @@ module.exports = [
       .state('licenses-edit', {
         url: '/licenses/:licenseId/edit?step&fromBooking',
         templateUrl: '/templates/licenses/edit.html',
-        controller: 'LicenseController as licenseCtrl',
+        controller: 'LicenseEditController as licenseCtrl',
         data: {
-          auth: true
+          auth: true,
+          foundLicense: ['$stateParams', '$data', function ($stateParams, $data) {
+            return $data.resources.licenses.get({ id: $stateParams.licenseId }).$promise;
+          }]
         }
       })
       .state('licenses-request-validation', {
