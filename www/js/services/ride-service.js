@@ -1,8 +1,9 @@
 'use strict';
 var angular = require('angular');
+var _ = require('lodash');
 require('./message-service');
 
-module.exports = angular.module('app.services').factory('$endRide', [
+module.exports = angular.module('app.services').factory('$ride', [
   '$auth',
   '$data',
   '$state',
@@ -13,6 +14,23 @@ module.exports = angular.module('app.services').factory('$endRide', [
 
     /*eslint-disable */
     var defaultState = {
+      prereqs : {
+        phoneVerified : {
+          valid : false,
+          description : { valid : 'Phone Number has been verified', invalid : 'Verify Phone Number' },
+          path  : 'auth-account-verify({ fromBooking: true })'
+        },
+        hasValidLicense : {
+          valid       : false,
+          description : { valid : 'Valid Driver\'s License', invalid : 'Add Driver\'s License' },
+          path        : 'licenses-new({ fromBooking: true })'
+        },
+        hasValidCreditCard : {
+          valid : false,
+          description : { valid : 'Valid Credit Card', invalid : 'Add Payment Method' },
+          path  : 'credit-cards-new({ fromBooking: true })'
+        }
+      },
       booking : {
         id         : null,
         readyToEnd : false
@@ -40,6 +58,8 @@ module.exports = angular.module('app.services').factory('$endRide', [
       },
     };
     /*eslint-enable */
+
+    service.isInitialized = false;
 
     service.setState = function() {
       service.state = {};
@@ -138,7 +158,36 @@ module.exports = angular.module('app.services').factory('$endRide', [
       }).catch($message.error);
     };
 
-    service.setState();
+    service.init = function() {
+      console.log('$ride : init');
+      service.setState();
+      $data.initialize('bookings').then(function() {
+        if ($data.instances.bookings.length > 0) {
+          var current = _.find($data.instances.bookings, function(b) {
+            return !_.contains([ 'cancelled', 'ended' ], b.status);
+          });
+          if (current) {
+            service.setBooking(current.id);
+            $data.activate('bookings', current.id).then(function() {
+              $data.activate('cars', current.carId).then(function() {
+                console.log(current.status);
+                service.isInitialized = true;
+                if (current.status === 'started' && $state.current.name !== 'dashboard') {
+                  $state.go('dashboard', { id: current.id });
+                } else if (current.status === 'ready' && $state.current.name !== 'start-ride') {
+                  $state.go('start-ride', { id: current.id });
+                } else if (current.status === 'reserved' && $state.current.name !== 'bookings-active') {
+                  $state.go('bookings-active', { id: current.id });
+                }
+              });
+            });
+          }
+        }
+      });
+    };
+
+    // service.setState();
+    // service.init();
 
     return service;
   }

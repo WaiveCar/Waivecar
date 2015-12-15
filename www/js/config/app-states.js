@@ -186,14 +186,14 @@ module.exports = [
         // 15-Book-waivecar
         url: '/cars/:id?displayRequirements',
         templateUrl: '/templates/cars/show.html',
-        controller: 'CarController as car',
+        controller: 'CarController as ctrl',
         data: {
           auth: true
         },
         resolve: {
-          status: ['BookingService', '$stateParams', function(BookingService, $stateParams){
-            return BookingService.getCurrentStatus($stateParams.id);
-          }],
+          // status: ['BookingService', '$stateParams', function(BookingService, $stateParams){
+          //   return BookingService.getCurrentStatus($stateParams.id);
+          // }],
           car: ['$data', '$stateParams', function ($data, $stateParams) {
             return $data.resources.cars.get({id: $stateParams.id}).$promise;
           }]
@@ -238,14 +238,27 @@ module.exports = [
     .state('bookings-active', {
       url: '/bookings/:id/active',
       templateUrl: '/templates/bookings/active.html',
-      controller: 'BookingController',
+      controller: 'BookingController as ctrl',
       data: {
         auth: true
-      },
-      resolve: {
-        booking: ['BookingService', '$stateParams', function(BookingService, $stateParams){
-          return BookingService.getActiveBooking($stateParams.id);
-        }]
+      }
+    })
+
+    .state('start-ride', {
+      url: '/bookings/:id/start',
+      templateUrl: '/templates/bookings/start-ride.html',
+      controller: 'BookingController as ctrl',
+      data: {
+        auth: true
+      }
+    })
+
+    .state('dashboard', {
+      url: '/bookings/:id/dashboard',
+      templateUrl: '/templates/bookings/dashboard.html',
+      controller: 'BookingController as ctrl',
+      data: {
+        auth: true
       }
     })
 

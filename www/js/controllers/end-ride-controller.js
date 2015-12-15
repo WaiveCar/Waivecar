@@ -5,7 +5,7 @@ var _ = require('lodash');
 require('angular-ui-router');
 require('../services/auth-service');
 require('../services/data-service');
-require('../services/end-ride-service');
+require('../services/ride-service');
 require('../services/message-service');
 
 module.exports = angular.module('app.controllers').controller('EndRideController', [
@@ -14,9 +14,9 @@ module.exports = angular.module('app.controllers').controller('EndRideController
   '$state',
   '$auth',
   '$data',
-  '$endRide',
+  '$ride',
   '$message',
-  function ($rootScope, $scope, $state, $auth, $data, $endRide, $message) {
+  function ($rootScope, $scope, $state, $auth, $data, $ride, $message) {
 
     // Concepts:
     // $scope is used to store ref. to the service and the active models in the data svc.
@@ -24,12 +24,12 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     // Controller is reused by Sanpit and all End Ride views as there is a lot of crossover, but they could each have their own.
     // TEMP FOR SANDPIT section has the calls required for the Start ride flow. These relate to the buttons on the Sandpit view.
 
-    $scope.service = $endRide;
+    $scope.service = $ride;
     $scope.data = $data.active;
 
     // TEMP FOR SANDPIT **********************************************************************
     this.create = function() {
-      var tempModel = { userId: $auth.me.id, carId: 'E5000017DC1E8A01' };
+      var tempModel = { userId: $auth.me.id, carId: 'EE000017DC380D01' }; //DB000017DC73EA01' };
       // Create a Booking
       $data.create('bookings', tempModel).then(function(booking) {
         // Active the created Booking so any consumer of $data can access current booking via $data.active.bookings

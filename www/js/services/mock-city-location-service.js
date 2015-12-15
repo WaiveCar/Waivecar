@@ -26,6 +26,7 @@ function LocationService ($rootScope, $injector) {
 
   this.setLocation = function setLocation(location, isFuzzy) {
     isFuzzy = isFuzzy || true;
+    location = location || mockLocation;
     var locations;
 
     if (!isFuzzy) {

@@ -1,0 +1,31 @@
+<ion-view>
+  <ion-content scroll="false" padding="true" class="has-header ion-content--center dark-bg">
+    <div  class="row row-center row-full-height">
+      <div class="col col-center">
+<!--    <div ng-if="showVideo" class="video-container">
+          <iframe src="http://www.youtube.com/embed/KBKXu3Kg4yg?rel=0" frameborder="0" allowfullscreen></iframe>
+        </div>
+ -->
+        <div class="hank">
+          <div class="lead-logo">
+            <ng-include class="logo-image" src="'/img/waivecar-mark2.svg'" />
+          </div>
+          <div class="padding">
+            <h3 class="margin-bottom-10">ARE YOU READY</h3>
+            <div>
+              <p>Please confirm that you:</p>
+              <ul class="list-unstyled text-left margin-top-10">
+                <li>1. Are sitting in the WaiveCar.</li>
+                <li>2. Have taken the WaiveCar key.</li>
+                <li>3. The WaiveCar is problem free</li>
+              </ul>
+              <p>When you are ready, tap on "Continue" and start the car normally. Enjoy your ride!</p>
+            </div>
+            <button type="button" class="button button-block" ng-class="{ 'disabled' : data.cars.isKeySecure, 'button-balanced' : !data.cars.isKeySecure }">Continue</button>
+            <button type="button" class="button button-block" ng-click="ctrl.start()"> TEST Continue</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ion-content>
+</ion-view>

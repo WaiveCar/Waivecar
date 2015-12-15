@@ -12,22 +12,26 @@
 
     <div class="map-container has-info-footer has-big-info-footer">
       <skobbler-map id="map" zoom="15"
-        markers="booking.car.location"
+        markers="data.cars.location"
         route-start="currentLocation"
-        route-destiny="booking.car.location"
+        route-destiny="data.cars.location"
       ></skobbler-map>
     </div>
-
     <div class="info-footer big-info-footer">
-
       <div class="has-footer-information">
-        <car-info>
-          <p>
-            <time-left timer-name="getToYourWaiveCar" get-duration="duration()"></time-left> to get to your WaiveCar
-          </p>
-        </car-info>
-      </div>
-
+        <div class="row">
+          <div class="col col-67">
+            <img ng-src="{{ image }}" width="80%">
+          </div>
+          <div class="col">
+            <p class="title">
+              <h3 ng-bind="data.cars.make"></h3>
+              <h4 ng-bind="data.cars.model"></h4>
+            </p>
+            <p><span ng-bind="data.cars.license"></span></p>
+          </div>
+        </div>
+        <p class="text-center" ng-show="timeLeft"><strong>{{ timeLeft }} left</strong> to get to your WaiveCar</p>
       <div class="footer-information">
         <div class="button-bar">
           <button class="button button-small button-energized" ng-click="mockInRange()">Mock Arrival</button>
