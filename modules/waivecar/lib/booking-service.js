@@ -6,6 +6,7 @@ let fees        = require('./fee-service');
 let queue       = Bento.provider('queue');
 let queryParser = Bento.provider('sequelize/helpers').query;
 let error       = Bento.Error;
+let relay       = Bento.Relay;
 let config      = Bento.config.waivecar;
 
 // ### Models
@@ -185,7 +186,7 @@ module.exports = class BookingService extends Service {
 
     // ### Prepare Booking
 
-    booking          = booking.toJSON();
+    booking.user     = user;
     booking.car      = yield Car.findById(booking.carId);
     booking.payments = yield Payment.find({
       where : {
@@ -197,10 +198,11 @@ module.exports = class BookingService extends Service {
 
     booking.files = yield File.find({
       where : {
-        collectionId : booking.collectionId
+        collectionId : booking.collectionId || undefined
       }
     });
 
+    delete booking.userId;
     delete booking.carId;
 
     return booking;
@@ -243,15 +245,12 @@ module.exports = class BookingService extends Service {
 
     yield booking.ready();
     yield booking.delCancelTimer();
+    yield cars.unlockCar(car.id, _user);
 
     // ### Relay Update
 
     car.relay('update');
-    booking.relay('update', user);
-
-    // ### Unlock Car
-
-    return yield cars.unlockCar(car.id, _user);
+    yield this.relayBookingUpdate(booking.id, user, _user);
   }
 
   /**
@@ -285,13 +284,12 @@ module.exports = class BookingService extends Service {
     yield this.logDetails('start', booking, car);
     yield booking.setFreeRideReminder(config.booking.timers.freeRideReminder);
     yield booking.start();
+    yield cars.unlockImmobilzer(car.id, _user);
 
     // ### Relay Update
 
     car.relay('update');
-    booking.relay('update', user);
-
-    return yield cars.unlockImmobilzer(car.id, _user);
+    yield this.relayBookingUpdate(booking.id, user, _user);
   }
 
   /**
@@ -361,7 +359,7 @@ module.exports = class BookingService extends Service {
     // ### Relay Update
 
     car.relay('update');
-    booking.relay('update', user);
+    yield this.relayBookingUpdate(booking.id, user, _user);
   }
 
   /**
@@ -409,8 +407,8 @@ module.exports = class BookingService extends Service {
 
     // ### Relay
 
-    booking.relay('update', user);
     car.relay('update');
+    yield this.relayBookingUpdate(booking.id, user, _user);
   }
 
   /**
@@ -479,7 +477,7 @@ module.exports = class BookingService extends Service {
     // ### Relay Update
 
     car.relay('update');
-    booking.relay('update', user);
+    yield this.relayBookingUpdate(booking.id, user, _user);
   }
 
   // ### HELPERS
@@ -502,6 +500,23 @@ module.exports = class BookingService extends Service {
       charge    : 0
     });
     yield details.save();
+  }
+
+  /**
+   * Sends a relay for booking updates where we use the show method to
+   * send a full booking view.
+   * @param  {Number} id The booking id
+   * @param  {Object} user
+   * @param  {Object} _user
+   * @return {Void}
+   */
+  static *relayBookingUpdate(id, user, _user) {
+    let payload = {
+      type : 'update',
+      data : yield this.show(id, _user)
+    };
+    relay.user(user.id, 'bookings', payload);
+    relay.admin('bookings', payload);
   }
 
 };
