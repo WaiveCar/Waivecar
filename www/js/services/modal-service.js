@@ -3,10 +3,7 @@ var angular = require('angular');
 require('ionic-angular');
 
 function ModalFactory ($rootScope, $ionicModal) {
-  function Modal (templateName, initialData) {
-    if (!(this instanceof Modal)) {
-      return new Modal(templateName, initialData);
-    }
+  return function $modalFactory (templateName, initialData) {
     var template = '/templates/modals/' + templateName + '.html';
     var scope = $rootScope.$new();
     if (initialData.icon) {
@@ -16,16 +13,15 @@ function ModalFactory ($rootScope, $ionicModal) {
     }
     angular.extend(scope, initialData || {});
 
-    this.$promise = $ionicModal.fromTemplateUrl(template, {
+    return $ionicModal.fromTemplateUrl(template, {
       scope: scope,
       animation: initialData.animation || 'fade-in-up'
     })
     .then(function (modal) {
-      this.close = scope.close = modal.remove.bind(modal);
+      scope.close = modal.hide.bind(modal);
       return modal;
-    }.bind(this));
+    });
   };
-  return Modal;
 }
 
 module.exports = angular.module('app.services').service('$modal', [
