@@ -85,7 +85,8 @@
   }
 
   .verification,
-  .license-verification {
+  .license-verification,
+  .license-upload {
     margin-top : 10px;
     text-align : center;
     button, input {
@@ -96,6 +97,16 @@
       border-right : none;
     }
   }
+
+  .license-image {
+    text-align : center;
+    img {
+      height    : auto;
+      max-width : 320px;
+      width     : 100%;
+    }
+  }
+
   .license-verification {
     margin-top : 30px;
   }

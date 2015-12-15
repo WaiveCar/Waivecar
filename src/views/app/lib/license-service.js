@@ -25,7 +25,7 @@ module.exports = class License extends Service {
    * @param  {Function} reset
    */
   submitLicense(data) {
-    this.addLicense(auth.user(), data, function (err, license) {
+    this.addLicense(auth.user(), data, (err, license) => {
       if (err) {
         return this.error(err.data ? err.data : err.message);
       }
@@ -35,11 +35,11 @@ module.exports = class License extends Service {
         license
       ]);
       this.success(`Your license was stored successfully. Request for it to be verified prior to booking a WaiveCar.`);
-    }.bind(this));
+    });
   }
 
   validateLicense() {
-    api.post(`/licenses/${ this.getState('licenses')[0].id }/verify`, { userId : auth.user().id }, function(err, license) {
+    api.post(`/licenses/${ this.getState('licenses')[0].id }/verify`, { userId : auth.user().id }, (err, license) => {
       if (err) {
         if (err.data) {
           return this.error(err.data);
@@ -57,7 +57,7 @@ module.exports = class License extends Service {
       } else {
         this.success(`Your request for verification has been submitted successfully. Please check back later.`);
       }
-    }.bind(this));
+    });
   }
 
   /**
@@ -86,16 +86,16 @@ module.exports = class License extends Service {
         firstName  : license.firstName,
         middleName : license.middleName,
         lastName   : license.lastName,
-        birthDate  : new Date(license.birthDate.split('/')),
+        birthDate  : license.birthDate,
         gender     : license.gender,
         state      : license.state,
         number     : license.number
-      }, function (err, license) {
+      }, (err, license) => {
         if (err) {
           return done(err);
         }
         return done(null, license);
-      }.bind(this));
+      });
     });
   }
 
@@ -103,12 +103,12 @@ module.exports = class License extends Service {
    * Loads licenses from the api and adds them to the array on the ctx.
    */
   setLicenses() {
-    api.get('/licenses', function (err, cards) {
+    api.get('/licenses', (err, data) => {
       if (err) {
         return this.error(err.message);
       }
-      this.setState('licenses', cards);
-    }.bind(this));
+      this.setState('licenses', data);
+    });
   }
 
   /**
@@ -127,7 +127,7 @@ module.exports = class License extends Service {
     }
 
     // ### Submit Request
-    api.delete(`/licenses/${ licenseId }`, function (err) {
+    api.delete(`/licenses/${ licenseId }`, (err) => {
       if (err) {
         if (btn) {
           btn.className = dom.setClass({
@@ -138,7 +138,7 @@ module.exports = class License extends Service {
       }
 
       // ### Update State
-      this.setState('licenses', function () {
+      this.setState('licenses', function() {
         let models  = this.getState('licenses');
         let result = [];
         models.forEach((model) => {
@@ -153,7 +153,7 @@ module.exports = class License extends Service {
       // Notify client of successfull removal.
 
       this.success(`Your license was successfully removed from your account`);
-    }.bind(this));
+    });
 
   }
 
