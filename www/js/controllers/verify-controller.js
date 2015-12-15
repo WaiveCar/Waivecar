@@ -7,6 +7,8 @@ function VerifyController ($injector, $stateParams) {
   var $auth = $injector.get('$auth');
   var $state = $injector.get('$state');
   var BookingService = $injector.get('BookingService');
+  var $modal = $injector.get('$modal');
+  var $timeout = $injector.get('$timeout');
 
   this.form = {
     token: $stateParams.token
@@ -27,16 +29,41 @@ function VerifyController ($injector, $stateParams) {
         return $auth.reload();
       })
       .then(function(){
-        if(this.isWizard){
-          return $state.go('licenses-new', { step: 3 });
-        }
-        if(this.fromBooking){
-          return $state.go('cars-show', BookingService.getReturnParams());
-        }
-        $message.success('Your account is now verified!');
-        $state.go('cars');
+        return $modal('result', {
+          title: 'Mobile validation succeeded',
+          icon: 'check-icon',
+        });
+      })
+      .then(function (modal) {
+        modal.show();
+        $timeout(function () {
+          if (this.isWizard) {
+            return $state.go('licenses-new', { step: 3 });
+          }
+          if (this.fromBooking) {
+            return $state.go('cars-show', BookingService.getReturnParams());
+          }
+        }.bind(this), 2000);
       }.bind(this))
-      .catch($message.error.bind($message));
+      .catch(function (err) {
+        var modal;
+        return $modal('result', {
+          title: 'Wrong code',
+          icon: 'x-icon',
+          message: err.message,
+          actions: [{
+            className: 'button-balanced',
+            text: 'Retry',
+            handler: function () {
+              modal.hide();
+            }
+          }]
+        }).
+        then(function (_modal) {
+          modal = _modal;
+          modal.show();
+        });
+      });
   };
 
   this.resend = function resend () {
