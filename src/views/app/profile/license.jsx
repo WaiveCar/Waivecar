@@ -92,9 +92,13 @@ module.exports = class ProfileLicenseView extends React.Component {
           Your License <small>Your registered license details.</small>
         </h3>
         <div className="box-content">
-          <pre>
-            { JSON.stringify(license, null, 2) }
-          </pre>
+          <Form
+            ref       = "license"
+            className = "bento-form-static"
+            disabled  = { true }
+            fields    = { formFields.license }
+            default   = { license }
+          />
           { this.renderStatus(license.status, license.outcome) }
         </div>
       </div>

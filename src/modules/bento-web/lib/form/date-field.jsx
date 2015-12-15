@@ -126,7 +126,24 @@ module.exports = class DateField extends React.Component {
    */
   render() {
     let { label, name, type, placeholder, helpText, tabIndex } = this.props.options;
-    logger.debug(`Form > Render Date component [${ name }] [${ this.props.value }]`);
+    let { value, disabled } = this.props;
+    let dateValue = value;
+    if (value) {
+      dateValue = new Date(value);
+    }
+
+    logger.debug(`Form > Render Date component [${ name }] [${ dateValue }]`);
+
+    if (disabled) {
+      return (
+        <div className={ this.state.className }>
+          <input type="text" disabled readonly className="form-control" value={ moment(value).format('DD MMM YYYY') } />
+          <div className="focus-bar"></div>
+          <span className="help-text">{ helpText }</span>
+      </div>
+      );
+    }
+
     return (
       <div className={ this.state.className }>
         <DatePicker
@@ -135,10 +152,12 @@ module.exports = class DateField extends React.Component {
           label       = { label }
           onChange    = { this.onChange }
           placeholder = { placeholder }
-          value       = { this.props.value }
+          value       = { dateValue }
           onFocus     = { this.focus }
           onBlur      = { this.blur }
           tabIndex    = { tabIndex }
+          readonly    = { disabled }
+          disabled    = { disabled }
         />
         <div className="focus-bar"></div>
         <span className="help-text">{ helpText }</span>

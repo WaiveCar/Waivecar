@@ -162,6 +162,7 @@ module.exports = class Form extends React.Component {
                 field    = { field }
                 data     = { this.data() }
                 onChange = { this.onChange }
+                disabled = { this.props.disabled }
               />
             )
           }.bind(this))
