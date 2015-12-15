@@ -6,6 +6,7 @@ require('../services/data-service');
 require('../services/message-service');
 // require('../services/booking-service');
 require('../services/ride-service');
+require('../services/modal-service');
 
 module.exports = angular.module('app.controllers').controller('CarController', [
   '$rootScope',
@@ -20,7 +21,7 @@ module.exports = angular.module('app.controllers').controller('CarController', [
     var $message = $injector.get('$message');
     var $data = $injector.get('$data');
     var $auth = $injector.get('$auth');
-
+    var $modal = $injector.get('$modal');
     // if ($state.params.displayRequirements) {
     //   showRequirementsModal(status);
     // }
@@ -81,15 +82,11 @@ module.exports = angular.module('app.controllers').controller('CarController', [
     // };
 
     function formatArray(arr) {
-      var outStr = '';
-      if (arr.length === 1) {
-          outStr = arr[0];
-      } else if (arr.length === 2) {
-          outStr = arr.join(' and ');
-      } else if (arr.length > 2) {
-          outStr = arr.slice(0, -1).join(', ') + ', and ' + arr.slice(-1);
+      switch (arr.length) {
+        case 1: return arr[0];
+        case 2: return arr.join(' and ');
+        default: return arr.slice(0, -1).join(', ') + ', and ' + arr.slice(-1);
       }
-      return outStr;
     }
 
     this.book = function() {
@@ -106,10 +103,25 @@ module.exports = angular.module('app.controllers').controller('CarController', [
           }).catch($message.error);
         }).catch($message.error);
       }).catch(function(err) {
+        var modal;
         var message = (err.data && err.data.data && err.data.data.required)
             ? 'You still need to verify your ' + formatArray(err.data.data.required) + ' before you can book a WaiveCar.'
             : err;
-        $message.error(message);
+        $modal('result', {
+          icon: 'x-icon',
+          title: 'Missing Required Information',
+          message: message,
+          actions: [{
+            className: 'button-balanced',
+            text: 'OK',
+            handler: function () {
+              modal.remove();
+            }
+          }]
+        }).then(function (_modal) {
+          modal = _modal;
+          modal.show();
+        });
       });
     };
 
