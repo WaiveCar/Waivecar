@@ -137,7 +137,7 @@ module.exports = class DateField extends React.Component {
     if (disabled) {
       return (
         <div className={ this.state.className }>
-          <input type="text" disabled readonly className="form-control" value={ moment(value).format('DD MMM YYYY') } />
+          <input type="text" disabled={ true } readOnly={ true } className="form-control" value={ moment(value).format('DD MMM YYYY') } />
           <div className="focus-bar"></div>
           <span className="help-text">{ helpText }</span>
       </div>
