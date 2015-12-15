@@ -37,6 +37,8 @@ function ApplicationController ($rootScope, $scope, LocationService, $injector) 
     $state.go('auth-login');
   });
 
+  $data.initialize('locations');
+
   // $rootScope.$on('socket:error', function (ev, data) {
   //   console.log('TODO: handle socket error:');
   // });

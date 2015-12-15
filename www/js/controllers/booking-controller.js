@@ -72,6 +72,7 @@ module.exports = angular.module('app.controllers').controller('BookingController
     };
 
     $scope.showUnlock = function() {
+      $interval.cancel(timer);
       $modal('result', {
         title: 'You\'re In Reach',
         message: 'Now you can unlock your WaiveCar!',
@@ -84,7 +85,6 @@ module.exports = angular.module('app.controllers').controller('BookingController
             $data.resources.bookings.ready({ id: id }).$promise.then(function() {
               $data.fetch('bookings').then(function() {
                 this.modal.hide();
-                console.log('asd');
                 $state.go('start-ride', { id: id });
               }.bind(this));
             }.bind(this)).catch(function(err) {
@@ -136,6 +136,7 @@ module.exports = angular.module('app.controllers').controller('BookingController
       }.bind(this));
     };
 
+
     // this.cancel = function() {
     //   return $q(function (resolve, reject) {
     //     var id = $ride.state.booking.id;
@@ -150,12 +151,6 @@ module.exports = angular.module('app.controllers').controller('BookingController
     //     }
     // };
 
-    // this.ready = function() {
-    //   var id = $ride.state.booking.id;
-    //   return $data.resources.bookings.ready({ id: id }).$promise.then(function() {
-    //     return $data.fetch('bookings');
-    //   }).catch($message.error);
-    // };
 
     this.start = function() {
       var id = $ride.state.booking.id;
@@ -196,14 +191,6 @@ module.exports = angular.module('app.controllers').controller('BookingController
         });
     };
 
-
-
-
-
-
-
-
-
     this.init = function () {
       if (!$auth.isAuthenticated()) {
         $state.go('auth');
@@ -226,36 +213,6 @@ module.exports = angular.module('app.controllers').controller('BookingController
         });
       }
     };
-
-    //   // reset ride state.
-    //   $scope.service.setState();
-
-    //   $data.initialize('cars').then(function() {
-    //     console.log('cars initialized');
-    //   }).catch($message.error);
-
-    //   $data.initialize('bookings').then(function() {
-    //     console.log('bookings initialized');
-    //     if ($data.instances.bookings.length > 0) {
-    //       var current = _.find($data.instances.bookings, function(b) {
-    //         return !_.contains([ 'cancelled', 'ended' ], b.status);
-    //       });
-    //       if (current) {
-    //         $scope.service.setBooking(current.id);
-    //         $data.activate('bookings', current.id);
-    //         this.expired = moment($scope.data.bookings.createdAt).add(15, 'm');
-    //         $data.activate('cars', current.carId);
-    //         $scope.watchForWithinRange();
-    //         $scope.image = $data.active.cars.fileId || 'img/car.jpg';
-    //         if ($state.current.name === 'end-ride') {
-    //           $scope.service.processEndRide();
-    //         }
-    //       } else {
-    //       }
-    //     } else {
-    //     }
-    //   }.bind(this)).catch($message.error);
-    // }.bind(this);
 
     this.init();
 

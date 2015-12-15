@@ -100,10 +100,6 @@ module.exports = angular.module('app.services').factory('$ride', [
       debugger; // not yet considered.
     };
 
-    service.process = function(form) {
-      console.log(form);
-    };
-
     service.toggleZone = function() {
       service.state.zone.confirmed = false;
       service.state.zone.isOutside = !service.state.zone.isOutside;
@@ -146,15 +142,22 @@ module.exports = angular.module('app.services').factory('$ride', [
 
       $data.resources.bookings.end({ id: service.state.booking.id, data: payload }).$promise.then(function() {
         $data.fetch('bookings');
+      }).catch($message.error);
+    };
+
+    service.processCompleteRide = function() {
+      var id = service.state.booking.id;
+      $data.resources.bookings.complete({ id: id }).$promise.then(function() {
+        $data.fetch('bookings');
         $data.deactivate('bookings');
-        $message.success(service.state.booking.id + ' has been successfully ended');
+        $data.deactivate('cars');
+        service.setState();
+        $state.go('bookings-show', { id: id });
       }).catch($message.error);
     };
 
     service.lockCar = function(id) {
       $data.resources.cars.lock({ id: id }).$promise.then(function() {
-        $data.deactivate('cars');
-        $message.success(id + ' has been successfully locked');
       }).catch($message.error);
     };
 
@@ -164,19 +167,21 @@ module.exports = angular.module('app.services').factory('$ride', [
       $data.initialize('bookings').then(function() {
         if ($data.instances.bookings.length > 0) {
           var current = _.find($data.instances.bookings, function(b) {
-            return !_.contains([ 'cancelled', 'ended' ], b.status);
+            return !_.contains([ 'completed', 'closed' ], b.status);
           });
           if (current) {
             service.setBooking(current.id);
             $data.activate('bookings', current.id).then(function() {
               $data.activate('cars', current.carId).then(function() {
                 service.isInitialized = true;
-                if (current.status === 'started' && $state.current.name !== 'dashboard') {
-                  $state.go('dashboard', { id: current.id });
+                if (current.status === 'reserved' && $state.current.name !== 'bookings-active') {
+                  $state.go('bookings-active', { id: current.id });
                 } else if (current.status === 'ready' && $state.current.name !== 'start-ride') {
                   $state.go('start-ride', { id: current.id });
-                } else if (current.status === 'reserved' && $state.current.name !== 'bookings-active') {
-                  $state.go('bookings-active', { id: current.id });
+                } else if (current.status === 'started' && $state.current.name !== 'dashboard') {
+                  $state.go('dashboard', { id: current.id });
+                } else if (current.status === 'ended' && $state.current.name !== 'end-ride') {
+                  $state.go('end-ride', { id: current.id });
                 }
               });
             });

@@ -28,6 +28,13 @@ module.exports = angular.module('app').factory('Bookings', [
         params: {
           id: '@id'
         }
+      },
+      complete: {
+        method: 'PUT',
+        url: $utils.getCustomRoute('bookings/:id/complete'),
+        params: {
+          id: '@id'
+        }
       }
     }));
 

@@ -81,14 +81,6 @@ module.exports = angular.module('app.controllers').controller('CarController', [
     //     .catch($message.error);
     // };
 
-    function formatArray(arr) {
-      switch (arr.length) {
-        case 1: return arr[0];
-        case 2: return arr.join(' and ');
-        default: return arr.slice(0, -1).join(', ') + ', and ' + arr.slice(-1);
-      }
-    }
-
     this.book = function() {
       var model = { userId: $auth.me.id, carId: $state.params.id };
       // Create a Booking
@@ -104,13 +96,10 @@ module.exports = angular.module('app.controllers').controller('CarController', [
         }).catch($message.error);
       }).catch(function(err) {
         var modal;
-        var message = (err.data && err.data.data && err.data.data.required)
-            ? 'You still need to verify your ' + formatArray(err.data.data.required) + ' before you can book a WaiveCar.'
-            : err;
         $modal('result', {
           icon: 'x-icon',
           title: 'Missing Required Information',
-          message: message,
+          message: err.data.message,
           actions: [{
             className: 'button-balanced',
             text: 'OK',

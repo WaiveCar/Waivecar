@@ -70,7 +70,7 @@
               </li>
             </ul>
           </div>
-          <button type="button" class="button button-block" ng-class="{ 'disabled' : !data.cars.isImmobilized, 'button-balanced' : data.cars.isImmobilized }" ng-click="service.lockCar(data.cars.id)">Finish and Lock Car</button>
+          <button type="button" class="button button-block" ng-class="{ 'disabled' : !data.cars.isImmobilized, 'button-balanced' : data.cars.isImmobilized }" ng-click="service.processCompleteRide()">Finish and Lock Car</button>
         </div>
       </div>
     </div>
