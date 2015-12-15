@@ -7,6 +7,7 @@ require('../services/auth-service.js');
 require('../services/data-service.js');
 require('../services/message-service.js');
 require('../services/session-service.js');
+require('../services/ride-service.js');
 var _ = require('lodash');
 
 function ApplicationController ($rootScope, $scope, LocationService, $injector) {
@@ -16,6 +17,7 @@ function ApplicationController ($rootScope, $scope, LocationService, $injector) 
   var $data = $injector.get('$data');
   var $message = $injector.get('$message');
   var $document = $injector.get('$document');
+  var $ride = $injector.get('$ride');
 
   this.models = $data.instances;
   this.active = $data.active;
@@ -58,11 +60,13 @@ function ApplicationController ($rootScope, $scope, LocationService, $injector) 
 
   $rootScope.$on('authLogin', function () {
     initLocation();
+    $ride.init();
   });
 
   if ($auth.isAuthenticated()) {
     initLocation();
     $auth.loadSession();
+    $ride.init();
   }
 
   function initLocation () {
