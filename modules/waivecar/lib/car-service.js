@@ -328,6 +328,11 @@ module.exports = class CarService extends Service {
       isLocked                      : this.convertToBoolean(data, 'central_lock', { locked : true, unlocked : false })
     };
 
+    if (data['rfid_tag_states']) {
+      let cards = data['rfid_tag_states'];
+      car.isChargeCardSecure = this.convertToBoolean(cards, '1', { in : true, out : false });
+    }
+
     if (data['position']) {
       let position = data['position'];
       if (position['lat']) {
