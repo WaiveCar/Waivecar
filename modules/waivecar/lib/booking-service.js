@@ -319,7 +319,7 @@ module.exports = class BookingService extends Service {
     Object.assign(car, yield cars.getDevice(car.id, _user));
 
     if (car.isIgnitionOn) { errors.push('isIgnitionOn'); }
-    if (!car.isKeySecure)  { errors.push('isKeySecure'); }
+    //TEMP. if (!car.isKeySecure)  { errors.push('isKeySecure'); }
 
     if (errors.length) {
       throw error.parse({
