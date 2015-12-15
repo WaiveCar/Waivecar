@@ -1,9 +1,9 @@
 /* global window: false, L: true */
 'use strict';
 var angular = require('angular');
-var _ = require('lodash');
 var moment = require('moment');
 var sprintf = require('sprintf-js').sprintf;
+var ionic = require('ionic');
 
 require('angular-ui-router');
 require('../services/auth-service');
@@ -35,8 +35,9 @@ module.exports = angular.module('app.controllers').controller('BookingController
       if ($scope.expired) {
         var time = moment($scope.expired).toNow(true);
         $scope.timeLeft = time;
+        console.log(time);
       }
-    }.bind(this), 1000);
+    }, 1000);
 
     $scope.mockInRange = function () {
       LocationService.setLocation($scope.data.cars);
