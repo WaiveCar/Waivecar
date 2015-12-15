@@ -4,6 +4,7 @@ let Booking = Bento.model('Booking');
 let Car     = Bento.model('Car');
 let User    = Bento.model('User');
 let License = Bento.model('License');
+let Card    = Bento.model('Shop/Card');
 let error   = Bento.Error;
 
 module.exports = class Service {
@@ -122,23 +123,46 @@ module.exports = class Service {
       }
     });
 
-    // ### Check User
+    let card = yield Card.findOne({
+      where : {
+        userId : user.id
+      }
+    });
 
+    // ### Check User
     if (!user.verifiedEmail) { missing.push('email'); }
     if (!user.verifiedPhone) { missing.push('phone'); }
 
-    // ### Check License
+    // ### Check Credit Card
+    if (!user.stripeId) { missing.push('credit card'); }
+    if (!card) { missing.push('credit card'); }
 
+    // ### Check License
     if (!license || !license.isValid()) {
       missing.push('license');
     }
 
     // ### Throw Error
-
     if (missing.length) {
+      let message = `You are not yet approved to book a WaiveCar. Please ensure your `;
+      switch (missing.length) {
+        case 1: {
+          message = `${ message }${ missing[0] } has been provided and validated.`;
+          break;
+        }
+        case 2: {
+          message = `${ message }${ missing.join(' and ') } have been provided and validated.`;
+          break;
+        }
+        default: {
+          message =`${ message }${ missing.slice(0, -1).join(', ') } and ${ missing.slice(-1) } have been provided and validated.`;
+          break;
+        }
+      }
+
       throw error.parse({
         code    : `BOOKING_INVALID_REQUEST`,
-        message : `Your account must be approved for booking before you can make this request.`,
+        message : message,
         data    : {
           required : missing
         }
