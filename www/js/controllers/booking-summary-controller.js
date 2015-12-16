@@ -2,28 +2,16 @@
 'use strict';
 var angular = require('angular');
 var moment = require('moment');
-var sprintf = require('sprintf-js').sprintf;
-var ionic = require('ionic');
 
 require('angular-ui-router');
 require('../services/auth-service');
 require('../services/data-service');
-require('../services/ride-service');
-require('../services/message-service');
-require('../services/modal-service');
 
 module.exports = angular.module('app.controllers').controller('BookingSummaryController', [
-  '$rootScope',
-  '$scope',
-  '$interval',
   '$state',
   '$auth',
-  'MockLocationService',
   '$data',
-  '$ride',
-  '$message',
-  '$modal',
-  function ($rootScope, $scope, $interval, $state, $auth, LocationService, $data, $ride, $message, $modal) {
+  function ($state, $auth, $data) {
 
     this.init = function () {
       if (!$auth.isAuthenticated()) {
