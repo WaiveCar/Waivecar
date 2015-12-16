@@ -76,7 +76,6 @@ module.exports = angular.module('app.services').factory('$data', [
             .catch(reject);
 
         });
-
       },
 
       create: function (modelName, data) {

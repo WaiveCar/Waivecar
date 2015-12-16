@@ -1,48 +1,46 @@
-<ion-view class="bookings-show" ng-controller="BookingController">
-
+<ion-view class="bookings-show">
   <ion-nav-title>
     <page-title class="dark-bg">Summary</page-title>
   </ion-nav-title>
   <ion-nav-buttons side="primary">
     <button menu-toggle="right" class="button button-icon icon ion-navicon"></button>
   </ion-nav-buttons>
-
-
-  <ion-content padding="true" class="ion-content--center dark-bg">
-  <!-- <ion-content  class="has-header summary-container"> -->
+<!--   <ion-content padding="true" class="ion-content--center dark-bg">
+ -->  <ion-content  class="has-header summary-container">
     <div class="ride-info">
-      <p>This ride took place on <span ng-bind="bookingDetail('start', 'createdAt') | date : 'EEEE, MMMM d, yyyy'" class="highlight"></span>.</p>
-      <p>The WaiveCar  was picked at <span ng-bind="bookingDetail('start', 'address')" class="highlight"></span></p>
+      <p>This ride took place on <span ng-bind="ctrl.start.createdAt | date : 'EEEE, MMMM d, yyyy'" class="highlight"></span>.</p>
+      <p>The WaiveCar was picked up at <span ng-bind="ctrl.start.address" class="highlight"></span></p>
     </div>
-
     <div class="time-and-distance-info tableContainer">
       <table>
         <tr>
           <td class="title">Time</td>
-          <td class="value" ng-bind="duration()"></td>
+          <td class="value" ng-bind="ctrl.duration"></td>
         </tr>
         <tr>
           <td class="title">Distance</td>
-          <td class="value" ng-bind="distance()"></td>
+          <td class="value" ng-bind="ctrl.distance"></td>
         </tr>
       </table>
     </div>
-
     <div class="fees-info tableContainer">
-      <page-title>fees</page-title>
-      <table>
-        <tr ng-repeat="charge in active.bookings.charges">
-          <td class="title" ng-bind="charge.title"></td>
-          <td class="value">$<span ng-bind="charge.ammount"></span></td>
+      <page-title class="text-center">fees</page-title>
+      <p class="padding text-center" ng-hide="ctrl.booking.cart && ctrl.booking.cart.items">Free Ride. There was no charge for this ride.</p>
+      <table ng-show="ctrl.booking.cart && ctrl.booking.cart.items">
+        <tr ng-repeat="item in ctrl.booking.cart.items">
+          <td class="title">{{ item.quantity }}x {{ item.name }}</td>
+          <td class="value">$<span>{{ item.total }}</span></td>
         </tr>
         <tr class="totalRow">
           <td class="title total">total</td>
-          <td class="value">$<span ng-bind="total"></span></td>
+          <td class="value">$<span>{{ ctrl.booking.cart.total }}</span></td>
         </tr>
       </table>
     </div>
-
-    <div class="points-info tableContainer">
+    <div class="padding">
+      <button menu-toggle="right" class="button button-block button-dark">Home</button>
+    </div>
+<!--     <div class="points-info tableContainer">
       <page-title>points</page-title>
       <table>
         <tr ng-repeat="point in active.bookings.points">
@@ -55,7 +53,7 @@
         </tr>
       </table>
     </div>
-
+ -->
   </ion-content>
 
 </ion-view>

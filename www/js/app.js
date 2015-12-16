@@ -86,6 +86,7 @@ require('./controllers/timer-controller');
 require('./controllers/menu-controller');
 require('./controllers/verify-controller');
 require('./controllers/end-ride-controller');
+require('./controllers/booking-summary-controller');
 require('./constants/us-states');
 
 // Directives
