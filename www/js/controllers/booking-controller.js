@@ -175,34 +175,30 @@ module.exports = angular.module('app.controllers').controller('BookingController
     };
 
     $scope.getDirections = function () {
-      LocationService.getLocation()
-        .then(function(location){
-          var url;
-          var sprintfOptions = {
-            startingLat: location.latitude,
-            startingLon: location.longitude,
-            targetLat: $data.active.cars.latitude,
-            targetLon: $data.active.cars.longitude
-          };
+      var url;
+      var sprintfOptions = {
+        startingLat: $rootScope.currentLocation.latitude,
+        startingLon: $rootScope.currentLocation.longitude,
+        targetLat: $data.active.cars.latitude,
+        targetLon: $data.active.cars.longitude
+      };
 
-          if(ionic.Platform.isWebView()){
-            url = [
-              'comgooglemaps-x-callback://?',
-              '&saddr=%(startingLat)s,%(startingLon)s',
-              '&daddr=%(targetLat)s,%(targetLon)s',
-              '&directionsmode=walking',
-              '&x-success=WaiveCar://?resume=true',
-              '&x-source=WaiveCar'
-            ].join('');
-            url = sprintf(url, sprintfOptions);
-
-            window.open(encodeURI(url), '_system');
-          } else {
-            url = 'http://maps.google.com/maps?saddr=%(startingLat)s,%(startingLon)s&daddr=%(targetLat)s,%(targetLon)s&mode=walking';
-            url = sprintf(url, sprintfOptions);
-            window.open(url);
-          }
-        });
+      if (ionic.Platform.isWebView()) {
+        url = [
+          'comgooglemaps-x-callback://?',
+          '&saddr=%(startingLat)s,%(startingLon)s',
+          '&daddr=%(targetLat)s,%(targetLon)s',
+          '&directionsmode=walking',
+          '&x-success=WaiveCar://?resume=true',
+          '&x-source=WaiveCar'
+        ].join('');
+        url = sprintf(url, sprintfOptions);
+        window.open(encodeURI(url), '_system');
+      } else {
+        url = 'http://maps.google.com/maps?saddr=%(startingLat)s,%(startingLon)s&daddr=%(targetLat)s,%(targetLon)s&mode=walking';
+        url = sprintf(url, sprintfOptions);
+        window.open(url);
+      }
     };
 
     this.init = function () {
