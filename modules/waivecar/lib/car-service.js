@@ -8,6 +8,7 @@ let queue         = Bento.provider('queue');
 let queryParser   = Bento.provider('sequelize/helpers').query;
 let User          = Bento.model('User');
 let Car           = Bento.model('Car');
+let changeCase    = Bento.Helpers.Case;
 let error         = Bento.Error;
 let relay         = Bento.Relay;
 let config        = Bento.config.waivecar;
@@ -260,10 +261,10 @@ module.exports = class CarService extends Service {
       throw error;
     }
 
-    let payload = {
-      'central_lock' : 'locked',
-      immobilizer    : 'locked'
-    };
+    let payload = changeCase.toSnake({
+      centralLock : 'locked',
+      immobilizer : 'locked'
+    });
     let status = yield this.request(`/devices/${ id }/status`, 'PATCH', payload);
     let updatedCar = this.transformDeviceToCar(id, status);
     return yield this.syncUpdate(id, updatedCar, existingCar, _user);

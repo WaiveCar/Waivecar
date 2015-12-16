@@ -5,6 +5,3 @@ modules/**/node_modules
 
 #provider node_modules
 providers/**/node_modules
-
-modules/auth/lib
-modules/shop/lib/order-service.js
