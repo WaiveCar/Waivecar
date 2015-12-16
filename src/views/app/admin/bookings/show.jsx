@@ -128,7 +128,7 @@ module.exports = class BookingsView extends React.Component {
               {
                 cart.items.map((item) => {
                   return (
-                    <tr>
+                    <tr key={ item.id }>
                       <td>{ item.name }</td>
                       <td>${ item.price / 100 }</td>
                       <td>{ item.quantity }</td>

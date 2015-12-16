@@ -139,10 +139,14 @@ Resources.prepare = function (id) {
  * @return {Array}
  */
 function reducerStore(state, data) {
+  let index = state.findIndex(val => val.id === data.id);
+  if (index !== -1) {
+    return update(state, data);
+  }
   return [
-    ...state,
-    ...data
-  ]
+    data,
+    ...state
+  ];
 }
 
 /**
