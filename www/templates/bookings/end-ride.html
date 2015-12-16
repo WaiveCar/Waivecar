@@ -11,11 +11,11 @@
             <p>Please complete these tasks before you leave.<br />The list will automatically update.</p>
           </div>
           <div>
-            <ul class="list-unstyled text-left margin-top-10">
+            <ul class="list-unstyled text-left bold-list margin-top-10">
               <li ng-show="service.state.check.keySecure.isVisible">
                 <label class="pull-right">
                   <span ng-show="data.cars.isKeySecure">
-                    Y
+                    <ng-include class="check" src="'/img/check-icon.svg'" />
                   </span>
                   <span ng-hide="data.cars.isKeySecure">
                     <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
@@ -26,7 +26,7 @@
               <li ng-show="service.state.check.ignitionOff.isVisible">
                 <label class="pull-right">
                   <span ng-hide="data.cars.isIgnitionOn">
-                    Y
+                    <ng-include class="check" src="'/img/check-icon.svg'" />
                   </span>
                   <span ng-show="data.cars.isIgnitionOn">
                     <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
@@ -37,7 +37,7 @@
               <li ng-show="service.state.check.chargeCardSecure.isVisible">
                 <label class="pull-right">
                   <span ng-show="data.cars.isChargeCardSecure">
-                    Y
+                    <ng-include class="check" src="'/img/check-icon.svg'" />
                   </span>
                   <span ng-hide="data.cars.isChargeCardSecure">
                     <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
@@ -48,7 +48,7 @@
               <li ng-show="service.state.check.isCharging.isVisible">
                 <label class="pull-right">
                   <span ng-show="data.cars.isCharging">
-                    Y
+                    <ng-include class="check" src="'/img/check-icon.svg'" />
                   </span>
                   <span ng-hide="data.cars.isCharging">
                     <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
