@@ -16,8 +16,12 @@
       </h5>
     </div>
     <div class="map-container has-info-footer has-info-subheader">
-      <skobbler-map id="map" zoom="15" markers="::car.car"
-        route-start="$root.currentLocation" route-destiny="::car.car.location"
+      <skobbler-map
+        id="map"
+        zoom="15"
+        markers="ctrl.car"
+        route-start="$root.currentLocation"
+        route-destiny="ctrl.car"
       >
       </skobbler-map>
     </div>

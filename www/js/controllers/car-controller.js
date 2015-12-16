@@ -16,15 +16,11 @@ module.exports = angular.module('app.controllers').controller('CarController', [
   '$ride',
   'car',
   function ($rootScope, $scope, $state, $injector, $ride, car) {
-    // var BookingService = $injector.get('BookingService');
     var $ionicModal = $injector.get('$ionicModal');
     var $message = $injector.get('$message');
     var $data = $injector.get('$data');
     var $auth = $injector.get('$auth');
     var $modal = $injector.get('$modal');
-    // if ($state.params.displayRequirements) {
-    //   showRequirementsModal(status);
-    // }
 
     this.car = angular.extend({}, car, { item: 'car' });
 
