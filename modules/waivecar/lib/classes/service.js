@@ -134,8 +134,7 @@ module.exports = class Service {
     if (!user.verifiedPhone) { missing.push('phone'); }
 
     // ### Check Credit Card
-    if (!user.stripeId) { missing.push('credit card'); }
-    if (!card) { missing.push('credit card'); }
+    if (!user.stripeId || !card) { missing.push('credit card'); }
 
     // ### Check License
     if (!license || !license.isValid()) {
