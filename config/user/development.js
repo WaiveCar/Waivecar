@@ -26,8 +26,10 @@ module.exports = {
         lastName      : 'Cornejo',
         email         : 'jeduan+admin@clevertech.biz',
         password      : 'password',
+        phone         : '123123123',
         role          : 5, // Super
         verifiedEmail : true,
+        verifiedPhone : true,
         status        : 'active'
       },
       {
