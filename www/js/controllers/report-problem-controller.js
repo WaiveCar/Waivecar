@@ -3,40 +3,39 @@ var angular = require('angular');
 
 function ReportProblemController ($injector, $stateParams) {
   var $modal = $injector.get('$modal');
-  var self = this;
   var $uploadImage = $injector.get('$uploadImage');
   var $settings = $injector.get('$settings');
   var $window = $injector.get('$window');
-  var $state = $injector.get('$state');
+  var $ionicHistory = $injector.get('$ionicHistory');
 
   this.model = {
     bookingId: $stateParams.id,
     files: []
   };
 
-  $modal('result', {
-    message: 'Does the problem keep you from driving?',
-    title: 'Report a problem',
-    icon: 'waivecar-mark',
-    actions: [{
-      className: 'button-balanced',
-      text: 'Yes',
-      handler: function () {
-        self.important = true;
-        self.modal.hide();
-      }
-    }, {
-      className: 'button-balanced',
-      text: 'No',
-      handler: function () {
-        self.important = false;
-        self.modal.hide();
-      }
-    }]
-  }).then(function (_modal) {
-    this.modal = _modal;
-    this.modal.show();
-  }.bind(this));
+  // $modal('result', {
+  //   message: 'Does the problem keep you from driving?',
+  //   title: 'Report a problem',
+  //   icon: 'waivecar-mark',
+  //   actions: [{
+  //     className: 'button-balanced',
+  //     text: 'Yes',
+  //     handler: function () {
+  //       self.important = true;
+  //       self.modal.hide();
+  //     }
+  //   }, {
+  //     className: 'button-balanced',
+  //     text: 'No',
+  //     handler: function () {
+  //       self.important = false;
+  //       self.modal.hide();
+  //     }
+  //   }]
+  // }).then(function (_modal) {
+  //   this.modal = _modal;
+  //   this.modal.show();
+  // }.bind(this));
 
   this.submit = function submit () {
     var modal;
@@ -49,7 +48,7 @@ function ReportProblemController ($injector, $stateParams) {
         text: 'Continue',
         handler: function () {
           modal.hide();
-          $state.go('bookings-show', {id: $stateParams.bookingId});
+          $ionicHistory.goBack();
         }
       }]
     })
@@ -103,7 +102,7 @@ function ReportProblemController ($injector, $stateParams) {
           className: 'button-dark',
           handler: function () {
             modal.hide();
-            $state.go('bookings-show', {id: $stateParams.bookingId});
+            $ionicHistory.goBack();
           }
         }]
       })
