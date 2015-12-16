@@ -5,7 +5,6 @@
   <ion-nav-buttons side="right">
     <button menu-toggle="right" class="button button-icon icon ion-navicon"></button>
   </ion-nav-buttons>
-
   <ion-content scroll="false" padding="false" class="gray-bg has-header has-footer">
     <div class="info-header">
       <div class="row">
@@ -18,7 +17,7 @@
       </div>
     </div>
     <div class="map-container has-info-header">
-      <skobbler-map id="map" zoom="15" center="currentLocation" markers="data.locations" on-marker-tap="showChargingStationDetails">
+      <skobbler-map id="map" zoom="15" center="currentLocation" markers="cache.locations" on-marker-tap="showChargingStationDetails">
       </skobbler-map>
     </div>
   </ion-content>

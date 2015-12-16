@@ -30,6 +30,7 @@ module.exports = angular.module('app.controllers').controller('BookingController
 
     // $data is used to interact with models, never directly. If direct is required, $data should be refreshed.
     $scope.data = $data.active;
+    $scope.cache = $data.instances;
 
     var timer = $interval(function() {
       if ($scope.expired) {

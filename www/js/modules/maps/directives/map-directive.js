@@ -55,6 +55,8 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
 
     if (!this.center && $rootScope.currentLocation) {
       this.center = [$rootScope.currentLocation.latitude, $rootScope.currentLocation.longitude];
+    } else {
+      this.center = [ 34.0604643, -118.4186743 ];
     }
 
     // map instance is set from within the link function
@@ -97,7 +99,7 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
     }).map(function (mark) {
       var location = mark.location || mark;
       var marker = this.addMarker(mark.id, [location.latitude, location.longitude], {
-        icon: getIconInstance(this.leaflet, mark.icon || 'car')
+        icon: getIconInstance(this.leaflet, mark.icon || mark.type || 'car')
       });
       if (marker === null) {
         return null;
@@ -211,6 +213,14 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
       return {
         iconUrl: 'img/icon-valet-active.svg',
         iconRetinaUrl: 'img/icon-valet-active.svg',
+        iconSize: [20, 25],
+        iconAnchor: [10, 25],
+        popupAnchor: [0, 0]
+      };
+    case 'valet':
+      return {
+        iconUrl: 'img/icon-valet.svg',
+        iconRetinaUrl: 'img/icon-valet.svg',
         iconSize: [20, 25],
         iconAnchor: [10, 25],
         popupAnchor: [0, 0]
