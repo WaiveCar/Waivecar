@@ -64,7 +64,8 @@ module.exports = angular.module('app.controllers').controller('BookingController
         var from = L.latLng($rootScope.currentLocation.latitude, $rootScope.currentLocation.longitude);
         var to = L.latLng($data.active.cars.latitude, $data.active.cars.longitude);
         var distance = from.distanceTo(to);
-        return distance <= 25;
+        console.log(distance);
+        return distance <= 35;
       }, function (newValue) {
         if (newValue) {
           stopWatching();
