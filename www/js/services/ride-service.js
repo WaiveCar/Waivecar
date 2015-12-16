@@ -8,7 +8,8 @@ module.exports = angular.module('app.services').factory('$ride', [
   '$data',
   '$state',
   '$message',
-  function($auth, $data, $state, $message) {
+  '$interval',
+  function($auth, $data, $state, $message, $interval) {
 
     var service = {};
 
@@ -51,10 +52,10 @@ module.exports = angular.module('app.services').factory('$ride', [
         other           : { isVisible : true, confirmed : false, title : 'Other' }
       },
       check : {
-        isKeySecure    : { isVisible: true, confirmed: false },
-        isIgnitionOn   : { isVisible: true, confirmed: false },
-        isChargeCardIn : { isVisible: true, confirmed: false },
-        isCharging     : { isVisible: false, confirmed: false }
+        isKeySecure        : { isVisible: true,  confirmed: false },
+        isIgnitionOn       : { isVisible: true,  confirmed: false },
+        isChargeCardSecure : { isVisible: true,  confirmed: false },
+        isCharging         : { isVisible: false, confirmed: false }
       },
     };
     /*eslint-enable */
@@ -78,8 +79,8 @@ module.exports = angular.module('app.services').factory('$ride', [
           break;
         }
         case 'valet': {
-          service.state.check.keyIn.isVisible = false;
-          service.state.check.ignitionOff.isVisible = false;
+          service.state.check.isKeySecure.isVisible = false;
+          service.state.check.isIgnitionOn.isVisible = false;
           service.state.check.chargeCardIn.isVisible = false;
           break;
         }
@@ -110,11 +111,14 @@ module.exports = angular.module('app.services').factory('$ride', [
     };
 
     service.setCheck = function(key) {
-      service.state.check[key].confirmed = true;
       var isReady = false;
       for(var index in service.state.check) {
         if (service.state.check.hasOwnProperty(index)) {
           var item = service.state.check[index];
+          if (!item) {
+            console.log(index);
+          }
+          item.confirmed = $data.active.cars[index];
           if (item.isVisible && item.confirmed === false) {
             isReady = false;
           } else {
@@ -123,8 +127,11 @@ module.exports = angular.module('app.services').factory('$ride', [
         }
       }
 
-      if (isReady !== service.state.readyToEnd) {
-        service.this.state.readyToEnd = isReady;
+      if (isReady !== service.state.booking.readyToEnd) {
+        if (this.checkForLock) {
+          $interval.cancel(this.checkForLock);
+        }
+        service.state.booking.readyToEnd = isReady;
       }
     };
 
@@ -146,6 +153,9 @@ module.exports = angular.module('app.services').factory('$ride', [
 
       $data.resources.bookings.end({ id: service.state.booking.id, data: payload }).$promise.then(function() {
         $data.fetch('bookings');
+        this.checkForLock = $interval(function() {
+          service.setCheck();
+        }, 2000);
       }).catch($message.error);
     };
 
@@ -178,6 +188,7 @@ module.exports = angular.module('app.services').factory('$ride', [
             $data.activate('bookings', current.id).then(function() {
               $data.activate('cars', current.carId).then(function() {
                 service.isInitialized = true;
+                service.setCheck();
                 if (current.status === 'reserved' && $state.current.name !== 'bookings-active') {
                   $state.go('bookings-active', { id: current.id });
                 } else if (current.status === 'ready' && $state.current.name !== 'start-ride') {
