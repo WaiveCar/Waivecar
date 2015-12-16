@@ -6,12 +6,14 @@ var moment = require('moment');
 require('angular-ui-router');
 require('../services/auth-service');
 require('../services/data-service');
+require('../services/message-service');
 
 module.exports = angular.module('app.controllers').controller('BookingSummaryController', [
   '$state',
   '$auth',
   '$data',
-  function ($state, $auth, $data) {
+  '$message',
+  function ($state, $auth, $data, $message) {
 
     this.init = function () {
       if (!$auth.isAuthenticated()) {
