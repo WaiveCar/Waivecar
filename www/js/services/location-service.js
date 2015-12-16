@@ -17,14 +17,14 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message) {
     var posOptions = {
       maximumAge: 3000,
       timeout: 8000,
-      enableHighAccuracy: true
+      enableHighAccuracy: false
     };
 
     this.watch = $cordovaGeolocation.watchPosition(posOptions)
     .then(null, function (err) {
+      console.log(err);
       $message.error('Please ensure WaiveCar has access to retrieve your Location.');
     }, function (position) {
-      console.log(position);
       update(position);
     });
   };
@@ -45,7 +45,7 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message) {
     var posOptions = {
       maximumAge: 3000,
       timeout: 8000,
-      enableHighAccuracy: true
+      enableHighAccuracy: false
     };
 
     return $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
