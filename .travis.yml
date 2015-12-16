@@ -19,6 +19,7 @@ cache:
     - modules/auth
     - modules/file
     - modules/log
+    - modules/role
     - modules/shop
     - modules/user
     - modules/ui
@@ -28,6 +29,7 @@ cache:
     - providers/mongo
     - providers/queue
     - providers/sequelize
+    - provider/slack
     - providers/sms
     - providers/email
     - providers/token
