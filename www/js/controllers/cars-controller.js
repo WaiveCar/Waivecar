@@ -28,33 +28,44 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
     this.all = prepareCars(value);
   }.bind(this), true);
 
+  this.clearLocationWatcher = $rootScope.$watch('currentLocation', function(newValue, oldValue) {
+    if (newValue) {
+      console.log(newValue);
+      this.carsInRange();
+    }
+  }.bind(this));
+
   $scope.$on('$destroy', function () {
     this.clearCarWatcher();
+    this.clearLocationWatcher();
   }.bind(this));
+
 
   // First load
   this.all = prepareCars(cars);
-  if (!this.all.length) {
-    $modal('simple-modal', {
-      title: 'Bummer',
-      message: 'There are no WaiveCars currently available for rental. Please check back later.'
-    }).$promise
-    .then(function (modal) {
-      modal.show();
-    });
-  } else {
-    this.closest = $distance.closest(cars);
-    console.log('closest car at %d miles', this.closest);
-    // check for max miles
-    // TODO don't hardcode this
-    if (this.closest > 30) {
+
+  this.carsInRange = function() {
+    console.log($rootScope.currentLocation);
+    if (!this.all.length) {
       $modal('simple-modal', {
         title: 'Bummer',
-        message: 'WaiveCar is currently available just in LA. Check back when you are in the area.'
-      }).$promise
-      .then(function (modal) {
+        message: 'There are no WaiveCars currently available for rental. Please check back later.'
+      }).then(function (modal) {
         modal.show();
       });
+    } else {
+      this.closest = $distance.closest(cars);
+      console.log('closest car at %d miles', this.closest);
+      // check for max miles
+      // TODO don't hardcode this
+      if (this.closest > 30 || isNaN(this.closest)) {
+        $modal('simple-modal', {
+          title: 'Bummer',
+          message: 'WaiveCar is currently only available in LA. Check back when you are in the area.'
+        }).then(function (modal) {
+          modal.show();
+        });
+      }
     }
   }
 

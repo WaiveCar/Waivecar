@@ -2,7 +2,7 @@
 var angular = require('angular');
 require('angular-ui-router');
 require('ionic');
-require('../services/mock-city-location-service.js');
+require('../services/location-service.js');
 require('../services/auth-service.js');
 require('../services/data-service.js');
 require('../services/message-service.js');
@@ -10,7 +10,7 @@ require('../services/session-service.js');
 require('../services/ride-service.js');
 var _ = require('lodash');
 
-function ApplicationController ($rootScope, $scope, LocationService, $injector) {
+function ApplicationController ($rootScope, $scope, $injector) {
 
   var $state = $injector.get('$state');
   var $auth = $injector.get('$auth');
@@ -18,6 +18,7 @@ function ApplicationController ($rootScope, $scope, LocationService, $injector) 
   var $message = $injector.get('$message');
   var $document = $injector.get('$document');
   var $ride = $injector.get('$ride');
+  var LocationService = $injector.get('LocationService');
 
   this.models = $data.instances;
   this.active = $data.active;
@@ -36,8 +37,6 @@ function ApplicationController ($rootScope, $scope, LocationService, $injector) 
     $auth.logout();
     $state.go('auth-login');
   });
-
-  $data.initialize('locations');
 
   // $rootScope.$on('socket:error', function (ev, data) {
   //   console.log('TODO: handle socket error:');
@@ -72,6 +71,7 @@ function ApplicationController ($rootScope, $scope, LocationService, $injector) 
   }
 
   function initLocation () {
+    LocationService.getCurrentLocation();
     LocationService.initPositionWatch();
     return $data.initialize('locations')
       .catch(function (err) {
@@ -85,7 +85,6 @@ module.exports =
   .controller('ApplicationController', [
     '$rootScope',
     '$scope',
-    'MockLocationService',
     '$injector',
     ApplicationController
   ]);

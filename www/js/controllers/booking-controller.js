@@ -11,6 +11,7 @@ require('../services/data-service');
 require('../services/ride-service');
 require('../services/message-service');
 require('../services/modal-service');
+require('../services/location-service');
 
 module.exports = angular.module('app.controllers').controller('BookingController', [
   '$rootScope',
@@ -18,7 +19,7 @@ module.exports = angular.module('app.controllers').controller('BookingController
   '$interval',
   '$state',
   '$auth',
-  'MockLocationService',
+  'LocationService',
   '$data',
   '$ride',
   '$message',

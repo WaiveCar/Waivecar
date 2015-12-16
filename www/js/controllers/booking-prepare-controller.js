@@ -1,7 +1,6 @@
 'use strict';
 var angular = require('angular');
 require('angular-ui-router');
-require('../services/mock-city-location-service.js');
 require('../services/auth-service');
 require('../services/data-service');
 require('../services/message-service');

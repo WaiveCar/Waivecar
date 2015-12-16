@@ -37,6 +37,8 @@ DistanceService.prototype.toMiles = function toMiles (m) {
 };
 
 function isValidLocation (loc) {
+  console.log(loc);
+  //if (!loc) return false;
   return (loc.latitude && loc.longitude) ||
     (Array.isArray(loc) && loc.length === 2 &&
       typeof loc[0] === 'number' &&
