@@ -50,7 +50,7 @@ appSettings.provider('$settings', [
           skobbler: {
             key: skobblerKey
           },
-          phone: '555-555-5555'
+          phone: '855-WAIVE55'
 
         };
 
