@@ -141,7 +141,7 @@ Resources.prepare = function (id) {
 function reducerStore(state, data) {
   let index = state.findIndex(val => val.id === data.id);
   if (index !== -1) {
-    return update(state, data);
+    return reducerUpdate(state, data);
   }
   return [
     data,

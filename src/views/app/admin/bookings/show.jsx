@@ -37,6 +37,11 @@ module.exports = class BookingsView extends React.Component {
     this.loadBooking(this.props.params.id);
   }
 
+  /**
+   * Loads booking.
+   * @param  {Number} id
+   * @return {Void}
+   */
   loadBooking(id) {
     api.get(`/bookings/${ id }`, (err, booking) => {
       if (err) {
@@ -52,6 +57,11 @@ module.exports = class BookingsView extends React.Component {
     });
   }
 
+  /**
+   * Loads booking.
+   * @param  {String} id
+   * @return {Void}
+   */
   loadCart(id) {
     api.get(`/shop/carts/${ id }`, (err, cart) => {
       if (err) {
@@ -161,7 +171,7 @@ module.exports = class BookingsView extends React.Component {
     }
 
     let booking = this.state.bookings.find(val => val.id === parseInt(this.props.params.id));
-    if (!booking) {
+    if (!booking || !booking.user) {
       return (
         <div id="booking-view">
           <div className="booking-message">
