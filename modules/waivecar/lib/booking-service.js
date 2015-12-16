@@ -178,7 +178,7 @@ module.exports = class BookingService extends Service {
 
     // ### Get Booking
 
-    let booking = yield Booking.findById(id, relations);
+    let booking = yield this.getBooking(id, relations);
     let car     = yield Car.findById(booking.carId);
     let user    = yield this.getUser(booking.userId);
 

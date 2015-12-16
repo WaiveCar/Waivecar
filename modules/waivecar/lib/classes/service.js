@@ -12,10 +12,11 @@ module.exports = class Service {
   /**
    * Attempts to return the request booking.
    * @param  {Number} bookingId
+   * @param  {Object} relations
    * @return {Object}
    */
-  static *getBooking(bookingId) {
-    let booking = yield Booking.findById(bookingId);
+  static *getBooking(bookingId, relations) {
+    let booking = yield Booking.findById(bookingId, relations);
     if (!booking) {
       throw error.parse({
         code    : `BOOKING_NOT_FOUND`,
@@ -102,7 +103,7 @@ module.exports = class Service {
    * @return {Void}
    */
   static hasAccess(user, _user) {
-    if (user.id !== _user.id && _user.role !== 'admin') {
+    if (user.id !== _user.id && _user.hasAccess('admin')) {
       throw error.parse({
         error   : `INVALID_PRIVILEGES`,
         message : `You do not have the required privileges to perform this operation.`
