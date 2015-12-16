@@ -103,9 +103,9 @@ module.exports = class Service {
    * @return {Void}
    */
   static hasAccess(user, _user) {
-    if (user.id !== _user.id && _user.hasAccess('admin')) {
+    if (user.id !== _user.id && !_user.hasAccess('admin')) {
       throw error.parse({
-        error   : `INVALID_PRIVILEGES`,
+        code    : `BOOKING_INVALID_PRIVILEGES`,
         message : `You do not have the required privileges to perform this operation.`
       }, 400);
     }
