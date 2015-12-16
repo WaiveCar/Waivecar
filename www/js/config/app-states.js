@@ -299,6 +299,16 @@ module.exports = [
         auth: true
       }
     })
+
+    .state('report-problem', {
+      url: '/bookings/:id/new-problem',
+      templateUrl: '/templates/report-problem/new.html',
+      controller: 'ReportProblemController as ctrl',
+      data: {
+        auth: true
+      }
+    })
+
     .state('sandpit', {
       url: '/sandpit',
       templateUrl: '/templates/common/sandpit.html',

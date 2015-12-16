@@ -82,6 +82,7 @@ require('./controllers/message-controller');
 require('./controllers/user-create-controller');
 require('./controllers/user-facebook-create-controller');
 require('./controllers/user-edit-controller');
+require('./controllers/report-problem-controller');
 require('./controllers/timer-controller');
 require('./controllers/menu-controller');
 require('./controllers/verify-controller');

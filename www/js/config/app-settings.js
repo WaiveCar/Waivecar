@@ -49,7 +49,8 @@ appSettings.provider('$settings', [
           facebook: getFacebook(),
           skobbler: {
             key: skobblerKey
-          }
+          },
+          phone: '555-555-5555'
 
         };
 

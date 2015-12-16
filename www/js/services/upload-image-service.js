@@ -46,7 +46,7 @@ function uploadImageFactory ($injector) {
         return null;
       }
       var modal;
-      showLoadingModal()
+      return showLoadingModal()
       .then(function (_modal) {
         modal = _modal;
         return transferPicture(options, fileUri);
@@ -89,7 +89,7 @@ function uploadImageFactory ($injector) {
 
   function showLoadingModal () {
     return $modal('result', {
-      title: 'Uploading your license',
+      title: 'Uploading image',
       icon: '/templates/modals/loader.html'
     })
     .then(function (modal) {
@@ -115,6 +115,10 @@ function uploadImageFactory ($injector) {
       fileName: opts.filename,
       mimeType: 'image/jpeg',
     };
+
+    if (opts.params) {
+      options.params = opts.params;
+    }
 
     return $cordovaFileTransfer.upload(opts.endpoint, filePath, options, true)
       .then(function (response) {
