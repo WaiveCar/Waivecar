@@ -94,6 +94,22 @@ module.exports = class BookingsView extends React.Component {
   }
 
   /**
+   * Sends a booking cancel request to the api.
+   * @param  {String} action cancel|end|complete|close
+   * @return {Void}
+   */
+  cancel(action) {
+    this.setState({
+      isActing : true
+    });
+    api.delete(`/bookings/${ this.props.params.id }`, (err) => {
+      this.setState({
+        isActing : false
+      });
+    });
+  }
+
+  /**
    * Renders the available actions that can be performed on the booking.
    * @param  {Object} booking
    * @return {Object}
@@ -103,7 +119,7 @@ module.exports = class BookingsView extends React.Component {
       return <div className="text-center">Performing action...</div>;
     }
     switch (booking.status) {
-      case 'reserved' : return <button type="button" onClick={ () => { this.update('cancel') } } className="btn btn-primary">Cancel</button>;
+      case 'reserved' : return <button type="button" onClick={ () => { this.cancel() } } className="btn btn-primary">Cancel</button>;
       case 'ready'    : // started ...
       case 'started'  : return <button type="button" onClick={ () => { this.update('end') } } className="btn btn-primary">End Ride</button>;
       case 'ended'    : return <button type="button" onClick={ () => { this.update('complete') } } className="btn btn-primary">Complete Ride & Lock Car</button>;
