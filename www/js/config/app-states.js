@@ -269,6 +269,7 @@ module.exports = [
     .state('bookings-show', {
       url: '/bookings/:id',
       templateUrl: '/templates/bookings/show.html',
+      controller: 'BookingSummaryController as ctrl',
       data: {
         auth: true
       }
