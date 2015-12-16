@@ -130,17 +130,17 @@ module.exports = class Service {
       }
     });
 
-    // // ### Check User
-    // if (!user.verifiedEmail) { missing.push('email'); }
-    // if (!user.verifiedPhone) { missing.push('phone'); }
+    // ### Check User
+    if (!user.verifiedEmail) { missing.push('email'); }
+    if (!user.verifiedPhone) { missing.push('phone'); }
 
-    // // ### Check Credit Card
-    // if (!user.stripeId || !card) { missing.push('credit card'); }
+    // ### Check Credit Card
+    if (!user.stripeId || !card) { missing.push('credit card'); }
 
-    // // ### Check License
-    // if (!license || !license.isValid()) {
-    //   missing.push('license');
-    // }
+    // ### Check License
+    if (!license || !license.isValid()) {
+      missing.push('license');
+    }
 
     // ### Throw Error
     if (missing.length) {
