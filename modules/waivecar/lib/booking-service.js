@@ -512,8 +512,8 @@ module.exports = class BookingService extends Service {
       time      : new Date(),
       latitude  : car.latitude,
       longitude : car.longitude,
-      odometer  : 0,
-      charge    : 0
+      mileage   : car.totalMileage,
+      charge    : car.charge
     });
     yield details.save();
   }
