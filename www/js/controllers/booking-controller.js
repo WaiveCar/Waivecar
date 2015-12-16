@@ -64,7 +64,6 @@ module.exports = angular.module('app.controllers').controller('BookingController
         var from = L.latLng($rootScope.currentLocation.latitude, $rootScope.currentLocation.longitude);
         var to = L.latLng($data.active.cars.latitude, $data.active.cars.longitude);
         var distance = from.distanceTo(to);
-        console.log(distance);
         return distance <= 35;
       }, function (newValue) {
         if (newValue) {
@@ -75,7 +74,6 @@ module.exports = angular.module('app.controllers').controller('BookingController
     };
 
     $scope.showUnlock = function() {
-      $interval.cancel(timer);
       $modal('result', {
         title: 'You\'re In Reach',
         message: 'Now you can unlock your WaiveCar!',
@@ -84,6 +82,7 @@ module.exports = angular.module('app.controllers').controller('BookingController
           className: 'button-balanced',
           text: 'Unlock',
           handler: function () {
+            $interval.cancel(timer);
             var id = $ride.state.booking.id;
             $data.resources.bookings.ready({ id: id }).$promise.then(function() {
               $data.fetch('bookings').then(function() {
@@ -100,19 +99,8 @@ module.exports = angular.module('app.controllers').controller('BookingController
           className: 'button-dark',
           text: 'Cancel Booking',
           handler: function () {
-            var id = $ride.state.booking.id;
-            $data.remove('bookings', id).then(function() {
-              $message.success('Your Booking has been successfully cancelled');
-              $data.deactivate('cars');
-              $data.deactivate('bookings');
-              $ride.setState();
-              this.modal.hide();
-              $state.go('cars');
-            }.bind(this)).catch(function(err) {
-              $message.error(err);
-              this.modal.hide();
-              $scope.showRetry();
-            });
+            this.modal.hide();
+            $scope.showCancel();
           }.bind(this)
         }]
       }).then(function (modal) {
@@ -139,21 +127,44 @@ module.exports = angular.module('app.controllers').controller('BookingController
       }.bind(this));
     };
 
-
-    // this.cancel = function() {
-    //   return $q(function (resolve, reject) {
-    //     var id = $ride.state.booking.id;
-    //     $data.remove('bookings', id).then(function() {
-    //       $message.success(id + ' has been successfully cancelled');
-    //       $ride.setState();
-    //       $data.deactivate('cars');
-    //       $data.deactivate('bookings');
-    //       return resolve();
-    //     }).catch(function() {
-    //       $message.error);
-    //     }
-    // };
-
+    $scope.showCancel = function() {
+      $interval.cancel(timer);
+      $modal('result', {
+        title: 'Cancel Booking',
+        message: 'Are you sure you want to cancel your booking?',
+        icon: 'x-icon',
+        actions: [{
+          className: 'button-assertive',
+          text: 'Yes',
+          handler: function () {
+            $interval.cancel(timer);
+            var id = $ride.state.booking.id;
+            $data.remove('bookings', id).then(function() {
+              $message.success('Your Booking has been successfully cancelled');
+              $data.deactivate('cars');
+              $data.deactivate('bookings');
+              $ride.setState();
+              this.modal.hide();
+              $state.go('cars');
+            }.bind(this)).catch(function(err) {
+              $message.error(err);
+              this.modal.hide();
+              $scope.showRetry();
+            });
+          }.bind(this)
+        }, {
+          className: 'button-dark',
+          text: 'No',
+          handler: function () {
+            this.modal.remove();
+            $scope.watchForWithinRange();
+          }.bind(this)
+        }]
+      }).then(function (modal) {
+        this.modal = modal;
+        modal.show();
+      }.bind(this));
+    };
 
     this.start = function() {
       var id = $ride.state.booking.id;

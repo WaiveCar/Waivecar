@@ -39,9 +39,8 @@
 
   <ion-footer-bar class="no-padding">
     <div class="button-bar">
-      <button type="button" class="button button-balanced" ng-show="showConnect" ng-click="connect()">Connect to waivecar</button>
-      <button type="button" class="button button-dark" ng-click="getDirections()" ng-if="!showConnect">Get Directions</button>
-      <button type="button" class="button button-assertive" ng-click="cancel()" ng-if="!showConnect">Cancel</button>
+      <button type="button" class="button button-dark" ng-click="getDirections()">Get Directions</button>
+      <button type="button" class="button button-assertive" ng-click="showCancel()">Cancel</button>
     </div>
   </ion-footer-bar>
 
