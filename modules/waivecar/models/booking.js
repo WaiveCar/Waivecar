@@ -45,6 +45,14 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
     },
 
     /**
+     * The cart that has been created for the booking.
+     * @type {String}
+     */
+    cartId : {
+      type : Sequelize.STRING
+    },
+
+    /**
      * Booking comments.
      * @type {Text}
      */
@@ -103,7 +111,8 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
     'user=>car',
     'car=>files',
     'files=>details',
-    'details=>payments'
+    'details=>cart',
+    'cart=>payments'
   ];
 
   // ### Methods

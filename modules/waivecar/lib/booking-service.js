@@ -188,6 +188,7 @@ module.exports = class BookingService extends Service {
 
     booking.user     = user;
     booking.car      = yield Car.findById(booking.carId);
+    booking.cart     = yield fees.get(booking.cartId, _user);
     booking.payments = yield Payment.find({
       where : {
         id : booking.payments.map((val) => {
@@ -250,7 +251,7 @@ module.exports = class BookingService extends Service {
     // ### Relay Update
 
     car.relay('update');
-    yield this.relayBookingUpdate(booking.id, user, _user);
+    yield this.relayUpdate(booking.id, user, _user);
   }
 
   /**
@@ -289,7 +290,7 @@ module.exports = class BookingService extends Service {
     // ### Relay Update
 
     car.relay('update');
-    yield this.relayBookingUpdate(booking.id, user, _user);
+    yield this.relayUpdate(booking.id, user, _user);
   }
 
   /**
@@ -349,7 +350,7 @@ module.exports = class BookingService extends Service {
     // ### Create Order
     // Create a shop cart with automated fees.
 
-    // yield fees.create(yield this.show(booking.id, _user));
+    yield fees.create(booking, car, _user);
 
     // ### End Booking
 
@@ -359,7 +360,7 @@ module.exports = class BookingService extends Service {
     // ### Relay Update
 
     car.relay('update');
-    yield this.relayBookingUpdate(booking.id, user, _user);
+    yield this.relayUpdate(booking.id, user, _user);
   }
 
   /**
@@ -424,7 +425,7 @@ module.exports = class BookingService extends Service {
     // ### Relay
 
     car.relay('update');
-    yield this.relayBookingUpdate(booking.id, user, _user);
+    yield this.relayUpdate(booking.id, user, _user);
   }
 
   /**
@@ -493,7 +494,7 @@ module.exports = class BookingService extends Service {
     // ### Relay Update
 
     car.relay('update');
-    yield this.relayBookingUpdate(booking.id, user, _user);
+    yield this.relayUpdate(booking.id, user, _user);
   }
 
   // ### HELPERS
@@ -526,7 +527,7 @@ module.exports = class BookingService extends Service {
    * @param  {Object} _user
    * @return {Void}
    */
-  static *relayBookingUpdate(id, user, _user) {
+  static *relayUpdate(id, user, _user) {
     let payload = {
       type : 'update',
       data : yield this.show(id, _user)
