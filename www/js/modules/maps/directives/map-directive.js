@@ -73,7 +73,6 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
   };
 
   MapController.prototype.setMarkers = function setMarkers (locations) {
-    console.log('Setting markers at ', locations);
     if (locations === null || typeof locations === 'undefined') {
       return;
     }
