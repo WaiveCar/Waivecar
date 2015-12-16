@@ -16,7 +16,10 @@
     }
 
     .logo-image {
-      width: 90%;
+      width: 100%;
+      svg {
+        width: 100%;
+      }
     }
 
     .button-group {
