@@ -51,10 +51,10 @@ module.exports = angular.module('app.services').factory('$ride', [
         other           : { isVisible : true, confirmed : false, title : 'Other' }
       },
       check : {
-        keyIn        : { isVisible: true, confirmed: false },
-        ignitionOff  : { isVisible: true, confirmed: false },
-        chargeCardIn : { isVisible: true, confirmed: false },
-        isCharging   : { isVisible: false, confirmed: false }
+        isKeySecure    : { isVisible: true, confirmed: false },
+        isIgnitionOn   : { isVisible: true, confirmed: false },
+        isChargeCardIn : { isVisible: true, confirmed: false },
+        isCharging     : { isVisible: false, confirmed: false }
       },
     };
     /*eslint-enable */
@@ -129,6 +129,10 @@ module.exports = angular.module('app.services').factory('$ride', [
     };
 
     service.processEndRide = function() {
+      if ($data.active.bookings.status === 'ended') {
+        return;
+      }
+
       var payload = angular.copy(service.state.parkingLocation);
       for (var index in service.state.location) {
         if (service.state.location.hasOwnProperty(index)) {

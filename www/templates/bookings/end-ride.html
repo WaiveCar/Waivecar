@@ -1,5 +1,5 @@
 <ion-view>
-  <ion-content scroll="false" padding="true" class="has-header ion-content--center dark-bg">
+  <ion-content scroll="false" padding="true" class="has-header has-footer ion-content--center dark-bg">
     <div  class="row row-center row-full-height">
       <div class="col col-center">
         <div class="lead-logo">
@@ -12,10 +12,10 @@
           </div>
           <div>
             <ul class="list-unstyled text-left bold-list margin-top-10">
-              <li ng-show="service.state.check.keySecure.isVisible">
+              <li ng-show="service.state.check.isKeySecure.isVisible">
                 <label class="pull-right">
-                  <span ng-show="data.cars.isKeySecure">
-                    <ng-include class="check" src="'/img/check-icon.svg'" />
+                  <span class="check" ng-show="data.cars.isKeySecure">
+                    <ng-include src="'/img/check-icon.svg'" />
                   </span>
                   <span ng-hide="data.cars.isKeySecure">
                     <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
@@ -23,10 +23,10 @@
                 </label>
                 Key in holder
               </li>
-              <li ng-show="service.state.check.ignitionOff.isVisible">
+              <li ng-show="service.state.check.isIgnitionOn.isVisible">
                 <label class="pull-right">
-                  <span ng-hide="data.cars.isIgnitionOn">
-                    <ng-include class="check" src="'/img/check-icon.svg'" />
+                  <span class="check" ng-hide="data.cars.isIgnitionOn">
+                    <ng-include src="'/img/check-icon.svg'" />
                   </span>
                   <span ng-show="data.cars.isIgnitionOn">
                     <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
@@ -34,10 +34,10 @@
                 </label>
                 Engine off
               </li>
-              <li ng-show="service.state.check.chargeCardSecure.isVisible">
+              <li ng-show="service.state.check.isChargeCardSecure.isVisible">
                 <label class="pull-right">
-                  <span ng-show="data.cars.isChargeCardSecure">
-                    <ng-include class="check" src="'/img/check-icon.svg'" />
+                  <span class="check" ng-show="data.cars.isChargeCardSecure">
+                    <ng-include src="'/img/check-icon.svg'" />
                   </span>
                   <span ng-hide="data.cars.isChargeCardSecure">
                     <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
@@ -47,8 +47,8 @@
               </li>
               <li ng-show="service.state.check.isCharging.isVisible">
                 <label class="pull-right">
-                  <span ng-show="data.cars.isCharging">
-                    <ng-include class="check" src="'/img/check-icon.svg'" />
+                  <span class="check" ng-show="data.cars.isCharging">
+                    <ng-include src="'/img/check-icon.svg'" />
                   </span>
                   <span ng-hide="data.cars.isCharging">
                     <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
@@ -56,23 +56,21 @@
                 </label>
                 Charging
               </li>
-              <li>
-                <label class="pull-right">
-                  <span>{{ data.cars.isImmobilized }}</span>
-                </label>
-                Immobilized (No Action)
-              </li>
-              <li>
-                <label class="pull-right">
-                  <span>{{ data.cars.isLocked }}</span>
-                </label>
-                Car Locked (No Action)
-              </li>
             </ul>
+          </div>
+          <div class="text-center padding">
+            <br />
+            <p>Don't forget your things, closing the windows and leaving the car clean.</p>
+            <p>When you're ready and outside the car, tap the below button.</p>
           </div>
           <button type="button" class="button button-block" ng-class="{ 'disabled' : !data.cars.isImmobilized, 'button-balanced' : data.cars.isImmobilized }" ng-click="service.processCompleteRide()">Finish and Lock Car</button>
         </div>
       </div>
     </div>
   </ion-content>
+  <ion-footer-bar class="no-padding">
+    <div class="text-center footer-full">
+      <a href="">Learn about the WaiveCar return process</a>
+    </div>
+  </ion-footer-bar>
 </ion-view>

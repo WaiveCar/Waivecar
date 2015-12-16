@@ -154,6 +154,13 @@ ion-content {
 }
 .no-padding.bar.bar-footer {
   background : $dark;
+  color: $light;
+  .footer-full {
+    width: 100%;
+    a, a:visited {
+      color : $light
+    }
+  }
 }
 .vertical-aligned {
   @include vertical-align;
@@ -276,9 +283,17 @@ ion-view {
   padding: 5px 30px;
   li {
     padding: 5px;
+    line-height: 30px;
+    height: 38px;
   }
 }
 
 .text-underline {
   text-decoration: underline;
+}
+
+.check {
+  svg {
+    width : 28px;
+  }
 }
