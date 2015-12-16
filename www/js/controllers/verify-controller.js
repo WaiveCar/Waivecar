@@ -1,5 +1,6 @@
 'use strict';
 var angular = require('angular');
+require('../services/modal-service');
 
 function VerifyController ($injector, $stateParams) {
   var $message = $injector.get('$message');
@@ -36,14 +37,14 @@ function VerifyController ($injector, $stateParams) {
       .then(function (modal) {
         modal.show();
         $timeout(function () {
+          modal.remove();
           if (this.isWizard) {
             return $state.go('licenses-new', { step: 3 });
-          }
-          if (this.fromBooking) {
+          } else if (this.fromBooking) {
             return $state.go('cars-show');
-            // return $state.go('cars-show', BookingService.getReturnParams());
+          } else {
+            return $state.go('users-edit');
           }
-          return $state.go('users-edit');
         }.bind(this), 2000);
       }.bind(this))
       .catch(function (err) {
