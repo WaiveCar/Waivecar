@@ -36,17 +36,11 @@ function VerifyController ($injector, $stateParams) {
       })
       .then(function (modal) {
         modal.show();
-        $timeout(function () {
-          modal.remove();
-          if (this.isWizard) {
-            return $state.go('licenses-new', { step: 3 });
-          } else if (this.fromBooking) {
-            return $state.go('cars-show');
-          } else {
-            return $state.go('users-edit');
-          }
-        }.bind(this), 2000);
-      }.bind(this))
+        return $timeout(2000)
+        .then(function () {
+          return $state.go('users-edit');
+        });
+      })
       .catch(function (err) {
         var modal;
         return $modal('result', {

@@ -1,22 +1,18 @@
 'use strict';
 var angular = require('angular');
-var ionic = require('ionic');
 require('angular-ui-router');
 require('../services/auth-service');
 require('../services/data-service');
-require('../services/message-service');
-require('../services/camera-service');
+require('../services/upload-image-service');
 
 function LicenseController ($stateParams, $injector) {
-  var CameraService = $injector.get('CameraService');
   var $auth = $injector.get('$auth');
   var $data = $injector.get('$data');
   var USStates = $injector.get('USStates');
-  var $ionicActionSheet = $injector.get('$ionicActionSheet');
-  var $q = $injector.get('$q');
-  var $modal = $injector.get('$modal');
   var $timeout = $injector.get('$timeout');
   var $state = $injector.get('$state');
+  var $uploadImage = $injector.get('$uploadImage');
+  var $modal = $injector.get('$modal');
 
   this.isWizard = !!$stateParams.step;
   this.fromBooking = !!$stateParams.fromBooking;
@@ -33,29 +29,27 @@ function LicenseController ($stateParams, $injector) {
 
   var self = this;
   var modal;
-  function loadingModal () {
-    return $modal('result', {
-      title: 'Uploading your license',
-      icon: '/templates/modals/loader.html'
-    })
-    .then(function (_modal) {
-      modal = _modal;
-      modal.show();
-    });
-  }
 
-  var fileUri;
-  function upload (source) {
-    if (!fileUri) {
-      fileUri = source;
-    }
-    if (modal) {
-      console.error('Modal duplication found');
-    }
-    loadingModal();
-    return CameraService.uploadPicture(fileUri)
-    .then(function (response) {
-      hideModal();
+  this.pickImage = function pickImage () {
+    $uploadImage({
+      endpoint: '/files',
+      filename: $auth.token.token.substr(0, 10) + '_license.jpg'
+    })
+    .then(function onPictureUploaded (uploadResponse) {
+      this.license = new $data.resources.licenses({
+        number: this.license.number,
+        state: this.license.state,
+        userId: $auth.me.id,
+        country: 'USA'
+      });
+      if (uploadResponse) {
+        if (Array.isArray(uploadResponse) && uploadResponse.length) {
+          this.license.fileId = uploadResponse[0].id;
+        }
+      }
+      return this.license.$save();
+    }.bind(this))
+    .then(function () {
       return $modal('result', {
         icon: 'check-icon',
         title: 'License Uploaded'
@@ -63,7 +57,14 @@ function LicenseController ($stateParams, $injector) {
       .then(function (_modal) {
         modal = _modal;
         modal.show();
-        return response;
+        return modal;
+      })
+      .then(function () {
+        return $timeout(1000);
+      })
+      .then(function () {
+        hideModal();
+        self.nextState();
       });
     })
     .catch(function onUploadFailed (err) {
@@ -75,7 +76,6 @@ function LicenseController ($stateParams, $injector) {
           text: 'Retry',
           handler: function () {
             hideModal();
-            upload();
           }
         }, {
           className: 'button-dark',
@@ -92,72 +92,13 @@ function LicenseController ($stateParams, $injector) {
       });
       throw err;
     });
-  }
+  };
 
   function hideModal () {
-    if (!modal) {
-      return;
+    if (modal) {
+      modal.remove();
     }
-    modal.remove();
-    modal = null;
   }
-
-  var buttons = [
-    { text: 'Take Photo…' },
-    { text: 'Choose from Library' }
-  ];
-  if (!ionic.Platform.isWebView()) {
-    buttons.push({ text: 'Skip Photo (web)' });
-  }
-
-  this.pickImage = function pickImage () {
-    var hideSheet;
-    $q(function (done) {
-      hideSheet = $ionicActionSheet.show({
-        buttons: buttons,
-        cancelText: 'Cancel',
-        buttonClicked: done
-      });
-    })
-    .then(function onSourceSelected (buttonIndex) {
-      if (typeof hideSheet === 'function') {
-        hideSheet();
-        hideSheet = null;
-      }
-      if (buttonIndex === 2) {
-        return $timeout(2000);
-      } else if (buttonIndex === 0) {
-        return CameraService.getPicture()
-          .then(upload);
-      } else if (buttonIndex === 1) {
-        return CameraService.pickFile()
-          .then(upload);
-      }
-    })
-    .then(function onPictureUploaded (uploadResponse) {
-      this.license = new $data.resources.licenses({
-        number: this.license.number,
-        state: this.license.state,
-        userId: $auth.me.id,
-        country: 'USA'
-      });
-
-      if (uploadResponse) {
-        if (Array.isArray(uploadResponse) && uploadResponse.length) {
-          this.license.fileId = uploadResponse[0].id;
-        }
-      }
-
-      return this.license.$save();
-    }.bind(this))
-    .then(function () {
-      return $timeout(1000)
-      .then(function () {
-        hideModal();
-        self.nextState();
-      });
-    });
-  };
 
 }
 

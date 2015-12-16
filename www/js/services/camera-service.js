@@ -4,23 +4,18 @@ require('ngCordova');
 require('./auth-service.js');
 
 module.exports = angular.module('app.services').factory('CameraService', [
-  '$cordovaCamera',
-  '$cordovaFileTransfer',
-  '$q',
-  '$settings',
   '$window',
-  '$auth',
-  function ($cordovaCamera, $cordovaFileTransfer, $q, $settings, $window, $auth) {
+  '$cordovaCamera',
+  '$q',
+  function ($window, $cordovaCamera, $q) {
 
-    var endpoint = $settings.uri.api + '/files';
-
-    function getPicture(width, height, upload) {
+    function getPicture(width, height, fromLibrary) {
       if (!$window.Camera) {
         return $q.reject('This feature works only on mobile');
       }
 
       var sourceType = $window.Camera.PictureSourceType.CAMERA;
-      if (upload) {
+      if (fromLibrary) {
         sourceType = $window.Camera.PictureSourceType.PHOTOLIBRARY;
       }
 
@@ -39,36 +34,12 @@ module.exports = angular.module('app.services').factory('CameraService', [
       return $cordovaCamera.getPicture(options);
     }
 
-    function pickFile(width, height) {
+    function pickFile (width, height) {
       return getPicture(width, height, true);
-    }
-
-    function uploadPicture (filePath) {
-      var options = {
-        headers: {
-          Connection: 'close',
-          Authorization: $auth.token.token
-        },
-        fileKey: 'files',
-        fileName: $auth.token.token.substr(0, 10) + '_license.jpg',
-        mimeType: 'image/jpeg',
-      };
-
-      return $cordovaFileTransfer.upload(endpoint, filePath, options, true)
-        .then(function (response) {
-          if (response && response.responseCode === 200){
-            response = angular.fromJson(response.response);
-          }
-          return response;
-        })
-        .finally(function () {
-          $cordovaCamera.cleanup();
-        });
     }
 
     return {
       getPicture: getPicture,
-      uploadPicture: uploadPicture,
       pickFile: pickFile
     };
 
