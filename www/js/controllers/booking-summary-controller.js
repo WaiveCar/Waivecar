@@ -1,4 +1,3 @@
-/* global window: false, L: true */
 'use strict';
 var angular = require('angular');
 var moment = require('moment');

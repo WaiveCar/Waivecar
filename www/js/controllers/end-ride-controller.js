@@ -1,12 +1,10 @@
 'use strict';
 var angular = require('angular');
-var _ = require('lodash');
 
 require('angular-ui-router');
 require('../services/auth-service');
 require('../services/data-service');
 require('../services/ride-service');
-require('../services/message-service');
 
 module.exports = angular.module('app.controllers').controller('EndRideController', [
   '$rootScope',
@@ -15,8 +13,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
   '$auth',
   '$data',
   '$ride',
-  '$message',
-  function ($rootScope, $scope, $state, $auth, $data, $ride, $message) {
+  function ($rootScope, $scope, $state, $auth, $data, $ride) {
 
     // Concepts:
     // $scope is used to store ref. to the service and the active models in the data svc.

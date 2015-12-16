@@ -16,7 +16,6 @@ module.exports = angular.module('app.controllers').controller('CarController', [
   '$ride',
   'car',
   function ($rootScope, $scope, $state, $injector, $ride, car) {
-    var $ionicModal = $injector.get('$ionicModal');
     var $message = $injector.get('$message');
     var $data = $injector.get('$data');
     var $auth = $injector.get('$auth');
@@ -24,32 +23,32 @@ module.exports = angular.module('app.controllers').controller('CarController', [
 
     this.car = angular.extend({}, car, { item: 'car' });
 
-    function showRequirementsModal (_status) {
+    // function showRequirementsModal (_status) {
 
-      var scope = $scope.$new();
-      scope.status = _status;
-      scope.book = $scope.book;
+    //   var scope = $scope.$new();
+    //   scope.status = _status;
+    //   scope.book = $scope.book;
 
-      // scope.numberOfOpenItems = BookingService.getNumberOfOpenItems();
-      // TODO: this was failing so hard coded to false for now
-      // scope.hasActiveBooking = false; // BookingService.hasActiveBooking;
-      // end TODO
-      // scope.activeBooking = BookingService.activeBooking;
+    //   // scope.numberOfOpenItems = BookingService.getNumberOfOpenItems();
+    //   // TODO: this was failing so hard coded to false for now
+    //   // scope.hasActiveBooking = false; // BookingService.hasActiveBooking;
+    //   // end TODO
+    //   // scope.activeBooking = BookingService.activeBooking;
 
-      $ionicModal.fromTemplateUrl('/templates/bookings/modal-validation.html', {
-        scope: scope,
-        animation: 'slide-in-up'
-      }).then(function(modal) {
-        modal.show();
-        scope.close = function(){
-          modal.remove();
-        };
+    //   $ionicModal.fromTemplateUrl('/templates/bookings/modal-validation.html', {
+    //     scope: scope,
+    //     animation: 'slide-in-up'
+    //   }).then(function(modal) {
+    //     modal.show();
+    //     scope.close = function(){
+    //       modal.remove();
+    //     };
 
-        $scope.$on('$destroy', function() {
-          modal.remove();
-        });
-      });
-    }
+    //     $scope.$on('$destroy', function() {
+    //       modal.remove();
+    //     });
+    //   });
+    // }
 
     // this.book = function book() {
     //   if(BookingService.hasActiveBooking){

@@ -28,7 +28,7 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
     this.all = prepareCars(value);
   }.bind(this), true);
 
-  this.clearLocationWatcher = $rootScope.$watch('currentLocation', function(newValue, oldValue) {
+  this.clearLocationWatcher = $rootScope.$watch('currentLocation', function(newValue) {
     if (newValue) {
       console.log(newValue);
       this.carsInRange();
@@ -45,7 +45,6 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
   this.all = prepareCars(cars);
 
   this.carsInRange = function() {
-    console.log($rootScope.currentLocation);
     if (!this.all.length) {
       $modal('simple-modal', {
         title: 'Bummer',
@@ -59,6 +58,7 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
       // check for max miles
       // TODO don't hardcode this
       if (this.closest > 30 || isNaN(this.closest)) {
+        this.outOfRange = true;
         $modal('simple-modal', {
           title: 'Bummer',
           message: 'WaiveCar is currently only available in LA. Check back when you are in the area.'
@@ -67,7 +67,7 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
         });
       }
     }
-  }
+  };
 
   function prepareCars (items) {
     return _.map(items, function (item) {
