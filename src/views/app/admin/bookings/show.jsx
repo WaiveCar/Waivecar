@@ -15,9 +15,10 @@ module.exports = class BookingsView extends React.Component {
   constructor(...args) {
     super(...args);
     this.state = {
-      isActing : false
+      isActing : false,
+      error    : null
     };
-    relay.subscribe(this, 'bookings');
+    relay.subscribe(this, [ 'bookings', 'carts' ]);
   }
 
   /**
@@ -25,7 +26,7 @@ module.exports = class BookingsView extends React.Component {
    * @return {Void}
    */
   componentWillUnmount() {
-    relay.unsubscribe(this, 'bookings');
+    relay.unsubscribe(this, [ 'bookings', 'carts' ]);
   }
 
   /**
@@ -33,11 +34,36 @@ module.exports = class BookingsView extends React.Component {
    * @return {Void}
    */
   componentDidMount() {
-    api.get(`/bookings/${ this.props.params.id }`, (err, booking) => {
+    this.loadBooking(this.props.params.id);
+  }
+
+  loadBooking(id) {
+    api.get(`/bookings/${ id }`, (err, booking) => {
       if (err) {
-        return console.log(err);
+        this.setState({
+          error : err
+        });
+        return;
       }
       this.bookings.store(booking);
+      if (booking.cart) {
+        this.loadCart(booking.cart.id);
+      }
+    });
+  }
+
+  loadCart(id) {
+    api.get(`/shop/carts/${ id }`, (err, cart) => {
+      if (err) {
+        this.setState({
+          error : err
+        });
+        return;
+      }
+      relay.dispatch('carts', {
+        type : 'store',
+        data : cart
+      });
     });
   }
 
@@ -51,9 +77,6 @@ module.exports = class BookingsView extends React.Component {
       isActing : true
     });
     api.put(`/bookings/${ this.props.params.id }/${ action }`, {}, (err) => {
-      if (err) {
-        console.log(err);
-      }
       this.setState({
         isActing : false
       });
@@ -78,20 +101,81 @@ module.exports = class BookingsView extends React.Component {
   }
 
   /**
+   * Returns a list of fees attached to the booking.
+   * @param  {Object} booking
+   * @return {Object}
+   */
+  renderFees(booking) {
+    if (!booking.cart) {
+      return;
+    }
+    let cart = this.state.carts.find(val => val.id === booking.cart.id);
+    if (cart) {
+      return (
+        <div className="box">
+          <h3>Fees <small>List of fees to charge the booking</small></h3>
+          <div className="box-content">
+            <table className="fee-list">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Price</th>
+                  <th>Quantity</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+              {
+                cart.items.map((item) => {
+                  return (
+                    <tr>
+                      <td>{ item.name }</td>
+                      <td>${ item.price / 100 }</td>
+                      <td>{ item.quantity }</td>
+                      <td>${ item.total / 100 }</td>
+                    </tr>
+                  )
+                })
+              }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      );
+    }
+  }
+
+  /**
    * Renders booking view.
    * @return {Object}
    */
   render() {
+    if (this.state.error) {
+      return (
+        <div id="booking-view">
+          <div className="booking-message">
+            { this.state.error.message }
+          </div>
+        </div>
+      );
+    }
+
     let booking = this.state.bookings.find(val => val.id === parseInt(this.props.params.id));
     if (!booking) {
-      return <div>Loading booking...</div>;
+      return (
+        <div id="booking-view">
+          <div className="booking-message">
+            Loading ...
+          </div>
+        </div>
+      );
     }
+
     return (
       <div id="booking-view">
         <div className="box">
           <h3>Booking <small>Current booking status</small></h3>
           <div className="box-content">
-
             <div className="row">
               <div className="col-md-4 booking-status text-center">
                 <strong>Status</strong>
@@ -112,15 +196,15 @@ module.exports = class BookingsView extends React.Component {
                 </div>
               </div>
             </div>
-
             <div className="row">
               <div className="col-xs-12 booking-actions text-center">
                 { this.renderActions(booking) }
               </div>
             </div>
-
           </div>
         </div>
+
+        { this.renderFees(booking) }
 
         <pre>
           { JSON.stringify(booking, null, 2) }
