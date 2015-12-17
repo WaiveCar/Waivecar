@@ -19,7 +19,7 @@
     "babel-eslint": "4.1.1",
     "bentojs-api": "1.0.4",
     "bentojs-config": "0.0.5",
-    "bentojs-socket": "0.4.0",
+    "bentojs-socket": "0.4.2",
     "co": "4.6.0",
     "co-fs": "1.2.0",
     "co-glob": "0.0.2",
