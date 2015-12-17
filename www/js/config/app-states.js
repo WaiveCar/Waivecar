@@ -307,15 +307,6 @@ module.exports = [
       data: {
         auth: true
       }
-    })
-
-    .state('sandpit', {
-      url: '/sandpit',
-      templateUrl: '/templates/common/sandpit.html',
-      controller: 'EndRideController as ctrl',
-      data: {
-        auth: true
-      }
     });
 
     $stateProvider
