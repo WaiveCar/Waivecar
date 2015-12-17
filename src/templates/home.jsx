@@ -334,5 +334,5 @@ class HomeTemplate extends React.Component {
 // ### Register Template
 templates.register('home', {
   component : HomeTemplate,
-  path      : '/h'
+  path      : '/'
 });

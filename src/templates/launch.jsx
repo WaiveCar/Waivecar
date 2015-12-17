@@ -138,7 +138,7 @@ class LaunchTemplate extends React.Component {
 
 templates.register('launch', {
   component : LaunchTemplate,
-  path      : '/',
+  path      : '/soon',
   onEnter   : (nextState, transition) => {
     policies.isAnonymous(nextState, transition);
   }

@@ -29,10 +29,11 @@ Templates.store = {};
  * @param  {Object} template
  */
 Templates.register = function (id, template) {
+  /*
   if (config.app.environment === 'production' && (id !== 'launch' && id !== 'site')) {
     return;
   }
-
+  */
   Templates.store[id] = template;
 };
 
