@@ -111,6 +111,10 @@ module.exports = angular.module('app.services').factory('$ride', [
     };
 
     service.setCheck = function(key) {
+      if (!$data.active.cars) {
+        $interval.cancel(this.checkForLock);
+      }
+
       var isReady = false;
       for(var index in service.state.check) {
         if (service.state.check.hasOwnProperty(index)) {
@@ -172,6 +176,11 @@ module.exports = angular.module('app.services').factory('$ride', [
 
     service.lockCar = function(id) {
       $data.resources.cars.lock({ id: id }).$promise.then(function() {
+      }).catch($message.error);
+    };
+
+    service.unlockCar = function(id) {
+      $data.resources.cars.unlock({ id: id }).$promise.then(function() {
       }).catch($message.error);
     };
 

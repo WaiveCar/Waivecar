@@ -13,6 +13,13 @@ module.exports = angular.module('app').factory('Cars', [
         params: {
           id: '@id'
         }
+      },
+      unlock: {
+        method: 'PUT',
+        url: $utils.getCustomRoute('cars/:id/unlock'),
+        params: {
+          id: '@id'
+        }
       }
     }));
   }

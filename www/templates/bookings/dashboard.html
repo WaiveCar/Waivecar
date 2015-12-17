@@ -23,8 +23,8 @@
   </ion-content>
   <ion-footer-bar class="no-padding">
     <div class="button-bar">
-      <button type="button" class="button button-balanced" ng-show="data.cars.isLocked" ng-click="ctrl.unlock()">Unlock</button>
-      <button type="button" class="button button-balanced" ng-hide="data.cars.isLocked" ng-click="ctrl.lock()">Lock</button>
+      <button type="button" class="button button-balanced" ng-show="data.cars.isLocked" ng-click="service.unlockCar(data.cars.id)">Unlock</button>
+      <button type="button" class="button button-balanced" ng-hide="data.cars.isLocked" ng-click="service.lockCar(data.cars.id)">Lock</button>
       <button type="button" class="button button-dark" ui-sref="end-ride-options({ id: data.bookings.id })">End Ride</button>
     </div>
   </ion-footer-bar>
