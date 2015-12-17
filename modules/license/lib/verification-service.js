@@ -100,6 +100,11 @@ module.exports = class LicenseVerificationService extends Service {
           outcome    : update.result,
           verifiedAt : new Date()
         });
+        // ### Relay
+        relay.admin(resource, {
+          type : 'update',
+          data : license
+        });
       }
     }
   }
