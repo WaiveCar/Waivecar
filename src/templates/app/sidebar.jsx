@@ -87,37 +87,39 @@ module.exports = class Sidebar extends React.Component {
             </i>
           </button>
 
-          <div className="sidebar-meta">
-            <div className="sidebar-avatar animated flipInX">
-              <div
-                className = "sidebar-avatar-img"
-                style     = {{ background : `url(${ user.getAvatar() }) center center / cover` }}
-              />
+          <div className="sidebar-wrapper">
+            <div className="sidebar-meta">
+              <div className="sidebar-avatar animated flipInX">
+                <div
+                  className = "sidebar-avatar-img"
+                  style     = {{ background : `url(${ user.getAvatar() }) center center / cover` }}
+                />
+              </div>
+              <div className="sidebar-name animated flipInY">
+                <span>{ user.firstName } { user.lastName }</span>
+              </div>
+              <button className="btn-account" onClick={ () => { this.setState({ account : !this.state.account }) }.bind(this) }>
+                My Account
+                <i className="material-icons">{ this.state.account ? 'arrow_drop_up' : 'arrow_drop_down' }</i>
+              </button>
             </div>
-            <div className="sidebar-name animated flipInY">
-              <span>{ user.firstName } { user.lastName }</span>
+
+            <div className={ `sidebar-account${ this.state.account ? ' show' : '' }` }>
+              <h5 className="animated fadeInTop">Account</h5>
+              <ul>
+                { menu.get('sidebar-account').map(this.getLink) }
+              </ul>
             </div>
-            <button className="btn-account" onClick={ () => { this.setState({ account : !this.state.account }) }.bind(this) }>
-              My Account
-              <i className="material-icons">{ this.state.account ? 'arrow_drop_up' : 'arrow_drop_down' }</i>
-            </button>
-          </div>
 
-          <div className={ `sidebar-account${ this.state.account ? ' show' : '' }` }>
-            <h5 className="animated fadeInTop">Account</h5>
-            <ul>
-              { menu.get('sidebar-account').map(this.getLink) }
-            </ul>
-          </div>
+            <div className="sidebar-nav">
+              <h5 className="animated fadeInLeft">Application</h5>
+              <ul>
+                { menu.get('sidebar-user').map(this.getLink) }
+              </ul>
+            </div>
 
-          <div className="sidebar-nav">
-            <h5 className="animated fadeInLeft">Application</h5>
-            <ul>
-              { menu.get('sidebar-user').map(this.getLink) }
-            </ul>
+            { this.admin() }
           </div>
-
-          { this.admin() }
         </div>
       </div>
     );
