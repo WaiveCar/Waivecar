@@ -203,9 +203,6 @@ module.exports = class BookingService extends Service {
       }
     });
 
-    delete booking.userId;
-    delete booking.carId;
-
     return booking;
   }
 
