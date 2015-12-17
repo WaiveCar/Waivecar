@@ -1,15 +1,17 @@
 <ion-view>
-  <ion-content scroll="false" padding="true" class="has-header ion-content--center dark-bg">
+  <ion-content scroll="false" padding="true" class="has-header has-footer ion-content--center dark-bg">
     <div  class="row row-center row-full-height">
       <div class="col col-center">
-<!--    <div ng-if="showVideo" class="video-container">
-          <iframe src="http://www.youtube.com/embed/KBKXu3Kg4yg?rel=0" frameborder="0" allowfullscreen></iframe>
+        <div class="lead-logo">
+          <ng-include class="logo-image" src="'/img/waivecar-mark2.svg'" />
         </div>
- -->
-        <div class="content-container">
-          <div class="lead-logo">
-            <ng-include class="logo-image" src="'/img/waivecar-mark2.svg'" />
-          </div>
+        <div ng-if="showVideo" class="padding video-container">
+          <iframe src="https://www.youtube.com/embed/w8rl3fl1St8" frameborder="0" allowfullscreen></iframe>
+          <br />
+          <br />
+          <button type="button" class="margin-20 button button-block button-balanced" ng-click="toggleVideo()">Got It</button>
+        </div>
+        <div ng-if="!showVideo">
           <div class="padding">
             <h3>ARE YOU READY</h3>
             <p>Please confirm that you:</p>
@@ -21,12 +23,17 @@
             <p class="text-center padding-vertical">When you are ready, tap on "Continue" and start the car normally. Enjoy your ride!</p>
             <button type="button" class="button button-block button-balanced" ng-class="{ 'disabled' : data.bookings.status !== 'ready' }" ng-click="ctrl.start()">Continue</button>
           </div>
-          <div class="footer-information">
-            <p class="text-center">If you need help, please watch our <a class="text-underline" href="" ng-click="toggleVideo()">video tutorial</a>.</p>
-            <p class="text-center">If you have a problem, please <a class="text-underline" ui-sref="problem">report the problem</a>.</p>
-          </div>
         </div>
       </div>
     </div>
   </ion-content>
+  <ion-footer-bar class="no-padding">
+    <div class="text-center footer-full">
+      <p class="text-center">
+        If you need help, please watch our <a class="text-underline" href="" ng-click="toggleVideo()">video tutorial</a>.
+        <br />
+        If you have a problem, please <a class="text-underline" ui-sref="problem">report the problem</a>.
+      </p>
+    </div>
+  </ion-footer-bar>
 </ion-view>

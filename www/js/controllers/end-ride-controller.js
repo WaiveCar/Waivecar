@@ -18,11 +18,14 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     // Concepts:
     // $scope is used to store ref. to the service and the active models in the data svc.
     // $data is used to interact with models, never directly. If direct is required, $data should be refreshed.
-    // Controller is reused by Sanpit and all End Ride views as there is a lot of crossover, but they could each have their own.
-    // TEMP FOR SANDPIT section has the calls required for the Start ride flow. These relate to the buttons on the Sandpit view.
 
     $scope.service = $ride;
     $scope.data = $data.active;
+
+    $scope.showVideo = false;
+    $scope.toggleVideo = function() {
+      $scope.showVideo = !$scope.showVideo;
+    };
 
     this.init = function () {
       var rideServiceReady = $scope.$watch('service.isInitialized', function(isInitialized) {

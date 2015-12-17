@@ -5,79 +5,87 @@
         <div class="lead-logo">
           <ng-include class="logo-image" src="'/img/waivecar-mark2.svg'" />
         </div>
-        <div class="padding" ng-if="service.state.location.valet.confirmed">
-          <h3 class="margin-bottom-10">END RIDE</h3>
-          <div>
-            <p>The WaiveCar valet will end your session as sooon as you give him the WaiveCar key. This window will automatically disappear.</p>
-            <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
-          </div>
+        <div ng-if="showVideo" class="padding video-container">
+          <iframe src="https://www.youtube.com/embed/o_P-47umrK0" frameborder="0" allowfullscreen></iframe>
+          <br />
+          <br />
+          <button type="button" class="margin-20 button button-block button-balanced" ng-click="toggleVideo()">Got It</button>
         </div>
-        <div class="padding" ng-if="service.state.location.valet.confirmed === false">
-          <h3 class="margin-bottom-10">END RIDE</h3>
-          <div>
-            <p>Please complete these tasks before you leave.<br />The list will automatically update.</p>
+        <div ng-if="!showVideo">
+          <div class="padding" ng-if="service.state.location.valet.confirmed">
+            <h3 class="margin-bottom-10">END RIDE</h3>
+            <div>
+              <p>The WaiveCar valet will end your session as sooon as you give him the WaiveCar key. This window will automatically disappear.</p>
+              <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
+            </div>
           </div>
-          <div>
-            <ul class="list-unstyled text-left bold-list margin-top-10">
-              <li ng-show="service.state.check.isKeySecure.isVisible">
-                <label class="pull-right">
-                  <span class="check" ng-show="data.cars.isKeySecure">
-                    <ng-include src="'/img/check-icon.svg'" />
-                  </span>
-                  <span ng-hide="data.cars.isKeySecure">
-                    <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
-                  </span>
-                </label>
-                Key in holder
-              </li>
-              <li ng-show="service.state.check.isIgnitionOn.isVisible">
-                <label class="pull-right">
-                  <span class="check" ng-hide="data.cars.isIgnitionOn">
-                    <ng-include src="'/img/check-icon.svg'" />
-                  </span>
-                  <span ng-show="data.cars.isIgnitionOn">
-                    <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
-                  </span>
-                </label>
-                Engine off
-              </li>
-              <li ng-show="service.state.check.isChargeCardSecure.isVisible">
-                <label class="pull-right">
-                  <span class="check" ng-show="data.cars.isChargeCardSecure">
-                    <ng-include src="'/img/check-icon.svg'" />
-                  </span>
-                  <span ng-hide="data.cars.isChargeCardSecure">
-                    <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
-                  </span>
-                </label>
-                Charging Card
-              </li>
-              <li ng-show="service.state.check.isCharging.isVisible">
-                <label class="pull-right">
-                  <span class="check" ng-show="data.cars.isCharging">
-                    <ng-include src="'/img/check-icon.svg'" />
-                  </span>
-                  <span ng-hide="data.cars.isCharging">
-                    <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
-                  </span>
-                </label>
-                Charging
-              </li>
-            </ul>
+          <div class="padding" ng-if="service.state.location.valet.confirmed === false">
+            <h3 class="margin-bottom-10">END RIDE</h3>
+            <div>
+              <p>Please complete these tasks before you leave.<br />The list will automatically update.</p>
+            </div>
+            <div>
+              <ul class="list-unstyled text-left bold-list margin-top-10">
+                <li ng-show="service.state.check.isKeySecure.isVisible">
+                  <label class="pull-right">
+                    <span class="check" ng-show="data.cars.isKeySecure">
+                      <ng-include src="'/img/check-icon.svg'" />
+                    </span>
+                    <span ng-hide="data.cars.isKeySecure">
+                      <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
+                    </span>
+                  </label>
+                  Key in holder
+                </li>
+                <li ng-show="service.state.check.isIgnitionOn.isVisible">
+                  <label class="pull-right">
+                    <span class="check" ng-hide="data.cars.isIgnitionOn">
+                      <ng-include src="'/img/check-icon.svg'" />
+                    </span>
+                    <span ng-show="data.cars.isIgnitionOn">
+                      <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
+                    </span>
+                  </label>
+                  Engine off
+                </li>
+                <li ng-show="service.state.check.isChargeCardSecure.isVisible">
+                  <label class="pull-right">
+                    <span class="check" ng-show="data.cars.isChargeCardSecure">
+                      <ng-include src="'/img/check-icon.svg'" />
+                    </span>
+                    <span ng-hide="data.cars.isChargeCardSecure">
+                      <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
+                    </span>
+                  </label>
+                  Charging Card
+                </li>
+                <li ng-show="service.state.check.isCharging.isVisible">
+                  <label class="pull-right">
+                    <span class="check" ng-show="data.cars.isCharging">
+                      <ng-include src="'/img/check-icon.svg'" />
+                    </span>
+                    <span ng-hide="data.cars.isCharging">
+                      <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
+                    </span>
+                  </label>
+                  Charging
+                </li>
+              </ul>
+            </div>
+            <div class="text-center padding">
+              <br />
+              <p>Don't forget your things, closing the windows and leaving the car clean.</p>
+              <p>When you're ready and outside the car, tap the below button.</p>
+            </div>
+            <button type="button" class="button button-block button-balanced"  ng-click="service.processCompleteRide()">Finish and Lock Car</button>
           </div>
-          <div class="text-center padding">
-            <br />
-            <p>Don't forget your things, closing the windows and leaving the car clean.</p>
-            <p>When you're ready and outside the car, tap the below button.</p>
-          </div>
-          <button type="button" class="button button-block button-balanced"  ng-click="service.processCompleteRide()">Finish and Lock Car</button>
         </div>
       </div>
     </div>
   </ion-content>
   <ion-footer-bar class="no-padding">
     <div class="text-center footer-full">
-      <a href="">Learn about the WaiveCar return process</a>
+      <a class="text-underline" href="" ng-click="toggleVideo()">Learn about the WaiveCar return process</a>.
     </div>
   </ion-footer-bar>
 </ion-view>

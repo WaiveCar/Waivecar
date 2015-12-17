@@ -27,8 +27,12 @@ module.exports = angular.module('app.controllers').controller('BookingController
   function ($rootScope, $scope, $interval, $state, $auth, LocationService, $data, $ride, $message, $modal) {
 
     $scope.image = 'img/car.jpg';
-    $scope.showVideo = false;
     $scope.distance = 'Unknown';
+
+    $scope.showVideo = false;
+    $scope.toggleVideo = function() {
+      $scope.showVideo = !$scope.showVideo;
+    };
 
     // $scope is used to store ref. to $ride and the active models in $data.
     $scope.service = $ride;
