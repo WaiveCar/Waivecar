@@ -12,6 +12,8 @@
     "instances"   : "1",
     "exec_mode"   : "fork_mode",
     "env": {
+        "DEBUG": "api:*",
+        "DEBUG_COLORS": "1",
         "NODE_ENV": "production"
     }
   }]
