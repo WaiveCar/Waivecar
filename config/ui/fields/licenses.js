@@ -142,10 +142,35 @@ module.exports = {
   },
   status : {
     name      : 'status',
+    required  : true,
+    label     : 'Status',
+    component : 'select',
+    required  : true,
+    helpText  : null,
+    options   : [
+      { name : 'Provided',    value : 'provided' },
+      { name : 'Complete',    value : 'complete' },
+      { name : 'In Progress', value : 'in-progress' }
+    ]
+  },
+  outcome : {
+    name      : 'outcome',
+    required  : true,
+    label     : 'Outcome',
+    component : 'select',
+    required  : true,
+    helpText  : null,
+    options   : [
+      { name : 'Consider', value : 'consider' },
+      { name : 'Clear',    value : 'clear' }
+    ]
+  },
+  report : {
+    name      : 'report',
     component : 'input',
     type      : 'text',
     required  : true,
-    label     : 'Status',
+    label     : 'Report',
     helpText  : null
   },
   fileId : {

@@ -4,6 +4,7 @@ let Booking = Bento.model('Booking');
 let Car     = Bento.model('Car');
 let User    = Bento.model('User');
 let License = Bento.model('License');
+let Card    = Bento.model('Shop/Card');
 let error   = Bento.Error;
 
 module.exports = class Service {
@@ -11,10 +12,11 @@ module.exports = class Service {
   /**
    * Attempts to return the request booking.
    * @param  {Number} bookingId
+   * @param  {Object} relations
    * @return {Object}
    */
-  static *getBooking(bookingId) {
-    let booking = yield Booking.findById(bookingId);
+  static *getBooking(bookingId, relations) {
+    let booking = yield Booking.findById(bookingId, relations);
     if (!booking) {
       throw error.parse({
         code    : `BOOKING_NOT_FOUND`,
@@ -53,8 +55,10 @@ module.exports = class Service {
       if (hasCar) {
         throw error.parse({
           code    : `CAR_IN_PROGRESS`,
-          message : `The user is already assigned to another car.`,
-          data    : hasCar
+          message : `You are already assigned to another waivecar.`,
+          data    : {
+            id : hasCar.id
+          }
         }, 400);
       }
     }
@@ -63,12 +67,12 @@ module.exports = class Service {
       if (parseInt(car.userId) === parseInt(userId)) {
         throw error.parse({
           code    : `CAR_UNAVAILBLE`,
-          message : `The user is already assigned to this car.`
+          message : `You are already assigned to this waivecar.`
         }, 400);
       } else {
         throw error.parse({
           code    : `CAR_UNAVAILBLE`,
-          message : `The requested car is currently not available.`
+          message : `The requested waivecar is currently not available.`
         }, 400);
       }
     }
@@ -99,9 +103,9 @@ module.exports = class Service {
    * @return {Void}
    */
   static hasAccess(user, _user) {
-    if (user.id !== _user.id && _user.role !== 'admin') {
+    if (user.id !== _user.id && !_user.hasAccess('admin')) {
       throw error.parse({
-        error   : `INVALID_PRIVILEGES`,
+        code    : `BOOKING_INVALID_PRIVILEGES`,
         message : `You do not have the required privileges to perform this operation.`
       }, 400);
     }
@@ -120,21 +124,50 @@ module.exports = class Service {
       }
     });
 
-    // ### Check Status
+    let card = yield Card.findOne({
+      where : {
+        userId : user.id
+      }
+    });
 
+    // ### Check User
     if (!user.verifiedEmail) { missing.push('email'); }
     if (!user.verifiedPhone) { missing.push('phone'); }
 
-    if (!license || license.status !== 'completed') {
+    // ### Check Credit Card
+    if (!user.stripeId || !card) { missing.push('credit card'); }
+
+    // ### Check License
+    if (!license || !license.isValid()) {
       missing.push('license');
     }
 
-    // ### Throw Error
+    // we may want this later, but lets leave it out now as it doesnt match the app flow.
+    // if(license && !license.fileId) {
+    //  missing.push('license photo');
+    // }
 
+    // ### Throw Error
     if (missing.length) {
+      let message = `You are not yet approved to book a WaiveCar. Please ensure your `;
+      switch (missing.length) {
+        case 1: {
+          message = `${ message }${ missing[0] } has been provided and validated.`;
+          break;
+        }
+        case 2: {
+          message = `${ message }${ missing.join(' and ') } have been provided and validated.`;
+          break;
+        }
+        default: {
+          message =`${ message }${ missing.slice(0, -1).join(', ') } and ${ missing.slice(-1) } have been provided and validated.`;
+          break;
+        }
+      }
+
       throw error.parse({
         code    : `BOOKING_INVALID_REQUEST`,
-        message : `Your account must be approved for booking before you can make this request.`,
+        message : message,
         data    : {
           required : missing
         }

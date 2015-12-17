@@ -15,6 +15,11 @@ Bento.Register.Model('BookingDetails', 'sequelize', (model, Sequelize) => {
    * @type     Object
    */
   model.schema = {
+
+    /**
+     * The booking id.
+     * @type {Integer}
+     */
     bookingId : {
       type       : Sequelize.INTEGER,
       allowNull  : false,
@@ -23,15 +28,56 @@ Bento.Register.Model('BookingDetails', 'sequelize', (model, Sequelize) => {
         key   : 'id'
       }
     },
+
+    /**
+     * The detail type of the ride, start, or end.
+     * @type {Enum}
+     */
     type : {
       type         : Sequelize.ENUM('start', 'end'),
       defaultValue : 'start'
     },
-    time      : { type : Sequelize.DATE },
-    latitude  : { type : Sequelize.FLOAT(10, 7) },
-    longitude : { type : Sequelize.FLOAT(10, 7) },
-    odometer  : { type : Sequelize.INTEGER },
-    charge    : { type : Sequelize.INTEGER }
+
+    /**
+     * Latitude location of the car.
+     * @type {Float}
+     */
+    latitude : {
+      type : Sequelize.FLOAT(10, 7)
+    },
+
+    /**
+     * Longitude location of the car.
+     * @type {Float}
+     */
+    longitude : {
+      type : Sequelize.FLOAT(10, 7)
+    },
+
+    /**
+     * The aproximate location address of the car.
+     * @type {String}
+     */
+    address : {
+      type : Sequelize.STRING
+    },
+
+    /**
+     * The total car mileage.
+     * @type {Integer}
+     */
+    mileage : {
+      type : Sequelize.INTEGER
+    },
+
+    /**
+     * The charge level of the car.
+     * @type {Integer}
+     */
+    charge : {
+      type : Sequelize.INTEGER
+    }
+
   };
 
   return model;

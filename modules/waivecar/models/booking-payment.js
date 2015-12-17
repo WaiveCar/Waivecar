@@ -16,16 +16,8 @@ Bento.Register.Model('BookingPayment', 'sequelize', function(model, Sequelize) {
    */
   model.schema = {
 
-    // ### Payment ID
-    // The payment this payment belongs to.
-
-    paymentId : {
-      type       : Sequelize.INTEGER,
-      primaryKey : true
-    },
-
     // ### Booking ID
-    // The booking this payment belongs to.
+    // The booking id the payment is attached to.
 
     bookingId : {
       type       : Sequelize.INTEGER,
@@ -34,21 +26,17 @@ Bento.Register.Model('BookingPayment', 'sequelize', function(model, Sequelize) {
         model : 'bookings',
         key   : 'id'
       }
+    },
+
+    // ### Order ID
+    // The id of the order the payment is connected to.
+
+    orderId : {
+      type      : Sequelize.INTEGER,
+      allowNull : false
     }
 
   };
-
-  /**
-   * The relation definitions of your model.
-   * @property relations
-   * @type     Array
-   */
-  model.relations = [
-    'BookingPaymentItem',
-    function(BookingPaymentItem) {
-      this.hasMany(BookingPaymentItem, { as : 'items',  foreignKey : 'paymentId' });
-    }
-  ];
 
   return model;
 

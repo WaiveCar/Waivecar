@@ -2,7 +2,8 @@
 
 module.exports = function *() {
   yield require('./jobs');
-  yield require('./locations');
   yield require('./cars');
-  yield require('./fees');
+  yield require('./homebase');
+  yield require('./stations');
+  yield require('./valets');
 };

@@ -20,6 +20,70 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       primaryKey : true
     },
 
+    // ### Car Status
+    // The current status of the car, if its available and what user is
+    // currenty in possession of the car.
+
+    userId : {
+      type       : Sequelize.INTEGER,
+      references : {
+        model : 'users',
+        key   : 'id'
+      }
+    },
+
+    isAvailable : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : true
+    },
+
+    isLocked : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
+    isImmobilized : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
+    isIgnitionOn : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
+    isKeySecure : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
+    isChargeCardSecure : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
+    isCharging : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
+    isQuickCharging : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
+    isOnChargeAdapter : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
+    isParked : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
+    // ### Car Details
+
     make : {
       type : Sequelize.STRING(28)
     },
@@ -37,6 +101,10 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     },
 
     license : {
+      type : Sequelize.STRING(88)
+    },
+
+    vin : {
       type : Sequelize.STRING(88)
     },
 
@@ -72,25 +140,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       type : Sequelize.DECIMAL(10, 2)
     },
 
-    isImmobilized : {
-      type         : Sequelize.BOOLEAN,
-      defaultValue : false
-    },
-
-    ignition : {
-      type : Sequelize.STRING(28)
-    },
-
-    isLocked : {
-      type         : Sequelize.BOOLEAN,
-      defaultValue : false
-    },
-
     lockLastCommand : {
-      type : Sequelize.STRING(28)
-    },
-
-    keyfob : {
       type : Sequelize.STRING(28)
     },
 
@@ -114,45 +164,8 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       type : Sequelize.DECIMAL(10, 2)
     },
 
-    isCharging : {
-      type         : Sequelize.BOOLEAN,
-      defaultValue : false
-    },
-
-    isQuickCharging : {
-      type         : Sequelize.BOOLEAN,
-      defaultValue : false
-    },
-
-    isOnChargeAdapter : {
-      type         : Sequelize.BOOLEAN,
-      defaultValue : false
-    },
-
-    isParked : {
-      type         : Sequelize.BOOLEAN,
-      defaultValue : false
-    },
-
     range : {
       type : Sequelize.DECIMAL(10, 2)
-    },
-
-    // ### Car Status
-    // This holds information such as the availability of the car
-    // and the current user who is occupying the car.
-
-    userId : {
-      type       : Sequelize.INTEGER,
-      references : {
-        model : 'users',
-        key   : 'id'
-      }
-    },
-
-    isAvailable : {
-      type         : Sequelize.BOOLEAN,
-      defaultValue : true
     },
 
     positionUpdatedAt : {
@@ -207,8 +220,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
      */
     removeDriver : function *() {
       yield this.update({
-        userId      : null,
-        isAvailable : true
+        userId : null
       });
     }
 

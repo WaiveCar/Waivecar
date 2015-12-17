@@ -7,8 +7,8 @@ module.exports = {
     label     : 'Id',
     helpText  : null
   },
-  customerId : {
-    name      : 'customerId',
+  userId : {
+    name      : 'userId',
     component : 'input',
     type      : 'text',
     required  : true,
@@ -24,7 +24,7 @@ module.exports = {
       value  : 'id'
     },
     required : true,
-    label    : 'Select Car',
+    label    : 'Car',
     helpText : null
   },
   paymentId : {
@@ -43,8 +43,8 @@ module.exports = {
     label     : 'Photos',
     helpText  : null
   },
-  state : {
-    name      : 'state',
+  status : {
+    name      : 'status',
     component : 'input',
     type      : 'text',
     required  : true,
@@ -54,7 +54,7 @@ module.exports = {
   createdAt : {
     name      : 'createdAt',
     component : 'input',
-    type      : 'text',
+    type      : 'date',
     required  : true,
     label     : 'Created At',
     helpText  : null
@@ -62,7 +62,7 @@ module.exports = {
   updatedAt : {
     name      : 'updatedAt',
     component : 'input',
-    type      : 'text',
+    type      : 'date',
     required  : true,
     label     : 'Updated At',
     helpText  : null

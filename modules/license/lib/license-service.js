@@ -27,8 +27,11 @@ module.exports = class LicenseService extends Service {
     let license = new License(data);
 
     // ### create user in verification provider and establish link.
-    let userLink = yield Verification.createUserLink(user, license, _user);
-    license.linkedUserId = userLink.id;
+    if (license.birthDate) {
+      let user = yield this.getUser(license.userId);
+      let userLink = yield Verification.createUserLink(user, license, _user);
+      license.linkedUserId = userLink.id;
+    }
 
     yield license.save();
 
@@ -42,31 +45,31 @@ module.exports = class LicenseService extends Service {
 
   /**
    * Returns license index.
-   * @param  {Object} role
+   * @param  {Object} query
    * @param  {Object} _user
    * @return {Object}
    */
-  static *index(query, role, _user) {
-    if (role.isAdmin()) {
-      return yield License.find(queryParser(query, {
-        where : {
-          userId       : queryParser.NUMBER,
-          number       : queryParser.STRING,
-          firstName    : queryParser.STRING,
-          middleName   : queryParser.STRING,
-          lastName     : queryParser.STRING,
-          birthDate    : queryParser.DATE,
-          country      : queryParser.STRING,
-          state        : queryParser.STRING,
-          collectionId : queryParser.STRING
-        }
-      }));
-    }
-    return yield License.find({
+  static *index(query, _user) {
+    query = queryParser(query, {
       where : {
-        userId : _user.id
+        userId       : queryParser.NUMBER,
+        number       : queryParser.STRING,
+        firstName    : queryParser.STRING,
+        middleName   : queryParser.STRING,
+        lastName     : queryParser.STRING,
+        birthDate    : queryParser.DATE,
+        country      : queryParser.STRING,
+        state        : queryParser.STRING,
+        collectionId : queryParser.STRING
       }
     });
+
+    if (_user.hasAccess('admin')) {
+      return yield License.find(query);
+    }
+
+    query.where.userId = _user.id;
+    return yield License.find(query);
   }
 
   /**
@@ -96,6 +99,12 @@ module.exports = class LicenseService extends Service {
     let user    = yield this.getUser(license.userId);
 
     this.hasAccess(user, _user);
+
+    // ### create user in verification provider and establish link.
+    if (!license.linkedUserId) {
+      let userLink = yield Verification.createUserLink(user, data, _user);
+      data.linkedUserId = userLink.id;
+    }
 
     // ### Update License
     yield license.update(data);

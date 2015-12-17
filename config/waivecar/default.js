@@ -12,13 +12,52 @@ module.exports = {
 
   waivecar : {
     booking : {
-      timer : {
-        value : 15,
-        type  : 'minutes'
+      timers : {
+        autoCancel : {
+          value : 15,
+          type  : 'minutes'
+        },
+        freeRideReminder : {
+          value : 110,
+          type  : 'minutes'
+        }
       }
     },
-    cars : {
-      includeMock : false
+    car : {
+      staleLimit : 60,
+      sync       : {
+        value : 5,
+        type  : 'minutes'
+      },
+      meta : {
+        DB000017DC73EA01 : {
+          license : 'WAIVE1'
+        },
+        E5000017DC1E8A01 : {
+          license : 'WAIVE2'
+        },
+        '2E000017DC47E801' : {
+          license : 'WAIVE3'
+        },
+        '2C000017DC44D001' : {
+          license : 'WAIVE4'
+        },
+        D4000017DC3AD101 : {
+          license : 'WAIVE5'
+        },
+        EE000017DC380D01 : {
+          license : 'WAIVE6'
+        },
+        D2000017DC65FC01 : {
+          license : 'WAIVE7'
+        }
+      }
+    },
+    mock : {
+      cars     : false,
+      homebase : true,
+      stations : true,
+      valets   : true
     },
     invers : {
       uri     : 'https://api.cloudboxx.invers.com/api',

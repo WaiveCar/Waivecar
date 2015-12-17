@@ -61,11 +61,13 @@ module.exports = function(app) {
         };
 
       } else if (this.status === 501) {
+        log.debug(`${ err.status } > ${ err.message }`);
         this.body = {
           code    : 'NOT_IMPLEMENTED',
           message : 'This service is currently not supporting this request'
         };
       } else {
+        log.debug(`${ err.status } > ${ err.message }`);
         this.body = response;
       }
     }

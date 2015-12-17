@@ -1,11 +1,14 @@
 'use strict';
 
+let co            = require('co');
+let parallel      = require('co-parallel');
 let request       = require('co-request');
 let moment        = require('moment');
 let queue         = Bento.provider('queue');
 let queryParser   = Bento.provider('sequelize/helpers').query;
 let User          = Bento.model('User');
 let Car           = Bento.model('Car');
+let changeCase    = Bento.Helpers.Case;
 let error         = Bento.Error;
 let relay         = Bento.Relay;
 let config        = Bento.config.waivecar;
@@ -22,11 +25,12 @@ module.exports = class CarService extends Service {
    * @param  {Object} _user
    * @return {Array}
    */
-  static *index(query, role, _user) {
+  static *index(query, _user) {
     return yield Car.find(queryParser(query, {
       where : {
-        userId : queryParser.NUMBER,
-        status : queryParser.STRING
+        id          : queryParser.STRING,
+        userId      : queryParser.NUMBER,
+        isAvailable : queryParser.BOOLEAN
       }
     }));
   }
@@ -42,6 +46,25 @@ module.exports = class CarService extends Service {
   }
 
   /**
+   * @param  {Number} id
+   * @param  {Object}  payload
+   * @param  {Object} _user
+   * @return {Mixed}
+   */
+  static *update(id, payload, _user) {
+    this.hasAccess(_user);
+    let model = yield Car.findById(id);
+    yield model.update(payload);
+
+    relay.emit('cars', {
+      type : 'update',
+      data : model.toJSON()
+    });
+
+    return model;
+  }
+
+  /**
    * A convenience method to update the local Car (to enable pre-save model transformations)
    * @param  {Number} id          car Id
    * @param  {Object} data        update data to persist
@@ -49,14 +72,20 @@ module.exports = class CarService extends Service {
    * @param  {Object} _user       user (optional)
    * @return {Object}             updated Car
    */
-  static *update(id, data, existingCar, _user) {
+  static *syncUpdate(id, data, existingCar, _user) {
     if (!existingCar) {
       existingCar = yield Car.findById(id);
     }
 
+    if (!existingCar.license) {
+      let meta = config.car.meta[existingCar.id];
+      if (meta) {
+        data.license = meta.license;
+      }
+    }
+
     // Is car stationary?
-    if (data.distanceSinceLastRead === 0) {
-      log.debug('CarService : update : car appears to be stationary');
+    if (data.currentSpeed === 0) { // data.distanceSinceLastRead === 0) {
 
       // If the distance last read was also 0, the car is STILL stopped so dont treat this update as an update.
       if (existingCar.distanceSinceLastRead === 0) {
@@ -71,7 +100,7 @@ module.exports = class CarService extends Service {
         delete data.calculatedSpeed;
       }
 
-      data.isParked = (data.currentSpeed === 0) && (data.ignition === 'off');
+      data.isParked = (data.currentSpeed === 0) && (!data.isIgnitionOn);
     }
 
     yield existingCar.update(data);
@@ -88,14 +117,54 @@ module.exports = class CarService extends Service {
     return existingCar;
   }
 
+  static *syncCar(device, cars, allCars) {
+    let existingCar = cars.find(c => c.id === device.id);
+    if (existingCar) {
+      let updatedCar = yield this.getDevice(device.id);
+      if (updatedCar) {
+        log.debug(`Cars : Sync : updating ${ device.id }.`);
+        yield this.syncUpdate(existingCar.id, updatedCar, existingCar);
+      } else {
+        log.debug(`Cars : Sync : failed to retrieve ${ device.id } to update database.`);
+      }
+    } else {
+      // If Device does not match any Car then add it to the database.
+      let excludedCar = allCars.find(c => c.id === device.id);
+      if (!excludedCar) {
+        let isMockCar = [ 'EE000017DC652701', 'C0000017DC247801' ].indexOf(device.id) > -1;
+        if (!config.mock.cars && isMockCar) {
+          // this is a dev kit, ignore update.
+          log.debug(`Cars : Sync : skipping DevKit ${ device.id }.`);
+        } else  {
+          let newCar = yield this.getDevice(device.id);
+          if (newCar) {
+            let car = new Car(newCar);
+            let meta = config.car.meta[car.id];
+            if (meta) {
+              car.license = meta.license;
+            }
+
+            log.debug(`Cars : Sync : adding ${ device.id }.`);
+            yield car.upsert();
+          } else {
+            log.debug(`Cars : Sync : failed to retrieve ${ device.id } to add to database.`);
+          }
+        }
+      } else {
+        // If Device was found in database but not in our filtered list, ignore.
+        log.debug(`Cars : Sync : skipping ${ device.id }.`);
+      }
+    }
+  }
+
   /**
    * [syncCars description]
    * @param  {Integer}  refreshAfter How many minutes can a Car go without being resynced (defaults to 15).
    * @return {Array}    all cars.
    */
-  static *syncCars(refreshAfter) {
+  static *syncCars() {
     log.debug('CarService : syncCars : start');
-    refreshAfter = refreshAfter || 15;
+    let refreshAfter = config.car.staleLimit || 15;
 
     // Retrieve all local cars.
     let allCars = yield Car.find();
@@ -120,35 +189,8 @@ module.exports = class CarService extends Service {
     let devices = yield this.getDevices();
     log.debug(`Cars : Sync : ${ devices.length } devices available for sync.`);
 
-    for (let i = 0, len = devices.length; i < len; i++) {
-      // If Device matches a Car in our filtered list for updates, update
-      let device = devices[i];
-      let existingCar = cars.find(c => c.id === device.id);
-
-      if (existingCar) {
-        let updatedCar = yield this.getDevice(device.id);
-        log.debug(`Cars : Sync : updating ${ device.id }.`);
-        yield this.update(existingCar.id, updatedCar, existingCar);
-      } else {
-        // If Device does not match any Car then add it to the database.
-        let excludedCar = allCars.find(c => c.id === device.id);
-        if (!excludedCar) {
-          let isMockCar = [ 'EE000017DC652701', 'C0000017DC247801' ].indexOf(device.id) > -1;
-          if (!config.cars.includeMock && isMockCar) {
-            // this is a dev kit, ignore update.
-            log.debug(`Cars : Sync : skipping DevKit ${ device.id }.`);
-          } else  {
-            let newCar = yield this.getDevice(device.id);
-            let car = new Car(newCar);
-            log.debug(`Cars : Sync : adding ${ device.id }.`);
-            yield car.upsert();
-          }
-        } else {
-          // If Device was found in database but not in our filtered list, ignore.
-          log.debug(`Cars : Sync : skipping ${ device.id }.`);
-        }
-      }
-    }
+    let syncs = devices.map(device => this.syncCar(device, cars, allCars));
+    let result = yield parallel(syncs, 20);
 
     return yield Car.find();
   }
@@ -163,7 +205,11 @@ module.exports = class CarService extends Service {
    */
   static *getDevices(_user) {
     let devices = yield this.request('/devices?active=true&limit=100');
-    return devices.data;
+    if (devices) {
+      return devices.data;
+    }
+
+    return null;
   }
 
   /**
@@ -174,8 +220,12 @@ module.exports = class CarService extends Service {
    * @return {Array}
    */
   static *getDevice(id, _user) {
-    let status = yield this.request(`/devices/${ id }/status`);
-    return this.transformDeviceToCar(id, status);
+    let status = yield this.request(`/devices/${ id }/status`, { timeout : 10000 });
+    if (status) {
+      return this.transformDeviceToCar(id, status);
+    }
+
+    return null;
   }
 
   /**
@@ -186,19 +236,38 @@ module.exports = class CarService extends Service {
    * @return {Object} updated Car
    */
   static *unlockCar(id, _user) {
-    return yield this.executeCommand(id, 'central_lock', 'unlock', user);
+    return yield this.executeCommand(id, 'central_lock', 'unlock', _user);
   }
 
   static *lockCar(id, _user) {
-    return yield this.executeCommand(id, 'central_lock', 'lock', user);
+    return yield this.executeCommand(id, 'central_lock', 'lock', _user);
   }
 
   static *unlockImmobilzer(id, _user) {
-    return yield this.executeCommand(id, 'immobilizer', 'unlock', user);
+    return yield this.executeCommand(id, 'immobilizer', 'unlock', _user);
   }
 
   static *lockImmobilzer(id, _user) {
-    return yield this.executeCommand(id, 'immobilizer', 'lock', user);
+    return yield this.executeCommand(id, 'immobilizer', 'lock', _user);
+  }
+
+  static *lockAndImmobilze(id, _user) {
+    let existingCar = yield Car.findById(id);
+    if (!existingCar) {
+      let error    = new Error(`CAR: ${ id }`);
+      error.code   = 'CAR_SERVICE';
+      error.status = 404;
+      error.data   = 'NA';
+      throw error;
+    }
+
+    let payload = changeCase.toSnake({
+      centralLock : 'locked',
+      immobilizer : 'locked'
+    });
+    let status = yield this.request(`/devices/${ id }/status`, 'PATCH', payload);
+    let updatedCar = this.transformDeviceToCar(id, status);
+    return yield this.syncUpdate(id, updatedCar, existingCar, _user);
   }
 
   /**
@@ -223,7 +292,7 @@ module.exports = class CarService extends Service {
     payload[part] = `${ command }ed`;
     let status = yield this.request(`/devices/${ id }/status`, 'PATCH', payload);
     let updatedCar = this.transformDeviceToCar(id, status);
-    return yield this.update(id, updatedCar, existingCar, _user);
+    return yield this.syncUpdate(id, updatedCar, existingCar, _user);
   }
 
   /**
@@ -247,27 +316,34 @@ module.exports = class CarService extends Service {
     let car = {
       id                            : id,
       lockLastCommand               : data['central_lock_last_command'],
-      keyfob                        : data['keyfob'],
+      isKeySecure                   : this.convertToBoolean(data, 'keyfob', { in : true, out : false }),
       bluetooth                     : data['bluetooth_connection'],
       alarmInput                    : data['alarm_input'],
       mileageSinceImmobilizerUnlock : data['mileage_since_immobilizer_unlock'],
       totalMileage                  : data['mileage'],
       boardVoltage                  : data['board_voltage'],
       charge                        : data['fuel_level'],
-      ignition                      : data['ignition'],
+      isIgnitionOn                  : this.convertToBoolean(data, 'ignition', { on : true, off : false }),
       currentSpeed                  : data['speed'],
       isImmobilized                 : this.convertToBoolean(data, 'immobilizer', { locked : true, unlocked : false }),
       isLocked                      : this.convertToBoolean(data, 'central_lock', { locked : true, unlocked : false })
     };
 
+    if (data['rfid_tag_states']) {
+      let cards = data['rfid_tag_states'];
+      car.isChargeCardSecure = this.convertToBoolean(cards, '1', { in : true, out : false });
+    }
+
     if (data['position']) {
       let position = data['position'];
-      car.latitude              = position['lat'];
-      car.longitude             = position['lon'];
-      car.distanceSinceLastRead = position['meters_driven_since_last_fix'];
-      car.locationQuality       = position['quality'];
-      car.calculatedSpeed       = position['speed_over_ground'];
-      car.positionUpdatedAt     = position['timestamp'];
+      if (position['lat']) {
+        car.latitude  = position['lat'];
+        car.longitude = position['lon'];
+        car.distanceSinceLastRead = position['meters_driven_since_last_fix'];
+        car.locationQuality       = position['quality'];
+        car.calculatedSpeed       = position['speed_over_ground'];
+        car.positionUpdatedAt     = position['timestamp'];
+      }
     }
 
     if (data['electric_vehicle_state']) {
@@ -299,29 +375,63 @@ module.exports = class CarService extends Service {
    * @param  {Object} data
    * @return {Object}          Response Object
    */
-  static *request(resource, method, data) {
-    let options = {
+  static *request(resource, options, data) {
+    options = options || {};
+    if (typeof options === 'string') {
+      options = {
+        method : options
+      };
+    }
+
+    let baseOptions = {
       url     : config.invers.uri + resource,
-      method  : method || 'GET',
-      headers : config.invers.headers
+      method  : options.method || 'GET',
+      headers : config.invers.headers,
+      timeout : options.timeout || 600000
     };
 
     if (data) {
-      options.body = JSON.stringify(data);
+      baseOptions.body = JSON.stringify(data);
     }
 
-    let result   = yield request(options);
-    let response = result.toJSON();
-    let statusCode = response ? response.statusCode : 400;
-    if (statusCode !== 200) {
+    try {
+      let result   = yield request(baseOptions);
+      let response = result.toJSON();
+      let statusCode = response ? response.statusCode : 400;
+      if (statusCode !== 200) {
+        log.error(error.parse({
+          code    : `CAR_SERVICE`,
+          message : `CAR: ${ resource }`,
+          data    : response.body ? JSON.parse(response.body) : response
+        }, statusCode));
+        return null;
+      }
+
+      return JSON.parse(response.body);
+    } catch(err) {
+        log.error(error.parse({
+          code    : `CAR_SERVICE`,
+          message : `CAR: ${ resource } - ${ err.message }`,
+          data    : { error : err.message },
+          stack   : err.stack
+        }, 503));
+        return null;
+    }
+  }
+
+  /**
+   * Only allow access if the requesting user is the administrator.
+   * @param  {Object}  user  The user to be modified.
+   * @param  {Object}  _user The user requesting modification.
+   * @return {Boolean}
+   */
+  static hasAccess(user) {
+    if (!user.hasAccess('admin')) {
       throw error.parse({
-        code    : `CAR_SERVICE`,
-        message : `CAR: ${ resource }`,
-        data    : response.body ? JSON.parse(response.body) : response
-      }, statusCode);
+        error   : `INVALID_PRIVILEGES`,
+        message : `You do not have the required privileges to perform this operation.`
+      }, 403);
     }
-
-    return JSON.parse(response.body);
   }
 
 };

@@ -1,19 +1,23 @@
 'use strict';
 
-let Service        = require('./classes/service');
-let PaymentHandler = require('./classes/payment');
-let queue          = Bento.provider('queue');
-let queryParser    = Bento.provider('sequelize/helpers').query;
+let Service     = require('./classes/service');
+let cars        = require('./car-service');
+let fees        = require('./fee-service');
+let queue       = Bento.provider('queue');
+let queryParser = Bento.provider('sequelize/helpers').query;
+let error       = Bento.Error;
+let relay       = Bento.Relay;
+let config      = Bento.config.waivecar;
+
+// ### Models
+
 let File           = Bento.model('File');
-let Payment        = Bento.model('Payment');
+let Payment        = Bento.model('Shop/Order');
 let User           = Bento.model('User');
 let Car            = Bento.model('Car');
 let Booking        = Bento.model('Booking');
 let BookingDetails = Bento.model('BookingDetails');
 let BookingPayment = Bento.model('BookingPayment');
-let error          = Bento.Error;
-let relay          = Bento.Relay;
-let config         = Bento.config.waivecar;
 
 module.exports = class BookingService extends Service {
 
@@ -67,21 +71,16 @@ module.exports = class BookingService extends Service {
     try {
       yield booking.save();
     } catch (err) {
-      yield car.removeDriver();
+      yield car.removeDriver(); // Remove driver if we failed to save the booking
       throw err;
     }
 
-    yield booking.setCancelTimer(config.booking.timer);
+    yield booking.setCancelTimer(config.booking.timers.autoCancel);
 
     // ### Relay Booking
 
-    let payload = {
-      type : 'store',
-      data : booking.toJSON()
-    };
-
-    relay.user(user.id, 'bookings', payload);
-    relay.admin('bookings', payload);
+    car.relay('update');
+    booking.relay('store', user);
 
     // ### Return Booking
 
@@ -113,25 +112,47 @@ module.exports = class BookingService extends Service {
   /**
    * Returns a list of bookings.
    * @param  {Object} query
-   * @param  {String} role
    * @param  {Object} _user
    * @return {Array}
    */
-  static *index(query, role, _user) {
-    if (role.isAdmin()) {
-      return yield Booking.find(queryParser(query, {
-        where : {
-          userId : queryParser.NUMBER,
-          carId  : queryParser.STRING,
-          status : queryParser.STRING
-        }
-      }));
-    }
-    return yield Booking.find({
+  static *index(query, _user) {
+    let bookings    = [];
+    let order       = query.order   ? query.order.split(',') : null;
+    let showDetails = query.details ? true : false;
+
+    // ### Parse Query
+
+    query = queryParser(query, {
       where : {
-        userId : _user.id
+        userId : queryParser.NUMBER,
+        carId  : queryParser.STRING,
+        status : queryParser.STRING
       }
     });
+
+    if (order) {
+      query.order = [ order ];
+    }
+
+    // ### Query Bookings
+
+    if (_user.hasAccess('admin')) {
+      bookings = yield Booking.find(query);
+    } else {
+      query.where.userId = _user.id;
+      bookings = yield Booking.find(query);
+    }
+
+    // ### Prepare Bookings
+    // Prepares bookings with payment, and file details.
+
+    if (showDetails) {
+      for (let i = 0, len = bookings.length; i < len; i++) {
+        bookings[i] = yield this.show(bookings[i].id, _user);
+      }
+    }
+
+    return bookings;
   }
 
   /**
@@ -141,7 +162,7 @@ module.exports = class BookingService extends Service {
    * @return {Object}
    */
   static *show(id, _user) {
-    let booking = yield Booking.findById(id, {
+    let relations = {
       include : [
         {
           model : 'BookingDetails',
@@ -150,20 +171,24 @@ module.exports = class BookingService extends Service {
         {
           model      : 'BookingPayment',
           as         : 'payments',
-          attributes : [ 'paymentId' ]
+          attributes : [ 'orderId' ]
         }
       ]
-    });
-    let user = yield this.getUser(booking.userId);
+    };
+
+    // ### Get Booking
+
+    let booking = yield this.getBooking(id, relations);
+    let car     = yield Car.findById(booking.carId);
+    let user    = yield this.getUser(booking.userId);
 
     this.hasAccess(user, _user);
 
     // ### Prepare Booking
 
-    booking = booking.toJSON();
-
-    // ### Append Payments
-
+    booking.user     = user;
+    booking.car      = yield Car.findById(booking.carId);
+    booking.cart     = yield fees.get(booking.cartId, _user);
     booking.payments = yield Payment.find({
       where : {
         id : booking.payments.map((val) => {
@@ -172,11 +197,9 @@ module.exports = class BookingService extends Service {
       }
     });
 
-    // ### Append Files
-
     booking.files = yield File.find({
       where : {
-        collectionId : booking.collectionId
+        collectionId : booking.collectionId || undefined
       }
     });
 
@@ -188,27 +211,48 @@ module.exports = class BookingService extends Service {
    | Update Methods
    |--------------------------------------------------------------------------------
    |
-   | Service update methods are used for triggering status updates on the booking
-   | via a collection of PUT endpoints.
-   |
-   | start() => PUT /bookings/:id/start
-   |
-   |  The user has arrived at the car and confirms that they want to start the
-   |  booking. At this point we unlock the car, and update the status of the
-   |  booking. From this point cancellation is no longer possible, and any
-   |  automatic cancelation timers are removed.
-   |
-   | ready() => PUT /bookings/:id/ready
-   |
-   |  The user has removed the key from the fob and is ready to start their drive.
-   |  We send a request to check if the key is out before unlocking the immobilizer
-   |  allowing the user to start the engine.
-   |
-   | end() => PUT /bookings/:id/end
-   |
-   |  The ride has ended, flow to be finalized...
+   | Updates the booking with the provided action.
+   | Endpoint : PUT /bookings/:id/:action
+   | Actions  : ready|start|end|complete|close
    |
    */
+
+  /**
+   * Unlocks the car and lets the driver prepeare before starting the ride.
+   * @param  {Number} id    The booking ID.
+   * @param  {Object} _user
+   * @return {Object}
+   */
+  static *ready(id, _user) {
+    let booking = yield this.getBooking(id);
+    let user    = yield this.getUser(booking.userId);
+    let car     = yield this.getCar(booking.carId);
+
+    this.hasAccess(user, _user);
+
+    // ### Verify Status
+
+    if (booking.status !== 'reserved') {
+      throw error.parse({
+        code    : `BOOKING_REQUEST_INVALID`,
+        message : `You must be in 'reserved' status to start your ride, you are currently in '${ booking.getStatus() }' status.`
+      }, 400);
+    }
+
+    // ### Update Status & Remove Cancel Timer
+
+    yield booking.ready();
+    yield booking.delCancelTimer();
+    yield cars.unlockCar(car.id, _user);
+
+    // ### Relay Update
+
+    car.relay('update');
+    // TEMP: relayUpdate does not appear to work:
+    booking.relay('update');
+    // END TEMP
+    yield this.relayUpdate(booking.id, user, _user);
+  }
 
   /**
    * Starts the booking and initiates the drive.
@@ -217,51 +261,39 @@ module.exports = class BookingService extends Service {
    * @return {Object}
    */
   static *start(id, _user) {
-    let booking   = yield this.getBooking(id);
-    let car       = yield this.getCar(booking.carId);
-    let user      = yield this.getUser(booking.userId);
-    let checkList = [ 'in-progress', 'pending-payment', 'cancelled', 'completed' ];
+    let booking = yield this.getBooking(id);
+    let user    = yield this.getUser(booking.userId);
+    let car     = yield this.getCar(booking.carId);
 
     this.hasAccess(user, _user);
 
-    // ### Check Status
-    // A booking can only be started once certain criterias are met, we need to ensure that
-    // the status is correct in corelation with the booking.
+    // ### Verify Status
 
-    if (checkList.indexOf(booking.status) !== -1) {
+    if (booking.status !== 'ready') {
       throw error.parse({
         code    : `BOOKING_REQUEST_INVALID`,
-        message : `You cannot start a ride for a booking that is ${ booking.getStatus() }`
+        message : `You must be in 'ready' status to start your ride, you are currently in '${ booking.getStatus() }' status.`
       }, 400);
     }
 
-    /* DEPRECATED? No longer need to pre-authorize payments (only need to validate that card is active)
-    if (booking.status !== 'payment-authorized') {
-      throw error.parse({
-        code    : `MISSING_PAYMENT_AUTHORIZATION`,
-        message : `The booking must be authorized for payment before we can start the ride.`
-      }, 400);
-    }
-    */
+    // ### Start Booking
+    // 1. Log the initial details of the booking and car details.
+    // 2. Start the free ride remind timer.
+    // 3. Update the booking status to 'started'.
+    // 4. Return the immobilizer unlock results.
 
-    // ### Create Details
-    // Creates a detail record of the start of the ride.
+    yield this.logDetails('start', booking, car);
+    yield booking.setFreeRideReminder(config.booking.timers.freeRideReminder);
+    yield booking.start();
+    yield cars.unlockImmobilzer(car.id, _user);
 
-    let details = new BookingDetails({
-      bookingId : booking.id,
-      type      : 'start',
-      time      : new Date(),
-      latitude  : car.latitude,
-      longitude : car.longitude,
-      odometer  : 0,
-      charge    : 0
-    });
-    yield details.save();
+    // ### Relay Update
 
-    // ### Update Booking Status
-
-    yield booking.inProgress();
-    yield booking.delCancelTimer();
+    car.relay('update');
+    // TEMP: relayUpdate does not appear to work:
+    booking.relay('update');
+    // END TEMP
+    yield this.relayUpdate(booking.id, user, _user);
   }
 
   /**
@@ -270,48 +302,161 @@ module.exports = class BookingService extends Service {
    * @param  {Object} _user
    * @return {Object}
    */
-  static *end(id, paymentId, _user) {
-    let booking        = yield this.getBooking(id);
-    let bookingPayment = yield BookingPayment.findById(paymentId);
-    let car            = yield this.getCar(booking.carId);
-    let user           = yield this.getUser(booking.userId);
+  static *end(id, _user) {
+    let booking = yield this.getBooking(id);
+    let car     = yield this.getCar(booking.carId);
+    let user    = yield this.getUser(booking.userId);
 
-    // ### Verify Payment
-
-    if (!bookingPayment) {
-      throw error.parse({
-        code    : `BOOKING_PAYMENT_INVALID`,
-        message : `The provided payment identifier is invalid`
-      }, 400);
-    }
+    this.hasAccess(user, _user);
 
     // ### Status Check
-    // Only bookings which are in a progress state can be ended through this endpoint.
+    // Go through end booking checklist.
 
-    if (booking.status !== 'in-progress') {
+    if ([ 'ready', 'started' ].indexOf(booking.status) === -1) {
       throw error.parse({
         code    : `BOOKING_REQUEST_INVALID`,
-        message : `You can only end a booking that is in-progress.`
+        message : `You can only end a booking which has been made ready or has already started.`
       }, 400);
     }
 
-    // ### Payment
+    Object.assign(car, yield cars.getDevice(car.id, _user));
 
-    let payment = new PaymentHandler(booking, bookingPayment);
+    if (car.isIgnitionOn) {
+      throw error.parse({
+        code    : `BOOKING_REQUEST_INVALID`,
+        message : `You must park, and turn off the engine before ending your booking.`
+      }, 400);
+    }
 
-    // -----------------------------------------------------------------------------
-    // TODO: CALCULATE RIDE COST
-    //       - Create a new payment (done)
-    //       - Add payment items for each charge that occured during the ride.
-    //         - Need a list of possible charges that can occur.
-    // -----------------------------------------------------------------------------
+    // ### Immobilize
+    // Immobilize the engine.
 
-    yield booking.update({ status : 'pending-payment' });
+    let status = yield cars.lockImmobilzer(car.id, _user);
+    if (!status.isImmobilized) {
+      throw error.parse({
+        code    : `BOOKING_END_IMMOBILIZER`,
+        message : `Immobilizing the engine failed.`
+      }, 400);
+    }
 
     // ### Reset Car
-    // Remove the user from the car and make it available
+    // Remove the driver from the vehicle.
 
-    yield car.delDriver();
+    yield car.removeDriver();
+
+    // ### Booking Details
+
+    if (booking.status === 'started') {
+      yield this.logDetails('end', booking, car);
+    }
+
+    // ### Create Order
+    // Create a shop cart with automated fees.
+
+    yield fees.create(booking, car, _user);
+
+    // ### End Booking
+
+    yield booking.delFreeRideReminder();
+    yield booking.end();
+
+    // ### Relay Update
+
+    car.relay('update');
+    // TEMP: relayUpdate does not appear to work:
+    booking.relay('update');
+    // END TEMP
+    yield this.relayUpdate(booking.id, user, _user);
+  }
+
+  /**
+   * Locks, and makes the car available for a new booking.
+   * @return {Object}
+   */
+  static *complete(id, _user) {
+    let booking = yield this.getBooking(id);
+    let car     = yield this.getCar(booking.carId);
+    let user    = yield this.getUser(booking.userId);
+    let errors  = [];
+
+    this.hasAccess(user, _user);
+
+    if (booking.status !== 'ended') {
+      throw error.parse({
+        code    : `BOOKING_REQUEST_INVALID`,
+        message : `You cannot complete a booking which has not yet ended.`
+      }, 400);
+    }
+
+    Object.assign(car, yield cars.getDevice(car.id, _user));
+
+    // ### Validate Complete Status
+    // Make sure all required car states are valid before allowing the booking to
+    // be completed and released for next booking.
+
+    if (car.isIgnitionOn) { errors.push('turn off Ignition'); }
+    //if (!car.isKeySecure) { errors.push('secure Key'); }
+
+    if (errors.length) {
+      let message = `Your Ride cannot be completed until you `;
+      switch (errors.length) {
+        case 1: {
+          message = `${ message }${ errors[0] }.`;
+          break;
+        }
+        case 2: {
+          message = `${ message }${ errors.join(' and ') }.`;
+          break;
+        }
+        default: {
+          message = `${ message }${ errors.slice(0, -1).join(', ') } and ${ errors.slice(-1) }.`;
+          break;
+        }
+      }
+
+      throw error.parse({
+        code    : `BOOKING_COMPLETE_INVALID`,
+        message : message,
+        data    : errors
+      }, 400);
+    }
+
+    yield cars.lockCar(car.id, _user);
+
+    // ### Booking & Car Updates
+
+    yield booking.complete();
+    yield car.available();
+
+    // ### Relay
+
+    car.relay('update');
+    // TEMP: relayUpdate does not appear to work:
+    booking.relay('update');
+    // END TEMP
+    yield this.relayUpdate(booking.id, user, _user);
+  }
+
+  /**
+   * Closes the ride and sends the fee cart if applicable for collection.
+   * @param  {Number} id
+   * @param  {Object} _user
+   * @return {Object}
+   */
+  static *close(id, _user) {
+    if (!_user.hasAccess('admin')) {
+      throw error.parse({
+        error   : `INVALID_PRIVILEGES`,
+        message : `You do not have the required privileges to perform this operation.`
+      });
+    }
+    let booking = yield this.getBooking(id);
+
+    // TEMP: relayUpdate does not appear to work:
+    booking.relay('update');
+    // END TEMP
+
+    // Payment stuff to be done...
   }
 
   /*
@@ -331,15 +476,15 @@ module.exports = class BookingService extends Service {
 
   /**
    * Attempts to cancel a booking.
-   * @param  {Number} bookingId
+   * @param  {Number} id
    * @param  {Object} _user
    * @return {Object}
    */
-  static *cancel(bookingId, _user) {
+  static *cancel(id, _user) {
     let booking = yield this.getBooking(id);
     let car     = yield this.getCar(booking.carId);
     let user    = yield this.getUser(booking.userId);
-    let states  = [ 'new-booking', 'payment-authorized', 'pending-arrival' ];
+    let states  = [ 'reserved', 'pending' ];
 
     this.hasAccess(user, _user);
 
@@ -357,6 +502,54 @@ module.exports = class BookingService extends Service {
     yield booking.cancel();
     yield booking.delCancelTimer();
     yield car.removeDriver();
+    yield car.available();
+
+    // ### Relay Update
+
+    car.relay('update');
+    // TEMP: relayUpdate does not appear to work:
+    booking.relay('update');
+    // END TEMP
+    yield this.relayUpdate(booking.id, user, _user);
+  }
+
+  // ### HELPERS
+
+  /**
+   * Logs the ride details.
+   * @param  {String} type    The detail type, start|end.
+   * @param  {Object} booking
+   * @param  {Object} car
+   * @return {Void}
+   */
+  static *logDetails(type, booking, car) {
+    let details = new BookingDetails({
+      bookingId : booking.id,
+      type      : type,
+      time      : new Date(),
+      latitude  : car.latitude,
+      longitude : car.longitude,
+      mileage   : car.totalMileage,
+      charge    : car.charge
+    });
+    yield details.save();
+  }
+
+  /**
+   * Sends a relay for booking updates where we use the show method to
+   * send a full booking view.
+   * @param  {Number} id The booking id
+   * @param  {Object} user
+   * @param  {Object} _user
+   * @return {Void}
+   */
+  static *relayUpdate(id, user, _user) {
+    let payload = {
+      type : 'update',
+      data : yield this.show(id, _user)
+    };
+    relay.user(user.id, 'bookings', payload);
+    relay.admin('bookings', payload);
   }
 
 };

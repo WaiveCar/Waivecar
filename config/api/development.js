@@ -1,15 +1,18 @@
 module.exports = {
   api : {
     port : 3000,
-    uri  : 'http://localhost:3000',
-    cors : {
-      origins : '*'
-    }
+    uri  : 'http://localhost:3000'
   },
   socket : {
-    auth : 'http://localhost:3000/users/me'
+    api : {
+      url   : 'http://localhost:3000',
+      me    : '/users/me',
+      roles : '/roles'
+    }
   },
-
+  web : {
+    uri : 'https://waivecar-dev.cleverbuild.biz'
+  },
   log : {
     level : {
       console : 'debug',
@@ -17,5 +20,4 @@ module.exports = {
       email   : 'error'
     }
   }
-
 };

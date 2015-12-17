@@ -1,36 +1,26 @@
 'use strict';
 
-// ### Booking Create
+// ### Booking
 
 Route.post('/bookings', {
-  policy : 'authenticate',
+  policy : 'isAuthenticated',
   uses   : 'BookingsController@create',
-  params : [ 'carId', 'userId' ]
+  params : [ 'userId', 'carId' ]
 });
 
-// ### Booking Read
+Route.get('/bookings',             [ 'isAuthenticated', 'BookingsController@index' ]);
+Route.get('/bookings/:id',         [ 'isAuthenticated', 'BookingsController@show' ]);
+Route.put('/bookings/:id/:action', [ 'isAuthenticated', 'BookingsController@update' ]);
+Route.del('/bookings/:id',         [ 'isAuthenticated', 'BookingsController@cancel' ]);
 
-Route.get('/bookings',     [ 'authenticate', 'BookingsController@index' ]);
-Route.get('/bookings/:id', [ 'authenticate', 'BookingsController@show' ]);
-
-// ### Booking Update
-
-Route.put('/bookings/:id/start', [ 'authenticate', 'BookingsController@start' ]);
-Route.put('/bookings/:id/end', {
-  policy : 'authenticate',
-  uses   : 'BookingsController@end',
-  params : [ 'paymentId' ]
-});
-
-// ### Booking Delete
-
-Route.del('/bookings/:id', [ 'authenticate', 'BookingsController@cancel' ]);
-
-// ### Resources
+// ### Cars
 
 Route.get('/cars',              [ 'CarsController@index' ]);
 Route.get('/cars/:id',          [ 'CarsController@show' ]);
-Route.get('/cars/:id/events',   [ 'authenticate', 'CarsController@events' ]);
-Route.put('/cars/:id/:command', [ 'authenticate', 'CarsController@update' ]);
+Route.get('/cars/:id/events',   [ 'isAuthenticated', 'CarsController@events' ]);
+Route.put('/cars/:id/:command', [ 'isAuthenticated', 'CarsController@command' ]);
+Route.put('/cars/:id',          [ 'isAuthenticated', 'CarsController@update' ]);
+
+// ### Locations
 
 Route.resource('locations', 'LocationsController');

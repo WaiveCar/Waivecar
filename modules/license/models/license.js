@@ -33,24 +33,26 @@ Bento.Register.Model('License', 'sequelize', function(model, Sequelize) {
       allowNull : false
     },
 
-    firstName : {
-      type      : Sequelize.STRING(80),
+    state : {
+      type      : Sequelize.STRING(20),
       allowNull : false
+    },
+
+
+    firstName : {
+      type : Sequelize.STRING(80)
     },
 
     middleName : {
-      type      : Sequelize.STRING(80),
-      allowNull : true
+      type : Sequelize.STRING(80)
     },
 
     lastName : {
-      type      : Sequelize.STRING(80),
-      allowNull : false
+      type : Sequelize.STRING(80)
     },
 
     birthDate : {
-      type      : Sequelize.DATEONLY(),
-      allowNull : false
+      type : Sequelize.DATEONLY()
     },
 
     gender : {
@@ -59,16 +61,6 @@ Bento.Register.Model('License', 'sequelize', function(model, Sequelize) {
         'female'
       ),
       defaultValue : 'male'
-    },
-
-    state : {
-      type      : Sequelize.STRING(20),
-      allowNull : false
-    },
-
-    zip : {
-      type      : Sequelize.STRING(80),
-      allowNull : true
     },
 
     linkedUserId : {
@@ -97,6 +89,10 @@ Bento.Register.Model('License', 'sequelize', function(model, Sequelize) {
       allowNull : true
     },
 
+    report : {
+      type : Sequelize.TEXT
+    },
+
     verifiedAt : {
       type      : Sequelize.DATE(),
       allowNull : true
@@ -109,7 +105,22 @@ Bento.Register.Model('License', 'sequelize', function(model, Sequelize) {
    * @property blacklist
    * @type     Array
    */
-  model.blacklist = [ 'linkedUserId', 'checkId', 'reportId', 'deletedAt' ];
+  model.blacklist = [ 'linkedUserId', 'checkId', 'reportId', 'report' ];
+
+  // ### Methods
+  // A list of methods attached to the model.
+
+  model.methods = {
+
+    /**
+     * Returns the validation status of the license.
+     * @return {Boolean}
+     */
+    isValid() {
+      return this.status === 'complete' && this.outcome === 'clear';
+    }
+
+  };
 
   return model;
 

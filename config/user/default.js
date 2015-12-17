@@ -15,11 +15,11 @@ module.exports = {
   user : {
     users : [
       {
-        role      : 'admin',
         firstName : 'John',
         lastName  : 'Doe',
         email     : 'admin@fixture.none',
-        password  : 'admin'
+        password  : 'admin',
+        role      : 5, // Super
       }
     ],
 
