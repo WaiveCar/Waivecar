@@ -98,10 +98,8 @@ class HomeTemplate extends React.Component {
           <Row className="m-t-lg hidden-md-up">
             <div className="col-sm-12">
               <div className="banner-container text-center">
-                <h1>Need to go somewhere?</h1>
-                <p className="lead">Use one of our electric cars <strong>for free</strong>.
-                <br />
-                It makes sense and a huge diffeence.</p>
+                <h1>We waive the fee. You drive for free.</h1>
+                <p className="lead">Get where you’re going and move toward a sustainable future.</p>
                 <ul className="list-inline">
                   <li className="store-item m-t">
                     <a href="#">
@@ -118,13 +116,11 @@ class HomeTemplate extends React.Component {
             </div>
           </Row>
           <Row className="m-t-lg hidden-sm-down">
-            <div className="col-md-6 col-sm-12">
+            <div className="col-md-7 col-sm-12">
               <div className="banner-container">
                 <div  className="valign">
-                  <h1>Need to go somewhere?</h1>
-                  <p className="lead">Use one of our electric cars <strong>for free</strong>.
-                  <br />
-                  It makes sense and a huge diffeence.</p>
+                  <h1>We waive the fee. You drive for free.</h1>
+                  <p className="lead">Get where you’re going and move toward a sustainable future.</p>
                   <ul className="list-inline">
                     <li className="store-item">
                       <a href="#">
@@ -140,7 +136,7 @@ class HomeTemplate extends React.Component {
                 </div>
               </div>
             </div>
-            <div className="col-sm-6 hidden-sm-down">
+            <div className="col-sm-5 hidden-sm-down">
               <img className="app-sample pull-right" src="/images/site/iphone.png" />
             </div>
           </Row>
@@ -159,7 +155,7 @@ class HomeTemplate extends React.Component {
       <section className="section section-signup">
         <Container>
           <h3 className="text-center m-b-lg">Create an account</h3>
-          <p className="text-center lead">Once registered, you’ll be able to find, book, and start using electric cars for free.</p>
+          <p className="text-center lead">Get approved and drive a free car <strong>today</strong>.</p>
           <Waypoint id="Signup" onEnter={ this.handleWaypointEnter } onEnterClassName="animated slideIn" className={ this.state.waypoints.Signup }>
             <Row>
               <Column width={ 6 } responsive={ true } centerContent={ true } className="text-right-md">
@@ -193,9 +189,9 @@ class HomeTemplate extends React.Component {
           <Row>
             <Column className="text-center">
               <h3>Our Vision</h3>
-              <p>We believe there are smarter ways for people in the city to benefit from cars.</p>
-              <p>Our contribution is WaiveCar, a revolutionary system in which users can find, book and drive ad-displaying, electric cars for free, anywhere in the city.</p>
-              <p>This is how people and companies can create a more sustainable future.</p>
+              <p>We believe there are smarter ways for communities to benefit from cars.</p>
+              <p>Our contribution is WaiveCar, a revolutionary transportation system that connects users with ad-displaying electric cars for free, anywhere in their city.</p>
+              <p>Together, drivers and companies can make a positive impact on the environment.</p>
               <a href="#" target="_blank" className="btn btn-primary text-center">Download App</a>
             </Column>
           </Row>
@@ -210,43 +206,39 @@ class HomeTemplate extends React.Component {
         <div id="Features" className="container">
           <Row>
             <Column>
-              <h2>How it works</h2>
+              <h2 className="m-b-lg">How it works</h2>
             </Column>
           </Row>
           <Row>
             <Column width={ 3 } responsive={ true } responsiveBreakpoint="lg" className="text-center">
               <Waypoint id="FeaturesFind" onEnter={ this.handleWaypointEnter } onEnterClassName="animated fadeInUp" className={ this.state.waypoints.FeaturesFind }>
                 <div className="card-block">
-                  <img className="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="1" width="140" height="140" />
-                  <h4 className="card-title">Find an available car near you</h4>
-                  <p className="card-text">A map displays all available cars in your area. Each car has  important information such as charge level and exact directions to its location.</p>
+                  <h3 className="card-title">Find a Car Near You</h3>
+                  <p className="card-text">Search a map to locate cars in your area. Pick the make, model, and charge level that works for you. We’ll point you toward the exact location of your favorite WaiveCar.</p>
                 </div>
               </Waypoint>
             </Column>
             <Column width={ 3 } responsive={ true } responsiveBreakpoint="lg" className="text-center">
               <Waypoint id="FeaturesBook" onEnter={ this.handleWaypointEnter } onEnterClassName="animated fadeInUp" className={ this.state.waypoints.FeaturesBook }>
                 <div className="card-block">
-                  <img className="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="2" width="140" height="140" />
-                  <h4 className="card-title">Book the car</h4>
-                  <p className="card-text">Once you find the car you want, book it. The car will be booked for you and made unavailable to other WaiveCar users. Now you can go get it.</p>
+                  <h3 className="card-title">Book It</h3>
+                  <p className="card-text">Found the car for you? As soon as you book it, the car will be unavailable to other WaiveCar users until after your ride is complete.</p>
                 </div>
               </Waypoint>
             </Column>
             <Column width={ 3 } responsive={ true } responsiveBreakpoint="lg" className="text-center">
               <Waypoint id="FeaturesStart" onEnter={ this.handleWaypointEnter } onEnterClassName="animated fadeInUp" className={ this.state.waypoints.FeaturesStart }>
                 <div className="card-block">
-                  <img className="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="3" width="140" height="140" />
-                  <h4 className="card-title">Connect and drive</h4>
-                  <p className="card-text">The app will detect your position and unlock your WaiveCar, you can connect and unlock it using the mobile app. Drive safely and enjoy!</p>
+                  <h3 className="card-title">Connect and Drive</h3>
+                  <p className="card-text">Unlock and access your WaiveCar through a mobile app that detects your position. No cards or keys necessary. Drive safely and enjoy!</p>
                 </div>
               </Waypoint>
             </Column>
             <Column width={ 3 } responsive={ true } responsiveBreakpoint="lg" className="text-center">
               <Waypoint id="FeaturesEnd" onEnter={ this.handleWaypointEnter } onEnterClassName="animated fadeInUp" className={ this.state.waypoints.FeaturesEnd }>
                 <div className="card-block">
-                  <img className="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="4" width="140" height="140" />
-                  <h4 className="card-title">Leave it there, please</h4>
-                  <p className="card-text">Once your free driving time is up, a map will show where you can drop the car off. There are rewards depending on where you do it.  </p>
+                  <h3 className="card-title">Easy Drop Offs</h3>
+                  <p className="card-text">Once your free driving time is up, a map will show where you can drop the car off. Depending on where you leave it, you can earn rewards.</p>
                 </div>
               </Waypoint>
             </Column>
@@ -265,8 +257,8 @@ class HomeTemplate extends React.Component {
           <Row>
             <div className="col-md-6 col-sm-12">
               <h2>Pricing</h2>
-              <p>WaiveCar rides are free because the cars work as mobile advertising panels. You’re actually paying us just by driving the cars. Pretty sweet trade off, don’t you think?</p>
-              <p>Driving a car is free within the first two hours, counting from the moment the car starts running. If you want to continue using the car, a $5,99 per extra hour fee will be charged to your account.</p>
+              <p>WaiveCar rides are free because the cars work as mobile billboards. You’re actually paying us just by driving the cars. Sweet deal, don’t you think?</p>
+              <p>The first two hours of drive time is on us, counting from the moment the motor starts running. After that, it’s $5.99 per an hour to continue your ride.</p>
             </div>
           </Row>
         </Container>
@@ -279,12 +271,26 @@ class HomeTemplate extends React.Component {
       <section className="section section-about">
         <Container>
           <Row id="About">
-            <div className="col-md-9 col-sm-12">
+            <div className="col-sm-12">
               <h2>About Us</h2>
-              <p>WaiveCar is a revolutionary form of transportation for citizens, a smart advertising medium for companies and a powerful way of fostering green, renewable energy in our communities.</p>
+              <p>WaiveCar is a revolutionary form of transportation, a smart advertising medium for companies, and a powerful way of fostering green, renewable energy in our communities.</p>
             </div>
-            <div className="col-md-3 hidden-sm-down text-right">
-              <img src="/images/site/waivecar-logo.svg" alt="WaiveCar" />
+          </Row>
+          <Row id="Cars">
+            <div className="col-md-6 col-sm-12">
+              <h2>Our Cars</h2>
+              <p>WaiveCar’s fleet is 100% electric and 100% emission free.<br />Our cars are zippy, compact, and functional:</p>
+              <ul className="list">
+                <li>4 Doors</li>
+                <li>Seats 4</li>
+                <li>80 Miles of Range per charge 128/109 MPGe</li>
+                <li>Bluetooth</li>
+                <li>0-60 in 7.9 Seconds</li>
+                <li>141 Horsepower</li>
+              </ul>
+            </div>
+            <div className="col-md-6 hidden-sm-down text-right">
+              <img src="/images/site/car.jpg" alt="WaiveCar" />
             </div>
           </Row>
         </Container>
