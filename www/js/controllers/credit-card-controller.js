@@ -15,7 +15,10 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
   '$q',
   '$modal',
   '$timeout',
-  function ($scope, $state, $auth, $data, $message, $stateParams, $q, $modal, $timeout) {
+  'cards',
+  '$injector',
+  function ($scope, $state, $auth, $data, $message, $stateParams, $q, $modal, $timeout, cards, $injector) {
+    var $ionicHistory = $injector.get('$ionicHistory');
 
     $scope.save = function(form) {
       if (form.$pristine) {
@@ -43,8 +46,8 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
           return $auth.reload();
         })
         .then(function() {
-          var card = angular.copy($scope.card);
-          return card.$save();
+          var creditCard = angular.copy($scope.card);
+          return creditCard.$save();
         })
         .then(function() {
           $modal('result', {
@@ -56,8 +59,7 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
             return $timeout(2000).then(function () {
               modal.remove();
               if ($scope.fromBooking) {
-                return $state.go('cars-show');
-                // return $state.go('cars-show', BookingService.getReturnParams());
+                return $ionicHistory.goBack();
               }
 
               if ($scope.isWizard) {
@@ -93,23 +95,19 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
       $scope.fromBooking = $stateParams.fromBooking;
       $scope.me = $auth.me;
 
-      if (!$stateParams.id) {
-        $scope.card = new $data.resources.Card({
-          userId: $scope.me.id,
-          service: 'stripe',
-          card: {}
-        });
-
-      } else {
-        return $data.resources.Card.get({
-            id: $stateParams.id
-          }).$promise
-          .then(function(card) {
-            $scope.card = card;
-          })
-          .catch($message.error);
+      if (cards && Array.isArray(cards)) {
+        if (cards.length) {
+          $scope.card = cards[0];
+        } else {
+          $scope.card = new $data.resources.Card({
+            userId: $scope.me.id,
+            service: 'stripe',
+            card: {}
+          });
+        }
+      } else if (cards instanceof $data.resources.Card) {
+        $scope.card = cards;
       }
-
     };
 
     $scope.init();

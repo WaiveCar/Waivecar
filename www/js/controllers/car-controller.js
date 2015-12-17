@@ -81,7 +81,7 @@ module.exports = angular.module('app.controllers').controller('CarController', [
       var model = { userId: $auth.me.id, carId: $state.params.id };
       // Create a Booking
       return $data.create('bookings', model)
-      .catch($preBook())
+      .catch($preBook)
       .then(function(booking) {
         return $q.all([
           // Active the created Booking so any consumer of $data can access current booking via $data.active.bookings

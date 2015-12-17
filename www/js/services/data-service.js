@@ -79,14 +79,12 @@ module.exports = angular.module('app.services').factory('$data', [
       },
 
       create: function (modelName, data) {
-        return $q(function (resolve, reject) {
-          var instance = new service.resources[modelName](data);
-          return instance.$save().then(function(model) {
-            service.merge(modelName, model.toJSON());
-            service.activateKnownModel(modelName, model.id).then(function() {
-              return resolve(model.toJSON());
-            });
-          }).catch(reject);
+        var instance = new service.resources[modelName](data);
+        return instance.$save().then(function(model) {
+          service.merge(modelName, model.toJSON());
+          service.activateKnownModel(modelName, model.id).then(function() {
+            return model.toJSON();
+          });
         });
       },
 

@@ -129,7 +129,22 @@ module.exports = [
         templateUrl: '/templates/licenses/edit.html',
         controller: 'LicenseEditController as licenseCtrl',
         data: {
-          auth: true,
+          auth: true
+        },
+        resolve: {
+          licenses: ['$stateParams', '$data', function ($stateParams, $data) {
+            return $data.resources.licenses.get($stateParams.licenseId).$promise;
+          }]
+        }
+      })
+      .state('licenses-form', {
+        url: '/licenses/form?step&fromBooking',
+        templateUrl: '/templates/licenses/edit.html',
+        controller: 'LicenseEditController as licenseCtrl',
+        data: {
+          auth: true
+        },
+        resolve: {
           licenses: ['$stateParams', '$data', function ($data) {
             return $data.initialize('licenses');
           }]
@@ -154,10 +169,32 @@ module.exports = [
       })
       .state('credit-cards-edit', {
         // 12-Payment-method@2x.png
-        url: '/credit-cards/:id/edit',
+        url: '/credit-cards/:cardId/edit',
         templateUrl: '/templates/credit-cards/edit.html',
+        controller: 'CreditCardController as ctrl',
         data: {
           auth: true
+        },
+        resolve: {
+          cards: ['$data', '$stateParams', function ($data, $stateParams) {
+            return $data.resources.Card.get({
+              id: $stateParams.id
+            }).$promise;
+          }]
+        }
+      })
+      .state('credit-cards-form', {
+        // 12-Payment-method@2x.png
+        url: '/credit-cards/form',
+        templateUrl: '/templates/credit-cards/edit.html',
+        controller: 'CreditCardController as ctrl',
+        data: {
+          auth: true
+        },
+        resolve: {
+          cards: ['$data', function ($data) {
+            return $data.initialize('Card');
+          }]
         }
       })
       .state('auth-account-verify', {

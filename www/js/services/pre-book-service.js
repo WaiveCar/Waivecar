@@ -8,7 +8,7 @@ function PreBookService ($injector) {
   var $state = $injector.get('$state');
   var $message = $injector.get('$message');
 
-  return function (err) {
+  return function catchPreBookError (err) {
     var modal;
     var actions = [{
       className: 'button-balanced',
@@ -17,17 +17,18 @@ function PreBookService ($injector) {
         modal.remove();
       }
     }];
-    if (err.data && err.data.required) {
+    if (err && err.data && err.data.data) {
+      var data = err.data.data;
       var base = {
         className: 'button-balanced',
       };
-      actions = _.map(err.data.required, function (field) {
+      actions = _.map(data.required, function (field) {
           if (field === 'license') {
             return angular.extend({}, base, {
               text: 'Add driver\'s license',
               handler: function () {
                 modal.remove();
-                $state.go('licenses-edit', {id: null});
+                $state.go('licenses-edit', {id: null, fromBooking: true});
               }
             });
           } else if (field === 'credit card') {
@@ -35,7 +36,7 @@ function PreBookService ($injector) {
               text: 'Add payment method',
               handler: function () {
                 modal.remove();
-                $state.go('credit-cards-edit', {id: null});
+                $state.go('credit-cards-form', {fromBooking: true});
               }
             });
           } else if (field === 'email') {
@@ -51,16 +52,24 @@ function PreBookService ($injector) {
               text: 'Validate phone number',
               handler: function () {
                 modal.remove();
-                $state.go('auth-account-verify');
+                $state.go('auth-account-verify', {fromBooking: true});
               }
             });
           }
         });
+      actions.push({
+        className: 'button-dark',
+        text: 'Cancel booking',
+        handler: function () {
+          modal.remove();
+          $state.go('cars');
+        }
+      });
     }
     return $modal('result', {
       icon: 'x-icon',
       title: 'Missing Required Information',
-      message: err.data && err.data.message,
+      message: err && err.data && err.data.message,
       actions: actions
     }).then(function (_modal) {
       modal = _modal;

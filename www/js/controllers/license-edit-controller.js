@@ -5,8 +5,10 @@ function LicenseEditController ($injector, licenses) {
   var $auth = $injector.get('$auth');
   var $data = $injector.get('$data');
 
-  if (licenses && licenses.length) {
+  if (Array.isArray(licenses) && licenses.length) {
     this.license = licenses[0];
+  } else if (licenses instanceof $data.resources.licenses) {
+    this.license = licenses;
   } else {
     this.license = new $data.resources.licenses({
       userId: $auth.me.id,
