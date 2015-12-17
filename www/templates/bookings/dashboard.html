@@ -17,7 +17,7 @@
       </div>
     </div>
     <div class="map-container has-info-header">
-      <skobbler-map id="map" zoom="15" center="currentLocation" markers="cache.locations" on-marker-tap="showChargingStationDetails">
+      <skobbler-map id="map" zoom="16" center="currentLocation" markers="cache.locations" on-marker-tap="openPopover">
       </skobbler-map>
     </div>
   </ion-content>
@@ -28,7 +28,20 @@
       <button type="button" class="button button-dark" ui-sref="end-ride-options({ id: data.bookings.id })">End Ride</button>
     </div>
   </ion-footer-bar>
-
+  <div class="item-popover" ng-show="showItem">
+    <div class="item-popover-content">
+      <div class="row">
+        <div class="col col-33">
+          <div class="item-type">{{ selectedItem.type.charAt(0).toUpperCase() }}</div>
+        </div>
+        <div class="col">
+          <h1>{{ selectedItem.name }}</h1>
+          <h2>{{ selectedItem.description }}</h2>
+        </div>
+      </div>
+    </div>
+    <button type="button" class="button button-balanced button-block" ng-click="closePopover()">Close</button>
+  </div>
 </ion-view>
 
 <!-- <ion-pane ng-controller="BookingInProgressController">
