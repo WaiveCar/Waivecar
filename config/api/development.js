@@ -10,6 +10,9 @@ module.exports = {
       roles : '/roles'
     }
   },
+  web : {
+    uri : 'https://waivecar-dev.cleverbuild.biz'
+  },
   log : {
     level : {
       console : 'debug',
