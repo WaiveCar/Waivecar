@@ -251,6 +251,9 @@ module.exports = class BookingService extends Service {
     // ### Relay Update
 
     car.relay('update');
+    // TEMP: relayUpdate does not appear to work:
+    booking.relay('update');
+    // END TEMP
     yield this.relayUpdate(booking.id, user, _user);
   }
 
@@ -290,6 +293,9 @@ module.exports = class BookingService extends Service {
     // ### Relay Update
 
     car.relay('update');
+    // TEMP: relayUpdate does not appear to work:
+    booking.relay('update');
+    // END TEMP
     yield this.relayUpdate(booking.id, user, _user);
   }
 
@@ -360,6 +366,9 @@ module.exports = class BookingService extends Service {
     // ### Relay Update
 
     car.relay('update');
+    // TEMP: relayUpdate does not appear to work:
+    booking.relay('update');
+    // END TEMP
     yield this.relayUpdate(booking.id, user, _user);
   }
 
@@ -425,6 +434,9 @@ module.exports = class BookingService extends Service {
     // ### Relay
 
     car.relay('update');
+    // TEMP: relayUpdate does not appear to work:
+    booking.relay('update');
+    // END TEMP
     yield this.relayUpdate(booking.id, user, _user);
   }
 
@@ -442,6 +454,10 @@ module.exports = class BookingService extends Service {
       });
     }
     let booking = yield this.getBooking(id);
+
+    // TEMP: relayUpdate does not appear to work:
+    booking.relay('update');
+    // END TEMP
 
     // Payment stuff to be done...
   }
@@ -494,6 +510,9 @@ module.exports = class BookingService extends Service {
     // ### Relay Update
 
     car.relay('update');
+    // TEMP: relayUpdate does not appear to work:
+    booking.relay('update');
+    // END TEMP
     yield this.relayUpdate(booking.id, user, _user);
   }
 
