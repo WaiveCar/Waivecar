@@ -142,6 +142,11 @@ module.exports = class Service {
       missing.push('license');
     }
 
+    // we may want this later, but lets leave it out now as it doesnt match the app flow.
+    // if(license && !license.fileId) {
+    //  missing.push('license photo');
+    // }
+
     // ### Throw Error
     if (missing.length) {
       let message = `You are not yet approved to book a WaiveCar. Please ensure your `;
