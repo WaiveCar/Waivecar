@@ -5,7 +5,14 @@
         <div class="lead-logo">
           <ng-include class="logo-image" src="'/img/waivecar-mark2.svg'" />
         </div>
-        <div class="padding">
+        <div class="padding" ng-if="service.state.location.valet.confirmed">
+          <h3 class="margin-bottom-10">END RIDE</h3>
+          <div>
+            <p>The WaiveCar valet will end your session as sooon as you give him the WaiveCar key. This window will automatically disappear.</p>
+            <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
+          </div>
+        </div>
+        <div class="padding" ng-if="service.state.location.valet.confirmed === false">
           <h3 class="margin-bottom-10">END RIDE</h3>
           <div>
             <p>Please complete these tasks before you leave.<br />The list will automatically update.</p>

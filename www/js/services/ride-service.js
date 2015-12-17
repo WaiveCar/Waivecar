@@ -81,7 +81,9 @@ module.exports = angular.module('app.services').factory('$ride', [
         case 'valet': {
           service.state.check.isKeySecure.isVisible = false;
           service.state.check.isIgnitionOn.isVisible = false;
-          service.state.check.chargeCardIn.isVisible = false;
+          service.state.check.isChargeCardSecure.isVisible = false;
+          $state.go('end-ride', { id: service.state.booking.id });
+          return;
           break;
         }
         case 'homebase':
@@ -113,6 +115,23 @@ module.exports = angular.module('app.services').factory('$ride', [
     service.setCheck = function(key) {
       if (!$data.active.cars) {
         $interval.cancel(this.checkForLock);
+        return;
+      }
+
+      if (!$data.active.bookings) {
+        $interval.cancel(this.checkForLock);
+        return;
+      }
+
+      if (service.state.location.valet.confirmed && $data.active.bookings.status === 'completed') {
+        var id = $data.active.bookings.id;
+        $interval.cancel(this.checkForLock);
+        $data.fetch('bookings');
+        $data.deactivate('bookings');
+        $data.deactivate('cars');
+        service.setState();
+        $state.go('bookings-show', { id: id });
+        return;
       }
 
       var isReady = false;
@@ -131,7 +150,7 @@ module.exports = angular.module('app.services').factory('$ride', [
         }
       }
 
-      if (isReady !== service.state.booking.readyToEnd) {
+      if (isReady === true && isReady !== service.state.booking.readyToEnd && service.state.location.valet.confirmed === false) {
         if (this.checkForLock) {
           $interval.cancel(this.checkForLock);
         }
@@ -140,7 +159,14 @@ module.exports = angular.module('app.services').factory('$ride', [
     };
 
     service.processEndRide = function() {
-      if ($data.active.bookings.status === 'ended') {
+      if ($data.active.bookings && $data.active.bookings.status === 'ended') {
+        return;
+      }
+
+      if (service.state.location.valet.confirmed) {
+        this.checkForLock = $interval(function() {
+          service.setCheck();
+        }, 2000);
         return;
       }
 
@@ -160,7 +186,7 @@ module.exports = angular.module('app.services').factory('$ride', [
         this.checkForLock = $interval(function() {
           service.setCheck();
         }, 2000);
-      }).catch($message.error);
+      }.bind(this)).catch($message.error);
     };
 
     service.processCompleteRide = function() {
