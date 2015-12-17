@@ -28,6 +28,7 @@ module.exports = angular.module('app.controllers').controller('BookingController
 
     $scope.image = 'img/car.jpg';
     $scope.showVideo = false;
+    $scope.distance = 'Unknown';
 
     // $scope is used to store ref. to $ride and the active models in $data.
     $scope.service = $ride;
@@ -67,6 +68,7 @@ module.exports = angular.module('app.controllers').controller('BookingController
         var from = L.latLng($rootScope.currentLocation.latitude, $rootScope.currentLocation.longitude);
         var to = L.latLng($data.active.cars.latitude, $data.active.cars.longitude);
         var distance = from.distanceTo(to);
+        $scope.distance = Math.floor(distance * 1.09361) + 'yds to ';
         return distance <= 35;
       }, function (newValue) {
         if (newValue) {
@@ -80,7 +82,7 @@ module.exports = angular.module('app.controllers').controller('BookingController
       $modal('result', {
         title: 'You\'re In Reach',
         message: 'Now you can unlock your WaiveCar!',
-        icon: 'x-icon',
+        icon: 'check-icon',
         actions: [{
           className: 'button-balanced',
           text: 'Unlock',
@@ -167,6 +169,15 @@ module.exports = angular.module('app.controllers').controller('BookingController
         this.modal = modal;
         modal.show();
       }.bind(this));
+    };
+
+    $scope.openPopover = function(item) {
+      $scope.selectedItem = item;
+      $scope.showItem = true;
+    };
+    $scope.closePopover = function() {
+      $scope.showItem = false;
+      $scope.selectedItem = null;
     };
 
     this.start = function() {
