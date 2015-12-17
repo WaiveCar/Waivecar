@@ -130,8 +130,8 @@ module.exports = [
         controller: 'LicenseEditController as licenseCtrl',
         data: {
           auth: true,
-          foundLicense: ['$stateParams', '$data', function ($stateParams, $data) {
-            return $data.resources.licenses.get({ id: $stateParams.licenseId }).$promise;
+          licenses: ['$stateParams', '$data', function ($data) {
+            return $data.initialize('licenses');
           }]
         }
       })

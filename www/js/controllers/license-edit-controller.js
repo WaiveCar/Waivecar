@@ -1,36 +1,31 @@
 'use strict';
 var angular = require('angular');
 
-function LicenseEditController ($injector, foundLicense) {
-  var $data = $injector.get('$data');
+function LicenseEditController ($injector, licenses) {
   var $auth = $injector.get('$auth');
+  var $data = $injector.get('$data');
 
-  this.license = foundLicense;
+  if (licenses && licenses.length) {
+    this.license = licenses[0];
+  } else {
+    this.license = new $data.resources.licenses({
+      userId: $auth.me.id,
+      country: 'USA'
+    });
+  }
+
   if (!this.license.firstName) {
     this.license.firstName = $auth.me.firstName;
     this.license.lastName = $auth.me.lastName;
   }
 
-  // TODO
-  /* eslint-disable no-unused-vars */
-  function updateLicense (uploadResponse) {
-    var oldFileId = this.license.fileId;
-    this.license.fileId = uploadResponse.id;
-
-    return this.license.$save()
-    .then(function () {
-      if (!oldFileId) {
-        return false;
-      }
-      return $data.resources.File.destroy({
-        id: oldFileId
-      });
-    });
-  }
+  this.update = function updateLicense () {
+    return this.license.$save();
+  };
 }
 
 module.exports = angular.module('app.controllers').controller('LicenseEditController', [
   '$injector',
-  'foundLicense',
+  'licenses',
   LicenseEditController
 ]);

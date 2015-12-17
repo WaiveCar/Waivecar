@@ -7,19 +7,20 @@ require('../services/message-service');
 // require('../services/booking-service');
 require('../services/ride-service');
 require('../services/modal-service');
+require('../services/pre-book-service');
 
 module.exports = angular.module('app.controllers').controller('CarController', [
-  '$rootScope',
   '$scope',
   '$state',
   '$injector',
   '$ride',
   'car',
-  function ($rootScope, $scope, $state, $injector, $ride, car) {
+  function ($scope, $state, $injector, $ride, car) {
     var $message = $injector.get('$message');
     var $data = $injector.get('$data');
     var $auth = $injector.get('$auth');
-    var $modal = $injector.get('$modal');
+    var $q = $injector.get('$q');
+    var $preBook = $injector.get('$preBook');
 
     this.car = angular.extend({}, car, { item: 'car' });
 
@@ -79,33 +80,20 @@ module.exports = angular.module('app.controllers').controller('CarController', [
     this.book = function() {
       var model = { userId: $auth.me.id, carId: $state.params.id };
       // Create a Booking
-      $data.create('bookings', model).then(function(booking) {
-        // Active the created Booking so any consumer of $data can access current booking via $data.active.bookings
-        $data.activate('bookings', booking.id).then(function() {
+      return $data.create('bookings', model)
+      .catch($preBook())
+      .then(function(booking) {
+        return $q.all([
+          // Active the created Booking so any consumer of $data can access current booking via $data.active.bookings
+          $data.activate('bookings', booking.id),
           // Active the Car used in the active Booking so any consumer of $data can access current car via $data.active.cars
-          $data.activate('cars', booking.carId).then(function() {
-            // Set the $endRide service's ref to the booking id.
-            $ride.setBooking(booking.id);
-            $state.go('bookings-active', { id: booking.id });
-          }).catch($message.error);
-        }).catch($message.error);
-      }).catch(function(err) {
-        var modal;
-        $modal('result', {
-          icon: 'x-icon',
-          title: 'Missing Required Information',
-          message: err.data.message,
-          actions: [{
-            className: 'button-balanced',
-            text: 'OK',
-            handler: function () {
-              modal.remove();
-            }
-          }]
-        }).then(function (_modal) {
-          modal = _modal;
-          modal.show();
-        });
+          $data.activate('cars', booking.carId)
+        ])
+        .then(function() {
+          $ride.setBooking(booking.id);
+          $state.go('bookings-active', { id: booking.id });
+        })
+        .catch($message.error);
       });
     };
 

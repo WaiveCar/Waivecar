@@ -103,10 +103,10 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
       if (marker === null) {
         return null;
       }
-      if (typeof this.onMarkerTap === 'function') {
-        var fn = this.onMarkerTap;
+      var fn = this.onMarkerTap();
+      if (typeof fn == 'function') {
         marker.on('mousedown', function () {
-          fn()(mark);
+          fn(mark);
         });
       }
       return marker;
