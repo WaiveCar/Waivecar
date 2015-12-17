@@ -26,6 +26,9 @@ module.exports = angular.module('app.controllers').controller('BookingController
   '$modal',
   function ($rootScope, $scope, $interval, $state, $auth, LocationService, $data, $ride, $message, $modal) {
 
+    $scope.image = 'img/car.jpg';
+    $scope.showVideo = false;
+
     // $scope is used to store ref. to $ride and the active models in $data.
     $scope.service = $ride;
 
@@ -206,17 +209,11 @@ module.exports = angular.module('app.controllers').controller('BookingController
         $state.go('auth');
       }
 
-      $scope.showVideo = true;
-
-      console.log($state.current.name);
-
       if ($state.current.name === 'bookings-active') {
         var rideServiceReady = $scope.$watch('service.isInitialized', function(isInitialized) {
-          console.log(isInitialized);
           if (isInitialized === true) {
             rideServiceReady();
             $scope.watchForWithinRange();
-            console.log($scope.data.bookings);
             $scope.expired = moment($scope.data.bookings.createdAt).add(15, 'm');
             $scope.image = $data.active.cars.fileId || 'img/car.jpg';
           }
