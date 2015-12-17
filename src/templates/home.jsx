@@ -274,10 +274,11 @@ class HomeTemplate extends React.Component {
             <div className="col-sm-12">
               <h2>About Us</h2>
               <p>WaiveCar is a revolutionary form of transportation, a smart advertising medium for companies, and a powerful way of fostering green, renewable energy in our communities.</p>
+              <br />
             </div>
           </Row>
           <Row id="Cars">
-            <div className="col-md-6 col-sm-12">
+            <div className="col-md-7 col-sm-12">
               <h2>Our Cars</h2>
               <p>WaiveCar’s fleet is 100% electric and 100% emission free.<br />Our cars are zippy, compact, and functional:</p>
               <ul className="list">
@@ -289,7 +290,7 @@ class HomeTemplate extends React.Component {
                 <li>141 Horsepower</li>
               </ul>
             </div>
-            <div className="col-md-6 hidden-sm-down text-right">
+            <div className="col-md-5 hidden-sm-down text-right">
               <img src="/images/site/car.jpg" alt="WaiveCar" />
             </div>
           </Row>
