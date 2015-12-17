@@ -22,7 +22,7 @@ module.exports = {
     uri     : 'http://localhost:8081',
     cors    : {
       origins : null,
-      headers : [ 'Content-Type', 'Cache-Control', 'X-Requested-With', 'Authorization' ]
+      headers : [ 'Content-Type', 'Cache-Control', 'X-Requested-With', 'Authorization', 'Role' ]
     }
   },
 
