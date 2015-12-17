@@ -9,6 +9,27 @@
 }
 
 #home {
+
+  font-family: Lato;
+  letter-spacing: -.4px;
+  h1, h2, h3, h4, h5, h6 {
+    font-family: Lato;
+    letter-spacing: -.4px;
+  }
+  p, ul, li {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-family: Lato;
+    font-weight: 200;
+    line-height: 33px;
+    font-size: 20px;
+  }
+
+  ul li {
+    margin : 0;
+    list-style-type : 'circle';
+  }
+
   background-color : $app-color-white;
   h4 {
     font-size : 1.25rem;
@@ -24,10 +45,6 @@
       margin-bottom : 35px;
     }
     .card-text {
-      font-size: 1.4rem;
-      font-weight: 400;
-      line-height: 2rem;
-      letter-spacing: 0;
     }
     .card-title  {
       margin-bottom: 1.4rem;
@@ -140,6 +157,7 @@
       background      : $brand-primary url('/images/site/bg-green.jpg') no-repeat center bottom;
       background-size : cover;
       color           : $app-color-white;
+      font-weight: 800;
       .btn {
         background-color : #0A6B28;
       }
