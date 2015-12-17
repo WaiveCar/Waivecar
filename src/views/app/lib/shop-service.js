@@ -2,6 +2,7 @@
 
 import { api, auth, dom } from 'bento';
 import Service            from './component-service';
+import { snackbar }       from 'bento-web';
 
 module.exports = class ShopService extends Service {
 
