@@ -47,6 +47,9 @@ module.exports = {
         },
         EE000017DC380D01 : {
           license : 'WAIVE6'
+        },
+        D2000017DC65FC01 : {
+          license : 'WAIVE7'
         }
       }
     },
