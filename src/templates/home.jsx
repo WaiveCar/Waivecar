@@ -8,6 +8,7 @@ import UI, { templates, views } from 'bento-ui';
 import { Anchor, Layout }       from 'bento-web';
 import policies                 from 'policies';
 import Header                   from './app/header';
+import facebook                 from '../views/auth/facebook';
 
 let { Waypoint, Container, Row, Column } = Layout;
 
@@ -159,10 +160,10 @@ class HomeTemplate extends React.Component {
           <Waypoint id="Signup" onEnter={ this.handleWaypointEnter } onEnterClassName="animated slideIn" className={ this.state.waypoints.Signup }>
             <Row>
               <Column width={ 6 } responsive={ true } centerContent={ true } className="text-right-md">
-                <a className="btn btn-facebook md-m-r" href={ `https://www.facebook.com/dialog/oauth?client_id=${ config.auth.facebook.appId }&redirect_uri=${ config.auth.facebook.redirect }&state=register` }>
+                <button className="btn btn-facebook" onClick={ facebook.register }>
                   <i className="fa fa-facebook" />
-                  Connect with Facebook
-                </a>
+                  Register with Facebook
+                </button>
               </Column>
               <Column width={ 6 } responsive={ true } centerContent={ true } className="text-left-md">
                 <Link to="/register" className="btn btn-primary md-m-l">
