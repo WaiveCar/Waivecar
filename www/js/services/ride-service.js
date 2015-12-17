@@ -15,23 +15,6 @@ module.exports = angular.module('app.services').factory('$ride', [
 
     /*eslint-disable */
     var defaultState = {
-      prereqs : {
-        phoneVerified : {
-          valid : false,
-          description : { valid : 'Phone Number has been verified', invalid : 'Verify Phone Number' },
-          path  : 'auth-account-verify({ fromBooking: true })'
-        },
-        hasValidLicense : {
-          valid       : false,
-          description : { valid : 'Valid Driver\'s License', invalid : 'Add Driver\'s License' },
-          path        : 'licenses-new({ fromBooking: true })'
-        },
-        hasValidCreditCard : {
-          valid : false,
-          description : { valid : 'Valid Credit Card', invalid : 'Add Payment Method' },
-          path  : 'credit-cards-new({ fromBooking: true })'
-        }
-      },
       booking : {
         id         : null,
         readyToEnd : false
@@ -56,7 +39,7 @@ module.exports = angular.module('app.services').factory('$ride', [
         isIgnitionOn       : { isVisible: true,  confirmed: false },
         isChargeCardSecure : { isVisible: true,  confirmed: false },
         isCharging         : { isVisible: false, confirmed: false }
-      },
+      }
     };
     /*eslint-enable */
 
@@ -112,7 +95,7 @@ module.exports = angular.module('app.services').factory('$ride', [
       service.state.zone.confirmed = true;
     };
 
-    service.setCheck = function(key) {
+    service.setCheck = function() {
       if (!$data.active.cars) {
         $interval.cancel(this.checkForLock);
         return;
