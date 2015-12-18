@@ -8,7 +8,8 @@ module.exports = angular.module('app.services').factory('$message', [
   '$ionicPopup',
   '$cordovaToast',
   '$log',
-  function ($ionicPopup, $cordovaToast, $log) {
+  '$q',
+  function ($ionicPopup, $cordovaToast, $log, $q) {
     var existingMessage;
 
     function launchPopup(title, message) {
@@ -42,7 +43,8 @@ module.exports = angular.module('app.services').factory('$message', [
 
       var promise;
       if(ionic.Platform.isWebView()){
-        promise = $cordovaToast.show(message, 'short', 'top');
+        // promise = $cordovaToast.show(message, 'short', 'top');
+        promise = $q.resolve();
       } else {
         promise = $ionicPopup.alert({
           title: title,
