@@ -32,7 +32,7 @@ function LicenseEditController ($injector, licenses, $scope) {
     this.license = new $data.resources.licenses(this.license);
   }
 
-  this.canEdit = (this.license.status === 'pending');
+  this.canEdit = (this.license.status == null || this.license.status === 'pending');
   this.states = USStates;
 
   function success () {
@@ -162,7 +162,7 @@ function LicenseEditController ($injector, licenses, $scope) {
 
 module.exports = angular.module('app.controllers').controller('LicenseEditController', [
   '$injector',
-  '$scope',
   'licenses',
+  '$scope',
   LicenseEditController
 ]);

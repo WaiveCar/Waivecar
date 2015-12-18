@@ -9,6 +9,7 @@ function VerifyController ($injector, $stateParams) {
   var $state = $injector.get('$state');
   var $modal = $injector.get('$modal');
   var $timeout = $injector.get('$timeout');
+  var $ionicHistory = $injector.get('$ionicHistory');
 
   this.form = {
     token: $stateParams.token
@@ -23,6 +24,7 @@ function VerifyController ($injector, $stateParams) {
     if (form.$invalid) {
       return $message.error('Please resolve form errors and try again.');
     }
+    var self = this;
 
     $data.resources.Verification.verify(this.form).$promise
       .then(function(){
@@ -38,6 +40,13 @@ function VerifyController ($injector, $stateParams) {
         modal.show();
         return $timeout(2000)
         .then(function () {
+          modal.remove();
+          if (self.isBooking) {
+            return $ionicHistory.goBack();
+          }
+          if (self.isWizard) {
+            return $state.go('licenses-new', {step: 3});
+          }
           return $state.go('users-edit');
         });
       })
