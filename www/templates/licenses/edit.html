@@ -45,7 +45,8 @@
         </label>
         <label class="item item-input">
           <span class="input-label required">Date Of Birth</span>
-          <input name="birthDate" type="date" value="" placeholder="Date of Birth" ng-model="licenseCtrl.license.birthDate" required ng-disabled="!licenseCtrl.canEdit">
+          <input name="birthDate" type="date" value="" placeholder="Date of Birth" ng-model="licenseCtrl.license.birthDate" required ng-if="licenseCtrl.canEdit">
+          <span class="input-label" ng-if="!licenseCtrl.canEdit">{{licenseCtrl.license.birthDate}}</span>
         </label>
       </div>
       <div class="validations" ng-if="form.$submitted && form.$invalid">

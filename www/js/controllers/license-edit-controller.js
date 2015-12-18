@@ -95,7 +95,10 @@ function LicenseEditController ($injector, licenses, $scope) {
     var self = this;
     return this.license.$save()
     .then(function () {
-      return $data.resources.licenses.verify({id: this.license.id}).$promise;
+      return $data.resources.licenses.verify({
+        id: this.license.id,
+        userId: this.license.userId
+      }).$promise;
     }.bind(this))
     .then(function () {
       var modal;
@@ -124,6 +127,7 @@ function LicenseEditController ($injector, licenses, $scope) {
                 if (lic.outcome === 'consider') {
                   modal.scope.message += '<p>Still waiting? Feel free to close this screen, we\'ll send you an SMS when your validation is completed.</p>';
                   cancelPolling();
+                  return;
                 }
                 if (lic.outcome === 'clear') {
                   $interval.cancel(polling);
