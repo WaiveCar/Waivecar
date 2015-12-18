@@ -51,7 +51,11 @@ module.exports = class BookingService extends Service {
 
     this.hasAccess(user, _user);
 
-    yield this.hasBookingAccess(user);
+    if (user.id === _user.id && _user.hasAccess('admin')) {
+      // skip access check...
+    } else {
+      yield this.hasBookingAccess(user);
+    }
 
     // ### Add Driver
     // Add the driver to the car so no simultaneous requests can book this car.
