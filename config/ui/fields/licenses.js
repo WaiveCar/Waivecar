@@ -148,9 +148,10 @@ module.exports = {
     required  : true,
     helpText  : null,
     options   : [
+      { name : 'Pending',     value : 'pending' },
       { name : 'Provided',    value : 'provided' },
-      { name : 'Complete',    value : 'complete' },
-      { name : 'In Progress', value : 'in-progress' }
+      { name : 'In Progress', value : 'in-progress' },
+      { name : 'Complete',    value : 'complete' }
     ]
   },
   outcome : {
