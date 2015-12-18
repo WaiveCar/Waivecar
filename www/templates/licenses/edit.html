@@ -8,31 +8,36 @@
   <ion-content padding="true" class="ion-content--center dark-bg">
     <form ng-submit="licenseCtrl.update(form)" name="form" id="form" novalidate>
       <div class="list list-inset">
+        <label class="item item-input" ng-if="licenseCtrl.license && licenseCtrl.license.status !== 'provided'">
+          <span ng-if="licenseCtrl.license.status !=='complete'" class="input-label">Your Driver's License is pending verification</span>
+          <span ng-if="licenseCtrl.license.status ==='complete' && licenseCtrl.license.outcome === 'consider'" class="input-label">Driver's License has failed verification.</span>
+          <span ng-if="licenseCtrl.license.status ==='complete' && licenseCtrl.license.outcome === 'clear'" class="input-label">Your Driver's License has been cleared.</span>
+        </label>
         <label class="item item-input">
           <span class="input-label required">License Number</span>
-          <input name="number" type="text" placeholder="Driver's License Number" ng-model="licenseCtrl.license.number" autofocus required>
+          <input name="number" type="text" placeholder="Driver's License Number" ng-model="licenseCtrl.license.number" autofocus required ng-disabled="!licenseCtrl.canEdit">
         </label>
         <label class="item item-input item-select">
           <div class="input-label required">License State</div>
-          <select ng-model="licenseCtrl.license.state" name="state" required ng-options="state.abbreviation as state.name for state in licenseCtrl.states track by state.abbreviation">
+          <select ng-model="licenseCtrl.license.state" name="state" required ng-options="state.abbreviation as state.name for state in licenseCtrl.states" ng-disabled="!licenseCtrl.canEdit">
             <option value=""></option>
           </select>
         </label>
         <label class="item item-input">
           <span class="input-label required">First Name</span>
-          <input name="firstName" type="text" placeholder="First Name" ng-model="licenseCtrl.license.firstName" required>
+          <input name="firstName" type="text" placeholder="First Name" ng-model="licenseCtrl.license.firstName" required ng-disabled="!licenseCtrl.canEdit">
         </label>
         <label class="item item-input">
           <span class="input-label">Middle Name</span>
-          <input name="middleName" type="text" placeholder="Middle Name" ng-model="licenseCtrl.license.middleName">
+          <input name="middleName" type="text" placeholder="Middle Name" ng-model="licenseCtrl.license.middleName" ng-disabled="!licenseCtrl.canEdit">
         </label>
         <label class="item item-input">
           <span class="input-label required">Last Name</span>
-          <input name="lastName" type="text" placeholder="Last Name" ng-model="licenseCtrl.license.lastName" required>
+          <input name="lastName" type="text" placeholder="Last Name" ng-model="licenseCtrl.license.lastName" required ng-disabled="!licenseCtrl.canEdit">
         </label>
         <label class="item item-input item-select">
           <div class="input-label">Gender</div>
-          <select name="gender" ng-model="licenseCtrl.license.gender">
+          <select name="gender" ng-model="licenseCtrl.license.gender" ng-disabled="!licenseCtrl.canEdit">
             <option value="male">Male</option>
             <option value="female">Female</option>
             <option value="other">Other</option>
@@ -40,7 +45,7 @@
         </label>
         <label class="item item-input">
           <span class="input-label required">Date Of Birth</span>
-          <input name="birthDate" type="date" value="" placeholder="Date of Birth" ng-model="licenseCtrl.license.birthDate" required>
+          <input name="birthDate" type="date" value="" placeholder="Date of Birth" ng-model="licenseCtrl.license.birthDate" required ng-disabled="!licenseCtrl.canEdit">
         </label>
       </div>
       <div class="validations" ng-if="form.$submitted && form.$invalid">
@@ -51,7 +56,7 @@
         <div class="help-block" ng-if="form.birthDate.$error.required">Date of Birth is required</div>
       </div>
       <div class="padding-top padding-bottom">
-        <button type="submit" form="form" class="button button-balanced button-block">Validate</button>
+        <button type="submit" form="form" class="button button-balanced button-block" ng-disabled="!licenseCtrl.canEdit">Validate</button>
         <button type="button" class="button button-gray button-block" ng-click="licenseCtrl.cancel()">Cancel Booking</button>
       </div>
     </form>

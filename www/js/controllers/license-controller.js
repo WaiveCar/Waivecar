@@ -13,6 +13,7 @@ function LicenseController ($stateParams, $injector) {
   var $state = $injector.get('$state');
   var $uploadImage = $injector.get('$uploadImage');
   var $modal = $injector.get('$modal');
+  var $q = $injector.get('$q');
 
   this.isWizard = !!$stateParams.step;
   this.fromBooking = !!$stateParams.fromBooking;
@@ -20,11 +21,7 @@ function LicenseController ($stateParams, $injector) {
   this.states = USStates;
 
   this.nextState = function nextState () {
-    if (this.isWizard) {
-      $state.go('credit-cards-new', {step: 4});
-    } else {
-      // TODO can something come to this screen after the wizard?
-    }
+    $state.go('credit-cards-new', {step: 4});
   };
 
   var self = this;
@@ -90,7 +87,7 @@ function LicenseController ($stateParams, $injector) {
         modal = _modal;
         modal.show();
       });
-      throw err;
+      $q.reject(err);
     });
   };
 

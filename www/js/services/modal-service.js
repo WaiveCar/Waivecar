@@ -2,7 +2,7 @@
 var angular = require('angular');
 require('ionic-angular');
 
-function ModalFactory ($rootScope, $ionicModal) {
+function ModalFactory ($rootScope, $ionicModal, $sce) {
   return function $modalFactory (templateName, initialData) {
     var template = '/templates/modals/' + templateName + '.html';
     var scope = $rootScope.$new();
@@ -12,6 +12,9 @@ function ModalFactory ($rootScope, $ionicModal) {
       }
     }
     angular.extend(scope, initialData || {});
+    if (scope.message) {
+      scope.message = $sce.trustAsHtml(scope.message);
+    }
 
     return $ionicModal.fromTemplateUrl(template, {
       scope: scope,
@@ -27,5 +30,6 @@ function ModalFactory ($rootScope, $ionicModal) {
 module.exports = angular.module('app.services').service('$modal', [
   '$rootScope',
   '$ionicModal',
+  '$sce',
   ModalFactory
 ]);

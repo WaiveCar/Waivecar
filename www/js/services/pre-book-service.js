@@ -25,10 +25,10 @@ function PreBookService ($injector) {
       actions = _.map(data.required, function (field) {
           if (field === 'license') {
             return angular.extend({}, base, {
-              text: 'Add driver\'s license',
+              text: 'Validate driver\'s license',
               handler: function () {
                 modal.remove();
-                $state.go('licenses-edit', {id: null, fromBooking: true});
+                $state.go('licenses-form', {fromBooking: true});
               }
             });
           } else if (field === 'credit card') {
@@ -44,7 +44,7 @@ function PreBookService ($injector) {
               text: 'Validate email',
               handler: function () {
                 modal.remove();
-                $message.show('Please click on the email you received');
+                $message.info('Please click on the email you received');
               }
             });
           } else if (field === 'phone') {

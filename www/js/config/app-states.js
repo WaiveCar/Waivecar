@@ -125,7 +125,7 @@ module.exports = [
         }
       })
       .state('licenses-edit', {
-        url: '/licenses/:licenseId/edit?step&fromBooking',
+        url: '/licenses/:licenseId/edit?fromBooking',
         templateUrl: '/templates/licenses/edit.html',
         controller: 'LicenseEditController as licenseCtrl',
         data: {
@@ -138,14 +138,14 @@ module.exports = [
         }
       })
       .state('licenses-form', {
-        url: '/licenses/form?step&fromBooking',
+        url: '/licenses/form?fromBooking',
         templateUrl: '/templates/licenses/edit.html',
         controller: 'LicenseEditController as licenseCtrl',
         data: {
           auth: true
         },
         resolve: {
-          licenses: ['$stateParams', '$data', function ($data) {
+          licenses: ['$data', function ($data) {
             return $data.initialize('licenses');
           }]
         }
@@ -165,6 +165,15 @@ module.exports = [
         controller: 'CreditCardController as ctrl',
         data: {
           auth: true
+        },
+        resolve: {
+          cards: ['$data', '$auth', function ($data, $auth) {
+            return new $data.resources.Card({
+              userId: $auth.me.id,
+              service: 'stripe',
+              card: {}
+            });
+          }]
         }
       })
       .state('credit-cards-edit', {
