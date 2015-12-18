@@ -7,7 +7,6 @@ module.exports = {
    |
    | @param {Array}    users  A list of users to register by default.
    | @param {Array}    params A list of parameters required for user registration.
-   | @param {Object}   ui     The bentojs UI configuration.
    | @param {Function} filter The query filter available on the user model.
    |
    */
@@ -31,10 +30,10 @@ module.exports = {
       'password'
     ],
 
-    filter : function(queryParser, query) {
+    filter(queryParser, query) {
       return queryParser(query, {
         where : {
-          role          : queryParser.STRING,
+          id            : queryParser.NUMBER,
           firstName     : { $like : queryParser.STRING },
           lastName      : { $like : queryParser.STRING },
           phone         : queryParser.STRING,
