@@ -10,8 +10,8 @@ module.exports = function *() {
     init   : true,
     repeat : true,
     timer  : {
-      value : 1,
-      type  : 'minutes'
+      value : 10,
+      type  : 'seconds'
     }
   });
 };

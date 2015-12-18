@@ -42,6 +42,9 @@ Bento.Register.Controller('CarsController', function(controller) {
       case 'unlock'             : return yield car.unlockCar(id, this.auth.user);
       case 'lock-immobilizer'   : return yield car.lockImmobilzer(id, this.auth.user);
       case 'unlock-immobilizer' : return yield car.unlockImmobilzer(id, this.auth.user);
+      case 'refresh'            : return yield car.refresh(id, this.auth.user);
+      case 'available'          : return yield car.updateAvailability(id, true, this.auth.user);
+      case 'unavailable'        : return yield car.updateAvailability(id, false, this.auth.user);
       default                   : {
         throw error.parse({
           code    : `CAR_UNRECOGNIZED_COMMAND`,
