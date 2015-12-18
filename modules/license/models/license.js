@@ -81,7 +81,7 @@ Bento.Register.Model('License', 'sequelize', function(model, Sequelize) {
     status : {
       type         : Sequelize.STRING(64),
       allowNull    : false,
-      defaultValue : 'provided'
+      defaultValue : 'pending'
     },
 
     outcome : {
