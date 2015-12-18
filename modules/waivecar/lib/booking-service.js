@@ -6,7 +6,6 @@ let fees        = require('./fee-service');
 let queue       = Bento.provider('queue');
 let queryParser = Bento.provider('sequelize/helpers').query;
 let error       = Bento.Error;
-let relay       = Bento.Relay;
 let config      = Bento.config.waivecar;
 
 // ### Models
@@ -248,10 +247,7 @@ module.exports = class BookingService extends Service {
     // ### Relay Update
 
     car.relay('update');
-    // TEMP: relayUpdate does not appear to work:
     booking.relay('update');
-    // END TEMP
-    yield this.relayUpdate(booking.id, user, _user);
   }
 
   /**
@@ -290,10 +286,7 @@ module.exports = class BookingService extends Service {
     // ### Relay Update
 
     car.relay('update');
-    // TEMP: relayUpdate does not appear to work:
     booking.relay('update');
-    // END TEMP
-    yield this.relayUpdate(booking.id, user, _user);
   }
 
   /**
@@ -363,10 +356,7 @@ module.exports = class BookingService extends Service {
     // ### Relay Update
 
     car.relay('update');
-    // TEMP: relayUpdate does not appear to work:
     booking.relay('update');
-    // END TEMP
-    yield this.relayUpdate(booking.id, user, _user);
   }
 
   /**
@@ -431,10 +421,7 @@ module.exports = class BookingService extends Service {
     // ### Relay
 
     car.relay('update');
-    // TEMP: relayUpdate does not appear to work:
     booking.relay('update');
-    // END TEMP
-    yield this.relayUpdate(booking.id, user, _user);
   }
 
   /**
@@ -452,9 +439,7 @@ module.exports = class BookingService extends Service {
     }
     let booking = yield this.getBooking(id);
 
-    // TEMP: relayUpdate does not appear to work:
     booking.relay('update');
-    // END TEMP
 
     // Payment stuff to be done...
   }
@@ -507,10 +492,7 @@ module.exports = class BookingService extends Service {
     // ### Relay Update
 
     car.relay('update');
-    // TEMP: relayUpdate does not appear to work:
     booking.relay('update');
-    // END TEMP
-    yield this.relayUpdate(booking.id, user, _user);
   }
 
   // ### HELPERS
@@ -533,23 +515,6 @@ module.exports = class BookingService extends Service {
       charge    : car.charge
     });
     yield details.save();
-  }
-
-  /**
-   * Sends a relay for booking updates where we use the show method to
-   * send a full booking view.
-   * @param  {Number} id The booking id
-   * @param  {Object} user
-   * @param  {Object} _user
-   * @return {Void}
-   */
-  static *relayUpdate(id, user, _user) {
-    let payload = {
-      type : 'update',
-      data : yield this.show(id, _user)
-    };
-    relay.user(user.id, 'bookings', payload);
-    relay.admin('bookings', payload);
   }
 
 };
