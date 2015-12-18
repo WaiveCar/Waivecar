@@ -65,6 +65,29 @@ module.exports = class CarService extends Service {
   }
 
   /**
+   * @param  {Number} id
+   * @param  {Boolean}  isAvailable
+   * @param  {Object} _user
+   * @return {Mixed}
+   */
+  static *updateAvailability(id, isAvailable, _user) {
+    this.hasAccess(_user);
+    let model = yield Car.findById(id);
+    if (isAvailable) {
+      yield model.available();
+    } else {
+      yield model.unavailable();
+    }
+
+    relay.emit('cars', {
+      type : 'update',
+      data : model.toJSON()
+    });
+
+    return model;
+  }
+
+  /**
    * A convenience method to update the local Car (to enable pre-save model transformations)
    * @param  {Number} id          car Id
    * @param  {Object} data        update data to persist
@@ -115,6 +138,16 @@ module.exports = class CarService extends Service {
     });
 
     return existingCar;
+  }
+
+  static *refresh(deviceId) {
+    let updatedCar = yield this.getDevice(deviceId);
+    if (updatedCar) {
+      log.debug(`Cars : Refresh : updating ${ deviceId }.`);
+      yield this.syncUpdate(deviceId, updatedCar);
+    } else {
+      log.debug(`Cars : Refresh : failed to retrieve ${ deviceId } to update database.`);
+    }
   }
 
   static *syncCar(device, cars, allCars) {
