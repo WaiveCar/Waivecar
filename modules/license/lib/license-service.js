@@ -31,6 +31,7 @@ module.exports = class LicenseService extends Service {
       let user = yield this.getUser(license.userId);
       let userLink = yield Verification.createUserLink(user, license, _user);
       license.linkedUserId = userLink.id;
+      license.status = 'provided';
     }
 
     yield license.save();
@@ -104,6 +105,7 @@ module.exports = class LicenseService extends Service {
     if (!license.linkedUserId) {
       let userLink = yield Verification.createUserLink(user, data, _user);
       data.linkedUserId = userLink.id;
+      data.status = 'provided';
     }
 
     // ### Update License

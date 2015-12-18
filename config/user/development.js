@@ -6,10 +6,8 @@ module.exports = {
         lastName      : 'Ginty',
         email         : 'matt.ginty+admin@clevertech.biz',
         password      : 'lollipop0',
-        phone         : '+61430099449',
         role          : 5, // Super
         verifiedEmail : true,
-        verifiedPhone : true,
         status        : 'active'
       },
       {
@@ -52,7 +50,7 @@ module.exports = {
       },
       {
         firstName     : 'Issac',
-        lastName      : '',
+        lastName      : 'Deutsch',
         email         : 'ideutsch@waivecar.com',
         password      : 'password',
         role          : 4, // Owner
@@ -77,7 +75,96 @@ module.exports = {
         verifiedEmail : true,
         verifiedPhone : true,
         status        : 'active'
+      },
+      {
+        firstName     : 'Sergio',
+        lastName      : 'Vides',
+        email         : 'sergio.g.vides@gmail.com',
+        phone         : '+13107407461',
+        password      : 'password',
+        role          : 3,
+        verifiedEmail : true,
+        verifiedPhone : true,
+        status        : 'active'
+      },
+      {
+        firstName     : 'Naceur',
+        lastName      : 'Garouachi',
+        email         : 'naceur.garouachi@gmail.com',
+        phone         : '+13103672199',
+        password      : 'password',
+        role          : 3,
+        verifiedEmail : true,
+        verifiedPhone : true,
+        status        : 'active'
+      },
+      {
+        firstName     : 'Rafael',
+        lastName      : 'Moreno',
+        email         : 'danimoreno1194@gmail.com',
+        phone         : '+13108906097',
+        password      : 'password',
+        role          : 3,
+        verifiedEmail : true,
+        verifiedPhone : true,
+        status        : 'active'
+      },
+      {
+        firstName     : 'Artist',
+        lastName      : 'Patton III',
+        email         : 'artistpatton@gmail.com',
+        phone         : '+14242646717',
+        password      : 'password',
+        role          : 3,
+        verifiedEmail : true,
+        verifiedPhone : true,
+        status        : 'active'
+      },
+      {
+        firstName     : 'Robert',
+        lastName      : 'Brown Jr.',
+        email         : 'brownrr13@yahoo.com',
+        phone         : '+13233092089',
+        password      : 'password',
+        role          : 3,
+        verifiedEmail : true,
+        verifiedPhone : true,
+        status        : 'active'
+      },
+      {
+        firstName     : 'Tonia',
+        lastName      : 'Sample',
+        email         : 'tesample@aol.com',
+        phone         : '+16264821211',
+        password      : 'password',
+        role          : 3,
+        verifiedEmail : true,
+        verifiedPhone : true,
+        status        : 'active'
+      },
+      {
+        firstName     : 'Ronnie',
+        lastName      : 'Calton',
+        email         : 'taroncample@yahoo.com',
+        phone         : '+16266440360',
+        password      : 'password',
+        role          : 3,
+        verifiedEmail : true,
+        verifiedPhone : true,
+        status        : 'active'
+      },
+      {
+        firstName     : 'Lonnie',
+        lastName      : 'Calton',
+        email         : 'lonniecalton82@gmail.com',
+        phone         : '+17606381822',
+        password      : 'password',
+        role          : 3,
+        verifiedEmail : true,
+        verifiedPhone : true,
+        status        : 'active'
       }
     ]
   }
 };
+
