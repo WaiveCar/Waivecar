@@ -1,15 +1,15 @@
 
 'use strict';
 
-import React                from 'react';
-import moment               from 'moment';
-import mixin                from 'react-mixin';
-import { History }          from 'react-router';
-import Switch               from 'react-toolbox/lib/switch';
-import { auth, relay, dom } from 'bento';
-import { fields }           from 'bento-ui';
-import { Form, Map }        from 'bento-web';
-import Service              from '../../lib/car-service';
+import React                 from 'react';
+import moment                from 'moment';
+import mixin                 from 'react-mixin';
+import { History }           from 'react-router';
+import Switch                from 'react-toolbox/lib/switch';
+import { auth, relay, dom }  from 'bento';
+import { fields }            from 'bento-ui';
+import { Form, Button, Map } from 'bento-web';
+import Service               from '../../lib/car-service';
 
 let formFields = {
   photo : [],
@@ -232,7 +232,6 @@ class CarsShowView extends React.Component {
         </div>
       );
     }
-
     let switches = [
       {
         ref : 1,
@@ -245,6 +244,17 @@ class CarsShowView extends React.Component {
         checked  : car.isImmobilized,
         label    : car.isImmobilized ? 'Deactivate Immobilizer' : 'Activate Immobilizer',
         onChange : this.service.executeCommand.bind(this, car, car.isImmobilized ? 'unlock-immobilizer' : 'lock-immobilizer')
+      },
+      {
+        ref : 3,
+        checked  : car.isAvailable,
+        label    : car.isAvailable ? 'Make Unavailable' : 'Make Available',
+        onChange : this.service.executeCommand.bind(this, car, car.isAvailable ? 'unavailable' : 'available')
+      },
+      {
+        ref : 4,
+        label    : 'Refresh Cloudboxx Data',
+        onChange : this.service.executeCommand.bind(this, car, 'refresh')
       }
     ];
     return (
@@ -255,17 +265,31 @@ class CarsShowView extends React.Component {
         <div className="box-content">
           <div className="container-fluid">
             <div className="row">
-              <div className="col-md-6 text-center">
+              <div className="col-md-6">
                 <Switch { ...switches[0] } />
               </div>
-              <div className="col-md-6 text-center">
+              <div className="col-md-6">
                 <Switch { ...switches[1] } />
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-md-6">
+                <Switch { ...switches[2] } />
+              </div>
+              <div className="col-md-6">
+                <Button
+                  key       = { switches[3].ref }
+                  className = { 'btn btn-primary-outline' }
+                  type      = { 'button' }
+                  value     = { switches[3].label }
+                  onClick   = { switches[3].onChange }
+                />
               </div>
             </div>
             <div className="row">
               <div className="col-md-12 text-center">
                 <div className="p-t">
-                  <small className="text-danger hidden-xs-down">WARNING: These actions will remotely access and control the car</small>
+                  <small className="text-danger hidden-xs-down">WARNING: These actions may remotely access and control the car</small>
                 </div>
               </div>
             </div>

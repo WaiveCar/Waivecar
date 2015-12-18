@@ -1,21 +1,29 @@
-  .cars {
-    .ride-map {
-      height : 400px;
-    }
-    .box {
-      max-width: 980px;
-    }
-    .list-group {
-      min-width: 270px;
-    }
-    .loading-panel {
-      position   : relative;
-      min-height : 126.391px;
-    }
-    [data-react-toolbox="checkbox"] {
-      margin: 0;
-      :last-child {
-        font-size : 1rem;
-      }
+.cars {
+  .ride-map {
+    height : 400px;
+  }
+  .box {
+    max-width: 980px;
+  }
+  .list-group {
+    min-width: 270px;
+  }
+  .loading-panel {
+    position   : relative;
+    min-height : 126.391px;
+  }
+  [data-react-toolbox="checkbox"] {
+    margin: 0;
+    :last-child {
+      font-size : 1rem;
     }
   }
+}
+
+.cars-show {
+  .btn-primary-outline {
+    border: 0.0625rem solid $brand-primary;
+    line-height: .8rem;
+    margin: .2rem 0;
+  }
+}
