@@ -73,6 +73,22 @@ hooks.set('user:send-password-token', function *(user, token, resetUrl) {
   });
 });
 
+let phoneFormat = function(phone) {
+  phone = phone.replace(/[^0-9+]/g, '');
+  if (phone.startsWith('0')) {
+    phone = phone.substring(1);
+  }
+
+  if (!phone.startsWith('+1')) {
+    if (phone.startsWith('+')) {
+      return phone;
+    }
+
+    phone = `+1${ phone }`;
+  }
+
+  return phone;
+};
 // ### Store Hooks
 
 /**
@@ -81,6 +97,10 @@ hooks.set('user:send-password-token', function *(user, token, resetUrl) {
  * @return {Object}
  */
 hooks.set('user:store:before', function *(payload) {
+  if (payload.phone) {
+    payload.phone = phoneFormat(payload.phone);
+  }
+
   return payload;
 });
 
@@ -116,6 +136,10 @@ hooks.set('user:store:after', function *(user) {
  * @return {Object}
  */
 hooks.set('user:update:before', function *(prevUser, nextUser) {
+  if (nextUser.phone) {
+    nextUser.phone = phoneFormat(nextUser.phone);
+  }
+
   if (nextUser.phone && prevUser.phone !== nextUser.phone) {
     nextUser.verifiedPhone = false;
   }
