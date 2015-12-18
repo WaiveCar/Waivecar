@@ -13,11 +13,23 @@ module.exports = {
     options   : [
       {
         name  : 'User',
-        value : 'user'
+        value : '1'
       },
       {
-        name  : 'Admin',
-        value : 'admin'
+        name  : 'Moderator',
+        value : '2'
+      },
+      {
+        name  : 'Administrator',
+        value : '3'
+      },
+      {
+        name  : 'Owner',
+        value : '4'
+      },
+      {
+        name  : 'Super User',
+        value : '5'
       }
     ],
     label    : 'Role',
