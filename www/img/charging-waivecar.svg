@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg width="61px" height="77px" viewBox="0 0 61 77" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-    <!-- Generator: Sketch 3.3 (11970) - http://www.bohemiancoding.com/sketch -->
+    <!-- Generator: Sketch 3.4.4 (17249) - http://www.bohemiancoding.com/sketch -->
     <title>Group</title>
     <desc>Created with Sketch.</desc>
     <defs></defs>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <g id="Find-waivecar@2x-" sketch:type="MSArtboardGroup" transform="translate(-616.000000, -259.000000)">
+    <g id="Core-Flow" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="14.1-WaiveCar-not-available@2x-" sketch:type="MSArtboardGroup" transform="translate(-616.000000, -259.000000)">
             <g id="MAP" sketch:type="MSLayerGroup" transform="translate(0.000000, 41.000000)">
                 <g id="waivecars" transform="translate(103.535286, 218.472414)" sketch:type="MSShapeGroup">
                     <g id="waivecar-mark-copy-4" transform="translate(121.398136, 0.000000)">
                         <g id="Group" transform="translate(391.157124, 0.000000)">
-                            <g>
+                            <g transform="translate(0.000000, -0.000000)">
                                 <ellipse id="Oval-1" opacity="0.800000012" fill="#FFFFFF" cx="30.234957" cy="30.2387873" rx="30.234957" ry="30.2387873"></ellipse>
                                 <path d="M19.8259239,58.6576306 C12.0761243,55.8415136 5.83614162,49.965505 2.51957975,42.5022955 L12.5978987,37.2945043 L12.0939828,47.5420933 L28.8911811,34.4386188 L28.5552372,42.6702887 L58.4542502,19.3192252 C59.7980261,22.6790905 60.469914,26.3749422 60.469914,30.2387873 C60.469914,42.8240773 52.7750814,53.6778107 41.7525512,58.2139148 L30.6491345,75.7965517 L19.8259239,58.6576306 Z M21.1644699,24.3590231 L18.9808341,34.6066121 L35.9460044,21.5031376 L35.2741165,29.5668142 L55.4307545,13.439461 C50.055651,5.37578441 40.8171919,0 30.234957,0 C13.6057306,0 0,13.6074543 0,30.2387873 C0,34.6066121 0.839859917,38.6384504 2.51957975,42.3343022 L21.1644699,24.3590231 Z" id="Shape" fill="#A3A9A5"></path>
                             </g>
