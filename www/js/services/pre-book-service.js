@@ -17,6 +17,25 @@ function PreBookService ($injector) {
         modal.remove();
       }
     }];
+
+    if (err && err.data && err.data.code === 'CAR_IN_PROGRESS') {
+      return $modal('result', {
+        icon: 'x-icon',
+        title: err.data.message,
+        actions: [{
+          className: 'button-dark',
+          text: 'Ok',
+          handler: function () {
+            modal.remove();
+          }
+        }]
+      }).then(function (_modal) {
+        modal = _modal;
+        modal.show();
+        return $q.reject(err);
+      });
+    }
+
     if (err && err.data && err.data.data) {
       var data = err.data.data;
       var base = {
@@ -83,4 +102,3 @@ module.exports = angular.module('app.services').factory('$preBook', [
   '$injector',
   PreBookService
 ]);
-
