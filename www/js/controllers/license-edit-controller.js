@@ -1,5 +1,6 @@
 'use strict';
 var angular = require('angular');
+var moment = require('moment');
 
 function LicenseEditController ($injector, licenses, $scope) {
   var $auth = $injector.get('$auth');
@@ -30,6 +31,10 @@ function LicenseEditController ($injector, licenses, $scope) {
 
   if (!(this.license instanceof $data.resources.licenses)) {
     this.license = new $data.resources.licenses(this.license);
+  }
+
+  if (this.license.birthDate) {
+    this.birthdateMoment = moment(this.license.birthDate).format('LL');
   }
 
   this.canEdit = (this.license.status == null || this.license.status === 'pending');
