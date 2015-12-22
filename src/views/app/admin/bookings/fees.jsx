@@ -1,5 +1,5 @@
-import React          from 'react';
-import { api, relay } from 'bento';
+import React                from 'react';
+import { auth, api, relay } from 'bento';
 
 module.exports = class BookingFeesView extends React.Component {
 
@@ -17,7 +17,7 @@ module.exports = class BookingFeesView extends React.Component {
         return console.log(err);
       }
       this.setState({ items : items });
-      this.loadCart(this.props.cartId);
+      this.loadCart(this.props.booking.cartId);
     });
   }
 
@@ -134,11 +134,44 @@ module.exports = class BookingFeesView extends React.Component {
   }
 
   /**
+   * Submits the booking fees for payment.
+   * @return {Void}
+   */
+  submitCart(cart) {
+    let booking = this.props.booking;
+    let user    = auth.user();
+    api.get('/shop/cards', {
+      userId : user.id
+    }, (err, cards) => {
+      if (!cards.length) {
+        return console.log('User has no registered payment cards!');
+      }
+      api.post('/shop/orders', {
+        bookingId   : booking.id,
+        userId      : user.id,
+        cart        : cart.id,
+        source      : cards[0].id,
+        currency    : 'usd',
+        description : `Payment for fees incurred during a waivecar ride.`,
+        metadata    : {
+          user    : `${ booking.user.firstName } ${ booking.user.lastName } <${ booking.user.email }>`,
+          booking : booking.id
+        }
+      }, (err, order) => {
+        if (err) {
+          return console.log(err);
+        }
+        console.log(order);
+      });
+    });
+  }
+
+  /**
    * Renders the fees/cart view.
    * @return {Object}
    */
   render() {
-    let cart = this.state.carts.find(val => val.id === this.props.cartId);
+    let cart = this.state.carts.find(val => val.id === this.props.booking.cartId);
     if (!cart) {
       return <div></div>;
     }
@@ -173,6 +206,12 @@ module.exports = class BookingFeesView extends React.Component {
               </tr>
             </tfoot>
           </table>
+          <div className="fee-actions">
+            <button className="btn btn-primary" onClick={ this.submitCart.bind(this, cart) }>Close Booking</button>
+            <p>
+              Closing the booking will submit the fees list for payment if any items has been added.
+            </p>
+          </div>
         </div>
       </div>
     );

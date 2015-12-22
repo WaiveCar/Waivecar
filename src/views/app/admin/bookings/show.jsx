@@ -14,7 +14,6 @@ module.exports = class BookingsView extends React.Component {
     this.state = {
       isActing : false,
       error    : null,
-      cartId   : null,
       items    : []
     };
     relay.subscribe(this, 'bookings');
@@ -50,9 +49,6 @@ module.exports = class BookingsView extends React.Component {
         return;
       }
       this.bookings.store(booking);
-      if (booking.cartId) {
-        this.setState({ cartId : booking.cartId });
-      }
     });
   }
 
@@ -130,11 +126,11 @@ module.exports = class BookingsView extends React.Component {
    * Returns a list of fees attached to the booking.
    * @return {Object}
    */
-  renderFees() {
-    if (!this.state.cartId) {
+  renderFees(booking) {
+    if (!booking.cartId) {
       return;
     }
-    return <BookingFees cartId={ this.state.cartId } />
+    return <BookingFees booking={ booking } />
   }
 
   /**
@@ -192,7 +188,7 @@ module.exports = class BookingsView extends React.Component {
           </div>
         </div>
 
-        { this.renderFees() }
+        { this.renderFees(booking) }
 
         <pre>
           { JSON.stringify(booking, null, 2) }
