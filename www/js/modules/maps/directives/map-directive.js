@@ -29,11 +29,12 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
       ctrl.setMarkers(ctrl.markers);
       ctrl.drawRoute();
       ctrl.$$ready.resolve();
-      var watchers = [];
-      watchers[0] = $scope.$watch('map.markers', ctrl.setMarkers.bind(ctrl), true);
-      watchers[1] = $scope.$watch('map.routeStart', ctrl.drawRoute.bind(ctrl), true);
-      watchers[2] = $scope.$watch('map.routeDestiny', ctrl.drawRoute.bind(ctrl), true);
-      watchers[3] = $rootScope.$watch('currentLocation', ctrl.setCurrentLocation.bind(ctrl), true);
+      var watchers = [
+        $scope.$watch('map.markers', ctrl.setMarkers.bind(ctrl), true),
+        $scope.$watch('map.routeStart', ctrl.drawRoute.bind(ctrl), true),
+        $scope.$watch('map.routeDestiny', ctrl.drawRoute.bind(ctrl), true),
+        $rootScope.$watch('currentLocation', ctrl.setCurrentLocation.bind(ctrl), true)
+      ];
       $scope.$on('$destroy', function () {
         console.log('Destroying watchers');
         watchers.forEach(function (watcher) {
@@ -72,7 +73,7 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
     });
   };
 
-  MapController.prototype.setMarkers = function setMarkers (locations) {
+  MapController.prototype.setMarkers = function setMarkers (locations, oldLocations) {
     if (locations === null || typeof locations === 'undefined') {
       return;
     }
@@ -112,6 +113,9 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
       return marker;
     }, this)
     .value();
+    if (oldLocations && oldLocations.length !== locations.length) {
+      this.fitBounds(null, 0.5);
+    }
   };
 
   MapController.prototype.addMarker = function addMarker (id, location, options) {
@@ -127,7 +131,6 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
     if (this.items[id]) {
       this.items[id].setLatLng(location).update();
       // return null when no new marker is added to avoid setting listeners
-      this.fitBounds(null, 0.5);
       return null;
     }
 
@@ -136,7 +139,6 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
       .addTo(this.map);
 
     this.items[id] = marker;
-    this.fitBounds(null, 0.5);
 
     return marker;
   };
