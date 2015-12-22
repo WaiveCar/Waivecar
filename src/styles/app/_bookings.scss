@@ -17,4 +17,18 @@
   .fee-list {
     width : 100%;
   }
+
+  .fee-item-row {
+    td {
+      padding : 10px 0;
+    }
+  }
+
+  .fee-item-btn {
+    background    : #fff;
+    border        : 1px solid #cecece;
+    border-radius : 3px;
+    margin        : 0 5px;
+    width         : 25px;
+  }
 }

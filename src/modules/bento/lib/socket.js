@@ -1,5 +1,3 @@
-'use strict';
-
 let config = require('config');
 let auth   = require('./auth');
 let relay  = require('./relay');

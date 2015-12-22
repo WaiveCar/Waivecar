@@ -1,5 +1,3 @@
-'use strict';
-
 import { app } from 'config';
 
 let Logger = module.exports = function (type, value) {

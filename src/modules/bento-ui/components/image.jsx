@@ -1,5 +1,3 @@
-'use strict';
-
 import React         from 'react';
 import { Image }     from 'bento-web';
 import resources      from '../lib/resources';

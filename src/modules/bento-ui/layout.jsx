@@ -1,5 +1,3 @@
-'use strict';
-
 import React             from 'react';
 import mixin             from 'react-mixin';
 import { History, Link } from 'react-router';
@@ -16,9 +14,9 @@ function LayoutBuilder(view) {
 
     constructor(...args) {
       super(...args);
-      
+
       dom.setTitle(view.title);
-      
+
       this.renderRow       = this.renderRow.bind(this);
       this.renderContainer = this.renderContainer.bind(this);
     }

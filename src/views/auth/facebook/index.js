@@ -1,5 +1,3 @@
-'use strict';
-
 import { api, auth } from 'bento';
 import { snackbar }  from 'bento-web';
 import types         from 'bento/lib/helpers/type';

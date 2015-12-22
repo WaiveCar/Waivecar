@@ -1,5 +1,3 @@
-'use strict';
-
 import { fields } from 'bento-ui';
 
 let layout = fields.mergeFromLayout('cards', [

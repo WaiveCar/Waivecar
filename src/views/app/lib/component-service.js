@@ -1,5 +1,3 @@
-'use strict';
-
 import { snackbar } from 'bento-web';
 
 module.exports = class Service {

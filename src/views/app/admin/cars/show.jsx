@@ -1,6 +1,4 @@
 
-'use strict';
-
 import React                 from 'react';
 import moment                from 'moment';
 import mixin                 from 'react-mixin';

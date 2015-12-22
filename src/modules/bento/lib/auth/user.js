@@ -1,5 +1,3 @@
-'use strict';
-
 import md5    from 'md5';
 import config from 'config';
 

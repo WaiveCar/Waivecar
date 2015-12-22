@@ -1,5 +1,3 @@
-'use strict';
-
 let NON_WORD_REGEXP       = require('./vendor/non-word-regexp');
 let CAMEL_CASE_REGEXP     = require('./vendor/camel-case-regexp');
 let TRAILING_DIGIT_REGEXP = require('./vendor/trailing-digit-regexp');

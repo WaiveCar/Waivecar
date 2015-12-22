@@ -1,5 +1,3 @@
-'use strict';
-
 import { api }      from 'bento';
 import { snackbar } from 'bento-web';
 

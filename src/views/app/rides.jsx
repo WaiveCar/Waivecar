@@ -1,5 +1,3 @@
-'use strict';
-
 import React                              from 'react';
 import moment                             from 'moment';
 import { auth, relay, api, dom, helpers } from 'bento';

@@ -1,5 +1,3 @@
-'use strict';
-
 import { auth } from 'bento';
 
 module.exports = {

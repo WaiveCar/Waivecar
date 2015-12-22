@@ -1,5 +1,3 @@
-'use strict';
-
 import React                from 'react';
 import { auth, relay, dom } from 'bento';
 import { Form }             from 'bento-web';

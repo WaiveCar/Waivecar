@@ -1,5 +1,3 @@
-'use strict';
-
 import React                      from 'react';
 import mixin                      from 'react-mixin';
 import { History, Link }          from 'react-router';

@@ -1,5 +1,3 @@
-'use strict';
-
 import React     from 'react';
 import { relay } from 'bento';
 import { type }  from 'bento/lib/helpers';

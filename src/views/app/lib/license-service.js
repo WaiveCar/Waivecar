@@ -1,5 +1,3 @@
-'use strict';
-
 import { api, auth, dom, helpers } from 'bento';
 import Service                     from './component-service';
 import async                       from 'async';

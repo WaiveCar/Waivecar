@@ -1,5 +1,3 @@
-'use strict';
-
 import React from 'react';
 
 module.exports = class Spinner extends React.Component {

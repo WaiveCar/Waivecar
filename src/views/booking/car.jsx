@@ -1,5 +1,3 @@
-'use strict';
-
 import React               from 'react';
 import { relay, api, dom } from 'bento';
 import { components }      from 'bento-ui';

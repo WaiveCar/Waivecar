@@ -1,5 +1,3 @@
-'use strict';
-
 import { api, auth, dom } from 'bento';
 import Service            from './component-service';
 

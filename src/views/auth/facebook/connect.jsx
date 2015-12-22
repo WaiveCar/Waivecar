@@ -1,5 +1,3 @@
-'use strict';
-
 import React    from 'react';
 import facebook from './index';
 import Spinner  from './spinner';

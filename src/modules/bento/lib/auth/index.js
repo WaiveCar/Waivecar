@@ -1,5 +1,3 @@
-'use strict';
-
 let storage = require('local-storage');
 let relay   = require('../relay');
 let User    = require('./user');

@@ -1,5 +1,3 @@
-'use strict';
-
 import React              from 'react';
 import config             from 'config';
 import { auth, api }      from 'bento';

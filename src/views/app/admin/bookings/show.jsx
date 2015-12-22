@@ -1,9 +1,6 @@
-import React from 'react';
-import {
-  api,
-  relay,
-  helpers
-} from 'bento';
+import React                   from 'react';
+import { api, relay, helpers } from 'bento';
+import BookingFees             from './fees';
 
 module.exports = class BookingsView extends React.Component {
 
@@ -16,9 +13,11 @@ module.exports = class BookingsView extends React.Component {
     super(...args);
     this.state = {
       isActing : false,
-      error    : null
+      error    : null,
+      cartId   : null,
+      items    : []
     };
-    relay.subscribe(this, [ 'bookings', 'carts' ]);
+    relay.subscribe(this, 'bookings');
   }
 
   /**
@@ -26,7 +25,7 @@ module.exports = class BookingsView extends React.Component {
    * @return {Void}
    */
   componentWillUnmount() {
-    relay.unsubscribe(this, [ 'bookings', 'carts' ]);
+    relay.unsubscribe(this, 'bookings');
   }
 
   /**
@@ -51,29 +50,9 @@ module.exports = class BookingsView extends React.Component {
         return;
       }
       this.bookings.store(booking);
-      if (booking.cart) {
-        this.loadCart(booking.cart.id);
+      if (booking.cartId) {
+        this.setState({ cartId : booking.cartId });
       }
-    });
-  }
-
-  /**
-   * Loads booking.
-   * @param  {String} id
-   * @return {Void}
-   */
-  loadCart(id) {
-    api.get(`/shop/carts/${ id }`, (err, cart) => {
-      if (err) {
-        this.setState({
-          error : err
-        });
-        return;
-      }
-      relay.dispatch('carts', {
-        type : 'store',
-        data : cart
-      });
     });
   }
 
@@ -118,57 +97,44 @@ module.exports = class BookingsView extends React.Component {
     if (this.state.isActing) {
       return <div className="text-center">Performing action...</div>;
     }
+
+    let action = false;
     switch (booking.status) {
-      case 'reserved' : return <button type="button" onClick={ () => { this.cancel() } } className="btn btn-primary">Cancel</button>;
-      case 'ready'    : // started ...
-      case 'started'  : return <button type="button" onClick={ () => { this.update('end') } } className="btn btn-primary">End Ride</button>;
-      case 'ended'    : return <button type="button" onClick={ () => { this.update('complete') } } className="btn btn-primary">Complete Ride & Lock Car</button>;
+      case 'reserved' : {
+        action = <button type="button" onClick={ () => { this.cancel() } } className="btn btn-primary">Cancel</button>;
+        break;
+      }
+      case 'ready'   :
+      case 'started' : {
+        action = <button type="button" onClick={ () => { this.update('end') } } className="btn btn-primary">End Ride</button>;
+        break;
+      }
+      case 'ended' : {
+        action = <button type="button" onClick={ () => { this.update('complete') } } className="btn btn-primary">Complete Ride & Lock Car</button>;
+        break;
+      }
+    }
+
+    if (action) {
+      return (
+        <div className="row">
+          <div className="col-xs-12 booking-actions text-center">
+            { action }
+          </div>
+        </div>
+      );
     }
   }
 
   /**
    * Returns a list of fees attached to the booking.
-   * @param  {Object} booking
    * @return {Object}
    */
-  renderFees(booking) {
-    if (!booking.cart) {
+  renderFees() {
+    if (!this.state.cartId) {
       return;
     }
-    let cart = this.state.carts.find(val => val.id === booking.cart.id);
-    if (cart) {
-      return (
-        <div className="box">
-          <h3>Fees <small>List of fees to charge the booking</small></h3>
-          <div className="box-content">
-            <table className="fee-list">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Price</th>
-                  <th>Quantity</th>
-                  <th>Total</th>
-                </tr>
-              </thead>
-              <tbody>
-              {
-                cart.items.map((item) => {
-                  return (
-                    <tr key={ item.id }>
-                      <td>{ item.name }</td>
-                      <td>${ item.price / 100 }</td>
-                      <td>{ item.quantity }</td>
-                      <td>${ item.total / 100 }</td>
-                    </tr>
-                  )
-                })
-              }
-              </tbody>
-            </table>
-          </div>
-        </div>
-      );
-    }
+    return <BookingFees cartId={ this.state.cartId } />
   }
 
   /**
@@ -203,34 +169,30 @@ module.exports = class BookingsView extends React.Component {
           <h3>Booking <small>Current booking status</small></h3>
           <div className="box-content">
             <div className="row">
-              <div className="col-md-4 booking-status text-center">
+              <div className="col-xs-12 col-md-4 booking-status text-center">
                 <strong>Status</strong>
                 <div>
                   { helpers.changeCase.toCapital(booking.status) }
                 </div>
               </div>
-              <div className="col-md-4 booking-status text-center">
+              <div className="col-xs-12 col-md-4 booking-status text-center">
                 <strong>Customer</strong>
                 <div>
                   { booking.user.firstName } { booking.user.lastName }
                 </div>
               </div>
-              <div className="col-md-4 booking-status text-center">
+              <div className="col-xs-12 col-md-4 booking-status text-center">
                 <strong>Car</strong>
                 <div>
                   { booking.car.license }
                 </div>
               </div>
             </div>
-            <div className="row">
-              <div className="col-xs-12 booking-actions text-center">
-                { this.renderActions(booking) }
-              </div>
-            </div>
+            { this.renderActions(booking) }
           </div>
         </div>
 
-        { this.renderFees(booking) }
+        { this.renderFees() }
 
         <pre>
           { JSON.stringify(booking, null, 2) }
