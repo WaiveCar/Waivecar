@@ -11,7 +11,7 @@ let config      = Bento.config.waivecar;
 // ### Models
 
 let File           = Bento.model('File');
-let Payment        = Bento.model('Shop/Order');
+let Order          = Bento.model('Shop/Order');
 let User           = Bento.model('User');
 let Car            = Bento.model('Car');
 let Booking        = Bento.model('Booking');
@@ -192,11 +192,12 @@ module.exports = class BookingService extends Service {
     booking.user     = user;
     booking.car      = yield Car.findById(booking.carId);
     booking.cart     = yield fees.get(booking.cartId, _user);
-    booking.payments = yield Payment.find({
+    booking.payments = yield Order.find({
       where : {
-        id : booking.payments.map((val) => {
-          return val.paymentId;
-        })
+        id : booking.payments.reduce((list, next) => {
+          list.push(next.orderId);
+          return list;
+        }, [])
       }
     });
 

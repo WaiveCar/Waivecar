@@ -2,6 +2,8 @@
 
 let customer = require('./lib/customer');
 let items    = require('./lib/items');
+let payments = require('./lib/payments');
+let error    = Bento.Error;
 let hooks    = Bento.Hooks;
 
 /**
@@ -44,6 +46,12 @@ hooks.set('shop:update:customer:before', function *(payload) {
  * @return {Void}
  */
 hooks.set('shop:store:order:before', function *(payload) {
+  if (!payload.bookingId) {
+    throw error.parse({
+      code    : `FEE_MISSING_PARAMETER`,
+      message : `You must provide a booking id with waivecar orders.`
+    }, 400);
+  }
   return payload;
 });
 
@@ -54,7 +62,7 @@ hooks.set('shop:store:order:before', function *(payload) {
  * @return {Void}
  */
 hooks.set('shop:store:order:after', function *(order, payload) {
-  // ...
+  yield payments.store(order.id, payload.bookingId);
 });
 
 // ### Authorize Hooks
