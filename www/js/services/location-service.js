@@ -9,18 +9,14 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message) {
       latitude: latitude,
       longitude: longitude
     };
-
-    // $rootScope.$broadcast(MapsEvents.positionChanged, this.manualPosition);
   };
 
   this.initPositionWatch = function initPositionWatch () {
-    var posOptions = {
+    this.watch = $cordovaGeolocation.watchPosition({
       maximumAge: 3000,
       timeout: 8000,
-      enableHighAccuracy: false
-    };
-
-    this.watch = $cordovaGeolocation.watchPosition(posOptions)
+      enableHighAccuracy: true
+    })
     .then(null, function (err) {
       console.log(err);
       $message.error('Please ensure WaiveCar has access to retrieve your Location.');
@@ -42,19 +38,20 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message) {
       return $q.resolve(this.manualPosition);
     }
 
-    var posOptions = {
+    return $cordovaGeolocation.getCurrentPosition({
       maximumAge: 3000,
       timeout: 8000,
-      enableHighAccuracy: false
-    };
-
-    return $cordovaGeolocation.getCurrentPosition(posOptions).then(function (position) {
+      enableHighAccuracy: true
+    })
+    .then(function (position) {
       update(position);
       return {
         latitude: position.coords.latitude,
-        longitude: position.coords.longitude
+        longitude: position.coords.longitude,
+        accuracy: position.accuracy
       };
-    }, function (err) {
+    })
+    .catch(function (err) {
       $message.error('We were not able to find your location, please reconnect.');
       $q.reject(err);
     });
@@ -68,12 +65,13 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message) {
       console.error('Tried to set location but object is malformed ', position);
       return;
     }
-    console.log('updating location to ' + position.latitude + ', ' + position.longitude);
+    console.log('updating location to %d, %d (~%d)',
+                position.latitude, position.longitude, position.accuracy);
     $rootScope.currentLocation = {
       latitude: position.latitude,
-      longitude: position.longitude
+      longitude: position.longitude,
+      accuracy: position.accuracy
     };
-    //$rootScope.$broadcast(MapsEvents.positionChanged, $rootScope.currentLocation);
   }
 
 }

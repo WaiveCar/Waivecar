@@ -18,6 +18,14 @@ module.exports = angular.module('app.controllers').controller('CarsController', 
 
 function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $modal) {
   var $distance = $injector.get('$distance');
+  var LocationService = $injector.get('LocationService');
+  // the accuracy should be within this amount of meters to show the Bummer dialog
+  var accuracyThreshold = 200;
+
+  LocationService.getCurrentLocation()
+    .then(function () {
+      this.carsInRange();
+    }.bind(this));
 
   this.clearCarWatcher = $scope.$watch(function () {
     return $data.instances.cars;
@@ -28,16 +36,8 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
     this.all = prepareCars(value);
   }.bind(this), true);
 
-  this.clearLocationWatcher = $rootScope.$watch('currentLocation', function(newValue) {
-    if (newValue) {
-      console.log(newValue);
-      this.carsInRange();
-    }
-  }.bind(this));
-
   $scope.$on('$destroy', function () {
     this.clearCarWatcher();
-    this.clearLocationWatcher();
   }.bind(this));
 
 
@@ -53,6 +53,11 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
         modal.show();
       });
     } else {
+      if ($rootScope.currentLocation &&
+        $rootScope.currentLocation.accuracy &&
+        $rootScope.currentLocation.accuracy >= accuracyThreshold) {
+          return;
+      }
       this.closest = $distance.closest(cars);
       console.log('closest car at %d miles', this.closest);
       // check for max miles

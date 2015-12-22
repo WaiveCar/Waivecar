@@ -4,37 +4,39 @@
 var angular = require('angular');
 var _ = require('lodash');
 
-function DistanceService ($rootScope) {
-  this.location = $rootScope.currentLocation;
+function $distanceFactory ($rootScope) {
+  function DistanceService () {
+  }
+
+  DistanceService.prototype.getDistance = function getDistance (to, from) {
+    from = from || $rootScope.currentLocation;
+    if (!(isValidLocation(to) && isValidLocation(from))) {
+      return NaN;
+    }
+    var _from = latLng($rootScope.currentLocation);
+    var _to = latLng(to);
+    if (!from || !to) {
+      return NaN;
+    }
+    var distance = _from.distanceTo(_to);
+    // return miles
+    return distance / 1609;
+  };
+
+  DistanceService.prototype.closest = function closest (arr) {
+    return _(arr)
+      .map(function (car) {
+        return this.getDistance(car);
+      }, this)
+      .sortBy()
+      .first();
+  };
+
+  DistanceService.prototype.toMiles = function toMiles (m) {
+    return m / 1609;
+  };
+  return new DistanceService();
 }
-
-DistanceService.prototype.getDistance = function getDistance (to, from) {
-  from = from || this.location;
-  if (!(isValidLocation(to) && isValidLocation(from))) {
-    return NaN;
-  }
-  var _from = latLng(this.location);
-  var _to = latLng(to);
-  if (!from || !to) {
-    return NaN;
-  }
-  var distance = _from.distanceTo(_to);
-  // return miles
-  return distance / 1609;
-};
-
-DistanceService.prototype.closest = function closest (arr) {
-  return _(arr)
-    .map(function (car) {
-      return this.getDistance(car);
-    }, this)
-    .sortBy()
-    .first();
-};
-
-DistanceService.prototype.toMiles = function toMiles (m) {
-  return m / 1609;
-};
 
 function isValidLocation (loc) {
   if (!loc) {
@@ -56,6 +58,6 @@ function latLng (loc) {
   return null;
 }
 
-module.exports = angular.module('app.services').service('$distance', [
+module.exports = angular.module('app.services').factory('$distance', [
   '$rootScope',
-  DistanceService]);
+  $distanceFactory]);
