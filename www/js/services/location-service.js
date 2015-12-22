@@ -18,7 +18,9 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message) {
       enableHighAccuracy: true
     })
     .then(null, function (err) {
-      console.log(err);
+      if (err.constructor.name === 'PositionError' && err.code === 3) {
+        return $q.reject();
+      }
       $message.error('Please ensure WaiveCar has access to retrieve your Location.');
     }, function (position) {
       update(position);
@@ -52,6 +54,10 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message) {
       };
     })
     .catch(function (err) {
+      // ignore timeouts
+      if (err.constructor.name === 'PositionError' && err.code === 3) {
+        return $q.reject();
+      }
       $message.error('We were not able to find your location, please reconnect.');
       $q.reject(err);
     });
