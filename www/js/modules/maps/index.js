@@ -24,6 +24,5 @@ require('./directives/map-directive');
 require('./directives/route-distance-directive');
 require('./directives/route-duration-directive');
 
-require('./services/location-service');
 require('./services/real-reach-service');
 require('./services/route-service');
