@@ -20,7 +20,8 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
   var $distance = $injector.get('$distance');
   var LocationService = $injector.get('LocationService');
   // the accuracy should be within this amount of meters to show the Bummer dialog
-  var accuracyThreshold = 200;
+  var minAccuracyThreshold = 200;
+  var modal;
 
   LocationService.getCurrentLocation()
     .then(function () {
@@ -34,6 +35,7 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
       return false;
     }
     this.all = prepareCars(value);
+    ensureAvailableCars(this.all);
   }.bind(this), true);
 
   $scope.$on('$destroy', function () {
@@ -43,34 +45,49 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
 
   // First load
   this.all = prepareCars(cars);
+  ensureAvailableCars(this.all);
+
+  function ensureAvailableCars (allCars) {
+    var availableCars = _.filter(allCars, 'isAvailable');
+    if (availableCars.length) {
+      return;
+    }
+    if (modal && modal.isShown()) {
+      return;
+    }
+    $modal('simple-modal', {
+      title: 'Bummer',
+      message: 'There are no WaiveCars currently available for rental. Please check back later.'
+    }).then(function (_modal) {
+      modal = _modal;
+      modal.show();
+    });
+  };
 
   this.carsInRange = function() {
-    if (!this.all.length) {
+    if ($rootScope.currentLocation &&
+      $rootScope.currentLocation.accuracy &&
+      $rootScope.currentLocation.accuracy >= minAccuracyThreshold) {
+        return;
+    }
+
+    var availableCars = _.filter(this.all, 'isAvailable');
+    this.closest = $distance.closest(availableCars);
+    console.log('closest car at %d miles', this.closest);
+    // check for max miles
+    // TODO don't hardcode this
+    if (this.closest > 30 || isNaN(this.closest)) {
+      if (modal && modal.isShown()) {
+        return;
+      }
+      this.outOfRange = true;
       $modal('simple-modal', {
         title: 'Bummer',
-        message: 'There are no WaiveCars currently available for rental. Please check back later.'
-      }).then(function (modal) {
+        message: 'WaiveCar is currently only available in LA. Check back when you are in the area.'
+      }).then(function (_modal) {
+        modal = _modal;
         modal.show();
       });
-    } else {
-      if ($rootScope.currentLocation &&
-        $rootScope.currentLocation.accuracy &&
-        $rootScope.currentLocation.accuracy >= accuracyThreshold) {
-          return;
-      }
-      this.closest = $distance.closest(cars);
-      console.log('closest car at %d miles', this.closest);
-      // check for max miles
-      // TODO don't hardcode this
-      if (this.closest > 30 || isNaN(this.closest)) {
-        this.outOfRange = true;
-        $modal('simple-modal', {
-          title: 'Bummer',
-          message: 'WaiveCar is currently only available in LA. Check back when you are in the area.'
-        }).then(function (modal) {
-          modal.show();
-        });
-      }
     }
   };
 

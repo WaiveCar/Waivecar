@@ -21,7 +21,7 @@ function ModalFactory ($rootScope, $ionicModal, $sce) {
       animation: initialData.animation || 'fade-in-up'
     })
     .then(function (modal) {
-      scope.close = modal.hide.bind(modal);
+      scope.close = modal.remove.bind(modal);
       return modal;
     });
   };

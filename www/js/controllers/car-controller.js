@@ -23,6 +23,9 @@ module.exports = angular.module('app.controllers').controller('CarController', [
     var $preBook = $injector.get('$preBook');
 
     this.car = angular.extend({}, car, { item: 'car' });
+    if (this.car.isAvailable === false) {
+      this.car.icon = 'unavailable';
+    }
 
     // function showRequirementsModal (_status) {
 
