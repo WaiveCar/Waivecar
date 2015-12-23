@@ -1,6 +1,7 @@
 import React                   from 'react';
 import { api, relay, helpers } from 'bento';
 import BookingFees             from './fees';
+import BookingPayment          from './payment';
 
 module.exports = class BookingsView extends React.Component {
 
@@ -187,12 +188,7 @@ module.exports = class BookingsView extends React.Component {
             { this.renderActions(booking) }
           </div>
         </div>
-
-        { this.renderFees(booking) }
-
-        <pre>
-          { JSON.stringify(booking, null, 2) }
-        </pre>
+        { booking.payments.length ? <BookingPayment payment={ booking.payments[0] } /> : this.renderFees(booking) }
       </div>
     );
   }
