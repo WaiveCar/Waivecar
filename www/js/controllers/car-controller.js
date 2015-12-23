@@ -84,8 +84,7 @@ module.exports = angular.module('app.controllers').controller('CarController', [
       var model = { userId: $auth.me.id, carId: $state.params.id };
       // Create a Booking
       return $data.create('bookings', model)
-      .catch($preBook)
-      .then(function(booking) {
+      .then(function onBooking (booking) {
         return $q.all([
           // Active the created Booking so any consumer of $data can access current booking via $data.active.bookings
           $data.activate('bookings', booking.id),
@@ -97,7 +96,7 @@ module.exports = angular.module('app.controllers').controller('CarController', [
           $state.go('bookings-active', { id: booking.id });
         })
         .catch($message.error);
-      });
+      }, $preBook);
     };
 
     this.cancel = function() {

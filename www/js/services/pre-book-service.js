@@ -21,7 +21,8 @@ function PreBookService ($injector) {
     if (err && err.data && err.data.code === 'CAR_IN_PROGRESS') {
       return $modal('result', {
         icon: 'x-icon',
-        title: err.data.message,
+        title: 'You have a booking already in progress',
+        message: err.data.message,
         actions: [{
           className: 'button-dark',
           text: 'Ok',

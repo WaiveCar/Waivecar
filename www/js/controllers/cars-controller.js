@@ -35,7 +35,6 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
       return false;
     }
     this.all = prepareCars(value);
-    ensureAvailableCars(this.all);
   }.bind(this), true);
 
   $scope.$on('$destroy', function () {
@@ -114,5 +113,11 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
       });
     }
   };
+
+  $scope.$on('$destroy', function () {
+    if (modal) {
+      modal.remove();
+    }
+  });
 }
 

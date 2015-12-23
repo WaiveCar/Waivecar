@@ -82,7 +82,7 @@ module.exports = angular.module('app.services').factory('$data', [
         var instance = new service.resources[modelName](data);
         return instance.$save().then(function(model) {
           service.merge(modelName, model.toJSON());
-          service.activateKnownModel(modelName, model.id).then(function() {
+          return service.activateKnownModel(modelName, model.id).then(function() {
             return model.toJSON();
           });
         });
@@ -92,7 +92,7 @@ module.exports = angular.module('app.services').factory('$data', [
         var instance = new service.resources[modelName](data);
         instance.$update(function (model) {
           service.merge(modelName, model.toJSON());
-          service.activateKnownModel(modelName, model.id, next);
+          return service.activateKnownModel(modelName, model.id, next);
           return next();
         }, function (error) {
           return next(error.data || error);
