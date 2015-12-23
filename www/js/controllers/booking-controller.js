@@ -69,6 +69,10 @@ module.exports = angular.module('app.controllers').controller('BookingController
           return false;
         }
 
+        if (!($data.active.cars && $data.active.cars.latitude)) {
+          return false;
+        }
+
         var from = L.latLng($rootScope.currentLocation.latitude, $rootScope.currentLocation.longitude);
         var to = L.latLng($data.active.cars.latitude, $data.active.cars.longitude);
         var distance = from.distanceTo(to);
