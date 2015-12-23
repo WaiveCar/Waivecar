@@ -160,7 +160,7 @@ module.exports = class Service {
           break;
         }
         default: {
-          message =`${ message }${ missing.slice(0, -1).join(', ') } and ${ missing.slice(-1) } have been provided and validated.`;
+          message = `${ message }${ missing.slice(0, -1).join(', ') } and ${ missing.slice(-1) } have been provided and validated.`;
           break;
         }
       }

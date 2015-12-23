@@ -5,13 +5,14 @@ let cars        = require('./car-service');
 let fees        = require('./fee-service');
 let queue       = Bento.provider('queue');
 let queryParser = Bento.provider('sequelize/helpers').query;
+let relay       = Bento.Relay;
 let error       = Bento.Error;
 let config      = Bento.config.waivecar;
 
 // ### Models
 
 let File           = Bento.model('File');
-let Payment        = Bento.model('Shop/Order');
+let Order          = Bento.model('Shop/Order');
 let User           = Bento.model('User');
 let Car            = Bento.model('Car');
 let Booking        = Bento.model('Booking');
@@ -192,11 +193,12 @@ module.exports = class BookingService extends Service {
     booking.user     = user;
     booking.car      = yield Car.findById(booking.carId);
     booking.cart     = yield fees.get(booking.cartId, _user);
-    booking.payments = yield Payment.find({
+    booking.payments = yield Order.find({
       where : {
-        id : booking.payments.map((val) => {
-          return val.paymentId;
-        })
+        id : booking.payments.reduce((list, next) => {
+          list.push(next.orderId);
+          return list;
+        }, [])
       }
     });
 
@@ -251,7 +253,7 @@ module.exports = class BookingService extends Service {
     // ### Relay Update
 
     car.relay('update');
-    booking.relay('update');
+    yield this.relay('update', id, _user);
   }
 
   /**
@@ -290,7 +292,7 @@ module.exports = class BookingService extends Service {
     // ### Relay Update
 
     car.relay('update');
-    booking.relay('update');
+    yield this.relay('update', id, _user);
   }
 
   /**
@@ -360,7 +362,7 @@ module.exports = class BookingService extends Service {
     // ### Relay Update
 
     car.relay('update');
-    booking.relay('update');
+    yield this.relay('update', id, _user);
   }
 
   /**
@@ -425,27 +427,7 @@ module.exports = class BookingService extends Service {
     // ### Relay
 
     car.relay('update');
-    booking.relay('update');
-  }
-
-  /**
-   * Closes the ride and sends the fee cart if applicable for collection.
-   * @param  {Number} id
-   * @param  {Object} _user
-   * @return {Object}
-   */
-  static *close(id, _user) {
-    if (!_user.hasAccess('admin')) {
-      throw error.parse({
-        error   : `INVALID_PRIVILEGES`,
-        message : `You do not have the required privileges to perform this operation.`
-      });
-    }
-    let booking = yield this.getBooking(id);
-
-    booking.relay('update');
-
-    // Payment stuff to be done...
+    yield this.relay('update', id, _user);
   }
 
   /*
@@ -500,6 +482,15 @@ module.exports = class BookingService extends Service {
   }
 
   // ### HELPERS
+
+  static *relay(type, id, _user) {
+    let payload = {
+      type : type,
+      data : yield this.show(id, _user)
+    };
+    relay.user(payload.userId, 'bookings', payload);
+    relay.admin('bookings', payload);
+  }
 
   /**
    * Logs the ride details.

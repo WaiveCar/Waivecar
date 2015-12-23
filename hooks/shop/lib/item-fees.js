@@ -53,5 +53,15 @@ module.exports = [
     name        : 'Accident',
     description : 'Vehicle involved in an accident, fault attributed to the driver.',
     price       : 100000
+  },
+  {
+    name        : 'Excess Time',
+    description : 'Non Waive time',
+    price       : 599
+  },
+  {
+    name        : 'Valet',
+    description : 'Rental returned to valet',
+    price       : 0
   }
 ];
