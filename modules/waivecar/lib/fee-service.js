@@ -28,20 +28,7 @@ module.exports = class FeeService {
     // ### Car Fees
     // Calculate fees pertaining to the cars current status.
 
-    if (car.charge < 20) {
-      items.push({
-        id       : 1,
-        quantity : 1
-      });
-    }
-
-    // ### Test
-    // Just a test so we actually get a value when testing.
-
-    items.push({
-      id       : 2,
-      quantity : 1
-    });
+    // ...
 
     if (items.length) {
       let cart = yield CartService.create({
