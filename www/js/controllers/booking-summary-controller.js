@@ -15,10 +15,6 @@ module.exports = angular.module('app.controllers').controller('BookingSummaryCon
   function ($state, $auth, $data, $message) {
 
     this.init = function () {
-      if (!$auth.isAuthenticated()) {
-        $state.go('auth');
-      }
-
       $data.resources.Booking.get({ id: $state.params.id }).$promise.then(function(booking) {
         this.booking = booking;
         this.start = booking.details[0];
