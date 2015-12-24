@@ -12,7 +12,7 @@ module.exports = {
       cars     : false,
       homebase : true,
       stations : true,
-      valets   : true
+      valets   : false
     }
   }
 
