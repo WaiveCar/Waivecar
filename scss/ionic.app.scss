@@ -278,14 +278,15 @@ ion-view {
   transform: translateY(25%);
   text-align: center;
 }
+
 .bold-list {
   font-size: 1rem;
   font-weight: 800;
-  padding: 5px 30px;
+  padding: 5px 0;
+  text-align: center;
   li {
-    padding: 5px;
-    line-height: 30px;
-    height: 38px;
+    margin: 2px 0;
+    min-height: 38px;
   }
 }
 

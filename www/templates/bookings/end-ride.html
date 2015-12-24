@@ -12,20 +12,20 @@
           <button type="button" class="margin-20 button button-block button-balanced" ng-click="toggleVideo()">Got It</button>
         </div>
         <div ng-if="!showVideo">
-          <div class="padding" ng-if="service.state.location.valet.confirmed">
+          <div ng-if="service.state.location.valet.confirmed">
             <h3 class="margin-bottom-10">END RIDE</h3>
             <div>
               <p>The WaiveCar valet will end your session as sooon as you give him the WaiveCar key. This window will automatically disappear.</p>
               <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
             </div>
           </div>
-          <div class="padding" ng-if="service.state.location.valet.confirmed === false">
-            <h3 class="margin-bottom-10">END RIDE</h3>
+          <div ng-if="service.state.location.valet.confirmed === false">
+            <h3>END RIDE</h3>
             <div>
-              <p>Please complete these tasks before you leave.<br />The list will automatically update.</p>
+              <p>Please complete these tasks before you leave. The list will automatically update.</p>
             </div>
             <div>
-              <ul class="list-unstyled text-left bold-list margin-top-10">
+              <ul class="list-unstyled text-left bold-list">
                 <li ng-show="service.state.check.isKeySecure.isVisible">
                   <label class="pull-right">
                     <span class="check" ng-show="data.cars.isKeySecure">
@@ -72,8 +72,7 @@
                 </li>
               </ul>
             </div>
-            <div class="text-center padding">
-              <br />
+            <div class="text-center">
               <p>Don't forget your things, closing the windows and leaving the car clean.</p>
               <p>When you're ready and outside the car, tap the below button.</p>
             </div>
