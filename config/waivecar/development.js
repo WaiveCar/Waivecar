@@ -1,19 +1,17 @@
 module.exports = {
-
   waivecar : {
     car : {
       staleLimit : 15,
       sync       : {
-        value : 10,
-        type  : 'seconds'
+        value : 1,
+        type  : 'hour'
       }
     },
     mock : {
       cars     : false,
       homebase : true,
       stations : true,
-      valets   : true
+      valets   : false
     }
   }
-
 };

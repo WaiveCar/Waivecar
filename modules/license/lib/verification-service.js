@@ -32,7 +32,7 @@ module.exports = class LicenseVerificationService extends Service {
 
     let status = 'unknown';
     switch (check.status) {
-      case 'in_progress' : {
+      case 'in_progress' : case 'awaiting_data' : {
         status = 'in-progress';
         break;
       }
@@ -86,6 +86,10 @@ module.exports = class LicenseVerificationService extends Service {
     return report;
   }
 
+  /**
+   * Syncs licenses.
+   * @return {Void}
+   */
   static *syncLicenses() {
     let licenses = yield this.getLicensesInProgress();
     let count = licenses.length;
