@@ -44,7 +44,20 @@ module.exports = {
           stripeId      : queryParser.STRING
         }
       });
+    },
+
+    search(value) {
+      return {
+        where : {
+          $or : [
+            { firstName : { $like : `${ value }%` } },
+            { lastName : { $like : `${ value }%` } },
+            { email : { $like : `${ value }%` } }
+          ]
+        }
+      };
     }
+
   }
 
 };
