@@ -86,7 +86,10 @@ class UIForm extends React.Component {
     let resource = this.resource();
     api.get(resource.uri.replace(':id', id), function(error, data) {
       if (error) {
-        throw new Error(error);
+        return snackbar.notify({
+          type    : 'danger',
+          message : error.message
+        });
       }
       this.setState({
         default : data
