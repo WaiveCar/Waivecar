@@ -4,5 +4,6 @@ module.exports = [
   'cors',
   'errors',
   'authentication',
-  'router'
+  'router',
+  'newrelic'
 ];
