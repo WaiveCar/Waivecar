@@ -23,6 +23,7 @@ module.exports = class ProfileView extends React.Component {
    */
   componentDidMount() {
     api.get('/bookings', {
+      userId  : auth.user().id,
       order   : 'id,DESC',
       details : true
     }, (err, bookings) => {
@@ -117,19 +118,26 @@ module.exports = class ProfileView extends React.Component {
                 </small>
               </h3>
               <div className="box-content no-padding">
-                <table className="table-rides">
-                  <thead>
-                    <tr>
-                      <th width="24"></th>
-                      <th>Date</th>
-                      <th>Duration</th>
-                      <th>Car</th>
-                      <th>Fee</th>
-                      <th>Status</th>
-                    </tr>
-                  </thead>
-                  { pastRides.map(this.booking) }
-                </table>
+                {
+                  !pastRides.length ?
+                    <div className="text-center" style={{ padding : '20px 0px' }}>
+                      You currently have no past rides.
+                    </div>
+                    :
+                    <table className="table-rides">
+                      <thead>
+                        <tr>
+                          <th width="24"></th>
+                          <th>Date</th>
+                          <th>Duration</th>
+                          <th>Car</th>
+                          <th>Fee</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      { pastRides.map(this.booking) }
+                    </table>
+                }
               </div>
             </div>
           </div>
