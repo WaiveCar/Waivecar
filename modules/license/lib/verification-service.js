@@ -96,11 +96,11 @@ module.exports = class LicenseVerificationService extends Service {
     log.info(`License : Checking ${ count } Licenses`);
     for (let i = count - 1; i >= 0; i--) {
       let license = licenses[i];
-      let update = yield Verification.getReport(license.linkedUserId, license.checkId, license.reportId);
+      let update  = yield Verification.getReport(license.linkedUserId, license.checkId, license.reportId);
       if (update.status !== license.status) {
         log.debug(`${ update.id } : ${ update.status }`);
         yield license.update({
-          status     : update.status,
+          status     : update.status === 'awaiting_data' || update.status === 'in_progress' ? 'in-progress' : update.status,
           outcome    : update.result,
           verifiedAt : new Date()
         });
