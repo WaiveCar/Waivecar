@@ -81,10 +81,6 @@ module.exports = class Auth {
    * @param {Object} user
    */
   static set(user) {
-    if (user.token) {
-      this.token(user.token);
-      delete user.token;
-    }
     relay.dispatch('me', {
       type : 'login',
       data : user

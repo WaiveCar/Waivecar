@@ -1,13 +1,12 @@
 import md5    from 'md5';
 import config from 'config';
 
-let apiUrl   = config.api.uri + (config.api.port ? ':' + config.api.port : '');
-let apiRoles = [];
+const apiUrl = config.api.uri + (config.api.port ? ':' + config.api.port : '');
 
 module.exports = class User {
 
   constructor(data, roles) {
-    apiRoles = roles;
+    this._roles = roles;
     for (let key in data) {
       this[key] = data[key];
     }
@@ -19,8 +18,8 @@ module.exports = class User {
    * @return {Boolean}
    */
   hasAccess(role) {
-    let check = apiRoles.find(val => val.name === role);
-    let auth  = apiRoles.find(val => val.name === this.role.name);
+    let check = this._roles.find(val => val.name === role);
+    let auth  = this._roles.find(val => val.name === this.role.name);
 
     // ### Access Check
     // If provided role is less than authenticated role we have access.

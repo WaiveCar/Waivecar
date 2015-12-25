@@ -32,7 +32,7 @@ class LoginView extends React.Component {
       data  = this.refs.form.data();
       reset = this.refs.form.reset;
     }
-    api.post('/auth/login', data, (error, user) => {
+    api.post('/auth/login', data, (error, res) => {
       if (error) {
         reset();
         return snackbar.notify({
@@ -44,24 +44,32 @@ class LoginView extends React.Component {
       // ### Authenticate Socket
       // Sends the user token for authentication with the socket.
 
-      socket.authenticate(user.token);
+      socket.authenticate(res.token);
 
-      // ### Store Credentials
-      // Stores the user with the local store via the auth object.
+      // ### Store Token
 
-      auth.set(user);
+      auth.token(res.token);
 
-      // ### Remember
-      // Check if remember check was requested and send a remember request
-      // back to the API.
+      api.get('/users/me', (err, user) => {
 
-      if (remember) {
-        api.get('/auth/remember', (error) => {
+        // ### Store Credentials
+        // Stores the user with the local store via the auth object.
+
+        auth.set(user);
+
+        // ### Remember
+        // Check if remember check was requested and send a remember request
+        // back to the API.
+
+        if (remember) {
+          api.get('/auth/remember', (error) => {
+            this.history.pushState(null, '/profile');
+          });
+        } else {
           this.history.pushState(null, '/profile');
-        });
-      } else {
-        this.history.pushState(null, '/profile');
-      }
+        }
+
+      });
     });
   }
 
