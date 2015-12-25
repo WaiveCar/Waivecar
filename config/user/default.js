@@ -52,7 +52,8 @@ module.exports = {
           $or : [
             { firstName : { $like : `${ value }%` } },
             { lastName : { $like : `${ value }%` } },
-            { email : { $like : `${ value }%` } }
+            { email : { $like : `${ value }%` } },
+            { status : value }
           ]
         }
       };
