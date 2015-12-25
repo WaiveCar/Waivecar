@@ -94,7 +94,7 @@ module.exports = class Service {
    * @return {Boolean}
    */
   static hasAccess(user, _user) {
-    if (user.id !== _user.id && _user.role !== 'admin') {
+    if (user.id !== _user.id && !_user.hasAccess('admin')) {
       throw error.parse({
         error   : `INVALID_PRIVILEGES`,
         message : `You do not have the required privileges to perform this operation.`
