@@ -2,7 +2,7 @@ import React                     from 'react';
 import { auth, relay, dom, api } from 'bento';
 import { Form }                  from 'bento-web';
 import config                    from 'config';
-import License                   from '../lib/license-service';
+import License                   from '../../lib/license-service';
 
 let formFields = {
   license : require('./form-fields/license'),

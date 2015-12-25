@@ -1,7 +1,7 @@
 import React                from 'react';
 import { auth, relay, dom } from 'bento';
 import { Form }             from 'bento-web';
-import Account              from '../lib/account-service';
+import Account              from '../../lib/account-service';
 
 // ### Form Fields
 

@@ -3,8 +3,8 @@ import { auth, relay, api, dom } from 'bento';
 import { Files }                 from 'bento-service';
 import { Form, snackbar }        from 'bento-web';
 import { resources, fields }     from 'bento-ui';
-import Account                   from '../lib/account-service';
-import facebook                  from '../../auth/facebook';
+import Account                   from '../../lib/account-service';
+import facebook                  from '../../../auth/facebook';
 
 // ### Form Fields
 

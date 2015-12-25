@@ -2,7 +2,7 @@ import React                              from 'react';
 import moment                             from 'moment';
 import { auth, relay, api, dom, helpers } from 'bento';
 import { Map }                            from 'bento-web';
-import RideDetails                        from './ride-details';
+import RideDetails                        from './details';
 
 module.exports = class ProfileView extends React.Component {
 

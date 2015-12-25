@@ -36,7 +36,11 @@ module.exports = class Auth {
    * @return {Void}
    */
   static roles(list) {
-    roles = list;
+    if (list) {
+      roles = list;
+    } else {
+      return roles;
+    }
   }
 
   /**

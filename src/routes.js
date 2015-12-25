@@ -57,13 +57,17 @@ module.exports = {
  * @return {Void}
  */
 function loadRoles(done) {
-  api.get('/roles', (err, roles) => {
-    if (err) {
-      return done(err);
-    }
-    auth.roles(roles);
+  if (!auth.roles().length) {
+    api.get('/roles', (err, roles) => {
+      if (err) {
+        return done(err);
+      }
+      auth.roles(roles);
+      done();
+    });
+  } else {
     done();
-  });
+  }
 }
 
 /**
@@ -74,7 +78,8 @@ function loadRoles(done) {
  */
 function loadAuth(done) {
   let token = auth.token();
-  if (token) {
+  let user  = auth.user();
+  if (!user && token) {
     api.get('/users/me', (err, user) => {
       if (!err) {
         auth.set(user);
