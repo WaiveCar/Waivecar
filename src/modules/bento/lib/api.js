@@ -12,7 +12,7 @@ const API_URI = config.api.uri + (config.api.port ? ':' + config.api.port : '');
 
 // ### API
 
-module.exports = class API {
+class API {
 
   /**
    * Submits a post request to the api.
@@ -127,7 +127,9 @@ module.exports = class API {
     req.end(_handleResult.bind(this, done));
   }
 
-}
+};
+
+API.uri = API_URI;
 
 /**
  * Executes the callback with the err and res of the api request.
@@ -160,3 +162,5 @@ function _handleResult(callback, err, res, isExternal) {
   }
   callback(null, res.body || res.text);
 }
+
+module.exports = API;

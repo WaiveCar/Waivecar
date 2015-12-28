@@ -20,13 +20,17 @@
   input:-webkit-autofill:first-line {
     color: #fff;
   }
+  input[type="text"][disabled] {
+    color: #b6b6b6;
+  }
 
   .Select-control {
     border        : none;
     border-bottom : 1px solid #eee;
     border-radius : 0;
     background    : none;
-    padding       : 8px 52px 0px 10px;
+    margin-top    : -6px;
+    padding       : 4px 52px 0px 10px;
   }
 
   .is-focused:not(.is-open) > .Select-control {
@@ -76,6 +80,10 @@
     [data-role="label"] {
       font-size : 1.1rem;
     }
+  }
+
+  .form-actions {
+    margin-top : 25px;
   }
 
 }

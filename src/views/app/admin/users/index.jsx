@@ -113,6 +113,7 @@ class UsersListView extends React.Component {
               message : err.message
             });
           }
+          this.setState({ offset : 0 });
           this.users.index(users);
         });
       } else {
