@@ -3,7 +3,8 @@ var angular = require('angular');
 
 module.exports = angular.module('Maps').directive('locateMe', [
   '$rootScope',
-  function ($rootScope) {
+  'LocationService',
+  function ($rootScope, LocationService) {
 
     function link($scope, $element, $attrs, MapCtrl) {
 
@@ -11,8 +12,13 @@ module.exports = angular.module('Maps').directive('locateMe', [
         event.preventDefault();
         event.stopPropagation();
 
-        var loc = $rootScope.currentLocation;
-        MapCtrl.map.setView([loc.latitude, loc.longitude]);
+        LocationService.getCurrentLocation()
+          .then(function (loc) {
+            if (!(loc && loc.latitude && loc.longitude)) {
+              console.error('Couldn\'t retrieve location');
+            }
+            MapCtrl.map.setView([loc.latitude, loc.longitude]);
+          });
       }
 
       MapCtrl.$ready.then(function () {

@@ -182,80 +182,80 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
       return {
         iconUrl: 'img/active-waivecar.svg',
         iconRetinaUrl: 'img/active-waivecar.svg',
-        iconSize: [20, 25],
-        iconAnchor: [10, 25],
+        iconSize: [35, 44],
+        iconAnchor: [17, 44],
         popupAnchor: [0, 0]
       };
     case 'unavailable':
       return {
         iconUrl: 'img/charging-waivecar.svg',
         iconRetinaUrl: 'img/charging-waivecar.svg',
-        iconSize: [20, 25],
-        iconAnchor: [10, 25],
+        iconSize: [35, 44],
+        iconAnchor: [17, 44],
         popupAnchor: [0, 0]
       };
     case 'station':
       return {
         iconUrl: 'img/icon-station.svg',
         iconRetinaUrl: 'img/icon-station.svg',
-        iconSize: [20, 25],
-        iconAnchor: [10, 25],
+        iconSize: [35, 44],
+        iconAnchor: [17, 44],
         popupAnchor: [0, 0]
       };
     case 'station-active':
       return {
         iconUrl: 'img/icon-station-active.svg',
         iconRetinaUrl: 'img/icon-station-active.svg',
-        iconSize: [20, 25],
-        iconAnchor: [10, 25],
+        iconSize: [35, 44],
+        iconAnchor: [17, 44],
         popupAnchor: [0, 0]
       };
     case 'valet-active':
       return {
         iconUrl: 'img/icon-valet-active.svg',
         iconRetinaUrl: 'img/icon-valet-active.svg',
-        iconSize: [20, 25],
-        iconAnchor: [10, 25],
+        iconSize: [35, 44],
+        iconAnchor: [17, 44],
         popupAnchor: [0, 0]
       };
     case 'valet':
       return {
         iconUrl: 'img/icon-valet.svg',
         iconRetinaUrl: 'img/icon-valet.svg',
-        iconSize: [20, 25],
-        iconAnchor: [10, 25],
+        iconSize: [35, 44],
+        iconAnchor: [17, 44],
         popupAnchor: [0, 0]
       };
     case 'homebase':
       return {
         iconUrl: 'img/icon-homebase.svg',
         iconRetinaUrl: 'img/icon-homebase.svg',
-        iconSize: [20, 25],
-        iconAnchor: [10, 25],
+        iconSize: [35, 44],
+        iconAnchor: [17, 44],
         popupAnchor: [0, 0]
       };
     case 'homebase-active':
       return {
         iconUrl: 'img/icon-homebase-active.svg',
         iconRetinaUrl: 'img/icon-homebase-active.svg',
-        iconSize: [20, 25],
-        iconAnchor: [10, 25],
+        iconSize: [35, 44],
+        iconAnchor: [17, 44],
         popupAnchor: [0, 0]
       };
     case 'location':
       return {
         iconUrl: 'img/user-location.svg',
         iconRetinaUrl: 'img/user-location.svg',
-        iconSize: [25, 25],
-        iconAnchor: [12.5, 25],
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
         popupAnchor: [0, 0]
       };
     default:
       return {
         iconUrl: 'img/user-location.svg',
         iconRetinaUrl: 'img/user-location.svg',
-        iconSize: [25, 25],
-        iconAnchor: [12.5, 25],
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
         popupAnchor: [0, 0]
       };
     }
