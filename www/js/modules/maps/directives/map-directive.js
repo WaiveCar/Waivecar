@@ -42,6 +42,7 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
             watcher();
           }
         });
+        watchers = null;
       });
     }
   }
@@ -53,6 +54,7 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
     this.$$ready = $q.defer();
     this.$ready = this.$$ready.promise;
     this.route = null;
+    this.activating = false;
 
     if (!this.center && $rootScope.currentLocation) {
       this.center = [$rootScope.currentLocation.latitude, $rootScope.currentLocation.longitude];
@@ -107,14 +109,30 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
       var fn = this.onMarkerTap();
       if (typeof fn == 'function') {
         marker.on('mousedown', function () {
-          fn(mark);
-        });
+          if (this.activating) {
+            return;
+          }
+          // Only make map icons work on zoom > 14
+          if (this.map.getZoom() >= 14) {
+            // let the fn return true if map should activate handlers again
+            var done = fn(mark);
+            this.activating = true;
+            if (done === true) {
+              this.activating = false;
+            }
+          } else {
+            this.map.setZoomAround(
+              marker.getLatLng(),
+              this.map.getZoom() + 1
+            );
+          }
+        }.bind(this));
       }
       return marker;
     }, this)
     .value();
-    if (oldLocations && oldLocations.length !== locations.length) {
-      this.fitBounds(null, 0.5);
+    if (!oldLocations || oldLocations.length !== locations.length) {
+      this.fitBounds();
     }
   };
 
@@ -152,7 +170,7 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
 
     this._group = new this.leaflet.featureGroup(_.values(this.items));
     bounds = bounds || this._group.getBounds();
-    this.map.fitBounds(bounds.pad(padding));
+    this.map.fitBounds(bounds);
   };
 
   MapController.prototype.drawRoute = function () {
@@ -167,7 +185,7 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
       this.route = this.leaflet.geoJson(routeLines);
       this.route.addTo(this.map);
 
-      this.fitBounds(this.route.getBounds(), 0);
+      this.fitBounds(this.route.getBounds());
     }.bind(this));
   };
 
