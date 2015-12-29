@@ -53,7 +53,7 @@
     "bentojs-api-role": "1.0.1",
     "bentojs-api-sequelize": "1.1.1",
     "bentojs-api-shop": "1.1.2",
-    "bentojs-api-slack": "0.0.2",
+    "bentojs-api-slack": "0.0.3",
     "bentojs-api-sms": "0.0.13",
     "bentojs-api-subscription": "1.0.0",
     "bentojs-api-token": "1.0.1",

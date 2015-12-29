@@ -3,6 +3,7 @@
 let Service     = require('./classes/service');
 let cars        = require('./car-service');
 let fees        = require('./fee-service');
+let Slack       = Bento.provider('slack');
 let queue       = Bento.provider('queue');
 let queryParser = Bento.provider('sequelize/helpers').query;
 let relay       = Bento.Relay;
@@ -18,6 +19,10 @@ let Car            = Bento.model('Car');
 let Booking        = Bento.model('Booking');
 let BookingDetails = Bento.model('BookingDetails');
 let BookingPayment = Bento.model('BookingPayment');
+
+// ### Instances
+
+const slack = new Slack('notifications');
 
 module.exports = class BookingService extends Service {
 
@@ -423,6 +428,9 @@ module.exports = class BookingService extends Service {
 
     yield booking.complete();
     yield car.available();
+    yield slack.message({
+      text : `${ user.name() } completed their booking with ${ car.license || car.id }! Review and close the booking at https://www.waivecar.com/bookings/${ booking.id }`
+    });
 
     // ### Relay
 
@@ -479,6 +487,9 @@ module.exports = class BookingService extends Service {
 
     car.relay('update');
     booking.relay('update');
+    yield slack.message({
+      text : `${ user.name() } cancelled their booking with ${ car.license || car.id }`
+    });
   }
 
   // ### HELPERS
