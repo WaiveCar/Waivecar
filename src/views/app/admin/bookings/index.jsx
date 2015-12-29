@@ -45,11 +45,11 @@ class TableIndex extends React.Component {
   }
 
   /**
-   * Unsubscribe from users relay.
+   * Unsubscribe from bookings relay.
    * @return {Void}
    */
   componentWillUnmount() {
-    relay.unsubscribe(this, 'users');
+    relay.unsubscribe(this, 'bookings');
   }
 
   /**
