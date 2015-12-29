@@ -80,6 +80,11 @@ templates.register('app', {
         path      : '/users/:id',
         component : require('../../views/app/admin/users/show'),
         onEnter   : policies.isAdministrator
+      },
+      {
+        path      : '/bookings',
+        component : require('../../views/app/admin/bookings'),
+        onEnter   : policies.isAdministrator
       }
 
     ].concat(views.getRoutes('app')));
@@ -131,6 +136,7 @@ templates.register('app', {
     parent    : null,
     locations : [ 'sidebar-user' ]
   },
+  /*
   {
     title     : 'Book a Car',
     icon      : 'directions_car',
@@ -145,6 +151,7 @@ templates.register('app', {
     parent    : null,
     locations : [ 'sidebar-user' ]
   },
+  */
 
   // ### Admin Routes
 
@@ -153,7 +160,16 @@ templates.register('app', {
     icon      : 'group',
     path      : '/users',
     parent    : null,
-    locations : [ 'sidebar' ]
+    locations : [ 'sidebar' ],
+    order     : 2
+  },
+  {
+    title     : 'Bookings',
+    icon      : 'insert_invitation',
+    path      : '/bookings',
+    parent    : null,
+    locations : [ 'sidebar' ],
+    order     : 3
   }
 
 ].forEach(val => menu.add(val));

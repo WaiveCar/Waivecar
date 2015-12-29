@@ -75,8 +75,45 @@
     width : 100%;
 
     th {
-      font-size : .9rem;
-      padding   : 5px;
+      font-size           : .9rem;
+      padding             : 5px;
+      -moz-user-select    : none;
+      -webkit-user-select : none;
+      user-select         : none;
+      &.sortable {
+        &:hover {
+          cursor : pointer;
+        }
+        span {
+          float : left;
+        }
+        .ASC, .DESC {
+          display     : none;
+          float       : left;
+          margin-top  : -3px;
+        }
+        .sort-spacer {
+          float      : left;
+          height     : 10px;
+          width      : 24px;
+        }
+        &.ASC, &.DESC {
+          color : #25C155;
+          .sort-spacer {
+            display : none;
+          }
+        }
+        &.ASC {
+          .ASC {
+            display : block;
+          }
+        }
+        &.DESC {
+          .DESC {
+            display : block;
+          }
+        }
+      }
     }
 
     td {

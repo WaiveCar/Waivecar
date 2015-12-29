@@ -4,7 +4,7 @@ import { api }      from 'bento';
 import { snackbar } from 'bento-web';
 import { Form }     from 'bento/lib/helpers';
 import FormSelect   from 'react-select';
-import FormInput    from './form-input';
+import FormInput    from '../components/form-input';
 
 module.exports = class UserDetails extends React.Component {
 

@@ -1,4 +1,5 @@
 import React             from 'react';
+import moment            from 'moment';
 import { relay, api }    from 'bento';
 import { snackbar }      from 'bento-web';
 import mixin             from 'react-mixin';
@@ -8,10 +9,10 @@ import ThSort            from '../components/table-th';
 let timer = null;
 
 @mixin.decorate(History)
-class UsersListView extends React.Component {
+class TableIndex extends React.Component {
 
   /**
-   * Subscribes to the users relay store.
+   * Subscribes to the bookings relay store.
    * @param  {...[type]} args
    * @return {Void}
    */
@@ -25,17 +26,17 @@ class UsersListView extends React.Component {
       more   : false,
       offset : 0
     };
-    relay.subscribe(this, 'users');
+    relay.subscribe(this, 'bookings');
   }
 
   /**
-   * Set users on component load.
+   * Set bookings on component load.
    * @return {Void}
    */
   componentDidMount() {
-    let count = this.state.users.length;
+    let count = this.state.bookings.length;
     if (count < 20) {
-      this.setUsers();
+      this.setBookings();
     }
     this.setState({
       more   : count % 20 === 0,
@@ -52,23 +53,24 @@ class UsersListView extends React.Component {
   }
 
   /**
-   * Loads users from api and updates the users relay index.
+   * Loads bookings from api and updates the bookings relay index.
    */
-  setUsers() {
-    api.get('/users', {
+  setBookings() {
+    api.get('/bookings', {
       limit  : 20,
-      offset : this.state.offset
-    }, (err, users) => {
+      offset : this.state.offset,
+      order  : 'created_at,DESC'
+    }, (err, bookings) => {
       if (err) {
         return snackbar.notify({
           type    : `danger`,
           message : err.message
         });
       }
-      this.users.index(users);
+      this.bookings.index(bookings);
       this.setState({
-        more   : users.length === 20,
-        offset : this.state.offset + users.length
+        more   : bookings.length === 20,
+        offset : this.state.offset + bookings.length
       });
     });
   }
@@ -78,53 +80,26 @@ class UsersListView extends React.Component {
    * @return {Void}
    */
   loadMore = () => {
-    api.get('/users', {
+    api.get('/bookings', {
       limit  : 20,
-      offset : this.state.offset
-    }, (err, users) => {
+      offset : this.state.offset,
+      order  : 'created_at,DESC'
+    }, (err, bookings) => {
       if (err) {
         return snackbar.notify({
           type    : `danger`,
           message : err.message
         });
       }
-      this.users.index([
-        ...this.state.users,
-        ...users
+      this.bookings.index([
+        ...this.state.bookings,
+        ...bookings
       ]);
       this.setState({
-        more   : users.length === 20,
-        offset : this.state.offset + users.length
+        more   : bookings.length === 20,
+        offset : this.state.offset + bookings.length
       });
     });
-  }
-
-  /**
-   * Sends a search request to the api.
-   * @param  {Object} e
-   * @return {Void}
-   */
-  search = (e) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => {
-      let search = e.target.value;
-      if (search) {
-        api.get('/users', {
-          search : search
-        }, (err, users) => {
-          if (err) {
-            return snackbar.notify({
-              type    : `danger`,
-              message : err.message
-            });
-          }
-          this.setState({ offset : 0 });
-          this.users.index(users);
-        });
-      } else {
-        this.setUsers();
-      }
-    }, 500);
   }
 
   /**
@@ -161,20 +136,20 @@ class UsersListView extends React.Component {
   }
 
   /**
-   * Renders the user row.
-   * @param  {Object} user
+   * Renders the booking row.
+   * @param  {Object} booking
    * @return {Object}
    */
-  renderItem(user) {
+  renderItem(booking) {
     return (
-      <tr key={ user.id }>
-        <td>{ user.id }</td>
-        <td>{ user.firstName } { user.lastName }</td>
-        <td className="hidden-sm-down">{ user.email }</td>
-        <td className="hidden-sm-down">{ user.role.title }</td>
-        <td>{ user.status }</td>
+      <tr key={ booking.id }>
+        <td>{ booking.id }</td>
+        <td className="hidden-sm-down">{ booking.carId }</td>
+        <td className="hidden-sm-down">{ booking.userId }</td>
+        <td>{ booking.status }</td>
+        <td>{ moment(booking.createdAt).format('HH:mm YYYY-MM-DD') }</td>
         <td>
-          <Link to={ `/users/${ user.id }` }>
+          <Link to={ `/bookings/${ booking.id }` }>
             <i className="material-icons" style={{ marginTop : 5 }}>pageview</i>
           </Link>
         </td>
@@ -188,24 +163,23 @@ class UsersListView extends React.Component {
    */
   render() {
     return (
-      <div id="users-list" className="container">
+      <div id="bookings-list" className="container">
         <div className="box full">
-          <h3>Users <small>List of registered WaiveCar users</small></h3>
+          <h3>Bookings <small>List of registered WaiveCar bookings</small></h3>
           <div className="box-content">
-            <input type="text" className="box-table-search" ref="search" placeholder="Enter search text [name, email, status]" onChange={ this.search } />
             <table className="box-table table-striped">
               <thead>
                 <tr ref="sort">
-                  <th>#</th>
-                  <ThSort sort="firstName"  value="Name"   ctx={ this } />
-                  <ThSort sort="email"      value="Email"  ctx={ this } className="hidden-sm-down" />
-                  <ThSort sort="role.title" value="Role"   ctx={ this } className="hidden-sm-down" />
-                  <ThSort sort="status"     value="Status" ctx={ this } />
+                  <ThSort sort="id"        value="#"       ctx={ this } className="text-center" style={{ width : 45 }} />
+                  <ThSort sort="carId"     value="Car"     ctx={ this } className="hidden-sm-down" />
+                  <ThSort sort="userId"    value="User"    ctx={ this } className="hidden-sm-down" />
+                  <ThSort sort="status"    value="Status"  ctx={ this } />
+                  <ThSort sort="createdAt" value="Created" ctx={ this } style={{ width : 125 }} />
                   <th></th>
                 </tr>
               </thead>
               <tbody>
-                { this.renderIndex(this.state.users) }
+                { this.renderIndex(this.state.bookings) }
               </tbody>
             </table>
             {
@@ -224,4 +198,4 @@ class UsersListView extends React.Component {
 
 };
 
-module.exports = UsersListView;
+module.exports = TableIndex;

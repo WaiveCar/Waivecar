@@ -3,7 +3,7 @@ import { relay, api } from 'bento';
 import { snackbar }   from 'bento-web';
 import { Form }       from 'bento/lib/helpers';
 import md5            from 'md5';
-import FormInput      from './form-input';
+import FormInput      from '../components/form-input';
 
 module.exports = class UserDetails extends React.Component {
 

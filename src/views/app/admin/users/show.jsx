@@ -2,8 +2,8 @@ import React from 'react';
 
 // ### Components
 
-import UserDetails from './components/user-details';
-import UserLicense from './components/user-license';
+import UserDetails from './user-details';
+import UserLicense from './user-license';
 
 module.exports = class AdminUsersView extends React.Component {
   render() {
