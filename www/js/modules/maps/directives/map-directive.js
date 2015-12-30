@@ -25,7 +25,7 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
 
     ctrl.map = ctrl.leaflet.skobbler.map($elem[0].firstChild, mapOptions);
     if (ctrl.map) {
-      ctrl.setCurrentLocation(ctrl.location);
+      ctrl.setCurrentLocation($rootScope.currentLocation);
       ctrl.setMarkers(ctrl.markers);
       ctrl.drawRoute();
       ctrl.$$ready.resolve();
@@ -48,7 +48,6 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
   }
 
   function MapController () {
-    this._group = null;
     this.items = {};
     this.leaflet = MapsLoader.leaflet;
     this.$$ready = $q.defer();
@@ -168,8 +167,22 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
       padding = 0;
     }
 
-    this._group = new this.leaflet.featureGroup(_.values(this.items));
-    bounds = bounds || this._group.getBounds();
+    if (bounds == null) {
+      var items;
+      if (Array.isArray(this.featured) && this.featured.length) {
+        items = this.featured.map(function (item) {
+          return this.items[item.id];
+        }, this);
+        if (this.items.location) {
+          items = items.concat(this.items.location || []);
+        }
+      } else {
+        items = _.values(this.items);
+      }
+      var group = new this.leaflet.featureGroup(items);
+      bounds = group.getBounds();
+    }
+
     this.map.fitBounds(bounds);
   };
 
@@ -289,6 +302,7 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
       zoom: '@',
       center: '=',
       markers: '=',
+      featured: '=',
       onMarkerTap: '&',
       routeStart: '=',
       routeDestiny: '='

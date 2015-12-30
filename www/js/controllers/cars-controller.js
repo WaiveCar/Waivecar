@@ -35,6 +35,7 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
       return false;
     }
     this.all = prepareCars(value);
+    this.featured = featured(value);
   }.bind(this), true);
 
   $scope.$on('$destroy', function () {
@@ -44,6 +45,7 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
 
   // First load
   this.all = prepareCars(cars);
+  this.featured = featured(cars);
   ensureAvailableCars(this.all);
 
   function ensureAvailableCars (allCars) {
@@ -103,6 +105,19 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
       return item;
     });
   };
+
+  function featured (items) {
+    return _(items)
+      .filter('isAvailable')
+      .sortBy(function (item) {
+        if ($rootScope.currentLocation) {
+          return $distance.getDistance(item);
+        }
+        return item.id;
+      })
+      .take(2)
+      .value();
+  }
 
   this.showCar = function showCar (car) {
     if (car.isAvailable === false) {
