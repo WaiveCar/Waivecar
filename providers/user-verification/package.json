@@ -1,9 +1,0 @@
-{
-  "name": "user-verification",
-  "private": true,
-  "description": "A user verification provider",
-  "bento": {
-    "name": "user-verification",
-    "type": "provider"
-  }
-}

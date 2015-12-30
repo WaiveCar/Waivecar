@@ -6,10 +6,10 @@ let config = Bento.config;
 
 // ### Require Verification Jobs
 
-require('./jobs/request-email-verification');
-require('./jobs/request-phone-verification');
+require('../jobs/request-email-verification');
+require('../jobs/request-phone-verification');
 
-module.exports = class UserVerification {
+module.exports = class Verification {
 
   /**
    * Creates and sends a new phone verification request.
