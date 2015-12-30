@@ -73,14 +73,14 @@ let facebook = module.exports = {
         type   : 'login',
         token  : facebook.getToken(),
         fields : 'first_name,last_name,email'
-      }, (error, user) => {
+      }, (error, res) => {
         if (error) {
           if (types.isFunction(errorHandler)) {
             return errorHandler(error);
           }
           return facebook.error(error.message);
         }
-        facebook.setAuth(user);
+        facebook.setAuth(res.token, errorHandler);
       });
     } else {
       window.location.href = facebook.getLink('login');
@@ -112,12 +112,19 @@ let facebook = module.exports = {
   // ### Authorization Methods
 
   /**
-   * Stores the authenticated user and pushes a new state.
-   * @param {[type]} user [description]
+   * Stores the authenticated token and pushes a new state.
+   * @param {String}   token
+   * @param {Function} errorHandler
    */
-  setAuth(user) {
-    auth.set(user);
-    window.location.href = '/'; // Hopefully a better way to do this with react-router?
+  setAuth(token, errorHandler) {
+    auth.token(token);
+    api.get('/users/me', (err, user) => {
+      if (err) {
+        return errorHandler(err);
+      }
+      auth.set(user);
+      window.location.href = '/profile';
+    });
   },
 
   // ### Token Methods
