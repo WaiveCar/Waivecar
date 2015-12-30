@@ -93,9 +93,10 @@ let phoneFormat = function(phone) {
 /**
  * Provides the data payload for filtering, adjustments etc. for storage requests.
  * @param  {Object} payload
+ * @param  {Object} _user
  * @return {Object}
  */
-hooks.set('user:store:before', function *(payload) {
+hooks.set('user:store:before', function *(payload, _user) {
   if (payload.phone) {
     payload.phone = phoneFormat(payload.phone);
   }
@@ -105,9 +106,10 @@ hooks.set('user:store:before', function *(payload) {
 /**
  * Executed after a new user has been sucessfully registered.
  * @param  {Object} user
+ * @param  {Object} _user
  * @return {Void}
  */
-hooks.set('user:store:after', function *(user) {
+hooks.set('user:store:after', function *(user, _user) {
   if (user.email.match(/fixture\.none/gi)) {
     return; // Ignore test accounts...
   }
@@ -131,9 +133,10 @@ hooks.set('user:store:after', function *(user) {
  * Provides the data payload for filter, adjustments etc. for update requests.
  * @param  {Object} prevUser The previous user data in our database.
  * @param  {Object} nextUser The new user payload provided by client.
+ * @param  {Object} _user
  * @return {Object}
  */
-hooks.set('user:update:before', function *(prevUser, nextUser) {
+hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
   if (nextUser.phone) {
     nextUser.phone = phoneFormat(nextUser.phone);
   }
@@ -142,9 +145,9 @@ hooks.set('user:update:before', function *(prevUser, nextUser) {
     nextUser.verifiedPhone = false;
   }
 
-  // if the user's verification requirements have changed, they are no longer active.
-
-  if (!nextUser.verifiedPhone) {
+  if (nextUser.status && _user.hasAccess('admin')) {
+    // ...
+  } else if (!nextUser.verifiedPhone) {
     nextUser.status = 'pending';
   }
 
@@ -154,9 +157,10 @@ hooks.set('user:update:before', function *(prevUser, nextUser) {
 /**
  * Executed after a user has been successfully updated.
  * @param  {Object} user
+ * @param  {Object} _user
  * @return {Void}
  */
-hooks.set('user:update:after', function *(user) {
+hooks.set('user:update:after', function *(user, _user) {
   if (user.phone && !user.verifiedPhone) {
     yield verification.requestPhoneVerification(user.id, user.phone);
   }
@@ -168,8 +172,9 @@ hooks.set('user:update:after', function *(user) {
  * Executed before the user is deleted.
  * @param  {Object} user
  * @param  {Object} query The query that was provided with the delete request.
+ * @param  {Object} _user
  * @return {Boolean}
  */
-hooks.set('user:delete:before', function *(user, query) {
+hooks.set('user:delete:before', function *(user, query, _user) {
   return true;
 });
