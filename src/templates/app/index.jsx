@@ -85,6 +85,11 @@ templates.register('app', {
         path      : '/bookings',
         component : require('../../views/app/admin/bookings'),
         onEnter   : policies.isAdministrator
+      },
+      {
+        path      : '/licenses',
+        component : require('../../views/app/admin/licenses'),
+        onEnter   : policies.isAdministrator
       }
 
     ].concat(views.getRoutes('app')));
@@ -170,6 +175,14 @@ templates.register('app', {
     parent    : null,
     locations : [ 'sidebar' ],
     order     : 3
+  },
+  {
+    title     : 'Licenses',
+    icon      : 'picture_in_picture',
+    path      : '/licenses',
+    parent    : null,
+    locations : [ 'sidebar' ],
+    order     : 4
   }
 
 ].forEach(val => menu.add(val));

@@ -1,4 +1,5 @@
 import React             from 'react';
+import moment            from 'moment';
 import { relay }         from 'bento';
 import Table             from 'bento-service/table';
 import mixin             from 'react-mixin';
@@ -6,16 +7,16 @@ import { History, Link } from 'react-router';
 import ThSort            from '../components/table-th';
 
 @mixin.decorate(History)
-class UsersListView extends React.Component {
+class TableIndex extends React.Component {
 
   /**
-   * Subscribes to the users relay store.
+   * Subscribes to the licenses relay store.
    * @param  {...[type]} args
    * @return {Void}
    */
   constructor(...args) {
     super(...args);
-    this.table = new Table(this, 'users');
+    this.table = new Table(this, 'licenses');
     this.state = {
       sort : {
         key   : null,
@@ -24,15 +25,15 @@ class UsersListView extends React.Component {
       more   : false,
       offset : 0
     };
-    relay.subscribe(this, 'users');
+    relay.subscribe(this, 'licenses');
   }
 
   /**
-   * Set users on component load.
+   * Set licenses on component load.
    * @return {Void}
    */
   componentDidMount() {
-    let count = this.state.users.length;
+    let count = this.state.licenses.length;
     if (count < 20) {
       this.table.init();
     }
@@ -43,28 +44,30 @@ class UsersListView extends React.Component {
   }
 
   /**
-   * Unsubscribe from users relay.
+   * Unsubscribe from licenses relay.
    * @return {Void}
    */
   componentWillUnmount() {
-    relay.unsubscribe(this, 'users');
+    relay.unsubscribe(this, 'licenses');
   }
 
   /**
-   * Renders the user row.
-   * @param  {Object} user
+   * Renders the license row.
+   * @param  {Object} license
    * @return {Object}
    */
-  row(user) {
+  row(license) {
     return (
-      <tr key={ user.id }>
-        <td>{ user.id }</td>
-        <td>{ user.firstName } { user.lastName }</td>
-        <td className="hidden-sm-down">{ user.email }</td>
-        <td className="hidden-sm-down">{ user.role.title }</td>
-        <td>{ user.status }</td>
+      <tr key={ license.id }>
+        <td>{ license.id }</td>
+        <td className="hidden-sm-down">{ license.userId }</td>
+        <td>{ license.firstName }</td>
+        <td>{ license.lastName }</td>
+        <td className="hidden-sm-down">{ license.status }</td>
+        <td className="hidden-sm-down">{ license.outcome }</td>
+        <td className="hidden-sm-down">{ moment(license.createdAt).format('HH:mm YYYY-MM-DD') }</td>
         <td>
-          <Link to={ `/users/${ user.id }` }>
+          <Link to={ `/users/${ license.userId }` }>
             <i className="material-icons" style={{ marginTop : 5 }}>pageview</i>
           </Link>
         </td>
@@ -78,19 +81,20 @@ class UsersListView extends React.Component {
    */
   render() {
     return (
-      <div id="users-list" className="container">
+      <div id="bookings-list" className="container">
         <div className="box full">
-          <h3>Users <small>List of registered WaiveCar users</small></h3>
+          <h3>Licenses <small>List of registered licenses</small></h3>
           <div className="box-content">
-            <input type="text" className="box-table-search" ref="search" placeholder="Enter search text [name, email, status]" onChange={ this.table.search } />
             <table className="box-table table-striped">
               <thead>
                 <tr ref="sort">
                   <th>#</th>
-                  <ThSort sort="firstName"  value="Name"   ctx={ this } />
-                  <ThSort sort="email"      value="Email"  ctx={ this } className="hidden-sm-down" />
-                  <ThSort sort="role.title" value="Role"   ctx={ this } className="hidden-sm-down" />
-                  <ThSort sort="status"     value="Status" ctx={ this } />
+                  <ThSort sort="userId"    value="User"       ctx={ this } className="hidden-sm-down" />
+                  <ThSort sort="firstName" value="First Name" ctx={ this } />
+                  <ThSort sort="lastName"  value="Last Name"  ctx={ this } />
+                  <ThSort sort="status"    value="Status"     ctx={ this } className="hidden-sm-down" />
+                  <ThSort sort="outcome"   value="Outcome"    ctx={ this } className="hidden-sm-down" />
+                  <ThSort sort="createdAt" value="Created"    ctx={ this } className="hidden-sm-down" />
                   <th></th>
                 </tr>
               </thead>
@@ -114,4 +118,4 @@ class UsersListView extends React.Component {
 
 };
 
-module.exports = UsersListView;
+module.exports = TableIndex;

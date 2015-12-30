@@ -1,3 +1,4 @@
 module.exports = {
-  Files : require('./files')
+  Files : require('./files'),
+  Table : require('./table')
 };

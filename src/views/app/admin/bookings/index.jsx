@@ -1,12 +1,10 @@
 import React             from 'react';
 import moment            from 'moment';
-import { relay, api }    from 'bento';
-import { snackbar }      from 'bento-web';
+import { relay }         from 'bento';
+import Table             from 'bento-service/table';
 import mixin             from 'react-mixin';
 import { History, Link } from 'react-router';
 import ThSort            from '../components/table-th';
-
-let timer = null;
 
 @mixin.decorate(History)
 class TableIndex extends React.Component {
@@ -18,6 +16,7 @@ class TableIndex extends React.Component {
    */
   constructor(...args) {
     super(...args);
+    this.table = new Table(this, 'bookings');
     this.state = {
       sort : {
         key   : null,
@@ -36,7 +35,7 @@ class TableIndex extends React.Component {
   componentDidMount() {
     let count = this.state.bookings.length;
     if (count < 20) {
-      this.setBookings();
+      this.table.init();
     }
     this.setState({
       more   : count % 20 === 0,
@@ -53,94 +52,11 @@ class TableIndex extends React.Component {
   }
 
   /**
-   * Loads bookings from api and updates the bookings relay index.
-   */
-  setBookings() {
-    api.get('/bookings', {
-      limit  : 20,
-      offset : this.state.offset,
-      order  : 'created_at,DESC'
-    }, (err, bookings) => {
-      if (err) {
-        return snackbar.notify({
-          type    : `danger`,
-          message : err.message
-        });
-      }
-      this.bookings.index(bookings);
-      this.setState({
-        more   : bookings.length === 20,
-        offset : this.state.offset + bookings.length
-      });
-    });
-  }
-
-  /**
-   * Loads more user records and appends them to the current state index.
-   * @return {Void}
-   */
-  loadMore = () => {
-    api.get('/bookings', {
-      limit  : 20,
-      offset : this.state.offset,
-      order  : 'created_at,DESC'
-    }, (err, bookings) => {
-      if (err) {
-        return snackbar.notify({
-          type    : `danger`,
-          message : err.message
-        });
-      }
-      this.bookings.index([
-        ...this.state.bookings,
-        ...bookings
-      ]);
-      this.setState({
-        more   : bookings.length === 20,
-        offset : this.state.offset + bookings.length
-      });
-    });
-  }
-
-  /**
-   * Renders the provided list.
-   * @param  {Array} list
-   * @return {Object}
-   */
-  renderIndex(list) {
-    let { key, order } = this.state.sort;
-    if (key) {
-
-      // ### Adjust Classes
-      // Removes and adds correct classNames to sortable columns.
-
-      [].slice.call(this.refs.sort.children).map((th) => {
-        if (th.className)  { th.className = th.className.replace(/ASC|DESC/, '').trim(); }
-        if (key === th.id) { th.className = `${ th.className } ${ order }`; }
-      });
-
-      // ### Perform Sort
-
-      let isDeep   = key.match(/\./) ? true : false;
-      let deepLink = isDeep ? key.split('.') : null;
-      list = list.sort((a, b) => {
-        a = isDeep ? deepLink.reduce((obj, key) => { return obj[key] }, a) : a[key];
-        b = isDeep ? deepLink.reduce((obj, key) => { return obj[key] }, b) : b[key];
-        if (a > b) { return order === 'DESC' ? 1 : -1; }
-        if (a < b) { return order === 'DESC' ? -1 : 1; }
-        return 0;
-      });
-
-    }
-    return list.map(item => this.renderItem(item));
-  }
-
-  /**
    * Renders the booking row.
    * @param  {Object} booking
    * @return {Object}
    */
-  renderItem(booking) {
+  row(booking) {
     return (
       <tr key={ booking.id }>
         <td>{ booking.id }</td>
@@ -179,13 +95,13 @@ class TableIndex extends React.Component {
                 </tr>
               </thead>
               <tbody>
-                { this.renderIndex(this.state.bookings) }
+                { this.table.index() }
               </tbody>
             </table>
             {
               this.state.more ?
                 <div className="text-center" style={{ marginTop : 20 }}>
-                  <button className="btn btn-primary" onClick={ this.loadMore }>Load More</button>
+                  <button className="btn btn-primary" onClick={ this.table.more }>Load More</button>
                 </div>
                 :
                 ''
