@@ -107,11 +107,32 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
   this.showCar = function showCar (car) {
     if (car.isAvailable === false) {
       console.error('Should show car unavailable modal here');
-    } else {
-      $state.go('cars-show', {
-        id: car.id
-      });
+      return true;
     }
+    var distance = $distance.getDistance(car);
+    if (distance > 10) {
+      var farModal;
+      $modal('result', {
+        icon: 'x-icon',
+        title: 'You\'re too far away to rent this car',
+        message: 'Get within 10 miles of the WaiveCar to book it.',
+        actions: [{
+          text: 'Close',
+          handler: function () {
+            farModal.remove();
+          }
+        }]
+      })
+      .then(function (_modal) {
+        farModal = _modal;
+        farModal.show();
+      });
+      return true;
+    }
+    $state.go('cars-show', {
+      id: car.id
+    });
+    return false;
   };
 
   $scope.$on('$destroy', function () {

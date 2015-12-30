@@ -19,8 +19,7 @@ function $distanceFactory ($rootScope) {
       return NaN;
     }
     var distance = _from.distanceTo(_to);
-    // return miles
-    return distance / 1609;
+    return this.toMiles(distance);
   };
 
   DistanceService.prototype.closest = function closest (arr) {
@@ -33,6 +32,9 @@ function $distanceFactory ($rootScope) {
   };
 
   DistanceService.prototype.toMiles = function toMiles (m) {
+    if (isNaN(m)) {
+      return m;
+    }
     return m / 1609;
   };
   return new DistanceService();

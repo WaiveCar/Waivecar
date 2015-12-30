@@ -112,8 +112,8 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
           if (this.activating) {
             return;
           }
-          // Only make map icons work on zoom > 14
-          if (this.map.getZoom() >= 14) {
+          // Only make map icons work on zoom > 13
+          if (this.map.getZoom() >= 13) {
             // let the fn return true if map should activate handlers again
             var done = fn(mark);
             this.activating = true;
