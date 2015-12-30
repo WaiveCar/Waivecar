@@ -101,14 +101,40 @@ module.exports = class UserDetails extends React.Component {
               </div>
 
               <div className="form-group row">
-                <FormInput className="col-md-6 bento-form-input">
+                <FormInput className="col-md-6 bento-form-input" helpText={ user.verifiedPhone ? 'Email has been verified' : 'Email has not been verified' }>
                   <label>Email Address</label>
                   <input text="text" name="email" className="form-control" defaultValue={ user.email } required />
                 </FormInput>
-                <FormInput className="col-md-6 bento-form-input">
+                <FormInput className="col-md-6 bento-form-input" helpText={ user.verifiedPhone ? 'Phone has been verified' : 'Phone has not been verified' }>
                   <label>Cell Phone</label>
                   <input text="text" name="phone" className="form-control" defaultValue={ user.phone } required />
                 </FormInput>
+              </div>
+
+              <div className="form-group row">
+                <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Account Status</label>
+                <div className="col-sm-9 text-right" style={{ padding : '8px 25px' }}>
+                  <div className="radio-inline">
+                    <label>
+                      <input type="radio" name="status" value="pending" defaultChecked={ user.status === 'pending' } />
+                      Pending
+                    </label>
+                  </div>
+
+                  <div className="radio-inline">
+                    <label>
+                      <input type="radio" name="status" value="suspended" defaultChecked={ user.status === 'suspended' } />
+                      Suspended
+                    </label>
+                  </div>
+
+                  <div className="radio-inline">
+                    <label>
+                      <input type="radio" name="status" value="active" defaultChecked={ user.status === 'active' } />
+                      Active
+                    </label>
+                  </div>
+                </div>
               </div>
 
               <div className="form-actions text-center">

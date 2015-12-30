@@ -22,6 +22,7 @@ let facebook = module.exports = {
             case 'FB_ID_EXISTS'    : facebook.login(errorHandler);   break;
             case 'FB_EMAIL_EXISTS' : console.log('FB_EMAIL_EXISTS'); break;
             default : {
+              facebook.removeToken();
               if (types.isFunction(errorHandler)) {
                 return errorHandler(error);
               }
@@ -50,6 +51,7 @@ let facebook = module.exports = {
         fields : 'first_name,last_name,email'
       }, (error) => {
         if (error) {
+          facebook.removeToken();
           if (types.isFunction(errorHandler)) {
             return errorHandler(error);
           }
@@ -75,6 +77,7 @@ let facebook = module.exports = {
         fields : 'first_name,last_name,email'
       }, (error, res) => {
         if (error) {
+          facebook.removeToken();
           if (types.isFunction(errorHandler)) {
             return errorHandler(error);
           }
@@ -156,6 +159,14 @@ let facebook = module.exports = {
    */
   getToken() {
     return sessionStorage.fb_token;
+  },
+
+  /**
+   * Removes facebook session token.
+   * @return {Void}
+   */
+  removeToken() {
+    sessionStorage.removeItem('fb_token');
   }
 
 };

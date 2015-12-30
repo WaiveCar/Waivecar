@@ -60,6 +60,9 @@ module.exports = class FormInput extends React.Component {
           })
         }
         <div className="focus-bar" />
+        <div className="help-text">
+          { this.props.helpText }
+        </div>
       </div>
     );
   }

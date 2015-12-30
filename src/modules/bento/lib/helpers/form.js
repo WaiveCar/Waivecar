@@ -10,8 +10,11 @@ module.exports = class Form {
   constructor(event) {
     this.data = {};
     for (let i = 0, len = event.target.length; i < len; i++) {
-      let el = event.target[i];
-      if (el.name) {
+      let el      = event.target[i];
+      let isCheck = [ 'radio', 'checkbox' ].indexOf(el.type) > -1;
+      if (el.name && !isCheck) {
+        this.data[el.name] = el.value;
+      } else if (isCheck && el.checked) {
         this.data[el.name] = el.value;
       }
     }
