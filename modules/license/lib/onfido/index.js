@@ -31,7 +31,7 @@ module.exports = class OnfidoService {
   static *createUserLink(user, license, _user) {
 
     [ 'email', 'phone' ].forEach((val) => {
-      let currentValue = user.hasOwnProperty(val) ? user[val] : undefined;
+      let currentValue = user[val];
       if (!currentValue) {
         throw error.parse({
           code    : `MISSING_PARAMETER`,
@@ -41,7 +41,7 @@ module.exports = class OnfidoService {
     });
 
     [ 'firstName', 'lastName', 'birthDate', 'number', 'state' ].forEach((val) => {
-      let currentValue = license.hasOwnProperty(val) ? license[val] : undefined;
+      let currentValue = license[val];
       if (!currentValue) {
         throw error.parse({
           code    : `MISSING_PARAMETER`,

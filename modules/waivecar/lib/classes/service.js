@@ -131,7 +131,6 @@ module.exports = class Service {
     });
 
     // ### Check User
-    if (!user.verifiedEmail) { missing.push('email'); }
     if (!user.verifiedPhone) { missing.push('phone'); }
 
     // ### Check Credit Card

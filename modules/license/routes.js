@@ -5,7 +5,7 @@ Route.post('/licenses/hooks', [ 'isOnfido', 'LicenseHooksController@catch' ]);
 Route.post('/licenses', {
   policy : 'isAuthenticated',
   uses   : 'LicensesController@store',
-  params : [ 'number', 'state' ]
+  params : [ 'firstName', 'lastName', 'birthDate', 'number', 'state' ]
 });
 
 Route.get('/licenses',     [ 'isAuthenticated', 'LicensesController@index' ]);

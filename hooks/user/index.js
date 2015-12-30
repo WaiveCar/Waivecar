@@ -1,8 +1,8 @@
 'use strict';
 
+let verification = require('./lib/verification');
 let queue        = Bento.provider('queue');
 let tokens       = Bento.provider('token');
-let verification = Bento.provider('user-verification');
 let User         = Bento.model('User');
 let error        = Bento.Error;
 let hooks        = Bento.Hooks;
@@ -83,7 +83,6 @@ let phoneFormat = function(phone) {
     if (phone.startsWith('+')) {
       return phone;
     }
-
     phone = `+1${ phone }`;
   }
 
@@ -100,7 +99,6 @@ hooks.set('user:store:before', function *(payload) {
   if (payload.phone) {
     payload.phone = phoneFormat(payload.phone);
   }
-
   return payload;
 });
 
@@ -144,12 +142,9 @@ hooks.set('user:update:before', function *(prevUser, nextUser) {
     nextUser.verifiedPhone = false;
   }
 
-  if (nextUser.email && prevUser.email !== nextUser.email) {
-    nextUser.verifiedEmail = false;
-  }
-
   // if the user's verification requirements have changed, they are no longer active.
-  if (!nextUser.verifiedEmail || !nextUser.verifiedEmail) {
+
+  if (!nextUser.verifiedPhone) {
     nextUser.status = 'pending';
   }
 
@@ -164,9 +159,6 @@ hooks.set('user:update:before', function *(prevUser, nextUser) {
 hooks.set('user:update:after', function *(user) {
   if (user.phone && !user.verifiedPhone) {
     yield verification.requestPhoneVerification(user.id, user.phone);
-  }
-  if (user.email && !user.verifiedEmail) {
-    yield verification.requestEmailVerification(user.id, user.email, user.name());
   }
 });
 
