@@ -118,9 +118,12 @@ let facebook = module.exports = {
    */
   setAuth(token, errorHandler) {
     auth.token(token);
-    api.get('/users/me', (err, user) => {
-      if (err) {
-        return errorHandler(err);
+    api.get('/users/me', (error, user) => {
+      if (error) {
+        if (types.isFunction(errorHandler)) {
+          return errorHandler(error);
+        }
+        return facebook.error(error.message);
       }
       auth.set(user);
       window.location.href = '/profile';
