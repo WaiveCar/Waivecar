@@ -42,8 +42,10 @@ templates.register('site', {
   component   : SiteTemplate,
   childRoutes : [
     {
-      path      : '/terms',
-      component : require('views/site/terms')
+      path    : '/terms',
+      onEnter : {
+        window.location = '/terms.pdf'
+      }
     },
     {
       path      : '/privacy',
