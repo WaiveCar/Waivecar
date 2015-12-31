@@ -43,7 +43,7 @@ templates.register('site', {
   childRoutes : [
     {
       path    : '/terms',
-      onEnter : {
+      onEnter : function () {
         window.location = '/terms.pdf'
       }
     },
