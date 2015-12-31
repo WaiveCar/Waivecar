@@ -4,6 +4,7 @@ var angular = require('angular');
 var moment = require('moment');
 var sprintf = require('sprintf-js').sprintf;
 var ionic = require('ionic');
+var _ = require('lodash');
 
 require('angular-ui-router');
 require('../services/auth-service');
@@ -24,7 +25,8 @@ module.exports = angular.module('app.controllers').controller('BookingController
   '$ride',
   '$message',
   '$modal',
-  function ($rootScope, $scope, $interval, $state, $auth, LocationService, $data, $ride, $message, $modal) {
+  '$distance',
+  function ($rootScope, $scope, $interval, $state, $auth, LocationService, $data, $ride, $message, $modal, $distance) {
 
     $scope.image = 'img/car.jpg';
     $scope.distance = 'Unknown';
@@ -40,6 +42,19 @@ module.exports = angular.module('app.controllers').controller('BookingController
     // $data is used to interact with models, never directly. If direct is required, $data should be refreshed.
     $scope.data = $data.active;
     $scope.cache = $data.instances;
+    $scope.featured = featured($data.instances.locations);
+
+    function featured (items) {
+      return _(items)
+        .sortBy(function (item) {
+          if ($rootScope.currentLocation) {
+            return $distance.getDistance(item);
+          }
+          return item.id;
+        })
+        .take(2)
+        .value();
+    }
 
     var timer = $interval(function() {
       if ($scope.expired) {
@@ -182,6 +197,7 @@ module.exports = angular.module('app.controllers').controller('BookingController
     $scope.openPopover = function(item) {
       $scope.selectedItem = item;
       $scope.showItem = true;
+      return true;
     };
     $scope.closePopover = function() {
       $scope.showItem = false;
