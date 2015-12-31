@@ -2,10 +2,10 @@ module.exports = {
 
   waivecar : {
     car : {
-      staleLimit : 15,
+      staleLimit : 30,
       sync       : {
-        value : 10,
-        type  : 'seconds'
+        value : 1,
+        type  : 'minute'
       }
     },
     mock : {
