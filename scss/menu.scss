@@ -18,14 +18,16 @@
       flex-direction: column;
       justify-content: center;
       text-decoration: none;
-      span {
-        margin-top: 1rem;
-        font-size: 1.2rem;
-      }
     }
 
-    .menu-item-image {
-      width: 30%;
-    }
+  }
+
+  .button-icon-label {
+    margin-top: 1rem;
+    font-size: 1rem;
+  }
+
+  .menu-item-image {
+    width: 40px;
   }
 }

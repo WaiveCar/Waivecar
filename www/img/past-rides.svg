@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg viewBox="0 0 81 81" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
-    <!-- Generator: Sketch 3.3 (11970) - http://www.bohemiancoding.com/sketch -->
+<svg viewBox="0 0 80 80" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.4.4 (17249) - http://www.bohemiancoding.com/sketch -->
     <title>Imported Layers</title>
     <desc>Created with Sketch.</desc>
     <defs></defs>
-    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <g id="nav@2x-" sketch:type="MSArtboardGroup" transform="translate(-173.000000, -600.000000)" fill="#25C155" opacity="0.9">
-            <g id="items" sketch:type="MSLayerGroup" transform="translate(140.000000, 291.500000)">
-                <g id="past-rides" transform="translate(0.000000, 309.000000)" sketch:type="MSShapeGroup">
-                    <path d="M73.5,0 C51.4085437,0 33.5,17.9085437 33.5,40 C33.5,62.0912621 51.4085437,80 73.5,80 C95.5912621,80 113.5,62.0912621 113.5,40 C113.5,17.9085437 95.5912621,0 73.5,0 L73.5,0 Z M98.124466,41.9 C98.456699,41.9576699 98.6994175,42.2458252 98.6994175,42.5831068 L98.6994175,42.601165 C98.6994175,42.9351456 98.4619417,43.2201942 98.1335922,43.2817476 C90.931068,44.628932 73.8675728,47.4273786 71.9951456,47.4273786 C69.3139806,47.4273786 67.1407767,45.2541748 67.1407767,42.5730097 C67.1407767,40.6638835 70.0126214,22.247767 71.3384466,14.7902913 C71.3916505,14.4908738 71.6520388,14.2720388 71.9561165,14.2720388 L71.9576699,14.2720388 C72.2895146,14.2720388 72.5720388,14.5133981 72.6238835,14.8413592 L76.3001942,38.1236893 L98.124466,41.9 L98.124466,41.9 Z" id="Imported-Layers"></path>
+    <g id="Nav" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="13-Nav@2x-" sketch:type="MSArtboardGroup" transform="translate(-181.000000, -634.000000)" fill="#25C155" opacity="0.9">
+            <g id="items" sketch:type="MSLayerGroup" transform="translate(147.000000, 326.000000)">
+                <g id="past-rides" transform="translate(0.000000, 308.000000)" sketch:type="MSShapeGroup">
+                    <path d="M74,0 C51.9085437,0 34,17.9085437 34,40 C34,62.0912621 51.9085437,80 74,80 C96.0912621,80 114,62.0912621 114,40 C114,17.9085437 96.0912621,0 74,0 L74,0 Z M98.624466,41.9 C98.956699,41.9576699 99.1994175,42.2458252 99.1994175,42.5831068 L99.1994175,42.601165 C99.1994175,42.9351456 98.9619417,43.2201942 98.6335922,43.2817476 C91.431068,44.628932 74.3675728,47.4273786 72.4951456,47.4273786 C69.8139806,47.4273786 67.6407767,45.2541748 67.6407767,42.5730097 C67.6407767,40.6638835 70.5126214,22.247767 71.8384466,14.7902913 C71.8916505,14.4908738 72.1520388,14.2720388 72.4561165,14.2720388 L72.4576699,14.2720388 C72.7895146,14.2720388 73.0720388,14.5133981 73.1238835,14.8413592 L76.8001942,38.1236893 L98.624466,41.9 L98.624466,41.9 Z" id="Imported-Layers"></path>
                 </g>
             </g>
         </g>
