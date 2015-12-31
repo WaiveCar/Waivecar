@@ -30,21 +30,34 @@ class SiteTemplate extends React.Component {
   render() {
     return (
       <div id="site">
-        <Header />
-        <div id="content">
-          <div id="content-wrapper">
-            { this.props.children }
-          </div>
-        </div>
+        { this.props.children }
       </div>
     );
   }
 }
 
 // ### Register Template
+
 templates.register('site', {
-  component : SiteTemplate,
-  getChildRoutes(state, done) {
-    done(null, views.getRoutes('site'));
-  }
+  component   : SiteTemplate,
+  childRoutes : [
+    {
+      path      : '/terms',
+      component : require('views/site/terms')
+    },
+    {
+      path      : '/privacy',
+      component : require('views/site/privacy')
+    }
+    /*
+    {
+      path      : '/fee-schedule',
+      component : require('views/site/fee-schedule')
+    },
+    {
+      path      : '/support',
+      component : require('views/site/support')
+    }
+    */
+  ]
 });

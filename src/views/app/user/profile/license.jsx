@@ -35,7 +35,7 @@ module.exports = class ProfileLicenseView extends React.Component {
    * @return {Void}
    */
   componentDidMount() {
-    this.license.setLicenses();
+    this.license.setLicenses(auth.user().id);
   }
 
   /**

@@ -100,8 +100,10 @@ module.exports = class License extends Service {
   /**
    * Loads licenses from the api and adds them to the array on the ctx.
    */
-  setLicenses() {
-    api.get('/licenses', (err, data) => {
+  setLicenses(userId) {
+    api.get('/licenses', {
+      userId : userId
+    }, (err, data) => {
       if (err) {
         return this.error(err.message);
       }
