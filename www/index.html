@@ -38,7 +38,8 @@
       <div ng-include="'templates/common/menu.html'"></div>
     </ion-side-menu> -->
 
-    <ion-side-menu-content>
+    <!-- disable dragging on cars state -->
+    <ion-side-menu-content can-drag="!('cars' | isState)">
 
       <ion-nav-bar class="bar-dark" align-title="center">
         <div class="nav-bar-block" nav-bar="active">
