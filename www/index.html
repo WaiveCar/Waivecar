@@ -39,7 +39,7 @@
     </ion-side-menu> -->
 
     <!-- disable dragging on cars state -->
-    <ion-side-menu-content can-drag="!('cars' | isState)">
+    <ion-side-menu-content can-drag="!($state.is('cars') || $state.is('dashboard'))">
 
       <ion-nav-bar class="bar-dark" align-title="center">
         <div class="nav-bar-block" nav-bar="active">
