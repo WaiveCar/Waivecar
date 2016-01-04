@@ -257,7 +257,6 @@ module.exports = class CarService extends Service {
     if (status) {
       return this.transformDeviceToCar(id, status);
     }
-
     return null;
   }
 
