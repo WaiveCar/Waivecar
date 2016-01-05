@@ -4,8 +4,8 @@ module.exports = {
     car : {
       staleLimit : 30,
       sync       : {
-        value : 1,
-        type  : 'minute'
+        value : 15,
+        type  : 'minutes'
       }
     },
     mock : {

@@ -19,7 +19,7 @@ module.exports = function *() {
   let location = new Location({
     type        : 'homebase',
     name        : `WaiveCar Santa Monica HomeBase`,
-    description : `Home to 200 WaiveCars`,
+    description : `Home to 20 WaiveCars`,
     latitude    : 34.0166784,
     longitude   : -118.4914082,
     address     : '1547 7th Street Santa Monica CA'
