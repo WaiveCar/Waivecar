@@ -1,3 +1,4 @@
+/* global navigator */
 'use strict';
 var angular = require('angular');
 var ionic = require('ionic');
@@ -23,7 +24,12 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
       mapOptions.center = ctrl.center;
     }
 
-    ctrl.map = ctrl.leaflet.skobbler.map($elem[0].firstChild, mapOptions);
+    ctrl.map = ctrl.leaflet.skobbler.map($elem.find('.map-instance')[0], mapOptions);
+
+    if (attrs.updateLocation != null) {
+      watchLocation($scope);
+    }
+
     if (ctrl.map) {
       ctrl.setCurrentLocation($rootScope.currentLocation);
       ctrl.setMarkers(ctrl.markers);
@@ -45,6 +51,47 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
         watchers = null;
       });
     }
+  }
+
+  function watchLocation ($scope) {
+    var watch = navigator.geolocation.watchPosition(function onPosition (position) {
+      if ($scope.error != null) {
+        $scope.error = null;
+      }
+      $rootScope.currentLocation = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+        accuracy: position.coords.accuracy
+      };
+      $rootScope.$digest();
+    }, function onPositionErr (err) {
+      switch (err.code) {
+        case 1: // PositionError.PERMISSION_DENIED
+          $scope.error = 'Please allow this app to get the phone\'s location on settings';
+          break;
+        case 2: // PositionError.POSITION_UNAVAILABLE
+          $scope.error = 'The current position is unavailable';
+          break;
+        case 3: // PositionError.TIMEOUT
+          $scope.error = 'Timed out getting the phone\'s location';
+          break;
+        default:
+          $scope.error = err.message;
+          console.error(err);
+      }
+      $scope.$digest();
+    }, {
+      maximumAge: 3000,
+      timeout: 10000,
+      enableHighAccuracy: true
+    });
+    $scope.$on('$destroy', function () {
+      if (watch != null) {
+        console.log('Clearing location watch');
+        navigator.geolocation.clearWatch(watch);
+        watch = null;
+      }
+    });
   }
 
   function MapController () {
@@ -146,6 +193,9 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
     }
 
     if (this.items[id]) {
+      if (id === 'location') {
+        console.log('[map] updating location ', location);
+      }
       this.items[id].setLatLng(location).update();
       // return null when no new marker is added to avoid setting listeners
       return null;
@@ -294,7 +344,7 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
 
   return {
     restrict: 'E',
-    template: '<div class="map-instance"></div>',
+    template: '<div class="map-container"><div class="error-bar" ng-if="error">{{error}}</div><div class="map-instance"></div></div>',
     controller: MapController,
     controllerAs: 'map',
     scope: true,

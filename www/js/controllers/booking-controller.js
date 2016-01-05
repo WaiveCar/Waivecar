@@ -60,7 +60,6 @@ module.exports = angular.module('app.controllers').controller('BookingController
       if ($scope.expired) {
         var time = moment($scope.expired).toNow(true);
         $scope.timeLeft = time;
-        console.log(time);
       }
     }, 1000);
 

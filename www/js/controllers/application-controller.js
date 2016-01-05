@@ -72,7 +72,6 @@ function ApplicationController ($rootScope, $scope, $injector) {
 
   function initLocation () {
     LocationService.getCurrentLocation();
-    LocationService.initPositionWatch();
     return $data.initialize('locations')
       .catch(function (err) {
         return $message.error(err);

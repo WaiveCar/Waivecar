@@ -5,16 +5,12 @@ function LocationService ($rootScope, $injector) {
   var $q = $injector.get('$q');
   var MapsEvents = $injector.get('MapsEvents');
 
-  var mockLocation = {
-    latitude: 34.0604643,
-    longitude: -118.4186743
-  };
+  // var mockLocation = {
+  //   latitude: 34.0604643,
+  //   longitude: -118.4186743
+  // };
 
   /* PUBLIC */
-
-  this.initPositionWatch = function initPositionWatch() {
-    update(mockLocation);
-  };
 
   this.getLocation = function getLocation() {
     return $q.when($rootScope.currentLocation);

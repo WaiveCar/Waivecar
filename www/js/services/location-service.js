@@ -2,33 +2,11 @@
 var angular = require('angular');
 
 function LocationService ($rootScope, $cordovaGeolocation, $q, $message) {
-
-
   this.setManualPosition = function setManualPosition (latitude, longitude) {
     this.manualPosition = {
       latitude: latitude,
       longitude: longitude
     };
-  };
-
-  this.initPositionWatch = function initPositionWatch () {
-    this.watch = $cordovaGeolocation.watchPosition({
-      maximumAge: 3000,
-      timeout: 8000,
-      enableHighAccuracy: true
-    })
-    .then(null, function (err) {
-      if (err.constructor.name === 'PositionError' && err.code === 3) {
-        return $q.reject();
-      }
-      $message.error('Please ensure WaiveCar has access to retrieve your Location.');
-    }, function (position) {
-      update(position);
-    });
-  };
-
-  this.clearWatch = function clearWatch () {
-    this.watch.clearWatch();
   };
 
   this.getLocation = function getLocation () {
@@ -71,7 +49,7 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message) {
       console.error('Tried to set location but object is malformed ', position);
       return;
     }
-    console.log('updating location to %d, %d (~%d)',
+    console.log('[location-service] updating location to %d, %d (~%d)',
                 position.latitude, position.longitude, position.accuracy);
     $rootScope.currentLocation = {
       latitude: position.latitude,
