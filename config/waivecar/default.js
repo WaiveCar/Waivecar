@@ -18,8 +18,12 @@ module.exports = {
           type  : 'minutes'
         },
         freeRideReminder : {
-          value : 110,
+          value : 90,
           type  : 'minutes'
+        },
+        freeRideExpiration : {
+          value : 2,
+          type  : 'hours'
         }
       }
     },

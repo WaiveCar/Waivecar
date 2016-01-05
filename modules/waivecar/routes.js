@@ -13,6 +13,16 @@ Route.get('/bookings/:id',         [ 'isAuthenticated', 'BookingsController@show
 Route.put('/bookings/:id/:action', [ 'isAuthenticated', 'BookingsController@update' ]);
 Route.del('/bookings/:id',         [ 'isAuthenticated', 'BookingsController@cancel' ]);
 
+// ### Problem Report
+
+Route.post('/reports', {
+  policy : 'isAuthenticated',
+  uses   : 'ReportsController@create',
+  params : [ 'bookingId', 'description' ]
+});
+
+Route.get('/reports', [ 'isAuthenticated', 'ReportsController@index' ]);
+
 // ### Cars
 
 Route.get('/cars',              [ 'CarsController@index' ]);

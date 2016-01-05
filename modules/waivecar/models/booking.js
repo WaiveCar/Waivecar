@@ -228,26 +228,40 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
     },
 
     /**
-     * Sets the ride free time end reminder timer.
-     * @param  {Number} time
-     * @return {Void}
+     * Sets ride reminder schedules.
+     * @param {Object} user
+     * @param {Object} timers
      */
-    *setFreeRideReminder(time) {
+    *setReminders(user, timers) {
+
+      // ### Free time remains timers
+
       queue.scheduler.add('booking-free-timer', {
         uid   : `booking-${ this.id }`,
-        timer : time,
+        timer : timers.freeRideReminder,
         data  : {
-          bookingId : this.id
+          phone : user.phone
         }
       });
+
+      // ### Free time expired
+
+      queue.scheduler.add('booking-free-timer-expired', {
+        uid   : `booking-${ this.id }`,
+        timer : timers.freeRideExpiration,
+        data  : {
+          phone : user.phone
+        }
+      });
+
     },
 
     /**
-     * Deletes the free ride timer schedule.
-     * @return {Void}
+     * Removes scheduled ride reminders.
      */
-    *delFreeRideReminder() {
+    *delReminders() {
       queue.scheduler.cancel('booking-free-timer', `booking-${ this.id }`);
+      queue.scheduler.cancel('booking-free-timer-expired', `booking-${ this.id }`);
     }
 
   };
