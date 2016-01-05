@@ -121,7 +121,22 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
 
   this.showCar = function showCar (car) {
     if (car.isAvailable === false) {
-      console.error('Should show car unavailable modal here');
+      var unavailableModal;
+      $modal('result', {
+        icon: 'x-icon',
+        title: 'This WaiveCar is unavailable right now',
+        message: 'The green icons on the map are the available WaiveCars.',
+        actions: [{
+          text: 'Ok',
+          handler: function () {
+            unavailableModal.remove();
+          }
+        }]
+      })
+      .then(function (_modal) {
+        unavailableModal = _modal;
+        unavailableModal.show();
+      });
       return true;
     }
     var distance = $distance.getDistance(car);
