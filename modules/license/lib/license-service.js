@@ -94,16 +94,19 @@ module.exports = class LicenseService extends Service {
     this.hasAccess(user, _user);
 
     // ### create user in verification provider and establish link.
+
     if (!license.linkedUserId) {
-      let userLink = yield Verification.createUserLink(user, data, _user);
+      let userLink      = yield Verification.createUserLink(user, data, _user);
       data.linkedUserId = userLink.id;
-      data.status = 'provided';
+      data.status       = 'provided';
     }
 
     // ### Update License
+
     yield license.update(data);
 
     // ### Relay
+
     relay.admin(resource, {
       type : 'update',
       data : license
@@ -123,9 +126,11 @@ module.exports = class LicenseService extends Service {
     let user    = yield this.getUser(license.userId);
 
     // ### Delete License
+
     yield license.delete();
 
     // ### Relay
+
     relay.admin(resource, {
       type : 'delete',
       data : license

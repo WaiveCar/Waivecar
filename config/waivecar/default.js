@@ -33,6 +33,10 @@ module.exports = {
         value : 5,
         type  : 'minutes'
       },
+      status : {
+        value : 1,
+        type  : 'minutes'
+      },
       meta : {
         DB000017DC73EA01 : {
           license : 'WAIVE1'

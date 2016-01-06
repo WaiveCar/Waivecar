@@ -1,8 +1,10 @@
 'use strict';
 
-let relay        = Bento.Relay;
 let Service      = require('./classes/service');
 let Verification = require('./onfido');
+let notify       = Bento.module('waivecar/lib/notification-service');
+let User         = Bento.model('User');
+let relay        = Bento.Relay;
 let log          = Bento.Log;
 let resource     = 'licenses';
 
@@ -92,19 +94,31 @@ module.exports = class LicenseVerificationService extends Service {
    */
   static *syncLicenses() {
     let licenses = yield this.getLicensesInProgress();
-    let count = licenses.length;
+    let count    = licenses.length;
+
     log.info(`License : Checking ${ count } Licenses`);
+
     for (let i = count - 1; i >= 0; i--) {
       let license = licenses[i];
+      let user    = yield User.findById(license.userId);
       let update  = yield Verification.getReport(license.linkedUserId, license.checkId, license.reportId);
       if (update.status !== license.status) {
         log.debug(`${ update.id } : ${ update.status }`);
+
+        // ### Update License
+
         yield license.update({
           status     : update.status === 'awaiting_data' || update.status === 'in_progress' ? 'in-progress' : update.status,
           outcome    : update.result,
           verifiedAt : new Date()
         });
-        // ### Relay
+
+        // ### Notify Changes
+
+        if (license.status === 'complete' && license.status === 'clear') {
+          yield notify.sendTextMessage(user, `Hey there, your license check is complete! Please open the WaiveCar app to continue your reservation.`);
+        }
+
         relay.admin(resource, {
           type : 'update',
           data : license
