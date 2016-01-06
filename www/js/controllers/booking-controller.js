@@ -211,6 +211,47 @@ module.exports = angular.module('app.controllers').controller('BookingController
       }).catch($message.error);
     };
 
+    this.lockCar = function (id) {
+      $ride.lockCar(id)
+        .catch(function (reason) {
+          if (reason && reason.code === 'IGNITION_ON') {
+            showIngitionOnModal();
+            return;
+          }
+          $message.error(reason);
+        });
+    };
+
+    this.endRide = function (carId, bookingId) {
+      return $ride.isCarOn(carId)
+        .then(function (isCarOn) {
+          if (isCarOn) {
+            showIngitionOnModal();
+            return;
+          }
+          $state.go('end-ride-options', {id: bookingId});
+        });
+    };
+
+    function showIngitionOnModal () {
+      var ignitionOnModal;
+      $modal('result', {
+        icon: 'x-icon',
+        title: 'Please turn the car off',
+        actions: [{
+          text: 'Ok',
+          className: 'button-balanced',
+          handler: function () {
+            ignitionOnModal.remove();
+          }
+        }]
+      })
+      .then(function (_modal) {
+        ignitionOnModal = _modal;
+        ignitionOnModal.show();
+      });
+    }
+
     $scope.getDirections = function () {
       var url;
       var sprintfOptions = {

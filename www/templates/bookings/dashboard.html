@@ -30,8 +30,8 @@
   <ion-footer-bar class="no-padding">
     <div class="button-bar">
       <button type="button" class="button button-balanced" ng-show="data.cars.isLocked" ng-click="service.unlockCar(data.cars.id)">Unlock</button>
-      <button type="button" class="button button-balanced" ng-hide="data.cars.isLocked" ng-click="service.lockCar(data.cars.id)">Lock</button>
-      <button type="button" class="button button-dark" ui-sref="end-ride-options({ id: data.bookings.id })">End Ride</button>
+      <button type="button" class="button button-balanced" ng-hide="data.cars.isLocked" ng-click="ctrl.lockCar(data.cars.id)">Lock</button>
+      <button type="button" class="button button-dark" ng-click="ctrl.endRide(data.cars.id, data.bookings.id)">End Ride</button>
     </div>
   </ion-footer-bar>
   <div class="item-popover" ng-show="showItem">
@@ -49,45 +49,3 @@
     <button type="button" class="button button-balanced button-block" ng-click="closePopover()">Close</button>
   </div>
 </ion-view>
-
-<!-- <ion-pane ng-controller="BookingInProgressController">
-  <header-bar type="nav" on-button-click="showNav()">Dashboard</header-bar>
-  <ion-content scroll="false" class="has-header has-footer-bar">
-    <div class="map-container has-info-footer">
-      <skobbler-map id="map" zoom="15" center="currentLocation"
-        markers="app.models.locations"
-        on-marker-tap="showChargingStationDetails">
-      </skobbler-map>
-    </div>
-    <div class="info-footer">
-      <div class="row dashboard-information" ng-hide="ride.showingStation" class="ng-hide">
-        <div class="col">
-          <p class="big-title">
-            <battery-charge></battery-charge>
-          </p>
-          <p class="small-title">Charged</p>
-        </div>
-        <div class="col">
-          <p class="big-title">
-            <distance-travelled></distance-travelled>
-          </p>
-          <p class="small-title">Travelled</p>
-        </div>
-        <div class="col">
-          <p class="big-title">
-            <free-ride-time></free-ride-time>
-          </p>
-          <p class="small-title">Remaining</p>
-        </div>
-      </div>
-      <div class="charging-station-info" ng-show="ride.showingStation">
-        <button ng-click="ride.hideChargingStationDetails()" class="button button-right close-button" ng-include="'/img/close.svg'">
-        </button>
-        <charging-station-info location="app.active.locations"></charging-station-info>
-      </div>
-    </div>
-  </ion-content>
-  <div class="bar bar-footer">
-    <button class="button button-dark" ng-click="end()">end ride</button>
-  </div>
-</ion-pane> -->

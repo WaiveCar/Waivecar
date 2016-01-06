@@ -9,7 +9,8 @@ module.exports = angular.module('app.services').factory('$ride', [
   '$state',
   '$message',
   '$interval',
-  function($auth, $data, $state, $message, $interval) {
+  '$q',
+  function($auth, $data, $state, $message, $interval, $q) {
 
     var service = {};
 
@@ -183,14 +184,26 @@ module.exports = angular.module('app.services').factory('$ride', [
       }).catch($message.error);
     };
 
+    service.isCarOn = function (id) {
+      return $data.resources.cars.status({ id: id }).$promise
+        .then(function (status) {
+          return status.isIgnitionOn;
+        });
+    };
+
     service.lockCar = function(id) {
-      $data.resources.cars.lock({ id: id }).$promise.then(function() {
-      }).catch($message.error);
+      return service.isCarOn(id)
+        .then(function (isCarOn) {
+          if (isCarOn) {
+            return $q.reject({code: 'IGNITION_ON'});
+          }
+          return $data.resources.cars.lock({ id: id }).$promise;
+        });
     };
 
     service.unlockCar = function(id) {
-      $data.resources.cars.unlock({ id: id }).$promise.then(function() {
-      }).catch($message.error);
+      $data.resources.cars.unlock({ id: id }).$promise
+        .catch($message.error);
     };
 
     service.init = function() {

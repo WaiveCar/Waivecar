@@ -20,6 +20,13 @@ module.exports = angular.module('app').factory('Cars', [
         params: {
           id: '@id'
         }
+      },
+      status: {
+        method: 'GET',
+        url: $utils.getCustomRoute('cars/:id/status'),
+        params: {
+          id: '@id'
+        }
       }
     }));
   }
