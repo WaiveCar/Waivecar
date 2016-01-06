@@ -173,11 +173,12 @@ module.exports = angular.module('app.controllers').controller('BookingController
               $ride.setState();
               this.modal.hide();
               $state.go('cars');
-            }.bind(this)).catch(function(err) {
+            }.bind(this))
+            .catch(function(err) {
               $message.error(err);
               this.modal.hide();
               $scope.showRetry();
-            });
+            }.bind(this));
           }.bind(this)
         }, {
           className: 'button-dark',

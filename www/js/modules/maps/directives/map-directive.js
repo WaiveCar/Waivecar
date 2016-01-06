@@ -63,7 +63,9 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
         longitude: position.coords.longitude,
         accuracy: position.coords.accuracy
       };
-      $rootScope.$digest();
+      if (!$rootScope.$$phase) {
+        $rootScope.$digest();
+      }
     }, function onPositionErr (err) {
       switch (err.code) {
         case 1: // PositionError.PERMISSION_DENIED
@@ -79,7 +81,9 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
           $scope.error = err.message;
           console.error(err);
       }
-      $scope.$digest();
+      if (!$scope.$$phase) {
+        $scope.$digest();
+      }
     }, {
       maximumAge: 3000,
       timeout: 10000,
