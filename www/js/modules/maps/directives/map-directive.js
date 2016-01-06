@@ -6,7 +6,7 @@ var ionic = require('ionic');
 require('../../../providers/maps-loader-provider');
 var _ = require('lodash');
 
-function directive ($rootScope, MapsLoader, RouteService, $q) {
+function directive ($rootScope, MapsLoader, RouteService, $q, $timeout) {
   function link ($scope, $elem, attrs, ctrl) {
     var mapOptions = {
       apiKey: ctrl.leaflet.skobbler.apiKey,
@@ -58,32 +58,30 @@ function directive ($rootScope, MapsLoader, RouteService, $q) {
       if ($scope.error != null) {
         $scope.error = null;
       }
-      $rootScope.currentLocation = {
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-        accuracy: position.coords.accuracy
-      };
-      if (!$rootScope.$$phase) {
-        $rootScope.$digest();
-      }
+      $timeout(function () {
+        $rootScope.currentLocation = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          accuracy: position.coords.accuracy
+        };
+      });
     }, function onPositionErr (err) {
-      switch (err.code) {
-        case 1: // PositionError.PERMISSION_DENIED
-          $scope.error = 'Please allow this app to get the phone\'s location on settings';
-          break;
-        case 2: // PositionError.POSITION_UNAVAILABLE
-          $scope.error = 'The current position is unavailable';
-          break;
-        case 3: // PositionError.TIMEOUT
-          $scope.error = 'Timed out getting the phone\'s location';
-          break;
-        default:
-          $scope.error = err.message;
-          console.error(err);
-      }
-      if (!$scope.$$phase) {
-        $scope.$digest();
-      }
+      $timeout(function () {
+        switch (err.code) {
+          case 1: // PositionError.PERMISSION_DENIED
+            $scope.error = 'Please allow this app to get the phone\'s location on settings';
+            break;
+          case 2: // PositionError.POSITION_UNAVAILABLE
+            $scope.error = 'The current position is unavailable';
+            break;
+          case 3: // PositionError.TIMEOUT
+            $scope.error = 'Timed out getting the phone\'s location';
+            break;
+          default:
+            $scope.error = err.message;
+            console.error(err);
+        }
+      });
     }, {
       maximumAge: 3000,
       timeout: 10000,
@@ -371,5 +369,6 @@ module.exports = angular.module('Maps').directive('skobblerMap', [
   'MapsLoader',
   'RouteService',
   '$q',
+  '$timeout',
   directive
 ]);
