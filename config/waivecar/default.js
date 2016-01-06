@@ -18,8 +18,12 @@ module.exports = {
           type  : 'minutes'
         },
         freeRideReminder : {
-          value : 110,
+          value : 90,
           type  : 'minutes'
+        },
+        freeRideExpiration : {
+          value : 2,
+          type  : 'hours'
         }
       }
     },
@@ -27,6 +31,10 @@ module.exports = {
       staleLimit : 60,
       sync       : {
         value : 5,
+        type  : 'minutes'
+      },
+      status : {
+        value : 1,
         type  : 'minutes'
       },
       meta : {

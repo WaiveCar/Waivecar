@@ -3,7 +3,7 @@
 let Service     = require('./classes/service');
 let cars        = require('./car-service');
 let fees        = require('./fee-service');
-let Slack       = Bento.provider('slack');
+let notify      = require('./notification-service');
 let queue       = Bento.provider('queue');
 let queryParser = Bento.provider('sequelize/helpers').query;
 let relay       = Bento.Relay;
@@ -19,10 +19,6 @@ let Car            = Bento.model('Car');
 let Booking        = Bento.model('Booking');
 let BookingDetails = Bento.model('BookingDetails');
 let BookingPayment = Bento.model('BookingPayment');
-
-// ### Instances
-
-const slack = new Slack('notifications');
 
 module.exports = class BookingService extends Service {
 
@@ -90,6 +86,13 @@ module.exports = class BookingService extends Service {
 
     car.relay('update');
     booking.relay('store', user);
+
+    // ### Notifications
+
+    yield notify.sendTextMessage(user, `Hi There! Your WaiveCar reservation has been confirmed. You'll have 15 minutes to get to your WaiveCar before your reservation expires. Let us know if you have any questions.`);
+    yield notify.slack({
+      text : `${ user.name() } has reserved ${ car.license || car.id }`
+    });
 
     // ### Return Booking
 
@@ -290,7 +293,7 @@ module.exports = class BookingService extends Service {
     // 4. Return the immobilizer unlock results.
 
     yield this.logDetails('start', booking, car);
-    yield booking.setFreeRideReminder(config.booking.timers.freeRideReminder);
+    yield booking.setReminders(user, config.booking.timers);
     yield booking.start();
     yield cars.unlockImmobilzer(car.id, _user);
 
@@ -361,7 +364,7 @@ module.exports = class BookingService extends Service {
 
     // ### End Booking
 
-    yield booking.delFreeRideReminder();
+    yield booking.delReminders();
     yield booking.end();
 
     // ### Relay Update
@@ -428,7 +431,9 @@ module.exports = class BookingService extends Service {
 
     yield booking.complete();
     yield car.available();
-    yield slack.message({
+
+    yield notify.sendTextMessage(user, `Thanks for renting with WaiveCar! Your rental is complete. You can see your trip summary in the app.`);
+    yield notify.slack({
       text : `${ user.name() } completed their booking with ${ car.license || car.id }! Review and close the booking at https://www.waivecar.com/bookings/${ booking.id }`
     });
 
@@ -487,7 +492,9 @@ module.exports = class BookingService extends Service {
 
     car.relay('update');
     booking.relay('update');
-    yield slack.message({
+
+    yield notify.sendTextMessage(user, `Your WaiveCar reservation has been cancelled.`);
+    yield notify.slack({
       text : `${ user.name() } cancelled their booking with ${ car.license || car.id }`
     });
   }
