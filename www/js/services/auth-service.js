@@ -66,6 +66,7 @@ function AuthService ($rootScope, $session, $data, $injector) {
           this.token = $session.get('auth');
           this.me = $data.me = $session.get('me');
           $rootScope.$emit('authLogin', code);
+          return $data.resources.Auth.remember().$promise;
         }.bind(this));
       }.bind(this))
       .catch(function(response) {
