@@ -2,6 +2,9 @@
   <ion-nav-title>
     <page-title class="dark-bg title-plain">Dashboard</page-title>
   </ion-nav-title>
+  <ion-nav-buttons side="primary">
+    <button class="button button-icon icon icon-svg" ng-include="'/img/warning-white-icon.svg'" ui-sref="report-problem({id: data.bookings.id})"></button>
+  </ion-nav-buttons>
   <ion-nav-buttons side="right">
     <button menu-toggle="right" class="button button-icon icon ion-navicon"></button>
   </ion-nav-buttons>
