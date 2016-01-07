@@ -21,7 +21,7 @@
       <label class="item item-input">
         <textarea ng-model="ctrl.model.comment" rows="10"></textarea>
       </label>
-      <button type="submit" class="button button-balanced button-block" ng-disabled="!(ctrl.model.files.length && ctrl.model.comment.length)">
+      <button type="submit" class="button button-balanced button-block" ng-disabled="!(ctrl.model.files.length || ctrl.model.comment.length)">
         Report
       </button>
     </form>

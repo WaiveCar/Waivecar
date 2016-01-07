@@ -1,12 +1,15 @@
 'use strict';
 var angular = require('angular');
 
+require('../resources/reports.js');
+
 function ReportProblemController ($injector, $stateParams) {
   var $modal = $injector.get('$modal');
   var $uploadImage = $injector.get('$uploadImage');
   var $settings = $injector.get('$settings');
   var $window = $injector.get('$window');
   var $ionicHistory = $injector.get('$ionicHistory');
+  var Reports = $injector.get('Reports');
 
   this.model = {
     bookingId: $stateParams.id,
@@ -38,6 +41,15 @@ function ReportProblemController ($injector, $stateParams) {
   // }.bind(this));
 
   this.submit = function submit () {
+    Reports.create({
+      bookingId: this.model.bookingId,
+      description: this.model.comment
+    }).$promise
+    .then(successModal)
+    .catch(failModal);
+  };
+
+  function successModal () {
     var modal;
     $modal('result', {
       icon: 'check-icon',
@@ -47,7 +59,7 @@ function ReportProblemController ($injector, $stateParams) {
         className: 'button-balanced',
         text: 'Continue',
         handler: function () {
-          modal.hide();
+          modal.remove();
           $ionicHistory.goBack();
         }
       }]
@@ -55,16 +67,16 @@ function ReportProblemController ($injector, $stateParams) {
     .then(function (_modal) {
       modal = _modal;
       modal.show();
+    })
+    .catch(function (err) {
+      failModal(err.message);
     });
-  };
+  }
 
   this.addPicture = function addPicture () {
     $uploadImage({
       endpoint: '/files?bookingId=' + $stateParams.id,
       filename: 'problem_' + $stateParams.id + '_' + Date.now() + '.jpg',
-      params: {
-        comment: this.model.comment
-      }
     })
     .then(function (result) {
       if (result) {
@@ -86,32 +98,36 @@ function ReportProblemController ($injector, $stateParams) {
           }
         }
       }
-      var modal;
-      $modal('result', {
-        icon: 'x-icon',
-        title: 'We couldn\'t report your problem.',
-        message: (message || 'The server is down') + '. If the problem persists call us at ' + $settings.phone,
-        actions: [{
-          text: 'Retry',
-          className: 'button-balanced',
-          handler: function () {
-            modal.hide();
-          }
-        }, {
-          text: 'Cancel',
-          className: 'button-dark',
-          handler: function () {
-            modal.hide();
-            $ionicHistory.goBack();
-          }
-        }]
-      })
-      .then(function (_modal) {
-        modal = _modal;
-        modal.show();
-      });
+      failModal(message);
     });
   };
+
+  function failModal (message) {
+    var modal;
+    $modal('result', {
+      icon: 'x-icon',
+      title: 'We couldn\'t report your problem.',
+      message: (message || 'The server is down') + '. If the problem persists call us at ' + $settings.phone,
+      actions: [{
+        text: 'Retry',
+        className: 'button-balanced',
+        handler: function () {
+          modal.remove();
+        }
+      }, {
+        text: 'Cancel',
+        className: 'button-dark',
+        handler: function () {
+          modal.remove();
+          $ionicHistory.goBack();
+        }
+      }]
+    })
+    .then(function (_modal) {
+      modal = _modal;
+      modal.show();
+    });
+  }
 
   function prepareResult (file) {
     return {
