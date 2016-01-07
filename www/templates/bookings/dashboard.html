@@ -10,25 +10,23 @@
   </ion-nav-buttons>
   <ion-content scroll="false" padding="false" class="gray-bg has-header has-footer">
     <div class="info-header">
-      <div class="row">
-        <div class="col">
-          <span>{{ data.cars.charge }}</span>
-        </div>
-        <div class="col">
-          <span>{{ data.cars.charge }}</span>
-        </div>
+      <div class="info-header-item">
+        <ng-include class="battery" src="'/img/battery-darkgrey.svg'"></ng-include>
+        {{ data.cars.charge | number:0 }} %
+      </div>
+      <div class="info-header-item">
+        <ng-include src="'/img/clock-grey-icon.svg'"></ng-include>
+        {{ timeLeft }}
       </div>
     </div>
-    <div class="map-container has-info-header">
-      <skobbler-map
-        id="map"
-        zoom="16"
-        markers="cache.locations"
-        on-marker-tap="openPopover"
-        update-location
-        featured="featured"
-      ></skobbler-map>
-    </div>
+    <skobbler-map
+      id="map"
+      zoom="16"
+      markers="cache.locations"
+      on-marker-tap="openPopover"
+      update-location
+      featured="featured"
+    ></skobbler-map>
   </ion-content>
   <ion-footer-bar class="no-padding">
     <div class="button-bar">

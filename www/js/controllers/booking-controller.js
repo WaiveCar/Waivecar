@@ -281,20 +281,21 @@ module.exports = angular.module('app.controllers').controller('BookingController
     };
 
     this.init = function () {
-      if (!$auth.isAuthenticated()) {
-        $state.go('auth');
-      }
-
-      if ($state.current.name === 'bookings-active') {
-        var rideServiceReady = $scope.$watch('service.isInitialized', function(isInitialized) {
-          if (isInitialized === true) {
-            rideServiceReady();
+      var rideServiceReady = $scope.$watch('service.isInitialized', function(isInitialized) {
+        if (isInitialized === true) {
+          rideServiceReady();
+          if ($state.current.name === 'bookings-active') {
             $scope.watchForWithinRange();
             $scope.expired = moment($scope.data.bookings.createdAt).add(15, 'm');
             $scope.image = $data.active.cars.fileId || 'img/car.jpg';
           }
-        });
-      }
+          if ($state.current.name === 'dashboard') {
+            if ($scope.data.bookings && $scope.data.bookings.details.length) {
+              $scope.timeLeft = moment($scope.data.bookings.details[0].time).add(90, 'm').toNow(true);
+            }
+          }
+        }
+      });
     };
 
     this.init();
