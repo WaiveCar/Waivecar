@@ -1,20 +1,19 @@
 'use strict';
 
-let co            = require('co');
-let parallel      = require('co-parallel');
-let request       = require('co-request');
-let moment        = require('moment');
-let queue         = Bento.provider('queue');
-let queryParser   = Bento.provider('sequelize/helpers').query;
-let User          = Bento.model('User');
-let Car           = Bento.model('Car');
-let changeCase    = Bento.Helpers.Case;
-let error         = Bento.Error;
-let relay         = Bento.Relay;
-let config        = Bento.config.waivecar;
-let log           = Bento.Log;
-let Service       = require('./classes/service');
-let Notifications = require('./notification-service');
+let co          = require('co');
+let parallel    = require('co-parallel');
+let request     = require('co-request');
+let moment      = require('moment');
+let queue       = Bento.provider('queue');
+let queryParser = Bento.provider('sequelize/helpers').query;
+let User        = Bento.model('User');
+let Car         = Bento.model('Car');
+let changeCase  = Bento.Helpers.Case;
+let error       = Bento.Error;
+let relay       = Bento.Relay;
+let config      = Bento.config.waivecar;
+let log         = Bento.Log;
+let Service     = require('./classes/service');
 
 module.exports = class CarService extends Service {
 
@@ -53,8 +52,11 @@ module.exports = class CarService extends Service {
    */
   static *update(id, payload, _user) {
     this.hasAccess(_user);
-    let model = yield Car.findById(id);
-    yield model.update(payload);
+
+    let model  = yield Car.findById(id);
+    let device = yield this.getDevice(car.id, _user);
+
+    yield model.update(Object.assign(device, payload));
 
     relay.emit('cars', {
       type : 'update',
@@ -116,12 +118,12 @@ module.exports = class CarService extends Service {
       }
 
       // Only update position if its more accurate
-      if (existingCar.locationQuality >= data.locationQuality) {
-        delete data.locationQuality;
-        delete data.latitude;
-        delete data.longitude;
-        delete data.calculatedSpeed;
-      }
+      // if (existingCar.locationQuality >= data.locationQuality) {
+      //   delete data.locationQuality;
+      //   delete data.latitude;
+      //   delete data.longitude;
+      //   delete data.calculatedSpeed;
+      // }
 
       data.isParked = (data.currentSpeed === 0) && (!data.isIgnitionOn);
     }

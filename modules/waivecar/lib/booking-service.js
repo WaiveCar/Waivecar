@@ -397,14 +397,15 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
-    Object.assign(car, yield cars.getDevice(car.id, _user));
+    let data = yield cars.getDevice(car.id, _user);
+    yield car.update(data);
 
     // ### Validate Complete Status
     // Make sure all required car states are valid before allowing the booking to
     // be completed and released for next booking.
 
     if (car.isIgnitionOn) { errors.push('turn off Ignition'); }
-    //if (!car.isKeySecure) { errors.push('secure Key'); }
+    if (!car.isKeySecure) { errors.push('secure Key'); }
 
     if (errors.length) {
       let message = `Your Ride cannot be completed until you `;
