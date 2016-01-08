@@ -68,6 +68,7 @@ providers/**/cache.json
 !**/license
 !**/waivecar
 !**/gm-api
+!**/user
 !**/user-verification
 !**/admin
 
