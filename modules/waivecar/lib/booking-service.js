@@ -89,7 +89,12 @@ module.exports = class BookingService extends Service {
 
     // ### Notifications
 
-    yield notify.sendTextMessage(user, `Hi There! Your WaiveCar reservation has been confirmed. You'll have 15 minutes to get to your WaiveCar before your reservation expires. Let us know if you have any questions.`);
+    try {
+      yield notify.sendTextMessage(user, `Hi There! Your WaiveCar reservation has been confirmed. You'll have 15 minutes to get to your WaiveCar before your reservation expires. Let us know if you have any questions.`);
+    } catch (err) {
+      // ...
+    }
+
     yield notify.slack({
       text : `${ user.name() } has reserved ${ car.license || car.id }`
     });
@@ -392,14 +397,15 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
-    Object.assign(car, yield cars.getDevice(car.id, _user));
+    let data = yield cars.getDevice(car.id, _user);
+    yield car.update(data);
 
     // ### Validate Complete Status
     // Make sure all required car states are valid before allowing the booking to
     // be completed and released for next booking.
 
     if (car.isIgnitionOn) { errors.push('turn off Ignition'); }
-    //if (!car.isKeySecure) { errors.push('secure Key'); }
+    if (!car.isKeySecure) { errors.push('secure Key'); }
 
     if (errors.length) {
       let message = `Your Ride cannot be completed until you `;
@@ -432,7 +438,12 @@ module.exports = class BookingService extends Service {
     yield booking.complete();
     yield car.available();
 
-    yield notify.sendTextMessage(user, `Thanks for renting with WaiveCar! Your rental is complete. You can see your trip summary in the app.`);
+    try {
+      yield notify.sendTextMessage(user, `Thanks for renting with WaiveCar! Your rental is complete. You can see your trip summary in the app.`);
+    } catch (err) {
+      // ...
+    }
+
     yield notify.slack({
       text : `${ user.name() } completed their booking with ${ car.license || car.id }! Review and close the booking at https://www.waivecar.com/bookings/${ booking.id }`
     });
@@ -493,7 +504,12 @@ module.exports = class BookingService extends Service {
     car.relay('update');
     booking.relay('update');
 
-    yield notify.sendTextMessage(user, `Your WaiveCar reservation has been cancelled.`);
+    try {
+      yield notify.sendTextMessage(user, `Your WaiveCar reservation has been cancelled.`);
+    } catch (err) {
+      // ...
+    }
+
     yield notify.slack({
       text : `${ user.name() } cancelled their booking with ${ car.license || car.id }`
     });

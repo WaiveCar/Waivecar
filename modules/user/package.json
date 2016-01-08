@@ -1,0 +1,9 @@
+{
+  "name": "user",
+  "private": true,
+  "bento": {
+    "name": "user",
+    "type": "module",
+    "priority": true
+  }
+}

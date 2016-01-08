@@ -1,6 +1,7 @@
 'use strict';
 
-let car = require('../lib/car-service');
+let car   = require('../lib/car-service');
+let error = Bento.Error;
 
 Bento.Register.Controller('CarsController', function(controller) {
 

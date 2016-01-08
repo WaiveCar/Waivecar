@@ -4,7 +4,7 @@ module.exports = {
     car : {
       staleLimit : 30,
       sync       : {
-        value : 15,
+        value : 10,
         type  : 'minutes'
       }
     },
