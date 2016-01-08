@@ -72,8 +72,7 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
         return;
     }
 
-    var availableCars = _.filter(this.all, 'isAvailable');
-    this.closest = $distance.closest(availableCars);
+    this.closest = $distance.closest(this.all);
     console.log('closest car at %d miles', this.closest);
     // check for max miles
     // TODO don't hardcode this
