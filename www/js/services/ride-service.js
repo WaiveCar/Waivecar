@@ -212,7 +212,8 @@ module.exports = angular.module('app.services').factory('$ride', [
       $data.initialize('bookings').then(function() {
         if ($data.instances.bookings.length > 0) {
           var current = _.find($data.instances.bookings, function(b) {
-            return !_.contains([ 'cancelled', 'completed', 'closed' ], b.status);
+            return b.userId === $auth.me.id &&
+              !_.contains([ 'cancelled', 'completed', 'closed' ], b.status);
           });
           if (current) {
             service.setBooking(current.id);
