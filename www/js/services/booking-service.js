@@ -46,8 +46,11 @@ module.exports = angular.module('app.services').factory('BookingService', [
       function hasValidLicense () {
         return $data.resources.licenses.query().$promise
           .then(function(licenses) {
-            var latestLicense = _.chain(licenses).sortBy('createdAt').last().value();
-            return !!latestLicense;
+            var license = _(licenses)
+              .filter({userId: $auth.me.id})
+              .sortBy('createdAt')
+              .last();
+            return license != null && license.status === 'completed' && license.outcome === 'clear';
           });
       }
 
@@ -133,7 +136,8 @@ module.exports = angular.module('app.services').factory('BookingService', [
         promise = $data.resources.bookings.query().$promise
           .then(function(bookings) {
             return _(bookings).findWhere({
-              status: 'new-booking'
+              status: 'new-booking',
+              userId: $auth.me.id
             });
           });
 

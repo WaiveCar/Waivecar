@@ -11,45 +11,44 @@ function LicenseController ($stateParams, $injector) {
   var USStates = $injector.get('USStates');
   var $timeout = $injector.get('$timeout');
   var $state = $injector.get('$state');
-  var $uploadImage = $injector.get('$uploadImage');
   var $modal = $injector.get('$modal');
+  var $message = $injector.get('$message');
   var $q = $injector.get('$q');
 
   this.isWizard = !!$stateParams.step;
   this.fromBooking = !!$stateParams.fromBooking;
-  this.license = this.license || {};
+  this.license = this.license || new $data.resources.licenses({
+    country: 'USA',
+    userId: $auth.me.id
+  });
+  if ($auth.me.firstName) {
+    this.license.firstName = $auth.me.firstName;
+  }
+  if ($auth.me.lastName) {
+    this.license.lastName = $auth.me.lastName;
+  }
   this.states = USStates;
 
   this.nextState = function nextState () {
-    $state.go('credit-cards-new', {step: 4});
+    if (this.isWizard) {
+      $state.go('credit-cards-new', {step: 4});
+      return;
+    }
+    $state.go('users-edit');
   };
 
   var self = this;
-  var modal;
 
-  this.pickImage = function pickImage () {
-    $uploadImage({
-      endpoint: '/files',
-      filename: $auth.token.token.substr(0, 10) + '_license.jpg'
-    })
-    .then(function onPictureUploaded (uploadResponse) {
-      this.license = new $data.resources.licenses({
-        number: this.license.number,
-        state: this.license.state,
-        userId: $auth.me.id,
-        country: 'USA'
-      });
-      if (uploadResponse) {
-        if (Array.isArray(uploadResponse) && uploadResponse.length) {
-          this.license.fileId = uploadResponse[0].id;
-        }
-      }
-      return this.license.$save();
-    }.bind(this))
+  this.submit = function submit (form) {
+    if (!form.$valid) {
+      $message.error('Please fill the fields');
+    }
+    return this.license.$create()
     .then(function () {
+      var modal;
       return $modal('result', {
         icon: 'check-icon',
-        title: 'License Uploaded'
+        title: 'License info received'
       })
       .then(function (_modal) {
         modal = _modal;
@@ -60,25 +59,26 @@ function LicenseController ($stateParams, $injector) {
         return $timeout(1000);
       })
       .then(function () {
-        hideModal();
-        self.nextState();
-      });
-    })
+        modal.remove();
+        this.nextState();
+      }.bind(this));
+    }.bind(this))
     .catch(function onUploadFailed (err) {
+      var modal;
       $modal('result', {
         icon: 'x-icon',
-        title: 'Upload failed',
+        title: 'License upload failed',
         actions: [{
           className: 'button-balanced',
           text: 'Retry',
           handler: function () {
-            hideModal();
+            modal.remove();
           }
         }, {
           className: 'button-dark',
           text: 'Skip',
           handler: function () {
-            hideModal();
+            modal.remove();
             self.nextState();
           }
         }]
@@ -90,12 +90,6 @@ function LicenseController ($stateParams, $injector) {
       $q.reject(err);
     });
   };
-
-  function hideModal () {
-    if (modal) {
-      modal.remove();
-    }
-  }
 
 }
 

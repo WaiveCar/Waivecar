@@ -1,5 +1,6 @@
 'use strict';
 require('angular-ui-router');
+var _ = require('lodash');
 
 module.exports = [
   '$stateProvider',
@@ -133,7 +134,7 @@ module.exports = [
         },
         resolve: {
           licenses: ['$stateParams', '$data', function ($stateParams, $data) {
-            return $data.resources.licenses.get($stateParams.licenseId).$promise;
+            return $data.resources.licenses.get({id: $stateParams.licenseId}).$promise;
           }]
         }
       })
@@ -145,8 +146,11 @@ module.exports = [
           auth: true
         },
         resolve: {
-          licenses: ['$data', function ($data) {
-            return $data.initialize('licenses');
+          licenses: ['$data', '$auth', function ($data, $auth) {
+            return $data.initialize('licenses')
+              .then(function (licenses) {
+                return _.filter(licenses, {userId: $auth.me.id});
+              });
           }]
         }
       })

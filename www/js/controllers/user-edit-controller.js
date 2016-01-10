@@ -37,7 +37,10 @@ module.exports = angular.module('app.controllers').controller('UserEditControlle
           $scope.user = me;
           return $data.resources.licenses.query().$promise;
         }).then(function(licenses) {
-          $scope.license = _.chain(licenses).sortBy('createdAt').last().value();
+          $scope.license = _(licenses)
+            .filter({userId: $scope.user.id})
+            .sortBy('createdAt')
+            .last();
           if (next) {
             return next();
           }

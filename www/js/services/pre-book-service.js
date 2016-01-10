@@ -6,7 +6,9 @@ function PreBookService ($injector) {
   var $modal = $injector.get('$modal');
   var $q = $injector.get('$q');
   var $state = $injector.get('$state');
-  var $message = $injector.get('$message');
+  var $data = $injector.get('$data');
+  var $auth = $injector.get('$auth');
+  var $validateLicense = $injector.get('$validateLicense');
 
   return function catchPreBookError (err) {
     var modal;
@@ -47,8 +49,7 @@ function PreBookService ($injector) {
             return angular.extend({}, base, {
               text: 'Validate driver\'s license',
               handler: function () {
-                modal.remove();
-                $state.go('licenses-form', {fromBooking: true});
+                validateDriversLicense(modal);
               }
             });
           } else if (field === 'credit card') {
@@ -57,14 +58,6 @@ function PreBookService ($injector) {
               handler: function () {
                 modal.remove();
                 $state.go('credit-cards-form', {fromBooking: true});
-              }
-            });
-          } else if (field === 'email') {
-            return angular.extend({}, base, {
-              text: 'Validate email',
-              handler: function () {
-                modal.remove();
-                $message.info('Please click on the email you received');
               }
             });
           } else if (field === 'phone') {
@@ -97,6 +90,24 @@ function PreBookService ($injector) {
       return $q.reject(err);
     });
   };
+
+  function validateDriversLicense (modal) {
+    return $data.initialize('licenses')
+      .then(function (licenses) {
+        return _(licenses).filter({userId: $auth.me.id}).sortBy('createdAt').last();
+      }).then(function (license) {
+        if (license == null) {
+          modal.remove();
+          $state.go('licenses-new', {fromBooking: true});
+          return;
+        }
+        if (license.status === 'provided') {
+          $validateLicense.validate(license);
+          return;
+        }
+        $state.go('licenses-edit', {licenseId: license.id});
+      });
+  }
 }
 
 module.exports = angular.module('app.services').factory('$preBook', [

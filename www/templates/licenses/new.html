@@ -5,8 +5,9 @@
   <ion-content padding="true" class="ion-content--center dark-bg">
     <p class="padding-bottom">
       We need to verify your age and driving.<br>
-      Please enter your details and upload a photo of your license.
+      Please enter your details.
     </p>
+    <form name="form">
     <div class="list list-inset">
       <label class="item item-input">
         <span class="input-label required">License Number</span>
@@ -14,18 +15,43 @@
       </label>
       <label class="item item-input item-select">
         <div class="input-label required">License State</div>
-        <select ng-model="licenseCtrl.license.state" name="state" required ng-options="state.abbreviation as state.name for state in licenseCtrl.states track by state.abbreviation">
+        <select ng-model="licenseCtrl.license.state" name="state" required ng-options="state.abbreviation as state.name for state in licenseCtrl.states">
           <option value=""></option>
         </select>
+      </label>
+      <label class="item item-input">
+        <span class="input-label required">First Name</span>
+        <input name="firstName" type="text" placeholder="First Name" ng-model="licenseCtrl.license.firstName" required>
+      </label>
+      <label class="item item-input">
+        <span class="input-label">Middle Name</span>
+        <input name="middleName" type="text" placeholder="Middle Name" ng-model="licenseCtrl.license.middleName">
+      </label>
+      <label class="item item-input">
+        <span class="input-label required">Last Name</span>
+        <input name="lastName" type="text" placeholder="Last Name" ng-model="licenseCtrl.license.lastName" required>
+      </label>
+      <label class="item item-input item-select">
+        <div class="input-label">Gender</div>
+        <select name="gender" ng-model="licenseCtrl.license.gender">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+        </select>
+      </label>
+      <label class="item item-input">
+        <span class="input-label required">Date Of Birth</span>
+        <input name="birthDate" type="date" value="" placeholder="Date of Birth" ng-model="licenseCtrl.license.birthDate" required>
       </label>
     </div>
     <div class="padding-top padding-bottom">
       <button
         class="button button-balanced button-block"
-        on-tap="licenseCtrl.pickImage()"
-        ng-disabled="!licenseCtrl.license.number || !licenseCtrl.license.state"
-      >Submit and Upload photo</button>
+        ng-click="licenseCtrl.submit(form)"
+        ng-disabled="form.$invalid"
+      >Submit</button>
     </div>
+  </form>
     <p class="padding-top">
       Your driver's license is required to book WaiveCar.
       <span ng-if="::licenseCtrl.isWizard">

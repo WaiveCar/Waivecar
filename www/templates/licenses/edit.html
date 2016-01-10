@@ -8,14 +8,15 @@
   <ion-content padding="true" class="ion-content--center dark-bg">
     <form ng-submit="licenseCtrl.update(form)" name="form" id="form" novalidate>
       <div class="list list-inset">
-        <label class="item item-input" ng-if="licenseCtrl.license && licenseCtrl.license.status !== 'provided'">
-          <span ng-if="licenseCtrl.license.status !=='complete'" class="input-label">Your Driver's License is pending verification</span>
-          <span ng-if="licenseCtrl.license.status ==='complete' && licenseCtrl.license.outcome === 'consider'" class="input-label">Driver's License has failed verification.</span>
-          <span ng-if="licenseCtrl.license.status ==='complete' && licenseCtrl.license.outcome === 'clear'" class="input-label">Your Driver's License has been cleared.</span>
+        <label class="item item-input" ng-if="licenseCtrl.license && licenseCtrl.license.status !== 'pending'">
+          <span ng-if="licenseCtrl.license.status === 'provided'" class="input-label">Your Driver's License is pending validation</span>
+          <span ng-if="licenseCtrl.license.status === 'in-progress'" class="input-label">Your Driver's License is ongoing validation</span>
+          <span ng-if="licenseCtrl.license.status === 'complete' && licenseCtrl.license.outcome === 'consider'" class="input-label">Driver's License has failed validation.</span>
+          <span ng-if="licenseCtrl.license.status === 'complete' && licenseCtrl.license.outcome === 'clear'" class="input-label">Your Driver's License has been cleared.</span>
         </label>
         <label class="item item-input">
           <span class="input-label required">License Number</span>
-          <input name="text" type="number" placeholder="Driver's License Number" ng-model="licenseCtrl.license.number" autofocus required ng-disabled="!licenseCtrl.canEdit">
+          <input name="text" type="text" placeholder="Driver's License Number" ng-model="licenseCtrl.license.number" autofocus required ng-disabled="!licenseCtrl.canEdit">
         </label>
         <label class="item item-input item-select">
           <div class="input-label required">License State</div>
@@ -46,7 +47,7 @@
         <label class="item item-input">
           <span class="input-label required">Date Of Birth</span>
           <input name="birthDate" type="date" value="" placeholder="Date of Birth" ng-model="licenseCtrl.license.birthDate" required ng-if="licenseCtrl.canEdit">
-          <span class="input-label" ng-if="::licenseCtrl.birthDateMoment">{{licenseCtrl.birthDateMoment}}</span>
+          <span class="input-label" ng-if="licenseCtrl.birthDateMoment">{{::licenseCtrl.birthDateMoment}}</span>
         </label>
       </div>
       <div class="validations" ng-if="form.$submitted && form.$invalid">
@@ -57,8 +58,8 @@
         <div class="help-block" ng-if="form.birthDate.$error.required">Date of Birth is required</div>
       </div>
       <div class="padding-top padding-bottom">
-        <button type="submit" form="form" class="button button-balanced button-block" ng-disabled="!licenseCtrl.canEdit">Validate</button>
-        <button type="button" class="button button-gray button-block" ng-click="licenseCtrl.cancel()">Cancel Booking</button>
+        <button type="submit" class="button button-balanced button-block" ng-if="licenseCtrl.canEdit">Update Details</button>
+        <button type="button" class="button button-balanced button-block" ng-if="licenseCtrl.license.status === 'provided'" ng-click="licenseCtrl.validate(form)">Validate</button>
       </div>
     </form>
   </ion-content>
