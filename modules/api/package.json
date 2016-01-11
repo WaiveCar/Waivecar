@@ -1,0 +1,9 @@
+{
+  "name": "clevertech-api",
+  "private": true,
+  "description": "Fetching api related stuff",
+  "reach": {
+    "name": "api",
+    "type": "module"
+  }
+}

@@ -1,5 +1,4 @@
 module.exports = {
-
   waivecar : {
     car : {
       staleLimit : 30,
