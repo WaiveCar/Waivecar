@@ -43,19 +43,32 @@ module.exports = class LicenseService extends Service {
    * @return {Object}
    */
   static *index(query, _user) {
-    query = queryParser(query, {
-      where : {
-        userId       : queryParser.NUMBER,
-        number       : queryParser.STRING,
-        firstName    : queryParser.STRING,
-        middleName   : queryParser.STRING,
-        lastName     : queryParser.STRING,
-        birthDate    : queryParser.DATE,
-        country      : queryParser.STRING,
-        state        : queryParser.STRING,
-        collectionId : queryParser.STRING
-      }
-    });
+    if (query.search) {
+      query = {
+        where : {
+          $or : [
+            { firstName : { $like : `${ query.search }%` } },
+            { lastName : { $like : `${ query.search }%` } },
+            { status : { $like : `${ query.search }%` } },
+            { outcome : { $like : `${ query.search }%` } }
+          ]
+        }
+      };
+    } else {
+      query = queryParser(query, {
+        where : {
+          userId       : queryParser.NUMBER,
+          number       : queryParser.STRING,
+          firstName    : queryParser.STRING,
+          middleName   : queryParser.STRING,
+          lastName     : queryParser.STRING,
+          birthDate    : queryParser.DATE,
+          country      : queryParser.STRING,
+          state        : queryParser.STRING,
+          collectionId : queryParser.STRING
+        }
+      });
+    }
 
     if (_user.hasAccess('admin')) {
       return yield License.find(query);
