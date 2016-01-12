@@ -49,9 +49,14 @@ module.exports = class UserDetails extends React.Component {
     });
   }
 
+  /**
+   * Submits the license for update.
+   * @param  {Object} event
+   * @return {Void}
+   */
   submit = (event) => {
     let form = new Form(event);
-    api.put(`/licenses/${ this.props.id }`, form.data, (err) => {
+    api.put(`/licenses/${ this.state.license.id }`, form.data, (err) => {
       if (err) {
         return snackbar.notify({
           type    : 'danger',
@@ -65,6 +70,10 @@ module.exports = class UserDetails extends React.Component {
     });
   }
 
+  /**
+   * Render license details.
+   * @return {Void}
+   */
   render() {
     if (!this.state.license) {
       return (
@@ -99,11 +108,11 @@ module.exports = class UserDetails extends React.Component {
             <div className="form-group row">
               <FormInput className="col-md-4 bento-form-input">
                 <label>License Number</label>
-                <input type="text" name="number" className="form-control" defaultValue={ license.number } required />
+                <input type="text" name="number" className="form-control" defaultValue={ license.number } disabled={ !license.provided } required />
               </FormInput>
               <FormInput className="col-md-4 bento-form-input">
                 <label>State</label>
-                <input type="text" name="state" className="form-control" defaultValue={ license.state } required />
+                <input type="text" name="state" className="form-control" defaultValue={ license.state } disabled={ !license.provided } required />
               </FormInput>
               <FormInput className="col-md-4 bento-form-input">
                 <label>Status</label>
@@ -114,29 +123,30 @@ module.exports = class UserDetails extends React.Component {
             <div className="form-group row">
               <FormInput className="col-md-4 bento-form-input">
                 <label>First Name</label>
-                <input type="text" name="firstName" className="form-control" defaultValue={ license.firstName } required />
+                <input type="text" name="firstName" className="form-control" defaultValue={ license.firstName } disabled={ !license.provided } required />
               </FormInput>
               <FormInput className="col-md-4 bento-form-input">
                 <label>Middle Name (Optional)</label>
-                <input type="text" name="middleName" className="form-control" defaultValue={ license.middleName } />
+                <input type="text" name="middleName" className="form-control" defaultValue={ license.middleName } disabled={ !license.provided } />
               </FormInput>
               <FormInput className="col-md-4 bento-form-input">
                 <label>Last Name</label>
-                <input type="text" name="lastName" className="form-control" defaultValue={ license.lastName } required />
+                <input type="text" name="lastName" className="form-control" defaultValue={ license.lastName } disabled={ !license.provided } required />
               </FormInput>
             </div>
 
             <div className="form-group row">
               <FormInput className="col-md-4 bento-form-input">
                 <label>Birth Date</label>
-                <input type="date" name="birthDate" className="form-control" defaultValue={ moment(license.birthDate).format('YYYY-MM-DD') } required />
+                <input type="date" name="birthDate" className="form-control" defaultValue={ moment(license.birthDate).format('YYYY-MM-DD') } disabled={ !license.provided } required />
               </FormInput>
               <FormInput className="col-md-4 bento-form-input">
-                <label>Outcome</label>
+                <label>Gender</label>
                 <FormSelect
-                  name    = "gender"
-                  value   = { license.gender }
-                  options = {[
+                  name     = "gender"
+                  value    = { license.gender }
+                  disabled = { !license.provided }
+                  options  = {[
                     { value : 'male', label : 'Male' },
                     { value : 'female', label : 'Female' }
                   ]}
