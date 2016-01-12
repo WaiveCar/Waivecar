@@ -91,6 +91,8 @@ class HomeTemplate extends React.Component {
   }
 
   renderHeader() {
+    var appStoreUri = 'https://itunes.apple.com/us/app/waivecar/id1051144802?ls=1&mt=8'
+    var playStoreUri = 'https://play.google.com/store/apps/details?id=com.waivecar.app'
     return (
       <header className="section jumbotron bg-inverse" role="banner">
         <div className="container">
@@ -102,12 +104,12 @@ class HomeTemplate extends React.Component {
                 <p className="lead">Get where you’re going and move toward a sustainable future.</p>
                 <ul className="list-inline">
                   <li className="store-item m-t">
-                    <a href="http://s3.amazonaws.com/waivecar-dev/index.html">
+                    <a href={appStoreUri}>
                       <img className="app-store" src="/images/site/btn-app-store.svg" />
                     </a>
                   </li>
                   <li className="store-item m-t">
-                    <a href="https://play.google.com/store/apps/details?id=com.waivecar.app">
+                    <a href={playStoreUri}>
                       <img className="app-store" src="/images/site/btn-google-play.svg" />
                     </a>
                   </li>
@@ -123,12 +125,12 @@ class HomeTemplate extends React.Component {
                   <p className="lead">Get where you’re going and move toward a sustainable future.</p>
                   <ul className="list-inline">
                     <li className="store-item">
-                      <a href="https://appsto.re/us/IjZP-.i">
+                      <a href={appStoreUri}>
                         <img className="app-store" src="/images/site/btn-app-store.svg" />
                       </a>
                     </li>
                     <li className="store-item">
-                      <a href="https://play.google.com/store/apps/details?id=com.waivecar.app">
+                      <a href={playStoreUri}>
                         <img className="app-store" src="/images/site/btn-google-play.svg" />
                       </a>
                     </li>
