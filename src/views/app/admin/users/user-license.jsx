@@ -159,7 +159,8 @@ module.exports = class UserDetails extends React.Component {
                   value   = { license.outcome }
                   options = {[
                     { value : 'consider', label : 'Consider' },
-                    { value : 'clear', label : 'Clear' }
+                    { value : 'clear', label : 'Clear' },
+                    { value : 'reject', label : 'Reject' }
                   ]}
                 />
               </FormInput>

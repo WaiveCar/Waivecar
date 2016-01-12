@@ -23,6 +23,7 @@ module.exports = class Table {
    */
   init() {
     api.get(this.endpoint, {
+      order  : 'created_at,DESC',
       limit  : 20,
       offset : this.ctx.state.offset
     }, (err, data) => {
@@ -113,6 +114,7 @@ module.exports = class Table {
    */
   more = () => {
     api.get(this.endpoint, {
+      order  : 'created_at,DESC',
       limit  : 20,
       offset : this.ctx.state.offset
     }, (err, users) => {

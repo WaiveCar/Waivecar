@@ -123,7 +123,7 @@ class HomeTemplate extends React.Component {
                   <p className="lead">Get where you’re going and move toward a sustainable future.</p>
                   <ul className="list-inline">
                     <li className="store-item">
-                      <a href="https://itunes.apple.com/us/app/waivecar/id1051144802?ls=1&mt=8">
+                      <a href="https://appsto.re/us/IjZP-.i">
                         <img className="app-store" src="/images/site/btn-app-store.svg" />
                       </a>
                     </li>
