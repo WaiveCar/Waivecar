@@ -15,42 +15,41 @@ scheduler.process('booking-auto-cancel', function *(job) {
       message : 'Could not find a booking with the provided id'
     });
   }
+  if (booking.status === 'reserved' || bookings.status === 'pending') {
 
-  if ([ 'reserved', 'pending' ].indexOf(booking.status) !== -1) {
-    return; // Only auto cancel reserved or pending bookings
+    // ### Cancel Booking
+
+    yield booking.update({
+      status : 'cancelled'
+    });
+
+    // ### Update Car
+    // Remove the user from the car and make it available again.
+
+    let car = yield Car.findById(booking.carId);
+    yield car.update({
+      userId      : null,
+      isAvailable : true
+    });
+
+    // ### Emit Event
+    // Sends the cancelled event to the user and administrators.
+
+    relay.user(booking.userId, 'bookings', {
+      type : 'update',
+      data : booking.toJSON()
+    });
+
+    relay.admin('bookings', {
+      type : 'update',
+      data : booking.toJSON()
+    });
+
+    log.info(`The booking with ${ car.license || car.id } was automatically cancelled, booking status was '${ booking.status }'.`);
+
+    yield notify.notifyAdmins(`The booking with ${ car.license || car.id } was automatically cancelled, after their 15 minute timer expired.`, [ 'slack' ]);
+
   }
-
-  // ### Cancel Booking
-
-  yield booking.update({
-    status : 'cancelled'
-  });
-
-  // ### Update Car
-  // Remove the user from the car and make it available again.
-
-  let car = yield Car.findById(booking.carId);
-  yield car.update({
-    userId      : null,
-    isAvailable : true
-  });
-
-  // ### Emit Event
-  // Sends the cancelled event to the user and administrators.
-
-  relay.user(booking.userId, 'bookings', {
-    type : 'update',
-    data : booking.toJSON()
-  });
-
-  relay.admin('bookings', {
-    type : 'update',
-    data : booking.toJSON()
-  });
-
-  log.info(`The booking with ${ car.license || car.id } was automatically cancelled, booking status was '${ booking.status }'.`);
-
-  yield notify.notifyAdmins(`The booking with ${ car.license || car.id } was automatically cancelled, after their 15 minute timer expired.`, [ 'slack' ]);
 });
 
 module.exports = function *() {
