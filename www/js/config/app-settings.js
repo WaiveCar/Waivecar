@@ -1,65 +1,49 @@
+/* global localStorage */
 'use strict';
 var angular = require('angular');
+var _ = require('lodash');
 var appSettings = angular.module('app.settings');
 module.exports = appSettings;
 
+var defaults = {
+  baseUrl: 'https://api-waivecar-dev.cleverbuild.biz',
+  skobbler: {
+    key: '8698d318586c58a1f8ca1e88ecfac299',
+  },
+  facebook: {
+    clientId: '1022704731082512'
+  }
+};
+
 appSettings.provider('$settings', [
-
   function Config() {
-
-    var skobblerKey;
-    var _this = this;
-
-    // Overriden in app-setup
-    this.baseUrl = 'https://api-waivecar-dev.cleverbuild.biz';
-    this.facebook = {
-      clientId: '1022704731082512',
-    };
-
-    function getBaseUrl() {
-      return _this.baseUrl;
-    }
-
-    function getFacebook(){
-      return _this.facebook;
-    }
-
-    this.setBaseUrl = function(baseUrl) {
-      _this.baseUrl = baseUrl;
-    };
-
-    this.setSkobblerApiKey = function(key){
-      skobblerKey = key;
-    };
+    var env = localStorage.env || 'prod';
+    var envs = {};
+    envs.prod = _.extend({}, defaults, {
+      baseUrl: 'https://api.waivecar.com'
+    });
+    envs.dev = _.extend({}, defaults);
+    var config = envs[env];
 
     this.$get = [
-
       function() {
         return {
           uri: {
-            api: getBaseUrl(),
+            api: config.baseUrl,
             auth: {
-              login: getBaseUrl() + '/auth/login',
-              logout: getBaseUrl() + '/auth/logout',
-              forgot: getBaseUrl() + '/auth/forgot-password',
-              reset: getBaseUrl() + '/auth/reset-password'
+              login: config.baseUrl + '/auth/login',
+              logout: config.baseUrl + '/auth/logout',
+              forgot: config.baseUrl + '/auth/forgot-password',
+              reset: config.baseUrl + '/auth/reset-password'
             }
           },
-
-          facebook: getFacebook(),
-          skobbler: {
-            key: skobblerKey
-          },
+          facebook: config.facebook,
+          skobbler: config.skobbler,
           phone: '855-WAIVE55'
-
         };
-
       }
-
     ];
-
   }
-
 ]);
 
 appSettings
