@@ -263,6 +263,10 @@ module.exports = class BookingService extends Service {
     yield booking.delCancelTimer();
     yield cars.unlockCar(car.id, _user);
 
+    // ### Notify
+
+    yield notify.notifyAdmins(`${ user.name() } readied their booking with ${ car.license || car.id }`, [ 'slack' ]);
+
     // ### Relay Update
 
     car.relay('update');
@@ -301,6 +305,10 @@ module.exports = class BookingService extends Service {
     yield booking.setReminders(user, config.booking.timers);
     yield booking.start();
     yield cars.unlockImmobilzer(car.id, _user);
+
+    // ### Notify Admins
+
+    yield notify.notifyAdmins(`${ user.name() } started their booking with ${ car.license || car.id }`, [ 'slack' ]);
 
     // ### Relay Update
 
@@ -371,6 +379,10 @@ module.exports = class BookingService extends Service {
 
     yield booking.delReminders();
     yield booking.end();
+
+    // ### Notify
+
+    yield notify.notifyAdmins(`${ user.name() } ended their booking with ${ car.license || car.id }`, [ 'slack' ]);
 
     // ### Relay Update
 

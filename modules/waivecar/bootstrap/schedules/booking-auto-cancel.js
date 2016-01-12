@@ -1,5 +1,6 @@
 'use strict';
 
+let notify    = require('../../lib/notification-service');
 let scheduler = Bento.provider('queue').scheduler;
 let Booking   = Bento.model('Booking');
 let Car       = Bento.model('Car');
@@ -41,6 +42,8 @@ scheduler.process('booking-auto-cancel', function *(job) {
     type : 'update',
     data : booking.toJSON()
   });
+
+  yield notify.notifyAdmins(`The booking with ${ car.license || car.id } was automatically cancelled, after their 15 minute timer expired.`, [ 'slack' ]);
 });
 
 module.exports = function *() {
