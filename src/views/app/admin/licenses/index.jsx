@@ -85,6 +85,7 @@ class TableIndex extends React.Component {
         <div className="box full">
           <h3>Licenses <small>List of registered licenses</small></h3>
           <div className="box-content">
+            <input type="text" className="box-table-search" ref="search" placeholder="Enter search text [first name, last name, status, outcome]" onChange={ this.table.search } />
             <table className="box-table table-striped">
               <thead>
                 <tr ref="sort">
