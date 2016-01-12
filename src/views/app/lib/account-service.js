@@ -16,7 +16,7 @@ module.exports = class AccountService extends Service {
    */
   status(id) {
     this.setState('status', [
-      { type : 'Email Verified',   isValid : false },
+      // { type : 'Email Verified',   isValid : false },
       { type : 'Phone Verified',   isValid : false },
       { type : 'Payment Card',     isValid : false },
       { type : 'License Provided', isValid : false },
@@ -39,11 +39,13 @@ module.exports = class AccountService extends Service {
       }
       this.setState('status', this.getState('status').map((status) => {
         switch (status.type) {
+          /*
           case 'Email Verified' : return {
             type    : 'Email Verified',
             isValid : user.verifiedEmail,
             validIcon : 'done'
           };
+          */
           case 'Phone Verified' : return {
             type    : 'Phone Verified',
             isValid : user.verifiedPhone,

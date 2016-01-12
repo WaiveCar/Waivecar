@@ -25,7 +25,7 @@ module.exports = class ShopService extends Service {
    */
   ensureCustomer(user) {
     if (!user.stripeId) {
-      this.addCustomer(user);
+      this.addCustomer(user, true);
     }
   }
 
@@ -51,14 +51,17 @@ module.exports = class ShopService extends Service {
       // stored auth.user
 
       if (auth.user().id === user.id) {
-        auth.put({ stripeId : res.stripeId });
+        auth.set({
+          ...auth.user(),
+          stripeId : res.stripeId
+        });
       }
 
       // ### Notify
       // If true we throw a snackbar notification of a successfull registration.
 
       if (shouldNotify) {
-        this.success(`Account was successfully registered with payment service.`);
+        this.success(`Your account can now register payment methods.`);
       }
     });
   }

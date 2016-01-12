@@ -1,10 +1,10 @@
-import React                       from 'react';
-import mixin                       from 'react-mixin';
-import { History, Link }           from 'react-router';
-import config                      from 'config';
-import { auth, api, dom, helpers } from 'bento';
-import { Form, snackbar }          from 'bento-web';
-import facebook                    from './facebook';
+import React                               from 'react';
+import mixin                               from 'react-mixin';
+import { History, Link }                   from 'react-router';
+import config                              from 'config';
+import { auth, api, dom, helpers, socket } from 'bento';
+import { Form, snackbar }                  from 'bento-web';
+import facebook                            from './facebook';
 
 @mixin.decorate(History)
 class RegisterView extends React.Component {
@@ -56,15 +56,19 @@ class RegisterView extends React.Component {
     api.post('/auth/login', {
       identifier : email,
       password   : password
-    }, (error, user) => {
+    }, (error, res) => {
       if (error) {
         return snackbar.notify({
           type    : 'danger',
           message : error.message
         });
       }
-      auth.set(user);
-      this.history.pushState(null, '/');
+      socket.authenticate(res.token);
+      auth.token(res.token);
+      api.get('/users/me', (err, user) => {
+        auth.set(user);
+        this.history.pushState(null, '/profile');
+      });
     });
   }
 

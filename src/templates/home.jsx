@@ -39,10 +39,10 @@ class HomeTemplate extends React.Component {
         { type: 'anchor', to : '#About',    title : 'About Us' }
       ],
       footerItems : [
-        { type: 'link',   to : '/terms',   title : 'Terms' },
-        { type: 'link',   to : '/privacy', title : 'Privacy' },
-        { type: 'link',   to : '/support', title : 'Support' },
-        { type: 'link',   to : '/login',   title : 'Login' }
+        { type: 'link', to : '/terms',                      title : 'Terms' },
+        { type: 'link', to : '/privacy',                    title : 'Privacy' },
+        { type: 'a',    to : 'mailto:support@waivecar.com', title : 'Support' },
+        { type: 'link', to : '/login',                      title : 'Login' }
       ]
     };
 
@@ -66,6 +66,7 @@ class HomeTemplate extends React.Component {
     let items = isFooter ? 'footerItems' : 'navItems';
     return this.state[items].map((n, i) => {
       switch (n.type) {
+        case 'a'      : return <li key={ i }><a href={ n.to }>{ n.title }</a></li>
         case 'link'   : return <li key={ i }><Link className="nav-item nav-link" to={ n.to }>{ n.title }</Link></li>
         case 'anchor' : return <li key={ i }><Anchor className="nav-item nav-link" href={ n.to }>{ n.title }</Anchor></li>
       }
