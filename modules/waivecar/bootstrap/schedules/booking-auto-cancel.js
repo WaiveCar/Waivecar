@@ -4,6 +4,7 @@ let notify    = require('../../lib/notification-service');
 let scheduler = Bento.provider('queue').scheduler;
 let Booking   = Bento.model('Booking');
 let Car       = Bento.model('Car');
+let log       = Bento.Log;
 let relay     = Bento.Relay;
 
 scheduler.process('booking-auto-cancel', function *(job) {
@@ -13,6 +14,10 @@ scheduler.process('booking-auto-cancel', function *(job) {
       code    : 'BOOKING_AUTO_CANCEL_FAILED',
       message : 'Could not find a booking with the provided id'
     });
+  }
+
+  if ([ 'reserved', 'pending' ].indexOf(booking.status) !== -1) {
+    return; // Only auto cancel reserved or pending bookings
   }
 
   // ### Cancel Booking
@@ -42,6 +47,8 @@ scheduler.process('booking-auto-cancel', function *(job) {
     type : 'update',
     data : booking.toJSON()
   });
+
+  log.info(`The booking with ${ car.license || car.id } was automatically cancelled, booking status was '${ booking.status }'.`);
 
   yield notify.notifyAdmins(`The booking with ${ car.license || car.id } was automatically cancelled, after their 15 minute timer expired.`, [ 'slack' ]);
 });
