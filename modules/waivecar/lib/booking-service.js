@@ -309,6 +309,7 @@ module.exports = class BookingService extends Service {
     // ### Notify Admins
 
     yield notify.notifyAdmins(`${ user.name() } started their booking with ${ car.license || car.id }`, [ 'slack' ]);
+    yield notify.sendTextMessage(user, `Your WaiveCar rental has started! The first 2 hours are completely FREE! After that, it's $5.99 / hour. Make sure to return the car in Santa Monica, don't drain the battery under 20%, and keep within our driving borders to avoid any charges. Thanks for renting with WaiveCar!`);
 
     // ### Relay Update
 
