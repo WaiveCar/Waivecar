@@ -22,7 +22,6 @@ module.exports = class BookingFeesView extends React.Component {
   }
 
   getItem(item) {
-    console.log(item);
     return (
       <div key={ item.id } className="row payment-item">
         <div className="col-xs-8">

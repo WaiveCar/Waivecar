@@ -1,6 +1,7 @@
 import React                from 'react';
 import async                from 'async';
 import { auth, api, relay } from 'bento';
+import { snackbar }         from 'bento-web';
 
 module.exports = class BookingFeesView extends React.Component {
 
@@ -202,9 +203,15 @@ module.exports = class BookingFeesView extends React.Component {
         }
       }, (err, order) => {
         if (err) {
-          return console.log(err);
+          return snackbar.notify({
+            type    : `danger`,
+            message : err.message
+          });
         }
-        console.log(order);
+        snackbar.notify({
+          type    : `success`,
+          message : 'Fees was successfully submitted, to manage payment check the stripe dashboard.'
+        });
       });
     });
   }
