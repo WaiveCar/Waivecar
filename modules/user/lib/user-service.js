@@ -207,12 +207,6 @@ module.exports = {
     yield user.update(data);
     yield hooks.require('user:update:after', user, _user);
 
-    if (user.id === _user.id) {
-      relay.user(user.id, 'me', {
-        type : 'update',
-        data : user
-      });
-    }
     user.relay('update');
 
     return user;

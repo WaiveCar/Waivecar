@@ -88,6 +88,7 @@ let phoneFormat = function(phone) {
 
   return phone;
 };
+
 // ### Store Hooks
 
 /**

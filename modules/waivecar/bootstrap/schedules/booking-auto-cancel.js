@@ -15,6 +15,7 @@ scheduler.process('booking-auto-cancel', function *(job) {
       message : 'Could not find a booking with the provided id'
     });
   }
+
   if (booking.status === 'reserved' || bookings.status === 'pending') {
 
     // ### Cancel Booking
@@ -45,10 +46,11 @@ scheduler.process('booking-auto-cancel', function *(job) {
       data : booking.toJSON()
     });
 
-    log.info(`The booking with ${ car.license || car.id } was automatically cancelled, booking status was '${ booking.status }'.`);
-
     yield notify.notifyAdmins(`The booking with ${ car.license || car.id } was automatically cancelled, after their 15 minute timer expired.`, [ 'slack' ]);
 
+    log.info(`The booking with ${ car.license || car.id } was automatically cancelled, booking status was '${ booking.status }'.`);
+  } else {
+    log.warn(`Auto cancellation of booking ${ booking.id } was request but ignored | Booking status: ${ booking.status }`);
   }
 });
 
