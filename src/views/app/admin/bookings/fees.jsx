@@ -100,7 +100,10 @@ module.exports = class BookingFeesView extends React.Component {
 
       return (
         <tr key={ item.id } className="fee-item-row">
-          <td>{ item.name }</td>
+          <td>
+            { item.name }
+            <div style={{ color : '#aaa', fontSize : '.8rem' }}>{ item.description }</div>
+          </td>
           <td className="hidden-xs-down">${ item.price / 100 }</td>
           <td className="text-center">
             <button className="fee-item-btn" onClick={ () => { this.removeItem(cart, item.id) } }>-</button>
