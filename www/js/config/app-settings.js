@@ -17,13 +17,14 @@ var defaults = {
 
 appSettings.provider('$settings', [
   function Config() {
-    var env = localStorage.env || 'prod';
+    var env = localStorage.env;
+    console.log('[settings] using `%s` environment', env);
     var envs = {};
     envs.prod = _.extend({}, defaults, {
       baseUrl: 'https://api.waivecar.com'
     });
     envs.dev = _.extend({}, defaults);
-    var config = envs[env];
+    var config = envs[env] || envs.prod;
 
     this.$get = [
       function() {
