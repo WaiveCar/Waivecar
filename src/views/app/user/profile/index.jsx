@@ -31,7 +31,7 @@ module.exports = class ProfileView extends React.Component {
 
     // ### Relay Subscriptions
 
-    relay.subscribe(this, 'me');
+    relay.subscribe(this, 'users');
   }
 
   /**
@@ -120,7 +120,7 @@ module.exports = class ProfileView extends React.Component {
             ref       = "personal"
             className = "bento-form-static"
             fields    = { formFields.personal }
-            default   = { this.state.me }
+            default   = { auth.user() }
             buttons   = {[
               {
                 value : 'Update Details',

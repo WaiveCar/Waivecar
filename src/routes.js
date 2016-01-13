@@ -32,10 +32,10 @@ module.exports = {
    * @type     Array
    */
   getChildRoutes(state, done) {
-    async.parallel([
+    async.series([
+      loadUI,
       loadRoles,
-      loadAuth,
-      loadUI
+      loadAuth
     ], (err) => {
       done(err, templates.getAll());
     });

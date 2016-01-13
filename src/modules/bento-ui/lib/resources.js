@@ -71,7 +71,7 @@ Resources.prepare = function (id) {
   relay.resource(id, (state = [], action) => {
     switch (action.type) {
       case 'store'  : return reducerStore(state, action.data);
-      case 'index'  : return action.data;
+      case 'index'  : return reducerIndex(state, action.data);
       case 'update' : return reducerUpdate(state, action.data);
       case 'delete' : return reducerDelete(state, action.data);
       default       : return state;
@@ -147,6 +147,25 @@ function reducerStore(state, data) {
     data,
     ...state
   ];
+}
+
+/**
+ * Returns new indexed resource array.
+ * @param  {Array} state The current reducer state.
+ * @param  {Array} data  List of resource data.
+ * @return {Array}
+ */
+function reducerIndex(state, data) {
+  let ids = state.reduce((list, next) => {
+    list.push(next.id);
+    return list;
+  }, []);
+  data.forEach(obj => {
+    if (ids.indexOf(obj.id) === -1) {
+      state.push(obj);
+    }
+  });
+  return state;
 }
 
 /**
