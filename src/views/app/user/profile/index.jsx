@@ -42,6 +42,14 @@ module.exports = class ProfileView extends React.Component {
   }
 
   /**
+   * Unsub from relay.
+   * @return {Void}
+   */
+  componentWillUnmount() {
+    relay.unsubscribe(this, 'users');
+  }
+
+  /**
    * Render facebook connect button if no facebook ID exists on the user.
    * @return {Object}
    */
