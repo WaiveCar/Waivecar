@@ -13,12 +13,10 @@ function LicenseValidationService ($injector) {
 
   function validate (license) {
     if (license == null) {
-      $state.go('licenses-new');
       return $q.reject({code: 'LICENSE_EMPTY'});
     }
     if (license.status === 'pending') {
-      $state.go('licenses-edit', {licenseId: license.id});
-      return $q.reject({code: 'LICENSE_INCOMPLETE'});
+      return $q.reject({code: 'LICENSE_INCOMPLETE', id: license.id});
     }
     if (license.status === 'in-progress') {
       return $q.reject({code: 'LICENSE_IN_PROGRESS'});
@@ -28,7 +26,9 @@ function LicenseValidationService ($injector) {
         return $q.resolve();
       }
       if (license.outcome === 'consider') {
-        failure();
+        return $q.reject({code: 'LICENSE_CONSIDER'});
+      }
+      if (license.outcome === 'reject') {
         return $q.reject({code: 'LICENSE_FAILED'});
       }
     }
@@ -39,8 +39,27 @@ function LicenseValidationService ($injector) {
     }).$promise
       .then(spinner)
       .then(success)
-      .catch(failure);
+      .catch(handleRejection);
   };
+
+  function handleRejection (reason) {
+    switch (reason.code) {
+      case 'LICENSE_FAILED':
+        failure();
+        break;
+      case 'LICENSE_EMPTY':
+        $state.go('licenses-new');
+        break;
+      case 'LICENSE_INCOMPLETE':
+        $state.go('licenses-edit', {licenseId: reason.id});
+        break;
+      case 'LICENSE_MANUAL_CHECK':
+        manualCheck();
+        break;
+      default:
+        $q.reject(reason);
+    }
+  }
 
   function cancelPolling () {
     if (polling == null) {
@@ -90,7 +109,13 @@ function LicenseValidationService ($injector) {
               if (lic.outcome === 'consider') {
                 cancelPolling();
                 modal.remove();
-                reject();
+                reject({code: 'LICENSE_CONSIDER'});
+                return;
+              }
+              if (lic.outcome === 'reject') {
+                cancelPolling();
+                modal.remove();
+                reject({code: 'LICENSE_FAILED'});
                 return;
               }
               cancelPolling();
@@ -113,6 +138,31 @@ function LicenseValidationService ($injector) {
         className: 'button-balanced',
         handler: function () {
           modal.remove();
+          $ionicHistory.goBack();
+        }
+      }]
+    })
+    .then(function (_modal) {
+      modal = _modal;
+      modal.show();
+    });
+  }
+
+  function manualCheck () {
+    var modal;
+    $modal('result', {
+      icon: 'waivecar-mark',
+      title: 'Manual license validation required.',
+      message: 'Driver\'s License needs to be manually validated by us and you are unable to book a WaiveCar at this time. <br>' +
+        'Please contact us if you would like further information or a copy of your report from our validation provider. <br>' +
+        'You\'ll receive an SMS when this validation passes.',
+      actions: [{
+        className: 'button-dark',
+        text: 'Go back',
+        handler: function () {
+          if (modal) {
+            modal.remove();
+          }
           $ionicHistory.goBack();
         }
       }]

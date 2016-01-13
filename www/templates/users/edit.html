@@ -17,7 +17,8 @@
       <div class="license-verification text-center" ng-if="license && license.status !== 'pending'">
         <p ng-if="license.status === 'provided'">Your Driver's License is pending validation</p>
         <p ng-if="license.status === 'in-progress'">Your Driver's License is ongoing validation</p>
-        <p ng-if="license.status === 'complete' && license.outcome === 'consider'">Driver's License has failed validation.</p>
+        <p ng-if="license.status === 'complete' && license.outcome === 'reject'">Driver's License has failed validation.</p>
+        <p ng-if="license.status === 'complete' && license.outcome === 'consider'">Driver's License is being manually validated.</p>
         <p ng-if="license.status === 'complete' && license.outcome === 'clear'">Your Driver's License has been cleared.</p>
       </div>
     </div>
