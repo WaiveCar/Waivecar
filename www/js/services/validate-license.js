@@ -12,6 +12,22 @@ function LicenseValidationService ($injector) {
   var polling;
 
   function validate (license) {
+    return checkLicense(license)
+      .catch(function (reason) {
+        if (reason && reason.code !== 'VALIDATE') {
+          return handleRejection(reason);
+        }
+        return $data.resources.licenses.verify({
+          id: license.id,
+          userId: license.userId
+        }).$promise
+          .then(spinner)
+          .then(success)
+          .catch(handleRejection);
+      });
+  };
+
+  function checkLicense (license) {
     if (license == null) {
       return $q.reject({code: 'LICENSE_EMPTY'});
     }
@@ -32,15 +48,8 @@ function LicenseValidationService ($injector) {
         return $q.reject({code: 'LICENSE_FAILED'});
       }
     }
-
-    return $data.resources.licenses.verify({
-      id: license.id,
-      userId: license.userId
-    }).$promise
-      .then(spinner)
-      .then(success)
-      .catch(handleRejection);
-  };
+    return $q.reject({code: 'VALIDATE'});
+  }
 
   function handleRejection (reason) {
     switch (reason.code) {
