@@ -1,4 +1,5 @@
 import React                from 'react';
+import async                from 'async';
 import { auth, api, relay } from 'bento';
 
 module.exports = class BookingFeesView extends React.Component {
@@ -6,49 +7,89 @@ module.exports = class BookingFeesView extends React.Component {
   constructor(...args) {
     super(...args);
     this.state = {
-      items : []
+      cartId : this.props.cartId || null,
+      items  : []
     };
     relay.subscribe(this, 'carts');
   }
 
+  /**
+   * Load items and cart.
+   * @return {Void}
+   */
   componentDidMount() {
-    api.get(`/shop/items`, (err, items) => {
+    async.series([
+      this.loadItems,
+      this.loadCart
+    ], (err) => {
       if (err) {
-        return console.log(err);
+        console.log(err);
       }
-      this.setState({ items : items });
-      this.loadCart(this.props.booking.cartId);
     });
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.loadCart(nextProps.cartId);
-  }
-
+  /**
+   * Unsubscribe from the carts relay.
+   * @return {Void}
+   */
   componentWillUnmount() {
     relay.unsubscribe(this, 'carts');
   }
 
   /**
-   * Loads booking.
-   * @param  {String} id
+   * Loads items from the shop.
+   * @param  {Function} done
    * @return {Void}
    */
-  loadCart(id) {
-    api.get(`/shop/carts/${ id }`, (err, cart) => {
+  loadItems = (done) => {
+    api.get(`/shop/items`, (err, items) => {
       if (err) {
-        return console.log(err);
+        return done(err);
       }
-      relay.dispatch('carts', {
-        type : 'store',
-        data : cart
-      });
+      this.setState({ items : items });
+      done();
     });
   }
 
   /**
+   * Loads a cart, either pre-defined or creates a new one.
+   * @param  {Function} done
+   * @return {Void}
+   */
+  loadCart = (done) => {
+    if (this.state.cartId) {
+      api.get(`/shop/carts/${ id }`, (err, cart) => {
+        if (err) {
+          return done(err);
+        }
+        relay.dispatch('carts', {
+          type : 'store',
+          data : cart
+        });
+        done();
+      });
+    } else {
+      api.post('/shop/carts', {
+        items : []
+      }, (err, cart) => {
+        if (err) {
+          return done(err);
+        }
+        this.setState({
+          cartId : cart.id
+        });
+        relay.dispatch('carts', {
+          type : 'store',
+          data : cart
+        });
+        done();
+      });
+    }
+  }
+
+  /**
    * Returns a list of items available and current values of cart.
-   * @return {Object}
+   * @eturn Object}
    */
   getItems(cart) {
     return this.state.items.map(item => {
@@ -138,24 +179,23 @@ module.exports = class BookingFeesView extends React.Component {
    * @return {Void}
    */
   submitCart(cart) {
-    let booking = this.props.booking;
-    let user    = auth.user();
+    let { bookingId, userId } = this.props;
+    let user                  = auth.user();
     api.get('/shop/cards', {
-      userId : user.id
+      userId : userId
     }, (err, cards) => {
       if (!cards.length) {
         return console.log('User has no registered payment cards!');
       }
       api.post('/shop/orders', {
-        bookingId   : booking.id,
-        userId      : user.id,
+        bookingId   : bookingId,
+        userId      : userId,
         cart        : cart.id,
         source      : cards[0].id,
         currency    : 'usd',
         description : `Payment for fees incurred during a waivecar ride.`,
         metadata    : {
-          user    : `${ booking.user.firstName } ${ booking.user.lastName } <${ booking.user.email }>`,
-          booking : booking.id
+          booking : bookingId
         }
       }, (err, order) => {
         if (err) {
@@ -166,12 +206,8 @@ module.exports = class BookingFeesView extends React.Component {
     });
   }
 
-  /**
-   * Renders the fees/cart view.
-   * @return {Object}
-   */
   render() {
-    let cart = this.state.carts.find(val => val.id === this.props.booking.cartId);
+    let cart = this.state.carts.find(val => val.id === this.state.cartId);
     if (!cart) {
       return <div></div>;
     }

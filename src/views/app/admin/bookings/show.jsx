@@ -124,17 +124,6 @@ module.exports = class BookingsView extends React.Component {
   }
 
   /**
-   * Returns a list of fees attached to the booking.
-   * @return {Object}
-   */
-  renderFees(booking) {
-    if (!booking.cartId) {
-      return;
-    }
-    return <BookingFees booking={ booking } />
-  }
-
-  /**
    * Renders booking view.
    * @return {Object}
    */
@@ -188,7 +177,11 @@ module.exports = class BookingsView extends React.Component {
             { this.renderActions(booking) }
           </div>
         </div>
-        { booking.payments.length ? <BookingPayment payment={ booking.payments[0] } /> : this.renderFees(booking) }
+        {
+          booking.payments.length
+            ? <BookingPayment payment={ booking.payments[0] } />
+            : <BookingFees bookingId={ booking.id } userId={ booking.userId } cartId={ booking.cartId } />
+        }
       </div>
     );
   }

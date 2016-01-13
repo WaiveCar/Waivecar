@@ -29,13 +29,6 @@ module.exports = class ProfileCardsView extends React.Component {
   }
 
   /**
-   * Unsubscribes from the app reducer.
-   */
-  componentWillUnmount() {
-    relay.unsubscribe(this, 'app');
-  }
-
-  /**
    * Renders the list of registered payment cards
    * @return {Object}
    */
