@@ -19,11 +19,17 @@ module.exports = {
    * @param {String} message
    */
   *sendTextMessage(user, message) {
-    let sms = new Sms();
-    yield sms.send({
-      to      : user.phone,
-      message : message
-    });
+    if (user.phone) {
+      try {
+        let sms = new Sms();
+        yield sms.send({
+          to      : user.phone,
+          message : message
+        });
+      } catch (err) {
+        log.warn(`Failed to send sms to ${ user.name() } > ${ err.message }`);
+      }
+    }
   },
 
   /**
