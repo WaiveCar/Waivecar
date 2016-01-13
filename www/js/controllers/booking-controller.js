@@ -1,4 +1,3 @@
-/* global window: false, L: true */
 'use strict';
 var angular = require('angular');
 var moment = require('moment');
@@ -15,18 +14,18 @@ require('../services/modal-service');
 require('../services/location-service');
 
 module.exports = angular.module('app.controllers').controller('BookingController', [
-  '$rootScope',
   '$scope',
-  '$interval',
-  '$state',
-  '$auth',
-  'LocationService',
-  '$data',
-  '$ride',
-  '$message',
-  '$modal',
-  '$distance',
-  function ($rootScope, $scope, $interval, $state, $auth, LocationService, $data, $ride, $message, $modal, $distance) {
+  '$rootScope',
+  '$injector',
+  function ($scope, $rootScope, $injector) {
+    var $ride = $injector.get('$ride');
+    var $data = $injector.get('$data');
+    var $distance = $injector.get('$distance');
+    var $interval = $injector.get('$interval');
+    var $modal = $injector.get('$modal');
+    var $state = $injector.get('$state');
+    var $message = $injector.get('$message');
+    var $cordovaInAppBrowser = $injector.get('$cordovaInAppBrowser');
 
     $scope.image = 'img/car.jpg';
     $scope.distance = 'Unknown';
@@ -63,37 +62,17 @@ module.exports = angular.module('app.controllers').controller('BookingController
       }
     }, 1000);
 
-    $scope.mockInRange = function () {
-      LocationService.setLocation($scope.data.cars);
-    };
-
-    $scope.mockOutOfRange = function () {
-      var mock = {
-        latitude: 34.0604643,
-        longitude: -118.4186743
-      };
-
-      LocationService.setLocation(mock);
-      $scope.watchForWithinRange();
-    };
-
     $scope.watchForWithinRange = function () {
-      var stopWatching = $scope.$watch(function () {
-        if (!$rootScope.currentLocation) {
-          return false;
+      var stopWatching = $rootScope.$watch('currentLocation', function (value) {
+        if (value == null) {
+          return;
         }
-
-        if (!($data.active.cars && $data.active.cars.latitude)) {
-          return false;
+        var distance = $distance($data.active.cars);
+        if (_.isFinite(distance)) {
+          // convert miles to yards
+          $scope.distance = distance / 1760;
         }
-
-        var from = L.latLng($rootScope.currentLocation.latitude, $rootScope.currentLocation.longitude);
-        var to = L.latLng($data.active.cars.latitude, $data.active.cars.longitude);
-        var distance = from.distanceTo(to);
-        $scope.distance = Math.floor(distance * 1.09361) + 'yds to ';
-        return distance <= 35;
-      }, function (newValue) {
-        if (newValue) {
+        if (distance <= 35) {
           stopWatching();
           $scope.showUnlock();
         }
@@ -272,11 +251,11 @@ module.exports = angular.module('app.controllers').controller('BookingController
           '&x-source=WaiveCar'
         ].join('');
         url = sprintf(url, sprintfOptions);
-        window.open(encodeURI(url), '_system');
+        $cordovaInAppBrowser.open(encodeURI(url), '_system');
       } else {
         url = 'http://maps.google.com/maps?saddr=%(startingLat)s,%(startingLon)s&daddr=%(targetLat)s,%(targetLon)s&mode=walking';
         url = sprintf(url, sprintfOptions);
-        window.open(url);
+        $cordovaInAppBrowser.open(url);
       }
     };
 
