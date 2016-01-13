@@ -23,6 +23,9 @@ module.exports = {
     cors    : {
       origins : null,
       headers : [ 'Content-Type', 'Cache-Control', 'X-Requested-With', 'Authorization' ]
+    },
+    log : {
+      timeFormat : 'YYYY-MM-DD HH:mm:ss'
     }
   },
 
