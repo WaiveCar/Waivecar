@@ -569,7 +569,7 @@ module.exports = class BookingService extends Service {
       let details = list[i];
       if (!details.address) {
         yield details.update({
-          address : yield getAddress(details.latitude, details.longitude)
+          address : yield this.getAddress(details.latitude, details.longitude)
         });
       }
     }
