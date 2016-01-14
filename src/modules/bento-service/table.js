@@ -24,7 +24,6 @@ module.exports = class Table {
   init() {
     api.get(this.endpoint, {
       order  : 'created_at,DESC',
-      limit  : 20,
       offset : this.ctx.state.offset
     }, (err, data) => {
       if (err) {

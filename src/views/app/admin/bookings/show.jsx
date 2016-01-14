@@ -1,7 +1,9 @@
 import React                   from 'react';
 import { api, relay, helpers } from 'bento';
+import { Link }                from 'react-router';
 import BookingFees             from './fees';
 import BookingPayment          from './payment';
+import BookingDetails          from './details';
 
 module.exports = class BookingsView extends React.Component {
 
@@ -170,7 +172,9 @@ module.exports = class BookingsView extends React.Component {
               <div className="col-xs-12 col-md-4 booking-status text-center">
                 <strong>Car</strong>
                 <div>
-                  { booking.car.license }
+                  <Link to={ `/cars/${ booking.car.id }` }>
+                    { booking.car.license }
+                  </Link>
                 </div>
               </div>
             </div>
@@ -178,9 +182,22 @@ module.exports = class BookingsView extends React.Component {
           </div>
         </div>
         {
+          [ 'ended', 'completed', 'closed' ].indexOf(booking.status) !== -1
+            ? <BookingDetails booking={ booking } />
+            : <div className="box-empty">
+                <h3>Details</h3>
+                A ride must be ended before details are shown.
+              </div>
+        }
+        {
           booking.payments.length
             ? <BookingPayment payment={ booking.payments[0] } />
-            : <BookingFees bookingId={ booking.id } userId={ booking.userId } cartId={ booking.cartId } />
+            : ''
+        }
+        {
+          booking.status === 'completed' && !booking.payments.length
+            ? <BookingFees bookingId={ booking.id } userId={ booking.userId } cartId={ booking.cartId } />
+            : ''
         }
       </div>
     );

@@ -185,23 +185,39 @@ module.exports = class BookingFeesView extends React.Component {
   submitCart(cart) {
     let { bookingId, userId } = this.props;
     let user                  = auth.user();
-    api.get('/shop/cards', {
-      userId : userId
-    }, (err, cards) => {
-      if (!cards.length) {
-        return console.log('User has no registered payment cards!');
-      }
-      api.post('/shop/orders', {
-        bookingId   : bookingId,
-        userId      : userId,
-        cart        : cart.id,
-        source      : cards[0].id,
-        currency    : 'usd',
-        description : `Payment for fees incurred during a waivecar ride.`,
-        metadata    : {
-          booking : bookingId
+
+    if (cart.items.length) {
+      api.get('/shop/cards', {
+        userId : userId
+      }, (err, cards) => {
+        if (!cards.length) {
+          return console.log('User has no registered payment cards!');
         }
-      }, (err, order) => {
+        api.post('/shop/orders', {
+          bookingId   : bookingId,
+          userId      : userId,
+          cart        : cart.id,
+          source      : cards[0].id,
+          currency    : 'usd',
+          description : `Payment for fees incurred during a waivecar ride.`,
+          metadata    : {
+            booking : bookingId
+          }
+        }, (err, order) => {
+          if (err) {
+            return snackbar.notify({
+              type    : `danger`,
+              message : err.message
+            });
+          }
+          snackbar.notify({
+            type    : `success`,
+            message : 'Fees was successfully submitted, to manage payment check the stripe dashboard.'
+          });
+        });
+      });
+    } else {
+      api.put(`/bookings/${bookingId}/close`, {}, (err) => {
         if (err) {
           return snackbar.notify({
             type    : `danger`,
@@ -210,10 +226,10 @@ module.exports = class BookingFeesView extends React.Component {
         }
         snackbar.notify({
           type    : `success`,
-          message : 'Fees was successfully submitted, to manage payment check the stripe dashboard.'
+          message : 'Successfully closed booking, no fees charged.'
         });
       });
-    });
+    }
   }
 
   render() {

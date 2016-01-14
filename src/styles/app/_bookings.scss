@@ -50,4 +50,60 @@
     margin-top  : 10px;
     padding-top : 10px;
   }
+
+  .ride-map {
+    height   : 300px;
+    position : relative;
+    width    : 100%;
+  }
+
+  .ride-meta {
+    .ride-fee {
+      font-size   : 1.8rem;
+      font-weight : 500;
+      margin-top  : 20px;
+      text-align  : center;
+    }
+    .ride-date {
+      border-top    : 1px solid #e6e6e6;
+      border-bottom : 1px solid #e6e6e6;
+      margin-top    : 20px;
+      text-align    : center;
+      padding       : 8px 0;
+    }
+    .ride-from, .ride-to {
+      margin-top   : 20px;
+      padding-left : 35px;
+      position     : relative;
+      .ride-time {
+        font-size   : 1.18rem;
+        font-weight : 400;
+      }
+      .ride-icon {
+        left     : 5px;
+        position : absolute;
+        top      : 2px;
+        width    : 20px;
+      }
+    }
+  }
+  .ride-car {
+    position   : relative;
+    text-align : center;
+    img {
+      height : auto;
+      width  : 100%;
+    }
+    h3 {
+      margin-top : 15px;
+    }
+    ul {
+      list-style : none;
+      margin     : 0;
+      padding    : 0;
+    }
+    .ride-car-meta {
+      margin-top : 35px;
+    }
+  }
 }
