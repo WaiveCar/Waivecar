@@ -16,7 +16,7 @@ scheduler.process('booking-auto-cancel', function *(job) {
     });
   }
 
-  if (booking.status === 'reserved' || bookings.status === 'pending') {
+  if (booking.status === 'reserved') {
 
     // ### Cancel Booking
 
