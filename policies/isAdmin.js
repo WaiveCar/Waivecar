@@ -1,12 +1,8 @@
 'use strict';
 
-let error = Bento.Error;
+let access = Bento.Access;
+let error  = Bento.Error;
 
 module.exports = function *isAdmin() {
-  if (this.auth.user.hasAccess('admin')) {
-    throw error.parse({
-      code    : `INVALID_CREDENTIALS`,
-      message : `Your account credentials does not allow access to this route.`
-    }, 401);
-  }
+  access.verifyAdmin(this.auth.user);
 };

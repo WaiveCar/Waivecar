@@ -204,6 +204,7 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
      |
      */
 
+
     /**
      * Sets the booking to cancel itself automaticaly after the set time.
      * @param  {Number} time
@@ -262,6 +263,22 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
     *delReminders() {
       queue.scheduler.cancel('booking-free-timer', `booking-${ this.id }`);
       queue.scheduler.cancel('booking-free-timer-expired', `booking-${ this.id }`);
+    },
+
+    /**
+     * Sets booking auto lock to 5 minutes.
+     */
+    *setAutoLock() {
+      queue.scheduler.add('booking-auto-lock', {
+        uid   : `booking-${ this.id }`,
+        timer : {
+          value : 5,
+          type  : 'minutes'
+        },
+        data  : {
+          bookingId : this.id
+        }
+      });
     }
 
   };

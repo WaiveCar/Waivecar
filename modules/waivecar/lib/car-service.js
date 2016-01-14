@@ -321,10 +321,9 @@ module.exports = class CarService extends Service {
       error.data   = 'NA';
       throw error;
     }
-
-    let payload = {};
-    payload[part] = `${ command }ed`;
-    let status = yield this.request(`/devices/${ id }/status`, 'PATCH', payload);
+    let payload    = {};
+    payload[part]  = `${ command }ed`;
+    let status     = yield this.request(`/devices/${ id }/status`, 'PATCH', payload);
     let updatedCar = this.transformDeviceToCar(id, status);
     return yield this.syncUpdate(id, updatedCar, existingCar, _user);
   }

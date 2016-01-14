@@ -13,6 +13,10 @@ Route.get('/bookings/:id',         [ 'isAuthenticated', 'BookingsController@show
 Route.put('/bookings/:id/:action', [ 'isAuthenticated', 'BookingsController@update' ]);
 Route.del('/bookings/:id',         [ 'isAuthenticated', 'BookingsController@cancel' ]);
 
+// ### Patches
+
+Route.put('/bookings/addressDetails', [ 'isAuthenticated', 'isAdmin', 'BookingsController@patchAddressDetails' ])
+
 // ### Problem Report
 
 Route.post('/reports', {

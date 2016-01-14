@@ -1,5 +1,6 @@
 'use strict';
 
+let request     = require('co-request');
 let Service     = require('./classes/service');
 let cars        = require('./car-service');
 let fees        = require('./fee-service');
@@ -250,15 +251,26 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
-    // ### Update Status & Remove Cancel Timer
+    // ### Start Booking
+    // 1. Delete the booking cancelation timer
+    // 2. Log the initial details of the booking and car details.
+    // 3. Start the free ride remind timer.
+    // 4. Update the booking status to 'started'.
+    // 5. Unlock the car and immobilizer.
 
-    yield booking.ready();
     yield booking.delCancelTimer();
+    yield this.logDetails('start', booking, car);
+
+    yield booking.setReminders(user, config.booking.timers);
+    yield booking.start();
+
     yield cars.unlockCar(car.id, _user);
+    yield cars.unlockImmobilzer(car.id, _user);
 
     // ### Notify
 
-    yield notify.notifyAdmins(`${ user.name() } readied their booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`, [ 'slack' ]);
+    yield notify.notifyAdmins(`${ _user.name() } started a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`, [ 'slack' ]);
+    yield notify.sendTextMessage(user, `Your WaiveCar rental has started! The first 2 hours are completely FREE! After that, it's $5.99 / hour. Make sure to return the car in Santa Monica, don't drain the battery under 20%, and keep within our driving borders to avoid any charges. Thanks for renting with WaiveCar!`);
 
     // ### Relay Update
 
@@ -273,6 +285,10 @@ module.exports = class BookingService extends Service {
    * @return {Object}
    */
   static *start(id, _user) {
+    /*
+    This no longer server any purpose and was moved up to the ready method, we keeping this method in place
+    so that the app doesn't hit any errors when attempting to call it.
+
     let booking = yield this.getBooking(id);
     let user    = yield this.getUser(booking.userId);
     let car     = yield this.getCar(booking.carId);
@@ -308,6 +324,7 @@ module.exports = class BookingService extends Service {
 
     car.relay('update');
     yield this.relay('update', id, _user);
+    */
   }
 
   /**
@@ -352,6 +369,11 @@ module.exports = class BookingService extends Service {
         message : `Immobilizing the engine failed.`
       }, 400);
     }
+
+    // ### Auto Lock
+    // Sets the car connected to the booking on a 5 minute auto lock timer.
+
+    yield booking.setAutoLock();
 
     // ### Reset Car
     // Remove the driver from the vehicle.
@@ -455,6 +477,18 @@ module.exports = class BookingService extends Service {
     yield this.relay('update', id, _user);
   }
 
+  /**
+   * Closes a booking, this method is run when no payment is needed.
+   * @param  {Number} id
+   * @param  {Object} _user
+   * @return {Void}
+   */
+  static *close(id, _user) {
+    let booking = yield this.getBooking(id);
+    yield booking.close();
+    yield this.relay('update', booking.id, _user);
+  }
+
   /*
    |--------------------------------------------------------------------------------
    | Delete Methods
@@ -511,6 +545,36 @@ module.exports = class BookingService extends Service {
     });
   }
 
+  /*
+   |--------------------------------------------------------------------------------
+   | Extras
+   |--------------------------------------------------------------------------------
+   |
+   | A list of extra methods helpfull for when you need to get some out of the
+   | ordinary work done.
+   |
+   */
+
+   /**
+    * Updates all details with missing address stamps.
+    * @return {Void}
+    */
+  static *patchAddressDetails() {
+    let list = yield BookingDetails.find({
+      where : {
+        address : null
+      }
+    });
+    for (let i = 0, len = list.length; i < len; i++) {
+      let details = list[i];
+      if (!details.address) {
+        yield details.update({
+          address : yield getAddress(details.latitude, details.longitude)
+        });
+      }
+    }
+  }
+
   // ### HELPERS
 
   static *relay(type, id, _user) {
@@ -536,10 +600,27 @@ module.exports = class BookingService extends Service {
       time      : new Date(),
       latitude  : car.latitude,
       longitude : car.longitude,
+      address   : yield this.getAddress(car.latitude, car.longitude),
       mileage   : car.totalMileage,
       charge    : car.charge
     });
     yield details.save();
+  }
+
+  /**
+   * Fetches an address from the provided lat long coordinates.
+   * @param  {Number} lat
+   * @param  {Number} long
+   * @return {String}
+   */
+  static *getAddress(lat, long) {
+    let res = yield request(`http://maps.googleapis.com/maps/api/geocode/json`, {
+      qs : {
+        latlng : `${ lat },${ long }`
+      }
+    });
+    let body = JSON.parse(res.body);
+    return body.results.length ? body.results[0].formatted_address : null;
   }
 
 };
