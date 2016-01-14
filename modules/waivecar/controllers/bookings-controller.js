@@ -53,6 +53,14 @@ Bento.Register.Controller('BookingsController', function(controller) {
   };
 
   /**
+   * Updates all the details missing their addresses.
+   * @yield {[type]} [description]
+   */
+  controller.patchAddressDetails = function *() {
+    return yield booking.patchAddressDetails();
+  };
+
+  /**
    * Cancels a booking.
    * @param  {Number} id
    * @return {Object}
