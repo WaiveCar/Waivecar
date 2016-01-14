@@ -70,7 +70,7 @@ module.exports = class RideDetails extends React.Component {
                     Ride Duration<br/>
                     <strong>
                     {
-                      ride.duration.hours ? `${ ride.duration.hours } hour${ ride.duration.hours !== 1 ? 's' : '' }` : ''
+                      ride.duration.hours ? `${ ride.duration.hours } hour${ ride.duration.hours !== 1 ? 's ' : ' ' }` : ''
                     }
                     {
                       `${ ride.duration.minutes } minute${ ride.duration.minutes !== 1 ? 's' : '' }`
@@ -79,7 +79,7 @@ module.exports = class RideDetails extends React.Component {
                   </div>
                   <div>
                     Distance Traveled<br/>
-                    <strong>{ (ride.end.mileage - ride.start.mileage) * 0.621371192 } miles</strong>
+                    <strong>{ parseFloat(Math.round(((ride.end.mileage - ride.start.mileage) * 0.621371192) * 100) / 100).toFixed(2) } miles</strong>
                   </div>
                 </div>
               </div>

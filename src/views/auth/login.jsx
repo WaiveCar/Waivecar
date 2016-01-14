@@ -63,6 +63,12 @@ class LoginView extends React.Component {
 
         if (remember) {
           api.get('/auth/remember', (error) => {
+            if (error) {
+              return snackbar.notify({
+                type    : 'danger',
+                message : error.message
+              });
+            }
             this.history.pushState(null, '/profile');
           });
         } else {
