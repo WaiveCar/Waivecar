@@ -292,7 +292,7 @@ module.exports = [
     .state('bookings-active', {
       url: '/bookings/:id/active',
       templateUrl: '/templates/bookings/active.html',
-      controller: 'BookingController as ctrl',
+      controller: 'ActiveBookingController as ctrl',
       data: {
         auth: true
       }

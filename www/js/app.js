@@ -65,6 +65,7 @@ app.run(setup.run);
 // Controllers
 require('./controllers/application-controller');
 require('./controllers/auth-controller');
+require('./controllers/active-booking-controller');
 require('./controllers/booking-controller');
 require('./controllers/booking-in-progress-controller');
 require('./controllers/booking-prepare-controller');
