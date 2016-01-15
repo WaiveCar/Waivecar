@@ -245,9 +245,6 @@ module.exports = [
           auth: true
         },
         resolve: {
-          // status: ['BookingService', '$stateParams', function(BookingService, $stateParams){
-          //   return BookingService.getCurrentStatus($stateParams.id);
-          // }],
           car: ['$data', '$stateParams', function ($data, $stateParams) {
             return $data.resources.cars.get({id: $stateParams.id}).$promise;
           }]

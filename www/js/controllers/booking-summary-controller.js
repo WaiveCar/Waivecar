@@ -15,7 +15,7 @@ module.exports = angular.module('app.controllers').controller('BookingSummaryCon
   function ($state, $auth, $data, $message) {
 
     this.init = function () {
-      $data.resources.Booking.get({ id: $state.params.id }).$promise.then(function(booking) {
+      $data.resources.bookings.get({ id: $state.params.id }).$promise.then(function(booking) {
         this.booking = booking;
         this.start = booking.details[0];
         this.end = booking.details[0];
