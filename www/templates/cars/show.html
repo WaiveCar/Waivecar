@@ -34,7 +34,7 @@
 
   <ion-footer-bar class="no-padding">
     <div class="button-bar">
-      <button type="button" class="button button-balanced" ng-click="ctrl.book()">Book WaiveCar</button>
+      <button type="button" class="button button-balanced" ng-click="ctrl.book()" ng-disabled="!ctrl.car.isAvailable">Book WaiveCar</button>
     </div>
   </ion-footer-bar>
 
