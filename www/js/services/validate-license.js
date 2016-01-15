@@ -1,5 +1,6 @@
 'use strict';
 var angular = require('angular');
+var _ = require('lodash');
 
 function LicenseValidationService ($injector) {
   var $data = $injector.get('$data');
@@ -8,12 +9,37 @@ function LicenseValidationService ($injector) {
   var $modal = $injector.get('$modal');
   var $interval = $injector.get('$interval');
   var $ionicHistory = $injector.get('$ionicHistory');
+  var $distance = $injector.get('$distance');
 
   var polling;
+  var maxDistance = 30; // at least one car should be less than 30 miles away
 
   function validate (license) {
-    return checkLicense(license)
+    return $data.fetch('cars')
+      .then(function (instances) {
+        var carInRange = _(instances).find(function (car) {
+          var distance = $distance(car);
+          return _.isFinite(distance) && distance < maxDistance;
+        });
+        if (carInRange == null) {
+          return $q.reject({code: 'NO_RANGE'});
+        }
+      })
+      .then(function () {
+        return checkLicense(license);
+      })
       .catch(function (reason) {
+        if (reason && reason.code === 'NO_RANGE') {
+          var modal;
+          $modal('simple-modal', {
+            title: 'Bummer',
+            message: 'We can only validate your license when you\'re close to a WaiveCar. Check back when you are in the area.'
+          }).then(function (_modal) {
+            modal = _modal;
+            modal.show();
+          });
+          return $q.reject(reason);
+        }
         if (reason && reason.code !== 'VALIDATE') {
           return handleRejection(reason);
         }
