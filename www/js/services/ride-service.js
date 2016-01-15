@@ -207,36 +207,37 @@ module.exports = angular.module('app.services').factory('$ride', [
     };
 
     service.init = function() {
-      console.log('$ride : init');
       service.setState();
-      $data.initialize('bookings').then(function() {
-        if ($data.instances.bookings.length > 0) {
-          var current = _.find($data.instances.bookings, function(b) {
-            return b.userId === $auth.me.id &&
-              !_.contains([ 'cancelled', 'completed', 'closed' ], b.status);
+      $data.initialize('bookings').then(function(bookings) {
+        var current = _(bookings)
+          .filter({userId: $auth.me.id})
+          .find(function (b) {
+              return !_.contains([ 'cancelled', 'completed', 'closed' ], b.status);
           });
-          if (current) {
-            service.setBooking(current.id);
-            $data.activate('bookings', current.id).then(function() {
-              $data.activate('cars', current.carId).then(function() {
-                service.isInitialized = true;
-                service.setCheck();
-                if (current.status === 'reserved' && $state.current.name !== 'bookings-active') {
-                  $state.go('bookings-active', { id: current.id });
-                } else if (current.status === 'ready' && $state.current.name !== 'start-ride') {
-                  $state.go('start-ride', { id: current.id });
-                } else if (current.status === 'started' && $state.current.name !== 'dashboard') {
-                  $state.go('dashboard', { id: current.id });
-                } else if (current.status === 'ended' && $state.current.name !== 'end-ride') {
-                  $state.go('end-ride', { id: current.id });
-                }
-              });
-            });
-          } else {
-            $state.go('cars');
-            service.isInitialized = true;
-          }
+
+        console.log('$ride : init. current: %O', current);
+
+        if (current == null) {
+          $state.go('cars');
+          service.isInitialized = true;
+          return;
         }
+        service.setBooking(current.id);
+        $data.activate('bookings', current.id).then(function() {
+          $data.activate('cars', current.carId).then(function() {
+            service.isInitialized = true;
+            service.setCheck();
+            if (current.status === 'reserved' && $state.current.name !== 'bookings-active') {
+              $state.go('bookings-active', { id: current.id });
+            } else if (current.status === 'ready' && $state.current.name !== 'start-ride') {
+              $state.go('start-ride', { id: current.id });
+            } else if (current.status === 'started' && $state.current.name !== 'dashboard') {
+              $state.go('dashboard', { id: current.id });
+            } else if (current.status === 'ended' && $state.current.name !== 'end-ride') {
+              $state.go('end-ride', { id: current.id });
+            }
+          });
+        });
       });
     };
 
