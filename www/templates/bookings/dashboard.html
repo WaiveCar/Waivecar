@@ -16,16 +16,16 @@
       </div>
       <div class="info-header-item">
         <ng-include src="'/img/clock-grey-icon.svg'"></ng-include>
-        {{ timeLeft }}
+        {{ ctrl.timeLeft }}
       </div>
     </div>
     <skobbler-map
       id="map"
       zoom="16"
-      markers="cache.locations"
-      on-marker-tap="openPopover"
+      markers="ctrl.locations"
+      on-marker-tap="ctrl.openPopover"
       update-location
-      featured="featured"
+      featured="ctrl.featured"
     ></skobbler-map>
   </ion-content>
   <ion-footer-bar class="no-padding">
@@ -35,18 +35,18 @@
       <button type="button" class="button button-dark" ng-click="ctrl.endRide(data.cars.id, data.bookings.id)">End Ride</button>
     </div>
   </ion-footer-bar>
-  <div class="item-popover" ng-show="showItem">
+  <div class="item-popover" ng-if="ctrl.selectedItem">
     <div class="item-popover-content">
       <div class="row">
         <div class="col col-33">
-          <div class="item-type">{{ selectedItem.type.charAt(0).toUpperCase() }}</div>
+          <div class="item-type">{{ ctrl.selectedItem.type.charAt(0).toUpperCase() }}</div>
         </div>
         <div class="col">
-          <h1>{{ selectedItem.name }}</h1>
-          <h2>{{ selectedItem.description }}</h2>
+          <h1>{{ ctrl.selectedItem.name }}</h1>
+          <h2>{{ ctrl.selectedItem.description }}</h2>
         </div>
       </div>
     </div>
-    <button type="button" class="button button-balanced button-block" ng-click="closePopover()">Close</button>
+    <button type="button" class="button button-balanced button-block" ng-click="ctrl.closePopover()">Close</button>
   </div>
 </ion-view>

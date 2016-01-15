@@ -5,13 +5,13 @@
         <div class="lead-logo">
           <ng-include class="logo-image" src="'/img/waivecar-mark2.svg'" />
         </div>
-        <div ng-if="showVideo" class="padding video-container">
+        <div ng-if="ctrl.showVideo" class="padding video-container">
           <iframe src="https://www.youtube.com/embed/w8rl3fl1St8" frameborder="0" allowfullscreen></iframe>
           <br />
           <br />
-          <button type="button" class="margin-20 button button-block button-balanced" ng-click="toggleVideo()">Got It</button>
+          <button type="button" class="margin-20 button button-block button-balanced" ng-click="ctrl.toggleVideo()">Got It</button>
         </div>
-        <div ng-if="!showVideo">
+        <div ng-if="!ctrl.showVideo">
           <div>
             <h3>ARE YOU READY</h3>
             <p>Please confirm that you:</p>
@@ -21,7 +21,7 @@
               <li>3. The WaiveCar is problem free.</li>
             </ul>
             <p class="text-center padding-vertical">When you are ready, tap on "Continue" and start the car normally. Enjoy your ride!</p>
-            <button type="button" class="button button-block button-balanced" ng-class="{ 'disabled' : data.bookings.status !== 'ready' }" ng-click="ctrl.start()">Continue</button>
+            <button type="button" class="button button-block button-balanced" ng-disabled="data.bookings.status !== 'started'" ng-click="ctrl.start()">Continue</button>
           </div>
         </div>
       </div>
@@ -30,7 +30,7 @@
   <ion-footer-bar class="no-padding">
     <div class="text-center footer-full">
       <p class="text-center">
-        If you need help, please watch our <a class="text-underline" href="" ng-click="toggleVideo()">video tutorial</a>.
+        If you need help, please watch our <a class="text-underline" href="" ng-click="ctrl.toggleVideo()">video tutorial</a>.
         <br />
         If you have a problem, please <a class="text-underline" ui-sref="problem">report the problem</a>.
       </p>

@@ -310,7 +310,7 @@ module.exports = [
     .state('dashboard', {
       url: '/bookings/:id/dashboard',
       templateUrl: '/templates/bookings/dashboard.html',
-      controller: 'BookingController as ctrl',
+      controller: 'DashboardController as ctrl',
       data: {
         auth: true
       }

@@ -39,6 +39,14 @@ function directive ($rootScope, MapsLoader, RouteService, $q, $timeout) {
         $scope.$watch('map.markers', ctrl.setMarkers.bind(ctrl), true),
         $scope.$watch('map.routeStart', ctrl.drawRoute.bind(ctrl), true),
         $scope.$watch('map.routeDestiny', ctrl.drawRoute.bind(ctrl), true),
+        $scope.$watch('map.featured', function (value, oldValue) {
+          if (!Array.isArray(value)) {
+            return false;
+          }
+          if (oldValue == null || value.length !== oldValue.length) {
+            ctrl.fitBounds();
+          }
+        }, true),
         $rootScope.$watch('currentLocation', ctrl.setCurrentLocation.bind(ctrl), true)
       ];
       $scope.$on('$destroy', function () {
