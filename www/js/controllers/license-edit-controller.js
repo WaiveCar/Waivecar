@@ -39,11 +39,19 @@ function LicenseEditController ($injector, licenses, $scope) {
     return this.license.$save();
   };
 
+  var validating;
   this.validate = function validate () {
+    if (validating) {
+      return null;
+    }
+    validating = true;
     $scope.$on('$destroy', function () {
       $validateLicense.cancelPolling();
     });
-    return $validateLicense.validate(this.license);
+    return $validateLicense.validate(this.license)
+      .finally(function () {
+        validating = false;
+      });
   };
 }
 
