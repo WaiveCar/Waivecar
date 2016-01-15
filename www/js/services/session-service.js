@@ -58,7 +58,8 @@ function session ($rootScope, $window) {
       delete $window.localStorage[key];
     } else {
       this.data = {};
-      $window.localStorage.clear();
+      $window.localStorage.removeItem('auth');
+      $window.localStorage.removeItem('me');
     }
 
     return this;
