@@ -3,7 +3,10 @@ var angular = require('angular');
 var moment = require('moment');
 var _ = require('lodash');
 
+require('../services/progress-service');
+
 function DashboardController ($scope, $rootScope, $injector) {
+  var $q = $injector.get('$q');
   var $ride = $injector.get('$ride');
   var $data = $injector.get('$data');
   var $distance = $injector.get('$distance');
@@ -11,6 +14,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   var $message = $injector.get('$message');
   var $state = $injector.get('$state');
   var $timeout = $injector.get('$timeout');
+  var $progress = $injector.get('$progress');
 
   // $data is used to interact with models, never directly. If direct is required, $data should be refreshed.
   $scope.data = $data.active;
@@ -23,16 +27,15 @@ function DashboardController ($scope, $rootScope, $injector) {
       return;
     }
     rideServiceReady();
-    this.featured = featured(this.locations);
 
+    this.featured = featured(this.locations);
     var booking = $data.active.bookings;
 
-    if (booking == null) {
+    if (!(booking && booking.status === 'started')) {
+      $state.go('cars');
       return;
     }
-    if (booking.status === 'started') {
-      this.timeLeft = moment(booking.updatedAt).add(90, 'm').toNow(true);
-    }
+    this.timeLeft = moment(booking.updatedAt).add(90, 'm').toNow(true);
   }.bind(this));
 
   this.openPopover = function(item) {
@@ -49,9 +52,18 @@ function DashboardController ($scope, $rootScope, $injector) {
     return true;
   }.bind(this);
 
+  var locking;
   this.lockCar = function (id) {
+    if (locking === true) {
+      return;
+    }
+    locking = true;
     $ride.lockCar(id)
+      .then(function () {
+        locking = false;
+      })
       .catch(function (reason) {
+        locking = false;
         if (reason && reason.code === 'IGNITION_ON') {
           showIngitionOnModal();
           return;
@@ -60,9 +72,22 @@ function DashboardController ($scope, $rootScope, $injector) {
       });
   };
 
+  var ending;
   this.endRide = function (carId, bookingId) {
+    if (ending === true) {
+      return null;
+    }
+    ending = true;
+    $progress.showSimple(true);
     return $ride.isCarOn(carId)
+      .catch(function (reason) {
+        ending = false;
+        $progress.hide();
+        return $q.reject(reason);
+      })
       .then(function (isCarOn) {
+        ending = false;
+        $progress.hide();
         if (isCarOn) {
           showIngitionOnModal();
           return;
