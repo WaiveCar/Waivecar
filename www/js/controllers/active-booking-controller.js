@@ -58,7 +58,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       if (value == null) {
         return;
       }
-      var distance = $distance.getDistance($data.active.cars);
+      var distance = $distance($data.active.cars);
       if (_.isFinite(distance)) {
         // convert miles to yards
         $scope.distance = distance * 1760;

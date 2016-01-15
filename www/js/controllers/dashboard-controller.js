@@ -100,7 +100,7 @@ function DashboardController ($scope, $rootScope, $injector) {
     return _(items)
       .sortBy(function (item) {
         if ($rootScope.currentLocation) {
-          return $distance.getDistance(item);
+          return $distance(item);
         }
         return item.id;
       })

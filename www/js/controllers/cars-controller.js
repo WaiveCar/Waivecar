@@ -72,11 +72,13 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
         return;
     }
 
-    this.closest = $distance.closest(this.all);
-    console.log('closest car at %d miles', this.closest);
-    // check for max miles
-    // TODO don't hardcode this
-    if (this.closest > 30 || isNaN(this.closest)) {
+    var maxDistance = 30; // at least one car should be less than 30 miles away
+    var carInRange = _(this.all).find(function (car) {
+      var distance = $distance(car);
+      return _.isFinite(distance) && distance < maxDistance;
+    });
+
+    if (carInRange == null) {
       if (modal && modal.isShown()) {
         return;
       }
@@ -110,7 +112,7 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
       .filter('isAvailable')
       .sortBy(function (item) {
         if ($rootScope.currentLocation) {
-          return $distance.getDistance(item);
+          return $distance(item);
         }
         return item.id;
       })
@@ -138,7 +140,7 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
       });
       return true;
     }
-    var distance = $distance.getDistance(car);
+    var distance = $distance(car);
     if (distance > 10) {
       var farModal;
       $modal('result', {
@@ -170,4 +172,3 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
     }
   });
 }
-

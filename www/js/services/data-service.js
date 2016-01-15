@@ -63,16 +63,14 @@ module.exports = angular.module('app.services').factory('$data', [
       },
 
       fetch: function (modelName) {
-        return $q(function (resolve, reject) {
-
-          service.resources[modelName].query().$promise
-            .then(function (items) {
-              service.mergeAll(modelName, items);
-              resolve(service.instances[modelName]);
-            })
-            .catch(reject);
-
-        });
+        if (service.resources[modelName] == null) {
+          return $q.reject('Model ' + modelName + ' unknown');
+        }
+        return service.resources[modelName].query().$promise
+          .then(function (items) {
+            service.mergeAll(modelName, items);
+            return service.instances[modelName];
+          });
       },
 
       create: function (modelName, data) {
