@@ -138,50 +138,5 @@
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.4.0"
-  },
-  "cordovaPlugins": [
-    "ionic-plugin-keyboard",
-    "cordova-plugin-statusbar",
-    {
-      "locator": "https://github.com/EddyVerbruggen/Toast-PhoneGap-Plugin.git",
-      "id": "cordova-plugin-x-toast"
-    },
-    "cordova-plugin-camera",
-    "cordova-plugin-console",
-    "cordova-plugin-device",
-    "cordova-plugin-file",
-    "cordova-plugin-file-transfer",
-    "cordova-plugin-geolocation",
-    {
-      "id": "cordova-plugin-customurlscheme",
-      "locator": "https://github.com/EddyVerbruggen/LaunchMyApp-PhoneGap-Plugin.git",
-      "variables": {
-        "URL_SCHEME": "WaiveCar"
-      }
-    },
-    "cordova-plugin-whitelist",
-    "cordova-plugin-inappbrowser",
-    {
-      "id": "cordova-plugin-facebook4",
-      "locator": "https://github.com/jeduan/cordova-plugin-facebook4.git",
-      "variables": {
-        "APP_ID": "1022704731082512",
-        "APP_NAME": "WaiveCar"
-      }
-    }
-  ],
-  "cordovaPlatforms": [
-    "ios",
-    "android",
-    {
-      "platform": "android",
-      "version": "",
-      "locator": "android"
-    },
-    {
-      "platform": "ios",
-      "version": "",
-      "locator": "ios"
-    }
-  ]
+  }
 }

@@ -7,10 +7,8 @@
     <name>WaiveCar</name>
     <description>WaiveCar Mobile Application</description>
     <author email="info@waivecar.com" href="http://waivecar.com/">WaiveCar</author>
-
     <content src="index.html" />
     <access origin="*" subdomains="true" />
-
     <preference name="webviewbounce" value="false" />
     <preference name="UIWebViewBounce" value="false" />
     <preference name="DisallowOverscroll" value="true" />
@@ -22,7 +20,6 @@
     <preference name="xwalkVersion" value="14+" />
     <preference name="xwalkCommandLine" value="--disable-pull-to-refresh-effect" />
     <preference name="xwalkMode" value="embedded" />
-
     <platform name="android">
         <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />
         <icon density="mdpi" src="resources/android/icon/drawable-mdpi-icon.png" />
@@ -43,7 +40,6 @@
         <splash density="port-xxhdpi" src="resources/android/splash/drawable-port-xxhdpi-screen.png" />
         <splash density="port-xxxhdpi" src="resources/android/splash/drawable-port-xxxhdpi-screen.png" />
     </platform>
-
     <platform name="ios">
         <icon height="57" src="resources/ios/icon/icon.png" width="57" />
         <icon height="114" src="resources/ios/icon/icon@2x.png" width="114" />
@@ -72,18 +68,23 @@
         <splash height="960" src="resources/ios/splash/Default@2x~iphone.png" width="640" />
         <splash height="480" src="resources/ios/splash/Default~iphone.png" width="320" />
     </platform>
-
-    <plugin name="ionic-plugin-keyboard" spec="~1.0.7" />
-    <plugin name="cordova-plugin-statusbar" spec="~1.0.1" />
-    <plugin name="cordova-plugin-x-toast" spec="https://github.com/EddyVerbruggen/Toast-PhoneGap-Plugin.git" />
-    <plugin name="cordova-plugin-facebook4" spec="https://github.com/jeduan/cordova-plugin-facebook4.git">
-      <variable name="APP_ID" value="1022704731082512" />
-      <variable name="APP_NAME" value="WaiveCar" />
-    </plugin>
-
     <allow-navigation href="*" />
     <allow-navigation href="http://*/*" />
     <allow-navigation href="https://*/*" />
     <allow-navigation href="data:*" />
-
+    <plugin name="ionic-plugin-keyboard" spec="~1.0.7" />
+    <plugin name="cordova-plugin-statusbar" spec="~1.0.1" />
+    <plugin name="cordova-plugin-x-toast" spec="https://github.com/EddyVerbruggen/Toast-PhoneGap-Plugin.git" />
+    <plugin name="cordova-plugin-facebook4" spec="https://github.com/jeduan/cordova-plugin-facebook4.git">
+        <variable name="APP_ID" value="1022704731082512" />
+        <variable name="APP_NAME" value="WaiveCar" />
+    </plugin>
+    <plugin name="cordova-plugin-camera" spec="~1.2.0" />
+    <plugin name="cordova-plugin-console" spec="~1.0.2" />
+    <plugin name="cordova-plugin-device" spec="~1.1.0" />
+    <plugin name="cordova-plugin-file-transfer" spec="~1.4.0" />
+    <plugin name="cordova-plugin-geolocation" spec="~1.0.1" />
+    <plugin name="cordova-plugin-whitelist" spec="~1.2.0" />
+    <plugin name="cordova-plugin-inappbrowser" spec="~1.1.1" />
+    <plugin name="org.pbernasconi.progressindicator" spec="~1.1.0" />
 </widget>
