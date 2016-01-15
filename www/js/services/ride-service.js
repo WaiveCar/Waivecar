@@ -212,7 +212,7 @@ module.exports = angular.module('app.services').factory('$ride', [
         var current = _(bookings)
           .filter({userId: $auth.me.id})
           .find(function (b) {
-              return !_.contains([ 'cancelled', 'completed', 'closed' ], b.status);
+              return !_.contains([ 'cancelled', 'completed', 'closed', 'ended' ], b.status);
           });
 
         console.log('$ride : init. current: %O', current);
