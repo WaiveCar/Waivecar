@@ -285,6 +285,9 @@ module.exports = class BookingService extends Service {
    * @return {Object}
    */
   static *start(id, _user) {
+    let booking = yield this.getBooking(id);
+    let user    = yield this.getUser(booking.userId);
+    this.hasAccess(user, _user);
     yield booking.start();
     /*
     This no longer server any purpose and was moved up to the ready method, we keeping this method in place
