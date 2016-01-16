@@ -289,6 +289,7 @@ module.exports = class BookingService extends Service {
     let user    = yield this.getUser(booking.userId);
     this.hasAccess(user, _user);
     yield booking.start();
+    yield this.relay('update', id, _user);
     /*
     This no longer server any purpose and was moved up to the ready method, we keeping this method in place
     so that the app doesn't hit any errors when attempting to call it.
