@@ -21,7 +21,7 @@
               <li>3. The WaiveCar is problem free.</li>
             </ul>
             <p class="text-center padding-vertical">When you are ready, tap on "Continue" and start the car normally. Enjoy your ride!</p>
-            <button type="button" class="button button-block button-balanced" ng-disabled="data.bookings.status !== 'started'" ng-click="ctrl.start()">Continue</button>
+            <button type="button" class="button button-block button-balanced" ng-disabled="!(data.bookings.status === 'started' || data.bookings.status === 'ready')" ng-click="ctrl.start()">Continue</button>
           </div>
         </div>
       </div>
