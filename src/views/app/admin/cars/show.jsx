@@ -47,10 +47,8 @@ class CarsShowView extends React.Component {
     this.service.setCar(this.id());
   }
 
-  componentWillUpdate() {
-  }
-
   componentWillUnmount() {
+    relay.unsubscribe(this, 'cars');
   }
 
   /**
@@ -71,13 +69,9 @@ class CarsShowView extends React.Component {
   renderCarMedia(car) {
     return (
       <div className="box">
-        <h3>{ car.license }</h3>
         <div className="container-fluid">
           <div className="row">
-            <div className="col-md-6 hidden-xs-down">
-              <img style={{ width : '100%' }} src="/images/cars/chevy_spark.png" />
-            </div>
-            <div className="col-md-6 col-xs-12">
+            <div className="col-xs-12">
               <div className="ride-map">
                 <Map
                   markerIcon = { '/images/map/active-waivecar.svg' }
@@ -316,9 +310,9 @@ class CarsShowView extends React.Component {
 
     return (
       <div className="cars cars-show">
-        { this.renderCarMedia(car) }
         { this.renderCarForm(car) }
         { this.renderCarActions(car) }
+        { this.renderCarMedia(car) }
         { this.renderCarIndicators(car) }
         { this.renderLastUpdate(car) }
       </div>
