@@ -88,7 +88,7 @@ class UIMap extends React.Component {
           markers          = { markers }
           includeUser      = { this.props.includeUser }
           markerHandlerKey = { this.props.key }
-          markerIcon       = { '/images/admin/map-icon-waivecar.svg' }
+          markerIcon       = { '/images/map/active-waivecar.svg' }
           markerHandler    = { handler }
         />
       </div>

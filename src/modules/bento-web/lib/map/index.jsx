@@ -2,6 +2,27 @@ import { api } from 'bento';
 import React   from 'react';
 import config  from 'config';
 
+let icons = [
+  'WAIVE1',
+  'WAIVE2',
+  'WAIVE3',
+  'WAIVE4',
+  'WAIVE5',
+  'WAIVE6',
+  'WAIVE7',
+  'WAIVE8',
+  'WAIVE9',
+  'WAIVE10',
+  'WAIVE11',
+  'valet',
+  'station',
+  'homebase',
+  'car-available',
+  'user-location',
+  'start',
+  'end'
+];
+
 module.exports = class Map extends React.Component {
 
   /**
@@ -193,10 +214,9 @@ module.exports = class Map extends React.Component {
    * @return {Object}
    */
   getMarkerIcon(name) {
-    let hasImage = [ 'WAIVE1', 'WAIVE2', 'WAIVE3', 'WAIVE4', 'WAIVE5', 'WAIVE6', 'WAIVE7', 'WAIVE8', 'WAIVE9', 'WAIVE10', 'WAIVE11' ];
     return L.icon({
-      iconUrl       : hasImage.indexOf(name) !== -1 ? `/images/map/icon-${ name }.svg` : `/images/map/icon-start.svg`,
-      iconRetinaUrl : hasImage.indexOf(name) !== -1 ? `/images/map/icon-${ name }.svg` : `/images/map/icon-start.svg`,
+      iconUrl       : name && icons.indexOf(name) !== -1 ? `/images/map/icon-${ name }.svg` : this.props.markerIcon,
+      iconRetinaUrl : name && icons.indexOf(name) !== -1 ? `/images/map/icon-${ name }.svg` : this.props.markerIcon,
       iconSize      : [ 16, 20 ],
       iconAnchor    : [ 16, 20 ],
       popupAnchor   : [ 0 , 0 ]
