@@ -387,9 +387,7 @@ module.exports = class BookingService extends Service {
 
     // ### Booking Details
 
-    if (booking.status === 'started') {
-      yield this.logDetails('end', booking, car);
-    }
+    yield this.logDetails('end', booking, car);
 
     // ### Create Order
     // Create a shop cart with automated fees.
