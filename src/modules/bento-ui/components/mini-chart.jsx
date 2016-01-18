@@ -28,7 +28,7 @@ class UIMiniChart extends React.Component {
         message : `MiniChart component is missing ${ this.resourceName() }`
       });
     }
-    api.get(index.uri, (err, data) => {
+    api.get(index.uri, { limit : 0 }, (err, data) => {
       if (err) {
         return snackbar.notify({
           type    : 'danger',

@@ -193,9 +193,10 @@ module.exports = class Map extends React.Component {
    * @return {Object}
    */
   getMarkerIcon(name) {
+    let hasImage = [ 'WAIVE1', 'WAIVE2', 'WAIVE3', 'WAIVE4', 'WAIVE5', 'WAIVE6', 'WAIVE7', 'WAIVE8', 'WAIVE9', 'WAIVE10', 'WAIVE11' ];
     return L.icon({
-      iconUrl       : name ? `/images/map/icon-${ name }.svg` : this.props.markerIcon,
-      iconRetinaUrl : name ? `/images/map/icon-${ name }.svg` : this.props.markerIcon,
+      iconUrl       : hasImage.indexOf(name) !== -1 ? `/images/map/icon-${ name }.svg` : `/images/map/icon-start.svg`,
+      iconRetinaUrl : hasImage.indexOf(name) !== -1 ? `/images/map/icon-${ name }.svg` : `/images/map/icon-start.svg`,
       iconSize      : [ 16, 20 ],
       iconAnchor    : [ 16, 20 ],
       popupAnchor   : [ 0 , 0 ]
