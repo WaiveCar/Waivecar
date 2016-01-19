@@ -58,17 +58,25 @@ module.exports = {
   *update(id, payload, _user) {
     access.verifyAdmin(_user);
 
-    let model  = yield Car.findById(id);
+    let car = yield Car.findById(id);
+    if (!car) {
+      throw error.parse({
+        code    : 'CAR_SERIVCE_NOT_FOUND',
+        message : 'The car has not been registered in our database.',
+        data    : {
+          id : id
+        }
+      }, 404);
+    }
     let device = yield this.getDevice(car.id, _user);
 
-    yield model.update(Object.assign(device, payload));
-
+    yield car.update(Object.assign(device, payload));
     relay.emit('cars', {
       type : 'update',
-      data : model.toJSON()
+      data : car.toJSON()
     });
 
-    return model;
+    return car;
   },
 
   /**
