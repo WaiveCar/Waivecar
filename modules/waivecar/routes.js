@@ -31,7 +31,6 @@ Route.get('/reports', [ 'isAuthenticated', 'ReportsController@index' ]);
 
 Route.get('/cars',              [ 'CarsController@index' ]);
 Route.get('/cars/:id',          [ 'CarsController@show' ]);
-Route.get('/cars/:id/status',   [ 'isAuthenticated', 'CarsController@status' ]);
 Route.get('/cars/:id/events',   [ 'isAuthenticated', 'CarsController@events' ]);
 Route.put('/cars/:id/:command', [ 'isAuthenticated', 'CarsController@command' ]);
 Route.put('/cars/:id',          [ 'isAuthenticated', 'CarsController@update' ]);

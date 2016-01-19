@@ -4,18 +4,23 @@ let co          = require('co');
 let parallel    = require('co-parallel');
 let request     = require('co-request');
 let moment      = require('moment');
+let notify      = require('./notification-service');
+let Service     = require('./classes/service');
 let queue       = Bento.provider('queue');
 let queryParser = Bento.provider('sequelize/helpers').query;
-let User        = Bento.model('User');
-let Car         = Bento.model('Car');
 let changeCase  = Bento.Helpers.Case;
+let access      = Bento.Access;
 let error       = Bento.Error;
 let relay       = Bento.Relay;
-let config      = Bento.config.waivecar;
 let log         = Bento.Log;
-let Service     = require('./classes/service');
+let config      = Bento.config.waivecar;
 
-module.exports = class CarService extends Service {
+// ### Models
+
+let User = Bento.model('User');
+let Car  = Bento.model('Car');
+
+module.exports = {
 
   /**
    * Returns a list of cars from the local database.
@@ -24,7 +29,7 @@ module.exports = class CarService extends Service {
    * @param  {Object} _user
    * @return {Array}
    */
-  static *index(query, _user) {
+  *index(query, _user) {
     return yield Car.find(queryParser(query, {
       where : {
         id          : queryParser.STRING,
@@ -32,7 +37,7 @@ module.exports = class CarService extends Service {
         isAvailable : queryParser.BOOLEAN
       }
     }));
-  }
+  },
 
   /**
    * Returns a car based on provided id from the local database.
@@ -40,9 +45,9 @@ module.exports = class CarService extends Service {
    * @param  {Object} _user
    * @return {Object}
    */
-  static *show(id, _user) {
+  *show(id, _user) {
     return yield Car.findById(id);
-  }
+  },
 
   /**
    * @param  {Number} id
@@ -50,8 +55,8 @@ module.exports = class CarService extends Service {
    * @param  {Object} _user
    * @return {Mixed}
    */
-  static *update(id, payload, _user) {
-    this.hasAccess(_user);
+  *update(id, payload, _user) {
+    access.verifyAdmin(_user);
 
     let model  = yield Car.findById(id);
     let device = yield this.getDevice(car.id, _user);
@@ -64,16 +69,16 @@ module.exports = class CarService extends Service {
     });
 
     return model;
-  }
+  },
 
   /**
-   * @param  {Number} id
-   * @param  {Boolean}  isAvailable
-   * @param  {Object} _user
+   * @param  {Number}  id
+   * @param  {Boolean} isAvailable
+   * @param  {Object}  _user
    * @return {Mixed}
    */
-  static *updateAvailability(id, isAvailable, _user) {
-    this.hasAccess(_user);
+  *updateAvailability(id, isAvailable, _user) {
+    access.verifyAdmin(_user);
     let model = yield Car.findById(id);
     if (isAvailable) {
       yield model.available();
@@ -87,7 +92,21 @@ module.exports = class CarService extends Service {
     });
 
     return model;
-  }
+  },
+
+  /**
+   * Updates the local car with the remote fleet device.
+   * @param {String} deviceId
+   */
+  *refresh(deviceId) {
+    let updatedCar = yield this.getDevice(deviceId);
+    if (updatedCar) {
+      log.debug(`Cars : Refresh : updating ${ deviceId }.`);
+      return yield this.syncUpdate(deviceId, updatedCar);
+    } else {
+      log.debug(`Cars : Refresh : failed to retrieve ${ deviceId } to update database.`);
+    }
+  },
 
   /**
    * A convenience method to update the local Car (to enable pre-save model transformations)
@@ -97,7 +116,7 @@ module.exports = class CarService extends Service {
    * @param  {Object} _user       user (optional)
    * @return {Object}             updated Car
    */
-  static *syncUpdate(id, data, existingCar, _user) {
+  *syncUpdate(id, data, existingCar, _user) {
     if (!existingCar) {
       existingCar = yield Car.findById(id);
     }
@@ -109,127 +128,113 @@ module.exports = class CarService extends Service {
       }
     }
 
-    // Is car stationary?
-    if (data.currentSpeed === 0) { // data.distanceSinceLastRead === 0) {
-
-      // If the distance last read was also 0, the car is STILL stopped so dont treat this update as an update.
+    if (data.currentSpeed === 0) {
       if (existingCar.distanceSinceLastRead === 0) {
         delete data.positionUpdatedAt;
       }
-
-      // Only update position if its more accurate
-      // if (existingCar.locationQuality >= data.locationQuality) {
-      //   delete data.locationQuality;
-      //   delete data.latitude;
-      //   delete data.longitude;
-      //   delete data.calculatedSpeed;
-      // }
-
       data.isParked = (data.currentSpeed === 0) && (!data.isIgnitionOn);
     }
 
     yield existingCar.update(data);
 
-    // Alerts
-    // yield Notifications.sendToAdmins('car');
-
-    // Relay update to connected clients
     relay.emit('cars', {
       type : 'update',
       data : existingCar.toJSON()
     });
 
     return existingCar;
-  }
-
-  static *refresh(deviceId) {
-    let updatedCar = yield this.getDevice(deviceId);
-    if (updatedCar) {
-      log.debug(`Cars : Refresh : updating ${ deviceId }.`);
-      yield this.syncUpdate(deviceId, updatedCar);
-    } else {
-      log.debug(`Cars : Refresh : failed to retrieve ${ deviceId } to update database.`);
-    }
-  }
-
-  static *syncCar(device, cars, allCars) {
-    let existingCar = cars.find(c => c.id === device.id);
-    if (existingCar) {
-      let updatedCar = yield this.getDevice(device.id);
-      if (updatedCar) {
-        log.debug(`Cars : Sync : updating ${ device.id }.`);
-        yield this.syncUpdate(existingCar.id, updatedCar, existingCar);
-      } else {
-        log.debug(`Cars : Sync : failed to retrieve ${ device.id } to update database.`);
-      }
-    } else {
-      // If Device does not match any Car then add it to the database.
-      let excludedCar = allCars.find(c => c.id === device.id);
-      if (!excludedCar) {
-        let isMockCar = [ 'EE000017DC652701', 'C0000017DC247801' ].indexOf(device.id) > -1;
-        if (!config.mock.cars && isMockCar) {
-          // this is a dev kit, ignore update.
-          log.debug(`Cars : Sync : skipping DevKit ${ device.id }.`);
-        } else  {
-          let newCar = yield this.getDevice(device.id);
-          if (newCar) {
-            let car = new Car(newCar);
-            let meta = config.car.meta[car.id];
-            if (meta) {
-              car.license = meta.license;
-            }
-
-            log.debug(`Cars : Sync : adding ${ device.id }.`);
-            yield car.upsert();
-          } else {
-            log.debug(`Cars : Sync : failed to retrieve ${ device.id } to add to database.`);
-          }
-        }
-      } else {
-        // If Device was found in database but not in our filtered list, ignore.
-        log.debug(`Cars : Sync : skipping ${ device.id }.`);
-      }
-    }
-  }
+  },
 
   /**
-   * [syncCars description]
-   * @param  {Integer}  refreshAfter How many minutes can a Car go without being resynced (defaults to 15).
-   * @return {Array}    all cars.
+   * Does sync operations against all cars in the invers fleet.
+   * @return {Array}
    */
-  static *syncCars() {
+  *syncCars() {
     log.debug('CarService : syncCars : start');
     let refreshAfter = config.car.staleLimit || 15;
 
     // Retrieve all local cars.
+
     let allCars = yield Car.find();
 
     // Filter cars to include either:
     // 1. car is currently in a booking (i.e. not available), or
     // 2. car has never been updated, or
     // 3. car has not been updated for more than [refreshAfter] minutes.
+
     let stale = moment().subtract(refreshAfter, 'minutes');
-    let cars = allCars.filter((c) => {
+    let cars  = allCars.filter((c) => {
       return !c.isAvailable || !c.updatedAt || moment(c.updatedAt).isBefore(stale);
     });
 
     // If cars exist but no updates are required, return
+
     if (allCars.length > 8 && cars.length === 0) {
       log.debug('Cars : Sync : No cars to be synced.');
       return;
     }
 
     // Retrieve all Active Devices from Invers and loop.
+
     log.debug(`Cars : Sync : retrieving device list from Cloudboxx.`);
     let devices = yield this.getDevices();
     log.debug(`Cars : Sync : ${ devices.length } devices available for sync.`);
 
-    let syncs = devices.map(device => this.syncCar(device, cars, allCars));
-    let result = yield parallel(syncs, 20);
+    let syncList = devices.map(device => this.syncCar(device, cars, allCars));
+    let result   = yield parallel(syncList);
 
     return yield Car.find();
-  }
+  },
 
+  /**
+   * Attempts to sync a device with the local database.
+   * @param  {String} device
+   * @param  {Array}  cars
+   * @param  {Array}  allCars
+   * @return {Void}
+   */
+  *syncCar(device, cars, allCars) {
+    try {
+      let existingCar = cars.find(c => c.id === device.id);
+      if (existingCar) {
+        let updatedCar = yield this.getDevice(device.id);
+        if (updatedCar) {
+          log.debug(`Cars : Sync : updating ${ device.id }.`);
+          yield this.syncUpdate(existingCar.id, updatedCar, existingCar);
+        } else {
+          log.debug(`Cars : Sync : failed to retrieve ${ device.id } to update database.`);
+        }
+      } else {
+        // If Device does not match any Car then add it to the database.
+        let excludedCar = allCars.find(c => c.id === device.id);
+        if (!excludedCar) {
+          let isMockCar = [ 'EE000017DC652701', 'C0000017DC247801' ].indexOf(device.id) > -1;
+          if (!config.mock.cars && isMockCar) {
+            // this is a dev kit, ignore update.
+            log.debug(`Cars : Sync : skipping DevKit ${ device.id }.`);
+          } else  {
+            let newCar = yield this.getDevice(device.id);
+            if (newCar) {
+              let car = new Car(newCar);
+              let meta = config.car.meta[car.id];
+              if (meta) {
+                car.license = meta.license;
+              }
+              log.debug(`Cars : Sync : adding ${ device.id }.`);
+              yield car.upsert();
+            } else {
+              log.debug(`Cars : Sync : failed to retrieve ${ device.id } to add to database.`);
+            }
+          }
+        } else {
+          // If Device was found in database but not in our filtered list, ignore.
+          log.debug(`Cars : Sync : skipping ${ device.id }.`);
+        }
+      }
+    } catch(err) {
+      log.warn(`Cars : Sync : ${ err.data.status } : ${ err.data.message } : ${ err.data.resource }`);
+    }
+  },
 
   /**
    * Returns a list of car devices from Invers.
@@ -238,14 +243,13 @@ module.exports = class CarService extends Service {
    * @param  {Object} _user
    * @return {Array}
    */
-  static *getDevices(_user) {
+  *getDevices(_user) {
     let devices = yield this.request('/devices?active=true&limit=100');
     if (devices) {
       return devices.data;
     }
-
     return null;
-  }
+  },
 
   /**
    * Returns a single car device from Invers.
@@ -254,38 +258,48 @@ module.exports = class CarService extends Service {
    * @param  {Object} _user
    * @return {Array}
    */
-  static *getDevice(id, _user) {
-    let status = yield this.request(`/devices/${ id }/status`, { timeout : 10000 });
-    if (status) {
-      return this.transformDeviceToCar(id, status);
+  *getDevice(id, _user) {
+    try {
+      let status = yield this.request(`/devices/${ id }/status`, { timeout : 30000 });
+      if (status) {
+        return this.transformDeviceToCar(id, status);
+      }
+    } catch (err) {
+      if (err.code === 'CAR_SERVICE_TIMEDOUT') {
+        log.warn(`Cars : Sync : fetching device ${ id } failed, fleet request timed out.`);
+        yield notify.notifyAdmins(`Requested status update for car '${ id }' timed out, contact fleet provider to resolve this issue.`, [ 'slack' ]);
+        return null;
+      }
+      throw err;
     }
-    return null;
-  }
+  },
 
-  /**
-   * Execute a Command against a Device and update Car
-   * @param  {String} id
-   * @param  {String} command lock/unlock
-   * @param  {Object} _user
-   * @return {Object} updated Car
+  /*
+   |--------------------------------------------------------------------------------
+   | Car Commands
+   |--------------------------------------------------------------------------------
+   |
+   | A list of methods used to execute commands against a device/car.
+   |
    */
-  static *unlockCar(id, _user) {
+
+  *unlockCar(id, _user) {
     return yield this.executeCommand(id, 'central_lock', 'unlock', _user);
-  }
+  },
 
-  static *lockCar(id, _user) {
+  *lockCar(id, _user) {
     return yield this.executeCommand(id, 'central_lock', 'lock', _user);
-  }
+  },
 
-  static *unlockImmobilzer(id, _user) {
+  *unlockImmobilzer(id, _user) {
     return yield this.executeCommand(id, 'immobilizer', 'unlock', _user);
-  }
+  },
 
-  static *lockImmobilzer(id, _user) {
+  *lockImmobilzer(id, _user) {
     return yield this.executeCommand(id, 'immobilizer', 'lock', _user);
-  }
+  },
 
-  static *lockAndImmobilze(id, _user) {
+  *lockAndImmobilze(id, _user) {
     let existingCar = yield Car.findById(id);
     if (!existingCar) {
       let error    = new Error(`CAR: ${ id }`);
@@ -299,10 +313,12 @@ module.exports = class CarService extends Service {
       centralLock : 'locked',
       immobilizer : 'locked'
     });
-    let status = yield this.request(`/devices/${ id }/status`, 'PATCH', payload);
+    let status = yield this.request(`/devices/${ id }/status`, {
+      method : 'PATCH'
+    }, payload);
     let updatedCar = this.transformDeviceToCar(id, status);
     return yield this.syncUpdate(id, updatedCar, existingCar, _user);
-  }
+  },
 
   /**
    * Execute a Command against a Device and update Car
@@ -312,7 +328,7 @@ module.exports = class CarService extends Service {
    * @param  {Object} _user
    * @return {Object} updated Car
    */
-  static *executeCommand(id, part, command, _user) {
+  *executeCommand(id, part, command, _user) {
     let existingCar = yield Car.findById(id);
     if (!existingCar) {
       let error    = new Error(`CAR: ${ id }`);
@@ -323,10 +339,12 @@ module.exports = class CarService extends Service {
     }
     let payload    = {};
     payload[part]  = `${ command }ed`;
-    let status     = yield this.request(`/devices/${ id }/status`, 'PATCH', payload);
+    let status     = yield this.request(`/devices/${ id }/status`, {
+      method : 'PATCH'
+    }, payload);
     let updatedCar = this.transformDeviceToCar(id, status);
     return yield this.syncUpdate(id, updatedCar, existingCar, _user);
-  }
+  },
 
   /**
    * Events for a provided Car from Invers
@@ -334,10 +352,10 @@ module.exports = class CarService extends Service {
    * @param  {Object} _user
    * @return {Array}        Array of Event Objects
    */
-  static *getEvents(id, _user) {
+  *getEvents(id, _user) {
     let events = yield this.request(`/events?device=${ id }&timeout=0`);
     return events.data;
-  }
+  },
 
   /**
    * Helper Function to transform an Invers Car object in to a Waivecar Car
@@ -345,7 +363,7 @@ module.exports = class CarService extends Service {
    * @param  {Object} data Invers car object
    * @return {Object}      WaiveCar car model
    */
-  static transformDeviceToCar(id, data) {
+  transformDeviceToCar(id, data) {
     let car = {
       id                            : id,
       lockLastCommand               : data['central_lock_last_command'],
@@ -390,16 +408,16 @@ module.exports = class CarService extends Service {
     car.updatedAt = new Date();
 
     return car;
-  }
+  },
 
-  static convertToBoolean(data, field, test) {
+  convertToBoolean(data, field, test) {
     let fieldValue = data[field];
     if (Object.keys(test).indexOf(fieldValue) > -1) {
       return test[fieldValue];
     } else {
       return false;
     }
-  }
+  },
 
   /**
    * Returns the Response from a Request aginst the Invers API
@@ -408,62 +426,49 @@ module.exports = class CarService extends Service {
    * @param  {Object} data
    * @return {Object}          Response Object
    */
-  static *request(resource, options, data) {
+  *request(resource, options, data) {
     options = options || {};
-    if (typeof options === 'string') {
-      options = {
-        method : options
-      };
-    }
 
-    let baseOptions = {
+    // ### Request Payload
+
+    let payload = {
       url     : config.invers.uri + resource,
       method  : options.method || 'GET',
       headers : config.invers.headers,
-      timeout : options.timeout || 600000
+      timeout : options.timeout || 60000
     };
-
     if (data) {
-      baseOptions.body = JSON.stringify(data);
+      payload.body = JSON.stringify(data);
     }
+
+    // ### Submit Request
 
     try {
-      let result   = yield request(baseOptions);
-      let response = result.toJSON();
-      let statusCode = response ? response.statusCode : 400;
-      if (statusCode !== 200) {
-        log.error(error.parse({
-          code    : `CAR_SERVICE`,
-          message : `CAR: ${ resource }`,
-          data    : response.body ? JSON.parse(response.body) : response
-        }, statusCode));
-        return null;
+      let res = yield request(payload);
+      if (res.statusCode !== 200) {
+        let body = res.body ? JSON.parse(res.body) : null;
+        throw error.parse({
+          code    : 'CAR_SERVICE',
+          message : 'An interaction attempt against the fleet service api failed.',
+          data    : {
+            status   : res.statusCode,
+            message  : body ? body.error : null,
+            resource : resource
+          }
+        }, 400);
       }
-
-      return JSON.parse(response.body);
-    } catch(err) {
-        log.error(error.parse({
-          code    : `CAR_SERVICE`,
-          message : `CAR: ${ resource } - ${ err.message }`,
-          data    : { error : err.message },
-          stack   : err.stack
-        }, 503));
-        return null;
-    }
-  }
-
-  /**
-   * Only allow access if the requesting user is the administrator.
-   * @param  {Object}  user  The user to be modified.
-   * @param  {Object}  _user The user requesting modification.
-   * @return {Boolean}
-   */
-  static hasAccess(user) {
-    if (!user.hasAccess('admin')) {
-      throw error.parse({
-        error   : `INVALID_PRIVILEGES`,
-        message : `You do not have the required privileges to perform this operation.`
-      }, 403);
+      return JSON.parse(res.body);
+    } catch (err) {
+      if (err.message === 'ETIMEDOUT') {
+        throw error.parse({
+          code    : 'CAR_SERVICE_TIMEDOUT',
+          message : 'The interaction attempt against fleet service timed out.',
+          data    : {
+            target : resource
+          }
+        }, 400);
+      }
+      throw err;
     }
   }
 

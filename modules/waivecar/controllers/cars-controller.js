@@ -32,15 +32,6 @@ Bento.Register.Controller('CarsController', function(controller) {
   };
 
   /**
-   * Returns the current status from Invers.
-   * @param  {Number} id
-   * @return {Object}
-   */
-  controller.status = function *(id) {
-    return yield car.getDevice(id, this.auth.user);
-  };
-
-  /**
    * Execute a command on a single car.
    * @param  {Number} id The Car Id.
    * @param  {String} command lock/unlock.
