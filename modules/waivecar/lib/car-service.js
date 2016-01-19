@@ -266,8 +266,13 @@ module.exports = {
       }
     } catch (err) {
       if (err.code === 'CAR_SERVICE_TIMEDOUT') {
+        let device = id;
+        let car    = yield Car.findById(id);
+        if (car) {
+          device = car.license || id;
+        }
         log.warn(`Cars : Sync : fetching device ${ id } failed, fleet request timed out.`);
-        yield notify.notifyAdmins(`Requested status update for car '${ id }' timed out, contact fleet provider to resolve this issue.`, [ 'slack' ]);
+        yield notify.notifyAdmins(`${ device } timed out on API status request from cloudboxx | ${ Bento.config.web.uri }/cars/${ device } | Contact cloudboxx to resolve.`, [ 'slack' ]);
         return null;
       }
       throw err;
