@@ -298,7 +298,7 @@ module.exports = [
     .state('start-ride', {
       url: '/bookings/:id/start',
       templateUrl: '/templates/bookings/start-ride.html',
-      controller: 'BookingController as ctrl',
+      controller: 'StartRideController as ctrl',
       data: {
         auth: true
       }

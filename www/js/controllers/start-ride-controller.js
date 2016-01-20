@@ -4,7 +4,7 @@ var angular = require('angular');
 require('angular-ui-router');
 require('../services/data-service');
 
-module.exports = angular.module('app.controllers').controller('BookingController', [
+module.exports = angular.module('app.controllers').controller('StartRideController', [
   '$scope',
   '$rootScope',
   '$injector',
@@ -21,8 +21,10 @@ module.exports = angular.module('app.controllers').controller('BookingController
     $scope.data = $data.active;
 
     this.start = function () {
-      $data.fetch('bookings');
-      $state.go('dashboard');
+      $data.fetch('bookings')
+        .then(function () {
+          $state.go('dashboard', null, {location: 'replace'});
+        });
     };
   }
 
