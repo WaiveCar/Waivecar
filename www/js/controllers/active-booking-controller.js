@@ -10,6 +10,7 @@ require('../services/data-service');
 require('../services/distance-service');
 require('../services/modal-service');
 require('../services/message-service');
+require('../services/progress-service');
 
 function ActiveBookingController ($scope, $rootScope, $injector) {
   var $ride = $injector.get('$ride');
@@ -21,6 +22,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   var $message = $injector.get('$message');
   var $settings = $injector.get('$settings');
   var $cordovaInAppBrowser = $injector.get('$cordovaInAppBrowser');
+  var $progress = $injector.get('$progress');
 
   $scope.distance = 'Unknown';
   // $scope is used to store ref. to $ride and the active models in $data.
@@ -63,6 +65,9 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         // convert miles to yards
         $scope.distance = distance * 1760;
         if ($scope.distance <= 35) {
+          console.log('Showing unlock');
+          stopWatching();
+          stopWatching = null;
           showUnlock();
         }
       }
@@ -89,7 +94,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         className: 'button-balanced',
         text: 'Retry',
         handler: function () {
-          showUnlock();
+          modal.remove();
         }
       }]
     }).$promise
@@ -189,21 +194,27 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         return;
       }
       unlocking = true;
+      $progress.showSimple(true);
       $interval.cancel(timer);
       var id = $ride.state.booking.id;
+      console.log('unlocking');
       $data.resources.bookings.ready({ id: id }).$promise
       .then(function() {
+        console.log('fetching');
         return $data.fetch('bookings');
       })
       .then(function() {
+        console.log('removing modal');
         modal.remove();
         unlocking = false;
+        $progress.hide();
         $state.go('start-ride', { id: id });
       })
       .catch(function(err) {
         unlocking = false;
         $message.error(err);
         modal.remove();
+        $progress.hide();
         showRetry();
       });
     }
