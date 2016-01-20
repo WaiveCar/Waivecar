@@ -33,13 +33,12 @@ class TableIndex extends React.Component {
    * @return {Void}
    */
   componentDidMount() {
-    let count = this.state.bookings.length;
-    if (count < 20) {
-      this.table.init();
-    }
+    this.table.init();
     this.setState({
-      more   : count % 20 === 0,
-      offset : count
+      sort : {
+        key   : 'id',
+        order : 'ASC'
+      }
     });
   }
 
@@ -59,9 +58,9 @@ class TableIndex extends React.Component {
   row(booking) {
     return (
       <tr key={ booking.id }>
-        <td>{ booking.id }</td>
-        <td className="hidden-sm-down">{ booking.carId }</td>
-        <td className="hidden-sm-down">{ booking.userId }</td>
+        <td><Link to={ `/bookings/${ booking.id }` }>{ booking.id }</Link></td>
+        <td className="hidden-sm-down"><Link to={ `/cars/${ booking.carId }` }>{ booking.carId }</Link></td>
+        <td className="hidden-sm-down"><Link to={ `/users/${ booking.userId }` } >{ booking.userId }</Link></td>
         <td>{ booking.status }</td>
         <td>{ moment(booking.createdAt).format('HH:mm YYYY-MM-DD') }</td>
         <td>

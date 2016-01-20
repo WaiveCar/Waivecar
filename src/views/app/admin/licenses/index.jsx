@@ -16,7 +16,7 @@ class TableIndex extends React.Component {
    */
   constructor(...args) {
     super(...args);
-    this.table = new Table(this, 'licenses');
+    this.table = new Table(this, 'licenses', [ 'firstName', 'lastName', 'status', 'outcome' ]);
     this.state = {
       sort : {
         key   : null,
@@ -33,13 +33,12 @@ class TableIndex extends React.Component {
    * @return {Void}
    */
   componentDidMount() {
-    let count = this.state.licenses.length;
-    if (count < 20) {
-      this.table.init();
-    }
+    this.table.init();
     this.setState({
-      more   : count % 20 === 0,
-      offset : count
+      sort : {
+        key   : 'id',
+        order : 'ASC'
+      }
     });
   }
 
@@ -60,7 +59,7 @@ class TableIndex extends React.Component {
     return (
       <tr key={ license.id }>
         <td>{ license.id }</td>
-        <td className="hidden-sm-down">{ license.userId }</td>
+        <td className="hidden-sm-down"><Link to={ `/users/${ license.userId }` }>{ license.userId }</Link></td>
         <td>{ license.firstName }</td>
         <td>{ license.lastName }</td>
         <td className="hidden-sm-down">{ license.status }</td>

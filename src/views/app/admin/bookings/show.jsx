@@ -166,7 +166,9 @@ module.exports = class BookingsView extends React.Component {
               <div className="col-xs-12 col-md-4 booking-status text-center">
                 <strong>Customer</strong>
                 <div>
-                  { booking.user.firstName } { booking.user.lastName }
+                  <Link to={ `/users/${ booking.user.id }` }>
+                    { booking.user.firstName } { booking.user.lastName }
+                  </Link>
                 </div>
               </div>
               <div className="col-xs-12 col-md-4 booking-status text-center">

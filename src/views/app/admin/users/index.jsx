@@ -15,9 +15,10 @@ class UsersListView extends React.Component {
    */
   constructor(...args) {
     super(...args);
-    this.table = new Table(this, 'users');
+    this.table = new Table(this, 'users', [ 'lastName', 'firstName', 'email', 'status' ]);
     this.state = {
-      sort : {
+      search : null,
+      sort   : {
         key   : null,
         order : 'DESC'
       },
@@ -32,13 +33,12 @@ class UsersListView extends React.Component {
    * @return {Void}
    */
   componentDidMount() {
-    let count = this.state.users.length;
-    if (count < 20) {
-      this.table.init();
-    }
+    this.table.init();
     this.setState({
-      more   : count % 20 === 0,
-      offset : count
+      sort : {
+        key   : 'id',
+        order : 'ASC'
+      }
     });
   }
 
@@ -86,7 +86,7 @@ class UsersListView extends React.Component {
             <table className="box-table table-striped">
               <thead>
                 <tr ref="sort">
-                  <th>#</th>
+                  <ThSort sort="id"         value="#"      ctx={ this } />
                   <ThSort sort="firstName"  value="Name"   ctx={ this } />
                   <ThSort sort="email"      value="Email"  ctx={ this } className="hidden-sm-down" />
                   <ThSort sort="role.title" value="Role"   ctx={ this } className="hidden-sm-down" />

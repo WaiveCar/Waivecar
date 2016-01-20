@@ -7,12 +7,14 @@ module.exports = class Table {
    * Sets up the instance.
    * @param  {Object} ctx        The component instance.
    * @param  {String} resource   The resource this table is consuming.
+   * @param  {Array}  filters    The fields that are filtered in the search.
    * @param  {String} [endpoint] Optional endpoint if resource name is not the same.
    * @return {Void}
    */
-  constructor(ctx, resource, endpoint) {
+  constructor(ctx, resource, filters, endpoint) {
     this.ctx      = ctx;
     this.resource = resource;
+    this.filters  = filters;
     this.endpoint = endpoint || `/${ resource }`;
     this.timer    = null;
   }
@@ -49,7 +51,22 @@ module.exports = class Table {
    */
   index() {
     let { key, order } = this.ctx.state.sort;
+    let search         = this.ctx.state.search;
     let list           = this.ctx.state[this.resource];
+
+    if (search) {
+      let re = new RegExp(search, 'i');
+      list = list.filter(item => {
+        for (let i = 0, len = this.filters.length; i < len; i++) {
+          let key = item[this.filters[i]];
+          if (key && key.match(re)) {
+            return true;
+          }
+        }
+        return false;
+      });
+    }
+
     if (key) {
 
       // ### Adjust Classes
@@ -64,6 +81,7 @@ module.exports = class Table {
 
       let isDeep   = key.match(/\./) ? true : false;
       let deepLink = isDeep ? key.split('.') : null;
+
       list = list.sort((a, b) => {
         a = isDeep ? deepLink.reduce((obj, key) => { return obj[key] }, a) : a[key];
         b = isDeep ? deepLink.reduce((obj, key) => { return obj[key] }, b) : b[key];
@@ -95,7 +113,10 @@ module.exports = class Table {
               message : err.message
             });
           }
-          this.ctx.setState({ offset : 0 });
+          this.ctx.setState({
+            search : search,
+            offset : 0
+          });
           relay.dispatch(this.resource, {
             type : 'index',
             data : data
@@ -103,6 +124,9 @@ module.exports = class Table {
         });
       } else {
         this.init();
+        this.ctx.setState({
+          search : null
+        });
       }
     }, 500);
   }
