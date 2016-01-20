@@ -394,7 +394,7 @@ module.exports = [
         }
       });
 
-    $urlRouterProvider.otherwise('/');
+    $urlRouterProvider.otherwise('/auth');
 
   }
 
