@@ -16,7 +16,8 @@ module.exports = angular.module('app.controllers').controller('EndRideController
   '$ride',
   '$geocoding',
   '$progress',
-  function ($rootScope, $scope, $state, $auth, $data, $ride, $geocoding, $progress) {
+  '$message',
+  function ($rootScope, $scope, $state, $auth, $data, $ride, $geocoding, $progress, $message) {
 
     // Concepts:
     // $scope is used to store ref. to the service and the active models in the data svc.
@@ -42,6 +43,13 @@ module.exports = angular.module('app.controllers').controller('EndRideController
         .finally(function () {
           $progress.hide();
         });
+    };
+
+    this.setParkingLocation = function (form) {
+      if (form.$invalid) {
+        return $message.error('Please resolve form errors and try again.');
+      }
+      return $state.go('end-ride', { id: $ride.state.booking.id });
     };
 
     this.endRide = function () {

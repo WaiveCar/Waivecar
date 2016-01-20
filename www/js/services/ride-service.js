@@ -79,14 +79,6 @@ module.exports = angular.module('app.services').factory('$ride', [
       $state.go('end-ride-location', { id: service.state.booking.id });
     };
 
-    service.setParkingLocation = function(location, isForm) {
-      if (isForm) {
-        return $state.go('end-ride', { id: service.state.booking.id });
-      }
-
-      debugger; // not yet considered.
-    };
-
     service.toggleZone = function() {
       service.state.zone.confirmed = false;
       service.state.zone.isOutside = !service.state.zone.isOutside;
@@ -97,61 +89,72 @@ module.exports = angular.module('app.services').factory('$ride', [
     };
 
     service.setCheck = function() {
-      if (!$data.active.cars) {
+      var car = $data.active.cars;
+      var booking = $data.active.bookings;
+      $data.resources.cars.refresh({id: car.id});
+
+      if (car == null || booking == null) {
         $interval.cancel(this.checkForLock);
+        this.checkForLock = null;
         return;
       }
 
-      if (!$data.active.bookings) {
-        $interval.cancel(this.checkForLock);
-        return;
-      }
-
-      if (service.state.location.valet.confirmed && $data.active.bookings.status === 'completed') {
-        var id = $data.active.bookings.id;
-        $interval.cancel(this.checkForLock);
+      if (service.state.location.valet.confirmed) {
+        if (booking.status !== 'completed') {
+          return;
+        }
+        if (this.checkForLock) {
+          $interval.cancel(this.checkForLock);
+          this.checkForLock = null;
+        }
         $data.fetch('bookings');
         $data.deactivate('bookings');
         $data.deactivate('cars');
         service.setState();
-        $state.go('bookings-show', { id: id });
+        $state.go('bookings-show', { id: booking.id });
         return;
       }
 
-      var isReady = false;
-      for(var index in service.state.check) {
-        if (service.state.check.hasOwnProperty(index)) {
-          var item = service.state.check[index];
-          if (!item) {
-            console.log(index);
-          }
-          item.confirmed = $data.active.cars[index];
-          if (item.isVisible && item.confirmed === false) {
-            isReady = false;
-          } else {
-            isReady = true;
-          }
-        }
-      }
-
-      if (isReady === true && isReady !== service.state.booking.readyToEnd && service.state.location.valet.confirmed === false) {
+      if (service.state.booking.readyToEnd) {
         if (this.checkForLock) {
           $interval.cancel(this.checkForLock);
+          this.checkForLock = null;
         }
-        service.state.booking.readyToEnd = isReady;
+        return;
+      }
+
+      _.forEach(service.state.check, function (item, key) {
+        item.confirmed = car[key];
+      });
+
+      var isReady = _(service.state.check)
+        .every(function (item) {
+          return item.confirmed || !item.isVisible;
+        });
+
+      if (!isReady) {
+        return;
+      }
+      console.log('ready to end');
+
+      service.state.booking.readyToEnd = true;
+      if (this.checkForLock) {
+        $interval.cancel(this.checkForLock);
+        this.checkForLock = null;
       }
     };
 
     service.processEndRide = function() {
       if ($data.active.bookings && $data.active.bookings.status === 'ended') {
-        return;
+        $state.go('cars', null, {location: 'replace'});
+        return null;
       }
 
       if (service.state.location.valet.confirmed) {
         this.checkForLock = $interval(function() {
           service.setCheck();
-        }, 2000);
-        return;
+        }, 5000);
+        return null;
       }
 
       var payload = angular.copy(service.state.parkingLocation);
@@ -165,12 +168,16 @@ module.exports = angular.module('app.services').factory('$ride', [
         }
       }
 
-      $data.resources.bookings.end({ id: service.state.booking.id, data: payload }).$promise.then(function() {
-        $data.fetch('bookings');
+      return $data.resources.bookings.end({ id: service.state.booking.id, data: payload }).$promise
+      .then(function() {
+        return $data.fetch('bookings');
+      })
+      .then(function () {
         this.checkForLock = $interval(function() {
           service.setCheck();
-        }, 2000);
-      }.bind(this)).catch($message.error);
+        }, 5000);
+      }.bind(this))
+      .catch($message.error);
     };
 
     service.processCompleteRide = function() {
