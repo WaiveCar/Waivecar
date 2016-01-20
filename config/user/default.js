@@ -18,7 +18,7 @@ module.exports = {
         lastName  : 'Doe',
         email     : 'admin@fixture.none',
         password  : 'admin',
-        role      : 5, // Super
+        role      : 'Super User'
       }
     ],
 

@@ -6,7 +6,7 @@ module.exports = {
         lastName      : 'Ginty',
         email         : 'matt.ginty+admin@clevertech.biz',
         password      : 'lollipop0',
-        role          : 5, // Super
+        role          : 'Super User', // Super
         verifiedEmail : true,
         status        : 'active'
       },
@@ -15,7 +15,7 @@ module.exports = {
         lastName      : 'Rødvik',
         email         : 'christoffer@clevertech.biz',
         password      : 'password',
-        role          : 5, // Super
+        role          : 'Super User', // Super
         verifiedEmail : true,
         status        : 'active'
       },
@@ -24,7 +24,7 @@ module.exports = {
         lastName      : 'Cornejo',
         email         : 'jeduan+admin@clevertech.biz',
         password      : 'password',
-        role          : 5, // Super
+        role          : 'Super User', // Super
         verifiedEmail : true,
         status        : 'active'
       },
@@ -33,7 +33,7 @@ module.exports = {
         lastName      : 'Honig',
         email         : 'zoli@waivecar.com',
         password      : 'password',
-        role          : 4, // Owner,
+        role          : 'Owner', // Owner,
         verifiedEmail : true,
         status        : 'active'
       },
@@ -42,7 +42,7 @@ module.exports = {
         lastName      : 'Deutsch',
         email         : 'ideutsch@waivecar.com',
         password      : 'password',
-        role          : 4, // Owner,
+        role          : 'Owner', // Owner,
         verifiedEmail : true,
         status        : 'active'
       },
@@ -51,7 +51,7 @@ module.exports = {
         lastName      : 'Ryman',
         email         : 'roy@waivecar.com',
         password      : 'password',
-        role          : 3, // Admin,
+        role          : 'Administrator', // Admin,
         verifiedEmail : true,
         status        : 'active'
       },
@@ -61,7 +61,7 @@ module.exports = {
         email         : 'sergio.g.vides@gmail.com',
         phone         : '+13107407461',
         password      : 'password',
-        role          : 3,
+        role          : 'Administrator',
         verifiedEmail : true,
         verifiedPhone : true,
         status        : 'active'
@@ -72,7 +72,7 @@ module.exports = {
         email         : 'naceur.garouachi@gmail.com',
         phone         : '+13103672199',
         password      : 'password',
-        role          : 3,
+        role          : 'Administrator',
         verifiedEmail : true,
         verifiedPhone : true,
         status        : 'active'
@@ -83,7 +83,7 @@ module.exports = {
         email         : 'danimoreno1194@gmail.com',
         phone         : '+13108906097',
         password      : 'password',
-        role          : 3,
+        role          : 'Administrator',
         verifiedEmail : true,
         verifiedPhone : true,
         status        : 'active'
@@ -94,7 +94,7 @@ module.exports = {
         email         : 'artistpatton@gmail.com',
         phone         : '+14242646717',
         password      : 'password',
-        role          : 3,
+        role          : 'Administrator',
         verifiedEmail : true,
         verifiedPhone : true,
         status        : 'active'
@@ -105,7 +105,7 @@ module.exports = {
         email         : 'brownrr13@yahoo.com',
         phone         : '+13233092089',
         password      : 'password',
-        role          : 3,
+        role          : 'Administrator',
         verifiedEmail : true,
         verifiedPhone : true,
         status        : 'active'
@@ -116,7 +116,7 @@ module.exports = {
         email         : 'tesample@aol.com',
         phone         : '+16264821211',
         password      : 'password',
-        role          : 3,
+        role          : 'Administrator',
         verifiedEmail : true,
         verifiedPhone : true,
         status        : 'active'
@@ -127,7 +127,7 @@ module.exports = {
         email         : 'taroncample@yahoo.com',
         phone         : '+16266440360',
         password      : 'password',
-        role          : 3,
+        role          : 'Administrator',
         verifiedEmail : true,
         verifiedPhone : true,
         status        : 'active'
@@ -138,7 +138,7 @@ module.exports = {
         email         : 'lonniecalton82@gmail.com',
         phone         : '+17606381822',
         password      : 'password',
-        role          : 3,
+        role          : 'Administrator',
         verifiedEmail : true,
         verifiedPhone : true,
         status        : 'active'
