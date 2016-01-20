@@ -185,7 +185,7 @@ module.exports = angular.module('app.services').factory('$ride', [
     };
 
     service.isCarOn = function (id) {
-      return $data.resources.cars.status({ id: id }).$promise
+      return $data.resources.cars.refresh({ id: id }).$promise
         .then(function (status) {
           return status.isIgnitionOn;
         });
