@@ -92,7 +92,8 @@ function DashboardController ($scope, $rootScope, $injector) {
           showIngitionOnModal();
           return;
         }
-        $state.go('end-ride-options', {id: bookingId});
+        $ride.setLocation('homebase');
+        $state.go('end-ride-location', {id: bookingId});
       });
   };
 

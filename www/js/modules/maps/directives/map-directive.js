@@ -131,7 +131,7 @@ function directive ($rootScope, MapsLoader, RouteService, $q, $timeout) {
     });
   };
 
-  MapController.prototype.setMarkers = function setMarkers (locations, oldLocations) {
+  MapController.prototype.setMarkers = function setMarkers (locations) {
     if (locations === null || typeof locations === 'undefined') {
       return;
     }
@@ -187,9 +187,6 @@ function directive ($rootScope, MapsLoader, RouteService, $q, $timeout) {
       return marker;
     }, this)
     .value();
-    if (!oldLocations || oldLocations.length !== locations.length) {
-      this.fitBounds();
-    }
   };
 
   MapController.prototype.addMarker = function addMarker (id, location, options) {

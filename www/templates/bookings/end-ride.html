@@ -66,7 +66,7 @@
               <p>When you're ready and outside the car, tap the below button.</p>
             </div>
             <button type="button" class="button button-block button-balanced"  ng-click="ctrl.endRide()"
-              ng-disabled="!service.state.booking.readyToEnd"
+              ng-disabled="data.cars.isIgnitionOn || !data.cars.isKeySecure"
             >Finish and Lock Car</button>
           </div>
         </div>
