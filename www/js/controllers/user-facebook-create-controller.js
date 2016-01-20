@@ -9,7 +9,7 @@ function UserFacebookCreateController ($stateParams, $injector) {
   var $message = $injector.get('$message');
 
   if (!$auth.me) {
-    return $state.go('landing');
+    return $state.go('auth');
   }
 
   this.user = $auth.me;

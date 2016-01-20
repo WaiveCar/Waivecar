@@ -33,18 +33,12 @@ module.exports = [
 
     // INTRO, SIGN-IN, REGISTRATION
     $stateProvider
-      .state('landing', {
-        // 1-Intro
-        cache: false,
-        url: '/',
-        controller: 'LandingController as landing',
-        templateUrl: '/templates/landing/index.html'
-      })
       .state('auth', {
         // 2-Register-sign-in
         cache: false,
         url: '/auth',
         templateUrl: '/templates/auth/index.html',
+        controller: 'LandingController as ctrl',
         data: {
           auth: false
         }

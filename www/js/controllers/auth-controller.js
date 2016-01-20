@@ -36,7 +36,7 @@ function AuthController ($injector) {
 
     return $auth.login(this.forms.loginForm)
       .then(function(){
-        $state.go('landing');
+        $state.go('cars');
       })
       .catch($message.error.bind($message));
 
