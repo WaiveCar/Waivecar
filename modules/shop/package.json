@@ -1,0 +1,8 @@
+{
+  "name": "shop",
+  "private": true,
+  "bento": {
+    "name": "shop",
+    "type": "module"
+  }
+}

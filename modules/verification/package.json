@@ -1,0 +1,8 @@
+{
+  "name": "verification",
+  "private": true,
+  "bento": {
+    "name": "verification",
+    "type": "module"
+  }
+}

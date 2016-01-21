@@ -1,8 +1,7 @@
 {
-  "name": "clevertech-waivecar",
+  "name": "waivecar",
   "private": true,
-  "description": "Module for managing cars and bookings for electric cars",
-  "reach": {
+  "bento": {
     "name": "waivecar",
     "type": "module"
   }

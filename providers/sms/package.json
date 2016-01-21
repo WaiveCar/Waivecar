@@ -1,0 +1,8 @@
+{
+  "name": "sms",
+  "private": true,
+  "bento": {
+    "name": "sms",
+    "type": "provider"
+  }
+}

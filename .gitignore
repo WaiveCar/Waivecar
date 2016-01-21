@@ -27,14 +27,6 @@
 #===========================================================
 
 config/**/local.js
-config/auth/default.js
-config/file/default.js
-config/log/default.js
-config/mongo/default.js
-config/payment/default.js
-config/queue/default.js
-config/sequelize/default.js
-config/slack/default.js
 sftp-config.json
 
 #===========================================================
@@ -49,29 +41,6 @@ sftp-config.json
 #===========================================================
 
 node_modules
-
-#===========================================================
-# Modules & Providers
-#===========================================================
-#
-# By default all modules and providers are ommited from
-# github uploads much like node_modules. If you have private
-# packages you can make them visible via the ! marker.
-# ex. !**/private-module
-#
-#===========================================================
-
-modules/*
-providers/*
-modules/**/cache.json
-providers/**/cache.json
-!**/api
-!**/license
-!**/waivecar
-!**/gm-api
-!**/user
-!**/user-verification
-!**/admin
 
 #===========================================================
 # Node.js / NPM

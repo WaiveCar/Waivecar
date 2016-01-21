@@ -1,0 +1,8 @@
+{
+  "name": "file",
+  "private": true,
+  "bento": {
+    "name": "file",
+    "type": "module"
+  }
+}

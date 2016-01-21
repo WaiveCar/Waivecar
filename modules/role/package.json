@@ -1,0 +1,8 @@
+{
+  "name": "role",
+  "private": true,
+  "bento": {
+    "name": "role",
+    "type": "module"
+  }
+}

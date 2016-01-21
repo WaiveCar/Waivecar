@@ -1,0 +1,9 @@
+{
+  "name": "sequelize",
+  "private": true,
+  "bento": {
+    "name": "sequelize",
+    "type": "provider",
+    "init": "setup.js"
+  }
+}
