@@ -16,23 +16,6 @@ branches:
 cache:
   directories:
     - node_modules
-    - modules/auth
-    - modules/file
-    - modules/log
-    - modules/role
-    - modules/shop
-    - modules/user
-    - modules/ui
-    - modules/subscription
-    - modules/verification
-    - providers/bcrypt
-    - providers/mongo
-    - providers/queue
-    - providers/sequelize
-    - provider/slack
-    - providers/sms
-    - providers/email
-    - providers/token
 env:
   global:
     - BRANCHING_MODEL=API_APP
@@ -55,7 +38,6 @@ services:
 before_install:
   - npm install -g node-gyp
   - rm -rf ~/.node-gyp/
-  - npm install -g bentojs
   - curl 'http://cistats.clevertech.biz/logstat/?&project=Waivecar&type=3'
   - deployment/build/scripts/trigger_coverage
   - openssl aes-256-cbc -K $encrypted_e155dc6b3053_key -iv $encrypted_e155dc6b3053_iv
@@ -63,7 +45,6 @@ before_install:
   - chmod 400 deployment/build/ssh/id_rsa
 install:
   - $SCR/commit_dependencies
-  - bento package
 script:
   - $SCR/commit_build && $SCR/commit_analysis && $SCR/commit_test && $SCR/commit_package
     --name ${PACKAGE_NAME} --commit ${TRAVIS_COMMIT} && $SCR/deploy
