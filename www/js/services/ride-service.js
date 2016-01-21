@@ -36,9 +36,9 @@ module.exports = angular.module('app.services').factory('$ride', [
         other           : { isVisible : true, confirmed : false, title : 'Other' }
       },
       check : {
-        isKeySecure        : { isVisible: true,  confirmed: false },
-        isIgnitionOn       : { isVisible: true,  confirmed: false },
-        isChargeCardSecure : { isVisible: true,  confirmed: false },
+        isKeySecure        : { isVisible: true, confirmed: false },
+        isIgnitionOn       : { isVisible: true, confirmed: false },
+        isChargeCardSecure : { isVisible: false, confirmed: false },
         isCharging         : { isVisible: false, confirmed: false }
       }
     };
@@ -72,9 +72,8 @@ module.exports = angular.module('app.services').factory('$ride', [
         }
         case 'homebase':
         case 'other':
-        default: {
+        default:
           break;
-        }
       }
       $state.go('end-ride-location', { id: service.state.booking.id });
     };
@@ -94,8 +93,10 @@ module.exports = angular.module('app.services').factory('$ride', [
       $data.resources.cars.refresh({id: car.id});
 
       if (car == null || booking == null) {
-        $interval.cancel(this.checkForLock);
-        this.checkForLock = null;
+        if (this.checkForLock) {
+          $interval.cancel(this.checkForLock);
+          this.checkForLock = null;
+        }
         return;
       }
 
@@ -125,6 +126,9 @@ module.exports = angular.module('app.services').factory('$ride', [
 
       _.forEach(service.state.check, function (item, key) {
         item.confirmed = car[key];
+        if (key === 'isIgnitionOn') {
+          item.confirmed = !car[key];
+        }
       });
 
       var isReady = _(service.state.check)
@@ -150,39 +154,33 @@ module.exports = angular.module('app.services').factory('$ride', [
         return null;
       }
 
-      if (service.state.location.valet.confirmed) {
-        this.checkForLock = $interval(function() {
-          service.setCheck();
-        }, 5000);
-        return null;
-      }
+      this.checkForLock = $interval(function() {
+        service.setCheck();
+      }, 5000);
 
       var payload = angular.copy(service.state.parkingLocation);
-      for (var index in service.state.location) {
-        if (service.state.location.hasOwnProperty(index)) {
-          var item = service.state.location[index];
-          if (item.confirmed === true) {
-            payload.locationType = item.title;
-            break;
-          }
-        }
+      var locationType = _.find(service.state.location, function (item) {
+        return item.confirmed === true;
+      });
+      if (locationType != null) {
+        payload.locationType = locationType.title;
       }
 
       return $data.resources.bookings.end({ id: service.state.booking.id, data: payload }).$promise
       .then(function() {
         return $data.fetch('bookings');
       })
-      .then(function () {
-        this.checkForLock = $interval(function() {
-          service.setCheck();
-        }, 5000);
-      }.bind(this))
       .catch($message.error);
     };
 
     service.processCompleteRide = function() {
       var id = service.state.booking.id;
-      $data.resources.bookings.complete({ id: id }).$promise.then(function() {
+      if (this.checkForLock) {
+        $interval.cancel(this.checkForLock);
+        this.checkForLock = null;
+      }
+      $data.resources.bookings.complete({ id: id }).$promise
+      .then(function() {
         $data.fetch('bookings');
         $data.deactivate('bookings');
         $data.deactivate('cars');

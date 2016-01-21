@@ -60,7 +60,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       if (!car.isKeySecure || car.isIgnitionOn) {
         return null;
       }
-      return $ride.processEndRide();
+      return $ride.processCompleteRide();
     };
 
     this.init = function () {
@@ -74,7 +74,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
           this.geocode();
         }
         if ($state.current.name === 'end-ride') {
-          $scope.service.processEndRide();
+          $ride.processEndRide();
         }
       }.bind(this));
     };
