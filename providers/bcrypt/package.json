@@ -1,0 +1,8 @@
+{
+  "name": "bcrypt",
+  "private": true,
+  "bento": {
+    "name": "bcrypt",
+    "type": "provider"
+  }
+}

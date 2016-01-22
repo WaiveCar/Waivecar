@@ -1,0 +1,8 @@
+{
+  "name": "subscription",
+  "private": true,
+  "bento": {
+    "name": "subscription",
+    "type": "module"
+  }
+}

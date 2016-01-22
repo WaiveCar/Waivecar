@@ -1,0 +1,8 @@
+{
+  "name": "slack",
+  "private": true,
+  "bento": {
+    "name": "slack",
+    "type": "provider"
+  }
+}

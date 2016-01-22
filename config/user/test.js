@@ -6,14 +6,14 @@ module.exports = {
         lastName  : 'Doe',
         email     : 'john.user@test.none',
         password  : 'password',
-        role      : 5
+        role      : 'Super User'
       },
       {
         firstName : 'Jane',
         lastName  : 'Doe',
         email     : 'jane.user@test.none',
         password  : 'password',
-        role      : 1
+        role      : 'User'
       }
     ]
   }

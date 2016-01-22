@@ -1,0 +1,9 @@
+{
+  "name": "log",
+  "private": true,
+  "bento": {
+    "name": "log",
+    "type": "module",
+    "init": "bootstrap.js"
+  }
+}

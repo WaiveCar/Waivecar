@@ -1,0 +1,8 @@
+{
+  "name": "email",
+  "private": true,
+  "bento": {
+    "name": "email",
+    "type": "provider"
+  }
+}

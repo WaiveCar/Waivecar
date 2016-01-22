@@ -262,7 +262,7 @@ module.exports = class BookingService extends Service {
     yield this.logDetails('start', booking, car);
 
     yield booking.setReminders(user, config.booking.timers);
-    yield booking.ready();
+    yield booking.start();
 
     yield cars.unlockCar(car.id, _user);
     yield cars.unlockImmobilzer(car.id, _user);
@@ -285,11 +285,6 @@ module.exports = class BookingService extends Service {
    * @return {Object}
    */
   static *start(id, _user) {
-    let booking = yield this.getBooking(id);
-    let user    = yield this.getUser(booking.userId);
-    this.hasAccess(user, _user);
-    yield booking.start();
-    yield this.relay('update', id, _user);
     /*
     This no longer server any purpose and was moved up to the ready method, we keeping this method in place
     so that the app doesn't hit any errors when attempting to call it.

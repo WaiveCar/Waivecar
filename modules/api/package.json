@@ -2,7 +2,7 @@
   "name": "clevertech-api",
   "private": true,
   "description": "Fetching api related stuff",
-  "reach": {
+  "bento": {
     "name": "api",
     "type": "module"
   }

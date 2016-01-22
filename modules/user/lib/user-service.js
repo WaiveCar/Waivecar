@@ -97,46 +97,42 @@ module.exports = {
    * @return {Array}
    */
   *index(query, _user) {
-    let users = yield User.find(query.search ? config.search(query.search) : config.filter(queryParser, query));
-    if (!users.length) {
-      return users;
-    }
-
-    // ### Group
-    // Perform operations pertaining to the users groups and roles.
-
-    let groupId   = _user ? _user.group.id : 1;
-    let connector = yield GroupUser.find({
+    let groupId    = _user ? _user.hasAccess('super') && query.groupId ? query.groupId : _user.group.id : 1;
+    let groupUsers = yield GroupUser.find({
       where : {
-        groupId : groupId,
-        userId  : {
-          $in : users.map(user => user.id)
-        }
+        groupId : groupId
       }
     });
 
-    if (!connector.length) {
+    // ### Create Query String
+
+    let qs = query.search ? config.search(query.search) : config.filter(queryParser, query);
+    qs.where.id = {
+      $in : groupUsers.map(val => val.userId)
+    };
+
+    // ### Fetch Users
+
+    let users = yield User.find(qs);
+    if (!users.length) {
       return [];
     }
+
+    // ### Fetch Group & Roles
 
     let group      = yield Group.findById(groupId);
     let groupRoles = yield GroupRole.find({
       where : {
-        id : {
-          $in : connector.reduce((list, next) => {
-            if (list.indexOf(next.groupRoleId) === -1) {
-              list.push(next.groupRoleId);
-            }
-            return list;
-          }, [])
-        }
+        groupId : groupId
       }
     });
 
+    // ### Map Group & Roles
+
     users.map(user => {
-      let groupUser = connector.find(groupUser => user.id === groupUser.userId);
+      let groupUser = groupUsers.find(groupUser => user.id === groupUser.userId);
       let groupRole = groupRoles.find(role => role.id === groupUser.groupRoleId);
-      let role      = roles.find(role => role.id === groupUser.groupRoleId);
+      let role      = roles.find(role => role.id === groupRole.roleId);
 
       // ### Assign Attributes
 
@@ -146,6 +142,18 @@ module.exports = {
         name  : role.name
       };
     });
+
+    // ### Omit Records
+
+    if (query.omit) {
+      let ids = query.omit.split(',').map(val => parseInt(val));
+      return users.reduce((list, next) => {
+        if (ids.indexOf(next.id) === -1) {
+          list.push(next);
+        }
+        return list;
+      }, []);
+    }
 
     return users;
   },

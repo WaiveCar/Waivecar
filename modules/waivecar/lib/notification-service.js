@@ -106,7 +106,9 @@ module.exports = {
    * @param {Object} payload
    */
   *slack(payload) {
-    yield slack.message(payload);
+    if (process.env.NODE_ENV === 'production') {
+      yield slack.message(payload);
+    }
   },
 
   /**
