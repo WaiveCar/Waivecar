@@ -9,14 +9,8 @@ WaiveCar API
 First download this repo and unpack it into your destination of choice, then open your terminal and run npm install to install all the dependencies for the api.
 
 ```sh
-# Install bentojs-cli.
-$ npm install -g bentojs
-
 # Install NPM dependencies.
 $ npm install
-
-# Install bentojs packages.
-$ bento package
 ```
 
 ### Startup
