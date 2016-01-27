@@ -107,6 +107,8 @@ module.exports = class ProfileView extends React.Component {
         type    : `success`,
         message : `Verification request was successfull.`
       });
+
+      this.account.status();
     });
   }
 
