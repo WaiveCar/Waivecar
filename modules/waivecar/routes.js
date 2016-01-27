@@ -15,7 +15,7 @@ Route.del('/bookings/:id',         [ 'isAuthenticated', 'BookingsController@canc
 
 // ### Patches
 
-Route.put('/bookings/addressDetails', [ 'isAuthenticated', 'isAdmin', 'BookingsController@patchAddressDetails' ])
+Route.put('/bookings/addressDetails', [ 'isAuthenticated', 'isAdmin', 'BookingsController@patchAddressDetails' ]);
 
 // ### Problem Report
 
