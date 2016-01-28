@@ -10,7 +10,14 @@ First download this repo and unpack it into your destination of choice, then ope
 
 ```sh
 # Install NPM dependencies.
+$ npm install -g bentojs
 $ npm install
+```
+
+Once you have installed all dependencies you will need to resolve all the bento packages, this is done my running:
+
+```sh
+bento package
 ```
 
 ### Startup
