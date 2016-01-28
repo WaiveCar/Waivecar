@@ -9,10 +9,5 @@ module.exports = {
       me    : '/users/me',
       roles : '/roles'
     }
-  },
-  log : {
-    level : {
-      console : 'error'
-    }
   }
 };

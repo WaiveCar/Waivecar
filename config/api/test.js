@@ -1,27 +1,22 @@
 module.exports = {
   api : {
-    port : 8082,
-    uri  : 'http://localhost:8082'
+    port : 8371,
+    uri  : 'http://localhost:8371'
   },
-  log : {
-    level : {
-      console : 'info',
-      file    : 'ignore',
-      email   : 'ignore'
+  users : [
+    {
+      firstName : 'John',
+      lastName  : 'Doe',
+      email     : 'john.user@test.none',
+      password  : 'password',
+      role      : 'Super User'
+    },
+    {
+      firstName : 'Jane',
+      lastName  : 'Doe',
+      email     : 'jane.user@test.none',
+      password  : 'password',
+      role      : 'User'
     }
-  },
-  test : {
-    custom : [
-      'interface/models/user'
-    ],
-    modules : [
-      'auth',
-      'user',
-      'log'
-    ],
-    providers : [
-      'email',
-      'sms'
-    ]
-  }
+  ]
 };

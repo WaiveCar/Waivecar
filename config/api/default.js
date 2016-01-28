@@ -117,22 +117,32 @@ module.exports = {
 
   /*
    |--------------------------------------------------------------------------------
-   | Log Settings
+   | Users
    |--------------------------------------------------------------------------------
    |
-   | This API by default uses winston to log events, here you can define at what
-   | error levels the winston adapters should trigger a logging event.
-   |
-   | @param {Object} level The various log levels
+   | List of default uers to create when the api sets up a clean database.
    |
    */
 
-  log : {
-    level : {
-      console : 'debug',
-      file    : 'error',
-      email   : 'error'
+  users : [
+    {
+      firstName : 'John',
+      lastName  : 'Doe',
+      email     : 'admin@fixture.none',
+      password  : 'admin',
+      role      : 'Super User'
     }
-  }
+  ],
+
+  /*
+   |--------------------------------------------------------------------------------
+   | Groups
+   |--------------------------------------------------------------------------------
+   |
+   | List of custom groups to register when api sets up a clean database.
+   |
+   */
+
+  groups : []
 
 };
