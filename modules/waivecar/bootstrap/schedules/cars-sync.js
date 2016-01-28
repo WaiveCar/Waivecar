@@ -15,7 +15,6 @@ module.exports = function *() {
   });
 };
 
-
 scheduler.process('cars-sync', function *(job) {
   let cars = yield service.syncCars();
   if (cars) {
