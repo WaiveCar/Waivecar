@@ -10,7 +10,7 @@ function directive ($rootScope, MapsLoader, RouteService, $q, $timeout) {
   function link ($scope, $elem, attrs, ctrl) {
     var mapOptions = {
       apiKey: ctrl.leaflet.skobbler.apiKey,
-      zoom: parseInt(ctrl.zoom, 10),
+      zoom: parseInt(ctrl.zoom || 16, 10),
       tap: true,
       trackResize: false,
       dragging: true
@@ -62,6 +62,8 @@ function directive ($rootScope, MapsLoader, RouteService, $q, $timeout) {
   }
 
   function watchLocation ($scope) {
+    // don't use $cordovaGeolocation. On the first error (like location unavailable),
+    // it will reject the promise and stop getting updates
     var watch = navigator.geolocation.watchPosition(function onPosition (position) {
       if ($scope.error != null) {
         $scope.error = null;
@@ -231,7 +233,7 @@ function directive ($rootScope, MapsLoader, RouteService, $q, $timeout) {
           return this.items[item.id];
         }, this);
         if (this.items.location) {
-          items = items.concat(this.items.location || []);
+          items.push(this.items.location);
         }
       } else {
         items = _.values(this.items);

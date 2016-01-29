@@ -5,7 +5,7 @@
     <desc>Created with Sketch.</desc>
     <defs></defs>
     <g id="Core-Flow" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
-        <g id="19-Dashboard@2x" sketch:type="MSArtboardGroup" transform="translate(-112.000000, -203.000000)" fill="#545A56">
+        <g class="battery-background" sketch:type="MSArtboardGroup" transform="translate(-112.000000, -203.000000)" fill="#545A56">
             <g id="time-+-battery" sketch:type="MSLayerGroup" transform="translate(0.000000, 174.000000)">
                 <g id="battery" sketch:type="MSShapeGroup">
                     <g id="battery-icon-+-55%" transform="translate(112.000000, 24.000000)">

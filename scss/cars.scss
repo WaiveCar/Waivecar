@@ -90,3 +90,20 @@ car-charge-status svg {
   background-size: contain;
   margin: 10px;
 }
+
+.car-row {
+  svg {
+    height: 16px;
+  }
+  .is-charging {
+    .battery-background {
+      fill: #20e25c;
+    }
+  }
+  .car-cell {
+    display: flex;
+    flex-flow: column;
+    justify-content: space-around;
+    min-height: 80px;
+  }
+}

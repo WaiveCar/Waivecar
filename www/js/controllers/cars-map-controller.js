@@ -5,7 +5,7 @@ require('../services/distance-service');
 require('../services/modal-service');
 require('angular-ui-router');
 
-module.exports = angular.module('app.controllers').controller('CarsController', [
+module.exports = angular.module('app.controllers').controller('CarsMapController', [
   '$rootScope',
   '$scope',
   '$state',
@@ -13,10 +13,10 @@ module.exports = angular.module('app.controllers').controller('CarsController', 
   '$data',
   'cars',
   '$modal',
-  CarsController
+  CarsMapController
 ]);
 
-function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $modal) {
+function CarsMapController ($rootScope, $scope, $state, $injector, $data, cars, $modal) {
   var $distance = $injector.get('$distance');
   var LocationService = $injector.get('LocationService');
   // the accuracy should be within this amount of meters to show the Bummer dialog
@@ -31,7 +31,10 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
   this.clearCarWatcher = $scope.$watch(function () {
     return $data.instances.cars;
   }, function (value) {
-    if (!value) {
+    if (value == null) {
+      return false;
+    }
+    if (Array.isArray(value) && !value.length) {
       return false;
     }
     this.all = prepareCars(value);
@@ -46,7 +49,7 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
   // First load
   this.all = prepareCars(cars);
   this.featured = featured(cars);
-  ensureAvailableCars(this.all);
+  ensureAvailableCars(cars);
 
   function ensureAvailableCars (allCars) {
     var availableCars = _.filter(allCars, 'isAvailable');
@@ -94,7 +97,23 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
   };
 
   function prepareCars (items) {
-    return _.map(items, function (item) {
+    var homebase = {
+      latitude: 34.016338,
+      longitude: -118.489212
+    };
+    var tempItems = _.partition(items, function (item) {
+      var miles = $distance(item, homebase);
+      var yards = miles * 1760;
+      return yards < 100;
+    });
+    // items within 100 yards of homebase will get on the same marker
+    homebase.length = _.filter(tempItems[0], 'isAvailable').length;
+    homebase.icon = 'homebase-active';
+    homebase.isWaiveCarLot = true;
+    homebase.cars = tempItems[0];
+    homebase.id = 'homebase';
+
+    var awayCars = _.map(tempItems[1], function (item) {
       if (!item.hasOwnProperty('isAvailable')) {
         return item;
       }
@@ -105,6 +124,8 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
       }
       return item;
     });
+    awayCars.push(homebase);
+    return awayCars;
   };
 
   function featured (items) {
@@ -116,48 +137,29 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
         }
         return item.id;
       })
-      .take(2)
+      .take(1)
       .value();
   }
 
   this.showCar = function showCar (car) {
+    if (car.isWaiveCarLot) {
+      var ids = _(car.cars).filter('isAvailable').map('id').value();
+      if (ids.length) {
+        $state.go('cars-list', {
+          ids: ids
+        });
+      } else {
+        showLotUnavailableModal();
+      }
+      return true;
+    }
     if (car.isAvailable === false) {
-      var unavailableModal;
-      $modal('result', {
-        icon: 'x-icon',
-        title: 'This WaiveCar is unavailable right now',
-        message: 'The green icons on the map are the available WaiveCars.',
-        actions: [{
-          text: 'Ok',
-          handler: function () {
-            unavailableModal.remove();
-          }
-        }]
-      })
-      .then(function (_modal) {
-        unavailableModal = _modal;
-        unavailableModal.show();
-      });
+      showCarUnavailableModal();
       return true;
     }
     var distance = $distance(car);
     if (distance > 10) {
-      var farModal;
-      $modal('result', {
-        icon: 'x-icon',
-        title: 'You\'re too far away to rent this car',
-        message: 'Get within 10 miles of the WaiveCar to book it.',
-        actions: [{
-          text: 'Close',
-          handler: function () {
-            farModal.remove();
-          }
-        }]
-      })
-      .then(function (_modal) {
-        farModal = _modal;
-        farModal.show();
-      });
+      showCarTooFarModal();
       return true;
     }
     $state.go('cars-show', {
@@ -165,6 +167,62 @@ function CarsController ($rootScope, $scope, $state, $injector, $data, cars, $mo
     });
     return false;
   };
+
+  function showCarUnavailableModal () {
+    var unavailableModal;
+    $modal('result', {
+      icon: 'x-icon',
+      title: 'This WaiveCar is unavailable right now',
+      message: 'The green icons on the map are the available WaiveCars.',
+      actions: [{
+        text: 'Ok',
+        handler: function () {
+          unavailableModal.remove();
+        }
+      }]
+    })
+    .then(function (_modal) {
+      unavailableModal = _modal;
+      unavailableModal.show();
+    });
+  }
+
+  function showLotUnavailableModal () {
+    var unavailableModal;
+    $modal('result', {
+      icon: 'x-icon',
+      title: 'There are no WaiveCars available in the homebase right now',
+      actions: [{
+        text: 'Ok',
+        handler: function () {
+          unavailableModal.remove();
+        }
+      }]
+    })
+    .then(function (_modal) {
+      unavailableModal = _modal;
+      unavailableModal.show();
+    });
+  }
+
+  function showCarTooFarModal () {
+    var farModal;
+    $modal('result', {
+      icon: 'x-icon',
+      title: 'You\'re too far away to rent this car',
+      message: 'Get within 10 miles of the WaiveCar to book it.',
+      actions: [{
+        text: 'Close',
+        handler: function () {
+          farModal.remove();
+        }
+      }]
+    })
+    .then(function (_modal) {
+      farModal = _modal;
+      farModal.show();
+    });
+  }
 
   $scope.$on('$destroy', function () {
     if (modal) {

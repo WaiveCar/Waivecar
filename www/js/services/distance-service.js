@@ -10,9 +10,9 @@ function $distance ($rootScope) {
     if (!(isValidLocation(to) && isValidLocation(from))) {
       return NaN;
     }
-    var _from = latLng($rootScope.currentLocation);
+    var _from = latLng(from);
     var _to = latLng(to);
-    if (!from || !to) {
+    if (!_from || !_to) {
       return NaN;
     }
     var distance = _from.distanceTo(_to);

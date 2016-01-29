@@ -220,13 +220,35 @@ module.exports = [
         // 14-Find-waivecar
         url: '/cars',
         templateUrl: '/templates/cars/index.html',
-        controller: 'CarsController as cars',
+        controller: 'CarsMapController as cars',
         data: {
           auth: true
         },
         resolve: {
           cars: ['$data', function ($data) {
             return $data.initialize('cars');
+          }]
+        }
+      })
+      .state('cars-list', {
+        // 14-Find-waivecar
+        url: '/cars-list?ids',
+        templateUrl: '/templates/cars/list.html',
+        controller: 'CarsListController as cars',
+        data: {
+          auth: true
+        },
+        resolve: {
+          cars: ['$stateParams', '$data', function ($stateParams, $data) {
+            return $data.initialize('cars')
+              .then(function (cars) {
+                if ($stateParams.ids != null) {
+                  return cars.filter(function (car) {
+                    return _.includes($stateParams.ids, car.id);
+                  });
+                }
+                return cars;
+              });
           }]
         }
       })
