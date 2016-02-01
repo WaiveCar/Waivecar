@@ -108,7 +108,7 @@ function DashboardController ($scope, $rootScope, $injector) {
         // Not inside geofence -> show error
         $modal('result', {
           icon: 'x-icon',
-          title: 'Please head back to Santa Monica',
+          title: 'Looks like you\'re outside of the rental zone (Santa Monica). Please head back to end your rental.',
           actions: [{
             text: 'Ok',
             className: 'button-balanced',
