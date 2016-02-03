@@ -129,6 +129,7 @@
     "napa": "^1.2.0",
     "ng-cordova": "^0.1.20-alpha",
     "ng-fittext": "^3.3.3",
+    "point-in-polygon": "^1.0.0",
     "sass-flex-mixin": "^1.0.0",
     "satellizer": "^0.12.5",
     "shelljs": "^0.3.0",

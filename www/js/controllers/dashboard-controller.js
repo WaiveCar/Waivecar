@@ -4,6 +4,7 @@ var moment = require('moment');
 var _ = require('lodash');
 
 require('../services/progress-service');
+require('../services/geofencing-service');
 
 function DashboardController ($scope, $rootScope, $injector) {
   var $q = $injector.get('$q');
@@ -15,6 +16,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   var $state = $injector.get('$state');
   var $timeout = $injector.get('$timeout');
   var $progress = $injector.get('$progress');
+  var GeofencingService = $injector.get('GeofencingService');
 
   // $data is used to interact with models, never directly. If direct is required, $data should be refreshed.
   $scope.data = $data.active;
@@ -77,24 +79,51 @@ function DashboardController ($scope, $rootScope, $injector) {
     if (ending === true) {
       return null;
     }
-    ending = true;
-    $progress.showSimple(true);
-    return $ride.isCarOn(carId)
-      .catch(function (reason) {
-        ending = false;
-        $progress.hide();
-        return $q.reject(reason);
-      })
-      .then(function (isCarOn) {
-        ending = false;
-        $progress.hide();
-        if (isCarOn) {
-          showIngitionOnModal();
-          return;
-        }
-        $ride.setLocation('homebase');
-        $state.go('end-ride-location', {id: bookingId});
-      });
+
+    var outsideModal;
+
+    // Check that current position is within geofence coordinates
+    GeofencingService.insideBoundary().then(function(inside) {
+      if (inside) {
+        // inside geofence -> continue as normal
+        ending = true;
+        $progress.showSimple(true);
+        return $ride.isCarOn(carId)
+          .catch(function (reason) {
+            ending = false;
+            $progress.hide();
+            return $q.reject(reason);
+          })
+          .then(function (isCarOn) {
+            ending = false;
+            $progress.hide();
+            if (isCarOn) {
+              showIngitionOnModal();
+              return;
+            }
+            $ride.setLocation('homebase');
+            $state.go('end-ride-location', {id: bookingId});
+          });
+      } else {
+        // Not inside geofence -> show error
+        $modal('result', {
+          icon: 'x-icon',
+          title: 'Looks like you\'re outside of the rental zone (Santa Monica). Please head back to end your rental.',
+          actions: [{
+            text: 'Ok',
+            className: 'button-balanced',
+            handler: function () {
+              outsideModal.remove();
+            }
+          }]
+        })
+        .then(function (_modal) {
+          _modal.show();
+          outsideModal = _modal;
+          outsideModal.show();
+        });
+      }
+    });
   };
 
   function featured (items) {
