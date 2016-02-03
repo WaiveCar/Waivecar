@@ -83,7 +83,7 @@ module.exports = class Service {
    * @return {Boolean}
    */
   static hasAccess(user, _user) {
-    if (user.id !== _user.id && _user.hasAccess('admin')) {
+    if (user.id !== _user.id && !_user.hasAccess('admin')) {
       throw error.parse({
         error   : `SHOP_INVALID_CREDENTIALS`,
         message : `You do not have access to this shop request.`
