@@ -2,5 +2,89 @@
   "platform": "api",
   "tests": {
     "ignore": []
+  },
+  "modules": {
+    "api": {
+      "location": "modules",
+      "folder": "api"
+    },
+    "auth": {
+      "location": "modules",
+      "folder": "auth"
+    },
+    "file": {
+      "location": "modules",
+      "folder": "file"
+    },
+    "license": {
+      "location": "modules",
+      "folder": "license"
+    },
+    "log": {
+      "location": "modules",
+      "folder": "log"
+    },
+    "role": {
+      "location": "modules",
+      "folder": "role"
+    },
+    "shop": {
+      "location": "modules",
+      "folder": "shop"
+    },
+    "subscription": {
+      "location": "modules",
+      "folder": "subscription"
+    },
+    "ui": {
+      "location": "modules",
+      "folder": "ui"
+    },
+    "user": {
+      "location": "modules",
+      "folder": "user"
+    },
+    "verification": {
+      "location": "modules",
+      "folder": "verification"
+    },
+    "waivecar": {
+      "location": "modules",
+      "folder": "waivecar"
+    }
+  },
+  "providers": {
+    "bcrypt": {
+      "location": "providers",
+      "folder": "bcrypt"
+    },
+    "email": {
+      "location": "providers",
+      "folder": "email"
+    },
+    "mongo": {
+      "location": "providers",
+      "folder": "mongo"
+    },
+    "queue": {
+      "location": "providers",
+      "folder": "queue"
+    },
+    "sequelize": {
+      "location": "providers",
+      "folder": "sequelize"
+    },
+    "slack": {
+      "location": "providers",
+      "folder": "slack"
+    },
+    "sms": {
+      "location": "providers",
+      "folder": "sms"
+    },
+    "token": {
+      "location": "providers",
+      "folder": "token"
+    }
   }
 }

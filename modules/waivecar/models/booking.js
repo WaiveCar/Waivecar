@@ -275,7 +275,7 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
           value : 5,
           type  : 'minutes'
         },
-        data  : {
+        data : {
           bookingId : this.id
         }
       });
