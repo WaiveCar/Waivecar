@@ -15,7 +15,7 @@ Route.del('/bookings/:id',         [ 'isAuthenticated', 'BookingsController@canc
 
 // ### Patches
 
-Route.put('/bookings/addressDetails', [ 'isAuthenticated', 'isAdmin', 'BookingsController@patchAddressDetails' ])
+Route.put('/bookings/addressDetails', [ 'isAuthenticated', 'isAdmin', 'BookingsController@patchAddressDetails' ]);
 
 // ### Problem Report
 
@@ -38,3 +38,7 @@ Route.put('/cars/:id',          [ 'isAuthenticated', 'CarsController@update' ]);
 // ### Locations
 
 Route.resource('locations', 'LocationsController');
+
+// ### Notifications
+
+Route.post('/notify', [ 'isAuthenticated', 'NotificationsController@send' ]);

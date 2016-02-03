@@ -162,7 +162,7 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
      * @return {Boolean}
      */
     hasAccess(role) {
-      let roles = Bento.Interface.getRoles();
+      let roles = Bento.Interface.roles;
       let check = roles.find(val => val.name === role);
       let auth  = roles.find(val => val.name === this.role.name);
 

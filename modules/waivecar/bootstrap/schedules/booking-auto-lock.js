@@ -18,7 +18,7 @@ scheduler.process('booking-auto-lock', function *(job) {
       }
     });
   }
-  if (booking.status !== 'completed' || bookings.status !== 'closed') {
+  if (booking.status !== 'completed' || booking.status !== 'closed') {
     let car = yield Car.findById(booking.carId);
 
     yield cars.lockCar(car.id);

@@ -12,16 +12,6 @@ module.exports = {
    */
 
   user : {
-    users : [
-      {
-        firstName : 'John',
-        lastName  : 'Doe',
-        email     : 'admin@fixture.none',
-        password  : 'admin',
-        role      : 'Super User'
-      }
-    ],
-
     params : [
       'firstName',
       'lastName',

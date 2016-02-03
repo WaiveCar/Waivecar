@@ -21,6 +21,11 @@ module.exports = class LicenseService extends Service {
 
     this.hasAccess(user, _user);
 
+    // Strip time off birthDate
+    if (data.birthDate && /.+T.+/.test(data.birthDate)) {
+      data.birthDate = data.birthDate.split('T')[0];
+    }
+
     let license = new License(data);
 
     if (license.birthDate) {

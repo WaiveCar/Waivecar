@@ -3,6 +3,7 @@
 let customer = require('./lib/customer');
 let items    = require('./lib/items');
 let payments = require('./lib/payments');
+let Booking  = Bento.model('Booking');
 let error    = Bento.Error;
 let hooks    = Bento.Hooks;
 
@@ -52,6 +53,16 @@ hooks.set('shop:store:order:before', function *(payload, _user) {
       code    : `FEE_MISSING_PARAMETER`,
       message : `You must provide a booking id with waivecar orders.`
     }, 400);
+  }
+  let booking = yield Booking.findById(payload.bookingId);
+  if (!booking) {
+    throw error.parse({
+      code    : `BOOKING_NOT_FOUND`,
+      message : `The booking id provided does not exist.`,
+      data    : {
+        id : payload.bookingId
+      }
+    }, 404);
   }
   return payload;
 });

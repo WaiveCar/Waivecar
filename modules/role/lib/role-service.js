@@ -10,7 +10,7 @@ module.exports = {
    * @return {Array}
    */
   *index() {
-    return Bento.Interface.getRoles();
+    return Bento.Interface.roles;
   },
 
   /**
