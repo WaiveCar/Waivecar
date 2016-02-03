@@ -38,3 +38,7 @@ Route.put('/cars/:id',          [ 'isAuthenticated', 'CarsController@update' ]);
 // ### Locations
 
 Route.resource('locations', 'LocationsController');
+
+// ### Notifications
+
+Route.post('/notify', [ 'isAuthenticated', 'NotificationsController@send' ]);
