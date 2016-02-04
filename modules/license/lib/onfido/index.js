@@ -11,6 +11,7 @@ let relay         = Bento.Relay;
 let config        = Bento.config.license;
 let log           = Bento.Log;
 let Service       = require('../classes/service');
+let notify        = Bento.module('waivecar/lib/notification-service');
 
 if (!config.onfido) {
   throw error.parse({
@@ -183,13 +184,13 @@ module.exports = class OnfidoService {
     let response = result.toJSON();
 
     if (!response || response.statusCode > 201) {
-      throw error.parse(this.getError(resource, result), response.statusCode || 400);
+      throw error.parse(yield this.getError(resource, result), response.statusCode || 400);
     }
 
     return JSON.parse(response.body);
   }
 
-  static getError(resource, result) {
+  static *getError(resource, result) {
     let data = result.body ? JSON.parse(result.body) : null;
     if (!data) {
       return {
@@ -220,6 +221,8 @@ module.exports = class OnfidoService {
       if (errors === `Sorry, you don't have enough credit to make this purchase`) {
         log.error('License - Onfido : ' + errors);
       }
+
+      yield notify.notifyAdmins(`Call to onfido failed: ${ errors }`, [ 'slack' ]);
 
       return {
         code    : 'LICENSE_SERVICE_VALIDATION_ERROR',
