@@ -5,6 +5,7 @@ var _ = require('lodash');
 
 require('../services/progress-service');
 require('../services/geofencing-service');
+require('../services/notification-service');
 
 function DashboardController ($scope, $rootScope, $injector) {
   var $q = $injector.get('$q');
@@ -17,12 +18,24 @@ function DashboardController ($scope, $rootScope, $injector) {
   var $timeout = $injector.get('$timeout');
   var $progress = $injector.get('$progress');
   var GeofencingService = $injector.get('GeofencingService');
+  var NotificationService = $injector.get('NotificationService');
+  var notificationReasons = $injector.get('notificationReasons');
+  var homebase = $injector.get('homebase');
 
   // $data is used to interact with models, never directly. If direct is required, $data should be refreshed.
   $scope.data = $data.active;
   $scope.service = $ride;
-
   this.locations = $data.instances.locations;
+
+  this.openPopover = openPopover;
+  this.closePopover = closePopover;
+  this.lockCar = lockCar;
+  this.endRide = endRide;
+
+  // State
+  var ending;
+  var locking;
+  var outside = false;
 
   var rideServiceReady = $scope.$watch('service.isInitialized', function(isInitialized) {
     if (isInitialized !== true) {
@@ -40,22 +53,39 @@ function DashboardController ($scope, $rootScope, $injector) {
     this.timeLeft = moment(booking.updatedAt).add(90, 'm').toNow(true);
   }.bind(this));
 
-  this.openPopover = function(item) {
+  var locationWatch = $rootScope.$watch('currentLocation', function() {
+    if ($distance(homebase) > 20) {
+      if (!outside) {
+        NotificationService.notifySms(notificationReasons.outsideRange);
+      }
+      outside = true;
+    } else {
+      outside = false;
+    }
+  });
+
+  $scope.$on('$destroy', function() {
+    if (locationWatch) {
+      locationWatch();
+      locationWatch = null;
+    }
+  });
+
+  function openPopover(item) {
     $timeout(function () {
       this.selectedItem = item;
     }.bind(this));
     return true;
-  }.bind(this);
+  }
 
-  this.closePopover = function() {
+  function closePopover() {
     $timeout(function () {
       this.selectedItem = null;
     }.bind(this));
     return true;
-  }.bind(this);
+  }
 
-  var locking;
-  this.lockCar = function (id) {
+  function lockCar(id) {
     if (locking === true) {
       return;
     }
@@ -67,20 +97,17 @@ function DashboardController ($scope, $rootScope, $injector) {
       .catch(function (reason) {
         locking = false;
         if (reason && reason.code === 'IGNITION_ON') {
-          showIngitionOnModal();
+          showIgnitionOnModal();
           return;
         }
         $message.error(reason);
       });
-  };
+  }
 
-  var ending;
-  this.endRide = function (carId, bookingId) {
+  function endRide(carId, bookingId) {
     if (ending === true) {
       return null;
     }
-
-    var outsideModal;
 
     // Check that current position is within geofence coordinates
     GeofencingService.insideBoundary().then(function(inside) {
@@ -98,7 +125,7 @@ function DashboardController ($scope, $rootScope, $injector) {
             ending = false;
             $progress.hide();
             if (isCarOn) {
-              showIngitionOnModal();
+              showIgnitionOnModal();
               return;
             }
             $ride.setLocation('homebase');
@@ -106,25 +133,10 @@ function DashboardController ($scope, $rootScope, $injector) {
           });
       } else {
         // Not inside geofence -> show error
-        $modal('result', {
-          icon: 'x-icon',
-          title: 'Looks like you\'re outside of the rental zone (Santa Monica). Please head back to end your rental.',
-          actions: [{
-            text: 'Ok',
-            className: 'button-balanced',
-            handler: function () {
-              outsideModal.remove();
-            }
-          }]
-        })
-        .then(function (_modal) {
-          _modal.show();
-          outsideModal = _modal;
-          outsideModal.show();
-        });
+        endRideFailure('Looks like you\'re outside of the rental zone (Santa Monica). Please head back to end your rental.');
       }
     });
-  };
+  }
 
   function featured (items) {
     return _(items)
@@ -138,7 +150,7 @@ function DashboardController ($scope, $rootScope, $injector) {
       .value();
   }
 
-  function showIngitionOnModal () {
+  function showIgnitionOnModal () {
     var ignitionOnModal;
     $modal('result', {
       icon: 'x-icon',
@@ -154,6 +166,27 @@ function DashboardController ($scope, $rootScope, $injector) {
     .then(function (_modal) {
       ignitionOnModal = _modal;
       ignitionOnModal.show();
+    });
+  }
+
+  function endRideFailure(message) {
+    var endRideModal;
+
+    $modal('result', {
+      icon: 'x-icon',
+      title: message,
+      actions: [{
+        text: 'Ok',
+        className: 'button-balanced',
+        handler: function () {
+          endRideModal.remove();
+        }
+      }]
+    })
+    .then(function (_modal) {
+      _modal.show();
+      endRideModal = _modal;
+      endRideModal.show();
     });
   }
 }

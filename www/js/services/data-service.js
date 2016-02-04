@@ -1,18 +1,19 @@
 'use strict';
 var angular = require('angular');
-require('./socket-service.js');
-require('../resources/bookings.js');
-require('../resources/cars.js');
-require('../resources/locations.js');
-require('../resources/users.js');
-require('../resources/licenses.js');
-
+require('./socket-service');
+require('../resources/bookings');
+require('../resources/cars');
+require('../resources/locations');
+require('../resources/users');
+require('../resources/licenses');
+require('../resources/notification');
 require('../resources/card');
 require('../resources/file');
 require('../resources/auth');
 require('../resources/user');
 require('../resources/verification');
 require('../resources/car');
+require('../resources/notification');
 
 var _ = require('lodash');
 
@@ -32,7 +33,8 @@ module.exports = angular.module('app.services').factory('$data', [
   'Auth',
   'User',
   'Verification',
-  function ($rootScope, $http, $q, $socket, Bookings, Cars, Locations, Users, Licenses, Card, File, Auth, User, Verification) {
+  'Notifications',
+  function ($rootScope, $http, $q, $socket, Bookings, Cars, Locations, Users, Licenses, Card, File, Auth, User, Verification, Notifications) {
 
     var service = {
 
@@ -42,6 +44,7 @@ module.exports = angular.module('app.services').factory('$data', [
         licenses: Licenses,
         locations: Locations,
         users: Users,
+        notification: Notifications,
 
         Card: Card,
         File: File,

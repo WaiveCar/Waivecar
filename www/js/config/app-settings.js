@@ -76,6 +76,12 @@ appSettings
   });
 
 appSettings
+  .constant('notificationReasons', {
+    outsideRange: 'OUTSIDE_RANGE',
+    lowCharge: 'LOW_CHARGE'
+  });
+
+appSettings
   .constant('geofenceCoords', [
     [ -118.494651, 34.050775 ],
     [ -118.483794, 34.041583 ],
@@ -98,3 +104,9 @@ appSettings
     [ -118.504565, 34.041227 ],
     [ -118.494673, 34.050704 ]
   ]);
+
+appSettings
+  .constant('homebase', {
+    latitude: 34.016338,
+    longitude: -118.489212
+  });
