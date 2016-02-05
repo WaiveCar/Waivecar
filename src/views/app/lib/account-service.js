@@ -33,7 +33,7 @@ module.exports = class AccountService extends Service {
    * of the email and phone verification.
    */
   setGeneralStatus() {
-    api.get(`/users/${ auth.user().id }`, function(err, user) {
+    api.get(`/users/${ auth.user().id }`, (err, user) => {
       if (err) {
         return this.error(err.message);
       }
@@ -54,7 +54,7 @@ module.exports = class AccountService extends Service {
           default : return status;
         }
       }));
-    }.bind(this));
+    });
   }
 
   /**
@@ -62,7 +62,7 @@ module.exports = class AccountService extends Service {
    * registered with the account.
    */
   setPaymentStatus() {
-    api.get('/shop/cards', { userId : auth.user().id }, function (err, cards) {
+    api.get('/shop/cards', { userId : auth.user().id }, (err, cards) => {
       if (err) {
         return this.error(err.message);
       }
@@ -70,15 +70,15 @@ module.exports = class AccountService extends Service {
         this.setState('status', this.getState('status').map((status) => {
           switch (status.type) {
             case 'Payment Card' : return {
-              type    : 'Payment Card',
-              isValid : true,
+              type      : 'Payment Card',
+              isValid   : true,
               validIcon : 'done'
             };
             default : return status;
           }
         }));
       }
-    }.bind(this));
+    });
   }
 
   /**

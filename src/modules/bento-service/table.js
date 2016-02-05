@@ -91,6 +91,10 @@ module.exports = class Table {
       });
 
     }
+
+    // Paginate here...
+    // this.ctx.state.offset === page
+
     return list.map(item => this.ctx.row(item));
   }
 
@@ -133,6 +137,7 @@ module.exports = class Table {
 
   /**
    * Loads the next 20 records from the api.
+   * TODO: Make this into pagination rather than load more...
    * @return {Void}
    */
   more = () => {
