@@ -113,17 +113,15 @@ function CarsMapController ($rootScope, $scope, $state, $injector, $data, cars, 
     homebase.cars = tempItems[0];
     homebase.id = 'homebase';
 
-    var awayCars = _.map(tempItems[1], function (item) {
-      if (!item.hasOwnProperty('isAvailable')) {
-        return item;
-      }
-      if (item.isAvailable) {
+    var awayCars = tempItems[1].filter(function(item) {
+      return item.isAvailable;
+    }).map(function(item) {
+      if (item.hasOwnProperty('isAvailable')) {
         item.icon = 'car';
-      } else {
-        item.icon = 'unavailable';
       }
       return item;
     });
+
     awayCars.push(homebase);
     return awayCars;
   };
