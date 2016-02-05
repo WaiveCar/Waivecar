@@ -23,6 +23,11 @@ let Car  = Bento.model('Car');
 module.exports = {
 
   /**
+   * Track api errors to notify admins
+   */
+  _errors : {},
+
+  /**
    * Returns a list of cars from the local database.
    * @param  {Object} query
    * @param  {String} role
@@ -269,18 +274,24 @@ module.exports = {
   *getDevice(id, _user) {
     try {
       let status = yield this.request(`/devices/${ id }/status`, { timeout : 30000 });
+      this._errors[id] = 0;
       if (status) {
         return this.transformDeviceToCar(id, status);
       }
     } catch (err) {
       if (err.code === 'CAR_SERVICE_TIMEDOUT') {
+        if (!this._errors[id]) this._errors[id] = 0;
+        this._errors[id]++;
         let device = id;
         let car    = yield Car.findById(id);
         if (car) {
           device = car.license || id;
         }
         log.warn(`Cars : Sync : fetching device ${ id } failed, fleet request timed out.`);
-        yield notify.notifyAdmins(`${ device } timed out on API status request from cloudboxx | ${ Bento.config.web.uri }/cars/${ device } | Contact cloudboxx to resolve.`, [ 'slack' ]);
+        if (this._errors[id] === 4) {
+          yield notify.notifyAdmins(`${ device } timed out on API status request from cloudboxx | ${ Bento.config.web.uri }/cars/${ device } | Contact cloudboxx to resolve.`, [ 'slack' ], { channel : 'api-errors' });
+          this._errors[id] = 0;
+        }
         return null;
       }
       throw err;

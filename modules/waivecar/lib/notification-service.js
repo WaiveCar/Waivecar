@@ -48,7 +48,7 @@ module.exports = {
    * @param {String} message
    * @param {Mixed}  channels String or Array of channels to notify
    */
-  *notifyAdmins(message, channels) {
+  *notifyAdmins(message, channels, params) {
     if (typeof channels === 'string') {
       channels = [ channels ];
     }
@@ -75,7 +75,8 @@ module.exports = {
 
       if (channels.indexOf('slack') !== -1) {
         yield this.slack({
-          text : message
+          text   : message,
+          params : params
         });
       }
 
@@ -105,9 +106,9 @@ module.exports = {
    * Sends a slack notification to the waivecar slack.
    * @param {Object} payload
    */
-  *slack(payload) {
+  *slack(payload, params) {
     if (process.env.NODE_ENV === 'production') {
-      yield slack.message(payload);
+      yield slack.message(payload, params);
     }
   },
 
