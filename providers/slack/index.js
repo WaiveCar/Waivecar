@@ -29,17 +29,26 @@ module.exports = class Slack {
       log.warn(`The requested channel '${ channel }' has not been defined in the slack configuration.`);
     }
 
-    this.webhook = channels[channel];
+    this.webhook  = channels[channel];
   }
 
   /**
    * Attempts to send a message via the channel webhook.
    * @param {Object} msg
    */
-  *message(msg) {
+  *message(msg, params) {
+    let url = this.webhook;
+    if (params && params.channel) {
+      if (!config.channels[params.channel]) {
+        log.warn(`The requested channel '${ params.channel }' has not been defined in the slack configuration.`);
+      } else {
+        url = config.channels[params.channel];
+      }
+    }
+
     let res = yield request({
       method : 'POST',
-      url    : this.webhook,
+      url    : url,
       body   : msg,
       json   : true
     });

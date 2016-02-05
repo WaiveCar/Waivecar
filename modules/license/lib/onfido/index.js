@@ -222,7 +222,7 @@ module.exports = class OnfidoService {
         log.error('License - Onfido : ' + errors);
       }
 
-      yield notify.notifyAdmins(`Call to onfido failed: ${ errors }`, [ 'slack' ]);
+      yield notify.notifyAdmins(`Call to onfido failed: ${ errors }`, [ 'slack' ], { channel : 'api-errors' });
 
       return {
         code    : 'LICENSE_SERVICE_VALIDATION_ERROR',
