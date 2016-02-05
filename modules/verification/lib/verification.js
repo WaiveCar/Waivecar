@@ -3,6 +3,8 @@
 let tokens = Bento.provider('token');
 let hooks  = Bento.Hooks;
 let error  = Bento.Error;
+let errors = Bento.module('user/lib/errors');
+let User   = Bento.model('User');
 
 module.exports = class VerificationService {
 
@@ -16,6 +18,22 @@ module.exports = class VerificationService {
   static *send(type, payload, _user) {
     let send = hooks.get('verification:send', true);
     return yield send(type, _user, payload);
+  }
+
+  /**
+   * Allows the sending of verification requests on behalf of another user
+   * @param  {String} type    The purpose/type of the verification.
+   * @param  {String} id      ID of user to send verification
+   * @param  {Object} payload The post payload provided.
+   * @param  {Object} _user   The authenticated user.
+   */
+  static *sendUser(type, id, payload, _user) {
+    let user = yield User.findById(id);
+
+    if (!user) throw errors.userNotFound();
+    if (user.id !== _user.id || !_user.hasAccess('admin')) throw errors.userUpdateRefused();
+
+    return yield this.send(type, payload, user);
   }
 
   /**

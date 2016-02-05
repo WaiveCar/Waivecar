@@ -2,6 +2,13 @@
 
 let verification = require('./lib/verification');
 
+Route.pst('/verifications/:type/:id', [
+  'isAuthenticated',
+  function *(type, id) {
+    return yield verification.sendUser(type, id, this.payload, this.auth.user);
+  }
+]);
+
 // ### Verification Request
 // Attempts to send a verification token containing the body payload.
 
