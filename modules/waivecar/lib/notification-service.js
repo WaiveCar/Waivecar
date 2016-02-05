@@ -75,9 +75,8 @@ module.exports = {
 
       if (channels.indexOf('slack') !== -1) {
         yield this.slack({
-          text   : message,
-          params : params
-        });
+          text : message
+        }, params);
       }
 
       if (channels.indexOf('sms') !== -1) {
