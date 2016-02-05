@@ -1,0 +1,40 @@
+.auth {
+  &.auth-index ion-content {
+    background-repeat: no-repeat;
+    background-image: url('../img/background.png');
+    background-size: cover;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+
+    .logo {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-image {
+      width: 100%;
+      svg {
+        width: 100%;
+      }
+    }
+
+    .button-group {
+      min-width: 100%;
+      margin: 0 auto;
+    }
+  }
+
+  // &.forgot-password-success {
+  //   ion-content {
+  //     display: flex;
+  //     flex-direction: column;
+  //     justify-content: center;
+  //     align-items: center;
+  //     align-content: center;
+  //   }
+  // }
+}

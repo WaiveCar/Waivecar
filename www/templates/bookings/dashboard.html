@@ -1,0 +1,53 @@
+<ion-view>
+  <ion-nav-title>
+    <page-title class="dark-bg title-plain">Dashboard</page-title>
+  </ion-nav-title>
+  <ion-nav-buttons side="primary">
+    <button class="button button-icon icon icon-svg" ng-include="'/img/warning-white-icon.svg'" ui-sref="report-problem({id: data.bookings.id})"></button>
+  </ion-nav-buttons>
+  <ion-nav-buttons side="right">
+    <button menu-toggle="right" class="button button-icon icon ion-navicon"></button>
+  </ion-nav-buttons>
+  <ion-content scroll="false" padding="false" class="gray-bg has-header has-footer">
+    <div class="info-header">
+      <div class="info-header-item">
+        <ng-include class="battery" src="'/img/battery-darkgrey.svg'"></ng-include>
+        {{ data.cars.charge | number:0 }} %
+      </div>
+      <div class="info-header-item">
+        <ng-include src="'/img/clock-grey-icon.svg'"></ng-include>
+        {{ ctrl.timeLeft }}
+      </div>
+    </div>
+    <skobbler-map
+      id="map"
+      zoom="18"
+      markers="ctrl.locations"
+      on-marker-tap="ctrl.openPopover"
+      update-location
+      featured="ctrl.featured"
+      center="ctrl.center"
+    ></skobbler-map>
+  </ion-content>
+  <ion-footer-bar class="no-padding">
+    <div class="button-bar">
+      <button type="button" class="button button-balanced" ng-show="data.cars.isLocked" ng-click="service.unlockCar(data.cars.id)">Unlock</button>
+      <button type="button" class="button button-balanced" ng-hide="data.cars.isLocked" ng-click="ctrl.lockCar(data.cars.id)">Lock</button>
+      <button type="button" class="button button-dark" ng-click="ctrl.endRide(data.cars.id, data.bookings.id)">End Ride</button>
+    </div>
+  </ion-footer-bar>
+  <div class="item-popover" ng-if="ctrl.selectedItem">
+    <div class="item-popover-content">
+      <div class="row">
+        <div class="col col-33">
+          <div class="item-type">{{ ctrl.selectedItem.type.charAt(0).toUpperCase() }}</div>
+        </div>
+        <div class="col">
+          <h1>{{ ctrl.selectedItem.name }}</h1>
+          <h2>{{ ctrl.selectedItem.description }}</h2>
+        </div>
+      </div>
+    </div>
+    <button type="button" class="button button-balanced button-block" ng-click="ctrl.closePopover()">Close</button>
+  </div>
+</ion-view>

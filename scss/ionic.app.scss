@@ -1,0 +1,335 @@
+// The path for our font files, relative to the built CSS in www/css
+// All fonts are copied from /node-modules to www/fonts by gulp
+$ionicons-font-path: "../fonts" !default;
+$fa-font-path: "../fonts" !default;
+@import 'colors';
+@import 'fonts';
+@import 'sizes';
+
+//// @import "www/lib/bootstrap-sass/assets/stylesheets/_bootstrap";
+// Twitter Bootstrap grid clashes with ionic grid so we're importing only what we need
+@import "./node_modules/bootstrap-sass/assets/stylesheets/bootstrap/variables";
+@import "./node_modules/bootstrap-sass/assets/stylesheets/bootstrap/mixins";
+@import "./node_modules/bootstrap-sass/assets/stylesheets/bootstrap/thumbnails";
+@import "./node_modules/bootstrap-sass/assets/stylesheets/bootstrap/type";
+
+@import "./node_modules/ionic/scss/ionic";
+@import "./node_modules/font-awesome/scss/font-awesome";
+
+@import 'ads';
+@import 'auth';
+@import 'bookings';
+@import 'cars';
+@import 'directives';
+@import 'form';
+@import 'header';
+@import 'landing';
+@import 'licenses';
+@import 'loading';
+@import 'map';
+@import 'menu';
+@import 'messages';
+@import 'modals';
+@import 'vision';
+@import 'report-problem';
+
+.icon-svg {
+  svg {
+    height: 15px;
+    width : 15px;
+  }
+}
+.padding {
+  padding: 10px 18px;;
+}
+
+.padding-top,
+.padding-vertical {
+  padding-top: 10px;
+}
+
+.padding-right,
+.padding-horizontal {
+  padding-right: 18px;
+}
+
+.padding-bottom,
+.padding-vertical {
+  padding-bottom: 10px;
+}
+
+.padding-left,
+.padding-horizontal {
+  padding-left: 18px;
+}
+
+.padding-top-10 {
+  @include custom-padding (10, 'top');
+}
+.padding-top-20 {
+  @include custom-padding (20, 'top');
+}
+.margin-top-10 {
+  @include custom-margin (10, 'top');
+}
+.margin-top-20 {
+  @include custom-margin (20, 'top');
+}
+.margin-bottom-10 {
+  @include custom-margin (10, 'bottom');
+}
+.margin-bottom-20 {
+  @include custom-margin (20, 'bottom');
+}
+
+.highlight {
+  font-weight: bold;
+}
+
+.required:after {
+  content: "*";
+  vertical-align: top;
+  color: red;
+}
+
+.button {
+  text-transform: uppercase;
+  border-radius: 0;
+}
+
+.no-padding {
+  padding: 0;
+}
+
+.ion-content--center {
+  text-align: center;
+  form {
+    text-align: left;
+  }
+}
+
+ion-content {
+  &.dark-bg {
+    color: $light;
+    background-color: $dark;
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      color: $light;
+      text-transform: uppercase;
+    }
+    a,
+    a:link,
+    a:hover,
+    a:visited,
+    a:active {
+      color: $light;
+    }
+    ion-list {
+      color: inherit;
+      a,
+      a:link,
+      a:hover,
+      a:visited,
+      a:active h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        color: inherit;
+      }
+    }
+  }
+  &.gray-bg {
+    color: $dark;
+    background-color: $gray3;
+  }
+}
+
+.has-header {
+  // top: ((100 - $bigHeaderSize) * 1%) !important;
+}
+.no-padding.bar.bar-footer {
+  background : $dark;
+  color: $light;
+  .footer-full {
+    width: 100%;
+    a, a:visited {
+      color : $light
+    }
+  }
+}
+.vertical-aligned {
+  @include vertical-align;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.img-avatar {
+  border-radius: 50%;
+  height: 100%;
+}
+
+ion-view {
+  .header-text {
+    width: 100%;
+    .vertical-aligned {
+      width: 100%;
+      h6 {
+        color: $light;
+        width: 100%;
+      }
+    }
+  }
+  .header-title {
+    text-transform: uppercase;
+    font-size: $headerTitleSize*1rem;
+    padding-right: $headerTitleSize*1rem;
+    width: 90%;
+  }
+  h1.header-title {
+    @include vertical-align;
+  }
+  .header-subtitle {
+    font-size: $headerSubtitleSize*1rem;
+  }
+  .scroll {
+    height: 100%;
+  }
+
+
+}
+.button-bar {
+  .button {
+    border-radius : 0;
+    &:first-child,
+    &:last-child {
+      border-radius : 0;
+    }
+  }
+}
+.button-clear {
+  text-transform: none;
+  color : #fff;
+  &.button-clear {
+    color : #fff;
+  }
+}
+.button-gray {
+  background-color : #353434;
+  color : #fff;
+  border : 1px solid #353434;
+  &:hover,
+  &.button.active,
+  &.button.activated {
+    background-color : #353434;
+    color : #fff;
+    border : 1px solid #353434;
+  }
+}
+
+.item-select select {
+  direction: ltr;
+  width: 100%;
+  text-align: left;
+  left: 200px;
+}
+
+.row-full-height {
+  height : 100%;
+}
+
+.lead-logo {
+  .logo-image {
+    svg {
+      width : 50px;
+      height : 50px;
+    }
+  }
+}
+
+.license-verification {
+  p {
+    border : 1px solid $light;
+    color: $dark;
+    background-color: $light;
+    padding: 2px;
+    font-size: 16px;
+    line-height: 42px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+}
+
+.list.dark-bg {
+  color: $light;
+  border-color: $dark;
+  .item {
+    color: $light;
+    border-color: $dark;
+  }
+}
+
+.img-center {
+  transform: translateY(25%);
+  text-align: center;
+}
+
+.bold-list {
+  font-size: 1rem;
+  font-weight: 800;
+  padding: 5px 0;
+  text-align: center;
+  li {
+    margin: 2px 0;
+    min-height: 38px;
+  }
+}
+
+.text-underline {
+  text-decoration: underline;
+}
+
+.check {
+  svg {
+    width : 28px;
+  }
+}
+
+.item-popover {
+  position: absolute;
+  bottom: 0;
+  height: 180px;
+  background: white;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  .item-type {
+    background : $blue;
+    color: $light;
+    border-radius: 100%;
+    width: 77px;
+    height: 77px;
+    line-height: 77px;
+    text-align: center;
+    font-size: 30px;
+  }
+  .item-popover-content {
+    padding: 5% 5% 0;
+    h1 {
+      font-size: 16px;
+    }
+    h2 {
+      font-size: 14px;
+    }
+  }
+  .button {
+    position: absolute;
+    margin: 0;
+    bottom: 0;
+  }
+}

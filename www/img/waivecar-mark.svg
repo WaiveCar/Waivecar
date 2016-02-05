@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   viewBox="0 0 25 25"
+   version="1.1"
+   id="svg3473"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="waivecar-mark.svg">
+  <metadata
+     id="metadata3491">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1301"
+     inkscape:window-height="744"
+     id="namedview3489"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:zoom="2.5376344"
+     inkscape:cx="-20.683427"
+     inkscape:cy="-20.040106"
+     inkscape:window-x="65"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg3473" />
+  <!-- Generator: Sketch 3.3 (11970) - http://www.bohemiancoding.com/sketch -->
+  <title
+     id="title3475">waivecar-mark</title>
+  <desc
+     id="desc3477">Created with Sketch.</desc>
+  <defs
+     id="defs3479" />
+  <g
+     id="Page-1"
+     sketch:type="MSPage"
+     transform="matrix(0.26999896,0,0,0.26999896,-0.19972093,-0.06452975)"
+     style="fill:none;stroke:none">
+    <g
+       id="dashboard@2x"
+       sketch:type="MSArtboardGroup"
+       transform="translate(-436,-298)">
+      <g
+         id="waivecar-mark"
+         sketch:type="MSLayerGroup"
+         transform="translate(436.73971,296.239)">
+        <g
+           id="Group"
+           transform="translate(0,1)"
+           sketch:type="MSShapeGroup">
+          <ellipse
+             id="Oval-1"
+             cx="46.296474"
+             cy="47.296474"
+             rx="46.296474"
+             ry="46.296474"
+             sodipodi:cx="46.296474"
+             sodipodi:cy="47.296474"
+             sodipodi:rx="46.296474"
+             sodipodi:ry="46.296474"
+             style="fill:#ffffff"
+             d="m 92.592949,47.296474 c 0,25.568837 -20.727638,46.296475 -46.296475,46.296475 C 20.727638,93.592949 0,72.865311 0,47.296474 0,21.727638 20.727638,1 46.296474,1 71.865311,1 92.592949,21.727638 92.592949,47.296474 z" />
+          <path
+             d="M 32.407531,38.294381 29.063897,53.983741 55.041362,33.921936 54.012551,46.267662 84.876867,21.57621 C 76.646382,9.230484 62.500238,1 46.296473,1 20.833413,1 0,21.833413 0,47.296473 0,53.983741 1.2860131,60.156604 3.8580394,65.815062 l 28.5494916,-27.520681 0,0 z"
+             id="Shape"
+             inkscape:connector-curvature="0"
+             style="fill:#25c155" />
+          <path
+             d="M 89.506514,30.578302 43.724446,66.329467 44.238852,53.726538 18.518589,73.788343 19.290197,58.098983 3.8580394,66.072264 C 11.059713,82.27603 27.263478,93.592945 46.296473,93.592945 c 25.720262,0 46.296472,-20.833412 46.296472,-46.296472 0,-5.915661 -1.02881,-11.574118 -3.086431,-16.718171 l 0,0 z"
+             id="path3487"
+             inkscape:connector-curvature="0"
+             style="fill:#25c155" />
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,26 @@
+<ion-view hide-back-button="true" class="cars-index">
+
+  <ion-nav-title>
+    <page-title class="dark-bg title-plain">Find WaiveCars</page-title>
+  </ion-nav-title>
+
+  <ion-nav-buttons side="right">
+    <button menu-toggle="right" class="button button-icon icon ion-navicon"></button>
+  </ion-nav-buttons>
+
+  <ion-content scroll="false" padding="false" class="ion-content--center">
+
+    <div class="map-container">
+      <skobbler-map id="map"
+        markers="cars.all"
+        on-marker-tap="cars.showCar"
+        featured="cars.featured"
+        update-location
+        locate-me
+        center="cars.center"
+      >
+      </skobbler-map>
+    </div>
+  </ion-content>
+
+</ion-view>

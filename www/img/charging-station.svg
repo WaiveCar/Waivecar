@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="40.243904"
+   height="50"
+   viewBox="0 0 40.243904 50"
+   version="1.1"
+   id="svg2"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="charging-station.svg">
+  <metadata
+     id="metadata19">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1301"
+     inkscape:window-height="744"
+     id="namedview17"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:zoom="2.8780488"
+     inkscape:cx="-37.556015"
+     inkscape:cy="25"
+     inkscape:window-x="65"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2" />
+  <!-- Generator: Sketch 3.3 (11970) - http://www.bohemiancoding.com/sketch -->
+  <title
+     id="title4">charging station location</title>
+  <desc
+     id="desc6">Created with Sketch.</desc>
+  <defs
+     id="defs8" />
+  <g
+     id="Page-1"
+     sketch:type="MSPage"
+     transform="scale(0.6097561,0.6097561)"
+     style="fill:none;stroke:none">
+    <g
+       id="7-Dashboard@2x"
+       sketch:type="MSArtboardGroup"
+       transform="translate(-374,-348)">
+      <g
+         id="MAP"
+         sketch:type="MSLayerGroup"
+         transform="translate(0,46)">
+        <g
+           id="charging-station-location"
+           transform="translate(374,302)"
+           sketch:type="MSShapeGroup">
+          <path
+             d="M 21,63 45,63 33,82 21,63 z"
+             id="Triangle-1"
+             inkscape:connector-curvature="0"
+             style="fill:#021106" />
+          <circle
+             id="Oval-34"
+             cx="33"
+             cy="33"
+             r="33"
+             d="M 66,33 C 66,51.225397 51.225397,66 33,66 14.774603,66 0,51.225397 0,33 0,14.774603 14.774603,0 33,0 51.225397,0 66,14.774603 66,33 z"
+             sodipodi:cx="33"
+             sodipodi:cy="33"
+             sodipodi:rx="33"
+             sodipodi:ry="33"
+             style="fill:#021106" />
+          <path
+             d="m 28.856352,32.321206 0,-12.272989 L 57,40.280327 37.458334,34.683189 l 0,11.268594 L 9,26.575186 l 19.856352,5.74602 z"
+             id="bolt"
+             inkscape:connector-curvature="0"
+             style="fill:#25c155" />
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

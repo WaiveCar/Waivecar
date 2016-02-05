@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg viewBox="0 0 128 128" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.4.3 (16044) - http://www.bohemiancoding.com/sketch -->
+    <title>Shape Copy</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Intro---Sign-In---Registration" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="10.2-Verification-succeed@2x" sketch:type="MSArtboardGroup" transform="translate(-312.000000, -553.000000)" fill="#25C155">
+            <g id="BUTTONS" sketch:type="MSLayerGroup">
+                <g id="LICENSE-UPLOADED-+-Shape-Copy" transform="translate(73.000000, 553.000000)" sketch:type="MSShapeGroup">
+                    <path d="M303,0 C267.8,0 239,28.8 239,64 C239,99.2 267.8,128 303,128 C338.2,128 367,99.2 367,64 C367,28.8 338.2,0 303,0 L303,0 Z M290.2,96 L258.2,64 L267.16,55.04 L290.2,78.08 L338.84,29.44 L347.8,38.4 L290.2,96 L290.2,96 Z" id="Shape-Copy"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

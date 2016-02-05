@@ -1,0 +1,22 @@
+<ion-pane  class="info-window waiveCarContainer" ng-controller="BookingPrepareController">
+  <ion-content scroll="false">
+    <ion-slide-box>
+      <ion-slide >
+        <div class="container box">
+          <div class="vertical-aligned">
+            <ng-include src="'/img/waivecar-mark2.svg'" class="waiveCar-icon" />
+            <p>Connecting to WaiveCar</p>
+            <p>
+              <time-left  foo="bar" timer-name="{{connection.timerName}}" get-duration="connection.getConnectionDurations()"></time-left>
+            </p>
+            <ng-include src="'/img/smartphone-danger.svg'" alt="" class="main-image"></ng-include>
+            <p class="highlight">Please look around</p>
+            <p>If you see any damage on the car please take a picture and report the problem, thank you!</p>
+            <p class="highlight">Don’t worry about time, we will give you 1 more hour free on your next ride. </p>
+            <button ng-click="inspect()" class="button button-balanced">Report a Problem</button>
+          </div>
+        </div>
+      </ion-slide>
+    </ion-slide-box>
+  </ion-content>
+</ion-pane>

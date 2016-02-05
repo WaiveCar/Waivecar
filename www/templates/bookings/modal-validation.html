@@ -1,0 +1,29 @@
+<ion-modal-view>
+  <ion-content scroll="false" padding="true" class="ion-content--center dark-bg">
+    <div  class="row row-center row-full-height">
+      <div class="col col-center">
+        <div class="lead-logo">
+          <ng-include class="logo-image" src="'/img/waivecar-mark2.svg'" />
+        </div>
+        <h3 class="margin-bottom-10">MISSING INFORMATION</h3>
+        <div ng-if="hasActiveBooking">
+          <p>We need your driver's license and credit card detailsHi! You already have an active booking. <br>You can't have two at the same time. Sorry.</p>
+          <button type="button" class="button button-balanced button-block" ui-sref="bookings-active({id: activeBooking.id})">Go to my active booking</button>
+        </div>
+        <div ng-if="!hasActiveBooking">
+          <div ng-if="numberOfOpenItems > 0">
+            <p>We need some additional details before you can book</p>
+          </div>
+          <ul class="list-unstyled text-left margin-top-10">
+            <li ng-repeat="(key, item) in status">
+              <button type="button" class="button button-block button-balanced" ui-sref="{{item.path}}" ng-if="!item.valid">
+                {{ item.description.invalid }}
+              </button>
+            </li>
+          </ul>
+          <button type="button" class="button button-gray button-block" ng-click="close()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </ion-content>
+</ion-modal-view>

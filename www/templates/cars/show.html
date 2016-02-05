@@ -1,0 +1,42 @@
+<ion-view class="cars cars-show">
+  <ion-nav-title>
+    <page-title class="dark-bg title-plain">
+      <reverse-geo-coding location="ctrl.car"></reverse-geo-coding>
+    </page-title>
+  </ion-nav-title>
+  <ion-nav-buttons side="right">
+    <button class="button button-icon icon-svg" ui-sref="cars">
+      <ng-include src="'/img/close-icon.svg'" alt="close"></ng-include>
+    </button>
+  </ion-nav-buttons>
+  <ion-content scroll="false" padding="false" class="has-header has-footer">
+    <div class="bar bar-dark bar-subheader route-distance">
+      <h5 class="text-center">
+        <route-distance></route-distance> - <route-duration></route-duration>
+      </h5>
+    </div>
+    <div class="map-container has-info-footer has-info-subheader">
+      <skobbler-map
+        id="map"
+        zoom="15"
+        markers="ctrl.car"
+        route-start="$root.currentLocation"
+        route-destiny="ctrl.car"
+        center="ctrl.center"
+      >
+      </skobbler-map>
+    </div>
+
+    <div class="info-footer padding-horizontal">
+      <car-charge-status car="ctrl.car"></car-charge-status>
+    </div>
+
+  </ion-content>
+
+  <ion-footer-bar class="no-padding">
+    <div class="button-bar">
+      <button type="button" class="button button-balanced" ng-click="ctrl.book()" ng-disabled="!ctrl.car.isAvailable">Book WaiveCar</button>
+    </div>
+  </ion-footer-bar>
+
+</ion-view>

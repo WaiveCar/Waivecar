@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="120px" height="120px" viewBox="0 0 120 120" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.3.3 (12072) - http://www.bohemiancoding.com/sketch -->
+    <title>Imported Layers + clock</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Vision" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="36-Our-vision@2x" sketch:type="MSArtboardGroup" transform="translate(-544.000000, -999.000000)">
+            <g id="ICONS" sketch:type="MSLayerGroup" transform="translate(60.000000, 995.000000)">
+                <g id="icons" transform="translate(14.000000, 1.000000)" sketch:type="MSShapeGroup">
+                    <g id="clock-icon" transform="translate(470.000000, 1.000000)">
+                        <g id="Imported-Layers-+-Oval-3-+-Path" transform="translate(0.000000, 1.000000)">
+                            <g id="Imported-Layers-+-clock">
+                                <path d="M60,1 C26.8628155,1 0,27.8628155 0,61 C0,94.1368932 26.8628155,121 60,121 C93.1368932,121 120,94.1368932 120,61 C120,27.8628155 93.1368932,1 60,1 L60,1 Z" id="Imported-Layers" fill="#25C155"></path>
+                                <g id="clock" transform="translate(28.000000, 28.000000)">
+                                    <circle id="Oval-3" fill="#FFFFFF" cx="32.5" cy="33.5" r="32.5"></circle>
+                                    <path d="M51.6821681,33.7854501 C51.9296744,33.8284129 52.1104943,34.0430823 52.1104943,34.2943497 L52.1104943,34.3078027 C52.1104943,34.5566109 51.9335801,34.7689658 51.6889669,34.8148217 C46.3232445,35.8184445 33.6113154,37.9032258 32.2163982,37.9032258 C30.2189892,37.9032258 28.6,36.2842366 28.6,34.2868276 C28.6,32.8645705 30.7394612,19.1449681 31.7271719,13.5893125 C31.7668076,13.366253 31.9607912,13.2032258 32.1873224,13.2032258 L32.1884796,13.2032258 C32.4356966,13.2032258 32.646171,13.3830331 32.6847941,13.627357 L35.4235649,30.9721816 L51.6821681,33.7854501 L51.6821681,33.7854501 Z" id="Path" fill="#25C155"></path>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

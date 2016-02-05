@@ -1,0 +1,34 @@
+.report-problem-new {
+  .waivecar-mark {
+    width: 35px;
+    height: 35px;
+    display: block;
+    margin: 0 auto;
+  }
+
+  .image-tray {
+    display: flex;
+    flex-flow: columns;
+    align-items: center;
+    justify-content: center;
+    margin: 15px 0;
+  }
+
+  .image-tray-item {
+    width: 54px;
+    height: 54px;
+    margin-right: 15px;
+    display: flex;
+    background-size: cover;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .add-icon {
+    background-color: #353434;
+    background-image: url('../img/plus-icon.svg');
+    background-size: 18px 18px;
+    background-position: center center;
+    background-repeat: no-repeat;
+  }
+}

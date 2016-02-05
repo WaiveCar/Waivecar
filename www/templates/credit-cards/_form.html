@@ -1,0 +1,42 @@
+<div class="list padding-top">
+
+  <label class="item item-input">
+    <span class="input-label required">Card Number</span>
+    <input name="number" type="tel" placeholder="#### #### #### ####" ng-model="card.card.number" required payments-validate="card" payments-format="card" payments-type-model="type" autofocus>
+  </label>
+
+  <label class="item item-input">
+    <span class="input-label required">Name on Card</span>
+    <input name="name" type="text" placeholder="MR JOHN SMITH" ng-model="card.card.name" required autofocus>
+  </label>
+
+  <label class="item item-input">
+    <span class="input-label required">Expiration Date</span>
+    <input name="expiry" type="month" ng-model="card.card.expiry" required>
+  </label>
+
+  <label class="item item-input">
+    <span class="input-label required">CVC</span>
+    <input name="cvc" type="tel" ng-model="card.card.cvc" required payments-validate="cvc" payments-format="cvc" payments-type-model="type">
+  </label>
+
+  <div ng-messages="form.number.$error" ng-if="form.$submitted && form.number.$invalid" role="alert">
+    <div ng-message="required">Credit Card number is required</div>
+    <div ng-message="card">Credit Card number is invalid</div>
+  </div>
+
+  <div ng-messages="form.name.$error" ng-if="form.$submitted && form.name.$invalid" role="alert">
+    <div ng-message="required">Card Holder Name is required</div>
+  </div>
+
+  <div ng-messages="form.expiry.$error" ng-if="form.$submitted && form.expiry.$invalid" role="alert">
+    <div ng-message="required">Expiry Date is required</div>
+    <div ng-message="expiry">Expiry Date is invalid</div>
+  </div>
+
+  <div ng-messages="form.cvc.$error" ng-if="form.$submitted && form.cvc.$invalid" role="alert">
+    <div ng-message="required">CVC is required</div>
+    <div ng-message="cvc">CVC is invalid</div>
+  </div>
+
+</div>

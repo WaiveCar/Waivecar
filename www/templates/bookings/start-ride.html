@@ -1,0 +1,39 @@
+<ion-view>
+  <ion-content scroll="false" padding="true" class="has-header has-footer ion-content--center dark-bg">
+    <div  class="row row-center row-full-height">
+      <div class="col col-center">
+        <div class="lead-logo">
+          <ng-include class="logo-image" src="'/img/waivecar-mark2.svg'" />
+        </div>
+        <div ng-if="ctrl.showVideo" class="padding video-container">
+          <iframe src="https://www.youtube.com/embed/w8rl3fl1St8" frameborder="0" allowfullscreen></iframe>
+          <br />
+          <br />
+          <button type="button" class="margin-20 button button-block button-balanced" ng-click="ctrl.toggleVideo()">Got It</button>
+        </div>
+        <div ng-if="!ctrl.showVideo">
+          <div>
+            <h3>ARE YOU READY</h3>
+            <p>Please confirm that you:</p>
+            <ul class="list-unstyled text-left bold-list">
+              <li>1. Are sitting in the WaiveCar.</li>
+              <li>2. Have taken the WaiveCar key.</li>
+              <li>3. The WaiveCar is problem free.</li>
+            </ul>
+            <p class="text-center padding-vertical">When you are ready, tap on "Continue" and start the car normally. Enjoy your ride!</p>
+            <button type="button" class="button button-block button-balanced" ng-disabled="!(data.bookings.status === 'started' || data.bookings.status === 'ready')" ng-click="ctrl.start()">Continue</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ion-content>
+  <ion-footer-bar class="no-padding">
+    <div class="text-center footer-full">
+      <p class="text-center">
+        If you need help, please watch our <a class="text-underline" href="" ng-click="ctrl.toggleVideo()">video tutorial</a>.
+        <br />
+        If you have a problem, please <a class="text-underline" ui-sref="problem">report the problem</a>.
+      </p>
+    </div>
+  </ion-footer-bar>
+</ion-view>

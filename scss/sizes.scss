@@ -1,0 +1,65 @@
+//Vws
+$headerTitleSize: 1.3;
+$headerSubtitleSize: $headerTitleSize*0.8;
+ //Percentages
+$menuRowSpacing: 5;
+$infoFooterHeight: 22;
+$bigInfoFooterHeight: 24.5;
+$smallSubHeaderSize: 5;
+$bigHeaderSize: 15;
+$mainTitleHeightPercent:  80;
+$barHeight: 9.37;
+$barFooterHeight:9;
+$imgFooterIconHeight:31.68;
+$footerInformationSize:24.48;
+
+$padding10: 10;
+$padding20: 20;
+$padding30: 30;
+$padding40: 40;
+$padding50: 50;
+
+$margin10: 10;
+$margin20: 20;
+$margin30: 30;
+$margin40: 40;
+$margin50: 50;
+
+@mixin vertical-align {
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+@mixin custom-padding ($size, $direction){
+  padding-#{$direction}: $size*1%;
+}
+@mixin custom-margin ($size, $direction){
+  margin-#{$direction}: $size*1%;
+  display: block;
+}
+
+.info-header {
+  height: 45px;
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+}
+
+.info-header-item {
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.info-header-item svg {
+  height: 18px;
+  margin-right: 10px;
+}
+
+.info-header-item .battery svg {
+  height: 16px;
+}

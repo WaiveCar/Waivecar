@@ -1,0 +1,8 @@
+<ion-pane class="damageContainer" ng-controller="InspectionController">
+  <header-bar type="nav" on-button-click="showNav()">Car damage</header-bar>
+  <ion-content  class="has-header" >
+    <damage-info-container get-set-picture-function="damage.setPicture(setFn)" damage-description="damage.description"></damage-info-container>
+    <take-picture on-take-picture="damage.takePictureOfDamage()"></take-picture>
+    <send-report on-send-report="damage.sendReport()"></send-report>
+  </ion-content>
+</ion-pane>

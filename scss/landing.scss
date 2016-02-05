@@ -1,0 +1,14 @@
+.app-index {
+  ion-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+
+    img {
+      flex-basis: 1;
+      width: 80%;
+    }
+  }
+}

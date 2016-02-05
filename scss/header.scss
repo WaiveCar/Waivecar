@@ -1,0 +1,72 @@
+.page-title {
+  margin-top: 1rem;
+  margin-top: 0;
+  margin-bottom: 2rem;
+  margin-bottom: 0;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  line-height: 44px;
+  height: 44px;
+  span {
+    margin-bottom: 0.2rem;
+    display: block;
+  }
+}
+
+page-title {
+  width: 100%;
+  display: block;
+  &.dark-bg {
+    .page-title {
+      color: $light;
+    }
+  }
+  &.title-plain .strike {
+    display: none;
+  }
+  h4 {
+    width: 100%;
+    display: block;
+  }
+}
+
+ion-nav-bar .bar-header {
+  color: $light;
+  .button.back-button {
+    width: 10%;
+    text-align: center;
+  }
+  .title {
+    &+.buttons {
+    }
+  }
+
+  .buttons {
+    margin-top: 3px;
+  }
+}
+
+.bar.bar-dark {
+  h1, h2, h3, h4, h5, h6 {
+    color: $light;
+  }
+}
+
+ion-content .bar-subheader {
+  position: relative;
+  top: 0;
+
+  &.route-distance {
+    height: $smallSubHeaderSize * 1%;
+    h5 {
+      color: $lightGray;
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+  }
+}
+
+.nav-bar-title {
+  width: 100%;
+  display: block;
+}

@@ -1,0 +1,53 @@
+<ion-view hide-back-button="{{!verify.fromBooking}}" class="auth">
+
+  <ion-nav-title>
+    <page-title class="dark-bg">Enter Code</page-title>
+  </ion-nav-title>
+
+  <ion-content scroll="false" padding="true" class="ion-content--center dark-bg">
+
+    <div ng-if="::verify.fromBooking">
+      <p class="margin-top-10">You must verify your account before booking a car.</p>
+      <p>
+        We have previously sent you an SMS with verification code.
+        (<button type="button" class="button button-small button-clear button-energized" ng-click="verify.resend()">Resend</button>)
+      </p>
+      <p>Please enter it below to verify your account.</p>
+    </div>
+
+    <div ng-if="::verify.isWizard">
+      <p class="margin-top-10">We just sent you SMS with a verification code.</p>
+      <p>Please enter it below.</p>
+    </div>
+
+    <form name="form" id="form" ng-submit="verify.submit(form)" novalidate class="margin-top-10">
+      <div class="list">
+        <label class="item item-input">
+          <span class="input-label required">Code</span>
+          <input type="tel" name="token" ng-model="verify.form.token" required autofocus autocapitalize="off" autocorrect="off" />
+        </label>
+
+        <div ng-messages="verify.form.$error" ng-if="verify.form.$submitted" role="alert">
+          <div ng-message="required">Verification Code is required</div>
+        </div>
+
+      </div>
+    </form>
+
+    <button
+      type="button"
+      class="button button-small button-clear button-block margin-top-10"
+      ui-sref="licenses-new({step: 3})"
+      ng-if="::verify.isWizard"
+    >Skip this step</button>
+
+  </ion-content>
+
+  <ion-footer-bar class="no-padding">
+    <div class="button-bar">
+      <button type="button" class="button button-stable" ng-if="::verify.fromBooking" go-back>Cancel</button>
+      <button type="submit" form="form" class="button button-balanced">Verify</button>
+    </div>
+  </ion-footer-bar>
+
+</ion-view>

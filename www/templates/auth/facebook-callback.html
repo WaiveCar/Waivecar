@@ -1,0 +1,44 @@
+<ion-pane class="waiveCarContainer facebookContainer">
+
+  <ion-content class="full-page  has-footer-bar">
+
+    <step-by-step current-step="2"></step-by-step>
+    <page-title back-button="true">Connect with facebook</page-title>
+
+    <form>
+
+      <p class="formSectionTitle">Review your information</p>
+
+      <div class="nameAndEmailContainer">
+        <label class="item item-input">
+          <span class="input-label">Full Name</span>
+          <input type="text" ng-model="userCtrl.forms.userForm.fullName">
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Email</span>
+          <input type="text" placeholder="Email" ng-model="userCtrl.forms.userForm.email" autocapitalize="off" autocorrect="off">
+        </label>
+      </div>
+
+      <p class="formSectionTitle">Enter your mobile number and password</p>
+
+      <label class="item item-input">
+        <span class="input-label">Mobile</span>
+        <input type="text" ng-model="userCtrl.forms.userForm.mobile" autocapitalize="off" autocorrect="off">
+      </label>
+      <label class="item item-input">
+        <span class="input-label">Password</span>
+        <input type="password" placeholder="Password" ng-model="userCtrl.forms.userForm.password" autocapitalize="off" autocorrect="off">
+      </label>
+
+    </form>
+
+    <p class="bottomTextInfo">By tapping on continue, you are agreeing with our <span style="text-decoration:underline">Terms of Service</span></p>
+
+  </ion-content>
+
+  <div class="bar bar-footer">
+    <button class="button button-balanced">Continue</button>
+  </div>
+
+</ion-pane>

@@ -1,0 +1,60 @@
+<ion-view>
+
+  <ion-nav-title>
+    <page-title class="dark-bg">Connect With Facebook</page-title>
+  </ion-nav-title>
+
+  <ion-content padding="true" class="ion-content--center dark-bg">
+    <form ng-submit="userCreate.completeFacebookRegistration(form)" name="form" id="form" novalidate>
+      <div class="list">
+
+        <p>Review your information</p>
+
+        <label class="item item-input">
+          <span class="input-label required">First Name</span>
+          <input type="text" name="firstName" placeholder="John" ng-model="userCreate.user.firstName" required autofocus />
+        </label>
+
+        <label class="item item-input">
+          <span class="input-label required">Last Name</span>
+          <input type="text" name="lastName" placeholder="Smith" ng-model="userCreate.user.lastName" required />
+        </label>
+
+        <label class="item item-input">
+          <span class="input-label required">Email</span>
+          <input type="email" placeholder="john@example.com" name="email" ng-model="userCreate.user.email" required />
+        </label>
+
+        <p class="padding-top">Enter your mobile number</p>
+
+        <label class="item item-input">
+          <span class="input-label mobile-label required">Mobile</span>
+          <i class="icon icon-flag" ng-include="'/img/flag-icon.svg'">
+          </i>
+          <input type="tel" name="mobile" placeholder="(323) 567-5555" ng-model="userCreate.user.phone" required />
+        </label>
+
+        <div class="validations" ng-if="form.$submitted && form.$invalid">
+          <div class="help-block" ng-if="form.firstName.$error.required">First Name is required</div>
+          <div class="help-block" ng-if="form.lastName.$error.required">Last Name is required</div>
+          <div class="help-block" ng-if="form.email.$error.required">An Email Address is required</div>
+          <div class="help-block" ng-if="form.email.$error.email">A valid Email Address is required</div>
+          <div class="help-block" ng-if="form.phone.$error.required">Mobile Number is required</div>
+        </div>
+
+      </div>
+
+    </form>
+
+    <p class="padding-top">You won't receive any spam from us</p>
+
+  </ion-content>
+
+  <ion-footer-bar class="no-padding">
+    <div class="button-bar">
+      <button type="button" class="button button-gray" go-back>Cancel</button>
+      <button type="submit" form="form" class="button button-balanced">Continue</button>
+    </div>
+  </ion-footer-bar>
+
+</ion-view>

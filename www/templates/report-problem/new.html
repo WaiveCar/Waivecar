@@ -1,0 +1,30 @@
+<ion-view class="report-problem-new">
+  <!--ion-nav-buttons side="primary">
+    <button class="button button-icon icon ion-chevron-left" ng-click="ctrl.modal.show()"></button>
+  </ion-nav-buttons>
+  <ion-nav-buttons side="right">
+    <button class="button button-icon icon ion-close" ui-sref="booking({ id: ctrl.model.bookingId })"></button>
+  </ion-nav-buttons-->
+  <ion-content padding="true" class="ion-content--center dark-bg">
+    <ng-include src="'/img/waivecar-mark.svg'" class="waivecar-mark"></ng-include>
+    <h4>Report a problem</h4>
+    <p>Add as many pictures as possible</p>
+    <div class="image-tray">
+      <div class="image-tray-item add-icon" ng-click="ctrl.addPicture()"></div>
+      <div class="image-tray-item"
+        ng-repeat="file in ctrl.model.files"
+        ng-style="file.style"
+      ></div>
+    </div>
+    <p>Describe the problem</p>
+    <form ng-submit="ctrl.submit()">
+      <label class="item item-input">
+        <textarea ng-model="ctrl.model.comment" rows="10"></textarea>
+      </label>
+      <button type="submit" class="button button-balanced button-block" ng-disabled="!(ctrl.model.files.length || ctrl.model.comment.length)">
+        Report
+      </button>
+    </form>
+  </ion-content>
+</ion-view>
+

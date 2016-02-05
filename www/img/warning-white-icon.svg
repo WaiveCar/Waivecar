@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg viewBox="0 0 45 45" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.4.4 (17249) - http://www.bohemiancoding.com/sketch -->
+    <title>warning-2-icon</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Core-Flow" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="19.1-Dashboard-charging-station@2x" sketch:type="MSArtboardGroup" transform="translate(-30.000000, -86.000000)" fill="#FFFFFF">
+            <path d="M52.5002184,86 C40.0736161,86 30,96.0735558 30,108.500109 C30,120.926444 40.0736161,131 52.5002184,131 C64.9264931,131 75,120.926444 75,108.500109 C75,96.0735558 64.9263839,86 52.5002184,86 L52.5002184,86 Z M48.1857006,94.0598058 L56.8142994,94.0598058 L54.629844,114.266007 L50.370156,114.266007 L48.1857006,94.0598058 L48.1857006,94.0598058 Z M52.5,124.118823 C50.707982,124.118823 49.2552099,122.665934 49.2552099,120.874017 C49.2552099,119.081881 50.707982,117.629211 52.5,117.629211 C54.292018,117.629211 55.7447901,119.081881 55.7447901,120.874017 C55.7447901,122.665934 54.292018,124.118823 52.5,124.118823 L52.5,124.118823 Z" id="warning-2-icon" sketch:type="MSShapeGroup"></path>
+        </g>
+    </g>
+</svg>

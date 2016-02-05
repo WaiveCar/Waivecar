@@ -1,0 +1,33 @@
+.main-menu > div {
+  display:flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-content: space-around;
+  align-items: center;
+  height: 100%;
+
+  div.text-center {
+    width: 45%;
+    padding-top: 10%;
+    padding-bottom: 10%;
+
+    a {
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      justify-content: center;
+      text-decoration: none;
+    }
+
+  }
+
+  .button-icon-label {
+    margin-top: 1rem;
+    font-size: 1rem;
+  }
+
+  .menu-item-image {
+    width: 40px;
+  }
+}

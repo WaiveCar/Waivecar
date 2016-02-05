@@ -1,0 +1,16 @@
+<ion-view hide-nav-bar="true" class="auth auth-index">
+
+  <ion-content scroll="false" padding="true" class="ion-content--center dark-bg">
+
+    <div class="logo" on-hold="ctrl.changeEnv()">
+      <ng-include class="logo-image" src="'/img/logo-waivecar.svg'" />
+    </div>
+
+    <div class="button-group">
+      <button class="button button-balanced button-padded button-full" ui-sref="auth-login">Sign in</button>
+      <button class="button button-positive button-padded button-full" ui-sref="users-new({step: 1})" >Register</button>
+    </div>
+
+  </ion-content>
+
+</ion-view>

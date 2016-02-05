@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg viewBox="0 0 58 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.4.3 (16044) - http://www.bohemiancoding.com/sketch -->
+    <title>battery icon</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Core-Flow" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g class="battery-background" sketch:type="MSArtboardGroup" transform="translate(-112.000000, -203.000000)" fill="#545A56">
+            <g id="time-+-battery" sketch:type="MSLayerGroup" transform="translate(0.000000, 174.000000)">
+                <g id="battery" sketch:type="MSShapeGroup">
+                    <g id="battery-icon-+-55%" transform="translate(112.000000, 24.000000)">
+                        <g id="55%-+-battery-icon">
+                            <path d="M0,36.8400002 L49.5485162,36.8400002 L49.5485162,5 L0,5 L0,36.8400002 L0,36.8400002 Z M22.4741935,20.4793345 L22.4741935,12.5132848 L38.6258836,25.6453745 L27.4108867,22.0124305 L27.4108867,29.3265561 L11.0785978,16.7497561 L22.4741935,20.4793345 L22.4741935,20.4793345 Z M57.994286,16.3032001 L57.994286,25.5368001 C57.994286,26.9436505 56.9860018,28.0840001 55.7420807,28.0840001 L52.3637728,28.0840001 L52.3637728,13.756 L55.7420807,13.756 C56.9860018,13.756 57.994286,14.8963496 57.994286,16.3032001 L57.994286,16.3032001 Z" id="battery-icon"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

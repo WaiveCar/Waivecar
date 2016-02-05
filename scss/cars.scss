@@ -1,0 +1,109 @@
+// /cars/:id
+
+.info-footer {
+  height: $infoFooterHeight * 1%;
+  background-color: #FFF;
+  color: #545a56;
+
+  &.big-info-footer {
+    height: $bigInfoFooterHeight* 1%;
+  }
+
+  ul {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-content: stretch;
+    align-items: stretch;
+    height: 100%;
+
+    li {
+      display: flex;
+      align-items: center;
+      padding: 0;
+      font-size: 1rem;
+      flex: 1 1 auto;
+      align-self: auto;
+      border-bottom: solid 1px $lightGray;
+      &:last-child {
+        border-bottom: none;
+      }
+
+      img {
+        height: 15px;
+        margin-left: 6.66%;
+        margin-right: 6.66%;
+      }
+
+    }
+
+
+  }
+
+  .footer-information {
+    font-size: $headerTitleSize * 0.6rem;
+    height: $footerInformationSize*1%;
+    margin: 0;
+    p {
+      @include vertical-align;
+    }
+  }
+  .has-footer-information {
+    height: (100-$footerInformationSize)*1%;
+    width: 100%;
+    display: block;
+  }
+  // .info-card {
+  //   display: inline-block;
+  //   margin: 0;
+  //   border: 0;
+  //   height: 100%;
+  //   float: left;
+  //   p {
+  //     text-align: left;
+  //     &.title {
+  //       font-size: $headerTitleSize*0.8rem;
+  //     }
+  //     font-size: $headerTitleSize*0.7rem;
+  //     span {
+  //       font-size: $headerTitleSize*0.7rem;
+  //     }
+  //   }
+  //   &.info-card-s {
+  //     width: 35%;
+  //   }
+  //   &.info-card-m {
+  //     width: 65%;
+  //   }
+  // }
+}
+
+car-charge-status svg {
+  width: 24px;
+  margin: 0 10px;
+}
+
+.car-image {
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-size: contain;
+  margin: 10px;
+}
+
+.car-row {
+  svg {
+    height: 16px;
+  }
+  .is-charging {
+    .battery-background {
+      fill: #20e25c;
+    }
+  }
+  .car-cell {
+    display: flex;
+    flex-flow: column;
+    justify-content: space-around;
+    min-height: 80px;
+  }
+}

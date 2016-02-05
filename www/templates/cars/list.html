@@ -1,0 +1,38 @@
+<ion-view class="cars-list">
+
+  <ion-nav-title>
+    <page-title class="dark-bg title-plain">Find WaiveCars</page-title>
+  </ion-nav-title>
+
+  <ion-nav-buttons side="right">
+    <button menu-toggle="right" class="button button-icon icon ion-navicon"></button>
+  </ion-nav-buttons>
+
+  <ion-content scroll="true" padding="false">
+    <ion-list
+      show-delete="false"
+      show-reorder="false"
+      can-swipe="false">
+      <ion-item ng-repeat="car in cars.all"
+        class="item-thumbnail-left car-row"
+        ng-click="cars.show(car)">
+        <img ng-src="img/car.png">
+        <div class="car-cell">
+          <h2 ng-bind="car.license || '&nbsp;'"></h2>
+          <div ng-if="::car.isCharging" class="is-charging">
+            <ng-include src="'/img/battery-darkgrey.svg'" alt="charge"></ng-include>
+            Charging
+          </div>
+          <div ng-if="::(!car.isCharging)">
+            <ng-include src="'/img/battery-darkgrey.svg'" alt="charge"></ng-include>
+            Not charging
+          </div>
+          <div>
+            Charge <strong ng-bind="car.charge || 0"></strong>
+          </div>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+
+</ion-view>

@@ -1,0 +1,43 @@
+<ion-view class="contacts-new" ng-controller="MessageController">
+
+  <ion-nav-title>
+    <page-title class="dark-bg title-plain">Contact</page-title>
+  </ion-nav-title>
+
+  <ion-nav-buttons side="primary">
+    <button menu-toggle="right" class="button button-icon icon ion-navicon"></button>
+  </ion-nav-buttons>
+
+  <ion-content scroll="false" padding="true" class="ion-content--center gray-bg">
+
+    <p id="padding-top padding-bottom">Please fill the form below and we will contact you as soon as possible.</p>
+
+    <form ng-submit="send(form)" name="form" id="form" class="padding-bottom">
+
+      <label class="item item-input">
+        <span class="input-label">Subject</span>
+        <input type="text" autofocus>
+      </label>
+
+      <label class="item item-input" style="align-items: flex-start">
+        Message
+        <textarea rows="10"></textarea>
+      </label>
+
+    </form>
+
+    <div class="padding-top">
+      <img class="social-icon" src="img/facebook-icon.svg" />
+      <img class="social-icon" src="img/twitter-icon.svg" />
+    </div>
+
+  </ion-content>
+
+  <ion-footer-bar class="no-padding">
+    <div class="button-bar">
+      <!-- <button type="button" class="button button-gray" go-back>Cancel</button> -->
+      <button type="submit" form="form" class="button button-balanced">Send</button>
+    </div>
+  </ion-footer-bar>
+
+</ion-view>

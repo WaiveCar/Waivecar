@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="69px" height="70px"  version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.3 (11970) - http://www.bohemiancoding.com/sketch -->
+    <title>facebook-circle-icon</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Intro---Sign-In---Registration" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <g id="3-Sign-in@2x" sketch:type="MSArtboardGroup" transform="translate(-88.000000, -251.000000)" fill="#FFFFFF">
+            <g id="Group" sketch:type="MSLayerGroup" transform="translate(37.000000, 228.000000)">
+                <g id="FACEBOOK-BUTTON" sketch:type="MSShapeGroup">
+                    <path d="M85.25,23.75 C66.3341905,23.75 51,39.0841905 51,58 C51,76.9158095 66.3341905,92.25 85.25,92.25 C104.165809,92.25 119.5,76.9158095 119.5,58 C119.5,39.0841905 104.165809,23.75 85.25,23.75 L85.25,23.75 Z M95.3866699,43.8996408 L90.6001493,43.8996408 C88.9105934,43.8996408 88.5584502,44.59179 88.5584502,46.3400364 L88.5584502,50.5637597 L95.3866699,50.5637597 L94.7297682,57.9783859 L88.5584502,57.9783859 L88.5584502,80.1289915 L79.7133046,80.1289915 L79.7133046,58.072324 L75.1134964,58.072324 L75.1134964,50.563926 L79.7133046,50.563926 L79.7133046,44.6508131 C79.7133046,39.1011493 82.6809175,36.2035328 89.2629029,36.2035328 L95.3868362,36.2035328 L95.3868362,43.8996408 L95.3866699,43.8996408 Z" id="facebook-circle-icon"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
