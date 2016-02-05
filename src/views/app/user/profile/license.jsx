@@ -24,7 +24,6 @@ module.exports = class ProfileLicenseView extends React.Component {
    * @return {Void}
    */
   handleChange = (item, value) => {
-    console.log(item);
     const newState = {};
     newState[item] = value;
     this.setState(newState);

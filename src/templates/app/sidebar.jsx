@@ -60,7 +60,7 @@ module.exports = class Sidebar extends React.Component {
    */
   getLink(link, i) {
     return (
-      <li key={ i } className={ link.parent ? "has-parent" : "parent" }>
+      <li key={ i } className={ link.parent ? 'has-parent' : 'parent' }>
         <Link to={ link.path } className={ dom.setClass({ 'nav-link' : true, animated : true, fadeInDown : true, active : link.path === this.props.route }) }>
           <i className="material-icons" role={ link.title }>{ link.icon }</i>
           { link.title }
@@ -92,8 +92,9 @@ module.exports = class Sidebar extends React.Component {
               <div className="sidebar-avatar animated flipInX">
                 <div
                   className = "sidebar-avatar-img"
-                  style     = {{ background : `url(${ user.getAvatar() }) center center / cover` }}
-                />
+                  style     = {{ background : `url(${ user.getAvatar() }) center center / cover` }}>
+
+                </div>
               </div>
               <div className="sidebar-name animated flipInY">
                 <span>{ user.firstName } { user.lastName }</span>
