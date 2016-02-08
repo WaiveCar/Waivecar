@@ -67,7 +67,7 @@ function LicenseController ($stateParams, $injector) {
       var modal;
       $modal('result', {
         icon: 'x-icon',
-        title: 'License upload failed',
+        title: 'Looks like the formatting of your license is wrong, please try again.',
         actions: [{
           className: 'button-balanced',
           text: 'Retry',
