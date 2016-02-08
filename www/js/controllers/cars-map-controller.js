@@ -53,7 +53,6 @@ function CarsMapController ($rootScope, $scope, $state, $injector, $data, cars, 
 
   function ensureAvailableCars (allCars) {
     var availableCars = _.filter(allCars, 'isAvailable');
-    
     if (availableCars.length) {
       return;
     }
