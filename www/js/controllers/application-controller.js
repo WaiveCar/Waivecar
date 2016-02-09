@@ -50,7 +50,6 @@ function ApplicationController ($rootScope, $scope, $injector) {
     var isAuthenticated = $auth.isAuthenticated();
 
     if (isAuthenticated && !_.isUndefined(authRequired) && authRequired === false) {
-      $auth.logout();
       event.preventDefault();
       $state.go('cars');
     } else if (!isAuthenticated && authRequired) {
