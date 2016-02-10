@@ -4,6 +4,7 @@ require('ionic-angular');
 require('ngCordova');
 require('../services/auth-interceptor');
 var ionic = require('ionic');
+var _ = require('lodash');
 
 var config = [
   '$ionicConfigProvider',
@@ -108,10 +109,13 @@ var config = [
 ];
 
 var run = [
+  '$rootScope',
   '$cordovaKeyboard',
   '$cordovaStatusbar',
   '$ionicPlatform',
-  function Run($cordovaKeyboard, $cordovaStatusbar, $ionicPlatform) {
+  '$auth',
+  '$state',
+  function Run($rootScope, $cordovaKeyboard, $cordovaStatusbar, $ionicPlatform, $auth, $state) {
 
     $ionicPlatform.ready(function() {
 
@@ -123,6 +127,22 @@ var run = [
 
       }
 
+    });
+
+    $rootScope.$on('$stateChangeStart', function(event, toState) {
+      var authRequired;
+      if (toState && _.has(toState, 'data') && _.has(toState.data, 'auth')) {
+        authRequired = toState.data.auth;
+      }
+      var isAuthenticated = $auth.isAuthenticated();
+
+      if (isAuthenticated && !_.isUndefined(authRequired) && authRequired === false) {
+        event.preventDefault();
+        $state.go('cars');
+      } else if (!isAuthenticated && authRequired) {
+        event.preventDefault();
+        $state.go('auth-login');
+      }
     });
 
   }

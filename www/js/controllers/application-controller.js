@@ -8,7 +8,6 @@ require('../services/data-service.js');
 require('../services/message-service.js');
 require('../services/session-service.js');
 require('../services/ride-service.js');
-var _ = require('lodash');
 
 function ApplicationController ($rootScope, $scope, $injector) {
 
@@ -41,22 +40,6 @@ function ApplicationController ($rootScope, $scope, $injector) {
   // $rootScope.$on('socket:error', function (ev, data) {
   //   console.log('TODO: handle socket error:');
   // });
-
-  $rootScope.$on('$stateChangeStart', function(event, toState) {
-    var authRequired;
-    if (toState && _.has(toState, 'data') && _.has(toState.data, 'auth')) {
-      authRequired = toState.data.auth;
-    }
-    var isAuthenticated = $auth.isAuthenticated();
-
-    if (isAuthenticated && !_.isUndefined(authRequired) && authRequired === false) {
-      event.preventDefault();
-      $state.go('cars');
-    } else if (!isAuthenticated && authRequired) {
-      event.preventDefault();
-      $state.go('auth-login');
-    }
-  });
 
   $rootScope.$on('authLogin', function () {
     initLocation();
