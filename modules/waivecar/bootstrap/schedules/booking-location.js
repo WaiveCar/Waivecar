@@ -40,8 +40,7 @@ scheduler.process('booking-location', function *(job) {
         // User has returned to zone
         yield notify.notifyAdmins(`${ user.name() } took ${ car.license } back into the driving zone. https://www.waivecar.com/bookings/${ booking.id }`, [ 'slack' ]);
       }
-
-      yield cars.syncUpdate(car.id, device, car);
     }
+    yield cars.syncUpdate(car.id, device, car);
   }
 });
