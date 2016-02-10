@@ -74,7 +74,7 @@ module.exports = class OnfidoService {
     if (license.gender) candidate.gender = license.gender;
     /*eslint-enable */
 
-    let response = yield this.request('/applicants', 'POST', candidate);
+    let response = yield this.request('/applicants', 'POST', candidate, user);
     return response;
   }
 
@@ -165,7 +165,7 @@ module.exports = class OnfidoService {
    * @param  {Object} data
    * @return {Object}          Response Object
    */
-  static *request(resource, method, data) {
+  static *request(resource, method, data, user) {
     let options = {
       url     : config.onfido.uri + resource,
       method  : method || 'GET',
@@ -184,13 +184,13 @@ module.exports = class OnfidoService {
     let response = result.toJSON();
 
     if (!response || response.statusCode > 201) {
-      throw error.parse(yield this.getError(resource, result), response.statusCode || 400);
+      throw error.parse(yield this.getError(resource, result, user), response.statusCode || 400);
     }
 
     return JSON.parse(response.body);
   }
 
-  static *getError(resource, result) {
+  static *getError(resource, result, user) {
     let data = result.body ? JSON.parse(result.body) : null;
     if (!data) {
       return {
@@ -199,19 +199,23 @@ module.exports = class OnfidoService {
       };
     }
 
+    let errors = '';
+    let errorMap = [];
     if (data.error && data.error.type === 'validation_error') {
-      let errors = '';
       console.log(data.error);
       for (let field in data.error.fields) {
         let messages = data.error.fields[field];
         let messageArray = messages.map((f) => {
           if (f.value) {
-            return f.value.join('\n');
+            return f.value.join(' ');
           } else {
             return f;
           }
         });
-        errors += `${ messageArray.join('\n') }`;
+        errors += `${ messageArray.join(' ') }`;
+        errorMap[field] = errors;
+        errorMap.push(field);
+        errorMap.push(errors);
       }
 
       if (errors === 'You have already entered this applicant into your Onfido system') {
@@ -222,7 +226,15 @@ module.exports = class OnfidoService {
         log.error('License - Onfido : ' + errors);
       }
 
-      yield notify.notifyAdmins(`Call to onfido failed: ${ errors }`, [ 'slack' ], { channel : 'api-errors' });
+      if (data.error.fields.email) {
+        data.error.message = 'Invalid email address';
+      }
+
+      if (data.error.fields.id_numbers) {
+        data.error.message = 'Invalid license number';
+      }
+
+      yield notify.notifyAdmins(`Call to onfido failed : ${ user ? user.name() + ' - ' + (user.phone || user.email) : ''} : ${ errorMap.join(' - ') }`, [ 'slack' ], { channel : 'api-errors' });
 
       return {
         code    : 'LICENSE_SERVICE_VALIDATION_ERROR',
