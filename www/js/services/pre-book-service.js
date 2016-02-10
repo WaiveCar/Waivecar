@@ -11,6 +11,12 @@ function PreBookService ($injector) {
   var $validateLicense = $injector.get('$validateLicense');
 
   return function catchPreBookError (err) {
+    $data.initialize('licenses').then(function(licenses) {
+      handlePreBookError(err, licenses);
+    });
+  };
+
+  function handlePreBookError(err, licenses) {
     var modal;
     var actions = [{
       className: 'button-balanced',
@@ -47,7 +53,7 @@ function PreBookService ($injector) {
       actions = _.map(data.required, function (field) {
           if (field === 'license') {
             return angular.extend({}, base, {
-              text: 'Validate driver\'s license',
+              text: licenses.length ? 'Validate driver\'s license' : 'Add driver\'s license',
               handler: function () {
                 validateDriversLicense(modal);
               }
@@ -61,13 +67,23 @@ function PreBookService ($injector) {
               }
             });
           } else if (field === 'phone') {
-            return angular.extend({}, base, {
-              text: 'Validate phone number',
-              handler: function () {
-                modal.remove();
-                $state.go('auth-account-verify', {fromBooking: true});
-              }
-            });
+            if ($auth.me.phone) {
+              return angular.extend({}, base, {
+                text: 'Validate phone number',
+                handler: function () {
+                  modal.remove();
+                  $state.go('auth-account-verify', {fromBooking: true});
+                }
+              });
+            } else {
+              return angular.extend({}, base, {
+                text: 'Add phone number',
+                handler: function () {
+                  modal.remove();
+                  $state.go('users-edit', {fromBooking: true});
+                }
+              });
+            }
           }
         });
       actions.push({
@@ -89,7 +105,7 @@ function PreBookService ($injector) {
       modal.show();
       return $q.reject(err);
     });
-  };
+  }
 
   function validateDriversLicense (modal) {
     return $data.initialize('licenses')
