@@ -18,9 +18,6 @@ function DashboardController ($scope, $rootScope, $injector) {
   var $timeout = $injector.get('$timeout');
   var $progress = $injector.get('$progress');
   var GeofencingService = $injector.get('GeofencingService');
-  var NotificationService = $injector.get('NotificationService');
-  var notificationReasons = $injector.get('notificationReasons');
-  var homebase = $injector.get('homebase');
 
   // $data is used to interact with models, never directly. If direct is required, $data should be refreshed.
   $scope.data = $data.active;
@@ -35,7 +32,6 @@ function DashboardController ($scope, $rootScope, $injector) {
   // State
   var ending;
   var locking;
-  var outside = false;
 
   var rideServiceReady = $scope.$watch('service.isInitialized', function(isInitialized) {
     if (isInitialized !== true) {
@@ -52,24 +48,6 @@ function DashboardController ($scope, $rootScope, $injector) {
     }
     this.timeLeft = moment(booking.updatedAt).add(90, 'm').toNow(true);
   }.bind(this));
-
-  var locationWatch = $rootScope.$watch('currentLocation', function() {
-    if ($distance(homebase) > 20) {
-      if (!outside) {
-        NotificationService.notifySms(notificationReasons.outsideRange);
-      }
-      outside = true;
-    } else {
-      outside = false;
-    }
-  });
-
-  $scope.$on('$destroy', function() {
-    if (locationWatch) {
-      locationWatch();
-      locationWatch = null;
-    }
-  });
 
   function openPopover(item) {
     $timeout(function () {
