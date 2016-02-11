@@ -46,6 +46,26 @@ module.exports = class LicenseVerificationService extends Service {
 
     let report = yield Verification.getReport(license.linkedUserId, check.id, check.reports[0].id);
     if (report.status === 'complete') {
+
+      // Check if reason for 'consider' is simple restriction
+      if (report.result === 'consider' && report.breakdown) {
+        let reasons = [];
+        for (let key in report.breakdown) {
+          if (report.breakdown[key].result !== 'clear') {
+            reasons.push(key);
+          }
+        }
+
+        // Ensure only restrictions are the cause for 'consider'
+        if (reasons.length === 1 && reasons[0] === 'driving_restrictions') {
+          // Check for corrective lenses restriction
+          let restriction = report.properties.restrictions.length && report.properties.restrictions[0];
+          if (restriction && restriction.name === 'CORRECTIVE LENSES') {
+            report.result = 'clear';
+          }
+        }
+      }
+
       log.debug(`LICENSE VERIFICATION : ${ report.id } : ${ report.status }`);
       yield license.update({
         status     : report.status,
