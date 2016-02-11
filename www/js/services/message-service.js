@@ -1,15 +1,13 @@
 'use strict';
 var angular = require('angular');
 require('ionic-angular');
-var ionic = require('ionic');
 var _ = require('lodash');
 
 module.exports = angular.module('app.services').factory('$message', [
   '$ionicPopup',
   '$cordovaToast',
   '$log',
-  '$q',
-  function ($ionicPopup, $cordovaToast, $log, $q) {
+  function ($ionicPopup, $cordovaToast, $log) {
     var existingMessage;
 
     function launchPopup(title, message) {
@@ -41,16 +39,10 @@ module.exports = angular.module('app.services').factory('$message', [
 
       existingMessage = message;
 
-      var promise;
-      if(ionic.Platform.isWebView()){
-        // promise = $cordovaToast.show(message, 'short', 'top');
-        promise = $q.resolve();
-      } else {
-        promise = $ionicPopup.alert({
-          title: title,
-          template: message
-        });
-      }
+      var promise = $ionicPopup.alert({
+        title: title,
+        template: message
+      });
 
       promise
         .finally(function () {
