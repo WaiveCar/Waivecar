@@ -22,6 +22,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   // $data is used to interact with models, never directly. If direct is required, $data should be refreshed.
   $scope.data = $data.active;
   $scope.service = $ride;
+  var ctrl = this;
   this.locations = $data.instances.locations;
 
   this.openPopover = openPopover;
@@ -30,8 +31,8 @@ function DashboardController ($scope, $rootScope, $injector) {
   this.endRide = endRide;
 
   // State
-  var ending;
-  var locking;
+  this.ending = false;
+  this.locking = false;
 
   var rideServiceReady = $scope.$watch('service.isInitialized', function(isInitialized) {
     if (isInitialized !== true) {
@@ -64,16 +65,16 @@ function DashboardController ($scope, $rootScope, $injector) {
   }
 
   function lockCar(id) {
-    if (locking === true) {
+    if (ctrl.locking === true) {
       return;
     }
-    locking = true;
+    ctrl.locking = true;
     $ride.lockCar(id)
       .then(function () {
-        locking = false;
+        ctrl.locking = false;
       })
       .catch(function (reason) {
-        locking = false;
+        ctrl.locking = false;
         if (reason && reason.code === 'IGNITION_ON') {
           showIgnitionOnModal();
           return;
@@ -83,24 +84,28 @@ function DashboardController ($scope, $rootScope, $injector) {
   }
 
   function endRide(carId, bookingId) {
-    if (ending === true) {
+    if (ctrl.ending === true) {
       return null;
     }
 
-    // Check that current position is within geofence coordinates
-    GeofencingService.insideBoundary().then(function(inside) {
+    ctrl.ending = true;
+    $progress.showSimple(true);
+    $ride.isChargeOkay(carId).then(function(okay) {
+      if (okay) {
+        return GeofencingService.insideBoundary();
+      }
+      return $q.reject('Looks like the charge is pretty low.  Please head to the nearest charger!');
+    }).then(function(inside) {
       if (inside) {
         // inside geofence -> continue as normal
-        ending = true;
-        $progress.showSimple(true);
         return $ride.isCarOn(carId)
           .catch(function (reason) {
-            ending = false;
+            ctrl.ending = false;
             $progress.hide();
             return $q.reject(reason);
           })
           .then(function (isCarOn) {
-            ending = false;
+            ctrl.ending = false;
             $progress.hide();
             if (isCarOn) {
               showIgnitionOnModal();
@@ -111,9 +116,9 @@ function DashboardController ($scope, $rootScope, $injector) {
           });
       } else {
         // Not inside geofence -> show error
-        endRideFailure('Looks like you\'re outside of the rental zone (Santa Monica). Please head back to end your rental.');
+        return $q.reject('Looks like you\'re outside of the rental zone (Santa Monica). Please head back to end your rental.');
       }
-    });
+    }).catch(endRideFailure);
   }
 
   function featured (items) {
