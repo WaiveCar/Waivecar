@@ -57,6 +57,21 @@ module.exports = class UserDetails extends React.Component {
     });
   }
 
+  requestVerification = (event) => {
+    api.post(`/verifications/phone-verification/${ this.props.id }`, {}, (err, res) => {
+      if (err) {
+        return snackbar.notify({
+          type    : `danger`,
+          message : err.message
+        });
+      }
+      snackbar.notify({
+        type    : `success`,
+        message : `Verification SMS has been sent.`
+      });
+    });
+  }
+
   render() {
     let user = this.state.users.find(val => val.id === parseInt(this.props.id));
     if (!user) {
@@ -108,6 +123,9 @@ module.exports = class UserDetails extends React.Component {
                 <FormInput className="col-md-6 bento-form-input" helpText={ user.verifiedPhone ? 'Phone has been verified' : 'Phone has not been verified' }>
                   <label>Cell Phone</label>
                   <input text="text" name="phone" className="form-control" defaultValue={ user.phone } required />
+                  { !user.verifiedPhone &&
+                    <button type="button" className="btn btn-info" onClick={this.requestVerification}>Send Verification SMS</button>
+                  }
                 </FormInput>
               </div>
 
