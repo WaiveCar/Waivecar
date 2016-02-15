@@ -1,8 +1,14 @@
-import React   from 'react';
+import React, { Component, PropTypes } from 'react';
 import moment  from 'moment';
 import { Map } from 'bento-web';
 
-module.exports = class RideDetails extends React.Component {
+class RideDetails extends Component {
+
+  static propTypes = {
+    start: PropTypes.object.isRequired,
+    end: PropTypes.object.isRequired,
+    fee: PropTypes.number.isRequired
+  }
 
   render() {
     let { start, end, fee } = this.props;
@@ -64,3 +70,5 @@ module.exports = class RideDetails extends React.Component {
   }
 
 }
+
+module.exports = RideDetails;

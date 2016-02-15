@@ -4,6 +4,8 @@ import { Files }                 from 'bento-service';
 import { Form, snackbar }        from 'bento-web';
 import { resources, fields }     from 'bento-ui';
 import Account                   from '../../lib/account-service';
+import CardList                  from '../../components/user/cards/card-list';
+import RideList                  from '../../components/user/rides/ride-list';
 import facebook                  from '../../../auth/facebook';
 
 // ### Form Fields
@@ -113,10 +115,45 @@ module.exports = class ProfileView extends React.Component {
   }
 
   /**
+   * Sends a new verification sms
+   */
+  submitVerification() {
+    let user = auth.user();
+    api.post(`/verifications/phone-verification/${ user.id }`, {}, (err, res) => {
+      if (err) {
+        return snackbar.notify({
+          type    : `danger`,
+          message : error.message
+        });
+      }
+      snackbar.notify({
+        type    : `success`,
+        message : `Verification request was successfull.`
+      });
+    });
+  }
+
+  /**
    * Render the personal details form.
    * @return {Object}
    */
   renderPersonalDetails() {
+    let user = auth.user();
+
+    let buttons = [{
+      value : 'Update Details',
+      type  : 'submit',
+      class : 'btn btn-primary btn-profile-submit'
+    }];
+
+    if (user.phone && !user.verifiedPhone) {
+      buttons.push({
+        value : 'Send Verification SMS',
+        class : 'btn btn-primary',
+        click : this.submitVerification
+      });
+    }
+
     return (
       <div className="box">
         <h3>
@@ -130,17 +167,35 @@ module.exports = class ProfileView extends React.Component {
             ref       = "personal"
             className = "bento-form-static"
             fields    = { formFields.personal }
-            default   = { auth.user() }
-            buttons   = {[
-              {
-                value : 'Update Details',
-                type  : 'submit',
-                class : 'btn btn-primary btn-profile-submit'
-              }
-            ]}
+            default   = { user }
+            buttons   = { buttons }
             submit = { this.account.submitUser }
           />
         </div>
+      </div>
+    );
+  }
+
+  /**
+   * Render user payment cards
+   * @return {Object}
+   */
+  renderCards() {
+    let user = auth.user();
+    return (
+      <CardList user={ user }></CardList>
+    );
+  }
+
+  /**
+   * Render user past rides
+   * @return {Object}
+   */
+  renderRides() {
+    let user = auth.user();
+    return (
+      <div className='rides'>
+        <RideList user={ user } full={ false }></RideList>
       </div>
     );
   }
@@ -220,6 +275,8 @@ module.exports = class ProfileView extends React.Component {
 
         { this.renderFacebookConnect() }
         { this.renderPersonalDetails() }
+        { this.renderCards() }
+        { this.renderRides() }
         { this.renderAccountStatus() }
       </div>
     );
