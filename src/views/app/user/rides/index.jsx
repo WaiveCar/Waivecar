@@ -1,103 +1,12 @@
 import React                              from 'react';
-import moment                             from 'moment';
-import { auth, relay, api, dom, helpers } from 'bento';
-import { Map }                            from 'bento-web';
-import RideDetails                        from './details';
+import { auth, dom } from 'bento';
+import RideList from '../../components/user/rides/ride-list';
 
-module.exports = class ProfileView extends React.Component {
+module.exports = class RideListView extends React.Component {
 
   constructor(...args) {
     super(...args);
     dom.setTitle('My Rides');
-    this.state = {
-      bookings : [],
-      details  : null
-    };
-    relay.subscribe(this, 'me');
-    this.booking = this.booking.bind(this);
-  }
-
-  /**
-   * Retrieve list of bookings.
-   * @return {Void}
-   */
-  componentDidMount() {
-    api.get('/bookings', {
-      userId  : auth.user().id,
-      order   : 'id,DESC',
-      details : true
-    }, (err, bookings) => {
-      if (err) {
-        return console.log(err);
-      }
-      this.setState({
-        bookings : bookings
-      });
-    });
-  }
-
-  /**
-   * Returns a booking as tbody
-   * @param  {Object} data
-   * @return {Object}
-   */
-  booking(data) {
-    let isOpen = this.state.details === data.id;
-
-    // ### Ride
-
-    let ride = {
-      start : data.details.find(val => val.type === 'start'),
-      end   : data.details.find(val => val.type === 'end'),
-      fee   : data.payments.reduce((value, payment) => { return value + (payment.amount - payment.refunded); }, 0) / 100,
-    };
-
-    // ### Duration
-
-    let duration  = moment.duration(moment(ride.end.createdAt).diff(moment(ride.start.createdAt)));
-    ride.duration = {
-      raw     : duration,
-      hours   : duration.hours(),
-      minutes : duration.minutes(),
-      seconds : duration.seconds()
-    };
-
-    return (
-      <tbody key={ data.id }>
-        <tr className="ride-row" onClick={ this.viewDetails.bind(this, data.id) }>
-          <td className="text-center">
-            {
-              isOpen ? <i className="material-icons primary">keyboard_arrow_down</i> : <i className="material-icons">keyboard_arrow_right</i>
-            }
-          </td>
-          <td>
-            { moment(data.createdAt).format('DD/MM/YYYY') }
-          </td>
-          <td>
-            { ride.duration.hours ? `${ ride.duration.hours } hour${ ride.duration.hours > 1 ? 's' : '' }` : '' } { `${ ride.duration.minutes } minute${ ride.duration.minutes > 1 ? 's' : '' }` }
-          </td>
-          <td>
-            { data.car.license }
-          </td>
-          <td>
-            { ride.fee ? `$${ ride.fee }` : 'No Charge' }
-          </td>
-          <td>
-            { helpers.changeCase.toCapital(data.status) }
-          </td>
-        </tr>
-        {
-          isOpen ? <RideDetails { ...ride } /> : null
-        }
-      </tbody>
-    );
-
-  }
-
-  viewDetails(bookingId) {
-    this.setState({
-      details : bookingId === this.state.details ? null : bookingId
-    });
   }
 
   /**
@@ -105,41 +14,11 @@ module.exports = class ProfileView extends React.Component {
    * @return {Object}
    */
   render() {
-    let pastRides = this.state.bookings.filter(b => [ 'ended', 'completed', 'finalized'].includes(b.status));
     return (
       <div className="rides container">
         <div className="row">
           <div className="col-xs-12">
-            <div className="box full">
-              <h3>
-                My Rides
-                <small>
-                  Your current, and past ride history.
-                </small>
-              </h3>
-              <div className="box-content no-padding">
-                {
-                  !pastRides.length ?
-                    <div className="text-center" style={{ padding : '20px 0px' }}>
-                      You currently have no past rides.
-                    </div>
-                    :
-                    <table className="table-rides">
-                      <thead>
-                        <tr>
-                          <th width="24"></th>
-                          <th>Date</th>
-                          <th>Duration</th>
-                          <th>Car</th>
-                          <th>Fee</th>
-                          <th>Status</th>
-                        </tr>
-                      </thead>
-                      { pastRides.map(this.booking) }
-                    </table>
-                }
-              </div>
-            </div>
+            <RideList user={ auth.user() }></RideList>
           </div>
         </div>
       </div>

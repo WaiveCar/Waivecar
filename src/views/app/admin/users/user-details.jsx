@@ -4,7 +4,8 @@ import { snackbar }   from 'bento-web';
 import { Form }       from 'bento/lib/helpers';
 import md5            from 'md5';
 import FormInput      from '../components/form-input';
-import CardList        from '../../components/user/cards/card-list';
+import CardList       from '../../components/user/cards/card-list';
+import RideList       from '../../components/user/rides/ride-list';
 
 module.exports = class UserDetails extends React.Component {
 
@@ -168,6 +169,9 @@ module.exports = class UserDetails extends React.Component {
         </div>
 
         <CardList user={ user } currentUser={ false }></CardList>
+        <div className='rides'>
+          <RideList user={ user } currentUser={ false } full={ false }></RideList>
+        </div>
       </div>
     );
   }
