@@ -112,11 +112,43 @@ module.exports = class ProfileView extends React.Component {
     });
   }
 
+  submitVerification() {
+    let user = auth.user();
+    api.post(`/verifications/phone-verification/${ user.id }`, {}, (err, res) => {
+      if (err) {
+        return snackbar.notify({
+          type    : `danger`,
+          message : error.message
+        });
+      }
+      snackbar.notify({
+        type    : `success`,
+        message : `Verification request was successfull.`
+      });
+    });
+  }
+
   /**
    * Render the personal details form.
    * @return {Object}
    */
   renderPersonalDetails() {
+    let user = auth.user();
+
+    let buttons = [{
+      value : 'Update Details',
+      type  : 'submit',
+      class : 'btn btn-primary btn-profile-submit'
+    }];
+
+    if (user.phone && !user.verifiedPhone) {
+      buttons.push({
+        value : 'Send Verification SMS',
+        class : 'btn btn-primary',
+        click : this.submitVerification
+      });
+    }
+
     return (
       <div className="box">
         <h3>
@@ -130,14 +162,8 @@ module.exports = class ProfileView extends React.Component {
             ref       = "personal"
             className = "bento-form-static"
             fields    = { formFields.personal }
-            default   = { auth.user() }
-            buttons   = {[
-              {
-                value : 'Update Details',
-                type  : 'submit',
-                class : 'btn btn-primary btn-profile-submit'
-              }
-            ]}
+            default   = { user }
+            buttons   = { buttons }
             submit = { this.account.submitUser }
           />
         </div>
