@@ -4,6 +4,7 @@ import { Files }                 from 'bento-service';
 import { Form, snackbar }        from 'bento-web';
 import { resources, fields }     from 'bento-ui';
 import Account                   from '../../lib/account-service';
+import CardList                  from '../../components/user/cards/card-list';
 import facebook                  from '../../../auth/facebook';
 
 // ### Form Fields
@@ -112,6 +113,9 @@ module.exports = class ProfileView extends React.Component {
     });
   }
 
+  /**
+   * Sends a new verification sms
+   */
   submitVerification() {
     let user = auth.user();
     api.post(`/verifications/phone-verification/${ user.id }`, {}, (err, res) => {
@@ -168,6 +172,13 @@ module.exports = class ProfileView extends React.Component {
           />
         </div>
       </div>
+    );
+  }
+
+  renderCards() {
+    let user = auth.user();
+    return (
+      <CardList user={ user }></CardList>
     );
   }
 
@@ -246,6 +257,7 @@ module.exports = class ProfileView extends React.Component {
 
         { this.renderFacebookConnect() }
         { this.renderPersonalDetails() }
+        { this.renderCards() }
         { this.renderAccountStatus() }
       </div>
     );
