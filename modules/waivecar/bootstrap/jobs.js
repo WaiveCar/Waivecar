@@ -7,6 +7,7 @@ module.exports = function *() {
     yield require('./schedules/booking-auto-lock');
     yield require('./schedules/booking-free-timer');
     yield require('./schedules/booking-free-timer-expired');
+    yield require('./schedules/active-booking');
     yield require('./schedules/cars-sync');
     yield require('./schedules/cars-status');
     if (config.mock.cars) {
