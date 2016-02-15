@@ -4,6 +4,7 @@ import { snackbar }   from 'bento-web';
 import { Form }       from 'bento/lib/helpers';
 import md5            from 'md5';
 import FormInput      from '../components/form-input';
+import CardList        from '../../components/user/cards/card-list';
 
 module.exports = class UserDetails extends React.Component {
 
@@ -107,24 +108,25 @@ module.exports = class UserDetails extends React.Component {
               <div className="form-group row">
                 <FormInput className="col-md-6 bento-form-input">
                   <label>First Name</label>
-                  <input text="text" name="firstName" className="form-control" defaultValue={ user.firstName } required />
+                  <input type="text" name="firstName" className="form-control" defaultValue={ user.firstName } required />
                 </FormInput>
                 <FormInput className="col-md-6 bento-form-input">
                   <label>Last Name</label>
-                  <input text="text" name="lastName" className="form-control" defaultValue={ user.lastName } required />
+                  <input type="text" name="lastName" className="form-control" defaultValue={ user.lastName } required />
                 </FormInput>
               </div>
 
               <div className="form-group row">
                 <FormInput className="col-md-6 bento-form-input" helpText={ user.verifiedPhone ? 'Email has been verified' : 'Email has not been verified' }>
                   <label>Email Address</label>
-                  <input text="text" name="email" className="form-control" defaultValue={ user.email } required />
+                  <input type="text" name="email" className="form-control" defaultValue={ user.email } required />
                 </FormInput>
                 <FormInput className="col-md-6 bento-form-input" helpText={ user.verifiedPhone ? 'Phone has been verified' : 'Phone has not been verified' }>
                   <label>Cell Phone</label>
-                  <input text="text" name="phone" className="form-control" defaultValue={ user.phone } required />
+                  <input type="text" name="phone" className="form-control" defaultValue={ user.phone } required />
                   { !user.verifiedPhone &&
-                    <button type="button" className="btn btn-info" onClick={this.requestVerification}>Send Verification SMS</button>
+                    <button type="button" className="btn btn-info" onClick={this.requestVerification}>Send Verification SMS</button> ||
+                    ''
                   }
                 </FormInput>
               </div>
@@ -164,6 +166,8 @@ module.exports = class UserDetails extends React.Component {
             </form>
           </div>
         </div>
+
+        <CardList user={ user } currentUser={ false }></CardList>
       </div>
     );
   }

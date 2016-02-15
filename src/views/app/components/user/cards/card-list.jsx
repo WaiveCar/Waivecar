@@ -2,8 +2,15 @@ import React from 'react';
 import Shop from '../../../lib/shop-service';
 
 class CardList extends React.Component {
+
   static propTypes = {
-    user: React.PropTypes.object.isRequired
+    user: React.PropTypes.object.isRequired,
+    currentUser: React.PropTypes.bool
+  }
+
+  static defaultProps = {
+    ...React.Component.defaultProps,
+    currentUser: true
   }
 
   constructor(...options) {
@@ -25,7 +32,7 @@ class CardList extends React.Component {
   renderCardTable() {
     let cards = this.shop.getState('cards');
     if (!cards.length) {
-      return <div className="no-records">You have not registered any cards.</div>;
+      return <div className="no-records">{ this.props.currentUser ? 'You have ' : 'User has'} not registered any cards.</div>;
     }
     return (
       <table className="table-striped profile-table">
@@ -63,9 +70,9 @@ class CardList extends React.Component {
     return (
       <div className="box">
         <h3>
-          Your Cards
+          { this.props.currentUser ? 'Your Cards' : 'User Cards' }
           <small>
-            List of payment cards registered with your waivecar account.
+            List of payment cards registered with { this.props.currentUser ? 'your' : 'user\'s' } waivecar account.
           </small>
         </h3>
         <div className="box-content">
