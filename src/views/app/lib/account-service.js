@@ -123,10 +123,14 @@ module.exports = class AccountService extends Service {
    * @param  {Function} reset
    */
   submitPassword(data, reset) {
+    if (!data.oldPassword || !data.password || !data.passwordVerify) {
+      return this.error('Must provide all fields');
+    }
     if (data.password !== data.passwordVerify) {
-      return this.error(`Passwords does not match`);
+      return this.error(`Passwords do not match`);
     }
     api.put(`/users/${ auth.user().id }`, {
+      oldPassword : data.oldPassword,
       password : data.password
     }, (err) => {
       if (err) {
