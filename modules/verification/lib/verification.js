@@ -31,7 +31,7 @@ module.exports = class VerificationService {
     let user = yield User.findById(id);
 
     if (!user) throw errors.userNotFound();
-    if (user.id !== _user.id || !_user.hasAccess('admin')) throw errors.userUpdateRefused();
+    if (user.id !== _user.id && !_user.hasAccess('admin')) throw errors.userUpdateRefused();
 
     return yield this.send(type, payload, user);
   }
