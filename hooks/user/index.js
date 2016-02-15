@@ -1,6 +1,7 @@
 'use strict';
 
 let verification = require('./lib/verification');
+let bcrypt       = Bento.provider('bcrypt');
 let queue        = Bento.provider('queue');
 let tokens       = Bento.provider('token');
 let User         = Bento.model('User');
@@ -138,6 +139,15 @@ hooks.set('user:store:after', function *(user, _user) {
  * @return {Object}
  */
 hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
+  if (nextUser.password) {
+    if (!nextUser.oldPassword || !(yield bcrypt.compare(nextUser.oldPassword, prevUser.password))) {
+      throw error.parse({
+        code    : 'INVALID_CREDENTIALS',
+        message : 'The provided credentials does not match any record in our database'
+      }, 404);
+    }
+  }
+
   if (nextUser.phone) {
     nextUser.phone = phoneFormat(nextUser.phone);
   }
