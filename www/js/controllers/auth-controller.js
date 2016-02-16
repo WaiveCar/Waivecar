@@ -12,6 +12,8 @@ function AuthController ($injector) {
   var $data = $injector.get('$data');
   var $stateParams = $injector.get('$stateParams');
   var $ionicHistory = $injector.get('$ionicHistory');
+  var $ionicLoading = $injector.get('$ionicLoading');
+  console.log($ionicLoading);
 
   this.$ionicHistory = $ionicHistory;
 
@@ -34,11 +36,17 @@ function AuthController ($injector) {
       return $message.error('Please resolve form errors and try again.');
     }
 
-    return $auth.login(this.forms.loginForm)
-      .then(function(){
-        $state.go('cars');
-      })
-      .catch($message.error.bind($message));
+    return $ionicLoading.show({
+      template: '<div class="circle-loader"><span>Loading</span></div>'
+    })
+      .then(
+        $auth.login(this.forms.loginForm)
+          .then(function(){
+            $ionicLoading.hide()
+            $state.go('cars');
+          })
+          .catch($message.error.bind($message))
+      );
 
   };
 
