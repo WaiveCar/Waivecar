@@ -42,3 +42,7 @@ Route.resource('locations', 'LocationsController');
 // ### Notifications
 
 Route.post('/notify', [ 'isAuthenticated', 'NotificationsController@send' ]);
+
+// ### Sms Handlers
+
+Route.get('/sms', [ 'SmsController@response' ]);
