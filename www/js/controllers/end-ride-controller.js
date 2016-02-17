@@ -17,7 +17,8 @@ module.exports = angular.module('app.controllers').controller('EndRideController
   '$geocoding',
   '$progress',
   '$message',
-  function ($rootScope, $scope, $state, $auth, $data, $ride, $geocoding, $progress, $message) {
+  '$ionicLoading',
+  function ($rootScope, $scope, $state, $auth, $data, $ride, $geocoding, $progress, $message, $ionicLoading) {
 
     // Concepts:
     // $scope is used to store ref. to the service and the active models in the data svc.
@@ -64,6 +65,11 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     };
 
     this.init = function () {
+      
+      $ionicLoading.show({
+        template: '<div class="circle-loader"><span>Loading</span></div>'
+      });
+
       var rideServiceReady = $scope.$watch('service.isInitialized', function(isInitialized) {
         console.log('[end-ride] Service initialized: %s', isInitialized);
         if (isInitialized !== true) {
@@ -76,6 +82,9 @@ module.exports = angular.module('app.controllers').controller('EndRideController
         if ($state.current.name === 'end-ride') {
           $ride.processEndRide();
         }
+
+        $ionicLoading.hide();
+        
       }.bind(this));
     };
 
