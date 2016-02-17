@@ -10,6 +10,7 @@ function UserCreateController ($injector) {
   var $auth = $injector.get('$auth');
   var $data = $injector.get('$data');
   var $message = $injector.get('$message');
+  var $ionicLoading = $injector.get('$ionicLoading');
   this.user = new $data.resources.users();
 
   this.save = function saveUser (form) {
@@ -20,17 +21,23 @@ function UserCreateController ($injector) {
     var credentials = {
       identifier: this.user.email,
       password: this.user.password
-    };
+    }
+
+    $ionicLoading.show({
+      template: '<div class="circle-loader"><span>Loading</span></div>'
+    });
 
     return this.user.$save()
       .then(function login () {
         return $auth.login(credentials);
       })
       .then(function () {
+        $ionicLoading.hide();
         return $state.go('auth-account-verify', { step: 2 });
       })
       .catch(function (err) {
-        return $message.error(err);
+        $ionicLoading.hide();
+        $message.error(err);
       });
   };
 
@@ -47,7 +54,9 @@ function UserCreateController ($injector) {
           return $state.go('cars');
         }
       })
-      .catch($message.error.bind($message));
+      .catch(function (err) {
+        $message.error(err);
+      });
 
   };
 }

@@ -5,10 +5,9 @@ var _ = require('lodash');
 
 module.exports = angular.module('app.services').factory('$message', [
   '$ionicPopup',
-  '$cordovaToast',
-  '$log',
-  function ($ionicPopup, $cordovaToast, $log) {
-    var existingMessage;
+  // '$cordovaToast',
+  function ($ionicPopup) {
+    // var existingMessage;
 
     function launchPopup(title, message) {
       if(message && _.contains([401, 403], message.status)){
@@ -30,24 +29,24 @@ module.exports = angular.module('app.services').factory('$message', [
         message = JSON.stringify(message);
       }
 
-      $log.log(message);
+      // $log.log(message);
 
-      if (existingMessage === message) {
-        // Prevent opening another popup with the same exact message
-        return false;
-      }
+      // if (existingMessage === message) {
+      //   // Prevent opening another popup with the same exact message
+      //   return false;
+      // }
 
-      existingMessage = message;
+      // existingMessage = message;
 
       var promise = $ionicPopup.alert({
         title: title,
         template: message
       });
 
-      promise
-        .finally(function () {
-          existingMessage = null;
-        });
+      // promise
+      //   .finally(function () {
+      //     existingMessage = '';
+      //   });
 
     }
 

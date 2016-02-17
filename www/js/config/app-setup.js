@@ -35,7 +35,7 @@ var config = [
       function exceptionHandlerDecorator($delegate) {
 
         return function(exception, cause) {
-          var $log = $injector.get('$log');
+          // var $log = $injector.get('$log');
           $delegate(exception, cause);
           // throw exception;
 
@@ -60,7 +60,7 @@ var config = [
             }
           }
 
-          $log.error(data.message);
+          // $log.error(data.message);
 
           // catch exceptions out of angular
           window.onerror = function(message, url, line, col, error) {
