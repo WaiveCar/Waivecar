@@ -17,10 +17,10 @@ module.exports = angular.module('app.controllers').controller('BookingSummaryCon
     this.init = function () {
       $data.resources.bookings.get({ id: $state.params.id }).$promise.then(function(booking) {
         this.booking = booking;
-        console.log(booking.details);
+        // console.log(booking.details);
         // Calc miles from coordinates in booking details.
         this.start = booking.details[0];
-        this.end = booking.details[0];
+        this.end = booking.details[1];
         this.distance = this.end.mileage - this.start.mileage + ' miles';
         this.duration = moment(this.start.createdAt).to(this.end.createdAt, true);
       }.bind(this)).catch($message.error);

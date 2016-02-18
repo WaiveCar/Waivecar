@@ -93,13 +93,13 @@ module.exports = angular.module('app.services').factory('$ride', [
       var booking = $data.active.bookings;
       $data.resources.cars.refresh({id: car.id});
 
-      if (car == null || booking == null) {
+      // if (car == null || booking == null) {
         if (this.checkForLock) {
           $interval.cancel(this.checkForLock);
           this.checkForLock = null;
         }
         return;
-      }
+      // }
 
       if (service.state.location.valet.confirmed) {
         if (booking.status !== 'completed') {
@@ -155,9 +155,9 @@ module.exports = angular.module('app.services').factory('$ride', [
         return null;
       }
 
-      // this.checkForLock = $interval(function() {
-      //   service.setCheck();
-      // }, 5000);
+      this.checkForLock = $interval(function() {
+        service.setCheck();
+      }, 5000);
 
       var payload = angular.copy(service.state.parkingLocation);
       var locationType = _.find(service.state.location, function (item) {
@@ -204,10 +204,10 @@ module.exports = angular.module('app.services').factory('$ride', [
         });
     };
 
-    service.isDoorOpen = function(id) {
+    service.isDoorsClosed = function(id) {
       return $data.resources.cars.refresh({ id: id }).$promise
         .then(function (status) {
-          return status.isDoorOpen;
+          return status.isDoorClosed;
         })
     }
 
