@@ -38,6 +38,7 @@ module.exports = angular.module('app.services').factory('$ride', [
       check : {
         isKeySecure        : { isVisible: true, confirmed: false },
         isIgnitionOn       : { isVisible: true, confirmed: false },
+        isDoorsClosed      : { isVisible: true, confirmed: false },
         isChargeCardSecure : { isVisible: false, confirmed: false },
         isCharging         : { isVisible: false, confirmed: false }
       }
@@ -154,9 +155,9 @@ module.exports = angular.module('app.services').factory('$ride', [
         return null;
       }
 
-      this.checkForLock = $interval(function() {
-        service.setCheck();
-      }, 5000);
+      // this.checkForLock = $interval(function() {
+      //   service.setCheck();
+      // }, 5000);
 
       var payload = angular.copy(service.state.parkingLocation);
       var locationType = _.find(service.state.location, function (item) {
@@ -202,6 +203,13 @@ module.exports = angular.module('app.services').factory('$ride', [
           return status.charge > 30;
         });
     };
+
+    service.isDoorOpen = function(id) {
+      return $data.resources.cars.refresh({ id: id }).$promise
+        .then(function (status) {
+          return status.isDoorOpen;
+        })
+    }
 
     service.lockCar = function(id) {
       return service.isCarOn(id)
