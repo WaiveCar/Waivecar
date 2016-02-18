@@ -17,7 +17,8 @@ module.exports = angular.module('app.controllers').controller('EndRideController
   '$geocoding',
   '$progress',
   '$message',
-  function ($rootScope, $scope, $state, $auth, $data, $ride, $geocoding, $progress, $message) {
+  '$ionicLoading',
+  function ($rootScope, $scope, $state, $auth, $data, $ride, $geocoding, $progress, $ionicLoading, $message) {
 
     // Concepts:
     // $scope is used to store ref. to the service and the active models in the data svc.

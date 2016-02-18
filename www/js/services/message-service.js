@@ -5,9 +5,7 @@ var _ = require('lodash');
 
 module.exports = angular.module('app.services').factory('$message', [
   '$ionicPopup',
-  '$cordovaToast',
-  '$log',
-  function ($ionicPopup, $cordovaToast, $log) {
+  function ($ionicPopup) {
     var existingMessage;
 
     function launchPopup(title, message) {
@@ -30,7 +28,7 @@ module.exports = angular.module('app.services').factory('$message', [
         message = JSON.stringify(message);
       }
 
-      $log.log(message);
+      // $log.log(message);
 
       if (existingMessage === message) {
         // Prevent opening another popup with the same exact message

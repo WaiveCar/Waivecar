@@ -17,6 +17,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   var $state = $injector.get('$state');
   var $timeout = $injector.get('$timeout');
   var $progress = $injector.get('$progress');
+  var $ionicLoading = $injector.get('$ionicLoading');
   var GeofencingService = $injector.get('GeofencingService');
 
   // $data is used to interact with models, never directly. If direct is required, $data should be refreshed.
@@ -68,12 +69,19 @@ function DashboardController ($scope, $rootScope, $injector) {
     if (ctrl.locking === true) {
       return;
     }
+
+    $ionicLoading.show({
+      template: '<div class="circle-loader"><span>Loading</span></div>'
+    });
+
     ctrl.locking = true;
     $ride.lockCar(id)
       .then(function () {
+        $ionicLoading.hide();
         ctrl.locking = false;
       })
       .catch(function (reason) {
+        $ionicLoading.hide();
         ctrl.locking = false;
         if (reason && reason.code === 'IGNITION_ON') {
           showIgnitionOnModal();
@@ -84,12 +92,15 @@ function DashboardController ($scope, $rootScope, $injector) {
   }
 
   function endRide(carId, bookingId) {
+    $ionicLoading.show({
+      template: '<div class="circle-loader"><span>Loading</span></div>'
+    });
+
     if (ctrl.ending === true) {
       return null;
     }
 
     ctrl.ending = true;
-    $progress.showSimple(true);
     $ride.isChargeOkay(carId).then(function(okay) {
       if (okay) {
         return GeofencingService.insideBoundary();
@@ -101,12 +112,12 @@ function DashboardController ($scope, $rootScope, $injector) {
         return $ride.isCarOn(carId)
           .catch(function (reason) {
             ctrl.ending = false;
-            $progress.hide();
+            $ionicLoading.hide();
             return $q.reject(reason);
           })
           .then(function (isCarOn) {
             ctrl.ending = false;
-            $progress.hide();
+            $ionicLoading.hide();
             if (isCarOn) {
               showIgnitionOnModal();
               return;

@@ -23,6 +23,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   var $settings = $injector.get('$settings');
   var $cordovaInAppBrowser = $injector.get('$cordovaInAppBrowser');
   var $progress = $injector.get('$progress');
+  var $ionicLoading = $injector.get('$ionicLoading');
 
   $scope.distance = 'Unknown';
   // $scope is used to store ref. to $ride and the active models in $data.
@@ -190,11 +191,16 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     });
 
     function onUnlock () {
+
       if (unlocking) {
         return;
       }
       unlocking = true;
-      $progress.showSimple(true);
+
+      $ionicLoading.show({
+        template: '<div class="circle-loader"><span>Loading</span></div>'
+      });
+      
       $interval.cancel(timer);
       var id = $ride.state.booking.id;
       console.log('unlocking');
@@ -204,13 +210,14 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         return $data.fetch('bookings');
       })
       .then(function() {
+        $ionicLoading.hide();
         console.log('removing modal');
         modal.remove();
         unlocking = false;
-        $progress.hide();
         $state.go('start-ride', { id: id });
       })
       .catch(function(err) {
+        $ionicLoading.hide();
         unlocking = false;
         $message.error(err);
         modal.remove();

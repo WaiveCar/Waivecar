@@ -36,17 +36,19 @@ function AuthController ($injector) {
       return $message.error('Please resolve form errors and try again.');
     }
 
-    return $ionicLoading.show({
+    $ionicLoading.show({
       template: '<div class="circle-loader"><span>Loading</span></div>'
-    })
-      .then(
-        $auth.login(this.forms.loginForm)
-          .then(function(){
-            $ionicLoading.hide()
-            $state.go('cars');
-          })
-          .catch($message.error.bind($message))
-      );
+    });
+
+    return $auth.login(this.forms.loginForm)
+      .then(function(){
+        $ionicLoading.hide()
+        $state.go('cars');
+      })
+      .catch(function (err) {
+        $ionicLoading.hide();
+        $message.error(err);
+      })
 
   };
 
