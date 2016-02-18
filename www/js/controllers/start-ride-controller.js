@@ -11,6 +11,7 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
   function ($scope, $rootScope, $injector) {
     var $data = $injector.get('$data');
     var $state = $injector.get('$state');
+    var $ionicLoading = $injector.get('$ionicLoading');
 
     this.showVideo = false;
     this.toggleVideo = function() {
@@ -21,8 +22,14 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
     $scope.data = $data.active;
 
     this.start = function () {
+
+      $ionicLoading.show({
+        template: '<div class="circle-loader"><span>Loading</span></div>'
+      });
+
       $data.fetch('bookings')
         .then(function () {
+          $ionicLoading.hide();
           $state.go('dashboard', null, {location: 'replace'});
         });
     };
