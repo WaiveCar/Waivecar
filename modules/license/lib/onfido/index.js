@@ -191,7 +191,10 @@ module.exports = class OnfidoService {
   }
 
   static *getError(resource, result, user) {
-    let data = result.body ? JSON.parse(result.body) : null;
+    let data;
+    try {
+      data = result.body ? JSON.parse(result.body) : null;
+    } catch (err) {}
     if (!data) {
       return {
         code    : `LICENSE_SERVICE_${ resource }`,
