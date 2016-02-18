@@ -21,50 +21,43 @@ module.exports = class LicenseVerificationService extends Service {
     this.hasAccess(user, _user);
 
     let license = yield this.getLicense(id);
-    let payload = {
-      type    : 'express',
-      reports : [
-        {
-          name : 'driving_record'
+    let status = license.status;
+    let checkId = license.checkId;
+    let reportId = license.reportId;
+
+    if (status === 'provided') {
+      let payload = {
+        type    : 'express',
+        reports : [
+          {
+            name : 'driving_record'
+          }
+        ]
+      };
+
+      let check = yield Verification.createCheck(license.linkedUserId, payload, _user);
+
+      let status = 'unknown';
+      switch (check.status) {
+        case 'in_progress' : case 'awaiting_data' : {
+          status = 'in-progress';
+          break;
         }
-      ]
-    };
-
-    let check = yield Verification.createCheck(license.linkedUserId, payload, _user);
-
-    let status = 'unknown';
-    switch (check.status) {
-      case 'in_progress' : case 'awaiting_data' : {
-        status = 'in-progress';
-        break;
+        case 'complete' : {
+          status = 'complete';
+          break;
+        }
       }
-      case 'complete' : {
-        status = 'complete';
-        break;
-      }
+
+      checkId = check.id;
+      reportId = check.reports[0].id;
     }
 
-    let report = yield Verification.getReport(license.linkedUserId, check.id, check.reports[0].id);
+    let report = yield Verification.getReport(license.linkedUserId, checkId, reportId);
     if (report.status === 'complete') {
 
-      // Check if reason for 'consider' is simple restriction
-      if (report.result === 'consider' && report.breakdown) {
-        let reasons = [];
-        for (let key in report.breakdown) {
-          if (report.breakdown[key].result !== 'clear') {
-            reasons.push(key);
-          }
-        }
-
-        // Ensure only restrictions are the cause for 'consider'
-        if (reasons.length === 1 && reasons[0] === 'driving_restrictions') {
-          // Check for corrective lenses restriction
-          let restriction = report.properties.restrictions.length && report.properties.restrictions[0];
-          if (restriction && restriction.name === 'CORRECTIVE LENSES') {
-            report.result = 'clear';
-          }
-        }
-      }
+      // Get result
+      report.result = yield this.getResult(report);
 
       log.debug(`LICENSE VERIFICATION : ${ report.id } : ${ report.status }`);
       yield license.update({
@@ -78,8 +71,8 @@ module.exports = class LicenseVerificationService extends Service {
     } else {
       yield license.update({
         status   : status,
-        checkId  : check.id,
-        reportId : check.reports[0].id
+        checkId  : checkId,
+        reportId : reportId
       });
     }
 
@@ -126,16 +119,17 @@ module.exports = class LicenseVerificationService extends Service {
         log.debug(`${ update.id } : ${ update.status }`);
 
         // ### Update License
+        let result = yield this.getResult(update);
 
         yield license.update({
           status     : update.status === 'awaiting_data' || update.status === 'in_progress' ? 'in-progress' : update.status,
-          outcome    : update.result,
+          outcome    : result,
           verifiedAt : new Date()
         });
 
         // ### Notify Changes
 
-        if (license.status === 'complete' && license.status === 'clear') {
+        if (license.status === 'complete' && result === 'clear') {
           yield notify.sendTextMessage(user, `Hey there, your license check is complete! Please open the WaiveCar app to continue your reservation.`);
         }
 
@@ -145,6 +139,28 @@ module.exports = class LicenseVerificationService extends Service {
         });
       }
     }
+  }
+
+  static *getResult(report) {
+    // Check if reason for 'consider' is simple restriction
+    if (report.result === 'consider' && report.breakdown) {
+      let reasons = [];
+      for (let key in report.breakdown) {
+        if (report.breakdown[key].result !== 'clear') {
+          reasons.push(key);
+        }
+      }
+
+      // Ensure only restrictions are the cause for 'consider'
+      if (reasons.length === 1 && reasons[0] === 'driving_restrictions') {
+        // Check for corrective lenses restriction
+        let restriction = report.properties.restrictions.length && report.properties.restrictions[0];
+        if (restriction && restriction.name === 'CORRECTIVE LENSES') {
+          return 'clear';
+        }
+      }
+    }
+    return report.result;
   }
 
 };
