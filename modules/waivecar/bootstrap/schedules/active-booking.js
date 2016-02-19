@@ -28,6 +28,8 @@ scheduler.process('active-booking', function *(job) {
     let device = yield cars.getDevice(car.id);
     let user = yield User.findById(car.userId);
 
+    if (!device || !car || !user) return;
+
     // Check if outside driving zone
     if (device.latitude !== car.latitude && device.longitude !== car.longitude) {
       let carInside = inside([ car.longitude, car.latitude ], config.waivecar.homebase.coords);

@@ -1,6 +1,7 @@
 'use strict';
 
-let log = Bento.Log;
+let log   = Bento.Log;
+let error = Bento.Error;
 
 if (!Bento.config.mongo) {
   throw error.parse({

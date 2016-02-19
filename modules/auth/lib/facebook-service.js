@@ -47,7 +47,7 @@ module.exports = class FacebookService {
       default : {
         throw error.parse({
           code    : `FB_INVALID_REQUEST`,
-          message : `We do not support facebook request type '${ type }'.`
+          message : `We do not support facebook request type '${ data.type }'.`
         }, 400);
       }
     }
