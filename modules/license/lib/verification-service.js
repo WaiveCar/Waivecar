@@ -24,6 +24,7 @@ module.exports = class LicenseVerificationService extends Service {
     let status = license.status;
     let checkId = license.checkId;
     let reportId = license.reportId;
+    let check;
 
     if (status === 'provided') {
       let payload = {
@@ -35,9 +36,9 @@ module.exports = class LicenseVerificationService extends Service {
         ]
       };
 
-      let check = yield Verification.createCheck(license.linkedUserId, payload, _user);
+      check = yield Verification.createCheck(license.linkedUserId, payload, _user);
 
-      let status = 'unknown';
+      status = 'unknown';
       switch (check.status) {
         case 'in_progress' : case 'awaiting_data' : {
           status = 'in-progress';
