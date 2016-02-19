@@ -25,6 +25,7 @@
       overflow : hidden;
       img {
         height : 3.2rem;
+        max-width: 100%;
       }
     }
     .navbar-items {
@@ -36,7 +37,7 @@
           text-transform : uppercase;
           font-size      : 1.06rem;
           padding        : 0;
-          padding-left   : 4%;
+          padding-left   : 3%;
         }
       }
       &.footer-items {
