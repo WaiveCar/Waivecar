@@ -74,6 +74,23 @@ module.exports = class UserDetails extends React.Component {
     });
   }
 
+  verifyPhone = (event) => {
+    api.put(`/users/${ this.props.id }`, {
+      verifiedPhone: true
+    }, (err) => {
+      if (err) {
+        return snackbar.notify({
+          type    : 'danger',
+          message : err.message
+        });
+      }
+      snackbar.notify({
+        type    : 'success',
+        message : 'User phone successfully verified'
+      });
+    });
+  }
+
   render() {
     let user = this.state.users.find(val => val.id === parseInt(this.props.id));
     if (!user) {
@@ -126,8 +143,10 @@ module.exports = class UserDetails extends React.Component {
                   <label>Cell Phone</label>
                   <input type="text" name="phone" className="form-control" defaultValue={ user.phone } required />
                   { !user.verifiedPhone &&
-                    <button type="button" className="btn btn-info" onClick={this.requestVerification}>Send Verification SMS</button> ||
-                    ''
+                    <div>
+                      <button type="button" className="btn btn-info" style={{ marginRight: 5 }} onClick={this.requestVerification}>Send Code</button>
+                      <button type="button" className="btn btn-info" onClick={this.verifyPhone}>Verify</button>
+                    </div> || ''
                   }
                 </FormInput>
               </div>
