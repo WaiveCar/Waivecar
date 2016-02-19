@@ -35,7 +35,7 @@ module.exports = class LicenseService extends Service {
       data.birthDate = data.birthDate.split('T')[0];
     }
 
-    // Check that birthdate is > 21 yeras
+    // Check that birthdate is > 21 years
     if (moment().diff(data.birthDate, 'years') < 21) {
       throw error.parse({
         code    : `INVALID_LICENSE`,

@@ -162,6 +162,14 @@ hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
     nextUser.status = 'pending';
   }
 
+  if (nextUser.verifiedPhone) {
+    if (_user.hasAccess('admin')) {
+      if (prevUser.status === 'pending') nextUser.status = 'active';
+    } else {
+      delete nextUser.verifiedPhone;
+    }
+  }
+
   return nextUser;
 });
 
