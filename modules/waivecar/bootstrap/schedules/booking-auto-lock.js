@@ -6,6 +6,7 @@ let scheduler = Bento.provider('queue').scheduler;
 let Booking   = Bento.model('Booking');
 let Car       = Bento.model('Car');
 let log       = Bento.Log;
+let error     = Bento.Error;
 
 scheduler.process('booking-auto-lock', function *(job) {
   let booking = yield Booking.findOne({ where : { id : job.data.bookingId } });

@@ -4,6 +4,7 @@ let nodemailer        = require('nodemailer');
 let mandrillTransport = require('nodemailer-mandrill-transport');
 let Template          = require('email-templates').EmailTemplate;
 let path              = require('path');
+let error             = Bento.Error;
 
 module.exports = class Email {
 

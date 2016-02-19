@@ -3,6 +3,7 @@
 let request = require('co-request');
 let log     = Bento.Log;
 let config  = Bento.config.slack;
+let error   = Bento.Error;
 
 module.exports = class Slack {
 

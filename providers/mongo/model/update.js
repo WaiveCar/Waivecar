@@ -1,6 +1,7 @@
 'use strict';
 
-let type = Bento.Helpers.Type;
+let type  = Bento.Helpers.Type;
+let error = Bento.Error;
 
 /**
  * @param  {Object} data

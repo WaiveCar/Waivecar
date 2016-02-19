@@ -93,7 +93,7 @@ module.exports = class Items {
         code    : `SHOP_ITEM_NOT_FOUND`,
         message : `The requested item does not exist.`,
         data    : {
-          id : itemId
+          id : id
         }
       }, 404);
     }
