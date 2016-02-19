@@ -38,6 +38,7 @@ class HomeTemplate extends React.Component {
         { type: 'anchor', to : '#Pricing',  title : 'Pricing' },
         { type: 'anchor', to : '#About',    title : 'About Us' },
         { type: 'a',      to : 'mailto:advertise@waivecar.com', title : 'Advertise' },
+        { type: 'link',   to : '/faq',                        title : 'FAQ' },
       ],
       footerItems : [
         { type: 'link', to : '/terms',                      title : 'Terms' },
@@ -77,12 +78,12 @@ class HomeTemplate extends React.Component {
   renderNav() {
     return (
       <nav className="row">
-        <div className="navbar-app col-lg-5 col-md-5">
+        <div className="navbar-app col-lg-4 col-md-3">
           <Link to="/">
             <img src="/images/site/logo.svg" alt="WaiveCar" />
           </Link>
         </div>
-        <div className="navbar-items col-lg-7 col-md-7">
+        <div className="navbar-items col-lg-8 col-md-9">
           <ul className="text-right list-inline  hidden-md-down">
             { this.renderNavItems() }
           </ul>

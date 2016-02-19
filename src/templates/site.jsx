@@ -50,6 +50,10 @@ templates.register('site', {
     {
       path      : '/privacy',
       component : require('views/site/privacy')
+    },
+    {
+      path      : '/faq',
+      component : require('views/site/faq')
     }
     /*
     {
