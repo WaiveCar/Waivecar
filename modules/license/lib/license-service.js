@@ -20,6 +20,14 @@ module.exports = class LicenseService extends Service {
   static *store(data, _user) {
     let user = yield this.getUser(data.userId);
 
+    // Check if user already has license
+    if (yield License.findOne({ where : { userId : data.userId } })) {
+      throw error.parse({
+        code    : `INVALID_LICENSE`,
+        message : `User already has a registered license`
+      }, 400);
+    }
+
     this.hasAccess(user, _user);
 
     // Strip time off birthDate
@@ -30,7 +38,7 @@ module.exports = class LicenseService extends Service {
     // Check that birthdate is > 21 yeras
     if (moment().diff(data.birthDate, 'years') < 21) {
       throw error.parse({
-        error   : `INVALID_LICENSE`,
+        code    : `INVALID_LICENSE`,
         message : `You must be 21 years old to access this service`
       }, 400);
     }
