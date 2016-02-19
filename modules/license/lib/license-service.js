@@ -7,6 +7,7 @@ let relay        = Bento.Relay;
 let Service      = require('./classes/service');
 let Verification = require('./onfido');
 let resource     = 'licenses';
+let moment       = require('moment');
 
 module.exports = class LicenseService extends Service {
 
@@ -24,6 +25,14 @@ module.exports = class LicenseService extends Service {
     // Strip time off birthDate
     if (data.birthDate && /.+T.+/.test(data.birthDate)) {
       data.birthDate = data.birthDate.split('T')[0];
+    }
+
+    // Check that birthdate is > 21 yeras
+    if (moment().diff(data.birthDate, 'years') < 21) {
+      throw error.parse({
+        error   : `INVALID_LICENSE`,
+        message : `You must be 21 years old to access this service`
+      }, 400);
     }
 
     let license = new License(data);
