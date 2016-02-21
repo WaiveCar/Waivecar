@@ -2,7 +2,7 @@
 var angular = require('angular');
 var moment = require('moment');
 var _ = require('lodash');
-var ionic = require('ionic');
+// var ionic = require('ionic');
 var sprintf = require('sprintf-js').sprintf;
 
 require('../services/ride-service');
@@ -49,6 +49,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     if (expired) {
       var time = moment(expired).toNow(true);
       this.timeLeft = time;
+      return this.timeLeft;
     }
   }.bind(this), 1000);
 
@@ -64,8 +65,8 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       var distance = $distance($data.active.cars);
       if (_.isFinite(distance)) {
         // convert miles to yards
-        $scope.distance = distance * 1760;
-        if ($scope.distance <= 35) {
+        $scope.distance = distance;
+        if ($scope.distance <= 0.019) {
           console.log('Showing unlock');
           stopWatching();
           stopWatching = null;
@@ -123,13 +124,18 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         className: 'button-assertive',
         text: 'Yes',
         handler: function () {
+          $ionicLoading.show({
+            template: '<div class="circle-loader"><span>Loading</span></div>'
+          });
           if (cancelling) {
+            $ionicLoading.hide();
             return;
           }
           cancelling = true;
           $interval.cancel(timer);
           var id = $ride.state.booking.id;
           $data.remove('bookings', id).then(function() {
+            $ionicLoading.hide();
             cancelling = false;
             $message.success('Your Booking has been successfully cancelled');
             $data.deactivate('cars');
@@ -140,6 +146,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
           })
           .catch(function(err) {
             cancelling = false;
+            $ionicLoading.hide();
             $message.error(err);
             modal.remove();
             showRetry();
@@ -243,7 +250,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       targetLon: $data.active.cars.longitude
     };
 
-    if (ionic.Platform.isWebView()) {
+    // if (ionic.Platform.isWebView()) {
       url = [
         'comgooglemaps-x-callback://?',
         '&saddr=%(startingLat)s,%(startingLon)s',
@@ -255,11 +262,11 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       url = sprintf(url, sprintfOptions);
       $cordovaInAppBrowser.open(encodeURI(url), '_system');
       return;
-    }
+    // }
 
-    url = 'http://maps.google.com/maps?saddr=%(startingLat)s,%(startingLon)s&daddr=%(targetLat)s,%(targetLon)s&mode=walking';
-    url = sprintf(url, sprintfOptions);
-    $cordovaInAppBrowser.open(url);
+    // url = 'http://maps.google.com/maps?saddr=%(startingLat)s,%(startingLon)s&daddr=%(targetLat)s,%(targetLon)s&mode=walking';
+    // url = sprintf(url, sprintfOptions);
+    // $cordovaInAppBrowser.open(url);
   };
 }
 
