@@ -1,0 +1,21 @@
+'use strict';
+
+let Email  = Bento.provider('email');
+let config = Bento.config;
+
+module.exports = {
+  *deliverMessage(payload, _user) {
+    let email = new Email();
+
+    yield email.send({
+      to       : config.waivecar.contact.email,
+      from     : config.email.sender,
+      subject  : 'WaiveCar [Contact]',
+      template : 'waivecar-contact',
+      context  : {
+        message : payload.message,
+        user    : _user
+      }
+    });
+  }
+};

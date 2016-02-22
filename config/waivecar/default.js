@@ -102,6 +102,9 @@ module.exports = {
         [ -118.504565, 34.041227 ],
         [ -118.494673, 34.050704 ]
       ]
+    },
+    contact : {
+      email : 'support@waivecar.com'
     }
   }
 
