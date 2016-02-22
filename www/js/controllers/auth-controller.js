@@ -84,8 +84,8 @@ function AuthController ($injector) {
         } else if (res.code === 'LOGGED_IN') {
           return $state.go('cars');
         }
-      })
-      .catch($message.error.bind($message));
+      });
+      // .catch($message.error.bind($message));
   };
 
   this.init = function init () {
