@@ -6,7 +6,7 @@ var appSettings = angular.module('app.settings');
 module.exports = appSettings;
 
 var defaults = {
-  baseUrl: 'http://localhost:3000',
+  baseUrl: 'https://api-waivecar-dev.cleverbuild.biz',
   skobbler: {
     key: '8698d318586c58a1f8ca1e88ecfac299',
   },

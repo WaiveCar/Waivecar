@@ -18,6 +18,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   var $timeout = $injector.get('$timeout');
   var $progress = $injector.get('$progress');
   var GeofencingService = $injector.get('GeofencingService');
+  var homebase = $injector.get('homebase');
 
   // $data is used to interact with models, never directly. If direct is required, $data should be refreshed.
   $scope.data = $data.active;
@@ -91,9 +92,10 @@ function DashboardController ($scope, $rootScope, $injector) {
     ctrl.ending = true;
     $progress.showSimple(true);
     $ride.isChargeOkay(carId).then(function(okay) {
-      if (okay) {
+      if (okay || $distance(homebase) < 0.3) {
         return GeofencingService.insideBoundary();
       }
+
       return $q.reject('Looks like the charge is pretty low.  Please head to the nearest charger!');
     }).then(function(inside) {
       if (inside) {
