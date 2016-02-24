@@ -14,6 +14,7 @@ module.exports = {
       template : 'waivecar-contact',
       context  : {
         message : payload.message,
+        subject : payload.subject,
         user    : _user
       }
     });
