@@ -21,6 +21,10 @@ function CarsListController ($rootScope, $scope, $state, $injector, $data, cars,
 
   this.all = cars;
 
+  cars.forEach(function(car) {
+    car.charge = Math.min(car.charge, 100) || 0;
+  });
+
   this.show = function showCar (car) {
     if (car.isAvailable === false) {
       showUnavailableModal();
