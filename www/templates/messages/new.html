@@ -1,4 +1,4 @@
-<ion-view class="contacts-new" ng-controller="MessageController">
+<ion-view class="contacts-new"x>
 
   <ion-nav-title>
     <page-title class="dark-bg title-plain">Contact</page-title>
@@ -12,16 +12,16 @@
 
     <p id="padding-top padding-bottom">Please fill the form below and we will contact you as soon as possible.</p>
 
-    <form ng-submit="send(form)" name="form" id="form" class="padding-bottom">
+    <form ng-submit="ctrl.send(ctrl.subject, ctrl.message)" name="form" id="form" class="padding-bottom">
 
       <label class="item item-input">
         <span class="input-label">Subject</span>
-        <input type="text" autofocus>
+        <input type="text" ng-model='ctrl.subject' autofocus>
       </label>
 
       <label class="item item-input" style="align-items: flex-start">
-        Message
-        <textarea rows="10"></textarea>
+        <span class="input-label">Message</span>
+        <textarea style="flex: 1 220px" rows="10" ng-model='ctrl.message'></textarea>
       </label>
 
     </form>

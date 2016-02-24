@@ -32,10 +32,10 @@ var config = [
 
     $provide.decorator('$exceptionHandler', [
       '$delegate',
-      function exceptionHandlerDecorator($delegate) {
+      '$log',
+      function exceptionHandlerDecorator($delegate, $log) {
 
         return function(exception, cause) {
-          var $log = $injector.get('$log');
           $delegate(exception, cause);
           // throw exception;
 
