@@ -37,6 +37,10 @@
     }
   }
   &.has-big-info-footer {
-    height: (100 - $bigInfoFooterHeight) * 1%
+    height: (100 - $bigInfoFooterHeight) * 1%;
+
+    &.has-info-subheader {
+      height: (100 - $bigInfoFooterHeight - $smallSubHeaderSize) * 1%
+    }
   }
 }
