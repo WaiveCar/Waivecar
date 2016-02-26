@@ -63,5 +63,10 @@ module.exports = [
     name        : 'Valet',
     description : 'Rental returned to valet',
     price       : 0
+  },
+  {
+    name        : 'Miscellaneous',
+    description : '',
+    price       : 0
   }
 ];

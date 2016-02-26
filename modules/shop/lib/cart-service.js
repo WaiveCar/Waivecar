@@ -168,8 +168,11 @@ module.exports = class CartService {
       userId : userId,
       items  : payload.items.map((item) => {
         return {
-          id       : item.id,
-          quantity : item.quantity
+          id          : item.id,
+          quantity    : item.quantity,
+          description : item.description,
+          price       : item.price,
+          name        : item.name
         };
       }),
       coupon : payload.coupon || null
@@ -257,14 +260,27 @@ module.exports = class CartService {
       if (!item) {
         continue;
       }
+      if (item.name === 'Miscellaneous') {
+        let created = {
+          id          : item.id,
+          categoryId  : item.categoryId,
+          number      : item.number,
+          name        : item.name,
+          price       : items[i].price,
+          description : items[i].description
+        };
+        item = created;
+      }
+
       result.push({
-        id         : item.id,
-        categoryId : item.categoryId,
-        number     : item.number,
-        name       : item.name,
-        price      : item.price,
-        quantity   : items[i].quantity,
-        total      : items[i].quantity * item.price
+        id          : item.id,
+        categoryId  : item.categoryId,
+        number      : item.number,
+        name        : item.name,
+        price       : item.price,
+        description : items[i].description,
+        quantity    : items[i].quantity,
+        total       : items[i].quantity * item.price
       });
     }
     return result;
