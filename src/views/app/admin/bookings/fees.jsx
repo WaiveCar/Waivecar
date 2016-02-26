@@ -3,7 +3,7 @@ import async                from 'async';
 import { auth, api, relay } from 'bento';
 import { snackbar }         from 'bento-web';
 
-module.exports = class BookingFeesView extends React.Component {
+class BookingFeesView extends React.Component {
 
   constructor(...args) {
     super(...args);
@@ -89,8 +89,59 @@ module.exports = class BookingFeesView extends React.Component {
   }
 
   /**
+   * Updates Miscellaneous item values for this cart
+   * @param {String} field
+   * @param {Object} evnt
+   * @return none
+   */
+  setGeneric(field, evnt) {
+    let items = this.state.items;
+    let item = items.find(item => item.name === 'Miscellaneous');
+
+    switch(field) {
+      case 'description':
+        item[field] = evnt.target.value;
+        break;
+      case 'price':
+        if (!isNaN(evnt.target.value)) {
+          item[field] = (+evnt.target.value) * 100;
+        }
+    }
+
+    this.setState({ items });
+  }
+
+  /**
+   * Returns Miscellaneous item row
+   * @param {Object} cart
+   * @param {Object} item
+   * @return {Object}
+   */
+  getGeneric(cart, item) {
+    return (
+      <tr key={ item.id } className="fee-item-row">
+        <td>
+          { item.name }
+          <input className='form-control' style={{ width: '90%' }} type='text'
+            onChange={ this.setGeneric.bind(this, 'description') } placeholder='Enter fee description'></input>
+        </td>
+        <td className="hidden-xs-down" style={{ paddingTop: 24 }}>
+          <input className='form-control' style={{ width: 70, marginTop: 9, paddingRight: 0 }}
+            onChange={ this.setGeneric.bind(this, 'price') } type='number' placeholder='Price'></input>
+        </td>
+        <td className="text-center" style={{ paddingTop: 24 }}>
+          <button className="fee-item-btn" onClick={ () => { this.removeItem(cart, item.id) } }>-</button>
+          { item.quantity }
+          <button className="fee-item-btn" onClick={ () => { this.addItem(cart, item.id) } }>+</button>
+        </td>
+        <td className="hidden-xs-down text-right" style={{ paddingTop: 24 }}>${ item.total / 100 }</td>
+      </tr>
+    );
+  }
+
+  /**
    * Returns a list of items available and current values of cart.
-   * @eturn Object}
+   * @return {Object}
    */
   getItems(cart) {
     return this.state.items.map(item => {
@@ -98,6 +149,7 @@ module.exports = class BookingFeesView extends React.Component {
 
       item.quantity = cartItem ? cartItem.quantity : 0;
       item.total    = cartItem ? cartItem.total    : 0;
+      if (item.name === 'Miscellaneous') return this.getGeneric(cart, item);
 
       return (
         <tr key={ item.id } className="fee-item-row">
@@ -155,10 +207,21 @@ module.exports = class BookingFeesView extends React.Component {
       items.push(item);
     });
     if (!found) {
-      items.push({
-        id       : id,
-        quantity : 1
-      });
+      let _item = this.state.items.find(i => i.id === id);
+      if (_item.name === 'Miscellaneous') {
+        items.push({
+          id : id,
+          quantity : 1,
+          description : _item.description,
+          price : _item.price,
+          name : _item.name
+        });
+      } else {
+        items.push({
+          id       : id,
+          quantity : 1
+        });
+      }
     }
     this.updateCart(cart, items);
   }
@@ -191,7 +254,11 @@ module.exports = class BookingFeesView extends React.Component {
         userId : userId
       }, (err, cards) => {
         if (!cards.length) {
-          return console.log('User has no registered payment cards!');
+          console.log('User has no registered payment cards!');
+          return snackbar.notify({
+            type    : `danger`,
+            message : 'User has no registered payment cards!'
+          });
         }
         api.post('/shop/orders', {
           bookingId   : bookingId,
@@ -280,3 +347,5 @@ module.exports = class BookingFeesView extends React.Component {
   }
 
 };
+
+module.exports = BookingFeesView;
