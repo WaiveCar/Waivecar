@@ -104,7 +104,7 @@ module.exports = {
       ]
     },
     contact : {
-      email : 'support@waivecar.com'
+      email : 'swhitewvu24@gmail.com'
     }
   }
 

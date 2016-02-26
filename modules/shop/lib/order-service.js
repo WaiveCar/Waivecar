@@ -11,6 +11,7 @@ let hooks       = Bento.Hooks;
 let redis       = Bento.Redis;
 let error       = Bento.Error;
 let config      = Bento.config.shop;
+let log         = Bento.Log;
 
 module.exports = class OrderService extends Service {
 
@@ -63,8 +64,16 @@ module.exports = class OrderService extends Service {
 
     // ### Charge
 
-    yield this.charge(order, user);
-    yield hooks.call('shop:store:order:after', order, payload, _user);
+    try {
+      yield this.charge(order, user);
+      yield hooks.call('shop:store:order:after', order, payload, _user);
+    } catch (err) {
+      log.warn(`Failed to charge user: ${ user.id }`, err);
+      throw error.parse({
+        code    : `SHOP_PAYMENT_FAILED`,
+        message : `The user's card was declined.`
+      }, 400);
+    }
 
     return order;
   }
