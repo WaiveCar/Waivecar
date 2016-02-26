@@ -25,7 +25,7 @@ module.exports = class BookingFeesView extends React.Component {
     return (
       <div key={ item.id } className="row payment-item">
         <div className="col-xs-8">
-          { item.name }
+          { item.name } { item.description ? ` - ${ item.description }` : '' }
         </div>
         <div className="col-xs-2 text-right">
           { item.quantity } x
