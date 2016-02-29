@@ -170,13 +170,13 @@ module.exports = angular.module('app.services').factory('$ride', [
       }
 
       return $data.resources.bookings.end({ id: service.state.booking.id, data: payload }).$promise
-      .then(function() {
-        return $data.fetch('bookings');
-      })
-      .catch(function(err) {
-        $ionicLoading.hide();
-        $message.error(err);
-      });
+        .then(function() {
+          return $data.fetch('bookings');
+        })
+        .catch(function(err) {
+          $ionicLoading.hide();
+          $message.error(err);
+        });
     };
 
     service.processCompleteRide = function() {

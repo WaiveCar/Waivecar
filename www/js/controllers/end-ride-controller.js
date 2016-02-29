@@ -54,8 +54,9 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       return $state.go('end-ride', { id: $ride.state.booking.id });
     };
 
-    this.endRide = function () {
+    this.completeRide = function () {
       var car = $data.active.cars;
+      console.log($data);
 
       if (car == null) {
         return null;
@@ -64,7 +65,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
         return null;
       }
       return $ride.processCompleteRide();
-    };
+    }
 
     this.init = function () {
       var rideServiceReady = $scope.$watch('service.isInitialized', function(isInitialized) {
@@ -77,8 +78,9 @@ module.exports = angular.module('app.controllers').controller('EndRideController
           this.geocode();
         }
         if ($state.current.name === 'end-ride') {
-          $ride.processEndRide();
+          this.completeRide();
         }
+        // if ($state.current.name === 'e')
 
         $ionicLoading.hide();
         
