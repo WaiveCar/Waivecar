@@ -130,6 +130,14 @@ module.exports = class Service {
       }
     });
 
+    // ### Check account status
+    if (user.status === 'suspended') {
+      throw error.parse({
+        code    : `BOOKING_INVALID_USER`,
+        message : `Your account has been suspended.`
+      }, 403);
+    }
+
     // ### Check User
     if (!user.verifiedPhone) { missing.push('phone'); }
 
