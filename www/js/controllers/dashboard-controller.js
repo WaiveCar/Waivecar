@@ -36,6 +36,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   this.ending = false;
   this.locking = false;
   this.unlocking = false;
+  this.locked = false;
 
   var rideServiceReady = $scope.$watch('service.isInitialized', function(isInitialized) {
     if (isInitialized !== true) {
@@ -82,6 +83,7 @@ function DashboardController ($scope, $rootScope, $injector) {
       .then(function () {
         $ionicLoading.hide();
         ctrl.locking = false;
+        ctrl.locked = true;
       })
       .catch(function (reason) {
         $ionicLoading.hide();
@@ -109,6 +111,7 @@ function DashboardController ($scope, $rootScope, $injector) {
       .then(function () {
         $ionicLoading.hide();
         ctrl.unlocking = false;
+        ctrl.locked = false;
       })
       .catch(function (reason) {
         $ionicLoading.hide();

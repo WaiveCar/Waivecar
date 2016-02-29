@@ -34,7 +34,6 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     };
 
     this.geocode = function () {
-      $progress.showSimple(true);
       if (!($rootScope.currentLocation && $rootScope.currentLocation.latitude)) {
         return null;
       }
@@ -43,7 +42,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
           $ride.state.parkingLocation.addressLine1 = location.display_name;
         })
         .finally(function () {
-          $progress.hide();
+          $ionicLoading.hide();
         });
     };
 
