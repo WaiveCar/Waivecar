@@ -4,6 +4,7 @@ let notify    = require('../../lib/notification-service');
 let cars      = require('../../lib/car-service');
 let scheduler = Bento.provider('queue').scheduler;
 let Booking   = Bento.model('Booking');
+let Location  = Bento.model('BookingLocation');
 let Car       = Bento.model('Car');
 let User      = Bento.model('User');
 let log       = Bento.Log;
@@ -53,6 +54,14 @@ scheduler.process('active-booking', function *(job) {
         yield notify.sendTextMessage(user, config.notification.reasons['LOW_CHARGE']);
         yield notify.notifyAdmins(`${ user.name() } has driven ${ car.license } to ${ device.charge }% charge. https://www.waivecar.com/bookings/${ booking.id }`, [ 'slack' ]);
       }
+
+      // Log position
+      let location = new Location({
+        bookingId : booking.id,
+        latitude  : car.latitude,
+        longitude : car.longitude
+      });
+      yield location.save();
 
       yield cars.syncUpdate(car.id, device, car);
     } catch(err) {

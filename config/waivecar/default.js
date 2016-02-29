@@ -26,8 +26,8 @@ module.exports = {
           type  : 'hours'
         },
         carLocation : {
-          value : 1,
-          type  : 'minutes'
+          value : 30,
+          type  : 'seconds'
         }
       }
     },
