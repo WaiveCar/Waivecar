@@ -4,6 +4,7 @@ let Service      = require('./classes/service');
 let Verification = require('./onfido');
 let notify       = Bento.module('waivecar/lib/notification-service');
 let User         = Bento.model('User');
+let error        = Bento.Error;
 let relay        = Bento.Relay;
 let log          = Bento.Log;
 let resource     = 'licenses';
@@ -25,6 +26,13 @@ module.exports = class LicenseVerificationService extends Service {
     let checkId = license.checkId;
     let reportId = license.reportId;
     let check;
+
+    if (status === 'in-progress') {
+      throw error.parse({
+        code    : `VERIFICATION_IN_PROGRESS`,
+        message : `License verification already in progress`
+      }, 400);
+    }
 
     if (status === 'provided') {
       let payload = {
