@@ -30,6 +30,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   $scope.service = $ride;
 
   // $data is used to interact with models, never directly. If direct is required, $data should be refreshed.
+  var ctrl = this;
   this.data = $data.active;
 
   var expired;
@@ -37,6 +38,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     if (!isInitialized) {
       return;
     }
+    ctrl.car = $data.active.cars;
     stopServiceWatch();
     stopServiceWatch = null;
     watchForWithinRange();

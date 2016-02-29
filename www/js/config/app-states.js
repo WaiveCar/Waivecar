@@ -376,12 +376,14 @@ module.exports = [
       .state('messages-new', {
         // 34-Contact
         url: '/messages/new',
-        templateUrl: '/templates/messages/new.html'
+        templateUrl: '/templates/messages/new.html',
+        controller: 'MessageController as ctrl'
       })
       .state('messages-sent', {
         // 35-Message-confirmation
         url: '/messages/sent',
-        templateUrl: '/templates/messages/sent.html'
+        templateUrl: '/templates/messages/sent.html',
+        controller: 'MessageController as ctrl'
       });
 
     // ACCOUNT

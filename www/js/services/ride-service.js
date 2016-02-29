@@ -210,7 +210,7 @@ module.exports = angular.module('app.services').factory('$ride', [
     service.isChargeOkay = function(id) {
       return $data.resources.cars.refresh({ id: id }).$promise
         .then(function (status) {
-          return status.charge > 30;
+          return status.charge > 30 || status.isCharging;
         });
     };
 

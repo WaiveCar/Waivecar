@@ -98,6 +98,7 @@ function AuthController ($injector) {
           $ionicLoading.hide();
           return $state.go('cars');
         }
+
       })
       .catch(function (err) {
         $ionicLoading.hide();

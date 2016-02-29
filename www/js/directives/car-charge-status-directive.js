@@ -6,6 +6,8 @@ module.exports = angular.module('app.directives')
 
     function carChargeStatusDirective() {
 
+      var ratio = 0.7629893327695743;
+
       function link ($scope) {
 
         function setInfo(car){
@@ -15,9 +17,9 @@ module.exports = angular.module('app.directives')
           car.charge = car.charge || 0;
           car.range = car.range || 0;
 
-          $scope.chargeLevel = car.charge + '%';
+          $scope.chargeLevel = Math.min(car.charge, 100) + '%';
           $scope.chargeState = car.isCharging ? 'is Parked at Charging Station' : 'is not charging';
-          $scope.chargeReach = car.range + ' miles ';
+          $scope.chargeReach = (car.range || car.charge * ratio).toFixed(2) + ' miles ';
           $scope.license = car.license;
 
         }
