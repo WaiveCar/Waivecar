@@ -180,7 +180,6 @@ module.exports = angular.module('app.services').factory('$ride', [
     };
 
     service.processCompleteRide = function() {
-
       var id = service.state.booking.id;
       if (this.checkForLock) {
         $interval.cancel(this.checkForLock);
@@ -232,8 +231,13 @@ module.exports = angular.module('app.services').factory('$ride', [
     };
 
     service.unlockCar = function(id) {
-      $data.resources.cars.unlock({ id: id }).$promise
-        .catch($message.error);
+      return service.isCarOn(id)
+        .then(function (isCarOn) {
+          if (isCarOn) {
+            return $q.reject({code: 'IGNITION_ON'});
+          }
+          return $data.resources.cars.unlock({ id: id }).$promise;
+        });
     };
 
     service.init = function() {

@@ -31,7 +31,7 @@
   </ion-content>
   <ion-footer-bar class="no-padding">
     <div class="button-bar">
-      <button type="button" class="button button-balanced" ng-show="data.cars.isLocked" ng-click="service.unlockCar(data.cars.id)">Unlock</button>
+      <button type="button" class="button button-balanced" ng-show="data.cars.isLocked" ng-click="ctrl.unlockCar(data.cars.id)">Unlock</button>
       <button type="button" class="button button-balanced" ng-hide="data.cars.isLocked" ng-click="ctrl.lockCar(data.cars.id)">Lock</button>
       <button type="button" class="button button-dark" ng-disabled="ctrl.ending" ng-click="ctrl.endRide(data.cars.id, data.bookings.id)">End Ride</button>
     </div>

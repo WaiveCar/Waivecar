@@ -29,11 +29,13 @@ function DashboardController ($scope, $rootScope, $injector) {
   this.openPopover = openPopover;
   this.closePopover = closePopover;
   this.lockCar = lockCar;
+  this.unlockCar = unlockCar;
   this.endRide = endRide;
 
   // State
   this.ending = false;
   this.locking = false;
+  this.unlocking = false;
 
   var rideServiceReady = $scope.$watch('service.isInitialized', function(isInitialized) {
     if (isInitialized !== true) {
@@ -84,6 +86,33 @@ function DashboardController ($scope, $rootScope, $injector) {
       .catch(function (reason) {
         $ionicLoading.hide();
         ctrl.locking = false;
+        if (reason && reason.code === 'IGNITION_ON') {
+          showIgnitionOnModal();
+          return;
+        }
+        $message.error(reason);
+      });
+  }
+
+  function unlockCar(id) {
+    
+    $ionicLoading.show({
+      template: '<div class="circle-loader"><span>Loading</span></div>'
+    });
+
+    if (ctrl.unlocking === true) {
+      return;
+    }
+
+    ctrl.unlocking = true;
+    $ride.unlockCar(id)
+      .then(function () {
+        $ionicLoading.hide();
+        ctrl.unlocking = false;
+      })
+      .catch(function (reason) {
+        $ionicLoading.hide();
+        ctrl.unlocking = false;
         if (reason && reason.code === 'IGNITION_ON') {
           showIgnitionOnModal();
           return;

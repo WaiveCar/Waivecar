@@ -32,8 +32,8 @@ var config = [
 
     $provide.decorator('$exceptionHandler', [
       '$delegate',
-      '$log',
-      function exceptionHandlerDecorator($delegate, $log) {
+      // '$log',
+      function exceptionHandlerDecorator($delegate) {
 
         return function(exception, cause) {
 
