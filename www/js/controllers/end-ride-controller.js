@@ -55,7 +55,6 @@ module.exports = angular.module('app.controllers').controller('EndRideController
 
     this.completeRide = function () {
       var car = $data.active.cars;
-      console.log($data);
 
       if (car == null) {
         return null;
@@ -76,13 +75,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
         if ($state.current.name === 'end-ride-location') {
           this.geocode();
         }
-        if ($state.current.name === 'end-ride') {
-          this.completeRide();
-        }
-        // if ($state.current.name === 'e')
 
-        $ionicLoading.hide();
-        
       }.bind(this));
     };
 
