@@ -21,7 +21,7 @@ function UserCreateController ($injector) {
     var credentials = {
       identifier: this.user.email,
       password: this.user.password
-    }
+    };
 
     $ionicLoading.show({
       template: '<div class="circle-loader"><span>Loading</span></div>'

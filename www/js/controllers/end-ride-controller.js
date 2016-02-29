@@ -56,6 +56,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
 
     this.endRide = function () {
       var car = $data.active.cars;
+
       if (car == null) {
         return null;
       }
@@ -66,11 +67,6 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     };
 
     this.init = function () {
-      
-      $ionicLoading.show({
-        template: '<div class="circle-loader"><span>Loading</span></div>'
-      });
-
       var rideServiceReady = $scope.$watch('service.isInitialized', function(isInitialized) {
         console.log('[end-ride] Service initialized: %s', isInitialized);
         if (isInitialized !== true) {

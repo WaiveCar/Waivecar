@@ -16,7 +16,6 @@ function DashboardController ($scope, $rootScope, $injector) {
   var $message = $injector.get('$message');
   var $state = $injector.get('$state');
   var $timeout = $injector.get('$timeout');
-  var $progress = $injector.get('$progress');
   var $ionicLoading = $injector.get('$ionicLoading');
   var GeofencingService = $injector.get('GeofencingService');
 
@@ -66,13 +65,14 @@ function DashboardController ($scope, $rootScope, $injector) {
   }
 
   function lockCar(id) {
-    if (ctrl.locking === true) {
-      return;
-    }
-
+    
     $ionicLoading.show({
       template: '<div class="circle-loader"><span>Loading</span></div>'
     });
+
+    if (ctrl.locking === true) {
+      return;
+    }
 
     ctrl.locking = true;
     $ride.lockCar(id)
@@ -92,6 +92,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   }
 
   function endRide(carId, bookingId) {
+
     $ionicLoading.show({
       template: '<div class="circle-loader"><span>Loading</span></div>'
     });

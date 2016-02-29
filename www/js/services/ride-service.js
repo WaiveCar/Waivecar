@@ -10,7 +10,9 @@ module.exports = angular.module('app.services').factory('$ride', [
   '$message',
   '$interval',
   '$q',
-  function($auth, $data, $state, $message, $interval, $q) {
+  '$injector',
+  function($auth, $data, $state, $message, $interval, $q, $injector) {
+    var $ionicLoading = $injector.get('$ionicLoading');
 
     var service = {};
 
@@ -93,13 +95,13 @@ module.exports = angular.module('app.services').factory('$ride', [
       var booking = $data.active.bookings;
       $data.resources.cars.refresh({id: car.id});
 
-      // if (car == null || booking == null) {
+      if (car == null || booking == null) {
         if (this.checkForLock) {
           $interval.cancel(this.checkForLock);
           this.checkForLock = null;
         }
         return;
-      // }
+      }
 
       if (service.state.location.valet.confirmed) {
         if (booking.status !== 'completed') {
@@ -171,10 +173,14 @@ module.exports = angular.module('app.services').factory('$ride', [
       .then(function() {
         return $data.fetch('bookings');
       })
-      .catch($message.error);
+      .catch(function(err) {
+        $ionicLoading.hide();
+        $message.error(err);
+      });
     };
 
     service.processCompleteRide = function() {
+
       var id = service.state.booking.id;
       if (this.checkForLock) {
         $interval.cancel(this.checkForLock);
@@ -182,12 +188,16 @@ module.exports = angular.module('app.services').factory('$ride', [
       }
       $data.resources.bookings.complete({ id: id }).$promise
       .then(function() {
+        $ionicLoading.hide();
         $data.fetch('bookings');
         $data.deactivate('bookings');
         $data.deactivate('cars');
         service.setState();
         $state.go('bookings-show', { id: id });
-      }).catch($message.error);
+      }).catch(function(err) {
+        $ionicLoading.hide();
+        $message.error(err);
+      });
     };
 
     service.isCarOn = function (id) {
@@ -208,8 +218,8 @@ module.exports = angular.module('app.services').factory('$ride', [
       return $data.resources.cars.refresh({ id: id }).$promise
         .then(function (status) {
           return status.isDoorClosed;
-        })
-    }
+        });
+    };
 
     service.lockCar = function(id) {
       return service.isCarOn(id)
@@ -261,8 +271,8 @@ module.exports = angular.module('app.services').factory('$ride', [
       });
     };
 
-    // service.setState();
-    // service.init();
+    service.setState();
+    service.init();
 
     return service;
   }
