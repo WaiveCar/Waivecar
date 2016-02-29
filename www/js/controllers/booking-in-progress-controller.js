@@ -12,12 +12,19 @@ module.exports = angular.module('app.controllers').controller('BookingInProgress
   '$auth',
   '$data',
   '$message',
-  function ($rootScope, $scope, $state, $auth, $data, $message) {
+  '$ionicLoading',
+  function ($rootScope, $scope, $state, $auth, $data, $message, $ionicLoading) {
 
     $scope.end = function () {
       var booking = angular.copy($data.active.bookings);
+
+      $ionicLoading.show({
+        template: '<div class="circle-loader"><span>Loading</span></div>'
+      });
+
       booking.state = 'end';
       $data.update('bookings', booking, function (err) {
+        $ionicLoading.hide();
         if (err) {
           return $message.error(err.message || err);
         }

@@ -20,6 +20,7 @@ module.exports = angular.module('app.controllers').controller('CarController', [
     var $auth = $injector.get('$auth');
     var $q = $injector.get('$q');
     var $preBook = $injector.get('$preBook');
+    var $ionicLoading = $injector.get('$ionicLoading');
 
     this.car = angular.extend({}, car, { item: 'car' });
     if (this.car.isAvailable === false) {
@@ -28,6 +29,11 @@ module.exports = angular.module('app.controllers').controller('CarController', [
 
     this.book = function() {
       var model = { userId: $auth.me.id, carId: $state.params.id };
+
+      $ionicLoading.show({
+        template: '<div class="circle-loader"><span>Loading</span></div>'
+      });
+
       // Create a Booking
       return $data.create('bookings', model)
       .then(function onBooking (booking) {
@@ -38,6 +44,7 @@ module.exports = angular.module('app.controllers').controller('CarController', [
           $data.activate('cars', booking.carId)
         ])
         .then(function() {
+          $ionicLoading.hide();
           $ride.setBooking(booking.id);
           $state.go('bookings-active', { id: booking.id });
         })
@@ -47,7 +54,13 @@ module.exports = angular.module('app.controllers').controller('CarController', [
 
     this.cancel = function() {
       var id = $scope.service.state.booking.id;
+
+      $ionicLoading.show({
+        template: '<div class="circle-loader"><span>Loading</span></div>'
+      });
+
       $data.remove('bookings', id).then(function() {
+        $ionicLoading.hide();
         $message.success(id + ' has been successfully cancelled');
         $scope.service.setState();
         $data.deactivate('cars');

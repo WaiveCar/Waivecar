@@ -12,6 +12,7 @@ function AuthController ($injector) {
   var $data = $injector.get('$data');
   var $stateParams = $injector.get('$stateParams');
   var $ionicHistory = $injector.get('$ionicHistory');
+  var $ionicLoading = $injector.get('$ionicLoading');
 
   this.$ionicHistory = $ionicHistory;
 
@@ -25,7 +26,6 @@ function AuthController ($injector) {
     },
   };
 
-
   this.login = function login (form) {
     if (form.$pristine) {
       return $message.info('Please fill in your credentials first.');
@@ -34,12 +34,19 @@ function AuthController ($injector) {
       return $message.error('Please resolve form errors and try again.');
     }
 
+    $ionicLoading.show({
+      template: '<div class="circle-loader"><span>Loading</span></div>'
+    });
+
     return $auth.login(this.forms.loginForm)
-      .then(function(){
+      .then(function () {
+        $ionicLoading.hide();
         $state.go('cars');
       })
-      .catch($message.error.bind($message));
-
+      .catch(function (err) {
+        $ionicLoading.hide();
+        $message.error(err);
+      });
   };
 
   this.initPasswordReset = function initPasswordReset (form) {
@@ -51,7 +58,7 @@ function AuthController ($injector) {
     }
 
     $data.resources.User.initPasswordReset(this.forms.forgotForm).$promise
-      .then(function(){
+      .then(function () {
         $state.go('auth-reset-password');
       })
       .catch($message.error.bind($message));
@@ -67,7 +74,7 @@ function AuthController ($injector) {
 
     var data = _.omit(this.forms.resetForm, 'passwordConfirm');
     $data.resources.User.submitNewPassword(data).$promise
-      .then(function(){
+      .then(function () {
         $state.go('auth-reset-password-success');
       })
       .catch(angular.bind($message, $message.error));
@@ -75,17 +82,28 @@ function AuthController ($injector) {
   };
 
   this.loginWithFacebook = function loginWithFacebook () {
+
+    $ionicLoading.show({
+      template: '<div class="circle-loader"><span>Loading</span></div>'
+    });
+
     return $auth.facebookAuth()
       .then(function (res) {
         if (res.code === 'NEW_USER') {
+          $ionicLoading.hide();
           return $state.go('users-new-facebook', {
             step: 2
           });
         } else if (res.code === 'LOGGED_IN') {
+          $ionicLoading.hide();
           return $state.go('cars');
         }
+
+      })
+      .catch(function (err) {
+        $ionicLoading.hide();
+        $message.error(err);
       });
-      // .catch($message.error.bind($message));
   };
 
   this.init = function init () {
