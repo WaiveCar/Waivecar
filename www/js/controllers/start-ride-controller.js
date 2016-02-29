@@ -22,7 +22,6 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
     $scope.data = $data.active;
 
     this.start = function () {
-
       $ionicLoading.show({
         template: '<div class="circle-loader"><span>Loading</span></div>'
       });

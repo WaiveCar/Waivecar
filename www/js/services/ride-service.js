@@ -180,6 +180,9 @@ module.exports = angular.module('app.services').factory('$ride', [
     };
 
     service.processCompleteRide = function() {
+      $ionicLoading.show({
+        template: '<div class="circle-loader"><span>Loading</span></div>'
+      });
       var id = service.state.booking.id;
       if (this.checkForLock) {
         $interval.cancel(this.checkForLock);
