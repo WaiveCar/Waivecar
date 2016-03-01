@@ -17,7 +17,9 @@ module.exports = angular.module('app.controllers').controller('EndRideController
   '$geocoding',
   '$progress',
   '$message',
-  function ($rootScope, $scope, $state, $auth, $data, $ride, $geocoding, $progress, $message) {
+  '$ionicLoading',
+  function ($rootScope, $scope, $state, $auth, $data, $ride, $geocoding, $progress, $message, $ionicLoading) {
+
 
     // Concepts:
     // $scope is used to store ref. to the service and the active models in the data svc.
@@ -32,7 +34,6 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     };
 
     this.geocode = function () {
-      $progress.showSimple(true);
       if (!($rootScope.currentLocation && $rootScope.currentLocation.latitude)) {
         return null;
       }
@@ -41,7 +42,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
           $ride.state.parkingLocation.addressLine1 = location.display_name;
         })
         .finally(function () {
-          $progress.hide();
+          $ionicLoading.hide();
         });
     };
 
@@ -52,8 +53,9 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       return $state.go('end-ride', { id: $ride.state.booking.id });
     };
 
-    this.endRide = function () {
+    this.completeRide = function () {
       var car = $data.active.cars;
+
       if (car == null) {
         return null;
       }
@@ -61,7 +63,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
         return null;
       }
       return $ride.processCompleteRide();
-    };
+    }
 
     this.init = function () {
       var rideServiceReady = $scope.$watch('service.isInitialized', function(isInitialized) {
@@ -73,9 +75,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
         if ($state.current.name === 'end-ride-location') {
           this.geocode();
         }
-        if ($state.current.name === 'end-ride') {
-          $ride.processEndRide();
-        }
+
       }.bind(this));
     };
 

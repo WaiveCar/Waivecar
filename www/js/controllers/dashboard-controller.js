@@ -16,7 +16,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   var $message = $injector.get('$message');
   var $state = $injector.get('$state');
   var $timeout = $injector.get('$timeout');
-  var $progress = $injector.get('$progress');
+  var $ionicLoading = $injector.get('$ionicLoading');
   var GeofencingService = $injector.get('GeofencingService');
   var homebase = $injector.get('homebase');
 
@@ -29,11 +29,14 @@ function DashboardController ($scope, $rootScope, $injector) {
   this.openPopover = openPopover;
   this.closePopover = closePopover;
   this.lockCar = lockCar;
+  this.unlockCar = unlockCar;
   this.endRide = endRide;
 
   // State
   this.ending = false;
   this.locking = false;
+  this.unlocking = false;
+  this.locked = false;
 
   var rideServiceReady = $scope.$watch('service.isInitialized', function(isInitialized) {
     if (isInitialized !== true) {
@@ -66,15 +69,24 @@ function DashboardController ($scope, $rootScope, $injector) {
   }
 
   function lockCar(id) {
+    
+    $ionicLoading.show({
+      template: '<div class="circle-loader"><span>Loading</span></div>'
+    });
+
     if (ctrl.locking === true) {
       return;
     }
+
     ctrl.locking = true;
     $ride.lockCar(id)
       .then(function () {
+        $ionicLoading.hide();
         ctrl.locking = false;
+        ctrl.locked = true;
       })
       .catch(function (reason) {
+        $ionicLoading.hide();
         ctrl.locking = false;
         if (reason && reason.code === 'IGNITION_ON') {
           showIgnitionOnModal();
@@ -84,13 +96,45 @@ function DashboardController ($scope, $rootScope, $injector) {
       });
   }
 
+  function unlockCar(id) {
+    
+    $ionicLoading.show({
+      template: '<div class="circle-loader"><span>Loading</span></div>'
+    });
+
+    if (ctrl.unlocking === true) {
+      return;
+    }
+
+    ctrl.unlocking = true;
+    $ride.unlockCar(id)
+      .then(function () {
+        $ionicLoading.hide();
+        ctrl.unlocking = false;
+        ctrl.locked = false;
+      })
+      .catch(function (reason) {
+        $ionicLoading.hide();
+        ctrl.unlocking = false;
+        if (reason && reason.code === 'IGNITION_ON') {
+          showIgnitionOnModal();
+          return;
+        }
+        $message.error(reason);
+      });
+  }
+
   function endRide(carId, bookingId) {
+
+    $ionicLoading.show({
+      template: '<div class="circle-loader"><span>Loading</span></div>'
+    });
+
     if (ctrl.ending === true) {
       return null;
     }
 
     ctrl.ending = true;
-    $progress.showSimple(true);
     $ride.isChargeOkay(carId).then(function(okay) {
       if (okay || $distance(homebase) < 0.3) {
         return GeofencingService.insideBoundary();
@@ -103,17 +147,18 @@ function DashboardController ($scope, $rootScope, $injector) {
         return $ride.isCarOn(carId)
           .catch(function (reason) {
             ctrl.ending = false;
-            $progress.hide();
+            $ionicLoading.hide();
             return $q.reject(reason);
           })
           .then(function (isCarOn) {
             ctrl.ending = false;
-            $progress.hide();
+            // $ionicLoading.hide();
             if (isCarOn) {
               showIgnitionOnModal();
               return;
             }
             $ride.setLocation('homebase');
+            $ride.processEndRide();
             $state.go('end-ride-location', {id: bookingId});
           });
       } else {

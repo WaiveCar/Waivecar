@@ -10,7 +10,9 @@ module.exports = angular.module('app.services').factory('$ride', [
   '$message',
   '$interval',
   '$q',
-  function($auth, $data, $state, $message, $interval, $q) {
+  '$injector',
+  function($auth, $data, $state, $message, $interval, $q, $injector) {
+    var $ionicLoading = $injector.get('$ionicLoading');
 
     var service = {};
 
@@ -38,6 +40,7 @@ module.exports = angular.module('app.services').factory('$ride', [
       check : {
         isKeySecure        : { isVisible: true, confirmed: false },
         isIgnitionOn       : { isVisible: true, confirmed: false },
+        isDoorsClosed      : { isVisible: true, confirmed: false },
         isChargeCardSecure : { isVisible: false, confirmed: false },
         isCharging         : { isVisible: false, confirmed: false }
       }
@@ -167,13 +170,19 @@ module.exports = angular.module('app.services').factory('$ride', [
       }
 
       return $data.resources.bookings.end({ id: service.state.booking.id, data: payload }).$promise
-      .then(function() {
-        return $data.fetch('bookings');
-      })
-      .catch($message.error);
+        .then(function() {
+          return $data.fetch('bookings');
+        })
+        .catch(function(err) {
+          $ionicLoading.hide();
+          $message.error(err);
+        });
     };
 
     service.processCompleteRide = function() {
+      $ionicLoading.show({
+        template: '<div class="circle-loader"><span>Loading</span></div>'
+      });
       var id = service.state.booking.id;
       if (this.checkForLock) {
         $interval.cancel(this.checkForLock);
@@ -181,12 +190,16 @@ module.exports = angular.module('app.services').factory('$ride', [
       }
       $data.resources.bookings.complete({ id: id }).$promise
       .then(function() {
+        $ionicLoading.hide();
         $data.fetch('bookings');
         $data.deactivate('bookings');
         $data.deactivate('cars');
         service.setState();
         $state.go('bookings-show', { id: id });
-      }).catch($message.error);
+      }).catch(function(err) {
+        $ionicLoading.hide();
+        $message.error(err);
+      });
     };
 
     service.isCarOn = function (id) {
@@ -203,6 +216,13 @@ module.exports = angular.module('app.services').factory('$ride', [
         });
     };
 
+    service.isDoorsClosed = function(id) {
+      return $data.resources.cars.refresh({ id: id }).$promise
+        .then(function (status) {
+          return status.isDoorClosed;
+        });
+    };
+
     service.lockCar = function(id) {
       return service.isCarOn(id)
         .then(function (isCarOn) {
@@ -214,8 +234,13 @@ module.exports = angular.module('app.services').factory('$ride', [
     };
 
     service.unlockCar = function(id) {
-      $data.resources.cars.unlock({ id: id }).$promise
-        .catch($message.error);
+      return service.isCarOn(id)
+        .then(function (isCarOn) {
+          if (isCarOn) {
+            return $q.reject({code: 'IGNITION_ON'});
+          }
+          return $data.resources.cars.unlock({ id: id }).$promise;
+        });
     };
 
     service.init = function() {
@@ -253,8 +278,8 @@ module.exports = angular.module('app.services').factory('$ride', [
       });
     };
 
-    // service.setState();
-    // service.init();
+    service.setState();
+    service.init();
 
     return service;
   }
