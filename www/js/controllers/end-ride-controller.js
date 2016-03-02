@@ -63,7 +63,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
         return null;
       }
       return $ride.processCompleteRide();
-    }
+    };
 
     this.init = function () {
       var rideServiceReady = $scope.$watch('service.isInitialized', function(isInitialized) {
