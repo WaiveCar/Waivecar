@@ -1,7 +1,9 @@
 'use strict';
 
+let co          = require('co');
 let Service     = require('./classes/service');
 let CartService = require('./cart-service');
+let Email       = Bento.provider('email');
 let queryParser = Bento.provider('sequelize/helpers').query;
 let User        = Bento.model('User');
 let Cart        = Bento.model('Shop/Cart');
@@ -11,6 +13,7 @@ let hooks       = Bento.Hooks;
 let redis       = Bento.Redis;
 let error       = Bento.Error;
 let config      = Bento.config.shop;
+let emailConfig = Bento.config.email;
 let log         = Bento.Log;
 
 module.exports = class OrderService extends Service {
@@ -31,7 +34,7 @@ module.exports = class OrderService extends Service {
     this.verifyCurrency(data.currency);
 
     // ### Create Order
-
+    let miscCharge = null;
     let cart  = yield CartService.getCart(data.cart);
     let items = yield CartService.getItems(cart);
     let order = new Order({
@@ -60,12 +63,20 @@ module.exports = class OrderService extends Service {
         quantity    : items[i].quantity
       });
       yield item.save();
+      if (items[i].name === 'Miscellaneous') miscCharge = items[i];
     }
 
     // ### Charge
 
     try {
       yield this.charge(order, user);
+
+      // Notify user if they received a miscellaneous charge
+      if (miscCharge) {
+        log.info(`Notifying user of miscellaneous charge: ${ user.id }`);
+        this.notifyOfCharge(miscCharge, user);
+      }
+
       yield hooks.call('shop:store:order:after', order, payload, _user);
     } catch (err) {
       log.warn(`Failed to charge user: ${ user.id }`, err);
@@ -292,6 +303,34 @@ module.exports = class OrderService extends Service {
         message : `The requested currency is not supported.`
       }, 400);
     }
+  }
+
+  /**
+   * Notify user that miscellaneous was added to their booking
+   * @param {Object} item
+   * @param {Object} user
+   * @return {Void}
+   */
+  static notifyOfCharge(item, user) {
+    co(function *() {
+      let email = new Email();
+      try {
+        item.total = (item.quantity * item.price / 100).toFixed(2);
+
+        yield email.send({
+          to       : user.email,
+          from     : emailConfig.sender,
+          subject  : 'Waivecar [Charge Added]',
+          template : 'miscellaneous-charge',
+          context  : {
+            name   : user.name(),
+            charge : item
+          }
+        });
+      } catch (err) {
+        log.warn('Failed to deliver notification email: ', err);
+      }
+    });
   }
 
 };
