@@ -139,7 +139,7 @@ function DashboardController ($scope, $rootScope, $injector) {
       if (okay || $distance(homebase) < 0.3) {
         return GeofencingService.insideBoundary();
       }
-
+      $ionicLoading.hide();
       return $q.reject('Looks like the charge is pretty low.  Please head to the nearest charger!');
     }).then(function(inside) {
       if (inside) {
@@ -163,6 +163,7 @@ function DashboardController ($scope, $rootScope, $injector) {
           });
       } else {
         // Not inside geofence -> show error
+        $ionicLoading.hide();
         return $q.reject('Looks like you\'re outside of the rental zone (Santa Monica). Please head back to end your rental.');
       }
     }).catch(endRideFailure);

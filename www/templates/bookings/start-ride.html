@@ -13,7 +13,17 @@
         </div>
         <div ng-if="!ctrl.showVideo">
           <div>
-            <h3>ARE YOU READY</h3>
+            <h3>START RIDE</h3>
+            <div class="info-header">
+              <div class="info-header-item">
+                <ng-include class="battery" src="'/img/battery-darkgrey.svg'"></ng-include>
+                {{ data.cars.charge | number:0 }} %
+              </div>
+              <div class="info-header-item">
+                <ng-include src="'/img/clock-grey-icon.svg'"></ng-include>
+                {{ ctrl.timeLeft }}
+              </div>
+            </div>
             <p>Please confirm that you:</p>
             <ul class="list-unstyled text-left bold-list">
               <li>1. Are sitting in the WaiveCar.</li>
