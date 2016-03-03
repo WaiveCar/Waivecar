@@ -16,21 +16,80 @@
             <h3>START RIDE</h3>
             <div class="info-header">
               <div class="info-header-item">
-                <ng-include class="battery" src="'/img/battery-darkgrey.svg'"></ng-include>
+                <ng-include class="battery" src="'/img/battery.svg'"></ng-include>
                 {{ data.cars.charge | number:0 }} %
               </div>
               <div class="info-header-item">
-                <ng-include src="'/img/clock-grey-icon.svg'"></ng-include>
+                <ng-include src="'/img/clock-icon.svg'"></ng-include>
                 {{ ctrl.timeLeft }}
               </div>
             </div>
-            <p>Please confirm that you:</p>
+            <p>Almost ready to roll.</p>
+            <p>Quick checklist before you start.</p>
             <ul class="list-unstyled text-left bold-list">
-              <li>1. Are sitting in the WaiveCar.</li>
-              <li>2. Have taken the WaiveCar key.</li>
-              <li>3. The WaiveCar is problem free.</li>
+              <li>
+                <p class="pull-left">No damage to car exterior</p>
+                <label class="pull-right">
+                  <span class="check">
+                    <ng-include src="'/img/x-icon.svg'" />
+                  </span>
+                  <span class="check">
+                    <ng-include src="'/img/check-icon.svg'" />
+                  </span>
+                </label>
+              </li>
+              <li>
+                <p class="pull-left">No damage to car interior</p>
+                <label class="pull-right">
+                  <span class="check">
+                    <ng-include src="'/img/x-icon.svg'" />
+                  </span>
+                  <span class="check" ng-show="data.cars.isKeySecure">
+                    <ng-include src="'/img/check-icon.svg'" />
+                  </span>
+                </label>
+              </li>
+              <li>
+                <p class="pull-left">Car is clean</p>
+                <label class="pull-right">
+                  <span class="check">
+                    <ng-include src="'/img/x-icon.svg'" />
+                  </span>
+                  <span class="check">
+                    <ng-include src="'/img/check-icon.svg'" />
+                  </span>
+                </label>
+              </li>
+            </ul>
+            <p>Last few things</p>
+            <ul class="list-unstyled text-left bold-list">
+              <li>
+                <p class="pull-left">Take keys out of glovebox</p>
+                <label class="pull-right">
+                  <span class="check">
+                    <ng-include src="'/img/check-icon.svg'" />
+                  </span>
+                </label>
+              </li>
+              <li>
+                <p class="pull-left">Check your mirrors</p>
+                <label class="pull-right">
+                  <span class="check">
+                    <ng-include src="'/img/check-icon.svg'" />
+                  </span>
+                </label>
+              </li>
+              <li>
+                <p class="pull-left">Take note of your charge level</p>
+                <label class="pull-right">
+                  <span class="check">
+                    <ng-include src="'/img/check-icon.svg'" />
+                  </span>
+                </label>
+              </li>
             </ul>
             <p class="text-center padding-vertical">When you are ready, tap on "Continue" and start the car normally. Enjoy your ride!</p>
+            <button type="button" class="button button-block button-balanced" ng-disabled="!(data.bookings.status === 'started' || data.bookings.status === 'ready')" ng-click="ctrl.start()">Start Ride</button>
             <button type="button" class="button button-block button-balanced" ng-disabled="!(data.bookings.status === 'started' || data.bookings.status === 'ready')" ng-click="ctrl.start()">Continue</button>
           </div>
         </div>
