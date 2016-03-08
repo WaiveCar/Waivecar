@@ -49,6 +49,24 @@
           font-size : 0.95rem;
         }
       }
+
+      .login-btn {
+        padding-left: 0;
+        a {
+          border-radius: 0;
+        }
+      }
+    }
+  }
+
+  .banner-container {
+    h1 {
+      font-size: 3rem;
+    }
+
+    p {
+      margin: 2rem 0;
+      font-size: 1.7rem;
     }
   }
 }
