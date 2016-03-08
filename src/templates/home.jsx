@@ -32,7 +32,6 @@ class HomeTemplate extends React.Component {
         FeaturesEnd   : 'card wp wp-features-end'
       },
       navItems : [
-        { type: 'anchor', to : '#Download', title : 'Download' },
         { type: 'anchor', to : '#Vision',   title : 'Vision' },
         { type: 'anchor', to : '#Features', title : 'How It Works' },
         { type: 'anchor', to : '#Pricing',  title : 'Pricing' },
@@ -86,6 +85,11 @@ class HomeTemplate extends React.Component {
         <div className="navbar-items col-lg-8 col-md-9">
           <ul className="text-right list-inline  hidden-md-down">
             { this.renderNavItems() }
+            <li className='login-btn'>
+              <Link to="/login" className="btn btn-primary md-m-l">
+                Login
+              </Link>
+            </li>
           </ul>
         </div>
       </nav>
@@ -102,8 +106,11 @@ class HomeTemplate extends React.Component {
           <Row className="m-t-lg hidden-md-up">
             <div className="col-sm-12">
               <div className="banner-container text-center">
-                <h1>We waive the fee. You drive for free.</h1>
-                <p className="lead">Get where you’re going and move toward a sustainable future.</p>
+                <h1>Need to go somewhere?</h1>
+                <p className="lead">
+                  Use one of our electric cars <strong>for free</strong>.<br></br>
+                  It makes sense and a huge difference.
+                </p>
                 <ul className="list-inline">
                   <li className="store-item m-t">
                     <a href={appStoreUri}>
@@ -123,8 +130,11 @@ class HomeTemplate extends React.Component {
             <div className="col-md-7 col-sm-12">
               <div className="banner-container">
                 <div  className="valign">
-                  <h1>We waive the fee. You drive for free.</h1>
-                  <p className="lead">Get where you’re going and move toward a sustainable future.</p>
+                  <h1>Need to go somewhere?</h1>
+                  <p className="lead">
+                    Use one of our electric cars <strong>for free</strong>.<br></br>
+                    It makes sense and a huge difference.
+                  </p>
                   <ul className="list-inline">
                     <li className="store-item">
                       <a href={appStoreUri}>
@@ -141,7 +151,7 @@ class HomeTemplate extends React.Component {
               </div>
             </div>
             <div className="col-sm-5 hidden-sm-down">
-              <img className="app-sample pull-right" src="/images/site/iphone.png" />
+              <img className="app-sample pull-right" src="/images/site/iphone-mockup.png" />
             </div>
           </Row>
         </div>
@@ -158,14 +168,14 @@ class HomeTemplate extends React.Component {
     return (
       <section className="section section-signup">
         <Container>
-          <h3 className="text-center m-b-lg">Create an account</h3>
-          <p className="text-center lead">Get approved and drive a free car <strong>today</strong>.</p>
+          <h2 className="text-center m-b-md">Create an account</h2>
+          <p className="text-center lead">Once you're registered, you'll be able to find, book, and start using electric cars for free.</p>
           <Waypoint id="Signup" onEnter={ this.handleWaypointEnter } onEnterClassName="animated slideIn" className={ this.state.waypoints.Signup }>
             <Row>
               <Column width={ 6 } responsive={ true } centerContent={ true } className="text-right-md">
                 <button className="btn btn-facebook" onClick={ facebook.register }>
                   <i className="fa fa-facebook" />
-                  Register with Facebook
+                  Connect with Facebook
                 </button>
               </Column>
               <Column width={ 6 } responsive={ true } centerContent={ true } className="text-left-md">
@@ -191,11 +201,13 @@ class HomeTemplate extends React.Component {
       <section className="section section-vision text-center">
         <div id="Vision" className="container">
           <Row>
-            <Column className="text-center">
-              <h3>Our Vision</h3>
-              <p>We believe there are smarter ways for communities to benefit from cars.</p>
-              <p>Our contribution is WaiveCar, a revolutionary transportation system that connects users with ad-displaying electric cars for free, anywhere in their city.</p>
-              <p>Together, drivers and companies can make a positive impact on the environment.</p>
+            <Column width={ 8 } responsive={ true } responsiveBreakpoint="lg" className="text-center col-lg-offset-2">
+              <h2>Our Vision</h2>
+              <p>
+                We believe there are smarter ways for people in the city to benefit from cars. Our contribution is WaiveCar,
+                a revolutionary system in which users can find, book and drive ad-displaying, electric cars for free, anywhere
+                in the city. This is how people and companies can create a more sustainable future.
+              </p>
               <a href="#" target="_blank" className="btn btn-primary text-center">Download App</a>
             </Column>
           </Row>
@@ -255,14 +267,18 @@ class HomeTemplate extends React.Component {
   renderPricing() {
     return (
       <section className="section section-pricing">
-        <div className="tinted-half hidden-sm-down">
-        </div>
         <Container id="Pricing">
           <Row>
-            <div className="col-md-6 col-sm-12">
+            <div className="col-md-offset-3 col-md-6 col-sm-12 text-center">
               <h2>Pricing</h2>
-              <p>WaiveCar rides are free because the cars work as mobile billboards. You’re actually paying us just by driving the cars. Sweet deal, don’t you think?</p>
-              <p>The first two hours of drive time is on us, counting from the moment the motor starts running. After that, it’s $5.99 per an hour to continue your ride.</p>
+              <p>
+                WaiveCar rides are free because the cars work as mobile advertising panels.
+                You're actually paying use just by driving the cars. Pretty sweet trade off, don't you think?
+              </p>
+              <p>
+                Driving a car is free within the first two hours, counting from the moment the car starts running.
+                If you want to continue using the car, a $5.99 per extra hour fee will be charged to your account.
+              </p>
             </div>
           </Row>
         </Container>
@@ -275,14 +291,25 @@ class HomeTemplate extends React.Component {
       <section className="section section-about">
         <Container>
           <Row id="About">
-            <div className="col-sm-12">
+            <div className="col-md-8 col-md-offset-2 text-center">
               <h2>About Us</h2>
               <p>WaiveCar is a revolutionary form of transportation, a smart advertising medium for companies, and a powerful way of fostering green, renewable energy in our communities.</p>
-              <br />
             </div>
           </Row>
+        </Container>
+      </section>
+    );
+  }
+
+  renderCars() {
+    return (
+      <section className="section section-cars clearfix">
+        <div className='cars-photo hidden-md-down'>
+          <img src='/images/site/our-cars-photo.jpg' />
+        </div>
+        <div className='cars-content'>
           <Row id="Cars">
-            <div className="col-md-7 col-sm-12">
+            <div className="col-xs-12">
               <h2>Our Cars</h2>
               <p>WaiveCar’s fleet is 100% electric and 100% emission free.<br />Our cars are zippy, compact, and functional:</p>
               <ul className="list">
@@ -294,11 +321,8 @@ class HomeTemplate extends React.Component {
                 <li>141 Horsepower</li>
               </ul>
             </div>
-            <div className="col-md-5 hidden-sm-down text-right">
-              <img src="/images/site/car.jpg" alt="WaiveCar" />
-            </div>
           </Row>
-        </Container>
+        </div>
       </section>
     );
   }
@@ -336,6 +360,7 @@ class HomeTemplate extends React.Component {
         { this.renderFeatures() }
         { this.renderPricing() }
         { this.renderAbout() }
+        { this.renderCars() }
         { this.renderFooter() }
       </div>
     );

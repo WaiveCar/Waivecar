@@ -15,6 +15,9 @@
     font-family: 'Lato', sans-serif;
     letter-spacing: -.4px;
   }
+  h2 {
+    font-size: 2.5rem;
+  }
   p, ul, li {
     margin-top: 0;
     margin-bottom: 1rem;
@@ -33,6 +36,11 @@
   h4 {
     font-size : 1.25rem;
   }
+
+  .btn {
+    border-radius: 0;
+  }
+
   .card {
     border : 0;
     .card-block {
@@ -104,6 +112,11 @@
     margin-top     : 0;
     margin-bottom  : 0;
     font-size       : 1.25rem;
+
+    p {
+      margin: 2rem 0;
+    }
+
     &.jumbotron {
       padding-top     : 60px;
       min-height      : 845px;
@@ -152,7 +165,7 @@
     }
     &.section-vision {
       min-height      : 458px;
-      background      : $brand-primary url('/images/site/bg-green.jpg') no-repeat center bottom;
+      background      : $brand-primary url('/images/site/our-vision.jpg') no-repeat center bottom;
       background-size : cover;
       color           : $app-color-white;
       font-weight: 800;
@@ -166,22 +179,42 @@
     &.section-pricing {
       position        : relative;
       min-height      : 504px;
-      background      : $brand-primary url('/images/site/bg-green.jpg') no-repeat center bottom;
+      background      : $brand-primary url('/images/site/pricing-photo.jpg') no-repeat center bottom;
       background-size : cover;
       color           : $app-color-white;
-      .row {
-        > [class*="col-"] {
-          padding-right : 100px;
-        }
-      }
     }
     &.section-about {
+      background-color: #021207;
+      color: $app-color-white;
+      p {
+        margin-bottom: 0;
+      }
+    }
+    &.section-cars {
+      position: relative;
+      height: 516px;
+      overflow: hidden;
+      padding: 0;
+      .cars-photo, .cars-content {
+        height: 516px;
+        width: 50%;
+        float: left;
+
+      }
+      .cars-photo {
+        position: relative;
+        img {
+          position: absolute;
+          right: 0;
+          min-height: 100%;
+          width: 100%;
+        }
+      }
+      .cars-content {
+        padding: 4rem 2rem;
+      }
       ul li {
         margin-left: 1.4rem;
-      }
-      img {
-        width: 30rem;
-        padding-top: 6rem;
       }
     }
     &.section-footer {
@@ -215,6 +248,11 @@
   }
 }
 
+@media (max-width: 61.9em) {
+  #home .section.section-cars .cars-content {
+    width: 100%;
+  }
+}
 
 
 
