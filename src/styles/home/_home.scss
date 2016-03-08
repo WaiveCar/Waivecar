@@ -176,6 +176,7 @@
     &.section-features {
       img {
         width: 80%;
+        max-width: 200px;
         margin-bottom: 2rem;
       }
     }
@@ -196,7 +197,6 @@
     &.section-cars {
       position: relative;
       height: 516px;
-      overflow: hidden;
       padding: 0;
       .cars-photo, .cars-content {
         height: 516px;
@@ -214,10 +214,49 @@
         }
       }
       .cars-content {
-        padding: 4rem 2rem;
+        padding: 4rem 4rem;
       }
       ul li {
         margin-left: 1.4rem;
+      }
+    }
+
+    &.section-zones {
+      position: relative;
+      height: 516px;
+      padding: 0;
+      .zones-photo, .zones-content {
+        height: 516px;
+        width: 50%;
+        float: left;
+
+      }
+      .zones-photo {
+        position: relative;
+        img {
+          position: absolute;
+          right: 0;
+          min-height: 100%;
+          width: 100%;
+        }
+
+        .zones-toggle {
+          z-index: 1;
+          position: absolute;
+          right: 5%;
+          top: 5%;
+
+          .btn-default {
+            background-color: $app-color-white;
+
+            &:hover, &:focus {
+              background-color: darken($app-color-white, 20%);
+            }
+          }
+        }
+      }
+      .zones-content {
+        padding: 4rem 4rem;
       }
     }
     &.section-footer {
@@ -252,8 +291,19 @@
 }
 
 @media (max-width: 61.9em) {
-  #home .section.section-cars .cars-content {
-    width: 100%;
+  #home .section.section-cars {
+    height: auto;
+    .cars-content {
+      float: none;
+      width: 100%;
+    }
+  }
+  #home .section.section-zones {
+    height: auto;
+    .zones-content {
+      float: none;
+      width: 100%;
+    }
   }
 }
 

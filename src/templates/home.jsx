@@ -44,7 +44,8 @@ class HomeTemplate extends React.Component {
         { type: 'link', to : '/privacy',                    title : 'Privacy' },
         { type: 'a',    to : 'mailto:support@waivecar.com', title : 'Support' },
         { type: 'link', to : '/login',                      title : 'Login' }
-      ]
+      ],
+      zone: 'driving'
     };
 
     this.handleWaypointEnter = this.handleWaypointEnter.bind(this);
@@ -331,6 +332,47 @@ class HomeTemplate extends React.Component {
     );
   }
 
+  toggleZone(zone) {
+    this.setState({ zone });
+  }
+
+  renderZones() {
+    let drivingClasses = 'btn';
+    let parkingClasses = 'btn';
+    let src = '/images/site/';
+    if (this.state.zone === 'driving') {
+      drivingClasses += ' btn-primary';
+      parkingClasses += ' btn-default';
+      src += 'map-photo-1.jpg';
+    } else {
+      drivingClasses += ' btn-default';
+      parkingClasses += ' btn-primary';
+      src += 'map-photo-2.jpg';
+    }
+    return (
+      <section className='section section-zones clearfix'>
+        <div className='zones-content'>
+          <Row id='Zones'>
+            <div className='col-xs-12'>
+              <h2>WaiveCar Return Zone and Driving Zone</h2>
+              <p>
+                WaiveCars are available to rent in Santa Monica. That means that all rentals must start and end inside of Santa Monica. That doesn't mean you have to stay in Santa Monica, we allow you to drive a 20 mile radius from our HQ at 1547 7th Street. When driving far distances, make sure not to drain the battery too low!
+                When returning the car, if your car has under 25% charge, you must return it at a charger or at WaiveCar HQ. If your car has over 25% remaining, make sure your return spot is a legal parking spot and valid for at least the next 3 hours.
+              </p>
+            </div>
+          </Row>
+        </div>
+        <div className='zones-photo hidden-md-down'>
+          <div className='zones-toggle btn-group btn-group-lg'>
+            <button type='button' onClick={ this.toggleZone.bind(this, 'driving') } className={ drivingClasses }>DRIVING ZONE</button>
+            <button type='button' onClick={ this.toggleZone.bind(this, 'parking') } className={ parkingClasses }>PARKING ZONE</button>
+          </div>
+          <img src={ src } />
+        </div>
+      </section>
+    );
+  }
+
   renderFooter() {
     return (
       <footer className="section section-footer bg-inverse" role="contentinfo">
@@ -365,6 +407,7 @@ class HomeTemplate extends React.Component {
         { this.renderPricing() }
         { this.renderAbout() }
         { this.renderCars() }
+        { this.renderZones() }
         { this.renderFooter() }
       </div>
     );
