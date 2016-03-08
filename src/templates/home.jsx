@@ -35,15 +35,17 @@ class HomeTemplate extends React.Component {
         { type: 'anchor', to : '#Vision',   title : 'Vision' },
         { type: 'anchor', to : '#Features', title : 'How It Works' },
         { type: 'anchor', to : '#Pricing',  title : 'Pricing' },
-        { type: 'anchor', to : '#About',    title : 'About Us' },
-        { type: 'a',      to : 'mailto:advertise@waivecar.com', title : 'Advertise' },
-        { type: 'link',   to : '/faq',                        title : 'FAQ' },
+        { type: 'anchor', to : '#About',    title : 'About Us' }
       ],
       footerItems : [
         { type: 'link', to : '/terms',                      title : 'Terms' },
         { type: 'link', to : '/privacy',                    title : 'Privacy' },
         { type: 'a',    to : 'mailto:support@waivecar.com', title : 'Support' },
         { type: 'link', to : '/login',                      title : 'Login' }
+      ],
+      extraItems : [
+        { type: 'a',      to : 'mailto:advertise@waivecar.com', title : 'Advertise' },
+        { type: 'link',   to : '/faq',                        title : 'FAQ' }
       ],
       zone: 'driving'
     };
@@ -65,7 +67,13 @@ class HomeTemplate extends React.Component {
   }
 
   renderNavItems(isFooter) {
-    let items = isFooter ? 'footerItems' : 'navItems';
+    let items;
+    if (typeof isFooter === 'string') {
+      items = isFooter
+    } else {
+      items = isFooter ? 'footerItems' : 'navItems';
+    }
+
     return this.state[items].map((n, i) => {
       switch (n.type) {
         case 'a'      : return <li key={ i }><a className="nav-item nav-link" href={ n.to }>{ n.title }</a></li>
@@ -75,7 +83,7 @@ class HomeTemplate extends React.Component {
     });
   }
 
-  renderNav() {
+  renderNav(isHeader) {
     return (
       <nav className="row">
         <div className="navbar-app col-lg-4 col-md-3">
@@ -86,10 +94,13 @@ class HomeTemplate extends React.Component {
         <div className="navbar-items col-lg-8 col-md-9">
           <ul className="text-right list-inline  hidden-md-down">
             { this.renderNavItems() }
+            { isHeader && this.renderNavItems('extraItems') }
             <li className='login-btn'>
-              <Link to="/login" className="btn btn-primary md-m-l">
-                Login
-              </Link>
+              { isHeader &&
+                <Link to="/login" className="btn btn-primary md-m-l">
+                  Login
+                </Link>
+              }
             </li>
           </ul>
         </div>
@@ -103,7 +114,7 @@ class HomeTemplate extends React.Component {
     return (
       <header className="section jumbotron bg-inverse" role="banner">
         <div className="container">
-          { this.renderNav() }
+          { this.renderNav(true) }
           <Row className="m-t-lg hidden-md-up">
             <div className="col-sm-12">
               <div className="banner-container text-center">
@@ -384,6 +395,7 @@ class HomeTemplate extends React.Component {
             <div className="navbar-items footer-items col-md-6 col-xs-10">
               <ul className="text-center list-inline">
                 { this.renderNavItems(true) }
+                { this.renderNavItems('extraItems') }
               </ul>
             </div>
             <div className="col-md-3 col-xs-1">
