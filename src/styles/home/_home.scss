@@ -207,12 +207,8 @@
       }
       .cars-photo {
         position: relative;
-        img {
-          position: absolute;
-          right: 0;
-          min-height: 100%;
-          width: 100%;
-        }
+        background: url('/images/site/our-cars-photo.jpg') no-repeat center bottom;
+        background-size: cover;
       }
       .cars-content {
         padding: 4rem 4rem;
@@ -224,22 +220,27 @@
 
     &.section-zones {
       position: relative;
-      height: 516px;
+      height: 600px;
       overflow: hidden;
       padding: 0;
       .zones-photo, .zones-content {
-        height: 516px;
+        height: 600px;
         width: 50%;
         float: left;
 
       }
       .zones-photo {
         position: relative;
-        img {
-          position: absolute;
-          right: 0;
-          min-height: 100%;
-          width: 100%;
+        background-size: cover;
+
+        &.driving {
+          background: url('/images/site/map-photo-1.jpg') no-repeat center;
+          background-size: cover;
+        }
+
+        &.parking {
+          background: url('/images/site/map-photo-2.jpg') no-repeat center;
+          background-size: cover;
         }
 
         .zones-toggle {

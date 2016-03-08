@@ -321,7 +321,6 @@ class HomeTemplate extends React.Component {
     return (
       <section className="section section-cars clearfix">
         <div className='cars-photo hidden-md-down'>
-          <img src='/images/site/our-cars-photo.jpg' />
         </div>
         <div className='cars-content'>
           <Row id="Cars">
@@ -350,15 +349,13 @@ class HomeTemplate extends React.Component {
   renderZones() {
     let drivingClasses = 'btn';
     let parkingClasses = 'btn';
-    let src = '/images/site/';
+    let photoClasses = `zones-photo hidden-md-down ${ this.state.zone }`;
     if (this.state.zone === 'driving') {
       drivingClasses += ' btn-primary';
       parkingClasses += ' btn-default';
-      src += 'map-photo-1.jpg';
     } else {
       drivingClasses += ' btn-default';
       parkingClasses += ' btn-primary';
-      src += 'map-photo-2.jpg';
     }
     return (
       <section className='section section-zones clearfix'>
@@ -373,12 +370,11 @@ class HomeTemplate extends React.Component {
             </div>
           </Row>
         </div>
-        <div className='zones-photo hidden-md-down'>
+        <div className={ photoClasses }>
           <div className='zones-toggle btn-group btn-group-lg'>
             <button type='button' onClick={ this.toggleZone.bind(this, 'driving') } className={ drivingClasses }>DRIVING ZONE</button>
             <button type='button' onClick={ this.toggleZone.bind(this, 'parking') } className={ parkingClasses }>PARKING ZONE</button>
           </div>
-          <img src={ src } />
         </div>
       </section>
     );
