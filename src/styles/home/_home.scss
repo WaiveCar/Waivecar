@@ -197,6 +197,7 @@
     &.section-cars {
       position: relative;
       height: 516px;
+      overflow: hidden;
       padding: 0;
       .cars-photo, .cars-content {
         height: 516px;
@@ -224,6 +225,7 @@
     &.section-zones {
       position: relative;
       height: 516px;
+      overflow: hidden;
       padding: 0;
       .zones-photo, .zones-content {
         height: 516px;
