@@ -229,32 +229,36 @@ class HomeTemplate extends React.Component {
             <Column width={ 3 } responsive={ true } responsiveBreakpoint="lg" className="text-center">
               <Waypoint id="FeaturesFind" onEnter={ this.handleWaypointEnter } onEnterClassName="animated fadeInUp" className={ this.state.waypoints.FeaturesFind }>
                 <div className="card-block">
-                  <h3 className="card-title">Find a Car Near You</h3>
-                  <p className="card-text">Search a map to locate cars in your area. Pick the make, model, and charge level that works for you. We’ll point you toward the exact location of your favorite WaiveCar.</p>
+                  <img src='/images/site/find-available-car.png' />
+                  <h3 className="card-title">Find an available car near you</h3>
+                  <p className="card-text">A map displays all available cars in your area. Each car has important information such as charge level and exact directions to its location.</p>
                 </div>
               </Waypoint>
             </Column>
             <Column width={ 3 } responsive={ true } responsiveBreakpoint="lg" className="text-center">
               <Waypoint id="FeaturesBook" onEnter={ this.handleWaypointEnter } onEnterClassName="animated fadeInUp" className={ this.state.waypoints.FeaturesBook }>
                 <div className="card-block">
-                  <h3 className="card-title">Book It</h3>
-                  <p className="card-text">Found the car for you? As soon as you book it, the car will be unavailable to other WaiveCar users until after your ride is complete.</p>
+                  <img src='/images/site/book-the-car.png' />
+                  <h3 className="card-title">Book the car</h3>
+                  <p className="card-text">Once you find the car you want, book it. The car will be booked for you and made unavailable to other WaiveCar users. Now you can go get it.</p>
                 </div>
               </Waypoint>
             </Column>
             <Column width={ 3 } responsive={ true } responsiveBreakpoint="lg" className="text-center">
               <Waypoint id="FeaturesStart" onEnter={ this.handleWaypointEnter } onEnterClassName="animated fadeInUp" className={ this.state.waypoints.FeaturesStart }>
                 <div className="card-block">
-                  <h3 className="card-title">Connect and Drive</h3>
-                  <p className="card-text">Unlock and access your WaiveCar through a mobile app that detects your position. No cards or keys necessary. Drive safely and enjoy!</p>
+                  <img src='/images/site/connect-and-drive.png' />
+                  <h3 className="card-title">Connect and drive</h3>
+                  <p className="card-text">The app will detect your position and unlock your WaiveCar, you can connect and unlock it using the mobile app. Drive safely and enjoy!</p>
                 </div>
               </Waypoint>
             </Column>
             <Column width={ 3 } responsive={ true } responsiveBreakpoint="lg" className="text-center">
               <Waypoint id="FeaturesEnd" onEnter={ this.handleWaypointEnter } onEnterClassName="animated fadeInUp" className={ this.state.waypoints.FeaturesEnd }>
                 <div className="card-block">
-                  <h3 className="card-title">Easy Drop Offs</h3>
-                  <p className="card-text">Once your free driving time is up, a map will show where you can drop the car off. Depending on where you leave it, you can earn rewards.</p>
+                  <img src='/images/site/leave-it-there-please.png' />
+                  <h3 className="card-title">Leave it there, please</h3>
+                  <p className="card-text">Once your free driving time is up, a map will show where you can drop the car off. There are rewards depending on where you do it.</p>
                 </div>
               </Waypoint>
             </Column>
