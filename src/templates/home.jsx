@@ -118,10 +118,9 @@ class HomeTemplate extends React.Component {
           <Row className="m-t-lg hidden-md-up">
             <div className="col-sm-12">
               <div className="banner-container text-center">
-                <h1>Need to go somewhere?</h1>
+                <h1>We waive the fee. You drive for free.</h1>
                 <p className="lead">
-                  Use one of our electric cars <strong>for free</strong>.<br></br>
-                  It makes sense and a huge difference.
+                  Drive toward a sustainable future.
                 </p>
                 <ul className="list-inline">
                   <li className="store-item m-t">
@@ -142,10 +141,9 @@ class HomeTemplate extends React.Component {
             <div className="col-md-7 col-sm-12">
               <div className="banner-container">
                 <div  className="valign">
-                  <h1>Need to go somewhere?</h1>
+                  <h1>We waive the fee. You drive for free.</h1>
                   <p className="lead">
-                    Use one of our electric cars <strong>for free</strong>.<br></br>
-                    It makes sense and a huge difference.
+                    Drive toward a sustainable future.
                   </p>
                   <ul className="list-inline">
                     <li className="store-item">
@@ -216,9 +214,13 @@ class HomeTemplate extends React.Component {
             <Column width={ 8 } responsive={ true } responsiveBreakpoint="lg" className="text-center col-lg-offset-2">
               <h2>Our Vision</h2>
               <p>
-                We believe there are smarter ways for people in the city to benefit from cars. Our contribution is WaiveCar,
-                a revolutionary system in which users can find, book and drive ad-displaying, electric cars for free, anywhere
-                in the city. This is how people and companies can create a more sustainable future.
+                We believe there are more efficient ways for communities to benefit from transportation that will also
+                benefit our future. Our contribution is WaiveCar, a revolutionary car-sharing program that connects users
+                with ad-supported electric cars they can drive for free, anywhere in their city. Companies pay us to
+                display their ads. Drivers contribute by driving the ads around.
+              </p>
+              <p>
+                Together, drivers and companies can make a positive impact on the environment in a much more cost conscious way.
               </p>
               <a href="#" target="_blank" className="btn btn-primary text-center">Download App</a>
             </Column>
@@ -242,8 +244,8 @@ class HomeTemplate extends React.Component {
               <Waypoint id="FeaturesFind" onEnter={ this.handleWaypointEnter } onEnterClassName="animated fadeInUp" className={ this.state.waypoints.FeaturesFind }>
                 <div className="card-block">
                   <img src='/images/site/find-available-car.png' />
-                  <h3 className="card-title">Find an available car near you</h3>
-                  <p className="card-text">A map displays all available cars in your area. Each car has important information such as charge level and exact directions to its location.</p>
+                  <h3 className="card-title">Find a car near you</h3>
+                  <p className="card-text">Search the map from our mobile app to locate cars in your area. Pick the car closest to you with an adequate charge level that works for your trip. Hit “Book Waivecar” and the app will direct you to the exact location of your Waive Car.</p>
                 </div>
               </Waypoint>
             </Column>
@@ -251,8 +253,8 @@ class HomeTemplate extends React.Component {
               <Waypoint id="FeaturesBook" onEnter={ this.handleWaypointEnter } onEnterClassName="animated fadeInUp" className={ this.state.waypoints.FeaturesBook }>
                 <div className="card-block">
                   <img src='/images/site/book-the-car.png' />
-                  <h3 className="card-title">Book the car</h3>
-                  <p className="card-text">Once you find the car you want, book it. The car will be booked for you and made unavailable to other WaiveCar users. Now you can go get it.</p>
+                  <h3 className="card-title">Book it</h3>
+                  <p className="card-text">As soon as you book your car, you have 15 minutes to get there before the car is made available again. The car will be unavailable to other WaiveCar users until after your ride is complete.</p>
                 </div>
               </Waypoint>
             </Column>
@@ -261,7 +263,7 @@ class HomeTemplate extends React.Component {
                 <div className="card-block">
                   <img src='/images/site/connect-and-drive.png' />
                   <h3 className="card-title">Connect and drive</h3>
-                  <p className="card-text">The app will detect your position and unlock your WaiveCar, you can connect and unlock it using the mobile app. Drive safely and enjoy!</p>
+                  <p className="card-text">Unlock and access your WaiveCar through our mobile app that detects when you’re 10 feet away. Remove the key from the sensor in the glove box to activate the car. Drive safely and enjoy!</p>
                 </div>
               </Waypoint>
             </Column>
@@ -269,8 +271,8 @@ class HomeTemplate extends React.Component {
               <Waypoint id="FeaturesEnd" onEnter={ this.handleWaypointEnter } onEnterClassName="animated fadeInUp" className={ this.state.waypoints.FeaturesEnd }>
                 <div className="card-block">
                   <img src='/images/site/leave-it-there-please.png' />
-                  <h3 className="card-title">Leave it there, please</h3>
-                  <p className="card-text">Once your free driving time is up, a map will show where you can drop the car off. There are rewards depending on where you do it.</p>
+                  <h3 className="card-title">Easy drop-offs</h3>
+                  <p className="card-text">Once your free driving time is up, a map on the dashboard will show where you can drop the car off. You can park at our home base, or any legal parking spot, 3 hour meter, or public charging station in Santa Monica. Depending where you leave it, you could earn rewards!</p>
                 </div>
               </Waypoint>
             </Column>
@@ -288,12 +290,12 @@ class HomeTemplate extends React.Component {
             <div className="col-md-offset-3 col-md-6 col-sm-12 text-center">
               <h2>Pricing</h2>
               <p>
-                WaiveCar rides are free because the cars work as mobile advertising panels.
-                You're actually paying use just by driving the cars. Pretty sweet trade off, don't you think?
+                WaiveCar rides are free for the first 2 hours then $5.99/hr after that.
               </p>
               <p>
-                Driving a car is free within the first two hours, counting from the moment the car starts running.
-                If you want to continue using the car, a $5.99 per extra hour fee will be charged to your account.
+                We are able to allow free driving because the cars work as mobile billboards.
+                Advertisers pay us to display their ads, while drivers contribute by driving those ads around!
+                Pretty sweet deal, don’t you think?
               </p>
             </div>
           </Row>
@@ -309,7 +311,11 @@ class HomeTemplate extends React.Component {
           <Row id="About">
             <div className="col-md-8 col-md-offset-2 text-center">
               <h2>About Us</h2>
-              <p>WaiveCar is a revolutionary form of transportation, a smart advertising medium for companies, and a powerful way of fostering green, renewable energy in our communities.</p>
+              <p>
+                WaiveCar is a revolutionary group of progressive thinkers that desired to link the needs of
+                customers and businesses in a beneficial way to our future by fostering green, renewable energy
+                in our communities.
+              </p>
             </div>
           </Row>
         </Container>
