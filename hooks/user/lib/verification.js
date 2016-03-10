@@ -31,10 +31,15 @@ module.exports = class Verification {
     co(function *() {
       log.debug(`Delivering verification message to ${ phone }`);
       let message = new Sms();
-      yield message.send({
-        to      : phone,
-        message : `WaiveCar: Your verification code is ${ token }. Do not reply by SMS.`
-      });
+      try {
+        let response = yield message.send({
+          to      : phone,
+          message : `WaiveCar: Your verification code is ${ token }. Do not reply by SMS.`
+        });
+        log.debug('verification delivery response: ', response);
+      } catch (err) {
+        console.log('Failed to deliver verification sms: ', err);
+      }
     });
   }
 
