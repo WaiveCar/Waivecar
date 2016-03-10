@@ -9,8 +9,9 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
   '$scope',
   '$rootScope',
   '$injector',
+  '$stateParams',
   '$ride',
-  function ($scope, $rootScope, $injector, $ride) {
+  function ($scope, $rootScope, $injector, $stateParams, $ride) {
     var $data = $injector.get('$data');
     var $state = $injector.get('$state');
     var $ionicLoading = $injector.get('$ionicLoading');
@@ -45,8 +46,11 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
         .then(function () {
           $ionicLoading.hide();
 
-          var toState = ctrl.dirty || ctrl.intDamage || ctrl.extDamage ? 'report-problem' : 'dashboard';
-          $state.go(toState, null, {location: 'replace'});
+          if (ctrl.dirty || ctrl.intDamage || ctrl.extDamage) {
+            $state.go('report-problem', $stateParams);
+          } else {
+            $state.go('dashboard', null, {location: 'replace'});
+          }
         });
     }
 
