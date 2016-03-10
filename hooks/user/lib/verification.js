@@ -1,8 +1,11 @@
 'use strict';
 
+let co     = require('co');
 let queue  = Bento.provider('queue');
 let tokens = Bento.provider('token');
 let config = Bento.config;
+let log    = Bento.Log;
+let Sms    = Bento.provider('sms');
 
 // ### Require Verification Jobs
 
@@ -25,13 +28,12 @@ module.exports = class Verification {
       tokenLength : 6
     }, 60 * 48);
 
-    let job = queue.create('sms:user:request-phone-verification', {
-      to      : phone,
-      message : `WaiveCar: Your verification code is ${ token }. Do not reply by SMS.`
-    }).save();
-
-    job.on('complete', () => {
-      job.remove();
+    co(function *() {
+      let message = new Sms();
+      yield message.send({
+        to      : phone,
+        message : `WaiveCar: Your verification code is ${ token }. Do not reply by SMS.`
+      });
     });
   }
 
