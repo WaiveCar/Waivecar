@@ -4,11 +4,12 @@ let notify    = require('../../lib/notification-service');
 let cars      = require('../../lib/car-service');
 let scheduler = Bento.provider('queue').scheduler;
 let Booking   = Bento.model('Booking');
+let Location  = Bento.model('BookingLocation');
 let Car       = Bento.model('Car');
 let User      = Bento.model('User');
 let log       = Bento.Log;
 let config    = Bento.config;
-let inside    = require('point-in-polygon');
+let geolib    = require('geolib');
 
 module.exports = function *() {
   scheduler.add('active-booking', {
@@ -17,6 +18,18 @@ module.exports = function *() {
     timer  : config.waivecar.booking.timers.carLocation
   });
 };
+
+/**
+ * Check if provided lat / long is within 20 mile driving zone
+ * @param {Number} lat
+ * @param {Number} long
+ * @returns boolean
+ */
+function inDrivingZone(lat, long) {
+  let distance = geolib.getDistance({ latitude : lat, longitude : long }, config.waivecar.homebase.coords);
+  let miles = distance * 0.000621371;
+  return miles <= 20;
+}
 
 scheduler.process('active-booking', function *(job) {
   log.info('ActiveBooking : start');
@@ -33,9 +46,9 @@ scheduler.process('active-booking', function *(job) {
       if (!device || !car || !user) return;
 
       // Check if outside driving zone
-      if (device.latitude !== car.latitude && device.longitude !== car.longitude) {
-        let carInside = inside([ car.longitude, car.latitude ], config.waivecar.homebase.coords);
-        let deviceInside = inside([ device.longitude, device.latitude ], config.waivecar.homebase.coords);
+      if (device.latitude !== car.latitude || device.longitude !== car.longitude) {
+        let carInside = inDrivingZone(car.latitude, car.longitude);
+        let deviceInside = inDrivingZone(device.latitude, device.longitude);
 
         if (carInside && !deviceInside) {
           // User has ventured outside of zone
@@ -53,6 +66,14 @@ scheduler.process('active-booking', function *(job) {
         yield notify.sendTextMessage(user, config.notification.reasons['LOW_CHARGE']);
         yield notify.notifyAdmins(`${ user.name() } has driven ${ car.license } to ${ device.charge }% charge. https://www.waivecar.com/bookings/${ booking.id }`, [ 'slack' ]);
       }
+
+      // Log position
+      let location = new Location({
+        bookingId : booking.id,
+        latitude  : car.latitude,
+        longitude : car.longitude
+      });
+      yield location.save();
 
       yield cars.syncUpdate(car.id, device, car);
     } catch(err) {
