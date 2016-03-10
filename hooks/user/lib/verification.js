@@ -38,7 +38,7 @@ module.exports = class Verification {
         });
         log.debug('verification delivery response: ', response);
       } catch (err) {
-        log.warn('Failed to deliver verification sms: ', err);
+        console.log('Failed to deliver verification sms: ', err);
       }
     });
   }
