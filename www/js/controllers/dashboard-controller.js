@@ -69,7 +69,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   }
 
   function lockCar(id) {
-    
+
     $ionicLoading.show({
       template: '<div class="circle-loader"><span>Loading</span></div>'
     });
@@ -97,7 +97,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   }
 
   function unlockCar(id) {
-    
+
     $ionicLoading.show({
       template: '<div class="circle-loader"><span>Loading</span></div>'
     });
