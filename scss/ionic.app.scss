@@ -250,6 +250,15 @@ ion-view {
       height : 50px;
     }
   }
+  &.header {
+    padding-top: 5px;
+    .logo-image {
+      svg {
+        width : 35px;
+        height : 35px;
+      }
+    }
+  }
 }
 
 .license-verification {

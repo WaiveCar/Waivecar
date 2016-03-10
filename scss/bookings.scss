@@ -105,3 +105,27 @@
     }
   }
 }
+
+.start-ride {
+  .empty-red {
+    border-radius: 50%;
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    border: 2px solid #FB4738;
+  }
+
+  .empty-green {
+    border-radius: 50%;
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    border: 2px solid #25C155;
+  }
+
+  .info-header-item {
+    svg {
+      width: 30px;
+    }
+  }
+}
