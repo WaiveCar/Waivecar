@@ -29,6 +29,7 @@ module.exports = class Verification {
     }, 60 * 48);
 
     co(function *() {
+      log.debug(`Delivering verification message to ${ phone }`);
       let message = new Sms();
       yield message.send({
         to      : phone,
