@@ -3,6 +3,7 @@
 let queue  = Bento.provider('queue');
 let tokens = Bento.provider('token');
 let config = Bento.config;
+let log    = Bento.Log;
 
 // ### Require Verification Jobs
 
@@ -25,6 +26,7 @@ module.exports = class Verification {
       tokenLength : 6
     }, 60 * 48);
 
+    log.debug(`creating sms verification job for ${ id }`);
     let job = queue.create('sms:user:request-phone-verification', {
       to      : phone,
       message : `WaiveCar: Your verification code is ${ token }. Do not reply by SMS.`
