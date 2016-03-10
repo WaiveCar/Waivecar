@@ -22,9 +22,9 @@ Queue.loader = require('./lib/loader');
 
 // ### Graceful Shutdown
 
-// process.once('SIGTERM', () => {
-//   Queue.shutdown(5000, function(err) {
-//     log.error(`Kue shutdown: ${ err || '' }`);
-//     process.exit(0);
-//   });
-// });
+process.once('SIGTERM', () => {
+  Queue.shutdown(5000, function(err) {
+    log.error(`Kue shutdown: ${ err || '' }`);
+    process.exit(0);
+  });
+});
