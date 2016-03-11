@@ -35,7 +35,7 @@ module.exports = {
     });
     yield report.save();
 
-    yield slack.message({
+    let slackPayload = {
       text        : `${ _user.name() } has reported a problem with booking: ${ booking.id }`,
       attachments : [
         {
@@ -50,7 +50,19 @@ module.exports = {
           ]
         }
       ]
-    });
+    };
+
+    if (payload.files && payload.files.length) {
+      payload.files.forEach((file, i) => {
+        slackPayload.attachments.push({
+          fallback  : `Image ${ i }`,
+          color     : '#D00000',
+          image_url : `https://s3.amazonaws.com/waivecar-prod/${ file.path }` // eslint-disable-line
+        });
+      });
+    }
+
+    yield slack.message(slackPayload);
 
     return report;
   },
