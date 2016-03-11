@@ -2,8 +2,8 @@
 <widget xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"
   id="com.waivecar.app"
   version="1.0.6"
-  ios-CFBundleVersion="56"
-  android-versionCode="56">
+  ios-CFBundleVersion="57"
+  android-versionCode="57">
     <name>WaiveCar</name>
     <description>WaiveCar Mobile Application</description>
     <author email="info@waivecar.com" href="http://waivecar.com/">WaiveCar</author>

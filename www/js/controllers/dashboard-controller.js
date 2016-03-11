@@ -136,6 +136,7 @@ function DashboardController ($scope, $rootScope, $injector) {
 
     ctrl.ending = true;
     $ride.isChargeOkay(carId).then(function(okay) {
+      ctrl.ending = false;
       if (okay || $distance(homebase) < 0.3) {
         return GeofencingService.insideBoundary();
       }
@@ -201,6 +202,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   }
 
   function endRideFailure(message) {
+    $ionicLoading.hide();
     var endRideModal;
 
     $modal('result', {

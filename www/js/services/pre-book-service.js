@@ -9,8 +9,10 @@ function PreBookService ($injector) {
   var $data = $injector.get('$data');
   var $auth = $injector.get('$auth');
   var $validateLicense = $injector.get('$validateLicense');
+  var $ionicLoading = $injector.get('$ionicLoading');
 
   return function catchPreBookError (err) {
+    $ionicLoading.hide();
     $data.initialize('licenses').then(function(licenses) {
       handlePreBookError(err, licenses);
     });

@@ -43,7 +43,8 @@ function ReportProblemController ($injector, $stateParams) {
   this.submit = function submit () {
     Reports.create({
       bookingId: this.model.bookingId,
-      description: this.model.comment
+      description: this.model.comment,
+      files: this.model.files
     }).$promise
     .then(successModal)
     .catch(failModal);
@@ -130,11 +131,10 @@ function ReportProblemController ($injector, $stateParams) {
   }
 
   function prepareResult (file) {
-    return {
-      style: {
-        'background-image': 'url(' + $settings.uri.api + '/file/' + file.id + ')'
-      }
+    file.style = {
+      'background-image': 'url(' + $settings.uri.api + '/file/' + file.id + ')'
     };
+    return file;
   }
 
 }
