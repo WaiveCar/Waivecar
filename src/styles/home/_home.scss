@@ -304,8 +304,17 @@
   #home .section.section-zones {
     height: auto;
     .zones-content {
+      height: auto;
+    }
+    .zones-photo {
+      height: 400px;
+    }
+    .zones-content, .zones-photo {
       float: none;
       width: 100%;
+      button {
+        font-size: 14px;
+      }
     }
   }
 }

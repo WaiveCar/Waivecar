@@ -355,7 +355,7 @@ class HomeTemplate extends React.Component {
   renderZones() {
     let drivingClasses = 'btn';
     let parkingClasses = 'btn';
-    let photoClasses = `zones-photo hidden-md-down ${ this.state.zone }`;
+    let photoClasses = `zones-photo ${ this.state.zone }`;
     if (this.state.zone === 'driving') {
       drivingClasses += ' btn-primary';
       parkingClasses += ' btn-default';
