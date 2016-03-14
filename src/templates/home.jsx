@@ -114,6 +114,9 @@ class HomeTemplate extends React.Component {
     return (
       <header className="section jumbotron bg-inverse" role="banner">
         <div className="container">
+          <Link to="/login" className="md-m-l hidden-md-up mobile-login">
+            Login
+          </Link>
           { this.renderNav(true) }
           <Row className="m-t-lg hidden-md-up">
             <div className="col-sm-12">
