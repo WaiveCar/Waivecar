@@ -113,6 +113,13 @@ class HomeTemplate extends React.Component {
     var playStoreUri = 'https://play.google.com/store/apps/details?id=com.waivecar.app'
     return (
       <header className="section jumbotron bg-inverse" role="banner">
+        <div className='video-container'>
+          <video className='bg-video' autoPlay='autoplay' loop='loop' onended='var v=this;setTimeout(function(){v.play()},300)'>
+            <source src='/video/waivecar_homepage.mp4' type='video/mp4' />
+            <source src='/video/waivecar_homepage.ogv' type='video/webm' />
+            <source src='/video/waivecar_homepage.webm' type='video/ogg' />
+          </video>
+        </div>
         <div className="container">
           <Link to="/login" className="md-m-l hidden-md-up mobile-login">
             Login

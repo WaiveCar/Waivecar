@@ -69,6 +69,28 @@
       font-size: 1.7rem;
     }
   }
+
+  .video-container {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    // z-index: -1;
+    .bg-video {
+      position: absolute;
+      left: 0;
+      min-width: 100%;
+      min-height: 100%;
+      opacity: 0.4;
+      transform: scale(1.1, 1.1);
+      -ms-transform: scale(1.1, 1.1);
+      -moz-transform: scale(1.1, 1.1);
+      -webkit-transform: scale(1.1, 1.1);
+      -o-transform: scale(1.1, 1.1);
+    }
+  }
 }
 
 // #home {
