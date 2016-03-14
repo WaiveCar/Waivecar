@@ -114,7 +114,10 @@ class HomeTemplate extends React.Component {
     return (
       <header className="section jumbotron bg-inverse" role="banner">
         <div className='video-container'>
-          <video className='bg-video' autoPlay='autoplay' loop='loop' onended='var v=this;setTimeout(function(){v.play()},300)'>
+          <div className='dimmer'></div>
+          <video className='bg-video' autoPlay='autoplay' loop='loop'
+              poster='/images/site/waivecar_homepage.png'
+              onended='var v=this;setTimeout(function(){v.play()},300)'>
             <source src='/video/waivecar_homepage.mp4' type='video/mp4' />
             <source src='/video/waivecar_homepage.ogv' type='video/webm' />
             <source src='/video/waivecar_homepage.webm' type='video/ogg' />
