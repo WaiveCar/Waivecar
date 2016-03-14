@@ -26,6 +26,8 @@ function DashboardController ($scope, $rootScope, $injector) {
   var ctrl = this;
   this.locations = $data.instances.locations;
 
+  console.log('locations: ', this.locations);
+
   this.openPopover = openPopover;
   this.closePopover = closePopover;
   this.lockCar = lockCar;
@@ -56,15 +58,15 @@ function DashboardController ($scope, $rootScope, $injector) {
 
   function openPopover(item) {
     $timeout(function () {
-      this.selectedItem = item;
-    }.bind(this));
+      ctrl.selectedItem = item;
+    });
     return true;
   }
 
   function closePopover() {
     $timeout(function () {
-      this.selectedItem = null;
-    }.bind(this));
+      ctrl.selectedItem = null;
+    });
     return true;
   }
 
