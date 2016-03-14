@@ -155,7 +155,7 @@ function DashboardController ($scope, $rootScope, $injector) {
           })
           .then(function (isCarOn) {
             ctrl.ending = false;
-            // $ionicLoading.hide();
+            $ionicLoading.hide();
             if (isCarOn) {
               showIgnitionOnModal();
               return;
@@ -185,6 +185,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   }
 
   function showIgnitionOnModal () {
+    $ionicLoading.hide();
     var ignitionOnModal;
     $modal('result', {
       icon: 'x-icon',
