@@ -79,16 +79,6 @@
     overflow: hidden;
     // z-index: -1;
 
-    .dimmer {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      display: none;
-    }
-
     .bg-video {
       position: absolute;
       left: 0;
@@ -105,13 +95,8 @@
 }
 @media (max-width: 61.9em) {
   #home .video-container {
-    background      : url('/images/site/waivecar_homepage.png') no-repeat center bottom;
-    background-size : cover;
     .bg-video {
       display: none;
-    }
-    .dimmer {
-      display: block;
     }
   }
 }

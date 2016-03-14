@@ -296,6 +296,8 @@
 
 @media (max-width: 61.9em) {
   #home .section.jumbotron {
+    background      : url('/images/site/header.jpg') no-repeat center bottom;
+    background-size : cover;
   }
 
   #home .section.section-cars {
