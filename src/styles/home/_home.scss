@@ -173,6 +173,10 @@
       .btn {
         background-color : #0A6B28;
       }
+
+      p {
+        font-weight: 500;
+      }
     }
     &.section-features {
       img {
@@ -187,6 +191,10 @@
       background      : $brand-primary url('/images/site/pricing-photo.jpg') no-repeat center bottom;
       background-size : cover;
       color           : $app-color-white;
+
+      p {
+        font-weight: 500;
+      }
     }
     &.section-about {
       background-color: #021207;
@@ -300,6 +308,10 @@
     background-size : cover;
   }
 
+  #home .section.section-vision {
+    background-position: 25% bottom;
+  }
+
   #home .section.section-cars {
     height: auto;
     .cars-content {
@@ -307,6 +319,7 @@
       width: 100%;
     }
   }
+
   #home .section.section-zones {
     height: auto;
     .zones-content {
