@@ -26,8 +26,6 @@ function DashboardController ($scope, $rootScope, $injector) {
   var ctrl = this;
   this.locations = $data.instances.locations;
 
-  console.log('locations: ', this.locations);
-
   this.openPopover = openPopover;
   this.closePopover = closePopover;
   this.lockCar = lockCar;
@@ -53,7 +51,7 @@ function DashboardController ($scope, $rootScope, $injector) {
       $state.go('cars');
       return;
     }
-    this.timeLeft = moment(booking.createdAt).add(90, 'm').toNow(true);
+    this.timeLeft = moment(booking.createdAt).add(120, 'm').toNow(true);
   }.bind(this));
 
   function openPopover(item) {
