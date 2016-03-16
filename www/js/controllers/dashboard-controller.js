@@ -53,7 +53,7 @@ function DashboardController ($scope, $rootScope, $injector) {
       $state.go('cars');
       return;
     }
-    this.timeLeft = moment(booking.updatedAt).add(90, 'm').toNow(true);
+    this.timeLeft = moment(booking.createdAt).add(90, 'm').toNow(true);
   }.bind(this));
 
   function openPopover(item) {
@@ -83,9 +83,9 @@ function DashboardController ($scope, $rootScope, $injector) {
     ctrl.locking = true;
     $ride.lockCar(id)
       .then(function () {
-        $ionicLoading.hide();
         ctrl.locking = false;
         ctrl.locked = true;
+        $ionicLoading.hide();
       })
       .catch(function (reason) {
         $ionicLoading.hide();
@@ -149,16 +149,15 @@ function DashboardController ($scope, $rootScope, $injector) {
         // inside geofence -> continue as normal
         return $ride.isCarOn(carId)
           .catch(function (reason) {
-            ctrl.ending = false;
             $ionicLoading.hide();
+            ctrl.ending = false;
             return $q.reject(reason);
           })
           .then(function (isCarOn) {
-            ctrl.ending = false;
             $ionicLoading.hide();
+            ctrl.ending = false;
             if (isCarOn) {
-              showIgnitionOnModal();
-              return;
+              return showIgnitionOnModal();
             }
             $ride.setLocation('homebase');
             $ride.processEndRide();
