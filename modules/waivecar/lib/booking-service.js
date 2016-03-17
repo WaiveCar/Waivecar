@@ -91,7 +91,7 @@ module.exports = class BookingService extends Service {
     // ### Notifications
 
     yield notify.sendTextMessage(user, `Hi There! Your WaiveCar reservation has been confirmed. You'll have 15 minutes to get to your WaiveCar before your reservation expires. Let us know if you have any questions.`);
-    yield notify.notifyAdmins(`${ _user.name() } created a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`, [ 'slack' ]);
+    yield notify.notifyAdmins(`${ _user.name() } created a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`, [ 'slack' ], { channel : '#reservations' });
 
     // ### Return Booking
 
@@ -269,7 +269,7 @@ module.exports = class BookingService extends Service {
 
     // ### Notify
 
-    yield notify.notifyAdmins(`${ _user.name() } started a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`, [ 'slack' ]);
+    yield notify.notifyAdmins(`${ _user.name() } started a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`, [ 'slack' ], { channel : '#reservations' });
     yield notify.sendTextMessage(user, `Your WaiveCar rental has started! The first 2 hours are completely FREE! After that, it's $5.99 / hour. Make sure to return the car in Santa Monica, don't drain the battery under 20%, and keep within our driving borders to avoid any charges. Thanks for renting with WaiveCar!`);
 
     // ### Relay Update
@@ -396,7 +396,7 @@ module.exports = class BookingService extends Service {
 
     // ### Notify
 
-    yield notify.notifyAdmins(`${ _user.name() } ended a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`, [ 'slack' ]);
+    yield notify.notifyAdmins(`${ _user.name() } ended a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`, [ 'slack' ], { channel : '#reservations' });
 
     // ### Relay Update
 
@@ -467,7 +467,7 @@ module.exports = class BookingService extends Service {
     yield notify.sendTextMessage(user, `Thanks for renting with WaiveCar! Your rental is complete. You can see your trip summary in the app.`);
     yield notify.slack({
       text : `${ user.name() } completed a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }> | https://www.waivecar.com/bookings/${ booking.id }`
-    });
+    }, { channel : '#reservations' });
 
     // ### Relay
 
@@ -540,7 +540,7 @@ module.exports = class BookingService extends Service {
     yield notify.sendTextMessage(user, `Your WaiveCar reservation has been cancelled.`);
     yield notify.slack({
       text : `${ user.name() } cancelled a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`
-    });
+    }, { channel : '#reservations' });
   }
 
   /*

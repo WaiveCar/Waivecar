@@ -9,7 +9,7 @@ let GroupUser   = Bento.model('GroupUser');
 let error       = Bento.Error;
 let config      = Bento.config;
 let log         = Bento.Log;
-let slack       = new Slack('notifications');
+let slack       = new Slack();
 
 module.exports = {
 
@@ -107,7 +107,8 @@ module.exports = {
    */
   *slack(payload, params) {
     if (process.env.NODE_ENV === 'production') {
-      yield slack.message(payload, params);
+      if (params && params.channel) payload.channel = params.channel;
+      yield slack.message(payload);
     }
   },
 

@@ -237,7 +237,7 @@ module.exports = class OnfidoService {
         data.error.message = 'Invalid license number';
       }
 
-      yield notify.notifyAdmins(`Call to onfido failed : ${ user ? user.name() + ' - ' + (user.phone || user.email) : ''} : ${ errorMap.join(' - ') }`, [ 'slack' ], { channel : 'api-errors' });
+      yield notify.notifyAdmins(`Call to onfido failed : ${ user ? user.name() + ' - ' + (user.phone || user.email) : ''} : ${ errorMap.join(' - ') }`, [ 'slack' ], { channel : '#api-errors' });
 
       return {
         code    : 'LICENSE_SERVICE_VALIDATION_ERROR',

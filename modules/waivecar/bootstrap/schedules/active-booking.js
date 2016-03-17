@@ -54,17 +54,17 @@ scheduler.process('active-booking', function *(job) {
           // User has ventured outside of zone
 
           yield notify.sendTextMessage(user, config.notification.reasons['OUTSIDE_RANGE']);
-          yield notify.notifyAdmins(`${ user.name() } took ${ car.license } outside of the driving zone. https://www.waivecar.com/bookings/${ booking.id }`, [ 'slack' ]);
+          yield notify.notifyAdmins(`${ user.name() } took ${ car.license } outside of the driving zone. https://www.waivecar.com/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
         } else if (deviceInside && !carInside) {
           // User has returned to zone
-          yield notify.notifyAdmins(`${ user.name() } took ${ car.license } back into the driving zone. https://www.waivecar.com/bookings/${ booking.id }`, [ 'slack' ]);
+          yield notify.notifyAdmins(`${ user.name() } took ${ car.license } back into the driving zone. https://www.waivecar.com/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
         }
       }
 
       // Check charge level
       if (device.charge < 30 && car.charge > 30) {
         yield notify.sendTextMessage(user, config.notification.reasons['LOW_CHARGE']);
-        yield notify.notifyAdmins(`${ user.name() } has driven ${ car.license } to ${ device.charge }% charge. https://www.waivecar.com/bookings/${ booking.id }`, [ 'slack' ]);
+        yield notify.notifyAdmins(`${ user.name() } has driven ${ car.license } to ${ device.charge }% charge. https://www.waivecar.com/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
       }
 
       // Log position

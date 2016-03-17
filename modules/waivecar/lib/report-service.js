@@ -37,6 +37,7 @@ module.exports = {
 
     let slackPayload = {
       text        : `${ _user.name() } has reported a problem with booking: ${ booking.id }`,
+      channel     : '#rental-alerts',
       attachments : [
         {
           fallback : `${ _user.name() } has reported a problem with booking: ${ booking.id }`,

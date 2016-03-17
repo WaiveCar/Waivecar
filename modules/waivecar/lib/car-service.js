@@ -289,7 +289,7 @@ module.exports = {
         }
         log.warn(`Cars : Sync : fetching device ${ id } failed, fleet request timed out.`);
         if (this._errors[id] === 4) {
-          yield notify.notifyAdmins(`${ device } timed out on API status request from cloudboxx | ${ Bento.config.web.uri }/cars/${ device } | Contact cloudboxx to resolve.`, [ 'slack' ], { channel : 'api-errors' });
+          yield notify.notifyAdmins(`${ device } timed out on API status request from cloudboxx | ${ Bento.config.web.uri }/cars/${ device } | Contact cloudboxx to resolve.`, [ 'slack' ], { channel : '#api-errors' });
           this._errors[id] = 0;
         }
         return null;
