@@ -16,7 +16,7 @@ class TableIndex extends React.Component {
    */
   constructor(...args) {
     super(...args);
-    this.table = new Table(this, 'bookings');
+    this.table = new Table(this, 'bookings', null, '/bookings?details=true');
     this.state = {
       sort : {
         key   : null,
@@ -56,13 +56,25 @@ class TableIndex extends React.Component {
    * @return {Object}
    */
   row(booking) {
+    let duration;
+    if (booking.details.length >= 2) {
+      let start, end;
+      for (let i = 0; i < booking.details.length; i++) {
+        let detail = booking.details[i];
+        if (detail.type === 'start') start = moment(detail.createdAt);
+        else if (detail.type === 'end') end = moment(detail.createdAt);
+      }
+
+      duration = moment.duration(end.diff(start)).humanize();
+    }
     return (
       <tr key={ booking.id }>
         <td><Link to={ `/bookings/${ booking.id }` }>{ booking.id }</Link></td>
-        <td className="hidden-sm-down"><Link to={ `/cars/${ booking.carId }` }>{ booking.carId }</Link></td>
-        <td className="hidden-sm-down"><Link to={ `/users/${ booking.userId }` } >{ booking.userId }</Link></td>
+        <td className="hidden-sm-down"><Link to={ `/cars/${ booking.carId }` }>{ booking.car.license || booking.carId }</Link></td>
+        <td className="hidden-sm-down"><Link to={ `/users/${ booking.userId }` } >{ `${ booking.user.firstName} ${ booking.user.lastName }` }</Link></td>
         <td>{ booking.status }</td>
         <td>{ moment(booking.createdAt).format('HH:mm YYYY-MM-DD') }</td>
+        <td>{ duration }</td>
         <td>
           <Link to={ `/bookings/${ booking.id }` }>
             <i className="material-icons" style={{ marginTop : 5 }}>pageview</i>
@@ -90,6 +102,7 @@ class TableIndex extends React.Component {
                   <ThSort sort="userId"    value="User"    ctx={ this } className="hidden-sm-down" />
                   <ThSort sort="status"    value="Status"  ctx={ this } />
                   <ThSort sort="createdAt" value="Created" ctx={ this } style={{ width : 125 }} />
+                  <th>Duration</th>
                   <th></th>
                 </tr>
               </thead>
