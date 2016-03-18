@@ -182,6 +182,10 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
   };
 
+  model.attributes = [
+    'bookingId'
+  ];
+
   // ### Model Methods
 
   model.methods = {

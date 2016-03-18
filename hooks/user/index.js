@@ -112,7 +112,7 @@ hooks.set('user:store:before', function *(payload, _user) {
  * @return {Void}
  */
 hooks.set('user:store:after', function *(user, _user) {
-  if (user.email.match(/fixture\.none/gi)) {
+  if (user.email && user.email.match(/fixture\.none/gi)) {
     return; // Ignore test accounts...
   }
 
