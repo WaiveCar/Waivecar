@@ -18,7 +18,7 @@ scheduler.process('car-status', function *(job) {
     if (!car.userId && !car.isLocked && !car.isKeySecure) {
       let message = `Unauthorized entry on ${ car.license || car.id } at ${ moment().format('MMMM Do YYYY, h:mm:ss a') } at ${ car.latitude }, ${ car.longitude }`;
       log.info(`Car Status > ${ message }`);
-      yield notify.notifyAdmins(message, [ 'slack', 'sms', 'email' ]);
+      yield notify.notifyAdmins(message, [ 'slack', 'sms', 'email' ], { channel : '#rental-alerts' });
     }
   }
 });

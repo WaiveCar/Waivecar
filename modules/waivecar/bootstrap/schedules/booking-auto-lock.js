@@ -24,7 +24,7 @@ scheduler.process('booking-auto-lock', function *(job) {
 
     yield cars.lockCar(car.id);
 
-    yield notify.notifyAdmins(`The booking with ${ car.license || car.id } was automaticaly locked and needs manual review | https://www.waivecar.com/bookings/${ booking.id }`, [ 'slack' ]);
+    yield notify.notifyAdmins(`The booking with ${ car.license || car.id } was automaticaly locked and needs manual review | https://www.waivecar.com/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
   }
 });
 
