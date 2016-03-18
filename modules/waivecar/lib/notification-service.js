@@ -107,7 +107,6 @@ module.exports = {
    */
   *slack(payload, params) {
     if (process.env.NODE_ENV === 'production') {
-      log.info(`[NOTIFICATION] Delivering slack message to channel ${ params.channel || 'default' }`);
       if (params && params.channel) payload.channel = params.channel;
       yield slack.message(payload);
     }
