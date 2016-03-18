@@ -102,7 +102,7 @@ class TableIndex extends React.Component {
                   <ThSort sort="userId"    value="User"    ctx={ this } className="hidden-sm-down" />
                   <ThSort sort="status"    value="Status"  ctx={ this } />
                   <ThSort sort="createdAt" value="Created" ctx={ this } style={{ width : 125 }} />
-                  <th>Duration</th>
+                  <th className='hidden-sm-down'>Duration</th>
                   <th></th>
                 </tr>
               </thead>
