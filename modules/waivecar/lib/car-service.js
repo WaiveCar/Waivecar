@@ -19,6 +19,7 @@ let config      = Bento.config.waivecar;
 
 let User = Bento.model('User');
 let Car  = Bento.model('Car');
+let Booking = Bento.model('Booking');
 
 module.exports = {
 
@@ -35,13 +36,24 @@ module.exports = {
    * @return {Array}
    */
   *index(query, _user) {
-    return yield Car.find(queryParser(query, {
+    let cars = yield Car.find(queryParser(query, {
       where : {
         id          : queryParser.STRING,
         userId      : queryParser.NUMBER,
         isAvailable : queryParser.BOOLEAN
       }
     }));
+    let bookings = yield Booking.find({ where : { status : 'started' } });
+
+    bookings.forEach(function(booking) {
+      cars.forEach(function(car) {
+        if (car.id === booking.carId) {
+          car.bookingId = booking.id;
+        }
+      });
+    });
+
+    return cars;
   },
 
   /**
