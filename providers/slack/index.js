@@ -20,6 +20,7 @@ module.exports = class Slack {
     }
 
     this.webhook  = config.default;
+    log.info(`[SLACK] Using slack webhook: ${ this.webhook }`);
   }
 
   /**
