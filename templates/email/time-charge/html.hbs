@@ -4,13 +4,13 @@
 <div class="main">
   <h3>Hello, {{ name }}</h3>
   <p>
-    You have been charged for additional time to your recent WaiveCar booking.
+    A charge was added to your recent booking with WaiveCar.
   </p>
   <p>
-    {{ duration }} minutes x $5.99 / hr
+    {{ charge.quantity }} x {{ charge.description }}
   </p>
   <p>
-    <strong>$${{ amount }}
+    <strong>${{ charge.total }}
   </p>
   <p>
     Visit <a href="https://www.waivecar.com">https://www.waivecar.com</a> to access your account.
