@@ -77,7 +77,7 @@ scheduler.process('active-booking', function *(job) {
 
       yield cars.syncUpdate(car.id, device, car);
     } catch(err) {
-      log.warn(`ActiveBooking : failed to handle booking ${ booking.id }`);
+      log.warn(`ActiveBooking : failed to handle booking ${ booking.id } : ${ err }`);
     }
   }
 });

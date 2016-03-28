@@ -1,15 +1,16 @@
 'use strict';
 
-let request     = require('co-request');
-let Service     = require('./classes/service');
-let cars        = require('./car-service');
-let fees        = require('./fee-service');
-let notify      = require('./notification-service');
-let queue       = Bento.provider('queue');
-let queryParser = Bento.provider('sequelize/helpers').query;
-let relay       = Bento.Relay;
-let error       = Bento.Error;
-let config      = Bento.config.waivecar;
+let request      = require('co-request');
+let Service      = require('./classes/service');
+let cars         = require('./car-service');
+let fees         = require('./fee-service');
+let notify       = require('./notification-service');
+let queue        = Bento.provider('queue');
+let queryParser  = Bento.provider('sequelize/helpers').query;
+let relay        = Bento.Relay;
+let error        = Bento.Error;
+let config       = Bento.config.waivecar;
+let OrderService = Bento.module('shop/lib/order-service');
 
 // ### Models
 
@@ -394,6 +395,9 @@ module.exports = class BookingService extends Service {
     yield booking.delReminders();
     yield booking.end();
 
+    // ### Handle auto charge for time
+    yield this.handleTimeCharge(booking, user);
+
     // ### Notify
 
     yield notify.notifyAdmins(`${ _user.name() } ended a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`, [ 'slack' ], { channel : '#reservations' });
@@ -571,6 +575,15 @@ module.exports = class BookingService extends Service {
         });
       }
     }
+  }
+
+  /**
+   * Creates order if booking requires automatic charge for time driven
+   * @param {Object} booking
+   * @param {Object} user
+   */
+  static *handleTimeCharge(booking, user) {
+    yield OrderService.createTimeOrder(booking, user);
   }
 
   // ### HELPERS
