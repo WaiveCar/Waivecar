@@ -130,6 +130,7 @@ module.exports = {
       return yield this.syncUpdate(deviceId, updatedCar);
     } else {
       log.debug(`Cars : Refresh : failed to retrieve ${ deviceId } to update database.`);
+      return yield Car.findById(deviceId);
     }
   },
 
