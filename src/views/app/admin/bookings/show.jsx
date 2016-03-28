@@ -197,7 +197,7 @@ module.exports = class BookingsView extends React.Component {
             : ''
         }
         {
-          booking.status === 'completed' && !booking.payments.length
+          booking.status === 'completed'
             ? <BookingFees bookingId={ booking.id } userId={ booking.userId } cartId={ booking.cartId } />
             : ''
         }
