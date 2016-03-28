@@ -1,5 +1,6 @@
 import React                from 'react';
 import { auth, api, relay } from 'bento';
+import asynclib             from 'async';
 
 module.exports = class BookingFeesView extends React.Component {
 
@@ -11,13 +12,37 @@ module.exports = class BookingFeesView extends React.Component {
   }
 
   componentDidMount() {
-    api.get(`/shop/orders/${ this.props.payment.id }`, (err, order) => {
-      if (err) {
-        return console.log(err);
-      }
-      this.setState({
-        payment : order
+    if (this.props.paymentIds && this.props.paymentIds.length) {
+      asynclib.map(this.props.paymentIds, this.fetchPayment.bind(this), (err, results) => {
+        if (err) return console.log(err);
+
+        let aggregate = {
+          amount: 0,
+          items: []
+        };
+        results.forEach(payment => {
+          aggregate.items = aggregate.items.concat(payment.items);
+          aggregate.amount += payment.amount;
+        });
+
+        this.setState({
+          payment: aggregate
+        });
       });
+    } else {
+      this.fetchPayment(this.props.payment.id, (err, order) => {
+        if (err) return console.log(err);
+        this.setState({
+          payment: order
+        });
+      });
+    }
+  }
+
+  fetchPayment(id, cb) {
+    api.get(`/shop/orders/${ id }`, (err, order) => {
+      if (err) return cb(err);
+      cb(null, order);
     });
   }
 

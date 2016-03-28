@@ -88,6 +88,19 @@ module.exports = class BookingsView extends React.Component {
   }
 
   /**
+   * Renders all payments associated with booking
+   * @param {Array} payments
+   * @param {Object}
+   */
+  renderPayments(payments) {
+    let ids = payments.map(payment => payment.id);
+
+    return (
+      <BookingPayment paymentIds={ ids }/>
+    );
+  }
+
+  /**
    * Renders the available actions that can be performed on the booking.
    * @param  {Object} booking
    * @return {Object}
@@ -193,7 +206,7 @@ module.exports = class BookingsView extends React.Component {
         }
         {
           booking.payments.length
-            ? <BookingPayment payment={ booking.payments[0] } />
+            ? this.renderPayments(booking.payments)
             : ''
         }
         {
