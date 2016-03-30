@@ -127,11 +127,11 @@ module.exports = {
     let updatedCar = yield this.getDevice(deviceId);
     if (updatedCar) {
       log.debug(`Cars : Refresh : updating ${ deviceId }.`);
-      return yield this.syncUpdate(deviceId, updatedCar);
+      yield this.syncUpdate(deviceId, updatedCar);
     } else {
       log.debug(`Cars : Refresh : failed to retrieve ${ deviceId } to update database.`);
-      return yield Car.findById(deviceId);
     }
+    return yield Car.findById(deviceId);
   },
 
   /**
