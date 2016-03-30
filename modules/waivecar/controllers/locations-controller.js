@@ -1,13 +1,13 @@
 'use strict';
 
 let error = Bento.Error;
-let Model = Bento.model('Location');
+let Location = Bento.model('Location');
 let _ = require('lodash');
 
 Bento.Register.ResourceController('Location', 'LocationsController', function(controller) {
 
   controller.update = function *(id) {
-    let model = yield Model.findById(id);
+    let model = yield Location.findById(id);
     let data  = this.payload;
 
     // ### Verify Resource Exists
@@ -28,6 +28,23 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
     model.relay('update');
 
     return model;
+  };
+
+  controller.delete = function *(id) {
+    let location = yield Location.findById(id);
+
+    if (!location) {
+      throw error.parse({
+        code    : 'LOCATION_NOT_FOUND',
+        message : 'Could not find resource requested for delete'
+      }, 404);
+    }
+
+    yield controller._hasAccess(this.auth.user, location);
+
+    yield location.delete();
+
+    location.relay('delete');
   };
 
   controller._hasAccess = function *(user) {
