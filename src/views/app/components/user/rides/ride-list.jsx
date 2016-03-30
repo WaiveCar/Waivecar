@@ -110,7 +110,7 @@ class RideList extends Component {
   }
 
   render() {
-    let pastRides = this.state.bookings.filter(b => [ 'ended', 'completed', 'finalized'].includes(b.status));
+    let pastRides = this.state.bookings.filter(b => [ 'ended', 'completed', 'finalized', 'closed'].includes(b.status));
     var boxClass = classNames({
       box: true,
       full: this.props.full
