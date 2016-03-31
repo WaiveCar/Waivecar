@@ -152,7 +152,7 @@ module.exports = class OrderService extends Service {
         context  : {
           name     : user.name(),
           duration : minutesOver,
-          amount   : amount / 100
+          amount   : (amount / 100).toFixed(2)
         }
       });
     } catch (err) {
