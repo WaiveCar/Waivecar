@@ -9,7 +9,7 @@ module.exports = {
 
     yield email.send({
       to       : config.waivecar.contact.email,
-      from     : config.email.sender,
+      from     : _user.email,
       subject  : 'WaiveCar [Contact]',
       template : 'waivecar-contact',
       context  : {
