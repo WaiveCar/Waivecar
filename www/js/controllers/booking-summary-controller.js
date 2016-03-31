@@ -14,19 +14,25 @@ module.exports = angular.module('app.controllers').controller('BookingSummaryCon
   '$message',
   function ($state, $auth, $data, $message) {
 
-    this.init = function () {
+    var ctrl = this;
+
+    ctrl.init = function () {
       $data.resources.bookings.get({ id: $state.params.id }).$promise.then(function(booking) {
-        this.booking = booking;
+        ctrl.booking = booking;
         console.log(booking.details);
         // Calc miles from coordinates in booking details.
-        this.start = booking.details[0];
-        this.end = booking.details[0];
-        this.distance = this.end.mileage - this.start.mileage + ' miles';
-        this.duration = moment(this.start.createdAt).to(this.end.createdAt, true);
-      }.bind(this)).catch($message.error);
+        ctrl.start = booking.details[0];
+        ctrl.end = booking.details[0];
+        ctrl.distance = ctrl.end.mileage - ctrl.start.mileage + ' miles';
+        ctrl.duration = moment(ctrl.start.createdAt).to(ctrl.end.createdAt, true);
+
+        ctrl.booking.total = ctrl.booking.payments ? ctrl.booking.payments.reduce(function(sum, payment) {
+          return sum + payment.amount;
+        }, 0) : 0;
+      }).catch($message.error);
     };
 
-    this.init();
+    ctrl.init();
   }
 
 ]);

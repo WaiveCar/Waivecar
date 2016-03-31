@@ -24,15 +24,15 @@
     </div>
     <div class="fees-info tableContainer">
       <page-title class="text-center">Fees</page-title>
-      <p class="padding text-center" ng-hide="ctrl.booking.cart && ctrl.booking.cart.items">Free Ride. There was no charge for this ride.</p>
-      <table ng-show="ctrl.booking.cart && ctrl.booking.cart.items">
-        <tr ng-repeat="item in ctrl.booking.cart.items">
-          <td class="title">{{ item.quantity }}x {{ item.name }}</td>
-          <td class="value">{{ item.total / 100 | currency:$:0  }}</td>
+      <p class="padding text-center" ng-hide="ctrl.booking.payments && ctrl.booking.payments.length">Free Ride. There was no charge for this ride.</p>
+      <table ng-show="ctrl.booking.payments && ctrl.booking.payments.length">
+        <tr ng-repeat="item in ctrl.booking.payments">
+          <td class="title">{{ item.description }}</td>
+          <td class="value">{{ item.amount / 100 | currency:$:0  }}</td>
         </tr>
         <tr class="totalRow">
           <td class="title total">total</td>
-          <td class="value">{{ ctrl.booking.cart.total / 100 | currency:$:0 }}</td>
+          <td class="value">{{ ctrl.booking.total / 100 | currency:$:0 }}</td>
         </tr>
       </table>
     </div>
