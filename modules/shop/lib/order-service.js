@@ -135,6 +135,8 @@ module.exports = class OrderService extends Service {
         orderId   : order.id
       });
       yield payment.save();
+
+      yield notify.notifyAdmins(`Successfully charged ${ user.name() } for ${ minutesOver} minutes extra driving time | https://www.waivecar.com/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
       log.info(`Charged user for time driven : $${ amount / 100 } : booking ${ booking.id }`);
     } catch (err) {
       log.warn(`Failed to charge user for time: ${ user.id }`, err);
@@ -152,7 +154,7 @@ module.exports = class OrderService extends Service {
         context  : {
           name     : user.name(),
           duration : minutesOver,
-          amount   : amount / 100
+          amount   : (amount / 100).toFixed(2)
         }
       });
     } catch (err) {
