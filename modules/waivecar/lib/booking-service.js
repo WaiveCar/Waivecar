@@ -63,7 +63,12 @@ module.exports = class BookingService extends Service {
 
     // ### Add Driver
     // Add the driver to the car so no simultaneous requests can book this car.
-
+    if (car.userId !== null) {
+      throw error.parse({
+        code    : `BOOKING_REQUEST_INVALID`,
+        message : `Another driver has already reserved this WaiveCar.`
+      }, 400);
+    }
     yield car.addDriver(user.id);
 
     // ### Create Booking
@@ -249,6 +254,21 @@ module.exports = class BookingService extends Service {
       throw error.parse({
         code    : `BOOKING_REQUEST_INVALID`,
         message : `You must be in 'reserved' status to start your ride, you are currently in '${ booking.getStatus() }' status.`
+      }, 400);
+    }
+
+    // Verify no one else has booked car
+    if (car.userId !== user.id) {
+      yield booking.cancel();
+      yield booking.delCancelTimer();
+      yield car.removeDriver();
+      yield car.available();
+
+      car.relay('update');
+      booking.relay('update');
+      throw error.parse({
+        code    : `BOOKING_REQUEST_INVALID`,
+        message : `Another driver has already reserved this WaiveCar.`
       }, 400);
     }
 
