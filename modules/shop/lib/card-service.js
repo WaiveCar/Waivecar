@@ -112,6 +112,14 @@ module.exports = class Cards extends Service {
 
     this.hasAccess(user, _user);
 
+    let cards = yield Card.find({ where : { userId : user.id } });
+    if (cards.length <= 1) {
+      throw error.parse({
+        code    : 'CARD_COUNT',
+        message : 'User must maintain one active card'
+      }, 400);
+    }
+
     yield service.delete(user.stripeId, cardId);
     yield card.delete();
   }
