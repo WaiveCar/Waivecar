@@ -6,7 +6,7 @@ import { Link, History }           from 'react-router';
 import Switch                from 'react-toolbox/lib/switch';
 import { auth, relay, dom }  from 'bento';
 import { fields }            from 'bento-ui';
-import { Form, Button, Map } from 'bento-web';
+import { Form, Button, Map, snackbar } from 'bento-web';
 import Service               from '../../lib/car-service';
 
 let formFields = {
@@ -199,6 +199,28 @@ class CarsShowView extends React.Component {
     );
   }
 
+  toggleAvailable(car) {
+    if (car.isAvailable) {
+      this.service.executeCommand(car, 'unavailable');
+    } else {
+      if (car.booking) {
+        snackbar.notify({
+          type    : 'danger',
+          message : 'Car is in active rental. Make available anyway?',
+          action : {
+            title : 'CONTINUE',
+            click : () => {
+              snackbar.dismiss();
+              this.service.executeCommand(car, 'available');
+            }
+          }
+        });
+      } else {
+        this.service.executeCommand(car, 'available');
+      }
+    }
+  }
+
   renderCarActions(car) {
     if (this.service.getState('isLoading')) {
       return (
@@ -241,7 +263,7 @@ class CarsShowView extends React.Component {
         ref : 3,
         checked  : car.isAvailable,
         label    : car.isAvailable ? 'Make Unavailable' : 'Make Available',
-        onChange : this.service.executeCommand.bind(this, car, car.isAvailable ? 'unavailable' : 'available')
+        onChange : this.toggleAvailable.bind(this, car)
       },
       {
         ref : 4,

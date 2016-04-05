@@ -25,8 +25,9 @@ module.exports = class Car extends Service {
         return this.error(err.data ? err.data : err.message);
       }
 
-      this.updateCarState(model);
-      this.success('Command completed successfully.');
+      this.getBooking(model, () => {
+        this.success('Command completed successfully.');
+      });
     }.bind(this));
   }
 
@@ -91,10 +92,15 @@ module.exports = class Car extends Service {
     api.get(`/cars/${ id }`, (err, car) => {
       if (err) return this.error(err.message);
 
-      api.get(`/bookings?carId=${ car.id }&status=started&details=true`, (err, bookings) => {
-        car.booking = bookings[0];
-        this.updateCarState(car);
-      });
+      this.getBooking(car);
+    });
+  }
+
+  getBooking(car, cb) {
+    api.get(`/bookings?carId=${ car.id }&status=started&details=true`, (err, bookings) => {
+      car.booking = bookings[0];
+      this.updateCarState(car);
+      if (cb) cb();
     });
   }
 }
