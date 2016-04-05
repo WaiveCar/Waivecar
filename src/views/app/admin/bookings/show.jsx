@@ -4,6 +4,7 @@ import { Link }                from 'react-router';
 import BookingFees             from './fees';
 import BookingPayment          from './payment';
 import BookingDetails          from './details';
+import { snackbar }         from 'bento-web';
 
 module.exports = class BookingsView extends React.Component {
 
@@ -60,14 +61,29 @@ module.exports = class BookingsView extends React.Component {
    * @param  {String} action cancel|end|complete|close
    * @return {Void}
    */
-  update(action) {
+  update(action, force) {
     this.setState({
       isActing : true
     });
-    api.put(`/bookings/${ this.props.params.id }/${ action }`, {}, (err) => {
+    api.put(`/bookings/${ this.props.params.id }/${ action }${ force ? '?force=true' : '' }`, {}, (err) => {
       this.setState({
         isActing : false
       });
+      if (err) {
+        if (action === 'end' || action === 'complete') {
+          snackbar.notify({
+            type    : 'danger',
+            message : err.message,
+            action : {
+              title : 'FORCE',
+              click : () => {
+                snackbar.dismiss();
+                this.update(action, true);
+              }
+            }
+          });
+        }
+      }
     });
   }
 
@@ -188,7 +204,7 @@ module.exports = class BookingsView extends React.Component {
                 <strong>Car</strong>
                 <div>
                   <Link to={ `/cars/${ booking.car.id }` }>
-                    { booking.car.license }
+                    { booking.car.license || booking.car.id }
                   </Link>
                 </div>
               </div>
