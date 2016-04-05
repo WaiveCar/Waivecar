@@ -274,7 +274,7 @@ class CarsShowView extends React.Component {
                 {
                   car.booking ?
                   <Link key={ 5 } className='btn btn-primary' to={ `/bookings/${ car.booking.id }` }>View Booking</Link> :
-                  <button key={ 5 } className='btn btn-primary' disabled='true'>No Booking</button>
+                  <button key={ 5 } className='btn btn-danger' disabled='true'>No Booking</button>
                 }
               </div>
               <div className="col-md-6">
