@@ -26,7 +26,7 @@ module.exports = class Car extends Service {
       }
 
       this.updateCarState(model);
-      this.success(`Command completed successfully.`);
+      this.success('Command completed successfully.');
     }.bind(this));
   }
 
@@ -42,7 +42,7 @@ module.exports = class Car extends Service {
       }
 
       this.updateCarState(model);
-      this.success(`Car was updated successfully.`);
+      this.success('Car was updated successfully.');
     }.bind(this));
   }
 
@@ -88,13 +88,13 @@ module.exports = class Car extends Service {
    * Loads car from the api and adds it to ctx.
    */
   setCar(id) {
-    api.get(`/cars/${ id }`, function (err, car) {
-      if (err) {
-        return this.error(err.message);
-      }
+    api.get(`/cars/${ id }`, (err, car) => {
+      if (err) return this.error(err.message);
 
-      this.updateCarState(car);
-
-    }.bind(this));
+      api.get(`/bookings?carId=${ car.id }&status=started&details=true`, (err, bookings) => {
+        car.booking = bookings[0];
+        this.updateCarState(car);
+      });
+    });
   }
 }

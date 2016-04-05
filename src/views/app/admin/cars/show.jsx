@@ -2,7 +2,7 @@
 import React                 from 'react';
 import moment                from 'moment';
 import mixin                 from 'react-mixin';
-import { History }           from 'react-router';
+import { Link, History }           from 'react-router';
 import Switch                from 'react-toolbox/lib/switch';
 import { auth, relay, dom }  from 'bento';
 import { fields }            from 'bento-ui';
@@ -267,6 +267,15 @@ class CarsShowView extends React.Component {
             <div className="row">
               <div className="col-md-6">
                 <Switch { ...switches[2] } />
+              </div>
+            </div>
+            <div className="row" style={{ marginTop: 10 }}>
+              <div className="col-md-6">
+                {
+                  car.booking ?
+                  <Link key={ 5 } className='btn btn-primary' to={ `/bookings/${ car.booking.id }` }>View Booking</Link> :
+                  <button key={ 5 } className='btn btn-primary' disabled='true'>No Booking</button>
+                }
               </div>
               <div className="col-md-6">
                 <Button
