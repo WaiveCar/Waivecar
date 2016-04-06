@@ -57,7 +57,7 @@ module.exports = class Cards extends Service {
   }
 
   /**
-   * Returns a reigstered card based on the provided cardId.
+   * Returns a registered card based on the provided cardId.
    * @param  {String} cardId
    * @param  {Object} _user  The authenticated user making the request.
    * @return {Object}
