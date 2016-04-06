@@ -354,10 +354,12 @@ module.exports = class BookingService extends Service {
    * @param  {Object} _user
    * @return {Object}
    */
-  static *end(id, _user) {
+  static *end(id, _user, query) {
     let booking = yield this.getBooking(id);
     let car     = yield this.getCar(booking.carId);
     let user    = yield this.getUser(booking.userId);
+    let warnings = [];
+    let isAdmin = _user.hasAccess('admin');
 
     this.hasAccess(user, _user);
 
@@ -374,10 +376,14 @@ module.exports = class BookingService extends Service {
     Object.assign(car, yield cars.getDevice(car.id, _user));
 
     if (car.isIgnitionOn) {
-      throw error.parse({
-        code    : `BOOKING_REQUEST_INVALID`,
-        message : `You must park, and turn off the engine before ending your booking.`
-      }, 400);
+      if (isAdmin) {
+        warnings.push('the ignition is on');
+      } else {
+        throw error.parse({
+          code    : `BOOKING_REQUEST_INVALID`,
+          message : `You must park, and turn off the engine before ending your booking.`
+        }, 400);
+      }
     }
 
     // ### Immobilize
@@ -385,9 +391,20 @@ module.exports = class BookingService extends Service {
 
     let status = yield cars.lockImmobilzer(car.id, _user);
     if (!status.isImmobilized) {
+      if (isAdmin) {
+        warnings.push('the engine not immobilized');
+      } else {
+        throw error.parse({
+          code    : `BOOKING_END_IMMOBILIZER`,
+          message : `Immobilizing the engine failed.`
+        }, 400);
+      }
+    }
+
+    if (isAdmin && warnings.length && !query.force) {
       throw error.parse({
         code    : `BOOKING_END_IMMOBILIZER`,
-        message : `Immobilizing the engine failed.`
+        message : `The booking can't be ended because ${ warnings.join(' and ')}.`
       }, 400);
     }
 
@@ -432,7 +449,7 @@ module.exports = class BookingService extends Service {
    * Locks, and makes the car available for a new booking.
    * @return {Object}
    */
-  static *complete(id, _user) {
+  static *complete(id, _user, query) {
     let booking = yield this.getBooking(id);
     let car     = yield this.getCar(booking.carId);
     let user    = yield this.getUser(booking.userId);
@@ -457,7 +474,7 @@ module.exports = class BookingService extends Service {
     if (car.isIgnitionOn) { errors.push('turn off Ignition'); }
     if (!car.isKeySecure) { errors.push('secure Key'); }
 
-    if (errors.length) {
+    if (errors.length && !(_user.hasAccess('admin') && query.force)) {
       let message = `Your Ride cannot be completed until you `;
       switch (errors.length) {
         case 1: {
