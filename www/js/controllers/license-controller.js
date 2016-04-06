@@ -64,10 +64,13 @@ function LicenseController ($stateParams, $injector) {
       }.bind(this));
     }.bind(this))
     .catch(function onUploadFailed (err) {
-      var modal;
+      var modal, message = 'Looks like the formatting of your license is wrong, please try again.';
+      if('data' in err && 'message' in err.data) {
+        message = err.data.message;
+      }
       $modal('result', {
         icon: 'x-icon',
-        title: 'Looks like the formatting of your license is wrong, please try again.',
+        title: message,
         actions: [{
           className: 'button-balanced',
           text: 'Retry',
