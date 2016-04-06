@@ -20,6 +20,7 @@ class HomeTemplate extends React.Component {
    */
   constructor(...args) {
     super(...args);
+
     this.state = {
       waypoints : {
         wp1 : 'wp wp1',
@@ -360,6 +361,15 @@ class HomeTemplate extends React.Component {
     );
   }
 
+  toggleSite() {
+    if(localStorage['desktop']) {
+      delete localStorage['desktop'];
+    } else {
+      localStorage['desktop'] = true;
+    }
+    location.reload();
+  }
+
   toggleZone(zone) {
     this.setState({ zone });
   }
@@ -410,6 +420,7 @@ class HomeTemplate extends React.Component {
               <ul className="text-center list-inline">
                 { this.renderNavItems(true) }
                 { this.renderNavItems('extraItems') }
+                <a onClick={ this.toggleSite.bind(this) }>Desktop Site</a>
               </ul>
             </div>
             <div className="col-md-3 col-xs-1">
