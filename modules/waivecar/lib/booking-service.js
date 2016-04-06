@@ -1,15 +1,16 @@
 'use strict';
 
-let request     = require('co-request');
-let Service     = require('./classes/service');
-let cars        = require('./car-service');
-let fees        = require('./fee-service');
-let notify      = require('./notification-service');
-let queue       = Bento.provider('queue');
-let queryParser = Bento.provider('sequelize/helpers').query;
-let relay       = Bento.Relay;
-let error       = Bento.Error;
-let config      = Bento.config.waivecar;
+let request      = require('co-request');
+let Service      = require('./classes/service');
+let cars         = require('./car-service');
+let fees         = require('./fee-service');
+let notify       = require('./notification-service');
+let queue        = Bento.provider('queue');
+let queryParser  = Bento.provider('sequelize/helpers').query;
+let relay        = Bento.Relay;
+let error        = Bento.Error;
+let config       = Bento.config.waivecar;
+let OrderService = Bento.module('shop/lib/order-service');
 
 // ### Models
 
@@ -60,9 +61,24 @@ module.exports = class BookingService extends Service {
       yield this.hasBookingAccess(user);
     }
 
+    // ### Pre authorization payment
+    try {
+      yield OrderService.authorize(null, _user);
+    } catch (err) {
+      throw error.parse({
+        code    : 'BOOKING_AUTHORIZATION',
+        message : 'Unable to authorize payment. Please validate payment method.'
+      }, 400);
+    }
+
     // ### Add Driver
     // Add the driver to the car so no simultaneous requests can book this car.
-
+    if (car.userId !== null) {
+      throw error.parse({
+        code    : `BOOKING_REQUEST_INVALID`,
+        message : `Another driver has already reserved this WaiveCar.`
+      }, 400);
+    }
     yield car.addDriver(user.id);
 
     // ### Create Booking
@@ -251,6 +267,21 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
+    // Verify no one else has booked car
+    if (car.userId !== user.id) {
+      yield booking.cancel();
+      yield booking.delCancelTimer();
+      yield car.removeDriver();
+      yield car.available();
+
+      car.relay('update');
+      booking.relay('update');
+      throw error.parse({
+        code    : `BOOKING_REQUEST_INVALID`,
+        message : `Another driver has already reserved this WaiveCar.`
+      }, 400);
+    }
+
     // ### Start Booking
     // 1. Delete the booking cancelation timer
     // 2. Log the initial details of the booking and car details.
@@ -333,10 +364,12 @@ module.exports = class BookingService extends Service {
    * @param  {Object} _user
    * @return {Object}
    */
-  static *end(id, _user) {
+  static *end(id, _user, query) {
     let booking = yield this.getBooking(id);
     let car     = yield this.getCar(booking.carId);
     let user    = yield this.getUser(booking.userId);
+    let warnings = [];
+    let isAdmin = _user.hasAccess('admin');
 
     this.hasAccess(user, _user);
 
@@ -353,10 +386,14 @@ module.exports = class BookingService extends Service {
     Object.assign(car, yield cars.getDevice(car.id, _user));
 
     if (car.isIgnitionOn) {
-      throw error.parse({
-        code    : `BOOKING_REQUEST_INVALID`,
-        message : `You must park, and turn off the engine before ending your booking.`
-      }, 400);
+      if (isAdmin) {
+        warnings.push('the ignition is on');
+      } else {
+        throw error.parse({
+          code    : `BOOKING_REQUEST_INVALID`,
+          message : `You must park, and turn off the engine before ending your booking.`
+        }, 400);
+      }
     }
 
     // ### Immobilize
@@ -364,9 +401,20 @@ module.exports = class BookingService extends Service {
 
     let status = yield cars.lockImmobilzer(car.id, _user);
     if (!status.isImmobilized) {
+      if (isAdmin) {
+        warnings.push('the engine not immobilized');
+      } else {
+        throw error.parse({
+          code    : `BOOKING_END_IMMOBILIZER`,
+          message : `Immobilizing the engine failed.`
+        }, 400);
+      }
+    }
+
+    if (isAdmin && warnings.length && !query.force) {
       throw error.parse({
         code    : `BOOKING_END_IMMOBILIZER`,
-        message : `Immobilizing the engine failed.`
+        message : `The booking can't be ended because ${ warnings.join(' and ')}.`
       }, 400);
     }
 
@@ -394,6 +442,9 @@ module.exports = class BookingService extends Service {
     yield booking.delReminders();
     yield booking.end();
 
+    // ### Handle auto charge for time
+    yield this.handleTimeCharge(booking, user);
+
     // ### Notify
 
     yield notify.notifyAdmins(`${ _user.name() } ended a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`, [ 'slack' ], { channel : '#reservations' });
@@ -408,7 +459,7 @@ module.exports = class BookingService extends Service {
    * Locks, and makes the car available for a new booking.
    * @return {Object}
    */
-  static *complete(id, _user) {
+  static *complete(id, _user, query) {
     let booking = yield this.getBooking(id);
     let car     = yield this.getCar(booking.carId);
     let user    = yield this.getUser(booking.userId);
@@ -433,7 +484,7 @@ module.exports = class BookingService extends Service {
     if (car.isIgnitionOn) { errors.push('turn off Ignition'); }
     if (!car.isKeySecure) { errors.push('secure Key'); }
 
-    if (errors.length) {
+    if (errors.length && !(_user.hasAccess('admin') && query.force)) {
       let message = `Your Ride cannot be completed until you `;
       switch (errors.length) {
         case 1: {
@@ -571,6 +622,15 @@ module.exports = class BookingService extends Service {
         });
       }
     }
+  }
+
+  /**
+   * Creates order if booking requires automatic charge for time driven
+   * @param {Object} booking
+   * @param {Object} user
+   */
+  static *handleTimeCharge(booking, user) {
+    yield OrderService.createTimeOrder(booking, user);
   }
 
   // ### HELPERS

@@ -57,7 +57,7 @@ module.exports = class Cards extends Service {
   }
 
   /**
-   * Returns a reigstered card based on the provided cardId.
+   * Returns a registered card based on the provided cardId.
    * @param  {String} cardId
    * @param  {Object} _user  The authenticated user making the request.
    * @return {Object}
@@ -111,6 +111,14 @@ module.exports = class Cards extends Service {
     let service = this.getService(config.service, 'cards');
 
     this.hasAccess(user, _user);
+
+    let cards = yield Card.find({ where : { userId : user.id } });
+    if (cards.length <= 1) {
+      throw error.parse({
+        code    : 'CARD_COUNT',
+        message : 'User must maintain one active card'
+      }, 400);
+    }
 
     yield service.delete(user.stripeId, cardId);
     yield card.delete();

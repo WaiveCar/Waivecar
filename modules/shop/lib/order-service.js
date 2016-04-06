@@ -3,12 +3,18 @@
 let co          = require('co');
 let Service     = require('./classes/service');
 let CartService = require('./cart-service');
+let moment      = require('moment');
+let _           = require('lodash');
 let Email       = Bento.provider('email');
 let queryParser = Bento.provider('sequelize/helpers').query;
 let User        = Bento.model('User');
 let Cart        = Bento.model('Shop/Cart');
+let Card        = Bento.model('Shop/Card');
 let Order       = Bento.model('Shop/Order');
 let OrderItem   = Bento.model('Shop/OrderItem');
+let BookingDetails = Bento.model('BookingDetails');
+let BookingPayment = Bento.model('BookingPayment');
+let notify      = Bento.module('waivecar/lib/notification-service');
 let hooks       = Bento.Hooks;
 let redis       = Bento.Redis;
 let error       = Bento.Error;
@@ -52,19 +58,8 @@ module.exports = class OrderService extends Service {
 
     // ### Add Items
 
-    for (let i = 0, len = items.length; i < len; i++) {
-      let item = new OrderItem({
-        orderId     : order.id,
-        itemId      : items[i].id,
-        productNo   : items[i].productNo,
-        name        : items[i].name,
-        description : items[i].description,
-        price       : items[i].price,
-        quantity    : items[i].quantity
-      });
-      yield item.save();
-      if (items[i].name === 'Miscellaneous') miscCharge = items[i];
-    }
+    yield this.addItems(order, items);
+    miscCharge = _.find(items, { name : 'Miscellaneous' });
 
     // ### Charge
 
@@ -90,44 +85,115 @@ module.exports = class OrderService extends Service {
   }
 
   /**
+   * Special case order automatically created based on booking time
+   * @param {Object} booking
+   * @param {Object} user
+   */
+  static *createTimeOrder(booking, user) {
+    // Determine time
+    let amount = 0;
+    let minutesOver = 0;
+    let billableGroups = 0;
+
+    let start = yield this.getDetails('start', booking.id);
+    let end = yield this.getDetails('end', booking.id);
+
+    if (start && end) {
+
+      // Get difference
+      let diff = moment(end.createdAt).diff(start.createdAt, 'minutes');
+      if (diff > 120) {
+        minutesOver = Math.max(diff - 120, 0);
+      }
+    }
+
+    if (minutesOver === 0) return;
+    billableGroups = Math.ceil(minutesOver / 10);
+    amount = Math.round((billableGroups / 6 * 5.99) * 100);
+
+    let card = yield Card.findOne({ where : { userId : user.id } });
+    let cart = yield CartService.createTimeCart(minutesOver, amount, user);
+    let order = new Order({
+      createdBy : user.id,
+      userId    : user.id,
+
+      // User card id
+      source      : card.id,
+      description : 'Payment for additional time for waivecar rental',
+      metadata    : null,
+      currency    : 'usd',
+      amount      : amount
+    });
+
+    yield order.save();
+    yield this.addItems(order, cart.items);
+
+    try {
+      yield this.charge(order, user);
+      let payment = new BookingPayment({
+        bookingId : booking.id,
+        orderId   : order.id
+      });
+      yield payment.save();
+
+      yield notify.notifyAdmins(`Successfully charged ${ user.name() } for ${ minutesOver} minutes extra driving time | https://www.waivecar.com/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+      log.info(`Charged user for time driven : $${ amount / 100 } : booking ${ booking.id }`);
+    } catch (err) {
+      log.warn(`Failed to charge user for time: ${ user.id }`, err);
+
+      yield notify.notifyAdmins(`Failed to automatically charge ${ user.name() } for time driven: ${ err } | https://www.waivecar.com/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+    }
+
+    let email = new Email();
+    try {
+      yield email.send({
+        to       : user.email,
+        from     : emailConfig.sender,
+        subject  : 'Waivecar [Charge Added For Time]',
+        template : 'time-charge',
+        context  : {
+          name     : user.name(),
+          duration : minutesOver,
+          amount   : (amount / 100).toFixed(2)
+        }
+      });
+    } catch (err) {
+      log.warn('Failed to deliver time notification email: ', err);
+    }
+  }
+
+  /**
    * Creates a authorized order of a given amount to be captured later.
    * @param  {Object} payload
    * @param  {Object} _user
    * @return {Object}
    */
   static *authorize(payload, _user) {
-    let data = yield hooks.require('shop:store:authorize:before', payload, _user);
-    let user = yield this.getUser(data.userId);
+    let card = Card.findOne({ where : { userId : _user.id } });
 
-    this.hasAccess(user, _user);
-    this.verifyCurrency(data.currency);
-
-    // ### Validate Amount
-    // Checks if a authorized amount has been provided.
-
-    if (!data.amount) {
+    if (!card) {
       throw error.parse({
-        code    : `SHOP_AUTHORIZATION_AMOUNT`,
-        message : `The request does not provide the required amount to authorize.`
-      }, 400);
+        code    : 'SHOP_MISSING_CARD',
+        message : 'The user does not have a valid payment method.'
+      });
     }
 
     // ### Create Order
-
     let order = new Order({
       createdBy   : _user.id,
-      userId      : data.userId,
-      source      : data.source,
-      description : data.description,
-      currency    : data.currency,
-      amount      : data.amount
+      userId      : _user.id,
+      source      : card.id,
+      description : 'Pre booking authorization',
+      currency    : 'usd',
+      amount      : 100
     });
     yield order.save();
 
     // ### Charge
 
-    yield this.charge(order, user, false);
-    yield hooks.call('shop:store:authorize:after', order, data, _user);
+    let charge = yield this.charge(order, _user, false);
+    console.log('authorize charge: ', charge);
+    yield this.cancel(order, _user, charge);
 
     return order;
   }
@@ -235,7 +301,7 @@ module.exports = class OrderService extends Service {
    */
   static *show(id, _user) {
     let order = yield this.getOrder(id);
-    let user  = yield this.getUser(id);
+    let user  = yield this.getUser(order.userId);
 
     this.hasAccess(user, _user);
 
@@ -251,11 +317,26 @@ module.exports = class OrderService extends Service {
   // ### HELPERS
 
   /**
+   * Retrieves details for a booking.
+   * @param  {String} type
+   * @param  {Number} id
+   * @return {Object}
+   */
+  static *getDetails(type, id) {
+    return yield BookingDetails.findOne({
+      where : {
+        bookingId : id,
+        type      : type
+      }
+    });
+  }
+
+  /**
    * Attempts to submit an order to the configured payment service.
    * @param  {Object}  order
    * @param  {Object}  user
    * @param  {Boolean} capture
-   * @return {Void}
+   * @return {Object} charge
    */
   static *charge(order, user, capture) {
     let service = this.getService(config.service, 'charges');
@@ -271,6 +352,23 @@ module.exports = class OrderService extends Service {
       service  : config.service,
       chargeId : charge.id,
       status   : capture === false ? 'authorized' : 'paid'
+    });
+
+    return charge;
+  }
+
+  /**
+   * Cancel pending payment
+   * @param {Object} order
+   * @param {Object} user
+   * @param {Object} charge
+   * @return {Void}
+   */
+  static *cancel(order, user, charge) {
+    let service = this.getService(config.service, 'charges');
+    yield service.refund(charge.id);
+    yield order.update({
+      status : 'refunded'
     });
   }
 
@@ -289,6 +387,27 @@ module.exports = class OrderService extends Service {
       amount   : charge.amount,
       refunded : charge.amount_refunded
     });
+  }
+
+  /**
+   * Captures order items
+   * @param {Object} order
+   * @param {Array} items
+   * reeturn {Void}
+   */
+  static *addItems(order, items) {
+    for (let i = 0, len = items.length; i < len; i++) {
+      let item = new OrderItem({
+        orderId     : order.id,
+        itemId      : items[i].id,
+        productNo   : items[i].productNo,
+        name        : items[i].name,
+        description : items[i].description,
+        price       : items[i].price,
+        quantity    : items[i].quantity
+      });
+      yield item.save();
+    }
   }
 
   /**

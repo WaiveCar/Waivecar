@@ -53,6 +53,36 @@ module.exports = class CartService {
   }
 
   /**
+   * createTimeCart
+   * Creates a specific cart for time overrage
+   *
+   * @param {Number} minutes
+   * @param {Number} total
+   * @param {Object} user
+   * @return {Object}
+   */
+  static *createTimeCart(minutes, total, user) {
+    let cartId = shortid();
+    let item = yield Item.findOne({ where : { name : 'Excess Time' } });
+    yield bucket.setJSON(cartId, {
+      id     : cartId,
+      userId : user.id,
+      items  : [
+        {
+          quantity : minutes / 60,
+          id       : item.id,
+          total    : total
+        }
+      ],
+      coupon : null
+    }, CART_TIMER);
+
+    let cart = yield this.show(cartId, user);
+    this.relay('store', cart);
+    return cart;
+  }
+
+  /**
    * Returns a indexed array of carts belonging to the provided user.
    * @param  {Number} userId
    * @param  {Object} _user
@@ -280,7 +310,7 @@ module.exports = class CartService {
         price       : item.price,
         description : items[i].description,
         quantity    : items[i].quantity,
-        total       : items[i].quantity * item.price
+        total       : items[i].total || (items[i].quantity * item.price)
       });
     }
     return result;

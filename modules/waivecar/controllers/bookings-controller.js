@@ -40,8 +40,8 @@ Bento.Register.Controller('BookingsController', function(controller) {
     switch (action) {
       case 'start'    : return yield booking.start(id, this.auth.user);
       case 'ready'    : return yield booking.ready(id, this.auth.user);
-      case 'end'      : return yield booking.end(id, this.auth.user);
-      case 'complete' : return yield booking.complete(id, this.auth.user);
+      case 'end'      : return yield booking.end(id, this.auth.user, this.query);
+      case 'complete' : return yield booking.complete(id, this.auth.user, this.query);
       case 'close'    : return yield booking.close(id, this.auth.user);
       default         : {
         throw error.parse({
