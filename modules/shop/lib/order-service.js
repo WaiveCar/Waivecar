@@ -169,38 +169,31 @@ module.exports = class OrderService extends Service {
    * @return {Object}
    */
   static *authorize(payload, _user) {
-    let data = yield hooks.require('shop:store:authorize:before', payload, _user);
-    let user = yield this.getUser(data.userId);
+    let card = Card.findOne({ where : { userId : _user.id } });
 
-    this.hasAccess(user, _user);
-    this.verifyCurrency(data.currency);
-
-    // ### Validate Amount
-    // Checks if a authorized amount has been provided.
-
-    if (!data.amount) {
+    if (!card) {
       throw error.parse({
-        code    : `SHOP_AUTHORIZATION_AMOUNT`,
-        message : `The request does not provide the required amount to authorize.`
-      }, 400);
+        code    : 'SHOP_MISSING_CARD',
+        message : 'The user does not have a valid payment method.'
+      });
     }
 
     // ### Create Order
-
     let order = new Order({
       createdBy   : _user.id,
-      userId      : data.userId,
-      source      : data.source,
-      description : data.description,
-      currency    : data.currency,
-      amount      : data.amount
+      userId      : _user.id,
+      source      : card.id,
+      description : 'Pre booking authorization',
+      currency    : 'usd',
+      amount      : 100
     });
     yield order.save();
 
     // ### Charge
 
-    yield this.charge(order, user, false);
-    yield hooks.call('shop:store:authorize:after', order, data, _user);
+    let charge = yield this.charge(order, _user, false);
+    console.log('authorize charge: ', charge);
+    yield this.cancel(order, _user, charge);
 
     return order;
   }
@@ -343,7 +336,7 @@ module.exports = class OrderService extends Service {
    * @param  {Object}  order
    * @param  {Object}  user
    * @param  {Boolean} capture
-   * @return {Void}
+   * @return {Object} charge
    */
   static *charge(order, user, capture) {
     let service = this.getService(config.service, 'charges');
@@ -359,6 +352,23 @@ module.exports = class OrderService extends Service {
       service  : config.service,
       chargeId : charge.id,
       status   : capture === false ? 'authorized' : 'paid'
+    });
+
+    return charge;
+  }
+
+  /**
+   * Cancel pending payment
+   * @param {Object} order
+   * @param {Object} user
+   * @param {Object} charge
+   * @return {Void}
+   */
+  static *cancel(order, user, charge) {
+    let service = this.getService(config.service, 'charges');
+    yield service.refund(charge.id);
+    yield order.update({
+      status : 'refunded'
     });
   }
 

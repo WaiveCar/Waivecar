@@ -81,7 +81,7 @@ Route.post('/shop/orders', {
 Route.post('/shop/orders/authorize', {
   policy : 'isAuthenticated',
   uses   : 'Shop/OrdersController@authorize',
-  params : [ 'userId', 'source', 'currency' ]
+  params : [ ]
 });
 
 Route.post('/shop/orders/capture/:id', {

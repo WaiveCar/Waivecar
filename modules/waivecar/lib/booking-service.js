@@ -61,6 +61,16 @@ module.exports = class BookingService extends Service {
       yield this.hasBookingAccess(user);
     }
 
+    // ### Pre authorization payment
+    try {
+      yield OrderService.authorize(null, _user);
+    } catch (err) {
+      throw error.parse({
+        code    : 'BOOKING_AUTHORIZATION',
+        message : 'Unable to authorize payment. Please validate payment method.'
+      }, 400);
+    }
+
     // ### Add Driver
     // Add the driver to the car so no simultaneous requests can book this car.
     if (car.userId !== null) {
