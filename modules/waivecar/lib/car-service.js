@@ -87,7 +87,7 @@ module.exports = {
     }
     let device = yield this.getDevice(car.id, _user);
 
-    yield car.update(Object.assign(device, payload));
+    yield car.update(Object.assign(device || {}, payload));
     relay.emit('cars', {
       type : 'update',
       data : car.toJSON()
