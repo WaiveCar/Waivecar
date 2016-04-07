@@ -109,7 +109,7 @@ module.exports = class OrderService extends Service {
 
     if (minutesOver === 0) return;
     billableGroups = Math.ceil(minutesOver / 10);
-    amount = (billableGroups / 6 * 5.99) * 100;
+    amount = Math.round((billableGroups / 6 * 5.99) * 100);
 
     let card = yield Card.findOne({ where : { userId : user.id } });
     let cart = yield CartService.createTimeCart(minutesOver, amount, user);
