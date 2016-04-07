@@ -48,8 +48,15 @@ class HomeTemplate extends React.Component {
         { type: 'a',      to : 'mailto:advertise@waivecar.com', title : 'Advertise' },
         { type: 'link',   to : '/faq',                        title : 'FAQ' }
       ],
+      footerToggles : [],
       zone: 'driving'
     };
+
+    // I only care about this button iff I'm on mobile, defined here as under 1080 pixels
+    if(window.innerWidth < 1080) {
+      let title = ('desktop' in localStorage) ? 'Mobile' : 'Desktop';
+      this.state['footerToggles'].push({ type: 'click',  to : this.toggleSite,              title : title + ' Site' });
+    }
 
     this.handleWaypointEnter = this.handleWaypointEnter.bind(this);
 
@@ -78,6 +85,7 @@ class HomeTemplate extends React.Component {
     return this.state[items].map((n, i) => {
       switch (n.type) {
         case 'a'      : return <li key={ i }><a className="nav-item nav-link" href={ n.to }>{ n.title }</a></li>
+        case 'click'  : return <li key={ i }><Link className="nav-item nav-link" to="#" onClick={ n.to.bind(this) }>{ n.title }</Link></li>
         case 'link'   : return <li key={ i }><Link className="nav-item nav-link" to={ n.to }>{ n.title }</Link></li>
         case 'anchor' : return <li key={ i }><Anchor className="nav-item nav-link" href={ n.to }>{ n.title }</Anchor></li>
       }
@@ -420,7 +428,7 @@ class HomeTemplate extends React.Component {
               <ul className="text-center list-inline">
                 { this.renderNavItems(true) }
                 { this.renderNavItems('extraItems') }
-                <a onClick={ this.toggleSite.bind(this) }>Desktop Site</a>
+                { this.renderNavItems('footerToggles') }
               </ul>
             </div>
             <div className="col-md-3 col-xs-1">
