@@ -36,6 +36,13 @@ Bento.Register.Model('BookingLocation', 'sequelize', function(model, Sequelize) 
     }
   };
 
+  model.relations = [
+    'Booking',
+    function(Booking) {
+      this.belongsTo(Booking);
+    }
+  ];
+
   return model;
 
 });
