@@ -22,6 +22,10 @@ module.exports = class NotesService extends Service {
     payload.authorId = _user.id;
     let model = new Model(payload);
     yield model.save();
+
+    model = yield this.getNote(type, model.id);
+
+    model.relay('store', 'notes');
     return model;
   }
 
@@ -47,7 +51,7 @@ module.exports = class NotesService extends Service {
   static *update(type, id, payload, _user) {
     let model = yield this.getNote(type, id);
 
-    if (model.userId !== _user.id) {
+    if (model.userId !== _user.id && !_user.hasAccess('owner')) {
       throw error.parse({
         code    : 'NOTE_UNAUTHORIZED',
         message : 'Not authorized to update this note'
@@ -55,6 +59,10 @@ module.exports = class NotesService extends Service {
     }
 
     yield model.update({ content : payload.content });
+
+    model = yield this.getNote(type, model.id);
+
+    model.relay('update', 'notes', model);
 
     return model;
   }
@@ -69,7 +77,7 @@ module.exports = class NotesService extends Service {
   static *remove(type, id, _user) {
     let model = yield this.getNote(type, id);
 
-    if (model.userId !== _user.id) {
+    if (model.userId !== _user.id && !_user.hasAccess('owner')) {
       throw error.parse({
         code    : 'NOTE_UNAUTHORIZED',
         message : 'Not authorized to remove this note'
@@ -77,6 +85,7 @@ module.exports = class NotesService extends Service {
     }
 
     yield model.delete();
+    model.relay('delete', 'notes');
   }
 
   /**
@@ -155,8 +164,16 @@ module.exports = class NotesService extends Service {
    * @return {Object}
    */
   static *getNote(type, id) {
+    let relations = {
+      include : [
+        {
+          model : 'User',
+          as    : 'author'
+        }
+      ]
+    };
     let Model = this.getModel(type);
-    let model = yield Model.findById(id);
+    let model = yield Model.findById(id, relations);
     if (!model) {
       throw error.parse({
         code    : `NOTE_NOT_FOUND`,
