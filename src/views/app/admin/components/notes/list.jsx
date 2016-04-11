@@ -12,7 +12,6 @@ module.exports = class NotesList extends React.Component {
 
   constructor(...args) {
     super(...args);
-    this.state = { notes : [] };
 
     relay.subscribe(this, 'notes');
   }
@@ -26,13 +25,15 @@ module.exports = class NotesList extends React.Component {
     });
   }
 
-  renderNotes() {
-    return this.state.notes.map(note => {
+  renderNotes(notes) {
+    return notes.map(note => {
       return <Note key={ note.id } note={ note } type={ this.props.type } />;
     });
   }
 
   render() {
+    let bookingNotes = this.state.notes[this.props.type] || {};
+    let notes = bookingNotes[this.props.identifier] || [];
     return (
       <div className='box'>
         <h3>
@@ -41,8 +42,8 @@ module.exports = class NotesList extends React.Component {
         </h3>
         <div className='box-content'>
           <div className='container-fluid notes'>
-            { this.state.notes.length ?
-              this.renderNotes() :
+            { notes.length ?
+              this.renderNotes(notes) :
               <div className='row'>
                 <div className='col-sm-12'>
                   <em>No notes yet.</em>

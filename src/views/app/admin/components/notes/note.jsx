@@ -26,7 +26,7 @@ module.exports = class Note extends React.Component {
   render() {
     let note = this.props.note;
     let user = auth.user();
-    console.log(user);
+
     return (
       <div className='row note'>
         <div className='col-sm-3'>
