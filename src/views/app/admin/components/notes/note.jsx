@@ -26,6 +26,7 @@ module.exports = class Note extends React.Component {
   render() {
     let note = this.props.note;
     let user = auth.user();
+    console.log(user);
     return (
       <div className='row note'>
         <div className='col-sm-3'>
@@ -36,7 +37,7 @@ module.exports = class Note extends React.Component {
         <div className='col-sm-9'>
           { note.content }
         </div>
-        { user.id === note.authorId || user._roles.length >= 4 ?
+        { user.id === note.authorId || user.role.name === 'owner' || user.role.name === 'super' ?
           <button className='btn-link remove-note' onClick={ this.deleteNote }><i className="material-icons" role="true">close</i></button>
           : '' }
       </div>
