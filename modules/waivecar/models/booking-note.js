@@ -1,13 +1,12 @@
 'use strict';
 
-Bento.Register.Model('BookingLocation', 'sequelize', function(model, Sequelize) {
-
+Bento.Register.Model('BookingNote', 'sequelize', function(model, Sequelize) {
   /**
    * The identity of the table created in your database.
    * @property table
    * @type     String
    */
-  model.table = 'booking_locations';
+  model.table = 'booking_notes';
 
   /**
    * The sequelize schema definition of your model.
@@ -25,23 +24,20 @@ Bento.Register.Model('BookingLocation', 'sequelize', function(model, Sequelize) 
       }
     },
 
-    latitude : {
-      type      : Sequelize.DECIMAL(10, 8),
-      allowNull : false
+    authorId : {
+      type       : Sequelize.INTEGER,
+      allowNull  : false,
+      references : {
+        model : 'users',
+        key   : 'id'
+      }
     },
 
-    longitude : {
-      type      : Sequelize.DECIMAL(11, 8),
+    content : {
+      type      : Sequelize.STRING(250),
       allowNull : false
     }
   };
-
-  model.relations = [
-    'Booking',
-    function(Booking) {
-      this.belongsTo(Booking);
-    }
-  ];
 
   return model;
 
