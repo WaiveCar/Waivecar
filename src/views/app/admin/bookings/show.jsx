@@ -5,6 +5,7 @@ import BookingFees             from './fees';
 import BookingPayment          from './payment';
 import BookingDetails          from './details';
 import { snackbar }         from 'bento-web';
+import NotesList from '../components/notes/list';
 
 module.exports = class BookingsView extends React.Component {
 
@@ -154,6 +155,12 @@ module.exports = class BookingsView extends React.Component {
     }
   }
 
+  renderNotes(booking) {
+    return (
+      <NotesList type='booking' identifier={ booking.id }></NotesList>
+    );
+  }
+
   /**
    * Renders booking view.
    * @return {Object}
@@ -230,6 +237,7 @@ module.exports = class BookingsView extends React.Component {
             ? <BookingFees bookingId={ booking.id } userId={ booking.userId } cartId={ booking.cartId } />
             : ''
         }
+        { this.renderNotes(booking) }
       </div>
     );
   }

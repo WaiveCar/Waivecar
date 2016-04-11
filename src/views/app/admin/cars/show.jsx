@@ -4,10 +4,11 @@ import moment                from 'moment';
 import mixin                 from 'react-mixin';
 import { Link, History }           from 'react-router';
 import Switch                from 'react-toolbox/lib/switch';
-import { auth, relay, dom }  from 'bento';
+import { auth, relay, dom, api }  from 'bento';
 import { fields }            from 'bento-ui';
 import { Form, Button, Map, snackbar } from 'bento-web';
 import Service               from '../../lib/car-service';
+import NotesList from '../components/notes/list';
 
 let formFields = {
   photo : [],
@@ -322,6 +323,12 @@ class CarsShowView extends React.Component {
     );
   }
 
+  renderNotes(car) {
+    return (
+      <NotesList type='car' identifier={ car.id }></NotesList>
+    );
+  }
+
   renderLastUpdate(car) {
     let updated = moment(car.updatedAt).format('h:mm.ss YY-MM-DD');
 
@@ -345,6 +352,7 @@ class CarsShowView extends React.Component {
         { this.renderCarActions(car) }
         { this.renderCarMedia(car) }
         { this.renderCarIndicators(car) }
+        { this.renderNotes(car) }
         { this.renderLastUpdate(car) }
       </div>
     );

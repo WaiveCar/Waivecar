@@ -4,6 +4,7 @@ import React from 'react';
 
 import UserDetails from './user-details';
 import UserLicense from './user-license';
+import NotesList from '../components/notes/list';
 
 module.exports = class AdminUsersView extends React.Component {
   render() {
@@ -11,6 +12,8 @@ module.exports = class AdminUsersView extends React.Component {
       <div id="users">
         <UserDetails id={ this.props.params.id } />
         <UserLicense id={ this.props.params.id } />
+
+        <NotesList type='user' identifier={ this.props.params.id }></NotesList>
       </div>
     );
   }
