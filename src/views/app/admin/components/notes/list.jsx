@@ -26,6 +26,12 @@ module.exports = class NotesList extends React.Component {
     });
   }
 
+  renderNotes() {
+    return this.state.notes.map(note => {
+      return <Note key={ note.id } note={ note } type={ this.props.type } />;
+    });
+  }
+
   render() {
     return (
       <div className='box'>
@@ -35,9 +41,14 @@ module.exports = class NotesList extends React.Component {
         </h3>
         <div className='box-content'>
           <div className='container-fluid notes'>
-            { this.state.notes.map(note => {
-              return <Note key={ note.id } note={ note } type={ this.props.type } />;
-            }) }
+            { this.state.notes.length ?
+              this.renderNotes() :
+              <div className='row'>
+                <div className='col-sm-12'>
+                  <em>No notes yet.</em>
+                </div>
+              </div>
+            }
           </div>
           <AddNote type={ this.props.type } identifier={ this.props.identifier }/>
         </div>
