@@ -39,6 +39,20 @@ Bento.Register.Model('CarNote', 'sequelize', function(model, Sequelize) {
     }
   };
 
+  model.attributes = [
+    'car',
+    'author'
+  ];
+
+  model.relations = [
+    'User',
+    'Car',
+    function(User, Car) {
+      this.belongsTo(User, { as : 'author', foreignKey : 'authorId' });
+      this.belongsTo(Car, { as : 'car', foreignKey : 'carId' });
+    }
+  ];
+
   return model;
 
 });

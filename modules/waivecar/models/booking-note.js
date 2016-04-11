@@ -39,6 +39,20 @@ Bento.Register.Model('BookingNote', 'sequelize', function(model, Sequelize) {
     }
   };
 
+  model.attributes = [
+    'booking',
+    'author'
+  ];
+
+  model.relations = [
+    'User',
+    'Booking',
+    function(User, Booking) {
+      this.belongsTo(User, { as : 'author', foreignKey : 'authorId' });
+      this.belongsTo(Booking, { as : 'booking', foreignKey : 'bookingId' });
+    }
+  ];
+
   return model;
 
 });

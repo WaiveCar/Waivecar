@@ -84,7 +84,15 @@ module.exports = class NotesService extends Service {
    * @param {Number} bookingId
    */
   static *getBookingNotes(bookingId) {
-    return yield BookingNote.find({ where : { bookingId } });
+    return yield BookingNote.find({
+      where   : { bookingId },
+      include : [
+        {
+          model : 'User',
+          as    : 'author'
+        }
+      ]
+    });
   }
 
   /**
@@ -92,7 +100,15 @@ module.exports = class NotesService extends Service {
    * @param {String} carId
    */
   static *getCarNotes(carId) {
-    return yield CarNote.find({ where : { carId } });
+    return yield CarNote.find({
+      where   : { carId },
+      include : [
+        {
+          model : 'User',
+          as    : 'author'
+        }
+      ]
+    });
   }
 
   /**
@@ -100,7 +116,15 @@ module.exports = class NotesService extends Service {
    * @param {String} userId
    */
   static *getUserNotes(userId) {
-    return yield UserNote.find({ where : { userId } });
+    return yield UserNote.find({
+      where   : { userId },
+      include : [
+        {
+          model : 'User',
+          as    : 'author'
+        }
+      ]
+    });
   }
 
   /**
