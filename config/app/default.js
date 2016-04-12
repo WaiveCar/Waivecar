@@ -19,7 +19,6 @@ module.exports = {
     version     : '0.0.1',
     environment : 'development',
     uri         : 'http://localhost',
-    port        : 8080,
     log         : {
       silly   : false,
       debug   : false,
