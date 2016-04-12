@@ -85,7 +85,7 @@ module.exports = class BookingFeesView extends React.Component {
               <strong>Total</strong>
             </div>
             <div className="col-xs-6 text-right">
-              ${ payment.amount / 100 }
+              ${ (payment.amount / 100).toFixed(2) }
             </div>
           </div>
         </div>
