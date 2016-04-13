@@ -28,7 +28,7 @@ module.exports = angular.module('app').factory('User', [
       initPasswordReset: {
         method: 'POST',
         isArray: false,
-        url: $utils.getCustomRoute('users/password'),
+        url: $utils.getCustomRoute('reset-password/token'),
         transformRequest: function(data){
           data.resetUrl = sprintf('%(protocol)s://%(host)s%(port)s/#/auth/reset-password', {
             protocol: $location.protocol(),
@@ -41,7 +41,7 @@ module.exports = angular.module('app').factory('User', [
       submitNewPassword: {
         method: 'PUT',
         isArray: false,
-        url: $utils.getCustomRoute('users/password')
+        url: $utils.getCustomRoute('reset-password')
       },
       verify: {
         method: 'POST',
