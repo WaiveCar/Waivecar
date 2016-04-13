@@ -76,7 +76,7 @@ class ResetPasswordView extends React.Component {
       this.setState({
         step  : 2
       });
-    }.bind(this));
+    });
   }
 
   renderTokenInput() {
