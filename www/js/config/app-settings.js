@@ -6,9 +6,12 @@ var appSettings = angular.module('app.settings');
 module.exports = appSettings;
 
 var defaults = {
-  baseUrl: 'https://api-waivecar-dev.cleverbuild.biz',
+  baseUrl: 'http://localhost:3000',
   skobbler: {
     key: '8698d318586c58a1f8ca1e88ecfac299',
+  },
+  zendrive: {
+    key: 'vqt01cZ58eUQHtdqkZOzaATWZXFjnV2p'
   },
   facebook: {
     clientId: '1022704731082512'
@@ -40,6 +43,7 @@ appSettings.provider('$settings', [
           },
           facebook: config.facebook,
           skobbler: config.skobbler,
+          zendrive: config.zendrive,
           phone: '855-WAIVE55'
         };
       }

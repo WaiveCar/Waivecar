@@ -87,4 +87,5 @@
     <plugin name="cordova-plugin-whitelist" spec="~1.2.0" />
     <plugin name="cordova-plugin-inappbrowser" spec="~1.1.1" />
     <plugin name="org.pbernasconi.progressindicator" spec="~1.1.0" />
+    <plugin name="com.zendrive.phonegap.sdk" spec="https://github.com/zendrive/zendrive-sdk-phonegap-plugin" />
 </widget>

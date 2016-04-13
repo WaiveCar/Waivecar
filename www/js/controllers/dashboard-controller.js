@@ -6,6 +6,7 @@ var _ = require('lodash');
 require('../services/progress-service');
 require('../services/geofencing-service');
 require('../services/notification-service');
+require('../services/zendrive-service');
 
 function DashboardController ($scope, $rootScope, $injector) {
   var $q = $injector.get('$q');
@@ -18,6 +19,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   var $timeout = $injector.get('$timeout');
   var $ionicLoading = $injector.get('$ionicLoading');
   var GeofencingService = $injector.get('GeofencingService');
+  var ZendriveService = $injector.get('ZendriveService');
   var homebase = $injector.get('homebase');
 
   // $data is used to interact with models, never directly. If direct is required, $data should be refreshed.
@@ -52,7 +54,18 @@ function DashboardController ($scope, $rootScope, $injector) {
       return;
     }
     this.timeLeft = moment(booking.createdAt).add(120, 'm').toNow(true);
+    startZendrive();
   }.bind(this));
+
+  function startZendrive() {
+    return $data.resources.users.me().$promise
+      .then(function(me) {
+        ZendriveService.start(me, $data.active.bookings.id, $data.active.cars.id);
+      })
+      .catch(function() {
+        console.log('failed to load zendrive');
+      });
+  }
 
   function openPopover(item) {
     $timeout(function () {
@@ -135,7 +148,7 @@ function DashboardController ($scope, $rootScope, $injector) {
     }
 
     ctrl.ending = true;
-    $ride.isChargeOkay(carId).then(function(okay) {
+    return $ride.isChargeOkay(carId).then(function(okay) {
       ctrl.ending = false;
       if (okay || $distance(homebase) < 0.3) {
         return GeofencingService.insideBoundary();
@@ -159,7 +172,8 @@ function DashboardController ($scope, $rootScope, $injector) {
             }
             $ride.setLocation('homebase');
             $ride.processEndRide();
-            $state.go('end-ride-location', {id: bookingId});
+            ZendriveService.stop();
+            return $state.go('end-ride-location', {id: bookingId});
           });
       } else {
         // Not inside geofence -> show error
