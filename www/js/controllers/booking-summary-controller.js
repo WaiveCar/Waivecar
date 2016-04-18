@@ -20,13 +20,11 @@ module.exports = angular.module('app.controllers').controller('BookingSummaryCon
     ctrl.init = function () {
       $data.resources.bookings.get({ id: $state.params.id }).$promise.then(function(booking) {
         ctrl.booking = booking;
-        console.log(booking.details);
+
         // Calc miles from coordinates in booking details.
         ctrl.start = _.find(booking.details, { type: 'start' });
         ctrl.end = _.find(booking.details, { type: 'end' });
 
-        console.log('start: ', ctrl.start);
-        console.log('end: ', ctrl.end);
         ctrl.distance = ctrl.end.mileage - ctrl.start.mileage + ' miles';
         ctrl.duration = moment(ctrl.start.createdAt).to(ctrl.end.createdAt, true);
 
