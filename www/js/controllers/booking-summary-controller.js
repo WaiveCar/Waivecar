@@ -1,6 +1,7 @@
 'use strict';
 var angular = require('angular');
 var moment = require('moment');
+var _ = require('lodash');
 
 require('angular-ui-router');
 require('../services/auth-service');
@@ -21,8 +22,11 @@ module.exports = angular.module('app.controllers').controller('BookingSummaryCon
         ctrl.booking = booking;
         console.log(booking.details);
         // Calc miles from coordinates in booking details.
-        ctrl.start = booking.details[0];
-        ctrl.end = booking.details[0];
+        ctrl.start = _.find(booking.details, { type: 'start' });
+        ctrl.end = _.find(booking.details, { type: 'end' });
+
+        console.log('start: ', ctrl.start);
+        console.log('end: ', ctrl.end);
         ctrl.distance = ctrl.end.mileage - ctrl.start.mileage + ' miles';
         ctrl.duration = moment(ctrl.start.createdAt).to(ctrl.end.createdAt, true);
 

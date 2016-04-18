@@ -5,14 +5,12 @@ var angular = require('angular');
 require('ngCordova');
 module.exports = angular.module('app.services').factory('ZendriveService', [
   '$settings',
-  // '$cordovaZendrive',
-  function($settings, $cordovaZendrive) {
-    // var Zendrive = $cordovaZendrive;
+  function($settings) {
     function startDrive() {}
     function endDrive() {}
     function locationDenied() {}
 
-    function start(user, bookingId, carId) {
+    function start(user) {
       try {
         var config = new Zendrive.ZendriveConfiguration($settings.zendrive.key, '' + user.id);
 
