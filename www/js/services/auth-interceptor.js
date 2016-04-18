@@ -19,8 +19,9 @@ module.exports = angular.module('app.services').factory('AuthInterceptor', [
 
         var isLoginRequest = httpConfig.url === $settings.uri.auth.login;
         var isSkobblerRequest = httpConfig.url.indexOf($settings.skobbler.key) !== -1;
+        var isOpenMapRequest = /openstreetmap/.test(httpConfig.url);
 
-        if (token && !isLoginRequest && !isSkobblerRequest) {
+        if (token && !isLoginRequest && !isSkobblerRequest && !isOpenMapRequest) {
           httpConfig.headers.Authorization = token;
         }
 
@@ -33,7 +34,7 @@ module.exports = angular.module('app.services').factory('AuthInterceptor', [
       },
 
       responseError: function (rejection) {
-        if (_.contains([401, 403], rejection.status)) {
+        if (_.contains([401, 403], rejection.status) && !/openstreetmap/.test(rejection.config.url)) {
           $rootScope.$emit('authError');
         }
 

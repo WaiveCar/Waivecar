@@ -39,6 +39,7 @@ function CarsMapController ($rootScope, $scope, $state, $injector, $data, cars, 
     }
     this.all = prepareCars(value);
     this.featured = featured(value);
+    return false;
   }.bind(this), true);
 
   $scope.$on('$destroy', function () {

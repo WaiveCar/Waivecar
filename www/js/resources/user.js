@@ -30,7 +30,7 @@ module.exports = angular.module('app').factory('User', [
         isArray: false,
         url: $utils.getCustomRoute('reset-password/token'),
         transformRequest: function(data){
-          data.resetUrl = sprintf('%(protocol)s://%(host)s%(port)s/#/auth/reset-password', {
+          data.resetUrl = sprintf('%(protocol)s://%(host)s%(port)s/reset-password', {
             protocol: $location.protocol(),
             host: $location.host(),
             port: $location.port() ? ':' + $location.port() : ''
