@@ -90,8 +90,12 @@ templates.register('app', {
         path      : '/licenses',
         component : require('../../views/app/admin/licenses'),
         onEnter   : policies.isAdministrator
+      },
+      {
+        path      : '/logs',
+        component : require('../../views/app/admin/logs'),
+        onEnter   : policies.isAdministrator
       }
-
     ].concat(views.getRoutes('app')));
   }
 });
@@ -183,6 +187,14 @@ templates.register('app', {
     parent    : null,
     locations : [ 'sidebar' ],
     order     : 4
+  },
+  {
+    title     : 'Audit Log',
+    icon      : 'picture_in_picture',
+    path      : '/logs',
+    parent    : null,
+    locations : [ 'sidebar' ],
+    order     : 5
   }
 
 ].forEach(val => menu.add(val));
