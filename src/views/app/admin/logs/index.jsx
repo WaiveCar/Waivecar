@@ -52,7 +52,7 @@ class LogIndex extends React.Component {
 
   /**
    * Turn log data into sentence
-   * @param {Object} log 
+   * @param {Object} log
    * @return {Object}
    */
   renderAction(log) {
@@ -160,6 +160,7 @@ class LogIndex extends React.Component {
                 { this.table.index() }
               </tbody>
             </table>
+            { !this.state.logs.length ? <h3 style={{ textAlign : 'center', marginTop : 20 }}><em>No logs to display</em></h3> : '' }
             {
               this.state.more ?
                 <div className="text-center" style={{ marginTop : 20 }}>
