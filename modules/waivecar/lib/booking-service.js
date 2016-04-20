@@ -11,6 +11,8 @@ let relay        = Bento.Relay;
 let error        = Bento.Error;
 let config       = Bento.config.waivecar;
 let OrderService = Bento.module('shop/lib/order-service');
+let LogService   = require('./log-service');
+let Actions      = LogService.getActions();
 
 // ### Models
 
@@ -108,6 +110,7 @@ module.exports = class BookingService extends Service {
 
     yield notify.sendTextMessage(user, `Hi There! Your WaiveCar reservation has been confirmed. You'll have 15 minutes to get to your WaiveCar before your reservation expires. Let us know if you have any questions.`);
     yield notify.notifyAdmins(`${ _user.name() } created a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`, [ 'slack' ], { channel : '#reservations' });
+    yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.CREATE_BOOKING }, _user);
 
     // ### Return Booking
 
@@ -448,6 +451,7 @@ module.exports = class BookingService extends Service {
     // ### Notify
 
     yield notify.notifyAdmins(`${ _user.name() } ended a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`, [ 'slack' ], { channel : '#reservations' });
+    yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.END_BOOKING }, _user);
 
     // ### Relay Update
 
@@ -519,6 +523,7 @@ module.exports = class BookingService extends Service {
     yield notify.slack({
       text : `${ user.name() } completed a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }> | https://www.waivecar.com/bookings/${ booking.id }`
     }, { channel : '#reservations' });
+    yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
 
     // ### Relay
 

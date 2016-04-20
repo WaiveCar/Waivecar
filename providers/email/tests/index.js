@@ -9,13 +9,13 @@ let mockEmail    = {
     name    : 'user',
     company : 'Acme'
   },
-  from    : 'sender@example.com',
+  from    : 'sender@waivecar.com',
   to      : 'receiver@example.com',
   subject : 'Hello',
   html    : '<p>How are you?</p>'
 };
 
-describe('Email Service', function() {
+describe.only('Email Service', function() {
   this.timeout(30000);
 
   if (config && config.transport && config.templateFolder && config.transportName === 'mandrill') {
