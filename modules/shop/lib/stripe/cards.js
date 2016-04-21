@@ -25,9 +25,11 @@ module.exports = class StripeCards {
 
     let result = yield new Promise((resolve, reject) => {
       this.stripe.customers.createCard(user.stripeId, { card : changeCase.objectKeys('toSnake', card) }, (err, res) => {
-        if (err) {
-          return reject(err);
-        }
+        if (err) return reject(err);
+        if (res.funding === 'prepaid') return reject({
+          code    : 'PREPAID_CARD',
+          message : 'Prepaid cards are not allowed.'
+        });
         resolve(res);
       });
     });
