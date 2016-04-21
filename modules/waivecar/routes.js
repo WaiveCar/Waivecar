@@ -65,3 +65,6 @@ Route.get('/users/:id/notes',   [ 'isAuthenticated', 'NotesController@getUserNot
 // ### Log Handlers
 Route.post('/audit/log', [ 'isAuthenticated', 'isAdmin', 'LogController@create' ]);
 Route.get('/audit/log', [ 'isAuthenticated', 'isAdmin', 'LogController@index' ]);
+
+// ### Geocoding Handlers
+Route.get('/geocoding', [ 'isAuthenticated', 'GeocodingController@show' ]);
