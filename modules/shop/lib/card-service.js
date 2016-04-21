@@ -23,7 +23,17 @@ module.exports = class Cards extends Service {
 
     this.hasAccess(user, _user);
 
-    return yield service.create(user, data.card);
+    try {
+      let card = yield service.create(user, data.card);
+      return card;
+    } catch(err) {
+      if (err.code === 'PREPAID_CARD') {
+        throw error.parse({
+          code    : 'PREPAID_CARD',
+          message : 'Prepaid cards are not allowed.'
+        }, 400);
+      }
+    }
   }
 
   /**
