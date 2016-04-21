@@ -60,7 +60,17 @@ Bento.Register.Model('Shop/Card', 'sequelize', (model, Sequelize) => {
 
   };
 
+  model.attributes = [
+    'user'
+  ];
+
+  model.relations = [
+    'User',
+    function(User, Booking) {
+      this.belongsTo(User, { as : 'user', foreignKey : 'userId' });
+    }
+  ];
+
   return model;
 
 });
-
