@@ -13,6 +13,7 @@ let config       = Bento.config.waivecar;
 let OrderService = Bento.module('shop/lib/order-service');
 let LogService   = require('./log-service');
 let Actions      = LogService.getActions();
+let moment       = require('moment');
 
 // ### Models
 
@@ -62,6 +63,8 @@ module.exports = class BookingService extends Service {
     } else {
       yield this.hasBookingAccess(user);
     }
+
+    yield this.recentBooking(user, car);
 
     // ### Pre authorization payment
     try {
@@ -684,6 +687,34 @@ module.exports = class BookingService extends Service {
     });
     let body = JSON.parse(res.body);
     return body.results.length ? body.results[0].formatted_address : null;
+  }
+
+  /**
+   * Determines if user has booked car in last 10 minutes
+   * @param {Object} user
+   * @param {Object} car
+   * @return {Void}
+   */
+  static *recentBooking(user, car) {
+    let booking = yield Booking.findOne({
+      where : {
+        userId : user.id,
+        carId  : car.id
+      },
+      order : [
+        [ 'created_at', 'DESC' ]
+      ]
+    });
+
+    if (booking) {
+      let minutesOld = moment().diff(booking.createdAt, 'minutes');
+      if (minutesOld <= 10) {
+        throw error.parse({
+          code    : 'RECENT_BOOKING',
+          message : 'Sorry! You need to wait 10 minutes to rebook the same WaiveCar. Sharing is caring!'
+        }, 400);
+      }
+    }
   }
 
 };

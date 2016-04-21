@@ -192,7 +192,6 @@ module.exports = class OrderService extends Service {
     // ### Charge
 
     let charge = yield this.charge(order, _user, false);
-    console.log('authorize charge: ', charge);
     yield this.cancel(order, _user, charge);
 
     return order;
