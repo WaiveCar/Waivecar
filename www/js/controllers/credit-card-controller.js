@@ -75,7 +75,7 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
           $modal('result', {
             icon: 'x-icon',
             title: 'Error adding your credit card',
-            message: err.message,
+            message: err.data.message,
             actions: [{
               className: 'button-balanced',
               text: 'Retry',

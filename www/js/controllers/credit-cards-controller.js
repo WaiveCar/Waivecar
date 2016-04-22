@@ -32,7 +32,7 @@ module.exports = angular.module('app.controllers').controller('CreditCardsContro
         return false;
       }
 
-      $data.resources.Card.query().$promise
+      $data.resources.Card.query({ userId: $auth.me.id }).$promise
         .then(function (cards) {
           $scope.cards = cards;
         })
