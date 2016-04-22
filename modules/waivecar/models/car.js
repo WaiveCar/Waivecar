@@ -230,6 +230,17 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
   };
 
+  model.attributes = [
+    'user'
+  ];
+
+  model.relations = [
+    'User',
+    function(User) {
+      this.belongsTo(User, { as : 'user', foreignKey : 'userId' });
+    }
+  ];
+
   return model;
 
 });

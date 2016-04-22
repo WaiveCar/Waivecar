@@ -65,7 +65,14 @@ module.exports = {
    * @return {Object}
    */
   *show(id, _user) {
-    return yield Car.findById(id);
+    return yield Car.findById(id, {
+      include : [
+        {
+          model : 'User',
+          as    : 'user'
+        }
+      ]
+    });
   },
 
   /**
