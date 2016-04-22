@@ -4,7 +4,8 @@ relay.resource('notes', function (state = defaultState(), action) {
   let map = divine(action.data);
   switch (action.type) {
     case 'index' : {
-      state[map.type][map.id] = action.data;
+      if (!map) state = defaultState();
+      else state[map.type][map.id] = action.data;
       return state;
     }
     case 'store' : {
@@ -46,8 +47,8 @@ relay.resource('notes', function (state = defaultState(), action) {
  * @return {Object}
  */
 function divine(data) {
-  if (!data) return {};
-  if (Array.isArray(data)) data = data[0] || {};
+  if (Array.isArray(data)) data = data[0];
+  if (!data) return;
   let map = {};
   if (data.bookingId) {
     map.type = 'booking';
