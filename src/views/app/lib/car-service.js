@@ -97,8 +97,9 @@ module.exports = class Car extends Service {
   }
 
   getBooking(car, cb) {
-    api.get(`/bookings?carId=${ car.id }&status=started&details=true`, (err, bookings) => {
-      car.booking = bookings[0];
+    api.get(`/bookings?carId=${ car.id }&details=true&order=created_at,DESC&limit=1`, (err, bookings) => {
+      let booking = bookings[0] || {};
+      if (booking.status === 'reserved' || booking.status === 'started') car.booking = booking;
       this.updateCarState(car);
       if (cb) cb();
     });

@@ -153,7 +153,7 @@ class CarsShowView extends React.Component {
                   <li className="list-group-item">
                     <span className="pull-right">{ this.renderBoolean(car.isAvailable) }</span>
                     Available
-                    { !car.isAvailable && <span className="user-link">&nbsp;<em>allocated to user { car.userId }</em></span> }
+                    { !car.isAvailable && <span className="user-link">&nbsp;<em>allocated to { car.user ? `${ car.user.firstName } ${ car.user.lastName }` : `user ${ car.userId }` }</em></span> }
                   </li>
                   <li className="list-group-item">
                     <span className="pull-right">{ car.totalMileage }</span>
