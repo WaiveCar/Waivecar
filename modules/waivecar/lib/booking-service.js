@@ -705,29 +705,30 @@ module.exports = class BookingService extends Service {
         [ 'created_at', 'DESC' ]
       ]
     });
+
+    if (!booking) return;
+
     let minutesOld = moment().diff(booking.createdAt, 'minutes');
     let minTime = 10;
 
-    if (booking) {
-      switch (booking.status) {
-      case 'cancelled':
-        minutesOld = moment().diff(booking.createdAt, 'minutes');
-        minTime = 15;
-        break;
-      case 'ended':
-      case 'completed':
-      case 'closed':
-        minutesOld = moment().diff(booking.updatedAt, 'minutes');
-        minTime = 10;
+    switch (booking.status) {
+    case 'cancelled':
+      minutesOld = moment().diff(booking.createdAt, 'minutes');
+      minTime = 15;
       break;
-      }
+    case 'ended':
+    case 'completed':
+    case 'closed':
+      minutesOld = moment().diff(booking.updatedAt, 'minutes');
+      minTime = 10;
+    break;
+    }
 
-      if (minutesOld <= minTime) {
-        throw error.parse({
-          code    : 'RECENT_BOOKING',
-          message : 'Sorry! You need to wait 10 minutes to rebook the same WaiveCar. Sharing is caring!'
-        }, 400);
-      }
+    if (minutesOld <= minTime) {
+      throw error.parse({
+        code    : 'RECENT_BOOKING',
+        message : 'Sorry! You need to wait 10 minutes to rebook the same WaiveCar. Sharing is caring!'
+      }, 400);
     }
   }
 
