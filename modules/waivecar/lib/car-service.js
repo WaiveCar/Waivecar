@@ -125,7 +125,7 @@ module.exports = {
       data : model.toJSON()
     });
 
-    yield LogService.create({ carId : id, action : isAvailable ? Actions.MAKE_CAR_AVAILABLE : Actions.MAKE_CAR_UNAVAILABLE }, _user);
+    if (_user) yield LogService.create({ carId : id, action : isAvailable ? Actions.MAKE_CAR_AVAILABLE : Actions.MAKE_CAR_UNAVAILABLE }, _user);
 
     return model;
   },
@@ -332,22 +332,22 @@ module.exports = {
    */
 
   *unlockCar(id, _user) {
-    yield LogService.create({ carId : id, action : Actions.UNLOCK_CAR }, _user);
+    if (_user) yield LogService.create({ carId : id, action : Actions.UNLOCK_CAR }, _user);
     return yield this.executeCommand(id, 'central_lock', 'unlock', _user);
   },
 
   *lockCar(id, _user) {
-    yield LogService.create({ carId : id, action : Actions.LOCK_CAR }, _user);
+    if (_user) yield LogService.create({ carId : id, action : Actions.LOCK_CAR }, _user);
     return yield this.executeCommand(id, 'central_lock', 'lock', _user);
   },
 
   *unlockImmobilzer(id, _user) {
-    yield LogService.create({ carId : id, action : Actions.UNIMMOBILIZE_CAR }, _user);
+    if (_user) yield LogService.create({ carId : id, action : Actions.UNIMMOBILIZE_CAR }, _user);
     return yield this.executeCommand(id, 'immobilizer', 'unlock', _user);
   },
 
   *lockImmobilzer(id, _user) {
-    yield LogService.create({ carId : id, action : Actions.IMMOBILIZE_CAR }, _user);
+    if (_user) yield LogService.create({ carId : id, action : Actions.IMMOBILIZE_CAR }, _user);
     return yield this.executeCommand(id, 'immobilizer', 'lock', _user);
   },
 
@@ -369,8 +369,8 @@ module.exports = {
       method : 'PATCH'
     }, payload);
     let updatedCar = this.transformDeviceToCar(id, status);
-    yield LogService.create({ carId : id, action : Actions.IMMOBILIZE_CAR }, _user);
-    yield LogService.create({ carId : id, action : Actions.LOCK_CAR }, _user);
+    if (_user) yield LogService.create({ carId : id, action : Actions.IMMOBILIZE_CAR }, _user);
+    if (_user) yield LogService.create({ carId : id, action : Actions.LOCK_CAR }, _user);
     return yield this.syncUpdate(id, updatedCar, existingCar, _user);
   },
 
