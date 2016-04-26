@@ -9,6 +9,7 @@ let queue        = Bento.provider('queue');
 let queryParser  = Bento.provider('sequelize/helpers').query;
 let relay        = Bento.Relay;
 let error        = Bento.Error;
+let log          = Bento.Log;
 let config       = Bento.config.waivecar;
 let OrderService = Bento.module('shop/lib/order-service');
 let LogService   = require('./log-service');
@@ -389,7 +390,12 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
-    Object.assign(car, yield cars.getDevice(car.id, _user));
+    try {
+      Object.assign(car, yield cars.getDevice(car.id, _user));
+    } catch (err) {
+      log.debug('Failed to fetch car information when ending booking');
+      if (isAdmin) warnings.push('car is unreachable');
+    }
 
     if (car.isIgnitionOn) {
       if (isAdmin) {
@@ -419,7 +425,7 @@ module.exports = class BookingService extends Service {
 
     if (isAdmin && warnings.length && !query.force) {
       throw error.parse({
-        code    : `BOOKING_END_IMMOBILIZER`,
+        code    : `BOOKING_END`,
         message : `The booking can't be ended because ${ warnings.join(' and ')}.`
       }, 400);
     }
