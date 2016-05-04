@@ -356,8 +356,8 @@ module.exports = [
     })
     .state('end-ride', {
       url: '/bookings/:id/end-ride',
-      templateUrl: '/templates/bookings/end-ride.html',
-      controller: 'EndRideController as ctrl',
+      templateUrl: '/templates/bookings/complete-ride.html',
+      controller: 'CompleteRideController as ctrl',
       data: {
         auth: true
       }

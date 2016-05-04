@@ -188,7 +188,7 @@ module.exports = angular.module('app.services').factory('$ride', [
         $interval.cancel(this.checkForLock);
         this.checkForLock = null;
       }
-      $data.resources.bookings.complete({ id: id }).$promise
+      return $data.resources.bookings.complete({ id: id }).$promise
       .then(function() {
         $ionicLoading.hide();
         $data.fetch('bookings');

@@ -53,18 +53,6 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       return $state.go('end-ride', { id: $ride.state.booking.id });
     };
 
-    this.completeRide = function () {
-      var car = $data.active.cars;
-
-      if (car == null) {
-        return null;
-      }
-      if (!car.isKeySecure || car.isIgnitionOn) {
-        return null;
-      }
-      return $ride.processCompleteRide();
-    };
-
     this.init = function () {
       var rideServiceReady = $scope.$watch('service.isInitialized', function(isInitialized) {
         console.log('[end-ride] Service initialized: %s', isInitialized);

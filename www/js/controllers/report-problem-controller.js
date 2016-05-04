@@ -55,7 +55,7 @@ function ReportProblemController ($injector, $stateParams) {
     $modal('result', {
       icon: 'check-icon',
       title: 'Success!',
-      message: 'If the problem is preventing you for driving call us at ' + $settings.phone,
+      message: 'If the problem is preventing you from driving call us at ' + $settings.phone,
       actions: [{
         className: 'button-balanced',
         text: 'Continue',
