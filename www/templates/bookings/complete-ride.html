@@ -144,6 +144,7 @@
 
             <div ng-if="ctrl.dirty || ctrl.damage || ctrl.tickets">
               <button type="button" class="button button-block button-balanced"
+                ng-disabled="ctrl.data.cars.isIgnitionOn || !ctrl.data.cars.isKeySecure"
                 ng-click="ctrl.reportProblem()">Continue</button>
             </div>
             <div ng-if="!(ctrl.dirty || ctrl.damage || ctrl.tickets)">
