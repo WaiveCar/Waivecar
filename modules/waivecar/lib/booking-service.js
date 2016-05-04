@@ -313,7 +313,7 @@ module.exports = class BookingService extends Service {
     // ### Relay Update
 
     car.relay('update');
-    yield this.relay('update', id, _user);
+    yield this.relay('update', booking, _user);
   }
 
   /**
@@ -455,7 +455,7 @@ module.exports = class BookingService extends Service {
     yield booking.end();
 
     // ### Handle auto charge for time
-    yield this.handleTimeCharge(booking, user);
+    if (!isAdmin) yield this.handleTimeCharge(booking, user);
 
     // ### Notify
 
@@ -465,7 +465,7 @@ module.exports = class BookingService extends Service {
     // ### Relay Update
 
     car.relay('update');
-    yield this.relay('update', id, _user);
+    yield this.relay('update', booking, _user);
   }
 
   /**
@@ -537,7 +537,7 @@ module.exports = class BookingService extends Service {
     // ### Relay
 
     car.relay('update');
-    yield this.relay('update', id, _user);
+    yield this.relay('update', booking, _user);
   }
 
   /**
@@ -549,7 +549,7 @@ module.exports = class BookingService extends Service {
   static *close(id, _user) {
     let booking = yield this.getBooking(id);
     yield booking.close();
-    yield this.relay('update', booking.id, _user);
+    yield this.relay('update', booking, _user);
   }
 
   /*
@@ -649,12 +649,12 @@ module.exports = class BookingService extends Service {
 
   // ### HELPERS
 
-  static *relay(type, id, _user) {
+  static *relay(type, booking, _user) {
     let payload = {
       type : type,
-      data : yield this.show(id, _user)
+      data : yield this.show(booking.id, _user)
     };
-    relay.user(payload.userId, 'bookings', payload);
+    relay.user(booking.userId, 'bookings', payload);
     relay.admin('bookings', payload);
   }
 
