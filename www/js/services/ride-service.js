@@ -31,6 +31,7 @@ module.exports = angular.module('app.services').factory('$ride', [
         level              : null,
         spot               : null
       },
+      parkingDetails : {},
       location : {
         chargingStation : { isVisible : true, confirmed : false, title : 'Charging Station' },
         homebase        : { isVisible : true, confirmed : false, title : 'WaiveCar Home Lot' },
@@ -179,6 +180,10 @@ module.exports = angular.module('app.services').factory('$ride', [
         });
     };
 
+    service.setParkingDetails = function(details) {
+      service.state.parkingDetails = details;
+    };
+
     service.processCompleteRide = function() {
       $ionicLoading.show({
         template: '<div class="circle-loader"><span>Loading</span></div>'
@@ -188,7 +193,7 @@ module.exports = angular.module('app.services').factory('$ride', [
         $interval.cancel(this.checkForLock);
         this.checkForLock = null;
       }
-      return $data.resources.bookings.complete({ id: id }).$promise
+      return $data.resources.bookings.complete({ id: id, data: service.state.parkingDetails }).$promise
       .then(function() {
         $ionicLoading.hide();
         $data.fetch('bookings');

@@ -131,8 +131,24 @@
 }
 
 .parking-location {
-  .button-bar .button-dark {
+  .button-dark {
     background-color: #444;
+    color: #fff;
+  }
+
+  .add-image {
+    width: 45px;
+    height: 45px;
+  }
+
+  .street-sign-image {
+    width: 45px;
+    height: 45px;
+    margin-right: 15px;
+    display: flex;
+    background-size: cover;
+    align-items: center;
+    justify-content: center;
   }
 
   .small-input {

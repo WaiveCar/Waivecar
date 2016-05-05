@@ -6,12 +6,16 @@ var moment = require('moment');
 module.exports = angular.module('app.controllers').controller('ParkingLocationController', [
   '$rootScope',
   '$scope',
+  '$settings',
+  '$window',
   '$state',
+  '$stateParams',
   '$ride',
   '$geocoding',
   '$ionicLoading',
   '$modal',
-  function($rootScope, $scope, $state, $ride, $geocoding, $ionicLoading, $modal) {
+  '$uploadImage',
+  function($rootScope, $scope, $settings, $window, $state, $stateParams, $ride, $geocoding, $ionicLoading, $modal, $uploadImage) {
     $scope.service = $ride;
     // Setup scope
     var ctrl = this;
@@ -28,13 +32,17 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
       lotOvernightRest: false
     };
     ctrl.street = {
-
+      streetSignImage: null,
+      streetHours: 0,
+      streetMinutes: 0,
+      streetOvernightRest: false
     };
 
     // Attach methods
     ctrl.toggleType = toggleType;
     ctrl.geocode = geocode;
     ctrl.submit = submit;
+    ctrl.addPicture = addPicture;
     ctrl.init = init;
 
     // Kickoff
@@ -88,17 +96,65 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
         });
     }
 
+    /**
+     * Uploads image to server for street sign
+     * @returns {Void} null
+     */
+    function addPicture () {
+      $uploadImage({
+        endpoint: '/files?bookingId=' + $stateParams.id,
+        filename: 'problem_' + $stateParams.id + '_' + Date.now() + '.jpg',
+      })
+      .then(function (result) {
+        if (result && Array.isArray(result)) result = result[0];
+
+        result.style = {
+          'background-image': 'url(' + $settings.uri.api + '/file/' + result.id + ')'
+        };
+        ctrl.street.streetSignImage = result;
+      })
+      .catch(function (err) {
+        var message = err.message;
+        if (err instanceof $window.FileTransferError) {
+          if (err.body) {
+            var error = angular.fromJson(err.body);
+            if (error.message) {
+              message = error.message;
+            }
+          }
+        }
+        submitFailure(message);
+      });
+    };
+
+    /**
+     * Submits payload
+     * @returns {Void} null
+     */
     function submit() {
+      var payload;
+
       // Check which type we are submitting
       if (ctrl.type === 'lot') {
         if (ctrl.lot.lotHours < 3 && !ctrl.lot.lotFreePeriod) return submitFailure('You can\'t return your WaiveCar here. The spot needs to be valid for at least 3 hours.');
-        if (moment().hours() < 21 && ctrl.lot.lotOvernightRest) return submitFailure('You can\'t return your WaiveCar here. If the car is ticketed or towed, you\'ll be responsible for the fees.');
+        if (moment().hours() >= 21 && ctrl.lot.lotOvernightRest) return submitFailure('You can\'t return your WaiveCar here. If the car is ticketed or towed, you\'ll be responsible for the fees.');
+        payload = ctrl.lot;
       } else if (ctrl.type === 'street') {
-
+        if (ctrl.street.streetHours < 3) return submitFailure('You can\'t return your WaiveCar here. The spot needs to be valid for at least 3 hours.');
+        if (moment().hours() >= 21 && ctrl.lot.streetOvernightRest) return submitFailure('You can\'t return your WaiveCar here. If the car is ticketed or towed, you\'ll be responsible for the fees.');
+        payload = ctrl.street;
       }
-      return null;
+
+      payload.type = ctrl.type;
+      $ride.setParkingDetails(payload);
+      return $state.go('end-ride', { id: $ride.state.booking.id });
     }
 
+    /**
+     * Displays error message
+     * @param {String} message Message to display
+     * @returns {Void} null
+     */
     function submitFailure(message) {
       $ionicLoading.hide();
       var endRideModal;
