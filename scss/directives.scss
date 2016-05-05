@@ -49,3 +49,29 @@
   margin: 0 auto;
 }
 
+.yes-no-toggle {
+  display: inline-block;
+  position: relative;
+  width: 70px;
+  height: 35px;
+  border-radius: 6px;
+  overflow: hidden;
+  background-color: #fff;
+  text-align: center;
+
+  .yes {
+    background-color: $balanced;
+  }
+
+  .no {
+    background-color: $assertive;
+    left: 50%;
+  }
+
+  .yes, .no {
+    height: 100%;
+    width: 50%;
+    position: relative;
+    padding-top: 7px;
+  }
+}

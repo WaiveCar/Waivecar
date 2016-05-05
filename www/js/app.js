@@ -91,6 +91,7 @@ require('./controllers/menu-controller');
 require('./controllers/verify-controller');
 require('./controllers/end-ride-controller');
 require('./controllers/complete-ride-controller');
+require('./controllers/parking-location-controller');
 require('./controllers/booking-summary-controller');
 require('./constants/us-states');
 
@@ -105,6 +106,7 @@ require('./directives/wizard-directive');
 require('./directives/equal-to-directive');
 require('./directives/car-charge-status-directive');
 require('./directives/car-info-directive');
+require('./directives/yes-no-toggle');
 
 ionic.Platform.ready(function () {
 
