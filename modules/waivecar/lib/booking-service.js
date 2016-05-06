@@ -549,15 +549,54 @@ module.exports = class BookingService extends Service {
     yield car.available();
 
     // ### Store parking info
+    let parkingSlack;
     if (payload && payload.data && payload.data.type) {
+      let parkingText = '';
       let end = _.find(booking.details, { type : 'end' });
+      payload.data.bookingDetailId = end.id;
+
+      if (payload.data.type === 'street') {
+        parkingText += 'Parked on street for ${ payload.data.streetHours }:${ payload.data.streetMinutes }.  ';
+        parkingText += payload.data.streetOvernightRest ? 'Has an overnight restriction.' : 'Does not have an overnight restriction.';
+      } else {
+        parkingText += 'Parked in lot for ${ payload.data.lotHours }:${ payload.data.lotMinutes }.  ';
+        parkingText += payload.data.lotFreePeriod ? 'Has free period of ${ payload.data.lotFreeHours } hours.  ' : '';
+        parkingText += payload.data.lotLevel ? 'On level ${ payload.data.lotLevel }, spot ${ payload.data.lotSpot }.  ' : '';
+        parkingText += payload.data.streetOvernightRest ? 'Has an overnight restriction.' : 'Does not have an overnight restriction.';
+      }
+
+      parkingSlack = {
+        text        : `${ user.name() } completed a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }> | https://www.waivecar.com/bookings/${ booking.id }`,
+        attachments : [
+          {
+            fallback : `Parking Details`,
+            color    : '#D00000',
+            fields   : [
+              {
+                title : 'Parking Details',
+                value : parkingText,
+                short : false
+              }
+            ]
+          }
+        ]
+      };
+
+      if (payload.data.streetSignImage && payload.data.streetSignImage.id) {
+        parkingSlack.attachments.push({
+          fallback  : 'Parking image',
+          color     : '#D00000',
+          image_url : `https://s3.amazonaws.com/waivecar-prod/${ payload.data.streetSignImage.path }` // eslint-disable-line
+        });
+        payload.data.streetSignImage = payload.data.streetSignImage.id;
+      }
+
       let parking = new ParkingDetails(payload.data);
-      parking.bookingDetailId = end.id;
       yield parking.save();
     }
 
     yield notify.sendTextMessage(user, `Thanks for renting with WaiveCar! Your rental is complete. You can see your trip summary in the app.`);
-    yield notify.slack({
+    yield notify.slack(parkingSlack || {
       text : `${ user.name() } completed a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }> | https://www.waivecar.com/bookings/${ booking.id }`
     }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);

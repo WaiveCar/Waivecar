@@ -91,7 +91,7 @@ Bento.Register.Model('ParkingDetails', 'sequelize', (model, Sequelize) => {
       defaultValue : 0
     },
 
-    lotOvernightRest : {
+    streetOvernightRest : {
       type         : Sequelize.BOOLEAN,
       defaultValue : false
     }
