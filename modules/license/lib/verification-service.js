@@ -60,6 +60,12 @@ module.exports = class LicenseVerificationService extends Service {
       // Get result
       report.result = yield this.getResult(report);
 
+      if (report.result === 'consider') {
+        yield notify.slack({
+          text : `${ user.name() } had their license moved to 'consider' <${ user.phone || user.email }> | https://www.waivecar.com/users/${ user.id }`
+        }, { channel : '#user-alerts' });
+      }
+
       log.debug(`LICENSE VERIFICATION : ${ report.id } : ${ report.status }`);
       yield license.update({
         status     : report.status,
@@ -121,6 +127,12 @@ module.exports = class LicenseVerificationService extends Service {
 
         // ### Update License
         let result = yield this.getResult(update);
+
+        if (result === 'consider') {
+          yield notify.slack({
+            text : `${ user.name() } had their license moved to 'consider' <${ user.phone || user.email }> | https://www.waivecar.com/users/${ user.id }`
+          }, { channel : '#user-alerts' });
+        }
 
         yield license.update({
           status     : update.status === 'awaiting_data' || update.status === 'in_progress' ? 'in-progress' : update.status,
