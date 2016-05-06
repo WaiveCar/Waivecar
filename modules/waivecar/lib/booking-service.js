@@ -15,6 +15,7 @@ let OrderService = Bento.module('shop/lib/order-service');
 let LogService   = require('./log-service');
 let Actions      = LogService.getActions();
 let moment       = require('moment');
+let _            = require('lodash');
 
 // ### Models
 
@@ -25,6 +26,7 @@ let Car            = Bento.model('Car');
 let Booking        = Bento.model('Booking');
 let BookingDetails = Bento.model('BookingDetails');
 let BookingPayment = Bento.model('BookingPayment');
+let ParkingDetails = Bento.model('ParkingDetails');
 
 module.exports = class BookingService extends Service {
 
@@ -65,7 +67,9 @@ module.exports = class BookingService extends Service {
       yield this.hasBookingAccess(user);
     }
 
-    yield this.recentBooking(user, car);
+    if (!_user.hasAccess('admin')) {
+      yield this.recentBooking(user, car);
+    }
 
     // ### Pre authorization payment
     try {
@@ -231,6 +235,14 @@ module.exports = class BookingService extends Service {
         }, [])
       }
     });
+
+    // ### Attach parking details
+    if (booking.details && booking.details.length) {
+      for (let i = 0, len = booking.details.length; i < len; i++) {
+        let detail = booking.details[i];
+        detail.parkingDetails = yield ParkingDetails.findOne({ where : { bookingDetailId : detail.id } });
+      }
+    }
 
     booking.files = yield File.find({
       where : {
@@ -472,8 +484,16 @@ module.exports = class BookingService extends Service {
    * Locks, and makes the car available for a new booking.
    * @return {Object}
    */
-  static *complete(id, _user, query) {
-    let booking = yield this.getBooking(id);
+  static *complete(id, _user, query, payload) {
+    let relations = {
+      include : [
+        {
+          model : 'BookingDetails',
+          as    : 'details'
+        }
+      ]
+    };
+    let booking = yield this.getBooking(id, relations);
     let car     = yield this.getCar(booking.carId);
     let user    = yield this.getUser(booking.userId);
     let errors  = [];
@@ -527,6 +547,14 @@ module.exports = class BookingService extends Service {
 
     yield booking.complete();
     yield car.available();
+
+    // ### Store parking info
+    if (payload && payload.data && payload.data.type) {
+      let end = _.find(booking.details, { type : 'end' });
+      let parking = new ParkingDetails(payload.data);
+      parking.bookingDetailId = end.id;
+      yield parking.save();
+    }
 
     yield notify.sendTextMessage(user, `Thanks for renting with WaiveCar! Your rental is complete. You can see your trip summary in the app.`);
     yield notify.slack({
