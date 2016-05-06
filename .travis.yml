@@ -36,7 +36,7 @@ services:
   - redis-server
   - mongodb
 before_install:
-  - npm install -g node-gyp bentojs
+  - npm install -g node-gyp bentojs@1.0.3
   - rm -rf ~/.node-gyp/
   - curl 'http://cistats.clevertech.biz/logstat/?&project=Waivecar&type=3'
   - deployment/build/scripts/trigger_coverage

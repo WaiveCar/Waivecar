@@ -80,6 +80,26 @@ Bento.Register.Model('BookingDetails', 'sequelize', (model, Sequelize) => {
 
   };
 
+  /**
+   * The relation definitions of your model.
+   * @property relations
+   * @type     Array
+   */
+  model.relations = [
+    'ParkingDetails',
+    function relations(ParkingDetails) {
+      this.hasMany(ParkingDetails, { as : 'parkingDetails', foreignKey : 'bookingDetailId' });
+    }
+  ];
+
+  /**
+   * Possible custom attributes attached to booking outside of schema.
+   * @type {Array}
+   */
+  model.attributes = [
+    'parkingDetails'
+  ];
+
   return model;
 
 });

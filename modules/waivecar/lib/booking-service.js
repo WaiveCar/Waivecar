@@ -9,11 +9,13 @@ let queue        = Bento.provider('queue');
 let queryParser  = Bento.provider('sequelize/helpers').query;
 let relay        = Bento.Relay;
 let error        = Bento.Error;
+let log          = Bento.Log;
 let config       = Bento.config.waivecar;
 let OrderService = Bento.module('shop/lib/order-service');
 let LogService   = require('./log-service');
 let Actions      = LogService.getActions();
 let moment       = require('moment');
+let _            = require('lodash');
 
 // ### Models
 
@@ -24,6 +26,7 @@ let Car            = Bento.model('Car');
 let Booking        = Bento.model('Booking');
 let BookingDetails = Bento.model('BookingDetails');
 let BookingPayment = Bento.model('BookingPayment');
+let ParkingDetails = Bento.model('ParkingDetails');
 
 module.exports = class BookingService extends Service {
 
@@ -64,7 +67,9 @@ module.exports = class BookingService extends Service {
       yield this.hasBookingAccess(user);
     }
 
-    yield this.recentBooking(user, car);
+    if (!_user.hasAccess('admin')) {
+      yield this.recentBooking(user, car);
+    }
 
     // ### Pre authorization payment
     try {
@@ -231,6 +236,14 @@ module.exports = class BookingService extends Service {
       }
     });
 
+    // ### Attach parking details
+    if (booking.details && booking.details.length) {
+      for (let i = 0, len = booking.details.length; i < len; i++) {
+        let detail = booking.details[i];
+        detail.parkingDetails = yield ParkingDetails.findOne({ where : { bookingDetailId : detail.id } });
+      }
+    }
+
     booking.files = yield File.find({
       where : {
         collectionId : booking.collectionId || undefined
@@ -312,7 +325,7 @@ module.exports = class BookingService extends Service {
     // ### Relay Update
 
     car.relay('update');
-    yield this.relay('update', id, _user);
+    yield this.relay('update', booking, _user);
   }
 
   /**
@@ -389,7 +402,12 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
-    Object.assign(car, yield cars.getDevice(car.id, _user));
+    try {
+      Object.assign(car, yield cars.getDevice(car.id, _user));
+    } catch (err) {
+      log.debug('Failed to fetch car information when ending booking');
+      if (isAdmin) warnings.push('car is unreachable');
+    }
 
     if (car.isIgnitionOn) {
       if (isAdmin) {
@@ -419,7 +437,7 @@ module.exports = class BookingService extends Service {
 
     if (isAdmin && warnings.length && !query.force) {
       throw error.parse({
-        code    : `BOOKING_END_IMMOBILIZER`,
+        code    : `BOOKING_END`,
         message : `The booking can't be ended because ${ warnings.join(' and ')}.`
       }, 400);
     }
@@ -449,7 +467,7 @@ module.exports = class BookingService extends Service {
     yield booking.end();
 
     // ### Handle auto charge for time
-    yield this.handleTimeCharge(booking, user);
+    if (!isAdmin) yield this.handleTimeCharge(booking, user);
 
     // ### Notify
 
@@ -459,15 +477,23 @@ module.exports = class BookingService extends Service {
     // ### Relay Update
 
     car.relay('update');
-    yield this.relay('update', id, _user);
+    yield this.relay('update', booking, _user);
   }
 
   /**
    * Locks, and makes the car available for a new booking.
    * @return {Object}
    */
-  static *complete(id, _user, query) {
-    let booking = yield this.getBooking(id);
+  static *complete(id, _user, query, payload) {
+    let relations = {
+      include : [
+        {
+          model : 'BookingDetails',
+          as    : 'details'
+        }
+      ]
+    };
+    let booking = yield this.getBooking(id, relations);
     let car     = yield this.getCar(booking.carId);
     let user    = yield this.getUser(booking.userId);
     let errors  = [];
@@ -522,8 +548,55 @@ module.exports = class BookingService extends Service {
     yield booking.complete();
     yield car.available();
 
+    // ### Store parking info
+    let parkingSlack;
+    if (payload && payload.data && payload.data.type) {
+      let parkingText = '';
+      let end = _.find(booking.details, { type : 'end' });
+      payload.data.bookingDetailId = end.id;
+
+      if (payload.data.type === 'street') {
+        parkingText += 'Parked on street for ${ payload.data.streetHours }:${ payload.data.streetMinutes }.  ';
+        parkingText += payload.data.streetOvernightRest ? 'Has an overnight restriction.' : 'Does not have an overnight restriction.';
+      } else {
+        parkingText += 'Parked in lot for ${ payload.data.lotHours }:${ payload.data.lotMinutes }.  ';
+        parkingText += payload.data.lotFreePeriod ? 'Has free period of ${ payload.data.lotFreeHours } hours.  ' : '';
+        parkingText += payload.data.lotLevel ? 'On level ${ payload.data.lotLevel }, spot ${ payload.data.lotSpot }.  ' : '';
+        parkingText += payload.data.streetOvernightRest ? 'Has an overnight restriction.' : 'Does not have an overnight restriction.';
+      }
+
+      parkingSlack = {
+        text        : `${ user.name() } completed a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }> | https://www.waivecar.com/bookings/${ booking.id }`,
+        attachments : [
+          {
+            fallback : `Parking Details`,
+            color    : '#D00000',
+            fields   : [
+              {
+                title : 'Parking Details',
+                value : parkingText,
+                short : false
+              }
+            ]
+          }
+        ]
+      };
+
+      if (payload.data.streetSignImage && payload.data.streetSignImage.id) {
+        parkingSlack.attachments.push({
+          fallback  : 'Parking image',
+          color     : '#D00000',
+          image_url : `https://s3.amazonaws.com/waivecar-prod/${ payload.data.streetSignImage.path }` // eslint-disable-line
+        });
+        payload.data.streetSignImage = payload.data.streetSignImage.id;
+      }
+
+      let parking = new ParkingDetails(payload.data);
+      yield parking.save();
+    }
+
     yield notify.sendTextMessage(user, `Thanks for renting with WaiveCar! Your rental is complete. You can see your trip summary in the app.`);
-    yield notify.slack({
+    yield notify.slack(parkingSlack || {
       text : `${ user.name() } completed a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }> | https://www.waivecar.com/bookings/${ booking.id }`
     }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
@@ -531,7 +604,7 @@ module.exports = class BookingService extends Service {
     // ### Relay
 
     car.relay('update');
-    yield this.relay('update', id, _user);
+    yield this.relay('update', booking, _user);
   }
 
   /**
@@ -543,7 +616,7 @@ module.exports = class BookingService extends Service {
   static *close(id, _user) {
     let booking = yield this.getBooking(id);
     yield booking.close();
-    yield this.relay('update', booking.id, _user);
+    yield this.relay('update', booking, _user);
   }
 
   /*
@@ -643,12 +716,12 @@ module.exports = class BookingService extends Service {
 
   // ### HELPERS
 
-  static *relay(type, id, _user) {
+  static *relay(type, booking, _user) {
     let payload = {
       type : type,
-      data : yield this.show(id, _user)
+      data : yield this.show(booking.id, _user)
     };
-    relay.user(payload.userId, 'bookings', payload);
+    relay.user(booking.userId, 'bookings', payload);
     relay.admin('bookings', payload);
   }
 
