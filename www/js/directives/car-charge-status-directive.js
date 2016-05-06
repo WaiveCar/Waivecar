@@ -6,7 +6,7 @@ module.exports = angular.module('app.directives')
 
     function carChargeStatusDirective() {
 
-      var ratio = 0.7629893327695743;
+      var ratio = 0.7;
 
       function link ($scope) {
 
