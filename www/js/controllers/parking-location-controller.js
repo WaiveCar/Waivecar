@@ -103,7 +103,7 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
     function addPicture () {
       $uploadImage({
         endpoint: '/files?bookingId=' + $stateParams.id,
-        filename: 'problem_' + $stateParams.id + '_' + Date.now() + '.jpg',
+        filename: 'parking_' + $stateParams.id + '_' + Date.now() + '.jpg',
       })
       .then(function (result) {
         if (result && Array.isArray(result)) result = result[0];
