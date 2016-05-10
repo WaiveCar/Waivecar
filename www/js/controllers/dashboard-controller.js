@@ -170,16 +170,20 @@ function DashboardController ($scope, $rootScope, $injector) {
             if (isCarOn) {
               return showIgnitionOnModal();
             }
-            $ride.setLocation('homebase');
-            $ride.processEndRide();
             ZendriveService.stop();
-            return $state.go('end-ride-location', {id: bookingId});
+            // $ride.setLocation('homebase');
+            return $ride.processEndRide();
           });
       } else {
         // Not inside geofence -> show error
         $ionicLoading.hide();
         return $q.reject('Looks like you\'re outside of the rental zone (Santa Monica). Please head back to end your rental.');
       }
+    }).then(function() {
+      if ($distance(homebase) * 1760 < 100) {
+        return $state.go('end-ride', { id: bookingId });
+      }
+      return $state.go('end-ride-location', { id: bookingId });
     }).catch(endRideFailure);
   }
 
