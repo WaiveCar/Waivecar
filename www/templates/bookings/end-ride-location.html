@@ -24,7 +24,7 @@
           <div class="text-right">
             <yes-no-toggle val="ctrl.lot.lotFreePeriod"></yes-no-toggle>
             <div class="small-input">
-              <input ng-model="ctrl.lot.lotFreeHours" ng-disabled="!ctrl.lot.lotFreePeriod" type="number">
+              <input ng-model="ctrl.lot.lotFreeHours" ng-disabled="!ctrl.lot.lotFreePeriod" type="tel">
               <span class="input-label">Hours</span>
             </div>
           </div>
@@ -36,11 +36,11 @@
           </p>
           <div class="text-right">
             <div class="small-input">
-              <input ng-model="ctrl.lot.lotHours" type="number">
+              <input ng-model="ctrl.lot.lotHours" type="tel">
               <span class="input-label">Hours</span>
             </div>
             <div class="small-input">
-              <input ng-model="ctrl.lot.lotMinutes" type="number">
+              <input ng-model="ctrl.lot.lotMinutes" type="tel">
               <span class="input-label">Min.</span>
             </div>
           </div>
@@ -49,11 +49,11 @@
           <p class="pull-left text-left">What is your spot number?</p>
           <div class="text-right">
             <div class="small-input">
-              <input ng-model="ctrl.lot.lotLevel" type="number">
+              <input ng-model="ctrl.lot.lotLevel" type="tel">
               <span class="input-label">Level</span>
             </div>
             <div class="small-input">
-              <input ng-model="ctrl.lot.lotSpot" type="number">
+              <input ng-model="ctrl.lot.lotSpot" type="tel">
               <span class="input-label">Spot</span>
             </div>
           </div>
@@ -89,11 +89,11 @@
           </p>
           <div class="text-center">
             <div class="small-input">
-              <input ng-model="ctrl.street.streetHours" type="number">
+              <input ng-model="ctrl.street.streetHours" type="tel">
               <span class="input-label">Hours</span>
             </div>
             <div class="small-input">
-              <input ng-model="ctrl.street.streetMinutes" type="number">
+              <input ng-model="ctrl.street.streetMinutes" type="tel">
               <span class="input-label">Min.</span>
             </div>
           </div>
