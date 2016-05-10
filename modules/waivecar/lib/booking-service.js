@@ -199,7 +199,7 @@ module.exports = class BookingService extends Service {
    * @param  {Object} _user
    * @return {Object}
    */
-  static *show(id, _user) {
+  static *show(id, _user, ignoreUser) {
     let relations = {
       include : [
         {
@@ -220,7 +220,7 @@ module.exports = class BookingService extends Service {
     let car     = yield Car.findById(booking.carId);
     let user    = yield this.getUser(booking.userId);
 
-    this.hasAccess(user, _user);
+    if (!ignoreUser) this.hasAccess(user, _user);
 
     // ### Prepare Booking
 

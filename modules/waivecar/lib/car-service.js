@@ -16,6 +16,7 @@ let error       = Bento.Error;
 let relay       = Bento.Relay;
 let log         = Bento.Log;
 let config      = Bento.config.waivecar;
+let hooks       = Bento.Hooks;
 
 // ### Models
 
@@ -65,7 +66,7 @@ module.exports = {
    * @return {Object}
    */
   *show(id, _user) {
-    return yield Car.findById(id, {
+    let car = yield Car.findById(id, {
       include : [
         {
           model : 'User',
@@ -73,6 +74,10 @@ module.exports = {
         }
       ]
     });
+
+    let data  = yield hooks.call('cars:show:after', car);
+
+    return data;
   },
 
   /**
