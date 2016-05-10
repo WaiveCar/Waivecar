@@ -20,7 +20,7 @@ module.exports = {
     });
     yield payment.save();
     yield booking.close();
-    yield bookingService.relay('update', booking.id, _user);
+    yield bookingService.relay('update', booking, _user);
   }
 
 };
