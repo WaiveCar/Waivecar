@@ -21,20 +21,20 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
     var ctrl = this;
 
     ctrl.service = $ride;
-    ctrl.type = 'lot';
+    ctrl.type = 'street';
     ctrl.lot = {
       lotFreePeriod: false,
-      lotFreeHours: 0,
-      lotHours: 0,
-      lotMinutes: 0,
-      lotLevel: 0,
-      lotSpot: 0,
+      lotFreeHours: null,
+      lotHours: null,
+      lotMinutes: null,
+      lotLevel: null,
+      lotSpot: null,
       lotOvernightRest: false
     };
     ctrl.street = {
       streetSignImage: null,
-      streetHours: 0,
-      streetMinutes: 0,
+      streetHours: null,
+      streetMinutes: null,
       streetOvernightRest: false
     };
 
