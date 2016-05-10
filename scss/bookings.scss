@@ -141,6 +141,29 @@
     height: 45px;
   }
 
+  .address {
+    margin-top: 10px;
+  }
+
+  .parking-details-wrap {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .parking-details {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+    }
+
+    .button-bar {
+      flex: inherit;
+      -webkit-flex: inherit;
+    }
+  }
+
   .street-sign-image {
     width: 45px;
     height: 45px;
