@@ -7,11 +7,11 @@
       <div class="button-bar">
         <a class="button"
           ng-class="{ 'button-balanced' : ctrl.type === 'lot', 'button-dark' : ctrl.type !== 'lot'  }"
-          ng-click="ctrl.toggleType()"
+          ng-click="ctrl.setType('lot')"
           >Parking Lot</a>
         <a class="button"
           ng-class="{ 'button-balanced' : ctrl.type === 'street', 'button-dark' : ctrl.type !== 'street'  }"
-          ng-click="ctrl.toggleType()"
+          ng-click="ctrl.setType('street')"
           >Street</a>
       </div>
       <p class="address" n>
@@ -19,8 +19,8 @@
         &nbsp;{{ ctrl.address.city }}<span ng-if="ctrl.address">,</span> {{ ctrl.address.state }} {{ ctrl.address.postcode }}
       </p>
       <div ng-if="ctrl.type === 'lot'" class="parking-details">
-        <div>
-          <p class="pull-left text-left">Is there a free parking period?</p>
+        <div class="row">
+          <p class="text-left fill">Is there a free parking period?</p>
           <div class="text-right">
             <yes-no-toggle val="ctrl.lot.lotFreePeriod"></yes-no-toggle>
             <div class="small-input">
@@ -29,8 +29,8 @@
             </div>
           </div>
         </div>
-        <div>
-          <p class="pull-left text-left">
+        <div class="row">
+          <p class="text-left fill">
             How long can you park in the lot?<br>
             (minimum 3 hours)
           </p>
@@ -45,8 +45,8 @@
             </div>
           </div>
         </div>
-        <div>
-          <p class="pull-left text-left">What is your spot number?</p>
+        <div class="row">
+          <p class="text-left fill">What is your spot number?</p>
           <div class="text-right">
             <div class="small-input">
               <input ng-model="ctrl.lot.lotLevel" type="tel">
@@ -58,8 +58,8 @@
             </div>
           </div>
         </div>
-        <div>
-          <p class="pull-left text-left">
+        <div class="row">
+          <p class="text-left fill">
             Is there an overnight restriction?<br>
             (ex: No Parking from 3AM - 5AM)
           </p>

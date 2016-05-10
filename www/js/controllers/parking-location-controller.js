@@ -39,7 +39,7 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
     };
 
     // Attach methods
-    ctrl.toggleType = toggleType;
+    ctrl.setType = setType;
     ctrl.geocode = geocode;
     ctrl.submit = submit;
     ctrl.addPicture = addPicture;
@@ -70,9 +70,8 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
      * Toggle parking type
      * @returns {Void} none
      */
-    function toggleType() {
-      if (ctrl.type === 'lot') ctrl.type = 'street';
-      else if (ctrl.type === 'street') ctrl.type = 'lot';
+    function setType(type) {
+      ctrl.type = type;
     }
 
     /**

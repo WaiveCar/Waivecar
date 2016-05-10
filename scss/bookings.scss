@@ -157,6 +157,13 @@
       flex-direction: column;
       justify-content: space-around;
       font-size: 16px;
+
+      .row {
+        padding: 0;
+        .fill {
+          flex: 1;
+        }
+      }
     }
 
     .button-bar {
