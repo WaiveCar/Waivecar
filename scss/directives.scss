@@ -58,20 +58,31 @@
   overflow: hidden;
   background-color: #fff;
   text-align: center;
+  background-color: $assertive;
 
-  .yes {
+  &.active {
     background-color: $balanced;
   }
 
+  .yes {
+    left: 0;
+  }
+
   .no {
-    background-color: $assertive;
     left: 50%;
   }
 
   .yes, .no {
     height: 100%;
     width: 50%;
-    position: relative;
+    position: absolute;
     padding-top: 7px;
+    font-size: 12px;
+    display: inline-block;
+
+    &.inactive {
+      border-radius: 6px;
+      background-color: #fff;
+    }
   }
 }

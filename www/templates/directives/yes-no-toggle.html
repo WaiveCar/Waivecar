@@ -1,4 +1,4 @@
-<div ng-click="ctrl.toggle()" class="yes-no-toggle">
-  <div ng-if="ctrl.val" class="yes">YES</div>
-  <div ng-if="!ctrl.val" class="no">NO</div>
+<div ng-click="ctrl.toggle()" class="yes-no-toggle" ng-class="{ active: ctrl.val }">
+  <div ng-class="{ inactive: !ctrl.val }" class="yes">YES</div>
+  <div ng-class="{ inactive: ctrl.val }" class="no">NO</div>
 </div>

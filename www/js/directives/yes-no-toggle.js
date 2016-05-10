@@ -12,15 +12,13 @@ module.exports = angular.module('app.directives')
       bindToController: true,
       controllerAs: 'ctrl',
       replace: true,
-      controller: ['$scope', function($scope) {
+      controller: function() {
         var ctrl = this;
         ctrl.toggle = toggle;
-        console.log('scope: ', $scope);
-        console.log('this: ', this);
 
         function toggle() {
           ctrl.val = !ctrl.val;
         }
-      }]
+      }
     };
   });
