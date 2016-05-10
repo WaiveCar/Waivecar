@@ -429,7 +429,7 @@ module.exports = class BookingService extends Service {
       log.warn(`Unable to lock immobilizer when ending booking ${ booking.id }`);
     }
 
-    if (!status.isImmobilized) {
+    if (!status || !status.isImmobilized) {
       if (isAdmin) {
         warnings.push('the engine is not immobilized');
       } else {
