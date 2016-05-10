@@ -422,11 +422,16 @@ module.exports = class BookingService extends Service {
 
     // ### Immobilize
     // Immobilize the engine.
+    let status;
+    try {
+      status = yield cars.lockImmobilzer(car.id, _user);
+    } catch (err) {
+      log.warn(`Unable to lock immobilizer when ending booking ${ booking.id }`);
+    }
 
-    let status = yield cars.lockImmobilzer(car.id, _user);
     if (!status.isImmobilized) {
       if (isAdmin) {
-        warnings.push('the engine not immobilized');
+        warnings.push('the engine is not immobilized');
       } else {
         throw error.parse({
           code    : `BOOKING_END_IMMOBILIZER`,
