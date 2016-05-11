@@ -53,7 +53,7 @@ scheduler.process('active-booking', function *(job) {
       if (start) {
         let milesDriven = car.mileage - start.mileage;
         if (milesDriven >= 7 && car.charge === device.charge) {
-        yield notify.notifyAdmins(`${ car.license } has been driven ${ milesDriven } miles since last change reported, but charge level has not changed. https://www.waivecar.com/cars/${ car.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+        yield notify.notifyAdmins(`${ car.license } has been driven ${ milesDriven } miles since last change reported, but charge level has not changed. ${ config.api.uri }/cars/${ car.id }`, [ 'slack' ], { channel : '#rental-alerts' });
         }
       }
 
@@ -65,17 +65,17 @@ scheduler.process('active-booking', function *(job) {
         if (carInside && !deviceInside) {
           // User has ventured outside of zone
           yield notify.sendTextMessage(user, config.notification.reasons['OUTSIDE_RANGE']);
-          yield notify.notifyAdmins(`${ user.name() } took ${ car.license } outside of the driving zone. https://www.waivecar.com/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+          yield notify.notifyAdmins(`${ user.name() } took ${ car.license } outside of the driving zone. ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
         } else if (deviceInside && !carInside) {
           // User has returned to zone
-          yield notify.notifyAdmins(`${ user.name() } took ${ car.license } back into the driving zone. https://www.waivecar.com/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+          yield notify.notifyAdmins(`${ user.name() } took ${ car.license } back into the driving zone. ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
         }
       }
 
       // Check charge level
       if (device.charge < 30 && car.charge > 30) {
         yield notify.sendTextMessage(user, config.notification.reasons['LOW_CHARGE']);
-        yield notify.notifyAdmins(`${ user.name() } has driven ${ car.license } to ${ device.charge }% charge. https://www.waivecar.com/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+        yield notify.notifyAdmins(`${ user.name() } has driven ${ car.license } to ${ device.charge }% charge. ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
       }
 
       // Log position

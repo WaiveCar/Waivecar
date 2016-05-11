@@ -42,7 +42,7 @@ module.exports = {
       {
         firstName     : 'Zoli',
         lastName      : 'Honig',
-        email         : 'zoli@waivecar.com',
+        email         : 'zoli@waive.car',
         password      : 'password',
         role          : 'Owner', // Owner
         verifiedEmail : true,
@@ -51,7 +51,7 @@ module.exports = {
       {
         firstName     : 'Issac',
         lastName      : 'Deutsch',
-        email         : 'ideutsch@waivecar.com',
+        email         : 'ideutsch@waive.car',
         password      : 'password',
         role          : 'Owner', // Owner
         verifiedEmail : true,
@@ -60,7 +60,7 @@ module.exports = {
       {
         firstName     : 'Roy',
         lastName      : 'Ryman',
-        email         : 'roy@waivecar.com',
+        email         : 'roy@waive.car',
         password      : 'password',
         role          : 'Administrator', // Admin
         verifiedEmail : true,

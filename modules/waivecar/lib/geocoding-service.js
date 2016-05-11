@@ -2,6 +2,7 @@
 
 let request = require('co-request');
 let error = Bento.Error;
+let config = Bento.config;
 
 module.exports = {
 
@@ -24,7 +25,7 @@ module.exports = {
       url     : url,
       method  : 'GET',
       headers : {
-        Referer : 'https://waivecar.com',
+        Referer : config.api.uri,
         Accept  : 'application/json'
       }
     });

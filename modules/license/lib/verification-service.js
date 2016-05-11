@@ -7,6 +7,7 @@ let User         = Bento.model('User');
 let relay        = Bento.Relay;
 let log          = Bento.Log;
 let resource     = 'licenses';
+let apiConfig    = Bento.config.api;
 
 module.exports = class LicenseVerificationService extends Service {
 
@@ -62,7 +63,7 @@ module.exports = class LicenseVerificationService extends Service {
 
       if (report.result === 'consider') {
         yield notify.slack({
-          text : `${ user.name() } had their license moved to 'consider' <${ user.phone || user.email }> | https://www.waivecar.com/users/${ user.id }`
+          text : `${ user.name() } had their license moved to 'consider' <${ user.phone || user.email }> | ${ apiConfig.uri }/users/${ user.id }`
         }, { channel : '#user-alerts' });
       }
 
@@ -130,7 +131,7 @@ module.exports = class LicenseVerificationService extends Service {
 
         if (result === 'consider') {
           yield notify.slack({
-            text : `${ user.name() } had their license moved to 'consider' <${ user.phone || user.email }> | https://www.waivecar.com/users/${ user.id }`
+            text : `${ user.name() } had their license moved to 'consider' <${ user.phone || user.email }> | ${ apiConfig.uri }/users/${ user.id }`
           }, { channel : '#user-alerts' });
         }
 

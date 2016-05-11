@@ -86,7 +86,7 @@ module.exports = {
       }
     },
     contact : {
-      email : 'support@waivecar.com'
+      email : 'support@waive.car'
     }
   }
 

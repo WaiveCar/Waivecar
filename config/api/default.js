@@ -39,7 +39,7 @@ module.exports = {
    */
 
   web : {
-    uri : 'https://www.waivecar.com'
+    uri : 'https://waive.car'
   },
 
   /*

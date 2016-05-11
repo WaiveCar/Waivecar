@@ -7,6 +7,7 @@ let Booking   = Bento.model('Booking');
 let Car       = Bento.model('Car');
 let log       = Bento.Log;
 let error     = Bento.Error;
+let config    = Bento.config;
 
 scheduler.process('booking-auto-lock', function *(job) {
   let booking = yield Booking.findOne({ where : { id : job.data.bookingId } });
@@ -24,7 +25,7 @@ scheduler.process('booking-auto-lock', function *(job) {
 
     yield cars.lockCar(car.id);
 
-    yield notify.notifyAdmins(`The booking with ${ car.license || car.id } was automaticaly locked and needs manual review | https://www.waivecar.com/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+    yield notify.notifyAdmins(`The booking with ${ car.license || car.id } was automaticaly locked and needs manual review | ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
   }
 });
 

@@ -11,6 +11,7 @@ let relay        = Bento.Relay;
 let error        = Bento.Error;
 let log          = Bento.Log;
 let config       = Bento.config.waivecar;
+let apiConfig    = Bento.config.api;
 let OrderService = Bento.module('shop/lib/order-service');
 let LogService   = require('./log-service');
 let Actions      = LogService.getActions();
@@ -571,7 +572,7 @@ module.exports = class BookingService extends Service {
       }
 
       parkingSlack = {
-        text        : `${ user.name() } completed a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }> | https://www.waivecar.com/bookings/${ booking.id }`,
+        text        : `${ user.name() } completed a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }> | ${ apiConfig.uri }/bookings/${ booking.id }`,
         attachments : [
           {
             fallback : `Parking Details`,
@@ -602,7 +603,7 @@ module.exports = class BookingService extends Service {
 
     yield notify.sendTextMessage(user, `Thanks for renting with WaiveCar! Your rental is complete. You can see your trip summary in the app.`);
     yield notify.slack(parkingSlack || {
-      text : `${ user.name() } completed a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }> | https://www.waivecar.com/bookings/${ booking.id }`
+      text : `${ user.name() } completed a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }> | ${ apiConfig.uri }/bookings/${ booking.id }`
     }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
 
