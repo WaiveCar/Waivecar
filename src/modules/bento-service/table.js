@@ -30,7 +30,7 @@ module.exports = class Table {
     }, (err, data) => {
       if (err) {
         return snackbar.notify({
-          type    : `danger`,
+          type    : 'danger',
           message : err.message
         });
       }
@@ -113,7 +113,7 @@ module.exports = class Table {
         }, (err, data) => {
           if (err) {
             return snackbar.notify({
-              type    : `danger`,
+              type    : 'danger',
               message : err.message
             });
           }
@@ -138,30 +138,34 @@ module.exports = class Table {
   /**
    * Loads the next 20 records from the api.
    * TODO: Make this into pagination rather than load more...
+   * @param {bool} replace
    * @return {Void}
    */
-  more = () => {
+  more = (replace) => {
     api.get(this.endpoint, {
       order  : 'created_at,DESC',
       limit  : 20,
       offset : this.ctx.state.offset
-    }, (err, users) => {
+    }, (err, data) => {
       if (err) {
         return snackbar.notify({
-          type    : `danger`,
+          type    : 'danger',
           message : err.message
         });
       }
       this.ctx.setState({
-        more   : users.length === 20,
-        offset : this.ctx.state.offset + users.length
+        more   : data.length === 20,
+        offset : this.ctx.state.offset + data.length
       });
+      if (!replace) {
+        data = [
+          ...this.ctx.state[this.resource],
+          ...data
+        ];
+      }
       relay.dispatch(this.resource, {
         type : 'index',
-        data : [
-          ...this.ctx.state[this.resource],
-          ...users
-        ]
+        data : data
       });
     });
   }
