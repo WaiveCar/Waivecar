@@ -513,8 +513,12 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
-    let data = yield cars.getDevice(car.id, _user);
-    yield car.update(data);
+    try {
+      let data = yield cars.getDevice(car.id, _user);
+      yield car.update(data);
+    } catch (err) {
+      log.warn(`Failed to update car ${ car.license } when completing booking ${ booking.id }`);
+    }
 
     // ### Validate Complete Status
     // Make sure all required car states are valid before allowing the booking to
@@ -547,7 +551,11 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
-    yield cars.lockCar(car.id, _user);
+    try {
+      yield cars.lockCar(car.id, _user);
+    } catch (err) {
+      log.warn(`Failed to lock car ${ car.license } when completing booking ${ booking.id }`);
+    }
 
     // ### Booking & Car Updates
 
