@@ -39,13 +39,15 @@ module.exports = {
    * @return {Array}
    */
   *index(query, _user) {
-    let cars = yield Car.find(queryParser(query, {
+    let options = queryParser(query, {
       where : {
         id          : queryParser.STRING,
         userId      : queryParser.NUMBER,
         isAvailable : queryParser.BOOLEAN
       }
-    }));
+    });
+    options.limit = 100;
+    let cars = yield Car.find(options);
     let bookings = yield Booking.find({ where : { status : 'started' } });
 
     bookings.forEach(function(booking) {
