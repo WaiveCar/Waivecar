@@ -8,7 +8,7 @@ module.exports = {
   index : {
     key    : 'cars',
     method : 'GET',
-    uri    : '/cars'
+    uri    : '/cars?limit=100'
   },
   show : {
     key    : 'car',
