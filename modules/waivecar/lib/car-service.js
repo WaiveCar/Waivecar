@@ -45,6 +45,10 @@ module.exports = {
         isAvailable : queryParser.BOOLEAN
       }
     });
+
+    if (_user && !_user.hasAccess('admin')) {
+      options.where.adminOnly = false;
+    }
     options.limit = 100;
     let cars = yield Car.find(options);
     let bookings = yield Booking.find({ where : { status : 'started' } });
