@@ -46,6 +46,11 @@ module.exports = {
         isAvailable : queryParser.BOOLEAN
       }
     });
+
+    if (_user && !_user.hasAccess('admin')) {
+      options.where.adminOnly = false;
+    }
+
     options.limit = 100;
     let cars = yield Car.find(options);
     let bookings = yield Booking.find({ where : { status : 'started' } });
@@ -133,6 +138,30 @@ module.exports = {
     });
 
     if (_user) yield LogService.create({ carId : id, action : isAvailable ? Actions.MAKE_CAR_AVAILABLE : Actions.MAKE_CAR_UNAVAILABLE }, _user);
+
+    return model;
+  },
+
+  /**
+   * @param {String} id
+   * @param {Boolean} isVisible
+   * @param {Object} _user
+   * @return {Object}
+   */
+  *updateVisibility(id, isVisible, _user) {
+    access.verifyAdmin(_user);
+    let model = yield Car.findById(id);
+
+    if (isVisible) {
+      yield model.visible();
+    } else {
+      yield model.hidden();
+    }
+
+    relay.emit('cars', {
+      type : 'update',
+      data : model.toJSON()
+    });
 
     return model;
   },

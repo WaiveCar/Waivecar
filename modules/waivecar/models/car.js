@@ -37,6 +37,11 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       defaultValue : true
     },
 
+    adminOnly : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
     isLocked : {
       type         : Sequelize.BOOLEAN,
       defaultValue : false
@@ -201,6 +206,18 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     available : function *() {
       yield this.update({
         isAvailable : true
+      });
+    },
+
+    hidden : function *() {
+      yield this.update({
+        adminOnly : true
+      });
+    },
+
+    visible : function *() {
+      yield this.update({
+        adminOnly : false
       });
     },
 
