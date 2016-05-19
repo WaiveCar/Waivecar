@@ -133,6 +133,30 @@ module.exports = {
   },
 
   /**
+   * @param {String} id
+   * @param {Boolean} isVisible
+   * @param {Object} _user
+   * @return {Object}
+   */
+  *updateVisibility(id, isVisible, _user) {
+    access.verifyAdmin(_user);
+    let model = yield Car.findById(id);
+
+    if (isVisible) {
+      yield model.visible();
+    } else {
+      yield model.hidden();
+    }
+
+    relay.emit('cars', {
+      type : 'update',
+      data : model.toJSON()
+    });
+
+    return model;
+  },
+
+  /**
    * Updates the local car with the remote fleet device.
    * @param {String} deviceId
    */
