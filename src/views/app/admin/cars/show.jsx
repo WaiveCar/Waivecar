@@ -222,6 +222,28 @@ class CarsShowView extends React.Component {
     }
   }
 
+  toggleHidden(car) {
+    if (car.adminOnly) {
+      this.service.executeCommand(car, 'visible');
+    } else {
+      if (car.booking) {
+        snackbar.notify({
+          type    : 'danger',
+          message : 'Car is in active rental. Hide from app anyway?',
+          action : {
+            title : 'CONTINUE',
+            click : () => {
+              snackbar.dismiss();
+              this.service.executeCommand(car, 'hidden');
+            }
+          }
+        });
+      } else {
+        this.service.executeCommand(car, 'hidden');
+      }
+    }
+  }
+
   renderCarActions(car) {
     if (this.service.getState('isLoading')) {
       return (
@@ -268,6 +290,12 @@ class CarsShowView extends React.Component {
       },
       {
         ref : 4,
+        checked  : !car.adminOnly,
+        label    : car.adminOnly ? 'Show in App' : 'Hide in App',
+        onChange : this.toggleHidden.bind(this, car)
+      },
+      {
+        ref : 5,
         label    : 'Refresh Cloudboxx Data',
         onChange : this.service.executeCommand.bind(this, car, 'refresh')
       }
@@ -291,6 +319,9 @@ class CarsShowView extends React.Component {
               <div className="col-md-6">
                 <Switch { ...switches[2] } />
               </div>
+              <div className="col-md-6">
+                <Switch { ...switches[3] } />
+              </div>
             </div>
             <div className="row" style={{ marginTop: 10 }}>
               <div className="col-md-6">
@@ -302,11 +333,11 @@ class CarsShowView extends React.Component {
               </div>
               <div className="col-md-6">
                 <Button
-                  key       = { switches[3].ref }
+                  key       = { switches[4].ref }
                   className = { 'btn btn-primary-outline' }
                   type      = { 'button' }
-                  value     = { switches[3].label }
-                  onClick   = { switches[3].onChange }
+                  value     = { switches[4].label }
+                  onClick   = { switches[4].onChange }
                 />
               </div>
             </div>
