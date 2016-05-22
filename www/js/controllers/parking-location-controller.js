@@ -137,6 +137,9 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
     function submit() {
       var payload;
 
+      $ionicLoading.show({
+        template: '<div class="circle-loader"><span>Loading</span></div>'
+      });
       // Check which type we are submitting
       if (ctrl.type === 'lot') {
         if (ctrl.lot.lotHours < 3 && !ctrl.lot.lotFreePeriod) return submitFailure('You can\'t return your WaiveCar here. The spot needs to be valid for at least 3 hours.');
@@ -152,6 +155,7 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
       payload.type = ctrl.type;
       $ride.setParkingDetails(payload);
       return $ride.processEndRide().then(function() {
+        $ionicLoading.hide();
         return $state.go('end-ride', { id: $ride.state.booking.id });
       });
     }
