@@ -383,7 +383,7 @@ module.exports = class BookingService extends Service {
    * @param  {Object} _user
    * @return {Object}
    */
-  static *end(id, _user, query) {
+  static *end(id, _user, query, payload) {
     let booking = yield this.getBooking(id);
     let car     = yield this.getCar(booking.carId);
     let user    = yield this.getUser(booking.userId);
@@ -459,7 +459,7 @@ module.exports = class BookingService extends Service {
 
     // ### Booking Details
 
-    yield this.logDetails('end', booking, car);
+    let endDetails = yield this.logDetails('end', booking, car);
 
     // ### Create Order
     // Create a shop cart with automated fees.
@@ -474,9 +474,56 @@ module.exports = class BookingService extends Service {
     // ### Handle auto charge for time
     if (!isAdmin) yield this.handleTimeCharge(booking, user);
 
+    let parkingSlack;
+    if (payload && payload.data && payload.data.type) {
+      let parkingText = '';
+      payload.data.bookingDetailId = endDetails.id;
+
+      if (payload.data.type === 'street') {
+        parkingText += `Parked on street for ${ payload.data.streetHours }:${ payload.data.streetMinutes >= 10 ? payload.data.streetMinutes : '0' + payload.data.streetMinutes }.  `;
+        parkingText += payload.data.streetOvernightRest ? 'Has an overnight restriction.' : 'Does not have an overnight restriction.';
+      } else {
+        parkingText += `Parked in lot for ${ payload.data.lotHours }:${ payload.data.lotMinutes }.  `;
+        parkingText += payload.data.lotFreePeriod ? `Has free period of ${ payload.data.lotFreeHours } hours.  ` : '';
+        parkingText += payload.data.lotLevel ? `On level ${ payload.data.lotLevel }, spot ${ payload.data.lotSpot }.  ` : '';
+        parkingText += payload.data.streetOvernightRest ? 'Has an overnight restriction.' : 'Does not have an overnight restriction.';
+      }
+
+      parkingSlack = {
+        text        : `${ _user.name() } ended a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`,
+        attachments : [
+          {
+            fallback : `Parking Details`,
+            color    : '#D00000',
+            fields   : [
+              {
+                title : 'Parking Details',
+                value : parkingText,
+                short : false
+              }
+            ]
+          }
+        ]
+      };
+
+      if (payload.data.streetSignImage && payload.data.streetSignImage.id) {
+        parkingSlack.attachments.push({
+          fallback  : 'Parking image',
+          color     : '#D00000',
+          image_url : `https://s3.amazonaws.com/waivecar-prod/${ payload.data.streetSignImage.path }` // eslint-disable-line
+        });
+        payload.data.streetSignImage = payload.data.streetSignImage.id;
+      }
+
+      let parking = new ParkingDetails(payload.data);
+      yield parking.save();
+    }
+
     // ### Notify
 
-    yield notify.notifyAdmins(`${ _user.name() } ended a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`, [ 'slack' ], { channel : '#reservations' });
+    yield notify.slack(parkingSlack || {
+      text : `${ _user.name() } ended a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`
+    }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.END_BOOKING }, _user);
 
     // ### Relay Update
@@ -561,55 +608,8 @@ module.exports = class BookingService extends Service {
     yield booking.complete();
     yield car.available();
 
-    // ### Store parking info
-    let parkingSlack;
-    if (payload && payload.data && payload.data.type) {
-      let parkingText = '';
-      let end = _.find(booking.details, { type : 'end' });
-      payload.data.bookingDetailId = end.id;
-
-      if (payload.data.type === 'street') {
-        parkingText += `Parked on street for ${ payload.data.streetHours }:${ payload.data.streetMinutes }.  `;
-        parkingText += payload.data.streetOvernightRest ? 'Has an overnight restriction.' : 'Does not have an overnight restriction.';
-      } else {
-        parkingText += `Parked in lot for ${ payload.data.lotHours }:${ payload.data.lotMinutes }.  `;
-        parkingText += payload.data.lotFreePeriod ? `Has free period of ${ payload.data.lotFreeHours } hours.  ` : '';
-        parkingText += payload.data.lotLevel ? `On level ${ payload.data.lotLevel }, spot ${ payload.data.lotSpot }.  ` : '';
-        parkingText += payload.data.streetOvernightRest ? 'Has an overnight restriction.' : 'Does not have an overnight restriction.';
-      }
-
-      parkingSlack = {
-        text        : `${ user.name() } completed a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }> | https://www.waivecar.com/bookings/${ booking.id }`,
-        attachments : [
-          {
-            fallback : `Parking Details`,
-            color    : '#D00000',
-            fields   : [
-              {
-                title : 'Parking Details',
-                value : parkingText,
-                short : false
-              }
-            ]
-          }
-        ]
-      };
-
-      if (payload.data.streetSignImage && payload.data.streetSignImage.id) {
-        parkingSlack.attachments.push({
-          fallback  : 'Parking image',
-          color     : '#D00000',
-          image_url : `https://s3.amazonaws.com/waivecar-prod/${ payload.data.streetSignImage.path }` // eslint-disable-line
-        });
-        payload.data.streetSignImage = payload.data.streetSignImage.id;
-      }
-
-      let parking = new ParkingDetails(payload.data);
-      yield parking.save();
-    }
-
     yield notify.sendTextMessage(user, `Thanks for renting with WaiveCar! Your rental is complete. You can see your trip summary in the app.`);
-    yield notify.slack(parkingSlack || {
+    yield notify.slack({
       text : `${ user.name() } completed a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }> | https://www.waivecar.com/bookings/${ booking.id }`
     }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
@@ -757,6 +757,7 @@ module.exports = class BookingService extends Service {
       charge    : car.charge
     });
     yield details.save();
+    return details;
   }
 
   /**
