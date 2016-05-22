@@ -3,6 +3,8 @@
 var angular = require('angular');
 var moment = require('moment');
 
+require('../services/zendrive-service');
+
 module.exports = angular.module('app.controllers').controller('ParkingLocationController', [
   '$rootScope',
   '$scope',
@@ -15,7 +17,8 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
   '$ionicLoading',
   '$modal',
   '$uploadImage',
-  function($rootScope, $scope, $settings, $window, $state, $stateParams, $ride, $geocoding, $ionicLoading, $modal, $uploadImage) {
+  'ZendriveService',
+  function($rootScope, $scope, $settings, $window, $state, $stateParams, $ride, $geocoding, $ionicLoading, $modal, $uploadImage, ZendriveService) {
     $scope.service = $ride;
     // Setup scope
     var ctrl = this;
@@ -68,6 +71,7 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
 
     /**
      * Toggle parking type
+     * @param {String} type Type of parking info
      * @returns {Void} none
      */
     function setType(type) {
@@ -144,9 +148,12 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
         payload = ctrl.street;
       }
 
+      ZendriveService.stop();
       payload.type = ctrl.type;
       $ride.setParkingDetails(payload);
-      return $state.go('end-ride', { id: $ride.state.booking.id });
+      return $ride.processEndRide().then(function() {
+        return $state.go('end-ride', { id: $ride.state.booking.id });
+      });
     }
 
     /**

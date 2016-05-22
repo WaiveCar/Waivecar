@@ -170,7 +170,7 @@ module.exports = angular.module('app.services').factory('$ride', [
         payload.locationType = locationType.title;
       }
 
-      return $data.resources.bookings.end({ id: service.state.booking.id, data: payload }).$promise
+      return $data.resources.bookings.end({ id: service.state.booking.id, data: service.state.parkingDetails }).$promise
         .then(function() {
           return $data.fetch('bookings');
         })
@@ -193,7 +193,7 @@ module.exports = angular.module('app.services').factory('$ride', [
         $interval.cancel(this.checkForLock);
         this.checkForLock = null;
       }
-      return $data.resources.bookings.complete({ id: id, data: service.state.parkingDetails }).$promise
+      return $data.resources.bookings.complete({ id: id }).$promise
       .then(function() {
         $ionicLoading.hide();
         $data.fetch('bookings');
@@ -257,7 +257,7 @@ module.exports = angular.module('app.services').factory('$ride', [
               return !_.contains([ 'cancelled', 'completed', 'closed', 'ended' ], b.status);
           });
 
-        console.log('$ride : init. current: %O', current);
+        console.log('$ride : init. current: ', current);
 
         if (current == null) {
           $state.go('cars');
