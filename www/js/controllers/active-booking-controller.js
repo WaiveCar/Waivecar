@@ -38,14 +38,29 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     if (!isInitialized) {
       return;
     }
-    ctrl.car = $data.active.cars;
+
+    // ctrl.car = $data.active.cars;
     stopServiceWatch();
     stopServiceWatch = null;
     watchForWithinRange();
     if ($data.active.bookings) {
+      loadCar($data.active.bookings.carId);
       expired = moment($data.active.bookings.createdAt).add(15, 'm');
     }
   });
+
+  function loadCar(id) {
+    $data.resources.cars.get({ id: id }).$promise.then(function(car) {
+      ctrl.car = car;
+
+      if (car.lastBooking) {
+        var end = _.find(car.lastBooking.details, { type: 'end' });
+        if (end) {
+          ctrl.parkingDetails = end.parkingDetails;
+        }
+      }
+    });
+  }
 
   var timer = $interval(function() {
     if (expired) {
@@ -53,6 +68,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       this.timeLeft = time;
       return this.timeLeft;
     }
+    return null;
   }.bind(this), 1000);
 
   var stopWatching;
@@ -209,7 +225,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       $ionicLoading.show({
         template: '<div class="circle-loader"><span>Loading</span></div>'
       });
-      
+
       $interval.cancel(timer);
       var id = $ride.state.booking.id;
       console.log('unlocking');

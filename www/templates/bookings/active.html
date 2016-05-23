@@ -29,13 +29,17 @@
         <div class="row" style="height: 100%;">
           <div class="col col-50 car-image" style="background-image: url(/img/car.jpg);"></div>
           <div class="col">
-            <p class="title">
-              <h3 ng-bind="ctrl.data.cars.make"></h3>
-              <h4 ng-bind="ctrl.data.cars.model"></h4>
-            </p>
+            <!-- <p class="title"> -->
+              <!-- <h3 ng-bind="ctrl.car.make"></h3> -->
+              <!-- <h4 ng-bind="ctrl.car.model"></h4> -->
+            <!-- </p> -->
             <p>
               <span ng-if="distance">{{ distance | number:0 }} miles away</span>
               <span ng-bind="data.cars.license"></span>
+            </p>
+            <p ng-if="ctrl.parkingDetails && ctrl.parkingDetails.type === 'lot'">
+              <span ng-if="ctrl.parkingDetails.lotLevel">Lot level: {{ ctrl.parkingDetails.lotLevel }}</span><br>
+              <span ng-if="ctrl.parkingDetails.lotSpot">Lot spot: {{ ctrl.parkingDetails.lotSpot }}</span>
             </p>
           </div>
         </div>
