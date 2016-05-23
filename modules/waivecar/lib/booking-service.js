@@ -609,11 +609,8 @@ module.exports = class BookingService extends Service {
     yield booking.complete();
     yield car.available();
 
-    // ### Store parking info
-    let parkingSlack;
-
     yield notify.sendTextMessage(user, `Thanks for renting with WaiveCar! Your rental is complete. You can see your trip summary in the app.`);
-    yield notify.slack(parkingSlack || {
+    yield notify.slack({
       text : `${ user.name() } completed a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }> | ${ apiConfig.uri }/bookings/${ booking.id }`
     }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
