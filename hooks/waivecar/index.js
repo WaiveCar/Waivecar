@@ -1,20 +1,40 @@
 'use strict';
 
 let hooks = Bento.Hooks;
-let bookings = Bento.module('waivecar/lib/booking-service');
 let Booking = Bento.model('Booking');
+let ParkingDetails = Bento.model('ParkingDetails');
 
 hooks.set('cars:show:after', function *(payload) {
-  let booking = yield Booking.findOne({
+  let bookings = yield Booking.find({
     where : {
       carId  : payload.id,
-      status : [ 'completed', 'closed', 'ended' ]
+      status : {
+        $in : [ 'completed', 'closed', 'ended' ]
+      }
     },
-    order : [
-      [ 'created_at', 'DESC' ]
+    include : [
+      {
+        model : 'BookingDetails',
+        as    : 'details'
+      },
+      {
+        model      : 'BookingPayment',
+        as         : 'payments',
+        attributes : [ 'orderId' ]
+      }
     ]
   });
 
-  if (booking) payload.lastBooking = yield bookings.show(booking.id, null, true);
+  if (bookings && bookings.length) {
+    let booking = bookings[0];
+    if (booking.details && booking.details.length) {
+      for (let i = 0, len = booking.details.length; i < len; i++) {
+        let detail = booking.details[i];
+        detail.parkingDetails = yield ParkingDetails.findOne({ where : { bookingDetailId : detail.id } });
+      }
+    }
+    payload.lastBooking = booking;
+  }
+
   return payload;
 });
