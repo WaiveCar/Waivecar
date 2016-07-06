@@ -31,7 +31,7 @@ module.exports = angular.module('app.directives')
           triggerAt = Date.now() + 5e3;
           registerFallback();
 
-          if (+val === 100) {
+          if (+val >= 90) {
             if (timer) $interval.cancel(timer);
             ctrl.onSlide();
           }
