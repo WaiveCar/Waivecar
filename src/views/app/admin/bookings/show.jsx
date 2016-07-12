@@ -133,7 +133,10 @@ module.exports = class BookingsView extends React.Component {
         action = <button type="button" onClick={ () => { this.cancel() } } className="btn btn-primary">Cancel</button>;
         break;
       }
-      case 'ready'   :
+      case 'ready'   : {
+        action = <button type="button" onClick={ () => { this.update('ready') } } className="btn btn-primary">Start Ride</button>;
+        break;
+      }
       case 'started' : {
         action = <button type="button" onClick={ () => { this.update('end') } } className="btn btn-primary">End Ride</button>;
         break;
