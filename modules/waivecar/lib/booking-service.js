@@ -481,7 +481,7 @@ module.exports = class BookingService extends Service {
       payload.data.bookingDetailId = endDetails.id;
 
       if (payload.data.type === 'street') {
-        parkingText += `Parked on street for ${ payload.data.streetHours }:${ payload.data.streetMinutes >= 10 ? payload.data.streetMinutes : '0' + payload.data.streetMinutes }.  `;
+        parkingText += `Parked on street for ${ payload.data.streetHours }:${ ((payload.data.streetMinutes || 0) + 100).toString().slice(1) }.  `;
         parkingText += payload.data.streetOvernightRest ? 'Has an overnight restriction.' : 'Does not have an overnight restriction.';
       } else {
         parkingText += `Parked in lot for ${ payload.data.lotHours }:${ payload.data.lotMinutes }.  `;
