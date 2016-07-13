@@ -26,7 +26,7 @@ module.exports = angular.module('app.services').factory('$message', [
         message = JSON.stringify(message);
       }
 
-      var promise = $ionicPopup.alert({
+      $ionicPopup.alert({
         title: title,
         template: message
       });
