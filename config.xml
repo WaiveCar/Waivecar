@@ -1,14 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0"
-  id="com.waivecar.app"
-  version="1.0.8"
-  ios-CFBundleVersion="69"
-  android-versionCode="69">
+<widget android-versionCode="69" id="com.waivecar.app" ios-CFBundleVersion="69" version="1.0.8" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>WaiveCar</name>
     <description>WaiveCar Mobile Application</description>
     <author email="info@waivecar.com" href="http://waivecar.com/">WaiveCar</author>
     <content src="index.html" />
     <access origin="*" subdomains="true" />
+    <access origin="tel:*" launch-external="yes" />
     <preference name="webviewbounce" value="false" />
     <preference name="UIWebViewBounce" value="false" />
     <preference name="DisallowOverscroll" value="true" />
@@ -72,6 +69,7 @@
     <allow-navigation href="http://*/*" />
     <allow-navigation href="https://*/*" />
     <allow-navigation href="data:*" />
+    <allow-intent href="tel:*" />
     <plugin name="ionic-plugin-keyboard" spec="~1.0.7" />
     <plugin name="cordova-plugin-statusbar" spec="~1.0.1" />
     <plugin name="cordova-plugin-x-toast" spec="https://github.com/EddyVerbruggen/Toast-PhoneGap-Plugin.git" />
