@@ -72,7 +72,13 @@ scheduler.process('active-booking', function *(job) {
         }
       }
 
+      // if its zero and the last one was above 10
+      // discard it all as invalid data.
+      //
+      // 0 problem is probably due to api failure.
+      //
       // Check charge level
+      // This computes a delta threshhold
       if (device.charge < 30 && car.charge > 30) {
         yield notify.sendTextMessage(user, config.notification.reasons['LOW_CHARGE']);
         yield notify.notifyAdmins(`${ user.name() } has driven ${ car.license } to ${ device.charge }% charge. ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
