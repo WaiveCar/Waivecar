@@ -5,7 +5,7 @@
     <author email="info@waivecar.com" href="http://waivecar.com/">WaiveCar</author>
     <content src="index.html" />
     <access origin="*" subdomains="true" />
-    <access origin="tel:*" launch-external="yes" />
+    <access launch-external="yes" origin="tel:*" />
     <preference name="webviewbounce" value="false" />
     <preference name="UIWebViewBounce" value="false" />
     <preference name="DisallowOverscroll" value="true" />
@@ -86,4 +86,5 @@
     <plugin name="cordova-plugin-inappbrowser" spec="~1.1.1" />
     <plugin name="org.pbernasconi.progressindicator" spec="~1.1.0" />
     <plugin name="com.zendrive.phonegap.sdk" spec="https://github.com/zendrive/zendrive-sdk-phonegap-plugin" />
+    <engine name="browser" spec="~4.1.0" />
 </widget>
