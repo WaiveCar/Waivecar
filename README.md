@@ -18,6 +18,11 @@ The rest of the documentation here presumes you are in the context of the 4.2 wa
 Debian 8.0 (jessie).  There will be special notes to that effect if I (cjm) think that its important although tbh, it's the only platform
 I'm using this on.
 
+## Routes
+
+The actual routing logic is burried a bit deep at src/templates/app/index.jsx.
+
+
 Start by running npm install to get all the dependencies.
 
 ```sh
