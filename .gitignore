@@ -79,3 +79,4 @@ retval
 storage
 .env
 prepaid_users.csv
+.vagrant
