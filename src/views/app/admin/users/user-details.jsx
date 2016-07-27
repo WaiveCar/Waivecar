@@ -43,6 +43,19 @@ module.exports = class UserDetails extends React.Component {
     return url;
   }
 
+ 
+  removeUser = (event) => {
+    api.delete(`/users/${ this.props.id }`, {}, (err) => {
+      snackbar.notify({
+        type    : 'success',
+        message : 'User successfully deleted'
+      });
+
+      window.location = '/users/';
+    });
+  }
+
+  
   submit = (event) => {
     let form = new Form(event);
     api.put(`/users/${ this.props.id }`, form.data, (err) => {
@@ -178,6 +191,7 @@ module.exports = class UserDetails extends React.Component {
               </div>
 
               <div className="form-actions text-center">
+                <a style={{ marginTop: "0.5em" }} onClick={ this.removeUser } className="pull-left btn btn-xs btn-danger">Delete <br/> User</a>
                 <div className="btn-group" role="group">
                   <button type="submit" className="btn btn-primary">Update Details</button>
                 </div>
