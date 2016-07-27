@@ -28,6 +28,25 @@ module.exports = class LicenseService extends Service {
       }, 400);
     }
 
+    // API: Licenses must be unique #456
+    //
+    // Make sure the user hasn't registered before.  It appears
+    // that state/license pairs are globally unique identifiers
+    // and that the license number alone is insufficient.
+    //
+    // First we normalize the data
+    data.number = data.number.toUpperCase();
+    // Check if user already has license
+    if (yield License.findOne({ where : { 
+      state : data.state,
+      number: data.number
+    } })) {
+      throw error.parse({
+        code    : `DUPLICATE_LICENSE`,
+        message : `This license has already been registered. Please use the contact form for questions if you believe this is an error.`
+      }, 400);
+    }
+
     this.hasAccess(user, _user);
 
     // Strip time off birthDate
