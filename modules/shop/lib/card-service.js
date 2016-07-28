@@ -23,6 +23,27 @@ module.exports = class Cards extends Service {
 
     this.hasAccess(user, _user);
 
+    // Credit card must match either first or last name #476
+    //
+    // This should exist above the stripe lib.
+    // A little bit of sanitization will be done beforehand.
+    //
+    // The CC name that comes in is a single unit with spaces.
+    let cardNameParts = data.card.name.toLowerCase().split(/\s+/);
+    let userNameParts = [user.firstName, user.lastName].join(' ').toLowerCase().split(/\s+/);
+    let hasMatch = false;
+
+    userNameParts.forEach(function(name) {
+      hasMatch |= (name.length && cardNameParts.indexOf(name)) !== -1);
+    });
+
+    if (!hasMatch) {
+      throw error.parse({
+        code    : 'NAME_ON_CARD',
+        message : 'The name on the credit card must be close to the one on the account.'
+      }, 400);
+    }
+
     try {
       let card = yield service.create(user, data.card);
       return card;
