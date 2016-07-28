@@ -80,3 +80,4 @@ storage
 .env
 prepaid_users.csv
 .vagrant
+.bento-packages
