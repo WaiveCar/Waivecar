@@ -34,7 +34,7 @@ module.exports = class Cards extends Service {
     let hasMatch = false;
 
     userNameParts.forEach(function(name) {
-      hasMatch |= (name.length && cardNameParts.indexOf(name)) !== -1);
+      hasMatch |= ( (name.length && cardNameParts.indexOf(name)) !== -1 );
     });
 
     if (!hasMatch) {
