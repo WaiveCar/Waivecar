@@ -141,6 +141,10 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       type : Sequelize.DECIMAL(10, 2)
     },
 
+    chargeHistory: {
+      type : Sequelize.STRING
+    },
+
     charge : {
       type : Sequelize.DECIMAL(10, 2)
     },
