@@ -141,6 +141,10 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       type : Sequelize.DECIMAL(10, 2)
     },
 
+    chargeHistory: {
+      type : Sequelize.STRING
+    },
+
     charge : {
       type : Sequelize.DECIMAL(10, 2)
     },
@@ -190,6 +194,35 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
   // ### Model Methods
 
   model.methods = {
+
+    getChargeHistory : function () {
+      return JSON.parse(this.chargeHistory) || [];
+    },
+
+    addToHistory : function (what) {
+      // TODO: find out where constants can be stored for
+      // scoped access.
+      let history_length = 4;
+      let history = this.getChargeHistory();
+
+      if (history.length > history_length) {
+        history.shift();
+      }
+      history.push(what);
+      this.chargeHistory = JSON.stringify(history);
+    },
+   
+    averageCharge : function () {
+      let history = this.getChargeHistory();
+
+      // If there is a history then we compute this function. Otherwise
+      // we just return the charge as the "average"
+      if (history.length > 0) {
+        let total = history.reduce(function(current, sum) { return current + sum } );
+        return total / history.length;
+      }
+      return this.charge;
+    },
 
     /**
      * Sets the car into unavailable mode.

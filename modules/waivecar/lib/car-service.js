@@ -208,6 +208,9 @@ module.exports = {
       data.isParked = (data.currentSpeed === 0) && (!data.isIgnitionOn);
     }
 
+    existingCar.addToHistory(data.charge);
+    data.chargeHistory = existingCar.chargeHistory;
+
     yield existingCar.update(data);
 
     relay.emit('cars', {
