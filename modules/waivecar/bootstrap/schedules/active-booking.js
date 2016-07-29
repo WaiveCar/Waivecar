@@ -46,7 +46,7 @@ scheduler.process('active-booking', function *(job) {
       let car = yield Car.findById(booking.carId);
       let device = yield cars.getDevice(car.id);
       let user = yield User.findById(car.userId);
-
+      
       if (!device || !car || !user) return;
 
       // Check that battery use is changing as expected
@@ -73,9 +73,9 @@ scheduler.process('active-booking', function *(job) {
       }
 
       // Check charge level
-      if (device.charge < 30 && car.charge > 30) {
+      if (device.charge < 20 && car.charge > 20) {
         yield notify.sendTextMessage(user, config.notification.reasons['LOW_CHARGE']);
-        yield notify.notifyAdmins(`${ user.name() } has driven ${ car.license } to ${ device.charge }% charge. ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+        yield notify.notifyAdmins(`${ user.name() } has driven ${ car.license } to ${ device.charge }% charge (normalized: ${ car.averageCharge() }). ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
       }
 
       // Log position
