@@ -210,7 +210,6 @@ module.exports = {
 
     existingCar.addToHistory(data.charge);
     data.chargeHistory = existingCar.chargeHistory;
-    log.info(existingCar.averageCharge());
 
     yield existingCar.update(data);
 

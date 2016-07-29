@@ -214,8 +214,14 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
    
     averageCharge : function () {
       let history = this.getChargeHistory();
-      let total = history.reduce(function(current, sum) { return current + sum } );
-      return total / history.length;
+
+      // If there is a history then we compute this function. Otherwise
+      // we just return the charge as the "average"
+      if (history.length > 0) {
+        let total = history.reduce(function(current, sum) { return current + sum } );
+        return total / history.length;
+      }
+      return this.charge;
     },
 
     /**
