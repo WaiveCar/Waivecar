@@ -195,25 +195,25 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
   model.methods = {
 
-    history : function () {
-      return JSON.parse(this.charge_history) || [];
+    getChargeHistory : function () {
+      return JSON.parse(this.chargeHistory) || [];
     },
 
     addToHistory : function (what) {
       // TODO: find out where constants can be stored for
       // scoped access.
       let history_length = 4;
-      let history = this.history();
+      let history = this.getChargeHistory();
 
-      if (history.length > history_legth) {
+      if (history.length > history_length) {
         history.shift();
       }
       history.push(what);
-      this.charge_history = JSON.encode(history);
+      this.chargeHistory = JSON.stringify(history);
     },
-
-    average : function () {
-      let history = this.history();
+   
+    averageCharge : function () {
+      let history = this.getChargeHistory();
       let total = history.reduce(function(current, sum) { return current + sum } );
       return total / history.length;
     },
