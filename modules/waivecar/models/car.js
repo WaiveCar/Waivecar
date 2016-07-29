@@ -195,6 +195,29 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
   model.methods = {
 
+    history : function () {
+      return JSON.parse(this.charge_history) || [];
+    },
+
+    addToHistory : function (what) {
+      // TODO: find out where constants can be stored for
+      // scoped access.
+      let history_length = 4;
+      let history = this.history();
+
+      if (history.length > history_legth) {
+        history.shift();
+      }
+      history.push(what);
+      this.charge_history = JSON.encode(history);
+    },
+
+    average : function () {
+      let history = this.history();
+      let total = history.reduce(function(current, sum) { return current + sum } );
+      return total / history.length;
+    },
+
     /**
      * Sets the car into unavailable mode.
      */
