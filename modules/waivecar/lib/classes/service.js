@@ -134,7 +134,7 @@ module.exports = class Service {
     if (user.status === 'suspended') {
       throw error.parse({
         code    : `BOOKING_INVALID_USER`,
-        message : `Your account has been suspended.`
+        message : `Your account has been suspended. The most common reason for a suspended account is an expired credit cards. Try updating your card in the account section.`
       }, 403);
     } else if (user.status === 'pending') {
       throw error.parse({
