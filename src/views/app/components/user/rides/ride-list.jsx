@@ -120,7 +120,7 @@ class RideList extends Component {
         <h3>
           { this.props.currentUser ? 'My' : 'User\'s' } Rides
           <small>
-            { this.props.currentUser ? 'Your' : 'User\'s' } current, and past ride history.
+            { this.props.currentUser ? 'Your' : 'User\'s' } current and past ride history.
           </small>
         </h3>
         <div className="box-content no-padding">
