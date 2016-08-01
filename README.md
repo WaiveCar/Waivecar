@@ -18,6 +18,10 @@ The rest of the documentation here presumes you are in the context of the 4.2 wa
 Debian 8.0 (jessie).  There will be special notes to that effect if I (cjm) think that its important although tbh, it's the only platform
 I'm using this on.
 
+## Actual deployment
+
+ct decided to use something called webpack that you need to of course install through `npm -g` in order to get the executable thing.
+
 ## Routes
 
 The actual routing logic is burried a bit deep at src/templates/app/index.jsx.
@@ -47,3 +51,4 @@ $ npm run lint
 ## [Host](#host)
 
 You may want to change the host in `server.js` and `webpack.config.js` from `localhost` to `0.0.0.0` to allow access from same WiFi network. This is not enabled by default because it is reported to cause problems on Windows. This may also be useful if you're using a VM.
+
