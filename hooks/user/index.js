@@ -124,9 +124,9 @@ hooks.set('user:store:after', function *(user, _user) {
 
   // ### Verify Email
 
-  // if (user.email && !user.verifiedEmail) {
-  //   yield verification.requestEmailVerification(user.id, user.email, user.name());
-  // }
+  if (user.email && !user.verifiedEmail) {
+    yield verification.requestEmailVerification(user.id, user.email, user.name());
+  }
 });
 
 // ### Update Hooks
