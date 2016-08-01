@@ -26,9 +26,9 @@ env:
   - REMOTE_DIR_WEB=/opt/${PACKAGE_NAME}-web
   - REMOTE_DIR_ADMIN=/opt/${PACKAGE_NAME}-admin
   - REMOTE_DIR_API=/opt/${PACKAGE_NAME}-api
-  - REMOTE_HOST_DEV=${PACKAGE_NAME}-dev.cleverbuild.biz
-  - REMOTE_HOST_STAG=${PACKAGE_NAME}-stag.cleverbuild.biz
-  - REMOTE_HOST_PROD=${PACKAGE_NAME}-prod.cleverbuild.biz
+  - REMOTE_HOST_DEV=local.waivecar.com
+  - REMOTE_HOST_STAG=api-staging.waivecar.com
+  - REMOTE_HOST_PROD=api.waivecar.com
   - SCR=deployment/build/scripts
 before_install:
   - openssl aes-256-cbc -K $encrypted_e155dc6b3053_key -iv $encrypted_e155dc6b3053_iv
