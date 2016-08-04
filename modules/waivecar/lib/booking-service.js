@@ -521,6 +521,20 @@ module.exports = class BookingService extends Service {
     }
 
     // ### Notify
+    //
+    // Slack Alerts: Scamming by booking without moving #468
+    //
+    // If a user ends a ride, and the booking is longer than 10 minutes, but they have driven 0 miles, send an alert to the "User Alerts" Channel.
+    // Alert text: "{User Name} had booking with 0 miles driven for X minutes. {User phone number} {link to user profile}."
+    // (People do this to 'hold' the car for a while).
+    //
+    let deltas = yield this.getDeltas(booking);
+
+    if(deltas.duration > 10 && deltas.distance === 0) {
+      yield notify.slack({
+        text : `${ _user.name() } had booking with 0 miles driven for ${ deltas.duration } minutes. Car: ${ car.license || car.id } | <${ user.phone || user.email }>`
+      }, { channel : '#user-alerts' });
+    }
 
     yield notify.slack(parkingSlack || {
       text : `${ _user.name() } ended a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`
@@ -759,6 +773,30 @@ module.exports = class BookingService extends Service {
     });
     yield details.save();
     return details;
+  }
+
+  static *getDetails(type, id) {
+    return yield BookingDetails.findOne({
+      where : {
+        bookingId : id,
+        type      : type
+      }
+    });
+  }
+
+  // Returns the duration in minutes and the difference between the mileage reads
+  // of a particular booking.
+  static *getDeltas(booking) {
+    let start = yield this.getDetails('start', booking.id);
+    let end = yield this.getDetails('end', booking.id);
+    let ret = {duration: 0, distance: 0};
+
+    if (start && end) {
+      ret.duration = moment(end.createdAt).diff(start.createdAt, 'minutes');
+      ret.distance = end.mileage - start.mileage;
+    }
+
+    return ret;
   }
 
   /**

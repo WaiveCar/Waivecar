@@ -46,9 +46,20 @@ hooks.set('auth:social', function *(user, payload) {
  * @return {Void}
  */
 function *verifyUser(user, payload) {
-  if (user.status === 'suspended') {
-    throw accountSuspended();
-  }
+  // Api: Suspended users should be able to be log in and update credit cards #484
+  //
+  // Ideally what you want to do is permit the user to log in but then return a crafted
+  // message under the umbrella of a successful login which directs them to fix their CC.
+  //
+  // This is the ideal situation. The easier one for now is to piggy-back on the prohibition
+  // of booking for suspended accounts (this is good) and to then tell them to update their
+  // credit card in that message. (cjm 20160727)
+  //
+  // if (user.status === 'suspended') {
+  //   throw accountSuspended();
+  // }
+  //
+  
   let group = yield getGroup(user.id, payload.group || 1);
   if (!group) {
     throw invalidGroup();

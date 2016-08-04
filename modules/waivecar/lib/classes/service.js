@@ -134,8 +134,13 @@ module.exports = class Service {
     if (user.status === 'suspended') {
       throw error.parse({
         code    : `BOOKING_INVALID_USER`,
-        message : `Your account has been suspended.`
-      }, 403);
+        message : `Your account has been suspended. The most common reason for a suspended account is an expired credit cards. Try updating your card in the account section.`
+      }, 400);
+    } else if (user.status === 'pending') {
+      throw error.parse({
+        code    : `BOOKING_PENDING_USER`,
+        message : `You are not yet approved to book a WaiveCar. Please call us at 1-800-WAIVE55 to activate your account.`
+      }, 400);
     }
 
     // ### Check User
