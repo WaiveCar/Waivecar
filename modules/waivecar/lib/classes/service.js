@@ -135,7 +135,7 @@ module.exports = class Service {
       throw error.parse({
         code    : `BOOKING_INVALID_USER`,
         message : `Your account has been suspended. The most common reason for a suspended account is an expired credit cards. Try updating your card in the account section.`
-      }, 403);
+      }, 400);
     } else if (user.status === 'pending') {
       throw error.parse({
         code    : `BOOKING_PENDING_USER`,
