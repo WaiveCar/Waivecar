@@ -144,7 +144,7 @@ module.exports = class LicenseVerificationService extends Service {
         // ### Notify Changes
 
         if (license.status === 'complete' && result === 'clear') {
-          yield notify.sendTextMessage(user, `Hey there, your license check is complete! Please open the WaiveCar app to continue your reservation.`);
+          yield notify.sendTextMessage(user, `Congrats! You have been approved to drive with WaiveCar! But not so fast! Give us a call at 1-855-924-8355 so we can give you a run down on our rules and regulations before your first trip.`);
         }
 
         relay.admin(resource, {
