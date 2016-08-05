@@ -1,5 +1,4 @@
 'use strict';
-
 let queryParser  = Bento.provider('sequelize/helpers').query;
 let License      = Bento.model('License');
 let error        = Bento.Error;
@@ -8,6 +7,7 @@ let Service      = require('./classes/service');
 let Verification = require('./onfido');
 let resource     = 'licenses';
 let moment       = require('moment');
+let notify       = Bento.module('waivecar/lib/notification-service');
 
 module.exports = class LicenseService extends Service {
 
@@ -142,12 +142,14 @@ module.exports = class LicenseService extends Service {
    * @return {Object}
    */
   static *update(id, data, _user) {
+
     let license = yield this.getLicense(id);
     let user    = yield this.getUser(license.userId);
 
     this.hasAccess(user, _user);
 
     // ### create user in verification provider and establish link.
+
 
     if (!license.linkedUserId) {
       let userLink      = yield Verification.createUserLink(user, data, _user);
@@ -156,6 +158,13 @@ module.exports = class LicenseService extends Service {
     }
 
     // ### Update License
+
+    // So when a license moves to consider we need to send an SMS to the user.
+    // This is where it happens to happen.
+    //
+    if(license.outcome !== data.outcome && data.outcome === 'clear') {
+      yield notify.sendTextMessage(user, `Congrats! You have been approved to drive with WaiveCar! But not so fast! Give us a call at 1-855-924-8355 so we can give you a run down on our rules and regulations before your first trip.`);
+    }
 
     yield license.update(data);
 

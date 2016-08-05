@@ -142,10 +142,13 @@ module.exports = class LicenseVerificationService extends Service {
         });
 
         // ### Notify Changes
-
-        if (license.status === 'complete' && result === 'clear') {
-          yield notify.sendTextMessage(user, `Congrats! You have been approved to drive with WaiveCar! But not so fast! Give us a call at 1-855-924-8355 so we can give you a run down on our rules and regulations before your first trip.`);
-        }
+        //
+        // This code seems to never run so this message has been moved to lib/license-service.js  
+        //
+        // if (license.status === 'complete' && result === 'clear') {
+        //  yield notify.sendTextMessage(user, `Congrats! You have been approved to drive with WaiveCar! But not so fast! Give us a call at 1-855-924-8355 so we can give you a run down on our rules and regulations before your first trip.`);
+        // }
+        //
 
         relay.admin(resource, {
           type : 'update',
