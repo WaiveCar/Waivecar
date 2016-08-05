@@ -33,10 +33,8 @@ hooks.set('verification:handle', function *(user, payload) {
   yield user.update(function update() {
     switch (payload.type) {
       case 'phone-verification' : {
-        return {
-          verifiedPhone : true,
-          status        : user.status === 'pending' ? 'active' : user.status
-        };
+        return { verifiedPhone : true };
+        // status        : user.status === 'pending' ? 'active' : user.status
       }
       case 'email-verification' : {
         return {
