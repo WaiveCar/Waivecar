@@ -5,7 +5,8 @@
   "description": "WaiveCar Web",
   "scripts": {
     "local": "NODE_ENV=development node webpack.local.js",
-    "build": "webpack -p --config ./webpack/config/deployment.js",
+    "staging": "NODE_ENV=staging node webpack.local.js",
+    "build": "NODE_ENV=production node_modules/webpack/bin/webpack.js -p --config ./webpack/config/deployment.js",
     "lint": "eslint src"
   },
   "repository": {
