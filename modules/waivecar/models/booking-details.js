@@ -64,10 +64,10 @@ Bento.Register.Model('BookingDetails', 'sequelize', (model, Sequelize) => {
 
     /**
      * The total car mileage.
-     * @type {Integer}
+     * @type {Decimal}
      */
     mileage : {
-      type : Sequelize.INTEGER
+      type : Sequelize.DECIMAL(10,2)
     },
 
     /**
