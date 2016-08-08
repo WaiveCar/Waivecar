@@ -81,3 +81,4 @@ storage
 prepaid_users.csv
 .vagrant
 .bento-packages
+*.sql
