@@ -1,3 +1,7 @@
+Notes:
+
+Active booking loop: waivecar/bootstrap/schedules/active-booking.js
+
 WaiveCar API
 ============
 
