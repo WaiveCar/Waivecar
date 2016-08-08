@@ -473,8 +473,20 @@ module.exports = class BookingService extends Service {
     yield booking.end();
 
     // ### Handle auto charge for time
-    if (!isAdmin) yield this.handleTimeCharge(booking, user);
+    if (!isAdmin) {
+      yield this.handleTimeCharge(booking, user);
 
+      // If car is under 25% make it unavailable after ride is done #514
+      // We use the average to make this assessment.
+      if (car.averageCharge() < 25.00) {
+        yield car.updateAvailabilityAnonymous(car.id, false);
+        yield notify.slack({
+          text : `Car ${ car.license || car.id } has been made unavailable due to charge being under 25%.`
+        }, { channel : '#rental-alerts' });
+      }
+    }
+
+    // Parking restrictions:
     let parkingSlack;
     if (payload && payload.data && payload.data.type) {
       let parkingText = '';
@@ -535,7 +547,7 @@ module.exports = class BookingService extends Service {
         text : `${ _user.name() } had booking with 0 miles driven for ${ deltas.duration } minutes. Car: ${ car.license || car.id } | <${ user.phone || user.email }> | https://www.waivecar.com/users/${ user.id }`
       }, { channel : '#user-alerts' });
     }
-
+  
     yield notify.slack(parkingSlack || {
       text : `${ _user.name() } ended a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`
     }, { channel : '#reservations' });
