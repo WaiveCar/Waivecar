@@ -1,3 +1,8 @@
+Notes:
+
+Ending a booking: end@waivecar/lib/booking-service.js
+
+
 WaiveCar API
 ============
 
