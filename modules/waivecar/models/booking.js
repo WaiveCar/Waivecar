@@ -68,6 +68,10 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       type : Sequelize.STRING
     },
 
+    flags: {
+      type : Sequelize.TEXT()
+    },
+
     /**
      * The boooking status.
      * @type {Enum}
@@ -132,6 +136,26 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
      */
     getStatus() {
       return this.status.replace('-', ' ');
+    },
+
+    getFlags() {
+      return JSON.parse(this.flags) || [];
+    },
+
+    isFlagged(what) {
+      return this.getFlags().indexOf(what) !== -1;
+    },
+
+    *flag(what) {
+      if(!this.isFlagged(what)) {
+        let flagList = this.getFlags();
+        flagList.append(what);
+
+        yield this.update({
+          flags: JSON.stringify(flagList)
+        });
+      }
+      return flagList;
     },
 
     /**
