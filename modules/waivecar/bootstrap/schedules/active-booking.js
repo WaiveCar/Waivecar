@@ -92,7 +92,7 @@ scheduler.process('active-booking', function *(job) {
 
       // Check charge level
       // See Api: Low charge text message triggers #495 
-      if (car.getAverage() < 20 && !booking.isFlagged('low-charge')) {
+      if (car.averageCharge() < 20 && !booking.isFlagged('low-charge')) {
         // make sure an excess number of messages aren't sent
         // and that they are only sent when the average dips below 20
         yield booking.flag('low-charge');
