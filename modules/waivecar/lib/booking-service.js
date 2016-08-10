@@ -472,6 +472,8 @@ module.exports = class BookingService extends Service {
     yield booking.delReminders();
     yield booking.end();
 
+    let deltas = yield this.getDeltas(booking);
+
     // ### Handle auto charge for time
     if (!isAdmin) {
       yield this.handleTimeCharge(booking, user);
@@ -484,6 +486,10 @@ module.exports = class BookingService extends Service {
           text : `Car ${ car.license || car.id } has been made unavailable due to charge being under 25%.`
         }, { channel : '#rental-alerts' });
       }
+    } else if(deltas.duration > 120) {
+      yield notify.slack({
+        text : `@mobeenyc: Booking was ended by admin. Time driven was over 2 hours. https://waivecar.com/bookings/${ id }`
+      }, { channel : '#rental-alerts' });
     }
 
     // Parking restrictions:
@@ -540,7 +546,6 @@ module.exports = class BookingService extends Service {
     // Alert text: "{User Name} had booking with 0 miles driven for X minutes. {User phone number} {link to user profile}."
     // (People do this to 'hold' the car for a while).
     //
-    let deltas = yield this.getDeltas(booking);
 
     if(deltas.duration > 10 && deltas.distance === 0) {
       yield notify.slack({
