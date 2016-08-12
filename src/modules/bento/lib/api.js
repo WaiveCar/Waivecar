@@ -23,6 +23,9 @@ class API {
   static post(uri, data, callback) {
     let req = this.prepare('post', uri);
     req.send(data);
+    if(self._debug) {
+      console.log("POST " + uri, data);
+    }
     req.end(_handleResult.bind(this, callback));
   }
 
@@ -70,6 +73,9 @@ class API {
 
     let req = this.prepare('get', uri);
     req.query(qs);
+    if(self._debug) {
+      console.log("GET " + uri, qs);
+    }
     req.end(_handleResult.bind(this, done));
   }
 
