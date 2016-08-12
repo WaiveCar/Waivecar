@@ -101,7 +101,7 @@ module.exports = class Car extends Service {
       let booking = bookings[0] || {};
       if (booking.status === 'reserved' || booking.status === 'started') car.booking = booking;
       this.updateCarState(car);
-      if (cb) cb();
+      if (cb) cb(booking);
     });
   }
 }
