@@ -8,6 +8,9 @@ Route.post('/bookings', {
   params : [ 'userId', 'carId' ]
 });
 
+//Route.get('/status',               [ 'isAuthenticated', 'ReportsController@status' ]);
+Route.get('/status',               [ 'ReportsController@status' ]);
+
 Route.get('/bookings',             [ 'isAuthenticated', 'BookingsController@index' ]);
 Route.get('/bookings/:id',         [ 'isAuthenticated', 'BookingsController@show' ]);
 Route.get('/bookings/:id/notes',   [ 'isAuthenticated', 'NotesController@getBookingNotes' ]);

@@ -4,7 +4,11 @@ let Slack       = Bento.provider('slack');
 let queryParser = Bento.provider('sequelize/helpers').query;
 let Report      = Bento.model('Report');
 let Booking     = Bento.model('Booking');
+let Car         = Bento.model('Car');
+let User        = Bento.model('User');
 let error       = Bento.Error;
+let log         = Bento.Log;
+
 
 // ### Instances
 
@@ -12,6 +16,35 @@ const slack = new Slack('notifications');
 
 module.exports = {
 
+  *status() {
+    let allCars = yield Car.find();
+
+    let report = {
+      'unavailable': [],
+      'available': [],
+      'booked': []
+    };
+
+    allCars.forEach(function(car) {
+      if(!car.isAvailable) {
+        report.unavailable.push(car.license);
+      } else {
+        if(car.user) {
+          user = yield User.findById(car.user);
+        }
+        report.booked.push([
+          car.license, car.bookingId, car.user, user.name()
+        ]);
+      }
+    })
+
+
+    log.info(allCars[0]);
+    log.info(JSON.stringify(report));
+
+    // is_available
+  },
+  
   /**
    * Creates a new report.
    * @param  {Object} payload
