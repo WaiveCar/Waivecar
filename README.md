@@ -22,10 +22,11 @@ I'm using this on.
 
 ct decided to use something called webpack that you need to of course install through `npm -g` in order to get the executable thing.
 
-## Routes
+## Tips
 
 The actual routing logic is burried a bit deep at src/templates/app/index.jsx.
 
+Debugging: There's a `self._debug` that's observed throughout the code. Toggle that to on and you should see things like console logs of ajax calls which get sucked into the opaqueness of websockets socket.io nonsense etc... I know, can you imagine?
 
 Start by running npm install to get all the dependencies.
 
