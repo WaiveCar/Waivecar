@@ -8,6 +8,7 @@ let roles       = Bento.Interface.roles;
 let hooks       = Bento.Hooks;
 let relay       = Bento.Relay;
 let config      = Bento.config.user;
+let log         = Bento.Log;
 
 // ### Models
 
@@ -16,6 +17,7 @@ let Role      = Bento.model('Role');
 let Group     = Bento.model('Group');
 let GroupUser = Bento.model('GroupUser');
 let GroupRole = Bento.model('GroupRole');
+let sequelize = Bento.provider('sequelize');
 
 module.exports = {
 
@@ -107,13 +109,21 @@ module.exports = {
     // ### Create Query String
 
     let qs = query.search ? config.search(query.search) : config.filter(queryParser, query);
+    /*
     qs.where.id = {
       $in : groupUsers.map(val => val.userId)
     };
+    */
 
+    let users = [];
+    if(query.search) {
+      users = yield sequelize.query(`select * from users where concat_ws(' ', first_name, last_name) like '%${query.search}%' or email like '%${query.search}%'`);
+      query.search = null;
+    } else {
+      users = yield User.find(qs);
+    }
     // ### Fetch Users
 
-    let users = yield User.find(qs);
     if (!users.length) {
       return [];
     }
