@@ -8,6 +8,7 @@ let Car         = Bento.model('Car');
 let User        = Bento.model('User');
 let error       = Bento.Error;
 let log         = Bento.Log;
+let notify      = Bento.module('waivecar/lib/notification-service');
 
 
 // ### Instances
@@ -33,7 +34,7 @@ module.exports = {
         if(car.userId) {
           let user = yield User.findById(car.userId);
           report.booked.push([
-            license, user.name()
+            license, user.name(), `(https://waivecar.com/users/${car.userId})`
           ].join(' '));
         } else {
           report.unavailable.push(license);
@@ -44,19 +45,19 @@ module.exports = {
     }
 
     let slackReport = [
-      'Unavailable', 
+      'Unavailable:', 
       report.unavailable.join(' '),
       '',
-      'Available',
+      'Available:',
       report.available.join(' '),
       '',
-      'In Use',
+      'In Use:',
       report.booked.join('\n')
     ].join('\n');
 
-    log.info(slackReport);
-
-    // is_available
+    yield notify.slack({
+      text : slackReport
+    }, { channel : '#reservations' });
   },
   
   /**
