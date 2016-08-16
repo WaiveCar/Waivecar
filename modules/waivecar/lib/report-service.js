@@ -25,21 +25,23 @@ module.exports = {
       'booked': []
     };
 
-    allCars.forEach(function(car) {
+    for(let i = 0; i < allCars.length; i++) {
+      let car = allCars[i];
       if(!car.isAvailable) {
         report.unavailable.push(car.license);
       } else {
-        if(car.user) {
-          user = yield User.findById(car.user);
+        log.info(JSON.stringify(car));
+        if(car.userId) {
+          let user = yield User.findById(car.userId);
+          report.booked.push([
+            car.license, car.bookingId, car.user, user.name()
+          ]);
+        } else  {
+          report.available.push(car.license);
         }
-        report.booked.push([
-          car.license, car.bookingId, car.user, user.name()
-        ]);
       }
-    })
+    }
 
-
-    log.info(allCars[0]);
     log.info(JSON.stringify(report));
 
     // is_available
