@@ -160,6 +160,14 @@ module.exports = class BookingService extends Service {
     let showDetails = query.details ? true : false;
 
     // ### Parse Query
+    /*
+    if(query.search) {
+      let carList = yield Car.find({
+         license : { $like : `%${ query.search }%` } 
+      });
+      console.log(JSON.stringify(carList.map(ab => ab.license)));
+    }
+    */
 
     query = queryParser(query, {
       where : {
@@ -846,23 +854,21 @@ module.exports = class BookingService extends Service {
 
     if (!booking) return;
 
-    let minutesOld = moment().diff(booking.createdAt, 'minutes');
+    let minutesLapsed = moment().diff(booking.createdAt, 'minutes');
     let minTime = 10;
 
     switch (booking.status) {
     case 'cancelled':
-      minutesOld = moment().diff(booking.createdAt, 'minutes');
       minTime = 15;
       break;
     case 'ended':
     case 'completed':
     case 'closed':
-      minutesOld = moment().diff(booking.updatedAt, 'minutes');
-      minTime = 10;
-    break;
+      minutesLapsed = moment().diff(booking.updatedAt, 'minutes');
+      break;
     }
 
-    if (minutesOld <= minTime) {
+    if (minutesLapsed <= minTime) {
       throw error.parse({
         code    : 'RECENT_BOOKING',
         message : 'Sorry! You need to wait 10 minutes to rebook the same WaiveCar. Sharing is caring!'
