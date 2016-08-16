@@ -28,6 +28,9 @@ module.exports = {
 
     for(let i = 0; i < allCars.length; i++) {
       let car = allCars[i];
+      if(car.license.search(/waive/i) === -1 || car.license.search(/ret/i) !== -1) {
+        continue;
+      }
       var license = car.license.replace(/waive/i,'');
 
       if(!car.isAvailable) {
@@ -46,15 +49,17 @@ module.exports = {
 
     let slackReport = [
       'Unavailable:', 
-      report.unavailable.join(' '),
+      report.unavailable.sort().join(', '),
       '',
       'Available:',
-      report.available.join(' '),
+      report.available.sort().join(', '),
       '',
       'In Use:',
-      report.booked.join('\n')
+      report.booked.sort().join('\n')
     ].join('\n');
 
+    //log.info(slackReport);
+    
     yield notify.slack({
       text : slackReport
     }, { channel : '#reservations' });
