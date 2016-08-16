@@ -27,22 +27,34 @@ module.exports = {
 
     for(let i = 0; i < allCars.length; i++) {
       let car = allCars[i];
+      var license = car.license.replace(/waive/i,'');
+
       if(!car.isAvailable) {
-        report.unavailable.push(car.license);
-      } else {
-        log.info(JSON.stringify(car));
         if(car.userId) {
           let user = yield User.findById(car.userId);
           report.booked.push([
-            car.license, car.bookingId, car.user, user.name()
-          ]);
-        } else  {
-          report.available.push(car.license);
+            license, user.name()
+          ].join(' '));
+        } else {
+          report.unavailable.push(license);
         }
+      } else {
+        report.available.push(license);
       }
     }
 
-    log.info(JSON.stringify(report));
+    let slackReport = [
+      'Unavailable', 
+      report.unavailable.join(' '),
+      '',
+      'Available',
+      report.available.join(' '),
+      '',
+      'In Use',
+      report.booked.join('\n')
+    ].join('\n');
+
+    log.info(slackReport);
 
     // is_available
   },
