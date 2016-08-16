@@ -858,14 +858,14 @@ module.exports = class BookingService extends Service {
     let minTime = 10;
 
     switch (booking.status) {
-    case 'cancelled':
-      minTime = 15;
-      break;
-    case 'ended':
-    case 'completed':
-    case 'closed':
-      minutesLapsed = moment().diff(booking.updatedAt, 'minutes');
-      break;
+      case 'cancelled':
+        minTime = 15;
+        break;
+      case 'ended':
+      case 'completed':
+      case 'closed':
+        minutesLapsed = moment().diff(booking.updatedAt, 'minutes');
+        break;
     }
 
     if (minutesLapsed <= minTime) {
@@ -873,6 +873,39 @@ module.exports = class BookingService extends Service {
         code    : 'RECENT_BOOKING',
         message : 'Sorry! You need to wait 10 minutes to rebook the same WaiveCar. Sharing is caring!'
       }, 400);
+    }
+    // See https://github.com/clevertech/Waivecar/issues/497
+    //
+    // The logic here is that we are going to try to see if this is under say, XX minutes and there
+    // is another booking in between. 
+    
+    // We consider the minutes lapsed to be the updated metric.
+    minutesLapsed = moment().diff(booking.updatedAt, 'minutes');
+    
+    // And give a margin of minutes
+    minTime = 20;
+
+    if(minutesLapsed < minTime) {
+
+      // We now look for a booking in between.
+      let bookingForCar = yield Booking.findOne({
+        where : {
+          carId  : car.id
+        },
+        order : [
+          [ 'created_at', 'DESC' ]
+        ]
+      });
+
+      // If the most recent booking is not by the user booking 
+      // (but the user had booked within our margin) then we call
+      // it suspicious but let thing go ahead.
+      if(bookingForCar && bookingForCar.userId != user.id) {
+        let holder = User.findById(bookingForCar.userId);
+
+        yield notify.notifyAdmins(`${ holder.name() } | ${ holder.phone } may have been holding a car for ${ user.name() } | ${ user.phone }.`
+           [ 'slack' ], { channel : '#user-alerts' });
+      }
     }
   }
 
