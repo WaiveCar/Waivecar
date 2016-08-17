@@ -160,6 +160,14 @@ module.exports = class BookingService extends Service {
     let showDetails = query.details ? true : false;
 
     // ### Parse Query
+    /*
+    if(query.search) {
+      let carList = yield Car.find({
+         license : { $like : `%${ query.search }%` } 
+      });
+      console.log(JSON.stringify(carList.map(ab => ab.license)));
+    }
+    */
 
     query = queryParser(query, {
       where : {
@@ -472,6 +480,8 @@ module.exports = class BookingService extends Service {
     yield booking.delReminders();
     yield booking.end();
 
+    let deltas = yield this.getDeltas(booking);
+
     // ### Handle auto charge for time
     if (!isAdmin) {
       yield this.handleTimeCharge(booking, user);
@@ -484,6 +494,10 @@ module.exports = class BookingService extends Service {
           text : `Car ${ car.license || car.id } has been made unavailable due to charge being under 25%.`
         }, { channel : '#rental-alerts' });
       }
+    } else if(deltas.duration > 120) {
+      yield notify.slack({
+        text : `@mobeenyc: Booking was ended by admin. Time driven was over 2 hours. https://waivecar.com/bookings/${ id }`
+      }, { channel : '#rental-alerts' });
     }
 
     // Parking restrictions:
@@ -540,11 +554,10 @@ module.exports = class BookingService extends Service {
     // Alert text: "{User Name} had booking with 0 miles driven for X minutes. {User phone number} {link to user profile}."
     // (People do this to 'hold' the car for a while).
     //
-    let deltas = yield this.getDeltas(booking);
 
     if(deltas.duration > 10 && deltas.distance === 0) {
       yield notify.slack({
-        text : `${ _user.name() } had booking with 0 miles driven for ${ deltas.duration } minutes. Car: ${ car.license || car.id } | <${ user.phone || user.email }> | https://www.waivecar.com/users/${ user.id }`
+        text : `${ user.name() } had a booking with 0 miles driven for ${ deltas.duration } minutes. Car: ${ car.license || car.id } | <${ user.phone || user.email }> | https://www.waivecar.com/users/${ user.id }`
       }, { channel : '#user-alerts' });
     }
   
@@ -846,27 +859,58 @@ module.exports = class BookingService extends Service {
 
     if (!booking) return;
 
-    let minutesOld = moment().diff(booking.createdAt, 'minutes');
+    let minutesLapsed = moment().diff(booking.createdAt, 'minutes');
     let minTime = 10;
 
     switch (booking.status) {
-    case 'cancelled':
-      minutesOld = moment().diff(booking.createdAt, 'minutes');
-      minTime = 15;
-      break;
-    case 'ended':
-    case 'completed':
-    case 'closed':
-      minutesOld = moment().diff(booking.updatedAt, 'minutes');
-      minTime = 10;
-    break;
+      case 'cancelled':
+        minTime = 15;
+        break;
+      case 'ended':
+      case 'completed':
+      case 'closed':
+        minutesLapsed = moment().diff(booking.updatedAt, 'minutes');
+        break;
     }
 
-    if (minutesOld <= minTime) {
+    if (minutesLapsed <= minTime) {
       throw error.parse({
         code    : 'RECENT_BOOKING',
         message : 'Sorry! You need to wait 10 minutes to rebook the same WaiveCar. Sharing is caring!'
       }, 400);
+    }
+    // See https://github.com/clevertech/Waivecar/issues/497
+    //
+    // The logic here is that we are going to try to see if this is under say, XX minutes and there
+    // is another booking in between. 
+    
+    // We consider the minutes lapsed to be the updated metric.
+    minutesLapsed = moment().diff(booking.updatedAt, 'minutes');
+    
+    // And give a margin of minutes
+    minTime = 20;
+
+    if(minutesLapsed < minTime) {
+
+      // We now look for a booking in between.
+      let bookingForCar = yield Booking.findOne({
+        where : {
+          carId  : car.id
+        },
+        order : [
+          [ 'created_at', 'DESC' ]
+        ]
+      });
+
+      // If the most recent booking is not by the user booking 
+      // (but the user had booked within our margin) then we call
+      // it suspicious but let thing go ahead.
+      if(bookingForCar && bookingForCar.userId != user.id) {
+        let holder = User.findById(bookingForCar.userId);
+
+        yield notify.notifyAdmins(`${ holder.name() } | ${ holder.phone } may have been holding a car for ${ user.name() } | ${ user.phone }.`
+           [ 'slack' ], { channel : '#user-alerts' });
+      }
     }
   }
 
