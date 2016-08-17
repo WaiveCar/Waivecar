@@ -4,7 +4,12 @@ let Slack       = Bento.provider('slack');
 let queryParser = Bento.provider('sequelize/helpers').query;
 let Report      = Bento.model('Report');
 let Booking     = Bento.model('Booking');
+let Car         = Bento.model('Car');
+let User        = Bento.model('User');
 let error       = Bento.Error;
+let log         = Bento.Log;
+let notify      = Bento.module('waivecar/lib/notification-service');
+
 
 // ### Instances
 
@@ -12,6 +17,54 @@ const slack = new Slack('notifications');
 
 module.exports = {
 
+  *status() {
+    let allCars = yield Car.find();
+
+    let report = {
+      'unavailable': [],
+      'available': [],
+      'booked': []
+    };
+
+    for(let i = 0; i < allCars.length; i++) {
+      let car = allCars[i];
+      if(car.license.search(/waive/i) === -1 || car.license.search(/ret/i) !== -1) {
+        continue;
+      }
+      var license = car.license.replace(/waive/i,'');
+
+      if(!car.isAvailable) {
+        if(car.userId) {
+          let user = yield User.findById(car.userId);
+          report.booked.push([
+            license, user.name(), `(https://waivecar.com/users/${car.userId})`
+          ].join(' '));
+        } else {
+          report.unavailable.push(license);
+        }
+      } else {
+        report.available.push(license);
+      }
+    }
+
+    let slackReport = [
+      'Unavailable:', 
+      report.unavailable.sort().join(', '),
+      '',
+      'Available:',
+      report.available.sort().join(', '),
+      '',
+      'In Use:',
+      report.booked.sort().join('\n')
+    ].join('\n');
+
+    //log.info(slackReport);
+    
+    yield notify.slack({
+      text : slackReport
+    }, { channel : '#reservations' });
+  },
+  
   /**
    * Creates a new report.
    * @param  {Object} payload
