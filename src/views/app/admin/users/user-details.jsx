@@ -191,7 +191,7 @@ module.exports = class UserDetails extends React.Component {
               </div>
 
               <div className="form-actions text-center">
-                <a style={{ marginTop: "0.5em" }} onClick={ this.removeUser } className="pull-left btn btn-xs btn-danger">Delete <br/> User</a>
+                <a style={{ marginTop: "0.5em", display: "none" }} onClick={ this.removeUser } className="pull-left btn btn-xs btn-danger">Delete <br/> User</a>
                 <div className="btn-group" role="group">
                   <button type="submit" className="btn btn-primary">Update Details</button>
                 </div>
