@@ -117,11 +117,12 @@ module.exports = {
 
     let users = [];
     if(query.search) {
-      users = yield sequelize.query(`select * from users where concat_ws(' ', first_name, last_name) like '%${query.search}%' or email like '%${query.search}%'`);
-      query.search = null;
+      users = yield User.find(qs, `select * from users where concat_ws(' ', first_name, last_name) like '%${query.search}%' or email like '%${query.search}%'`);
+      //users = yield User.raw(qs, `select * from users where concat_ws(' ', first_name, last_name) like '%${query.search}%' or email like '%${query.search}%'`);
     } else {
       users = yield User.find(qs);
     }
+    //log.info(JSON.stringify(users));
     // ### Fetch Users
 
     if (!users.length) {
