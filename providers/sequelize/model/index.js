@@ -74,6 +74,7 @@ module.exports = (name, getModelSetup) => {
   SequelizeModel.find     = require('./find');
   SequelizeModel.findOne  = require('./findOne');
   SequelizeModel.findById = require('./findById');
+  SequelizeModel.raw      = require('./raw');
 
   // ### Instance Methods
 
