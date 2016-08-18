@@ -1,6 +1,6 @@
 import React             from 'react';
 import moment            from 'moment';
-import { relay }         from 'bento';
+import { api, relay }    from 'bento';
 import Table             from 'bento-service/table';
 import mixin             from 'react-mixin';
 import { History, Link } from 'react-router';
@@ -53,6 +53,11 @@ class TableIndex extends React.Component {
   }
 
   reportStatus() {
+    api.get('/status', {}, ( err, data ) => {
+      if (err) {
+        return this.error(err.message);
+      }
+    });
   }
 
   /**
