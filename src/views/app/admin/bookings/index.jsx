@@ -1,6 +1,6 @@
 import React             from 'react';
 import moment            from 'moment';
-import { relay }         from 'bento';
+import { api, relay }    from 'bento';
 import Table             from 'bento-service/table';
 import mixin             from 'react-mixin';
 import { History, Link } from 'react-router';
@@ -16,7 +16,9 @@ class TableIndex extends React.Component {
    */
   constructor(...args) {
     super(...args);
+    //self._debug = true;
     this.table = new Table(this, 'bookings', null, '/bookings?details=true');
+    //this.table = new Table(this, 'bookings', ['car', 'user'], '/bookings?details=true');
     this.state = {
       sort : {
         key   : null,
@@ -48,6 +50,14 @@ class TableIndex extends React.Component {
    */
   componentWillUnmount() {
     relay.unsubscribe(this, 'bookings');
+  }
+
+  reportStatus() {
+    api.get('/status', {}, ( err, data ) => {
+      if (err) {
+        return this.error(err.message);
+      }
+    });
   }
 
   /**
@@ -92,8 +102,9 @@ class TableIndex extends React.Component {
     return (
       <div id="bookings-list" className="container">
         <div className="box full">
-          <h3>Bookings <small>List of registered WaiveCar bookings</small></h3>
+          <h3>Bookings <button className="pull-right btn btn-info btn-sm" onClick={ this.reportStatus }>Send to Slack</button></h3>
           <div className="box-content">
+            <input type="hidden" className="box-table-search" ref="search" placeholder="Enter search text [name, car]" onChange={ this.table.search } />
             <table className="box-table table-striped">
               <thead>
                 <tr ref="sort">
