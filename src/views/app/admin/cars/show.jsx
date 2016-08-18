@@ -93,6 +93,14 @@ class CarsShowView extends React.Component {
   }
 
   renderCarForm(car) {
+    let addon = '';
+
+    if(car.userId) {
+      addon = <a href={"/users/" + car.userId }>{ car.userId }</a>;
+    } else {
+      addon = <em>None</em>;
+    }
+
     return (
       <div className="box hidden-xs-down">
         <h3>Details</h3>
@@ -111,6 +119,9 @@ class CarsShowView extends React.Component {
             ]}
             submit = { this.service.update }
           />
+          <p>
+            Current User: { addon }
+          </p>
         </div>
       </div>
     );
@@ -376,6 +387,9 @@ class CarsShowView extends React.Component {
     if (!car || !car.id) {
       return <div className="text-center">Retrieving Car...</div>
     }
+
+    self._ct = this.service;
+    self._car = car;
 
     return (
       <div className="cars cars-show">

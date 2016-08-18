@@ -55,7 +55,11 @@ module.exports = class Service {
    * @return {Mixed}
    */
   getState(key) {
-    return this.ctx.state[this.service][key];
+    if(key !== undefined) {
+      return this.ctx.state[this.service][key];
+    } else {
+      return this.ctx.state[this.service];
+    }
   }
 
   /**
