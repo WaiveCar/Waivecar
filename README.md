@@ -19,6 +19,9 @@ Since this is all a web-app with a few hooks, you can debug it over usb like any
 
 This can be especially helpful because it's not always easy to know what all these tools end up creating as the final form inside the app.
 
+## Config
+
+In order to point the app to a new place you need to modify `./www/js/config/app-settings.js`
 
 
 ## Clevertech notes

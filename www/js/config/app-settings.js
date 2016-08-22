@@ -6,7 +6,7 @@ var appSettings = angular.module('app.settings');
 module.exports = appSettings;
 
 var defaults = {
-  baseUrl: 'http://localhost:3000',
+  baseUrl: 'http://local.waivecar.com:3000',
   skobbler: {
     key: '8698d318586c58a1f8ca1e88ecfac299',
   },
@@ -23,7 +23,7 @@ appSettings.provider('$settings', [
     var env = localStorage.env;
     var envs = {};
     envs.prod = _.extend({}, defaults, {
-      baseUrl: 'https://api.waivecar.com'
+      baseUrl: 'https://api-staging.waivecar.com'
     });
     envs.dev = _.extend({}, defaults);
     var config = envs[env] || envs.prod;
