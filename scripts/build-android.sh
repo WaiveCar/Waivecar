@@ -28,4 +28,5 @@ zipalign -f 4 \
   platforms/android/build/outputs/apk/android-release-unsigned.apk \
   releases/$APK_NAME.apk
 
-open releases
+# This is an OS-X ism
+# open releases
