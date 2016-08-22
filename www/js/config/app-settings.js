@@ -23,7 +23,7 @@ appSettings.provider('$settings', [
     var env = localStorage.env;
     var envs = {};
     envs.prod = _.extend({}, defaults, {
-      baseUrl: 'https://api-staging.waivecar.com'
+      baseUrl: 'https://api.waivecar.com'
     });
     envs.dev = _.extend({}, defaults);
     var config = envs[env] || envs.prod;
