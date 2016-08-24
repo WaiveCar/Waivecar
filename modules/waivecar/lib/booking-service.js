@@ -906,7 +906,7 @@ module.exports = class BookingService extends Service {
       // (but the user had booked within our margin) then we call
       // it suspicious but let thing go ahead.
       if(bookingForCar && bookingForCar.userId != user.id) {
-        let holder = User.findById(bookingForCar.userId);
+        let holder = yield User.findById(bookingForCar.userId);
 
         yield notify.notifyAdmins(`${ holder.name() } | ${ holder.phone } may have been holding a car for ${ user.name() } | ${ user.phone }.`
            [ 'slack' ], { channel : '#user-alerts' });
