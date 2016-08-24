@@ -1,5 +1,5 @@
 #!/bin/sh
 set -x
-adb uninstall com.waivecar.app
-adb install platforms/android/build/outputs/apk/android-debug.apk
+adb uninstall -k com.waivecar.app
+adb install -dg platforms/android/build/outputs/apk/android-debug.apk
 
