@@ -149,7 +149,7 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
     *flag(what) {
       if(!this.isFlagged(what)) {
         let flagList = this.getFlags();
-        flagList.append(what);
+        flagList.push(what);
 
         yield this.update({
           flags: JSON.stringify(flagList)
