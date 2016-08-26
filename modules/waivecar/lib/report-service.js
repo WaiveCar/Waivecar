@@ -36,9 +36,12 @@ module.exports = {
       if(!car.isAvailable) {
         if(car.userId) {
           let user = yield User.findById(car.userId);
+          let booking = yield car.getCurrentBooking();
+
           report.booked.push([
-            license, user.name(), `(https://waivecar.com/users/${car.userId})`
+            license, user.name(), booking.status, `(https://waivecar.com/bookings/${booking.id})` 
           ].join(' '));
+
         } else {
           report.unavailable.push(license);
         }
@@ -58,7 +61,7 @@ module.exports = {
       report.booked.sort().join('\n')
     ].join('\n');
 
-    //log.info(slackReport);
+    log.info(slackReport);
     
     yield notify.slack({
       text : slackReport
