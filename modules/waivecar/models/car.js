@@ -1,5 +1,6 @@
 'use strict';
 
+let Booking = Bento.model('Booking');
 Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
   /**
@@ -198,6 +199,17 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
   // ### Model Methods
 
   model.methods = {
+
+    getCurrentBooking: function *() {
+      return yield Booking.findOne({ 
+        where : { 
+          car_id : this.id,
+          status : {
+            $in : ['started', 'reserved']
+          }
+        } 
+      });
+    },
 
     getChargeHistory : function () {
       return JSON.parse(this.chargeHistory) || [];
