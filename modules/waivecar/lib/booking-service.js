@@ -496,8 +496,8 @@ module.exports = class BookingService extends Service {
       }
     } else if(deltas.duration > 120) {
       yield notify.slack({
-        text : `@mobeenyc: Booking was ended by admin. Time driven was over 2 hours. https://waivecar.com/bookings/${ id }`
-      }, { channel : '#rental-alerts' });
+        text : `Booking was ended by admin. Time driven was over 2 hours. https://waivecar.com/bookings/${ id }`
+      }, { channel : '#adminended' });
     }
 
     // Parking restrictions:
