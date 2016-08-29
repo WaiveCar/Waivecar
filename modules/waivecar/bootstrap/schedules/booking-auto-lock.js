@@ -23,9 +23,29 @@ scheduler.process('booking-auto-lock', function *(job) {
   if (booking.status !== 'completed' && booking.status !== 'closed') {
     let car = yield Car.findById(booking.carId);
 
+    // We need to try to find out why this isn't working.
+    let reason = [];
+
+    if (car.is_ignition_on) {
+      reason.push('ignition is on');
+    }
+    if (!car.is_locked) {
+      reason.push('left unlocked (locking now)');
+    }
+    if (!car.is_key_secure) {
+      reason.push("key isn't in holder");
+    }
+
+    if(reason.length) {
+      reason = 'reason(s): ' + reason.join(',');
+    } else {
+      reason = 'reason unknown (ignition is off, doors are locked, and the key is in the holder)'; 
+    }
+
     yield cars.lockCar(car.id);
 
-    yield notify.notifyAdmins(`The booking with ${ car.license || car.id } was automaticaly locked and needs manual review | ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+
+    yield notify.notifyAdmins(`The booking with ${ car.license || car.id } was automaticaly locked and needs manual review | ${ reason } ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
   }
 });
 
