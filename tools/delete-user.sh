@@ -5,6 +5,7 @@ cat > /tmp/delete-user.sql << ENDL
  delete from booking_details where booking_id in (select id from bookings where user_id=$user);
  delete from booking_locations where booking_id in (select id from bookings where user_id=$user);
  delete from bookings where user_id=$user;
+ delete from files where user_id=$user;
  delete from group_users where user_id=$user;
  delete from licenses where user_id=$user;
  delete from shop_orders where user_id=$user;
