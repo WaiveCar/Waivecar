@@ -1,10 +1,12 @@
 module.exports = {
   api : {
-    uri    : 'http://localhost',
-    port   : 3000,
+    uri    : 'http://api-local.waivecar.com',
+    port   : 3080,
     socket : {
-      uri     : 'http://localhost:5000',
-      options : null
+      uri     : 'http://api-local.waivecar.com:3080',
+      options : {
+         path : '/socket/socket.io'
+      }
     }
   }
 };
