@@ -13,6 +13,7 @@
       <button class="button button-balanced button-block" ui-sref="auth-account-verify" ng-if="!user.verifiedPhone">Enter Phone Verification Code</button>
       <button class="button button-balanced button-block" ui-sref="credit-cards">Update Payment Method</button>
       <button class="button button-positive button-block" ui-sref="licenses-new" ng-if="!license">Add Driver's License</button>
+      <button class="button button-positive button-block" ui-sref="verify-id">Verify Identity</button>
       <button class="button button-positive button-block" ui-sref="licenses-edit({ licenseId: license.id })" ng-if="license.status === 'provided' || license.status === 'pending'">Validate Driver's License</button>
       <div class="license-verification text-center" ng-if="license && license.status !== 'pending'">
         <p ng-if="license.status === 'provided'">Your Driver's License is pending validation</p>

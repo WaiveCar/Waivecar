@@ -1,0 +1,32 @@
+<ion-view class="verify-id-new">
+  <ion-content padding="true" class="ion-content--center dark-bg">
+    <ng-include src="'/img/waivecar-mark.svg'" class="waivecar-mark"></ng-include>
+    <h4>Verify Your Identity</h4>
+    <p>Help us keep your account secure<br>
+    by providing us with a photo of <br>
+    your license and a selfie.</p>
+
+    <p>Your License</p>
+    <div class="image-tray">
+      <div class="image-tray-item add-icon" ng-click="ctrl.addPicture()"></div>
+      <div class="image-tray-item"
+        ng-style="file.style"
+      ></div>
+    </div>
+
+    <p>Your Selfie</p>
+    <div class="image-tray">
+      <div class="image-tray-item add-icon" ng-click="ctrl.addPicture()"></div>
+      <div class="image-tray-item"
+        ng-style="file.style"
+      ></div>
+    </div>
+
+    <form ng-submit="ctrl.submit()">
+      <button type="submit" class="button button-balanced button-block" ng-disabled="!(ctrl.model.files.length)">
+        Confirm
+      </button>
+    </form>
+  </ion-content>
+</ion-view>
+
