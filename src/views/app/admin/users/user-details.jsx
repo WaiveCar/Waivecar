@@ -118,7 +118,9 @@ module.exports = class UserDetails extends React.Component {
       <div>
         <div className="profile-header">
           <div className="profile-image">
-            <div className="profile-image-view" style={{ background : `url(${ this.getAvatar(user) }) center center / cover` }} />
+            <a target="_blank" href={ this.getAvatar(user) }>
+              <div className="profile-image-view" style={{ background : `url(${ this.getAvatar(user) }) center center / cover` }} />
+            </a>
           </div>
           <div className="profile-meta">
             <div className="profile-name">
