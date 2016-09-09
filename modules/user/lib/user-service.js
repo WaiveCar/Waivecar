@@ -117,8 +117,14 @@ module.exports = {
 
     let users = [];
     if(query.search) {
-      users = yield User.find(qs, `select * from users where concat_ws(' ', first_name, last_name) like '%${query.search}%' or email like '%${query.search}%'`);
-      //users = yield User.raw(qs, `select * from users where concat_ws(' ', first_name, last_name) like '%${query.search}%' or email like '%${query.search}%'`);
+      users = yield User.find({
+        where: {
+          $or: [
+            {email: {$like: `%${query.search}%` } },
+            sequelize.literal(`concat_ws(' ', first_name, last_name) like '%${query.search}%'`)
+          ]
+        }
+      });
     } else {
       users = yield User.find(qs);
     }
