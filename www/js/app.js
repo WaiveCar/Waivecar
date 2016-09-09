@@ -93,6 +93,7 @@ require('./controllers/end-ride-controller');
 require('./controllers/complete-ride-controller');
 require('./controllers/parking-location-controller');
 require('./controllers/booking-summary-controller');
+require('./controllers/verify-id-controller');
 require('./constants/us-states');
 
 // Directives
