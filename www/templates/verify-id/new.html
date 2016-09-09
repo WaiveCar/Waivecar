@@ -1,10 +1,8 @@
 <ion-view class="verify-id-new">
   <ion-content padding="true" class="ion-content--center dark-bg">
-    <ng-include src="'/img/waivecar-mark.svg'" class="waivecar-mark"></ng-include>
     <h4>Verify Your Identity</h4>
-    <p>Help us keep your account secure<br>
-    by providing us with a photo of <br>
-    your license and a selfie.</p>
+    <p>Help us keep your account secure by providing<br>
+    us with a photo of your license and a selfie.</p>
 
     <p>Your License</p>
     <div class="image-tray">
@@ -12,6 +10,8 @@
       <div class="image-tray-item"
         ng-style="file.style"
       ></div>
+      <div ng-if="ctrl.image.license" class="license-image" ng-style="ctrl.image.license.style"></div>
+      <button ng-click="ctrl.addLicense()" class="button button-dark ion-plus add-image"></button>
     </div>
 
     <p>Your Selfie</p>
@@ -20,6 +20,8 @@
       <div class="image-tray-item"
         ng-style="file.style"
       ></div>
+      <div ng-if="ctrl.image.selfie" class="selfie-image" ng-style="ctrl.image.selfie.style"></div>
+      <button ng-click="ctrl.addSelfie()" class="button button-dark ion-plus add-image"></button>
     </div>
 
     <form ng-submit="ctrl.submit()">
