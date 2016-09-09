@@ -6,7 +6,7 @@ var appSettings = angular.module('app.settings');
 module.exports = appSettings;
 
 var defaults = {
-  baseUrl: 'http://local.waivecar.com:3000',
+  baseUrl: 'http://local.waivecar.com:3080',
   skobbler: {
     key: '8698d318586c58a1f8ca1e88ecfac299',
   },
