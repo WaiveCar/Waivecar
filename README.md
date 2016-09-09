@@ -9,9 +9,17 @@ The list with links to the CLI documentation: [cordova](https://cordova.apache.o
 
 ## Tips on 
 
+### Finding things
+
+I (cjm) can't find any evidence of some UI builder that was used to manager the flow - I think it must have been done by hand.  Anyway, the "routes" are in `js/config/app-states.js`.
+
 ### Making things run
 
 I (cjm) have had success using a usb cable to an android phone with `ionic run android`. Note that this doesn't rebuild things if you change code
+
+### Creating new things
+
+If you **add a controller** you have to put it in some giant enumerated list in `js/app.js`. This *could* have grabbed `*.js` but it doesn't and there may even be a dependency problem to doing so given the state of this thing, so just tack your new thing on at the end.
 
 ### Debugging
 
