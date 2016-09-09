@@ -111,6 +111,14 @@ module.exports = [
           auth: true
         }
       })
+      .state('verify-id', {
+        url: '/verify-id',
+        templateUrl: '/templates/verify-id/new.html',
+        controller: 'VerifyIdController as VerifyIdCtrl',
+        data: {
+          auth: true
+        }
+      })
       .state('licenses-new', {
         url: '/licenses/new?step&fromBooking',
         templateUrl: '/templates/licenses/new.html',
