@@ -37,7 +37,7 @@ scheduler.process('booking-auto-lock', function *(job) {
     }
 
     if(reason.length) {
-      reason = 'reason(s): ' + reason.join(',');
+      reason = 'reason(s): ' + reason.join(', ');
     } else {
       reason = 'reason unknown (ignition is off, doors are locked, and the key is in the holder)'; 
     }
