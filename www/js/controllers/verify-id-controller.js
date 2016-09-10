@@ -22,27 +22,19 @@ module.exports = angular.module('app.controllers').controller('VerifyIdControlle
 
     var ctrl = this;
 
-    ctrl.images = {
-      license: null,
-      selfie: null
+    ctrl.imageMap = {
+      license: '/img/upload.png',
+      selfie: '/img/upload.png'
     };
 
-    this.submit = function submit (form) {
+    this.submit = function submit () {
       return this.license.$create()
       .then(function () {
         var modal;
         return $modal('result', {
           icon: 'check-icon',
           title: 'License info received',
-          message: 'Thanks! During normal business hours this will only take a minute or two.'/*,
-          actions: [{
-            text: 'Ok',
-            className: 'button-balanced',
-            handler: function () {
-              ignitionOnModal.remove();
-            }
-         }]
-          */
+          message: 'Thanks! During normal business hours this will only take a minute or two.'
         })
         .then(function (_modal) {
           modal = _modal;
@@ -57,48 +49,24 @@ module.exports = angular.module('app.controllers').controller('VerifyIdControlle
         });
       })
       .catch(function onUploadFailed (err) {
-        var modal, message = 'Looks like the formatting of your license is wrong, please try again.';
+        var message = 'Looks like the formatting of your license is wrong, please try again.';
         if('data' in err && 'message' in err.data) {
           message = err.data.message;
         }
-        $modal('result', {
-          icon: 'x-icon',
-          title: message,
-          actions: [{
-            className: 'button-balanced',
-            text: 'Retry',
-            handler: function () {
-              modal.remove();
-            }
-          }, {
-            className: 'button-dark',
-            text: 'Skip',
-            handler: function () {
-              modal.remove();
-              ctrl.nextState();
-            }
-          }]
-        })
-        .then(function (_modal) {
-          modal = _modal;
-          modal.show();
-        });
+        submitFailure(message);
         $q.reject(err);
       });
     };
 
-    function addPicture (param, name) {
+    function addPicture (param, value, what) {
       $uploadImage({
-        endpoint: '/files?' + param,
-        filename: [name, Date.now()].join('_') + '.jpg',
+        endpoint: '/files?' + param + value,
+        filename: [what, value, Date.now()].join('_') + '.jpg',
       })
       .then(function (result) {
         if (result && Array.isArray(result)) result = result[0];
 
-        result.style = {
-          'background-image': 'url(' + $settings.uri.api + '/file/' + result.id + ')'
-        };
-        ctrl.street.streetSignImage = result;
+        ctrl.imageMap[what] = $settings.uri.api + '/file/' + result.id;
       })
       .catch(function (err) {
         var message = err.message;
@@ -115,12 +83,22 @@ module.exports = angular.module('app.controllers').controller('VerifyIdControlle
     };
 
     ctrl.addLicense = function () {
-      addPicture('licenseId=' + $scope.license.id, ['license', $scope.license.id].join('_'));
+      addPicture('licenseId=', $scope.license.id, 'license');
     };
 
     ctrl.addSelfie = function () {
-      addPicture('isAvatar=true&userId=' + $scope.user.id, ['selfie', $scope.user.id].join('_'));
+      addPicture('isAvatar=true&userId=', $scope.user.id, 'selfie');
     };
+
+    function updateImages() {
+      if($scope.user.avatar) {
+        ctrl.imageMap.selfie = $settings.uri.api + '/file/' + $scope.user.avatar;
+      }
+
+      if($scope.license && $scope.license.fileId) {
+        ctrl.imageMap.license = $settings.uri.api + '/file/' + $scope.license.fileId;
+      }
+    }
 
     $scope.init = function() {
 
@@ -135,6 +113,7 @@ module.exports = angular.module('app.controllers').controller('VerifyIdControlle
             .sortBy('createdAt')
             .last();
           console.log($scope);
+          updateImages();
         }).catch($message.error);
     };
 
@@ -143,23 +122,22 @@ module.exports = angular.module('app.controllers').controller('VerifyIdControlle
 
     function submitFailure(message) {
       $ionicLoading.hide();
-      var endRideModal;
+      var uploadError;
 
       $modal('result', {
         icon: 'x-icon',
         title: message,
         actions: [{
-          text: 'Ok',
+          text: 'Retry',
           className: 'button-balanced',
           handler: function () {
-            endRideModal.remove();
+            uploadError.remove();
           }
         }]
       })
       .then(function (_modal) {
         _modal.show();
-        endRideModal = _modal;
-        endRideModal.show();
+        uploadError = _modal;
       });
     }
   }
