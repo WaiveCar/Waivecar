@@ -909,7 +909,7 @@ module.exports = class BookingService extends Service {
       if(bookingForCar && bookingForCar.userId != user.id) {
         let holder = yield User.findById(bookingForCar.userId);
 
-        yield notify.notifyAdmins(`${ holder.name() } | ${ holder.phone } may have been holding a car for ${ user.name() } | ${ user.phone }.`
+        yield notify.notifyAdmins(`${ holder.name() } | ${ holder.phone } may have been holding a car for ${ user.name() } | ${ user.phone }.`,
            [ 'slack' ], { channel : '#user-alerts' });
       }
     }
