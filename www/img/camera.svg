@@ -13,7 +13,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.5 r10040"
-   sodipodi:docname="Ic_camera_alt_48px.svg">
+   sodipodi:docname="camera.svg">
   <metadata
      id="metadata14">
     <rdf:RDF>
@@ -22,7 +22,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -41,9 +41,9 @@
      inkscape:window-height="746"
      id="namedview10"
      showgrid="false"
-     inkscape:zoom="4.9166667"
-     inkscape:cx="24"
-     inkscape:cy="24"
+     inkscape:zoom="9.8333333"
+     inkscape:cx="2.2394673"
+     inkscape:cy="26.820816"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
@@ -51,15 +51,22 @@
   <circle
      cx="24"
      cy="24"
-     r="6.4"
+     r="6.4000001"
      id="circle4"
-     style="fill:#ffffff" />
+     style="fill:#ffffff"
+     sodipodi:cx="24"
+     sodipodi:cy="24"
+     sodipodi:rx="6.4000001"
+     sodipodi:ry="6.4000001"
+     transform="matrix(0.45974577,0,0,0.45974577,12.966102,12.966101)" />
   <path
-     d="M18 4l-3.66 4h-6.34c-2.21 0-4 1.79-4 4v24c0 2.21 1.79 4 4 4h32c2.21 0 4-1.79 4-4v-24c0-2.21-1.79-4-4-4h-6.34l-3.66-4h-12zm6 30c-5.52 0-10-4.48-10-10s4.48-10 10-10 10 4.48 10 10-4.48 10-10 10z"
+     d="m 21.241525,14.805084 -1.682669,1.838983 h -2.914789 c -1.016038,0 -1.838983,0.822946 -1.838983,1.838983 v 11.033899 c 0,1.016037 0.822945,1.838982 1.838983,1.838982 h 14.711864 c 1.016039,0 1.838984,-0.822945 1.838984,-1.838982 V 18.48305 c 0,-1.016037 -0.822945,-1.838983 -1.838984,-1.838983 h -2.914788 l -1.682669,-1.838983 h -5.516949 z m 2.758474,13.792373 c -2.537797,0 -4.597457,-2.059661 -4.597457,-4.597457 0,-2.537797 2.05966,-4.597458 4.597457,-4.597458 2.537797,0 4.597458,2.059661 4.597458,4.597458 0,2.537796 -2.059661,4.597457 -4.597458,4.597457 z"
      id="path6"
-     style="fill:#ffffff" />
+     style="fill:#ffffff"
+     inkscape:connector-curvature="0" />
   <path
-     d="M0 0h48v48h-48z"
-     fill="none"
-     id="path8" />
+     d="M 12.966101,12.966101 H 35.033898 V 35.033898 H 12.966101 z"
+     id="path8"
+     inkscape:connector-curvature="0"
+     style="fill:none" />
 </svg>

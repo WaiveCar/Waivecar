@@ -6,11 +6,20 @@
 .verify-id-new {
   .image-tray {
     text-align: center;
+    p {
+      margin-top: 1em;
+      margin-bottom: 0.25em;
+    }
   }
   .tnail {
     display: inline-block;
     width: 90%;
     height: 200px;
+  }
+
+  .tnail.license-image {
+    width: 95%;
+    height: 180px;
   }
 }
 
