@@ -641,15 +641,13 @@ module.exports = class BookingService extends Service {
 
     yield booking.complete();
 
-    if (!isAdmin) {
-      // If car is under 25% make it unavailable after ride is done #514
-      // We use the average to make this assessment.
-      if (car.averageCharge() < 25.00) {
-        yield cars.updateAvailabilityAnonymous(car.id, false);
-        yield notify.slack({
-          text : `Car ${ car.license || car.id } has been made unavailable due to charge being under 25%. (current charge: ${car.averageCharge()}%)`
-        }, { channel : '#rental-alerts' });
-      }
+    // If car is under 25% make it unavailable after ride is done #514
+    // We use the average to make this assessment.
+    if (car.averageCharge() < 25.00 && !isAdmin) {
+      yield cars.updateAvailabilityAnonymous(car.id, false);
+      yield notify.slack({
+        text : `Car ${ car.license || car.id } has been made unavailable due to charge being under 25%. (current charge: ${car.averageCharge()}%)`
+      }, { channel : '#rental-alerts' });
     } else {
       yield car.available();
     }
