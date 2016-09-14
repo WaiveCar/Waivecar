@@ -23,8 +23,8 @@ module.exports = angular.module('app.controllers').controller('VerifyIdControlle
     var ctrl = this;
 
     ctrl.imageMap = {
-      license: '/img/upload.png',
-      selfie: '/img/upload.png'
+      license: '/img/camera.svg',
+      selfie: '/img/camera.svg'
     };
 
     this.submit = function submit () {
@@ -62,6 +62,7 @@ module.exports = angular.module('app.controllers').controller('VerifyIdControlle
       $uploadImage({
         endpoint: '/files?' + param + value,
         filename: [what, value, Date.now()].join('_') + '.jpg',
+        sourceList: ['camera']
       })
       .then(function (result) {
         if (result && Array.isArray(result)) result = result[0];
