@@ -5,6 +5,15 @@ var ionic = require('ionic');
 
 require('./camera-service');
 
+// The options are:
+//
+//  endpoint - where the file will be saved
+//  filename - what the file will be called
+//  sourceList (optional) - an array of sources to accept from.
+//     The default value (through omission) is "all" which 
+//     is equivalent to whateve is set at the beginning of
+//     pickImageSource() below.
+//
 function uploadImageFactory ($injector) {
   var $modal = $injector.get('$modal');
   var $auth = $injector.get('$auth');
@@ -27,7 +36,7 @@ function uploadImageFactory ($injector) {
 
   return function uploadImage (options) {
     options = options || {};
-    return pickImageSource()
+    return pickImageSource(options)
       .then(function (source) {
         if (source === 'library') {
           return CameraService.pickFile();
@@ -59,32 +68,43 @@ function uploadImageFactory ($injector) {
     };
   };
 
-  function pickImageSource () {
-    var hideSheet;
-    return $q(function (done) {
-      hideSheet = $ionicActionSheet.show({
-        buttons: buttons,
-        cancelText: 'Cancel',
-        buttonClicked: done
+  function pickImageSource (optionMap) {
+    optionMap.sourceList = optionMap.sourceList || ['camera', 'library'];
+
+    // Only show the dialog box if the upload cna come from multiple places.
+    if(optionMap.sourceList.length > 1) {
+      var hideSheet;
+      return $q(function (done) {
+        hideSheet = $ionicActionSheet.show({
+          buttons: buttons,
+          cancelText: 'Cancel',
+          buttonClicked: done
+        });
+      })
+      .then(function onSourceSelected (buttonIndex) {
+        if (typeof hideSheet === 'function') {
+          hideSheet();
+          hideSheet = null;
+        }
+        if (buttonIndex === 2) {
+          return $timeout(500)
+            .then(function () {
+              return null;
+            });
+        } else if (buttonIndex === 0) {
+          return 'camera';
+        } else if (buttonIndex === 1) {
+          return 'library';
+        }
+        return null;
       });
-    })
-    .then(function onSourceSelected (buttonIndex) {
-      if (typeof hideSheet === 'function') {
-        hideSheet();
-        hideSheet = null;
-      }
-      if (buttonIndex === 2) {
-        return $timeout(500)
-          .then(function () {
-            return null;
-          });
-      } else if (buttonIndex === 0) {
-        return 'camera';
-      } else if (buttonIndex === 1) {
-        return 'library';
-      }
-      return null;
-    });
+    } else {
+      return $q(function (done) {
+        done();
+      }).then(function(){
+        return optionMap.sourceList[0];
+      });
+    }
   };
 
   function showLoadingModal () {
