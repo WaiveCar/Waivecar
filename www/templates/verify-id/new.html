@@ -4,15 +4,15 @@
     <p>Help us keep your account secure by providing<br>
     us with a photo of your license and a selfie.</p>
 
-    <p>Your License</p>
     <div class="image-tray">
-      <button ng-click="ctrl.addLicense()" class="button button-dark add-image tnail" style="background:url({{ ctrl.imageMap.license }}) center center / cover"></div>
+      <p>Your License</p>
+      <button ng-click="ctrl.addLicense()" class="button button-dark add-image tnail license-image" style="background:url({{ ctrl.imageMap.license }}) center center / cover"></div>
       </button>
     </div>
 
-    <p>Your Selfie</p>
     <div class="image-tray">
-      <button ng-click="ctrl.addSelfie()" class="button button-dark add-image tnail" class="selfie-image tnail" style="background:url({{ ctrl.imageMap.selfie }}) center center / cover"></button>
+      <p>Your Selfie</p>
+      <button ng-click="ctrl.addSelfie()" class="button button-dark add-image tnail selfie-image" style="background:url({{ ctrl.imageMap.selfie }}) center center / cover"></button>
     </div>
 
     <form ng-submit="ctrl.submit()">
