@@ -138,7 +138,7 @@ module.exports = class UserDetails extends React.Component {
             <div className="form-group row">
               <FormInput className="col-md-4 bento-form-input">
                 <label>Birth Date</label>
-                <input type="date" name="birthDate" className="form-control" defaultValue={ moment(license.birthDate).format('YYYY-MM-DD') } disabled={ !license.provided } required />
+                <input type="date" name="birthDate" className="form-control" defaultValue={ moment(license.birthDate.slice(0,-1)).format('YYYY-MM-DD') } disabled={ !license.provided } required />
               </FormInput>
               <FormInput className="col-md-4 bento-form-input">
                 <label>Gender</label>
