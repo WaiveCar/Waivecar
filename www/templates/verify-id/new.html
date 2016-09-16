@@ -19,7 +19,7 @@
     </div>
 
     <form ng-submit="ctrl.submit()">
-      <button type="submit" class="button button-balanced button-block" ng-disabled="{{ ctrl.imageMap.license == ctrl.imageMap.default || ctrl.imageMap.selfie == ctrl.imageMap.default }}">
+      <button type="submit" class="button button-balanced button-block" ng-disabled="!ctrl.haveAllImages()">
         Confirm
       </button>
     </form>

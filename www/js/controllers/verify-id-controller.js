@@ -29,7 +29,7 @@ module.exports = angular.module('app.controllers').controller('VerifyIdControlle
       default: 'img/camera.svg'
     };
 
-    ctrl.formCheck = function () {
+    ctrl.haveAllImages = function () {
       return (
         (images.license && images.license !== images.default) && 
         (images.selfie && images.selfie !== images.default)
