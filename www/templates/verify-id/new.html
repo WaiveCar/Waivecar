@@ -1,22 +1,25 @@
 <ion-view class="verify-id-new">
+  <ion-nav-title>
+    <page-title class="dark-bg title-plain">Verify Your Identity</page-title>
+  </ion-nav-title>
+
   <ion-content padding="true" class="ion-content--center dark-bg">
-    <h4>Verify Your Identity</h4>
     <p>Help us keep your account secure by providing<br>
     us with a photo of your license and a selfie.</p>
 
     <div class="image-tray">
-      <p>Your License</p>
       <button ng-click="ctrl.addLicense()" class="button button-dark add-image tnail license-image" style="background:url({{ ctrl.imageMap.license }}) center center / cover"></div>
       </button>
+      <p>Your License</p>
     </div>
 
     <div class="image-tray">
-      <p>Your Selfie</p>
       <button ng-click="ctrl.addSelfie()" class="button button-dark add-image tnail selfie-image" style="background:url({{ ctrl.imageMap.selfie }}) center center / cover"></button>
+      <p>Your Selfie</p>
     </div>
 
     <form ng-submit="ctrl.submit()">
-      <button type="submit" class="button button-balanced button-block" ng-disabled="!(ctrl.model.files.length)">
+      <button type="submit" class="button button-balanced button-block" ng-disabled="{{ ctrl.imageMap.license == ctrl.imageMap.default || ctrl.imageMap.selfie == ctrl.imageMap.default }}">
         Confirm
       </button>
     </form>
