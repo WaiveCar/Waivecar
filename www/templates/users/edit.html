@@ -19,12 +19,12 @@
         <p ng-if="license.status === 'in-progress'">Your Driver's License is ongoing validation.</p>
         <p ng-if="license.status === 'complete' && license.outcome === 'reject'">Driver's License has failed validation.</p>
         <p ng-if="license.status === 'complete' && license.outcome === 'consider'">Driver's License is being manually validated.</p>
-        <p ng-if="license.status === 'complete' && license.outcome === 'clear'">Your Driver's License has been cleared.</p>
+        <p ng-if="license.status === 'complete' && license.outcome === 'clear'">Your Driver's License is cleared.</p>
       </div>
-      <button class="button button-positive button-block" ui-sref="verify-id" ng-if="license">Verify Identity</button>
       <div class="identity-verification text-center" ng-if="license">
-        <p ng-if="user.status === 'active'">Your identity has been verified.</p>
+        <button class="button button-positive button-block" ui-sref="verify-id" ng-if="user.status !== 'active'">Verify Identity</button>
         <p ng-if="user.status !== 'active'">Your identity has not yet been verified.</p>
+        <p ng-if="user.status === 'active'">Your identity is verified.</p>
       </div>
     </div>
     <p ng-if="license.status ==='complete' && license.outcome !== 'clear'" class="padding-top content-disclaimer">Please contact us if you would like more information in relation to the status of your Driver's License.</p>
