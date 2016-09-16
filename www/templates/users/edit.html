@@ -24,7 +24,7 @@
       <div class="identity-verification text-center" ng-if="license">
         <button class="button button-positive button-block" ui-sref="verify-id" ng-if="user.status !== 'active'">Verify Identity</button>
         <p ng-if="user.status !== 'active'">Your identity has not yet been verified.</p>
-        <p ng-if="user.status === 'active'">Your identity is verified.</p>
+        <p ng-if="user.status === 'active'">No further identity verification required.</p>
       </div>
     </div>
     <p ng-if="license.status ==='complete' && license.outcome !== 'clear'" class="padding-top content-disclaimer">Please contact us if you would like more information in relation to the status of your Driver's License.</p>
