@@ -18,43 +18,42 @@ module.exports = angular.module('app.controllers').controller('VerifyIdControlle
     var $modal = $injector.get('$modal');
     var $message = $injector.get('$message');
     var $data = $injector.get('$data');
-    var $q = $injector.get('$q');
+    var $state = $injector.get('$state');
 
     var ctrl = this;
 
-    ctrl.imageMap = {
-      license: '/img/camera.svg',
-      selfie: '/img/camera.svg'
+    var images = ctrl.imageMap = {
+      // This is a flag that gets toggled if both
+      // types of images have been provided. It
+      // enables the button.
+      default: 'img/camera.svg'
     };
 
-    this.submit = function submit () {
-      return this.license.$create()
-      .then(function () {
-        var modal;
-        return $modal('result', {
-          icon: 'check-icon',
-          title: 'License info received',
-          message: 'Thanks! During normal business hours this will only take a minute or two.'
-        })
-        .then(function (_modal) {
-          modal = _modal;
-          modal.show();
-          return modal;
-        })
-        .then(function () {
-          return $timeout(1000);
-        })
-        .then(function () {
-          modal.remove();
-        });
+    ctrl.formCheck = function () {
+      return (
+        (images.license && images.license !== images.default) && 
+        (images.selfie && images.selfie !== images.default)
+      );
+    };
+
+    ctrl.submit = function () {
+      var modal;
+      return $modal('result', {
+        icon: 'check-icon',
+        title: 'Photographs Sent',
+        message: 'Thanks! We appreciate it.'
       })
-      .catch(function onUploadFailed (err) {
-        var message = 'Looks like the formatting of your license is wrong, please try again.';
-        if('data' in err && 'message' in err.data) {
-          message = err.data.message;
-        }
-        submitFailure(message);
-        $q.reject(err);
+      .then(function (_modal) {
+        modal = _modal;
+        modal.show();
+        return modal;
+      })
+      .then(function () {
+        return $timeout(2000);
+      })
+      .then(function () {
+        modal.remove();
+        $state.go('users-edit');
       });
     };
 
@@ -94,16 +93,19 @@ module.exports = angular.module('app.controllers').controller('VerifyIdControlle
     function updateImages() {
       if($scope.user.avatar) {
         ctrl.imageMap.selfie = $settings.uri.api + '/file/' + $scope.user.avatar;
+      } else {
+        ctrl.imageMap.selfie = ctrl.imageMap.default;
       }
 
       if($scope.license && $scope.license.fileId) {
         ctrl.imageMap.license = $settings.uri.api + '/file/' + $scope.license.fileId;
+      } else {
+        ctrl.imageMap.license = ctrl.imageMap.default;
       }
     }
 
     $scope.init = function() {
-
-      // this insane thingie is how licenses for a user are found.are detected.
+      // this insane thingie is how licenses for a user are found.
       return $data.resources.users.me().$promise
         .then(function(me) {
           $scope.user = me;
@@ -113,13 +115,11 @@ module.exports = angular.module('app.controllers').controller('VerifyIdControlle
             .filter({userId: $scope.user.id})
             .sortBy('createdAt')
             .last();
-          console.log($scope);
           updateImages();
         }).catch($message.error);
     };
 
     $scope.init();
-
 
     function submitFailure(message) {
       $ionicLoading.hide();
@@ -127,7 +127,8 @@ module.exports = angular.module('app.controllers').controller('VerifyIdControlle
 
       $modal('result', {
         icon: 'x-icon',
-        title: message,
+        title: 'Did You Take a Picture?',
+        message: 'If you did, please try again. ' + (message || ''),
         actions: [{
           text: 'Retry',
           className: 'button-balanced',
