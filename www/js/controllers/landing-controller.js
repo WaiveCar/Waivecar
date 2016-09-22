@@ -6,7 +6,7 @@ function LandingController ($injector) {
   var $ionicActionSheet = $injector.get('$ionicActionSheet');
 
   this.changeEnv = function () {
-    var envs = ['prod', 'dev'];
+    var envs = ['prod', 'dev', 'staging'];
     var currentEnv = localStorage.env || 'prod';
     var buttons = envs.map(function (env) {
       return {text: env};
