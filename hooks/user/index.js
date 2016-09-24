@@ -155,6 +155,8 @@ hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
 
   if (nextUser.phone && prevUser.phone !== nextUser.phone) {
     nextUser.verifiedPhone = false;
+  } else {
+    nextUser.verifiedPhone = true;
   }
 
   if (nextUser.status && _user.hasAccess('admin')) {
