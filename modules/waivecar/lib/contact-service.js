@@ -7,7 +7,7 @@ let notify       = require('./notification-service');
 module.exports = {
   *deliverMessage(payload, _user) {
     yield notify.slack({
-      text : `From: ${ _user.name() } <${ _user.email }> ( ${ _user.phone } )\n Subject: payload.subject\n Message: payload.message`
+      text : `From: ${ _user.name() } <${ _user.email }> ( ${ _user.phone } )\n Subject: ${ payload.subject }\n${ payload.message }`
     }, { channel : '#app_support' });
   }/*,
 
