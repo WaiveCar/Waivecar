@@ -16,6 +16,9 @@ let OrderService = Bento.module('shop/lib/order-service');
 let LogService   = require('./log-service');
 let Actions      = LogService.getActions();
 let moment       = require('moment');
+let wrapper      = require('co-redis');
+let redis        = getRedis();
+let uuid         = require('uuid');
 let _            = require('lodash');
 
 // ### Models
@@ -84,13 +87,44 @@ module.exports = class BookingService extends Service {
 
     // ### Add Driver
     // Add the driver to the car so no simultaneous requests can book this car.
-    if (car.userId !== null) {
+    //
+    // We're trying to address https://github.com/clevertech/Waivecar/issues/435
+    // This is ct's really terrible way of trying to do locks. The way below
+    //
+    // is from http://redis.io/topics/distlock and probably has some edge case ...
+    // but for the time being I don't care, this is better than the other thing.
+    //
+    let key = ['booking-lock', data.carId].join(':');
+    let uniq = uuid.v4();
+
+    // We put a 15000 ms (15second) lock on this resource ... that should be ok.
+    let canProceed = yield redis.set(key, uniq, 'nx', 'px', 15000);
+    let check = yield redis.get(key);
+
+    // We re-get the car to update the value.
+    car = yield this.getCar(data.carId, data.userId, true);
+    if (!canProceed || check !== uniq || car.userId !== null) {
+
+      yield notify.notifyAdmins(`Potentially stopped a double booking of ${ car.license || car.id }.`, [ 'slack' ], { channel : '#rental-alerts' });
+
       throw error.parse({
         code    : `BOOKING_REQUEST_INVALID`,
         message : `Another driver has already reserved this WaiveCar.`
       }, 400);
     }
     yield car.addDriver(user.id);
+
+    //
+    // We *could* do this, but it will be expiring in 15 seconds any way and there's
+    // a away that the double booking could still occur here. 
+    //
+    // A gets db record
+    // B gets db record
+    // A adds driver and removes lock
+    // B sees the lock isn't there and then adds driver and removes lock
+    //
+    // See doing this will screw things up...
+    // yield redis.del(key)
 
     // ### Create Booking
     // Attempt to create a new booking, if booking fails to save we remove the
@@ -919,3 +953,15 @@ module.exports = class BookingService extends Service {
   }
 
 };
+function getRedis() {
+  let client = null;
+  if (Bento.config.queue && Bento.config.queue.redis) {
+    let port = Bento.config.queue.redis.port;
+    let host = Bento.config.queue.redis.host;
+    client = require('redis').createClient(port, host, Bento.config.queue.redis);
+  } else {
+    client = require('redis').createClient();
+  }
+  return wrapper(client);
+}
+
