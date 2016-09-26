@@ -15,7 +15,60 @@ I (cjm) can't find any evidence of some UI builder that was used to manager the 
 
 ### Making things run
 
+#### Linux
 I (cjm) have had success using a usb cable to an android phone with `ionic run android`. Note that this doesn't rebuild things if you change code
+
+#### OSX
+I'm (cjm) not primarily an osx guy so this may be suboptimal but here are my notes nonetheless. 
+
+So it looks like you need the following (assuming you're using a consumer-setup osx):
+
+  * administrative access
+  * xcode
+  * brew (arguably you could use others but this is what I used)
+  * about 4-8 hours
+
+> Note: I *believe* `iterm2` is still what the cool kids use for a terminal emulator and that's what I put on --- but this is by no means a requirement.
+
+Here's generally what I did after installing the above:
+
+  $ brew install git
+  $ git clone https://github.com/clevertech/Waivecar
+    ... magic credentials ...
+    # This next line is taken from https://github.com/creationix/nvm
+    # As of Sept 23, 2016, this is the version of node that is known to work.
+    # I (cjm) don't have the time to cross my fingers and upgrade. I'm going with
+    # what I know works.
+
+  $ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.0/install.sh | bash 
+    # Follow the instructions and put the lines into ~/.profile and start a new terminal
+
+  $ nvm install v4.2.6
+
+    # check it
+  $ node --version
+  $ cd Waivecar
+  $ git checkout --track -b app/development origin/app/development
+  $ npm install
+    # Ignore warnings for the same reason as above.
+
+    #
+    # 1) It really looks like the package.json of the npm install command doesn't cover this.
+    #    There may be a ct reason, these are pretty core things to *accidentally* omit.
+    #
+    # 2) It looks like that putting ionic at 1.7.16 works. It may work at a later version, 
+    #    but 2.0.0 was not my friend when I was doing this.  When I got to the `ionic run ios`
+    #    step I got an error about CDVCamera.o which the internet had mixed messages on but 
+    #    essentially said that using an older version of ionic reliably remediated it.
+    #
+  $ npm install ionic@1.7.16 cordova@6.2.0 -g
+  $ ionic platform add ios
+
+    # At least *I* didn't have to do the `--unsafe-perm=true` that was recommended here.
+  $ sudo npm install ios-sim ios-deploy
+  $ ionic build ios
+  $ ionic run ios
+
 
 ### Creating new things
 
@@ -26,6 +79,9 @@ If you **add a controller** you have to put it in some giant enumerated list in 
 Since this is all a web-app with a few hooks, you can debug it over usb like any other website.  See [here](https://developers.google.com/web/tools/chrome-devtools/debug/remote-debugging/remote-debugging?hl=en).  Essentially you type `chrome://inspect` inside of a modern version of chrome and if the magic is set up right, you can look at the current running app using the chrome inspector.
 
 This can be especially helpful because it's not always easy to know what all these tools end up creating as the final form inside the app.
+
+Also if you long-press the waivecar logo on the initial screen you have an option of using different servers.  I'm not documenting the names
+here because they could change without me remembering to change the documentation... Try it and check the code.
 
 ## Config
 
