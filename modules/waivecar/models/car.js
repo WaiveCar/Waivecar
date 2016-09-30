@@ -240,18 +240,24 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       return this.charge;
     },
 
-    /**
-     * Sets the car into unavailable mode.
-     */
+    //
+    // This is similar to the active charge above and really is designed
+    // to address [Api: Report the full number of the average charge #545]
+    // Essentially it returns a consistent human readable string that
+    // consists of the average charge and charge history.
+    //
+    chargeReport : function () {
+      return `(Avg: ${ this.averageCharge() }, History: ${ this.getChargeHistory().reverse.join(', ') })`;
+    },
+
+    // Sets the car into unavailable mode.
     unavailable : function *() {
       yield this.update({
         isAvailable : false
       });
     },
 
-    /**
-     * Sets the car into available mode.
-     */
+    // Sets the car into available mode.
     available : function *() {
       yield this.update({
         isAvailable : true
