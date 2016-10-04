@@ -11,7 +11,22 @@ let config      = Bento.config;
 let log         = Bento.Log;
 let slack       = new Slack();
 
+let fs          = require('fs');
+
+function log_message(type, what) {
+  // There's probably a more frameworky way of doing this in a much
+  // more convoluted and hard way --- watch me not care at all.
+  var logStream = fs.createWriteStream('/var/log/outgoing/log.txt', {'flags': 'a'});
+
+  what.t = type;
+  what.at = new Date();
+
+  logStream.write(JSON.stringify(what) + "\n");
+  logStream.close();
+}
+
 module.exports = {
+
 
   /**
    * Sends a sms text message.
@@ -22,6 +37,7 @@ module.exports = {
     if (user.phone) {
       try {
         let sms = new Sms();
+        log_message('sms', {phone: user.phone, text: message});
         yield sms.send({
           to      : user.phone,
           message : message
@@ -109,6 +125,7 @@ module.exports = {
     if (process.env.NODE_ENV === 'production') {
       if (params && params.channel) payload.channel = params.channel;
       try {
+        log_message('slack', payload);
         yield slack.message(payload);
       } catch (err) {
         log.warn('Failed to deliver slack message');
@@ -121,6 +138,7 @@ module.exports = {
    */
   *email(payload) {
     let email = new Email();
+    log_message('email', payload);
     yield email.send(payload);
   }
 
