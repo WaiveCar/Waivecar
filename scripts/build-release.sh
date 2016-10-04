@@ -1,4 +1,5 @@
 # exit on first error
+rm ./platforms/android/build/outputs/apk/*apk
 set -e
 
 export KEYSTORE_PASS="yEt7Mon3I9Swi5woY4Wu"
