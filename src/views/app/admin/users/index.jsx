@@ -15,7 +15,7 @@ class UsersListView extends React.Component {
    */
   constructor(...args) {
     super(...args);
-    this.table = new Table(this, 'users', [ 'lastName', 'firstName', 'email', 'status' ]);
+    this.table = new Table(this, 'users', [ ['firstName', 'lastName'], 'email' ]);
     this.state = {
       search : null,
       sort   : {
