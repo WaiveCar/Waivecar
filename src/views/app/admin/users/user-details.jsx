@@ -187,6 +187,9 @@ module.exports = class UserDetails extends React.Component {
                       Active
                     </label>
                   </div>
+                  <div className="col-sm-12 text-right help-text" style={{ paddingRight: 0, fontSize: "85%", marginTop: "-0.70em" }}>
+                    Signup Date: { user.createdAt.split('T')[0] }
+                  </div>
                 </div>
               </div>
 
