@@ -1,8 +1,9 @@
 import React        from 'react';
 import moment       from 'moment';
-import { api }      from 'bento';
+import { relay, api }      from 'bento';
 import { snackbar } from 'bento-web';
 import { Form }     from 'bento/lib/helpers';
+import md5          from 'md5';
 import FormSelect   from 'react-select';
 import FormInput    from '../components/form-input';
 
@@ -11,12 +12,24 @@ module.exports = class UserDetails extends React.Component {
   constructor(...args) {
     super(...args);
     this.state = {
-      license : null,
-      report  : null
+      license  : null,
+      report   : null,
+      userInfo : null
     };
+    relay.subscribe(this, 'users');
   }
 
   componentDidMount() {
+    api.get(`/users/${ this.props.id }`, (err, user) => {
+      user.image =  user.avatar ? 
+        `${ api.uri }/file/${ user.avatar }` :
+        `//www.gravatar.com/avatar/${ md5(user.email) }?s=150`;
+
+      this.setState({
+        userInfo: user
+      });
+    });
+
     api.get('/licenses', {
       userId : this.props.id
     }, (err, licenses) => {
@@ -93,16 +106,24 @@ module.exports = class UserDetails extends React.Component {
           </small>
         </h3>
         <div className="box-content">
-          {
-            license.fileId ?
-              <div className="box-image text-center">
+          <div className="box-image text-center">
+            {
+              license.fileId ?
                 <a href={ `${ api.uri }/file/${ license.fileId }` } target="_blank">
                   <img src={ `${ api.uri }/file/${ license.fileId }` } style={{ width : '50%' }} />
                 </a>
-              </div>
-              :
-              ''
-          }
+                : 
+                <div style={{ border: '1px solid #bbb', display: 'inline-block', background: '#eee', width: '250px', height: '125px', color: 'white' }}>
+                  <p style={{ paddingTop: '15%', fontWeight: 'bold', color: '#bbb' }}>
+                    [ No Image ]
+                  </p>
+                </div>
+            }
+            { 
+              this.state.userInfo ? 
+                <img style={{ maxHeight: '100%', maxWidth: '45%', width: 'auto', display: 'inline-block', paddingLeft: '10px' }} src={ this.state.userInfo.image } /> : "" 
+            }
+          </div>
 
           <form className="bento-form-static" role="form" onSubmit={ this.submit } style={{ marginTop : 20 }}>
             <div className="form-group row">
