@@ -56,14 +56,23 @@ module.exports = class Table {
 
     if (search) {
       let re = new RegExp(search, 'i');
+      let candidate = null;
+
       list = list.filter(item => {
-        for (let i = 0, len = this.filters.length; i < len; i++) {
-          let key = item[this.filters[i]];
-          if (key && key.match(re)) {
-            return true;
+
+        return this.filters.reduce( (res, index) => {
+          // cheap array check
+          if (index.map) {
+            candidate = index.map((key) => { return item[key] }).join(' ');
+          } else {
+            candidate = item[index];
           }
-        }
-        return false;
+
+          if (!candidate) { return res; }
+
+          return res | (candidate.search(re) !== -1);
+        }, false);        
+
       });
     }
 
