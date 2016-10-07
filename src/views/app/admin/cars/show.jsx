@@ -245,14 +245,6 @@ class CarsShowView extends React.Component {
   }
 
   renderCarActions(car) {
-    let addon = '';
-
-    if(car.userId) {
-      addon = <a href={"/users/" + car.userId }>{ car.user.firstName + " " + car.user.lastName }</a>;
-    } else {
-      addon = <em>None</em>;
-    }
-
     if (this.service.getState('isLoading')) {
       return (
         <div className="box">
@@ -333,10 +325,13 @@ class CarsShowView extends React.Component {
             </div>
             <div className="row" style={{ marginTop: 10 }}>
               <div className="col-md-6">
-                { addon }
                 {
                   car.booking ?
-                  <Link key={ 5 } className='btn btn-link' to={ `/bookings/${ car.booking.id }` }>View Booking</Link> : ''
+                    <div style={{ padding: "10px 0" }}>
+                      <a  style={{ marginRight: "10px" }} href={ `/users/${ car.userId }` }>{ car.user.firstName + " " + car.user.lastName }</a>
+                      Booking #<a href={ `/bookings/${ car.booking.id }` }>{ car.booking.id }</a> 
+                    </div>
+                  : ''
                 }
               </div>
               <div className="col-md-6">
