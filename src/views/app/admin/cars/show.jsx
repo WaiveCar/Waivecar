@@ -93,14 +93,6 @@ class CarsShowView extends React.Component {
   }
 
   renderCarForm(car) {
-    let addon = '';
-
-    if(car.userId) {
-      addon = <a href={"/users/" + car.userId }>{ car.userId }</a>;
-    } else {
-      addon = <em>None</em>;
-    }
-
     return (
       <div className="box hidden-xs-down">
         <h3>Details</h3>
@@ -119,9 +111,6 @@ class CarsShowView extends React.Component {
             ]}
             submit = { this.service.update }
           />
-          <p>
-            Current User: { addon }
-          </p>
         </div>
       </div>
     );
@@ -256,6 +245,14 @@ class CarsShowView extends React.Component {
   }
 
   renderCarActions(car) {
+    let addon = '';
+
+    if(car.userId) {
+      addon = <a href={"/users/" + car.userId }>{ car.user.firstName + " " + car.user.lastName }</a>;
+    } else {
+      addon = <em>None</em>;
+    }
+
     if (this.service.getState('isLoading')) {
       return (
         <div className="box">
@@ -336,10 +333,10 @@ class CarsShowView extends React.Component {
             </div>
             <div className="row" style={{ marginTop: 10 }}>
               <div className="col-md-6">
+                { addon }
                 {
                   car.booking ?
-                  <Link key={ 5 } className='btn btn-primary' to={ `/bookings/${ car.booking.id }` }>View Booking</Link> :
-                  <button key={ 5 } className='btn btn-danger' disabled='true'>No Booking</button>
+                  <Link key={ 5 } className='btn btn-link' to={ `/bookings/${ car.booking.id }` }>View Booking</Link> : ''
                 }
               </div>
               <div className="col-md-6">
