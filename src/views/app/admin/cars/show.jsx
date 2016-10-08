@@ -67,6 +67,27 @@ class CarsShowView extends React.Component {
     return <span className="text-muted"><i className="material-icons" role="true">close</i></span>;
   }
 
+  updateUser(event) {
+    this.setState({user_find_name: null, user_find_id: event.target.value});
+  }
+
+  findUser() {
+    let user_id = this.state.user_find_id;
+
+    api.get(`/users/${ user_id }`, (err, user) => {
+      if (err) {
+        return snackbar.notify({
+          type    : `danger`,
+          message : err.message
+        });
+      }
+      this.setState({user_find_name: `${user.firstName} ${user.lastName}`});
+    });
+  }
+
+  bookCar() {
+  }
+
   renderCarMedia(car) {
     return (
       <div className="box">
@@ -328,10 +349,25 @@ class CarsShowView extends React.Component {
                 {
                   car.booking ?
                     <div style={{ padding: "10px 0" }}>
-                      <a  style={{ marginRight: "10px" }} href={ `/users/${ car.userId }` }>{ car.user.firstName + " " + car.user.lastName }</a>
+                      <a style={{ marginRight: "10px" }} href={ `/users/${ car.userId }` }>{ car.user.firstName + " " + car.user.lastName }</a>
                       Booking #<a href={ `/bookings/${ car.booking.id }` }>{ car.booking.id }</a> 
                     </div>
-                  : ''
+                  : <div> 
+                      <div className="row" style={{ marginTop: "9px" }}>
+                        <input 
+                          onChange={ this.updateUser.bind(this) }
+                          value={ this.state.user_find_query } 
+                          style={{ marginTop: "1px", padding: "5px" }} 
+                          className="col-xs-6" 
+                          placeholder="User ID" 
+                        />
+                        <button className="btn btn-primary btn-sm col-xs-6" onClick={ this.findUser.bind(this) }>Find User</button>
+                      </div>
+                      <div className={ `row ${ this.state.user_find_result ? '' : 'hide' }` }>
+                        <div style={{ padding: "10px" }} className="col-xs-6">#{this.state.user_find_id} { this.state.user_find_name }</div>
+                        <button className="btn btn-link col-xs-6" onClick={ this.bookCar.bind(this) }>Book { car.license }</button>
+                      </div>
+                    </div>
                 }
               </div>
               <div className="col-md-6">
@@ -379,9 +415,6 @@ class CarsShowView extends React.Component {
     if (!car || !car.id) {
       return <div className="text-center">Retrieving Car...</div>
     }
-
-    self._ct = this.service;
-    self._car = car;
 
     return (
       <div className="cars cars-show">
