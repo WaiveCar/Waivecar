@@ -9,18 +9,12 @@ import moment         from 'moment';
 
 class UITable extends React.Component {
 
-  /**
-   * @constructor
-   */
   constructor(...args) {
     super(...args);
     relay.subscribe(this, this.resourceName());
     this.tableActions = this.tableActions.bind(this);
   }
 
-  /**
-   * @method componentDidMount
-   */
   componentDidMount() {
     let { index } = resources.get(this.resourceName());
     if (!index) {
@@ -34,9 +28,6 @@ class UITable extends React.Component {
     }.bind(this));
   }
 
-  /**
-   * @method componentWillUnmount
-   */
   componentWillUnmount() {
     relay.unsubscribe(this, this.resourceName());
   }
@@ -106,9 +97,6 @@ class UITable extends React.Component {
     }
   }
 
-  /**
-   * @method getMetadata
-   */
   getMetadata() {
     let list  = fields.get(this.props.resource);
     let fieldList = this.props.fields;
@@ -132,7 +120,7 @@ class UITable extends React.Component {
           meta.customComponent = React.createClass({
             render : function() {
               if (this.props.data === true) {
-                return <span className="text-success"><i className="material-icons" role="true">check</i></span>;
+                return <span className="text-success"><i className="material-icons" role="true">check</i>a</span>;
               }
 
               return <span className="text-muted"><i className="material-icons" role="true">close</i></span>;
@@ -160,9 +148,6 @@ class UITable extends React.Component {
     return metadata;
   }
 
-  /**
-   * @method getColumns
-   */
   getColumns() {
     let columns = this.props.fields.map((field) => {
       return field;
@@ -197,9 +182,6 @@ class UITable extends React.Component {
     );
   }
 
-  /**
-   * @method render
-   */
   render() {
     return (
       <div id="table-component" className="component-container">
