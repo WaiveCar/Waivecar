@@ -40,7 +40,7 @@ module.exports = class BookingService extends Service {
    |
    |  Creates a new booking by adding the provided userId to the provided carId.
    |  Our system currently allows admins to create new bookings on behalf of the
-   |  user, hence the hasAccess check.
+   |  driver, hence the hasAccess check.
    |
    |  We have an additional try catch when saving a booking so that we can remove
    |  the driver from the assigned car in case booking for some reason fails.
@@ -57,28 +57,33 @@ module.exports = class BookingService extends Service {
    * @return {Object}
    */
   static *create(data, _user) {
-    let user = yield this.getUser(data.userId);
+    let driver = yield this.getUser(data.userId);
     let car  = yield this.getCar(data.carId, data.userId, true);
 
-    this.hasAccess(user, _user);
+    this.hasAccess(driver, _user);
 
-    if (user.id === _user.id && _user.hasAccess('admin')) {
+    // If the user doing the booking is also the driver and the
+    // user is an admin we give them the car.
+    if (driver.id === _user.id && _user.hasAccess('admin')) {
       // skip access check...
     } else {
-      yield this.hasBookingAccess(user);
+      // Otherwise we check to see if the driver can drive. This
+      // means that if an admin is booking a driver who is not
+      // themselves, this code is still run.
+      yield this.hasBookingAccess(driver);
     }
 
     if (!_user.hasAccess('admin')) {
-      yield this.recentBooking(user, car);
+      yield this.recentBooking(driver, car);
     }
 
     // ### Pre authorization payment
     try {
-      yield OrderService.authorize(null, _user);
+      yield OrderService.authorize(null, driver);
     } catch (err) {
       throw error.parse({
         code    : 'BOOKING_AUTHORIZATION',
-        message : 'Unable to authorize payment. Please validate payment method.'
+        message : 'Unable to authorize payment. Please validate payment method.' + JSON.stringify(err)
       }, 400);
     }
 
@@ -90,7 +95,7 @@ module.exports = class BookingService extends Service {
         message : `Another driver has already reserved this WaiveCar.`
       }, 400);
     }
-    yield car.addDriver(user.id);
+    yield car.addDriver(driver.id);
 
     // ### Create Booking
     // Attempt to create a new booking, if booking fails to save we remove the
@@ -113,13 +118,13 @@ module.exports = class BookingService extends Service {
     // ### Relay Booking
 
     car.relay('update');
-    booking.relay('store', user);
+    booking.relay('store', driver);
 
     // ### Notifications
 
-    yield notify.sendTextMessage(user, `Hi There! Your WaiveCar reservation with ${ car.license } has been confirmed. You'll have 15 minutes to get to your WaiveCar before your reservation expires. Let us know if you have any questions.`);
-    yield notify.notifyAdmins(`${ _user.name() } created a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`, [ 'slack' ], { channel : '#reservations' });
-    yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.CREATE_BOOKING }, _user);
+    yield notify.sendTextMessage(driver, `Hi There! Your WaiveCar reservation with ${ car.license } has been confirmed. You'll have 15 minutes to get to your WaiveCar before your reservation expires. Let us know if you have any questions.`);
+    yield notify.notifyAdmins(`${ _user.name() } created a booking | Car: ${ car.license || car.id } | Driver: ${ driver.name() } <${ driver.phone || driver.email }>`, [ 'slack' ], { channel : '#reservations' });
+    yield LogService.create({ bookingId : booking.id, carId : car.id, userId : driver.id, action : Actions.CREATE_BOOKING }, _user);
 
     // ### Return Booking
 
