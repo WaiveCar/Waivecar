@@ -170,7 +170,7 @@ module.exports = class OrderService extends Service {
    * @return {Object}
    */
   static *authorize(payload, _user) {
-    let card = Card.findOne({ where : { userId : _user.id } });
+    let card = yield Card.findOne({ where : { userId : _user.id } });
 
     if (!card) {
       throw error.parse({
