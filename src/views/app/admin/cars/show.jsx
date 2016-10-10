@@ -86,6 +86,23 @@ class CarsShowView extends React.Component {
   }
 
   bookCar() {
+    // Looking at the code I belive it's a POST to /bookings
+    // with a userId of the driver to drive and the carId of
+    //
+    // Why the carId is so deeply entrenched is bs I'm not willing
+    // to get into right now.
+    let data = { 'userId': this.state.user_find_id, 'carId': this.state.car.cars[0].id };
+    api.post('/bookings', data, (err, user) => {
+      if(err) {
+        return snackbar.notify({
+          type    : 'danger',
+          message : err.message
+        });
+      }
+      // This seems to update the screen. There's probably better ways
+      // but I have no idea how this rube goldberg contraption works.
+      this.service.setCar(this.id());
+    })
   }
 
   renderCarMedia(car) {
@@ -356,15 +373,15 @@ class CarsShowView extends React.Component {
                       <div className="row" style={{ marginTop: "9px" }}>
                         <input 
                           onChange={ this.updateUser.bind(this) }
-                          value={ this.state.user_find_query } 
+                          value={ this.state.user_find_id } 
                           style={{ marginTop: "1px", padding: "5px" }} 
                           className="col-xs-6" 
                           placeholder="User ID" 
                         />
                         <button className="btn btn-primary btn-sm col-xs-6" onClick={ this.findUser.bind(this) }>Find User</button>
                       </div>
-                      <div className={ `row ${ this.state.user_find_result ? '' : 'hide' }` }>
-                        <div style={{ padding: "10px" }} className="col-xs-6">#{this.state.user_find_id} { this.state.user_find_name }</div>
+                      <div className={ `row ${ this.state.user_find_name ? '' : 'hide' }` }>
+                        <div style={{ padding: "10px 0" }} className="col-xs-6"><a target='_blank' href={ `/users/${ this.state.user_find_id }` }>#{this.state.user_find_id}</a> { this.state.user_find_name }</div>
                         <button className="btn btn-link col-xs-6" onClick={ this.bookCar.bind(this) }>Book { car.license }</button>
                       </div>
                     </div>
