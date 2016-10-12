@@ -22,6 +22,20 @@ I'm using this on.
 
 ct decided to use something called webpack that you need to of course install through `npm -g` in order to get the executable thing.
 
+To deploy to the server, this usually works:
+
+  $ nvmsh
+  $ npm build
+    # Check to see that the files, notably 
+    # vendors.js and bundle.js were recently 
+    # created
+  $ ls -l app/scripts
+  $ scp app/scripts/{vendors,bundle}.js waive-prod:
+  $ ssh waive-prod
+  $ sudo cp vendors.js bundle.js /opt/waivecar-web/scripts/
+
+That's about it ... reload the webpage avoiding cache and you should be ok
+
 ## Tips
 
 The actual routing logic is burried a bit deep at src/templates/app/index.jsx.
