@@ -685,7 +685,7 @@ module.exports = class BookingService extends Service {
     if (car.averageCharge() < 25.00 && !isAdmin) {
       yield cars.updateAvailabilityAnonymous(car.id, false);
       yield notify.slack({
-        text : `Car ${ car.license || car.id } has been made unavailable due to charge being under 25%. (current charge: ${car.averageCharge()}%)`
+        text : `Car ${ car.license || car.id } has been made unavailable due to charge being under 25%. ${ car.chargeReport() }`
       }, { channel : '#rental-alerts' });
     } else {
       yield car.available();
