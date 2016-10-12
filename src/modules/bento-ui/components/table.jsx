@@ -120,7 +120,7 @@ class UITable extends React.Component {
           meta.customComponent = React.createClass({
             render : function() {
               if (this.props.data === true) {
-                return <span className="text-success"><i className="material-icons" role="true">check</i>a</span>;
+                return <span className="text-success"><i className="material-icons" role="true">check</i></span>;
               }
 
               return <span className="text-muted"><i className="material-icons" role="true">close</i></span>;
