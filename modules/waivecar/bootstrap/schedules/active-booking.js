@@ -98,7 +98,7 @@ scheduler.process('active-booking', function *(job) {
         yield booking.flag('low-charge');
 
         yield notify.sendTextMessage(user, config.notification.reasons['LOW_CHARGE']);
-        yield notify.notifyAdmins(`${ user.name() } has driven ${ car.license } to ${ car.averageCharge() }% charge. ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+        yield notify.notifyAdmins(`${ user.name() } has driven ${ car.license } to a low charge. ${ car.chargeReport() }. ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
       }
 
       // Log position
