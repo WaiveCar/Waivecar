@@ -25,7 +25,10 @@ module.exports = angular.module('app.controllers').controller('BookingSummaryCon
         ctrl.start = _.find(booking.details, { type: 'start' });
         ctrl.end = _.find(booking.details, { type: 'end' });
 
-        ctrl.distance = ctrl.end.mileage - ctrl.start.mileage + ' miles';
+        // See App: Distance is in a silly 64bit float #532
+        // https://github.com/clevertech/Waivecar/issues/532
+        var distance_in_miles = (ctrl.end.mileage - ctrl.start.mileage) * 0.621371;
+        ctrl.distance = distance_in_miles.toFixed(2) + ' miles';
         ctrl.duration = moment(ctrl.start.createdAt).to(ctrl.end.createdAt, true);
 
         ctrl.booking.total = ctrl.booking.payments ? ctrl.booking.payments.reduce(function(sum, payment) {
