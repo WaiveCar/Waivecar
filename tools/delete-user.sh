@@ -2,6 +2,7 @@
 user=$1;
 cat > /tmp/delete-user.sql << ENDL
  delete from logs where user_id=$user or actor_id=$user or booking_id in (select id from bookings where user_id=$user);
+ delete from reports where booking_id in (select id from bookings where user_id=$user);
  delete from booking_details where booking_id in (select id from bookings where user_id=$user);
  delete from booking_locations where booking_id in (select id from bookings where user_id=$user);
  delete from bookings where user_id=$user;
