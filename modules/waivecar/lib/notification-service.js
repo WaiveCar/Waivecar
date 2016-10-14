@@ -34,10 +34,11 @@ module.exports = {
    * @param {String} message
    */
   *sendTextMessage(user, message) {
-    if (user.phone) {
+    log_message('sms', {phone: user.phone, text: message});
+
+    if (user.phone && process.env.NODE_ENV === 'production') {
       try {
         let sms = new Sms();
-        log_message('sms', {phone: user.phone, text: message});
         yield sms.send({
           to      : user.phone,
           message : message
@@ -122,15 +123,16 @@ module.exports = {
    * @param {Object} payload
    */
   *slack(payload, params) {
+    if (params && params.channel) payload.channel = params.channel;
+    log_message('slack', payload);
+
     if (process.env.NODE_ENV === 'production') {
-      if (params && params.channel) payload.channel = params.channel;
       try {
-        log_message('slack', payload);
         yield slack.message(payload);
       } catch (err) {
         log.warn('Failed to deliver slack message');
       }
-    }
+    } 
   },
 
   /**
