@@ -247,7 +247,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     // consists of the average charge and charge history.
     //
     chargeReport : function () {
-      return `(Avg: ${ this.averageCharge() }, History: ${ this.getChargeHistory().reverse.join(', ') })`;
+      return `${ this.averageCharge() }% (${ this.getChargeHistory().join(', ') })`;
     },
 
     // Sets the car into unavailable mode.
