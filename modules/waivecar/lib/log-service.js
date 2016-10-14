@@ -1,7 +1,12 @@
 'use strict';
 
 let error = Bento.Error;
+
+// We are handling both type of log - since the separation is confusing
+// and not helpful.
 let Log = Bento.model('Log');
+let Locations = Bento.model('BookingLocation');
+
 let queryParser  = Bento.provider('sequelize/helpers').query;
 let _ = require('lodash');
 
@@ -30,6 +35,12 @@ class LogService {
     }), this.getRelations());
 
     return yield Log.find(query);
+  }
+
+  static *carHistory(id) {
+    // This is less direct then I'd like --- 
+    //let log = yield Log.findById(id, this.getRelations());
+    return yield Locations.find();
   }
 
   static *getLog(id) {
