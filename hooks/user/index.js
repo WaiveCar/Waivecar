@@ -8,6 +8,7 @@ let User         = Bento.model('User');
 let error        = Bento.Error;
 let hooks        = Bento.Hooks;
 let config       = Bento.config;
+let notify       = Bento.module('waivecar/lib/notification-service');
 
 // ### Register Jobs
 
@@ -170,6 +171,18 @@ hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
       // if (prevUser.status === 'pending') nextUser.status = 'active';
       delete nextUser.verifiedPhone;
     }
+  }
+
+  if (nextUser.status == 'pending' && prevUser.status == 'active') {
+    let reason = '';
+
+    if (prevUser.id == _user.id) {
+      reason = 'by themselves';
+    } else {
+      reason = `by ${ _user.firstName } ${ _user.lastName } (#${ _user.id })`;
+    }
+
+    yield notify.notifyAdmins(`${ nextUser.firstName } ${ nextUser.lastName } (#${ prevUser.id }), a previously active user, has been moved to pending ${ reason }.`, [ 'slack' ], { channel : '#user-alerts' });
   }
 
   return nextUser;
