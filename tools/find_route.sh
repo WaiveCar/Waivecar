@@ -1,2 +1,7 @@
+#!/bin/bash
 cd /home/chris/code/Waivecar/api
-find . -name routes.js | xargs grep $1
+if [ -z $1 ]; then
+  find . -name routes.js | xargs cat 
+else 
+  find . -name routes.js | xargs grep $1 
+fi
