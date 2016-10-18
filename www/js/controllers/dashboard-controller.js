@@ -41,6 +41,10 @@ function DashboardController ($scope, $rootScope, $injector) {
   this.unlocking = false;
   this.locked = false;
 
+  // So there was a bug when this thing wasn't running right ... so 
+  // we need to put it in an interval BUUT sometimes it was so we 
+  // need to avoid getting this thing to run multiple times because
+  // fuck frameworks, that's why ...
   var rideServiceReady = $scope.$watch('service.isInitialized', function(isInitialized) {
     if (isInitialized !== true) {
       return;
@@ -55,21 +59,28 @@ function DashboardController ($scope, $rootScope, $injector) {
       return;
     }
 
-    // So there was a bug when this thing wasn't running right ... so 
-    // we need to put it in an interval BUUT sometimes it was so we 
-    // need to avoid getting this thing to run multiple times because
-    // fuck frameworks, that's why ...
     if($window.timeOutForRide) {
-      clearTimeout($window.timeOutForRide);
+      clearInterval($window.timeOutForRide);
     }
+
     var endTime = moment(booking.createdAt).add(120, 'm');
     var timeLeft = function () {
+      // thanks to stupid moment for being stupid...
       var left = -moment().diff(endTime);
-      this.timeLeft = moment.utc(left).format('H:mm:ss');
+      var isFreeTime = (Math.abs(left) === left);
+      var prefix = isFreeTime ? 'Free: ' : 'Extra: ';
+      left = Math.abs(left);
+      this.timeLeft = prefix + moment.utc(left).format('H:mm:ss');
+     
+      // This is because frameworks are buggy in interesting ways.
+      if(!$scope.$$phase) {
+        $scope.$apply();
+      } 
     }.bind(this);
     timeLeft();
-    $window.timeOutForRide = setInterval(timeLeft, 1000);
-
+    // sub 1 second because this is how these things work.
+    $window.timeOutForRide = setInterval(timeLeft, 500);
+  
     startZendrive();
   }.bind(this));
 
