@@ -17,6 +17,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   var $message = $injector.get('$message');
   var $state = $injector.get('$state');
   var $timeout = $injector.get('$timeout');
+  var $window = $injector.get('$window');
   var $ionicLoading = $injector.get('$ionicLoading');
   var GeofencingService = $injector.get('GeofencingService');
   var ZendriveService = $injector.get('ZendriveService');
@@ -53,7 +54,22 @@ function DashboardController ($scope, $rootScope, $injector) {
       $state.go('cars');
       return;
     }
-    this.timeLeft = moment(booking.createdAt).add(120, 'm').toNow(true);
+
+    // So there was a bug when this thing wasn't running right ... so 
+    // we need to put it in an interval BUUT sometimes it was so we 
+    // need to avoid getting this thing to run multiple times because
+    // fuck frameworks, that's why ...
+    if($window.timeOutForRide) {
+      clearTimeout($window.timeOutForRide);
+    }
+    var endTime = moment(booking.createdAt).add(120, 'm');
+    var timeLeft = function () {
+      var left = -moment().diff(endTime);
+      this.timeLeft = moment.utc(left).format('H:mm:ss');
+    }.bind(this);
+    timeLeft();
+    $window.timeOutForRide = setInterval(timeLeft, 1000);
+
     startZendrive();
   }.bind(this));
 
