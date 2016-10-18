@@ -7,7 +7,6 @@ module.exports = angular.module('Maps').directive('routeDuration', [
     function link(scope) {
 
       scope.$on(mapsEvents.routeDurationChanged, function(ev, totalTime, profile) {
-        var timeInHours = 0;
         var timeToDisplay;
         var timeInMinutes = Math.floor(totalTime / 60);
 
