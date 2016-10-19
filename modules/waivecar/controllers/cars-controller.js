@@ -66,6 +66,20 @@ Bento.Register.Controller('CarsController', function(controller) {
     return yield car.events(id, this.auth.user);
   };
 
+  //
+  // This is really to address https://github.com/clevertech/Waivecar/issues/577
+  // The problem was that the server didn't crash but it wasn't servicing requests
+  // like expected. The "best" way to look for that, in my opinion would be to
+  // put a dummy route in the same place as everything else that doesn't do much.
+  //
+  // Eventually with load-balancing something like this will be put elsewhere but 
+  // for now this is a fine place - especially since we are tackling a separate and 
+  // distinct issue.
+  //
+  controller.ping = function *() {
+    return yield car.ping();
+  };
+
   return controller;
 
 });
