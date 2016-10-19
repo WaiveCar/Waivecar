@@ -38,7 +38,10 @@ That's about it ... reload the webpage avoiding cache and you should be ok
 
 ## Tips
 
-The actual routing logic is burried a bit deep at src/templates/app/index.jsx.
+The actual routing logic is burried a bit deep at a few places:
+
+ * src/templates/app/index.jsx
+ * src/templates/site.jsx
 
 Debugging: There's a `self._debug` that's observed throughout the code. Toggle that to on and you should see things like console logs of ajax calls which get sucked into the opaqueness of websockets socket.io nonsense etc... I know, can you imagine?
 

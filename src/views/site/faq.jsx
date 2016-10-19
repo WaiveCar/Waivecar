@@ -5,7 +5,7 @@ module.exports = class Faq extends Component {
     return (
       <div className='container'>
         <div className='row'>
-          <div className="col-xs-12 col-md-8 col-md-push-2">
+          <div className="col-xs-12 col-md-8 col-md-push-2 faq">
           <h2 id="what-is-waivecar">What is WaiveCar?</h2>
           <p>WaiveCar is the first ever FREE &amp; 100% electric car sharing program. We are ad-supported so the funds we receive from Advertisers to display their ads on our roof-mounted screens and body wraps allow users to drive our cars FREE for 2 hours then $5.99/hr...MIC DROP.</p>
           <h2 id="signing-up">Signing up</h2>
@@ -71,7 +71,7 @@ module.exports = class Faq extends Component {
           <p>This one's a big N.O. The ONLY person allowed to drive a WaiveCar is the person on the account who has booked the car. Big consequences if we find out otherwise!</p>
           <h3 id="what-happens-if-theres-a-parking-ticket">What happens if there's a parking ticket?</h3>
           <p>If you get a ticket, you have 10 days to pay it. If you don't pay it within that time, we will charge your account for the amount due. If you see a ticket from a previous user, simply put it in the glove box.</p>
-          <h2 id="ending-ride">Ending Ride</h2>
+          <h2 id="ending-your-ride">Ending Your Ride</h2>
           <h3 id="where-can-i-park-when-im-done">Where can I park when I'm done?</h3>
           <p>If the battery is over 25% charged (20 miles), you can park at any 3 hour public parking spot in Santa Monica without paying the meter. If the battery is under 25% charged (20 miles) you MUST return it at the headquarters at 1547 7th Street.</p>
           <p>However, after midnight, parking must be valid until 10:00 AM that morning.</p>

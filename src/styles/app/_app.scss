@@ -57,3 +57,23 @@ body {
     right: 10px;
   }
 }
+
+#site { 
+  .faq {
+    ul {
+      margin-left: 1.5em;
+    }
+    h2 {
+      margin-top: 2em;
+    }
+    h2 + h3 {
+      margin-top: 1em;
+    }
+    h3 {
+      margin-bottom: 0.35em;
+    }
+    p, h3 { 
+      line-height: 1.5em;
+    }
+  }
+}

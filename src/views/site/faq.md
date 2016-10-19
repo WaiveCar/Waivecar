@@ -95,7 +95,7 @@ This one's a big N.O. The ONLY person allowed to drive a WaiveCar is the person 
 ### What happens if there's a parking ticket?
 If you get a ticket, you have 10 days to pay it. If you don't pay it within that time, we will charge your account for the amount due. If you see a ticket from a previous user, simply put it in the glove box.
 
-## Ending Ride
+## Ending Your Ride
 
 ### Where can I park when I'm done?
 If the battery is over 25% charged (20 miles), you can park at any 3 hour public parking spot in Santa Monica without paying the meter. If the battery is under 25% charged (20 miles) you MUST return it at the headquarters at 1547 7th Street.
@@ -125,7 +125,7 @@ Yes! No need for an extensive cleaning, but make sure all your belongings are ou
 ### Do I need to charge the car before I end my ride?
 Nope! Follow the rules above. If the car is under 25% charged (20 miles), simply return it at the HQ!
 
-### Fees
+## Fees
 
 There are some modest fees in order to keep our fleet bright and shiny.
 
