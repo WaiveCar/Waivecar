@@ -66,6 +66,14 @@ module.exports = {
     return cars;
   },
 
+  // This is the do-nothing thing that is in reference
+  // to https://github.com/clevertech/Waivecar/issues/577
+  // There's more rationale as to the placement of this 
+  // in the controller comment
+  *ping() {
+    return true;
+  },
+
   /**
    * Returns a car based on provided id from the local database.
    * @param  {Number} id

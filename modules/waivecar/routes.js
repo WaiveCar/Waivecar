@@ -10,6 +10,7 @@ Route.post('/bookings', {
 
 //Route.get('/status',               [ 'isAuthenticated', 'ReportsController@status' ]);
 Route.get('/status',               [ 'ReportsController@status' ]);
+Route.get('/ping',                 [ 'CarsController@ping' ]);
 
 Route.get('/bookings',             [ 'isAuthenticated', 'BookingsController@index' ]);
 Route.get('/bookings/:id',         [ 'isAuthenticated', 'BookingsController@show' ]);
