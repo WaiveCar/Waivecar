@@ -19,6 +19,10 @@ module.exports = class StripeCards {
    * @return {Object}      Returns the api representation of the card.
    */
   *create(user, card) {
+    // This just checks for a property on the user object existing
+    // and throws an error if it doesn't ... probably a bad way
+    // of doing things since that error gets hidden by a secondary
+    // error catcher higher up but that's the way it goes.
     this.verifyStripeId(user);
 
     // ### Register Card
@@ -86,10 +90,19 @@ module.exports = class StripeCards {
    * @return {Void}
    */
   *delete(stripeId, cardId) {
+    let card = yield Card.findById(cardId);
+    if (card) {
+      yield card.delete();
+    } else {
+      console.warn("Couldn't find a card with the id of " + cardId);
+    }
+      
     yield new Promise((resolve, reject) => {
       this.stripe.customers.deleteCard(stripeId, cardId, (err, confirmation) => {
         if (err) {
-          return reject(err);
+          console.warn("Couldn't delete card from stripe", err);
+          // We aren't going to return this issue to the user ... instead we just drop it in the error above
+          // return reject(err);
         }
         resolve();
       });
