@@ -59,14 +59,28 @@ scheduler.process('active-booking', function *(job) {
           yield notify.notifyAdmins(`${ car.license } has been driven ${ milesDriven } miles since last change reported, but charge level has not changed. ${ config.api.uri }/cars/${ car.id }`, [ 'slack' ], { channel : '#rental-alerts' });
         }
 
+
+        duration = moment().utc().diff(start.createdAt, 'minutes');
+
+        //
+        // Send a message 1hr 45 min into ride #578
+        //
+        // We give the user a 15 minute warning to end their ride.
+        //
+        // 2 * 60 = 120 - (15 + 2) = 103 ... we are doing it at 17 minutes
+        // to avoid issues with latency
+        //
+        if (duration >= 103 && !booking.isFlagged('1hr45-warning')) {
+          yield booking.flag('1hr45-warning');
+          yield notify.sendTextMessage(user, config.notification.reasons['NEAR_END']);
+        }
         //
         // New user rental warning (under 5 rentals, over 3 hours) #463
         //
         // Send an alert to 'rental alerts' if a new user (less than 5 trips) has taken a car for longer than 3 hours. 
         //
-        duration = moment().utc().diff(start.createdAt, 'minutes');
-        // TODO: Make sure that the user isn't flagged more than once per booking
-        if (duration >= 180 && duration < 181) {
+        if (duration >= 180 && !booking.isFlagged('new-user-long-rental')) {
+          yield booking.flag('new-user-long-rental');
           booking_history = yield Booking.find({ where : { userId : user.id }});
 
           if(booking_history.length < 5) {
