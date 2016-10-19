@@ -2,4 +2,4 @@
 source ~/bin/nvmsh
 ENV=development
 [ -e .env ] && source .env
-NODE_ENV=$ENF npm run local
+NODE_ENV=$ENV npm run local
