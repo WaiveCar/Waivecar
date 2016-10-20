@@ -11,6 +11,9 @@ Route.post('/bookings', {
 //Route.get('/status',               [ 'isAuthenticated', 'ReportsController@status' ]);
 Route.get('/status',               [ 'ReportsController@status' ]);
 
+Route.get('/history', [ 'LogController@index' ]);
+Route.get('/history/car/:id',      [ 'LogController@carHistory' ]);
+
 Route.get('/bookings',             [ 'isAuthenticated', 'BookingsController@index' ]);
 Route.get('/bookings/:id',         [ 'isAuthenticated', 'BookingsController@show' ]);
 Route.get('/bookings/:id/notes',   [ 'isAuthenticated', 'NotesController@getBookingNotes' ]);
