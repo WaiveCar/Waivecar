@@ -6,6 +6,8 @@ let error = Bento.Error;
 // and not helpful.
 let Log = Bento.model('Log');
 let Locations = Bento.model('BookingLocation');
+let Booking   = Bento.model('Booking');
+let Car       = Bento.model('Car');
 
 let queryParser  = Bento.provider('sequelize/helpers').query;
 let _ = require('lodash');
@@ -38,9 +40,39 @@ class LogService {
   }
 
   static *carHistory(id) {
-    // This is less direct then I'd like --- 
-    //let log = yield Log.findById(id, this.getRelations());
-    return yield Locations.find();
+    //let startTime = new Date();
+    let car = yield Car.findOne({where: {license: id }});
+    if (!car) {
+      console.log(`>> Found NO CAR for ${ id }.`);
+      return false;
+    }
+
+    let carId = car.id;
+    //console.log(">> Using " + carId);
+    let bookings = yield Booking.find({
+      attributes: ['id'],
+      where: { carId: carId } 
+    }); 
+
+    if (!bookings) {
+      //console.log(`>> Found NO BOOKINGS for ${carId}`);
+      return false;
+    }
+    let bookingsById = bookings.map( (row) => { return row.id; } );
+    //console.log(">> Found " + bookingsById.length + " bookings.");
+
+    let locations = yield Locations.find({ 
+      attributes: ['latitude', 'longitude', 'created_at'],
+      order: [ ['created_at', 'desc'] ],
+      where: {booking_id: { $in: bookingsById } } 
+    });
+
+    if (!locations) {
+      //console.log(`>> Found NO LOCATIONS for ${carId}`);
+      return false;
+    }
+    //console.log(`>> Found ${ locations.length } locations`);
+    return locations;
   }
 
   static *getLog(id) {
