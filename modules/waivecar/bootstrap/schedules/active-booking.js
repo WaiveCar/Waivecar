@@ -70,7 +70,7 @@ scheduler.process('active-booking', function *(job) {
           booking_history = yield Booking.find({ where : { userId : user.id }});
 
           if(booking_history.length < 5) {
-            yield notify.notifyAdmins(`${ car.license } has been driven for ${ duration } minutes by ${ user.name() } who has only rented ${ booking_history.length } times. Driver: ${ user.name() } <${ user.phone || user.email }>`, [ 'slack' ], { channel : '#rental-alerts' });
+            yield notify.notifyAdmins(`:cactus: ${ car.license } has been driven for ${ duration } minutes by ${ user.name() } who has only rented ${ booking_history.length } times. Driver: ${ user.name() } <${ user.phone || user.email }>`, [ 'slack' ], { channel : '#rental-alerts' });
           }
         }
       }
@@ -98,7 +98,7 @@ scheduler.process('active-booking', function *(job) {
         yield booking.flag('low-charge');
 
         yield notify.sendTextMessage(user, config.notification.reasons['LOW_CHARGE']);
-        yield notify.notifyAdmins(`${ user.name() } has driven ${ car.license } to a low charge. ${ car.chargeReport() }. ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+        yield notify.notifyAdmins(`:battery: ${ user.name() } has driven ${ car.license } to a low charge. ${ car.chargeReport() }. ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
       }
 
       // Log position
