@@ -157,7 +157,7 @@ module.exports = class BookingService extends Service {
     // ### Notifications
 
     yield notify.sendTextMessage(driver, `Hi There! Your WaiveCar reservation with ${ car.license } has been confirmed. You'll have 15 minutes to get to your WaiveCar before your reservation expires. Let us know if you have any questions.`);
-    yield notify.notifyAdmins(`${ _user.name() } created a booking | Car: ${ car.license || car.id } | Driver: ${ driver.name() } <${ driver.phone || driver.email }>`, [ 'slack' ], { channel : '#reservations' });
+    yield notify.notifyAdmins(`:musical_keyboard: ${ _user.name() } created a booking | Car: ${ car.license || car.id } | Driver: ${ driver.name() } <${ driver.phone || driver.email }>`, [ 'slack' ], { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : driver.id, action : Actions.CREATE_BOOKING }, _user);
 
     // ### Return Booking
@@ -367,7 +367,7 @@ module.exports = class BookingService extends Service {
 
     // ### Notify
 
-    yield notify.notifyAdmins(`${ _user.name() } started a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`, [ 'slack' ], { channel : '#reservations' });
+    yield notify.notifyAdmins(`:octopus: ${ _user.name() } started a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`, [ 'slack' ], { channel : '#reservations' });
     yield notify.sendTextMessage(user, `Your WaiveCar rental has started! The first 2 hours are completely FREE! After that, it's $5.99 / hour. Make sure to return the car in Santa Monica, don't drain the battery under 20%, and keep within our driving borders to avoid any charges. Thanks for renting with WaiveCar!`);
 
     // ### Relay Update
@@ -383,46 +383,8 @@ module.exports = class BookingService extends Service {
    * @return {Object}
    */
   static *start(id, _user) {
-    /*
-    This no longer server any purpose and was moved up to the ready method, we keeping this method in place
-    so that the app doesn't hit any errors when attempting to call it.
-
-    let booking = yield this.getBooking(id);
-    let user    = yield this.getUser(booking.userId);
-    let car     = yield this.getCar(booking.carId);
-
-    this.hasAccess(user, _user);
-
-    // ### Verify Status
-
-    if (booking.status !== 'ready') {
-      throw error.parse({
-        code    : `BOOKING_REQUEST_INVALID`,
-        message : `You must be in 'ready' status to start your ride, you are currently in '${ booking.getStatus() }' status.`
-      }, 400);
-    }
-
-    // ### Start Booking
-    // 1. Log the initial details of the booking and car details.
-    // 2. Start the free ride remind timer.
-    // 3. Update the booking status to 'started'.
-    // 4. Return the immobilizer unlock results.
-
-    yield this.logDetails('start', booking, car);
-    yield booking.setReminders(user, config.booking.timers);
-    yield booking.start();
-    yield cars.unlockImmobilzer(car.id, _user);
-
-    // ### Notify Admins
-
-    yield notify.notifyAdmins(`${ _user.name() } started a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`, [ 'slack' ]);
-    yield notify.sendTextMessage(user, `Your WaiveCar rental has started! The first 2 hours are completely FREE! After that, it's $5.99 / hour. Make sure to return the car in Santa Monica, don't drain the battery under 20%, and keep within our driving borders to avoid any charges. Thanks for renting with WaiveCar!`);
-
-    // ### Relay Update
-
-    car.relay('update');
-    yield this.relay('update', id, _user);
-    */
+    // This no longer server any purpose and was moved up to the ready method, we keeping this method in place
+    // so that the app doesn't hit any errors when attempting to call it.
   }
 
   /**
@@ -526,8 +488,7 @@ module.exports = class BookingService extends Service {
       yield this.handleTimeCharge(booking, user);
 
     } else if(deltas.duration > 120) {
-      yield notify.slack({
-        text : `Booking was ended by admin. Time driven was over 2 hours. https://waivecar.com/bookings/${ id }`
+      yield notify.slack({ text : `:umbrella: Booking was ended by admin. Time driven was over 2 hours. https://waivecar.com/bookings/${ id }`
       }, { channel : '#adminended' });
     }
 
@@ -588,13 +549,11 @@ module.exports = class BookingService extends Service {
     //
 
     if(deltas.duration > 10 && deltas.distance === 0) {
-      yield notify.slack({
-        text : `${ user.name() } had a booking with 0 miles driven for ${ deltas.duration } minutes. Car: ${ car.license || car.id } | <${ user.phone || user.email }> | https://www.waivecar.com/users/${ user.id }`
+      yield notify.slack({ text : `:popcorn: ${ user.name() } had a booking with 0 miles driven for ${ deltas.duration } minutes. Car: ${ car.license || car.id } | <${ user.phone || user.email }> | https://www.waivecar.com/users/${ user.id }`
       }, { channel : '#user-alerts' });
     }
   
-    yield notify.slack(parkingSlack || {
-      text : `${ _user.name() } ended a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`
+    yield notify.slack(parkingSlack || { text : `:cherries: ${ _user.name() } ended a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`
     }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.END_BOOKING }, _user);
 
@@ -684,16 +643,14 @@ module.exports = class BookingService extends Service {
     // We use the average to make this assessment.
     if (car.averageCharge() < 25.00 && !isAdmin) {
       yield cars.updateAvailabilityAnonymous(car.id, false);
-      yield notify.slack({
-        text : `Car ${ car.license || car.id } has been made unavailable due to charge being under 25%. ${ car.chargeReport() }`
+      yield notify.slack({ text : `:spider: Car ${ car.license || car.id } has been made unavailable due to charge being under 25%. ${ car.chargeReport() }`
       }, { channel : '#rental-alerts' });
     } else {
       yield car.available();
     }
 
     yield notify.sendTextMessage(user, `Thanks for renting with WaiveCar! Your rental is complete. You can see your trip summary in the app.`);
-    yield notify.slack({
-      text : `${ user.name() } completed a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }> | ${ apiConfig.uri }/bookings/${ booking.id }`
+    yield notify.slack({ text : `:coffee: ${ user.name() } completed a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }> | ${ apiConfig.uri }/bookings/${ booking.id }`
     }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
 
@@ -766,8 +723,7 @@ module.exports = class BookingService extends Service {
     booking.relay('update');
 
     yield notify.sendTextMessage(user, `Your WaiveCar reservation has been cancelled.`);
-    yield notify.slack({
-      text : `${ user.name() } cancelled a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`
+    yield notify.slack({ text : `:pill: ${ user.name() } cancelled a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`
     }, { channel : '#reservations' });
   }
 
@@ -951,7 +907,7 @@ module.exports = class BookingService extends Service {
       if(bookingForCar && bookingForCar.userId != user.id) {
         let holder = yield User.findById(bookingForCar.userId);
 
-        yield notify.notifyAdmins(`${ holder.name() } | ${ holder.phone } may have been holding a car for ${ user.name() } | ${ user.phone }.`,
+        yield notify.notifyAdmins(`:dark_sunglasses: ${ holder.name() } | ${ holder.phone } may have been holding a car for ${ user.name() } | ${ user.phone }.`,
            [ 'slack' ], { channel : '#user-alerts' });
       }
     }
