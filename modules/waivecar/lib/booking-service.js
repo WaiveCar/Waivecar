@@ -510,7 +510,7 @@ module.exports = class BookingService extends Service {
       }
 
       parkingSlack = {
-        text        : `${ _user.name() } ended a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`,
+        text        : `:cherries: ${ _user.name() } ended a booking | Car: ${ car.license || car.id } | Driver: ${ user.name() } <${ user.phone || user.email }>`,
         attachments : [
           {
             fallback : `Parking Details`,
