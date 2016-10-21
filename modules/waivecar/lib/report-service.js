@@ -63,9 +63,7 @@ module.exports = {
 
     log.info(slackReport);
     
-    yield notify.slack({
-      text : slackReport
-    }, { channel : '#reservations' });
+    yield notify.slack({ text : slackReport }, { channel : '#reservations' });
   },
   
   /**
