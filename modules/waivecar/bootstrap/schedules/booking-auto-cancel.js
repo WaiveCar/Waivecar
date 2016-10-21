@@ -47,7 +47,7 @@ scheduler.process('booking-auto-cancel', function *(job) {
       data : booking.toJSON()
     });
 
-    yield notify.notifyAdmins(`The booking with ${ car.license || car.id } was automatically cancelled, after their 15 minute timer expired.`, [ 'slack' ], { channel : '#reservations' });
+    yield notify.notifyAdmins(`:alarm_clock: The booking with ${ car.license || car.id } was automatically cancelled, after their 15 minute timer expired.`, [ 'slack' ], { channel : '#reservations' });
 
     log.info(`The booking with ${ car.license || car.id } was automatically cancelled, booking status was '${ booking.status }'.`);
   } else {
