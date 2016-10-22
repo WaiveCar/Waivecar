@@ -39,14 +39,14 @@ module.exports = {
           let booking = yield car.getCurrentBooking();
 
           report.booked.push([
-            license, user.name(), booking.status, `(https://waivecar.com/bookings/${booking.id})` 
+            license, user.name(), booking.status, `(https://waivecar.com/bookings/${booking.id})`, car.chargeReport()
           ].join(' '));
 
         } else {
           report.unavailable.push(license);
         }
       } else {
-        report.available.push(license);
+        report.available.push([license, car.chargeReport()].join(' '));
       }
     }
 
@@ -55,14 +55,12 @@ module.exports = {
       report.unavailable.sort().join(', '),
       '',
       'Available:',
-      report.available.sort().join(', '),
+      report.available.sort().join('\n'),
       '',
       'In Use:',
       report.booked.sort().join('\n')
     ].join('\n');
 
-    log.info(slackReport);
-    
     yield notify.slack({ text : slackReport }, { channel : '#reservations' });
   },
   
