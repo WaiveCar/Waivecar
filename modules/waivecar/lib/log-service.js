@@ -39,40 +39,151 @@ class LogService {
     return yield Log.find(query);
   }
 
-  static *carHistory(id) {
-    //let startTime = new Date();
-    let car = yield Car.findOne({where: {license: id }});
+  static *carHistory(query, id) {
+    //
+    // this is from https://github.com/clevertech/Waivecar/issues/590
+    //
+    // have 3 optional parameters
+    // 
+    //     limit: return no more than x results
+    //     first: return no results before this id
+    //     last: return no results after this id
+    // 
+    // The response will be as specified above
+    // 
+    // {
+    //   data: [ ... current stuff ... ]
+    //   first: [ first id ]
+    //   last: [ last id ]
+    // }
+    // 
+    // Some notes
+    // 
+    //     Since ids are distributed among all cars, the number of records between x and y are necessarily <= x-y.
+    //     If there's a
+    //         limit and a first: the limit applies to those incrementing after the first.
+    //         limit and a last: the limit goes backwards from the last
+    //         limit and a first and a last: the limit goes forward from the first, and the 
+    //         results may have a new last since the limit is also observed.
+    //
+    let limit = query.limit || 250;
+    let first = query.first;
+    let last = query.last;
+    let doReverse = false;
+    let params = {};
+    let car = null;
+
+    // The device ids are 17 letters long while california licenses are 7 ... so
+    // this is a huge difference. If we have a lengthy id that is querying then
+    // we can just bypass trying to look up the car, we have everything we need.
+    //
+    // This takes off about 10ms in practice from a 40ms call, so it's a 25% savings.
+    //
+    if (id.length < 13) {
+      car = yield Car.findOne({ where: { license: id }});
+    }
     if (!car) {
-      console.log(`>> Found NO CAR for ${ id }.`);
-      return false;
+      car = { id: id };
     }
 
-    let carId = car.id;
-    //console.log(">> Using " + carId);
-    let bookings = yield Booking.find({
+    // A big issue that we may get ALL the bookings regardless of the limit 
+    // ... this is turned on its head by limiting ourselves to the range 
+    // operators (first and last) and then getting the subset of bookings 
+    // within that. 
+    //
+    // The use case here is if someone is looking at recent bookings,
+    // say in real-time, then normally there will be nearly 0 - this is 
+    // really the only one that's being done.
+    //
+    // In practice this runtime is around 40 ms versus 200 if this wasn't here.
+    //
+    params = {
       attributes: ['id'],
-      where: { carId: carId } 
-    }); 
+      where: { carId: car.id } 
+    };
 
+    if (first !== undefined) {
+      let recentBookings = yield Locations.find({
+        attributes: [ 'booking_id' ],
+        where: { id : { $gte: first } },
+        order: [ [ 'booking_id', 'asc' ] ],
+        limit: 1
+      });
+
+      if (recentBookings) {
+        // if there is nothing here then nothing will match so
+        // we can just return no results now.
+        if (!recentBookings.length) {
+          return {res: true, data: {}};
+        }
+
+        // otherwise we can just be simple and take
+        // the first as the lowerbound for looking for our
+        // car bookings.
+        params.where.id = { $gte: recentBookings[0].bookingId };
+      }
+    }
+
+    let bookings = yield Booking.find(params);
     if (!bookings) {
-      //console.log(`>> Found NO BOOKINGS for ${carId}`);
-      return false;
+      return { res: false, data: `Found No Booking for ${ id } ${ car.id }.` };
     }
+
     let bookingsById = bookings.map( (row) => { return row.id; } );
-    //console.log(">> Found " + bookingsById.length + " bookings.");
 
-    let locations = yield Locations.find({ 
-      attributes: ['latitude', 'longitude', 'created_at'],
-      order: [ ['created_at', 'desc'] ],
-      where: {booking_id: { $in: bookingsById } } 
-    });
+    params = {
+      attributes: ['id', 'latitude', 'longitude', 'created_at'],
+      where: { booking_id: { $in: bookingsById } },
+      limit: limit
+    };
 
-    if (!locations) {
-      //console.log(`>> Found NO LOCATIONS for ${carId}`);
-      return false;
+    // This isn't just a duck-typed 'not' operator because
+    // first can reasonably be '0'.
+    if (first !== undefined) {
+      // If we have a first specified then we return
+      // from that point moving forward.
+      params.order = [ ['created_at', 'asc'] ];
+
+      if (last) {
+        params.where.id = { $between: [first, last] };
+      } else {
+        // only a first defined
+        params.where.id = { $gte: first };
+      }
+    } else { 
+      // With no first defined we go backwards
+      params.order = [ ['created_at', 'desc'] ];
+
+      // and then remind ourselves to reverse things
+      doReverse = true;
+ 
+      if (last) {
+        // only a last defined
+        params.where.id = { $lte: last };
+      }
     }
-    //console.log(`>> Found ${ locations.length } locations`);
-    return locations;
+
+    let locations = yield Locations.find(params);
+
+    if (!locations || !locations.length) {
+      return {res: true, data: {}};
+    }
+
+    if (doReverse) {
+      locations = locations.reverse();
+    }
+
+    let flat = locations.map( (row) => { return [row.latitude, row.longitude, row.createdAt] });
+
+    return {
+      res: true,
+      data: {
+        car: car.id,
+        first: locations[0].id,
+        last: locations[locations.length - 1].id,
+        data: flat
+      }
+    };
   }
 
   static *getLog(id) {
