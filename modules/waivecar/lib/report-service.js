@@ -31,7 +31,7 @@ module.exports = {
       if(car.license.search(/waive/i) === -1 || car.license.search(/ret/i) !== -1) {
         continue;
       }
-      var license = car.license.replace(/waive/i,'');
+      var license = '*' + car.license.replace(/waive/i,'') + '*';
 
       if(!car.isAvailable) {
         if(car.userId) {
@@ -46,7 +46,7 @@ module.exports = {
           report.unavailable.push(license);
         }
       } else {
-        report.available.push([license, car.chargeReport()].join(' '));
+        report.available.push([license, car.chargeReport()].join('   '));
       }
     }
 
