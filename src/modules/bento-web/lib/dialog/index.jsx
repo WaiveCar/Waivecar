@@ -14,39 +14,43 @@ module.exports = class Dialog extends React.Component {
     this.setState({open: false})
   }
 
+  something() {
+    console.log('something');
+  }
 
   render() {
-    let { title, onClick, content } = this.props;
-
     let closeModal = () => this.setState({ open: false })
  
     let open = () => {
       this.setState({open: true})
     }
 
-    let saveAndClose = () => {
-      api.saveData()
-        .then(() => this.setState({ open: false }))
+    let onSuccess = () => {
+      this.setState({ open: false });
+      if (this.props.onSuccess) {
+        this.props.onSuccess();
+      }
     }
+
     return (
       <div>
         <button onClick={ open } type='button'>Launch modal</button>
         <Modal
-          show={this.state.open}
-          onHide={closeModal}
+          show={ this.state.open }
+          onHide={ closeModal }
           aria-labelledby="ModalHeader"
         >
           <Modal.Header closeButton>
-            <Modal.Title id='ModalHeader'>{ title }</Modal.Title>
+            <Modal.Title id='ModalHeader'>{ this.props.title }</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <p>{ content }</p>
+            <p>{ this.props.content }</p>
           </Modal.Body>
           <Modal.Footer>
             <Modal.Dismiss className='btn btn-default'>Cancel</Modal.Dismiss>
  
-            <button className='btn btn-primary' onClick={saveAndClose}>
-              Save
+            <button className='btn btn-primary' onClick={ onSuccess }>
+              OK
             </button>
           </Modal.Footer>
         </Modal>
