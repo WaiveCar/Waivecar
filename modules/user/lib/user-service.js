@@ -225,12 +225,28 @@ module.exports = {
       throw error.userUpdateRefused();
     }
 
-    let data = yield hooks.require('user:update:before', user, payload, _user);
-    if (data.password) {
-      data.password = yield bcrypt.hash(data.password, 10);
+    // admins can change a users role.
+    if (_user.hasAccess('admin') && 'role' in payload) {
+      // currently a user role is '1' and an admin is '3' ...
+      // we aren't going to do fancy things to get there ... 
+      // this isn't going to change.
+      let newRole = parseInt(payload.role);
+      if (Number.isNaN(newRole)) {
+        newRole = {user:1, admin:3}[payload.role];
+      }
+      let groupUser = yield GroupUser.findOne({where: {userId: id} });
+      console.log(id, groupUser, user);
+      yield groupUser.update({groupRoleId: newRole});
+
+    } else {
+
+      let data = yield hooks.require('user:update:before', user, payload, _user);
+      if (data.password) {
+        data.password = yield bcrypt.hash(data.password, 10);
+      }
+      yield user.update(data);
+      yield hooks.require('user:update:after', user, _user);
     }
-    yield user.update(data);
-    yield hooks.require('user:update:after', user, _user);
 
     user.relay('update');
 
