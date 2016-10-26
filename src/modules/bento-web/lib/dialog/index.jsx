@@ -14,14 +14,15 @@ module.exports = class Dialog extends React.Component {
     this.setState({open: false})
   }
 
-  something() {
-    console.log('something');
-  }
-
   render() {
     let closeModal = () => this.setState({ open: false })
  
     let open = () => {
+      this.props.trigger = false;
+      this.setState({open: true})
+    }
+
+    if (this.props.trigger && !this.state.open) {
       this.setState({open: true})
     }
 
@@ -34,7 +35,6 @@ module.exports = class Dialog extends React.Component {
 
     return (
       <div>
-        <button onClick={ open } type='button'>Launch modal</button>
         <Modal
           show={ this.state.open }
           onHide={ closeModal }
@@ -49,9 +49,7 @@ module.exports = class Dialog extends React.Component {
           <Modal.Footer>
             <Modal.Dismiss className='btn btn-default'>Cancel</Modal.Dismiss>
  
-            <button className='btn btn-primary' onClick={ onSuccess }>
-              OK
-            </button>
+            <button className='btn btn-primary' onClick={ onSuccess }>OK</button>
           </Modal.Footer>
         </Modal>
       </div>

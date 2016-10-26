@@ -11,6 +11,9 @@ module.exports = class UserDetails extends React.Component {
 
   constructor(...args) {
     super(...args);
+    this.state = {
+      showDanger: false
+    }
     relay.subscribe(this, 'users');
   }
 
@@ -18,6 +21,7 @@ module.exports = class UserDetails extends React.Component {
     let user = this.state.users.find(val => val.id === parseInt(this.props.id));
     if (!user) {
       api.get(`/users/${ this.props.id }`, (err, user) => {
+        this.setState({currentUser: user});
         if (err) {
           return snackbar.notify({
             type    : `danger`,
@@ -26,6 +30,8 @@ module.exports = class UserDetails extends React.Component {
         }
         this.users.store(user);
       });
+    } else {
+      this.setState({currentUser: user});
     }
   }
 
@@ -43,7 +49,6 @@ module.exports = class UserDetails extends React.Component {
     return url;
   }
 
- 
   removeUser = (event) => {
     api.delete(`/users/${ this.props.id }`, {}, (err) => {
       snackbar.notify({
@@ -55,6 +60,29 @@ module.exports = class UserDetails extends React.Component {
     });
   }
 
+  isFleetManager = () => {
+    return this.state.currentUser.role.name === 'admin';
+  }
+
+  fleetToggle = () => {
+    let user = this.state.currentUser, newRole = 0;
+    if (this.isFleetManager()) {
+      if(!confirm(`Are you sure you want to Remove ${user.firstName} ${user.lastName} as a fleet manager?`)) {
+        return false;
+      }
+      newRole = 1;
+    } else {
+      if(!confirm(`Are you sure you want to Add ${user.firstName} ${user.lastName} as a fleet manager?`)) {
+        return false;
+      }
+      newRole = 3;
+    }
+    if([1,3].indexOf(newRole) !== -1) {
+      api.put(`/users/${ user.id }`, { role: newRole }, (err, user) => {
+        console.log(user, err);
+      });
+    }
+  }
   
   submit = (event) => {
     let form = new Form(event);
@@ -102,6 +130,10 @@ module.exports = class UserDetails extends React.Component {
         message : 'User phone successfully verified'
       });
     });
+  }
+
+  toggleDanger = () => {
+    this.setState({ showDanger: !this.state.showDanger });
   }
 
   render() {
@@ -193,10 +225,24 @@ module.exports = class UserDetails extends React.Component {
                     User #{ user.id }. Signup: { user.createdAt.split('T')[0] }
                   </div>
                 </div>
+
+                <label className="col-sm-4 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Danger Zone <a onClick={ this.toggleDanger }>({ this.state.showDanger ? 'hide' : 'show' })</a></label>
+                <div className="col-sm-8 text-right" style={{ padding : '8px 25px' }}>
+                  { this.state.showDanger && 
+                   <div>
+                    <div className="radio-inline">
+                      <a onClick={ this.removeUser } className="pull-left btn btn-xs btn-danger">Delete User</a>
+                    </div>
+
+                    <div className="radio-inline">
+                      <a onClick={ this.fleetToggle.bind(this) } className="pull-left btn btn-xs btn-link">{ this.isFleetManager() ? "Remove As" : "Add As" } Fleet Manager</a>
+                    </div>
+                   </div>
+                  }
+                </div>
               </div>
 
               <div className="form-actions text-center">
-                <a style={{ marginTop: "0.5em", display: "none" }} onClick={ this.removeUser } className="pull-left btn btn-xs btn-danger">Delete <br/> User</a>
                 <div className="btn-group" role="group">
                   <button type="submit" className="btn btn-primary">Update Details</button>
                 </div>
