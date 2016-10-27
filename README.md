@@ -15,10 +15,19 @@ I (cjm) can't find any evidence of some UI builder that was used to manager the 
 
 ### Making things run
 
-#### Linux
-I (cjm) have had success using a usb cable to an android phone with `ionic run android`. Note that this doesn't rebuild things if you change code
+#### Android
 
-#### OSX
+Apparently you need two things, in one window you need to run
+
+  $ ionic serve
+
+In order to have things recompile and then in another you need to run
+
+  $ ionic run android
+
+to deploy it to the phone
+
+#### iOS
 I'm (cjm) not primarily an osx guy so this may be suboptimal but here are my notes nonetheless. 
 
 So it looks like you need the following (assuming you're using a consumer-setup osx):
