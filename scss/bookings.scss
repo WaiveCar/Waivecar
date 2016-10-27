@@ -143,6 +143,8 @@
 
   .address {
     margin-top: 10px;
+    display: inline-block;
+    text-align: center;
   }
 
   .parking-details-wrap {
@@ -167,6 +169,10 @@
     }
 
     .button-bar {
+      margin-top: -18px;
+      padding-top: 18px;
+      background: black;
+      z-index: 10;
       flex: inherit;
       -webkit-flex: inherit;
     }
