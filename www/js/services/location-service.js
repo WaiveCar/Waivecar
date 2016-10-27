@@ -1,13 +1,16 @@
 'use strict';
 var angular = require('angular');
+require('./permission-service');
 
-function LocationService ($rootScope, $cordovaGeolocation, $q, $message) {
+function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window, $injector) {
   this.setManualPosition = function setManualPosition (latitude, longitude) {
     this.manualPosition = {
       latitude: latitude,
       longitude: longitude
     };
   };
+
+  var $perm = $injector.get('PermissionService');
 
   this.getLocation = function getLocation () {
     return $q.resolve($rootScope.currentLocation);
@@ -36,8 +39,11 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message) {
       if (err.constructor.name === 'PositionError' && err.code === 3) {
         return $q.reject();
       }
-      $message.error('We were not able to find your location, please reconnect.');
-      $q.reject(err);
+
+      $perm.getPermissionsIfNeeded('ACCESS_FINE_LOCATION', $q);
+
+      /*$message.error('We were not able to find your location, please reconnect.');
+      $q.reject(err);*/
     });
   };
 
@@ -65,5 +71,7 @@ module.exports = angular.module('app.services').service('LocationService', [
   '$cordovaGeolocation',
   '$q',
   '$message',
+  '$window',
+  '$injector',
   LocationService
 ]);

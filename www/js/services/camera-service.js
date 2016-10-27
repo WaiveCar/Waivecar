@@ -6,23 +6,18 @@ require('./auth-service.js');
 module.exports = angular.module('app.services').factory('CameraService', [
   '$window',
   '$cordovaCamera',
+  'PermissionService',
   '$q',
-  function ($window, $cordovaCamera, $q) {
+  function ($window, $cordovaCamera, PermissionService, $q) {
 
     function getPicture(width, height, fromLibrary) {
       if (!$window.Camera) {
         return $q.reject('This feature works only on mobile');
       }
 
-      var sourceType = $window.Camera.PictureSourceType.CAMERA;
-      if (fromLibrary) {
-        sourceType = $window.Camera.PictureSourceType.PHOTOLIBRARY;
-      }
-
       var options = {
         quality: 75,
         destinationType: $window.Camera.DestinationType.FILE_URI,
-        sourceType: sourceType,
         encodingType: $window.Camera.EncodingType.JPEG,
         targetWidth: width || 800,
         targetHeight: height || 800,
@@ -30,6 +25,18 @@ module.exports = angular.module('app.services').factory('CameraService', [
         correctOrientation: true,
         cameraDirection: $window.Camera.Direction.BACK
       };
+
+      if (fromLibrary) {
+        options.sourceType = $window.Camera.PictureSourceType.PHOTOLIBRARY;
+      } else {
+        options.sourceType = $window.Camera.PictureSourceType.CAMERA;
+
+        return $q(function(){
+          PermissionService.getPermissionsIfNeeded('CAMERA', $q);
+        }).then(function() {
+          $cordovaCamera.getPicture(options);
+        });
+      }
 
       return $cordovaCamera.getPicture(options);
     }
