@@ -14,11 +14,8 @@
           ng-click="ctrl.setType('street')"
           >Street</a>
       </div>
-      <p class="address" n>
-        {{ ctrl.address.house_number || '' }} {{ ctrl.address.road }}<br>
-        &nbsp;{{ ctrl.address.city }}<span ng-if="ctrl.address">,</span> {{ ctrl.address.state }} {{ ctrl.address.postcode }}
-      </p>
       <div ng-if="ctrl.type === 'lot'" class="parking-details">
+        <div class="address row" ng-bind-html="ctrl.address_markup"></div>
         <div class="row">
           <p class="text-left fill">Is there a free parking period?</p>
           <div class="text-right">
@@ -73,6 +70,7 @@
         </div>
       </div>
       <div ng-if="ctrl.type === 'street'" class="parking-details">
+        <div class="address row" ng-bind-html="ctrl.address_markup"></div>
         <div>
           <p class="text-center">
             1) Take a picture of the parking sign.
