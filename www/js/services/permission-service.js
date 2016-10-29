@@ -5,20 +5,28 @@ require('./auth-service.js');
 
 module.exports = angular.module('app.services').factory('PermissionService', [
   '$window',
-  function ($window) {
+  '$q',
+  function ($window, $q) {
+    var permissions = $window.cordova.plugins.permissions;
 
-    function checkPermissionCallback(what, promise, permissions) {
+    function checkPermissionCallback(what) {
+      var beforeRequest = new Date();
+
       var errorCallback = function() {
-        console.warn( what + ' permission is not turned on');
-        promise.reject(false);
+        var delay = new Date() - beforeRequest; 
+        if (delay < 350) {
+          // This implies that the user has rejected us always.
+        }
+        console.warn( what + ' permission is not turned on (' + delay + ')');
+        $q.reject();
       };
    
-      return permissions.requestPermission(
+      permissions.requestPermission(
         permissions[what],
         function(status) {
           if(status.hasPermission) {
             console.warn( what + ' permission is turned on');
-            return promise.resolve(true);
+            $q.resolve();
           }
           errorCallback();
         },
@@ -26,16 +34,15 @@ module.exports = angular.module('app.services').factory('PermissionService', [
     }
 
     return {
-      getPermissionsIfNeeded: function (what, promise) {
-        var permissions = $window.cordova.plugins.permissions;
-
-        return permissions.hasPermission(
+      getPermissionsIfNeeded: function (what) {
+        permissions.hasPermission(
           permissions[what], 
           function(status) {
             if(status.hasPermission) {
-              promise.resolve(true);
+              console.log( what + ' has permission');
+              $q.resolve();
             }
-            return checkPermissionCallback(what, promise, permissions);
+            checkPermissionCallback(what);
           }, 
           null);
       }

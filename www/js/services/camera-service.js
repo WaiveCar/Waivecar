@@ -10,6 +10,12 @@ module.exports = angular.module('app.services').factory('CameraService', [
   '$q',
   function ($window, $cordovaCamera, PermissionService, $q) {
 
+    function getPermissions(fromLibrary) {
+      if (!fromLibrary) {
+        PermissionService.getPermissionsIfNeeded('CAMERA');
+      }
+    }
+
     function getPicture(width, height, fromLibrary) {
       if (!$window.Camera) {
         return $q.reject('This feature works only on mobile');
@@ -30,12 +36,6 @@ module.exports = angular.module('app.services').factory('CameraService', [
         options.sourceType = $window.Camera.PictureSourceType.PHOTOLIBRARY;
       } else {
         options.sourceType = $window.Camera.PictureSourceType.CAMERA;
-
-        return $q(function(){
-          PermissionService.getPermissionsIfNeeded('CAMERA', $q);
-        }).then(function() {
-          $cordovaCamera.getPicture(options);
-        });
       }
 
       return $cordovaCamera.getPicture(options);
@@ -46,6 +46,7 @@ module.exports = angular.module('app.services').factory('CameraService', [
     }
 
     return {
+      getPermissions: getPermissions,
       getPicture: getPicture,
       pickFile: pickFile
     };

@@ -35,9 +35,14 @@ function uploadImageFactory ($injector) {
   }
 
   return function uploadImage (options) {
+    var source = null;
     options = options || {};
     return pickImageSource(options)
-      .then(function (source) {
+      .then(function (_source) {
+        source = _source;
+        CameraService.getPermissions(source);
+      })
+      .then(function () {
         if (source === 'library') {
           return CameraService.pickFile();
         } else if (source === 'camera') {

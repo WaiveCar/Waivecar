@@ -203,7 +203,7 @@ function directive ($rootScope, MapsLoader, RouteService, $q, $timeout) {
 
     if (this.items[id]) {
       if (id === 'location') {
-        console.log('[map] updating location ', location);
+        // console.log('[map] updating location ', location);
       }
       this.items[id].setLatLng(location).update();
       // return null when no new marker is added to avoid setting listeners
