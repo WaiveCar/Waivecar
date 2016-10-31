@@ -18,6 +18,7 @@ let Group     = Bento.model('Group');
 let GroupUser = Bento.model('GroupUser');
 let GroupRole = Bento.model('GroupRole');
 let sequelize = Bento.provider('sequelize');
+let notify    = require('../../waivecar/lib/notification-service');
 
 module.exports = {
 
@@ -235,8 +236,14 @@ module.exports = {
         newRole = {user:1, admin:3}[payload.role];
       }
       let groupUser = yield GroupUser.findOne({where: {userId: id} });
-      console.log(id, groupUser, user);
       yield groupUser.update({groupRoleId: newRole});
+
+      let newRoleStr = {3:'fleet admin', 1:'normal user'}[newRole];
+
+      yield notify.notifyAdmins(`${ _user.firstName } ${ _user.lastName } has changed the status of ${ user.firstName } ${ user.lastName } to a ${ newRoleStr }.`, [ 'slack' ], { channel : '#user-alerts' });
+
+      // We're doing this in order to get the new status.
+      user = yield this.get(id, _user);
 
     } else {
 
