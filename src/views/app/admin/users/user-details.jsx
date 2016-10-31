@@ -45,6 +45,8 @@ module.exports = class UserDetails extends React.Component {
 
  
   removeUser = (event) => {
+    alert('Please tell Chris to delete user ' + this.props.id);
+    /*
     api.delete(`/users/${ this.props.id }`, {}, (err) => {
       snackbar.notify({
         type    : 'success',
@@ -53,8 +55,39 @@ module.exports = class UserDetails extends React.Component {
 
       window.location = '/users/';
     });
+    */
   }
 
+  isFleetManager = () => {
+    return this.state.currentUser.role.name === 'admin';
+  }
+
+  fleetToggle = () => {
+    let user = this.state.currentUser;
+    let newRole = 0;
+
+    if (this.isFleetManager()) {
+      if(!confirm(`Are you sure you want to Remove ${user.firstName} ${user.lastName} as a fleet manager?`)) {
+        return false;
+      }
+      newRole = 1;
+    } else {
+      if(!confirm(`Are you sure you want to Add ${user.firstName} ${user.lastName} as a fleet manager?`)) {
+        return false;
+      }
+      newRole = 3;
+    }
+    if([1,3].indexOf(newRole) !== -1) {
+      api.put(`/users/${ user.id }`, { role: newRole }, (err, user) => {
+        snackbar.notify({
+          type    : 'success',
+          message : 'User status has changed.'
+        });
+        this.users.store(user);
+        this.setState({currentUser: user});
+      });
+    }
+  }
   
   submit = (event) => {
     let form = new Form(event);
