@@ -50,6 +50,8 @@ module.exports = class UserDetails extends React.Component {
   }
 
   removeUser = (event) => {
+    alert('Please tell Chris to delete user ' + this.props.id);
+    /*
     api.delete(`/users/${ this.props.id }`, {}, (err) => {
       snackbar.notify({
         type    : 'success',
@@ -58,6 +60,7 @@ module.exports = class UserDetails extends React.Component {
 
       window.location = '/users/';
     });
+    */
   }
 
   isFleetManager = () => {
@@ -65,7 +68,9 @@ module.exports = class UserDetails extends React.Component {
   }
 
   fleetToggle = () => {
-    let user = this.state.currentUser, newRole = 0;
+    let user = this.state.currentUser;
+    let newRole = 0;
+
     if (this.isFleetManager()) {
       if(!confirm(`Are you sure you want to Remove ${user.firstName} ${user.lastName} as a fleet manager?`)) {
         return false;
@@ -79,7 +84,12 @@ module.exports = class UserDetails extends React.Component {
     }
     if([1,3].indexOf(newRole) !== -1) {
       api.put(`/users/${ user.id }`, { role: newRole }, (err, user) => {
-        console.log(user, err);
+        snackbar.notify({
+          type    : 'success',
+          message : 'User status has changed.'
+        });
+        this.users.store(user);
+        this.setState({currentUser: user});
       });
     }
   }
