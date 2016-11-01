@@ -78,6 +78,11 @@ Here's generally what I did after installing the above:
   $ ionic build ios
   $ ionic run ios
 
+About the ios store options:
+
+  * Does not use IDFA
+  * Does use encryption
+  * Does qualify for the exceptions
 
 ##### Building a release for IOS
 
