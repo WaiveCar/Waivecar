@@ -16,13 +16,16 @@ let fs          = require('fs');
 function log_message(type, what) {
   // There's probably a more frameworky way of doing this in a much
   // more convoluted and hard way --- watch me not care at all.
-  var logStream = fs.createWriteStream('/var/log/outgoing/log.txt', {'flags': 'a'});
-
   what.t = type;
   what.at = new Date();
 
-  logStream.write(JSON.stringify(what) + "\n");
-  logStream.close();
+  try {
+    var logStream = fs.createWriteStream('/var/log/outgoing/log.txt', {'flags': 'a'});
+    logStream.write(JSON.stringify(what) + "\n");
+    logStream.close();
+  } catch (err) {
+    log.warn(`Failed to write to the log file: ${ err.message }`);
+  }
 }
 
 module.exports = {
