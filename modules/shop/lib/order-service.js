@@ -137,7 +137,7 @@ module.exports = class OrderService extends Service {
       });
       yield payment.save();
 
-      yield notify.notifyAdmins(`:moneybag: Charged ${ user.name() } for ${ minutesOver} minutes extra | ${ apiConfig.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+      yield notify.notifyAdmins(`:moneybag: Charged ${ user.name() } $${ amount / 100 } for ${ minutesOver } minutes | ${ apiConfig.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
       log.info(`Charged user for time driven : $${ amount / 100 } : booking ${ booking.id }`);
     } catch (err) {
       log.warn(`Failed to charge user for time: ${ user.id }`, err);
