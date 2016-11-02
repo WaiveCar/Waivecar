@@ -488,7 +488,7 @@ module.exports = class BookingService extends Service {
       yield this.handleTimeCharge(booking, user);
 
     } else if(deltas.duration > 120) {
-      yield notify.slack({ text : `:umbrella: Booking was ended by admin. Time driven was over 2 hours. https://waivecar.com/bookings/${ id }`
+      yield notify.slack({ text : `:umbrella: Booking ended by admin. Time driven was over 2 hours. https://waivecar.com/bookings/${ id }`
       }, { channel : '#adminended' });
     }
 
@@ -549,7 +549,7 @@ module.exports = class BookingService extends Service {
     //
 
     if(deltas.duration > 10 && deltas.distance === 0) {
-      yield notify.slack({ text : `:popcorn: ${ user.name() } had a booking with 0 miles driven for ${ deltas.duration } minutes. Car: ${ car.license || car.id } | <${ user.phone || user.email }> | https://www.waivecar.com/users/${ user.id }`
+      yield notify.slack({ text : `:popcorn: ${ user.name() } drove 0 miles for ${ deltas.duration } minutes. Car: ${ car.license || car.id } | <${ user.phone || user.email }> | https://www.waivecar.com/users/${ user.id }`
       }, { channel : '#user-alerts' });
     }
   
@@ -643,7 +643,7 @@ module.exports = class BookingService extends Service {
     // We use the average to make this assessment.
     if (car.averageCharge() < 25.00 && !isAdmin) {
       yield cars.updateAvailabilityAnonymous(car.id, false);
-      yield notify.slack({ text : `:spider: Car ${ car.license || car.id } has been made unavailable due to charge being under 25%. ${ car.chargeReport() }`
+      yield notify.slack({ text : `:spider: ${ car.license || car.id } unavailable due to charge being under 25%. ${ car.chargeReport() }`
       }, { channel : '#rental-alerts' });
     } else {
       yield car.available();

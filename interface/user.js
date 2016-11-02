@@ -145,12 +145,13 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
     // ### Required Methods
     // These methods are locked and should not be removed or have its key changed.
 
-    /**
-     * Returns the users full name.
-     * @return {String}
-     */
     name() {
       return `${ this.firstName } ${ this.lastName }`;
+    },
+
+    // This is used mostly in slack messages ... it emits the users phone number 
+    info() {
+      return '';
     },
 
     // ### Role Methods
