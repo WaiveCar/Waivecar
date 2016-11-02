@@ -62,7 +62,7 @@ module.exports = class LicenseVerificationService extends Service {
       report.result = yield this.getResult(report);
 
       if (report.result === 'consider') {
-        yield notify.slack({ text : `:bicyclist: ${ user.name() } license moved to 'consider' <${ user.phone || user.email }> | ${ apiConfig.uri }/users/${ user.id }`
+        yield notify.slack({ text : `:bicyclist: ${ user.name() } license moved to 'consider' ${ user.info() } | ${ apiConfig.uri }/users/${ user.id }`
         }, { channel : '#user-alerts' });
       }
 
@@ -129,7 +129,7 @@ module.exports = class LicenseVerificationService extends Service {
         let result = yield this.getResult(update);
 
         if (result === 'consider') {
-          yield notify.slack({ text : `:bicyclist: ${ user.name() } license moved to 'consider' <${ user.phone || user.email }> | ${ apiConfig.uri }/users/${ user.id }`
+          yield notify.slack({ text : `:bicyclist: ${ user.name() } license moved to 'consider' ${ user.info() } | ${ apiConfig.uri }/users/${ user.id }`
           }, { channel : '#user-alerts' });
         }
 
