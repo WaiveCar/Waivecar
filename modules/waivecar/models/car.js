@@ -215,6 +215,10 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       return JSON.parse(this.chargeHistory) || [];
     },
 
+    info : function () {
+      return this.license || this.id;
+    },
+
     addToHistory : function (what) {
       // TODO: find out where constants can be stored for
       // scoped access.

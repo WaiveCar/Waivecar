@@ -47,9 +47,9 @@ scheduler.process('booking-auto-cancel', function *(job) {
       data : booking.toJSON()
     });
 
-    yield notify.notifyAdmins(`:timer_clock: ${ car.license || car.id } booking cancelled after 15 minute timer expiration.`, [ 'slack' ], { channel : '#reservations' });
+    yield notify.notifyAdmins(`:timer_clock: ${ car.info() } booking cancelled after 15 minute timer expiration.`, [ 'slack' ], { channel : '#reservations' });
 
-    log.info(`The booking with ${ car.license || car.id } was automatically cancelled, booking status was '${ booking.status }'.`);
+    log.info(`The booking with ${ car.info() } was automatically cancelled, booking status was '${ booking.status }'.`);
   } else {
     log.warn(`Auto cancellation of booking ${ booking.id } was request but ignored | Booking status: ${ booking.status }`);
   }
