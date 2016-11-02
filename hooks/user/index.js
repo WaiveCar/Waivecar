@@ -179,10 +179,10 @@ hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
     if (prevUser.id == _user.id) {
       reason = 'by themselves';
     } else {
-      reason = `by ${ _user.firstName } ${ _user.lastName } (#${ _user.id })`;
+      reason = `by ${ _user.name() } (#${ _user.id })`;
     }
 
-    yield notify.notifyAdmins(`${ nextUser.firstName } ${ nextUser.lastName } (#${ prevUser.id }), a previously active user, has been moved to pending ${ reason }.`, [ 'slack' ], { channel : '#user-alerts' });
+    yield notify.notifyAdmins(`${ nextUser.name() } (#${ prevUser.id }), a previously active user, has been moved to pending ${ reason }.`, [ 'slack' ], { channel : '#user-alerts' });
   }
 
   return nextUser;

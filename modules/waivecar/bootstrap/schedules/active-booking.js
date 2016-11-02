@@ -84,7 +84,7 @@ scheduler.process('active-booking', function *(job) {
           booking_history = yield Booking.find({ where : { userId : user.id }});
 
           if(booking_history.length < 5) {
-            yield notify.notifyAdmins(`:cactus: ${ car.license } has been driven for ${ duration } minutes by ${ user.name() } who has only rented ${ booking_history.length } times. Driver: ${ user.name() } <${ user.phone || user.email }>`, [ 'slack' ], { channel : '#rental-alerts' });
+            yield notify.notifyAdmins(`:cactus: ${ user.name() } drove ${ car.license } ${ duration } minutes who has only rented ${ booking_history.length } times. <${ user.phone || user.email }>`, [ 'slack' ], { channel : '#rental-alerts' });
           }
         }
       }

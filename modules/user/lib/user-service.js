@@ -240,7 +240,7 @@ module.exports = {
 
       let newRoleStr = {3:'fleet admin', 1:'normal user'}[newRole];
 
-      yield notify.notifyAdmins(`${ _user.firstName } ${ _user.lastName } has changed the status of ${ user.firstName } ${ user.lastName } to a ${ newRoleStr }.`, [ 'slack' ], { channel : '#user-alerts' });
+      yield notify.notifyAdmins(`${ _user.name() } changed the status of ${ user.name() } to a ${ newRoleStr }.`, [ 'slack' ], { channel : '#user-alerts' });
 
       // We're doing this in order to get the new status.
       user = yield this.get(id, _user);
