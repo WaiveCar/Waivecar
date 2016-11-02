@@ -21,7 +21,9 @@ while True:
     response = c.getresponse()
 
     if response.status != 200:
-        res = send_email(who='kristopolous@yahoo.com', subject="waivecar server: %d " % response.status, body='total failure', sender='Indycast Admin <info@indycast.net>')
+        for email in ['kristopolous@yahoo.com', 'moe@waive.car']:
+            res = send_email(who=email, subject="waivecar server: %d " % response.status, body='total failure', sender='WaiveCar HealthCheck <info@indycast.net>')
+
         print "Found failure (%d). Emailing" % response.status
 
     time.sleep(10)
