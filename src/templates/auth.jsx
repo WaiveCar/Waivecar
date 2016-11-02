@@ -9,11 +9,14 @@ class AuthTemplate extends React.Component {
   render() {
     return (
       <div id="auth">
+        <img className="bg" src="/images/auth/login.jpg" />
+        <div className="video">
         <video autoPlay className="bg-vid" loop poster="/images/auth/login.jpg">
           <source src="/images/auth/login.webm" type="video/webm" />
           <source src="/images/auth/login.mp4" type="video/mp4" />
         </video>
         <div className="vid-overlay"></div>
+        </div>
         { this.props.children }
       </div>
     );

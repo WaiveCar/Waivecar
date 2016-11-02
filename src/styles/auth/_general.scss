@@ -10,6 +10,26 @@ $subscribe-width : 600px;
   top      : 0;
   width    : 100%;
 
+  .bg {
+    min-width: 100%;
+    min-height: 100%;
+  }
+  @media only screen and (max-width: 1023px) {
+    .bg {
+      display: block;
+    }
+    .video {
+      display: none;
+    }
+  }
+  @media only screen and (min-width: 1024px) {
+    .bg {
+      display: none;
+    }
+    .video {
+      display: block;
+    }
+  }
   .login {
     background    : rgba(#000, .6);
     box-shadow    : 0 0 10px rgba(0, 0, 0, .3);
