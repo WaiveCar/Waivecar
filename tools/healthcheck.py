@@ -23,19 +23,19 @@ def dofail(what):
 
 while True:
 
-    print str(datetime.datetime.now())
+  print str(datetime.datetime.now())
 
-    try:
-      c = httplib.HTTPSConnection("api.waivecar.com")
-      c.request('GET', '/ping')
+  try:
+    c = httplib.HTTPSConnection("api.waivecar.com")
+    c.request('GET', '/ping')
 
-      response = c.getresponse()
+    response = c.getresponse()
 
-      if response.status != 200:
-        dofail(str(response.status)) 
+    if response.status != 200:
+      dofail(str(response.status)) 
 
-    except Exception as exc:
-      dofail(str(exc))
+  except Exception as exc:
+    dofail(str(exc))
 
-    time.sleep(10)
+  time.sleep(10)
 
