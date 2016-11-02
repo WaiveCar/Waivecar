@@ -44,7 +44,7 @@ scheduler.process('booking-auto-lock', function *(job) {
 
     yield cars.lockCar(car.id);
 
-    yield notify.notifyAdmins(`:closed_lock_with_key: The booking with ${ car.license || car.id } was automaticaly locked and needs manual review | ${ reason } ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+    yield notify.notifyAdmins(`:closed_lock_with_key: The booking with ${ car.info() } was automaticaly locked and needs manual review | ${ reason } ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
   }
 });
 

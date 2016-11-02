@@ -56,7 +56,7 @@ scheduler.process('active-booking', function *(job) {
         // Check that battery use is changing as expected
         let milesDriven = car.mileage - start.mileage;
         if (milesDriven >= 7 && car.charge === device.charge) {
-          yield notify.notifyAdmins(`${ car.license } has been driven ${ milesDriven } miles since last change reported, but charge level has not changed. ${ config.api.uri }/cars/${ car.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+          yield notify.notifyAdmins(`${ car.info() } has been driven ${ milesDriven } miles since last change reported, but charge level has not changed. ${ config.api.uri }/cars/${ car.id }`, [ 'slack' ], { channel : '#rental-alerts' });
         }
 
 
@@ -84,7 +84,7 @@ scheduler.process('active-booking', function *(job) {
           booking_history = yield Booking.find({ where : { userId : user.id }});
 
           if(booking_history.length < 5) {
-            yield notify.notifyAdmins(`:cactus: ${ user.name() } drove ${ car.license } ${ duration } minutes who has only rented ${ booking_history.length } times. <${ user.phone || user.email }>`, [ 'slack' ], { channel : '#rental-alerts' });
+            yield notify.notifyAdmins(`:cactus: ${ user.name() } drove ${ car.info() } ${ duration } minutes who has only rented ${ booking_history.length } times. <${ user.phone || user.email }>`, [ 'slack' ], { channel : '#rental-alerts' });
           }
         }
       }
@@ -97,10 +97,10 @@ scheduler.process('active-booking', function *(job) {
         if (carInside && !deviceInside) {
           // User has ventured outside of zone
           yield notify.sendTextMessage(user, config.notification.reasons['OUTSIDE_RANGE']);
-          yield notify.notifyAdmins(`${ user.name() } took ${ car.license } outside of the driving zone. ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+          yield notify.notifyAdmins(`${ user.name() } took ${ car.info() } outside of the driving zone. ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
         } else if (deviceInside && !carInside) {
           // User has returned to zone
-          yield notify.notifyAdmins(`${ user.name() } took ${ car.license } back into the driving zone. ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+          yield notify.notifyAdmins(`${ user.name() } took ${ car.info() } back into the driving zone. ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
         }
       }
 
@@ -112,7 +112,7 @@ scheduler.process('active-booking', function *(job) {
         yield booking.flag('low-charge');
 
         yield notify.sendTextMessage(user, config.notification.reasons['LOW_CHARGE']);
-        yield notify.notifyAdmins(`:battery: ${ user.name() } has driven ${ car.license } to a low charge. ${ car.chargeReport() }. ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+        yield notify.notifyAdmins(`:battery: ${ user.name() } has driven ${ car.info() } to a low charge. ${ car.chargeReport() }. ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
       }
 
       // Log position
