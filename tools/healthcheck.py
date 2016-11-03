@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import httplib, requests, time, datetime
+from subprocess import call
 
 failCount = 0
 
@@ -22,9 +23,18 @@ def dofail(what):
 
   failCount += 1
 
+  subject = 'waivecar server: '
+
   if failCount > 1:
+    if failCount == 2:
+      subject += 'restarting'
+      call(["/etc/init.d/node-waivecar", "restart"])
+
+    elif failCount > 4:
+      subject += 'system down (%s)' %s
+
     for email in ['kristopolous@yahoo.com', 'moe@waive.car']:
-      res = send_email(who=email, subject="waivecar server: %s " % what, body='total failure', sender='WaiveCar HealthCheck <info@indycast.net>')
+      res = send_email(who=email, subject=subject, body='total failure', sender='WaiveCar HealthCheck <info@indycast.net>')
 
     print "[%d] Found failure (%s). Emailing" % (failCount, what)
   else:
