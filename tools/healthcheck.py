@@ -18,6 +18,8 @@ def send_email(who, subject, body, sender):
   return request
 
 def dofail(what):
+  global failCount
+
   failCount += 1
 
   if failCount > 1:
@@ -33,6 +35,7 @@ while True:
   print str(datetime.datetime.now())
 
   try:
+    #c = httplib.HTTPConnection("9ol.es")
     c = httplib.HTTPSConnection("api.waivecar.com")
     c.request('GET', '/ping')
 
@@ -40,7 +43,7 @@ while True:
 
     if response.status != 200:
       dofail(str(response.status)) 
-    else
+    else:
       failCount = 0
 
   except Exception as exc:
