@@ -1,6 +1,8 @@
 #!/usr/bin/python
 import httplib, requests, time, datetime
 
+failCount = 0
+
 # Taken from https://bradgignac.com/2014/05/12/sending-email-with-python-and-the-mailgun-api.html
 def send_email(who, subject, body, sender):
   request_url = "https://api.mailgun.net/v3/indycast.net/messages"
@@ -16,10 +18,15 @@ def send_email(who, subject, body, sender):
   return request
 
 def dofail(what):
-  for email in ['kristopolous@yahoo.com', 'moe@waive.car']:
-    res = send_email(who=email, subject="waivecar server: %s " % what, body='total failure', sender='WaiveCar HealthCheck <info@indycast.net>')
+  failCount += 1
 
-  print "Found failure (%s). Emailing" % what
+  if failCount > 1:
+    for email in ['kristopolous@yahoo.com', 'moe@waive.car']:
+      res = send_email(who=email, subject="waivecar server: %s " % what, body='total failure', sender='WaiveCar HealthCheck <info@indycast.net>')
+
+    print "[%d] Found failure (%s). Emailing" % (failCount, what)
+  else:
+    print "[%d] Not sufficient for emailing." % failCount
 
 while True:
 
@@ -33,6 +40,8 @@ while True:
 
     if response.status != 200:
       dofail(str(response.status)) 
+    else
+      failCount = 0
 
   except Exception as exc:
     dofail(str(exc))
