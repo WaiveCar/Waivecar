@@ -18,11 +18,17 @@ const slack = new Slack('notifications');
 module.exports = {
 
   *status() {
+    function atShop(car) {
+      console.log(car.longitude, car.latitude);
+      // This is a hacky little box, see here: https://github.com/clevertech/Waivecar/issues/595
+      return (car.longitude < -118.489070 && car.longitude > -118.489544) && (car.latitude > 34.016418 && car.latitude < 34.016800);
+    }
+
     let allCars = yield Car.find();
 
     let report = {
-      'unavailable': [],
-      'available': [],
+      'unavailable': {shop: [], wild: []},
+      'available': {shop: [], wild: []},
       'booked': []
     };
 
@@ -43,21 +49,23 @@ module.exports = {
           ].join(' '));
 
         } else {
-          report.unavailable.push(license);
+          report.unavailable[ atShop(car) ? 'shop' : 'wild' ].push(license);
         }
       } else {
-        report.available.push([license, car.chargeReport()].join('   '));
+        report.available[ atShop(car) ? 'shop' : 'wild' ].push([license, car.chargeReport()].join('   '));
       }
     }
 
     let slackReport = [
       'Unavailable:', 
-      report.unavailable.sort().join(', '),
-      '',
-      'Available:',
-      report.available.sort().join('\n'),
-      '',
-      'In Use:',
+      ' Shop: ' + report.unavailable.shop.sort().join(', '),
+      ' Wild: ' + report.unavailable.wild.sort().join(', '),
+      '\nAvailable:',
+      '*Shop*',
+      report.available.shop.sort().join('\n'),
+      '\n*Wild*',
+      report.available.wild.sort().join('\n'),
+      '\nIn Use:',
       report.booked.sort().join('\n')
     ].join('\n');
 
