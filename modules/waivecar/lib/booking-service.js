@@ -650,7 +650,7 @@ module.exports = class BookingService extends Service {
     }
 
     yield notify.sendTextMessage(user, `Thanks for renting with WaiveCar! Your rental is complete. You can see your trip summary in the app.`);
-    yield notify.slack({ text : `:coffee: ${ user.name() } completed a booking | ${ car.info() } | Driver: ${ user.name() } ${ user.info() } | ${ apiConfig.uri }/bookings/${ booking.id }`
+    yield notify.slack({ text : `:coffee: ${ user.name() } completed a booking | ${ car.info() } | ${ apiConfig.uri }/bookings/${ booking.id }`
     }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
 
@@ -723,7 +723,7 @@ module.exports = class BookingService extends Service {
     booking.relay('update');
 
     yield notify.sendTextMessage(user, `Your WaiveCar reservation has been cancelled.`);
-    yield notify.slack({ text : `:pill: ${ user.name() } cancelled a booking | ${ car.info() } | Driver: ${ user.name() } ${ user.info }`
+    yield notify.slack({ text : `:pill: ${ user.name() } cancelled a booking | ${ car.info() } | Driver: ${ user.name() } ${ user.info() }`
     }, { channel : '#reservations' });
   }
 
