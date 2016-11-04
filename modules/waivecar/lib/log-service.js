@@ -66,7 +66,7 @@ class LogService {
     //         limit and a first and a last: the limit goes forward from the first, and the 
     //         results may have a new last since the limit is also observed.
     //
-    let limit = query.limit || 250;
+    let limit = parseInt(query.limit || 250, 10);
     let first = query.first;
     let last = query.last;
     let doReverse = false;
