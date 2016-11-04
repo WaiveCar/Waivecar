@@ -81,13 +81,15 @@ module.exports = class BookingService extends Service {
     }
 
     // ### Pre authorization payment
-    try {
-      yield OrderService.authorize(null, driver);
-    } catch (err) {
-      throw error.parse({
-        code    : 'BOOKING_AUTHORIZATION',
-        message : 'Unable to authorize payment. Please validate payment method.' + JSON.stringify(err)
-      }, 400);
+    if(process.env.NODE_ENV === 'production') {
+      try {
+        yield OrderService.authorize(null, driver);
+      } catch (err) {
+        throw error.parse({
+          code    : 'BOOKING_AUTHORIZATION',
+          message : 'Unable to authorize payment. Please validate payment method.' + JSON.stringify(err)
+        }, 400);
+      }
     }
 
     // ### Add Driver
@@ -157,7 +159,12 @@ module.exports = class BookingService extends Service {
     // ### Notifications
 
     yield notify.sendTextMessage(driver, `Hi There! Your WaiveCar reservation with ${ car.license } has been confirmed. You'll have 15 minutes to get to your WaiveCar before your reservation expires. Let us know if you have any questions.`);
-    yield notify.notifyAdmins(`:musical_keyboard: ${ _user.name() } created a booking | ${ car.info() } | Driver: ${ driver.name() } ${ driver.info() }`, [ 'slack' ], { channel : '#reservations' });
+
+    let message = (_user.id === driver.id) ?
+      `${ _user.name() } created ` :
+      `${ _user.name() } created for ${ driver.name() }`;
+
+    yield notify.notifyAdmins(`:musical_keyboard: ${ message } | ${ car.info() } ${ car.averageCharge() }% ${ driver.info() }`, [ 'slack' ], { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : driver.id, action : Actions.CREATE_BOOKING }, _user);
 
     // ### Return Booking
@@ -367,7 +374,11 @@ module.exports = class BookingService extends Service {
 
     // ### Notify
 
-    yield notify.notifyAdmins(`:octopus: ${ _user.name() } started a booking | ${ car.info() } | Driver: ${ user.name() } ${ user.info() }`, [ 'slack' ], { channel : '#reservations' });
+    let message = (_user.id === user.id) ?
+      `${ _user.name() } started ` :
+      `${ _user.name() } started for ${ user.name() }`;
+
+    yield notify.notifyAdmins(`:octopus: ${ message } | ${ car.info() } ${ car.averageCharge() }% ${ user.info() }`, [ 'slack' ], { channel : '#reservations' });
     yield notify.sendTextMessage(user, `Your WaiveCar rental has started! The first 2 hours are completely FREE! After that, it's $5.99 / hour. Make sure to return the car in Santa Monica, don't drain the battery under 20%, and keep within our driving borders to avoid any charges. Thanks for renting with WaiveCar!`);
 
     // ### Relay Update
@@ -553,7 +564,11 @@ module.exports = class BookingService extends Service {
       }, { channel : '#user-alerts' });
     }
   
-    yield notify.slack(parkingSlack || { text : `:cherries: ${ _user.name() } ended a booking | ${ car.info() } | Driver: ${ user.name() } ${ user.info() }`
+    let message = (_user.id === user.id) ?
+      `${ _user.name() } ended a booking` :
+      `${ _user.name() } ended a booking for ${ user.name() }`;
+
+    yield notify.slack(parkingSlack || { text : `:cherries: ${ message } | ${ car.info() } ${ car.averageCharge() }% ${ user.info() }`
     }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.END_BOOKING }, _user);
 
