@@ -20,6 +20,7 @@ scheduler.process('booking-auto-lock', function *(job) {
       }
     });
   }
+  let user = yield this.getUser(booking.userId);
   if (booking.status !== 'completed' && booking.status !== 'closed') {
     let car = yield Car.findById(booking.carId);
 
@@ -42,9 +43,10 @@ scheduler.process('booking-auto-lock', function *(job) {
       reason = 'reason unknown (ignition is off, doors are locked, and the key is in the holder)'; 
     }
 
+
     yield cars.lockCar(car.id);
 
-    yield notify.notifyAdmins(`:closed_lock_with_key: The booking with ${ car.info() } was automaticaly locked and needs manual review | ${ reason } ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+    yield notify.notifyAdmins(`:closed_lock_with_key: ${ user.name() }'s booking with ${ car.info() } was automaticaly locked and needs manual review | ${ reason } ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
   }
 });
 
