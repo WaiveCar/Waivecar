@@ -92,7 +92,7 @@ class RideList extends Component {
             { `${ ride.duration.minutes } minute${ ride.duration.minutes > 1 ? 's' : '' }` }
           </td>
           <td>
-            { data.car.license }
+            { data.car ? data.car.license : '(unknown)' }
           </td>
           <td>
             { ride.fee ? `$${ ride.fee }` : 'No Charge' }
