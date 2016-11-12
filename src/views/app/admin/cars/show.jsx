@@ -364,17 +364,17 @@ class CarsShowView extends React.Component {
             <div className="row" style={{ marginTop: 10 }}>
               <div className="col-md-6">
                 {
-                  car.booking ?
-                    <div style={{ padding: "10px 0" }}>
+                  (car.booking && car.user) ?
+                    <div>
                       <a style={{ marginRight: "10px" }} href={ `/users/${ car.userId }` }>{ car.user.firstName + " " + car.user.lastName }</a>
                       Booking #<a href={ `/bookings/${ car.booking.id }` }>{ car.booking.id }</a> 
                     </div>
                   : <div> 
-                      <div className="row" style={{ marginTop: "9px" }}>
+                      <div className="row" style={{ marginTop: "4px" }}>
                         <input 
                           onChange={ this.updateUser.bind(this) }
                           value={ this.state.user_find_id } 
-                          style={{ marginTop: "1px", padding: "5px" }} 
+                          style={{ marginTop: "1px", padding: "2px" }} 
                           className="col-xs-6" 
                           placeholder="User ID" 
                         />
@@ -388,6 +388,7 @@ class CarsShowView extends React.Component {
                 }
               </div>
               <div className="col-md-6">
+                Updated: { new Date(car.updatedAt).toLocaleTimeString() }
                 <Button
                   key       = { switches[4].ref }
                   className = { 'btn btn-primary-outline' }
