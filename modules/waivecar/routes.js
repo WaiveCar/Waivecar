@@ -54,10 +54,7 @@ Route.post('/notify', [ 'isAuthenticated', 'NotificationsController@send' ]);
 
 // ### Sms Handlers
 
-Route.get('/sms', [ 'SmsController@response' ]);
-
-// ### Contact Handlers
-
+Route.get('/sms', 'ContactController@sms');
 Route.post('/contact', [ 'isAuthenticated', 'ContactController@send' ]);
 
 // ### Notes Handlers
