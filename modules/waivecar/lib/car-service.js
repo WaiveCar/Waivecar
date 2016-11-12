@@ -354,6 +354,11 @@ module.exports = {
       let status = yield this.request(`/devices/${ id }/status`, { timeout : 30000 });
       this._errors[id] = 0;
       if (status) {
+
+        if(status.fuel_level.toString() === '0') {
+          yield notify.notifyAdmins(`0 charge reported. Full data retrieved: ${ JSON.stringify(status) }`, [ 'slack' ], { channel : '#api-errors' });
+        }
+
         return this.transformDeviceToCar(id, status);
       }
     } catch (err) {
