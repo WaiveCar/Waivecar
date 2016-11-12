@@ -737,8 +737,12 @@ module.exports = class BookingService extends Service {
     car.relay('update');
     booking.relay('update');
 
+    let message = (_user.id === user.id) ?
+      `${ _user.name() } cancelled a booking` :
+      `${ _user.name() } cancelled a booking for ${ user.name() }`;
+
     yield notify.sendTextMessage(user, `Your WaiveCar reservation has been cancelled.`);
-    yield notify.slack({ text : `:pill: ${ user.name() } cancelled a booking | ${ car.info() } | Driver: ${ user.name() } ${ user.info() }`
+    yield notify.slack({ text : `:pill: ${ message } | ${ car.info() } ${ user.info() }`
     }, { channel : '#reservations' });
   }
 
