@@ -18,6 +18,9 @@ module.exports = class Car extends Service {
   }
 
   executeCommand(car, command) {
+    if(command === 'refresh') {
+      return this.setCar(car.id);
+    }
     this.setState('isLoading', true);
     api.put(`/cars/${ car.id }/${ command }`, { }, function (err, model) {
       this.setState('isLoading', false);
@@ -92,6 +95,7 @@ module.exports = class Car extends Service {
     api.get(`/cars/${ id }`, (err, car) => {
       if (err) return this.error(err.message);
 
+      car.lastUpdated = (new Date()).toLocaleTimeString();
       this.getBooking(car);
     });
   }

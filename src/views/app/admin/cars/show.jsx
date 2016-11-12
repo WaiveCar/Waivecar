@@ -388,7 +388,7 @@ class CarsShowView extends React.Component {
                 }
               </div>
               <div className="col-md-6">
-                Updated: { new Date(car.updatedAt).toLocaleTimeString() }
+                Updated: { car.lastUpdated }
                 <Button
                   key       = { switches[4].ref }
                   className = { 'btn btn-primary-outline' }
@@ -433,6 +433,7 @@ class CarsShowView extends React.Component {
     if (!car || !car.id) {
       return <div className="text-center">Retrieving Car...</div>
     }
+    dom.setTitle(car.license);
 
     return (
       <div className="cars cars-show">
