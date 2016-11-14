@@ -21,7 +21,7 @@ module.exports = {
     let message = `${ who } (${ phone }): ${ params.query.Body }`;
     yield notify.slack({ text : message }, { channel : '#app_support' });
 
-    params.query.Body = 'THIS IS A TEST!! ' + params.query.Body;
+    params.query.Body = params.query.Body;
 
     let response = yield request({
       url     : aircall_url,
