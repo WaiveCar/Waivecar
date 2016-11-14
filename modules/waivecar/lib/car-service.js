@@ -18,11 +18,11 @@ let log         = Bento.Log;
 let config      = Bento.config.waivecar;
 let hooks       = Bento.Hooks;
 
-// ### Models
-
 let User = Bento.model('User');
 let Car  = Bento.model('Car');
 let Booking = Bento.model('Booking');
+
+let fs = require('fs');
 
 module.exports = {
 
@@ -355,9 +355,11 @@ module.exports = {
       this._errors[id] = 0;
       if (status) {
 
+        status.id = id;
         if(status.fuel_level.toString() === '0') {
           yield notify.notifyAdmins(`0 charge reported. Full data retrieved: ${ JSON.stringify(status) }`, [ 'slack' ], { channel : '#api-errors' });
         }
+        fs.appendFileSync('/var/log/invers/log.txt', JSON.stringify(status) + "\n");
 
         return this.transformDeviceToCar(id, status);
       }

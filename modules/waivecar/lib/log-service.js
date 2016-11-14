@@ -10,13 +10,15 @@ let Booking   = Bento.model('Booking');
 let Car       = Bento.model('Car');
 
 let queryParser  = Bento.provider('sequelize/helpers').query;
-let _ = require('lodash');
+let _  = require('lodash');
+let fs = require('fs');
 
 class LogService {
 
   static *create(payload, _user) {
     let log = new Log(payload);
     log.actorId = _user.id;
+    fs.appendFileSync('/var/log/invers/log.txt', JSON.stringify(payload) + "\n");
 
     yield log.save();
 
