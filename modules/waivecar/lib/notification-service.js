@@ -20,9 +20,7 @@ function log_message(type, what) {
   what.at = new Date();
 
   try {
-    var logStream = fs.createWriteStream('/var/log/outgoing/log.txt', {'flags': 'a'});
-    logStream.write(JSON.stringify(what) + "\n");
-    logStream.close();
+    fs.appendFileSync('/var/log/outgoing/log.txt', JSON.stringify(what) + "\n");
   } catch (err) {
     log.warn(`Failed to write to the log file: ${ err.message }`);
   }
