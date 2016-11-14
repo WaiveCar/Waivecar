@@ -1,5 +1,6 @@
 export { default as Anchor }    from './lib/anchor';
 export { default as Button }    from './lib/button';
+export { default as Dialog }    from './lib/dialog';
 export { default as Charts }    from './lib/charts';
 export { default as Content }   from './lib/content';
 export { default as File }      from './lib/file';
