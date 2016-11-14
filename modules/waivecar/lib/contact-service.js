@@ -28,6 +28,8 @@ module.exports = {
       method  : 'POST',
       form    : params.query
     });
+
+    return response.body;
   }
   /*,
 
