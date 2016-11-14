@@ -520,8 +520,12 @@ module.exports = class BookingService extends Service {
         parkingText += payload.data.streetOvernightRest ? 'Has an overnight restriction.' : 'Does not have an overnight restriction.';
       }
 
+      let message = (_user.id === user.id) ?
+        `${ _user.name() } ended ` :
+        `${ _user.name() } ended for ${ user.name() }`;
+
       parkingSlack = {
-        text        : `:cherries: ${ _user.name() } ended a booking | ${ car.info() } | Driver: ${ user.name() } ${ user.info() }`,
+        text        : `:cherries: ${ message } ended | ${ car.info() } | ${ user.info() }`,
         attachments : [
           {
             fallback : `Parking Details`,
@@ -565,8 +569,8 @@ module.exports = class BookingService extends Service {
     }
   
     let message = (_user.id === user.id) ?
-      `${ _user.name() } ended a booking` :
-      `${ _user.name() } ended a booking for ${ user.name() }`;
+      `${ _user.name() } ended ` :
+      `${ _user.name() } ended for ${ user.name() }`;
 
     yield notify.slack(parkingSlack || { text : `:cherries: ${ message } | ${ car.info() } ${ car.averageCharge() }% ${ user.info() }`
     }, { channel : '#reservations' });
@@ -665,7 +669,7 @@ module.exports = class BookingService extends Service {
     }
 
     yield notify.sendTextMessage(user, `Thanks for renting with WaiveCar! Your rental is complete. You can see your trip summary in the app.`);
-    yield notify.slack({ text : `:coffee: ${ user.name() } completed a booking | ${ car.info() } | ${ apiConfig.uri }/bookings/${ booking.id }`
+    yield notify.slack({ text : `:coffee: ${ user.name() } completed | ${ car.info() } | ${ apiConfig.uri }/bookings/${ booking.id }`
     }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
 
@@ -738,8 +742,8 @@ module.exports = class BookingService extends Service {
     booking.relay('update');
 
     let message = (_user.id === user.id) ?
-      `${ _user.name() } cancelled a booking` :
-      `${ _user.name() } cancelled a booking for ${ user.name() }`;
+      `${ _user.name() } cancelled ` :
+      `${ _user.name() } cancelled for ${ user.name() }`;
 
     yield notify.sendTextMessage(user, `Your WaiveCar reservation has been cancelled.`);
     yield notify.slack({ text : `:pill: ${ message } | ${ car.info() } ${ user.info() }`
