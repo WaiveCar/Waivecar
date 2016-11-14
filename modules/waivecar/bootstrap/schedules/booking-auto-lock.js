@@ -4,6 +4,7 @@ let notify    = require('../../lib/notification-service');
 let cars      = require('../../lib/car-service');
 let scheduler = Bento.provider('queue').scheduler;
 let Booking   = Bento.model('Booking');
+let User      = Bento.model('User');
 let Car       = Bento.model('Car');
 let log       = Bento.Log;
 let error     = Bento.Error;
@@ -20,7 +21,9 @@ scheduler.process('booking-auto-lock', function *(job) {
       }
     });
   }
-  let user = yield this.getUser(booking.userId);
+
+  let user = yield User.findById(booking.userId);
+
   if (booking.status !== 'completed' && booking.status !== 'closed') {
     let car = yield Car.findById(booking.carId);
 
