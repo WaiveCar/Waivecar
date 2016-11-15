@@ -9,7 +9,7 @@ let url     = require('url');
 
 module.exports = {
   *deliverMessage(payload, _user) {
-    yield notify.slack({ text : `From: ${ _user.name() } <${ _user.email }> ${ _user.info() }\n Subject: ${ payload.subject || '_(none)_' }\n${ payload.message || '_(none)_' }` }, { channel : '#app_support' });
+    yield notify.slack({ text : `From: ${ _user.name() } ${ _user.email } ${ _user.info() }\n Subject: ${ payload.subject || '_(none)_' }\n${ payload.message || '_(none)_' }` }, { channel : '#app_support' });
   },
 
   *deliverSms(payload) {
