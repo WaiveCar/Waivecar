@@ -8,6 +8,7 @@
   }
 }
 
+
 #home {
   font-family: 'Lato', sans-serif;
   letter-spacing: -.4px;
@@ -276,6 +277,34 @@
     padding-bottom : 1.5rem;
     }
   }
+  .announcement {
+    position: relative;
+    background: url('/images/site/hyundai-crop.jpg') no-repeat center;
+    background-size: cover;
+    text-align: right;
+    /*box-shadow: 0 0 11px 1px rgba(0,0,0,0.7);*/
+    z-index: 100;
+    p {
+      /*background: rgba(255,255,255,0.8);*/
+      color: white;
+      /*width: 10em;*/
+      text-align: right;
+      font-family: 'Lato', sans-serif;
+      font-weight: 500;
+      line-height: 1.4em;
+      font-size: 34px;
+      margin-top:1em;
+      margin-bottom:9em;
+      padding: 0.5em 1em;
+      display: inline-block;
+      cursor: pointer;
+      a {
+        display: block;
+        font-size: 70%;
+        margin-top: -0.5em;
+      }
+    }
+  }
 }
 
 @media (min-width: 48em) {
@@ -303,6 +332,18 @@
 }
 
 @media (max-width: 61.9em) {
+  #home .announcement {
+    background: url('/images/site/hyundai-mobile.jpg') no-repeat center;
+    background-size: cover;
+    padding-top: 3em;
+    height: auto;
+    p {
+      float: none;
+      width: 90%;
+      margin-top:0em;
+      margin-bottom:6em;
+    }
+  }
   #home .section.jumbotron {
     background      : url('/images/site/header.jpg') no-repeat center bottom;
     background-size : cover;

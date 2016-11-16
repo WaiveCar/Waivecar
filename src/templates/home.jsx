@@ -447,6 +447,12 @@ class HomeTemplate extends React.Component {
       <div id="home">
         { this.renderHeader() }
         { this.renderSignup() }
+       <div className="announcement">
+         <p>
+         <span onClick={ function(){document.location='https://medium.com/@WaiveCar/announcing-our-partnership-with-hyundai-e5b070812738#.vm74d9cdh'} }>Announcing our partnership with Hyundai</span>
+         <a href='https://medium.com/@WaiveCar/announcing-our-partnership-with-hyundai-e5b070812738#.vm74d9cdh'>more&hellip;</a>
+         </p>
+       </div>
         { this.renderVision() }
         { this.renderFeatures() }
         { this.renderPricing() }
