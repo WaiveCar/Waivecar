@@ -17,7 +17,13 @@ class LogService {
 
   static *create(payload, _user) {
     let log = new Log(payload);
-    log.actorId = _user.id;
+
+    if (_user) {
+      log.actorId = _user.id;
+    } else {
+      log.actorId = 0;
+    }
+
     fs.appendFileSync('/var/log/invers/log.txt', JSON.stringify(payload) + "\n");
 
     yield log.save();

@@ -125,7 +125,7 @@ module.exports = {
     return car;
   },
 
-  *updateAvailabilityAnonymous(id, isAvailable) {
+  *updateAvailabilityAnonymous(id, isAvailable, _user) {
     let model = yield Car.findById(id);
     if (isAvailable) {
       yield model.available();
@@ -137,6 +137,8 @@ module.exports = {
       type : 'update',
       data : model.toJSON()
     });
+
+    if (_user) yield LogService.create({ carId : id, action : isAvailable ? Actions.MAKE_CAR_AVAILABLE : Actions.MAKE_CAR_UNAVAILABLE }, _user);
 
     return model;
   },
@@ -150,9 +152,7 @@ module.exports = {
   *updateAvailability(id, isAvailable, _user) {
     access.verifyAdmin(_user);
 
-    let model = yield this.updateAvailabilityAnonymous(id, isAvailable);
-
-    if (_user) yield LogService.create({ carId : id, action : isAvailable ? Actions.MAKE_CAR_AVAILABLE : Actions.MAKE_CAR_UNAVAILABLE }, _user);
+    let model = yield this.updateAvailabilityAnonymous(id, isAvailable, _user);
 
     return model;
   },
