@@ -244,6 +244,8 @@ class LogService {
       UNIMMOBILIZE_CAR     : 'UNIMMOBILIZE_CAR',
       MAKE_CAR_AVAILABLE   : 'MAKE_CAR_AVAILABLE',
       MAKE_CAR_UNAVAILABLE : 'MAKE_CAR_UNAVAILABLE',
+      START_CHARGE         : 'START_CHARGE',
+      END_CHARGE           : 'END_CHARGE'
     };
   }
 };
