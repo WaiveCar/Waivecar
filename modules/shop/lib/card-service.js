@@ -29,13 +29,16 @@ module.exports = class Cards extends Service {
     // A little bit of sanitization will be done beforehand.
     //
     // The CC name that comes in is a single unit with spaces.
-    let cardNameParts = data.card.name.toLowerCase().split(/\s+/);
-    let userNameParts = [user.firstName, user.lastName].join(' ').toLowerCase().split(/\s+/);
     let hasMatch = false;
 
-    userNameParts.forEach(function(name) {
-      hasMatch |= ( (name.length && cardNameParts.indexOf(name)) !== -1 );
-    });
+    if(data.card.name) {
+      let cardNameParts = data.card.name.toLowerCase().split(/\s+/);
+      let userNameParts = [user.firstName, user.lastName].join(' ').toLowerCase().split(/\s+/);
+
+      userNameParts.forEach(function(name) {
+        hasMatch |= ( (name.length && cardNameParts.indexOf(name)) !== -1 );
+      });
+    }
 
     if (!hasMatch) {
       throw error.parse({
