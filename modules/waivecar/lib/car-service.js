@@ -356,9 +356,12 @@ module.exports = {
       if (status) {
 
         status.id = id;
+        status.t = new Date();
+        /*
         if(status.fuel_level.toString() === '0') {
           yield notify.notifyAdmins(`0 charge reported. Full data retrieved: ${ JSON.stringify(status) }`, [ 'slack' ], { channel : '#api-errors' });
         }
+        */
         fs.appendFileSync('/var/log/invers/log.txt', JSON.stringify(status) + "\n");
 
         return this.transformDeviceToCar(id, status);
