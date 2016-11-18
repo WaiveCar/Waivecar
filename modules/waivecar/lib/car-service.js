@@ -226,6 +226,11 @@ module.exports = {
     existingCar.addToHistory(data.charge);
     data.chargeHistory = existingCar.chargeHistory;
 
+    // We find out if our charging status has changed
+    if(data.isCharging != existingCar.isCharging) {
+      yield LogService.create({ carId : id, action : data.isCharging ? Actions.START_CHARGE : Actions.END_CHARGE });
+    }
+
     yield existingCar.update(data);
 
     relay.emit('cars', {
