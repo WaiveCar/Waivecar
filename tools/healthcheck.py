@@ -31,7 +31,7 @@ def dofail(what):
       call(["/etc/init.d/node-waivecar", "restart"])
 
     elif failCount > 4:
-      subject += 'system down (%s)' %s
+      subject += 'system down (%s)' % what
 
     for email in ['kristopolous@yahoo.com', 'moe@waive.car']:
       res = send_email(who=email, subject=subject, body='total failure', sender='WaiveCar HealthCheck <info@indycast.net>')
