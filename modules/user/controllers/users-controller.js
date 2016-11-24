@@ -39,13 +39,12 @@ Bento.Register.ResourceController('User', 'UsersController', (controller) => {
       // We are also piggy-backing the user agent on top of this.
       // see ticket #561 for more details.
       if( 
-          ('request' in this) &&
-          ('header' in this.request) &&
-          ('user-agent' in this.request.header) &&
-          (this.auth.user.device !== this.request.header['user-agent']) {
-        ) {
-          yield this.auth.user.update({device: this.request.header['user-agent']});
-        }
+        ('request' in this) &&
+        ('header' in this.request) &&
+        ('user-agent' in this.request.header) &&
+        (this.auth.user.device !== this.request.header['user-agent']) 
+      ) {
+        yield this.auth.user.update({device: this.request.header['user-agent']});
       }
       return this.auth.user;
     }
