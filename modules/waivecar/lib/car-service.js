@@ -223,8 +223,15 @@ module.exports = {
       data.isParked = (data.currentSpeed === 0) && (!data.isIgnitionOn);
     }
 
-    existingCar.addToHistory(data.charge);
-    data.chargeHistory = existingCar.chargeHistory;
+    // We only store the charges if things are non-zero 
+    // (see https://github.com/clevertech/Waivecar/issues/629)
+    //
+    // And by zero we are also considering all bottom values, as one
+    // user got some other non-integer bottom values.
+    if(data.charge) {
+      existingCar.addToHistory(data.charge);
+      data.chargeHistory = existingCar.chargeHistory;
+    }
 
     // We find out if our charging status has changed
     if(('charging' in data) && (data.isCharging != existingCar.isCharging)) {
