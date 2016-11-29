@@ -1,0 +1,11 @@
+--- temp	2016-11-29 15:33:27.000000000 -0800
++++ platforms/ios/WaiveCar/WaiveCar-Info.plist	2016-11-29 15:31:44.000000000 -0800
+@@ -80,6 +80,8 @@
+ 	<string></string>
+ 	<key>NSMainNibFile~ipad</key>
+ 	<string></string>
++	<key>NSPhotoLibraryUsageDescription</key>
++	<string>Photo Library Access</string>
+ 	<key>UIBackgroundModes</key>
+ 	<array>
+ 		<string>location</string>
