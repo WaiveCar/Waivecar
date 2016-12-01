@@ -54,6 +54,10 @@ templates.register('site', {
     {
       path      : '/faq',
       component : require('views/site/faq')
+    },
+    {
+      path      : '/jobs',
+      component : require('views/site/job')
     }
     /*
     {
