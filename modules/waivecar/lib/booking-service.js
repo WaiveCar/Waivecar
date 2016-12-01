@@ -525,7 +525,7 @@ module.exports = class BookingService extends Service {
         `${ _user.name() } ended for ${ user.name() }`;
 
       parkingSlack = {
-        text        : `:cherries: ${ message } ended | ${ car.info() } | ${ user.info() }`,
+        text        : `:cherries: ${ message } | ${ car.info() } | ${ user.info() }`,
         attachments : [
           {
             fallback : `Parking Details`,
