@@ -6,9 +6,9 @@ module.exports = class Job extends Component {
       <div className='container'>
         <div className='row'>
           <div className="col-xs-12 col-md-8 col-md-push-2 faq">
-          <p>Experienced Startup Developer to join Small Team</p>
-          <p>We're a funded cash-flow positive startup in Santa Monica paying market rates with benefits looking for a full-time developer.</p>
-          <p>Send us one or more of the following that you believe reliably represent you:</p>
+          <h2 id="experienced-startup-developer">Experienced startup developer</h2>
+          <p>Waivecar is a funded cash-flow positive startup in Santa Monica paying market rates with benefits looking for a full-time developer to join a small team.</p>
+          <p>Send us one or more of the following you believe reliably represent you:</p>
           <ul>
           <li>resume</li>
           <li>github account</li>
@@ -19,7 +19,10 @@ module.exports = class Job extends Component {
           <p>You should be able to be able to get to Santa Monica in a reasonable amount of time - although we are comfortable with offsite work.</p>
           <p>The most important thing for us is your process, character, and intuition with regard to software development.</p>
           <p>If you could include a cover letter talking about how you'd address this, that'd be great:</p>
+          <blockquote>
           <p>Let's say a non-technical person reports a problem and proposes a solution, what do you see as your job and list of priorities?</p>
+          </blockquote>
+          <p>Apply to chris@(domain this is on).</p>
           </div>
         </div>
       </div>

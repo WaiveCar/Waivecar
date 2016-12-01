@@ -1,9 +1,9 @@
-Experienced Startup Developer to join Small Team
+## Experienced startup developer
 
-We're a funded cash-flow positive startup in Santa Monica paying market rates
-with benefits looking for a full-time developer.
+Waivecar is a funded cash-flow positive startup in Santa Monica paying market rates
+with benefits looking for a full-time developer to join a small team.
 
-Send us one or more of the following that you believe reliably represent you:
+Send us one or more of the following you believe reliably represent you:
 
  * resume 
  * github account
@@ -22,6 +22,7 @@ regard to software development.
 
 If you could include a cover letter talking about how you'd address this, that'd be great:
 
-  Let's say a non-technical person reports a problem and proposes a solution,
-  what do you see as your job and list of priorities?
+> Let's say a non-technical person reports a problem and proposes a solution, what do you see as your job and list of priorities?
+
+Apply to chris@(domain this is on).
 
