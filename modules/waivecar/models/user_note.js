@@ -36,7 +36,13 @@ Bento.Register.Model('UserNote', 'sequelize', function(model, Sequelize) {
     content : {
       type      : Sequelize.STRING(250),
       allowNull : false
+    },
+
+    type : {
+      type      : Sequelize.TEXT,
+      allowNull : true
     }
+
   };
 
   model.attributes = [
