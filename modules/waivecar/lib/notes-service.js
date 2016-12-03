@@ -9,17 +9,30 @@ let UserNote = Bento.model('UserNote');
 
 
 module.exports = class NotesService extends Service {
-
-  /**
-   * Create new note
-   * @param {String} type
-   * @param {Object} payload
-   * @param {Object} _user
-   * @return {Object}
-   */
+  //
+  // so type can be things like
+  //  user:suspension
+  // 
+  // in the format of 
+  //  a:b
+  //
+  // where
+  //  a is one of ['booking','car','user'] and
+  //
+  //  b as of this writing (2016-12-02) corresponds to the
+  //    value of the type field in the notes table, which only
+  //    exists in the user_notes table.
+  // 
+  // This means that you'll usually just have no colons
+  // and only one of the values in a.
+  //
   static *create(type, payload, _user) {
-    let Model = this.getModel(type);
+    let parts = type.split(':');
+    let Model = this.getModel(parts[0]);
     payload.authorId = _user.id;
+    if(parts.length > 1) {
+      payload.type = parts[1];
+    }
     let model = new Model(payload);
     yield model.save();
 
