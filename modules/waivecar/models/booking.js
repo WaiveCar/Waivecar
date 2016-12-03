@@ -289,9 +289,19 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       queue.scheduler.cancel('booking-free-timer-expired', `booking-${ this.id }`);
     },
 
-    /**
-     * Sets booking auto lock to 5 minutes.
-     */
+    *setCompleteCheck() {
+      queue.scheduler.add('booking-complete-check', {
+        uid   : `booking-${ this.id }`,
+        timer : {
+          value : 1.5,
+          type  : 'minutes'
+        },
+        data : {
+          bookingId : this.id
+        }
+      });
+    },
+
     *setAutoLock() {
       queue.scheduler.add('booking-auto-lock', {
         uid   : `booking-${ this.id }`,
