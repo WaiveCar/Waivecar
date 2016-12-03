@@ -2,6 +2,7 @@
 
 let notify    = require('../../lib/notification-service');
 let cars      = require('../../lib/car-service');
+let bookingService   = require('../../lib/booking-service');
 let scheduler = Bento.provider('queue').scheduler;
 let Booking   = Bento.model('Booking');
 let User      = Bento.model('User');
@@ -9,6 +10,17 @@ let Car       = Bento.model('Car');
 let log       = Bento.Log;
 let error     = Bento.Error;
 let config    = Bento.config;
+
+scheduler.process('booking-complete-check', function *(job) {
+  let booking = yield Booking.findOne({ where : { id : job.data.bookingId } });
+  let user = yield User.findById(booking.userId);
+  try {
+    yield bookingService._complete(job.data.bookingId, booking.userId);
+  } catch (ex) {
+    // so if we get here then the user forgot to do a few things.
+    yield notify.sendTextMessage('Hi! Thanks for using WaiveCar. This is a courtesy reminder to make sure you ' + ex.message + '. Thanks.', user);
+  }
+});
 
 scheduler.process('booking-auto-lock', function *(job) {
   let booking = yield Booking.findOne({ where : { id : job.data.bookingId } });

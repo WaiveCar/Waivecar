@@ -468,9 +468,11 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
-    // ### Auto Lock
-    // Sets the car connected to the booking on a 5 minute auto lock timer.
+    // Rides are attempted to be completed some time period after they are ended
+    // If everything is ok then they go to complete
+    yield booking.setCompleteCheck();
 
+    // Sets the car connected to the booking on a 5 minute auto lock timer.
     yield booking.setAutoLock();
 
     // ### Reset Car
@@ -582,11 +584,19 @@ module.exports = class BookingService extends Service {
     yield this.relay('update', booking, _user);
   }
 
+  static *complete(id, _user, query, payload) {
+    try { 
+      return yield this._complete(id, _user, query, payload);
+    } catch(ex) {
+      throw error.parse(ex, 400);
+    }
+  }
+
   /**
    * Locks, and makes the car available for a new booking.
    * @return {Object}
    */
-  static *complete(id, _user, query, payload) {
+  static *_complete(id, _user, query, payload) {
     let relations = {
       include : [
         {
@@ -604,10 +614,10 @@ module.exports = class BookingService extends Service {
     this.hasAccess(user, _user);
 
     if (booking.status !== 'ended') {
-      throw error.parse({
+      throw {
         code    : `BOOKING_REQUEST_INVALID`,
         message : `You cannot complete a booking which has not yet ended.`
-      }, 400);
+      };
     }
 
     try {
@@ -641,11 +651,11 @@ module.exports = class BookingService extends Service {
         }
       }
 
-      throw error.parse({
+      throw {
         code    : `BOOKING_COMPLETE_INVALID`,
         message : message,
         data    : errors
-      }, 400);
+      };
     }
 
     try {
