@@ -15,6 +15,7 @@ module.exports = class UserDetails extends React.Component {
       showDanger: false
     }
     relay.subscribe(this, 'users');
+    relay.subscribe(this, 'notes');
   }
 
   componentDidMount() {
@@ -96,6 +97,16 @@ module.exports = class UserDetails extends React.Component {
   
   submit = (event) => {
     let form = new Form(event);
+
+    // If we are suspending the user then we ask for a reason
+    if (form.data.status === 'suspended' && this.state.currentUser.status !== 'suspended') {
+      var reason = prompt("Please optionally provide a reason for suspending the user (they will see this when try to use the service). You can leave this blank.");
+      api.post('/notes/user', {
+        content: reason,
+        type: 'suspension',
+        userId: this.state.currentUser.id
+      }, () => {});
+    }
     api.put(`/users/${ this.props.id }`, form.data, (err) => {
       if (err) {
         return snackbar.notify({
@@ -142,12 +153,26 @@ module.exports = class UserDetails extends React.Component {
     });
   }
 
+  getSuspensionReason = (user) => {
+    if(user.status === 'suspended' && this.state.notes.user[user.id]) {
+
+      let notes = this.state.notes.user[user.id].filter((row) => {
+        return row.type === 'suspension';
+      });
+      if(notes) {
+        return notes[notes.length - 1].content;
+      }
+    }
+  }
+
   toggleDanger = () => {
     this.setState({ showDanger: !this.state.showDanger });
   }
 
   render() {
     let user = this.state.users.find(val => val.id === parseInt(this.props.id));
+    let suspensionReason = user ? this.getSuspensionReason(user) : false;
+
     if (!user) {
       return (
         <div className="box-empty">
@@ -210,7 +235,7 @@ module.exports = class UserDetails extends React.Component {
 
               <div className="form-group row">
                 <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Account Status</label>
-                <div className="col-sm-9 text-right" style={{ padding : '8px 25px' }}>
+                <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
                   <div className="radio-inline">
                     <label>
                       <input type="radio" name="status" value="pending" defaultChecked={ user.status === 'pending' } />
@@ -231,11 +256,12 @@ module.exports = class UserDetails extends React.Component {
                       Active
                     </label>
                   </div>
+
                   <div className="col-sm-12 text-right help-text" style={{ paddingRight: 0, fontSize: "85%", marginTop: "-0.70em" }}>
                     User #{ user.id }. Signup: { user.createdAt.split('T')[0] }
+                    { suspensionReason ? <b><br/>Suspension Reason: {suspensionReason}</b> : '' } 
                   </div>
                 </div>
-
                 <label className="col-sm-4 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Danger Zone <a onClick={ this.toggleDanger }>({ this.state.showDanger ? 'hide' : 'show' })</a></label>
                 <div className="col-sm-8 text-right" style={{ padding : '8px 25px' }}>
                   { this.state.showDanger && 
