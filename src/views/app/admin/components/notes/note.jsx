@@ -33,6 +33,7 @@ module.exports = class Note extends React.Component {
           <strong>{ note.author.firstName } { note.author.lastName }</strong>
           <br />
           <small>{ moment(note.createdAt).fromNow() }</small>
+          { note.type ? <em>type: { note.type }</em> : '' }
         </div>
         <div className='col-sm-9'>
           { note.content }
