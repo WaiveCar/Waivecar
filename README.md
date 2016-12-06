@@ -1,7 +1,9 @@
 Notes:
 
-Ending a booking: end@waivecar/lib/booking-service.js
+Ending a booking: end@`modules/aivecar/lib/booking-service.js`
+
 Active booking loop: modules/waivecar/bootstrap/schedules/active-booking.js
+
 For raw sql queries use `Bento.provider('sequelize')` as found in places like `api/modules/shop/lib/customer-service.js`.
 
 WaiveCar API
