@@ -56,12 +56,12 @@ class Relay {
     }
     if (type.isArray(id)) {
       id.forEach(function(id) {
-        addListener.call(this, context, id);
-        addActions.call(this, context, id);
-      }.bind(this));
+        addListener(context, id);
+        addActions(context, id);
+      });
     } else {
-      addListener.call(this, context, id);
-      addActions.call(this, context, id);
+      addListener(context, id);
+      addActions(context, id);
     }
   }
 
@@ -74,10 +74,10 @@ class Relay {
     let name = context.constructor.name;
     if (type.isArray(id)) {
       id.forEach(function(id) {
-        removeListener.call(this, id, name);
-      }.bind(this));
+        removeListener(id, name);
+      });
     } else {
-      removeListener.call(this, id, name);
+      removeListener(id, name);
     }
   }
 
@@ -129,6 +129,11 @@ class Relay {
     return stored.actions;
   }
 
+  // for inspecting everything.
+  all() {
+    return stored;
+  }
+
 }
 
 module.exports = new Relay();
@@ -146,6 +151,8 @@ function addListener(component, id) {
   if (!stored.listeners[id][name]) {
     stored.listeners[id][name] = [];
   }
+  // this is a race condition because this needs registration before
+  // the component comes in (cjm 20161205)
   stored.listeners[id][name].push(() => {
     component.setState(prepareState(id, stored.states[id]));
   });
