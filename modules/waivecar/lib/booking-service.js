@@ -16,8 +16,7 @@ let OrderService = Bento.module('shop/lib/order-service');
 let LogService   = require('./log-service');
 let Actions      = LogService.getActions();
 let moment       = require('moment');
-let wrapper      = require('co-redis');
-let redis        = getRedis();
+let redis        = require('./redis-service');
 let uuid         = require('uuid');
 let _            = require('lodash');
 
@@ -123,7 +122,7 @@ module.exports = class BookingService extends Service {
 
     //
     // We *could* do this, but it will be expiring in 15 seconds any way and there's
-    // a away that the double booking could still occur here. 
+    // a way that the double booking could still occur here. 
     //
     // A gets db record
     // B gets db record
@@ -947,15 +946,3 @@ module.exports = class BookingService extends Service {
   }
 
 };
-function getRedis() {
-  let client = null;
-  if (Bento.config.queue && Bento.config.queue.redis) {
-    let port = Bento.config.queue.redis.port;
-    let host = Bento.config.queue.redis.host;
-    client = require('redis').createClient(port, host, Bento.config.queue.redis);
-  } else {
-    client = require('redis').createClient();
-  }
-  return wrapper(client);
-}
-
