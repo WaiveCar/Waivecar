@@ -3,6 +3,7 @@
 let Service      = require('./classes/service');
 let Verification = require('./onfido');
 let notify       = Bento.module('waivecar/lib/notification-service');
+let redis        = require('waivecar/lib/redis-service');
 let User         = Bento.model('User');
 let relay        = Bento.Relay;
 let log          = Bento.Log;
@@ -120,6 +121,11 @@ module.exports = class LicenseVerificationService extends Service {
 
     for (let i = count - 1; i >= 0; i--) {
       let license = licenses[i];
+      // locking mechanism for scaling
+      if (!(yield redis.shouldProcess('license', license.userId))) {
+        continue;
+      }
+
       let user    = yield User.findById(license.userId);
       let update  = yield Verification.getReport(license.linkedUserId, license.checkId, license.reportId);
       if (update.status !== license.status) {
