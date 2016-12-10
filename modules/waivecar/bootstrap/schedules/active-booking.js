@@ -12,6 +12,8 @@ let log       = Bento.Log;
 let config    = Bento.config;
 let moment    = require('moment');
 let geolib    = require('geolib');
+let redis     = require('../../lib/redis-service');
+let uuid      = require('uuid');
 let _         = require('lodash');
 
 module.exports = function *() {
@@ -34,14 +36,51 @@ function inDrivingZone(lat, long) {
   return miles <= 20;
 }
 
+function *shouldProcess(bookingId) {
+  //
+  // Currently (2016-12-09) the scheduler goes every 45 seconds and there's
+  // a 30 second timeout on the api call to get the car info. Ideally, these
+  // things shouldn't matter - but I'm pretending they do just in case.
+  //
+  // A smart observer will notice there's a way this leads to a remote 
+  // possibility of a booking being skipped one time ... you get extra 
+  // points - but honestly that's unlikely and not a big deal.
+  //
+  let lockTimeMS = 40000;
+  let key = `booking-loop-lock:${ bookingId }`;
+  log.info(`locking ${key}`);
+
+  // The uuid here is used to work around the fact that get/set isn't atomic.
+  let uniq = uuid.v4();
+
+  // The nx will only only succeed if the key hasn't been set. 
+  let canProceed = yield redis.set(key, uniq, 'nx', 'px', lockTimeMS);
+  let check = yield redis.get(key);
+  return (canProceed && check === uniq);
+}
+
 scheduler.process('active-booking', function *(job) {
   log.info('ActiveBooking : start');
-  // Get active bookings
   let bookings = yield Booking.find({ where : { status : 'started' } });
 
   for (let i = 0, len = bookings.length; i < len; i++) {
     let booking = bookings[i];
     try {
+      //
+      // We need to make sure multiple servers don't process the same booking
+      // simultaneously. There's many bad ideas and complicated solutions for
+      // dealing with this and those sound really fun to write.
+      //
+      // I think the easiest way to scale this horizontally without using some
+      // form of distributed web-workers with a thread-pool is to use 
+      // http://redis.io/topics/distlock
+      // 
+      // We let the lock expire "naturally" after the elapsing of lockTimeMS
+      //
+      if (!(yield shouldProcess(booking.id))) {
+        continue;
+      }
+
       let details = yield BookingDetails.find({ where : { bookingId : booking.id } });
       let start = _.find(details, { type : 'start' });
       let car = yield Car.findById(booking.carId);
