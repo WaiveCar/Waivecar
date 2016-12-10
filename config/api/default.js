@@ -52,7 +52,7 @@ module.exports = {
    */
 
   redis : {
-    host : 'localhost',
+    host : 'datastore',
     port : 6379
   },
 
@@ -72,7 +72,7 @@ module.exports = {
   socket : {
     port  : 5000,
     redis : {
-      host : 'localhost',
+      host : 'datastore',
       port : 6379
     },
     api : {
