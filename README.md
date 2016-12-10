@@ -6,6 +6,13 @@ Active booking loop: modules/waivecar/bootstrap/schedules/active-booking.js
 
 For raw sql queries use `Bento.provider('sequelize')` as found in places like `api/modules/shop/lib/customer-service.js`.
 
+### About the load-balancing:
+
+Be weary of things like `scheduler.process` ... two reasons:
+
+  * If a process crashes, I don't believe these ever actually happen.
+  * If they are running independently, it could be possible that it's doing two things at once.
+
 WaiveCar API
 ============
 
