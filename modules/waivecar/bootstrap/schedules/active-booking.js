@@ -36,28 +36,6 @@ function inDrivingZone(lat, long) {
   return miles <= 20;
 }
 
-function *shouldProcess(bookingId) {
-  //
-  // Currently (2016-12-09) the scheduler goes every 45 seconds and there's
-  // a 30 second timeout on the api call to get the car info. Ideally, these
-  // things shouldn't matter - but I'm pretending they do just in case.
-  //
-  // A smart observer will notice there's a way this leads to a remote 
-  // possibility of a booking being skipped one time ... you get extra 
-  // points - but honestly that's unlikely and not a big deal.
-  //
-  let lockTimeMS = 40000;
-  let key = `booking-loop-lock:${ bookingId }`;
-
-  // The uuid here is used to work around the fact that get/set isn't atomic.
-  let uniq = uuid.v4();
-
-  // The nx will only only succeed if the key hasn't been set. 
-  let canProceed = yield redis.set(key, uniq, 'nx', 'px', lockTimeMS);
-  let check = yield redis.get(key);
-  return (canProceed && check === uniq);
-}
-
 scheduler.process('active-booking', function *(job) {
   log.info('ActiveBooking : start');
   let bookings = yield Booking.find({ where : { status : 'started' } });
@@ -76,7 +54,7 @@ scheduler.process('active-booking', function *(job) {
       // 
       // We let the lock expire "naturally" after the elapsing of lockTimeMS
       //
-      if (!(yield shouldProcess(booking.id))) {
+      if (!(yield redis.shouldProcess('booking-loop', booking.id))) {
         continue;
       }
 
