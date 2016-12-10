@@ -48,7 +48,6 @@ function *shouldProcess(bookingId) {
   //
   let lockTimeMS = 40000;
   let key = `booking-loop-lock:${ bookingId }`;
-  log.info(`locking ${key}`);
 
   // The uuid here is used to work around the fact that get/set isn't atomic.
   let uniq = uuid.v4();
