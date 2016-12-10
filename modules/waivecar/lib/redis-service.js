@@ -14,8 +14,11 @@ module.exports = (function() {
   }
 
   let res = wrapper(client);
+
   res.lockTimeMS = 40000;
-  res.shouldProceed = function *(type, id) {
+
+  // These both sound like reasonable names.
+  res.shouldProceed = res.shouldProcess = function *(type, id) {
     //
     // Currently (2016-12-09) the scheduler goes every 45 seconds and there's
     // a 30 second timeout on the api call to get the car info. Ideally, these
@@ -31,8 +34,8 @@ module.exports = (function() {
     let uniq = uuid.v4();
 
     // The nx will only only succeed if the key hasn't been set. 
-    let canProceed = yield redis.set(key, uniq, 'nx', 'px', res.lockTimeMS);
-    let check = yield redis.get(key);
+    let canProceed = yield res.set(key, uniq, 'nx', 'px', res.lockTimeMS);
+    let check = yield res.get(key);
     return (canProceed && check === uniq);
   }
   return res;
