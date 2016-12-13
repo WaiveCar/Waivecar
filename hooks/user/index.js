@@ -182,7 +182,7 @@ hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
       reason = `by ${ _user.name() } (#${ _user.id })`;
     }
 
-    yield notify.notifyAdmins(`${ nextUser.name() } (#${ prevUser.id }), a previously active user, has been moved to pending ${ reason }.`, [ 'slack' ], { channel : '#user-alerts' });
+    yield notify.notifyAdmins(`${ prevUser.name() } (#${ prevUser.id }), a previously active user, has been moved to pending ${ reason }.`, [ 'slack' ], { channel : '#user-alerts' });
   }
 
   return nextUser;
