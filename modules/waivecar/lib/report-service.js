@@ -9,6 +9,7 @@ let User        = Bento.model('User');
 let error       = Bento.Error;
 let log         = Bento.Log;
 let notify      = Bento.module('waivecar/lib/notification-service');
+let moment      = require('moment');
 
 
 // ### Instances
@@ -19,7 +20,7 @@ module.exports = {
 
   *status() {
     function atShop(car) {
-      console.log(car.longitude, car.latitude);
+      //console.log(car.longitude, car.latitude);
       // This is a hacky little box, see here: https://github.com/clevertech/Waivecar/issues/595
       return (car.longitude < -118.489070 && car.longitude > -118.489544) && (car.latitude > 34.016418 && car.latitude < 34.016800);
     }
@@ -43,9 +44,12 @@ module.exports = {
         if(car.userId) {
           let user = yield User.findById(car.userId);
           let booking = yield car.getCurrentBooking();
+          let status = (booking.status !== 'started') ? booking.status : moment.utc(
+              moment().utc().diff(booking.createdAt, 'milliseconds')
+            ).format("H:mm");
 
           report.booked.push([
-            license, user.name(), booking.status, `(https://waivecar.com/bookings/${booking.id})`, car.chargeReport()
+            license, user.name(), status, `(https://waivecar.com/bookings/${booking.id})`, car.chargeReport()
           ].join(' '));
 
         } else {
@@ -62,9 +66,9 @@ module.exports = {
       ' Wild: ' + report.unavailable.wild.sort().join(', '),
       '\nAvailable:',
       '*Shop*',
-      report.available.shop.sort().join('\n'),
+      (report.available.shop.sort().join('\n') || '_(none)_'),
       '\n*Wild*',
-      report.available.wild.sort().join('\n'),
+      (report.available.wild.sort().join('\n') || '_(none)_'),
       '\nIn Use:',
       report.booked.sort().join('\n')
     ].join('\n');
