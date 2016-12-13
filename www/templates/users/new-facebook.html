@@ -31,7 +31,7 @@
           <span class="input-label mobile-label required">Mobile</span>
           <i class="icon icon-flag" ng-include="'/img/flag-icon.svg'">
           </i>
-          <input type="tel" name="mobile" placeholder="(323) 567-5555" ng-model="userCreate.user.phone" required />
+          <input type="text" name="mobile" placeholder="(323) 567-5555" ng-model="userCreate.user.phone" required />
         </label>
 
         <div class="validations" ng-if="form.$submitted && form.$invalid">
