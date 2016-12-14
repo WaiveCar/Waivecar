@@ -45,8 +45,8 @@ module.exports = class UserDetails extends React.Component {
     if (user.avatar) {
       url = `${ api.uri }/file/${ user.avatar }`;
     } else {
-      url = `//www.gravatar.com/avatar/${ md5(user.email) }?s=150`;
-    }
+      url = `//www.gravatar.com/avatar/${ md5(user.email || '') }?s=150`;
+    } 
     return url;
   }
 

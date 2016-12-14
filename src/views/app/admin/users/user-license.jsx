@@ -23,7 +23,7 @@ module.exports = class UserDetails extends React.Component {
     api.get(`/users/${ this.props.id }`, (err, user) => {
       user.image =  user.avatar ? 
         `${ api.uri }/file/${ user.avatar }` :
-        `//www.gravatar.com/avatar/${ md5(user.email) }?s=150`;
+        `//www.gravatar.com/avatar/${ md5(user.email || '') }?s=150`;
 
       this.setState({
         userInfo: user
