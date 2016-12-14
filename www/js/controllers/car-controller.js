@@ -21,6 +21,11 @@ module.exports = angular.module('app.controllers').controller('CarController', [
     var $q = $injector.get('$q');
     var $preBook = $injector.get('$preBook');
     var $ionicLoading = $injector.get('$ionicLoading');
+    var $cordovaAppVersion = $injector.get('$cordovaAppVersion'); 
+    var appVersion = false;
+    $cordovaAppVersion.getVersionCode().then(function (version) {
+      appVersion = version;
+    });
 
     this.car = angular.extend({}, car, { item: 'car' });
     if (this.car.isAvailable === false) {
@@ -28,7 +33,7 @@ module.exports = angular.module('app.controllers').controller('CarController', [
     }
 
     this.book = function() {
-      var model = { userId: $auth.me.id, carId: $state.params.id };
+      var model = { version: appVersion, userId: $auth.me.id, carId: $state.params.id };
 
       $ionicLoading.show({
         template: '<div class="circle-loader"><span>Loading</span></div>'

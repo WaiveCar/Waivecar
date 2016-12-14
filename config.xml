@@ -91,4 +91,5 @@
         <variable name="CAMERA_USAGE_DESCRIPTION" value="Upload Photos" />
         <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="Use Photos" />
     </plugin>
+    <plugin name="cordova-plugin-app-version" spec="https://github.com/whiteoctober/cordova-plugin-app-version.git" />
 </widget>
