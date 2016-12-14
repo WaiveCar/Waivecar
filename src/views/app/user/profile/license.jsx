@@ -197,6 +197,16 @@ module.exports = class ProfileLicenseView extends React.Component {
     let license  = null;
     if (licenses.length) {
       license = licenses[0];
+      //
+      // There's a bug in the bento libraries with respect
+      // to timestamps.  Likely the easiest way to address it is to 
+      // fix it here. The bug tries to localize a UTC time stamp, 
+      // sending birthdays back 1 day.  See #473 and #645 for details.
+      //
+      // The "easiest" fix is to un-UTC the timestamp by taking off 
+      // the "Z" at the end.
+      //
+      license.birthDate = license.birthDate.replace(/Z$/, '');
     }
 
     return (
