@@ -26,7 +26,7 @@ appSettings.provider('$settings', [
       baseUrl: 'https://api.waivecar.com'
     });
     envs.staging = _.extend({}, defaults, {
-      baseUrl: 'https://api-staging.waivecar.com'
+      baseUrl: 'http://staging.waivecar.com:4300'
     });
     envs.dev = _.extend({}, defaults);
     var config = envs[env] || envs.prod;
