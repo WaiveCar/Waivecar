@@ -122,6 +122,11 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       defaultValue : false
     },
 
+    credit : {
+      type         : Sequelize.DECIMAL(10,2),
+      defaultValue : 0
+    },
+
     device : {
       type         : Sequelize.STRING,
       defaultValue : false
