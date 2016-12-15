@@ -8,11 +8,6 @@ function AuthService ($rootScope, $session, $data, $injector) {
   this.me = $session.get('me');
   var $cordovaFacebook = $injector.get('$cordovaFacebook');
   var $q = $injector.get('$q');
-  var $cordovaAppVersion = $injector.get('$cordovaAppVersion');
-  var appVersion = false;
-  $cordovaAppVersion.getVersionCode().then(function (version) {
-    appVersion = version;
-  });
 
   this.isAuthenticated = function isAuthenticated () {
     return !!(this.token && this.me);
@@ -63,7 +58,6 @@ function AuthService ($rootScope, $session, $data, $injector) {
   };
 
   this.login = function login (data) {
-    data.version = appVersion;
     return $data.resources.Auth.login(data).$promise
       .then(function(user) {
         var code = {code: 'LOGGED_IN', method: 'EMAIL', user: user};
@@ -110,8 +104,7 @@ function AuthService ($rootScope, $session, $data, $injector) {
     return $data.resources.Auth.facebook({
       token: token,
       type: 'login',
-      fields: 'first_name,last_name,email',
-      version: appVersion
+      fields: 'first_name,last_name,email'
     }).$promise
     .then(function (user) {
       return {code: 'LOGGED_IN', method: 'FACEBOOK', user: user};
