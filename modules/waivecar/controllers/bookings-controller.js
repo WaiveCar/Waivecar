@@ -5,11 +5,38 @@ let error   = Bento.Error;
 
 Bento.Register.Controller('BookingsController', function(controller) {
 
+  function checkVersion(obj){
+    var payload = obj.payload;
+    var request = obj.request;
+
+    let minApp = 797; 
+    let minMarketLink = 777; 
+    let version = parseInt(payload.version, 10) || 0;
+
+    if(payload.source !== 'web' && version < minApp) {
+      var 
+        iPhone = request.header['user-agent'].match(/iPhone/), 
+        link = "itms-apps://itunes.apple.com/app/id1051144802";
+
+      if(!iPhone) {
+        link = ( version < minMarketLink) ? 
+          'https://play.google.com/store/apps/details?id=com.waivecar.app' :
+          'market://details?id=com.waivecar.app';
+      } 
+
+      throw error.parse({
+        code    : `BOOKING_OLD_VERSION`,
+        message : `You'll need to upgrade the WaiveCar App before booking. <a href="${ link }" target="_top">Please upgrade here</a>. Thanks.`
+      }, 400);
+    }
+  }
+
   /**
    * Creates a new booking request.
    * @return {Object}
    */
   controller.create = function *() {
+    checkVersion(this);
     return yield booking.create(this.payload, this.auth.user);
   };
 
