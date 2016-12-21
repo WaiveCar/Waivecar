@@ -124,7 +124,8 @@ module.exports = {
             {email: {$like: `%${query.search}%` } },
             sequelize.literal(`concat_ws(' ', first_name, last_name) like '%${query.search}%'`)
           ]
-        }
+        },
+        limit: 20
       });
     } else {
       users = yield User.find(qs);
