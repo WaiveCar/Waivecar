@@ -9,6 +9,7 @@ let relay     = Bento.Relay;
 let error     = Bento.Error;
 
 scheduler.process('booking-auto-cancel', function *(job) {
+  let timeWindow = 15;
   let booking = yield Booking.findOne({ where : { id : job.data.bookingId } });
   if (!booking) {
     throw error.parse({
@@ -47,7 +48,8 @@ scheduler.process('booking-auto-cancel', function *(job) {
       data : booking.toJSON()
     });
 
-    yield notify.notifyAdmins(`:timer_clock: ${ car.info() } booking cancelled after 15 minute timer expiration.`, [ 'slack' ], { channel : '#reservations' });
+    let user = yield notify.sendTextMessage(booking.userId, `Hi, sorry you couldn't make it to your car on time. Your ${ timeWindow } minutes have expired and we've had to cancel your reservation for ${ car.info() }`);
+    yield notify.notifyAdmins(`:timer_clock: ${ user.name() } ${ car.info() } booking cancelled after ${ timeWindow } minute timer expiration.`, [ 'slack' ], { channel : '#reservations' });
 
     log.info(`The booking with ${ car.info() } was automatically cancelled, booking status was '${ booking.status }'.`);
   } else {
