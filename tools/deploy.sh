@@ -2,9 +2,11 @@
 
 ts=`date +%Y%m%d-%H%M`
 path=/opt/waivecar-api
+previous=`readlink -f $path-last`
 
-[ -e $path-last ] && unlink $path-last
 set -x
+[ -e $previous ] && rm -r $previous
+[ -e $path-last ] && unlink $path-last
 cp -r $path $path-$ts
 ln -s $path-$ts $path-last
 cp -r * $path
