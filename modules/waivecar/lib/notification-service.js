@@ -36,6 +36,9 @@ module.exports = {
    * @param {String} message
    */
   *sendTextMessage(user, message) {
+    if(Number.isInteger(user)) {
+      user = yield User.findById(user);
+    }
     log_message('sms', {phone: user.phone, text: message});
 
     if (user.phone && process.env.NODE_ENV === 'production') {
@@ -49,6 +52,7 @@ module.exports = {
         log.warn(`Failed to send sms to ${ user.name() } > ${ err.message }`);
       }
     }
+    return user;
   },
 
   /**
