@@ -7,7 +7,7 @@ previous=`readlink -f $path-last`
 set -x
 git describe > git-sha-1
 [ -e $previous ] && rm -r $previous
-[ -e $path-last ] && unlink $path-last
+unlink $path-last
 cp -r $path $path-$ts
 ln -s $path-$ts $path-last
 cp -r * $path
