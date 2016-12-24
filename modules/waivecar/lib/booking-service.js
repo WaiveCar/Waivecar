@@ -423,7 +423,7 @@ module.exports = class BookingService extends Service {
     }
 
     try {
-      Object.assign(car, yield cars.getDevice(car.id, _user));
+      Object.assign(car, yield cars.getDevice(car.id, _user, 'booking.end'));
     } catch (err) {
       log.debug('Failed to fetch car information when ending booking');
       if (isAdmin) warnings.push('car is unreachable');
@@ -620,7 +620,7 @@ module.exports = class BookingService extends Service {
     }
 
     try {
-      let data = yield cars.getDevice(car.id, _user);
+      let data = yield cars.getDevice(car.id, _user, 'booking.complete');
       yield car.update(data);
     } catch (err) {
       log.warn(`Failed to update ${ car.info() } when completing booking ${ booking.id }`);
