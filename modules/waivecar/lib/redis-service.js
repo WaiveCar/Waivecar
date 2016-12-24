@@ -15,7 +15,7 @@ module.exports = (function() {
 
   let res = wrapper(client);
 
-  res.lockTimeMS = 40000;
+  res.lockTimeMS = 25000;
 
   // These both sound like reasonable names.
   res.shouldProceed = res.shouldProcess = function *(type, id) {
