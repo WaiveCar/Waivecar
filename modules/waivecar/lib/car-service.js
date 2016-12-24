@@ -114,7 +114,7 @@ module.exports = {
         }
       }, 404);
     }
-    let device = yield this.getDevice(car.id, _user);
+    let device = yield this.getDevice(car.id, _user, 'update');
 
     yield car.update(Object.assign(device || {}, payload));
     relay.emit('cars', {
@@ -186,7 +186,7 @@ module.exports = {
    * @param {String} deviceId
    */
   *refresh(deviceId) {
-    let updatedCar = yield this.getDevice(deviceId);
+    let updatedCar = yield this.getDevice(deviceId, null, 'refresh');
     if (updatedCar) {
       log.debug(`Cars : Refresh : updating ${ deviceId }.`);
       yield this.syncUpdate(deviceId, updatedCar);
@@ -300,7 +300,7 @@ module.exports = {
     try {
       let existingCar = cars.find(c => c.id === device.id);
       if (existingCar) {
-        let updatedCar = yield this.getDevice(device.id);
+        let updatedCar = yield this.getDevice(device.id, null, 'sync');
         if (updatedCar) {
           log.debug(`Cars : Sync : updating ${ device.id }.`);
           yield this.syncUpdate(existingCar.id, updatedCar, existingCar);
@@ -361,7 +361,7 @@ module.exports = {
    * @param  {Object} _user
    * @return {Array}
    */
-  *getDevice(id, _user) {
+  *getDevice(id, _user, source) {
     try {
       let status = yield this.request(`/devices/${ id }/status`, { timeout : 30000 });
       this._errors[id] = 0;
@@ -369,11 +369,7 @@ module.exports = {
 
         status.id = id;
         status.t = new Date();
-        /*
-        if(status.fuel_level.toString() === '0') {
-          yield notify.notifyAdmins(`0 charge reported. Full data retrieved: ${ JSON.stringify(status) }`, [ 'slack' ], { channel : '#api-errors' });
-        }
-        */
+        status.src = source;
         fs.appendFileSync('/var/log/invers/log.txt', JSON.stringify(status) + "\n");
 
         return this.transformDeviceToCar(id, status);
