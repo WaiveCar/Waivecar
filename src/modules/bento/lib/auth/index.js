@@ -29,7 +29,7 @@ module.exports = {
    * @return {Object}
    */
   user() {
-    let users = relay.getState('users');
+    let users = relay.getState('me');
     if (users) {
       let state = users.find(val => val.id === this.id);
       if (state) {
@@ -66,10 +66,20 @@ module.exports = {
    */
   set(user) {
     this.id = user.id;
+    // Beforehand ct decided to mangle the auth user
+    // in with like, search results, and then search
+    // for them linearly each time in some retarded 
+    // way.  Wow...
+    relay.dispatch('me', {
+      type : 'store',
+      data : user
+    });
+    /*
     relay.dispatch('users', {
       type : 'store',
       data : user
     });
+    */
   },
 
   /**
