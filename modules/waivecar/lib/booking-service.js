@@ -5,6 +5,8 @@ let Service      = require('./classes/service');
 let cars         = require('./car-service');
 let fees         = require('./fee-service');
 let notify       = require('./notification-service');
+let UserService  = require('./user-service');
+let CarService   = require('./car-service');
 let queue        = Bento.provider('queue');
 let queryParser  = Bento.provider('sequelize/helpers').query;
 let relay        = Bento.Relay;
@@ -19,6 +21,8 @@ let moment       = require('moment');
 let redis        = require('./redis-service');
 let uuid         = require('uuid');
 let _            = require('lodash');
+let Sequelize = require('sequelize');
+
 
 // ### Models
 
@@ -201,44 +205,50 @@ module.exports = class BookingService extends Service {
    */
   static *index(query, _user) {
     let bookings    = [];
-    let order       = query.order   ? query.order.split(',') : null;
-    let showDetails = query.details ? true : false;
+    let dbQuery     = {where: {}};
 
-    // ### Parse Query
-    /*
+    //
+    // In order to understand this you should really look at
+    // https://github.com/clevertech/Waivecar/issues/667 and 
+    // https://github.com/clevertech/Waivecar/issues/524
+    //
     if(query.search) {
-      let carList = yield Car.find({
-         license : { $like : `%${ query.search }%` } 
-      });
-      console.log(JSON.stringify(carList.map(ab => ab.license)));
-    }
-    */
-
-    query = queryParser(query, {
-      where : {
-        userId : queryParser.NUMBER,
-        carId  : queryParser.STRING,
-        status : queryParser.STRING
+      // We first look to see if any of the cars match this.
+      let carList = yield CarService.find(query.search);
+      if(carList.length) {
+        dbQuery.where.car_id = { $in: carList.map(ab => ab.id) };  
       }
-    });
 
-    if (order) {
-      query.order = [ order ];
+      // Then look for users that may match
+      let userList = yield UserService.find(query.search);
+      if(userList.length) {
+        dbQuery.where.user_id = { $in: userList.map(ab => ab.id) };  
+      }
+    }
+
+    if (query.cutoff) {
+      // NOTE: The string will be duck-typed to an int given 
+      // the multiplication operator.
+      dbQuery.where.created_at = { $lt : new Date(query.cutoff * 1000) }
+    }
+
+    if (query.order) {
+      dbQuery.order = [ query.order.split(',') ];
     }
 
     // ### Query Bookings
 
     if (_user.hasAccess('admin')) {
-      bookings = yield Booking.find(query);
+      bookings = yield Booking.find(dbQuery);
     } else {
-      query.where.userId = _user.id;
-      bookings = yield Booking.find(query);
+      dbQuery.where.user_id = _user.id;
+      bookings = yield Booking.find(dbQuery);
     }
 
     // ### Prepare Bookings
     // Prepares bookings with payment, and file details.
 
-    if (showDetails) {
+    if (query.details) {
       for (let i = 0, len = bookings.length; i < len; i++) {
         bookings[i] = yield this.show(bookings[i].id, _user);
       }
@@ -280,7 +290,11 @@ module.exports = class BookingService extends Service {
 
     booking.user     = user;
     booking.car      = yield Car.findById(booking.carId);
-    booking.cart     = yield fees.get(booking.cartId, _user);
+    try {
+      booking.cart     = yield fees.get(booking.cartId, _user);
+    } catch(ex) {
+      booking.cart     = null;
+    }
     booking.payments = yield Order.find({
       where : {
         id : booking.payments.reduce((list, next) => {
