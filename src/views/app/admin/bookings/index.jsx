@@ -40,6 +40,9 @@ class TableIndex extends React.Component {
       sort : {
         key   : 'id',
         order : 'ASC'
+      },
+      searchObj: {
+        order: 'id,DESC'
       }
     });
   }
@@ -50,6 +53,29 @@ class TableIndex extends React.Component {
    */
   componentWillUnmount() {
     relay.unsubscribe(this, 'bookings');
+  }
+
+  search_date_real(el) {
+    let 
+      query = el.target.value.toLowerCase().trim(),
+      isValid = (query === 'now') || query.match(/^\d{1,2}.(0?[1-9]|[1-3][0-9])(.\d{2,4}|)$/),
+      cutoff = false;
+
+    if(!isValid) {
+      return;
+    }
+    cutoff = (query === 'now') ? moment().unix() : moment(query, [ 'MM-DD-YYYY' ]).unix();
+
+    if(cutoff) {
+      this.table.search_handler({cutoff: cutoff}, true);
+    }
+  }
+
+  search_date(el) {
+    clearTimeout(this.timer);
+    this.timer = setTimeout(() => {
+      this.search_date_real(el);
+    }, 500);
   }
 
   reportStatus() {
@@ -80,7 +106,7 @@ class TableIndex extends React.Component {
     return (
       <tr key={ booking.id }>
         <td><Link to={ `/bookings/${ booking.id }` }>{ booking.id }</Link></td>
-        <td className="hidden-sm-down"><Link to={ `/cars/${ booking.carId }` }>{ booking.car.license || booking.carId }</Link></td>
+        <td className="hidden-sm-down"><Link to={ `/cars/${ booking.carId }` }>{ booking.car ? (booking.car.license || booking.carId) : '(unknown)' }</Link></td>
         <td className="hidden-sm-down"><Link to={ `/users/${ booking.userId }` } >{ `${ booking.user.firstName} ${ booking.user.lastName }` }</Link></td>
         <td>{ booking.status }</td>
         <td>{ moment(booking.createdAt).format('HH:mm YYYY-MM-DD') }</td>
@@ -104,7 +130,14 @@ class TableIndex extends React.Component {
         <div className="box full">
           <h3>Bookings <button className="pull-right btn btn-info btn-sm" onClick={ this.reportStatus }>Send to Slack</button></h3>
           <div className="box-content">
-            <input type="hidden" className="box-table-search" ref="search" placeholder="Enter search text [name, car]" onChange={ this.table.search } />
+            <div className="row">
+              <div className="col-md-3">
+                <input type="text" className="form-control box-table-search" ref="date" placeholder="Cut off MM-DD-YY / Now" onChange={ this.search_date.bind(this) } />
+              </div>
+              <div className="col-md-9">
+                <input type="text" className="form-control box-table-search" ref="search" placeholder="Search text [name, car]" onChange={ this.table.search } />
+              </div>
+            </div>
             <table className="box-table table-striped">
               <thead>
                 <tr ref="sort">
