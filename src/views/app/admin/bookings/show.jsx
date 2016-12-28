@@ -218,9 +218,13 @@ module.exports = class BookingsView extends React.Component {
               <div className="col-xs-12 col-md-4 booking-status text-center">
                 <strong>Car</strong>
                 <div>
-                  <Link to={ `/cars/${ booking.car.id }` }>
-                    { booking.car.license || booking.car.id }
-                  </Link>
+                  { booking.car ? 
+                    <Link to={ `/cars/${ booking.car.id }` }>
+                      { booking.car.license || booking.car.id }
+                    </Link>
+                    :
+                    "(unknown car)"
+                  }
                 </div>
               </div>
             </div>
