@@ -25,6 +25,14 @@ class Relay {
    * @param  {Function} reducer
    */
   resource(id, reducer) {
+    // if we don't pass a reducer, then we use a generic one. Which
+    // at this point in time, is easiest to grab from somewhere else.
+    // I believe, for some absurd unknown reason these things are
+    // grabbed from mongo. I have no idea.  It's stupid.
+    // 
+    // This allows us to create these things on the fly without
+    // having to be super fancy.
+    reducer = reducer || stored.reducers.bookings;
     if (!stored.reducers[id]) {
       stored.states[id]    = reducer(undefined, {});
       stored.reducers[id]  = reducer;
@@ -88,7 +96,9 @@ class Relay {
    */
   dispatch(resource, payload) {
     if (!stored.reducers[resource]) {
-      return console.warn(`Relay > Ignoring dispatch request, '${ resource }' reducer has not been defined.`);
+      // if we haven't seen this then we don't care ... we just create it.
+      this.resource(resource);
+      //return console.warn(`Relay > Ignoring dispatch request, '${ resource }' reducer has not been defined.`);
     }
 
     let reducer   = stored.reducers[resource];
@@ -96,13 +106,17 @@ class Relay {
 
     // ### Update State
 
+    //console.log(' {{{ ', listeners, stored.states[resource], payload);
     stored.states[resource] = reducer(stored.states[resource], payload);
+    //console.log('!!!', resource, payload.type, stored.states[resource]);
 
     // ### Inform Listeners
 
     for (let key in listeners) {
-      listeners[key].forEach(listener => { listener() });
+      //console.log(key);
+      listeners[key].forEach(listener => { console.log("" + listener); listener() });
     }
+    //console.log(' }}} ');
   }
 
   /**
