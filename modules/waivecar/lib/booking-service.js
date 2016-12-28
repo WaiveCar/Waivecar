@@ -232,6 +232,8 @@ module.exports = class BookingService extends Service {
       dbQuery.where.created_at = { $lt : new Date(query.cutoff * 1000) }
     }
 
+    dbQuery.limit = +query.limit || 20;
+
     if (query.order) {
       dbQuery.order = [ query.order.split(',') ];
     }
