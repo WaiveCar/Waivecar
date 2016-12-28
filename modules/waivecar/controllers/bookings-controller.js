@@ -6,6 +6,8 @@ let error   = Bento.Error;
 Bento.Register.Controller('BookingsController', function(controller) {
 
   function checkVersion(obj){
+    return true;
+
     var payload = obj.payload;
     var request = obj.request;
 
