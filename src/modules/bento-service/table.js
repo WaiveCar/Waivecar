@@ -54,6 +54,7 @@ module.exports = class Table {
     let search         = this.ctx.state.search;
     let list           = this.ctx.state[this.resource];
 
+    /*
     if (search) {
       let re = new RegExp(search, 'i');
       let candidate = null;
@@ -75,6 +76,7 @@ module.exports = class Table {
 
       });
     }
+    */
 
     if (key) {
 
@@ -107,40 +109,62 @@ module.exports = class Table {
     return list.map(item => this.ctx.row(item));
   }
 
-  /**
-   * Performs a search against the api.
-   * @param  {Object} e
-   * @return {Void}
-   */
+  // Performs a search against the api.
+  search_handler = (queryObj, force) => {
+    // Older ct code presumed a k/v pair of { search : text }
+    // This proves to be insufficient when other constraints,
+    // such as a date are being queried.  So this is backwards
+    // compatible with the old world while providing an ability
+    // to pass a more expressive object in.
+    queryObj = Object.assign(
+
+      // the old query
+      (this.ctx.state.searchObj || {}),
+
+      // this new one ... second argument takes precedent in
+      // object.assign
+      queryObj
+    );
+
+    let query = queryObj.search;
+    
+    if (query || force) {
+      api.get(this.endpoint, queryObj, (err, data) => {
+        if (err) {
+          return snackbar.notify({
+            type    : 'danger',
+            message : err.message
+          });
+        }
+        this.ctx.setState({
+          search : query,
+          searchObj: queryObj,
+          offset : 0
+        });
+        relay.dispatch(this.resource, {
+          type : 'index',
+          data : data
+        });
+      });
+    } else {
+      this.init();
+      this.ctx.setState({
+        search : null,
+        searchObj: queryObj
+      });
+    }
+  }
+
+  // grabs an input value from a dom element
+  // and calls the searc handler on it within
+  // a loop.  If this is insufficient, you can
+  // always call search_handler directly. Please
+  // note the documentation on the likely 
+  // counter-intuitive format.
   search = (e) => {
     clearTimeout(this.timer);
     this.timer = setTimeout(() => {
-      let search = e.target.value;
-      if (search) {
-        api.get(this.endpoint, {
-          search : search
-        }, (err, data) => {
-          if (err) {
-            return snackbar.notify({
-              type    : 'danger',
-              message : err.message
-            });
-          }
-          this.ctx.setState({
-            search : search,
-            offset : 0
-          });
-          relay.dispatch(this.resource, {
-            type : 'index',
-            data : data
-          });
-        });
-      } else {
-        this.init();
-        this.ctx.setState({
-          search : null
-        });
-      }
+      this.search_handler({search: e.target.value});
     }, 500);
   }
 
