@@ -93,6 +93,7 @@ module.exports = {
    * @return {Object}
    */
   *show(id, _user) {
+    let start = +new Date();
     console.log(">> show start ", id, +new Date());
     let car = yield Car.findById(id, {
       include : [
@@ -103,9 +104,9 @@ module.exports = {
       ]
     });
 
-    console.log(">> show find ", id, +new Date());
+    console.log(">> show find  ", id, +new Date());
     let data  = yield hooks.call('cars:show:after', car);
-    console.log(">> show hooks ", id, +new Date());
+    console.log(">> show hooks ", id, +new Date(), new Date() - start);
 
     return data;
   },
