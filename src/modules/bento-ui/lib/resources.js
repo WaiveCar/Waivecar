@@ -149,17 +149,22 @@ function reducerStore(state, data) {
   ];
 }
 
-/**
- * Returns new indexed resource array.
- * @param  {Array} state The current reducer state.
- * @param  {Array} data  List of resource data.
- * @return {Array}
- */
-function reducerIndex(state, data) {
+// Returns new indexed resource array.
+// @param  {Array} state The current reducer state.
+// @param  {Array} data  List of resource data.
+// @return {Array}
+//
+// This is optimistically an O(N*M) "caching" system. This guy has no idea how to program. I've replaced
+// this honking pile of crap but I've left it here just to come back and laugh.
+function _reducerIndex(state, data) {
+  // This is an absurd way to pluck a key from an object. Did they do state.map(row => row.id)? no, of course not.
+  // Look at this, it uses an accumulator. Unbelievable.
   let ids = state.reduce((list, next) => {
     list.push(next.id);
     return list;
   }, []);
+  // Then there's a linear search over all of that looking for duplicates. Oh my f'ing god. You're all fancy
+  // ES6'ing around, you could use Set, or you know, create an object and do a looku... oh nevermind...
   data.forEach(obj => {
     if (ids.indexOf(obj.id) === -1) {
       state.push(obj);
@@ -167,6 +172,18 @@ function reducerIndex(state, data) {
   });
   return state;
 }
+
+function reducerIndex(state, data) {
+  // Essentially what we are doing above is
+  //
+  // grouped = unique( concat(state, data) );
+  //
+  // It's arguable whether this is *ever* a thing that wants to be done.  
+  // A cache may at first sound admirable, but since they go out and fetch e-v-e-r-y time and the 
+  // caching doesn't work, the real thing to do is...
+  return data;
+}
+
 
 /**
  * Returns a new array with updated data in update position.
