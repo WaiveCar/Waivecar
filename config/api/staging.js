@@ -1,11 +1,9 @@
 module.exports = {
   api : {
-    uri    : 'http://api-staging.waivecar.com',
-    //uri    : 'https://api-waivecar-dev.cleverbuild.biz',
+    uri    : 'https://api-staging.waivecar.com',
     port   : 443,
     socket : {
-      uri     : 'http://api-staging.waivecar.com',
-      //uri     : 'https://api-waivecar-dev.cleverbuild.biz',
+      uri     : 'https://api-staging.waivecar.com',
       options : {
         path : '/socket/socket.io'
       }
