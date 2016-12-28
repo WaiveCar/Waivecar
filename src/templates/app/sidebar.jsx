@@ -13,12 +13,12 @@ module.exports = class Sidebar extends React.Component {
       open    : false,
       account : false
     };
-    relay.subscribe(this, 'users');
+    relay.subscribe(this, 'me');
     this.getLink = this.getLink.bind(this);
   }
 
   componentWillUnmount() {
-    relay.unsubscribe(this, 'users');
+    relay.unsubscribe(this, 'me');
   }
 
   /**
