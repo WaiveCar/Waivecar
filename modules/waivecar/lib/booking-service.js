@@ -205,7 +205,13 @@ module.exports = class BookingService extends Service {
    */
   static *index(query, _user) {
     let bookings    = [];
-    let dbQuery     = {where: {}};
+    let dbQuery     = queryParser(query, {
+      where : {
+        userId : queryParser.NUMBER,
+        carId  : queryParser.STRING,
+        status : queryParser.STRING
+      }
+    });
 
     //
     // In order to understand this you should really look at
