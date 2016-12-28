@@ -19,6 +19,7 @@ let GroupUser = Bento.model('GroupUser');
 let GroupRole = Bento.model('GroupRole');
 let sequelize = Bento.provider('sequelize');
 let notify    = require('../../waivecar/lib/notification-service');
+let _         = require('lodash')
 
 module.exports = {
 
@@ -93,6 +94,40 @@ module.exports = {
     yield tokens.delete(token);
   },
 
+  // This allows for spaces and quotes to be used, compounding
+  // as expected. You can pass in a prepared array or a string to
+  // be parsed.
+  //
+  // This means that a term like 'waive20 "alice smith"' will find 
+  // 'alice smith' appropriately
+  *find(query, limit) {
+    if(query) {
+      if(!_.isArray(query)) {
+        query = query.match(/('.*?'|".*?"|\S+)/g).map(term => term.replace(/[\'\"]/g, ''));
+      }
+      console.log(query);
+   
+      let opts = {
+        where: {
+          $or: _.flatten(
+            query.map((term) => {
+              return [
+                {email: {$like: `%${term}%` } },
+                sequelize.literal(`concat_ws(' ', first_name, last_name) like '%${term}%'`)
+              ];
+            })
+          )
+        }
+      };
+
+      if(limit) {
+        opts.limit = limit;
+      }
+      return yield User.find(opts);
+    } 
+    return [];
+  },
+
   /**
    * Returns an indexed array of users.
    * @param  {Object} query
@@ -118,15 +153,7 @@ module.exports = {
 
     let users = [];
     if(query.search) {
-      users = yield User.find({
-        where: {
-          $or: [
-            {email: {$like: `%${query.search}%` } },
-            sequelize.literal(`concat_ws(' ', first_name, last_name) like '%${query.search}%'`)
-          ]
-        },
-        limit: 20
-      });
+      users = yield this.find(query.search, 20);
     } else {
       users = yield User.find(qs);
     }
