@@ -66,6 +66,18 @@ module.exports = {
     return cars;
   },
 
+  *find(query) {
+    let parts = query.split(' ');
+
+    return yield Car.find({
+      where: { $or: 
+        parts.map((term) => {
+          return { license : { $like : `%${ term }%` } };
+        })
+      }
+    });
+  },
+
   // This is the do-nothing thing that is in reference
   // to https://github.com/clevertech/Waivecar/issues/577
   // There's more rationale as to the placement of this 
