@@ -71,7 +71,7 @@ function loadRoles(done) {
 }
 
 /**
- * Checks if there is a auth token set and attempts to retireve the
+ * Checks if there is a auth token set and attempts to retrieve the
  * authenticated user session form the api.
  * @param  {Function} done
  * @return {Void}
