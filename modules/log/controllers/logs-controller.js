@@ -13,6 +13,10 @@ Bento.Register.Controller('LogsController', (controller) => {
     return yield service.create(type, this.payload);
   };
 
+  controller.stats = function *(type) {
+    return yield service.stats(type);
+  };
+  
   /**
    * Returns an index array of results.
    * @param  {String} type The type of log we are indexing.
