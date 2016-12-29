@@ -23,6 +23,7 @@ let Car  = Bento.model('Car');
 let Booking = Bento.model('Booking');
 
 let fs = require('fs');
+let carMap = false;
 
 module.exports = {
 
@@ -30,6 +31,24 @@ module.exports = {
    * Track api errors to notify admins
    */
   _errors : {},
+
+  // people only really care about licenses ... so this 
+  // helps convert things over in some non-braindead way.
+  *id2license(id) {
+    // we *cache* things
+    if(!carMap) {
+      carMap = {};
+      (yield Car.find()).forEach((car) => {
+        // create a two way map
+        carMap[car.id] = car.license;
+        carMap[car.license] = car.id;
+      });
+    }
+    if(!arguments.length) { 
+      return carMap;
+    }
+    return carMap[id];
+  },
 
   /**
    * Returns a list of cars from the local database.
