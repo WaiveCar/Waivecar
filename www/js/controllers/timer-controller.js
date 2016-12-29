@@ -33,26 +33,21 @@ module.exports = angular.module('app.controllers').controller('TimerController',
       ctrl.hours = remainingTime.hours;
       ctrl.minutes = remainingTime.minutes;
       ctrl.seconds = remainingTime.seconds;
+      ctrl.seconds_ttl = (ctrl.hours * 60 + ctrl.minutes) * 60 + ctrl.seconds;
 
       var intervalFunction = function () {
-        ctrl.seconds--;
-        if (ctrl.seconds < 0) {
-          ctrl.seconds = 59;
-          ctrl.minutes--;
-        }
-        if (ctrl.minutes < 0) {
-          ctrl.minutes = 59;
-          ctrl.hours--;
-        }
-        if (ctrl.hours < 0) {
-          ctrl.hours = 0;
-          ctrl.minutes = 0;
-          ctrl.seconds = 0;
+        ctrl.seconds_ttl --;
+
+        if(ctrl.seconds_ttl <= 0) {
           ctrl.stopCount();
         }
+
+        ctrl.seconds = ctrl.seconds_ttl % 60;
+        ctrl.minutes = Math.floor(ctrl.seconds_ttl / 60);
+        ctrl.hours = Math.floor(ctrl.seconds_ttl / 3600);
       };
 
-      _stopInterval = $interval(intervalFunction, 1000);
+      _stopInterval = $interval(intervalFunction, 980);
 
     };
 
