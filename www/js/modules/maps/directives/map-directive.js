@@ -117,7 +117,7 @@ function directive ($rootScope, MapsLoader, RouteService, $q, $timeout) {
     if (!this.center && $rootScope.currentLocation) {
       this.center = [$rootScope.currentLocation.latitude, $rootScope.currentLocation.longitude];
     } else {
-      this.center = [ 34.0604643, -118.4186743 ];
+      this.center = [ 34.016660, -118.489252 ];
     }
 
     // map instance is set from within the link function
