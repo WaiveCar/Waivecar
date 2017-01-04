@@ -85,7 +85,7 @@ class RideList extends Component {
             }
           </td>
           <td>
-            { moment(data.createdAt).format('DD/MM/YYYY') }
+            { moment(data.createdAt).format('MM/DD/YYYY') }
           </td>
           <td>
             { ride.duration.hours ? `${ ride.duration.hours } hour${ ride.duration.hours > 1 ? 's ' : ' ' }` : ' ' }
