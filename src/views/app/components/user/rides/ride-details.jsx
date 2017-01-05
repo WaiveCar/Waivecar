@@ -59,7 +59,7 @@ class RideDetails extends Component {
                 <h3>Chevy Spark EV 2015</h3>
                 <div>
                   Distance Traveled<br/>
-                  <strong>{ end.mileage - start.mileage } miles</strong>
+                  <strong>{ (end.mileage - start.mileage).toFixed(2) } miles</strong>
                 </div>
               </div>
             </div>
