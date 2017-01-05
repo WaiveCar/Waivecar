@@ -110,11 +110,12 @@ module.exports = class DateField extends React.Component {
    * @param  {Object} options
    */
   onChange(value, options) {
-    console.log(value);
+    let bd = moment(value, "MM-DD-YYYY").format();
+    console.log(bd);
     this.props.onChange({
       target : {
         type  : 'date',
-        name  : this.props.options.name,
+        name  : bd,
         value : value
       }
     });
@@ -129,7 +130,7 @@ module.exports = class DateField extends React.Component {
     let { value, disabled } = this.props;
     let dateValue = value;
     if (value) {
-      dateValue = new Date(value);
+      value = moment(value).format('YYYY-MM-DD')
     }
 
     logger.debug(`Form > Render Date component [${ name }] [${ dateValue }]`);
@@ -137,7 +138,7 @@ module.exports = class DateField extends React.Component {
     if (disabled) {
       return (
         <div className={ this.state.className }>
-          <input type="text" disabled={ true } readOnly={ true } className="form-control" value={ moment(value).format('DD MMM YYYY') } />
+          <input type="text" disabled={ true } readOnly={ true } className="form-control" value={ value } />
           <div className="focus-bar"></div>
           <span className="help-text">{ helpText }</span>
       </div>
@@ -146,18 +147,17 @@ module.exports = class DateField extends React.Component {
 
     return (
       <div className={ this.state.className }>
-        <DatePicker
+        <label>{ label }</label>
+        <input
+          type        = "date"
           className   = "form-control"
           name        = { name }
-          label       = { label }
-          onChange    = { this.onChange }
-          placeholder = { placeholder }
-          value       = { dateValue }
+          placeholder = "MM/DD/YYYY"
+          value       = { value }
+          onChange    = { this.props.onChange }
           onFocus     = { this.focus }
           onBlur      = { this.blur }
           tabIndex    = { tabIndex }
-          readonly    = { disabled }
-          disabled    = { disabled }
         />
         <div className="focus-bar"></div>
         <span className="help-text">{ helpText }</span>
