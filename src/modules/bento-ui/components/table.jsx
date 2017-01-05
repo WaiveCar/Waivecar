@@ -111,7 +111,7 @@ class UITable extends React.Component {
           meta.cssClassName = 'table-col-lg';
           meta.customComponent = React.createClass({
             render : function() {
-              let date = moment(this.props.data).format('h:mm.ss YY-MM-DD');
+              let date = moment(this.props.data).format('h:mm:ss YY-MM-DD');
               return <span>{ date }</span>;
             }
           });
