@@ -73,25 +73,40 @@ class CarsShowView extends React.Component {
 
   findUser() {
     let user_id = this.state.user_find_id;
-
-    api.get(`/users/${ user_id }`, (err, user) => {
-      if (err) {
-        return snackbar.notify({
-          type    : `danger`,
-          message : err.message
+    if (parseInt(user_id) == user_id) {
+      api.get(`/users/${ user_id }`, (err, user) => {
+        if (err) {
+          return snackbar.notify({
+            type    : `danger`,
+            message : err.message
+          });
+        }
+        this.setState({user_find_name: [[user_id, `${user.firstName} ${user.lastName}`]]});
+      });
+    } else {
+      api.get(`/users?search="${ user_id }"`, (err, userList) => {
+        if (err) {
+          return snackbar.notify({
+            type    : `danger`,
+            message : err.message
+          });
+        }
+        this.setState({
+          user_find_name: userList.map((row) => {
+            return [ row.id, `${row.firstName} ${row.lastName}` ]
+          })
         });
-      }
-      this.setState({user_find_name: `${user.firstName} ${user.lastName}`});
-    });
+      });
+    }
   }
 
-  bookCar() {
+  bookCar(user_id) {
     // Looking at the code I belive it's a POST to /bookings
     // with a userId of the driver to drive and the carId of
     //
     // Why the carId is so deeply entrenched is bs I'm not willing
     // to get into right now.
-    let data = { 'source': 'web', 'userId': this.state.user_find_id, 'carId': this.state.car.cars[0].id };
+    let data = { 'source': 'web', 'userId': user_id, 'carId': this.state.car.cars[0].id };
     api.post('/bookings', data, (err, user) => {
       if(err) {
         return snackbar.notify({
@@ -282,6 +297,22 @@ class CarsShowView extends React.Component {
     }
   }
 
+  renderUserSearch(car) {
+    if(!this.state.user_find_name) {
+      return '';
+    }
+    return this.state.user_find_name.map((row) => {
+      let user_id = row[0], user_name = row[1];
+
+      return (
+        <div>
+          <div style={{ padding: "10px 0" }} className="col-xs-6"><a target='_blank' href={ `/users/${ user_id }` }>#{user_id}</a> { user_name }</div>
+          <button className="btn btn-link col-xs-6" onClick={ this.bookCar.bind(this, user_id) }>Book { car.license }</button>
+        </div>
+      )
+    });
+  }
+
   renderCarActions(car) {
     if (this.service.getState('isLoading')) {
       return (
@@ -381,8 +412,7 @@ class CarsShowView extends React.Component {
                         <button className="btn btn-primary btn-sm col-xs-6" onClick={ this.findUser.bind(this) }>Find User</button>
                       </div>
                       <div className={ `row ${ this.state.user_find_name ? '' : 'hide' }` }>
-                        <div style={{ padding: "10px 0" }} className="col-xs-6"><a target='_blank' href={ `/users/${ this.state.user_find_id }` }>#{this.state.user_find_id}</a> { this.state.user_find_name }</div>
-                        <button className="btn btn-link col-xs-6" onClick={ this.bookCar.bind(this) }>Book { car.license }</button>
+                        { this.renderUserSearch(car) }
                       </div>
                     </div>
                 }
