@@ -28,7 +28,6 @@ appSettings.provider('$settings', [
     envs.staging = _.extend({}, defaults, {
       baseUrl: 'http://staging.waivecar.com:4300'
     });
-    envs.dev = _.extend({}, defaults);
     var config = envs[env] || envs.prod;
     console.log('[settings] using `%s` environment', env || 'prod');
 
