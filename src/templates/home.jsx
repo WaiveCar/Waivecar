@@ -1,23 +1,20 @@
 import React                    from 'react';
-import { Link }                 from 'react-router';
+import { History, Link }        from 'react-router';
 import config                   from 'config';
-import Reach, { relay, dom }    from 'bento';
+import Reach, { auth, relay, dom }    from 'bento';
 import UI, { templates, views } from 'bento-ui';
 import { Anchor, Layout }       from 'bento-web';
 import policies                 from 'policies';
 import Header                   from './app/header';
+import mixin                    from 'react-mixin';
 import facebook                 from '../views/auth/facebook';
 
 let { Waypoint, Container, Row, Column } = Layout;
 
-/**
- * @class AppTemplate
- */
+// This is the home page, as in '/'.
+@mixin.decorate(History)
 class HomeTemplate extends React.Component {
 
-  /**
-   * @constructor
-   */
   constructor(...args) {
     super(...args);
 
@@ -62,9 +59,13 @@ class HomeTemplate extends React.Component {
 
   }
 
-  /**
-   * @method componentWillUnmount
-   */
+  componentDidMount() {
+    let user = auth.user();
+    if (user) {
+      this.history.pushState(null, user.hasAccess('admin') ? '/dashboard' : '/profile');
+    }
+  }
+
   componentWillUnmount() {
   }
 
@@ -439,9 +440,6 @@ class HomeTemplate extends React.Component {
     );
   }
 
-  /**
-   * @method render
-   */
   render() {
     return (
       <div id="home">
