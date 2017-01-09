@@ -6,7 +6,7 @@ var ionic = require('ionic');
 require('../../../providers/maps-loader-provider');
 var _ = require('lodash');
 
-function directive ($rootScope, MapsLoader, RouteService, $q, $timeout) {
+function directive ($rootScope, MapsLoader, RouteService, $q, $timeout, $window) {
   function link ($scope, $elem, attrs, ctrl) {
     var mapOptions = {
       apiKey: ctrl.leaflet.skobbler.apiKey,
@@ -77,6 +77,7 @@ function directive ($rootScope, MapsLoader, RouteService, $q, $timeout) {
       });
     }, function onPositionErr (err) {
       $timeout(function () {
+        $window.cordova.plugins.locationAccuracy.request(function(){}, function(){});
         switch (err.code) {
           case 1: // PositionError.PERMISSION_DENIED
             $scope.error = 'Please allow this app to get the phone\'s location on settings';
@@ -377,5 +378,6 @@ module.exports = angular.module('Maps').directive('skobblerMap', [
   'RouteService',
   '$q',
   '$timeout',
+  '$window',
   directive
 ]);
