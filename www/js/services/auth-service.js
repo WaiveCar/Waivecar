@@ -73,10 +73,7 @@ function AuthService ($rootScope, $session, $data, $injector) {
         if (response.status === 0) {
           return $q.reject('Unable to reach the server. CORS issue!');
         }
-        if (response.data.code === 'AUTH_INVALID_CREDENTIALS') {
-          return $q.reject('Your e-mail or password is incorrect. Please try again.');
-        }
-        return $q.reject('An error occured! ' + response.data.message);
+        return $q.reject(response.data.message);
       });
   };
 
