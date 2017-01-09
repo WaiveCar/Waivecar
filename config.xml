@@ -93,4 +93,6 @@
         <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="Use Photos" />
     </plugin>
     <plugin name="cordova-plugin-app-version" spec="https://github.com/whiteoctober/cordova-plugin-app-version.git" />
+    <plugin name="com.transistorsoft.cordova.background-geolocation" spec="~2.2.0" />
+    <plugin name="cordova-plugin-request-location-accuracy" spec="~2.2.0" />
 </widget>
