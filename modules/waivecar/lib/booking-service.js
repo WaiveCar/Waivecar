@@ -100,7 +100,6 @@ module.exports = class BookingService extends Service {
     //
     // We're trying to address https://github.com/clevertech/Waivecar/issues/435
     // This is ct's really terrible way of trying to do locks. The way below
-    //
     // is from http://redis.io/topics/distlock and probably has some edge case ...
     // but for the time being I don't care, this is better than the other thing.
     //
