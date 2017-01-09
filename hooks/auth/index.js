@@ -18,6 +18,10 @@ hooks.set('auth:login', function *(payload) {
     throw invalidCredentials();
   }
 
+  if(!user.password) {
+    throw invalidCredentials('You signed up through Facebook.');
+  }
+
   let password = yield bcrypt.compare(payload.password, user.password);
   if (!password) {
     throw invalidCredentials();
@@ -66,11 +70,6 @@ function *verifyUser(user, payload) {
   }
 }
 
-/**
- * Returns user for identifier authentication.
- * @param  {String} identifier
- * @return {Object}
- */
 function *getUser(identifier) {
   return yield User.findOne({
     where : {
@@ -94,21 +93,13 @@ function *getGroup(userId, groupId) {
   });
 }
 
-/**
- * Returns a invalid credentials error.
- * @return {Object}
- */
-function invalidCredentials() {
+function invalidCredentials(msg) {
   return error.parse({
     code    : `AUTH_INVALID_CREDENTIALS`,
-    message : `The credentials provided does not match any user in our database.`
+    message : msg || 'Your email or password is incorrect, please try again'
   }, 400);
 }
 
-/**
- * Returns a invalid group error.
- * @return {Object}
- */
 function invalidGroup() {
   return error.parse({
     code    : `AUTH_INVALID_GROUP`,
@@ -116,10 +107,6 @@ function invalidGroup() {
   }, 400);
 }
 
-/**
- * Returns account suspension error.
- * @return {Object}
- */
 function accountSuspended() {
   return error.parse({
     code    : 'AUTH_ACCOUNT_SUSPENDED',
