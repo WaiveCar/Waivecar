@@ -14,6 +14,7 @@ let Order       = Bento.model('Shop/Order');
 let OrderItem   = Bento.model('Shop/OrderItem');
 let BookingDetails = Bento.model('BookingDetails');
 let BookingPayment = Bento.model('BookingPayment');
+let RedisService   = require('../../waivecar/lib/redis-service');
 let notify      = Bento.module('waivecar/lib/notification-service');
 let hooks       = Bento.Hooks;
 let redis       = Bento.Redis;
@@ -91,6 +92,12 @@ module.exports = class OrderService extends Service {
    * @param {Object} user
    */
   static *createTimeOrder(booking, user) {
+    // This is to avoid a double-booking charge - see #674.
+    if (! (yield RedisService.shouldProcess('booking-charge', booking.id))) {
+      yield notify.notifyAdmins(`Avoiding a potential double charging of booking ${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+      return true;
+    }
+
     // Determine time
     let amount = 0;
     let minutesOver = 0;
