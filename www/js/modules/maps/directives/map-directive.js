@@ -78,6 +78,7 @@ function directive ($rootScope, MapsLoader, RouteService, $q, $timeout, $window)
     }, function onPositionErr (err) {
       $timeout(function () {
         $window.cordova.plugins.locationAccuracy.request(function(){}, function(){});
+        $window.cordova.plugins.diagnostic.switchToSettings();
         switch (err.code) {
           case 1: // PositionError.PERMISSION_DENIED
             $scope.error = 'Please allow this app to get the phone\'s location on settings';
