@@ -84,7 +84,6 @@
     <plugin name="cordova-plugin-whitelist" spec="~1.2.0" />
     <plugin name="com.zendrive.phonegap.sdk" spec="https://github.com/zendrive/zendrive-sdk-phonegap-plugin" />
     <plugin name="cordova-plugin-inappbrowser" spec="~1.5.0" />
-    <plugin name="org.pbernasconi.progressindicator" spec="~1.1.0" />
     <engine name="browser" spec="~4.1.0" />
     <plugin name="cordova-plugin-statusbar" spec="~2.2.1" />
     <plugin name="cordova-plugin-ios-camera-permissions" spec="~1.0.3" />
@@ -95,4 +94,5 @@
     <plugin name="cordova-plugin-app-version" spec="https://github.com/whiteoctober/cordova-plugin-app-version.git" />
     <plugin name="com.transistorsoft.cordova.background-geolocation" spec="~2.2.0" />
     <plugin name="cordova-plugin-request-location-accuracy" spec="~2.2.0" />
+    <plugin name="cordova.plugins.diagnostic" spec="~3.3.2" />
 </widget>
