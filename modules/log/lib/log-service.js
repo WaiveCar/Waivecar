@@ -42,10 +42,15 @@ module.exports = class LogService {
     // time between bookings, per car
     // time car is registered below 30% charge, rotated to base to charged
     // time cars spend offline vs. available to rent
-    // $$ earned per car, per fleet, per day
+    // $$ earned per car, per fleet, per day - in excess charges
     // impressions per car, per day
     // reservations completed per day v. app logins
+    //
     // app downloads, and trends of usage 
+    //
+    //    7 day moving window of number of users who registered versus number of users
+    //    who drove a car for the first time.
+    //
     // abandoned reservations for reservations that are driven off
     // number of users in a car before a WaiveCar employee/contract touches the car (charges it, cleans it, rotates, etc)
     //
@@ -206,14 +211,53 @@ module.exports = class LogService {
     // app downloads, and trends of usage 
     // abandoned reservations for reservations that are driven off
     // number of users in a car before a WaiveCar employee/contract touches the car (charges it, cleans it, rotates, etc)
-    return report;
+    //
+    // The report is essentially a csv file that looks like this
+    //
+    //      stat | stat | stat
+    // car1  xx     xx     xx
+    // car2  xx     xx     xx
+    // car3  xx     xx     xx
+    //
+    //
+    // key | value
+    // key | value
+    //
+    // We're going to call this the 'table' and 'kv'.
+    let kv = [
+      // some breathing room.
+      [],
+      ['Stats'],
+      ['Total Active', report.active_count],
+      ['Total Available', report.available_count]
+    ];
+    let table = [
+      [ 'Car', 'Unavailable', 'Available', 'KM', 'Bookings' ]
+    ];
+
+    // I'd like to more or less get the cars to do things
+    // in the same order each day.
+    Object.keys(evByCar).sort().forEach(function(id) {
+      table.push([
+         id,    
+         report.unavailable[id],
+         report.available[id],
+         report.miles[id],
+         report.booking_count[id]
+      ]);
+    });
+
+    // Apparently the node versions of csv writers want streams, which
+    // mean promises, which mean yeah, what the fuck node, why do you
+    // do stupid shit and make things so fucking hard that *should*
+    // *be* *easy*. Fuck you node, fuck you. Now I'm doing my own 
+    // csv engine ... and this is the thing I always complain to others
+    // about.
+    return table.concat(kv).map(function(row) { 
+      return row.join(',');
+    }).join('\n');
   }
 
-  /**
-   * Logs a new error event with the database.
-   * @param  {Object} payload
-   * @return {Object}
-   */
   static *error(payload) {
     let log = yield ErrorLog.findOne({
       where : {
