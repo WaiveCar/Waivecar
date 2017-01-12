@@ -164,6 +164,16 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       return this.phone.replace(/^\+1(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
     },
 
+    *notes(opts) {
+      let UserNote = Bento.model('UserNote');
+      opts = opts || {};
+      opts.user_id = this.id;
+      return yield UserNote.find({
+        order: [ [ 'id', 'desc' ] ],
+        where: opts
+      });
+    },
+
     // ### Role Methods
     // A batch of methods that can determine the users access rights.
 
