@@ -83,8 +83,18 @@ module.exports = class BookingService extends Service {
       yield this.recentBooking(driver, car);
     }
 
-    // ### Pre authorization payment
+    // if someone owes us more than a dollar
+    // we tell them to settle their balance with us.
+    if(driver.credit < -1) {
+      throw error.parse({
+        code    : 'BOOKING_OUTSTANDING_CREDIT',
+        message : `You have an outstanding balance of <b>$${ (-driver.credit).toFixed(2) }</b>. This needs to be resolved before making a booking.`
+      }, 400);
+    }
+
+
     if(process.env.NODE_ENV === 'production') {
+      // ### Pre authorization payment
       try {
         yield OrderService.authorize(null, driver);
       } catch (err) {
