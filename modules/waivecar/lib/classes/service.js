@@ -132,9 +132,19 @@ module.exports = class Service {
 
     // ### Check account status
     if (user.status === 'suspended') {
+      let reason = yield user.notes({type: 'suspension'}), statedReason = false;
+      if (reason.length) {
+        statedReason = reason[0].content;
+      }
+      if(!statedReason) {
+        statedReason = 'The most common reason for a suspended account is an expired credit cards. Try updating your card in the account section';
+      } else {
+        statedReason = `<br>The given reason is: <b>${ statedReason }</b><br><br>If you feel this can be addressed, call us at <a href="tel:+18559248355">(855) 924-8355</a>.`;
+      }
+
       throw error.parse({
         code    : `BOOKING_INVALID_USER`,
-        message : `Your account has been suspended. The most common reason for a suspended account is an expired credit cards. Try updating your card in the account section.`
+        message : `<div style='text-align:left;margin-bottom:1em'>Your account has been suspended. ${statedReason}</div>`
       }, 400);
     } else if (user.status === 'pending') {
       throw error.parse({
