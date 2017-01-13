@@ -68,6 +68,13 @@ module.exports = class BookingService extends Service {
 
     this.hasAccess(driver, _user);
 
+    if (! ('version' in data) ) {
+      throw error.parse({
+        code    : 'BOOKING_OLD_SOFTWARE',
+        message : `You need to upgrade your version of WaiveCar from the app store before continuing.`
+      }, 400);
+    }
+
     // If the user doing the booking is also the driver and the
     // user is an admin we give them the car.
     if (driver.id === _user.id && _user.hasAccess('admin')) {
