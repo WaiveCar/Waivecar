@@ -139,7 +139,7 @@ module.exports = class Service {
       if(!statedReason) {
         statedReason = 'The most common reason for a suspended account is an expired credit cards. Try updating your card in the account section';
       } else {
-        statedReason = `<br>The given reason is: <b>${ statedReason }</b><br><br>If you feel this can be addressed, call us at <a href="tel:+18559248355">(855) 924-8355</a>.`;
+        statedReason = `<br>The given reason is: <b>${ statedReason }</b><br><br>If you feel this can be addressed, call us at <a href="tel:+18559248355">1-855-WAIVE55</a>.`;
       }
 
       throw error.parse({
@@ -149,36 +149,31 @@ module.exports = class Service {
     } else if (user.status === 'pending') {
       throw error.parse({
         code    : `BOOKING_PENDING_USER`,
-        message : `You are not yet approved to book a WaiveCar. Please call us at 1-855-WAIVE55 to activate your account.`
+        message : `You are not yet approved to book a WaiveCar. Please call us at <a href="tel:+18559248355">1-855-WAIVE55</a> to activate your account.`
       }, 400);
     }
 
-    // ### Check User
-    if (!user.verifiedPhone) { missing.push('phone'); }
+    if (!user.verifiedPhone) { 
+      missing.push('phone'); 
+    }
 
-    // ### Check Credit Card
-    if (!user.stripeId || !card) { missing.push('credit card'); }
+    if (!user.stripeId || !card) { 
+      missing.push('credit card'); 
+    }
 
-    // ### Check License
     if (!license || !license.isValid()) {
       missing.push('license');
     }
 
-    // we may want this later, but lets leave it out now as it doesnt match the app flow.
-    // if(license && !license.fileId) {
-    //  missing.push('license photo');
-    // }
+    if(license && !license.fileId) {
+      missing.push('license photo');
+    }
 
-    // ### Throw Error
     if (missing.length) {
       let message = `You are not yet approved to book a WaiveCar. Please ensure your `;
       switch (missing.length) {
         case 1: {
           message = `${ message }${ missing[0] } has been provided and validated.`;
-          break;
-        }
-        case 2: {
-          message = `${ message }${ missing.join(' and ') } have been provided and validated.`;
           break;
         }
         default: {
