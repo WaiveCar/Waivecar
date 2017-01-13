@@ -305,7 +305,7 @@ class CarsShowView extends React.Component {
       let user_id = row[0], user_name = row[1];
 
       return (
-        <div>
+        <div className='row'>
           <div style={{ padding: "10px 0" }} className="col-xs-6"><a target='_blank' href={ `/users/${ user_id }` }>#{user_id}</a> { user_name }</div>
           <button className="btn btn-link col-xs-6" onClick={ this.bookCar.bind(this, user_id) }>Book { car.license }</button>
         </div>
@@ -318,7 +318,7 @@ class CarsShowView extends React.Component {
       return (
         <div className="box">
           <h3>
-            Controls
+            Controls for { car.license }
           </h3>
           <div className="box-content">
             <div className="loading-panel">
@@ -372,7 +372,7 @@ class CarsShowView extends React.Component {
     return (
       <div className="box">
         <h3>
-          Controls
+          Controls for { car.license }
         </h3>
         <div className="box-content">
           <div className="container-fluid">
@@ -405,9 +405,9 @@ class CarsShowView extends React.Component {
                         <input 
                           onChange={ this.updateUser.bind(this) }
                           value={ this.state.user_find_id } 
-                          style={{ marginTop: "1px", padding: "2px" }} 
+                          style={{ marginTop: "1px", padding: "2px", height: '40px' }} 
                           className="col-xs-6" 
-                          placeholder="User ID" 
+                          placeholder="Name or ID" 
                         />
                         <button className="btn btn-primary btn-sm col-xs-6" onClick={ this.findUser.bind(this) }>Find User</button>
                       </div>
@@ -418,7 +418,6 @@ class CarsShowView extends React.Component {
                 }
               </div>
               <div className="col-md-6">
-                Updated: { car.lastUpdated }
                 <Button
                   key       = { switches[4].ref }
                   className = { 'btn btn-primary-outline' }
@@ -426,6 +425,7 @@ class CarsShowView extends React.Component {
                   value     = { switches[4].label }
                   onClick   = { switches[4].onChange }
                 />
+                Updated: { car.lastUpdated }
               </div>
             </div>
             <div className="row">
