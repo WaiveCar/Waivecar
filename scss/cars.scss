@@ -25,10 +25,7 @@
       font-size: 1rem;
       flex: 1 1 auto;
       align-self: auto;
-      border-bottom: solid 1px $lightGray;
-      &:last-child {
-        border-bottom: none;
-      }
+      border-bottom: none;
 
       img {
         height: 15px;
