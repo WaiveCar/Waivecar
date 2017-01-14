@@ -5,7 +5,8 @@ let queue  = Bento.provider('queue');
 let tokens = Bento.provider('token');
 let config = Bento.config;
 let log    = Bento.Log;
-let Sms    = Bento.provider('sms');
+let notify = require('../../../modules/waivecar/lib/notification-service');
+
 
 // ### Require Verification Jobs
 
@@ -28,19 +29,7 @@ module.exports = class Verification {
       tokenLength : 6
     }, 60 * 48);
 
-    co(function *() {
-      log.debug(`Delivering verification message to ${ phone }`);
-      let message = new Sms();
-      try {
-        let response = yield message.send({
-          to      : phone,
-          message : `WaiveCar: Your verification code is ${ token }. Do not reply by SMS.`
-        });
-        log.debug('verification delivery response: ', response);
-      } catch (err) {
-        console.log('Failed to deliver verification sms: ', err);
-      }
-    });
+    yield notify.sendTextMessage(id, `WaiveCar: Your verification code is ${ token }.`);
   }
 
   /**
