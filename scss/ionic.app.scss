@@ -203,6 +203,16 @@ ion-view {
 
 
 }
+.btn-group .button-balanced {
+  text-align: left;
+  b {
+    display: inline-block;
+    font-size: 24px;
+    vertical-align: bottom;
+    padding: 0 31px 0 7px;
+  }
+}
+
 .button-fail, .button-done, .button-pending {
   background: url('/img/check-icon.svg') no-repeat;
   border: none;
