@@ -119,6 +119,13 @@ module.exports = [
           auth: true
         }
       })
+      .state('users-edit-general', {
+        url: '/users-edit-general',
+        templateUrl: '/templates/users/edit-general.html',
+        data: {
+          auth: true
+        }
+      })
       .state('licenses-new', {
         url: '/licenses/new?step&fromBooking',
         templateUrl: '/templates/licenses/new.html',
