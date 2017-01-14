@@ -6,32 +6,36 @@
     <button menu-toggle="right" class="button button-icon icon ion-navicon"></button>
   </ion-nav-buttons>
   <ion-content padding="true" class="ion-content--center gray-bg">
-    <form ng-submit="save(form)" name="form" id="form" novalidate>
-      <div ng-include="'/templates/users/_form.html'"></div>
-    </form>
-    <div class="padding-top padding-bottom">
-      <button class="button button-balanced button-block" ui-sref="auth-account-verify" ng-if="!user.verifiedPhone">Enter Verification Code</button>
-      <button class="button button-balanced button-block" ui-sref="credit-cards">Update Payment Method</button>
-      <button class="button button-positive button-block" ui-sref="licenses-new" ng-if="!license">Add Driver's License</button>
-      <button class="button button-positive button-block" ui-sref="licenses-edit({ licenseId: license.id })" ng-if="license.status === 'provided' || license.status === 'pending'">Validate Driver's License</button>
-      <div class="text-center" ng-if="license">
-        <p ng-if="license.status === 'provided'">Your Driver's License is pending validation.</p>
-        <p ng-if="license.status === 'in-progress'">Your Driver's License is ongoing validation.</p>
-        <p ng-if="license.status === 'complete' && license.outcome === 'reject'">Driver's License has failed validation.</p>
-        <p ng-if="license.status === 'complete' && license.outcome === 'consider'">Driver's License is being manually validated.</p>
-        <p ng-if="license.status === 'complete' && license.outcome === 'clear'">Your Driver's License is cleared.</p>
-      </div>
-      <div class="identity-verification text-center" ng-if="license">
-        <button class="button button-positive button-block" ui-sref="verify-id" ng-if="user.status !== 'active'">Verify Identity</button>
-        <p ng-if="user.status !== 'active'">Your identity has not yet been verified.</p>
-        <p ng-if="user.status === 'active'">No further identity verification required.</p>
-      </div>
+    <h3 ng-if="canBook">You <b>can</b> rent WaiveCars!</h3>
+    <h3 ng-if="!canBook && !hasFailed">You can not rent WaiveCars yet. <span ng-if='isPending'>We are processing your application.</span><span ng-if='!isPending'>Tap to complete the highlighted steps below.</span></h3>
+    <h3 ng-if="hasFailed">You <b>can not currently</b> rent WaiveCars. Please <a href="tel:+18559248355">contact us</a> for more information.</h3>
+
+    <div class="padding-top padding-bottom btn-group">
+
+      <button class="button button-balanced button-block" ui-sref="users-edit-general" ng-if="!user.phone"><b>1</b>Enter your General Information</button>
+      <button class="button button-done button-block" ui-sref="users-edit-general" ng-if="user.phone">General Information OK</button>
+
+      <button class="button button-balanced button-block" ui-sref="auth-account-verify" ng-if="!user.verifiedPhone"><b>2</b>Enter Verification Code</button>
+      <button class="button button-done button-block" ui-sref="auth-account-verify" ng-if="user.verifiedPhone">Phone Verified</button>
+
+      <button class="button button-balanced button-block" ui-sref="credit-cards" ng-if="!card"><b>3</b>Add Payment Method</button>
+      <button class="button button-done button-block" ui-sref="credit-cards"     ng-if="card">Payment Method OK</button>
+
+      <button class="button button-balanced button-block" ui-sref="road-rules" ng-if="!user.tested"><b>4</b>Read the Rules of the Road</button>
+      <button class="button button-done button-block" ui-sref="road-rules" ng-if="user.tested">Rules Read</button>
+
+      <button class="button button-balanced button-block" ui-sref="verify-id" ng-if="!user.verified"><b>5</b>Verify Your Identity</button>
+      <button class="button button-done button-block" ui-sref="verify-id" ng-if="user.verified">Identity Verified</button>
+
+      <button class="button button-balanced button-block" ui-sref="licenses-new" ng-if="!license.outcome"><b>6</b>Add Driver's License</button>
+      <button class="button button-balanced button-block" ui-sref="licenses-edit({ licenseId: license.id })" ng-if="license.outcome === 'needsValidation'"><b>6</b>Validate Driver's License</button>
+      <button class="button button-fail button-block" ui-sref="licenses-edit({ licenseId: license.id })"     ng-if="license.outcome === 'reject'">Driver's License has failed validation</button>
+      <button class="button button-pending button-block" ui-sref="licenses-edit({ licenseId: license.id })"  ng-if="license.outcome === 'pending'">Driver's License is being processed</button>
+      <button class="button button-done button-block" ui-sref="licenses-edit({ licenseId: license.id })"     ng-if="license.outcome === 'clear'">Driver's License Cleared</button>
+
+
+      <button class="button button-positive button-block" ng-class="{disabled: !canBook}" ui-sref="cars">Find available WaiveCars</button>
     </div>
-    <p ng-if="license.status ==='complete' && license.outcome !== 'clear'" class="padding-top content-disclaimer">Please contact us if you would like more information in relation to the status of your Driver's License.</p>
+    <p ng-if="license.status ==='complete' && license.outcome !== 'clear'" class="padding-top content-disclaimer">Please <a href="tel:+18559248355">contact us</a> if you would like more information in relation to the status of your Driver's License.</p>
   </ion-content>
-  <ion-footer-bar class="no-padding">
-    <div class="button-bar">
-      <button type="submit" form="form" class="button button-balanced">Update</button>
-    </div>
-  </ion-footer-bar>
 </ion-view>
