@@ -127,6 +127,11 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       defaultValue : 0
     },
 
+    tested : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
     device : {
       type         : Sequelize.STRING,
       defaultValue : false
