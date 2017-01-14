@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   viewBox="0 0 80 80"
+   version="1.1"
+   id="svg2"
+   inkscape:version="0.48.5 r10040"
+   width="100%"
+   height="100%"
+   sodipodi:docname="find-cars.svg">
+  <metadata
+     id="metadata20">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Shape + Shape</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="724"
+     inkscape:window-height="544"
+     id="namedview18"
+     showgrid="false"
+     inkscape:zoom="4.17193"
+     inkscape:cx="89.962114"
+     inkscape:cy="50.387607"
+     inkscape:window-x="118"
+     inkscape:window-y="85"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2" />
+  <!-- Generator: Sketch 3.3 (11970) - http://www.bohemiancoding.com/sketch -->
+  <title
+     id="title4">Shape + Shape</title>
+  <desc
+     id="desc6">Created with Sketch.</desc>
+  <defs
+     id="defs8" />
+  <g
+     id="Page-1"
+     stroke="none"
+     stroke-width="1"
+     fill="none"
+     fill-rule="evenodd"
+     sketch:type="MSPage"
+     style="fill:#999999">
+    <g
+       id="nav@2x-"
+       sketch:type="MSArtboardGroup"
+       transform="translate(-174.000000, -292.000000)"
+       fill="#25C155"
+       opacity="0.899999976"
+       style="fill:#999999">
+      <g
+         id="items"
+         sketch:type="MSLayerGroup"
+         transform="translate(140.000000, 292.500000)"
+         style="fill:#999999">
+        <g
+           id="find-cars"
+           transform="translate(6.000000, 0.000000)"
+           sketch:type="MSShapeGroup"
+           style="fill:#999999">
+          <g
+             id="Shape-+-Shape"
+             transform="translate(28.000000, 0.000000)"
+             style="fill:#999999">
+            <path
+               d="M27.9006279,32.1078654 L25.0219917,45.6153123 L47.3867807,28.343495 L46.5010465,38.9723056 L73.0730731,17.7146844 C65.9871993,7.08587375 53.8083538,0 39.8580399,0 C17.9361179,0 0,17.9361179 0,39.8580399 C0,45.6153123 1.10716777,50.9297176 3.32150332,55.8012558 L27.9006279,32.1078654 L27.9006279,32.1078654 Z"
+               id="Shape"
+               style="fill:#999999" />
+            <path
+               d="M76.969697,25.0505051 L37.5545242,55.8297692 L37.9973913,44.979525 L15.8540359,62.2513423 L16.5183365,48.7438954 L3.23232323,55.6083356 C9.43246277,69.5586496 23.3827767,79.301726 39.7688598,79.301726 C61.9122152,79.301726 79.6268996,61.365608 79.6268996,39.4436861 C79.6268996,34.3507144 78.7411654,29.4791761 76.969697,25.0505051 L76.969697,25.0505051 Z"
+               id="path16"
+               style="fill:#999999" />
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
