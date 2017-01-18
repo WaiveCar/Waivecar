@@ -69,6 +69,7 @@ require('./controllers/active-booking-controller');
 require('./controllers/booking-in-progress-controller');
 require('./controllers/booking-prepare-controller');
 require('./controllers/bookings-controller');
+require('./controllers/quiz-controller');
 require('./controllers/car-controller');
 require('./controllers/cars-list-controller');
 require('./controllers/cars-map-controller');
