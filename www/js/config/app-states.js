@@ -111,6 +111,14 @@ module.exports = [
           auth: true
         }
       })
+      .state('quiz-index', {
+        url: '/quiz/index',
+        templateUrl: '/templates/quiz/index.html',
+        controller: 'QuizController as ctrl',
+        data: {
+          auth: true
+        }
+      })
       .state('verify-id', {
         url: '/verify-id',
         templateUrl: '/templates/verify-id/new.html',
