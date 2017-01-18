@@ -1,12 +1,12 @@
 <ion-view>
   <ion-nav-title>
-    <page-title class="dark-bg">Driver's License</page-title>
+    <page-title class="dark-bg"><span ng-if="::licenseCtrl.isWizard">Step 3 of 6:</span> Driver's License</page-title>
   </ion-nav-title>
   <ion-content padding="true" class="ion-content--center dark-bg">
     <p class="padding-bottom">
       We do a DMV check to insure you.<br>
       Please double check your info.<br>
-      If there are any mistakes, we won't be<br>
+      If there are any mistakes we won't be<br>
       able to get you in a WaiveCar today.
     </p>
     <form name="form">
@@ -57,10 +57,6 @@
   </form>
     <p class="padding-top">
       Your driver's license is required to book WaiveCar.
-      <span ng-if="::licenseCtrl.isWizard">
-        <br>
-        However you can <a ui-sref="credit-cards-new({ step: 4 })">skip this step</a> and do it later on your account settings
-      </span>
     </p>
   </ion-content>
 </ion-view>
