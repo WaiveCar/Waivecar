@@ -1,4 +1,5 @@
 /* global localStorage */
+/* global location */
 'use strict';
 var angular = require('angular');
 var _ = require('lodash');
@@ -22,12 +23,20 @@ appSettings.provider('$settings', [
   function Config() {
     var env = localStorage.env;
     var envs = {};
+    envs.local = envs.dev = _.extend({}, defaults, {
+      baseUrl: 'http://localhost:3000'
+    });
     envs.prod = _.extend({}, defaults, {
       baseUrl: 'https://api.waivecar.com'
     });
     envs.staging = _.extend({}, defaults, {
       baseUrl: 'http://staging.waivecar.com:4300'
     });
+
+    if(location.host.match(/^localhost/) && !localStorage.env) {
+      env = 'local';
+    }
+
     var config = envs[env] || envs.prod;
     console.log('[settings] using `%s` environment', env || 'prod');
 
