@@ -7,6 +7,9 @@ module.exports = angular.module('app.services').factory('PermissionService', [
   '$window',
   '$q',
   function ($window, $q) {
+    if(!$window.cordova) {
+      return true;
+    }
     var permissions = $window.cordova.plugins.permissions;
 
     function checkPermissionCallback(what) {
@@ -25,8 +28,8 @@ module.exports = angular.module('app.services').factory('PermissionService', [
         permissions[what],
         function(status) {
           if(status.hasPermission) {
-            console.warn( what + ' permission is turned on');
-            $q.resolve();
+            console.warn( what + ' permission is turned on', status);
+            return $q.resolve();
           }
           errorCallback();
         },
@@ -39,8 +42,8 @@ module.exports = angular.module('app.services').factory('PermissionService', [
           permissions[what], 
           function(status) {
             if(status.hasPermission) {
-              console.log( what + ' has permission');
-              $q.resolve();
+              console.log( what + ' has permission', status);
+              return $q.resolve();
             }
             checkPermissionCallback(what);
           }, 
