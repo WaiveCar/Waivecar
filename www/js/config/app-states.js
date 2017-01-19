@@ -111,6 +111,30 @@ module.exports = [
           auth: true
         }
       })
+      .state('quiz-video', {
+        url: '/quiz/video',
+        templateUrl: '/templates/quiz/video.html',
+        controller: 'QuizController as ctrl',
+        data: {
+          auth: true
+        }
+      })
+      .state('quiz-faq', {
+        url: '/quiz/faq',
+        templateUrl: '/templates/quiz/faq.html',
+        controller: 'QuizController as ctrl',
+        data: {
+          auth: true
+        }
+      })
+      .state('quiz-list', {
+        url: '/quiz/list',
+        templateUrl: '/templates/quiz/quiz.html',
+        controller: 'QuizController as ctrl',
+        data: {
+          auth: true
+        }
+      })
       .state('quiz-index', {
         url: '/quiz/index',
         templateUrl: '/templates/quiz/index.html',
