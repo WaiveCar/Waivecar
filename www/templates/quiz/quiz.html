@@ -1,0 +1,17 @@
+<p class='quiz desc'>
+These questions cover our most commonly asked questions. Please take a few seconds and answer them.
+</p>
+
+<div class='quiz' ng-repeat="(ix, question) in questionList">
+  <h4 class='question'><span class='num'>{{ ix + 1 }}</span>{{ question.prompt }}</h4>
+  <div class='answer' ng-repeat="(iy, answer) in question.answerList" ng-class='{"selected": guessList[ix] === iy}'>
+    <input ng-model="guessList[ix]" ng-value="iy" id="quiz-{{ix}}{{iy}}" type='radio'>
+      <label for="quiz-{{ix}}{{iy}}">
+        {{ answer[1] }} 
+      </label>
+    </input>
+    <div ng-if="guessList[ix] === iy" class='response' ng-class='["wrong","right"][answer[0]]'>{{ answer[2] }}{{ answer[0] ? '' : wrongAppend }}</div>
+  </div>
+</div>
+<button class="button button-balanced button-block" ng-class="{'disabled': !canProceed()}">
+You're done!</button>
