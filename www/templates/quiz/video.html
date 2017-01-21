@@ -7,7 +7,7 @@
   </ion-nav-buttons>
 
   <ion-content padding="true" class="ion-content--center gray-bg">
-    <iframe style='margin-bottom:1em' id='video-embed' width="100%" height="325" src="https://www.youtube.com/embed/WAPlGKNJlQw?autoplay=1&showinfo=0&rel=0" frameborder="0" allowfullscreen></iframe>
+  <iframe style='margin-bottom:1em' id='video-embed' width="{{ videoWidth }}" height="{{ videoHeight }}" src="https://www.youtube.com/embed/WAPlGKNJlQw?autoplay=1&showinfo=0&rel=0" frameborder="0" allowfullscreen></iframe>
 
     <div class='quiz-content' ng-if='!user.tested'>
       <div ng-if="!showQuiz()">
