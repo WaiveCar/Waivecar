@@ -217,6 +217,11 @@ div.group {
     font-size: 32px;
   }
 }
+
+.input.ng-invalid {
+  background-color: pink;
+}
+
 .quiz {
   text-align: left;
   margin-bottom: 32px;
