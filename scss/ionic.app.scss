@@ -208,12 +208,23 @@ div.group {
   padding: 1em 0;
 }
 
+.quiz-content {
+  text-align: left;
+
+  .time-display {
+    display: block;
+    text-align: center;
+    font-size: 32px;
+  }
+}
 .quiz {
   text-align: left;
   margin-bottom: 32px;
 
   &.desc {
-    text-align: center;
+    font-weight: bold;
+    text-align: left;
+    font-size: 20px;
     margin-bottom: 16px;
   }
   .question {
