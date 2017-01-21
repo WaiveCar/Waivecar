@@ -8,14 +8,18 @@
 
   <ion-content padding="true" class="ion-content--center gray-bg">
 
-    <iframe style='margin-bottom:1em' width="100%" height="85%" src="https://www.waivecar.com/faq"></iframe>
+    <iframe style='margin-bottom:1em' width="100%" height="60%" src="https://www.waivecar.com/faq"></iframe>
 
-    <div ng-if="!showQuiz()">
-      <h3>Thanks! Please take some time to look this over.<br/>
-      {{ timeDisplay }}
-      </h3>
+    <div class='quiz-content' ng-if='!user.tested'>
+      <div ng-if="!showQuiz()">
+        <h3>Please take some time to look this over. We'd like to make sure you read it before continuing.
+          <span class='time-display'>
+          {{ timeDisplay }}
+          </span>
+        </h3>
+      </div>
+
+      <div ng-if="showQuiz()" ng-include src="'/templates/quiz/quiz.html'"></div>
     </div>
-
-    <div ng-if="showQuiz()" ng-include src="'/templates/quiz/quiz.html'"></div>
   </ion-content>
 </ion-view>
