@@ -1,6 +1,6 @@
-<ion-view class="verify-id-new">
+<ion-view hide-back-button="{{ctrl.isWizard}}" class="verify-id-new">
   <ion-nav-title>
-    <page-title class="dark-bg title-plain">Verify Your Identity</page-title>
+  <page-title class="dark-bg title-plain"><span ng-if="ctrl.isWizard">Step 5 of 6: </span>Verify Your Identity</page-title>
   </ion-nav-title>
 
   <ion-content padding="true" class="ion-content--center dark-bg">
