@@ -136,7 +136,7 @@ module.exports = [
         }
       })
       .state('quiz-index', {
-        url: '/quiz/index',
+        url: '/quiz/index?step',
         templateUrl: '/templates/quiz/index.html',
         controller: 'QuizController as ctrl',
         data: {
@@ -144,7 +144,7 @@ module.exports = [
         }
       })
       .state('verify-id', {
-        url: '/verify-id',
+        url: '/verify-id?step',
         templateUrl: '/templates/verify-id/new.html',
         controller: 'VerifyIdController as ctrl',
         data: {
