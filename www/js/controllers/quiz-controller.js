@@ -4,15 +4,22 @@ var angular = require('angular');
 module.exports = angular.module('app.controllers').controller('QuizController', [
   '$scope',
   '$interval',
+  '$stateParams',
   '$injector',
-  function ($scope, $interval, $injector) {
+  function ($scope, $interval, $stateParams, $injector) {
 
     var $auth = $injector.get('$auth');
-    //var $window = $injector.get('$window');
+    var $window = $injector.get('$window');
 
     $scope.init = function () {
+      $scope.isWizard = $stateParams.step;
       $scope.user = $auth.me;
       $scope.timer = 180;
+      $scope.width = $window.innerWidth;
+
+      // as of the writing of this, the margins are 18px on both sides
+      $scope.videoWidth = $scope.width - 36;
+      $scope.videoHeight = (9 / 16) * $scope.videoWidth;
 
       var wait = $interval(function() {
         $scope.timer--;
@@ -88,10 +95,6 @@ module.exports = angular.module('app.controllers').controller('QuizController', 
       }
 
       return allCorrect;
-    };
-
-
-    $scope.quiz = function () {
     };
   }
 ]);
