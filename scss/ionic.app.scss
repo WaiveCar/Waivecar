@@ -238,12 +238,12 @@ div.group {
   .num {
     font-weight: normal;
     display: inline-block;
-    width: 24px;
+    width: 16px;
   }
   .answer {
     font-size: 16px;
     margin-left: 16px;
-    padding-left: 8px;
+    padding-left: 0;
     padding-top: 6px;
     label {
       font-size: 16px;
@@ -323,7 +323,7 @@ div.group {
   direction: ltr;
   width: 100%;
   text-align: left;
-  left: 200px;
+  //left: 200px;
 }
 
 .row-full-height {
