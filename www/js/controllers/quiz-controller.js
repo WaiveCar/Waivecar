@@ -4,10 +4,15 @@ var angular = require('angular');
 module.exports = angular.module('app.controllers').controller('QuizController', [
   '$scope',
   '$interval',
-  function ($scope, $interval) {
+  '$injector',
+  function ($scope, $interval, $injector) {
+
+    var $auth = $injector.get('$auth');
+    //var $window = $injector.get('$window');
 
     $scope.init = function () {
-      $scope.timer = 10;
+      $scope.user = $auth.me;
+      $scope.timer = 180;
 
       var wait = $interval(function() {
         $scope.timer--;
