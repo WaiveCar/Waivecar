@@ -1,26 +1,15 @@
-<ion-view>
+<ion-view hide-back-button="{{isWizard}}">
   <ion-nav-title>
-    <page-title class="dark-bg">Credit Card</page-title>
+    <page-title class="dark-bg"><span ng-if="isWizard">Step 4 of 6: </span>Credit Card</page-title>
   </ion-nav-title>
   <ion-content padding="true" class="ion-content--center dark-bg">
-    <p class="padding-bottom">Don't worry, the majority of rides are free!
-      <br /> However, fees could apply in some cases.
-      <br />
-      <a href="https://waivecar.com/fee-schedule">Check our Fee Guidelines</a>
-    </p>
+    <p class="padding-bottom">Don't worry, the majority of rides are free!</p>
     <form ng-submit="save(form)" name="form" id="form" novalidate>
       <div ng-include="'./templates/credit-cards/_form.html'"></div>
     </form>
     <div class="padding-top padding-bottom">
-      <button type="submit" form="form" class="button button-balanced button-block" ng-bind="isWizard ? 'Add Card and Finish' : 'Save'"></button>
+      <button type="submit" form="form" class="button button-balanced button-block">Save</button>
     </div>
-    <p class="padding-top">By adding a credit card you are agreeing with our <a href="https://waivecar.com/terms">terms of services</a> and <a href="https://waivecar.com/fee-schedule">Fee Guidelines</a>. Your credit card information is safe with us.</p>
-    <p class="padding-top">
-      Your credit card is required to book a WaiveCar.
-      <span ng-if="isWizard">
-        <br>
-        However you can <a ui-sref="cars">skip this step</a> and do it later on.
-      </span>
-    </p>
+    <p class="padding-top">By adding a credit card you are agreeing with our <a href="https://waivecar.com/terms">Terms of Service</a>. Your credit card information is safe with us.</p>
   </ion-content>
 </ion-view>
