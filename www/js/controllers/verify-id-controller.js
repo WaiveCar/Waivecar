@@ -53,7 +53,7 @@ module.exports = angular.module('app.controllers').controller('VerifyIdControlle
       })
       .then(function () {
         modal.remove();
-        if ($scope.isWizard) {
+        if (ctrl.isWizard) {
           return $state.go('quiz-index', {step: 6});
         }
         $state.go('users-edit');
@@ -108,7 +108,7 @@ module.exports = angular.module('app.controllers').controller('VerifyIdControlle
     }
 
     $scope.init = function() {
-      $scope.isWizard = $stateParams.step;
+      ctrl.isWizard = $stateParams.step;
 
       // this insane thingie is how licenses for a user are found.
       return $data.resources.users.me().$promise
