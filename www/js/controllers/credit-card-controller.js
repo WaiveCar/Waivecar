@@ -63,7 +63,7 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
               }
 
               if ($scope.isWizard) {
-                return $state.go('verify-id', {step: 5});
+                return $state.go('verify-id', { step: 5 });
               }
 
               $state.go('credit-cards');
