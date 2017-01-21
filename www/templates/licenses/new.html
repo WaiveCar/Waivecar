@@ -1,4 +1,4 @@
-<ion-view>
+<ion-view hide-back-button="{{::verify.isWizard}}" >
   <ion-nav-title>
     <page-title class="dark-bg"><span ng-if="::licenseCtrl.isWizard">Step 3 of 6:</span> Driver's License</page-title>
   </ion-nav-title>
@@ -55,8 +55,5 @@
       >Submit</button>
     </div>
   </form>
-    <p class="padding-top">
-      Your driver's license is required to book WaiveCar.
-    </p>
   </ion-content>
 </ion-view>
