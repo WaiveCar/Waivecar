@@ -31,7 +31,7 @@ module.exports = angular.module('app.controllers').controller('UserEditControlle
 
 
     $scope.init = function(next) {
-      
+
       return $data.resources.users.me().$promise
         .then(function(me) {
           $scope.user = me;
@@ -50,10 +50,12 @@ module.exports = angular.module('app.controllers').controller('UserEditControlle
 
           // With regard to the current flow we require the user to tap again
           // to actually "validate" the id
-          if( $scope.license.status === 'provided' && !$scope.license.outcome ) {
-            $scope.license.outcome = 'needsValidation';
-          } else if(    
-                 $scope.license.status === 'in-progress' 
+          if( 
+              // needs validation ... this means that the person hasn't done all the
+              // steps yet (since we run the validation after everything is done). 
+              // We communicate this as leaving it in pending.
+              ( $scope.license.status === 'provided' && !$scope.license.outcome ) 
+              || $scope.license.status === 'in-progress' 
               || $scope.license.status === 'provided' 
               || $scope.license.outcome === 'consider'
             ) {
