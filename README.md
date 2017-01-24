@@ -99,6 +99,36 @@ This may be alleviated by updating of various aspects of the cordova system... l
 
 If you **add a controller** you have to put it in some giant enumerated list in `js/app.js`. This *could* have grabbed `*.js` but it doesn't and there may even be a dependency problem to doing so given the state of this thing, so just tack your new thing on at the end.
 
+### Accessing the server
+
+Instead of directly talking to the server, this app uses a very convoluted and indirect way of doing it through an angular thing called [ngResource](https://docs.angularjs.org/api/ngResource).  At first blush it looks close to being an ORM-style way of doing things - however, there's lots of added complexity which make it absurd and comically horrendous. Generally speaking doing `ack-grep '\$resource'` will expose this.  
+
+There's a number of filtering system that are used which are tucked and hidden away in obscure files that prevent a direct mapping from working as most would assume would be the case.
+
+Also, as a security note, these filterings are being done inexplicably client side so if a hacker was able to override it, they'd probably be able to do such things as re-assign their stripe id or other terrible things.  Comically horrendous.
+
+Of course the *right* way to do this would be to unscaffold this indirect action-at-a-distance anti-patterned nonsense and do things directly ... but alas, infinite time isn't at hand.
+
+
+#### About objects
+
+Also if you think you can do something like
+
+    $scope.user = $auth.me;
+    $scope.user.save();
+
+Which looks and sounds *totally legitimate*, dream on! Instead you need to create a promise, go out to the server, grab the thing back as a resource, then you have it.  I kid you the fuck not.  Angular, making life easier since Absolutely never. So here is the right "pattern" to be able to save:
+
+    $data.resources.users.me().$promise
+      .then(function(me) {
+        $scope.user = me;
+      });
+
+"But isn't that enormously ineffecient? Aren't you unnecessarily hitting the server and delaying the page load in order to conform to some bullshit ORM system?  Oh I see, you're avoiding a race condit... no you aren't even doing that - you're simply narrowing the time window without solving the problem... a non-solution to a non-problem!" 
+
+Yes! Now you get it! Welcome to modern programming. Have fun.
+
+
 ### Debugging
 
 Since this is all a web-app with a few hooks, you can debug it over usb like any other website.  See [here](https://developers.google.com/web/tools/chrome-devtools/debug/remote-debugging/remote-debugging?hl=en).  Essentially you type `chrome://inspect` inside of a modern version of chrome and if the magic is set up right, you can look at the current running app using the chrome inspector.
