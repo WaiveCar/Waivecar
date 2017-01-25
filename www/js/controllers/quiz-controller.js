@@ -5,17 +5,25 @@ module.exports = angular.module('app.controllers').controller('QuizController', 
   '$scope',
   '$interval',
   '$stateParams',
+  '$data',
   '$injector',
-  function ($scope, $interval, $stateParams, $injector) {
+  function ($scope, $interval, $stateParams, $data, $injector) {
 
     var $auth = $injector.get('$auth');
     var $window = $injector.get('$window');
+    var $state = $injector.get('$state');
 
     $scope.init = function () {
       $scope.isWizard = $stateParams.step;
       $scope.user = $auth.me;
       $scope.timer = 180;
       $scope.width = $window.innerWidth;
+
+      $data.resources.users.me().$promise
+        .then(function(me) {
+          $scope.user = me;
+        });
+
 
       // as of the writing of this, the margins are 18px on both sides
       $scope.videoWidth = $scope.width - 36;
@@ -68,6 +76,13 @@ module.exports = angular.module('app.controllers').controller('QuizController', 
       return $scope.timer <= 0;
     };
 
+    $scope.finishTest = function() {
+      $scope.user.tested = true;
+
+      $scope.user.$save().then(function() {
+        $state.go('users-edit');
+      });
+    };
 
     // Check to see if the user got all the right answers.
     $scope.canProceed = function() {
