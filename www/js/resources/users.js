@@ -13,7 +13,7 @@ module.exports = angular.module('app').factory('Users', [
         return data;
       }
       data = angular.copy(data);
-      data = _.pick(data, ['email', 'firstName', 'lastName', 'phone', 'password']);
+      data = _.pick(data, ['email', 'firstName', 'lastName', 'phone', 'password', 'tested']);
 
       return angular.toJson(data);
 
