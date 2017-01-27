@@ -13,7 +13,9 @@ module.exports = angular.module('app.controllers').controller('UserEditControlle
   '$auth',
   '$data',
   '$message',
-  function($rootScope, $scope, $state, $auth, $data, $message) {
+  '$q',
+  '$injector',
+  function($rootScope, $scope, $state, $auth, $data, $message, $q, $injector) {
 
     $scope.save = function(form) {
       if (form.$invalid) {
@@ -31,58 +33,80 @@ module.exports = angular.module('app.controllers').controller('UserEditControlle
 
 
     $scope.init = function(next) {
+      // This is mostly stolen from http://stackoverflow.com/a/21056378/535759
+      var promiseMap = {};
 
-      return $data.resources.users.me().$promise
-        .then(function(me) {
-          $scope.user = me;
-          return $data.resources.Card.query().$promise;
-        }).then(function(card) {
-          $scope.card = card ? card[0] : false;
-        }).then(function() {
-          return $data.resources.licenses.query().$promise;
-        }).then(function(licenses) {
-          var stepsDone = false;
+      if(!$scope.user) {
+        promiseMap.user = $data.resources.users.me().$promise;
+      }
+      if(!('card' in $scope)) {
+        promiseMap.card = $data.resources.Card.query().$promise;
+      }
+      if(!('license' in $scope) || $scope.license.outcome === 'consider') {
+        promiseMap.license = $data.resources.licenses.query().$promise;
+      }
 
-          $scope.license = _(licenses)
-            .filter({userId: $scope.user.id})
+      return $q.all(promiseMap).then(function(res) {
+        var stepsDone = false;
+
+        $scope.user = $scope.user || res.user;
+        $scope.card = $scope.card || (res.card ? res.card[0] : false);
+        $scope.license = $scope.license || _(res.license)
             .sortBy('createdAt')
             .last() || {};
 
-          // With regard to the current flow we require the user to tap again
-          // to actually "validate" the id
-          if( 
-              // needs validation ... this means that the person hasn't done all the
-              // steps yet (since we run the validation after everything is done). 
-              // We communicate this as leaving it in pending.
-              ( $scope.license.status === 'provided' && !$scope.license.outcome ) 
-              || $scope.license.status === 'in-progress' 
-              || $scope.license.status === 'provided' 
-              || $scope.license.outcome === 'consider'
-            ) {
-            $scope.license.outcome = 'pending';
-          }
+        $scope.license.current = $scope.license.outcome;
 
-          // Has the user given us a selfie and license photo?
-          $scope.user.verified = ($scope.user.avatar && $scope.license.fileId);
+        // With regard to the current flow we require the user to tap again
+        // to actually "validate" the id
+        if( 
+            // needs validation ... this means that the person hasn't done all the
+            // steps yet (since we run the validation after everything is done). 
+            // We communicate this as leaving it in pending.
+            ( $scope.license.status === 'provided' && !$scope.license.outcome ) 
+            || $scope.license.status === 'in-progress' 
+            || $scope.license.status === 'provided' 
+            || $scope.license.outcome === 'consider'
+          ) {
+          $scope.license.current = 'pending';
+        }
 
-          // Have they at least filled in all the fields
-          stepsDone = (
-               $scope.user.tested 
-            && $scope.user.verified
-            && $scope.user.verifiedPhone 
-            && $scope.card
-            && $scope.license
-          );
+        // Has the user given us a selfie and license photo?
+        $scope.user.verified = ($scope.user.avatar && $scope.license.fileId);
 
-          // If the user has filled everything out and is waiting on us.
-          $scope.isPending = ($scope.license.outcome === 'pending' || (stepsDone && $scope.user.status === 'pending'));
-          $scope.hasFailed = ($scope.user.status === 'suspended' || $scope.license.outcome === 'reject');
-          $scope.canBook = (stepsDone && $scope.user.status === 'active' && $scope.license.outcome === 'clear');
+        // Have they at least filled in all the fields
+        stepsDone = (
+             $scope.user.tested 
+          && $scope.user.verified
+          && $scope.user.verifiedPhone 
+          && $scope.card
+          && $scope.license
+        );
 
-          if (next) {
-            return next();
-          }
-        }).catch($message.error);
+        // If the user has filled everything out and is waiting on us.
+        $scope.isPending = ($scope.license.current === 'pending' || $scope.user.status === 'pending');
+
+        // If they've completed everything but they are either suspended or in pending or their license
+        // is rejected. TODO: pending should become probation eventually
+        $scope.hasFailed = ($scope.user.status === 'pending' || $scope.user.status === 'suspended' || $scope.license.current === 'reject');
+        $scope.canBook = (stepsDone && $scope.user.status === 'active' && $scope.license.current === 'clear');
+
+        // If the user has finished all the steps and we haven't run the license validation, we
+        // do that now.
+        if (stepsDone && !$scope.license.outcome && $scope.license.status === 'provided') {
+          var $validateLicense = $injector.get('$validateLicense');
+          $scope.spinner = true;
+          $validateLicense.validate($scope.license).then(function() {
+            delete $scope.license;
+            $scope.spinner = false;
+            $scope.init();
+          });
+        }
+
+        if (next) {
+          return next();
+        }
+      }).catch($message.error);
     };
 
     $scope.init();
