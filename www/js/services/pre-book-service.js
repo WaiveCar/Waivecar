@@ -105,6 +105,9 @@ function PreBookService ($injector) {
     }).then(function (_modal) {
       modal = _modal;
       modal.show();
+      if(err.data.code === 'USER_READ_RULES') {
+        $state.go('quiz-index');
+      }
       return $q.reject(err);
     });
   }
