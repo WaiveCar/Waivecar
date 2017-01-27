@@ -15,6 +15,25 @@ function LicenseValidationService ($injector) {
   var maxDistance = 30; // at least one car should be less than 30 miles away
 
   function validate (license) {
+    return validateNoDistanceCheck(license);
+  }
+
+  function validateNoDistanceCheck (license) {
+    return checkLicense(license).catch(function (reason) {
+        if (reason && reason.code !== 'VALIDATE') {
+          return handleRejection(reason);
+        }
+        return $data.resources.licenses.verify({
+          id: license.id,
+          userId: license.userId
+        }).$promise
+          .then(spinner)
+          .then(success)
+          .catch(handleRejection);
+      });
+  }
+
+  function validateWithDistanceCheck (license) {
     return $data.fetch('cars')
       .then(function (instances) {
         var carInRange = _(instances).find(function (car) {
