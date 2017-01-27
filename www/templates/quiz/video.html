@@ -7,11 +7,11 @@
   </ion-nav-buttons>
 
   <ion-content padding="true" class="ion-content--center gray-bg">
-  <iframe style='margin-bottom:1em' id='video-embed' width="{{ videoWidth }}" height="{{ videoHeight }}" src="https://www.youtube.com/embed/WAPlGKNJlQw?autoplay=1&showinfo=0&rel=0" frameborder="0" allowfullscreen></iframe>
+  <iframe class='quiz' id='video-embed' width="{{ videoWidth }}" height="{{ videoHeight }}" src="https://www.youtube.com/embed/WAPlGKNJlQw?autoplay=1&showinfo=0&rel=0" frameborder="0" allowfullscreen></iframe>
 
     <div class='quiz-content' ng-if='!user.tested'>
       <div ng-if="!showQuiz()">
-        <h3>Thanks! Please enjoy the video. We'd like to make sure you watch it before continuing.
+        <h3>Thanks! When you're ready, please tap the play icon to start the video. We'd like to make sure you watch it before continuing.
         <span class='time-display'>
         {{ timeDisplay }}
         </span>
