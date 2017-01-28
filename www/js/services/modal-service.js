@@ -4,6 +4,7 @@ require('ionic-angular');
 
 function ModalFactory ($rootScope, $ionicModal, $sce) {
   return function $modalFactory (templateName, initialData) {
+    initialData = initialData || {};
     var template = '/templates/modals/' + templateName + '.html';
     var scope = $rootScope.$new();
     if (initialData.icon) {
@@ -11,7 +12,7 @@ function ModalFactory ($rootScope, $ionicModal, $sce) {
         initialData.icon = '/img/' + initialData.icon + '.svg';
       }
     }
-    angular.extend(scope, initialData || {});
+    angular.extend(scope, initialData);
     if (scope.message) {
       scope.message = $sce.trustAsHtml(scope.message);
     }
@@ -21,7 +22,12 @@ function ModalFactory ($rootScope, $ionicModal, $sce) {
       animation: initialData.animation || 'fade-in-up'
     })
     .then(function (modal) {
-      scope.close = modal.remove.bind(modal);
+      scope.close = function() {
+        if (initialData.close) {
+          initialData.close();
+        }
+        modal.remove.bind(modal);
+      };
       return modal;
     });
   };
