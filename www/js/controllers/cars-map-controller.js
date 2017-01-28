@@ -70,9 +70,12 @@ function CarsMapController ($rootScope, $scope, $state, $injector, $data, cars, 
   };
 
   this.carsInRange = function() {
-    if ($rootScope.currentLocation &&
-      $rootScope.currentLocation.accuracy &&
-      $rootScope.currentLocation.accuracy >= minAccuracyThreshold) {
+    if (
+      !$rootScope.currentLocation || (
+        $rootScope.currentLocation &&
+        $rootScope.currentLocation.accuracy &&
+        $rootScope.currentLocation.accuracy >= minAccuracyThreshold)
+      ) {
         return;
     }
 
