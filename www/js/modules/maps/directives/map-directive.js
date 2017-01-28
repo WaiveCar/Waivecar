@@ -6,7 +6,11 @@ var ionic = require('ionic');
 require('../../../providers/maps-loader-provider');
 var _ = require('lodash');
 
-function directive ($rootScope, MapsLoader, RouteService, $q, $timeout, $window) {
+function directive ($rootScope, MapsLoader, RouteService, $q, $timeout, $window, $modal) {
+  var 
+    diagnostic = $window.cordova.plugins.diagnostic || false,
+    modal;
+
   function link ($scope, $elem, attrs, ctrl) {
     var mapOptions = {
       apiKey: ctrl.leaflet.skobbler.apiKey,
@@ -61,39 +65,53 @@ function directive ($rootScope, MapsLoader, RouteService, $q, $timeout, $window)
     }
   }
 
+  function askUserToEnableLocation() {
+    $modal('simple-modal', {
+      title: 'Please Enable Location Settings',
+      message: 'You need to enable location settings to use WaiveCar.',
+      close: function () {
+        diagnostic.switchToSettings();
+      }
+    }).then(function (_modal) {
+      modal = _modal;
+      modal.show();
+    });
+  }
+
   function watchLocation ($scope) {
     // don't use $cordovaGeolocation. On the first error (like location unavailable),
     // it will reject the promise and stop getting updates
+    console.log('>> in function << ');
     var watch = navigator.geolocation.watchPosition(function onPosition (position) {
-      if ($scope.error != null) {
-        $scope.error = null;
-      }
-      $timeout(function () {
-        $rootScope.currentLocation = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          accuracy: position.coords.accuracy
-        };
-      });
+      console.log(new Date(), position);
+      $rootScope.currentLocation = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+        accuracy: position.coords.accuracy
+      };
     }, function onPositionErr (err) {
-      $timeout(function () {
-        $window.cordova.plugins.locationAccuracy.request(function(){}, function(){});
-        $window.cordova.plugins.diagnostic.switchToSettings();
-        switch (err.code) {
-          case 1: // PositionError.PERMISSION_DENIED
-            $scope.error = 'Please allow this app to get the phone\'s location on settings';
-            break;
-          case 2: // PositionError.POSITION_UNAVAILABLE
-            $scope.error = 'The current position is unavailable';
-            break;
-          case 3: // PositionError.TIMEOUT
-            $scope.error = 'Timed out getting the phone\'s location';
-            break;
-          default:
-            $scope.error = err.message;
-            console.error(err);
-        }
-      });
+      console.log(new Date(), err);
+      if(diagnostic) {
+        diagnostic.isLocationAuthorized(function(res) {
+          if(res) {
+            return;
+          }
+          diagnostic.isLocationEnabled(function(res1) {
+            if(res1) {
+              return askUserToEnableLocation();
+            }
+            $window.cordova.plugins.locationAccuracy.canRequest(function(canRequest) {
+              if(canRequest) {
+                $window.cordova.plugins.locationAccuracy.request(function(){
+                  console.log('ios dialog');
+                }, function() {
+                  return false;
+                });
+              }
+            });
+          });
+        });
+      }
     }, {
       maximumAge: 3000,
       timeout: 10000,
@@ -380,5 +398,6 @@ module.exports = angular.module('Maps').directive('skobblerMap', [
   '$q',
   '$timeout',
   '$window',
+  '$modal',
   directive
 ]);
