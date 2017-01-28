@@ -35,6 +35,7 @@ module.exports = angular.module('app.controllers').controller('UserEditControlle
     $scope.init = function(next) {
       // This is mostly stolen from http://stackoverflow.com/a/21056378/535759
       var promiseMap = {};
+      $scope.loaded = false;
 
       if(!$scope.user) {
         promiseMap.user = $data.resources.users.me().$promise;
@@ -102,6 +103,9 @@ module.exports = angular.module('app.controllers').controller('UserEditControlle
             $scope.init();
           });
         }
+
+        // I want to avoid the flashing default state so I toggle this 
+        $scope.loaded = true;
 
         if (next) {
           return next();

@@ -6,36 +6,41 @@
     <button menu-toggle="right" class="button button-icon icon ion-navicon"></button>
   </ion-nav-buttons>
   <ion-content padding="true" class="ion-content--center gray-bg">
-    <h3 ng-if="canBook">You can rent WaiveCars!</h3>
-    <h3 ng-if="!canBook && !hasFailed">You can not rent WaiveCars yet. <span ng-if='isPending'>We are processing your application.</span><span ng-if='!isPending'>Tap to complete the highlighted steps below.</span></h3>
-    <h3 ng-if="hasFailed">You <b>can not currently</b> rent WaiveCars. Please <a href="tel:+18559248355">contact us</a> for more information.</h3>
+    <div ng-if="!loaded">
+      <h3>Loading...</h3>
+    </div>
+    <div ng-if="loaded">
+      <h3 ng-if="canBook">You can rent WaiveCars!</h3>
+      <h3 ng-if="!canBook && !hasFailed">You can not rent WaiveCars yet. <span ng-if='isPending'>We are processing your application.</span><span ng-if='!isPending'>Tap to complete the highlighted steps below.</span></h3>
+      <h3 ng-if="hasFailed">You <b>can not currently</b> rent WaiveCars. Please <a href="tel:+18559248355">contact us</a> for more information.</h3>
 
-    <div class="padding-top padding-bottom btn-group">
-      <button class="button button-balanced button-block" ui-sref="users-edit-general" ng-if="!user.phone"><b>1</b>Enter your General Information</button>
-      <button class="button button-done button-block" ui-sref="users-edit-general" ng-if="user.phone">General Information OK</button>
+      <div class="padding-top padding-bottom btn-group">
+        <button class="button button-balanced button-block" ui-sref="users-edit-general" ng-if="!user.phone"><b>1</b>Enter your General Information</button>
+        <button class="button button-done button-block" ui-sref="users-edit-general" ng-if="user.phone">General Information OK</button>
 
-      <button class="button button-balanced button-block" ui-sref="auth-account-verify" ng-if="!user.verifiedPhone"><b>2</b>Enter Verification Code</button>
-      <button class="button button-done button-block" ui-sref="auth-account-verify" ng-if="user.verifiedPhone">Phone Verified</button>
+        <button class="button button-balanced button-block" ui-sref="auth-account-verify" ng-if="!user.verifiedPhone"><b>2</b>Enter Verification Code</button>
+        <button class="button button-done button-block" ui-sref="auth-account-verify" ng-if="user.verifiedPhone">Phone Verified</button>
 
-      <button class="button button-balanced button-block" ui-sref="licenses-new" ng-if="!license.current"><b>3</b>Add Driver's License</button>
-      <button class="button button-fail button-block" ui-sref="licenses-edit({ licenseId: license.id })"     ng-if="license.current === 'reject'">License failed validation</button>
-      <button class="button button-pending button-block" ui-sref="licenses-edit({ licenseId: license.id })"  ng-if="license.current === 'pending'"><img style='margin-right:0.5em' ng-if='spinner' src='img/ajax-loader.gif'>Processing License</button>
-      <button class="button button-done button-block" ui-sref="licenses-edit({ licenseId: license.id })"     ng-if="license.current === 'clear'">License Cleared</button>
-      <p ng-if='license.outcome === "consider"' class='license-copy'>
-      We are reviewing your license.  This can take up to a business day.
-      Feel free to contact us if you have questions.
-      </p>
+        <button class="button button-balanced button-block" ui-sref="licenses-new" ng-if="!license.current"><b>3</b>Add Driver's License</button>
+        <button class="button button-fail button-block" ui-sref="licenses-edit({ licenseId: license.id })"     ng-if="license.current === 'reject'">License failed validation</button>
+        <button class="button button-pending button-block" ui-sref="licenses-edit({ licenseId: license.id })"  ng-if="license.current === 'pending'"><img style='margin-right:0.5em' ng-if='spinner' src='img/ajax-loader.gif'>Processing License</button>
+        <button class="button button-done button-block" ui-sref="licenses-edit({ licenseId: license.id })"     ng-if="license.current === 'clear'">License Cleared</button>
+        <p ng-if='license.outcome === "consider"' class='license-copy'>
+        We are reviewing your license.  This can take up to a business day.
+        Feel free to contact us if you have questions.
+        </p>
 
-      <button class="button button-balanced button-block" ui-sref="credit-cards" ng-if="!card"><b>4</b>Add Payment Method</button>
-      <button class="button button-done button-block" ui-sref="credit-cards"     ng-if="card">Payment Method OK</button>
+        <button class="button button-balanced button-block" ui-sref="credit-cards" ng-if="!card"><b>4</b>Add Payment Method</button>
+        <button class="button button-done button-block" ui-sref="credit-cards"     ng-if="card">Payment Method OK</button>
 
-      <button class="button button-balanced button-block" ui-sref="verify-id" ng-if="!user.verified"><b>5</b>Verify Your Identity</button>
-      <button class="button button-done button-block" ui-sref="verify-id" ng-if="user.verified">Identity Verified</button>
+        <button class="button button-balanced button-block" ui-sref="verify-id" ng-if="!user.verified"><b>5</b>Verify Your Identity</button>
+        <button class="button button-done button-block" ui-sref="verify-id" ng-if="user.verified">Identity Verified</button>
 
-      <button class="button button-balanced button-block" ui-sref="quiz-index" ng-if="!user.tested"><b>6</b>Read the Rules of the Road</button>
-      <button class="button button-done button-block" ui-sref="quiz-index" ng-if="user.tested">Rules Read</button>
+        <button class="button button-balanced button-block" ui-sref="quiz-index" ng-if="!user.tested"><b>6</b>Read the Rules of the Road</button>
+        <button class="button button-done button-block" ui-sref="quiz-index" ng-if="user.tested">Rules Read</button>
 
-      <button class="button button-positive button-block" ng-class="{disabled: !canBook}" ui-sref="cars">Find available WaiveCars</button>
+        <button class="button button-positive button-block" ng-class="{disabled: !canBook}" ui-sref="cars">Find available WaiveCars</button>
+      </div>
     </div>
   </ion-content>
 </ion-view>
