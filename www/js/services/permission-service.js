@@ -38,6 +38,15 @@ module.exports = angular.module('app.services').factory('PermissionService', [
 
     return {
       getPermissionsIfNeeded: function (what) {
+        // This is mostly for android
+        if(!permissions) {
+          permissions = $window.cordova.plugins.permissions;
+        }
+        // ios can just skip it.
+        if(!permissions) {
+          return $q.resolve();
+        }
+
         permissions.hasPermission(
           permissions[what], 
           function(status) {
