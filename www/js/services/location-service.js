@@ -10,10 +10,51 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
     };
   };
 
+  var $this = this;
   var $perm = $injector.get('PermissionService');
+  var $modal = $injector.get('$modal'), modal;
+  var diagnostic = $window.cordova.plugins.diagnostic || false;
 
   this.getLocation = function getLocation () {
     return $q.resolve($rootScope.currentLocation);
+  };
+
+  function askUserToEnableLocation() {
+    $modal('simple-modal', {
+      title: 'Please Enable Location Settings',
+      message: 'You need to enable location settings to use WaiveCar.',
+      close: function () {
+        diagnostic.switchToSettings();
+      }
+    }).then(function (_modal) {
+      modal = _modal;
+      modal.show();
+    });
+  }
+
+  this.enableLocation = function() {
+    if(!diagnostic) {
+      return;
+    }
+    diagnostic.isLocationAuthorized(function(res) {
+      if(res) {
+        return;
+      }
+      diagnostic.isLocationEnabled(function(res1) {
+        if(res1) {
+          return askUserToEnableLocation();
+        }
+        $window.cordova.plugins.locationAccuracy.canRequest(function(canRequest) {
+          if(canRequest) {
+            $window.cordova.plugins.locationAccuracy.request(function(){
+              console.log('ios dialog');
+            }, function() {
+              return false;
+            });
+          }
+        });
+      });
+    });
   };
 
   this.getCurrentLocation = function getLocation () {
@@ -40,7 +81,7 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
         return $q.reject();
       }
 
-      $perm.getPermissionsIfNeeded('ACCESS_FINE_LOCATION', $q);
+      $this.enableLocation();
 
       /*$message.error('We were not able to find your location, please reconnect.');
       $q.reject(err);*/

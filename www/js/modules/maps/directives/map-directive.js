@@ -6,10 +6,7 @@ var ionic = require('ionic');
 require('../../../providers/maps-loader-provider');
 var _ = require('lodash');
 
-function directive ($rootScope, MapsLoader, RouteService, $q, $timeout, $window, $modal) {
-  var 
-    diagnostic = $window.cordova.plugins.diagnostic || false,
-    modal;
+function directive ($rootScope, MapsLoader, RouteService, $q, $timeout, $window, LocationService) {
 
   function link ($scope, $elem, attrs, ctrl) {
     var mapOptions = {
@@ -65,53 +62,19 @@ function directive ($rootScope, MapsLoader, RouteService, $q, $timeout, $window,
     }
   }
 
-  function askUserToEnableLocation() {
-    $modal('simple-modal', {
-      title: 'Please Enable Location Settings',
-      message: 'You need to enable location settings to use WaiveCar.',
-      close: function () {
-        diagnostic.switchToSettings();
-      }
-    }).then(function (_modal) {
-      modal = _modal;
-      modal.show();
-    });
-  }
-
   function watchLocation ($scope) {
     // don't use $cordovaGeolocation. On the first error (like location unavailable),
     // it will reject the promise and stop getting updates
-    console.log('>> in function << ');
     var watch = navigator.geolocation.watchPosition(function onPosition (position) {
-      console.log(new Date(), position);
-      $rootScope.currentLocation = {
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-        accuracy: position.coords.accuracy
-      };
+      $timeout(function(){
+        $rootScope.currentLocation = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          accuracy: position.coords.accuracy
+        };
+      });
     }, function onPositionErr (err) {
-      console.log(new Date(), err);
-      if(diagnostic) {
-        diagnostic.isLocationAuthorized(function(res) {
-          if(res) {
-            return;
-          }
-          diagnostic.isLocationEnabled(function(res1) {
-            if(res1) {
-              return askUserToEnableLocation();
-            }
-            $window.cordova.plugins.locationAccuracy.canRequest(function(canRequest) {
-              if(canRequest) {
-                $window.cordova.plugins.locationAccuracy.request(function(){
-                  console.log('ios dialog');
-                }, function() {
-                  return false;
-                });
-              }
-            });
-          });
-        });
-      }
+      LocationService.enableLocation();
     }, {
       maximumAge: 3000,
       timeout: 10000,
@@ -398,6 +361,6 @@ module.exports = angular.module('Maps').directive('skobblerMap', [
   '$q',
   '$timeout',
   '$window',
-  '$modal',
+  'LocationService',
   directive
 ]);
