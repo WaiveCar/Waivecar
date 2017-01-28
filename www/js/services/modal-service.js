@@ -26,6 +26,7 @@ function ModalFactory ($rootScope, $ionicModal, $sce) {
         if (initialData.close) {
           initialData.close();
         }
+        modal.remove();
         modal.remove.bind(modal);
       };
       return modal;
