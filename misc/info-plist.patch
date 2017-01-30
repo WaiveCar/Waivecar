@@ -4,6 +4,8 @@
  	<string></string>
  	<key>NSMainNibFile~ipad</key>
  	<string></string>
++ <key>ITSAppUsesNonExemptEncryption</key>
++ <false/>
 +	<key>NSPhotoLibraryUsageDescription</key>
 +	<string>Photo Library Access</string>
  	<key>UIBackgroundModes</key>
