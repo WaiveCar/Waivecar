@@ -84,6 +84,7 @@ module.exports = {
    */
   *create(payload, _user) {
     let booking = yield Booking.findById(payload.bookingId);
+    let car = yield Car.findById(booking.carId);
 
     if (!booking || (booking.userId !== _user.id && !_user.hasAccess('admin'))) {
       throw error.parse({
@@ -99,12 +100,13 @@ module.exports = {
     });
     yield report.save();
 
+    let txt = `${ _user.name() } has reported a problem with ${ car.license } on booking ${ booking.id }`;
     let slackPayload = {
-      text        : `${ _user.name() } has reported a problem with booking: ${ booking.id }`,
+      text        : txt,
       channel     : '#rental-alerts',
       attachments : [
         {
-          fallback : `${ _user.name() } has reported a problem with booking: ${ booking.id }`,
+          fallback : txt,
           color    : '#D00000',
           fields   : [
             {
