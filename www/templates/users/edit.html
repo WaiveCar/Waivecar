@@ -16,7 +16,7 @@
 
       <div class="padding-top padding-bottom btn-group">
         <button class="button button-balanced button-block" ui-sref="users-edit-general" ng-if="!user.phone"><b>1</b>Enter your General Information</button>
-        <button class="button button-done button-block" ui-sref="users-edit-general" ng-if="user.phone">General Information OK</button>
+        <button class="button button-done button-block" ui-sref="users-edit-general" ng-if="user.phone">General Info</button>
 
         <button class="button button-balanced button-block" ui-sref="auth-account-verify" ng-if="!user.verifiedPhone"><b>2</b>Enter Verification Code</button>
         <button class="button button-done button-block" ui-sref="auth-account-verify" ng-if="user.verifiedPhone">Phone Verified</button>
@@ -36,7 +36,7 @@
         <button class="button button-balanced button-block" ui-sref="verify-id" ng-if="!user.verified"><b>5</b>Verify Your Identity</button>
         <button class="button button-done button-block" ui-sref="verify-id" ng-if="user.verified">Identity Verified</button>
 
-        <button class="button button-balanced button-block" ui-sref="quiz-index" ng-if="!user.tested"><b>6</b>Read the Rules of the Road</button>
+        <button class="button button-balanced button-block" ui-sref="quiz-index" ng-if="!user.tested"><b>6</b>Rules of the Road</button>
         <button class="button button-done button-block" ui-sref="quiz-index" ng-if="user.tested">Rules Read</button>
 
         <button class="button button-positive button-block" ng-class="{disabled: !canBook}" ui-sref="cars">Find available WaiveCars</button>
