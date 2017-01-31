@@ -76,7 +76,7 @@ function DashboardController ($scope, $rootScope, $injector) {
       // This means that a minute is actually 59.375 seconds
       //
       if (isFreeTime) {
-        left *= 118.75/120;
+        left *= 118.75 / 120;
       } else {
         //
         // If it's pay-time, then we go the other way, slightly speeding things up. This favors the
@@ -85,7 +85,7 @@ function DashboardController ($scope, $rootScope, $injector) {
         // from contesting a claim that the app said one thing and we charged them more.  Hopefully,
         // in these edge cases we will always "err" in the users' favor.
         //
-        left *= 120/118.75;
+        left *= 120 / 118.75;
       }
       var prefix = isFreeTime ? 'Free: ' : 'Extra: ';
       left = Math.abs(left);
