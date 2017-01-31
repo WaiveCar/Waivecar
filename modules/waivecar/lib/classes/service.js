@@ -153,6 +153,13 @@ module.exports = class Service {
       }, 400);
     }
 
+    if (!user.tested) {
+      throw error.parse({
+        code    : `USER_READ_RULES`,
+        message : `Please read or watch "the rules of the road" in the account section before booking.`
+      }, 400);
+    }
+
     if (!user.verifiedPhone) { 
       missing.push('phone'); 
     }
