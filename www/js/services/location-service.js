@@ -33,9 +33,6 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
   }
 
   this.enableLocation = function() {
-    if(!diagnostic) {
-      return;
-    }
     diagnostic.isLocationAuthorized(function(res) {
       if(res) {
         return;
@@ -76,6 +73,8 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
       };
     })
     .catch(function (err) {
+      $perm.getPermissionsIfNeeded('ACCESS_FINE_LOCATION');
+      $window.console.log(err);
       // ignore timeouts
       if (err.constructor.name === 'PositionError' && err.code === 3) {
         return $q.reject();
