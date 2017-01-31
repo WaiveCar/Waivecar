@@ -85,7 +85,7 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
      */
     status : {
       type         : Sequelize.ENUM('pending', 'active', 'suspended'),
-      defaultValue : 'pending'
+      defaultValue : 'active'
     },
 
     /**
