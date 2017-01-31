@@ -68,6 +68,25 @@ function DashboardController ($scope, $rootScope, $injector) {
       // thanks to stupid moment for being stupid...
       var left = -moment().diff(endTime);
       var isFreeTime = (Math.abs(left) === left);
+      //
+      // See https://github.com/clevertech/Waivecar/issues/605 ... we intentionally drift the time
+      // in the users' favor so they don't bicker over a few seconds or if their phone has clock drift
+      // they don't say "well my app said so and so!".  As their time expires, the number 'left' decreases.  
+      // So we make this decrease a small amount faster so that 2 hours will elapse in 1hr 58:45 ... 
+      // This means that a minute is actually 59.375 seconds
+      //
+      if (isFreeTime) {
+        left *= 118.75/120;
+      } else {
+        //
+        // If it's pay-time, then we go the other way, slightly speeding things up. This favors the
+        // user again because the app will report that they've driven for say, 20 minutes, when the
+        // server and actual clock time will be 13 seconds less - so this again helps prevent them
+        // from contesting a claim that the app said one thing and we charged them more.  Hopefully,
+        // in these edge cases we will always "err" in the users' favor.
+        //
+        left *= 120/118.75;
+      }
       var prefix = isFreeTime ? 'Free: ' : 'Extra: ';
       left = Math.abs(left);
       this.timeLeft = prefix + moment.utc(left).format('H:mm:ss');
