@@ -35,10 +35,14 @@ module.exports = {
    * @param {Object} user
    * @param {String} message
    */
-  *sendTextMessage(user, message) {
-    if(Number.isInteger(user)) {
-      user = yield User.findById(user);
+  *sendTextMessage(query, message) {
+    let user = false;
+    if(Number.isInteger(query)) {
+      user = yield User.findById(query);
+    } else {
+      user = query;
     }
+
     log_message('sms', {phone: user.phone, text: message});
 
     if (user.phone && process.env.NODE_ENV === 'production') {
