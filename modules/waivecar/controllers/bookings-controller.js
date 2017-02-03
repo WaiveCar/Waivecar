@@ -5,30 +5,34 @@ let error   = Bento.Error;
 
 Bento.Register.Controller('BookingsController', function(controller) {
 
-  function checkVersion(obj){
-    return true;
+  function buttonhack(link) {
+    return `<a href="${link}" class="button-balanced button button-block" style="margin-bottom:-57px;z-index: 1000;">Upgrade Now</a>`;
+  }
 
+  function checkVersion(obj){
     var payload = obj.payload;
     var request = obj.request;
+    let iPhone = request.header['user-agent'].match(/iPhone/);
 
-    let minApp = 797; 
-    let minMarketLink = 777; 
+    // app versions between android and iphone are dramatically different for some reason.
+    let minApp = iPhone ? 77 : 797; 
+    let minMarketLink = 797; 
     let version = parseInt(payload.version, 10) || 0;
+    var copy;
 
     if(payload.source !== 'web' && version < minApp) {
-      var 
-        iPhone = request.header['user-agent'].match(/iPhone/), 
-        link = "itms-apps://itunes.apple.com/app/id1051144802";
 
-      if(!iPhone) {
-        link = ( version < minMarketLink) ? 
-          'https://play.google.com/store/apps/details?id=com.waivecar.app' :
-          'market://details?id=com.waivecar.app';
-      } 
+      if(iPhone) {
+        copy = buttonhack("itms-apps://itunes.apple.com/app/id1051144802");
+      } else if ( version < minMarketLink) {
+        copy = 'Please upgrade WaiveCar at the Google Play Store.'; 
+      } else {
+        copy = buttonhack("market://details?id=com.waivecar.app");
+      }
 
       throw error.parse({
         code    : `BOOKING_OLD_VERSION`,
-        message : `You'll need to upgrade the WaiveCar App before booking. <a href="${ link }" target="_top">Please upgrade here</a>. Thanks.`
+        message : `You'll need to upgrade the WaiveCar App before booking. ${ copy }`
       }, 400);
     }
   }
