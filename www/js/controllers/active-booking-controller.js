@@ -64,9 +64,13 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
 
   var timer = $interval(function() {
     if (expired) {
-      var time = moment(expired).toNow(true);
-      this.timeLeft = time;
-      return this.timeLeft;
+      // if we are in the future then the answer is 0.
+      if (moment().diff(expired) > 0) {
+        // to do, new expired flow
+      } else {
+        this.timeLeft = moment(expired).toNow(true);
+        return this.timeLeft;
+      }
     }
     return null;
   }.bind(this), 1000);
