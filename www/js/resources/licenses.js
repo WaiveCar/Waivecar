@@ -33,7 +33,8 @@ module.exports = angular.module('app').factory('Licenses', [
       }
       data = angular.fromJson(data);
       if (data.birthDate) {
-        data.birthDate = moment(data.birthDate).toDate();
+        // We need to strip the UTC code in order to prevent an off-by-1 error
+        data.birthDate = moment(data.birthDate.replace(/Z$/, '')).toDate();
       }
       return data;
 
