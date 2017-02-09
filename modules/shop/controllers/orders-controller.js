@@ -4,10 +4,11 @@ let service = require('../lib/order-service');
 
 Bento.Register.Controller('Shop/OrdersController', (controller) => {
 
-  /**
-   * Creates a new order.
-   * @return {Object}
-   */
+  controller.quickcharge = function *() {
+    return yield service.quickCharge(this.payload, this.auth.user);
+  };
+
+  // Creates a new order.
   controller.create = function *() {
     return yield service.create(this.payload, this.auth.user);
   };

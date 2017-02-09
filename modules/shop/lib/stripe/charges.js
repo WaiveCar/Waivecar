@@ -6,12 +6,11 @@ module.exports = class StripeCharges {
     this.stripe = service;
   }
 
-  /**
-   * Charges the provided account.
-   * @param  {Object} charge
-   * @param  {Object} user
-   * @return {Object}
-   */
+  // Charges the provided account.
+  //
+  // This absurd level of indirection is called
+  // from modules/shop/lib/order-service.js @ charge
+  //
   *create(charge, user) {
     if (user.stripeId) {
       charge.customer = user.stripeId;
@@ -26,12 +25,8 @@ module.exports = class StripeCharges {
     });
   }
 
-  /**
-   * Captures a payment.
-   * @param  {String} id     The chargeId of the order.
-   * @param  {Object} charge The charge object sent to stripe.
-   * @return {Object}
-   */
+  // @param  {String} id     The chargeId of the order.
+  // @param  {Object} charge The charge object sent to stripe.
   *capture(id, charge) {
     return yield new Promise((resolve, reject) => {
       this.stripe.charges.capture(id, charge, (err, res) => {
@@ -43,12 +38,6 @@ module.exports = class StripeCharges {
     });
   }
 
-  /**
-   * Refunds a payment.
-   * @param  {String} id     The chargeId of the order.
-   * @param  {Object} charge
-   * @return {Object}
-   */
   *refund(id, charge) {
     return yield new Promise((resolve, reject) => {
       this.stripe.refunds.create({
@@ -62,11 +51,6 @@ module.exports = class StripeCharges {
     });
   }
 
-  /**
-   * Returns payment data.
-   * @param  {String} id The chargeId of the order.
-   * @return {Object}
-   */
   *show(id) {
     return new Promise((resolve, reject) => {
       this.stripe.charges.retrieve(id, (err, res) => {

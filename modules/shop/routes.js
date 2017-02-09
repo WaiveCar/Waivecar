@@ -21,6 +21,11 @@ Route.del('/shop/customers/:id', [ 'isAuthenticated', 'Shop/CustomersController@
 // A series of routes for creating new payment cards with the assigned
 // payment service.
 
+Route.post('/shop/quickcharge', {
+  policy : [ 'isAuthenticated', 'isAdmin' ],
+  uses   : 'Shop/OrdersController@quickcharge',
+});
+
 Route.post('/shop/cards', {
   policy : 'isAuthenticated',
   uses   : 'Shop/CardsController@create',
