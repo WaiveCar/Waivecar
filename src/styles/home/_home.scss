@@ -307,6 +307,23 @@
   }
 }
 
+.credit {
+  font-size: 1.25rem;
+  .notice {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .positive {
+    color: green;
+    font-weight: bold;
+  }
+  .negative {
+    color: red;
+    font-weight: bold;
+  }
+}
+
 @media (min-width: 48em) {
   .text-left-md {
     text-align : left;
