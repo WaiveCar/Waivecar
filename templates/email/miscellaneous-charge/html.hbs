@@ -4,13 +4,13 @@
 <div class="main">
   <h3>Hello, {{ name }}</h3>
   <p>
-    A charge was added to your recent booking with WaiveCar.
+    A {{ charge.total > 0 ? 'charge' : '<b>credit</b>' }} was added to your account with WaiveCar.
   </p>
   <p>
     {{ charge.quantity }} x {{ charge.description }}
   </p>
   <p>
-    <strong>${{ charge.total }}</strong>
+    <strong>${{ Math.abs(charge.total) }}</strong>
   </p>
   <p>
     Visit <a href="https://www.waivecar.com">https://www.waivecar.com</a> to access your account.

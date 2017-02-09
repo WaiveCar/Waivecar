@@ -26,14 +26,51 @@ let apiConfig   = Bento.config.api;
 
 module.exports = class OrderService extends Service {
 
-  // ### CREATE
+  // Apparently you can't just charge a user without filling up a fucking
+  // "cart" first. That's asinine bullshit and absolutely ridiculous. So
+  // we are subverting that by copying the code below (see *create) and
+  // removing all the overlapping dependency anti-patterned nonsense.
+  // I mean god damn...
+  static *quickCharge(data, _user) {
+    let user = yield this.getUser(data.userId);
+    data.currency = data.currency || 'usd';
+    this.verifyCurrency(data.currency);
 
-  /**
-   * Creates a new order.
-   * @param  {Object} payload
-   * @param  {Object} [_user]
-   * @return {Object}
-   */
+    let order = new Order({
+      createdBy   : _user.id,
+      userId      : data.userId,
+      source      : data.source,
+      description : data.description,
+      metadata    : data.metadata,
+      currency    : data.currency,
+      amount      : data.amount
+    });
+    yield order.save();
+
+    try {
+      yield this.charge(order, user);
+
+      log.info(`Notifying user of miscellaneous charge: ${ user.id }`);
+      // looking over the template at templates/email/miscellaneous-charge/html.hbs and
+      // modules/shop/lib/order-service.js it looks like we need to pass an object with
+      // quantity, price, and description defined.
+      this.notifyOfCharge({
+        quantity: 1,
+        price: data.amount,
+        description: data.description
+      }, user);
+
+    } catch (err) {
+      log.warn(`Failed to charge user: ${ user.id }`, err);
+      throw error.parse({
+        code    : `SHOP_PAYMENT_FAILED`,
+        message : `The user's card was declined.`
+      }, 400);
+    }
+
+    return {order: order, user: user};
+  }
+
   static *create(payload, _user) {
     let data  = yield hooks.call('shop:store:order:before', payload, _user);
     let user  = yield this.getUser(data.userId);
@@ -199,7 +236,7 @@ module.exports = class OrderService extends Service {
 
     // ### Charge
 
-    let charge = yield this.charge(order, _user, false);
+    let charge = yield this.charge(order, _user, {nocapture: true});
     yield this.cancel(order, _user, charge);
 
     return order;
@@ -338,28 +375,106 @@ module.exports = class OrderService extends Service {
     });
   }
 
-  /**
-   * Attempts to submit an order to the configured payment service.
-   * @param  {Object}  order
-   * @param  {Object}  user
-   * @param  {Boolean} capture
-   * @return {Object} charge
-   */
-  static *charge(order, user, capture) {
-    let service = this.getService(config.service, 'charges');
-    let charge  = yield service.create({
-      source      : order.source,
-      description : order.description,
-      metadata    : order.metadata ? JSON.parse(order.metadata) : {},
-      currency    : order.currency,
-      amount      : order.amount,
-      capture     : capture === false ? false : true
-    }, user);
-    yield order.update({
-      service  : config.service,
-      chargeId : charge.id,
-      status   : capture === false ? 'authorized' : 'paid'
-    });
+  // order is the core object here. It effectively gets passed
+  // through to stripe as-is in shop/lib/stripe/charges.js
+  static *charge(order, user, opts) {
+    // See #650: Api: Pass through the credit column before charging a user 
+    //
+    // We do two things here at once:
+    //
+    //  If a user has an existing debt, expressed as a negative credit, we
+    //  tack that on to what we are attempting to charge.
+    //
+    //  If a user has an existing credit, expressed as a positive credit, we
+    //  subtract that from what we are attempting to charge.
+    //
+    // There's an important nuance here in that we need to settle the books
+    // after things are done - I mean this is basic bookkeeping but yeah,
+    // might be new to you. :-)
+    //
+
+    opts = opts || {};
+
+    // Normally we try to capture the payment (as in, we actually charge
+    // the user). We can do this two-step thing where we just see if the
+    // CC is valid by specifying an opt
+    let capture = true;
+    let credit = user.credit;
+    let charge = {};
+
+    if(opts.nocapture) {
+      capture = false;
+      // We don't try to balance the books
+      // when we aren't capturing.
+      credit = 0;
+    }
+
+    // If the user doesn't have enough credit to cover the entire costs, we
+    // proceed to attempt to charge things.
+    //
+    // We also use this routine to credit the users account so the bottom
+    // condition has to be in there.
+    if (order.amount >= 0 && credit < order.amount) {
+      try {
+        let service = this.getService(config.service, 'charges');
+        charge  = yield service.create({
+          source      : order.source,
+          description : order.description,
+          metadata    : order.metadata ? JSON.parse(order.metadata) : {},
+          currency    : order.currency,
+
+          // Since debt is negative credit we need to subtract to add
+          // to the amount being charged. Yes that's confusing, read it
+          // again if you need to.
+          amount      : order.amount - credit,
+
+          capture     : capture
+        }, user);
+        yield order.update({
+          service  : config.service,
+          chargeId : charge.id,
+          status   : capture ? 'paid' : 'authorized'
+        });
+      } catch (ex) {
+        // This more or less says we were unable to chage the user.
+        // If we are capturing, as in, we expected to charge them,
+        // this is a splendid time to modify their credit with us.
+        //
+        // We failed to chage order.amount so that's what our math is.
+        // It's not more complex than that.
+        if (capture) {
+          yield user.update({ credit: user.credit - order.amount });
+        }
+        // we need to pass up this error because it's being handled
+        // above us.
+        throw ex;
+      }
+
+      // if we got here then we've successfully changed the user 
+      // some amount. You can look over the math as many times as
+      // you want, but arriving here means their credit will be 0.
+      if (capture) {
+        yield user.update({ credit: 0 });
+      }
+    } else {
+      // If the user can cover the entirety of the charge with the
+      // credit they have then we can just lob off the charge from
+      // their existing credit.
+      //
+      // technically this isn't needed here given the parent logic,
+      // but excluding this would be a very tricky dependency on the
+      // parent logic not changing - so we keep it here.
+      if (capture) {
+        yield user.update({ credit: credit - order.amount });
+
+        // We now "fake" as if we did a CC charge.
+        yield order.update({
+          service  : config.service,
+          chargeId : 0,
+          status   : 'paid'
+        });
+      }
+    }
 
     return charge;
   }
