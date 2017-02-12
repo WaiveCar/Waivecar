@@ -426,6 +426,12 @@ module.exports = class OrderService extends Service {
           // Since debt is negative credit we need to subtract to add
           // to the amount being charged. Yes that's confusing, read it
           // again if you need to.
+          //
+          // For example, if the user has a balance of -$2 and the fee is $4
+          // Then 4 - -2 = 4 + 2 = 6 ... we charge them $6.
+          //
+          // If the user has a credit of $2 and the fee is $4 
+          // Then 4 - 2 = 2 ... we charge them $2.
           amount      : order.amount - credit,
 
           capture     : capture
@@ -444,13 +450,21 @@ module.exports = class OrderService extends Service {
         // It's not more complex than that.
         if (capture) {
           yield user.update({ credit: user.credit - order.amount });
+
+          // A failed charge needs to be marked as such (see #670).
+          yield order.update({ status: 'failed' });
         }
-        // we need to pass up this error because it's being handled
+        // We need to pass up this error because it's being handled
         // above us.
         throw ex;
+
+        // This is here in case someone is sloppy and removes the 
+        // above line in the future, leading to a very tricky and
+        // hard to catch fall-through bug.
+        return charge;
       }
 
-      // if we got here then we've successfully changed the user 
+      // If we got here then we've successfully changed the user 
       // some amount. You can look over the math as many times as
       // you want, but arriving here means their credit will be 0.
       if (capture) {
@@ -461,13 +475,14 @@ module.exports = class OrderService extends Service {
       // credit they have then we can just lob off the charge from
       // their existing credit.
       //
-      // technically this isn't needed here given the parent logic,
-      // but excluding this would be a very tricky dependency on the
-      // parent logic not changing - so we keep it here.
+      // Technically this capture check isn't needed here given the 
+      // parent logic, but excluding this would incur a fragile 
+      // dependency on the parent logic not changing - so we keep it.
       if (capture) {
         yield user.update({ credit: credit - order.amount });
 
-        // We now "fake" as if we did a CC charge.
+        // We now "fake" as if we did a CC charge to keep the
+        // rest of the code from being confused by this.
         yield order.update({
           service  : config.service,
           chargeId : 0,
@@ -494,11 +509,6 @@ module.exports = class OrderService extends Service {
     });
   }
 
-  /**
-   * Captures the provided order.
-   * @param  {Object} order
-   * @return {Void}
-   */
   static *capture(order) {
     let service = this.getService(config.service, 'charges');
     let charge  = yield service.capture(order.chargeId, {
