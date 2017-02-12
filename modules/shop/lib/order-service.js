@@ -445,14 +445,16 @@ module.exports = class OrderService extends Service {
         // This more or less says we were unable to chage the user.
         // If we are capturing, as in, we expected to charge them,
         // this is a splendid time to modify their credit with us.
-        //
-        // We failed to chage order.amount so that's what our math is.
-        // It's not more complex than that.
         if (capture) {
+          // We failed to chage order.amount so that's what our math is.
+          // It's not more complex than that.
           yield user.update({ credit: user.credit - order.amount });
 
           // A failed charge needs to be marked as such (see #670).
           yield order.update({ status: 'failed' });
+
+          // And finally we tell them (also covered in #670).
+          yield notify.sendTextMessage(user, 'Hi. Unfortunately we were unable to charge your credit card for your last ride. Please call us to help resolve this issue');
         }
         // We need to pass up this error because it's being handled
         // above us.
