@@ -17,6 +17,10 @@ module.exports = {
           value : 15,
           type  : 'minutes'
         },
+        extension : {
+          value : 10,
+          type  : 'minutes'
+        },
         freeRideReminder : {
           value : 90,
           type  : 'minutes'
