@@ -146,6 +146,32 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       return this.getFlags().indexOf(what) !== -1;
     },
 
+    *swapflag(out, in) {
+      var newFlagList = this.getFlags().filter(function(flag) {
+        return flag !== out;
+      });
+      newFlagList.push(in);
+
+      yield this.update({
+        flags: JSON.stringify(newFlagList)
+      });
+
+      return newFlagList;
+    }
+
+    *unflag(what) {
+      if(this.isFlagged(what)) {
+        var newFlagList = this.getFlags().filter(function(flag) {
+          return flag !== what;
+        });
+
+        yield this.update({
+          flags: JSON.stringify(newFlagList)
+        });
+      }
+      return newFlagList;
+    },
+
     *flag(what) {
       if(!this.isFlagged(what)) {
         var flagList = this.getFlags();
@@ -229,12 +255,31 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
      */
 
 
-    /**
-     * Sets the booking to cancel itself automaticaly after the set time.
-     * @param  {Number} time
-     * @return {Void}
-     */
+    // Sets the booking to cancel itself automaticaly after the set time.
     *setCancelTimer(time) {
+      // For some BS reason, time is an object with units
+      // (see config/waivecar/default.js).  This is such nonsense.
+      // Anyway, we're talking about #550 here where we warn the user
+      // about a warning that things are going to expire.
+      //
+      // We also have to worry about object copies because you know,
+      // screw javascript.
+      let expireTime = {value: time.value, type: value.type};
+
+      // we presume that the type will be minutes and that
+      expireTime.value -= 5;
+
+      // make it a tiny bit future proof.
+      if(expireTime.value > 0) {
+        queue.scheduler.add('booking-auto-cancel-reminder', {
+          uid   : `booking-${ this.id }`,
+          timer : expireTime,
+          data  : {
+            bookingId : this.id
+          }
+        });
+      }
+
       queue.scheduler.add('booking-auto-cancel', {
         uid   : `booking-${ this.id }`,
         timer : time,
