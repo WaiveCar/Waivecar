@@ -146,18 +146,18 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       return this.getFlags().indexOf(what) !== -1;
     },
 
-    *swapflag(out, in) {
+    *swapflag(outFlag, inFlag) {
       var newFlagList = this.getFlags().filter(function(flag) {
-        return flag !== out;
+        return flag !== outFlag;
       });
-      newFlagList.push(in);
+      newFlagList.push(inFlag);
 
       yield this.update({
         flags: JSON.stringify(newFlagList)
       });
 
       return newFlagList;
-    }
+    },
 
     *unflag(what) {
       if(this.isFlagged(what)) {
@@ -271,6 +271,7 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
 
       // make it a tiny bit future proof.
       if(expireTime.value > 0) {
+        /*
         queue.scheduler.add('booking-auto-cancel-reminder', {
           uid   : `booking-${ this.id }`,
           timer : expireTime,
@@ -278,6 +279,7 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
             bookingId : this.id
           }
         });
+        */
       }
 
       queue.scheduler.add('booking-auto-cancel', {
