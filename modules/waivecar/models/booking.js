@@ -264,6 +264,7 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       //
       // We also have to worry about object copies because you know,
       // screw javascript.
+        /*
       let expireTime = {value: time.value, type: value.type};
 
       // we presume that the type will be minutes and that
@@ -271,7 +272,6 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
 
       // make it a tiny bit future proof.
       if(expireTime.value > 0) {
-        /*
         queue.scheduler.add('booking-auto-cancel-reminder', {
           uid   : `booking-${ this.id }`,
           timer : expireTime,
@@ -279,9 +279,9 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
             bookingId : this.id
           }
         });
-        */
       }
 
+        */
       queue.scheduler.add('booking-auto-cancel', {
         uid   : `booking-${ this.id }`,
         timer : time,
