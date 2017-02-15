@@ -26,6 +26,17 @@
         font-weight : 300;
       }
       .ride-row {
+        &.failed-row {
+          background: rgba(149, 29, 52, 0.2);
+          &:hover {
+            background: rgba(149, 29, 52, 0.3);
+            color: #000;
+          }
+          .status {
+            font-weight: 400;
+            color: #951D34;
+          }
+        }
         &:hover {
           background : #eee;
           cursor     : pointer;
@@ -49,6 +60,11 @@
             font-weight : 500;
             margin-top  : 20px;
             text-align  : center;
+            small {
+              display: block;
+              line-height: 1rem;
+              font-size: 1rem;
+            }
           }
           .ride-date {
             border-top    : 1px solid #e6e6e6;
