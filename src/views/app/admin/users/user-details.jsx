@@ -159,7 +159,7 @@ module.exports = class UserDetails extends React.Component {
       let notes = this.state.notes.user[user.id].filter((row) => {
         return row.type === 'suspension';
       });
-      if(notes) {
+      if(notes && notes[notes.length - 1]) {
         return notes[notes.length - 1].content;
       }
     }
