@@ -93,7 +93,7 @@ class TableIndex extends React.Component {
    */
   row(booking) {
     let duration;
-    if (booking.details.length >= 2) {
+    if (booking.details && booking.details.length >= 2) {
       let start, end;
       for (let i = 0; i < booking.details.length; i++) {
         let detail = booking.details[i];
