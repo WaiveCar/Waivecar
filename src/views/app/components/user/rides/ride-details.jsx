@@ -12,6 +12,17 @@ class RideDetails extends Component {
 
   render() {
     let { start, end, fee } = this.props;
+    let noFeeText = 'Free Ride';
+    let extraText = false;
+
+    if (this.props.duration.hours > 2 && !fee) {
+      noFeeText = 'Nothing Paid';
+      extraText = <small>Either a card <b>was declined</b> or fees were waived</small>
+    }
+    else if (this.props.failed) {
+      extraText = <small>Your card <b>was declined</b>.</small>
+    }
+
     return (
       <tr className="ride-details">
         <td colSpan="6">
@@ -37,7 +48,8 @@ class RideDetails extends Component {
             </div>
             <div className="col-md-4 ride-meta">
               <div className="ride-fee">
-                { fee ? `$${fee}` : 'Free Ride' }
+                { fee ? `$${fee}` : noFeeText }
+                { extraText ? extraText : '' }
               </div>
               <div className="ride-date">
                 { moment(start.createdAt).format('dddd, MMMM Do YYYY h:mm a') }

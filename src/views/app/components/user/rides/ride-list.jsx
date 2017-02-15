@@ -57,6 +57,10 @@ class RideList extends Component {
    */
   booking(data) {
     let isOpen = this.state.details === data.id;
+    let isFailed = data.payments.filter(val => val.status === 'failed').length;
+    let className = ['ride-row'];
+    let emptyChargeText = 'No Charge';
+    let status = data.status;
 
     // ### Ride
 
@@ -76,9 +80,22 @@ class RideList extends Component {
       seconds : duration.seconds()
     };
 
+
+    if(isFailed) {
+      className.push('failed-row');
+      status = 'Failed Charge';
+      ride.failed = true;
+    }
+
+    // If it was over 2 hours then it may have been
+    // a failed charge, so we cover that use-case here.
+    if(ride.duration.hours > 2 && !ride.fee) {
+      emptyChargeText = 'No/Failed Charge';
+    }
+
     return (
       <tbody key={ data.id }>
-        <tr className="ride-row" onClick={ this.viewDetails.bind(this, data.id) }>
+        <tr className={ className.join(' ') } onClick={ this.viewDetails.bind(this, data.id) }>
           <td className="text-center">
             {
               isOpen ? <i className="material-icons primary">keyboard_arrow_down</i> : <i className="material-icons">keyboard_arrow_right</i>
@@ -95,10 +112,10 @@ class RideList extends Component {
             { data.car ? data.car.license : '(unknown)' }
           </td>
           <td>
-            { ride.fee ? `$${ ride.fee }` : 'No Charge' }
+            { ride.fee ? `$${ ride.fee }` : emptyChargeText }
           </td>
-          <td>
-            { helpers.changeCase.toCapital(data.status) }
+          <td className='status'>
+            { helpers.changeCase.toCapital(status) }
           </td>
         </tr>
         {
