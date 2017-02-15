@@ -73,7 +73,7 @@ class CardList extends React.Component {
   }
 
   amount(num) {
-    let n = Math.abs(num).toFixed(2);
+    let n = Math.abs(num/100).toFixed(2);
     if(num === 0) {
       return '$' + n;
     }
