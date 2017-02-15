@@ -175,12 +175,6 @@ module.exports = class OrderService extends Service {
 
     try {
       yield this.charge(order, user);
-      let payment = new BookingPayment({
-        bookingId : booking.id,
-        orderId   : order.id
-      });
-      yield payment.save();
-
       yield notify.notifyAdmins(`:moneybag: Charged ${ user.name() } $${ amount / 100 } for ${ minutesOver } minutes | ${ apiConfig.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
       log.info(`Charged user for time driven : $${ amount / 100 } : booking ${ booking.id }`);
     } catch (err) {
@@ -188,6 +182,14 @@ module.exports = class OrderService extends Service {
 
       yield notify.notifyAdmins(`:earth_africa: *Failed to charge* ${ user.name() } for time driven: ${ err } | ${ apiConfig.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
     }
+
+    // Regardless of whether we successfully charged the user or not, we need
+    // to associate this booking with the users' order id
+    let payment = new BookingPayment({
+      bookingId : booking.id,
+      orderId   : order.id
+    });
+    yield payment.save();
 
     let email = new Email();
     try {
