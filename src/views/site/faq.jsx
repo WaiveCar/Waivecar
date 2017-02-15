@@ -10,7 +10,15 @@ module.exports = class Faq extends Component {
           <p>WaiveCar is the first ever FREE &amp; 100% electric car sharing program. We are ad-supported so the funds we receive from Advertisers to display their ads on our roof-mounted screens and body wraps allow users to drive our cars FREE for 2 hours then $5.99/hr...MIC DROP.</p>
           <h2 id="signing-up">Signing up</h2>
           <h3 id="what-do-i-need-to-sign-up">What do I need to sign up?</h3>
-          <p>All you need to sign up with WaiveCar is a smart phone, credit/debit card, and a valid drivers license. Simply download the app from your app store!</p>
+          <p>All you need to sign up with WaiveCar is a smart phone, credit/debit card, a valid driver's license, and a good driving record. Simply download the app from your app store!</p>
+          <h4 id="whats-a-good-driving-record">What's a good driving record?</h4>
+          <p>To us, a good driving record means one without any:</p>
+          <ul>
+          <li>DUIs</li>
+          <li>Dangerous speeding (20+ mph over, school zones, etc)</li>
+          <li>Driving with a suspended license</li>
+          <li>Any similar negligent or reckless acts</li>
+          </ul>
           <h3 id="does-it-cost-any-money-to-sign-up">Does it cost any money to sign up?</h3>
           <p>Nope! We promise there REALLY are no catches. We're that magical.</p>
           <h3 id="why-do-i-need-a-creditdebit-card-to-sign-up-if-its-free">Why do I need a credit/debit card to sign up if it's free?</h3>
@@ -51,7 +59,7 @@ module.exports = class Faq extends Component {
           <h3 id="whats-with-that-1-charge-when-i-book-a-waivecar">What's with that $1 charge when I book a WaiveCar?</h3>
           <p>No worries! It's just a $1 hold on your card we will refund right back to you when your ride is complete!</p>
           <h3 id="how-many-waivecars-are-there">How many WaiveCars are there?</h3>
-          <p>We currently have 20 in Santa Monica, however are expanding to about 150 very soon in LA and several major cities!</p>
+          <p>We currently have 20 in Santa Monica, however are expanding very soon.</p>
           <h2 id="driving-cars">Driving Cars</h2>
           <h3 id="how-far-can-i-drive-with-a-waivecar">How far can I drive with a WaiveCar?</h3>
           <p>You can drive up to 20 miles outside our HQ in Santa Monica, which includes most of LA. You will get a text message alert when you have passed the boundaries!</p>

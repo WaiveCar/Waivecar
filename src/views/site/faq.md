@@ -3,7 +3,16 @@ WaiveCar is the first ever FREE & 100% electric car sharing program. We are ad-s
 
 ## Signing up
 ### What do I need to sign up?
-All you need to sign up with WaiveCar is a smart phone, credit/debit card, and a valid drivers license. Simply download the app from your app store!
+All you need to sign up with WaiveCar is a smart phone, credit/debit card, a valid driver's license, and a good driving record. Simply download the app from your app store!
+
+#### What's a good driving record?
+
+To us, a good driving record means one without any:
+
+ * DUIs
+ * Dangerous speeding (20+ mph over, school zones, etc)
+ * Driving with a suspended license
+ * Any similar negligent or reckless acts
 
 ### Does it cost any money to sign up?
 Nope! We promise there REALLY are no catches. We're that magical.
@@ -65,7 +74,7 @@ Then your reservation will expire! So hurry up and try to rebook the same car or
 No worries! It's just a $1 hold on your card we will refund right back to you when your ride is complete!
 
 ### How many WaiveCars are there?
-We currently have 20 in Santa Monica, however are expanding to about 150 very soon in LA and several major cities!
+We currently have 20 in Santa Monica, however are expanding very soon.
 
 ## Driving Cars
 ### How far can I drive with a WaiveCar?
@@ -159,3 +168,4 @@ Restricted parking includes:
  * Private lots (Whole Foods, Ralphs, etc.)
  * Private driveways & Permit-only zones
  * Indoor public lots with less than 3 hours Free Parking
+
