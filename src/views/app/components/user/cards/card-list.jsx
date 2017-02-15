@@ -39,7 +39,7 @@ class CardList extends React.Component {
     api.post('/shop/quickcharge', {
       userId      : who.id,
       source      : cards[0].id,
-      amount      : amount,
+      amount      : amount * 100,
       description : description
     }, (err, res) => {
       if (err) {
