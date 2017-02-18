@@ -472,6 +472,9 @@ module.exports = class OrderService extends Service {
       // some amount. You can look over the math as many times as
       // you want, but arriving here means their credit will be 0.
       if (capture) {
+        // This is the amount that we actually charged.
+        yield order.update({ amount: order.amount - credit });
+
         yield user.update({ credit: 0 });
       }
     } else {
