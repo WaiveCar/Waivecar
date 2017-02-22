@@ -43,6 +43,7 @@ class CardList extends React.Component {
       description : description
     }, (err, res) => {
       if (err) {
+        mthis.setState({user: err.data});
         return snackbar.notify({
           type    : `danger`,
           message : err.message
@@ -66,7 +67,7 @@ class CardList extends React.Component {
 
   addCredit(who, cards) {
     let name = [who.firstName, who.lastName].join(' ');
-    let amount = prompt(name + " currently has $" + who.credit.toFixed(2) + " in credit.\nHow much *additional* credit do you want to add?");
+    let amount = prompt(name + " currently has $" + (who.credit / 100).toFixed(2) + " in credit.\nHow much *additional* credit do you want to add?");
     if (amount) {
       this.creditMod(who, -amount, cards);
     }
@@ -85,7 +86,7 @@ class CardList extends React.Component {
 
   renderNotice(credit) {
     if (credit < 0) {
-      return <div className='notice'><b>You cannot rent WaiveCars until this balance is cleared.</b></div>
+      return <div className='notice'>You cannot book WaiveCars until this balance is cleared.</div>
     }
     if (credit > 0) {
       return <div className='notice'>This credit will be automatically applied against any future fees.</div>
@@ -134,11 +135,14 @@ class CardList extends React.Component {
           }
           </tbody>
         </table>
-        { 
-          auth.user().hasAccess('admin') ? 
-            <p><button onClick={ this.chargeUser.bind(this, this.props.user, cards) } className='pull-right btn btn-link btn-sm'>Charge User</button></p> 
-            : '' 
-        }
+        <p>
+          <button onClick={ this.creditMod.bind(this, this.props.user, 0, cards) } className={'pull-right btn btn-link btn-sm ' + (this.props.user.credit >= 0 ? 'disabled' : '' ) }>Attempt to Clear Balance</button> 
+          { 
+            auth.user().hasAccess('admin') ? 
+              <button onClick={ this.chargeUser.bind(this, this.props.user, cards) } className='pull-right btn btn-link btn-sm'>Charge User</button> 
+              : '' 
+          }
+        </p>
       </div>
     );
   }
