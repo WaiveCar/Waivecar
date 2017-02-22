@@ -594,17 +594,26 @@ module.exports = class OrderService extends Service {
     //
     // This is how much credit the user had prior to this charge.
     let creditBeforeCharge = user.credit + amountInCents;
-    let message = [];
+    let messageParts = [];
+    let message = '';
 
     // If the user had $0 in credit before the charge, then this email
     // is about 1 failed charge.
     if(amountInCents) {
-      message.push('cover the $' + amountInDollars + ' charge disclosed in the previous email');
+      messageParts.push('cover the $' + amountInDollars + ' in fees disclosed in the previous email');
     }
     if(creditBeforeCharge) {
-      message.push(`clear your existing balance of $${ (Math.abs(creditBeforeCharge) / 100).toFixed(2) } with us`);
+      messageParts.push(`clear your existing balance of $${ (Math.abs(creditBeforeCharge) / 100).toFixed(2) } with us`);
     }
-    message = message.join(' and ');
+    
+    // if there's two parts we show a grand total, otherwise we omit it
+    // because it looks redundant.
+    if(messageParts.length > 1){
+      message = '$' + (-user.credit / 100).toFixed(2) + ' to ';
+    } else {
+      message = 'to ';
+    }
+    message += messageParts.join(' and ');
 
     let email = new Email();
     try {
@@ -614,7 +623,6 @@ module.exports = class OrderService extends Service {
         subject  : '[WaiveCar] Important! Failed Charge.',
         template : 'failed-charge',
         context  : {
-          credit : (-user.credit / 100).toFixed(2),
           name   : user.name(),
           charge : amountInDollars,
           message: message
