@@ -1,0 +1,27 @@
+<div class="header">
+  <img src="https://s3.amazonaws.com/waivecar-assets/email-logo.png">
+</div>
+<div class="main">
+  <h3>Hello, {{ name }}</h3>
+
+  <p>
+    Sorry, but we were unable to charge your card ${{ charge }} for the fees disclosed in the previous email.
+  </p>
+
+  <p>
+    You now have a balance with us of ${{ -credit }}. You'll be <strong>unable to book</strong> until we can clear this balance.
+  </p>
+
+  <h4>How to fix this issue</h4>
+  <ol>
+    <li> Use the app to update your card info: Tap on <b>Account</b>, <b>Payment Method</b> (fourth down) and add a new card.</li>
+    <li> Call us at 1-855-924-8355 during business hours and speak with a representative and we will attempt to clear your balance of ${{ -credit }} with us. </li>
+  </ol>
+  <p>
+    Visit <a href="https://www.waivecar.com">https://www.waivecar.com</a> to access your account. Thanks for using WaiveCar.
+  </p>
+  <p>
+    Best regards,<br>
+    The WaiveCar Team
+  </p>
+</div>
