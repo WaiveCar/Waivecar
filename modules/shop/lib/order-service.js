@@ -60,8 +60,10 @@ module.exports = class OrderService extends Service {
         description: data.description
       }, user);
 
+      yield notify.notifyAdmins(`:moneybag: Charged ${ user.name() } $${ data.amount / 100 } for ${ data.description }`, [ 'slack' ], { channel : '#rental-alerts' });
+
     } catch (err) {
-      log.warn(`Failed to charge user: ${ user.id }`, err);
+      yield this.failedCharge(data.amount, user, err);
       throw error.parse({
         code    : `SHOP_PAYMENT_FAILED`,
         message : `The user's card was declined.`
@@ -82,6 +84,9 @@ module.exports = class OrderService extends Service {
     let miscCharge = null;
     let cart  = yield CartService.getCart(data.cart);
     let items = yield CartService.getItems(cart);
+    let amountInCents = items.reduce((prev, next) => {
+      return prev + next.total;
+    }, 0);
     let order = new Order({
       createdBy   : _user.id,
       userId      : data.userId,
@@ -89,9 +94,7 @@ module.exports = class OrderService extends Service {
       description : data.description,
       metadata    : data.metadata,
       currency    : data.currency,
-      amount      : items.reduce((prev, next) => {
-        return prev + next.total;
-      }, 0)
+      amount      : amountInCents
     });
     yield order.save();
 
@@ -113,7 +116,7 @@ module.exports = class OrderService extends Service {
 
       yield hooks.call('shop:store:order:after', order, payload, _user);
     } catch (err) {
-      log.warn(`Failed to charge user: ${ user.id }`, err);
+      yield this.failedCharge(amountInCents, user, err);
       throw error.parse({
         code    : `SHOP_PAYMENT_FAILED`,
         message : `The user's card was declined.`
@@ -178,9 +181,7 @@ module.exports = class OrderService extends Service {
       yield notify.notifyAdmins(`:moneybag: Charged ${ user.name() } $${ amount / 100 } for ${ minutesOver } minutes | ${ apiConfig.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
       log.info(`Charged user for time driven : $${ amount / 100 } : booking ${ booking.id }`);
     } catch (err) {
-      log.warn(`Failed to charge user for time: ${ user.id }`, err);
-
-      yield notify.notifyAdmins(`:earth_africa: *Failed to charge* ${ user.name() } for time driven: ${ err } | ${ apiConfig.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+      yield this.failedCharge(amount, user, err, ` | ${ apiConfig.uri }/bookings/${ booking.id }`);
     }
 
     // Regardless of whether we successfully charged the user or not, we need
@@ -563,12 +564,34 @@ module.exports = class OrderService extends Service {
     }
   }
 
-  /**
-   * Notify user that miscellaneous was added to their booking
-   * @param {Object} item
-   * @param {Object} user
-   * @return {Void}
-   */
+  static *failedCharge(amountInCents, user, err, extra) {
+    log.warn(`Failed to charge user: ${ user.id }`, err);
+    let amountInDollars = amountInCents / 100;
+    extra = extra || '';
+    yield notify.notifyAdmins(`:earth_africa: Failed to charge ${ user.name() } ${ amountInDollars }: ${ err } ${ extra }`, [ 'slack' ], { channel : '#rental-alerts' });
+
+    co(function *() {
+      let email = new Email();
+      try {
+        yield email.send({
+          to       : user.email,
+          from     : emailConfig.sender,
+          subject  : '[WaiveCar] Important! Failed Charge.',
+          template : 'failed-charge',
+          context  : {
+            credit : user.credit / 100,
+            name   : user.name(),
+            charge : amountInDollars,
+          }
+        });
+      } catch (err) {
+        log.warn('Failed to deliver notification email: ', err);
+      }
+    });
+
+  }
+
+  // Notify user that miscellaneous was added to their booking
   static notifyOfCharge(item, user) {
     co(function *() {
       let email = new Email();
