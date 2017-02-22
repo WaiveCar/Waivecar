@@ -33,6 +33,22 @@ module.exports = class OrderService extends Service {
   // I mean god damn...
   static *quickCharge(data, _user) {
     let user = yield this.getUser(data.userId);
+
+    if (
+      // if we aren't an admin, this may be ok
+      !_user.hasAccess('admin') && (
+        // we have to be modifying ourselves
+        // and we are only allowed to clear our balance
+        user.id !== _user.id ||
+        data.amount !== 0 
+      )
+    ) {
+      throw error.parse({
+        code    : `FORBIDDEN`,
+        message : `This operation is forbidden`
+      }, 400);
+    }
+      
     data.currency = data.currency || 'usd';
     this.verifyCurrency(data.currency);
 
@@ -47,27 +63,30 @@ module.exports = class OrderService extends Service {
     });
     yield order.save();
 
+    // looking over the template at templates/email/miscellaneous-charge/html.hbs and
+    // modules/shop/lib/order-service.js it looks like we need to pass an object with
+    // quantity, price, and description defined.
+    yield this.notifyOfCharge({
+      quantity: 1,
+      price: data.amount,
+      description: data.description
+    }, user);
+
     try {
       yield this.charge(order, user);
 
       log.info(`Notifying user of miscellaneous charge: ${ user.id }`);
-      // looking over the template at templates/email/miscellaneous-charge/html.hbs and
-      // modules/shop/lib/order-service.js it looks like we need to pass an object with
-      // quantity, price, and description defined.
-      this.notifyOfCharge({
-        quantity: 1,
-        price: data.amount,
-        description: data.description
-      }, user);
 
       yield notify.notifyAdmins(`:moneybag: Charged ${ user.name() } $${ data.amount / 100 } for ${ data.description }`, [ 'slack' ], { channel : '#rental-alerts' });
 
     } catch (err) {
       yield this.failedCharge(data.amount, user, err);
-      throw error.parse({
+      throw {
+        status  : 400,
         code    : `SHOP_PAYMENT_FAILED`,
-        message : `The user's card was declined.`
-      }, 400);
+        message : `The card was declined.`,
+        data    : user
+      };
     }
 
     return {order: order, user: user};
@@ -103,23 +122,21 @@ module.exports = class OrderService extends Service {
     yield this.addItems(order, items);
     miscCharge = _.find(items, { name : 'Miscellaneous' });
 
-    // ### Charge
+    // Notify user if they received a miscellaneous charge
+    if (miscCharge) {
+      log.info(`Notifying user of miscellaneous charge: ${ user.id }`);
+      yield this.notifyOfCharge(miscCharge, user);
+    }
 
     try {
       yield this.charge(order, user);
-
-      // Notify user if they received a miscellaneous charge
-      if (miscCharge) {
-        log.info(`Notifying user of miscellaneous charge: ${ user.id }`);
-        this.notifyOfCharge(miscCharge, user);
-      }
 
       yield hooks.call('shop:store:order:after', order, payload, _user);
     } catch (err) {
       yield this.failedCharge(amountInCents, user, err);
       throw error.parse({
         code    : `SHOP_PAYMENT_FAILED`,
-        message : `The user's card was declined.`
+        message : `The card was declined.`
       }, 400);
     }
 
@@ -167,7 +184,7 @@ module.exports = class OrderService extends Service {
 
       // User card id
       source      : card.id,
-      description : 'Payment for additional time for waivecar rental',
+      description : `${ minutesOver }min for booking ${ booking.id }`,
       metadata    : null,
       currency    : 'usd',
       amount      : amount
@@ -175,6 +192,23 @@ module.exports = class OrderService extends Service {
 
     yield order.save();
     yield this.addItems(order, cart.items);
+
+    let email = new Email();
+    try {
+      yield email.send({
+        to       : user.email,
+        from     : emailConfig.sender,
+        subject  : '[WaiveCar] Charge Added For Time',
+        template : 'time-charge',
+        context  : {
+          name     : user.name(),
+          duration : minutesOver,
+          amount   : (amount / 100).toFixed(2)
+        }
+      });
+    } catch (err) {
+      log.warn('Failed to deliver time notification email: ', err);
+    }
 
     try {
       yield this.charge(order, user);
@@ -191,23 +225,6 @@ module.exports = class OrderService extends Service {
       orderId   : order.id
     });
     yield payment.save();
-
-    let email = new Email();
-    try {
-      yield email.send({
-        to       : user.email,
-        from     : emailConfig.sender,
-        subject  : 'Waivecar [Charge Added For Time]',
-        template : 'time-charge',
-        context  : {
-          name     : user.name(),
-          duration : minutesOver,
-          amount   : (amount / 100).toFixed(2)
-        }
-      });
-    } catch (err) {
-      log.warn('Failed to deliver time notification email: ', err);
-    }
   }
 
   /**
@@ -459,6 +476,7 @@ module.exports = class OrderService extends Service {
           // And finally we tell them (also covered in #670).
           yield notify.sendTextMessage(user, 'Hi. Unfortunately we were unable to charge your credit card for your last ride. Please call us to help resolve this issue');
         }
+        yield user.save();
         // We need to pass up this error because it's being handled
         // above us.
         throw ex;
@@ -566,52 +584,71 @@ module.exports = class OrderService extends Service {
 
   static *failedCharge(amountInCents, user, err, extra) {
     log.warn(`Failed to charge user: ${ user.id }`, err);
-    let amountInDollars = amountInCents / 100;
+    let amountInDollars = (amountInCents / 100).toFixed(2);
     extra = extra || '';
-    yield notify.notifyAdmins(`:earth_africa: Failed to charge ${ user.name() } ${ amountInDollars }: ${ err } ${ extra }`, [ 'slack' ], { channel : '#rental-alerts' });
+    yield notify.notifyAdmins(`:earth_africa: Failed to charge ${ user.credit } ${ user.name() } $${ amountInDollars }: ${ err } ${ extra }`, [ 'slack' ], { channel : '#rental-alerts' });
 
-    co(function *() {
-      let email = new Email();
-      try {
-        yield email.send({
-          to       : user.email,
-          from     : emailConfig.sender,
-          subject  : '[WaiveCar] Important! Failed Charge.',
-          template : 'failed-charge',
-          context  : {
-            credit : user.credit / 100,
-            name   : user.name(),
-            charge : amountInDollars,
-          }
-        });
-      } catch (err) {
-        log.warn('Failed to deliver notification email: ', err);
-      }
-    });
+    // We need to communicate that there was a potential charge + a potential 
+    // balance that was attempted to be cleared.  This email can cover all 3
+    // conditions. We can detect it pretty easily.
+    //
+    // This is how much credit the user had prior to this charge.
+    let creditBeforeCharge = user.credit + amountInCents;
+    let message = [];
 
+    // If the user had $0 in credit before the charge, then this email
+    // is about 1 failed charge.
+    if(amountInCents) {
+      message.push('cover the $' + amountInDollars + ' charge disclosed in the previous email');
+    }
+    if(creditBeforeCharge) {
+      message.push(`clear your existing balance of $${ (creditBeforeCharge / 100).toFixed(2) } with us`);
+    }
+    message = message.join(' and ');
+
+    let email = new Email();
+    try {
+      yield email.send({
+        to       : user.email,
+        from     : emailConfig.sender,
+        subject  : '[WaiveCar] Important! Failed Charge.',
+        template : 'failed-charge',
+        context  : {
+          credit : (-user.credit / 100).toFixed(2),
+          name   : user.name(),
+          charge : amountInDollars,
+          message: message
+        }
+      });
+    } catch (err) {
+      log.warn('Failed to deliver notification email: ', err);
+    }
   }
 
   // Notify user that miscellaneous was added to their booking
-  static notifyOfCharge(item, user) {
-    co(function *() {
-      let email = new Email();
-      try {
-        item.total = (item.quantity * item.price / 100).toFixed(2);
+  static *notifyOfCharge(item, user) {
+    if(item.price === 0) {
+      return;
+    }
+    let email = new Email();
+    try {
+      item.total = (Math.abs(item.quantity * item.price / 100)).toFixed(2);
+      let word = item.price > 0 ? 'Charge' : 'Credit';
 
-        yield email.send({
-          to       : user.email,
-          from     : emailConfig.sender,
-          subject  : 'Waivecar [Charge Added]',
-          template : 'miscellaneous-charge',
-          context  : {
-            name   : user.name(),
-            charge : item
-          }
-        });
-      } catch (err) {
-        log.warn('Failed to deliver notification email: ', err);
-      }
-    });
+      yield email.send({
+        to       : user.email,
+        from     : emailConfig.sender,
+        subject  : `[WaiveCar] Additional ${ word }`,
+        template : 'miscellaneous-charge',
+        context  : {
+          name   : user.name(),
+          charge : item,
+          word   : word
+        }
+      });
+    } catch (err) {
+      log.warn('Failed to deliver notification email: ', err);
+    }
   }
 
 };

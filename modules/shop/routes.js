@@ -22,7 +22,7 @@ Route.del('/shop/customers/:id', [ 'isAuthenticated', 'Shop/CustomersController@
 // payment service.
 
 Route.post('/shop/quickcharge', {
-  policy : [ 'isAuthenticated', 'isAdmin' ],
+  policy : [ 'isAuthenticated' ],
   uses   : 'Shop/OrdersController@quickcharge',
 });
 
