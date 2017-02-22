@@ -586,7 +586,7 @@ module.exports = class OrderService extends Service {
     log.warn(`Failed to charge user: ${ user.id }`, err);
     let amountInDollars = (amountInCents / 100).toFixed(2);
     extra = extra || '';
-    yield notify.notifyAdmins(`:earth_africa: Failed to charge ${ user.credit } ${ user.name() } $${ amountInDollars }: ${ err } ${ extra }`, [ 'slack' ], { channel : '#rental-alerts' });
+    yield notify.notifyAdmins(`:earth_africa: Failed to charge ${ user.name() } $${ amountInDollars }: ${ err } ${ extra }`, [ 'slack' ], { channel : '#rental-alerts' });
 
     // We need to communicate that there was a potential charge + a potential 
     // balance that was attempted to be cleared.  This email can cover all 3
@@ -602,7 +602,7 @@ module.exports = class OrderService extends Service {
       message.push('cover the $' + amountInDollars + ' charge disclosed in the previous email');
     }
     if(creditBeforeCharge) {
-      message.push(`clear your existing balance of $${ (creditBeforeCharge / 100).toFixed(2) } with us`);
+      message.push(`clear your existing balance of $${ (Math.abs(creditBeforeCharge) / 100).toFixed(2) } with us`);
     }
     message = message.join(' and ');
 
