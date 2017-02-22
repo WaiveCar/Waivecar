@@ -81,8 +81,8 @@ module.exports = {
     label     : 'On Charge Adapter',
     helpText  : null
   },
-  isWaiveWork : {
-    name      : 'isWaiveWork',
+  isWaivework : {
+    name      : 'isWaivework',
     component : 'checkbox',
     required  : true,
     label     : 'Is Waive Work',
