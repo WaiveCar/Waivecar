@@ -68,13 +68,18 @@ module.exports = class CarsIndex extends React.Component {
 
   render() {
 
+    if (!this.state.cars.length)
+      return (false);
+
     return (
       <div className="cars-index" >
         <section className="container" >
           <div className="row">
             <div className="col-xs-12" >
-              <div className="ride-map">
+              <div className="map-dynamic">
                 <Map
+                    markerIcon = { '/images/map/active-waivecar.svg' }
+                    markers    = { this.state.cars }
                   />
               </div>
             </div>
