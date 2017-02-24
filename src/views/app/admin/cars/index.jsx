@@ -72,15 +72,15 @@ module.exports = class CarsIndex extends React.Component {
     var value = car[column.key];
 
     if (column.type == "bool") {
-      return <td className="table-col-xs">{ this.renderCheckMark(value )}</td>
+      return <td className="table-col-xs" key={column.key}>{ this.renderCheckMark(value )}</td>
     }
 
     if (column.type == "datetime") {
       let date = moment(value).format('h:mm:ss YY-MM-DD');
-      return <td><span>{date}</span></td>
+      return <td key={column.key}><span>{date}</span></td>
     }
 
-    return <td>{value}</td>
+    return <td key={column.key}>{value}</td>
   }
 
   sort(event) {
@@ -127,7 +127,7 @@ module.exports = class CarsIndex extends React.Component {
     var sortBy = this.state.sortBy;
 
     return (
-      <th data-title={column.key} className={className} onClick={ (e) => this.sort(e) } >
+      <th data-title={column.key} className={className} key={column.key} onClick={ (e) => this.sort(e) } >
         <span>{column.title}</span>
         {
           sortBy && sortBy.key == column.key
@@ -140,11 +140,11 @@ module.exports = class CarsIndex extends React.Component {
 
   renderCarRow(car) {
     return (
-      <tr className="standard-row">
+      <tr className="standard-row" key={car.id}>
         {
           this.columns.map((column) => this.renderCell(car, column))
         }
-        <td><div className="text-center"><a className="grid-action" href={"/cars/" + car.id}><i className="material-icons" role="edit">edit</i></a></div></td>
+        <td key="actions"><div className="text-center"><a className="grid-action" href={"/cars/" + car.id}><i className="material-icons" role="edit">edit</i></a></div></td>
       </tr>
     )
   }
