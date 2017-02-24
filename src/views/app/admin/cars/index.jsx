@@ -5,6 +5,7 @@ import { api } from 'bento';
 
 module.exports = class CarsIndex extends React.Component {
 
+
   constructor(...options) {
     super(...options);
 
@@ -12,6 +13,20 @@ module.exports = class CarsIndex extends React.Component {
       cars : [],
       filter : ""
     };
+
+    this.columns = [
+      {key : "license", title:"License", type : "text"},
+      {key : "charge", title:"Charge", type : "text"},
+      {key : "currentSpeed", title:"Speed", type : "text"},
+
+      {key : "isIgnitionOn", title:"Ignition", type : "bool"},
+      {key : "isKeySecure", title:"Key Secure", type : "bool"},
+      {key : "isLocked", title:"Locked", type : "bool"},
+      {key : "isImmobilized", title:"Immobilized", type : "bool"},
+      {key : "isCharging", title:"Charging", type : "bool"},
+      {key : "isAvailable", title:"available", type : "bool"},
+      {key : "updatedAt", title:"Updated At", type : "datetime"}
+    ];
   }
 
   componentDidMount() {
@@ -29,11 +44,16 @@ module.exports = class CarsIndex extends React.Component {
   }
 
   isCarIncludes(car, str) {
-    for (var fldName in car) {
-      if (car[fldName].toString().includes(str))
-        return true
-    }
-    return false;
+
+    str = str.toLowerCase();
+    return this.columns.filter((column) => {
+        if (column.type == "text" || column.type == "datetime") {
+          var value = car[column.key];
+          return value && value.toString().toLowerCase().includes(str);
+        }
+        return false;
+    }).length > 0;
+
   }
 
   renderCheckMark(checked) {
@@ -48,20 +68,83 @@ module.exports = class CarsIndex extends React.Component {
     }
   }
 
+  renderCell(car, column) {
+    var value = car[column.key];
+
+    if (column.type == "bool") {
+      return <td className="table-col-xs" key={column.key}>{ this.renderCheckMark(value )}</td>
+    }
+
+    if (column.type == "datetime") {
+      let date = moment(value).format('h:mm:ss YY-MM-DD');
+      return <td key={column.key}><span>{date}</span></td>
+    }
+
+    return <td key={column.key}>{value}</td>
+  }
+
+  sort(event) {
+    var columnKey = event.target.dataset.title||event.target.parentElement.dataset.title;
+
+    var orderAsc = true;
+
+    if (this.state.sortBy) {
+       if (this.state.sortBy.key == columnKey)
+         orderAsc = !this.state.sortBy.orderAsc;
+    }
+    this.setState({
+      sortBy : {key : columnKey, orderAsc: orderAsc}
+    })
+  }
+
+  sortComparator(a, b) {
+    var sortBy = this.state.sortBy;
+    if (!sortBy)
+      return 0;
+
+    if (a[sortBy.key] < b[sortBy.key]) {
+      return sortBy.orderAsc ? -1 : 1;
+    }
+
+    if (a[sortBy.key] > b[sortBy.key]) {
+      return sortBy.orderAsc ? 1 : -1;
+    }
+    return 0;
+  }
+
+  renderColumnHeader( column) {
+
+    var className = "";
+
+    if (column.type == "bool") {
+      className = "table-col-xs";
+    }
+
+    if (column.type == "datetime") {
+      className="table-col-lg"
+    }
+
+    var sortBy = this.state.sortBy;
+
+    return (
+      <th data-title={column.key} className={className} key={column.key} onClick={ (e) => this.sort(e) } >
+        <span>{column.title}</span>
+        {
+          sortBy && sortBy.key == column.key
+            ? <span>{sortBy.orderAsc ? " ▲" : " ▼" }</span>
+            : ""
+        }
+      </th>
+    )
+  }
+
   renderCarRow(car) {
     return (
-      <tr className="standard-row">
-        <td>{car.license}</td>
-        <td>{car.charge}</td>
-        <td>{car.currentSpeed}</td>
-        <td className="table-col-xs">{ this.renderCheckMark(car.isIgnitionOn )}</td>
-        <td className="table-col-xs">{ this.renderCheckMark(car.isKeySecure )}</td>
-        <td className="table-col-xs">{ this.renderCheckMark(car.isLocked )}</td>
-        <td className="table-col-xs">{ this.renderCheckMark(car.isImmobilized )}</td>
-        <td className="table-col-xs">{ this.renderCheckMark(car.isCharging )}</td>
-        <td className="table-col-xs">{ this.renderCheckMark(car.isAvailable )}</td>
-        <td className="table-col-lg"><span>{ car.updatedAt }</span></td>
-        <td><div className="text-center"><a className="grid-action" href={"/cars/" + car.id}><i className="material-icons" role="edit">edit</i></a></div></td>
+      <tr className="standard-row" key={car.id}>
+        {
+          this.columns.map((column) => this.renderCell(car, column))
+        }
+        <td key="actions"><div className="text-center"><a className="grid-action" href={"/cars/" + car.id}><i className="material-icons" role="edit">edit</i></a></div></td>
       </tr>
     )
   }
@@ -108,22 +191,18 @@ module.exports = class CarsIndex extends React.Component {
                         <table>
                           <thead>
                           <tr>
-                            <th data-title="license"><span>License</span></th>
-                            <th data-title="charge"><span>Charge</span></th>
-                            <th data-title="currentSpeed"><span>Speed</span></th>
-                            <th data-title="isIgnitionOn" className="table-col-xs"><span>Ignition</span></th>
-                            <th data-title="isKeySecure" className="table-col-xs"><span>Key Secure</span></th>
-                            <th data-title="isLocked" className="table-col-xs"><span>Locked</span></th>
-                            <th data-title="isImmobilized" className="table-col-xs"><span>Immobilized</span></th>
-                            <th data-title="isCharging" className="table-col-xs"><span>Charging</span></th>
-                            <th data-title="isAvailable" className="table-col-xs"><span>available</span></th>
-                            <th data-title="updatedAt" className="table-col-lg"><span>Updated At</span></th>
+                            {
+                              this.columns.map((column) => this.renderColumnHeader(column))
+                            }
                             <th data-title="actions" ><span>Actions</span></th>
                           </tr>
                           </thead>
                           <tbody>
                           {
-                            this.state.cars.filter((car) => this.isCarIncludes(car, this.state.filter) ).map((car) => this.renderCarRow(car))
+                            this.state.cars
+                              .filter((car) => this.isCarIncludes(car, this.state.filter) )
+                              .sort((a, b) => this.sortComparator(a, b))
+                              .map((car) => this.renderCarRow(car))
                           }
                           </tbody>
                         </table>
