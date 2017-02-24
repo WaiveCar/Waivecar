@@ -46,6 +46,7 @@ module.exports = class Faq extends Component {
           <p>Right now our cars are only dispersed around Santa Monica, CA. In the near future, you will be able to pick them up anywhere in LA and other major cities!</p>
           <h3 id="how-long-do-i-have-to-get-to-a-waivecar">How long do I have to get to a WaiveCar?</h3>
           <p>You have 15 minutes to get to a WaiveCar before the reservation times out.</p>
+          <p>Once you get there, please make sure you drive the WaiveCar! We may have to forfeit your booking if the WaiveCar isn't being used. But don't worry, we send out a message beforehand and you'll have plenty of time to contact us if we've made a mistake.</p>
           <h3 id="can-i-reserve-a-car-in-advance">Can I reserve a car in advance?</h3>
           <p>Unlike a rental company, you CANNOT reserve a car in advance. WaiveCar believes in the convenience of giving you a free car NOW! Get it while it's hot!</p>
           <h3 id="can-i-book-multiple-cars-a-day">Can I book multiple cars a day?</h3>
@@ -53,13 +54,13 @@ module.exports = class Faq extends Component {
           <h3 id="does-the-free-2-hours-start-when-i-reserve-a-car-or-when-i-start-the-ride">Does the free 2 hours start when I reserve a car or when I start the ride?</h3>
           <p>When you start the ride! Enjoy your leisurely walk!</p>
           <h3 id="is-the-free-2-hours-only-when-im-driving-the-car">Is the free 2 hours only when I'm driving the car?</h3>
-          <p>Nope! The free 2 hours counts for having the car while it's driving or parked. Use your time wisely!</p>
+          <p>Nope! The free 2 hours counts for having the car while it's driving or parked.</p>
           <h3 id="what-happens-if-i-dont-make-it-to-the-car-in-15-minutes">What happens if I don't make it to the car in 15 minutes?</h3>
           <p>Then your reservation will expire! So hurry up and try to rebook the same car or another WaiveCar before it's gone! We're a hot commodity!</p>
           <h3 id="whats-with-that-1-charge-when-i-book-a-waivecar">What's with that $1 charge when I book a WaiveCar?</h3>
           <p>No worries! It's just a $1 hold on your card we will refund right back to you when your ride is complete!</p>
           <h3 id="how-many-waivecars-are-there">How many WaiveCars are there?</h3>
-          <p>We currently have 20 in Santa Monica, however are expanding very soon.</p>
+          <p>We currently have 20 in Santa Monica and we are expanding very soon.</p>
           <h2 id="driving-cars">Driving Cars</h2>
           <h3 id="how-far-can-i-drive-with-a-waivecar">How far can I drive with a WaiveCar?</h3>
           <p>You can drive up to 20 miles outside our HQ in Santa Monica, which includes most of LA. You will get a text message alert when you have passed the boundaries!</p>

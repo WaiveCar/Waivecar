@@ -55,6 +55,8 @@ Right now our cars are only dispersed around Santa Monica, CA. In the near futur
 ### How long do I have to get to a WaiveCar?
 You have 15 minutes to get to a WaiveCar before the reservation times out.
 
+Once you get there, please make sure you drive the WaiveCar! We may have to forfeit your booking if the WaiveCar isn't being used.  But don't worry, we send out a message beforehand and you'll have plenty of time to contact us if we've made a mistake.
+
 ### Can I reserve a car in advance?
 Unlike a rental company, you CANNOT reserve a car in advance. WaiveCar believes in the convenience of giving you a free car NOW! Get it while it's hot!
 
@@ -65,7 +67,7 @@ Yep! And even better, you will get the free 2 hours for EVERY ride!
 When you start the ride! Enjoy your leisurely walk!
 
 ### Is the free 2 hours only when I'm driving the car?
-Nope! The free 2 hours counts for having the car while it's driving or parked. Use your time wisely!
+Nope! The free 2 hours counts for having the car while it's driving or parked. 
 
 ### What happens if I don't make it to the car in 15 minutes?
 Then your reservation will expire! So hurry up and try to rebook the same car or another WaiveCar before it's gone! We're a hot commodity!
@@ -74,7 +76,7 @@ Then your reservation will expire! So hurry up and try to rebook the same car or
 No worries! It's just a $1 hold on your card we will refund right back to you when your ride is complete!
 
 ### How many WaiveCars are there?
-We currently have 20 in Santa Monica, however are expanding very soon.
+We currently have 20 in Santa Monica and we are expanding very soon.
 
 ## Driving Cars
 ### How far can I drive with a WaiveCar?
