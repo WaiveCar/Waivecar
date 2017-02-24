@@ -67,7 +67,7 @@ templates.register('app', {
         onEnter   : policies.isAdministrator
       },
       {
-        path      : '/cars_dev',
+        path      : '/cars',
         component : require('../../views/app/admin/cars'),
         onEnter   : policies.isAdministrator
       },
