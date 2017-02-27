@@ -16,7 +16,7 @@ module.exports = class CarsIndex extends React.Component {
     };
 
     this.columns = [
-      {key : "license", title:"License", type : "text"},
+      {key : "license", title:"License", type : "text", comparator : this.licenseComparator.bind(this)},
       {key : "charge", title:"Charge", type : "text"},
       {key : "currentSpeed", title:"Speed", type : "text"},
 
@@ -98,19 +98,63 @@ module.exports = class CarsIndex extends React.Component {
     })
   }
 
+  defaultComparator(valA, valB) {
+
+    if (valA < valB) {
+      return -1;
+    }
+
+    if (valA > valB) {
+      return 1;
+    }
+
+    return 0;
+
+  }
+
+  licenseComparator(valA, valB) {
+
+    let regExp = /([a-z]*)(\d*)/i;
+    let partsA = valA.match(regExp);
+    let partsB = valB.match(regExp);
+
+    let result = this.defaultComparator(partsA[1], partsB[1]);
+    if (result != 0) {
+      return result;
+    }
+
+    let intPartA = parseInt(partsA[2], 10);
+    let intPartB = parseInt(partsB[2], 10);
+
+    if (!intPartA)
+      return -1;
+
+    if (!intPartB)
+      return 1;
+
+    return this.defaultComparator(intPartA, intPartB);
+  }
+
   sortComparator(a, b) {
-    var sortBy = this.state.sortBy;
+    let sortBy = this.state.sortBy;
     if (!sortBy)
       return 0;
 
-    if (a[sortBy.key] < b[sortBy.key]) {
-      return sortBy.orderAsc ? -1 : 1;
+    let comparator = this.defaultComparator;
+
+    let sortingCol = this.columns.filter((col) => col.key == sortBy.key);
+    if (sortingCol.length && sortingCol[0].comparator) {
+      comparator = sortingCol[0].comparator;
     }
 
-    if (a[sortBy.key] > b[sortBy.key]) {
-      return sortBy.orderAsc ? 1 : -1;
+    var comparisonResult = comparator(a[sortBy.key], b[sortBy.key])
+
+    if (!sortBy.orderAsc) {
+      comparisonResult = -comparisonResult;
     }
-    return 0;
+
+
+    return comparisonResult;
   }
 
   renderColumnHeader( column) {
