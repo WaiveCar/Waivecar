@@ -1,7 +1,8 @@
-import React   from 'react';
-import moment  from 'moment';
-import { Map } from 'bento-web';
-import { api } from 'bento';
+import React    from 'react';
+import { Link } from 'react-router';
+import moment   from 'moment';
+import { Map }  from 'bento-web';
+import { api }  from 'bento';
 
 module.exports = class CarsIndex extends React.Component {
 
@@ -149,6 +150,22 @@ module.exports = class CarsIndex extends React.Component {
     )
   }
 
+  renderListLinkItem(item, index) {
+    let route = `/cars/${ item.id }`;
+    let text = <span>{ item.id } <small className="pull-right">{ updated }</small></span>
+    let updated = moment(item.updatedAt).format('hh:mm.ss');
+
+    if (item.license) {
+      text = <span>{ item.license } ({ item.id }) <small className="pull-right">{ updated }</small></span>
+    }
+
+    return (
+        <Link key={ index } className="list-group-item" to={ route }>
+          { text }
+        </Link>
+    );
+  }
+
   render() {
 
     if (!this.state.cars.length)
@@ -170,46 +187,57 @@ module.exports = class CarsIndex extends React.Component {
           <div className="row">
             <div className="col-xs-12" >
               <div id="table-component" className="component-container" >
-                <div className="griddle" >
-                  <div className="top-section" >
-                    <div className="griddle-filter" >
-                      <div className="filter-container" >
-                        <input type="text"
-                               name="filter"
-                               placeholder="Filter Results"
-                               className="form-control"
-                               value={this.state.filter}
-                               onChange={ (e) => this.onFilter(e)}
-                          />
+                <div className="hidden-md-down">
+                  <div className="griddle" >
+                    <div className="top-section" >
+                      <div className="griddle-filter" >
+                        <div className="filter-container" >
+                          <input type="text"
+                                 name="filter"
+                                 placeholder="Filter Results"
+                                 className="form-control"
+                                 value={this.state.filter}
+                                 onChange={ (e) => this.onFilter(e)}
+                            />
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="griddle-container">
-                    <div className="griddle-body">
-                      <div>
-                        <table>
-                          <thead>
-                          <tr>
+                    <div className="griddle-container">
+                      <div className="griddle-body">
+                        <div>
+                          <table>
+                            <thead>
+                            <tr>
+                              {
+                                this.columns.map((column) => this.renderColumnHeader(column))
+                              }
+                              <th data-title="actions" ><span>Actions</span></th>
+                            </tr>
+                            </thead>
+                            <tbody>
                             {
-                              this.columns.map((column) => this.renderColumnHeader(column))
+                              this.state.cars
+                                .filter((car) => this.isCarIncludes(car, this.state.filter) )
+                                .sort((a, b) => this.sortComparator(a, b))
+                                .map((car) => this.renderCarRow(car))
                             }
-                            <th data-title="actions" ><span>Actions</span></th>
-                          </tr>
-                          </thead>
-                          <tbody>
-                          {
-                            this.state.cars
-                              .filter((car) => this.isCarIncludes(car, this.state.filter) )
-                              .sort((a, b) => this.sortComparator(a, b))
-                              .map((car) => this.renderCarRow(car))
-                          }
-                          </tbody>
-                        </table>
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
+                  </div>
+                </div>
+                <div className="hidden-lg-up visible-md-down">
+                  <div className="list-group">
+                    {
+                      this.state.cars
+                          ? this.state.cars.map(this.renderListLinkItem.bind(this))
+                          : <div className="list-group-item">Loading</div>
+                    }
+                  </div>
                 </div>
               </div>
             </div>
