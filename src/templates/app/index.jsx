@@ -67,6 +67,11 @@ templates.register('app', {
         onEnter   : policies.isAdministrator
       },
       {
+        path      : '/cars',
+        component : require('../../views/app/admin/cars'),
+        onEnter   : policies.isAdministrator
+      },
+      {
         path      : '/bookings/:id',
         component : require('../../views/app/admin/bookings/show'),
         onEnter   : policies.isAdministrator
