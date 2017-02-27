@@ -156,7 +156,7 @@ module.exports = class CarsIndex extends React.Component {
     let updated = moment(item.updatedAt).format('hh:mm.ss');
 
     if (item.license) {
-      text = <span>{ item.license } ({ item.id }) <small className="pull-right">{ updated }</small></span>
+      text = <span>{ item.license } <small className="pull-right">{ updated }</small></span>
     }
 
     return (
