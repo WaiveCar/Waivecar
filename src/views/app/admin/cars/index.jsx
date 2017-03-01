@@ -25,19 +25,15 @@ module.exports = class CarsIndex extends React.Component {
       {key : "isLocked", title:"Locked", type : "bool"},
       {key : "isImmobilized", title:"Immobilized", type : "bool"},
       {key : "isCharging", title:"Charging", type : "bool"},
-      {key : "status", title:"Status", type : "text"},
+      {key : "statuscolumn", title:"Status", type : "status"},
       {key : "updatedAt", title:"Updated At", type : "datetime"}
     ];
   }
 
   componentDidMount() {
-
-
     api.get(`/carsWithBookings`, (err, cars) => {
       this.setState( {cars: cars } );
     });
-
-
   }
 
   onFilter(event) {
@@ -73,13 +69,17 @@ module.exports = class CarsIndex extends React.Component {
     var value = car[column.key];
 
     if (column.type == "bool") {
-      return <td className="table-col-xs" key={column.key}>{ this.renderCheckMark(value )}</td>
+      return <td className="table-col-xs" key={column.key}>{ this.renderCheckMark(value)}</td>
     }
 
     if (column.type == "datetime") {
       let date = moment(value).format('h:mm:ss YY-MM-DD');
       return <td key={column.key}><span>{date}</span></td>
     }
+
+    // TODO: see https://github.com/WaiveCar/Waivecar/issues/437#1 last item on the ask.
+    // if (column.type === "status") {
+    // }
 
     return <td key={column.key}>{value}</td>
   }
