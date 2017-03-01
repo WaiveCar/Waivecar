@@ -5,3 +5,6 @@ Vagrant::Config.run do |config|
   config.vm.forward_port 80, 3080
   config.vm.box_url = "http://files.vagrantup.com/precise64.box"
 end
+Vagrant.configure(2) do |config|
+  config.ssh.insert_key = false
+end
