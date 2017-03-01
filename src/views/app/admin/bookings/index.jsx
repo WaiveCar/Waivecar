@@ -101,7 +101,11 @@ class TableIndex extends React.Component {
         else if (detail.type === 'end') end = moment(detail.createdAt);
       }
 
-      duration = moment.duration(end.diff(start)).humanize();
+      duration = moment.utc(moment.duration(end.diff(start)).asMilliseconds()).format("H:mm");
+      if(duration === '0:00') {
+        duration = "< 1m";
+      }
+
     }
     return (
       <tr key={ booking.id }>
