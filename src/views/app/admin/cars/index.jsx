@@ -6,7 +6,6 @@ import { api }  from 'bento';
 
 module.exports = class CarsIndex extends React.Component {
 
-
   constructor(...options) {
     super(...options);
 
@@ -41,14 +40,13 @@ module.exports = class CarsIndex extends React.Component {
   }
 
   isCarIncludes(car, str) {
-
     str = str.toLowerCase();
     return this.columns.filter((column) => {
-        if (column.type == "text" || column.type == "datetime") {
-          var value = car[column.key];
-          return value && value.toString().toLowerCase().includes(str);
-        }
-        return false;
+      if (column.type == "text" || column.type == "datetime") {
+        var value = car[column.key];
+        return value && value.toString().toLowerCase().includes(str);
+      }
+      return false;
     }).length > 0;
 
   }
@@ -99,21 +97,10 @@ module.exports = class CarsIndex extends React.Component {
   }
 
   defaultComparator(valA, valB) {
-
-    if (valA < valB) {
-      return -1;
-    }
-
-    if (valA > valB) {
-      return 1;
-    }
-
-    return 0;
-
+    return valA - valB;
   }
 
   licenseComparator(valA, valB) {
-
     let regExp = /([a-z]*)(\d*)/i;
     let partsA = valA.match(regExp);
     let partsB = valB.match(regExp);
@@ -137,8 +124,9 @@ module.exports = class CarsIndex extends React.Component {
 
   sortComparator(a, b) {
     let sortBy = this.state.sortBy;
-    if (!sortBy)
+    if (!sortBy) {
       return 0;
+    }
 
     let comparator = this.defaultComparator;
 
@@ -153,12 +141,10 @@ module.exports = class CarsIndex extends React.Component {
       comparisonResult = -comparisonResult;
     }
 
-
     return comparisonResult;
   }
 
   renderColumnHeader( column) {
-
     var className = "";
 
     if (column.type == "bool") {
@@ -200,13 +186,24 @@ module.exports = class CarsIndex extends React.Component {
     let updated = moment(item.updatedAt).format('hh:mm.ss');
 
     if (item.license) {
-      text = <span>{ item.license } <small className="pull-right">{ updated }</small></span>
+      let name = '';
+      if (item.user) {
+        name = [item.user.firstName, item.user.lastName].join(' ');
+      } else {
+        let word = item.statuscolumn;
+        if (item.isCharging) { 
+          word = 'Charging';
+        }
+        name = <em>{ word }: {item.charge}%</em>
+      }
+
+      text = <span><span className='carname'>{ item.license }</span> <small>{ name }</small><small className="pull-right">{ updated }</small></span>
     }
 
     return (
-        <Link key={ index } className="list-group-item" to={ route }>
-          { text }
-        </Link>
+      <Link key={ index } className="list-group-item" to={ route }>
+        { text }
+      </Link>
     );
   }
 
