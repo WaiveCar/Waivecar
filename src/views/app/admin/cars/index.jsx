@@ -25,7 +25,7 @@ module.exports = class CarsIndex extends React.Component {
       {key : "isLocked", title:"Locked", type : "bool"},
       {key : "isImmobilized", title:"Immobilized", type : "bool"},
       {key : "isCharging", title:"Charging", type : "bool"},
-      {key : "isAvailable", title:"available", type : "bool"},
+      {key : "status", title:"Status", type : "text"},
       {key : "updatedAt", title:"Updated At", type : "datetime"}
     ];
   }
@@ -33,7 +33,7 @@ module.exports = class CarsIndex extends React.Component {
   componentDidMount() {
 
 
-    api.get(`/cars`, (err, cars) => {
+    api.get(`/carsWithBookings`, (err, cars) => {
       this.setState( {cars: cars } );
     });
 
