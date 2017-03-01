@@ -102,11 +102,11 @@ module.exports = class CarsIndex extends React.Component {
   }
 
   licCompare(valA, valB) {
-    return (parseInt(valA.license.replace(/\D/g,''), 10) || 0) - (parseInt(valB.license.replace(/\D/g,''), 10) || 0);
+    return (parseInt(valA.license.replace(/\D/g,''), 10) || 10000) - (parseInt(valB.license.replace(/\D/g,''), 10) || 10000);
   }
 
   licenseComparator(valA, valB) {
-    return (parseInt(valA.replace(/\D/g,''), 10) || 0) - (parseInt(valB.replace(/\D/g,''), 10) || 0);
+    return (parseInt(valA.replace(/\D/g,''), 10) || 10000) - (parseInt(valB.replace(/\D/g,''), 10) || 10000);
   }
 
   sortComparator(a, b) {
