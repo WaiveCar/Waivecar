@@ -102,11 +102,11 @@ module.exports = class CarsIndex extends React.Component {
   }
 
   licCompare(valA, valB) {
-    return parseInt(valA.license.replace(/\D/g,''), 10) - parseInt(valB.license.replace(/\D/g,''), 10);
+    return (parseInt(valA.license.replace(/\D/g,''), 10) || 0) - (parseInt(valB.license.replace(/\D/g,''), 10) || 0);
   }
 
   licenseComparator(valA, valB) {
-    return parseInt(valA.replace(/\D/g,''), 10) - parseInt(valB.replace(/\D/g,''), 10);
+    return (parseInt(valA.replace(/\D/g,''), 10) || 0) - (parseInt(valB.replace(/\D/g,''), 10) || 0);
   }
 
   sortComparator(a, b) {
@@ -204,16 +204,6 @@ module.exports = class CarsIndex extends React.Component {
         <section className="container" >
           <div className="row">
             <div className="col-xs-12" >
-              <div className="map-dynamic">
-                <Map
-                    markerIcon = { '/images/map/active-waivecar.svg' }
-                    markers    = { this.state.cars }
-                  />
-              </div>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-xs-12" >
               <div id="table-component" className="component-container" >
                 <div className="hidden-md-down">
                   <div className="griddle" >
@@ -267,6 +257,16 @@ module.exports = class CarsIndex extends React.Component {
                     }
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-xs-12" >
+              <div className="map-dynamic">
+                <Map
+                    markerIcon = { '/images/map/active-waivecar.svg' }
+                    markers    = { this.state.cars }
+                  />
               </div>
             </div>
           </div>
