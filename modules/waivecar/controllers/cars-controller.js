@@ -14,6 +14,14 @@ Bento.Register.Controller('CarsController', function(controller) {
   };
 
   /**
+   * Returns a list of cars with bookings.
+   * @return {Object}
+   */
+  controller.carsWithBookings = function *() {
+    return yield car.carsWithBookings(this.auth.user);
+  };
+
+  /**
    * Returns a single car.
    * @param  {Number} id The Car Id.
    * @return {Object}

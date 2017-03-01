@@ -38,6 +38,7 @@ Route.get('/reports', [ 'isAuthenticated', 'ReportsController@index' ]);
 // ### Cars
 
 Route.get('/cars',              [ 'CarsController@index' ]);
+Route.get('/carsWithBookings',  [ 'CarsController@carsWithBookings' ]);
 Route.get('/cars/:id',          [ 'CarsController@show' ]);
 Route.get('/cars/:id/notes',    [ 'isAuthenticated', 'NotesController@getCarNotes' ]);
 Route.get('/cars/:id/events',   [ 'isAuthenticated', 'CarsController@events' ]);

@@ -1,5 +1,6 @@
 'use strict';
 
+let sequelize = Bento.provider('sequelize');
 let co          = require('co');
 let parallel    = require('co-parallel');
 let request     = require('co-request');
@@ -83,6 +84,33 @@ module.exports = {
     });
 
     return cars;
+  },
+
+  /**
+   * Returns a list of cars with bookings from the local database.
+   * @param  {Object} _user
+   * @return {Array}
+   */
+  *carsWithBookings(_user) {
+    let where = '';
+
+    if (_user && !_user.hasAccess('admin')) {
+      where += ' WHERE admin_only = 0';
+    }
+
+    let cars = yield sequelize.query('SELECT *, IF(`is_available` = 0, \'Unavailable\', (SELECT `status` FROM waivecar_development.bookings WHERE car_id = cars.id ORDER BY `updated_at` DESC LIMIT 0,1)) as `status` FROM waivecar_development.cars as cars' + where + ' LIMIT 0, 100;');
+
+    cars[0].map(function(car){
+      if (car.status == 'closed' || car.status == 'completed')
+       car.status = 'Available';
+       else if (car.status == 'reserved')
+       car.status = 'Reserved';
+       else if (car.status == 'started' || car.status == 'ended')
+       car.status = 'Active Booking';
+      return car;
+    });
+
+    return cars[0];
   },
 
   *find(query) {
