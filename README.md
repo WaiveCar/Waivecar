@@ -6,6 +6,31 @@ Active booking loop: modules/waivecar/bootstrap/schedules/active-booking.js
 
 For raw sql queries use `Bento.provider('sequelize')` as found in places like `api/modules/shop/lib/customer-service.js`.
 
+## Booking history notes
+
+This may need to be redone eventually ... there's a few issues with this model (as of this writing no tickets ... they are mostly race condition based).
+
+
+Anyway, getting all the booking start and end times is done through something like:
+
+    select * from booking_details where booking_id in (
+      select id from bookings where 
+        car_id='59000018940C5501' and 
+        status in ('completed', 'closed', 'ended') and 
+        created_at > '2017-01-10';
+      )
+    );
+
+Of course update it to your needs.
+
+### CSV notes
+
+Although this is profusely documented elsewhere, I'm doing it again:
+
+
+    INTO OUTFILE '/var/lib/mysql-files/somename.csv' FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';
+
+
 ### About the load-balancing:
 
 Be weary of things like `scheduler.process` ... two reasons:
