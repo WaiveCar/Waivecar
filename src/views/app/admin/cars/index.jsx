@@ -11,7 +11,8 @@ module.exports = class CarsIndex extends React.Component {
 
     this.state = {
       cars : [],
-      filter : ""
+      filter : "",
+      sortBy: { key: "license", orderAsc: true }
     };
 
     this.columns = [
@@ -48,7 +49,6 @@ module.exports = class CarsIndex extends React.Component {
       }
       return false;
     }).length > 0;
-
   }
 
   renderCheckMark(checked) {
@@ -71,7 +71,7 @@ module.exports = class CarsIndex extends React.Component {
     }
 
     if (column.type == "datetime") {
-      let date = moment(value).format('h:mm:ss YY-MM-DD');
+      let date = moment(value).format('HH:mm:ss MM-DD-YY');
       return <td key={column.key}><span>{date}</span></td>
     }
 
@@ -88,8 +88,9 @@ module.exports = class CarsIndex extends React.Component {
     var orderAsc = true;
 
     if (this.state.sortBy) {
-       if (this.state.sortBy.key == columnKey)
+       if (this.state.sortBy.key == columnKey) {
          orderAsc = !this.state.sortBy.orderAsc;
+       }
     }
     this.setState({
       sortBy : {key : columnKey, orderAsc: orderAsc}
@@ -100,26 +101,12 @@ module.exports = class CarsIndex extends React.Component {
     return valA - valB;
   }
 
+  licCompare(valA, valB) {
+    return parseInt(valA.license.replace(/\D/g,''), 10) - parseInt(valB.license.replace(/\D/g,''), 10);
+  }
+
   licenseComparator(valA, valB) {
-    let regExp = /([a-z]*)(\d*)/i;
-    let partsA = valA.match(regExp);
-    let partsB = valB.match(regExp);
-
-    let result = this.defaultComparator(partsA[1], partsB[1]);
-    if (result != 0) {
-      return result;
-    }
-
-    let intPartA = parseInt(partsA[2], 10);
-    let intPartB = parseInt(partsB[2], 10);
-
-    if (!intPartA)
-      return -1;
-
-    if (!intPartB)
-      return 1;
-
-    return this.defaultComparator(intPartA, intPartB);
+    return parseInt(valA.replace(/\D/g,''), 10) - parseInt(valB.replace(/\D/g,''), 10);
   }
 
   sortComparator(a, b) {
@@ -208,9 +195,9 @@ module.exports = class CarsIndex extends React.Component {
   }
 
   render() {
-
-    if (!this.state.cars.length)
-      return (false);
+    if (!this.state.cars.length) {
+      return false;
+    }
 
     return (
       <div className="cars-index" >
@@ -275,8 +262,8 @@ module.exports = class CarsIndex extends React.Component {
                   <div className="list-group">
                     {
                       this.state.cars
-                          ? this.state.cars.map(this.renderListLinkItem.bind(this))
-                          : <div className="list-group-item">Loading</div>
+                        ? this.state.cars.sort(this.licCompare).map(this.renderListLinkItem.bind(this))
+                        : <div className="list-group-item">Loading</div>
                     }
                   </div>
                 </div>
