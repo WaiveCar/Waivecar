@@ -310,13 +310,16 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
   model.attributes = [
     'bookingId',
     'lastBooking',
+    'statuscolumn',
     'user'
   ];
 
   model.relations = [
     'User',
-    function(User) {
+    'Booking',
+    function(User, Booking) {
       this.belongsTo(User, { as : 'user', foreignKey : 'userId' });
+      this.hasMany(Booking, { as : 'booking' });
     }
   ];
 
