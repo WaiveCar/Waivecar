@@ -170,7 +170,7 @@ module.exports = class CarsIndex extends React.Component {
   renderListLinkItem(item, index) {
     let route = `/cars/${ item.id }`;
     let text = <span>{ item.id } <small className="pull-right">{ updated }</small></span>
-    let updated = moment(item.updatedAt).format('hh:mm.ss');
+    let updated = moment(item.updatedAt).format('HH:mm');
 
     if (item.license) {
       let name = '';
