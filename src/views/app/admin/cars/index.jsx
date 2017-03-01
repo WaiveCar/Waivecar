@@ -175,16 +175,21 @@ module.exports = class CarsIndex extends React.Component {
     if (item.license) {
       let name = '';
       if (item.user) {
-        name = [item.user.firstName, item.user.lastName].join(' ');
+        name = [item.user.firstName, item.user.lastName];
+        if (item.booking) {
+          let duration = moment.duration(moment.utc().diff(moment(item.booking[0].createdAt)));
+          name.unshift( moment.utc(duration.asMilliseconds()).format('H:mm') );
+        }
+        name = name.join(' ');
       } else {
         let word = item.statuscolumn;
         if (item.isCharging) { 
           word = 'Charging';
         }
-        name = <em>{ word }: {item.charge}%</em>
+        name = <em>{item.charge}% { word }</em>
       }
 
-      text = <span><span className='carname'>{ item.license }</span> <small>{ name }</small><small className="pull-right">{ updated }</small></span>
+      text = <span><span className='carname'>{ item.license }</span> <small>{ name }</small><small className="cartime pull-right">{ updated }</small></span>
     }
 
     return (
