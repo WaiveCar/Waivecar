@@ -122,6 +122,9 @@ module.exports = {
 
     cars.forEach(function(car){
       car.statuscolumn = statusMap[car.booking[0].status] || 'Unavailable';
+      if(car.statuscolumn === 'Available') {
+        car.statuscolumn = car.isAvailable ? 'Available' : 'Unavailable';
+      }
     });
 
     return cars;
