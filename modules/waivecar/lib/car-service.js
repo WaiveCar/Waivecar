@@ -92,8 +92,20 @@ module.exports = {
    * @return {Array}
    */
   *carsWithBookings() {
-
-    let cars = yield sequelize.query('SELECT *, IF(`is_available` = 0, \'Unavailable\', (SELECT `status` FROM waivecar_development.bookings WHERE car_id = cars.id ORDER BY `updated_at` DESC LIMIT 1)) as `status` FROM waivecar_development.cars as cars LIMIT 0, 100;');
+    let cars = yield Car.find({
+      include: [
+        { 
+          model : 'User',
+          as: 'user'
+        },
+        { 
+          model : 'Booking',
+          as: 'booking',
+          order: [['created_at', 'DESC']],
+          limit: 1
+        }
+      ]
+    });
 
     // the schema as of this writing is
     // enum('reserved','pending','cancelled','ready','started','ended','completed','closed') 
@@ -108,11 +120,11 @@ module.exports = {
       started:   'Active',
     };
 
-    cars[0].forEach(function(car){
-      car.statuscolumn = statusMap[car.status] || 'Unavailable';
+    cars.forEach(function(car){
+      car.statuscolumn = statusMap[car.booking[0].status] || 'Unavailable';
     });
 
-    return cars[0];
+    return cars;
   },
 
   *find(query) {
