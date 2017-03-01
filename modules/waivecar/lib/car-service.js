@@ -91,23 +91,25 @@ module.exports = {
    * @param  {Object} _user
    * @return {Array}
    */
-  *carsWithBookings(_user) {
-    let where = '';
+  *carsWithBookings() {
 
-    if (_user && !_user.hasAccess('admin')) {
-      where += ' WHERE admin_only = 0';
-    }
+    let cars = yield sequelize.query('SELECT *, IF(`is_available` = 0, \'Unavailable\', (SELECT `status` FROM waivecar_development.bookings WHERE car_id = cars.id ORDER BY `updated_at` DESC LIMIT 1)) as `status` FROM waivecar_development.cars as cars LIMIT 0, 100;');
 
-    let cars = yield sequelize.query('SELECT *, IF(`is_available` = 0, \'Unavailable\', (SELECT `status` FROM waivecar_development.bookings WHERE car_id = cars.id ORDER BY `updated_at` DESC LIMIT 0,1)) as `status` FROM waivecar_development.cars as cars' + where + ' LIMIT 0, 100;');
+    // the schema as of this writing is
+    // enum('reserved','pending','cancelled','ready','started','ended','completed','closed') 
+    let statusMap = {
+      cancelled: 'Available',
+      closed:    'Available',
+      completed: 'Available',
+      ended:     'Available',
+      pending:   'Reserved',
+      ready:     'Active',
+      reserved:  'Reserved',
+      started:   'Active',
+    };
 
-    cars[0].map(function(car){
-      if (car.status == 'closed' || car.status == 'completed')
-       car.status = 'Available';
-       else if (car.status == 'reserved')
-       car.status = 'Reserved';
-       else if (car.status == 'started' || car.status == 'ended')
-       car.status = 'Active Booking';
-      return car;
+    cars[0].forEach(function(car){
+      car.statuscolumn = statusMap[car.status] || 'Unavailable';
     });
 
     return cars[0];
