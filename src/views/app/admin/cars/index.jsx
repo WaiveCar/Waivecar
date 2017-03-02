@@ -43,7 +43,7 @@ module.exports = class CarsIndex extends React.Component {
   isCarIncludes(car, str) {
     str = str.toLowerCase();
     return this.columns.filter((column) => {
-      if (column.type == "text" || column.type == "datetime") {
+      if (column.key == "license") {
         var value = car[column.key];
         return value && value.toString().toLowerCase().includes(str);
       }
@@ -75,9 +75,12 @@ module.exports = class CarsIndex extends React.Component {
       return <td key={column.key}><span>{date}</span></td>
     }
 
-    // TODO: see https://github.com/WaiveCar/Waivecar/issues/437#1 last item on the ask.
-    // if (column.type === "status") {
-    // }
+    if (column.type === "status") {
+      if (car.user) {
+        value = <a href={ '/users/' + car.user.id }>{ car.user.firstName } { car.user.lastName }</a>
+      }
+      return <td key={column.key}>{value}</td>
+    }
 
     return <td key={column.key}>{value}</td>
   }
