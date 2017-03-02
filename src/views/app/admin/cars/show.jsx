@@ -137,6 +137,9 @@ class CarsShowView extends React.Component {
                     }
                   ]}
                 />
+                <div className="hidden-lg-up visible-md-down">
+                  <a className="btn btn-link btn-sm col-xs-6" style={{ float: "none" }} href={"geo:" + car.longitude + "," + car.latitude}>Open in Maps</a>
+                </div>
               </div>
             </div>
           </div>
