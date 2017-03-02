@@ -121,6 +121,7 @@ class CarsShowView extends React.Component {
   }
 
   renderCarMedia(car) {
+    let geo = car.latitude + ',' + car.longitude 
     return (
       <div className="box">
         <div className="container-fluid">
@@ -138,7 +139,7 @@ class CarsShowView extends React.Component {
                   ]}
                 />
                 <div className="hidden-lg-up visible-md-down text-center">
-                  <a className="btn btn-link btn-sm col-xs-6" style={{ float: "none" }} href={"geo:" + car.latitude + ',' + car.longitude }>Open in Maps</a>
+                  <a className="btn btn-link btn-sm col-xs-6" style={{ float: "none" }} href={ "geo:" + geo + '?q=' + geo + '(' + car.license + ')' }>Open in Maps</a>
                 </div>
               </div>
             </div>
