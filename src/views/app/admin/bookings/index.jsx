@@ -86,6 +86,13 @@ class TableIndex extends React.Component {
     });
   }
 
+  redirectToBooking(id) {
+    let e = document.getElementById('isMobile');
+
+    if (window.getComputedStyle(e).display == 'none')   // Mobile version
+      location.href = '/bookings/' + id;
+  }
+
   /**
    * Renders the booking row.
    * @param  {Object} booking
@@ -108,14 +115,15 @@ class TableIndex extends React.Component {
 
     }
     return (
-      <tr key={ booking.id }>
-        <td><Link to={ `/bookings/${ booking.id }` }>{ booking.id }</Link></td>
+      <tr key={ booking.id } onClick={()=>this.redirectToBooking(booking.id)}>
+        <td className="hidden-md-up">{ booking.id }</td>
+        <td className="hidden-sm-down"><Link to={ `/bookings/${ booking.id }` }>{ booking.id }</Link></td>
         <td className="hidden-sm-down"><Link to={ `/cars/${ booking.carId }` }>{ booking.car ? (booking.car.license || booking.carId) : '(unknown)' }</Link></td>
         <td className="hidden-sm-down"><Link to={ `/users/${ booking.userId }` } >{ `${ booking.user.firstName} ${ booking.user.lastName }` }</Link></td>
         <td>{ booking.status }</td>
-        <td>{ moment(booking.createdAt).format('HH:mm YYYY-MM-DD') }</td>
+        <td>{ moment(booking.createdAt).format('HH:mm MM-DD') }</td>
         <td>{ duration }</td>
-        <td>
+        <td className="hidden-sm-down">
           <Link to={ `/bookings/${ booking.id }` }>
             <i className="material-icons" style={{ marginTop : 5 }}>pageview</i>
           </Link>
@@ -142,6 +150,7 @@ class TableIndex extends React.Component {
                 <input type="text" className="form-control box-table-search" ref="search" placeholder="Search text [name, car]" onChange={ this.table.search } />
               </div>
             </div>
+            <div id="isMobile" className="hidden-sm-down"></div>
             <table className="box-table table-striped">
               <thead>
                 <tr ref="sort">
@@ -151,7 +160,7 @@ class TableIndex extends React.Component {
                   <ThSort sort="status"    value="Status"  ctx={ this } />
                   <ThSort sort="createdAt" value="Created" ctx={ this } style={{ width : 125 }} />
                   <th className='hidden-sm-down'>Duration</th>
-                  <th></th>
+                  <th className="hidden-sm-down"></th>
                 </tr>
               </thead>
               <tbody>
