@@ -13,10 +13,11 @@ module.exports = angular.module('app.controllers').controller('CarsMapController
   '$data',
   'cars',
   '$modal',
+  '$interval',
   CarsMapController
 ]);
 
-function CarsMapController ($rootScope, $scope, $state, $injector, $data, cars, $modal) {
+function CarsMapController ($rootScope, $scope, $state, $injector, $data, cars, $modal, $interval) {
   var $distance = $injector.get('$distance');
   var LocationService = $injector.get('LocationService');
   // the accuracy should be within this amount of meters to show the Bummer dialog
@@ -24,9 +25,18 @@ function CarsMapController ($rootScope, $scope, $state, $injector, $data, cars, 
   var modal;
 
   LocationService.getCurrentLocation()
-    .then(function () {
+    .then(function (latlon) {
+      //this.mapControl.fitBounds();
+      this.location = latlon;
+      //this.location = { latitude: 34.016660, longitude: -118.489252 };
+
+      this.all = prepareCars(cars);
+      this.featured = featured(this.all, this.location);
+
       this.carsInRange();
-    }.bind(this));
+    }.bind(this)
+  );
+
 
   this.clearCarWatcher = $scope.$watch(function () {
     return $data.instances.cars;
@@ -38,7 +48,9 @@ function CarsMapController ($rootScope, $scope, $state, $injector, $data, cars, 
       return false;
     }
     this.all = prepareCars(value);
-    this.featured = featured(value);
+    if (this.location)
+      this.featured = featured(this.all, this.location);
+
     return false;
   }.bind(this), true);
 
@@ -49,7 +61,7 @@ function CarsMapController ($rootScope, $scope, $state, $injector, $data, cars, 
 
   // First load
   this.all = prepareCars(cars);
-  this.featured = featured(cars);
+
   ensureAvailableCars(cars);
 
   function ensureAvailableCars (allCars) {
@@ -112,6 +124,7 @@ function CarsMapController ($rootScope, $scope, $state, $injector, $data, cars, 
     });
     // items within 100 yards of homebase will get on the same marker
     homebase.length = _.filter(tempItems[0], 'isAvailable').length;
+    homebase.isAvailable = homebase.length > 0;
     homebase.icon = 'homebase-active';
     homebase.isWaiveCarLot = true;
     homebase.cars = tempItems[0];
@@ -130,12 +143,12 @@ function CarsMapController ($rootScope, $scope, $state, $injector, $data, cars, 
     return awayCars;
   };
 
-  function featured (items) {
+  function featured (items, userLocation) {
     return _(items)
       .filter('isAvailable')
       .sortBy(function (item) {
-        if ($rootScope.currentLocation) {
-          return $distance(item);
+        if (userLocation) {
+          return $distance(item, userLocation);
         }
         return item.id;
       })

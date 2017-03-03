@@ -13,7 +13,8 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
   var $this = this;
   var $perm = $injector.get('PermissionService');
   var $modal = $injector.get('$modal'), modal;
-  var diagnostic = $window.cordova.plugins.diagnostic || false;
+
+  var diagnostic = $window.cordova ? $window.cordova.plugins.diagnostic || false : false;
 
   this.getLocation = function getLocation () {
     return $q.resolve($rootScope.currentLocation);

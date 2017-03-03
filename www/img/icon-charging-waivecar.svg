@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<svg width="61" height="77" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg">
+ <!-- Generator: Sketch 3.4.4 (17249) - http://www.bohemiancoding.com/sketch -->
+ <title>Group</title>
+ <desc>Created with Sketch.</desc>
+
+ <g>
+  <title>Layer 1</title>
+  <g fill-rule="evenodd" fill="none" id="Core-Flow">
+   <g id="14.1-WaiveCar-not-available@2x-">
+    <g id="MAP">
+     <g id="waivecars">
+      <g id="waivecar-mark-copy-4">
+       <g id="Group">
+        <g id="svg_1">
+         <ellipse ry="30.238787" rx="30.234957" cy="30.711199" cx="30.32551" fill="#FFFFFF" opacity="0.8" id="Oval-1"/>
+         <path fill="#A3A9A5" id="Shape" d="m19.916473,59.130042c-7.7498,-2.81612 -13.98978,-8.69212 -17.30634,-16.15533l10.07832,-5.2078l-0.50392,10.24759l16.7972,-13.10347l-0.33594,8.23167l29.89901,-23.35106c1.34378,3.35986 2.01566,7.05571 2.01566,10.91956c0,12.58529 -7.69483,23.43902 -18.71736,27.97512l-11.10342,17.58264l-10.82321,-17.13892zm1.33855,-34.29861l-2.18364,10.24759l16.96517,-13.10347l-0.67188,8.06367l20.15663,-16.12735c-5.3751,-8.06368 -14.61356,-13.43946 -25.19579,-13.43946c-16.62923,0 -30.23496,13.60745 -30.23496,30.23879c0,4.36782 0.83986,8.39966 2.51958,12.09551l18.64489,-17.97528z"/>
+        </g>
+       </g>
+      </g>
+     </g>
+    </g>
+   </g>
+  </g>
+ </g>
+</svg>
