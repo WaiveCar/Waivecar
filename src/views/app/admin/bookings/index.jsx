@@ -139,7 +139,7 @@ class TableIndex extends React.Component {
         <td className="hidden-sm-down">{ booking.status }</td>
         <td className="hidden-md-up no-wrap"><i className={ `fa fa-${ this.state.icons[booking.status]}` }></i> { booking.car.license }</td>
         <td>{ moment(booking.createdAt).format('HH:mm MM-DD') }</td>
-        <td>{ duration }</td>
+        <td className="no-wrap">{ duration }</td>
         <td className="hidden-sm-down">
           <Link to={ `/bookings/${ booking.id }` }>
             <i className="material-icons" style={{ marginTop : 5 }}>pageview</i>
