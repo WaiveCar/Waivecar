@@ -89,8 +89,10 @@ class TableIndex extends React.Component {
   redirectToBooking(id) {
     let e = document.getElementById('isMobile');
 
-    if (window.getComputedStyle(e).display == 'none')   // Mobile version
+    // Mobile version
+    if (window.getComputedStyle(e).display == 'none') {
       location.href = '/bookings/' + id;
+    }
   }
 
   /**
