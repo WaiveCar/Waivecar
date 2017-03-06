@@ -323,6 +323,14 @@ module.exports = {
       yield LogService.create({ carId : id, action : data.isCharging ? Actions.START_CHARGE : Actions.END_CHARGE });
     }
 
+    // see https://github.com/WaiveCar/Waivecar/issues/727 ... Waive2 and 20 is off by 35 
+    if(['WAIVE20','WAIVE2'].indexOf(data.license) !== -1) {
+      // we lob off some amount
+      data.charge -= 35;
+      // and make sure it's over 0.
+      data.charge = Math.max(0, data.charge);
+    }
+
     yield existingCar.update(data);
 
     relay.emit('cars', {
