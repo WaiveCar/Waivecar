@@ -25,7 +25,15 @@ class TableIndex extends React.Component {
         order : 'DESC'
       },
       more   : false,
-      offset : 0
+      offset : 0,
+      icons: {
+        "completed": "check",
+        "closed": "check",
+        "ended": "check",
+        "cancelled": "times",
+        "started": "play",
+        "reserved": "hourglass"
+      }
     };
     relay.subscribe(this, 'bookings');
   }
@@ -86,11 +94,12 @@ class TableIndex extends React.Component {
     });
   }
 
-  redirectToBooking(id) {
-    let e = document.getElementById('isMobile');
+  isMobile() {
+    return window.getComputedStyle(document.getElementById('isMobile')).display === 'none';
+  }
 
-    // Mobile version
-    if (window.getComputedStyle(e).display == 'none') {
+  redirectToBooking(id) {
+    if(this.isMobile()) {
       location.href = '/bookings/' + id;
     }
   }
@@ -102,12 +111,17 @@ class TableIndex extends React.Component {
    */
   row(booking) {
     let duration;
-    if (booking.details && booking.details.length >= 2) {
-      let start, end;
+    if (booking.details && booking.status !== 'cancelled') {
+      let start, end = moment.utc();
+
       for (let i = 0; i < booking.details.length; i++) {
         let detail = booking.details[i];
-        if (detail.type === 'start') start = moment(detail.createdAt);
-        else if (detail.type === 'end') end = moment(detail.createdAt);
+        if (detail.type === 'start') {
+          start = moment(detail.createdAt);
+        }
+        else if (detail.type === 'end') {
+          end = moment(detail.createdAt);
+        }
       }
 
       duration = moment.utc(moment.duration(end.diff(start)).asMilliseconds()).format("H:mm");
@@ -122,7 +136,8 @@ class TableIndex extends React.Component {
         <td className="hidden-sm-down"><Link to={ `/bookings/${ booking.id }` }>{ booking.id }</Link></td>
         <td className="hidden-sm-down"><Link to={ `/cars/${ booking.carId }` }>{ booking.car ? (booking.car.license || booking.carId) : '(unknown)' }</Link></td>
         <td className="hidden-sm-down"><Link to={ `/users/${ booking.userId }` } >{ `${ booking.user.firstName} ${ booking.user.lastName }` }</Link></td>
-        <td>{ booking.status }</td>
+        <td className="hidden-sm-down">{ booking.status }</td>
+        <td className="hidden-md-up no-wrap"><i className={ `fa fa-${ this.state.icons[booking.status]}` }></i> { booking.car.license }</td>
         <td>{ moment(booking.createdAt).format('HH:mm MM-DD') }</td>
         <td>{ duration }</td>
         <td className="hidden-sm-down">
