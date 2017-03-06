@@ -1,9 +1,20 @@
 'use strict';
+let fs          = require('fs');
 
 module.exports = class StripeCharges {
 
   constructor(service) {
     this.stripe = service;
+  }
+
+  log(action, options, response, extra) {
+    let payload = [action, options, response];
+
+    if(extra) {
+      payload.push(extra);
+    }
+
+    fs.appendFileSync('/var/log/outgoing/stripe.txt', JSON.stringify(payload) + "\n");
   }
 
   // Charges the provided account.
@@ -16,11 +27,14 @@ module.exports = class StripeCharges {
       charge.customer = user.stripeId;
     }
     return yield new Promise((resolve, reject) => {
-      this.stripe.charges.create(charge, (err, charge) => {
+      this.stripe.charges.create(charge, (err, res) => {
+
+        this.log('charge', charge, [err, res], user);
+
         if (err) {
           return reject(err);
         }
-        resolve(charge);
+        resolve(res);
       });
     });
   }
@@ -30,6 +44,9 @@ module.exports = class StripeCharges {
   *capture(id, charge) {
     return yield new Promise((resolve, reject) => {
       this.stripe.charges.capture(id, charge, (err, res) => {
+
+        this.log('capture', charge, [err, res], {id: id});
+
         if (err) {
           return reject(err);
         }
@@ -43,6 +60,9 @@ module.exports = class StripeCharges {
       this.stripe.refunds.create({
         charge : id
       }, (err, res) => {
+
+        this.log('refund', {id: id}, [err, res]);
+
         if (err) {
           return reject(err);
         }
