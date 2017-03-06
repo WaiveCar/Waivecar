@@ -8,7 +8,7 @@ module.exports = class StripeCharges {
   }
 
   log(action, options, response, extra) {
-    let payload = [action, options, response];
+    let payload = [new Date(), action, options, response];
 
     if(extra) {
       payload.push(extra);
