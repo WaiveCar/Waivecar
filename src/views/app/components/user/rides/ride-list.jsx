@@ -147,19 +147,26 @@ class RideList extends Component {
                 { this.props.currentUser ? 'You currently have' : 'User currently has' }  no past rides.
               </div>
               :
-              <table className="table-rides">
-                <thead>
-                  <tr>
-                    <th width="24"></th>
-                    <th>Date</th>
-                    <th>Duration</th>
-                    <th>Car</th>
-                    <th>Fee</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                { pastRides.map(this.booking) }
-              </table>
+              <div>
+                <table className="table-rides">
+                  <thead>
+                    <tr>
+                      <th width="24"></th>
+                      <th>Date</th>
+                      <th>Duration</th>
+                      <th>Car</th>
+                      <th>Fee</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  { pastRides.map(this.booking) }
+                 </table>
+                 <div className='pull-right'>
+                   <button className="btn btn-sm disabled" >Previous</button>&nbsp; &nbsp;
+                   <button className="btn btn-primary btn-sm" >Next</button>
+                 </div>
+               </div>
+
           }
         </div>
       </div>
