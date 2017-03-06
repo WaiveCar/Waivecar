@@ -315,7 +315,7 @@ module.exports = {
     // user got some other non-integer bottom values.
     if(data.charge) {
       // see https://github.com/WaiveCar/Waivecar/issues/727 ... Waive2 and 20 is off by 35 
-      if(['WAIVE20','WAIVE2'].indexOf(data.license) !== -1) {
+      if(['WAIVE20','WAIVE2'].indexOf(existingCar.license) !== -1) {
         // we lob off some amount
         data.charge -= 35;
         // and make sure it's over 0.
