@@ -26,17 +26,13 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
 
   LocationService.getCurrentLocation()
     .then(function (latlon) {
-      //this.mapControl.fitBounds();
-
-      var firstTimeLocationIsInitialized = !this.location;
 
       this.location = latlon;
 
       this.all = prepareCars(cars);
       this.featured = featured(this.all, this.location);
 
-      if (firstTimeLocationIsInitialized)
-        this.fitBoundsByMarkers = getMarkersToFitBoundBy(this.all, this.featured, this.location);
+      this.fitBoundsByMarkers = getMarkersToFitBoundBy(this.all, this.featured, this.location);
 
       this.carsInRange();
     }.bind(this)
