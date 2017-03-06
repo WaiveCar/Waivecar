@@ -27,10 +27,31 @@ module.exports = angular.module('app.controllers').controller('CarController', [
       appVersion = version;
     });
 
+
+    var LocationService = $injector.get('LocationService');
+    // the accuracy should be within this amount of meters to show the Bummer dialog
+    var minAccuracyThreshold = 200;
+    var modal;
+
+    LocationService.getCurrentLocation()
+      .then(function (latlon) {
+        this.location = latlon;
+        this.route = {
+          start: this.location,
+          destiny: car
+        };
+
+      }.bind(this)
+    );
+
     this.car = angular.extend({}, car, { item: 'car' });
     if (this.car.isAvailable === false) {
       this.car.icon = 'unavailable';
     }
+
+    this.markers = [car];
+
+
 
     this.book = function() {
       var model = { version: appVersion, userId: $auth.me.id, carId: $state.params.id };

@@ -16,15 +16,14 @@
       </h5>
     </div>
     <div class="map-container has-info-footer has-info-subheader">
-      <skobbler-map
-        id="map"
-        zoom="15"
-        markers="ctrl.car"
-        route-start="$root.currentLocation"
-        route-destiny="ctrl.car"
-        center="ctrl.center"
-      >
-      </skobbler-map>
+
+      <google-map id="map"
+                  markers="ctrl.markers"
+                  route="ctrl.route"
+                  current-location="ctrl.location"
+              >
+      </google-map>
+
     </div>
 
     <div class="info-footer padding-horizontal">
