@@ -16,31 +16,14 @@ function directive ($rootScope, MapsLoader, RouteService, $q, $timeout, $window,
 
   function link ($scope, $elem, attrs, ctrl) {
 
+    var mapOptions = {};
 
-
-    //var center = ctrl.center ? ctrl.center :  ctrl.currentLocation;
-
-    var mapOptions = {
-      //zoom: 15,
-      //center: mapToGoogleLatLong(center)
-    };
+    var center = ctrl.center ? ctrl.center : ctrl.currentLocation;
+    if (center) {
+      mapOptions.center = center;
+    }
 
     ctrl.map = new google.maps.Map($elem.find('.map-instance')[0], mapOptions);
-
-    if (ctrl.markers) {
-      ctrl.updateMarkers(ctrl.markers);
-    }
-
-    if (ctrl.currentLocation) {
-      ctrl.addLocationMarker(ctrl.currentLocation);
-    }
-
-    ctrl.control = ctrl.control || {};
-
-    //ctrl.control.fitBounds = function() {
-      ctrl.mapFitBounds(ctrl.markers, ctrl.featured, ctrl.currentLocation);
-    //}
-
 
     var watchers = [
       $scope.$watch('map.markers', function (value, oldValue) {
@@ -48,26 +31,17 @@ function directive ($rootScope, MapsLoader, RouteService, $q, $timeout, $window,
           ctrl.updateMarkers(value);
         }
 
-        // first time initialization
-        if (!oldValue && value) {
-          ctrl.mapFitBounds(value, ctrl.featured, ctrl.currentLocation);
-        }
-
       }, true),
       $scope.$watch('map.currentLocation', function (value, oldValue) {
-        if (oldValue && value) {
+        if (value) {
           ctrl.updateLocationMarker(value);
         }
 
-        if (!oldValue && value) {
-          ctrl.addLocationMarker(ctrl.currentLocation);
-          ctrl.mapFitBounds(ctrl.markers, ctrl.featured, value);
-        }
       }, true),
-      $scope.$watch('map.featured', function (value, oldValue) {
+      $scope.$watch('map.fitBoundsByMarkers', function (value) {
 
-        if (!oldValue && value) {
-          ctrl.mapFitBounds(ctrl.markers, value, ctrl.currentLocation);
+        if (value) {
+          ctrl.mapFitBounds(value);
         }
       }, true)
       //$scope.$watch('map.routeStart', ctrl.drawRoute.bind(ctrl), true),
@@ -97,24 +71,12 @@ function directive ($rootScope, MapsLoader, RouteService, $q, $timeout, $window,
   }
 
 
-  MapController.prototype.mapFitBounds = function mapFitBounds(markers, featured, currentLocation) {
+  MapController.prototype.mapFitBounds = function mapFitBounds(markers) {
     var ctrl = this;
 
-
-    var fitBounedsMarkers = [];
-    if (Array.isArray(featured) && featured.length) {
-      fitBounedsMarkers = featured.slice();
-
-      if (currentLocation) {
-        fitBounedsMarkers.push(currentLocation);
-      }
-    } else {
-      fitBounedsMarkers = markers.slice();
-    }
-
-    if (fitBounedsMarkers.length) {
+    if (markers && markers.length) {
       var bounds = new google.maps.LatLngBounds();
-      fitBounedsMarkers.forEach(function (marker) {
+      markers.forEach(function (marker) {
         bounds.extend(mapToGoogleLatLong(marker));
       });
       ctrl.map.fitBounds(bounds);
@@ -173,7 +135,12 @@ function directive ($rootScope, MapsLoader, RouteService, $q, $timeout, $window,
 
   MapController.prototype.updateLocationMarker = function updateLocationMarker(marker) {
     var ctrl = this;
-    ctrl._addedMarkers.location.setPosition(mapToGoogleLatLong(marker));
+
+    if (ctrl._addedMarkers.location) {
+      ctrl._addedMarkers.location.setPosition(mapToGoogleLatLong(marker));
+    } else {
+      ctrl.addLocationMarker(marker);
+    }
   };
 
 
@@ -327,7 +294,7 @@ function directive ($rootScope, MapsLoader, RouteService, $q, $timeout, $window,
       center: '=',
       currentLocation: '=',
       markers: '=',
-      featured: '=',
+      fitBoundsByMarkers: '=',
       onMarkerTap: '&',
       routeStart: '=',
       routeDestiny: '='

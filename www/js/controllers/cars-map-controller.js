@@ -17,7 +17,7 @@ module.exports = angular.module('app.controllers').controller('CarsMapController
   CarsMapController
 ]);
 
-function CarsMapController ($rootScope, $scope, $state, $injector, $data, cars, $modal, $interval) {
+function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $modal, $interval) {
   var $distance = $injector.get('$distance');
   var LocationService = $injector.get('LocationService');
   // the accuracy should be within this amount of meters to show the Bummer dialog
@@ -27,11 +27,16 @@ function CarsMapController ($rootScope, $scope, $state, $injector, $data, cars, 
   LocationService.getCurrentLocation()
     .then(function (latlon) {
       //this.mapControl.fitBounds();
+
+      var firstTimeLocationIsInitialized = !this.location;
+
       this.location = latlon;
-      //this.location = { latitude: 34.016660, longitude: -118.489252 };
 
       this.all = prepareCars(cars);
       this.featured = featured(this.all, this.location);
+
+      if (firstTimeLocationIsInitialized)
+        this.fitBoundsByMarkers = getMarkersToFitBoundBy(this.all, this.featured, this.location);
 
       this.carsInRange();
     }.bind(this)
@@ -61,10 +66,11 @@ function CarsMapController ($rootScope, $scope, $state, $injector, $data, cars, 
 
   // First load
   this.all = prepareCars(cars);
+  this.fitBoundsByMarkers = getMarkersToFitBoundBy(this.all);
 
   ensureAvailableCars(cars);
 
-  function ensureAvailableCars (allCars) {
+  function ensureAvailableCars(allCars) {
     var availableCars = _.filter(allCars, 'isAvailable');
     if (availableCars.length) {
       return;
@@ -81,14 +87,15 @@ function CarsMapController ($rootScope, $scope, $state, $injector, $data, cars, 
     });
   };
 
-  this.carsInRange = function() {
+
+  this.carsInRange = function () {
     if (
       !$rootScope.currentLocation || (
-        $rootScope.currentLocation &&
-        $rootScope.currentLocation.accuracy &&
-        $rootScope.currentLocation.accuracy >= minAccuracyThreshold)
-      ) {
-        return;
+      $rootScope.currentLocation &&
+      $rootScope.currentLocation.accuracy &&
+      $rootScope.currentLocation.accuracy >= minAccuracyThreshold)
+    ) {
+      return;
     }
 
     var maxDistance = 30; // at least one car should be less than 30 miles away
@@ -112,7 +119,7 @@ function CarsMapController ($rootScope, $scope, $state, $injector, $data, cars, 
     }
   };
 
-  function prepareCars (items) {
+  function prepareCars(items) {
     var homebase = {
       latitude: 34.016338,
       longitude: -118.489212
@@ -130,9 +137,9 @@ function CarsMapController ($rootScope, $scope, $state, $injector, $data, cars, 
     homebase.cars = tempItems[0];
     homebase.id = 'homebase';
 
-    var awayCars = tempItems[1].filter(function(item) {
+    var awayCars = tempItems[1].filter(function (item) {
       return item.isAvailable;
-    }).map(function(item) {
+    }).map(function (item) {
       if (item.hasOwnProperty('isAvailable')) {
         item.icon = 'car';
       }
@@ -143,7 +150,7 @@ function CarsMapController ($rootScope, $scope, $state, $injector, $data, cars, 
     return awayCars;
   };
 
-  function featured (items, userLocation) {
+  function featured(items, userLocation) {
     return _(items)
       .filter('isAvailable')
       .sortBy(function (item) {
@@ -156,7 +163,22 @@ function CarsMapController ($rootScope, $scope, $state, $injector, $data, cars, 
       .value();
   }
 
-  this.showCar = function showCar (car) {
+  function getMarkersToFitBoundBy(all, featuredCars, currentLocation) {
+
+    var fitBoundsMarkers = [];
+    if (Array.isArray(featuredCars) && featuredCars.length) {
+      fitBoundsMarkers = featuredCars.slice();
+
+      if (currentLocation) {
+        fitBoundsMarkers.push(currentLocation);
+      }
+    } else {
+      fitBoundsMarkers = all.slice();
+    }
+    return fitBoundsMarkers;
+  }
+
+  this.showCar = function showCar(car) {
     if (car.isWaiveCarLot) {
       var ids = _(car.cars).filter('isAvailable').map('id').value();
       if (ids.length) {
@@ -183,7 +205,7 @@ function CarsMapController ($rootScope, $scope, $state, $injector, $data, cars, 
     return false;
   };
 
-  function showCarUnavailableModal () {
+  function showCarUnavailableModal() {
     var unavailableModal;
     $modal('result', {
       icon: 'x-icon',
@@ -196,13 +218,13 @@ function CarsMapController ($rootScope, $scope, $state, $injector, $data, cars, 
         }
       }]
     })
-    .then(function (_modal) {
-      unavailableModal = _modal;
-      unavailableModal.show();
-    });
+      .then(function (_modal) {
+        unavailableModal = _modal;
+        unavailableModal.show();
+      });
   }
 
-  function showLotUnavailableModal () {
+  function showLotUnavailableModal() {
     var unavailableModal;
     $modal('result', {
       icon: 'x-icon',
@@ -214,13 +236,13 @@ function CarsMapController ($rootScope, $scope, $state, $injector, $data, cars, 
         }
       }]
     })
-    .then(function (_modal) {
-      unavailableModal = _modal;
-      unavailableModal.show();
-    });
+      .then(function (_modal) {
+        unavailableModal = _modal;
+        unavailableModal.show();
+      });
   }
 
-  function showCarTooFarModal () {
+  function showCarTooFarModal() {
     var farModal;
     $modal('result', {
       icon: 'x-icon',
@@ -233,10 +255,10 @@ function CarsMapController ($rootScope, $scope, $state, $injector, $data, cars, 
         }
       }]
     })
-    .then(function (_modal) {
-      farModal = _modal;
-      farModal.show();
-    });
+      .then(function (_modal) {
+        farModal = _modal;
+        farModal.show();
+      });
   }
 
   $scope.$on('$destroy', function () {
