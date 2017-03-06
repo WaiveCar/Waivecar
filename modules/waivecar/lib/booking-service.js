@@ -100,7 +100,7 @@ module.exports = class BookingService extends Service {
       } catch (err) {
         throw error.parse({
           code    : 'BOOKING_AUTHORIZATION',
-          message : 'Unable to authorize payment. Please validate payment method.' + JSON.stringify(err)
+          message : 'Unable to authorize payment. Please validate payment method.'
         }, 400);
       }
     }
