@@ -30,10 +30,17 @@ module.exports = class CarsIndex extends React.Component {
     ];
   }
 
-  componentDidMount() {
+  update() {
     api.get(`/carsWithBookings`, (err, cars) => {
-      this.setState( {cars: cars } );
+      this.setState( {
+        updated: moment().format('HH:mm:ss'),
+        cars: cars 
+      } );
     });
+  }
+
+  componentDidMount() {
+    this.update();
   }
 
   onFilter(event) {
@@ -257,6 +264,7 @@ module.exports = class CarsIndex extends React.Component {
                   </div>
                 </div>
                 <div className="hidden-lg-up visible-md-down">
+                  <small>Updated: { this.state.updated } <a style={{cursor:'pointer', padding: '0 1em'}} onClick={ this.update.bind(this) }>refresh</a></small>
                   <div className="list-group">
                     {
                       this.state.cars
