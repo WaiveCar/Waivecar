@@ -58,6 +58,10 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
 
   this.getCurrentLocation = function getLocation () {
 
+    if (this.watchingLocation) {
+      return $q.resolve($rootScope.currentLocation);
+    }
+
     return $cordovaGeolocation.getCurrentPosition({
       maximumAge: 3000,
       timeout: 8000,
@@ -88,6 +92,7 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
 
   this.watchLocation = function watchLocation (updateCallback) {
 
+    var ctrl = this;
     var watch = navigator.geolocation.watchPosition(function onPosition (position) {
       $timeout(function(){
         var location = {
@@ -95,6 +100,7 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
           longitude: position.coords.longitude,
           accuracy: position.coords.accuracy
         };
+        update(location);
         updateCallback(location);
       });
     }, function onPositionErr (err) {
@@ -105,7 +111,10 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
       enableHighAccuracy: true
     });
 
+    ctrl.watchingLocation = true;
+
     return function stopWatch() {
+      ctrl.watchingLocation = false;
       navigator.geolocation.clearWatch(watch);
     };
   };

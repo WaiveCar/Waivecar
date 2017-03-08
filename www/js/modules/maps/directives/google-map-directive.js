@@ -213,7 +213,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     RouteService.getGRoute(mapToGoogleLatLong(start), mapToGoogleLatLong(destiny),
       function (response) {
         ctrl.directionsRenderer.setDirections(response);
-        ctrl.directionsRenderer.setMap(ctrl.map);
+        //ctrl.directionsRenderer.setMap(ctrl.map);
       });
 
   };

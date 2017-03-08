@@ -35,20 +35,22 @@ module.exports = angular.module('app.controllers').controller('CarController', [
     var modal;
 
     var stopLocationWatch = null;
+
     LocationService.getCurrentLocation().then(function (currentLocation) {
 
         ctrl.route = {
           start: currentLocation,
           destiny: car
         };
-        ctrl.fitMapBoundsByMarkers = [this.route.start, this.route.destiny];
+        ctrl.fitMapBoundsByMarkers = [ctrl.route.start, ctrl.route.destiny];
         ctrl.currentLocation = currentLocation;
-        stopLocationWatch = LocationService.watchLocation(function(updatedLocation) {
+        stopLocationWatch = LocationService.watchLocation(function (updatedLocation) {
           ctrl.route.start = updatedLocation;
           ctrl.currentLocation = updatedLocation;
         });
       }
     );
+
 
     $scope.$on('$destroy', function () {
       if (stopLocationWatch != null) {
