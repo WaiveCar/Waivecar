@@ -15,7 +15,7 @@ module.exports = class Faq extends Component {
           <p>To us, a good driving record means one without any:</p>
           <ul>
           <li>DUIs</li>
-          <li>Dangerous speeding (20+ mph over, school zones, etc)</li>
+          <li>Moving violations</li>
           <li>Driving with a suspended license</li>
           <li>Any similar negligent or reckless acts</li>
           </ul>

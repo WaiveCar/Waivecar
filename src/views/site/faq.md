@@ -10,7 +10,7 @@ All you need to sign up with WaiveCar is a smart phone, credit/debit card, a val
 To us, a good driving record means one without any:
 
  * DUIs
- * Dangerous speeding (20+ mph over, school zones, etc)
+ * Moving violations
  * Driving with a suspended license
  * Any similar negligent or reckless acts
 
