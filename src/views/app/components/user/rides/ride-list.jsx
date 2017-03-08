@@ -185,7 +185,6 @@ class RideList extends Component {
   }
 
   render() {
-    let pastRides = this.state.bookings.filter(b => [ 'ended', 'completed', 'finalized', 'closed'].includes(b.status));
     var boxClass = classNames({
       box: true,
       full: this.props.full
@@ -200,7 +199,7 @@ class RideList extends Component {
         </h3>
         <div className="box-content no-padding">
           {
-            !pastRides.length ?
+            !this.state.bookings.length ?
               <div className="text-center" style={{ padding : '20px 0px' }}>
                 { this.props.currentUser ? 'You currently have' : 'User currently has' }  no past rides.
               </div>
@@ -217,7 +216,7 @@ class RideList extends Component {
                       <th>Status</th>
                     </tr>
                   </thead>
-                  { pastRides.map(this.booking) }
+                  { this.state.bookings.map(this.booking) }
                  </table>
                  <div className='pull-right'>
                    <button className={'btn btn-sm ' + (this.state.btnPrev ? 'btn-primary' : 'disabled')} onClick = { this.prevPage.bind(this) }>Previous</button>&nbsp; &nbsp;
