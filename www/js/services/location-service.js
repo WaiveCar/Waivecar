@@ -1,6 +1,7 @@
 /* global navigator */
 'use strict';
 var angular = require('angular');
+var _ = require('lodash');
 require('./permission-service');
 
 function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window, $injector, $timeout) {
@@ -14,6 +15,7 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
   var $this = this;
   var $perm = $injector.get('PermissionService');
   var $modal = $injector.get('$modal'), modal;
+  this.activeLocationWhatchers = []
 
   var diagnostic = $window.cordova ? $window.cordova.plugins.diagnostic || false : false;
 
@@ -58,7 +60,7 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
 
   this.getCurrentLocation = function getLocation () {
 
-    if (this.watchingLocation) {
+    if (this.activeLocationWhatchers.length > 0) {
       return $q.resolve($rootScope.currentLocation);
     }
 
@@ -92,7 +94,6 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
 
   this.watchLocation = function watchLocation (updateCallback) {
 
-    var ctrl = this;
     var watch = navigator.geolocation.watchPosition(function onPosition (position) {
       $timeout(function(){
         var location = {
@@ -111,10 +112,11 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
       enableHighAccuracy: true
     });
 
-    ctrl.watchingLocation = true;
+
+    $this.activeLocationWhatchers.push(watch);
 
     return function stopWatch() {
-      ctrl.watchingLocation = false;
+      $this.activeLocationWhatchers = _.without($this.activeLocationWhatchers, watch);
       navigator.geolocation.clearWatch(watch);
     };
   };
