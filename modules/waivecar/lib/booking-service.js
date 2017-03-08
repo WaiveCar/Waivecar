@@ -218,7 +218,7 @@ module.exports = class BookingService extends Service {
       where : {
         userId : queryParser.NUMBER,
         carId  : queryParser.STRING,
-        status : queryParser.STRING
+        status : queryParser.IN
       }
     });
 
