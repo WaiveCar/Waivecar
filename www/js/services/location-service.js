@@ -1,8 +1,9 @@
+/* global navigator */
 'use strict';
 var angular = require('angular');
 require('./permission-service');
 
-function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window, $injector) {
+function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window, $injector, $timeout) {
   this.setManualPosition = function setManualPosition (latitude, longitude) {
     this.manualPosition = {
       latitude: latitude,
@@ -56,9 +57,6 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
   };
 
   this.getCurrentLocation = function getLocation () {
-    if (typeof this.manualPosition !== 'undefined' && this.manualPosition) {
-      return $q.resolve(this.manualPosition);
-    }
 
     return $cordovaGeolocation.getCurrentPosition({
       maximumAge: 3000,
@@ -88,6 +86,31 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
     });
   };
 
+  this.watchLocation = function watchLocation (updateCallback) {
+
+    var watch = navigator.geolocation.watchPosition(function onPosition (position) {
+      $timeout(function(){
+        var location = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          accuracy: position.coords.accuracy
+        };
+        updateCallback(location);
+      });
+    }, function onPositionErr (err) {
+      LocationService.enableLocation();
+    }, {
+      maximumAge: 3000,
+      timeout: 10000,
+      enableHighAccuracy: true
+    });
+
+    return function stopWatch() {
+      navigator.geolocation.clearWatch(watch);
+    };
+  };
+
+
   function update (position) {
     if (position.coords) {
       position = position.coords;
@@ -114,5 +137,6 @@ module.exports = angular.module('app.services').service('LocationService', [
   '$message',
   '$window',
   '$injector',
+  '$timeout',
   LocationService
 ]);

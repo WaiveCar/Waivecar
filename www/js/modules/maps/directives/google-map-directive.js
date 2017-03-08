@@ -54,7 +54,6 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
           ctrl.drawRoute(value.start, value.destiny);
         }
       }, true)
-      //$scope.$watch('map.routeDestiny', ctrl.drawRoute.bind(ctrl), true),
 
     ];
     $scope.$on('$destroy', function () {
@@ -210,8 +209,6 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
   MapController.prototype.drawRoute = function drawRoute(start, destiny) {
 
     var ctrl = this;
-
-    ctrl.mapFitBounds([start, destiny]);
 
     RouteService.getGRoute(mapToGoogleLatLong(start), mapToGoogleLatLong(destiny),
       function (response) {

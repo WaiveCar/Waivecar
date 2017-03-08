@@ -21,6 +21,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   var $ionicLoading = $injector.get('$ionicLoading');
   var GeofencingService = $injector.get('GeofencingService');
   var ZendriveService = $injector.get('ZendriveService');
+  var LocationService = $injector.get('LocationService');
   var homebase = $injector.get('homebase');
 
   // $data is used to interact with models, never directly. If direct is required, $data should be refreshed.
@@ -50,8 +51,26 @@ function DashboardController ($scope, $rootScope, $injector) {
       return;
     }
     rideServiceReady();
+    var stopLocationWatch = null;
+    LocationService.getCurrentLocation().then(function (currentLocation) {
+      ctrl.fitMapBoundsByMarkers = featured(ctrl.locations).concat([currentLocation]);
+      ctrl.currentLocation = currentLocation;
 
-    this.featured = featured(this.locations);
+      stopLocationWatch = LocationService.watchLocation(function(updatedLocation) {
+        ctrl.currentLocation = updatedLocation;
+      });
+    });
+
+
+    $scope.$on('$destroy', function () {
+      if (stopLocationWatch != null) {
+        stopLocationWatch();
+        stopLocationWatch = null;
+      }
+    });
+
+
+
     var booking = $data.active.bookings;
 
     if (!(booking && booking.status === 'started')) {

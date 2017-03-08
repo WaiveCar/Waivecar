@@ -28,21 +28,34 @@ module.exports = angular.module('app.controllers').controller('CarController', [
     });
 
 
+    var ctrl = this;
     var LocationService = $injector.get('LocationService');
     // the accuracy should be within this amount of meters to show the Bummer dialog
     var minAccuracyThreshold = 200;
     var modal;
 
-    LocationService.getCurrentLocation()
-      .then(function (latlon) {
-        this.location = latlon;
-        this.route = {
-          start: this.location,
+    var stopLocationWatch = null;
+    LocationService.getCurrentLocation().then(function (currentLocation) {
+
+        ctrl.route = {
+          start: currentLocation,
           destiny: car
         };
-
-      }.bind(this)
+        ctrl.fitMapBoundsByMarkers = [this.route.start, this.route.destiny];
+        ctrl.currentLocation = currentLocation;
+        stopLocationWatch = LocationService.watchLocation(function(updatedLocation) {
+          ctrl.route.start = updatedLocation;
+          ctrl.currentLocation = updatedLocation;
+        });
+      }
     );
+
+    $scope.$on('$destroy', function () {
+      if (stopLocationWatch != null) {
+        stopLocationWatch();
+        stopLocationWatch = null;
+      }
+    });
 
     this.car = angular.extend({}, car, { item: 'car' });
     if (this.car.isAvailable === false) {

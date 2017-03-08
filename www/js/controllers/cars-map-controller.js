@@ -24,17 +24,18 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
   var minAccuracyThreshold = 200;
   var modal;
 
-  LocationService.getCurrentLocation()
-    .then(function (latlon) {
-
-      this.location = latlon;
+  var stopLocationWatch = null;
+  LocationService.getCurrentLocation().then(function (currentLocation) {
 
       this.all = prepareCars(cars);
-      this.featured = featured(this.all, this.location);
+      this.fitMapBoundsByMarkers = getMarkersToFitBoundBy(this.all, currentLocation);
+      this.currentLocation = currentLocation;
 
-      this.fitBoundsByMarkers = getMarkersToFitBoundBy(this.all, this.featured, this.location);
+      stopLocationWatch = LocationService.watchLocation(function(updatedLocation) {
+        this.currentLocation = updatedLocation;
+      }.bind(this));
 
-      this.carsInRange();
+      this.carsInRange(currentLocation);
     }.bind(this)
   );
 
@@ -48,15 +49,23 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
     if (Array.isArray(value) && !value.length) {
       return false;
     }
+
+    var firstLoad = !this.all;
+
     this.all = prepareCars(value);
-    if (this.location)
-      this.featured = featured(this.all, this.location);
+
+    if (firstLoad) {
+      this.fitMapBoundsByMarkers = getMarkersToFitBoundBy(this.all, this.currentLocation);
+    }
 
     return false;
   }.bind(this), true);
 
   $scope.$on('$destroy', function () {
     this.clearCarWatcher();
+    if (stopLocationWatch) {
+      stopLocationWatch();
+    }
   }.bind(this));
 
 
@@ -84,19 +93,19 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
   };
 
 
-  this.carsInRange = function () {
+  this.carsInRange = function (currentLocation) {
     if (
-      !$rootScope.currentLocation || (
-      $rootScope.currentLocation &&
-      $rootScope.currentLocation.accuracy &&
-      $rootScope.currentLocation.accuracy >= minAccuracyThreshold)
+      !currentLocation || (
+      currentLocation &&
+      currentLocation.accuracy &&
+      currentLocation.accuracy >= minAccuracyThreshold)
     ) {
       return;
     }
 
     var maxDistance = 30; // at least one car should be less than 30 miles away
     var carInRange = _(this.all).find(function (car) {
-      var distance = $distance(car);
+      var distance = $distance(car, currentLocation);
       return _.isFinite(distance) && distance < maxDistance;
     });
 
@@ -159,7 +168,12 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
       .value();
   }
 
-  function getMarkersToFitBoundBy(all, featuredCars, currentLocation) {
+  function getMarkersToFitBoundBy(all, currentLocation) {
+
+    var featuredCars;
+    if (currentLocation) {
+      featuredCars = featured(all, currentLocation);
+    }
 
     var fitBoundsMarkers = [];
     if (Array.isArray(featuredCars) && featuredCars.length) {
