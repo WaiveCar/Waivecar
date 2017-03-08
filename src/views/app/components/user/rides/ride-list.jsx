@@ -22,7 +22,11 @@ class RideList extends Component {
     super(...options);
     this.state = {
       bookings : [],
-      details  : null
+      offset : 0,
+      limit : 15,
+      details  : null,
+      btnPrev : false,
+      btnNext : true
     };
 
     this.booking = this.booking.bind(this);
@@ -33,7 +37,9 @@ class RideList extends Component {
     api.get('/bookings', {
       userId  : this.props.user.id,
       order   : 'id,DESC',
-      details : true
+      details : true,
+      offset: this.state.offset,
+      limit: this.state.limit
     }, (err, bookings) => {
       if (err) {
         return console.log(err);
@@ -48,6 +54,58 @@ class RideList extends Component {
     this.setState({
       details : bookingId === this.state.details ? null : bookingId
     });
+  }
+
+  getBookings(step, cb) {
+    api.get('/bookings', {
+      userId  : this.props.user.id,
+      order   : 'id,DESC',
+      details : true,
+      offset: this.state.offset + (this.state.limit * step),
+      limit: this.state.limit
+    }, (err, bookings) => {
+      if (err) {
+        return console.log(err);
+      }
+      cb(bookings);
+    });
+  }
+
+  prevPage() {
+    if (this.state.btnPrev) {
+      var self = this;
+      this.getBookings(-1, function(bookings){
+        if (bookings.length > 0){
+          self.setState({
+            bookings : bookings,
+            offset : self.state.offset - self.state.limit,
+            btnNext : true
+          }, function(){
+            if (self.state.offset == 0){
+              self.setState({btnPrev : false});
+            }
+          });
+        }
+      });
+    }
+  }
+
+  nextPage() {
+    if (this.state.btnNext) {
+      var self = this;
+      this.getBookings(1, function (bookings) {
+        if (bookings.length > 0) {
+          self.setState({
+            bookings: bookings,
+            offset: self.state.offset + self.state.limit,
+            btnPrev: true
+          });
+        }
+        else {
+          self.setState({btnNext: false});
+        }
+      });
+    }
   }
 
   /**
@@ -162,8 +220,8 @@ class RideList extends Component {
                   { pastRides.map(this.booking) }
                  </table>
                  <div className='pull-right'>
-                   <button className="btn btn-sm disabled" >Previous</button>&nbsp; &nbsp;
-                   <button className="btn btn-primary btn-sm" >Next</button>
+                   <button className={'btn btn-sm ' + (this.state.btnPrev ? 'btn-primary' : 'disabled')} onClick = { this.prevPage.bind(this) }>Previous</button>&nbsp; &nbsp;
+                   <button className={'btn btn-sm ' + (this.state.btnNext ? 'btn-primary' : 'disabled')} onClick = { this.nextPage.bind(this) }>Next</button>
                  </div>
                </div>
 
