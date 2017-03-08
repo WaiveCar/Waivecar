@@ -22,9 +22,9 @@ class RideList extends Component {
     super(...options);
     this.state = {
       bookings : [],
-      offset : 0,
-      limit : 15,
-      details  : null,
+      offset  : 0,
+      limit   : 15,
+      details : null,
       btnPrev : false,
       btnNext : true
     };
@@ -38,8 +38,9 @@ class RideList extends Component {
       userId  : this.props.user.id,
       order   : 'id,DESC',
       details : true,
-      offset: this.state.offset,
-      limit: this.state.limit
+      status  : 'ended,completed,closed',
+      offset  : this.state.offset,
+      limit   : this.state.limit
     }, (err, bookings) => {
       if (err) {
         return console.log(err);
@@ -61,8 +62,9 @@ class RideList extends Component {
       userId  : this.props.user.id,
       order   : 'id,DESC',
       details : true,
-      offset: this.state.offset + (this.state.limit * step),
-      limit: this.state.limit
+      status  : 'ended,completed,closed',
+      offset  : this.state.offset + (this.state.limit * step),
+      limit   : this.state.limit
     }, (err, bookings) => {
       if (err) {
         return console.log(err);
@@ -101,7 +103,7 @@ class RideList extends Component {
             btnPrev: true
           });
         }
-        else {
+        if (bookings.length < 15) {
           self.setState({btnNext: false});
         }
       });
