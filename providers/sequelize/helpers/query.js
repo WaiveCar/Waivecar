@@ -2,35 +2,59 @@
 
 let type = Bento.Helpers.Type;
 
-// ### Query
-
-let Query = module.exports = function query(options, schema) {
+//
+// This code was utterly confusing because fields were named terrrribly.
+// This has been mostly fixed with the explanation below:
+//
+//  First, this code takes a set of key/value pairs and some options and then
+//  spits out a Sequelize compatible vanilla javascript object that can be fed 
+//  back in to Sequelize.find.
+//
+//  This sounds and likely is unncessary - but it's used extensively so we might 
+//  as well document it.
+//
+//  queryValueMap is generally the code that is coming in via a query string
+//   in a GET post, such as /endpoint?animal=goat&type=cute.
+//   This will become: { animal: 'goat', type: 'cute' }
+//   Although this is generic of course.
+//
+//  options is how you want to process the values in queryValueMap.
+//   This is essentially a poor and overzealous version of concern separation.
+//   An example may be { animal: qs.STRING, type: qs.STRING }. There's
+//   other things in here that cover IN and many other types of sequelize
+//   things. 
+//
+// Again, all this does is output an object that is going to  be fed back 
+// into Sequelize so this code could be 100% bypassed ... 
+//
+let Query = module.exports = function query(queryValueMap, options) {
+  // Pass in a limit to the queryValueMap (as in the query string coming in)
+  // to override this.
+  let DEFAULT_LIMIT = 20;
   let result = { where : {} };
 
-  // ### Where
-
-  let where = schema.where;
-  for (let key in where) {
-    if (options.hasOwnProperty(key)) {
-      result.where[key] = prepareValue(where[key], options[key]);
+  let handlerMap = options.where;
+  for (let key in handlerMap) {
+    if (queryValueMap.hasOwnProperty(key)) {
+      result.where[key] = prepareValue(handlerMap[key], queryValueMap[key]);
     }
   }
 
   // ### Relations
 
-  if (schema.include) { result.include = schema.include; }
+  if (options.include) { result.include = options.include; }
 
   // ### Offset & Limit
 
-  result.limit  = options.limit  ? Query.NUMBER(options.limit)  : 20;
-  result.offset = options.offset ? Query.NUMBER(options.offset) : 0;
+  result.limit  = queryValueMap.limit  ? Query.NUMBER(queryValueMap.limit)  : DEFAULT_LIMIT;
+  result.offset = queryValueMap.offset ? Query.NUMBER(queryValueMap.offset) : 0;
   if (!result.limit)  { delete result.limit; }
   if (!result.offset) { delete result.offset; }
 
   // ### Order
 
-  if (options.order) {
-    result.order = [ options.order.split(',') ];
+  if (queryValueMap.order) {
+    result.order = [ queryValueMap.order.split(',') ];
   }
 
   return result;
