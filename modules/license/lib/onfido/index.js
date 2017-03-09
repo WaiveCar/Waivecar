@@ -100,60 +100,26 @@ module.exports = class OnfidoService {
     return response;
   }
 
-  /**
-   * Creates a Check
-   * @param  {Object} applicantId
-   * @param  {Object} data
-   * @param  {Object} _user
-   * @return {Object}
-   */
   static *createCheck(applicantId, data, _user) {
     let response = yield this.request(`/applicants/${ applicantId }/checks`, 'POST', data);
     return response;
   }
 
-  /**
-   * Retrieves Applicant's Checks
-   * @param  {Object} applicantId
-   * @param  {Object} _user
-   * @return {Object}
-   */
   static *getChecks(applicantId, _user) {
     let response = yield this.request(`/applicants/${ applicantId }/checks`);
     return response;
   }
 
-  /**
-   * Retrieves an Applicant's Check
-   * @param  {Object} applicantId
-   * @param  {Object} checkId
-   * @param  {Object} _user
-   * @return {Object}
-   */
   static *getCheck(applicantId, checkId, _user) {
     let response = yield this.request(`/applicants/${ applicantId }/checks/${ checkId }`);
     return response;
   }
 
-  /**
-   * Retrieves Check's Reports
-   * @param  {Object} applicantId
-   * @param  {Object} _user
-   * @return {Object}
-   */
   static *getReport(applicantId, checkId, _user) {
     let response = yield this.request(`/checks/${ checkId }/reports`);
     return response;
   }
 
-  /**
-   * Retrieves a Check's Report
-   * @param  {Object} applicantId
-   * @param  {Object} checkId
-   * @param  {Object} reportId
-   * @param  {Object} _user
-   * @return {Object}
-   */
   static *getReport(applicantId, checkId, reportId, _user) {
     let response = yield this.request(`/checks/${ checkId }/reports/${ reportId }`);
     return response;
@@ -212,7 +178,6 @@ module.exports = class OnfidoService {
     let errors = '';
     let errorMap = [];
     if (data.error && data.error.type === 'validation_error') {
-      console.log(data.error);
       for (let field in data.error.fields) {
         let messages = data.error.fields[field];
         let messageArray = messages.map((f) => {
