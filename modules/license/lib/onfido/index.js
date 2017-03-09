@@ -183,14 +183,18 @@ module.exports = class OnfidoService {
 
     let result   = yield request(options);
     let response = result.toJSON();
+    let body = false;
 
-    fs.appendFileSync('/var/log/outgoing/onfido.txt', JSON.stringify([options, response]) + "\n");
+    if (response && response.body) {
+      body = JSON.parse(response.body);
+    }
+    fs.appendFileSync('/var/log/outgoing/onfido.txt', JSON.stringify([options, body, response]) + "\n");
 
     if (!response || response.statusCode > 201) {
       throw error.parse(yield this.getError(resource, result, user), response.statusCode || 400);
     }
 
-    return JSON.parse(response.body);
+    return body;
   }
 
   static *getError(resource, result, user) {
