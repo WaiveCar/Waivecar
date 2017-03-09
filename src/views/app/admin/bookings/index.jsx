@@ -29,7 +29,7 @@ class TableIndex extends React.Component {
       icons: {
         "completed": "check",
         "closed": "check",
-        "ended": "check",
+        "ended": "lock",
         "cancelled": "times",
         "started": "play",
         "reserved": "hourglass"
