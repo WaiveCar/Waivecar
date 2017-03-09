@@ -12,6 +12,7 @@ let config        = Bento.config.license;
 let log           = Bento.Log;
 let Service       = require('../classes/service');
 let notify        = Bento.module('waivecar/lib/notification-service');
+let fs            = require('fs');
 
 if (!config.onfido) {
   throw error.parse({
@@ -182,6 +183,8 @@ module.exports = class OnfidoService {
 
     let result   = yield request(options);
     let response = result.toJSON();
+
+    fs.appendFileSync('/var/log/outgoing/onfido.txt', JSON.stringify([options, response]) + "\n");
 
     if (!response || response.statusCode > 201) {
       throw error.parse(yield this.getError(resource, result, user), response.statusCode || 400);
