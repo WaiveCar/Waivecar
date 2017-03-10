@@ -22,7 +22,7 @@ function directive ($rootScope, MapsLoader, RouteService, $q, $timeout, $window,
     }
 
     if (ctrl.center) {
-      mapOptions.center = ctrl.center;
+      mapOptions.center = [ctrl.center.latitude, ctrl.center.longitude];
     }
 
     ctrl.map = ctrl.leaflet.skobbler.map($elem.find('.map-instance')[0], mapOptions);

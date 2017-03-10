@@ -24,6 +24,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   var $cordovaInAppBrowser = $injector.get('$cordovaInAppBrowser');
   var $progress = $injector.get('$progress');
   var $ionicLoading = $injector.get('$ionicLoading');
+  var LocationService = $injector.get('LocationService');
 
   $scope.distance = 'Unknown';
   // $scope is used to store ref. to $ride and the active models in $data.
@@ -33,12 +34,15 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   var ctrl = this;
   this.data = $data.active;
 
+
+
   var expired;
   var stopServiceWatch = $scope.$watch('service.isInitialized', function(isInitialized) {
     if (!isInitialized) {
       return;
     }
 
+    ctrl.markers = [$data.active.cars];
     // ctrl.car = $data.active.cars;
     stopServiceWatch();
     stopServiceWatch = null;
@@ -80,22 +84,39 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     if (stopWatching != null) {
       return;
     }
-    stopWatching = $rootScope.$watch('currentLocation', function (value) {
-      if (value == null) {
-        return;
-      }
-      var distance = $distance($data.active.cars);
-      if (_.isFinite(distance)) {
-        // convert miles to yards
-        $scope.distance = distance;
-        if ($scope.distance <= 0.019) {
-          console.log('Showing unlock');
-          stopWatching();
-          stopWatching = null;
-          showUnlock();
-        }
-      }
+
+    LocationService.getCurrentLocation().then(function (currentLocation) {
+
+      ctrl.currentLocation = currentLocation;
+      ctrl.route = {
+        start: currentLocation,
+        destiny: $data.active.cars
+      };
+
+      ctrl.fitMapBoundsByMarkers = [ctrl.route.start, ctrl.route.destiny];
+      checkIsInRange(currentLocation);
+
+      stopWatching = LocationService.watchLocation(function(updatedLocation) {
+        ctrl.route.start = updatedLocation;
+        ctrl.currentLocation = updatedLocation;
+        checkIsInRange(updatedLocation);
+      });
+
     });
+  }
+
+  function checkIsInRange (currentLocation) {
+    var distance = $distance($data.active.cars, currentLocation);
+    if (_.isFinite(distance)) {
+      // convert miles to yards
+      $scope.distance = distance;
+      if ($scope.distance <= 0.019) {
+        console.log('Showing unlock');
+        stopWatching();
+        stopWatching = null;
+        showUnlock();
+      }
+    }
   }
 
   $scope.$on('$destroy', function () {

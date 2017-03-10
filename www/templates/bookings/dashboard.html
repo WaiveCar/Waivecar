@@ -19,15 +19,15 @@
         {{ ctrl.timeLeft }}
       </div>
     </div>
-    <skobbler-map
-      id="map"
-      zoom="18"
-      markers="ctrl.locations"
-      on-marker-tap="ctrl.openPopover"
-      update-location
-      featured="ctrl.featured"
-      center="ctrl.center"
-    ></skobbler-map>
+
+    <google-map id="map"
+                markers="ctrl.locations"
+                on-marker-tap="ctrl.openPopover"
+                fit-bounds-by-markers="ctrl.fitMapBoundsByMarkers"
+                current-location="ctrl.currentLocation"
+            >
+    </google-map>
+
   </ion-content>
   <ion-footer-bar class="no-padding">
     <div class="button-bar">

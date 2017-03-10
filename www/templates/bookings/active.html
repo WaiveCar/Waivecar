@@ -16,13 +16,13 @@
     </div>
 
     <div class="map-container has-big-info-footer has-info-subheader">
-      <skobbler-map id="map" zoom="15"
-        markers="ctrl.data.cars"
-        route-start="$root.currentLocation"
-        route-destiny="ctrl.data.cars"
-        update-location
-        center="ctrl.center"
-      ></skobbler-map>
+      <google-map
+        id="map"
+        markers="ctrl.markers"
+        route="ctrl.route"
+        fit-bounds-by-markers="ctrl.fitMapBoundsByMarkers"
+        current-location="ctrl.currentLocation"
+      ></google-map>
     </div>
     <div class="info-footer big-info-footer">
       <div class="has-footer-information">

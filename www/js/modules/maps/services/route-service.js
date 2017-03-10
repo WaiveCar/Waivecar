@@ -1,3 +1,4 @@
+/* global google */
 'use strict';
 var angular = require('angular');
 require('../../../providers/maps-loader-provider');
@@ -10,6 +11,8 @@ module.exports = angular.module('Maps').service('RouteService', [
   'MapsEvents',
   'skobblerApiCodes',
   function ($rootScope, MapsLoader, $q, $http, MapsEvents, skobblerApiCodes) {
+
+    var googleDirectionsService = new google.maps.DirectionsService();
     var service = {
 
       getUrl: function (apiKey) {
@@ -62,7 +65,33 @@ module.exports = angular.module('Maps').service('RouteService', [
           }];
           return lines;
         });
+      },
+
+      getGRoute: function (start, destiny, callback) {
+
+        var request = {
+          origin: start,
+          destination: destiny,
+          travelMode: google.maps.TravelMode.WALKING
+        };
+
+        googleDirectionsService.route(request, function (response, status) {
+          if (status === google.maps.DirectionsStatus.OK) {
+
+            $rootScope.$broadcast(MapsEvents.routeDurationChanged, response.routes[0].legs[0].duration.value, 'pedestrian');
+            $rootScope.$broadcast(MapsEvents.routeDistanceChanged, response.routes[0].legs[0].distance.value, 'pedestrian');
+
+            callback(response, status);
+          }
+        });
+
+
+
+
+
       }
+
+
 
     };
 

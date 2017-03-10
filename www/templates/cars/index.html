@@ -10,16 +10,15 @@
 
   <ion-content scroll="false" padding="false" class="ion-content--center">
 
-    <div class="map-container">
-      <skobbler-map id="map"
+      <google-map id="map"
+        control="cars.mapControl"
         markers="cars.all"
         on-marker-tap="cars.showCar"
-        featured="cars.featured"
-        update-location
-        locate-me
-        center="cars.center"
+        fit-bounds-by-markers="cars.fitMapBoundsByMarkers"
+        current-location="cars.currentLocation"
       >
-      </skobbler-map>
+      </google-map>
+
     </div>
   </ion-content>
 

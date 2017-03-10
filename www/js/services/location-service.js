@@ -1,8 +1,10 @@
+/* global navigator */
 'use strict';
 var angular = require('angular');
+var _ = require('lodash');
 require('./permission-service');
 
-function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window, $injector) {
+function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window, $injector, $timeout) {
   this.setManualPosition = function setManualPosition (latitude, longitude) {
     this.manualPosition = {
       latitude: latitude,
@@ -13,7 +15,9 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
   var $this = this;
   var $perm = $injector.get('PermissionService');
   var $modal = $injector.get('$modal'), modal;
-  var diagnostic = $window.cordova.plugins.diagnostic || false;
+  this.activeLocationWhatchers = []
+
+  var diagnostic = $window.cordova ? $window.cordova.plugins.diagnostic || false : false;
 
   this.getLocation = function getLocation () {
     return $q.resolve($rootScope.currentLocation);
@@ -55,8 +59,9 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
   };
 
   this.getCurrentLocation = function getLocation () {
-    if (typeof this.manualPosition !== 'undefined' && this.manualPosition) {
-      return $q.resolve(this.manualPosition);
+
+    if (this.activeLocationWhatchers.length > 0) {
+      return $q.resolve($rootScope.currentLocation);
     }
 
     return $cordovaGeolocation.getCurrentPosition({
@@ -87,6 +92,36 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
     });
   };
 
+  this.watchLocation = function watchLocation (updateCallback) {
+
+    var watch = navigator.geolocation.watchPosition(function onPosition (position) {
+      $timeout(function(){
+        var location = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          accuracy: position.coords.accuracy
+        };
+        update(location);
+        updateCallback(location);
+      });
+    }, function onPositionErr (err) {
+      LocationService.enableLocation();
+    }, {
+      maximumAge: 3000,
+      timeout: 10000,
+      enableHighAccuracy: true
+    });
+
+
+    $this.activeLocationWhatchers.push(watch);
+
+    return function stopWatch() {
+      $this.activeLocationWhatchers = _.without($this.activeLocationWhatchers, watch);
+      navigator.geolocation.clearWatch(watch);
+    };
+  };
+
+
   function update (position) {
     if (position.coords) {
       position = position.coords;
@@ -113,5 +148,6 @@ module.exports = angular.module('app.services').service('LocationService', [
   '$message',
   '$window',
   '$injector',
+  '$timeout',
   LocationService
 ]);
