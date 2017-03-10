@@ -9,9 +9,10 @@ module.exports = angular.module('app.services').factory('$ride', [
   '$state',
   '$message',
   '$interval',
+  '$timeout',
   '$q',
   '$injector',
-  function($auth, $data, $state, $message, $interval, $q, $injector) {
+  function($auth, $data, $state, $message, $interval, $timeout, $q, $injector) {
     var $ionicLoading = $injector.get('$ionicLoading');
 
     var service = {};
@@ -161,6 +162,10 @@ module.exports = angular.module('app.services').factory('$ride', [
       this.checkForLock = $interval(function() {
         service.setCheck();
       }, 5000);
+
+      $timeout(function(){
+        $interval.cancel(this.checkForLock);
+      }.bind(this), 5 * 60 * 1000);
 
       var payload = angular.copy(service.state.parkingLocation);
       var locationType = _.find(service.state.location, function (item) {
