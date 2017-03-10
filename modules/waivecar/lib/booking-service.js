@@ -56,6 +56,13 @@ module.exports = class BookingService extends Service {
    |
    */
 
+  static *updateState(state, _user, driver) {
+    yield driver.update({state: state});
+    return (_user.id === driver.id) ?
+      `${ _user.name() } ${ state } ` :
+      `${ _user.name() } ${ state } for ${ driver.name() }`;
+  }
+
   /**
    * Creates a new booking.
    * @param  {Object} data  Data object containing carId, and userId.
@@ -172,14 +179,9 @@ module.exports = class BookingService extends Service {
 
     yield notify.sendTextMessage(driver, `Hi There! Your WaiveCar reservation with ${ car.license } has been confirmed. You'll have 15 minutes to get to your WaiveCar before your reservation expires. Let us know if you have any questions.`);
 
-    let message = (_user.id === driver.id) ?
-      `${ _user.name() } created ` :
-      `${ _user.name() } created for ${ driver.name() }`;
-
+    let message = yield this.updateState('created', _user, driver);
     yield notify.notifyAdmins(`:musical_keyboard: ${ message } | ${ car.info() } ${ car.averageCharge() }% ${ driver.info() }`, [ 'slack' ], { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : driver.id, action : Actions.CREATE_BOOKING }, _user);
-
-    // ### Return Booking
 
     return booking;
   }
@@ -404,10 +406,7 @@ module.exports = class BookingService extends Service {
 
     // ### Notify
 
-    let message = (_user.id === user.id) ?
-      `${ _user.name() } started ` :
-      `${ _user.name() } started for ${ user.name() }`;
-
+    let message = yield this.updateState('started', _user, user);
     yield notify.notifyAdmins(`:octopus: ${ message } | ${ car.info() } ${ car.averageCharge() }% ${ user.info() }`, [ 'slack' ], { channel : '#reservations' });
     yield notify.sendTextMessage(user, `Your WaiveCar rental has started! The first 2 hours are completely FREE! After that, it's $5.99 / hour. Make sure to return the car in Santa Monica, don't drain the battery under 20%, and keep within our driving borders to avoid any charges. Thanks for renting with WaiveCar!`);
 
@@ -552,9 +551,7 @@ module.exports = class BookingService extends Service {
         parkingText += payload.data.streetOvernightRest ? 'Has an overnight restriction.' : 'Does not have an overnight restriction.';
       }
 
-      let message = (_user.id === user.id) ?
-        `${ _user.name() } ended ` :
-        `${ _user.name() } ended for ${ user.name() }`;
+      let message = yield this.updateState('ended', _user, user);
 
       parkingSlack = {
         text        : `:cherries: ${ message } | ${ car.info() } | ${ user.info() }`,
@@ -600,10 +597,7 @@ module.exports = class BookingService extends Service {
       }, { channel : '#user-alerts' });
     }
   
-    let message = (_user.id === user.id) ?
-      `${ _user.name() } ended ` :
-      `${ _user.name() } ended for ${ user.name() }`;
-
+    let message = yield this.updateState('ended', _user, user);
     yield notify.slack(parkingSlack || { text : `:cherries: ${ message } | ${ car.info() } ${ car.averageCharge() }% ${ user.info() }`
     }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.END_BOOKING }, _user);
@@ -708,8 +702,10 @@ module.exports = class BookingService extends Service {
       yield car.available();
     }
 
+    // The user should be seeing cars to rent now.
+    let message = yield this.updateState('completed', _user, user);
     yield notify.sendTextMessage(user, `Thanks for renting with WaiveCar! Your rental is complete. You can see your trip summary in the app.`);
-    yield notify.slack({ text : `:coffee: ${ user.name() } completed | ${ car.info() } | ${ apiConfig.uri }/bookings/${ booking.id }`
+    yield notify.slack({ text : `:coffee: ${ user.name() } ${ state } | ${ car.info() } | ${ apiConfig.uri }/bookings/${ booking.id }`
     }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
 
@@ -781,6 +777,8 @@ module.exports = class BookingService extends Service {
     car.relay('update');
     booking.relay('update');
 
+    // We consider a cancellation as effectively a reset
+    yield user.update({state: 'completed'});
     let message = (_user.id === user.id) ?
       `${ _user.name() } cancelled ` :
       `${ _user.name() } cancelled for ${ user.name() }`;
