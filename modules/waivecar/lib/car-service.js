@@ -539,6 +539,7 @@ module.exports = {
    */
   *executeCommand(id, part, command, _user) {
     let existingCar = yield Car.findById(id);
+    let updatedCar = false;
     if (!existingCar) {
       let error    = new Error(`CAR: ${ id }`);
       error.code   = 'CAR_SERVICE';
@@ -548,10 +549,26 @@ module.exports = {
     }
     let payload    = {};
     payload[part]  = `${ command }ed`;
-    let status     = yield this.request(`/devices/${ id }/status`, {
-      method : 'PATCH'
-    }, payload);
-    let updatedCar = this.transformDeviceToCar(id, status);
+    //
+    // We only touch cars if we are in production. See
+    // https://github.com/WaiveCar/Waivecar/issues/739
+    //
+    if (process.env.NODE_ENV === 'production') {
+      let status     = yield this.request(`/devices/${ id }/status`, {
+        method : 'PATCH'
+      }, payload);
+      updatedCar = this.transformDeviceToCar(id, status);
+    } else {
+      updatedCar = existingCar;
+      if(part === 'central_lock') {
+        if(command === 'unlock') { updatedCar.isLocked = false; }
+        if(command === 'lock')   { updatedCar.isLocked = true; }
+      }
+      if(part === 'immobilizer') {
+        if(command === 'unlock') { updatedCar.isImmobilized = false; }
+        if(command === 'lock')   { updatedCar.isImmobilized = true; }
+      }
+    }
     return yield this.syncUpdate(id, updatedCar, existingCar, _user);
   },
 
