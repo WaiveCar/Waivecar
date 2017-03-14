@@ -18,7 +18,8 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
   '$modal',
   '$uploadImage',
   'ZendriveService',
-  function($rootScope, $scope, $settings, $window, $state, $stateParams, $ride, $geocoding, $ionicLoading, $modal, $uploadImage, ZendriveService) {
+  '$message',
+  function($rootScope, $scope, $settings, $window, $state, $stateParams, $ride, $geocoding, $ionicLoading, $modal, $uploadImage, ZendriveService, $message) {
     $scope.service = $ride;
     // Setup scope
     var ctrl = this;
@@ -153,29 +154,77 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
      * @returns {Void} null
      */
     function submit() {
-      var payload;
+
 
       $ionicLoading.show({
         template: '<div class="circle-loader"><span>Loading</span></div>'
       });
+
+
+      var isNightTime = moment().hours() >= 21 || moment().hours() < 5;
+
+      if (!isNightTime) {
+        goToEndRide(isNightTime);
+      } else {
+        showOvernightWarning(function() {
+          goToEndRide(isNightTime);
+        });
+      }
+
+    }
+
+    function goToEndRide(isNightTime) {
+
+      var payload;
+
       // Check which type we are submitting
       if (ctrl.type === 'lot') {
         if (ctrl.lot.lotHours < 3 && !ctrl.lot.lotFreePeriod) return submitFailure('You can\'t return your WaiveCar here. The spot needs to be valid for at least 3 hours.');
-        if (moment().hours() >= 21 && ctrl.lot.lotOvernightRest) return submitFailure('You can\'t return your WaiveCar here. If the car is ticketed or towed, you\'ll be responsible for the fees.');
+        if (isNightTime && ctrl.lot.lotOvernightRest) return submitFailure('You can\'t return your WaiveCar here. If the car is ticketed or towed, you\'ll be responsible for the fees.');
         payload = ctrl.lot;
       } else if (ctrl.type === 'street') {
         if (ctrl.street.streetHours < 3) return submitFailure('You can\'t return your WaiveCar here. The spot needs to be valid for at least 3 hours.');
-        if (moment().hours() >= 21 && ctrl.lot.streetOvernightRest) return submitFailure('You can\'t return your WaiveCar here. If the car is ticketed or towed, you\'ll be responsible for the fees.');
+        if (isNightTime && ctrl.lot.streetOvernightRest) return submitFailure('You can\'t return your WaiveCar here. If the car is ticketed or towed, you\'ll be responsible for the fees.');
         payload = ctrl.street;
       }
 
       ZendriveService.stop();
       payload.type = ctrl.type;
       $ride.setParkingDetails(payload);
-      return $ride.processEndRide().then(function() {
+      return $ride.processEndRide().then(function () {
         $ionicLoading.hide();
-        return $state.go('end-ride', { id: $ride.state.booking.id });
+        return $state.go('end-ride', {id: $ride.state.booking.id});
       });
+    }
+
+    function showOvernightWarning(next) {
+      $ionicLoading.hide();
+      var showOvernightWarningModal;
+
+      $modal('result', {
+        icon: 'x-icon',
+        title: "Hey, you need to make sure the car is good for the next 3 hours. Please check the signs carefully.",
+        actions: [{
+          text: 'Ok',
+          className: 'button-balanced',
+          handler: function () {
+            showOvernightWarningModal.remove();
+            next();
+          }
+        },
+          {
+          text: 'Cancel',
+          className: 'button-balanced',
+          handler: function () {
+            showOvernightWarningModal.remove();
+          }
+        }]
+      })
+        .then(function (_modal) {
+          _modal.show();
+          showOvernightWarningModal = _modal;
+          showOvernightWarningModal.show();
+        });
     }
 
     /**
