@@ -35,6 +35,10 @@
           <td class="value">{{ ctrl.booking.total / 100 | currency:$:0 }}</td>
         </tr>
       </table>
+      <div ng-show="ctrl.booking.failedCharge">
+        <page-title class="text-center">Failed to Charge Card</page-title>
+        <p>We were unable to charge your card for the fees above. Please be advised that you cannot use the service again until these fees are resolved.</p>
+      </div>
     </div>
     <div class="padding">
       <button menu-toggle="right" class="button button-block button-dark">Home</button>
