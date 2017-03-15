@@ -159,7 +159,7 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       return newFlagList;
     },
 
-    *unflag(what) {
+    *unFlag(what) {
       if(this.isFlagged(what)) {
         var newFlagList = this.getFlags().filter(function(flag) {
           return flag !== what;
