@@ -26,14 +26,24 @@ module.exports = angular.module('app.controllers').controller('BookingSummaryCon
         ctrl.end = _.find(booking.details, { type: 'end' });
 
         // See App: Distance is in a silly 64bit float #532
-        // https://github.com/clevertech/Waivecar/issues/532
+        // https://github.com/WaiveCar/Waivecar/issues/532
         var distanceInMiles = (ctrl.end.mileage - ctrl.start.mileage) * 0.621371;
         ctrl.distance = distanceInMiles.toFixed(2) + ' miles';
         ctrl.duration = moment(ctrl.start.createdAt).to(ctrl.end.createdAt, true);
+        ctrl.booking.total = 0;
+        ctrl.booking.failedCharge = false;
+        
+        if (ctrl.booking.payments) {
+          ctrl.booking.total = ctrl.booking.payments.reduce(function(sum, payment) {
+            return sum + payment.amount;
+          }, 0);
 
-        ctrl.booking.total = ctrl.booking.payments ? ctrl.booking.payments.reduce(function(sum, payment) {
-          return sum + payment.amount;
-        }, 0) : 0;
+          // See https://github.com/WaiveCar/Waivecar/issues/487, 
+          // App: A declined CC card appears as if the ride was free  
+          ctrl.booking.failedCharge = ctrl.booking.payments.filter(function(payment) { 
+            return payment.status === 'failed';
+          });
+        }
       }).catch($message.error);
     };
 
