@@ -69,8 +69,6 @@ function DashboardController ($scope, $rootScope, $injector) {
       }
     });
 
-
-
     var booking = $data.active.bookings;
 
     if (!(booking && booking.status === 'started')) {
