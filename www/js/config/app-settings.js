@@ -1,5 +1,5 @@
 /* global localStorage */
-/* global location */
+/* global window */
 'use strict';
 var angular = require('angular');
 var _ = require('lodash');
@@ -33,7 +33,7 @@ appSettings.provider('$settings', [
       baseUrl: 'http://staging.waivecar.com:4300'
     });
 
-    if(location.host.match(/^localhost/) && !localStorage.env) {
+    if(window.location.host.match(/^localhost/) && !localStorage.env) {
       env = 'local';
     }
 
