@@ -95,7 +95,7 @@ module.exports = class BookingService extends Service {
     if(driver.credit < -1) {
       throw error.parse({
         code    : 'BOOKING_OUTSTANDING_CREDIT',
-        message : `You have an outstanding balance of <b>$${ (-driver.credit).toFixed(2) }</b>. This needs to be resolved before making a booking.`
+        message : `You have an outstanding balance of <b>$${ (-driver.credit / 100).toFixed(2) }</b>. This needs to be resolved before making a booking.`
       }, 400);
     }
 
