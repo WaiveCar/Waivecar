@@ -655,9 +655,11 @@ module.exports = class BookingService extends Service {
     // Make sure all required car states are valid before allowing the booking to
     // be completed and released for next booking.
 
-    if (car.isIgnitionOn) { errors.push('turn off Ignition'); }
-    if (!car.isKeySecure) { errors.push('secure Key'); }
-
+    if(process.env.NODE_ENV === 'production') {
+      if (car.isIgnitionOn) { errors.push('turn off Ignition'); }
+      if (!car.isKeySecure) { errors.push('secure Key'); }
+    }
+      
     if (errors.length && !(_user.hasAccess('admin') && query.force)) {
       let message = `Your Ride cannot be completed until you `;
       switch (errors.length) {
@@ -705,7 +707,7 @@ module.exports = class BookingService extends Service {
     // The user should be seeing cars to rent now.
     let message = yield this.updateState('completed', _user, user);
     yield notify.sendTextMessage(user, `Thanks for renting with WaiveCar! Your rental is complete. You can see your trip summary in the app.`);
-    yield notify.slack({ text : `:coffee: ${ user.name() } ${ state } | ${ car.info() } | ${ apiConfig.uri }/bookings/${ booking.id }`
+    yield notify.slack({ text : `:coffee: ${ user.name() } ${ message } | ${ car.info() } | ${ apiConfig.uri }/bookings/${ booking.id }`
     }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
 
