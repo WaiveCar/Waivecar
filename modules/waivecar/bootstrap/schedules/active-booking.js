@@ -86,18 +86,18 @@ var checkBooking = co.wrap(function *(booking) {
   }
 
   // Check if outside driving zone
-  if (device.latitude !== car.latitude || device.longitude !== car.longitude) {
-    let carInside = inDrivingZone(car.latitude, car.longitude);
-    let deviceInside = inDrivingZone(device.latitude, device.longitude);
+  let deviceInside = inDrivingZone(device.latitude, device.longitude);
 
-    if (carInside && !deviceInside) {
-      // User has ventured outside of zone
-      yield notify.sendTextMessage(user, config.notification.reasons['OUTSIDE_RANGE']);
-      yield notify.notifyAdmins(`${ user.name() } took ${ car.info() } outside of the driving zone. ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
-    } else if (deviceInside && !carInside) {
-      // User has returned to zone
-      yield notify.notifyAdmins(`${ user.name() } took ${ car.info() } back into the driving zone. ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
-    }
+  // if we thought we were outside but now we're inside
+  if (deviceInside && booking.isFlagged('outside-range')) {
+    yield booking.unFlag('outside-range');
+    yield notify.notifyAdmins(`${ user.name() } took ${ car.info() } back into the driving zone. ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+
+  // if we thought we were inside but now we are outside.
+  } else if (!deviceInside && !booking.isFlagged('outside-range')) {
+    yield booking.flag('outside-range');
+    yield notify.sendTextMessage(user, config.notification.reasons['OUTSIDE_RANGE']);
+    yield notify.notifyAdmins(`${ user.name() } took ${ car.info() } outside of the driving zone. ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
   }
 
   // Check charge level
