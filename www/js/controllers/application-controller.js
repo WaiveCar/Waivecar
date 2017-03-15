@@ -16,6 +16,7 @@ function ApplicationController ($rootScope, $scope, $injector) {
   var $data = $injector.get('$data');
   var $message = $injector.get('$message');
   var $document = $injector.get('$document');
+  var $interval = $injector.get('$interval');
   var $ride = $injector.get('$ride');
   var LocationService = $injector.get('LocationService');
 
@@ -41,9 +42,54 @@ function ApplicationController ($rootScope, $scope, $injector) {
   //   console.log('TODO: handle socket error:');
   // });
 
+  // Find out what my current app-state and then
+  // navigate to the right parts of the app given what
+  // the server thinks of me.
+  function myState() {
+    var currentBooking = false;
+    var lastState = false;
+
+    $interval(function() {
+      $data.resources.users.me().$promise
+        .then(function(me) {
+
+          var shown = $state.current.name;
+          console.log($state.current.name, new Date(), me.state);
+          if(['ended', 'created', 'started'].indexOf(me.state) !== -1 && !currentBooking) {
+            $data.resources.bookings.current().$promise
+              .then(function(booking) {
+                 currentBooking = booking;
+            });
+          }
+          if(currentBooking) {
+            if(me.state === 'created' && shown === 'cars') {
+              $ride.setBooking(currentBooking.id);
+              $state.go('bookings-active', { id: currentBooking.id });
+            } else if(me.state === 'started' && lastState === 'created') {
+              $state.go('dashboard', { id: currentBooking.id });
+            } else if(me.state === 'completed') {
+              // if we have a booking id then we should go to the booking
+              // summary screen ONLY if our previous state was 'started', 
+              // otherwise this means that we've canceled.
+              if(lastState === 'started' && shown !== 'bookings-show') {
+                $state.go('bookings-show', { id: currentBooking.id });
+              } else if(lastState === 'created' && shown !== 'cars') {
+                $state.go('cars');
+              }
+              currentBooking = false;
+            } else if(me.state === 'ended' && shown !== 'end-ride') {
+              $state.go('end-ride', { id: currentBooking.id });
+            }
+          }
+          lastState = me.state;
+        });
+    }, 5000);
+  }
+
   $rootScope.$on('authLogin', function () {
     initLocation();
     $ride.init();
+    myState();
   });
 
   if ($auth.isAuthenticated()) {
