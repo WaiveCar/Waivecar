@@ -1,6 +1,6 @@
 Notes:
 
-Ending a booking: end@`modules/aivecar/lib/booking-service.js`
+Ending a booking: end@`modules/waivecar/lib/booking-service.js`
 
 Active booking loop: modules/waivecar/bootstrap/schedules/active-booking.js
 
