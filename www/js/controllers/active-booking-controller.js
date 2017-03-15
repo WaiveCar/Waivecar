@@ -34,8 +34,6 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   var ctrl = this;
   this.data = $data.active;
 
-
-
   var expired;
   var stopServiceWatch = $scope.$watch('service.isInitialized', function(isInitialized) {
     if (!isInitialized) {
