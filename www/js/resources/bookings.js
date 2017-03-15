@@ -8,6 +8,11 @@ module.exports = angular.module('app').factory('Bookings', [
   function ($resource, $utils) {
 
     var resource = $resource(null, null, $utils.createResource('bookings', {
+      current: {
+        method: 'GET',
+        url: $utils.getCustomRoute('bookings?limit=1&order=created_at,DESC&status=ended,started'),
+        isArray: true
+      },
       query: {
         method: 'GET',
         url: $utils.getCustomRoute('bookings?order=created_at,DESC'),
