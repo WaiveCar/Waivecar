@@ -15,7 +15,7 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
   var $this = this;
   var $perm = $injector.get('PermissionService');
   var $modal = $injector.get('$modal'), modal;
-  this.activeLocationWhatchers = []
+  this.activeLocationWatchers = [];
 
   var diagnostic = $window.cordova ? $window.cordova.plugins.diagnostic || false : false;
 
@@ -60,7 +60,7 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
 
   this.getCurrentLocation = function getLocation () {
 
-    if (this.activeLocationWhatchers.length > 0) {
+    if (this.activeLocationWatchers.length > 0) {
       return $q.resolve($rootScope.currentLocation);
     }
 
@@ -113,10 +113,10 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
     });
 
 
-    $this.activeLocationWhatchers.push(watch);
+    $this.activeLocationWatchers.push(watch);
 
     return function stopWatch() {
-      $this.activeLocationWhatchers = _.without($this.activeLocationWhatchers, watch);
+      $this.activeLocationWatchers = _.without($this.activeLocationWatchers, watch);
       navigator.geolocation.clearWatch(watch);
     };
   };
