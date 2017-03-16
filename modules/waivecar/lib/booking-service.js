@@ -459,14 +459,16 @@ module.exports = class BookingService extends Service {
       if (isAdmin) warnings.push('car is unreachable');
     }
 
-    if (car.isIgnitionOn) {
-      if (isAdmin) {
-        warnings.push('the ignition is on');
-      } else {
-        throw error.parse({
-          code    : `BOOKING_REQUEST_INVALID`,
-          message : `You must park, and turn off the engine before ending your booking.`
-        }, 400);
+    if(process.env.NODE_ENV === 'production') {
+      if (car.isIgnitionOn) {
+        if (isAdmin) {
+          warnings.push('the ignition is on');
+        } else {
+          throw error.parse({
+            code    : `BOOKING_REQUEST_INVALID`,
+            message : `You must park, and turn off the engine before ending your booking.`
+          }, 400);
+        }
       }
     }
 
