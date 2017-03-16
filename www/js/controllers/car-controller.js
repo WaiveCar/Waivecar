@@ -27,7 +27,6 @@ module.exports = angular.module('app.controllers').controller('CarController', [
       appVersion = version;
     });
 
-
     var ctrl = this;
     var LocationService = $injector.get('LocationService');
     // the accuracy should be within this amount of meters to show the Bummer dialog
@@ -51,7 +50,6 @@ module.exports = angular.module('app.controllers').controller('CarController', [
       }
     );
 
-
     $scope.$on('$destroy', function () {
       if (stopLocationWatch != null) {
         stopLocationWatch();
@@ -65,8 +63,6 @@ module.exports = angular.module('app.controllers').controller('CarController', [
     }
 
     this.markers = [car];
-
-
 
     this.book = function() {
       var model = { version: appVersion, userId: $auth.me.id, carId: $state.params.id };
