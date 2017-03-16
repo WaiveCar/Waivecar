@@ -141,6 +141,8 @@ hooks.set('user:store:after', function *(user, _user) {
  * @return {Object}
  */
 hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
+  let reason = [];
+
   if (nextUser.password) {
     if (!nextUser.oldPassword || !(yield bcrypt.compare(nextUser.oldPassword, prevUser.password))) {
       throw error.parse({
@@ -160,9 +162,15 @@ hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
     nextUser.verifiedPhone = true;
   }
 
+  if (nextUser.lastName != prevUser.lastName || nextUser.firstName != prevUser.lastName) {
+    nextUser.status = 'pending';
+    reason.push(`Name change ${ prevUser.firstName } ${ prevUser.lastName } -> ${ nextUser.firstName } ${ nextUser.lastName }`);
+  }
+
   if (nextUser.status && _user.hasAccess('admin')) {
     // ...
   } else if (!nextUser.verifiedPhone) {
+    reason.push(`Phone number change ${ prevUser.phone } -> ${ nextUser.phone }`);
     nextUser.status = 'pending';
   }
 
@@ -174,15 +182,19 @@ hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
   }
 
   if (nextUser.status == 'pending' && prevUser.status == 'active') {
-    let reason = '';
+    let who = '';
 
     if (prevUser.id == _user.id) {
-      reason = 'by themselves';
+      who = 'by themselves';
     } else {
-      reason = `by ${ _user.name() } (#${ _user.id })`;
+      who = `by ${ _user.name() } (#${ _user.id })`;
+    }
+    
+    if (reason.length) {
+      who += '(' + reason.join(', ') + ')';
     }
 
-    yield notify.notifyAdmins(`${ prevUser.name() } (#${ prevUser.id }), a previously active user, has been moved to pending ${ reason }.`, [ 'slack' ], { channel : '#user-alerts' });
+    yield notify.notifyAdmins(`${ prevUser.name() } (#${ prevUser.id }), a previously active user, has been moved to pending ${ who }.`, [ 'slack' ], { channel : '#user-alerts' });
   }
 
   return nextUser;
