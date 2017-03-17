@@ -39,13 +39,13 @@ module.exports = angular.module('app.controllers').controller('CarController', [
 
         ctrl.route = {
           start: currentLocation,
-          destiny: car
+          destiny: car,
+          fitBoundsByRoute: true
         };
-        ctrl.fitMapBoundsByMarkers = [ctrl.route.start, ctrl.route.destiny];
-        ctrl.currentLocation = currentLocation;
+
         stopLocationWatch = LocationService.watchLocation(function (updatedLocation) {
           ctrl.route.start = updatedLocation;
-          ctrl.currentLocation = updatedLocation;
+          ctrl.route.fitBoundsByRoute = false;
         });
       }
     );
@@ -61,8 +61,6 @@ module.exports = angular.module('app.controllers').controller('CarController', [
     if (this.car.isAvailable === false) {
       this.car.icon = 'unavailable';
     }
-
-    this.markers = [car];
 
     this.book = function() {
       var model = { version: appVersion, userId: $auth.me.id, carId: $state.params.id };

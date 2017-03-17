@@ -16,7 +16,9 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
   function link($scope, $elem, attrs, ctrl) {
 
-    var mapOptions = {};
+    var mapOptions = {
+      streetViewControl: false
+    };
 
     var center = ctrl.center ? ctrl.center : ctrl.currentLocation;
     if (center) {
@@ -26,7 +28,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     ctrl.map = new google.maps.Map($elem.find('.map-instance')[0], mapOptions);
 
     if ('route' in attrs) {
-      ctrl.directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true});
+      ctrl.directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true, preserveViewport: true});
       ctrl.directionsRenderer.setMap(ctrl.map);
     }
 
@@ -51,7 +53,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
       }, true),
       $scope.$watch('map.route', function (value) {
         if (value) {
-          ctrl.drawRoute(value.start, value.destiny);
+          ctrl.drawRoute(value.start, value.destiny, value.fitBoundsByRoute);
         }
       }, true)
 
@@ -206,14 +208,53 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     ctrl._addedMarkers.general = actualMarkers;
   };
 
-  MapController.prototype.drawRoute = function drawRoute(start, destiny) {
+  MapController.prototype.drawRouteMarkers = function drawRouteMarkers(begin, end) {
+    var ctrl = this;
+    if (!ctrl.beginMarker) {
+      var iconOpt = getIconOptions('location');
+
+      ctrl.beginMarker = new google.maps.Marker({
+        map: ctrl.map,
+        animation: google.maps.Animation.DROP,
+        position: begin,
+        icon: iconOpt
+      });
+    } else {
+      ctrl.beginMarker.setPosition(begin);
+    }
+
+    if (!ctrl.endMarker) {
+      iconOpt = getIconOptions('car');
+
+      ctrl.endMarker = new google.maps.Marker({
+        map: ctrl.map,
+        animation: google.maps.Animation.DROP,
+        position: end,
+        icon: iconOpt
+      });
+    } else {
+      ctrl.endMarker.setPosition(end);
+    }
+  };
+
+  MapController.prototype.drawRoute = function drawRoute(start, destiny, fitBoundsByRoute) {
 
     var ctrl = this;
 
     RouteService.getGRoute(mapToGoogleLatLong(start), mapToGoogleLatLong(destiny),
       function (response) {
+
+        var route = response.routes[0].legs[0];
+
+        var beginStep = route.steps[0];
+        var endStep = route.steps[route.steps.length - 1];
+
+        ctrl.drawRouteMarkers(beginStep.start_point, endStep.end_point);
+
         ctrl.directionsRenderer.setDirections(response);
-        //ctrl.directionsRenderer.setMap(ctrl.map);
+        if (fitBoundsByRoute) {
+          ctrl.map.fitBounds(ctrl.directionsRenderer.getDirections().routes[0].bounds);
+        }
       });
 
   };

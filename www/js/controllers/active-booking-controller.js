@@ -40,7 +40,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       return;
     }
 
-    ctrl.markers = [$data.active.cars];
+
     // ctrl.car = $data.active.cars;
     stopServiceWatch();
     stopServiceWatch = null;
@@ -88,14 +88,16 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       ctrl.currentLocation = currentLocation;
       ctrl.route = {
         start: currentLocation,
-        destiny: $data.active.cars
+        destiny: $data.active.cars,
+        fitBoundsByRoute: true
       };
 
-      ctrl.fitMapBoundsByMarkers = [ctrl.route.start, ctrl.route.destiny];
+
       checkIsInRange(currentLocation);
 
       stopWatching = LocationService.watchLocation(function(updatedLocation) {
         ctrl.route.start = updatedLocation;
+        ctrl.route.fitBoundsByRoute = false;
         ctrl.currentLocation = updatedLocation;
         checkIsInRange(updatedLocation);
       });
@@ -110,8 +112,10 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       $scope.distance = distance;
       if ($scope.distance <= 0.019) {
         console.log('Showing unlock');
-        stopWatching();
-        stopWatching = null;
+        if (stopWatching) {
+          stopWatching();
+          stopWatching = null;
+        }
         showUnlock();
       }
     }
