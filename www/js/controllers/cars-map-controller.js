@@ -24,14 +24,14 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
   var minAccuracyThreshold = 200;
   var modal;
 
-  var stopLocationWatch = null;
+  this.stopLocationWatch = null;
   LocationService.getCurrentLocation().then(function (currentLocation) {
 
       this.all = prepareCars(cars);
       this.fitMapBoundsByMarkers = getMarkersToFitBoundBy(this.all, currentLocation);
       this.currentLocation = currentLocation;
 
-      stopLocationWatch = LocationService.watchLocation(function(updatedLocation) {
+      this.stopLocationWatch = LocationService.watchLocation(function(updatedLocation) {
         this.currentLocation = updatedLocation;
       }.bind(this));
 
@@ -62,10 +62,10 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
   }.bind(this), true);
 
   $scope.$on('$destroy', function () {
-    this.clearCarWatcher();
-    if (stopLocationWatch) {
-      stopLocationWatch();
+    if (this.stopLocationWatch) {
+      this.stopLocationWatch();
     }
+    this.clearCarWatcher();
   }.bind(this));
 
 
