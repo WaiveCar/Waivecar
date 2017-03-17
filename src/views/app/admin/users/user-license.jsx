@@ -12,9 +12,10 @@ module.exports = class UserDetails extends React.Component {
   constructor(...args) {
     super(...args);
     this.state = {
-      license  : null,
-      report   : null,
-      userInfo : null
+      license    : null,
+      report     : null,
+      userInfo   : null,
+      runLicense : true
     };
     relay.subscribe(this, 'users');
   }
@@ -60,6 +61,20 @@ module.exports = class UserDetails extends React.Component {
         report : report
       });
     });
+  }
+
+  runLicense(id) {
+    if (this.state.runLicense) {
+      this.setState({runLicense: false});
+      api.post(`/licenses/${id}/verify`, {userId : this.props.id}, (err, license) => {
+        if (err) {
+          return err.data ? err.data : err.message;
+        }
+        return license.status === 'complete' ?
+            'Your request for verification has been completed.' :
+            'Your request for verification has been submitted successfully. Please check back later.';
+      });
+    }
   }
 
   /**
@@ -184,6 +199,14 @@ module.exports = class UserDetails extends React.Component {
                     { value : 'reject', label : 'Reject' }
                   ]}
                 />
+                {
+                  license.status != 'complete' || license.outcome == null
+                      ?
+                  <span className={'btnRunLicense btn btn-primary btn-danger btn-xs' + (this.state.runLicense ? '' : ' disabled')}
+                        onClick={ this.runLicense.bind(this, license.id) }>Run License</span>
+                      :
+                  ''
+                }
               </FormInput>
             </div>
 
