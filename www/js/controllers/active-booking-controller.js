@@ -83,24 +83,18 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       return;
     }
 
-    LocationService.getCurrentLocation().then(function (currentLocation) {
+    stopWatching = LocationService.watchLocation(function (currentLocation, isInitialCall) {
 
+      if (isInitialCall) {
+        ctrl.route = {
+          destiny: $data.active.cars
+        };
+      }
+      ctrl.route.start = currentLocation;
+      ctrl.route.fitBoundsByRoute = isInitialCall;
       ctrl.currentLocation = currentLocation;
-      ctrl.route = {
-        start: currentLocation,
-        destiny: $data.active.cars,
-        fitBoundsByRoute: true
-      };
-
 
       checkIsInRange(currentLocation);
-
-      stopWatching = LocationService.watchLocation(function(updatedLocation) {
-        ctrl.route.start = updatedLocation;
-        ctrl.route.fitBoundsByRoute = false;
-        ctrl.currentLocation = updatedLocation;
-        checkIsInRange(updatedLocation);
-      });
 
     });
   }

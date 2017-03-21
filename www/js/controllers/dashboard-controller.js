@@ -29,6 +29,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   $scope.service = $ride;
   var ctrl = this;
   this.locations = $data.instances.locations;
+  this.fitMapBoundsByMarkers = featured(this.locations);
 
   this.openPopover = openPopover;
   this.closePopover = closePopover;
@@ -51,14 +52,13 @@ function DashboardController ($scope, $rootScope, $injector) {
       return;
     }
     rideServiceReady();
-    var stopLocationWatch = null;
-    LocationService.getCurrentLocation().then(function (currentLocation) {
-      ctrl.fitMapBoundsByMarkers = featured(ctrl.locations).concat([currentLocation]);
+
+    var stopLocationWatch = LocationService.watchLocation(function (currentLocation, isInitialCall) {
+      if (isInitialCall) {
+        ctrl.fitMapBoundsByMarkers = featured(ctrl.locations).concat([currentLocation]);
+      }
       ctrl.currentLocation = currentLocation;
 
-      stopLocationWatch = LocationService.watchLocation(function(updatedLocation) {
-        ctrl.currentLocation = updatedLocation;
-      });
     });
 
 
