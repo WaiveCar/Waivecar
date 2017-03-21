@@ -58,11 +58,8 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
     });
   };
 
-  this.getCurrentLocation = function getLocation () {
 
-    if (this.activeLocationWatchers.length > 0) {
-      return $q.resolve($rootScope.currentLocation);
-    }
+  this.getCurrentLocation = function getLocation () {
 
     return $cordovaGeolocation.getCurrentPosition({
       maximumAge: 3000,
@@ -94,15 +91,29 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
 
   this.watchLocation = function watchLocation (updateCallback) {
 
-    var watch = navigator.geolocation.watchPosition(function onPosition (position) {
+    var watchState = {
+      isInitialCall: true
+    };
+
+    var invokeCallback = function(location) {
+      updateCallback(location, watchState.isInitialCall);
+      watchState.isInitialCall = false;
+    };
+
+    if ($rootScope.currentLocation) {
+      invokeCallback($rootScope.currentLocation);
+    }
+
+    watchState.watchId = navigator.geolocation.watchPosition(function onPosition (position) {
       $timeout(function(){
         var location = {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
           accuracy: position.coords.accuracy
         };
+        //$this.manualPosition.longitude += 0.001;
         update(location);
-        updateCallback(location);
+        invokeCallback(location);
       });
     }, function onPositionErr (err) {
       LocationService.enableLocation();
@@ -112,12 +123,15 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
       enableHighAccuracy: true
     });
 
+    console.log('start watch location', watchState.watchId, updateCallback);
 
-    $this.activeLocationWatchers.push(watch);
+    $this.activeLocationWatchers.push(watchState.watchId);
 
     return function stopWatch() {
-      $this.activeLocationWatchers = _.without($this.activeLocationWatchers, watch);
-      navigator.geolocation.clearWatch(watch);
+      $this.activeLocationWatchers = _.without($this.activeLocationWatchers, watchState.watchId);
+      console.log('stop watch location', watchState.watchId, updateCallback, $this.activeLocationWatchers);
+      navigator.geolocation.clearWatch(watchState.watchId);
+
     };
   };
 
@@ -130,7 +144,7 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
       console.error('Tried to set location but object is malformed ', position);
       return;
     }
-    console.log('[location-service] updating location to %d, %d (~%d)',
+    console.log('[location-service] updating location to %f, %f (~%f)',
                 position.latitude, position.longitude, position.accuracy);
     $rootScope.currentLocation = {
       latitude: position.latitude,

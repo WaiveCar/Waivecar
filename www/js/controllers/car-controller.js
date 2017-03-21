@@ -33,20 +33,17 @@ module.exports = angular.module('app.controllers').controller('CarController', [
     var minAccuracyThreshold = 200;
     var modal;
 
-    var stopLocationWatch = null;
 
-    LocationService.getCurrentLocation().then(function (currentLocation) {
+    var stopLocationWatch = LocationService.watchLocation(function (currentLocation, isInitialCall) {
 
-        ctrl.route = {
-          start: currentLocation,
-          destiny: car,
-          fitBoundsByRoute: true
-        };
+        if (isInitialCall) {
+          ctrl.route = {
+            destiny: car
+          };
+        }
 
-        stopLocationWatch = LocationService.watchLocation(function (updatedLocation) {
-          ctrl.route.start = updatedLocation;
-          ctrl.route.fitBoundsByRoute = false;
-        });
+        ctrl.route.start = currentLocation;
+        ctrl.route.fitBoundsByRoute = isInitialCall;
       }
     );
 

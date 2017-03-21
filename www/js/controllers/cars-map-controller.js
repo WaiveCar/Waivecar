@@ -24,18 +24,20 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
   var minAccuracyThreshold = 200;
   var modal;
 
-  this.stopLocationWatch = null;
-  LocationService.getCurrentLocation().then(function (currentLocation) {
+  // First load
+  this.all = prepareCars(cars);
+  this.fitBoundsByMarkers = getMarkersToFitBoundBy(this.all);
 
-      this.all = prepareCars(cars);
-      this.fitMapBoundsByMarkers = getMarkersToFitBoundBy(this.all, currentLocation);
+  ensureAvailableCars(cars);
+
+  this.stopLocationWatch = LocationService.watchLocation(function(currentLocation, isInitialCall) {
+
+      if (isInitialCall) {
+        this.fitMapBoundsByMarkers = getMarkersToFitBoundBy(this.all, currentLocation);
+        carsInRange(this.all, currentLocation);
+      }
       this.currentLocation = currentLocation;
 
-      this.stopLocationWatch = LocationService.watchLocation(function(updatedLocation) {
-        this.currentLocation = updatedLocation;
-      }.bind(this));
-
-      this.carsInRange(currentLocation);
     }.bind(this)
   );
 
@@ -50,13 +52,7 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
       return false;
     }
 
-    var firstLoad = !this.all;
-
     this.all = prepareCars(value);
-
-    if (firstLoad) {
-      this.fitMapBoundsByMarkers = getMarkersToFitBoundBy(this.all, this.currentLocation);
-    }
 
     return false;
   }.bind(this), true);
@@ -69,11 +65,6 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
   }.bind(this));
 
 
-  // First load
-  this.all = prepareCars(cars);
-  this.fitBoundsByMarkers = getMarkersToFitBoundBy(this.all);
-
-  ensureAvailableCars(cars);
 
   function ensureAvailableCars(allCars) {
     var availableCars = _.filter(allCars, 'isAvailable');
@@ -93,7 +84,7 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
   };
 
 
-  this.carsInRange = function (currentLocation) {
+  function carsInRange(allCars, currentLocation) {
     if (
       !currentLocation || (
       currentLocation &&
@@ -104,7 +95,7 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
     }
 
     var maxDistance = 30; // at least one car should be less than 30 miles away
-    var carInRange = _(this.all).find(function (car) {
+    var carInRange = _(allCars).find(function (car) {
       var distance = $distance(car, currentLocation);
       return _.isFinite(distance) && distance < maxDistance;
     });
@@ -113,7 +104,6 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
       if (modal && modal.isShown()) {
         return;
       }
-      this.outOfRange = true;
       $modal('simple-modal', {
         title: 'Bummer',
         message: 'WaiveCar is currently only available in LA. Check back when you are in the area.'
