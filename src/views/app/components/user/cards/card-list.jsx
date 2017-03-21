@@ -32,8 +32,10 @@ class CardList extends React.Component {
     this.setState({user: this.props.user});
   }
 
-  creditMod(who, amount, cards) {
-    let description = (amount > 0) ? 'Payment for fees incurred during a waivecar ride.' : 'Miscellaneous Credit';
+  creditMod(who, amount, cards, description) {
+    if(!description) {
+      description = (amount > 0) ? 'Payment for fees incurred during a waivecar ride.' : 'Miscellaneous Credit';
+    }
     let mthis = this;
 
     api.post('/shop/quickcharge', {
@@ -60,8 +62,9 @@ class CardList extends React.Component {
   chargeUser(who, cards) {
     let name = [who.firstName, who.lastName].join(' ');
     let amount = prompt("YOU ARE ABOUT TO CHARGE " + name + ".\nTHIS WILL APPEAR ON THEIR CREDIT CARD WHEN YOU CLICK OK. (Press cancel to abort).\nHow much would you like to charge " + name + "?");
-    if (amount) {
-      this.creditMod(who, amount, cards);
+    let reason = prompt('Optionally, give a reason for this charge. You can leave this blank. But you must tap "OK" for the charge to go through.');
+    if (amount && reason !== null) {
+      this.creditMod(who, amount, cards, reason);
     }
   }
 
