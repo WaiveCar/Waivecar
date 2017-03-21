@@ -4,6 +4,7 @@ let nodemailer        = require('nodemailer');
 let mandrillTransport = require('nodemailer-mandrill-transport');
 let Template          = require('email-templates').EmailTemplate;
 let path              = require('path');
+let fs                = require('fs');
 let error             = Bento.Error;
 
 module.exports = class Email {
@@ -41,6 +42,21 @@ module.exports = class Email {
    * @param {Object} email
    */
   *send(email) {
+    email._t = new Date();
+    // This is an exceptionally magical mode
+    // where all the mail gets funneled off to
+    // a single email address and its actual 
+    // destination gets set in the header.
+    //
+    // This is designed for diagnostics and
+    // debugging. see #754.
+    if(this.config.recipient) {
+      email.subject += " DBG:" + email.to;
+      email.to = this.config.recipient;
+    }
+
+    fs.appendFileSync('/var/log/outgoing/email.txt', JSON.stringify(email) + '\n');
+
     if (!this.transporter) {
       throw error.parse({
         code    : 'EMAIL_BAD_CONFIG',
