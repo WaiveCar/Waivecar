@@ -132,6 +132,11 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       defaultValue : false
     },
 
+    isWaivework : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
     state : {
       type         : Sequelize.STRING,
       defaultValue : false
