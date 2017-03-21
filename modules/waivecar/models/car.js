@@ -83,6 +83,11 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       defaultValue : false
     },
 
+    inService : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : true
+    },
+
     isOnChargeAdapter : {
       type         : Sequelize.BOOLEAN,
       defaultValue : false
