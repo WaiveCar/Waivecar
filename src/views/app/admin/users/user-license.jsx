@@ -63,6 +63,33 @@ module.exports = class UserDetails extends React.Component {
     });
   }
 
+  deleteLicense(id) {
+    var response = prompt("Warning, there is no way to undo this. If you delete a license the user will have to add it again. type 'ok' to confirm.");
+    if(response && response.toLowerCase() === 'ok') {
+      api.delete(`/licenses/${id}`, (err, license) => {
+        if (err) {
+          return snackbar.notify({
+            type    : `danger`,
+            message : err.message
+          });
+        } else {
+          snackbar.notify({
+            type    : `success`,
+            message : 'License removed'
+          });
+          this.setState({
+            license: null
+          });
+        }
+      });
+    } else {
+      snackbar.notify({
+        type    : `danger`,
+        message : 'License not deleted'
+      });
+    }
+  }
+
   runLicense(id) {
     if (this.state.runLicense) {
       this.setState({runLicense: false});
@@ -214,6 +241,7 @@ module.exports = class UserDetails extends React.Component {
               <div className="btn-group" role="group">
                 <button type="submit" className="btn btn-primary">Update License</button>
               </div>
+              <a style={{ paddingLeft: '1em' }} onClick={ this.deleteLicense.bind(this, license.id) } className="btn btn-link btn-xs">Delete License</a>
             </div>
           </form>
         </div>
