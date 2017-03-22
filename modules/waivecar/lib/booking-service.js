@@ -596,6 +596,7 @@ module.exports = class BookingService extends Service {
     //
 
     if(deltas.duration > 10 && deltas.distance === 0) {
+      yield UserLog.addUserEvent(user, 'SIT', booking.id, deltas.duration);
       yield notify.slack({ text : `:popcorn: ${ user.name() } drove 0 miles for ${ deltas.duration } minutes. ${ car.info() } | ${ user.info() } | https://www.waivecar.com/users/${ user.id }`
       }, { channel : '#user-alerts' });
     }
