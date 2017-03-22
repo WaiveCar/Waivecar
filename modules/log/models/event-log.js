@@ -16,11 +16,6 @@ Bento.Register.Model('EventLog', 'sequelize', (model, Sequelize) => {
    */
   model.schema = {
 
-    origin : {
-      type         : Sequelize.STRING,
-      defaultValue : 'API'
-    },
-
     // ### User
     // The user that the event connects to, NULL value means the
     // log was performed by the system.
