@@ -1,5 +1,7 @@
+/* global  window: false */
 'use strict';
 var angular = require('angular');
+var ionic = require('ionic');
 var moment = require('moment');
 var _ = require('lodash');
 // var ionic = require('ionic');
@@ -289,23 +291,18 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       targetLon: $data.active.cars.longitude
     };
 
-    // if (ionic.Platform.isWebView()) {
-      url = [
-        'comgooglemaps-x-callback://?',
-        '&saddr=%(startingLat)s,%(startingLon)s',
-        '&daddr=%(targetLat)s,%(targetLon)s',
-        '&directionsmode=walking',
-        '&x-success=WaiveCar://?resume=true',
-        '&x-source=WaiveCar'
-      ].join('');
-      url = sprintf(url, sprintfOptions);
-      $cordovaInAppBrowser.open(encodeURI(url), '_system');
-      return;
-    // }
+    var isIOS = ionic.Platform.isIOS();
 
-    // url = 'http://maps.google.com/maps?saddr=%(startingLat)s,%(startingLon)s&daddr=%(targetLat)s,%(targetLon)s&mode=walking';
-    // url = sprintf(url, sprintfOptions);
-    // $cordovaInAppBrowser.open(url);
+
+    var geocoords = $rootScope.currentLocation.latitude + ',' + $rootScope.currentLocation.longitude;
+
+    if (isIOS) {
+      window.open('maps://?q=' + geocoords, '_system');
+    } else {
+      var label = encodeURI(this.car.license);
+      window.open('geo:0,0?q=' + geocoords + '(' + label + ')', '_system');
+    }
+
   };
 }
 
