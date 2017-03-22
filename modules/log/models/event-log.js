@@ -50,6 +50,11 @@ Bento.Register.Model('EventLog', 'sequelize', (model, Sequelize) => {
       type : Sequelize.TEXT
     },
 
+    // a generic reference id - used depending on context
+    referenceId : {
+      type       : Sequelize.INTEGER,
+    },
+
     // ### Resolved
     // Holds event resolved state, default is true as events are usually not needed
     // to be reviewed. In case it is needed we set this to false so it can be
