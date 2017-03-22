@@ -320,6 +320,10 @@ module.exports = class LogService {
       resolved: false
     };
 
+    if (_.isNumber(details)) {
+      object.referenceId = details;
+    }
+
     if (comment) {
       obj.comment = comment;
     }
@@ -328,18 +332,14 @@ module.exports = class LogService {
   }
 
   static *event(payload) {
-    var obj = {
-      userId   : payload.userId || null,
-      type     : payload.type,
-      value    : payload.value,
-      resolved : payload.resolved || true
+    let log = new EventLog({
+      userId      : payload.userId || null,
+      type        : payload.type,
+      value       : payload.value,
+      resolved    : payload.resolved || true,
+      comment     : payload.comment || null,
+      referenceId : payload.referenceId || null
     });
-
-    if(payload.comment) {
-      obj.comment = payload.comment;
-    }
-
-    let log = new EventLog(obj);
 
     yield log.save();
 
