@@ -120,6 +120,10 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       type : Sequelize.STRING(88)
     },
 
+    licenseUsed : {
+      type : Sequelize.STRING(88)
+    },
+
     vin : {
       type : Sequelize.STRING(88)
     },
@@ -153,11 +157,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     },
 
     chargeHistory: {
-      type : Sequelize.STRING
-    },
-
-    license_used : {
-      type : Sequelize.STRING(88)
+      type : Sequelize.TEXT()
     },
 
     charge : {
