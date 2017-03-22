@@ -5,6 +5,7 @@ let Service     = require('./classes/service');
 let CartService = require('./cart-service');
 let moment      = require('moment');
 let _           = require('lodash');
+let UserLog     = require('../../log/lib/log-service');
 let Email       = Bento.provider('email');
 let queryParser = Bento.provider('sequelize/helpers').query;
 let User        = Bento.model('User');
@@ -126,6 +127,9 @@ module.exports = class OrderService extends Service {
     if (miscCharge) {
       log.info(`Notifying user of miscellaneous charge: ${ user.id }`);
       yield this.notifyOfCharge(miscCharge, user);
+
+      // A miscellaneous charge is likely an issue we should keep track of
+      yield UserLog.addUserEvent(user, 'FEE', order.id, data.description);
     }
 
     try {
@@ -472,6 +476,9 @@ module.exports = class OrderService extends Service {
 
           // A failed charge needs to be marked as such (see #670).
           yield order.update({ status: 'failed' });
+
+          // We need to hold this failed charge against the user. (see #715)
+          yield UserLog.addUserEvent(user, 'DECLINED', order.id);
 
           // And finally we tell them (also covered in #670).
           yield notify.sendTextMessage(user, 'Hi. Unfortunately we were unable to charge your credit card for your last ride. Please call us to help resolve this issue');
