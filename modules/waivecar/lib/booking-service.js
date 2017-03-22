@@ -15,6 +15,7 @@ let log          = Bento.Log;
 let config       = Bento.config.waivecar;
 let apiConfig    = Bento.config.api;
 let OrderService = Bento.module('shop/lib/order-service');
+let UserLog      = require('../../log/lib/log-service');
 let LogService   = require('./log-service');
 let Actions      = LogService.getActions();
 let moment       = require('moment');
@@ -971,6 +972,10 @@ module.exports = class BookingService extends Service {
       // it suspicious but let thing go ahead.
       if(bookingForCar && bookingForCar.userId != user.id) {
         let holder = yield User.findById(bookingForCar.userId);
+
+        // We tarnish both users' stellar records.
+        yield UserLog.addUserEvent(user, 'HOLDING', holder.id, holder.name());
+        yield UserLog.addUserEvent(holder, 'HOLDING', user.id, user.name());
 
         yield notify.notifyAdmins(`:dark_sunglasses: ${ holder.name() } | ${ holder.info() } may have been holding a car for ${ user.name() } | ${ user.info() }.`,
            [ 'slack' ], { channel : '#user-alerts' });
