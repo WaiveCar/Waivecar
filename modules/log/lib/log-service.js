@@ -10,6 +10,7 @@ let Log         = Bento.model('Log');
 let hooks       = Bento.Hooks;
 let error       = Bento.Error;
 let logs        = Bento.Log;
+let _           = require('lodash');
 let CarService  = require('../../waivecar/lib/car-service');
 
 module.exports = class LogService {
@@ -302,14 +303,32 @@ module.exports = class LogService {
     return log;
   }
 
-  /**
-   * Logs a new payload with the database so it can be tracked.
-   * @param  {Object} payload
-   * @return {Object}
-   */
+  static *addUserEvent(who, what, details, comment) {
+    var obj = false;
+
+    if (who.id) {
+      who = who.id;
+    }
+    if (!_.isString(details) ) {
+      details = JSON.stringify(details);
+    }
+
+    obj = {
+      userId: who,
+      type: what,
+      value: details,
+      resolved: false
+    };
+
+    if (comment) {
+      obj.comment = comment;
+    }
+
+    return yield this.event(obj);
+  }
+
   static *event(payload) {
     let log = new EventLog({
-      origin   : payload.origin || 'API',
       userId   : payload.userId || null,
       type     : payload.type,
       value    : payload.value,
