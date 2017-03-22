@@ -328,19 +328,22 @@ module.exports = class LogService {
   }
 
   static *event(payload) {
-    let log = new EventLog({
+    var obj = {
       userId   : payload.userId || null,
       type     : payload.type,
       value    : payload.value,
       resolved : payload.resolved || true
     });
+
+    if(payload.comment) {
+      obj.comment = payload.comment;
+    }
+
+    let log = new EventLog(obj);
+
     yield log.save();
 
-    // ### Debug
-
     debug(`Log > Logged ${ payload.type } with the 'log_events' table.`);
-
-    // ### Hook
 
     yield hooks.call('log:event', log);
 
