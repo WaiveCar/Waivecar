@@ -405,7 +405,7 @@ module.exports = {
               let meta = config.car.meta[car.id];
               if (meta) {
                 car.license = meta.license;
-                car.license_used = meta.license;
+                car.licenseUsed = meta.license;
               }
               log.debug(`Cars : Sync : adding ${ device.id }.`);
               yield car.upsert();
