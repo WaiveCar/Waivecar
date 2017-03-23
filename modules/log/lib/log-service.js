@@ -303,29 +303,37 @@ module.exports = class LogService {
     return log;
   }
 
+  //
+  // who is either a number or a user object.  Either
+  //  way we'll try our best to extract the userid
+  //
+  // what is a preferably all caps, one word reason for
+  //  the event, such as 'DECLINED' for a cc decline
+  //
+  // details is terribly hard to explain, it's 'smart'.
+  //  If it's a number, it also becomes the referenceId,
+  //  it always gets JSON.stringified as the 'value' column
+  //  value 
+  //
   static *addUserEvent(who, what, details, comment) {
-    var obj = false;
+    var obj = {
+      type: what,
+      value: details,
+      resolved: false,
+      comment: comment
+    };
 
     if (who.id) {
       who = who.id;
     }
-    if (!_.isString(details) ) {
-      details = JSON.stringify(details);
-    }
-
-    obj = {
-      userId: who,
-      type: what,
-      value: details,
-      resolved: false
-    };
+    obj.userId = who;
 
     if (_.isNumber(details)) {
       object.referenceId = details;
     }
 
-    if (comment) {
-      obj.comment = comment;
+    if (!_.isString(details) ) {
+      obj.value = JSON.stringify(details);
     }
 
     return yield this.event(obj);
@@ -336,7 +344,7 @@ module.exports = class LogService {
       userId      : payload.userId || null,
       type        : payload.type,
       value       : payload.value,
-      resolved    : payload.resolved || true,
+      resolved    : ('resolved' in payload) ? payload.resolved : true,
       comment     : payload.comment || null,
       referenceId : payload.referenceId || null
     });
