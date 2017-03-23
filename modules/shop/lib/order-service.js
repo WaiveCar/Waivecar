@@ -81,9 +81,9 @@ module.exports = class OrderService extends Service {
       yield this.charge(order, user);
 
       if(data.amount > 0) {
-        yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.name() } $${ data.amount / 100 } for ${ data.description }`, [ 'slack' ], { channel : '#rental-alerts' });
+        yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.name() } $${ data.amount / 100 } for ${ data.description } | ${ apiConfig.uri }/users/${ user.id }`, [ 'slack' ], { channel : '#rental-alerts' });
       } else {
-        yield notify.notifyAdmins(`:money_with_wings: ${ _user.name() } *credited* ${ user.name() } $${ -data.amount / 100 } for ${ data.description }`, [ 'slack' ], { channel : '#rental-alerts' });
+        yield notify.notifyAdmins(`:money_with_wings: ${ _user.name() } *credited* ${ user.name() } $${ -data.amount / 100 } for ${ data.description } | ${ apiConfig.uri }/users/${ user.id }`, [ 'slack' ], { channel : '#rental-alerts' });
       }
 
     } catch (err) {
@@ -140,7 +140,7 @@ module.exports = class OrderService extends Service {
 
     try {
       yield this.charge(order, user);
-      yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.name() } $${ amountInCents / 100 } for ${ data.description }`, [ 'slack' ], { channel : '#rental-alerts' });
+      yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.name() } $${ amountInCents / 100 } for ${ data.description } | ${ apiConfig.uri }/bookings/${ data.bookingId }`, [ 'slack' ], { channel : '#rental-alerts' });
 
       yield hooks.call('shop:store:order:after', order, payload, _user);
     } catch (err) {
