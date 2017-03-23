@@ -61,11 +61,19 @@ class CardList extends React.Component {
 
   chargeUser(who, cards) {
     let name = [who.firstName, who.lastName].join(' ');
-    let amount = prompt("YOU ARE ABOUT TO CHARGE " + name + ".\nTHIS WILL APPEAR ON THEIR CREDIT CARD WHEN YOU CLICK OK. (Press cancel to abort).\nHow much would you like to charge " + name + "?");
-    let reason = prompt('Optionally, give a reason for this charge. You can leave this blank. But you must tap "OK" for the charge to go through.');
-    if (amount && reason !== null) {
-      this.creditMod(who, amount, cards, reason);
+    let amount = prompt("YOU ARE ABOUT TO CHARGE " + name + ".\nHow much would you like to charge " + name + "?\n(Tap Cancel to abort).");
+
+    if (amount) {
+      let reason = prompt('Optionally, give a reason for this charge.\nYou can leave this blank. But you must tap "OK" for the charge to go through.');
+
+      if (reason !== null) {
+        return this.creditMod(who, amount, cards, reason);
+      }
     }
+    snackbar.notify({
+      type    : `success`,
+      message : 'No fee was charged'
+    });
   }
 
   addCredit(who, cards) {
