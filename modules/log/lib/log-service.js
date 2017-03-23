@@ -329,7 +329,7 @@ module.exports = class LogService {
     obj.userId = who;
 
     if (_.isNumber(details)) {
-      object.referenceId = details;
+      obj.referenceId = details;
     }
 
     if (!_.isString(details) ) {
