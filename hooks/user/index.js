@@ -165,7 +165,10 @@ hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
       reason.push(`Name change ${ prevUser.firstName } ${ prevUser.lastName } -> ${ nextUser.firstName } ${ nextUser.lastName }`);
     }
 
-    if (nextUser.phone && prevUser.phone !== nextUser.phone) {
+    // During signup the user moves the phone number from null to something valid.
+    // We are ok with this - that's what the first check is for (prevUer.phone) - 
+    // it's not just there for no reason.
+    if (prevUser.phone && nextUser.phone && prevUser.phone !== nextUser.phone) {
       nextUser.verifiedPhone = false;
       nextUser.status = 'pending';
       reason.push(`Phone number change ${ prevUser.phone } -> ${ nextUser.phone }`);
