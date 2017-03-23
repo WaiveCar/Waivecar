@@ -140,7 +140,7 @@ module.exports = class OrderService extends Service {
 
     try {
       yield this.charge(order, user);
-      yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.name() } $${ data.amount / 100 } for ${ data.description }`, [ 'slack' ], { channel : '#rental-alerts' });
+      yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.name() } $${ amountInCents / 100 } for ${ data.description }`, [ 'slack' ], { channel : '#rental-alerts' });
 
       yield hooks.call('shop:store:order:after', order, payload, _user);
     } catch (err) {
