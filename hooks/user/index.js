@@ -192,10 +192,10 @@ hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
     }
     
     if (reason.length) {
-      who += '(' + reason.join(', ') + ')';
+      who += ' (' + reason.join(', ') + ')';
     }
     yield UserLog.addUserEvent(prevUser, 'PENDING', reason || '');
-    yield notify.notifyAdmins(`${ prevUser.name() } (#${ prevUser.id }), a previously active user, has been moved to pending ${ who }.`, [ 'slack' ], { channel : '#user-alerts' });
+    yield notify.notifyAdmins(`:construction: ${ prevUser.name() } (#${ prevUser.id }), a previously active user, has been moved to pending ${ who }.`, [ 'slack' ], { channel : '#user-alerts' });
   }
 
   return nextUser;
