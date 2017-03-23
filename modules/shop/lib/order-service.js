@@ -78,6 +78,7 @@ module.exports = class OrderService extends Service {
 
       log.info(`Notifying user of miscellaneous charge: ${ user.id }`);
 
+      yield UserLog.addUserEvent(user, 'FEE', order.id, data.description);
       yield notify.notifyAdmins(`:moneybag: Charged ${ user.name() } $${ data.amount / 100 } for ${ data.description }`, [ 'slack' ], { channel : '#rental-alerts' });
 
     } catch (err) {
