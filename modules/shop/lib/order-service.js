@@ -67,6 +67,7 @@ module.exports = class OrderService extends Service {
     // looking over the template at templates/email/miscellaneous-charge/html.hbs and
     // modules/shop/lib/order-service.js it looks like we need to pass an object with
     // quantity, price, and description defined.
+    log.info(`Notifying user of miscellaneous charge: ${ user.id }`);
     yield this.notifyOfCharge({
       quantity: 1,
       price: data.amount,
@@ -74,11 +75,10 @@ module.exports = class OrderService extends Service {
     }, user);
 
     try {
-      yield this.charge(order, user);
-
-      log.info(`Notifying user of miscellaneous charge: ${ user.id }`);
-
+      // The order here matters.  If a charge fails then only the failed charge will appear
+      // as a transgression, not the fee itself.  So we need to log this prior to the charge
       yield UserLog.addUserEvent(user, 'FEE', order.id, data.description);
+      yield this.charge(order, user);
       yield notify.notifyAdmins(`:moneybag: Charged ${ user.name() } $${ data.amount / 100 } for ${ data.description }`, [ 'slack' ], { channel : '#rental-alerts' });
 
     } catch (err) {
