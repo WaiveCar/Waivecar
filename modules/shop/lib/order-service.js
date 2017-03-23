@@ -79,7 +79,12 @@ module.exports = class OrderService extends Service {
       // as a transgression, not the fee itself.  So we need to log this prior to the charge
       yield UserLog.addUserEvent(user, 'FEE', order.id, data.description);
       yield this.charge(order, user);
-      yield notify.notifyAdmins(`:moneybag: Charged ${ user.name() } $${ data.amount / 100 } for ${ data.description }`, [ 'slack' ], { channel : '#rental-alerts' });
+
+      if(data.amount > 0) {
+        yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.name() } $${ data.amount / 100 } for ${ data.description }`, [ 'slack' ], { channel : '#rental-alerts' });
+      } else {
+        yield notify.notifyAdmins(`:money_with_wings: ${ _user.name() } *credited* ${ user.name() } $${ -data.amount / 100 } for ${ data.description }`, [ 'slack' ], { channel : '#rental-alerts' });
+      }
 
     } catch (err) {
       yield this.failedCharge(data.amount, user, err);
@@ -135,6 +140,7 @@ module.exports = class OrderService extends Service {
 
     try {
       yield this.charge(order, user);
+      yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.name() } $${ data.amount / 100 } for ${ data.description }`, [ 'slack' ], { channel : '#rental-alerts' });
 
       yield hooks.call('shop:store:order:after', order, payload, _user);
     } catch (err) {
