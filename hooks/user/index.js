@@ -157,28 +157,18 @@ hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
     nextUser.phone = phoneFormat(nextUser.phone);
   }
 
-  if (nextUser.phone && prevUser.phone !== nextUser.phone) {
-    nextUser.verifiedPhone = false;
-  } else {
-    nextUser.verifiedPhone = true;
-  }
+  if(!_user.hasAccess('admin')) {
+    if ( nextUser.lastName  != prevUser.lastName || 
+         nextUser.firstName != prevUser.firstName
+      ) {
+      nextUser.status = 'pending';
+      reason.push(`Name change ${ prevUser.firstName } ${ prevUser.lastName } -> ${ nextUser.firstName } ${ nextUser.lastName }`);
+    }
 
-  if (nextUser.lastName != prevUser.lastName || nextUser.firstName != prevUser.lastName) {
-    nextUser.status = 'pending';
-    reason.push(`Name change ${ prevUser.firstName } ${ prevUser.lastName } -> ${ nextUser.firstName } ${ nextUser.lastName }`);
-  }
-
-  if (nextUser.status && _user.hasAccess('admin')) {
-    // ...
-  } else if (!nextUser.verifiedPhone) {
-    reason.push(`Phone number change ${ prevUser.phone } -> ${ nextUser.phone }`);
-    nextUser.status = 'pending';
-  }
-
-  if (nextUser.verifiedPhone) {
-    if (!_user.hasAccess('admin')) {
-      // if (prevUser.status === 'pending') nextUser.status = 'active';
-      delete nextUser.verifiedPhone;
+    if (nextUser.phone && prevUser.phone !== nextUser.phone) {
+      nextUser.verifiedPhone = false;
+      nextUser.status = 'pending';
+      reason.push(`Phone number change ${ prevUser.phone } -> ${ nextUser.phone }`);
     }
   }
 
