@@ -13,6 +13,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      padding: 0px 20px;
     }
 
     .logo-image {
@@ -25,6 +26,15 @@
     .button-group {
       min-width: 100%;
       margin: 0 auto;
+      padding: 0px 37px 27px;
+      & .button {
+        min-height: 67px;
+        font-family: LatoWeb;
+        font-size: 18px;
+        padding: 4px 12px 0px;
+        margin-bottom: 20px;
+        letter-spacing: 2px;
+      }
     }
 
   }
