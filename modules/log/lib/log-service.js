@@ -318,7 +318,7 @@ module.exports = class LogService {
   static *addUserEvent(who, what, details, comment) {
     var obj = {
       type: what,
-      value: details,
+      value: details || comment,
       resolved: false,
       comment: comment
     };
