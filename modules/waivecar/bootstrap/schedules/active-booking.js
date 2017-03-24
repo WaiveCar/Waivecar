@@ -63,10 +63,10 @@ var checkBooking = co.wrap(function *(booking) {
     //
     // We give the user a 15 minute warning to end their ride.
     //
-    // 2 * 60 = 120 - (15 + 2) = 103 ... we are doing it at 17 minutes
+    // 2 * 60 = 120 - (15 + 1) = 103 ... we are doing it at 16 minutes
     // to avoid issues with latency
     //
-    if (duration >= 103 && !booking.isFlagged('1hr45-warning')) {
+    if (duration >= 104 && !booking.isFlagged('1hr45-warning')) {
       yield booking.flag('1hr45-warning');
       yield notify.sendTextMessage(user, config.notification.reasons['NEAR_END']);
     }
