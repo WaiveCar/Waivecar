@@ -49,7 +49,7 @@ module.exports = {
             ).format("H:mm");
 
           report.booked.push([
-            license, user.name(), status, `(https://waivecar.com/bookings/${booking.id})`, car.chargeReport()
+            license, user.name(), status, `(${ Bento.config.web.uri }/bookings/${booking.id})`, car.chargeReport()
           ].join(' '));
 
         } else {
