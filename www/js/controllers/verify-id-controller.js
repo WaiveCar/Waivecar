@@ -120,6 +120,9 @@ module.exports = angular.module('app.controllers').controller('VerifyIdControlle
             .filter({userId: $scope.user.id})
             .sortBy('createdAt')
             .last();
+
+          ctrl.license = $scope.license;
+          ctrl.licenseDisplay = true;
           updateImages();
         }).catch($message.error);
     };
