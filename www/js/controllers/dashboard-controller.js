@@ -80,7 +80,10 @@ function DashboardController ($scope, $rootScope, $injector) {
       clearInterval($window.timeOutForRide);
     }
 
-    var endTime = moment(booking.createdAt).add(120, 'm');
+    // See #605. Since we are going to run the user-facing timer slightly faster than 2 hours 
+    // We need to take our ratio and add it to the base, otherwise we start at 1:58:45. 
+    // This math will be accounted for in the first calculation.
+    var endTime = moment(booking.createdAt).add(120 * (120 / 118.75), 'm');
     var timeLeft = function () {
       // thanks to stupid moment for being stupid...
       var left = -moment().diff(endTime);
