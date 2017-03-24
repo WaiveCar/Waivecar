@@ -533,7 +533,7 @@ module.exports = class BookingService extends Service {
       yield this.handleTimeCharge(booking, user);
 
     } else if(deltas.duration > 120) {
-      yield notify.slack({ text : `:umbrella: Booking ended by admin. Time driven was over 2 hours. https://waivecar.com/bookings/${ id }`
+      yield notify.slack({ text : `:umbrella: Booking ended by admin. Time driven was over 2 hours. ${ Bento.config.web.uri }/bookings/${ id }`
       }, { channel : '#adminended' });
     }
 
@@ -597,7 +597,7 @@ module.exports = class BookingService extends Service {
 
     if(deltas.duration > 10 && deltas.distance === 0) {
       yield UserLog.addUserEvent(user, 'SIT', booking.id, deltas.duration);
-      yield notify.slack({ text : `:popcorn: ${ user.name() } drove 0 miles for ${ deltas.duration } minutes. ${ car.info() } | ${ user.info() } | https://www.waivecar.com/users/${ user.id }`
+      yield notify.slack({ text : `:popcorn: ${ user.name() } drove 0 miles for ${ deltas.duration } minutes. ${ car.info() } | ${ user.info() } | ${ Bento.config.web.uri }/users/${ user.id }`
       }, { channel : '#user-alerts' });
     }
   
