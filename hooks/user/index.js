@@ -166,9 +166,19 @@ hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
     }
 
     // During signup the user moves the phone number from null to something valid.
-    // We are ok with this - that's what the first check is for (prevUer.phone) - 
+    // We are ok with this - that's what the first check is for (prevUser.phone) - 
     // it's not just there for no reason.
-    if (prevUser.phone && nextUser.phone && prevUser.phone !== nextUser.phone) {
+    if (prevUser.phone && nextUser.phone && 
+        // Changing unverified phone numbers should come without penalty #770
+        // We want to make sure that honest input mistakes during signup don't flag
+        // an account but changes of phone numbers at other times should raise an alert.
+        //
+        // We do this by only raising an alert after it's been verified.  Otherwise
+        // we don't care.
+        prevUser.verifiedPhone &&
+
+        prevUser.phone !== nextUser.phone) {
+
       nextUser.verifiedPhone = false;
       nextUser.status = 'pending';
       reason.push(`Phone number change ${ prevUser.phone } -> ${ nextUser.phone }`);
