@@ -1,27 +1,19 @@
-<ion-view>
+<ion-view can-swipe-back="false" class="new-user">
   <ion-nav-title>
-    <page-title class="dark-bg">Step 1 of 6: Register</page-title>
+    <page-title class="dark-bg">Register</page-title>
   </ion-nav-title>
   <ion-content padding="true" class="ion-content--center dark-bg">
     <div>
-      <button type="button" class="button button-block button-positive button-padded" ng-click="userCreate.registerWithFacebook()">
-        <span class="fa-stack">
-          <i class="fa fa-circle fa-stack-2x"></i>
-          <i class="fa fa-facebook fa-stack-1x positive"></i>
-        </span> Register with Facebook
+      <button type="button" class="button button-block button-positive button-padded button-fb" ng-click="userCreate.registerWithFacebook()">
+        <i class="fa fa-facebook"></i> Register with Facebook
       </button>
       <lined>Or</lined>
     </div>
     <form ng-submit="userCreate.save(form)" name="form" id="form" novalidate>
       <div class="list">
         <label class="item item-input">
-          <span class="input-label required">First Name</span>
-          <input type="text" name="firstName" placeholder="John" ng-model="userCreate.user.firstName" required />
-        </label>
-
-        <label class="item item-input">
-          <span class="input-label required">Last Name</span>
-          <input type="text" name="lastName" placeholder="Smith" ng-model="userCreate.user.lastName" required />
+          <span class="input-label required">Full Name</span>
+          <input type="text" name="fullName" placeholder="John Doe" ng-model="userCreate.user.fullName" required />
         </label>
 
         <label class="item item-input">
@@ -41,8 +33,7 @@
         </label>
 
         <div class="validations" ng-if="form.$submitted && form.$invalid">
-          <div class="help-block" ng-if="form.firstName.$error.required">First Name is required</div>
-          <div class="help-block" ng-if="form.lastName.$error.required">Last Name is required</div>
+          <div class="help-block" ng-if="form.fullName.$error.required">Full Name is required</div>
           <div class="help-block" ng-if="form.email.$error.required">An Email Address is required</div>
           <div class="help-block" ng-if="form.email.$error.email">A valid Email Address is required</div>
           <div class="help-block" ng-if="form.phone.$error.required">A Mobile Phone Number is required</div>
@@ -51,7 +42,7 @@
         </div>
       </div>
     </form>
-    <p class="padding-top">You won't receive any spam from us</p>
+    <p class="text-agreeing">By tapping on continue, you are agreeing with our<br/><a href="#">Terms of Services.</a><br/><br/>You won't receive any spam from us.</p>
   </ion-content>
   <ion-footer-bar class="no-padding">
     <div class="button-bar">

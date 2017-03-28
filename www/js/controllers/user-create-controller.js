@@ -14,6 +14,14 @@ function UserCreateController ($injector) {
   this.user = new $data.resources.users();
 
   this.save = function saveUser (form) {
+    var arr = this.user.fullName.split(' ');
+    this.user.firstName = arr[0];
+    this.user.lastName = arr[1];
+
+    if (!this.user.firstName || !this.user.lastName){
+      return $message.error('Field "Full Name" has to include a space.');
+    }
+
     if (form.$invalid) {
       return $message.error('Please fix form errors and try again.');
     }
