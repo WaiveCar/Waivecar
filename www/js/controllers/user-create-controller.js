@@ -14,6 +14,11 @@ function UserCreateController ($injector) {
   this.user = new $data.resources.users();
 
   this.save = function saveUser (form) {
+    var phone = this.user.phone.toString();
+    var first = phone[0];
+    phone = phone.replace(/\D/g, '');
+    this.user.phone = first === '+' ? '+' + phone : phone;
+
     var arr = this.user.fullName.split(' ');
     this.user.firstName = arr[0];
     this.user.lastName = arr[1];
@@ -37,8 +42,9 @@ function UserCreateController ($injector) {
 
     return this.user.$save()
       .then(function login () {
+        this.user.fullName = this.user.firstName + ' ' + this.user.lastName;
         return $auth.login(credentials);
-      })
+      }.bind(this))
       .then(function () {
         $ionicLoading.hide();
         return $state.go('auth-account-verify', { step: 2 });
@@ -66,6 +72,33 @@ function UserCreateController ($injector) {
         $message.error(err);
       });
 
+  };
+
+
+  this.enterPhone = function enterPhone(event){
+    if (event.keyCode !== 8) {
+      var phone = this.user.phone ? this.user.phone.toString() : '';
+      var first = phone[0];
+      phone = phone.replace(/\D/g, '');
+      if (first === '+') {
+        phone = '+' + phone;
+        if (phone.length > 13) {
+          phone = phone.substr(0, 13);
+        }
+      } else if (first) {
+        phone = '(' + phone;
+        if (phone.length >= 4) {
+          phone = phone.substr(0, 4) + ') ' + phone.substr(4);
+        }
+        if (phone.length >= 9) {
+          phone = phone.substr(0, 9) + '-' + phone.substr(9);
+        }
+        if (phone.length > 14) {
+          phone = phone.substr(0, 14);
+        }
+      }
+      this.user.phone = phone;
+    }
   };
 }
 

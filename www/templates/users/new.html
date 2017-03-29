@@ -12,24 +12,24 @@
     <form ng-submit="userCreate.save(form)" name="form" id="form" novalidate>
       <div class="list">
         <label class="item item-input">
-          <span class="input-label required">Full Name</span>
+          <span class="input-label">Full Name</span>
           <input type="text" name="fullName" placeholder="John Doe" ng-model="userCreate.user.fullName" required />
         </label>
 
         <label class="item item-input">
-          <span class="input-label required">Email</span>
-          <input type="email" placeholder="john@example.com" name="email" ng-model="userCreate.user.email" required />
+          <span class="input-label">Email</span>
+          <input type="email" placeholder="name@example.com" name="email" ng-model="userCreate.user.email" required />
         </label>
 
         <label class="item item-input">
-          <span class="input-label mobile-label required">Mobile</span>
-          <i class="icon icon-flag" ng-include="'/img/flag-icon.svg'">
-          </i>
-          <input type="text" name="phone" placeholder="(323) 567-5555" ng-model="userCreate.user.phone" required />
+          <span class="input-label mobile-label">Mobile</span>
+          <i class="icon icon-flag" ng-include="'/img/flag-icon.svg'"></i>
+          <input type="text" name="phone" ng-model="userCreate.user.phone" ng-keyup="userCreate.enterPhone($event)" required />
         </label>
+
         <label class="item item-input">
-          <span class="input-label required">Password</span>
-          <input type="password" placeholder="* * * * * *" name="password" ng-model="userCreate.user.password" ng-required="!userCreate.user.id" ng-minlength="6">
+          <span class="input-label">Password</span>
+          <input type="password" placeholder="6 characters or more" name="password" ng-model="userCreate.user.password" ng-required="!userCreate.user.id" ng-minlength="6">
         </label>
 
         <div class="validations" ng-if="form.$submitted && form.$invalid">
