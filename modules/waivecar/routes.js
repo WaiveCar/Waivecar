@@ -30,7 +30,7 @@ Route.put('/bookings/addressDetails', [ 'isAuthenticated', 'isAdmin', 'BookingsC
 Route.post('/reports', {
   policy : 'isAuthenticated',
   uses   : 'ReportsController@create',
-  params : [ 'bookingId', 'description' ]
+  params : [ 'bookingId' ]
 });
 
 Route.get('/reports', [ 'isAuthenticated', 'ReportsController@index' ]);
