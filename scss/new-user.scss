@@ -35,6 +35,14 @@
 
   .icon-flag{
     padding-top: 6px;
+    width: 33px;
+  }
+
+  .item-input{
+    border-color: #727B75;
+    .input-label, input{
+      font-size: 18px;
+    }
   }
 
   ion-content .text-agreeing{
