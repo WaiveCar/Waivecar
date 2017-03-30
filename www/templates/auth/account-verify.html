@@ -1,7 +1,13 @@
 <ion-view hide-back-button="{{::verify.isWizard}}" class="auth">
 
-  <ion-nav-title>
-    <page-title class="dark-bg"><span ng-if="::verify.isWizard">Step 2 of 6:</span> Enter Code</page-title>
+  <ion-nav-title class="new-user-header">
+    <ul class="progress-bar">
+      <li></li>
+      <li class="active"></li>
+      <li></li>
+      <li></li>
+    </ul>
+    <page-title class="dark-bg">Enter Code</page-title>
   </ion-nav-title>
 
   <ion-content scroll="false" padding="true" class="ion-content--center dark-bg">
