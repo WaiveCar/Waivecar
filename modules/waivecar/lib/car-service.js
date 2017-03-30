@@ -75,6 +75,7 @@ module.exports = {
     let cars = yield Car.find(options);
     let bookings = yield Booking.find({ where : { status : 'started' } });
 
+    // cjm note: this is O(M*N) ... stupid ... we need to do better
     bookings.forEach(function(booking) {
       cars.forEach(function(car) {
         if (car.id === booking.carId) {
@@ -83,6 +84,14 @@ module.exports = {
       });
     });
 
+    let available = 0;
+    cars.forEach(function(car) {
+      available += car.isAvailable;
+    });
+
+    if (_user && !_user.hasAccess('admin')) {
+      fs.appendFileSync('/var/log/outgoing/carsrequest.txt', JSON.stringify([new Date(), available, _user.id])) + '\n');
+    }
     return cars;
   },
 
