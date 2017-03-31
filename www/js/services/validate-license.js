@@ -12,7 +12,7 @@ function LicenseValidationService ($injector) {
   var $distance = $injector.get('$distance');
 
   var polling;
-  var maxDistance = 30; // at least one car should be less than 30 miles away
+  var maxDistance = 30; // at least one car should be less than this distance
 
   function validate (license) {
     return validateNoDistanceCheck(license);
