@@ -22,8 +22,12 @@ module.exports = angular.module('app.services').factory('$message', [
         }
       }
 
+      // See #716 - we want to minimize JS errors being passed back to the
+      // user - What this thing is is essentially a weirdo JS object being
+      // converted to a string ... better solution would be something like
       if (!_(message).isString()) {
-        message = JSON.stringify(message);
+        message = "Something unexpected happened. Please try again.\nIf this problem persists, please contact us.";
+        //message = JSON.stringify(message);
       }
 
       $ionicPopup.alert({
