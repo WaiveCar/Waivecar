@@ -1,7 +1,6 @@
 .auth {
   &.auth-index ion-content {
-    background-repeat: no-repeat;
-    background-image: url('../img/background.png');
+    background: url('../img/bg.png') no-repeat center center;
     background-size: cover;
 
     display: flex;
@@ -10,16 +9,36 @@
 
     .logo {
       height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       padding: 0px 20px;
-    }
-
-    .logo-image {
-      width: 100%;
-      svg {
-        width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      .logoPicture{
+        background: url('../img/bg_logo.png') no-repeat center center;
+        background-size: contain;
+        height: 60px;
+        margin-top: 20px;
+      }
+      .logoBetter{
+        background: url('../img/bg_better.png') no-repeat center center;
+        background-size: contain;
+        height: 24px;
+        margin-left: 45%;
+        width: 60%;
+      }
+      .logoIoniq{
+        background: url('../img/bg_ioniq.png') no-repeat center center;
+        background-size: contain;
+        height: 60px;
+        margin: 0px auto;
+        width: 80%;
+      }
+      .logoFeaturing{
+        background: url('../img/bg_featuring.png') no-repeat center center;
+        background-size: contain;
+        height: 24px;
+        margin: 5px auto 0px;
+        width: 60%;
       }
     }
 
