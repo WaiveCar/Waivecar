@@ -40,12 +40,16 @@ module.exports = {
     component : 'select',
     options   : [
       {
-        name  : 'Pending',
-        value : 'pending'
-      },
-      {
         name  : 'Active',
         value : 'active'
+      },
+      {
+        name  : 'Probation',
+        value : 'probation'
+      },
+      {
+        name  : 'Pending',
+        value : 'pending'
       },
       {
         name  : 'Suspended',
