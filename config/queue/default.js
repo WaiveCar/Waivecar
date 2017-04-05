@@ -13,7 +13,7 @@ module.exports = {
   queue : {
     prefix : 'queue',
     redis  : {
-      host : 'datastore',
+      host : 'localhost',
       port : 6379
     }
   }
