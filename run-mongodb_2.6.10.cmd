@@ -1,0 +1,1 @@
+c:\mongodb\mongodb_2.6.10\mongodb-win32-x86_64-2008plus-2.6.10\bin\mongod --port 27017 --dbpath c:\mongodb\mongodb_2.6.10\mongo-db

@@ -1,0 +1,1 @@
+c:\mongodb\mongodb_2.6.10\redis-2.8.19\redis-server.exe c:\mongodb\mongodb_2.6.10\redis-2.8.19\redis.windows.conf
