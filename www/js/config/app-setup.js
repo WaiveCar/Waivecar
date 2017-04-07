@@ -137,7 +137,10 @@ var run = [
       }
       var isAuthenticated = $auth.isAuthenticated();
 
-      if (isAuthenticated && !_.isUndefined(authRequired) && authRequired === false) {
+      if ($auth.me && !$auth.me.verifiedPhone && toState.name !== 'auth-account-verify') {
+        event.preventDefault();
+        $state.go('auth-account-verify', { step: 2 });
+      } else if (isAuthenticated && !_.isUndefined(authRequired) && authRequired === false) {
         event.preventDefault();
         $state.go('cars');
       } else if (!isAuthenticated && authRequired) {
