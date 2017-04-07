@@ -100,15 +100,48 @@ module.exports = {
   //
   // This means that a term like 'waive20 "alice smith"' will find 
   // 'alice smith' appropriately
+  //
+  // As it turns out, this leads to sub-optimal results as most queries
+  // that go through this are just names.  So this yields every "Adam"
+  // and every "Smith" unless someone annoyingly remembers to search with
+  // quotes. (https://github.com/WaiveCar/Waivecar/issues/684)
+  //
+  // So to support both methods we're going to be "smart" --- the scariest
+  // word in programming. I'm going to preface the "smart" stuff with an
+  // asterisk and give an explanation below:
   *find(query, limit) {
     if(query) {
       if(!_.isArray(query)) {
         query = query.match(/('.*?'|".*?"|\S+)/g).map(term => term.replace(/[\'\"]/g, ''));
       }
-      console.log(query);
    
-      let opts = {
-        where: {
+      // * We try to determine if the search contains an email
+      // or car number, in which case we fall back on the more
+      // complicated system described in 
+      // https://github.com/WaiveCar/Waivecar/issues/525
+      let rawQuery = query.join(' ').toLowerCase();
+      let hasCar = rawQuery.indexOf('waive') > -1;
+      let hasEmail = rawQuery.indexOf('@') > -1;
+
+      let opts = { };
+
+      // * If we aren't searching for either a car or email then
+      // we can use 'AND' for our search - but not so fast! If
+      // a user searches "Adam Smith" and they are in the system
+      // as "Adam E Smith" we need to be immune to this and be
+      // able find him still.
+      if(!hasCar && !hasEmail) {
+        opts.where = {
+          $and: _.flatten(
+            query.map((term) => {
+              return sequelize.literal(`concat_ws(' ', first_name, last_name) like '%${term}%'`);
+            })
+          )
+        };
+      } else {
+        // * Otherwise we can fall back to the more flexible and 
+        // admittedly harder to use system described in #525 
+        opts.where = {
           $or: _.flatten(
             query.map((term) => {
               return [
@@ -117,8 +150,8 @@ module.exports = {
               ];
             })
           )
-        }
-      };
+        };
+      }
 
       if(limit) {
         opts.limit = limit;
