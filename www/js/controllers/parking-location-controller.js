@@ -21,7 +21,6 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
   '$message',
   function($rootScope, $scope, $settings, $window, $state, $stateParams, $ride, $geocoding, $ionicLoading, $modal, $uploadImage, ZendriveService, $message) {
     $scope.service = $ride;
-    // Setup scope
     var ctrl = this;
 
     ctrl.service = $ride;
@@ -154,14 +153,11 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
      * @returns {Void} null
      */
     function submit() {
-
-
       $ionicLoading.show({
         template: '<div class="circle-loader"><span>Loading</span></div>'
       });
 
-
-      var isNightTime = moment().hours() >= 21 || moment().hours() < 5;
+      var isNightTime = moment().hours() >= 23 || moment().hours() < 5;
 
       if (!isNightTime) {
         goToEndRide(isNightTime);
@@ -212,7 +208,7 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
             next();
           }
         },
-          {
+        {
           text: 'Cancel',
           className: 'button-balanced',
           handler: function () {
@@ -220,11 +216,11 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
           }
         }]
       })
-        .then(function (_modal) {
-          _modal.show();
-          showOvernightWarningModal = _modal;
-          showOvernightWarningModal.show();
-        });
+      .then(function (_modal) {
+        _modal.show();
+        showOvernightWarningModal = _modal;
+        showOvernightWarningModal.show();
+      });
     }
 
     /**
