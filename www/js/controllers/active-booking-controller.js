@@ -292,8 +292,6 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     };
 
     var isIOS = ionic.Platform.isIOS();
-
-
     var geocoords = $rootScope.currentLocation.latitude + ',' + $rootScope.currentLocation.longitude;
 
     if (isIOS) {
