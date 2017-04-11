@@ -400,6 +400,7 @@ module.exports = class BookingService extends Service {
     yield this.logDetails('start', booking, car);
 
     yield booking.setReminders(user, config.booking.timers);
+    yield booking.setForfeitureTimers(user, config.booking.timers);
     yield booking.start();
 
     yield cars.unlockCar(car.id, _user);
@@ -792,6 +793,27 @@ module.exports = class BookingService extends Service {
     yield notify.sendTextMessage(user, `Your WaiveCar reservation has been cancelled.`);
     yield notify.slack({ text : `:pill: ${ message } | ${ car.info() } ${ user.info() }`
     }, { channel : '#reservations' });
+  }
+
+  static *forfeitureBooking(booking) {
+
+    let car     = yield this.getCar(booking.carId);
+    yield booking.flag('forfeit');
+
+    // this cancel booking logic is repeated al lest three time in different places(there, auto cancel, cancel method above)
+    // I think we should refactor this and move this logic to separate function, like 'doCancel'
+
+
+    yield booking.cancel();
+    yield booking.delCancelTimer();
+    yield car.removeDriver();
+    yield car.available();
+
+
+    // ### Relay Update
+
+    car.relay('update');
+    booking.relay('update');
   }
 
   /*
