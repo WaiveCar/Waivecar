@@ -375,7 +375,7 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
     /**
      * Removes scheduled booking forfeiture.
      */
-    *delForfeitureTimers() {
+    delForfeitureTimers() {
 
       let uid = `booking-${ this.id }`;
 
