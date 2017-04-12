@@ -336,38 +336,29 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       queue.scheduler.cancel('booking-free-timer-expired', `booking-${ this.id }`);
     },
 
-    /**
-     * Sets booking forfeiture schedules.
-     * @param {Object} user
-     * @param {Object} timers
-     */
     *setForfeitureTimers(user, timers) {
-
       let uid = `booking-${ this.id }`;
+      let data = {
+        userId : user.id,
+        bookingId : this.id
+      };
 
       queue.scheduler.add('booking-forfeiture-first-warning', {
         uid   : uid,
         timer : timers.forfeitureFirstWarning,
-        data  : {
-          phone : user.phone
-        }
+        data  : data
       });
 
       queue.scheduler.add('booking-forfeiture-second-warning', {
         uid   : uid,
         timer : timers.forfeitureSecondWarning,
-        data  : {
-          phone : user.phone
-        }
+        data  : data
       });
 
       queue.scheduler.add('booking-forfeiture', {
         uid   : uid,
         timer : timers.forfeiture,
-        data  : {
-          phone : user.phone,
-          bookingId : this.id
-        }
+        data  : data
       });
 
     },
