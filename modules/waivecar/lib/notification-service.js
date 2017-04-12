@@ -28,8 +28,6 @@ function log_message(type, what) {
 }
 
 module.exports = {
-
-
   /**
    * Sends a sms text message.
    * @param {Object} user
@@ -41,6 +39,9 @@ module.exports = {
       user = yield User.findById(query);
     } else {
       user = query;
+    }
+    if(!user) {
+      log.warn(`Failed to send sms to user query of ${ query } > ${ err.message }`);
     }
 
     log_message('sms', {phone: user.phone, text: message});

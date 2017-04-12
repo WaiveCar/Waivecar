@@ -312,9 +312,9 @@ module.exports = {
     //
     // And by zero we are also considering all bottom values, as one
     // user got some other non-integer bottom values.
-    if(data.charge) {
+    if (data.charge) {
       // see https://github.com/WaiveCar/Waivecar/issues/727 ... Waive2 and 20 is off by 35 
-      if(['WAIVE20','WAIVE2'].indexOf(existingCar.license) !== -1) {
+      if (['WAIVE20', 'WAIVE2'].indexOf(existingCar.license) !== -1) {
         // we lob off some amount
         data.charge -= 35;
         // and make sure it's over 0.
@@ -326,16 +326,24 @@ module.exports = {
     }
 
     // We find out if our charging status has changed
-    if(('charging' in data) && (data.isCharging != existingCar.isCharging)) {
-      yield LogService.create({ carId : id, action : data.isCharging ? Actions.START_CHARGE : Actions.END_CHARGE });
+    if (('charging' in data) && (data.isCharging != existingCar.isCharging)) {
+      yield LogService.create({carId: id, action: data.isCharging ? Actions.START_CHARGE : Actions.END_CHARGE});
     }
 
     yield existingCar.update(data);
 
     relay.emit('cars', {
-      type : 'update',
-      data : existingCar.toJSON()
+      type: 'update',
+      data: existingCar.toJSON()
     });
+
+    if (data.isIgnitionOn) {
+      let booking = yield Booking.findOne({where: {status: 'started', carId: existingCar.id}});
+      if ( booking ) {
+        booking.delForfeitureTimers();
+      }
+    }
+
 
     return existingCar;
   },

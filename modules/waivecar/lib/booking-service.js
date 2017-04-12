@@ -353,7 +353,7 @@ module.exports = class BookingService extends Service {
    */
 
   /**
-   * Unlocks the car and lets the driver prepeare before starting the ride.
+   * Unlocks the car and lets the driver prepare before starting the ride.
    * @param  {Number} id    The booking ID.
    * @param  {Object} _user
    * @return {Object}
@@ -376,13 +376,8 @@ module.exports = class BookingService extends Service {
 
     // Verify no one else has booked car
     if (car.userId !== user.id) {
-      yield booking.cancel();
-      yield booking.delCancelTimer();
-      yield car.removeDriver();
-      yield car.available();
-
-      car.relay('update');
-      booking.relay('update');
+      yield this.cancelBookingAndMakeCarAvailable(booking, car);
+e
       throw error.parse({
         code    : `BOOKING_REQUEST_INVALID`,
         message : `Another driver has already reserved this WaiveCar.`
@@ -400,6 +395,7 @@ module.exports = class BookingService extends Service {
     yield this.logDetails('start', booking, car);
 
     yield booking.setReminders(user, config.booking.timers);
+    yield booking.setForfeitureTimers(user, config.booking.timers);
     yield booking.start();
 
     yield cars.unlockCar(car.id, _user);
@@ -620,6 +616,20 @@ module.exports = class BookingService extends Service {
     }
   }
 
+  static *cancelBookingAndMakeCarAvailable(booking, car) {
+    if(!car) {
+      let car = yield this.getCar(booking.carId); 
+    }
+
+    yield booking.cancel();
+    yield booking.delCancelTimer();
+    yield car.removeDriver();
+    yield car.available();
+
+    car.relay('update');
+    booking.relay('update');
+  }
+
   /**
    * Locks, and makes the car available for a new booking.
    * @return {Object}
@@ -771,17 +781,7 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
-    // ### Cancel Booking
-
-    yield booking.cancel();
-    yield booking.delCancelTimer();
-    yield car.removeDriver();
-    yield car.available();
-
-    // ### Relay Update
-
-    car.relay('update');
-    booking.relay('update');
+    yield this.cancelBookingAndMakeCarAvailable(booking, car);
 
     // We consider a cancellation as effectively a reset
     yield user.update({state: 'completed'});
@@ -945,7 +945,9 @@ module.exports = class BookingService extends Service {
         message : 'Sorry! You need to wait 10 minutes to rebook the same WaiveCar. Sharing is caring!'
       }, 400);
     }
-    // See https://github.com/clevertech/Waivecar/issues/497
+   
+    //
+    // See https://github.com/waivecar/Waivecar/issues/497
     //
     // The logic here is that we are going to try to see if this is under say, XX minutes and there
     // is another booking in between. 
