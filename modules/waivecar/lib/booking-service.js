@@ -699,7 +699,7 @@ module.exports = class BookingService extends Service {
     yield booking.complete();
 
     if (user.isProbation()){
-      user.setActive();
+      yield user.setActive();
     }
 
     // If car is under 25% make it unavailable after ride is done #514

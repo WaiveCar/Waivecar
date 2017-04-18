@@ -222,31 +222,31 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
 
     isSuspended() {
       return this.status === 'suspended';
-    }/*,
+    },
 
-    setActive() {
+    *setActive() {
       yield this.update({
         status : 'active'
       });
     },
 
-    setProbation() {
+    *setProbation() {
       yield this.update({
         status : 'probation'
       });
     },
 
-    setPending() {
+    *setPending() {
       yield this.update({
         status : 'pending'
       });
     },
 
-    setSuspended() {
+    *setSuspended() {
       yield this.update({
         status : 'suspended'
       });
-    }*/
+    }
 
   };
 
