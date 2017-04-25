@@ -132,7 +132,12 @@ module.exports = {
 
     cars.forEach(function(car){
       car.license = car.license || '';
-      car.statuscolumn = statusMap[car.booking[0].status] || 'Unavailable';
+      if(car.booking && car.booking[0]) {
+        car.statuscolumn = statusMap[car.booking[0].status] || 'Unavailable';
+      } else { 
+        car.statuscolumn = 'Unavailable';
+      }
+
       if(car.statuscolumn === 'Available') {
         car.statuscolumn = car.isAvailable ? 'Available' : 'Unavailable';
       }
