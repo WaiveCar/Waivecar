@@ -61,7 +61,6 @@ function DashboardController ($scope, $rootScope, $injector) {
 
     });
 
-
     $scope.$on('$destroy', function () {
       if (stopLocationWatch != null) {
         stopLocationWatch();

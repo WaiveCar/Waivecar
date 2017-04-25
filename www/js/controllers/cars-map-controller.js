@@ -30,8 +30,8 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
 
   ensureAvailableCars(cars);
 
-  this.stopLocationWatch = LocationService.watchLocation(function(currentLocation, isInitialCall) {
-
+  this.stopLocationWatch = LocationService.watchLocation(
+    function(currentLocation, isInitialCall) {
       if (isInitialCall) {
         this.fitMapBoundsByMarkers = getMarkersToFitBoundBy(this.all, currentLocation);
         carsInRange(this.all, currentLocation);
@@ -64,8 +64,6 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
     this.clearCarWatcher();
   }.bind(this));
 
-
-
   function ensureAvailableCars(allCars) {
     var availableCars = _.filter(allCars, 'isAvailable');
     if (availableCars.length) {
@@ -81,7 +79,7 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
       modal = _modal;
       modal.show();
     });
-  };
+  }
 
 
   function carsInRange(allCars, currentLocation) {
@@ -112,7 +110,7 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
         modal.show();
       });
     }
-  };
+  }
 
   function prepareCars(items) {
     var homebase = {
@@ -143,7 +141,7 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
 
     awayCars.push(homebase);
     return awayCars;
-  };
+  }
 
   function featured(items, userLocation) {
     return _(items)
@@ -218,10 +216,10 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
         }
       }]
     })
-      .then(function (_modal) {
-        unavailableModal = _modal;
-        unavailableModal.show();
-      });
+    .then(function (_modal) {
+      unavailableModal = _modal;
+      unavailableModal.show();
+    });
   }
 
   function showLotUnavailableModal() {
