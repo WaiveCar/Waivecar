@@ -50,7 +50,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         if (value) {
           ctrl.mapFitBounds(value);
         }
-      }, true),
+      }),
       $scope.$watch('map.route', function (value) {
         if (value) {
           ctrl.drawRoute(value.start, value.destiny, value.fitBoundsByRoute);
