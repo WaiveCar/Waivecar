@@ -6,6 +6,9 @@ import DatePicker                           from 'react-toolbox/lib/date_picker'
 
 let { type } = helpers;
 
+const ExternalDateFormat = 'YYYY-MM-DDTHH:mm:ss.SSS';
+const InternalDateFormat = 'MM/DD/YYYY';
+
 module.exports = class DateField extends React.Component {
 
   /**
@@ -19,7 +22,22 @@ module.exports = class DateField extends React.Component {
     };
     this.onChange = this.onChange.bind(this);
     // this.focus = this.focus.bind(this);
-    // this.blur  = this.blur.bind(this);
+    this.onBlur  = this.onBlur.bind(this);
+  }
+
+
+
+  tryConvertDate(value) {
+    var date = moment(value, ExternalDateFormat, true);
+
+    if (!date.isValid()) {
+      date = moment(value, 'YYYY-MM-DD', true)
+    }
+
+    if (date.isValid()) {
+      value = date.format(InternalDateFormat);
+    }
+    return value;
   }
 
   /**
@@ -29,6 +47,14 @@ module.exports = class DateField extends React.Component {
     this.setState({
       className : this.className()
     });
+
+    let value = this.props.value;
+
+    if (value) {
+
+      this.inputRef.value = this.tryConvertDate(value);
+    }
+
   }
 
   /**
@@ -59,6 +85,10 @@ module.exports = class DateField extends React.Component {
       return true;
     }
 
+    /*if (this.state.value !== nextState.value) {
+      return true;
+    }*/
+
     return false;
   }
 
@@ -66,6 +96,7 @@ module.exports = class DateField extends React.Component {
    * @method componentWillUpdate
    */
   componentWillUpdate(nextProps, nextState) {
+
     this.setState({
       className : this.className(nextProps.value)
     });
@@ -83,42 +114,62 @@ module.exports = class DateField extends React.Component {
     });
   }
 
-  // /**
-  //  * @method focus
-  //  */
-  // focus() {
-  //   this.hasFocus = true;
-  //   this.setState({
-  //     className : this.className(this.props.value)
-  //   });
-  // }
+  onChange(event) {
+    let value = event.target.value;
+    let resetState = false;
 
-  // /**
-  //  * @method blur
-  //  */
-  // blur() {
-  //   this.hasFocus = false;
-  //   this.setState({
-  //     className : this.className(this.props.value)
-  //   });
-  // }
+    if (value.length == 2 && value[1] != '/') {
+      value += '/';
+      resetState = true;
+    }
 
-  /**
-   * Sends input to the form state handler.
-   * @method onChange
-   * @param  {String} value
-   * @param  {Object} options
-   */
-  onChange(value, options) {
-    let bd = moment(value, "MM-DD-YYYY").format();
-    console.log(bd);
-    this.props.onChange({
-      target : {
-        type  : 'date',
-        name  : bd,
-        value : value
+    let date = null;
+
+    if (value.length > 2) {
+      var parts = value.split('/');
+      if (parts.length == 2) {
+        var days = parts[1];
+        if (days.length == 2 && days[1] != '/') {
+          value += '/';
+          resetState = true;
+        }
       }
-    });
+      if (parts.length == 3 && parts[1].length == 4) {
+        date = moment(value, InternalDateFormat);
+      }
+    }
+
+    if (resetState) {
+      this.inputRef.value = value;
+    }
+
+
+ /*   if (this.props.onChange && date) {
+
+      this.props.onChange({
+        target: {
+          type: 'date',
+          name: event.target.name,
+          value: date.format('YYYY-MM-DD')
+        }
+      });
+    }*/
+  }
+
+  onBlur(event) {
+    let value = event.target.value;
+
+    let date = moment(value, InternalDateFormat, true);
+
+    if (this.props.onChange ) {
+      this.props.onChange({
+        target: {
+          type: 'date',
+          name: event.target.name,
+          value:  date.isValid() ? date.format(ExternalDateFormat) : value
+        }
+      });
+    }
   }
 
   /**
@@ -126,16 +177,15 @@ module.exports = class DateField extends React.Component {
    * @return {Component}
    */
   render() {
-    let { label, name, type, placeholder, helpText, tabIndex } = this.props.options;
+    let { label, name, helpText, tabIndex } = this.props.options;
     let { value, disabled } = this.props;
-    let dateValue = value;
+
     if (value) {
-      value = moment(value).format('YYYY-MM-DD')
+      value = this.tryConvertDate(value);
     }
 
-    logger.debug(`Form > Render Date component [${ name }] [${ dateValue }]`);
-
     if (disabled) {
+
       return (
         <div className={ this.state.className }>
           <input type="text" disabled={ true } readOnly={ true } className="form-control" value={ value } />
@@ -149,14 +199,13 @@ module.exports = class DateField extends React.Component {
       <div className={ this.state.className }>
         <label>{ label }</label>
         <input
-          type        = "date"
+          type        = "text"
           className   = "form-control"
           name        = { name }
           placeholder = "MM/DD/YYYY"
-          value       = { value }
-          onChange    = { this.props.onChange }
-          onFocus     = { this.focus }
-          onBlur      = { this.blur }
+          onChange    = { this.onChange }
+          ref         = { (input) => { this.inputRef = input; } }
+          onBlur     = { this.onBlur}
           tabIndex    = { tabIndex }
         />
         <div className="focus-bar"></div>
