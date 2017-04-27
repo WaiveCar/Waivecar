@@ -18,6 +18,8 @@ function ApplicationController ($rootScope, $scope, $injector) {
   var $document = $injector.get('$document');
   var $interval = $injector.get('$interval');
   var $ride = $injector.get('$ride');
+  var $socket = $injector.get('$socket');
+  var $session = $injector.get('$session');
   var LocationService = $injector.get('LocationService');
 
   this.models = $data.instances;
@@ -49,6 +51,13 @@ function ApplicationController ($rootScope, $scope, $injector) {
     var currentBooking = false;
     var lastState = false;
 
+    var auth = $session.get('auth');
+    if(auth) {
+      $socket.emit('authenticate', auth.token, function(done) {
+        console.log('subscribed to messages');
+      });
+    }
+    /*
     $interval(function() {
       $data.resources.users.me().$promise
         .then(function(me) {
@@ -84,6 +93,7 @@ function ApplicationController ($rootScope, $scope, $injector) {
           lastState = me.state;
         });
     }, 5000);
+    */
   }
 
   $rootScope.$on('authLogin', function () {
@@ -96,6 +106,7 @@ function ApplicationController ($rootScope, $scope, $injector) {
     initLocation();
     $auth.loadSession();
     $ride.init();
+    myState();
   }
 
   function initLocation () {
