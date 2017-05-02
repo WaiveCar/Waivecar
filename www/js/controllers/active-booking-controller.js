@@ -42,7 +42,6 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       return;
     }
 
-
     // ctrl.car = $data.active.cars;
     stopServiceWatch();
     stopServiceWatch = null;
