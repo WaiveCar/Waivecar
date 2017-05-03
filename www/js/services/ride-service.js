@@ -262,15 +262,16 @@ module.exports = angular.module('app.services').factory('$ride', [
         });
     };
 
-    service.init = function() {
+    service.init = function(current) {
       service.setState();
       $data.initialize('bookings').then(function(bookings) {
-        var current = _(bookings)
-          .filter({userId: $auth.me.id})
-          .find(function (b) {
-              return !_.contains([ 'cancelled', 'completed', 'closed', 'ended' ], b.status);
-          });
-
+        if(!current) {
+          current = _(bookings)
+            .filter({userId: $auth.me.id})
+            .find(function (b) {
+              return !_.contains([ 'cancelled', 'completed', 'closed'], b.status);
+            });
+        }
         console.log('$ride : init. current: ', current);
 
         if (current == null) {
