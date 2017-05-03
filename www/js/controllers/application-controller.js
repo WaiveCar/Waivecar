@@ -1,5 +1,6 @@
 'use strict';
 var angular = require('angular');
+var _ = require('lodash');
 require('angular-ui-router');
 require('ionic');
 require('../services/location-service.js');
@@ -10,7 +11,6 @@ require('../services/session-service.js');
 require('../services/ride-service.js');
 
 function ApplicationController ($rootScope, $scope, $injector) {
-
   var $state = $injector.get('$state');
   var $auth = $injector.get('$auth');
   var $data = $injector.get('$data');
@@ -50,50 +50,68 @@ function ApplicationController ($rootScope, $scope, $injector) {
   function myState() {
     var currentBooking = false;
     var lastState = false;
-
+    var newState;
     var auth = $session.get('auth');
-    if(auth) {
-      $socket.emit('authenticate', auth.token, function(done) {
-        console.log('subscribed to messages');
-      });
-    }
-    /*
-    $interval(function() {
-      $data.resources.users.me().$promise
-        .then(function(me) {
 
-          var shown = $state.current.name;
-          console.log($state.current.name, new Date(), me.state);
-          if(['ended', 'created', 'started'].indexOf(me.state) !== -1 && !currentBooking) {
-            $data.resources.bookings.current().$promise
-              .then(function(booking) {
-                 currentBooking = booking;
-            });
+    // todo: this logic looks like bullshit although it seems to work.
+    function checkState(shown) {
+      // We need to both check the state that the user is currently in
+      // along with what they are currently viewing in the app
+      if(newState === 'created' && shown === 'cars') {
+        $ride.init();
+      } else if(newState === 'started' && (shown === 'bookings-active' || lastState === 'created')) {
+        $ride.init();
+      } else if(newState === 'completed') {
+        // if we have a booking id then we should go to the booking
+        // summary screen ONLY if our previous state was 'started', 
+        // otherwise this means that we've canceled.
+        if(((!lastState || lastState === 'started' || lastState === 'ended') && shown !== 'bookings-show')|| shown === 'end-ride') {
+          $state.go('bookings-show', { id: currentBooking.id });
+        } else if(lastState === 'created' && shown !== 'cars') {
+          $state.go('cars');
+        } 
+        currentBooking = false;
+      } else if(newState === 'ended' && shown !== 'end-ride') {
+        $state.go('end-ride', { id: currentBooking.id });
+      }
+    }
+
+    $data.subscribe('User');
+
+    if(auth) {
+      // subscribe to user-specific messages
+      $socket.emit('authenticate', auth.token, function(done) {});
+
+      // This makes sure that the user isn't navigating to a wrong part of the app
+      // in the flow of booking a car. Note that the code below will call this code.
+      $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
+        console.log(fromState.name + ' -> ' + toState.name, newState, currentBooking);
+        checkState(toState.name);
+      });
+
+      // This will move the app to a new state if an admin puts the user inside a car
+      $scope.$watch('app.models.User', function(user) {
+        if(user) {
+          newState = user[0].state;
+
+          if(['ended', 'created', 'started', 'completed'].indexOf(newState) !== -1 && !currentBooking) {
+            currentBooking = _($scope.app.models.bookings)
+              .filter({userId: $auth.me.id})
+              .find(function (b) {
+                return [ 'cancelled', 'completed', 'closed' ].indexOf(b.status) === -1;
+              });
           }
+
+          // this should not be any else logic because we could be
+          // assigning the current booking from the above code for this
           if(currentBooking) {
-            if(me.state === 'created' && shown === 'cars') {
-              $ride.setBooking(currentBooking.id);
-              $state.go('bookings-active', { id: currentBooking.id });
-            } else if(me.state === 'started' && lastState === 'created') {
-              $state.go('dashboard', { id: currentBooking.id });
-            } else if(me.state === 'completed') {
-              // if we have a booking id then we should go to the booking
-              // summary screen ONLY if our previous state was 'started', 
-              // otherwise this means that we've canceled.
-              if(lastState === 'started' && shown !== 'bookings-show') {
-                $state.go('bookings-show', { id: currentBooking.id });
-              } else if(lastState === 'created' && shown !== 'cars') {
-                $state.go('cars');
-              }
-              currentBooking = false;
-            } else if(me.state === 'ended' && shown !== 'end-ride') {
-              $state.go('end-ride', { id: currentBooking.id });
-            }
+            checkState($state.current.name);
           }
-          lastState = me.state;
-        });
-    }, 5000);
-    */
+
+          lastState = newState;
+        }
+      }, true);
+    }
   }
 
   $rootScope.$on('authLogin', function () {
