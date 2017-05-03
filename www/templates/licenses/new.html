@@ -1,7 +1,15 @@
-<ion-view hide-back-button="{{::licenseCtrl.isWizard}}" >
-  <ion-nav-title>
-    <page-title class="dark-bg"><span ng-if="::licenseCtrl.isWizard">Step 3 of 6:</span> Driver's License</page-title>
+<ion-view can-swipe-back="false" hide-back-button="true" class="sign-in-content">
+
+  <ion-nav-title class="sign-in-header">
+    <ul class="progress-bar">
+      <li></li>
+      <li></li>
+      <li class="active"></li>
+      <li></li>
+    </ul>
+    <page-title class="dark-bg">Driver's license</page-title>
   </ion-nav-title>
+
   <ion-content padding="true" class="ion-content--center dark-bg">
     <p class="padding-bottom">
       We do a DMV check to insure you.<br>
@@ -56,4 +64,5 @@
     </div>
   </form>
   </ion-content>
+
 </ion-view>

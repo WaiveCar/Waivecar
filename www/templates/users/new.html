@@ -1,5 +1,6 @@
-<ion-view can-swipe-back="false" class="new-user-content">
-  <ion-nav-title class="new-user-header">
+<ion-view can-swipe-back="false" hide-back-button="true" class="sign-in-content">
+
+  <ion-nav-title class="sign-in-header">
     <ul class="progress-bar">
       <li class="active"></li>
       <li></li>
@@ -8,13 +9,16 @@
     </ul>
     <page-title class="dark-bg">Register</page-title>
   </ion-nav-title>
+
   <ion-content padding="true" class="ion-content--center dark-bg">
+
     <div>
       <button type="button" class="button button-block button-positive button-padded button-fb" ng-click="userCreate.registerWithFacebook()">
         <i class="fa fa-facebook"></i> Register with Facebook
       </button>
       <lined>Or</lined>
     </div>
+
     <form ng-submit="userCreate.save(form)" name="form" id="form" novalidate>
       <div class="list">
         <label class="item item-input">
@@ -49,11 +53,14 @@
       </div>
     </form>
     <p class="text-agreeing">By tapping on continue, you are agreeing with our<br/><a href="#">Terms of Services.</a><br/><br/>You won't receive any spam from us.</p>
+
   </ion-content>
+
   <ion-footer-bar class="no-padding">
     <div class="button-bar">
       <button type="button" class="button button-gray" ui-sref="auth">Cancel</button>
       <button type="submit" form="form" class="button button-balanced">Continue</button>
     </div>
   </ion-footer-bar>
+
 </ion-view>
