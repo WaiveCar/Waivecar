@@ -41,7 +41,6 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
     }.bind(this)
   );
 
-
   this.clearCarWatcher = $scope.$watch(function () {
     return $data.instances.cars;
   }, function (value) {
@@ -157,7 +156,6 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
   }
 
   function getMarkersToFitBoundBy(all, currentLocation) {
-
     var featuredCars;
     if (currentLocation) {
       featuredCars = featured(all, currentLocation);
@@ -234,10 +232,10 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
         }
       }]
     })
-      .then(function (_modal) {
-        unavailableModal = _modal;
-        unavailableModal.show();
-      });
+    .then(function (_modal) {
+      unavailableModal = _modal;
+      unavailableModal.show();
+    });
   }
 
   function showCarTooFarModal() {
@@ -253,10 +251,10 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
         }
       }]
     })
-      .then(function (_modal) {
-        farModal = _modal;
-        farModal.show();
-      });
+    .then(function (_modal) {
+      farModal = _modal;
+      farModal.show();
+    });
   }
 
   $scope.$on('$destroy', function () {
