@@ -59,6 +59,7 @@ module.exports = class BookingService extends Service {
 
   static *updateState(state, _user, driver) {
     yield driver.update({state: state});
+    relay.user(driver.id, 'User', {type: 'update', data: driver.toJSON()});
     return (_user.id === driver.id) ?
       `${ _user.name() } ${ state } ` :
       `${ _user.name() } ${ state } for ${ driver.name() }`;
@@ -449,14 +450,16 @@ e
       }, 400);
     }
 
-    try {
-      Object.assign(car, yield cars.getDevice(car.id, _user, 'booking.end'));
-    } catch (err) {
-      log.debug('Failed to fetch car information when ending booking');
-      if (isAdmin) warnings.push('car is unreachable');
-    }
-
     if(process.env.NODE_ENV === 'production') {
+      try {
+        Object.assign(car, yield cars.getDevice(car.id, _user, 'booking.end'));
+      } catch (err) {
+        log.debug('Failed to fetch car information when ending booking');
+        if (isAdmin) {
+          warnings.push('car is unreachable');
+        }
+      }
+
       if (car.isIgnitionOn) {
         if (isAdmin) {
           warnings.push('the ignition is on');
@@ -784,7 +787,7 @@ e
     yield this.cancelBookingAndMakeCarAvailable(booking, car);
 
     // We consider a cancellation as effectively a reset
-    yield user.update({state: 'completed'});
+    yield this.updateState('completed', _user, user);
     let message = (_user.id === user.id) ?
       `${ _user.name() } cancelled ` :
       `${ _user.name() } cancelled for ${ user.name() }`;

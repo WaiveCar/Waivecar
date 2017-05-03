@@ -55,7 +55,6 @@ var checkBooking = co.wrap(function *(booking) {
       yield notify.notifyAdmins(`${ car.info() } has been driven ${ milesDriven } miles since last change reported, but charge level has not changed. ${ config.api.uri }/cars/${ car.id }`, [ 'slack' ], { channel : '#rental-alerts' });
     }
 
-
     duration = moment().utc().diff(start.createdAt, 'minutes');
 
     //
