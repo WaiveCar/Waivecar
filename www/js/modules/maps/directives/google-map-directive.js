@@ -9,7 +9,7 @@ var _ = require('lodash');
 
 function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, LocationService) {
 
-  var MOVETHRESHOLD = 0.000002;
+  var MOVETHRESHOLD = 0.000008;
 
   function mapToGoogleLatLong(location) {
     return new google.maps.LatLng(location.latitude, location.longitude);
@@ -17,7 +17,11 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
   function link($scope, $elem, attrs, ctrl) {
     var mapOptions = {
-      streetViewControl: false
+      streetViewControl: false,
+      mapTypeControl: false,
+      zoom: 14,
+      fullscreenControl: false,
+      zoomControl: false
     };
 
     var center = ctrl.center ? ctrl.center : ctrl.currentLocation;
@@ -26,6 +30,15 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     }
 
     ctrl.map = new google.maps.Map($elem.find('.map-instance')[0], mapOptions);
+    /*
+    console.log(mapOptions);
+
+    ['center_changed', 'zoom_changed', 'bounds_changed'].forEach(function(m) {
+      ctrl.map.addListener(m, function(a){
+        console.log(new Date(), m, ctrl.map.getZoom());
+      });
+    });
+    */
 
     if ('route' in attrs) {
       ctrl.directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true, preserveViewport: true});
@@ -45,6 +58,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
           // There are some ridiculous jitters in GPS that we do not care about and shouldn't ask the
           // map to update on.
           var isMoved = (Math.abs(lastLocation[0] - value.latitude) + Math.abs(lastLocation[1] - value.longitude)) > MOVETHRESHOLD;
+          //console.log('>> map draw', isMoved, (Math.abs(lastLocation[0] - value.latitude) + Math.abs(lastLocation[1] - value.longitude)));
           if(isMoved) {
             ctrl.updateLocationMarker(value);
             lastLocation = [value.latitude, value.longitude];
@@ -73,7 +87,6 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     });
   }
 
-
   function hasMoved(old, check) {
     return (Math.abs(old.latitude - check.latitude) + Math.abs(old.longitude - check.longitude)) > MOVETHRESHOLD;
   }
@@ -88,11 +101,12 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
   MapController.prototype.mapFitBounds = function mapFitBounds(markers) {
     var ctrl = this;
 
-    if (markers && markers.length) {
+    if (markers && markers.length > 1) {
       var bounds = new google.maps.LatLngBounds();
       markers.forEach(function (marker) {
         bounds.extend(mapToGoogleLatLong(marker));
       });
+      //console.log('>> fit bounds', bounds, markers);
       ctrl.map.fitBounds(bounds);
     }
 
@@ -255,6 +269,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
         ctrl.directionsRenderer.setDirections(response);
         if (fitBoundsByRoute) {
+          console.log('>> fit bounds a');
           ctrl.map.fitBounds(ctrl.directionsRenderer.getDirections().routes[0].bounds);
         }
       });
