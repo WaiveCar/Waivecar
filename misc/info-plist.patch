@@ -1,13 +1,29 @@
---- temp	2016-11-29 15:33:27.000000000 -0800
-+++ platforms/ios/WaiveCar/WaiveCar-Info.plist	2016-11-29 15:31:44.000000000 -0800
-@@ -80,6 +80,8 @@
- 	<string></string>
- 	<key>NSMainNibFile~ipad</key>
- 	<string></string>
-+ <key>ITSAppUsesNonExemptEncryption</key>
-+ <false/>
-+	<key>NSPhotoLibraryUsageDescription</key>
-+	<string>Photo Library Access</string>
- 	<key>UIBackgroundModes</key>
- 	<array>
- 		<string>location</string>
+--- platforms/ios/WaiveCar/WaiveCar-Info.plist	2017-05-05 03:06:46.000000000 -0700
++++ platforms/ios/WaiveCar/WaiveCar-Info.plist	2017-05-05 03:12:25.000000000 -0700
+@@ -32,6 +32,10 @@
+     <string/>
+     <key>NSMainNibFile~ipad</key>
+     <string/>
++    <key>ITSAppUsesNonExemptEncryption</key>
++    <false/>
++    <key>NSPhotoLibraryUsageDescription</key>
++    <string>Photo Library Access</string>
+     <key>UISupportedInterfaceOrientations</key>
+     <array>
+       <string>UIInterfaceOrientationPortrait</string>
+@@ -79,8 +83,6 @@
+     </array>
+     <key>NSLocationAlwaysUsageDescription</key>
+     <string>This app requires constant access to your location in order to track your position, even when the screen is off.</string>
+-    <key>NSLocationWhenInUseUsageDescription</key>
+-    <string>This app requires access to your location when the screen is on and the app is displayed.</string>
+     <key>FacebookAppID</key>
+     <string>1022704731082512</string>
+     <key>FacebookDisplayName</key>
+@@ -118,4 +120,4 @@
+     <key>NSRemindersUsageDescription</key>
+     <string>This app requires reminders access to function properly.</string>
+   </dict>
+-</plist>
+\ No newline at end of file
++</plist>
