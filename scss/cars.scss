@@ -116,5 +116,9 @@ car-charge-status svg {
     flex-flow: column;
     justify-content: space-around;
     min-height: 80px;
+    .battery {
+      display: inline-block;
+      width: 30px;
+    }
   }
 }
