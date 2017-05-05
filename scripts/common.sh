@@ -1,12 +1,21 @@
 #!/bin/sh
 
-deviceList=`adb devices | grep -v List | awk ' { printf "%s ", $1 } ' | sed s'/ *$//'`
 if [ -z "$deviceList" ]; then
-  echo "Can't find any devices. Exiting";
-  exit -1
-else
-  echo "Using $deviceList"
+  deviceList=`adb devices | grep -v List | awk ' { printf "%s ", $1 } ' | sed s'/ *$//'`
+  if [ -z "$deviceList" ]; then
+    echo "Can't find any devices. Exiting";
+    exit -1
+  else
+    echo "Using $deviceList"
+  fi
 fi
+
+nvmcheck() {
+  version=`node --version`
+  if [ "$version" != "v4.2.6" ]; then
+    nvmsh on
+  fi
+}
 
 wrap() {
   fn=$1
@@ -24,7 +33,7 @@ install_cb() {
   device=$1
   path=$2
   echo "[$device] $path"
-  adb -s $device install -rdg $path
+  adb -s $device install -rdg $path &
 }
 
 install() {
