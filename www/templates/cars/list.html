@@ -20,11 +20,11 @@
         <div class="car-cell">
           <h2 ng-bind="car.license || '&nbsp;'"></h2>
           <div ng-if="::car.isCharging" class="is-charging">
-            <ng-include src="'/img/battery-darkgrey.svg'" alt="charge"></ng-include>
+            <ng-include class="battery" src="'/img/battery-darkgrey.svg'" alt="charge"></ng-include>
             Charging
           </div>
           <div ng-if="::(!car.isCharging)">
-            <ng-include src="'/img/battery-darkgrey.svg'" alt="charge"></ng-include>
+            <ng-include class="battery" src="'/img/battery-darkgrey.svg'" alt="charge"></ng-include>
             Not charging
           </div>
           <div>
