@@ -396,7 +396,7 @@ e
     yield this.logDetails('start', booking, car);
 
     yield booking.setReminders(user, config.booking.timers);
-    yield booking.setForfeitureTimers(user, config.booking.timers);
+    //yield booking.setForfeitureTimers(user, config.booking.timers);
     yield booking.start();
 
     yield cars.unlockCar(car.id, _user);
