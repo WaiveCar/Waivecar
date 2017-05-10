@@ -137,6 +137,10 @@ var run = [
       }
       var isAuthenticated = $auth.isAuthenticated();
 
+      if ($auth.bypass) {
+        return true;
+      }
+
       if ($auth.me && !$auth.me.verifiedPhone && toState.name !== 'auth-account-verify') {
         event.preventDefault();
         $state.go('auth-account-verify', { step: 2 });
