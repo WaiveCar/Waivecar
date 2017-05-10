@@ -16,6 +16,7 @@ function VerifyController ($injector, $stateParams) {
   };
   this.isWizard = !!$stateParams.step;
   this.fromBooking = !!$stateParams.fromBooking;
+  this.phone = $auth.me.phone.replace(/[+1]*(\d{3})(\d{3})(.*)/, '($1) $2-$3');
 
   this.submit = function verify (form) {
     if (form.$pristine) {
@@ -69,6 +70,16 @@ function VerifyController ($injector, $stateParams) {
           modal.show();
         });
       });
+  };
+
+  this.change = function change() {
+    $auth.bypass = true;
+    $state.go('users-edit-general');
+  };
+
+  this.abort = function abort () {
+    $auth.bypass = true;
+    $state.go('users-edit');
   };
 
   this.resend = function resend () {
