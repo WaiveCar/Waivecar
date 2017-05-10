@@ -75,10 +75,16 @@ Here's generally what I did after installing the above:
 
     # At least *I* didn't have to do the `--unsafe-perm=true` that was recommended here.
   $ sudo npm install ios-sim ios-deploy
-  $ ionic build ios
+  $ ionic build ios // this *may* not be needed. It appears that "run ios" will do a build.
   $ ionic run ios
 
-About the ios store options:
+You may need to also do this in another terminal:
+
+  $ ionic serve
+
+I wish I could be more clear on what magic incantation is required but honestly it may be based on some kind of ctime/mtime check that is subject to race conditions - so be careful and do md5s if you aren't sure. I know, this stuff sucks. Don't ever ask the cool hip kids to write stable software...
+
+About the iOS store options:
 
   * Does not use IDFA
   * Does use encryption
