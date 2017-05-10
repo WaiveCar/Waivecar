@@ -25,7 +25,14 @@ module.exports = angular.module('app.controllers').controller('UserEditControlle
       $scope.user.$save()
         .then(function() {
           $scope.init(function() {
-            return $message.success('Your details have been successfully updated');
+            if ($auth.bypass) {
+              // this is to avoid making redundantly stupid requests
+              // when going back to the verify screen.
+              $auth.me.phone = $scope.user.phone;
+              $state.go('auth-account-verify', { step: 2 });
+            } else {
+              return $message.success('Your details have been successfully updated');
+            }
           });
         })
         .catch($message.error);
