@@ -6,19 +6,7 @@
 
   <ion-content scroll="false" padding="true" class="ion-content--center dark-bg">
 
-    <div ng-if="::verify.fromBooking">
-      <p class="margin-top-10">You must verify your account before booking a car.</p>
-      <p>
-        We have previously sent you an SMS with verification code.
-        (<button type="button" class="button button-small button-clear button-energized" ng-click="verify.resend()">Resend</button>)
-      </p>
-      <p>Please enter it below to verify your account.</p>
-    </div>
-
-    <div ng-if="::verify.isWizard">
-      <p class="margin-top-10">We just sent you SMS with a verification code.</p>
-      <p>Please enter it below.</p>
-    </div>
+    <p class="margin-top-10 multiline">We<span ng-if='::verify.isWizard == false'> previously</span> sent an SMS with a verification code to {{::verify.phone}} from (855) 924-8355.</p>
 
     <form name="form" id="form" ng-submit="verify.submit(form)" novalidate class="margin-top-10">
       <div class="list">
@@ -33,6 +21,12 @@
 
       </div>
     </form>
+
+    <div class='multiline margin-top-10'>
+      <p>Didn't get anything? We can <a class="link" ng-click="verify.resend()">send again.</a></p>
+      <p>Phone number wrong? You can <a class="link" ng-click='verify.change()'>change the number.</a></p>
+      <p class='faded margin-top-10'>This is a required step for booking a car. If you feel you are seeing it in error, you can <a class='link' ng-click="verify.abort()">cancel</a>.</p>
+    </div>
 
   </ion-content>
 
