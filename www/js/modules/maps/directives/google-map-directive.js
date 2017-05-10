@@ -7,27 +7,27 @@ var ionic = require('ionic');
 require('../../../providers/maps-loader-provider');
 var _ = require('lodash');
 
-function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, LocationService) {
+function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, LocationService, $injector) {
 
   var MOVETHRESHOLD = 0.000008;
+  var homebase = $injector.get('homebase');
 
   function mapToGoogleLatLong(location) {
     return new google.maps.LatLng(location.latitude, location.longitude);
   }
 
   function link($scope, $elem, attrs, ctrl) {
+    var center = ctrl.center ? ctrl.center : ctrl.currentLocation;
+    center = center || homebase;
+
     var mapOptions = {
       streetViewControl: false,
       mapTypeControl: false,
       zoom: 14,
       fullscreenControl: false,
+      center: mapToGoogleLatLong(center),
       zoomControl: false
     };
-
-    var center = ctrl.center ? ctrl.center : ctrl.currentLocation;
-    if (center) {
-      mapOptions.center = mapToGoogleLatLong(center);
-    }
 
     ctrl.map = new google.maps.Map($elem.find('.map-instance')[0], mapOptions);
     /*
@@ -388,5 +388,6 @@ module.exports = angular.module('Maps').directive('googleMap', [
   '$timeout',
   '$window',
   'LocationService',
+  '$injector',
   directive
 ]);
