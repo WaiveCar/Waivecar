@@ -371,6 +371,7 @@ module.exports = class BookingService extends Service {
     if (booking.status !== 'reserved') {
       throw error.parse({
         code    : `BOOKING_REQUEST_INVALID`,
+        status  : booking.status,
         message : `You must be in 'reserved' status to start your ride, you are currently in '${ booking.getStatus() }' status.`
       }, 400);
     }
