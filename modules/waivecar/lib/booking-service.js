@@ -378,7 +378,6 @@ module.exports = class BookingService extends Service {
     // Verify no one else has booked car
     if (car.userId !== user.id) {
       yield this.cancelBookingAndMakeCarAvailable(booking, car);
-e
       throw error.parse({
         code    : `BOOKING_REQUEST_INVALID`,
         message : `Another driver has already reserved this WaiveCar.`
@@ -396,7 +395,7 @@ e
     yield this.logDetails('start', booking, car);
 
     yield booking.setReminders(user, config.booking.timers);
-    //yield booking.setForfeitureTimers(user, config.booking.timers);
+    yield booking.setForfeitureTimers(user, config.booking.timers);
     yield booking.start();
 
     yield cars.unlockCar(car.id, _user);
