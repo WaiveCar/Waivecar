@@ -116,6 +116,13 @@ function addJob(job, options, time) {
   let trigger = getScheduleTrigger(job, time, options.silent);
   Scheduler.store[job + uid] = setTimeout(() => {
     co(function *() {
+      if(uid) {
+        let isset = yield redis.exists(SCHEDULES + job + uid);
+        if(!isset) {
+          return false;
+        }
+      }
+
       let task = queue
         .create(job, options.data || {})
         .save((err) => {
