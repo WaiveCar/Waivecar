@@ -348,7 +348,7 @@ module.exports = {
       let booking = yield Booking.findOne({where: {status: 'started', carId: existingCar.id}});
       if ( booking && !booking.isFlagged('drove') ) {
         yield booking.flag('drove');
-        booking.delForfeitureTimers();
+        yield booking.delForfeitureTimers();
       }
     }
 
