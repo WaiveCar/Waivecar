@@ -1,36 +1,46 @@
-<ion-view hide-back-button="{{ctrl.isWizard}}" class="verify-id-new">
-  <ion-nav-title>
-  <page-title class="dark-bg title-plain"><span ng-if="ctrl.isWizard">Step 5 of 6: </span>Verify Your Identity</page-title>
+<ion-view can-swipe-back="false" hide-back-button="true" class="sign-in-content">
+
+  <ion-nav-title class="sign-in-header">
+    <ul class="progress-bar">
+      <li class="active"></li>
+      <li class="active"></li>
+      <li class="active"></li>
+      <li></li>
+    </ul>
+    <page-title class="dark-bg">Verify Your Identity</page-title>
   </ion-nav-title>
 
-  <ion-content padding="true" class="ion-content--center dark-bg">
-    <p>Help us keep your account secure by providing<br>
-    us with a photo of your license and a selfie.</p>
+  <ion-content scroll="false" padding="true" class="ion-content--center dark-bg">
 
-    <div ng-if='ctrl.licenseDisplay' class="image-tray">
-      <div ng-if='ctrl.license'>
-        <button ng-click="ctrl.addLicense()" class="button button-dark add-image tnail license-image" style="background:url({{ ctrl.imageMap.license }}) center center / cover">
-        </button>
+    <p class="text-agreeing padding">Help us keep your account secure by providing<br>us with a photo of your license and a selfie.</p>
+
+    <div ng-if='verifyIdCtrl.licenseDisplay' class="image-tray">
+      <div ng-if='verifyIdCtrl.license'>
+        <button ng-click="verifyIdCtrl.addLicense()" class="button button-dark add-image tnail license-image" style="background:url({{ verifyIdCtrl.imageMap.selfie }}) center center / cover"></button>
         <p>Your License</p>
       </div>
 
-      <div ng-if='!ctrl.license' style='padding:1.5em 2.5em'>
+      <div ng-if='!verifyIdCtrl.license' style='padding:1.5em 2.5em'>
         <button class="button button-balanced" ui-sref="licenses-new">Add your license</button>
         <p style='margin-top:0.5em'>Add your license by tapping the green button. Then come back here to upload a photo.</p>
       </div>
-
     </div>
 
     <div class="image-tray">
-      <button ng-click="ctrl.addSelfie()" class="button button-dark add-image tnail selfie-image" style="background:url({{ ctrl.imageMap.selfie }}) center center / cover"></button>
+      <button ng-click="verifyIdCtrl.addSelfie()" class="button button-dark add-image tnail selfie-image" style="background:url({{ verifyIdCtrl.imageMap.selfie }}) center center / cover"></button>
       <p>Your Selfie</p>
     </div>
 
-    <form ng-submit="ctrl.submit()">
-      <button type="submit" class="button button-balanced button-block" ng-disabled="!ctrl.haveAllImages()">
-        Confirm
-      </button>
-    </form>
+    <form name="form" id="form" ng-submit="verifyIdCtrl.submit(form)" novalidate></form>
+
   </ion-content>
+
+  <ion-footer-bar class="no-padding">
+    <div class="button-bar">
+      <button type="button" class="button button-gray" go-back>Cancel</button>
+      <button type="submit" form="form" class="button button-balanced">Confirm</button>
+    </div>
+  </ion-footer-bar>
+
 </ion-view>
 

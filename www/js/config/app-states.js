@@ -97,7 +97,7 @@ module.exports = [
         // 8-Register
         url: '/users/new?step',
         templateUrl: '/templates/users/new.html',
-        controller: 'UserCreateController as userCreate',
+        controller: 'UserCreateController as userCreateCtrl',
         data: {
           auth: false
         }
@@ -106,7 +106,7 @@ module.exports = [
         // 8-Register
         url: '/users/new/facebook?step',
         templateUrl: '/templates/users/new-facebook.html',
-        controller: 'UserFacebookCreateController as userCreate',
+        controller: 'UserFacebookCreateController as userFacebookCreateCtrl',
         data: {
           auth: true
         }
@@ -146,7 +146,7 @@ module.exports = [
       .state('verify-id', {
         url: '/verify-id?step',
         templateUrl: '/templates/verify-id/new.html',
-        controller: 'VerifyIdController as ctrl',
+        controller: 'VerifyIdController as verifyIdCtrl',
         data: {
           auth: true
         }
@@ -207,7 +207,7 @@ module.exports = [
         // 12-Payment-method@2x.png
         url: '/credit-cards/new?step&fromBooking',
         templateUrl: '/templates/credit-cards/new.html',
-        controller: 'CreditCardController as ctrl',
+        controller: 'CreditCardController as creditCardCtrl',
         data: {
           auth: true
         },
@@ -255,7 +255,7 @@ module.exports = [
         // 10.1-Verification
         url: '/auth/account-verify?step&token&fromBooking',
         templateUrl: '/templates/auth/account-verify.html',
-        controller: 'VerifyController as verify',
+        controller: 'VerifyController as verifyCtrl',
         data: {
           auth: true
         }

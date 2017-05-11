@@ -3,7 +3,7 @@ var angular = require('angular');
 require('angular-ui-router');
 require('../services/auth-service');
 
-function UserFacebookCreateController ($stateParams, $injector) {
+function UserFacebookCreateController($injector){
   var $state = $injector.get('$state');
   var $auth = $injector.get('$auth');
   var $message = $injector.get('$message');
@@ -14,7 +14,7 @@ function UserFacebookCreateController ($stateParams, $injector) {
 
   this.user = $auth.me;
 
-  this.completeFacebookRegistration = function completeFacebookRegistration (form) {
+  this.completeFacebookRegistration = function(form){
     if (form.$invalid) {
       return $message.error('Please fix form errors and try again.');
     }
@@ -30,7 +30,6 @@ function UserFacebookCreateController ($stateParams, $injector) {
 
 module.exports = angular.module('app.controllers')
   .controller('UserFacebookCreateController', [
-    '$stateParams',
     '$injector',
     UserFacebookCreateController
   ]);

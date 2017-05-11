@@ -5,7 +5,7 @@ require('../services/auth-service');
 require('../services/data-service');
 require('../services/upload-image-service');
 
-function LicenseController ($stateParams, $injector) {
+function LicenseController($injector, $stateParams){
   var $auth = $injector.get('$auth');
   var $data = $injector.get('$data');
   var USStates = $injector.get('USStates');
@@ -18,31 +18,24 @@ function LicenseController ($stateParams, $injector) {
   this.isWizard = !!$stateParams.step;
   this.fromBooking = !!$stateParams.fromBooking;
   this.license = this.license || new $data.resources.licenses({
-    country: 'USA',
-    userId: $auth.me.id
-  });
-  if ($auth.me.firstName) {
+      country: 'USA',
+      userId: $auth.me.id
+    });
+  if ($auth.me.firstName){
     this.license.firstName = $auth.me.firstName;
   }
-  if ($auth.me.lastName) {
+  if ($auth.me.lastName){
     this.license.lastName = $auth.me.lastName;
   }
   this.states = USStates;
 
-  this.nextState = function nextState () {
-    if (this.isWizard) {
-      $state.go('credit-cards-new', {step: 4});
-      return;
-    }
-    $state.go('users-edit');
-  };
-
   var self = this;
 
-  this.submit = function submit (form) {
-    if (!form.$valid) {
-      $message.error('Please fill the fields');
+  this.submit = function(form){
+    if (form.$invalid){
+      return $message.error('Please fix form errors and try again.');
     }
+
     return this.license.$create()
     .then(function () {
       var modal;
@@ -94,10 +87,19 @@ function LicenseController ($stateParams, $injector) {
     });
   };
 
+  this.nextState = function(){
+    if (this.isWizard) {
+      $state.go('verify-id', {step: 4});
+      return;
+    }
+    $state.go('users-edit');
+  };
+
 }
 
-module.exports = angular.module('app.controllers').controller('LicenseController', [
-  '$stateParams',
-  '$injector',
-  LicenseController
-]);
+module.exports = angular.module('app.controllers')
+  .controller('LicenseController', [
+    '$injector',
+    '$stateParams',
+    LicenseController
+  ]);

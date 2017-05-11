@@ -1,22 +1,31 @@
-<ion-view hide-back-button="{{::verify.isWizard}}" class="auth">
+<ion-view can-swipe-back="false" hide-back-button="true" class="sign-in-content">
 
-  <ion-nav-title>
-    <page-title class="dark-bg"><span ng-if="::verify.isWizard">Step 2 of 6:</span> Enter Code</page-title>
+  <ion-nav-title class="sign-in-header">
+    <ul class="progress-bar">
+      <li class="active"></li>
+      <li class="active"></li>
+      <li></li>
+      <li></li>
+    </ul>
+    <page-title class="dark-bg">Enter Code</page-title>
   </ion-nav-title>
 
   <ion-content scroll="false" padding="true" class="ion-content--center dark-bg">
 
     <p class="margin-top-10 multiline">We<span ng-if='::verify.isWizard == false'> previously</span> sent an SMS with a verification code to {{::verify.phone}} from (855) 924-8355.</p>
 
-    <form name="form" id="form" ng-submit="verify.submit(form)" novalidate class="margin-top-10">
+    <form name="form" id="form" ng-submit="verifyCtrl.submit(form)" novalidate>
       <div class="list">
+
         <label class="item item-input">
-          <span class="input-label required">Code</span>
-          <input type="text" name="token" ng-model="verify.form.token" required autofocus autocapitalize="off" autocorrect="off" />
+          <span class="input-label">Code</span>
+          <input type="text" name="token" ng-model="verifyCtrl.form.token" required autofocus />
         </label>
 
-        <div ng-messages="verify.form.$error" ng-if="verify.form.$submitted" role="alert">
-          <div ng-message="required">Verification Code is required</div>
+        <div class="errors">
+          <div ng-messages="form.token.$error" ng-if="form.$submitted">
+            <div ng-message="required">Verification Code is required</div>
+          </div>
         </div>
 
       </div>
@@ -32,7 +41,7 @@
 
   <ion-footer-bar class="no-padding">
     <div class="button-bar">
-      <button type="button" class="button button-stable" ng-if="::verify.fromBooking" go-back>Cancel</button>
+      <button type="button" class="button button-gray" go-back>Cancel</button>
       <button type="submit" form="form" class="button button-balanced">Verify</button>
     </div>
   </ion-footer-bar>

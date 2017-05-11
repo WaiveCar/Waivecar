@@ -1,62 +1,77 @@
-<ion-view>
-  <ion-nav-title>
-    <page-title class="dark-bg">Step 1 of 6: Register</page-title>
+<ion-view can-swipe-back="false" hide-back-button="true" class="sign-in-content">
+
+  <ion-nav-title class="sign-in-header">
+    <ul class="progress-bar">
+      <li class="active"></li>
+      <li></li>
+      <li></li>
+      <li></li>
+    </ul>
+    <page-title class="dark-bg">Register</page-title>
   </ion-nav-title>
-  <ion-content padding="true" class="ion-content--center dark-bg">
+
+  <ion-content scroll="false" padding="true" class="ion-content--center dark-bg">
+
     <div>
-      <button type="button" class="button button-block button-positive button-padded" ng-click="userCreate.registerWithFacebook()">
-        <span class="fa-stack">
-          <i class="fa fa-circle fa-stack-2x"></i>
-          <i class="fa fa-facebook fa-stack-1x positive"></i>
-        </span> Register with Facebook
+      <button type="button" class="button button-block button-positive button-padded button-fb" ng-click="userCreateCtrl.registerWithFacebook()">
+        <i class="fa fa-facebook"></i> Register with Facebook
       </button>
       <lined>Or</lined>
     </div>
-    <form ng-submit="userCreate.save(form)" name="form" id="form" novalidate>
+
+    <form name="form" id="form" ng-submit="userCreateCtrl.submit(form)" novalidate>
       <div class="list">
+
         <label class="item item-input">
-          <span class="input-label required">First Name</span>
-          <input type="text" name="firstName" placeholder="John" ng-model="userCreate.user.firstName" required />
+          <span class="input-label">Full Name</span>
+          <input type="text" name="fullName" ng-model="userCreateCtrl.user.fullName" required autofocus placeholder="John Doe" />
         </label>
 
         <label class="item item-input">
-          <span class="input-label required">Last Name</span>
-          <input type="text" name="lastName" placeholder="Smith" ng-model="userCreate.user.lastName" required />
+          <span class="input-label">Email</span>
+          <input type="email" name="email" ng-model="userCreateCtrl.user.email" required placeholder="name@example.com" />
         </label>
 
         <label class="item item-input">
-          <span class="input-label required">Email</span>
-          <input type="email" placeholder="john@example.com" name="email" ng-model="userCreate.user.email" required />
+          <span class="input-label mobile-label">Mobile</span>
+          <i class="icon icon-flag" ng-include="'/img/flag-icon.svg'"></i>
+          <input type="text" name="phone" ng-model="userCreateCtrl.user.phone" required ng-keyup="userCreateCtrl.enterPhone($event)" />
         </label>
 
         <label class="item item-input">
-          <span class="input-label mobile-label required">Mobile</span>
-          <i class="icon icon-flag" ng-include="'/img/flag-icon.svg'">
-          </i>
-          <input type="text" name="phone" placeholder="(323) 567-5555" ng-model="userCreate.user.phone" required />
-        </label>
-        <label class="item item-input">
-          <span class="input-label required">Password</span>
-          <input type="password" placeholder="* * * * * *" name="password" ng-model="userCreate.user.password" ng-required="!userCreate.user.id" ng-minlength="6">
+          <span class="input-label">Password</span>
+          <input type="password" name="password" ng-model="userCreateCtrl.user.password" required placeholder="6 characters or more" ng-minlength="6">
         </label>
 
-        <div class="validations" ng-if="form.$submitted && form.$invalid">
-          <div class="help-block" ng-if="form.firstName.$error.required">First Name is required</div>
-          <div class="help-block" ng-if="form.lastName.$error.required">Last Name is required</div>
-          <div class="help-block" ng-if="form.email.$error.required">An Email Address is required</div>
-          <div class="help-block" ng-if="form.email.$error.email">A valid Email Address is required</div>
-          <div class="help-block" ng-if="form.phone.$error.required">A Mobile Phone Number is required</div>
-          <div class="help-block" ng-if="form.password.$error.required">Password is required</div>
-          <div class="help-block" ng-if="form.password.$error.minlength">Password must be greater than 5 characters</div>
+        <div class="errors">
+          <div ng-messages="form.fullName.$error" ng-if="form.$submitted">
+            <div ng-message="required">Full Name is required</div>
+          </div>
+          <div ng-messages="form.email.$error" ng-if="form.$submitted">
+            <div ng-message="required">An Email Address is required</div>
+            <div ng-message="email">A valid Email Address is required</div>
+          </div>
+          <div ng-messages="form.phone.$error" ng-if="form.$submitted">
+            <div ng-message="required">A Mobile Phone Number is required</div>
+          </div>
+          <div ng-messages="form.password.$error" ng-if="form.$submitted">
+            <div ng-message="required">Password is required</div>
+            <div ng-message="minlength">Password must be greater than 5 characters</div>
+          </div>
         </div>
+
       </div>
     </form>
-    <p class="padding-top">You won't receive any spam from us</p>
+
+    <p class="text-agreeing padding">By tapping on continue, you are agreeing with our<br/><a href="https://waivecar.com/terms">Terms of Services.</a><br/><br/>You won't receive any spam from us.</p>
+
   </ion-content>
+
   <ion-footer-bar class="no-padding">
     <div class="button-bar">
-      <button type="button" class="button button-gray" ui-sref="auth">Cancel</button>
+      <button type="button" class="button button-gray" go-back>Cancel</button>
       <button type="submit" form="form" class="button button-balanced">Continue</button>
     </div>
   </ion-footer-bar>
+
 </ion-view>
