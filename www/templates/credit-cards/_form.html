@@ -12,12 +12,12 @@
 
   <label class="item item-input">
     <span class="input-label">Expiration Date</span>
-    <input type="month" name="expiry" ng-model="card.card.expiry" required placeholder="YYYY-MM" />
+    <input type="text" name="expiry" ng-model="card.card.expiry" required placeholder="05/2020" payments-validate="expiry" payments-format="expiry" />
   </label>
 
   <label class="item item-input">
     <span class="input-label">CVV</span>
-    <input type="password" name="cvc" ng-model="card.card.cvc" required payments-validate="cvc" payments-format="cvc" payments-type-model="type" />
+    <input type="password" name="cvc" ng-model="card.card.cvc" required placeholder="###" payments-validate="cvc" payments-format="cvc" payments-type-model="type" />
   </label>
 
   <div class="errors">

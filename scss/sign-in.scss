@@ -77,11 +77,13 @@
   }
 
   .text-agreeing{
-    padding-top: 40px;
-    padding-bottom: 40px;
     color: #CCCCCC;
     a, a:link{
       color: #CCCCCC;
+    }
+    &.padding{
+      padding-top: 40px;
+      padding-bottom: 40px;
     }
   }
 
