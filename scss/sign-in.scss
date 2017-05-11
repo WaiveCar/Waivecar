@@ -29,4 +29,82 @@
 
 
 
-.sign-in-content{}
+.sign-in-content{
+
+  .button{
+    font-family: LatoWeb;
+    font-size: 18px;
+    letter-spacing: 1.5px;
+    padding-top: 5px;
+    height: 67px;
+  }
+
+  .button-fb{
+    text-align: left;
+  }
+  .fa-facebook{
+    display: inline-block;
+    font-size: 24px;
+    padding: 22px 23px 21px;
+    margin-left: -12px;
+    margin-top: -6px;
+    border-right: 1px solid #243B6E;
+    margin-right: 14px;
+  }
+
+  .lined{
+    font-family: LatoWeb;
+    font-size: 18px;
+    letter-spacing: 1.5px;
+    margin-top: 40px;
+    margin-bottom: 45px;
+  }
+
+  .has-footer{
+    bottom: 67px;
+  }
+
+  .icon-flag{
+    padding-top: 6px;
+    width: 33px;
+  }
+
+  .item-input{
+    border-color: #727B75;
+    .input-label, input{
+      font-size: 18px;
+    }
+  }
+
+  .text-agreeing{
+    padding-top: 40px;
+    padding-bottom: 40px;
+    color: #CCCCCC;
+    a, a:link{
+      color: #CCCCCC;
+    }
+  }
+
+  .bar-footer{
+    height: 67px;
+  }
+
+  form {
+    .errors {
+      padding-top: 15px;
+    }
+    [ng-messages]{
+      padding: 0;
+    }
+  }
+
+  button.license-image, button.selfie-image{
+    width: 370px;
+    height: 150px;
+    border: 1px solid #404D43;
+    &+p{
+      color: #CCCCCC;
+    }
+  }
+
+}

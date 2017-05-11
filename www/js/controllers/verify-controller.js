@@ -2,7 +2,7 @@
 var angular = require('angular');
 require('../services/modal-service');
 
-function VerifyController ($injector, $stateParams) {
+function VerifyController($injector, $stateParams){
   var $message = $injector.get('$message');
   var $data = $injector.get('$data');
   var $auth = $injector.get('$auth');
@@ -17,12 +17,9 @@ function VerifyController ($injector, $stateParams) {
   this.isWizard = !!$stateParams.step;
   this.fromBooking = !!$stateParams.fromBooking;
 
-  this.submit = function verify (form) {
-    if (form.$pristine) {
-      return $message.info('Please fill in verification code first.');
-    }
-    if (form.$invalid) {
-      return $message.error('Please resolve form errors and try again.');
+  this.submit = function(form){
+    if (form.$invalid){
+      return $message.error('Please fix form errors and try again.');
     }
     var self = this;
 
@@ -71,7 +68,7 @@ function VerifyController ($injector, $stateParams) {
       });
   };
 
-  this.resend = function resend () {
+  this.resend = function(){
     $data.resources.Verification.sendSMS({}).$promise
       .then(function(){
         $message.success('Verification code sent to ' + $auth.me.phone);
@@ -81,4 +78,8 @@ function VerifyController ($injector, $stateParams) {
 }
 
 module.exports = angular.module('app.controllers')
-  .controller('VerifyController', ['$injector', '$stateParams', VerifyController]);
+  .controller('VerifyController', [
+    '$injector',
+    '$stateParams',
+    VerifyController
+  ]);

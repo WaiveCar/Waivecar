@@ -1,15 +1,32 @@
-<ion-view hide-back-button="{{isWizard}}">
-  <ion-nav-title>
-    <page-title class="dark-bg"><span ng-if="isWizard">Step 4 of 6: </span>Credit Card</page-title>
+<ion-view can-swipe-back="false" hide-back-button="true" class="sign-in-content">
+
+  <ion-nav-title class="sign-in-header">
+    <ul class="progress-bar">
+      <li class="active"></li>
+      <li class="active"></li>
+      <li class="active"></li>
+      <li class="active"></li>
+    </ul>
+    <page-title class="dark-bg">Credit Card</page-title>
   </ion-nav-title>
-  <ion-content padding="true" class="ion-content--center dark-bg">
-    <p class="padding-bottom">Don't worry, the majority of rides are free!</p>
-    <form ng-submit="save(form)" name="form" id="form" novalidate>
+
+  <ion-content scroll="false" padding="true" class="ion-content--center dark-bg">
+
+    <p class="text-agreeing">Don't worry, the majority of rides are free!<br/>However, fees could apply in some cases.<br/><a href="#">Check our Fees Guidelines.</a></p>
+
+    <form name="form" id="form" ng-submit="creditCardCtrl.submit(form)" novalidate>
       <div ng-include="'./templates/credit-cards/_form.html'"></div>
     </form>
-    <div class="padding-top padding-bottom">
-      <button type="submit" form="form" class="button button-balanced button-block">Save</button>
-    </div>
-    <p class="padding-top">By adding a credit card you are agreeing with our <a href="https://waivecar.com/terms">Terms of Service</a>. Your credit card information is safe with us.</p>
+
+    <p class="text-agreeing">By adding a credit card you are agreeing with our<br/><a href="https://waivecar.com/terms">Terms of Service</a> and <a href="#">Fees Guidelines.</a>. Your credit<br/>card information is sure with us.<br/><br/>Your credit card is required to book a WaiveCar.<br/>However, you can skip this step and do it later on<br/>your account settings.</p>
+
   </ion-content>
+
+  <ion-footer-bar class="no-padding">
+    <div class="button-bar">
+      <button type="button" class="button button-gray" go-back>Cancel</button>
+      <button type="submit" form="form" class="button button-balanced">Add card</button>
+    </div>
+  </ion-footer-bar>
+
 </ion-view>
