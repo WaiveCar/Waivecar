@@ -86,7 +86,9 @@ function ApplicationController ($rootScope, $scope, $injector) {
       // in the flow of booking a car. Note that the code below will call this code.
       $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
         console.log(fromState.name + ' -> ' + toState.name, newState, currentBooking);
-        checkState(toState.name);
+        if(['users-edit'].indexOf(fromState.name) === -1) {
+          checkState(toState.name);
+        }
       });
 
       // This will move the app to a new state if an admin puts the user inside a car

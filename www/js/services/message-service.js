@@ -26,6 +26,7 @@ module.exports = angular.module('app.services').factory('$message', [
       // user - What this thing is is essentially a weirdo JS object being
       // converted to a string ... better solution would be something like
       if (!_(message).isString()) {
+        console.log(message);
         message = 'Something unexpected happened. Please try again.\nIf this problem persists, please contact us.';
         //message = JSON.stringify(message);
       }
