@@ -42,7 +42,7 @@ install() {
 
 uninstall_cb() {
   device=$1
-  app=`adb -s $device shell pm list packages |& grep waive | awk -F : ' { print $2 } ' | tr '\r' ''`
+  app=`adb -s $device shell pm list packages |& grep waive | awk -F : ' { print $2 } ' | tr -t '\r' ''`
   echo "[$device] $app"
   adb -s $device uninstall $app
 }
