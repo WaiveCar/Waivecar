@@ -626,6 +626,7 @@ module.exports = class BookingService extends Service {
 
     yield booking.cancel();
     yield booking.delCancelTimer();
+    yield booking.delForfeitureTimers();
     yield car.removeDriver();
     yield car.available();
 
