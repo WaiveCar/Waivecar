@@ -344,7 +344,7 @@ module.exports = {
       data: existingCar.toJSON()
     });
 
-    if (data.isIgnitionOn) {
+    if (data.isIgnitionOn || data.calculatedSpeed > 0 || data.currentSpeed > 0 || !data.isParked) {
       let booking = yield Booking.findOne({where: {status: 'started', carId: existingCar.id}});
       if ( booking && !booking.isFlagged('drove') ) {
         yield booking.flag('drove');
