@@ -593,8 +593,11 @@ module.exports = class BookingService extends Service {
     // Alert text: "{User Name} had booking with 0 miles driven for X minutes. {User phone number} {link to user profile}."
     // (People do this to 'hold' the car for a while).
     //
+    // One car, Waive17 had a bug where it wasn't reporting the odometer increasing. This caused a false positive report here. So we've added
+    // a second check, to see if the car's GPS from the start of the ride and the end of the ride are dramatically different from each other.
+    // 
 
-    if(deltas.duration > 10 && deltas.distance === 0) {
+    if(deltas.duration > 10 && deltas.distance === 0 && !deltas.hasMoved) {
       yield UserLog.addUserEvent(user, 'SIT', booking.id, deltas.duration);
       yield notify.slack({ text : `:popcorn: ${ user.name() } drove 0 miles for ${ deltas.duration } minutes. ${ car.info() } | ${ user.info() } | ${ Bento.config.web.uri }/users/${ user.id }`
       }, { channel : '#user-alerts' });
@@ -884,11 +887,16 @@ module.exports = class BookingService extends Service {
   static *getDeltas(booking) {
     let start = yield this.getDetails('start', booking.id);
     let end = yield this.getDetails('end', booking.id);
-    let ret = {duration: 0, distance: 0};
+    let ret = {duration: 0, distance: 0, hasMoved: false};
 
+    // We're using essentially Euclidean distance here and a routine that was developed for Google Maps refresh optimization in commit id
+    // 6f033cba based on long/lat -> distances relative to around santa monica/soca.
     if (start && end) {
       ret.duration = moment(end.createdAt).diff(start.createdAt, 'minutes');
       ret.distance = end.mileage - start.mileage;
+      let absDistance = Math.abs(start.latitude - end.latitude) + Math.abs(start.longitude - end.longitude);
+      ret.hasMoved = absDistance > 0.00005;
+      console.log(`<< ${ret.distance} ${ret.duration} ${absDistance}`);
     }
 
     return ret;
