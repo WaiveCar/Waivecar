@@ -12,9 +12,9 @@
 
   <ion-content scroll="false" padding="true" class="ion-content--center dark-bg">
 
-    <p class="margin-top-10 multiline">We<span ng-if='::verify.isWizard == false'> previously</span> sent an SMS with a verification code to {{::verify.phone}} from (855) 924-8355.</p>
+    <p class="margin-top-10 multiline">We<span ng-if='verifyCtrl.isWizard == false'> previously</span> sent an SMS with a verification code to {{verifyCtrl.phone}} from (855) 924-8355.</p>
 
-    <form name="form" id="form" ng-submit="verifyCtrl.submit(form)" novalidate>
+    <form style='margin:10px 0 30px' name="form" id="form" ng-submit="verifyCtrl.submit(form)" novalidate>
       <div class="list">
 
         <label class="item item-input">
@@ -31,17 +31,16 @@
       </div>
     </form>
 
-    <div class='multiline margin-top-10'>
-      <p>Didn't get anything? We can <a class="link" ng-click="verify.resend()">send again.</a></p>
-      <p>Phone number wrong? You can <a class="link" ng-click='verify.change()'>change the number.</a></p>
-      <p class='faded margin-top-10'>This is a required step for booking a car. If you feel you are seeing it in error, you can <a class='link' ng-click="verify.abort()">cancel</a>.</p>
+    <div class='multiline'>
+      <p>Didn't get anything? We can <a class="link" ng-click="verifyCtrl.resend()">send again.</a></p>
+      <p>Phone number wrong? You can <a class="link" ng-click='verifyCtrl.change()'>change the number.</a></p>
+      <p class='faded margin-top-10'>This is a required step for booking a car. If you feel you are seeing it in error, you can <a class='link' ng-click="verifyCtrl.abort()">cancel.</a></p>
     </div>
 
   </ion-content>
 
   <ion-footer-bar class="no-padding">
     <div class="button-bar">
-      <button type="button" class="button button-gray" go-back>Cancel</button>
       <button type="submit" form="form" class="button button-balanced">Verify</button>
     </div>
   </ion-footer-bar>
