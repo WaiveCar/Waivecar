@@ -1,5 +1,7 @@
+/* global  window: false */
 'use strict';
 var angular = require('angular');
+var ionic = require('ionic');
 var moment = require('moment');
 var _ = require('lodash');
 // var ionic = require('ionic');
@@ -40,7 +42,6 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       return;
     }
 
-
     // ctrl.car = $data.active.cars;
     stopServiceWatch();
     stopServiceWatch = null;
@@ -68,7 +69,8 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     if (expired) {
       // if we are in the future then the answer is 0.
       if (moment().diff(expired) > 0) {
-        // to do, new expired flow
+        $interval.cancel(timer);
+        showExpired();
       } else {
         this.timeLeft = moment(expired).toNow(true);
         return this.timeLeft;
@@ -144,6 +146,26 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       modal.show();
     });
   };
+
+  function showExpired() {
+    var modal;
+    $modal('result', {
+      title: 'Booking is expired',
+      message: 'You booking is expired',
+      icon: 'x-icon',
+      actions: [{
+        className: 'button-assertive',
+        text: 'OK',
+        handler: function () {
+          modal.remove();
+          $state.go('cars');
+        }
+      }]
+    }).then(function (_modal) {
+      modal = _modal;
+      modal.show();
+    });
+  }
 
   var showCancel = this.showCancel = function showCancel () {
     var modal;
@@ -289,23 +311,16 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       targetLon: $data.active.cars.longitude
     };
 
-    // if (ionic.Platform.isWebView()) {
-      url = [
-        'comgooglemaps-x-callback://?',
-        '&saddr=%(startingLat)s,%(startingLon)s',
-        '&daddr=%(targetLat)s,%(targetLon)s',
-        '&directionsmode=walking',
-        '&x-success=WaiveCar://?resume=true',
-        '&x-source=WaiveCar'
-      ].join('');
-      url = sprintf(url, sprintfOptions);
-      $cordovaInAppBrowser.open(encodeURI(url), '_system');
-      return;
-    // }
+    var isIOS = ionic.Platform.isIOS();
+    var geocoords = $rootScope.currentLocation.latitude + ',' + $rootScope.currentLocation.longitude;
 
-    // url = 'http://maps.google.com/maps?saddr=%(startingLat)s,%(startingLon)s&daddr=%(targetLat)s,%(targetLon)s&mode=walking';
-    // url = sprintf(url, sprintfOptions);
-    // $cordovaInAppBrowser.open(url);
+    if (isIOS) {
+      window.open('maps://?q=' + geocoords, '_system');
+    } else {
+      var label = encodeURI(this.car.license);
+      window.open('geo:0,0?q=' + geocoords + '(' + label + ')', '_system');
+    }
+
   };
 }
 

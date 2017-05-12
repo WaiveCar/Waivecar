@@ -20,7 +20,6 @@ module.exports = angular.module('app.services').service('$utils', [
       getCustomRoute: function (endpoint) {
         var fragments = [$settings.uri.api, endpoint];
         return fragments.join('/');
-
       },
 
       transformPaginatedResponse: function (data) {

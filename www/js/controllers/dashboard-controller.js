@@ -61,7 +61,6 @@ function DashboardController ($scope, $rootScope, $injector) {
 
     });
 
-
     $scope.$on('$destroy', function () {
       if (stopLocationWatch != null) {
         stopLocationWatch();
@@ -213,8 +212,12 @@ function DashboardController ($scope, $rootScope, $injector) {
       return null;
     }
 
+    var status = false;
     ctrl.ending = true;
-    return $ride.isChargeOkay(carId).then(function(okay) {
+    return $ride.getStatus(carId).then(function(obj) {
+      status = obj;
+      var okay = $ride.isChargeOkay(carId, obj);
+
       ctrl.ending = false;
       if (okay || $distance(homebase) < 0.3) {
         return GeofencingService.insideBoundary();
@@ -224,28 +227,21 @@ function DashboardController ($scope, $rootScope, $injector) {
     }).then(function(inside) {
       if (inside) {
         // inside geofence -> continue as normal
-        return $ride.isCarOn(carId)
-          .catch(function (reason) {
-            $ionicLoading.hide();
-            ctrl.ending = false;
-            return $q.reject(reason);
-          })
-          .then(function (isCarOn) {
-            $ionicLoading.hide();
-            ctrl.ending = false;
-            if (isCarOn) {
-              return showIgnitionOnModal();
-            }
-            // $ride.setLocation('homebase');
-            // return $ride.processEndRide();
-            if ($distance(homebase) * 1760 < 100) {
-              ZendriveService.stop();
-              return $ride.processEndRide().then(function() {
-                return $state.go('end-ride', { id: bookingId });
-              });
-            }
-            return $state.go('end-ride-location', { id: bookingId });
+        var isCarOn = $ride.isCarOn(carId, status);
+        $ionicLoading.hide();
+        ctrl.ending = false;
+        if (isCarOn) {
+          return showIgnitionOnModal();
+        }
+        // $ride.setLocation('homebase');
+        // return $ride.processEndRide();
+        if ($distance(homebase) * 1760 < 100) {
+          ZendriveService.stop();
+          return $ride.processEndRide().then(function() {
+            return $state.go('end-ride', { id: bookingId });
           });
+        }
+        return $state.go('end-ride-location', { id: bookingId });
       } else {
         // Not inside geofence -> show error
         $ionicLoading.hide();

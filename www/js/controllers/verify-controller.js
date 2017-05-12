@@ -16,6 +16,7 @@ function VerifyController($injector, $stateParams){
   };
   this.isWizard = !!$stateParams.step;
   this.fromBooking = !!$stateParams.fromBooking;
+  this.phone = $auth.me.phone.replace(/[+1]*(\d{3})(\d{3})(.*)/, '($1) $2-$3');
 
   this.submit = function(form){
     if (form.$invalid){
@@ -68,7 +69,17 @@ function VerifyController($injector, $stateParams){
       });
   };
 
-  this.resend = function(){
+  this.change = function change() {
+    $auth.bypass = true;
+    $state.go('users-edit-general');
+  };
+
+  this.abort = function abort () {
+    $auth.bypass = true;
+    $state.go('users-edit');
+  };
+
+  this.resend = function resend () {
     $data.resources.Verification.sendSMS({}).$promise
       .then(function(){
         $message.success('Verification code sent to ' + $auth.me.phone);

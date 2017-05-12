@@ -36,7 +36,7 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
     });
   }
 
-  this.enableLocation = function() {
+  function enableLocation() {
     diagnostic.isLocationAuthorized(function(res) {
       if(res) {
         return;
@@ -57,7 +57,7 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
       });
     });
   };
-
+  this.enableLocation = enableLocation;
 
   this.getCurrentLocation = function getLocation () {
 
@@ -82,7 +82,7 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
         return $q.reject();
       }
 
-      $this.enableLocation();
+      enableLocation();
 
       /*$message.error('We were not able to find your location, please reconnect.');
       $q.reject(err);*/
@@ -116,20 +116,20 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
         invokeCallback(location);
       });
     }, function onPositionErr (err) {
-      LocationService.enableLocation();
+      enableLocation();
     }, {
       maximumAge: 3000,
       timeout: 10000,
       enableHighAccuracy: true
     });
 
-    console.log('start watch location', watchState.watchId, updateCallback);
+    //console.log('start watch location', watchState.watchId, updateCallback);
 
     $this.activeLocationWatchers.push(watchState.watchId);
 
     return function stopWatch() {
       $this.activeLocationWatchers = _.without($this.activeLocationWatchers, watchState.watchId);
-      console.log('stop watch location', watchState.watchId, updateCallback, $this.activeLocationWatchers);
+      //console.log('stop watch location', watchState.watchId, updateCallback, $this.activeLocationWatchers);
       navigator.geolocation.clearWatch(watchState.watchId);
 
     };

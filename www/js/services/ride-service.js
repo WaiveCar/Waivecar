@@ -212,25 +212,34 @@ module.exports = angular.module('app.services').factory('$ride', [
       });
     };
 
-    service.isCarOn = function (id) {
-      return $data.resources.cars.refresh({ id: id }).$promise
-        .then(function (status) {
-          return status.isIgnitionOn;
-        });
+    function genericCheck(id, obj, check) {
+      if (obj) {
+        return check(obj);
+      }
+
+      return service.getStatus(id).then(check);
+    }
+
+    service.getStatus = function (id) {
+      return $data.resources.cars.refresh({ id: id }).$promise;
     };
 
-    service.isChargeOkay = function(id) {
-      return $data.resources.cars.refresh({ id: id }).$promise
-        .then(function (status) {
-          return status.charge > 30 || status.isCharging;
-        });
+    service.isCarOn = function (id, obj) {
+      return genericCheck(id, obj, function(status) {
+        return status.isIgnitionOn;
+      });
     };
 
-    service.isDoorsClosed = function(id) {
-      return $data.resources.cars.refresh({ id: id }).$promise
-        .then(function (status) {
-          return status.isDoorClosed;
-        });
+    service.isChargeOkay = function(id, obj) {
+      return genericCheck(id, obj, function(status) {
+        return status.charge > 30 || status.isCharging;
+      });
+    };
+
+    service.isDoorsClosed = function(id, obj) {
+      return genericCheck(id, obj, function(status) {
+        return status.isDoorClosed;
+      });
     };
 
     service.lockCar = function(id) {
@@ -253,15 +262,16 @@ module.exports = angular.module('app.services').factory('$ride', [
         });
     };
 
-    service.init = function() {
+    service.init = function(current) {
       service.setState();
       $data.initialize('bookings').then(function(bookings) {
-        var current = _(bookings)
-          .filter({userId: $auth.me.id})
-          .find(function (b) {
-              return !_.contains([ 'cancelled', 'completed', 'closed', 'ended' ], b.status);
-          });
-
+        if(!current) {
+          current = _(bookings)
+            .filter({userId: $auth.me.id})
+            .find(function (b) {
+              return !_.contains([ 'cancelled', 'completed', 'closed'], b.status);
+            });
+        }
         console.log('$ride : init. current: ', current);
 
         if (current == null) {

@@ -33,7 +33,6 @@ module.exports = angular.module('app.controllers').controller('CarController', [
     var minAccuracyThreshold = 200;
     var modal;
 
-
     var stopLocationWatch = LocationService.watchLocation(function (currentLocation, isInitialCall) {
 
         if (isInitialCall) {

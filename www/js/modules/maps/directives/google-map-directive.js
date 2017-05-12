@@ -7,31 +7,45 @@ var ionic = require('ionic');
 require('../../../providers/maps-loader-provider');
 var _ = require('lodash');
 
-function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, LocationService) {
+function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, LocationService, $injector) {
 
+  var MOVETHRESHOLD = 0.000008;
+  var homebase = $injector.get('homebase');
 
   function mapToGoogleLatLong(location) {
     return new google.maps.LatLng(location.latitude, location.longitude);
   }
 
   function link($scope, $elem, attrs, ctrl) {
+    var center = ctrl.center ? ctrl.center : ctrl.currentLocation;
+    center = center || homebase;
 
     var mapOptions = {
-      streetViewControl: false
+      streetViewControl: false,
+      mapTypeControl: false,
+      zoom: 14,
+      fullscreenControl: false,
+      center: mapToGoogleLatLong(center),
+      zoomControl: false
     };
 
-    var center = ctrl.center ? ctrl.center : ctrl.currentLocation;
-    if (center) {
-      mapOptions.center = mapToGoogleLatLong(center);
-    }
-
     ctrl.map = new google.maps.Map($elem.find('.map-instance')[0], mapOptions);
+    /*
+    console.log(mapOptions);
+
+    ['center_changed', 'zoom_changed', 'bounds_changed'].forEach(function(m) {
+      ctrl.map.addListener(m, function(a){
+        console.log(new Date(), m, ctrl.map.getZoom());
+      });
+    });
+    */
 
     if ('route' in attrs) {
       ctrl.directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true, preserveViewport: true});
       ctrl.directionsRenderer.setMap(ctrl.map);
     }
 
+    var lastLocation = [0, 0];
     var watchers = [
       $scope.$watch('map.markers', function (value) {
         if (value) {
@@ -41,16 +55,21 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
       }, true),
       $scope.$watch('map.currentLocation', function (value) {
         if (value) {
-          ctrl.updateLocationMarker(value);
+          // There are some ridiculous jitters in GPS that we do not care about and shouldn't ask the
+          // map to update on.
+          var isMoved = (Math.abs(lastLocation[0] - value.latitude) + Math.abs(lastLocation[1] - value.longitude)) > MOVETHRESHOLD;
+          //console.log('>> map draw', isMoved, (Math.abs(lastLocation[0] - value.latitude) + Math.abs(lastLocation[1] - value.longitude)));
+          if(isMoved) {
+            ctrl.updateLocationMarker(value);
+            lastLocation = [value.latitude, value.longitude];
+          } 
         }
-
       }, true),
       $scope.$watch('map.fitBoundsByMarkers', function (value) {
-
         if (value) {
           ctrl.mapFitBounds(value);
         }
-      }, true),
+      }),
       $scope.$watch('map.route', function (value) {
         if (value) {
           ctrl.drawRoute(value.start, value.destiny, value.fitBoundsByRoute);
@@ -59,7 +78,6 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
     ];
     $scope.$on('$destroy', function () {
-      console.log('Destroying watchers');
       watchers.forEach(function (watcher) {
         if (typeof watcher === 'function') {
           watcher();
@@ -67,35 +85,34 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
       });
       watchers = null;
     });
-
-
   }
 
+  function hasMoved(old, check) {
+    return (Math.abs(old.latitude - check.latitude) + Math.abs(old.longitude - check.longitude)) > MOVETHRESHOLD;
+  }
 
   function MapController() {
     this._addedMarkers = {
       location: null,
       general: []
     };
-
   }
-
 
   MapController.prototype.mapFitBounds = function mapFitBounds(markers) {
     var ctrl = this;
 
-    if (markers && markers.length) {
+    if (markers && markers.length > 1) {
       var bounds = new google.maps.LatLngBounds();
       markers.forEach(function (marker) {
         bounds.extend(mapToGoogleLatLong(marker));
       });
+      //console.log('>> fit bounds', bounds, markers);
       ctrl.map.fitBounds(bounds);
     }
 
   };
 
   MapController.prototype.addMarker = function addMarker(marker) {
-
     var ctrl = this;
 
     var iconOpt = getIconOptions(marker.icon || marker.type || 'car');
@@ -153,14 +170,13 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     }
   };
 
-
-  MapController.prototype.updateMarkers = function updateMarkers(markers) {
+  MapController.prototype.updateMarkers = function updateMarkers(newMarkers) {
     var ctrl = this;
 
     var oldIds = ctrl._addedMarkers.general.map(function (m) {
       return m.id;
     });
-    var newIds = markers.map(function (m) {
+    var newIds = newMarkers.map(function (m) {
       return m.id;
     });
 
@@ -169,23 +185,24 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     var markersToRemove = _.difference(oldIds, markersToUpdate);
     var actualMarkers = [];
 
-
     markersToUpdate.forEach(function (id) {
-      var addedMarker = ctrl._addedMarkers.general.filter(function (m) {
+      var currentMarker = ctrl._addedMarkers.general.filter(function (m) {
         return m.id === id;
       })[0];
 
-      var marker = markers.filter(function (m) {
+      var newMarker = newMarkers.filter(function (m) {
         return m.id === id;
       })[0];
 
-      addedMarker.markerObj.setPosition(mapToGoogleLatLong(marker));
-      addedMarker.markerObj.setIcon(getIconOptions(marker.icon));
-      actualMarkers.push(addedMarker);
+      if(hasMoved(currentMarker, newMarker)) {
+        currentMarker.markerObj.setPosition(mapToGoogleLatLong(newMarker));
+      } 
+      //addedMarker.markerObj.setIcon(getIconOptions(marker.icon));
+      actualMarkers.push(currentMarker);
     });
 
     markersToAdd.forEach(function (id) {
-      var marker = markers.filter(function (m) {
+      var marker = newMarkers.filter(function (m) {
         return m.id === id;
       })[0];
 
@@ -238,7 +255,6 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
   };
 
   MapController.prototype.drawRoute = function drawRoute(start, destiny, fitBoundsByRoute) {
-
     var ctrl = this;
 
     RouteService.getGRoute(mapToGoogleLatLong(start), mapToGoogleLatLong(destiny),
@@ -253,10 +269,10 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
         ctrl.directionsRenderer.setDirections(response);
         if (fitBoundsByRoute) {
+          console.log('>> fit bounds a');
           ctrl.map.fitBounds(ctrl.directionsRenderer.getDirections().routes[0].bounds);
         }
       });
-
   };
 
   function getIconOptions(iconType) {
@@ -372,5 +388,6 @@ module.exports = angular.module('Maps').directive('googleMap', [
   '$timeout',
   '$window',
   'LocationService',
+  '$injector',
   directive
 ]);

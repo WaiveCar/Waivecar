@@ -205,6 +205,24 @@ ion-view {
 
 }
 
+.multiline {
+  text-align: left;
+}
+a.link {
+  color: $blue !important;
+  text-decoration: underline;
+}
+a.link.activated {
+  background: $blue !important;
+  color: white !important;
+  padding: 3px 5px;
+  margin: -3px -5px;
+  text-decoration: none;
+}
+
+.faded {
+  opacity: 0.6;
+}
 div.group {
   padding: 1em 0;
 }

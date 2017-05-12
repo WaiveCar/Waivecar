@@ -12,18 +12,9 @@
 
   <ion-content scroll="false" padding="true" class="ion-content--center dark-bg">
 
-    <div ng-if="::verifyCtrl.fromBooking">
-      <p class="margin-top-10">You must verify your account before booking a car.</p>
-      <p>
-        We have previously sent you an SMS with verification code.
-        (<button type="button" class="button button-small button-clear button-energized" ng-click="verifyCtrl.resend()">Resend</button>)
-      </p>
-      <p>Please enter it below to verify your account.</p>
-    </div>
+    <p class="margin-top-10 multiline">We<span ng-if='verifyCtrl.isWizard == false'> previously</span> sent an SMS with a verification code to {{verifyCtrl.phone}} from (855) 924-8355.</p>
 
-    <p ng-if="::verifyCtrl.isWizard" class="text-agreeing padding">We just sent you SMS with a verification code.<br/>Please enter it below.</p>
-
-    <form name="form" id="form" ng-submit="verifyCtrl.submit(form)" novalidate>
+    <form style='margin:10px 0 30px' name="form" id="form" ng-submit="verifyCtrl.submit(form)" novalidate>
       <div class="list">
 
         <label class="item item-input">
@@ -40,11 +31,16 @@
       </div>
     </form>
 
+    <div class='multiline'>
+      <p>Didn't get anything? We can <a class="link" ng-click="verifyCtrl.resend()">send again.</a></p>
+      <p>Phone number wrong? You can <a class="link" ng-click='verifyCtrl.change()'>change the number.</a></p>
+      <p class='faded margin-top-10'>This is a required step for booking a car. If you feel you are seeing it in error, you can <a class='link' ng-click="verifyCtrl.abort()">cancel.</a></p>
+    </div>
+
   </ion-content>
 
   <ion-footer-bar class="no-padding">
     <div class="button-bar">
-      <button type="button" class="button button-gray" go-back>Cancel</button>
       <button type="submit" form="form" class="button button-balanced">Verify</button>
     </div>
   </ion-footer-bar>

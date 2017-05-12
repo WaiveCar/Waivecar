@@ -42,7 +42,7 @@ module.exports = angular.module('app.controllers').controller('BookingSummaryCon
           // App: A declined CC card appears as if the ride was free  
           ctrl.booking.failedCharge = ctrl.booking.payments.filter(function(payment) { 
             return payment.status === 'failed';
-          });
+          }).length;
         }
       }).catch($message.error);
     };

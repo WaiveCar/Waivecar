@@ -65,7 +65,6 @@ module.exports = angular.module('app.services').factory('$data', [
       initialize: function (modelName) {
         service.instances[modelName] = [];
         return service.fetch(modelName, {});
-
       },
 
       fetch: function (modelName) {
@@ -190,7 +189,9 @@ module.exports = angular.module('app.services').factory('$data', [
 
       getExisting: function (modelName, id) {
         var existing = _.find(service.instances[modelName], function (m) {
-          return m.id.toString() === id.toString();
+          if(id && m.id && m.id.toString) {
+            return m.id.toString() === id.toString();
+          }
         });
 
         return existing;
@@ -213,7 +214,6 @@ module.exports = angular.module('app.services').factory('$data', [
       // client-side manipulations only
       deactivate: function (modelName) {
         delete service.active[modelName];
-
       },
 
       subscribe: function () {
@@ -254,21 +254,21 @@ module.exports = angular.module('app.services').factory('$data', [
       }
 
       switch (action.type) {
-      case 'show':
-      case 'store':
-      case 'update':
-      case 'index':
-        if (_.isArray(model)) {
-          service.mergeAll(resource, model);
-        } else {
-          service.merge(resource, model);
-        }
-        break;
-      case 'delete':
-        service.purge(resource, model);
-        break;
-      default:
-        throw new Error('Undetermined socket relay action.type handler');
+        case 'show':
+        case 'store':
+        case 'update':
+        case 'index':
+          if (_.isArray(model)) {
+            service.mergeAll(resource, model);
+          } else {
+            service.merge(resource, model);
+          }
+          break;
+        case 'delete':
+          service.purge(resource, model);
+          break;
+        default:
+          throw new Error('Undetermined socket relay action.type handler');
       }
     });
 
