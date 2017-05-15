@@ -20,6 +20,7 @@ Bento.Register.Controller('BookingsController', function(controller) {
     let version = parseInt(payload.version, 10) || 0;
     var copy;
 
+    /*
     if(payload.source !== 'web' && version < minApp) {
 
       if(iPhone) {
@@ -35,6 +36,7 @@ Bento.Register.Controller('BookingsController', function(controller) {
         message : `You'll need to upgrade the WaiveCar App before booking. ${ copy }`
       }, 400);
     }
+    */
   }
 
   /**
