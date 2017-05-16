@@ -288,11 +288,12 @@ function DashboardController ($scope, $rootScope, $injector) {
 
     $modal('result', {
       icon: 'x-icon',
-      title: message,
+      title: 'Unable to end your ride. Please try again or call us at (855) 924-8355.',
       actions: [{
         text: 'Ok',
         className: 'button-balanced',
         handler: function () {
+          ctrl.ending = false;
           endRideModal.remove();
         }
       }]
