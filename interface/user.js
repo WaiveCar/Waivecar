@@ -84,8 +84,8 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
      * @module waivecar
      */
     status : {
-      type         : Sequelize.ENUM('pending', 'active', 'suspended'),
-      defaultValue : 'active'
+      type         : Sequelize.ENUM('active', 'probation', 'pending', 'suspended'),
+      defaultValue : 'probation'
     },
 
     /**
@@ -206,6 +206,46 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       // If provided role is less than authenticated role we have access.
 
       return check.position <= auth.position;
+    },
+
+    isActive() {
+      return this.status === 'active';
+    },
+
+    isProbation() {
+      return this.status === 'probation';
+    },
+
+    isPending() {
+      return this.status === 'pending';
+    },
+
+    isSuspended() {
+      return this.status === 'suspended';
+    },
+
+    *setActive() {
+      yield this.update({
+        status : 'active'
+      });
+    },
+
+    *setProbation() {
+      yield this.update({
+        status : 'probation'
+      });
+    },
+
+    *setPending() {
+      yield this.update({
+        status : 'pending'
+      });
+    },
+
+    *setSuspended() {
+      yield this.update({
+        status : 'suspended'
+      });
     }
 
   };

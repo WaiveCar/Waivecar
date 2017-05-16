@@ -716,6 +716,10 @@ module.exports = class BookingService extends Service {
 
     yield booking.complete();
 
+    if (user.isProbation()){
+      yield user.setActive();
+    }
+
     // If car is under 25% make it unavailable after ride is done #514
     // We use the average to make this assessment.
     if (car.averageCharge() < 25.00 && !isAdmin) {
