@@ -226,14 +226,13 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     });
   };
 
+  var unlockModal;
+
   function showUnlock () {
     var modal;
     var unlocking;
     var booking = $data.active.bookings;
-    if (booking == null) {
-      return;
-    }
-    if (booking.status !== 'reserved') {
+    if (booking == null || booking.status !== 'reserved' || unlockModal) {
       return;
     }
     $modal('result', {
@@ -248,6 +247,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         className: 'button-dark',
         text: 'Cancel Booking',
         handler: function () {
+          unlockModal = false;
           modal.remove();
           showCancel();
         }
@@ -256,10 +256,11 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     .then(function (_modal) {
       modal = _modal;
       modal.show();
+      unlockModal = true;
     });
 
     function onUnlock () {
-
+      unlockModal = false;
       if (unlocking) {
         return;
       }
