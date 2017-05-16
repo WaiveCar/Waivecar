@@ -4,6 +4,7 @@
   </ion-nav-title>
   <ion-content scroll="false" padding="true" class="has-header ion-content--center dark-bg parking-location">
     <div class="parking-details-wrap">
+      <!--
       <div class="button-bar">
         <a class="button"
           ng-class="{ 'button-balanced' : ctrl.type === 'lot', 'button-dark' : ctrl.type !== 'lot'  }"
@@ -14,6 +15,7 @@
           ng-click="ctrl.setType('street')"
           >Street</a>
       </div>
+      -->
       <div ng-if="ctrl.type === 'lot'" class="parking-details">
         <div class="address row" ng-bind-html="ctrl.address_markup"></div>
         <div class="row">
