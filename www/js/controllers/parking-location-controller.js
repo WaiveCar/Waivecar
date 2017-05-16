@@ -159,13 +159,7 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
 
       var isNightTime = moment().hours() >= 23 || moment().hours() < 5;
 
-      if (!isNightTime) {
-        goToEndRide(isNightTime);
-      } else {
-        showOvernightWarning(function() {
-          goToEndRide(isNightTime);
-        });
-      }
+      goToEndRide(isNightTime);
 
     }
 
@@ -180,7 +174,7 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
         payload = ctrl.lot;
       } else if (ctrl.type === 'street') {
         if (ctrl.street.streetHours < 3) return submitFailure('You can\'t return your WaiveCar here. The spot needs to be valid for at least 3 hours.');
-        if (isNightTime && ctrl.lot.streetOvernightRest) return submitFailure('You can\'t return your WaiveCar here. If the car is ticketed or towed, you\'ll be responsible for the fees.');
+        if (isNightTime && ctrl.street.streetOvernightRest) return submitFailure('You can\'t return your WaiveCar here. If the car is ticketed or towed, you\'ll be responsible for the fees.');
         payload = ctrl.street;
       }
 
@@ -190,29 +184,6 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
       return $ride.processEndRide().then(function () {
         $ionicLoading.hide();
         return $state.go('end-ride', {id: $ride.state.booking.id});
-      });
-    }
-
-    function showOvernightWarning(next) {
-      $ionicLoading.hide();
-      var showOvernightWarningModal;
-
-      $modal('result', {
-        icon: 'x-icon',
-        title: 'Please make sure the parking is good for the next 3 hours.',
-        actions: [{
-          text: 'Ok',
-          className: 'button-balanced',
-          handler: function () {
-            showOvernightWarningModal.remove();
-            next();
-          }
-        }]
-      })
-      .then(function (_modal) {
-        _modal.show();
-        showOvernightWarningModal = _modal;
-        showOvernightWarningModal.show();
       });
     }
 
