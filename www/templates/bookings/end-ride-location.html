@@ -15,7 +15,6 @@
           ng-click="ctrl.setType('street')"
           >Street</a>
       </div>
-      -->
       <div ng-if="ctrl.type === 'lot'" class="parking-details">
         <div class="address row" ng-bind-html="ctrl.address_markup"></div>
         <div class="row">
@@ -71,6 +70,7 @@
           <p class="text-center">Please put the parking ticket in the glove box.</p>
         </div>
       </div>
+      -->
       <div ng-if="ctrl.type === 'street'" class="parking-details">
         <div class="address row" ng-bind-html="ctrl.address_markup"></div>
         <div>
@@ -79,12 +79,12 @@
           </p>
           <div class="text-center">
             <div ng-if="ctrl.street.streetSignImage" class="street-sign-image" ng-style="ctrl.street.streetSignImage.style"></div>
-            <button ng-click="ctrl.addPicture()" class="button button-dark ion-plus add-image"></button>
+            <button ng-click="ctrl.addPicture()" class="button button-dark add-image"></button>
           </div>
         </div>
         <div>
           <p class="text-center">
-            2) For how long is the spot valid (from now)?<br>
+            2) How long is the spot valid from now?<br>
             (minimum 3 hours)
           </p>
           <div class="text-center">
@@ -94,7 +94,7 @@
             </div>
             <div class="small-input">
               <input ng-model="ctrl.street.streetMinutes" type="text">
-              <span class="input-label">Min.</span>
+              <span class="input-label">Min</span>
             </div>
           </div>
         </div>
