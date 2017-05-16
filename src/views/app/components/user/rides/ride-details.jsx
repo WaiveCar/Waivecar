@@ -11,7 +11,7 @@ class RideDetails extends Component {
   }
 
   render() {
-    let { start, end, fee } = this.props;
+    let { start, end, fee, id } = this.props;
     let noFeeText = 'Free Ride';
     let extraText = false;
 
@@ -70,6 +70,7 @@ class RideDetails extends Component {
                 <img src="/images/cars/chevy_spark.png" />
                 <h3>Chevy Spark EV 2015</h3>
                 <div>
+                  <small>Booking <a href={ '/bookings/' +  id }>#{ id }</a></small><br/>
                   Distance Traveled<br/>
                   <strong>{ (end.mileage - start.mileage).toFixed(2) } miles</strong>
                 </div>

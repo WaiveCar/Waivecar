@@ -128,6 +128,7 @@ class RideList extends Component {
       start : data.details.find(val => val.type === 'start'),
       end   : data.details.find(val => val.type === 'end'),
       fee   : data.payments.reduce((value, payment) => { return value + (payment.amount - payment.refunded); }, 0) / 100,
+      id    : data.id
     };
 
     // ### Duration
