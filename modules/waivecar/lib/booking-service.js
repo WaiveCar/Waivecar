@@ -523,6 +523,7 @@ module.exports = class BookingService extends Service {
     // ### End Booking
 
     yield booking.delReminders();
+    yield booking.delForfeitureTimers();
     yield booking.end();
 
     let deltas = yield this.getDeltas(booking);
