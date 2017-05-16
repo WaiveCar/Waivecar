@@ -142,10 +142,11 @@
   .add-image {
     width: 45px;
     height: 45px;
+    background: url('../img/camera.svg') center center no-repeat;
+    background-color: #444;
   }
 
   .address {
-    margin-top: 10px;
     display: inline-block;
     text-align: center;
   }
