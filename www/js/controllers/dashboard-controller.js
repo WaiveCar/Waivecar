@@ -236,7 +236,7 @@ function DashboardController ($scope, $rootScope, $injector) {
         // $ride.setLocation('homebase');
         // return $ride.processEndRide();
         if ($distance(homebase) * 1760 < 100) {
-          ZendriveService.stop();
+          ZendriveService.stop(bookingId);
           return $ride.processEndRide().then(function() {
             return $state.go('end-ride', { id: bookingId });
           });

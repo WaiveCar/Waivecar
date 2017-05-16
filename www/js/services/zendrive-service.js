@@ -10,7 +10,7 @@ module.exports = angular.module('app.services').factory('ZendriveService', [
     function endDrive() {}
     function locationDenied() {}
 
-    function start(user) {
+    function start(user, bookingId, car) {
       try {
         var config = new Zendrive.ZendriveConfiguration($settings.zendrive.key, '' + user.id);
 
@@ -21,12 +21,14 @@ module.exports = angular.module('app.services').factory('ZendriveService', [
         driverAttributes.phoneNumber = user.phone.replace('+', '');
         config.driverAttributes = driverAttributes;
 
-        config.driveDetectionMode = Zendrive.ZendriveDriveDetectionMode.ZendriveDriveDetectionModeAutoON;
+        config.driveDetectionMode = Zendrive.ZendriveDriveDetectionMode.ZendriveDriveDetectionModeAutoOFF;
 
         var zendriveCallback = new Zendrive.ZendriveCallback(startDrive, endDrive, locationDenied);
 
         Zendrive.setup(config, zendriveCallback,
           function() {
+            Zendrive.startDrive(bookingId);
+            Zendrive.startSession(bookingId);
             console.log('Zendrive setup done');
           },
           function(err) {
@@ -34,12 +36,14 @@ module.exports = angular.module('app.services').factory('ZendriveService', [
           }
         );
       } catch(err) {
-        console.log('Failed to start zendrive: ', err, err.stack);
+        console.log('zd << Failed to start zendrive: ', err, err.stack);
       }
     }
 
-    function stop() {
+    function stop(bookingId) {
       try {
+        Zendrive.stopSession(bookingId);
+        Zendrive.stopDrive(bookingId);
         Zendrive.teardown();
         console.log('Zendrive teardown complete');
       } catch(err) {
