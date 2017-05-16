@@ -199,20 +199,13 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
 
       $modal('result', {
         icon: 'x-icon',
-        title: 'Hey, you need to make sure the car is good for the next 3 hours. Please check the signs carefully.',
+        title: 'Please make sure the parking is good for the next 3 hours.',
         actions: [{
           text: 'Ok',
           className: 'button-balanced',
           handler: function () {
             showOvernightWarningModal.remove();
             next();
-          }
-        },
-        {
-          text: 'Cancel',
-          className: 'button-balanced',
-          handler: function () {
-            showOvernightWarningModal.remove();
           }
         }]
       })
