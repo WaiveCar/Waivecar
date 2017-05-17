@@ -4,8 +4,11 @@ ts=`date +%Y%m%d-%H%M`
 path=/opt/waivecar-api
 previous=`readlink -f $path-last`
 
-set -x
+echo -n "Last was: "; cat git-sha-1
 git describe > git-sha-1
+echo -n "This is: "; cat git-sha-1
+
+set -x
 [ -e $previous ] && rm -r $previous
 unlink $path-last
 cp -r $path $path-$ts
