@@ -94,9 +94,7 @@ function DashboardController ($scope, $rootScope, $injector) {
       // So we make this decrease a small amount faster so that 2 hours will elapse in 1hr 58:45 ... 
       // This means that a minute is actually 59.375 seconds
       //
-      if (isFreeTime) {
-        left *= 118.75 / 120;
-      } else {
+      if (!isFreeTime) {
         //
         // If it's pay-time, then we go the other way, slightly speeding things up. This favors the
         // user again because the app will report that they've driven for say, 20 minutes, when the
@@ -106,9 +104,13 @@ function DashboardController ($scope, $rootScope, $injector) {
         //
         left *= 120 / 118.75;
       }
-      var prefix = isFreeTime ? 'Free: ' : 'Extra: ';
-      left = Math.abs(left);
-      this.timeLeft = prefix + moment.utc(left).format('H:mm:ss');
+
+      if(isFreeTime) {
+        this.timeLeft = 'Free until ' + endTime.format('h:m A');
+      } else {
+        left = Math.abs(left);
+        this.timeLeft = 'Extra: ' + moment.utc(left).format('H:mm:ss');
+      }
      
       // This is because frameworks are buggy in interesting ways.
       if(!$scope.$$phase) {
