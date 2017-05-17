@@ -1,15 +1,17 @@
 #!/bin/sh
 app=com.waivecar.app
 
-if [ -z "$deviceList" ]; then
-  deviceList=`adb devices | grep -v List | awk ' { printf "%s ", $1 } ' | sed s'/ *$//'`
+get_device() {
   if [ -z "$deviceList" ]; then
-    echo "Can't find any devices. Exiting";
-    exit -1
-  else
-    echo "Using $deviceList"
+    deviceList=`adb devices | grep -v List | awk ' { printf "%s ", $1 } ' | sed s'/ *$//'`
+    if [ -z "$deviceList" ]; then
+      echo "Can't find any devices. Exiting";
+      exit -1
+    else
+      echo "Using $deviceList"
+    fi
   fi
-fi
+}
 
 nvmcheck() {
   version=`node --version`
@@ -19,6 +21,7 @@ nvmcheck() {
 }
 
 wrap() {
+  get_device
   fn=$1
   path=$2
   for device in $deviceList; do
@@ -45,6 +48,13 @@ install_cb() {
 
 install() {
   wrap install_cb $1
+}
+
+clean_build() {
+  if [ -e platforms/android/build ]; then
+    echo 'removing build'
+    rm -rf platforms/android/build
+  fi
 }
 
 stop() {
