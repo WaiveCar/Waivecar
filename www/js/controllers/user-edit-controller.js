@@ -97,7 +97,7 @@ module.exports = angular.module('app.controllers').controller('UserEditControlle
         // If they've completed everything but they are either suspended or in pending or their license
         // is rejected. TODO: pending should become probation eventually
         $scope.hasFailed = ($scope.user.status === 'pending' || $scope.user.status === 'suspended' || $scope.license.current === 'reject');
-        $scope.canBook = (stepsDone && $scope.user.status === 'active' && $scope.license.current === 'clear');
+        $scope.canBook = (stepsDone && ($scope.user.status === 'active' || $scope.user.status === 'probation') && $scope.license.current === 'clear');
 
         // If the user has finished all the steps and we haven't run the license validation, we
         // do that now.
