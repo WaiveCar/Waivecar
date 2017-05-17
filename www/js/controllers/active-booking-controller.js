@@ -14,7 +14,7 @@ require('../services/modal-service');
 require('../services/message-service');
 require('../services/progress-service');
 
-function ActiveBookingController ($scope, $rootScope, $injector) {
+function ActiveBookingController ($scope, $injector) {
   var $ride = $injector.get('$ride');
   var $data = $injector.get('$data');
   var $distance = $injector.get('$distance');
@@ -304,16 +304,10 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     if (booking.status !== 'reserved') {
       return;
     }
-    var url;
-    var sprintfOptions = {
-      startingLat: $rootScope.currentLocation.latitude,
-      startingLon: $rootScope.currentLocation.longitude,
-      targetLat: $data.active.cars.latitude,
-      targetLon: $data.active.cars.longitude
-    };
+
 
     var isIOS = ionic.Platform.isIOS();
-    var geocoords = $rootScope.currentLocation.latitude + ',' + $rootScope.currentLocation.longitude;
+    var geocoords = this.car.latitude + ',' + this.car.longitude;
 
     if (isIOS) {
       window.open('maps://?q=' + geocoords, '_system');
