@@ -5,15 +5,15 @@ let bookingService   = require('../../lib/booking-service');
 let UserLog   = require('../../../log/lib/log-service');
 let Booking   = Bento.model('Booking');
 let Car       = Bento.model('Car');
-let User      = Bento.model('User');
+let UserService   = require('../../lib/user-service.js');
 let scheduler = Bento.provider('queue').scheduler;
 
 scheduler.process('booking-forfeiture', function *(job) {
   let booking = yield Booking.findById(job.data.bookingId);
-  let user = yield User.findById(job.data.userId);
+  let user = yield UserService.get(job.data.userId);
   let car = yield Car.findById(booking.carId);
 
-  yield bookingService.cancelBookingAndMakeCarAvailable(booking, car);
+  yield bookingService.end(job.data.bookingId, user, {force: true});
   yield booking.flag('forfeit');
   yield UserLog.addUserEvent(user, 'FORFEIT', booking.id);
 
