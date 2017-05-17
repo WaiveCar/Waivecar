@@ -1,4 +1,5 @@
 #!/bin/sh
+app=com.waivecar.app
 
 if [ -z "$deviceList" ]; then
   deviceList=`adb devices | grep -v List | awk ' { printf "%s ", $1 } ' | sed s'/ *$//'`
@@ -26,6 +27,9 @@ wrap() {
   for job in `jobs -p`; do
     wait $job
   done
+  for device in $deviceList; do
+    start
+  done
   echo "Done"
 }
 
@@ -35,6 +39,7 @@ install_cb() {
   echo "[$device] $path"
   date
   ls -l $path
+  stop
   adb -s $device install -rdg $path &
 }
 
@@ -42,11 +47,17 @@ install() {
   wrap install_cb $1
 }
 
+stop() {
+  adb -s $device shell am force-stop $app
+}
+start() {
+  adb -s $device shell monkey -p $app -c android.intent.category.LAUNCHER 1
+}
+
 uninstall_cb() {
   device=$1
-  app=com.waivecar.app
   echo "[$device] $app"
-  adb -s $device shell am force-stop $app
+  stop
   adb -s $device uninstall $app
 }
 

@@ -3,6 +3,11 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . $DIR/common.sh
 
 nvmcheck
-[ -e platforms/android/build/outputs/apk/android-debug.apk ] && rm platforms/android/build/outputs/apk/android-debug.apk
+
+#if [ -e platforms/android/build ]; then
+#  echo 'removing build'
+#  rm -rf platforms/android/build
+#fi
+
 ionic build android
 $DIR/android-replace.sh
