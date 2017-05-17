@@ -5,7 +5,7 @@ var angular = require('angular');
 var _ = require('lodash');
 
 function $distance ($rootScope) {
-  return function getDistance (to, from) {
+  function getDistance (to, from) {
     from = from || $rootScope.currentLocation;
     if (!(isValidLocation(to) && isValidLocation(from))) {
       return NaN;
@@ -18,6 +18,22 @@ function $distance ($rootScope) {
     var distance = _from.distanceTo(_to);
     return toMiles(distance);
   };
+
+  getDistance.fallback = function (to, from) {
+    var attempt = getDistance(to);
+    if (isNaN(attempt)) {
+
+      // TODO: THIS IS A TERRIBLE PLACE TO DO THIS
+      //   THIS IS A SIDE-EFFECT, A PRETTY BIG ONE
+      //   BUT IT'S ALSO THE EASIEST PLACE.
+      $rootScope.currentLocation = from;
+
+      attempt = getDistance(to, from);
+    }
+    return attempt;
+  };
+
+  return getDistance;
 }
 
 function toMiles (m) {
