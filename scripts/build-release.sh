@@ -2,7 +2,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 . $DIR/common.sh
 
-clean_build
+#clean_build
 
 set -e
 
@@ -11,6 +11,10 @@ export KEYSTORE="certs/waivecar.keystore"
 export KEYSTORE_ALIAS="waivecar"
 export APK_NAME="waivecar"
 export APK_LOCATION="platforms/android/build/outputs/apk/android-release-unsigned.apk"
+
+nvmcheck
+
+which cordova 
 
 cordova build android --release
 
@@ -25,11 +29,12 @@ jarsigner \
 echo "> verifying APK"
 jarsigner -verify -certs $APK_LOCATION
 
-echo "> creating release file in releases/$APK_NAME.apk"
+release_path=releases/$APK_NAME.apk
+
 mkdir -p releases
 zipalign -f 4 \
   platforms/android/build/outputs/apk/android-release-unsigned.apk \
-  releases/$APK_NAME.apk
+  $release_path
 
-# This is an OS-X ism
-# open releases
+echo 
+echo $release_path

@@ -5,10 +5,8 @@ get_device() {
   if [ -z "$deviceList" ]; then
     deviceList=`adb devices | grep -v List | awk ' { printf "%s ", $1 } ' | sed s'/ *$//'`
     if [ -z "$deviceList" ]; then
-      echo "Can't find any devices. Exiting";
-      exit -1
-    else
-      echo "Using $deviceList"
+      watch -n 0.2 "adb devices -l"
+      get_device
     fi
   fi
 }
@@ -16,7 +14,7 @@ get_device() {
 nvmcheck() {
   version=`node --version`
   if [ "$version" != "v4.2.6" ]; then
-    nvmsh on
+    . "$HOME/.nvm/nvm.sh"
   fi
 }
 
@@ -30,10 +28,6 @@ wrap() {
   for job in `jobs -p`; do
     wait $job
   done
-  for device in $deviceList; do
-    start
-  done
-  echo "Done"
 }
 
 install_cb() {
@@ -48,6 +42,7 @@ install_cb() {
 
 install() {
   wrap install_cb $1
+  wrap start
 }
 
 clean_build() {
@@ -58,19 +53,22 @@ clean_build() {
 }
 
 stop() {
+  device=$1
   adb -s $device shell am force-stop $app
 }
+
 start() {
+  device=$1
   adb -s $device shell monkey -p $app -c android.intent.category.LAUNCHER 1
 }
 
 uninstall_cb() {
   device=$1
   echo "[$device] $app"
-  stop
   adb -s $device uninstall $app
 }
 
 uninstall() {
+  wrap stop
   wrap uninstall_cb
 }
