@@ -33,14 +33,13 @@ wrap() {
 install_cb() {
   device=$1
   path=$2
-  echo "[$device] $path"
-  date
+  echo '                              '`date`
   ls -l $path
-  stop
   adb -s $device install -rdg $path &
 }
 
 install() {
+  wrap stop
   wrap install_cb $1
   wrap start
 }
