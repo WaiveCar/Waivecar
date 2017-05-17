@@ -10,7 +10,8 @@ module.exports = angular.module('app.controllers').controller('CompleteRideContr
   '$state',
   '$ride',
   '$data',
-  function ($scope, $stateParams, $state, $ride, $data) {
+  '$injector',
+  function ($scope, $stateParams, $state, $ride, $data, $injector) {
 
     $scope.service = $ride;
     var ctrl = this;
@@ -26,11 +27,14 @@ module.exports = angular.module('app.controllers').controller('CompleteRideContr
 
     ctrl.init();
 
+    var ZendriveService = $injector.get('ZendriveService');
+
     function init() {
       loadBooking($stateParams.id)
         .then(function(booking) {
           ctrl.booking = booking;
           $ride.setBooking(booking.id);
+          ZendriveService.stop(booking.id);
 
           var start = _.find(booking.details, { type: 'start' });
           var end = _.find(booking.details, { type: 'end' });
