@@ -245,6 +245,13 @@ module.exports = class UserDetails extends React.Component {
 
                   <div className="radio-inline">
                     <label>
+                      <input type="radio" name="status" value="pending" defaultChecked={ user.status === 'probation' } />
+                      Probation
+                    </label>
+                  </div>
+
+                  <div className="radio-inline">
+                    <label>
                       <input type="radio" name="status" value="suspended" defaultChecked={ user.status === 'suspended' } />
                       Suspended
                     </label>
