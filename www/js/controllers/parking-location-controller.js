@@ -178,7 +178,7 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
         payload = ctrl.street;
       }
 
-      ZendriveService.stop();
+      //ZendriveService.stop();
       payload.type = ctrl.type;
       $ride.setParkingDetails(payload);
       return $ride.processEndRide().then(function () {
