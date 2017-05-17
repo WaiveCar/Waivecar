@@ -22,7 +22,7 @@ jarsigner \
   $APK_LOCATION \
   $KEYSTORE_ALIAS
 
-echo "\n > verifying APK"
+echo "> verifying APK"
 jarsigner -verify -certs $APK_LOCATION
 
 echo "> creating release file in releases/$APK_NAME.apk"
