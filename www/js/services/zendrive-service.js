@@ -2,6 +2,7 @@
 /*eslint strict: 0 */
 
 var angular = require('angular');
+var ionic = require('ionic');
 require('ngCordova');
 module.exports = angular.module('app.services').factory('ZendriveService', [
   '$settings',
@@ -27,8 +28,10 @@ module.exports = angular.module('app.services').factory('ZendriveService', [
 
         Zendrive.setup(config, zendriveCallback,
           function() {
-            Zendrive.startDrive(bookingId);
-            Zendrive.startSession(bookingId);
+            if (!ionic.Platform.isIOS()) {
+              Zendrive.startDrive(bookingId);
+              Zendrive.startSession(bookingId);
+            }
             console.log('Zendrive setup done');
           },
           function(err) {
