@@ -14,7 +14,7 @@ require('../services/modal-service');
 require('../services/message-service');
 require('../services/progress-service');
 
-function ActiveBookingController ($scope, $injector) {
+function ActiveBookingController ($scope, $rootScope, $injector) {
   var $ride = $injector.get('$ride');
   var $data = $injector.get('$data');
   var $distance = $injector.get('$distance');
