@@ -33,6 +33,8 @@ install_cb() {
   device=$1
   path=$2
   echo "[$device] $path"
+  date
+  ls -l $path
   adb -s $device install -rdg $path &
 }
 
@@ -42,8 +44,9 @@ install() {
 
 uninstall_cb() {
   device=$1
-  app=`adb -s $device shell pm list packages |& grep waive | awk -F : ' { print $2 } ' | tr -t '\r' ''`
+  app=com.waivecar.app
   echo "[$device] $app"
+  adb -s $device shell am force-stop $app
   adb -s $device uninstall $app
 }
 
