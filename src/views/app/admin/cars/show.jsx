@@ -32,7 +32,9 @@ class CarsShowView extends React.Component {
 
   constructor(...args) {
     super(...args);
-    this.state = {};
+    this.state = {
+      carPath : null
+    };
     dom.setTitle('Car');
     this.service = new Service(this);
     relay.subscribe(this, 'cars');
@@ -46,6 +48,13 @@ class CarsShowView extends React.Component {
 
   componentDidMount() {
     this.service.setCar(this.id());
+
+    api.get(`/history/car/${ this.id() }`, (err, model) => {
+      var locationHistory = model.data.data;
+      this.setState({
+        carPath : locationHistory
+      });
+    });
   }
 
   componentWillUnmount() {
@@ -137,6 +146,7 @@ class CarsShowView extends React.Component {
                       type      : 'start'
                     }
                   ]}
+                  path      =  {this.state.carPath }
                 />
                 <div className="hidden-lg-up visible-md-down text-center">
                   <a className="btn btn-link btn-sm col-xs-6" style={{ float: "none" }} href={ "geo:" + geo + '?q=' + geo + '(' + car.license + ')' }>Open in Maps</a>
