@@ -379,7 +379,8 @@ module.exports = class LogService {
         return yield EventLog.find(queryParser(query, {
           where : {
             origin : queryParser.STRING,
-            type   : queryParser.STRING
+            type   : queryParser.STRING,
+            userId : queryParser.NUMBER
           }
         }));
       }
