@@ -268,7 +268,7 @@ module.exports = class ProfileView extends React.Component {
 
           <div className="profile-meta">
             <div className="profile-name">
-              { user.getName() }
+              { user.getName() } <span>{user.isWaivework ? 'Is Waivework' : ''}</span>
             </div>
           </div>
         </div>

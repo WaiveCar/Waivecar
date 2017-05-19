@@ -63,6 +63,11 @@ class UsersListView extends React.Component {
         <td className="hidden-sm-down">{ user.email }</td>
         <td className="hidden-sm-down">{ user.role.title }</td>
         <td>{ user.status }</td>
+        <td className="hidden-sm-down">
+          <Link to="#" onClick={ this.toggleIsWaivework(user.id) }>
+            <i className="material-icons" style={{ marginTop : 5 }}>{user.isWaivework ? 'check' : 'close'}</i>
+          </Link>
+        </td>
         <td>
           <Link to={ `/users/${ user.id }` }>
             <i className="material-icons" style={{ marginTop : 5 }}>pageview</i>
@@ -70,6 +75,15 @@ class UsersListView extends React.Component {
         </td>
       </tr>
     );
+  }
+
+  /**
+   * Toggle field in DB.
+   * @param  {int} user id
+   * @return {Void}
+   */
+  toggleIsWaivework(id) {
+    //console.log('user id is: ' + id);
   }
 
   /**
@@ -86,11 +100,12 @@ class UsersListView extends React.Component {
             <table className="box-table table-striped">
               <thead>
                 <tr ref="sort">
-                  <ThSort sort="id"         value="#"      ctx={ this } />
-                  <ThSort sort="firstName"  value="Name"   ctx={ this } />
-                  <ThSort sort="email"      value="Email"  ctx={ this } className="hidden-sm-down" />
-                  <ThSort sort="role.title" value="Role"   ctx={ this } className="hidden-sm-down" />
-                  <ThSort sort="status"     value="Status" ctx={ this } />
+                  <ThSort sort="id"          value="#"           ctx={ this } />
+                  <ThSort sort="firstName"   value="Name"        ctx={ this } />
+                  <ThSort sort="email"       value="Email"       ctx={ this } className="hidden-sm-down" />
+                  <ThSort sort="role.title"  value="Role"        ctx={ this } className="hidden-sm-down" />
+                  <ThSort sort="status"      value="Status"      ctx={ this } className="hidden-sm-down" />
+                  <ThSort sort="isWaivework" value="isWaivework" ctx={ this } />
                   <th></th>
                 </tr>
               </thead>
