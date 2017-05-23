@@ -1,5 +1,7 @@
 <?php
- $db = @mysqli_connect('localhost', 'root', '', 'waivecar_development');
+include('common.php');
+
+ $db = db();
  $res = mysqli_query($db, 'select * from booking_locations bl join bookings b on bl.booking_id = b.id join users u on b.user_id = u.id where bl.created_at > "2017-04-30" order by bl.id asc');
  $map = [];
 
