@@ -4,9 +4,6 @@ logs('16');
 
 $allCars = [];
 $weekly = [];
-$tracked = [ 'CREATE_BOOKING', 'COMPLETE_BOOKING', 'MAKE_CAR_UNAVAILABLE', 'MAKE_CAR_AVAILABLE' ];
-$one_week = 7 * 24 * 60 * 60;
-$current_week = false;
 $order = [];
 $late = 0;
 $early = 7;
@@ -21,9 +18,15 @@ function at_night($what) {
   return $what > $late && $what < $early;
 }
 
-function availability() {
+define('ONE_WEEK', 7 * 24 * 60 * 60);
+
+function availability($car = false, $start = false, $period = ONE_WEEK) {
+  global $late, $early;
+  $tracked = [ 'CREATE_BOOKING', 'COMPLETE_BOOKING', 'MAKE_CAR_UNAVAILABLE', 'MAKE_CAR_AVAILABLE' ];
   $evt = [];
-  $all = logs(false, '2017-03-20');
+  $all = logs($car, '2017-03-20');
+  $one_period = $period;
+  $current_period = false;
 
   foreach($all as $row) {
     $booking = $row['booking_id'];
@@ -33,24 +36,26 @@ function availability() {
     $date_str = $row['created_at'];
     $date = strtotime($date_str);
 
-    if(!$current_week) {
-      $current_week = $date;
+    if(!$current_period) {
+      $current_period = $date;
     }
 
-    if($date - $current_week > $one_week) {
-      $duration = ($date - $current_week) / 100;// * (24 - $early - $late) / 24;
+    // our totals are aggregate over one_period
+    if($date - $current_period > $one_period) {
+      $duration = ($date - $current_period) / 100;// * (24 - $early - $late) / 24;
 
       $avg = [0,0,0];
       $car_ttl = 0;
-      printf("\n%-17s ava use una | ava use una min\n", date("Y-m-d", $current_week));
+      printf("\n%-12s ava use una     | ava use una min\n", date("Y-m-d", $current_period));
       foreach($order as $car) {
+        // If the car dissappears we ignore it.
         if(!isset($weekly[$car])) {
           if(!isset($missing[$car])) {
             $missing[$car] = 0;
           }
           $missing[$car]++;
           if($missing[$car] < 3) {
-           // printf(" %s %3s %3s %3s | %3s %3s %3s\n", $car, '-', '-', '-', '-', '-', '-', '-');
+             printf(" %11s %3s %3s %3s   - | %3s %3s %3s\n", id2car($car), '-', '-', '-', '-', '-', '-', '-');
           }
           continue;
         }
@@ -71,29 +76,28 @@ function availability() {
           $avg[0] += $data['avail'] * $scale;
           $avg[1] += $data['use'] * $scale;
           $avg[2] += $data['unavail'] * $scale;
-          printf(" %s %3d %3d %3d %3d %3d | %3d %3d %3d %f\n", 
-            $car, $avail, $unavail, $use, 
-            ($data['ttl']), ($ttl_accounted),
+          printf(" %11s %3d %3d %3d %3d | %3d %3d %3d %f\n", 
+            id2car($car), $avail, $unavail, $use, 
+            $ttl_accounted,
             $_avail, $_use, $_unavail,
-            $car_duration / 60 / 60 / 24 * 100);
+            ($data['ttl'] / $car_duration));
           $car_ttl++;
         }
       }
       $weekly = [];
       $sum = 0;
-      $report = [date("Y-m-d", $current_week)];
+      $report = [date("Y-m-d", $current_period)];
       foreach($avg as $unit) {
         // so a smaller report for a smaller week should increase.
-        $col = round($unit / $car_ttl * ($one_week / ($date - $current_week)));
+        $col = round($unit / $car_ttl * ($one_period / ($date - $current_period)));
         $sum += $col;
         $report[] = $col;
       }
-      $this_week = $date - $current_week;
-      $delta = 1 - ($sum / $one_week);
-      echo "Avg:" . implode(',', $report);// . " $sum $one_week ($delta)\n";
+      $this_week = $date - $current_period;
+      $delta = 1 - ($sum / $one_period);
+      echo "Avg:" . implode(',', $report);// . " $sum $one_period ($delta)\n";
 
-
-      $current_week = $date;
+      $current_period = $date;
     }
 
     if(!isset($allCars[$car])) {
@@ -127,7 +131,7 @@ function availability() {
 
       if($allCars[$car]['last']) {
         // make sure that we don't dip into prior weeks.
-        $last = max($allCars[$car]['last'], $current_week);
+        $last = max($allCars[$car]['last'], $current_period);
 
         // understand the duration between our two events
         $delta = $date - $last;
@@ -187,4 +191,12 @@ function availability() {
   }
 }
 
+function details($car = false, $start = false) {
+  $rowList = logs($car, $start);
+  foreach($rowList as $row) {
+    printf("%20s %10s\n", $row['action'], $row['created_at']);
+  }
+}
+
+//details('60000018942E1401', '2017-04-24');
 availability();
