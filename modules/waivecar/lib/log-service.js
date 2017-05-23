@@ -29,7 +29,6 @@ class LogService {
     yield log.save();
 
     log = yield this.getLog(log.id);
-    log.relay('store', 'logs');
     return log;
   }
 
