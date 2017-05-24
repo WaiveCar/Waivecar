@@ -12,6 +12,10 @@ Bento.Register.Controller('LogController', function(controller) {
     return yield log.carHistory(this.query, car);
   };
 
+  controller.bookingHistory = function *(booking) {
+    return yield log.bookingHistory(this.query, booking);
+  };
+
   controller.index = function *() {
     return yield log.index(this.query, this.auth.user);
   };

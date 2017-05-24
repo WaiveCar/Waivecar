@@ -47,6 +47,31 @@ class LogService {
     return yield Log.find(query);
   }
 
+  static *bookingHistory(query, id) {
+    let params = {
+      attributes: ['id', 'latitude', 'longitude', 'created_at'],
+      where: { booking_id: id },
+      order: [ ['created_at', 'asc'] ]
+    };
+
+    console.log(params);
+    let locations = yield Locations.find(params);
+
+    if (!locations || !locations.length) {
+      return {res: true, data: {}};
+    }
+
+    let flat = locations.map( (row) => { return [row.latitude, row.longitude, row.createdAt] });
+
+    return {
+      res: true,
+      len: locations.length,
+      data: {
+        data: flat
+      }
+    };
+  }
+
   static *carHistory(query, id) {
     //
     // this is from https://github.com/clevertech/Waivecar/issues/590
