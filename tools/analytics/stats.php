@@ -46,7 +46,7 @@ function availability($car = false, $start = false, $period = ONE_WEEK) {
 
       $avg = [0,0,0];
       $car_ttl = 0;
-      printf("\n%-12s ava use una     | ava use una min\n", date("Y-m-d", $current_period));
+      printf("\n%-12s ava use una sum | ava use una min\n", date("Y-m-d", $current_period));
       foreach($order as $car) {
         // If the car dissappears we ignore it.
         if(!isset($weekly[$car])) {
@@ -155,16 +155,7 @@ function availability($car = false, $start = false, $period = ONE_WEEK) {
 
           $type = 'none';
           if($action == 'CREATE_BOOKING') {
-            if($delta > (180 * 60)) {
-              //$weekly[$car]['scrub'] += $delta;
-            } else {
-              // this means a timer expired ... we remove 15 minutes
-              /*
-              if($last_state == 'CREATE_BOOKING') {
-                $delta -= (60 * 15);
-                $delta = max($delta, 0);
-              }
-               */
+            if($delta <= (180 * 60)) {
               $weekly[$car]['avail'] += $delta;
               $weekly[$car]['_avail'] ++;
               $type = 'avail';
@@ -198,5 +189,5 @@ function details($car = false, $start = false) {
   }
 }
 
-//details('60000018942E1401', '2017-04-24');
+details('60000018942E1401', '2017-04-24');
 availability();
