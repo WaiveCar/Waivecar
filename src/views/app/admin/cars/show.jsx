@@ -264,14 +264,7 @@ class CarsShowView extends React.Component {
       if (car.booking) {
         snackbar.notify({
           type    : 'danger',
-          message : 'Car is in active rental. Make available anyway?',
-          action : {
-            title : 'CONTINUE',
-            click : () => {
-              snackbar.dismiss();
-              this.service.executeCommand(car, 'available');
-            }
-          }
+          message : 'Car is in active rental.'
         });
       } else {
         this.service.executeCommand(car, 'available');
