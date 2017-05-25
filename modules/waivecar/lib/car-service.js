@@ -75,14 +75,7 @@ module.exports = {
     let cars = yield Car.find(options);
     let bookings = yield Booking.find({ where : { status : 'started' } });
 
-    // cjm note: this is O(M*N) ... stupid ... we need to do better
-    bookings.forEach(function(booking) {
-      cars.forEach(function(car) {
-        if (car.id === booking.carId) {
-          car.bookingId = booking.id;
-        }
-      });
-    });
+    this.joinCarsWithBookings(cars, bookings);
 
     let available = 0;
     cars.forEach(function(car) {
@@ -94,6 +87,24 @@ module.exports = {
       fs.appendFileSync('/var/log/outgoing/carsrequest.txt', JSON.stringify([new Date(), available, _user.id]) + '\n');
     }
     return cars;
+  },
+
+  joinCarsWithBookings(cars, bookings) {
+
+    var cardIdToBookingIdMap = {};
+
+    bookings.forEach(function(booking) {
+      cardIdToBookingIdMap[booking.carId] = booking.id;
+    });
+
+    cars.forEach(function(car) {
+      var bookingId = cardIdToBookingIdMap[car.id];
+      if (bookingId) {
+        car.bookingId = bookingId;
+      }
+    });
+
+
   },
 
   /**
