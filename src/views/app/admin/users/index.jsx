@@ -64,9 +64,7 @@ class UsersListView extends React.Component {
         <td className="hidden-sm-down">{ user.role.title }</td>
         <td>{ user.status }</td>
         <td className="hidden-sm-down">
-          <Link to="#" onClick={ this.toggleIsWaivework(user.id) }>
-            <i className="material-icons" style={{ marginTop : 5 }}>{user.isWaivework ? 'check' : 'close'}</i>
-          </Link>
+          <button className="material-icons" onClick={ this.toggleIsWaivework.bind(this, user) }>{user.isWaivework ? 'check' : 'close'}</button>
         </td>
         <td>
           <Link to={ `/users/${ user.id }` }>
@@ -82,8 +80,17 @@ class UsersListView extends React.Component {
    * @param  {int} user id
    * @return {Void}
    */
-  toggleIsWaivework(id) {
-    //console.log('user id is: ' + id);
+  toggleIsWaivework(user) {
+    console.log('Sent request, user ID is: ' + user.id + ', isWaivework is: ' + user.isWaivework);
+    // TODO: Get response and give value of "isWaivework" to "result"
+    let result = !user.isWaivework;
+    let arr = this.state.users;
+    for (let i=0; i<arr.length; i++){
+      if (arr[i].id === user.id){
+        arr[i].isWaivework = result;
+      }
+    }
+    this.setState({users: arr});
   }
 
   /**
