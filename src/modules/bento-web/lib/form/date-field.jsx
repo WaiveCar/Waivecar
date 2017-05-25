@@ -85,10 +85,6 @@ module.exports = class DateField extends React.Component {
       return true;
     }
 
-    /*if (this.state.value !== nextState.value) {
-      return true;
-    }*/
-
     return false;
   }
 
@@ -96,7 +92,6 @@ module.exports = class DateField extends React.Component {
    * @method componentWillUpdate
    */
   componentWillUpdate(nextProps, nextState) {
-
     this.setState({
       className : this.className(nextProps.value)
     });
@@ -119,7 +114,6 @@ module.exports = class DateField extends React.Component {
     let resetState = false;
 
     if (value.length == 2 && value[1] != '/') {
-      value += '/';
       resetState = true;
     }
 
@@ -130,7 +124,6 @@ module.exports = class DateField extends React.Component {
       if (parts.length == 2) {
         var days = parts[1];
         if (days.length == 2 && days[1] != '/') {
-          value += '/';
           resetState = true;
         }
       }
@@ -185,7 +178,6 @@ module.exports = class DateField extends React.Component {
     }
 
     if (disabled) {
-
       return (
         <div className={ this.state.className }>
           <input type="text" disabled={ true } readOnly={ true } className="form-control" value={ value } />
