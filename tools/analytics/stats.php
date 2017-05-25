@@ -20,6 +20,45 @@ function at_night($what) {
 
 define('ONE_WEEK', 7 * 24 * 60 * 60);
 
+function booking() {
+  $start = '2017-03-02';
+  $end = '2017-05-04';
+  $bookingMap = [];
+
+  $rowList = all("select * from booking_details where created_at > '$start' and created_at < '$end'");
+
+  $rowIx = -1;
+  $rowTime = 0;
+  $row = $rowList[$rowIx];
+  $rowTime = strtotime($row['created_at']);
+  $lastId = 0;
+  for($ix = strtotime($start); $ix < strtotime($end); $ix += 3600) {
+    while($rowTime < $ix) {
+      $rowIx ++;
+      $row = $rowList[$rowIx];
+      if($row['type'] === 'start') {
+        $bookingMap[$row['booking_id']] = true;
+        //echo $row['booking_id'] . '(' . $row['created_at'] . ')';
+      }
+      if($row['type'] === 'end') {
+        unset($bookingMap[$row['booking_id']]);
+      }
+      $rowTime = strtotime($row['created_at']);// - (7 * 60 * 60);
+    }
+    $m = ($ix - (7 * 60 * 60));
+    if(date('H', $m) === '00') {
+      echo "--- " . date('l', $m) . ' ' .( $row['booking_id'] - $lastId ) . "\n";
+      $lastId = $row['booking_id'];
+    }
+    echo date('M d H', $m) . ' '; 
+    for($iy = 0; $iy < count($bookingMap); $iy++) {
+      echo '*';
+    }
+    echo "\n";
+    // count($bookingMap) . "\n";
+  }
+}
+
 function availability($car = false, $start = false, $period = ONE_WEEK) {
   global $late, $early;
   $tracked = [ 'CREATE_BOOKING', 'COMPLETE_BOOKING', 'MAKE_CAR_UNAVAILABLE', 'MAKE_CAR_AVAILABLE' ];
@@ -189,5 +228,6 @@ function details($car = false, $start = false) {
   }
 }
 
-details('60000018942E1401', '2017-04-24');
-availability();
+booking();
+//details('60000018942E1401', '2017-04-24');
+//availability();
