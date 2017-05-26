@@ -45,8 +45,10 @@ module.exports = angular.module('app.services').factory('ZendriveService', [
 
     function stop(bookingId) {
       try {
-        Zendrive.stopSession(bookingId);
-        Zendrive.stopDrive(bookingId);
+        if (!ionic.Platform.isIOS()) {
+          Zendrive.stopSession(bookingId);
+          Zendrive.stopDrive(bookingId);
+        }
         Zendrive.teardown();
         console.log('Zendrive teardown complete');
       } catch(err) {
