@@ -49,6 +49,12 @@
         font-size   : 1.65rem;
         font-weight : 300;
         margin-top  : 10px;
+        span:last-child {
+          display: block;
+          color: #25C155;
+          font-size: 1.0rem;
+          font-weight: bold;
+        }
       }
     }
   }

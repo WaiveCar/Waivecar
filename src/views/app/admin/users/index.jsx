@@ -63,6 +63,11 @@ class UsersListView extends React.Component {
         <td className="hidden-sm-down">{ user.email }</td>
         <td className="hidden-sm-down">{ user.role.title }</td>
         <td>{ user.status }</td>
+        {/*
+        <td className="hidden-sm-down">
+          <button className="material-icons" onClick={ this.toggleIsWaivework.bind(this, user) }>{user.isWaivework ? 'check' : 'close'}</button>
+        </td>
+        */}
         <td>
           <Link to={ `/users/${ user.id }` }>
             <i className="material-icons" style={{ marginTop : 5 }}>pageview</i>
@@ -70,6 +75,24 @@ class UsersListView extends React.Component {
         </td>
       </tr>
     );
+  }
+
+  /**
+   * Toggle field in DB.
+   * @param  {int} user id
+   * @return {Void}
+   */
+  toggleIsWaivework(user) {
+    console.log('Sent request, user ID is: ' + user.id + ', isWaivework is: ' + user.isWaivework);
+    // TODO: Get response and give value of "isWaivework" to "result"
+    let result = !user.isWaivework;
+    let arr = this.state.users;
+    for (let i=0; i<arr.length; i++){
+      if (arr[i].id === user.id){
+        arr[i].isWaivework = result;
+      }
+    }
+    this.setState({users: arr});
   }
 
   /**
@@ -86,11 +109,14 @@ class UsersListView extends React.Component {
             <table className="box-table table-striped">
               <thead>
                 <tr ref="sort">
-                  <ThSort sort="id"         value="#"      ctx={ this } />
-                  <ThSort sort="firstName"  value="Name"   ctx={ this } />
-                  <ThSort sort="email"      value="Email"  ctx={ this } className="hidden-sm-down" />
-                  <ThSort sort="role.title" value="Role"   ctx={ this } className="hidden-sm-down" />
-                  <ThSort sort="status"     value="Status" ctx={ this } />
+                  <ThSort sort="id"          value="#"           ctx={ this } />
+                  <ThSort sort="firstName"   value="Name"        ctx={ this } />
+                  <ThSort sort="email"       value="Email"       ctx={ this } className="hidden-sm-down" />
+                  <ThSort sort="role.title"  value="Role"        ctx={ this } className="hidden-sm-down" />
+                  <ThSort sort="status"      value="Status"      ctx={ this } className="hidden-sm-down" />
+               {/*
+                  <ThSort sort="isWaivework" value="isWaivework" ctx={ this } />
+               */}
                   <th></th>
                 </tr>
               </thead>

@@ -64,8 +64,35 @@ module.exports = class UserDetails extends React.Component {
     */
   }
 
+  isWaiveWork = () => {
+    return this.state.currentUser.isWaivework;
+  }
   isFleetManager = () => {
     return this.state.currentUser.role.name === 'admin';
+  }
+
+  waiveWorkToggle = () => { 
+    let user = this.state.currentUser;
+    let word = this.isWaiveWork() ? ['remove', 'from'] : ['add', 'to'];
+    if(!confirm(`Are you sure you want to ${word[0]} ${user.firstName} ${user.lastName} ${word[1]} WaiveWork?`)) {
+      return;
+    }
+    api.put(`/users/${ this.props.id }`, {isWaivework: !this.isWaiveWork()}, (err) => {
+      if (err) {
+        return snackbar.notify({
+          type    : 'danger',
+          message : err.message
+        });
+      }
+
+      user.isWaivework = !this.isWaiveWork();
+      this.setState({currentUser: user});
+
+      snackbar.notify({
+        type    : 'success',
+        message : `${user.firstName} ${user.lastName} ${word[0]} ${word[1]} WaiveWork successful`
+      });
+    });
   }
 
   fleetToggle = () => {
@@ -191,7 +218,7 @@ module.exports = class UserDetails extends React.Component {
           </div>
           <div className="profile-meta">
             <div className="profile-name">
-              { user.firstName } { user.lastName }
+              { user.firstName } { user.lastName } <span>{user.isWaivework ? 'Waivework' : ''}</span>
             </div>
           </div>
         </div>
@@ -233,7 +260,7 @@ module.exports = class UserDetails extends React.Component {
                 </FormInput>
               </div>
 
-              <div className="form-group row">
+              <div className="form-group">
                 <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Account Status</label>
                 <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
                   <div className="radio-inline">
@@ -268,6 +295,7 @@ module.exports = class UserDetails extends React.Component {
                     User #{ user.id }. Signup: { user.createdAt.split('T')[0] }
                     { suspensionReason ? <b><br/>Suspension Reason: {suspensionReason}</b> : '' } 
                   </div>
+                  <a onClick={ this.waiveWorkToggle.bind(this) } className="btn btn-xs btn-link">{ this.isWaiveWork() ? "Remove From" : "Add to" } WaiveWork</a>
                 </div>
                 <label className="col-sm-4 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Danger Zone <a onClick={ this.toggleDanger }>({ this.state.showDanger ? 'hide' : 'show' })</a></label>
                 <div className="col-sm-8 text-right" style={{ padding : '8px 25px' }}>
