@@ -63,9 +63,11 @@ class UsersListView extends React.Component {
         <td className="hidden-sm-down">{ user.email }</td>
         <td className="hidden-sm-down">{ user.role.title }</td>
         <td>{ user.status }</td>
+        {/*
         <td className="hidden-sm-down">
           <button className="material-icons" onClick={ this.toggleIsWaivework.bind(this, user) }>{user.isWaivework ? 'check' : 'close'}</button>
         </td>
+        */}
         <td>
           <Link to={ `/users/${ user.id }` }>
             <i className="material-icons" style={{ marginTop : 5 }}>pageview</i>
@@ -112,7 +114,9 @@ class UsersListView extends React.Component {
                   <ThSort sort="email"       value="Email"       ctx={ this } className="hidden-sm-down" />
                   <ThSort sort="role.title"  value="Role"        ctx={ this } className="hidden-sm-down" />
                   <ThSort sort="status"      value="Status"      ctx={ this } className="hidden-sm-down" />
+               {/*
                   <ThSort sort="isWaivework" value="isWaivework" ctx={ this } />
+               */}
                   <th></th>
                 </tr>
               </thead>

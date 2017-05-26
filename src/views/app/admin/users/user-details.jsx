@@ -64,8 +64,30 @@ module.exports = class UserDetails extends React.Component {
     */
   }
 
+  isWaiveWork = () => {
+    return this.state.currentUser.isWaivework;
+  }
   isFleetManager = () => {
     return this.state.currentUser.role.name === 'admin';
+  }
+
+  waiveWorkToggle = () => { 
+    api.put(`/users/${ this.props.id }`, {isWaivework: !this.isWaiveWork()}, (err) => {
+      if (err) {
+        return snackbar.notify({
+          type    : 'danger',
+          message : err.message
+        });
+      }
+
+      this.state.currentUser.isWaivework = !this.isWaiveWork();
+      this.setState({currentUser: this.state.currentUser});
+
+      snackbar.notify({
+        type    : 'success',
+        message : 'User details successfully updated'
+      });
+    });
   }
 
   fleetToggle = () => {
@@ -268,6 +290,7 @@ module.exports = class UserDetails extends React.Component {
                     User #{ user.id }. Signup: { user.createdAt.split('T')[0] }
                     { suspensionReason ? <b><br/>Suspension Reason: {suspensionReason}</b> : '' } 
                   </div>
+                  <a onClick={ this.waiveWorkToggle.bind(this) } className="btn btn-xs btn-link">{ this.isWaiveWork() ? "Remove From" : "Add to" } WaiveWork</a>
                 </div>
                 <label className="col-sm-4 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Danger Zone <a onClick={ this.toggleDanger }>({ this.state.showDanger ? 'hide' : 'show' })</a></label>
                 <div className="col-sm-8 text-right" style={{ padding : '8px 25px' }}>
