@@ -4,5 +4,4 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 nvmcheck
 
-ionic build ios
 ionic run ios
