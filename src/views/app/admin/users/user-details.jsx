@@ -72,6 +72,11 @@ module.exports = class UserDetails extends React.Component {
   }
 
   waiveWorkToggle = () => { 
+    let user = this.state.currentUser;
+    let word = this.isWaiveWork() ? ['remove', 'from'] : ['add', 'to'];
+    if(!confirm(`Are you sure you want to ${word[0]} ${user.firstName} ${user.lastName} ${word[1]} WaiveWork?`)) {
+      return;
+    }
     api.put(`/users/${ this.props.id }`, {isWaivework: !this.isWaiveWork()}, (err) => {
       if (err) {
         return snackbar.notify({
@@ -80,12 +85,12 @@ module.exports = class UserDetails extends React.Component {
         });
       }
 
-      this.state.currentUser.isWaivework = !this.isWaiveWork();
-      this.setState({currentUser: this.state.currentUser});
+      user.isWaivework = !this.isWaiveWork();
+      this.setState({currentUser: user});
 
       snackbar.notify({
         type    : 'success',
-        message : 'User details successfully updated'
+        message : `${user.firstName} ${user.lastName} ${word[0]} ${word[1]} WaiveWork successful`
       });
     });
   }
@@ -213,7 +218,7 @@ module.exports = class UserDetails extends React.Component {
           </div>
           <div className="profile-meta">
             <div className="profile-name">
-              { user.firstName } { user.lastName }
+              { user.firstName } { user.lastName } <span>{user.isWaivework ? 'Waivework' : ''}</span>
             </div>
           </div>
         </div>
@@ -255,7 +260,7 @@ module.exports = class UserDetails extends React.Component {
                 </FormInput>
               </div>
 
-              <div className="form-group row">
+              <div className="form-group">
                 <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Account Status</label>
                 <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
                   <div className="radio-inline">

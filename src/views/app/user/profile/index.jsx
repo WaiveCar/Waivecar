@@ -250,7 +250,7 @@ module.exports = class ProfileView extends React.Component {
   }
 
   /**
-   * Rdner the profile view.
+   * Render the profile view.
    * @return {Object}
    */
   render() {
@@ -268,7 +268,7 @@ module.exports = class ProfileView extends React.Component {
 
           <div className="profile-meta">
             <div className="profile-name">
-              { user.getName() }
+              { user.getName() } <span>{user.isWaivework ? 'Waivework' : ''}</span>
             </div>
           </div>
         </div>
