@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 app=com.waivecar.app
 
 get_device() {
@@ -12,9 +12,14 @@ get_device() {
 }
 
 nvmcheck() {
-  version=`node --version`
-  if [ "$version" != "v4.2.6" ]; then
+  which node 
+  if [ $? ]; then
     . "$HOME/.nvm/nvm.sh"
+  else
+    version=`node --version`
+    if [ "$version" != "v4.2.6" ]; then
+      . "$HOME/.nvm/nvm.sh"
+    fi
   fi
 }
 
