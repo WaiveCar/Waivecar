@@ -9,6 +9,7 @@ import { fields }            from 'bento-ui';
 import { Form, Button, Map, snackbar } from 'bento-web';
 import Service               from '../../lib/car-service';
 import NotesList from '../components/notes/list';
+import Logs from '../../components/logs';
 
 let formFields = {
   photo : [],
@@ -470,6 +471,8 @@ class CarsShowView extends React.Component {
         { this.renderCarIndicators(car) }
         { this.renderNotes(car) }
         { this.renderLastUpdate(car) }
+
+        <Logs carId={ car.id } />
       </div>
     );
   }
