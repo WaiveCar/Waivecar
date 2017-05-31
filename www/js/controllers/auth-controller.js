@@ -100,8 +100,9 @@ function AuthController ($injector) {
         }
 
       })
-      .catch(function () {
+      .catch(function (e) {
         $ionicLoading.hide();
+        console.log('fb error', e);
         // this is the useless facebook error
         //$message.error(err);
       });
