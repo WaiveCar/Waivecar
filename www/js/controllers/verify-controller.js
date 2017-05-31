@@ -16,7 +16,14 @@ function VerifyController ($injector, $stateParams) {
   };
   this.isWizard = !!$stateParams.step;
   this.fromBooking = !!$stateParams.fromBooking;
-  this.phone = $auth.me.phone.replace(/[+1]*(\d{3})(\d{3})(.*)/, '($1) $2-$3');
+
+  if($auth.me && $auth.me.phone && $auth.me.phone.replace) {
+    this.phone = $auth.me.phone.replace(/[+1]*(\d{3})(\d{3})(.*)/, '($1) $2-$3');
+  } else {
+    // if we don't have a phone number then that means we got here before
+    // we should have.
+    return $state.go('users-edit-general');
+  }
 
   this.submit = function verify (form) {
     if (form.$pristine) {
