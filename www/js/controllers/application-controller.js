@@ -86,7 +86,7 @@ function ApplicationController ($rootScope, $scope, $injector) {
       // in the flow of booking a car. Note that the code below will call this code.
       $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
         console.log(fromState.name + ' -> ' + toState.name, newState, currentBooking);
-        if(['users-edit'].indexOf(fromState.name) === -1) {
+        if($data.me && $data.me.tested && fromState.name && ['users-edit'].indexOf(fromState.name) === -1) {
           checkState(toState.name);
         }
       });
@@ -117,9 +117,12 @@ function ApplicationController ($rootScope, $scope, $injector) {
   }
 
   $rootScope.$on('authLogin', function () {
-    initLocation();
-    $ride.init();
-    myState();
+    if($data.me.tested) {
+      initLocation();
+      console.log($data, 'init aa');
+      $ride.init();
+      myState();
+    }
   });
 
   if ($auth.isAuthenticated()) {
