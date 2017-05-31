@@ -24,7 +24,7 @@
     .navbar-app {
       overflow : hidden;
       img {
-        height : 3.2rem;
+        height: 2.7rem;
         max-width: 100%;
       }
     }
@@ -98,6 +98,11 @@
     .bg-video {
       display: none;
     }
+  }
+}
+@media (min-width: 48em) and (max-width: 61.9em) {
+  #home nav .navbar-app img{
+    height: 1.5rem;
   }
 }
 

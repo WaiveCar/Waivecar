@@ -133,7 +133,7 @@ class HomeTemplate extends React.Component {
           </video>
         </div>
         <div className="container">
-          <Link to="/login" className="md-m-l hidden-md-up mobile-login">
+          <Link to="/login" className="md-m-l hidden-lg-up mobile-login">
             Login
           </Link>
           { this.renderNav(true) }
