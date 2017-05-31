@@ -12,7 +12,7 @@ get_device() {
 }
 
 nvmcheck() {
-  which node 
+  which node > /dev/null
   if [ $? ]; then
     . "$HOME/.nvm/nvm.sh"
   else
@@ -27,20 +27,27 @@ wrap() {
   get_device
   fn=$1
   path=$2
-  for device in $deviceList; do
-    $fn $device $path
-  done
   for job in `jobs -p`; do
     wait $job
   done
+  for device in $deviceList; do
+    echo "[$device "$( date +"%H:%m:%S" )$"] $fn $path"
+    $fn $device $path > /dev/null
+  done
 }
 
+build() {
+  cd $DIR/..
+  nvmcheck
+  ionic build android
+}
+ 
 install_cb() {
-  device=$1
-  path=$2
-  echo '                              '`date`
-  ls -l $path
-  adb -s $device install -rdg $path &
+  adb -s $1 install -rdg $2 &
+}
+
+clear_cb() {
+  adb -s $1 shell pm clear $app 
 }
 
 install() {
@@ -57,22 +64,14 @@ clean_build() {
 }
 
 stop() {
-  device=$1
-  adb -s $device shell am force-stop $app
+  adb -s $1 shell am force-stop $app &
 }
 
 start() {
-  device=$1
-  adb -s $device shell monkey -p $app -c android.intent.category.LAUNCHER 1
+  adb -s $1 shell monkey -p $app -c android.intent.category.LAUNCHER 1
 }
 
 uninstall_cb() {
   device=$1
-  echo "[$device] $app"
   adb -s $device uninstall $app
-}
-
-uninstall() {
-  wrap stop
-  wrap uninstall_cb
 }

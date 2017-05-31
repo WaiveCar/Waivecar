@@ -1,0 +1,49 @@
+#!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+help() {
+  echo clear remove build install install_release stop start
+  exit
+}
+
+cmd=$( basename $0 )
+suffix=${cmd#android}
+if [ "$suffix" ]; then
+  suffix=${cmd#android-}
+  shift
+  $DIR/android $suffix $*
+  exit 0
+fi
+
+. $DIR/common.sh
+[ "$#" -lt 1 ] && help
+stop=1
+start=1
+
+for i in $*; do
+  case $1 in
+    stop) start= ;;
+    start) stop= ;;
+    clear) clear=1 ;; 
+    remove) remove=1 ;;
+    build) 
+      build=1 
+      install=1
+    ;;
+    install) install=1 ;;
+    install_release) install_release=1 ;;
+    *)
+      echo "$1 not understood"
+      help
+      ;;
+  esac
+  shift
+done
+
+[ "$stop" ] && wrap stop
+[ "$clear" ] && wrap clear_cb
+[ "$build" ] && build
+[ "$remove" ] && wrap uninstall_cb
+[ "$install" ] && wrap install_cb $DIR/../platforms/android/build/outputs/apk/android-debug.apk
+[ "$install_release" ] && wrap install_cb $DIR/../releases/waivecar.apk
+[ "$start" ] && wrap start
