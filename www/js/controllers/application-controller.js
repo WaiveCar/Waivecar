@@ -20,7 +20,9 @@ function ApplicationController ($rootScope, $scope, $injector) {
   var $ride = $injector.get('$ride');
   var $socket = $injector.get('$socket');
   var $session = $injector.get('$session');
+  var $window = $injector.get('$window');
   var LocationService = $injector.get('LocationService');
+  var IntercomService = $injector.get('IntercomService');
 
   this.models = $data.instances;
   this.active = $data.active;
@@ -116,17 +118,27 @@ function ApplicationController ($rootScope, $scope, $injector) {
     }
   }
 
+  if ($window.cordova) {
+    $window.cordova.plugins.intercom.setLauncherVisibility('VISIBLE');
+  }
+
   $rootScope.$on('authLogin', function () {
     initLocation();
     $ride.init();
     myState();
+
+    IntercomService.registerIdentifiedUser($auth.me);
   });
 
   if ($auth.isAuthenticated()) {
     initLocation();
-    $auth.loadSession();
+    $auth.loadSession().then(function(me) {
+      IntercomService.registerIdentifiedUser(me);
+    });
     $ride.init();
     myState();
+  } else {
+    IntercomService.registerUnidentifiedUser();
   }
 
   function initLocation () {
@@ -136,6 +148,8 @@ function ApplicationController ($rootScope, $scope, $injector) {
         return $message.error(err);
       });
   };
+
+
 }
 
 module.exports =

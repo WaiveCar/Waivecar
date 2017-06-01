@@ -27,6 +27,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   var $progress = $injector.get('$progress');
   var $ionicLoading = $injector.get('$ionicLoading');
   var LocationService = $injector.get('LocationService');
+  var IntercomService = $injector.get('IntercomService');
 
   $scope.distance = 'Unknown';
   // $scope is used to store ref. to $ride and the active models in $data.
@@ -279,6 +280,9 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         return $data.fetch('bookings');
       })
       .then(function() {
+        IntercomService.emitBookingEvent($ride.state.booking);
+
+
         $ionicLoading.hide();
         console.log('removing modal');
         modal.remove();

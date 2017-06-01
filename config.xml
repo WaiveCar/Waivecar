@@ -18,6 +18,11 @@
     <preference name="xwalkVersion" value="14+" />
     <preference name="xwalkCommandLine" value="--disable-pull-to-refresh-effect" />
     <preference name="xwalkMode" value="embedded" />
+
+    <preference name="intercom-app-id" value="wmtsw9cn"/>
+    <preference name="intercom-ios-api-key" value="ios_sdk-37f93bf20f8e6d05e472820d7d758374373ee422"/>
+    <preference name="intercom-android-api-key" value="android_sdk-e4a15d71f7e91cb85d920387d1e998d2b61b40e7"/>
+
     <platform name="android">
         <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />
         <icon density="mdpi" src="resources/android/icon/drawable-mdpi-icon.png" />
@@ -94,4 +99,5 @@
     <plugin name="cordova-plugin-app-version" spec="https://github.com/whiteoctober/cordova-plugin-app-version.git" />
     <plugin name="cordova-plugin-request-location-accuracy" spec="~2.2.0" />
     <plugin name="cordova.plugins.diagnostic" spec="~3.3.2" />
+    <plugin name="cordova-plugin-intercom" spec="~3.2.2" />
 </widget>

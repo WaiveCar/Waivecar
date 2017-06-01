@@ -13,7 +13,9 @@ module.exports = angular.module('app.controllers').controller('BookingInProgress
   '$data',
   '$message',
   '$ionicLoading',
-  function ($rootScope, $scope, $state, $auth, $data, $message, $ionicLoading) {
+  'IntercomService',
+  function ($rootScope, $scope, $state, $auth, $data, $message, $ionicLoading, IntercomService) {
+
 
     $scope.end = function () {
       var booking = angular.copy($data.active.bookings);
@@ -24,6 +26,9 @@ module.exports = angular.module('app.controllers').controller('BookingInProgress
 
       booking.state = 'end';
       $data.update('bookings', booking, function (err) {
+
+        IntercomService.emitBookingEvent(booking);
+
         $ionicLoading.hide();
         if (err) {
           return $message.error(err.message || err);

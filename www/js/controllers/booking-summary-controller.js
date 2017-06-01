@@ -13,6 +13,7 @@ module.exports = angular.module('app.controllers').controller('BookingSummaryCon
   '$auth',
   '$data',
   '$message',
+  'IntercomService',
   function ($state, $auth, $data, $message) {
 
     var ctrl = this;
@@ -44,6 +45,13 @@ module.exports = angular.module('app.controllers').controller('BookingSummaryCon
             return payment.status === 'failed';
           }).length;
         }
+
+
+        IntercomService.emitBookingEvent(ctrl.booking, {
+          distance: ctrl.distance,
+          duration: ctrl.duration
+        });
+
       }).catch($message.error);
     };
 
