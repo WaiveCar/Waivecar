@@ -17,14 +17,11 @@ get_device() {
 
 nvmcheck() {
   which node > /dev/null
-  if [ $? ]; then
-    . "$HOME/.nvm/nvm.sh"
-  else
+  if [ ! $? ]; then
     version=`node --version`
-    if [ "$version" != "v4.2.6" ]; then
-      . "$HOME/.nvm/nvm.sh"
-    fi
+    [ "$version" == "v4.2.6" ] && return
   fi
+  . "$HOME/.nvm/nvm.sh"
 }
 
 wrap() {
@@ -36,7 +33,7 @@ wrap() {
   done
   for device in $deviceList; do
     echo "[$device "$( date +"%H:%m:%S" )$"] $fn $path"
-    $fn $device $path > /dev/null
+    $fn $device $path > /dev/null &
   done
 }
 
@@ -46,20 +43,6 @@ build() {
   ionic build android
 }
  
-install_cb() {
-  adb -s $1 install -rdg $2 &
-}
-
-clear_cb() {
-  adb -s $1 shell pm clear $app 
-}
-
-install() {
-  wrap stop
-  wrap install_cb $1
-  wrap start
-}
-
 unfuckup() {
   cd $DIR/..
   set -x
@@ -68,14 +51,8 @@ unfuckup() {
   set +x
 }
 
-stop() {
-  adb -s $1 shell am force-stop $app &
-}
-
-start() {
-  adb -s $1 shell monkey -p $app -c android.intent.category.LAUNCHER 1 &
-}
-
-uninstall_cb() {
-  adb -s $1 uninstall $app &
-}
+stop()       { adb -s $1 shell am force-stop $app; }
+install()    { adb -s $1 install -rdg $2; }
+clear()      { adb -s $1 shell pm clear $app; }
+start()      { adb -s $1 shell monkey -p $app -c android.intent.category.LAUNCHER 1; }
+uninstall()  { adb -s $1 uninstall $app; }

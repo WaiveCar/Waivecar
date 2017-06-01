@@ -49,9 +49,9 @@ done
 
 [ "$unfuckup" ] && unfuckup
 [ "$stop" ] && wrap stop
-[ "$clear" ] && wrap clear_cb
+[ "$clear" ] && wrap clear
 [ "$build" ] && build
-[ "$remove" ] && wrap uninstall_cb
-[ "$install" ] && wrap install_cb $DIR/../platforms/android/build/outputs/apk/android-debug.apk
-[ "$install_release" ] && wrap install_cb $DIR/../releases/waivecar.apk
+[ "$remove" ] && wrap uninstall
+[ "$install" ] && wrap install $DIR/../platforms/android/build/outputs/apk/android-debug.apk
+[ "$install_release" ] && wrap install $DIR/../releases/waivecar.apk
 [ "$start" ] && wrap start
