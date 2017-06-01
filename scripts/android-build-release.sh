@@ -13,6 +13,7 @@ export APK_NAME="waivecar"
 export APK_LOCATION="platforms/android/build/outputs/apk/android-release-unsigned.apk"
 
 nvmcheck
+node --version
 
 which cordova 
 

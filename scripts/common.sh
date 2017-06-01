@@ -60,11 +60,12 @@ install() {
   wrap start
 }
 
-clean_build() {
-  if [ -e platforms/android/build ]; then
-    echo 'removing build'
-    rm -rf platforms/android/build
-  fi
+unfuckup() {
+  cd $DIR/..
+  set -x
+  [ -e releases ] && rm -fr releases
+  [ -e platforms/android/build ] && rm -fr platforms/android/build
+  set +x
 }
 
 stop() {
