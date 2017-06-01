@@ -25,7 +25,10 @@ for i in $*; do
     stop) start= ;;
     start) stop= ;;
     clear) clear=1 ;; 
-    remove) remove=1 ;;
+    remove) 
+      remove=1 
+      start=
+    ;;
     build) 
       build=1 
       install=1

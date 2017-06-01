@@ -2,11 +2,15 @@
 app=com.waivecar.app
 
 get_device() {
-  if [ -z "$deviceList" ]; then
-    deviceList=`adb devices | grep -v List | awk ' { printf "%s ", $1 } ' | sed s'/ *$//'`
+  if [ "$DEVICE" ]; then
+    deviceList=$DEVICE
+  else
     if [ -z "$deviceList" ]; then
-      watch -n 0.2 "adb devices -l"
-      get_device
+      deviceList=`adb devices | grep -v List | awk ' { printf "%s ", $1 } ' | sed s'/ *$//'`
+      if [ -z "$deviceList" ]; then
+        watch -n 0.2 "adb devices -l"
+        get_device
+      fi
     fi
   fi
 }
@@ -68,10 +72,9 @@ stop() {
 }
 
 start() {
-  adb -s $1 shell monkey -p $app -c android.intent.category.LAUNCHER 1
+  adb -s $1 shell monkey -p $app -c android.intent.category.LAUNCHER 1 &
 }
 
 uninstall_cb() {
-  device=$1
-  adb -s $device uninstall $app
+  adb -s $1 uninstall $app &
 }
