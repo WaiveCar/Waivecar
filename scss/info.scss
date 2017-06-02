@@ -1,0 +1,35 @@
+.info {
+  ion-content > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+
+    padding: 0px 5%;
+
+    .contacts {
+      margin-top: 10%;
+    }
+    .grey {
+      color: #8F9A92;
+    }
+
+    h3, h4, h5 {
+      margin-top: 15px;
+    }
+  }
+}
+
+.return-zone, .driving-zone, .insurance {
+  ion-content > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+  }
+  img {
+    width: 100%;
+  }
+}

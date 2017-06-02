@@ -433,6 +433,7 @@ module.exports = [
         controller: 'MessageController as ctrl'
       });
 
+
     // ACCOUNT
     $stateProvider
       .state('credit-cards', {
@@ -451,10 +452,25 @@ module.exports = [
           auth: true
         }
       })
-      .state('vision', {
-        // 36-Our-vision@2x.png
-        url: '/vision',
-        templateUrl: '/templates/vision/index.html'
+      .state('info', {
+        url: '/info',
+        templateUrl: '/templates/info/index.html'
+      })
+      .state('info-return-zone', {
+        url: '/info-return-zone',
+        templateUrl: '/templates/info/return-zone.html'
+      })
+      .state('info-driving-zone', {
+        url: '/info-driving-zone',
+        templateUrl: '/templates/info/driving-zone.html'
+      })
+      .state('info-faq', {
+        url: '/info-faq',
+        templateUrl: '/templates/info/faq.html'
+      })
+      .state('info-insurance', {
+        url: '/info-insurance',
+        templateUrl: '/templates/info/insurance.html'
       })
       .state('ads', {
         url: '/ads',
@@ -464,7 +480,6 @@ module.exports = [
           redirectParams: null
         }
       });
-
     $urlRouterProvider.otherwise('/auth');
 
   }
