@@ -175,7 +175,7 @@ class RideList extends Component {
           <td>
             { ride.fee ? `$${ ride.fee }` : emptyChargeText }
           </td>
-          <td className='status'>
+          <td className='status hidden-md-down'>
             { helpers.changeCase.toCapital(status) }
           </td>
         </tr>
@@ -216,7 +216,7 @@ class RideList extends Component {
                       <th>Duration</th>
                       <th>Car</th>
                       <th>Fee</th>
-                      <th>Status</th>
+                      <th className='hidden-md-down'>Status</th>
                     </tr>
                   </thead>
                   { this.state.bookings.map(this.booking) }
