@@ -146,14 +146,14 @@ class CardList extends React.Component {
           }
           </tbody>
         </table>
-        <p>
-          <button onClick={ this.creditMod.bind(this, this.props.user, 0, cards) } className={'pull-right btn btn-link btn-sm ' + (this.props.user.credit >= 0 ? 'disabled' : '' ) }>Attempt to Clear Balance</button> 
+        <div style={{ textAlign: 'right' }}>
           { 
             auth.user().hasAccess('admin') ? 
-              <button onClick={ this.chargeUser.bind(this, this.props.user, cards) } className='pull-right btn btn-link btn-sm'>Charge User</button> 
+              <button onClick={ this.chargeUser.bind(this, this.props.user, cards) } className='btn btn-link btn-sm'>Charge User</button> 
               : '' 
           }
-        </p>
+          <button onClick={ this.creditMod.bind(this, this.props.user, 0, cards) } className={'btn btn-sm ' + (this.props.user.credit >= 0 ? 'btn-link disabled' : '' ) }>Attempt to Clear Balance</button> 
+        </div>
       </div>
     );
   }
