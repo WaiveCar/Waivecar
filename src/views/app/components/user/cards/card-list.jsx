@@ -33,10 +33,9 @@ class CardList extends React.Component {
   }
 
   creditMod(who, amount, cards, description) {
-    if(!description) {
+    if(!_.isString(description)) {
       description = (amount > 0) ? 'Payment for fees incurred during a waivecar ride.' : 'Miscellaneous Credit';
     }
-    let mthis = this;
 
     api.post('/shop/quickcharge', {
       userId      : who.id,
@@ -45,7 +44,7 @@ class CardList extends React.Component {
       description : description
     }, (err, res) => {
       if (err) {
-        mthis.setState({user: err.data});
+        this.setState({user: err.data});
         return snackbar.notify({
           type    : `danger`,
           message : err.message
@@ -55,7 +54,7 @@ class CardList extends React.Component {
         type    : `success`,
         message : 'Fees was successfully submitted, to manage payment check the stripe dashboard.'
       });
-      mthis.setState({user: res.user});
+      this.setState({user: res.user});
     });
   }
 
