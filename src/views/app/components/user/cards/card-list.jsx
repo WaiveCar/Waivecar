@@ -52,7 +52,7 @@ class CardList extends React.Component {
       }
       snackbar.notify({
         type    : `success`,
-        message : 'Fees was successfully submitted, to manage payment check the stripe dashboard.'
+        message : 'Amount was successfully charged.'
       });
       this.setState({user: res.user});
     });
