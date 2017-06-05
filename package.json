@@ -89,7 +89,27 @@
             ]
         }
     },
-    "dependencies": {},
+    "dependencies": {
+        "com.zendrive.phonegap.sdk": "https://github.com/zendrive/zendrive-sdk-phonegap-plugin",
+        "cordova-browser": "~4.1.0",
+        "cordova-ios": "^4.3.1",
+        "cordova-plugin-app-version": "https://github.com/whiteoctober/cordova-plugin-app-version.git",
+        "cordova-plugin-camera": "~2.3.1",
+        "cordova-plugin-console": "~1.0.2",
+        "cordova-plugin-device": "~1.1.1",
+        "cordova-plugin-facebook4": "https://github.com/jeduan/cordova-plugin-facebook4.git",
+        "cordova-plugin-file-transfer": "~1.4.0",
+        "cordova-plugin-geolocation": "~2.4.1",
+        "cordova-plugin-inappbrowser": "~1.5.0",
+        "cordova-plugin-intercom": "^3.2.2",
+        "cordova-plugin-ios-camera-permissions": "~1.0.3",
+        "cordova-plugin-request-location-accuracy": "~2.2.0",
+        "cordova-plugin-statusbar": "~2.2.1",
+        "cordova-plugin-whitelist": "~1.2.0",
+        "cordova-plugin-x-toast": "https://github.com/EddyVerbruggen/Toast-PhoneGap-Plugin.git",
+        "cordova.plugins.diagnostic": "~3.3.2",
+        "ionic-plugin-keyboard": "~2.2.1"
+    },
     "devDependencies": {
         "angular": "^1.4.6",
         "angular-animate": "^1.4.6",
@@ -147,7 +167,33 @@
     ],
     "cordova": {
         "plugins": {
+            "com.zendrive.phonegap.sdk": {},
+            "cordova-plugin-app-version": {},
+            "cordova-plugin-camera": {
+                "CAMERA_USAGE_DESCRIPTION": "Upload Photos",
+                "PHOTOLIBRARY_USAGE_DESCRIPTION": "Use Photos"
+            },
+            "cordova-plugin-console": {},
+            "cordova-plugin-device": {},
+            "cordova-plugin-facebook4": {
+                "APP_ID": "1022704731082512",
+                "APP_NAME": "WaiveCar"
+            },
+            "cordova-plugin-file-transfer": {},
+            "cordova-plugin-geolocation": {},
+            "cordova-plugin-inappbrowser": {},
+            "cordova-plugin-ios-camera-permissions": {},
+            "cordova-plugin-request-location-accuracy": {},
+            "cordova-plugin-statusbar": {},
+            "cordova-plugin-whitelist": {},
+            "cordova-plugin-x-toast": {},
+            "cordova.plugins.diagnostic": {},
+            "ionic-plugin-keyboard": {},
             "cordova-plugin-intercom": {}
-        }
+        },
+        "platforms": [
+            "browser",
+            "ios"
+        ]
     }
 }

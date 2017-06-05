@@ -9,6 +9,7 @@ require('../services/data-service.js');
 require('../services/message-service.js');
 require('../services/session-service.js');
 require('../services/ride-service.js');
+require('../services/intercom-service.js');
 
 function ApplicationController ($rootScope, $scope, $injector) {
   var $state = $injector.get('$state');
@@ -65,13 +66,13 @@ function ApplicationController ($rootScope, $scope, $injector) {
         $ride.init();
       } else if(newState === 'completed') {
         // if we have a booking id then we should go to the booking
-        // summary screen ONLY if our previous state was 'started', 
+        // summary screen ONLY if our previous state was 'started',
         // otherwise this means that we've canceled.
         if(((!lastState || lastState === 'started' || lastState === 'ended') && shown !== 'bookings-show')|| shown === 'end-ride') {
           $state.go('bookings-show', { id: currentBooking.id });
         } else if(lastState === 'created' && shown !== 'cars') {
           $state.go('cars');
-        } 
+        }
         currentBooking = false;
       } else if(newState === 'ended' && shown !== 'end-ride') {
         $state.go('end-ride', { id: currentBooking.id });

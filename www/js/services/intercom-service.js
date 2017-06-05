@@ -2,7 +2,7 @@
 var angular = require('angular');
 
 
-module.exports = angular.module('app.services').factory('IntercomService', [
+module.exports = angular.module('app.services').service('IntercomService', [
   '$window',
 
   function ($window) {
@@ -26,7 +26,7 @@ module.exports = angular.module('app.services').factory('IntercomService', [
     };
 
 
-    this.emitBookingEvent = function (bookin, extProps) {
+    this.emitBookingEvent = function (booking, extProps) {
       if (!intercom()){
         return;
       }
