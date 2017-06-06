@@ -84,6 +84,8 @@ module.exports = angular.module('app.services').service('IntercomService', [
     function createIntecomUserModel(user) {
       var iUser = {
         userId: user.id,
+        name: user.firstName + " " + user.lastName,
+        email: user.email,
         custom_attributes: {
           credit: user.credit,
           status: user.status
