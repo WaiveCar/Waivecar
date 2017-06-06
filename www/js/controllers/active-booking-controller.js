@@ -280,7 +280,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         return $data.fetch('bookings');
       })
       .then(function() {
-        IntercomService.emitBookingEvent($ride.state.booking);
+        IntercomService.emitBookingEvent($data.active.bookings);
 
 
         $ionicLoading.hide();

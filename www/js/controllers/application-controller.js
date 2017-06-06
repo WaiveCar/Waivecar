@@ -119,9 +119,7 @@ function ApplicationController ($rootScope, $scope, $injector) {
     }
   }
 
-  if ($window.cordova) {
-    $window.cordova.plugins.intercom.setLauncherVisibility('VISIBLE');
-  }
+  IntercomService.setLauncherVisibility();
 
   $rootScope.$on('authLogin', function () {
     initLocation();

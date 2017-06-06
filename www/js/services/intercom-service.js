@@ -13,7 +13,7 @@ module.exports = angular.module('app.services').service('IntercomService', [
       }
 
       var iUser = createIntecomUserModel(user);
-      intercom().registerIdentifiedUser();
+      intercom().registerIdentifiedUser(iUser);
     };
 
     this.registerUnidentifiedUser = function () {
@@ -42,14 +42,41 @@ module.exports = angular.module('app.services').service('IntercomService', [
     };
 
     this.emitCreditCardEvent = function (status) {
+
+      if (!intercom()){
+        return;
+      }
+
       intercom().logEvent("credit-card", {
         status: status
       });
     };
 
+    this.setLauncherVisibility = function() {
+
+      if (!intercom()){
+        return;
+      }
+
+      intercom().setLauncherVisibility('VISIBLE');
+    };
+
     function intercom() {
       if (!$window.cordova) {
-        return null;
+        return {
+          registerIdentifiedUser: function(user) {
+            console.log("registerIdentifiedUser", JSON.stringify(user));
+          },
+          registerUnidentifiedUser: function(){
+            console.log("registerUnidentifiedUser");
+          },
+          logEvent: function(name, event) {
+            console.log("logEvent", name, JSON.stringify(event));
+          },
+          setLauncherVisibility: function() {
+            console.log("setLauncherVisibility");
+          }
+        };
       }
       return $window.cordova.plugins.intercom;
     }
@@ -73,6 +100,7 @@ module.exports = angular.module('app.services').service('IntercomService', [
 
       //TODO: number of credit cards
 
+      return iUser;
     }
 
   }]);
