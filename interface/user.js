@@ -145,6 +145,11 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
     device : {
       type         : Sequelize.STRING,
       defaultValue : false
+    },
+
+    version : {
+      type         : Sequelize.INTEGER,
+      defaultValue : false
     }
   };
 

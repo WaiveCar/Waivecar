@@ -9,7 +9,7 @@ Bento.Register.Controller('BookingsController', function(controller) {
     return `<a href="${link}" class="button-balanced button button-block" style="margin-bottom:-57px;z-index: 1000;">Upgrade Now</a>`;
   }
 
-  function checkVersion(obj){
+  function *checkVersion(obj){
     var payload = obj.payload;
     var request = obj.request;
     let iPhone = request.header['user-agent'].match(/iPhone/);
@@ -19,6 +19,10 @@ Bento.Register.Controller('BookingsController', function(controller) {
     let minMarketLink = 797; 
     let version = parseInt(payload.version, 10) || 0;
     var copy;
+
+    if(version !== obj.auth.user.version) {
+       yield obj.auth.user.update({version: version});
+    }
 
     /*
     if(payload.source !== 'web' && version < minApp) {
@@ -44,7 +48,7 @@ Bento.Register.Controller('BookingsController', function(controller) {
    * @return {Object}
    */
   controller.create = function *() {
-    checkVersion(this);
+    yield checkVersion(this);
     return yield booking.create(this.payload, this.auth.user);
   };
 
