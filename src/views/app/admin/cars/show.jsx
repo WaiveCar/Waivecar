@@ -377,27 +377,27 @@ class CarsShowView extends React.Component {
       },
       {
         ref : 2,
+        checked  : car.inService,
+        label    : car.inService ? 'In Service' : 'In Repair',
+        onChange : this.toggleService.bind(this, car)
+      },
+      {
+        ref : 3,
         checked  : car.isImmobilized,
         label    : car.isImmobilized ? 'Deactivate Immobilizer' : 'Activate Immobilizer',
         onChange : this.service.executeCommand.bind(this, car, car.isImmobilized ? 'unlock-immobilizer' : 'lock-immobilizer')
       },
       {
-        ref : 3,
+        ref : 4,
         checked  : car.isAvailable,
         label    : car.isAvailable ? 'Make Unavailable' : 'Make Available',
         onChange : this.toggleAvailable.bind(this, car)
       },
       {
-        ref : 4,
+        ref : 5,
         checked  : !car.adminOnly,
         label    : car.adminOnly ? 'Show in App' : 'Hide in App',
         onChange : this.toggleHidden.bind(this, car)
-      },
-      {
-        ref : 5,
-        checked  : car.inService,
-        label    : car.inService ? 'In Service' : 'In Repair',
-        onChange : this.toggleService.bind(this, car)
       },
       {
         ref : 6,
