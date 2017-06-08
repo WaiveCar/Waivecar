@@ -52,7 +52,8 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
         })
         .then(function() {
 
-          IntercomService.emitCreditCardEvent("added");
+          IntercomService.emitCreditCardEvent("added", $scope.card.card.number);
+          IntercomService.updateCardsInfo($auth.me);
 
           $modal('result', {
             icon: 'check-icon',

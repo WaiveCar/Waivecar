@@ -52,6 +52,8 @@ module.exports = angular.module('app.controllers').controller('BookingSummaryCon
           duration: ctrl.duration
         });
 
+        IntercomService.updateBookingsInfo($auth.me);
+
       }).catch($message.error);
     };
 

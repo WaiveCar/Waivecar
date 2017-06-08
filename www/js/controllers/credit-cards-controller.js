@@ -16,10 +16,13 @@ module.exports = angular.module('app.controllers').controller('CreditCardsContro
     $scope.$ionicHistory = $ionicHistory;
 
     $scope.removeCreditCard = function (card, $index) {
+
+      var cardNumber = card.card.number;
       return card.$delete()
         .then(function () {
 
-          IntercomService.emitCreditCardEvent("removed");
+          IntercomService.emitCreditCardEvent("removed", cardNumber);
+          IntercomService.updateCardsInfo($auth.me);
 
           $scope.cards.splice($index, 1);
           $message.success('Card removed!');

@@ -4,16 +4,23 @@ var angular = require('angular');
 
 module.exports = angular.module('app.services').service('IntercomService', [
   '$window',
+  '$data',
 
-  function ($window) {
+  function ($window, $data) {
 
     this.registerIdentifiedUser = function(user) {
       if (!intercom()){
         return;
       }
 
+      intercom().registerIdentifiedUser({userId: user.id});
+
       var iUser = createIntecomUserModel(user);
-      intercom().registerIdentifiedUser(iUser);
+      intercom().updateUser(iUser);
+
+      this.updateCardsInfo(user);
+      this.updateLicensesInfo(user);
+      this.updateBookingsInfo(user);
     };
 
     this.registerUnidentifiedUser = function () {
@@ -38,17 +45,20 @@ module.exports = angular.module('app.services').service('IntercomService', [
       };
 
 
-      intercom().logEvent("booking", Object.assign(event, extProps));
+      intercom().logEvent('booking', Object.assign(event, extProps));
     };
 
-    this.emitCreditCardEvent = function (status) {
+    this.emitCreditCardEvent = function (status, cardNumber) {
+
+      var partialNumber = cardNumber.substring(0, 4) + "********" + cardNumber.substring(12, 16);
 
       if (!intercom()){
         return;
       }
 
-      intercom().logEvent("credit-card", {
-        status: status
+      intercom().logEvent('credit-card', {
+        status: status,
+        card: partialNumber
       });
     };
 
@@ -65,16 +75,19 @@ module.exports = angular.module('app.services').service('IntercomService', [
       if (!$window.cordova) {
         return {
           registerIdentifiedUser: function(user) {
-            console.log("registerIdentifiedUser", JSON.stringify(user));
+            console.log('registerIdentifiedUser', JSON.stringify(user));
+          },
+          updateUser: function(user) {
+            console.log('updateUser', JSON.stringify(user));
           },
           registerUnidentifiedUser: function(){
-            console.log("registerUnidentifiedUser");
+            console.log('registerUnidentifiedUser');
           },
           logEvent: function(name, event) {
-            console.log("logEvent", name, JSON.stringify(event));
+            console.log('logEvent', name, JSON.stringify(event));
           },
           setLauncherVisibility: function() {
-            console.log("setLauncherVisibility");
+            console.log('setLauncherVisibility');
           }
         };
       }
@@ -83,7 +96,6 @@ module.exports = angular.module('app.services').service('IntercomService', [
 
     function createIntecomUserModel(user) {
       var iUser = {
-        userId: user.id,
         name: user.firstName + " " + user.lastName,
         email: user.email,
         custom_attributes: {
@@ -100,9 +112,49 @@ module.exports = angular.module('app.services').service('IntercomService', [
         iUser.phone = user.phone;
       }
 
-      //TODO: number of credit cards
-
       return iUser;
     }
+
+    this.updateCardsInfo = function(user) {
+      $data.resources.Card.query({ userId: user.id }).$promise
+        .then(function (cards) {
+
+          intercom().updateUser({
+            custom_attributes: {
+              numberOfCreditCards: cards.length
+            }
+          });
+        });
+    };
+
+    this.updateLicensesInfo = function(user) {
+      $data.resources.licenses.query({ userId: user.id }).$promise
+        .then(function (licenses) {
+          var licenseCheck = "N/A";
+          if (licenses.length > 0 ) {
+            licenseCheck = licenses[0].status;
+          }
+
+          intercom().updateUser({
+            custom_attributes: {
+              licenseCheck: licenseCheck
+            }
+          });
+
+        });
+    };
+
+    this.updateBookingsInfo = function(user) {
+      $data.resources.bookings.completedCount({ userId: user.id }).$promise
+        .then(function (bookings) {
+          intercom().updateUser({
+            custom_attributes: {
+              completedBookings: bookings.bookingsCount
+            }
+          });
+
+        });
+    };
+
 
   }]);
