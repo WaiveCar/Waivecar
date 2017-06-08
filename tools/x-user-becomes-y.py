@@ -8,7 +8,7 @@ if len(sys.argv) != 3:
 (cmd, from_user, to_user) = sys.argv
 
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
-auth = r.keys('*auth:user:%s*app' % from_user)
+auth = r.keys('*auth:user:%s*default' % from_user)
 
 if len(auth) == 0:
     print "can't find %s. bye" % from_user
@@ -20,11 +20,12 @@ auth = auth[0]
 tokenList = r.lrange(auth, 0, -1)
 
 # this is our fake user packet which we inject
-to_user_packet = '{"user":%s,"group":1,"source":"%s:default","persist":true}' % (to_user, to_user)
-to_user_key = 'waive-car:auth:user:%s:app' % to_user
+to_user_packet = '{"user":%s,"group":1,"source":"%s:default","persist":false}' % (to_user, to_user)
+to_user_key = 'waive-car:auth:user:%s:default' % to_user
 
 # The system is a two-way reference so we need to first fake out the packet.
 for token in tokenList:
+    #r.delete('waive-car:auth:token:%s' % token)
     r.set('waive-car:auth:token:%s' % token, to_user_packet)
 
     # Then we need to add our token to the tokenlist of the new user
