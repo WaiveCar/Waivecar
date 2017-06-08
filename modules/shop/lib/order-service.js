@@ -53,6 +53,10 @@ module.exports = class OrderService extends Service {
     data.currency = data.currency || 'usd';
     this.verifyCurrency(data.currency);
 
+    if(data.amount === 0) {
+      data.description = "Clearing outstanding balance";
+    }
+
     let order = new Order({
       createdBy   : _user.id,
       userId      : data.userId,
@@ -83,12 +87,12 @@ module.exports = class OrderService extends Service {
       if(data.amount > 0) {
         yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.name() } $${ data.amount / 100 } for ${ data.description } | ${ apiConfig.uri }/users/${ user.id }`, [ 'slack' ], { channel : '#rental-alerts' });
       } else if(data.amount < 0) {
-        yield notify.notifyAdmins(`:money_with_wings: ${ _user.name() } *credited* ${ user.name() } $${ -data.amount / 100 } for ${ data.description } | ${ apiConfig.uri }/users/${ user.id }`, [ 'slack' ], { channel : '#user-alerts' });
+        yield notify.notifyAdmins(`:money_with_wings: ${ _user.name() } *credited* ${ user.name() } $${ -data.amount / 100 } for ${ data.description } | ${ apiConfig.uri }/users/${ user.id }`, [ 'slack' ], { channel : '#rental-alerts' });
       } else {
         charge.amount = charge.amount || 0;
-        charge = `$${ -charge.amount / 100 }`;
-        let phrase = ( _user.name() === user.name()) ? 'their balance'  : `the balance of ${ user.name() }`;
-        yield notify.notifyAdmins(`:scales: ${ _user.name() } ${ phrase } ${ charge } | ${ apiConfig.uri }/users/${ user.id }`, [ 'slack' ], { channel : '#user-alerts' });
+        charge = `($${ charge.amount / 100 })`;
+        let phrase = ( _user.name() === user.name()) ? 'cleared their balance'  : `the balance of ${ user.name() }`;
+        yield notify.notifyAdmins(`:scales: ${ _user.name() } ${ phrase } ${ charge } | ${ apiConfig.uri }/users/${ user.id }`, [ 'slack' ], { channel : '#rental-alerts' });
       }
 
     } catch (err) {
