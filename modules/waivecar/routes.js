@@ -38,7 +38,7 @@ Route.get('/reports', [ 'isAuthenticated', 'ReportsController@index' ]);
 
 // ### Cars
 
-Route.get('/cars',              [ 'isAuthenticated', 'CarsController@index' ]);
+Route.get('/cars',              [ 'CarsController@index' ]);
 Route.get('/carsWithBookings',  [ 'isAuthenticated', 'isAdmin', 'CarsController@carsWithBookings' ]);
 Route.get('/cars/:id',          [ 'isAuthenticated', 'CarsController@show' ]);
 Route.get('/cars/:id/notes',    [ 'isAuthenticated', 'NotesController@getCarNotes' ]);

@@ -78,12 +78,17 @@ module.exports = class OrderService extends Service {
       // The order here matters.  If a charge fails then only the failed charge will appear
       // as a transgression, not the fee itself.  So we need to log this prior to the charge
       yield UserLog.addUserEvent(user, 'FEE', order.id, data.description);
-      yield this.charge(order, user);
+      let charge = yield this.charge(order, user);
 
       if(data.amount > 0) {
         yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.name() } $${ data.amount / 100 } for ${ data.description } | ${ apiConfig.uri }/users/${ user.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+      } else if(data.amount < 0) {
+        yield notify.notifyAdmins(`:money_with_wings: ${ _user.name() } *credited* ${ user.name() } $${ -data.amount / 100 } for ${ data.description } | ${ apiConfig.uri }/users/${ user.id }`, [ 'slack' ], { channel : '#user-alerts' });
       } else {
-        yield notify.notifyAdmins(`:money_with_wings: ${ _user.name() } *credited* ${ user.name() } $${ -data.amount / 100 } for ${ data.description } | ${ apiConfig.uri }/users/${ user.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+        charge.amount = charge.amount || 0;
+        charge = `$${ -charge.amount / 100 }`;
+        let phrase = ( _user.name() === user.name()) ? 'their balance'  : `the balance of ${ user.name() }`;
+        yield notify.notifyAdmins(`:scales: ${ _user.name() } ${ phrase } ${ charge } | ${ apiConfig.uri }/users/${ user.id }`, [ 'slack' ], { channel : '#user-alerts' });
       }
 
     } catch (err) {
@@ -448,6 +453,7 @@ module.exports = class OrderService extends Service {
     if (order.amount >= 0 && credit < order.amount) {
       try {
         let service = this.getService(config.service, 'charges');
+
         charge  = yield service.create({
           source      : order.source,
           description : order.description,
@@ -467,6 +473,9 @@ module.exports = class OrderService extends Service {
 
           capture     : capture
         }, user);
+
+        charge.amount = order.amount - credit;
+
         yield order.update({
           service  : config.service,
           chargeId : charge.id,
