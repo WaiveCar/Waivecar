@@ -91,8 +91,8 @@ module.exports = class OrderService extends Service {
       } else {
         charge.amount = charge.amount || 0;
         charge = `($${ charge.amount / 100 })`;
-        let phrase = ( _user.name() === user.name()) ? 'cleared their balance'  : `the balance of ${ user.name() }`;
-        yield notify.notifyAdmins(`:scales: ${ _user.name() } ${ phrase } ${ charge } | ${ apiConfig.uri }/users/${ user.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+        let phrase = ( _user.name() === user.name()) ? `cleared their outstanding ${charge} balance`  : `the outstanding ${charge} balance of ${ user.name() }`;
+        yield notify.notifyAdmins(`:scales: ${ _user.name() } ${ phrase } | ${ apiConfig.uri }/users/${ user.id }`, [ 'slack' ], { channel : '#rental-alerts' });
       }
 
     } catch (err) {
