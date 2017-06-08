@@ -33,7 +33,13 @@ wrap() {
   done
   for device in $deviceList; do
     echo "[$device "$( date +"%H:%m:%S" )$"] $fn $path"
-    $fn $device $path > /dev/null &
+    {
+      isFailed=$($fn $device $path | grep -i failure)
+      if [ -n "$isFailed" ]; then
+        uninstall $device
+        $fn $device $path
+      fi
+    } &
   done
 }
 
