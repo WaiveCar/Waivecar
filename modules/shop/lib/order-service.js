@@ -90,7 +90,7 @@ module.exports = class OrderService extends Service {
         yield notify.notifyAdmins(`:money_with_wings: ${ _user.name() } *credited* ${ user.name() } $${ -data.amount / 100 } for ${ data.description } | ${ apiConfig.uri }/users/${ user.id }`, [ 'slack' ], { channel : '#rental-alerts' });
       } else {
         charge.amount = charge.amount || 0;
-        charge = `($${ charge.amount / 100 })`;
+        charge = `$${ charge.amount / 100 }`;
         let phrase = ( _user.name() === user.name()) ? `cleared their outstanding ${charge} balance`  : `the outstanding ${charge} balance of ${ user.name() }`;
         yield notify.notifyAdmins(`:scales: ${ _user.name() } ${ phrase } | ${ apiConfig.uri }/users/${ user.id }`, [ 'slack' ], { channel : '#rental-alerts' });
       }
