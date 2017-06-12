@@ -13,6 +13,16 @@ scheduler.process('booking-forfeiture', function *(job) {
   let user = yield UserService.get(job.data.userId);
   let car = yield Car.findById(booking.carId);
 
+  // see https://github.com/WaiveCar/Waivecar/issues/816
+  // Make sure server received updates from cars during the forfeit window
+  let timeSinceCarUpdated = moment().diff(car.updatedAt, 'minutes');
+
+  if (timeSinceCarUpdated > 15) {
+    let adminMessage = `${ car.license } NOT forfeited due to API errors.`;
+    yield notify.notifyAdmins(adminMessage, [ 'slack' ], { channel : '#rental-alerts' });
+    return true;
+  }
+
   yield bookingService.end(job.data.bookingId, user, {force: true});
   yield booking.flag('forfeit');
   yield UserLog.addUserEvent(user, 'FORFEIT', booking.id);
