@@ -7,6 +7,10 @@ var _ = require('lodash');
 // var ionic = require('ionic');
 var sprintf = require('sprintf-js').sprintf;
 
+// 0.019 essentially maps to "100 imperial feet" - about
+// the length of a suburban home + property.
+var UNLOCK_RADIUS = 0.019 * 2;
+
 require('../services/ride-service');
 require('../services/data-service');
 require('../services/distance-service');
@@ -106,7 +110,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     if (_.isFinite(distance)) {
       // convert miles to yards
       $scope.distance = distance;
-      if ($scope.distance <= 0.019) {
+      if ($scope.distance <= UNLOCK_RADIUS) {
         console.log('Showing unlock');
         if (stopWatching) {
           stopWatching();
