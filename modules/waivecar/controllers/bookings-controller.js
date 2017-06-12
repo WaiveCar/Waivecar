@@ -12,10 +12,12 @@ Bento.Register.Controller('BookingsController', function(controller) {
   function *checkVersion(obj){
     var payload = obj.payload;
     var request = obj.request;
-    let iPhone = request.header['user-agent'].match(/iPhone/);
+    let osVersion = 0;
+    let header = request.header['user-agent'];
+    let iPhone = header.match(/iPhone/);
 
-    // app versions between android and iphone are dramatically different for some reason.
-    let minApp = iPhone ? 77 : 797; 
+    // App versions between android and iphone are dramatically different for some reason.
+    let minApp = iPhone ? 91 : 868; 
     let minMarketLink = 797; 
     let version = parseInt(payload.version, 10) || 0;
     var copy;
@@ -24,8 +26,33 @@ Bento.Register.Controller('BookingsController', function(controller) {
        yield obj.auth.user.update({version: version});
     }
 
-    /*
     if(payload.source !== 'web' && version < minApp) {
+      if(iPhone) {
+        osVersion = header.match(/OS (\d+)/);
+        if(osVersion) {
+          osVersion = parseInt(osVersion[1], 10);
+          // if older than iOS 10 then don't even try
+          // to upgrade
+          if(osVersion < 10) {
+            return true;
+          }
+        } 
+      } else {
+        osVersion = header.match(/Android (\d+)/);
+        if(osVersion) {
+          osVersion = parseInt(osVersion[1], 10);
+          // if older than Android 5 we don't ask
+          if(osVersion < 5) {
+            return true;
+          }
+        }
+      }
+      // If we can't determine the version of the OS
+      // that the user is using then we bail and don't
+      // force an upgrade to an unknown version.
+      if(!osVersion) {
+        return true;
+      }
 
       if(iPhone) {
         copy = buttonhack("itms-apps://itunes.apple.com/app/id1051144802");
@@ -39,8 +66,8 @@ Bento.Register.Controller('BookingsController', function(controller) {
         code    : `BOOKING_OLD_VERSION`,
         message : `You'll need to upgrade the WaiveCar App before booking. ${ copy }`
       }, 400);
+
     }
-    */
   }
 
   /**
