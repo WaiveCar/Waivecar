@@ -252,6 +252,7 @@ module.exports = class BookingService extends Service {
     }
 
     dbQuery.limit = +query.limit || 20;
+    dbQuery.offset = +query.offset || 0;
 
     if (query.order) {
       dbQuery.order = [ query.order.split(',') ];
