@@ -6,6 +6,8 @@ import md5            from 'md5';
 import FormInput      from '../components/form-input';
 import CardList       from '../../components/user/cards/card-list';
 import RideList       from '../../components/user/rides/ride-list';
+import ChargeList     from '../../components/user/charges/charge-list';
+
 
 module.exports = class UserDetails extends React.Component {
 
@@ -326,6 +328,7 @@ module.exports = class UserDetails extends React.Component {
         <CardList user={ user } currentUser={ false }></CardList>
         <div className='rides'>
           <RideList user={ user } currentUser={ false } full={ false }></RideList>
+          <ChargeList user={ user } currentUser={ false } full={ false }></ChargeList>
         </div>
       </div>
     );

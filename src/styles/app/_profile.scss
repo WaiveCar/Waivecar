@@ -167,5 +167,16 @@
     top: 7px;
     left: 45px;
   }
+  .status {
+    color: grey;
+    font-size: 1rem;
+    font-weight: 400;
+    &.credit {
+      color: green;
+    }
+    &.failed {
+      color: #951D34;
+    }
+  }
 
 }

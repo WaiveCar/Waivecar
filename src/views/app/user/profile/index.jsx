@@ -6,6 +6,7 @@ import { resources, fields }     from 'bento-ui';
 import Account                   from '../../lib/account-service';
 import CardList                  from '../../components/user/cards/card-list';
 import RideList                  from '../../components/user/rides/ride-list';
+import ChargeList                from '../../components/user/charges/charge-list';
 import facebook                  from '../../../auth/facebook';
 
 // ### Form Fields
@@ -176,10 +177,6 @@ module.exports = class ProfileView extends React.Component {
     );
   }
 
-  /**
-   * Render user payment cards
-   * @return {Object}
-   */
   renderCards() {
     let user = auth.user();
     return (
@@ -187,10 +184,15 @@ module.exports = class ProfileView extends React.Component {
     );
   }
 
-  /**
-   * Render user past rides
-   * @return {Object}
-   */
+  renderCharges() {
+    let user = auth.user();
+    return (
+      <div className='rides'>
+        <ChargeList user={ user } full={ false }></ChargeList>
+      </div>
+    );
+  }
+
   renderRides() {
     let user = auth.user();
     return (
@@ -277,6 +279,7 @@ module.exports = class ProfileView extends React.Component {
         { this.renderPersonalDetails() }
         { this.renderCards() }
         { this.renderRides() }
+        { this.renderCharges() }
         { this.renderAccountStatus() }
       </div>
     );
