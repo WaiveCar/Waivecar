@@ -385,33 +385,37 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
-    // ### Start Booking
-    // 1. Delete the booking cancelation timer
-    // 2. Log the initial details of the booking and car details.
-    // 3. Start the free ride remind timer.
-    // 4. Update the booking status to 'started'.
-    // 5. Unlock the car and immobilizer.
+    if (redis.shouldProcess('booking-start', booking.id)) {
+      // ### Start Booking
+      // 1. Delete the booking cancelation timer
+      // 2. Log the initial details of the booking and car details.
+      // 3. Start the free ride remind timer.
+      // 4. Update the booking status to 'started'.
+      // 5. Unlock the car and immobilizer.
 
-    yield booking.delCancelTimer();
-    yield this.logDetails('start', booking, car);
+      yield booking.delCancelTimer();
+      yield this.logDetails('start', booking, car);
 
-    yield booking.setReminders(user, config.booking.timers);
-    yield booking.setForfeitureTimers(user, config.booking.timers);
-    yield booking.start();
+      yield booking.setReminders(user, config.booking.timers);
+      yield booking.setForfeitureTimers(user, config.booking.timers);
+      yield booking.start();
 
-    yield cars.unlockCar(car.id, _user);
-    yield cars.unlockImmobilzer(car.id, _user);
+      yield cars.unlockCar(car.id, _user);
+      yield cars.unlockImmobilzer(car.id, _user);
 
-    // ### Notify
+      // ### Notify
 
-    let message = yield this.updateState('started', _user, user);
-    yield notify.notifyAdmins(`:octopus: ${ message } | ${ car.info() } ${ car.averageCharge() }% ${ user.info() }`, [ 'slack' ], { channel : '#reservations' });
-    yield notify.sendTextMessage(user, `Your WaiveCar rental has started! The first 2 hours are completely FREE! After that, it's $5.99 / hour. Make sure to return the car in Santa Monica, don't drain the battery under 20%, and keep within our driving borders to avoid any charges. Thanks for renting with WaiveCar!`);
+      let message = yield this.updateState('started', _user, user);
+      yield notify.notifyAdmins(`:octopus: ${ message } | ${ car.info() } ${ car.averageCharge() }% ${ user.info() }`, [ 'slack' ], { channel : '#reservations' });
+      yield notify.sendTextMessage(user, `Your WaiveCar rental has started! The first 2 hours are completely FREE! After that, it's $5.99 / hour. Make sure to return the car in Santa Monica, don't drain the battery under 20%, and keep within our driving borders to avoid any charges. Thanks for renting with WaiveCar!`);
 
-    // ### Relay Update
+      // ### Relay Update
 
-    car.relay('update');
-    yield this.relay('update', booking, _user);
+      car.relay('update');
+      yield this.relay('update', booking, _user);
+    } else {
+      yield notify.notifyAdmins(`:timer_clock: ${ user.name() } started a booking when it was being canceled. This was denied. ${ car.info() }.`, [ 'slack' ], { channel : '#reservations' });
+    }
   }
 
   /**

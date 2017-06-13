@@ -8,6 +8,7 @@ let log       = Bento.Log;
 let relay     = Bento.Relay;
 let error     = Bento.Error;
 let config    = Bento.config.waivecar;
+let RedisService   = require('../../lib/redis-service');
 
 
 // See #550 - Allow user to extend Reservation period for $1.
@@ -68,52 +69,56 @@ scheduler.process('booking-auto-cancel', function *(job) {
   }
 
   if (booking.status === 'reserved') {
-    if (booking.isFlagged('extended')) {
-      // this gives us a historical record of this
-      booking.swapFlag('extended', 'extension');
-      queue.scheduler.add('booking-auto-cancel', {
-        uid   : `booking-${ booking.id }`,
-        timer : config.booking.timers.extension,
-        data  : {
-          bookingId : booking.id
-        }
+    if (RedisService.shouldProcess('booking-start', booking.id)) {
+      if (booking.isFlagged('extended')) {
+        // this gives us a historical record of this
+        booking.swapFlag('extended', 'extension');
+        queue.scheduler.add('booking-auto-cancel', {
+          uid   : `booking-${ booking.id }`,
+          timer : config.booking.timers.extension,
+          data  : {
+            bookingId : booking.id
+          }
+        });
+        // and then get out of here.
+        return true;
+      }
+
+      // ### Cancel Booking
+
+      yield booking.update({
+        status : 'cancelled'
       });
-      // and then get out of here.
-      return true;
+
+      // ### Update Car
+      // Remove the user from the car and make it available again.
+
+      let car = yield Car.findById(booking.carId);
+      yield car.update({
+        userId      : null,
+        isAvailable : true
+      });
+
+      // ### Emit Event
+      // Sends the cancelled event to the user and administrators.
+
+      relay.user(booking.userId, 'bookings', {
+        type : 'update',
+        data : booking.toJSON()
+      });
+
+      relay.admin('bookings', {
+        type : 'update',
+        data : booking.toJSON()
+      });
+
+      let user = yield notify.sendTextMessage(booking.userId, `Hi, sorry you couldn't make it to your car on time. Your ${ timeWindow } minutes have expired and we've had to cancel your reservation for ${ car.info() }`);
+      yield notify.notifyAdmins(`:timer_clock: ${ user.name() }, ${ car.info() } booking cancelled after ${ timeWindow } minute timer expiration.`, [ 'slack' ], { channel : '#reservations' });
+
+      log.info(`The booking with ${ car.info() } was automatically cancelled, booking status was '${ booking.status }'.`);
+    } else {
+      yield notify.notifyAdmins(`:timer_clock: ${ user.name() } started a booking when it was being canceled. This was granted. ${ car.info() }.`, [ 'slack' ], { channel : '#reservations' });
     }
-
-    // ### Cancel Booking
-
-    yield booking.update({
-      status : 'cancelled'
-    });
-
-    // ### Update Car
-    // Remove the user from the car and make it available again.
-
-    let car = yield Car.findById(booking.carId);
-    yield car.update({
-      userId      : null,
-      isAvailable : true
-    });
-
-    // ### Emit Event
-    // Sends the cancelled event to the user and administrators.
-
-    relay.user(booking.userId, 'bookings', {
-      type : 'update',
-      data : booking.toJSON()
-    });
-
-    relay.admin('bookings', {
-      type : 'update',
-      data : booking.toJSON()
-    });
-
-    let user = yield notify.sendTextMessage(booking.userId, `Hi, sorry you couldn't make it to your car on time. Your ${ timeWindow } minutes have expired and we've had to cancel your reservation for ${ car.info() }`);
-    yield notify.notifyAdmins(`:timer_clock: ${ user.name() }, ${ car.info() } booking cancelled after ${ timeWindow } minute timer expiration.`, [ 'slack' ], { channel : '#reservations' });
-
-    log.info(`The booking with ${ car.info() } was automatically cancelled, booking status was '${ booking.status }'.`);
   } else {
     log.warn(`Auto cancellation of booking ${ booking.id } was request but ignored | Booking status: ${ booking.status }`);
   }
