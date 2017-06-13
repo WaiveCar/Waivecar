@@ -354,10 +354,13 @@ module.exports = class OrderService extends Service {
    * @return {Array}
    */
   static *index(query, _user) {
-    query = queryParser(query, {
+    let statusType = query.status.match(/,/) ? 
+      queryParser.IN : queryParser.STRING;
+
+    let dbQuery = queryParser(query, {
       where : {
         userId   : queryParser.NUMBER,
-        status   : queryParser.STRING,
+        status   : statusType,
         source   : queryParser.STRING,
         chargeId : queryParser.STRING,
         amount   : queryParser.BETWEEN,
@@ -366,15 +369,20 @@ module.exports = class OrderService extends Service {
     });
 
     // ### Admin Query
+    if (query.order) {
+      dbQuery.order = [ query.order.split(',') ];
+    }
+    dbQuery.limit = +query.limit || 20;
+    dbQuery.offset = +query.offset || 0;
 
-    if (_user.role === 'admin') {
-      return yield Order.find(query);
+    if (_user.hasAccess('admin')) {
+      return yield Order.find(dbQuery);
     }
 
     // ### User Query
 
-    query.where.userId = _user.id;
-    return yield Order.find(query);
+    dbQuery.where.userId = _user.id;
+    return yield Order.find(dbQuery);
   }
 
   /**
