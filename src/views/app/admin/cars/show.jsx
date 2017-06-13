@@ -356,12 +356,6 @@ class CarsShowView extends React.Component {
       },
       {
         ref : 4,
-        checked  : !car.adminOnly,
-        label    : car.adminOnly ? 'Show in App' : 'Hide in App',
-        onChange : this.toggleHidden.bind(this, car)
-      },
-      {
-        ref : 5,
         label    : 'Refresh Cloudboxx Data',
         onChange : this.service.executeCommand.bind(this, car, 'refresh')
       }
