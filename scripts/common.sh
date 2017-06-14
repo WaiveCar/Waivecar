@@ -58,7 +58,7 @@ unfuckup() {
 }
 
 stop()       { adb -s $1 shell am force-stop $app; }
-install()    { adb -s $1 install -rdg $2; }
+install()    { adb -s $1 install -r -d -g $2; }
 clear()      { adb -s $1 shell pm clear $app; }
 start()      { adb -s $1 shell monkey -p $app -c android.intent.category.LAUNCHER 1; }
 uninstall()  { adb -s $1 uninstall $app; }
