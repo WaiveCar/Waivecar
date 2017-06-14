@@ -106,7 +106,6 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
       markers.forEach(function (marker) {
         bounds.extend(mapToGoogleLatLong(marker));
       });
-      //console.log('>> fit bounds', bounds, markers);
       ctrl.map.fitBounds(bounds);
     }
 
@@ -269,7 +268,6 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
         ctrl.directionsRenderer.setDirections(response);
         if (fitBoundsByRoute) {
-          console.log('>> fit bounds a');
           ctrl.map.fitBounds(ctrl.directionsRenderer.getDirections().routes[0].bounds);
         }
       });
