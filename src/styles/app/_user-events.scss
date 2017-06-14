@@ -1,0 +1,28 @@
+.user-events {
+
+  .table-user-events {
+    width : 100%;
+    thead {
+      th {
+        color       : #565656;
+        font-weight : 400;
+        padding : 8px 8px 8px 40px;
+      }
+    }
+    tbody {
+      border-top : 1px solid #eee;
+      td {
+        padding : 8px 8px 8px 40px;
+        i {
+          font-size   : 1.2rem;
+          font-weight : 600;
+          margin-top  : 6px;
+          &.primary {
+            color : #25C155;
+          }
+        }
+      }
+    }
+  }
+
+}
