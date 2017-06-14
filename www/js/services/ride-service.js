@@ -231,8 +231,11 @@ module.exports = angular.module('app.services').factory('$ride', [
     };
 
     service.isChargeOkay = function(id, obj) {
+      // see https://github.com/WaiveCar/Waivecar/issues/828
+      // Complaints about the cars not being able to end below 25 miles
+      // Really we need to be system-wide consistent with this number.
       return genericCheck(id, obj, function(status) {
-        return status.charge > 30 || status.isCharging;
+        return status.charge > 20 || status.isCharging;
       });
     };
 
