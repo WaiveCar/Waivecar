@@ -87,6 +87,10 @@ Bento.Register.Controller('BookingsController', function(controller) {
     return yield booking.index(this.query, this.auth.user);
   };
 
+  controller.count = function *() {
+    return yield booking.count(this.query, this.auth.user);
+  };
+
   /**
    * Returns a single booking.
    * @param  {Number} id

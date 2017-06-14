@@ -279,6 +279,29 @@ module.exports = class BookingService extends Service {
     return bookings;
   }
 
+
+  static *count(query, _user) {
+    let bookingsCount    = null;
+    let dbQuery     = queryParser(query, {
+      where : {
+        userId : queryParser.NUMBER,
+        carId  : queryParser.STRING,
+        status : queryParser.IN
+      }
+    });
+
+    // ### Query Bookings
+
+    if (_user.hasAccess('admin')) {
+      bookingsCount = yield Booking.count(dbQuery);
+    } else {
+      dbQuery.where.user_id = _user.id;
+      bookingsCount = yield Booking.count(dbQuery);
+    }
+
+    return {bookingsCount: bookingsCount};
+  }
+
   /**
    * Returns a booking based on provided id.
    * @param  {Number} id
