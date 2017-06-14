@@ -376,13 +376,16 @@ module.exports = class LogService {
         }));
       }
       case 'event' : {
-        return yield EventLog.find(queryParser(query, {
+        let qp = queryParser(query, {
           where : {
             origin : queryParser.STRING,
             type   : queryParser.STRING,
             userId : queryParser.NUMBER
           }
-        }));
+        });
+        qp.order = [[ 'id', 'DESC' ]];
+
+        return yield EventLog.find(qp);
       }
       default : {
         throw error.parse({
