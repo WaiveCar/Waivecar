@@ -1,8 +1,6 @@
 import React from 'react';
 import { api } from 'bento';
-// ### Components
-
-
+import moment from 'moment';
 
 module.exports = class UsersEvents extends React.Component {
 
@@ -21,11 +19,21 @@ module.exports = class UsersEvents extends React.Component {
   }
 
   renderEvent(event) {
+    comment = event.comment;
+    if (event.type === 'SIT') {
+      comment = <span>{ event.comment } minutes for booking <a href={ '/bookings/' + event.referenceId }>#{ event.referenceId }</a></span>
+    } 
+    if (event.type === 'HOLDING') {
+      comment = <a href={ '/users/' + event.referenceId }>{ event.comment }</a>
+    }
+    if (event.type === 'DECLINED') {
+      comment = <a href={ '#charge-' + event.referenceId }>Charge #{ event.referenceId }</a>
+    }
     return (
       <tr>
         <td>{ moment(event.createdAt).format('MM/DD/YYYY') }</td>
-        <td>{event.type}</td>
-        <td>{event.comment}</td>
+        <td>{ event.type }</td>
+        <td>{ comment }</td>
       </tr>
     );
   }
