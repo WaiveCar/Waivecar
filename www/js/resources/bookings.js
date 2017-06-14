@@ -22,6 +22,10 @@ module.exports = angular.module('app').factory('Bookings', [
         method: 'GET',
         url: $utils.getCustomRoute('bookingsCount?status=ended,completed,closed'),
       },
+      reservationsCount: {
+        method: 'GET',
+        url: $utils.getCustomRoute('bookingsCount'),
+      },
       ready: {
         method: 'PUT',
         url: $utils.getCustomRoute('bookings/:id/ready'),

@@ -154,6 +154,17 @@ module.exports = angular.module('app.services').service('IntercomService', [
           });
 
         });
+
+      $data.resources.bookings.reservationsCount({ userId: user.id }).$promise
+        .then(function (bookings) {
+          intercom().updateUser({
+            custom_attributes: {
+              reservations: bookings.bookingsCount
+            }
+          });
+
+        });
+
     };
 
 
