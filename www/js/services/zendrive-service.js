@@ -26,13 +26,12 @@ module.exports = angular.module('app.services').factory('ZendriveService', [
 
         var zendriveCallback = new Zendrive.ZendriveCallback(startDrive, endDrive, locationDenied);
 
+        var bookingIdStr = '' + bookingId;
         Zendrive.setup(config, zendriveCallback,
           function() {
-            if (!ionic.Platform.isIOS()) {
-              Zendrive.startDrive(bookingId);
-              Zendrive.startSession(bookingId);
-            }
-            console.log('Zendrive setup done');
+            Zendrive.startDrive(bookingIdStr);
+            Zendrive.startSession(bookingIdStr);
+            console.log('Zendrive setup done', driverAttributes, bookingIdStr);
           },
           function(err) {
             console.log('Zendrive setup failed: ', err);
@@ -45,12 +44,11 @@ module.exports = angular.module('app.services').factory('ZendriveService', [
 
     function stop(bookingId) {
       try {
-        if (!ionic.Platform.isIOS()) {
-          Zendrive.stopSession(bookingId);
-          Zendrive.stopDrive(bookingId);
-        }
+        var bookingIdStr = '' + bookingId;
+        Zendrive.stopSession(bookingIdStr);
+        Zendrive.stopDrive(bookingIdStr);
         Zendrive.teardown();
-        console.log('Zendrive teardown complete');
+        console.log('Zendrive teardown complete', bookingIdStr);
       } catch(err) {
         console.log('Failed to stop zendrive: ', err, err.stack);
       }
