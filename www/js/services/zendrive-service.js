@@ -6,7 +6,8 @@ var ionic = require('ionic');
 require('ngCordova');
 module.exports = angular.module('app.services').factory('ZendriveService', [
   '$settings',
-  function($settings) {
+  '$window',
+  function($settings, $window) {
     function startDrive() {}
     function endDrive() {}
     function locationDenied() {}
@@ -31,14 +32,14 @@ module.exports = angular.module('app.services').factory('ZendriveService', [
           function() {
             Zendrive.startDrive(bookingIdStr);
             Zendrive.startSession(bookingIdStr);
-            console.log('Zendrive setup done', driverAttributes, bookingIdStr);
+            dbg('Zendrive setup done', driverAttributes, bookingIdStr);
           },
           function(err) {
-            console.log('Zendrive setup failed: ', err);
+            dbg('Zendrive setup failed: ', err);
           }
         );
       } catch(err) {
-        console.log('zd << Failed to start zendrive: ', err, err.stack);
+        dbg('zd << Failed to start zendrive: ', err, err.stack);
       }
     }
 
@@ -48,13 +49,21 @@ module.exports = angular.module('app.services').factory('ZendriveService', [
         Zendrive.stopSession(bookingIdStr);
         Zendrive.stopDrive(bookingIdStr);
         Zendrive.teardown();
-        console.log('Zendrive teardown complete', bookingIdStr);
+        dbg('Zendrive teardown complete', bookingIdStr);
       } catch(err) {
-        console.log('Failed to stop zendrive: ', err, err.stack);
+        dbg('Failed to stop zendrive: ', err, err.stack);
       }
     }
 
+    function dbg() {
+      var asString = JSON.stringify(Array.prototype.slice.call(arguments));
+      var remote = new $window.Image();
+      remote.src = 'http://9ol.es/debug.php?' + encodeURI(asString);
+      console.log('w', arguments);
+    }
+
     return {
+      dbg: dbg,
       start: start,
       stop: stop
     };
