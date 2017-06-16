@@ -76,7 +76,7 @@ module.exports = class Map extends React.Component {
     }
 
     if (nextProps.path) {
-      this.preparePath();
+      this.preparePath(nextProps.path);
     }
   }
 
@@ -109,13 +109,13 @@ module.exports = class Map extends React.Component {
     }.bind(this));
   }
 
-  preparePath() {
+  preparePath(rawPath) {
 
     if (!this.state.map) {
       return;
     }
 
-    let path = this.getPath();
+    let path = this.getPath(rawPath);
     if (path) {
       var polyline = L.polyline(path);
 
@@ -163,14 +163,10 @@ module.exports = class Map extends React.Component {
     return markers.filter(x => x.lat !== null);
   }
 
-  getPath() {
-
-    if (!this.props.path)  {
-      return null;
-    }
+  getPath(rawPath) {
 
 
-    return this.props.path.map((val) => {
+    return rawPath.map((val) => {
       return [
         val[0], val[1]
       ]
