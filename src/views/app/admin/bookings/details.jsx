@@ -4,6 +4,7 @@ import { Map } from 'bento-web';
 
 module.exports = class RideDetails extends React.Component {
 
+
   render() {
     let data = this.props.booking;
 
@@ -44,6 +45,7 @@ module.exports = class RideDetails extends React.Component {
                   type      : 'end'
                 }
               ]}
+              path      =  {this.props.carPath }
             />
           </div>
           <div className="box-content">
