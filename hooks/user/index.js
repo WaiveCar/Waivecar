@@ -197,7 +197,7 @@ hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
     if (reason.length) {
       who += ' (' + reason.join(', ') + ')';
     }
-    yield UserLog.addUserEvent(prevUser, 'PENDING', null, [reason || []].join(', '));
+    yield UserLog.addUserEvent(prevUser, 'PENDING', _user.id, [reason || []].join(', '));
     yield notify.notifyAdmins(`:construction: ${ prevUser.name() }, a previously active user, has been moved to pending ${ who } | ${ Bento.config.web.uri }/users/${ prevUser.id }`, [ 'slack' ], { channel : '#user-alerts' });
   }
 
