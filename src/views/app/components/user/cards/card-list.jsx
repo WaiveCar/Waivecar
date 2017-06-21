@@ -33,7 +33,7 @@ class CardList extends React.Component {
   }
 
   creditMod(who, amount, cards, description) {
-    if(this.props.user.credit >= 0) {
+    if(this.props.user.credit >= 0 && amount === 0) {
       snackbar.notify({
         type    : `success`,
         message : 'Nothing needs to be done. Thanks'
