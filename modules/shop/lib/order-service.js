@@ -96,7 +96,9 @@ module.exports = class OrderService extends Service {
       }
 
     } catch (err) {
-      yield this.failedCharge(data.amount, user, err);
+      charge = charge || { amount: 0 };
+
+      yield this.failedCharge(data.amount || charge.amount, user, err);
       throw {
         status  : 400,
         code    : `SHOP_PAYMENT_FAILED`,
