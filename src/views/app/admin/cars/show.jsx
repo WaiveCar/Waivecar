@@ -213,6 +213,10 @@ class CarsShowView extends React.Component {
                     { !car.isAvailable && <span className="user-link">&nbsp;<em>allocated to { car.user ? `${ car.user.firstName } ${ car.user.lastName }` : `user ${ car.userId }` }</em></span> }
                   </li>
                   <li className="list-group-item">
+                    <span className="pull-right">{ this.renderBoolean(car.inService) }</span>
+                    In Service
+                  </li>
+                  <li className="list-group-item">
                     <span className="pull-right">{ car.totalMileage }</span>
                     Total Miles
                   </li>
@@ -294,6 +298,28 @@ class CarsShowView extends React.Component {
     }
   }
 
+  toggleService(car) {
+    if (car.adminOnly) {
+      this.service.executeCommand(car, 'service');
+    } else {
+      if (car.booking) {
+        snackbar.notify({
+          type    : 'danger',
+          message : 'Car is in active rental. Make repair anyway?',
+          action : {
+            title : 'CONTINUE',
+            click : () => {
+              snackbar.dismiss();
+              this.service.executeCommand(car, 'repair');
+            }
+          }
+        });
+      } else {
+        this.service.executeCommand(car, 'repair');
+      }
+    }
+  }
+
   renderUserSearch(car) {
     if(!this.state.user_find_name) {
       return '';
@@ -344,18 +370,24 @@ class CarsShowView extends React.Component {
       },
       {
         ref : 2,
+        checked  : car.inService,
+        label    : car.inService ? 'In Service' : 'In Repair',
+        onChange : this.toggleService.bind(this, car)
+      },
+      {
+        ref : 3,
         checked  : car.isImmobilized,
         label    : car.isImmobilized ? 'Deactivate Immobilizer' : 'Activate Immobilizer',
         onChange : this.service.executeCommand.bind(this, car, car.isImmobilized ? 'unlock-immobilizer' : 'lock-immobilizer')
       },
       {
-        ref : 3,
+        ref : 4,
         checked  : car.isAvailable,
         label    : car.isAvailable ? 'Make Unavailable' : 'Make Available',
         onChange : this.toggleAvailable.bind(this, car)
       },
       {
-        ref : 4,
+        ref : 5,
         label    : 'Refresh Cloudboxx Data',
         onChange : this.service.executeCommand.bind(this, car, 'refresh')
       }
