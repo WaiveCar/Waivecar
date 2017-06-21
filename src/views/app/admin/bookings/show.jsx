@@ -19,7 +19,8 @@ module.exports = class BookingsView extends React.Component {
     this.state = {
       isActing : false,
       error    : null,
-      items    : []
+      items    : [],
+      carPath : []
     };
     relay.subscribe(this, 'bookings');
   }
@@ -38,6 +39,7 @@ module.exports = class BookingsView extends React.Component {
    */
   componentDidMount() {
     this.loadBooking(this.props.params.id);
+    this.loadCarPath(this.props.params.id)
   }
 
   /**
@@ -54,6 +56,17 @@ module.exports = class BookingsView extends React.Component {
         return;
       }
       this.bookings.store(booking);
+    });
+
+
+  }
+
+  loadCarPath(id) {
+    api.get(`/history/booking/${ id }`, (err, model) => {
+      var locationHistory = model.data.data;
+      this.setState({
+        carPath : locationHistory
+      });
     });
   }
 
@@ -185,7 +198,7 @@ module.exports = class BookingsView extends React.Component {
     }
 
     let booking = this.state.bookings.find(val => val.id === parseInt(this.props.params.id));
-    if (!booking || !booking.user) {
+    if (!booking || !booking.user ) {
       return (
         <div id="booking-view">
           <div className="booking-message">
@@ -233,7 +246,7 @@ module.exports = class BookingsView extends React.Component {
         </div>
         {
           [ 'ended', 'completed', 'closed' ].indexOf(booking.status) !== -1
-            ? <BookingDetails booking={ booking } />
+            ? <BookingDetails booking={ booking } carPath = {this.state.carPath }/>
             : <div className="box-empty">
                 <h3>Details</h3>
                 A ride must be ended before details are shown.
