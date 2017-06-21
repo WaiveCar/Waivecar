@@ -53,6 +53,7 @@ module.exports = class Map extends React.Component {
       })
     }, function() {
       this.state.map.scrollWheelZoom.disable();
+
       this.prepareMarkers();
     });
   }
@@ -73,15 +74,25 @@ module.exports = class Map extends React.Component {
     if (nextProps.markers) {
       this.prepareMarkers();
     }
+
+    if (nextProps.path) {
+      this.preparePath(nextProps.path);
+    }
   }
 
   /**
    * Prepares a list of markers.
    */
   prepareMarkers() {
+
+
+
     if (!this.state.map) {
       return;
     }
+
+
+
     let markers = this.getMarkers();
     this.getUser(function(err, userMarker) {
       if (userMarker) {
@@ -97,6 +108,21 @@ module.exports = class Map extends React.Component {
       }
     }.bind(this));
   }
+
+  preparePath(rawPath) {
+
+    if (!this.state.map) {
+      return;
+    }
+
+    let path = this.getPath(rawPath);
+    if (path) {
+      var polyline = L.polyline(path);
+
+      polyline.addTo(this.state.map);
+    }
+  }
+
 
   getUser(next) {
     if (!(this.props.includeUser && navigator)) {
@@ -135,6 +161,16 @@ module.exports = class Map extends React.Component {
     });
 
     return markers.filter(x => x.lat !== null);
+  }
+
+  getPath(rawPath) {
+
+
+    return rawPath.map((val) => {
+      return [
+        val[0], val[1]
+      ]
+    })
   }
 
   /**
