@@ -44,7 +44,7 @@ module.exports = class UsersEvents extends React.Component {
       <div className="user-events">
         <div className="box">
           <h3>
-            User's  Events
+            Iniquities
           </h3>
           <div className="box-content no-padding">
 
