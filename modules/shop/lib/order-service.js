@@ -16,6 +16,7 @@ let OrderItem   = Bento.model('Shop/OrderItem');
 let BookingDetails = Bento.model('BookingDetails');
 let BookingPayment = Bento.model('BookingPayment');
 let RedisService   = require('../../waivecar/lib/redis-service');
+let UserService = require('../../user/lib/user-service');
 let notify      = Bento.module('waivecar/lib/notification-service');
 let hooks       = Bento.Hooks;
 let redis       = Bento.Redis;
@@ -34,6 +35,7 @@ module.exports = class OrderService extends Service {
   // I mean god damn...
   static *quickCharge(data, _user) {
     let user = yield this.getUser(data.userId);
+    let charge = {amount: data.amount};
 
     if (
       // if we aren't an admin, this may be ok
@@ -82,7 +84,7 @@ module.exports = class OrderService extends Service {
       // The order here matters.  If a charge fails then only the failed charge will appear
       // as a transgression, not the fee itself.  So we need to log this prior to the charge
       yield UserLog.addUserEvent(user, 'FEE', order.id, data.description);
-      let charge = yield this.charge(order, user);
+      charge = yield this.charge(order, user);
 
       if(data.amount > 0) {
         yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.name() } $${ data.amount / 100 } for ${ data.description } | ${ apiConfig.uri }/users/${ user.id }`, [ 'slack' ], { channel : '#rental-alerts' });
@@ -96,9 +98,9 @@ module.exports = class OrderService extends Service {
       }
 
     } catch (err) {
-      charge = charge || { amount: 0 };
-
       yield this.failedCharge(data.amount || charge.amount, user, err);
+      yield this.suspendIfMultipleFailed(user);
+
       throw {
         status  : 400,
         code    : `SHOP_PAYMENT_FAILED`,
@@ -619,11 +621,31 @@ module.exports = class OrderService extends Service {
     }
   }
 
+  static *suspendIfMultipleFailed(user) {
+    let failedChargeList = yield Order.find({
+      // This looks for distinct cards
+      group: ['source'],
+      where: {
+        // which had a failed charge
+        status: 'failed',
+        userId: user.id,
+        // in the past hour
+        created_at: {
+          $gte: new Date(new Date() - (3600 * 1000 * 10))
+        }
+      }
+    });
+
+    if(failedChargeList.length > 1 && user.status === 'active') {
+      yield UserService.suspend(user, 'Potential credit card fraud'); 
+    }
+  }
+
   static *failedCharge(amountInCents, user, err, extra) {
     log.warn(`Failed to charge user: ${ user.id }`, err);
     let amountInDollars = (amountInCents / 100).toFixed(2);
     extra = extra || '';
-    yield notify.notifyAdmins(`:earth_africa: Failed to charge ${ user.name() } $${ amountInDollars }: ${ err } ${ extra }`, [ 'slack' ], { channel : '#rental-alerts' });
+    yield notify.notifyAdmins(`:lemon: Failed to charge ${ user.name() } $${ amountInDollars }: ${ err } ${ extra }`, [ 'slack' ], { channel : '#rental-alerts' });
 
     // We need to communicate that there was a potential charge + a potential 
     // balance that was attempted to be cleared.  This email can cover all 3
