@@ -19,6 +19,7 @@ let GroupUser = Bento.model('GroupUser');
 let GroupRole = Bento.model('GroupRole');
 let sequelize = Bento.provider('sequelize');
 let notify    = require('../../waivecar/lib/notification-service');
+let UserLog   = require('../../log/lib/log-service');
 let _         = require('lodash')
 
 module.exports = {
@@ -274,17 +275,52 @@ module.exports = {
     return user;
   },
 
-  /**
-   * @param  {Number} id
-   * @param  {Object}  payload
-   * @param  {Object} _user
-   * @return {Mixed}
-   */
+  *unsuspend(user, _user) {
+    yield notify.notifyAdmins(`:innocent: ${ user.name() } was unsuspended by ${ _user.name() }.`, [ 'slack' ], { channel : '#user-alerts' });
+    yield UserLog.addUserEvent(user, 'UNSUSPENDED', _user.id);
+  },
+
+  *suspend(user, reason, _user) {
+    // notify the admins that the person has been suspended
+    let message = reason ? `because "${ reason }"` : '';
+    let who = _user ? `by ${ _user.name() }` : 'automatically';
+    yield notify.notifyAdmins(`:exclamation: ${ user.name() } was suspended ${ who } ${ message }.`, [ 'slack' ], { channel : '#user-alerts' });
+
+    if(!_user) {
+      _user = {id: 0};
+    } 
+
+    // record the suspension details in the user note
+    let UserNote = Bento.model('UserNote');
+    let note = new UserNote({
+      userId: user.id,
+      authorId: _user.id,
+      content: reason,
+      type: 'suspension'
+    });
+    yield note.save();
+
+    yield user.update({status: 'suspended'});
+
+    // and log this as a transgression
+    yield UserLog.addUserEvent(user, 'SUSPENDED', _user.id, reason);
+  },
+
   *update(id, payload, _user) {
     let user = yield this.get(id, _user);
 
     if (user.id !== _user.id && !_user.hasAccess('admin')) {
       throw error.userUpdateRefused();
+    }
+
+    // we are suspending a user ... BFD.
+    if (payload.status === 'suspended' && user.status !== 'suspended') {
+      yield this.suspend(user, payload.reason, _user);
+
+      delete payload.reason;
+      // we are unsuspending the user
+    } else if (payload.status === 'active' && user.status === 'suspended') {
+      yield this.unsuspend(user, _user);
     }
 
     // admins can change a users role.
