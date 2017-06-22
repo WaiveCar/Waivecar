@@ -130,11 +130,20 @@ module.exports = class UserDetails extends React.Component {
     // If we are suspending the user then we ask for a reason
     if (form.data.status === 'suspended' && this.state.currentUser.status !== 'suspended') {
       var reason = prompt("Please optionally provide a reason for suspending the user (they will see this when try to use the service). You can leave this blank.");
-      api.post('/notes/user', {
-        content: reason,
-        type: 'suspension',
-        userId: this.state.currentUser.id
-      }, () => {});
+      if(reason !== null) {
+        api.post('/notes/user', {
+          content: reason,
+          type: 'suspension',
+          userId: this.state.currentUser.id
+        }, () => {});
+      } else {
+        snackbar.notify({
+          type    : 'success',
+          message : 'Suspension aborted'
+        });
+        // and make sure we get out of here and do nothing.
+        return false;
+      }
     }
     api.put(`/users/${ this.props.id }`, form.data, (err) => {
       if (err) {
