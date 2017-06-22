@@ -143,3 +143,9 @@
     border-radius: 0;
   }
 }
+
+@media (max-width: 767px) {
+  .box {
+    margin: 0px auto;
+  }
+}

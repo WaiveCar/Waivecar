@@ -15,7 +15,7 @@ class UsersListView extends React.Component {
    */
   constructor(...args) {
     super(...args);
-    this.table = new Table(this, 'users', [ ['firstName', 'lastName'], 'email' ]);
+    this.table = new Table(this, 'users', [ ['firstName', 'lastName'], 'phone' ]);
     this.state = {
       search : null,
       sort   : {
@@ -57,10 +57,10 @@ class UsersListView extends React.Component {
    */
   row(user) {
     return (
-      <tr key={ user.id }>
+      <tr key={ user.id } onClick={ () => { this.history.pushState(null, `/users/${ user.id }`) } }>
         <td>{ user.id }</td>
         <td>{ user.firstName } { user.lastName }</td>
-        <td className="hidden-sm-down">{ user.email }</td>
+        <td className="hidden-sm-down">{ user.phone }</td>
         <td className="hidden-sm-down">{ user.role.title }</td>
         <td>{ user.status }</td>
         {/*
@@ -68,7 +68,7 @@ class UsersListView extends React.Component {
           <button className="material-icons" onClick={ this.toggleIsWaivework.bind(this, user) }>{user.isWaivework ? 'check' : 'close'}</button>
         </td>
         */}
-        <td>
+        <td className="hidden-sm-down">
           <Link to={ `/users/${ user.id }` }>
             <i className="material-icons" style={{ marginTop : 5 }}>pageview</i>
           </Link>
@@ -111,7 +111,7 @@ class UsersListView extends React.Component {
                 <tr ref="sort">
                   <ThSort sort="id"          value="#"           ctx={ this } />
                   <ThSort sort="firstName"   value="Name"        ctx={ this } />
-                  <ThSort sort="email"       value="Email"       ctx={ this } className="hidden-sm-down" />
+                  <ThSort sort="phone"       value="Phone"       ctx={ this } className="hidden-sm-down" />
                   <ThSort sort="role.title"  value="Role"        ctx={ this } className="hidden-sm-down" />
                   <ThSort sort="status"      value="Status"      ctx={ this } className="hidden-sm-down" />
                {/*
