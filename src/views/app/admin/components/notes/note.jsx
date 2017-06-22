@@ -26,11 +26,12 @@ module.exports = class Note extends React.Component {
   render() {
     let note = this.props.note;
     let user = auth.user();
+    let name = note.author ? `${note.author.firstName} ${note.author.lastName}` : '(Automated)';
 
     return (
       <div className='row note'>
         <div className='col-sm-3'>
-          <strong>{ note.author.firstName } { note.author.lastName }</strong>
+          <strong>{ name }</strong>
           <br />
           <small>{ moment(note.createdAt).fromNow() }</small>
           { note.type ? <em>type: { note.type }</em> : '' }
