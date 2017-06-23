@@ -17,18 +17,17 @@ fi
 
 . $DIR/common.sh
 [ "$#" -lt 1 ] && help
-stop=1
-start=1
+
+stop=
+start=
 
 for i in $*; do
   case $1 in
     find) find=1 ;;
-    stop) start= ;;
-    start) stop= ;;
+    stop) stop=1 ;;
+    start) start=1 ;;
     clear) clear=1 ;; 
     unfuckup) 
-      stop=
-      start=
       unfuckup=1 ;;
     remove) 
       remove=1 
@@ -36,7 +35,6 @@ for i in $*; do
     ;;
     build) 
       build=1 
-      install=1
     ;;
     install) install=1 ;;
     install_release) install_release=1 ;;
@@ -45,6 +43,17 @@ for i in $*; do
       help
       ;;
   esac
+
+  case $1 in
+    clear|install|install_release) 
+      start=1
+      stop=1
+      ;;
+    remove) 
+      stop=1
+      ;;
+  esac
+
   shift
 done
 

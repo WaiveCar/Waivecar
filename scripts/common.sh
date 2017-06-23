@@ -6,10 +6,14 @@ get_device() {
     deviceList=$DEVICE
   else
     if [ -z "$deviceList" ]; then
+      if [ $1 -eq "1" ]; then
+        echo "Bailing..."
+        exit -1
+      fi
       deviceList=`adb devices | grep -v List | awk ' { printf "%s ", $1 } ' | sed s'/ *$//'`
       if [ -z "$deviceList" ]; then
         watch -n 0.2 "adb devices -l"
-        get_device
+        get_device 1
       fi
     fi
   fi
