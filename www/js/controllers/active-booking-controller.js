@@ -281,8 +281,6 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       })
       .then(function() {
         IntercomService.emitBookingEvent($data.active.bookings);
-
-
         $ionicLoading.hide();
         console.log('removing modal');
         modal.remove();

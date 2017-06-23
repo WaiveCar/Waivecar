@@ -51,8 +51,7 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
           return creditCard.$save();
         })
         .then(function() {
-
-          IntercomService.emitCreditCardEvent("added", $scope.card.card.number);
+          IntercomService.emitCreditCardEvent('added', $scope.card.card.number);
           IntercomService.updateCardsInfo($auth.me);
 
           $modal('result', {

@@ -147,8 +147,6 @@ function ApplicationController ($rootScope, $scope, $injector) {
         return $message.error(err);
       });
   };
-
-
 }
 
 module.exports =

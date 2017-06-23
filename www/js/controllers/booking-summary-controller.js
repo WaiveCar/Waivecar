@@ -46,7 +46,6 @@ module.exports = angular.module('app.controllers').controller('BookingSummaryCon
           }).length;
         }
 
-
         IntercomService.emitBookingEvent(ctrl.booking, {
           distance: ctrl.distance,
           duration: ctrl.duration
