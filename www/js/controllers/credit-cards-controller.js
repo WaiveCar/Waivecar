@@ -11,17 +11,21 @@ module.exports = angular.module('app.controllers').controller('CreditCardsContro
   '$auth',
   '$stateParams',
   '$ionicHistory',
-  function ($scope, $data, $message, $auth, $stateParams, $ionicHistory) {
+  'IntercomService',
+  function ($scope, $data, $message, $auth, $stateParams, $ionicHistory, IntercomService) {
     $scope.$ionicHistory = $ionicHistory;
 
     $scope.removeCreditCard = function (card, $index) {
+      var last4 = card.last4;
       return card.$delete()
         .then(function () {
+          IntercomService.emitCreditCardEvent('removed', last4);
+          IntercomService.updateCardsInfo($auth.me);
+
           $scope.cards.splice($index, 1);
           $message.success('Card removed!');
         })
         .catch($message.error);
-
     };
 
     function init() {

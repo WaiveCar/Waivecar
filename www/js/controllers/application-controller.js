@@ -9,6 +9,7 @@ require('../services/data-service.js');
 require('../services/message-service.js');
 require('../services/session-service.js');
 require('../services/ride-service.js');
+require('../services/intercom-service.js');
 
 function ApplicationController ($rootScope, $scope, $injector) {
   var $state = $injector.get('$state');
@@ -20,7 +21,9 @@ function ApplicationController ($rootScope, $scope, $injector) {
   var $ride = $injector.get('$ride');
   var $socket = $injector.get('$socket');
   var $session = $injector.get('$session');
+  var $window = $injector.get('$window');
   var LocationService = $injector.get('LocationService');
+  var IntercomService = $injector.get('IntercomService');
 
   this.models = $data.instances;
   this.active = $data.active;
@@ -63,13 +66,13 @@ function ApplicationController ($rootScope, $scope, $injector) {
         $ride.init();
       } else if(newState === 'completed') {
         // if we have a booking id then we should go to the booking
-        // summary screen ONLY if our previous state was 'started', 
+        // summary screen ONLY if our previous state was 'started',
         // otherwise this means that we've canceled.
         if(((!lastState || lastState === 'started' || lastState === 'ended') && shown !== 'bookings-show')|| shown === 'end-ride') {
           $state.go('bookings-show', { id: currentBooking.id });
         } else if(lastState === 'created' && shown !== 'cars') {
           $state.go('cars');
-        } 
+        }
         currentBooking = false;
       } else if(newState === 'ended' && shown !== 'end-ride') {
         $state.go('end-ride', { id: currentBooking.id });
@@ -116,20 +119,26 @@ function ApplicationController ($rootScope, $scope, $injector) {
     }
   }
 
+  IntercomService.setLauncherVisibility();
+
   $rootScope.$on('authLogin', function () {
     if($data.me.tested) {
       initLocation();
-      console.log($data, 'init aa');
       $ride.init();
       myState();
+      IntercomService.registerIdentifiedUser($auth.me);
     }
   });
 
   if ($auth.isAuthenticated()) {
     initLocation();
-    $auth.loadSession();
+    $auth.loadSession().then(function(me) {
+      IntercomService.registerIdentifiedUser(me);
+    });
     $ride.init();
     myState();
+  } else {
+    IntercomService.registerUnidentifiedUser();
   }
 
   function initLocation () {

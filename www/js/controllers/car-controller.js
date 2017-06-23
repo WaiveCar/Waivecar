@@ -21,7 +21,9 @@ module.exports = angular.module('app.controllers').controller('CarController', [
     var $q = $injector.get('$q');
     var $preBook = $injector.get('$preBook');
     var $ionicLoading = $injector.get('$ionicLoading');
-    var $cordovaAppVersion = $injector.get('$cordovaAppVersion'); 
+    var $cordovaAppVersion = $injector.get('$cordovaAppVersion');
+    var IntercomService = $injector.get('IntercomService');
+
     var appVersion = false;
     $cordovaAppVersion.getVersionCode().then(function (version) {
       appVersion = version;
@@ -77,6 +79,7 @@ module.exports = angular.module('app.controllers').controller('CarController', [
         .then(function() {
           $ionicLoading.hide();
           $ride.setBooking(booking.id);
+          IntercomService.emitBookingEvent(booking);
           $state.go('bookings-active', { id: booking.id });
         })
         .catch($message.error);

@@ -16,8 +16,9 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
   '$modal',
   '$timeout',
   'cards',
+  'IntercomService',
   '$injector',
-  function ($scope, $state, $auth, $data, $message, $stateParams, $q, $modal, $timeout, cards, $injector) {
+  function ($scope, $state, $auth, $data, $message, $stateParams, $q, $modal, $timeout, cards, IntercomService, $injector) {
     var $ionicHistory = $injector.get('$ionicHistory');
 
     $scope.save = function(form) {
@@ -50,6 +51,9 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
           return creditCard.$save();
         })
         .then(function() {
+          IntercomService.emitCreditCardEvent('added', $scope.card.card.number);
+          IntercomService.updateCardsInfo($auth.me);
+
           $modal('result', {
             icon: 'check-icon',
             title: 'Your payment method looks okay.'

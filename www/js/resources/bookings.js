@@ -18,6 +18,14 @@ module.exports = angular.module('app').factory('Bookings', [
         url: $utils.getCustomRoute('bookings?order=created_at,DESC'),
         isArray: true
       },
+      completedCount: {
+        method: 'GET',
+        url: $utils.getCustomRoute('bookingsCount?status=ended,completed,closed'),
+      },
+      reservationsCount: {
+        method: 'GET',
+        url: $utils.getCustomRoute('bookingsCount'),
+      },
       ready: {
         method: 'PUT',
         url: $utils.getCustomRoute('bookings/:id/ready'),

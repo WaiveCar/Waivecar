@@ -13,7 +13,8 @@ module.exports = angular.module('app.controllers').controller('BookingSummaryCon
   '$auth',
   '$data',
   '$message',
-  function ($state, $auth, $data, $message) {
+  'IntercomService',
+  function ($state, $auth, $data, $message, IntercomService) {
 
     var ctrl = this;
 
@@ -32,18 +33,26 @@ module.exports = angular.module('app.controllers').controller('BookingSummaryCon
         ctrl.duration = moment(ctrl.start.createdAt).to(ctrl.end.createdAt, true);
         ctrl.booking.total = 0;
         ctrl.booking.failedCharge = false;
-        
+
         if (ctrl.booking.payments) {
           ctrl.booking.total = ctrl.booking.payments.reduce(function(sum, payment) {
             return sum + payment.amount;
           }, 0);
 
-          // See https://github.com/WaiveCar/Waivecar/issues/487, 
-          // App: A declined CC card appears as if the ride was free  
-          ctrl.booking.failedCharge = ctrl.booking.payments.filter(function(payment) { 
+          // See https://github.com/WaiveCar/Waivecar/issues/487,
+          // App: A declined CC card appears as if the ride was free
+          ctrl.booking.failedCharge = ctrl.booking.payments.filter(function(payment) {
             return payment.status === 'failed';
           }).length;
         }
+
+        IntercomService.emitBookingEvent(ctrl.booking, {
+          distance: ctrl.distance,
+          duration: ctrl.duration
+        });
+
+        IntercomService.updateBookingsInfo($auth.me);
+
       }).catch($message.error);
     };
 
