@@ -34,7 +34,8 @@ wrap() {
   for device in $deviceList; do
     echo "[$device "$( date +"%H:%m:%S" )$"] $fn $path"
     {
-      isFailed=$($fn $device $path | grep -i failure)
+      result=$($fn $device $path)
+      isFailed=$(echo $result | grep -iE '(failure|error)')
       if [ -n "$isFailed" ]; then
         uninstall $device
         $fn $device $path
@@ -50,15 +51,17 @@ build() {
 }
  
 unfuckup() {
+  path=www/js/controllers/car-controller.js
   cd $DIR/..
   set -x
   [ -e releases ] && rm -fr releases
   [ -e platforms/android/build ] && rm -fr platforms/android/build
+  [ -e $path ] && touch $path
   set +x
 }
 
 stop()       { adb -s $1 shell am force-stop $app; }
-install()    { adb -s $1 install -r -d -g $2; }
+install()    { adb -s $1 install -r -d $2; }
 clear()      { adb -s $1 shell pm clear $app; }
 start()      { adb -s $1 shell monkey -p $app -c android.intent.category.LAUNCHER 1; }
 uninstall()  { adb -s $1 uninstall $app; }

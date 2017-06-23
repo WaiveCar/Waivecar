@@ -2,7 +2,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 help() {
-  echo unfuckup clear remove build install install_release stop start
+  echo find unfuckup clear remove build install install_release stop start
   exit
 }
 
@@ -22,6 +22,7 @@ start=1
 
 for i in $*; do
   case $1 in
+    find) find=1 ;;
     stop) start= ;;
     start) stop= ;;
     clear) clear=1 ;; 
@@ -47,6 +48,7 @@ for i in $*; do
   shift
 done
 
+[ "$find" ] && get_device
 [ "$unfuckup" ] && unfuckup
 [ "$stop" ] && wrap stop
 [ "$clear" ] && wrap clear
