@@ -6,7 +6,7 @@ get_device() {
     deviceList=$DEVICE
   else
     if [ -z "$deviceList" ]; then
-      if [ $1 -eq "1" ]; then
+      if [ "$1" -eq "1" ]; then
         echo "Bailing..."
         exit -1
       fi
