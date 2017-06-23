@@ -70,7 +70,7 @@ Here's generally what I did after installing the above:
     #    step I got an error about CDVCamera.o which the internet had mixed messages on but 
     #    essentially said that using an older version of ionic reliably remediated it.
     #
-  $ npm install ionic@1.7.16 cordova@6.2.0 -g
+  $ npm install ionic@1.7.16 cordova@6 -g
   $ ionic platform add ios
 
     # At least *I* didn't have to do the `--unsafe-perm=true` that was recommended here.
