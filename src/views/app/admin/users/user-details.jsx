@@ -5,6 +5,7 @@ import { Form }       from 'bento/lib/helpers';
 import md5            from 'md5';
 import FormInput      from '../components/form-input';
 import CardList       from '../../components/user/cards/card-list';
+import AddCard        from '../../components/user/cards/add-card';
 import RideList       from '../../components/user/rides/ride-list';
 import ChargeList     from '../../components/user/charges/charge-list';
 
@@ -67,7 +68,7 @@ module.exports = class UserDetails extends React.Component {
   }
 
   isWaiveWork = () => {
-    return this.state.currentUser.isWaivework;
+    return this.state.currentUser ? this.state.currentUser.isWaivework : false;
   }
   isFleetManager = () => {
     return this.state.currentUser.role.name === 'admin';
@@ -331,6 +332,7 @@ module.exports = class UserDetails extends React.Component {
         </div>
 
         <CardList user={ user } currentUser={ false }></CardList>
+        <AddCard user={ user } currentUser={ false }></AddCard>
         <div className='rides'>
           <RideList user={ user } currentUser={ false } full={ false }></RideList>
           <ChargeList user={ user } currentUser={ false } full={ false }></ChargeList>
