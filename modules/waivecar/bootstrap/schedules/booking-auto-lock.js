@@ -18,7 +18,7 @@ scheduler.process('booking-complete-check', function *(job) {
     yield bookingService._complete(job.data.bookingId, booking.userId);
   } catch (ex) {
     // so if we get here then the user forgot to do a few things.
-    yield notify.sendTextMessage('Hi! Thanks for using WaiveCar. This is a courtesy reminder to make sure you ' + ex.message + '. Thanks.', user);
+    //yield notify.sendTextMessage(user, 'Hi! Thanks for using WaiveCar. This is a courtesy reminder to make sure you ' + ex.message + '. Thanks.');
   }
 });
 
