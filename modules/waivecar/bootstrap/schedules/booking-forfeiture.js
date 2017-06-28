@@ -7,6 +7,7 @@ let Booking   = Bento.model('Booking');
 let Car       = Bento.model('Car');
 let UserService   = require('../../lib/user-service.js');
 let scheduler = Bento.provider('queue').scheduler;
+let moment    = require('moment');
 
 scheduler.process('booking-forfeiture', function *(job) {
   let booking = yield Booking.findById(job.data.bookingId);
