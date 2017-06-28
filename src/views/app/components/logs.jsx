@@ -138,8 +138,8 @@ module.exports = class Logs extends React.Component {
 
     return (
       <tr key={ log.id }>
+        <td>{ moment(log.createdAt).format('HH:mm MMM D') }</td>
         <td>{ this.renderAction(log) }</td>
-        <td>{ moment(log.createdAt).fromNow() }</td>
       </tr>
     );
 
@@ -158,8 +158,8 @@ module.exports = class Logs extends React.Component {
             <table className="table-logs">
               <thead>
               <tr ref="sort">
-                <th>Action</th>
                 <th>Date</th>
+                <th>Action</th>
               </tr>
               </thead>
               <tbody>
