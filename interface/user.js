@@ -181,7 +181,7 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
     // This is used mostly in slack messages ... it emits the users phone number 
     // in a non-stupid way.
     info() {
-      return this.phone.replace(/^\+1(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+      return this.phone ? this.phone.replace(/^\+1(\d{3})(\d{3})(\d{4})/, '$1-$2-$3') : '';
     },
 
     *notes(opts) {
