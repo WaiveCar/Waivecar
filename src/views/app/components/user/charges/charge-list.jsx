@@ -120,7 +120,7 @@ class ChargeList extends Component {
         <tr className={ className.join(' ') }>
           <td>
             <a name={ 'charge-' + data.id }></a>
-            { moment(data.createdAt).format('MM/DD/YYYY') }
+            { moment(data.createdAt).format('MMM D YYYY') }
           </td>
           <td>
             { data.description }
