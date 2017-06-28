@@ -204,7 +204,7 @@ module.exports = class UserDetails extends React.Component {
   }
 
   render() {
-    let user = this.state.users.find(val => val.id === parseInt(this.props.id));
+    let user = this.state.currentUser;
     let suspensionReason = user ? this.getSuspensionReason(user) : false;
 
     if (!user) {
