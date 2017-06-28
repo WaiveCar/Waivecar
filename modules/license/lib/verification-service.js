@@ -72,7 +72,7 @@ module.exports = class LicenseVerificationService extends Service {
         status     : report.status,
         outcome    : report.result,
         report     : JSON.stringify(report),
-        checkId    : check.id,
+        checkId    : license.checkId || check.id,
         reportId   : report.id,
         verifiedAt : new Date()
       });
