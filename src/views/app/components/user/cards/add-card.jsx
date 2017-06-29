@@ -1,7 +1,7 @@
-import React         from 'react';
-import { auth, dom } from 'bento';
-import { Form }      from 'bento-web';
-import Shop          from '../../../lib/shop-service';
+import React    from 'react';
+import { auth } from 'bento';
+import { Form } from 'bento-web';
+import Shop     from '../../../lib/shop-service';
 
 
 // ### Form Fields
@@ -10,10 +10,19 @@ let formFields = {
 };
 
 class AddCard extends React.Component {
+  static propTypes = {
+    user: React.PropTypes.object.isRequired,
+    currentUser: React.PropTypes.bool
+  }
+
+  static defaultProps = {
+    ...React.Component.defaultProps,
+    currentUser: true
+  }
+
   constructor(...options) {
     super(...options);
 
-    dom.setTitle('Cards');
     this.state = {};
     this.shop  = new Shop(this);
   }
@@ -23,9 +32,8 @@ class AddCard extends React.Component {
    * application view header.
    */
   componentDidMount() {
-    let user = auth.user();
+    let user = this.props.user;
     this.shop.ensureCustomer(user);
-    this.shop.setCards(user.id);
   }
 
   render() {
@@ -50,7 +58,7 @@ class AddCard extends React.Component {
                     class : 'btn btn-primary btn-profile-submit'
                   }
                 ]}
-              submit = { this.shop.submitCard }
+              submit = { (data, reset) => { this.shop.submitCard(this.props.user, data, reset); } }
           />
         </div>
       </div>
