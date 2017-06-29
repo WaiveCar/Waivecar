@@ -26,7 +26,8 @@ module.exports = class Table {
   init() {
     api.get(this.endpoint, {
       order  : 'created_at,DESC',
-      offset : this.ctx.state.offset
+      offset : this.ctx.state.offset,
+      limit  : 20
     }, (err, data) => {
       if (err) {
         return snackbar.notify({
@@ -55,28 +56,28 @@ module.exports = class Table {
     let list           = this.ctx.state[this.resource];
 
     /*
-    if (search) {
-      let re = new RegExp(search, 'i');
-      let candidate = null;
+     if (search) {
+     let re = new RegExp(search, 'i');
+     let candidate = null;
 
-      list = list.filter(item => {
+     list = list.filter(item => {
 
-        return this.filters.reduce( (res, index) => {
-          // cheap array check
-          if (index.map) {
-            candidate = index.map((key) => { return item[key] }).join(' ');
-          } else {
-            candidate = item[index];
-          }
+     return this.filters.reduce( (res, index) => {
+     // cheap array check
+     if (index.map) {
+     candidate = index.map((key) => { return item[key] }).join(' ');
+     } else {
+     candidate = item[index];
+     }
 
-          if (!candidate) { return res; }
+     if (!candidate) { return res; }
 
-          return res | (candidate.search(re) !== -1);
-        }, false);        
+     return res | (candidate.search(re) !== -1);
+     }, false);
 
-      });
-    }
-    */
+     });
+     }
+     */
 
     if (key) {
 
@@ -139,7 +140,8 @@ module.exports = class Table {
         this.ctx.setState({
           search : query,
           searchObj: queryObj,
-          offset : 0
+          more   : data.length === 20,
+          offset : data.length
         });
         relay.dispatch(this.resource, {
           type : 'index',
@@ -164,7 +166,7 @@ module.exports = class Table {
   search = (e) => {
     clearTimeout(this.timer);
     this.timer = setTimeout(() => {
-      this.search_handler({search: e.target.value});
+      this.search_handler({search: e.target.value, limit  : 20});
     }, 500);
   }
 
@@ -175,11 +177,15 @@ module.exports = class Table {
    * @return {Void}
    */
   more = (replace) => {
-    api.get(this.endpoint, {
+
+
+    var searchObj = Object.assign({
       order  : 'created_at,DESC',
       limit  : 20,
       offset : this.ctx.state.offset
-    }, (err, data) => {
+    }, this.ctx.state.searchObj);
+
+    api.get(this.endpoint, searchObj, (err, data) => {
       if (err) {
         return snackbar.notify({
           type    : 'danger',
