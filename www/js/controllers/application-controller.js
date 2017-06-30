@@ -40,7 +40,7 @@ function ApplicationController ($rootScope, $scope, $injector) {
 
   $rootScope.$on('authError', function() {
     $auth.logout();
-    $state.go('auth-login');
+    $state.go('auth');
   });
 
   // $rootScope.$on('socket:error', function (ev, data) {

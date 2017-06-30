@@ -154,7 +154,7 @@ var run = [
         $state.go('cars');
       } else if (!isAuthenticated && authRequired) {
         event.preventDefault();
-        $state.go('auth-login');
+        $state.go('auth');
       }
     });
 
