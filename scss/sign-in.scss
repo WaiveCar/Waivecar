@@ -40,16 +40,27 @@
   }
 
   .button-fb{
-    text-align: left;
-  }
-  .fa-facebook{
-    display: inline-block;
-    font-size: 24px;
-    padding: 22px 23px 21px;
-    margin-left: -12px;
-    margin-top: -6px;
-    border-right: 1px solid #243B6E;
-    margin-right: 14px;
+    padding: 0px;
+    .logo-fb{
+      float: left;
+      .fa-facebook{
+        font-size: 24px;
+        padding: 22px 23px 21px;
+        margin-left: -1px;
+        margin-top: -1px;
+        border-right: 1px solid #243B6E;
+      }
+    }
+    .text-fb{
+      float: left;
+      width: 73%;
+      text-align: left;
+      line-height: 22px;
+      height: 67px;
+      display: flex;
+      align-items: center;
+      margin-left: 10px;
+    }
   }
 
   .lined{
