@@ -72,6 +72,13 @@ module.exports = class BookingService extends Service {
    * @return {Object}
    */
   static *create(data, _user) {
+    if (!redis.shouldProcess('booking-car', data.carId, 10 * 1000)) {
+      throw error.parse({
+        code    : 'BOOKING_AUTHORIZATION',
+        message : 'Unable to start booking. Someone else is booking.'
+      }, 400);
+    }
+
     let driver = yield this.getUser(data.userId);
     let car  = yield this.getCar(data.carId, data.userId, true);
 

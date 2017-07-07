@@ -18,7 +18,7 @@ module.exports = (function() {
   res.lockTimeMS = 25000;
 
   // These both sound like reasonable names.
-  res.shouldProceed = res.shouldProcess = function *(type, id) {
+  res.shouldProceed = res.shouldProcess = function *(type, id, timeout) {
     //
     // Currently (2016-12-09) the scheduler goes every 45 seconds and there's
     // a 30 second timeout on the api call to get the car info. Ideally, these
@@ -29,12 +29,13 @@ module.exports = (function() {
     // points - but honestly that's unlikely and not a big deal.
     //
     let key = `LOCK:${ type }:${ id }`;
+    timeout = timeout || res.lockTimeMS;
 
     // The uuid here is used to work around the fact that get/set isn't atomic.
     let uniq = uuid.v4();
 
     // The nx will only only succeed if the key hasn't been set. 
-    let canProceed = yield res.set(key, uniq, 'nx', 'px', res.lockTimeMS);
+    let canProceed = yield res.set(key, uniq, 'nx', 'px', timeout);
     let check = yield res.get(key);
     return (canProceed && check === uniq);
   }
