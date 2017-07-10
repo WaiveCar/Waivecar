@@ -118,7 +118,9 @@ var run = [
   '$ionicPlatform',
   '$auth',
   '$state',
-  function Run($rootScope, $cordovaKeyboard, $cordovaStatusbar, $ionicPlatform, $auth, $state) {
+  'IntercomService',
+  function Run($rootScope, $cordovaKeyboard, $cordovaStatusbar, $ionicPlatform, $auth, $state, IntercomService) {
+
 
     $ionicPlatform.ready(function() {
 
@@ -151,6 +153,9 @@ var run = [
         event.preventDefault();
         $state.go('auth-login');
       }
+
+      var showIntercom = toState && toState.data && toState.data.intercom;
+      IntercomService.setLauncherVisibility(showIntercom);
     });
 
   }
