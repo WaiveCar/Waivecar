@@ -364,7 +364,7 @@ module.exports = [
       controller: 'StartRideController as ctrl',
       data: {
         auth: true,
-        intercom : true
+        intercom: true
       }
     })
 
@@ -374,7 +374,7 @@ module.exports = [
       controller: 'DashboardController as ctrl',
       data: {
         auth: true,
-        intercom : true
+        intercom: true
       }
     })
 
@@ -409,7 +409,7 @@ module.exports = [
       controller: 'CompleteRideController as ctrl',
       data: {
         auth: true,
-        intercom : true
+        intercom: true
       }
     })
 
