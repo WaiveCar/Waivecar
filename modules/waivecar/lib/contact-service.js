@@ -48,8 +48,28 @@ module.exports = {
     }
 
     // now we can do the simple ones.
-    if(['available','start','finish','complete','cancel','unlock','lock'].indexOf(command) === -1) {
+    if(['commands','available','start','finish','complete','cancel','unlock','lock'].indexOf(command) === -1) {
       return false;
+    }
+
+    if(command === 'commands') {
+      let help = [
+        "Available commands:",
+        "",
+        " available - show available WaiveCars",
+        " book <car name> - book a WaiveCar. Example:",
+        "   book waive14",
+        "",
+        " cancel - cancel your booking",
+        " start - start a booking",
+        " lock - lock the WaiveCar",
+        " unlock - unlock the WaiveCar",
+        " finish - complete the booking",
+        "",
+        "All other messages sent to this number pass thru to WaiveCar's support staff."
+      ];
+      yield notify.sendTextMessage(user, help.join('\n'));
+      return true;
     }
 
     if(command === 'available') {
@@ -61,7 +81,7 @@ module.exports = {
       let message = yield carList.map(function *(car) {
         return car.license + " " + (yield booking.getAddress(car.latitude, car.longitude));
       });
-      yield notify.sendTextMessage(user, message.join('\n'));
+      yield notify.sendTextMessage(user, "Currently available WaiveCars:\n" + message.join('\n\n') + "\nType 'commands' in for help.");
       return true;
     }
 
