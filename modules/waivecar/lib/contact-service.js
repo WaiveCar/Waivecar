@@ -55,17 +55,14 @@ module.exports = {
     if(command === 'commands') {
       let help = [
         "Available commands:",
-        "",
-        " available - show available WaiveCars",
+        " available - list available WaiveCars",
         " book <car name> - book a WaiveCar. Example:",
         "   book waive14",
-        "",
         " cancel - cancel your booking",
-        " start - start a booking",
+        " start - start your booking",
+        " finish - complete your booking",
         " lock - lock the WaiveCar",
         " unlock - unlock the WaiveCar",
-        " finish - complete the booking",
-        "",
         "All other messages sent to this number pass thru to WaiveCar's support staff."
       ];
       yield notify.sendTextMessage(user, help.join('\n'));
@@ -81,7 +78,7 @@ module.exports = {
       let message = yield carList.map(function *(car) {
         return car.license + " " + (yield booking.getAddress(car.latitude, car.longitude));
       });
-      yield notify.sendTextMessage(user, "Currently available WaiveCars:\n" + message.join('\n\n') + "\nType 'commands' in for help.");
+      yield notify.sendTextMessage(user, "Currently available WaiveCars:\n" + message.join('\n\n') + "\nType 'commands' for help.");
       return true;
     }
 
