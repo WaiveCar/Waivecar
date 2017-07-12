@@ -17,6 +17,15 @@ module.exports = {
     yield notify.slack({ text : `From: ${ _user.name() } ${ _user.email } ${ _user.info() }\n Subject: ${ payload.subject || '_(none)_' }\n${ payload.message || '_(none)_' }` }, { channel : '#app_support' });
   },
 
+  
+  *returnError(user, err) {
+    if(err.message) {
+      let message = err.message.replace(/<br>/g, '\n');
+      message = message.replace(/<[^>]*>/g, '');
+      yield notify.sendTextMessage(user, message);
+    }
+  },
+
   *attemptAction(user, command) {
     // we try the complex book command first.
     let bookCmd = command.match(/^book\s(\w+)$/i);
@@ -37,9 +46,7 @@ module.exports = {
             carId: requestedCar.id,
           }, user);
         } catch(ex) {
-          if(ex.message) {
-            yield notify.sendTextMessage(user, ex.message);
-          }
+          yield this.returnError(user, ex);
         }
       } else {
         yield notify.sendTextMessage(user, `Unable to book ${license}. Check your spelling.`);
@@ -101,18 +108,14 @@ module.exports = {
       try {
         yield booking.end(id, user);
       } catch(ex) {
-        if(ex.message) {
-          yield notify.sendTextMessage(user, ex.message);
-          console.log(ex.stack);
-        }
+        yield this.returnError(user, ex);
+        console.log(ex.stack);
       }
       try {
         yield booking.complete(id, user);
       } catch(ex) {
-        if(ex.message) {
-          yield notify.sendTextMessage(user, ex.message);
-          console.log(ex.stack);
-        }
+        yield this.returnError(user, ex);
+        console.log(ex.stack);
       }
     }
     try {
@@ -126,6 +129,7 @@ module.exports = {
         yield cars.unlockCar(currentbooking.carId, user);
       }
     } catch(ex) {
+      yield this.returnError(user, ex);
     }
 
     return true;
