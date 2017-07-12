@@ -55,7 +55,7 @@ module.exports = {
     }
 
     // now we can do the simple ones.
-    if(['commands','available','start','finish','complete','cancel','unlock','lock'].indexOf(command) === -1) {
+    if(['commands','available','start','finish','complete','abort','cancel','unlock','lock'].indexOf(command) === -1) {
       return false;
     }
 
@@ -65,7 +65,7 @@ module.exports = {
         " available - list available WaiveCars",
         " book <car name> - book a WaiveCar. Example:",
         "   book waive14",
-        " cancel - cancel your booking",
+        " abort - cancel your booking",
         " start - start your booking",
         " finish - complete your booking",
         " lock - lock the WaiveCar",
@@ -121,7 +121,7 @@ module.exports = {
     try {
       if(command === 'start') {
         yield booking.ready(id, user);
-      } else if (command === 'cancel') {
+      } else if (command === 'cancel' || command === 'abort') {
         yield booking.cancel(id, user);
       } else if (command === 'unlock') {
         yield cars.lockCar(currentbooking.carId, user);
