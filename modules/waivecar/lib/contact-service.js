@@ -42,6 +42,7 @@ module.exports = {
       } catch(ex) {
         if(ex.message) {
           yield notify.sendTextMessage(user, ex.message);
+          console.log(ex.stack);
         }
       }
       try {
@@ -49,6 +50,7 @@ module.exports = {
       } catch(ex) {
         if(ex.message) {
           yield notify.sendTextMessage(user, ex.message);
+          console.log(ex.stack);
         }
       }
     }
