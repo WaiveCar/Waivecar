@@ -17,7 +17,7 @@ module.exports = {
   },
 
   *attemptAction(user, command) {
-    if(['start','end','complete','cancel','unlock','lock'].indexOf(command) === -1) {
+    if(['start','finish','complete','cancel','unlock','lock'].indexOf(command) === -1) {
       return false;
     }
 
@@ -36,14 +36,25 @@ module.exports = {
     }
     let id = currentBooking.id;
 
+    if (command === 'finish' || command === 'complete') {
+      try {
+        yield booking.end(id, user);
+      } catch(ex) {
+        if(ex.message) {
+          yield notify.sendTextMessage(user, ex.message);
+        }
+      }
+      try {
+        yield booking.complete(id, user);
+      } catch(ex) {
+        if(ex.message) {
+          yield notify.sendTextMessage(user, ex.message);
+        }
+      }
+    }
     try {
       if(command === 'start') {
         yield booking.ready(id, user);
-      } else if (command === 'end') {
-        yield booking.end(id, user);
-        yield booking.complete(id, user);
-      } else if (command === 'complete') {
-        yield booking.complete(id, user);
       } else if (command === 'cancel') {
         yield booking.cancel(id, user);
       } else if (command === 'unlock') {
