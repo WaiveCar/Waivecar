@@ -203,14 +203,17 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
      * @return {Boolean}
      */
     hasAccess(role) {
-      let roles = Bento.Interface.roles;
-      let check = roles.find(val => val.name === role);
-      let auth  = roles.find(val => val.name === this.role.name);
+      try {
+        let roles = Bento.Interface.roles;
+        let check = roles.find(val => val.name === role);
+        let auth  = roles.find(val => val.name === this.role.name);
 
-      // ### Access Check
-      // If provided role is less than authenticated role we have access.
+        // ### Access Check
+        // If provided role is less than authenticated role we have access.
 
-      return check.position <= auth.position;
+        return check.position <= auth.position;
+      } catch (ex) { }
+      return false;
     },
 
     isActive() {
