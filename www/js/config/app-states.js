@@ -363,7 +363,8 @@ module.exports = [
       templateUrl: '/templates/bookings/start-ride.html',
       controller: 'StartRideController as ctrl',
       data: {
-        auth: true
+        auth: true,
+        intercom: true
       }
     })
 
@@ -372,7 +373,8 @@ module.exports = [
       templateUrl: '/templates/bookings/dashboard.html',
       controller: 'DashboardController as ctrl',
       data: {
-        auth: true
+        auth: true,
+        intercom: true
       }
     })
 
@@ -406,7 +408,8 @@ module.exports = [
       templateUrl: '/templates/bookings/complete-ride.html',
       controller: 'CompleteRideController as ctrl',
       data: {
-        auth: true
+        auth: true,
+        intercom: true
       }
     })
 

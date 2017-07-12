@@ -25,8 +25,8 @@ module.exports = angular.module('app.services').service('IntercomService', [
         logEvent: function(name, event) {
           console.log('logEvent', name, JSON.stringify(event));
         },
-        setLauncherVisibility: function() {
-          console.log('setLauncherVisibility');
+        setLauncherVisibility: function(arg) {
+          console.log('setLauncherVisibility:' + arg );
         }
       };
     }
@@ -65,8 +65,8 @@ module.exports = angular.module('app.services').service('IntercomService', [
       });
     };
 
-    this.setLauncherVisibility = function() {
-      intercom().setLauncherVisibility('VISIBLE');
+    this.setLauncherVisibility = function(show) {
+      intercom().setLauncherVisibility(show ? 'VISIBLE' : 'GONE');
     };
 
     function createIntecomUserModel(user) {
