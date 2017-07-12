@@ -20,6 +20,110 @@ function at_night($what) {
 
 define('ONE_WEEK', 7 * 24 * 60 * 60);
 
+function booking_duration_perbooking() {
+  $start = '2016-04-02';
+  $end = '2017-07-10';
+  $durationMap = [];
+  $bookingMap = [];
+  $max = 0;
+  $dMax = 0;
+  $cnt = 0;
+  $factor = 4 * 60;
+
+  $rowList = all("select * from booking_details where created_at > '$start' and created_at < '$end'");
+
+  foreach($rowList as $row) {
+    $id = $row['booking_id'];
+    if($row['type'] === 'start') {
+      $bookingMap[$id] = $row['created_at'];
+    }
+    if($row['type'] === 'end' && isset($bookingMap[$id])) {
+      $user = $row['user_id'];
+      $duration = strtotime($row['created_at']) - strtotime($bookingMap[$id]);
+      $duration = round($duration / $factor) * $factor;
+      $duration = min($duration, 21600);
+      if(!isset($durationMap[$duration])) {
+        $durationMap[$duration] = 0;
+      }
+      $max = max($max, $duration);
+      $durationMap[$duration] ++;
+      $dMax = max($dMax, $durationMap[$duration]);
+      $cnt ++;
+    }
+  }
+  $mult = $dMax / 180;
+
+  for($ix = 0; $ix <= $max; $ix+= $factor) {
+    echo ($ix / 60 ) . " " . $durationMap[$ix] , "\n";
+    /*
+    if(isset($durationMap[$ix])) {
+      for($iy = 0; $iy < $durationMap[$ix]; $iy += $mult) {
+        echo '*';
+      }
+    }
+    echo "\n";
+     */
+  }
+  echo $cnt;
+}
+
+function booking_duration() {
+  $start = '2016-04-02';
+  $end = '2017-07-10';
+  $durationMap = [];
+  $bookingMap = [];
+  $max = 0;
+  $dMax = 0;
+  $cnt = 0;
+  $factor = 5 * 60;
+
+  $rowList = all("select *, bd.created_at as created_at from booking_details bd join bookings b on bd.booking_id = b.id where bd.created_at > '$start'");
+
+  foreach($rowList as $row) {
+    $id = $row['booking_id'];
+    if($row['type'] === 'start') {
+      $bookingMap[$id] = $row['created_at'];
+    }
+    if($row['type'] === 'end' && isset($bookingMap[$id])) {
+      $user = $row['user_id'];
+      $duration = strtotime($row['created_at']) - strtotime($bookingMap[$id]);
+      $duration = min($duration, 21600);
+      if(!isset($durationMap[$user])) {
+        $durationMap[$user] = [0,0];
+      }
+      $max = max($max, $duration);
+      $durationMap[$user][0] += $duration;
+      $durationMap[$user][1] ++;
+      $cnt ++;
+    }
+  }
+
+  for($ix = 0; $ix <= $max; $ix+= $factor) {
+    $dList[$ix] = 0;
+  }
+
+  foreach($durationMap as $user => $map) {
+    if($map[1] > 0) {
+      $avg = $map[0] / $map[1]; 
+      $avg = round($avg / $factor) * $factor;
+      $dList[$avg] ++;
+    }
+  }
+
+  for($ix = 0; $ix <= $max; $ix+= $factor) {
+    echo ($ix / 60) . " " . $dList[$ix] , "\n";
+    /*
+    if(isset($durationMap[$ix])) {
+      for($iy = 0; $iy < $durationMap[$ix]; $iy += $mult) {
+        echo '*';
+      }
+    }
+    echo "\n";
+     */
+  }
+  //echo $cnt;
+}
+
 function booking() {
   $start = '2017-03-02';
   $end = '2017-05-04';
@@ -228,6 +332,6 @@ function details($car = false, $start = false) {
   }
 }
 
-//booking();
+booking_duration();
 //details('60000018942E1401', '2017-04-24');
-availability();
+//availability();
