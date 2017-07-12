@@ -85,7 +85,7 @@ module.exports = {
       let message = yield carList.map(function *(car) {
         return car.license + " " + (yield booking.getAddress(car.latitude, car.longitude));
       });
-      yield notify.sendTextMessage(user, "Currently available WaiveCars:\n" + message.join('\n\n') + "\nType 'commands' for help.");
+      yield notify.sendTextMessage(user, "Currently available WaiveCars:\n" + message.join('\n') + "\n\nType 'commands' for help.");
       return true;
     }
 
