@@ -3,6 +3,7 @@
 let Email   = Bento.provider('email');
 let User    = Bento.model('User');
 let Booking = Bento.model('Booking');
+let Car     = Bento.model('Car');
 let config  = Bento.config;
 let notify  = require('./notification-service');
 let request = require('co-request');
@@ -17,8 +18,51 @@ module.exports = {
   },
 
   *attemptAction(user, command) {
-    if(['start','finish','complete','cancel','unlock','lock'].indexOf(command) === -1) {
+    // we try the complex book command first.
+    let bookCmd = command.match(/^book\s(\w+)$/i);
+
+    if(bookCmd) {
+      let license = bookCmd[1];
+      let requestedCar = yield Car.findOne({
+        where: {
+          license: {
+            $like: `%${ license }%`
+          }
+        }
+      });
+      if(requestedCar) {
+        try {
+          yield booking.create({
+            userId: user.id,
+            carId: requestedCar.id,
+          }, user);
+        } catch(ex) {
+          if(ex.message) {
+            yield notify.sendTextMessage(user, ex.message);
+          }
+        }
+      } else {
+        yield notify.sendTextMessage(user, `Unable to book ${license}. Check your spelling.`);
+      }
+      return true;
+    }
+
+    // now we can do the simple ones.
+    if(['available','start','finish','complete','cancel','unlock','lock'].indexOf(command) === -1) {
       return false;
+    }
+
+    if(command === 'available') {
+      let carList = yield Car.find({where: {
+          isWaivework: false,
+          isAvailable: true
+        }
+      });
+      let message = yield carList.map(function *(car) {
+        return car.license + " " + (yield booking.getAddress(car.latitude, car.longitude));
+      });
+      yield notify.sendTextMessage(user, message.join('\n'));
+      return true;
     }
 
     let currentBooking = yield Booking.findOne({ 
