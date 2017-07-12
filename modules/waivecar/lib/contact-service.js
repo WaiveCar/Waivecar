@@ -59,7 +59,7 @@ module.exports = {
 
   *deliverSms(payload) {
     let params = url.parse(payload, true);
-    let smstext = params.query.Body.tim().toLowerCase();
+    let smstext = params.query.Body.trim().toLowerCase();
     let phone = params.query.From;
     let user = yield User.findOne({ where : { phone: phone } });
 
