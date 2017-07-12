@@ -63,7 +63,7 @@ module.exports = {
     let phone = params.query.From;
     let user = yield User.findOne({ where : { phone: phone } });
 
-    if( !(yield attemptAction(user, smstext) ) ) {
+    if( !(yield this.attemptAction(user, smstext) ) ) {
       let who = user ? user.name() : '_unkonwn_';
       let message = `${ who } (${ phone }): ${ params.query.Body }`;
       yield notify.slack({ text : message }, { channel : '#app_support' });
