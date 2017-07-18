@@ -124,7 +124,7 @@ module.exports = {
             moment().diff(currentBooking.createdAt)
           ).asMilliseconds()
         );
-        let hour = mStart.format('h');
+        let hour = mStart.format('H');
         let minute = mStart.format('m');
 
         message.push(`You have an active booking. It started ${hour}hr ${minute}m ago`);
