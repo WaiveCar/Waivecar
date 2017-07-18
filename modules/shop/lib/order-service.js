@@ -167,6 +167,39 @@ module.exports = class OrderService extends Service {
     return order;
   }
 
+  static *extendReservation(booking, user) {
+    let amount = 100;
+
+    let card = yield Card.findOne({ where : { userId : user.id } });
+    let order = new Order({
+      createdBy : user.id,
+      userId    : user.id,
+      source      : card.id,
+      description : `Booking ${booking.id} reservation extension`,
+      metadata    : null,
+      currency    : 'usd',
+      amount      : amount
+    });
+
+    yield order.save();
+    try {
+      yield this.charge(order, user);
+      yield notify.notifyAdmins(`:moneybag: Charged ${ user.name() } $1.00 for a reservation extension | ${ apiConfig.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+    } catch (err) {
+      yield this.failedCharge(amount, user, err, ` | ${ apiConfig.uri }/bookings/${ booking.id }`);
+      return false;
+    }
+
+    // Regardless of whether we successfully charged the user or not, we need
+    // to associate this booking with the users' order id
+    let payment = new BookingPayment({
+      bookingId : booking.id,
+      orderId   : order.id
+    });
+    yield payment.save();
+    return true;
+  }
+
   /**
    * Special case order automatically created based on booking time
    * @param {Object} booking
