@@ -58,9 +58,9 @@ module.exports = {
     // alias commands are blank.
     let documentation = {
       available: "List available WaiveCars",
-      book: "Book a WaiveCar. Example:\n book waive14",
+      book: "Book a WaiveCar. Example:\n   book waive14",
       commands: null,
-      save: "Add 10 minutes to get to a WaiveCar reservation for $1.00",
+      save: "Add 10 additional minutes to get to a WaiveCar reservation for $1.00",
       abort: "Cancel your booking",
       cancel: null,
       start: "Start your booking",
