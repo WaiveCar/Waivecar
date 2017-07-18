@@ -257,34 +257,16 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
 
     // Sets the booking to cancel itself automaticaly after the set time.
     *setCancelTimer(time) {
-      // For some BS reason, time is an object with units
-      // (see config/waivecar/default.js).  This is such nonsense.
-      // Anyway, we're talking about #550 here where we warn the user
-      // about a warning that things are going to expire.
-      //
-      // We also have to worry about object copies because you know,
-      // screw javascript.
-        /*
-      let expireTime = {value: time.value, type: value.type};
-
-      // we presume that the type will be minutes and that
-      expireTime.value -= 5;
-
-      // make it a tiny bit future proof.
-      if(expireTime.value > 0) {
-        queue.scheduler.add('booking-auto-cancel-reminder', {
-          uid   : `booking-${ this.id }`,
-          timer : expireTime,
-          data  : {
-            bookingId : this.id
-          }
-        });
-      }
-
-        */
       queue.scheduler.add('booking-auto-cancel', {
         uid   : `booking-${ this.id }`,
-        timer : time,
+        timer : time.autoCancel,
+        data  : {
+          bookingId : this.id
+        }
+      });
+      queue.scheduler.add('booking-extension-offer', {
+        uid   : `booking-${ this.id }`,
+        timer : time.extensionOffer,
         data  : {
           bookingId : this.id
         }
