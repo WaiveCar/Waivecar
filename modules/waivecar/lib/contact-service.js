@@ -56,7 +56,7 @@ module.exports = {
     }
 
     // now we can do the simple ones.
-    if(['info','commands','available','start','finish','complete','abort','cancel','unlock','lock'].indexOf(command) === -1) {
+    if(['account','commands','available','start','finish','complete','abort','cancel','unlock','lock'].indexOf(command) === -1) {
       return false;
     }
 
@@ -64,7 +64,6 @@ module.exports = {
       let help = [
         "Available commands:",
         " available - List available WaiveCars",
-        //" info - your current booking, free time, balance, and more",
         " book <car name> - Book a WaiveCar. Example:",
         "   book waive14",
         " abort - Cancel your booking",
@@ -72,6 +71,7 @@ module.exports = {
         " finish - Complete your booking",
         " lock - Lock the WaiveCar",
         " unlock - Unlock the WaiveCar",
+        " account - Information about your account",
         "All other messages sent to this number pass thru to WaiveCar's support staff."
       ];
       yield notify.sendTextMessage(user, help.join('\n'));
@@ -107,9 +107,9 @@ module.exports = {
       }
     });
 
-    // info may or may not have a current booking if one does or
+    // account may or may not have a current booking if one does or
     // does not exist. So the place that it is processed is important.
-    if(command === 'info') {
+    if(command === 'account') {
       let message = [`Hi, ${user.name()}`];
 
       let word = (user.credit < 0 ? 'You owe $' : 'Your credit is $');
