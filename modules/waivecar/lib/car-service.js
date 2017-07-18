@@ -28,9 +28,7 @@ let carMap = false;
 
 module.exports = {
 
-  /**
-   * Track api errors to notify admins
-   */
+  // Track api errors to notify admins
   _errors : {},
 
   // people only really care about licenses ... so this 
@@ -339,6 +337,18 @@ module.exports = {
         data.charge = Math.max(0, data.charge);
       }
 
+      // We notify fleet if the car passes a threshold to make
+      // sure that they put the car out.
+      // see https://github.com/WaiveCar/Waivecar/issues/857
+      if(data.isCharging && !existingCar.isAvailable) {
+        if( 
+            (data.charge >= 100 && existingCar.charge < 100) ||
+            (data.charge >= 80 && existingCar.charge < 80)
+          ) {
+          yield notify.notifyAdmins(`:car: ${ existingCar.license } has charged to ${ data.charge }% and should be made available.`, [ 'slack' ], { channel : '#fleet' });
+        }
+      }
+
       existingCar.addToHistory(data.charge);
       data.chargeHistory = existingCar.chargeHistory;
     }
@@ -397,7 +407,6 @@ module.exports = {
     }
 
     // Retrieve all Active Devices from Invers and loop.
-
     log.debug(`Cars : Sync : retrieving device list from Cloudboxx.`);
     let devices = yield this.getDevices();
     log.debug(`Cars : Sync : ${ devices.length } devices available for sync.`);
