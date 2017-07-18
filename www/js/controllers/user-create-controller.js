@@ -14,10 +14,7 @@ function UserCreateController($injector){
   this.user = new $data.resources.users();
 
   this.submit = function(form){
-    var phone = this.user.phone ? this.user.phone.toString() : '';
-    var first = phone[0];
-    phone = phone.replace(/\D/g, '');
-    this.user.phone = first === '+' ? '+' + phone : phone;
+    this.user.phone = this.user.phone ? this.user.phone.toString() : '';
 
     if (this.user.fullName){
       var arr = this.user.fullName.split(' ');
@@ -27,10 +24,14 @@ function UserCreateController($injector){
 
     if (form.$invalid){
       return $message.error('Please fix form errors and try again.');
+    } else if (this.user.phone.length !== 10 && this.user.phone.length !== 12){
+      return $message.error('Field "Phone" should have 10 or 12 numbers.');
     } else if (!this.user.firstName || !this.user.lastName){
       return $message.error('Field "Full Name" has to include a space.');
-    } else if (this.user.phone.length !== 10){
-      return $message.error('Field "Phone" should have 10 numbers.');
+    }
+
+    if (this.user.phone.length === 12) {
+      this.user.phone = '+' + this.user.phone;
     }
 
     var credentials = {
@@ -75,30 +76,10 @@ function UserCreateController($injector){
   };
 
 
-  this.enterPhone = function(event){
-    if (event.keyCode !== 8) {
-      var phone = this.user.phone ? this.user.phone.toString() : '';
-      var first = phone[0];
-      phone = phone.replace(/\D/g, '');
-      if (first === '+') {
-        phone = '+' + phone;
-        if (phone.length > 13) {
-          phone = phone.substr(0, 13);
-        }
-      } else if (first) {
-        phone = '(' + phone;
-        if (phone.length >= 4) {
-          phone = phone.substr(0, 4) + ') ' + phone.substr(4);
-        }
-        if (phone.length >= 9) {
-          phone = phone.substr(0, 9) + '-' + phone.substr(9);
-        }
-        if (phone.length > 14) {
-          phone = phone.substr(0, 14);
-        }
-      }
-      this.user.phone = phone;
-    }
+  this.enterPhone = function(){
+    var phone = this.user.phone ? this.user.phone.toString() : '';
+    phone = phone.replace(/\D/g, '').substr(0, 12);
+    this.user.phone = phone;
   };
 }
 
