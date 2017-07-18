@@ -154,9 +154,7 @@ module.exports = {
         };
       }
 
-      if(limit) {
-        opts.limit = limit;
-      }
+      opts.limit = limit || 20;
       if (offset) {
         opts.offset = offset;
       }
