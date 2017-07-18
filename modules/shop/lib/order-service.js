@@ -453,6 +453,7 @@ module.exports = class OrderService extends Service {
     let capture = true;
     let credit = user.credit;
     let charge = {};
+    let silentFailure = false;
 
     if(opts.nocapture) {
       capture = false;
@@ -470,55 +471,70 @@ module.exports = class OrderService extends Service {
       try {
         let service = this.getService(config.service, 'charges');
 
-        charge  = yield service.create({
-          source      : order.source,
-          description : order.description,
-          metadata    : order.metadata ? JSON.parse(order.metadata) : {},
-          currency    : order.currency,
+        // Since debt is negative credit we need to subtract to add
+        // to the amount being charged. Yes that's confusing, read it
+        // again if you need to.
+        //
+        // For example, if the user has a balance of -$2 and the fee is $4
+        // Then 4 - -2 = 4 + 2 = 6 ... we charge them $6.
+        //
+        // If the user has a credit of $2 and the fee is $4 
+        // Then 4 - 2 = 2 ... we charge them $2.
+        let amountToCharge = order.amount - credit;
 
-          // Since debt is negative credit we need to subtract to add
-          // to the amount being charged. Yes that's confusing, read it
-          // again if you need to.
-          //
-          // For example, if the user has a balance of -$2 and the fee is $4
-          // Then 4 - -2 = 4 + 2 = 6 ... we charge them $6.
-          //
-          // If the user has a credit of $2 and the fee is $4 
-          // Then 4 - 2 = 2 ... we charge them $2.
-          amount      : order.amount - credit,
+        // Stripe will sensibly tell us to jump in a lake if the amount to
+        // charge is under a dollar. If this is the case we don't bother.
+        // See https://github.com/WaiveCar/Waivecar/issues/852 for documentation
+        //
+        console.log('>>>>>>>> ' + amountToCharge);
+        if(amountToCharge < 99) {
+          silentFailure = true;
+          throw new Error;
+        } else {
+          charge  = yield service.create({
+            source      : order.source,
+            description : order.description,
+            metadata    : order.metadata ? JSON.parse(order.metadata) : {},
+            currency    : order.currency,
+            amount      : amountToCharge,
+            capture     : capture
+          }, user);
 
-          capture     : capture
-        }, user);
+          charge.amount = order.amount - credit;
 
-        charge.amount = order.amount - credit;
-
-        yield order.update({
-          service  : config.service,
-          chargeId : charge.id,
-          status   : capture ? 'paid' : 'authorized'
-        });
+          yield order.update({
+            service  : config.service,
+            chargeId : charge.id,
+            status   : capture ? 'paid' : 'authorized'
+          });
+        }
       } catch (ex) {
         // This more or less says we were unable to chage the user.
         // If we are capturing, as in, we expected to charge them,
         // this is a splendid time to modify their credit with us.
         if (capture) {
-          // We failed to chage order.amount so that's what our math is.
+          // We failed to charge order.amount so that's what our math is.
           // It's not more complex than that.
           yield user.update({ credit: user.credit - order.amount });
 
           // A failed charge needs to be marked as such (see #670).
           yield order.update({ status: 'failed' });
 
-          // We need to hold this failed charge against the user. (see #715)
-          yield UserLog.addUserEvent(user, 'DECLINED', order.id);
+          if(!silentFailure) {
+            // We need to hold this failed charge against the user. (see #715)
+            yield UserLog.addUserEvent(user, 'DECLINED', order.id);
 
-          // And finally we tell them (also covered in #670).
-          yield notify.sendTextMessage(user, 'Hi. Unfortunately we were unable to charge your credit card for your last ride. Please call us to help resolve this issue');
+            // And finally we tell them (also covered in #670).
+            yield notify.sendTextMessage(user, 'Hi. Unfortunately we were unable to charge your credit card for your last ride. Please call us to help resolve this issue');
+          }
         }
         yield user.save();
-        // We need to pass up this error because it's being handled
-        // above us.
-        throw ex;
+
+        if(!silentFailure) {
+          // We need to pass up this error because it's being handled
+          // above us.
+          throw ex;
+        }
 
         // This is here in case someone is sloppy and removes the 
         // above line in the future, leading to a very tricky and
