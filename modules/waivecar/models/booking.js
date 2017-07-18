@@ -146,7 +146,7 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       return this.getFlags().indexOf(what) !== -1;
     },
 
-    *swapflag(outFlag, inFlag) {
+    *swapFlag(outFlag, inFlag) {
       var newFlagList = this.getFlags().filter(function(flag) {
         return flag !== outFlag;
       });

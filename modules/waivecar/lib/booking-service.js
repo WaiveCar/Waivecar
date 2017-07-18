@@ -377,6 +377,7 @@ module.exports = class BookingService extends Service {
   static *extend(id) {
     let booking = yield this.getBooking(id);
     let user    = yield this.getUser(booking.userId);
+    let car     = yield this.getCar(booking.carId);
     let err     = false;
 
     if(booking.status !== 'reserved') {
