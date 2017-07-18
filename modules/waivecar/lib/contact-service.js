@@ -10,6 +10,7 @@ let request = require('co-request');
 let url     = require('url');
 let booking = require('./booking-service');
 let cars    = require('./car-service');
+let moment  = require('moment');
 
 
 module.exports = {
@@ -55,21 +56,22 @@ module.exports = {
     }
 
     // now we can do the simple ones.
-    if(['commands','available','start','finish','complete','abort','cancel','unlock','lock'].indexOf(command) === -1) {
+    if(['info','commands','available','start','finish','complete','abort','cancel','unlock','lock'].indexOf(command) === -1) {
       return false;
     }
 
     if(command === 'commands') {
       let help = [
         "Available commands:",
-        " available - list available WaiveCars",
-        " book <car name> - book a WaiveCar. Example:",
+        " available - List available WaiveCars",
+        //" info - your current booking, free time, balance, and more",
+        " book <car name> - Book a WaiveCar. Example:",
         "   book waive14",
-        " abort - cancel your booking",
-        " start - start your booking",
-        " finish - complete your booking",
-        " lock - lock the WaiveCar",
-        " unlock - unlock the WaiveCar",
+        " abort - Cancel your booking",
+        " start - Start your booking",
+        " finish - Complete your booking",
+        " lock - Lock the WaiveCar",
+        " unlock - Unlock the WaiveCar",
         "All other messages sent to this number pass thru to WaiveCar's support staff."
       ];
       yield notify.sendTextMessage(user, help.join('\n'));
@@ -77,15 +79,22 @@ module.exports = {
     }
 
     if(command === 'available') {
+      let footer = "\nType 'commands' for help.";
       let carList = yield Car.find({where: {
           isWaivework: false,
           isAvailable: true
         }
       });
-      let message = yield carList.map(function *(car) {
-        return car.license + " " + (yield booking.getAddress(car.latitude, car.longitude));
-      });
-      yield notify.sendTextMessage(user, "Currently available WaiveCars:\n" + message.join('\n') + "\n\nType 'commands' for help.");
+      
+      if(carList.length === 0) {
+        yield notify.sendTextMessage(user, "There are no WaiveCars available. :(" + footer);
+      } else {
+        let message = yield carList.map(function *(car) {
+          return car.license + " " + (yield booking.getAddress(car.latitude, car.longitude));
+        });
+        yield notify.sendTextMessage(user, "Available WaiveCars:\n" + message.join('\n') + "\n" + footer);
+      }
+     
       return true;
     }
 
@@ -97,6 +106,34 @@ module.exports = {
         userId : user.id 
       }
     });
+
+    // info may or may not have a current booking if one does or
+    // does not exist. So the place that it is processed is important.
+    if(command === 'info') {
+      let message = [`Hi, ${user.name()}`];
+
+      let word = (user.credit < 0 ? 'You owe $' : 'Your credit is $');
+      let money = Math.abs(user.credit)/100;
+      message.push(`${ word }${ money }`);
+      if(user.status !== 'active') {
+        message.push(`Your status is ${user.status}`);
+      }
+      if(currentBooking) {
+        let mStart = moment.utc(
+          moment.duration(
+            moment().diff(currentBooking.createdAt)
+          ).asMilliseconds()
+        );
+        let hour = mStart.format('h');
+        let minute = mStart.format('m');
+
+        message.push(`You have an active booking. It started ${hour}hr ${minute}m ago`);
+      } else {
+        message.push('You do not have an active booking');
+      }
+      yield notify.sendTextMessage(user, message.join('. ') + '.');
+      return true;
+    }
 
     if(!currentBooking) {
       yield notify.sendTextMessage(user, "You don't have a current booking. Command not understood");
@@ -118,6 +155,7 @@ module.exports = {
         console.log(ex.stack);
       }
     }
+
     try {
       if(command === 'start') {
         yield booking.ready(id, user);
@@ -141,22 +179,25 @@ module.exports = {
     let phone = params.query.From;
     let user = yield User.findOne({ where : { phone: phone } });
 
-    if( !(yield this.attemptAction(user, smstext) ) ) {
-      let who = user ? user.name() : '_unkonwn_';
-      let message = `${ who } (${ phone }): ${ params.query.Body }`;
-      yield notify.slack({ text : message }, { channel : '#app_support' });
-
-      params.query.Body = params.query.Body;
-      let aircall_url = 'https://webhook.frontapp.com/sms/18f55053c49e4d3d27bbc4af0e7d78e97205c88981d8f954579682a382654912';
-
-      let response = yield request({
-        url     : aircall_url,
-        method  : 'POST',
-        form    : params.query
-      });
-
-      return response.body;
+    // We need to be open to the possibility of people texting us which
+    // have not registered. In these cases we pass everything through.
+    if(user && (yield this.attemptAction(user, smstext))) {
+      return true;
     }
+
+    let who = user ? user.name() : '_unkonwn_';
+    let message = `${ who } (${ phone }): ${ params.query.Body }`;
+    yield notify.slack({ text : message }, { channel : '#app_support' });
+
+    params.query.Body = params.query.Body;
+    let aircall_url = 'https://webhook.frontapp.com/sms/18f55053c49e4d3d27bbc4af0e7d78e97205c88981d8f954579682a382654912';
+
+    let response = yield request({
+      url     : aircall_url,
+      method  : 'POST',
+      form    : params.query
+    });
+    return response.body;
   }
   /*,
 
