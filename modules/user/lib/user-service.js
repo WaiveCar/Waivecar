@@ -110,7 +110,7 @@ module.exports = {
   // So to support both methods we're going to be "smart" --- the scariest
   // word in programming. I'm going to preface the "smart" stuff with an
   // asterisk and give an explanation below:
-  *find(query, limit) {
+  *find(query, offset, limit) {
     if(query) {
       if(!_.isArray(query)) {
         query = query.match(/('.*?'|".*?"|\S+)/g).map(term => term.replace(/[\'\"]/g, ''));
@@ -157,6 +157,10 @@ module.exports = {
       if(limit) {
         opts.limit = limit;
       }
+      if (offset) {
+        opts.offset = offset;
+      }
+
       return yield User.find(opts);
     } 
     return [];
@@ -178,7 +182,7 @@ module.exports = {
 
     // ### Create Query String
 
-    let qs = query.search ? config.search(query.search) : config.filter(queryParser, query);
+    let qs = config.filter(queryParser, query);
     /*
     qs.where.id = {
       $in : groupUsers.map(val => val.userId)
@@ -187,7 +191,7 @@ module.exports = {
 
     let users = [];
     if(query.search) {
-      users = yield this.find(query.search, 20);
+      users = yield this.find(query.search, qs.offset, qs.limit);
     } else {
       users = yield User.find(qs);
     }
