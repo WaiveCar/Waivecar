@@ -13,6 +13,10 @@ module.exports = {
   waivecar : {
     booking : {
       timers : {
+        extensionOffer: {
+          value : 12,
+          type  : 'minutes'
+        },
         autoCancel : {
           value : 15,
           type  : 'minutes'
