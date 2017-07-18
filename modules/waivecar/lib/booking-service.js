@@ -177,7 +177,7 @@ module.exports = class BookingService extends Service {
       throw err;
     }
 
-    yield booking.setCancelTimer(config.booking.timers.autoCancel);
+    yield booking.setCancelTimer(config.booking.timers);
 
     // ### Relay Booking
 
@@ -371,6 +371,41 @@ module.exports = class BookingService extends Service {
     });
 
     return booking;
+  }
+
+  // extends reservation for $1.00 - see https://github.com/WaiveCar/Waivecar/issues/550
+  static *extend(id) {
+    let booking = yield this.getBooking(id);
+    let user    = yield this.getUser(booking.userId);
+    let err     = false;
+
+    if(booking.status !== 'reserved') {
+      err = "You can only extend your time if you haven't started the ride.";
+    }
+    if(booking.isFlagged('extended')) {
+      err = "Booking reservation has already been extended.";
+    }
+
+    if(!err) {
+      if(yield OrderService.extendReservation(booking, user)) {
+        yield booking.flag('extended');
+        yield notify.sendTextMessage(user, `Your WaiveCar reservation has been extended 10 minutes.`);
+        yield notify.notifyAdmins(`:clock1: ${ user.name() } extended their reservation with ${ car.info() } by 10 minutes.`, [ 'slack' ], { channel : '#reservations' });
+      } else {
+        err = "Unable to charge $1.00 to your account. Reservation extension failed.";
+
+        // Since it failed, we credit the user the dollar back since we didn't offer
+        // the service. Additionally this should really be a red flag and we should
+        // probably cancel the ride entirely... but let's not do that riht now.
+        yield user.update({credit: user.credit + 100});
+      } 
+    }
+    if(err) {
+      throw error.parse({
+        code    : `BOOKING_REQUEST_INVALID`,
+        message : err
+      }, 400);
+    }
   }
 
   /*
