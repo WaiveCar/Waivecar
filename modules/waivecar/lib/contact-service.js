@@ -55,25 +55,36 @@ module.exports = {
       return true;
     }
 
+    // alias commands are blank.
+    let documentation = {
+      available: "List available WaiveCars",
+      book: "Book a WaiveCar. Example:\n book waive14",
+      commands: null,
+      save: "Add 10 minutes to get to a WaiveCar reservation for $1.00",
+      abort: "Cancel your booking",
+      cancel: null,
+      start: "Start your booking",
+      finish: "Complete your booking",
+      complete: null,
+      lock: "Lock the WaiveCar",
+      unlock: "Unlock the WaiveCar",
+      account: "Information about your account",
+    };
+
     // now we can do the simple ones.
-    if(['account','commands','available','start','finish','complete','abort','cancel','unlock','lock'].indexOf(command) === -1) {
+    if(Object.keys(documentation).indexOf(command) === -1) {
       return false;
     }
 
     if(command === 'commands') {
-      let help = [
-        "Available commands:",
-        " available - List available WaiveCars",
-        " book <car name> - Book a WaiveCar. Example:",
-        "   book waive14",
-        " abort - Cancel your booking",
-        " start - Start your booking",
-        " finish - Complete your booking",
-        " lock - Lock the WaiveCar",
-        " unlock - Unlock the WaiveCar",
-        " account - Information about your account",
-        "All other messages sent to this number pass thru to WaiveCar's support staff."
-      ];
+      let help = [ "Available commands:" ];
+      for(var command in documentation) {
+        if(documentation[command]) {
+          help.push(` ${command} - ${documentation[command]}`);
+        }
+      }
+      help.push( "All other messages sent to this number pass thru to WaiveCar's support staff.");
+
       yield notify.sendTextMessage(user, help.join('\n'));
       return true;
     }
@@ -112,12 +123,20 @@ module.exports = {
     if(command === 'account') {
       let message = [`Hi, ${user.name()}`];
 
-      let word = (user.credit < 0 ? 'You owe $' : 'Your credit is $');
-      let money = Math.abs(user.credit)/100;
-      message.push(`${ word }${ money }`);
-      if(user.status !== 'active') {
-        message.push(`Your status is ${user.status}`);
+      if(user.credit !== 0) {
+        let money = Math.abs(user.credit)/100;
+
+        message.push( 
+          user.credit < 0 ? 
+            `You owe $${money}` : 
+            `You have $${money} in credit`
+        );
       }
+
+      if(user.status !== 'active') {
+        message.push(`Your account status is ${user.status}`);
+      }
+
       if(currentBooking) {
         let mStart = moment.utc(
           moment.duration(
@@ -125,9 +144,12 @@ module.exports = {
           ).asMilliseconds()
         );
         let hour = mStart.format('H');
-        let minute = mStart.format('m');
+        hour = (hour === '0') ? '' : `${hour}hr `;
 
-        message.push(`You have an active booking. It started ${hour}hr ${minute}m ago`);
+        let minute = mStart.format('m');
+        let second = mStart.format('s');
+
+        message.push(`Your booking is ${ currentBooking.status } as of ${hour}${minute}m${second}s ago`);
       } else {
         message.push('You do not have an active booking');
       }
@@ -159,6 +181,8 @@ module.exports = {
     try {
       if(command === 'start') {
         yield booking.ready(id, user);
+      } else if (command === 'save') {
+        yield booking.extend(id);
       } else if (command === 'cancel' || command === 'abort') {
         yield booking.cancel(id, user);
       } else if (command === 'unlock') {
