@@ -58,6 +58,14 @@ scheduler.process('booking-auto-cancel-reminder', function *(job) {
   }
 });
 
+scheduler.process('booking-extension-offer', function *(job) {
+  let booking = yield Booking.findOne({ where : { id : job.data.bookingId } });
+
+  if(booking && booking.status === 'reserved' && !booking.isFlagged('extended')) {
+    yield notify.sendTextMessage(booking.userId, `The reservation time for ${car.info()} is almost up! You can add an extra 10 minutes to get to the car for $1.00 by responding "SAVE" to this message.`);
+  }
+});
+
 scheduler.process('booking-auto-cancel', function *(job) {
   let timeWindow = config.booking.timers.autoCancel.value;
   let booking = yield Booking.findOne({ where : { id : job.data.bookingId } });
@@ -72,7 +80,7 @@ scheduler.process('booking-auto-cancel', function *(job) {
     if (RedisService.shouldProcess('booking-start', booking.id)) {
       if (booking.isFlagged('extended')) {
         // this gives us a historical record of this
-        booking.swapFlag('extended', 'extension');
+        yield booking.swapFlag('extended', 'extension');
         queue.scheduler.add('booking-auto-cancel', {
           uid   : `booking-${ booking.id }`,
           timer : config.booking.timers.extension,
@@ -80,6 +88,9 @@ scheduler.process('booking-auto-cancel', function *(job) {
             bookingId : booking.id
           }
         });
+        // tell the user that this is actually happening.
+        yield notify.sendTextMessage(booking.userId, `Your reservation extension time has started! You have ${ config.booking.timers.extension.value } minutes more to get to ${ car.info() }.`);
+
         // and then get out of here.
         return true;
       }
