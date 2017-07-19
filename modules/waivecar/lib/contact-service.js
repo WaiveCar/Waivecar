@@ -186,9 +186,9 @@ module.exports = {
       } else if (command === 'cancel' || command === 'abort') {
         yield booking.cancel(id, user);
       } else if (command === 'unlock') {
-        yield cars.lockCar(currentbooking.carId, user);
+        yield cars.lockCar(currentBooking.carId, user);
       } else if (command === 'lock') {
-        yield cars.unlockCar(currentbooking.carId, user);
+        yield cars.unlockCar(currentBooking.carId, user);
       }
     } catch(ex) {
       yield this.returnError(user, ex);
