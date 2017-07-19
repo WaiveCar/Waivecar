@@ -1,5 +1,5 @@
 import React             from 'react';
-import { relay }         from 'bento';
+import { relay, dom }         from 'bento';
 import Table             from 'bento-service/table';
 import mixin             from 'react-mixin';
 import { History, Link } from 'react-router';
@@ -33,6 +33,7 @@ class UsersListView extends React.Component {
    * @return {Void}
    */
   componentDidMount() {
+    dom.setTitle("Users");
     this.table.init();
     this.setState({
       sort : {

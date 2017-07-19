@@ -1,5 +1,5 @@
 import React          from 'react';
-import { relay, api } from 'bento';
+import { relay, api, dom } from 'bento';
 import { snackbar }   from 'bento-web';
 import { Form }       from 'bento/lib/helpers';
 import md5            from 'md5';
@@ -215,7 +215,10 @@ module.exports = class UserDetails extends React.Component {
         </div>
       );
     }
-    return (
+
+    dom.setTitle(user.firstName + " " + user.lastName);
+
+  return (
       <div>
         <div className="profile-header">
           <div className="profile-image">

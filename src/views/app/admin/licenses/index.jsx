@@ -1,6 +1,6 @@
 import React             from 'react';
 import moment            from 'moment';
-import { relay }         from 'bento';
+import { relay, dom }    from 'bento';
 import Table             from 'bento-service/table';
 import mixin             from 'react-mixin';
 import { History, Link } from 'react-router';
@@ -33,6 +33,7 @@ class TableIndex extends React.Component {
    * @return {Void}
    */
   componentDidMount() {
+    dom.setTitle("Licenses");
     this.table.init();
     this.setState({
       sort : {

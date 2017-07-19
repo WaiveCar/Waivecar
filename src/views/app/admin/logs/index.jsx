@@ -3,7 +3,7 @@ import React from 'react';
 import mixin from 'react-mixin';
 import moment from 'moment';
 import Table from 'bento-service/table';
-import { relay } from 'bento';
+import { relay, dom } from 'bento';
 
 @mixin.decorate(History)
 class LogIndex extends React.Component {
@@ -26,6 +26,7 @@ class LogIndex extends React.Component {
    * Tell table to fetch initial payload
    */
   componentDidMount() {
+    dom.setTitle("Logs");
     this.table.init();
     this.setState({
       sort : {
