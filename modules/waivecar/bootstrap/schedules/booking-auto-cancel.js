@@ -60,6 +60,7 @@ scheduler.process('booking-auto-cancel-reminder', function *(job) {
 
 scheduler.process('booking-extension-offer', function *(job) {
   let booking = yield Booking.findOne({ where : { id : job.data.bookingId } });
+  let car = yield Car.findById(booking.carId);
 
   if(booking && booking.status === 'reserved' && !booking.isFlagged('extended')) {
     yield notify.sendTextMessage(booking.userId, `The reservation time for ${car.info()} is almost up! You can add an extra 10 minutes to get to the car for $1.00 by responding "SAVE" to this message.`);
@@ -69,6 +70,7 @@ scheduler.process('booking-extension-offer', function *(job) {
 scheduler.process('booking-auto-cancel', function *(job) {
   let timeWindow = config.booking.timers.autoCancel.value;
   let booking = yield Booking.findOne({ where : { id : job.data.bookingId } });
+
   if (!booking) {
     throw error.parse({
       code    : 'BOOKING_AUTO_CANCEL_FAILED',
@@ -76,12 +78,14 @@ scheduler.process('booking-auto-cancel', function *(job) {
     });
   }
 
+  let car = yield Car.findById(booking.carId);
+
   if (booking.status === 'reserved') {
     if (RedisService.shouldProcess('booking-start', booking.id)) {
       if (booking.isFlagged('extended')) {
         // this gives us a historical record of this
         yield booking.swapFlag('extended', 'extension');
-        queue.scheduler.add('booking-auto-cancel', {
+        scheduler.add('booking-auto-cancel', {
           uid   : `booking-${ booking.id }`,
           timer : config.booking.timers.extension,
           data  : {
@@ -104,7 +108,6 @@ scheduler.process('booking-auto-cancel', function *(job) {
       // ### Update Car
       // Remove the user from the car and make it available again.
 
-      let car = yield Car.findById(booking.carId);
       yield car.update({
         userId      : null,
         isAvailable : true
@@ -122,6 +125,10 @@ scheduler.process('booking-auto-cancel', function *(job) {
         type : 'update',
         data : booking.toJSON()
       });
+
+      if(booking.isFlagged('extension')) {
+        timeWindow = '25';
+      }
 
       let user = yield notify.sendTextMessage(booking.userId, `Hi, sorry you couldn't make it to your car on time. Your ${ timeWindow } minutes have expired and we've had to cancel your reservation for ${ car.info() }`);
       yield notify.notifyAdmins(`:timer_clock: ${ user.name() }, ${ car.info() } booking cancelled after ${ timeWindow } minute timer expiration.`, [ 'slack' ], { channel : '#reservations' });
