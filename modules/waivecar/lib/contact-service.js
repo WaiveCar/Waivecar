@@ -29,10 +29,10 @@ module.exports = {
 
   *attemptAction(user, command) {
     // we try the complex book command first.
-    let bookCmd = command.match(/^book\s(\w+)$/i);
+    let bookCmd = command.match(/^book\s(\w+|\w+\s\d+)$/i);
 
     if(bookCmd) {
-      let license = bookCmd[1];
+      let license = bookCmd[1].replace(/\s/g, '');
       let requestedCar = yield Car.findOne({
         where: {
           license: {
