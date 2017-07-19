@@ -40,27 +40,10 @@ let RedisService   = require('../../lib/redis-service');
 // This is slightly incorrect as eventually I decided to just make it
 // a booking flag ... it's likely easier
 //
-scheduler.process('booking-auto-cancel-reminder', function *(job) {
-  let booking = yield Booking.findOne({ where : { id : job.data.bookingId } });
-  if (!booking) {
-    throw error.parse({
-      code    : 'BOOKING_AUTO_CANCEL_FAILED',
-      message : 'Could not find a booking with the provided id'
-    });
-  }
-
-  if (booking.status === 'reserved') {
-    // We need to find the user and tell them the booking
-    // is about to expire.
-    let user = yield notify.sendTextMessage(booking.userId, `Hi, there's only a few more minutes to get to ${ car.info() }. If you need more time, respond "Buy" to this message and get an additional ${ config.booking.timers.extension.value } minutes for only $1.`);
-  } else {
-    log.warn(`Auto cancellation of booking ${ booking.id } was request but ignored | Booking status: ${ booking.status }`);
-  }
-});
-
 scheduler.process('booking-extension-offer', function *(job) {
   let booking = yield Booking.findOne({ where : { id : job.data.bookingId } });
   let car = yield Car.findById(booking.carId);
+  console.log(car, booking.carId, booking);
 
   if(booking && booking.status === 'reserved' && !booking.isFlagged('extended')) {
     yield notify.sendTextMessage(booking.userId, `The reservation time for ${car.info()} is almost up! You can add an extra 10 minutes to get to the car for $1.00 by responding "SAVE" to this message.`);
