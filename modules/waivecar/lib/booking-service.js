@@ -521,17 +521,19 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
+    var isCarReachable = true;
     if(process.env.NODE_ENV === 'production') {
       try {
         Object.assign(car, yield cars.getDevice(car.id, _user, 'booking.end'));
       } catch (err) {
+        isCarReachable = false;
         log.debug('Failed to fetch car information when ending booking');
         if (isAdmin) {
           warnings.push('car is unreachable');
         }
       }
 
-      if (car.isIgnitionOn) {
+      if (isCarReachable && car.isIgnitionOn) {
         if (isAdmin) {
           warnings.push('the ignition is on');
         } else {
@@ -552,14 +554,16 @@ module.exports = class BookingService extends Service {
       log.warn(`Unable to lock immobilizer when ending booking ${ booking.id }`);
     }
 
-    if (!status || !status.isImmobilized) {
-      if (isAdmin) {
-        warnings.push('the engine is not immobilized');
-      } else {
-        throw error.parse({
-          code    : `BOOKING_END_IMMOBILIZER`,
-          message : `Immobilizing the engine failed.`
-        }, 400);
+    if (isCarReachable) {
+      if (!status || !status.isImmobilized) {
+        if (isAdmin) {
+          warnings.push('the engine is not immobilized');
+        } else {
+          throw error.parse({
+            code: `BOOKING_END_IMMOBILIZER`,
+            message: `Immobilizing the engine failed.`
+          }, 400);
+        }
       }
     }
 
@@ -596,6 +600,10 @@ module.exports = class BookingService extends Service {
     yield booking.delReminders();
     yield booking.delForfeitureTimers();
     yield booking.end();
+    if (!isCarReachable) {
+      yield booking.flag("pending-end");
+      yield notify.slack({ text : `Pending end of booking. ${ Bento.config.web.uri }/bookings/${ id }`
+    }
 
     let deltas = yield this.getDeltas(booking);
 
@@ -655,6 +663,10 @@ module.exports = class BookingService extends Service {
 
       let parking = new ParkingDetails(payload.data);
       yield parking.save();
+
+      return {
+        isCarReachable : isCarReachable
+      };      
     }
 
     // ### Notify
