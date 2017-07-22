@@ -36,7 +36,8 @@ module.exports = {
   web : {
     components : {
       map : {
-        key : '8698d318586c58a1f8ca1e88ecfac299'
+        key : 'bc7b4da77e971c12cb0e069bffcf2771',
+        realkey : '8698d318586c58a1f8ca1e88ecfac299'
       }
     }
   }
