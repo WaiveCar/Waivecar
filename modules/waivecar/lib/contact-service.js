@@ -10,7 +10,8 @@ let request = require('co-request');
 let url     = require('url');
 let booking = require('./booking-service');
 let cars    = require('./car-service');
-let moment  = require('moment');
+let moment  = require('moment-timezone');
+let fs      = require('fs');
 
 
 module.exports = {
@@ -202,6 +203,9 @@ module.exports = {
     let smstext = params.query.Body.trim().toLowerCase();
     let phone = params.query.From;
     let user = yield User.findOne({ where : { phone: phone } });
+    let who = user ? user.name() : '_unkonwn_';
+    let ts = moment.tz(moment.utc(), "America/Los_Angeles").format('YYYY/MM/DD HH:mm:ss');
+    fs.appendFileSync('/var/log/outgoing/sms.txt', `${ts} ${phone} ${who}: ${ params.query.Body }\n`);
 
     // We need to be open to the possibility of people texting us which
     // have not registered. In these cases we pass everything through.
@@ -209,7 +213,6 @@ module.exports = {
       return true;
     }
 
-    let who = user ? user.name() : '_unkonwn_';
     let message = `${ who } (${ phone }): ${ params.query.Body }`;
     yield notify.slack({ text : message }, { channel : '#app_support' });
 

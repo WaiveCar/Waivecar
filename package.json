@@ -41,6 +41,7 @@
     "mailchimp-api": "2.0.7",
     "mimetype": "0.0.7",
     "moment": "^2.18.1",
+    "moment-timezone": "^0.5.13",
     "mongodb": "2.0.47",
     "mysql": "2.9.0",
     "node-fs": "0.1.7",
