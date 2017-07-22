@@ -82,15 +82,12 @@ scheduler.process('booking-auto-cancel', function *(job) {
         return true;
       }
 
-      // ### Cancel Booking
-
       yield booking.update({
         status : 'cancelled'
       });
 
       // ### Update Car
       // Remove the user from the car and make it available again.
-
       yield car.update({
         userId      : null,
         isAvailable : true
