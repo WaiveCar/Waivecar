@@ -487,14 +487,10 @@ class CarsShowView extends React.Component {
     }
 
     return (
-      <div>
-        <div className="visible-md-up text-center">
-          <a target="_blank" className="btn btn-link btn-sm col-xs-6" style={{ float: "none" }} href={ "http://maps.google.com/?q=" + geo + '(' + car.license + ')' }>Open in Maps</a>
-        </div>
+      <div className="text-center">
+        <a target="_blank" className="btn btn-link btn-sm col-xs-6" style={{ float: "none" }} href={ "http://maps.google.com/?q=" + geo + '(' + car.license + ')' }>Open in Maps (desktop)</a>
 
-        <div className="hidden-lg-up visible-md-down text-center">
-          <a className="btn btn-link btn-sm col-xs-6" style={{ float: "none" }} href={ "geo:" + geo + '?q=' + geo + '(' + car.license + ')' }>Open in Maps</a>
-        </div>
+        <a className="btn btn-link btn-sm col-xs-6" style={{ float: "none" }} href={ "geo:" + geo + '?q=' + geo + '(' + car.license + ')' }>Open in Maps (mobile)</a>
       </div>
     );
   }
