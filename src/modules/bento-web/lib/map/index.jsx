@@ -25,9 +25,6 @@ let icons = [
 
 module.exports = class Map extends React.Component {
 
-  /**
-   * @constructor
-   */
   constructor(...args) {
     super(...args);
     this.state = {
@@ -80,18 +77,10 @@ module.exports = class Map extends React.Component {
     }
   }
 
-  /**
-   * Prepares a list of markers.
-   */
   prepareMarkers() {
-
-
-
     if (!this.state.map) {
       return;
     }
-
-
 
     let markers = this.getMarkers();
     this.getUser(function(err, userMarker) {
@@ -122,7 +111,6 @@ module.exports = class Map extends React.Component {
       polyline.addTo(this.state.map);
     }
   }
-
 
   getUser(next) {
     if (!(this.props.includeUser && navigator)) {
@@ -164,8 +152,6 @@ module.exports = class Map extends React.Component {
   }
 
   getPath(rawPath) {
-
-
     return rawPath.map((val) => {
       return [
         val[0], val[1]
@@ -259,9 +245,6 @@ module.exports = class Map extends React.Component {
     });
   }
 
-  /**
-   * @render
-   */
   render() {
     return (
       <div className="map-wrapper animated fadeIn">

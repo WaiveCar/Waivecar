@@ -131,7 +131,6 @@ class CarsShowView extends React.Component {
   }
 
   renderCarMedia(car) {
-    let geo = car.latitude + ',' + car.longitude 
     return (
       <div className="box">
         <div className="container-fluid">
@@ -139,6 +138,7 @@ class CarsShowView extends React.Component {
             <div className="col-xs-12">
               <div className="ride-map">
                 <Map
+                  ref={(map) => { this.map = map; }}
                   markerIcon = { '/images/map/active-waivecar.svg' }
                   markers    = {[
                     {
@@ -149,9 +149,7 @@ class CarsShowView extends React.Component {
                   ]}
                   path      =  {this.state.carPath }
                 />
-                <div className="hidden-lg-up visible-md-down text-center">
-                  <a className="btn btn-link btn-sm col-xs-6" style={{ float: "none" }} href={ "geo:" + geo + '?q=' + geo + '(' + car.license + ')' }>Open in Maps</a>
-                </div>
+                { this.renderLocation(car) }
               </div>
             </div>
           </div>
@@ -478,6 +476,26 @@ class CarsShowView extends React.Component {
   renderNotes(car) {
     return (
       <NotesList type='car' identifier={ car.id }></NotesList>
+    );
+  }
+
+  renderLocation(car) {
+    let geo = car.latitude + ',' + car.longitude;
+    if(this.state.location) {}
+
+    if(this.map && this.map.getAddress) {
+    }
+
+    return (
+      <div>
+        <div className="visible-md-up text-center">
+          <a target="_blank" className="btn btn-link btn-sm col-xs-6" style={{ float: "none" }} href={ "http://maps.google.com/?q=" + geo + '(' + car.license + ')' }>Open in Maps</a>
+        </div>
+
+        <div className="hidden-lg-up visible-md-down text-center">
+          <a className="btn btn-link btn-sm col-xs-6" style={{ float: "none" }} href={ "geo:" + geo + '?q=' + geo + '(' + car.license + ')' }>Open in Maps</a>
+        </div>
+      </div>
     );
   }
 
