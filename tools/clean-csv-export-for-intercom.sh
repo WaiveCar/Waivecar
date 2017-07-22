@@ -1,6 +1,9 @@
-cp all-users.csv all-users-orig.csv
-sed -ri 's/,(\+|\\N)/,/' all-users.csv  # Replace the nulls with empty fields
-sed -ri 's/\s+"/"/g' all-users.csv # Remove trailing whitespace
-sed -ri 's/"\+([0-9]{0,8}|[0-9]{14,40})"//g'  all-users.csv # Remove bogus phone numbers
-grep -P '\"[\w\.+-]*@[\w-]+\.[\.\w]*"' all-users.csv > tmp # Remove email addresses that are clearly bogus
-mv tmp all-users.csv
+#!/bin/bash
+
+cp $1 ${1/.csv/}-orig.csv
+  # Replace the nulls with empty fields
+  # Remove trailing whitespace
+  # Remove bogus phone numbers
+
+sed -r 's/,(\+|\\N)/,/g;   s/\s+"/"/g;   s/"0000\/00\/00"/""/g;  s/"\+([0-9]{0,8}|[0-9]{14,40})"//g;' $1 | grep -P '\"[\w\.+-]*@[\w-]+\.[\.\w]*"' > tmp # Remove email addresses that are clearly bogus
+[ -s tmp ] && mv tmp all-users.csv
