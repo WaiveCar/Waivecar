@@ -15,8 +15,9 @@ module.exports = angular.module('app').factory('Card', [
     function transformRequest(data) {
       if (data && data.card) {
         data = angular.copy(data);
-        data.card.exp_month = data.card.expiry.getMonth() + 1;
-        data.card.exp_year = data.card.expiry.getFullYear();
+        var date = data.card.expiry.split('/');
+        data.card.exp_month = date[0];
+        data.card.exp_year = date[1];
         delete data.card.expiry;
       }
       return angular.toJson(data);
