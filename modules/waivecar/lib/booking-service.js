@@ -522,6 +522,7 @@ module.exports = class BookingService extends Service {
     }
 
     var isCarReachable = true;
+    isCarReachable = false;
     if(process.env.NODE_ENV === 'production') {
       try {
         Object.assign(car, yield cars.getDevice(car.id, _user, 'booking.end'));
@@ -602,7 +603,7 @@ module.exports = class BookingService extends Service {
     yield booking.end();
     if (!isCarReachable) {
       yield booking.flag("pending-end");
-      yield notify.slack({ text : `Pending end of booking. ${ Bento.config.web.uri }/bookings/${ id }`
+      yield notify.slack({ text : `Pending end of booking. ${ Bento.config.web.uri }/bookings/${ id }`}, { channel : '#adminended' });
     }
 
     let deltas = yield this.getDeltas(booking);
@@ -663,10 +664,6 @@ module.exports = class BookingService extends Service {
 
       let parking = new ParkingDetails(payload.data);
       yield parking.save();
-
-      return {
-        isCarReachable : isCarReachable
-      };      
     }
 
     // ### Notify
@@ -696,6 +693,10 @@ module.exports = class BookingService extends Service {
 
     car.relay('update');
     yield this.relay('update', booking, _user);
+
+    return {
+      isCarReachable : isCarReachable
+    };
   }
 
   static *complete(id, _user, query, payload) {
