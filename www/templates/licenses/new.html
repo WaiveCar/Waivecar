@@ -30,12 +30,20 @@
           </select>
         </label>
 
+        <label class="item item-input">
+          <span class="input-label">Date Of Birth</span>
+          <input name="birthDate" type="date" value="" placeholder="Date of Birth" required ng-model="licenseCtrl.license.birthDate">
+        </label>
+
         <div class="errors">
           <div ng-messages="form.number.$error" ng-if="form.$submitted">
             <div ng-message="required">License Number is required</div>
           </div>
           <div ng-messages="form.state.$error" ng-if="form.$submitted">
             <div ng-message="required">License State is required</div>
+          </div>
+          <div ng-messages="form.birthDate.$error" ng-if="form.$submitted">
+            <div ng-message="required">Date Of Birth is required</div>
           </div>
         </div>
 
