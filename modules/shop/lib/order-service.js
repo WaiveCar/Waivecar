@@ -519,7 +519,6 @@ module.exports = class OrderService extends Service {
         // charge is under a dollar. If this is the case we don't bother.
         // See https://github.com/WaiveCar/Waivecar/issues/852 for documentation
         //
-        console.log('>>>>>>>> ' + amountToCharge);
         if(amountToCharge < 99) {
           silentFailure = true;
           throw new Error;
