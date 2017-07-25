@@ -3,7 +3,7 @@
 ts=`date +%Y%m%d-%H%M`
 path=/opt/waivecar-api
 previous=`readlink -f $path-last`
-npm install
+#npm install
 
 echo -n "Last was: "; cat git-sha-1
 git describe > git-sha-1
