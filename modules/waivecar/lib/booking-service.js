@@ -972,7 +972,7 @@ module.exports = class BookingService extends Service {
       ret.distance = end.mileage - start.mileage;
       let absDistance = Math.abs(start.latitude - end.latitude) + Math.abs(start.longitude - end.longitude);
       ret.hasMoved = absDistance > 0.00005;
-      console.log(`<< ${ret.distance} ${ret.duration} ${absDistance}`);
+      //console.log(`<< ${ret.distance} ${ret.duration} ${absDistance}`);
     }
 
     return ret;

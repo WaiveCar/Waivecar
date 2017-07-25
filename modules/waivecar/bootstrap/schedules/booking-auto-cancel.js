@@ -43,7 +43,6 @@ let RedisService   = require('../../lib/redis-service');
 scheduler.process('booking-extension-offer', function *(job) {
   let booking = yield Booking.findOne({ where : { id : job.data.bookingId } });
   let car = yield Car.findById(booking.carId);
-  console.log(car, booking.carId, booking);
 
   if(booking && booking.status === 'reserved' && !booking.isFlagged('extended')) {
     yield notify.sendTextMessage(booking.userId, `The reservation time for ${car.info()} is almost up! You can add an extra 10 minutes to get to the car for $1.00 by responding "SAVE" to this message.`);
