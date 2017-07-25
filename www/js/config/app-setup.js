@@ -141,7 +141,15 @@ var run = [
         return true;
       }
 
-      if (isAuthenticated && !_.isUndefined(authRequired) && authRequired === false) {
+      /*
+      if ($auth.me && !$auth.me.phone && !$auth.me.verifiedPhone && toState.name !== 'users-edit-general') {
+        event.preventDefault();
+        console.log('fff');
+        $state.go('users-edit-general', { step: 1 });
+      } else */ if ($auth.me && $auth.me.phone && !$auth.me.verifiedPhone && toState.name !== 'auth-account-verify') {
+        event.preventDefault();
+        $state.go('auth-account-verify', { step: 2 });
+      } else if (isAuthenticated && !_.isUndefined(authRequired) && authRequired === false && $auth.me.tested) {
         event.preventDefault();
         $state.go('cars');
       } else if (!isAuthenticated && authRequired) {
