@@ -30,31 +30,37 @@ module.exports = {
 
   *attemptAction(user, command) {
     // we try the complex book command first.
-    let bookCmd = command.match(/^book\s(\w+|\w+\s\d+)$/i);
+    let argCmd = command.match(/^(book|details)\s(\w+|\w+\s\d+)$/i);
 
-    if(bookCmd) {
-      let license = bookCmd[1].replace(/\s/g, '');
+    if(argCmd) {
+      let license = argCmd[2].replace(/\s/g, '');
       let requestedCar = yield Car.findOne({
         where: {
+          isAvailable: true,
           license: {
-            $like: `%${ license }%`
+            $like: `${ license }`
           }
         }
       });
       if(requestedCar) {
         try {
-          yield booking.create({
-            userId: user.id,
-            carId: requestedCar.id,
-          }, user);
+          if(argCmd[1] === 'book') {
+            yield booking.create({
+              userId: user.id,
+              carId: requestedCar.id
+            }, user);
+          } else if(argCmd[1] === 'details') {
+            yield notify.sendTextMessage(user, `${requestedCar.license} is available. It's at ${requestedCar.charge}%. It's current GPS coordinates are https://maps.google.com/?q=${requestedCar.latitude},${requestedCar.longitude}`);
+          }
         } catch(ex) {
           yield this.returnError(user, ex);
         }
       } else {
-        yield notify.sendTextMessage(user, `Unable to book ${license}. Check your spelling.`);
+        yield notify.sendTextMessage(user, `Unable to access ${license}. Check your spelling.`);
       }
       return true;
     }
+
 
     // alias commands are blank.
     let documentation = {
