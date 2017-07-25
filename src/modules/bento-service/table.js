@@ -17,6 +17,7 @@ module.exports = class Table {
     this.filters  = filters;
     this.endpoint = endpoint || `/${ resource }`;
     this.timer    = null;
+    this.limit    = 20;
   }
 
   /**
@@ -127,6 +128,7 @@ module.exports = class Table {
     );
 
     let query = queryObj.search;
+    queryObj.offset = this.ctx.state.offset;
     
     if (query || force) {
       api.get(this.endpoint, queryObj, (err, data) => {
@@ -139,7 +141,8 @@ module.exports = class Table {
         this.ctx.setState({
           search : query,
           searchObj: queryObj,
-          offset : 0
+          more   : data.length === this.limit,
+          offset : data.length
         });
         relay.dispatch(this.resource, {
           type : 'index',
@@ -156,7 +159,7 @@ module.exports = class Table {
   }
 
   // grabs an input value from a dom element
-  // and calls the searc handler on it within
+  // and calls the search handler on it within
   // a loop.  If this is insufficient, you can
   // always call search_handler directly. Please
   // note the documentation on the likely 
@@ -164,22 +167,23 @@ module.exports = class Table {
   search = (e) => {
     clearTimeout(this.timer);
     this.timer = setTimeout(() => {
+      this.ctx.setState({offset: 0});
       this.search_handler({search: e.target.value});
-    }, 500);
+    }, 700);
   }
 
   /**
-   * Loads the next 20 records from the api.
+   * Loads the next this.limit records from the api.
    * TODO: Make this into pagination rather than load more...
    * @param {bool} replace
    * @return {Void}
    */
   more = (replace) => {
-    api.get(this.endpoint, {
-      order  : 'created_at,DESC',
-      limit  : 20,
-      offset : this.ctx.state.offset
-    }, (err, data) => {
+    let queryObj = this.ctx.state.searchObj;
+    queryObj.offset = this.ctx.state.offset;
+    queryObj.limit = this.limit;
+
+    api.get(this.endpoint, queryObj, (err, data) => {
       if (err) {
         return snackbar.notify({
           type    : 'danger',
@@ -187,7 +191,7 @@ module.exports = class Table {
         });
       }
       this.ctx.setState({
-        more   : data.length === 20,
+        more   : data.length === this.limit,
         offset : this.ctx.state.offset + data.length
       });
       if (!replace) {
