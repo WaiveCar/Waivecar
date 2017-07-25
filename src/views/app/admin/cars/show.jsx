@@ -7,7 +7,6 @@ import Switch                from 'react-toolbox/lib/switch';
 import { auth, relay, dom, api }  from 'bento';
 import { fields }            from 'bento-ui';
 import { Form, Button, Map, snackbar } from 'bento-web';
-import { withGoogleMap, GoogleMap, Marker } from "react-google-maps";
 import Service    from '../../lib/car-service';
 import NotesList  from '../components/notes/list';
 import Logs       from '../../components/logs';
@@ -28,21 +27,6 @@ let formFields = {
   ]),
 
 };
-
-const CarMap = withGoogleMap(props => (
-  <GoogleMap
-    ref={props.onMapLoad}
-    defaultZoom={14}
-    defaultCenter={{ lat: 34.020014, lng:-118.491493 }}
-  >
-    {props.markers.map((marker, index) => (
-      <Marker
-        {...marker}
-        onRightClick={() => props.onMarkerRightClick(index)}
-      />
-    ))}
-  </GoogleMap>
-));
 
 @mixin.decorate(History)
 class CarsShowView extends React.Component {
@@ -142,13 +126,6 @@ class CarsShowView extends React.Component {
     })
   }
 
-  handleMapLoad(map) {
-    this._mapComponent = map;
-    if (map) {
-      console.log(map.getZoom());
-    }
-  }
-
   renderCarMedia(car) {
     return (
       <div className="box">
@@ -156,21 +133,13 @@ class CarsShowView extends React.Component {
           <div className="row">
             <div className="col-xs-12">
               <div className="ride-map">
-                <CarMap
-                  containerElement={
-                    <div style={{ width: '100%', height: `400px` }} />
-                  }
-                  mapElement={
-                    <div style={{ width: '100%', height: `400px` }} />
-                  }
-                  onMapLoad={this.handleMapLoad}
+                <Map
+                  ref={(map) => { this.map = map; }}
                   markerIcon = { '/images/map/active-waivecar.svg' }
                   markers    = {[
                     {
-                      position: {
-                        lng : car.longitude,
-                        lat : car.latitude
-                      },
+                      longitude : car.longitude,
+                      latitude  : car.latitude,
                       type      : 'start'
                     }
                   ]}
