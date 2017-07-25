@@ -47,8 +47,12 @@ module.exports = class Cards extends Service {
       }, 400);
     }
 
-
-    let card = yield service.create(user, data.card);
+    
+    try {
+      let card = yield service.create(user, data.card);
+    } catch (ex) {
+      throw error.parse(ex, 400);
+    }
     return card;
 
   }
