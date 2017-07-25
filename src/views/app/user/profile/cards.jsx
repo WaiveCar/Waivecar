@@ -13,9 +13,6 @@ module.exports = class ProfileCardsView extends React.Component {
   componentDidMount() {
   }
 
-  /**
-   * @return {Object}
-   */
   render() {
     let user = auth.user();
     return (
