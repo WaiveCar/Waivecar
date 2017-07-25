@@ -34,7 +34,6 @@ module.exports = {
     let data = yield hooks.require('user:store:before', payload, _user);
 
     // ### Create User
-
     let user = new User(data);
     if (data.password) {
       user.password = yield bcrypt.hash(data.password, 10);
@@ -42,7 +41,6 @@ module.exports = {
     yield user.save();
 
     // ### Group Assignment
-
     let group = new GroupUser({
       groupId     : 1,
       userId      : user.id,
@@ -124,6 +122,9 @@ module.exports = {
       let hasCar = rawQuery.indexOf('waive') > -1;
       let hasEmail = rawQuery.indexOf('@') > -1;
 
+      // A phone number search is defined as at least 3 consecutive digits
+      let hasPhone = rawQuery.match(/[0-9]{3,}/);
+
       let opts = { };
 
       // * If we aren't searching for either a car or email then
@@ -131,7 +132,7 @@ module.exports = {
       // a user searches "Adam Smith" and they are in the system
       // as "Adam E Smith" we need to be immune to this and be
       // able find him still.
-      if(!hasCar && !hasEmail) {
+      if(!hasCar && !hasEmail && !hasPhone) {
         opts.where = {
           $and: _.flatten(
             query.map((term) => {
@@ -147,6 +148,7 @@ module.exports = {
             query.map((term) => {
               return [
                 {email: {$like: `%${term}%` } },
+                {phone: {$like: `%${term}%` } },
                 sequelize.literal(`concat_ws(' ', first_name, last_name) like '%${term}%'`)
               ];
             })
@@ -158,6 +160,12 @@ module.exports = {
       if (offset) {
         opts.offset = offset;
       }
+
+      if (query.order) {
+        opts.order = [ query.order.split(',') ];
+      } else {
+        opts.order = [ ['created_at', 'DESC'] ];
+      } 
 
       return yield User.find(opts);
     } 
