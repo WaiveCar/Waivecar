@@ -108,7 +108,7 @@ module.exports = {
         yield notify.sendTextMessage(user, "There are no WaiveCars available. :(" + footer);
       } else {
         let message = yield carList.map(function *(car) {
-          return car.license + " " + (yield booking.getAddress(car.latitude, car.longitude));
+          return car.license + " (" + car.charge + "%) " + (yield booking.getAddress(car.latitude, car.longitude));
         });
         yield notify.sendTextMessage(user, "Available WaiveCars:\n" + message.join('\n') + "\n" + footer);
       }
