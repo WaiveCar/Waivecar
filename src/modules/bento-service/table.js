@@ -27,7 +27,8 @@ module.exports = class Table {
   init() {
     api.get(this.endpoint, {
       order  : 'created_at,DESC',
-      offset : this.ctx.state.offset
+      offset : this.ctx.state.offset,
+      limit  : 20
     }, (err, data) => {
       if (err) {
         return snackbar.notify({
@@ -54,30 +55,6 @@ module.exports = class Table {
     let { key, order } = this.ctx.state.sort;
     let search         = this.ctx.state.search;
     let list           = this.ctx.state[this.resource];
-
-    /*
-    if (search) {
-      let re = new RegExp(search, 'i');
-      let candidate = null;
-
-      list = list.filter(item => {
-
-        return this.filters.reduce( (res, index) => {
-          // cheap array check
-          if (index.map) {
-            candidate = index.map((key) => { return item[key] }).join(' ');
-          } else {
-            candidate = item[index];
-          }
-
-          if (!candidate) { return res; }
-
-          return res | (candidate.search(re) !== -1);
-        }, false);        
-
-      });
-    }
-    */
 
     if (key) {
 
@@ -167,8 +144,10 @@ module.exports = class Table {
   search = (e) => {
     clearTimeout(this.timer);
     this.timer = setTimeout(() => {
-      this.ctx.setState({offset: 0});
-      this.search_handler({search: e.target.value});
+      this.search_handler({
+        offset: 0,
+        limit: this.limit || 20,
+        search: e.target.value});
     }, 700);
   }
 
