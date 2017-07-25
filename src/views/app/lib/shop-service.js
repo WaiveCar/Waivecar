@@ -73,8 +73,8 @@ module.exports = class ShopService extends Service {
    * @param  {Object}   data
    * @param  {Function} reset
    */
-  submitCard(data, reset) {
-    this.addCard(auth.user(), data, (card) => {
+  submitCard(user, data, reset) {
+    this.addCard(user, data, (card) => {
       this.setState('cards', [
         ...this.getState('cards'),
         card

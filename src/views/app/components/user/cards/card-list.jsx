@@ -122,7 +122,11 @@ class CardList extends React.Component {
       <div>
         <div className='credit'>Current Credit: { this.amount(this.state.user.credit) }{
           auth.user().hasAccess('admin') ? 
-            <button onClick={ this.addCredit.bind(this, this.props.user, cards) } className='pull-right btn btn-link btn-sm'>Add Credit</button> : 
+            <div className="pull-right">
+              <button onClick={ this.props.addCard } className='btn btn-link btn-sm'>Add Card</button>
+              <button onClick={ this.addCredit.bind(this, this.props.user, cards) } className='btn btn-link btn-sm'>Add Credit</button>
+            </div>
+            : 
             this.renderNotice(this.state.user.credit)
         }</div>
         <table className="table-striped profile-table">
