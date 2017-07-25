@@ -5,24 +5,24 @@
   </ion-nav-title>
 
   <ion-content padding="true" class="ion-content--center dark-bg">
-    <form ng-submit="userCreate.completeFacebookRegistration(form)" name="form" id="form" novalidate>
+    <form ng-submit="userFacebookCreateCtrl.completeFacebookRegistration(form)" name="form" id="form" novalidate>
       <div class="list">
 
         <p>Review your information</p>
 
         <label class="item item-input">
           <span class="input-label required">First Name</span>
-          <input type="text" name="firstName" placeholder="John" ng-model="userCreate.user.firstName" required autofocus />
+          <input type="text" name="firstName" placeholder="John" ng-model="userFacebookCreateCtrl.user.firstName" required autofocus />
         </label>
 
         <label class="item item-input">
           <span class="input-label required">Last Name</span>
-          <input type="text" name="lastName" placeholder="Smith" ng-model="userCreate.user.lastName" required />
+          <input type="text" name="lastName" placeholder="Smith" ng-model="userFacebookCreateCtrl.user.lastName" required />
         </label>
 
         <label class="item item-input">
           <span class="input-label required">Email</span>
-          <input type="email" placeholder="john@example.com" name="email" ng-model="userCreate.user.email" required />
+          <input type="email" placeholder="john@example.com" name="email" ng-model="userFacebookCreateCtrl.user.email" required />
         </label>
 
         <p class="padding-top">Enter your mobile number</p>
@@ -31,7 +31,7 @@
           <span class="input-label mobile-label required">Mobile</span>
           <i class="icon icon-flag" ng-include="'/img/flag-icon.svg'">
           </i>
-          <input type="text" name="mobile" placeholder="(323) 567-5555" ng-model="userCreate.user.phone" required />
+          <input type="text" name="mobile" placeholder="(323) 567-5555" ng-model="userFacebookCreateCtrl.user.phone" required />
         </label>
 
         <div class="validations" ng-if="form.$submitted && form.$invalid">

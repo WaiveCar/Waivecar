@@ -26,6 +26,15 @@
       min-width: 100%;
       margin: 0 auto;
     }
+
+  }
+
+  form.loginUser{
+    .item-input{
+      span.input-label{
+        width: 40%;
+      }
+    }
   }
 
   // &.forgot-password-success {

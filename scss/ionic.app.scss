@@ -278,15 +278,15 @@ div.group {
     }
   }
 
-  .response { 
+  .response {
     margin: 12px 0 12px 12px;
     padding-left: 26px;
   }
 
-  .response.wrong { 
+  .response.wrong {
     background: url('../img/fail-icon-20px.png') no-repeat;
   }
-  .response.right { 
+  .response.right {
     background: url('../img/check-icon-20px.png') no-repeat;
   }
 }
@@ -313,10 +313,10 @@ iframe.quiz {
   padding-left: 4em;
   text-align: left;
 }
-.button-pending { 
+.button-pending {
   background: url('../img/pending-icon.svg') no-repeat;
 }
-.button-fail { 
+.button-fail {
   background: url('../img/fail-icon.svg') no-repeat;
 }
 

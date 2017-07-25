@@ -5,7 +5,7 @@ require('../services/auth-service');
 require('../services/data-service');
 require('../services/message-service');
 
-function UserCreateController ($injector) {
+function UserCreateController($injector){
   var $state = $injector.get('$state');
   var $auth = $injector.get('$auth');
   var $data = $injector.get('$data');
@@ -13,10 +13,30 @@ function UserCreateController ($injector) {
   var $ionicLoading = $injector.get('$ionicLoading');
   this.user = new $data.resources.users();
 
-  this.save = function saveUser (form) {
-    if (form.$invalid) {
-      return $message.error('Please fix form errors and try again.');
+  this.submit = function(form){
+    this.user.phone = this.user.phone ? this.user.phone.toString() : '';
+
+    if (this.user.fullName){
+      var arr = this.user.fullName.split(' ');
+      this.user.firstName = arr[0];
+      this.user.lastName = arr[1];
     }
+
+    var phone = this.user.phone.replace(/[\s()\-+]/g, '');
+
+    if (form.$invalid){
+      return $message.error('Please fix form errors and try again.');
+    } else if(!phone.match(/^1?[2-9]\d{9}$/)){
+      return $message.error('Thanks but we only accept United States numbers currently. Please check the digits and correct any issues.');
+    } else if (!this.user.firstName || !this.user.lastName){
+      return $message.error('Field "Full Name" has to include a space.');
+    }
+
+    if (phone.length === 10) {
+      phone = '1' + phone;
+    }
+    phone = '+' + phone;
+    this.user.phone = phone;
 
     var credentials = {
       identifier: this.user.email,
@@ -29,8 +49,9 @@ function UserCreateController ($injector) {
 
     return this.user.$save()
       .then(function login () {
+        this.user.fullName = this.user.firstName + ' ' + this.user.lastName;
         return $auth.login(credentials);
-      })
+      }.bind(this))
       .then(function () {
         $ionicLoading.hide();
         return $state.go('auth-account-verify', { step: 2 });
@@ -42,8 +63,7 @@ function UserCreateController ($injector) {
   };
 
 
-  this.registerWithFacebook = function registerWithFacebook () {
-
+  this.registerWithFacebook = function(){
     return $auth.facebookAuth()
       .then(function (res) {
         if (res.code === 'NEW_USER') {
@@ -57,12 +77,12 @@ function UserCreateController ($injector) {
       .catch(function (err) {
         $message.error(err);
       });
-
   };
+
 }
 
 module.exports = angular.module('app.controllers')
-.controller('UserCreateController', [
-  '$injector',
-  UserCreateController
-]);
+  .controller('UserCreateController', [
+    '$injector',
+    UserCreateController
+  ]);

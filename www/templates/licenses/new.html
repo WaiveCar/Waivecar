@@ -1,59 +1,64 @@
-<ion-view hide-back-button="{{::licenseCtrl.isWizard}}" >
-  <ion-nav-title>
-    <page-title class="dark-bg"><span ng-if="::licenseCtrl.isWizard">Step 3 of 6:</span> Driver's License</page-title>
+<ion-view can-swipe-back="false" hide-back-button="true" class="sign-in-content">
+
+  <ion-nav-title class="sign-in-header">
+    <ul class="progress-bar">
+      <li class="active"></li>
+      <li class="active"></li>
+      <li class="active"></li>
+      <li></li>
+    </ul>
+    <page-title class="dark-bg">Driver's license</page-title>
   </ion-nav-title>
-  <ion-content padding="true" class="ion-content--center dark-bg">
-    <p class="padding-bottom">
-      We do a DMV check to insure you.<br>
-      Please double check your info.<br>
-      If there are any mistakes we won't be<br>
-      able to get you in a WaiveCar today.
-    </p>
-    <form name="form">
-    <div class="list list-inset">
-      <label class="item item-input">
-        <span class="input-label required">License Number</span>
-        <input name="number" type="text" placeholder="CA Ex: A1231234" ng-model="licenseCtrl.license.number" autofocus required>
-      </label>
-      <label class="item item-input item-select">
-        <div class="input-label required">License State</div>
-        <select ng-model="licenseCtrl.license.state" name="state" required ng-options="state.abbreviation as state.name for state in licenseCtrl.states">
-          <option value=""></option>
-        </select>
-      </label>
-      <label class="item item-input">
-        <span class="input-label required">First Name</span>
-        <input name="firstName" type="text" placeholder="Must Match License" ng-model="licenseCtrl.license.firstName" required>
-      </label>
-      <label class="item item-input">
-        <span class="input-label">Middle Name</span>
-        <input name="middleName" type="text" placeholder="Must Match License" ng-model="licenseCtrl.license.middleName">
-      </label>
-      <label class="item item-input">
-        <span class="input-label required">Last Name</span>
-        <input name="lastName" type="text" placeholder="Must Match License" ng-model="licenseCtrl.license.lastName" required>
-      </label>
-      <label class="item item-input item-select">
-        <div class="input-label">Gender</div>
-        <select name="gender" ng-model="licenseCtrl.license.gender">
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="other">Other</option>
-        </select>
-      </label>
-      <label class="item item-input">
-        <span class="input-label required">Date Of Birth</span>
-        <input name="birthDate" type="date" value="" placeholder="Date of Birth" ng-model="licenseCtrl.license.birthDate" required>
-      </label>
-    </div>
-    <p style='text-align:center'>You must be 21 years old to drive a WaiveCar.</p>
-    <div class="padding-top padding-bottom">
-      <button
-        class="button button-balanced button-block"
-        ng-click="licenseCtrl.submit(form)"
-        ng-disabled="form.$invalid"
-      >Submit</button>
-    </div>
-  </form>
+
+  <ion-content scroll="true" padding="true" class="ion-content--center dark-bg">
+
+    <p class="text-agreeing padding">We need to verify your age and driving.<br/>Please enter your details and upload<br/>a photo of your license.</p>
+
+    <form name="form" id="form" ng-submit="licenseCtrl.submit(form)" class="newLicense" novalidate>
+      <div class="list">
+
+        <label class="item item-input">
+          <span class="input-label">License Number</span>
+          <input type="text" name="number" ng-model="licenseCtrl.license.number" required autofocus placeholder="123 456 789" />
+        </label>
+
+        <label class="item item-input item-select">
+          <span class="input-label">License State</span>
+          <select name="state" ng-model="licenseCtrl.license.state" required>
+            <option value=""></option>
+            <option ng-repeat="state in licenseCtrl.states" value="{{state.abbreviation}}">{{state.name}}</option>
+          </select>
+        </label>
+
+        <label class="item item-input">
+          <span class="input-label">Date Of Birth</span>
+          <input name="birthDate" type="date" value="" placeholder="Date of Birth" required ng-model="licenseCtrl.license.birthDate">
+        </label>
+
+        <div class="errors">
+          <div ng-messages="form.number.$error" ng-if="form.$submitted">
+            <div ng-message="required">License Number is required</div>
+          </div>
+          <div ng-messages="form.state.$error" ng-if="form.$submitted">
+            <div ng-message="required">License State is required</div>
+          </div>
+          <div ng-messages="form.birthDate.$error" ng-if="form.$submitted">
+            <div ng-message="required">Date Of Birth is required</div>
+          </div>
+        </div>
+
+      </div>
+    </form>
+
+    <p class="text-agreeing padding">Your driver's license is required to book a WaiveCar.<br/>However, you can skip this step and do it later on<br/>your account settings.</p>
+
   </ion-content>
+
+  <ion-footer-bar class="no-padding">
+    <div class="button-bar">
+      <button type="button" class="button button-gray" go-back>Cancel</button>
+      <button type="submit" form="form" class="button button-balanced">Continue</button>
+    </div>
+  </ion-footer-bar>
+
 </ion-view>
