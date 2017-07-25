@@ -28,6 +28,10 @@ nvmcheck() {
   . "$HOME/.nvm/nvm.sh"
 }
 
+log() {
+  echo "[$device "$( date +"%H:%m:%S" )$"] $*"
+}
+
 wrap() {
   get_device
   fn=$1
@@ -36,11 +40,12 @@ wrap() {
     wait $job
   done
   for device in $deviceList; do
-    echo "[$device "$( date +"%H:%m:%S" )$"] $fn $path"
+    log $fn $path
     {
-      result=$($fn $device $path)
+      result=$($fn $device $path 2>&1)
       isFailed=$(echo $result | grep -iE '(failure|error)')
       if [ -n "$isFailed" ]; then
+        log "Failed Install, uninstalling"
         uninstall $device
         $fn $device $path
       fi
