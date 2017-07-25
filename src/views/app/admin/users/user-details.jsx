@@ -15,10 +15,12 @@ module.exports = class UserDetails extends React.Component {
   constructor(...args) {
     super(...args);
     this.state = {
-      showDanger: false
+      showDanger: false,
+      addCard: false
     }
     relay.subscribe(this, 'users');
     relay.subscribe(this, 'notes');
+    this.addCard = this.addCard.bind(this);
   }
 
   componentDidMount() {
@@ -200,6 +202,10 @@ module.exports = class UserDetails extends React.Component {
     }
   }
 
+  addCard = () => {
+    this.setState({ addCard: true });
+  }
+
   toggleDanger = () => {
     this.setState({ showDanger: !this.state.showDanger });
   }
@@ -331,8 +337,11 @@ module.exports = class UserDetails extends React.Component {
           </div>
         </div>
 
-        <CardList user={ user } currentUser={ false }></CardList>
-        <AddCard user={ user } currentUser={ false }></AddCard>
+        { this.state.addCard ?
+          <AddCard user={ user } currentUser={ false }></AddCard>
+          : ''
+        }
+        <CardList addCard={ this.addCard } user={ user } currentUser={ false }></CardList>
         <div className='rides'>
           <RideList user={ user } currentUser={ false } full={ false }></RideList>
           <ChargeList user={ user } currentUser={ false } full={ false }></ChargeList>
