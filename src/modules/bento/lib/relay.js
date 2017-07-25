@@ -114,7 +114,7 @@ class Relay {
 
     for (let key in listeners) {
       //console.log(key);
-      listeners[key].forEach(listener => { console.log("" + listener); listener() });
+      listeners[key].forEach(listener => { listener() });
     }
     //console.log(' }}} ');
   }
