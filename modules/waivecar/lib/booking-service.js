@@ -113,14 +113,19 @@ module.exports = class BookingService extends Service {
       try {
         yield OrderService.authorize(null, driver);
       } catch (err) {
+        // Failing to secure the authorization hold should be recorded as an
+        // iniquity. See https://github.com/WaiveCar/Waivecar/issues/861 for
+        // details.
+        let details = 'no card';
+        if(OrderService.authorize.last) {
+          details = OrderService.authorize.last.card.last4;
+        }
+        yield UserLog.addUserEvent(driver, 'AUTH', details, `Failed to authorize $${ (OrderService.authorize.last.amount / 100).toFixed(2) }`);
+
         throw error.parse({
           code    : 'BOOKING_AUTHORIZATION',
           message : 'Unable to authorize payment. Please validate payment method.'
         }, 400);
-        // Failing to secure the authorization hold should be recorded as an
-        // iniquity. See https://github.com/WaiveCar/Waivecar/issues/861 for
-        // details.
-        yield UserLog.addUserEvent(driver, 'AUTH');
       }
     }
 
