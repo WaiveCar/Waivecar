@@ -122,6 +122,6 @@ appSettings
 
 appSettings
   .constant('homebase', {
-    latitude: 34.016338,
-    longitude: -118.489212
+    latitude: 34.016629,
+    longitude: -118.489304
   });
