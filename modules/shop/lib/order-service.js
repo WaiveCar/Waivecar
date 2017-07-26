@@ -292,6 +292,14 @@ module.exports = class OrderService extends Service {
    */
   static *authorize(payload, _user) {
     let card = yield Card.findOne({ where : { userId : _user.id } });
+    let amount = 100;
+
+    // This data leak is so that if we fail to charge the card, we can
+    // find the card and amount we tried to charge.
+    this.authorize.last = {
+      card: card,
+      amount: amount
+    };
 
     if (!card) {
       throw error.parse({
@@ -307,7 +315,7 @@ module.exports = class OrderService extends Service {
       source      : card.id,
       description : 'Pre booking authorization',
       currency    : 'usd',
-      amount      : 100
+      amount      : amount
     });
     yield order.save();
 
