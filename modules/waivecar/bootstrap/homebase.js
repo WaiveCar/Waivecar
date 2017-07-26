@@ -20,8 +20,8 @@ module.exports = function *() {
     type        : 'homebase',
     name        : `WaiveCar Santa Monica HomeBase`,
     description : `Home to 20 WaiveCars`,
-    latitude    : 34.0166784,
-    longitude   : -118.4914082,
+    latitude    : 34.016629,
+    longitude   : -118.489304,
     address     : '1547 7th Street Santa Monica CA'
   });
 
