@@ -26,7 +26,6 @@ let Sequelize = require('sequelize');
 
 
 // ### Models
-
 let File           = Bento.model('File');
 let Order          = Bento.model('Shop/Order');
 let User           = Bento.model('User');
@@ -80,7 +79,7 @@ module.exports = class BookingService extends Service {
     }
 
     let driver = yield this.getUser(data.userId);
-    let car  = yield this.getCar(data.carId, data.userId, true);
+    let car = yield this.getCar(data.carId, data.userId, true);
 
     this.hasAccess(driver, _user);
 
@@ -118,10 +117,14 @@ module.exports = class BookingService extends Service {
           code    : 'BOOKING_AUTHORIZATION',
           message : 'Unable to authorize payment. Please validate payment method.'
         }, 400);
+        // Failing to secure the authorization hold should be recorded as an
+        // iniquity. See https://github.com/WaiveCar/Waivecar/issues/861 for
+        // details.
+        yield UserLog.addUserEvent(driver, 'AUTH');
       }
     }
 
-    // ### Add Driver
+    //
     // Add the driver to the car so no simultaneous requests can book this car.
     //
     // We're trying to address https://github.com/clevertech/Waivecar/issues/435
@@ -392,6 +395,7 @@ module.exports = class BookingService extends Service {
         yield booking.flag('extended');
         yield notify.sendTextMessage(user, `Your WaiveCar reservation has been extended 10 minutes.`);
         yield notify.notifyAdmins(`:clock1: ${ user.name() } extended their reservation with ${ car.info() } by 10 minutes.`, [ 'slack' ], { channel : '#reservations' });
+        booking.relay('update');
       } else {
         err = "Unable to charge $1.00 to your account. Reservation extension failed.";
 
