@@ -221,7 +221,7 @@ function DashboardController ($scope, $rootScope, $injector) {
       var okay = $ride.isChargeOkay(carId, obj);
 
       ctrl.ending = false;
-      if (okay || $distance.fallback(homebase, obj) < 0.3) {
+      if (okay || $distance.fallback(homebase, obj) < 0.4) {
         return GeofencingService.insideBoundary(obj);
       }
       $ionicLoading.hide();
