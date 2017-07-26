@@ -55,9 +55,16 @@
   .footer-information {
     font-size: $headerTitleSize * 0.6rem;
     height: $footerInformationSize*1%;
-    margin: 0;
+    margin: -1.5em 0 0;
     p {
       @include vertical-align;
+    }
+    .text-left {
+      display: inline-block;
+      margin-top: 0.25em;
+    }
+    .time-extension {
+      margin-left: -11px;
     }
   }
   .has-footer-information {

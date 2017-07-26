@@ -37,8 +37,13 @@
             </p>
           </div>
         </div>
-        <div class="footer-information">
-          <p class="text-center" ng-show="ctrl.timeLeft"><strong>{{ ctrl.timeLeft }} left</strong> to get to your WaiveCar</p>
+        <div class="footer-information text-center">
+          <div class="text-left" ng-show="ctrl.timeLeft">
+            <strong>{{ ctrl.timeLeft }} left</strong> to get to your WaiveCar
+            <div class="time-extension">
+              <a>+ 10 minutes ($1.00)</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>

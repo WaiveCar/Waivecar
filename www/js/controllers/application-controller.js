@@ -51,6 +51,7 @@ function ApplicationController ($rootScope, $scope, $injector) {
   // navigate to the right parts of the app given what
   // the server thinks of me.
   function myState() {
+    console.log('In my state');
     var currentBooking = false;
     var lastState = false;
     var newState;
@@ -81,9 +82,13 @@ function ApplicationController ($rootScope, $scope, $injector) {
 
     $data.subscribe('User');
 
+    console.log('in the function');
     if(auth) {
       // subscribe to user-specific messages
-      $socket.emit('authenticate', auth.token, function(done) {});
+      console.log('in the auth function');
+      $socket.emit('authenticate', auth.token, function(done) {
+        console.log('subscribed to messages');
+      });
 
       // This makes sure that the user isn't navigating to a wrong part of the app
       // in the flow of booking a car. Note that the code below will call this code.

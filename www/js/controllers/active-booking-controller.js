@@ -70,10 +70,19 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     });
   }
 
+  function watchBook() {
+    if($data.active.bookings) {
+      console.log(new Date(), $data.active.bookings);
+    } else {
+      console.log(new Date(), 'no booking', $data);
+    }
+  }
   var timer = $interval(function() {
     if (expired) {
+      watchBook();
       // if we are in the future then the answer is 0.
       if (moment().diff(expired) > 0) {
+        console.log(expired, moment().diff(expired));
         $interval.cancel(timer);
         showExpired();
       } else {
@@ -86,6 +95,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
 
   var stopWatching;
   function watchForWithinRange () {
+    watchBook();
     if (stopWatching != null) {
       return;
     }
@@ -107,6 +117,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   }
 
   function checkIsInRange (currentLocation) {
+    watchBook();
     var distance = $distance($data.active.cars, currentLocation);
     if (_.isFinite(distance)) {
       // convert miles to yards
@@ -277,16 +288,13 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
 
       $interval.cancel(timer);
       var id = $ride.state.booking.id;
-      console.log('unlocking');
       $data.resources.bookings.ready({ id: id }).$promise
       .then(function() {
-        console.log('fetching');
         return $data.fetch('bookings');
       })
       .then(function() {
         IntercomService.emitBookingEvent($data.active.bookings);
         $ionicLoading.hide();
-        console.log('removing modal');
         modal.remove();
         unlocking = false;
         $state.go('start-ride', { id: id });
@@ -310,7 +318,6 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     if (booking.status !== 'reserved') {
       return;
     }
-
 
     var isIOS = ionic.Platform.isIOS();
     var geocoords = this.car.latitude + ',' + this.car.longitude;
