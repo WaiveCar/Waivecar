@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import { auth, relay, api, dom, helpers } from 'bento';
-import { Map } from 'bento-web';
 import moment from 'moment';
 import classNames from 'classnames';
 import RideDetails from './ride-details';

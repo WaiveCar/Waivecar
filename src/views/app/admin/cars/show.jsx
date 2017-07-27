@@ -6,7 +6,7 @@ import { Link, History }           from 'react-router';
 import Switch                from 'react-toolbox/lib/switch';
 import { auth, relay, dom, api }  from 'bento';
 import { fields }            from 'bento-ui';
-import { Form, Button, Map, snackbar } from 'bento-web';
+import { Form, Button, GMap, snackbar } from 'bento-web';
 import Service               from '../../lib/car-service';
 import NotesList from '../components/notes/list';
 import Logs from '../../components/logs';
@@ -138,7 +138,7 @@ class CarsShowView extends React.Component {
           <div className="row">
             <div className="col-xs-12">
               <div className="ride-map">
-                <Map
+                <GMap
                   markerIcon = { '/images/map/active-waivecar.svg' }
                   markers    = {[
                     {

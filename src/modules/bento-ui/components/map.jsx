@@ -2,7 +2,7 @@ import React          from 'react';
 import mixin          from 'react-mixin';
 import { History }    from 'react-router';
 import { relay, api } from 'bento';
-import { Map }        from 'bento-web';
+import { GMap }       from 'bento-web';
 import components     from '../lib/components';
 import fields         from '../lib/fields';
 import resources      from '../lib/resources';
@@ -84,7 +84,7 @@ class UIMap extends React.Component {
 
     return (
       <div className="map-dynamic">
-        <Map
+        <GMap
           markers          = { markers }
           includeUser      = { this.props.includeUser }
           markerHandlerKey = { this.props.key }

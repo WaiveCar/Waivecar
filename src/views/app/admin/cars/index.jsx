@@ -1,7 +1,7 @@
 import React    from 'react';
 import { Link } from 'react-router';
 import moment   from 'moment';
-import { Map }  from 'bento-web';
+import { GMap }  from 'bento-web';
 import { api }  from 'bento';
 
 module.exports = class CarsIndex extends React.Component {
@@ -280,7 +280,7 @@ module.exports = class CarsIndex extends React.Component {
           <div className="row">
             <div className="col-xs-12" >
               <div className="map-dynamic">
-                <Map
+                <GMap
                     markerIcon = { '/images/map/active-waivecar.svg' }
                     markers    = { this.state.cars }
                   />

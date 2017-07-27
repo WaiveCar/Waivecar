@@ -1,6 +1,6 @@
 import React   from 'react';
 import moment  from 'moment';
-import { Map } from 'bento-web';
+import { GMap } from 'bento-web';
 
 module.exports = class RideDetails extends React.Component {
 
@@ -31,7 +31,7 @@ module.exports = class RideDetails extends React.Component {
         <div className="box">
           <h3>Details <small>Current ride details</small></h3>
           <div className="container ride-map">
-            <Map
+            <GMap
               markerIcon = { '/images/map/active-waivecar.svg' }
               markers    = {[
                 {
