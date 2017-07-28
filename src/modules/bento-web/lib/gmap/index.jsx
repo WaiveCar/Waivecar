@@ -50,7 +50,9 @@ module.exports = class GMap extends React.Component {
     // center and zoom was hardcoded in bento Map component, to maintain same interface I also hardcode them
     const mapConfig = {
       center: new google.maps.LatLng(34.0604643, -118.4186743),
-      zoom: 11
+      zoom: 15,
+      streetViewControl: false,
+      mapTypeControl: false
     };
 
     this.map = new google.maps.Map(ReactDOM.findDOMNode(this.refs.map), mapConfig);
@@ -59,7 +61,7 @@ module.exports = class GMap extends React.Component {
     }
 
     if (this.props.path) {
-      this.prepareMarkers(this.props.path);
+      this.preparePath(this.props.path);
     }
   }
 
@@ -183,11 +185,15 @@ module.exports = class GMap extends React.Component {
 
   centerPosition(markers) {
 
-    var bounds = new google.maps.LatLngBounds();
-    markers.forEach((val) => {
-      bounds.extend(new google.maps.LatLng(val.lat, val.long));
-    });
-    this.map.fitBounds(bounds);
+    if (markers.length > 1) {
+      var bounds = new google.maps.LatLngBounds();
+      markers.forEach((val) => {
+        bounds.extend(new google.maps.LatLng(val.lat, val.long));
+      });
+      this.map.fitBounds(bounds);
+    } else {
+      this.map.setCenter(new google.maps.LatLng(markers[0].lat, markers[0].long));
+    }
   }
 
 
@@ -210,7 +216,6 @@ module.exports = class GMap extends React.Component {
 
       var gmapMarker = new google.maps.Marker({
         map: this.map,
-        animation: google.maps.Animation.DROP,
         position: new google.maps.LatLng(val.lat, val.long),
         icon: markerIcon
       });
