@@ -14,7 +14,6 @@
   font-size: 5.5em;
   margin: 0;
   padding: 0;
-  margin: 0p
 }
 
 .dashboard-information .col .big-title {
@@ -213,6 +212,30 @@
       font-size: 14px;
       min-width: 100%;
       display: inline-block;
+    }
+  }
+}
+
+.past-rides-content{
+  .ride-block{
+    .header{
+      background-color: #fff;
+      color: #000;
+      text-transform: uppercase;
+      padding: 13px 0px;
+    }
+    .line{
+      display: block;
+      width: 30px;
+      margin: 0px auto;
+      background-color: #25C557;
+      height: 1px;
+    }
+    .body{
+      background-color: #ddd;
+    }
+    .hour, .price{
+      padding: 9px 13px;
     }
   }
 }
