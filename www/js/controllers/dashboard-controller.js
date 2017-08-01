@@ -204,8 +204,34 @@ function DashboardController ($scope, $rootScope, $injector) {
       });
   }
 
-  function endRide(carId, bookingId) {
+  function endRidePrompt(carId, bookingId) {
+    var modal;
+    $modal('result', {
+      icon: 'x-icon',
+      title: 'End Booking?',
+      message: 'Are you sure you want to end your booking?',
+      actions: [{
+        text: 'yes',
+        className: 'button-balanced',
+        handler: function () {
+          modal.remove();
+          ctrl.endRide(carId, bookingId);
+        }
+      }, {
+        text: 'no',
+        className: 'button-dark',
+        handler: function () {
+          modal.remove();
+        }
+      }]
+    })
+    .then(function (_modal) {
+      modal = _modal;
+      modal.show();
+    });
+  }
 
+  function endRide(carId, bookingId) {
     $ionicLoading.show({
       template: '<div class="circle-loader"><span>Loading</span></div>'
     });
