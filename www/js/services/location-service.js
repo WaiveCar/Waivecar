@@ -24,16 +24,18 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
   };
 
   function askUserToEnableLocation() {
-    $modal('simple-modal', {
-      title: 'Please Enable Location Settings',
-      message: 'You need to enable location settings to use WaiveCar.',
-      close: function () {
-        diagnostic.switchToSettings();
-      }
-    }).then(function (_modal) {
-      modal = _modal;
-      modal.show();
-    });
+    if(!modal || !modal.isShown()) {
+      $modal('simple-modal', {
+        title: 'Please Enable Location Settings',
+        message: 'You need to enable location settings to use WaiveCar.',
+        close: function () {
+          diagnostic.switchToSettings();
+        }
+      }).then(function (_modal) {
+        modal = _modal;
+        modal.show();
+      });
+    }
   }
 
   function enableLocation() {
@@ -83,9 +85,6 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
       }
 
       enableLocation();
-
-      /*$message.error('We were not able to find your location, please reconnect.');
-      $q.reject(err);*/
     });
   };
 
