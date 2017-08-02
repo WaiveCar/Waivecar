@@ -65,28 +65,15 @@ function directive ($rootScope, MapsLoader, RouteService, $q, $timeout, $window,
   function watchLocation ($scope) {
     // don't use $cordovaGeolocation. On the first error (like location unavailable),
     // it will reject the promise and stop getting updates
-    var watch = navigator.geolocation.watchPosition(function onPosition (position) {
-      $timeout(function(){
-        $rootScope.currentLocation = {
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          accuracy: position.coords.accuracy
-        };
-      });
-    }, function onPositionErr (err) {
-      LocationService.enableLocation();
-    }, {
-      maximumAge: 3000,
-      timeout: 10000,
-      enableHighAccuracy: true
+    var stop = LocationService.watchLocation(function onPosition (position) {
+      $rootScope.currentLocation = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+        accuracy: position.coords.accuracy
+      };
     });
-    $scope.$on('$destroy', function () {
-      if (watch != null) {
-        console.log('Clearing location watch');
-        navigator.geolocation.clearWatch(watch);
-        watch = null;
-      }
-    });
+
+    $scope.$on('$destroy', stop);
   }
 
   function MapController () {
