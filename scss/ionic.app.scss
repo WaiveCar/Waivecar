@@ -23,6 +23,7 @@ $fa-font-path: "../fonts" !default;
 @import 'directives';
 @import 'form';
 @import 'header';
+@import 'info';
 @import 'landing';
 @import 'licenses';
 @import 'loading';
@@ -32,6 +33,7 @@ $fa-font-path: "../fonts" !default;
 @import 'modals';
 @import 'info';
 @import 'report-problem';
+@import 'sign-in';
 
 .icon-svg {
   svg {

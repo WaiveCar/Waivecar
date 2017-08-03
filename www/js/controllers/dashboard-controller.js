@@ -36,6 +36,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   this.lockCar = lockCar;
   this.unlockCar = unlockCar;
   this.endRide = endRide;
+  this.endRidePrompt = endRidePrompt;
 
   // State
   this.ending = false;
@@ -204,8 +205,34 @@ function DashboardController ($scope, $rootScope, $injector) {
       });
   }
 
-  function endRide(carId, bookingId) {
+  function endRidePrompt(carId, bookingId) {
+    var modal;
+    $modal('result', {
+      icon: 'x-icon',
+      title: 'End Ride',
+      message: 'Are you sure you want to end your ride?',
+      actions: [{
+        text: 'yes',
+        className: 'button-dark',
+        handler: function () {
+          modal.remove();
+          ctrl.endRide(carId, bookingId);
+        }
+      }, {
+        text: 'no',
+        className: 'button-balanced',
+        handler: function () {
+          modal.remove();
+        }
+      }]
+    })
+    .then(function (_modal) {
+      modal = _modal;
+      modal.show();
+    });
+  }
 
+  function endRide(carId, bookingId) {
     $ionicLoading.show({
       template: '<div class="circle-loader"><span>Loading</span></div>'
     });
@@ -221,7 +248,7 @@ function DashboardController ($scope, $rootScope, $injector) {
       var okay = $ride.isChargeOkay(carId, obj);
 
       ctrl.ending = false;
-      if (okay || $distance.fallback(homebase, obj) < 0.3) {
+      if (okay || $distance.fallback(homebase, obj) < 0.4) {
         return GeofencingService.insideBoundary(obj);
       }
       $ionicLoading.hide();

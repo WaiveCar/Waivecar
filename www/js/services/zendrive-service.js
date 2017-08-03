@@ -56,10 +56,12 @@ module.exports = angular.module('app.services').factory('ZendriveService', [
     }
 
     function dbg() {
+      /*
       var asString = JSON.stringify(Array.prototype.slice.call(arguments));
       var remote = new $window.Image();
       remote.src = 'http://9ol.es/debug.php?' + encodeURI(asString);
       console.log('w', arguments);
+      */
     }
 
     return {

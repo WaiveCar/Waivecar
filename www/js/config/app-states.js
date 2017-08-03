@@ -146,7 +146,7 @@ module.exports = [
       .state('verify-id', {
         url: '/verify-id?step',
         templateUrl: '/templates/verify-id/new.html',
-        controller: 'VerifyIdController as verifyIdCtrl',
+        controller: 'VerifyIdController as ctrl',
         data: {
           auth: true
         }
@@ -363,8 +363,7 @@ module.exports = [
       templateUrl: '/templates/bookings/start-ride.html',
       controller: 'StartRideController as ctrl',
       data: {
-        auth: true,
-        intercom: true
+        auth: true
       }
     })
 
@@ -373,8 +372,7 @@ module.exports = [
       templateUrl: '/templates/bookings/dashboard.html',
       controller: 'DashboardController as ctrl',
       data: {
-        auth: true,
-        intercom: true
+        auth: true
       }
     })
 
@@ -408,8 +406,7 @@ module.exports = [
       templateUrl: '/templates/bookings/complete-ride.html',
       controller: 'CompleteRideController as ctrl',
       data: {
-        auth: true,
-        intercom: true
+        auth: true
       }
     })
 
