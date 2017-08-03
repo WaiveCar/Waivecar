@@ -36,6 +36,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   this.lockCar = lockCar;
   this.unlockCar = unlockCar;
   this.endRide = endRide;
+  this.endRidePrompt = endRidePrompt;
 
   // State
   this.ending = false;
@@ -208,18 +209,18 @@ function DashboardController ($scope, $rootScope, $injector) {
     var modal;
     $modal('result', {
       icon: 'x-icon',
-      title: 'End Booking?',
-      message: 'Are you sure you want to end your booking?',
+      title: 'End Ride',
+      message: 'Are you sure you want to end your ride?',
       actions: [{
         text: 'yes',
-        className: 'button-balanced',
+        className: 'button-dark',
         handler: function () {
           modal.remove();
           ctrl.endRide(carId, bookingId);
         }
       }, {
         text: 'no',
-        className: 'button-dark',
+        className: 'button-balanced',
         handler: function () {
           modal.remove();
         }
