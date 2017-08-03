@@ -16,7 +16,7 @@ module.exports = angular.module('app.controllers').controller('BookingsControlle
         $state.go('auth');
       }
 
-      $scope.limit = 15;
+      $scope.limit = 5;
 
       $scope.getPastRides(0, function(data){
         $scope.rides = data;

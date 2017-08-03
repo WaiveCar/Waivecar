@@ -46,6 +46,16 @@ module.exports = angular.module('app').factory('Bookings', [
         params: {
           id: '@id'
         }
+      },
+      getPastRides: {
+        method: 'GET',
+        url: $utils.getCustomRoute('bookings?userId=:userId&order=id,DESC&details=true&status=ended,completed,closed&offset=:offset&limit=:limit'),
+        isArray: true,
+        params: {
+          userId: '@userId',
+          offset: '@offset',
+          limit: '@limit'
+        }
       }
     }));
 
