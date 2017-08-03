@@ -23,6 +23,12 @@
     </div>
     <div class="info-footer big-info-footer">
       <div class="has-footer-information">
+        <div class="footer-information text-center">
+          <div class="text-left" ng-show="ctrl.timeLeft">
+            Reservation expires at <strong>{{ ctrl.timeLeft }}</strong>
+          </div>
+          <button type="button" class="button button-dark"> Buy extension for $1</button>
+        </div>
         <div class="row" style="height: 100%;">
           <div class="col col-50 car-image" style="background-image: url(img/car.jpg);"></div>
           <div class="col">
@@ -35,14 +41,6 @@
               <span ng-if="ctrl.parkingDetails.lotLevel">Lot level: {{ ctrl.parkingDetails.lotLevel }}</span><br>
               <span ng-if="ctrl.parkingDetails.lotSpot">Lot spot: {{ ctrl.parkingDetails.lotSpot }}</span>
             </p>
-          </div>
-        </div>
-        <div class="footer-information text-center">
-          <div class="text-left" ng-show="ctrl.timeLeft">
-            <strong>{{ ctrl.timeLeft }} left</strong> to get to your WaiveCar
-            <div class="time-extension">
-              <a>+ 10 minutes ($1.00)</a>
-            </div>
           </div>
         </div>
       </div>
