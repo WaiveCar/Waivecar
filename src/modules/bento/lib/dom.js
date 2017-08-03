@@ -2,21 +2,11 @@ import config   from 'config';
 import { type } from './helpers';
 
 module.exports = class DOM {
-
-  /**
-   * Sets a new document header title.
-   * @param {String} value
-   */
   static setTitle(value, seperator = '|', isRaw = false) {
-    document.title = isRaw ? value : `${ config.app.name } ${ seperator } ${ value }`;
+    document.title = value;
+    //document.title = isRaw ? value : `${ config.app.name } ${ seperator } ${ value }`;
   }
 
-  /**
-   * Returns boolean value of class state.
-   * @param  {String}  classes
-   * @param  {String}  className
-   * @return {Boolean}
-   */
   static hasClass(classes, className) {
     return classes.match(new RegExp(className, 'g'));
   }
