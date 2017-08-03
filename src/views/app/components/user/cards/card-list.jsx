@@ -45,14 +45,28 @@ class CardList extends React.Component {
       description = (amount > 0) ? 'Payment for fees incurred during a waivecar ride.' : 'Miscellaneous Credit';
     }
 
+    // preventing the user from trying to do this twice.
+    if(this.state.processing) {
+      return;
+    }
+
+    this.setState({processing: true});
+    snackbar.notify({
+      type    : 'success',
+      message : 'processing...'
+    });
+
     api.post('/shop/quickcharge', {
       userId      : who.id,
       source      : cards[0].id,
       amount      : amount * 100,
       description : description
     }, (err, res) => {
+      this.setState({
+        user: err ? err.data : res.user,
+        processing: false
+      });
       if (err) {
-        this.setState({user: err.data});
         return snackbar.notify({
           type    : `danger`,
           message : err.message
@@ -62,7 +76,6 @@ class CardList extends React.Component {
         type    : `success`,
         message : 'Amount was successfully charged.'
       });
-      this.setState({user: res.user});
     });
   }
 

@@ -1,7 +1,3 @@
-//
-// Base styles
-//
-
 .btn {
   display: inline-block;
   font-weight: $btn-font-weight;
@@ -33,6 +29,8 @@
 
   &:active,
   &.active {
+    color: white !important;
+    background: #141 !important;
     background-image: none;
     outline: 0;
     @include box-shadow(inset 0 3px 5px rgba(0,0,0,.125));
