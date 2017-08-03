@@ -2,7 +2,7 @@ import React    from 'react';
 import { Link } from 'react-router';
 import moment   from 'moment';
 import { Map }  from 'bento-web';
-import { api }  from 'bento';
+import { api, dom }  from 'bento';
 
 module.exports = class CarsIndex extends React.Component {
 
@@ -41,6 +41,7 @@ module.exports = class CarsIndex extends React.Component {
   }
 
   componentDidMount() {
+    dom.setTitle("Cars");
     this.update();
   }
 
