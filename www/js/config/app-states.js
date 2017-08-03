@@ -146,7 +146,7 @@ module.exports = [
       .state('verify-id', {
         url: '/verify-id?step',
         templateUrl: '/templates/verify-id/new.html',
-        controller: 'VerifyIdController as verifyIdCtrl',
+        controller: 'VerifyIdController as ctrl',
         data: {
           auth: true
         }

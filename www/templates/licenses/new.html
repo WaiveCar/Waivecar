@@ -12,7 +12,7 @@
 
   <ion-content scroll="true" padding="true" class="ion-content--center dark-bg">
 
-    <p class="text-agreeing padding">We need to verify your age and driving.<br/>Please enter your details and upload<br/>a photo of your license.</p>
+    <p class="text-agreeing padding">We need to verify your age and driving eligibility.<br/>Please enter your details.</p>
 
     <form name="form" id="form" ng-submit="licenseCtrl.submit(form)" class="newLicense" novalidate>
       <div class="list">
@@ -32,7 +32,7 @@
 
         <label class="item item-input">
           <span class="input-label">Date Of Birth</span>
-          <input name="birthDate" type="date" value="" placeholder="Date of Birth" required ng-model="licenseCtrl.license.birthDate">
+          <input name="birthDate" type="text" value="" placeholder="MM/DD/YYYY" required ng-model="licenseCtrl.license.birthDate">
         </label>
 
         <div class="errors">
@@ -49,8 +49,7 @@
 
       </div>
     </form>
-
-    <p class="text-agreeing padding">Your driver's license is required to book a WaiveCar.<br/>However, you can skip this step and do it later on<br/>your account settings.</p>
+    <p class="text-agreeing padding">You must be at least 21 to drive a WaiveCar.</p>
 
   </ion-content>
 
