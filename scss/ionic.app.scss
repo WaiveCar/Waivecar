@@ -88,6 +88,16 @@ $fa-font-path: "../fonts" !default;
   font-weight: bold;
 }
 
+.vcenter {
+  align-items: center;
+}
+
+.pull-right {
+  float: right;
+  text-align: right;
+  justify-content: flex-end;
+}
+
 .required:after {
   content: "*";
   vertical-align: top;

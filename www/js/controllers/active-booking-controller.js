@@ -86,7 +86,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         $interval.cancel(timer);
         showExpired();
       } else {
-        this.timeLeft = moment(expired).toNow(true);
+        this.timeLeft = moment(expired).format('h:mm A');
         return this.timeLeft;
       }
     }
@@ -157,6 +157,33 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         }
       }]
     }).$promise
+    .then(function (_modal) {
+      modal = _modal;
+      modal.show();
+    });
+  };
+
+  this.extendBooking = function extendBooking() {
+    ctrl.isExtended = true;
+    var modal;
+    var extendedExpire = moment(expired).add(10, 'm').format('h:mm A');
+    $modal('result', {
+      title: 'Extend Reservation?',
+      message: 'Extend reservation to <b>' + extendedExpire + '</b> for $1.00?',
+      icon: 'waivecar-mark',
+      actions: [{
+        className: 'button-balanced',
+        text: 'I\'ll buy that for a dollar',
+        handler: function () {
+          modal.remove();
+        }
+      }, {
+        className: 'button-dark',
+        text: 'No thanks',
+        handler: function () {
+          modal.remove();
+      }}]
+    })
     .then(function (_modal) {
       modal = _modal;
       modal.show();
