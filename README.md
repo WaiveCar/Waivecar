@@ -71,7 +71,7 @@ Here's generally what I did after installing the above:
     #    essentially said that using an older version of ionic reliably remediated it.
     #
   $ npm install ionic@1.7.16 cordova@6 -g
-  $ ionic platform add ios
+  $ ionic platform add ios@4.3.1
 
     # At least *I* didn't have to do the `--unsafe-perm=true` that was recommended here.
   $ sudo npm install ios-sim ios-deploy
