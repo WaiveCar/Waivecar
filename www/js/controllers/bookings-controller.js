@@ -16,10 +16,26 @@ module.exports = angular.module('app.controllers').controller('BookingsControlle
         $state.go('auth');
       }
 
+      $scope.rides = [];
       $scope.limit = 5;
+      $scope.offset = 0;
+      $scope.moreBtn = true;
 
-      $scope.getPastRides(0, function(data){
+      $scope.getPastRides($scope.offset, function(data){
         $scope.rides = data;
+        $scope.offset++;
+      });
+    };
+
+    $scope.getMoreRides = function(){
+      $scope.getPastRides($scope.offset, function(data){
+        if (!data.length){
+          $scope.moreBtn = false;
+        }
+        for (var i=0; i<data.length; i++){
+          $scope.rides.push(data[i]);
+        }
+        $scope.offset++;
       });
     };
 
@@ -61,6 +77,21 @@ module.exports = angular.module('app.controllers').controller('BookingsControlle
           if(isFailed) {
             className.push('failed-row');
             ride.failed = true;
+          }
+
+          item.route = false;
+          if (ride.start && ride.end){
+            item.route = {
+              start: {
+                longitude: ride.start.longitude,
+                latitude: ride.start.latitude
+              },
+              destiny: {
+                longitude: ride.end.longitude,
+                latitude: ride.end.latitude
+              },
+              fitBoundsByRoute: true
+            };
           }
 
           item.ride = ride;
