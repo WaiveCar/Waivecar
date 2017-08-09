@@ -66,6 +66,7 @@ unfuckup() {
   [ -e releases ] && rm -fr releases
   [ -e platforms/android/build ] && rm -fr platforms/android/build
   [ -e platforms/android/assets/www ] && rm -fr platforms/android/assets/www
+  [ -e www/dist ] && rm -fr www/dist/*
   [ -e $path ] && touch $path
   set +x
 }
