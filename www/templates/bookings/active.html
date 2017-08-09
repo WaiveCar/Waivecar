@@ -24,7 +24,7 @@
     <div class="info-footer big-info-footer">
       <div class="has-footer-information">
         <div class="row pull-right vcenter reservation-extension">
-          <div class="text-left" ng-show="ctrl.timeLeft">
+          <div class="text-left reservation-text" ng-show="ctrl.timeLeft">
             Reservation {{ ctrl.isExtended ? 'extended to' : 'expires at' }} <strong>{{ ctrl.timeLeft }}</strong>.
           </div>
           <button ng-if="!ctrl.isExtended" type="button" class="button button-small button-balanced" ng-click="ctrl.extendBooking()"><img ng-src='img/clock.svg'>Extend for $1</button>
