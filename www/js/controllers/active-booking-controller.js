@@ -53,9 +53,49 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     watchForWithinRange();
     if ($data.active.bookings) {
       loadCar($data.active.bookings.carId);
+      var flags = $data.active.bookings.flags;
+
       expired = moment($data.active.bookings.createdAt).add(15, 'm');
+
+      // A perhaps bad idea on my part (cjm) ... I swap out 
+      // the word 'extension' for 'extended' when the extended
+      // time happens ... as a boolean.  That's also the
+      // test case to see if it was extended at all.  So
+      // we are doing 2 things in one place - bad idea.
+      if(flags && flags.search(/exten/) !== -1) {
+        loadExtended();
+      }
     }
   });
+
+  function loadExtended() {
+    expired = moment($data.active.bookings.createdAt).add(25, 'm');
+    ctrl.isExtended = true;
+  }
+
+  function showFailure(title, message, opts) {
+    opts = opts || {};
+    var modal;
+    $modal('result', {
+      title: title,
+      message: message,
+      icon: 'x-icon',
+      actions: [{
+        className: 'button-balanced',
+        text: opts.label ? opts.label : 'ok',
+        handler: function () {
+          modal.remove();
+          if(opts.cb) {
+            opts.cb();
+          }
+        }
+      }]
+    })
+    .then(function (_modal) {
+      modal = _modal;
+      modal.show();
+    });
+  }
 
   function loadCar(id) {
     $data.resources.cars.get({ id: id }).$promise.then(function(car) {
@@ -144,27 +184,15 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   });
 
   function showRetry () {
-    var modal;
-    $modal('result', {
-      title: 'Connection Failed',
-      message: 'We couldn\'t connect to the server. If the problem persists call .' + $settings.phone,
-      icon: 'x-icon',
-      actions: [{
-        className: 'button-balanced',
-        text: 'Retry',
-        handler: function () {
-          modal.remove();
-        }
-      }]
-    }).$promise
-    .then(function (_modal) {
-      modal = _modal;
-      modal.show();
-    });
-  };
+    return showFailure(
+      'Connection Failed', 
+      'We couldn\'t connect to the server. If the problem persists call .' + $settings.phone, {
+        label: 'retry'
+      }
+    );
+  }
 
   this.extendBooking = function extendBooking() {
-    ctrl.isExtended = true;
     var modal;
     var extendedExpire = moment(expired).add(10, 'm').format('h:mm A');
     $modal('result', {
@@ -176,6 +204,13 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         text: 'I\'ll buy that for a dollar',
         handler: function () {
           modal.remove();
+          $data.resources.bookings.extend({id: $ride.state.booking.id}).$promise
+            .then(function() {
+              loadExtended();
+            })
+            .catch(function(err) {
+              showFailure('Unable to extend', 'There was a problem extending your reservation');
+            });
         }
       }, {
         className: 'button-dark',
@@ -191,23 +226,14 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   };
 
   function showExpired() {
-    var modal;
-    $modal('result', {
-      title: 'Booking is expired',
-      message: 'You booking is expired',
-      icon: 'x-icon',
-      actions: [{
-        className: 'button-assertive',
-        text: 'OK',
-        handler: function () {
-          modal.remove();
+    return showFailure(
+      'Booking is expired', 
+      'You booking is expired', { 
+        cb: function() {
           $state.go('cars');
         }
-      }]
-    }).then(function (_modal) {
-      modal = _modal;
-      modal.show();
-    });
+      }
+    );
   }
 
   var showCancel = this.showCancel = function showCancel () {
