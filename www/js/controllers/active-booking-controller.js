@@ -53,18 +53,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     watchForWithinRange();
     if ($data.active.bookings) {
       loadCar($data.active.bookings.carId);
-      var flags = $data.active.bookings.flags;
-
       expired = moment($data.active.bookings.createdAt).add(15, 'm');
-
-      // A perhaps bad idea on my part (cjm) ... I swap out 
-      // the word 'extension' for 'extended' when the extended
-      // time happens ... as a boolean.  That's also the
-      // test case to see if it was extended at all.  So
-      // we are doing 2 things in one place - bad idea.
-      if(flags && flags.search(/exten/) !== -1) {
-        loadExtended();
-      }
     }
   });
 
@@ -112,10 +101,15 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
 
   function watchBook() {
     if($data.active.bookings) {
-      console.log(new Date(), $data.active.bookings);
-    } else {
-      console.log(new Date(), 'no booking', $data);
-    }
+      if(!ctrl.isExtended && $data.active.bookings.flags && $data.active.bookings.flags.search(/exten/) !== -1) {
+        // A perhaps bad idea on my part (cjm) ... I swap out 
+        // the word 'extension' for 'extended' when the extended
+        // time happens ... as a boolean.  That's also the
+        // test case to see if it was extended at all.  So
+        // we are doing 2 things in one place - bad idea.
+        loadExtended();
+      }
+    } 
   }
   var timer = $interval(function() {
     if (expired) {
@@ -205,9 +199,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         handler: function () {
           modal.remove();
           $data.resources.bookings.extend({id: $ride.state.booking.id}).$promise
-            .then(function() {
-              loadExtended();
-            })
+            .then(function() {} )
             .catch(function(err) {
               showFailure('Unable to extend', 'There was a problem extending your reservation');
             });
