@@ -36,7 +36,7 @@
     font-size: 16px;
     letter-spacing: 1px;
     padding-top: 5px;
-    height: 67px;
+    height: 55px;
     line-height: 1.3;
   }
 
@@ -46,7 +46,7 @@
       float: left;
       .fa-facebook{
         font-size: 24px;
-        padding: 22px 23px 21px;
+        padding: 16px 23px 16px;
         margin-left: -1px;
         margin-top: -1px;
         border-right: 1px solid #243B6E;
@@ -57,7 +57,7 @@
       width: 73%;
       text-align: left;
       line-height: 22px;
-      height: 67px;
+      height: 100%;
       display: flex;
       align-items: center;
       margin-left: 10px;
@@ -89,6 +89,7 @@
   }
 
   .text-agreeing{
+    font-size: 13px;
     color: #CCCCCC;
     a, a:link{
       color: #CCCCCC;

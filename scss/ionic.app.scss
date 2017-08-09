@@ -258,6 +258,9 @@ div.group {
   margin-top:-8px;
   margin-bottom:10px;
 }
+.item-input {
+  padding: 3px 0 2px 16px;
+}
 .quiz {
   text-align: left;
   margin-bottom: 32px;
@@ -364,6 +367,7 @@ iframe.quiz {
 .item-select select {
   direction: ltr;
   width: 100%;
+  padding: 12px 0 12px 27px;
   text-align: left;
   //left: 200px;
 }
