@@ -107,7 +107,6 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
-
     if(process.env.NODE_ENV === 'production') {
       // ### Pre authorization payment
       try {
@@ -382,11 +381,13 @@ module.exports = class BookingService extends Service {
   }
 
   // extends reservation for $1.00 - see https://github.com/WaiveCar/Waivecar/issues/550
-  static *extend(id) {
+  static *extend(id, _user) {
     let booking = yield this.getBooking(id);
     let user    = yield this.getUser(booking.userId);
     let car     = yield this.getCar(booking.carId);
     let err     = false;
+
+    if (_user) this.hasAccess(user, _user);
 
     if(booking.status !== 'reserved') {
       err = "You can only extend your time if you haven't started the ride.";
