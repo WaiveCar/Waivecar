@@ -13,5 +13,6 @@ Let's help avoid some common issues and make sure everything stays free.  Please
     <div ng-if="guessList[ix] === iy" class='response' ng-class='["wrong","right"][answer[0]]'>{{ answer[2] }}{{ answer[0] ? '' : wrongAppend }}</div>
   </div>
 </div>
-<button style='margin-bottom:2em' class="button button-balanced button-block" ng-click="finishTest()" ng-class="{'disabled': !canProceed()}">
+<button style='margin-bottom:4em' class="button button-balanced button-block" ng-click="finishTest()" ng-class="{'disabled': !canProceed()}">
 You're done!</button>
+<span>&nbsp;</span>
