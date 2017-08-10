@@ -55,10 +55,16 @@ module.exports = class LicenseService extends Service {
     }
 
     // Check that birthdate is > 21 years
-    if (moment().diff(data.birthDate, 'years') < 21) {
+    var age = moment().diff(data.birthDate, 'years');
+    if (age < 21) {
       throw error.parse({
         code    : `INVALID_LICENSE`,
         message : `You must be 21 years old to access this service`
+      }, 400);
+    } else if (age > 200) {
+      throw error.parse({
+        code    : `INVALID_LICENSE`,
+        message : `Your date of birth appears to have some errors. Are you really ${age} years old?`
       }, 400);
     }
 
