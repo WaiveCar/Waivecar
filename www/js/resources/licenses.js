@@ -17,7 +17,7 @@ module.exports = angular.module('app').factory('Licenses', [
       }
       data = angular.copy(data);
       if (data.birthDate) {
-        data.birthDate = moment(data.birthDate).format('YYYY-MM-DD');
+        data.birthDate = moment(data.birthDate, 'MM-DD-YYYY').format('YYYY-MM-DD');
       }
       delete data.createdAt;
       delete data.updatedAt;
@@ -33,8 +33,7 @@ module.exports = angular.module('app').factory('Licenses', [
       }
       data = angular.fromJson(data);
       if (data.birthDate) {
-        // We need to strip the UTC code in order to prevent an off-by-1 error
-        data.birthDate = moment(data.birthDate.replace(/Z$/, '')).toDate();
+        data.birthDate = moment(data.birthDate, 'MM-DD-YYYY').toDate();
       }
       return data;
 
@@ -45,6 +44,7 @@ module.exports = angular.module('app').factory('Licenses', [
         method: 'POST',
         url: $utils.getRoute(resourceName),
         isArray: false,
+        transformRequest: transformRequest,
         transformResponse: transformResponse
       },
       update: {
