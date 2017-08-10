@@ -14,7 +14,7 @@
 
     <p class="text-agreeing padding">Don't worry, the majority of rides are free!<br/>However, fees could apply in some cases.</p>
 
-    <form name="form" id="form" ng-submit="creditCardCtrl.submit(form)" class="newCreditCard" novalidate>
+    <form name="form" id="form" ng-submit="save(form)" class="newCreditCard" novalidate>
       <div ng-include="'./templates/credit-cards/_form.html'"></div>
     </form>
 
@@ -24,7 +24,7 @@
 
   <ion-footer-bar class="no-padding">
     <div class="button-bar">
-      <button type="button" class="button button-gray" ng-click="creditCardCtrl.cancel()">Cancel</button>
+      <button type="button" class="button button-gray" ng-click="cancel()">Cancel</button>
       <button type="submit" form="form" class="button button-balanced">Add card</button>
     </div>
   </ion-footer-bar>
