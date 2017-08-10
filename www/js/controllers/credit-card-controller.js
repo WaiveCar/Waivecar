@@ -21,11 +21,11 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
   function ($scope, $state, $auth, $data, $message, $stateParams, $q, $modal, $timeout, cards, IntercomService, $injector) {
     var $ionicHistory = $injector.get('$ionicHistory');
 
-    $scope.cancel = function() {
+    this.cancel = $scope.cancel = function() {
       $state.go('users-edit');
     };
 
-    $scope.save = function(form) {
+    this.save = $scope.save = function(form) {
       if (form.$pristine) {
         return $message.info('Please fill in the form fields first.');
       }
@@ -71,7 +71,7 @@ module.exports = angular.module('app.controllers').controller('CreditCardControl
               }
 
               if ($scope.isWizard) {
-                return $state.go('verify-id', { step: 5 });
+                return $state.go('quiz-index', { step: 6 });
               }
 
               $state.go('credit-cards');
