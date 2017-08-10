@@ -9,6 +9,7 @@ export { default as Grid }      from './lib/grid';
 export { default as Image }     from './lib/image';
 export { default as Layout }    from './lib/layout';
 export { default as Map }       from './lib/map';
+export { default as GMap }      from './lib/gmap';
 export { default as Navbar }    from './lib/navbar';
 export { default as snackbar }  from './lib/snackbar';
 

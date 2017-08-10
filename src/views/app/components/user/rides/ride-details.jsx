@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import moment  from 'moment';
-import { Map } from 'bento-web';
+import { GMap } from 'bento-web';
 
 class RideDetails extends Component {
 
@@ -29,7 +29,7 @@ class RideDetails extends Component {
           <div className="row">
             <div className="col-md-4">
               <div className="ride-map">
-                <Map
+                <GMap
                   markerIcon = { '/images/map/active-waivecar.svg' }
                   markers    = {[
                     {
