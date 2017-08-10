@@ -67,15 +67,35 @@ class TableIndex extends React.Component {
   search_date_real(el) {
     let 
       query = el.target.value.toLowerCase().trim(),
-      isValid = (query === 'now') || query.match(/^\d{1,2}.(0?[1-9]|[1-3][0-9])(.\d{2,4}|)$/),
-      cutoff = false;
+      // splits up the query into m/d/y 
+      isValid = (query === 'now') || query.match(/^(\d+.\d+).?(\d+|)$/),
+      cutoff = false, date, year;
 
     if(!isValid) {
       return;
     }
-    cutoff = (query === 'now') ? moment().unix() : moment(query, [ 'MM-DD-YYYY' ]).unix();
 
-    if(cutoff) {
+    if(query !== 'now') {
+      date = isValid[1];
+      year = parseInt(isValid[2], 10) || 0;
+     
+      // if the year isn't there then we add it on.
+      if(year === 0) {
+        year = (new Date()).getYear() - 100;
+      }
+
+      // If the year is 2 digits we make it 4.
+      if(year < 100) {
+        year += 2000;
+      }
+
+      // we update the query
+      query = [date,year].join('-');
+    }
+
+    cutoff = (query === 'now') ? moment().unix() : moment(query, 'MM-DD-YYYY').unix();
+
+    if(cutoff > 0) {
       this.table.search_handler({cutoff: cutoff}, true);
     }
   }

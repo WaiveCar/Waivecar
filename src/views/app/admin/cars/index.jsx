@@ -2,7 +2,7 @@ import React    from 'react';
 import { Link } from 'react-router';
 import moment   from 'moment';
 import { GMap }  from 'bento-web';
-import { api }  from 'bento';
+import { api, relay, dom }  from 'bento';
 
 module.exports = class CarsIndex extends React.Component {
 
@@ -26,8 +26,8 @@ module.exports = class CarsIndex extends React.Component {
       {key : "isImmobilized", title:"Immobilized", type : "bool"},
       {key : "isCharging", title:"Charging", type : "bool"},
       {key : "statuscolumn", title:"Status", type : "status"},
-      {key : "updatedAt", title:"Updated At", type : "datetime"},
-      {key : "inService", title:"In Repair", type : "bool"}
+      {key : "updatedAt", title:"Updated At", type : "datetime"}//,
+      //{key : "inService", title:"In Repair", type : "bool"}
     ];
   }
 
