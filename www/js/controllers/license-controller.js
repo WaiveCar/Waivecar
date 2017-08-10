@@ -31,6 +31,10 @@ function LicenseController($injector, $stateParams){
 
   var self = this;
 
+  this.cancel = function() {
+    $state.go('users-edit');
+  };
+
   this.submit = function(form){
     if (form.$invalid){
       return $message.error('Please fix form errors and try again.');
