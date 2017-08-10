@@ -11,16 +11,11 @@
   <meta http-equiv="Content-Security-Policy" content="
       img-src * android-webview-video-poster: 
       cdvphotolibrary:  'self' data:; 
-      default-src * blob: 'self' gap: wss: ws: http://*.google.com  http://*.googleapis.com  http://*.gstatic.com  http://*.googleusercontent.com;
+      default-src * data: blob: 'self' gap: wss: ws: http://*.google.com  http://*.googleapis.com  http://*.gstatic.com  http://*.googleusercontent.com;
       style-src 'self' 'unsafe-inline' http://*.googleapis.com ;
       script-src 'self' http://*.google.com  http://*.googleapis.com  http://*.gstatic.com  http://*.googleusercontent.com 'unsafe-inline' 'unsafe-eval'
         http://127.0.0.1:* http://localhost:*;
   ">
-  <meta http-equiv="---Content-Security-Policy" content="
-      default-src *;
-      style-src 'self' 'unsafe-inline';
-      img-src 'self' data: *;
-      script-src * 'unsafe-inline' 'unsafe-eval';">
   <!-- compiled css output -->
   <link href="css/ionic.app.css" rel="stylesheet">
 
