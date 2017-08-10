@@ -56,6 +56,11 @@ wrap() {
 build() {
   cd $DIR/..
   nvmcheck
+
+  for i in res/mipmap*/icon.png; do
+    cp $i platforms/android/$i >& /dev/null
+  done
+
   ionic build android
 }
  
