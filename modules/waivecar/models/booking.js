@@ -3,19 +3,8 @@
 let queue = Bento.provider('queue');
 
 Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
-
-  /**
-   * The identity of the table created in your database.
-   * @property table
-   * @type     String
-   */
   model.table = 'bookings';
 
-  /**
-   * The sequelize schema definition of your model.
-   * @property schema
-   * @type     Object
-   */
   model.schema = {
 
     /**
@@ -121,7 +110,6 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
 
   // ### Methods
   // A list of methods attached to the model.
-
   model.methods = {
 
     /*
@@ -184,60 +172,36 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       return flagList;
     },
 
-    /**
-     * Cancels the booking by updating the status to cancelled.
-     * @return {Void}
-     */
     *cancel() {
       yield this.update({
         status : 'cancelled'
       });
     },
 
-    /**
-     * Sets the booking status to ready.
-     * @return {Void}
-     */
     *ready() {
       yield this.update({
         status : 'ready'
       });
     },
 
-    /**
-     * Sets the booking status to started.
-     * @return {Void}
-     */
     *start() {
       yield this.update({
         status : 'started'
       });
     },
 
-    /**
-     * Sets the booking status to ended.
-     * @return {Void}
-     */
     *end() {
       yield this.update({
         status : 'ended'
       });
     },
 
-    /**
-     * Sets the booking status to completed.
-     * @return {Void}
-     */
     *complete() {
       yield this.update({
         status : 'completed'
       });
     },
 
-    /**
-     * Sets the booking status to closed.
-     * @return {Void}
-     */
     *close() {
       yield this.update({
         status : 'closed'
@@ -320,26 +284,34 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
 
     *setForfeitureTimers(user, timers) {
       let uid = `booking-${ this.id }`;
+      let relativeTimers = {};
       let data = {
         userId : user.id,
         bookingId : this.id
       };
 
+      ['forfeitureFirstWarning', 'forfeitureSecondWarning', 'forfeiture'].forEach(function(which) {
+        relativeTimers[which] = {
+          type: 'seconds',
+          value: timers[which].value + 0
+        }
+      });
+
       queue.scheduler.add('booking-forfeiture-first-warning', {
         uid   : uid,
-        timer : timers.forfeitureFirstWarning,
+        timer : relativeTimers.forfeitureFirstWarning,
         data  : data
       });
 
       queue.scheduler.add('booking-forfeiture-second-warning', {
         uid   : uid,
-        timer : timers.forfeitureSecondWarning,
+        timer : relativeTimers.forfeitureSecondWarning,
         data  : data
       });
 
       queue.scheduler.add('booking-forfeiture', {
         uid   : uid,
-        timer : timers.forfeiture,
+        timer : relativeTimers.forfeiture,
         data  : data
       });
 
