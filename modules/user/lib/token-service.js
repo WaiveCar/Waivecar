@@ -12,7 +12,7 @@ module.exports = class TokenService {
    * @return {String} token
    */
   static *create(payload) {
-    let token = rndm.base10(6);
+    let token = rndm.base10(4);
     yield bucket.setJSON(token, payload, 60 * 60);
     return token;
   }

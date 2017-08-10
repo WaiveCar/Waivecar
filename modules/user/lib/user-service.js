@@ -70,6 +70,7 @@ module.exports = {
       id      : user.id,
       purpose : 'password-reset'
     });
+    yield notify.sendTextMessage(user, `${token} is your password reset token.`);
     yield hooks.require('user:send-password-token', user, token, resetUrl);
   },
 
