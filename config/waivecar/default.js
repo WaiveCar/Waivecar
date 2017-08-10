@@ -38,16 +38,16 @@ module.exports = {
           type  : 'seconds'
         },
         forfeitureFirstWarning : {
-          value : 5,
-          type  : 'minutes'
+          value : 5*60,
+          type  : 'seconds'
         },
         forfeitureSecondWarning : {
-          value : 10,
-          type  : 'minutes'
+          value : 10*60,
+          type  : 'seconds'
         },
-        forfeiture: {
-          value : 15,
-          type  : 'minutes'
+        forfeiture : {
+          value : 15*60,
+          type  : 'seconds'
         }
       }
     },

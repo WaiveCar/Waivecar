@@ -484,7 +484,7 @@ module.exports = class BookingService extends Service {
 
       let message = yield this.updateState('started', _user, user);
       yield notify.notifyAdmins(`:octopus: ${ message } | ${ car.info() } ${ car.averageCharge() }% ${ user.info() }`, [ 'slack' ], { channel : '#reservations' });
-      yield notify.sendTextMessage(user, `Your WaiveCar rental has started! The first 2 hours are completely FREE! After that, it's $5.99 / hour. Make sure to return the car in Santa Monica, don't drain the battery under 20%, and keep within our driving borders to avoid any charges. Thanks for renting with WaiveCar!`);
+      yield notify.sendTextMessage(user, `Your WaiveCar rental has started! The first 2 hours are completely FREE! After that, it's $5.99 / hour. Make sure to return the car in Santa Monica, don't drain the battery under 25%, and keep within our driving borders to avoid any charges. Thanks for renting with WaiveCar!`);
 
       // ### Relay Update
 
