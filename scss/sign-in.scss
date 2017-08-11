@@ -19,9 +19,10 @@
   page-title{
     h4 span{
       font-family: LatoWeb;
-      font-size: 16px;
-      letter-spacing: 1px;
+      font-size: 14px;
+      letter-spacing: 2px;
       margin-bottom: 4px;
+      padding-top: 10px;
     }
   }
 
@@ -33,20 +34,23 @@
 
   .button{
     font-family: LatoWeb;
-    font-size: 16px;
+    font-size: 14px;
     letter-spacing: 1px;
     padding-top: 5px;
-    height: 67px;
+    height: 54px;
     line-height: 1.3;
   }
 
   .button-fb{
     padding: 0px;
+    margin-top: 14px;
+    height: 54px;
+    background-color: #4f70f8;
     .logo-fb{
       float: left;
       .fa-facebook{
-        font-size: 24px;
-        padding: 22px 23px 21px;
+        font-size: 20px;
+        padding: 18px 23px 16px;
         margin-left: -1px;
         margin-top: -1px;
         border-right: 1px solid #243B6E;
@@ -56,8 +60,9 @@
       float: left;
       width: 73%;
       text-align: left;
-      line-height: 22px;
-      height: 67px;
+      font-size: 14px;
+      line-height: 18px;
+      height: 54px;
       display: flex;
       align-items: center;
       margin-left: 10px;
@@ -66,14 +71,14 @@
 
   .lined{
     font-family: LatoWeb;
-    font-size: 16px;
+    font-size: 14px;
     letter-spacing: 1px;
-    margin-top: 40px;
-    margin-bottom: 45px;
+    margin-top: 29px;
+    margin-bottom: 35px;
   }
 
   .has-footer{
-    bottom: 67px;
+    bottom: 54px;
   }
 
   .icon-flag{
@@ -83,13 +88,19 @@
 
   .item-input{
     border-color: #727B75;
+    padding: 4px 0 2px 16px;
     .input-label, input{
-      font-size: 16px;
+      font-size: 14px;
+    }
+    .input-label{
+      padding: 5px 10px 4px 0px;
     }
   }
 
   .text-agreeing{
     color: #CCCCCC;
+    font-size: 11px;
+    line-height: 14px;
     a, a:link{
       color: #CCCCCC;
     }
@@ -100,7 +111,7 @@
   }
 
   .bar-footer{
-    height: 67px;
+    height: 54px;
   }
 
   form {
