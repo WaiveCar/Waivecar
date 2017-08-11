@@ -75,3 +75,5 @@ Route.get('/audit/log', [ 'isAuthenticated', 'isAdmin', 'LogController@index' ])
 
 // ### Geocoding Handlers
 Route.get('/geocoding', [ 'isAuthenticated', 'GeocodingController@show' ]);
+
+Route.get('/dashboard', [ /* 'isAuthenticated', 'isAdmin',*/ 'DashboardController@index' ]);
