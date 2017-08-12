@@ -120,12 +120,12 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         $interval.cancel(timer);
         showExpired();
       } else {
-        this.timeLeft = moment(expired).format('h:mm A');
-        return this.timeLeft;
+        ctrl.timeLeft = moment(expired).format('h:mm A');
+        return ctrl.timeLeft;
       }
     }
     return null;
-  }.bind(this), 1000);
+  }, 1000);
 
   var stopWatching;
   function watchForWithinRange () {
@@ -259,7 +259,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
           $data.remove('bookings', id).then(function() {
             $ionicLoading.hide();
             cancelling = false;
-            $message.success('Your Booking has been successfully cancelled');
+            $message.success('Your booking has been successfully cancelled');
             $data.deactivate('cars');
             $data.deactivate('bookings');
             $ride.setState();
