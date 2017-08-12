@@ -139,7 +139,7 @@ scheduler.process('active-booking', function *(job) {
       // 
       // We let the lock expire "naturally" after the elapsing of lockTimeMS
       //
-      if (yield redis.shouldProcess('booking-loop', booking.id)) {
+      if (yield redis.shouldProcess('booking-loop', booking.id, 90 * 1000)) {
         checkBooking(booking);
       }
     } catch(err) {
