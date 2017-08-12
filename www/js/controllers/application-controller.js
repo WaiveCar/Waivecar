@@ -51,20 +51,25 @@ function ApplicationController ($rootScope, $scope, $injector) {
   // navigate to the right parts of the app given what
   // the server thinks of me.
   function myState() {
-    console.log('In my state');
     var currentBooking = false;
     var lastState = false;
     var newState;
     var auth = $session.get('auth');
 
     // todo: this logic looks like bullshit although it seems to work.
-    function checkState(shown) {
+    function checkState(shown, event) {
       // We need to both check the state that the user is currently in
       // along with what they are currently viewing in the app
       if(newState === 'created' && shown === 'cars') {
         $ride.init();
+        // If the user is in a reservation state (get to your waivecar) and they
+        // navigate away and then go to "current ride" it should take them back
+        // to the reservation state.
       } else if(newState === 'started' && (shown === 'bookings-active' || lastState === 'created')) {
         $ride.init();
+      } else if((shown === 'dashboard' || shown === 'cars-show') && $data.active.bookings && $data.active.bookings.status === 'reserved') {
+        // prevents the transition from being made
+        event.preventDefault();
       } else if(newState === 'completed') {
         // if we have a booking id then we should go to the booking
         // summary screen ONLY if our previous state was 'started',
@@ -82,10 +87,8 @@ function ApplicationController ($rootScope, $scope, $injector) {
 
     $data.subscribe('User');
 
-    console.log('in the function');
     if(auth) {
       // subscribe to user-specific messages
-      console.log('in the auth function');
       $socket.emit('authenticate', auth.token, function(done) {
         console.log('subscribed to messages');
       });
@@ -93,9 +96,9 @@ function ApplicationController ($rootScope, $scope, $injector) {
       // This makes sure that the user isn't navigating to a wrong part of the app
       // in the flow of booking a car. Note that the code below will call this code.
       $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
-        console.log(fromState.name + ' -> ' + toState.name, newState, currentBooking);
-        if($data.me && $data.me.tested && fromState.name && ['users-edit'].indexOf(fromState.name) === -1) {
-          checkState(toState.name);
+        console.log(fromState.name + ' -> ' + toState.name, newState, $data.active.bookings, currentBooking);
+        if($data.me && $data.me.tested && fromState.name && fromState.name !== 'users-edit') {
+          checkState(toState.name, event);
         }
       });
 
