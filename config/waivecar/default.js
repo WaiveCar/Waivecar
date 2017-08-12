@@ -34,7 +34,7 @@ module.exports = {
           type  : 'hours'
         },
         carLocation : {
-          value : 30,
+          value : 120,
           type  : 'seconds'
         },
         forfeitureFirstWarning : {
