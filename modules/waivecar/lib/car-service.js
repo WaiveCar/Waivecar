@@ -208,7 +208,7 @@ module.exports = {
     let car = yield Car.findById(id);
     if (!car) {
       throw error.parse({
-        code    : 'CAR_SERIVCE_NOT_FOUND',
+        code    : 'CAR_SERVICE_NOT_FOUND',
         message : 'The car has not been registered in our database.',
         data    : {
           id : id
@@ -492,6 +492,9 @@ module.exports = {
    * @return {Array}
    */
   *getDevice(id, _user, source) {
+    if (process.env.NODE_ENV !== 'production') {
+      return false;
+    }
     try {
       let status = yield this.request(`/devices/${ id }/status`, { timeout : 30000 });
       this._errors[id] = 0;
