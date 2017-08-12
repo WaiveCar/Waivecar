@@ -19,7 +19,7 @@ I (cjm) can't find any evidence of some UI builder that was used to manager the 
 
 Apparently you need two things, in one window you need to run
 
-  $ ionic serve
+  $ ionic serve -b
 
 In order to have things recompile and then in another you need to run
 
