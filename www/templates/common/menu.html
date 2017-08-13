@@ -14,8 +14,11 @@
       <ng-include class="menu-item-image" src="'/img/find-cars.svg'" alt=""></ng-include>
       <span class="button-icon-label">Find Cars</span>
     </a>
-
-    <a ui-sref="dashboard({id: $data.active.bookings.id})" ng-if="$data.active.bookings">
+    <a ui-sref="bookings-active({id: $data.active.bookings.id})" ng-if="$data.active.bookings && $data.active.bookings.status === 'reserved'">
+      <ng-include class="menu-item-image" src="'/img/find-cars.svg'" alt=""></ng-include>
+      <span class="button-icon-label">Current Ride</span>
+    </a>
+    <a ui-sref="dashboard({id: $data.active.bookings.id})" ng-if="$data.active.bookings && $data.active.bookings.status !== 'reserved'">
       <ng-include class="menu-item-image" src="'/img/find-cars.svg'" alt=""></ng-include>
       <span class="button-icon-label">Current Ride</span>
     </a>
