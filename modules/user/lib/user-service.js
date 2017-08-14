@@ -1,5 +1,6 @@
 'use strict';
 
+let intercom    = require('./intercom-service');
 let tokens      = require('./token-service');
 let error       = require('./errors');
 let bcrypt      = Bento.provider('bcrypt');
@@ -31,6 +32,9 @@ module.exports = {
    * @return {Object}
    */
   *store(payload, _user) {
+    let myvar = intercom.mymethod('test');
+    console.log(myvar());
+
     let data = yield hooks.require('user:store:before', payload, _user);
 
     // ### Create User
