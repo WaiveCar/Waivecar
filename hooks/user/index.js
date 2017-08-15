@@ -10,6 +10,7 @@ let error        = Bento.Error;
 let hooks        = Bento.Hooks;
 let config       = Bento.config;
 let notify       = Bento.module('waivecar/lib/notification-service');
+let intercom     = require('./lib/intercom-service');
 
 // ### Register Jobs
 
@@ -130,6 +131,10 @@ hooks.set('user:store:after', function *(user, _user) {
   // if (user.email && !user.verifiedEmail) {
   //  yield verification.requestEmailVerification(user.id, user.email, user.name());
   //}
+
+  // Add user to intercom
+  intercom.addUser(user);
+
 });
 
 // ### Update Hooks
@@ -226,5 +231,10 @@ hooks.set('user:update:after', function *(user, _user) {
  * @return {Boolean}
  */
 hooks.set('user:delete:before', function *(user, query, _user) {
+  return true;
+});
+
+hooks.set('user:delete:after', function *(user, query, _user) {
+  intercom.removeUser(user);
   return true;
 });
