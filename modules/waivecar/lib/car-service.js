@@ -333,7 +333,7 @@ module.exports = {
       // see https://github.com/WaiveCar/Waivecar/issues/727 ... Waive2 and 20 is off by 35 
       if (['WAIVE20', 'WAIVE2'].indexOf(existingCar.license) !== -1) {
         // we lob off some amount
-        data.charge -= 35;
+        data.charge -= 30;
         // and make sure it's over 0.
         data.charge = Math.max(0, data.charge);
       }
@@ -366,7 +366,7 @@ module.exports = {
       data: existingCar.toJSON()
     });
 
-    if (data.isIgnitionOn || data.calculatedSpeed > 0 || data.currentSpeed > 0 || !data.isParked) {
+    if (data.isIgnitionOn || existingCar.mileage !== data.mileage || data.calculatedSpeed > 0 || data.currentSpeed > 0 || !data.isParked) {
       let booking = yield Booking.findOne({where: {status: 'started', carId: existingCar.id}});
       if ( booking && !booking.isFlagged('drove') ) {
         yield booking.flag('drove');
