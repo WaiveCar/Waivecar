@@ -42,7 +42,7 @@ So it looks like you need the following (assuming you're using a consumer-setup 
 Here's generally what I did after installing the above:
 
   $ brew install git
-  $ git clone https://github.com/clevertech/Waivecar
+  $ git clone https://github.com/waivecar/Waivecar
     ... magic credentials ...
     # This next line is taken from https://github.com/creationix/nvm
     # As of Sept 23, 2016, this is the version of node that is known to work.
