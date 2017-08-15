@@ -41,7 +41,7 @@ So it looks like you need the following (assuming you're using a consumer-setup 
 
 Here's generally what I did after installing the above:
 
-  $ brew install git
+  $ brew install git node
   $ git clone https://github.com/waivecar/Waivecar
     ... magic credentials ...
     # This next line is taken from https://github.com/creationix/nvm
@@ -49,7 +49,7 @@ Here's generally what I did after installing the above:
     # I (cjm) don't have the time to cross my fingers and upgrade. I'm going with
     # what I know works.
 
-  $ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.32.0/install.sh | bash 
+  $ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash 
     # Follow the instructions and put the lines into ~/.profile and start a new terminal
 
   $ nvm install v4.2.6
