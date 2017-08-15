@@ -2,7 +2,7 @@
 
 ix=0
 d=`mktemp -d`
-while [ "$#" -gt 1 ]; do
+while [ "$#" -gt 0 ]; do
   file=$1
   for host in waive-prod1 waive-prod2; do
     scp -C $host:$file $d/$ix
