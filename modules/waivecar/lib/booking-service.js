@@ -532,12 +532,13 @@ module.exports = class BookingService extends Service {
     }
 
     var isCarReachable = true;
-    isCarReachable = false;
     if(process.env.NODE_ENV === 'production') {
       try {
         Object.assign(car, yield cars.getDevice(car.id, _user, 'booking.end'));
       } catch (err) {
-        isCarReachable = false;
+        // BUGBUG: This is disabled until the new version of the app goes out
+        // that can handle the pending end issue (#892).
+        //isCarReachable = false;
         log.debug('Failed to fetch car information when ending booking');
         if (isAdmin) {
           warnings.push('car is unreachable');
@@ -565,16 +566,14 @@ module.exports = class BookingService extends Service {
       log.warn(`Unable to lock immobilizer when ending booking ${ booking.id }`);
     }
 
-    if (isCarReachable) {
-      if (!status || !status.isImmobilized) {
-        if (isAdmin) {
-          warnings.push('the engine is not immobilized');
-        } else {
-          throw error.parse({
-            code: `BOOKING_END_IMMOBILIZER`,
-            message: `Immobilizing the engine failed.`
-          }, 400);
-        }
+    if (isCarReachable && (!status || !status.isImmobilized) ) {
+      if (isAdmin) {
+        warnings.push('the engine is not immobilized');
+      } else {
+        throw error.parse({
+          code: `BOOKING_END_IMMOBILIZER`,
+          message: `Immobilizing the engine failed.`
+        }, 400);
       }
     }
 
