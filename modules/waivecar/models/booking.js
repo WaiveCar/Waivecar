@@ -264,13 +264,15 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
 
       // ### Free time expired
 
-      queue.scheduler.add('booking-free-timer-expired', {
-        uid   : `booking-${ this.id }`,
-        timer : timers.freeRideExpiration,
-        data  : {
-          phone : user.phone
-        }
-      });
+      if (!user.isWaivework){
+        queue.scheduler.add('booking-free-timer-expired', {
+          uid   : `booking-${ this.id }`,
+          timer : timers.freeRideExpiration,
+          data  : {
+            phone : user.phone
+          }
+        });
+      }
 
     },
 
