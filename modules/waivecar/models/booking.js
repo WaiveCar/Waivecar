@@ -77,6 +77,10 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
         'closed'     // The booking has been closed and payment has been requested/collected.
       ),
       defaultValue : 'reserved'
+    },
+
+    createdAt : {
+      type : Sequelize.DATE
     }
 
   };
