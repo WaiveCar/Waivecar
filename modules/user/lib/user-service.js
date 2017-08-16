@@ -379,6 +379,7 @@ module.exports = {
 
     yield hooks.require('user:delete:before', user, query, _user);
     yield user.delete();
+    yield hooks.require('user:delete:after', user, query, _user);
 
     relay.emit('users', {
       type : 'delete',
