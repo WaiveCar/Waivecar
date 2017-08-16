@@ -4,7 +4,7 @@ module.exports = {
       staleLimit : 30,
       sync       : {
         value : 1,
-        type  : 'minutes'
+        type  : 'hour'
       }
     },
     mock : {

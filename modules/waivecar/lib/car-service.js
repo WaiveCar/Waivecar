@@ -324,7 +324,7 @@ module.exports = {
       data.isParked = (data.currentSpeed === 0) && (!data.isIgnitionOn);
     }
 
-    // We only store the charges if things are non-zero
+    // We only store the charges if things are non-zero 
     // (see https://github.com/clevertech/Waivecar/issues/629)
     //
     // And by zero we are also considering all bottom values, as one
@@ -355,7 +355,7 @@ module.exports = {
     }
 
     if (data.boardVoltage < 10.5 && data.isIgnitionOn) {
-      yield notify.notifyAdmins(`:car: ${ existingCar.license } board voltage  is at ${ data.boardVoltage } v`, [ 'slack' ], { channel : '#rental-alerts' });
+      yield notify.notifyAdmins(`:skull: ${ existingCar.license } board voltage is at ${ data.boardVoltage }v`, [ 'slack' ], { channel : '#rental-alerts' });
     }
 
     // We find out if our charging status has changed
