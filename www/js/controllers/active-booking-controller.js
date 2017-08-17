@@ -54,6 +54,9 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     if ($data.active.bookings) {
       loadCar($data.active.bookings.carId);
       expired = moment($data.active.bookings.createdAt).add(15, 'm');
+      if(ctrl.isExtended) {
+        expired = moment($data.active.bookings.createdAt).add(25, 'm');
+      }
     }
   });
 
