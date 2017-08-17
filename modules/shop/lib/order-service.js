@@ -229,7 +229,7 @@ module.exports = class OrderService extends Service {
       }
     }
 
-    if (minutesOver === 0) return;
+    if (minutesOver === 0 || user.isWaivework) return;
     billableGroups = Math.ceil(minutesOver / 10);
     amount = Math.round((billableGroups / 6 * 5.99) * 100);
 
