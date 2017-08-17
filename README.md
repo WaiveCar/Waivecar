@@ -70,17 +70,21 @@ Here's generally what I did after installing the above:
     #    step I got an error about CDVCamera.o which the internet had mixed messages on but 
     #    essentially said that using an older version of ionic reliably remediated it.
     #
-  $ npm install ionic@1.7.16 cordova@6 -g
+  $ npm install ionic@1.7.16 cordova@6 gulp -g
   $ ionic platform add ios@4.3.1
 
     # At least *I* didn't have to do the `--unsafe-perm=true` that was recommended here.
-  $ sudo npm install ios-sim ios-deploy
+  $ sudo npm install ios-sim ios-deploy -g
+
+    # intercom needs cocoapods ... I don't know ... I just don't know sometimes.
+  $ sudo gem install cocoapods 
+  $ pod setup
   $ ionic build ios // this *may* not be needed. It appears that "run ios" will do a build.
   $ ionic run ios
 
 You may need to also do this in another terminal:
 
-  $ ionic serve
+  $ ionic serve -b
 
 I wish I could be more clear on what magic incantation is required but honestly it may be based on some kind of ctime/mtime check that is subject to race conditions - so be careful and do md5s if you aren't sure. I know, this stuff sucks. Don't ever ask the cool hip kids to write stable software...
 
