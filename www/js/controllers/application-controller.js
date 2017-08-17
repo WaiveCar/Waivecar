@@ -57,30 +57,36 @@ function ApplicationController ($rootScope, $scope, $injector) {
     var auth = $session.get('auth');
 
     // todo: this logic looks like bullshit although it seems to work.
-    function checkState(shown, event) {
+    function checkState(obj, event) {
+      var newScreen = obj.to;
+      var oldScreen = obj.from;
+
       // We need to both check the state that the user is currently in
       // along with what they are currently viewing in the app
-      if(newState === 'created' && shown === 'cars') {
+      if(newState === 'created' && newScreen === 'cars') {
         $ride.init();
         // If the user is in a reservation state (get to your waivecar) and they
         // navigate away and then go to "current ride" it should take them back
         // to the reservation state.
-      } else if(newState === 'started' && (shown === 'bookings-active' || lastState === 'created')) {
+      } else if(newState === 'started' && (newScreen === 'bookings-active' || lastState === 'created')) {
         $ride.init();
-      } else if((shown === 'dashboard' || shown === 'cars-show') && $data.active.bookings && $data.active.bookings.status === 'reserved') {
+      } else if(newScreen === 'dashboard' && oldScreen === 'end-ride-location') {
         // prevents the transition from being made
+        event.preventDefault();
+      } else if((newScreen === 'dashboard' || newScreen === 'cars-show') && $data.active.bookings && $data.active.bookings.status === 'reserved') {
+        // on the reservation screen and the user has requested to go to the cars screen
         event.preventDefault();
       } else if(newState === 'completed') {
         // if we have a booking id then we should go to the booking
         // summary screen ONLY if our previous state was 'started',
         // otherwise this means that we've canceled.
-        if(((!lastState || lastState === 'started' || lastState === 'ended') && shown !== 'bookings-show')|| shown === 'end-ride') {
+        if(((!lastState || lastState === 'started' || lastState === 'ended') && newScreen !== 'bookings-show')|| newScreen === 'end-ride') {
           $state.go('bookings-show', { id: currentBooking.id });
-        } else if(lastState === 'created' && shown !== 'cars') {
+        } else if(lastState === 'created' && newScreen !== 'cars') {
           $state.go('cars');
         }
         currentBooking = false;
-      } else if(newState === 'ended' && shown !== 'end-ride') {
+      } else if(newState === 'ended' && newScreen !== 'end-ride') {
         $state.go('end-ride', { id: currentBooking.id });
       }
     }
@@ -98,7 +104,7 @@ function ApplicationController ($rootScope, $scope, $injector) {
       $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
         console.log(fromState.name + ' -> ' + toState.name, newState, $data.active.bookings, currentBooking);
         if($data.me && $data.me.tested && fromState.name && fromState.name !== 'users-edit') {
-          checkState(toState.name, event);
+          checkState({from: fromState.name, to: toState.name}, event);
         }
       });
 
