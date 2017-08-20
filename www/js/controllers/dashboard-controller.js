@@ -83,7 +83,14 @@ function DashboardController ($scope, $rootScope, $injector) {
     // See #605. Since we are going to run the user-facing timer slightly faster than 2 hours 
     // We need to take our ratio and add it to the base, otherwise we start at 1:58:45. 
     // This math will be accounted for in the first calculation.
-    var endTime = moment(booking.createdAt).add(120 * (118.75 / 120), 'm');
+    var rideStart;
+    if(booking.details) {
+      rideStart = booking.details[0].createdAt;
+    } else {
+      rideStart = booking.updatedAt;
+    }
+    
+    var endTime = moment(rideStart).add(120 * (119.25 / 120), 'm');
     var timeLeft = function () {
       // thanks to stupid moment for being stupid...
       var left = -moment().diff(endTime);
