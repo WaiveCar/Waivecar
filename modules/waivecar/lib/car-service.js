@@ -550,6 +550,18 @@ module.exports = {
     return yield this.executeCommand(id, 'central_lock', 'lock', _user);
   },
 
+  *openDoor(id, _user){
+    if (_user) yield LogService.create({ carId : id, action : Actions.OPEN_DOOR_CAR }, _user);
+    let car = yield Car.findById(id);
+    return yield car.openDoor();
+  },
+
+  *closeDoor(id, _user){
+    if (_user) yield LogService.create({ carId : id, action : Actions.CLOSE_DOOR_CAR }, _user);
+    let car = yield Car.findById(id);
+    return yield car.closeDoor();
+  },
+
   *unlockImmobilzer(id, _user) {
     if (_user) yield LogService.create({ carId : id, action : Actions.UNIMMOBILIZE_CAR }, _user);
     return yield this.executeCommand(id, 'immobilizer', 'unlock', _user);
