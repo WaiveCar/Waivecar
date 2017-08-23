@@ -48,6 +48,11 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       defaultValue : false
     },
 
+    isOpenDoor : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
     isImmobilized : {
       type         : Sequelize.BOOLEAN,
       defaultValue : false
@@ -275,6 +280,18 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     available : function *() {
       yield this.update({
         isAvailable : true
+      });
+    },
+
+    openDoor : function *() {
+      yield this.update({
+        isOpenDoor : true
+      });
+    },
+
+    closeDoor : function *() {
+      yield this.update({
+        isOpenDoor : false
       });
     },
 

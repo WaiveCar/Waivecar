@@ -479,6 +479,7 @@ module.exports = class BookingService extends Service {
 
       yield cars.unlockCar(car.id, _user);
       yield cars.unlockImmobilzer(car.id, _user);
+      yield cars.openDoor(car.id, _user);
 
       // ### Notify
 
@@ -595,6 +596,7 @@ module.exports = class BookingService extends Service {
 
     // Sets the car connected to the booking on a 5 minute auto lock timer.
     yield booking.setAutoLock();
+    yield cars.closeDoor(car.id, _user);
 
     // ### Reset Car
     // Remove the driver from the vehicle.

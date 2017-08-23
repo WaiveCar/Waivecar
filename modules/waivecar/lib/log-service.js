@@ -264,6 +264,8 @@ class LogService {
       CLOSE_BOOKING        : 'CLOSE_BOOKING',
       LOCK_CAR             : 'LOCK_CAR',
       UNLOCK_CAR           : 'UNLOCK_CAR',
+      OPEN_DOOR_CAR        : 'OPEN_DOOR_CAR',
+      CLOSE_DOOR_CAR       : 'CLOSE_DOOR_CAR',
       IMMOBILIZE_CAR       : 'IMMOBILIZE_CAR',
       UNIMMOBILIZE_CAR     : 'UNIMMOBILIZE_CAR',
       MAKE_CAR_AVAILABLE   : 'MAKE_CAR_AVAILABLE',
