@@ -845,6 +845,16 @@ module.exports = class BookingService extends Service {
     yield this.relay('update', booking, _user);
   }
 
+  static *cancelForfeit(id, _user) {
+    let booking = yield this.getBooking(id);
+
+    if ( _user.hasAccess('admin')) {
+      yield booking.delForfeitureTimers();
+      yield booking.addFlag('cancelforfeit');
+      yield this.relay('update', booking, _user);
+    }
+  }
+
   /*
    |--------------------------------------------------------------------------------
    | Delete Methods
@@ -860,12 +870,6 @@ module.exports = class BookingService extends Service {
    |
    */
 
-  /**
-   * Attempts to cancel a booking.
-   * @param  {Number} id
-   * @param  {Object} _user
-   * @return {Object}
-   */
   static *cancel(id, _user) {
     let booking = yield this.getBooking(id);
     let car     = yield this.getCar(booking.carId);
