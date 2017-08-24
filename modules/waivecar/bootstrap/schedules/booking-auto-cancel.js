@@ -64,9 +64,9 @@ scheduler.process('booking-auto-cancel', function *(job) {
 
   if (booking.status === 'reserved') {
     if (RedisService.shouldProcess('booking-start', booking.id)) {
-      if (booking.isFlagged('extended')) {
-        // this gives us a historical record of this
-        yield booking.swapFlag('extended', 'extension');
+      if (booking.isFlagged('extended') && !booking.isFlagged('ext-started')) {
+        yield booking.addFlag('ext-started');
+
         scheduler.add('booking-auto-cancel', {
           uid   : `booking-${ booking.id }`,
           timer : config.booking.timers.extension,
@@ -105,7 +105,7 @@ scheduler.process('booking-auto-cancel', function *(job) {
         data : booking.toJSON()
       });
 
-      if(booking.isFlagged('extension')) {
+      if(booking.isFlagged('extended')) {
         timeWindow = '25';
       }
 
