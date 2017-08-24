@@ -29,6 +29,10 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
       zoomControl: false
     };
 
+    if(attrs.noscroll) {
+      mapOptions.gestureHandling = 'cooperative';
+    }
+
     ctrl.map = new google.maps.Map($elem.find('.map-instance')[0], mapOptions);
     /*
     console.log(mapOptions);

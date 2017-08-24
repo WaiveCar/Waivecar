@@ -336,6 +336,7 @@ module.exports = [
         // 32-Past-rides@2x.png
         url: '/bookings',
         templateUrl: '/templates/bookings/index.html',
+        controller: 'BookingsController as ctrl',
         data: {
           auth: true
         }
