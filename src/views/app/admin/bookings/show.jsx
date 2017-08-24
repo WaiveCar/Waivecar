@@ -156,7 +156,18 @@ module.exports = class BookingsView extends React.Component {
         break;
       }
       case 'started' : {
-        action = <button type="button" onClick={ () => { this.update('end') } } className="btn btn-primary">End Ride</button>;
+        let drove = booking.flags.drove;
+        let cancelforfeit = booking.flags.cancelforfeit;
+        action = (
+          <span>
+            <button type="button" onClick={ () => { this.update('end') } } className="btn btn-primary">End Ride</button>
+            { drove ? '' : (
+                cancelforfeit ? <span><br/>Forfeiture Cancelled</span> :
+                  <button type="button" onClick={ () => { this.update('cancelforfeit') } } className="btn btn-link">Cancel Forfeiture</button>
+              )
+            }
+          </span>
+        )
         break;
       }
       case 'ended' : {
@@ -182,10 +193,6 @@ module.exports = class BookingsView extends React.Component {
     );
   }
 
-  /**
-   * Renders booking view.
-   * @return {Object}
-   */
   render() {
     if (this.state.error) {
       return (
@@ -207,6 +214,15 @@ module.exports = class BookingsView extends React.Component {
         </div>
       );
     }
+    if(_.isString(booking.flags)) {
+      let flags = {};
+      JSON.parse(booking.flags).forEach(which => { flags[which] = 1 });
+      booking.flags = flags;
+    } else if(_.isNull(booking.flags)){
+      booking.flags = {};
+    }
+
+    let extended = booking.flags.extension ? 'Extended' : 'Not Extended';
 
     return (
       <div id="booking-view">
@@ -217,7 +233,8 @@ module.exports = class BookingsView extends React.Component {
               <div className="col-xs-12 col-md-4 booking-status text-center">
                 <strong>Status</strong>
                 <div>
-                  { helpers.changeCase.toCapital(booking.status) }
+                  { helpers.changeCase.toCapital(booking.status) } <br/>
+                  <small style={{ display: 'block', marginTop: '-0.2em' }}>{ moment(booking.updatedAt).format('MM/D HH:mm') }</small>
                 </div>
               </div>
               <div className="col-xs-12 col-md-4 booking-status text-center">
@@ -239,6 +256,7 @@ module.exports = class BookingsView extends React.Component {
                     "(unknown car)"
                   }
                 </div>
+                { extended }
               </div>
             </div>
             { this.renderActions(booking) }
