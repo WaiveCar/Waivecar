@@ -3,6 +3,8 @@
 let Slack       = Bento.provider('slack');
 let queryParser = Bento.provider('sequelize/helpers').query;
 let Report      = Bento.model('Report');
+let ReportFile  = Bento.model('ReportFile');
+let File        = Bento.model('File');
 let Booking     = Bento.model('Booking');
 let Car         = Bento.model('Car');
 let User        = Bento.model('User');
@@ -120,13 +122,24 @@ module.exports = {
     };
 
     if (payload.files && payload.files.length) {
-      payload.files.forEach((file, i) => {
+      let files = payload.files;
+
+      for (let i = 0; i < files.length; ++i) {
+        let file = files[i];
+
+        let report_file = new ReportFile({
+          reportId : report.id,
+          fileId : file.id
+        });
+
+        yield report_file.save();
+
         slackPayload.attachments.push({
           fallback  : `Image ${ i }`,
           color     : '#D00000',
           image_url : `https://s3.amazonaws.com/waivecar-prod/${ file.path }` // eslint-disable-line
         });
-      });
+      }
     }
 
     yield slack.message(slackPayload);
@@ -141,12 +154,25 @@ module.exports = {
    * @return {Array}
    */
   *index(query, _user) {
-    return yield Report.find(queryParser(query, {
+
+    let parsedQuery = queryParser(query, {
       where : {
         bookingId : queryParser.NUMBER,
         createdBy : queryParser.NUMBER
       }
-    }));
+    });
+
+    parsedQuery.include = [{
+      model : ReportFile._schema,
+      as    : 'files',
+      include : [{
+        model : File._schema,
+        as    : 'details'
+      }]
+    }];
+
+
+    return yield Report._schema.findAll(parsedQuery);
   }
 
 };

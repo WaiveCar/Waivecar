@@ -22,7 +22,7 @@ Bento.Register.Controller('ReportsController', function(controller) {
 
   controller.status = function *() {
     return yield service.status();
-  }
+  };
 
   return controller;
 

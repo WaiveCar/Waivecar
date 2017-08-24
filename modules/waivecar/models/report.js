@@ -52,6 +52,13 @@ Bento.Register.Model('Report', 'sequelize', function(model, Sequelize) {
 
   };
 
+  model.relations = [
+    'ReportFile',
+    function relations(ReportFile) {
+      this.hasMany(ReportFile, { as : 'files',  foreignKey : 'reportId' });
+    }
+  ];
+
   return model;
 
 });
