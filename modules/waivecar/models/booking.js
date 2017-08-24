@@ -7,10 +7,6 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
 
   model.schema = {
 
-    /**
-     * The user that created the booking.
-     * @type {Integer}
-     */
     userId : {
       type       : Sequelize.INTEGER,
       allowNull  : false,
@@ -162,6 +158,10 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
         });
       }
       return newFlagList;
+    },
+
+    *addFlag(what) {
+      return yield this.flag(what);
     },
 
     *flag(what) {
