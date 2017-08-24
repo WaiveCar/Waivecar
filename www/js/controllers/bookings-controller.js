@@ -51,7 +51,6 @@ module.exports = angular.module('app.controllers').controller('BookingsControlle
           }).length;
           var className = ['ride-row'];
           item.dateHeader = moment(item.createdAt).format('MMMM D, YYYY');
-          item.hourFooter = moment(item.createdAt).format('LT');
 
           var ride = {
             start: item.details.find(function(val){
@@ -65,6 +64,13 @@ module.exports = angular.module('app.controllers').controller('BookingsControlle
             }, 0) / 100,
             id: item.id
           };
+
+          item.hourFooter = moment(ride.start.createdAt).format('LT') + ' - ' + moment(ride.end.createdAt).format('LT');
+          if(ride.fee) {
+            ride.fee = '$' + ride.fee.toFixed(2);
+          } else {
+            ride.fee = 'FREE';
+          }
 
           var duration = moment.duration(moment((ride.end || {}).createdAt).diff(moment((ride.start || {}).createdAt)));
           ride.duration = {
