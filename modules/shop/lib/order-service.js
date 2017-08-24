@@ -200,15 +200,17 @@ module.exports = class OrderService extends Service {
     return true;
   }
 
-  /**
-   * Special case order automatically created based on booking time
-   * @param {Object} booking
-   * @param {Object} user
-   */
+  // The regular over-time booking charge code.
   static *createTimeOrder(booking, user) {
     // This is to avoid a double-booking charge - see #674.
     if (! (yield RedisService.shouldProcess('booking-charge', booking.id))) {
       yield notify.notifyAdmins(`Avoiding a potential double charging of booking ${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+      return true;
+    }
+
+    // Don't charge the waivework users 
+    // for going over 2 hours.
+    if(user.isWaiveWork) {
       return true;
     }
 
@@ -229,7 +231,7 @@ module.exports = class OrderService extends Service {
       }
     }
 
-    if (minutesOver === 0 || user.isWaivework) return;
+    if (minutesOver === 0) return;
     billableGroups = Math.ceil(minutesOver / 10);
     amount = Math.round((billableGroups / 6 * 5.99) * 100);
 
