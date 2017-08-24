@@ -127,7 +127,8 @@ class RideList extends Component {
       start : data.details.find(val => val.type === 'start'),
       end   : data.details.find(val => val.type === 'end'),
       fee   : data.payments.reduce((value, payment) => { return value + (payment.amount - payment.refunded); }, 0) / 100,
-      id    : data.id
+      id    : data.id,
+      data  : data
     };
 
     // ### Duration
@@ -172,7 +173,7 @@ class RideList extends Component {
             { data.car ? data.car.license : '(unknown)' }
           </td>
           <td>
-            { ride.fee ? `$${ ride.fee }` : emptyChargeText }
+            { ride.fee ? `$${ ride.fee.toFixed(2) }` : emptyChargeText }
           </td>
           <td className='status hidden-md-down'>
             { helpers.changeCase.toCapital(status) }

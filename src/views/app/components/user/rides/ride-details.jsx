@@ -11,9 +11,10 @@ class RideDetails extends Component {
   }
 
   render() {
-    let { start, end, fee, id } = this.props;
+    let { start, end, fee, id, data } = this.props;
     let noFeeText = 'Free Ride';
     let extraText = false;
+    let isExtended = data.flags && data.flags.search(/extended/) !== -1;
 
     if (this.props.duration.hours > 2 && !fee) {
       noFeeText = 'Nothing Paid';
@@ -48,7 +49,7 @@ class RideDetails extends Component {
             </div>
             <div className="col-md-4 ride-meta">
               <div className="ride-fee">
-                { fee ? `$${fee}` : noFeeText }
+                { fee ? `$${fee.toFixed(2)}` : noFeeText }
                 { extraText ? extraText : '' }
               </div>
               <div className="ride-date">
@@ -73,6 +74,9 @@ class RideDetails extends Component {
                   <small>Booking <a href={ '/bookings/' +  id }>#{ id }</a></small><br/>
                   Distance Traveled<br/>
                   <strong>{ (end.mileage - start.mileage).toFixed(2) } miles</strong>
+                  <div>
+                  { isExtended ? "Reservation Extended" : "" }
+                  </div>
                 </div>
               </div>
             </div>
