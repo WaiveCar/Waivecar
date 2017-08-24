@@ -471,6 +471,8 @@ module.exports = class BookingService extends Service {
       // 5. Unlock the car and immobilizer.
 
       yield booking.delCancelTimer();
+
+      // This is what is used to actually calculate the overage time.
       yield this.logDetails('start', booking, car);
 
       yield booking.setReminders(user, config.booking.timers);
@@ -528,7 +530,6 @@ module.exports = class BookingService extends Service {
 
     // ### Status Check
     // Go through end booking checklist.
-
     if ([ 'ready', 'started' ].indexOf(booking.status) === -1) {
       throw error.parse({
         code    : `BOOKING_REQUEST_INVALID`,
@@ -562,7 +563,6 @@ module.exports = class BookingService extends Service {
       }
     }
 
-    // ### Immobilize
     // Immobilize the engine.
     let status;
     try {
@@ -589,29 +589,22 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
-    // Rides are attempted to be completed some time period after they are ended
-    // If everything is ok then they go to complete
+    // This is a timer to check the car some time period after they are ended
+    // If everything is ok then the booking status goes to complete
     yield booking.setCompleteCheck();
 
     // Sets the car connected to the booking on a 5 minute auto lock timer.
     yield booking.setAutoLock();
 
     // ### Reset Car
-    // Remove the driver from the vehicle.
-
     yield car.removeDriver();
-
-    // ### Booking Details
 
     let endDetails = yield this.logDetails('end', booking, car);
 
-    // ### Create Order
     // Create a shop cart with automated fees.
-
     yield fees.create(booking, car, _user);
 
     // ### End Booking
-
     yield booking.delReminders();
     yield booking.delForfeitureTimers();
     yield booking.end();
@@ -680,7 +673,6 @@ module.exports = class BookingService extends Service {
       yield parking.save();
     }
 
-    // ### Notify
     //
     // Slack Alerts: Scamming by booking without moving #468
     //
