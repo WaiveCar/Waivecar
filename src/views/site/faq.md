@@ -109,7 +109,7 @@ If you get a ticket, you have 10 days to pay it. If you don't pay it within that
 ## Ending Your Ride
 
 ### Where can I park when I'm done?
-If the battery is over 25% charged (20 miles), you can park at any 3 hour public parking spot in Santa Monica without paying the meter. If the battery is under 25% charged (20 miles) you MUST return it at the headquarters at 1547 7th Street.
+If the battery is over 25 miles charged, you can park at any 3 hour public parking spot in Santa Monica without paying the meter. If the battery is under 25 miles charged you MUST return it at the headquarters at 1547 7th Street.
 
 However, after midnight, parking must be valid until 10:00 AM that morning.
 
@@ -134,13 +134,13 @@ First make sure that you are parked in an accurate spot (see above). Turn off th
 Yes! No need for an extensive cleaning, but make sure all your belongings are out of the car and clean up any trash you may leave. If you leave a mess, there could be a cleaning fee!
 
 ### Do I need to charge the car before I end my ride?
-Nope! Follow the rules above. If the car is under 25% charged (20 miles), simply return it at the HQ!
+Nope! Follow the rules above. If the car is under 25 miles charged, simply return it at the HQ!
 
 ### Fees
 
 There are some modest fees in order to keep our fleet bright and shiny.
 
- * **Ending with under 20% charge and not brought back to WaiveCar's lot** $20
+ * **Ending with under 20 miles charge and not brought back to WaiveCar's lot** $20
  * **Dead Battery / Lights Left On** $100
  * **Missing Key (Failure to return equipment)** $300
  * **Parking Violation (Any violation of our parking rules)** $40
