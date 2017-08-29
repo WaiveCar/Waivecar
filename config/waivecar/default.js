@@ -12,6 +12,7 @@ module.exports = {
 
   waivecar : {
     booking : {
+      parityCheckTimeWindow: 300,
       timers : {
         extensionOffer: {
           value : 12,
