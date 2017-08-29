@@ -54,7 +54,7 @@ function QuizController($injector, $stateParams, $scope, $interval, $data){
       ]
     },
     {
-      prompt: 'I can return my low (25% or lower) charge car to',
+      prompt: 'I can return my low (25mi or lower) charge car to',
       answerList: [
         [ 0, 'Whole Foods Charger', 'Woops. Whole Foods doesn\'t really like that.' ],
         [ 0, 'Public Parking Garage Charger', 'Almost! We like to service and clean our low cars.' ],
