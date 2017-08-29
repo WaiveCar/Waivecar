@@ -13,7 +13,7 @@
     <form ng-submit="auth.login(form)" name="form" id="form" novalidate class="loginUser padding-bottom">
       <div class="list">
         <label class="item item-input">
-          <span class="input-label">Email or Mobile</span>
+          <span class="input-label">Email</span>
           <input type="text" placeholder="john@example.com" name="identifier" ng-model="auth.forms.loginForm.identifier" required autofocus autocapitalize="off" autocorrect="off" />
         </label>
         <label class="item item-input">
@@ -21,7 +21,7 @@
           <input type="password" placeholder="* * * * * *" name="password" ng-model="auth.forms.loginForm.password" required autocapitalize="off" autocorrect="off">
         </label>
         <div class="validations" ng-show="form.$dirty && form.$invalid">
-          <div class="help-block" ng-show="form.identifier.$dirty && form.identifier.$error.required">An Email or Phone is required</div>
+          <div class="help-block" ng-show="form.identifier.$dirty && form.identifier.$error.required">An Email is required</div>
           <div class="help-block" ng-show="form.password.$dirty && form.password.$error.required">Password is required</div>
         </div>
       </div>
