@@ -222,7 +222,7 @@ module.exports = class BookingsView extends React.Component {
       booking.flags = {};
     }
 
-    let extended = booking.flags.extension ? 'Extended' : 'Not Extended';
+    let extended = booking.flags.extended ? 'Extended' : 'Not Extended';
 
     return (
       <div id="booking-view">
