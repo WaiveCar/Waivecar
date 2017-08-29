@@ -41,7 +41,7 @@ class ResetPasswordView extends React.Component {
           className = "bento-form"
           fields    = {[
             {
-              label     : 'Enter your email or phone',
+              label     : 'Enter your email',
               component : 'input',
               type      : 'text',
               name      : 'identifier',
