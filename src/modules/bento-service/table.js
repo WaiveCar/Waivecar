@@ -105,7 +105,9 @@ module.exports = class Table {
     );
 
     let query = queryObj.search;
-    queryObj.offset = this.ctx.state.offset;
+    if(! ('offset' in queryObj) ) {
+      queryObj.offset = this.ctx.state.offset;
+    }
     
     if (query || force) {
       api.get(this.endpoint, queryObj, (err, data) => {
