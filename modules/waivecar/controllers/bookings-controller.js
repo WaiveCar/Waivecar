@@ -9,7 +9,9 @@ Bento.Register.Controller('BookingsController', function(controller) {
     return `<a href="${link}" class="button-balanced button button-block" style="margin-bottom:-57px;z-index: 1000;">Upgrade Now</a>`;
   }
 
-  function *checkVersion(obj){
+  function *checkVersion(obj, message){
+    message = message || "Your WaiveCar has been reserved. However, you need to upgrade the App before starting the ride.";
+
     var payload = obj.payload;
     var request = obj.request;
     let osVersion = 0;
@@ -17,7 +19,7 @@ Bento.Register.Controller('BookingsController', function(controller) {
     let iPhone = header.match(/iPhone/);
 
     // App versions between android and iphone are dramatically different for some reason.
-    let minApp = iPhone ? 91 : 872; 
+    let minApp = iPhone ? 103 : 877;
     let minMarketLink = 797; 
     let version = parseInt(payload.version, 10) || 0;
     var copy;
@@ -64,7 +66,7 @@ Bento.Register.Controller('BookingsController', function(controller) {
 
       throw error.parse({
         code    : `BOOKING_OLD_VERSION`,
-        message : `You'll need to upgrade the WaiveCar App before booking. ${ copy }`
+        message : `${ message } ${ copy }`
       }, 400);
 
     }
@@ -75,8 +77,9 @@ Bento.Register.Controller('BookingsController', function(controller) {
    * @return {Object}
    */
   controller.create = function *() {
+    let res = yield booking.create(this.payload, this.auth.user);
     yield checkVersion(this);
-    return yield booking.create(this.payload, this.auth.user);
+    return res;
   };
 
   /**
@@ -107,6 +110,10 @@ Bento.Register.Controller('BookingsController', function(controller) {
    * @return {Object}
    */
   controller.update = function *(id, action) {
+    if (action === 'start' || action === 'ready') {
+      yield checkVersion(this, "Please upgrade the WaiveCar app before continuing");
+    }
+
     switch (action) {
       case 'start'    : return yield booking.start(id, this.auth.user);
       case 'ready'    : return yield booking.ready(id, this.auth.user);
