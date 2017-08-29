@@ -110,7 +110,7 @@ Bento.Register.Controller('BookingsController', function(controller) {
    * @return {Object}
    */
   controller.update = function *(id, action) {
-    if (action === 'start' || action === 'ready') {
+    if (action === 'start') {
       yield checkVersion(this, "Please upgrade the WaiveCar app before continuing");
     }
 
