@@ -153,6 +153,11 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
      * @returns {Void} null
      */
     function submit() {
+
+      if (ctrl.type === 'lot' && !ctrl.street.streetSignImage){
+        return submitFailure('You have to make a photo, if you left a car not on parking.');
+      }
+
       $ionicLoading.show({
         template: '<div class="circle-loader"><span>Loading</span></div>'
       });
