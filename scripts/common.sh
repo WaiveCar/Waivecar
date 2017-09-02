@@ -61,6 +61,7 @@ build() {
     cp $i platforms/android/$i >& /dev/null
   done
 
+  cp -up misc/build-extras.gradle platforms/android
   ionic build android
 }
  
