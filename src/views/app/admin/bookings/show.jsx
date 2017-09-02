@@ -234,7 +234,7 @@ module.exports = class BookingsView extends React.Component {
                 <strong>Status</strong>
                 <div>
                   { helpers.changeCase.toCapital(booking.status) } <br/>
-                  <small style={{ display: 'block', marginTop: '-0.2em' }}>{ moment(booking.updatedAt).format('MM/D HH:mm') }</small>
+                  <small style={{ display: 'block', marginTop: '-0.2em' }}>{ moment(booking.updatedAt).format('MM/DD HH:mm') }</small>
                 </div>
               </div>
               <div className="col-xs-12 col-md-4 booking-status text-center">
