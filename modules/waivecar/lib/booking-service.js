@@ -265,14 +265,28 @@ module.exports = class BookingService extends Service {
       dbQuery.where.created_at = { $lt : new Date(query.cutoff * 1000) }
     }
 
+    // See #907, this should really be removed in the future.
+    // We are essentially looking for an incorrect query from
+    // the app and fixing it ... what this group of code does 
+    // is limit this totally incorrect anti-pattern way of
+    // doing things to a very small subset, which makes it yet 
+    // again another, different, and more nuanced problem to
+    // find in the future.
+    if (! _user.hasAccess('admin') &&
+          Object.keys(query).length === 1 && 
+          query.order === 'created_at,DESC'
+       ) {
+      query.details = true;
+      query.limit = 1;
+    }
+
+
     dbQuery.limit = +query.limit || 20;
     dbQuery.offset = +query.offset || 0;
 
     if (query.order) {
       dbQuery.order = [ query.order.split(',') ];
     }
-
-    // ### Query Bookings
 
     if (_user.hasAccess('admin')) {
       bookings = yield Booking.find(dbQuery);
@@ -283,7 +297,6 @@ module.exports = class BookingService extends Service {
 
     // ### Prepare Bookings
     // Prepares bookings with payment, and file details.
-
     if (query.details) {
       for (let i = 0, len = bookings.length; i < len; i++) {
         bookings[i] = yield this.show(bookings[i].id, _user);
