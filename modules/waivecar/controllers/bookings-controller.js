@@ -72,20 +72,12 @@ Bento.Register.Controller('BookingsController', function(controller) {
     }
   }
 
-  /**
-   * Creates a new booking request.
-   * @return {Object}
-   */
   controller.create = function *() {
     let res = yield booking.create(this.payload, this.auth.user);
     yield checkVersion(this);
     return res;
   };
 
-  /**
-   * Returns a list of bookings.
-   * @return {Object}
-   */
   controller.index = function *() {
     return yield booking.index(this.query, this.auth.user);
   };
@@ -139,11 +131,6 @@ Bento.Register.Controller('BookingsController', function(controller) {
     return yield booking.patchAddressDetails();
   };
 
-  /**
-   * Cancels a booking.
-   * @param  {Number} id
-   * @return {Object}
-   */
   controller.cancel = function *(id) {
     return yield booking.cancel(id, this.auth.user);
   };
