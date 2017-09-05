@@ -276,8 +276,12 @@ module.exports = class BookingService extends Service {
           Object.keys(query).length === 1 && 
           query.order === 'created_at,DESC'
        ) {
-      query.details = true;
-      query.limit = 1;
+      dbQuery.include = [
+        {
+          model : 'BookingDetails',
+          as    : 'details'
+        }
+      ];
     }
 
 
@@ -329,12 +333,6 @@ module.exports = class BookingService extends Service {
     return {bookingsCount: bookingsCount};
   }
 
-  /**
-   * Returns a booking based on provided id.
-   * @param  {Number} id
-   * @param  {Object} _user
-   * @return {Object}
-   */
   static *show(id, _user, ignoreUser) {
     let relations = {
       include : [
