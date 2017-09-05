@@ -2,12 +2,15 @@
 
 let tokens      = require('./token-service');
 let error       = require('./errors');
+let bError      = Bento.Error;
 let bcrypt      = Bento.provider('bcrypt');
 let queryParser = Bento.provider('sequelize/helpers').query;
 let roles       = Bento.Interface.roles;
 let hooks       = Bento.Hooks;
 let relay       = Bento.Relay;
 let config      = Bento.config.user;
+let Email       = Bento.provider('email');
+let emailConfig = Bento.config.email;
 let log         = Bento.Log;
 
 // ### Models
@@ -17,6 +20,7 @@ let Role      = Bento.model('Role');
 let Group     = Bento.model('Group');
 let GroupUser = Bento.model('GroupUser');
 let GroupRole = Bento.model('GroupRole');
+let Booking   = Bento.model('Booking');
 let sequelize = Bento.provider('sequelize');
 let notify    = require('../../waivecar/lib/notification-service');
 let UserLog   = require('../../log/lib/log-service');
@@ -377,13 +381,45 @@ module.exports = {
   *delete(id, query, _user) {
     let user = yield this.get(id, _user);
 
+    let bookingsCount = yield Booking.count({
+      where : {
+        userId : user.id
+      }
+    });
+
+    if (bookingsCount > 0) {
+
+      throw bError.parse({
+        code    : 'USER_DELETE_FAIL',
+        message : 'User with bookings can\'t be deleted.'
+      });
+    }
+
+
     yield hooks.require('user:delete:before', user, query, _user);
     yield user.delete();
+
+    yield notify.notifyAdmins(`${ _user.name() } deleted user ${ user.name() }.`, [ 'slack' ], { channel : '#user-alerts' });
 
     relay.emit('users', {
       type : 'delete',
       data : user.toJSON()
     });
+
+    let email = new Email();
+    try {
+      yield email.send({
+        to       : user.email,
+        from     : emailConfig.sender,
+        subject  : '[WaiveCar] You account is successfully deleted.',
+        template : 'user-delete',
+        context  : {
+          name   : user.name()
+        }
+      });
+    } catch (err) {
+      log.warn('Failed to deliver notification email: ', err);
+    }
 
     return user;
   }

@@ -29,6 +29,6 @@ module.exports = {
     *removeUser(user){
         let client = this.getClient();
         let u = yield client.users.find({ email: user.email });
-        return yield client.users.delete({ id: u.id });
+        return yield client.users.delete({ id: u.body.id });
     }
 };
