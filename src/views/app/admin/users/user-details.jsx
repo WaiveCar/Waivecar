@@ -56,9 +56,15 @@ module.exports = class UserDetails extends React.Component {
   }
 
   removeUser = (event) => {
-    alert('Please tell Chris to delete user ' + this.props.id);
-    /*
-    api.delete(`/users/${ this.props.id }`, {}, (err) => {
+
+
+    api.delete(`/users/${ this.props.id }`, (err) => {
+
+      if (err) {
+        alert('This user can\'t be deleted directly. Please tell Chris to delete it ' + this.props.id);
+        return;
+      }
+
       snackbar.notify({
         type    : 'success',
         message : 'User successfully deleted'
@@ -66,7 +72,7 @@ module.exports = class UserDetails extends React.Component {
 
       window.location = '/users/';
     });
-    */
+
   }
 
   isWaiveWork = () => {
