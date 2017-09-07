@@ -6,6 +6,7 @@ import BookingPayment          from './payment';
 import BookingDetails          from './details';
 import { snackbar }         from 'bento-web';
 import NotesList from '../components/notes/list';
+import UserLicense from '../users/user-license';
 
 module.exports = class BookingsView extends React.Component {
 
@@ -118,6 +119,26 @@ module.exports = class BookingsView extends React.Component {
   }
 
   /**
+   * Show popup window with user info.
+   * @param  {Event}
+   * @return {Void}
+   */
+  showUserInfo(event) {
+    event.preventDefault();
+    document.getElementById('userInfoWindow').style.display = 'block';
+  }
+
+  /**
+   * Close popup window with user info.
+   * @param  {Event}
+   * @return {Void}
+   */
+  closeUserInfo(event) {
+    event.preventDefault();
+    document.getElementById('userInfoWindow').style.display = 'none';
+  }
+
+  /**
    * Renders all payments associated with booking
    * @param {Array} payments
    * @param {Object}
@@ -226,6 +247,18 @@ module.exports = class BookingsView extends React.Component {
 
     return (
       <div id="booking-view">
+        <div className="modal" id="userInfoWindow">
+          <div className="modal-dialog" role="document">
+            <div className="modal-content">
+              <div className="modal-body">
+                <UserLicense id={ booking.user.id } />
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={this.closeUserInfo}>Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
         <div className="box">
           <h3>Booking <small>Current booking status</small></h3>
           <div className="box-content">
@@ -240,7 +273,7 @@ module.exports = class BookingsView extends React.Component {
               <div className="col-xs-12 col-md-4 booking-status text-center">
                 <strong>Customer</strong>
                 <div>
-                  <Link to={ `/users/${ booking.user.id }` }>
+                  <Link to={ `/users/${ booking.user.id }` } onClick={this.showUserInfo}>
                     { booking.user.firstName } { booking.user.lastName }
                   </Link>
                 </div>

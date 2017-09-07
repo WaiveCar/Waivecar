@@ -106,4 +106,14 @@
       margin-top : 35px;
     }
   }
+
+  #userInfoWindow{
+    display: none;
+    .box{
+      margin: 20px auto;
+    }
+    .box-content{
+      border-bottom: none;
+    }
+  }
 }
