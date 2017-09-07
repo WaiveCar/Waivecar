@@ -82,6 +82,23 @@ templates.register('app', {
         onEnter   : policies.isAdministrator
       },
       {
+        path      : '/bookings',
+        component : require('../../views/app/admin/bookings'),
+        onEnter   : policies.isAdministrator
+      },
+        /*
+      {
+        path      : '/tickets/:id',
+        component : require('../../views/app/admin/tickets/show'),
+        onEnter   : policies.isAdministrator
+      },
+      */
+      {
+        path      : '/tickets',
+        component : require('../../views/app/admin/tickets'),
+        onEnter   : policies.isAdministrator
+      },
+      {
         path      : '/users',
         component : require('../../views/app/admin/users'),
         onEnter   : policies.isAdministrator
@@ -89,11 +106,6 @@ templates.register('app', {
       {
         path      : '/users/:id',
         component : require('../../views/app/admin/users/show'),
-        onEnter   : policies.isAdministrator
-      },
-      {
-        path      : '/bookings',
-        component : require('../../views/app/admin/bookings'),
         onEnter   : policies.isAdministrator
       },
       {

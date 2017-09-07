@@ -16,10 +16,6 @@ module.exports = class AddNote extends React.Component {
     this.addNote = this.addNote.bind(this);
   }
 
-  /**
-   * Add new note for resource
-   * @param {Object} evnt
-   */
   addNote(evnt) {
     let form = new Form(evnt);
     let data = form.data;

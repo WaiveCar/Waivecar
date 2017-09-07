@@ -52,7 +52,9 @@ module.exports = class Table {
    * @return {Array}
    */
   index() {
-    let { key, order } = this.ctx.state.sort;
+    if (this.ctx.state.sort) {
+      var { key, order } = this.ctx.state.sort;
+    }
     let search         = this.ctx.state.search;
     let list           = this.ctx.state[this.resource];
 

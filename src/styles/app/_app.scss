@@ -44,6 +44,17 @@ body {
     display    : flex;
     flex       : 1;
   }
+  #tickets-list {
+    padding : 18px;
+
+    tr.closed {
+      opacity: 0.5;
+    }
+    td.date {
+      white-space: nowrap;
+      font-size: 0.85rem;
+    }
+  }
 }
 
 .notes .note {

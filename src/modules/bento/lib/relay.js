@@ -152,14 +152,12 @@ class Relay {
 
 module.exports = new Relay();
 
-/**
- * @private
- * @param {Component} component
- * @param {String}    id
- */
 function addListener(component, id) {
   if (!stored.states[id]) {
-    return console.warn(`Relay > Ignoring subscription request, '${ id }' has not been defined.`);
+    // if we haven't seen this then we don't care ... we just create it.
+    module.exports.resource(id);
+
+    //return console.warn(`Relay > Ignoring subscription request, '${ id }' has not been defined.`);
   }
   let name = component.constructor.name;
   if (!stored.listeners[id][name]) {
