@@ -57,16 +57,19 @@ class TicketService {
       extra: {'car': car}
     });
 
-    yield notify.notifyAdmins(`:horse_racing: ${ user.name() } created a ticket to ${ payload.action } <${ config.api.uri }/cars/${ car.id }|${ car.info() }>`, [ 'slack' ], { channel : '#rental-alerts' });
+    yield notify.notifyAdmins(`:horse_racing: ${ user.name() } created a ticket to ${ payload.action.toLowerCase() } <${ config.api.uri }/cars/${ car.id }|${ car.info() }>.`, [ 'slack' ], { channel : '#rental-alerts' });
   }
 
   static *update(id, payload, _assignee) {
     let ticket = this.makeSureValid(yield Ticket.findById(id));
-    let words = 'is done';
+    let action = ticket.action.toLowerCase();
+    let words = `is done with the ${ action } of`;
+    let fun = ':checkered_flag:';
 
     if(payload.status === 'inprogress') {
       payload.assigneeId = _assignee.id;
-      words = 'is off to';
+      fun = ':horse';
+      words = `is off to ${ action }`;
     }
 
     yield ticket.update(payload);
@@ -77,7 +80,7 @@ class TicketService {
     });
 
     let user = yield User.findById(_assignee.id);
-    yield notify.notifyAdmins(`:horse: ${ user.name() } ${ words } ${ payload.action } <${ config.api.uri }/cars/${ car.id }|${ car.info() }> `, [ 'slack' ], { channel : '#rental-alerts' });
+    yield notify.notifyAdmins(`${ fun } ${ user.name() } ${ words } <${ config.api.uri }/cars/${ car.id }|${ car.info() }>.`, [ 'slack' ], { channel : '#rental-alerts' });
   }
 
   // TODO
