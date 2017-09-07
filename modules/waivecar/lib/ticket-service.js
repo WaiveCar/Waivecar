@@ -68,7 +68,7 @@ class TicketService {
 
     if(payload.status === 'inprogress') {
       payload.assigneeId = _assignee.id;
-      fun = ':horse';
+      fun = ':horse:';
       words = `is off to ${ action }`;
     }
 
