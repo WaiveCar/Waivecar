@@ -57,6 +57,7 @@ class TicketIndex extends React.Component {
           message : err.message
         });
       }
+      this.setState({ newTicket: false });
     });
   }
 
