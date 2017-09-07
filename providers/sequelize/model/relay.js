@@ -13,10 +13,25 @@ let types      = Bento.Helpers.Type;
  * @return {Void}
  */
 module.exports = function SequelizeRelay(type, resource, user) {
-  let payload = {
-    type : type,
-    data : this.toJSON()
-  };
+  var payload;
+  if (types.isString(type)) {
+    payload = {
+      type : type,
+      data : this.toJSON()
+    };
+  } else {
+    // this makes the sequelize object a simple
+    // set of key/value pairs
+    let obj = this.toJSON();
+
+    // put any extra stuff on
+    Object.assign(obj, type.extra);
+
+    payload = {
+      type : type.type,
+      data : obj
+    };
+  }
 
   // ### Optional Arguments
 
@@ -38,3 +53,6 @@ module.exports = function SequelizeRelay(type, resource, user) {
     relay.emit(resource, payload);
   }
 };
+
+module.exports.extra = function(type, extra) {
+}
