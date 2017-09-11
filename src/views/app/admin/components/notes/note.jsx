@@ -20,7 +20,9 @@ module.exports = class Note extends React.Component {
    * Remove this note
    */
   deleteNote() {
-    api.delete(`/notes/${ this.props.type }/${ this.props.note.id }`, () => {});
+    api.delete(`/notes/${ this.props.type }/${ this.props.note.id }`, () => {
+      this.props.onNoteDeleted();
+    });
   }
 
   render() {
