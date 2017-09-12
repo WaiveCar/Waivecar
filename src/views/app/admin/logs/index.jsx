@@ -46,7 +46,7 @@ class LogIndex extends React.Component {
       <tr key={ log.id }>
         <td>{ log.id }</td>
         <td>{ this.renderAction(log) }</td>
-        <td>{ moment(log.createdAt).fromNow() }</td>
+        <td title={ moment(log.createdAt).format('HH:mm:ss MM-DD-YY') }>{ moment(log.createdAt).fromNow() }</td>
       </tr>
     );
   }

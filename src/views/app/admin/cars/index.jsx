@@ -81,7 +81,7 @@ module.exports = class CarsIndex extends React.Component {
 
     if (column.type == "datetime") {
       let date = moment(value).format('HH:mm:ss MM-DD-YY');
-      return <td key={column.key}><span>{date}</span></td>
+      return <td title={date} key={column.key}><span>{date}</span></td>
     }
 
     if (column.type === "status") {
@@ -183,6 +183,7 @@ module.exports = class CarsIndex extends React.Component {
     let route = `/cars/${ item.id }`;
     let text = <span>{ item.id } <small className="pull-right">{ updated }</small></span>
     let updated = moment(item.updatedAt).format('HH:mm');
+    let updatedFull = moment(item.updatedAt).format('HH:mm:ss MM-DD-YY');
 
     if (item.license) {
       let name = '';
@@ -201,7 +202,7 @@ module.exports = class CarsIndex extends React.Component {
         name = <em>{item.charge}% { word }</em>
       }
 
-      text = <span><span className='carname'>{ item.license }</span> <small>{ name }</small><small className="cartime pull-right">{ updated }</small></span>
+      text = <span><span className='carname'>{ item.license }</span> <small>{ name }</small><small title={updatedFull} className="cartime pull-right">{ updated }</small></span>
     }
 
     return (
