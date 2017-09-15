@@ -31,7 +31,7 @@ module.exports = class UsersEvents extends React.Component {
     }
     return (
       <tr>
-        <td>{ moment(event.createdAt).format('MMM D YYYY') }</td>
+        <td title={ moment(event.createdAt).format('YYYY-MM-DD HH:mm:ss') }>{ moment(event.createdAt).format('MMM D YYYY') }</td>
         <td>{ event.type }</td>
         <td>{ comment }</td>
       </tr>
