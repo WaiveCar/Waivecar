@@ -22,6 +22,7 @@ let moment       = require('moment');
 let redis        = require('./redis-service');
 let uuid         = require('uuid');
 let _            = require('lodash');
+let geolib    = require('geolib');
 let Sequelize = require('sequelize');
 
 
@@ -34,6 +35,7 @@ let Booking        = Bento.model('Booking');
 let BookingDetails = Bento.model('BookingDetails');
 let BookingPayment = Bento.model('BookingPayment');
 let ParkingDetails = Bento.model('ParkingDetails');
+let Location       = Bento.model('BookingLocation');
 
 module.exports = class BookingService extends Service {
 
@@ -909,6 +911,67 @@ module.exports = class BookingService extends Service {
     yield notify.sendTextMessage(user, `Your WaiveCar reservation has been cancelled.`);
     yield notify.slack({ text : `:pill: ${ message } | ${ car.info() } ${ user.info() }`
     }, { channel : '#reservations' });
+  }
+
+  static *checkCarParityWithUser(id, payload, user) {
+
+    if (!Array.isArray(payload.userLocations) || payload.userLocations.length == 0 || !payload.appNowTime) {
+      throw error.parse({
+        code    : 'INVALID_PAYLOAD',
+        message : 'Invalid payload'
+      }, 404);
+    }
+
+    let now = new Date();
+    let timeWindowWidth = config.booking.parityCheckTimeWindow * 1000;
+
+    let userLocations = payload.userLocations.map( location => {
+     return {
+       latitude: location.latitude,
+       longitude: location.longitude,
+       time: new Date( location.timestamp - payload.appNowTime + now.getTime())
+     }
+    });
+
+    let params = {
+      attributes: ['id', 'latitude', 'longitude', 'created_at'],
+      where: { booking_id: id, created_at : { $gt : new Date(now.getTime() - timeWindowWidth)  } },
+      order: [ ['created_at', 'asc'] ]
+    };
+
+    console.log(params);
+    let carLocations = yield Location.find(params);
+
+    let carLocationsWithNearestInTimeUserLocation = carLocations.map(location => {
+
+      let closestUserLocation = _.min( userLocations.map(userLocation => {
+        return {
+          userLocation: userLocation,
+          carLocation: location,
+          timeDiff: Math.abs(userLocation.time - location.createdAt)
+        }
+      }), "timeDiff");
+
+      return closestUserLocation;
+    });
+
+    let closestLocations = _.min(carLocationsWithNearestInTimeUserLocation, "timeDiff");
+
+    let isPaired = false;
+    if (closestLocations.timeDiff < timeWindowWidth) {
+
+      let distanceError = 200 + (closestLocations.timeDiff / 1000) * 20; //20 m/c is around 45 mile per hour
+
+      let distance = geolib.getDistance(closestLocations.userLocation, closestLocations.carLocation);
+
+      isPaired = distance < distanceError;
+    }
+
+    if (!isPaired) {
+      yield notify.notifyAdmins(`Parity warning for booking ${ id }, user id ${user.id }.`, [ 'slack' ], { channel : '#rental-alerts' });
+    }
+
+    return { isPaired: isPaired };
   }
 
   /*
