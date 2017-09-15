@@ -5,7 +5,7 @@ let Service      = require('./classes/service');
 let cars         = require('./car-service');
 let fees         = require('./fee-service');
 let notify       = require('./notification-service');
-let UserService  = require('../../user/lib/user-service');
+let UserService  = require('./user-service');
 let CarService   = require('./car-service');
 let queue        = Bento.provider('queue');
 let queryParser  = Bento.provider('sequelize/helpers').query;
@@ -1059,7 +1059,7 @@ module.exports = class BookingService extends Service {
     if (minutesLapsed <= minTime) {
       throw error.parse({
         code    : 'RECENT_BOOKING',
-        message : 'Sorry! You need to wait ' + minTime + ' minutes to rebook the same WaiveCar. Sharing is caring!'
+        message : 'Sorry! You need to wait ' + Math.ceil(minTime - minutesLapsed) + 'min more to rebook the same WaiveCar. Sharing is caring!'
       }, 400);
     }
    
