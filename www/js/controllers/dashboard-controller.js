@@ -264,9 +264,9 @@ function DashboardController ($scope, $rootScope, $injector) {
       if (inside) {
         // inside geofence -> continue as normal
         var isCarOn = $ride.isCarOn(carId, status);
-        $ionicLoading.hide();
         ctrl.ending = false;
         if (isCarOn) {
+          $ionicLoading.hide();
           return showIgnitionOnModal();
         }
         // $ride.setLocation('homebase');
@@ -274,9 +274,11 @@ function DashboardController ($scope, $rootScope, $injector) {
         if ($distance.fallback(homebase, status) * 1760 < 100) {
           //ZendriveService.stop(bookingId);
           return $ride.processEndRide().then(function() {
+            $ionicLoading.hide();
             return $state.go('end-ride', { id: bookingId });
           });
         }
+        $ionicLoading.hide();
         return $state.go('end-ride-location', { id: bookingId });
       } else {
         // Not inside geofence -> show error
