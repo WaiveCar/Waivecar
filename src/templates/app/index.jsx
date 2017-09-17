@@ -202,13 +202,22 @@ templates.register('app', {
     locations : [ 'sidebar' ],
     order     : 3
   },
+
+  {
+    title     : 'Tickets',
+    icon      : 'insert_invitation',
+    path      : '/tickets',
+    parent    : null,
+    locations : [ 'sidebar' ],
+    order     : 4
+  },
   {
     title     : 'Licenses',
     icon      : 'picture_in_picture',
     path      : '/licenses',
     parent    : null,
     locations : [ 'sidebar' ],
-    order     : 4
+    order     : 5
   },
   {
     title     : 'Audit Log',
@@ -216,7 +225,7 @@ templates.register('app', {
     path      : '/logs',
     parent    : null,
     locations : [ 'sidebar' ],
-    order     : 5
+    order     : 6
   }
 
 ].forEach(val => menu.add(val));
