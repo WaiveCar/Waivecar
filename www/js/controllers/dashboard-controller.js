@@ -110,7 +110,7 @@ function DashboardController ($scope, $rootScope, $injector) {
         // from contesting a claim that the app said one thing and we charged them more.  Hopefully,
         // in these edge cases we will always "err" in the users' favor.
         //
-        left *= 120 / 118.75;
+        left *= 120 / 119.25;
       }
 
       if(isFreeTime) {
