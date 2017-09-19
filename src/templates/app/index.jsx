@@ -202,7 +202,6 @@ templates.register('app', {
     locations : [ 'sidebar' ],
     order     : 3
   },
-
   {
     title     : 'Tickets',
     icon      : 'insert_invitation',
