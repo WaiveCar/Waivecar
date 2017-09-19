@@ -27,8 +27,15 @@ module.exports = angular.module('app.services').service('IntercomService', [
         },
         setLauncherVisibility: function(arg) {
           console.log('setLauncherVisibility:' + arg );
+        },
+        registerForPush() {
+          console.log('registerForPush');
         }
       };
+    }
+
+    this.registerForPush = function() {
+      intercom().registerForPush();
     }
 
     this.registerIdentifiedUser = function(user) {

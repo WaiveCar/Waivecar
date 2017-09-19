@@ -144,6 +144,8 @@ function ApplicationController ($rootScope, $scope, $injector) {
     }
   });
 
+  IntercomService.registerForPush();
+
   if ($auth.isAuthenticated()) {
     initLocation();
     $auth.loadSession().then(function(me) {
