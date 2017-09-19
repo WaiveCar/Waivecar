@@ -20,7 +20,9 @@ module.exports = class AddNote extends React.Component {
     let form = new Form(evnt);
     let data = form.data;
     data[`${ this.props.type }Id`] = this.props.identifier;
-    api.post(`/notes/${ this.props.type }`, data, () => {});
+    api.post(`/notes/${ this.props.type }`, data, () => {
+      this.props.onNoteAdded();
+    });
   }
 
   render() {

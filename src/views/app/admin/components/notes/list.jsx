@@ -17,6 +17,10 @@ module.exports = class NotesList extends React.Component {
   }
 
   componentDidMount() {
+    this.refreshList();
+  }
+
+  refreshList()  {
     api.get(this._buildUrl(this.props.type, this.props.identifier), (err, notes) => {
       relay.dispatch('notes', {
         type : 'index',
@@ -27,7 +31,7 @@ module.exports = class NotesList extends React.Component {
 
   renderNotes(notes) {
     return notes.map(note => {
-      return <Note key={ note.id } note={ note } type={ this.props.type } />;
+      return <Note key={ note.id } note={ note } type={ this.props.type } onNoteDeleted={ () => this.refreshList() }/>;
     });
   }
 
@@ -51,7 +55,7 @@ module.exports = class NotesList extends React.Component {
               </div>
             }
           </div>
-          <AddNote type={ this.props.type } identifier={ this.props.identifier }/>
+          <AddNote type={ this.props.type } identifier={ this.props.identifier } onNoteAdded={ () => this.refreshList() }/>
         </div>
       </div>
     );
