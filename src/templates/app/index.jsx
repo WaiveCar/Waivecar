@@ -204,7 +204,7 @@ templates.register('app', {
   },
   {
     title     : 'Tickets',
-    icon      : 'insert_invitation',
+    icon      : 'list',
     path      : '/tickets',
     parent    : null,
     locations : [ 'sidebar' ],
