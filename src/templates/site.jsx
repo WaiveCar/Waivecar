@@ -56,6 +56,14 @@ templates.register('site', {
       component : require('views/site/faq')
     },
     {
+      path      : '/waitlist',
+      component : require('views/site/waitlist')
+    },
+    {
+      path      : '/faq',
+      component : require('views/site/faq')
+    },
+    {
       path      : '/jobs',
       component : require('views/site/job')
     }
