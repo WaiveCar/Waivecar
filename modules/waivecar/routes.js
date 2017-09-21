@@ -51,6 +51,7 @@ Route.put('/cars/:id',          [ 'isAuthenticated', 'CarsController@update' ]);
 // ### Locations
 
 Route.resource('locations', 'LocationsController');
+Route.get('locations/dropoff', 'LocationsController@dropoff');
 
 // ### Notifications
 
