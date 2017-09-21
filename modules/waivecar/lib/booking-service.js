@@ -395,6 +395,8 @@ module.exports = class BookingService extends Service {
 
   // extends reservation for $1.00 - see https://github.com/WaiveCar/Waivecar/issues/550
   static *extend(id, _user) {
+    redis.failOnMultientry('booking-extend', id, 5 * 1000);
+
     let booking = yield this.getBooking(id);
     let user    = yield this.getUser(booking.userId);
     let car     = yield this.getCar(booking.carId);

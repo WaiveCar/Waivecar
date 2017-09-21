@@ -17,6 +17,15 @@ module.exports = (function() {
 
   res.lockTimeMS = 25000;
 
+  res.failOnMultientry = function *(type, id, timeout) {
+    if(!res.shouldProceed(type, id, timeout)) {
+      throw error.parse({
+        code    : 'DOUBLE_ENTRY',
+        message : 'Please try again.'
+      }, 400);
+    }
+  }
+
   // These both sound like reasonable names.
   res.shouldProceed = res.shouldProcess = function *(type, id, timeout) {
     //
