@@ -2,22 +2,12 @@
 
 Bento.Register.Model('Location', 'sequelize', function(model, Sequelize) {
 
-  /**
-   * The identity of the table created in your database.
-   * @property table
-   * @type     String
-   */
   model.table = 'locations';
 
-  /**
-   * The sequelize schema definition of your model.
-   * @property schema
-   * @type     Object
-   */
   model.schema = {
 
     type : {
-      type         : Sequelize.ENUM('station', 'valet', 'homebase', 'item-of-interest'),
+      type         : Sequelize.ENUM('station', 'valet', 'homebase', 'item-of-interest', 'dropoff'),
       defaultValue : 'station'
     },
 
@@ -32,6 +22,13 @@ Bento.Register.Model('Location', 'sequelize', function(model, Sequelize) {
     longitude : { type : Sequelize.DECIMAL(11, 8), allowNull : false },
 
     address : { type : Sequelize.STRING },
+
+    // I guess these will be in US feet because that's
+    // how americans roll. What a silly system.
+    radius : {
+      type       : Sequelize.INTEGER,
+      allowNull  : true
+    },
 
     status : {
       type : Sequelize.ENUM(
