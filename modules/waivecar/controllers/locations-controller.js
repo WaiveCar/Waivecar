@@ -6,6 +6,17 @@ let _ = require('lodash');
 
 Bento.Register.ResourceController('Location', 'LocationsController', function(controller) {
 
+  controller.dropoff = function *() {
+    return yield Location.find({ where: 
+      {
+        type: 'dropoff',
+        // only return entries after the date below ... we are considering
+        // all the older ones to essentially be bullshit
+        created_at: { $gt: new Date(2017, 8, 1) }
+      }
+    });
+  }
+
   controller.update = function *(id) {
     let model = yield Location.findById(id);
     let data  = this.payload;
