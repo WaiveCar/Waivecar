@@ -185,6 +185,23 @@ module.exports = angular.module('app.services').factory('$ride', [
         });
     };
 
+    // obj is returned by the car and should have a long/lat
+    // first and foremost the users' gps is used.
+    service.canEndHereCheck = function(car) {
+      // if we are in Santa Monica we are good
+      if ( GeofencingService.insideBoundary(obj) ) {
+        return true;
+      }
+      // otherwise we need to look for end locations.
+      $data.resources.location.getDropoff(function(locationList) {
+        for(var ix = 0; ix < locationList.length; ix++) {
+          if ($distance.fallback(locationList]ix], car) * 1760 < locationList[ix].radius) {
+            return true;
+          }
+        }
+      });
+    }
+
     service.setParkingDetails = function(details) {
       service.state.parkingDetails = details;
     };

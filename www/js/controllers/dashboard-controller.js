@@ -244,6 +244,8 @@ function DashboardController ($scope, $rootScope, $injector) {
       template: '<div class="circle-loader"><span>Loading</span></div>'
     });
 
+    // This feigned attempt at a mutex tries to prevent multiple
+    // ends from coming through. It's probably a raindance
     if (ctrl.ending === true) {
       return null;
     }
@@ -251,12 +253,15 @@ function DashboardController ($scope, $rootScope, $injector) {
     var status = false;
     ctrl.ending = true;
     return $ride.getStatus(carId).then(function(obj) {
+      // This silly hack is so our second closure doesn't
+      // shadow our car status.
       status = obj;
-      var okay = $ride.isChargeOkay(carId, obj);
-
       ctrl.ending = false;
-      if (okay || $distance.fallback(homebase, obj) < 0.4) {
-        return GeofencingService.insideBoundary(obj);
+
+      // if we have a good charge then we can move
+      // on to the distance check.
+      if ($ride.isChargeOkay(carId, obj)) {
+        return $ride.canEndHereCheck();
       }
       $ionicLoading.hide();
       return $q.reject('Looks like the charge is pretty low.  Please head to the nearest charger!');

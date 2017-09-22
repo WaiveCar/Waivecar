@@ -9,6 +9,8 @@ GeofencingService.$inject = ['LocationService', 'geofenceCoords'];
 
 function GeofencingService(LocationService, geofenceCoords) {
 
+  // backup is used if the location services fail to get a gps read
+  // this should probably be the car gps
   this.insideBoundary = function insideBoundary(backup) {
     return LocationService.getLocation().then(function(coords) {
       if(!coords && backup) {
