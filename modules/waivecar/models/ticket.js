@@ -16,7 +16,7 @@ Bento.Register.Model('Ticket', 'sequelize', function(model, Sequelize) {
     assigneeId : {
       type       : Sequelize.INTEGER,
       references : {
-        model : 'assignees',
+        model : 'users',
         key   : 'id'
       }
     },
@@ -25,7 +25,7 @@ Bento.Register.Model('Ticket', 'sequelize', function(model, Sequelize) {
       type       : Sequelize.INTEGER,
       allowNull  : false,
       references : {
-        model : 'assignees',
+        model : 'users',
         key   : 'id'
       }
     },
