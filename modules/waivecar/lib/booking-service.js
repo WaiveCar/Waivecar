@@ -785,6 +785,7 @@ module.exports = class BookingService extends Service {
     if(process.env.NODE_ENV === 'production') {
       if (car.isIgnitionOn) { errors.push('turn off Ignition'); }
       if (!car.isKeySecure) { errors.push('secure Key'); }
+      if (!car.isLocked) { errors.push('lock Car');}
     }
       
     if (errors.length && !(_user.hasAccess('admin') && query.force)) {
