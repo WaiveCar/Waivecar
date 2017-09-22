@@ -92,6 +92,30 @@
       -o-transform: scale(1.1, 1.1);
     }
   }
+  #wait-header {
+    margin-bottom: 1.5rem;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    .navbar-app {
+      text-align: center;
+    }
+  }
+  .waitlist {
+    text-align: center;
+    p {
+      text-align: left;
+    }
+    h2 {
+      margin-bottom: 1.5rem;
+      margin-top: 1rem;
+    }
+    .btn {
+      margin-top: 1rem;
+    }
+    .advertise {
+      margin-top: 2.5rem;
+    }
+  }
 }
 @media (max-width: 61.9em) {
   #home .video-container {
