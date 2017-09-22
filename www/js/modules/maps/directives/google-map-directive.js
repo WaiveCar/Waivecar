@@ -120,11 +120,18 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
     var iconOpt = getIconOptions(marker.icon || marker.type || 'car');
 
+    var markerLabel;
+
+   /* if (marker.type == 'dropoff') {
+      markerLabel = marker.name;
+    }*/
+
     var markerObj = new google.maps.Marker({
       map: ctrl.map,
       animation: google.maps.Animation.DROP,
       position: mapToGoogleLatLong(marker),
-      icon: iconOpt
+      icon: iconOpt,
+      label: markerLabel
     });
     return markerObj;
   };
@@ -348,6 +355,13 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
           iconRetinaUrl: 'img/user-location.svg',
           scaledSize: new google.maps.Size(24, 24),
           anchor: new google.maps.Point(12, 12),
+          origin: new google.maps.Point(0, 0)
+        };
+      case 'dropoff':
+        return {
+          url: 'img/icon-active-waivecar.svg',
+          scaledSize: new google.maps.Size(35, 44),
+          anchor: new google.maps.Point(17, 44),
           origin: new google.maps.Point(0, 0)
         };
       default:

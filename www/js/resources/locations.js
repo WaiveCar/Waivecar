@@ -9,9 +9,9 @@ module.exports = angular.module('app').factory('Locations', [
     return $resource(null, null, $utils.createResource('locations', {
       dropoff: {
         method: 'GET',
-        url: $utils.getCustomRoute('locations')
+        url: $utils.getCustomRoute('locations/dropoff'),
         isArray: true
       }
-    });
+    }));
   }
 ]);

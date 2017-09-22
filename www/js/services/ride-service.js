@@ -12,7 +12,9 @@ module.exports = angular.module('app.services').factory('$ride', [
   '$timeout',
   '$q',
   '$injector',
-  function($auth, $data, $state, $message, $interval, $timeout, $q, $injector) {
+  'GeofencingService',
+  '$distance',
+  function($auth, $data, $state, $message, $interval, $timeout, $q, $injector, GeofencingService, $distance) {
     var $ionicLoading = $injector.get('$ionicLoading');
 
     var service = {};
@@ -189,18 +191,24 @@ module.exports = angular.module('app.services').factory('$ride', [
     // first and foremost the users' gps is used.
     service.canEndHereCheck = function(car) {
       // if we are in Santa Monica we are good
-      if ( GeofencingService.insideBoundary(obj) ) {
-        return true;
-      }
-      // otherwise we need to look for end locations.
-      $data.resources.location.getDropoff(function(locationList) {
-        for(var ix = 0; ix < locationList.length; ix++) {
-          if ($distance.fallback(locationList]ix], car) * 1760 < locationList[ix].radius) {
-            return true;
-          }
+      return GeofencingService.insideBoundary(car).then(function(isInside) {
+        if (isInside) {
+          return true;
         }
+
+        // otherwise we need to look for end locations.
+        return $data.resources.locations.dropoff().$promise.then(function(locationList) {
+          for(var ix = 0; ix < locationList.length; ix++) {
+            if ($distance.fallback(locationList[ix], car) * 1760 < locationList[ix].radius) {
+              return true;
+            }
+          }
+          return false;
+        });
+
       });
-    }
+
+    };
 
     service.setParkingDetails = function(details) {
       service.state.parkingDetails = details;
