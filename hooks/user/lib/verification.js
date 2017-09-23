@@ -29,7 +29,7 @@ module.exports = class Verification {
       tokenLength : 6
     }, 60 * 48);
 
-    yield notify.sendTextMessage(id, `WaiveCar: Your verification code is ${ token }.`);
+    yield notify.sendTextMessage(id, `${ token } is your verification code.`);
   }
 
   /**
