@@ -45,7 +45,7 @@ module.exports = class VerificationService {
    */
   static *handle(token, _user) {
     let handle  = hooks.get('verification:handle', true);
-    let payload = yield tokens.get(token);
+    let payload = yield tokens.get(token, _user.id);
 
     // ### Handle Verification Token
     // Send the payload to the verification handler hook, once it
@@ -74,7 +74,7 @@ module.exports = class VerificationService {
  * @return {Object}
  */
 function *payload(token, _user) {
-  let payload = yield tokens.get(token);
+  let payload = yield tokens.get(token, _user.id);
   if (_user.id !== payload.user && _user.role !== 'admin') {
     throw error.parse({
       code    : 'INVALID_CREDENTIALS',

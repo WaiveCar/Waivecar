@@ -78,20 +78,17 @@ Bento.Register.ResourceController('User', 'UsersController', (controller) => {
     return yield service.verify(this.payload.token);
   };
 
-  /**
-   * Request a password token.
-   * @return {Object}
-   */
   controller.passwordToken = function *() {
     return yield service.passwordToken(this.payload.identifier, this.payload.resetUrl);
   };
 
-  /**
-   * Request a password reset.
-   * @return {Object}
-   */
   controller.passwordReset = function *() {
-    return yield service.passwordReset(this.payload.token, this.payload.password);
+    return yield service.passwordReset(
+      this.payload.token, 
+      this.payload.identifier, 
+      this.payload.hash,
+      this.payload.password
+    );
   };
 
   return controller;
