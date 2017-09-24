@@ -70,15 +70,10 @@ module.exports = {
       id      : user.id,
       purpose : 'password-reset'
     });
-    yield notify.sendTextMessage(user, `${token} is your password reset token.`);
+    yield notify.sendTextMessage(user, `${token.token} is your password reset token.`);
     yield hooks.require('user:send-password-token', user, token, resetUrl);
   },
 
-  /**
-   * @param  {String} token
-   * @param  {String} password
-   * @return {Object}
-   */
   *passwordReset(token, password) {
     let payload = yield tokens.get(token);
     if (payload.purpose !== 'password-reset') {
