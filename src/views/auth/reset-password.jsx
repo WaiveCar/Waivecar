@@ -11,14 +11,12 @@ class ResetPasswordView extends React.Component {
   constructor(...args) {
     super(...args);
     dom.setTitle('Reset Password');
-    let token = null;
-    if (this.props.location.query) {
-      token = this.props.location.query.token;
-    }
+
     this.state = {
-      step  : token ? 3 : 1,
-      token : token || null
-    }
+      hash: this.props.location.query.hash
+    };
+    this.state.step = this.state.hash ? 3 : 1;
+
     this.requestToken = this.requestToken.bind(this);
     this.inputToken   = this.inputToken.bind(this);
     this.submit       = this.submit.bind(this);
@@ -63,6 +61,7 @@ class ResetPasswordView extends React.Component {
       data  = this.refs.requestTokenForm.data();
       reset = this.refs.requestTokenForm.reset;
     }
+    this.setState({identifier: data.identifier});
     api.post('/reset-password/token', {
       identifier : data.identifier,
       resetUrl   : `${ config.app.uri }${ config.app.port ? ':' + config.app.port : '' }/reset-password`
@@ -159,9 +158,14 @@ class ResetPasswordView extends React.Component {
         message : 'Your passwords does not match'
       });
     }
+    // there's essentially two ways we can enter this page
+    // the first is with a hash provided, that we can just
+    // pass over and the second is with a token/email pair
     api.put('/reset-password', {
-      password : data.password,
-      token    : this.state.token
+      password   : data.password,
+      identifier : this.state.identifier,
+      token      : this.state.token,
+      hash       : this.state.hash,  
     }, (error, result) => {
       if (error) {
         return snackbar.notify({
@@ -189,9 +193,6 @@ class ResetPasswordView extends React.Component {
     );
   }
 
-  /**
-   * @method render
-   */
   render() {
     return (
       <div className="login">
