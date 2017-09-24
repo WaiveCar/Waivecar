@@ -71,13 +71,15 @@ Route.del('/notes/:type/:id', [ 'isAuthenticated', 'isAdmin', 'NotesController@r
 
 Route.get('/users/:id/notes',   [ 'isAuthenticated', 'NotesController@getUserNotes' ]);
 
-// ### Log Handlers
 Route.post('/audit/log', [ 'isAuthenticated', 'isAdmin', 'LogController@create' ]);
 Route.get('/audit/log', [ 'isAuthenticated', 'isAdmin', 'LogController@index' ]);
 
 Route.get('/tickets', [ 'isAuthenticated', 'isAdmin', 'TicketController@index' ]);
 Route.post('/tickets', [ 'isAuthenticated', 'isAdmin', 'TicketController@create' ]);
 Route.post('/tickets/:id/:action', [ 'isAuthenticated', 'isAdmin', 'TicketController@update' ]);
+
+Route.post('/waitlist/add', ['WaitlistController@add' ]);
+Route.post('/waitlist/addById', ['WaitlistController@addById' ]);
 
 // ### Geocoding Handlers
 Route.get('/geocoding', [ 'isAuthenticated', 'GeocodingController@show' ]);
