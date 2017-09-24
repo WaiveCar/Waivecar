@@ -3,6 +3,7 @@
 let bucket = Bento.Redis.bucket('verification');
 let rndm   = Bento.Helpers.Random;
 let error  = Bento.Error;
+let md5    = require('md5');
 
 module.exports = class Token {
 
@@ -15,21 +16,23 @@ module.exports = class Token {
   static *create(payload, timer) {
     let token = generate(payload);
 
-    // ### Store Token
-    // Stores the token and its payload in the verification bucket
+    let ourHash = this.hash(token, payload.id);
+    yield bucket.setJSON(ourHash, payload, 60 * (timer || 60));
 
-    yield bucket.setJSON(token, payload, 60 * (timer || 60));
-
-    return token;
+    return {
+      token: token,
+      hash: ourHash
+    };
   }
 
-  /**
-   * Retrieves a token from the token store.
-   * @param  {String} token
-   * @return {Object}
-   */
-  static *get(token) {
-    let payload = yield bucket.getJSON(token);
+  static hash(token, id) {
+    // A uuid type-5 gen in base64 to use as the salt.
+    let ourSecret = 'ghBJuu5xS2i81VOXrdYs8A';
+    return md5([ourSecret, token, id].join(':'));
+  }
+
+  static *getByHash(ourHash) {
+    let payload = yield bucket.getJSON(ourHash);
     if (!payload) {
       throw error.parse({
         code    : 'INVALID_TOKEN',
@@ -37,6 +40,11 @@ module.exports = class Token {
       }, 400);
     }
     return payload;
+  }
+
+  static *get(token, id) {
+    let ourHash = this.hash(token, id);
+    return yield this.getByHash(ourHash);
   }
 
   /**
@@ -50,25 +58,18 @@ module.exports = class Token {
 
 };
 
+
 /**
  * Generates a new token based on the provided payload setup.
  * @param  {Object} payload
  * @return {String}
  */
 function generate(payload) {
-  let type   = payload.tokenType;
-  let length = parseInt(payload.tokenLength) || 12;
+  let length = parseInt(payload.tokenLength) || 6;
 
   // ### Delete Token Settings
   // Token specific settings does not belong to the payload.
-
-  delete payload.tokenType;
   delete payload.tokenLength;
 
-  switch (type) {
-    case 'base10' : return rndm.base10(length);
-    case 'base32' : return rndm.base32(length);
-    case 'base64' : return rndm.base64(length);
-    default       : return rndm(length);
-  }
+  return rndm.base10(length);
 }
