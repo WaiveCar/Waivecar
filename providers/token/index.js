@@ -3,7 +3,7 @@
 let bucket = Bento.Redis.bucket('verification');
 let rndm   = Bento.Helpers.Random;
 let error  = Bento.Error;
-let bcrypt      = Bento.provider('bcrypt');
+let md5    = require('md5');
 
 module.exports = class Token {
 
@@ -16,13 +16,19 @@ module.exports = class Token {
   static *create(payload, timer) {
     let token = generate(payload);
 
-    let ourHash = hash(token, payload.id);
+    let ourHash = this.hash(token, payload.id);
     yield bucket.setJSON(ourHash, payload, 60 * (timer || 60));
 
     return {
       token: token,
       hash: ourHash
     };
+  }
+
+  static hash(token, id) {
+    // A uuid type-5 gen in base64 to use as the salt.
+    let ourSecret = 'ghBJuu5xS2i81VOXrdYs8A';
+    return md5([ourSecret, token, id].join(':'));
   }
 
   static *getByHash(ourHash) {
@@ -37,7 +43,8 @@ module.exports = class Token {
   }
 
   static *get(token, id) {
-    return yield this.getByHash(hash(token, id));
+    let ourHash = this.hash(token, id);
+    return yield this.getByHash(ourHash);
   }
 
   /**
@@ -51,11 +58,6 @@ module.exports = class Token {
 
 };
 
-function hash(token, id) {
-  // A uuid type-5 gen in base64 to use as the salt.
-  let ourSecret = 'ghBJuu5xS2i81VOXrdYs8A';
-  return bcrypt.hash([ourSecret, token, id].join(':'));
-}
 
 /**
  * Generates a new token based on the provided payload setup.
@@ -63,19 +65,11 @@ function hash(token, id) {
  * @return {String}
  */
 function generate(payload) {
-  let type   = payload.tokenType;
-  let length = parseInt(payload.tokenLength) || 12;
+  let length = parseInt(payload.tokenLength) || 6;
 
   // ### Delete Token Settings
   // Token specific settings does not belong to the payload.
-
-  delete payload.tokenType;
   delete payload.tokenLength;
 
-  switch (type) {
-    case 'base10' : return rndm.base10(length);
-    case 'base32' : return rndm.base32(length);
-    case 'base64' : return rndm.base64(length);
-    default       : return rndm(length);
-  }
+  return rndm.base10(length);
 }

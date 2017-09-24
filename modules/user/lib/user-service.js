@@ -1,6 +1,6 @@
 'use strict';
 
-let tokens      = require('./token-service');
+let tokens      = Bento.provider('token');
 let error       = require('./errors');
 let bcrypt      = Bento.provider('bcrypt');
 let queryParser = Bento.provider('sequelize/helpers').query;
@@ -74,9 +74,19 @@ module.exports = {
     yield hooks.require('user:send-password-token', user, token, resetUrl);
   },
 
-  *passwordReset(token, password) {
-    let payload = yield tokens.get(token);
-    if (payload.purpose !== 'password-reset') {
+  *passwordReset(token, identifier, hash, password) {
+    var payload;
+
+    if (hash) {
+      payload = yield tokens.getByHash(hash);
+    } else {
+      let user = yield hooks.require('user:get', identifier);
+      if (user) {
+        payload = yield tokens.get(token, user.id);
+      }
+    }
+
+    if (!payload || payload.purpose !== 'password-reset') {
       throw error.parse({
         code    : 'TOKEN_INVALID',
         message : 'The provided token is not a valid reset token.'
