@@ -13,9 +13,12 @@ class ResetPasswordView extends React.Component {
     dom.setTitle('Reset Password');
 
     this.state = {
+      isnew: this.props.location.query.isnew,
       hash: this.props.location.query.hash
     };
     this.state.step = this.state.hash ? 3 : 1;
+    this.state.verb = this.state.isnew ? 'Set' : 'Reset';
+    this.state.adjective = this.state.isnew ? '' : 'new';
 
     this.requestToken = this.requestToken.bind(this);
     this.inputToken   = this.inputToken.bind(this);
@@ -122,7 +125,7 @@ class ResetPasswordView extends React.Component {
           className = "bento-form-static"
           fields    = {[
             {
-              label     : 'Enter your new password',
+              label     : `Enter your ${ this.state.adjective } password`,
               component : 'input',
               type      : 'password',
               name      : 'password',
@@ -130,7 +133,7 @@ class ResetPasswordView extends React.Component {
               tabIndex  : 1
             },
             {
-              label     : 'Validate your new password',
+              label     : `Validate your ${ this.state.adjective } password`,
               component : 'input',
               type      : 'password',
               name      : 'validate',
@@ -141,7 +144,7 @@ class ResetPasswordView extends React.Component {
           submit = { this.submit }
         />
         <div className="token-request">
-          <button type="button" className="r-btn btn-login" onClick={ this.submit }>Reset password</button>
+          <button type="button" className="r-btn btn-login" onClick={ this.submit }>{ this.state.verb } password</button>
         </div>
       </div>
     );
@@ -184,10 +187,13 @@ class ResetPasswordView extends React.Component {
     return (
       <div>
         <div className="message-success">
-          Your password was successfully reset.
+          { this.state.isnew ?
+            "Welcome to WaiveCar! The next step is to log in and setup your account." :
+            "Your password was successfully reset."
+          }
         </div>
         <div className="token-request">
-          <Link to="/login" className="r-btn btn-login">Go to login</Link>
+          <Link to="/login" className="r-btn btn-login">Go login</Link>
         </div>
       </div>
     );
@@ -198,7 +204,7 @@ class ResetPasswordView extends React.Component {
       <div className="login">
         <div className="title">
           { config.app.name }&nbsp;
-          <span className="title-site">Reset Password</span>
+          <span className="title-site">{ this.state.verb } Password</span>
         </div>
         {
           this.step()
