@@ -3,6 +3,7 @@
 let bucket = Bento.Redis.bucket('verification');
 let rndm   = Bento.Helpers.Random;
 let error  = Bento.Error;
+let bcrypt      = Bento.provider('bcrypt');
 
 module.exports = class Token {
 
@@ -15,21 +16,17 @@ module.exports = class Token {
   static *create(payload, timer) {
     let token = generate(payload);
 
-    // ### Store Token
-    // Stores the token and its payload in the verification bucket
+    let ourHash = hash(token, payload.id);
+    yield bucket.setJSON(ourHash, payload, 60 * (timer || 60));
 
-    yield bucket.setJSON(token, payload, 60 * (timer || 60));
-
-    return token;
+    return {
+      token: token,
+      hash: ourHash
+    };
   }
 
-  /**
-   * Retrieves a token from the token store.
-   * @param  {String} token
-   * @return {Object}
-   */
-  static *get(token) {
-    let payload = yield bucket.getJSON(token);
+  static *getByHash(ourHash) {
+    let payload = yield bucket.getJSON(ourHash);
     if (!payload) {
       throw error.parse({
         code    : 'INVALID_TOKEN',
@@ -37,6 +34,10 @@ module.exports = class Token {
       }, 400);
     }
     return payload;
+  }
+
+  static *get(token, id) {
+    return yield this.getByHash(hash(token, id));
   }
 
   /**
@@ -49,6 +50,12 @@ module.exports = class Token {
   }
 
 };
+
+function hash(token, id) {
+  // A uuid type-5 gen in base64 to use as the salt.
+  let ourSecret = 'ghBJuu5xS2i81VOXrdYs8A';
+  return bcrypt.hash([ourSecret, token, id].join(':'));
+}
 
 /**
  * Generates a new token based on the provided payload setup.
