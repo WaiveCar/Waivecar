@@ -99,6 +99,11 @@ templates.register('app', {
         onEnter   : policies.isAdministrator
       },
       {
+        path      : '/waitlist',
+        component : require('../../views/app/admin/waitlist'),
+        onEnter   : policies.isAdministrator
+      },
+      {
         path      : '/users',
         component : require('../../views/app/admin/users'),
         onEnter   : policies.isAdministrator
@@ -124,6 +129,7 @@ templates.register('app', {
 
 // ### App Menus
 
+let order = 2;
 [
   {
     title     : 'Profile',
@@ -192,7 +198,7 @@ templates.register('app', {
     path      : '/users',
     parent    : null,
     locations : [ 'sidebar' ],
-    order     : 2
+    order     : order++
   },
   {
     title     : 'Bookings',
@@ -200,7 +206,15 @@ templates.register('app', {
     path      : '/bookings',
     parent    : null,
     locations : [ 'sidebar' ],
-    order     : 3
+    order     : order++
+  },
+  {
+    title     : 'Waitlist',
+    icon      : 'list',
+    path      : '/waitlist',
+    parent    : null,
+    locations : [ 'sidebar' ],
+    order     : order++
   },
   {
     title     : 'Tickets',
@@ -208,7 +222,7 @@ templates.register('app', {
     path      : '/tickets',
     parent    : null,
     locations : [ 'sidebar' ],
-    order     : 4
+    order     : order++
   },
   {
     title     : 'Licenses',
@@ -216,7 +230,7 @@ templates.register('app', {
     path      : '/licenses',
     parent    : null,
     locations : [ 'sidebar' ],
-    order     : 5
+    order     : order++ 
   },
   {
     title     : 'Audit Log',
@@ -224,7 +238,7 @@ templates.register('app', {
     path      : '/logs',
     parent    : null,
     locations : [ 'sidebar' ],
-    order     : 6
+    order     : order++
   }
 
 ].forEach(val => menu.add(val));

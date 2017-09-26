@@ -7,25 +7,9 @@ module.exports = class WaitList extends Component {
     super(...args);
 
     this.state = {};
-    if (this.props.location.query) {
-      let lat = this.props.location.query.lat;
-      let lng = this.props.location.query.lng;
-
-      if(lat) {
-        lat = parseFloat(lat);
-      }
-      if(lng) {
-        lng = parseFloat(lng);
-      }
-      if (lat && lng) {
-        // see https://github.com/WaiveCar/Waivecar/issues/943
-        let distance = Math.sqrt( Math.pow(34.310074 - lat, 2) + Math.pow(-118.455963 - lat, 2) );
-
-        let isInLaCutoff = 151.47066894015737;
-
-        this.state.location =  (distance > isInLaCutoff) ? 'notla' : 'la'
-      }
-      this.state.id = this.props.location.query.id;
+    let query = this.props.location.query;
+    if (query) {
+      this.state = query;
     }
   }
 
@@ -58,14 +42,28 @@ module.exports = class WaitList extends Component {
           <div className='row'>
             <div className="col-xs-12 col-md-6 col-md-push-3 waitlist">
               <h2>Thanks for Coming!</h2>
-              { this.state.location == 'notla' &&
+              { this.state.established == 'yes' &&
+                <div>
+                  <p>It looks like you're already a member!</p>
+                  <p>If you're having issues logging in, try <a href="/reset-password">resetting your password</a>.</p>
+                  <p>Still no luck? Give us a call at <a href="tel:+1855waive55">1 (855) WAIVE-55</a>.</p>
+                </div>
+              }
+              { this.state.alreadyLetIn == 'yes' &&
+                <div>
+                  <p>It looks like we've already let you in!</p>
+                  <p>You should have received an email with further instructions. We've sent another one in case you missed it.</p>
+                  <p>Still can't find it? Give us a call at <a href="tel:+1855waive55">1 (855) WAIVE-55</a>.</p>
+                </div>
+              }
+              { this.state.inside == 'no' &&
                 <div>
                   <p>Our lovely WaiveCars currently live in sunny <b>Santa Monica, California</b>.</p>
                   <p>If you're going to be visiting the Los Angeles area soon, feel free to add yourself to the waitlist.</p> 
                   <button className='btn btn-primary' onClick={ this.addToWaitlist.bind(this) }>I'll be in LA soon. Add me!</button>
                 </div>
               }
-              { this.state.location == 'la' &&
+              { this.state.inside == 'yes' &&
                 <div>
                   <p>Due to overwhelming popularity there is a waitlist for new registrations.</p>
                   <p>Our staff has been informed of your arrival and we'll contact you
