@@ -67,7 +67,7 @@ class LocationsIndex extends React.Component {
 
   componentDidMount() {
     let locationInput = this.refs.location;
-    let autocomplete =  new google.maps.places.Autocomplete(locationInput, {types: ['geocode']});
+    let autocomplete =  new google.maps.places.Autocomplete(locationInput, {types: ['establishment', 'geocode']});
 
     google.maps.event.addDomListener(locationInput, 'keydown', function(event) {
       if (event.keyCode === 13) {
