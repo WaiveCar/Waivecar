@@ -117,6 +117,11 @@ templates.register('app', {
         path      : '/logs',
         component : require('../../views/app/admin/logs'),
         onEnter   : policies.isAdministrator
+      },
+      {
+        path      : '/locations/create',
+        component : require('../../views/app/admin/locations/create'),
+        onEnter   : policies.isAdministrator
       }
     ].concat(views.getRoutes('app')));
   }
