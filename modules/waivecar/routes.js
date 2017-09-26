@@ -50,8 +50,15 @@ Route.put('/cars/:id',          [ 'isAuthenticated', 'CarsController@update' ]);
 
 // ### Locations
 
-Route.resource('locations', 'LocationsController');
+Route.post('/locations', [ 'isAuthenticated', 'isAdmin', 'LocationsController@create'])
+
+Route.get('/locations', 'LocationsController@index');
+Route.get('/locations/:id', 'LocationsController@show');
+Route.put('/locations/:id', [ 'isAuthenticated', 'isAdmin', 'LocationsController@update' ]);
+Route.del('/locations/:id', [ 'isAuthenticated', 'isAdmin', 'LocationsController@delete' ]);
+
 Route.get('/locations/dropoff', 'LocationsController@dropoff');
+
 
 // ### Notifications
 
