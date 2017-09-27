@@ -15,7 +15,16 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
         created_at: { $gt: new Date(2017, 8, 1) }
       }
     });
-  }
+  };
+
+  controller.create = function *() {
+    let model = new Location(this.payload);
+
+    yield model.save();
+    model.relay({
+      type: 'store'
+    });
+  };
 
   controller.update = function *(id) {
     let model = yield Location.findById(id);
