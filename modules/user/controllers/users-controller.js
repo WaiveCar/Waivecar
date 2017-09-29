@@ -90,6 +90,9 @@ Bento.Register.ResourceController('User', 'UsersController', (controller) => {
       this.payload.password
     );
   };
+  controller.passwordSetAdmin = function *(id) {
+    return yield service.passwordSetAdmin(id, this.payload.password, this.auth.user)
+  };
 
   return controller;
 
