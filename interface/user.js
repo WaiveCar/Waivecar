@@ -2,54 +2,28 @@
 
 Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
 
-  /**
-   * The identity of the table created in your database.
-   * @property table
-   * @type     String
-   */
   model.table = 'users';
 
-  /**
-   * The sequelize schema definition of your model.
-   * @property schema
-   * @type     Object
-   */
   model.schema = {
 
     // ### Required Fields
     // These fields are locked and should not be removed or have its key changed.
 
-    /**
-     * Users first name.
-     * @type {String}
-     */
     firstName : {
       type      : Sequelize.STRING(28),
       allowNull : false
     },
 
-    /**
-     * Users last name.
-     * @type {String}
-     */
     lastName : {
       type      : Sequelize.STRING(28),
       allowNull : false
     },
 
-    /**
-     * Users email address.
-     * @type {String}
-     */
     email : {
       type   : Sequelize.STRING(128),
       unique : true
     },
 
-    /**
-     * Users encrypted password
-     * @type {String}
-     */
     password : {
       type : Sequelize.STRING(64)
     },
