@@ -60,6 +60,13 @@ function PreBookService ($injector) {
                 validateDriversLicense(modal);
               }
             });
+          } else if (field === 'license photo') {
+            return angular.extend({}, base, {
+              text: licenses.length ? 'Validate license photo' : 'Add license photo',
+              handler: function () {
+                validateDriversLicense(modal);
+              }
+            });
           } else if (field === 'credit card') {
             return angular.extend({}, base, {
               text: 'Add payment method',
