@@ -21,6 +21,7 @@ module.exports = class UserDetails extends React.Component {
     relay.subscribe(this, 'users');
     relay.subscribe(this, 'notes');
     this.addCard = this.addCard.bind(this);
+
   }
 
   componentDidMount() {
@@ -74,6 +75,26 @@ module.exports = class UserDetails extends React.Component {
   }
   isFleetManager = () => {
     return this.state.currentUser.role.name === 'admin';
+  }
+
+  setPassword = () => {
+    let password = prompt("New user password");
+
+    if (password) {
+      api.put(`/set-password-admin/${ this.props.id }`, {password: password}, (err) => {
+        if (err) {
+          return snackbar.notify({
+            type    : 'danger',
+            message : err.message
+          });
+        }
+
+        snackbar.notify({
+          type    : 'success',
+          message : `Password successfully changed`
+        });
+      });
+    }
   }
 
   waiveWorkToggle = () => { 
@@ -325,6 +346,12 @@ module.exports = class UserDetails extends React.Component {
                     <div className="radio-inline">
                       <a onClick={ this.fleetToggle.bind(this) } className="pull-left btn btn-xs btn-link">{ this.isFleetManager() ? "Remove As" : "Add As" } Fleet Manager</a>
                     </div>
+
+                     <div className="radio-inline">
+                       <a onClick={ this.setPassword } className=" btn btn-xs ">Set user password</a>
+                     </div>
+
+
                    </div>
                   }
                 </div>
