@@ -85,6 +85,8 @@ Route.get('/tickets', [ 'isAuthenticated', 'isAdmin', 'TicketController@index' ]
 Route.post('/tickets', [ 'isAuthenticated', 'isAdmin', 'TicketController@create' ]);
 Route.post('/tickets/:id/:action', [ 'isAuthenticated', 'isAdmin', 'TicketController@update' ]);
 
+Route.get('/waitlist', [ 'isAuthenticated', 'isAdmin', 'WaitlistController@index' ]);
+Route.post('/waitlist/letIn', [ 'isAuthenticated', 'isAdmin', 'WaitlistController@take' ]);
 Route.post('/waitlist/add', ['WaitlistController@add' ]);
 Route.post('/waitlist/addById', ['WaitlistController@addById' ]);
 
