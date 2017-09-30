@@ -7,6 +7,7 @@ previous=`readlink -f $path-last`
 
 echo -n "Last was: "; cat git-sha-1
 git describe > git-sha-1
+echo `date` `git describe` >> .deploy-history
 echo -n "This is: "; cat git-sha-1
 
 set -x
