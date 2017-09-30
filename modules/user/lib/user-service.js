@@ -64,12 +64,26 @@ module.exports = {
    * @param  {String} resetUrl
    * @return {Object}
    */
-  *passwordToken(identifier, resetUrl) {
-    let user  = yield hooks.require('user:get', identifier);
+  *generatePasswordToken(identifier) {
+    let user = false;
+
+    if ('id' in identifier) {
+      user = identifier;
+    } else {
+      user  = yield hooks.require('user:get', identifier);
+    }
+
     let token = yield tokens.create({
       id      : user.id,
       purpose : 'password-reset'
     });
+    return {'user': user, 'token': token}
+  },
+
+  *sendPasswordReset(tokenObj, resetUrl) {
+    let token = tokenObj.token;
+    let user = tokenObj.user;
+
     yield notify.sendTextMessage(user, `${token.token} is your password reset token.`);
     yield hooks.require('user:send-password-token', user, token, resetUrl);
   },
