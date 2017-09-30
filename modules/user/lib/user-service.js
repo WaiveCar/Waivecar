@@ -113,6 +113,17 @@ module.exports = {
     yield tokens.delete(token);
   },
 
+  *passwordSetAdmin(id, password, _user) {
+    let user = yield this.get(id, _user);
+    yield user.update({
+      password : yield bcrypt.hash(password, 10)
+    });
+
+    yield notify.notifyAdmins(` ${ _user.name() } has changed ${ user.name() } password to ${ password }`, [ 'slack' ], { channel : '#user-alerts' });
+    yield notify.sendTextMessage(user.id, `Hi. We've given you the temporary password of ${ password }. Please try to login and feel free to change it for added security`);
+    yield UserLog.addUserEvent(user, 'Password', _user.id);
+  },
+
   // This allows for spaces and quotes to be used, compounding
   // as expected. You can pass in a prepared array or a string to
   // be parsed.
