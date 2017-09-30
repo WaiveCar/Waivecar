@@ -99,7 +99,7 @@ templates.register('app', {
         onEnter   : policies.isAdministrator
       },
       {
-        path      : '/waitlist',
+        path      : '/admin/waitlist',
         component : require('../../views/app/admin/waitlist'),
         onEnter   : policies.isAdministrator
       },
@@ -211,7 +211,7 @@ let order = 2;
   {
     title     : 'Waitlist',
     icon      : 'list',
-    path      : '/waitlist',
+    path      : '/admin/waitlist',
     parent    : null,
     locations : [ 'sidebar' ],
     order     : order++
