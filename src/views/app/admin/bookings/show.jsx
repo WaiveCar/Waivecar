@@ -6,6 +6,7 @@ import BookingPayment          from './payment';
 import BookingDetails          from './details';
 import { snackbar }         from 'bento-web';
 import NotesList from '../components/notes/list';
+import UserLicense from '../users/user-license';
 
 module.exports = class BookingsView extends React.Component {
 
@@ -115,6 +116,26 @@ module.exports = class BookingsView extends React.Component {
         isActing : false
       });
     });
+  }
+
+  /**
+   * Show popup window with user info.
+   * @param  {Event}
+   * @return {Void}
+   */
+  showUserInfo(event) {
+    event.preventDefault();
+    document.getElementById('userInfoWindow').style.display = 'block';
+  }
+
+  /**
+   * Close popup window with user info.
+   * @param  {Event}
+   * @return {Void}
+   */
+  closeUserInfo(event) {
+    event.preventDefault();
+    document.getElementById('userInfoWindow').style.display = 'none';
   }
 
   /**
@@ -234,7 +255,7 @@ module.exports = class BookingsView extends React.Component {
                 <strong>Status</strong>
                 <div>
                   { helpers.changeCase.toCapital(booking.status) } <br/>
-                  <small style={{ display: 'block', marginTop: '-0.2em' }}>{ moment(booking.updatedAt).format('MM/DD HH:mm') }</small>
+                  <small>{ moment(booking.updatedAt).format('MM/DD HH:mm') }</small>
                 </div>
               </div>
               <div className="col-xs-12 col-md-4 booking-status text-center">
@@ -243,6 +264,7 @@ module.exports = class BookingsView extends React.Component {
                   <Link to={ `/users/${ booking.user.id }` }>
                     { booking.user.firstName } { booking.user.lastName }
                   </Link>
+                  <small><button className='btn-link' onClick={this.showUserInfo}>Show License</button></small>
                 </div>
               </div>
               <div className="col-xs-12 col-md-4 booking-status text-center">
@@ -255,11 +277,16 @@ module.exports = class BookingsView extends React.Component {
                     :
                     "(unknown car)"
                   }
+                <small>{ extended }</small>
                 </div>
-                { extended }
               </div>
             </div>
             { this.renderActions(booking) }
+          </div>
+        </div>
+        <div className="box" id="userInfoWindow">
+          <div className="box-content">
+             <UserLicense id={ booking.user.id } readOnly="1" />
           </div>
         </div>
         {

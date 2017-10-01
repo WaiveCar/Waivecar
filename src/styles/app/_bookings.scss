@@ -1,4 +1,9 @@
 #booking-view {
+  small {
+    display: block;
+    margin-top: -0.2em;
+  }
+
   .booking-status {
     > div {
       font-size : 1.3rem;
@@ -104,6 +109,16 @@
     }
     .ride-car-meta {
       margin-top : 35px;
+    }
+  }
+
+  #userInfoWindow{
+    display: none;
+    .box{
+      margin: 20px auto;
+    }
+    .box-content{
+      border-bottom: none;
     }
   }
 }
