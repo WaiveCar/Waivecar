@@ -71,7 +71,7 @@ module.exports = {
   *generatePasswordToken(identifier) {
     let user = false;
 
-    if ('id' in identifier) {
+    if (!_.isString(identifier) && ('id' in identifier)) {
       user = identifier;
     } else {
       user  = yield hooks.require('user:get', identifier);
