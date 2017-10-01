@@ -12,6 +12,8 @@ let config      = Bento.config.user;
 let Email       = Bento.provider('email');
 let emailConfig = Bento.config.email;
 let log         = Bento.Log;
+let waiveConfig = Bento.config;
+
 
 // ### Models
 
@@ -28,12 +30,6 @@ let _         = require('lodash')
 
 module.exports = {
 
-  /**
-   * Stores a user in the database.
-   * @param  {Object} payload
-   * @param  {Object} _user
-   * @return {Object}
-   */
   *store(payload, _user) {
     let data = yield hooks.require('user:store:before', payload, _user);
 
@@ -62,12 +58,7 @@ module.exports = {
     return user;
   },
 
-  /**
-   * Creates an password access token used to reset a users password.
-   * @param  {Mixed} identifier
-   * @param  {String} resetUrl
-   * @return {Object}
-   */
+  // Creates an password access token used to reset a users password.
   *generatePasswordToken(identifier) {
     let user = false;
 
@@ -123,7 +114,7 @@ module.exports = {
       password : yield bcrypt.hash(password, 10)
     });
 
-    yield notify.notifyAdmins(` ${ _user.name() } has changed ${ user.name() } password to ${ password }`, [ 'slack' ], { channel : '#user-alerts' });
+    yield notify.notifyAdmins(`:sleuth_or_spy: ${ _user.name() } has changed the password of <${ waiveConfig.api.uri }/users/${ user.id }|${ user.name() }> to *${ password }*.`, [ 'slack' ], { channel : '#user-alerts' });
     yield notify.sendTextMessage(user.id, `Hi. We've given you the temporary password of ${ password }. Please try to login and feel free to change it for added security`);
     yield UserLog.addUserEvent(user, 'Password', _user.id);
   },
