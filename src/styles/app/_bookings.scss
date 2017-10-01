@@ -1,4 +1,9 @@
 #booking-view {
+  small {
+    display: block;
+    margin-top: -0.2em;
+  }
+
   .booking-status {
     > div {
       font-size : 1.3rem;

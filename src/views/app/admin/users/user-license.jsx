@@ -143,9 +143,6 @@ module.exports = class UserDetails extends React.Component {
       <div className="box">
         <h3>
           License
-          <small>
-            View, and edit the users license
-          </small>
         </h3>
         <div className="box-content">
           <div className="box-image text-center">
@@ -236,13 +233,14 @@ module.exports = class UserDetails extends React.Component {
                 }
               </FormInput>
             </div>
-
-            <div className="form-actions text-center">
-              <div className="btn-group" role="group">
-                <button type="submit" className="btn btn-primary">Update License</button>
+            { this.props.readOnly ? "" :
+              <div className="form-actions text-center">
+                <div className="btn-group" role="group">
+                  <button type="submit" className="btn btn-primary">Update License</button>
+                </div>
+                <a style={{ paddingLeft: '1em' }} onClick={ this.deleteLicense.bind(this, license.id) } className="btn btn-link btn-xs">Delete License</a>
               </div>
-              <a style={{ paddingLeft: '1em' }} onClick={ this.deleteLicense.bind(this, license.id) } className="btn btn-link btn-xs">Delete License</a>
-            </div>
+            }
           </form>
         </div>
       </div>
