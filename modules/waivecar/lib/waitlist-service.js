@@ -188,7 +188,7 @@ module.exports = {
         }
       }
 
-      nameList.push(fullName);
+      nameList.push(`<${config.api.uri}/users/${userRecord.id}|${fullName}>`);
 
       // X-ref it back so that we don't do this again.
       // They'd be able to reset their password and that's about it.
@@ -214,7 +214,7 @@ module.exports = {
     }
     // If a candidate signs up again we "re-let" them in ... effectively sending them the same email again
     if (_user) {
-      let list = nameList.slice(0, -2).join(',') + nameList.slice(0, -2).join(' and ');
+      let list = nameList.slice(0, -2).join(',') + nameList.slice(-2).join(' and ');
       yield notify.notifyAdmins(`:rocket: ${ _user.name() } let in ${ list }`, [ 'slack' ], { channel : '#user-alerts' })
     }
   },
