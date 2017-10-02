@@ -184,8 +184,10 @@ module.exports = {
 
         if (userRecord) {
           yield record.update({userId: userRecord.id});
-          continue;
+        } else {
+          log.warn('Unable to add user with email ' + record.email);
         }
+        continue;
       }
 
       nameList.push(`<${config.api.uri}/users/${userRecord.id}|${fullName}>`);
@@ -195,7 +197,8 @@ module.exports = {
       yield record.update({userId: userRecord.id});
 
       let res = yield UserService.generatePasswordToken(userRecord);
-  
+    
+      // If a candidate signs up again we "re-let" them in ... effectively sending them the same email again
       let email = new Email();
       try {
         yield email.send({
@@ -205,14 +208,13 @@ module.exports = {
           template : 'waitlist-letin-email',
           context  : {
             name: fullName,
-            passwordlink: `${config.api.uri}/password-reset?hash=${res.token.hash}&isnew=yes`
+            passwordlink: `${config.api.uri}/reset-password?hash=${res.token.hash}&isnew=yes`
           }
         });
       } catch(err) {
         log.warn('Failed to deliver notification email: ', err);      
       }
     }
-    // If a candidate signs up again we "re-let" them in ... effectively sending them the same email again
     if (_user) {
       let list = nameList.slice(0, -2).join(',') + nameList.slice(-2).join(' and ');
       yield notify.notifyAdmins(`:rocket: ${ _user.name() } let in ${ list }`, [ 'slack' ], { channel : '#user-alerts' })
