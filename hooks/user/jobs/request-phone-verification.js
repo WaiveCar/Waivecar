@@ -6,7 +6,6 @@ let Sms   = Bento.provider('sms');
 let log   = Bento.Log;
 
 queue.process('sms:user:request-phone-verification', function(job, done) {
-  if (Bento.ENV === 'test') { return done(); }
   log.debug('Sending request for phone verification to : ' + job.data.to);
   co(function *() {
     let message = new Sms();
