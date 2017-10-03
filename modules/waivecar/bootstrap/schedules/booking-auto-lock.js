@@ -51,6 +51,9 @@ scheduler.process('booking-auto-lock', function *(job) {
     if (!car.is_key_secure) {
       reason.push("key isn't in holder");
     }
+    if (car.is_open_door) {
+      reason.push("Auto-locked " + car.license + ", but the doors may be open");
+    }
 
     if(reason.length) {
       reason = 'reason(s): ' + reason.join(', ');
