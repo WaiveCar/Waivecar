@@ -10,7 +10,6 @@ class ResetPasswordView extends React.Component {
 
   constructor(...args) {
     super(...args);
-    dom.setTitle('Reset Password');
 
     this.state = {
       isnew: this.props.location.query.isnew,
@@ -19,6 +18,8 @@ class ResetPasswordView extends React.Component {
     this.state.step = this.state.hash ? 3 : 1;
     this.state.verb = this.state.isnew ? 'Set' : 'Reset';
     this.state.adjective = this.state.isnew ? '' : 'new';
+
+    dom.setTitle([this.state.verb, this.state.adjective, 'Password'].join(' '));
 
     this.requestToken = this.requestToken.bind(this);
     this.inputToken   = this.inputToken.bind(this);
