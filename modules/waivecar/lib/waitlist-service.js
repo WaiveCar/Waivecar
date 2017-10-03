@@ -239,14 +239,14 @@ module.exports = {
     // Because of how "broken" group by is when not using an aggregator, it returns us
     // the first record at each priority level. This makes sure that the higher priority
     // people will come in ahead of, but not exclusively
-    if ('idList' in payload) {
-      let recordList = yield Waitlist.find({ where : { id : { $in: payload.idList } } });
-      yield this.letIn(recordList, _user);
+    let recordList = [];
+    if('idList' in payload) {
+      recordList = yield Waitlist.find({ where : { id : { $in: payload.idList } } });
     } else {
       let letInCount = parseInt(payload.amount, 10);
 
       if (letInCount) {
-        let recordList = yield Waitlist.find({ 
+        recordList = yield Waitlist.find({ 
           where: {
             user_id: null,
             priority: { $gt: 0 }
@@ -257,41 +257,10 @@ module.exports = {
           ],
           limit: letInCount
         });
-
-        yield this.letIn(recordList);
       }
-
-      /*
-      while (letInCount > 0) {
-
-        let recordPart = yield Waitlist.findAll({ 
-          where: {
-            user_id: null,
-            priority: { $gt: 0 }
-          },
-
-          group: 'priority',
-
-          order: [
-            [ 'priority', 'desc'  ],
-            [ 'created_at', 'asc' ]
-          ]
-        });
-
-        if (recordPart.length === 0) {
-          break;
-        }
-
-        if (recordPart.length > letInCount) {
-          recordPart = recordPart.slice(letInCount);
-        }
-
-        // let all these records in
-        yield letIn(recordPart);
-
-        letInCount -= recordPart.length
-      }
-      */
+    }
+    if(recordList.length) {
+      yield this.letIn(recordList, _user);
     }
   }
 
