@@ -16,7 +16,7 @@ module.exports = class Token {
   static *create(payload, timer) {
     let token = generate(payload);
 
-    let ourHash = this.hash(token, payload.id);
+    let ourHash = this.hash(token, payload.id || payload.user);
     yield bucket.setJSON(ourHash, payload, 60 * (timer || 60));
 
     return {
