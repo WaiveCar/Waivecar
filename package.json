@@ -100,6 +100,7 @@
         "cordova-plugin-console": "^1.0.7",
         "cordova-plugin-device": "^1.1.6",
         "cordova-plugin-facebook4": "^1.7.4",
+        "cordova-plugin-fcm": "^2.1.2",
         "cordova-plugin-file": "^4.3.3",
         "cordova-plugin-file-transfer": "^1.4.0",
         "cordova-plugin-geolocation": "^2.4.3",
@@ -198,7 +199,8 @@
             "cordova.plugins.diagnostic": {},
             "ionic-plugin-keyboard": {},
             "cordova-plugin-intercom": {},
-            "com.zendrive.phonegap.sdk": {}
+            "com.zendrive.phonegap.sdk": {},
+            "cordova-plugin-fcm": {}
         },
         "platforms": [
             "browser",

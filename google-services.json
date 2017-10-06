@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1000758502524",
+    "firebase_url": "https://waivecar-703b5.firebaseio.com",
+    "project_id": "waivecar-703b5",
+    "storage_bucket": "waivecar-703b5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1000758502524:android:808f17e29abddf31",
+        "android_client_info": {
+          "package_name": "com.waivecar.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1000758502524-vv581f7hrulab5phbcec9eglnhr4om87.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA77YUSEIo77Ms26dlAKllaBFYl-XAaELs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -8,7 +8,14 @@ module.exports = angular.module('app').factory('Notifications', [
       create: {
         method: 'POST',
         isArray: false
-      }
+      },
+      refreshDeviceToken: {
+        method: 'PUT',
+        url: $utils.getCustomRoute('refreshDeviceToken'),
+        params: {
+          id: '@id'
+        }
+      },
     });
   }
 ]);

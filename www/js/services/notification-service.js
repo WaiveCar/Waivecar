@@ -5,8 +5,14 @@ require('./data-service');
 angular.module('app.services')
   .service('NotificationService', NotificationService);
 
-NotificationService.$inject = ['$data'];
-function NotificationService($data) {
+NotificationService.$inject = ['$data', '$utils'];
+function NotificationService($data, '$utils') {
+
+  this.refreshDeviceToken = function () {
+    FCMPlugin.onTokenRefresh(function(token){
+
+    });
+  };
 
   this.notifySms = function(code) {
     return _notify('sms', code);

@@ -24,6 +24,7 @@ function ApplicationController ($rootScope, $scope, $injector) {
   var $window = $injector.get('$window');
   var LocationService = $injector.get('LocationService');
   var IntercomService = $injector.get('IntercomService');
+  var NotificationService = $injector.get('NotificationService');
 
   this.models = $data.instances;
   this.active = $data.active;
@@ -133,6 +134,7 @@ function ApplicationController ($rootScope, $scope, $injector) {
     }
   }
 
+  NotificationService.refreshDeviceToken();
   IntercomService.setLauncherVisibility();
 
   $rootScope.$on('authLogin', function () {
