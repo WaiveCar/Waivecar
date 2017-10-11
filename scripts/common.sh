@@ -1,5 +1,7 @@
 #!/bin/bash
-app=com.waivecar.app
+APP=com.waivecar.app
+NODE_VERSION=v6.11.4
+DBG=
 
 get_device() {
   if [ "$DEVICE" ]; then
@@ -23,7 +25,7 @@ nvmcheck() {
   which node > /dev/null
   if [ ! $? ]; then
     version=`node --version`
-    [ "$version" == "v4.2.6" ] && return
+    [ "$version" == $NODE_VERSION ] && return
   fi
   . "$HOME/.nvm/nvm.sh"
 }
@@ -61,7 +63,8 @@ build() {
     cp $i platforms/android/$i >& /dev/null
   done
 
-  ionic build android
+  cp -up misc/build-extras.gradle platforms/android
+  $DBG ionic build android
 }
  
 unfuckup() {
@@ -76,8 +79,8 @@ unfuckup() {
   set +x
 }
 
-stop()       { adb -s $1 shell am force-stop $app; }
+stop()       { adb -s $1 shell am force-stop $APP; }
 install()    { adb -s $1 install -r -d $2; }
-clear()      { adb -s $1 shell pm clear $app; }
-start()      { adb -s $1 shell monkey -p $app -c android.intent.category.LAUNCHER 1; }
-uninstall()  { adb -s $1 uninstall $app; }
+clear()      { adb -s $1 shell pm clear $APP; }
+start()      { adb -s $1 shell monkey -p $APP -c android.intent.category.LAUNCHER 1; }
+uninstall()  { adb -s $1 uninstall $APP; }

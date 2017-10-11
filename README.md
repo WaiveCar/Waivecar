@@ -45,14 +45,14 @@ Here's generally what I did after installing the above:
   $ git clone https://github.com/waivecar/Waivecar
     ... magic credentials ...
     # This next line is taken from https://github.com/creationix/nvm
-    # As of Sept 23, 2016, this is the version of node that is known to work.
+    # As of Oct 6, 2017, this is the version of node that is known to work.
     # I (cjm) don't have the time to cross my fingers and upgrade. I'm going with
     # what I know works.
 
   $ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash 
     # Follow the instructions and put the lines into ~/.profile and start a new terminal
 
-  $ nvm install v4.2.6
+  $ nvm install v6.4.11
 
     # check it
   $ node --version
@@ -70,7 +70,7 @@ Here's generally what I did after installing the above:
     #    step I got an error about CDVCamera.o which the internet had mixed messages on but 
     #    essentially said that using an older version of ionic reliably remediated it.
     #
-  $ npm install ionic@1.7.16 cordova@6 gulp -g
+  $ npm install ionic@1.7 cordova@6 gulp -g
   $ ionic platform add ios@4.3.1
 
     # At least *I* didn't have to do the `--unsafe-perm=true` that was recommended here.
