@@ -162,7 +162,6 @@ function DashboardController ($scope, $rootScope, $injector) {
   }
 
   function lockCar(id) {
-
     $ionicLoading.show({
       template: '<div class="circle-loader"><span>Loading</span></div>'
     });
@@ -218,26 +217,23 @@ function DashboardController ($scope, $rootScope, $injector) {
   }
 
   function sendUserLocationsToServer() {
-
-    if (ctrl.lastUserLocations.length == 0) {
+    if (ctrl.lastUserLocations.length === 0) {
       return;
     }
 
     var now = new Date();
 
     var id = $data.active.bookings.id;
-    $data.resources.bookings.checkParity({ id: id, userLocations: ctrl.lastUserLocations, appNowTime:now.getTime() })
-      .$promise.then(function() {        });
+    $data.resources.bookings.checkParity({ id: id, userLocations: ctrl.lastUserLocations, appNowTime: now.getTime() })
+      .$promise.then(function() {});
 
     ctrl.lastTimeOfParityCheck = now;
     ctrl.lastUserLocations = [];
-
   }
 
   function checkParityWithUser(location) {
-
-
     var now = new Date();
+
     ctrl.lastUserLocations.push({
       timestamp: now.getTime(),
       latitude: location.latitude,
