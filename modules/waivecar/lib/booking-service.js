@@ -791,7 +791,7 @@ module.exports = class BookingService extends Service {
     }
       
     if (errors.length && !(_user.hasAccess('admin') && query.force)) {
-      let message = `Your Ride cannot be completed until you `;
+      let message = `Your ride cannot be completed until you `;
       switch (errors.length) {
         case 1: {
           message = `${ message }${ errors[0] }.`;
