@@ -23,6 +23,7 @@ start=
 
 for i in $*; do
   case $1 in
+    debug) export DBG="strace -f" ;;
     find) find=1 ;;
     stop) stop=1 ;;
     start) start=1 ;;
