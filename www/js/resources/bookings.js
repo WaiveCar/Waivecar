@@ -63,6 +63,13 @@ module.exports = angular.module('app').factory('Bookings', [
           offset: '@offset',
           limit: '@limit'
         }
+      },
+      checkParity: {
+        method: 'PUT',
+        url: $utils.getCustomRoute('bookings/:id/checkParity'),
+        params: {
+          id: '@id'
+        }
       }
     }));
 

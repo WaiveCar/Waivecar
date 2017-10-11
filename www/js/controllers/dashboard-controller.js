@@ -44,6 +44,10 @@ function DashboardController ($scope, $rootScope, $injector) {
   this.unlocking = false;
   this.locked = false;
 
+  this.lastTimeOfParityCheck = null;
+  this.lastUserLocations = [];
+  this.parityCheckTimeout = null;
+
   // So there was a bug when this thing wasn't running right ... so 
   // we need to put it in an interval BUUT sometimes it was so we 
   // need to avoid getting this thing to run multiple times because
@@ -60,6 +64,7 @@ function DashboardController ($scope, $rootScope, $injector) {
       }
       ctrl.currentLocation = currentLocation;
 
+      checkParityWithUser(currentLocation);
     });
 
     $scope.$on('$destroy', function () {
@@ -210,6 +215,51 @@ function DashboardController ($scope, $rootScope, $injector) {
         }
         $message.error(reason);
       });
+  }
+
+  function sendUserLocationsToServer() {
+
+    if (ctrl.lastUserLocations.length == 0) {
+      return;
+    }
+
+    var now = new Date();
+
+    var id = $data.active.bookings.id;
+    $data.resources.bookings.checkParity({ id: id, userLocations: ctrl.lastUserLocations, appNowTime:now.getTime() })
+      .$promise.then(function() {        });
+
+    ctrl.lastTimeOfParityCheck = now;
+    ctrl.lastUserLocations = [];
+
+  }
+
+  function checkParityWithUser(location) {
+
+
+    var now = new Date();
+    ctrl.lastUserLocations.push({
+      timestamp: now.getTime(),
+      latitude: location.latitude,
+      longitude: location.longitude
+    });
+
+
+    if (ctrl.parityCheckTimeout) {
+      $timeout.cancel(ctrl.parityCheckTimeout);
+    }
+
+
+    if (!ctrl.lastTimeOfParityCheck) {
+      ctrl.lastTimeOfParityCheck = now;
+    }
+
+    if ( (now - ctrl.lastTimeOfParityCheck) > 60 * 1000) {
+      sendUserLocationsToServer();
+    } else {
+      ctrl.parityCheckTimeout = $timeout(sendUserLocationsToServer, 60 * 1000);
+    }
+
   }
 
   function endRidePrompt(carId, bookingId) {
