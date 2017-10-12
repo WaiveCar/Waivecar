@@ -722,6 +722,16 @@ module.exports = class BookingService extends Service {
     };
   }
 
+  static *notifyUsers(car) {
+    let peopleToTell = yield User.find({ where : { notifyEnd : { $gt : new Date() } } });
+    let address = yield this.getAddress(car.latitude, car.longitude);
+    let message = `${ car.license } (${ car.charge }%) is now available at ${ address }.`;
+
+    for(var ix = 0; ix < peopleToTell.length; ix++) {
+      yield notify.sendTextMessage(peopleToTell[ix], message);
+    }
+  }
+
   static *complete(id, _user, query, payload) {
     try { 
       return yield this._complete(id, _user, query, payload);
@@ -740,6 +750,7 @@ module.exports = class BookingService extends Service {
     yield booking.delForfeitureTimers();
     yield car.removeDriver();
     yield car.available();
+    yield this.notifyUsers(car);
 
     car.relay('update');
     booking.relay('update');
@@ -833,6 +844,7 @@ module.exports = class BookingService extends Service {
       }, { channel : '#rental-alerts' });
     } else {
       yield car.available();
+      yield this.notifyUsers(car);
     }
 
     // The user should be seeing cars to rent now.
@@ -978,10 +990,8 @@ module.exports = class BookingService extends Service {
    |
    */
 
-   /**
-    * Updates all details with missing address stamps.
-    * @return {Void}
-    */
+  
+  // Updates all details with missing address stamps.
   static *patchAddressDetails() {
     let list = yield BookingDetails.find({
       where : {
