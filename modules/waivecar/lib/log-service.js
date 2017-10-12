@@ -5,7 +5,7 @@ let error = Bento.Error;
 // We are handling both type of log - since the separation is confusing
 // and not helpful.
 let Log = Bento.model('Log');
-let Locations = Bento.model('BookingLocation');
+let Location  = Bento.model('BookingLocation');
 let Booking   = Bento.model('Booking');
 let Car       = Bento.model('Car');
 
@@ -53,8 +53,7 @@ class LogService {
       order: [ ['created_at', 'asc'] ]
     };
 
-    console.log(params);
-    let locations = yield Locations.find(params);
+    let locations = yield Location.find(params);
 
     if (!locations || !locations.length) {
       return {res: true, data: {}};
@@ -135,7 +134,7 @@ class LogService {
     };
 
     if (first !== undefined) {
-      let recentBookings = yield Locations.find({
+      let recentBookings = yield Location.find({
         attributes: [ 'booking_id' ],
         where: { id : { $gte: first } },
         order: [ [ 'booking_id', 'asc' ] ],
@@ -195,7 +194,7 @@ class LogService {
       }
     }
 
-    let locations = yield Locations.find(params);
+    let locations = yield Location.find(params);
 
     if (!locations || !locations.length) {
       return {res: true, data: {}};
