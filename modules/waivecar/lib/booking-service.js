@@ -496,7 +496,7 @@ module.exports = class BookingService extends Service {
 
       yield cars.unlockCar(car.id, _user);
       yield cars.unlockImmobilzer(car.id, _user);
-      yield cars.openDoor(car.id, _user);
+      //yield cars.openDoor(car.id, _user);
 
       // ### Notify
 
@@ -611,7 +611,7 @@ module.exports = class BookingService extends Service {
 
     // Sets the car connected to the booking on a 5 minute auto lock timer.
     yield booking.setAutoLock();
-    yield cars.closeDoor(car.id, _user);
+    // yield cars.closeDoor(car.id, _user);
 
     // ### Reset Car
     yield car.removeDriver();
@@ -745,10 +745,7 @@ module.exports = class BookingService extends Service {
     booking.relay('update');
   }
 
-  /**
-   * Locks, and makes the car available for a new booking.
-   * @return {Object}
-   */
+  // Locks, and makes the car available for a new booking.
   static *_complete(id, _user, query, payload) {
     let relations = {
       include : [
@@ -851,12 +848,7 @@ module.exports = class BookingService extends Service {
     yield this.relay('update', booking, _user);
   }
 
-  /**
-   * Closes a booking, this method is run when no payment is needed.
-   * @param  {Number} id
-   * @param  {Object} _user
-   * @return {Void}
-   */
+  // Closes a booking, this method is run when no payment is needed.
   static *close(id, _user) {
     let booking = yield this.getBooking(id);
     yield booking.close();
@@ -919,7 +911,6 @@ module.exports = class BookingService extends Service {
   }
 
   static *checkCarParityWithUser(id, payload, user) {
-
     if (!Array.isArray(payload.userLocations) || payload.userLocations.length == 0 || !payload.appNowTime) {
       throw error.parse({
         code    : 'INVALID_PAYLOAD',
@@ -944,7 +935,6 @@ module.exports = class BookingService extends Service {
       order: [ ['created_at', 'asc'] ]
     };
 
-    console.log(params);
     let carLocations = yield Location.find(params);
 
     let carLocationsWithNearestInTimeUserLocation = carLocations.map(location => {
@@ -961,19 +951,18 @@ module.exports = class BookingService extends Service {
     });
 
     let closestLocations = _.min(carLocationsWithNearestInTimeUserLocation, "timeDiff");
-
     let isPaired = false;
+    var distance = 0;
+    var distanceError;
+
     if (closestLocations.timeDiff < timeWindowWidth) {
-
-      let distanceError = 200 + (closestLocations.timeDiff / 1000) * 20; //20 m/c is around 45 mile per hour
-
-      let distance = geolib.getDistance(closestLocations.userLocation, closestLocations.carLocation);
-
+      distanceError = 200 + (closestLocations.timeDiff / 1000) * 20; //20 m/c is around 45 mile per hour
+      distance = geolib.getDistance(closestLocations.userLocation, closestLocations.carLocation);
       isPaired = distance < distanceError;
     }
 
     if (!isPaired) {
-      yield notify.notifyAdmins(`Parity warning for booking ${ id }, user id ${user.id }.`, [ 'slack' ], { channel : '#rental-alerts' });
+      yield notify.notifyAdmins(`:airplane: Location check failed on <${ apiConfig.uri }/bookings/${ id }|booking ${ id }>. <${ apiConfig.uri }/users/${ user.id }|${ user.name() }> is ${ (0.000621371 * distance).toFixed(2) }mi from the car`, [ 'slack' ], { channel : '#rental-alerts' });
     }
 
     return { isPaired: isPaired };
