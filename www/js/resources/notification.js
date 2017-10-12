@@ -3,17 +3,18 @@ var angular = require('angular');
 
 module.exports = angular.module('app').factory('Notifications', [
   'Resource',
-  function (Resource) {
+  '$utils',
+  function (Resource, $utils) {
     return Resource('/notify', null, {
       create: {
         method: 'POST',
         isArray: false
       },
       refreshDeviceToken: {
-        method: 'PUT',
-        url: $utils.getCustomRoute('refreshDeviceToken'),
+        method: 'POST',
+        url: $utils.getCustomRoute('refresh-device-token'),
         params: {
-          id: '@id'
+          deviceToken: '@deviceToken'
         }
       },
     });
