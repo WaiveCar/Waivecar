@@ -62,21 +62,11 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       defaultValue : 'probation'
     },
 
-    /**
-     * The users facebook id.
-     * @type   {String}
-     * @module auth
-     */
     facebook : {
       type   : Sequelize.STRING,
       unique : true
     },
 
-    /**
-     * The users stripe id.
-     * @type   {String}
-     * @module shop
-     */
     stripeId : {
       type   : Sequelize.STRING(64),
       unique : true
@@ -121,6 +111,11 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       defaultValue : false
     },
 
+    notifyEnd : {
+      type         : Sequelize.DATE,
+      defaultValue : false
+    },
+
     version : {
       type         : Sequelize.INTEGER,
       defaultValue : null
@@ -133,10 +128,7 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
    */
   model.attributes = [ 'email=>role', 'role=>group' ];
 
-  /**
-   * A list of blacklisted public values.
-   * @type {Array}
-   */
+  // A list of blacklisted public values.
   model.blacklist = [ 'password' ];
 
   /**

@@ -73,6 +73,7 @@ module.exports = {
       start: "Start your booking",
       finish: "Complete your booking",
       complete: null,
+      notify: null,
       lock: "Lock the WaiveCar",
       unlock: "Unlock the WaiveCar",
       account: "Information about your account",
@@ -81,6 +82,12 @@ module.exports = {
     // now we can do the simple ones.
     if(Object.keys(documentation).indexOf(command) === -1) {
       return false;
+    }
+
+    if(command === 'notify') {
+      yield user.update({notifyEnd: new Date(+new Date() + 1000 * 1800) });
+      yield notify.sendTextMessage(user, "You will be updated of available cars for the next 30 minutes");
+      return true;
     }
 
     if(command === 'commands') {
@@ -209,7 +216,7 @@ module.exports = {
     let smstext = params.query.Body.trim().toLowerCase();
     let phone = params.query.From;
     let user = yield User.findOne({ where : { phone: phone } });
-    let who = user ? user.name() : '_unkonwn_';
+    let who = user ? user.name() : '_unknown_';
     let ts = moment.tz(moment.utc(), "America/Los_Angeles").format('YYYY/MM/DD HH:mm:ss');
     fs.appendFileSync('/var/log/outgoing/sms.txt', `${ts} ${phone} ${who}: ${ params.query.Body }\n`);
 
