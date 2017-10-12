@@ -240,11 +240,9 @@ function DashboardController ($scope, $rootScope, $injector) {
       longitude: location.longitude
     });
 
-
     if (ctrl.parityCheckTimeout) {
       $timeout.cancel(ctrl.parityCheckTimeout);
     }
-
 
     if (!ctrl.lastTimeOfParityCheck) {
       ctrl.lastTimeOfParityCheck = now;
