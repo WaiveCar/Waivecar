@@ -669,7 +669,8 @@ module.exports = {
       isIgnitionOn                  : this.convertToBoolean(data, 'ignition', { on : true, off : false }),
       currentSpeed                  : data['speed'],
       isImmobilized                 : this.convertToBoolean(data, 'immobilizer', { locked : true, unlocked : false }),
-      isLocked                      : this.convertToBoolean(data, 'central_lock', { locked : true, unlocked : false })
+      isLocked                      : this.convertToBoolean(data, 'central_lock', { locked : true, unlocked : false }),
+      isDoorOpen                    : this.convertToBoolean(data, 'doors', { open : true, closed : false }),
     };
 
     if (data['rfid_tag_states']) {

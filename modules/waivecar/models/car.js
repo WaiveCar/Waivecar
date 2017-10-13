@@ -10,11 +10,6 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
    */
   model.table = 'cars';
 
-  /**
-   * The sequelize schema definition of your model.
-   * @property schema
-   * @type     Object
-   */
   model.schema = {
     id : {
       type       : Sequelize.STRING(28),
@@ -44,6 +39,11 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     },
 
     isLocked : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
+    isDoorOpen : {
       type         : Sequelize.BOOLEAN,
       defaultValue : false
     },
@@ -290,10 +290,6 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       });
     },
 
-    /**
-     * Adds a driver to the car and sets the car to unavailable.
-     * @param {Number} userId
-     */
     addDriver : function *(userId) {
       yield this.update({
         userId      : userId,
