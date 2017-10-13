@@ -518,12 +518,6 @@ module.exports = class BookingService extends Service {
     }
   }
 
-  /**
-   * Starts the booking and initiates the drive.
-   * @param  {Number} id
-   * @param  {Object} _user
-   * @return {Object}
-   */
   static *start(id, _user) {
     // This no longer server any purpose and was moved up to the ready method, we keeping this method in place
     // so that the app doesn't hit any errors when attempting to call it.
@@ -795,7 +789,7 @@ module.exports = class BookingService extends Service {
     if(process.env.NODE_ENV === 'production') {
       if (car.isIgnitionOn) { errors.push('turn off the ignition'); }
       if (!car.isKeySecure) { errors.push('secure the cey'); }
-      // if (!car.isLocked) { errors.push('lock the car');}
+      if (car.isDoorOpen) { errors.push('make sure the doors are closed');}
     }
       
     if (errors.length && !(_user.hasAccess('admin') && query.force)) {
@@ -850,7 +844,7 @@ module.exports = class BookingService extends Service {
     // The user should be seeing cars to rent now.
     let message = yield this.updateState('completed', _user, user);
     yield notify.sendTextMessage(user, `Thanks for renting with WaiveCar! Your rental is complete. You can see your trip summary in the app.`);
-    yield notify.slack({ text : `:coffee: ${ message } | ${ car.info() } | ${ apiConfig.uri }/bookings/${ booking.id }`
+    yield notify.slack({ text : `:coffee: ${ message } | ${ car.info() } | ${ booking.link()}`
     }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
 
