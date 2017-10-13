@@ -25,12 +25,7 @@ module.exports = function *() {
   });
 };
 
-/**
- * Check if provided lat / long is within 20 mile driving zone
- * @param {Number} lat
- * @param {Number} long
- * @returns boolean
- */
+// Check if provided lat / long is within 20 mile driving zone
 function inDrivingZone(lat, long) {
   let distance = geolib.getDistance({ latitude : lat, longitude : long }, config.waivecar.homebase.coords);
   let miles = distance * 0.000621371;
@@ -90,24 +85,31 @@ var checkBooking = co.wrap(function *(booking) {
   // if we thought we were outside but now we're inside
   if (deviceInside && booking.isFlagged('outside-range')) {
     yield booking.unFlag('outside-range');
-    yield notify.notifyAdmins(`${ user.name() } took ${ car.info() } back into the driving zone. ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+    yield notify.notifyAdmins(`${ user.link() } took ${ car.info() } back into the driving zone. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
 
   // if we thought we were inside but now we are outside.
   } else if (!deviceInside && !booking.isFlagged('outside-range')) {
     yield booking.flag('outside-range');
     yield notify.sendTextMessage(user, config.notification.reasons['OUTSIDE_RANGE']);
-    yield notify.notifyAdmins(`${ user.name() } took ${ car.info() } outside of the driving zone. ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+    yield notify.notifyAdmins(`${ user.link() } took ${ car.info() } outside of the driving zone. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
   }
 
   // Check charge level
-  // See Api: Low charge text message triggers #495 
-  if (car.averageCharge() < 20 && !booking.isFlagged('low-charge')) {
-    // make sure an excess number of messages aren't sent
-    // and that they are only sent when the average dips below 20
-    yield booking.flag('low-charge');
+  // See Api: Low charge text message triggers #495 & #961
+  if (car.averageCharge() < 7 && !booking.isFlagged('low-2')) {
+    yield booking.flag('low-2');
+    yield notify.sendTextMessage(user, "Hi, you're WaiveCar is getting dangerously low on charge! If it runs out of juice, we'll have to tow it at your expense! Please call us at this number and we'll direct you to the nearest charger.");
+    yield notify.notifyAdmins(`:interrobang: ${ user.link() } is persisting and is now disastrously low with ${ car.info() }, oh dear. ${ car.chargeReport() }. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
 
+  } else if (car.averageCharge() < 14 && !booking.isFlagged('low-1')) {
+    yield booking.flag('low-1');
+    yield notify.sendTextMessage(user, "Hi, you're WaiveCar is getting really low. Please call us and we can help you get to a charger.");
+    yield notify.notifyAdmins(`:small_red_triangle: ${ user.link() } is continuing to drive ${ car.info() } to an even lower charge. ${ car.chargeReport() }. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
+
+  } else if (car.averageCharge() < 21 && !booking.isFlagged('low-0')) {
+    yield booking.flag('low-0');
     yield notify.sendTextMessage(user, config.notification.reasons['LOW_CHARGE']);
-    yield notify.notifyAdmins(`:battery: ${ user.name() } has driven ${ car.info() } to a low charge. ${ car.chargeReport() }. ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+    yield notify.notifyAdmins(`:battery: ${ user.link() } has driven ${ car.info() } to a low charge. ${ car.chargeReport() }. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
   }
 
   // Log position
