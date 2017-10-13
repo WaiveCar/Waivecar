@@ -1,4 +1,5 @@
 'use strict';
+let apiConfig   = Bento.config.api;
 
 let queue = Bento.provider('queue');
 
@@ -16,10 +17,6 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       }
     },
 
-    /**
-     * The id of the car used in the booking.
-     * @type {String}
-     */
     carId : {
       type       : Sequelize.STRING(28),
       allowNull  : false,
@@ -29,18 +26,10 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       }
     },
 
-    /**
-     * The cart that has been created for the booking.
-     * @type {String}
-     */
     cartId : {
       type : Sequelize.STRING
     },
 
-    /**
-     * Booking comments.
-     * @type {Text}
-     */
     comments : {
       type : Sequelize.TEXT()
     },
@@ -81,11 +70,6 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
 
   };
 
-  /**
-   * The relation definitions of your model.
-   * @property relations
-   * @type     Array
-   */
   model.relations = [
     'BookingDetails',
     'BookingPayment',
@@ -124,6 +108,10 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
      */
     getStatus() {
       return this.status.replace('-', ' ');
+    },
+
+    link() {
+      return `<${ apiConfig.uri }/bookings/${ this.id }|Booking ${ this.id }>`;
     },
 
     getFlags() {

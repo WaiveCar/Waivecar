@@ -1,4 +1,5 @@
 'use strict';
+let apiConfig   = Bento.config.api;
 
 Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
 
@@ -142,6 +143,10 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
 
     name() {
       return `${ this.firstName } ${ this.lastName }`;
+    },
+
+    link() {
+      return `<${ apiConfig.uri }/users/${ this.id }|${ this.name() }>`;
     },
 
     // This is used mostly in slack messages ... it emits the users phone number 
