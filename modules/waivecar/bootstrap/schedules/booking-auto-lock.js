@@ -51,6 +51,9 @@ scheduler.process('booking-auto-lock', function *(job) {
     if (!car.is_key_secure) {
       reason.push("key isn't in holder");
     }
+    if(!car.is_door_open) {
+      reason.push("doors are open or ajar");
+    }
 
     if(reason.length) {
       reason = 'reason(s): ' + reason.join(', ');
@@ -58,10 +61,9 @@ scheduler.process('booking-auto-lock', function *(job) {
       reason = 'reason unknown (ignition is off, doors are locked, and the key is in the holder)'; 
     }
 
-
     yield cars.lockCar(car.id);
 
-    yield notify.notifyAdmins(`:closed_lock_with_key: ${ user.name() }'s booking with ${ car.info() } was automaticaly locked and needs manual review | ${ reason } ${ config.api.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+    yield notify.notifyAdmins(`:closed_lock_with_key: ${ user.link() }'s booking with ${ car.info() } was automaticaly locked and needs manual review | ${ reason } ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
   }
 });
 
