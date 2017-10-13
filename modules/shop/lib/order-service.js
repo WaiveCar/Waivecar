@@ -87,9 +87,9 @@ module.exports = class OrderService extends Service {
       charge = yield this.charge(order, user);
 
       if(data.amount > 0) {
-        yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.name() } $${ data.amount / 100 } for ${ data.description } | ${ apiConfig.uri }/users/${ user.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+        yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.link() } $${ data.amount / 100 } for ${ data.description }`, [ 'slack' ], { channel : '#rental-alerts' });
       } else if(data.amount < 0) {
-        yield notify.notifyAdmins(`:money_with_wings: ${ _user.name() } *credited* ${ user.name() } $${ -data.amount / 100 } for ${ data.description } | ${ apiConfig.uri }/users/${ user.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+        yield notify.notifyAdmins(`:money_with_wings: ${ _user.name() } *credited* ${ user.link() } $${ -data.amount / 100 } for ${ data.description }`, [ 'slack' ], { channel : '#rental-alerts' });
       } else {
         charge.amount = charge.amount || 0;
         charge = `$${ charge.amount / 100 }`;
@@ -153,7 +153,7 @@ module.exports = class OrderService extends Service {
 
     try {
       yield this.charge(order, user);
-      yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.name() } $${ amountInCents / 100 } for ${ data.description } | ${ apiConfig.uri }/bookings/${ data.bookingId }`, [ 'slack' ], { channel : '#rental-alerts' });
+      yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.link() } $${ amountInCents / 100 } for ${ data.description } | ${ apiConfig.uri }/bookings/${ data.bookingId }`, [ 'slack' ], { channel : '#rental-alerts' });
 
       yield hooks.call('shop:store:order:after', order, payload, _user);
     } catch (err) {
@@ -208,9 +208,8 @@ module.exports = class OrderService extends Service {
       return true;
     }
 
-    // Don't charge the waivework users 
-    // for going over 2 hours.
-    if(user.isWaiveWork) {
+    // Don't charge the waivework users or admins for going over 2 hours.
+    if(user.isWaiveWork || user.isAdmin()) {
       return true;
     }
 
@@ -271,7 +270,7 @@ module.exports = class OrderService extends Service {
 
     try {
       yield this.charge(order, user);
-      yield notify.notifyAdmins(`:moneybag: Charged ${ user.name() } $${ amount / 100 } for ${ minutesOver } minutes | ${ apiConfig.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+      yield notify.notifyAdmins(`:moneybag: Charged ${ user.link() } $${ amount / 100 } for ${ minutesOver } minutes | ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
       log.info(`Charged user for time driven : $${ amount / 100 } : booking ${ booking.id }`);
     } catch (err) {
       yield this.failedCharge(amount, user, err, ` | ${ apiConfig.uri }/bookings/${ booking.id }`);
@@ -703,7 +702,7 @@ module.exports = class OrderService extends Service {
     log.warn(`Failed to charge user: ${ user.id }`, err);
     let amountInDollars = (amountInCents / 100).toFixed(2);
     extra = extra || '';
-    yield notify.notifyAdmins(`:lemon: Failed to charge ${ user.name() } $${ amountInDollars }: ${ err } ${ extra }`, [ 'slack' ], { channel : '#rental-alerts' });
+    yield notify.notifyAdmins(`:lemon: Failed to charge ${ user.link() } $${ amountInDollars }: ${ err } ${ extra }`, [ 'slack' ], { channel : '#rental-alerts' });
 
     // We need to communicate that there was a potential charge + a potential 
     // balance that was attempted to be cleared.  This email can cover all 3
