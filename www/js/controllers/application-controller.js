@@ -134,7 +134,7 @@ function ApplicationController ($rootScope, $scope, $injector) {
     }
   }
 
-  NotificationService.refreshDeviceToken();
+
   IntercomService.setLauncherVisibility();
 
   $rootScope.$on('authLogin', function () {
@@ -142,11 +142,14 @@ function ApplicationController ($rootScope, $scope, $injector) {
       initLocation();
       $ride.init();
       myState();
+
+      NotificationService.setupPushNotifications();
       IntercomService.registerIdentifiedUser($auth.me);
     }
   });
 
   if ($auth.isAuthenticated()) {
+    NotificationService.setupPushNotifications();
     initLocation();
     $auth.loadSession().then(function(me) {
       IntercomService.registerIdentifiedUser(me);
