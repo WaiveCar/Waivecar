@@ -1,4 +1,5 @@
 /* global window */
+/* global ionic */
 'use strict';
 var angular = require('angular');
 require('./data-service');
@@ -31,7 +32,7 @@ function NotificationService($data, $modal) {
     });
   }
 
-  this.setupPushNotifications = function () {
+  function subscribeToTokenChange() {
     window.FirebasePlugin.onTokenRefresh(function(token) {
       console.log("TOKEN" + token);
 
@@ -45,13 +46,30 @@ function NotificationService($data, $modal) {
     }, function(error) {
       console.error(error);
     });
+  }
+
+  this.setupPushNotifications = function () {
+
+    if (ionic.Platform.isIOS()) {
+      window.FirebasePlugin.grantPermission(function() {
+        subscribeToTokenChange();
+      });
+    } else {
+      subscribeToTokenChange();
+    }
+
+
 
     window.FirebasePlugin.onNotificationOpen(function(notification) {
 
       /*collapse_key: "com.waivecar.app" from: "1000758502524" google.message_id : "0:1507813040297820%dd2e9ac6dd2e9ac6" google.sent_time:1507813040289 tap:true   */
 
       if (!notification.tap) {
-        showPushNotificationModal(notification.body);
+        var body = notification.body;
+        if (notification.aps && notification.aps.alert) {
+          body = notification.aps.alert.body;
+        }
+        showPushNotificationModal(body);
       }
       console.log(notification);
     }, function(error) {
