@@ -31,10 +31,10 @@
           <button ng-if="ctrl.isExtended" type="button" class="button button-small" >extended</button>
         </div>
         <div class="row" style="height: 100%;">
-          <div class="col col-50 car-image" style="background-image: url(img/car.jpg);"></div>
+          <div class="col col-50 car-image" style="background-image:url({{ ctrl.car.image }});"></div>
           <div class="col">
 
-            <div class="title">Chevy Spark EV</div>
+            <div class="title">{{ ctrl.car.make }} {{ ctrl.car.model }}</div>
             <div class="license" ng-bind="ctrl.car.license"></div>
             <div class="line"></div>
 
