@@ -92,7 +92,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   function loadCar(id) {
     $data.resources.cars.get({ id: id }).$promise.then(function(car) {
       ctrl.car = car;
-      ctrl.car.image = "https://waive.car/images/cars/" + ctrl.car.model.toLowerCase().split(' ')[0] + "_384.png";
+      ctrl.car.image = 'https://waive.car/images/cars/' + ctrl.car.model.toLowerCase().split(' ')[0] + '_384.png';
 
       if (car.lastBooking) {
         var end = _.find(car.lastBooking.details, { type: 'end' });
