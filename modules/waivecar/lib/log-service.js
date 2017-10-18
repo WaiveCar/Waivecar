@@ -23,6 +23,7 @@ class LogService {
     } else {
       payload.actorId = 0;
     }
+    log.actorId = payload.actorId;
     payload.t = new Date();
 
     fs.appendFileSync('/var/log/invers/log.txt', JSON.stringify(payload) + "\n");
