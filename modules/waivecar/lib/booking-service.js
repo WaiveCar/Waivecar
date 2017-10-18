@@ -534,7 +534,7 @@ module.exports = class BookingService extends Service {
     let car     = yield this.getCar(booking.carId);
     let user    = yield this.getUser(booking.userId);
     let warnings = [];
-    let isAdmin = _user.hasAccess('admin');
+    let isAdmin = _user.isAdmin();
 
     this.hasAccess(user, _user);
 
@@ -605,7 +605,6 @@ module.exports = class BookingService extends Service {
 
     // Sets the car connected to the booking on a 5 minute auto lock timer.
     yield booking.setAutoLock();
-    // yield cars.closeDoor(car.id, _user);
 
     // ### Reset Car
     yield car.removeDriver();
@@ -615,7 +614,7 @@ module.exports = class BookingService extends Service {
     // Create a shop cart with automated fees.
     yield fees.create(booking, car, _user);
 
-    // ### End Booking
+    // End Booking
     yield booking.delReminders();
     yield booking.delForfeitureTimers();
     yield booking.end();
@@ -626,9 +625,9 @@ module.exports = class BookingService extends Service {
 
     let deltas = yield this.getDeltas(booking);
 
-    // ### Handle auto charge for time
+    // Handle auto charge for time
     if (!isAdmin) {
-      yield this.handleTimeCharge(booking, user);
+      yield OrderService.createTimeOrder(booking, user);
 
     } else if(deltas.duration > 120) {
       yield notify.slack({ text : `:umbrella: Booking ended by admin. Time driven was over 2 hours. ${ Bento.config.web.uri }/bookings/${ id }`
@@ -694,10 +693,9 @@ module.exports = class BookingService extends Service {
     // One car, Waive17 had a bug where it wasn't reporting the odometer increasing. This caused a false positive report here. So we've added
     // a second check, to see if the car's GPS from the start of the ride and the end of the ride are dramatically different from each other.
     // 
-
     if(deltas.duration > 10 && deltas.distance === 0 && !deltas.hasMoved) {
       yield UserLog.addUserEvent(user, 'SIT', booking.id, deltas.duration);
-      yield notify.slack({ text : `:popcorn: ${ user.name() } drove 0 miles for ${ deltas.duration } minutes. ${ car.info() } | ${ user.info() } | ${ Bento.config.web.uri }/users/${ user.id }`
+      yield notify.slack({ text : `:popcorn: ${ user.link() } drove 0 miles for ${ deltas.duration } minutes. ${ car.info() } | ${ user.info() }`
       }, { channel : '#user-alerts' });
     }
   
@@ -788,7 +786,7 @@ module.exports = class BookingService extends Service {
 
     if(process.env.NODE_ENV === 'production') {
       if (car.isIgnitionOn) { errors.push('turn off the ignition'); }
-      if (!car.isKeySecure) { errors.push('secure the cey'); }
+      if (!car.isKeySecure) { errors.push('secure the key'); }
       if (car.isDoorOpen) { errors.push('make sure the doors are closed');}
     }
       
@@ -1002,17 +1000,7 @@ module.exports = class BookingService extends Service {
     }
   }
 
-  /**
-   * Creates order if booking requires automatic charge for time driven
-   * @param {Object} booking
-   * @param {Object} user
-   */
-  static *handleTimeCharge(booking, user) {
-    yield OrderService.createTimeOrder(booking, user);
-  }
-
   // ### HELPERS
-
   static *relay(type, booking, _user) {
     let payload = {
       type : type,
