@@ -62,8 +62,8 @@ module.exports = class BookingService extends Service {
     yield driver.update({state: state});
     relay.user(driver.id, 'User', {type: 'update', data: driver.toJSON()});
     return (_user.id === driver.id) ?
-      `${ _user.name() } ${ state } ` :
-      `${ _user.name() } ${ state } for ${ driver.name() }`;
+      `${ _user.link() } ${ state } ` :
+      `${ _user.name() } ${ state } for ${ driver.link() }`;
   }
 
   /**
@@ -415,7 +415,7 @@ module.exports = class BookingService extends Service {
       if(yield OrderService.extendReservation(booking, user)) {
         yield booking.flag('extended');
         yield notify.sendTextMessage(user, `Your WaiveCar reservation has been extended 10 minutes.`);
-        yield notify.notifyAdmins(`:clock1: ${ user.name() } extended their reservation with ${ car.info() } by 10 minutes.`, [ 'slack' ], { channel : '#reservations' });
+        yield notify.notifyAdmins(`:clock1: ${ user.link() } extended their reservation with ${ car.info() } by 10 minutes.`, [ 'slack' ], { channel : '#reservations' });
         booking.relay('update');
       } else {
         err = "Unable to charge $1.00 to your account. Reservation extension failed.";
@@ -501,7 +501,7 @@ module.exports = class BookingService extends Service {
       // ### Notify
 
       let message = yield this.updateState('started', _user, user);
-      yield notify.notifyAdmins(`:octopus: ${ message } | ${ car.info() } ${ car.averageCharge() }% ${ user.info() }`, [ 'slack' ], { channel : '#reservations' });
+      yield notify.notifyAdmins(`:octopus: ${ message } | ${ car.info() } ${ car.averageCharge() }% `, [ 'slack' ], { channel : '#reservations' });
       if (user.isWaivework){
         yield notify.sendTextMessage(user, `Thanks for using WaiveWork! Your booking has started.`);
       }
@@ -514,7 +514,7 @@ module.exports = class BookingService extends Service {
       car.relay('update');
       yield this.relay('update', booking, _user);
     } else {
-      yield notify.notifyAdmins(`:timer_clock: ${ user.name() } started a booking when it was being canceled. This was denied. ${ car.info() }.`, [ 'slack' ], { channel : '#reservations' });
+      yield notify.notifyAdmins(`:timer_clock: ${ user.link() } started a booking when it was being canceled. This was denied. ${ car.info() }.`, [ 'slack' ], { channel : '#reservations' });
     }
   }
 
@@ -695,7 +695,7 @@ module.exports = class BookingService extends Service {
     // 
     if(deltas.duration > 10 && deltas.distance === 0 && !deltas.hasMoved) {
       yield UserLog.addUserEvent(user, 'SIT', booking.id, deltas.duration);
-      yield notify.slack({ text : `:popcorn: ${ user.link() } drove 0 miles for ${ deltas.duration } minutes. ${ car.info() } | ${ user.info() }`
+      yield notify.slack({ text : `:popcorn: ${ user.link() } drove 0 miles for ${ deltas.duration } minutes. ${ car.info() }`
       }, { channel : '#user-alerts' });
     }
   
@@ -842,7 +842,7 @@ module.exports = class BookingService extends Service {
     // The user should be seeing cars to rent now.
     let message = yield this.updateState('completed', _user, user);
     yield notify.sendTextMessage(user, `Thanks for renting with WaiveCar! Your rental is complete. You can see your trip summary in the app.`);
-    yield notify.slack({ text : `:coffee: ${ message } | ${ car.info() } | ${ booking.link()}`
+    yield notify.slack({ text : `:coffee: ${ message } | ${ car.info() } | ${ booking.link() }`
     }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
 
@@ -966,7 +966,7 @@ module.exports = class BookingService extends Service {
     }
 
     if (!isPaired) {
-      yield notify.notifyAdmins(`:airplane: Location check failed on <${ apiConfig.uri }/bookings/${ id }|booking ${ id }>. <${ apiConfig.uri }/users/${ user.id }|${ user.name() }> is ${ (0.000621371 * distance).toFixed(2) }mi from the car`, [ 'slack' ], { channel : '#rental-alerts' });
+      yield notify.notifyAdmins(`:airplane: Location check failed on ${ booking.link() }. ${ user.link() }> is ${ (0.000621371 * distance).toFixed(2) }mi from the car`, [ 'slack' ], { channel : '#rental-alerts' });
     }
 
     return { isPaired: isPaired };
@@ -1146,7 +1146,7 @@ module.exports = class BookingService extends Service {
         yield UserLog.addUserEvent(user, 'HOLDING', holder.id, holder.name());
         yield UserLog.addUserEvent(holder, 'HOLDING', user.id, user.name());
 
-        yield notify.notifyAdmins(`:dark_sunglasses: ${ holder.name() } | ${ holder.info() } may have been holding a car for ${ user.name() } | ${ user.info() }.`,
+        yield notify.notifyAdmins(`:dark_sunglasses: ${ holder.link() } may have been holding a car for ${ user.link() }.`,
            [ 'slack' ], { channel : '#user-alerts' });
       }
     }
