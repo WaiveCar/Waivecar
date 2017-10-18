@@ -22,12 +22,15 @@ get_device() {
 }
 
 nvmcheck() {
-  which node > /dev/null
-  if [ ! $? ]; then
-    version=`node --version`
-    [ "$version" == $NODE_VERSION ] && return
+  version=`node --version`
+  if [ "$version" != $NODE_VERSION ]; then
+    . "$HOME/.nvm/nvm.sh"
+    nvm use $NODE_VERSION
+    if [ ! $? ]; then
+      echo "Can't find nvm node version $NODE_VERSION"
+      exit 1
+    fi
   fi
-  . "$HOME/.nvm/nvm.sh"
 }
 
 log() {
@@ -64,6 +67,7 @@ build() {
   done
 
   cp -up misc/build-extras.gradle platforms/android
+  node --version
   $DBG ionic build android
 }
  
