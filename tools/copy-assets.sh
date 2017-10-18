@@ -1,2 +1,2 @@
 #!/bin/bash
-cp -vr app/images /opt/waivecar-web/images/
+sudo cp -puvr app/images/* /opt/waivecar-web/images/
