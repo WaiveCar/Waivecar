@@ -488,6 +488,13 @@ module.exports = {
     return null;
   },
 
+  logStatus(status, id, misc) {
+    status.id = id;
+    status.t = new Date();
+    status._misc = misc;
+    fs.appendFileSync('/var/log/invers/log.txt', JSON.stringify(status) + "\n");
+  },
+
   /**
    * Returns a single car device from Invers.
    * @param  {Object} query
@@ -504,10 +511,7 @@ module.exports = {
       this._errors[id] = 0;
       if (status) {
 
-        status.id = id;
-        status.t = new Date();
-        status.src = source;
-        fs.appendFileSync('/var/log/invers/log.txt', JSON.stringify(status) + "\n");
+        this.logStatus(status, id, source);
 
         return this.transformDeviceToCar(id, status);
       }
@@ -623,6 +627,7 @@ module.exports = {
       let status     = yield this.request(`/devices/${ id }/status`, {
         method : 'PATCH'
       }, payload);
+      this.logStatus(status, id, payload);
       updatedCar = this.transformDeviceToCar(id, status);
     } else {
       updatedCar = existingCar;
