@@ -941,8 +941,7 @@ module.exports = class BookingService extends Service {
 
     let carLocations = yield Location.find(params);
 
-    let carLocationsWithNearestInTimeUserLocation = carLocations.map(location => {
-
+    let carLocationsWithNearestInTimeUserLocation = carLocations.map(location => { 
       let closestUserLocation = _.min( userLocations.map(userLocation => {
         return {
           userLocation: userLocation,
@@ -955,7 +954,10 @@ module.exports = class BookingService extends Service {
     });
 
     let closestLocations = _.min(carLocationsWithNearestInTimeUserLocation, "timeDiff");
-    let isPaired = false;
+    // we start with this set to true in case we don't have 
+    // any matches so we don't get of false positives.
+    let isPaired = true;
+
     var distance = 0;
     var distanceError;
 
