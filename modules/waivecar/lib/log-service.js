@@ -19,10 +19,11 @@ class LogService {
     let log = new Log(payload);
 
     if (_user) {
-      log.actorId = _user.id;
+      payload.actorId = _user.id;
     } else {
-      log.actorId = 0;
+      payload.actorId = 0;
     }
+    payload.t = new Date();
 
     fs.appendFileSync('/var/log/invers/log.txt', JSON.stringify(payload) + "\n");
 
