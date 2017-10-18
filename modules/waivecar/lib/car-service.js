@@ -667,6 +667,9 @@ module.exports = {
     if (! ('fuel_leve' in data) ) {
       data['fuel_level'] = 89;
     }
+    if (! ('keyfob' in data) ) {
+      data['keyfob'] = 'in';
+    }
 
     let car = {
       id                            : id,
