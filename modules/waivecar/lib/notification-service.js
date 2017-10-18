@@ -21,7 +21,6 @@ function log_message(type, what) {
 
   try {
     fs.appendFileSync('/var/log/outgoing/log.txt', JSON.stringify(what) + "\n");
-    fs.appendFileSync('/var/log/invers/log.txt', JSON.stringify(what) + "\n");
   } catch (err) {
     log.warn(`Failed to write to the log file: ${ err.message }`);
   }
