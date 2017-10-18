@@ -664,7 +664,7 @@ module.exports = {
 
     // if we don't have a fuel level, we default to 89 ... this should
     // be eventually removed 
-    if (! ('fuel_leve' in data) ) {
+    if (! ('fuel_level' in data) ) {
       data['fuel_level'] = 89;
     }
     if (! ('keyfob' in data) ) {
