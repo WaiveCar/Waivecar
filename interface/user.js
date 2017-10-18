@@ -35,10 +35,6 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
     // to mark what modules are dependent on the value so you know if its safe
     // to remove it or not inside of your setup.
 
-    /**
-     * Users phone number, user for SMS and identification purposes.
-     * @type {String}
-     */
     phone : {
       type   : Sequelize.STRING(128),
       unique : true
@@ -132,10 +128,6 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
   // A list of blacklisted public values.
   model.blacklist = [ 'password' ];
 
-  /**
-   * A list of custom model methods.
-   * @type {Object}
-   */
   model.methods = {
 
     // ### Required Methods
@@ -185,6 +177,10 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
         return check.position <= auth.position;
       } catch (ex) { }
       return false;
+    },
+
+    isAdmin() {
+      return this.hasAccess('admin');
     },
 
     isActive() {
