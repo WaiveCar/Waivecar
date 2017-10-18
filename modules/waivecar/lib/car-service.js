@@ -656,6 +656,13 @@ module.exports = {
    * @return {Object}      WaiveCar car model
    */
   transformDeviceToCar(id, data) {
+
+    // if we don't have a fuel level, we default to 89 ... this should
+    // be eventually removed 
+    if (! ('fuel_leve' in data) ) {
+      data['fuel_level'] = 89;
+    }
+
     let car = {
       id                            : id,
       lockLastCommand               : data['central_lock_last_command'],
