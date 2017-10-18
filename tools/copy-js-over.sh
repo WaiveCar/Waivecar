@@ -2,6 +2,10 @@
 # This is run on the production machines.  The
 # new versions of the js should be in web-js/new
 set -x
+if [ ! -e web.js ]; then 
+  echo 'This is probably not supposed to be run from here.'
+  exit -1
+fi
 cd web-js
 
 goforward() {
