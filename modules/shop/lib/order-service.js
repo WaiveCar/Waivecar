@@ -184,7 +184,7 @@ module.exports = class OrderService extends Service {
     yield order.save();
     try {
       yield this.charge(order, user);
-      yield notify.notifyAdmins(`:moneybag: Charged ${ user.name() } $1.00 for a reservation extension | ${ apiConfig.uri }/bookings/${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
+      yield notify.notifyAdmins(`:moneybag: Charged ${ user.link() } $1.00 for a reservation extension | ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
     } catch (err) {
       yield this.failedCharge(amount, user, err, ` | ${ apiConfig.uri }/bookings/${ booking.id }`);
       return false;
