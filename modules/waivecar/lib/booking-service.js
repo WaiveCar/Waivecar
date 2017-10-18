@@ -198,7 +198,7 @@ module.exports = class BookingService extends Service {
     yield notify.sendTextMessage(driver, `Hi There! Your WaiveCar reservation with ${ car.license } has been confirmed. You'll have 15 minutes to get to your WaiveCar before your reservation expires. Let us know if you have any questions.`);
 
     let message = yield this.updateState('created', _user, driver);
-    yield notify.notifyAdmins(`:musical_keyboard: ${ message } | ${ car.info() } ${ car.averageCharge() }% ${ driver.info() }`, [ 'slack' ], { channel : '#reservations' });
+    yield notify.notifyAdmins(`:musical_keyboard: ${ message } | ${ car.info() } ${ car.averageCharge() }%`, [ 'slack' ], { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : driver.id, action : Actions.CREATE_BOOKING }, _user);
 
     return booking;
@@ -700,7 +700,7 @@ module.exports = class BookingService extends Service {
     }
   
     let message = yield this.updateState('ended', _user, user);
-    yield notify.slack(parkingSlack || { text : `:cherries: ${ message } | ${ car.info() } ${ car.averageCharge() }% ${ user.info() }`
+    yield notify.slack(parkingSlack || { text : `:cherries: ${ message } | ${ car.info() } ${ car.averageCharge() }%`
     }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.END_BOOKING }, _user);
 
@@ -906,11 +906,11 @@ module.exports = class BookingService extends Service {
     // We consider a cancellation as effectively a reset
     yield this.updateState('completed', _user, user);
     let message = (_user.id === user.id) ?
-      `${ _user.name() } cancelled ` :
-      `${ _user.name() } cancelled for ${ user.name() }`;
+      `${ _user.link() } cancelled ` :
+      `${ _user.name() } cancelled for ${ user.link() }`;
 
     yield notify.sendTextMessage(user, `Your WaiveCar reservation has been cancelled.`);
-    yield notify.slack({ text : `:pill: ${ message } | ${ car.info() } ${ user.info() }`
+    yield notify.slack({ text : `:pill: ${ message } | ${ car.info() }`
     }, { channel : '#reservations' });
   }
 
