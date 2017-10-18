@@ -26,9 +26,6 @@ let icons = [
 
 module.exports = class GMap extends React.Component {
 
-  /**
-   * @constructor
-   */
   constructor(...args) {
     super(...args);
     this.map = null;
@@ -38,9 +35,7 @@ module.exports = class GMap extends React.Component {
     this.clearMarkers = this.clearMarkers.bind(this);
   }
 
-  /**
-   * Creates a new skobbler map and adds it to the current map state.
-   */
+  // Creates a new skobbler map and adds it to the current map state.
   componentDidMount() {
     this.loadMap();
   }
@@ -90,9 +85,6 @@ module.exports = class GMap extends React.Component {
     }
   }
 
-  /**
-   * Prepares a list of markers.
-   */
   prepareMarkers(rawMarkers) {
 
     if (!this.map) {
@@ -135,8 +127,7 @@ module.exports = class GMap extends React.Component {
 
     polyline.setMap(this.map);
 
-  };
-
+  }
 
   getUser(next) {
     if (!(this.props.includeUser && navigator)) {
@@ -173,8 +164,6 @@ module.exports = class GMap extends React.Component {
   }
 
   getPath(rawPath) {
-
-
     return rawPath.map((val) => {
       return {
         lat: val[0],
@@ -205,6 +194,7 @@ module.exports = class GMap extends React.Component {
 
     let markerIcon = this.getMarkerIcon();
     markers.forEach((val) => {
+      console.log(val);
       if (val.license) {
         markerIcon = this.getMarkerIcon(val.license);
       } else if (val.type) {
@@ -253,10 +243,6 @@ module.exports = class GMap extends React.Component {
     });
   }
 
-  /**
-   * Returns leaflet marker icon.
-   * @return {Object}
-   */
   getMarkerIcon(name) {
     return {
       url        : name && icons.indexOf(name) !== -1 ? `/images/map/icon-${ name }.svg` : this.props.markerIcon,

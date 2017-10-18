@@ -27,6 +27,7 @@ class ResetPasswordView extends React.Component {
   }
 
   step() {
+    console.log(new Date(), this.state.step);
     switch (this.state.step) {
       case 1 : return this.renderTokenRequest();
       case 2 : return this.renderTokenInput();
@@ -79,6 +80,8 @@ class ResetPasswordView extends React.Component {
       this.setState({
         step  : 2
       });
+      console.log(new Date(), "HERE");
+      this.forceUpdate();
     });
   }
 
@@ -99,7 +102,7 @@ class ResetPasswordView extends React.Component {
             }
           ]}
           submit = { this.inputToken }
-        />
+        /> 
         <div className="token-request">
           <button type="button" className="r-btn btn-login" onClick={ this.inputToken }>Submit token</button>
         </div>
