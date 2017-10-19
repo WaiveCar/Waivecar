@@ -65,7 +65,7 @@ module.exports = {
 
   *sendPushNotification(query, message) {
     let user = false;
-    if(Number.isInteger(query)) {
+    if(Number.isInteger(query) || typeof query === 'string') {
       user = yield User.findById(query);
     } else {
       user = query;
@@ -76,17 +76,19 @@ module.exports = {
 
     log_message('push', {deviceToken: user.deviceToken, text: message});
 
-    if (user.deviceToken && process.env.NODE_ENV === 'production') {
+    if (user.deviceToken) {
       try {
 
         fcm.send({
             to: user.deviceToken,
+            priority: "high",
             notification: {
               title: 'Waivecar',
-              body: message
+              body: message,
+              sound: "default"
             }
           },
-          function(err){
+          function(err, res){
             if (err) {
               log.warn(`Failed to send push notification to ${ user.name() } > ${ err.message }`);
             }
