@@ -64,6 +64,8 @@ Route.get('/locations/dropoff', 'LocationsController@dropoff');
 
 Route.post('/notify', [ 'isAuthenticated', 'NotificationsController@send' ]);
 Route.post('/refresh-device-token', [ 'isAuthenticated', 'NotificationsController@refreshDeviceToken' ]);
+Route.get('/send-test-push/:id', 'NotificationsController@sendTestPush');
+
 
 // ### Sms Handlers
 

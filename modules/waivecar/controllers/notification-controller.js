@@ -32,6 +32,13 @@ Bento.Register.Controller('NotificationsController', function(controller) {
     });
   };
 
+  controller.sendTestPush = function *(to) {
+
+    if (process.env.NODE_ENV !== 'production') {
+      yield notify.sendPushNotification(to, this.query.message);
+    }
+  };
+
   /**
    * Handle an sms notification using provided reason.
    * @param {Object} user
