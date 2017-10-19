@@ -73,7 +73,6 @@ module.exports = class GMap extends React.Component {
    * @param {Object} props
    */
   componentWillReceiveProps(nextProps) {
-
     console.log("componentWillReceiveProps ");
 
     if (nextProps.markers) {
@@ -86,7 +85,6 @@ module.exports = class GMap extends React.Component {
   }
 
   prepareMarkers(rawMarkers) {
-
     if (!this.map) {
       return;
     }
@@ -109,7 +107,6 @@ module.exports = class GMap extends React.Component {
   }
 
   preparePath(rawPath) {
-
     if (!this.map) {
       return;
     }
@@ -126,7 +123,6 @@ module.exports = class GMap extends React.Component {
     });
 
     polyline.setMap(this.map);
-
   }
 
   getUser(next) {
@@ -173,7 +169,6 @@ module.exports = class GMap extends React.Component {
   }
 
   centerPosition(markers) {
-
     if (markers.length > 1) {
       var bounds = new google.maps.LatLngBounds();
       markers.forEach((val) => {
@@ -185,62 +180,80 @@ module.exports = class GMap extends React.Component {
     }
   }
 
+  getImportanceIcon(importance) {
+    return {
+      url        : `/images/map/icon-default-${ importance }.svg`,
+      scaledSize : new google.maps.Size( (1.75 * importance + 6) * 3, (1.75 * importance + 7) * 4 ),
+      anchor     : new google.maps.Point(8, 20 ),
+      origin     : new google.maps.Point(-1, -3),
+      title      : "importance"
+    };
+  }
 
   addMarkers(markers) {
     if (!markers) {
       return;
     }
 
-
     let markerIcon = this.getMarkerIcon();
+    let ix = 0;
     markers.forEach((val) => {
-      console.log(val);
+      var importance = 0, label = '';
       if (val.license) {
-        markerIcon = this.getMarkerIcon(val.license);
+        label = val.license.replace(/[^\d]*/, '');
+        if (val.charge < 25 && !val.isCharging) {
+          importance++;
+        }
+        if (val.charge < 15 && !val.isCharging) {
+          importance++;
+        }
+        if(val.booking && val.user && !val.user.isWaivework) {
+          if( moment.utc().diff(moment(val.booking[0].createdAt) ) / 1000 / 3600 > 3 ) {
+            importance++;
+          }
+        }
+
+        markerIcon = this.getImportanceIcon(importance);
       } else if (val.type) {
         markerIcon = this.getMarkerIcon(val.type);
       } else if (val.icon) {
-       markerIcon = val.icon;
+        markerIcon = val.icon;
       }
 
-
-      var gmapMarker = new google.maps.Marker({
+      var marker = new google.maps.Marker({
         map: this.map,
         position: new google.maps.LatLng(val.lat, val.long),
-        icon: markerIcon
+        label: {
+          fontSize: (9 + (1.3 * importance)) + 'px',
+          color: 'rgba(0,0,0,' + (importance / 5 + 0.6) + ')',
+          text: label,
+          zIndex: importance * 100 + ix
+        },
+        icon: markerIcon,
+        zIndex: importance * 100 + ix
       });
 
-      this.markers.push(gmapMarker);
+      ix++;
+      if(val.license) {
+        marker.addListener('click', function() { 
+          window.location = '/cars/' + val.id;
+        });
+      }
 
+      if (val.license) {
+        marker.license = val.id;
+      }
 
+      this.markers.push(marker);
     });
   }
 
-  /**
-   * Clears any added marker from the map.
-   */
   clearMarkers() {
     this.markers.forEach(function (marker) {
       marker.setMap(null);
     });
 
     this.markers = [];
-  }
-
-  /**
-   * Adds a marker click handler to the provided marker.
-   * @param {Object} marker
-   * @param {String} id
-   */
-  addMarkerClick(marker, id) {
-    let handler = this.props.markerHandler;
-    let key     = this.props.markerHandlerKey || 'id';
-    let data    = {};
-    data[key]   = id;
-    marker.on('mousedown', function(e) {
-      console.log('moused down');
-      handler(data);
-    });
   }
 
   getMarkerIcon(name) {
@@ -252,9 +265,6 @@ module.exports = class GMap extends React.Component {
     };
   }
 
-  /**
-   * @render
-   */
   render() {
     return (
       <div className="map-wrapper animated fadeIn">
