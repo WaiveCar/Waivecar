@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 import colorsys
-start = [0xe2, 0xe2, 0xe2]
-end = [0x20, 0xE2, 0x5C]
-grades = 4
+start = [0xff, 0xff, 0xff]
+end = [0x20, 0xff, 0x3C]
+grades = 3
 
-brighter = '#20E25C'
-darker = '#FFFFFF'
+darker = '#20E25C'
+brighter = '#FFFFFF'
 
 icon = ''
 with open('icon-default.svg', 'r') as myfile:
@@ -21,7 +21,7 @@ for y in range(0, grades + 1):
     hsv = [(end_hsv[x] - start_hsv[x]) * ((y) / grades) + start_hsv[x] for x in range(0, len(start))]
     hsv[0] = end_hsv[0]
     rgb_brighter = rgb2hex(colorsys.hsv_to_rgb(*[x for x in hsv]))
-    hsv[2] *= 0.7
+    hsv[2] *= 0.8
     rgb_darker = rgb2hex(colorsys.hsv_to_rgb(*[x for x in hsv]))
     
     with open('icon-default-{}.svg'.format(y), 'w') as myfile:
