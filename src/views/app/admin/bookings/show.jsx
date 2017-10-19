@@ -7,6 +7,7 @@ import BookingDetails          from './details';
 import { snackbar }         from 'bento-web';
 import NotesList from '../components/notes/list';
 import UserLicense from '../users/user-license';
+import moment            from 'moment';
 
 module.exports = class BookingsView extends React.Component {
 
@@ -19,9 +20,10 @@ module.exports = class BookingsView extends React.Component {
     super(...args);
     this.state = {
       isActing : false,
+      force    : false,
       error    : null,
       items    : [],
-      carPath : []
+      carPath  : []
     };
     relay.subscribe(this, 'bookings');
   }
@@ -58,8 +60,6 @@ module.exports = class BookingsView extends React.Component {
       }
       this.bookings.store(booking);
     });
-
-
   }
 
   loadCarPath(id) {
@@ -85,6 +85,10 @@ module.exports = class BookingsView extends React.Component {
         isActing : false
       });
       if (err) {
+        // display the force button next to the action button (#964)
+        this.setState({
+          force: action
+        });
         if (action === 'end' || action === 'complete') {
           snackbar.notify({
             type    : 'danger',
@@ -197,11 +201,16 @@ module.exports = class BookingsView extends React.Component {
       }
     }
 
+    var force = ""; 
+    if (this.state.force) {
+      force = <button type="button" onClick={ () => { this.update(this.statae.force, true) } } className="btn btn-link">force</button>
+    }
     if (action) {
       return (
         <div className="row">
           <div className="col-xs-12 booking-actions text-center">
             { action }
+            { force }
           </div>
         </div>
       );

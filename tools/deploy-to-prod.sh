@@ -1,13 +1,17 @@
 #!/bin/bash
 
+NODE_VERSION=v6.11.4
 # This is copied from the app/tools/common.sh
 nvmcheck() {
-  which node > /dev/null
-  if [ ! $? ]; then
-    version=`node --version`
-    [ "$version" == "v4.2.6" ] && return
+  version=`node --version`
+  if [ "$version" != $NODE_VERSION ]; then
+    . "$HOME/.nvm/nvm.sh"
+    nvm use $NODE_VERSION
+    if [ ! $? ]; then
+      echo "Can't find nvm node version $NODE_VERSION"
+      exit 1
+    fi
   fi
-  . "$HOME/.nvm/nvm.sh"
 }
 nvmcheck
 
