@@ -2,6 +2,7 @@ import { api } from 'bento';
 import React   from 'react';
 import config  from 'config';
 import ReactDOM from 'react-dom';
+import moment   from 'moment';
 
 let icons = [
   'WAIVE1',
