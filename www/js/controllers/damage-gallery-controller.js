@@ -4,6 +4,7 @@ var angular = require('angular');
 
 function DamageGalleryController ($injector, $stateParams) {
 
+  var $modal = $injector.get('$modal');
   var $uploadImage = $injector.get('$uploadImage');
   var $settings = $injector.get('$settings');
   var $ionicHistory = $injector.get('$ionicHistory');
@@ -14,16 +15,16 @@ function DamageGalleryController ($injector, $stateParams) {
   var ctrl = this;
   ctrl.images = [];
 
-  Reports.carReports({id : $data.active.cars.id}).$promise.then(
+  Reports.carReports({id: $data.active.cars.id}).$promise.then(
     function(reports) {
 
-      ctrl.images = reports.reduce( function(result,  report) {
+      ctrl.images = reports.reduce(function(result, report) {
         return result.concat(report.files.map(function(file) {
           return {
             description: report.description,
             url: $settings.uri.api + '/file/' + file.fileId
-          }
-        }))
+          };
+        }));
       }, []);
     }
   );
@@ -45,7 +46,7 @@ function DamageGalleryController ($injector, $stateParams) {
         $data.active.damagePhoto = result;
         $state.go('report-problem', $stateParams, { location: 'replace' });
       }
-    }.bind(this))
+    })
     .catch(function (err) {
       var message = err.message;
       /*if (err instanceof $window.FileTransferError) {
