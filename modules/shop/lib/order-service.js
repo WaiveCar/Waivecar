@@ -209,7 +209,7 @@ module.exports = class OrderService extends Service {
     }
 
     // Don't charge the waivework users or admins for going over 2 hours.
-    if(user.isWaiveWork || user.isAdmin()) {
+    if(user.isWaivework || user.isAdmin()) {
       return true;
     }
 
