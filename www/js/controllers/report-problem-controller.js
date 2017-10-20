@@ -5,46 +5,23 @@ require('../resources/reports.js');
 
 function ReportProblemController ($injector, $stateParams) {
   var $modal = $injector.get('$modal');
-  var $uploadImage = $injector.get('$uploadImage');
   var $settings = $injector.get('$settings');
   var $window = $injector.get('$window');
   var $ionicHistory = $injector.get('$ionicHistory');
   var Reports = $injector.get('Reports');
+  var $data = $injector.get('$data');
 
   this.model = {
     bookingId: $stateParams.id,
-    files: []
+    file: prepareResult($data.active.damagePhoto)
   };
 
-  // $modal('result', {
-  //   message: 'Does the problem keep you from driving?',
-  //   title: 'Report a problem',
-  //   icon: 'waivecar-mark',
-  //   actions: [{
-  //     className: 'button-balanced',
-  //     text: 'Yes',
-  //     handler: function () {
-  //       self.important = true;
-  //       self.modal.hide();
-  //     }
-  //   }, {
-  //     className: 'button-balanced',
-  //     text: 'No',
-  //     handler: function () {
-  //       self.important = false;
-  //       self.modal.hide();
-  //     }
-  //   }]
-  // }).then(function (_modal) {
-  //   this.modal = _modal;
-  //   this.modal.show();
-  // }.bind(this));
 
   this.submit = function submit () {
     Reports.create({
       bookingId: this.model.bookingId,
       description: this.model.comment,
-      files: this.model.files
+      files: [this.model.files]
     }).$promise
     .then(successModal)
     .catch(failModal);
@@ -74,34 +51,7 @@ function ReportProblemController ($injector, $stateParams) {
     });
   }
 
-  this.addPicture = function addPicture () {
-    $uploadImage({
-      endpoint: '/files?bookingId=' + $stateParams.id,
-      filename: 'problem_' + $stateParams.id + '_' + Date.now() + '.jpg',
-    })
-    .then(function (result) {
-      if (result) {
-        if (Array.isArray(result)) {
-          var results = result.map(prepareResult);
-          this.model.files = this.model.files.concat(results);
-        } else {
-          this.model.files.push(prepareResult(result));
-        }
-      }
-    }.bind(this))
-    .catch(function (err) {
-      var message = err.message;
-      if (err instanceof $window.FileTransferError) {
-        if (err.body) {
-          var error = angular.fromJson(err.body);
-          if (error.message) {
-            message = error.message;
-          }
-        }
-      }
-      failModal(message);
-    });
-  };
+
 
   function failModal (message) {
     var modal;
@@ -110,13 +60,7 @@ function ReportProblemController ($injector, $stateParams) {
       title: 'We couldn\'t report your problem.',
       message: (message || 'The server is down') + '. If the problem persists call us at ' + $settings.phone,
       actions: [{
-        text: 'Retry',
-        className: 'button-balanced',
-        handler: function () {
-          modal.remove();
-        }
-      }, {
-        text: 'Cancel',
+        text: 'Ok',
         className: 'button-dark',
         handler: function () {
           modal.remove();
@@ -136,7 +80,6 @@ function ReportProblemController ($injector, $stateParams) {
     };
     return file;
   }
-
 }
 
 module.exports = angular.module('app.controllers').controller('ReportProblemController', [
