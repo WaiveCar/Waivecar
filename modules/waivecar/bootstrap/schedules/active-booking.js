@@ -82,16 +82,18 @@ var checkBooking = co.wrap(function *(booking) {
   // Check if outside driving zone
   let deviceInside = inDrivingZone(device.latitude, device.longitude);
 
-  // if we thought we were outside but now we're inside
-  if (deviceInside && booking.isFlagged('outside-range')) {
-    yield booking.unFlag('outside-range');
-    yield notify.notifyAdmins(`${ user.link() } took ${ car.info() } back into the driving zone. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
+  if (!user.isWaivework) {
+    // if we thought we were outside but now we're inside
+    if (deviceInside && booking.isFlagged('outside-range')) {
+      yield booking.unFlag('outside-range');
+      yield notify.notifyAdmins(`:waving_white_flag: ${ user.link() } took ${ car.info() } back into the driving zone. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
 
-  // if we thought we were inside but now we are outside.
-  } else if (!deviceInside && !booking.isFlagged('outside-range')) {
-    yield booking.flag('outside-range');
-    yield notify.sendTextMessage(user, config.notification.reasons['OUTSIDE_RANGE']);
-    yield notify.notifyAdmins(`${ user.link() } took ${ car.info() } outside of the driving zone. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
+    // if we thought we were inside but now we are outside.
+    } else if (!deviceInside && !booking.isFlagged('outside-range')) {
+      yield booking.flag('outside-range');
+      yield notify.sendTextMessage(user, config.notification.reasons['OUTSIDE_RANGE']);
+      yield notify.notifyAdmins(`:waving_black_flag: ${ user.link() } took ${ car.info() } outside of the driving zone. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
+    }
   }
 
   // Check charge level
