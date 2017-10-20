@@ -163,8 +163,8 @@ hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
   }
 
   if(!_user.hasAccess('admin')) {
-    if ( nextUser.lastName  != prevUser.lastName || 
-         nextUser.firstName != prevUser.firstName
+    if ( (nextUser.lastName && nextUser.firstName) &&
+         (nextUser.lastName != prevUser.lastName || nextUser.firstName != prevUser.firstName)
       ) {
       nextUser.status = 'pending';
       reason.push(`Name change ${ prevUser.firstName } ${ prevUser.lastName } -> ${ nextUser.firstName } ${ nextUser.lastName }`);
