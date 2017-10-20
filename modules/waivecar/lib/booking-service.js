@@ -501,7 +501,7 @@ module.exports = class BookingService extends Service {
       // ### Notify
 
       let message = yield this.updateState('started', _user, user);
-      yield notify.notifyAdmins(`:octopus: ${ message } | ${ car.info() } ${ car.averageCharge() }% `, [ 'slack' ], { channel : '#reservations' });
+      yield notify.notifyAdmins(`:octopus: ${ message } | ${ car.info() } ${ car.averageCharge() }% ${ booking.link() }`, [ 'slack' ], { channel : '#reservations' });
       if (user.isWaivework){
         yield notify.sendTextMessage(user, `Thanks for using WaiveWork! Your booking has started.`);
       }
@@ -654,7 +654,7 @@ module.exports = class BookingService extends Service {
       let message = yield this.updateState('ended', _user, user);
 
       parkingSlack = {
-        text        : `:cherries: ${ message } | ${ car.info() } | ${ user.info() }`,
+        text        : `:cherries: ${ message } | ${ car.info() } | ${ booking.link() }`,
         attachments : [
           {
             fallback : `Parking Details`,
@@ -695,12 +695,12 @@ module.exports = class BookingService extends Service {
     // 
     if(deltas.duration > 10 && deltas.distance === 0 && !deltas.hasMoved) {
       yield UserLog.addUserEvent(user, 'SIT', booking.id, deltas.duration);
-      yield notify.slack({ text : `:popcorn: ${ user.link() } drove 0 miles for ${ deltas.duration } minutes. ${ car.info() }`
+      yield notify.slack({ text : `:popcorn: ${ user.link() } drove 0 miles for ${ deltas.duration } minutes. ${ booking.link() }`
       }, { channel : '#user-alerts' });
     }
   
     let message = yield this.updateState('ended', _user, user);
-    yield notify.slack(parkingSlack || { text : `:cherries: ${ message } | ${ car.info() } ${ car.averageCharge() }%`
+    yield notify.slack(parkingSlack || { text : `:cherries: ${ message } | ${ car.info() } ${ car.averageCharge() }% ${ booking.link() }`
     }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.END_BOOKING }, _user);
 
@@ -910,7 +910,7 @@ module.exports = class BookingService extends Service {
       `${ _user.name() } cancelled for ${ user.link() }`;
 
     yield notify.sendTextMessage(user, `Your WaiveCar reservation has been cancelled.`);
-    yield notify.slack({ text : `:pill: ${ message } | ${ car.info() }`
+    yield notify.slack({ text : `:pill: ${ message } | ${ car.info() } ${ booking.link() }`
     }, { channel : '#reservations' });
   }
 
