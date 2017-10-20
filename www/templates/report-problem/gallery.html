@@ -7,14 +7,16 @@
   </ion-nav-buttons-->
   <ion-content padding="true" class="ion-content--center dark-bg">
     <ng-include src="'/img/waivecar-mark.svg'" class="waivecar-mark"></ng-include>
-    <h4>Report a problem</h4>
+    <h4>{{ ctrl.car.license}}</h4>
 
-    <div class="image-tray">
-      <img ng-repeat="image in ctrl.images" ng-src="{{image.url}}">
+    <div class="row" style="flex-wrap: wrap;">
+      <div ng-repeat="image in ctrl.images" class="col col-33">
+        <img ng-src="{{image.url}}">
+      </div>
     </div>
 
 
-    <ion-footer-bar class="no-padding">
+    <ion-footer-bar>
       <div class="button-bar">
         <button type="button" class="button button-dark" ng-click="ctrl.goBack()">Cancel</button>
         <button type="button" class="button button-balanced" ng-click="ctrl.addPicture()">Add new photo</button>

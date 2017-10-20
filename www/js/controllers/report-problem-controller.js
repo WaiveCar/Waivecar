@@ -21,7 +21,7 @@ function ReportProblemController ($injector, $stateParams) {
     Reports.create({
       bookingId: this.model.bookingId,
       description: this.model.comment,
-      files: [this.model.files]
+      files: [this.model.file]
     }).$promise
     .then(successModal)
     .catch(failModal);

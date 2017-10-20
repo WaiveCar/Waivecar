@@ -14,8 +14,9 @@ function DamageGalleryController ($injector, $stateParams) {
 
   var ctrl = this;
   ctrl.images = [];
+  ctrl.car = $data.active.cars;
 
-  Reports.carReports({id: $data.active.cars.id}).$promise.then(
+  Reports.carReports({id: ctrl.car.id}).$promise.then(
     function(reports) {
 
       ctrl.images = reports.reduce(function(result, report) {

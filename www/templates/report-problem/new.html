@@ -7,14 +7,9 @@
   </ion-nav-buttons-->
   <ion-content padding="true" class="ion-content--center dark-bg">
     <ng-include src="'/img/waivecar-mark.svg'" class="waivecar-mark"></ng-include>
-    <h4>Report a problem</h4>
-    <p>Add as many pictures as possible</p>
+
     <div class="image-tray">
-      <div class="image-tray-item add-icon" ng-click="ctrl.addPicture()"></div>
-      <div class="image-tray-item"
-        ng-repeat="file in ctrl.model.files"
-        ng-style="file.style"
-      ></div>
+      <div ng-style="ctrl.file.style"></div>
     </div>
     <p>Describe the problem</p>
     <form ng-submit="ctrl.submit()">
