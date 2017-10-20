@@ -75,9 +75,7 @@ function ReportProblemController ($injector, $stateParams) {
   }
 
   function prepareResult (file) {
-    file.style = {
-      'background-image': 'url(' + $settings.uri.api + '/file/' + file.id + ')'
-    };
+    file.url = $settings.uri.api + '/file/' + file.id;
     return file;
   }
 }

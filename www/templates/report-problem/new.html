@@ -9,14 +9,14 @@
     <ng-include src="'/img/waivecar-mark.svg'" class="waivecar-mark"></ng-include>
 
     <div class="image-tray">
-      <div ng-style="ctrl.file.style"></div>
+      <img ng-src="{{ctrl.model.file.url}}"></div>
     </div>
     <p>Describe the problem</p>
     <form ng-submit="ctrl.submit()">
       <label class="item item-input">
         <textarea ng-model="ctrl.model.comment" rows="10"></textarea>
       </label>
-      <button type="submit" class="button button-balanced button-block" ng-disabled="!(ctrl.model.files.length)">
+      <button type="submit" class="button button-balanced button-block">
         Report
       </button>
     </form>
