@@ -4,4 +4,4 @@
 nvm use v4.2.6
 ENV=development
 [ -e .env ] && source .env
-NODE_ENV=$ENV npm run local
+NODE_ENV=$ENV node webpack.local.js
