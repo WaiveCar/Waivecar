@@ -11,7 +11,7 @@ cd web-js
 goforward() {
   # We preserve the timestamp and copy over whatever was
   # last being served over the wire as our previous version
-  cp -p /opt/waivecar-web/scripts/{vendors,bundle.js} last
+  cp -p /opt/waivecar-web/scripts/{vendors.js,bundle.js} last
 
   # Now we move over the new stuff
   sudo cp new/{vendors,bundle}.js /opt/waivecar-web/scripts/
