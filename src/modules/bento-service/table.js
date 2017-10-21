@@ -90,7 +90,7 @@ module.exports = class Table {
   }
 
   // Performs a search against the api.
-  search_handler = (queryObj, force) => {
+  search_handler = (queryObj, force, dom) => {
     // Older ct code presumed a k/v pair of { search : text }
     // This proves to be insufficient when other constraints,
     // such as a date are being queried.  So this is backwards
@@ -112,7 +112,14 @@ module.exports = class Table {
     }
     
     if (query || force) {
+      if (dom) {
+        dom.style.background = 'url("images/site/spinner.gif") #fff 0 50% no-repeat';
+        dom.style.textIndent = '20px';
+      }
       api.get(this.endpoint, queryObj, (err, data) => {
+        if (dom) {
+          dom.style.background = '#fff';
+        }
         if (err) {
           return snackbar.notify({
             type    : 'danger',
@@ -145,13 +152,19 @@ module.exports = class Table {
   // always call search_handler directly. Please
   // note the documentation on the likely 
   // counter-intuitive format.
-  search = (e) => {
+  search = (e, value, dom) => {
     clearTimeout(this.timer);
     this.timer = setTimeout(() => {
+      let query = '';
+      if(value) {
+        query = value;
+      } else if (e && e.target) {
+        query = e.target.value;
+      } 
       this.search_handler({
         offset: 0,
         limit: this.limit || 20,
-        search: e.target.value});
+        search: query}, false, dom);
     }, 700);
   }
 

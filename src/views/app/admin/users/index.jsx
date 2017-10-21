@@ -43,19 +43,10 @@ class UsersListView extends React.Component {
     });
   }
 
-  /**
-   * Unsubscribe from users relay.
-   * @return {Void}
-   */
   componentWillUnmount() {
     relay.unsubscribe(this, 'users');
   }
 
-  /**
-   * Renders the user row.
-   * @param  {Object} user
-   * @return {Object}
-   */
   row(user) {
     return (
       <tr key={ user.id }>
@@ -64,11 +55,6 @@ class UsersListView extends React.Component {
         <td className="hidden-sm-down">{ user.email }</td>
         <td className="hidden-sm-down">{ user.role.title }</td>
         <td>{ user.status }</td>
-        {/*
-        <td className="hidden-sm-down">
-          <button className="material-icons" onClick={ this.toggleIsWaivework.bind(this, user) }>{user.isWaivework ? 'check' : 'close'}</button>
-        </td>
-        */}
         <td>
           <Link to={ `/users/${ user.id }` }>
             <i className="material-icons" style={{ marginTop : 5 }}>pageview</i>
@@ -96,17 +82,18 @@ class UsersListView extends React.Component {
     this.setState({users: arr});
   }
 
-  /**
-   * Render the user table index.
-   * @return {Object}
-   */
   render() {
     return (
       <div id="users-list" className="container">
         <div className="box full">
           <h3>Users <small>List of registered WaiveCar users</small></h3>
           <div className="box-content">
-            <input type="text" className="box-table-search" ref="search" placeholder="Enter search text [name, email, status]" onChange={ this.table.search } />
+            <input 
+              type="text" 
+              className="box-table-search" 
+              ref={(input) => { this.textInput = input; }}
+              placeholder="Enter search text [name, email, status]" 
+              onChange={ (e) => { this.table.search(false, this.textInput.value, this.textInput) }  } />
             <table className="box-table table-striped">
               <thead>
                 <tr ref="sort">
@@ -115,9 +102,6 @@ class UsersListView extends React.Component {
                   <ThSort sort="email"       value="Email"       ctx={ this } className="hidden-sm-down" />
                   <ThSort sort="role.title"  value="Role"        ctx={ this } className="hidden-sm-down" />
                   <ThSort sort="status"      value="Status"      ctx={ this } className="hidden-sm-down" />
-               {/*
-                  <ThSort sort="isWaivework" value="isWaivework" ctx={ this } />
-               */}
                   <th></th>
                 </tr>
               </thead>
