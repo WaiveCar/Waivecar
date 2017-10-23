@@ -37,6 +37,9 @@ Route.post('/reports', {
 });
 
 Route.get('/reports', [ 'isAuthenticated', 'ReportsController@index' ]);
+Route.get('/reports/car/:id', [ 'ReportsController@showForCar' ]);
+
+
 
 // ### Cars
 
