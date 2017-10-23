@@ -14,21 +14,30 @@ function DamageGalleryController ($injector, $stateParams) {
 
   var ctrl = this;
   ctrl.images = [];
-  ctrl.car = $data.active.cars;
+  ctrl.car = {};
 
-  Reports.carReports({id: ctrl.car.id}).$promise.then(
-    function(reports) {
 
-      ctrl.images = reports.reduce(function(result, report) {
-        return result.concat(report.files.map(function(file) {
-          return {
-            description: report.description,
-            url: $settings.uri.api + '/file/' + file.fileId
-          };
-        }));
-      }, []);
-    }
-  );
+  $data.activate('bookings', $stateParams.id).then(function() {
+    var carId = $data.active.bookings.carId;
+
+    Reports.carReports({id: carId}).$promise.then(
+      function (reports) {
+
+        ctrl.images = reports.reduce(function (result, report) {
+          return result.concat(report.files.map(function (file) {
+            return {
+              description: report.description,
+              url: $settings.uri.api + '/file/' + file.fileId
+            };
+          }));
+        }, []);
+      }
+    );
+
+    $data.activate('cars', carId).then(function(){
+      ctrl.car = $data.active.cars;
+    });
+  });
 
   this.addPicture = function addPicture () {
     $uploadImage({
@@ -60,6 +69,11 @@ function DamageGalleryController ($injector, $stateParams) {
       }*/
       failModal(message);
     });
+  };
+
+  this.showPicture = function showPicture(image) {
+    $data.active.damagePhoto = image;
+    $state.go('show-problem', $stateParams);
   };
 
   function failModal (message) {
