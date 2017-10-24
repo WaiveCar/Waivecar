@@ -97,11 +97,15 @@ module.exports = {
   },
   make : {
     name      : 'make',
-    component : 'input',
+    component : 'select',
     type      : 'text',
     required  : true,
     label     : 'Make',
-    helpText  : null
+    helpText  : null,
+    options   : [
+      { name : 'Hyundai',   value : 'Hyundai' },
+      { name : 'Chevrolet', value : 'Chevrolet' }
+    ]
   },
   model : {
     name      : 'model',
