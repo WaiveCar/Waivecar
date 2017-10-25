@@ -104,13 +104,6 @@ module.exports = class Cards extends Service {
     return yield service.show(user.stripeId, cardId);
   }
 
-  /**
-   * Updates card information.
-   * @param  {String} cardId
-   * @param  {Object} data
-   * @param  {Object} _user
-   * @return {Object}
-   */
   static *update(cardId, data, _user) {
     let card    = yield this.getCard(cardId);
     let user    = yield this.getUser(card.userId);
@@ -131,12 +124,7 @@ module.exports = class Cards extends Service {
     return card;
   }
 
-  /**
-   * Deletes a card from the customer records.
-   * @param  {String} cardId
-   * @param  {Object} _user
-   * @return {Void}
-   */
+  // Deletes a card from the customer records.
   static *delete(cardId, _user) {
     let card    = yield this.getCard(cardId);
     let user    = yield this.getUser(card.userId);
@@ -145,7 +133,7 @@ module.exports = class Cards extends Service {
     this.hasAccess(user, _user);
 
     let cards = yield Card.find({ where : { userId : user.id } });
-    if (!_user.hasAccess('admin') && cards.length <= 1) {
+    if (!_user.isAdmin() && cards.length <= 1) {
       throw error.parse({
         code    : 'CARD_COUNT',
         message : 'User must maintain one active card'
@@ -155,8 +143,6 @@ module.exports = class Cards extends Service {
     yield service.delete(user.stripeId, cardId);
     yield card.delete();
   }
-
-  // ### HELPERS
 
   /**
    * Returns a card based on provided id.
