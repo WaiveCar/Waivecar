@@ -27,7 +27,7 @@ function ApplicationController ($rootScope, $scope, $injector) {
   var IntercomService = $injector.get('IntercomService');
 
   $window.bleres = {};
-  function testBle(carid) {
+  function testBle(carId) {
     var _token = false;
     var _sessionKey = false;
     var _deviceId = false;
@@ -58,6 +58,8 @@ function ApplicationController ($rootScope, $scope, $injector) {
       TRIGGER_RELAY: 0x100
     };
 
+    _ccsMap.start = _ccsMap.CENTRAL_LOCK_OPEN | _ccsMap.IMMOBILIZER_UNLOCK;
+    _ccsMap.finish = _ccsMap.CENTRAL_LOCK_CLOSE | _ccsMap.IMMOBILIZER_LOCK;
 
     function ok(what) {
       return function() {
@@ -71,10 +73,13 @@ function ApplicationController ($rootScope, $scope, $injector) {
       };
     }
 
-    function b642bin(hex) {
-      return new Uint8Array(atob(hex).split('').map(function(c) { 
+    function b642array(b64) {
+      return atob(b64).split('').map(function(c) { 
         return c.charCodeAt(0); 
-      }));
+      });
+    }
+    function b642bin(b64) {
+      return new Uint8Array(b642array(b64));
     }
 
     function bin2str(bin) {
@@ -86,15 +91,13 @@ function ApplicationController ($rootScope, $scope, $injector) {
     }
 
     function findCarById(id, success, fail) {
-      console.log('scanning');
       ble.startScan([], function(car) { 
-        console.log(car.name, car.id, id);
         if (car.name === id) {
           console.log('found car');
           _deviceId = car.id;
           ble.connect(car.id, function() {
             console.log('connected');
-            success(car.id);
+            success();
           }, fail);
         }
       }, fail);
@@ -134,25 +137,34 @@ function ApplicationController ($rootScope, $scope, $injector) {
       sendData();
     }
 
+    function bin2hex(m) {
+      m = _.toArray(m);
+      var hex = m.map(function(a) { 
+        return ((256 + a).toString(16)).slice(1); 
+      });
+
+      console.log('\\x' + hex.join('\\x'), hex.join(''));
+    }
+
     function doit(what) {
-      var command = new Uint8Array(10);
+      var command = new Array(10).fill(0);
       command[0] = _ccsMap[what];
       cis('COMMAND_CHALLENGE', function(commandChallenge) {
-        var valueCommandArray = _.toArray(command).concat(_.toArray(commandChallenge));
-        var responseb64 = hmacsha1(bin2str(valueCommandArray), bin2str(_sessionKey));
-        var payload = _.toArray(command).concat(b642bin(responseb64));
-        ble.write(_deviceId, CAR_CONTROL_SERVICE, COMMAND_PHONE, new Uint8Array(payload), ok(what), failure(what));
+        commandChallenge = new Uint8Array(commandChallenge);
+        var valueCommandArray = command.concat(_.toArray(commandChallenge));
+        var responseb64 = hmacsha1(bin2str(_sessionKey), bin2str(valueCommandArray));
+        var payload = command.concat(b642array(responseb64)).slice(0, 20);
+        var toWrite = (new Uint8Array(payload)).buffer;
+        ble.write(_deviceId, CAR_CONTROL_SERVICE, COMMAND_PHONE, toWrite, ok(what), failure(what));
       });
     }
 
-    function authorizeCar(mac) {
-      writeBig(mac, CAR_CONTROL_SERVICE, AUTHORIZE_PHONE, _token, ok('authorized'), failure('authorized'));
-    }
-
-    $data.resources.car.ble({ id: carid }).$promise.then(function (creds) {
+    $data.resources.cars.ble({ id: carId }).$promise.then(function (creds) {
       _token = b642bin(creds.token);
       _sessionKey = b642bin(creds.sessionKey);
-      findCarById(carId, authorizeCar, failure('findcar'));
+      findCarById(carId, function() {
+        writeBig(CAR_CONTROL_SERVICE, AUTHORIZE_PHONE, _token, ok('authorized'), failure('authorized'));
+      }, failure('findcar'));
     });
 
     $window.doit = doit;
