@@ -560,7 +560,7 @@ module.exports = {
     let status = yield this.request(`/bluetooth-token/${ id }`, {
       method : 'POST'
     }, {
-      level: "OpenClose",
+      level: "Drive",
       from: now.toISOString(),
       until: expire.toISOString()
     });
