@@ -1,7 +1,7 @@
 #!/bin/bash
 APP=com.waivecar.app
 NODE_VERSION=v6.11.4
-DBG=
+#DBG=
 
 get_device() {
   if [ "$DEVICE" ]; then
@@ -58,15 +58,19 @@ wrap() {
   done
 }
 
-build() {
+prebuild() {
   cd $DIR/..
-  nvmcheck
-
   for i in res/mipmap*/icon.png; do
     cp $i platforms/android/$i >& /dev/null
   done
 
   cp -up misc/build-extras.gradle platforms/android
+}
+
+build() {
+  nvmcheck
+
+  prebuild
   node --version
   $DBG ionic build android
 }
