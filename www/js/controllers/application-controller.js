@@ -27,7 +27,11 @@ function ApplicationController ($rootScope, $scope, $injector) {
   var IntercomService = $injector.get('IntercomService');
 
   $window.bleres = {};
-  function testBle(auth, sessionKey) {
+  function testBle(carid) {
+    var _token = false;
+    var _sessionKey = false;
+    var _deviceId = false;
+
     var CAR_INFORMATION_SERVICE = '869CEFA0-B058-11E4-AB27-00025B03E1F4';
     var _cisMap = {
       COMMAND_CHALLENGE: '869CEFA2-B058-11E4-AB27-00025B03E1F4',
@@ -42,7 +46,7 @@ function ApplicationController ($rootScope, $scope, $injector) {
     var CAR_CONTROL_SERVICE = '869CEF80-B058-11E4-AB27-00025B03E1F4';
     var AUTHORIZE_PHONE = '869CEF82-B058-11E4-AB27-00025B03E1F4';
     var COMMAND_PHONE = '869CEF84-B058-11E4-AB27-00025B03E1F4';
-    var ccsMap = {
+    var _ccsMap = {
       CENTRAL_LOCK_CLOSE: 0x01,
       CENTRAL_LOCK_OPEN: 0x02,
       IMMOBILIZER_LOCK: 0x04,
@@ -55,11 +59,30 @@ function ApplicationController ($rootScope, $scope, $injector) {
     };
 
 
-    var _sessionKey = hex2bin(sessionKey);
-    var _deviceId = false;
+    function ok(what) {
+      return function() {
+        console.log('successs ' + what, arguments[0]);
+        $window.bleres[what] = arguments[0];
+      };
+    }
+    function failure(what) {
+      return function() {
+        console.log('failed with ' + what, arguments[0]);
+      };
+    }
 
-    function cis(mac, what, success, fail) {
-      ble.read(mac, CAR_INFORMATION_SERVICE, _cisMap[what], success, fail);
+    function b642bin(hex) {
+      return new Uint8Array(atob(hex).split('').map(function(c) { 
+        return c.charCodeAt(0); 
+      }));
+    }
+
+    function bin2str(bin) {
+      return String.fromCharCode.apply(0, bin);
+    }
+
+    function cis(what, success, fail) {
+      ble.read(_deviceId, CAR_INFORMATION_SERVICE, _cisMap[what], success, fail);
     }
 
     function findCarById(id, success, fail) {
@@ -79,16 +102,17 @@ function ApplicationController ($rootScope, $scope, $injector) {
 
     function partitionData(raw) {
       var payloadList = [], 
+        unit = 18,
         row,
         offset,
         ttl = raw.length;
         
-      for(var start = 0; start < raw.length; start+= 18) {
-        row = new Uint8Array(2 + Math.min(18, raw.length - start));
+      for(var start = 0; start < raw.length; start += unit) {
+        row = new Uint8Array(2 + Math.min(unit, raw.length - start));
         row[0] = ttl;
-        ttl -= 18;
+        ttl -= unit;
         offset = 2;
-        for(var ix = start; ix < Math.min(start + 18, raw.length); ix++) {
+        for(var ix = start; ix < Math.min(start + unit, raw.length); ix++) {
           row[offset] = raw[ix];
           offset++; 
         }
@@ -97,66 +121,47 @@ function ApplicationController ($rootScope, $scope, $injector) {
       return payloadList;
     }
 
-    function writeBig(deviceId, service, characteristic, rawPayload, success, fail) {
+    function writeBig(service, characteristic, rawPayload, success, fail) {
       var payload = partitionData(rawPayload);
 
       function sendData(arg) {
         if(payload.length === 0) {
-          success(arg);
-        } else {
-          console.log('writing payload ' + payload.length, arg);
-          ble.write(deviceId, service, characteristic, payload.shift().buffer, sendData, fail);
-        }
+          return success(arg);
+        } 
+        ble.write(_deviceId, service, characteristic, payload.shift().buffer, sendData, fail);
       }
       
       sendData();
     }
 
-    function ok(what) {
-      return function() {
-        console.log('successs ' + what, arguments[0]);
-        $window.bleres[what] = arguments[0];
-      };
-    }
-    function failure(what) {
-      return function() {
-        console.log('failed with ' + what, arguments[0]);
-      };
-    }
-
-    function hex2bin(hex) {
-      return new Uint8Array(atob(hex).split('').map(function(c) { 
-        return c.charCodeAt(0); 
-      }));
-    }
-
     function doit(what) {
       var command = new Uint8Array(10);
-      command[0] = ccsMap[what];
-      cis(_deviceId, 'COMMAND_CHALLENGE', function(challenge) {
-        var valueCommandArray = [].concat(Array.prototype.slice.call(command), Array.prototype.slice.call(commandChallenge));
-        var response = hmacsha1(new Uint8Array(valueCommandArray), _sessionKey);
-        var payload = [].concat(Array.prototype.slice.call(command), response);
-        ble.write(_deviceId, CAR_CONTROL_SERVICE, COMMAND_PHONE, payload, ok(what), failure(what));
+      command[0] = _ccsMap[what];
+      cis('COMMAND_CHALLENGE', function(commandChallenge) {
+        var valueCommandArray = _.toArray(command).concat(_.toArray(commandChallenge));
+        var responseb64 = hmacsha1(bin2str(valueCommandArray), bin2str(_sessionKey));
+        var payload = _.toArray(command).concat(b642bin(responseb64));
+        ble.write(_deviceId, CAR_CONTROL_SERVICE, COMMAND_PHONE, new Uint8Array(payload), ok(what), failure(what));
       });
     }
 
     function authorizeCar(mac) {
-      var payload = hex2bin(auth);
-
-      writeBig(mac, CAR_CONTROL_SERVICE, AUTHORIZE_PHONE, payload, function() {
-        console.log('.success', arguments);
-        $window.doit = doit;
-        $window.bleread = function(what) {
-          cis(_deviceId, what, function(a) {
-            $window.bleres[what] = a;
-            console.log('read ' + what);
-          }, failure('read ' + what));
-        };
-      }, failure('writebig'));
+      writeBig(mac, CAR_CONTROL_SERVICE, AUTHORIZE_PHONE, _token, ok('authorized'), failure('authorized'));
     }
 
-    findCarById('E700001895F07501', authorizeCar, failure('findcar'));
+    $data.resources.car.ble({ id: carid }).$promise.then(function (creds) {
+      _token = b642bin(creds.token);
+      _sessionKey = b642bin(creds.sessionKey);
+      findCarById(carId, authorizeCar, failure('findcar'));
+    });
+
+    $window.doit = doit;
+    $window.bleread = function(what) {
+      cis(what, function(a) {
+        $window.bleres[what] = a;
+        console.log('read ' + what);
+      }, failure('read ' + what));
+    };
   }
 
   $window.testBle = testBle;
