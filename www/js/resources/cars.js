@@ -21,6 +21,12 @@ module.exports = angular.module('app').factory('Cars', [
           id: '@id'
         }
       },
+      ble: {
+        url: $utils.getCustomRoute('cars/:id/ble'),
+        params: {
+          id: '@id'
+        }
+      },
       refresh: {
         method: 'PUT',
         url: $utils.getCustomRoute('cars/:id/refresh'),
