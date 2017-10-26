@@ -56,17 +56,13 @@ class TableIndex extends React.Component {
     });
   }
 
-  /**
-   * Unsubscribe from bookings relay.
-   * @return {Void}
-   */
   componentWillUnmount() {
     relay.unsubscribe(this, 'bookings');
   }
 
-  search_date_real(el) {
+  search_date_real(value) {
     let 
-      query = el.target.value.toLowerCase().trim(),
+      query = value.toLowerCase().trim(),
       // splits up the query into m/d/y 
       isValid = (query === 'now') || query.match(/^(\d+.\d+).?(\d+|)$/),
       cutoff = false, date, year;
@@ -96,14 +92,18 @@ class TableIndex extends React.Component {
     cutoff = (query === 'now') ? moment().unix() : moment(query, 'MM-DD-YYYY').unix();
 
     if(cutoff > 0) {
-      this.table.search_handler({cutoff: cutoff}, true);
+      this.table.search_handler({cutoff: cutoff}, true, this.dateInput);
     }
   }
 
-  search_date(el) {
+  search_handler(what) {
     clearTimeout(this.timer);
     this.timer = setTimeout(() => {
-      this.search_date_real(el);
+      if(what === 'date') {
+        this.search_date_real(this.dateInput.value);
+      } else {
+        this.table.search(false, this.userInput.value, this.userInput);
+      }
     }, 500);
   }
 
@@ -173,10 +173,6 @@ class TableIndex extends React.Component {
     );
   }
 
-  /**
-   * Render the user table index.
-   * @return {Object}
-   */
   render() {
     return (
       <div id="bookings-list" className="container">
@@ -185,10 +181,20 @@ class TableIndex extends React.Component {
           <div className="box-content">
             <div className="row">
               <div className="col-md-3">
-                <input type="text" className="form-control box-table-search" ref="date" placeholder="Cut off MM-DD-YY / Now" onChange={ this.search_date.bind(this) } />
+                <input type="text" 
+                  className="form-control box-table-search" 
+                  ref={(input) => { this.dateInput = input; }}
+                  placeholder="Cut off MM-DD-YY / Now" 
+                  onChange={ this.search_handler.bind(this, 'date') } 
+                />
               </div>
               <div className="col-md-9">
-                <input type="text" className="form-control box-table-search" ref="search" placeholder="Search text [name, car]" onChange={ this.table.search } />
+                <input type="text" 
+                  className="form-control box-table-search" 
+                  ref={(input) => { this.userInput = input; }}
+                  placeholder="Search text [name, car]" 
+                  onChange={ this.search_handler.bind(this, 'user') } 
+                />
               </div>
             </div>
             <div id="isMobile" className="hidden-sm-down"></div>
