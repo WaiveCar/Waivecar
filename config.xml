@@ -21,8 +21,9 @@
     <preference name="intercom-app-id" value="wmtsw9cn" />
     <preference name="intercom-ios-api-key" value="ios_sdk-37f93bf20f8e6d05e472820d7d758374373ee422" />
     <preference name="intercom-android-api-key" value="android_sdk-e4a15d71f7e91cb85d920387d1e998d2b61b40e7" />
-    <preference name="intercom-android-push-type" value="FCM"/>
+    <preference name="intercom-android-push-type" value="FCM" />
     <platform name="android">
+        <hook src="scripts/android-prebuild" type="before_build" />
         <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />
         <icon density="mdpi" src="resources/android/icon/drawable-mdpi-icon.png" />
         <icon density="hdpi" src="resources/android/icon/drawable-hdpi-icon.png" />
@@ -43,6 +44,11 @@
         <splash density="port-xxxhdpi" src="resources/android/splash/drawable-port-xxxhdpi-screen.png" />
     </platform>
     <platform name="ios">
+        <plugin name="cordova-plugin-ios-camera-permissions" spec="^1.0.5">
+            <variable name="CAMERA_USAGE_DESCRIPTION" value="This app needs camera access" />
+            <variable name="MICROPHONE_USAGE_DESCRIPTION" value="This app needs microphone access" />
+            <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="This app needs photo library access" />
+        </plugin>
         <icon height="57" src="resources/ios/icon/icon.png" width="57" />
         <icon height="114" src="resources/ios/icon/icon@2x.png" width="114" />
         <icon height="40" src="resources/ios/icon/icon-40.png" width="40" />
@@ -83,8 +89,6 @@
         <variable name="CAMERA_USAGE_DESCRIPTION" value="Upload Photos" />
         <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="Use Photos" />
     </plugin>
-    <plugin name="cordova-plugin-console" spec="^1.0.7" />
-    <plugin name="cordova-plugin-device" spec="^1.1.6" />
     <plugin name="cordova-plugin-facebook4" spec="^1.7.4">
         <variable name="APP_ID" value="1022704731082512" />
         <variable name="APP_NAME" value="WaiveCar" />
@@ -95,15 +99,8 @@
     </plugin>
     <plugin name="cordova-plugin-inappbrowser" spec="^1.5.0" />
     <plugin name="cordova-plugin-intercom" spec="^3.2.2" />
-    <plugin name="cordova-plugin-ios-camera-permissions" spec="^1.0.5">
-        <variable name="CAMERA_USAGE_DESCRIPTION" value="This app needs camera access" />
-        <variable name="MICROPHONE_USAGE_DESCRIPTION" value="This app needs microphone access" />
-        <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="This app needs photo library access" />
-    </plugin>
     <plugin name="cordova-plugin-request-location-accuracy" spec="^2.2.1" />
-    <plugin name="cordova-plugin-statusbar" spec="^2.2.3" />
     <plugin name="cordova-plugin-whitelist" spec="^1.2.2" />
-    <plugin name="cordova-plugin-x-toast" spec="https://github.com/EddyVerbruggen/Toast-PhoneGap-Plugin" />
     <plugin name="cordova.plugins.diagnostic" spec="^3.3.3" />
     <plugin name="ionic-plugin-keyboard" spec="^2.2.1" />
 </widget>
