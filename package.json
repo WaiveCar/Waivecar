@@ -111,6 +111,7 @@
     "cordova-plugin-whitelist": "^1.2.2",
     "cordova-plugin-x-toast": "https://github.com/EddyVerbruggen/Toast-PhoneGap-Plugin",
     "cordova.plugins.diagnostic": "^3.3.3",
+    "hmacsha1": "^1.0.0",
     "ionic-plugin-keyboard": "^2.2.1"
   },
   "devDependencies": {
