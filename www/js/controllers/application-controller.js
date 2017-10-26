@@ -1,6 +1,7 @@
 'use strict';
 var angular = require('angular');
 var _ = require('lodash');
+var hmacsha1 = require('hmacsha1');
 require('angular-ui-router');
 require('ionic');
 require('../services/location-service.js');
@@ -24,6 +25,141 @@ function ApplicationController ($rootScope, $scope, $injector) {
   var $window = $injector.get('$window');
   var LocationService = $injector.get('LocationService');
   var IntercomService = $injector.get('IntercomService');
+
+  $window.bleres = {};
+  function testBle(auth, sessionKey) {
+    var CAR_INFORMATION_SERVICE = '869CEFA0-B058-11E4-AB27-00025B03E1F4';
+    var _cisMap = {
+      COMMAND_CHALLENGE: '869CEFA2-B058-11E4-AB27-00025B03E1F4',
+      DRIVING_INFORMATION_1: '869CEFA3-B058-11E4-AB27-00025B03E1F4',
+      STATUS_1: '869CEFA5-B058-11E4-AB27-00025B03E1F4',
+      GPS_1: '869CEFA8-B058-11E4-AB27-00025B03E1F4',
+      CARD_MONITORING: '869CEFAA-B058-11E4-AB27-00025B03E1F4',
+      MODEM_STATUS: '869CEFAD-B058-11E4-AB27-00025B03E1F4',
+      DEBUG: '869CEFB0-B058-11E4-AB27-00025B03E1F4'
+    }; 
+
+    var CAR_CONTROL_SERVICE = '869CEF80-B058-11E4-AB27-00025B03E1F4';
+    var AUTHORIZE_PHONE = '869CEF82-B058-11E4-AB27-00025B03E1F4';
+    var COMMAND_PHONE = '869CEF84-B058-11E4-AB27-00025B03E1F4';
+    var ccsMap = {
+      CENTRAL_LOCK_CLOSE: 0x01,
+      CENTRAL_LOCK_OPEN: 0x02,
+      IMMOBILIZER_LOCK: 0x04,
+      IMMOBILIZER_UNLOCK: 0x08,
+      BOARD_RESET: 0x10,
+      GSM_RESET: 0x20,
+      GPRS_RESET: 0x40,
+      BLE_RESET: 0x80,
+      TRIGGER_RELAY: 0x100
+    };
+
+
+    var _sessionKey = hex2bin(sessionKey);
+    var _deviceId = false;
+
+    function cis(mac, what, success, fail) {
+      ble.read(mac, CAR_INFORMATION_SERVICE, _cisMap[what], success, fail);
+    }
+
+    function findCarById(id, success, fail) {
+      console.log('scanning');
+      ble.startScan([], function(car) { 
+        console.log(car.name, car.id, id);
+        if (car.name === id) {
+          console.log('found car');
+          _deviceId = car.id;
+          ble.connect(car.id, function() {
+            console.log('connected');
+            success(car.id);
+          }, fail);
+        }
+      }, fail);
+    }
+
+    function partitionData(raw) {
+      var payloadList = [], 
+        row,
+        offset,
+        ttl = raw.length;
+        
+      for(var start = 0; start < raw.length; start+= 18) {
+        row = new Uint8Array(2 + Math.min(18, raw.length - start));
+        row[0] = ttl;
+        ttl -= 18;
+        offset = 2;
+        for(var ix = start; ix < Math.min(start + 18, raw.length); ix++) {
+          row[offset] = raw[ix];
+          offset++; 
+        }
+        payloadList.push(row);
+      }
+      return payloadList;
+    }
+
+    function writeBig(deviceId, service, characteristic, rawPayload, success, fail) {
+      var payload = partitionData(rawPayload);
+
+      function sendData(arg) {
+        if(payload.length === 0) {
+          success(arg);
+        } else {
+          console.log('writing payload ' + payload.length, arg);
+          ble.write(deviceId, service, characteristic, payload.shift().buffer, sendData, fail);
+        }
+      }
+      
+      sendData();
+    }
+
+    function ok(what) {
+      return function() {
+        console.log('successs ' + what, arguments[0]);
+        $window.bleres[what] = arguments[0];
+      };
+    }
+    function failure(what) {
+      return function() {
+        console.log('failed with ' + what, arguments[0]);
+      };
+    }
+
+    function hex2bin(hex) {
+      return new Uint8Array(atob(hex).split('').map(function(c) { 
+        return c.charCodeAt(0); 
+      }));
+    }
+
+    function doit(what) {
+      var command = new Uint8Array(10);
+      command[0] = ccsMap[what];
+      cis(_deviceId, 'COMMAND_CHALLENGE', function(challenge) {
+        var valueCommandArray = [].concat(Array.prototype.slice.call(command), Array.prototype.slice.call(commandChallenge));
+        var response = hmacsha1(new Uint8Array(valueCommandArray), _sessionKey);
+        var payload = [].concat(Array.prototype.slice.call(command), response);
+        ble.write(_deviceId, CAR_CONTROL_SERVICE, COMMAND_PHONE, payload, ok(what), failure(what));
+      });
+    }
+
+    function authorizeCar(mac) {
+      var payload = hex2bin(auth);
+
+      writeBig(mac, CAR_CONTROL_SERVICE, AUTHORIZE_PHONE, payload, function() {
+        console.log('.success', arguments);
+        $window.doit = doit;
+        $window.bleread = function(what) {
+          cis(_deviceId, what, function(a) {
+            $window.bleres[what] = a;
+            console.log('read ' + what);
+          }, failure('read ' + what));
+        };
+      }, failure('writebig'));
+    }
+
+    findCarById('E700001895F07501', authorizeCar, failure('findcar'));
+  }
+
+  $window.testBle = testBle;
 
   this.models = $data.instances;
   this.active = $data.active;
