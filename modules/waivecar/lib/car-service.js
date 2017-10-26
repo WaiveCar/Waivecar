@@ -546,8 +546,9 @@ module.exports = {
 
   *ble(id, _user) {
     let car = yield Car.findById(id);
-    if (!(_user.isAdmin() || car.userId == _user.id)) {
-      throw error.parse({
+    
+    if (!_user.isAdmin() && car.userId !== _user.id) {
+      return error.parse({
         code    : 'CAR_SERVICE',
         message : 'You do not have access to that car'
       });
