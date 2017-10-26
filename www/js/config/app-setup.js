@@ -114,20 +114,17 @@ var config = [
 var run = [
   '$rootScope',
   '$cordovaKeyboard',
-  '$cordovaStatusbar',
   '$ionicPlatform',
   '$auth',
   '$state',
   'IntercomService',
-  function Run($rootScope, $cordovaKeyboard, $cordovaStatusbar, $ionicPlatform, $auth, $state, IntercomService) {
+  function Run($rootScope, $cordovaKeyboard, $ionicPlatform, $auth, $state, IntercomService) {
 
 
     $ionicPlatform.ready(function() {
 
       if (ionic.Platform.isWebView()) {
         $cordovaKeyboard.hideAccessoryBar(false);
-        // styles: Default : 0, LightContent: 1, BlackTranslucent: 2, BlackOpaque: 3
-        $cordovaStatusbar.style(1);
       }
 
     });
