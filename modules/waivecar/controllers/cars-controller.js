@@ -13,19 +13,11 @@ Bento.Register.Controller('CarsController', function(controller) {
     return yield car.index(this.query, this.auth.user);
   };
 
-  /**
-   * Returns a list of cars with bookings.
-   * @return {Object}
-   */
   controller.carsWithBookings = function *() {
     return yield car.carsWithBookings(this.auth.user);
   };
 
-  /**
-   * Returns a single car.
-   * @param  {Number} id The Car Id.
-   * @return {Object}
-   */
+  // single car
   controller.show = function *(id) {
     return yield car.show(id, this.auth.user);
   };
@@ -47,8 +39,10 @@ Bento.Register.Controller('CarsController', function(controller) {
    */
   controller.command = function *(id, command) {
     switch (command) {
+      case 'ble'                : return yield car.ble(id, this.auth.user);
       case 'lock'               : return yield car.lockCar(id, this.auth.user);
       case 'unlock'             : return yield car.unlockCar(id, this.auth.user);
+      case 'horn'               : return yield car.horn(id, this.auth.user);
       case 'lock-immobilizer'   : return yield car.lockImmobilzer(id, this.auth.user);
       case 'unlock-immobilizer' : return yield car.unlockImmobilzer(id, this.auth.user);
       case 'refresh'            : return yield car.refresh(id, this.auth.user);
@@ -65,11 +59,6 @@ Bento.Register.Controller('CarsController', function(controller) {
     }
   };
 
-  /**
-   * Retrieve all events for a single car.
-   * @param  {Number} id The Car Id.
-   * @return {Object}
-   */
   controller.events = function *(id) {
     return yield car.events(id, this.auth.user);
   };

@@ -413,7 +413,7 @@ module.exports = {
 
     // Retrieve all Active Devices from Invers and loop.
     log.debug(`Cars : Sync : retrieving device list from Cloudboxx.`);
-    let devices = yield this.getDevices();
+    let devices = yield this.getAllDevices();
     log.debug(`Cars : Sync : ${ devices.length } devices available for sync.`);
 
     let syncList = devices.map(device => this.syncCar(device, cars, allCars));
@@ -480,7 +480,7 @@ module.exports = {
    * @param  {Object} _user
    * @return {Array}
    */
-  *getDevices(_user) {
+  *getAllDevices(_user) {
     let devices = yield this.request('/devices?active=true&limit=100');
     if (devices) {
       return devices.data;
@@ -543,6 +543,34 @@ module.exports = {
    | A list of methods used to execute commands against a device/car.
    |
    */
+
+  *ble(id, _user) {
+    let car = yield Car.findById(id);
+    if (!(_user.isAdmin() || car.userId == _user.id)) {
+      throw error.parse({
+        code    : 'CAR_SERVICE',
+        message : 'You do not have access to that car'
+      });
+    }
+
+    let now = new Date();
+    let expire = new Date(+now + 3600 * 1000);
+
+    let status = yield this.request(`/bluetooth-token/${ id }`, {
+      method : 'POST'
+    }, {
+      level: "OpenClose",
+      from: now.toISOString(),
+      until: expire.toISOString()
+    });
+
+    return status;
+  },
+
+  *horn(id, _user) {
+    if (_user) yield LogService.create({ carId : id, action : Actions.UNLOCK_CAR }, _user);
+    return yield this.executeCommand(id, 'horn', 'on', _user);
+  },
 
   *unlockCar(id, _user) {
     if (_user) yield LogService.create({ carId : id, action : Actions.UNLOCK_CAR }, _user);
