@@ -45,6 +45,9 @@
           <input type="password" name="password" ng-model="userCreateCtrl.user.password" required placeholder="6 characters or more" ng-minlength="6">
         </label>
 
+        <ion-checkbox ng-model="userCreateCtrl.inLA">I'm in LA</ion-checkbox>
+
+
         <div class="errors">
           <div ng-messages="form.fullName.$error" ng-if="form.$submitted">
             <div ng-message="required">Full Name is required</div>

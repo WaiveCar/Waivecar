@@ -34,6 +34,8 @@
           <input type="text" name="mobile" placeholder="(323) 567-5555" ng-model="userFacebookCreateCtrl.user.phone" required />
         </label>
 
+        <ion-checkbox ng-model="userCreateCtrl.inLA">I'm in LA</ion-checkbox>
+
         <div class="validations" ng-if="form.$submitted && form.$invalid">
           <div class="help-block" ng-if="form.firstName.$error.required">First Name is required</div>
           <div class="help-block" ng-if="form.lastName.$error.required">Last Name is required</div>

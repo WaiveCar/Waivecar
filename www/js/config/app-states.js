@@ -111,6 +111,13 @@ module.exports = [
           auth: true
         }
       })
+      .state('sunny-santa-monica', {
+        url: '/users/new/sunny-santa-monica',
+        templateUrl: '/templates/users/sunny-santa-monica.html',
+        data: {
+          auth: false
+        }
+      })
       .state('quiz-video', {
         url: '/quiz/video',
         templateUrl: '/templates/quiz/video.html',

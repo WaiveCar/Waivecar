@@ -13,6 +13,8 @@ function UserCreateController($injector){
   var $ionicLoading = $injector.get('$ionicLoading');
   this.user = new $data.resources.users();
 
+  this.inLA = true;
+
   this.submit = function(form){
     this.user.phone = this.user.phone ? this.user.phone.toString() : '';
 
@@ -50,12 +52,19 @@ function UserCreateController($injector){
     return this.user.$save()
       .then(function login () {
         this.user.fullName = this.user.firstName + ' ' + this.user.lastName;
-        return $auth.login(credentials);
+
+        if (this.inLA) {
+          return $auth.login(credentials);
+        }
       }.bind(this))
       .then(function () {
         $ionicLoading.hide();
-        return $state.go('auth-account-verify', { step: 2 });
-      })
+        if (this.inLA) {
+          return $state.go('auth-account-verify', {step: 2});
+        } else {
+          return $state.go('sunny-santa-monica');
+        }
+      }.bind(this))
       .catch(function (err) {
         $ionicLoading.hide();
         $message.error(err);
