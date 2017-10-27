@@ -52,9 +52,11 @@ module.exports = {
     let user = false;
     let data = {};
 
+    let requiredList = ['firstName', 'lastName', 'email', 'placeName'];
+
     // only accept certain fields...
     ['latitude', 'longitude', 'firstName', 'lastName', 'email', 'placeName', 'placeId'].forEach((field) => {
-      if (! field in payload) {
+      if (! (field in payload) && requiredList.index(field) !== -1) {
         throw error.parse({
           code    : 'MALFORMED QUERY',
           message : 'You need to post ' + field
