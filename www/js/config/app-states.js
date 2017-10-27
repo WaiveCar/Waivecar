@@ -103,12 +103,19 @@ module.exports = [
         }
       })
       .state('users-new-facebook', {
-        // 8-Register
         url: '/users/new/facebook?step',
         templateUrl: '/templates/users/new-facebook.html',
         controller: 'UserFacebookCreateController as userFacebookCreateCtrl',
         data: {
           auth: true
+        }
+      })
+      .state('users-add-to-waitlist', {
+        url: '/users/new/add-to-waitlist',
+        templateUrl: '/templates/users/waitlist-new.html',
+        controller: 'UserAddWaitlistController as userCreateCtrl',
+        data: {
+          auth: false
         }
       })
       .state('sunny-santa-monica', {

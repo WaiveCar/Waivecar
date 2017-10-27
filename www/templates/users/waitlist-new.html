@@ -1,0 +1,77 @@
+<ion-view can-swipe-back="false" hide-back-button="true" class="sign-in-content">
+
+  <ion-nav-title class="sign-in-header">
+    <ul class="progress-bar">
+      <li class="active"></li>
+      <li></li>
+      <li></li>
+      <li></li>
+    </ul>
+    <page-title class="dark-bg">Register</page-title>
+  </ion-nav-title>
+
+  <ion-content scroll="true" padding="true" class="ion-content--center dark-bg">
+
+    <div>
+     Thanks for Stopping By!
+    </div>
+
+    <div>
+      You can vote on where we expand to by giving us your name, email, and current location.
+    </div>
+    <div>
+      We'll add you to a waitlist and notify you of updates.
+    </div>
+    <div>
+      No spam, we promise.
+    </div>
+
+    <form name="form" id="form" ng-submit="userCreateCtrl.submit(form)" class="newUser" novalidate>
+      <div class="list">
+
+        <label class="item item-input">
+          <span class="input-label">Full Name</span>
+          <input type="text" name="fullName" ng-model="userCreateCtrl.user.fullName" required autofocus placeholder="John Doe" />
+        </label>
+
+        <label class="item item-input">
+          <span class="input-label">Email</span>
+          <input type="email" name="email" ng-model="userCreateCtrl.user.email" required placeholder="name@example.com" />
+        </label>
+
+
+        <label class="item item-input" >
+          <span class="input-label">Where are you?</span>
+          <input type="text" name="placeName" ng-model="userCreateCtrl.placeName" required placeholder="Your Town, Your State" >
+        </label>
+
+
+        <div class="errors">
+          <div ng-messages="form.fullName.$error" ng-if="form.$submitted">
+            <div ng-message="required">Full Name is required</div>
+          </div>
+          <div ng-messages="form.email.$error" ng-if="form.$submitted">
+            <div ng-message="required">An Email Address is required</div>
+            <div ng-message="email">A valid Email Address is required</div>
+          </div>
+
+          <div ng-messages="form.placeName.$error" ng-if="form.$submitted">
+            <div ng-message="required">A Your Town, Your State is required</div>
+          </div>
+
+
+        </div>
+
+      </div>
+    </form>
+
+  </ion-content>
+
+  <ion-footer-bar class="no-padding">
+    <div class="button-bar">
+      <button type="button" class="button button-gray" go-back>Cancel</button>
+      <button type="submit" form="form" class="button button-balanced">VOTE</button>
+    </div>
+  </ion-footer-bar>
+
+</ion-view>

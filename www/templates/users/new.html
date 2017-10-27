@@ -52,7 +52,7 @@
 
         <label class="item item-input" ng-if="userCreateCtrl.inNotLA">
           <span class="input-label">Where are you?</span>
-          <input type="text" name="placeName" ng-model="userCreateCtrl.placeName" required placeholder="City" >
+          <input type="text" name="placeName" ng-model="userCreateCtrl.placeName" required placeholder="Your Town, Your State" >
         </label>
 
 
@@ -73,7 +73,7 @@
           </div>
 
           <div ng-messages="form.placeName.$error" ng-if="form.$submitted && userCreateCtrl.inNotLA">
-            <div ng-message="required">A City is required</div>
+            <div ng-message="required">A Your Town, Your State is required</div>
           </div>
 
           <div  ng-messages="form.isLocationSelected.$error" ng-if="form.$submitted">

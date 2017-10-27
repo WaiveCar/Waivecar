@@ -13,9 +13,6 @@ function UserFacebookCreateController($injector){
   }
 
   this.user = $auth.me;
-
-  this.inLA = true;
-
   this.completeFacebookRegistration = function(form){
     if (form.$invalid) {
       return $message.error('Please fix form errors and try again.');
@@ -23,11 +20,7 @@ function UserFacebookCreateController($injector){
 
     return this.user.$save()
       .then(function () {
-        if (this.inLA) {
           return $state.go('auth-account-verify', {step: 2});
-        } else {
-          return $state.go('sunny-santa-monica');
-        }
       })
       .catch($message.error.bind($message));
   };

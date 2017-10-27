@@ -11,6 +11,7 @@ function UserCreateController($injector){
   var $data = $injector.get('$data');
   var $message = $injector.get('$message');
   var $ionicLoading = $injector.get('$ionicLoading');
+  var $modal = $injector.get('$modal');
   this.user = new $data.resources.users();
 
   this.inLA = false;
@@ -92,19 +93,46 @@ function UserCreateController($injector){
 
 
   this.registerWithFacebook = function(){
-    return $auth.facebookAuth()
-      .then(function (res) {
-        if (res.code === 'NEW_USER') {
-          return $state.go('users-new-facebook', {
-            step: 2
-          });
-        } else if (res.code === 'LOGGED_IN') {
-          return $state.go('cars');
+
+    var modal;
+
+    return $modal('result', {
+      icon: 'waivecar-icon',
+
+      message: 'Our WaiveCars live in Santa Monica California.   <br/>  Do you want to continue?',
+      actions: [{
+        className: 'button-balanced',
+        text: 'Yes',
+        handler: function () {
+          modal.remove();
+          return $auth.facebookAuth()
+            .then(function (res) {
+              if (res.code === 'NEW_USER') {
+                return $state.go('users-new-facebook', {
+                  step: 2
+                });
+              } else if (res.code === 'LOGGED_IN') {
+                return $state.go('cars');
+              }
+            })
+            .catch(function (err) {
+              $message.error(err);
+            });
         }
-      })
-      .catch(function (err) {
-        $message.error(err);
-      });
+      },{
+        className: 'button-dark',
+        text: 'No',
+        handler: function () {
+          modal.remove();
+          return $state.go('users-add-to-waitlist');
+        }
+      }]
+    }).then(function (_modal) {
+      modal = _modal;
+      modal.show();
+    });
+
+
   };
 
 }

@@ -83,6 +83,7 @@ require('./controllers/license-edit-controller');
 require('./controllers/license-request-validation-controller');
 require('./controllers/message-controller');
 require('./controllers/user-create-controller');
+require('./controllers/user-add-waitlist-controller');
 require('./controllers/user-facebook-create-controller');
 require('./controllers/user-edit-controller');
 require('./controllers/user-edit-general-controller');
