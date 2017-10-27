@@ -45,7 +45,15 @@
           <input type="password" name="password" ng-model="userCreateCtrl.user.password" required placeholder="6 characters or more" ng-minlength="6">
         </label>
 
-        <ion-checkbox ng-model="userCreateCtrl.inLA">I'm in LA</ion-checkbox>
+        <ion-checkbox ng-model="userCreateCtrl.inLA" ng-change="userCreateCtrl.inLocationChanged(true)">I'm in Los Angeles</ion-checkbox>
+        <ion-checkbox ng-model="userCreateCtrl.inNotLA" ng-change="userCreateCtrl.inLocationChanged(false)">I'm somewhere else</ion-checkbox>
+
+        <input type="hidden" name="isLocationSelected" ng-model="userCreateCtrl.isLocationSelected" required placeholder="City" >
+
+        <label class="item item-input" ng-if="userCreateCtrl.inNotLA">
+          <span class="input-label">Where are you?</span>
+          <input type="text" name="placeName" ng-model="userCreateCtrl.placeName" required placeholder="City" >
+        </label>
 
 
         <div class="errors">
@@ -63,6 +71,15 @@
             <div ng-message="required">Password is required</div>
             <div ng-message="minlength">Password must be greater than 5 characters</div>
           </div>
+
+          <div ng-messages="form.placeName.$error" ng-if="form.$submitted && userCreateCtrl.inNotLA">
+            <div ng-message="required">A City is required</div>
+          </div>
+
+          <div  ng-messages="form.isLocationSelected.$error" ng-if="form.$submitted">
+            <div  ng-message="required">Please tell us where you're living</div>
+          </div>
+
         </div>
 
       </div>

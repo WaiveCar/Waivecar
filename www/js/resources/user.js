@@ -48,7 +48,12 @@ module.exports = angular.module('app').factory('User', [
         params: {
           action: 'verify'
         }
-      }
+      },
+      addToWaitlist: {
+        method: 'POST',
+        isArray: false,
+        url: $utils.getCustomRoute('waitlist/add')
+      },
     });
 
   }

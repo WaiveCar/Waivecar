@@ -13,7 +13,15 @@ function UserCreateController($injector){
   var $ionicLoading = $injector.get('$ionicLoading');
   this.user = new $data.resources.users();
 
-  this.inLA = true;
+  this.inLA = false;
+  this.inNotLA = false;
+  this.placeName = '';
+
+  this.inLocationChanged = function (isInLA) {
+    this.inLA = isInLA;
+    this.inNotLA = !isInLA;
+    this.isLocationSelected = true;
+  };
 
   this.submit = function(form){
     this.user.phone = this.user.phone ? this.user.phone.toString() : '';
@@ -49,26 +57,37 @@ function UserCreateController($injector){
       template: '<div class="circle-loader"><span>Loading</span></div>'
     });
 
-    return this.user.$save()
-      .then(function login () {
-        this.user.fullName = this.user.firstName + ' ' + this.user.lastName;
 
-        if (this.inLA) {
+    if (this.inLA) {
+      return this.user.$save()
+        .then(function login () {
+          this.user.fullName = this.user.firstName + ' ' + this.user.lastName;
           return $auth.login(credentials);
-        }
-      }.bind(this))
-      .then(function () {
-        $ionicLoading.hide();
-        if (this.inLA) {
+        }.bind(this))
+        .then(function () {
+          $ionicLoading.hide();
           return $state.go('auth-account-verify', {step: 2});
-        } else {
+        }.bind(this))
+        .catch(function (err) {
+          $ionicLoading.hide();
+          $message.error(err);
+        });
+    } else {
+      return $data.resources.User.addToWaitlist({
+          firstName:this.user.firstName,
+          lastName:this.user.lastName,
+          email:this.user.email,
+          placeName:this.placeName
+        }).$promise
+        .then(function () {
+          $ionicLoading.hide();
           return $state.go('sunny-santa-monica');
-        }
-      }.bind(this))
-      .catch(function (err) {
-        $ionicLoading.hide();
-        $message.error(err);
-      });
+        })
+        .catch(function (err) {
+          $ionicLoading.hide();
+          $message.error(err);
+        });
+    }
   };
 
 
