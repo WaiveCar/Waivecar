@@ -41,7 +41,13 @@ module.exports = class WaitList extends Component {
 
           <div className='row'>
             <div className="col-xs-12 col-md-6 col-md-push-3 waitlist">
-              <h2>Thanks for Coming!</h2>
+              <h2>Thanks for { this.state.waivework === 'yes' ? 'Signing up' : 'Coming' }!</h2>
+              { this.state.waivework == 'yes' &&
+                <div>
+                  <p>Your information has been saved and our staff will contact you shortly.</p>
+                  <p>In the meantime, you can still enjoy being a standard WaiveCar user by signing up through the app. Thanks.</p>
+                </div>
+              }
               { this.state.established == 'yes' &&
                 <div>
                   <p>It looks like you're already a member!</p>
