@@ -54,7 +54,28 @@ Bento.Register.Model('Waitlist', 'sequelize', function(model, Sequelize) {
       }
     },
 
+    accoutType : {
+      type       : Sequelize.STRING(16),
+      defaultValue : 'normal'
+    },
+      
+    phone : {
+      type       : Sequelize.STRING(32),
+    },
+
     signupCount : {
+      type       : Sequelize.INTEGER,
+    },
+
+    experience : {
+      type       : Sequelize.INTEGER,
+    },
+
+    hours : {
+      type       : Sequelize.INTEGER,
+    },
+
+    days : {
       type       : Sequelize.INTEGER,
     }
   };
