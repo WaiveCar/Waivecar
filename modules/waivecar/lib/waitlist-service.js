@@ -57,7 +57,7 @@ module.exports = {
     // only accept certain fields...
     ['accountType', 'days', 'hours', 'experience', 'phone', 'latitude', 'longitude', 'firstName', 'lastName', 'email', 'placeName', 'placeId'].forEach((field) => {
       if (! (field in payload) ) {
-        if ( requiredList.index(field) !== -1) {
+        if ( requiredList.indexOf(field) !== -1) {
           throw error.parse({
             code    : 'MALFORMED QUERY',
             message : 'You need to post ' + field
