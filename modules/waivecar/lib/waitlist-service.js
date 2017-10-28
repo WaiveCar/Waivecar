@@ -55,14 +55,17 @@ module.exports = {
     let requiredList = ['firstName', 'lastName', 'email', 'placeName'];
 
     // only accept certain fields...
-    ['latitude', 'longitude', 'firstName', 'lastName', 'email', 'placeName', 'placeId'].forEach((field) => {
-      if (! (field in payload) && requiredList.index(field) !== -1) {
-        throw error.parse({
-          code    : 'MALFORMED QUERY',
-          message : 'You need to post ' + field
-        }, 400);
+    ['accountType', 'days', 'hours', 'experience', 'phone', 'latitude', 'longitude', 'firstName', 'lastName', 'email', 'placeName', 'placeId'].forEach((field) => {
+      if (! (field in payload) ) {
+        if ( requiredList.index(field) !== -1) {
+          throw error.parse({
+            code    : 'MALFORMED QUERY',
+            message : 'You need to post ' + field
+          }, 400);
+        }
+      } else {
+        data[field] = payload[field];
       }
-      data[field] = payload[field];
     });
 
     payload.email = payload.email.toLowerCase();
@@ -112,16 +115,21 @@ module.exports = {
 
       record = new Waitlist(data);
 
-      // FIELD
-      res.inside = isInside ? 'yes' : 'no';
-
-      // If we are outside then because of the architecture we
-      // are going to pass back the record id so the person can
-      // opt in on the next page
-      if (!isInside) {
-
+      // If this is a valid waivework signup
+      if (isInside && data['accountType'] == 'waivework') {
+        res.waivework = 'yes';
+      } else {
         // FIELD
-        res.id = record.id;
+        res.inside = isInside ? 'yes' : 'no';
+
+        // If we are outside then because of the architecture we
+        // are going to pass back the record id so the person can
+        // opt in on the next page
+        if (!isInside) {
+
+          // FIELD
+          res.id = record.id;
+        }
       }
 
       yield record.save();
@@ -251,6 +259,7 @@ module.exports = {
         recordList = yield Waitlist.find({ 
           where: {
             user_id: null,
+            account_type: 'normal',
             priority: { $gt: 0 }
           },
           order: [
