@@ -20,7 +20,8 @@ function UserFacebookCreateController($injector){
 
     return this.user.$save()
       .then(function () {
-          return $state.go('auth-account-verify', {step: 2});
+          $auth.logout();
+          return $state.go('user-waitlist');//'auth-account-verify', {step: 2});
       })
       .catch($message.error.bind($message));
   };

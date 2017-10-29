@@ -59,7 +59,32 @@ function UserCreateController($injector){
     });
 
 
+    var opts = {
+      firstName: this.user.firstName,
+      lastName: this.user.lastName,
+      email: this.user.email
+    }, nextPage;
+
     if (this.inLA) {
+      opts.longitude = -118.4912;
+      opts.latitude = 34.0195;
+      opts.placeName = "Los Angeles";
+      nextPage = 'user-waitlist';
+    } else {
+      opts.placeName = this.placeName;
+      nextPage = 'sunny-santa-monica';
+    }
+
+    return $data.resources.User.addToWaitlist(opts).$promise
+      .then(function () {
+        $ionicLoading.hide();
+        return $state.go(nextPage);
+      })
+      .catch(function (err) {
+        $ionicLoading.hide();
+        $message.error(err);
+      });
+    /*
       var mthis = this;
       return this.user.$save()
         .then(function login (user) {
@@ -70,27 +95,14 @@ function UserCreateController($injector){
           return $auth.login(credentials);
         }).then(function () {
           $ionicLoading.hide();
-          return $state.go('auth-account-verify', {step: 2});
+          $auth.logout();
+          return $state.go('user-waitlist');
         }).catch(function (err) {
           $ionicLoading.hide();
           $message.error(err);
         });
     } else {
-      return $data.resources.User.addToWaitlist({
-          firstName:this.user.firstName,
-          lastName:this.user.lastName,
-          email:this.user.email,
-          placeName:this.placeName
-        }).$promise
-        .then(function () {
-          $ionicLoading.hide();
-          return $state.go('sunny-santa-monica');
-        })
-        .catch(function (err) {
-          $ionicLoading.hide();
-          $message.error(err);
-        });
-    }
+    */
   };
 
 

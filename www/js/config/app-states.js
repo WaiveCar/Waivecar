@@ -118,9 +118,18 @@ module.exports = [
           auth: false
         }
       })
+      .state('user-waitlist', {
+        url: '/users/new/user-waitlist',
+        templateUrl: '/templates/users/user-waitlist.html',
+        controller: 'UserAddWaitlistController as userCreateCtrl',
+        data: {
+          auth: false
+        }
+      })
       .state('sunny-santa-monica', {
         url: '/users/new/sunny-santa-monica',
         templateUrl: '/templates/users/sunny-santa-monica.html',
+        controller: 'UserAddWaitlistController as userCreateCtrl',
         data: {
           auth: false
         }

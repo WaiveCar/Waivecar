@@ -19,6 +19,9 @@ function UserAddWaitlistController($injector){
 
   this.placeName = '';
 
+  this.goback = function() {
+    return $state.go('auth');
+  };
 
   this.submit = function(form){
 
