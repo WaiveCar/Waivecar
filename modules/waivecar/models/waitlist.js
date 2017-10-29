@@ -54,7 +54,7 @@ Bento.Register.Model('Waitlist', 'sequelize', function(model, Sequelize) {
       }
     },
 
-    accoutType : {
+    accountType : {
       type       : Sequelize.STRING(16),
       defaultValue : 'normal'
     },
