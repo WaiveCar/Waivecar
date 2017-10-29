@@ -132,10 +132,10 @@ hooks.set('user:store:after', function *(user, _user) {
   //  yield verification.requestEmailVerification(user.id, user.email, user.name());
   //}
 
-  // Add user to intercom
-  if(user.email) {
-    let res = yield intercom.addUser(user);
+  if(!user.email) {
+    user.email = 'Unknown_email_' + user.id + '@waivecar.com';
   }
+  let res = yield intercom.addUser(user);
 
 });
 
