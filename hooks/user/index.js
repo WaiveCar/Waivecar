@@ -133,7 +133,9 @@ hooks.set('user:store:after', function *(user, _user) {
   //}
 
   // Add user to intercom
-  let res = yield intercom.addUser(user);
+  if(user.email) {
+    let res = yield intercom.addUser(user);
+  }
 
 });
 
