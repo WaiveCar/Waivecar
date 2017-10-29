@@ -145,7 +145,7 @@ module.exports = {
   // them because their priority is null.  So what we do here is give
   // them the default priority level.
   *addById(payload) {
-    let record = yield Waitlist.findByid(payload.id);
+    let record = yield Waitlist.findById(payload.id);
     if(record && record.prioriy == _pri.none) {
       yield record.update({priority: _pri.default});
     }
