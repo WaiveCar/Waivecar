@@ -13,8 +13,8 @@ function UserAddWaitlistController($injector){
   var $ionicLoading = $injector.get('$ionicLoading');
 
   this.user = {
-    fullName : '',
-    email : ''
+    fullName: '',
+    email: ''
   };
 
   this.placeName = '';
@@ -39,17 +39,26 @@ function UserAddWaitlistController($injector){
       template: '<div class="circle-loader"><span>Loading</span></div>'
     });
 
-
-
+    var mthis = this;
     return $data.resources.User.addToWaitlist({
-        firstName:this.user.firstName,
-        lastName:this.user.lastName,
-        email:this.user.email,
-        placeName:this.placeName
+        firstName: this.user.firstName,
+        lastName: this.user.lastName,
+        accountType: 'normal',
+        phone: this.user.phone,
+        email: this.user.email,
+        placeName: this.placeName
       }).$promise
       .then(function () {
+        // BUGBUG: this HACK is being used to know where our origin is from
+        // If a phone isn't set then we did the facebook flow and after this 
+        // is done we should return to the splash.
         $ionicLoading.hide();
-        return $state.go('sunny-santa-monica');
+        var opts = {};
+        if(!mthis.user.phone) {
+          opts.brief = true;
+        }
+
+        return $state.go('sunny-santa-monica', opts);
       })
       .catch(function (err) {
         $ionicLoading.hide();

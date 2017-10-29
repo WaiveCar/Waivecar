@@ -60,16 +60,18 @@ function UserCreateController($injector){
 
 
     if (this.inLA) {
+      var mthis = this;
       return this.user.$save()
-        .then(function login () {
-          this.user.fullName = this.user.firstName + ' ' + this.user.lastName;
+        .then(function login (user) {
+          if(!mthis.user) {
+            mthis.user = user;
+          }
+          mthis.user.fullName = user.firstName + ' ' + user.lastName;
           return $auth.login(credentials);
-        }.bind(this))
-        .then(function () {
+        }).then(function () {
           $ionicLoading.hide();
           return $state.go('auth-account-verify', {step: 2});
-        }.bind(this))
-        .catch(function (err) {
+        }).catch(function (err) {
           $ionicLoading.hide();
           $message.error(err);
         });
