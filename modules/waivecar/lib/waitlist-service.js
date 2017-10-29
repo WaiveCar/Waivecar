@@ -82,14 +82,16 @@ module.exports = {
     if (record || user) {
       // They've signed up before, that's chill. 
       
-      // We always update the signup_count regardless
-      yield record.update({signupCount: record.signupCount + 1 });
+      if (record) {
+        // We always update the signup_count regardless
+        yield record.update({signupCount: record.signupCount + 1 });
+      }
 
       // If there's a user id then we've already signed them up
       // so we just try it all again. The letin code is smart enough to
       // just send out emails and not create duplicate records
-      if (record.userId) {
-        yield this.letIn(record);
+      if (user) {
+        yield this.letIn(user);
 
         // we set a magical custom flag
         
