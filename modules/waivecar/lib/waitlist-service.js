@@ -22,13 +22,16 @@ let _pri = {
 };
 
 function inside(obj) {
-  // see https://github.com/WaiveCar/Waivecar/issues/943
-  let ourCenter = { latitude : 34.310074, longitude : -118.455963 };
+  if ('latitude' in obj && 'longitude' in obj) {
+    // see https://github.com/WaiveCar/Waivecar/issues/943
+    let ourCenter = { latitude : 34.310074, longitude : -118.455963 };
 
-  // the geolib docs say they report in meters.
-  let distance = geolib.getDistance(ourCenter, obj);
+    // the geolib docs say they report in meters.
+    let distance = geolib.getDistance(ourCenter, obj);
 
-  return distance < 145000;
+    return distance < 145000;
+  }
+  return false;
 }
 
 module.exports = {
