@@ -98,7 +98,7 @@
         <variable name="GEOLOCATION_USAGE_DESCRIPTION" value=" " />
     </plugin>
     <plugin name="cordova-plugin-inappbrowser" spec="^1.5.0" />
-    <plugin name="cordova-plugin-intercom" spec="^3.2.2" />
+    <!-- <plugin name="cordova-plugin-intercom" spec="^3.2.2" /> -->
     <plugin name="cordova-plugin-request-location-accuracy" spec="^2.2.1" />
     <plugin name="cordova-plugin-whitelist" spec="^1.2.2" />
     <plugin name="cordova.plugins.diagnostic" spec="^3.3.3" />
