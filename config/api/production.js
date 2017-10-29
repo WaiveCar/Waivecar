@@ -1,7 +1,7 @@
 module.exports = {
   api : {
     port : 3000,
-    uri  : 'https://waive.car'
+    uri  : 'https://lb.waivecar.com'
   },
   socket : {
     api : {
