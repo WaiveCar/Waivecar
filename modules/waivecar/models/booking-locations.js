@@ -2,27 +2,21 @@
 
 Bento.Register.Model('BookingLocation', 'sequelize', function(model, Sequelize) {
 
-  /**
-   * The identity of the table created in your database.
-   * @property table
-   * @type     String
-   */
   model.table = 'booking_locations';
-
-  /**
-   * The sequelize schema definition of your model.
-   * @property schema
-   * @type     Object
-   */
   model.schema = {
 
     bookingId : {
       type       : Sequelize.INTEGER,
-      allowNull  : false,
+      allowNull  : true,
       references : {
         model : 'bookings',
         key   : 'id'
       }
+    },
+
+    carId : {
+      type       : Sequelize.INTEGER,
+      allowNull  : true
     },
 
     latitude : {

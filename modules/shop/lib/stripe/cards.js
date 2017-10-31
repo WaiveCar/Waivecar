@@ -83,12 +83,7 @@ module.exports = class StripeCards {
     });
   }
 
-  /**
-   * Deletes a card from the stripe service.
-   * @param  {String} stripeId
-   * @param  {String} cardId
-   * @return {Void}
-   */
+  // Deletes a card from the stripe service.
   *delete(stripeId, cardId) {
     let card = yield Card.findById(cardId);
     if (card) {
