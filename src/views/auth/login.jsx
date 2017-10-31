@@ -130,7 +130,7 @@ class LoginView extends React.Component {
           </button>
         </div>
 
-        <div className="footer">
+        <div className="footer" style={{ display: 'none' }}>
           Don't have an account? <Link to="/register">Register</Link>
         </div>
       </div>

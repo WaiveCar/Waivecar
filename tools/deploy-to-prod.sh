@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NODE_VERSION=v6.11.4
+NODE_VERSION=v4.2.6
 # This is copied from the app/tools/common.sh
 nvmcheck() {
   version=`node --version`

@@ -36,11 +36,13 @@ templates.register('auth', {
       component : require('views/auth/reset-password'),
       onEnter   : policies.isAnonymous
     },
+      /*
     {
       path      : '/register',
       component : require('views/auth/register'),
       onEnter   : policies.isAnonymous
     },
+    */
     {
       path      : '/logout',
       component : require('views/auth/logout'),
@@ -67,6 +69,7 @@ templates.register('social-auth', {
 
     // ### Facebook
 
+    /*
     {
       path      : '/auth/facebook/register',
       component : require('views/auth/facebook/register'),
@@ -74,6 +77,7 @@ templates.register('social-auth', {
         policies.isAnonymous(nextState, replaceState);
       }
     },
+    */
     {
       path      : '/auth/facebook/connect',
       component : require('views/auth/facebook/connect'),
