@@ -148,6 +148,8 @@ function ApplicationController ($rootScope, $scope, $injector) {
     }
   });
 
+  IntercomService.registerForPush();
+
   if ($auth.isAuthenticated()) {
     NotificationService.setupPushNotifications();
     initLocation();
