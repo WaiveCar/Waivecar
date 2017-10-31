@@ -49,14 +49,9 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       type : Sequelize.STRING
     },
 
-    /**
-     * The user current account status.
-     * @type   {Enum}
-     * @module waivecar
-     */
     status : {
-      type         : Sequelize.ENUM('active', 'probation', 'pending', 'suspended'),
-      defaultValue : 'probation'
+      type         : Sequelize.ENUM('active', 'probation', 'pending', 'suspended', 'waitlist'),
+      defaultValue : 'waitlist'
     },
 
     facebook : {
