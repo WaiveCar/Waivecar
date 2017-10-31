@@ -18,6 +18,13 @@ hooks.set('auth:login', function *(payload) {
     throw invalidCredentials();
   }
 
+  if(user.status === 'waitlist') {
+    throw error.parse({
+      code    : `AUTH_INVALID_GROUP`,
+      message : `You're currently on the waitlist. We'll contact you when you're account is active.`
+    }, 400);
+  }
+
   if(!user.password) {
     throw invalidCredentials('You signed up through Facebook.');
   }
@@ -40,6 +47,12 @@ hooks.set('auth:login', function *(payload) {
  */
 hooks.set('auth:social', function *(user, payload) {
   yield verifyUser(user, payload);
+  if(user.status === 'waitlist') {
+    throw error.parse({
+      code    : `AUTH_INVALID_GROUP`,
+      message : `You're currently on the waitlist. We'll contact you when you're account is active.`
+    }, 400);
+  }
   return yield auth.token(user.id, payload);
 });
 
