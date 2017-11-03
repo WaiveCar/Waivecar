@@ -962,7 +962,7 @@ module.exports = class BookingService extends Service {
     var distanceError;
 
     if (closestLocations.timeDiff < timeWindowWidth) {
-      distanceError = 2000 + (closestLocations.timeDiff / 1000) * 20; //20 m/c is around 45 mile per hour
+      distanceError = 6000 + (closestLocations.timeDiff / 1000) * 20; //20 m/c is around 45 mile per hour
       distance = geolib.getDistance(closestLocations.userLocation, closestLocations.carLocation);
       isPaired = distance < distanceError;
     }
