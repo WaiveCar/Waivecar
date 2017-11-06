@@ -17,4 +17,4 @@ set -x
 
 # we put the new stuff to be in the "new" directory.
 scp -C tools/deploy-api.sh waive-prod$server: 
-ssh waive-prod$server "sudo ./deploy-api.sh"
+ssh waive-prod$server "./deploy-api.sh"

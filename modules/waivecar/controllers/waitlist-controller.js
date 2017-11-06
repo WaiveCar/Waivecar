@@ -9,7 +9,7 @@ Bento.Register.Controller('WaitlistController', function(controller) {
   }
 
   controller.add = function *() {
-    return yield waitlist.add(this.query, this.auth.user);
+    return yield waitlist.add(this.payload, this.auth.user);
   }
 
   controller.addById = function *() {
