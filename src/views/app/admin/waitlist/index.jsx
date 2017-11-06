@@ -99,6 +99,12 @@ class TableIndex extends React.Component {
             <button type="submit" onClick={ this.letin.bind(this) } className="btn btn-primary"> Let People in</button>
           </div>
           <div className="box-content">
+            <input 
+              type="text" 
+              className="box-table-search" 
+              ref={(input) => { this.textInput = input; }}
+              placeholder="Enter search text [name, email" 
+              onChange={ (e) => { this.table.search(false, this.textInput.value, this.textInput) }  } />
             <div id="isMobile" className="hidden-sm-down"></div>
             <table className="box-table table-striped">
               <thead>
