@@ -8,6 +8,7 @@ let config        = Bento.config;
 let Email         = Bento.provider('email');
 let log           = Bento.Log;
 let notify        = Bento.module('waivecar/lib/notification-service');
+let sequelize     = Bento.provider('sequelize');
 
 let UserService = require('./user-service');
 let geolib      = require('geolib');
@@ -156,17 +157,17 @@ module.exports = {
     }
   },
 
-  *index(query, _user) {
-    query = _.extend(queryParser(query, {
-      where : {
-        //actorId   : queryParser.NUMBER
-      }
-    }));
-
+  *index(queryIn, _user) {
+    let query = {order: [ ['created_at', 'desc'] ] };
     // 
     // Only return users that we haven't let in already
     //
-    query.where['user_id'] = null;
+    if (queryIn.search) {
+      query.where = { $and: [
+        {user_id: null },
+        sequelize.literal(`concat_ws(' ', first_name, last_name, place_name) like '%${queryIn.search}%'`)
+      ] };
+    }
 
     return yield Waitlist.find(query);
   },
