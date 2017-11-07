@@ -193,7 +193,8 @@ module.exports = {
         userRecord = yield UserService.store({
           firstName: record.firstName,
           lastName: record.lastName,
-          email: record.email
+          email: record.email,
+          status: 'pending'
         }, _user);
       } catch(ex) {
         userRecord = yield User.findOne({ where: { email: record.email } });
