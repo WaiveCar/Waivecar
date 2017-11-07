@@ -20,8 +20,8 @@ Bento.Register.Controller('WaitlistController', function(controller) {
     return yield waitlist.index(this.query, this.auth.user);
   }
 
-  controller.take = function *() {
-    return yield waitlist.take(this.query, this.auth.user);
+  controller.letIn = function *() {
+    return yield waitlist.letIn(this.payload, this.auth.user);
   }
 
   return controller;

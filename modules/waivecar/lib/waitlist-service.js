@@ -95,7 +95,7 @@ module.exports = {
       // so we just try it all again. The letin code is smart enough to
       // just send out emails and not create duplicate records
       if (user) {
-        yield this.letIn(user);
+        yield this.letInByRecord(user, _user);
 
         // we set a magical custom flag
         
@@ -178,7 +178,7 @@ module.exports = {
   // just to essentially dequeue some quantity of records.  The letin function 
   // is what converges the waitlist users to actual users.
   //
-  *letIn(recordList, _user) {
+  *letInByRecord(recordList, _user) {
     
     let nameList = [];
 
@@ -199,6 +199,7 @@ module.exports = {
         userRecord = yield User.findOne({ where: { email: record.email } });
 
         if (userRecord) {
+          log.warn(`Found user with email ${ record.email }. Not adding`);
           yield record.update({userId: userRecord.id});
         } else {
           log.warn('Unable to add user with email ' + record.email);
@@ -237,7 +238,7 @@ module.exports = {
     }
   },
 
-  *take(payload, _user) {
+  *letIn(payload, _user) {
     // This is "clever" because we want a round-robin fashion.
     // So the sql that we want is essentially:
     //
@@ -274,10 +275,12 @@ module.exports = {
           ],
           limit: letInCount
         });
+      } else {
+        log.warn(`0 people requested to be let in. This may be an error`);
       }
     }
     if(recordList.length) {
-      yield this.letIn(recordList, _user);
+      yield this.letInByRecord(recordList, _user);
     }
   }
 
