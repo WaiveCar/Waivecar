@@ -167,6 +167,8 @@ module.exports = {
         {user_id: null },
         sequelize.literal(`concat_ws(' ', first_name, last_name, place_name) like '%${queryIn.search}%'`)
       ] };
+    } else {
+      query.where = {user_id: null };
     }
 
     return yield Waitlist.find(query);
