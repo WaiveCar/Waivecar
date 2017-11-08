@@ -68,7 +68,6 @@ rules:
     space-after-keywords: [0, "never"]
     space-before-blocks: 0
     space-before-function-paren: [0, "never"]
-    space-unary-ops: [2, {words: true, nonwords: false}]
     spaced-comment: [0, "always", { exceptions: ["-"]}]
     strict: [2, "global"]
     valid-jsdoc: [1, { prefer: { "return": "returns"}}]
