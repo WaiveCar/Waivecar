@@ -71,6 +71,7 @@ module.exports = {
     }
 
     options.limit = 100;
+    options.inService = true;
     let cars = yield Car.find(options);
     let bookings = yield Booking.find({ where : { status : 'started' } });
 
@@ -512,11 +513,9 @@ module.exports = {
    * @return {Array}
    */
   *getDevice(id, _user, source) {
-    /*
     if (process.env.NODE_ENV !== 'production') {
       return false;
     }
-    */
     try {
       let status = yield this.request(`/devices/${ id }/status`, { timeout : 30000 });
       this._errors[id] = 0;
