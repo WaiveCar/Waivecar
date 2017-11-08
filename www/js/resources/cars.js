@@ -1,20 +1,22 @@
 'use strict';
 var angular = require('angular');
 require('../services/utils.js');
+require('../services/ble-service.js');
 
 module.exports = angular.module('app').factory('Cars', [
   '$resource',
   '$utils',
-  function Resource($resource, $utils) {
-    return $resource(null, null, $utils.createResource('cars', {
-      lock: {
+  '$ble',
+  function Resource($resource, $utils, $ble) {
+    var res = $resource(null, null, $utils.createResource('cars', {
+      _lock: {
         method: 'PUT',
         url: $utils.getCustomRoute('cars/:id/lock'),
         params: {
           id: '@id'
         }
       },
-      unlock: {
+      _unlock: {
         method: 'PUT',
         url: $utils.getCustomRoute('cars/:id/unlock'),
         params: {
@@ -35,5 +37,20 @@ module.exports = angular.module('app').factory('Cars', [
         }
       }
     }));
+    res.lock = function(params) {
+      $ble.setFunction('getBle', res.ble);
+      return $ble.lock(params.id).catch(function(){
+        console.log("Failure ... using network"); 
+        return res._lock(params);
+      });
+    };
+    res.unlock = function(params) {
+      $ble.setFunction('getBle', res.ble);
+      return $ble.unlock(params.id).catch(function(){
+        console.log("Failure ... using network"); 
+        return res._unlock(params);
+      });
+    };
+    return res;
   }
 ]);
