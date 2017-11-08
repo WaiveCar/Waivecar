@@ -8,6 +8,14 @@ module.exports = angular.module('app').factory('Cars', [
   '$utils',
   '$ble',
   function Resource($resource, $utils, $ble) {
+
+    function transformResponse(data) {
+      data = angular.fromJson(data);
+      return data.filter(function(car) {
+        return car.inService;
+      });
+    }
+
     var res = $resource(null, null, $utils.createResource('cars', {
       _lock: {
         method: 'PUT',
@@ -35,6 +43,12 @@ module.exports = angular.module('app').factory('Cars', [
         params: {
           id: '@id'
         }
+      },
+      query: {
+        method: 'GET',
+        url: $utils.getCustomRoute('cars'),
+        isArray: true,
+        transformResponse: transformResponse
       }
     }));
     res.lock = function(params) {
