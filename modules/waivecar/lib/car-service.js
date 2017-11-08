@@ -431,7 +431,7 @@ module.exports = {
    */
   *syncCar(device, cars, allCars) {
     try {
-      let existingCar = cars.find(c => c.id === device.id);
+      let existingCar = yield cars.find(c => c.id === device.id);
       if (existingCar) {
         let updatedCar = yield this.getDevice(device.id, null, 'sync');
         if (updatedCar) {
@@ -442,7 +442,7 @@ module.exports = {
         }
       } else {
         // If Device does not match any Car then add it to the database.
-        let excludedCar = allCars.find(c => c.id === device.id);
+        let excludedCar = yield allCars.find(c => c.id === device.id);
         if (!excludedCar) {
           let isMockCar = [ 'EE000017DC652701', 'C0000017DC247801' ].indexOf(device.id) > -1;
           if (!config.mock.cars && isMockCar) {
@@ -455,8 +455,11 @@ module.exports = {
               let meta = config.car.meta[car.id];
               if (meta) {
                 car.license = meta.license;
-                car.licenseUsed = meta.license;
+              } else {
+                let allcars = yield cars.find();
+                car.license = `WAIVE${ allcars.length + 1 }`;
               }
+              car.licenseUsed = car.license;
               log.debug(`Cars : Sync : adding ${ device.id }.`);
               yield car.upsert();
             } else {
