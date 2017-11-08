@@ -422,16 +422,11 @@ module.exports = {
     return yield Car.find();
   },
 
-  /**
-   * Attempts to sync a device with the local database.
-   * @param  {String} device
-   * @param  {Array}  cars
-   * @param  {Array}  allCars
-   * @return {Void}
-   */
-  *syncCar(device, cars, allCars) {
+  // Note that the carList and the allCars are not model links
+  // but actual arrays of results. SMH
+  *syncCar(device, carList, allCars) {
     try {
-      let existingCar = yield cars.find(c => c.id === device.id);
+      let existingCar = carList.find(c => c.id === device.id);
       if (existingCar) {
         let updatedCar = yield this.getDevice(device.id, null, 'sync');
         if (updatedCar) {
@@ -442,7 +437,7 @@ module.exports = {
         }
       } else {
         // If Device does not match any Car then add it to the database.
-        let excludedCar = yield allCars.find(c => c.id === device.id);
+        let excludedCar = allCars.find(c => c.id === device.id);
         if (!excludedCar) {
           let isMockCar = [ 'EE000017DC652701', 'C0000017DC247801' ].indexOf(device.id) > -1;
           if (!config.mock.cars && isMockCar) {
@@ -456,8 +451,15 @@ module.exports = {
               if (meta) {
                 car.license = meta.license;
               } else {
-                let allcars = yield cars.find();
-                car.license = `WAIVE${ allcars.length + 1 }`;
+                let nextNumber =  allCars.length;
+                let candidateName = '';
+                do {
+                  candidateName = `WAIVE${ nextNumber }`;
+                  existingCar = carList.find(c => c.license === candidateName);
+                  nextNumber ++;
+                } while(existingCar);
+
+                car.license = candidateName;
               }
               car.licenseUsed = car.license;
               log.debug(`Cars : Sync : adding ${ device.id }.`);
@@ -472,7 +474,11 @@ module.exports = {
         }
       }
     } catch(err) {
-      log.warn(`Cars : Sync : ${ err.data.status } : ${ err.data.message } : ${ err.data.resource }`);
+      if(err.data) {
+        log.warn(`Cars : Sync : ${ err.data.status } : ${ err.data.message } : ${ err.data.resource }`);
+      } else {
+        log.warn(`Cars : Sync : ${ err }`);
+      }
     }
   },
 
@@ -506,9 +512,11 @@ module.exports = {
    * @return {Array}
    */
   *getDevice(id, _user, source) {
+    /*
     if (process.env.NODE_ENV !== 'production') {
       return false;
     }
+    */
     try {
       let status = yield this.request(`/devices/${ id }/status`, { timeout : 30000 });
       this._errors[id] = 0;
@@ -780,8 +788,6 @@ module.exports = {
     if (data) {
       payload.body = JSON.stringify(data);
     }
-
-    // ### Submit Request
 
     try {
       let res = yield request(payload);
