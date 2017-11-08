@@ -30,7 +30,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
     isAvailable : {
       type         : Sequelize.BOOLEAN,
-      defaultValue : true
+      defaultValue : false
     },
 
     adminOnly : {
@@ -85,7 +85,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
     inService : {
       type         : Sequelize.BOOLEAN,
-      defaultValue : true
+      defaultValue : false
     },
 
     isOnChargeAdapter : {
