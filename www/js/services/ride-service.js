@@ -193,11 +193,11 @@ module.exports = angular.module('app.services').factory('$ride', [
       return $data.resources.locations.dropoff().$promise.then(function(locationList) {
 
         // If the charge isn't ok then we can only end at hubs, not zones.
-        if(!$ride.isChargeOkay(car.id, car)) {
+        if(!service.isChargeOkay(car.id, car)) {
           locationList = locationList.filter(function(location) { return location.type === 'hub'; });
         }
         for(var ix = 0; ix < locationList.length; ix++) {
-          location = locationList[ix];
+          var location = locationList[ix];
           if (location.radius && $distance.fallback(location, car) * 1760 < location.radius) {
             return location.type;
           }
