@@ -9,10 +9,10 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
   controller.dropoff = function *() {
     return yield Location.find({ where: 
       {
-        type: 'dropoff',
+        type: { $in: ['dropoff', 'homebase'] }
         // only return entries after the date below ... we are considering
         // all the older ones to essentially be bullshit
-        created_at: { $gt: new Date(2017, 8, 1) }
+        //created_at: { $gt: new Date(2017, 8, 1) }
       }
     });
   };
