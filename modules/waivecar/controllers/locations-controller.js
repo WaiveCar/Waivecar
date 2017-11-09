@@ -18,6 +18,19 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
   };
 
   controller.create = function *() {
+    // we presume that there's a newline delineated blob of
+    // text for the shape. We need to clean that up.
+    if(this.payload.shape) {
+      let polygon = [];
+      this.payload.shape.split('\n').forEach((row) => {
+        let parts = row.split(',');
+        if(parts.length >= 2) {
+          polygon.push([parseFloat(parts[0], 10), parseFloat(parts[1], 10)]);
+        }
+      });
+      this.payload.shape = polygon;
+    }
+
     let model = new Location(this.payload);
 
     yield model.save();
