@@ -32,11 +32,12 @@ Bento.Register.Model('Location', 'sequelize', function(model, Sequelize) {
 
     shape : {
       type       : Sequelize.STRING,
+      allowNull  : true,
       get        : function() {
-        return this.getDataValue('shape').split(',');
+        return JSON.parse(this.getDataValue('shape'));
       },
       set        : function(val) {
-        this.setDataValue('shape', val.join(','));
+        this.setDataValue('shape', JSON.stringify(val));
       }
     },
 
