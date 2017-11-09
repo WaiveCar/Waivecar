@@ -7,7 +7,7 @@ Bento.Register.Model('Location', 'sequelize', function(model, Sequelize) {
   model.schema = {
 
     type : {
-      type         : Sequelize.ENUM('station', 'valet', 'homebase', 'item-of-interest', 'dropoff'),
+      type         : Sequelize.ENUM('station', 'valet', 'homebase', 'item-of-interest', 'hub', 'zone'),
       defaultValue : 'station'
     },
 
@@ -28,6 +28,16 @@ Bento.Register.Model('Location', 'sequelize', function(model, Sequelize) {
     radius : {
       type       : Sequelize.INTEGER,
       allowNull  : true
+    },
+
+    shape : {
+      type       : Sequelize.STRING,
+      get        : function() {
+        return this.getDataValue('shape').split(',');
+      },
+      set        : function(val) {
+        this.setDataValue('shape', val.join(','));
+      }
     },
 
     status : {
