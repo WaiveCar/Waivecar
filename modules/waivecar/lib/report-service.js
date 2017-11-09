@@ -173,6 +173,38 @@ module.exports = {
 
 
     return yield Report._schema.findAll(parsedQuery);
+  },
+
+  *showForCar(carId) {
+
+
+    let dbQuery = {
+      where : {
+        carId  : carId
+      },
+      include : [{
+        model : Report._schema,
+        as    : 'reports',
+        include : [{
+          model : ReportFile._schema,
+          as    : 'files',
+          include : [{
+            model : File._schema,
+            as    : 'details'
+          }]
+        }]
+      }]
+    };
+
+    var result = yield Booking._schema.findAll(dbQuery);
+
+    return result.filter(function(booking) {
+      return booking.reports.filter(function(report) {
+          return report.files.length > 0;
+        }).length > 0;
+    }).reduce (function(result, booking) {
+      return result.concat(booking.reports);
+    }, []);
   }
 
 };

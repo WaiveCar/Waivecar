@@ -24,6 +24,10 @@ Bento.Register.Controller('ReportsController', function(controller) {
     return yield service.status();
   };
 
+  controller.showForCar = function *(id) {
+    return yield service.showForCar(id);
+  };
+
   return controller;
 
 });
