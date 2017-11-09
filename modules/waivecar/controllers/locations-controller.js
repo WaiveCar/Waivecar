@@ -7,13 +7,18 @@ let _ = require('lodash');
 Bento.Register.ResourceController('Location', 'LocationsController', function(controller) {
 
   controller.dropoff = function *() {
-    return yield Location.find({ where: 
+    return (yield Location.find({ where: 
       {
-        type: { $in: ['dropoff', 'homebase'] }
+        type: { $in: ['hub', 'zone', 'homebase'] }
         // only return entries after the date below ... we are considering
         // all the older ones to essentially be bullshit
         //created_at: { $gt: new Date(2017, 8, 1) }
       }
+    })).map((row) => {
+      if(row.shape) {
+        row.shape = JSON.parse(row.shape);
+      }
+      return row;
     });
   };
 
