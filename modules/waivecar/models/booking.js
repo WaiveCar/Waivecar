@@ -73,9 +73,11 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
   model.relations = [
     'BookingDetails',
     'BookingPayment',
-    function relations(BookingDetails, BookingPayment) {
+    'Report',
+    function relations(BookingDetails, BookingPayment, Report) {
       this.hasMany(BookingDetails, { as : 'details',  foreignKey : 'bookingId' });
       this.hasMany(BookingPayment, { as : 'payments', foreignKey : 'bookingId' });
+      this.hasMany(Report,         { as : 'reports', foreignKey : 'bookingId' });
     }
   ];
 
