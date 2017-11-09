@@ -8,8 +8,6 @@ module.exports = angular.module('app.services').factory('$ble', [
   '$interval',
   '$q',
   function ($window, $interval, $q) {
-    var _bleres = {};
-
     var CAR_INFORMATION_SERVICE = '869CEFA0-B058-11E4-AB27-00025B03E1F4';
     var _cisMap = {
       COMMAND_CHALLENGE: '869CEFA2-B058-11E4-AB27-00025B03E1F4',
@@ -39,12 +37,22 @@ module.exports = angular.module('app.services').factory('$ble', [
     _ccsMap.start = _ccsMap.CENTRAL_LOCK_OPEN | _ccsMap.IMMOBILIZER_UNLOCK;
     _ccsMap.finish = _ccsMap.CENTRAL_LOCK_CLOSE | _ccsMap.IMMOBILIZER_LOCK;
 
-    var _token = false;
     var _sessionKey = false;
     var _deviceId = false;
-    var _carId = false;
     var _injected = {};
     var _rssi = {};
+    var _creds = {};
+
+    // If the token is set to expire then we need to grab another. We assume
+    //
+    //  clock drift + network time + estimated 90% network failure time (signal) + unknown unknowns
+    //
+    // 60s + 15s + 90s + 45s = 2.5 minutes ... 
+    //
+    //  that means that if a token is expiring in 2.5 minutes we try to go
+    //  out and get another one
+    //
+    var MINTIME = 210 * 1000;
 
     $window.blefn = {
       scan: function() {
@@ -94,7 +102,6 @@ module.exports = angular.module('app.services').factory('$ble', [
     function ok(what, okFn) {
       return function() {
         console.log(log.time() + 'Successs ' + what, arguments[0]);
-        _bleres[what] = arguments[0];
         if(okFn) {
           return okFn(what, arguments[0]);
         }
@@ -138,7 +145,6 @@ module.exports = angular.module('app.services').factory('$ble', [
           }
           log('Found car ' + car.id);
           _deviceId = car.id;
-          _carId = car.name;
           ble.connect(car.id, function() {
             log('Connected');
             success();
@@ -194,21 +200,34 @@ module.exports = angular.module('app.services').factory('$ble', [
       }, failure(what, fail));
     }
 
-    // TODO: WORRY ABOUT TOKEN EXPIRATION
     function connect(carId) {
       var defer = $q.defer();
-      if(_carId === carId) {
+      if(_creds.carId === carId && _creds.expire - new Date() > MINTIME) {
         defer.resolve();
       } else {
         log("Getting tokens");
+        //
+        // This is an example of what is returned by ble:
+        //
+        // {
+        // "uuid":"7a64d13a-0d7b-4817-b762-41f7bbcae274",
+        // "token":"65a***",
+        // "sessionKey":"sX***",
+        // "valid_from":"2017-11-09T01:32:06.648Z",
+        // "valid_until":"2017-11-09T02:32:06.648Z"
+        // } 
+        //
         _injected.getBle({ id: carId }).$promise.then(function(creds) {
-          _token = b642bin(creds.token);
+          var token = b642bin(creds.token);
+          _creds = creds;
+          _creds.carId = carId;
+          _creds.expire = new Date(creds.valid_until);
           _sessionKey = b642bin(creds.sessionKey);
 
           log("Looking for Car");
           findCarById(carId, function() {
             log("Authorizing Vehicle");
-            writeBig(CAR_CONTROL_SERVICE, AUTHORIZE_PHONE, _token, defer.resolve, failure('write', defer.reject));
+            writeBig(CAR_CONTROL_SERVICE, AUTHORIZE_PHONE, token, defer.resolve, failure('write', defer.reject));
           }, failure('find car', defer.reject));
         });
       }
