@@ -91,12 +91,6 @@ function *getUser(identifier) {
   });
 }
 
-/**
- * Returns a group.
- * @param  {Number} userId
- * @param  {Number} groupId
- * @return {Object}
- */
 function *getGroup(userId, groupId) {
   return yield GroupUser.findOne({
     where : {
