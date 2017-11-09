@@ -27,18 +27,12 @@ Bento.Register.Model('Location', 'sequelize', function(model, Sequelize) {
     // how americans roll. What a silly system.
     radius : {
       type       : Sequelize.INTEGER,
-      allowNull  : true
+      allowNull  : true,
     },
 
     shape : {
       type       : Sequelize.STRING,
-      allowNull  : true,
-      get        : function() {
-        return JSON.parse(this.getDataValue('shape'));
-      },
-      set        : function(val) {
-        this.setDataValue('shape', JSON.stringify(val));
-      }
+      allowNull  : true
     },
 
     status : {
