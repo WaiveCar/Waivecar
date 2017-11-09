@@ -294,47 +294,33 @@ function DashboardController ($scope, $rootScope, $injector) {
       return null;
     }
 
-    var status = false;
     ctrl.ending = true;
     return $ride.getStatus(carId).then(function(obj) {
       // This silly hack is so our second closure doesn't
       // shadow our car status.
-      status = obj;
       ctrl.ending = false;
 
-      // if we have a good charge then we can move
-      // on to the distance check.
-      if ($ride.isChargeOkay(carId, obj)) {
-        return $ride.canEndHereCheck();
+      if($ride.isCarOn(carId, obj)) {
+        return showIgnitionOnModal();
       }
-      $ionicLoading.hide();
-      return $q.reject('Looks like the charge is pretty low.  Please head to the nearest charger!');
-    }).then(function(inside) {
-      if (inside) {
-        // inside geofence -> continue as normal
-        var isCarOn = $ride.isCarOn(carId, status);
-        ctrl.ending = false;
-        if (isCarOn) {
-          $ionicLoading.hide();
-          return showIgnitionOnModal();
-        }
-        // $ride.setLocation('homebase');
-        // return $ride.processEndRide();
-        if ($distance.fallback(homebase, status) * 1760 < 100) {
-          //ZendriveService.stop(bookingId);
+
+      return $ride.canEndHereCheck(obj).then(function(type) {
+        if (type === 'hub') {
           return $ride.processEndRide().then(function() {
-            $ionicLoading.hide();
             return $state.go('end-ride', { id: bookingId });
           });
+        } else if(type === 'zone') {
+          return $state.go('end-ride-location', { id: bookingId });
+        } else {
+          // Not inside geofence -> show error
+          if ($ride.isChargeOkay(carId, obj)) {
+            return $q.reject('Looks like you\'re outside of the rental zone. Please head back to end your rental.');
+          } 
+          return $q.reject('Looks like the charge is pretty low. Please head to the nearest hub or charger!');
         }
-        $ionicLoading.hide();
-        return $state.go('end-ride-location', { id: bookingId });
-      } else {
-        // Not inside geofence -> show error
-        $ionicLoading.hide();
-        return $q.reject('Looks like you\'re outside of the rental zone (Santa Monica). Please head back to end your rental.');
-      }
-    }).catch(endRideFailure);
+      }).then($ionicLoading.hide)
+        .catch(endRideFailure);
+    });
   }
 
   function featured (items) {
