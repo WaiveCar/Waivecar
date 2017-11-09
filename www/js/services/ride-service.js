@@ -190,24 +190,28 @@ module.exports = angular.module('app.services').factory('$ride', [
     // obj is returned by the car and should have a long/lat
     // first and foremost the users' gps is used.
     service.canEndHereCheck = function(car) {
+      return $data.resources.locations.dropoff().$promise.then(function(locationList) {
+
+        // If the charge isn't ok then we can only end at hubs, not zones.
+        if(!$ride.isChargeOkay(car.id, car)) {
+          locationList = locationList.filter(function(location) { return location.type === 'hub'; });
+        }
+        for(var ix = 0; ix < locationList.length; ix++) {
+          location = locationList[ix];
+          if (location.radius && $distance.fallback(location, car) * 1760 < location.radius) {
+            return location.type;
+          }
+          if (location.shape && GeofencingService.insideFastCheck(car, location.shape)) {
+            return location.type;
+          }
+        }
+      });
+      /*
       // if we are in Santa Monica we are good
       return GeofencingService.insideBoundary(car).then(function(isInside) {
-        if (isInside) {
-          return true;
-        }
-
-        // otherwise we need to look for end locations.
-        return $data.resources.locations.dropoff().$promise.then(function(locationList) {
-          for(var ix = 0; ix < locationList.length; ix++) {
-            if ($distance.fallback(locationList[ix], car) * 1760 < locationList[ix].radius) {
-              return true;
-            }
-          }
-          return false;
-        });
-
+        return isInside;
       });
-
+      */
     };
 
     service.setParkingDetails = function(details) {
