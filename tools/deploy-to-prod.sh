@@ -51,7 +51,7 @@ fi
 
 for i in `seq 1 2`; do
   # we put the new stuff to be in the "new" directory.
-  scp -C app/scripts/{vendors,bundle}.js waive-prod$i:web-js/new/
+  scp -C app/scripts/{vendors,bundle}.js app/index.html waive-prod$i:web-js/new/
   scp -C tools/copy-js-over.sh waive-prod$i: 
   ssh waive-prod$i "sudo ./copy-js-over.sh"
 done

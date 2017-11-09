@@ -15,6 +15,9 @@ goforward() {
 
   # Now we move over the new stuff
   sudo cp new/{vendors,bundle}.js /opt/waivecar-web/scripts/
+  if [ -e new/index.html ]; then
+    sudo cp new/index.html /opt/waivecar-web/
+  fi
 }
 
 undo() {
