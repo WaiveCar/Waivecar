@@ -115,10 +115,16 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
   };
 
-  MapController.prototype.addMarker = function addMarker(marker) {
-    var ctrl = this;
+  function charge2color(marker) {
+    return Math.floor(marker.charge/33);
+  }
 
-    var iconOpt = getIconOptions(marker.icon || marker.type || 'car');
+  MapController.prototype.addMarker = function addMarker(marker) {
+    var type = marker.icon || marker.type;
+    if(marker.charge) {
+      type = 'active-waivecar-' + charge2color(marker);
+    }
+    var iconOpt = getIconOptions(type);
 
     var markerLabel;
 
@@ -127,7 +133,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     }*/
 
     var markerObj = new google.maps.Marker({
-      map: ctrl.map,
+      map: this.map,
       animation: google.maps.Animation.DROP,
       position: mapToGoogleLatLong(marker),
       icon: iconOpt,
@@ -235,7 +241,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     ctrl._addedMarkers.general = actualMarkers;
   };
 
-  MapController.prototype.drawRouteMarkers = function drawRouteMarkers(begin, end) {
+  MapController.prototype.drawRouteMarkers = function drawRouteMarkers(begin, end, destiny) {
     var ctrl = this;
     if (!ctrl.beginMarker) {
       var iconOpt = getIconOptions('location');
@@ -251,7 +257,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     }
 
     if (!ctrl.endMarker) {
-      iconOpt = getIconOptions('car');
+      iconOpt = getIconOptions('active-waivecar-' + charge2color(destiny));
 
       ctrl.endMarker = new google.maps.Marker({
         map: ctrl.map,
@@ -275,7 +281,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         var beginStep = route.steps[0];
         var endStep = route.steps[route.steps.length - 1];
 
-        ctrl.drawRouteMarkers(beginStep.start_point, endStep.end_point);
+        ctrl.drawRouteMarkers(beginStep.start_point, endStep.end_point, destiny);
 
         ctrl.directionsRenderer.setDirections(response);
         if (fitBoundsByRoute) {
@@ -286,9 +292,19 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
   function getIconOptions(iconType) {
     switch (iconType) {
-      case 'car':
+      case 'active-waivecar':
+      case 'active-waivecar-0':
+      case 'active-waivecar-1':
+      case 'active-waivecar-2':
+      case 'station':
+      case 'station-active':
+      case 'valet-active':
+      case 'valet':
+      case 'homebase':
+      case 'homebase-active':
         return {
-          url: 'img/icon-active-waivecar.svg',
+          url: 'img/icon-' + iconType + '.svg',
+          iconRetinaUrl: 'img/icon-' + iconType + '.svg',
           scaledSize: new google.maps.Size(35, 44),
           anchor: new google.maps.Point(17, 44),
           origin: new google.maps.Point(0, 0)
@@ -301,58 +317,10 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
           anchor: new google.maps.Point(17, 44),
           origin: new google.maps.Point(0, 0)
         };
-      case 'station':
-        return {
-          url: 'img/icon-station.svg',
-          iconRetinaUrl: 'img/icon-station.svg',
-          scaledSize: new google.maps.Size(35, 44),
-          anchor: new google.maps.Point(17, 44),
-          origin: new google.maps.Point(0, 0)
-        };
-      case 'station-active':
-        return {
-          url: 'img/icon-station-active.svg',
-          iconRetinaUrl: 'img/icon-station-active.svg',
-          scaledSize: new google.maps.Size(35, 44),
-          anchor: new google.maps.Point(17, 44),
-          origin: new google.maps.Point(0, 0)
-        };
-      case 'valet-active':
-        return {
-          url: 'img/icon-valet-active.svg',
-          iconRetinaUrl: 'img/icon-valet-active.svg',
-          scaledSize: new google.maps.Size(35, 44),
-          anchor: new google.maps.Point(17, 44),
-          origin: new google.maps.Point(0, 0)
-        };
-      case 'valet':
-        return {
-          url: 'img/icon-valet.svg',
-          iconRetinaUrl: 'img/icon-valet.svg',
-          scaledSize: new google.maps.Size(35, 44),
-          anchor: new google.maps.Point(17, 44),
-          origin: new google.maps.Point(0, 0)
-        };
-      case 'homebase':
-        return {
-          url: 'img/icon-homebase.svg',
-          iconRetinaUrl: 'img/icon-homebase.svg',
-          scaledSize: new google.maps.Size(35, 44),
-          anchor: new google.maps.Point(17, 44),
-          origin: new google.maps.Point(0, 0)
-        };
-      case 'homebase-active':
-        return {
-          url: 'img/icon-homebase-active.svg',
-          iconRetinaUrl: 'img/icon-homebase-active.svg',
-          scaledSize: new google.maps.Size(35, 44),
-          anchor: new google.maps.Point(17, 44),
-          origin: new google.maps.Point(0, 0)
-        };
       case 'location':
         return {
-          url: 'img/user-location.svg',
-          iconRetinaUrl: 'img/user-location.svg',
+          url: 'img/icon-location.svg',
+          iconRetinaUrl: 'img/icon-location.svg',
           scaledSize: new google.maps.Size(24, 24),
           anchor: new google.maps.Point(12, 12),
           origin: new google.maps.Point(0, 0)
