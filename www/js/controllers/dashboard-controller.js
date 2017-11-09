@@ -359,7 +359,7 @@ function DashboardController ($scope, $rootScope, $injector) {
     $ionicLoading.hide();
     var endRideModal;
 
-    if (message.search(/{/) !== -1) {
+    if (message && message.search && message.search(/{/) !== -1) {
       message = 'Unable to end your ride. Please try again or call us at (855) 924-8355.';
     }
 
