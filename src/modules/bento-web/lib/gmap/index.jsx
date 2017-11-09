@@ -195,12 +195,28 @@ module.exports = class GMap extends React.Component {
     if (!markers) {
       return;
     }
+    let infoWindow = new google.maps.InfoWindow;
 
     let markerIcon = this.getMarkerIcon();
     let ix = 0;
     markers.forEach((val) => {
-      var importance = 0, label = '';
-      if (val.license) {
+      console.log(val);
+      var 
+        marker = false;
+        importance = 0, 
+        label = val.name;
+      if (val.shape) {
+        var coor = val.shape.map(function(row) { return {lat: row[1], lng: row[0] }; });
+        marker = new google.maps.Polygon({
+          paths: coor,
+          strokeColor: '#FF0000',
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+          fillColor: '#FF0000',
+          fillOpacity: 0.35
+        });
+        marker.setMap(this.map);
+      } else if (val.license) {
         label = val.license.replace(/[^\d]*/, '');
         if (val.charge < 25 && !val.isCharging) {
           importance++;
@@ -221,23 +237,46 @@ module.exports = class GMap extends React.Component {
         markerIcon = val.icon;
       }
 
-      var marker = new google.maps.Marker({
-        map: this.map,
-        position: new google.maps.LatLng(val.lat, val.long),
-        label: {
-          fontSize: (9 + (1.3 * importance)) + 'px',
-          color: 'rgba(0,0,0,' + (importance / 5 + 0.6) + ')',
-          text: label,
+      if(!marker) {
+        marker = new google.maps.Marker({
+          map: this.map,
+          position: new google.maps.LatLng(val.lat, val.long),
+          label: {
+            fontSize: (9 + (1.3 * importance)) + 'px',
+            color: 'rgba(0,0,0,' + (importance / 5 + 0.6) + ')',
+            text: label,
+            zIndex: importance * 100 + ix
+          },
+          icon: markerIcon,
           zIndex: importance * 100 + ix
-        },
-        icon: markerIcon,
-        zIndex: importance * 100 + ix
-      });
+        });
+      }
 
       ix++;
       if(val.license) {
-        marker.addListener('click', function() { 
-          window.location = '/cars/' + val.id;
+        marker.addListener('click', function(e) { 
+          var content = `<div style="font-size:15px;margin-bottom:0.15em"><b><a href=/cars/${ val.id }>${ val.license }</a></b> (${ val.charge }%)</div>`;
+          if(val.user) {
+            content += `<div><a style="color:darkgreen" href=/users/${ val.user.id }>${ val.user.firstName } ${ val.user.lastName }</a></div>`;
+          }
+          if(!val.booking) {
+            content += '<em>Available</em>';
+          } else {
+            let bid = val.booking[0].id;
+            content += `<div> ${ val.booking[0].status } <a style="color:darkgreen" href=/bookings/${ bid }>Booking ${bid}</a></div>`;
+            content += `<div>${ moment(val.booking[0].created_at).format('YYYY-MM-DD HH:mm:ss') }</div>`;
+          }
+          infoWindow.setContent(content);
+          infoWindow.setPosition(e.latLng);
+          infoWindow.open(this.map);
+        });
+      } else if ('radius' in val) {
+        marker.addListener('click', (e) => {
+          val.description = val.description || '';
+          infoWindow.setContent(`<b><a href=/locations/${ val.id }>${ val.name }</a></b> (${ val.type })<div style="width:20em">${ val.description }</div><em>${ val.address }</em>`);
+          infoWindow.setPosition(e.latLng);
+          infoWindow.open(this.map);
+          //window.location = '/locations/' + val.id;
         });
       }
 
