@@ -71,7 +71,6 @@ module.exports = {
     }
 
     options.limit = 100;
-    options.inRepair = true;
     let cars = yield Car.find(options);
     let bookings = yield Booking.find({ where : { status : 'started' } });
 
