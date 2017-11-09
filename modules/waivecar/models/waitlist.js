@@ -41,6 +41,10 @@ Bento.Register.Model('Waitlist', 'sequelize', function(model, Sequelize) {
       type : Sequelize.STRING(128),
     },
 
+    facebook : {
+      type : Sequelize.STRING(256),
+    },
+
     priority : {
       type         : Sequelize.INTEGER,
       defaultValue : 0
