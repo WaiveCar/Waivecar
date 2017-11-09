@@ -122,6 +122,12 @@ class LocationsIndex extends React.Component {
                         <input type="text" className="form-control" name="name" onChange={this.handleInputChange}/>
                       </div>
                     </div>
+                    <div className="form-group row">
+                      <div className="col-xs-12 bento-form-input focus">
+                        <label>Description</label>
+                        <input type="text" className="form-control" name="description" onChange={this.handleInputChange}/>
+                      </div>
+                    </div>
                     <p>Specify a radius or a polygon (leave one blank)</p>
                     <div className="form-group row">
                       <div className="col-xs-12 bento-form-input focus">
