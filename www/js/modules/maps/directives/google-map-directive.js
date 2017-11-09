@@ -128,10 +128,6 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
     var markerLabel;
 
-   /* if (marker.type == 'dropoff') {
-      markerLabel = marker.name;
-    }*/
-
     var markerObj = new google.maps.Marker({
       map: this.map,
       animation: google.maps.Animation.DROP,

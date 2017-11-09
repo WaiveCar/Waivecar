@@ -15,7 +15,6 @@ module.exports = angular.module('app').factory('Car', [
         longitude: data.longitude
       };
       return data;
-
     }
 
     return Resource('/cars/:id', {
