@@ -11,7 +11,11 @@ function GeofencingService(LocationService, geofenceCoords, $rootScope) {
 
   this.insideFastCheck = function insideBoundary(car, shape) {
     shape = shape || geofenceCoords;
-    coords = $rootScope.currentLocation || car;
+    var coords = $rootScope.currentLocation || car;
+    console.log(coords, 'aa', $rootScope.currentLocation, 'bb', car, shape);
+    LocationService.getLocation().then(function(aa) {
+      console.log(aa);
+    });
     if(coords && 'longitude' in coords) {
       return inside([coords.longitude, coords.latitude], shape);
     }
