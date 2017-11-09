@@ -6,6 +6,15 @@ let _ = require('lodash');
 
 Bento.Register.ResourceController('Location', 'LocationsController', function(controller) {
 
+  controller.index = function *() {
+    return (yield Location.find()).map((row) => {
+      if(row.shape) {
+        row.shape = JSON.parse(row.shape);
+      }
+      return row;
+    });
+  };
+
   controller.dropoff = function *() {
     return (yield Location.find({ where: 
       {
@@ -33,7 +42,7 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
           polygon.push([parseFloat(parts[0], 10), parseFloat(parts[1], 10)]);
         }
       });
-      this.payload.shape = polygon;
+      this.payload.shape = JSON.stringify(polygon);
     }
 
     let model = new Location(this.payload);
