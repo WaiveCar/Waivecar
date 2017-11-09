@@ -12,7 +12,7 @@ module.exports = angular.module('app').factory('Cars', [
     function transformResponse(data) {
       data = angular.fromJson(data);
       return data.filter(function(car) {
-        return car.inService;
+        return !car.inRepair;
       });
     }
 
