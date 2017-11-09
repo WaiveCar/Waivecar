@@ -3,11 +3,6 @@
 let Booking = Bento.model('Booking');
 Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
-  /**
-   * The identity of the table created in your database.
-   * @property table
-   * @type     String
-   */
   model.table = 'cars';
 
   model.schema = {
@@ -83,9 +78,9 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       defaultValue : false
     },
 
-    inService : {
+    inRepair : {
       type         : Sequelize.BOOLEAN,
-      defaultValue : false
+      defaultValue : true
     },
 
     isOnChargeAdapter : {
