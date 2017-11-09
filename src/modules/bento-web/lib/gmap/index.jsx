@@ -264,7 +264,7 @@ module.exports = class GMap extends React.Component {
           } else {
             let bid = val.booking[0].id;
             content += `<div> ${ val.booking[0].status } <a style="color:darkgreen" href=/bookings/${ bid }>Booking ${bid}</a></div>`;
-            content += `<div>${ moment(val.booking[0].created_at).format('YYYY-MM-DD HH:mm:ss') }</div>`;
+            content += `<div>${ moment(val.booking[0].createdAt).format('YYYY-MM-DD HH:mm:ss') }</div>`;
           }
           infoWindow.setContent(content);
           infoWindow.setPosition(e.latLng);
