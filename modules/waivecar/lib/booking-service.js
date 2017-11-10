@@ -915,6 +915,7 @@ module.exports = class BookingService extends Service {
   }
 
   static *checkCarParityWithUser(id, payload, user) {
+    console.log(payload, id, user);
     if (!Array.isArray(payload.userLocations) || payload.userLocations.length == 0 || !payload.appNowTime) {
       throw error.parse({
         code    : 'INVALID_PAYLOAD',
@@ -971,7 +972,7 @@ module.exports = class BookingService extends Service {
       let booking = yield this.getBooking(id);
       let car     = yield Car.findById(booking.carId);
       let link = [closestLocations.userLocation.latitude, closestLocations.userLocation.longitude].join(',');
-      yield notify.notifyAdmins(`:airplane: Location check failed on ${ booking.link()}. ${ user.link() } is <https://www.google.com/maps/?q=${link} | ${ (0.000621371 * distance).toFixed(2) }mi> from ${car.license}.`, [ 'slack' ], { channel : '#rental-alerts' });
+      yield notify.notifyAdmins(`:airplane: Location check failed on ${ booking.link()}. ${ user.link() } is https://www.google.com/maps/?q=${link} <https://www.google.com/maps/?q=${link} | ${ (0.000621371 * distance).toFixed(2) }mi> from ${car.license}.`, [ 'slack' ], { channel : '#rental-alerts' });
     }
 
     return { isPaired: isPaired };
