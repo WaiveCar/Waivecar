@@ -970,7 +970,8 @@ module.exports = class BookingService extends Service {
     if (!isPaired) {
       let booking = yield this.getBooking(id);
       let car     = yield Car.findById(booking.carId);
-      yield notify.notifyAdmins(`:airplane: Location check failed on ${ booking.link()}. ${ user.link() } is ${ (0.000621371 * distance).toFixed(2) }mi from ${car.license}.`, [ 'slack' ], { channel : '#rental-alerts' });
+      let link = [closestLocations.userLocation.latitude, closestLocations.userLocation.longitude].join(',');
+      yield notify.notifyAdmins(`:airplane: Location check failed on ${ booking.link()}. ${ user.link() } is <https://www.google.com/maps/?q=${link} | ${ (0.000621371 * distance).toFixed(2) }mi> from ${car.license}.`, [ 'slack' ], { channel : '#rental-alerts' });
     }
 
     return { isPaired: isPaired };
