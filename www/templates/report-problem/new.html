@@ -8,8 +8,7 @@
   <ion-content padding="true" class="ion-content--center dark-bg">
     <ng-include src="'/img/waivecar-mark.svg'" class="waivecar-mark"></ng-include>
 
-    <div class="image-tray">
-      <img ng-src="{{ctrl.model.file.url}}"></div>
+    <div class="large-image" style="background-image: url('{{ctrl.model.file.url}}');">
     </div>
     <p>Describe the problem</p>
     <form ng-submit="ctrl.submit()">

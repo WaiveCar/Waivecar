@@ -13,8 +13,9 @@
     </div>
 
     <div class="row" style="flex-wrap: wrap;">
-      <div ng-repeat="image in ctrl.images" class="col col-33" ng-click="ctrl.showPicture(image)">
-        <img ng-src="{{image.url}}">
+      <div ng-repeat="image in ctrl.images"  class="col col-33 tile" ng-click="ctrl.showPicture(image)">
+        <div style="background-image: url(' {{image.url }}');">
+        </div>
       </div>
     </div>
 
