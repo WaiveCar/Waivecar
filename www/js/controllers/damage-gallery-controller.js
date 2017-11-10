@@ -1,5 +1,6 @@
 'use strict';
 var angular = require('angular');
+var moment = require('moment');
 
 
 function DamageGalleryController ($injector, $stateParams) {
@@ -16,6 +17,8 @@ function DamageGalleryController ($injector, $stateParams) {
   ctrl.images = [];
   ctrl.car = {};
 
+  ctrl.backCaption = $stateParams.return === 'dashboard' ? 'Start ride' : 'Finish and Lock Car';
+
 
   $data.activate('bookings', $stateParams.id).then(function() {
     var carId = $data.active.bookings.carId;
@@ -27,10 +30,19 @@ function DamageGalleryController ($injector, $stateParams) {
           return result.concat(report.files.map(function (file) {
             return {
               description: report.description,
-              url: $settings.uri.api + '/file/' + file.fileId
+              url: $settings.uri.api + '/file/' + file.fileId,
+              created_at: moment(file.created_at)
             };
           }));
-        }, []);
+        }, []).sort(function(a, b) {
+          if (a.created_at < b.created_at) {
+            return 1;
+          }
+          if (a.created_at > b.created_at) {
+            return -1;
+          }
+          return 0;
+        });
       }
     );
 
@@ -98,9 +110,8 @@ function DamageGalleryController ($injector, $stateParams) {
 
 
   this.goBack = function() {
-    $ionicHistory.goBack();
+    $state.go($stateParams.return, $stateParams, { location: 'replace' });
   };
-
 
 }
 

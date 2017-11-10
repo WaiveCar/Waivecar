@@ -8,6 +8,9 @@
   <ion-content padding="true" class="ion-content--center dark-bg">
     <ng-include src="'/img/waivecar-mark.svg'" class="waivecar-mark"></ng-include>
     <h4>{{ ctrl.car.license}}</h4>
+    <div>
+      Currently known damage or uncleanliness
+    </div>
 
     <div class="row" style="flex-wrap: wrap;">
       <div ng-repeat="image in ctrl.images" class="col col-33" ng-click="ctrl.showPicture(image)">
@@ -15,14 +18,13 @@
       </div>
     </div>
 
-
-    <ion-footer-bar class="no-padding">
-      <div class="button-bar">
-        <button type="button" class="button button-gray" go-back>Back</button>
-        <button type="button" class="button button-balanced" ng-click="ctrl.addPicture()">Add new photo</button>
-      </div>
-    </ion-footer-bar>
-
   </ion-content>
+
+  <ion-footer-bar class="no-padding">
+    <div class="button-bar">
+      <button type="button" class="button button-gray" ng-click="ctrl.goBack()">{{ctrl.backCaption}}</button>
+      <button type="button" class="button button-balanced" ng-click="ctrl.addPicture()">Add new photo</button>
+    </div>
+  </ion-footer-bar>
 </ion-view>
 

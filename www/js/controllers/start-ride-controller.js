@@ -47,7 +47,7 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
           $ionicLoading.hide();
 
           if (ctrl.dirty || ctrl.intDamage || ctrl.extDamage) {
-            $state.go('damage-gallery', $stateParams);
+            $state.go('damage-gallery', { id: $stateParams.id, return: 'dashboard' });
           } else {
             $state.go('dashboard', null, {location: 'replace'});
           }
