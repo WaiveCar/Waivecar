@@ -16,7 +16,6 @@ module.exports = angular.module('app').factory('Users', [
       data = _.pick(data, ['email', 'fullName', 'firstName', 'lastName', 'phone', 'password', 'tested']);
 
       return angular.toJson(data);
-
     };
 
     var resource = $resource(null, null, $utils.createResource('users', {

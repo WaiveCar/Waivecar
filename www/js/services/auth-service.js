@@ -112,6 +112,7 @@ function AuthService ($rootScope, $session, $data, $injector) {
     return $data.resources.Auth.facebook({
       token: token,
       type: 'register',
+      //type: 'waitlist',
       fields: 'first_name,last_name,email'
     }).$promise
     .then(function (user) {

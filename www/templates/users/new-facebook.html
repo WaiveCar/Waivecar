@@ -8,7 +8,7 @@
     <form ng-submit="userFacebookCreateCtrl.completeFacebookRegistration(form)" name="form" id="form" novalidate>
       <div class="list">
 
-        <p>Review your information</p>
+        <p>Please fill in the empty fields</p>
 
         <label class="item item-input">
           <span class="input-label required">First Name</span>
@@ -25,13 +25,16 @@
           <input type="email" placeholder="john@example.com" name="email" ng-model="userFacebookCreateCtrl.user.email" required />
         </label>
 
-        <p class="padding-top">Enter your mobile number</p>
-
         <label class="item item-input">
           <span class="input-label mobile-label required">Mobile</span>
           <i class="icon icon-flag" ng-include="'/img/flag-icon.svg'">
           </i>
           <input type="text" name="mobile" placeholder="(323) 567-5555" ng-model="userFacebookCreateCtrl.user.phone" required />
+        </label>
+
+        <label class="item item-input">
+          <span class="input-label required">Your town and state</span>
+          <input type="text" placeholder="Los Angeles, CA" name="placeName" ng-model="userFacebookCreateCtrl.user.placeName" required />
         </label>
 
         <div class="validations" ng-if="form.$submitted && form.$invalid">
