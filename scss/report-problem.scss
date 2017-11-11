@@ -6,6 +6,13 @@
     margin: 0 auto;
   }
 
+  .description {
+    text-align: left;
+  }
+  .description, .time {
+    margin: 1em inherit;
+  }
+
   .image-tray {
     display: flex;
     flex-flow: columns;
