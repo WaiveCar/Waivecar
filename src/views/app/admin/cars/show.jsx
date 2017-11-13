@@ -56,6 +56,7 @@ class CarsShowView extends React.Component {
       });
     });
     api.get(`/reports/car/${ this.id() }`, (err, model) => {
+      model.reverse();
       this.setState({
         damage : model
       });
