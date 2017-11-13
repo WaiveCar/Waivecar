@@ -20,6 +20,29 @@
   }
 }
 
+.damage-row {
+  border-top: 1px solid #ccc;
+}
+.gallery-image {
+  img {
+    width: 100%;
+  }
+  .btn-container {
+    position: relative;
+    height: 0;
+    top: 10px;
+    left: 10px;
+    overflow: visible;
+  }
+  .remove-image {
+    position: relative;
+    display: inline-block;
+    background: white;
+    height: 28px;
+  }
+  margin-bottom: 1rem;
+}
+
 .carname {
   margin-left: -13px;
   min-width: 4.5rem;

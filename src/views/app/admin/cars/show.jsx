@@ -51,9 +51,13 @@ class CarsShowView extends React.Component {
     this.service.setCar(this.id());
 
     api.get(`/history/car/${ this.id() }`, (err, model) => {
-      var locationHistory = model.data.data;
       this.setState({
-        carPath : locationHistory
+        carPath : model.data.data
+      });
+    });
+    api.get(`/reports/car/${ this.id() }`, (err, model) => {
+      this.setState({
+        damage : model
       });
     });
   }
@@ -182,9 +186,6 @@ class CarsShowView extends React.Component {
       <div className="box">
         <h3>
           Diagnostics
-          <small>
-            Current Indicators and Levels
-          </small>
         </h3>
         <div className="box-content">
           <div className="container-fluid">
@@ -468,10 +469,63 @@ class CarsShowView extends React.Component {
     );
   }
 
-  renderNotes(car) {
+  deleteImage(row, index) {
+    row.files = row.files.filter((row) => { return row.id != index; });
+
+    api.delete('/reports/' + row.id, (err, user) => {
+      return snackbar.notify({
+        type    : 'success',
+        message : 'Image deleted'
+      });
+    });
+
+    this.forceUpdate();
+  }
+
+  renderImages(row) {
+    let ix = 0;
+    let res = row.files.map((file) => {
+      return (
+        <div className="col-md-4 gallery-image">
+          <div className="btn-container">
+            <button className='btn-link remove-image' onClick={ this.deleteImage.bind(this, row, file.id) }><i className="material-icons" role="true">close</i></button>
+          </div>
+          <img key={ ix++ } src={ "https://api.waivecar.com/file/" + file.fileId } />
+        </div>
+      );
+    });
+    return <div className="row">{ res }</div>;
+  }
+
+  renderDamage(car) {
+    let ix = 0;
+    let toShow = this.state.damage.filter((row) => { return row.files.length });
+    let res = toShow.map((row) => {
+      return (
+        <div key={ ix ++ } className='damage-row'>
+          <div className="row">
+            <div className="col-xs-12">
+              { moment(row.created_at).format('YYYY-MM-DD HH:mm:ss') } <a href={ "/bookings/" + row.bookingId }>#{ row.bookingId }</a>
+            </div>
+          </div>
+          <div className="row">
+             <div className="col-md-11">
+                { row.description }
+             </div>
+          </div>
+          { this.renderImages(row) }
+        </div> 
+      );
+    });
     return (
-      <NotesList type='car' identifier={ car.id }></NotesList>
+      <div className="box">
+        <h3>Damage and uncleanliness</h3>
+        <div className="box-content">
+        { res }
+        </div>
+      </div>
     );
+       
   }
 
   renderLocation(car) {
@@ -483,9 +537,8 @@ class CarsShowView extends React.Component {
 
     return (
       <div className="text-center">
-        <a target="_blank" className="btn btn-link btn-sm col-xs-6" style={{ float: "none" }} href={ "http://maps.google.com/?q=" + geo + '(' + car.license + ')' }>Open in Maps (desktop)</a>
+        <a target="_blank" className="btn btn-link btn-sm col-xs-6" style={{ float: "none" }} href={ "http://maps.google.com/?q=" + geo + '(' + car.license + ')' }>Open in Maps</a>
 
-        <a className="btn btn-link btn-sm col-xs-6" style={{ float: "none" }} href={ "geo:" + geo + '?q=' + geo + '(' + car.license + ')' }>Open in Maps (mobile)</a>
       </div>
     );
   }
@@ -514,9 +567,9 @@ class CarsShowView extends React.Component {
         { this.renderCarActions(car) }
         { this.renderCarMedia(car) }
         { this.renderCarIndicators(car) }
-        { this.renderNotes(car) }
-
+        <NotesList type='car' identifier={ car.id }></NotesList>
         <Logs carId={ car.id } />
+        { this.renderDamage(car) }
       </div>
     );
   }
