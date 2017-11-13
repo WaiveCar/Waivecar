@@ -175,9 +175,16 @@ module.exports = {
     return yield Report._schema.findAll(parsedQuery);
   },
 
+  *delete(id, _user) {
+    let file = yield ReportFile.findById(id);
+    console.log(id, file);
+    if(file) {
+      yield file.delete();
+    }
+    
+  },
+
   *showForCar(carId) {
-
-
     let dbQuery = {
       where : {
         carId  : carId
