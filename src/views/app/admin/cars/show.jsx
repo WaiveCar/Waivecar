@@ -472,7 +472,7 @@ class CarsShowView extends React.Component {
   deleteImage(row, index) {
     row.files = row.files.filter((row) => { return row.id != index; });
 
-    api.delete('/reports/' + row.id, (err, user) => {
+    api.delete('/reports/' + index, (err, user) => {
       return snackbar.notify({
         type    : 'success',
         message : 'Image deleted'
