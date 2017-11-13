@@ -4,10 +4,6 @@ let service = require('../lib/file-service');
 
 Bento.Register.Controller('FilesController', (controller) => {
 
-  /**
-   * Stores an incoming file request.
-   * @return {Object}
-   */
   controller.store = function *() {
     return yield service.store(this.query, this.payload, this.auth.user);
   };
@@ -29,11 +25,6 @@ Bento.Register.Controller('FilesController', (controller) => {
     return yield service.getFile(id, this.auth.user);
   };
 
-  /**
-   * Returns a file stream or re-directs to physical location.
-   * @param  {String} id
-   * @return {Stream}
-   */
   controller.show = function *(id) {
     return yield service.show(this, id, this.auth.user);
   };
