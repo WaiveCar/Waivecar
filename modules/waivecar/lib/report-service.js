@@ -183,7 +183,7 @@ module.exports = {
       yield file.delete();
     } else {
       throw error.parse({
-        code    : 'CAN_NOT_FIND_FILE'
+        code    : 'CAN_NOT_FIND_FILE',
         message : 'Cannot file file ' + id
       }, 400);
     }
