@@ -177,10 +177,9 @@ module.exports = {
 
   *delete(id, _user) {
     let file = yield ReportFile.findById(id);
-    let user = yield User.findById(_user);
 
     if(file) {
-      yield notify.notifyAdmins(`:lower_left_paintbrush: ${ user.name() } removed a photo from the damage gallery.`, [ 'slack' ], { channel : '#rental-alerts' });
+      yield notify.notifyAdmins(`:lower_left_paintbrush: ${ _user.name() } removed a photo from the damage gallery.`, [ 'slack' ], { channel : '#rental-alerts' });
       yield file.delete();
     }
   },
