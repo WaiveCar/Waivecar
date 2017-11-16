@@ -23,6 +23,7 @@ Route.put('/bookings/:id/checkParity', [ 'isAuthenticated', 'BookingsController@
 Route.put('/bookings/:id/:action', [ 'isAuthenticated', 'BookingsController@update' ]);
 Route.del('/bookings/:id',         [ 'isAuthenticated', 'BookingsController@cancel' ]);
 Route.get('/bookingsCount',        [ 'isAuthenticated', 'BookingsController@count' ]);
+Route.get('/bookingsUserContribution/:id', ['BookingsController@userContribution' ]);
 
 // ### Patches
 
