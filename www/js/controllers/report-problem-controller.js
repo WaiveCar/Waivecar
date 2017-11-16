@@ -13,6 +13,7 @@ function ReportProblemController ($injector, $stateParams) {
 
   this.model = {
     bookingId: $stateParams.id,
+    buttonActive: false,
     files: []
   };
 
@@ -41,6 +42,7 @@ function ReportProblemController ($injector, $stateParams) {
   // }.bind(this));
 
   this.submit = function submit () {
+    this.model.buttonActive = true;
     Reports.create({
       bookingId: this.model.bookingId,
       description: this.model.comment,
@@ -51,6 +53,7 @@ function ReportProblemController ($injector, $stateParams) {
   };
 
   function successModal () {
+    this.model.buttonActive = false;
     var modal;
     $modal('result', {
       icon: 'check-icon',
@@ -104,6 +107,7 @@ function ReportProblemController ($injector, $stateParams) {
   };
 
   function failModal (message) {
+    this.model.buttonActive = false;
     var modal;
     $modal('result', {
       icon: 'x-icon',
