@@ -750,6 +750,11 @@ module.exports = class BookingService extends Service {
 
   // Locks, and makes the car available for a new booking.
   static *_complete(id, _user, query, payload) {
+
+    if (!redis.shouldProcess('booking-complete', id)) {
+      return;
+    }
+
     let relations = {
       include : [
         {
