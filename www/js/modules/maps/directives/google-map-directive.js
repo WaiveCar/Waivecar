@@ -315,8 +315,8 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         };
       case 'location':
         return {
-          url: 'img/icon-location.svg',
-          iconRetinaUrl: 'img/icon-location.svg',
+          url: 'img/user-location.svg',
+          iconRetinaUrl: 'img/user-location.svg',
           scaledSize: new google.maps.Size(24, 24),
           anchor: new google.maps.Point(12, 12),
           origin: new google.maps.Point(0, 0)
