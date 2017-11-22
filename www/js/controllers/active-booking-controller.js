@@ -184,8 +184,8 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
 
   function showRetry () {
     return showFailure(
-      'Connection Failed', 
-      'We couldn\'t connect to the server. If the problem persists call .' + $settings.phone, {
+      'Connection Failed',
+      'We couldn\'t connect to the server. If the problem persists call ' + $settings.phone, {
         label: 'retry'
       }
     );
