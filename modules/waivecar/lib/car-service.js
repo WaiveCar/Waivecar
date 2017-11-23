@@ -263,10 +263,17 @@ module.exports = {
     let model = yield Car.findById(id);
 
     yield model.update({inRepair: !model.inRepair});
+    // we trick the relay into hiding cars that are set
+    // to repair for legacy versions of the app so that
+    // they don't magically appear.
+    var obj = JSON.parse(model.toJSON());
+    if(model.inRepair) {
+      obj.isAvailable = false;
+    }
 
     relay.emit('cars', {
       type : 'update',
-      data : model.toJSON()
+      data : JSON.stringify(obj)
     });
 
     return model;
