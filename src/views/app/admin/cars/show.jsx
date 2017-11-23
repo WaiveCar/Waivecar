@@ -311,7 +311,7 @@ class CarsShowView extends React.Component {
       if (car.booking) {
         snackbar.notify({
           type    : 'danger',
-          message : 'Car is in active rental. Make repair anyway?',
+          message : 'Car is in active rental. Set repair anyway?',
           action : {
             title : 'CONTINUE',
             click : () => {
@@ -376,8 +376,8 @@ class CarsShowView extends React.Component {
       },
       {
         ref : 2,
-        checked  : car.inService,
-        label    : car.inService ? 'In Service' : 'In Repair',
+        checked  : car.inRepair,
+        label    : car.inRepair ? 'In Service' : 'In Repair',
         onChange : this.toggleService.bind(this, car)
       },
       {
