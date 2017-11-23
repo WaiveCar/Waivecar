@@ -66,6 +66,7 @@ module.exports = {
       }
     });
 
+    options.where.inRepair = false;
     if (_user && !_user.hasAccess('admin')) {
       options.where.adminOnly = false;
     }
@@ -257,12 +258,20 @@ module.exports = {
     return model;
   },
 
-  /**
-   * @param {String} id
-   * @param {Boolean} isVisible
-   * @param {Object} _user
-   * @return {Object}
-   */
+  *updateRepair(id, _user) {
+    access.verifyAdmin(_user);
+    let model = yield Car.findById(id);
+
+    yield model.update({inRepair: !model.inRepair});
+
+    relay.emit('cars', {
+      type : 'update',
+      data : model.toJSON()
+    });
+
+    return model;
+  },
+
   *updateVisibility(id, isVisible, _user) {
     access.verifyAdmin(_user);
     let model = yield Car.findById(id);
