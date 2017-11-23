@@ -1,26 +1,16 @@
 'use strict';
 
-let Sms         = Bento.provider('sms');
-let Slack       = Bento.provider('slack');
-let Email       = Bento.provider('email');
-let queryParser = Bento.provider('sequelize/helpers').query;
 let User        = Bento.model('User');
-let GroupUser   = Bento.model('GroupUser');
 let error       = Bento.Error;
-let config      = Bento.config;
-let log         = Bento.Log;
-let slack       = new Slack();
 
 let Step    = Bento.model('ActionEngine');
 let Booking = Bento.model('Booking');
 let Car     = Bento.model('Car');
 
-let fs          = require('fs');
-
 // these are constants for the event system
-let USER = 0, 
-    CAR = 1,
-    BOOKING = 2;
+let USER = 0;
+let CAR = 1;
+let BOOKING = 2;
 
 function doError(what, type) {
   throw error.parse({
@@ -33,18 +23,12 @@ function required(obj, what) {
   return obj.requireList && obj.requireList.indexOf(what) !== -1;
 }
 
-function navigate(url) {
-  return "" + function() {
-    window.location = url;
-  };
-}
-
 function makeState(state, value) {
   return {
     eventName: state.eventName,
     objectId: state.objectId,
     state: value
-  }
+  };
 }
 
 var eventMap = {
@@ -54,13 +38,16 @@ var eventMap = {
     cb: function *(state) {
       let action = {};
 
-      if(state.car.model === 'IONIQ') {
-        let current = state.step ? state.step.state;
-        action.response = navigate(url);
-        state.nextStep = makeState(state, current + 1);
+      if(state.car.model === "Spark EV") { //'IONIQ') {
+        let current = parseInt(state.step ? state.step.state : false, 10);
+        current++;
+        state.nextStep = makeState(state, current);
+        console.log(state.nextStep);
+      } else {
+        action = false;
       }
 
-      return [action, state];
+      return {action: action, state: state};
     }
   }
 };
@@ -74,8 +61,12 @@ module.exports = {
       return doError('Invalid event');
     }
 
-    if(ev.type === USER && objectId === _user.id) {
-      state.user = _user;
+    if(ev.type === USER) {
+      if(_user && objectId === _user.id) {
+        state.user = _user;
+      } else {
+        state.user = yield User.findById(objectId);
+      }
     }
 
     if(required(ev, BOOKING)) {
@@ -103,23 +94,22 @@ module.exports = {
       eventName: eventName
     });
 
-
     // find the next action and state
-    let [action, state] = yield ev.cb(state);
+    let res = yield ev.cb(state);
 
     // set the new state.
-    if(state.step) {
-      state.step.update(state.nextStep);
-    } else {
-      state.step = new State(state.nextStep);
+    if(res.state.nextStep) {
+      if(res.state.step) {
+        yield res.state.step.update(res.state.nextStep);
+      } else {
+        res.state.step = new Step(res.state.nextStep);
+        yield res.state.step.save();
+      }
     }
-    state.step.save();
 
     // if there's a response in the action, then send that
     // over.
-    if (action.response) {
-      return action.response;
-    }
+    return res;
   }
 
 };
