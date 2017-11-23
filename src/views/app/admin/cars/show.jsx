@@ -377,7 +377,7 @@ class CarsShowView extends React.Component {
       {
         ref : 2,
         checked  : car.inRepair,
-        label    : car.inRepair ? 'In Service' : 'In Repair',
+        label    : car.inRepair ? 'Put in Service' : 'Make Repair',
         onChange : this.toggleService.bind(this, car)
       },
       {
