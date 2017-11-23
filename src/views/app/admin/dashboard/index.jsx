@@ -35,7 +35,7 @@ module.exports = class DashboardIndex extends React.Component {
       } );
     });
 
-    api.get(`/cars`, (err, cars) => {
+    api.get(`/carsWithBookings`, (err, cars) => {
       this.setState( {
         cars: cars
       } );
