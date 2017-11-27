@@ -75,7 +75,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         }
       }),
       $scope.$watch('map.route', function (value) {
-        if (value) {
+        if (value && value.destiny) {
           ctrl.drawRoute(value.start, value.destiny, value.fitBoundsByRoute);
         }
       }, true)
