@@ -12,3 +12,4 @@ www/js/services/templates.min.js
 www/dist/
 npm-debug.log
 .DS_Store
+res/

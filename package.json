@@ -92,6 +92,7 @@
   "dependencies": {
     "com.zendrive.phonegap.sdk": "https://github.com/waivecar/zendrive-sdk-phonegap-plugin",
     "cordova": "^6.5.0",
+    "cordova-android": "^6.0.0",
     "cordova-browser": "~4.1.0",
     "cordova-ios": "^4.4.0",
     "cordova-plugin-app-version": "https://github.com/whiteoctober/cordova-plugin-app-version",
@@ -161,7 +162,11 @@
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.4.0"
   },
-  "cordovaPlugins": [],
+  "cordovaPlugins": [
+    "ionic-plugin-keyboard",
+    "cordova-plugin-firebase",
+    "cordova-plugin-intercom"
+  ],
   "cordovaPlatforms": [
     "ios",
     "android"

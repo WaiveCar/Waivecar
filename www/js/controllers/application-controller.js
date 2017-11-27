@@ -25,6 +25,7 @@ function ApplicationController ($rootScope, $scope, $injector) {
   var $window = $injector.get('$window');
   var LocationService = $injector.get('LocationService');
   var IntercomService = $injector.get('IntercomService');
+  var NotificationService = $injector.get('NotificationService');
 
   this.models = $data.instances;
   this.active = $data.active;
@@ -134,6 +135,7 @@ function ApplicationController ($rootScope, $scope, $injector) {
     }
   }
 
+
   IntercomService.setLauncherVisibility();
 
   $rootScope.$on('authLogin', function () {
@@ -141,6 +143,8 @@ function ApplicationController ($rootScope, $scope, $injector) {
       initLocation();
       $ride.init();
       myState();
+
+      NotificationService.setupPushNotifications();
       IntercomService.registerIdentifiedUser($auth.me);
     }
   });
@@ -148,6 +152,7 @@ function ApplicationController ($rootScope, $scope, $injector) {
   IntercomService.registerForPush();
 
   if ($auth.isAuthenticated()) {
+    NotificationService.setupPushNotifications();
     initLocation();
     $auth.loadSession().then(function(me) {
       IntercomService.registerIdentifiedUser(me);
