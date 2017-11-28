@@ -16,6 +16,7 @@ module.exports = (function() {
   let res = wrapper(client);
 
   res.lockTimeMS = 25000;
+  res.storeTimeMS = 10 * 60 * 1000;
 
   res.failOnMultientry = function *(type, id, timeout) {
     if(!res.shouldProceed(type, id, timeout)) {
@@ -24,6 +25,18 @@ module.exports = (function() {
         message : 'Please try again.'
       }, 400);
     }
+  }
+
+  res.tempGet = function*(key) {
+    return yield res.get(`STORE:${ key }`);
+  }
+
+  res.tempSet = function*(what, timeout) {
+    timeout = timeout || res.lockTimeMS;
+    let uniq = uuid.v4();
+    let key = `STORE:${ uniq }`
+    yield res.set(key, what, 'nx', 'px', timeout);
+    return uniq;
   }
 
   // These both sound like reasonable names.
