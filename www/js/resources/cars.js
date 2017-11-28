@@ -43,6 +43,13 @@ module.exports = angular.module('app').factory('Cars', [
         isArray: true
       }
     }));
+    res.connect = function(params) {
+      console.log("trying to connect to " + params);
+      $ble.setFunction('getBle', res.ble);
+      return $ble.nop(params.id).catch(function(){
+        console.log("Failure ... Unable to contact " + params.id);
+      });
+    };
     res.lock = function(params) {
       $ble.setFunction('getBle', res.ble);
       return $ble.lock(params.id).catch(function(){
