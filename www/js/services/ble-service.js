@@ -1,5 +1,6 @@
 'use strict';
 var angular = require('angular');
+var ionic = require('ionic');
 var hmacsha1 = require('hmacsha1');
 var _ = require('lodash');
 
@@ -94,7 +95,8 @@ module.exports = angular.module('app.services').factory('$ble', [
     // a wrapper around the ble functions so we know that things are enabled or not.
     function getBle() {
       var defer = $q.defer();
-      ble.enable(defer.resolve, failure('ble not enabled', defer.reject));
+
+      (ionic.Platform.isIOS() ? ble.isEnabled : ble.enable )(defer.resolve, failure('ble not enabled', defer.reject));
       return defer.promise;
     }
 
