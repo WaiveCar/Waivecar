@@ -2,6 +2,7 @@
 
 let User        = Bento.model('User');
 let error       = Bento.Error;
+let Redis   = require('./redis-service');
 
 let Step    = Bento.model('ActionEngine');
 let Booking = Bento.model('Booking');
@@ -53,6 +54,10 @@ var eventMap = {
 };
 
 module.exports = {
+  *getHash(hash) {
+    return Redis.tempGet(hash);
+  },
+
   *getAction(eventName, objectId, _user) {
     let ev = eventMap[eventName];
     let state = {objectId: objectId, eventName: eventName};
@@ -79,6 +84,7 @@ module.exports = {
         }
       });
     }
+    console.log(state.booking);
 
     if(required(ev, CAR)) {
       state.car = yield Car.findOne({
@@ -86,6 +92,9 @@ module.exports = {
           userId : state.user.id
         }
       });
+      if(!state.car) {
+        doError("Can't find an active car for the user");
+      }
     }
 
     // see if the user (object_id) has a state for the event
@@ -109,6 +118,8 @@ module.exports = {
 
     // if there's a response in the action, then send that
     // over.
+    let hash = Redis.tempSet(res);
+    res.hash = hash;
     return res;
   }
 
