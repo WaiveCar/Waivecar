@@ -11,19 +11,63 @@ module.exports = angular.module('app.services').factory('$ble', [
   function ($window, $interval, $q) {
     var CAR_INFORMATION_SERVICE = '869CEFA0-B058-11E4-AB27-00025B03E1F4';
     var _cisMap = {
-      COMMAND_CHALLENGE: '869CEFA2-B058-11E4-AB27-00025B03E1F4',
-      DRIVING_INFORMATION_1: '869CEFA3-B058-11E4-AB27-00025B03E1F4',
-      STATUS_1: '869CEFA5-B058-11E4-AB27-00025B03E1F4',
-      GPS_1: '869CEFA8-B058-11E4-AB27-00025B03E1F4',
-      CARD_MONITORING: '869CEFAA-B058-11E4-AB27-00025B03E1F4',
-      MODEM_STATUS: '869CEFAD-B058-11E4-AB27-00025B03E1F4',
-      DEBUG: '869CEFB0-B058-11E4-AB27-00025B03E1F4'
+      COMMAND_CHALLENGE: {
+        code: '869CEFA2-B058-11E4-AB27-00025B03E1F4',
+      },
+      DRIVING_INFORMATION_1: {
+        code: '869CEFA3-B058-11E4-AB27-00025B03E1F4',
+        format: [ 
+          [ 2, 'fuel' ],
+          [ 4, 'speed' ],
+          [ 4, 'mileage' ]
+        ]
+      },
+      STATUS_1: {
+        code: '869CEFA5-B058-11E4-AB27-00025B03E1F4',
+        format: [
+          [ 1, 'ignition' ],
+          [ 1, 'lock' ],
+          [ 1, 'immobilizer' ],
+          [ 1, 'doors' ],
+          [ 1, 'windows' ],
+          [ 1, 'lights' ],
+          [ 1, 'break' ],
+          [ 1, 'lockcan' ],
+          [ 2, 'voltage' ],
+          [ 1, 'charge' ],
+          [ 1, 'quickcharge' ],
+          [ 1, 'adapter' ],
+          [ 2, 'range' ]
+        ]
+      },
+      GPS_1: {
+        code: '869CEFA8-B058-11E4-AB27-00025B03E1F4',
+        format: [
+          [ '4float', 'latitude' ],
+          [ '4float', 'longitude' ],
+          [ 4, 'time' ],
+          [ 2, 'speed' ],
+          [ 2, 'hdop' ],
+          [ 1, 'quality' ],
+          [ 1, 'satellites' ]
+        ]
+      },
+      CARD_MONITORING: {
+        code: '869CEFAA-B058-11E4-AB27-00025B03E1F4',
+      },
+      MODEM_STATUS: {
+        code: '869CEFAD-B058-11E4-AB27-00025B03E1F4',
+      },
+      DEBUG: {
+        code: '869CEFB0-B058-11E4-AB27-00025B03E1F4',
+      },
     }; 
 
     var CAR_CONTROL_SERVICE = '869CEF80-B058-11E4-AB27-00025B03E1F4';
     var AUTHORIZE_PHONE = '869CEF82-B058-11E4-AB27-00025B03E1F4';
     var COMMAND_PHONE = '869CEF84-B058-11E4-AB27-00025B03E1F4';
     var _ccsMap = {
+      NOP: false,
       CENTRAL_LOCK_CLOSE: 0x01,
       CENTRAL_LOCK_OPEN: 0x02,
       IMMOBILIZER_LOCK: 0x04,
@@ -54,12 +98,43 @@ module.exports = angular.module('app.services').factory('$ble', [
     //  out and get another one
     //
     var MINTIME = 210 * 1000;
+    var mlog = {};
 
     $window.blefn = {
+      finder: function() {
+        getBle().then(function() {
+          $window.setInterval(function() {
+            var col = [];
+            ble.startScan([], function(car) { 
+              if(mlog[car.id]) {
+                //if(car.rssi > -80 && car.rssi - mlog[car.id].rssi !== 0) {
+                  col.push([car.name, car.rssi, car.rssi - mlog[car.id].rssi].join(' '));
+                  console.log(col.length);
+                //}
+              }
+              mlog[car.id] = car;
+            });
+            col = col.sort(function(a, b) {
+              return a[0] - b[0];
+            });
+            if(col.length > 0) {
+              console.log(col);
+            }
+
+          }, 400);
+        });
+      },
       scan: function() {
         getBle().then(function() {
           ble.startScan([], function(car) { 
             console.log(car);
+          });
+        });
+      },
+      read: function(what) {
+        Object.keys(_cisMap).forEach(function(key) {
+          cis(key, function(res) {
+            console.log(res, key);
           });
         });
       }
@@ -95,8 +170,16 @@ module.exports = angular.module('app.services').factory('$ble', [
     // a wrapper around the ble functions so we know that things are enabled or not.
     function getBle() {
       var defer = $q.defer();
+      var fn;
 
-      (ionic.Platform.isIOS() ? ble.isEnabled : ble.enable )(defer.resolve, failure('ble not enabled', defer.reject));
+      if(ionic.Platform.isIOS()) {
+        fn = ble.isEnabled;
+      } else {
+        fn = ble.enable;
+      }
+
+      fn(ok("BLE on", defer.resolve), failure('ble not enabled', defer.reject));
+
       return defer.promise;
     }
 
@@ -133,10 +216,50 @@ module.exports = angular.module('app.services').factory('$ble', [
       return String.fromCharCode.apply(0, bin);
     }
 
+    function buf2hex(buffer) { // buffer is an ArrayBuffer
+      return Array.prototype.map.call(new Uint8Array(buffer), function(x){ return ('00' + x.toString(16)).slice(-2); } ).join('');
+    }
+
+    function cisDecode(buf, fmt, cb) {
+      if(!fmt) {
+        return cb(buf);
+      }
+      var struct = {};
+      var pointer = 0;
+      fmt.forEach(function(format) {
+        var type = format[0];
+        var name = format[1];
+        var value = false;
+
+        switch(type) {
+          case 1:
+            value = new Uint8Array(buf, pointer, 1);
+            pointer += 1;
+            break;
+          case 2:
+            value = new Uint16Array(buf.slice(pointer, pointer + 2), 0, 1);
+            pointer += 2;
+            break;
+          case 4:
+            value = new Uint32Array(buf.slice(pointer, pointer + 4), 0, 1);
+            pointer += 4;
+            break;
+          case '4float':
+            value = new Float32Array(buf.slice(pointer, pointer + 4), 0, 1);
+            pointer += 4;
+            break;
+        }
+
+        struct[name] = value;
+      });
+
+      return cb(struct);
+    }
+
     function cis(what, success, fail) {
-      getBle().then(function() {
-        ble.read(_deviceId, CAR_INFORMATION_SERVICE, _cisMap[what], success, fail);
-      }).catch(fail);
+      ble.read(_deviceId, CAR_INFORMATION_SERVICE, _cisMap[what].code, function(buf) {
+        cisDecode(buf, _cisMap[what].format, success);
+      }, fail);
     }
 
     function findCarById(id, success, fail) {
@@ -193,6 +316,12 @@ module.exports = angular.module('app.services').factory('$ble', [
       var command = new Array(10).fill(0);
       command[0] = _ccsMap[what];
       cis('COMMAND_CHALLENGE', function(commandChallenge) {
+        // This is a NOP command to initially connect to
+        // the btle
+        if(command[0] === false) {
+          return success();
+        }
+
         commandChallenge = new Uint8Array(commandChallenge);
         var valueCommandArray = command.concat(_.toArray(commandChallenge));
         var responseb64 = hmacsha1(bin2str(_sessionKey), bin2str(valueCommandArray));
@@ -226,7 +355,7 @@ module.exports = angular.module('app.services').factory('$ble', [
           _creds.expire = new Date(creds.valid_until);
           _sessionKey = b642bin(creds.sessionKey);
 
-          log("Looking for Car");
+          log("Looking for Car " + carId);
           findCarById(carId, function() {
             log("Authorizing Vehicle");
             writeBig(CAR_CONTROL_SERVICE, AUTHORIZE_PHONE, token, defer.resolve, failure('write', defer.reject));
@@ -248,11 +377,17 @@ module.exports = angular.module('app.services').factory('$ble', [
       return defer.promise;
     }
 
-    return {
+    var res = {
+      immobilize: function(carId, what) { return wrap(carId, what ? _ccsMap.IMMOBILIZER_LOCK :_ccsMap.IMMOBILIZER_UNLOCK); },
+      nop:    function (carId) { return wrap(carId, _ccsMap.NOP); },
       lock:   function (carId) { return wrap(carId, _ccsMap.CENTRAL_LOCK_CLOSE); },
       unlock: function (carId) { return wrap(carId, _ccsMap.CENTRAL_LOCK_OPEN); },
       setFunction: setFunction
     };
+
+    $window.blefn.n = res;
+    $window.blefn.i = _injected;
+    return res;
 
     $interval(function() {
       log("Here");
