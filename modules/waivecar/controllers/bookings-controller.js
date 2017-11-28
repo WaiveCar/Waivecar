@@ -139,6 +139,10 @@ Bento.Register.Controller('BookingsController', function(controller) {
     return yield booking.checkCarParityWithUser(id, this.payload, this.auth.user);
   };
 
+  controller.userContribution = function *(id) {
+    return  yield booking.userContribution(id, this.auth.user);
+  };
+
   return controller;
 
 });
