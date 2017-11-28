@@ -23,7 +23,7 @@ let redis        = require('./redis-service');
 let uuid         = require('uuid');
 let _            = require('lodash');
 let geolib    = require('geolib');
-let Sequelize = require('sequelize');
+let sequelize = Bento.provider('sequelize');
 
 
 // ### Models
@@ -975,6 +975,64 @@ module.exports = class BookingService extends Service {
     }
 
     return { isPaired: isPaired };
+  }
+
+  static *userContribution(id, _user) {
+
+    if (_user.id == id || _user.hasAccess('admin')) {
+
+      var stats = {
+        rentedTotal : 0,
+        mileageTotal : 0,
+        payedTotal: null
+      };
+
+      var result = yield sequelize.query(`select sum(TIME_TO_SEC(timediff(bookings.updated_at, bookings.created_at))) as rented_total
+                              from bookings
+                              where user_id = ? and status = 'completed'`, {
+        type         : sequelize.QueryTypes.SELECT,
+        replacements : [ id ]
+      });
+
+      if (result.length == 1 && result[0]) {
+        stats.rentedTotal = result[0].rented_total;
+      }
+
+      var result = yield sequelize.query(`
+        select sum(ends_mileage - starts_mileage) as mileage_total, count(*) as number_of_rides from (
+
+            select min(starts.mileage) as starts_mileage, max(ends.mileage) as ends_mileage, max(ends.mileage) - min(starts.mileage)
+                from bookings
+                join booking_details as starts
+                  on starts.booking_id = bookings.id and starts.type='start'
+                join booking_details as ends
+                  on ends.booking_id = starts.booking_id and ends.type='end'
+                where user_id = ? and status = 'completed'  group by starts.booking_id
+
+        ) as R
+      `, {
+        type         : sequelize.QueryTypes.SELECT,
+        replacements : [ id ]
+      });
+
+      if (result.length == 1 && result[0]) {
+        stats.mileageTotal = result[0].mileage_total;
+        stats.numberOfRides = result[0].number_of_rides;
+      }
+
+      if (_user.hasAccess('admin')) {
+        var result = yield sequelize.query(`select sum(amount) as payed_total from shop_orders where user_id = ? and status = 'paid'`, {
+          type: sequelize.QueryTypes.SELECT,
+          replacements: [id]
+        });
+
+        if (result.length == 1 && result[0]) {
+          stats.payedTotal = result[0].payed_total;
+        }
+      }
+
+      return stats;
+    }
   }
 
   /*
