@@ -24,6 +24,9 @@ function ApplicationController ($rootScope, $scope, $injector) {
   var $session = $injector.get('$session');
   var $window = $injector.get('$window');
   var LocationService = $injector.get('LocationService');
+  var IntercomService = $injector.get('IntercomService');
+  var NotificationService = $injector.get('NotificationService');
+
 
   this.models = $data.instances;
   this.active = $data.active;
