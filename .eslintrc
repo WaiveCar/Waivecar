@@ -69,5 +69,4 @@ rules:
     spaced-comment: [0, "always", { exceptions: ["-"]}]
     strict: [2, "global"]
     valid-jsdoc: [1, { prefer: { "return": "returns"}}]
-    wrap-iife: 2
     yoda: 0
