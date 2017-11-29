@@ -134,6 +134,8 @@ function DashboardController ($scope, $rootScope, $injector) {
     // sub 1 second because this is how these things work.
     $window.timeOutForRide = setInterval(timeLeft, 500);
   
+    // connect to the ble
+    $data.resources.cars.connect({id: $data.active.cars.id}, ctrl);
     startZendrive();
   }.bind(this));
 
@@ -189,7 +191,6 @@ function DashboardController ($scope, $rootScope, $injector) {
   }
 
   function unlockCar(id) {
-
     $ionicLoading.show({
       template: '<div class="circle-loader"><span>Loading</span></div>'
     });
@@ -223,12 +224,14 @@ function DashboardController ($scope, $rootScope, $injector) {
 
     var now = new Date();
 
-    var id = $data.active.bookings.id;
-    $data.resources.bookings.checkParity({ id: id, userLocations: ctrl.lastUserLocations, appNowTime: now.getTime() })
-      .$promise.then(function() {});
+    if($data.active.bookings) {
+      var id = $data.active.bookings.id;
+      $data.resources.bookings.checkParity({ id: id, userLocations: ctrl.lastUserLocations, appNowTime: now.getTime() })
+        .$promise.then(function() {});
 
-    ctrl.lastTimeOfParityCheck = now;
-    ctrl.lastUserLocations = [];
+      ctrl.lastTimeOfParityCheck = now;
+      ctrl.lastUserLocations = [];
+    }
   }
 
   function checkParityWithUser(location) {
