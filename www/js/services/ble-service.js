@@ -87,7 +87,15 @@ module.exports = angular.module('app.services').factory('$ble', [
     var _injected = {};
     var _rssi = {};
     var _creds = {};
-
+    var _scanCache = {};
+    var _lastStatus = false;
+    var _signalHistory = [];
+    var _lastCommand = {};
+    var LOCKED = 1;
+    var UNLOCKED = 2;
+    var ON = 2;
+    var OFF = 1;
+    
     // If the token is set to expire then we need to grab another. We assume
     //
     //  clock drift + network time + estimated 90% network failure time (signal) + unknown unknowns
@@ -262,18 +270,33 @@ module.exports = angular.module('app.services').factory('$ble', [
       }, fail);
     }
 
+    function lowLevelConnect(car, success, fail) {
+      log('Found car ' + car.id);
+      ble.connect(car.id, function() {
+        _deviceId = car.id;
+        log("connected to " + _deviceId);
+        success();
+      }, failure('ble.connect', fail));
+    }
+
+    // There's a "cache" to speed things up. If
+    // we try to reconnect, then we look for the
+    // mapping between the car and the mac address
+    // If we can find it then we just try to connect.
     function findCarById(id, success, fail) {
+      var _car = _scanCache[id];
+      if(_car) {
+        return lowLevelConnect(_car, success, fail);
+      }
       getBle().then(function() {
+        // this devilish function returns many times,
+        // via a "progress" feature of promises. It 
+        // never gets to "complete"
         ble.startScan([], function(car) { 
-          if (car.name !== id) {
-            return;
+          _scanCache[car.id] = car;
+          if (car.name === id) {
+            lowLevelConnect(car, success, fail);
           }
-          log('Found car ' + car.id);
-          _deviceId = car.id;
-          ble.connect(car.id, function() {
-            log('Connected');
-            success();
-          }, failure('ble.connect', fail));
         }, failure('scan', fail));
       });
     }
@@ -324,19 +347,29 @@ module.exports = angular.module('app.services').factory('$ble', [
 
         commandChallenge = new Uint8Array(commandChallenge);
         var valueCommandArray = command.concat(_.toArray(commandChallenge));
+
+        // The order of these arguments is inconsistent with invers's documentation.  
+        // This is correct, the documentation is wrong.
         var responseb64 = hmacsha1(bin2str(_sessionKey), bin2str(valueCommandArray));
         var payload = command.concat(b642array(responseb64)).slice(0, 20);
         var toWrite = (new Uint8Array(payload)).buffer;
+        //console.log(buf2hex(toWrite), payload);
         ble.write(_deviceId, CAR_CONTROL_SERVICE, COMMAND_PHONE, toWrite, success, failure(what, fail));
       }, failure(what, fail));
     }
 
     function connect(carId) {
       var defer = $q.defer();
-      if(_creds.carId === carId && _creds.expire - new Date() > MINTIME) {
+
+      // we can get here before we have creds at all, in which case we claim that
+      // we are expired.
+      var expired = _creds.expire ? _creds.expire - new Date() < MINTIME : true;
+
+      // If we are trying to connect to the same car, we haven't disconnected, and the
+      // credentials haven't expired, then we can just completely skip this step.
+      if(_creds.carId === carId && !_creds.disconnected && !expired) {
         defer.resolve();
       } else {
-        log("Getting tokens");
         //
         // This is an example of what is returned by ble:
         //
@@ -348,10 +381,11 @@ module.exports = angular.module('app.services').factory('$ble', [
         // "valid_until":"2017-11-09T02:32:06.648Z"
         // } 
         //
-        _injected.getBle({ id: carId }).$promise.then(function(creds) {
+        function authorize(creds) {
           var token = b642bin(creds.token);
           _creds = creds;
           _creds.carId = carId;
+          _creds.disconnected = false;
           _creds.expire = new Date(creds.valid_until);
           _sessionKey = b642bin(creds.sessionKey);
 
@@ -360,9 +394,22 @@ module.exports = angular.module('app.services').factory('$ble', [
             log("Authorizing Vehicle");
             writeBig(CAR_CONTROL_SERVICE, AUTHORIZE_PHONE, token, defer.resolve, failure('write', defer.reject));
           }, failure('find car', defer.reject));
-        });
+        }
+        if(!expired) {
+          log("Using existing token");
+          authorize(_creds);
+        } else {
+          log("Getting tokens");
+          _injected.getBle({ id: carId }).$promise.then(authorize);
+        }
       }
       return defer.promise;
+    }
+
+    function disconnect() {
+      log("Disconnecting from " + _deviceId);
+      _creds.disconnected = true;
+      _deviceId = false;
     }
 
     function wrap(carId, cmd) {
@@ -371,47 +418,89 @@ module.exports = angular.module('app.services').factory('$ble', [
 
       connect(carId).then(function(){ 
         log("Doing " + cmd);
+        _lastCommand[cmd] = new Date();
         return doit(cmd, defer.resolve, defer.reject);
       }).catch(failure("connect", defer.reject));
 
       return defer.promise;
     }
 
+    function isLocked() {
+      if(_lastStatus) { 
+        return _lastStatus.lock[0] === LOCKED;
+      }
+    }
+
+    function getStatus(carId) {
+      var defer = $q.defer();
+      if(_creds.carId === carId && _lastStatus) {
+        defer.resolve({
+          isIgnitionOn: _lastStatus.ignition === ON,
+          isLocked: isLocked()
+        });
+      } else {
+        defer.reject();
+      }
+      return defer.promise;
+    }
+
     var res = {
-      immobilize: function(carId, what) { return wrap(carId, what ? _ccsMap.IMMOBILIZER_LOCK :_ccsMap.IMMOBILIZER_UNLOCK); },
-      nop:    function (carId) { return wrap(carId, _ccsMap.NOP); },
-      lock:   function (carId) { return wrap(carId, _ccsMap.CENTRAL_LOCK_CLOSE); },
-      unlock: function (carId) { return wrap(carId, _ccsMap.CENTRAL_LOCK_OPEN); },
+      disconnect: disconnect,
+      immobilize: function(carId, what) { return wrap(carId, what ? 'IMMOBILIZER_LOCK' : 'IMMOBILIZER_UNLOCK'); },
+      nop:    function (carId) { return wrap(carId, 'NOP'); },
+      lock:   function (carId) { return wrap(carId, 'CENTRAL_LOCK_CLOSE'); },
+      unlock: function (carId) { return wrap(carId, 'CENTRAL_LOCK_OPEN'); },
+      status: getStatus,
       setFunction: setFunction
     };
 
     $window.blefn.n = res;
     $window.blefn.i = _injected;
-    return res;
 
     $interval(function() {
-      log("Here");
       if(!_deviceId) {
         return;
       }
       ble.readRSSI(_deviceId, function(rssi) {
-        _rssi = {
-          quality: rssi,
-          time: new Date()
-        };
-        console.log(_rssi);
+
+        // Our signal strength has a lot of variance so
+        // we average it out in order to make it less jittery.
+        _signalHistory.push(rssi);
+        var average = 0;
+        if(_signalHistory.length > 10) {
+          _signalHistory.shift();
+          // we only report the average when we have enough samples.
+          average = _signalHistory.reduceRight(function(a, b) { return a + b }, 0) / _signalHistory.length;
+        }
+
+        cis('STATUS_1', function(obj) {
+          _lastStatus = obj;
+          console.log(_lastStatus.lock[0], rssi, average, (new Date() - _lastCommand.CENTRAL_LOCK_OPEN) );
+
+          // If we are over a certain distance, the door is unlocked, and we haven't recently sent
+          // an unlock command, then we try to lock it.
+          if( average < -90.2 && 
+              !isLocked() && 
+              ( _lastCommand.CENTRAL_LOCK_OPEN && (new Date() - _lastCommand.CENTRAL_LOCK_OPEN) > 20 * 1000 )
+            ) {
+            res.lock(_creds.carId);
+          }
+
+        }, function() {
+          if(_lastStatus) {
+
+            if(_lastStatus.lock[0] === UNLOCKED) {
+              log("Last status is unlocked, locking");
+              _injected.lock({id: _creds.carId});
+            }
+          }
+          disconnect();
+        });
       });
-    }, 2000);
+    }, 300);
 
 
-    /*
-    $window.bleread = function(what) {
-      cis(what, function(a) {
-        $window.bleres[what] = a;
-        console.log('read ' + what);
-      }, failure('read ' + what));
-    };
-    */
+    return res;
   }
 
 ]);
