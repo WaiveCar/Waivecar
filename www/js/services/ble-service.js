@@ -85,12 +85,11 @@ module.exports = angular.module('app.services').factory('$ble', [
     var _sessionKey = false;
     var _deviceId = false;
     var _injected = {};
-    var _rssi = {};
     var _creds = {};
     var _scanCache = {};
     var _lastStatus = false;
-    var _signalHistory = [];
     var _lastCommand = {};
+    var _res = {};
     var LOCKED = 1;
     var UNLOCKED = 2;
     var ON = 2;
@@ -100,12 +99,12 @@ module.exports = angular.module('app.services').factory('$ble', [
     //
     //  clock drift + network time + estimated 90% network failure time (signal) + unknown unknowns
     //
-    // 60s + 15s + 90s + 45s = 2.5 minutes ... 
+    // 60s + 15s + 90s + 120s = 4.75 minutes ... 
     //
-    //  that means that if a token is expiring in 2.5 minutes we try to go
+    //  that means that if a token is expiring in 4.75 minutes we try to go
     //  out and get another one
     //
-    var MINTIME = 210 * 1000;
+    var MINTIME = 285 * 1000;
     var mlog = {};
 
     $window.blefn = {
@@ -409,7 +408,7 @@ module.exports = angular.module('app.services').factory('$ble', [
           authorize(_creds);
         } else {
           log("Getting tokens");
-          _injected.getBle({ id: carId }).$promise.then(authorize);
+          _injected.getBle({ id: carId }).$promise.then(authorize).catch(defer.reject);
         }
       }
       return defer.promise;
@@ -455,34 +454,34 @@ module.exports = angular.module('app.services').factory('$ble', [
       return defer.promise;
     }
 
-    var res = {
-      disconnect: disconnect,
-      immobilize: function(carId, what) { return wrap(carId, what ? 'IMMOBILIZER_LOCK' : 'IMMOBILIZER_UNLOCK'); },
-      nop:    function (carId) { return wrap(carId, 'NOP'); },
-      lock:   function (carId) { return wrap(carId, 'CENTRAL_LOCK_CLOSE'); },
-      unlock: function (carId) { return wrap(carId, 'CENTRAL_LOCK_OPEN'); },
-      status: getStatus,
-      setFunction: setFunction
-    };
+    function poll() {
+      var average = 0;
+      var signalHistory = [];
+      var _lock = {token: false};
 
-    $window.blefn.n = res;
-    $window.blefn.i = _injected;
-
-    $interval(function() {
-      if(!_deviceId) {
-        return;
-      }
-      ble.readRSSI(_deviceId, function(rssi) {
-
-        // Our signal strength has a lot of variance so
-        // we average it out in order to make it less jittery.
-        _signalHistory.push(rssi);
-        var average = 0;
-        if(_signalHistory.length > 10) {
-          _signalHistory.shift();
-          // we only report the average when we have enough samples.
-          average = _signalHistory.reduceRight(function(a, b) { return a + b }, 0) / _signalHistory.length;
+      $interval(function() {
+        if(!_deviceId) {
+          return;
         }
+
+        if(!_creds.expire || _creds.expire - new Date() < MINTIME && !_lock.token) {
+          // this tries to pull down new tokens --- we try and make sure that we attempt
+          // this serially if need be.
+          connect(carId)
+            .then(function() { _lock.token = false; })
+            .catch(function() { _lock.token = false; });
+        }
+
+        ble.readRSSI(_deviceId, function(rssi) {
+          // Our signal strength has a lot of variance so
+          // we average it out in order to make it less jittery.
+          signalHistory.push(rssi);
+          if(signalHistory.length > 10) {
+            signalHistory.shift();
+            // we only report the average when we have enough samples.
+            average = signalHistory.reduceRight(function(a, b) { return a + b }, 0) / signalHistory.length;
+          }
+        });
 
         // We try to find out the status of the car ... this is essentially a poll and there's no indication
         // that this is a bad idea since it's a local btle connection
@@ -495,23 +494,34 @@ module.exports = angular.module('app.services').factory('$ble', [
               !isLocked() && 
               ( _lastCommand.CENTRAL_LOCK_OPEN && (new Date() - _lastCommand.CENTRAL_LOCK_OPEN) > 20 * 1000 )
             ) {
-            res.lock(_creds.carId);
+            _res.lock(_creds.carId);
           }
 
         }, function() {
-          if(_lastStatus) {
-
-            if(_lastStatus.lock[0] === UNLOCKED) {
-              log("Last status is unlocked, locking");
-              _injected.lock({id: _creds.carId});
-            }
+          if(!isLocked()) {
+            _injected.lock({id: _creds.carId});
           }
           disconnect();
         });
-      });
-    }, 300);
+      }, 300);
+    }
 
-    return res;
+    _res = {
+      disconnect: disconnect,
+      immobilize: function(carId, what) { return wrap(carId, what ? 'IMMOBILIZER_LOCK' : 'IMMOBILIZER_UNLOCK'); },
+      nop:    function (carId) { return wrap(carId, 'NOP'); },
+      lock:   function (carId) { return wrap(carId, 'CENTRAL_LOCK_CLOSE'); },
+      unlock: function (carId) { return wrap(carId, 'CENTRAL_LOCK_OPEN'); },
+      status: getStatus,
+      setFunction: setFunction
+    };
+
+    $window.blefn.n = _res;
+    $window.blefn.i = _injected;
+
+    poll();
+
+    return _res;
   }
 
 ]);
