@@ -67,7 +67,6 @@ module.exports = angular.module('app.services').factory('$ble', [
     var AUTHORIZE_PHONE = '869CEF82-B058-11E4-AB27-00025B03E1F4';
     var COMMAND_PHONE = '869CEF84-B058-11E4-AB27-00025B03E1F4';
     var _ccsMap = {
-      NOP: false,
       CENTRAL_LOCK_CLOSE: 0x01,
       CENTRAL_LOCK_OPEN: 0x02,
       IMMOBILIZER_LOCK: 0x04,
@@ -90,6 +89,7 @@ module.exports = angular.module('app.services').factory('$ble', [
     var _lastStatus = false;
     var _lastCommand = {};
     var _res = {};
+    var UNKNOWN = 0;
     var LOCKED = 1;
     var UNLOCKED = 2;
     var ON = 2;
@@ -242,7 +242,7 @@ module.exports = angular.module('app.services').factory('$ble', [
 
         switch(type) {
           case 1:
-            value = new Uint8Array(buf, pointer, 1);
+            value = (new Uint8Array(buf, pointer, 1))[0];
             pointer += 1;
             break;
           case 2:
@@ -347,11 +347,6 @@ module.exports = angular.module('app.services').factory('$ble', [
       var command = new Array(10).fill(0);
       command[0] = _ccsMap[what];
       cis('COMMAND_CHALLENGE', function(commandChallenge) {
-        // This is a NOP command to initially connect to
-        // the btle
-        if(command[0] === false) {
-          return success();
-        }
 
         commandChallenge = new Uint8Array(commandChallenge);
         var valueCommandArray = command.concat(_.toArray(commandChallenge));
@@ -435,9 +430,10 @@ module.exports = angular.module('app.services').factory('$ble', [
       return defer.promise;
     }
 
-    function isLocked() {
-      if(_lastStatus) { 
-        return _lastStatus.lock[0] === LOCKED;
+    function isLocked(obj) {
+      obj = obj || _lastStatus;
+      if(obj) {
+        return obj.lock === LOCKED;
       }
     }
 
@@ -457,7 +453,7 @@ module.exports = angular.module('app.services').factory('$ble', [
     function poll() {
       var average = 0;
       var signalHistory = [];
-      var _lock = {token: false};
+      var _lock = { token: false };
 
       $interval(function() {
         if(!_deviceId) {
@@ -486,6 +482,14 @@ module.exports = angular.module('app.services').factory('$ble', [
         // We try to find out the status of the car ... this is essentially a poll and there's no indication
         // that this is a bad idea since it's a local btle connection
         cis('STATUS_1', function(obj) {
+          // This passes up state to the controller if we have it
+          if( _injected.ctrl && 
+              _lastStatus && _lastStatus.lock !== obj.lock && 
+              obj.lock !== UNKNOWN ) {
+            console.log("Propagating lock change to controller ", isLocked());
+            _injected.ctrl.locked = isLocked(obj);
+          }
+
           _lastStatus = obj;
 
           // If we are over a certain distance, the door is unlocked, and we haven't recently sent
@@ -494,7 +498,7 @@ module.exports = angular.module('app.services').factory('$ble', [
               !isLocked() && 
               ( _lastCommand.CENTRAL_LOCK_OPEN && (new Date() - _lastCommand.CENTRAL_LOCK_OPEN) > 20 * 1000 )
             ) {
-            _res.lock(_creds.carId);
+            _res.lock(_creds.carId).catch(failure('lock'));
           }
 
         }, function() {
@@ -509,7 +513,7 @@ module.exports = angular.module('app.services').factory('$ble', [
     _res = {
       disconnect: disconnect,
       immobilize: function(carId, what) { return wrap(carId, what ? 'IMMOBILIZER_LOCK' : 'IMMOBILIZER_UNLOCK'); },
-      nop:    function (carId) { return wrap(carId, 'NOP'); },
+      connect:    function (carId) { return connect(carId); },
       lock:   function (carId) { return wrap(carId, 'CENTRAL_LOCK_CLOSE'); },
       unlock: function (carId) { return wrap(carId, 'CENTRAL_LOCK_OPEN'); },
       status: getStatus,
@@ -523,5 +527,4 @@ module.exports = angular.module('app.services').factory('$ble', [
 
     return _res;
   }
-
 ]);
