@@ -283,10 +283,8 @@ module.exports = angular.module('app.services').factory('$ride', [
       }
 
       return $data.resources.cars.status({id: id}).then(function(obj) {
-        console.log("here success");
         return check(obj.isIgnitionOn);
       }).catch(function() {
-        console.log("here fail");
         return service.isCarOn(id).then(check);
       });
     }
