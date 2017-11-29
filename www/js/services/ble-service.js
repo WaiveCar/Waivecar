@@ -228,6 +228,8 @@ module.exports = angular.module('app.services').factory('$ble', [
       return Array.prototype.map.call(new Uint8Array(buffer), function(x){ return ('00' + x.toString(16)).slice(-2); } ).join('');
     }
 
+    // This decodes binary data and puts it into our poor-man's C struct format for
+    // the various things we can read.
     function cisDecode(buf, fmt, cb) {
       if(!fmt) {
         return cb(buf);
@@ -245,10 +247,13 @@ module.exports = angular.module('app.services').factory('$ble', [
             pointer += 1;
             break;
           case 2:
+            // This stupid slice trick is needed because the buffer* prototype wants 
+            // structural alignment which is retarded.
             value = new Uint16Array(buf.slice(pointer, pointer + 2), 0, 1);
             pointer += 2;
             break;
           case 4:
+            // The 4 versus 4float is a very primitive type system
             value = new Uint32Array(buf.slice(pointer, pointer + 4), 0, 1);
             pointer += 4;
             break;
@@ -301,6 +306,8 @@ module.exports = angular.module('app.services').factory('$ble', [
       });
     }
 
+    // invers has a "protocol" for sending large payloads. This is 
+    // essentially re-interpreted Java code from the documentation.
     function partitionData(raw) {
       var payloadList = [], 
         unit = 18,
@@ -335,6 +342,8 @@ module.exports = angular.module('app.services').factory('$ble', [
       sendData();
     }
 
+    // All the write actions, such as lock and unlock, follow some challenge response 
+    // protocol invented by invers to prevent replay attacks.
     function doit(what, success, fail) {
       var command = new Array(10).fill(0);
       command[0] = _ccsMap[what];
@@ -408,6 +417,8 @@ module.exports = angular.module('app.services').factory('$ble', [
 
     function disconnect() {
       log("Disconnecting from " + _deviceId);
+      // This magical flag is trusted as an authority.
+      // It probably shouldn't be ... but it is.
       _creds.disconnected = true;
       _deviceId = false;
     }
@@ -473,9 +484,10 @@ module.exports = angular.module('app.services').factory('$ble', [
           average = _signalHistory.reduceRight(function(a, b) { return a + b }, 0) / _signalHistory.length;
         }
 
+        // We try to find out the status of the car ... this is essentially a poll and there's no indication
+        // that this is a bad idea since it's a local btle connection
         cis('STATUS_1', function(obj) {
           _lastStatus = obj;
-          console.log(_lastStatus.lock[0], rssi, average, (new Date() - _lastCommand.CENTRAL_LOCK_OPEN) );
 
           // If we are over a certain distance, the door is unlocked, and we haven't recently sent
           // an unlock command, then we try to lock it.
@@ -498,7 +510,6 @@ module.exports = angular.module('app.services').factory('$ble', [
         });
       });
     }, 300);
-
 
     return res;
   }
