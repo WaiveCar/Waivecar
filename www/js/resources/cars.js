@@ -43,22 +43,32 @@ module.exports = angular.module('app').factory('Cars', [
         isArray: true
       }
     }));
+    function setup() {
+      $ble.setFunction('getBle', res.ble);
+      $ble.setFunction('lock', res._lock);
+    }
+
+    res.status = function(params) {
+      setup();
+      return $ble.status(params.id);
+    }
+
     res.connect = function(params) {
       console.log("trying to connect to " + params);
-      $ble.setFunction('getBle', res.ble);
+      setup();
       return $ble.nop(params.id).catch(function(){
         console.log("Failure ... Unable to contact " + params.id);
       });
     };
     res.lock = function(params) {
-      $ble.setFunction('getBle', res.ble);
+      setup();
       return $ble.lock(params.id).catch(function(){
         console.log("Failure ... using network"); 
         return res._lock(params);
       });
     };
     res.unlock = function(params) {
-      $ble.setFunction('getBle', res.ble);
+      setup();
       return $ble.unlock(params.id).catch(function(){
         console.log("Failure ... using network"); 
         return res._unlock(params);
