@@ -467,14 +467,13 @@ module.exports = {
               if (meta) {
                 car.license = meta.license;
               } else {
-                let nextNumber =  allCars.length;
+                let nextNumber = (yield Car.find()).length; 
                 console.log("Next Available Number is " + nextNumber);
                 let candidateName = '';
                 do {
                   candidateName = `WAIVE${ nextNumber }`;
                   console.log("Next Candidate Name is " + candidateName);
-                  existingCar = carList.find(c => c.license === candidateName);
-                  console.log(existingCar);
+                  existingCar = yield Car.find({ where : { license: candidateName } });
                   nextNumber ++;
                 } while(existingCar);
 
