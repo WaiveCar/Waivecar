@@ -235,6 +235,41 @@ module.exports = angular.module('app.services').factory('$ride', [
       });
     };
 
+    service.checkAndProcessActionOnBookingEnd = function() {
+
+      return $data.resources.bookings.getEndBookingActions({ userId: $auth.me.id })
+        .$promise.then(function(result) {
+          var loadUrl = null;
+
+          if (result.action) {
+            result.action.forEach(function (action) {
+              if (Array.isArray(action) && action.length === 2 && action[0] === 'loadUrl') {
+                loadUrl = action[1];
+              }
+            });
+          }
+
+
+          if (loadUrl) {
+
+            $data.onActionNotification = function(action) {
+              if (action.name === 'endBooking') {
+                $data.onActionNotification = null;
+                service.processCompleteRide();
+              }
+            };
+            $state.go('blocker', {url: loadUrl, title: 'Quick Survey'});
+
+
+          } else {
+            service.processCompleteRide()
+          }
+        });
+
+
+
+    };
+
     function genericCheck(id, obj, check) {
       if (obj) {
         return check(obj);

@@ -12,6 +12,7 @@ function DamageGalleryController ($injector, $stateParams) {
   var Reports = $injector.get('Reports');
   var $data = $injector.get('$data');
   var $state = $injector.get('$state');
+  var $ride = $injector.get('$ride');
 
   var ctrl = this;
   ctrl.images = [];
@@ -110,7 +111,11 @@ function DamageGalleryController ($injector, $stateParams) {
 
 
   this.goBack = function() {
-    $state.go($stateParams.return, $stateParams, { location: 'replace' });
+    if ($stateParams.return === 'bookings-show') {
+      return $ride.checkAndProcessActionOnBookingEnd();
+    } else {
+      $state.go($stateParams.return, $stateParams, {location: 'replace'});
+    }
   };
 
 }

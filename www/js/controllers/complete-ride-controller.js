@@ -77,13 +77,15 @@ module.exports = angular.module('app.controllers').controller('CompleteRideContr
       if (!car.isKeySecure || car.isIgnitionOn) {
         return null;
       }
-      return $ride.processCompleteRide();
+
+      return $ride.checkAndProcessActionOnBookingEnd();
     }
 
     function reportProblem() {
-      complete().then(function() {
-        $state.go('damage-gallery', { id: $stateParams.id, return: 'bookings-show' }, { location: 'replace' });
-      });
+
+      $state.go('damage-gallery', { id: $stateParams.id, return: 'bookings-show' }, { location: 'replace' });
+
+
     }
   }
 ]);
