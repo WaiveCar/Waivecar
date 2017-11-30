@@ -102,6 +102,18 @@ module.exports = [
           auth: false
         }
       })
+      .state('blocker', {
+        url: '/blocker',
+        templateUrl: '/templates/common/blocker.html',
+        controller: 'BlockerController as ctrl',
+        params: {
+          url: null,
+          title: null
+        },
+        data: {
+          auth: true
+        }
+      })
       .state('users-new-facebook', {
         url: '/users/new/facebook?step',
         templateUrl: '/templates/users/new-facebook.html',
