@@ -206,12 +206,6 @@ module.exports = angular.module('app.services').factory('$ride', [
           }
         }
       });
-      /*
-      // if we are in Santa Monica we are good
-      return GeofencingService.insideBoundary(car).then(function(isInside) {
-        return isInside;
-      });
-      */
     };
 
     service.setParkingDetails = function(details) {
