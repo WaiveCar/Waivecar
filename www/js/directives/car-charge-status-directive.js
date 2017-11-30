@@ -6,13 +6,17 @@ module.exports = angular.module('app.directives')
 
     function carChargeStatusDirective() {
 
-      var ratio = 0.7;
-
       function link ($scope) {
 
         function setInfo(car){
+          var ratio;
           if(!car){
             return;
+          } 
+          if(car.model === 'Spark EV') {
+            ratio = 0.7;
+          } else {
+            ratio = 1.35
           }
           car.charge = car.charge || 0;
           car.range = car.range || 0;
