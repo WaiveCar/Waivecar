@@ -32,10 +32,10 @@ module.exports = (function() {
   }
 
   res.tempSet = function*(what, timeout) {
-    timeout = timeout || res.lockTimeMS;
+    timeout = timeout || res.storeTimeMS;
     let uniq = uuid.v4();
     let key = `STORE:${ uniq }`
-    yield res.set(key, what, 'nx', 'px', timeout);
+    yield res.set(key, JSON.stringify(what), 'nx', 'px', timeout);
     return uniq;
   }
 
