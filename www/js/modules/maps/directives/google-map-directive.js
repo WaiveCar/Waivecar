@@ -121,7 +121,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
   MapController.prototype.addMarker = function addMarker(marker) {
     var type = marker.icon || marker.type;
-    if(marker.charge) {
+    if('charge' in marker) {
       type = 'active-waivecar-' + charge2color(marker);
     }
     var iconOpt = getIconOptions(type);
