@@ -49,6 +49,9 @@ function NotificationService($data, $modal) {
   }
 
   this.setupPushNotifications = function () {
+    if (!window.FirebasePlugin) {
+      return;
+    }
 
     if (ionic.Platform.isIOS()) {
       window.FirebasePlugin.grantPermission(function() {
