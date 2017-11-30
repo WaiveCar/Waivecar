@@ -380,6 +380,21 @@ module.exports = angular.module('app.services').factory('$ble', [
       }, failure(what, fail));
     }
 
+    function authorize(creds, carId) {
+      var token = b642bin(creds.token);
+      _creds = creds;
+      _creds.carId = carId;
+      _creds.disconnected = false;
+      _creds.expire = new Date(creds.valid_until);
+      _sessionKey = b642bin(creds.sessionKey);
+
+      log("Looking for Car " + carId);
+      findCarById(carId, function() {
+        log("Authorizing Vehicle");
+        writeBig(CAR_CONTROL_SERVICE, AUTHORIZE_PHONE, token, defer.resolve, failure('write', defer.reject));
+      }, failure('find car', defer.reject));
+    }
+
     function connect(carId) {
       var defer = $q.defer();
 
@@ -403,26 +418,14 @@ module.exports = angular.module('app.services').factory('$ble', [
         // "valid_until":"2017-11-09T02:32:06.648Z"
         // } 
         //
-        function authorize(creds) {
-          var token = b642bin(creds.token);
-          _creds = creds;
-          _creds.carId = carId;
-          _creds.disconnected = false;
-          _creds.expire = new Date(creds.valid_until);
-          _sessionKey = b642bin(creds.sessionKey);
-
-          log("Looking for Car " + carId);
-          findCarById(carId, function() {
-            log("Authorizing Vehicle");
-            writeBig(CAR_CONTROL_SERVICE, AUTHORIZE_PHONE, token, defer.resolve, failure('write', defer.reject));
-          }, failure('find car', defer.reject));
-        }
         if(!expired && _creds.carId === carId ) {
           log("Using existing token");
-          authorize(_creds);
+          authorize(_creds, carId);
         } else {
           log("Getting tokens");
-          _injected.getBle({ id: carId }).$promise.then(authorize).catch(defer.reject);
+          _injected.getBle({ id: carId }).$promise.then(function(creds) {
+            return authorize(creds, carId);
+          }).catch(defer.reject);
         }
       }
       return defer.promise;
