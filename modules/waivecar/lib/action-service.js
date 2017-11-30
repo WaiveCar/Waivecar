@@ -78,8 +78,10 @@ module.exports = {
       return doError('Invalid event ' + state.eventName);
     }
     state.step = yield Step.findOne({
-      objectId: objectId,
-      eventName: eventName
+      where: {
+        objectId: objectId,
+        eventName: eventName
+      }
     });
 
     let res = yield ev.forward(state);
@@ -160,8 +162,10 @@ module.exports = {
 
     // see if the user (object_id) has a state for the event
     state.step = yield Step.findOne({
-      objectId: objectId,
-      eventName: eventName
+      where :{
+        objectId: objectId,
+        eventName: eventName
+      }
     });
 
     // find the next action and state
