@@ -52,7 +52,7 @@ var eventMap = {
         ['sbRn1X', 'ads']
       ];
 
-      if(state.car.model === "Spark EV") { //'IONIQ') {
+      if(state.car.model !== "Spark EV") { //'IONIQ') {
         let current = parseInt(state.step ? state.step.state : 0, 10);
         if(current < stateList.length) {
           let url = `https://waivecar.typeform.com/to/${ stateList[current][0] }?user=${ state.user.id }&booking=${ state.booking.id }`;
@@ -131,10 +131,11 @@ module.exports = {
       state.booking = yield Booking.findOne({
         where : {
           status : {
-            $notIn : [ 'completed', 'closed', 'ended', 'cancelled' ]
+            $notIn : [ 'completed', 'closed', 'cancelled' ]
           },
           userId : state.user.id
-        }
+        },
+        order: [ ['created_at', 'desc'] ] 
       });
     }
 
