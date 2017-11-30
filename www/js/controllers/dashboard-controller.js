@@ -135,6 +135,7 @@ function DashboardController ($scope, $rootScope, $injector) {
     $window.timeOutForRide = setInterval(timeLeft, 500);
   
     // connect to the ble
+    ctrl.license = $data.active.cars.license;
     $data.resources.cars.connect({id: $data.active.cars.id}, ctrl);
     startZendrive();
   }.bind(this));
