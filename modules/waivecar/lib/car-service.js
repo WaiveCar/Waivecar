@@ -471,7 +471,7 @@ module.exports = {
                 console.log("Next Available Number is " + nextNumber);
                 let candidateName = '';
                 do {
-                  candidateName = `WAIVE${ nextNumber }`;
+                  candidateName = `newCar${ nextNumber }`;
                   console.log("Next Candidate Name is " + candidateName);
                   existingCar = yield Car.findOne({ where : { license: candidateName } });
                   nextNumber ++;
