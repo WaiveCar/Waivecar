@@ -1,0 +1,13 @@
+<ion-view class="report-problem-new">
+  <ion-nav-title>
+    <page-title class="dark-bg">Return to Gallery</page-title>
+  </ion-nav-title>
+  <ion-content ng-click="ctrl.back()" padding="true" class="ion-content--center dark-bg">
+    <img ng-src="{{ ctrl.model.file }}">
+    <div>
+      <p class="time">Reported {{ ctrl.model.time }}</p>
+      <p class="description" ng-bind-html="ctrl.model.comment"></p>
+    </div>
+  </ion-content>
+</ion-view>
+

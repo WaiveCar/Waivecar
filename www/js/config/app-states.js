@@ -453,6 +453,22 @@ module.exports = [
       data: {
         auth: true
       }
+    })
+    .state('show-problem', {
+      url: '/bookings/:id/show-problem',
+      templateUrl: '/templates/report-problem/show.html',
+      controller: 'ShowProblemController as ctrl',
+      data: {
+        auth: true
+      }
+    })
+    .state('damage-gallery', {
+      url: '/bookings/:id/damage-gallery/:return',
+      templateUrl: '/templates/report-problem/gallery.html',
+      controller: 'DamageGalleryController as ctrl',
+      data: {
+        auth: true
+      }
     });
 
     $stateProvider

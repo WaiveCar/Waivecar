@@ -82,7 +82,7 @@ module.exports = angular.module('app.controllers').controller('CompleteRideContr
 
     function reportProblem() {
       complete().then(function() {
-        $state.go('report-problem', $stateParams, { location: 'replace' });
+        $state.go('damage-gallery', { id: $stateParams.id, return: 'bookings-show' }, { location: 'replace' });
       });
     }
   }

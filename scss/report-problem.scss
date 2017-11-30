@@ -6,6 +6,13 @@
     margin: 0 auto;
   }
 
+  .description {
+    text-align: left;
+  }
+  .description, .time {
+    margin: 1em inherit;
+  }
+
   .image-tray {
     display: flex;
     flex-flow: columns;
@@ -30,5 +37,35 @@
     background-size: 120%;
     background-position: center center;
     background-repeat: no-repeat;
+  }
+
+  img {
+    max-height: 100%;
+    max-width: 100%;
+  }
+
+
+  .tile {
+    padding-bottom: 33.3333%;
+    position: relative;
+  }
+
+  .tile>div {
+
+    background: no-repeat 50% 50%;
+    background-size: contain;
+
+    position: absolute;
+    top:3px;
+    bottom: 3px;
+    left: 3px;
+    right: 3px;
+  }
+
+  .large-image {
+    width: 100%;
+    padding-bottom: 100%;
+    background: no-repeat 50% 50%;
+    background-size: cover;
   }
 }
