@@ -97,6 +97,7 @@ Route.post('/waitlist/add', ['WaitlistController@add' ]);
 Route.post('/waitlist/addById', ['WaitlistController@addById' ]);
 
 Route.get('/actions/hash/:id', ['ActionController@getHash']);
+Route.get('/actions/forward/:id', ['ActionController@goForward']);
 Route.get('/actions/:type/:id', ['ActionController@getAction']);
 
 // ### Geocoding Handlers

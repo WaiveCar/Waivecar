@@ -15,7 +15,7 @@ let BOOKING = 2;
 
 function doError(what, type) {
   throw error.parse({
-    code    : TYPE || 'ENGINE_FAIL',
+    code    : type || 'ENGINE_FAIL',
     message : what
   }, 400);
 }
@@ -36,17 +36,29 @@ var eventMap = {
   endBooking: {
     type: USER,
     requireList: [BOOKING, CAR],
+    forward: function *(state) {
+      let current = parseInt(state.step ? state.step.state : 0, 10);
+      current ++;
+      state.nextStep = makeState(state, current);
+      return {action: false, state: state};
+    },
+
     cb: function *(state) {
-      let action = {};
+      let action = false;
+      
+      let stateList = [ 
+        ['rlM4Iz', 'brand'],
+        ['v91rhf', 'car'],
+        ['sbRn1X', 'ads']
+      ];
 
       if(state.car.model === "Spark EV") { //'IONIQ') {
-        let current = parseInt(state.step ? state.step.state : false, 10);
-        current++;
-        state.nextStep = makeState(state, current);
-        console.log(state.nextStep);
-      } else {
-        action = false;
-      }
+        let current = parseInt(state.step ? state.step.state : 0, 10);
+        if(current < stateList.length) {
+          let url = `https://waivecar.typeform.com/to/${ stateList[current][0] }?user=${ state.user.id }&booking=${ state.booking.id }`;
+          action = [['loadUrl', url]];
+        }
+      } 
 
       return {action: action, state: state};
     }
@@ -54,8 +66,40 @@ var eventMap = {
 };
 
 module.exports = {
-  *getHash(hash) {
-    return Redis.tempGet(hash);
+  *getHash(ignore, hash) {
+    return yield Redis.tempGet(hash);
+  },
+
+  *goForward(ignore, hash) {
+    let resRaw = yield Redis.tempGet(hash);
+    if(!resRaw) {
+      return doError('Expired token');
+    }
+
+    let res = JSON.parse(resRaw);
+    let state = res.state;
+    let ev = eventMap[state.eventName];
+
+    if(!ev) {
+      return doError('Invalid event ' + state.eventName);
+    }
+    res = yield ev.forward(state);
+
+    // set the new state.
+    if(res.state.nextStep) {
+      let row = yield Step.findOne({
+        objectId: state.objectId,
+        eventName: state.eventName
+      });
+
+      if(row) {
+        yield row.update(res.state.nextStep);
+      } else {
+        row = new Step(res.state.nextStep);
+        yield row.save();
+      }
+    }
+    return res;
   },
 
   *getAction(eventName, objectId, _user) {
@@ -84,7 +128,6 @@ module.exports = {
         }
       });
     }
-    console.log(state.booking);
 
     if(required(ev, CAR)) {
       state.car = yield Car.findOne({
@@ -106,19 +149,9 @@ module.exports = {
     // find the next action and state
     let res = yield ev.cb(state);
 
-    // set the new state.
-    if(res.state.nextStep) {
-      if(res.state.step) {
-        yield res.state.step.update(res.state.nextStep);
-      } else {
-        res.state.step = new Step(res.state.nextStep);
-        yield res.state.step.save();
-      }
-    }
-
     // if there's a response in the action, then send that
     // over.
-    let hash = Redis.tempSet(res);
+    let hash = yield Redis.tempSet(res, 25 * 60 * 1000);
     res.hash = hash;
     return res;
   }
