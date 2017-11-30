@@ -108,6 +108,25 @@ module.exports = angular.module('app.services').factory('$ble', [
     var mlog = {};
 
     $window.blefn = {
+      whoami: function() {
+        getBle().then(function() {
+          var _lowest = {rssi: -1000};
+          var _lastCar = false;
+          $window.setInterval(function() {
+            ble.startScan([], function(car) { 
+              if(car.rssi > _lowest.rssi) {
+                _lowest.name = car.name;
+                _lowest.rssi = car.rssi;
+              }
+            });
+            if(_lastCar !== _lowest.name) {
+              console.log(_lowest.name, _lowest.rssi);
+              _lastCar = _lowest.name;
+            }
+            _lowest.rssi -= 0.25;
+          }, 400);
+        });
+      },
       finder: function() {
         getBle().then(function() {
           $window.setInterval(function() {
@@ -398,7 +417,7 @@ module.exports = angular.module('app.services').factory('$ble', [
             writeBig(CAR_CONTROL_SERVICE, AUTHORIZE_PHONE, token, defer.resolve, failure('write', defer.reject));
           }, failure('find car', defer.reject));
         }
-        if(!expired) {
+        if(!expired && _creds.carId === carId ) {
           log("Using existing token");
           authorize(_creds);
         } else {
