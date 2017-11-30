@@ -2,6 +2,7 @@
 
 let User        = Bento.model('User');
 let error       = Bento.Error;
+let relay       = Bento.Relay;
 let Redis   = require('./redis-service');
 
 let Step    = Bento.model('ActionEngine');
@@ -93,6 +94,12 @@ module.exports = {
         yield row.save();
       }
     }
+
+    relay.emit('actions', {
+      type : 'update',
+      data : { name : eventName }
+    });
+
     return res;
   },
 
