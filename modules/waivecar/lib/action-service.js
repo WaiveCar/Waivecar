@@ -70,7 +70,34 @@ module.exports = {
     return yield Redis.tempGet(hash);
   },
 
-  *goForward(ignore, hash) {
+  *goForward(eventName, objectId, _user) {
+    let ev = eventMap[eventName];
+    let state = {objectId: objectId, eventName: eventName};
+    if(!ev) {
+      return doError('Invalid event ' + state.eventName);
+    }
+    state.step = yield Step.findOne({
+      objectId: objectId,
+      eventName: eventName
+    });
+
+    let res = yield ev.forward(state);
+
+    // set the new state.
+    if(res.state.nextStep) {
+
+      if(state.step) {
+        yield state.step.update(res.state.nextStep);
+      } else {
+        row = new Step(res.state.nextStep);
+        yield row.save();
+      }
+    }
+    return res;
+  },
+
+    /*
+  *goForwardHash(ignore, hash) {
     let resRaw = yield Redis.tempGet(hash);
     if(!resRaw) {
       return doError('Expired token');
@@ -80,27 +107,9 @@ module.exports = {
     let state = res.state;
     let ev = eventMap[state.eventName];
 
-    if(!ev) {
-      return doError('Invalid event ' + state.eventName);
-    }
-    res = yield ev.forward(state);
-
-    // set the new state.
-    if(res.state.nextStep) {
-      let row = yield Step.findOne({
-        objectId: state.objectId,
-        eventName: state.eventName
-      });
-
-      if(row) {
-        yield row.update(res.state.nextStep);
-      } else {
-        row = new Step(res.state.nextStep);
-        yield row.save();
-      }
-    }
     return res;
   },
+  */
 
   *getAction(eventName, objectId, _user) {
     let ev = eventMap[eventName];
@@ -136,6 +145,7 @@ module.exports = {
         }
       });
       if(!state.car) {
+        console.log(state);
         doError("Can't find an active car for the user");
       }
     }
