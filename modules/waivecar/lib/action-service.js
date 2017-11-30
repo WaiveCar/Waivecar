@@ -89,7 +89,7 @@ module.exports = {
       if(state.step) {
         yield state.step.update(res.state.nextStep);
       } else {
-        row = new Step(res.state.nextStep);
+        let row = new Step(res.state.nextStep);
         yield row.save();
       }
     }
