@@ -23,6 +23,8 @@ function DashboardController ($scope, $rootScope, $injector) {
   var ZendriveService = $injector.get('ZendriveService');
   var LocationService = $injector.get('LocationService');
   var homebase = $injector.get('homebase');
+  var $auth = $injector.get('$auth');
+
 
   // $data is used to interact with models, never directly. If direct is required, $data should be refreshed.
   $scope.data = $data.active;
@@ -260,6 +262,39 @@ function DashboardController ($scope, $rootScope, $injector) {
 
   }
 
+  function checkAndProcessActionOnRideEnd(carId, bookingId) {
+
+    $data.resources.bookings.getEndBookingActions({ userId: $auth.me.id })
+      .$promise.then(function(result) {
+        var loadUrl = null;
+
+        if (result.action) {
+          result.action.forEach(function (action) {
+            if (Array.isArray(action) && action.length === 2 && action[0] === 'loadUrl') {
+              loadUrl = action[1];
+            }
+          });
+        }
+
+        //https://api.waivecar.com/actions/forward/endBooking/user
+        if (loadUrl) {
+
+          $data.onActionNotification = function(action) {
+            if (action.name === 'endBooking') {
+              $data.onActionNotification = null;
+              ctrl.endRide(carId, bookingId);
+            }
+          };
+          $state.go('blocker', {url: loadUrl, title: 'Quick Survey'});
+        } else {
+          ctrl.endRide(carId, bookingId);
+        }
+      });
+
+
+
+  }
+
   function endRidePrompt(carId, bookingId) {
     var modal;
     $modal('result', {
@@ -271,7 +306,8 @@ function DashboardController ($scope, $rootScope, $injector) {
         className: 'button-dark',
         handler: function () {
           modal.remove();
-          ctrl.endRide(carId, bookingId);
+
+          checkAndProcessActionOnRideEnd(carId, bookingId);
         }
       }, {
         text: 'no',

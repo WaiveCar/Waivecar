@@ -61,6 +61,7 @@ module.exports = angular.module('app.services').factory('$data', [
       instances: {},
       active: {},
       isSubscribed: false,
+      onActionNotification: null,
 
       initialize: function (modelName) {
         service.instances[modelName] = [];
@@ -251,6 +252,10 @@ module.exports = angular.module('app.services').factory('$data', [
       if (resource === 'users') {
         service.me = resource;
         return;
+      }
+
+      if (resource === 'actions' && service.onActionNotification) {
+        service.onActionNotification(model);
       }
 
       switch (action.type) {

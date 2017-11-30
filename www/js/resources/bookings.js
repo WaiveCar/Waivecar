@@ -70,6 +70,13 @@ module.exports = angular.module('app').factory('Bookings', [
         params: {
           id: '@id'
         }
+      },
+      getEndBookingActions: {
+        method: 'GET',
+        url: $utils.getCustomRoute('actions/current/endBooking/:userId'),
+        params: {
+          userId: '@userId'
+        }
       }
     }));
 
