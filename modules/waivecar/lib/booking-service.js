@@ -606,8 +606,8 @@ module.exports = class BookingService extends Service {
     // Sets the car connected to the booking on a 5 minute auto lock timer.
     yield booking.setAutoLock();
 
-    // ### Reset Car
-    yield car.removeDriver();
+    // ### Reset Car --- moved to _complete
+    //yield car.removeDriver();
 
     let endDetails = yield this.logDetails('end', booking, car);
 
@@ -750,7 +750,6 @@ module.exports = class BookingService extends Service {
 
   // Locks, and makes the car available for a new booking.
   static *_complete(id, _user, query, payload) {
-
     if (!redis.shouldProcess('booking-complete', id)) {
       return;
     }
@@ -828,6 +827,7 @@ module.exports = class BookingService extends Service {
     // ### Booking & Car Updates
 
     yield booking.complete();
+    yield car.removeDriver();
 
     if (user.isProbation()){
       yield user.setActive();
