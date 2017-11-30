@@ -82,3 +82,4 @@ prepaid_users.csv
 .vagrant
 .bento-packages
 *.sql
+package-lock.json
