@@ -409,6 +409,13 @@ module.exports = angular.module('app.services').factory('$ble', [
       return defer.promise;
     }
 
+    function disconnectAndForget() {
+      disconnect();
+      _creds = {};
+      _lastCommand = {};
+      _sessionKey = false;
+    }
+
     function disconnect() {
       log("Disconnecting from " + _deviceId);
       // This magical flag is trusted as an authority.
@@ -453,17 +460,22 @@ module.exports = angular.module('app.services').factory('$ble', [
     function poll() {
       var average = 0;
       var signalHistory = [];
-      var _lock = { token: false };
+      var _lock = { 
+        token: false,
+        nextLock: new Date()
+      };
 
       $interval(function() {
         if(!_deviceId) {
           return;
         }
 
+        var now = new Date();
         if(!_creds.expire || _creds.expire - new Date() < MINTIME && !_lock.token) {
           // this tries to pull down new tokens --- we try and make sure that we attempt
           // this serially if need be.
-          connect(carId)
+          log("Credentials near expiration ... getting new ones");
+          connect(_creds.carId)
             .then(function() { _lock.token = false; })
             .catch(function() { _lock.token = false; });
         }
@@ -486,7 +498,7 @@ module.exports = angular.module('app.services').factory('$ble', [
           if( _injected.ctrl && 
               _lastStatus && _lastStatus.lock !== obj.lock && 
               obj.lock !== UNKNOWN ) {
-            console.log("Propagating lock change to controller ", isLocked());
+            log("Propagating lock change to controller");
             _injected.ctrl.locked = isLocked(obj);
           }
 
@@ -496,8 +508,11 @@ module.exports = angular.module('app.services').factory('$ble', [
           // an unlock command, then we try to lock it.
           if( average < -90.2 && 
               !isLocked() && 
-              ( _lastCommand.CENTRAL_LOCK_OPEN && (new Date() - _lastCommand.CENTRAL_LOCK_OPEN) > 20 * 1000 )
+              ( _lastCommand.CENTRAL_LOCK_OPEN && (new Date() - _lastCommand.CENTRAL_LOCK_OPEN) > 20 * 1000 ) &&
+              // Sometimes this gets run multiple times due to a race condition.
+              now > (_lock.nextLock + 5000)
             ) {
+            _lock.nextLock = new Date();
             _res.lock(_creds.carId).catch(failure('lock'));
           }
 
@@ -511,7 +526,7 @@ module.exports = angular.module('app.services').factory('$ble', [
     }
 
     _res = {
-      disconnect: disconnect,
+      disconnect: disconnectAndForget,
       immobilize: function(carId, what) { return wrap(carId, what ? 'IMMOBILIZER_LOCK' : 'IMMOBILIZER_UNLOCK'); },
       connect:    function (carId) { return connect(carId); },
       lock:   function (carId) { return wrap(carId, 'CENTRAL_LOCK_CLOSE'); },

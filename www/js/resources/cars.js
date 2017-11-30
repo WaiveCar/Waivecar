@@ -53,6 +53,11 @@ module.exports = angular.module('app').factory('Cars', [
       return $ble.status(params.id);
     }
 
+    res.disconnect = function(params) {
+      setup();
+      return $ble.disconnect();
+    }
+
     res.connect = function(params, ctrl) {
       setup();
       $ble.setFunction('ctrl', ctrl);
