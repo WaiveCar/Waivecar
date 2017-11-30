@@ -185,6 +185,10 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
   MapController.prototype.updateMarkers = function updateMarkers(newMarkers) {
     var ctrl = this;
 
+    newMarkers = newMarkers.filter(function(m) {
+      return m.type !== 'zone';
+    });
+
     var oldIds = ctrl._addedMarkers.general.map(function (m) {
       return m.id;
     });
