@@ -309,7 +309,7 @@ function DashboardController ($scope, $rootScope, $injector) {
       }
 
       return $ride.canEndHereCheck(obj).then(function(type) {
-        if (type === 'hub') {
+        if (type === 'hub' || type === 'homebase') {
           return $ride.processEndRide().then(function() {
             return $state.go('end-ride', { id: bookingId });
           });
