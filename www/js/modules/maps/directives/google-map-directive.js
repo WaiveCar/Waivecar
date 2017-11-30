@@ -332,6 +332,14 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
           anchor: new google.maps.Point(17, 44),
           origin: new google.maps.Point(0, 0)
         };
+      case 'hub':
+        return {
+          url: 'img/icon-hub.svg',
+          iconRetinaUrl: 'img/icon-hub.svg',
+          scaledSize: new google.maps.Size(24, 24),
+          anchor: new google.maps.Point(12, 12),
+          origin: new google.maps.Point(0, 0)
+        };
       default:
         return {
           url: 'img/user-location.svg',
