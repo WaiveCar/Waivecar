@@ -13,12 +13,11 @@ function ReportProblemController ($injector, $stateParams) {
 
   this.model = {
     bookingId: $stateParams.id,
-<<<<<<< HEAD
+    /*
     buttonActive: false,
     files: []
-=======
+    */
     file: prepareResult($data.active.damagePhoto)
->>>>>>> origin/app-612-damage-gallery
   };
 
 
