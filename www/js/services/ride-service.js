@@ -297,6 +297,10 @@ module.exports = angular.module('app.services').factory('$ride', [
       return service.dolock(id, "unlock");
     };
 
+    service.disconnect = function() {
+      return $data.resources.cars.disconnect();
+    }
+
     service.init = function(current) {
       service.setState();
       $data.initialize('bookings').then(function(bookings) {
