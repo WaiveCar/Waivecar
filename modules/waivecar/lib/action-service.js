@@ -125,7 +125,7 @@ module.exports = {
       data : { name : eventName }
     });
 
-    yield delayFn();
+    //yield delayFn();
 
     return 'One moment please...';
     //return res;
