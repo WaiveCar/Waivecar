@@ -4,6 +4,7 @@ let User        = Bento.model('User');
 let error       = Bento.Error;
 let relay       = Bento.Relay;
 let Redis   = require('./redis-service');
+let BookingService   = require('./booking-service');
 
 let Step    = Bento.model('ActionEngine');
 let Booking = Bento.model('Booking');
@@ -33,6 +34,19 @@ function makeState(state, value) {
   };
 }
 
+function *getBooking(id) {
+  return yield Booking.findOne({
+    where : {
+      status : {
+        $notIn : [ 'closed', 'cancelled' ]
+      },
+      userId : id
+    },
+    order: [ ['created_at', 'desc'] ] 
+  });
+}
+
+
 var eventMap = {
   endBooking: {
     type: USER,
@@ -40,7 +54,11 @@ var eventMap = {
     forward: function *(state) {
       let current = parseInt(state.step ? state.step.state : 0, 10);
       current ++;
+      state.user = yield User.findById(state.objectId);
       state.nextStep = makeState(state, current);
+      state.booking = yield getBooking(state.objectId);
+      yield BookingService.end(state.booking.id, state.user);
+
       return {action: false, state: state};
     },
 
@@ -102,7 +120,8 @@ module.exports = {
       data : { name : eventName }
     });
 
-    return res;
+    return 'One moment please...';
+    //return res;
   },
 
     /*
@@ -137,15 +156,7 @@ module.exports = {
     }
 
     if(required(ev, BOOKING)) {
-      state.booking = yield Booking.findOne({
-        where : {
-          status : {
-            $notIn : [ 'closed', 'cancelled' ]
-          },
-          userId : state.user.id
-        },
-        order: [ ['created_at', 'desc'] ] 
-      });
+      state.booking = yield getBooking(state.user.id);
     }
 
     if(required(ev, CAR)) {
