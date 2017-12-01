@@ -54,6 +54,7 @@ var eventMap = {
     forward: function *(state) {
       let current = parseInt(state.step ? state.step.state : 0, 10);
       current ++;
+      /*
       state.user = yield User.findById(state.objectId);
       state.nextStep = makeState(state, current);
       state.booking = yield getBooking(state.objectId);
@@ -62,6 +63,7 @@ var eventMap = {
       } catch(ex) {
         console.log("Couldn't complete");
       }
+      */
 
       return {action: false, state: state};
     },
