@@ -116,7 +116,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
   };
 
   function charge2color(marker) {
-    return Math.floor(marker.charge/33);
+    return Math.min(2, Math.floor(marker.charge / 33));
   }
 
   MapController.prototype.addMarker = function addMarker(marker) {
