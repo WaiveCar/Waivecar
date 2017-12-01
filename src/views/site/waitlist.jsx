@@ -41,10 +41,10 @@ module.exports = class WaitList extends Component {
 
           <div className='row'>
             <div className="col-xs-12 col-md-6 col-md-push-3 waitlist">
-              <h2>Thanks { this.state.autoshow == 'yes' ? "You're In" : (this.state.waivework === 'yes' ? 'for Signing up' : 'for Coming') }!</h2>
+              <h2>Thanks{ this.state.autoshow == 'yes' ? ", you're in" : (this.state.waivework === 'yes' ? ' for Signing up' : ' for Coming') }!</h2>
               { this.state.autoshow == 'yes' &&
                 <div>
-                  <p>You've been fast-tracked for signup and have skipped the waitlist!</p>
+                  <p>You've been fast-tracked and skipped the waitlist!</p>
                   <p>Please check your email for further instructions.</p>
                 </div>
               }
