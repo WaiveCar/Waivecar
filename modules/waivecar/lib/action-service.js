@@ -51,20 +51,10 @@ var eventMap = {
   endBooking: {
     type: USER,
     requireList: [BOOKING, CAR],
-    finish: function *(state) {
-      state.user = yield User.findById(state.objectId);
-      state.booking = yield getBooking(state.objectId);
-      try {
-        return yield BookingService.complete(state.booking.id, state.user);
-      } catch(ex) {
-        console.log("Couldn't complete");
-      }
-    },
-
     forward: function *(state) {
       let current = parseInt(state.step ? state.step.state : 0, 10);
-      state.nextStep = makeState(state, current);
       current ++;
+      state.nextStep = makeState(state, current);
 
       return {action: false, state: state};
     },
@@ -135,11 +125,6 @@ module.exports = {
       data : { name : eventName }
     });
 
-    /*
-    if (ev.finish) {
-      yield ev.finish(state);
-    }
-    */
     yield delayFn();
 
     return 'One moment please...';
