@@ -38,20 +38,12 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
     });
 
     function start () {
-      $ionicLoading.show({
-        template: '<div class="circle-loader"><span>Loading</span></div>'
-      });
 
-      $data.fetch('bookings')
-        .then(function () {
-          $ionicLoading.hide();
-
-          if (ctrl.dirty || ctrl.intDamage || ctrl.extDamage) {
-            $state.go('damage-gallery', { id: $stateParams.id, return: 'dashboard' });
-          } else {
-            $state.go('dashboard', null, {location: 'replace'});
-          }
-        });
+      if (ctrl.dirty || ctrl.intDamage || ctrl.extDamage) {
+        $state.go('damage-gallery', { id: $stateParams.id, return: 'dashboard' });
+      } else {
+        $state.go('dashboard', null, {location: 'replace'});
+      }
     }
 
     function toggle(field) {
