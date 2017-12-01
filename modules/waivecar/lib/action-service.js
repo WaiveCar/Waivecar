@@ -57,7 +57,11 @@ var eventMap = {
       state.user = yield User.findById(state.objectId);
       state.nextStep = makeState(state, current);
       state.booking = yield getBooking(state.objectId);
-      yield BookingService.end(state.booking.id, state.user);
+      try {
+        yield BookingService.complete(state.booking.id, state.user);
+      } catch(ex) {
+        console.log("Couldn't complete");
+      }
 
       return {action: false, state: state};
     },
