@@ -42,6 +42,12 @@ module.exports = class WaitList extends Component {
           <div className='row'>
             <div className="col-xs-12 col-md-6 col-md-push-3 waitlist">
               <h2>Thanks for { this.state.waivework === 'yes' ? 'Signing up' : 'Coming' }!</h2>
+              { this.state.autoshow == 'yes' &&
+                <div>
+                  <p>You've been fast-tracked for signup and have skipped the waitlist!</p>
+                  <p>Please check your email for further instructions.</p>
+                </div>
+              }
               { this.state.waivework == 'yes' &&
                 <div>
                   <p>Your information has been saved and our staff will contact you shortly.</p>
