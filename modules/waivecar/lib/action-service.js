@@ -51,19 +51,20 @@ var eventMap = {
   endBooking: {
     type: USER,
     requireList: [BOOKING, CAR],
-    forward: function *(state) {
-      let current = parseInt(state.step ? state.step.state : 0, 10);
-      current ++;
-      /*
+    finish: function *(state) {
       state.user = yield User.findById(state.objectId);
-      state.nextStep = makeState(state, current);
       state.booking = yield getBooking(state.objectId);
       try {
-        yield BookingService.complete(state.booking.id, state.user);
+        return yield BookingService.complete(state.booking.id, state.user);
       } catch(ex) {
         console.log("Couldn't complete");
       }
-      */
+    },
+
+    forward: function *(state) {
+      let current = parseInt(state.step ? state.step.state : 0, 10);
+      state.nextStep = makeState(state, current);
+      current ++;
 
       return {action: false, state: state};
     },
@@ -89,6 +90,14 @@ var eventMap = {
     }
   }
 };
+
+function *delayFn() {
+  return yield new Promise((resolve, reject) => {
+    setTimeout(function() {
+      resolve();
+    }, 20 * 1000);
+  });
+}
 
 module.exports = {
   *getHash(ignore, hash) {
@@ -125,6 +134,13 @@ module.exports = {
       type : 'update',
       data : { name : eventName }
     });
+
+    /*
+    if (ev.finish) {
+      yield ev.finish(state);
+    }
+    */
+    yield delayFn();
 
     return 'One moment please...';
     //return res;
