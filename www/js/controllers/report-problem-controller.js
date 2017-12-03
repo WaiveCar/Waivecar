@@ -6,20 +6,17 @@ require('../resources/reports.js');
 function ReportProblemController ($injector, $stateParams) {
   var $modal = $injector.get('$modal');
   var $settings = $injector.get('$settings');
-  var $window = $injector.get('$window');
   var $ionicHistory = $injector.get('$ionicHistory');
   var Reports = $injector.get('Reports');
   var $data = $injector.get('$data');
+  var ctrl = this;
 
   this.model = {
     bookingId: $stateParams.id,
-    /*
+    car: $data.active.cars.license,
     buttonActive: false,
-    files: []
-    */
     file: prepareResult($data.active.damagePhoto)
   };
-
 
   this.submit = function submit () {
     this.model.buttonActive = true;
@@ -28,13 +25,14 @@ function ReportProblemController ($injector, $stateParams) {
       description: this.model.comment,
       files: [this.model.file]
     }).$promise
-    .then(successModal)
-    .catch(failModal);
+      .then(successModal)
+      .catch(failModal);
   };
 
   function successModal () {
-    this.model.buttonActive = false;
     var modal;
+
+    ctrl.model.buttonActive = false;
     $modal('result', {
       icon: 'check-icon',
       title: 'Success!',
@@ -57,11 +55,10 @@ function ReportProblemController ($injector, $stateParams) {
     });
   }
 
-
-
   function failModal (message) {
-    this.model.buttonActive = false;
     var modal;
+
+    ctrl.model.buttonActive = false;
     $modal('result', {
       icon: 'x-icon',
       title: 'We couldn\'t report your problem.',

@@ -20,7 +20,6 @@ function DamageGalleryController ($injector, $stateParams) {
 
   ctrl.backCaption = $stateParams.return === 'dashboard' ? 'Start ride' : 'Finish and Lock Car';
 
-
   $data.activate('bookings', $stateParams.id).then(function() {
     var carId = $data.active.bookings.carId;
 
@@ -103,10 +102,10 @@ function DamageGalleryController ($injector, $stateParams) {
         }
       }]
     })
-      .then(function (_modal) {
-        modal = _modal;
-        modal.show();
-      });
+    .then(function (_modal) {
+      modal = _modal;
+      modal.show();
+    });
   }
 
 

@@ -1,15 +1,11 @@
 <ion-view class="report-problem-new">
   <ion-content padding="true" class="ion-content--center dark-bg">
-    <ng-include src="'/img/waivecar-mark.svg'" class="waivecar-mark"></ng-include>
-
-    <div class="large-image" style="background-image: url('{{ctrl.model.file.url}}');">
-    </div>
-    <p>Describe the problem</p>
+    <div class="large-image" style="background-image: url('{{ctrl.model.file.url}}');"></div>
     <form ng-submit="ctrl.submit()">
       <label class="item item-input">
-        <textarea ng-model="ctrl.model.comment" rows="10"></textarea>
+        <textarea ng-model="ctrl.model.comment" rows="4" placeholder="Describe the problem with {{ctrl.model.car}} here"></textarea>
       </label>
-      <button type="submit" class="button button-balanced button-block" ng-disabled="(!ctrl.model.files.length) || !ctrl.model.buttonActive">
+      <button type="submit" class="button button-balanced button-block" ng-disabled="!ctrl.model.file || ctrl.model.buttonActive">
         Report
       </button>
     </form>
