@@ -265,9 +265,6 @@ module.exports = angular.module('app.services').factory('$ride', [
             service.processCompleteRide()
           }
         });
-
-
-
     };
 
     function genericCheck(id, obj, check) {
