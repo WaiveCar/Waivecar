@@ -50,8 +50,8 @@ function DashboardController ($scope, $rootScope, $injector) {
   this.lastUserLocations = [];
   this.parityCheckTimeout = null;
 
-  // So there was a bug when this thing wasn't running right ... so 
-  // we need to put it in an interval BUUT sometimes it was so we 
+  // So there was a bug when this thing wasn't running right ... so
+  // we need to put it in an interval BUUT sometimes it was so we
   // need to avoid getting this thing to run multiple times because
   // fuck frameworks, that's why ...
   var rideServiceReady = $scope.$watch('service.isInitialized', function(isInitialized) {
@@ -87,8 +87,8 @@ function DashboardController ($scope, $rootScope, $injector) {
       clearInterval($window.timeOutForRide);
     }
 
-    // See #605. Since we are going to run the user-facing timer slightly faster than 2 hours 
-    // We need to take our ratio and add it to the base, otherwise we start at 1:58:45. 
+    // See #605. Since we are going to run the user-facing timer slightly faster than 2 hours
+    // We need to take our ratio and add it to the base, otherwise we start at 1:58:45.
     // This math will be accounted for in the first calculation.
     var rideStart;
     if(booking.details) {
@@ -96,7 +96,7 @@ function DashboardController ($scope, $rootScope, $injector) {
     } else {
       rideStart = booking.updatedAt;
     }
-    
+
     var endTime = moment(rideStart).add(120 * (119.25 / 120), 'm');
     var timeLeft = function () {
       // thanks to stupid moment for being stupid...
@@ -105,8 +105,8 @@ function DashboardController ($scope, $rootScope, $injector) {
       //
       // See https://github.com/clevertech/Waivecar/issues/605 ... we intentionally drift the time
       // in the users' favor so they don't bicker over a few seconds or if their phone has clock drift
-      // they don't say "well my app said so and so!".  As their time expires, the number 'left' decreases.  
-      // So we make this decrease a small amount faster so that 2 hours will elapse in 1hr 58:45 ... 
+      // they don't say "well my app said so and so!".  As their time expires, the number 'left' decreases.
+      // So we make this decrease a small amount faster so that 2 hours will elapse in 1hr 58:45 ...
       // This means that a minute is actually 59.375 seconds
       //
       if (!isFreeTime) {
@@ -126,16 +126,16 @@ function DashboardController ($scope, $rootScope, $injector) {
         left = Math.abs(left);
         this.timeLeft = 'Extra: ' + moment.utc(left).format('H:mm:ss');
       }
-     
+
       // This is because frameworks are buggy in interesting ways.
       if(!$scope.$$phase) {
         $scope.$apply();
-      } 
+      }
     }.bind(this);
     timeLeft();
     // sub 1 second because this is how these things work.
     $window.timeOutForRide = setInterval(timeLeft, 500);
-  
+
     // connect to the ble
     ctrl.license = $data.active.cars.license;
     $data.resources.cars.connect({id: $data.active.cars.id}, ctrl);
@@ -243,7 +243,8 @@ function DashboardController ($scope, $rootScope, $injector) {
     ctrl.lastUserLocations.push({
       timestamp: now.getTime(),
       latitude: location.latitude,
-      longitude: location.longitude
+      longitude: location.longitude,
+      accuracy: location.accuracy
     });
 
     if (ctrl.parityCheckTimeout) {
@@ -323,7 +324,7 @@ function DashboardController ($scope, $rootScope, $injector) {
           // Not inside geofence -> show error
           if ($ride.isChargeOkay(carId, obj)) {
             return $q.reject('Looks like you\'re outside of the rental zone. Please head back to end your rental.');
-          } 
+          }
           return $q.reject('Looks like the charge is pretty low. Please head to the nearest hub or charger!');
         }
       }).then($ionicLoading.hide)
