@@ -171,6 +171,14 @@ module.exports = {
     label     : 'Longitude',
     helpText  : null
   },
+  hdop : {
+    name      : 'hdop',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'HDOP',
+    helpText  : null
+  },
   locationQuality : {
     name      : 'locationQuality',
     component : 'input',
