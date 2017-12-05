@@ -531,9 +531,9 @@ module.exports = {
    * @return {Array}
    */
   *getDevice(id, _user, source) {
-    /*if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV !== 'production') {
       return false;
-    }*/
+    }
     try {
       let status = yield this.request(`/devices/${ id }/status`, { timeout : 30000 });
       this._errors[id] = 0;
@@ -755,6 +755,7 @@ module.exports = {
       if (position['lat']) {
         car.latitude  = position['lat'];
         car.longitude = position['lon'];
+        car.hdop = position['hdop'];
         car.distanceSinceLastRead = position['meters_driven_since_last_fix'];
         car.locationQuality       = position['quality'];
         car.calculatedSpeed       = position['speed_over_ground'];
