@@ -16,37 +16,83 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     return new google.maps.LatLng(location.latitude, location.longitude);
   }
 
+  function mapToNativeLatLong(location) {
+    return { lat:location.latitude, lng:location.longitude };
+  }
+
+  function mapToLatLong(location) {
+    return useCordova() ? mapToNativeLatLong(location) : mapToGoogleLatLong(location);
+  }
+
+  function useCordova() {
+    return !!window.plugin;
+  }
+
+  function createGMap(mapElement, center, noscroll) {
+
+    var mapOptions;
+
+    if (useCordova()) {
+
+      mapOptions = {
+        'mapType': plugin.google.maps.MapTypeId.ROADMAP,
+        'controls': {
+          'compass': false,
+          'myLocationButton': false,
+          'indoorPicker': false,
+          'zoom': false
+        },
+        'camera' : {
+          target: mapToNativeLatLong(center),
+          zoom: 14
+        },
+        'preferences': {
+          'zoom': {
+            'minZoom': 10,
+            'maxZoom': 18
+          },
+          'building': false
+        }
+      };
+
+
+      return plugin.google.maps.Map.getMap(mapElement, mapOptions)
+    } else {
+      mapOptions = {
+        streetViewControl: false,
+        mapTypeControl: false,
+        zoom: 14,
+        fullscreenControl: false,
+        center: mapToGoogleLatLong(center),
+        zoomControl: false
+      };
+
+      if(noscroll) {
+        mapOptions.gestureHandling = 'cooperative';
+      }
+
+
+      return new google.maps.Map(mapElement, mapOptions);
+    }
+  }
+
   function link($scope, $elem, attrs, ctrl) {
     var center = ctrl.center ? ctrl.center : ctrl.currentLocation;
     center = center || homebase;
 
-    var mapOptions = {
-      streetViewControl: false,
-      mapTypeControl: false,
-      zoom: 14,
-      fullscreenControl: false,
-      center: mapToGoogleLatLong(center),
-      zoomControl: false
-    };
 
-    if(attrs.noscroll) {
-      mapOptions.gestureHandling = 'cooperative';
-    }
-
-    ctrl.map = new google.maps.Map($elem.find('.map-instance')[0], mapOptions);
-    /*
-    console.log(mapOptions);
-
-    ['center_changed', 'zoom_changed', 'bounds_changed'].forEach(function(m) {
-      ctrl.map.addListener(m, function(a){
-        console.log(new Date(), m, ctrl.map.getZoom());
-      });
-    });
-    */
+    ctrl.map = createGMap( $elem.find('.map-instance')[0], center, attrs.noscroll);
+    ctrl.updatesQueue = [];
+    ctrl.drawRouteQueue = [];
 
     if ('route' in attrs) {
-      ctrl.directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true, preserveViewport: true});
-      ctrl.directionsRenderer.setMap(ctrl.map);
+
+      if (useCordova()) {
+        ctrl.directionsRenderer = createNativeDirectionsRenderer(ctrl.map)
+      } else {
+        ctrl.directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true, preserveViewport: true});
+        ctrl.directionsRenderer.setMap(ctrl.map);
+      }
     }
 
     var lastLocation = [0, 0];
@@ -106,11 +152,17 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     var ctrl = this;
 
     if (markers && markers.length > 1) {
-      var bounds = new google.maps.LatLngBounds();
+
+      var bounds = useCordova() ? new plugin.google.maps.LatLngBounds() : new google.maps.LatLngBounds();
       markers.forEach(function (marker) {
-        bounds.extend(mapToGoogleLatLong(marker));
+        bounds.extend(mapToLatLong(marker));
       });
-      ctrl.map.fitBounds(bounds);
+
+      if (useCordova()) {
+        ctrl.map.moveCamera({target: bounds});
+      } else {
+        ctrl.map.fitBounds(bounds);
+      }
     }
 
   };
@@ -120,44 +172,70 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
   }
 
   MapController.prototype.addMarker = function addMarker(marker) {
+
+    var deferred = $q.defer();
+
     var type = marker.icon || marker.type;
     if('charge' in marker) {
       type = 'active-waivecar-' + charge2color(marker);
     }
     var iconOpt = getIconOptions(type);
 
-    var markerLabel;
+    if (useCordova()) {
+      return this.map.addMarker({
+        position: mapToNativeLatLong(marker),
+      }, function(markerObj) {
+        markerObj.setIcon('/' + iconOpt);
+        deferred.resolve(markerObj);
+      });
 
-    var markerObj = new google.maps.Marker({
-      map: this.map,
-      animation: google.maps.Animation.DROP,
-      position: mapToGoogleLatLong(marker),
-      icon: iconOpt,
-      label: markerLabel
-    });
-    return markerObj;
+    } else {
+
+      var markerObj = new google.maps.Marker({
+        map: this.map,
+        animation: google.maps.Animation.DROP,
+        position: mapToGoogleLatLong(marker),
+        icon: iconOpt
+      });
+
+      deferred.resolve(markerObj);
+    }
+
+    return deferred.promise;
   };
 
   MapController.prototype.addClickableMarker = function addClickableMarker(marker) {
     var ctrl = this;
 
-    var markerObj = ctrl.addMarker(marker);
+    return ctrl.addMarker(marker).then(function(markerObj) {
 
-    var onMarkerTap = ctrl.onMarkerTap();
-    if (typeof onMarkerTap == 'function') {
+      var onMarkerTap = ctrl.onMarkerTap();
+      if (typeof onMarkerTap == 'function') {
 
-      markerObj.addListener('click', function () {
-        var zoomLevel = ctrl.map.getZoom();
-        if (zoomLevel >= 13) {
-          onMarkerTap(marker);
+        var onClick = function () {
+          var zoomLevel = useCordova() ? ctrl.map.getCameraZoom() : ctrl.map.getZoom();
+          if (zoomLevel >= 13) {
+            onMarkerTap(marker);
+          } else {
+
+            if (useCordova()) {
+              ctrl.map.moveCamera({target: markerObj.getPosition(), zoom : 13});
+            } else {
+              ctrl.map.setZoom(13);
+              ctrl.map.setCenter(markerObj.getPosition());
+            }
+          }
+        };
+
+        if (useCordova()) {
+          markerObj.on(plugin.google.maps.event.MARKER_CLICK, onClick);
         } else {
-          ctrl.map.setZoom(13);
-          ctrl.map.setCenter(markerObj.getPosition());
+          markerObj.addListener('click', onClick);
         }
-      });
-    }
 
-    return markerObj;
+      }
+      return markerObj;
+    });
   };
 
   MapController.prototype.addLocationMarker = function addLocationMarker(location) {
@@ -169,7 +247,9 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
       longitude: location.longitude
     };
 
-    ctrl._addedMarkers.location = ctrl.addMarker(locationMarker);
+     ctrl.addMarker(locationMarker).then(function(marker) {
+       ctrl._addedMarkers.location = marker;
+     });
   };
 
   MapController.prototype.updateLocationMarker = function updateLocationMarker(marker) {
@@ -183,6 +263,23 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
   };
 
   MapController.prototype.updateMarkers = function updateMarkers(newMarkers) {
+    var ctrl = this;
+
+    function onUpdateFinish() {
+      ctrl.updatesQueue.shift();
+      if (ctrl.updatesQueue.length > 0) {
+        ctrl.unsafeUpdateMarkers(ctrl.updatesQueue[0]).then(onUpdateFinish);
+      }
+    }
+
+    ctrl.updatesQueue.push(newMarkers);
+    if (ctrl.updatesQueue.length === 1) {
+      ctrl.unsafeUpdateMarkers(newMarkers).then(onUpdateFinish);
+    }
+
+  };
+
+  MapController.prototype.unsafeUpdateMarkers = function unsafeUpdateMarkers(newMarkers) {
     var ctrl = this;
 
     newMarkers = newMarkers.filter(function(m) {
@@ -211,63 +308,83 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
       })[0];
 
       if(hasMoved(currentMarker, newMarker)) {
-        currentMarker.markerObj.setPosition(mapToGoogleLatLong(newMarker));
+        currentMarker.markerObj.setPosition(mapToLatLong(newMarker));
       } 
       //addedMarker.markerObj.setIcon(getIconOptions(marker.icon));
       actualMarkers.push(currentMarker);
     });
 
+    var markersAddAllPromises = [];
     markersToAdd.forEach(function (id) {
       var marker = newMarkers.filter(function (m) {
         return m.id === id;
       })[0];
 
-      var markerObj = ctrl.addClickableMarker(marker);
-
-      actualMarkers.push({
-        id: marker.id,
-        markerObj: markerObj
+      var promise = ctrl.addClickableMarker(marker).then(function(markerObj) {
+        return {
+          id: marker.id,
+          markerObj: markerObj
+        };
       });
+
+      markersAddAllPromises.push(promise);
     });
 
-    markersToRemove.forEach(function (id) {
-      var removingMarker = ctrl._addedMarkers.general.filter(function (marker) {
-        return marker.id === id;
-      })[0];
+    return $q.all(markersAddAllPromises, $q.resolve()).then(function(newMarkersObjects) {
 
-      removingMarker.markerObj.setMap(null);
+      newMarkersObjects.pop();
+
+      actualMarkers = actualMarkers.concat(newMarkersObjects);
+
+
+      markersToRemove.forEach(function (id) {
+        var removingMarker = ctrl._addedMarkers.general.filter(function (marker) {
+          return marker.id === id;
+        })[0];
+
+        removingMarker.markerObj.setMap(null);
+      });
+
+      ctrl._addedMarkers.general = actualMarkers;
+
     });
-
-    ctrl._addedMarkers.general = actualMarkers;
   };
 
-  MapController.prototype.drawRouteMarkers = function drawRouteMarkers(begin, end, destiny) {
+  MapController.prototype.drawRouteMarkers = function drawRouteMarkers(begin, end) {
     var ctrl = this;
-    if (!ctrl.beginMarker) {
-      var iconOpt = getIconOptions('location');
 
-      ctrl.beginMarker = new google.maps.Marker({
-        map: ctrl.map,
-        animation: google.maps.Animation.DROP,
-        position: begin,
-        icon: iconOpt
-      });
+    function onUpdateFinish() {
+      ctrl.drawRouteQueue.shift();
+      if (ctrl.drawRouteQueue.length > 0) {
+        ctrl.unsafeDrawRouteMarkers(ctrl.drawRouteQueue[0].begin, ctrl.drawRouteQueue[0].end).then(onUpdateFinish);
+      }
+    }
+
+    ctrl.drawRouteQueue.push({ begin:begin, end:end});
+    if (ctrl.drawRouteQueue.length === 1) {
+      ctrl.unsafeDrawRouteMarkers(begin, end).then(onUpdateFinish);
+    }
+  };
+
+  MapController.prototype.unsafeDrawRouteMarkers = function unsafeDrawRouteMarkers(begin, end) {
+    var ctrl = this;
+    var promises = {
+      dumy:$q.resolve()
+    };
+
+    if (!ctrl.beginMarker) {
+      promises.beginMarker = ctrl.addMarker(begin);
     } else {
       ctrl.beginMarker.setPosition(begin);
     }
 
     if (!ctrl.endMarker) {
-      iconOpt = getIconOptions('active-waivecar-' + charge2color(destiny));
-
-      ctrl.endMarker = new google.maps.Marker({
-        map: ctrl.map,
-        animation: google.maps.Animation.DROP,
-        position: end,
-        icon: iconOpt
-      });
+      promises.endMarker = ctrl.addMarker(end);
     } else {
       ctrl.endMarker.setPosition(end);
     }
+
+    return $q.all(promises);
   };
 
   MapController.prototype.drawRoute = function drawRoute(start, destiny, fitBoundsByRoute) {
@@ -281,11 +398,36 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         var beginStep = route.steps[0];
         var endStep = route.steps[route.steps.length - 1];
 
-        ctrl.drawRouteMarkers(beginStep.start_point, endStep.end_point, destiny);
+        ctrl.drawRouteMarkers( {
+          latitude: beginStep.start_point.lat(),
+          longitude:  beginStep.start_point.lng(),
+          type: 'location'
+        }, {
+          latitude: endStep.end_point.lat(),
+          longitude:  endStep.end_point.lng(),
+          type: destiny.type,
+          charge: destiny.charge
+        });
 
         ctrl.directionsRenderer.setDirections(response);
         if (fitBoundsByRoute) {
-          ctrl.map.fitBounds(ctrl.directionsRenderer.getDirections().routes[0].bounds);
+          var bounds = response.routes[0].bounds;
+
+          if (useCordova()) {
+
+            ctrl.map.moveCamera({target: new plugin.google.maps.LatLngBounds([{
+              lat:bounds.getNorthEast().lat(),
+              lng:bounds.getNorthEast().lng()
+            }, {
+              lat:bounds.getSouthWest().lat(),
+              lng:bounds.getSouthWest().lng()
+            }])});
+
+          } else {
+            ctrl.map.fitBounds(bounds);
+          }
+
+
         }
       });
   };
@@ -350,6 +492,52 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         };
     }
   };
+
+  function createNativeDirectionsRenderer(map) {
+
+    var impl = {
+      polyline: null,
+      defferecDirections: null
+    };
+
+    map.addPolyline({
+      'points': [],
+      'color' : '#AA00FF',
+      'width': 10,
+      'geodesic': true
+    }, function(polyline) {
+      impl.polyline = polyline;
+      if (impl.defferecDirections) {
+        setPolylinePointsFromDirections(impl.defferecDirections);
+        impl.defferecDirections = null;
+      }
+    });
+
+    function setPolylinePointsFromDirections(directions) {
+      var route = response.routes[0].legs[0];
+      var steps = route.steps;
+
+      var points = [];
+
+      for (var i = 0; i < steps.length; ++i) {
+        var step = steps[i];
+
+        points.push({ lat: step.start_point.lat(), lng:step.start_point.lng()});
+      }
+
+      impl.polyline.setPoints(points);
+    }
+
+    return {
+      setDirections : function(directions) {
+        if (!impl.polyline) {
+          impl.defferecDirections = directions;
+        } else {
+          setPolylinePointsFromDirections(directions);
+        }
+      }
+    }
+  }
 
   return {
     restrict: 'E',
