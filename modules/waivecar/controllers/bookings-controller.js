@@ -19,7 +19,7 @@ Bento.Register.Controller('BookingsController', function(controller) {
     let iPhone = header.match(/iPhone/);
 
     // App versions between android and iphone are dramatically different for some reason.
-    let minApp = iPhone ? 103 : 877;
+    let minApp = iPhone ? 112 : 885;
     let minMarketLink = 797; 
     let version = parseInt(payload.version, 10) || 0;
     var copy;
