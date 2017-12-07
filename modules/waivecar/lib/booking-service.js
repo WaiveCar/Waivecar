@@ -944,6 +944,13 @@ module.exports = class BookingService extends Service {
       order: [ ['created_at', 'asc'] ]
     };
 
+    if(userLocations.length > 0) {
+      yield user.update({
+        latitude: userLocations[0].latitude,
+        longitude: userLocations[0].longitude
+      });
+    }
+
     let carLocations = yield Location.find(params);
 
     let carLocationsWithNearestInTimeUserLocation = carLocations.map(location => { 
