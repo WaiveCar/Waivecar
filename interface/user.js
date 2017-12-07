@@ -111,6 +111,14 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
     version : {
       type         : Sequelize.INTEGER,
       defaultValue : null
+    },
+
+    latitude : {
+      type      : Sequelize.DECIMAL(10, 8),
+    },
+
+    longitude : {
+      type      : Sequelize.DECIMAL(11, 8),
     }
   };
 
