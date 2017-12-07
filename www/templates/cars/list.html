@@ -16,19 +16,14 @@
       <ion-item ng-repeat="car in cars.all"
         class="item-thumbnail-left car-row"
         ng-click="cars.show(car)">
-        <img ng-src="https://waivecar.com/images/cars/{{ car.model.toLowerCase().split(' ')[0] }}_160.png" >
+        <img ng-src="https://waivecar.com/images/cars/{{ car.model.toLowerCase().split(' ')[0] }}_100.png" >
         <div class="car-cell">
           <h2 ng-bind="car.license || '&nbsp;'"></h2>
-          <div ng-if="::car.isCharging" class="is-charging">
-            <ng-include class="battery" src="'/img/battery-darkgrey.svg'" alt="charge"></ng-include>
-            Charging
-          </div>
-          <div ng-if="::(!car.isCharging)">
-            <ng-include class="battery" src="'/img/battery-darkgrey.svg'" alt="charge"></ng-include>
-            Not charging
+          <div>
+            <strong ng-bind="car.charge"></strong>% charge
           </div>
           <div>
-            Charge <strong ng-bind="car.charge"></strong>
+            <strong>{{ ((car.model.toLowerCase().indexOf('spark') !== -1) ? car.charge * .7 : car.charge * 1.35).toFixed(0) }}</strong> mile range
           </div>
         </div>
       </ion-item>

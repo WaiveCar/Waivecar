@@ -488,3 +488,15 @@ iframe.quiz {
     background: rgba(255,255,255,0.9);
   }
 }
+.car-cell h2 {
+  font-size: 18px;
+}
+.item-thumbnail-left,
+.item-thumbnail-left .item-content {
+  padding-left: 130px;
+}
+.item-thumbnail-left > img:first-child {
+  max-width: 100px;
+  margin-left: 5px;
+}
+
