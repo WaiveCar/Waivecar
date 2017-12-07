@@ -210,9 +210,10 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
         where : { 
           car_id : this.id,
           status : {
-            $in : ['started', 'reserved']
+            $in : ['started', 'reserved', 'ended']
           }
-        } 
+        },
+        order: [['created_at', 'DESC']]
       });
     },
 
