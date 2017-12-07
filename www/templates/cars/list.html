@@ -16,7 +16,7 @@
       <ion-item ng-repeat="car in cars.all"
         class="item-thumbnail-left car-row"
         ng-click="cars.show(car)">
-        <img ng-src={{ "https://waivecar.com/images/cars/" + car.model.toLowerCase().split(' ')[0] + "_160.png"}} >
+        <img ng-src="https://waivecar.com/images/cars/{{ car.model.toLowerCase().split(' ')[0] }}_160.png" >
         <div class="car-cell">
           <h2 ng-bind="car.license || '&nbsp;'"></h2>
           <div ng-if="::car.isCharging" class="is-charging">
