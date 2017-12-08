@@ -36,12 +36,14 @@ function NotificationService($data, $modal) {
     window.FirebasePlugin.onTokenRefresh(function(token) {
       console.log("TOKEN" + token);
 
+      /*
       $data.resources.notification.refreshDeviceToken({
         deviceToken: token
       }).$promise
         .then(function() {
 
         });
+        */
 
     }, function(error) {
       console.error(error);
