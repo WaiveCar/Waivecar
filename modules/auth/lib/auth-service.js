@@ -16,15 +16,13 @@ module.exports = class AuthService {
     return yield hooks.require('auth:login', payload);
   }
 
-  /**
-   * @param  {String} target
-   * @param  {Mixed}  data
-   * @param  {User}   _user
-   * @return {User}
-   */
   static *social(target, data, _user) {
     let service = getSocialService(target);
     let user    = yield service.handle(data, _user);
+
+    if(user._type === 'waitlist') {
+      return user;
+    }
 
     // ### Connect
     // A connect request does not require us to return an authentication

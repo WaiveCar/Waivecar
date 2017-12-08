@@ -8,6 +8,7 @@ let hooks      = Bento.Hooks;
 let error      = Bento.Error;
 let relay      = Bento.Relay;
 let config     = Bento.config;
+let waitlist   = require('../../waivecar/lib/waitlist-service.js');
 
 module.exports = class FacebookService {
 
@@ -44,6 +45,7 @@ module.exports = class FacebookService {
       case 'login'    : return yield this.login(fb);
       case 'connect'  : return yield this.connect(fb, _user);
       case 'register' : return yield this.register(fb);
+      case 'waitlist' : return yield this.waitlist(fb);
       default : {
         throw error.parse({
           code    : `FB_INVALID_REQUEST`,
@@ -77,24 +79,13 @@ module.exports = class FacebookService {
     return user;
   }
 
-  /**
-   * Attempts to connect the facebook profile provided with the user provided.
-   * @param  {Object} fb
-   * @param  {Object} user The user to connect the facebook id with.
-   * @return {Object}
-   */
   static *connect(fb, user) {
     yield user.update({
       facebook : fb.id
     });
   }
 
-  /**
-   * Attempts to register a user with the provided facebook profile.
-   * @param  {Object} fb
-   * @return {User}
-   */
-  static *register(fb) {
+  static *checkIfExists(fb) {
     let res = yield User.findOne({
       where : {
         $or : [
@@ -130,8 +121,10 @@ module.exports = class FacebookService {
         }
       }, 400);
     }
+  }
 
-    // ### Prepare Data
+  static *register(fb) {
+    yield this.checkIfExists(fb);
 
     fb.facebook = fb.id;
 
@@ -167,10 +160,21 @@ module.exports = class FacebookService {
     return user;
   }
 
-  /**
-   * @param  {Object} data
-   * @return {Object}
-   */
+  static *waitlist(fb) {
+    yield this.checkIfExists(fb);
+
+    fb.facebook = fb.id;
+
+    delete fb.id;
+
+    let data = changeCase.objectKeys('toCamel', fb);
+
+    let res = yield waitlist.internalAdd(data);
+    res.in = data;
+    res._type = 'waitlist';
+    return res;
+  }
+
   static *getProfile(data) {
     let facebook = new Facebook();
     let profile  = yield facebook.getProfile(data.token, data.fields);

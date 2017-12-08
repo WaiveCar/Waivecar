@@ -294,12 +294,11 @@ module.exports = class BookingService extends Service {
       dbQuery.order = [ query.order.split(',') ];
     }
 
-    if (_user.hasAccess('admin')) {
-      bookings = yield Booking.find(dbQuery);
-    } else {
+    if (!_user.hasAccess('admin') || query.type === 'mine') {
       dbQuery.where.user_id = _user.id;
-      bookings = yield Booking.find(dbQuery);
-    }
+    } 
+
+    bookings = yield Booking.find(dbQuery);
 
     // ### Prepare Bookings
     // Prepares bookings with payment, and file details.
