@@ -150,6 +150,8 @@ function ApplicationController ($rootScope, $scope, $injector) {
 
   IntercomService.registerForPush();
 
+  // set up the ble pass-thru machinery.
+  $data.resources.cars.setup();
   if ($auth.isAuthenticated()) {
     NotificationService.setupPushNotifications();
     initLocation();
