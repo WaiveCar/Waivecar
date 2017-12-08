@@ -128,6 +128,7 @@ module.exports = angular.module('app.services').factory('$ble', [
           }, 400);
         });
       },
+      /*
       finder: function() {
         getBle().then(function() {
           $window.setInterval(function() {
@@ -150,6 +151,7 @@ module.exports = angular.module('app.services').factory('$ble', [
           }, 400);
         });
       },
+      */
       scan: function() {
         getBle().then(function() {
           ble.startScan([], function(car) { 
@@ -168,7 +170,7 @@ module.exports = angular.module('app.services').factory('$ble', [
 
     var _start = 0;
     function log(what) {
-      console.log(log.time() + what);
+      console.log(log.time() + Array.prototype.slice.call(arguments).join(' '));
     }
     log.reset = function() {
       _start = +new Date();
@@ -196,15 +198,16 @@ module.exports = angular.module('app.services').factory('$ble', [
     var _mutex = {};
     function getLock(what, defer) {
       if(_mutex[what]) {
-        defer.reject("Mutex Locked");
+        defer.reject("Mutex locked " + _mutex[what]);
         return false;
       } else {
+        log("Acquiring mutex", what);
         _mutex[what] = new Date();
         defer.promise.then(function() {
-          log("releasing mutex" + what);
+          log("Releasing mutex", what);
           delete _mutex[what];
         }).catch(function() {
-          log("releasing mutex" + what);
+          log("Releasing mutex", what);
           delete _mutex[what];
         });
         return true;
@@ -315,7 +318,7 @@ module.exports = angular.module('app.services').factory('$ble', [
       log('Found car ' + car.id);
       ble.connect(car.id, function() {
         _deviceId = car.id;
-        log("connected to " + _deviceId);
+        log("Connected to ", _deviceId);
         success();
       }, failure('ble.connect', fail));
     }
@@ -339,7 +342,7 @@ module.exports = angular.module('app.services').factory('$ble', [
             lowLevelConnect(car, success, fail);
           }
         }, failure('scan', fail));
-      });
+      }).catch(failure('no ble', fail));
     }
 
     // invers has a "protocol" for sending large payloads. This is 
@@ -393,7 +396,6 @@ module.exports = angular.module('app.services').factory('$ble', [
         var responseb64 = hmacsha1(bin2str(_sessionKey), bin2str(valueCommandArray));
         var payload = command.concat(b642array(responseb64)).slice(0, 20);
         var toWrite = (new Uint8Array(payload)).buffer;
-        console.log(buf2hex(toWrite), payload);
         ble.write(_deviceId, CAR_CONTROL_SERVICE, COMMAND_PHONE, toWrite, success, failure(what, fail));
       }, failure(what, fail));
     }
@@ -406,10 +408,14 @@ module.exports = angular.module('app.services').factory('$ble', [
       _creds.expire = new Date(creds.valid_until);
       _sessionKey = b642bin(creds.sessionKey);
 
-      log("Looking for Car " + carId);
+      log("Looking for car", carId);
       findCarById(carId, function() {
-        log("Authorizing Vehicle");
-        writeBig(CAR_CONTROL_SERVICE, AUTHORIZE_PHONE, token, defer.resolve, failure('write', defer.reject));
+        log("Authorizing", carId);
+        writeBig(CAR_CONTROL_SERVICE, AUTHORIZE_PHONE, token, function(pass) {
+          _creds.authorized = true; 
+          log("Authorized", carId);
+          return defer.resolve(pass);
+        }, failure('write', defer.reject));
       }, failure('find car', defer.reject));
     }
 
@@ -430,7 +436,7 @@ module.exports = angular.module('app.services').factory('$ble', [
       // If we are trying to connect to the same car, we haven't disconnected, and the
       // credentials haven't expired, then we can just completely skip this step.
       if(_creds.carId === carId && !_creds.disconnected && !expired && _deviceId) {
-        console.log("No new connection needed", _deviceId, _creds.carId);
+        log("No new connection needed", _deviceId, _creds.carId);
         defer.resolve();
       } else {
         //
@@ -470,6 +476,7 @@ module.exports = angular.module('app.services').factory('$ble', [
       // This magical flag is trusted as an authority.
       // It probably shouldn't be ... but it is.
       _creds.disconnected = true;
+      _creds.authorized = false;
       _deviceId = false;
     }
 
@@ -517,11 +524,10 @@ module.exports = angular.module('app.services').factory('$ble', [
       $interval(function() {
         if(!_deviceId) {
           if(_desiredCar) {
-            console.log("Trying to connect");
             connect(_desiredCar).catch(function(reason) {
               console.log(reason);
             });
-          } else {
+          } else if(_desiredCar) {
             console.log("No device...", _desiredCar);
           }
           return;
@@ -535,6 +541,43 @@ module.exports = angular.module('app.services').factory('$ble', [
           connect(_creds.carId)
             .then(function() { _lock.token = false; })
             .catch(function() { _lock.token = false; });
+        } else if(_creds && _creds.authorized) {
+          // We try to find out the status of the car ... this is essentially a poll and there's no indication
+          // that this is a bad idea since it's a local btle connection
+          cis('STATUS_1', function(obj) {
+            // This passes up state to the controller if we have it
+            if( _injected.ctrl && 
+                  // When we come in for the first time we need to report
+                  // to the controller what our current status is
+                (
+                  !_lastStatus || 
+                  (_lastStatus.lock !== obj.lock && obj.lock !== UNKNOWN )
+                )
+              ) {
+              log("Propagating lock change to controller");
+              _injected.ctrl.locked = isLocked(obj);
+            }
+
+            _lastStatus = obj;
+
+            // If we are over a certain distance, the door is unlocked, and we haven't recently sent
+            // an unlock command, then we try to lock it.
+            if( average < -90.2 && 
+                !isLocked() && 
+                ( _lastCommand.CENTRAL_LOCK_OPEN && (new Date() - _lastCommand.CENTRAL_LOCK_OPEN) > 20 * 1000 ) &&
+                // Sometimes this gets run multiple times due to a race condition.
+                now > (_lock.nextLock + 5000)
+              ) {
+              _lock.nextLock = new Date();
+              _res.lock(_creds.carId).catch(failure('lock'));
+            }
+
+          }, function() {
+            if(!isLocked()) {
+              _injected.lock({id: _creds.carId});
+            }
+            disconnect();
+          });
         }
 
         ble.readRSSI(_deviceId, function(rssi) {
@@ -548,38 +591,7 @@ module.exports = angular.module('app.services').factory('$ble', [
           }
         });
 
-        // We try to find out the status of the car ... this is essentially a poll and there's no indication
-        // that this is a bad idea since it's a local btle connection
-        cis('STATUS_1', function(obj) {
-          // This passes up state to the controller if we have it
-          if( _injected.ctrl && 
-              _lastStatus && _lastStatus.lock !== obj.lock && 
-              obj.lock !== UNKNOWN ) {
-            log("Propagating lock change to controller");
-            _injected.ctrl.locked = isLocked(obj);
-          }
-
-          _lastStatus = obj;
-
-          // If we are over a certain distance, the door is unlocked, and we haven't recently sent
-          // an unlock command, then we try to lock it.
-          if( average < -90.2 && 
-              !isLocked() && 
-              ( _lastCommand.CENTRAL_LOCK_OPEN && (new Date() - _lastCommand.CENTRAL_LOCK_OPEN) > 20 * 1000 ) &&
-              // Sometimes this gets run multiple times due to a race condition.
-              now > (_lock.nextLock + 5000)
-            ) {
-            _lock.nextLock = new Date();
-            _res.lock(_creds.carId).catch(failure('lock'));
-          }
-
-        }, function() {
-          if(!isLocked()) {
-            _injected.lock({id: _creds.carId});
-          }
-          disconnect();
-        });
-      }, 300);
+      }, 1000);
     }
 
     _res = {
