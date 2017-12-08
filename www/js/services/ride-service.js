@@ -305,7 +305,7 @@ module.exports = angular.module('app.services').factory('$ride', [
         if (isCarOn) {
           return $q.reject({code: 'IGNITION_ON'});
         }
-        return $data.resources.cars[what]({ id: id }).$promise;
+        return $data.resources.cars[what]({ id: id });
       }
 
       return $data.resources.cars.status({id: id}).then(function(obj) {
@@ -328,6 +328,12 @@ module.exports = angular.module('app.services').factory('$ride', [
     }
 
     service.init = function(current) {
+      if(service._init) {
+        console.log('Double entry $ride.init');
+        return;
+      }
+      service._init = true;
+
       service.setState();
       $data.initialize('bookings').then(function(bookings) {
         if(!current) {
