@@ -197,7 +197,7 @@ module.exports = angular.module('app.services').factory('$ble', [
 
     var _mutex = {};
     function getLock(what, defer) {
-      if(_mutex[what]) {
+      if(_mutex[what] && new Date() - _mutex[what] < 60 * 1000) {
         defer.reject("Mutex locked " + _mutex[what]);
         return false;
       } else {
@@ -385,6 +385,9 @@ module.exports = angular.module('app.services').factory('$ble', [
     // protocol invented by invers to prevent replay attacks.
     function doit(what, success, fail) {
       var command = new Array(10).fill(0);
+      if(!(what in _ccsMap)) {
+        fail("Unable to find code for command " + what);
+      }
       command[0] = _ccsMap[what];
       cis('COMMAND_CHALLENGE', function(commandChallenge) {
 
@@ -600,6 +603,7 @@ module.exports = angular.module('app.services').factory('$ble', [
       connect:    function (carId) { return connect(carId); },
       lock:   function (carId) { return wrap(carId, 'CENTRAL_LOCK_CLOSE'); },
       unlock: function (carId) { return wrap(carId, 'CENTRAL_LOCK_OPEN'); },
+      any: function(carId, what) { return wrap(carId, what); },
       status: getStatus,
       setFunction: setFunction
     };
