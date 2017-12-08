@@ -198,12 +198,6 @@ module.exports = {
     return [];
   },
 
-  /**
-   * Returns an indexed array of users.
-   * @param  {Object} query
-   * @param  {Object} _user
-   * @return {Array}
-   */
   *index(query, _user) {
     let groupId    = _user ? _user.hasAccess('super') && query.groupId ? query.groupId : _user.group.id : 1;
     let groupUsers = yield GroupUser.find({
@@ -215,11 +209,7 @@ module.exports = {
     // ### Create Query String
 
     let qs = config.filter(queryParser, query);
-    /*
-    qs.where.id = {
-      $in : groupUsers.map(val => val.userId)
-    };
-    */
+    qs.where.status = { $not: 'waitlist' };
 
     let users = [];
     if(query.search) {
