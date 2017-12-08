@@ -89,6 +89,7 @@ module.exports = angular.module('app.services').factory('$ble', [
     var _lastStatus = false;
     var _lastCommand = {};
     var _res = {};
+    var _desiredCar = false;
     var UNKNOWN = 0;
     var LOCKED = 1;
     var UNLOCKED = 2;
@@ -135,7 +136,6 @@ module.exports = angular.module('app.services').factory('$ble', [
               if(mlog[car.id]) {
                 //if(car.rssi > -80 && car.rssi - mlog[car.id].rssi !== 0) {
                   col.push([car.name, car.rssi, car.rssi - mlog[car.id].rssi].join(' '));
-                  console.log(col.length);
                 //}
               }
               mlog[car.id] = car;
@@ -190,6 +190,24 @@ module.exports = angular.module('app.services').factory('$ble', [
     function setFunction(name, cb) { 
       if(!(name in _injected)) {
         _injected[name] = cb;
+      }
+    }
+
+    var _mutex = {};
+    function getLock(what, defer) {
+      if(_mutex[what]) {
+        defer.reject("Mutex Locked");
+        return false;
+      } else {
+        _mutex[what] = new Date();
+        defer.promise.then(function() {
+          log("releasing mutex" + what);
+          delete _mutex[what];
+        }).catch(function() {
+          log("releasing mutex" + what);
+          delete _mutex[what];
+        });
+        return true;
       }
     }
 
@@ -375,12 +393,12 @@ module.exports = angular.module('app.services').factory('$ble', [
         var responseb64 = hmacsha1(bin2str(_sessionKey), bin2str(valueCommandArray));
         var payload = command.concat(b642array(responseb64)).slice(0, 20);
         var toWrite = (new Uint8Array(payload)).buffer;
-        //console.log(buf2hex(toWrite), payload);
+        console.log(buf2hex(toWrite), payload);
         ble.write(_deviceId, CAR_CONTROL_SERVICE, COMMAND_PHONE, toWrite, success, failure(what, fail));
       }, failure(what, fail));
     }
 
-    function authorize(creds, carId) {
+    function authorize(creds, carId, defer) {
       var token = b642bin(creds.token);
       _creds = creds;
       _creds.carId = carId;
@@ -398,13 +416,21 @@ module.exports = angular.module('app.services').factory('$ble', [
     function connect(carId) {
       var defer = $q.defer();
 
+      if (!getLock('connect', defer)) {
+        return defer.promise;
+      }
+
+      // We state that this is the car that we intend to contact
+      _desiredCar = carId;
+
       // we can get here before we have creds at all, in which case we claim that
       // we are expired.
       var expired = _creds.expire ? _creds.expire - new Date() < MINTIME : true;
 
       // If we are trying to connect to the same car, we haven't disconnected, and the
       // credentials haven't expired, then we can just completely skip this step.
-      if(_creds.carId === carId && !_creds.disconnected && !expired) {
+      if(_creds.carId === carId && !_creds.disconnected && !expired && _deviceId) {
+        console.log("No new connection needed", _deviceId, _creds.carId);
         defer.resolve();
       } else {
         //
@@ -420,11 +446,11 @@ module.exports = angular.module('app.services').factory('$ble', [
         //
         if(!expired && _creds.carId === carId ) {
           log("Using existing token");
-          authorize(_creds, carId);
+          authorize(_creds, carId, defer);
         } else {
           log("Getting tokens");
           _injected.getBle({ id: carId }).$promise.then(function(creds) {
-            return authorize(creds, carId);
+            return authorize(creds, carId, defer);
           }).catch(defer.reject);
         }
       }
@@ -433,6 +459,7 @@ module.exports = angular.module('app.services').factory('$ble', [
 
     function disconnectAndForget() {
       disconnect();
+      _desiredCar = false;
       _creds = {};
       _lastCommand = {};
       _sessionKey = false;
@@ -489,6 +516,14 @@ module.exports = angular.module('app.services').factory('$ble', [
 
       $interval(function() {
         if(!_deviceId) {
+          if(_desiredCar) {
+            console.log("Trying to connect");
+            connect(_desiredCar).catch(function(reason) {
+              console.log(reason);
+            });
+          } else {
+            console.log("No device...", _desiredCar);
+          }
           return;
         }
 
