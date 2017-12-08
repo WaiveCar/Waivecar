@@ -136,41 +136,30 @@ function ApplicationController ($rootScope, $scope, $injector) {
     }
   }
 
-
-  $rootScope.$on('authLogin', function () {
+  function setupState() {
     if($data.me.tested) {
-      initLocation();
+      LocationService.getCurrentLocation();
+      $data.initialize('locations').catch($message.error);
+      // this hopefully loads up a ride screen if necessary
       $ride.init();
       myState();
 
       NotificationService.setupPushNotifications();
       IntercomService.registerIdentifiedUser($auth.me);
     }
-  });
+  }
 
+  $rootScope.$on('authLogin', setupState);
   IntercomService.registerForPush();
-
   // set up the ble pass-thru machinery.
   $data.resources.cars.setup();
+
   if ($auth.isAuthenticated()) {
-    NotificationService.setupPushNotifications();
-    initLocation();
-    $auth.loadSession().then(function(me) {
-      IntercomService.registerIdentifiedUser(me);
-    });
-    $ride.init();
-    myState();
+    $auth.loadSession().then(setupState);
   } else {
     IntercomService.registerUnidentifiedUser();
   }
 
-  function initLocation () {
-    LocationService.getCurrentLocation();
-    return $data.initialize('locations')
-      .catch(function (err) {
-        return $message.error(err);
-      });
-  };
 }
 
 module.exports =
