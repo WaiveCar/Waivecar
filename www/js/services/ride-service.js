@@ -237,6 +237,7 @@ module.exports = angular.module('app.services').factory('$ride', [
       return $data.resources.bookings.complete({ id: id }).$promise
       .then(function() {
         $ionicLoading.hide();
+        $data.resources.cars.disconnect();
         $data.fetch('bookings');
         $data.deactivate('bookings');
         $data.deactivate('cars');
@@ -335,10 +336,6 @@ module.exports = angular.module('app.services').factory('$ride', [
     service.unlockCar = function(id) {
       return service.dolock(id, "unlock");
     };
-
-    service.disconnect = function() {
-      return $data.resources.cars.disconnect();
-    }
 
     service.init = function(current) {
       if(service._init) {
