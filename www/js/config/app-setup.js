@@ -119,14 +119,10 @@ var run = [
   '$state',
   'IntercomService',
   function Run($rootScope, $cordovaKeyboard, $ionicPlatform, $auth, $state, IntercomService) {
-
-
     $ionicPlatform.ready(function() {
-
       if (ionic.Platform.isWebView()) {
         $cordovaKeyboard.hideAccessoryBar(false);
       }
-
     });
 
     $rootScope.$on('$stateChangeStart', function(event, toState) {
@@ -143,7 +139,6 @@ var run = [
       /*
       if ($auth.me && !$auth.me.phone && !$auth.me.verifiedPhone && toState.name !== 'users-edit-general') {
         event.preventDefault();
-        console.log('fff');
         $state.go('users-edit-general', { step: 1 });
       } else */ if ($auth.me && $auth.me.phone && !$auth.me.verifiedPhone && toState.name !== 'auth-account-verify') {
         event.preventDefault();
