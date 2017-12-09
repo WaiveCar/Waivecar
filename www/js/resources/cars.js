@@ -74,6 +74,7 @@ module.exports = angular.module('app').factory('Cars', [
         return res._lock(params);
       });
     };
+
     res.unlock = function(params) {
       res.setup();
       return $ble.unlock(params.id).catch(function(){

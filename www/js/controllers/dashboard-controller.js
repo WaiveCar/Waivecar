@@ -263,7 +263,6 @@ function DashboardController ($scope, $rootScope, $injector) {
   }
 
 
-
   function endRidePrompt(carId, bookingId) {
     var modal;
     $modal('result', {
