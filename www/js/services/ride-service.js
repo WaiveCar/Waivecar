@@ -191,19 +191,32 @@ module.exports = angular.module('app.services').factory('$ride', [
     // first and foremost the users' gps is used.
     service.canEndHereCheck = function(car) {
       return $data.resources.locations.dropoff().$promise.then(function(locationList) {
+        // We have order precendence here ... 
+        var precedence = {
+          none: 0,
+          zone: 1,
+          hub: 2,
+          homebase: 3
+        };
+        var type = 'none';
 
         // If the charge isn't ok then we can only end at hubs, not zones.
         if(!service.isChargeOkay(car.id, car)) {
           locationList = locationList.filter(function(location) { return location.type === 'hub'; });
         }
+
         for(var ix = 0; ix < locationList.length; ix++) {
           var location = locationList[ix];
-          if (location.radius && $distance.fallback(location, car) * 1760 < location.radius) {
-            return location.type;
+          if (precedence[location.type] > precedence[type] && (
+                location.radius && $distance.fallback(location, car) * 1760 < location.radius ||
+                location.shape && GeofencingService.insideFastCheck(car, location.shape)
+              ) 
+          ) {
+            type = location.type;
           }
-          if (location.shape && GeofencingService.insideFastCheck(car, location.shape)) {
-            return location.type;
-          }
+        }
+        if (type === 'none') {
+          return false;
         }
       });
     };
