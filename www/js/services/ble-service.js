@@ -547,6 +547,7 @@ module.exports = angular.module('app.services').factory('$ble', [
         } else if(_creds && _creds.authorized) {
           // We try to find out the status of the car ... this is essentially a poll and there's no indication
           // that this is a bad idea since it's a local btle connection
+          /*
           cis('STATUS_1', function(obj) {
             // This passes up state to the controller if we have it
             if( _injected.ctrl && 
@@ -581,8 +582,10 @@ module.exports = angular.module('app.services').factory('$ble', [
             }
             disconnect();
           });
+          */
         }
 
+        /*
         ble.readRSSI(_deviceId, function(rssi) {
           // Our signal strength has a lot of variance so
           // we average it out in order to make it less jittery.
@@ -593,8 +596,9 @@ module.exports = angular.module('app.services').factory('$ble', [
             average = signalHistory.reduceRight(function(a, b) { return a + b }, 0) / signalHistory.length;
           }
         });
+        */
 
-      }, 1000);
+      }, 10 * 1000);
     }
 
     _res = {
