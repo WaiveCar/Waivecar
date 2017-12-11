@@ -314,27 +314,12 @@ module.exports = angular.module('app.services').factory('$ride', [
       });
     };
 
-    service.dolock = function(id, what) {
-      function check(isCarOn) {
-        if (isCarOn) {
-          return $q.reject({code: 'IGNITION_ON'});
-        }
-        return $data.resources.cars[what]({ id: id });
-      }
-
-      return $data.resources.cars.status({id: id}).then(function(obj) {
-        return check(obj.isIgnitionOn);
-      }).catch(function() {
-        return service.isCarOn(id).then(check);
-      });
-    }
-
     service.lockCar = function(id) {
-      return service.dolock(id, "lock");
+      return $data.resources.cars.lock({ id: id });
     };
 
     service.unlockCar = function(id) {
-      return service.dolock(id, "unlock");
+      return $data.resources.cars.unlock({ id: id });
     };
 
     service.init = function(current) {
