@@ -304,7 +304,8 @@ module.exports = [
         templateUrl: '/templates/cars/index.html',
         controller: 'CarsMapController as cars',
         data: {
-          auth: true
+          auth: true,
+          hasGMap: true
         },
         resolve: {
           cars: ['$data', function ($data) {
@@ -340,7 +341,8 @@ module.exports = [
         templateUrl: '/templates/cars/show.html',
         controller: 'CarController as ctrl',
         data: {
-          auth: true
+          auth: true,
+          hasGMap: true
         },
         resolve: {
           car: ['$data', '$stateParams', function ($data, $stateParams) {
@@ -373,7 +375,8 @@ module.exports = [
         templateUrl: '/templates/bookings/index.html',
         controller: 'BookingsController as ctrl',
         data: {
-          auth: true
+          auth: true,
+          hasGMap: true
         }
       })
 
@@ -390,7 +393,8 @@ module.exports = [
       templateUrl: '/templates/bookings/active.html',
       controller: 'ActiveBookingController as ctrl',
       data: {
-        auth: true
+        auth: true,
+        hasGMap: true
       }
     })
 
@@ -408,7 +412,8 @@ module.exports = [
       templateUrl: '/templates/bookings/dashboard.html',
       controller: 'DashboardController as ctrl',
       data: {
-        auth: true
+        auth: true,
+        hasGMap: true
       }
     })
 

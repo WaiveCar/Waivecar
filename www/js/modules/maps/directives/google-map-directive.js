@@ -76,64 +76,71 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     }
   }
 
+
+
   function link($scope, $elem, attrs, ctrl) {
     var center = ctrl.center ? ctrl.center : ctrl.currentLocation;
     center = center || homebase;
 
 
     ctrl.map = createGMap( $elem.find('.map-instance')[0], center, attrs.noscroll);
+
     ctrl.updatesQueue = [];
     ctrl.drawRouteQueue = [];
 
-    if ('route' in attrs) {
 
-      if (useCordova()) {
-        ctrl.directionsRenderer = createNativeDirectionsRenderer(ctrl.map)
-      } else {
-        ctrl.directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true, preserveViewport: true});
-        ctrl.directionsRenderer.setMap(ctrl.map);
+    ctrl.invokeOnMapReady(function() {
+
+      if ('route' in attrs) {
+
+        if (useCordova()) {
+          ctrl.directionsRenderer = createNativeDirectionsRenderer(ctrl.map)
+        } else {
+          ctrl.directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true, preserveViewport: true});
+          ctrl.directionsRenderer.setMap(ctrl.map);
+        }
       }
-    }
 
-    var lastLocation = [0, 0];
-    var watchers = [
-      $scope.$watch('map.markers', function (value) {
-        if (value) {
-          ctrl.updateMarkers(value);
-        }
+      var lastLocation = [0, 0];
+      var watchers = [
+        $scope.$watch('map.markers', function (value) {
+          if (value) {
+            ctrl.updateMarkers(value);
+          }
 
-      }, true),
-      $scope.$watch('map.currentLocation', function (value) {
-        if (value) {
-          // There are some ridiculous jitters in GPS that we do not care about and shouldn't ask the
-          // map to update on.
-          var isMoved = (Math.abs(lastLocation[0] - value.latitude) + Math.abs(lastLocation[1] - value.longitude)) > MOVETHRESHOLD;
-          //console.log('>> map draw', isMoved, (Math.abs(lastLocation[0] - value.latitude) + Math.abs(lastLocation[1] - value.longitude)));
-          if(isMoved) {
-            ctrl.updateLocationMarker(value);
-            lastLocation = [value.latitude, value.longitude];
-          } 
-        }
-      }, true),
-      $scope.$watch('map.fitBoundsByMarkers', function (value) {
-        if (value) {
-          ctrl.mapFitBounds(value);
-        }
-      }),
-      $scope.$watch('map.route', function (value) {
-        if (value && value.destiny) {
-          ctrl.drawRoute(value.start, value.destiny, value.fitBoundsByRoute);
-        }
-      }, true)
+        }, true),
+        $scope.$watch('map.currentLocation', function (value) {
+          if (value) {
+            // There are some ridiculous jitters in GPS that we do not care about and shouldn't ask the
+            // map to update on.
+            var isMoved = (Math.abs(lastLocation[0] - value.latitude) + Math.abs(lastLocation[1] - value.longitude)) > MOVETHRESHOLD;
+            //console.log('>> map draw', isMoved, (Math.abs(lastLocation[0] - value.latitude) + Math.abs(lastLocation[1] - value.longitude)));
+            if (isMoved) {
+              ctrl.updateLocationMarker(value);
+              lastLocation = [value.latitude, value.longitude];
+            }
+          }
+        }, true),
+        $scope.$watch('map.fitBoundsByMarkers', function (value) {
+          if (value) {
+            ctrl.mapFitBounds(value);
+          }
+        }, true),
+        $scope.$watch('map.route', function (value) {
+          if (value && value.destiny) {
+            ctrl.drawRoute(value.start, value.destiny, value.fitBoundsByRoute);
+          }
+        }, true)
 
-    ];
-    $scope.$on('$destroy', function () {
-      watchers.forEach(function (watcher) {
-        if (typeof watcher === 'function') {
-          watcher();
-        }
+      ];
+      $scope.$on('$destroy', function () {
+        watchers.forEach(function (watcher) {
+          if (typeof watcher === 'function') {
+            watcher();
+          }
+        });
+        watchers = null;
       });
-      watchers = null;
     });
   }
 
@@ -148,6 +155,16 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     };
   }
 
+  MapController.prototype.invokeOnMapReady = function invokeOnMapReady(readyHandler) {
+    var ctrl = this;
+
+    if (useCordova()) {
+      ctrl.map.one(plugin.google.maps.event.MAP_READY, readyHandler);
+    } else {
+      readyHandler();
+    }
+  }
+
   MapController.prototype.mapFitBounds = function mapFitBounds(markers) {
     var ctrl = this;
 
@@ -159,7 +176,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
       });
 
       if (useCordova()) {
-        ctrl.map.moveCamera({target: bounds});
+        //ctrl.map.moveCamera({target: bounds});
       } else {
         ctrl.map.fitBounds(bounds);
       }
@@ -179,13 +196,19 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     if('charge' in marker) {
       type = 'active-waivecar-' + charge2color(marker);
     }
-    var iconOpt = getIconOptions(type);
+    var iconOpt = getIconOptions(type, useCordova() ? '.png' : '.svg');
 
     if (useCordova()) {
-      return this.map.addMarker({
+      this.map.addMarker({
         position: mapToNativeLatLong(marker),
+
+        icon: {
+          url: './' + iconOpt.url,
+          size: iconOpt.scaledSize,
+          anchor: iconOpt.anchor
+        }
+
       }, function(markerObj) {
-        markerObj.setIcon('/' + iconOpt);
         deferred.resolve(markerObj);
       });
 
@@ -309,7 +332,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
       if(hasMoved(currentMarker, newMarker)) {
         currentMarker.markerObj.setPosition(mapToLatLong(newMarker));
-      } 
+      }
       //addedMarker.markerObj.setIcon(getIconOptions(marker.icon));
       actualMarkers.push(currentMarker);
     });
@@ -432,7 +455,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
       });
   };
 
-  function getIconOptions(iconType) {
+  function getIconOptions(iconType, fileExt) {
     switch (iconType) {
       case 'active-waivecar':
       case 'active-waivecar-0':
@@ -445,47 +468,47 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
       case 'homebase':
       case 'homebase-active':
         return {
-          url: 'img/icon-' + iconType + '.svg',
-          iconRetinaUrl: 'img/icon-' + iconType + '.svg',
+          url: 'img/icon-' + iconType + fileExt,
+          iconRetinaUrl: 'img/icon-' + iconType + fileExt,
           scaledSize: new google.maps.Size(35, 44),
           anchor: new google.maps.Point(17, 44),
           origin: new google.maps.Point(0, 0)
         };
       case 'unavailable':
         return {
-          url: 'img/icon-charging-waivecar.svg',
-          iconRetinaUrl: 'img/charging-waivecar.svg',
+          url: 'img/icon-charging-waivecar' + fileExt,
+          iconRetinaUrl: 'img/charging-waivecar' + fileExt,
           scaledSize: new google.maps.Size(35, 44),
           anchor: new google.maps.Point(17, 44),
           origin: new google.maps.Point(0, 0)
         };
       case 'location':
         return {
-          url: 'img/user-location.svg',
-          iconRetinaUrl: 'img/user-location.svg',
+          url: 'img/user-location' + fileExt,
+          iconRetinaUrl: 'img/user-location' + fileExt,
           scaledSize: new google.maps.Size(24, 24),
           anchor: new google.maps.Point(12, 12),
           origin: new google.maps.Point(0, 0)
         };
       case 'dropoff':
         return {
-          url: 'img/icon-active-waivecar.svg',
+          url: 'img/icon-active-waivecar' + fileExt,
           scaledSize: new google.maps.Size(35, 44),
           anchor: new google.maps.Point(17, 44),
           origin: new google.maps.Point(0, 0)
         };
       case 'hub':
         return {
-          url: 'img/icon-hub.svg',
-          iconRetinaUrl: 'img/icon-hub.svg',
+          url: 'img/icon-hub.' + fileExt,
+          iconRetinaUrl: 'img/icon-hub.' + fileExt,
           scaledSize: new google.maps.Size(24, 24),
           anchor: new google.maps.Point(12, 12),
           origin: new google.maps.Point(0, 0)
         };
       default:
         return {
-          url: 'img/user-location.svg',
-          iconRetinaUrl: 'img/user-location.svg',
+          url: 'img/user-location' + fileExt,
+          iconRetinaUrl: 'img/user-location' + fileExt,
           scaledSize: new google.maps.Size(24, 24),
           anchor: new google.maps.Point(12, 12),
           origin: new google.maps.Point(0, 0)
@@ -497,15 +520,18 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
     var impl = {
       polyline: null,
-      defferecDirections: null
     };
 
+    console.log("Poly line map ", map);
     map.addPolyline({
-      'points': [],
-      'color' : '#AA00FF',
+      'points': [{lat: 35.548852, lng: 139.784086}, {lat: 37.615223, lng: -122.389979}],
+      'color' : '#55aaFF',
       'width': 10,
       'geodesic': true
     }, function(polyline) {
+
+      console.log("Poly line ", polyline);
+
       impl.polyline = polyline;
       if (impl.defferecDirections) {
         setPolylinePointsFromDirections(impl.defferecDirections);
@@ -514,7 +540,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     });
 
     function setPolylinePointsFromDirections(directions) {
-      var route = response.routes[0].legs[0];
+      var route = directions.routes[0].legs[0];
       var steps = route.steps;
 
       var points = [];
@@ -523,7 +549,11 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         var step = steps[i];
 
         points.push({ lat: step.start_point.lat(), lng:step.start_point.lng()});
+        if (i === steps.length - 1) {
+          points.push({ lat: step.end_point.lat(), lng:step.end_point.lng()});
+        }
       }
+
 
       impl.polyline.setPoints(points);
     }
