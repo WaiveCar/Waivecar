@@ -57,9 +57,10 @@ function AuthController ($injector) {
       return $message.error('Please resolve form errors and try again.');
     }
 
+    var identifier = this.forms.forgotForm.identifier;
     $data.resources.User.initPasswordReset(this.forms.forgotForm).$promise
       .then(function () {
-        $state.go('auth-reset-password');
+        $state.go('auth-reset-password', {identifier: identifier});
       })
       .catch($message.error.bind($message));
   };
@@ -111,6 +112,7 @@ function AuthController ($injector) {
   this.init = function init () {
     if($state.includes('auth-reset-password')){
       this.forms.resetForm.tokenProvided = !!$stateParams.token;
+      this.forms.resetForm.identifier = $stateParams.identifier;
     }
   };
 

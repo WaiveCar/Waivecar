@@ -80,6 +80,9 @@ module.exports = [
         // TODO: Implement this
         templateUrl: '/templates/auth/reset-password.html',
         controller: 'AuthController as auth',
+        params: {
+          identifier: null
+        },
         data: {
           auth: false
         }
