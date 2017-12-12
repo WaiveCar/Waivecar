@@ -44,7 +44,6 @@ function DashboardController ($scope, $rootScope, $injector) {
   this.ending = false;
   this.locking = false;
   this.unlocking = false;
-  this.locked = false;
 
   this.lastTimeOfParityCheck = null;
   this.lastUserLocations = [];
@@ -166,58 +165,32 @@ function DashboardController ($scope, $rootScope, $injector) {
     return true;
   }
 
-  function lockCar(id) {
+  function doLock(id, state) {
     $ionicLoading.show({
       template: '<div class="circle-loader"><span>Loading</span></div>'
     });
 
-    if (ctrl.locking === true) {
-      return;
-    }
+    if (!ctrl.locking) {
+      ctrl.locking = true;
+      $ride[ state ? 'lockCar' : 'unlockCar'](id)
+        .then(function () {
+          ctrl.locking = false;
+          $ionicLoading.hide();
+        })
+        .catch(function (reason) {
+          $ionicLoading.hide();
+          ctrl.locking = false;
+          $message.error(reason);
+        });
+     }
+  }
 
-    ctrl.locking = true;
-    $ride.lockCar(id)
-      .then(function () {
-        ctrl.locking = false;
-        ctrl.locked = true;
-        $ionicLoading.hide();
-      })
-      .catch(function (reason) {
-        $ionicLoading.hide();
-        ctrl.locking = false;
-        if (reason && reason.code === 'IGNITION_ON') {
-          showIgnitionOnModal();
-          return;
-        }
-        $message.error(reason);
-      });
+  function lockCar(id) {
+    return doLock(id, true);
   }
 
   function unlockCar(id) {
-    $ionicLoading.show({
-      template: '<div class="circle-loader"><span>Loading</span></div>'
-    });
-
-    if (ctrl.unlocking === true) {
-      return;
-    }
-
-    ctrl.unlocking = true;
-    $ride.unlockCar(id)
-      .then(function () {
-        $ionicLoading.hide();
-        ctrl.unlocking = false;
-        ctrl.locked = false;
-      })
-      .catch(function (reason) {
-        $ionicLoading.hide();
-        ctrl.unlocking = false;
-        if (reason && reason.code === 'IGNITION_ON') {
-          showIgnitionOnModal();
-          return;
-        }
-        $message.error(reason);
-      });
+    return doLock(id, false);
   }
 
   function sendUserLocationsToServer() {
