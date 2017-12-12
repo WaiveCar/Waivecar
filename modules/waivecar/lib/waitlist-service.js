@@ -141,7 +141,7 @@ module.exports = {
       yield record.save();
     }
 
-    if(payload.promoCode.toLowerCase() === 'laauto') {
+    if(payload.promocode && payload.promoCode.toLowerCase() === 'laauto') {
       res.autoshow = 'yes';
       delete res.inside;
       yield this.letInByRecord([record]);
