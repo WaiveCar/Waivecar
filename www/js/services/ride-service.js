@@ -208,6 +208,7 @@ module.exports = angular.module('app.services').factory('$ride', [
     service.canEndHereCheck = function(car) {
       return $data.resources.locations.dropoff().$promise.then(function(locationList) {
         // We have order precendence here ... 
+        var METERTOFEET = 3.28084;
         var precedence = {
           none: 0,
           zone: 1,
@@ -224,7 +225,7 @@ module.exports = angular.module('app.services').factory('$ride', [
         for(var ix = 0; ix < locationList.length; ix++) {
           var location = locationList[ix];
           if (precedence[location.type] > precedence[type] && (
-                location.radius && $distance.fallback(location, car) * 1760 < location.radius ||
+                location.radius && $distance.fallback(location, car) * METERTOFEET < location.radius ||
                 location.shape && GeofencingService.insideFastCheck(car, location.shape)
               ) 
           ) {
