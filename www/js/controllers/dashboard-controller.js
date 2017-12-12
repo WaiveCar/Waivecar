@@ -49,6 +49,10 @@ function DashboardController ($scope, $rootScope, $injector) {
   this.lastUserLocations = [];
   this.parityCheckTimeout = null;
 
+  this.getDirections = function() {
+    $ride.openDirections(ctrl.selectedItem, ctrl.selectedItem.name);
+  }
+
   // So there was a bug when this thing wasn't running right ... so 
   // we need to put it in an interval BUUT sometimes it was so we 
   // need to avoid getting this thing to run multiple times because

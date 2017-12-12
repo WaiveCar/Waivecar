@@ -1,7 +1,6 @@
 /* global  window: false */
 'use strict';
 var angular = require('angular');
-var ionic = require('ionic');
 var moment = require('moment');
 var _ = require('lodash');
 // var ionic = require('ionic');
@@ -369,16 +368,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       return;
     }
 
-    var isIOS = ionic.Platform.isIOS();
-    var geocoords = this.car.latitude + ',' + this.car.longitude;
-
-    if (isIOS) {
-      window.open('maps://?q=' + geocoords, '_system');
-    } else {
-      var label = encodeURI(this.car.license);
-      window.open('geo:0,0?q=' + geocoords + '(' + label + ')', '_system');
-    }
-
+    $ride.openDirections(this.car, this.car.license);
   };
 }
 
