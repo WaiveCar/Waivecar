@@ -87,7 +87,6 @@ module.exports = angular.module('app.services').factory('$ble', [
     var _creds = {};
     var _scanCache = {};
     var _lastStatus = false;
-    var _lastCommand = {};
     var _res = {};
     var _desiredCar = false;
     var UNKNOWN = 0;
@@ -296,7 +295,7 @@ module.exports = angular.module('app.services').factory('$ble', [
         _deviceId = car.id;
         log("Connected to ", _deviceId);
         success();
-      }, failure('ble.connect', fail));
+      }, failure('ble.connect ' + car.id, fail));
     }
 
     // There's a "cache" to speed things up. If
@@ -379,17 +378,22 @@ module.exports = angular.module('app.services').factory('$ble', [
       }, failure(what, fail));
     }
 
-    function authorize(creds, carId, defer) {
-      var token = b642bin(creds.token);
-      _creds = creds;
-      _creds.carId = carId;
-      _creds.disconnected = false;
-      _creds.expire = new Date(creds.valid_until);
-      _sessionKey = b642bin(creds.sessionKey);
+    function getCredentials(carId) {
+      return _injected.getBle({ id: carId }).$promise.then(function(creds) {
+        _creds = creds;
+        _creds.carId = carId;
+        _creds.disconnected = false;
+        _creds.expire = new Date(creds.valid_until);
+        _sessionKey = b642bin(creds.sessionKey);
+        return creds;
+      });
+    }
 
+    function authorize(carId, defer) {
       log("Looking for car", carId);
       findCarById(carId, function() {
         log("Authorizing", carId);
+        var token = b642bin(_creds.token);
         writeBig(CAR_CONTROL_SERVICE, AUTHORIZE_PHONE, token, function(pass) {
           _creds.authorized = true; 
           log("Authorized", carId);
@@ -401,10 +405,6 @@ module.exports = angular.module('app.services').factory('$ble', [
     function connect(carId) {
       var defer = $q.defer();
 
-      if (!getLock('connect', defer)) {
-        return defer.promise;
-      }
-
       // We state that this is the car that we intend to contact
       _desiredCar = carId;
 
@@ -415,9 +415,12 @@ module.exports = angular.module('app.services').factory('$ble', [
       // If we are trying to connect to the same car, we haven't disconnected, and the
       // credentials haven't expired, then we can just completely skip this step.
       if(_creds.carId === carId && !_creds.disconnected && !expired && _deviceId) {
-        log("No new connection needed", _deviceId, _creds.carId);
+        log("No new connection needed", _deviceId);
         defer.resolve();
       } else {
+        if (!getLock('connect', defer)) {
+          return defer.promise;
+        }
         //
         // This is an example of what is returned by ble:
         //
@@ -430,12 +433,12 @@ module.exports = angular.module('app.services').factory('$ble', [
         // } 
         //
         if(!expired && _creds.carId === carId ) {
-          log("Using existing token");
-          authorize(_creds, carId, defer);
+          log("Using existing token", carId);
+          authorize(carId, defer);
         } else {
-          log("Getting tokens");
-          _injected.getBle({ id: carId }).$promise.then(function(creds) {
-            return authorize(creds, carId, defer);
+          log("Getting tokens", carId);
+          getCredentials(carId).then(function(creds) {
+            return authorize(carId, defer);
           }).catch(defer.reject);
         }
       }
@@ -446,7 +449,6 @@ module.exports = angular.module('app.services').factory('$ble', [
       disconnect();
       _desiredCar = false;
       _creds = {};
-      _lastCommand = {};
       _sessionKey = false;
     }
 
@@ -465,8 +467,7 @@ module.exports = angular.module('app.services').factory('$ble', [
 
       connect(carId).then(function(){ 
         log("Doing " + cmd);
-        _lastCommand[cmd] = new Date();
-        return doit(cmd, defer.resolve, defer.reject);
+        return doit(cmd, ok("Done " + cmd, defer.resolve), failure("Not done " + cmd, defer.reject));
       }).catch(failure("connect", defer.reject));
 
       return defer.promise;
@@ -517,7 +518,8 @@ module.exports = angular.module('app.services').factory('$ble', [
           // this tries to pull down new tokens --- we try and make sure that we attempt
           // this serially if need be.
           log("Credentials near expiration ... getting new ones");
-          connect(_creds.carId)
+          _lock.token = true;
+          getCredentials(_creds.carId)
             .then(function() { _lock.token = false; })
             .catch(function() { _lock.token = false; });
         } else if(_creds && _creds.authorized) {
