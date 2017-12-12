@@ -70,7 +70,7 @@ module.exports = angular.module('app').factory('Cars', [
       res.setup();
       return $ble.lock(params.id).catch(function(){
         console.log("Failure ... using network"); 
-        return res._lock(params);
+        return res._lock(params).$promise;
       });
     };
 
@@ -78,7 +78,7 @@ module.exports = angular.module('app').factory('Cars', [
       res.setup();
       return $ble.unlock(params.id).catch(function(){
         console.log("Failure ... using network"); 
-        return res._unlock(params);
+        return res._unlock(params).$promise;
       });
     };
     return res;

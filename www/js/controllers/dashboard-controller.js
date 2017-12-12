@@ -175,7 +175,7 @@ function DashboardController ($scope, $rootScope, $injector) {
         .catch(function (reason) {
           $ionicLoading.hide();
           ctrl.locking = false;
-          $message.error(reason);
+          $message.error("Locking Failed. <b>Car did not lock!</b><br/>Please repark and try again.");
         });
      }
   }
