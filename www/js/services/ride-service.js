@@ -234,6 +234,7 @@ module.exports = angular.module('app.services').factory('$ride', [
         if (type === 'none') {
           return false;
         }
+        return type;
       });
     };
 
