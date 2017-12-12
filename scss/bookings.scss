@@ -148,6 +148,31 @@
     }
   }
 }
+.ride-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 800;
+  width: 100%;
+  border-top: 1px solid #999;
+  padding: 0 5px;
+  background: #f4f4f4;
+  .button-small {
+    background: #ccc;
+    border: 1px solid #555;
+    color: #000;
+  }
+  .item-right {
+    justify-content: flex-end;
+    width: 35%;
+  }
+  .icon {
+    margin-bottom: -3px;
+  }
+}
+.button-gray.button-lighter {
+  background-color: #666 !important;
+}
 
 .parking-location {
   .button-dark {
