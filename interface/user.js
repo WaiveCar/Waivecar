@@ -150,6 +150,21 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       return this.phone ? this.phone.replace(/^\+1(\d{3})(\d{3})(\d{4})/, '$1-$2-$3') : '';
     },
 
+    *currentBooking() {
+      let Booking = Bento.model('Booking');
+      return yield Booking.findOne({
+        where : {
+          status : {
+            $notIn : [ 'completed', 'closed', 'cancelled' ]
+          },
+          userId : this.id
+        },
+        order : [
+          [ 'created_at', 'DESC' ]
+        ]
+      });
+    },
+
     *notes(opts) {
       let UserNote = Bento.model('UserNote');
       opts = opts || {};
