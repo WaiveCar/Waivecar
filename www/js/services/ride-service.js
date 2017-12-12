@@ -361,11 +361,13 @@ module.exports = angular.module('app.services').factory('$ride', [
             }
           });
         });
-      });
+      })
     };
 
     service.setState();
-    service.init();
+
+    // This should be done through the authentication mechanisms.
+    // service.init();
 
     return service;
   }
