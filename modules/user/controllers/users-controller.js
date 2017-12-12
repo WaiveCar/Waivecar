@@ -21,11 +21,6 @@ Bento.Register.ResourceController('User', 'UsersController', (controller) => {
     return yield service.index(this.query, this.auth.user);
   };
 
-  /**
-   * Returns a requested user.
-   * @param  {Number} id
-   * @return {Object}
-   */
   controller.show = function *(id) {
     return yield service.get(id, this.auth.user);
   };
@@ -42,7 +37,10 @@ Bento.Register.ResourceController('User', 'UsersController', (controller) => {
       ) {
         yield this.auth.user.update({device: this.request.header['user-agent']});
       }
-      return this.auth.user;
+      var model = Object.assign({}, this.auth.user);
+      model.booking = yield this.auth.user.currentBooking();
+
+      return model;
     }
     throw error.parse({
       code    : `INVALID_TOKEN`,
