@@ -59,9 +59,8 @@ module.exports = angular.module('app').factory('Cars', [
       return $ble.disconnect();
     }
 
-    res.connect = function(params, ctrl) {
+    res.connect = function(params) {
       res.setup();
-      $ble.setFunction('ctrl', ctrl);
       return $ble.connect(params.id).catch(function(){
         console.log("Failure ... Unable to contact " + params.id);
       });

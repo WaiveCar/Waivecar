@@ -128,30 +128,6 @@ module.exports = angular.module('app.services').factory('$ble', [
           }, 400);
         });
       },
-      /*
-      finder: function() {
-        getBle().then(function() {
-          $window.setInterval(function() {
-            var col = [];
-            ble.startScan([], function(car) { 
-              if(mlog[car.id]) {
-                //if(car.rssi > -80 && car.rssi - mlog[car.id].rssi !== 0) {
-                  col.push([car.name, car.rssi, car.rssi - mlog[car.id].rssi].join(' '));
-                //}
-              }
-              mlog[car.id] = car;
-            });
-            col = col.sort(function(a, b) {
-              return a[0] - b[0];
-            });
-            if(col.length > 0) {
-              console.log(col);
-            }
-
-          }, 400);
-        });
-      },
-      */
       scan: function() {
         getBle().then(function() {
           ble.startScan([], function(car) { 
@@ -558,8 +534,6 @@ module.exports = angular.module('app.services').factory('$ble', [
                   (_lastStatus.lock !== obj.lock && obj.lock !== UNKNOWN )
                 )
               ) {
-              log("Propagating lock change to controller");
-              _injected.ctrl.locked = isLocked(obj);
             }
 
             _lastStatus = obj;

@@ -138,7 +138,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   
     // connect to the ble
     ctrl.license = $data.active.cars.license;
-    $data.resources.cars.connect({id: $data.active.cars.id}, ctrl);
+    $data.resources.cars.connect({id: $data.active.cars.id});
     startZendrive();
   }.bind(this));
 
