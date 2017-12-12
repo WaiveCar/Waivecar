@@ -145,7 +145,11 @@ var run = [
         $state.go('auth-account-verify', { step: 2 });
       } else if (isAuthenticated && !_.isUndefined(authRequired) && authRequired === false && $auth.me.tested) {
         event.preventDefault();
-        $state.go('cars');
+        if($auth.me.booking) {
+          $state.go('dashboard', { id: $auth.me.booking.id });
+        } else {
+          $state.go('cars');
+        }
       } else if (!isAuthenticated && authRequired) {
         event.preventDefault();
         $state.go('auth');
