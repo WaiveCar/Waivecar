@@ -16,7 +16,6 @@ module.exports = angular.module('app').factory('Users', [
       data = _.pick(data, ['email', 'fullName', 'firstName', 'lastName', 'phone', 'password', 'tested']);
 
       return angular.toJson(data);
-
     };
 
     var resource = $resource(null, null, $utils.createResource('users', {
@@ -32,7 +31,7 @@ module.exports = angular.module('app').factory('Users', [
         params: {
           id: '@id'
         },
-        transformRequest: transformRequest,
+        transformRequest: transformRequest
       },
       login: {
         method: 'POST',
