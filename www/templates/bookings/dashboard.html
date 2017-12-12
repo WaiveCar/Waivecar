@@ -9,14 +9,17 @@
     <button menu-toggle="right" class="button button-icon icon ion-navicon"></button>
   </ion-nav-buttons>
   <ion-content scroll="false" padding="false" class="gray-bg has-header has-footer">
-    <div class="info-header">
+    <div class="info-header ride-footer">
       <div class="info-header-item">
-        <ng-include class="battery" src="'/img/battery-darkgrey.svg'"></ng-include>
+        <ng-include class="battery icon" src="'/img/battery-darkgrey.svg'"></ng-include>
         {{ data.cars.charge > 100 ? 100 : data.cars.charge | number:0 }}%
       </div>
       <div class="info-header-item">
-        <ng-include src="'/img/clock-grey-icon.svg'"></ng-include>
+        <ng-include src="'/img/clock-grey-icon.svg'" class='icon'></ng-include>
         {{ ctrl.timeLeft }}
+      </div>
+      <div class="info-header-item item-right">
+        <button type="button" class="button button-small" ng-disabled="ctrl.ending" ng-click="ctrl.endRidePrompt(data.cars.id, data.bookings.id)">End Ride</button>
       </div>
     </div>
 
@@ -31,23 +34,20 @@
   </ion-content>
   <ion-footer-bar class="no-padding">
     <div class="button-bar">
-      <button type="button" class="button button-balanced" ng-show="ctrl.locked" ng-click="ctrl.unlockCar(data.cars.id)">Unlock</button>
-      <button type="button" class="button button-balanced" ng-hide="ctrl.locked" ng-click="ctrl.lockCar(data.cars.id)">Lock</button>
-      <button type="button" class="button button-dark" ng-disabled="ctrl.ending" ng-click="ctrl.endRidePrompt(data.cars.id, data.bookings.id)">End Ride</button>
+      <button type="button" class="button button-gray button-lighter" ng-click="ctrl.unlockCar(data.cars.id)"><i class="fa fa-unlock" aria-hidden="true"></i> &nbsp; Unlock</button>
+      <button type="button" class="button button-gray" ng-click="ctrl.lockCar(data.cars.id)"><i class="fa fa-lock" aria-hidden="true"></i> &nbsp; Lock</button>
     </div>
   </ion-footer-bar>
   <div class="item-popover" ng-if="ctrl.selectedItem">
     <div class="item-popover-content">
       <div class="row">
-        <div class="col col-33">
-          <div class="item-type">{{ ctrl.selectedItem.type.charAt(0).toUpperCase() }}</div>
-        </div>
         <div class="col">
           <h1>{{ ctrl.selectedItem.name }}</h1>
           <h2>{{ ctrl.selectedItem.description }}</h2>
+          <button type="button" class="button button-small button-dark" ng-click="ctrl.getDirections()">Directions to {{ ctrl.selectedItem.type }}</button>
         </div>
       </div>
     </div>
-    <button type="button" class="button button-balanced button-block" ng-click="ctrl.closePopover()">Close</button>
+    <button type="button" class="button button-gray button-block" ng-click="ctrl.closePopover()">Close</button>
   </div>
 </ion-view>
