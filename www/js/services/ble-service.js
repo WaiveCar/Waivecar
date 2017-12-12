@@ -89,6 +89,10 @@ module.exports = angular.module('app.services').factory('$ble', [
     var _lastStatus = false;
     var _res = {};
     var _desiredCar = false;
+    var _lock = { 
+      token: false,
+      nextLock: new Date()
+    };
     var UNKNOWN = 0;
     var LOCKED = 1;
     var UNLOCKED = 2;
@@ -200,7 +204,12 @@ module.exports = angular.module('app.services').factory('$ble', [
         fn = ble.enable;
       }
 
-      fn(ok("BLE on", defer.resolve), failure('ble not enabled', defer.reject));
+      if(getLock('bleScreen', defer)) {
+        fn(
+          ok("BLE on", defer.resolve),
+          failure('ble not enabled', defer.reject)
+        );
+      }
 
       return defer.promise;
     }
@@ -317,6 +326,15 @@ module.exports = angular.module('app.services').factory('$ble', [
             lowLevelConnect(car, success, fail);
           }
         }, failure('scan', fail));
+
+        setTimeout(function() {
+          log("stopping the scan");
+          ble.stopScan();
+          if(!_deviceId) {
+            failure("Couldn't find Car", fail)();
+          }
+        }, 5000);
+
       }).catch(failure('no ble', fail));
     }
 
@@ -375,7 +393,17 @@ module.exports = angular.module('app.services').factory('$ble', [
         var payload = command.concat(b642array(responseb64)).slice(0, 20);
         var toWrite = (new Uint8Array(payload)).buffer;
         ble.write(_deviceId, CAR_CONTROL_SERVICE, COMMAND_PHONE, toWrite, success, failure(what, fail));
-      }, failure(what, fail));
+      }, function(errStr) {
+        log("Trying to see if I can fix this");
+        console.log(errStr);
+        /*
+        if(errStr.strpos('is not connected') !== -1) {
+          log("Trying to fix");
+          connect(_desiredCar, true);
+        }
+        */
+        return fail(errStr);
+     });
     }
 
     function getCredentials(carId) {
@@ -402,7 +430,7 @@ module.exports = angular.module('app.services').factory('$ble', [
       }, failure('find car', defer.reject));
     }
 
-    function connect(carId) {
+    function connect(carId, doForce) {
       var defer = $q.defer();
 
       // We state that this is the car that we intend to contact
@@ -414,7 +442,7 @@ module.exports = angular.module('app.services').factory('$ble', [
 
       // If we are trying to connect to the same car, we haven't disconnected, and the
       // credentials haven't expired, then we can just completely skip this step.
-      if(_creds.carId === carId && !_creds.disconnected && !expired && _deviceId) {
+      if(!doForce && _creds.carId === carId && !_creds.disconnected && !expired && _deviceId) {
         log("No new connection needed", _deviceId);
         defer.resolve();
       } else {
@@ -496,12 +524,9 @@ module.exports = angular.module('app.services').factory('$ble', [
     function poll() {
       var average = 0;
       var signalHistory = [];
-      var _lock = { 
-        token: false,
-        nextLock: new Date()
-      };
 
       $interval(function() {
+        /*
         if(!_deviceId) {
           if(_desiredCar) {
             connect(_desiredCar).catch(function(reason) {
@@ -512,6 +537,7 @@ module.exports = angular.module('app.services').factory('$ble', [
           }
           return;
         }
+        */
 
         var now = new Date();
         if(!_creds.expire || _creds.expire - new Date() < MINTIME && !_lock.token) {
@@ -574,7 +600,7 @@ module.exports = angular.module('app.services').factory('$ble', [
         });
         */
 
-      }, 10 * 1000);
+      }, 20 * 1000);
     }
 
     _res = {
