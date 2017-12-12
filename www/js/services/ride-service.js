@@ -1,6 +1,7 @@
 'use strict';
 var angular = require('angular');
 var _ = require('lodash');
+var ionic = require('ionic');
 require('./message-service');
 
 module.exports = angular.module('app.services').factory('$ride', [
@@ -61,6 +62,21 @@ module.exports = angular.module('app.services').factory('$ride', [
     service.setBooking = function(id) {
       service.state.booking.id = id;
     };
+
+    service.openDirections = function(what, label) {
+      var isIOS = ionic.Platform.isIOS();
+      var append = '';
+      var geocoords = what.latitude + ',' + what.longitude;
+
+      if (isIOS) {
+        window.open('maps://?q=' + geocoords, '_system');
+      } else {
+        if(label) {
+          append = '(' + encodeURI(label) + ')';
+        } 
+        window.open('geo:0,0?q=' + geocoords + append, '_system');
+      }
+    }
 
     service.setLocation = function(key) {
       service.state.location[key].confirmed = true;
