@@ -442,10 +442,26 @@ iframe.quiz {
   }
 }
 
+.ride-control {
+  position: absolute;
+  bottom: 0;
+  height: 115px;
+  background: #F2F4F2;
+  left: 0;
+  right: 0;
+  z-index: 800;
+  .row {
+    margin-bottom: 5px;
+  }
+  .button {
+    margin: 0;
+  }
+}
+
 .item-popover {
   position: absolute;
   bottom: 0;
-  height: 180px;
+  height: 200px;
   background: white;
   left: 0;
   right: 0;
@@ -470,9 +486,11 @@ iframe.quiz {
     }
   }
   .button {
-    position: absolute;
     margin: 0;
+  }
+  .button-block {
     bottom: 0;
+    position: absolute;
   }
 }
 .scroll-content {
