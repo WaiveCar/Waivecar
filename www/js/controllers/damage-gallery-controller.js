@@ -15,7 +15,7 @@ function DamageGalleryController ($injector, $stateParams) {
   var $ride = $injector.get('$ride');
 
   var ctrl = this;
-  ctrl.images = [];
+  ctrl.images = null;
   ctrl.car = {};
 
   ctrl.backCaption = $stateParams.return === 'dashboard' ? 'Start ride' : 'Finish and Lock Car';
