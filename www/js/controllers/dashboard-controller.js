@@ -19,6 +19,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   var $timeout = $injector.get('$timeout');
   var $window = $injector.get('$window');
   var $ionicLoading = $injector.get('$ionicLoading');
+  var $session = $injector.get('$session');
   var GeofencingService = $injector.get('GeofencingService');
   var ZendriveService = $injector.get('ZendriveService');
   var LocationService = $injector.get('LocationService');
@@ -142,18 +143,8 @@ function DashboardController ($scope, $rootScope, $injector) {
     // connect to the ble
     ctrl.license = $data.active.cars.license;
     $data.resources.cars.connect({id: $data.active.cars.id});
-    startZendrive();
+    ZendriveService.start($session.get('me'), $data.active.bookings.id, $data.active.cars.id);
   }.bind(this));
-
-  function startZendrive() {
-    return $data.resources.users.me().$promise
-      .then(function(me) {
-        ZendriveService.start(me, $data.active.bookings.id, $data.active.cars.id);
-      })
-      .catch(function() {
-        console.log('failed to load zendrive');
-      });
-  }
 
   function openPopover(item) {
     $timeout(function () {
