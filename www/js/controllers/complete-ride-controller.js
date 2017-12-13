@@ -41,8 +41,7 @@ module.exports = angular.module('app.controllers').controller('CompleteRideContr
 
           ctrl.hours = moment(end.createdAt).diff(moment(start.createdAt), 'hours');
           ctrl.minutes = moment(end.createdAt).diff(moment(start.createdAt), 'minutes');
-
-          if (ctrl.minutes < 10) ctrl.minutes = '0' + ctrl.minutes;
+          ctrl.minutes = ("" + (100 + ctrl.minutes % 60)).slice(1);
 
           return loadCar(booking.carId);
         })
