@@ -44,9 +44,9 @@ module.exports = angular.module('app.services').service('IntercomService', [
       var iUser = createIntecomUserModel(user);
       intercom().updateUser(iUser);
 
-      this.updateCardsInfo(user);
-      this.updateLicensesInfo(user);
-      this.updateBookingsInfo(user);
+      // this.updateCardsInfo(user);
+      // this.updateLicensesInfo(user);
+      // this.updateBookingsInfo(user);
     };
 
     this.registerUnidentifiedUser = function () {
