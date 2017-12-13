@@ -29,8 +29,6 @@ module.exports = angular.module('app.controllers').controller('CarController', [
       appVersion = version;
     });
 
-    var appVersion = 900;
-
     var ctrl = this;
     var LocationService = $injector.get('LocationService');
     // the accuracy should be within this amount of meters to show the Bummer dialog
