@@ -204,7 +204,7 @@ module.exports = angular.module('app.services').factory('$ble', [
         fn = ble.enable;
       }
 
-      if(getLock('bleScreen', defer)) {
+      if(getLock('bleScan', defer)) {
         fn(
           ok("BLE on", defer.resolve),
           failure('ble not enabled', defer.reject)
@@ -408,6 +408,7 @@ module.exports = angular.module('app.services').factory('$ble', [
         _creds = creds;
         _creds.carId = carId;
         _creds.disconnected = false;
+        _creds.authorized = false;
         _creds.expire = new Date(creds.valid_until);
         _sessionKey = b642bin(creds.sessionKey);
         return creds;
@@ -439,7 +440,7 @@ module.exports = angular.module('app.services').factory('$ble', [
 
       // If we are trying to connect to the same car, we haven't disconnected, and the
       // credentials haven't expired, then we can just completely skip this step.
-      if(!doForce && _creds.carId === carId && !_creds.disconnected && !expired && _deviceId) {
+      if(!doForce && _creds.carId === carId && !_creds.disconnected && !expired && _deviceId && _creds.authorized) {
         log("No new connection needed", _deviceId);
         defer.resolve();
       } else {
