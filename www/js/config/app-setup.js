@@ -133,29 +133,8 @@ var run = [
 
 
 
-    $rootScope.$watch(function () {
-        return $ionicSideMenuDelegate.getOpenRatio();
-      },
-      function (ratio) {
-        var sideMenu = document.getElementsByTagName("ion-side-menu")[0];
-        if (ratio < 0){
-          sideMenu.style.visibility = "visible";
-        } else{
-          sideMenu.style.visibility = "hidden";
-        }
-      });
-
 
     $rootScope.$on('$stateChangeStart', function(event, toState) {
-
-      var sideMenu = document.getElementsByTagName("ion-side-menu")[0];
-
-      if (toState && _.has(toState, 'data') && _.has(toState.data, 'hasGMap')) {
-        sideMenu.style.visibility = "hidden";
-      } else {
-        sideMenu.style.visibility = "visible";
-      }
-
 
         var authRequired;
       if (toState && _.has(toState, 'data') && _.has(toState.data, 'auth')) {
