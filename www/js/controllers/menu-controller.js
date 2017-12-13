@@ -8,6 +8,7 @@ function MenuController ($scope, $auth, $state, $data) {
 
   this.logout = function logout () {
     $auth.logout();
+    $data.resources.cars.disconnect();
     $state.go('auth');
   };
 }
