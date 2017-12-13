@@ -126,8 +126,17 @@ function DashboardController ($scope, $rootScope, $injector) {
       if(isFreeTime) {
         this.timeLeft = 'Free until ' + endTime.format('h:mm A');
       } else {
+        var format = "mm:ss", prepend = "";
         left = Math.abs(left);
-        this.timeLeft = 'Extra: ' + moment.utc(left).format('H:mm:ss');
+
+        if(left > 60 * 60 * 1000) {
+          format = "H:" + format;
+          if(left > 24 * 60 * 60 * 1000) {
+            prepend = Math.floor(left / (24 * 60 * 60 * 1000)) + 'd ';
+          }
+        }
+
+        this.timeLeft = 'Extra: ' + prepend + moment.utc(left).format(format);
       }
      
       // This is because frameworks are buggy in interesting ways.
