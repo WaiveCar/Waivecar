@@ -9,7 +9,7 @@
  */
 angular.module('ionic.contrib.drawer', ['ionic'])
 
-    .controller('drawerCtrl', ['$element', '$attrs', '$ionicGesture', '$document', '$ionicPlatform', function ($element, $attr, $ionicGesture, $document, $ionicPlatform) {
+    .controller('drawerCtrl', ['$element', '$attrs', '$ionicGesture', '$document', '$ionicPlatform', '$rootScope', function ($element, $attr, $ionicGesture, $document, $ionicPlatform, $rootScope) {
         var el = $element[0];
         var dragging = false;
         var startX, lastX, offsetX, newX;
@@ -255,6 +255,8 @@ angular.module('ionic.contrib.drawer', ['ionic'])
             if (unregisterBackAction) {
                 unregisterBackAction();
             }
+
+            $rootScope.$emit('mainMenuStateChange', STATE_CLOSE);
         };
 
         this.open = function () {
@@ -267,6 +269,8 @@ angular.module('ionic.contrib.drawer', ['ionic'])
             });
 
             unregisterBackAction = $ionicPlatform.registerBackButtonAction(hardwareBackCallback, 100);
+
+            $rootScope.$emit('mainMenuStateChange', STATE_OPEN);
         };
 
         this.isOpen = isOpen;

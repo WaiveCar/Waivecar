@@ -91,6 +91,17 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
     ctrl.invokeOnMapReady(function() {
 
+      if (useCordova()) {
+        $rootScope.$on('mainMenuStateChange', function (event, data) {
+          if (data === 'open') {
+            ctrl.map.setClickable(false);
+          }
+          if (data === 'close') {
+            ctrl.map.setClickable(true);
+          }
+        });
+      }
+
       if ('route' in attrs) {
 
         if (useCordova()) {

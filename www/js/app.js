@@ -15,6 +15,7 @@ require('angular-socket-io');
 require('angular-payments');
 require('ng-fittext');
 require('./modules/ngIOS9UIWebViewPatch');
+require('./modules/ionic.contrib.drawer');
 
 // Components (We first define angular modules which are dependencies to main 'app' module)
 angular.module('app.settings', []);
