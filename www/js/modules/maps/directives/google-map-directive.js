@@ -533,24 +533,10 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
       polyline: null,
     };
 
-    console.log("Poly line map ", map);
-    map.addPolyline({
-      'points': [{lat: 35.548852, lng: 139.784086}, {lat: 37.615223, lng: -122.389979}],
-      'color' : '#55aaFF',
-      'width': 10,
-      'geodesic': true
-    }, function(polyline) {
+    
+    
 
-      console.log("Poly line ", polyline);
-
-      impl.polyline = polyline;
-      if (impl.defferecDirections) {
-        setPolylinePointsFromDirections(impl.defferecDirections);
-        impl.defferecDirections = null;
-      }
-    });
-
-    function setPolylinePointsFromDirections(directions) {
+    function getPolylinePointsFromDirections(directions) {
       var route = directions.routes[0].legs[0];
       var steps = route.steps;
 
@@ -566,16 +552,25 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
       }
 
 
-      impl.polyline.setPoints(points);
+      return points;
     }
 
     return {
       setDirections : function(directions) {
-        if (!impl.polyline) {
-          impl.defferecDirections = directions;
-        } else {
-          setPolylinePointsFromDirections(directions);
-        }
+
+        map.addPolyline({
+          'points': getPolylinePointsFromDirections(directions),
+          'color' : '#55aaFF',
+          'width': 10,
+          'geodesic': true
+        }, function(polyline) {
+          if(impl.polyline) {
+            impl.polyline.remove();
+          }
+
+          impl.polyline = polyline;
+          
+        });
       }
     }
   }
