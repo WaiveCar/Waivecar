@@ -24,10 +24,10 @@ module.exports = angular.module('app.controllers').controller('CarController', [
     var $cordovaAppVersion = $injector.get('$cordovaAppVersion');
     var IntercomService = $injector.get('IntercomService');
 
-    /*var appVersion = false;
+    var appVersion = false;
     $cordovaAppVersion.getVersionCode().then(function (version) {
       appVersion = version;
-    });*/
+    });
 
     var appVersion = 900;
 

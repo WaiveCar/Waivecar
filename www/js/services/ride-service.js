@@ -190,7 +190,6 @@ module.exports = angular.module('app.services').factory('$ride', [
     // obj is returned by the car and should have a long/lat
     // first and foremost the users' gps is used.
     service.canEndHereCheck = function(car) {
-      return $q.resolve('hub');
       return $data.resources.locations.dropoff().$promise.then(function(locationList) {
 
         // If the charge isn't ok then we can only end at hubs, not zones.
