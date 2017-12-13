@@ -5,6 +5,7 @@ require('../services/auth-service');
 require('../services/data-service');
 require('../services/message-service');
 
+
 module.exports = angular.module('app.controllers').controller('CreditCardController', [
   '$scope',
   '$state',

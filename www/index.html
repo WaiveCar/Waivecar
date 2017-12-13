@@ -31,38 +31,37 @@
 
   <!-- The APP -->
   <script src="dist/bundle.js"></script>
+  <script src="ionic.contrib.drawer.js"></script>
+  <link rel="stylesheet" href="ionic.contrib.drawer.css">
 
 </head>
 
 <body ng-controller="ApplicationController as app">
 
-  <ion-side-menus>
 
-    <!-- <ion-side-menu side="left">
-      <div ng-include="'templates/common/menu.html'"></div>
-    </ion-side-menu> -->
-
-    <!-- disable dragging on cars state -->
-    <ion-side-menu-content drag-content="false">
-
-      <ion-nav-bar class="bar-dark" align-title="center">
-        <div class="nav-bar-block" nav-bar="active">
-          <wizard></wizard>
-        </div>
-        <ion-nav-back-button>
-          <i class="fa fa-angle-left fa-2x"></i>
-        </ion-nav-back-button>
-      </ion-nav-bar>
-
-      <ion-nav-view></ion-nav-view>
-
-    </ion-side-menu-content>
-
-    <ion-side-menu side="right" width="{{app.windowWidth}}">
+  <drawer side="right" >
       <div ng-include="'/templates/common/menu.html'"></div>
-    </ion-side-menu>
+  </drawer>
 
-  </ion-side-menus>
+  <ion-nav-bar class="bar-dark" align-title="center">
+    <div class="nav-bar-block" nav-bar="active">
+      <wizard></wizard>
+    </div>
+    <ion-nav-back-button>
+      <i class="fa fa-angle-left fa-2x"></i>
+    </ion-nav-back-button>
+
+
+  </ion-nav-bar>
+
+
+  <ion-nav-view></ion-nav-view>
+
+
+
+
+
+
 
   <div id="fb-root"></div>
 

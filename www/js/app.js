@@ -51,6 +51,7 @@ var app = angular.module('app', [
   'app.providers',
   'app.services',
   'app.providers',
+  'ionic.contrib.drawer',
 ]);
 
 require('./config/app-settings');
