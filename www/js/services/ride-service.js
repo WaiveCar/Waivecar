@@ -224,11 +224,16 @@ module.exports = angular.module('app.services').factory('$ride', [
 
         for(var ix = 0; ix < locationList.length; ix++) {
           var location = locationList[ix];
+          // console.log(location, location.name, precedence[location.type], precedence[type]);
+          // if(location.radius) {
+          //  console.log($distance.fallback(location, car) * METERTOFEET, location.radius);
+          // }
           if (precedence[location.type] > precedence[type] && (
                 location.radius && $distance.fallback(location, car) * METERTOFEET < location.radius ||
                 location.shape && GeofencingService.insideFastCheck(car, location.shape)
               ) 
           ) {
+            // console.log("Using " + location.name);
             type = location.type;
           }
         }
@@ -341,11 +346,14 @@ module.exports = angular.module('app.services').factory('$ride', [
     };
 
     service.init = function(current) {
+      /*
       if(service._init) {
+        console.log($data.resources.bookings);
         console.log('Double entry $ride.init');
         return;
       }
       service._init = true;
+      */
 
       service.setState();
       $data.initialize('bookings').then(function(bookings) {
