@@ -395,13 +395,10 @@ module.exports = angular.module('app.services').factory('$ble', [
         ble.write(_deviceId, CAR_CONTROL_SERVICE, COMMAND_PHONE, toWrite, success, failure(what, fail));
       }, function(errStr) {
         log("Trying to see if I can fix this");
-        console.log(errStr);
-        /*
-        if(errStr.strpos('is not connected') !== -1) {
-          log("Trying to fix");
+        if(errStr.indexOf('is not connected') !== -1) {
+          log("Trying to connect to the car ", _desiredCar);
           connect(_desiredCar, true);
         }
-        */
         return fail(errStr);
      });
     }
