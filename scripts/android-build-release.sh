@@ -7,13 +7,12 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 set -e
 
 export KEYSTORE_PASS="yEt7Mon3I9Swi5woY4Wu"
-export KEYSTORE="certs/waivecar.keystore"
-export KEYSTORE_ALIAS="waivecar"
-export APK_NAME="waivecar"
+export KEYSTORE="certs/waivecardrive.keystore"
+export KEYSTORE_ALIAS="waivecardrive"
+export APK_NAME="waivecardrive"
 export APK_LOCATION="platforms/android/build/outputs/apk/android-release-unsigned.apk"
 
 nvmcheck
-node --version
 
 which cordova 
 
