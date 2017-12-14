@@ -197,3 +197,7 @@ And add this XML right before the end of the file inside of the last </dict> ent
 ```
 
 6. `ionic build ios`
+
+image conversion hint
+ find . -name \*.png | xargs identify | awk '{ print "convert ~/waive/logo-brn.png -resize "$3" "$1 } '   | sh
+
