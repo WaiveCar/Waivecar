@@ -31,6 +31,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   var $ionicLoading = $injector.get('$ionicLoading');
   var LocationService = $injector.get('LocationService');
   var IntercomService = $injector.get('IntercomService');
+  var _locationWatch;
 
   $scope.distance = 'Unknown';
   // $scope is used to store ref. to $ride and the active models in $data.
@@ -49,7 +50,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     // ctrl.car = $data.active.cars;
     stopServiceWatch();
     stopServiceWatch = null;
-    watchForWithinRange();
+    watchForUnlock();
     if ($data.active.bookings) {
       loadCar($data.active.bookings.carId);
       expired = moment($data.active.bookings.createdAt).add(15, 'm');
@@ -58,11 +59,6 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       }
     }
   });
-
-  function loadExtended() {
-    expired = moment($data.active.bookings.createdAt).add(25, 'm');
-    ctrl.isExtended = true;
-  }
 
   function showFailure(title, message, opts) {
     opts = opts || {};
@@ -111,10 +107,12 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         // time happens ... as a boolean.  That's also the
         // test case to see if it was extended at all.  So
         // we are doing 2 things in one place - bad idea.
-        loadExtended();
+        expired = moment($data.active.bookings.createdAt).add(25, 'm');
+        ctrl.isExtended = true;
       }
     } 
   }
+
   var timer = $interval(function() {
     if (expired) {
       watchBook();
@@ -131,15 +129,19 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     return null;
   }, 1000);
 
-  var stopWatching;
-  function watchForWithinRange () {
-    watchBook();
-    if (stopWatching != null) {
+  function stopWatchingForUnlock() {
+    if (_locationWatch != null) {
+      _locationWatch.stop();
+      _locationWatch = null;
+    }
+  }
+
+  function watchForUnlock () {
+    if (_locationWatch && _locationWatch.isActive()) {
       return;
     }
 
-    stopWatching = LocationService.watchLocation(function (currentLocation, isInitialCall) {
-
+    _locationWatch = LocationService.watchLocation(function (currentLocation, isInitialCall) {
       if (isInitialCall) {
         ctrl.route = {
           destiny: $data.active.cars
@@ -150,32 +152,23 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       ctrl.currentLocation = currentLocation;
 
       checkIsInRange(currentLocation);
-
     });
   }
 
-  function checkIsInRange (currentLocation) {
-    watchBook();
+  function checkIsInRange (currentLocation, ix, iy) {
     var distance = $distance($data.active.cars, currentLocation);
     if (_.isFinite(distance)) {
-      // convert miles to yards
       $scope.distance = distance;
       if ($scope.distance <= UNLOCK_RADIUS) {
         console.log('Showing unlock');
-        if (stopWatching) {
-          stopWatching();
-          stopWatching = null;
-        }
+        stopWatchingForUnlock();
         showUnlock();
       }
     }
   }
 
   $scope.$on('$destroy', function () {
-    if (stopWatching != null) {
-      stopWatching();
-      stopWatching = null;
-    }
+    stopWatchingForUnlock();
     if (stopServiceWatch != null) {
       stopServiceWatch();
     }
@@ -234,14 +227,12 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
 
   var showCancel = this.showCancel = function showCancel () {
     var modal;
-    var booking = $data.active.bookings;
-    if (booking == null) {
-      return;
-    }
-    if (booking.status !== 'reserved') {
-      return;
-    }
     var cancelling = false;
+    var booking = $data.active.bookings;
+    if (booking == null || booking.status !== 'reserved') {
+      return;
+    }
+
     $modal('result', {
       title: 'Cancel Booking',
       message: 'Are you sure you want to cancel your booking?',
@@ -283,6 +274,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         text: 'No',
         handler: function () {
           modal.remove();
+          watchForUnlock();
         }
       }]
     }).then(function (_modal) {
@@ -361,10 +353,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
 
   this.getDirections = function getDirections () {
     var booking = $data.active.bookings;
-    if (booking == null) {
-      return;
-    }
-    if (booking.status !== 'reserved') {
+    if (!booking || booking.status !== 'reserved') {
       return;
     }
 

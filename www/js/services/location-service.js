@@ -65,33 +65,37 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
   };
 
   this.watchLocation = function watchLocation (updateCallback) {
-    var watchState = {
-      isInitialCall: true
-    };
+    var isInitialCall = true;
+    var watchId = false;
+    var isActive = true;
+    var startTime = new Date();
+    var res = {};
 
     var invokeCallback = function(location) {
-      updateCallback(location, watchState.isInitialCall);
-      watchState.isInitialCall = false;
+      updateCallback(location, isInitialCall);
+      isInitialCall = false;
     };
 
+    var tryAgain = function() {
+      res.stop();
+      watchLocation(updateCallback);
+    }
+    /*
     if ($rootScope.currentLocation) {
       invokeCallback($rootScope.currentLocation);
     }
+    */
 
-    var startTime = new Date();
-    watchState.watchId = navigator.geolocation.watchPosition(function (position) {
+    watchId = navigator.geolocation.watchPosition(function (position) {
       $timeout(function(){
         var location = update(position);
         invokeCallback(location);
       });
     }, function() {
-      var failTime = new Date();
-      if (failTime - startTime < 500) {
-        enableLocation(function() {
-          watchLocation(updateCallback);
-        });
+      if(new Date() - startTime < 500) {
+        enableLocation(tryAgain);
       } else {
-        watchLocation(updateCallback);
+        tryAgain();
       }
     }, {
       maximumAge: 3000,
@@ -99,12 +103,19 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
       enableHighAccuracy: true
     });
 
-    activeLocationWatchers.push(watchState.watchId);
+    activeLocationWatchers.push(watchId);
 
-    return function () {
-      activeLocationWatchers = _.without(activeLocationWatchers, watchState.watchId);
-      navigator.geolocation.clearWatch(watchState.watchId);
+    res = function () {
+      activeLocationWatchers = _.without(activeLocationWatchers, watchId);
+      navigator.geolocation.clearWatch(watchId);
+      isActive = false;
     };
+    res.isActive = function() {
+      return isActive;
+    };
+    res.stop = res;
+
+    return res;
   };
 
   function update (position) {
@@ -122,7 +133,7 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
         longitude: position.longitude,
         accuracy: position.accuracy
       };
-      console.log('[location-service] updating location to', $rootScope.currentLocation);
+      //console.log('[location-service] updating location to', $rootScope.currentLocation);
     }
     return $rootScope.currentLocation;
   }
