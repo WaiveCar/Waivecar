@@ -302,7 +302,7 @@ module.exports = angular.module('app.services').factory('$ble', [
       log('Found car ' + car.id);
       ble.connect(car.id, function() {
         _deviceId = car.id;
-        log("Connected to ", _deviceId);
+        log("Connected to", _deviceId);
         success();
       }, failure('ble.connect ' + car.id, fail));
     }
@@ -328,7 +328,7 @@ module.exports = angular.module('app.services').factory('$ble', [
         }, failure('scan', fail));
 
         setTimeout(function() {
-          log("stopping the scan");
+          log("Stopping the scan");
           ble.stopScan();
           if(!_deviceId) {
             failure("Couldn't find Car", fail)();
@@ -482,6 +482,9 @@ module.exports = angular.module('app.services').factory('$ble', [
       log("Disconnecting from " + _deviceId);
       // This magical flag is trusted as an authority.
       // It probably shouldn't be ... but it is.
+      if(_deviceId) {
+        ble.disconnect(_deviceId);
+      }
       _creds.disconnected = true;
       _creds.authorized = false;
       _deviceId = false;
