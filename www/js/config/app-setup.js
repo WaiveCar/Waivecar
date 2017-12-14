@@ -136,17 +136,18 @@ var run = [
         return true;
       }
 
-      /*
-      if ($auth.me && !$auth.me.phone && !$auth.me.verifiedPhone && toState.name !== 'users-edit-general') {
-        event.preventDefault();
-        $state.go('users-edit-general', { step: 1 });
-      } else */ if ($auth.me && $auth.me.phone && !$auth.me.verifiedPhone && toState.name !== 'auth-account-verify') {
+      if ($auth.me && $auth.me.phone && !$auth.me.verifiedPhone && toState.name !== 'auth-account-verify') {
         event.preventDefault();
         $state.go('auth-account-verify', { step: 2 });
       } else if (isAuthenticated && !_.isUndefined(authRequired) && authRequired === false && $auth.me.tested) {
         event.preventDefault();
         if($auth.me.booking) {
-          $state.go('dashboard', { id: $auth.me.booking.id });
+          if($auth.me.booking.status === 'started') {
+            $state.go('dashboard', { id: $auth.me.booking.id });
+          } else {
+            // this seems to do some kind of auth setup
+            $state.go('cars');
+          }
         } else {
           $state.go('cars');
         }
