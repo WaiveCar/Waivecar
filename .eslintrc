@@ -58,7 +58,6 @@ rules:
     no-undefined: 2
     no-underscore-dangle: 0
     no-unused-expressions: 2
-    no-use-before-define: [2, "nofunc"]
     no-with: 2
     radix: 2
     semi-spacing: [2, {before: false, after: true}]
