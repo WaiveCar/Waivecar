@@ -292,6 +292,10 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     if (booking == null || booking.status !== 'reserved' || unlockModal) {
       return;
     }
+    // we try to buy a few seconds to connect to the car's ble by starting the
+    // process right before flaunting the unlock screen
+    $data.resources.cars.connect({id: $data.active.cars.id});
+
     $modal('result', {
       title: 'You\'re In Reach',
       message: 'Now you can unlock your WaiveCar!',
