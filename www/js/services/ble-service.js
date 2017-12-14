@@ -307,12 +307,14 @@ module.exports = angular.module('app.services').factory('$ble', [
       }, failure('ble.connect ' + car.id, fail));
     }
 
+    var ctr = 0;
     // There's a "cache" to speed things up. If
     // we try to reconnect, then we look for the
     // mapping between the car and the mac address
     // If we can find it then we just try to connect.
     function findCarById(id, success, fail) {
       var _car = _scanCache[id];
+      var ix = ctr++;
       if(_car) {
         return lowLevelConnect(_car, success, fail);
       }
@@ -323,17 +325,18 @@ module.exports = angular.module('app.services').factory('$ble', [
         ble.startScan([], function(car) { 
           _scanCache[car.id] = car;
           if (car.name === id) {
+            console.log("success connect " + ix);
             lowLevelConnect(car, success, fail);
           }
         }, failure('scan', fail));
 
         setTimeout(function() {
-          log("Stopping the scan");
+          log("Stopping the scan " + ix);
           ble.stopScan();
           if(!_deviceId) {
             failure("Couldn't find Car", fail)();
           }
-        }, 5000);
+        }, 12 * 1000);
 
       }).catch(failure('no ble', fail));
     }
@@ -404,15 +407,37 @@ module.exports = angular.module('app.services').factory('$ble', [
     }
 
     function getCredentials(carId) {
-      return _injected.getBle({ id: carId }).$promise.then(function(creds) {
+      var defer = $q.defer();
+
+      function setup(creds) {
         _creds = creds;
-        _creds.carId = carId;
+        _creds.carId = carId || creds.carId;
         _creds.disconnected = false;
         _creds.authorized = false;
         _creds.expire = new Date(creds.valid_until);
         _sessionKey = b642bin(creds.sessionKey);
+        $window.localStorage['creds'] = JSON.stringify(_creds);
+        defer.resolve(_creds);
         return creds;
-      });
+      }
+
+      _injected.getBle({ id: carId }).$promise
+        .then(setup)
+        .catch(function() {
+          if('creds' in $window.localStorage) {
+            var creds = JSON.parse($window.localStorage['creds']);
+            // we need to make sure that if we have no network and
+            // the app has crashed that the logic still tries to
+            // give it a good effort to unlock a car.
+            if(creds.carId === carId || !carId) {
+              log("Using credentials stored in local storage for " + creds.carId);
+              return setup(creds);
+            }
+          }
+          defer.reject("No network + no localStorage");
+        });
+
+      return defer.promise;
     }
 
     function authorize(carId, defer) {
@@ -464,7 +489,15 @@ module.exports = angular.module('app.services').factory('$ble', [
         } else {
           log("Getting tokens", carId);
           getCredentials(carId).then(function(creds) {
-            return authorize(carId, defer);
+            // creds.carId is an important distinction because
+            // we can pull out the rug from underneath our notion
+            // of what car to look for if we aren't connected to 
+            // the internet. This is because we tentatively do not
+            // know ... we have to use our cached copy in localStorage.
+            //
+            // Under normal circumstances this will just *be* carId
+            // and we're good.
+            return authorize(creds.carId, defer);
           }).catch(defer.reject);
         }
       }
@@ -476,6 +509,7 @@ module.exports = angular.module('app.services').factory('$ble', [
       _desiredCar = false;
       _creds = {};
       _sessionKey = false;
+      delete $window.localStorage['creds'];
     }
 
     function disconnect() {
@@ -493,6 +527,15 @@ module.exports = angular.module('app.services').factory('$ble', [
     function wrap(carId, cmd) {
       log.reset();
       var defer = $q.defer();
+
+      // We need to make sure that if we have no network and
+      // the app has crashed that we can try to do some good
+      // guess work to find out what the car is that we need
+      // to talk to. At worse this will simply be undefined
+      // while at best it will be the car we need.
+      if(!carId) {
+        carId = _creds.carId;
+      }
 
       connect(carId).then(function(){ 
         log("Doing " + cmd);
