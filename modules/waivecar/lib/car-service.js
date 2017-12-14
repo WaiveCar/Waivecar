@@ -583,7 +583,7 @@ module.exports = {
     }
 
     let now = new Date();
-    let expire = new Date(+now + 18 * 60 * 1000);
+    let expire = new Date(+now + 38 * 60 * 1000);
 
     let status = yield this.request(`/bluetooth-token/${ id }`, {
       method : 'POST'
