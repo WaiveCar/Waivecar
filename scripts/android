@@ -74,6 +74,6 @@ done
 [ "$build" ] && build
 [ "$remove" ] && wrap uninstall
 [ "$install" ] && wrap install $DIR/../platforms/android/build/outputs/apk/android-debug.apk
-[ "$install_release" ] && wrap install $DIR/../releases/waivecar.apk
+[ "$install_release" ] && wrap install $DIR/../releases/waivecardrive.apk
 [ "$clear" ] && wrap clear
 [ "$start" ] && wrap start
