@@ -1,5 +1,5 @@
 #!/bin/bash
-APP=com.waivecar.app
+APP=com.waivecardrive.app
 NODE_VERSION=v6.11.4
 #DBG=
 
