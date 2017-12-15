@@ -79,7 +79,7 @@ unfuckup() {
   path=www/js/controllers/car-controller.js
   cd $DIR/..
   set -x
-  [ -e releases ] && rm -fr releases
+  [ -e releases ] && rm releases/waivecardrive.apk
   [ -e platforms/android/build ] && rm -fr platforms/android/build
   [ -e platforms/android/assets/www ] && rm -fr platforms/android/assets/www
   [ -e www/dist ] && rm -fr www/dist/*
