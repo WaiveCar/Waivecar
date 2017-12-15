@@ -1,8 +1,9 @@
 #!/bin/bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+ROOT="$( dirname $DIR )"
 . $DIR/common.sh
 
-version=`cat $DIR/../config.xml | grep -Po "((?<=android-versionCode..)\d*)"`
+apk_version=`cat $ROOT/config.xml | grep -Po "((?<=android-versionCode..)\d*)"`
 #clean_build
 
 set -e
@@ -30,8 +31,8 @@ jarsigner \
 echo "> verifying APK"
 jarsigner -verify -certs $APK_LOCATION
 
-release_path=releases/$APK_NAME.apk
-release_path_archive=releases/$APK_NAME-$version.apk
+release_path=$ROOT/releases/$APK_NAME.apk
+release_path_archive=$ROOT/releases/$APK_NAME-$apk_version.apk
 
 mkdir -p releases
 zipalign -f 4 \
@@ -42,5 +43,6 @@ zipalign -f 4 \
 
 ln -s $release_path_archive $release_path
 
-echo 
-echo $release_path  $release_path_archive 
+echo ----------------
+echo $release_path 
+echo $release_path_archive 
