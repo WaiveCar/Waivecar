@@ -44,30 +44,29 @@ module.exports = angular.module('app').factory('Cars', [
       }
     }));
 
-    res.setup = function() {
+    res.setup = function(kv) {
       $ble.setFunction('getBle', res.ble);
       $ble.setFunction('lock', res._lock);
+      for(var key in kv) {
+        $ble.setFunction(key, kv[key]);
+      }
     }
 
     res.status = function(params) {
-      res.setup();
       return $ble.status(params.id);
     }
 
     res.disconnect = function(params) {
-      res.setup();
       return $ble.disconnect();
     }
 
     res.connect = function(params) {
-      res.setup();
       return $ble.connect(params.id).catch(function(){
         console.log("Failure ... Unable to contact " + params.id);
       });
     };
 
     res.lock = function(params) {
-      res.setup();
       return $ble.lock(params.id).catch(function(){
         console.log("Failure ... using network"); 
         return res._lock(params).$promise;
@@ -75,7 +74,6 @@ module.exports = angular.module('app').factory('Cars', [
     };
 
     res.unlock = function(params) {
-      res.setup();
       return $ble.unlock(params.id).catch(function(){
         console.log("Failure ... using network"); 
         return res._unlock(params).$promise;
