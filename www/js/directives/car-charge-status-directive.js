@@ -29,7 +29,6 @@ module.exports = angular.module('app.directives')
         }
 
         $scope.$watch('car', setInfo);
-
       }
 
       return {
