@@ -10,8 +10,6 @@ Bento.Register.Controller('BookingsController', function(controller) {
   }
 
   function *checkVersion(obj, message){
-    message = message || "Your WaiveCar has been reserved. However, you need to upgrade the App before starting the ride.";
-
     var payload = obj.payload;
     var request = obj.request;
     let osVersion = 0;
@@ -19,13 +17,21 @@ Bento.Register.Controller('BookingsController', function(controller) {
     let iPhone = header.match(/iPhone/);
 
     // App versions between android and iphone are dramatically different for some reason.
-    let minApp = iPhone ? 112 : 885;
+    let minApp = iPhone ? 112 : 892;
     let minMarketLink = 797; 
     let version = parseInt(payload.version, 10) || 0;
     var copy;
 
+    if(!message) {
+      if(!iPhone) {
+        message = "Your WaiveCar has been reserved.<br/><b>A new app is needed for the Ioniqs and Chevys.</b><ol style='text-align:left;margin:.5em 0 .75em 2.5em;list-style-type:decimal'><li>Install the new app</li><li>Uninstall the old app with the square logo</li><li>Enjoy!</li></ol>";
+      } else {
+        message = "Your WaiveCar has been reserved. However, you need to upgrade the App before starting the ride.";
+      }
+    }
+
     if(version !== obj.auth.user.version) {
-       yield obj.auth.user.update({version: version});
+      yield obj.auth.user.update({version: version});
     }
 
     if(payload.source !== 'web' && version < minApp) {
@@ -61,7 +67,7 @@ Bento.Register.Controller('BookingsController', function(controller) {
       } else if ( version < minMarketLink) {
         copy = 'Please upgrade WaiveCar at the Google Play Store.'; 
       } else {
-        copy = buttonhack("market://details?id=com.waivecar.app");
+        copy = buttonhack("market://details?id=com.waivecardrive.app");
       }
 
       throw error.parse({
