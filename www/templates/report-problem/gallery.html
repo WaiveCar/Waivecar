@@ -1,19 +1,16 @@
 <ion-view class="report-problem-new" can-swipe-back="false" hide-back-button="true">
-  <!--ion-nav-buttons side="primary">
-    <button class="button button-icon icon ion-chevron-left" ng-click="ctrl.modal.show()"></button>
-  </ion-nav-buttons>
-  <ion-nav-buttons side="right">
-    <button class="button button-icon icon ion-close" ui-sref="booking({ id: ctrl.model.bookingId })"></button>
-  </ion-nav-buttons-->
   <ion-content padding="true" class="ion-content--center dark-bg">
     <h4>{{ ctrl.car.license}}</h4>
     <div>
       Currently known damage or uncleanliness
     </div>
+    <div ng-if="ctrl.images != null && !ctrl.images.length">
+      <h3>Nothing currently reported</h3>
+    </div>
 
     <div class="row" style="flex-wrap: wrap;">
       <div ng-repeat="image in ctrl.images"  class="col col-33 tile" ng-click="ctrl.showPicture(image)">
-        <div style="box-shadow:0 0 1px #555;background-image: url(' {{image.url }}');">
+        <div style="box-shadow:0 0 1px #555;background-image: url('{{ image.url }}');">
         </div>
       </div>
     </div>
