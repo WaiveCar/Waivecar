@@ -1,7 +1,7 @@
 <ion-view class="report-problem-new" can-swipe-back="false" hide-back-button="true">
   <ion-content padding="true" class="ion-content--center dark-bg">
     <h4>{{ ctrl.car.license}}</h4>
-    <div>
+    <div ng-if="ctrl.images.length">
       Currently known damage or uncleanliness
     </div>
     <div ng-if="ctrl.images != null && !ctrl.images.length">
