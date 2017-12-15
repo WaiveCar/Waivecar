@@ -423,7 +423,8 @@ module.exports = angular.module('app.services').factory('$ble', [
 
       _injected.getBle({ id: carId }).$promise
         .then(setup)
-        .catch(function() {
+        .catch(function(m) {
+          console.log(m); 
           if('creds' in $window.localStorage) {
             var creds = JSON.parse($window.localStorage['creds']);
             // we need to make sure that if we have no network and
@@ -583,6 +584,9 @@ module.exports = angular.module('app.services').factory('$ble', [
         }
         */
 
+        if(!_injected.auth || !_injected.auth.me) {
+          return;
+        }
         var now = new Date();
         if(!_creds.expire || _creds.expire - new Date() < MINTIME && !_lock.token) {
           // this tries to pull down new tokens --- we try and make sure that we attempt
