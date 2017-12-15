@@ -152,7 +152,7 @@ function ApplicationController ($rootScope, $scope, $injector) {
   $rootScope.$on('authLogin', setupState);
   IntercomService.registerForPush();
   // set up the ble pass-thru machinery.
-  $data.resources.cars.setup();
+  $data.resources.cars.setup({auth: $auth});
 
   if ($auth.isAuthenticated()) {
     $auth.loadSession().then(setupState);
