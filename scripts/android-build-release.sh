@@ -16,7 +16,7 @@ export APK_LOCATION="platforms/android/build/outputs/apk/android-release-unsigne
 
 nvmcheck
 
-which cordova 
+#which cordova 
 
 cordova build android --release
 
