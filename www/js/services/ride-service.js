@@ -219,21 +219,21 @@ module.exports = angular.module('app.services').factory('$ride', [
 
         // If the charge isn't ok then we can only end at hubs, not zones.
         if(!service.isChargeOkay(car.id, car)) {
-          locationList = locationList.filter(function(location) { return location.type === 'hub'; });
+          locationList = locationList.filter(function(location) { return ['hub','homebase'].indexOf(location.type) !== -1; });
         }
 
         for(var ix = 0; ix < locationList.length; ix++) {
           var location = locationList[ix];
-          // console.log(location, location.name, precedence[location.type], precedence[type]);
-          // if(location.radius) {
-          //  console.log($distance.fallback(location, car) * METERTOFEET, location.radius);
-          // }
+           console.log(location, location.name, precedence[location.type], precedence[type]);
+           if(location.radius) {
+            console.log($distance.fallback(location, car) * METERTOFEET, location.radius);
+           }
           if (precedence[location.type] > precedence[type] && (
                 location.radius && $distance.fallback(location, car) * METERTOFEET < location.radius ||
                 location.shape && GeofencingService.insideFastCheck(car, location.shape)
               ) 
           ) {
-            // console.log("Using " + location.name);
+             console.log("Using " + location.name);
             type = location.type;
           }
         }
