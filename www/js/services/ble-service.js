@@ -410,6 +410,7 @@ module.exports = angular.module('app.services').factory('$ble', [
       var defer = $q.defer();
 
       function setup(creds) {
+        console.log(creds);
         _creds = creds;
         _creds.carId = carId || creds.carId;
         _creds.disconnected = false;
@@ -654,7 +655,7 @@ module.exports = angular.module('app.services').factory('$ble', [
     _res = {
       disconnect: disconnectAndForget,
       immobilize: function(carId, what) { return wrap(carId, what ? 'IMMOBILIZER_LOCK' : 'IMMOBILIZER_UNLOCK'); },
-      connect:    function (carId) { return connect(carId); },
+      connect:    connect,
       lock:   function (carId) { return wrap(carId, 'CENTRAL_LOCK_CLOSE'); },
       unlock: function (carId) { return wrap(carId, 'CENTRAL_LOCK_OPEN'); },
       any: function(carId, what) { return wrap(carId, what); },
