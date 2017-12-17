@@ -70,8 +70,8 @@ module.exports = {
       save: "Add 10 additional minutes to get to a WaiveCar reservation for $1.00",
       abort: "Cancel your booking",
       cancel: null,
-      start: "Start your booking",
-      finish: "Complete your booking",
+      start: "Start your ride",
+      finish: "Finish your ride",
       complete: null,
       notify: null,
       lock: "Lock the WaiveCar",
@@ -200,9 +200,9 @@ module.exports = {
       } else if (command === 'cancel' || command === 'abort') {
         yield booking.cancel(id, user);
       } else if (command === 'unlock') {
-        yield cars.lockCar(currentBooking.carId, user);
-      } else if (command === 'lock') {
         yield cars.unlockCar(currentBooking.carId, user);
+      } else if (command === 'lock') {
+        yield cars.lockCar(currentBooking.carId, user);
       }
     } catch(ex) {
       yield this.returnError(user, ex);
