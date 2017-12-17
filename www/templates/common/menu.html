@@ -14,7 +14,7 @@
       <ng-include class="menu-item-image" src="'/img/find-cars.svg'" alt=""></ng-include>
       <span class="button-icon-label">Find Cars</span>
     </a>
-    <a ng-click="menu.currentRide()" ng-if="$data.active.bookings && data.active.bookings.status !== 'completed'">
+    <a ng-click="menu.currentRide()" ng-if="$data.active.bookings && $data.active.bookings.status !== 'completed'">
       <ng-include class="menu-item-image" src="'/img/find-cars.svg'" alt=""></ng-include>
       <span class="button-icon-label">Current Ride</span>
     </a>
