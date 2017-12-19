@@ -7,7 +7,9 @@ module.exports = angular.module('app').factory('Cars', [
   '$resource',
   '$utils',
   '$ble',
-  function Resource($resource, $utils, $ble) {
+  '$timeout',
+  '$q',
+  function Resource($resource, $utils, $ble, $timeout, $q) {
 
     var res = $resource(null, null, $utils.createResource('cars', {
       _lock: {
@@ -61,23 +63,39 @@ module.exports = angular.module('app').factory('Cars', [
     }
 
     res.connect = function(params) {
-      return $ble.connect(params.id).catch(function(){
+      return $ble.connect(params.id).promise.catch(function(){
         console.log("Failure ... Unable to contact " + params.id);
+        return $q.reject();
       });
     };
 
     res.lock = function(params) {
-      return $ble.lock(params.id).catch(function(){
+      return $ble.lock(params.id).promise.catch(function(){
         console.log("Failure ... using network"); 
         return res._lock(params).$promise;
       });
     };
 
     res.unlock = function(params) {
-      return $ble.unlock(params.id).catch(function(){
-        console.log("Failure ... using network"); 
-        return res._unlock(params).$promise;
-      });
+      var done = false;
+      var bleHandle = $ble.unlock(params.id, done);
+
+      // ble actions usually complete in under 2 seconds,
+      // if it hasn't then we do something a bit crazy
+      $timeout(function() {
+        console.log("Attempting to unlock");
+        if(!done) {
+          console.log("Partaking in attempt");
+          return res._unlock(params).$promise
+            .then(function(txt) {
+              done = true;
+              return bleHandle.resolve(txt);
+            })
+            .catch(bleHandle.reject);
+        }
+      }, 1500);
+
+      return bleHandle.promise;
     };
     return res;
   }
