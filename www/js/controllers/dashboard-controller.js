@@ -235,7 +235,6 @@ function DashboardController ($scope, $rootScope, $injector) {
     } else {
       ctrl.parityCheckTimeout = $timeout(sendUserLocationsToServer, 60 * 1000);
     }
-
   }
 
 
