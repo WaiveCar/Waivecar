@@ -416,9 +416,13 @@ module.exports = angular.module('app.services').factory('$ble', [
         _creds.disconnected = false;
         _creds.authorized = false;
         _creds.expire = new Date(creds.valid_until);
-        _sessionKey = b642bin(creds.sessionKey);
-        $window.localStorage['creds'] = JSON.stringify(_creds);
-        defer.resolve(_creds);
+        if(creds.sessionKey) {
+          _sessionKey = b642bin(creds.sessionKey);
+          $window.localStorage['creds'] = JSON.stringify(_creds);
+          defer.resolve(_creds);
+        } else {
+          defer.reject("No car");
+        }
         return creds;
       }
 
@@ -472,7 +476,7 @@ module.exports = angular.module('app.services').factory('$ble', [
         defer.resolve();
       } else {
         if (!getLock('connect', defer)) {
-          return defer.promise;
+          return defer;
         }
         //
         // This is an example of what is returned by ble:
@@ -503,7 +507,7 @@ module.exports = angular.module('app.services').factory('$ble', [
           }).catch(defer.reject);
         }
       }
-      return defer.promise;
+      return defer;
     }
 
     function disconnectAndForget() {
@@ -526,7 +530,7 @@ module.exports = angular.module('app.services').factory('$ble', [
       _deviceId = false;
     }
 
-    function wrap(carId, cmd) {
+    function wrap(carId, cmd, done) {
       log.reset();
       var defer = $q.defer();
 
@@ -539,12 +543,18 @@ module.exports = angular.module('app.services').factory('$ble', [
         carId = _creds.carId;
       }
 
-      connect(carId).then(function(){ 
+      connect(carId).promise.then(function(){ 
         log("Doing " + cmd);
-        return doit(cmd, ok("Done " + cmd, defer.resolve), failure("Not done " + cmd, defer.reject));
+
+        if(!done) {
+          return doit(cmd, ok("Done " + cmd, defer.resolve), failure("Not done " + cmd, defer.reject));
+        } else {
+          return defer.resolve("Skipping " + cmd + " - already done");
+        }
       }).catch(failure("connect", defer.reject));
 
-      return defer.promise;
+      defer.$promise = defer.promise;
+      return defer;
     }
 
     function isLocked(obj) {
@@ -656,7 +666,7 @@ module.exports = angular.module('app.services').factory('$ble', [
       disconnect: disconnectAndForget,
       immobilize: function(carId, what) { return wrap(carId, what ? 'IMMOBILIZER_LOCK' : 'IMMOBILIZER_UNLOCK'); },
       connect:    connect,
-      lock:   function (carId) { return wrap(carId, 'CENTRAL_LOCK_CLOSE'); },
+      lock:   function (carId, done) { return wrap(carId, 'CENTRAL_LOCK_CLOSE', done); },
       unlock: function (carId) { return wrap(carId, 'CENTRAL_LOCK_OPEN'); },
       any: function(carId, what) { return wrap(carId, what); },
       status: getStatus,
