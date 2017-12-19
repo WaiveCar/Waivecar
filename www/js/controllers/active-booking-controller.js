@@ -3,12 +3,6 @@
 var angular = require('angular');
 var moment = require('moment');
 var _ = require('lodash');
-// var ionic = require('ionic');
-var sprintf = require('sprintf-js').sprintf;
-
-// 0.019 essentially maps to "100 imperial feet" - about
-// the length of a suburban home + property.
-var UNLOCK_RADIUS = 0.019 * 2;
 
 require('../services/ride-service');
 require('../services/data-service');
@@ -26,22 +20,24 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   var $state = $injector.get('$state');
   var $message = $injector.get('$message');
   var $settings = $injector.get('$settings');
-  var $cordovaInAppBrowser = $injector.get('$cordovaInAppBrowser');
-  var $progress = $injector.get('$progress');
   var $ionicLoading = $injector.get('$ionicLoading');
   var LocationService = $injector.get('LocationService');
   var IntercomService = $injector.get('IntercomService');
   var _locationWatch;
+  var ctrl = this;
+  var expired;
+  // 0.019 essentially maps to "100 imperial feet" - about
+  // the length of a suburban home + property.
+  var UNLOCK_RADIUS = 0.019 * 2;
 
-  $scope.distance = 'Unknown';
   // $scope is used to store ref. to $ride and the active models in $data.
+  $scope.distance = 'Unknown';
   $scope.service = $ride;
 
   // $data is used to interact with models, never directly. If direct is required, $data should be refreshed.
-  var ctrl = this;
   this.data = $data.active;
+  var unlockModal;
 
-  var expired;
   var stopServiceWatch = $scope.$watch('service.isInitialized', function(isInitialized) {
     if (!isInitialized) {
       return;
@@ -84,6 +80,22 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     });
   }
 
+  function showRetry () {
+    return showFailure('Connection Failed',
+      'We couldn\'t connect to the server. If the problem persists call ' + $settings.phone, {
+        label: 'retry'
+      }
+    );
+  }
+
+  function showExpired() {
+    return showFailure('Booking is expired', 'You booking is expired', { 
+      cb: function() {
+        $state.go('cars');
+      }
+    });
+  }
+
   function loadCar(id) {
     $data.resources.cars.get({ id: id }).$promise.then(function(car) {
       ctrl.car = car;
@@ -99,23 +111,19 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     });
   }
 
-  function watchBook() {
-    if($data.active.bookings) {
-      if(!ctrl.isExtended && $data.active.bookings.flags && $data.active.bookings.flags.search(/exten/) !== -1) {
-        // A perhaps bad idea on my part (cjm) ... I swap out 
-        // the word 'extension' for 'extended' when the extended
-        // time happens ... as a boolean.  That's also the
-        // test case to see if it was extended at all.  So
-        // we are doing 2 things in one place - bad idea.
-        expired = moment($data.active.bookings.createdAt).add(25, 'm');
-        ctrl.isExtended = true;
-      }
-    } 
-  }
-
   var timer = $interval(function() {
     if (expired) {
-      watchBook();
+      if($data.active.bookings) {
+        if(!ctrl.isExtended && $data.active.bookings.flags && $data.active.bookings.flags.search(/exten/) !== -1) {
+          // A perhaps bad idea on my part (cjm) ... I swap out 
+          // the word 'extension' for 'extended' when the extended
+          // time happens ... as a boolean.  That's also the
+          // test case to see if it was extended at all.  So
+          // we are doing 2 things in one place - bad idea.
+          expired = moment($data.active.bookings.createdAt).add(25, 'm');
+          ctrl.isExtended = true;
+        }
+      } 
       // if we are in the future then the answer is 0.
       if (moment().diff(expired) > 0) {
         console.log(expired, moment().diff(expired));
@@ -167,22 +175,6 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     }
   }
 
-  $scope.$on('$destroy', function () {
-    stopWatchingForUnlock();
-    if (stopServiceWatch != null) {
-      stopServiceWatch();
-    }
-  });
-
-  function showRetry () {
-    return showFailure(
-      'Connection Failed',
-      'We couldn\'t connect to the server. If the problem persists call ' + $settings.phone, {
-        label: 'retry'
-      }
-    );
-  }
-
   this.extendBooking = function extendBooking() {
     var modal;
     var extendedExpire = moment(expired).add(10, 'm').format('h:mm A');
@@ -214,18 +206,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     });
   };
 
-  function showExpired() {
-    return showFailure(
-      'Booking is expired', 
-      'You booking is expired', { 
-        cb: function() {
-          $state.go('cars');
-        }
-      }
-    );
-  }
-
-  var showCancel = this.showCancel = function showCancel () {
+  this.showCancel = function() {
     var modal;
     var cancelling = false;
     var booking = $data.active.bookings;
@@ -283,8 +264,6 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     });
   };
 
-  var unlockModal;
-
   function showUnlock () {
     var modal;
     var unlocking;
@@ -310,7 +289,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         handler: function () {
           unlockModal = false;
           modal.remove();
-          showCancel();
+          ctrl.showCancel();
         }
       }]
     })
@@ -333,8 +312,10 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
 
       $interval.cancel(timer);
       var id = $ride.state.booking.id;
+
+      $data.resources.cars.unlock({ id: $data.active.cars.id });
       $data.resources.bookings.ready({ id: id }).$promise
-      .then(function() {
+      .then(function(data) {
         return $data.fetch('bookings');
       })
       .then(function() {
@@ -349,20 +330,34 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         unlocking = false;
         $message.error(err);
         modal.remove();
-        $progress.hide();
         showRetry();
       });
     }
   }
 
   this.getDirections = function getDirections () {
-    var booking = $data.active.bookings;
-    if (!booking || booking.status !== 'reserved') {
-      return;
-    }
-
     $ride.openDirections(this.car, this.car.license);
   };
+
+  ctrl.startIfBleFound = function() {
+    $ionicLoading.show();
+    var res = $data.resources.cars.connect({id: this.car.id});
+     
+    res.then(function(lll) {
+        $ionicLoading.hide();
+        showUnlock();
+      }).catch(function(lll){
+        $ionicLoading.hide();
+        showFailure("Can't find car", "Please make sure you are next to the WaiveCar");
+      });
+  }
+
+  $scope.$on('$destroy', function () {
+    stopWatchingForUnlock();
+    if (stopServiceWatch != null) {
+      stopServiceWatch();
+    }
+  });
 }
 
 module.exports = angular.module('app.controllers').controller('ActiveBookingController', [
