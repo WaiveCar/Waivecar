@@ -22,7 +22,7 @@ function CarsListController ($rootScope, $scope, $state, $injector, $data, cars,
   this.all = cars;
 
   cars.forEach(function(car) {
-    car.model = car model || 'Ioniq';
+    car.model = car.model || 'Ioniq';
 
     var stub = car.model.toLowerCase().split(' ')[0],
         multiplier;
