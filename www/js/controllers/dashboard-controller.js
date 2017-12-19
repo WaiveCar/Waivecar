@@ -50,7 +50,6 @@ function DashboardController ($scope, $rootScope, $injector) {
   this.lastUserLocations = [];
   this.parityCheckTimeout = null;
 
-<<<<<<< HEAD
   this.getDirections = function() {
     $ride.openDirections(ctrl.selectedItem, ctrl.selectedItem.name);
   }
