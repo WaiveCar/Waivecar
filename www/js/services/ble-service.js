@@ -331,7 +331,7 @@ module.exports = angular.module('app.services').factory('$ble', [
         }, failure('scan', fail));
 
         setTimeout(function() {
-          log("Stopping the scan " + ix);
+          log("Stopping the scan " + ix + " (" + _deviceId + ")");
           ble.stopScan();
           if(!_deviceId) {
             failure("Couldn't find Car", fail)();
