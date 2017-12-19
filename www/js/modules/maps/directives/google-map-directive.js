@@ -11,6 +11,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
   var MOVETHRESHOLD = 0.000008;
   var homebase = $injector.get('homebase');
+  var isFirst = true;
 
   function mapToGoogleLatLong(location) {
     return new google.maps.LatLng(location.latitude, location.longitude);
@@ -70,7 +71,8 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         }
       }, true),
       $scope.$watch('map.fitBoundsByMarkers', function (value) {
-        if (value) {
+        if (value && isFirst) {
+          isFirst = false;
           ctrl.mapFitBounds(value);
         }
       }),
