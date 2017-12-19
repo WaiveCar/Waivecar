@@ -80,7 +80,6 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
     });
   }
 
-
   function carsInRange(allCars, currentLocation) {
     if (
       !currentLocation || (
@@ -138,34 +137,11 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
     return awayCars;
   }
 
-  function featured(items, userLocation) {
-    return _(items)
-      .filter('isAvailable')
-      .sortBy(function (item) {
-        if (userLocation) {
-          return $distance(item, userLocation);
-        }
-        return item.id;
-      })
-      .take(1)
-      .value();
-  }
-
   function getMarkersToFitBoundBy(all, currentLocation) {
-    var featuredCars;
+    var fitBoundsMarkers = all.slice();
+ 
     if (currentLocation) {
-      featuredCars = featured(all, currentLocation);
-    }
-
-    var fitBoundsMarkers = [];
-    if (Array.isArray(featuredCars) && featuredCars.length) {
-      fitBoundsMarkers = featuredCars.slice();
-
-      if (currentLocation) {
-        fitBoundsMarkers.push(currentLocation);
-      }
-    } else {
-      fitBoundsMarkers = all.slice();
+      fitBoundsMarkers.push(currentLocation);
     }
     return fitBoundsMarkers;
   }
