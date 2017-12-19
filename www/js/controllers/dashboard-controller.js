@@ -63,6 +63,8 @@ function DashboardController ($scope, $rootScope, $injector) {
     }
     rideServiceReady();
 
+    ctrl.locations = $data.instances.locations;
+
     var stopLocationWatch = LocationService.watchLocation(function (currentLocation, isInitialCall) {
       if (isInitialCall) {
         ctrl.fitMapBoundsByMarkers = featured(ctrl.locations).concat([currentLocation]);
