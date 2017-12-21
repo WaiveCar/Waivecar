@@ -369,6 +369,7 @@ module.exports = {
       user = yield this.get(id, _user);
 
     } else {
+      delete payload.password;
 
       let data = yield hooks.require('user:update:before', user, payload, _user);
       if (data.password) {
