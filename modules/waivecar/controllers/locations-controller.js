@@ -7,14 +7,21 @@ let _ = require('lodash');
 Bento.Register.ResourceController('Location', 'LocationsController', function(controller) {
 
   controller.index = function *() {
-    return (yield Location.find({
-      // There was a bug, now fixed, where locations where 
+    var query = {
+      // There was a bug, now fixed, where locations where
       // scanned and preferenced in such a way that people
       // couldn't end at the lot. it asked them to take a picture
       // This reverse sorting fixes the problem on the legacy
       // versions of the app
       order: [[ 'id', 'desc' ]]
-    })).map((row) => {
+    };
+    if (this.query.search) {
+      query.where = { $or: [
+        { name : { $like : `%${ this.query.search }%` } },
+        { address : { $like : `%${ this.query.search }%` } }
+      ]};
+    }
+    return (yield Location.find(query)).map((row) => {
       if(row.shape) {
         row.shape = JSON.parse(row.shape);
       }
