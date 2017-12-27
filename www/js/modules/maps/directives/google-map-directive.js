@@ -220,7 +220,26 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         }
 
       }, function(markerObj) {
-        deferred.resolve(markerObj);
+
+        if (!marker.shape) {
+          deferred.resolve(markerObj);
+        } else {
+
+          var points = marker.shape.map(function(point) {
+            return {lat: point[1], lng: point[0] };
+          });
+
+          map.addPolygon({
+            'points': points,
+            'strokeColor': '#AA00FF',
+            'strokeWidth': 2,
+            'fillColor': '#880000'
+          }, function (polygon) {
+            markerObj.shape = polygon;
+            deferred.resolve(markerObj);
+          });
+        }
+
       });
 
     } else {
@@ -231,6 +250,24 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         position: mapToGoogleLatLong(marker),
         icon: iconOpt
       });
+
+      if (marker.shape) {
+
+        var points = marker.shape.map(function(point) {
+          return {lat: point[1], lng: point[0] };
+        });
+
+        var shape = new google.maps.Polygon({
+          paths: points,
+          strokeColor: '#FF0000',
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+          fillColor: '#FF0000',
+          fillOpacity: 0.35
+        });
+        shape.setMap(this.map);
+        markerObj.shape = shape;
+      }
 
       deferred.resolve(markerObj);
     }
@@ -316,10 +353,6 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
   MapController.prototype.unsafeUpdateMarkers = function unsafeUpdateMarkers(newMarkers) {
     var ctrl = this;
 
-    newMarkers = newMarkers.filter(function(m) {
-      return m.type !== 'zone';
-    });
-
     var oldIds = ctrl._addedMarkers.general.map(function (m) {
       return m.id;
     });
@@ -376,7 +409,21 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
           return marker.id === id;
         })[0];
 
-        removingMarker.markerObj.setMap(null);
+        var markerObj = removingMarker.markerObj;
+
+        if (useCordova()) {
+          if (markerObj.shape) {
+            markerObj.shape.remove()
+          }
+          markerObj.remove();
+        } else {
+
+          if (markerObj.shape) {
+            markerObj.shape.setMap(null);
+          }
+
+          markerObj.setMap(null);
+        }
       });
 
       ctrl._addedMarkers.general = actualMarkers;
