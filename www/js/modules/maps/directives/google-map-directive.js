@@ -201,6 +201,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
   MapController.prototype.addMarker = function addMarker(marker) {
 
+    var ctrl = this;   
     var deferred = $q.defer();
 
     var type = marker.icon || marker.type;
@@ -214,7 +215,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         position: mapToNativeLatLong(marker),
 
         icon: {
-          url: './' + iconOpt.url,
+          url: 'www/' + iconOpt.url,
           size: iconOpt.scaledSize,
           anchor: iconOpt.anchor
         }
@@ -229,11 +230,11 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
             return {lat: point[1], lng: point[0] };
           });
 
-          map.addPolygon({
+          ctrl.map.addPolygon({
             'points': points,
-            'strokeColor': '#AA00FF',
+            'strokeColor': '#FF0000',
             'strokeWidth': 2,
-            'fillColor': '#880000'
+            'fillColor': '#FF0000'
           }, function (polygon) {
             markerObj.shape = polygon;
             deferred.resolve(markerObj);
