@@ -564,6 +564,14 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
           anchor: new google.maps.Point(12, 12),
           origin: new google.maps.Point(0, 0)
         };
+      case 'zone':
+        return {
+          url: '',
+          iconRetinaUrl: '',
+          scaledSize: new google.maps.Size(0, 0),
+          anchor: new google.maps.Point(0, 0),
+          origin: new google.maps.Point(0, 0)
+        };
       default:
         return {
           url: 'img/user-location' + fileExt,
