@@ -199,7 +199,8 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     return Math.min(2, Math.floor(marker.charge / 33));
   }
 
-  function GeneralMapObject() {
+  function GeneralMapObject(data) {
+    this.data = {latitude:data.latitude, longitude:data.longitude};
     this.marker = null;
     this.zone = null;
   }
@@ -253,8 +254,12 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     }
   };
 
-  GeneralMapObject.prototype.update = function(data) {
+  GeneralMapObject.prototype.hasMoved = function(data) {
+    return hasMoved(this.data, data);
+  }
 
+  GeneralMapObject.prototype.update = function(data) {
+    this.data = {latitude:data.latitude, longitude:data.longitude};
 
     if (this.marker) {
       this.marker.setPosition(mapToLatLong(data));
@@ -282,7 +287,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     }
     var iconOpt = getIconOptions(type, useCordova() ? '.png' : '.svg');
 
-    var mapObject = new GeneralMapObject();
+    var mapObject = new GeneralMapObject(marker);
 
     if (useCordova()) {
 
@@ -449,7 +454,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         return m.id === id;
       })[0];
 
-      if(hasMoved(currentMarker, newMarker)) {
+      if(currentMarker.markerObj.hasMoved(newMarker)) {
         currentMarker.markerObj.update(newMarker);
       }
       //addedMarker.markerObj.setIcon(getIconOptions(marker.icon));
