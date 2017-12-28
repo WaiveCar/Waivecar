@@ -26,7 +26,9 @@ module.exports = class CarsIndex extends React.Component {
       {key : "isImmobilized", title:"Immobilized", type : "bool"},
       {key : "isCharging", title:"Charging", type : "bool"},
       {key : "statuscolumn", title:"Status", type : "status"},
-      {key : "updatedAt", title:"Updated At", type : "datetime"}//,
+      {key : "updatedAt", title:"Updated At", type : "datetime"},
+      {key : "action", title:"Last Action", type : "text"},
+      {key : "actionAt", title:"Action At", type : "datetime"}
       //{key : "inService", title:"In Repair", type : "bool"}
     ];
   }
@@ -86,12 +88,13 @@ module.exports = class CarsIndex extends React.Component {
 
     if (column.type === "status") {
       if (car.user) {
-        value = <a href={ '/users/' + car.user.id }>{ car.user.firstName } { car.user.lastName }</a>
+        let name = `${car.user.firstName } ${ car.user.lastName }`;
+        value = <a title={name} href={ '/users/' + car.user.id }>{name}</a>
       }
       return <td key={column.key}>{value}</td>
     }
 
-    return <td key={column.key}>{value}</td>
+    return <td title={value} key={column.key}>{value}</td>
   }
 
   sort(event) {
