@@ -124,14 +124,13 @@ function PreBookService ($injector) {
       .then(function (licenses) {
         return _(licenses).filter({userId: $auth.me.id}).sortBy('createdAt').last();
       }).then(function (license) {
+        modal.remove();
         if (license == null) {
-          modal.remove();
-          $state.go('licenses-new', {fromBooking: true});
-          return;
-        }
-        if (license.status === 'provided') {
-          $validateLicense.validate(license);
-          return;
+          return $state.go('licenses-new', {fromBooking: true});
+        } else if (!license.fileId) {
+          return $state.go('verify-id');
+        } else if (license.status === 'provided') {
+          return $validateLicense.validate(license);
         }
         $state.go('licenses-edit', {licenseId: license.id});
       });
