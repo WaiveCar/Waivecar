@@ -159,7 +159,20 @@ function DashboardController ($scope, $rootScope, $injector) {
       });
     }, 1000);
     ZendriveService.start($session.get('me'), $data.active.bookings.id, $data.active.cars.id);
+
+    $scope.$watch(function() {
+      return $data.active.cars.isLocked
+    }, OnLockStateChange);
   }.bind(this));
+
+  function OnLockStateChange(isLocked) {
+    if (isLocked) {
+      ctrl.locations = $data.instances.locations.concat([$data.active.cars]);
+    } else {
+      ctrl.locations = $data.instances.locations;
+    }
+  }
+
 
   function openPopover(item) {
     $timeout(function () {
@@ -183,7 +196,10 @@ function DashboardController ($scope, $rootScope, $injector) {
     if (!ctrl.locking) {
       ctrl.locking = true;
       $ride[ state ? 'lockCar' : 'unlockCar'](id)
-        .then(function () {
+        .then(function (car) {
+
+          OnLockStateChange(car.isLocked);
+
           ctrl.locking = false;
           $ionicLoading.hide();
         })
