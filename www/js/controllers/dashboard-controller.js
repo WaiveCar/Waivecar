@@ -149,7 +149,13 @@ function DashboardController ($scope, $rootScope, $injector) {
 
     // connect to the ble
     ctrl.license = $data.active.cars.license;
-    $data.resources.cars.connect({id: $data.active.cars.id});
+
+    // These two lines make it crash!!!!!!!!
+    $timeout(function() {
+      $data.resources.cars.connect({id: $data.active.cars.id}).catch(function(){
+        console.log("no find car.");
+      });
+    }, 1000);
     ZendriveService.start($session.get('me'), $data.active.bookings.id, $data.active.cars.id);
   }.bind(this));
 

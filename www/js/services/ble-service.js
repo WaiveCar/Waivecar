@@ -676,7 +676,7 @@ module.exports = angular.module('app.services').factory('$ble', [
     $window.blefn.n = _res;
     $window.blefn.i = _injected;
 
-    poll();
+    //poll();
 
     return _res;
   }
