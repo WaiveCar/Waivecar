@@ -144,13 +144,14 @@ There are some modest fees in order to keep our fleet bright and shiny.
  * **Dead Battery / Lights Left On** $100
  * **Missing Key (Failure to return equipment)** $300
  * **Parking Violation (Any violation of our parking rules)** $40
- * **Special Cleaning** 
-   * **Smoking** $200
-   * **Pet not in carrier/odor** $50
-   * **Damage to the interior** Our costs to repair
  * **Vehicle Recovery (if left outside Santa Monica)** $300 minimum
  * **Declined Credit Card** Charges + $5 penalty fee
  * **Excess Time (Non Waive time)** $1 for every 10 mins. ($5.99/hour)
+
+#### Special Cleaning 
+ * **Smoking** $200
+ * **Pet not in carrier/odor** $50
+ * **Damage to the interior** Our costs to repair
 
 There's a few unfortunate events that can happen where we have pass the costs on to you:
 

@@ -109,13 +109,15 @@ module.exports = class Faq extends Component {
           <li><strong>Dead Battery / Lights Left On</strong> $100</li>
           <li><strong>Missing Key (Failure to return equipment)</strong> $300</li>
           <li><strong>Parking Violation (Any violation of our parking rules)</strong> $40</li>
-          <li><strong>Special Cleaning</strong></li>
-          <li><strong>Smoking</strong> $200</li>
-          <li><strong>Pet not in carrier/odor</strong> $50</li>
-          <li><strong>Damage to the interior</strong> Our costs to repair</li>
           <li><strong>Vehicle Recovery (if left outside Santa Monica)</strong> $300 minimum</li>
           <li><strong>Declined Credit Card</strong> Charges + $5 penalty fee</li>
           <li><strong>Excess Time (Non Waive time)</strong> $1 for every 10 mins. ($5.99/hour)</li>
+          </ul>
+          <h4 id="special-cleaning">Special Cleaning</h4>
+          <ul>
+          <li><strong>Smoking</strong> $200</li>
+          <li><strong>Pet not in carrier/odor</strong> $50</li>
+          <li><strong>Damage to the interior</strong> Our costs to repair</li>
           </ul>
           <p>There's a few unfortunate events that can happen where we have pass the costs on to you:</p>
           <ul>
