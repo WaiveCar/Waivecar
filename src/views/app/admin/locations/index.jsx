@@ -158,16 +158,8 @@ class TableIndex extends React.Component {
                 </tr>
               </thead>
               <tbody>
-
                 { this.table.index() }
               </tbody>
-              <tfoot>
-                <tr><td>
-                  <Link className="btn btn-icon btn-primary" to={ `/locations/create` }>
-                    Add location
-                  </Link>
-                </td></tr>
-              </tfoot>
             </table>
             {
               this.state.more ?
@@ -177,6 +169,9 @@ class TableIndex extends React.Component {
                 :
                 ''
             }
+            <Link className="btn btn-primary" to={ `/locations/create` }>
+              Add location
+            </Link>
           </div>
         </div>
       </div>
