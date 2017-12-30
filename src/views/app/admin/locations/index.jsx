@@ -5,22 +5,24 @@ import Table             from 'bento-service/table';
 import mixin             from 'react-mixin';
 import { History, Link } from 'react-router';
 import ThSort            from '../components/table-th';
+import { GMap }          from 'bento-web';
 
 @mixin.decorate(History)
 class TableIndex extends React.Component {
 
   constructor(...args) {
     super(...args);
-    //self._debug = true;
-    this.table = new Table(this, 'locations', null, '/locations?details=true');
-    //this.table = new Table(this, 'locations', ['car', 'user'], '/locations?details=true');
+    this.table = new Table(this, 'locations', ['address', 'type', 'name'], '/locations?details=true');
+
     this.state = {
+      search : null,
       sort : {
         key   : null,
         order : 'DESC'
       },
       more   : false,
       offset : 0,
+      locations: [],
       icons: {
         "completed": "check",
         "closed": "check",
@@ -40,24 +42,12 @@ class TableIndex extends React.Component {
       sort : {
         key   : 'id',
         order : 'ASC'
-      },
-      searchObj: {
-        order: 'id,DESC'
       }
     });
   }
 
   componentWillUnmount() {
     relay.unsubscribe(this, 'locations');
-  }
-
-
-  reportStatus() {
-    api.get('/status', {}, ( err, data ) => {
-      if (err) {
-        return this.error(err.message);
-      }
-    });
   }
 
   isMobile() {
@@ -67,6 +57,18 @@ class TableIndex extends React.Component {
   redirectToLocation(id) {
     if(this.isMobile()) {
       location.href = '/locations/' + id;
+    }
+  }
+
+  delete(id) {
+    if (confirm("Are you sure you want to delete?")) {
+      api.delete('/locations/'+ id, (error) => {
+        if (error) {
+          throw new Error(error);
+        } else {
+          window.location.reload();
+        }
+      });
     }
   }
 
@@ -93,6 +95,7 @@ class TableIndex extends React.Component {
     }
     return (
       <tr key={ location.id } onClick={()=>this.redirectToLocation(location.id)}>
+        <td className="hidden-sm-down">{ location.id }</td>
         <td className="hidden-sm-down">{ location.type }</td>
         <td className="hidden-sm-down">{ location.name }</td>
         <td className="hidden-sm-down">{ location.address }</td>
@@ -103,8 +106,11 @@ class TableIndex extends React.Component {
         <td className="no-wrap">{ duration }</td>
         <td className="hidden-sm-down">
           <Link to={ `/locations/${ location.id }` }>
-            <i className="material-icons" style={{ marginTop : 5 }}>pageview</i>
+            <i className="material-icons" style={{ marginTop : 5 }}>edit</i>
           </Link>
+          <button className="danger" onClick={ ()=>this.delete(location.id) }>
+            <i className="material-icons" role="delete">delete</i>
+          </button>
         </td>
       </tr>
     );
@@ -115,11 +121,36 @@ class TableIndex extends React.Component {
       <div id="locations-list" className="container">
         <div className="box full">
           <h3>Locations</h3>
+          {
+            this.state.locations.length ?
+          <div className="row">
+            <div className="col-xs-12" >
+              <div className="map-dynamic">
+                <GMap
+                    markerIcon = { '/images/map/active-waivecar.svg' }
+                    markers    = { this.state.locations }
+                />
+              </div>
+            </div>
+          </div>
+                :
+                ''
+          }
           <div className="box-content">
+            <Link className="btn btn-icon" to={ `/locations/create` }>
+              Add location
+            </Link>
+            <input
+                type="text"
+                className="box-table-search"
+                ref={(input) => { this.textInput = input; }}
+                placeholder="Enter search text [name, address]"
+                onChange={ (e) => { this.table.search(false, this.textInput.value, this.textInput) }  } />
             <div id="isMobile" className="hidden-sm-down"></div>
             <table className="box-table table-striped">
               <thead>
                 <tr ref="sort">
+                  <ThSort sort="id"     value="ID"     ctx={ this } className="hidden-sm-down" />
                   <ThSort sort="type"     value="Type"     ctx={ this } className="hidden-sm-down" />
                   <ThSort sort="name"     value="Name"    ctx={ this } className="hidden-sm-down" />
                   <ThSort sort="address"  value="Address"  ctx={ this } />
@@ -127,8 +158,16 @@ class TableIndex extends React.Component {
                 </tr>
               </thead>
               <tbody>
+
                 { this.table.index() }
               </tbody>
+              <tfoot>
+                <tr><td>
+                  <Link className="btn btn-icon btn-primary" to={ `/locations/create` }>
+                    Add location
+                  </Link>
+                </td></tr>
+              </tfoot>
             </table>
             {
               this.state.more ?

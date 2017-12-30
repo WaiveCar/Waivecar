@@ -124,6 +124,11 @@ templates.register('app', {
         onEnter   : policies.isAdministrator
       },
       {
+        path      : '/locations',
+        component : require('../../views/app/admin/locations'),
+        onEnter   : policies.isAdministrator
+      },
+      {
         path      : '/locations/create',
         component : require('../../views/app/admin/locations/create'),
         onEnter   : policies.isAdministrator
