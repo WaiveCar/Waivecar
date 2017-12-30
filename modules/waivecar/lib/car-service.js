@@ -755,6 +755,7 @@ module.exports = {
       if (position['lat']) {
         car.latitude  = position['lat'];
         car.longitude = position['lon'];
+        car.hdop = position['hdop'];
         car.distanceSinceLastRead = position['meters_driven_since_last_fix'];
         car.locationQuality       = position['quality'];
         car.calculatedSpeed       = position['speed_over_ground'];

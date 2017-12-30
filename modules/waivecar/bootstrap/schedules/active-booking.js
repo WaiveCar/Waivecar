@@ -118,7 +118,8 @@ var checkBooking = co.wrap(function *(booking) {
   let location = new Location({
     bookingId : booking.id,
     latitude  : car.latitude,
-    longitude : car.longitude
+    longitude : car.longitude,
+    hdop: car.hdop
   });
   yield location.save();
 
