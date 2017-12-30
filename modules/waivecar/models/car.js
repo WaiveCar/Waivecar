@@ -128,11 +128,15 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     },
 
     latitude : {
-      type : Sequelize.DECIMAL(10, 8),
+      type : Sequelize.DECIMAL(10, 8)
     },
 
     longitude : {
-      type : Sequelize.DECIMAL(11, 8),
+      type : Sequelize.DECIMAL(11, 8)
+    },
+
+    hdop : {
+      type : Sequelize.DECIMAL(10, 2)
     },
 
     locationQuality : {

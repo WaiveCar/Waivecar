@@ -24,6 +24,7 @@ let uuid         = require('uuid');
 let _            = require('lodash');
 let geolib    = require('geolib');
 let sequelize = Bento.provider('sequelize');
+let fs        = require('fs');
 
 
 // ### Models
@@ -933,12 +934,13 @@ module.exports = class BookingService extends Service {
      return {
        latitude: location.latitude,
        longitude: location.longitude,
+       accuracy: location.accuracy,
        time: new Date( location.timestamp - payload.appNowTime + now.getTime())
      }
     });
 
     let params = {
-      attributes: ['id', 'latitude', 'longitude', 'created_at'],
+      attributes: ['id', 'latitude', 'longitude', 'hdop', 'created_at'],
       where: { booking_id: id, created_at : { $gt : new Date(now.getTime() - timeWindowWidth)  } },
       order: [ ['created_at', 'asc'] ]
     };
@@ -984,6 +986,20 @@ module.exports = class BookingService extends Service {
       let link = [closestLocations.userLocation.latitude, closestLocations.userLocation.longitude].join(',');
       yield notify.notifyAdmins(`:airplane: Location check failed on ${ booking.link()}. ${ user.link() } is <https://www.google.com/maps/?q=${link} | ${ (0.000621371 * distance).toFixed(2) }mi> from ${car.license}.`, [ 'slack' ], { channel : '#rental-alerts' });
     }
+
+    // save user and car position into a file for research
+    let lastUserPos = userLocations.pop();
+    let lastCarPos = carLocations.pop();
+    let positionInfo = {
+      bookingId: id,
+      userId: user.id,
+      carId: lastCarPos.id,
+      userLocation: lastUserPos,
+      carLocation: lastCarPos,
+      time: new Date()
+    };
+    fs.appendFileSync('/var/log/outgoing/user-gps.txt', JSON.stringify(positionInfo) + '\n');
+
 
     return { isPaired: isPaired };
   }
