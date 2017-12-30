@@ -22,6 +22,23 @@ Bento.Register.Controller('NotificationsController', function(controller) {
     }
   };
 
+  controller.refreshDeviceToken = function *() {
+
+    let deviceToken = this.payload.deviceToken;
+    let user = this.auth.user;
+
+    yield user.update({
+      deviceToken : deviceToken
+    });
+  };
+
+  controller.sendTestPush = function *(to) {
+
+    if (process.env.NODE_ENV !== 'production') {
+      yield notify.sendPushNotification(to, this.query.message);
+    }
+  };
+
   /**
    * Handle an sms notification using provided reason.
    * @param {Object} user
