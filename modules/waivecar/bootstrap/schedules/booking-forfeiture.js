@@ -28,7 +28,9 @@ scheduler.process('booking-forfeiture', function *(job) {
   yield booking.flag('forfeit');
   yield UserLog.addUserEvent(user, 'FORFEIT', booking.id);
 
+
   yield notify.sendTextMessage(job.data.userId, `Hi, unfortunately we've had to make the car available for other users. We're sorry if there was difficulty starting the vehicle. Please call us if there's any questions or concerns.`);
+  yield notify.sendPushNotification(job.data.userId, `Hi, unfortunately we've had to make the car available for other users. We're sorry if there was difficulty starting the vehicle. Please call us if there's any questions or concerns.`);
 
   let adminMessage = `:shoe: ${ user.name() } forfeited ${ car.license }`;
   yield notify.notifyAdmins(adminMessage, [ 'slack' ], { channel : '#rental-alerts' });

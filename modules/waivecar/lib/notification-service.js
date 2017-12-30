@@ -10,6 +10,7 @@ let error       = Bento.Error;
 let config      = Bento.config;
 let log         = Bento.Log;
 let slack       = new Slack();
+let FCM         = require('fcm-node');
 
 let fs          = require('fs');
 
@@ -25,6 +26,8 @@ function log_message(type, what) {
     log.warn(`Failed to write to the log file: ${ err.message }`);
   }
 }
+
+let fcm = new FCM(config.push.serverKey);
 
 module.exports = {
   /**
@@ -54,6 +57,44 @@ module.exports = {
         });
       } catch (err) {
         log.warn(`Failed to send sms to ${ user.name() } > ${ err.message }`);
+      }
+    }
+    return user;
+  },
+
+  *sendPushNotification(query, message) {
+    let user = false;
+    if(Number.isInteger(query) || typeof query === 'string') {
+      user = yield User.findById(query);
+    } else {
+      user = query;
+    }
+    if(!user) {
+      log.warn(`Failed to send sms to user query of ${ query } > ${ err.message }`);
+    }
+
+    log_message('push', {deviceToken: user.deviceToken, text: message});
+
+    if (user.deviceToken) {
+      try {
+
+        fcm.send({
+            to: user.deviceToken,
+            priority: "high",
+            notification: {
+              title: 'Waivecar',
+              body: message,
+              sound: "default"
+            }
+          },
+          function(err, res){
+            if (err) {
+              log.warn(`Failed to send push notification to ${ user.name() } > ${ err.message }`);
+            }
+          }
+        );
+      } catch (err) {
+        log.warn(`Failed to send push notification to ${ user.name() } > ${ err.message }`);
       }
     }
     return user;
