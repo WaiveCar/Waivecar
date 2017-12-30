@@ -60,13 +60,11 @@ class TableIndex extends React.Component {
     }
   }
 
-  delete(id) {
-    if (confirm("Are you sure you want to delete?")) {
-      api.delete('/locations/'+ id, (error) => {
+  delete(location) {
+    if (confirm("Are you sure you want to delete " + location.name + "?")) {
+      api.delete('/locations/'+ location.id, (error) => {
         if (error) {
           throw new Error(error);
-        } else {
-          window.location.reload();
         }
       });
     }
@@ -108,7 +106,7 @@ class TableIndex extends React.Component {
           <Link to={ `/locations/${ location.id }` }>
             <i className="material-icons" style={{ marginTop : 5 }}>edit</i>
           </Link>
-          <button className="danger" onClick={ ()=>this.delete(location.id) }>
+          <button className="danger" onClick={ ()=>this.delete(location) }>
             <i className="material-icons" role="delete">delete</i>
           </button>
         </td>
