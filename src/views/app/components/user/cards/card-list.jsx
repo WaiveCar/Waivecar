@@ -73,9 +73,19 @@ class CardList extends React.Component {
           message : err.message
         });
       }
+
+      let message = '';
+      if (amount === 0) {
+        message = 'Cleared outstanding balance.';
+      } else if (amount < 0) {
+        message = 'Credited $' + -amount;
+      } else {
+        message = 'Charged $' + amount;
+      }
+
       snackbar.notify({
         type    : `success`,
-        message : amount === 0 ? 'Successfully cleared balance.' : 'Credited $' + -amount + ' .'
+        message : message
       });
     });
   }
