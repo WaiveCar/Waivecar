@@ -13,10 +13,6 @@ Bento.Register.Controller('Shop/OrdersController', (controller) => {
     return yield service.create(this.payload, this.auth.user);
   };
 
-  /**
-   * Authorizes an order for a set amount.
-   * @return {Object}
-   */
   controller.authorize = function *() {
     return yield service.authorize(this.payload, this.auth.user);
   };
@@ -30,10 +26,6 @@ Bento.Register.Controller('Shop/OrdersController', (controller) => {
     return yield service.captures(id, this.payload, this.auth.user);
   };
 
-  /**
-   * Returns an indexed array of orders.
-   * @return {Array}
-   */
   controller.index = function *() {
     return yield service.index(this.query, this.auth.user);
   };
