@@ -15,7 +15,8 @@ module.exports = angular.module('app.services').factory('$ride', [
   '$injector',
   'GeofencingService',
   '$distance',
-  function($auth, $data, $state, $message, $interval, $timeout, $q, $injector, GeofencingService, $distance) {
+  '$modal',
+  function($auth, $data, $state, $message, $interval, $timeout, $q, $injector, GeofencingService, $distance, $modal) {
     var $ionicLoading = $injector.get('$ionicLoading');
 
     var service = {};
@@ -194,6 +195,11 @@ module.exports = angular.module('app.services').factory('$ride', [
       }
 
       return $data.resources.bookings.end({ id: service.state.booking.id, data: service.state.parkingDetails }).$promise
+        .then(function(result) {
+          if (!result.isCarReachable) {
+            return pendingEndInstructionDialog();
+          }
+        })
         .then(function() {
           return $data.fetch('bookings');
         })
@@ -202,6 +208,50 @@ module.exports = angular.module('app.services').factory('$ride', [
           $message.error(err);
         });
     };
+
+    function pendingEndInstructionDialog() {
+
+      var instructions =
+        'Hi to end your ride, please complete the following steps!<br/>' +
+
+        '  1.Open the door and get in the car, leaving the door open.<br/>' +
+        '  2.Remove the keys from the glove compartment, press the lock button.<br/>' +
+        '  3.Put the key back in the holder where it belongs.<br/>' +
+        '  4.Please make sure the keys are in the glovebox and get out of the car and close the door.<br/>' +
+        '  5.Please make sure the door is now locked. If not, please try these steps again and remember to keep the door open as you press the lock button.<br/>' +
+        '  6.If there are additional issues, feel free to call us.<br/><br/>' +
+
+        'Press "I\'m done" when you\'ve done these steps to end the ride.';
+
+      var modal;
+      var resolvePromise;
+
+      $modal('result', {
+        icon: 'waivecar-mark',
+        message: instructions,
+        actions: [{
+          className: 'button-dark',
+          text: 'I\'m Done ',
+          handler: function () {
+            modal.remove();
+
+            $ionicLoading.show({
+              template: '<div class="circle-loader"><span>Loading</span></div>'
+            });
+
+            resolvePromise();
+          }
+        }]
+      }).then(function (_modal) {
+        modal = _modal;
+        $ionicLoading.hide();
+        modal.show();
+      });
+
+      return $q(function(resolve){
+        resolvePromise = resolve;
+      });
+    }
 
     // obj is returned by the car and should have a long/lat
     // first and foremost the users' gps is used.
