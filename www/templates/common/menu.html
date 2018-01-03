@@ -1,16 +1,16 @@
 <header class="bar bar-header bar-dark">
   <div class="title">NAVIGATION</div>
   <div class="buttons">
-    <button menu-toggle="right" class="button button-icon icon-svg">
+    <button ng-click="toggleDrawer()" class="button button-icon icon-svg">
       <ng-include src="'/img/close-icon.svg'" alt="close"></ng-include>
     </button>
   </div>
 </header>
 
-<ion-content has-header="true" padding="true" class="ion-content--center main-menu dark-bg" menu-close="true" ng-controller="MenuController as menu">
+<ion-content has-header="true" padding="true" class="ion-content--center main-menu dark-bg" ng-controller="MenuController as menu">
 
   <div class="text-center">
-    <a ui-sref="cars" ng-if="!$data.active.bookings || $data.active.bookings.status === 'completed'">
+    <a ng-click="menu.goto('cars')" ui-sref="cars" ng-if="!$data.active.bookings || $data.active.bookings.status === 'completed'">
       <ng-include class="menu-item-image" src="'/img/find-cars.svg'" alt=""></ng-include>
       <span class="button-icon-label">Find Cars</span>
     </a>
@@ -21,27 +21,27 @@
   </div>
 
   <div class="text-center">
-    <a ui-sref="users-edit">
+    <a ng-click="menu.goto('users-edit')">
       <ng-include class="menu-item-image" src="'/img/account.svg'" alt=""></ng-include>
       <span class="button-icon-label">Account</span>
     </a>
   </div>
 
   <div class="text-center">
-    <a ui-sref="bookings">
+    <a ng-click="menu.goto('bookings')">
       <ng-include class="menu-item-image" src="'/img/past-rides.svg'" alt=""></ng-include>
       <span class="button-icon-label">Past Rides</span>
     </a>
   </div>
 
   <div class="text-center">
-    <a ui-sref="info">
+    <a ng-click="menu.goto('info')">
       <ng-include class="menu-item-image" src="'/img/vision.svg'" alt=""></ng-include>
       <span class="button-icon-label">Info</span>
     </a>
   </div>
   <div class="text-center">
-    <a ui-sref="messages-new">
+    <a ng-click="menu.goto('messages-new')">
       <ng-include class="menu-item-image" src="'/img/contact.svg'" alt=""></ng-include>
       <span class="button-icon-label">Contact</span>
     </a>

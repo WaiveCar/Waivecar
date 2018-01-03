@@ -30,6 +30,7 @@ var paths = {
   ],
   scripts: [
     './www/**/*.js',
+    '!./www/**/ionic.contrib.drawer.js',
     '!./www/js/services/templates.min.js',
     '!./www/lib/**/*.*',
     '!./www/dist/**/*.*',

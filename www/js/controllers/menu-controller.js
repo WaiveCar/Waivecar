@@ -2,7 +2,7 @@
 var angular = require('angular');
 require('../services/auth-service.js');
 
-function MenuController ($scope, $auth, $state, $data) {
+function MenuController ($scope, $auth, $state, $data, $ionicHistory) {
   this.$auth = $auth;
   $scope.$data = $data;
 
@@ -14,11 +14,26 @@ function MenuController ($scope, $auth, $state, $data) {
       ended: 'end-ride'
     };
     if(stateMap[booking.status]) { 
-      $state.go(stateMap[booking.status], {id: booking.id});
-    } else {
-      console.log('UNHANDLED', booking.status);
+      return this.goto(stateMap[booking.status], {id: booking.id});
+    } 
+    console.log('UNHANDLED', booking.status);
+  };
+
+  this.goto = function(args, opt) {
+    if (!opt) {
+      opt = {};
     }
-  }
+    $ionicHistory.nextViewOptions({
+      historyRoot: true
+    });
+
+    $state.go(args, opt, {
+      reload: true,
+      inherit: false,
+      notify: true,
+      location: 'replace'
+    });
+  };
 
   this.logout = function() {
     $auth.logout();
@@ -33,5 +48,6 @@ module.exports =
     '$auth',
     '$state',
     '$data',
+    '$ionicHistory',
     MenuController
   ]);

@@ -110,4 +110,10 @@
     <plugin name="ionic-plugin-keyboard" spec="^2.2.1" />
     <plugin name="cordova-plugin-ble-central" spec="~1.1.4" />
     <plugin name="cordova-plugin-intercom" spec="https://github.com/paladin4ua/intercom-cordova" />
+    <plugin name="cordova-plugin-googlemaps" spec="^2.1.1">
+        <variable name="API_KEY_FOR_ANDROID" value="AIzaSyDuTxwQN4WKCktkzkLTHZSD7EzHvCn3WHs" />
+        <variable name="API_KEY_FOR_IOS" value="AIzaSyCjNzEEetDOi63O7qrD6APLffH0daZIDeQ" />
+        <variable name="LOCATION_WHEN_IN_USE_DESCRIPTION" value="Show your location on the map" />
+        <variable name="LOCATION_ALWAYS_USAGE_DESCRIPTION" value="Trace your location on the map" />
+    </plugin>
 </widget>

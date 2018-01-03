@@ -118,15 +118,16 @@ var run = [
   '$auth',
   '$state',
   'IntercomService',
-  function Run($rootScope, $cordovaKeyboard, $ionicPlatform, $auth, $state, IntercomService) {
+  '$ionicSideMenuDelegate',
+  function Run($rootScope, $cordovaKeyboard, $ionicPlatform, $auth, $state, IntercomService, $ionicSideMenuDelegate) {
     $ionicPlatform.ready(function() {
       if (ionic.Platform.isWebView()) {
         $cordovaKeyboard.hideAccessoryBar(false);
       }
     });
-
     $rootScope.$on('$stateChangeStart', function(event, toState) {
-      var authRequired;
+
+        var authRequired;
       if (toState && _.has(toState, 'data') && _.has(toState.data, 'auth')) {
         authRequired = toState.data.auth;
       }
