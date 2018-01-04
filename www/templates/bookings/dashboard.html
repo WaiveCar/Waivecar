@@ -2,24 +2,9 @@
   <ion-nav-title>
     <page-title class="dark-bg title-plain">{{ ctrl.license }}</page-title>
   </ion-nav-title>
-  <ion-nav-buttons side="right">
-    <button class="button button-icon icon icon-svg" ng-include="'/img/warning-white-icon.svg'" ui-sref="report-problem({id: data.bookings.id})"></button>
-  </ion-nav-buttons>
 
-  <ion-content scroll="false" padding="false" class="gray-bg has-header has-footer">
-    <div class="info-header ride-footer">
-      <div class="info-header-item">
-        <ng-include class="battery icon" src="'/img/battery-darkgrey.svg'"></ng-include>
-        {{ data.cars.charge > 100 ? 100 : data.cars.charge | number:0 }}%
-      </div>
-      <div class="info-header-item">
-        <ng-include src="'/img/clock-grey-icon.svg'" class='icon'></ng-include>
-        {{ ctrl.timeLeft }}
-      </div>
-      <div class="info-header-item item-right">
-        <button type="button" class="button button-small" ng-disabled="ctrl.ending" ng-click="ctrl.endRidePrompt(data.cars.id, data.bookings.id)">End Ride</button>
-      </div>
-    </div>
+  <ion-content scroll="false" padding="false" class="gray-bg has-header has-footer has-ride-footer">
+
 
     <google-map id="map"
                 markers="ctrl.locations"
@@ -30,6 +15,21 @@
     </google-map>
 
   </ion-content>
+
+  <div class="info-header ride-footer">
+    <div class="info-header-item">
+      <ng-include class="battery icon" src="'/img/battery-darkgrey.svg'"></ng-include>
+      {{ data.cars.charge > 100 ? 100 : data.cars.charge | number:0 }}%
+    </div>
+    <div class="info-header-item">
+      <ng-include src="'/img/clock-grey-icon.svg'" class='icon'></ng-include>
+      {{ ctrl.timeLeft }}
+    </div>
+    <div class="info-header-item item-right">
+      <button type="button" class="button button-small" ng-disabled="ctrl.ending" ng-click="ctrl.endRidePrompt(data.cars.id, data.bookings.id)">End Ride</button>
+    </div>
+  </div>
+
   <ion-footer-bar class="no-padding">
     <div class="button-bar">
       <button type="button" class="button button-gray button-lighter" ng-click="ctrl.unlockCar(data.cars.id)"><i class="fa fa-unlock" aria-hidden="true"></i> &nbsp; Unlock</button>

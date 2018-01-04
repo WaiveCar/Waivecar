@@ -148,9 +148,14 @@
     }
   }
 }
+
+.has-footer.has-ride-footer {
+  bottom: 89px;
+}
+
 .ride-footer {
   position: absolute;
-  bottom: 0;
+  bottom: 44px;
   left: 0;
   z-index: 800;
   width: 100%;
