@@ -32,7 +32,7 @@ module.exports = angular.module('app').factory('Cars', [
           id: '@id'
         }
       },
-      _refresh: {
+      refresh: {
         method: 'PUT',
         url: $utils.getCustomRoute('cars/:id/refresh'),
         params: {
@@ -45,9 +45,6 @@ module.exports = angular.module('app').factory('Cars', [
         isArray: true
       }
     }));
-
-    res.refresh = function() {
-    }
 
     res.setup = function(kv) {
       $ble.setFunction('getBle', res.ble);
