@@ -30,11 +30,6 @@ Bento.Register.Controller('Shop/OrdersController', (controller) => {
     return yield service.index(this.query, this.auth.user);
   };
 
-  /**
-   * Returns a order object.
-   * @param  {Number} id
-   * @return {Object}
-   */
   controller.show = function *(id) {
     return yield service.show(id, this.auth.user);
   };
