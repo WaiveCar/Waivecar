@@ -80,6 +80,12 @@ module.exports = angular.module('app').factory('Cars', [
       var done = false;
       var bleHandle = $ble.unlock(params.id, done);
 
+      bleHandle.promise.then(function() {
+        done = true;
+      }).catch(function() {
+        done = false;
+      });
+
       // ble actions usually complete in under 2 seconds,
       // if it hasn't then we do something a bit crazy
       $timeout(function() {
