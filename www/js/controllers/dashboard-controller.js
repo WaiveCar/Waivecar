@@ -65,6 +65,11 @@ function DashboardController ($scope, $rootScope, $injector) {
 
     ctrl.locations = $data.instances.locations;
 
+
+    if ($data.active.cars) {
+      OnLockStateChange($data.active.cars.isLocked);
+    }
+
     var stopLocationWatch = LocationService.watchLocation(function (currentLocation, isInitialCall) {
       if (isInitialCall) {
         ctrl.fitMapBoundsByMarkers = featured(ctrl.locations).concat([currentLocation]);
@@ -167,7 +172,15 @@ function DashboardController ($scope, $rootScope, $injector) {
 
   function OnLockStateChange(isLocked) {
     if (isLocked) {
-      ctrl.locations = $data.instances.locations.concat([$data.active.cars]);
+
+
+      var lockedCarMarker = {
+        type: "locked-car",
+        latitude: $data.active.cars.latitude,
+        longitude: $data.active.cars.longitude
+      };
+
+      ctrl.locations = $data.instances.locations.concat([lockedCarMarker]);
     } else {
       ctrl.locations = $data.instances.locations;
     }

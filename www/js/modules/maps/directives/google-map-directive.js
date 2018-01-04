@@ -635,6 +635,14 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
           anchor: new google.maps.Point(17, 44),
           origin: new google.maps.Point(0, 0)
         };
+      case 'locked-car':
+        return {
+          url: 'img/locked-car.png' ,
+          iconRetinaUrl: 'img/locked-car.png',
+          scaledSize: new google.maps.Size(14, 24),
+          anchor: new google.maps.Point(7, 12),
+          origin: new google.maps.Point(0, 0)
+        };
       case 'location':
         return {
           url: 'img/user-location' + fileExt,
