@@ -18,7 +18,12 @@ function $distance ($rootScope) {
     return _from.distanceTo(_to);
   };
 
-  getDistanceInMeters.fallbackInMeters = function (to, from) {
+  // Most of the code assumes miles
+  function getDistanceInMiles(to, from) {
+    return toMiles(getDistanceInMeters(to, from));
+  }
+
+  getDistanceInMiles.fallbackInMeters = function (to, from) {
     var attempt = getDistanceInMeters(to);
     if (isNaN(attempt)) {
 
@@ -27,16 +32,16 @@ function $distance ($rootScope) {
       //   BUT IT'S ALSO THE EASIEST PLACE.
       $rootScope.currentLocation = from;
 
-      attempt = getDistanceInMiles(to, from);
+      attempt = getDistanceInMeters(to, from);
     }
     return attempt;
   }
 
-  getDistanceInMeters.fallbackInMiles = function (to, from) {
+  getDistanceInMiles.fallbackInMiles = function (to, from) {
     return toMiles(getDistance.fallbackInMeters(to, from));
   };
 
-  return getDistanceInMeters;
+  return getDistanceInMiles;
 }
 
 function toMiles (m) {
