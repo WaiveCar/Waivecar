@@ -578,9 +578,15 @@ module.exports = angular.module('app.services').factory('$ble', [
     }
 
     function poll() {
+      /*
       var average = 0;
       var signalHistory = [];
+      */
 
+      // Most of this code has been commented out because it caused battery drain,
+      // even at a multi-second interval.
+      //
+      // We're trying to be more sensitive to those issues now.
       $interval(function() {
         /*
         if(!_deviceId) {
@@ -598,7 +604,6 @@ module.exports = angular.module('app.services').factory('$ble', [
         if(!_injected.auth || !_injected.auth.me) {
           return;
         }
-        var now = new Date();
         if(!_creds.expire || _creds.expire - new Date() < MINTIME && !_lock.token) {
           // this tries to pull down new tokens --- we try and make sure that we attempt
           // this serially if need be.
@@ -607,10 +612,11 @@ module.exports = angular.module('app.services').factory('$ble', [
           getCredentials(_creds.carId)
             .then(function() { _lock.token = false; })
             .catch(function() { _lock.token = false; });
-        } else if(_creds && _creds.authorized) {
+        } 
+        /*  
+          else if(_creds && _creds.authorized) {
           // We try to find out the status of the car ... this is essentially a poll and there's no indication
           // that this is a bad idea since it's a local btle connection
-          /*
           cis('STATUS_1', function(obj) {
             // This passes up state to the controller if we have it
             if( _injected.ctrl && 
@@ -643,10 +649,8 @@ module.exports = angular.module('app.services').factory('$ble', [
             }
             disconnect();
           });
-          */
         }
 
-        /*
         ble.readRSSI(_deviceId, function(rssi) {
           // Our signal strength has a lot of variance so
           // we average it out in order to make it less jittery.
@@ -659,7 +663,7 @@ module.exports = angular.module('app.services').factory('$ble', [
         });
         */
 
-      }, 20 * 1000);
+      }, 90 * 1000);
     }
 
     _res = {
@@ -667,7 +671,7 @@ module.exports = angular.module('app.services').factory('$ble', [
       immobilize: function(carId, what) { return wrap(carId, what ? 'IMMOBILIZER_LOCK' : 'IMMOBILIZER_UNLOCK'); },
       connect:    connect,
       lock:   function (carId, done) { return wrap(carId, 'CENTRAL_LOCK_CLOSE', done); },
-      unlock: function (carId) { return wrap(carId, 'CENTRAL_LOCK_OPEN'); },
+      unlock: function (carId, done) { return wrap(carId, 'CENTRAL_LOCK_OPEN', done); },
       any: function(carId, what) { return wrap(carId, what); },
       status: getStatus,
       setFunction: setFunction
