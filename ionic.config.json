@@ -1,5 +1,6 @@
 {
   "name": "WaiveCar",
+  "type": "ionic1",
   "app_id": "b3bc80d6",
   "gulpStartupTasks": [
     "sass",
@@ -28,5 +29,9 @@
       "browser": "crosswalk",
       "version": "12.41.296.5"
     }
-  ]
+  ],
+  "integrations": {
+    "cordova": {},
+    "gulp": {}
+  }
 }
