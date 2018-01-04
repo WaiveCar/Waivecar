@@ -358,12 +358,10 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         mapObject.setMarker(markerObj);
       } else {
 
-        points = marker.shape.map(function(point) {
-          return {lat: point[1], lng: point[0] };
-        });
-
         var polygon = new google.maps.Polygon({
-          paths: points,
+          paths: marker.shape.map(function(point) {
+            return {lat: point[1], lng: point[0] };
+          }),
           strokeColor: '#00AA00',
           strokeOpacity: 0.8,
           strokeWeight: 2,
@@ -550,16 +548,19 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     if (!ctrl.beginMarker) {
       promises.beginMarker = ctrl.addMarker(begin);
     } else {
-      ctrl.beginMarker.setPosition(begin);
+      ctrl.beginMarker.update(begin);
     }
 
     if (!ctrl.endMarker) {
       promises.endMarker = ctrl.addMarker(end);
     } else {
-      ctrl.endMarker.setPosition(end);
+      ctrl.endMarker.update(end);
     }
 
-    return $q.all(promises);
+    return $q.all(promises).then( function(result) {
+      ctrl.beginMarker = result.beginMarker;
+      ctrl.endMarker = result.endMarker;
+    });
   };
 
   MapController.prototype.drawRoute = function drawRoute(start, destiny, fitBoundsByRoute) {
@@ -632,6 +633,14 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
           iconRetinaUrl: 'img/charging-waivecar' + fileExt,
           scaledSize: new google.maps.Size(35, 44),
           anchor: new google.maps.Point(17, 44),
+          origin: new google.maps.Point(0, 0)
+        };
+      case 'locked-car':
+        return {
+          url: 'img/locked-car.png' ,
+          iconRetinaUrl: 'img/locked-car.png',
+          scaledSize: new google.maps.Size(14, 24),
+          anchor: new google.maps.Point(7, 12),
           origin: new google.maps.Point(0, 0)
         };
       case 'location':
