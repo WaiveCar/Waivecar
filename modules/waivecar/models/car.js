@@ -135,10 +135,6 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       type : Sequelize.DECIMAL(11, 8)
     },
 
-    hdop : {
-      type : Sequelize.DECIMAL(10, 2)
-    },
-
     locationQuality : {
       type : Sequelize.INTEGER
     },
