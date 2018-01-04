@@ -940,7 +940,7 @@ module.exports = class BookingService extends Service {
     });
 
     let params = {
-      attributes: ['id', 'latitude', 'longitude', 'hdop', 'created_at'],
+      attributes: ['id', 'latitude', 'longitude', /*'hdop', */ 'created_at'],
       where: { booking_id: id, created_at : { $gt : new Date(now.getTime() - timeWindowWidth)  } },
       order: [ ['created_at', 'asc'] ]
     };
