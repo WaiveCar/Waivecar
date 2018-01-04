@@ -27,12 +27,13 @@ Bento.Register.Model('BookingLocation', 'sequelize', function(model, Sequelize) 
     longitude : {
       type      : Sequelize.DECIMAL(11, 8),
       allowNull : false
-    },
+    }/*,
 
     hdop : {
       type      : Sequelize.DECIMAL(10, 2),
       allowNull : false
     }
+    */
   };
 
   model.relations = [
