@@ -274,16 +274,33 @@ module.exports = angular.module('app.services').factory('$ride', [
 
         for(var ix = 0; ix < locationList.length; ix++) {
           var location = locationList[ix];
-           console.log(location, location.name, precedence[location.type], precedence[type]);
-           if(location.radius) {
-            console.log($distance.fallback(location, car) * METERTOFEET, location.radius);
-           }
+          //
+          // There was a bug around 2017-12 (#1038) where it was presumed that the distance function
+          // returned meters but in fact it was miles. To quickly fix the issue, the radius for
+          // locations was changed to be expressed in miles ... as in it went from a number like
+          // "50" to, in this case "0.0031". This logic here is kinda about future proofing. We
+          // want to make sure that we have a coherent codebase that doesn't just convert things
+          // all over the place but we need a transitional bridge because people will be using
+          // the old version of the code when this is deployed (2018-01).
+          //
+          // So if there's a radius and it's a really small number, we'll presume this is in
+          // legacy miles and we'll just figure it out.  Eventually, probably in 2018-04 which
+          // is the future as of this writing, the old version of the app with the bug will have 
+          // been replaced, likely through a forced upgrade and this extra step can be removed.
+          //
+          if(location.radius && location.radius < 0.1) {
+            location.radius *= (3 * 5280);
+          }
+          console.log($distance.fallbackInMeters(location, car), location, location.name, precedence[location.type], precedence[type]);
+          if(location.radius) {
+            console.log($distance.fallbackInMeters(location, car) * METERTOFEET, location.radius);
+          }
           if (precedence[location.type] > precedence[type] && (
-                location.radius && $distance.fallback(location, car) * METERTOFEET < location.radius ||
+                location.radius && $distance.fallbackInMeters(location, car) * METERTOFEET < location.radius ||
                 location.shape && GeofencingService.insideFastCheck(car, location.shape)
               ) 
           ) {
-             console.log("Using " + location.name);
+            console.log("Using " + location.name);
             type = location.type;
           }
         }
