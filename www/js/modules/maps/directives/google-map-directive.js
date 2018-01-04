@@ -639,8 +639,8 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         return {
           url: 'img/locked-car.png' ,
           iconRetinaUrl: 'img/locked-car.png',
-          scaledSize: new google.maps.Size(14, 24),
-          anchor: new google.maps.Point(7, 12),
+          scaledSize: new google.maps.Size(35, 35),
+          anchor: new google.maps.Point(17, 17),
           origin: new google.maps.Point(0, 0)
         };
       case 'location':
