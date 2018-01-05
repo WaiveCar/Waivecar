@@ -4,6 +4,9 @@ ROOT="$( dirname $DIR )"
 . $DIR/common.sh
 
 apk_version=`cat $ROOT/config.xml | grep -Po "((?<=android-versionCode..)\d*)"`
+git_version=`git describe`
+now=`date +%s`
+echo $now $apk_version $git_version >> .release-history
 #clean_build
 
 set -e
