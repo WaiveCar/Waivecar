@@ -1159,13 +1159,17 @@ module.exports = class BookingService extends Service {
    * @return {String}
    */
   static *getAddress(lat, long) {
-    let res = yield request(`http://maps.googleapis.com/maps/api/geocode/json`, {
-      qs : {
-        latlng : `${ lat },${ long }`
-      }
-    });
-    let body = JSON.parse(res.body);
-    return body.results.length ? body.results[0].formatted_address : null;
+    try { 
+      let res = yield request(`http://maps.googleapis.com/maps/api/geocode/json`, {
+        qs : {
+          latlng : `${ lat },${ long }`
+        }
+      });
+      let body = JSON.parse(res.body);
+      return body.results.length ? body.results[0].formatted_address : null;
+    } catch(ex) {
+      return null;
+    }
   }
 
   /**
