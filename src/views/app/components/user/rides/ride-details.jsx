@@ -16,6 +16,9 @@ class RideDetails extends Component {
     let extraText = false;
     let isExtended = data.flags && data.flags.search(/extended/) !== -1;
 
+    let carName = data.car.make + ' ' + data.car.model + (data.car.year ? ' ' + data.car.year : '');
+    let carImage = data.car.make === 'Chevy' ? "/images/cars/chevy_spark.png" : "/images/cars/ioniq_hyundai_384.png";
+
     if (this.props.duration.hours > 2 && !fee) {
       noFeeText = 'Nothing Paid';
       extraText = <small>Either a card <b>was declined</b> or fees were waived</small>
@@ -68,8 +71,8 @@ class RideDetails extends Component {
             </div>
             <div className="col-md-4 ride-car">
               <div className="ride-car-meta">
-                <img src="/images/cars/chevy_spark.png" />
-                <h3>Chevy Spark EV 2015</h3>
+                <img src={carImage} />
+                <h3>{ carName }</h3>
                 <div>
                   <small>Booking <a href={ '/bookings/' +  id }>#{ id }</a></small><br/>
                   Distance Traveled<br/>

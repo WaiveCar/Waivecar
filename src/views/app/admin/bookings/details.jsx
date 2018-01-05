@@ -14,6 +14,7 @@ module.exports = class RideDetails extends React.Component {
       start : data.details.find(val => val.type === 'start'),
       end   : data.details.find(val => val.type === 'end'),
       fee   : data.payments.reduce((value, payment) => { return value + (payment.amount - payment.refunded); }, 0) / 100,
+      carName:  data.car.make + ' ' + data.car.model + (data.car.year ? ' ' + data.car.year : '')
     };
 
     // ### Duration
@@ -67,7 +68,7 @@ module.exports = class RideDetails extends React.Component {
               </div>
               <div className="col-md-6 ride-car">
                 <div className="ride-car-meta">
-                  <h3>Chevy Spark EV 2015</h3>
+                  <h3>{ ride.carName }</h3>
                   <div>
                     Ride Duration<br/>
                     <strong>
