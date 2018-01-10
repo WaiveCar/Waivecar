@@ -77,11 +77,14 @@ module.exports = angular.module('app').factory('Cars', [
     };
 
     res.unlock = function(params) {
+      var defer = $q.defer();
       var done = false;
       var bleHandle = $ble.unlock(params.id, done);
 
       bleHandle.promise.then(function() {
+        console.log("BTLE successful unlock");
         done = true;
+        return defer.resolve(true);
       }).catch(function() {
         console.log("Hit bt failure");
         done = false;
@@ -97,13 +100,13 @@ module.exports = angular.module('app').factory('Cars', [
             .then(function(txt) {
               console.log("Server unlocked");
               done = true;
-              return bleHandle.resolve(txt);
+              return defer.resolve(txt);
             })
-            .catch(bleHandle.reject);
+            .catch(defer.reject);
         }
       }, 1500);
 
-      return bleHandle.promise;
+      return defer.promise;
     };
     return res;
   }
