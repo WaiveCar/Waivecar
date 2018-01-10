@@ -662,8 +662,8 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         };
       case 'hub':
         return {
-          url: 'img/icon-hub.' + fileExt,
-          iconRetinaUrl: 'img/icon-hub.' + fileExt,
+          url: 'img/icon-hub' + fileExt,
+          iconRetinaUrl: 'img/icon-hub' + fileExt,
           scaledSize: new google.maps.Size(24, 24),
           anchor: new google.maps.Point(12, 12),
           origin: new google.maps.Point(0, 0)
