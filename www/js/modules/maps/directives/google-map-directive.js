@@ -89,7 +89,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     ctrl.drawRouteQueue = [];
 
 
-    ctrl.invokeOnMapReady(function() {
+    ctrl.invokeOnMapReady($scope, function() {
 
       if (useCordova()) {
         $rootScope.$on('mainMenuStateChange', function (event, data) {
@@ -193,11 +193,13 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     };
   }
 
-  MapController.prototype.invokeOnMapReady = function invokeOnMapReady(readyHandler) {
+  MapController.prototype.invokeOnMapReady = function invokeOnMapReady($scope,readyHandler) {
     var ctrl = this;
 
     if (useCordova()) {
-      ctrl.map.one(plugin.google.maps.event.MAP_READY, readyHandler);
+      ctrl.map.one(plugin.google.maps.event.MAP_READY, function() {
+        $scope.$apply(readyHandler);        
+      });
     } else {
       readyHandler();
     }
