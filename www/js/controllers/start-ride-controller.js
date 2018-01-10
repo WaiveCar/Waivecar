@@ -38,7 +38,6 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
     });
 
     function start () {
-
       if (ctrl.dirty || ctrl.intDamage || ctrl.extDamage) {
         $state.go('damage-gallery', { id: $stateParams.id, return: 'dashboard' });
       } else {
