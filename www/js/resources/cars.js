@@ -83,6 +83,7 @@ module.exports = angular.module('app').factory('Cars', [
       bleHandle.promise.then(function() {
         done = true;
       }).catch(function() {
+        console.log("Hit bt failure");
         done = false;
       });
 
@@ -94,6 +95,7 @@ module.exports = angular.module('app').factory('Cars', [
           console.log("Partaking in attempt");
           return res._unlock(params).$promise
             .then(function(txt) {
+              console.log("Server unlocked");
               done = true;
               return bleHandle.resolve(txt);
             })
