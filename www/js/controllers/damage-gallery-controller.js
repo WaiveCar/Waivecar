@@ -70,16 +70,36 @@ function DamageGalleryController ($injector, $stateParams) {
       }
     })
     .catch(function (err) {
-      var message = err.message;
-      /*if (err instanceof $window.FileTransferError) {
-        if (err.body) {
-          var error = angular.fromJson(err.body);
-          if (error.message) {
-            message = error.message;
-          }
-        }
-      }*/
-      failModal(message);
+      if (err.type === 'permission-denied') {
+
+        var modal;
+        $modal('result', {
+          //title: 'Extend Reservation?',
+          message: 'Hi! You need to toggle your permissions on in the next screen to take a picture! Thanks"',
+          icon: 'waivecar-mark',
+          actions: [{
+            className: 'button-balanced',
+            text: 'Continue',
+            handler: function () {
+              modal.remove();
+              window.cordova.plugins.settings.open("photos", function() {
+                  console.log('opened settings');
+                },
+                function () {
+                  console.log('failed to open settings');
+                }
+              );
+            }
+          }]
+        })
+        .then(function (_modal) {
+          modal = _modal;
+          modal.show();
+        });
+
+      } else {
+        failModal(err.message);
+      }
     });
   };
 
