@@ -548,21 +548,22 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     };
 
     if (!ctrl.beginMarker) {
-      promises.beginMarker = ctrl.addMarker(begin);
+      promises.beginMarker = ctrl.addMarker(begin).then(function(beginMarker) {
+        ctrl.beginMarker = beginMarker; 
+      });
     } else {
       ctrl.beginMarker.update(begin);
     }
 
     if (!ctrl.endMarker) {
-      promises.endMarker = ctrl.addMarker(end);
+      promises.endMarker = ctrl.addMarker(end).then(function(endMarker) {
+        ctrl.endMarker = endMarker;
+      });
     } else {
       ctrl.endMarker.update(end);
     }
 
-    return $q.all(promises).then( function(result) {
-      ctrl.beginMarker = result.beginMarker;
-      ctrl.endMarker = result.endMarker;
-    });
+    return $q.all(promises);
   };
 
   MapController.prototype.drawRoute = function drawRoute(start, destiny, fitBoundsByRoute) {
