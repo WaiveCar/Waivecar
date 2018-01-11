@@ -403,7 +403,7 @@ module.exports = angular.module('app.services').factory('$ble', [
           connect(_desiredCar, true);
         }
         return fail(errStr);
-     });
+      });
     }
 
     function getCredentials(carId) {
