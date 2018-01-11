@@ -431,7 +431,8 @@ module.exports = angular.module('app.services').factory('$ride', [
               return !_.contains([ 'cancelled', 'completed', 'closed'], b.status);
             });
         }
-        console.log('$ride : init. current: ', current);
+
+        console.log('$ride : init. current: ', current, current ? current.status : false , $state.current.name);
 
         if (current == null) {
           $state.go('cars');
