@@ -15,6 +15,8 @@ Bento.Register.Model('Location', 'sequelize', function(model, Sequelize) {
 
     description : { type : Sequelize.STRING },
 
+    isPublic : { type : Sequelize.BOOLEAN, defaultValue : false },
+
     comments : { type : Sequelize.TEXT() },
 
     latitude : { type : Sequelize.DECIMAL(10, 8), allowNull : false },
@@ -27,7 +29,7 @@ Bento.Register.Model('Location', 'sequelize', function(model, Sequelize) {
     // how americans roll. What a silly system.
     radius : {
       type       : Sequelize.INTEGER,
-      allowNull  : true,
+      allowNull  : true
     },
 
     shape : {
