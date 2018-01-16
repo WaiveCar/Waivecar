@@ -13,27 +13,37 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
   var homebase = $injector.get('homebase');
   var isFirst = true;
 
-  function mapToGoogleLatLong(location) {
-    return new google.maps.LatLng(location.latitude, location.longitude);
+  function MapController() {
+    this._addedMarkers = {
+      location: null,
+      general: []
+    };
   }
 
-  function mapToNativeLatLong(location) {
-    return { lat:location.latitude, lng:location.longitude };
-  }
-
-  function mapToLatLong(location) {
-    return useCordova() ? mapToNativeLatLong(location) : mapToGoogleLatLong(location);
-  }
-
-  function useCordova() {
+  MapController.prototype.useCordova = function() {
+    if (this.staticMap) {
+      return false;
+    }
     return !!window.plugin;
-  }
+  };
 
-  function createGMap(mapElement, center, noscroll) {
+  MapController.prototype.mapToGoogleLatLong = function(location) {
+    return new google.maps.LatLng(location.latitude, location.longitude);
+  };
+
+  MapController.prototype.mapToNativeLatLong = function(location) {
+    return { lat:location.latitude, lng:location.longitude };
+  };
+
+  MapController.prototype.mapToLatLong = function(location) {
+    return this.useCordova() ? this.mapToNativeLatLong(location) : this.mapToGoogleLatLong(location);
+  };
+
+  MapController.prototype.createGMap  = function (mapElement, center, noscroll) {
 
     var mapOptions;
 
-    if (useCordova()) {
+    if (this.useCordova()) {
 
       mapOptions = {
         'mapType': plugin.google.maps.MapTypeId.ROADMAP,
@@ -44,7 +54,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
           'zoom': false
         },
         'camera' : {
-          target: mapToNativeLatLong(center),
+          target: this.mapToNativeLatLong(center),
           zoom: 14
         },
         'preferences': {
@@ -64,26 +74,33 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         mapTypeControl: false,
         zoom: 14,
         fullscreenControl: false,
-        center: mapToGoogleLatLong(center),
+        center: this.mapToGoogleLatLong(center),
         zoomControl: false
       };
+
+      if (this.staticMap) {
+        mapOptions.draggable = false;
+        mapOptions.scrollwheel = false;
+        mapOptions.disableDoubleClickZoom = true;
+      }
 
       if(noscroll) {
         mapOptions.gestureHandling = 'cooperative';
       }
 
-
       return new google.maps.Map(mapElement, mapOptions);
     }
-  }
+  };
 
 
   function link($scope, $elem, attrs, ctrl) {
     var center = ctrl.center ? ctrl.center : ctrl.currentLocation;
     center = center || homebase;
 
+    ctrl.staticMap = !!attrs.static;
 
-    ctrl.map = createGMap( $elem.find('.map-instance')[0], center, attrs.noscroll);
+
+    ctrl.map = ctrl.createGMap( $elem.find('.map-instance')[0], center, attrs.noscroll);
 
     ctrl.updatesQueue = [];
     ctrl.drawRouteQueue = [];
@@ -91,7 +108,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
     ctrl.invokeOnMapReady($scope, function() {
 
-      if (useCordova()) {
+      if (ctrl.useCordova()) {
         $rootScope.$on('mainMenuStateChange', function (event, data) {
           if (data === 'open') {
             ctrl.map.setClickable(false);
@@ -102,36 +119,9 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         });
       }
 
-      /*
-<<<<<<< HEAD
-      }, true),
-      $scope.$watch('map.currentLocation', function (value) {
-        if (value) {
-          // There are some ridiculous jitters in GPS that we do not care about and shouldn't ask the
-          // map to update on.
-          var isMoved = (Math.abs(lastLocation[0] - value.latitude) + Math.abs(lastLocation[1] - value.longitude)) > MOVETHRESHOLD;
-          //console.log('>> map draw', isMoved, (Math.abs(lastLocation[0] - value.latitude) + Math.abs(lastLocation[1] - value.longitude)));
-          if(isMoved) {
-            ctrl.updateLocationMarker(value);
-            lastLocation = [value.latitude, value.longitude];
-          } 
-        }
-      }, true),
-      $scope.$watch('map.fitBoundsByMarkers', function (value) {
-        if (value && isFirst) {
-          isFirst = false;
-          ctrl.mapFitBounds(value);
-        }
-      }),
-      $scope.$watch('map.route', function (value) {
-        if (value && value.destiny) {
-          ctrl.drawRoute(value.start, value.destiny, value.fitBoundsByRoute);
-        }
-      }, true)
-=======
-*/
+
       if ('route' in attrs) {
-        if (useCordova()) {
+        if (ctrl.useCordova()) {
           ctrl.directionsRenderer = createNativeDirectionsRenderer(ctrl.map)
         } else {
           ctrl.directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true, preserveViewport: true});
@@ -186,24 +176,18 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     return (Math.abs(old.latitude - check.latitude) + Math.abs(old.longitude - check.longitude)) > MOVETHRESHOLD;
   }
 
-  function MapController() {
-    this._addedMarkers = {
-      location: null,
-      general: []
-    };
-  }
-
   MapController.prototype.invokeOnMapReady = function invokeOnMapReady($scope,readyHandler) {
     var ctrl = this;
 
-    if (useCordova()) {
+    if (ctrl.useCordova()) {
       ctrl.map.one(plugin.google.maps.event.MAP_READY, function() {
         $scope.$apply(readyHandler);        
       });
     } else {
       readyHandler();
     }
-  }
+  };
+
 
   MapController.prototype.mapFitBounds = function mapFitBounds(markers) {
     var ctrl = this;
@@ -212,10 +196,10 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
       var bounds = useCordova() ? new plugin.google.maps.LatLngBounds() : new google.maps.LatLngBounds();
       markers.forEach(function (marker) {
-        bounds.extend(mapToLatLong(marker));
+        bounds.extend(ctrl.mapToLatLong(marker));
       });
 
-      if (useCordova()) {
+      if (ctrl.useCordova()) {
         //ctrl.map.moveCamera({target: bounds});
       } else {
         ctrl.map.fitBounds(bounds);
@@ -228,7 +212,8 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     return Math.min(2, Math.floor(marker.charge / 33));
   }
 
-  function GeneralMapObject(data) {
+  function GeneralMapObject(mapCtrl, data) {
+    this.mapCtrl = mapCtrl;
     this.data = {latitude:data.latitude, longitude:data.longitude};
     this.marker = null;
     this.zone = null;
@@ -243,7 +228,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
   };
 
   GeneralMapObject.prototype.remove = function() {
-    if (useCordova()) {
+    if (this.mapCtrl.useCordova()) {
       if (this.marker) {
         this.marker.remove();
       }
@@ -274,7 +259,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         onClick(marker.getPosition());
       };
 
-      if (useCordova()) {
+      if (this.mapCtrl.useCordova()) {
         marker.on(plugin.google.maps.event.MARKER_CLICK, clickHandler);
       } else {
         marker.addListener('click', clickHandler);
@@ -284,13 +269,13 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
   GeneralMapObject.prototype.hasMoved = function(data) {
     return hasMoved(this.data, data);
-  }
+  };
 
   GeneralMapObject.prototype.update = function(data) {
     this.data = {latitude:data.latitude, longitude:data.longitude};
 
     if (this.marker) {
-      this.marker.setPosition(mapToLatLong(data));
+      this.marker.setPosition(this.mapCtrl.mapToLatLong(data));
     }
 
     if (this.zone) {
@@ -312,16 +297,16 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     if('charge' in marker) {
       type = 'active-waivecar-' + charge2color(marker);
     }
-    var iconOpt = getIconOptions(type, useCordova() ? '.png' : '.svg');
+    var iconOpt = getIconOptions(type, ctrl.useCordova() ? '.png' : '.svg');
 
-    var mapObject = new GeneralMapObject(marker);
+    var mapObject = new GeneralMapObject(ctrl, marker);
 
-    if (useCordova()) {
+    if (ctrl.useCordova()) {
 
       if (marker.type !== 'zone') {
 
         this.map.addMarker({
-          position: mapToNativeLatLong(marker),
+          position: ctrl.mapToNativeLatLong(marker),
 
           icon: {
             url: 'www/' + iconOpt.url,
@@ -353,7 +338,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         var markerObj = new google.maps.Marker({
           map: this.map,
           animation: google.maps.Animation.DROP,
-          position: mapToGoogleLatLong(marker),
+          position: ctrl.mapToGoogleLatLong(marker),
           icon: iconOpt
         });
 
@@ -389,12 +374,12 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
       if (typeof onMarkerTap == 'function') {
 
         var onClick = function (position) {
-          var zoomLevel = useCordova() ? ctrl.map.getCameraZoom() : ctrl.map.getZoom();
+          var zoomLevel = ctrl.useCordova() ? ctrl.map.getCameraZoom() : ctrl.map.getZoom();
           if (zoomLevel >= 13) {
             onMarkerTap(marker);
           } else {
 
-            if (useCordova()) {
+            if (ctrl.useCordova()) {
               ctrl.map.moveCamera({target: position, zoom : 13});
             } else {
               ctrl.map.setZoom(13);
@@ -569,7 +554,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
   MapController.prototype.drawRoute = function drawRoute(start, destiny, fitBoundsByRoute) {
     var ctrl = this;
 
-    RouteService.getGRoute(mapToGoogleLatLong(start), mapToGoogleLatLong(destiny),
+    RouteService.getGRoute(ctrl.mapToGoogleLatLong(start), ctrl.mapToGoogleLatLong(destiny),
       function (response) {
 
         var route = response.routes[0].legs[0];
@@ -592,7 +577,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         if (fitBoundsByRoute) {
           var bounds = response.routes[0].bounds;
 
-          if (useCordova()) {
+          if (ctrl.useCordova()) {
 
             ctrl.map.moveCamera({target: new plugin.google.maps.LatLngBounds([{
               lat:bounds.getNorthEast().lat(),
