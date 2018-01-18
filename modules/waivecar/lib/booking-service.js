@@ -1203,7 +1203,7 @@ module.exports = class BookingService extends Service {
     if (minutesLapsed <= minTime) {
       throw error.parse({
         code    : 'RECENT_BOOKING',
-        message : 'Sorry! You need to wait ' + Math.ceil(minTime - minutesLapsed) + 'min more to rebook the same WaiveCar. Sharing is caring!'
+        message : 'Sorry! You need to wait ' + Math.max(1, Math.ceil(minTime - minutesLapsed)) + 'min more to rebook the same WaiveCar. Sharing is caring!'
       }, 400);
     }
    

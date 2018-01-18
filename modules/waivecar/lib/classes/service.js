@@ -149,7 +149,7 @@ module.exports = class Service {
     } else if (user.status === 'pending') {
       throw error.parse({
         code    : `BOOKING_PENDING_USER`,
-        message : `You are not yet approved to book a WaiveCar. Please call us at <a href="tel:+18559248355">1-855-WAIVE55</a> to activate your account.`
+        message : `You are not yet approved to book a WaiveCar. Please contact us to activate your account.`
       }, 400);
     }
 
