@@ -238,6 +238,18 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       this.chargeHistory = JSON.stringify(history);
     },
    
+    getRange: function() {
+      if(this.model === "Spark EV") { 
+        return 70;
+      } else {
+        return 135;
+      }
+    },
+
+    milesAvailable: function () {
+      return this.averageCharge() * this.getRange();
+    },
+
     averageCharge : function () {
       let history = this.getChargeHistory();
 
