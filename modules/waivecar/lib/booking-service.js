@@ -835,9 +835,9 @@ module.exports = class BookingService extends Service {
 
     // If car is under 25% make it unavailable after ride is done #514
     // We use the average to make this assessment.
-    if (car.averageCharge() < 25.00 && !isAdmin) {
+    if (car.milesAvailable() < 25.00 && !isAdmin) {
       yield cars.updateAvailabilityAnonymous(car.id, false);
-      yield notify.slack({ text : `:spider: ${ car.info() } unavailable due to charge being under 25%. ${ car.chargeReport() }`
+      yield notify.slack({ text : `:spider: ${ car.info() } unavailable due to charge being under 25mi. ${ car.chargeReport() }`
       }, { channel : '#rental-alerts' });
     } else {
       yield car.available();
@@ -1200,7 +1200,7 @@ module.exports = class BookingService extends Service {
         break;
     }
 
-    if (minutesLapsed <= minTime) {
+    if (minutesLapsed < minTime) {
       throw error.parse({
         code    : 'RECENT_BOOKING',
         message : 'Sorry! You need to wait ' + Math.max(1, Math.ceil(minTime - minutesLapsed)) + 'min more to rebook the same WaiveCar. Sharing is caring!'
