@@ -247,7 +247,8 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     },
 
     milesAvailable: function () {
-      return this.averageCharge() * this.getRange();
+      // average charge is 0-100
+      return (this.averageCharge() * this.getRange()) / 100;
     },
 
     averageCharge : function () {
