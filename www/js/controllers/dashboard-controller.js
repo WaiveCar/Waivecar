@@ -163,7 +163,7 @@ function DashboardController ($scope, $rootScope, $injector) {
         console.log("no find car.");
       });
     }, 1000);
-    ZendriveService.start($session.get('me'), $data.active.bookings.id, $data.active.cars.id);
+    //ZendriveService.start($session.get('me'), $data.active.bookings.id, $data.active.cars.id);
 
     $scope.$watch(function() {
       return $data.active.cars.isLocked

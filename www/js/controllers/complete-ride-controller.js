@@ -34,7 +34,7 @@ module.exports = angular.module('app.controllers').controller('CompleteRideContr
         .then(function(booking) {
           ctrl.booking = booking;
           $ride.setBooking(booking.id);
-          ZendriveService.stop(booking.id);
+          //ZendriveService.stop(booking.id);
 
           var start = _.find(booking.details, { type: 'start' });
           var end = _.find(booking.details, { type: 'end' });
