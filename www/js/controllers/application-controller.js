@@ -71,7 +71,7 @@ function ApplicationController ($rootScope, $scope, $injector) {
         // If the user is in a reservation state (get to your waivecar) and they
         // navigate away and then go to "current ride" it should take them back
         // to the reservation state.
-      } else if(newState === 'started' && (newScreen === 'bookings-active' || lastState === 'created')) {
+      } else if(newState === 'reserved' && (newScreen === 'bookings-active' || lastState === 'created')) {
         $ride.init();
       } else if(newScreen === 'dashboard' && oldScreen === 'end-ride-location') {
         // prevents the transition from being made
