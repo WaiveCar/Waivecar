@@ -231,6 +231,16 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       });
     },
 
+    *setLockCarNotificationTimer(time){
+      queue.scheduler.add('lock-car-notification', {
+        uid   : `booking-${ this.id }`,
+        timer : time.lockCarReminderTimeout,
+        data  : {
+          bookingId : this.id
+        }
+      });
+    },
+
     /**
      * Removes the automatic cancellation of the booking.
      * @return {Void}

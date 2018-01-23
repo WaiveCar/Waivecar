@@ -379,6 +379,17 @@ module.exports = {
       yield LogService.create({carId: id, action: data.isCharging ? Actions.START_CHARGE : Actions.END_CHARGE});
     }
 
+    let carStopped = existingCar.isIgnitionOn && !data.isIgnitionOn;
+
+    if (carStopped) {
+       let booking = yield Booking.findOne({where: {status: 'started', carId: existingCar.id}});
+       if (booking) {
+         yield booking.setLockCarNotificationTimer(config.booking.timers);
+       }
+    }
+
+
+
     yield existingCar.update(data);
 
     relay.emit('cars', {

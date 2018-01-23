@@ -5,6 +5,7 @@ module.exports = function *() {
   if (!Bento.isTesting()) {
     yield require('./schedules/booking-auto-cancel');
     yield require('./schedules/booking-auto-lock');
+    yield require('./schedules/lock-car-reminder');
     yield require('./schedules/booking-free-timer');
     yield require('./schedules/booking-free-timer-expired');
     yield require('./schedules/booking-forfeiture-first-warning');

@@ -49,6 +49,10 @@ module.exports = {
         forfeiture : {
           value : 15*60,
           type  : 'seconds'
+        },
+        lockCarReminderTimeout: {
+          value: 61,
+          type: 'seconds'
         }
       }
     },
