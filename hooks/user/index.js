@@ -164,6 +164,10 @@ hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
     nextUser.phone = phoneFormat(nextUser.phone);
   }
 
+  if (nextUser.tier && !_user.hasAccess('admin')) {
+    delete nextUser.tier;
+  }
+
   if(!_user.hasAccess('admin')) {
     if ( (nextUser.lastName && nextUser.firstName) &&
          (nextUser.lastName != prevUser.lastName || nextUser.firstName != prevUser.firstName)
