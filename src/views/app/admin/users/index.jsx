@@ -54,6 +54,7 @@ class UsersListView extends React.Component {
         <td>{ user.firstName } { user.lastName }</td>
         <td className="hidden-sm-down">{ user.email }</td>
         <td className="hidden-sm-down">{ user.role.title }</td>
+        <td className="hidden-sm-down">{ user.tier }</td>
         <td>{ user.status }</td>
         <td>
           <Link to={ `/users/${ user.id }` }>
@@ -101,6 +102,7 @@ class UsersListView extends React.Component {
                   <ThSort sort="firstName"   value="Name"        ctx={ this } />
                   <ThSort sort="email"       value="Email"       ctx={ this } className="hidden-sm-down" />
                   <ThSort sort="role.title"  value="Role"        ctx={ this } className="hidden-sm-down" />
+                  <ThSort sort="tier"        value="Tier"        ctx={ this } className="hidden-sm-down" />
                   <ThSort sort="status"      value="Status"      ctx={ this } className="hidden-sm-down" />
                   <th></th>
                 </tr>

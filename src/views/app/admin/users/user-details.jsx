@@ -298,6 +298,13 @@ module.exports = class UserDetails extends React.Component {
                 </FormInput>
               </div>
 
+              <div className="form-group row">
+                <FormInput className="col-md-6 bento-form-input">
+                  <label>User Tier</label>
+                  <input type="number" min="0" max="127" name="tier" className="form-control" defaultValue={ user.tier } required />
+                </FormInput>
+              </div>
+
               <div className="form-group">
                 <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Account Status</label>
                 <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
