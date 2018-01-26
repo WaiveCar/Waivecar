@@ -1,5 +1,6 @@
 'use strict';
 var angular = require('angular');
+var moment = require('moment');
 require('angular-ui-router');
 require('../services/auth-service');
 require('../services/data-service');
@@ -38,6 +39,9 @@ function LicenseController($injector, $stateParams){
   this.submit = function(form){
     if (form.$invalid){
       return $message.error('Please fix form errors and try again.');
+    }
+    if (moment().diff(moment(this.license.expirationDate, 'MM/DD/YYYY')) > 0){
+      return $message.error('Whoa! Looks like your license is expired already. WaiveCar requires a current and valid drivers license.');
     }
 
     return this.license.$create()

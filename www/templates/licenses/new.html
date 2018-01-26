@@ -31,6 +31,11 @@
         </label>
 
         <label class="item item-input">
+          <span class="input-label">License expiration date</span>
+          <input name="expirationDate" type="text" value="" placeholder="MM/DD/YYYY" required ng-model="licenseCtrl.license.expirationDate">
+        </label>
+
+        <label class="item item-input">
           <span class="input-label">Date Of Birth</span>
           <input name="birthDate" type="text" value="" placeholder="MM/DD/YYYY" required ng-model="licenseCtrl.license.birthDate">
         </label>
@@ -41,6 +46,9 @@
           </div>
           <div ng-messages="form.state.$error" ng-if="form.$submitted">
             <div ng-message="required">License State is required</div>
+          </div>
+          <div ng-messages="form.expirationDate.$error" ng-if="form.$submitted">
+            <div ng-message="required">License expiration date is required</div>
           </div>
           <div ng-messages="form.birthDate.$error" ng-if="form.$submitted">
             <div ng-message="required">Date Of Birth is required</div>
