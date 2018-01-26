@@ -313,6 +313,9 @@ module.exports = [
         resolve: {
           cars: ['$data', function ($data) {
             return $data.initialize('cars');
+          }],
+          locations: ['$data', function ($data) {
+            return $data.initialize('locations');
           }]
         }
       })

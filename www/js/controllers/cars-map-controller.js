@@ -12,12 +12,12 @@ module.exports = angular.module('app.controllers').controller('CarsMapController
   '$injector',
   '$data',
   'cars',
+  'locations',
   '$modal',
-  'homebase',
   CarsMapController
 ]);
 
-function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $modal, homebase) {
+function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, locations, $modal) {
   var $distance = $injector.get('$distance');
   var LocationService = $injector.get('LocationService');
   // the accuracy should be within this amount of meters to show the Bummer dialog
@@ -111,6 +111,10 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
   }
 
   function prepareCars(items) {
+    var homebase = locations.filter(function(location){
+     return location.type === 'homebase';
+    })[0];
+
     var tempItems = _.partition(items, function (item) {
       var miles = $distance(item, homebase);
       var yards = miles * 1760;
@@ -139,7 +143,7 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
 
   function getMarkersToFitBoundBy(all, currentLocation) {
     var fitBoundsMarkers = all.slice();
- 
+
     if (currentLocation) {
       fitBoundsMarkers.push(currentLocation);
     }
