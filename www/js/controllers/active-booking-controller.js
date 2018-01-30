@@ -89,7 +89,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   }
 
   function showExpired() {
-    return showFailure('Booking is expired', 'You booking is expired', { 
+    return showFailure('Booking is expired', 'You booking is expired', {
       cb: function() {
         $state.go('cars');
       }
@@ -115,7 +115,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     if (expired) {
       if($data.active.bookings) {
         if(!ctrl.isExtended && $data.active.bookings.flags && $data.active.bookings.flags.search(/exten/) !== -1) {
-          // A perhaps bad idea on my part (cjm) ... I swap out 
+          // A perhaps bad idea on my part (cjm) ... I swap out
           // the word 'extension' for 'extended' when the extended
           // time happens ... as a boolean.  That's also the
           // test case to see if it was extended at all.  So
@@ -123,7 +123,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
           expired = moment($data.active.bookings.createdAt).add(25, 'm');
           ctrl.isExtended = true;
         }
-      } 
+      }
       // if we are in the future then the answer is 0.
       if (moment().diff(expired) > 0) {
         console.log(expired, moment().diff(expired));
@@ -277,7 +277,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
 
     $modal('result', {
       title: 'You\'re In Reach',
-      message: 'Now you can unlock your WaiveCar!',
+      message: 'Now you can unlock your WaiveCar!\nPlease note that there\'s a brief survey with the ionics after the first three rides.',
       icon: 'check-icon',
       actions: [{
         className: 'button-balanced',
@@ -342,7 +342,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   ctrl.startIfBleFound = function() {
     $ionicLoading.show();
     var res = $data.resources.cars.connect({id: this.car.id});
-     
+
     res.then(function(lll) {
         $ionicLoading.hide();
         showUnlock();
