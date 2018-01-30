@@ -8,6 +8,7 @@ let Verification = require('./onfido');
 let resource     = 'licenses';
 let moment       = require('moment');
 let notify       = Bento.module('waivecar/lib/notification-service');
+let redis        = require('../../waivecar/lib//redis-service');
 
 module.exports = class LicenseService extends Service {
 
@@ -19,6 +20,14 @@ module.exports = class LicenseService extends Service {
    */
   static *store(data, _user) {
     let user = yield this.getUser(data.userId);
+
+
+    if (!redis.shouldProcess('new-license', data.userId)) {
+      throw error.parse({
+        code    : `INVALID_LICENSE`,
+        message : `User already has a registered license`
+      }, 400);
+    }
 
     // Check if user already has license
     if (yield License.findOne({ where : { userId : data.userId } })) {
@@ -122,7 +131,9 @@ module.exports = class LicenseService extends Service {
     }
 
     query.where.userId = _user.id;
-    return yield License.find(query);
+    query.order = [ ['id', 'DESC'] ];
+    var license = yield License.findOne(query);
+    return license ? [license] : [];
   }
 
   /**

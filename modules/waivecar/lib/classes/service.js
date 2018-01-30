@@ -121,7 +121,8 @@ module.exports = class Service {
     let license = yield License.findOne({
       where : {
         userId : user.id
-      }
+      },
+      order: [ ['id', 'desc'] ]
     });
 
     let card = yield Card.findOne({
