@@ -144,12 +144,15 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     }
   }
 
+  var iz = 0;
   function watchForUnlock () {
     if (_locationWatch && _locationWatch.isActive()) {
       return;
     }
+    var iy = iz++; 
 
     _locationWatch = LocationService.watchLocation(function (currentLocation, isInitialCall) {
+      console.log(iy);
       if (isInitialCall) {
         ctrl.route = {
           destiny: $data.active.cars
@@ -315,15 +318,18 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
 
       $data.resources.cars.unlock({ id: $data.active.cars.id });
       $data.resources.bookings.ready({ id: id }).$promise
-      .then(function(data) {
-        return $data.fetch('bookings');
-      })
       .then(function() {
-        IntercomService.emitBookingEvent($data.active.bookings);
         $ionicLoading.hide();
         modal.remove();
         unlocking = false;
         $state.go('start-ride', { id: id });
+      })
+      .then(function(data) {
+        console.log(">>> bbb <<<");
+        return $data.fetch('bookings');
+      })
+      .then(function() {
+        IntercomService.emitBookingEvent($data.active.bookings);
       })
       .catch(function(err) {
         $ionicLoading.hide();
@@ -341,8 +347,10 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
 
   ctrl.startIfBleFound = function() {
     $ionicLoading.show();
-    var res = $data.resources.cars.connect({id: this.car.id});
-
+    var res = $data.resources.cars.connect({id: this.car.id}).catch(function() {
+      console.log("unable to connect");
+    });
+     
     res.then(function(lll) {
         $ionicLoading.hide();
         showUnlock();

@@ -424,6 +424,7 @@ module.exports = angular.module('app.services').factory('$ride', [
 
       service.setState();
       $data.initialize('bookings').then(function(bookings) {
+        console.log("<<< aaa >>>");
         if(!current) {
           current = _(bookings)
             .filter({userId: $auth.me.id})
@@ -441,6 +442,7 @@ module.exports = angular.module('app.services').factory('$ride', [
         }
         service.setBooking(current.id);
         $data.activate('bookings', current.id).then(function() {
+          console.log("<<< here >>>");
           $data.activate('cars', current.carId).then(function() {
             service.isInitialized = true;
             service.setCheck();
