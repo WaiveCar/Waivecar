@@ -13,16 +13,18 @@ module.exports = angular.module('app.controllers').controller('CompleteRideContr
   '$injector',
   function ($scope, $stateParams, $state, $ride, $data, $injector) {
 
+    var $modal = $injector.get('$modal');
+
     $scope.service = $ride;
     var ctrl = this;
-    ctrl.dirty = false;
-    ctrl.damage = false;
-    ctrl.tickets = false;
+    ctrl.dirty = true;
+    ctrl.damage = true;
+    ctrl.tickets = true;
     ctrl.data = $data.active;
 
     ctrl.init = init;
     ctrl.toggle = toggle;
-    ctrl.complete = complete;
+    ctrl.onComplete = onComplete;
     ctrl.reportProblem = reportProblem;
 
     ctrl.init();
@@ -65,6 +67,37 @@ module.exports = angular.module('app.controllers').controller('CompleteRideContr
 
     function toggle(field) {
       this[field] = !this[field];
+    }
+
+    function showNote() {
+      var modal;
+      $modal('result', {
+        title: 'Please Note',
+        message: 'I am reporting this car has no known damage. If the next user reports damage that I missed, I will be held responsible for it.',
+        icon: 'x-icon',
+        actions: [{
+          className: 'button-balanced',
+          text: 'I Understand',
+          handler: function () {
+            modal.remove();
+            complete();
+          }
+        }, {
+          className: 'button-dark',
+          text: 'I\'ll Take another look',
+          handler: function () {
+            modal.remove();
+          }
+        }]
+      })
+        .then(function (_modal) {
+          modal = _modal;
+          modal.show();
+        });
+    }
+
+    function onComplete() {
+      showNote();
     }
 
     function complete() {
