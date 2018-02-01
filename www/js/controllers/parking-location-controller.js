@@ -129,10 +129,12 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
       .then(function (result) {
         if (result && Array.isArray(result)) result = result[0];
 
-        result.style = {
-          'background-image': 'url(' + $settings.uri.api + '/file/' + result.id + ')'
-        };
-        ctrl.street.streetSignImage = result;
+        if (result) {
+          result.style = {
+            'background-image': 'url(' + $settings.uri.api + '/file/' + result.id + ')'
+          };
+          ctrl.street.streetSignImage = result;
+        }
       })
       .catch(function (err) {
         var message = err.message;

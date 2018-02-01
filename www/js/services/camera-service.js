@@ -42,8 +42,8 @@ module.exports = angular.module('app.services').factory('CameraService', [
 
       return $cordovaCamera.getPicture(options).catch(function(err) {
 
-        if (Date.now() - runTime > 100) {
-          return q.reject(err);
+        if (Date.now() - runTime > 400) {
+          return $q.reject(err);
         }
 
         return $q.reject({ type : 'permission-denied'});

@@ -62,8 +62,9 @@ function VerifyIdController($injector, $stateParams, $scope, $settings, $window,
     })
       .then(function (result) {
         if (result && Array.isArray(result)) result = result[0];
-
-        ctrl.imageMap[what] = $settings.uri.api + '/file/' + result.id;
+        if (result) {
+          ctrl.imageMap[what] = $settings.uri.api + '/file/' + result.id;
+        }
       })
       .catch(function (err) {
         var message = err.message;
