@@ -70,16 +70,7 @@ function DamageGalleryController ($injector, $stateParams) {
       }
     })
     .catch(function (err) {
-      var message = err.message;
-      /*if (err instanceof $window.FileTransferError) {
-        if (err.body) {
-          var error = angular.fromJson(err.body);
-          if (error.message) {
-            message = error.message;
-          }
-        }
-      }*/
-      failModal(message);
+      failModal(err.message);
     });
   };
 

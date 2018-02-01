@@ -18,7 +18,7 @@ module.exports = angular.module('app.services').factory('CameraService', [
 
     function getPicture(width, height, fromLibrary) {
       if (!$window.Camera) {
-        return $q.reject('This feature works only on mobile');
+        return $q.reject({ message: 'This feature works only on mobile'});
       }
 
       var options = {
@@ -38,7 +38,16 @@ module.exports = angular.module('app.services').factory('CameraService', [
         options.sourceType = $window.Camera.PictureSourceType.CAMERA;
       }
 
-      return $cordovaCamera.getPicture(options);
+      var runTime = Date.now();
+
+      return $cordovaCamera.getPicture(options).catch(function(err) {
+
+        if (Date.now() - runTime > 400) {
+          return $q.reject(err);
+        }
+
+        return $q.reject({ type : 'permission-denied'});
+      });
     }
 
     function pickFile (width, height) {

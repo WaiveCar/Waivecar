@@ -46,7 +46,31 @@ function uploadImageFactory ($injector) {
         if (source === 'library') {
           return CameraService.pickFile();
         } else if (source === 'camera') {
-          return CameraService.getPicture();
+          return CameraService.getPicture().catch(function (err) {
+            if (err.type === 'permission-denied') {
+              console.log(err);
+
+              var modal;
+              $modal('result', {
+                message: '<b>We need permissions to use your Camera.</b><br>To turn those on, follow these steps:<ol style="text-align:left;margin:.5em 0 .75em 2.5em;list-style-type:decimal"><li>Tap continue<li>On the next screen, tap Permissions<li>Tap Storage, toggling it to green<li>Tap the back button twice to return to the app</ol>Thanks.',
+                icon: 'waivecar-mark',
+                actions: [{
+                  className: 'button-balanced',
+                  text: 'Continue',
+                  handler: function () {
+                    modal.remove();
+                    window.cordova.plugins.diagnostic.switchToSettings();
+                  }
+                }]
+              })
+              .then(function (_modal) {
+                modal = _modal;
+                modal.show();
+              });
+            } else {
+              return $q.reject(err);
+            }
+          });
         } else {
           return null;
         }
