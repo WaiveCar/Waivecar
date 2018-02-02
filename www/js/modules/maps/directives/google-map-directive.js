@@ -231,15 +231,19 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
   function GeneralMapObject(data) {
     this.data = {latitude:data.latitude, longitude:data.longitude};
     this.marker = null;
-    this.zone = null;
+    this.geometry = null;
   }
 
   GeneralMapObject.prototype.setMarker = function(marker) {
     this.marker = marker;
   };
 
-  GeneralMapObject.prototype.setZone = function(zone) {
-    this.zone = zone;
+  GeneralMapObject.prototype.setZone = function(geometry) {
+    this.geometry = geometry;
+  };
+  
+  GeneralMapObject.prototype.setParking = function(geometry) {
+    this.geometry = geometry;
   };
 
   GeneralMapObject.prototype.remove = function() {
@@ -248,8 +252,8 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         this.marker.remove();
       }
 
-      if (this.zone) {
-        this.zone.remove();
+      if (this.geometry) {
+        this.geometry.remove();
       }
 
     } else {
@@ -258,8 +262,8 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         this.marker.setMap(null);
       }
 
-      if (this.zone) {
-        this.zone.setMap(null);
+      if (this.geometry) {
+        this.geometry.setMap(null);
       }
 
     }
@@ -284,7 +288,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
   GeneralMapObject.prototype.hasMoved = function(data) {
     return hasMoved(this.data, data);
-  }
+  };
 
   GeneralMapObject.prototype.update = function(data) {
     this.data = {latitude:data.latitude, longitude:data.longitude};
@@ -293,13 +297,13 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
       this.marker.setPosition(mapToLatLong(data));
     }
 
-    if (this.zone) {
+    if (this.geometry) {
 
       var points = marker.shape.map(function(point) {
         return {lat: point[1], lng: point[0] };
       });
 
-      this.zone.setPoints(points);
+      this.geometry.setPoints(points);
     }
 
   };
@@ -317,8 +321,32 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     var mapObject = new GeneralMapObject(marker);
 
     if (useCordova()) {
-
-      if (marker.type !== 'zone') {
+  
+      if(marker.type === 'zone') {
+        ctrl.map.addPolygon({
+          points: marker.shape.map(function(point) {
+            return {lat: point[1], lng: point[0] };
+          }),
+          strokeColor: '#00800080',
+          strokeWidth: 2,
+          fillColor: '#00A0281A'
+        }, function (polygon) {
+          mapObject.setZone(polygon);
+          deferred.resolve(mapObject);
+        });
+        
+      } else if(marker.type === 'parking') {
+        ctrl.map.addPolyline({
+          points: marker.shape.map(function(point) {
+            return {lat: point[1], lng: point[0] };
+          }),
+          color: '#00800080',
+          width: 2
+        }, function (polygon) {
+          mapObject.setParking(polygon);
+          deferred.resolve(mapObject);
+        });
+      } else  {
 
         this.map.addMarker({
           position: mapToNativeLatLong(marker),
@@ -333,33 +361,12 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
           mapObject.setMarker(markerObj);
           deferred.resolve(mapObject);
         });
-      } else if(marker.shape) {
-        ctrl.map.addPolygon({
-          points: marker.shape.map(function(point) {
-            return {lat: point[1], lng: point[0] };
-          }),
-          strokeColor: '#00800080',
-          strokeWidth: 2,
-          fillColor: '#00A0281A'
-        }, function (polygon) {
-          mapObject.setZone(polygon);
-          deferred.resolve(mapObject);
-        });
       }
+      
     } else {
 
-      if (marker.type !== 'zone') {
-
-        var markerObj = new google.maps.Marker({
-          map: this.map,
-          animation: google.maps.Animation.DROP,
-          position: mapToGoogleLatLong(marker),
-          icon: iconOpt
-        });
-
-        mapObject.setMarker(markerObj);
-      } else {
-
+      if (marker.type === 'zone') {
+        
         var polygon = new google.maps.Polygon({
           paths: marker.shape.map(function(point) {
             return {lat: point[1], lng: point[0] };
@@ -372,6 +379,30 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         });
         polygon.setMap(this.map);
         mapObject.setZone(polygon);
+        
+      } else if (marker.type === 'parking') {
+        
+        var polyline = new google.maps.Polyline({
+          paths: marker.shape.map(function(point) {
+            return {lat: point[1], lng: point[0] };
+          }),
+          strokeColor: '#00AA00',
+          strokeOpacity: 0.8,
+          strokeWeight: 2
+        });
+        polyline.setMap(this.map);
+        mapObject.setParking(polyline);
+        
+      } else {
+
+        var markerObj = new google.maps.Marker({
+          map: this.map,
+          animation: google.maps.Animation.DROP,
+          position: mapToGoogleLatLong(marker),
+          icon: iconOpt
+        });
+
+        mapObject.setMarker(markerObj);
       }
 
       deferred.resolve(mapObject);
