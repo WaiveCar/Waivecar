@@ -19,6 +19,7 @@ class LocationsIndex extends React.Component {
     this.locationTypes = [
       {value : 'hub', label:'Hub'},
       {value : 'zone', label:'Zone'},
+      {value : 'parking', label:'Parking'},
       {value : 'station', label:'Charging Station'},
       {value : 'valet', label:'Valet'},
       {value : 'homebase', label:'HomeBase'},
