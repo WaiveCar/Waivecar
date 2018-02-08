@@ -3,6 +3,7 @@ var _ = require('lodash');
 var angular = require('angular');
 require('../services/distance-service');
 require('../services/modal-service');
+require('../services/evgo-service');
 require('angular-ui-router');
 
 module.exports = angular.module('app.controllers').controller('CarsMapController', [
@@ -12,20 +13,25 @@ module.exports = angular.module('app.controllers').controller('CarsMapController
   '$injector',
   '$data',
   'cars',
+  'EvgoService',
   '$modal',
   'homebase',
   CarsMapController
 ]);
 
-function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $modal, homebase) {
+function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, chargersService, $modal, homebase) {
   var $distance = $injector.get('$distance');
   var LocationService = $injector.get('LocationService');
+
   // the accuracy should be within this amount of meters to show the Bummer dialog
   var minAccuracyThreshold = 200;
   var modal;
 
+  this.chargers = chargersService.getAvailableChargers();
+
   // First load
   this.all = prepareCars(cars);
+
   this.fitBoundsByMarkers = getMarkersToFitBoundBy(this.all);
 
   ensureAvailableCars(cars);
@@ -139,7 +145,7 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, $
 
   function getMarkersToFitBoundBy(all, currentLocation) {
     var fitBoundsMarkers = all.slice();
- 
+
     if (currentLocation) {
       fitBoundsMarkers.push(currentLocation);
     }

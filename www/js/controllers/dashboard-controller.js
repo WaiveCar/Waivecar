@@ -54,8 +54,8 @@ function DashboardController ($scope, $rootScope, $injector) {
     $ride.openDirections(ctrl.selectedItem, ctrl.selectedItem.name);
   }
 
-  // So there was a bug when this thing wasn't running right ... so 
-  // we need to put it in an interval BUUT sometimes it was so we 
+  // So there was a bug when this thing wasn't running right ... so
+  // we need to put it in an interval BUUT sometimes it was so we
   // need to avoid getting this thing to run multiple times
   var rideServiceReady = $scope.$watch('service.isInitialized', function(isInitialized) {
     if (isInitialized !== true) {
@@ -160,7 +160,7 @@ function DashboardController ($scope, $rootScope, $injector) {
     // These two lines make it crash!!!!!!!!
     $timeout(function() {
       $data.resources.cars.connect({id: $data.active.cars.id}).catch(function(){
-        console.log("no find car.");
+        console.log("can't find car.");
       });
     }, 1000);
     //ZendriveService.start($session.get('me'), $data.active.bookings.id, $data.active.cars.id);

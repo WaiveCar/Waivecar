@@ -4,6 +4,7 @@ require('./socket-service');
 require('../resources/bookings');
 require('../resources/cars');
 require('../resources/locations');
+require('../resources/evgo-chargers');
 require('../resources/users');
 require('../resources/licenses');
 require('../resources/notification');
@@ -36,7 +37,8 @@ module.exports = angular.module('app.services').factory('$data', [
   'Verification',
   'Notifications',
   'Messages',
-  function ($rootScope, $http, $q, $socket, Bookings, Cars, Locations, Users, Licenses, Card, File, Auth, User, Verification, Notifications, Messages) {
+  'Evgo',
+  function ($rootScope, $http, $q, $socket, Bookings, Cars, Locations, Users, Licenses, Card, File, Auth, User, Verification, Notifications, Messages, Evgo) {
 
     var service = {
 
@@ -48,6 +50,7 @@ module.exports = angular.module('app.services').factory('$data', [
         users: Users,
         notification: Notifications,
         messages: Messages,
+        evgo: Evgo,
 
         Card: Card,
         File: File,
