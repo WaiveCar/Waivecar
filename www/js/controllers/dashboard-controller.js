@@ -7,6 +7,7 @@ require('../services/progress-service');
 require('../services/geofencing-service');
 require('../services/notification-service');
 require('../services/zendrive-service');
+require('../services/evgo-service');
 
 function DashboardController ($scope, $rootScope, $injector) {
   var $q = $injector.get('$q');
@@ -23,6 +24,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   var GeofencingService = $injector.get('GeofencingService');
   var ZendriveService = $injector.get('ZendriveService');
   var LocationService = $injector.get('LocationService');
+  var EvgoService = $injector.get('EvgoService');
   var homebase = $injector.get('homebase');
   var $auth = $injector.get('$auth');
 
@@ -168,7 +170,29 @@ function DashboardController ($scope, $rootScope, $injector) {
     $scope.$watch(function() {
       return $data.active.cars.isLocked
     }, OnLockStateChange);
+
+    $scope.$watch(function() {
+      return true;//$data.active.cars.charge < 30
+    }, OnCarChargeStateChange);
+
   }.bind(this));
+
+  function OnCarChargeStateChange(needsCharging) {
+    if (needsCharging){
+      if (ctrl.carChargerLocations) {
+        ctrl.locations = $data.instances.locations.concat(ctrl.carChargerLocations);
+      }
+      else{
+        EvgoService.getAvailableChargers().then(function(chargers){
+          chargers = chargers.map(function(charger){ charger.type = 'evgo-charger'; charger.id = charger.id * 10; return charger;});
+          ctrl.carChargerLocations = chargers;
+          ctrl.locations = $data.instances.locations.concat(ctrl.carChargerLocations);
+        });
+      }
+    } else {
+      ctrl.locations = $data.instances.locations;
+    }
+  }
 
   function OnLockStateChange(isLocked) {
     if (isLocked) {

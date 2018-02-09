@@ -10,10 +10,7 @@ module.exports = angular.module('app.services').factory('EvgoService', [
 
     return {
       getAvailableChargers: function(){
-        $data.resources.evgo.chargers().$promise.then(function(chargers){
-          console.log('evgo call', chargers);
-          return chargers;
-        });
+        return $data.resources.evgo.chargers().$promise;
       }
     };
   }

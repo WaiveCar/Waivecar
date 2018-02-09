@@ -1,6 +1,9 @@
 'use strict';
 var angular = require('angular');
 var _ = require('lodash');
+
+_.contains = _.includes;
+
 var ionic = require('ionic');
 require('./message-service');
 
@@ -74,7 +77,7 @@ module.exports = angular.module('app.services').factory('$ride', [
       } else {
         if(label) {
           append = '(' + encodeURI(label) + ')';
-        } 
+        }
         window.open('geo:0,0?q=' + geocoords + append, '_system');
       }
     }
@@ -257,7 +260,7 @@ module.exports = angular.module('app.services').factory('$ride', [
     // first and foremost the users' gps is used.
     service.canEndHereCheck = function(car) {
       return $data.resources.locations.dropoff().$promise.then(function(locationList) {
-        // We have order precendence here ... 
+        // We have order precendence here ...
         var METERTOFEET = 3.28084;
         var precedence = {
           none: 0,
@@ -285,7 +288,7 @@ module.exports = angular.module('app.services').factory('$ride', [
           //
           // So if there's a radius and it's a really small number, we'll presume this is in
           // legacy miles and we'll just figure it out.  Eventually, probably in 2018-04 which
-          // is the future as of this writing, the old version of the app with the bug will have 
+          // is the future as of this writing, the old version of the app with the bug will have
           // been replaced, likely through a forced upgrade and this extra step can be removed.
           //
           if(location.radius && location.radius < 0.1) {
@@ -298,7 +301,7 @@ module.exports = angular.module('app.services').factory('$ride', [
           if (precedence[location.type] > precedence[type] && (
                 location.radius && $distance.fallbackInMeters(location, car) * METERTOFEET < location.radius ||
                 location.shape && GeofencingService.insideFastCheck(car, location.shape)
-              ) 
+              )
           ) {
             console.log("Using " + location.name);
             type = location.type;

@@ -114,7 +114,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
           if(isMoved) {
             ctrl.updateLocationMarker(value);
             lastLocation = [value.latitude, value.longitude];
-          } 
+          }
         }
       }, true),
       $scope.$watch('map.fitBoundsByMarkers', function (value) {
@@ -198,7 +198,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
     if (useCordova()) {
       ctrl.map.one(plugin.google.maps.event.MAP_READY, function() {
-        $scope.$apply(readyHandler);        
+        $scope.$apply(readyHandler);
       });
     } else {
       readyHandler();
@@ -305,7 +305,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
   };
 
   MapController.prototype.addMarker = function addMarker(marker) {
-    var ctrl = this;   
+    var ctrl = this;
     var deferred = $q.defer();
 
     var type = marker.icon || marker.type;
@@ -549,7 +549,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
     if (!ctrl.beginMarker) {
       promises.beginMarker = ctrl.addMarker(begin).then(function(beginMarker) {
-        ctrl.beginMarker = beginMarker; 
+        ctrl.beginMarker = beginMarker;
       });
     } else {
       ctrl.beginMarker.update(begin);
@@ -654,6 +654,14 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
           anchor: new google.maps.Point(12, 12),
           origin: new google.maps.Point(0, 0)
         };
+      case 'evgo-charger':
+        return {
+          url: 'img/locked-car.png',
+          iconRetinaUrl: 'img/locked-car.png',
+          scaledSize: new google.maps.Size(50, 50),
+          anchor: new google.maps.Point(17, 12),
+          origin: new google.maps.Point(0, 0)
+        };
       case 'dropoff':
         return {
           url: 'img/icon-active-waivecar' + fileExt,
@@ -719,7 +727,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
           }
 
           impl.polyline = polyline;
-          
+
         });
       }
     }
