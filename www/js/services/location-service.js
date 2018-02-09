@@ -137,6 +137,68 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
     }
     return $rootScope.currentLocation;
   }
+  
+  function convertLatLonArrToXY(arr, averageLat) {
+    
+    var toRadians = Math.PI / 180;
+    
+    return {
+      x: arr[0] * toRadians * Math.cos(averageLat * toRadians),
+      y: arr[1] * toRadians
+    };
+  }
+  
+  function getDistanceToLine(point, lineNormal, pointOnLine) {
+    
+    // using line equation  ax + by + c that return distance from point (x, y) to to line
+    // where a = lineNormal.x
+    //       b = lineNormal.y
+    //       c = - lineNormal.x * pointOnLine.x - lineNormal.y * pointOnLine.y
+    
+    return lineNormal.x * point.x + lineNormal.y * point.y
+      - lineNormal.x * pointOnLine.x - lineNormal.y * pointOnLine.y;
+  }
+  
+  function normalize(normal) {
+    var length = Math.sqrt(normal.x * normal.x + normal.y * normal.y);
+    normal.x /= length;
+    normal.y /= length;
+  }
+  
+  // [lng, lat] formatted array
+  this.getDistanceToParkingLine = function(aPolar, bPolar, carPolar) {
+    
+    var averageLat = (aPolar[1] + bPolar[1] + carPolar[1]) / 3;
+    
+    var a = convertLatLonArrToXY(aPolar, averageLat);
+    var b = convertLatLonArrToXY(bPolar, averageLat);
+    var car = convertLatLonArrToXY(carPolar, averageLat);
+    
+    var abNormal = {
+      x: (b.y - a.y),
+      y: (a.x - b.x)
+    };
+    
+    normalize(abNormal);
+    var carNormal = {
+      x: -abNormal.y,
+      y: abNormal.x
+    };
+    
+    var distanceToCar = Math.abs(getDistanceToLine(car, abNormal, a));
+    var distanceToA   = getDistanceToLine(a, carNormal, car);
+    var distanceToB   = getDistanceToLine(b, carNormal, car);
+  
+    // point A and B are on different sides of line going through car if distanceToA and distanceToB have difference sign
+    // thing mean that car is between A and B so distance is distance from car to AB line
+    if (distanceToA * distanceToB < 0) {
+      return distanceToCar * 6.371e6;
+    } else {
+      var distanceToNearestABEnd = Math.min(Math.abs(distanceToA), Math.abs(distanceToB));
+      
+      return Math.max(distanceToCar, distanceToNearestABEnd) * 6.371e6;
+    }
+  }
 }
 
 module.exports = angular.module('app.services').service('LocationService', [

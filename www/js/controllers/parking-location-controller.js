@@ -19,7 +19,9 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
   '$uploadImage',
   'ZendriveService',
   '$message',
-  function($rootScope, $scope, $settings, $window, $state, $stateParams, $ride, $geocoding, $ionicLoading, $modal, $uploadImage, ZendriveService, $message) {
+  '$data',
+  'LocationService',
+  function($rootScope, $scope, $settings, $window, $state, $stateParams, $ride, $geocoding, $ionicLoading, $modal, $uploadImage, ZendriveService, $message, $data, LocationService ) {
     $scope.service = $ride;
     var ctrl = this;
 
@@ -40,6 +42,8 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
       streetMinutes: null,
       streetOvernightRest: false
     };
+    
+    ctrl.overrideStreetRestrictions = false;
 
     // Attach methods
     ctrl.setType = setType;
@@ -157,6 +161,10 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
       if (ctrl.type === 'lot' && !ctrl.street.streetSignImage){
         return submitFailure('You have to make a photo, if you left a car not on parking.');
       }
+      
+      if (!ctrl.overrideStreetRestrictions && checkIsParkingRestricted()) {
+        return parkingRestrictionFailure();
+      }
 
       $ionicLoading.show({
         template: '<div class="circle-loader"><span>Loading</span></div>'
@@ -166,6 +174,101 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
 
       goToEndRide(isNightTime);
 
+    }
+    
+    function dayLess(date1, date2) {
+      
+      if (date1.day < date2.day) {
+        return true;
+      }
+      
+      return timeLess(date1, date2);
+    }
+    
+    function timeLess(date1, date2) {
+      if (date1.hour < date2.hour) {
+        return true;
+      }
+      
+      if (date1.hour > date2.hour) {
+        return false;
+      }
+      
+      return date1.minute <= date2.minute;
+    }
+    
+    function checkTimeRestrictions(restrictions) {
+  
+      var now = moment();
+      var current = {
+        day: now.isoWeekday(),
+        hour: now.hour(),
+        minute: now.minute()
+      };
+      
+      var restricted = false;
+      
+      restrictions.forEach(function (restriction) {
+        var begin = restriction[0];
+        var end = restriction[1];
+        
+        //ALL days case
+        if (begin.day === 0) {
+  
+          if (begin.hour <= end.hour) {
+            if (timeLess(begin,current) && timeLess(current, end)) {
+              restricted = true;
+            }
+          } else {
+            if (timeLess(begin,current) || timeLess(current, end)) {
+              restricted = true;
+            }
+          }
+          
+        } else {
+          if (begin.day <= end.day) {
+            
+            if (dayLess(begin,current) && dayLess(current, end)) {
+              restricted = true;
+            }
+          } else {
+            
+            if (dayLess(begin,current) || dayLess(current, end)) {
+              restricted = true;
+            }
+          }
+        }
+      });
+      
+      return restricted;
+    }
+    
+    function checkIsParkingRestricted() {
+      if (!$rootScope.currentLocation ) {
+        return false;
+      }
+      
+      if (!$data.instances.locations) {
+        return false;
+      }
+      
+      var car = $rootScope.currentLocation;
+      var locations = $data.instances.locations;
+      var hasRestrictions = false;
+      
+      var threshold = 20.0; //20 meters
+  
+      var carLatLngArr = [car.longitude, car.latitude];
+      
+      locations.forEach(function (location) {
+        if (location.type === 'parking') {
+           if (checkTimeRestrictions(location.restrictions) &&  LocationService.getDistanceToParkingLine(location.shape[0], location.shape[1], carLatLngArr) < threshold) {
+             hasRestrictions = true;
+           }
+        }
+      });
+      
+      return hasRestrictions;
     }
 
     function goToEndRide(isNightTime) {
@@ -217,6 +320,35 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
         endRideModal = _modal;
         endRideModal.show();
       });
+    }
+  
+    function parkingRestrictionFailure() {
+      $ionicLoading.hide();
+      var endRideModal;
+    
+      return $modal('result', {
+        icon: 'x-icon',
+        title: 'Looks like there are parking restriction on this street. Please check careful.',
+        actions: [{
+          text: 'I checked. There are no parking restrictions',
+          className: 'button-balanced',
+          handler: function () {
+            ctrl.overrideStreetRestrictions = true;
+            endRideModal.remove();
+          }
+        },{
+          text: 'Ok',
+          className: 'button-dark',
+          handler: function () {
+            endRideModal.remove();
+          }
+        }]
+      })
+        .then(function (_modal) {
+          _modal.show();
+          endRideModal = _modal;
+          endRideModal.show();
+        });
     }
   }
 ]);
