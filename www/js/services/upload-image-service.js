@@ -75,7 +75,13 @@ function uploadImageFactory ($injector) {
           return null;
         }
       })
-      .then(upload(options));
+      .then(upload(options))
+      .catch(function (err) {
+            if (err.type === 'cancel') {
+              return $q.resolve(null);
+            }
+            return $q.reject(err);
+          });
   };
 
   function upload (options) {
