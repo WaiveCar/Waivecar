@@ -17,20 +17,14 @@ Bento.Register.Controller('LogsController', (controller) => {
     return yield service.stats(type);
   };
   
-  /**
-   * Returns an index array of results.
-   * @param  {String} type The type of log we are indexing.
-   * @return {Array}
-   */
+  controller.report = function *(type) {
+    return yield service.report(type);
+  };
+
   controller.index = function *(type) {
     return yield service.index(type, this.query);
   };
 
-  /**
-   * Returns a single log object based on provided type and id.
-   * @param {String} type
-   * @param {Number} id
-   */
   controller.show = function *(type, id) {
     return yield service.getLog(type, id);
   };
