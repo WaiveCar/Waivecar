@@ -67,7 +67,7 @@ var checkBooking = co.wrap(function *(booking) {
 
     if (duration >= 11 * 60 && !booking.isFlagged('11h-warning')) {
       yield booking.flag('11h-warning');
-      yield notify.notifyAdmins(`:cactus: ${ user.name() } has had ${ car.info() } for 11 hours`, [ 'slack' ], { channel : '#rental-alerts' });
+      yield notify.notifyAdmins(`:waning_crescent_moon: ${ user.name() } has had ${ car.info() } for 11 hours`, [ 'slack' ], { channel : '#rental-alerts' });
       yield notify.sendTextMessage(user, config.notification.reasons['NEAR_LIMIT']);
     }
 
