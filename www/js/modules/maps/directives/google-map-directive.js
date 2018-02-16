@@ -82,12 +82,10 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     var center = ctrl.center ? ctrl.center : ctrl.currentLocation;
     center = center || homebase;
 
-
     ctrl.map = createGMap( $elem.find('.map-instance')[0], center, attrs.noscroll);
 
     ctrl.updatesQueue = [];
     ctrl.drawRouteQueue = [];
-
 
     ctrl.invokeOnMapReady($scope, function() {
 

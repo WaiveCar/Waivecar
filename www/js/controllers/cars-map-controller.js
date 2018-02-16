@@ -112,7 +112,7 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
 
   function prepareCars(items) {
     var homebase = locations.filter(function(location){
-     return location.type === 'homebase';
+      return location.type === 'homebase';
     })[0];
 
     var tempItems = _.partition(items, function (item) {
