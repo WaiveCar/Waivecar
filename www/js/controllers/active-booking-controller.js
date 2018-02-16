@@ -280,7 +280,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
 
     $modal('result', {
       title: 'You\'re In Reach',
-      message: 'Now you can unlock your WaiveCar!\nPlease note that there\'s a brief survey with the ionics after the first three rides.',
+      message: 'Now you can unlock your WaiveCar!\nPlease note that there\'s a brief survey with the Ioniqs after the first three rides.',
       icon: 'check-icon',
       actions: [{
         className: 'button-balanced',
