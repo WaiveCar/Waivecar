@@ -8,7 +8,7 @@
 
   <ion-content scroll="false" padding="true" class="ion-content--center gray-bg">
 
-    <p id="padding-top padding-bottom">Please fill the form below and we will contact you as soon as possible.</p>
+    <p id="padding-top padding-bottom">Please fill out the form. We will contact you shortly.</p>
 
     <form ng-submit="ctrl.send(ctrl.subject, ctrl.message)" name="form" id="form" class="padding-bottom">
 
@@ -21,29 +21,23 @@
         <span class="input-label">Message</span>
         <textarea style="flex: 1 220px" rows="10" ng-model='ctrl.message'></textarea>
       </label>
+      <button type="submit" form="form" class="button button-balanced button-block">Send</button>
 
     </form>
 
+    <!-- Discourage phone calls
     <p>
     You are free to call us at any time: <a class="icon-left ion-ios7-telephone button-calm" ng-href="tel: +1-855-924-8355">1 (855) WAIVE55</a>.
     </p>
+    -->
 
-    <div class="padding-top">
+    <button type="button" ui-sref="info-insurance" class="button button-dark button-block">VIEW INSURANCE INFORMATION</button>
+    <p>Live chat is available during business hours. Tap the green circle to get started.</p>
+
+    <div>
       <a onclick="window.open('https://www.facebook.com/waivecar', '_system', 'location=yes')"><img class="social-icon" src="img/facebook-icon.svg" /></a>
       <a onclick="window.open('https://twitter.com/waivecar', '_system', 'location=yes')"><img class="social-icon" src="img/twitter-icon.svg" /></a>
     </div>
-
-    <button type="button" ui-sref="info-insurance" class="button button-dark button-block">VIEW INSURANCE INFORMATION</button>
-
   </ion-content>
-
-  <ion-footer-bar class="no-padding">
-    <div class="button-bar">
-      <!-- <button type="button" class="button button-gray" go-back>Cancel</button> -->
-      <button type="submit" form="form" class="button button-balanced">Send</button>
-
-
-    </div>
-  </ion-footer-bar>
 
 </ion-view>
