@@ -484,7 +484,10 @@ module.exports = [
         // 34-Contact
         url: '/messages/new',
         templateUrl: '/templates/messages/new.html',
-        controller: 'MessageController as ctrl'
+        controller: 'MessageController as ctrl',
+        data: {
+          intercom: true
+        }
       })
       .state('messages-sent', {
         // 35-Message-confirmation
