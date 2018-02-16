@@ -99,12 +99,10 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
     ctrl.staticMap = !!attrs.static;
 
-
     ctrl.map = ctrl.createGMap( $elem.find('.map-instance')[0], center, attrs.noscroll);
 
     ctrl.updatesQueue = [];
     ctrl.drawRouteQueue = [];
-
 
     ctrl.invokeOnMapReady($scope, function() {
 

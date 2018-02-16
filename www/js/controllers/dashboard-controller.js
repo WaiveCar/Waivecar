@@ -23,7 +23,6 @@ function DashboardController ($scope, $rootScope, $injector) {
   var GeofencingService = $injector.get('GeofencingService');
   var ZendriveService = $injector.get('ZendriveService');
   var LocationService = $injector.get('LocationService');
-  var homebase = $injector.get('homebase');
   var $auth = $injector.get('$auth');
 
 
