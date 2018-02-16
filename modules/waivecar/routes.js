@@ -107,3 +107,12 @@ Route.get('/actions/current/:type/:id', ['ActionController@getAction']);
 Route.get('/geocoding', [ 'isAuthenticated', 'GeocodingController@show' ]);
 
 Route.get('/dashboard', [ /* 'isAuthenticated', 'isAdmin',*/ 'DashboardController@index' ]);
+
+// ### Tag
+Route.get('/tag', ['TagController@index']);
+Route.post('/tag', ['TagController@create']);
+Route.put('/tag/:id', ['TagController@update']);
+Route.del('/tag/:id', ['TagController@delete']);
+
+Route.post('/tag/:tagId/addToCar/:carId', ['TagController@addToCar']);
+Route.del('/tag/:tagId/removeFromCar/:carId', ['TagController@removeFromCar']);
