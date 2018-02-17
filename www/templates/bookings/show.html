@@ -34,7 +34,7 @@
         </tr>
         <tr class="totalRow">
           <td class="title total">total</td>
-          <td class="value">{{ ctrl.booking.total / 100 | currency:$:0 }}</td>
+          <td class="value">{{ ctrl.booking.total ? (ctrl.booking.total / 100 | currency:$:0) : "&hellip;"}}</td>
         </tr>
       </table>
     </div>
