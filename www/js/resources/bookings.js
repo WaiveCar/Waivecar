@@ -15,7 +15,7 @@ module.exports = angular.module('app').factory('Bookings', [
       },
       query: {
         method: 'GET',
-        url: $utils.getCustomRoute('bookings?type=mine&order=created_at,DESC'),
+        url: $utils.getCustomRoute('bookings?type=mine&order=created_at,DESC&details=true'),
         isArray: true
       },
       completedCount: {
