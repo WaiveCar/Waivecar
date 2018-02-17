@@ -192,7 +192,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
     if (markers && markers.length > 1) {
 
-      var bounds = useCordova() ? new plugin.google.maps.LatLngBounds() : new google.maps.LatLngBounds();
+      var bounds = ctrl.useCordova() ? new plugin.google.maps.LatLngBounds() : new google.maps.LatLngBounds();
       markers.forEach(function (marker) {
         bounds.extend(ctrl.mapToLatLong(marker));
       });
