@@ -41,7 +41,7 @@ function LicenseController($injector, $stateParams){
       return $message.error('Please fix form errors and try again.');
     }
     if (moment().diff(moment(this.license.expirationDate, 'MM/DD/YYYY')) > 0){
-      return $message.error('Whoa! Looks like your license is expired already. WaiveCar requires a current and valid drivers license.');
+      return $message.error("Whoa! Looks like your license is expired already. WaiveCar requires a current and valid driver's license.");
     }
 
     return this.license.$create()
