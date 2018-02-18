@@ -7,7 +7,7 @@ module.exports = class Faq extends Component {
         <div className='row'>
           <div className="col-xs-12 col-md-8 col-md-push-2 faq">
           <h2 id="what-is-waivecar">What is WaiveCar?</h2>
-          <p>WaiveCar is the first ever FREE &amp; 100% electric car sharing program. We are ad-supported so the funds we receive from Advertisers to display their ads on our roof-mounted screens and body wraps allow users to drive our cars FREE for 2 hours then $5.99/hr...MIC DROP.</p>
+          <p>WaiveCar is the first ever FREE &amp; 100% electric car sharing program. We are ad-supported so the funds we receive from advertisers to display their ads on our roof-mounted screens and body wraps allow users to drive our cars FREE for 2 hours then $5.99/hr...MIC DROP.</p>
           <h2 id="signing-up">Signing up</h2>
           <h3 id="what-do-i-need-to-sign-up">What do I need to sign up?</h3>
           <p>All you need to sign up with WaiveCar is a smart phone, credit/debit card, a valid driver's license, and a good driving record. Simply download the app from your app store!</p>
