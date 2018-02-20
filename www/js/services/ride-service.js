@@ -3,7 +3,6 @@ var angular = require('angular');
 var _ = require('lodash');
 
 _.contains = _.includes;
-
 var ionic = require('ionic');
 require('./message-service');
 

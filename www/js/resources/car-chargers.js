@@ -2,14 +2,14 @@
 var angular = require('angular');
 require('../services/utils.js');
 
-module.exports = angular.module('app').factory('Evgo', [
+module.exports = angular.module('app').factory('Chargers', [
   '$resource',
   '$utils',
   function Resource($resource, $utils) {
-    return $resource(null, null, $utils.createResource('evgo', {
-      chargers: {
+    return $resource(null, null, $utils.createResource('chargers', {
+      list: {
         method: 'GET',
-        url: $utils.getCustomRoute('evgo/chargers'),
+        url: $utils.getCustomRoute('chargers/list'),
         isArray: true
       }
     }));

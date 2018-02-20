@@ -7,7 +7,7 @@ require('../services/progress-service');
 require('../services/geofencing-service');
 require('../services/notification-service');
 require('../services/zendrive-service');
-require('../services/evgo-service');
+require('../services/chargers-service');
 
 function DashboardController ($scope, $rootScope, $injector) {
   var $q = $injector.get('$q');
@@ -24,7 +24,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   var GeofencingService = $injector.get('GeofencingService');
   var ZendriveService = $injector.get('ZendriveService');
   var LocationService = $injector.get('LocationService');
-  var EvgoService = $injector.get('EvgoService');
+  var ChargersService = $injector.get('ChargersService');
   var homebase = $injector.get('homebase');
   var $auth = $injector.get('$auth');
 
@@ -183,8 +183,8 @@ function DashboardController ($scope, $rootScope, $injector) {
         ctrl.locations = $data.instances.locations.concat(ctrl.carChargerLocations);
       }
       else{
-        EvgoService.getAvailableChargers().then(function(chargers){
-          chargers = chargers.map(function(charger){ charger.type = 'evgo-charger'; charger.id = charger.id * 10; return charger;});
+        ChargersService.getAvailableChargers().then(function(chargers){
+          chargers = chargers.data.map(function(charger){ charger.type = 'evgo-charger'; charger.id = charger.id * 10; return charger;});
           ctrl.carChargerLocations = chargers;
           ctrl.locations = $data.instances.locations.concat(ctrl.carChargerLocations);
         });
