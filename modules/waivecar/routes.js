@@ -67,7 +67,7 @@ Route.get('/locations/dropoff', 'LocationsController@dropoff');
 
 // ### EVGo chargers
 
-Route.get('/evgo/chargers', 'EvgoController@chargers');
+Route.get('/chargers/list', 'ChargersController@chargers');
 
 // ### Notifications
 

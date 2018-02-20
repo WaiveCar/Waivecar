@@ -64,5 +64,21 @@ module.exports = {
      });
 
      return response.body;
+    },
+
+    *list() {
+        //mocked token
+
+        let response = yield request({
+            url     : 'https://evgotest.driivz.com/externalIncoming/ocpi/cpo/2.1.1/locations',
+            method  : 'GET',
+            headers : {
+                Referer : config.api.uri,
+                Accept  : 'application/json',
+                Authorization: 'Token dsakjrh3447sdfgs32985sd'
+            }
+        });
+
+        return response.body;
     }
 };
