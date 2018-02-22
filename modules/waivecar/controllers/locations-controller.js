@@ -2,6 +2,7 @@
 
 let error = Bento.Error;
 let Location = Bento.model('Location');
+let moment       = require('moment');
 let _ = require('lodash');
 
 Bento.Register.ResourceController('Location', 'LocationsController', function(controller) {
@@ -25,6 +26,10 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
       if(row.shape) {
         row.shape = JSON.parse(row.shape);
       }
+  
+      if(row.restrictions) {
+        row.restrictions = JSON.parse(row.restrictions);
+      }
       return row;
     });
   };
@@ -41,9 +46,53 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
       if(row.shape) {
         row.shape = JSON.parse(row.shape);
       }
+  
+      if(row.restrictions) {
+        row.restrictions = JSON.parse(row.restrictions);
+      }
       return row;
     });
   };
+  
+  function parseDayOfWeek(dayOfWeekStr) {
+    switch (dayOfWeekStr.toUpperCase()) {
+      case 'ALL': return 0;
+      case 'MON': return 1;
+      case 'TUE': return 2;
+      case 'WED': return 3;
+      case 'THU': return 4;
+      case 'FRI': return 5;
+      case 'SAT': return 6;
+      case 'SUN': return 7;
+    }
+  
+    throw error.parse({
+      code    : 'LOCATION_INVALID_RESTRICTION_TIME',
+      message : 'Invalid restriction day of week'
+    }, 400);
+  }
+  
+  function parseRestrictions(restrictionsStr) {
+    return restrictionsStr.split('\n').map((row) => {
+      return row.split('-').map(timeStr => {
+        let dayOfWeek = parseDayOfWeek(timeStr.substring(0, 3));
+        let time = moment(timeStr.substring(3), 'hh:mmA');
+        
+        if (!time.isValid()) {
+          throw error.parse({
+            code    : 'LOCATION_INVALID_RESTRICTION_TIME',
+            message : 'Invalid restriction time format'
+          }, 400);
+        }
+        
+        return {
+          day: dayOfWeek,
+          hour: time.hour(),
+          minute: time.minute()
+        }
+      });
+    });
+  }
 
   controller.create = function *() {
     // we presume that there's a newline delineated blob of
@@ -57,6 +106,10 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
         }
       });
       this.payload.shape = JSON.stringify(polygon);
+    }
+    
+    if (this.payload.restrictions) {
+      this.payload.restrictions =  JSON.stringify(parseRestrictions(this.payload.restrictions));
     }
 
     let model = new Location(this.payload);
