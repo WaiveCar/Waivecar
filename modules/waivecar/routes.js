@@ -108,11 +108,14 @@ Route.get('/geocoding', [ 'isAuthenticated', 'GeocodingController@show' ]);
 
 Route.get('/dashboard', [ /* 'isAuthenticated', 'isAdmin',*/ 'DashboardController@index' ]);
 
-// ### Tag
-Route.get('/tag', ['TagController@index']);
-Route.post('/tag', ['TagController@create']);
-Route.put('/tag/:id', ['TagController@update']);
-Route.del('/tag/:id', ['TagController@delete']);
+// ### Group
+Route.get('/group', ['GroupController@index']);
+Route.post('/group', ['GroupController@create']);
+Route.put('/group/:id', ['GroupController@update']);
+Route.del('/group/:id', ['GroupController@delete']);
 
-Route.post('/tag/:tagId/addToCar/:carId', ['TagController@addToCar']);
-Route.del('/tag/:tagId/removeFromCar/:carId', ['TagController@removeFromCar']);
+// to delete
+Route.get('/group/:id/cars', ['GroupController@cars']);
+
+Route.post('/group/:groupRoleId/assigncar/:carId', ['GroupController@assignCar']);
+Route.del('/group/:groupRoleId/removecar/:carId', ['GroupController@removeCar']);

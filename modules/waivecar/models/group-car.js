@@ -1,15 +1,15 @@
 'use strict';
 
-Bento.Register.Model('CarTag', 'sequelize', function(model, Sequelize) {
-  model.table = 'car_tags';
+Bento.Register.Model('GroupCar', 'sequelize', function(model, Sequelize) {
+  model.table = 'group_cars';
   
   model.schema = {
     
-    tagId : {
+    groupRoleId : {
       type       : Sequelize.INTEGER,
       allowNull  : false,
       references : {
-        model : 'tags',
+        model : 'group_roles',
         key   : 'id'
       }
     },
@@ -26,9 +26,11 @@ Bento.Register.Model('CarTag', 'sequelize', function(model, Sequelize) {
   };
   
   model.relations = [
-    'Tag',
-    function relations(Tag) {
-      this.belongsTo(Tag, { as : 'tag', foreignKey : 'tagId' });
+    'GroupRole',
+    'Car',
+    function relations(GroupRole, Car) {
+      this.belongsTo(GroupRole, { as : 'group_roles', foreignKey : 'groupRoleId' });
+      this.belongsTo(Car,       { as : 'car',        foreignKey : 'carId'       });
     }
   ];
   
