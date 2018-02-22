@@ -34,6 +34,16 @@ Bento.Register.Model('Location', 'sequelize', function(model, Sequelize) {
       type       : Sequelize.STRING,
       allowNull  : true
     },
+  
+    restrictions : {
+      type       : Sequelize.STRING,
+      allowNull  : true
+    },
+  
+    streetType : {
+      type       : Sequelize.STRING,
+      allowNull  : true
+    },
 
     status : {
       type : Sequelize.ENUM(
