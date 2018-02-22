@@ -17,8 +17,8 @@ Bento.Register.Controller('LogsController', (controller) => {
     return yield service.stats(type);
   };
   
-  controller.report = function *(type) {
-    return yield service.report(type);
+  controller.report = function *(year_month, type) {
+    return yield service.report(year_month, type);
   };
 
   controller.index = function *(type) {

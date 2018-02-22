@@ -34,8 +34,8 @@ $id_map = [];
 function id2car($id) {
   global $id_map;
   if(!isset($id_map[$id])) {
-    $row = one("select license_used from cars where id='$id'");
-    $id_map[$id] = $row['license_used'];
+    $row = one("select license from cars where id='$id'");
+    $id_map[$id] = $row['license'];
   }
   return $id_map[$id];
 }

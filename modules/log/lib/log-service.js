@@ -7,11 +7,15 @@ let ErrorLog    = Bento.model('ErrorLog');
 let EventLog    = Bento.model('EventLog');
 let Booking     = Bento.model('Booking');
 let Log         = Bento.model('Log');
+let Location    = Bento.model('BookingLocation');
+let sequelize   = Bento.provider('sequelize');
+let GroupUser   = Bento.model('GroupUser');
 let hooks       = Bento.Hooks;
 let error       = Bento.Error;
 let logs        = Bento.Log;
 let _           = require('lodash');
 let CarService  = require('../../waivecar/lib/car-service');
+
 
 module.exports = class LogService {
 
@@ -257,6 +261,155 @@ module.exports = class LogService {
     return table.concat(kv).map(function(row) { 
       return row.join(',');
     }).join('\n');
+  }
+
+  static *report(year_month, type){
+    //
+    // Total number of rides taken/times the vehicle was rented
+    // Total number of drivers
+    // Total miles driven by the fleet
+    // Total impressions from website and app
+    // Any additional metrics they measure and/or think would be interesting
+    // 
+    // fleet members are
+    //
+    // select user_id from group_users where group_role_id > 1; 
+    //
+    let 
+      report = {},
+      // It's *probably* easier if we distribute these records by car
+      bookByCar = {},
+      carOdometer = {},
+      bookBy = {user: {}, fleet: {} },
+      totalDistance = {user: 0, fleet: 0 },
+      totalBookings = {user: 0, fleet: 0},
+      start = {year:0, month:0},
+      end = {year:0, month:0},
+      fleetUserList = yield GroupUser.find({ where: { groupRoleId: { $gt: 1 } } }),
+      licenseMap = yield CarService.id2license();
+
+    fleetUserList = fleetUserList.map((row) => { row.userId });
+
+    let parts = year_month.split('-');
+    if(parts.length == 2) {
+      start.year = parseInt(parts[0], 10);
+      start.month = parseInt(parts[1], 10);
+      end.month = start.month + 1;
+      end.year = start.year;
+      if(end.month > 12) {
+        end.year = start.year + 1;
+        end.month = 1;
+      }
+    }
+      
+    //
+    // IMPORTANT!!
+    //
+    // This is for Hyundai so we
+    // get rid of the cars that are not ioniq.
+    //
+    // IMPORTANT!!
+    //
+    for(var id in licenseMap) {
+      let license = licenseMap[id];
+      if(license.match(/waive1?\d$/i) || license.match(/waive20$/i)) {
+        delete licenseMap[id];
+      }
+    }
+
+    // see http://stackoverflow.com/questions/6273361/mysql-query-to-select-records-with-a-particular-date
+    // for a discussion on the 'best' way to do this.
+    let range = { $between: [`${start.year}-${start.month}-01 00:00:00`, `${end.year}-${end.month}-01 00:00:00`] };
+  
+    // we'll use this query to answer a number of questions.
+    let allBookings = yield Booking.find({
+      where : {
+        status : { $in : [ 'completed', 'closed', 'ended' ] },
+        created_at : range,
+        car_id : { $in : Object.keys(licenseMap) }
+      },
+      order : [ 
+        ['created_at', 'ASC'],
+        ['car_id', 'ASC']
+      ],
+      include : [
+        {
+          model : 'BookingDetails',
+          as    : 'details'
+        }
+      ]
+    });
+
+    if(type === 'points') {
+      
+      let qstr = 'select round(longitude,4) as lng, round(latitude,4) as lat, count(*) as weight ' +
+          'from booking_locations where booking_id in (' + allBookings.map((row) => { return row.id } ) + ') ' + 
+          'group by(concat(lng,lat))';
+
+      return (yield sequelize.query(qstr))[0].map((row) => {
+        return [row.lat, row.lng, row.weight];
+      });
+
+    }
+
+    // These should already be done by date so yeah, that's convenient.
+    allBookings.forEach((row) => {
+      let id = licenseMap[row.carId];
+      let userId = row.userId;
+      let userType = 'user';
+
+      if( ! (id in bookByCar) ) {
+        bookByCar[id] = [];
+        carOdometer[id] = [Number.MAX_VALUE, 0];
+      }
+      bookByCar[id].push(row);
+
+      row.details.forEach((record) => {
+        carOdometer[id][0] = Math.min(record.mileage, carOdometer[id][0]);
+        carOdometer[id][1] = Math.max(record.mileage, carOdometer[id][1]);
+      });
+
+      if( userId in fleetUserList ) {
+        userType = 'fleet';
+      }
+      totalBookings[userType] ++;
+      if( ! (userId in bookBy[userType]) ) {
+        bookBy[userType][userId] = [];
+      }
+      bookBy[userType][userId].push(row);
+
+      if(row.details.length > 1) {
+        totalDistance[userType] += Math.abs(row.details[0].mileage - row.details[1].mileage);
+      }
+    });
+
+    let odometerReading = _.values(carOdometer).reduce((accumulator, row) => {
+        return Math.abs(row[1] - row[0]) + accumulator;
+      }, 0);
+
+    totalDistance.odometer = odometerReading;
+    totalDistance.fleetDerived = odometerReading - totalDistance.user;
+
+    let details = {};
+    for(var id in carOdometer) {
+      details[id] = {
+        start: carOdometer[id][0],
+        end: carOdometer[id][1],
+        bookings: bookByCar[id].length
+      }
+      details[id].distance = details[id].end - details[id].start;
+      details[id].average = details[id].distance / details[id].bookings;
+    }
+
+    return {
+      period: year_month,
+      activeCars: Object.keys(bookByCar),
+      activeCarCount: Object.keys(bookByCar).length,
+      userCount:  Object.keys(bookBy.user).length,
+      numberOfRides: totalBookings,
+      details: details,
+      distance: totalDistance
+    };
   }
 
   static *error(payload) {
