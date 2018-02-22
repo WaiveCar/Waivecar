@@ -20,6 +20,7 @@ class LocationsIndex extends React.Component {
     this.locationTypes = [
       {value : 'hub', label:'Hub'},
       {value : 'zone', label:'Zone'},
+      {value : 'parking', label:'Parking'},
       {value : 'station', label:'Charging Station'},
       {value : 'valet', label:'Valet'},
       {value : 'homebase', label:'HomeBase'},
@@ -154,6 +155,35 @@ class LocationsIndex extends React.Component {
                         <textarea rows="5" placeholder="-118.27366,34.03844,0.0&#10;-118.27272,34.0453,0.0&#10;-118.25838,34.05358,0.0&#10;-118.24843,34.06226,0.0&#10;-118.23641,34.0565,0.0" className="form-control" name="shape" onChange={this.handleInputChange} />
                       </div>
                     </div>
+  
+                    <div className="form-group row">
+                      <div className="col-xs-12 bento-form-input focus">
+                        <label>Parking restrictions</label>
+                        <textarea rows="5" placeholder="MON10:00PM-TUE02:00AM&#10;ALL10:00PM-ALL11:00PM" className="form-control" name="restrictions" onChange={this.handleInputChange} />
+                      </div>
+                    </div>
+                    
+                    <div className="form-group row">
+  
+                      <div className="col-xs-12 ">
+                        <div>Street type</div>
+                        <div className="radio-inline">
+                          <label>
+                            <input type="radio" name="streetType" onChange={this.handleInputChange} value="commercial"/>
+                            Commercial
+                          </label>
+                        </div>
+  
+                        <div className="radio-inline">
+                          <label>
+                            <input type="radio" name="streetType" onChange={this.handleInputChange} value="residential"/>
+                            Residential
+                          </label>
+                        </div>
+                      </div>
+                      
+                    </div>
+                    
                     <div className="form-actions text-center">
                       <div className="btn-group" role="group">
                         <button type="submit" className="btn btn-primary btn-wave" >submit</button>
