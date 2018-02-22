@@ -111,9 +111,16 @@ module.exports = {
    * @param  {Object} _user
    * @return {Array}
    */
-  *carsWithBookings() {
+  *carsWithBookings(_user) {
+    let groupRoleId = _user.groupRole.id;
     let cars = yield Car.find({
-      include: [
+      include: [{
+          model: 'GroupCar',
+          as: 'groupCar',
+          where: {
+            groupRoleId: groupRoleId
+          }
+        },
         { 
           model : 'User',
           as: 'user'
@@ -121,7 +128,9 @@ module.exports = {
         { 
           model : 'Booking',
           as: 'booking',
-          order: [['created_at', 'DESC']],
+          order: [
+            ['created_at', 'DESC']
+          ],
           limit: 1
         }
       ]
