@@ -206,6 +206,7 @@ module.exports = {
 
     // Get all the cars, this is required in both methods.
     let allCars = yield Car.find();
+    let res = [];
 
     //
     // First method, reading the log files from disk. This method is the most accurate we have.
@@ -258,6 +259,9 @@ module.exports = {
           map[row.id] = { now: [ row.totalMileage, row.updatedAt ] };
         });
         startMileage[0].forEach((row) => {
+          if(!(row.car_id in map)) {
+            map[row.car_id] = {};
+          }
           map[row.car_id].start = [ row.mileage, row.created_at ];
         });
         endMileage[0].forEach((row) => {
@@ -268,7 +272,7 @@ module.exports = {
           let record = map[car];
           let distance = 0;
 
-          if(record.start) {
+          if(record && record.start) {
             if(record.end) {
               distance = record.end[0] - record.start[0];
             }
@@ -284,19 +288,22 @@ module.exports = {
       })();
     }
 
-    return allCars.map((row) => {
-      let distance = agg[row.id] || 0;
+    allCars.forEach((row) => {
+      if(row.vin) {
+        let distance = agg[row.id] || 0;
 
-      return {
-        Mileage: distance * 0.621371,
-        VIN: row.vin,
-        'Date': date,
-        license: row.license,
-        id: row.id,
-        // km: distance,
-        // record: row*
+        res.push({
+          Mileage: distance * 0.621371,
+          VIN: row.vin,
+          'Date': date,
+          license: row.license,
+          id: row.id,
+          // km: distance,
+          // record: row*
+        });
       }
     });
+    return res;
   },
 
   *showForCar(carId) {
