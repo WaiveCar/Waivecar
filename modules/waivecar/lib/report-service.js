@@ -12,6 +12,8 @@ let error       = Bento.Error;
 let log         = Bento.Log;
 let notify      = Bento.module('waivecar/lib/notification-service');
 let moment      = require('moment');
+let sequelize = Bento.provider('sequelize');
+let fs        = require('fs');
 
 
 // ### Instances
@@ -187,6 +189,114 @@ module.exports = {
         message : 'Cannot file file ' + id
       }, 400);
     }
+  },
+
+  *showMileage(date) {
+    // we have two methods. The first parses the inverse log, using UTC as the reference point. The second
+    // looks at the historical bookings. The second method chronically underreports and probably won't be
+    // needed unless really historical records are requested.
+    
+    // find what yesterday was and try to be smart about UTC.
+    if(!date) {
+      let yesterday = new Date(new Date() - 86400000);
+
+      // create a YYYY-MM-DD formatted date.
+      date = [1900 + yesterday.getYear(), (101 + yesterday.getMonth()).toString().slice(1), (100 + yesterday.getDate()).toString().slice(1)].join('-'); 
+    }
+
+    // Get all the cars, this is required in both methods.
+    let allCars = yield Car.find();
+
+    //
+    // First method, reading the log files from disk. This method is the most accurate we have.
+    //
+    let agg = (function() {
+      let map = {};
+      ['log.txt.1', 'log.txt'].forEach(function(file) {
+        var data = fs.readFileSync('/var/log/invers/' + file, 'utf8');
+        var startPoint = data.indexOf(date);
+        if(startPoint >= 0) { 
+          var recordListRaw = data.substr(startPoint).split('\n');
+          recordListRaw.forEach(function(row) {
+            if(row.indexOf(date) !== -1) {
+              try {
+                var data = JSON.parse(row);
+                if( !(data.id in map) ) {
+                  map[data.id] = [ data.mileage, 0 ];
+                } else {
+                  map[data.id][1] = data.mileage;
+                }
+              } catch(ex) { }
+            } 
+          });
+        } 
+      });
+      for(var car in map) {
+        map[car] = map[car][1] - map[car][0];
+      }
+      return map;
+    })();
+    
+    // 
+    // Second method, reading the historical database
+    //
+    // if we found nothing then we attempt the second method.
+    if(Object.keys(agg).length === 0) {
+      agg = yield (function*(){
+
+        // find the odometer readings at 3 points.
+        let map = {};
+
+        // the earliest one from yesterday
+        let startMileage = yield sequelize.query(`select bk.car_id as car_id, min(mileage) as mileage, min(bd.created_at) as created_at from booking_details bd join bookings bk on bd.booking_id = bk.id where bd.created_at >= '${date} 00:00:00' and bd.created_at < '${date} 23:59:59' group by bk.car_id order by bk.car_id`);
+
+        // the latest one from yesterday
+        let endMileage = yield sequelize.query(`select bk.car_id as car_id, max(mileage) as mileage, max(bd.created_at) as created_at from booking_details bd join bookings bk on bd.booking_id = bk.id where bd.created_at >= '${date} 00:00:00' and bd.created_at < '${date} 23:59:59' group by bk.car_id order by bk.car_id`);
+
+        // since the allCars list will be comprehensive we use that to key our map
+        allCars.forEach((row) => {
+          map[row.id] = { now: [ row.totalMileage, row.updatedAt ] };
+        });
+        startMileage[0].forEach((row) => {
+          map[row.car_id].start = [ row.mileage, row.created_at ];
+        });
+        endMileage[0].forEach((row) => {
+          map[row.car_id].end = [ row.mileage, row.created_at ];
+        });
+
+        for(var car in map) {
+          let record = map[car];
+          let distance = 0;
+
+          if(record.start) {
+            if(record.end) {
+              distance = record.end[0] - record.start[0];
+            }
+            if(!distance && record.now) {
+              distance = record.now - record.start[0];
+            }
+          }
+
+          map[car] = distance;
+        }
+        return map;
+     
+      })();
+    }
+
+    return allCars.map((row) => {
+      let distance = agg[row.id] || 0;
+
+      return {
+        Mileage: distance * 0.621371,
+        VIN: row.vin,
+        'Date': date,
+        license: row.license,
+        id: row.id,
+        // km: distance,
+        // record: row*
+      }
+    });
   },
 
   *showForCar(carId) {
