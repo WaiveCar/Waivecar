@@ -145,11 +145,20 @@ class TableIndex extends React.Component {
         }
       }
 
-      duration = moment.utc(moment.duration(end.diff(start)).asMilliseconds()).format("H:mm");
+      const millisecondsInDay = 86400000;
+
+      let durationInMs = moment.duration(end.diff(start)).asMilliseconds();
+      let days = Math.floor(durationInMs / millisecondsInDay);
+
+      duration = moment.utc(durationInMs).format("H:mm");
+
+      if (days > 0) {
+        duration = days + 'd ' + duration;
+      }
+
       if(duration === '0:00') {
         duration = "< 1m";
       }
-
     }
     return (
       <tr key={ booking.id } onClick={()=>this.redirectToBooking(booking.id)}>
