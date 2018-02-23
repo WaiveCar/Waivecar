@@ -63,7 +63,7 @@ module.exports = class Faq extends Component {
           <p>We currently have 20 in Santa Monica and we are expanding very soon.</p>
           <h2 id="driving-cars">Driving Cars</h2>
           <h3 id="how-far-can-i-drive-with-a-waivecar">How far can I drive with a WaiveCar?</h3>
-          <p>You can drive up to 20 miles outside our HQ in Santa Monica, which includes most of LA. You will get a text message alert when you have passed the boundaries!</p>
+          <p>You can drive up to 20 miles outside our HQ in Santa Monica, which includes most of LA. You will get a text message alert when you have passed the boundaries! Along with being free the first 2 hours, a single WaiveCar can be rented for up to 12 hours at a time.</p>
           <h3 id="where-are-the-keys">Where are the keys?</h3>
           <p>You don't need keys to start the car, however if you need to lock the car DURING your rental, the keys are on a sensor in the glovebox! Just make sure you replace them when you're done.</p>
           <h3 id="ive-never-driven-an-electric-car.-how-many-miles-per-charge-do-i-get">I've never driven an electric car. How many miles per charge do I get?</h3>
