@@ -193,14 +193,32 @@ module.exports = {
    */
   *show(id, _user) {
     let start = +new Date();
+    let groupRoleId = _user.groupRole.id;
     let car = yield Car.findById(id, {
       include : [
         {
           model : 'User',
           as    : 'user'
+        },
+        {
+          model : 'GroupCar',
+          as: 'groupCar',
+          where: {
+            groupRoleId: groupRoleId
+          }
         }
       ]
     });
+
+    if(!car) {
+      throw error.parse({
+        code    : 'CAR_NOT_FOUND',
+        message : 'Car is not found or You don\'t have access to it.',
+        data    : {
+          id : id
+        }
+      }, 404);
+    }
 
     return car;
   },
