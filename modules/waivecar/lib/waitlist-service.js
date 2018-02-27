@@ -141,10 +141,37 @@ module.exports = {
       yield record.save();
     }
 
-    if(payload.promocode && payload.promoCode.toLowerCase() === 'laauto') {
-      res.autoshow = 'yes';
-      delete res.inside;
-      yield this.letInByRecord([record]);
+    if(payload.promoCode) {
+      var promo = payload.promoCode.toLowerCase();
+
+      if(promo === 'hyrecar') {
+        res.hyrecar = 'yes';
+        delete res.inside;
+        yield this.letInByRecord([record]);
+      }
+
+      if(promo === 'laauto') {
+        res.autoshow = 'yes';
+        delete res.inside;
+        yield this.letInByRecord([record]);
+      }
+
+      if(promo === 'levelbk') {
+        res.level = 'yes';
+        delete res.inside;
+        let userList = yield this.letInByRecord([record]);
+
+        user = userList[0];
+        // we need to save what the user said is their
+        // apartment number
+        let UserNote = Bento.model('UserNote');
+        let note = new UserNote({
+          userId: user.id,
+          content: payload.apartment,
+          type: 'location'
+        });
+        yield note.save();
+      }
     }
 
     return res;
@@ -190,6 +217,7 @@ module.exports = {
   *letInByRecord(recordList, _user) {
     
     let nameList = [];
+    let userList = [];
 
     for(var ix = 0; ix < recordList.length; ix++) {
 
@@ -222,6 +250,7 @@ module.exports = {
       // X-ref it back so that we don't do this again.
       // They'd be able to reset their password and that's about it.
       yield record.update({userId: userRecord.id});
+      userList.push(userRecord);
 
       let res = yield UserService.generatePasswordToken(userRecord);
     
@@ -246,6 +275,7 @@ module.exports = {
       let list = nameList.slice(0, -2).join(',') + nameList.slice(-2).join(' and ');
       yield notify.notifyAdmins(`:rocket: ${ _user.name() } let in ${ list }`, [ 'slack' ], { channel : '#user-alerts' })
     }
+    return userList;
   },
 
   *letIn(payload, _user) {
