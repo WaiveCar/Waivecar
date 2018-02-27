@@ -184,7 +184,6 @@ function DashboardController ($scope, $rootScope, $injector) {
       }
       else{
         ChargersService.getAvailableChargers().then(function(chargers){
-          chargers = chargers.data.map(function(charger){ charger.type = 'evgo-charger'; charger.id = charger.id * 10; return charger;});
           ctrl.carChargerLocations = chargers;
           ctrl.locations = $data.instances.locations.concat(ctrl.carChargerLocations);
         });
