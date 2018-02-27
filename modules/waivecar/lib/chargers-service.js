@@ -79,6 +79,19 @@ module.exports = {
             }
         });
 
-        return response.body;
+        let result = JSON.parse(response.body);
+
+        let locations = (result.data || []).map(function(loc) {
+            return {
+                id: 'charger_' + loc.id,
+                address: loc.address,
+                type: 'evgo-charger',
+                latitude: loc.coordinates.latitude,
+                longtitude: loc.coordinates.longtitude,
+                name: loc.name
+            }
+        });
+
+        return locations;
     }
 };
