@@ -57,7 +57,7 @@ module.exports = {
           ].join(' '));
 
         } else {
-          report.unavailable[ atShop(car) ? 'shop' : 'wild' ].push(license);
+          report.unavailable[ atShop(car) ? 'shop' : 'wild' ].push([license, car.chargeReport()].join('   '));
         }
       } else {
         report.available[ atShop(car) ? 'shop' : 'wild' ].push([license, car.chargeReport()].join('   '));
@@ -66,8 +66,10 @@ module.exports = {
 
     let slackReport = [
       'Unavailable:', 
-      ' Shop: ' + report.unavailable.shop.sort().join(', '),
-      ' Wild: ' + report.unavailable.wild.sort().join(', '),
+      '*Shop*', 
+      (report.unavailable.shop.sort().join('\n') || '_(none)_'),
+      '\n*Wild*',
+      (report.unavailable.wild.sort().join('\n') || '_(none)_'),
       '\nAvailable:',
       '*Shop*',
       (report.available.shop.sort().join('\n') || '_(none)_'),
