@@ -206,6 +206,10 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       return this.hasAccess('admin');
     },
 
+    isSuperAdmin() {
+      return this.hasAccess('super');
+    },
+
     isActive() {
       return this.status === 'active';
     },

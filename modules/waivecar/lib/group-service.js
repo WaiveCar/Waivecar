@@ -63,6 +63,8 @@ class GroupService {
     groupCar.relay({
       type: 'store'
     });
+
+    return groupCar;
   }
 
   static *removeCar(groupRoleId, carId) {
@@ -91,7 +93,6 @@ class GroupService {
       ]
     };
     let groupCars = yield GroupCar.find(options);
-    console.log(groupCars);
 
     return groupCars.map(x => x.car);
   }
