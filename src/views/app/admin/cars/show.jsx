@@ -1,5 +1,6 @@
 
 import React                 from 'react';
+import ReactSelect from 'react-select';
 import moment                from 'moment';
 import mixin                 from 'react-mixin';
 import { Link, History }     from 'react-router';
@@ -60,6 +61,17 @@ class CarsShowView extends React.Component {
       this.setState({
         damage : model
       });
+    });
+
+    api.get('/group', (err, groups) => {
+      if(err) {
+        snackbar.danger(err);
+      }
+
+      this.setState({
+        groups : groups
+      });
+
     });
   }
 
@@ -429,7 +441,7 @@ class CarsShowView extends React.Component {
                       <a style={{ marginRight: "10px" }} href={ `/users/${ car.userId }` }>{ car.user.firstName + " " + car.user.lastName }</a>
                       Booking #<a href={ `/bookings/${ car.booking.id }` }>{ car.booking.id }</a> 
                     </div>
-                  : <div> 
+                  : <div className="col-md-12"> 
                       <div className="row" style={{ marginTop: "4px" }}>
                         <input 
                           onChange={ this.updateUser.bind(this) }
@@ -465,6 +477,39 @@ class CarsShowView extends React.Component {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  renderCarGroup(car) {
+    var options = this.state.groups ? 
+    this.state.groups.map(x => {
+      return {value: x.id, label: x.name } 
+    }) : [ {value: '', label: ''}];
+
+    var currentGroupRoleId = '';
+    if(car.groupCar && car.groupCar[0]) {
+      currentGroupRoleId = car.groupCar[0].groupRoleId;
+    }
+
+    return (
+      <div className="box">
+        <h3>
+          Group of { car.license }
+        </h3>
+        <div className={ 'box-content' }>
+          <div className={'row'}>
+            <label>{ 'Group' }</label>
+            <ReactSelect
+              name        = { 'cargroup' }
+              value       = { currentGroupRoleId || ''}
+              options     = { options }
+              onChange    = { this.service.updateCarGroup.bind(this.service, car) }
+              placeholder = { 'Choose car group' }
+            />
+          </div>
+          <div className={'row'}></div>
         </div>
       </div>
     );
@@ -565,6 +610,7 @@ class CarsShowView extends React.Component {
     return (
       <div className="cars cars-show">
         { this.renderCarForm(car) }
+        { this.renderCarGroup(car) }
         { this.renderCarActions(car) }
         { this.renderCarMedia(car) }
         { this.renderCarIndicators(car) }
