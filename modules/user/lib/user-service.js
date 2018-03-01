@@ -243,6 +243,7 @@ module.exports = {
       // ### Assign Attributes
 
       user.group = group;
+      user.groupRole = groupRole;
       user.role  = {
         title : groupRole.name,
         name  : role.name
@@ -293,6 +294,7 @@ module.exports = {
     let role      = roles.find(role => role.id === groupRole.roleId);
 
     user.group = yield Group.findById(connector.groupId);
+    user.groupRole = groupRole;
     user.role  = {
       title : groupRole.name,
       name  : role.name
@@ -349,25 +351,23 @@ module.exports = {
       yield this.unsuspend(user, _user);
     }
 
-    // admins can change a users role.
-    if (_user.hasAccess('admin') && 'role' in payload) {
-      // currently a user role is '1' and an admin is '3' ...
-      // we aren't going to do fancy things to get there ... 
-      // this isn't going to change.
-      let newRole = parseInt(payload.role);
-      if (Number.isNaN(newRole)) {
-        newRole = {user:1, admin:3}[payload.role];
+    // admins can change a users group role.
+    if (_user.hasAccess('admin') && 'groupRoleId' in payload) {
+      //check if exists
+      let newGroupRole = yield GroupRole.findById(payload.groupRoleId);
+      if(!newGroupRole) {
+        throw error.userUpdateRefused();
       }
+
       let groupUser = yield GroupUser.findOne({where: {userId: id} });
-      yield groupUser.update({groupRoleId: newRole});
+      yield groupUser.update({groupRoleId: newGroupRole.id});
 
-      let newRoleStr = {3:'fleet admin', 1:'normal user'}[newRole];
+      let newGroupRoleName = newGroupRole.name;
 
-      yield notify.notifyAdmins(`${ _user.name() } changed the status of ${ user.name() } to a ${ newRoleStr }.`, [ 'slack' ], { channel : '#user-alerts' });
+      yield notify.notifyAdmins(`${ _user.name() } changed the status of ${ user.name() } to a ${ newGroupRoleName }.`, [ 'slack' ], { channel : '#user-alerts' });
 
       // We're doing this in order to get the new status.
       user = yield this.get(id, _user);
-
     } else {
       delete payload.password;
 
