@@ -4,9 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name = "description" content = "Online tool to create code for polyline and polygon to Google Maps v3 (version 3)"/>
-<title>Tool for Google Maps v3 (version 3)</title>
 <head>
-<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false&key=AIzaSyAxgyybUw8aYMY84C5vys2qR9Ll_pCYUGg"></script>
 <script type="text/javascript">
 //<![CDATA[
 
@@ -271,7 +270,20 @@ function activateMarker() {
 }
 function initmap(){
     geocoder = new google.maps.Geocoder();
-    var latlng = new google.maps.LatLng(59.914063, 10.737874);//(45.0,7.0);//45.074723, 7.656433
+    var lastloc = localStorage['mapcenter'];
+    var opts = {
+      lat: 34.026192,
+      lng: -118.417503,
+      zoom: 12
+    };
+    if(lastloc) {
+      lastloc = lastloc.split(',');
+      opts.lat = parseFloat(lastloc[0]);
+      opts.lng = parseFloat(lastloc[1]);
+      opts.zoom = parseFloat(lastloc[2]);
+    }
+    
+    var latlng = new google.maps.LatLng(opts.lat, opts.lng);//(45.0,7.0);//45.074723, 7.656433
     var mapTypeIds = [];
     for(var type in google.maps.MapTypeId) {
         mapTypeIds.push(google.maps.MapTypeId[type]);
@@ -285,7 +297,7 @@ function initmap(){
     copyrightNode.style.whiteSpace = 'nowrap';
     //copyrightNode.index = 0;
     var myOptions = {
-        zoom: 3,
+        zoom: opts.zoom,
         center: latlng,
         draggableCursor: 'default',
         draggingCursor: 'pointer',
@@ -299,14 +311,6 @@ function initmap(){
         styles: [{featureType: 'poi', stylers: [{visibility: 'off'}]}],
         streetViewControl: false};
     map = new google.maps.Map(gob('map_canvas'),myOptions);
-    map.mapTypes.set("OSM", new google.maps.ImageMapType({
-        getTileUrl: function(coord, zoom) {
-            return "http://tile.openstreetmap.org/" + zoom + "/" + coord.x + "/" + coord.y + ".png";
-        },
-        tileSize: new google.maps.Size(256, 256),
-        name: "OpenStreetMap",
-        maxZoom: 18
-    }));
     google.maps.event.addListener(map, 'maptypeid_changed', updateCopyrights);
     map.controls[google.maps.ControlPosition.BOTTOM_RIGHT].push(copyrightNode);
 
@@ -324,14 +328,13 @@ function initmap(){
     google.maps.event.addListener(map, 'click', addLatLng);
     google.maps.event.addListener(map,'zoom_changed',mapzoom);
     cursorposition(map);
+    localStorage['coordinates'] = '';
 }
 // Called by initmap, addLatLng, drawRectangle, drawCircle, drawpolywithhole
 function cursorposition(mapregion){
     google.maps.event.addListener(mapregion,'mousemove',function(point){
-        var LnglatStr6 = point.latLng.lng().toFixed(6) + ', ' + point.latLng.lat().toFixed(6);
-        var latLngStr6 = point.latLng.lat().toFixed(6) + ', ' + point.latLng.lng().toFixed(6);
-        gob('over').options[0].text = LnglatStr6;
-        gob('over').options[1].text = latLngStr6;
+      var mapCenter = map.getCenter();
+      localStorage['mapcenter'] = [mapCenter.lat(), mapCenter.lng(), map.getZoom()].join(',');
     });
 }
 function updateCopyrights() {
@@ -1074,6 +1077,7 @@ function clearMap(){
     newstart();
     placemarks = [];
     createplacemarkobject();
+    localStorage['coordinates'] = '';
 }
 function newstart() {
     polyPoints = [];
@@ -2177,14 +2181,15 @@ function logCode1(){
                     '<LineString>\n<tessellate>'+placemarks[plmcur].tess+'</tessellate>\n' +
                     '<altitudeMode>'+placemarks[plmcur].alt+'</altitudeMode>\n<coordinates>\n';
     for(var i = 0; i < pointsArrayKml.length; i++) {
-        code += pointsArrayKml[i] + ',0.0 \n';
+        code += pointsArrayKml[i] + '\n';
     }
     kmltext2 = '</coordinates>\n</LineString>\n</Placemark>\n';
     placemarks[plmcur].plmtext = kmlcode = kmltext1+code+kmltext2;
     placemarks[plmcur].poly = "pl";
     placemarks[plmcur].jscode = pointsArray;
     placemarks[plmcur].kmlcode = pointsArrayKml;
-    gob('coords1').value = kmlheading()+kmltext1+code+kmltext2+kmlend();
+    gob('coords1').value = code;
+    localStorage['coordinates'] = code;
 }
 // write kml for Directions in text area
 function logCode1a(){
@@ -2532,6 +2537,7 @@ p {
     font-weight: bold;
 }
 #presenter {
+  display: none;
     opacity:0.7;
     filter:alpha(opacity=70);
     -ms-filter:”alpha(opacity=70)”;
@@ -2540,12 +2546,23 @@ p {
     MozOpacity: 0.7;
     -khtml-opacity:.70;
 }
+
 #buttonrow {
     position: absolute;
-    top: 50px;
-    left: 540px;
-    width: 505px;
-    height: 80px;
+    top: 2px;
+    left: 100px;
+}
+.topbutton input {
+  background: white;
+  color: black;
+  border: 1px solid white;
+  padding: 4px 8px;
+}
+#nope{ display: none }
+.topbutton input:hover {
+  background: #eee;
+  border: 1px solid #555;
+
 }
 #presenter {
     position: absolute;
@@ -2565,7 +2582,7 @@ p {
 }
 #map_canvas {
     position: absolute;
-    top: 50px;
+    top: 0px;
     left: 0px;
     width: 530px;
     height: 530px;
@@ -2747,7 +2764,6 @@ h1 {
 	padding-left: 3px;
 	width: 55px;
 	margin: 3px 0px 0px 3px;
-	border: 2px solid #ccc;
 }
 .inputlong {
     float: left;
@@ -2771,10 +2787,8 @@ h1 {
 <body id="body" onload="initmap()">
 
 <div id="map_canvas"></div>
+    <!--
 <div id="header">
-    <div id="title">
-        <h1>Google Maps API v3 Tool</h1>
-    </div>
     <div class="choice">
         <form id="tools" style="float:left;text-align:right;padding:10px 0px 0px 10px;" action="./" method="post" onsubmit="return false">
         <select id="toolchoice" name="toolchoice" style="border:1px solid #000000;" onchange="toolID=parseInt(this.options[this.selectedIndex].value);setTool();">
@@ -2810,12 +2824,14 @@ h1 {
         </form>
     </div>
 </div>
+    -->
 <div id="buttonrow">
+  <div class="topbutton">
+        <input type="button" onclick="clearMap();" value="Clear Map"/>
+    </div>
+    <!--
     <div class="topbutton">
         <input type="button" onclick="nextshape();" value="Next shape"/>
-    </div>
-    <div class="topbutton">
-        <input type="button" onclick="clearMap();" value="Clear Map"/>
     </div>
     <div class="topbutton">
         <input type="button" onclick="deleteLastPoint();" value="Delete Last Point"/>
@@ -2841,8 +2857,10 @@ h1 {
     <form style="margin-right:5px" action="#" onsubmit="showAddress(this.address.value); return false">
     <input type="text" style="border: 1px solid #000000;" size="50" name="address" value="Karl Johans gate 37, 0162 Oslo, Norge" />
     <input type="submit" value="Search" />
+    -->
     </form>
 </div>
+<div id='nope'>
 <div id="polygonstuff">
     <div>
         <a style="padding-left:5px; color: #ffffff;" href="javascript:holecreator()">Hole</a>
@@ -2858,18 +2876,8 @@ h1 {
     <form style="margin-bottom:5px" action="#">
     &nbsp;&nbsp;&nbsp;Live code presentation in textarea (below):
     <input type="checkbox" name="showcodemode" id="presentcode" value="yes" onclick="showCodeintextarea();" checked="checked"/>
+ 
 <textarea id="coords1" cols="62" rows="24">
-Click on the map. The code for the shape you create will be presented here.
-You may shift from Polyline to Polygon and vice/versa at any time when you draw.
-When finished with a shape, click 'Next shape' and draw another shape, if you wish.
-If you want to draw polygon with hole(-s), choose Polygon and follow the instructions.
-Polyline and polygon may be edited by clicking 'Edit lines'.
-When editing, you may remove a point with a click on it.
-If you want to edit a saved polyline or polygon, click on it. Then click 'Edit lines'.
-There are style options for everything you draw on the map.
-The complete KML code for what you have created, is always available with Show KML.
-Uncheck 'Live code presentation' for greater speed when you draw shapes with large amount of points.
-Check it when you want to see the code.
 </textarea>
     </form>
 </div>
@@ -3071,16 +3079,6 @@ Check it when you want to see the code.
     </table>
     <table>
         <tr>
-        <td><img src="icons/marker_20_red.png" alt="" /></td>
-        <td><img src="icons/marker_20_orange.png" alt="" /></td>
-        <td><img src="icons/marker_20_yellow.png" alt="" /></td>
-        <td><img src="icons/marker_20_green.png" alt="" /></td>
-        <td><img src="icons/marker_20_brown.png" alt="" /></td>
-        <td><img src="icons/marker_20_blue.png" alt="" /></td>
-        <td><img src="icons/marker_20_purple.png" alt="" /></td>
-        <td><img src="icons/marker_20_black.png" alt="" /></td>
-        <!--<td><img src="icons/marker_20_gray.png" alt="" /></td>-->
-        <td><img src="icons/marker_20_white.png" alt="" /></td>
         </tr>
         <tr>
         <td><input type="button" name="button" value="Use" onclick='iconoptions("icons/marker_20_red.png");' />
@@ -3211,123 +3209,7 @@ Check it when you want to see the code.
 <div class="clear"></div>
 <div style="height:580px"></div>
 
-<div id = "content">
-<p>This application is also available with
-<a href="http://www.birdtheme.org/useful/v3largemap.html">Large map.</a></p>
-<p>
-This is a drawing tool for polyline, polygon, polygon with holes, rectangle, circle, marker(icon), direction(route, path).
-This application uses the Google Maps API Version 3 (V3). It has all the features of Google Maps MyMaps and
-has direct access to the code for the shapes (overlays) you create. It should be a full-fledged alternative.
-You draw and create a map with the shapes you want. KML or Javascript code is presented in the textarea.
-You copy KML code and paste it into a text editor. Then you have a KML file you may upload to your website.
-This application should now also serve as a mature alternative to my online V2 tool
-<a href="http://www.birdtheme.org/useful/googletool.html">Digitizer tool</a>
-</p>
-<p>Code will be presented in the textarea. You may choose to see KML or Google Javascript V3.
-</p>
-<p>The OpenStreetMap map type has been added to the Google Maps map types. It has been
-embedded as a layer within the Google Map. This will in many parts
-of the world give you map tiles with more details than the default Google Maps tiles.
-</p>
-<p>
-<!-- <script type="text/javascript">
-ch_client = "webbirder";
-ch_width = 550;
-ch_height = 250;
-ch_type = "mpu";
-ch_sid = "Chitika Default";
-ch_backfill = 1;
-ch_color_site_link = "0000cc";
-ch_color_title = "0000cc";
-ch_color_border = "ffffff";
-ch_color_text = "000000";
-ch_color_bg = "ffffff";
-</script>
-<script src="http://scripts.chitika.net/eminimalls/amm.js" type="text/javascript">
-</script> -->
-</p>
-<p>
-The feature 'polygon with hole' ('donut') is built-in in V3. Choose Polygon draw mode and follow the instructions.
-All overlays have style options. There are some custom markers (icons) available for Marker and Direction.
-</p>
-<p>
-The V2 feature enableEditing now exists for V3. But it lacks 'Click to remove'. It is possible to build the feature for V3 with some javascript.<br />
-I have posted an example here:
-<a href="http://www.birdtheme.org/useful/editingv3.html">Enable editing in V3</a> And this method is used
-here in this application to enable editing.
-</p>
-<p>And for editing - if you have a kml file uploaded on a server, and you want to edit its coordinates,
-you may use my edit tool <a href="http://www.birdtheme.org/useful/editkmlfilev3.php">Edit tool for Google maps polyline and polygon</a><br />
-You will need a PC or laptop with a large amount of computer memory if your kml file has 1000
-coordinate pairs or more.</p>
-<p>
-If a coastline is part of the shape you want to create, you may use templates and build on them<br />
-<a href="http://www.birdtheme.org/useful/build.php">Build Google maps polylines and polygons from templates</a>
-</p>
-<p>Load your kml file with the php function simplexml_load_file(kmlfile) if you want to handle
-individual shapes in your kml file
-<a href="http://www.birdtheme.org/useful/sub/kmlwithv3.php">Dynamic Google Maps API V3</a></p>
-<p>If you are new to Google Maps, it may be useful to read the tutorial
-<a href="http://code.google.com/intl/no/apis/maps/documentation/javascript/tutorial.html">Google Maps Javascript API V3 Tutorial</a>
-and learn how to display the overlays you can create here on a map.
-</p>
-<p>If you need to learn how to use KML, this is where you start
-<a href="http://code.google.com/intl/no/apis/kml/">KML</a></p>
-Other useful links:<br />
-<table id="morelinks">
-<tr>
-<td><a href="http://code.google.com/intl/no/apis/maps/documentation/v3/">Google Maps V3 Documentation</a></td>
-<td rowspan="2">
-<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-<input type="hidden" name="cmd" value="_s-xclick">
-<input type="hidden" name="hosted_button_id" value="DHMCKU8XE4HZE">
-<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-</form>
-</td>
-</tr>
-<tr>
-<td><a href="http://groups.google.com/group/google-maps-js-api-v3">Google Maps API V3 discussion group</a></td>
-<td></td>
-</tr>
-<tr>
-<td><a href="http://stackoverflow.com/">Stack Overflow</a></td>
-<td></td>
-</tr>
-</table>
 </div>
-<div>
-<table>
-<tr>
-<td align="left"><a href="../index.html"><script type="text/javascript">
-document.write ('<img src="../statistics/sitestatistics/collect.php?name=face.jpg&refer=' + document.referrer + '"');
-</script>
-width="31" height="31" border="0" alt="Home"></a>
-</td>
-<td>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Contact: mapto@birdtheme.org
-</td>
-</tr>
-</table>
-</div>
-<div id="directionsPanel" style="margin:20px;background-color:#FFEE77;"></div>
-<p></p>
-<!-- <script type="text/javascript">
-    var infolink_pid = 432173;
-    var infolink_wsid = 0;
-</script>
-<script type="text/javascript" src="http://resources.infolinks.com/js/infolinks_main.js"></script> -->
-If you copy this page, please delete the Google Analytics page tracker
-<script type="text/javascript">
-var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-document.write("\<script src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'>\<\/script>" );
-</script>
-<script type="text/javascript">
-var pageTracker = _gat._getTracker("UA-3220503-1");
-pageTracker._initData();
-pageTracker._trackPageview();
-</script>
-
 </body>
 
 </html>
