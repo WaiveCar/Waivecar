@@ -118,23 +118,25 @@ module.exports = class Car extends Service {
       oldGroupRoleId = car.groupCar[0].groupRoleId;
     }
 
-    api.post(`/group/${newGroupRoleId}/assigncar/${car.id}`, {}, (err, groupCar) => {
-      if(err) {
-        return this.error(err.data ? err.data : err.message);
-      }
-
-      car.groupCar[0] = groupCar;
-
-      // sanitize old group. currently only one to one relation
-      api.delete(`/group/${oldGroupRoleId}/removecar/${car.id}`, (err) => {
+    if(newGroupRoleId == '') {
+      return api.delete(`/group/${oldGroupRoleId}/removecar/${car.id}`, (err) => {
         if(err) {
           return this.error(err.data ? err.data : err.message);
         }
 
-        this.updateCarState(car);
-        return this.success('Car group was updated');
+        return this.success('Removed car from group');
       });
-    });
+    } else {
+      api.post(`/group/${newGroupRoleId}/assigncar/${car.id}`, {}, (err, groupCar) => {
+        if(err) {
+          return this.error(err.data ? err.data : err.message);
+        }
+
+        car.groupCar[0] = groupCar;
+        this.updateCarState(car);
+        return this.success('Car\'s group was updated');
+      });
+    }
 
     
     
