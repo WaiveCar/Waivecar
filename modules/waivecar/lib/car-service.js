@@ -377,6 +377,12 @@ module.exports = {
     // We find out if our charging status has changed
     if (('charging' in data) && (data.isCharging != existingCar.isCharging)) {
       yield LogService.create({carId: id, action: data.isCharging ? Actions.START_CHARGE : Actions.END_CHARGE});
+
+      // see #616 - we are tracking when a car was last charged with respect to
+      // the odometer.
+      if(!data.isCharging) {
+        data.mileageLastCharge = data.totalMileage;
+      }
     }
 
     yield existingCar.update(data);
