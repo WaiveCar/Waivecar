@@ -13,10 +13,6 @@ Bento.Register.ResourceController('User', 'UsersController', (controller) => {
     return yield service.store(this.payload, this.auth.user);
   };
 
-  /**
-   * Returns an indexed array of users.
-   * @return {Array}
-   */
   controller.index = function *() {
     return yield service.index(this.query, this.auth.user);
   };
