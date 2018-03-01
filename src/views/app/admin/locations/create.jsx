@@ -7,9 +7,6 @@ import Switch                   from 'react-toolbox/lib/switch';
 
 class LocationsIndex extends React.Component {
 
-  /**
-   * @constructor
-   */
   constructor(...args) {
     super(...args);
     this.hasFocus = false;
@@ -32,6 +29,10 @@ class LocationsIndex extends React.Component {
     this.handleTypeChange = this.handleTypeChange.bind(this);
     this.handleIsPublicChange = this.handleIsPublicChange.bind(this);
 
+    setInterval(function() {
+      var coors = document.getElementsByTagName('textarea')[0];
+      coors.value = localStorage['coordinates'];
+    }, 100);
   }
 
   handleTypeChange(value) {
@@ -156,6 +157,12 @@ class LocationsIndex extends React.Component {
                       </div>
                     </div>
   
+                    <div className="form-group row">
+                      <div className="col-xs-12 bento-form-input focus">
+                        <iframe src='/map.html' style={{ width: '100%', height: '550px' }}></iframe>
+                      </div>
+                    </div>
+
                     <div className="form-group row">
                       <div className="col-xs-12 bento-form-input focus">
                         <label>Parking restrictions</label>
