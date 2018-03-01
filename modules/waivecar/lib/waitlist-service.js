@@ -162,13 +162,13 @@ module.exports = {
         let userList = yield this.letInByRecord([record]);
 
         user = userList[0];
-        // we need to save what the user said is their
-        // apartment number
+        // we need to save what the user said their
+        // unit or account number
         let UserNote = Bento.model('UserNote');
         let note = new UserNote({
           userId: user.id,
-          content: payload.apartment,
-          type: 'location'
+          content: payload.account
+          type: 'unit'
         });
         yield note.save();
       }
