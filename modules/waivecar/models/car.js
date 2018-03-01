@@ -175,6 +175,10 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       type : Sequelize.INTEGER
     },
 
+    mileageLastCharge : {
+      type : Sequelize.DECIMAL(10, 2)
+    },
+
     totalMileage : {
       type : Sequelize.DECIMAL(10, 2)
     },
