@@ -28,9 +28,5 @@ Bento.Register.Controller('GroupController', function (controller) {
     return yield service.removeCar(groupRoleId, carId);
   }
 
-  controller.cars = function* (groupRoleId) {
-    return yield service.getGroupCars(groupRoleId);
-  }
-
   return controller;
 });

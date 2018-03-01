@@ -2,11 +2,12 @@
 
 let error  = Bento.Error;
 
-let GroupRole = Bento.model('GroupRole');
 let Car       = Bento.model('Car');
-let GroupCar  = Bento.model('GroupCar');
-
 let User   = Bento.model('User');
+
+let GroupRole = Bento.model('GroupRole');
+let GroupCar  = Bento.model('GroupCar');
+let GroupUser = Bento.model('GroupUser');
 
 let config = Bento.config;
 
@@ -53,16 +54,30 @@ class GroupService {
   }
 
   static *assignCar(groupRoleId, carId) {
-    let groupCar = new GroupCar({
-      groupRoleId: groupRoleId,
-      carId: carId
+
+    // See #1077. Currently one to one relation.
+    let groupCar = yield GroupCar.findOne({
+      where : {
+        carId: carId
+      }
     });
 
-    yield groupCar.save();
+    if(!groupCar) {
+      groupCar = new GroupCar({
+        carId: carId,
+        groupRoleId: groupRoleId
+      });
 
-    groupCar.relay({
-      type: 'store'
-    });
+      yield groupCar.save();
+
+      groupCar.relay({
+        type: 'store'
+      });
+    } else {
+      yield groupCar.update({
+        groupRoleId: groupRoleId
+      });
+    }
 
     return groupCar;
   }
@@ -78,23 +93,6 @@ class GroupService {
     if(groupCar) {
       yield groupCar.delete();
     }
-  }
-
-  static *getGroupCars(groupRoleId) {
-    let options = {
-      where: {
-        groupRoleId: groupRoleId
-      },
-      include : [
-        {
-          model : 'Car',
-          as    : 'car'
-        }
-      ]
-    };
-    let groupCars = yield GroupCar.find(options);
-
-    return groupCars.map(x => x.car);
   }
 };
 
