@@ -21,6 +21,16 @@
             color : #25C155;
           }
         }
+        .undo {
+          font-size   : 0.8rem;
+          font-weight : 200;
+          float: right;
+          opacity: 0.5;
+          :hover {
+            opacity: 1;
+          }
+        }
+
       }
       .ride-row, .ride-details {
         font-weight : 300;

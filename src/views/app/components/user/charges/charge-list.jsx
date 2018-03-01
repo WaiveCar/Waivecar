@@ -61,6 +61,10 @@ class ChargeList extends Component {
     });
   }
 
+  refund(id, amount, description) {
+    var amount = prompt("Refunding up to $" + (amount / 100).toFixed(2) + " for:\n  " + description + "\nTo issue a partial refund, enter the amount below. For a full refund, leave the field blank");
+  }
+
   prevPage() {
     if (this.state.btnPrev) {
       var self = this;
@@ -129,6 +133,9 @@ class ChargeList extends Component {
           </td>
           <td className={ 'status ' + data.status }>
             { helpers.changeCase.toCapital(data.status) }
+            { auth.user().hasAccess('admin') && data.status === 'paid' &&
+              <button onClick = { this.refund.bind(this, data.id, data.amount, data.description) } className='btn btn-xs btn-link undo'><span className="fa fa-undo"></span></button>
+            }
           </td>
         </tr>
       </tbody>
