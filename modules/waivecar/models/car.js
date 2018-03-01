@@ -123,6 +123,10 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       type : Sequelize.STRING(88)
     },
 
+    plateNumber : {
+      type : Sequelize.STRING(16)
+    },
+
     fileId : {
       type : Sequelize.STRING
     },
