@@ -5,6 +5,9 @@ let error = Bento.Error;
 let config = Bento.config;
 let _ = require('lodash');
 
+
+const CHARGER_ID_BASE = 9999;
+
 module.exports = {
 
     /**
@@ -81,13 +84,17 @@ module.exports = {
 
         let result = JSON.parse(response.body);
 
+
+        //get first and put it inside szone
+
         let locations = (result.data || []).map(function(loc) {
+
             return {
                 id: 'charger_' + loc.id,
                 address: loc.address,
-                type: 'evgo-charger',
+                type: 'charging-station',
                 latitude: loc.coordinates.latitude,
-                longtitude: loc.coordinates.longtitude,
+                longitude: loc.coordinates.longitude,
                 name: loc.name
             }
         });
