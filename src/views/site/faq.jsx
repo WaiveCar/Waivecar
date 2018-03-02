@@ -102,7 +102,7 @@ module.exports = class Faq extends Component {
           <p>Yes! No need for an extensive cleaning, but make sure all your belongings are out of the car and clean up any trash you may leave. If you leave a mess, there could be a cleaning fee!</p>
           <h3 id="do-i-need-to-charge-the-car-before-i-end-my-ride">Do I need to charge the car before I end my ride?</h3>
           <p>Nope! Follow the rules above. If the car is under 25 miles charged, simply return it at the HQ!</p>
-          <h3 id="fees">Fees</h3>
+          <h3 id="fees"><a name="fees"></a>Fees</h3>
           <p>There are some modest fees in order to keep our fleet bright and shiny.</p>
           <ul>
           <li><strong>Ending with under 20 miles charge and not brought back to WaiveCar's lot</strong> $20</li>

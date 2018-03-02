@@ -136,7 +136,7 @@ Yes! No need for an extensive cleaning, but make sure all your belongings are ou
 ### Do I need to charge the car before I end my ride?
 Nope! Follow the rules above. If the car is under 25 miles charged, simply return it at the HQ!
 
-### Fees
+### <a name="fees"></a>Fees
 
 There are some modest fees in order to keep our fleet bright and shiny.
 
