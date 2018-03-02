@@ -654,12 +654,11 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
           anchor: new google.maps.Point(12, 12),
           origin: new google.maps.Point(0, 0)
         };
-      case 'evgo-charger':
+      case 'charging-station':
         return {
-          url: 'img/locked-car.png',
-          iconRetinaUrl: 'img/locked-car.png',
-          scaledSize: new google.maps.Size(50, 50),
-          anchor: new google.maps.Point(17, 12),
+          url: 'img/icon-active-waivecar' + fileExt,
+          scaledSize: new google.maps.Size(35, 44),
+          anchor: new google.maps.Point(17, 44),
           origin: new google.maps.Point(0, 0)
         };
       case 'dropoff':
