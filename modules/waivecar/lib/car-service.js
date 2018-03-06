@@ -366,6 +366,7 @@ module.exports = {
         }
       }
 
+      ///car log to base
       existingCar.addToHistory(data.charge);
       data.chargeHistory = existingCar.chargeHistory;
     }

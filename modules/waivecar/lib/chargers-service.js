@@ -71,8 +71,7 @@ module.exports = {
 
     *list() {
         //mocked token
-
-        let response = yield request({
+        /*let response = yield request({
             url     : 'https://evgotest.driivz.com/externalIncoming/ocpi/cpo/2.1.1/locations',
             method  : 'GET',
             headers : {
@@ -84,21 +83,41 @@ module.exports = {
 
         let result = JSON.parse(response.body);
 
+        let locations = (result.data || []).map((loc) => {
 
-        //get first and put it inside szone
-
-        let locations = (result.data || []).map(function(loc) {
-
+            let availableEvses = (loc.evses || []).filter( (evse) => { return evse.status === 'AVAILABLE';});
             return {
                 id: 'charger_' + loc.id,
                 address: loc.address,
                 type: 'charging-station',
                 latitude: loc.coordinates.latitude,
                 longitude: loc.coordinates.longitude,
-                name: loc.name
-            }
+                name: loc.name,
+                status: availableEvses.length > 0 ? 'available' : 'unavailable'
+            };
         });
 
-        return locations;
+        //mock one charger for testing
+        /*locations = locations.map( (loc) => {
+            if (loc.name === 'LAXT294DC1') {
+                loc.latitude = 34.01649900;
+                loc.longitude = -118.48908000;
+            };
+            return loc;
+        });
+
+        return locations;*/
+        return Promise.resolve([{
+            name: 'LAXT294DC1',
+            id: 'charger_' + 9999,
+            type: 'charging-station',
+            address: 'test charger location',
+            latitude: 34.0199,
+            longitude: -118.48908000
+        }]);
+    },
+
+    *unlock(id) {
+        return Promise.resolve({success: true});
     }
 };

@@ -12,13 +12,11 @@ Bento.Register.Controller('ChargersController', function(controller) {
      */
     controller.chargers = function *() {
         //return yield service.authorize();
-
         return yield service.list();
+    };
 
-        //for test
-        //return (yield Location.find({
-        //    where: {type: { $in: ['station']}}
-        //}));
+    controller.unlock = function *(id){
+        return yield service.unlock(id);
     };
     return controller;
 });
