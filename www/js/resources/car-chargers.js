@@ -11,7 +11,14 @@ module.exports = angular.module('app').factory('Chargers', [
         method: 'GET',
         url: $utils.getCustomRoute('chargers/list'),
         isArray: true
-      }
+      },
+      unlock: {
+        method: 'POST',
+        url: $utils.getRoute('chargers/unlock', true),
+        params: {
+          id: '@id'
+        }
+      },
     }));
   }
 ]);

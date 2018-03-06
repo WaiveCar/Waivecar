@@ -11,6 +11,10 @@ module.exports = angular.module('app.services').factory('ChargersService', [
     return {
       getAvailableChargers: function(){
         return $data.resources.chargers.list().$promise;
+      },
+
+      unlock: function(id){
+        return $data.resources.chargers.unlock(id).$promise;
       }
     };
   }
