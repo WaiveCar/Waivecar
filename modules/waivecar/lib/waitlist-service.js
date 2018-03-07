@@ -167,7 +167,7 @@ module.exports = {
         let UserNote = Bento.model('UserNote');
         let note = new UserNote({
           userId: user.id,
-          content: payload.account
+          content: payload.account,
           type: 'unit'
         });
         yield note.save();
