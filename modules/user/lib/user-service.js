@@ -101,6 +101,12 @@ module.exports = {
         message : 'The provided token is not a valid reset token.'
       });
     }
+    if (!password || password.length === 0) {
+      throw error.parse({
+        code    : 'PASSWORD_INVALID',
+        message : 'A password must be supplied'
+      });
+    }
     let user = yield this.get(payload.id);
     yield user.update({
       password : yield bcrypt.hash(password, 10)
