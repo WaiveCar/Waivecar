@@ -20,7 +20,7 @@ module.exports = class AuthService {
     let service = getSocialService(target);
     let user    = yield service.handle(data, _user);
 
-    if(user._type === 'waitlist') {
+    if(user && user._type === 'waitlist') {
       return user;
     }
 
