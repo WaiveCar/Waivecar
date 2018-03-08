@@ -474,16 +474,13 @@ module.exports = {
                 car.license = meta.license;
               } else {
                 let nextNumber = (yield Car.find()).length; 
-                console.log("Next Available Number is " + nextNumber);
                 let candidateName = '';
                 do {
                   candidateName = `newCar${ nextNumber }`;
-                  console.log("Next Candidate Name is " + candidateName);
                   existingCar = yield Car.findOne({ where : { license: candidateName } });
                   nextNumber ++;
                 } while(existingCar);
 
-                console.log("The license to use is " + candidateName);
                 car.license = candidateName;
               }
               car.licenseUsed = car.license;
