@@ -6,8 +6,10 @@ let parallel    = require('co-parallel');
 let request     = require('co-request');
 let moment      = require('moment');
 let notify      = require('./notification-service');
+let chargers    = require('./chargers-service');
 let Service     = require('./classes/service');
 let LogService  = require('./log-service');
+let UserLog     = require('../../log/lib/log-service');
 let redis       = require('./redis-service');
 let Actions     = LogService.getActions();
 let queue       = Bento.provider('queue');
@@ -357,12 +359,12 @@ module.exports = {
       // We notify fleet if the car passes a threshold to make
       // sure that they put the car out.
       // see https://github.com/WaiveCar/Waivecar/issues/857
-      if(data.isCharging && !existingCar.isAvailable && !(yield redis.shouldProcess('car-charge-notice', existingCar.id))) {
-        if( 
+      if (data.isCharging && !existingCar.isAvailable && !(yield redis.shouldProcess('car-charge-notice', existingCar.id))) {
+        if (
             (data.charge >= 100 && existingCar.charge < 100) ||
             (data.charge >= 80 && existingCar.charge < 80)
-          ) {
-          yield notify.notifyAdmins(`:car: ${ existingCar.license } has charged to ${ data.charge }% and should be made available.`, [ 'slack' ], { channel : '#rental-alerts' });
+        ) {
+          yield notify.notifyAdmins(`:car: ${ existingCar.license } has charged to ${ data.charge }% and should be made available.`, ['slack'], {channel: '#rental-alerts'});
         }
       }
 
@@ -377,6 +379,7 @@ module.exports = {
 
     // We find out if our charging status has changed
     if (('charging' in data) && (data.isCharging != existingCar.isCharging)) {
+      yield UserLog.addUserEvent(_user, data.isCharging ? Actions.START_CHARGE : Actions.END_CHARGE, id, data.charge);
       yield LogService.create({carId: id, action: data.isCharging ? Actions.START_CHARGE : Actions.END_CHARGE});
     }
 

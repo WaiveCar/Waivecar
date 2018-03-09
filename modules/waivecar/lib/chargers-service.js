@@ -5,9 +5,6 @@ let error = Bento.Error;
 let config = Bento.config;
 let _ = require('lodash');
 
-
-const CHARGER_ID_BASE = 9999;
-
 module.exports = {
 
     /**
@@ -71,7 +68,7 @@ module.exports = {
 
     *list() {
         //mocked token
-        /*let response = yield request({
+        let response = yield request({
             url     : 'https://evgotest.driivz.com/externalIncoming/ocpi/cpo/2.1.1/locations',
             method  : 'GET',
             headers : {
@@ -89,7 +86,7 @@ module.exports = {
             return {
                 id: 'charger_' + loc.id,
                 address: loc.address,
-                type: 'charging-station',
+                type: 'chargingStation',
                 latitude: loc.coordinates.latitude,
                 longitude: loc.coordinates.longitude,
                 name: loc.name,
@@ -98,23 +95,17 @@ module.exports = {
         });
 
         //mock one charger for testing
-        /*locations = locations.map( (loc) => {
+        locations = locations.map( (loc) => {
             if (loc.name === 'LAXT294DC1') {
-                loc.latitude = 34.01649900;
+                loc.id = 'charger_' + 9999;
+                loc.address = 'test charger location';
+                loc.latitude = 34.0199;
                 loc.longitude = -118.48908000;
-            };
+            }
             return loc;
         });
 
-        return locations;*/
-        return Promise.resolve([{
-            name: 'LAXT294DC1',
-            id: 'charger_' + 9999,
-            type: 'charging-station',
-            address: 'test charger location',
-            latitude: 34.0199,
-            longitude: -118.48908000
-        }]);
+        return locations;
     },
 
     *unlock(id) {
