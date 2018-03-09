@@ -156,7 +156,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         }, true),
         $scope.$watch('map.route', function (value) {
           if (value && value.destiny) {
-            ctrl.drawRoute(value.start, value.destiny, value.fitBoundsByRoute);
+            ctrl.drawRoute(value.start, value.destiny, value.intermediatePoints, value.fitBoundsByRoute);
           }
         }, true)
 
@@ -194,13 +194,13 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
     if (markers && markers.length > 1) {
 
-      var bounds = useCordova() ? new plugin.google.maps.LatLngBounds() : new google.maps.LatLngBounds();
+      var bounds = ctrl.useCordova() ? new plugin.google.maps.LatLngBounds() : new google.maps.LatLngBounds();
       markers.forEach(function (marker) {
         bounds.extend(ctrl.mapToLatLong(marker));
       });
 
       if (ctrl.useCordova()) {
-        //ctrl.map.moveCamera({target: bounds});
+        ctrl.map.moveCamera({ target: bounds });
       } else {
         ctrl.map.fitBounds(bounds);
       }
@@ -551,49 +551,55 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     return $q.all(promises);
   };
 
-  MapController.prototype.drawRoute = function drawRoute(start, destiny, fitBoundsByRoute) {
+  MapController.prototype.drawCarPath = function drawCarPath(start, destiny, points) {
+    var ctrl = this;
+    if(!ctrl.map) {
+      return;
+    }
+
+    if(!points || points.length === 0) {
+      points = points || [];
+      points.push(start);
+      points.push(destiny);
+    }
+    var path = points.map(ctrl.mapToLatLong.bind(this));
+
+    if(ctrl.useCordova()) {
+      ctrl.map.addPolyline({
+        points: path,
+        'color' : '#0000FF',
+        'width': 2,
+        'geodesic': true
+      });
+    } else {
+      var polyline = new google.maps.Polyline({
+        path: path,
+        geodesic: true,
+        strokeColor: '#0000FF',
+        strokeOpacity: 1.0,
+        strokeWeight: 2
+      });
+      polyline.setMap(ctrl.map);
+    }
+
+    ctrl.mapFitBounds(points);
+  }
+
+  MapController.prototype.drawRoute = function drawRoute(start, destiny, intermediatePoints, fitBoundsByRoute) {
     var ctrl = this;
 
-    RouteService.getGRoute(ctrl.mapToGoogleLatLong(start), ctrl.mapToGoogleLatLong(destiny),
-      function (response) {
+    ctrl.drawCarPath(start, destiny, intermediatePoints);
 
-        var route = response.routes[0].legs[0];
-
-        var beginStep = route.steps[0];
-        var endStep = route.steps[route.steps.length - 1];
-
-        ctrl.drawRouteMarkers( {
-          latitude: beginStep.start_point.lat(),
-          longitude:  beginStep.start_point.lng(),
-          type: 'location'
-        }, {
-          latitude: endStep.end_point.lat(),
-          longitude:  endStep.end_point.lng(),
-          type: destiny.type,
-          charge: destiny.charge
-        });
-
-        ctrl.directionsRenderer.setDirections(response);
-        if (fitBoundsByRoute) {
-          var bounds = response.routes[0].bounds;
-
-          if (ctrl.useCordova()) {
-
-            ctrl.map.moveCamera({target: new plugin.google.maps.LatLngBounds([{
-              lat:bounds.getNorthEast().lat(),
-              lng:bounds.getNorthEast().lng()
-            }, {
-              lat:bounds.getSouthWest().lat(),
-              lng:bounds.getSouthWest().lng()
-            }])});
-
-          } else {
-            ctrl.map.fitBounds(bounds);
-          }
-
-
-        }
-      });
+    ctrl.drawRouteMarkers( {
+      latitude: start.latitude,
+      longitude:  start.longitude,
+      type: 'location'
+    }, {
+      latitude: destiny.latitude,
+      longitude:  destiny.longitude,
+      type: destiny.type,
+      charge: destiny.charge
+    });
   };
 
   function getIconOptions(iconType, fileExt) {
