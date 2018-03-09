@@ -10,7 +10,7 @@
           <span ng-if="licenseCtrl.license.status === 'provided'" class="input-label">Your Driver's License is pending validation.</span>
           <span ng-if="licenseCtrl.license.status === 'in-progress'" class="input-label">Your Driver's License is ongoing validation.</span>
           <span ng-if="licenseCtrl.license.status === 'complete' && licenseCtrl.license.outcome === 'reject'" class="input-label">Driver's License has failed validation.</span>
-          <span ng-if="licenseCtrl.license.status === 'complete' && licenseCtrl.license.outcome === 'consider'" class="input-label">Driver's License is being manually validated.</span>
+          <span ng-if="licenseCtrl.license.status === 'complete' && licenseCtrl.license.outcome === 'consider'" class="input-label">Driver's License is pending further review.</span>
           <span ng-if="licenseCtrl.license.status === 'complete' && licenseCtrl.license.outcome === 'clear'" class="input-label">Your Driver's License is cleared.</span>
         </label>
         <label class="item item-input">
