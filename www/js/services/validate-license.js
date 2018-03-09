@@ -87,7 +87,7 @@ function LicenseValidationService ($injector) {
         return $q.resolve();
       }
       if (license.outcome === 'consider') {
-        return $q.reject({code: 'LICENSE_CONSIDER'});
+        return $q.reject({code: 'LICENSE_MANUAL_CHECK'});//'LICENSE_CONSIDER'});
       }
       if (license.outcome === 'reject') {
         return $q.reject({code: 'LICENSE_FAILED'});
@@ -163,7 +163,7 @@ function LicenseValidationService ($injector) {
               if (lic.outcome === 'consider') {
                 cancelPolling();
                 modal.remove();
-                reject({code: 'LICENSE_CONSIDER'});
+                reject({code: 'LICENSE_MANUAL_CHECK'});//'LICENSE_CONSIDER'});
                 return;
               }
               if (lic.outcome === 'reject') {
@@ -207,8 +207,7 @@ function LicenseValidationService ($injector) {
     $modal('result', {
       icon: 'waivecar-mark',
       title: 'Manual license validation required.',
-      message: 'Driver\'s License needs to be manually validated by us and you are unable to book a WaiveCar at this time. <br>' +
-        'Please contact us if you would like further information or a copy of your report from our validation provider. <br>' +
+      message: 'Driver\'s License is pending further review and you are unable to book a WaiveCar at this time. <br>' +
         'You\'ll receive an SMS when this validation passes.',
       actions: [{
         className: 'button-dark',
