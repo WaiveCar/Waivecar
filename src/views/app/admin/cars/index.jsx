@@ -113,12 +113,24 @@ module.exports = class CarsIndex extends React.Component {
     return valA - valB;
   }
 
-  licCompare(valA, valB) {
-    return (parseInt(valA.license.replace(/\D/g,''), 10) || 10000) - (parseInt(valB.license.replace(/\D/g,''), 10) || 10000);
-  }
-
   licenseComparator(valA, valB) {
-    return (parseInt(valA.replace(/\D/g,''), 10) || 10000) - (parseInt(valB.replace(/\D/g,''), 10) || 10000);
+    if (valA.hasOwnProperty('license')) {
+      valA = valA.license;
+      valB = valB.license;
+    }
+
+    valA = valA.toLowerCase();
+    valB = valB.toLowerCase();
+    let partsA = valA.match(/([a-z]*)\s*(\d*)/i);
+    let partsB = valB.match(/([a-z]*)\s*(\d*)/i);
+
+    if(partsA[1] === partsB[1]) {
+      return parseInt(partsA[2], 10) - parseInt(partsB[2], 10);
+    } else {
+      // This strangeness is done in order to keep the groupings
+      // far enough away from each other in the quicksort calculation
+      return (partsA[1] < partsB[1]) ? 1000 : -1000;
+    }
   }
 
   sortComparator(a, b) {
@@ -271,7 +283,7 @@ module.exports = class CarsIndex extends React.Component {
                   <div className="list-group">
                     {
                       this.state.cars
-                        ? this.state.cars.sort(this.licCompare).map(this.renderListLinkItem.bind(this))
+                        ? this.state.cars.sort(this.licenseComparator).map(this.renderListLinkItem.bind(this))
                         : <div className="list-group-item">Loading</div>
                     }
                   </div>
