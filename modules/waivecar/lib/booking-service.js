@@ -297,7 +297,7 @@ module.exports = class BookingService extends Service {
 
     if (!_user.hasAccess('admin') || query.type === 'mine') {
       dbQuery.where.user_id = _user.id;
-    } 
+    }
 
     bookings = yield Booking.find(dbQuery);
 
@@ -308,6 +308,22 @@ module.exports = class BookingService extends Service {
         bookings[i] = yield this.show(bookings[i].id, _user);
       }
     }
+
+    //if (query.includePath) {
+      let pathes = yield Location.find({
+        where: {
+          booking_id:{
+            $in: bookings.map(x => x.id)
+          }
+        }
+      });
+
+      for(let i = 0; i < bookings.length; ++i) {
+        bookings[i].carPath = pathes.filter((x) => x.bookingId == bookings[i].id);
+      }
+
+    
+    //}
 
     return bookings;
   }

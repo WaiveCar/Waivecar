@@ -14,11 +14,6 @@ Bento.Register.Model('BookingLocation', 'sequelize', function(model, Sequelize) 
       }
     },
 
-    carId : {
-      type       : Sequelize.INTEGER,
-      allowNull  : true
-    },
-
     latitude : {
       type      : Sequelize.DECIMAL(10, 8),
       allowNull : false
