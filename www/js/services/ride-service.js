@@ -16,9 +16,10 @@ module.exports = angular.module('app.services').factory('$ride', [
   '$q',
   '$injector',
   'GeofencingService',
+  'ChargersService',
   '$distance',
   '$modal',
-  function($auth, $data, $state, $message, $interval, $timeout, $q, $injector, GeofencingService, $distance, $modal) {
+  function($auth, $data, $state, $message, $interval, $timeout, $q, $injector, GeofencingService, ChargersService, $distance, $modal) {
     var $ionicLoading = $injector.get('$ionicLoading');
 
     var service = {};
@@ -271,7 +272,7 @@ module.exports = angular.module('app.services').factory('$ride', [
 
         // If the charge isn't ok then we can only end at hubs, not zones.
         if(!service.isChargeOkay(car.id, car)) {
-          locationList = locationList.filter(function(location) { return ['hub','homebase'].indexOf(location.type) !== -1; });
+          locationList = locationList.filter(function(location) { return ['hub','homebase', 'chargeStation'].indexOf(location.type) !== -1; });
         }
 
         for(var ix = 0; ix < locationList.length; ix++) {

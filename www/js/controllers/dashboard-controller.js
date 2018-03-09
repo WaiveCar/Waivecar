@@ -42,6 +42,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   this.unlockCar = unlockCar;
   this.endRide = endRide;
   this.endRidePrompt = endRidePrompt;
+  this.showUnlockChargerPrompt = showUnlockChargerPrompt;
 
   // State
   this.ending = false;
@@ -67,6 +68,9 @@ function DashboardController ($scope, $rootScope, $injector) {
 
     ctrl.locations = $data.instances.locations;
 
+    ChargersService.getAvailableChargers().then(function(chargers){
+      ctrl.locations = $data.instances.locations.concat(chargers);
+    });
 
     if ($data.active.cars) {
       OnLockStateChange($data.active.cars.isLocked);
@@ -171,38 +175,15 @@ function DashboardController ($scope, $rootScope, $injector) {
       return $data.active.cars.isLocked
     }, OnLockStateChange);
 
-    $scope.$watch(function() {
-      return true;//$data.active.cars.charge < 30
-    }, OnCarChargeStateChange);
-
   }.bind(this));
-
-  function OnCarChargeStateChange(needsCharging) {
-    if (needsCharging){
-      if (ctrl.carChargerLocations) {
-        ctrl.locations = $data.instances.locations.concat(ctrl.carChargerLocations);
-      }
-      else{
-        ChargersService.getAvailableChargers().then(function(chargers){
-          ctrl.carChargerLocations = chargers;
-          ctrl.locations = $data.instances.locations.concat(ctrl.carChargerLocations);
-        });
-      }
-    } else {
-      ctrl.locations = $data.instances.locations;
-    }
-  }
 
   function OnLockStateChange(isLocked) {
     if (isLocked) {
-
-
       var lockedCarMarker = {
         type: "locked-car",
         latitude: $data.active.cars.latitude,
         longitude: $data.active.cars.longitude
       };
-
       ctrl.locations = $data.instances.locations.concat([lockedCarMarker]);
     } else {
       ctrl.locations = $data.instances.locations;
@@ -249,6 +230,32 @@ function DashboardController ($scope, $rootScope, $injector) {
           }
         });
      }
+  }
+
+  function showUnlockChargerPrompt(id){
+    var modal;
+    $modal('result', {
+      icon: 'x-icon',
+      title: 'Charging Station',
+      message: 'Do you wanna unlock charger?',
+      actions: [{
+        text: 'yes',
+        className: 'button-balanced',
+        handler: function () {
+          modal.remove();
+          //ctrl.endRide(carId, bookingId);
+        }
+      }, {
+        text: 'no',
+        handler: function () {
+          modal.remove();
+        }
+      }]
+    })
+      .then(function (_modal) {
+        modal = _modal;
+        modal.show();
+      });
   }
 
   function lockCar(id) {
