@@ -11,7 +11,7 @@ let User      = Bento.model('User');
 let log       = Bento.Log;
 let config    = Bento.config;
 let moment    = require('moment');
-let geolib    = require('geolib');
+let GeocodingService = require('../../lib/geocoding-service');
 let redis     = require('../../lib/redis-service');
 let uuid      = require('uuid');
 let _         = require('lodash');
@@ -25,12 +25,7 @@ module.exports = function *() {
   });
 };
 
-// Check if provided lat / long is within 20 mile driving zone
-function inDrivingZone(lat, long) {
-  let distance = geolib.getDistance({ latitude : lat, longitude : long }, config.waivecar.homebase.coords);
-  let miles = distance * 0.000621371;
-  return miles <= 20;
-}
+
 
 var checkBooking = co.wrap(function *(booking) {
   let details = yield BookingDetails.find({ where : { bookingId : booking.id } });
@@ -80,7 +75,7 @@ var checkBooking = co.wrap(function *(booking) {
   }
 
   // Check if outside driving zone
-  let deviceInside = inDrivingZone(device.latitude, device.longitude);
+  let deviceInside = GeocodingService.inDrivingZone(device.latitude, device.longitude);
 
   if (!user.isWaivework) {
     // if we thought we were outside but now we're inside
