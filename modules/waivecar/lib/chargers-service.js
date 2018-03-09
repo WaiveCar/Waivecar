@@ -4,6 +4,7 @@ let request = require('co-request');
 let error = Bento.Error;
 let config = Bento.config;
 let _ = require('lodash');
+let GeocodingService = require('./geocoding-service');
 
 module.exports = {
 
@@ -83,7 +84,8 @@ module.exports = {
         let locations = (result.data || []).map((loc) => {
 
             let availableEvses = (loc.evses || []).filter( (evse) => { return evse.status === 'AVAILABLE';});
-            return {
+
+            let newLoc = {
                 id: 'charger_' + loc.id,
                 address: loc.address,
                 type: 'chargingStation',
@@ -92,20 +94,17 @@ module.exports = {
                 name: loc.name,
                 status: availableEvses.length > 0 ? 'available' : 'unavailable'
             };
-        });
 
-        //mock one charger for testing
-        locations = locations.map( (loc) => {
-            if (loc.name === 'LAXT294DC1') {
-                loc.id = 'charger_' + 9999;
-                loc.address = 'test charger location';
-                loc.latitude = 34.0199;
-                loc.longitude = -118.48908000;
+            if (newLoc.name === 'LAXT294DC1') {
+                newLoc.id = 'charger_' + 9999;
+                newLoc.address = 'test charger location';
+                newLoc.latitude = 34.0199;
+                newLoc.longitude = -118.48908000;
             }
-            return loc;
+            return newLoc;
         });
 
-        return locations;
+        return locations.filter( (loc) => { return GeocodingService.inDrivingZone(loc.latitude, loc.longitude); });
     },
 
     *unlock(id) {
