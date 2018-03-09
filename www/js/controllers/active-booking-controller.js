@@ -325,7 +325,6 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         $state.go('start-ride', { id: id });
       })
       .then(function(data) {
-        console.log(">>> bbb <<<");
         return $data.fetch('bookings');
       })
       .then(function() {
