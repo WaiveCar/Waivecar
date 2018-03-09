@@ -121,8 +121,8 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
       return yards < 100;
     });
     // items within 100 yards of homebase will get on the same marker
-    homebase.length = _.filter(tempItems[0], 'isAvailable').length;
-    homebase.isAvailable = homebase.length > 0;
+    homebase.size = _.filter(tempItems[0], 'isAvailable').length;
+    homebase.isAvailable = homebase.size > 0;
     homebase.icon = 'homebase-active';
     homebase.isWaiveCarLot = true;
     homebase.cars = tempItems[0];
