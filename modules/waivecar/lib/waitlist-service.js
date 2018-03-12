@@ -167,6 +167,9 @@ module.exports = {
         let UserNote = Bento.model('UserNote');
         let note = new UserNote({
           userId: user.id,
+          // the author id currently can't be null
+          // so we make it the level fleet account
+          authorId: 14827,
           content: payload.account,
           type: 'unit'
         });
