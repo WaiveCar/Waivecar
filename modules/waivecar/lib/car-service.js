@@ -6,7 +6,6 @@ let parallel    = require('co-parallel');
 let request     = require('co-request');
 let moment      = require('moment');
 let notify      = require('./notification-service');
-let chargers    = require('./chargers-service');
 let Service     = require('./classes/service');
 let LogService  = require('./log-service');
 let UserLog     = require('../../log/lib/log-service');
