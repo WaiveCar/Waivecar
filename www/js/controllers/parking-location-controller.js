@@ -261,11 +261,20 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
       var carLatLngArr = [car.longitude, car.latitude];
       
       locations.forEach(function (location) {
-        if (location.type === 'parking') {
-           if (checkTimeRestrictions(location.restrictions) &&  LocationService.getDistanceToParkingLine(location.shape[0], location.shape[1], carLatLngArr) < threshold) {
-             hasRestrictions = true;
-           }
+        if (location.type !== 'parking') {
+          return;
         }
+
+        var minDistance = Number.MAX_SAFE_INTEGER;
+        for(var i = 0; i < location.shape.length - 1; ++i) {
+          var dist = LocationService.getDistanceToParkingLine(location.shape[i], location.shape[i + 1], carLatLngArr);
+          minDistance = Math.min(minDistance, dist);
+        }
+        
+        if (checkTimeRestrictions(location.restrictions) &&  minDistance < threshold) {
+          hasRestrictions = true;
+        }
+        
       });
       
       return hasRestrictions;
