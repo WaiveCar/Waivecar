@@ -131,7 +131,7 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
    * List of custom out of schema attributes.
    * @type {Array}
    */
-  model.attributes = [ 'email=>role', 'role=>group' ];
+  model.attributes = [ 'email=>role', 'role=>group', 'group=>groupRole' ];
 
   // A list of blacklisted public values.
   model.blacklist = [ 'password' ];
@@ -204,6 +204,10 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
 
     isAdmin() {
       return this.hasAccess('admin');
+    },
+
+    isSuperAdmin() {
+      return this.hasAccess('super');
     },
 
     isActive() {

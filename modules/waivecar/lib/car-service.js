@@ -111,9 +111,24 @@ module.exports = {
    * @param  {Object} _user
    * @return {Array}
    */
-  *carsWithBookings() {
+  *carsWithBookings(_user) {
+
+    // See #1077. Super Admin can access all cars.
+    // But still we need car's group on UI
+    let includeGroupCar = {
+      model: 'GroupCar',
+      as :'groupCar'
+    };
+
+    if(!_user.isSuperAdmin()) {
+      includeGroupCar.where = {
+        groupRoleId: _user.groupRole.id
+      }
+    }
+
     let cars = yield Car.find({
       include: [
+        includeGroupCar,
         { 
           model : 'User',
           as: 'user'
@@ -121,7 +136,9 @@ module.exports = {
         { 
           model : 'Booking',
           as: 'booking',
-          order: [['created_at', 'DESC']],
+          order: [
+            ['created_at', 'DESC']
+          ],
           limit: 1
         }
       ]
@@ -184,14 +201,37 @@ module.exports = {
    */
   *show(id, _user) {
     let start = +new Date();
+
+    // See #1077
+    let includeCarGroup = {
+      model : 'GroupCar',
+      as: 'groupCar'
+    }
+    if(!_user.isSuperAdmin()) {
+      includeCarGroup.where = {
+        groupRoleId: _user.groupRole.id
+      };
+    }
+
     let car = yield Car.findById(id, {
       include : [
         {
           model : 'User',
           as    : 'user'
-        }
+        },
+        includeCarGroup
       ]
     });
+
+    if(!car) {
+      throw error.parse({
+        code    : 'CAR_NOT_FOUND',
+        message : 'Car is not found or You don\'t have access to it',
+        data    : {
+          id : id
+        }
+      }, 404);
+    }
 
     return car;
   },
@@ -205,7 +245,18 @@ module.exports = {
   *update(id, payload, _user) {
     access.verifyAdmin(_user);
 
-    let car = yield Car.findById(id);
+    // See #1077
+    let includeCarGroup = {
+      model : 'GroupCar',
+      as: 'groupCar'
+    }
+    if(!_user.isSuperAdmin()) {
+      includeCarGroup.where = {
+        groupRoleId: _user.groupRole.id
+      };
+    }
+
+    let car = yield Car.findById(id, { include: [includeCarGroup]});
     if (!car) {
       throw error.parse({
         code    : 'CAR_SERVICE_NOT_FOUND',
@@ -668,7 +719,17 @@ module.exports = {
    * @return {Object} updated Car
    */
   *executeCommand(id, part, command, _user) {
-    let existingCar = yield Car.findById(id);
+    // #1077
+    let carOptions = {
+      include: [
+        {
+          model: 'GroupCar',
+          as: 'groupCar'
+        }
+      ]
+    };
+    let existingCar = yield Car.findById(id, carOptions);
+
     let updatedCar = false;
     if (!existingCar) {
       let error    = new Error(`CAR: ${ id }`);

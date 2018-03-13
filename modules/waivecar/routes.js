@@ -109,3 +109,11 @@ Route.get('/actions/current/:type/:id', ['ActionController@getAction']);
 Route.get('/geocoding', [ 'isAuthenticated', 'GeocodingController@show' ]);
 
 Route.get('/dashboard', [ /* 'isAuthenticated', 'isAdmin',*/ 'DashboardController@index' ]);
+
+// ### Group
+Route.get('/group', ['GroupController@index']);
+Route.post('/group', ['GroupController@create']);
+Route.put('/group/:id', ['GroupController@update']);
+Route.del('/group/:id', ['GroupController@delete']);
+Route.post('/group/:groupRoleId/assigncar/:carId', ['GroupController@assignCar']);
+Route.del('/group/:groupRoleId/removecar/:carId', ['GroupController@removeCar']);
