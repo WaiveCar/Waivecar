@@ -88,7 +88,6 @@ module.exports = angular.module('app.controllers').controller('BookingsControlle
 
           item.route = false;
           if (ride.start && ride.end){
-            console.log('>>>>> item.route.intermediatePoints: ', ride.locations);
             item.route = {
               start: {
                 longitude: ride.start.longitude,
