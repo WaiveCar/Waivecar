@@ -297,7 +297,7 @@ module.exports = class BookingService extends Service {
 
     if (!_user.hasAccess('admin') || query.type === 'mine') {
       dbQuery.where.user_id = _user.id;
-    } 
+    }
 
     bookings = yield Booking.find(dbQuery);
 
@@ -353,7 +353,6 @@ module.exports = class BookingService extends Service {
     // ### Get Booking
 
     let booking = yield this.getBooking(id, relations);
-    let car     = yield Car.findById(booking.carId);
     let user    = yield this.getUser(booking.userId);
 
     if (!ignoreUser) this.hasAccess(user, _user);
@@ -361,7 +360,18 @@ module.exports = class BookingService extends Service {
     // ### Prepare Booking
 
     booking.user     = user;
-    booking.car      = yield Car.findById(booking.carId);
+
+    // See #1077. Needs car's group when admin changes
+    // switchers on cars/:id page
+    let carOptions = {
+      include: [
+        {
+          model : 'GroupCar',
+          as    : 'groupCar'
+        }
+      ]
+    };
+    booking.car      = yield Car.findById(booking.carId, carOptions);
     try {
       booking.cart     = yield fees.get(booking.cartId, _user);
     } catch(ex) {

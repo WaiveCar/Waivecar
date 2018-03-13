@@ -83,3 +83,4 @@ prepaid_users.csv
 .bento-packages
 *.sql
 package-lock.json
+.vscode/**
