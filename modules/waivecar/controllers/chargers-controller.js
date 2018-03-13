@@ -15,8 +15,8 @@ Bento.Register.Controller('ChargersController', function(controller) {
         return yield service.list();
     };
 
-    controller.unlock = function *(id){
-        return yield service.unlock(id);
+    controller.unlock = function *(id, charger){
+        return yield service.unlock(id, charger);
     };
     return controller;
 });

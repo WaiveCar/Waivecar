@@ -67,7 +67,7 @@ Route.get('/locations/dropoff', 'LocationsController@dropoff');
 
 // ### EVGo chargers
 
-Route.post('/chargers/unlock/:id', 'ChargersController@unlock');
+Route.put('/chargers/unlock/:id/:charger', 'ChargersController@unlock');
 Route.get('/chargers/list', 'ChargersController@chargers');
 
 
