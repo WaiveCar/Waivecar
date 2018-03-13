@@ -232,6 +232,26 @@ function DashboardController ($scope, $rootScope, $injector) {
      }
   }
 
+  function OnCarChargeChange(isLocked) {
+    //todo: add new marking for charging car
+  }
+
+  function unlockCharger(chargerId) {
+    $ionicLoading.show({
+      template: '<div class="circle-loader"><span>Loading</span></div>'
+    });
+    $ride.unlockCharger($data.active.cars.id, chargerId)
+      .then(function(car) {
+        OnCarChargeChange(car.isCharging);
+        console.log(car);
+        $ionicLoading.hide();
+    })
+    .catch(function (reason) {
+        $ionicLoading.hide();
+        $message.error("Charger nlocking failed. Please make sure you're connected to free EVSE connector.");
+    });
+  }
+
   function showUnlockChargerPrompt(id){
     var modal;
     $modal('result', {
@@ -243,7 +263,7 @@ function DashboardController ($scope, $rootScope, $injector) {
         className: 'button-balanced',
         handler: function () {
           modal.remove();
-          //ctrl.endRide(carId, bookingId);
+          unlockCharger(id);
         }
       }, {
         text: 'no',

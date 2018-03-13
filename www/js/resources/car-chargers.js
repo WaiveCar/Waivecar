@@ -13,12 +13,14 @@ module.exports = angular.module('app').factory('Chargers', [
         isArray: true
       },
       unlock: {
-        method: 'POST',
-        url: $utils.getRoute('chargers/unlock', true),
+        method: 'PUT',
+        url: $utils.getCustomRoute('chargers/unlock/:id/:charger'),
         params: {
-          id: '@id'
-        }
-      },
+          id: '@carId',
+          charger: '@chargerId'
+        },
+        isArray: false
+      }
     }));
   }
 ]);

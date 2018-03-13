@@ -415,6 +415,10 @@ module.exports = angular.module('app.services').factory('$ride', [
       return $data.resources.cars.unlock({ id: id });
     };
 
+    service.unlockCharger = function(carId, chargerId) {
+      return $data.resources.chargers.unlock({ carId: carId, chargerId: chargerId }).$promise;
+    };
+
     service.init = function(current) {
       /*
       if(service._init) {

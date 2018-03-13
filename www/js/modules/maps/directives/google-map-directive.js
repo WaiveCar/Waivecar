@@ -656,7 +656,8 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         };
       case 'chargingStation':
         return {
-          url: 'img/icon-active-waivecar' + fileExt,
+          url: 'img/icon-station' + fileExt,
+          iconRetinaUrl: 'img/icon-station' + iconType + fileExt,
           scaledSize: new google.maps.Size(35, 44),
           anchor: new google.maps.Point(17, 44),
           origin: new google.maps.Point(0, 0)
