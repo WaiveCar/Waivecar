@@ -159,7 +159,7 @@ module.exports = {
       if(promo === 'levelbk') {
         res.level = 'yes';
         delete res.inside;
-        let userList = yield this.letInByRecord([record]);
+        let userList = yield this.letInByRecord([record], null, {email: 'level-letin'});
 
         user = userList[0];
         // we need to save what the user said their
@@ -217,8 +217,9 @@ module.exports = {
   // just to essentially dequeue some quantity of records.  The letin function 
   // is what converges the waitlist users to actual users.
   //
-  *letInByRecord(recordList, _user) {
+  *letInByRecord(recordList, _user, opts) {
     
+    opts = opts || {};
     let nameList = [];
     let userList = [];
 
@@ -264,7 +265,7 @@ module.exports = {
           to       : record.email,
           from     : config.email.sender,
           subject  : 'Welcome to WaiveCar',
-          template : 'waitlist-letin-email',
+          template : opts.email || 'waitlist-letin-email',
           context  : {
             name: fullName,
             passwordlink: `${config.api.uri}/reset-password?hash=${res.token.hash}&isnew=yes`
