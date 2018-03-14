@@ -196,6 +196,11 @@ module.exports = class BookingService extends Service {
 
     // ### Notifications
 
+    if (car.isTagged('level')) {
+      // https://lb.waivecar.com/users/14827
+      yield notify.sendTextMessage(14827, `${ driver.name() } reserved ${ car.license }.`);
+    }
+
     yield notify.sendTextMessage(driver, `Hi There! Your WaiveCar reservation with ${ car.license } has been confirmed. You'll have 15 minutes to get to your WaiveCar before your reservation expires. Let us know if you have any questions.`);
 
     let message = yield this.updateState('created', _user, driver);
