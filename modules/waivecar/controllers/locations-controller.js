@@ -2,6 +2,7 @@
 
 let error = Bento.Error;
 let Location = Bento.model('Location');
+let Chargers = require('../lib/chargers-service');
 let _ = require('lodash');
 
 Bento.Register.ResourceController('Location', 'LocationsController', function(controller) {
@@ -21,16 +22,20 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
         { address : { $like : `%${ this.query.search }%` } }
       ]};
     }
-    return (yield Location.find(query)).map((row) => {
+    let locations =  (yield Location.find(query)).map((row) => {
       if(row.shape) {
         row.shape = JSON.parse(row.shape);
       }
       return row;
     });
+
+    let chargers = yield Chargers.list();
+    return locations.concat(chargers);
   };
 
   controller.dropoff = function *() {
-    return (yield Location.find({ where: 
+
+    let locations = (yield Location.find({ where:
       {
         type: { $in: ['hub', 'zone', 'homebase'] }
         // only return entries after the date below ... we are considering
@@ -43,6 +48,9 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
       }
       return row;
     });
+
+    let chargers = yield Chargers.list();
+    return locations.concat(chargers);
   };
 
   controller.create = function *() {

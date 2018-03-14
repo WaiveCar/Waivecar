@@ -73,15 +73,8 @@ module.exports = {
 
     *list() {
         //mocked token
-        let response = yield request({
-            url     : 'https://evgotest.driivz.com/externalIncoming/ocpi/cpo/2.1.1/locations',
-            method  : 'GET',
-            headers : {
-                Referer : config.api.uri,
-                Accept  : 'application/json',
-                Authorization: 'Token dsakjrh3447sdfgs32985sd'
-            }
-        });
+        let requestObj = this.prepareRequest('locations', 'GET');
+        let response = yield request(requestObj);
 
         let result = JSON.parse(response.body);
         let locations = (result.data || []).map(loc => this.mapCharger(loc));
@@ -89,16 +82,21 @@ module.exports = {
     },
 
     *getCharger(id) {
-        let response = yield request({
-            url     : `https://evgotest.driivz.com/externalIncoming/ocpi/cpo/2.1.1/locations/${id.replace('charger_', '')}`,
-            method  : 'GET',
+        let requestObj = this.prepareRequest(`locations/${id}`, 'GET');
+        let response = yield request(requestObj);
+        return JSON.parse(response.body).data;
+    },
+
+    prepareRequest(url, method) {
+        return {
+            url     : config.evgo.cpoUrl + url,
+            method  : method,
             headers : {
                 Referer : config.api.uri,
                 Accept  : 'application/json',
-                Authorization: 'Token dsakjrh3447sdfgs32985sd'
+                Authorization: 'Token ' + config.evgo.token
             }
-        });
-        return this.mapCharger(JSON.parse(response.body).data);
+        }
     },
 
     mapCharger(loc) {
@@ -114,7 +112,7 @@ module.exports = {
             status: availableEvses.length > 0 ? 'available' : 'unavailable'
         };
 
-        if (newLoc.name === 'LAXT294DC1') {
+        if (newLoc.name === 'LAXN512DC1') {
             newLoc.address = 'test charger location';
             newLoc.latitude = 34.0199;
             newLoc.longitude = -118.48908000;
@@ -123,14 +121,42 @@ module.exports = {
         return newLoc;
     },
 
+    *startChargeSession(chargerId){
+        let charger = yield this.getCharger(chargerId);
+        let availableEvses = (charger.evses || []).filter((evse) => {return evse.status === 'AVAILABLE';});
+
+        let status = availableEvses.length > 0;
+
+        if (!status) {
+            throw  error.parse({
+                code    : 'NO_EVSE_AVAILABLE',
+                message : 'There is no available EVSE at the moment.'
+            }, 400);
+        }
+
+        let evse = availableEvses[0];
+
+        let startSession = {
+            location_id: chargerId,
+            evse_uid: evse.id
+        };
+
+        let startCommand = this.prepareRequest('commands/START_SESSION', 'POST');
+        startCommand.body = JSON.stringify(startSession);
+        let response = yield request(startCommand);
+        return JSON.parse(response.body).data;
+    },
+
+    *stopChargeSession(chargerId){
+
+    },
+
     *unlock(carId, chargerId) {
         let car = yield Car.findById(carId);
-        let charger = yield this.getCharger(chargerId);
-        console.log(charger);
-
-        //send update status for charger and unlock available connector
-
-        car.isCharging = true;
+        let id = chargerId.replace('charger_', '');
+        let response = yield this.startChargeSession(id);
+        car.isCharging = response  === 'ACCEPTED';
+        //todo: send update status for charger and unlock available connector
         return yield cars.syncUpdate(carId, car);
     }
 };
