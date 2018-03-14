@@ -44,7 +44,7 @@ module.exports = class WaitList extends Component {
               <h2>Thanks{ (this.state.autoshow == 'yes' || this.state.level == 'yes') ? ", you're in" : (this.state.waivework === 'yes' ? ' for Signing up' : ' for Coming') }!</h2>
               { this.state.level == 'yes' &&
                 <div>
-                  <p>Please check your email for further instructions.</p>
+                  <p>You're just a few steps away from your complementary electric car. Please check your email for further instructions.</p>
                 </div>
               }
               { this.state.autoshow == 'yes' &&

@@ -192,13 +192,25 @@ class ResetPasswordView extends React.Component {
       <div>
         <div className="message-success">
           { this.state.isnew ?
-            "Welcome to WaiveCar! The next step is to log in and setup your account." :
-            "Your password was successfully reset."
+              "Welcome to WaiveCar! The next step is to download the app and setup your account." :
+              "Your password was successfully reset."
           }
         </div>
-        <div className="token-request">
-          <Link to="/login" className="r-btn btn-login">Go login</Link>
-        </div>
+        { this.state.isnew && 
+            <p>
+              <a href="https://itunes.apple.com/us/app/waivecar/id1051144802?ls=1&mt=8">
+                <img style={{ width: '50%', padding: '0 2%' }} src="https://lb.waivecar.com/images/site/btn-app-store.svg" />
+              </a>
+              <a href="https://play.google.com/store/apps/details?id=com.waivecardrive.app">
+                <img style={{ width: '50%', padding: '0 2%' }} src="https://lb.waivecar.com/images/site/btn-google-play.svg" />
+              </a>
+            </p>
+        }
+        { !this.state.isnew && 
+            <div className="token-request">
+              <Link to="/login" className="r-btn btn-login">Go login</Link>
+            </div>
+        }
       </div>
     );
   }
