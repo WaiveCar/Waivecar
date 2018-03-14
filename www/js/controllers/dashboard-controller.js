@@ -67,11 +67,6 @@ function DashboardController ($scope, $rootScope, $injector) {
     rideServiceReady();
 
     ctrl.locations = $data.instances.locations;
-
-    ChargersService.getAvailableChargers().then(function(chargers){
-      ctrl.locations = $data.instances.locations.concat(chargers);
-    });
-
     if ($data.active.cars) {
       OnLockStateChange($data.active.cars.isLocked);
     }
@@ -248,7 +243,7 @@ function DashboardController ($scope, $rootScope, $injector) {
     })
     .catch(function (reason) {
         $ionicLoading.hide();
-        $message.error("Charger nlocking failed. Please make sure you're connected to free EVSE connector.");
+        $message.error("Charger unlocking failed. Please make sure you're connected to available EVSE connector.");
     });
   }
 
