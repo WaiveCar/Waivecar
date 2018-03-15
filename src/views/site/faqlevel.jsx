@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-module.exports = class Faq-level extends Component {
+module.exports = class Faqlevel extends Component {
   render() {
     return (
       <div className='container'>
