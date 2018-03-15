@@ -6,7 +6,7 @@
 
   <ion-content padding="true" class="ion-content--center gray-bg">
 
-  <iframe class='quiz' width="100%" height="{{ user.tested ? '100%' : '60%' }}" src="https://www.waivecar.com/faq"></iframe>
+  <iframe class='quiz' width="100%" height="{{ user.tested ? '100%' : '60%' }}" src="https://lb.waivecar.com/{{ faqUrl }}"></iframe>
 
     <div class='quiz-content' ng-if='!user.tested'>
       <div ng-if="!showQuiz()">

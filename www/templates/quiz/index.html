@@ -11,19 +11,18 @@
   </ion-nav-title>
 
 
-
   <ion-content scroll="true" padding="true" class="ion-content--center dark-bg">
 
     <h3><b>Most</b> of our users haven't ever paid anything to use WaiveCar.</h3>
-    <p>We've made a guide to help make sure you are in the majority. Since some prefer to read and some prefer videos, we've made one of each.</p>
+    <p>We've made a guide to help make sure you are in the majority. <span ng-if="!user.hasTag('level')">Since some prefer to read and some prefer videos, we've made one of each.</span></p>
 
-    <div class='group'>
+    <div class='group' ng-if="!user.hasTag('level')">
       <h4>I prefer videos</h4>
       <button class="button button-balanced button-block" ui-sref="quiz-video">Show me a 3 minute video</button>
     </div>
 
     <div class='group'>
-      <h4>I prefer reading</h4>
+      <h4 ng-if="!user.hasTag('level')">I prefer reading</h4>
       <button class="button button-balanced button-block" ui-sref="quiz-faq">Show me the FAQ</button>
     </div>
 

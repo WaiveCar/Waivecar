@@ -35,6 +35,7 @@ function QuizController($injector, $stateParams, $scope, $interval, $data){
   $scope.init();
 
   if($scope.user.hasTag('level')) {
+    $scope.faqUrl = 'faqlevel';
     $scope.questionList = [
       {
         prompt: 'Who is allowed in a WaiveCar?',
@@ -65,6 +66,7 @@ function QuizController($injector, $stateParams, $scope, $interval, $data){
       }
     ];
   } else {
+    $scope.faqUrl = 'faq';
     $scope.questionList = [
       {
         prompt: 'When ending your ride make sure your spot is Legal and Free for at least',
