@@ -14,7 +14,7 @@ module.exports = angular.module('app').factory('User', [
   '$location',
   function(Resource, $utils, $settings, $location) {
 
-    return Resource('/users/:id/:action', {
+    var res = Resource('/users/:id/:action', {
       id: '@id'
     }, {
       create: {
@@ -56,5 +56,11 @@ module.exports = angular.module('app').factory('User', [
       },
     });
 
+    // TODO
+    res.hasTag = function(what) {
+      return true;
+    }
+
+    return res;
   }
 ]);
