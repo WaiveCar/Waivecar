@@ -6,7 +6,8 @@ var _ = require('lodash');
 module.exports = angular.module('app').factory('Users', [
   '$resource',
   '$utils',
-  function ($resource, $utils) {
+  '$rootScope',
+  function ($resource, $utils, $rootScope) {
 
     var transformRequest = function (data) {
       if (!data) {
@@ -41,9 +42,13 @@ module.exports = angular.module('app').factory('Users', [
         method: 'POST',
         url: $utils.getCustomRoute('auth/logout')
       },
-      me: {
+      _me: {
         method: 'GET',
-        url: $utils.getCustomRoute('users/me')
+        url: $utils.getCustomRoute('users/me?lat=:lat&lng=:lng'),
+        params: {
+          lat: '@lat',
+          lng: '@lng',
+        }
       },
       createCustomer: {
         method: 'POST',
@@ -54,6 +59,15 @@ module.exports = angular.module('app').factory('Users', [
         url: $utils.getCustomRoute('payments/cards')
       },
     }));
+
+    resource.me = function () {
+      console.log('bbb', JSON.stringify($rootScope.currentLocation));
+      var loc = $rootScope.currentLocation;
+      if(loc) {
+        return this._me({lat: loc.latitude, lng: loc.longitude});
+      } 
+      return this._me();
+    };
 
     resource.prototype.$save = function () {
       if (!this.id) {
