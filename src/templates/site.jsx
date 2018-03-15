@@ -9,24 +9,15 @@ import Header                   from './app/header';
  */
 class SiteTemplate extends React.Component {
 
-  /**
-   * @constructor
-   */
   constructor(...args) {
     super(...args);
     relay.subscribe(this, 'site');
   }
 
-  /**
-   * @method componentWillUnmount
-   */
   componentWillUnmount() {
     relay.unsubscribe(this, 'site');
   }
 
-  /**
-   * @method render
-   */
   render() {
     return (
       <div id="site">
@@ -60,8 +51,8 @@ templates.register('site', {
       component : require('views/site/waitlist')
     },
     {
-      path      : '/faq',
-      component : require('views/site/faq')
+      path      : '/faq-level',
+      component : require('views/site/faq-level')
     },
     {
       path      : '/jobs',
