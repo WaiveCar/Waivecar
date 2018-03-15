@@ -4,9 +4,6 @@ import UI, { templates, views } from 'bento-ui';
 import policies                 from 'policies';
 import Header                   from './app/header';
 
-/**
- * @class AppTemplate
- */
 class SiteTemplate extends React.Component {
 
   constructor(...args) {
@@ -52,7 +49,7 @@ templates.register('site', {
     },
     {
       path      : '/faq-level',
-      component : require('views/site/faq-level')
+      component : require('views/site/faqlevel')
     },
     {
       path      : '/jobs',
