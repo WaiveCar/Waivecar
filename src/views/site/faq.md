@@ -1,5 +1,5 @@
 ﻿## What is WaiveCar?
-WaiveCar is the first ever FREE & 100% electric car sharing program. We are ad-supported so the funds we receive from Advertisers to display their ads on our roof-mounted screens and body wraps allow users to drive our cars FREE for 2 hours then $5.99/hr...MIC DROP.
+WaiveCar is the first ever FREE & 100% electric car sharing program. We are ad-supported so the funds we receive from advertisers to display their ads on our roof-mounted screens and body wraps allow users to drive our cars FREE for 2 hours then $5.99/hr...MIC DROP.
 
 ## Signing up
 ### What do I need to sign up?
@@ -76,7 +76,7 @@ Then your reservation will expire! So hurry up and try to rebook the same car or
 No worries! It's just a $1 hold on your card we will refund right back to you when your ride is complete!
 
 ### How many WaiveCars are there?
-We currently have 20 in Santa Monica and we are expanding very soon.
+We currently have 37 in Santa Monica and we are expanding very soon.
 
 ## Driving Cars
 ### How far can I drive with a WaiveCar?
@@ -86,7 +86,7 @@ You can drive up to 20 miles outside our HQ in Santa Monica, which includes most
 You don't need keys to start the car, however if you need to lock the car DURING your rental, the keys are on a sensor in the glovebox! Just make sure you replace them when you're done.
 
 ### I've never driven an electric car. How many miles per charge do I get?
-Our Chevy Spark EVs have 80 miles per charge.
+Our Chevy Spark EVs have 50-70 miles per charge, depending on driving style. Our Hyundai Ioniqs have between 110-130 depending on driving style.
 
 ### What should I do if I'm running low on charge?
 Check the app for the closest fast charger, or download the app "Plugshare". Give us a call at 855-WAIVE55 if there is any confusion and we can direct you to one!

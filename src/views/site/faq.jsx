@@ -7,7 +7,7 @@ module.exports = class Faq extends Component {
         <div className='row'>
           <div className="col-xs-12 col-md-8 col-md-push-2 faq">
           <h2 id="what-is-waivecar">What is WaiveCar?</h2>
-          <p>WaiveCar is the first ever FREE &amp; 100% electric car sharing program. We are ad-supported so the funds we receive from Advertisers to display their ads on our roof-mounted screens and body wraps allow users to drive our cars FREE for 2 hours then $5.99/hr...MIC DROP.</p>
+          <p>WaiveCar is the first ever FREE &amp; 100% electric car sharing program. We are ad-supported so the funds we receive from advertisers to display their ads on our roof-mounted screens and body wraps allow users to drive our cars FREE for 2 hours then $5.99/hr...MIC DROP.</p>
           <h2 id="signing-up">Signing up</h2>
           <h3 id="what-do-i-need-to-sign-up">What do I need to sign up?</h3>
           <p>All you need to sign up with WaiveCar is a smart phone, credit/debit card, a valid driver's license, and a good driving record. Simply download the app from your app store!</p>
@@ -60,14 +60,14 @@ module.exports = class Faq extends Component {
           <h3 id="whats-with-that-1-charge-when-i-book-a-waivecar">What's with that $1 charge when I book a WaiveCar?</h3>
           <p>No worries! It's just a $1 hold on your card we will refund right back to you when your ride is complete!</p>
           <h3 id="how-many-waivecars-are-there">How many WaiveCars are there?</h3>
-          <p>We currently have 20 in Santa Monica and we are expanding very soon.</p>
+          <p>We currently have 37 in Santa Monica and we are expanding very soon.</p>
           <h2 id="driving-cars">Driving Cars</h2>
           <h3 id="how-far-can-i-drive-with-a-waivecar">How far can I drive with a WaiveCar?</h3>
           <p>You can drive up to 20 miles outside our HQ in Santa Monica, which includes most of LA. You will get a text message alert when you have passed the boundaries! Along with being free the first 2 hours, a single WaiveCar can be rented for up to 12 hours at a time.</p>
           <h3 id="where-are-the-keys">Where are the keys?</h3>
           <p>You don't need keys to start the car, however if you need to lock the car DURING your rental, the keys are on a sensor in the glovebox! Just make sure you replace them when you're done.</p>
           <h3 id="ive-never-driven-an-electric-car.-how-many-miles-per-charge-do-i-get">I've never driven an electric car. How many miles per charge do I get?</h3>
-          <p>Our Chevy Spark EVs have 80 miles per charge.</p>
+          <p>Our Chevy Spark EVs have 50-70 miles per charge, depending on driving style. Our Hyundai Ioniqs have between 110-130 depending on driving style.</p>
           <h3 id="what-should-i-do-if-im-running-low-on-charge">What should I do if I'm running low on charge?</h3>
           <p>Check the app for the closest fast charger, or download the app &quot;Plugshare&quot;. Give us a call at 855-WAIVE55 if there is any confusion and we can direct you to one!</p>
           <h3 id="do-you-guys-cover-the-charging-station-costs">Do you guys cover the charging station costs?</h3>
