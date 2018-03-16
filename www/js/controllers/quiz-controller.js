@@ -34,7 +34,7 @@ function QuizController($injector, $stateParams, $scope, $interval, $data){
 
   $scope.init();
 
-  if($scope.user.hasTag('level')) {
+  if($data.me.hasTag('level')) {
     $scope.faqUrl = 'faqlevel';
     $scope.questionList = [
       {
