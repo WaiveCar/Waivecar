@@ -56,11 +56,6 @@ module.exports = angular.module('app').factory('User', [
       },
     });
 
-    // TODO
-    res.hasTag = function(what) {
-      return true;
-    }
-
     return res;
   }
 ]);
