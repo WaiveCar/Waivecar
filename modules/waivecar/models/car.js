@@ -315,9 +315,9 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     },
 
     loadTagList : function* () {
-      if(!this.tagList) {
+      if(!this.groupCar) {
         let GroupCar = Bento.model('GroupCar');
-        this.tagList = yield GroupCar.find({
+        this.groupCar = yield GroupCar.find({
           where: { carId: this.id },
           include: [
             {
@@ -327,7 +327,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
           ]
         });
       }
-      return this.tagList;
+      return this.groupCar;
     },
 
     getTag : function *(tag) {
@@ -395,7 +395,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     function(User, Booking, GroupCar) {
       this.belongsTo(User, { as : 'user', foreignKey : 'userId' });
       this.hasMany(Booking, { as : 'booking' });
-      this.hasMany(GroupCar,  { as : 'tagList', foreignKey : 'carId' });
+      this.hasMany(GroupCar,  { as : 'groupCar', foreignKey : 'carId' });
     }
   ];
 
