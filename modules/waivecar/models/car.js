@@ -314,9 +314,65 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       });
     },
 
-    /**
-     * Removes driver from the car and sets the car to available.
-     */
+    loadTagList : function* () {
+      if(!this.tagList) {
+        let GroupCar = Bento.model('GroupCar');
+        this.tagList = yield GroupCar.find({
+          where: { carId: this.id },
+          include: [
+            {
+              model: 'GroupRole',
+              as: 'group_role'
+            }
+          ]
+        });
+      }
+      return this.tagList;
+    },
+
+    getTag : function *(tag) {
+      var res = (yield this.loadTagList()).filter((row) => {
+        return row.groupRole.name === tag;
+      });
+      return res;
+    },
+
+    addTag : function *(tag) {
+      let record = yield this.getTag(tag);
+      if(record) {
+        return record;
+      }
+      let GroupRole = Bento.model('GroupRole');
+      let groupRecord = yield GroupRole.findOne({where: {name: tag}});
+      if(groupRecord) {
+        let GroupCar = Bento.model('GroupCar');
+        return yield GroupCar.create({
+          carId: this.id,
+          groupRoleId: groupRecord.id
+        });
+      }    
+    },
+
+    isTagged : function *(tag) {
+      return (yield this.getTag(tag)).length;
+    },
+
+    hasTag : function *(tag) {
+      return (yield this.getTag(tag)).length;
+    },
+
+    untag : function *(tag) {
+      let record = yield this.getTag(tag);
+      if(record) {
+        let GroupCar = Bento.model('GroupCar');
+        yield GroupCar.destroy({where: {id: record[0].id} });
+      }
+    },
+
+    delTag : function *(tag) {
+      return yield this.untag(tag);
+    },
+
     removeDriver : function *() {
       yield this.update({
         userId : null
@@ -339,7 +395,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     function(User, Booking, GroupCar) {
       this.belongsTo(User, { as : 'user', foreignKey : 'userId' });
       this.hasMany(Booking, { as : 'booking' });
-      this.hasMany(GroupCar,  { as : 'groupCar', foreignKey : 'carId' });
+      this.hasMany(GroupCar,  { as : 'tagList', foreignKey : 'carId' });
     }
   ];
 
