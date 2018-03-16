@@ -123,33 +123,36 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
       }
     })[0];
 
-    var tempItems = _.partition(items, function (item) {
-      var miles = $distance(item, homebase);
-      var yards = miles * 1760;
-      return yards < 100;
-    });
-    // items within 100 yards of homebase will get on the same marker
-    homebase.size = _.filter(tempItems[0], 'isAvailable').length;
-    homebase.isAvailable = homebase.size > 0;
-    homebase.icon = 'homebase-active';
-    homebase.isWaiveCarLot = true;
-    homebase.cars = tempItems[0];
-    homebase.id = 'homebase';
+    if(homebase) {
+      var tempItems = _.partition(items, function (item) {
+        var miles = $distance(item, homebase);
+        var yards = miles * 1760;
+        return yards < 100;
+      });
+      // items within 100 yards of homebase will get on the same marker
+      homebase.size = _.filter(tempItems[0], 'isAvailable').length;
+      homebase.isAvailable = homebase.size > 0;
+      homebase.icon = 'homebase-active';
+      homebase.isWaiveCarLot = true;
+      homebase.cars = tempItems[0];
+      homebase.id = 'homebase';
 
-    // The homebase is region specific so we set it here.
-    $data.homebase = homebase;
+      // The homebase is region specific so we set it here.
+      $data.homebase = homebase;
 
-    var awayCars = tempItems[1].filter(function (item) {
-      return item.isAvailable;
-    }).map(function (item) {
-      if (item.hasOwnProperty('isAvailable')) {
-        item.icon = 'car';
-      }
-      return item;
-    });
+      var awayCars = tempItems[1].filter(function (item) {
+        return item.isAvailable;
+      }).map(function (item) {
+        if (item.hasOwnProperty('isAvailable')) {
+          item.icon = 'car';
+        }
+        return item;
+      });
 
-    awayCars.push(homebase);
-    return awayCars;
+      awayCars.push(homebase);
+      return awayCars;
+    }
+    return items;
   }
 
   function getMarkersToFitBoundBy(all, currentLocation) {
