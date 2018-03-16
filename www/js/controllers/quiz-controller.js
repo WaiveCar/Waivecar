@@ -15,7 +15,8 @@ function QuizController($injector, $stateParams, $scope, $interval, $data){
 
     $data.resources.users.me().$promise
       .then(function(me) {
-        $scope.user = Object.assign({}, me, $data.me);
+        $scope.user = me;
+        $scope.user.hasTag = $data.me.hasTag;
       });
 
 
@@ -55,12 +56,12 @@ function QuizController($injector, $stateParams, $scope, $interval, $data){
         ]
       },
       {
-        prompt: 'I can return my car to',
+        prompt: 'I can end my ride at',
         answerList: [
           [ 0, 'Any parking garage', 'Almost! We are specific on our garages.' ],
-          [ 0, 'The shoulder on the New Jersey Turnpike', 'No, just no. I mean come on, really?' ],
-          [ 0, 'Any street parking space', 'The cars have to be convenient for other residents' ],
-          [ 1, 'The 24 hour lot at 34 N 7th Street', 'Correct Again! All bookings must end here.' ]
+          [ 0, 'The shoulder of the New Jersey Turnpike', "That's silly. I mean come on, really?" ],
+          [ 0, 'Any street parking space', 'The cars have to be convenient for other residents.' ],
+          [ 1, 'The 24 hour lot at 34 North 7th Street', 'Correct Again! All bookings must end here.' ]
         ]
       }
     ];
