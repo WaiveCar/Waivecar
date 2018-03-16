@@ -5,10 +5,6 @@ let error   = Bento.Error;
 
 Bento.Register.ResourceController('User', 'UsersController', (controller) => {
 
-  /**
-   * Creates a new user.
-   * @return {Object}
-   */
   controller.store = function *() {
     return yield service.store(this.payload, this.auth.user);
   };
@@ -44,20 +40,10 @@ Bento.Register.ResourceController('User', 'UsersController', (controller) => {
     }, 404);
   };
 
-  /**
-   * Updates the provided user.
-   * @param  {Number} id
-   * @return {Object}
-   */
   controller.update = function *(id) {
     return yield service.update(id, this.payload, this.auth.user);
   };
 
-  /**
-   * Deletes the provided user.
-   * @param  {Number} id
-   * @return {Object}
-   */
   controller.delete = function *(id) {
     return yield service.delete(id, this.query, this.auth.user);
   };
