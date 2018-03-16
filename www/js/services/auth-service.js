@@ -13,11 +13,21 @@ function AuthService ($rootScope, $session, $data, $injector) {
     return !!(this.token && this.me);
   };
 
+  function prepareMe() {
+    var raw = $session.get('me');
+    raw.hasTag = function(tag) {
+      return raw.tagList.filter(function(row) {
+        return row.group.name === tag;
+      }).length
+    }
+    return raw;
+  }
+
   this.reload = function reload () {
     return $data.resources.users.me().$promise
       .then(function(me) {
         $session.set('me', me).save();
-        this.me = $data.me = $session.get('me');
+        this.me = $data.me = prepareMe();
       }.bind(this));
 
   };
@@ -50,7 +60,7 @@ function AuthService ($rootScope, $session, $data, $injector) {
         return createSession(code)
           .then(function () {
             this.token = $session.get('auth');
-            this.me = $data.me = $session.get('me');
+            this.me = $data.me = prepareMe();
             $rootScope.$emit('authLogin', code);
             return code;
           }.bind(this));
@@ -64,7 +74,7 @@ function AuthService ($rootScope, $session, $data, $injector) {
         return createSession(code)
         .then(function() {
           this.token = $session.get('auth');
-          this.me = $data.me = $session.get('me');
+          this.me = $data.me = prepareMe();
           $rootScope.$emit('authLogin', code);
           return $data.resources.Auth.remember().$promise;
         }.bind(this));
@@ -92,7 +102,7 @@ function AuthService ($rootScope, $session, $data, $injector) {
     return $data.resources.users.me().$promise
       .then(function(user) {
         $session.set('me', user).save();
-        this.me = $data.me = $session.get('me');
+        this.me = $data.me = prepareMe();
         return user;
       }.bind(this));
   };
