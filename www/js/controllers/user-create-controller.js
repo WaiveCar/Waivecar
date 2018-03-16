@@ -24,12 +24,12 @@ function UserCreateController($injector){
       this.inLA = setting;
       this.inNotLA = !setting;
       this.havePromo = false;
-      this.isLocationSelected = true;
     } else {
       this.inLA = false;
       this.inNotLA = false;
       this.havePromo = true;
     }
+    this.isLocationSelected = true;
   };
 
   this.submit = function(form){
@@ -70,7 +70,9 @@ function UserCreateController($injector){
     var opts = {
       firstName: this.user.firstName,
       lastName: this.user.lastName,
-      email: this.user.email
+      email: this.user.email,
+      phone: this.user.phone,
+      password: this.user.password
     }, nextPage;
 
     if (this.inLA) {
@@ -78,11 +80,17 @@ function UserCreateController($injector){
       opts.latitude = 34.0195;
       opts.placeName = "Los Angeles";
       nextPage = 'user-waitlist';
-    } else {
+    } else if(!this.havePromo) {
       opts.placeName = this.placeName;
       nextPage = 'sunny-santa-monica';
+    } else if(this.havePromo) {
+      opts.promoCode = this.user.promoCode;
+      opts.account = this.user.account;
     }
 
+    // we always add a user to the waitlist and then
+    // the server code sees if the user can be fast-tracked
+    // or not.
     return $data.resources.User.addToWaitlist(opts).$promise
       .then(function () {
         $ionicLoading.hide();
@@ -92,7 +100,8 @@ function UserCreateController($injector){
         $ionicLoading.hide();
         $message.error(err);
       });
-    /*
+      /*
+    } else {
       var mthis = this;
       return this.user.$save()
         .then(function login (user) {
@@ -109,8 +118,8 @@ function UserCreateController($injector){
           $ionicLoading.hide();
           $message.error(err);
         });
-    } else {
-    */
+    } 
+        */
   };
 
 
