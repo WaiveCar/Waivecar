@@ -52,7 +52,7 @@ Our cars are available 24/7 and the customer service line is open from 9am-midni
 Log onto the app to see if any cars are available. Tap on a car and hit "Book it"! You then have 15 minutes to get to the car before the reservation times out.
 
 ### Where can I get a WaiveCar?
-WaiveCars are an exclusive amenity of Level residents in Brooklyn and are available at 34 N 7th Street. We also have a large fleet available on the West Side of Los Angeles so come on by if you're ever in sunny LA.
+WaiveCars are an exclusive amenity of level residents in Brooklyn and are available at 34 N 7th Street. We also have a large fleet available on the West Side of Los Angeles so come on by if you're ever in sunny LA.
 
 ### How long do I have to get to a WaiveCar?
 You have 15 minutes to get to a WaiveCar before the reservation times out.
@@ -78,7 +78,7 @@ Then your reservation will expire! So hurry up and try to rebook the same car or
 No worries! It's just a $1 hold on your card we will refund right back to you when your ride is complete!
 
 ### How many WaiveCars are there?
-We currently have 3 available for Level Residents.
+We currently have 3 available for level residents.
 
 ## Driving Cars
 ### How far can I drive with a WaiveCar?
@@ -124,7 +124,7 @@ There are some modest fees in order to keep our fleet bright and shiny.
  * **Dead Battery / Lights Left On** $100
  * **Missing Key (Failure to return equipment)** $300
  * **Parking Violation (Any violation of our parking rules)** $40
- * **Vehicle Recovery (if left outside Santa Monica)** $300 minimum
+ * **Vehicle Recovery (if left outside Brooklyn)** $300 minimum
  * **Declined Credit Card** Charges + $5 penalty fee
  * **Excess Time (Non Waive time)** $1 for every 10 mins. ($5.99/hour)
 

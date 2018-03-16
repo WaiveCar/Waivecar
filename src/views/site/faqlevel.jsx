@@ -44,7 +44,7 @@ module.exports = class Faqlevel extends Component {
           <h3 id="how-do-i-book-a-waivecar">How do I book a WaiveCar?</h3>
           <p>Log onto the app to see if any cars are available. Tap on a car and hit &quot;Book it&quot;! You then have 15 minutes to get to the car before the reservation times out.</p>
           <h3 id="where-can-i-get-a-waivecar">Where can I get a WaiveCar?</h3>
-          <p>WaiveCars are an exclusive amenity of Level residents in Brooklyn and are available at 34 N 7th Street. We also have a large fleet available on the West Side of Los Angeles so come on by if you're ever in sunny LA.</p>
+          <p>WaiveCars are an exclusive amenity of level residents in Brooklyn and are available at 34 N 7th Street. We also have a large fleet available on the West Side of Los Angeles so come on by if you're ever in sunny LA.</p>
           <h3 id="how-long-do-i-have-to-get-to-a-waivecar">How long do I have to get to a WaiveCar?</h3>
           <p>You have 15 minutes to get to a WaiveCar before the reservation times out.</p>
           <p>Once you get there, please make sure you drive the WaiveCar! We may have to forfeit your booking if the WaiveCar isn't being used. But don't worry, we send out a message beforehand and you'll have plenty of time to contact us if we've made a mistake.</p>
@@ -61,7 +61,7 @@ module.exports = class Faqlevel extends Component {
           <h3 id="whats-with-that-1-charge-when-i-book-a-waivecar">What's with that $1 charge when I book a WaiveCar?</h3>
           <p>No worries! It's just a $1 hold on your card we will refund right back to you when your ride is complete!</p>
           <h3 id="how-many-waivecars-are-there">How many WaiveCars are there?</h3>
-          <p>We currently have 3 available for Level Residents.</p>
+          <p>We currently have 3 available for level residents.</p>
           <h2 id="driving-cars">Driving Cars</h2>
           <h3 id="how-far-can-i-drive-with-a-waivecar">How far can I drive with a WaiveCar?</h3>
           <p>The Chevy Sparks have between a 50 and 70 mile range depending on your driving style. You are at liberty to charge the car if you'd like for longer journeys. Along with being free the first 2 hours, a single WaiveCar can be rented for up to 12 hours at a time.</p>
@@ -93,7 +93,7 @@ module.exports = class Faqlevel extends Component {
           <li><strong>Dead Battery / Lights Left On</strong> $100</li>
           <li><strong>Missing Key (Failure to return equipment)</strong> $300</li>
           <li><strong>Parking Violation (Any violation of our parking rules)</strong> $40</li>
-          <li><strong>Vehicle Recovery (if left outside Santa Monica)</strong> $300 minimum</li>
+          <li><strong>Vehicle Recovery (if left outside Brooklyn)</strong> $300 minimum</li>
           <li><strong>Declined Credit Card</strong> Charges + $5 penalty fee</li>
           <li><strong>Excess Time (Non Waive time)</strong> $1 for every 10 mins. ($5.99/hour)</li>
           </ul>
