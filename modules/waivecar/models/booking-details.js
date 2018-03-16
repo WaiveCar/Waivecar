@@ -80,11 +80,6 @@ Bento.Register.Model('BookingDetails', 'sequelize', (model, Sequelize) => {
 
   };
 
-  /**
-   * The relation definitions of your model.
-   * @property relations
-   * @type     Array
-   */
   model.relations = [
     'ParkingDetails',
     function relations(ParkingDetails) {
