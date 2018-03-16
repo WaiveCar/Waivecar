@@ -2,11 +2,6 @@
 
 Bento.Register.Model('GroupUser', 'sequelize', (model, Sequelize) => {
 
-  /**
-   * The identity of the table created in your database.
-   * @property table
-   * @type     String
-   */
   model.table = 'group_users';
 
   /**
@@ -58,6 +53,15 @@ Bento.Register.Model('GroupUser', 'sequelize', (model, Sequelize) => {
     }
 
   };
+
+  model.attributes = ['group'];
+  
+  model.relations = [
+    'Group',
+    function relations(Group) {
+      this.belongsTo(Group, { as: 'group' });
+    }
+  ];
 
   return model;
 
