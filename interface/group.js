@@ -35,10 +35,6 @@ Bento.Register.Model('Group', 'sequelize', (model, Sequelize) => {
 
   };
 
-  /**
-   * A list of custom model methods.
-   * @type {Object}
-   */
   model.methods = {
 
     // ### Required Methods
