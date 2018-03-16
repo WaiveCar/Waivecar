@@ -29,8 +29,8 @@ Bento.Register.Model('GroupCar', 'sequelize', function(model, Sequelize) {
     'GroupRole',
     'Car',
     function relations(GroupRole, Car) {
-      this.belongsTo(GroupRole, { as : 'group_roles', foreignKey : 'groupRoleId' });
-      this.belongsTo(Car,       { as : 'car',        foreignKey : 'carId'       });
+      this.belongsTo(GroupRole, { as : 'group_role' });
+      this.belongsTo(Car,       { as : 'car'  });
     }
   ];
   
