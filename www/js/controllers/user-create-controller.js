@@ -18,10 +18,18 @@ function UserCreateController($injector){
   this.inNotLA = false;
   this.placeName = '';
 
-  this.inLocationChanged = function (isInLA) {
-    this.inLA = isInLA;
-    this.inNotLA = !isInLA;
-    this.isLocationSelected = true;
+  this.inLocationChanged = function (setting) {
+    if(setting === 'la' || setting === 'notla') {
+      setting = (setting === 'la');
+      this.inLA = setting;
+      this.inNotLA = !setting;
+      this.havePromo = false;
+      this.isLocationSelected = true;
+    } else {
+      this.inLA = false;
+      this.inNotLA = false;
+      this.havePromo = true;
+    }
   };
 
   this.submit = function(form){
