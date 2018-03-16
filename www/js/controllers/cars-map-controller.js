@@ -110,11 +110,19 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
     }
   }
 
+  function hasTag(tag) {
+    return $data.me.tagList.filter(function(row) {
+      return row.group.name === tag;
+    }).length;
+  }
+
   function prepareCars(items) {
     var homebase = locations.filter(function(location){
       // todo this sholdn't be so retarded.
       if( location.type === 'homebase' ) {
-        if($data.me.hasTag('level')) {
+        // it's possible for $data.me.hasTag not to exist, I don't know how.
+        // and it's 5am when I'm writing this so we're being ineffecient here.
+        if(hasTag('level')) {
           // like this hard coded id here, that's really bad form.
           return location.id === 1246;
         } else {
