@@ -10,7 +10,7 @@ var _ = require('lodash');
 function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, LocationService, $injector) {
 
   var MOVETHRESHOLD = 0.000008;
-  var homebase = $injector.get('homebase');
+  var $data = $injector.get('$data');
   var isFirst = true;
 
   function MapController() {
@@ -95,7 +95,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
   function link($scope, $elem, attrs, ctrl) {
     var center = ctrl.center ? ctrl.center : ctrl.currentLocation;
-    center = center || homebase;
+    center = center || $data.homebase;
 
     ctrl.staticMap = !!attrs.static;
 
