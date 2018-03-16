@@ -102,7 +102,7 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
       }
       $modal('simple-modal', {
         title: 'Bummer',
-        message: 'WaiveCar is currently only available in LA. Check back when you are in the area.'
+        message: 'WaiveCar is not available in your area. Check back when you are in LA or select markets.'
       }).then(function (_modal) {
         modal = _modal;
         modal.show();
@@ -112,7 +112,15 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
 
   function prepareCars(items) {
     var homebase = locations.filter(function(location){
-      return location.type === 'homebase';
+      // todo this sholdn't be so retarded.
+      if( location.type === 'homebase' ) {
+        if($data.me.hasTag('level')) {
+          // like this hard coded id here, that's really bad form.
+          return location.id === 1246;
+        } else {
+          return true;
+        }
+      }
     })[0];
 
     var tempItems = _.partition(items, function (item) {
@@ -127,6 +135,9 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
     homebase.isWaiveCarLot = true;
     homebase.cars = tempItems[0];
     homebase.id = 'homebase';
+
+    // The homebase is region specific so we set it here.
+    $data.homebase = homebase;
 
     var awayCars = tempItems[1].filter(function (item) {
       return item.isAvailable;
