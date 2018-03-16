@@ -45,8 +45,14 @@
           <input type="password" name="password" ng-model="userCreateCtrl.user.password" required placeholder="6 characters or more" ng-minlength="6">
         </label>
 
-        <ion-checkbox ng-model="userCreateCtrl.inLA" ng-change="userCreateCtrl.inLocationChanged(true)">I'm in Los Angeles</ion-checkbox>
-        <ion-checkbox ng-model="userCreateCtrl.inNotLA" ng-change="userCreateCtrl.inLocationChanged(false)">I'm somewhere else</ion-checkbox>
+        <ion-checkbox ng-model="userCreateCtrl.havePromo" ng-change="userCreateCtrl.inLocationChanged('promo')">I have a promo code</ion-checkbox>
+        <label class="item item-input" ng-if="userCreateCtrl.havePromo">
+          <input type="text" name="promo" ng-if="userCreateCtrl.havePromo" required placeholder="Promo Code" >
+          <input type="text" name="unit" ng-if="userCreateCtrl.havePromo" required placeholder="Unit Number" >
+        </label>
+
+        <ion-checkbox ng-model="userCreateCtrl.inLA" ng-change="userCreateCtrl.inLocationChanged('la')">I'm in Los Angeles</ion-checkbox>
+        <ion-checkbox ng-model="userCreateCtrl.inNotLA" ng-change="userCreateCtrl.inLocationChanged('notla')">I'm somewhere else</ion-checkbox>
 
         <input type="hidden" name="isLocationSelected" ng-model="userCreateCtrl.isLocationSelected" required placeholder="City" >
 
