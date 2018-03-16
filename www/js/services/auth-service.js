@@ -17,7 +17,7 @@ function AuthService ($rootScope, $session, $data, $injector) {
     var raw = $session.get('me');
     raw.hasTag = function(tag) {
       return raw.tagList.filter(function(row) {
-        return row.group.name === tag;
+        return row.groupRole.name === tag;
       }).length
     }
     return raw;
