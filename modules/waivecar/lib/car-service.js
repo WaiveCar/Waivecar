@@ -106,11 +106,6 @@ module.exports = {
 
   },
 
-  /**
-   * Returns a list of cars with bookings from the local database.
-   * @param  {Object} _user
-   * @return {Array}
-   */
   *carsWithBookings(_user) {
 
     // See #1077. Super Admin can access all cars.
@@ -120,11 +115,13 @@ module.exports = {
       as :'groupCar'
     };
 
+    /*
     if(!_user.isSuperAdmin()) {
       includeGroupCar.where = {
         groupRoleId: _user.groupRole.id
       }
     }
+    */
 
     let cars = yield Car.find({
       include: [
@@ -207,11 +204,13 @@ module.exports = {
       model : 'GroupCar',
       as: 'groupCar'
     }
+    /*
     if(!_user.isSuperAdmin()) {
       includeCarGroup.where = {
         groupRoleId: _user.groupRole.id
       };
     }
+    */
 
     let car = yield Car.findById(id, {
       include : [
@@ -250,11 +249,13 @@ module.exports = {
       model : 'GroupCar',
       as: 'groupCar'
     }
+    /*
     if(!_user.isSuperAdmin()) {
       includeCarGroup.where = {
         groupRoleId: _user.groupRole.id
       };
     }
+    */
 
     let car = yield Car.findById(id, { include: [includeCarGroup]});
     if (!car) {
