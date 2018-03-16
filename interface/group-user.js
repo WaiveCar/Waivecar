@@ -4,11 +4,6 @@ Bento.Register.Model('GroupUser', 'sequelize', (model, Sequelize) => {
 
   model.table = 'group_users';
 
-  /**
-   * The sequelize schema definition of your model.
-   * @property schema
-   * @type     Object
-   */
   model.schema = {
 
     // ### Required Fields
@@ -27,10 +22,6 @@ Bento.Register.Model('GroupUser', 'sequelize', (model, Sequelize) => {
       }
     },
 
-    /**
-     * The user id belonging to the group.
-     * @type {Integer}
-     */
     userId : {
       type       : Sequelize.INTEGER,
       allowNull  : false,
@@ -54,12 +45,14 @@ Bento.Register.Model('GroupUser', 'sequelize', (model, Sequelize) => {
 
   };
 
-  model.attributes = ['group'];
+  model.attributes = ['group', 'group_role'];
   
   model.relations = [
     'Group',
-    function relations(Group) {
+    'GroupRole',
+    function relations(Group, GroupRole) {
       this.belongsTo(Group, { as: 'group' });
+      this.belongsTo(GroupRole, { as: 'group_role' });
     }
   ];
 
