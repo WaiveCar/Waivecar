@@ -164,6 +164,7 @@ module.exports = {
         user = userList[0];
         // we need to save what the user said their
         // unit or account number
+        yield user.addTag('level');
         let UserNote = Bento.model('UserNote');
         let note = new UserNote({
           userId: user.id,
