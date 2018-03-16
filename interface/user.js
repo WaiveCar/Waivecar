@@ -131,7 +131,14 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
    * List of custom out of schema attributes.
    * @type {Array}
    */
-  model.attributes = [ 'email=>role', 'role=>group', 'group=>groupRole' ];
+  model.attributes = [ 'email=>role', 'role=>group', 'group=>groupRole', 'tagList' ];
+
+  model.relations = [
+    'GroupUser',
+    function(GroupUser) {
+      this.hasMany(GroupUser, { as: 'tagList', foreignKey: 'userId' });
+    }
+  ];
 
   // A list of blacklisted public values.
   model.blacklist = [ 'password' ];
@@ -201,6 +208,70 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       } catch (ex) { }
       return false;
     },
+
+    *loadTagList() {
+      if(!this.tagList) {
+        let GroupUser = Bento.model('GroupUser');
+        this.tagList = yield GroupUser.find({
+          where: { userId: this.id },
+          include: [
+            {
+              model: 'Group',
+              as: 'group'
+            },
+            {
+              model: 'GroupRole',
+              as: 'group_role'
+            }
+          ]
+        });
+      }
+      return this.tagList;
+    },
+
+    *getTag(tag) {
+      return (yield this.loadTagList()).filter((row) => {
+        return row.groupRole.name === tag;
+      });
+    },
+
+    *isTagged(tag) {
+      return yield this.getTag(tag).length;
+    },
+
+    *hasTag(tag) {
+      return yield this.getTag(tag).length;
+    },
+
+    *untag(tag) {
+      let record = yield this.getTag(tag);
+      if(record) {
+        let GroupUser = Bento.model('GroupUser');
+        yield GroupUser.destroy({where: {id: record[0].id} });
+      }
+    },
+
+    *delTag(tag) {
+      return yield this.untag(tag);
+    },
+
+    *addTag(tag) {
+      let record = yield this.getTag(tag);
+      if(record) {
+        return record;
+      }
+      let GroupRole = Bento.model('GroupRole');
+      let groupRecord = yield GroupRole.findOne({where: {name: tag}});
+      if(groupRecord) {
+        let GroupUser = Bento.model('GroupUser');
+        return yield GroupUser.create({
+          userId: this.id,
+          groupRoleId: groupRecord.id,
+          groupId: groupRecord.groupId
+        });
+      }    
+    },
+
 
     isAdmin() {
       return this.hasAccess('admin');
