@@ -196,7 +196,7 @@ module.exports = class BookingService extends Service {
 
     // ### Notifications
 
-    if (car.isTagged('level')) {
+    if (yield car.isTagged('level')) {
       // https://lb.waivecar.com/users/14827
       yield notify.sendTextMessage(14827, `${ driver.name() } reserved ${ car.license }.`);
     }
