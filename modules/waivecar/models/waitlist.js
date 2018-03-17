@@ -25,6 +25,10 @@ Bento.Register.Model('Waitlist', 'sequelize', function(model, Sequelize) {
       // unique : true
     },
 
+    password : { 
+      type   : Sequelize.STRING(64)
+    },
+
     latitude : {
       type : Sequelize.DECIMAL(10, 8),
     },
