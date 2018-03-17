@@ -519,10 +519,10 @@ module.exports = class BookingService extends Service {
       yield notify.notifyAdmins(`:octopus: ${ message } | ${ car.info() } ${ car.averageCharge() }% ${ booking.link() }`, [ 'slack' ], { channel : '#reservations' });
       if (user.isWaivework){
         yield notify.sendTextMessage(user, `Thanks for using WaiveWork! Your booking has started.`);
-      }
-      else{
-        let isLevel = yield cars.hasTag('level');
+      } else {
+        let isLevel = yield car.hasTag('level');
         let base = '';
+
         if(isLevel) {
           base = 'the parking garage';
         } else {
