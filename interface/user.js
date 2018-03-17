@@ -236,11 +236,11 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
     },
 
     *isTagged(tag) {
-      return yield this.getTag(tag).length;
+      return (yield this.getTag(tag)).length;
     },
 
     *hasTag(tag) {
-      return yield this.getTag(tag).length;
+      return (yield this.getTag(tag)).length;
     },
 
     *untag(tag) {
@@ -256,7 +256,7 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
     },
 
     *addTag(tag) {
-      let record = yield this.getTag(tag);
+      let record = yield this.hasTag(tag);
       if(record) {
         return record;
       }
@@ -264,11 +264,12 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       let groupRecord = yield GroupRole.findOne({where: {name: tag}});
       if(groupRecord) {
         let GroupUser = Bento.model('GroupUser');
-        return yield GroupUser.create({
+        let tag = new GroupUser({
           userId: this.id,
           groupRoleId: groupRecord.id,
           groupId: groupRecord.groupId
         });
+        yield tag.save();
       }    
     },
 
