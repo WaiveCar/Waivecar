@@ -61,7 +61,7 @@ function CarsListController ($rootScope, $scope, $state, $injector, $data, cars,
     $modal('result', {
       icon: 'x-icon',
       title: 'This WaiveCar is unavailable right now',
-      message: 'The green icons on the map are the available WaiveCars.',
+      message: 'Please check back later',
       actions: [{
         text: 'Ok',
         handler: function () {
