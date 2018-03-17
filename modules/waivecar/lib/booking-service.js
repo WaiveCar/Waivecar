@@ -591,7 +591,13 @@ module.exports = class BookingService extends Service {
     // Immobilize the engine.
     let status;
     try {
-      if (!(yield car.isTagged('level'))) {
+      if (yield car.isTagged('level')) {
+        // the easiest way to deal with that logic below
+        // is just to lie. But I'm writing this at 4am
+        // after working for 16 hours so there may be 
+        // smarter ways.
+        status = {isImmobilized: true};
+      } else {
         status = yield cars.lockImmobilzer(car.id, _user);
       }
     } catch (err) {
