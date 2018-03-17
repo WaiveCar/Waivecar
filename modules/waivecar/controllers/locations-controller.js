@@ -9,12 +9,11 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
 
   controller.index = function *() {
     var query = {
-      // There was a bug, now fixed, where locations where
-      // scanned and preferenced in such a way that people
-      // couldn't end at the lot. it asked them to take a picture
-      // This reverse sorting fixes the problem on the legacy
-      // versions of the app
-      order: [[ 'id', 'desc' ]]
+      // Legacy apps only know about one homebase.
+      // We have two now with the addition of level in brooklyn
+      // In order to facilitate this, we list the locations in
+      // ascending order.
+      order: [[ 'id', 'asc' ]]
     };
     if (this.query.search) {
       query.where = { $or: [
