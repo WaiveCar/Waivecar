@@ -35,7 +35,9 @@ module.exports = {
 
     // ### Create User
     let user = new User(data);
-    if (data.password) {
+    if (data.passwordEncrypted) {
+      user.password = data.passwordEncrypted;
+    } else if (data.password) {
       user.password = yield bcrypt.hash(data.password, 10);
     }
     yield user.save();
