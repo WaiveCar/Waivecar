@@ -521,7 +521,14 @@ module.exports = class BookingService extends Service {
         yield notify.sendTextMessage(user, `Thanks for using WaiveWork! Your booking has started.`);
       }
       else{
-        yield notify.sendTextMessage(user, `Your WaiveCar rental has started! The first 2 hours are completely FREE! After that, it's $5.99 / hour. Make sure to return the car in Santa Monica, don't drain the battery under 25mi, and keep within our driving borders to avoid any charges. Thanks for renting with WaiveCar!`);
+        let isLevel = yield cars.hasTag('level');
+        let base = '';
+        if(isLevel) {
+          base = 'the parking garage';
+        } else {
+          base = 'Santa Monica';
+        }
+        yield notify.sendTextMessage(user, `Your WaiveCar rental has started! The first 2 hours are completely FREE! After that, it's $5.99 / hour. Make sure to return the car to ${ base }, don't drain the battery under 25mi, and keep within our driving borders to avoid any charges. Thanks for renting with WaiveCar!`);
       }
 
       // ### Relay Update
