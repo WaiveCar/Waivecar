@@ -338,7 +338,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     },
 
     addTag : function *(tag) {
-      let record = yield this.getTag(tag);
+      let record = yield this.hasTag(tag);
       if(record) {
         return record;
       }
@@ -346,10 +346,11 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       let groupRecord = yield GroupRole.findOne({where: {name: tag}});
       if(groupRecord) {
         let GroupCar = Bento.model('GroupCar');
-        return yield GroupCar.create({
+        let tag = new GroupCar({
           carId: this.id,
           groupRoleId: groupRecord.id
         });
+        yield tag.save();
       }    
     },
 
