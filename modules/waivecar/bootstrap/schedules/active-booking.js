@@ -90,9 +90,12 @@ var checkBooking = co.wrap(function *(booking) {
 
     // if we thought we were inside but now we are outside.
     } else if (!deviceInside && !booking.isFlagged('outside-range')) {
-      yield booking.flag('outside-range');
-      yield notify.sendTextMessage(user, config.notification.reasons['OUTSIDE_RANGE']);
-      yield notify.notifyAdmins(`:waving_black_flag: ${ user.link() } took ${ car.info() } outside of the driving zone. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
+      let isLevel = yield car.hasTag('level');
+      if(!isLevel) {
+        yield booking.flag('outside-range');
+        yield notify.sendTextMessage(user, config.notification.reasons['OUTSIDE_RANGE']);
+        yield notify.notifyAdmins(`:waving_black_flag: ${ user.link() } took ${ car.info() } outside of the driving zone. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
+      }
     }
   }
 
