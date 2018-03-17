@@ -9,6 +9,7 @@ let Email         = Bento.provider('email');
 let log           = Bento.Log;
 let notify        = Bento.module('waivecar/lib/notification-service');
 let sequelize     = Bento.provider('sequelize');
+let bcrypt        = Bento.provider('bcrypt');
 
 let UserService = require('./user-service');
 let geolib      = require('geolib');
@@ -57,9 +58,18 @@ module.exports = {
     let data = {};
 
     let requiredList = ['firstName', 'lastName', 'email', 'placeName'];
+    var promo = '';
+
+    if(payload.promoCode) {
+      promo = payload.promoCode.toLowerCase();
+    }
+
+    if(promo === 'levelbk') {
+      payload.placeName = 'brooklyn';
+    }
 
     // only accept certain fields...
-    ['accountType', 'days', 'hours', 'experience', 'phone', 'latitude', 'longitude', 'firstName', 'lastName', 'email', 'placeName', 'placeId'].forEach((field) => {
+    ['accountType', 'days', 'hours', 'experience', 'password', 'phone', 'latitude', 'longitude', 'firstName', 'lastName', 'email', 'placeName', 'placeId'].forEach((field) => {
       if (! (field in payload) ) {
         if ( requiredList.indexOf(field) !== -1) {
           throw error.parse({
@@ -73,6 +83,13 @@ module.exports = {
     });
 
     payload.email = payload.email.toLowerCase();
+
+    // we store it encrypted and then pass it over to the 
+    // userservice using a special passwordEncrypted parameter
+    // so as not to be encrypted again.
+    if (data.password) {
+      data.password = yield bcrypt.hash(data.password, 10);
+    }
 
     // We first see if the person has already tried to join us previously
     let record = yield Waitlist.findOne({ where: { email: payload.email } });
@@ -141,41 +158,36 @@ module.exports = {
       yield record.save();
     }
 
-    if(payload.promoCode) {
-      var promo = payload.promoCode.toLowerCase();
+    if(promo === 'hyrecar') {
+      // This means they can skip the line -
+      // it's more of a communication to the app
+      // then it is any functional thing.
+      res.fastTrack = 'yes';
+      res.hyrecar = 'yes';
+      delete res.inside;
+      yield this.letInByRecord([record]);
+    } else if(promo === 'levelbk') {
+      res.level = 'yes';
+      res.fastTrack = 'yes';
+      delete res.inside;
+      let userList = yield this.letInByRecord([record], null, {email: 'level-letin'});
 
-      if(promo === 'hyrecar') {
-        res.hyrecar = 'yes';
-        delete res.inside;
-        yield this.letInByRecord([record]);
-      }
+      user = userList[0];
 
-      if(promo === 'laauto') {
-        res.autoshow = 'yes';
-        delete res.inside;
-        yield this.letInByRecord([record]);
-      }
+      // we need to save what the user said their
+      // unit or account number
+      yield user.addTag('level');
 
-      if(promo === 'levelbk') {
-        res.level = 'yes';
-        delete res.inside;
-        let userList = yield this.letInByRecord([record], null, {email: 'level-letin'});
-
-        user = userList[0];
-        // we need to save what the user said their
-        // unit or account number
-        yield user.addTag('level');
-        let UserNote = Bento.model('UserNote');
-        let note = new UserNote({
-          userId: user.id,
-          // the author id currently can't be null
-          // so we make it the level fleet account
-          authorId: 14827,
-          content: payload.account,
-          type: 'unit'
-        });
-        yield note.save();
-      }
+      let UserNote = Bento.model('UserNote');
+      let note = new UserNote({
+        userId: user.id,
+        // the author id currently can't be null
+        // so we make it the level fleet account
+        authorId: 14827,
+        content: payload.account,
+        type: 'unit'
+      });
+      yield note.save();
     }
 
     return res;
@@ -219,7 +231,6 @@ module.exports = {
   // is what converges the waitlist users to actual users.
   //
   *letInByRecord(recordList, _user, opts) {
-    
     opts = opts || {};
     let nameList = [];
     let userList = [];
@@ -235,6 +246,10 @@ module.exports = {
         userRecord = yield UserService.store({
           firstName: record.firstName,
           lastName: record.lastName,
+          // we already bcrypted their password when
+          // we passed it into the waitlist
+          passwordEncrypted: record.password,
+          phone: record.phone,
           email: record.email,
           status: 'pending'
         }, _user);
@@ -260,9 +275,9 @@ module.exports = {
       let res = yield UserService.generatePasswordToken(userRecord);
     
       // If a candidate signs up again we "re-let" them in ... effectively sending them the same email again
-      let email = new Email();
+      let email = new Email(), emailOpts = {};
       try {
-        yield email.send({
+        emailOpts = {
           to       : record.email,
           from     : config.email.sender,
           subject  : 'Welcome to WaiveCar',
@@ -271,9 +286,10 @@ module.exports = {
             name: fullName,
             passwordlink: `${config.api.uri}/reset-password?hash=${res.token.hash}&isnew=yes`
           }
-        });
+        };
+        yield email.send(emailOpts);
       } catch(err) {
-        log.warn('Failed to deliver notification email: ', err);      
+        log.warn('Failed to deliver notification email: ', emailOpts);      
       }
     }
     if (_user) {
