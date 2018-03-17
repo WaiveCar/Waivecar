@@ -111,9 +111,13 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
   }
 
   function hasTag(tag) {
-    return $data.me.tagList.filter(function(row) {
-      return row.group.name === tag;
-    }).length;
+    if($data.me && $data.me.tagList) {
+      return $data.me.tagList.filter(function(row) {
+        return row.groupRole.name === tag;
+      }).length;
+    } else {
+      console.log("No taglist", $data.me);
+    }
   }
 
   function prepareCars(items) {
@@ -204,7 +208,7 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
     $modal('result', {
       icon: 'x-icon',
       title: 'This WaiveCar is unavailable right now',
-      message: 'The green icons on the map are the available WaiveCars.',
+      message: 'Please try again later',
       actions: [{
         text: 'Ok',
         handler: function () {
