@@ -149,7 +149,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     if (_locationWatch && _locationWatch.isActive()) {
       return;
     }
-    var iy = iz++; 
+    var iy = iz++;
 
     _locationWatch = LocationService.watchLocation(function (currentLocation, isInitialCall) {
       console.log(iy);
@@ -278,13 +278,15 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     // process right before flaunting the unlock screen
     $data.resources.cars.connect({id: $data.active.cars.id});
 
+    var plateNumber = 'WAIVE ' + ($data.active.cars.plateNumber ? $data.active.cars.plateNumber : 'Unknown');
+
     $modal('result', {
       title: 'You\'re In Reach',
-      message: 'Now you can unlock your WaiveCar!\nPlease note that there\'s a brief survey with the Ioniqs after the first three rides.',
+      message: 'Welcome to ' + plateNumber + '. Now you can unlock your WaiveCar!\nPlease note that there\'s a brief survey with the Ioniqs after the first three rides.',
       icon: 'check-icon',
       actions: [{
         className: 'button-balanced',
-        text: 'Unlock',
+        text: 'Unlock ' + plateNumber,
         handler: onUnlock
       }, {
         className: 'button-dark',
@@ -349,7 +351,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     var res = $data.resources.cars.connect({id: this.car.id}).catch(function() {
       console.log("unable to connect");
     });
-     
+
     res.then(function(lll) {
         $ionicLoading.hide();
         showUnlock();
