@@ -5,7 +5,7 @@ let Service      = require('./classes/service');
 let cars         = require('./car-service');
 let fees         = require('./fee-service');
 let notify       = require('./notification-service');
-let UserService  = require('./user-service');
+let UserService  = require('../../user/lib/user-service.js');
 let CarService   = require('./car-service');
 let queue        = Bento.provider('queue');
 let queryParser  = Bento.provider('sequelize/helpers').query;
@@ -408,6 +408,36 @@ module.exports = class BookingService extends Service {
     return booking;
   }
 
+  static *extendForFree(id, _user) {
+    yield redis.failOnMultientry('booking-extend', id, 5 * 1000);
+
+    let booking = yield this.getBooking(id);
+    let user    = yield this.getUser(booking.userId);
+    let car     = yield this.getCar(booking.carId);
+    let err     = false;
+
+    if (_user) this.hasAccess(user, _user);
+
+    if(booking.status !== 'reserved') {
+      err = "You can only extend your time if you haven't started the ride.";
+    }
+    if(booking.isFlagged('extended')) {
+      err = "Booking reservation has already been extended.";
+    }
+
+    if(!err && _user.isAdmin()) {
+      yield booking.flag('extended');
+      yield notify.sendTextMessage(user, `Your WaiveCar reservation has been extended 10 minutes.`);
+      yield notify.notifyAdmins(`:clock1: ${ user.link() } extended their reservation with ${ car.info() } by 10 minutes.`, [ 'slack' ], { channel : '#reservations' });
+      booking.relay('update');
+    }
+    if(err) {
+      throw error.parse({
+        code    : `BOOKING_REQUEST_INVALID`,
+        message : err
+      }, 400);
+    }
+  }
   // extends reservation for $1.00 - see https://github.com/WaiveCar/Waivecar/issues/550
   static *extend(id, _user) {
     yield redis.failOnMultientry('booking-extend', id, 5 * 1000);
