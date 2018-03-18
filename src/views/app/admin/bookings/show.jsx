@@ -169,10 +169,17 @@ module.exports = class BookingsView extends React.Component {
     switch (booking.status) {
       case 'reserved' : {
         action = ( 
-          <span> 
-            <button type="button" onClick={ () => { this.cancel() } } className="btn btn-primary">Cancel</button> 
-            <button type="button" onClick={ () => { this.update('ready') } } className="btn btn-link">Start Ride</button> 
-          </span> 
+          <div>
+            <div>
+              <button type="button" onClick={ () => { this.cancel() } } className="btn btn-primary">Cancel</button>
+              <button type="button" onClick={ () => { this.update('ready') } } className="btn btn-link">Start Ride</button>
+            </div>
+            <div>
+                <button type="button" onClick={ () => { this.update('extend') } } className="btn btn-link">Extend 10 minutes for $1</button>
+                <button type="button" onClick={ () => { this.update('extendForFree') } } className="btn btn-link">Extend 10 minutes for $0</button>
+            </div>
+          </div>
+
         );
         break;
       }
@@ -203,7 +210,7 @@ module.exports = class BookingsView extends React.Component {
 
     var force = ""; 
     if (this.state.force) {
-      force = <button type="button" onClick={ () => { this.update(this.statae.force, true) } } className="btn btn-link">force</button>
+      force = <button type="button" onClick={ () => { this.update(this.state.force, true) } } className="btn btn-link">force</button>
     }
     if (action) {
       return (
