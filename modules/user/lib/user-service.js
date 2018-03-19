@@ -207,6 +207,7 @@ module.exports = {
   },
 
   *index(query, _user) {
+    let start=new Date();
     let groupId    = _user ? _user.hasAccess('super') && query.groupId ? query.groupId : _user.group.id : 1;
     let groupUsers = yield GroupUser.find({
       where : {
@@ -225,6 +226,7 @@ module.exports = {
     } else {
       users = yield User.find(qs);
     }
+    console.log(query, qs, new Date() - start);
     //log.info(JSON.stringify(users));
     // ### Fetch Users
 
@@ -241,6 +243,7 @@ module.exports = {
       }
     });
 
+    console.log(new Date() - start);
     // ### Map Group & Roles
 
     users.map(user => {
@@ -258,6 +261,7 @@ module.exports = {
       };
     });
 
+    console.log(new Date() - start);
     // ### Omit Records
 
     if (query.omit) {
@@ -269,6 +273,7 @@ module.exports = {
         return list;
       }, []);
     }
+    console.log(new Date() - start);
 
     return users;
   },
