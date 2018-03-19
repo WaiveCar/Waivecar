@@ -142,7 +142,7 @@ module.exports = {
   // So to support both methods we're going to be "smart" --- the scariest
   // word in programming. I'm going to preface the "smart" stuff with an
   // asterisk and give an explanation below:
-  *find(query, offset, limit) {
+  *find(query, offset, limit, opts) {
     if(query) {
       if(!_.isArray(query)) {
         query = query.match(/('.*?'|".*?"|\S+)/g).map(term => term.replace(/[\'\"]/g, ''));
@@ -209,11 +209,13 @@ module.exports = {
   *index(query, _user) {
     let start=new Date();
     let groupId    = _user ? _user.hasAccess('super') && query.groupId ? query.groupId : _user.group.id : 1;
+    /*
     let groupUsers = yield GroupUser.find({
       where : {
         groupId : groupId
       }
     });
+    */
 
     // ### Create Query String
 
@@ -226,7 +228,6 @@ module.exports = {
     } else {
       users = yield User.find(qs);
     }
-    console.log(query, qs, new Date() - start);
     //log.info(JSON.stringify(users));
     // ### Fetch Users
 
@@ -236,6 +237,7 @@ module.exports = {
 
     // ### Fetch Group & Roles
 
+    /*
     let group      = yield Group.findById(groupId);
     let groupRoles = yield GroupRole.find({
       where : {
@@ -260,8 +262,8 @@ module.exports = {
         name  : role.name
       };
     });
+    */
 
-    console.log(new Date() - start);
     // ### Omit Records
 
     if (query.omit) {
