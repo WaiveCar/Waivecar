@@ -197,30 +197,35 @@ module.exports = {
    * @return {Object}
    */
   *show(id, _user) {
-    let start = +new Date();
+    // there's an old bug that we are trying to access the car's
+    // ble through this -- if we are hitting this bug we don't even try
+    let car = null;
+    if(id.length !== 'ble') 
 
-    // See #1077
-    let includeCarGroup = {
-      model : 'GroupCar',
-      as: 'groupCar'
-    }
-    /*
-    if(!_user.isSuperAdmin()) {
-      includeCarGroup.where = {
-        groupRoleId: _user.groupRole.id
-      };
-    }
-    */
+      // See #1077
+      let includeCarGroup = {
+        model : 'GroupCar',
+        as: 'groupCar'
+      }
+      /*
+      if(!_user.isSuperAdmin()) {
+        includeCarGroup.where = {
+          groupRoleId: _user.groupRole.id
+        };
+      }
+      */
 
-    let car = yield Car.findById(id, {
-      include : [
-        {
-          model : 'User',
-          as    : 'user'
-        },
-        includeCarGroup
-      ]
-    });
+      car = yield Car.findById(id, {
+        include : [
+          {
+            model : 'User',
+            as    : 'user'
+          },
+          includeCarGroup
+        ]
+      });
+
+    }
 
     if(!car) {
       throw error.parse({
