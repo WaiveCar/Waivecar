@@ -26,6 +26,7 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
 
   // First load
   this.all = prepareCars(cars);
+  this.zones = locations.filter(function (x) { return x.type === 'zone' });
   this.fitBoundsByMarkers = getMarkersToFitBoundBy(this.all);
 
   ensureAvailableCars(cars);
