@@ -132,10 +132,14 @@ class LogService {
     //
     params = {
       attributes: ['id'],
-      where: { carId: car.id } 
+      where: { carId: car.id, status: { $not: 'cancelled' } },
+      order: [ [ 'id', 'desc' ] ]
     };
 
-    if (first !== undefined) {
+    if (first === undefined) {
+      // If nothing was specified we only look at a handful of the most recent bookings.
+      params.limit = 7;
+    } else {
       let recentBookings = yield Location.find({
         attributes: [ 'booking_id' ],
         where: { id : { $gte: first } },
