@@ -20,7 +20,7 @@ Route.get('/bookings',             [ 'isAuthenticated', 'BookingsController@inde
 Route.get('/bookings/:id',         [ 'isAuthenticated', 'BookingsController@show' ]);
 Route.get('/bookings/:id/notes',   [ 'isAuthenticated', 'NotesController@getBookingNotes' ]);
 Route.put('/bookings/:id/checkParity', [ 'isAuthenticated', 'BookingsController@checkCarParityWithUser' ]);
-Route.put('/bookings/:id/extendForFree', [ 'isAuthenticated', 'isAdmin', 'BookingsController@extendForFree' ]);
+Route.put('/bookings/:id/:time?/extendForFree', [ 'isAuthenticated', 'isAdmin', 'BookingsController@extendForFree' ]);
 Route.put('/bookings/:id/:action', [ 'isAuthenticated', 'BookingsController@update' ]);
 Route.del('/bookings/:id',         [ 'isAuthenticated', 'BookingsController@cancel' ]);
 Route.get('/bookingsCount',        [ 'isAuthenticated', 'BookingsController@count' ]);
