@@ -34,6 +34,9 @@ Bento.Register.ResourceController('User', 'UsersController', (controller) => {
         yield this.auth.user.update({device: this.request.header['user-agent']});
       }
       var model = Object.assign({}, this.auth.user);
+
+      //See #1132
+      delete model.password;
       model.booking = yield this.auth.user.currentBooking();
 
       return model;
