@@ -492,7 +492,7 @@ module.exports = angular.module('app.services').factory('$ble', [
         if(!expired && _creds.carId === carId ) {
           log("Using existing token", carId);
           authorize(carId, defer);
-        } else {
+        } else if(carId){
           log("Getting tokens", carId);
           getCredentials(carId).then(function(creds) {
             // creds.carId is an important distinction because
@@ -604,7 +604,7 @@ module.exports = angular.module('app.services').factory('$ble', [
         if(!_injected.auth || !_injected.auth.me) {
           return;
         }
-        if(!_creds.expire || _creds.expire - new Date() < MINTIME && !_lock.token) {
+        if(!_creds.expire || _creds.expire - new Date() < MINTIME && !_lock.token && _creds.carId) {
           // this tries to pull down new tokens --- we try and make sure that we attempt
           // this serially if need be.
           log("Credentials near expiration ... getting new ones");
