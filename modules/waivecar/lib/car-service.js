@@ -200,7 +200,7 @@ module.exports = {
     // there's an old bug that we are trying to access the car's
     // ble through this -- if we are hitting this bug we don't even try
     let car = null;
-    if(id.length !== 'ble') 
+    if(id.length !== 'ble') {
 
       // See #1077
       let includeCarGroup = {
