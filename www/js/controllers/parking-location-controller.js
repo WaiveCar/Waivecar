@@ -137,6 +137,13 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
         }
       })
       .catch(function (err) {
+        // for testing to skip photo. See #1113
+
+        // var result = {id: 'asdf'}.style = {
+        //   'background-image': 'url(' + $settings.uri.api + '/file/asdf' +  ')'
+        // };
+        // ctrl.street.streetSignImage = result;
+        // return;
         var message = err.message;
         if (err instanceof $window.FileTransferError) {
           if (err.body) {
@@ -156,7 +163,8 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
      */
     function submit() {
 
-      if (ctrl.type === 'lot' && !ctrl.street.streetSignImage){
+      // Force users to take pictures. See #1113
+      if ((ctrl.type === 'street' || ctrl.type === 'lot') && !ctrl.street.streetSignImage) {
         return submitFailure('You have to make a photo, if you left a car not on parking.');
       }
 
