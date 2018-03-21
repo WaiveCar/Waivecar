@@ -23,8 +23,12 @@ module.exports = class BookingsView extends React.Component {
       force    : false,
       error    : null,
       items    : [],
-      carPath  : []
+      carPath  : [],
+      reservationTime: 10
     };
+
+    this.handleInputChange = this.handleInputChange.bind(this);
+
     relay.subscribe(this, 'bookings');
   }
 
@@ -106,6 +110,25 @@ module.exports = class BookingsView extends React.Component {
     });
   }
 
+  extendForFree(reservationTime, force) {
+    this.setState({
+      isActing : true
+    });
+    api.put(`/bookings/${ this.props.params.id }/${reservationTime ? reservationTime : 10}/extendForFree${ force ? '?force=true' : '' }`, {}, (err) => {
+      this.setState({
+        isActing : false
+      });
+      if (err) {
+        // display the force button next to the action button (#964)
+        this.setState({
+          force: 'extendForFree'
+        });
+      }
+    });
+  }
+
+
+
   /**
    * Sends a booking cancel request to the api.
    * @param  {String} action cancel|end|complete|close
@@ -155,6 +178,17 @@ module.exports = class BookingsView extends React.Component {
     );
   }
 
+  handleInputChange(event) {
+
+    const target = event.target;
+    const value = target.value;
+    const name = target.name;
+
+    this.setState({
+      [name]: value
+    });
+  }
+
   /**
    * Renders the available actions that can be performed on the booking.
    * @param  {Object} booking
@@ -167,7 +201,7 @@ module.exports = class BookingsView extends React.Component {
 
     let action = false;
     switch (booking.status) {
-      case 'reserved' : {
+      case 'started' : {
         action = ( 
           <div>
             <div>
@@ -175,10 +209,19 @@ module.exports = class BookingsView extends React.Component {
               <button type="button" onClick={ () => { this.update('ready') } } className="btn btn-link">Start Ride</button>
             </div>
             <div>
+              <div className="form-group row">
                 <button type="button" onClick={ () => { this.update('extend') } } className="btn btn-link">Extend 10 minutes for $1</button>
-                <button type="button" onClick={ () => { this.update('extendForFree') } } className="btn btn-link">Extend 10 minutes for $0</button>
-            </div>
+                <button type="button" onClick={ () => { this.extendForFree(10) } } className="btn btn-link">Extend 10 minutes for $0</button>
+              </div>
+              <div className="form-group row">
+                <div className="col-xs-12">
+                  <label>${"Extend " + this.state.reservationTime + " minutes for $0"}</label>
+                  <input type="text" className="form-control" name="reservationTime" value={this.state.reservationTime} onChange={this.handleInputChange}/>
+                  <button type="button" onClick={ () => { this.extendForFree(this.state.reservationTime) } } className="btn btn-link">Extend</button>
+                </div>
+              </div>
           </div>
+         </div>
 
         );
         break;
