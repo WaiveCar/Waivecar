@@ -277,6 +277,49 @@ function DashboardController ($scope, $rootScope, $injector) {
     }
   }
 
+  function showZonePrompt(locZone, onOkayCallback) {
+    var zoneModal;
+    var days = [
+      'ALL', 'MON', 'TUE', 'WED',
+      'THU', 'FRI', 'SAT', 'SUN'
+    ];
+    var restrictions;
+
+    if(locZone.restrictions) {
+      restrictions = locZone.restrictions.map(function (x) {
+        var from = x[0];
+        var to = x[1];
+        return {
+          from: days[x[0].day] +  moment(new Date(0, 0, 0, from.hour, from.minute)).format(' hh:mmA'),
+          to:   days[x[1].day] + moment(new Date(0, 0, 0, to.hour, to.minute)).format(' hh:mmA')
+        };
+      })
+    }
+
+    $modal('zone', {
+      title: 'Zone description',
+      zoneName: locZone.name,
+      restrictions: restrictions,
+      actions: [{
+        text: "Ok, I'm responsible for these rules",
+        className: 'button-dark',
+        handler: function () {
+          zoneModal.remove();
+          onOkayCallback();
+        }
+      }, {
+        text: "No thanks, I'll end it elsewhere",
+        className: 'button-balanced',
+        handler: function () {
+          zoneModal.remove();
+          
+        }
+      }]
+    }).then(function (_modal) {
+      zoneModal = _modal;
+      zoneModal.show();
+    });
+  }
 
   function endRidePrompt(carId, bookingId) {
     var modal;
@@ -326,13 +369,15 @@ function DashboardController ($scope, $rootScope, $injector) {
         return showIgnitionOnModal();
       }
 
-      return $ride.canEndHereCheck(obj).then(function(type) {
-        if (type === 'hub' || type === 'homebase') {
+      return $ride.canEndHereCheck(obj).then(function(location) {
+        if (location.type === 'hub' || location.type === 'homebase') {
           return $ride.processEndRide().then(function() {
             return $state.go('end-ride', { id: bookingId });
           });
-        } else if(type === 'zone') {
-          return $state.go('end-ride-location', { id: bookingId });
+        } else if(location.type === 'zone') {
+          return showZonePrompt(location, function () {
+            return $state.go('end-ride-location', { id: bookingId })
+          });
         } else {
           // Not inside geofence -> show error
           if ($ride.isChargeOkay(carId, obj)) {

@@ -2,6 +2,12 @@
   .modal-title {
     font-weight: 700;
   }
+
+  &.zone-modal {
+    button {
+      font-size: 14px;
+    }
+  }
 }
 .modal.simple-modal {
   background: transparent;

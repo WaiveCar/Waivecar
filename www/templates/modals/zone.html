@@ -1,0 +1,28 @@
+<ion-modal-view class="result-modal zone-modal">
+  <ion-content scroll="false" padding="true" class="ion-content--center dark-bg">
+    <div class="modal-container">
+      <div class="modal-content">
+        <p class="text-uppercase modal-title">{{title}}</p>
+        <p>{{zoneName}} rules</p>
+        <p>You can end a ride in {{zoneName}} with <span ng-if="!restrictions">no</span> restrictions
+          <ul ng-if="restrictions">
+            <li ng-repeat="restriction in restrictions">
+              {{restriction.from}} - {{restriction.to}}
+            </li>
+          </ul>
+        </p>
+      </div>
+      <div class="modal-actions" ng-if="::actions">
+        <button
+          class="button button-block"
+          ng-repeat="action in actions"
+          ng-click="action.handler()"
+          ng-class="action.className">
+          {{action.text}}
+        </button>
+      </div>
+    </div>
+  </ion-content>
+
+</ion-modal-view>
+
