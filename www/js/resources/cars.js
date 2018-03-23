@@ -43,6 +43,10 @@ module.exports = angular.module('app').factory('Cars', [
         method: 'GET',
         url: $utils.getCustomRoute('cars'),
         isArray: true
+      },
+      notifyAvailability: {
+        method: 'POST',
+        url: $utils.getCustomRoute('cars/notify')
       }
     }));
 
@@ -71,7 +75,7 @@ module.exports = angular.module('app').factory('Cars', [
 
     res.lock = function(params) {
       return $ble.lock(params.id).promise.catch(function(){
-        console.log("Failure ... using network"); 
+        console.log("Failure ... using network");
         return res._lock(params).$promise;
       });
     };

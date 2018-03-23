@@ -23,6 +23,7 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
   // the accuracy should be within this amount of meters to show the Bummer dialog
   var minAccuracyThreshold = 200;
   var modal;
+  var ctrl = this;
 
   // First load
   this.all = prepareCars(cars);
@@ -63,22 +64,43 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
     this.clearCarWatcher();
   }.bind(this));
 
+
+  this.notifyWhenAvailable = function(){
+    $data.resources.cars.notifyAvailability().$promise
+      .then(function(res){
+        console.log(res);
+      });
+
+  }
+
   function ensureAvailableCars(allCars) {
     var availableCars = _.filter(allCars, 'isAvailable');
     if (availableCars.length) {
       return;
     }
-    if (modal && modal.isShown()) {
+    var unavailableModal;
+
+    if (unavailableModal && unavailableModal.isShown()) {
       return;
     }
     $modal('simple-modal', {
       title: 'Bummer',
-      message: 'There are no WaiveCars currently available for rental. Please check back later.'
+      message: 'There are no WaiveCars currently available for rental. Please check back later.',
+      action: {
+        className: 'button-balanced',
+        text: 'Notify me of available cars',
+        handler: function () {
+          unavailableModal.remove();
+          ctrl.notifyWhenAvailable();
+        }
+      }
     }).then(function (_modal) {
-      modal = _modal;
-      modal.show();
+      unavailableModal = _modal;
+      unavailableModal.show();
     });
   }
+
+
 
   function carsInRange(allCars, currentLocation) {
     if (

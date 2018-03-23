@@ -9,7 +9,13 @@
         <p>{{message}}</p>
       </div>
       <div class="modal-actions">
-        <button type="button" class="button button-balanced button-block" ng-click="close()">Ok</button>
+        <button ng-show="::action"
+          class="button button-block"
+          ng-click="action.handler()"
+          ng-class="action.className">
+          {{action.text}}
+        </button>
+        <button ng-hide="::action" type="button" class="button button-balanced button-block" ng-click="close()">Ok</button>
       </div>
     </div>
   </ion-content>
