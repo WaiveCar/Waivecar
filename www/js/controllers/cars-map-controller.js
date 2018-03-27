@@ -20,6 +20,7 @@ module.exports = angular.module('app.controllers').controller('CarsMapController
 function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, locations, $modal) {
   var $distance = $injector.get('$distance');
   var LocationService = $injector.get('LocationService');
+  var $auth = $injector.get('$auth');
   // the accuracy should be within this amount of meters to show the Bummer dialog
   var minAccuracyThreshold = 200;
   var modal;
@@ -65,12 +66,15 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
   }.bind(this));
 
 
+  //todo: move to some service
   this.notifyWhenAvailable = function(){
-    $data.resources.cars.notifyAvailability().$promise
+    $data.resources.cars.notifyAvailability({
+      user_id: $auth.me.id
+    }).$promise
       .then(function(res){
+        //todo: error check
         console.log(res);
-      });
-
+    });
   }
 
   function ensureAvailableCars(allCars) {
@@ -86,14 +90,20 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
     $modal('simple-modal', {
       title: 'Bummer',
       message: 'There are no WaiveCars currently available for rental. Please check back later.',
-      action: {
+      actions: [{
         className: 'button-balanced',
         text: 'Notify me of available cars',
         handler: function () {
           unavailableModal.remove();
           ctrl.notifyWhenAvailable();
         }
-      }
+      }, {
+        className: 'button-balanced',
+        text: 'OK',
+        handler: function () {
+          unavailableModal.remove();
+        }
+      }]
     }).then(function (_modal) {
       unavailableModal = _modal;
       unavailableModal.show();

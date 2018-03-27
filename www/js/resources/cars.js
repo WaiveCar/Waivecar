@@ -44,9 +44,14 @@ module.exports = angular.module('app').factory('Cars', [
         url: $utils.getCustomRoute('cars'),
         isArray: true
       },
+
       notifyAvailability: {
         method: 'POST',
-        url: $utils.getCustomRoute('cars/notify')
+        url: $utils.getCustomRoute('cars/notify'),
+        isArray: false,
+        params: {
+          user_id: '@user_id'
+        }
       }
     }));
 

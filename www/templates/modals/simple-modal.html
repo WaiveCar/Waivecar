@@ -8,14 +8,16 @@
       <div class="modal-content">
         <p>{{message}}</p>
       </div>
-      <div class="modal-actions">
-        <button ng-show="::action"
+      <div class="modal-actions" ng-if="::actions">
+        <button
           class="button button-block"
+          ng-repeat="action in actions"
           ng-click="action.handler()"
           ng-class="action.className">
           {{action.text}}
         </button>
-        <button ng-hide="::action" type="button" class="button button-balanced button-block" ng-click="close()">Ok</button>
+      </div>
+        <button ng-hide="::actions" type="button" class="button button-balanced button-block" ng-click="close()">Ok</button>
       </div>
     </div>
   </ion-content>
