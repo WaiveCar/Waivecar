@@ -23,6 +23,7 @@ let hooks       = Bento.Hooks;
 let User = Bento.model('User');
 let Car  = Bento.model('Car');
 let Booking = Bento.model('Booking');
+let UserCarNotification = Bento.model('UserCarNotification');
 
 let fs = require('fs');
 let carMap = false;
@@ -899,6 +900,16 @@ module.exports = {
       }
       throw err;
     }
-  }
+  },
 
+  *notifyAvailability(user_id, _user) {
+    //todo: filter by cars by region
+    //user_id maybe it's useless
+    let notification = new UserCarNotification({
+      user_id: user_id,
+      latitude: _user.latitude,
+      longitude: _user.longitude
+    });
+    yield notification.save();
+  }
 };

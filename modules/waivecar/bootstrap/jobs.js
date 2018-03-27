@@ -13,6 +13,7 @@ module.exports = function *() {
     yield require('./schedules/active-booking');
     yield require('./schedules/cars-sync');
     yield require('./schedules/cars-status');
+    yield require('./schedules/user-car-availability-timer');
     if (config.mock.cars) {
       yield require('./schedules/cars-mock-locations');
     }

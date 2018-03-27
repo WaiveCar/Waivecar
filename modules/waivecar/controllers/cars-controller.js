@@ -78,6 +78,10 @@ Bento.Register.Controller('CarsController', function(controller) {
     return yield car.ping();
   };
 
+  controller.notify = function *(){
+    return yield car.notifyAvailability(this.payload.user_id, this.auth.user);
+  };
+
   return controller;
 
 });

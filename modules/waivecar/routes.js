@@ -55,6 +55,7 @@ Route.get('/cars/:id/events',   [ 'isAuthenticated', 'CarsController@events' ]);
 Route.get('/cars/:id/:command', [ 'isAuthenticated', 'CarsController@command' ]);
 Route.put('/cars/:id/:command', [ 'isAuthenticated', 'CarsController@command' ]);
 Route.put('/cars/:id',          [ 'isAuthenticated', 'CarsController@update' ]);
+Route.post('/cars/notify',          [ 'isAuthenticated', 'CarsController@notify' ]);
 
 // ### Locations
 
