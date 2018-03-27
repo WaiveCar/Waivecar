@@ -155,7 +155,7 @@
 
 .ride-footer {
   position: absolute;
-  bottom: 44px;
+  bottom: 60px;
   left: 0;
   z-index: 800;
   width: 100%;
@@ -173,6 +173,10 @@
   }
   .icon {
     margin-bottom: -3px;
+  }
+
+  & + .bar-footer {
+    height: 60px;
   }
 }
 .button-gray.button-lighter {
