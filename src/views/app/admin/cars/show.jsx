@@ -17,12 +17,15 @@ let formFields = {
     [
       { name : 'license', className : 'col-md-4 bento-form-input' },
       { name : 'id',      className : 'col-md-4 bento-form-input' },
-      { name : 'vin',     className : 'col-md-4 bento-form-input' }
+      { name : 'vin',     className : 'col-md-4 bento-form-input' },
     ],
     [
       { name : 'make',         className : 'col-md-4 bento-form-input' },
       { name : 'model',        className : 'col-md-4 bento-form-input' },
       { name : 'manufacturer', className : 'col-md-4 bento-form-input' }
+    ],
+    [
+      { name : 'plateNumber',  className : 'col-md-4 bento-form-input' }
     ]
   ]),
 
