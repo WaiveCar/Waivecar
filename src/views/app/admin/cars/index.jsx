@@ -27,8 +27,8 @@ module.exports = class CarsIndex extends React.Component {
       {key : "isCharging", title:"Charging", type : "bool"},
       {key : "statuscolumn", title:"Status", type : "status"},
       {key : "updatedAt", title:"Updated At", type : "datetime"},
-      {key : "action", title:"Last Action", type : "text"},
-      {key : "actionAt", title:"Action At", type : "datetime"}
+      // {key : "action", title:"Last Action", type : "text"},
+      // {key : "actionAt", title:"Action At", type : "datetime"}
       //{key : "inService", title:"In Repair", type : "bool"}
     ];
   }
