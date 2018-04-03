@@ -26,7 +26,15 @@ module.exports = class UserDetails extends React.Component {
 
   componentDidMount() {
     let user = this.state.users.find(val => val.id === parseInt(this.props.id));
-    if (!user) {
+    //
+    // The user we get off the users page doesn't have the full fidelity and all
+    // the information that we need to display information corresponding to the user.
+    // So we we check here to make sure we have everything we need, specifically 
+    // seeing if we have the roles of the user as a proxy.
+    // 
+    // See https://github.com/WaiveCar/Waivecar/issues/1143 for details
+    //
+    if (!user || !user.role) {
       api.get(`/users/${ this.props.id }`, (err, user) => {
         this.setState({currentUser: user});
         if (err) {
