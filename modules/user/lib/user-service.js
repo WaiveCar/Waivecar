@@ -294,24 +294,36 @@ module.exports = {
       throw error.userNotFound();
     }
 
-    let connector = yield GroupUser.findOne({
-      where : {
-        groupId : _user ? _user.group.id : 1,
-        userId  : user.id
-      }
+    let allRecords = yield GroupUser.find({
+      where : { userId  : user.id },
+
+      order : [[ 'id', 'asc' ]],
+
+      include : [ 
+        {
+          model: 'Group',
+          as: 'group'
+        },
+        {
+          model: 'GroupRole',
+          as: 'group_role'
+        }
+      ]
     });
+
+    let connector = allRecords[0]; 
 
     if (!connector) {
       throw error.userNotFound();
     }
 
-    let groupRole = yield GroupRole.findById(connector.groupRoleId);
-    let role      = roles.find(role => role.id === groupRole.roleId);
+    let role      = roles.find(role => role.id === connector.groupRole.roleId);
 
-    user.group = yield Group.findById(connector.groupId);
-    user.groupRole = groupRole;
+    user.tagList = allRecords;
+    user.group = connector.group;
+    user.groupRole = connector.groupRole;
     user.role  = {
-      title : groupRole.name,
+      title : connector.groupRole.name,
       name  : role.name
     };
 
