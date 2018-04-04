@@ -1,21 +1,31 @@
 'use strict';
+var _ = require('lodash');
 
 module.exports = class Form {
 
-  /**
-   * Extracts the data from form elements with a [name] attribute.
-   * @param  {Object} event
-   * @return {Void}
-   */
+  addValue(key, value) {
+    // if we are using the classic PHP style naming convention
+    // for arrays then make sure we do this in an array 
+    if(key.indexOf('[]') !== -1) {
+      key = key.slice(0,-2);
+      if(!_.isArray(this.data[key])) {
+        this.data[key] = [];
+      }
+      this.data[key].push(value);
+    } else { 
+      this.data[key] = value;
+    }
+  }
+
   constructor(event) {
     this.data = {};
     for (let i = 0, len = event.target.length; i < len; i++) {
       let el      = event.target[i];
       let isCheck = [ 'radio', 'checkbox' ].indexOf(el.type) > -1;
       if (el.name && !isCheck) {
-        this.data[el.name] = el.value;
+        this.addValue(el.name, el.value);
       } else if (isCheck && el.checked) {
-        this.data[el.name] = el.value;
+        this.addValue(el.name, el.value);
       }
     }
     event.preventDefault();
