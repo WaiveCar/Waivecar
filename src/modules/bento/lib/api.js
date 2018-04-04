@@ -79,12 +79,6 @@ class API {
     req.end(_handleResult.bind(this, done));
   }
 
-  /**
-   * Submits a new put request to the api.
-   * @param  {String}   uri
-   * @param  {Object}   data
-   * @param  {Function} callback
-   */
   static put(uri, data, callback) {
     let req = this.prepare('put', uri);
     req.send(data);
