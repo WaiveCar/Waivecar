@@ -364,7 +364,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
     untag : function *(tag) {
       let record = yield this.getTag(tag);
-      if(record) {
+      if(record.length) {
         let GroupCar = Bento.model('GroupCar');
         yield GroupCar.destroy({where: {id: record[0].id} });
       }
