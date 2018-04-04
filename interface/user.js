@@ -229,6 +229,12 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       return this.tagList;
     },
 
+    *getTagList(filter) {
+      return (yield this.loadTagList()).map((row) => {
+        return row.groupRole.name && (filter ? row.group.name === filter : true);
+      });
+    },
+
     *getTag(tag) {
       return (yield this.loadTagList()).filter((row) => {
         return row.groupRole.name === tag;
@@ -245,7 +251,7 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
 
     *untag(tag) {
       let record = yield this.getTag(tag);
-      if(record) {
+      if(record.length) {
         let GroupUser = Bento.model('GroupUser');
         yield GroupUser.destroy({where: {id: record[0].id} });
       }
