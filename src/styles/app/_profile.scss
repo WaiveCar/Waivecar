@@ -1,7 +1,12 @@
 #users, .profile {
 
-  .form-group.row {
-    margin-right: 0;
+  .form-group {
+    .row {
+      margin-right: 0;
+    }
+    input[type="checkbox"] {
+      margin-right: 0.25rem;
+    }
   }
   .profile-header {
     margin-top : 50px;
