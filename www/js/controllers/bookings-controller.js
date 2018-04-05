@@ -62,6 +62,7 @@ module.exports = angular.module('app.controllers').controller('BookingsControlle
             fee: item.payments.reduce(function(value, payment){
               return value + (payment.amount - payment.refunded);
             }, 0) / 100,
+            locations: item.carPath,
             id: item.id
           };
 
@@ -96,7 +97,8 @@ module.exports = angular.module('app.controllers').controller('BookingsControlle
                 longitude: ride.end.longitude,
                 latitude: ride.end.latitude
               },
-              fitBoundsByRoute: true
+              fitBoundsByRoute: true,
+              intermediatePoints: ride.locations
             };
           }
 
