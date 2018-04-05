@@ -421,7 +421,7 @@ module.exports = [
         auth: true,
         hasGMap: true,
         intercom: true,
-        intercomPadding: 30
+        intercomPadding: 70
       }
     })
 
