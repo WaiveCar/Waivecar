@@ -91,7 +91,8 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
     'car=>files',
     'files=>details',
     'details=>cart',
-    'cart=>payments'
+    'cart=>payments',
+    'payments=>carPath'
   ];
 
   // ### Methods
