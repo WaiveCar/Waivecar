@@ -79,6 +79,10 @@ module.exports = angular.module('app.services').service('IntercomService', [
       intercom().setLauncherVisibility(show ? 'VISIBLE' : 'GONE');
     };
 
+    this.setBottomPadding = function(padding) {
+      intercom().setBottomPadding(padding);
+    }
+
     function createIntecomUserModel(user) {
       var iUser = {
         name: user.firstName + ' ' + user.lastName,
