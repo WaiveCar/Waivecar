@@ -30,6 +30,9 @@ module.exports = angular.module('app.services').service('IntercomService', [
         },
         registerForPush: function() {
           console.log('registerForPush');
+        },
+        setBottomPadding: function(padding) {
+          console.log('setBottomPadding');
         }
       };
     }
