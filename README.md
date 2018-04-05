@@ -31,6 +31,19 @@ Although this is profusely documented elsewhere, I'm doing it again:
     INTO OUTFILE '/var/lib/mysql-files/somename.csv' FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';
 
 
+### Sequelize notes
+
+#### delete/destroy/remove
+
+What CT left behind is the following pattern:
+
+ * retrieve the record you want to delete
+ * call record.delete() on it
+
+This is a soft delete ... Of course the immediate problem with this is that soft deletes should be *just an option*. So a second method was introduced that
+is a pass-thru of the actual method with `{force: true}` being set to avoid the notion of a soft-delete. The function signature follows the Sequelize 
+documentation in the form of `model.destroy({where: ... })` and is just a pass-thru
+
 ### About the load-balancing:
 
 Be weary of things like `scheduler.process` ... two reasons:

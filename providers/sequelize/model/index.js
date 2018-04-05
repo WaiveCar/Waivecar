@@ -73,6 +73,7 @@ module.exports = (name, getModelSetup) => {
   SequelizeModel.count    = require('./count');
   SequelizeModel.find     = require('./find');
   SequelizeModel.findOne  = require('./findOne');
+  SequelizeModel.destroy  = require('./destroy');
   SequelizeModel.findById = require('./findById');
   SequelizeModel.raw      = require('./raw');
 
