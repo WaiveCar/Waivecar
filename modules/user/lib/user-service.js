@@ -378,6 +378,24 @@ module.exports = {
       yield this.unsuspend(user, _user);
     }
 
+    // this is explicitly only regions
+    if (payload.tagList) {
+      let oldTags = yield user.getTagList('region');      
+
+      // We remove the ones we've unchecked
+      let toRemove = _.difference(oldTags, payload.tagList);
+      // see https://stackoverflow.com/a/32001777/535759
+      yield toRemove.map((tagName) => {
+        return user.untag(tagName);
+      });
+
+      // And add the ne ones if relevant.
+      let toAdd = _.difference(payload.tagList, oldTags);
+      yield toAdd.map((tagName) => {
+        return user.addTag(tagName);
+      });
+    }
+
     // admins can change a users group role.
     if (_user.hasAccess('admin') && 'groupRoleId' in payload) {
       //check if exists
