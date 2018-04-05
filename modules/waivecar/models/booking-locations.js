@@ -3,6 +3,14 @@
 Bento.Register.Model('BookingLocation', 'sequelize', function(model, Sequelize) {
 
   model.table = 'booking_locations';
+
+  // we don't care about these fields.
+  model.sequelizeOptionMap = {
+    updatedAt: false,
+    deletedAt: false,
+    paranoid: false
+  };
+
   model.schema = {
 
     bookingId : {
