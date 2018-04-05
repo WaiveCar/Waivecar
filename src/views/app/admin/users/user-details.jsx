@@ -36,13 +36,13 @@ module.exports = class UserDetails extends React.Component {
     //
     if (!user || !user.role) {
       api.get(`/users/${ this.props.id }`, (err, user) => {
-        this.setState({currentUser: user});
         if (err) {
           return snackbar.notify({
             type    : `danger`,
             message : err.message
           });
         }
+        this.setState({currentUser: user});
         this.users.store(user);
       });
     } else {
@@ -83,6 +83,12 @@ module.exports = class UserDetails extends React.Component {
   }
   isFleetManager = () => {
     return this.state.currentUser.role.name === 'admin';
+  }
+
+  hasTag = (tag) => {
+    return this.state.currentUser.tagList.filter((row) => {
+      return row.groupRole.name === tag;
+    }).length > 0;
   }
 
   setPassword = () => {
@@ -158,6 +164,7 @@ module.exports = class UserDetails extends React.Component {
   
   submit = (event) => {
     let form = new Form(event);
+    console.log(event, form);
 
     // If we are suspending the user then we ask for a reason
     if (form.data.status === 'suspended' && this.state.currentUser.status !== 'suspended') {
@@ -306,7 +313,7 @@ module.exports = class UserDetails extends React.Component {
                 </FormInput>
               </div>
 
-              <div className="form-group">
+              <div className="form-group row">
                 <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Account Status</label>
                 <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
                   <div className="radio-inline">
@@ -343,6 +350,28 @@ module.exports = class UserDetails extends React.Component {
                   </div>
                   <a onClick={ this.waiveWorkToggle.bind(this) } className="btn btn-xs btn-link">{ this.isWaiveWork() ? "Remove From" : "Add to" } WaiveWork</a>
                 </div>
+
+              </div>
+              <div className="form-group row">
+                <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Tags</label>
+                <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
+                  <div className="radio-inline">
+                    <label>
+                      <input type="checkbox" name="tagList[]" value="la" defaultChecked={ !this.hasTag('level') } />
+                      LA
+                    </label>
+                  </div>
+
+                  <div className="radio-inline">
+                    <label>
+                      <input type="checkbox" name="tagList[]" value="level" defaultChecked={ this.hasTag('level') } />
+                      Brooklyn
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-group row">
                 <label className="col-sm-4 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Danger Zone <a onClick={ this.toggleDanger }>({ this.state.showDanger ? 'hide' : 'show' })</a></label>
                 <div className="col-sm-8 text-right" style={{ padding : '8px 25px' }}>
                   { this.state.showDanger && 
@@ -358,7 +387,6 @@ module.exports = class UserDetails extends React.Component {
                      <div className="radio-inline">
                        <a onClick={ this.setPassword } className=" btn btn-xs ">Set user password</a>
                      </div>
-
 
                    </div>
                   }
