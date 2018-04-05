@@ -315,18 +315,19 @@ module.exports = class BookingService extends Service {
     }
 
     //if (query.includePath) {
-      let pathes = yield Location.find({
-        where: {
-          booking_id:{
-            $in: bookings.map(x => x.id)
-          }
+    let paths = yield Location.find({
+      where: {
+        booking_id:{
+          $in: bookings.map(x => x.id)
         }
-      });
+      },
+      order: [[ 'created_at', 'asc' ]],
+      attributes: ['booking_id', 'latitude', 'longitude']
+    });
 
-      for(let i = 0; i < bookings.length; ++i) {
-        bookings[i].carPath = pathes.filter((x) => x.bookingId == bookings[i].id);
-      }
-
+    for(let i = 0; i < bookings.length; ++i) {
+      bookings[i].carPath = paths.filter((x) => x.bookingId == bookings[i].id);
+    }
     
     //}
 
