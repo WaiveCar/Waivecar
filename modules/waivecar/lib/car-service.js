@@ -71,7 +71,7 @@ module.exports = {
       options.where.adminOnly = false;
     }
 
-    options.limit = 100;
+    delete options.limit;
     let cars = yield Car.find(options);
     let bookings = yield Booking.find({ where : { status : 'started' } });
 
