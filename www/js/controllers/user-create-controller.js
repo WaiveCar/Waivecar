@@ -98,9 +98,12 @@ function UserCreateController($injector){
         // here's the thing ... if res.fastTrack is true then
         // this means the person is good to go and we can go
         // to the next page. Magical, right?
+
         if(res.fastTrack) {
-          $auth.login(credentials);
-          return $state.go('auth-account-verify', { step: 2 });
+          return $auth.login(credentials).then(function() {
+
+            return $state.go('auth-account-verify', { step: 2 });
+          });
         } 
         return $state.go(nextPage);
       })
