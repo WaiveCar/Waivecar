@@ -604,7 +604,7 @@ module.exports = angular.module('app.services').factory('$ble', [
         if(!_injected.auth || !_injected.auth.me) {
           return;
         }
-        if(!_creds.expire || _creds.expire - new Date() < MINTIME && !_lock.token && _creds.carId) {
+        if(_creds.carId && !_lock.token && (!_creds.expire || _creds.expire - new Date() < MINTIME)) {
           // this tries to pull down new tokens --- we try and make sure that we attempt
           // this serially if need be.
           log("Credentials near expiration ... getting new ones");
