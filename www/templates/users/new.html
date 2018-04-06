@@ -48,6 +48,8 @@
         <ion-checkbox ng-model="userCreateCtrl.havePromo" ng-change="userCreateCtrl.inLocationChanged('promo')">I have a promo code</ion-checkbox>
         <label class="item item-input" ng-if="userCreateCtrl.havePromo">
           <input type="text" name="promoCode" ng-model="userCreateCtrl.user.promoCode" ng-if="userCreateCtrl.havePromo" required placeholder="Promo Code" >
+        </label>
+        <label class="item item-input" ng-if="userCreateCtrl.havePromo">
           <input type="text" name="account" ng-model="userCreateCtrl.user.account" ng-if="userCreateCtrl.havePromo" required placeholder="Unit/Account Number" >
         </label>
 
