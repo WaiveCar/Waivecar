@@ -50,13 +50,6 @@ module.exports = {
     return carMap[id];
   },
 
-  /**
-   * Returns a list of cars from the local database.
-   * @param  {Object} query
-   * @param  {String} role
-   * @param  {Object} _user
-   * @return {Array}
-   */
   *index(query, _user) {
     let options = queryParser(query, {
       where : {
@@ -65,6 +58,13 @@ module.exports = {
         isAvailable : queryParser.BOOLEAN
       }
     });
+
+    options.include = [
+      {
+        model: 'GroupCar',
+        as: 'groupCar'
+      }
+    ];
 
     options.where.inRepair = false;
     if (_user && !_user.hasAccess('admin')) {
@@ -107,7 +107,6 @@ module.exports = {
   },
 
   *carsWithBookings(_user) {
-
     // See #1077. Super Admin can access all cars.
     // But still we need car's group on UI
     let includeGroupCar = {
