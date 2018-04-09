@@ -38,6 +38,8 @@ function AuthController ($injector) {
       template: '<div class="circle-loader"><span>Loading</span></div>'
     });
 
+    // we should push people through the flow here if they haven't signed in
+    // yet and are just starting the app for the first time.
     return $auth.login(this.forms.loginForm)
       .then(function () {
         $ionicLoading.hide();
