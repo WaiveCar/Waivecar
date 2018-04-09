@@ -254,15 +254,27 @@ module.exports = {
           status: 'pending'
         }, _user);
       } catch(ex) {
-        userRecord = yield User.findOne({ where: { email: record.email } });
+        userRecord = yield User.findOne({ 
+          where: { 
+            $or: [
+              { email: record.email },
+              { phone: record.phone } 
+            ]
+          }
+        });
 
         if (userRecord) {
-          log.warn(`Found user with email ${ record.email }. Not adding`);
+          // Even if we've seen the user before, and they are
+          // trying to sign up again, we send them another invite 
+          // in good faith, going through the entire process again,
+          // presuming that they didn't receive or lost the previous. 
+          log.warn(`Found user with email ${ record.email } or phone ${ record.phone }. Not adding`);
           yield record.update({userId: userRecord.id});
         } else {
-          log.warn('Unable to add user with email ' + record.email);
+          log.warn(`Unable to add user with email ${ record.email } and phone ${ record.phone }`);
+          console.log(ex);
+          continue;
         }
-        continue;
       }
 
       nameList.push(`<${config.api.uri}/users/${userRecord.id}|${fullName}>`);
