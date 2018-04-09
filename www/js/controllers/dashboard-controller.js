@@ -172,7 +172,6 @@ function DashboardController ($scope, $rootScope, $injector) {
   function OnLockStateChange(isLocked) {
     if (isLocked) {
 
-
       var lockedCarMarker = {
         type: "locked-car",
         latitude: $data.active.cars.latitude,
