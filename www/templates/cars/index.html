@@ -6,16 +6,21 @@
 
   <ion-content scroll="false" padding="false" class="ion-content--center">
 
-      <google-map id="map"
-        control="cars.mapControl"
-        markers="cars.all"
-        on-marker-tap="cars.showCar"
-        fit-bounds-by-markers="cars.fitMapBoundsByMarkers"
-        current-location="cars.currentLocation"
-      >
-      </google-map>
-
+    <div ng-if="!cars.currentLocation">
+      <h1>Getting Location. Please Wait...</h1>
     </div>
+
+    <google-map 
+      ng-if="cars.currentLocation"
+      id="map"
+      control="cars.mapControl"
+      markers="cars.all"
+      on-marker-tap="cars.showCar"
+      fit-bounds-by-markers="cars.fitMapBoundsByMarkers"
+      current-location="cars.currentLocation"
+    >
+    </google-map>
+
   </ion-content>
 
 </ion-view>
