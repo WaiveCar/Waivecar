@@ -137,26 +137,21 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
   }
 
   function prepareCars(items) {
-    var res;
-    if($data.homebase) {
-      res = $data.homebase;
-    } else {
-      res = locations.filter(function(location){
-        // todo this sholdn't be so retarded.
-        if( location.type === 'homebase' ) {
-          // it's possible for $data.me.hasTag not to exist, I don't know how.
-          // and it's 5am when I'm writing this so we're being ineffecient here.
-          if(hasTag('level')) {
-            // like this hard coded id here, that's really bad form.
-            // Also note that below we assign a new id of a string value
-            // to a copy of the homebase object to.
-            return location.id === 1246;
-          } else {
-            return true;
-          }
+    var res = locations.filter(function(location){
+      // todo this sholdn't be so retarded.
+      if( location.type === 'homebase' ) {
+        // it's possible for $data.me.hasTag not to exist, I don't know how.
+        // and it's 5am when I'm writing this so we're being ineffecient here.
+        if(hasTag('level')) {
+          // like this hard coded id here, that's really bad form.
+          // Also note that below we assign a new id of a string value
+          // to a copy of the homebase object to.
+          return location.id === 1246;
+        } else {
+          return true;
         }
-      })[0];
-    }
+      }
+    })[0];
 
     if(res) {
       // make sure we don't pollute our pristine database results.
