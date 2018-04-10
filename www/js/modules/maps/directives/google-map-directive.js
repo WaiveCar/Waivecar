@@ -40,6 +40,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
   };
 
   MapController.prototype.createGMap  = function (mapElement, center, noscroll) {
+    // console.log(mapElement, center, noscroll);
 
     var mapOptions;
 
@@ -98,6 +99,8 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     center = center || $data.homebase;
 
     ctrl.staticMap = !!attrs.static;
+
+    // console.log(ctrl, center, attrs, $elem, $scope, ctrl.currentLocation,  $data.homebase);
 
     ctrl.map = ctrl.createGMap( $elem.find('.map-instance')[0], center, attrs.noscroll);
 
