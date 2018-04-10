@@ -79,6 +79,7 @@ require('./controllers/cars-map-controller');
 require('./controllers/credit-card-controller');
 require('./controllers/credit-cards-controller');
 require('./controllers/dashboard-controller');
+require('./controllers/info-controller');
 require('./controllers/inspection-controller');
 require('./controllers/landing-controller');
 require('./controllers/license-controller');
