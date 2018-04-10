@@ -23,21 +23,36 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
   // the accuracy should be within this amount of meters to show the Bummer dialog
   var minAccuracyThreshold = 200;
   var modal;
+  var ctrl = this;
 
   // First load
   this.all = prepareCars(cars);
-  this.fitBoundsByMarkers = getMarkersToFitBoundBy(this.all);
 
-  ensureAvailableCars(cars);
+  function firstLoad(currentLocation) {
+    ctrl.fitMapBoundsByMarkers = getMarkersToFitBoundBy(ctrl.all, currentLocation);
+    carsInRange(ctrl.all, currentLocation);
+    ensureAvailableCars(cars);
+  }
+
+  if($rootScope.currentLocation) {
+    this.currentLocation = $rootScope.currentLocation;
+    firstLoad(this.currentLocation);
+  }
+
+  // tells us whether it's available and reachable 
+  function isCarAccessible(row) {
+    // distance is in miles ... we don't show (or consider) 
+    // cars that are really really far away
+    return (row.isAvailable && $distance(row) < 150);
+  }
 
   this.stopLocationWatch = LocationService.watchLocation(
     function(currentLocation, isInitialCall) {
-      if (isInitialCall) {
-        this.fitMapBoundsByMarkers = getMarkersToFitBoundBy(this.all, currentLocation);
-        carsInRange(this.all, currentLocation);
+      if(!this.currentLocation) {
+        firstLoad(currentLocation);
       }
-      this.currentLocation = currentLocation;
 
+      this.currentLocation = currentLocation;
     }.bind(this)
   );
 
@@ -64,7 +79,8 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
   }.bind(this));
 
   function ensureAvailableCars(allCars) {
-    var availableCars = _.filter(allCars, 'isAvailable');
+    var availableCars = _.filter(allCars, isCarAccessible);
+
     if (availableCars.length) {
       return;
     }
@@ -121,21 +137,30 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
   }
 
   function prepareCars(items) {
-    var homebase = locations.filter(function(location){
-      // todo this sholdn't be so retarded.
-      if( location.type === 'homebase' ) {
-        // it's possible for $data.me.hasTag not to exist, I don't know how.
-        // and it's 5am when I'm writing this so we're being ineffecient here.
-        if(hasTag('level')) {
-          // like this hard coded id here, that's really bad form.
-          return location.id === 1246;
-        } else {
-          return true;
+    var res;
+    if($data.homebase) {
+      res = $data.homebase;
+    } else {
+      res = locations.filter(function(location){
+        // todo this sholdn't be so retarded.
+        if( location.type === 'homebase' ) {
+          // it's possible for $data.me.hasTag not to exist, I don't know how.
+          // and it's 5am when I'm writing this so we're being ineffecient here.
+          if(hasTag('level')) {
+            // like this hard coded id here, that's really bad form.
+            // Also note that below we assign a new id of a string value
+            // to a copy of the homebase object to.
+            return location.id === 1246;
+          } else {
+            return true;
+          }
         }
-      }
-    })[0];
+      })[0];
+    }
 
-    if(homebase) {
+    if(res) {
+      // make sure we don't pollute our pristine database results.
+      var homebase = Object.assign({}, res);
       var tempItems = _.partition(items, function (item) {
         var miles = $distance(item, homebase);
         var yards = miles * 1760;
@@ -147,14 +172,19 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
       homebase.icon = 'homebase-active';
       homebase.isWaiveCarLot = true;
       homebase.cars = tempItems[0];
-      homebase.id = 'homebase';
+      //
+      // we have this information in the type field ... I don't
+      // think any legacy code is looking at this. We should 
+      // certainly not be doing it.
+      //
+      //homebase.id = 'homebase';
 
       // The homebase is region specific so we set it here.
       $data.homebase = homebase;
 
-      var awayCars = tempItems[1].filter(function (item) {
-        return item.isAvailable;
-      }).map(function (item) {
+      var awayCars = tempItems[1]
+        .filter(isCarAccessible)
+        .map(function (item) {
         if (item.hasOwnProperty('isAvailable')) {
           item.icon = 'car';
         }
@@ -163,6 +193,8 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
 
       awayCars.push(homebase);
       return awayCars;
+    } else {
+      console.log("NO HOMEBASE");
     }
     return items;
   }
@@ -178,7 +210,7 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
 
   this.showCar = function showCar(car) {
     if (car.isWaiveCarLot) {
-      var ids = _(car.cars).filter('isAvailable').map('id').value();
+      var ids = _(car.cars).filter(isCarAccessible).map('id').value();
       if (ids.length) {
         $state.go('cars-list', {
           ids: ids
