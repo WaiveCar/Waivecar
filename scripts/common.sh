@@ -14,7 +14,11 @@ get_device() {
           echo "Bailing..."
           exit -1
         fi
-        watch -n 0.2 "adb devices -l"
+        echo "Waiting for Devices"
+        while [ -z "$deviceList" ]; do
+          deviceList=`adb devices | grep -v List | awk ' { printf "%s ", $1 } ' | sed s'/ *$//'`
+          sleep 0.5
+        done
         get_device 1
       fi
     fi
