@@ -109,7 +109,7 @@ If you get a ticket, you have 10 days to pay it. If you don't pay it within that
 ## Ending Your Ride
 
 ### Where can I park when I'm done?
-If the battery is over 25 miles charged, you can park at any 3 hour public parking spot in Santa Monica without paying the meter. If the battery is under 25 miles charged you MUST return it at the headquarters at 1547 7th Street.
+If the battery is over 25 miles charged, you can park at any 3 hour public parking spot in Santa Monica without paying the meter. If the battery is under 25 miles charged you MUST return it at the headquarters at 2102 Pico Blvd.
 
 However, after midnight, parking must be valid until 10:00 AM that morning.
 

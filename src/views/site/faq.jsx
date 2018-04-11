@@ -82,7 +82,7 @@ module.exports = class Faq extends Component {
           <p>If you get a ticket, you have 10 days to pay it. If you don't pay it within that time, we will charge your account for the amount due. If you see a ticket from a previous user, simply put it in the glove box.</p>
           <h2 id="ending-your-ride">Ending Your Ride</h2>
           <h3 id="where-can-i-park-when-im-done">Where can I park when I'm done?</h3>
-          <p>If the battery is over 25 miles charged, you can park at any 3 hour public parking spot in Santa Monica without paying the meter. If the battery is under 25 miles charged you MUST return it at the headquarters at 1547 7th Street.</p>
+          <p>If the battery is over 25 miles charged, you can park at any 3 hour public parking spot in Santa Monica without paying the meter. If the battery is under 25 miles charged you MUST return it at the headquarters at 2102 Pico Blvd.</p>
           <p>However, after midnight, parking must be valid until 10:00 AM that morning.</p>
           <h3 id="where-can-i-not-park">Where can I <strong>NOT</strong> park?</h3>
           <p>Private parking spaces, parking garages, permit-only spots, any business parking lot, or ANYWHERE not in Santa Monica! Make sure to check street signs so that there are no parking restrictions on the spot for 3 hours.</p>
