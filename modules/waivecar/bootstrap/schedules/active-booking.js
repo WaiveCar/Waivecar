@@ -60,17 +60,18 @@ var checkBooking = co.wrap(function *(booking) {
     // 2 * 60 = 120 - (15 + 1) = 103 ... we are doing it at 16 minutes
     // to avoid issues with latency
     //
-    if (duration >= 104 && !booking.isFlagged('1hr45-warning')) {
-      yield booking.flag('1hr45-warning');
-      yield notify.sendTextMessage(user, config.notification.reasons['NEAR_END']);
-    }
+    if (!user.isWaivework) {
+      if (duration >= 104 && !booking.isFlagged('1hr45-warning')) {
+        yield booking.flag('1hr45-warning');
+        yield notify.sendTextMessage(user, config.notification.reasons['NEAR_END']);
+      }
 
-    if (duration >= 11 * 60 && !booking.isFlagged('11h-warning')) {
-      yield booking.flag('11h-warning');
-      yield notify.notifyAdmins(`:waning_crescent_moon: ${ user.name() } has had ${ car.info() } for 11 hours`, [ 'slack' ], { channel : '#rental-alerts' });
-      yield notify.sendTextMessage(user, config.notification.reasons['NEAR_LIMIT']);
+      if (duration >= 11 * 60 && !booking.isFlagged('11h-warning')) {
+        yield booking.flag('11h-warning');
+        yield notify.notifyAdmins(`:waning_crescent_moon: ${ user.name() } has had ${ car.info() } for 11 hours`, [ 'slack' ], { channel : '#rental-alerts' });
+        yield notify.sendTextMessage(user, 'Hey there, WaiveCar has a 12 hour rental limit. Please end your rental in the next hour. Thanks!');
+      }
     }
-
     //
     // New user rental warning (under 5 rentals, over 3 hours) #463
     //
