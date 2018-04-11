@@ -26,7 +26,12 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
   var ctrl = this;
 
   // First load
-  this.all = prepareCars(cars);
+ // Need zones outside rental. See #1114
+  var zones = locations.filter(function (x) {
+    return x.type === 'zone';
+  });
+  this.all = prepareCars(cars).concat(zones);
+  
 
   function firstLoad(currentLocation) {
     ctrl.fitMapBoundsByMarkers = getMarkersToFitBoundBy(ctrl.all, currentLocation);
@@ -57,16 +62,29 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
   );
 
   this.clearCarWatcher = $scope.$watch(function () {
-    return $data.instances.cars;
+    var zzones = $data.instances.locations
+      .filter(function (x) {
+        return x.type === 'zone'
+      });
+    return {
+      cars: $data.instances.cars,
+      zones: zzones
+    };
   }, function (value) {
-    if (value == null) {
-      return false;
-    }
-    if (Array.isArray(value) && !value.length) {
+    if (value.cars == null || value.zones == null) {
       return false;
     }
 
-    this.all = prepareCars(value);
+    if (Array.isArray(value.cars) && !value.cars.length) {
+      return false;
+    }
+
+    if (Array.isArray(value.zones) && !value.zones.length) {
+      return false;
+    }
+
+    this.all = prepareCars(value.cars)
+      .concat(value.zones);
 
     return false;
   }.bind(this), true);
