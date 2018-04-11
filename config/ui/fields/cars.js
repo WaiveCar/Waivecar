@@ -147,6 +147,14 @@ module.exports = {
     label     : 'VIN',
     helpText  : null
   },
+  plateNumber : {
+    name      : 'plateNumber',
+    component : 'input',
+    type      : 'text',
+    required  : true,
+    label     : 'Plate Number',
+    helpText  : null
+  },
   fileId : {
     name      : 'fileId',
     component : 'input',
