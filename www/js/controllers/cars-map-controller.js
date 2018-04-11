@@ -26,10 +26,16 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
   var ctrl = this;
 
   // First load
- // Need zones outside rental. See #1114
+  // Need zones outside rental. See #1114
+  var zones = [];
+  /*
+   * this is new rather untested code that fucks up brooklyn so
+   * for now it's commented out until it can be done right.
+   *
   var zones = locations.filter(function (x) {
     return x.type === 'zone';
   });
+  */
   this.all = prepareCars(cars).concat(zones);
   
 
@@ -61,6 +67,7 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
     }.bind(this)
   );
 
+  /*
   this.clearCarWatcher = $scope.$watch(function () {
     var zzones = $data.instances.locations
       .filter(function (x) {
@@ -88,6 +95,7 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
 
     return false;
   }.bind(this), true);
+  */
 
   $scope.$on('$destroy', function () {
     if (this.stopLocationWatch) {

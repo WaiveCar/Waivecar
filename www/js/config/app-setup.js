@@ -164,7 +164,9 @@ var run = [
         bottomPadding = toState.data.intercomPadding;
       }
 
-      IntercomService.setBottomPadding(bottomPadding);
+      // This was from an unfinished, improper merge, cjm is at fault
+      // for the merge... check the git blame
+      //IntercomService.setBottomPadding(bottomPadding);
       IntercomService.setLauncherVisibility(showIntercom);
     });
 
