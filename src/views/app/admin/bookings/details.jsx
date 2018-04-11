@@ -22,6 +22,7 @@ module.exports = class RideDetails extends React.Component {
     let duration  = moment.duration(moment(ride.end.createdAt).diff(moment(ride.start.createdAt)));
     ride.duration = {
       raw     : duration,
+      days    : duration.days(),
       hours   : duration.hours(),
       minutes : duration.minutes(),
       seconds : duration.seconds()
@@ -57,12 +58,12 @@ module.exports = class RideDetails extends React.Component {
                 </div>
                 <div className="ride-from">
                   <img src="/images/map/icon-start.svg" className="ride-icon" />
-                  <div className="ride-time">{ moment(ride.start.createdAt).format('h:mm A') }</div>
+                  <div className="ride-time">{ moment(ride.start.createdAt).format('dddd, MMMM Do h:mm A') }</div>
                   { ride.start.address }
                 </div>
                 <div className="ride-to">
                   <img src="/images/map/icon-end.svg" className="ride-icon" />
-                  <div className="ride-time">{ moment(ride.end.createdAt).format('h:mm A') }</div>
+                  <div className="ride-time">{ moment(ride.end.createdAt).format('dddd, MMMM Do h:mm A') }</div>
                   { ride.end.address }
                 </div>
               </div>
@@ -72,6 +73,9 @@ module.exports = class RideDetails extends React.Component {
                   <div>
                     Ride Duration<br/>
                     <strong>
+                    {
+                      ride.duration.days ? `${ ride.duration.days } day${ ride.duration.days !== 1 ? 's ' : ' '}` : ''
+                    }
                     {
                       ride.duration.hours ? `${ ride.duration.hours } hour${ ride.duration.hours !== 1 ? 's ' : ' ' }` : ''
                     }
