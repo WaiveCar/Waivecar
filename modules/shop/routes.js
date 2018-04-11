@@ -97,3 +97,6 @@ Route.post('/shop/orders/capture/:id', {
 
 Route.get('/shop/orders',     [ 'isAuthenticated', 'Shop/OrdersController@index' ]);
 Route.get('/shop/orders/:id', [ 'isAuthenticated', 'Shop/OrdersController@show' ]);
+
+// ## CHARGES
+Route.get('/shop/charges/:id', [ 'Shop/ChargesController@show' ]);
