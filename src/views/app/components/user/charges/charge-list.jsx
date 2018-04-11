@@ -25,6 +25,9 @@ class ChargeList extends Component {
       btnPrev : false,
       btnNext : true
     };
+    this.totalHours = 0;
+    this.avg = 0;
+    this.totalFees = 0;
 
     this.charge = this.charge.bind(this);
   }
@@ -44,6 +47,9 @@ class ChargeList extends Component {
         charges : charges
       });
     });
+    this.totalHours = 77;
+    this.avg = 55;
+    this.totalFees = 88;
   }
 
   getCharges(step, cb) {
@@ -183,6 +189,11 @@ class ChargeList extends Component {
 
           }
         </div>
+        { this.props.currentUser ?
+            <div className="totalChargesSum">Total rented hours: {this.totalHours}, avg: {this.avg}</div>
+          :
+            <div className="totalChargesSum">Total fees: {this.totalFees}</div>
+        }
       </div>
     );
   }
