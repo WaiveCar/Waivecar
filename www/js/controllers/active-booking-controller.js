@@ -278,7 +278,10 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     // process right before flaunting the unlock screen
     $data.resources.cars.connect({id: $data.active.cars.id});
 
-    var plateNumber = 'WAIVE ' + ($data.active.cars.plateNumber ? $data.active.cars.plateNumber : 'Unknown');
+    var plateNumber = $data.active.cars.license;
+    if($data.active.cars.plateNumber) {
+      plateNumber += ' (' + data.active.cars.plateNumber + ')';
+    }
 
     $modal('result', {
       title: 'You\'re In Reach',
@@ -286,7 +289,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       icon: 'check-icon',
       actions: [{
         className: 'button-balanced',
-        text: 'Unlock ' + plateNumber,
+        text: 'Unlock ' + $data.active.cars.license,
         handler: onUnlock
       }, {
         className: 'button-dark',
