@@ -266,6 +266,7 @@ module.exports = angular.module('app.services').factory('$ride', [
           homebase: 3
         };
         var type = 'none';
+        var resLocation;
 
         // If the charge isn't ok then we can only end at hubs, not zones.
         if(!service.isChargeOkay(car.id, car)) {
@@ -301,13 +302,14 @@ module.exports = angular.module('app.services').factory('$ride', [
               ) 
           ) {
             console.log("Using " + location.name);
+            resLocation = location;
             type = location.type;
           }
         }
         if (type === 'none') {
           return false;
         }
-        return type;
+        return resLocation;
       });
     };
 
