@@ -158,6 +158,13 @@ var run = [
       }
 
       var showIntercom = toState && toState.data && toState.data.intercom;
+      var bottomPadding = 35;
+
+      if(toState && toState.data && toState.data.intercomPadding) {
+        bottomPadding = toState.data.intercomPadding;
+      }
+
+      IntercomService.setBottomPadding(bottomPadding);
       IntercomService.setLauncherVisibility(showIntercom);
     });
 

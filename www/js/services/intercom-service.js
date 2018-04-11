@@ -30,6 +30,9 @@ module.exports = angular.module('app.services').service('IntercomService', [
         },
         registerForPush: function() {
           console.log('registerForPush');
+        },
+        setBottomPadding: function(padding) {
+          console.log('setBottomPadding');
         }
       };
     }
@@ -75,6 +78,10 @@ module.exports = angular.module('app.services').service('IntercomService', [
     this.setLauncherVisibility = function(show) {
       intercom().setLauncherVisibility(show ? 'VISIBLE' : 'GONE');
     };
+
+    this.setBottomPadding = function(padding) {
+      intercom().setBottomPadding(padding);
+    }
 
     function createIntecomUserModel(user) {
       var iUser = {
