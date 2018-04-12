@@ -11,7 +11,9 @@ Bento.Register.Model('Location', 'sequelize', function(model, Sequelize) {
       defaultValue : 'station'
     },
 
-    name : { type : Sequelize.STRING, allowNull : false },
+    name : { 
+      type : Sequelize.STRING
+    },
 
     description : { type : Sequelize.STRING },
 
@@ -19,9 +21,9 @@ Bento.Register.Model('Location', 'sequelize', function(model, Sequelize) {
 
     comments : { type : Sequelize.TEXT() },
 
-    latitude : { type : Sequelize.DECIMAL(10, 8), allowNull : false },
+    latitude : { type : Sequelize.DECIMAL(10, 8) },
 
-    longitude : { type : Sequelize.DECIMAL(11, 8), allowNull : false },
+    longitude : { type : Sequelize.DECIMAL(11, 8) },
 
     address : { type : Sequelize.STRING },
 
