@@ -101,7 +101,7 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
     if (this.stopLocationWatch) {
       this.stopLocationWatch();
     }
-    this.clearCarWatcher();
+    //this.clearCarWatcher();
   }.bind(this));
 
   function ensureAvailableCars(allCars) {
