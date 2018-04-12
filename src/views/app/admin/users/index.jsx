@@ -47,19 +47,18 @@ class UsersListView extends React.Component {
     relay.unsubscribe(this, 'users');
   }
 
+  formatPhone(what) {
+    return what.replace(/^(\+1|)(\d{3})(\d{3})/, '($2) $3-');
+  }
+
   row(user) {
+    user.phone = user.phone || '';
     return (
       <tr key={ user.id } onClick={ () => { this.history.pushState(null, `/users/${ user.id }`) } }>
         <td>{ user.id }</td>
         <td>{ user.firstName } { user.lastName }</td>
-        <td>
-        <td className="hidden-sm-down">{ user.phone }</td>
+        <td className="hidden-sm-down"><a href={ "tel:" + user.phone }>{ this.formatPhone(user.phone) }</a></td>
         <td>{ user.status }</td>
-        {/*
-        <td className="hidden-sm-down">
-          <button className="material-icons" onClick={ this.toggleIsWaivework.bind(this, user) }>{user.isWaivework ? 'check' : 'close'}</button>
-        </td>
-        */}
         <td className="hidden-sm-down">
           <Link to={ `/users/${ user.id }` }>
             <i className="material-icons" style={{ marginTop : 5 }}>pageview</i>
