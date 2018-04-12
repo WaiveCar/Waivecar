@@ -7,6 +7,7 @@
 
 
     <google-map id="map"
+                ng-if="ctrl.currentLocation"
                 markers="ctrl.locations"
                 on-marker-tap="ctrl.openPopover"
                 fit-bounds-by-markers="ctrl.fitMapBoundsByMarkers"
