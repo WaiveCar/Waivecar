@@ -151,9 +151,12 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
           }
         }, true),
         $scope.$watch('map.fitBoundsByMarkers', function (value) {
+          /*
+          // console.log("bounds", value);
           if (value) {
             ctrl.mapFitBounds(value);
           }
+          */
         }, true),
         $scope.$watch('map.route', function (value) {
           if (value && value.destiny) {
