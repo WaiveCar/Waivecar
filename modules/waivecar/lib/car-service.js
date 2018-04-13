@@ -51,6 +51,7 @@ module.exports = {
   },
 
   *index(query, _user) {
+    let perf = [['start', new Date()]];
     let options = queryParser(query, {
       where : {
         id          : queryParser.STRING,
@@ -73,19 +74,30 @@ module.exports = {
 
     delete options.limit;
     let cars = yield Car.find(options);
+    perf.push(['car_query', new Date()]);
     let bookings = yield Booking.find({ where : { status : 'started' } });
+    perf.push(['booking_query', new Date()]);
 
     this.joinCarsWithBookings(cars, bookings);
+    perf.push(['join', new Date()]);
 
     let available = 0;
     cars.forEach(function(car) {
       car.license = car.license || '';
       available += car.isAvailable;
     });
+    perf.push(['foreach', new Date()]);
 
     if (_user && !_user.hasAccess('admin')) {
       fs.appendFileSync('/var/log/outgoing/carsrequest.txt', JSON.stringify([new Date(), available, _user.id]) + '\n');
     }
+    perf.push(['log', new Date()]);
+    perf.reverse();
+    var log = []
+    for(var ix = 0; ix < perf.length - 1 ; ix++) {
+      log.push( perf[ix][0] + ' ' + (perf[ix][1] - perf[ix + 1][1]) );
+    }
+    console.log( log.join(' | ') );
     return cars;
   },
 
