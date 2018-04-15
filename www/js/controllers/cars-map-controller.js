@@ -26,9 +26,27 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
   var ctrl = this;
 
   // First load
-  this.all = prepareCars(cars);
+  this.all = cars;
 
   function firstLoad(currentLocation) {
+    if(!ctrl.clearCarWatcher) {
+      ctrl.clearCarWatcher = $scope.$watch(function () {
+        return $data.instances.cars;
+      }, function (value) {
+        if (value == null) {
+          return false;
+        }
+        if (Array.isArray(value) && !value.length) {
+          return false;
+        }
+
+        ctrl.all = prepareCars(value);
+
+        return false;
+      }, true);
+    }
+
+    ctrl.all = prepareCars(cars);
     ctrl.fitMapBoundsByMarkers = getMarkersToFitBoundBy(ctrl.all, currentLocation);
     carsInRange(ctrl.all, currentLocation);
     ensureAvailableCars(cars);
@@ -49,27 +67,13 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
   this.stopLocationWatch = LocationService.watchLocation(
     function(currentLocation, isInitialCall) {
       if(!this.currentLocation) {
+        this.currentLocation = currentLocation;
         firstLoad(currentLocation);
       }
 
       this.currentLocation = currentLocation;
     }.bind(this)
   );
-
-  this.clearCarWatcher = $scope.$watch(function () {
-    return $data.instances.cars;
-  }, function (value) {
-    if (value == null) {
-      return false;
-    }
-    if (Array.isArray(value) && !value.length) {
-      return false;
-    }
-
-    this.all = prepareCars(value);
-
-    return false;
-  }.bind(this), true);
 
   $scope.$on('$destroy', function () {
     if (this.stopLocationWatch) {
