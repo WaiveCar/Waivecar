@@ -324,7 +324,7 @@ module.exports = class LogService {
     // we'll use this query to answer a number of questions.
     let allBookings = yield Booking.find({
       where : {
-        status : { $in : [ 'completed', 'closed', 'ended' ] },
+        status : { $in : [ 'completed', 'closed', 'ended', 'started' ] },
         created_at : range,
         car_id : { $in : Object.keys(licenseMap) }
       },

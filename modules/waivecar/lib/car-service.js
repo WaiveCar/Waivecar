@@ -60,6 +60,7 @@ module.exports = {
       }
     });
 
+    /*
     options.include = [
       {
         model: 'GroupCar',
@@ -67,6 +68,7 @@ module.exports = {
       }
     ];
 
+    */
     options.where.inRepair = false;
     if (_user && !_user.hasAccess('admin')) {
       options.where.adminOnly = false;
