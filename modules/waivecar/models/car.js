@@ -1,6 +1,11 @@
 'use strict';
 
 let Booking = Bento.model('Booking');
+
+let Utils = require('sequelize/lib/utils');
+require('./log');
+let Log = Bento.model('Log');
+
 Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
   model.table = 'cars';
@@ -219,6 +224,28 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
           car_id : this.id,
           status : {
             $in : ['started', 'reserved', 'ended']
+          }
+        },
+        order: [['created_at', 'DESC']]
+      });
+    },
+
+    // get last log for current car
+    getLastAction: function *() {
+      return yield Log.findOne({
+        where : {
+          car_id : this.id
+        },
+        order: [['created_at', 'DESC']]
+      });
+    },
+
+    // get last log for all cars
+    getLastActionForAllCars: function *() {
+      return yield Log.find({
+        where : {
+          id : {
+            $in : new Utils.literal('(SELECT MAX(id) FROM logs GROUP BY car_id)')
           }
         },
         order: [['created_at', 'DESC']]
