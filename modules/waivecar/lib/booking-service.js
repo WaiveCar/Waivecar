@@ -572,8 +572,12 @@ module.exports = class BookingService extends Service {
     let booking = yield this.getBooking(id);
     let car     = yield this.getCar(booking.carId);
     let user    = yield this.getUser(booking.userId);
-    let warnings = [];
     let isAdmin = _user.isAdmin();
+    let warnings = [];
+
+    // BUGBUG: We are using the user tagging and not the car tagging
+    // for level accounts
+    let isLevel = yield user.isTagged('level');
 
     this.hasAccess(user, _user);
 
@@ -615,7 +619,7 @@ module.exports = class BookingService extends Service {
     // Immobilize the engine.
     let status;
     try {
-      if (yield car.isTagged('level')) {
+      if (isLevel) {
         // the easiest way to deal with that logic below
         // is just to lie. But I'm writing this at 4am
         // after working for 16 hours so there may be 
@@ -812,6 +816,7 @@ module.exports = class BookingService extends Service {
     let booking = yield this.getBooking(id, relations);
     let car     = yield this.getCar(booking.carId);
     let user    = yield this.getUser(booking.userId);
+    let isLevel = yield user.isTagged('level');
     let isAdmin = _user.hasAccess('admin');
     let errors  = [];
 
@@ -865,10 +870,12 @@ module.exports = class BookingService extends Service {
       };
     }
 
-    try {
-      yield cars.lockCar(car.id, _user);
-    } catch (err) {
-      log.warn(`Failed to lock ${ car.info() } when completing booking ${ booking.id }`);
+    if (!isLevel) { 
+      try {
+        yield cars.lockCar(car.id, _user);
+      } catch (err) {
+        log.warn(`Failed to lock ${ car.info() } when completing booking ${ booking.id }`);
+      }
     }
 
     // ### Booking & Car Updates
