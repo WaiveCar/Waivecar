@@ -40,9 +40,13 @@ scheduler.process('user-car-availability-timer', function *(job) {
     };
   };
 
-  yield UserCarNotification.destroy({
+  let notified =  yield UserCarNotification.find({
     where: {notified: true}
   });
+
+  for(let i = 0; i < notified.length; ++i) {
+    yield notified[i].delete();
+  };
 });
 
 module.exports = function *() {
