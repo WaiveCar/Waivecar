@@ -10,6 +10,7 @@ class LocationsIndex extends React.Component {
   constructor(...args) {
     super(...args);
     this.hasFocus = false;
+
     this.state = {
       type: "hub"
     };
@@ -29,10 +30,18 @@ class LocationsIndex extends React.Component {
     this.handleTypeChange = this.handleTypeChange.bind(this);
     this.handleIsPublicChange = this.handleIsPublicChange.bind(this);
 
+
     setInterval(function() {
       var coors = document.getElementsByTagName('textarea')[0];
-      coors.value = localStorage['coordinates'];
-    }, 100);
+      if(!this.disableTA) {
+        if(coors.value !== localStorage['coordinates']) {
+          this.setState({
+            shape: localStorage['coordinates']
+          });
+        }
+        coors.value = localStorage['coordinates'];
+      }
+    }.bind(this), 100);
   }
 
   handleTypeChange(value) {
@@ -79,12 +88,23 @@ class LocationsIndex extends React.Component {
   componentDidMount() {
     let locationInput = this.refs.location;
     let autocomplete =  new google.maps.places.Autocomplete(locationInput, {types: ['establishment', 'geocode']});
+    let ctrl = this;
 
     google.maps.event.addDomListener(locationInput, 'keydown', function(event) {
       if (event.keyCode === 13) {
         event.preventDefault();
       }
     });
+
+    var coors = document.getElementsByTagName('textarea')[0];
+
+    coors.onfocus = function() {
+      ctrl.disableTA = true;
+    }
+    coors.onblur = function() {
+      localStorage['coordinates'] = coors.value;
+      ctrl.disableTA = false;
+    }
 
     autocomplete.addListener("place_changed", () => {
 
