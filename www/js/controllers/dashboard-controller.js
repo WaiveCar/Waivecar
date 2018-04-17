@@ -7,6 +7,7 @@ require('../services/progress-service');
 require('../services/geofencing-service');
 require('../services/notification-service');
 require('../services/zendrive-service');
+require('../services/chargers-service');
 
 function DashboardController ($scope, $rootScope, $injector) {
   var $q = $injector.get('$q');
@@ -23,6 +24,8 @@ function DashboardController ($scope, $rootScope, $injector) {
   var GeofencingService = $injector.get('GeofencingService');
   var ZendriveService = $injector.get('ZendriveService');
   var LocationService = $injector.get('LocationService');
+  var ChargersService = $injector.get('ChargersService');
+  //var homebase = $injector.get('homebase');
   var $auth = $injector.get('$auth');
 
 
@@ -39,6 +42,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   this.unlockCar = unlockCar;
   this.endRide = endRide;
   this.endRidePrompt = endRidePrompt;
+  this.showUnlockChargerPrompt = showUnlockChargerPrompt;
 
   // State
   this.ending = false;
@@ -53,8 +57,8 @@ function DashboardController ($scope, $rootScope, $injector) {
     $ride.openDirections(ctrl.selectedItem, ctrl.selectedItem.name);
   }
 
-  // So there was a bug when this thing wasn't running right ... so 
-  // we need to put it in an interval BUUT sometimes it was so we 
+  // So there was a bug when this thing wasn't running right ... so
+  // we need to put it in an interval BUUT sometimes it was so we
   // need to avoid getting this thing to run multiple times
   var rideServiceReady = $scope.$watch('service.isInitialized', function(isInitialized) {
     if (isInitialized !== true) {
@@ -63,8 +67,6 @@ function DashboardController ($scope, $rootScope, $injector) {
     rideServiceReady();
 
     ctrl.locations = $data.instances.locations;
-
-
     if ($data.active.cars) {
       OnLockStateChange($data.active.cars.isLocked);
     }
@@ -159,7 +161,7 @@ function DashboardController ($scope, $rootScope, $injector) {
     // These two lines make it crash!!!!!!!!
     $timeout(function() {
       $data.resources.cars.connect({id: $data.active.cars.id}).catch(function(){
-        console.log("no find car.");
+        console.log("can't find car.");
       });
     }, 1000);
     //ZendriveService.start($session.get('me'), $data.active.bookings.id, $data.active.cars.id);
@@ -167,17 +169,16 @@ function DashboardController ($scope, $rootScope, $injector) {
     $scope.$watch(function() {
       return $data.active.cars.isLocked
     }, OnLockStateChange);
+
   }.bind(this));
 
   function OnLockStateChange(isLocked) {
     if (isLocked) {
-
       var lockedCarMarker = {
         type: "locked-car",
         latitude: $data.active.cars.latitude,
         longitude: $data.active.cars.longitude
       };
-
       ctrl.locations = $data.instances.locations.concat([lockedCarMarker]);
     } else {
       ctrl.locations = $data.instances.locations;
@@ -224,6 +225,52 @@ function DashboardController ($scope, $rootScope, $injector) {
           }
         });
      }
+  }
+
+  function OnCarChargeChange(isLocked) {
+    //todo: add new marking for charging car
+  }
+
+  function unlockCharger(chargerId) {
+    $ionicLoading.show({
+      template: '<div class="circle-loader"><span>Loading</span></div>'
+    });
+    $ride.unlockCharger($data.active.cars.id, chargerId)
+      .then(function(car) {
+        OnCarChargeChange(car.isCharging);
+        console.log(car);
+        $ionicLoading.hide();
+    })
+    .catch(function (reason) {
+        $ionicLoading.hide();
+        $message.error("Charger unlocking failed. Please make sure you're connected to available EVSE connector.");
+    });
+  }
+
+  function showUnlockChargerPrompt(id){
+    var modal;
+    $modal('result', {
+      icon: 'x-icon',
+      title: 'Charging Station',
+      message: 'Do you wanna unlock charger?',
+      actions: [{
+        text: 'yes',
+        className: 'button-balanced',
+        handler: function () {
+          modal.remove();
+          unlockCharger(id);
+        }
+      }, {
+        text: 'no',
+        handler: function () {
+          modal.remove();
+        }
+      }]
+    })
+      .then(function (_modal) {
+        modal = _modal;
+        modal.show();
+      });
   }
 
   function lockCar(id) {

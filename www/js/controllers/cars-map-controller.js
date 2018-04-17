@@ -20,6 +20,7 @@ module.exports = angular.module('app.controllers').controller('CarsMapController
 function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, locations, $modal) {
   var $distance = $injector.get('$distance');
   var LocationService = $injector.get('LocationService');
+
   // the accuracy should be within this amount of meters to show the Bummer dialog
   var minAccuracyThreshold = 200;
   var modal;

@@ -16,7 +16,7 @@ module.exports = angular.module('app.services').factory('$ble', [
       },
       DRIVING_INFORMATION_1: {
         code: '869CEFA3-B058-11E4-AB27-00025B03E1F4',
-        format: [ 
+        format: [
           [ 2, 'fuel' ],
           [ 4, 'speed' ],
           [ 4, 'mileage' ]
@@ -61,7 +61,7 @@ module.exports = angular.module('app.services').factory('$ble', [
       DEBUG: {
         code: '869CEFB0-B058-11E4-AB27-00025B03E1F4',
       },
-    }; 
+    };
 
     var CAR_CONTROL_SERVICE = '869CEF80-B058-11E4-AB27-00025B03E1F4';
     var AUTHORIZE_PHONE = '869CEF82-B058-11E4-AB27-00025B03E1F4';
@@ -89,7 +89,7 @@ module.exports = angular.module('app.services').factory('$ble', [
     var _lastStatus = false;
     var _res = {};
     var _desiredCar = false;
-    var _lock = { 
+    var _lock = {
       token: false,
       nextLock: new Date()
     };
@@ -98,12 +98,12 @@ module.exports = angular.module('app.services').factory('$ble', [
     var UNLOCKED = 2;
     var ON = 2;
     var OFF = 1;
-    
+
     // If the token is set to expire then we need to grab another. We assume
     //
     //  clock drift + network time + estimated 90% network failure time (signal) + unknown unknowns
     //
-    // 60s + 15s + 90s + 120s = 4.75 minutes ... 
+    // 60s + 15s + 90s + 120s = 4.75 minutes ...
     //
     //  that means that if a token is expiring in 4.75 minutes we try to go
     //  out and get another one
@@ -117,7 +117,7 @@ module.exports = angular.module('app.services').factory('$ble', [
           var _lowest = {rssi: -1000};
           var _lastCar = false;
           $window.setInterval(function() {
-            ble.startScan([], function(car) { 
+            ble.startScan([], function(car) {
               if(car.rssi > _lowest.rssi) {
                 _lowest.name = car.name;
                 _lowest.rssi = car.rssi;
@@ -133,7 +133,7 @@ module.exports = angular.module('app.services').factory('$ble', [
       },
       scan: function() {
         getBle().then(function() {
-          ble.startScan([], function(car) { 
+          ble.startScan([], function(car) {
             console.log(car);
           });
         });
@@ -165,10 +165,10 @@ module.exports = angular.module('app.services').factory('$ble', [
     // shouldn't be happening because of lazy loading
     // but fuck angular so it's here. To avoid this
     // bullshit we pass things down since having mutual
-    // co-dependency is outside the comprehension of 
+    // co-dependency is outside the comprehension of
     // classical oop programmers. boohoo, fuck these
     // people.
-    function setFunction(name, cb) { 
+    function setFunction(name, cb) {
       if(!(name in _injected)) {
         _injected[name] = cb;
       }
@@ -234,8 +234,8 @@ module.exports = angular.module('app.services').factory('$ble', [
     }
 
     function b642array(b64) {
-      return atob(b64).split('').map(function(c) { 
-        return c.charCodeAt(0); 
+      return atob(b64).split('').map(function(c) {
+        return c.charCodeAt(0);
       });
     }
 
@@ -270,7 +270,7 @@ module.exports = angular.module('app.services').factory('$ble', [
             pointer += 1;
             break;
           case 2:
-            // This stupid slice trick is needed because the buffer* prototype wants 
+            // This stupid slice trick is needed because the buffer* prototype wants
             // structural alignment which is retarded.
             value = new Uint16Array(buf.slice(pointer, pointer + 2), 0, 1);
             pointer += 2;
@@ -320,9 +320,9 @@ module.exports = angular.module('app.services').factory('$ble', [
       }
       getBle().then(function() {
         // this devilish function returns many times,
-        // via a "progress" feature of promises. It 
+        // via a "progress" feature of promises. It
         // never gets to "complete"
-        ble.startScan([], function(car) { 
+        ble.startScan([], function(car) {
           _scanCache[car.id] = car;
           if (car.name === id) {
             console.log("success connect " + ix);
@@ -341,15 +341,15 @@ module.exports = angular.module('app.services').factory('$ble', [
       }).catch(failure('no ble', fail));
     }
 
-    // invers has a "protocol" for sending large payloads. This is 
+    // invers has a "protocol" for sending large payloads. This is
     // essentially re-interpreted Java code from the documentation.
     function partitionData(raw) {
-      var payloadList = [], 
+      var payloadList = [],
         unit = 18,
         row,
         offset,
         ttl = raw.length;
-        
+
       for(var start = 0; start < raw.length; start += unit) {
         row = new Uint8Array(2 + Math.min(unit, raw.length - start));
         row[0] = ttl;
@@ -357,7 +357,7 @@ module.exports = angular.module('app.services').factory('$ble', [
         offset = 2;
         for(var ix = start; ix < Math.min(start + unit, raw.length); ix++) {
           row[offset] = raw[ix];
-          offset++; 
+          offset++;
         }
         payloadList.push(row);
       }
@@ -370,14 +370,14 @@ module.exports = angular.module('app.services').factory('$ble', [
       function sendData(arg) {
         if(payload.length === 0) {
           return success(arg);
-        } 
+        }
         ble.write(_deviceId, service, characteristic, payload.shift().buffer, sendData, fail);
       }
-      
+
       sendData();
     }
 
-    // All the write actions, such as lock and unlock, follow some challenge response 
+    // All the write actions, such as lock and unlock, follow some challenge response
     // protocol invented by invers to prevent replay attacks.
     function doit(what, success, fail) {
       var command = new Array(10).fill(0);
@@ -390,7 +390,7 @@ module.exports = angular.module('app.services').factory('$ble', [
         commandChallenge = new Uint8Array(commandChallenge);
         var valueCommandArray = command.concat(_.toArray(commandChallenge));
 
-        // The order of these arguments is inconsistent with invers's documentation.  
+        // The order of these arguments is inconsistent with invers's documentation.
         // This is correct, the documentation is wrong.
         var responseb64 = hmacsha1(bin2str(_sessionKey), bin2str(valueCommandArray));
         var payload = command.concat(b642array(responseb64)).slice(0, 20);
@@ -429,7 +429,7 @@ module.exports = angular.module('app.services').factory('$ble', [
       _injected.getBle({ id: carId }).$promise
         .then(setup)
         .catch(function(m) {
-          console.log(m); 
+          console.log(m);
           if('creds' in $window.localStorage) {
             var creds = JSON.parse($window.localStorage['creds']);
             // we need to make sure that if we have no network and
@@ -452,7 +452,7 @@ module.exports = angular.module('app.services').factory('$ble', [
         log("Authorizing", carId);
         var token = b642bin(_creds.token);
         writeBig(CAR_CONTROL_SERVICE, AUTHORIZE_PHONE, token, function(pass) {
-          _creds.authorized = true; 
+          _creds.authorized = true;
           log("Authorized", carId);
           return defer.resolve(pass);
         }, failure('write', defer.reject));
@@ -487,7 +487,7 @@ module.exports = angular.module('app.services').factory('$ble', [
         // "sessionKey":"sX***",
         // "valid_from":"2017-11-09T01:32:06.648Z",
         // "valid_until":"2017-11-09T02:32:06.648Z"
-        // } 
+        // }
         //
         if(!expired && _creds.carId === carId ) {
           log("Using existing token", carId);
@@ -497,7 +497,7 @@ module.exports = angular.module('app.services').factory('$ble', [
           getCredentials(carId).then(function(creds) {
             // creds.carId is an important distinction because
             // we can pull out the rug from underneath our notion
-            // of what car to look for if we aren't connected to 
+            // of what car to look for if we aren't connected to
             // the internet. This is because we tentatively do not
             // know ... we have to use our cached copy in localStorage.
             //
@@ -531,30 +531,38 @@ module.exports = angular.module('app.services').factory('$ble', [
     }
 
     function wrap(carId, cmd, done) {
+
       log.reset();
       var defer = $q.defer();
-
-      // We need to make sure that if we have no network and
-      // the app has crashed that we can try to do some good
-      // guess work to find out what the car is that we need
-      // to talk to. At worse this will simply be undefined
-      // while at best it will be the car we need.
-      if(!carId) {
-        carId = _creds.carId;
-      }
-
-      connect(carId).promise.then(function(){ 
-        log("Doing " + cmd);
-
-        if(!done) {
-          return doit(cmd, ok("Done " + cmd, defer.resolve), failure("Not done " + cmd, defer.reject));
-        } else {
-          return defer.resolve("Skipping " + cmd + " - already done");
-        }
-      }).catch(failure("connect", defer.reject));
-
+      defer.reject();
       defer.$promise = defer.promise;
+
       return defer;
+
+      // log.reset();
+      // var defer = $q.defer();
+      //
+      // // We need to make sure that if we have no network and
+      // // the app has crashed that we can try to do some good
+      // // guess work to find out what the car is that we need
+      // // to talk to. At worse this will simply be undefined
+      // // while at best it will be the car we need.
+      // if(!carId) {
+      //   carId = _creds.carId;
+      // }
+      //
+      // connect(carId).promise.then(function(){
+      //   log("Doing " + cmd);
+      //
+      //   if(!done) {
+      //     return doit(cmd, ok("Done " + cmd, defer.resolve), failure("Not done " + cmd, defer.reject));
+      //   } else {
+      //     return defer.resolve("Skipping " + cmd + " - already done");
+      //   }
+      // }).catch(failure("connect", defer.reject));
+      //
+      // defer.$promise = defer.promise;
+      // return defer;
     }
 
     function isLocked(obj) {
@@ -612,18 +620,18 @@ module.exports = angular.module('app.services').factory('$ble', [
           getCredentials(_creds.carId)
             .then(function() { _lock.token = false; })
             .catch(function() { _lock.token = false; });
-        } 
-        /*  
+        }
+        /*
           else if(_creds && _creds.authorized) {
           // We try to find out the status of the car ... this is essentially a poll and there's no indication
           // that this is a bad idea since it's a local btle connection
           cis('STATUS_1', function(obj) {
             // This passes up state to the controller if we have it
-            if( _injected.ctrl && 
+            if( _injected.ctrl &&
                   // When we come in for the first time we need to report
                   // to the controller what our current status is
                 (
-                  !_lastStatus || 
+                  !_lastStatus ||
                   (_lastStatus.lock !== obj.lock && obj.lock !== UNKNOWN )
                 )
               ) {
@@ -633,8 +641,8 @@ module.exports = angular.module('app.services').factory('$ble', [
 
             // If we are over a certain distance, the door is unlocked, and we haven't recently sent
             // an unlock command, then we try to lock it.
-            if( average < -90.2 && 
-                !isLocked() && 
+            if( average < -90.2 &&
+                !isLocked() &&
                 ( _lastCommand.CENTRAL_LOCK_OPEN && (new Date() - _lastCommand.CENTRAL_LOCK_OPEN) > 20 * 1000 ) &&
                 // Sometimes this gets run multiple times due to a race condition.
                 now > (_lock.nextLock + 5000)
