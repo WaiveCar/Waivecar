@@ -36,10 +36,28 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
     return x.type === 'zone';
   });
   */
-  this.all = prepareCars(cars).concat(zones);
   
+  this.all = cars;
 
   function firstLoad(currentLocation) {
+    if(!ctrl.clearCarWatcher) {
+      ctrl.clearCarWatcher = $scope.$watch(function () {
+        return $data.instances.cars;
+      }, function (value) {
+        if (value == null) {
+          return false;
+        }
+        if (Array.isArray(value) && !value.length) {
+          return false;
+        }
+
+        ctrl.all = prepareCars(value);
+
+        return false;
+      }, true);
+    }
+
+    ctrl.all = prepareCars(cars);
     ctrl.fitMapBoundsByMarkers = getMarkersToFitBoundBy(ctrl.all, currentLocation);
     carsInRange(ctrl.all, currentLocation);
     ensureAvailableCars(cars);
@@ -60,6 +78,7 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
   this.stopLocationWatch = LocationService.watchLocation(
     function(currentLocation, isInitialCall) {
       if(!this.currentLocation) {
+        this.currentLocation = currentLocation;
         firstLoad(currentLocation);
       }
 
@@ -101,7 +120,9 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
     if (this.stopLocationWatch) {
       this.stopLocationWatch();
     }
-    //this.clearCarWatcher();
+    if(this.clearCarWatcher) {
+      this.clearCarWatcher();
+    }
   }.bind(this));
 
   function ensureAvailableCars(allCars) {

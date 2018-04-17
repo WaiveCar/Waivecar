@@ -1,5 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-versionCode="902" id="com.waivecar.app" android-packageName="com.waivecardrive.app" ios-CFBundleIdentifier="com.waivecar.app" ios-CFBundleVersion="133" version="1.0.37" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget 
+  android-versionCode="904" android-packageName="com.waivecardrive.app"
+  ios-CFBundleVersion="137" ios-CFBundleIdentifier="com.waivecar.app" 
+  id="com.waivecardrive.app" version="1.0.43" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>WaiveCar</name>
     <description>WaiveCar Mobile Application</description>
     <author email="info@waivecar.com" href="http://waivecar.com/">WaiveCar</author>
@@ -96,7 +99,6 @@
     <allow-navigation href="https://*/*" />
     <allow-navigation href="data:*" />
     <allow-intent href="tel:*" />
-    <engine name="browser" spec="~4.1.0" />
     <plugin name="com.zendrive.phonegap.sdk" spec="git+https://github.com/waivecar/zendrive-sdk-phonegap-plugin.git" />
     <plugin name="cordova-plugin-app-version" spec="https://github.com/whiteoctober/cordova-plugin-app-version" />
     <plugin name="cordova-plugin-camera" spec="^2.3.1">
@@ -132,7 +134,8 @@
     <plugin name="cordova-plugin-whitelist" spec="1.3.1" />
     <plugin name="cordova-plugin-device" spec="1.1.4" />
     <plugin name="cordova-plugin-splashscreen" spec="~4.0.1" />
-    <engine name="ios" spec="~4.3.1" />
     <plugin name="cordova-plugin-hide-home-indicator" spec="~1.0.0" />
     <plugin name="cordova-open-native-settings" spec="~1.4.1" />
+    <engine name="browser" spec="~4.1.0" />
+    <engine name="ios" spec="^4.5.4" />
 </widget>
