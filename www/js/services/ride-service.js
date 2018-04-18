@@ -272,16 +272,18 @@ module.exports = angular.module('app.services').factory('$ride', [
           if(location.radius && location.radius < 0.1) {
             location.radius *= (3 * 5280);
           }
+          /*
           console.log($distance.fallbackInMeters(location, car), location, location.name, precedence[location.type], precedence[type]);
           if(location.radius) {
             console.log($distance.fallbackInMeters(location, car) * METERTOFEET, location.radius);
           }
+          */
           if (precedence[location.type] > precedence[type] && (
                 location.radius && $distance.fallbackInMeters(location, car) * METERTOFEET < location.radius ||
                 location.shape && GeofencingService.insideFastCheck(car, location.shape)
               )
           ) {
-            console.log("Using " + location.name);
+            //console.log("Using " + location.name);
             resLocation = location;
             type = location.type;
           }
