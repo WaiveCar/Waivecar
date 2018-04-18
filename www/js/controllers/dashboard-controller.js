@@ -41,7 +41,6 @@ function DashboardController ($scope, $rootScope, $injector) {
   this.lockCar = lockCar;
   this.unlockCar = unlockCar;
   this.endRide = endRide;
-  this.endRidePrompt = endRidePrompt;
   this.showUnlockChargerPrompt = showUnlockChargerPrompt;
 
   // State
@@ -345,6 +344,7 @@ function DashboardController ($scope, $rootScope, $injector) {
     $modal('zone', {
       title: 'Zone description',
       zoneName: locZone.name,
+      description: locZone.description,
       restrictions: restrictions,
       actions: [{
         text: "Ok, I'm responsible for these rules",
@@ -367,34 +367,7 @@ function DashboardController ($scope, $rootScope, $injector) {
     });
   }
 
-  function endRidePrompt(carId, bookingId) {
-    var modal;
-    $modal('result', {
-      icon: 'x-icon',
-      title: 'End Ride',
-      message: 'Are you sure you want to end your ride?',
-      actions: [{
-        text: 'yes',
-        className: 'button-dark',
-        handler: function () {
-          modal.remove();
-          ctrl.endRide(carId, bookingId);
-        }
-      }, {
-        text: 'no',
-        className: 'button-balanced',
-        handler: function () {
-          modal.remove();
-        }
-      }]
-    })
-    .then(function (_modal) {
-      modal = _modal;
-      modal.show();
-    });
-  }
-
-  function endRide(carId, bookingId) {
+  function endRide(carId, bookingId, attempt) {
     $ionicLoading.show({
       template: '<div class="circle-loader"><span>Loading</span></div>'
     });
@@ -415,14 +388,14 @@ function DashboardController ($scope, $rootScope, $injector) {
         return showIgnitionOnModal();
       }
 
-      return $ride.canEndHereCheck(obj).then(function(location) {
-        if (location.type === 'hub' || location.type === 'homebase') {
+      return $ride.canEndHereCheck(obj).then(function(endLocation) {
+        if (endLocation.type === 'hub' || endLocation.type === 'homebase') {
           return $ride.processEndRide().then(function() {
             return $state.go('end-ride', { id: bookingId });
           });
-        } else if(location.type === 'zone') {
-          return showZonePrompt(location, function () {
-            return $state.go('end-ride-location', { id: bookingId })
+        } else if(endLocation.type === 'zone') {
+          return showZonePrompt(endLocation, function () {
+            return $state.go('end-ride-location', { id: bookingId, zone: endLocation })
           });
         } else {
           // Not inside geofence -> show error
@@ -433,6 +406,15 @@ function DashboardController ($scope, $rootScope, $injector) {
         }
       }).then($ionicLoading.hide)
         .catch(endRideFailure);
+    }).catch(function(obj) {
+      $ionicLoading.hide();
+      if(!attempt) {
+        attempt = 1;
+      }
+      console.log("Unable to end the ride, trying again shortly (" + attempt + ")");
+      $timeout(function() {
+        endRide(carId, bookingId, attempt + 1);
+      }, 500);
     });
   }
 

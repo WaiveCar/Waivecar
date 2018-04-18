@@ -438,6 +438,9 @@ module.exports = [
       url: '/bookings/:id/end-ride/location',
       templateUrl: '/templates/bookings/end-ride-location.html',
       controller: 'ParkingLocationController as ctrl',
+      params: {
+        zone: null
+      },
       data: {
         auth: true
       }
