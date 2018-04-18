@@ -50,15 +50,11 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
     ctrl.geocode = geocode;
     ctrl.submit = submit;
     ctrl.addPicture = addPicture;
+    ctrl.minhours = 3;
     ctrl.init = init;
 
-    // Kickoff
     ctrl.init();
 
-    /**
-     * Initialize controller
-     * @returns {Void} none
-     */
     function init() {
       // Wait for service to initialize
       var rideServiceReady = $scope.$watch('service.isInitialized', function(isInitialized) {
@@ -82,10 +78,6 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
       ctrl.type = type;
     }
 
-    /**
-     * Fetch geocode info for display
-     * @returns {Void} none
-     */
     function geocode() {
       if (!($rootScope.currentLocation && $rootScope.currentLocation.latitude)) {
         return null;
@@ -161,10 +153,6 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
       });
     };
 
-    /**
-     * Submits payload
-     * @returns {Void} null
-     */
     function submit() {
 
       // Force users to take pictures. See #1113
@@ -296,7 +284,7 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
 
       // Check which type we are submitting
       if (ctrl.type === 'lot') {
-        if (ctrl.lot.lotHours < 3 && !ctrl.lot.lotFreePeriod) return submitFailure('You can\'t return your WaiveCar here. The spot needs to be valid for at least 3 hours.');
+        if (ctrl.lot.lotHours < ctrl.minhours && !ctrl.lot.lotFreePeriod) return submitFailure('You can\'t return your WaiveCar here. The spot needs to be valid for at least ' + ctrl.minhours + ' hours.');
         if (isNightTime && ctrl.lot.lotOvernightRest) return submitFailure('You can\'t return your WaiveCar here. If the car is ticketed or towed, you\'ll be responsible for the fees.');
         payload = ctrl.lot;
       } else if (ctrl.type === 'street') {
