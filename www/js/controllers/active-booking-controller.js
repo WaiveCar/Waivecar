@@ -351,15 +351,14 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
 
   ctrl.startIfBleFound = function() {
     $ionicLoading.show();
-    var res = $data.resources.cars.connect({id: this.car.id}).catch(function() {
-      console.log("unable to connect");
-    });
-
-    res.then(function(lll) {
+    
+    $data.resources.cars.connect({id: this.car.id})
+      .then(function() {
         $ionicLoading.hide();
         showUnlock();
-      }).catch(function(lll){
+      }).catch(function(reason){
         $ionicLoading.hide();
+        console.log("Unable to connect", reason);
         showFailure("Can't find car", "Please make sure you are next to the WaiveCar");
       });
   }
