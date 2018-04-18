@@ -82,29 +82,6 @@ module.exports = angular.module('app.services').factory('$ride', [
       }
     }
 
-    service.setLocation = function(key) {
-      service.state.location[key].confirmed = true;
-      switch (key) {
-        case 'chargingStation': {
-          service.state.check.isCharging.isVisible = true;
-          break;
-        }
-        case 'valet': {
-          service.state.check.isKeySecure.isVisible = false;
-          service.state.check.isIgnitionOn.isVisible = false;
-          service.state.check.isChargeCardSecure.isVisible = false;
-          $state.go('end-ride', { id: service.state.booking.id });
-          return;
-          break;
-        }
-        case 'homebase':
-        case 'other':
-        default:
-          break;
-      }
-      $state.go('end-ride-location', { id: service.state.booking.id });
-    };
-
     service.toggleZone = function() {
       service.state.zone.confirmed = false;
       service.state.zone.isOutside = !service.state.zone.isOutside;
