@@ -2,8 +2,9 @@
   <ion-content scroll="false" padding="true" class="ion-content--center dark-bg">
     <div class="modal-container">
       <div class="modal-content">
-        <p class="text-uppercase modal-title">{{title}}</p>
-        <p>{{zoneName}} rules</p>
+        <p class="text-uppercase modal-title">{{zoneName}} rules</p>
+        <p>{{ description }}</p>
+        <!--
         <p>You can end a ride in {{zoneName}} with <span ng-if="!restrictions">no</span> restrictions
           <ul ng-if="restrictions">
             <li ng-repeat="restriction in restrictions">
@@ -11,6 +12,7 @@
             </li>
           </ul>
         </p>
+        -->
       </div>
       <div class="modal-actions" ng-if="::actions">
         <button
