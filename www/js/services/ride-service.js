@@ -358,7 +358,6 @@ module.exports = angular.module('app.services').factory('$ride', [
             });
           }
 
-
           if (loadUrl) {
 
             $data.onActionNotification = function(action) {
@@ -450,7 +449,6 @@ module.exports = angular.module('app.services').factory('$ride', [
         }
         service.setBooking(current.id);
         $data.activate('bookings', current.id).then(function() {
-          console.log("<<< here >>>");
           $data.activate('cars', current.carId).then(function() {
             service.isInitialized = true;
             service.setCheck();
