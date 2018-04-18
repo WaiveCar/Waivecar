@@ -434,14 +434,6 @@ module.exports = [
       }
     })
 
-    .state('end-ride-options', {
-      url: '/bookings/:id/end-ride/options',
-      templateUrl: '/templates/bookings/end-ride-options.html',
-      controller: 'EndRideController as ctrl',
-      data: {
-        auth: true
-      }
-    })
     .state('end-ride-location', {
       url: '/bookings/:id/end-ride/location',
       templateUrl: '/templates/bookings/end-ride-location.html',
