@@ -158,6 +158,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
           */
         }, true),
         $scope.$watch('map.route', function (value) {
+          // console.log('bullshit route', value);
           if (value && value.destiny) {
             ctrl.drawRoute(value.start, value.destiny, value.intermediatePoints, value.fitBoundsByRoute);
           }
@@ -614,10 +615,11 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
       polyline.setMap(ctrl.map);
     }
 
-    ctrl.mapFitBounds(points);
+    //ctrl.mapFitBounds(points);
   }
 
   MapController.prototype.drawRoute = function drawRoute(start, destiny, intermediatePoints, fitBoundsByRoute) {
+    // console.log("Drawing bogus straight line non-path bullshit");
     var ctrl = this;
 
     ctrl.drawCarPath(start, destiny, intermediatePoints);
