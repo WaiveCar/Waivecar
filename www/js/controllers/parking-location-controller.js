@@ -58,6 +58,7 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
     function init() {
       // Wait for service to initialize
       var rideServiceReady = $scope.$watch('service.isInitialized', function(isInitialized) {
+
         console.log('[end-ride] Service initialized: %s', isInitialized);
         if (isInitialized !== true) {
           return;
@@ -84,6 +85,13 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
       }
       return $geocoding($rootScope.currentLocation.latitude, $rootScope.currentLocation.longitude)
         .then(function (location) {
+          // BUGBUG: this information should be in the database. 1235 is santa monica
+          if($stateParams.zone.id === 1235) {
+            ctrl.minhours = 3;
+          } else {
+            ctrl.minhours = 12;
+          }
+          ctrl.zone = $stateParams.zone.name;
           $ride.state.parkingLocation.addressLine1 = location.display_name;
           ctrl.address = location.address;
           var addr = ctrl.address;
@@ -99,8 +107,13 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
           if(addr.house_number || addr.road) {
             ctrl.address_markup.push('<div>' + [addr.house_number, addr.road].join(' ').trim() + '</div>');
           }
+          if(addr.city) {
+            addr.city += ', ';
+          } else {
+            addr.city = '';
+          }
           ctrl.address_markup = ctrl.address_markup.concat([
-              addr.city + (addr.city ? ',' : ''),
+              addr.city,
               addr.state,
               addr.postcode
           ]).join(' ');
@@ -157,7 +170,7 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
 
       // Force users to take pictures. See #1113
       if ((ctrl.type === 'street' || ctrl.type === 'lot') && !ctrl.street.streetSignImage) {
-        return submitFailure('You have to make a photo, if you left a car not on parking.');
+        return submitFailure('Ending here requires a photo of the parking sign.');
       }
       
       if (!ctrl.overrideStreetRestrictions && checkIsParkingRestricted()) {
@@ -171,7 +184,6 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
       var isNightTime = moment().hours() >= 23 || moment().hours() < 5;
 
       goToEndRide(isNightTime);
-
     }
     
     function dayLess(date1, date2) {
@@ -279,7 +291,6 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
     }
 
     function goToEndRide(isNightTime) {
-
       var payload;
 
       // Check which type we are submitting
@@ -288,7 +299,7 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
         if (isNightTime && ctrl.lot.lotOvernightRest) return submitFailure('You can\'t return your WaiveCar here. If the car is ticketed or towed, you\'ll be responsible for the fees.');
         payload = ctrl.lot;
       } else if (ctrl.type === 'street') {
-        if (ctrl.street.streetHours < 3) return submitFailure('You can\'t return your WaiveCar here. The spot needs to be valid for at least 3 hours.');
+        if (ctrl.street.streetHours < ctrl.minhours) return submitFailure('You can\'t return your WaiveCar here. The spot needs to be valid for at least ' + ctrl.minhours + ' hours.');
         if (isNightTime && ctrl.street.streetOvernightRest) return submitFailure('You can\'t return your WaiveCar here. If the car is ticketed or towed, you\'ll be responsible for the fees.');
         payload = ctrl.street;
       }
