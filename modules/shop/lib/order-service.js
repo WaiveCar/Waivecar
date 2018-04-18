@@ -213,6 +213,10 @@ module.exports = class OrderService extends Service {
       return true;
     }
 
+    let isLevel = yield user.isTagged('level');
+    // level cars get 3 free hours, not 2. #1159
+    let freeTime = isLevel ? 180 : 120;
+
     // Determine time
     let amount = 0;
     let minutesOver = 0;
@@ -225,8 +229,8 @@ module.exports = class OrderService extends Service {
 
       // Get difference
       let diff = moment(end.createdAt).diff(start.createdAt, 'minutes');
-      if (diff > 120) {
-        minutesOver = Math.max(diff - 120, 0);
+      if (diff > freeTime) {
+        minutesOver = Math.max(diff - freeTime, 0);
       }
     }
 

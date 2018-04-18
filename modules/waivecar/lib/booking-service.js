@@ -36,7 +36,8 @@ let Booking        = Bento.model('Booking');
 let BookingDetails = Bento.model('BookingDetails');
 let BookingPayment = Bento.model('BookingPayment');
 let ParkingDetails = Bento.model('ParkingDetails');
-let Location       = Bento.model('BookingLocation');
+let BookingLocation= Bento.model('BookingLocation');
+let Location       = Bento.model('Locations');
 
 module.exports = class BookingService extends Service {
 
@@ -315,7 +316,7 @@ module.exports = class BookingService extends Service {
     }
 
     //if (query.includePath) {
-    let paths = yield Location.find({
+    let paths = yield BookingLocation.find({
       where: {
         booking_id:{
           $in: bookings.map(x => x.id)
@@ -578,6 +579,7 @@ module.exports = class BookingService extends Service {
     // BUGBUG: We are using the user tagging and not the car tagging
     // for level accounts
     let isLevel = yield user.isTagged('level');
+    let freeTime = isLevel ? 180 : 120;
 
     this.hasAccess(user, _user);
 
@@ -680,7 +682,7 @@ module.exports = class BookingService extends Service {
     if (!isAdmin) {
       yield OrderService.createTimeOrder(booking, user);
 
-    } else if(deltas.duration > 120) {
+    } else if(deltas.duration > freeTime) {
       yield notify.slack({ text : `:umbrella: Booking ended by admin. Time driven was over 2 hours. ${ Bento.config.web.uri }/bookings/${ id }`
       }, { channel : '#adminended' });
     }
@@ -1006,7 +1008,7 @@ module.exports = class BookingService extends Service {
       });
     }
 
-    let carLocations = yield Location.find(params);
+    let carLocations = yield BookingLocation.find(params);
 
     let carLocationsWithNearestInTimeUserLocation = carLocations.map(location => { 
       let closestUserLocation = _.min( userLocations.map(userLocation => {
