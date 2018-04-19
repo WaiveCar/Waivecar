@@ -200,6 +200,7 @@ module.exports = class BookingsView extends React.Component {
     }
 
     let action = false;
+    console.log(booking.status);
     switch (booking.status) {
       case 'reserved' : {
         action = ( 
@@ -210,11 +211,11 @@ module.exports = class BookingsView extends React.Component {
             </div>
             
             <div>
-              <div className="form-group row">
+              <div className="form-group row hide">
                 <button type="button" onClick={ () => { this.update('extend') } } className="btn btn-link">Extend 10 minutes for $1</button>
                 <button type="button" onClick={ () => { this.extendForFree(10) } } className="btn btn-link">Extend 10 minutes for $0</button>
               </div>
-          </div>
+            </div>
          </div>
 
         );
