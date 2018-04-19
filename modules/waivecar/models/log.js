@@ -1,18 +1,14 @@
 'use strict';
 
 Bento.Register.Model('Log', 'sequelize', function(model, Sequelize) {
-  /**
-   * The identity of the table created in your database.
-   * @property table
-   * @type     String
-   */
   model.table = 'logs';
 
-  /**
-   * The sequelize schema definition of your model.
-   * @property schema
-   * @type     Object
-   */
+  model.sequelizeOptionMap = {
+    updatedAt: false,
+    deletedAt: false,
+    paranoid: false
+  };
+
   model.schema = {
 
     bookingId : {
