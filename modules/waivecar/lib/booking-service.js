@@ -37,7 +37,7 @@ let BookingDetails = Bento.model('BookingDetails');
 let BookingPayment = Bento.model('BookingPayment');
 let ParkingDetails = Bento.model('ParkingDetails');
 let BookingLocation= Bento.model('BookingLocation');
-let Location       = Bento.model('Locations');
+let Location       = Bento.model('Location');
 
 module.exports = class BookingService extends Service {
 
