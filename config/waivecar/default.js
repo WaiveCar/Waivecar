@@ -57,6 +57,10 @@ module.exports = {
         value : 1,
         type  : 'minutes'
       },
+      odometer : {
+        value : 24,
+        type  : 'hours'
+      },
       meta : {
         DB000017DC73EA01 : {
           license : 'WAIVE1'
