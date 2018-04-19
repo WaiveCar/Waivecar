@@ -242,13 +242,20 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
     // get last log for all cars
     getLastActionForAllCars: function *() {
+      let sequelize = Bento.provider('sequelize');
+
+      // mysql for some reason chokes on the subquery so we approach this a different way
+      let idListSQL = yield sequelize.query('SELECT MAX(id) as m FROM logs GROUP BY car_id');
+      let idList = idListSQL[0].map((row) => {
+        return row.m;
+      });
+
       return yield Log.find({
         where : {
           id : {
-            $in : new Utils.literal('(SELECT MAX(id) FROM logs GROUP BY car_id)')
+            $in : idList
           }
-        },
-        order: [['created_at', 'DESC']]
+        }
       });
     },
 
@@ -413,6 +420,8 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     'bookingId',
     'lastBooking',
     'statuscolumn',
+    'lastAction',
+    'lastActionTime',
     'user'
   ];
 
