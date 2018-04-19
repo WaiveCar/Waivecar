@@ -155,7 +155,18 @@ module.exports = {
       started:   'Active',
     };
 
+    let lastActionList = yield cars[0].getLastActionForAllCars();
+    let lastActionMap = {};
+
+    lastActionList.forEach((row) => {
+      lastActionMap[row.carId] = row;
+    });
+
     cars.forEach(function(car){
+      car.lastAction = lastActionMap[car.id];
+      if(car.lastAction) {
+        car.lastActionTime = car.lastAction.createdAt;
+      }
       car.license = car.license || '';
       if(car.booking && car.booking[0]) {
         car.statuscolumn = statusMap[car.booking[0].status] || 'Unavailable';
