@@ -188,21 +188,24 @@ module.exports = class BookingService extends Service {
       throw err;
     }
 
-    yield booking.setCancelTimer(config.booking.timers);
+    let isLevel = yield car.isTagged('level');
+    let timerMap = isLevel ? config.booking.timers.level : config.booking.timers; 
+    let timeToCar = timerMap.autoCancel.value;
 
-    // ### Relay Booking
+    // ### Notifications
+    yield booking.setCancelTimer(timerMap);
+
+    if (isLevel) {
+      // https://lb.waivecar.com/users/14827
+      yield notify.sendTextMessage(14827, `${ driver.name() } reserved ${ car.license }.`);
+      yield booking.addFlag('level');
+    }
 
     car.relay('update');
     booking.relay('store', driver);
 
-    // ### Notifications
 
-    if (yield car.isTagged('level')) {
-      // https://lb.waivecar.com/users/14827
-      yield notify.sendTextMessage(14827, `${ driver.name() } reserved ${ car.license }.`);
-    }
-
-    yield notify.sendTextMessage(driver, `Hi There! Your WaiveCar reservation with ${ car.license } has been confirmed. You'll have 15 minutes to get to your WaiveCar before your reservation expires. Let us know if you have any questions.`);
+    yield notify.sendTextMessage(driver, `Hi There! Your WaiveCar reservation with ${ car.license } has been confirmed. You'll have ${ timeToCar } minutes to get to your WaiveCar before your reservation expires. Let us know if you have any questions.`);
 
     let message = yield this.updateState('created', _user, driver);
     yield notify.notifyAdmins(`:musical_keyboard: ${ message } | ${ car.info() } ${ car.averageCharge() }%`, [ 'slack' ], { channel : '#reservations' });
@@ -539,14 +542,16 @@ module.exports = class BookingService extends Service {
         yield notify.sendTextMessage(user, `Thanks for using WaiveWork! Your booking has started.`);
       } else {
         let isLevel = yield car.hasTag('level');
-        let base = '';
+        let base = '', freetime = '';
 
         if(isLevel) {
           base = 'the parking garage';
+          freetime = '3';
         } else {
-          base = 'Santa Monica';
+          base = 'one of the highlighted zones on the map';
+          freetime = '2';
         }
-        yield notify.sendTextMessage(user, `Your WaiveCar rental has started! The first 2 hours are completely FREE! After that, it's $5.99 / hour. Make sure to return the car to ${ base }, don't drain the battery under 25mi, and keep within our driving borders to avoid any charges. Thanks for renting with WaiveCar!`);
+        yield notify.sendTextMessage(user, `Your WaiveCar rental has started! The first ${ freetime } hours are completely FREE! After that, it's $5.99 / hour. Make sure to return the car to ${ base }, don't drain the battery under 25mi, and keep within our driving borders to avoid any charges. Thanks for renting with WaiveCar!`);
       }
 
       // ### Relay Update
@@ -561,6 +566,15 @@ module.exports = class BookingService extends Service {
   static *start(id, _user) {
     // This no longer server any purpose and was moved up to the ready method, we keeping this method in place
     // so that the app doesn't hit any errors when attempting to call it.
+  }
+
+  static *getZone(car) {
+    var zone = false;
+    (yield Location.find({type: 'zone'})).forEach(function(row) {
+      //geolib.isPointInside
+      console.log(row.shape);
+    });
+    return car;
   }
 
   /**
