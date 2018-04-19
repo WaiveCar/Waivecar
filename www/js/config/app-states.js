@@ -520,10 +520,6 @@ module.exports = [
         templateUrl: '/templates/info/index.html',
         controller: 'InfoController as ctrl'
       })
-      .state('info-return-zone', {
-        url: '/info-return-zone',
-        templateUrl: '/templates/info/return-zone.html'
-      })
       .state('info-driving-zone', {
         url: '/info-driving-zone',
         templateUrl: '/templates/info/driving-zone.html'
