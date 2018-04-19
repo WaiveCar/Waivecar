@@ -50,7 +50,6 @@ scheduler.process('booking-extension-offer', function *(job) {
 });
 
 scheduler.process('booking-auto-cancel', function *(job) {
-  let timeWindow = config.booking.timers.autoCancel.value;
   let booking = yield Booking.findOne({ where : { id : job.data.bookingId } });
 
   if (!booking) {
@@ -105,8 +104,11 @@ scheduler.process('booking-auto-cancel', function *(job) {
         data : booking.toJSON()
       });
 
+      let timeWindow = booking.isFlagged('level') ? config.booking.timers.level.autoCancel.value : config.booking.timers.autoCancel.value;
+      timeWindow = parseInt(timeWindow, 10);
+
       if(booking.isFlagged('extended')) {
-        timeWindow = '25';
+        timeWindow += 10;
       }
 
       let user = yield notify.sendTextMessage(booking.userId, `Hi, sorry you couldn't make it to your car on time. Your ${ timeWindow } minutes have expired and we've had to cancel your reservation for ${ car.info() }`);

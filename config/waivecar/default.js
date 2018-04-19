@@ -14,18 +14,13 @@ module.exports = {
     booking : {
       parityCheckTimeWindow: 300,
       timers : {
-        extensionOffer: {
-          value : 12,
-          type  : 'minutes'
+        level: {
+          autoCancel : { value : 30, type  : 'minutes' },
+          extensionOffer: { value : 27, type  : 'minutes' }
         },
-        autoCancel : {
-          value : 15,
-          type  : 'minutes'
-        },
-        extension : {
-          value : 10,
-          type  : 'minutes'
-        },
+        extensionOffer: { value : 12, type  : 'minutes' },
+        autoCancel : { value : 15, type  : 'minutes' },
+        extension : { value : 10, type  : 'minutes' },
         freeRideReminder : {
           value : 90,
           type  : 'minutes'
