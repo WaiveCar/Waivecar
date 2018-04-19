@@ -21,12 +21,12 @@ module.exports = class CarsIndex extends React.Component {
       {key : "currentSpeed", title:"Speed", type : "text"},
 
       {key : "isIgnitionOn", title:"Ignition", type : "bool"},
-      {key : "isKeySecure", title:"Key Secure", type : "bool"},
+      //{key : "isKeySecure", title:"Key Secure", type : "bool"},
       {key : "isLocked", title:"Locked", type : "bool"},
       {key : "isImmobilized", title:"Immobilized", type : "bool"},
       {key : "isCharging", title:"Charging", type : "bool"},
       {key : "statuscolumn", title:"Status", type : "status"},
-      {key : "updatedAt", title:"Updated At", type : "datetime"},
+      {key : "updatedAt", title:"Last Action", type : "lastaction"},
       // {key : "action", title:"Last Action", type : "text"},
       // {key : "actionAt", title:"Action At", type : "datetime"}
       //{key : "inService", title:"In Repair", type : "bool"}
@@ -84,6 +84,19 @@ module.exports = class CarsIndex extends React.Component {
     if (column.type == "datetime") {
       let date = moment(value).format('HH:mm:ss MM-DD-YY');
       return <td title={date} key={column.key}><span>{date}</span></td>
+    }
+
+    if (column.type === "lastaction") {
+      let duration = (moment.duration(moment.utc().diff(moment(car.lastActionTime)))).asMilliseconds();
+      let oneDay = 1000 * 60 * 60 * 24;
+      let urgency = Math.floor(Math.min(duration, 10 * 60 * 60 * 1000) / (150 * 60 * 1000));
+      let value = moment.utc(duration).format('H:mm');
+
+      if(duration > oneDay) {
+        value = Math.floor(duration/oneDay) + 'd ' + value;
+      }
+
+      return <td key={column.key} className={ 'llurgency' + urgency } >{ value }</td>
     }
 
     if (column.type === "status") {
