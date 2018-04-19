@@ -20,18 +20,4 @@ module.exports = function *() {
     return;
   }
 
-  if (config.mock.cars) {
-    log.debug(`Importing 8 mock cars`);
-    for (let i = 1, len = 9; i < len; i++) {
-      let carId = 'MOCK_' + i;
-      let car   = new Car({
-        id           : carId,
-        make         : 'Chevrolet',
-        model        : 'Spark EV',
-        year         : '2015',
-        manufacturer : 'General Motors'
-      });
-      yield car.upsert();
-    }
-  }
 };
