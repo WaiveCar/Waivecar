@@ -318,6 +318,13 @@ module.exports = class UserDetails extends React.Component {
                 <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
                   <div className="radio-inline">
                     <label>
+                      <input type="radio" name="status" value="waitlist" defaultChecked={ user.status === 'waitlist' } />
+                      Waitlist
+                    </label>
+                  </div>
+
+                  <div className="radio-inline">
+                    <label>
                       <input type="radio" name="status" value="pending" defaultChecked={ user.status === 'pending' } />
                       Pending
                     </label>
