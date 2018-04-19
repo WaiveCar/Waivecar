@@ -201,24 +201,18 @@ module.exports = class BookingsView extends React.Component {
 
     let action = false;
     switch (booking.status) {
-      case 'started' : {
+      case 'reserved' : {
         action = ( 
           <div>
             <div>
               <button type="button" onClick={ () => { this.cancel() } } className="btn btn-primary">Cancel</button>
               <button type="button" onClick={ () => { this.update('ready') } } className="btn btn-link">Start Ride</button>
             </div>
+            
             <div>
               <div className="form-group row">
                 <button type="button" onClick={ () => { this.update('extend') } } className="btn btn-link">Extend 10 minutes for $1</button>
                 <button type="button" onClick={ () => { this.extendForFree(10) } } className="btn btn-link">Extend 10 minutes for $0</button>
-              </div>
-              <div className="form-group row">
-                <div className="col-xs-12">
-                  <label>${"Extend " + this.state.reservationTime + " minutes for $0"}</label>
-                  <input type="text" className="form-control" name="reservationTime" value={this.state.reservationTime} onChange={this.handleInputChange}/>
-                  <button type="button" onClick={ () => { this.extendForFree(this.state.reservationTime) } } className="btn btn-link">Extend</button>
-                </div>
               </div>
           </div>
          </div>
