@@ -5,10 +5,6 @@ let error = Bento.Error;
 
 Bento.Register.Controller('CarsController', function(controller) {
 
-  /**
-   * Returns a list of cars.
-   * @return {Object}
-   */
   controller.index = function *() {
     return yield car.index(this.query, this.auth.user);
   };
