@@ -4,6 +4,8 @@ import moment   from 'moment';
 import { GMap }  from 'bento-web';
 import { api, relay, dom }  from 'bento';
 
+const oneDay = 1000 * 60 * 60 * 24;
+
 module.exports = class CarsIndex extends React.Component {
 
   constructor(...options) {
@@ -88,15 +90,13 @@ module.exports = class CarsIndex extends React.Component {
 
     if (column.type === "lastaction") {
       let duration = (moment.duration(moment.utc().diff(moment(car.lastActionTime)))).asMilliseconds();
-      let oneDay = 1000 * 60 * 60 * 24;
-      let urgency = Math.floor(Math.min(duration, 10 * 60 * 60 * 1000) / (150 * 60 * 1000));
       let value = moment.utc(duration).format('H:mm');
 
       if(duration > oneDay) {
         value = Math.floor(duration/oneDay) + 'd ' + value;
       }
 
-      return <td key={column.key} className={ 'llurgency' + urgency } >{ value }</td>
+      return <td key={column.key}>{ value }</td>
     }
 
     if (column.type === "status") {
@@ -209,12 +209,19 @@ module.exports = class CarsIndex extends React.Component {
 
   renderListLinkItem(item, index) {
     let route = `/cars/${ item.id }`;
-    let text = <span>{ item.id } <small className="pull-right">{ updated }</small></span>
-    let updated = moment(item.updatedAt).format('HH:mm');
-    let updatedFull = moment(item.updatedAt).format('HH:mm:ss MM-DD-YY');
+
+    let duration = (moment.duration(moment.utc().diff(moment(item.lastActionTime)))).asMilliseconds();
+    let value = moment.utc(duration).format('H:mm');
+
+    if(duration > oneDay) {
+      value = Math.floor(duration/oneDay) + 'd ' + value;
+    }
+    let text = <span>{ item.id } <small className="pull-right">{ value }</small></span>
+
 
     if (item.license) {
       let name = '';
+
       if (item.user) {
         name = [item.user.firstName, item.user.lastName];
         if (item.booking) {
@@ -224,13 +231,18 @@ module.exports = class CarsIndex extends React.Component {
         name = name.join(' ');
       } else {
         let word = item.statuscolumn;
+        let home = '';
         if (item.isCharging) { 
           word = 'Charging';
         }
-        name = <em>{item.charge}% { word }</em>
+        // This is the pico office.
+        if (item.latitude > 34.019808 && item.latitude < 34.019950 && item.longitude > -118.468597 && item.longitude < -118.467835) {
+          home = <i className="fa fa-home"></i>;
+        }
+        name = <em>{item.charge}% { word } {home}</em>
       }
 
-      text = <span><span className='carname'>{ item.license }</span> <small>{ name }</small><small title={updatedFull} className="cartime pull-right">{ updated }</small></span>
+      text = <span><span className='carname'>{ item.license }</span> <small>{ name }</small><small className="cartime pull-right">{ value }</small></span>
     }
 
     return (
