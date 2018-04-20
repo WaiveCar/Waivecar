@@ -39,6 +39,7 @@ var checkBooking = co.wrap(function *(booking) {
   let device = yield cars.getDevice(car.id, null, 'booking-loop');
   let user = yield User.findById(car.userId);
   let duration = 0;
+  let isLevel = yield car.hasTag('level');
   let booking_history = null;
   
   if (!device || !car || !user) return;
@@ -63,7 +64,7 @@ var checkBooking = co.wrap(function *(booking) {
     if (!user.isWaivework) {
       if (duration >= 104 && !booking.isFlagged('1hr45-warning')) {
         yield booking.flag('1hr45-warning');
-        yield notify.sendTextMessage(user, config.notification.reasons['NEAR_END']);
+        yield notify.sendTextMessage(user, 'Hi there, your free WaiveCar rental period ends in about 15 minutes. After the free period is over, rentals are $5.99 / hour. Enjoy!');
       }
 
       if (duration >= 11 * 60 && !booking.isFlagged('11h-warning')) {
@@ -98,10 +99,9 @@ var checkBooking = co.wrap(function *(booking) {
 
     // if we thought we were inside but now we are outside.
     } else if (!deviceInside && !booking.isFlagged('outside-range')) {
-      let isLevel = yield car.hasTag('level');
       if(!isLevel) {
         yield booking.flag('outside-range');
-        yield notify.sendTextMessage(user, config.notification.reasons['OUTSIDE_RANGE']);
+        yield notify.sendTextMessage(user, 'Hi there, looks like you are driving your WaiveCar outside of our range. As a reminder, all rentals must be completed in one of the green zones on the map. Thanks & enjoy your drive!');
         yield notify.notifyAdmins(`:waving_black_flag: ${ user.link() } took ${ car.info() } outside of the driving zone. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
       }
     }
@@ -121,7 +121,7 @@ var checkBooking = co.wrap(function *(booking) {
 
   } else if (car.milesAvailable() < 21 && !booking.isFlagged('low-0')) {
     yield booking.flag('low-0');
-    yield notify.sendTextMessage(user, config.notification.reasons['LOW_CHARGE']);
+    yield notify.sendTextMessage(user, 'Hey there! Looks like your WaiveCar battery is getting really low. Please return your WaiveCar to the home base.');
     yield notify.notifyAdmins(`:battery: ${ user.link() } has driven ${ car.info() } to a low charge. ${ car.chargeReport() }. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
   }
 
