@@ -103,7 +103,7 @@ function *getGroup(userId, groupId) {
 function invalidCredentials(msg) {
   return error.parse({
     code    : `AUTH_INVALID_CREDENTIALS`,
-    message : msg || 'Your email or password is incorrect, please try again'
+    message : msg || 'We didn’t find your account, please try again'
   }, 400);
 }
 
