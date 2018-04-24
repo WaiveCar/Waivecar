@@ -68,7 +68,9 @@ prebuild() {
     cp $i platforms/android/$i >& /dev/null
   done
 
-  cp -up misc/build-extras.gradle platforms/android
+  for i in platforms/android/app/src/main/ platforms/android platforms/android/app/src/; do
+    [ -e $i ] && cp -up misc/build-extras.gradle $i
+  done
 }
 
 build() {
@@ -76,7 +78,14 @@ build() {
 
   prebuild
   node --version
-  $DBG ionic build android
+  #$DBG cordova build android --debug -- --gradleArg=-PcdvCompileSdkVersion=$ORG_GRADLE_PROJECT_cdvCompileSdkVersion
+  #$DBG cordova build android --debug -- --gradleArg=-PcdvCompileSdkVersion=$ORG_GRADLE_PROJECT_cdvCompileSdkVersion --gradleArg=--debug --gradleArg=--info --gradleArg=--stacktrace
+  $DBG cordova build android 
+  if [ www/dist/bundle.js -nt platforms/android/assets/www/dist/bundle.js ]; then
+    echo 'failed to produce new file'
+    unfuckup
+    build
+  fi
 }
  
 unfuckup() {
