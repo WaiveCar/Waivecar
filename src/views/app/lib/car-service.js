@@ -94,7 +94,9 @@ module.exports = class Car extends Service {
    */
   setCar(id) {
     api.get(`/cars/${ id }`, (err, car) => {
-      if (err) return this.error(err.message);
+      if (err) {
+        return this.error(err.message);
+      }
 
       car.lastUpdated = (new Date()).toLocaleTimeString();
       this.getBooking(car);
@@ -108,5 +110,36 @@ module.exports = class Car extends Service {
       this.updateCarState(car);
       if (cb) cb(booking);
     });
+  }
+
+  updateCarGroup(car, newGroupRoleId) {
+    // #1077. Currently we support only 1 to 1 relation
+    var oldGroupRoleId = '';
+    if(car.groupCar && car.groupCar[0]) {
+      oldGroupRoleId = car.groupCar[0].groupRoleId;
+    }
+
+    if(newGroupRoleId == '') {
+      return api.delete(`/group/${oldGroupRoleId}/removecar/${car.id}`, (err) => {
+        if(err) {
+          return this.error(err.data ? err.data : err.message);
+        }
+
+        return this.success('Removed car from group');
+      });
+    } else {
+      api.post(`/group/${newGroupRoleId}/assigncar/${car.id}`, {}, (err, groupCar) => {
+        if(err) {
+          return this.error(err.data ? err.data : err.message);
+        }
+
+        car.groupCar[0] = groupCar;
+        this.updateCarState(car);
+        return this.success('Car\'s group was updated');
+      });
+    }
+
+    
+    
   }
 }

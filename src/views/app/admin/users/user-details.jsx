@@ -1,4 +1,5 @@
 import React          from 'react';
+import ReactSelect    from 'react-select';
 import { relay, api, dom } from 'bento';
 import { snackbar }   from 'bento-web';
 import { Form }       from 'bento/lib/helpers';
@@ -48,6 +49,19 @@ module.exports = class UserDetails extends React.Component {
     } else {
       this.setState({currentUser: user});
     }
+
+    api.get(`/group`, (err, groupRoles) => {
+      this.setState({
+        groupRoles: groupRoles
+      });
+
+      if(err) {
+        return snackbar.notify({
+          type    : `danger`,
+          message : err.message
+        });
+      }
+    })
   }
 
   componentWillUnmount() {
@@ -134,33 +148,6 @@ module.exports = class UserDetails extends React.Component {
       });
     });
   }
-
-  fleetToggle = () => {
-    let user = this.state.currentUser;
-    let newRole = 0;
-
-    if (this.isFleetManager()) {
-      if(!confirm(`Are you sure you want to Remove ${user.firstName} ${user.lastName} as a fleet manager?`)) {
-        return false;
-      }
-      newRole = 1;
-    } else {
-      if(!confirm(`Are you sure you want to Add ${user.firstName} ${user.lastName} as a fleet manager?`)) {
-        return false;
-      }
-      newRole = 3;
-    }
-    if([1,3].indexOf(newRole) !== -1) {
-      api.put(`/users/${ user.id }`, { role: newRole }, (err, user) => {
-        snackbar.notify({
-          type    : 'success',
-          message : 'User status has changed.'
-        });
-        this.users.store(user);
-        this.setState({currentUser: user});
-      });
-    }
-  }
   
   submit = (event) => {
     let form = new Form(event);
@@ -244,6 +231,40 @@ module.exports = class UserDetails extends React.Component {
 
   toggleDanger = () => {
     this.setState({ showDanger: !this.state.showDanger });
+  }
+
+  renderUserGroupSelect() {
+    var options = this.state.groupRoles ? 
+    this.state.groupRoles.map(x => {
+      return {value: x.id, label: x.name } 
+    }) : [ {value: '', label: ''}];
+
+    let user = this.state.currentUser;
+    let groupRoleId = user.groupRole.id;
+
+    return (
+      <div className="row text-left">
+        <label>{ 'Group role' }</label>
+        <ReactSelect
+          name        = { 'usergroup' }
+          value       = { groupRoleId}
+          options     = { options }
+          onChange    = { this.updateUserGroup.bind(this, user) }
+          clearable   = {false}
+        />
+      </div>
+    );
+  }
+
+  updateUserGroup(user, groupRoleId) {
+    api.put(`/users/${ user.id }`, { groupRoleId: groupRoleId }, (err, user) => {
+      snackbar.notify({
+        type    : 'success',
+        message : 'User group role has changed.'
+      });
+      this.users.store(user);
+      this.setState({currentUser: user});
+    });
   }
 
   render() {
@@ -387,14 +408,11 @@ module.exports = class UserDetails extends React.Component {
                       <a onClick={ this.removeUser } className="pull-left btn btn-xs btn-danger">Delete User</a>
                     </div>
 
-                    <div className="radio-inline">
-                      <a onClick={ this.fleetToggle.bind(this) } className="pull-left btn btn-xs btn-link">{ this.isFleetManager() ? "Remove As" : "Add As" } Fleet Manager</a>
-                    </div>
-
                      <div className="radio-inline">
                        <a onClick={ this.setPassword } className=" btn btn-xs ">Set user password</a>
                      </div>
 
+                     {this.renderUserGroupSelect()}
                    </div>
                   }
                 </div>
