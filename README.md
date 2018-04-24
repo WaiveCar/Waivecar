@@ -52,7 +52,7 @@ Here's generally what I did after installing the above:
   $ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash 
     # Follow the instructions and put the lines into ~/.profile and start a new terminal
 
-  $ nvm install v6.4.11
+  $ nvm install v6.11.4
 
     # check it
   $ node --version
