@@ -641,6 +641,8 @@ module.exports = class BookingService extends Service {
         // after working for 16 hours so there may be 
         // smarter ways.
         status = {isImmobilized: true};
+        // When level rental ends, unlock the car
+        yield cars.unlockCar(car.id, _user);
       } else {
         status = yield cars.lockImmobilzer(car.id, _user);
       }
