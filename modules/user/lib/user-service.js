@@ -404,7 +404,7 @@ module.exports = {
         throw error.userUpdateRefused();
       }
 
-      let groupUser = yield GroupUser.findOne({where: {userId: id} });
+      let groupUser = yield GroupUser.findOne({where: {groupId: payload.groupId, userId: id} });
       yield groupUser.update({groupRoleId: newGroupRole.id});
 
       let newGroupRoleName = newGroupRole.name;
