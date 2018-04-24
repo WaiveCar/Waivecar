@@ -105,16 +105,13 @@ require('./controllers/verify-id-controller');
 require('./constants/us-states');
 
 // Directives
-require('./directives/advertisement-directive');
 require('./directives/go-back-directive');
 require('./directives/lined-directive');
 require('./directives/page-title-directive');
 require('./directives/reverse-geocoding-directive');
 require('./directives/time-left-directive');
 require('./directives/wizard-directive');
-require('./directives/equal-to-directive');
 require('./directives/car-charge-status-directive');
-require('./directives/car-info-directive');
 require('./directives/yes-no-toggle');
 require('./directives/slider-confirm');
 
