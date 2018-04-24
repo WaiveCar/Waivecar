@@ -267,6 +267,34 @@ module.exports = class UserDetails extends React.Component {
     });
   }
 
+
+  fleetToggle = () => {
+    let user = this.state.currentUser;
+    let newRole = 0, normal = 1, admin = 3;                                                     
+                                                                               
+    if (this.isFleetManager()) {
+      if(!confirm(`Are you sure you want to Remove ${user.firstName} ${user.lastName} as a fleet manager?`)) {
+        return false;
+      }                                   
+      newRole = normal;                            
+    } else {                                                                                                                      
+      if(!confirm(`Are you sure you want to Add ${user.firstName} ${user.lastName} as a fleet manager?`)) {
+        return false;                           
+      }                                                                          
+      newRole = admin;                                                                                              
+    }                     
+    if([normal,admin].indexOf(newRole) !== -1) {
+      api.put(`/users/${ user.id }`, { groupId: 1, groupRoleId: newRole }, (err, user) => {
+        snackbar.notify({                                                                                                                                                      
+          type    : 'success',
+          message : 'User status has changed.'
+        });                                        
+        this.users.store(user);                                                                      
+        this.setState({currentUser: user});
+      });
+    }
+  } 
+
   render() {
     let user = this.state.currentUser;
     let suspensionReason = user ? this.getSuspensionReason(user) : false;
@@ -282,163 +310,165 @@ module.exports = class UserDetails extends React.Component {
 
     dom.setTitle(user.firstName + " " + user.lastName);
 
-  return (
-      <div>
-        <div className="profile-header">
-          <div className="profile-image">
-            <a target="_blank" href={ this.getAvatar(user) }>
-              <div className="profile-image-view" style={{ background : `url(${ this.getAvatar(user) }) center center / cover` }} />
-            </a>
-          </div>
-          <div className="profile-meta">
-            <div className="profile-name">
-              { user.firstName } { user.lastName } <span>{user.isWaivework ? 'Waivework' : ''}</span>
+    return (
+        <div>
+          <div className="profile-header">
+            <div className="profile-image">
+              <a target="_blank" href={ this.getAvatar(user) }>
+                <div className="profile-image-view" style={{ background : `url(${ this.getAvatar(user) }) center center / cover` }} />
+              </a>
+            </div>
+            <div className="profile-meta">
+              <div className="profile-name">
+                { user.firstName } { user.lastName } <span>{user.isWaivework ? 'Waivework' : ''}</span>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="box">
-          <h3>
-            Personal Details
-            <small>
-              Review, and edit the users personal details
-            </small>
-          </h3>
-          <div className="box-content">
-            <form className="bento-form-static" role="form" onSubmit={ this.submit }>
+          <div className="box">
+            <h3>
+              Personal Details
+              <small>
+                Review, and edit the users personal details
+              </small>
+            </h3>
+            <div className="box-content">
+              <form className="bento-form-static" role="form" onSubmit={ this.submit }>
 
-              <div className="form-group row">
-                <FormInput className="col-md-6 bento-form-input">
-                  <label>First Name</label>
-                  <input type="text" name="firstName" className="form-control" defaultValue={ user.firstName } required />
-                </FormInput>
-                <FormInput className="col-md-6 bento-form-input">
-                  <label>Last Name</label>
-                  <input type="text" name="lastName" className="form-control" defaultValue={ user.lastName } required />
-                </FormInput>
-              </div>
-
-              <div className="form-group row">
-                <FormInput className="col-md-6 bento-form-input" helpText={ user.verifiedPhone ? 'Email has been verified' : 'Email has not been verified' }>
-                  <label>Email Address</label>
-                  <input type="text" name="email" className="form-control" defaultValue={ user.email } required />
-                </FormInput>
-                <FormInput className="col-md-6 bento-form-input" helpText={ user.verifiedPhone ? 'Phone has been verified' : 'Phone has not been verified' }>
-                  <label>Cell Phone</label>
-                  <input type="text" name="phone" className="form-control" defaultValue={ user.phone } required />
-                  { !user.verifiedPhone &&
-                    <div>
-                      <button type="button" className="btn btn-info" style={{ marginRight: 5 }} onClick={this.requestVerification}>Send Code</button>
-                      <button type="button" className="btn btn-info" onClick={this.verifyPhone}>Verify</button>
-                    </div> || ''
-                  }
-                </FormInput>
-              </div>
-
-              <div className="form-group row">
-                <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Account Status</label>
-                <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
-                  <div className="radio-inline">
-                    <label>
-                      <input type="radio" name="status" value="waitlist" defaultChecked={ user.status === 'waitlist' } />
-                      Waitlist
-                    </label>
-                  </div>
-
-                  <div className="radio-inline">
-                    <label>
-                      <input type="radio" name="status" value="pending" defaultChecked={ user.status === 'pending' } />
-                      Pending
-                    </label>
-                  </div>
-
-                  <div className="radio-inline">
-                    <label>
-                      <input type="radio" name="status" value="pending" defaultChecked={ user.status === 'probation' } />
-                      Probation
-                    </label>
-                  </div>
-
-                  <div className="radio-inline">
-                    <label>
-                      <input type="radio" name="status" value="suspended" defaultChecked={ user.status === 'suspended' } />
-                      Suspended
-                    </label>
-                  </div>
-
-                  <div className="radio-inline">
-                    <label>
-                      <input type="radio" name="status" value="active" defaultChecked={ user.status === 'active' } />
-                      Active
-                    </label>
-                  </div>
-
-                  <div className="col-sm-12 text-right help-text" style={{ paddingRight: 0, fontSize: "85%", marginTop: "-0.70em" }}>
-                    User #{ user.id }. Signup: { user.createdAt.split('T')[0] }
-                    { suspensionReason ? <b><br/>Suspension Reason: {suspensionReason}</b> : '' } 
-                  </div>
-                  <a onClick={ this.waiveWorkToggle.bind(this) } className="btn btn-xs btn-link">{ this.isWaiveWork() ? "Remove From" : "Add to" } WaiveWork</a>
+                <div className="form-group row">
+                  <FormInput className="col-md-6 bento-form-input">
+                    <label>First Name</label>
+                    <input type="text" name="firstName" className="form-control" defaultValue={ user.firstName } required />
+                  </FormInput>
+                  <FormInput className="col-md-6 bento-form-input">
+                    <label>Last Name</label>
+                    <input type="text" name="lastName" className="form-control" defaultValue={ user.lastName } required />
+                  </FormInput>
                 </div>
 
-              </div>
-              <div className="form-group row">
-                <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Tags</label>
-                <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
-                  <div className="radio-inline">
-                    <label>
-                      <input type="checkbox" name="tagList[]" value="la" defaultChecked={ !this.hasTag('level') } />
-                      LA
-                    </label>
-                  </div>
-
-                  <div className="radio-inline">
-                    <label>
-                      <input type="checkbox" name="tagList[]" value="level" defaultChecked={ this.hasTag('level') } />
-                      Brooklyn
-                    </label>
-                  </div>
+                <div className="form-group row">
+                  <FormInput className="col-md-6 bento-form-input" helpText={ user.verifiedPhone ? 'Email has been verified' : 'Email has not been verified' }>
+                    <label>Email Address</label>
+                    <input type="text" name="email" className="form-control" defaultValue={ user.email } required />
+                  </FormInput>
+                  <FormInput className="col-md-6 bento-form-input" helpText={ user.verifiedPhone ? 'Phone has been verified' : 'Phone has not been verified' }>
+                    <label>Cell Phone</label>
+                    <input type="text" name="phone" className="form-control" defaultValue={ user.phone } required />
+                    { !user.verifiedPhone &&
+                      <div>
+                        <button type="button" className="btn btn-info" style={{ marginRight: 5 }} onClick={this.requestVerification}>Send Code</button>
+                        <button type="button" className="btn btn-info" onClick={this.verifyPhone}>Verify</button>
+                      </div> || ''
+                    }
+                  </FormInput>
                 </div>
-              </div>
 
-              <div className="form-group row">
-                <label className="col-sm-4 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Danger Zone <a onClick={ this.toggleDanger }>({ this.state.showDanger ? 'hide' : 'show' })</a></label>
-                <div className="col-sm-8 text-right" style={{ padding : '8px 25px' }}>
-                  { this.state.showDanger && 
-                   <div>
+                <div className="form-group row">
+                  <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Account Status</label>
+                  <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
                     <div className="radio-inline">
-                      <a onClick={ this.removeUser } className="pull-left btn btn-xs btn-danger">Delete User</a>
+                      <label>
+                        <input type="radio" name="status" value="waitlist" defaultChecked={ user.status === 'waitlist' } />
+                        Waitlist
+                      </label>
                     </div>
 
-                     <div className="radio-inline">
-                       <a onClick={ this.setPassword } className=" btn btn-xs ">Set user password</a>
+                    <div className="radio-inline">
+                      <label>
+                        <input type="radio" name="status" value="pending" defaultChecked={ user.status === 'pending' } />
+                        Pending
+                      </label>
+                    </div>
+
+                    <div className="radio-inline">
+                      <label>
+                        <input type="radio" name="status" value="pending" defaultChecked={ user.status === 'probation' } />
+                        Probation
+                      </label>
+                    </div>
+
+                    <div className="radio-inline">
+                      <label>
+                        <input type="radio" name="status" value="suspended" defaultChecked={ user.status === 'suspended' } />
+                        Suspended
+                      </label>
+                    </div>
+
+                    <div className="radio-inline">
+                      <label>
+                        <input type="radio" name="status" value="active" defaultChecked={ user.status === 'active' } />
+                        Active
+                      </label>
+                    </div>
+
+                    <div className="col-sm-12 text-right help-text" style={{ paddingRight: 0, fontSize: "85%", marginTop: "-0.70em" }}>
+                      User #{ user.id }. Signup: { user.createdAt.split('T')[0] }
+                      { suspensionReason ? <b><br/>Suspension Reason: {suspensionReason}</b> : '' } 
+                    </div>
+                    <a onClick={ this.waiveWorkToggle.bind(this) } className="btn btn-xs btn-link">{ this.isWaiveWork() ? "Remove From" : "Add to" } WaiveWork</a>
+                  </div>
+
+                </div>
+                <div className="form-group row">
+                  <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Tags</label>
+                  <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
+                    <div className="radio-inline">
+                      <label>
+                        <input type="checkbox" name="tagList[]" value="la" defaultChecked={ !this.hasTag('level') } />
+                        LA
+                      </label>
+                    </div>
+
+                    <div className="radio-inline">
+                      <label>
+                        <input type="checkbox" name="tagList[]" value="level" defaultChecked={ this.hasTag('level') } />
+                        Brooklyn
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-group row">
+                  <label className="col-sm-4 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Danger Zone <a onClick={ this.toggleDanger }>({ this.state.showDanger ? 'hide' : 'show' })</a></label>
+                  <div className="col-sm-8 text-right" style={{ padding : '8px 25px' }}>
+                    { this.state.showDanger && 
+                     <div>
+                       <div className="radio-inline">
+                         <a onClick={ this.removeUser } className="pull-left btn btn-xs btn-danger">Delete User</a>
+                       </div>
+
+                       <div className="radio-inline">
+                         <a onClick={ this.fleetToggle.bind(this) } className="pull-left btn btn-xs btn-link">{ this.isFleetManager() ? "Remove As" : "Add As" } Fleet Manager</a>
+                       </div>
+
+                       <div className="radio-inline">
+                         <a onClick={ this.setPassword } className=" btn btn-xs ">Set user password</a>
+                       </div>
+
                      </div>
-
-                     {this.renderUserGroupSelect()}
-                   </div>
-                  }
+                    }
+                  </div>
                 </div>
-              </div>
 
-              <div className="form-actions text-center">
-                <div className="btn-group" role="group">
-                  <button type="submit" className="btn btn-primary">Update Details</button>
+                <div className="form-actions text-center">
+                  <div className="btn-group" role="group">
+                    <button type="submit" className="btn btn-primary">Update Details</button>
+                  </div>
                 </div>
-              </div>
 
-            </form>
+              </form>
+            </div>
+          </div>
+
+          { this.state.addCard ?
+            <AddCard user={ user } currentUser={ false }></AddCard>
+            : ''
+          }
+          <CardList addCard={ this.addCard } user={ user } currentUser={ false }></CardList>
+          <div className='rides'>
+            <RideList user={ user } currentUser={ false } full={ false }></RideList>
+            <ChargeList user={ user } currentUser={ false } full={ false }></ChargeList>
           </div>
         </div>
-
-        { this.state.addCard ?
-          <AddCard user={ user } currentUser={ false }></AddCard>
-          : ''
-        }
-        <CardList addCard={ this.addCard } user={ user } currentUser={ false }></CardList>
-        <div className='rides'>
-          <RideList user={ user } currentUser={ false } full={ false }></RideList>
-          <ChargeList user={ user } currentUser={ false } full={ false }></ChargeList>
-        </div>
-      </div>
-    );
-  }
-
+      );
+    }
 }
