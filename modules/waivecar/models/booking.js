@@ -118,7 +118,7 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
     },
 
     getFlags() {
-      return JSON.parse(this.flags) || [];
+      return this.flags ? JSON.parse(this.flags) : [];
     },
 
     isFlagged(what) {
