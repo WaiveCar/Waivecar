@@ -17,6 +17,11 @@ I (cjm) can't find any evidence of some UI builder that was used to manager the 
 
 #### Android
 
+Here's the install notes:
+
+  $ npm install ionic@1.7 cordova@6 gulp -g
+  $ cordova platform add android
+
 Apparently you need two things, in one window you need to run
 
   $ ionic serve -b
