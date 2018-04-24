@@ -486,6 +486,8 @@ class CarsShowView extends React.Component {
   }
 
   renderCarGroup(car) {
+    return (<div />);
+
     var options = this.state.groups ? 
     this.state.groups.map(x => {
       return {value: x.id, label: x.name } 
