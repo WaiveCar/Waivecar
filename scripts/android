@@ -1,10 +1,11 @@
 #!/bin/bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-#export ORG_GRADLE_PROJECT_cdvBuildToolsVersion=26.0.1
+export ORG_GRADLE_PROJECT_cdvBuildToolsVersion=26.0.2
+#export ORG_GRADLE_PROJECT_cdvCompileSdkVersion=26
 
 
 help() {
-  echo find restart unfuckup clear remove build install install_release stop start
+  echo verbose find restart unfuckup clear remove build install install_release stop start
   exit
 }
 
@@ -25,6 +26,7 @@ start=
 
 for i in $*; do
   case $1 in
+    verbose) set -x ;;
     prebuild) 
       prebuild
       exit
@@ -73,7 +75,13 @@ done
 [ "$stop" ] && wrap stop
 [ "$build" ] && build
 [ "$remove" ] && wrap uninstall
-[ "$install" ] && wrap install $DIR/../platforms/android/build/outputs/apk/android-debug.apk
+if [ "$install" ]; then
+  path=''
+  for i in $DIR/../platforms/android/build/outputs/apk/debug $DIR/../platforms/android/build/outputs/apk; do
+    [ -z "$path" -a -d "$i" ] && path=$i
+  done
+  wrap install $path/android-debug.apk
+fi
 [ "$install_release" ] && wrap install $DIR/../releases/waivecardrive.apk
 [ "$clear" ] && wrap clear
 [ "$start" ] && wrap start
