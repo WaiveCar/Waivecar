@@ -150,15 +150,11 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
           }
         }, true),
         $scope.$watch('map.fitBoundsByMarkers', function (value) {
-          /*
-          // console.log("bounds", value);
           if (value) {
             ctrl.mapFitBounds(value);
           }
-          */
         }, true),
         $scope.$watch('map.route', function (value) {
-          // console.log('bullshit route', value);
           if (value && value.destiny) {
             ctrl.drawRoute(value.start, value.destiny, value.intermediatePoints, value.fitBoundsByRoute);
           }
@@ -600,9 +596,9 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     if(ctrl.useCordova()) {
       ctrl.map.addPolyline({
         points: path,
-        'color' : '#0000FF',
-        'width': 2,
-        'geodesic': true
+        color: '#0000FF',
+        width: 2,
+        geodesic: true
       });
     } else {
       var polyline = new google.maps.Polyline({
@@ -615,14 +611,19 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
       polyline.setMap(ctrl.map);
     }
 
-    //ctrl.mapFitBounds(points);
+    ctrl.mapFitBounds(points);
   }
 
   MapController.prototype.drawRoute = function drawRoute(start, destiny, intermediatePoints, fitBoundsByRoute) {
-    // console.log("Drawing bogus straight line non-path bullshit");
     var ctrl = this;
 
-    ctrl.drawCarPath(start, destiny, intermediatePoints);
+    if(!intermediatePoints) {
+      RouteService.getGRoute(ctrl.mapToGoogleLatLong(start), ctrl.mapToGoogleLatLong(destiny), function(response) {
+        ctrl.directionsRenderer.setDirections(response);
+      });
+    } else {
+      ctrl.drawCarPath(start, destiny, intermediatePoints);
+    }
 
     ctrl.drawRouteMarkers( {
       latitude: start.latitude,
@@ -634,6 +635,9 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
       type: destiny.type,
       charge: destiny.charge
     });
+    if(fitBoundsByRoute) {
+      ctrl.mapFitBounds([start, destiny]);
+    }
   };
 
   function getIconOptions(iconType, fileExt) {
