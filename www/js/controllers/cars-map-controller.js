@@ -124,6 +124,9 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
     if(this.clearCarWatcher) {
       this.clearCarWatcher();
     }
+    if (modal) {
+      modal.remove();
+    }
   }.bind(this));
 
   function ensureAvailableCars(allCars) {
@@ -333,10 +336,4 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
       farModal.show();
     });
   }
-
-  $scope.$on('$destroy', function () {
-    if (modal) {
-      modal.remove();
-    }
-  });
 }
