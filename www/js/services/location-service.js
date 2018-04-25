@@ -66,10 +66,11 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
 
   var MOVETHRESHOLD = 0.000008;
 
-  this.hasMoved = function (last, current) {
+  var hasMoved = this.hasMoved = function (last, current) {
     var isMoved = false, distance = false;
     if(! last.latitude ) {
       isMoved = true;
+      distance = true;
     } else {
       distance = (Math.abs(last.latitude - current.latitude) + Math.abs(last.longitude - current.longitude));
       isMoved = distance > MOVETHRESHOLD; 
@@ -89,6 +90,7 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
     var isActive = true;
     var startTime = new Date();
     var res = {};
+    var last = {};
 
     var invokeCallback = function(location) {
       updateCallback(location, isInitialCall);
@@ -107,8 +109,10 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
 
     watchId = navigator.geolocation.watchPosition(function (position) {
       $timeout(function(){
-        var location = update(position);
-        invokeCallback(location);
+        if(hasMoved(last, position)) {
+          var location = update(position);
+          invokeCallback(location);
+        }
       });
     }, function() {
       if(new Date() - startTime < 500) {
