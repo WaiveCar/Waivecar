@@ -144,22 +144,19 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     }
   }
 
-  var iz = 0;
   function watchForUnlock () {
     if (_locationWatch && _locationWatch.isActive()) {
       return;
     }
-    var iy = iz++;
 
-    _locationWatch = LocationService.watchLocation(function (currentLocation, isInitialCall) {
-      console.log(iy);
-      if (isInitialCall) {
+    _locationWatch = LocationService.watchLocation(function (currentLocation, callCount) {
+      if (!callCount) {
         ctrl.route = {
           destiny: $data.active.cars
         };
       }
       ctrl.route.start = currentLocation;
-      ctrl.route.fitBoundsByRoute = isInitialCall;
+      ctrl.route.fitBoundsByRoute = (callCount < 3);
       ctrl.currentLocation = currentLocation;
 
       checkIsInRange(currentLocation);

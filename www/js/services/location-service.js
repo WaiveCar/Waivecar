@@ -64,7 +64,7 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
     });
   };
 
-  var MOVETHRESHOLD = 0.000008;
+  var MOVETHRESHOLD = 0.000012;
 
   var hasMoved = this.hasMoved = function (last, current) {
     var isMoved = false, distance = false;
@@ -85,16 +85,16 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
   }
 
   this.watchLocation = function watchLocation (updateCallback) {
-    var isInitialCall = true;
     var watchId = false;
     var isActive = true;
     var startTime = new Date();
     var res = {};
     var last = {};
+    var callCount = 0;
 
     var invokeCallback = function(location) {
-      updateCallback(location, isInitialCall);
-      isInitialCall = false;
+      updateCallback(location, callCount);
+      callCount++;
     };
 
     var tryAgain = function() {

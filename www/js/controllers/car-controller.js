@@ -35,19 +35,17 @@ module.exports = angular.module('app.controllers').controller('CarController', [
     var minAccuracyThreshold = 200;
     var modal;
 
-    var firstFew;
-    var stopLocationWatch = LocationService.watchLocation(function (currentLocation, isInitialCall) {
-        if (isInitialCall) {
-          // this is needed because sometimes this will get called more than once before
-          // the map is actually called. Then the fitting is never done. So to alleviate
-          // this bug we make it so that the first *few* will fit the bound.
-          firstFew = 3;
+    var stopLocationWatch = LocationService.watchLocation(function (currentLocation, callCount) {
+        if (!callCount) {
           ctrl.route = {
             destiny: car
           };
         }
         ctrl.route.start = currentLocation;
-        ctrl.route.fitBoundsByRoute = (firstFew -- > 0);
+        // this is needed because sometimes this will get called more than once before
+        // the map is actually called. Then the fitting is never done. So to alleviate
+        // this bug we make it so that the first *few* will fit the bound.
+        ctrl.route.fitBoundsByRoute = (callCount < 3);
       }
     );
 

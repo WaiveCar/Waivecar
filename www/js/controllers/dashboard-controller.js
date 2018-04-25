@@ -70,8 +70,8 @@ function DashboardController ($scope, $rootScope, $injector) {
       OnLockStateChange($data.active.cars.isLocked);
     }
 
-    var stopLocationWatch = LocationService.watchLocation(function (currentLocation, isInitialCall) {
-      if (isInitialCall) {
+    var stopLocationWatch = LocationService.watchLocation(function (currentLocation, callCount) {
+      if (!callCount) {
         ctrl.fitMapBoundsByMarkers = featured(ctrl.locations).concat([currentLocation]);
       }
       ctrl.currentLocation = currentLocation;

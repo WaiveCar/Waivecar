@@ -77,7 +77,7 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
   }
 
   this.stopLocationWatch = LocationService.watchLocation(
-    function(currentLocation, isInitialCall) {
+    function(currentLocation, callCount) {
       if(!this.currentLocation) {
         this.currentLocation = currentLocation;
         firstLoad(currentLocation);
