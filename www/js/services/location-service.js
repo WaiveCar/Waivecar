@@ -64,6 +64,25 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
     });
   };
 
+  var MOVETHRESHOLD = 0.000008;
+
+  this.hasMoved = function (last, current) {
+    var isMoved = false, distance = false;
+    if(! last.latitude ) {
+      isMoved = true;
+    } else {
+      distance = (Math.abs(last.latitude - current.latitude) + Math.abs(last.longitude - current.longitude));
+      isMoved = distance > MOVETHRESHOLD; 
+    }
+
+    if(isMoved) {
+      last.latitude = current.latitude;
+      last.longitude = current.longitude;
+    }
+
+    return isMoved ? distance : false;
+  }
+
   this.watchLocation = function watchLocation (updateCallback) {
     var isInitialCall = true;
     var watchId = false;
