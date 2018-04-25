@@ -69,31 +69,27 @@ module.exports = {
 
     */
     options.where.inRepair = false;
-    if (_user && !_user.hasAccess('admin')) {
-      options.where.adminOnly = false;
-    }
+    options.where.adminOnly = false;
 
     delete options.limit;
-    let cars = yield Car.find(options);
+    return yield Car.find(options);
 
+    /*
     if (_user && _user.hasAccess('admin')) {
       let bookings = yield Booking.find({ where : { status : 'started' } });
       this.joinCarsWithBookings(cars, bookings);
     }
 
-    //let available = 0;
     cars.forEach(function(car) {
       car.license = car.license || '';
-      //available += car.isAvailable;
+      available += car.isAvailable;
     });
 
-
-    /*
     if (_user && !_user.hasAccess('admin')) {
       fs.appendFileSync('/var/log/outgoing/carsrequest.txt', JSON.stringify([new Date(), available, _user.id]) + '\n');
     }
-    */
     return cars;
+    */
   },
 
   joinCarsWithBookings(cars, bookings) {
