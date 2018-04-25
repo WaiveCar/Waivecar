@@ -3,8 +3,12 @@ import { Link } from 'react-router';
 import moment   from 'moment';
 import { GMap }  from 'bento-web';
 import { api, relay, dom }  from 'bento';
+var _ = require('lodash');
+
 
 const oneDay = 1000 * 60 * 60 * 24;
+const shownList = ['work', 'waive', 'level', 'other'];
+const LEVEL = 7;
 
 module.exports = class CarsIndex extends React.Component {
 
@@ -12,8 +16,10 @@ module.exports = class CarsIndex extends React.Component {
     super(...options);
 
     this.state = {
-      cars : [],
+      shownCars : [],
+      allCars : [],
       filter : "",
+      shown : this.getShown(),
       sortBy: { key: "license", orderAsc: true }
     };
 
@@ -39,7 +45,8 @@ module.exports = class CarsIndex extends React.Component {
     api.get(`/carsWithBookings`, (err, cars) => {
       this.setState( {
         updated: moment().format('HH:mm:ss'),
-        cars: cars 
+        allCars: cars,
+        shownCars: this.runShown({cars: cars})
       } );
     });
   }
@@ -51,6 +58,59 @@ module.exports = class CarsIndex extends React.Component {
 
   onFilter(event) {
     this.setState({filter: event.target.value});
+  }
+
+  // this looks to be unavoidaly O(M*N)
+  runShown(opts) {
+    let cars = opts.cars || this.state.allCars;
+    let shown = opts.shown || this.state.shown;
+    let shownMap = {};
+
+    shown.forEach((what) => {
+      shownMap[what] = true;
+    });
+
+    let shownList = cars.filter((car) => {
+      let lic = car.license.toLowerCase();
+      let res = {
+        waive: lic.indexOf('waive') > -1,
+        work: lic.indexOf('work') > -1,
+        level: car.groupCar.length ? car.groupCar[0].groupRoleId === LEVEL : false
+      };
+
+      return (
+        (shownMap.level && res.level) ||
+        (shownMap.waive && (res.waive && !res.level)) ||
+        (shownMap.work && res.work)   ||
+        (shownMap.other && !res.level && !res.work && !res.waive)  
+      );
+    });
+    return shownList;
+  }
+
+  updateShown(e) {
+    let shown = this.state.shown;
+    if(e.target.checked) {
+      shown.push(e.target.value);
+    } else {
+      shown = _.without(shown, e.target.value);
+    }
+    localStorage['carShown'] = shown.join(',');
+    this.setState({
+      shown: shown,
+      shownCars: this.runShown({shown: shown})
+    });
+  }
+
+  getShown() {
+    if(localStorage['carShown']) {
+      return localStorage['carShown'].split(',');
+    }
+    return shownList;
+  }
+
+  isShown(what) {
+    return this.state.shown.indexOf(what) > -1;
   }
 
   isCarIncludes(car, str) {
@@ -253,7 +313,7 @@ module.exports = class CarsIndex extends React.Component {
   }
 
   render() {
-    if (!this.state.cars.length) {
+    if (!this.state.shownCars.length) {
       return false;
     }
 
@@ -279,6 +339,15 @@ module.exports = class CarsIndex extends React.Component {
                       </div>
                     </div>
 
+                    <div className="form-group row">
+                      { shownList.map((what) =>
+                         <div className="radio-inline"> 
+                           <label><input type="checkbox" name="filter[]" onChange={ this.updateShown.bind(this) } defaultChecked={ this.isShown(what) } value={ what } /> { what } </label>
+                         </div>
+                        )
+                      }
+                    </div>
+
                     <div className="griddle-container">
                       <div className="griddle-body">
                         <div>
@@ -293,7 +362,7 @@ module.exports = class CarsIndex extends React.Component {
                             </thead>
                             <tbody>
                             {
-                              this.state.cars
+                              this.state.shownCars
                                 .filter((car) => this.isCarIncludes(car, this.state.filter) )
                                 .sort((a, b) => this.sortComparator(a, b))
                                 .map((car) => this.renderCarRow(car))
@@ -310,8 +379,8 @@ module.exports = class CarsIndex extends React.Component {
                   <small>Updated: { this.state.updated } <a style={{cursor:'pointer', padding: '0 1em'}} onClick={ this.update.bind(this) }>refresh</a></small>
                   <div className="list-group">
                     {
-                      this.state.cars
-                        ? this.state.cars.sort(this.licenseComparator).map(this.renderListLinkItem.bind(this))
+                      this.state.shownCars
+                        ? this.state.shownCars.sort(this.licenseComparator).map(this.renderListLinkItem.bind(this))
                         : <div className="list-group-item">Loading</div>
                     }
                   </div>
@@ -324,7 +393,7 @@ module.exports = class CarsIndex extends React.Component {
               <div className="map-dynamic">
                 <GMap
                     markerIcon = { '/images/map/active-waivecar.svg' }
-                    markers    = { this.state.cars }
+                    markers    = { this.state.shownCars }
                   />
               </div>
             </div>
