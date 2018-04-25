@@ -85,9 +85,12 @@ module.exports = {
       available += car.isAvailable;
     });
 
+
+    /*
     if (_user && !_user.hasAccess('admin')) {
       fs.appendFileSync('/var/log/outgoing/carsrequest.txt', JSON.stringify([new Date(), available, _user.id]) + '\n');
     }
+    */
     return cars;
   },
 
