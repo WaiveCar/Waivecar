@@ -139,7 +139,20 @@ class CardList extends React.Component {
   renderCardTable() {
     let cards = this.shop.getState('cards');
     if (!cards.length) {
-      return <div className="no-records">{ this.props.currentUser ? 'You have ' : 'User has'} not registered any cards.</div>;
+    return (
+      <div>
+        <div className='credit'>Current Credit: $0.00{
+          auth.user().hasAccess('admin') ? 
+            <div className="pull-right">
+              <button onClick={ this.props.addCard } className='btn btn-link btn-sm'>Add Card</button>
+              <button onClick={ this.addCredit.bind(this, this.props.user, cards) } className='btn btn-link btn-sm'>Add Credit</button>
+            </div>
+            : 
+            this.renderNotice(this.state.user.credit)
+        }</div>
+        <div className="no-records">{ this.props.currentUser ? 'You have ' : 'User has'} not registered any cards.</div>
+      </div>
+      );
     }
 
     return (
