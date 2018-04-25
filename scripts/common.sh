@@ -74,16 +74,19 @@ prebuild() {
 }
 
 build() {
+  before=`stat -c %Y www/dist/bundle.js`
   nvmcheck
-
   prebuild
-  node --version
   #$DBG cordova build android --debug -- --gradleArg=-PcdvCompileSdkVersion=$ORG_GRADLE_PROJECT_cdvCompileSdkVersion
   #$DBG cordova build android --debug -- --gradleArg=-PcdvCompileSdkVersion=$ORG_GRADLE_PROJECT_cdvCompileSdkVersion --gradleArg=--debug --gradleArg=--info --gradleArg=--stacktrace
   $DBG cordova build android 
+  after=`stat -c %Y www/dist/bundle.js`
   if [ www/dist/bundle.js -nt platforms/android/assets/www/dist/bundle.js ]; then
     echo 'failed to produce new file'
     unfuckup
+    build
+  elif [ $after != $before ]; then
+    echo 'Our dist file was rewritten under our feet, building again.'
     build
   fi
 }
