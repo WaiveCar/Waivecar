@@ -46,13 +46,15 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
     if (this.useCordova()) {
 
+      // reference: https://developers.google.com/maps/documentation/android-api/controls
       mapOptions = {
         'mapType': plugin.google.maps.MapTypeId.ROADMAP,
         'controls': {
-          'compass': false,
-          'myLocationButton': false,
-          'indoorPicker': false,
-          'zoom': false
+          compass: false,
+          mapToolbar: false,
+          myLocationButton: false,
+          indoorPicker: false,
+          zoom: false
         },
         'camera' : {
           target: this.mapToNativeLatLong(center),
@@ -60,13 +62,12 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         },
         'preferences': {
           'zoom': {
-            'minZoom': 10,
-            'maxZoom': 18
+            minZoom: 10,
+            maxZoom: 18
           },
           'building': false
         }
       };
-
 
       return plugin.google.maps.Map.getMap(mapElement, mapOptions)
     } else {
