@@ -75,14 +75,16 @@ module.exports = {
 
     delete options.limit;
     let cars = yield Car.find(options);
-    let bookings = yield Booking.find({ where : { status : 'started' } });
 
-    this.joinCarsWithBookings(cars, bookings);
+    if (_user && _user.hasAccess('admin')) {
+      let bookings = yield Booking.find({ where : { status : 'started' } });
+      this.joinCarsWithBookings(cars, bookings);
+    }
 
-    let available = 0;
+    //let available = 0;
     cars.forEach(function(car) {
       car.license = car.license || '';
-      available += car.isAvailable;
+      //available += car.isAvailable;
     });
 
 
