@@ -88,6 +88,8 @@ build() {
   elif [ $after != $before ]; then
     echo 'Our dist file was rewritten under our feet, building again.'
     build
+  else
+    echo -e "\nbundle is from" $(( `date +%s` - after )) "seconds ago\n"
   fi
 }
  
