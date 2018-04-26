@@ -112,8 +112,8 @@ module.exports = class CarsIndex extends React.Component {
     let shownList = cars.filter((car) => {
       let lic = car.license.toLowerCase();
       let res = {
-        waive: lic.indexOf('waive') > -1,
-        work: lic.indexOf('work') > -1,
+        waive: lic.includes('waive'),
+        work: lic.includes('work'),
         level: car.groupCar.length ? car.groupCar[0].groupRoleId === LEVEL : false
       };
 
@@ -345,7 +345,7 @@ module.exports = class CarsIndex extends React.Component {
           word = 'Charging';
         }
         // This is the pico office.
-        if (item.latitude > 34.019808 && item.latitude < 34.019950 && item.longitude > -118.468597 && item.longitude < -118.467835) {
+        if (item.latitude > 34.019708 && item.latitude < 34.02 && item.longitude > -118.468597 && item.longitude < -118.467835) {
           home = <i className="fa fa-home"></i>;
         }
         if (item.inRepair) {
@@ -383,7 +383,6 @@ module.exports = class CarsIndex extends React.Component {
                name="filter"
                placeholder="Filter Results"
                className="form-control"
-               value={this.state.filter.raw}
                onChange={ (e) => this.onFilter(e)}
           />
           { this.state.showHelp && <ul className="help">
