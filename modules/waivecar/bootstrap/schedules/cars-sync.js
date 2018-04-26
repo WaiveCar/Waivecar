@@ -17,8 +17,7 @@ module.exports = function *() {
 
 scheduler.process('cars-sync', function *(job) {
   let cars = yield service.syncCars();
-  if (cars && service.shouldRelay()) {
-    console.log("Still syncing!!!! HAHAHA");
+  if (cars && (yield service.shouldRelay())) {
     cars.relay('index');
   }
 });
