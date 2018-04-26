@@ -349,7 +349,7 @@ module.exports = class CarsIndex extends React.Component {
           home = <i className="fa fa-home"></i>;
         }
         if (item.inRepair) {
-          repair = <i class="fa fa-wrench"></i>
+          repair = <i className="fa fa-wrench"></i>
         }
         name = <em>{item.charge}% { word } {home} { repair }</em>
       }
