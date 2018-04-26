@@ -349,7 +349,8 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     },
 
     loadTagList : function* () {
-      if(!this.groupCar) {
+      // sometimes the groupCar is loaded by the name resolution depth is not.
+      if(!this.groupCar || (this.groupCar.length && !this.groupCar[0].groupRole)) {
         let GroupCar = Bento.model('GroupCar');
         this.groupCar = yield GroupCar.find({
           where: { carId: this.id },
