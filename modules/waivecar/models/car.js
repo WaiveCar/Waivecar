@@ -366,7 +366,11 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
     getTag : function *(tag) {
       var res = (yield this.loadTagList()).filter((row) => {
-        return row.groupRole.name === tag;
+        if(row.groupRole) {
+          return row.groupRole.name === tag;
+        } else {
+          console.log("Can't find tag for car", this);
+        }
       });
       return res;
     },
