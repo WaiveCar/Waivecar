@@ -51,6 +51,7 @@ module.exports = {
   },
 
   *index(query, _user) {
+    /*
     let options = queryParser(query, {
       where : {
         id          : queryParser.STRING,
@@ -59,7 +60,6 @@ module.exports = {
       }
     });
 
-    /*
     options.include = [
       {
         model: 'GroupCar',
@@ -68,11 +68,14 @@ module.exports = {
     ];
 
     */
-    options.where.inRepair = false;
-    options.where.adminOnly = false;
 
-    delete options.limit;
-    return yield Car.find(options);
+    return yield Car.find({ 
+      where : {
+        inRepair: false,
+        adminOnly: false,
+        isAvailable: true
+      }
+    });
 
     /*
     if (_user && _user.hasAccess('admin')) {
