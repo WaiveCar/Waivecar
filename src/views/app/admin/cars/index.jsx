@@ -340,6 +340,7 @@ module.exports = class CarsIndex extends React.Component {
       } else {
         let word = item.statuscolumn;
         let home = '';
+        let repair = '';
         if (item.isCharging) { 
           word = 'Charging';
         }
@@ -347,7 +348,10 @@ module.exports = class CarsIndex extends React.Component {
         if (item.latitude > 34.019808 && item.latitude < 34.019950 && item.longitude > -118.468597 && item.longitude < -118.467835) {
           home = <i className="fa fa-home"></i>;
         }
-        name = <em>{item.charge}% { word } {home}</em>
+        if (item.inRepair) {
+          repair = <i class="fa fa-wrench"></i>
+        }
+        name = <em>{item.charge}% { word } {home} { repair }</em>
       }
 
       text = <span><span className='carname'>{ item.license }</span> <small>{ name }</small><small className="cartime pull-right">{ value }</small></span>
