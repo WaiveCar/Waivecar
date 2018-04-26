@@ -51,21 +51,16 @@ module.exports = {
   },
 
   *index(query, _user) {
-    /*
-    let options = queryParser(query, {
-      where : {
-        id          : queryParser.STRING,
-        userId      : queryParser.NUMBER,
-        isAvailable : queryParser.BOOLEAN
-      }
-    });
-
-    */
     var opts = {
       where : {
-        inRepair: false,
-        adminOnly: false,
-        isAvailable: true
+        $or: [
+          {
+            inRepair: false,
+            adminOnly: false,
+            isAvailable: true,
+          },
+          { userId: _user.id }
+        ]
       }
     };
 
@@ -76,8 +71,14 @@ module.exports = {
       opts.include = [{
         model: 'GroupCar',
         as: 'groupCar',
-        where: { group_role_id: 7 } 
       }];
+
+      opts.where = { 
+        $or : [
+          { userId: _user.id },
+          sequelize.literal("groupCar.group_role_id = 7")
+        ]
+      };
     }
 
     return yield Car.find(opts);
