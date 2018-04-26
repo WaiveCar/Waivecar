@@ -806,6 +806,7 @@ module.exports = class BookingService extends Service {
       let car = yield this.getCar(booking.carId); 
     }
 
+    let isLevel = yield car.isTagged('level');
     yield booking.cancel();
     yield booking.delCancelTimer();
     yield booking.delForfeitureTimers();
@@ -813,7 +814,11 @@ module.exports = class BookingService extends Service {
     yield car.available();
     yield this.notifyUsers(car);
 
-    car.relay('update');
+    // See #1164 leave cars unavailable between 1-5am
+    var hour = (new Date()).getHour();
+    if(isLevel || hour < 4 || hour > 7) {
+      car.relay('update');
+    }
     booking.relay('update');
   }
 
@@ -925,7 +930,12 @@ module.exports = class BookingService extends Service {
 
     // ### Relay
 
-    car.relay('update');
+    // if it's between 1am and 5am (which is 4 and 8 according to our east coast servers), then
+    // we make the car available while disabling the relaying of the message back to the app #1164
+    var hour = (new Date()).getHour();
+    if(isLevel || hour < 4 || hour > 7) {
+      car.relay('update');
+    }
     yield this.relay('update', booking, _user);
   }
 
