@@ -20,10 +20,6 @@ Bento.Register.Controller('AuthController', (controller) => {
     return yield auth.social('facebook', this.payload, this.auth.user);
   };
 
-  /**
-   * Requests the api to remember the authenticated user.
-   * @return {Void}
-   */
   controller.remember = function *() {
     yield this.auth.remember();
   };
