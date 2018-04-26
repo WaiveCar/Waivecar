@@ -35,7 +35,10 @@ module.exports = {
   *shouldRelay(car) {
     var hour = (new Date()).getHours();
     if(hour >= 4 && hour < 8) {
-      return yield car.hasTag('level');
+      if(car) {
+        return yield car.hasTag('level');
+      } 
+      return false;
     }
     return true;
   },
