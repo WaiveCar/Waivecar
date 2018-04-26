@@ -815,7 +815,7 @@ module.exports = class BookingService extends Service {
     yield this.notifyUsers(car);
 
     // See #1164 leave cars unavailable between 1-5am
-    var hour = (new Date()).getHour();
+    var hour = (new Date()).getHours();
     if(isLevel || hour < 4 || hour > 7) {
       car.relay('update');
     }
@@ -932,7 +932,7 @@ module.exports = class BookingService extends Service {
 
     // if it's between 1am and 5am (which is 4 and 8 according to our east coast servers), then
     // we make the car available while disabling the relaying of the message back to the app #1164
-    var hour = (new Date()).getHour();
+    var hour = (new Date()).getHours();
     if(isLevel || hour < 4 || hour > 7) {
       car.relay('update');
     }
