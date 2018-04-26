@@ -71,11 +71,11 @@ module.exports = class CarsIndex extends React.Component {
     let isFlagged = false;
     let bMap = [ 
       [ 'available', 'ava' ],
-      [ 'notavailable', '!ava' ],
+      [ 'notavailable', 'noava' ],
       [ 'booked', 'boo' ],
-      [ 'notbooked', '!boo' ],
+      [ 'notbooked', 'noboo' ],
       [ 'charging', 'char' ],
-      [ 'notcharging', '!char'],
+      [ 'notcharging', 'nochar'],
       [ 'low', 'low' ],
       [ 'high', 'high' ]
     ];
@@ -90,7 +90,6 @@ module.exports = class CarsIndex extends React.Component {
       opts[row] &= !opts['not' + row];
     });
 
-    console.log(opts);
     opts.isFlagged = isFlagged;
     this.setState({
       showHelp: filter === 'help',
@@ -384,11 +383,11 @@ module.exports = class CarsIndex extends React.Component {
           { this.state.showHelp && <ul className="help">
             <li> (term) - (meaning) </li>
             <li> ava - available </li>
-            <li> !ava - unavailable </li>
+            <li> noava - unavailable </li>
             <li> char - charging </li>
-            <li> !char - not charging </li>
+            <li> nochar - not charging </li>
             <li> book - booked </li>
-            <li> !book - not booked </li>
+            <li> nobook - not booked </li>
             <li> high - over 70% </li>
             <li> low - under 30% </li>
             <li> help - this screen </li>
