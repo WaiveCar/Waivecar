@@ -110,6 +110,8 @@ module.exports = {
   },
 
   *carsWithBookings(_user) {
+    let start = new Date();
+    let perf = [];
     // See #1077. Super Admin can access all cars.
     // But still we need car's group on UI
     let includeGroupCar = {
@@ -142,6 +144,7 @@ module.exports = {
         }
       ]
     });
+    perf.push("car " + (new Date() - start));
 
     // the schema as of this writing is
     // enum('reserved','pending','cancelled','ready','started','ended','completed','closed') 
@@ -158,6 +161,7 @@ module.exports = {
 
     let lastActionList = yield cars[0].getLastActionForAllCars();
     let lastActionMap = {};
+    perf.push("action " + (new Date() - start));
 
     lastActionList.forEach((row) => {
       lastActionMap[row.carId] = row;
@@ -179,7 +183,9 @@ module.exports = {
         car.statuscolumn = car.isAvailable ? 'Available' : 'Unavailable';
       }
     });
+    perf.push("misc " + (new Date() - start));
 
+    console.log(perf.join(' | '));
     return cars;
   },
 
