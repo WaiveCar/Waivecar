@@ -60,22 +60,27 @@ module.exports = {
       }
     });
 
-    options.include = [
-      {
-        model: 'GroupCar',
-        as: 'groupCar'
-      }
-    ];
-
     */
-
-    return yield Car.find({ 
+    var opts = {
       where : {
         inRepair: false,
         adminOnly: false,
         isAvailable: true
       }
-    });
+    };
+
+    var hour = (new Date()).getHours();
+
+    // Don't show la cars between 1 and 3am pacific time.
+    if(hour >= 4 && hour < 8) {
+      opts.include = [{
+        model: 'GroupCar',
+        as: 'groupCar',
+        where: { group_role_id: 7 } 
+      }];
+    }
+
+    return yield Car.find(opts);
 
     /*
     if (_user && _user.hasAccess('admin')) {
