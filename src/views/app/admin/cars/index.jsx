@@ -345,17 +345,21 @@ module.exports = class CarsIndex extends React.Component {
         if (item.isCharging) { 
           word = 'Charging';
         }
-        // This is the pico office.
         if (item.latitude > 34.019708 && item.latitude < 34.02 && item.longitude > -118.468597 && item.longitude < -118.467835) {
           home = <i className="fa fa-home"></i>;
+          // This is the pico office.
           if(!item.isLocked) {
-            lock = <i style={{ color: 'red' }} className="fa fa-lock-open"></i>;
+            if(item.isImmobilized) {
+              lock = <i className="fa fa-unlock"></i>
+            } else {
+              lock = <i style={{ color: 'red', fontWeight: 'bold', fontSize: '120%' }} className="fa fa-unlock"></i>
+            }
           }
         }
         if (item.inRepair) {
           repair = <i className="fa fa-wrench"></i>
         }
-        name = <em>{item.charge}% { word } { home }{ repair }{ lock }</em>
+        name = <em>{item.charge}% { word } { home }{ repair } { lock }</em>
       }
 
       text = <span><span className='carname'>{ item.license }</span> <small>{ name }</small><small className="cartime pull-right">{ value }</small></span>
