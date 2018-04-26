@@ -312,6 +312,19 @@ module.exports = class CarsIndex extends React.Component {
     );
   }
 
+  renderShownFilters() {
+    return (
+      <div className="form-group row">
+        { shownList.map((what) =>
+           <div className="radio-inline"> 
+             <label><input type="checkbox" name="filter[]" onChange={ this.updateShown.bind(this) } defaultChecked={ this.isShown(what) } value={ what } /> { what } </label>
+           </div>
+          )
+        }
+      </div>
+    );
+  }
+
   render() {
     if (!this.state.shownCars.length) {
       return false;
@@ -339,14 +352,7 @@ module.exports = class CarsIndex extends React.Component {
                       </div>
                     </div>
 
-                    <div className="form-group row">
-                      { shownList.map((what) =>
-                         <div className="radio-inline"> 
-                           <label><input type="checkbox" name="filter[]" onChange={ this.updateShown.bind(this) } defaultChecked={ this.isShown(what) } value={ what } /> { what } </label>
-                         </div>
-                        )
-                      }
-                    </div>
+                    { this.renderShownFilters() }
 
                     <div className="griddle-container">
                       <div className="griddle-body">
@@ -384,6 +390,7 @@ module.exports = class CarsIndex extends React.Component {
                         : <div className="list-group-item">Loading</div>
                     }
                   </div>
+                  { this.renderShownFilters() }
                 </div>
               </div>
             </div>
