@@ -83,6 +83,8 @@ module.exports = class CarsIndex extends React.Component {
       if(filter.includes(row[1])) {
         opts[row[0]] = true;
         isFlagged = true;
+      } else {
+        opts[row[0]] = false;
       }
     });
     // ex: charging is a string subset of !charging
@@ -159,7 +161,7 @@ module.exports = class CarsIndex extends React.Component {
         // this allows us to search for say "low available"
         if(opts.available) { res &= car.isAvailable; }
         if(opts.notavailable) { res &= (!car.isAvailable && !car.name); }
-        if(opts.booked) { res &= car.name; }
+        if(opts.booked) { res &= car.name.length; }
         if(opts.notbooked) { res &= !car.name; }
         if(opts.charging) { res &= car.isCharging; }
         if(opts.notcharging) { res &= !car.isCharging; }
