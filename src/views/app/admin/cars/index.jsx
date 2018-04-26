@@ -17,8 +17,9 @@ module.exports = class CarsIndex extends React.Component {
 
     this.state = {
       shownCars : [],
+      showHelp : false,
       allCars : [],
-      filter : "",
+      filter : {},
       shown : this.getShown(),
       sortBy: { key: "license", orderAsc: true }
     };
@@ -43,6 +44,14 @@ module.exports = class CarsIndex extends React.Component {
 
   update() {
     api.get(`/carsWithBookings`, (err, cars) => {
+      cars.forEach((row) => {
+        row.licenseLower = row.license.toLowerCase();
+        if(row.user) {
+          row.name = [row.user.firstName, row.user.lastName].join(' ').toLowerCase();
+        } else {
+          row.name = '';
+        }
+      });
       this.setState( {
         updated: moment().format('HH:mm:ss'),
         allCars: cars,
@@ -57,7 +66,36 @@ module.exports = class CarsIndex extends React.Component {
   }
 
   onFilter(event) {
-    this.setState({filter: event.target.value});
+    let filter = event.target.value.toLowerCase();
+    let opts = { raw: filter };
+    let isFlagged = false;
+    let bMap = [ 
+      [ 'available', 'ava' ],
+      [ 'notavailable', '!ava' ],
+      [ 'booked', 'boo' ],
+      [ 'notbooked', '!boo' ],
+      [ 'charging', 'char' ],
+      [ 'notcharging', '!char'],
+      [ 'low', 'low' ],
+      [ 'high', 'high' ]
+    ];
+    bMap.forEach((row) => {
+      if(filter.includes(row[1])) {
+        opts[row[0]] = true;
+        isFlagged = true;
+      }
+    });
+    // ex: charging is a string subset of !charging
+    ['charging', 'available', 'booked'].forEach((row) => {
+      opts[row] &= !opts['not' + row];
+    });
+
+    console.log(opts);
+    opts.isFlagged = isFlagged;
+    this.setState({
+      showHelp: filter === 'help',
+      filter: opts
+    });
   }
 
   // this looks to be unavoidaly O(M*N)
@@ -113,15 +151,24 @@ module.exports = class CarsIndex extends React.Component {
     return this.state.shown.indexOf(what) > -1;
   }
 
-  isCarIncludes(car, str) {
-    str = str.toLowerCase();
-    return this.columns.filter((column) => {
-      if (column.key == "license") {
-        var value = car[column.key];
-        return value && value.toString().toLowerCase().includes(str);
+  isCarIncludes(car, opts) {
+    let res = true;
+    if (opts.raw) { 
+      res = car.licenseLower.includes(opts.raw) || car.name.includes(opts.raw);
+      if(!res && opts.isFlagged) {
+        res = true;
+        // this allows us to search for say "low available"
+        if(opts.available) { res &= car.isAvailable; }
+        if(opts.notavailable) { res &= (!car.isAvailable && !car.name); }
+        if(opts.booked) { res &= car.name; }
+        if(opts.notbooked) { res &= !car.name; }
+        if(opts.charging) { res &= car.isCharging; }
+        if(opts.notcharging) { res &= !car.isCharging; }
+        if(opts.low) { res &= car.charge < 30; }
+        if(opts.high) { res &= car.charge > 70; }
       }
-      return false;
-    }).length > 0;
+    }
+    return res;
   }
 
   renderCheckMark(checked) {
@@ -324,6 +371,32 @@ module.exports = class CarsIndex extends React.Component {
       </div>
     );
   }
+  renderSearch() {
+    return (
+      <div className="filter-container" >
+        <input type="text"
+               name="filter"
+               placeholder="Filter Results"
+               className="form-control"
+               value={this.state.filter.raw}
+               onChange={ (e) => this.onFilter(e)}
+          />
+          { this.state.showHelp && <ul className="help">
+            <li> (term) - (meaning) </li>
+            <li> ava - available </li>
+            <li> !ava - unavailable </li>
+            <li> char - charging </li>
+            <li> !char - not charging </li>
+            <li> book - booked </li>
+            <li> !book - not booked </li>
+            <li> high - over 70% </li>
+            <li> low - under 30% </li>
+            <li> help - this screen </li>
+            </ul>
+          }
+      </div>
+    )
+  }
 
   render() {
     if (!this.state.shownCars.length) {
@@ -340,15 +413,7 @@ module.exports = class CarsIndex extends React.Component {
                   <div className="griddle" >
                     <div className="top-section" >
                       <div className="griddle-filter" >
-                        <div className="filter-container" >
-                          <input type="text"
-                                 name="filter"
-                                 placeholder="Filter Results"
-                                 className="form-control"
-                                 value={this.state.filter}
-                                 onChange={ (e) => this.onFilter(e)}
-                            />
-                        </div>
+                        { this.renderSearch() }
                       </div>
                     </div>
 
@@ -382,11 +447,14 @@ module.exports = class CarsIndex extends React.Component {
                   </div>
                 </div>
                 <div className="hidden-lg-up visible-md-down">
+                  { this.renderSearch() }
                   <small>Updated: { this.state.updated } <a style={{cursor:'pointer', padding: '0 1em'}} onClick={ this.update.bind(this) }>refresh</a></small>
                   <div className="list-group">
                     {
                       this.state.shownCars
-                        ? this.state.shownCars.sort(this.licenseComparator).map(this.renderListLinkItem.bind(this))
+                        ? this.state.shownCars
+                          .filter((car) => this.isCarIncludes(car, this.state.filter) )
+                          .sort(this.licenseComparator).map(this.renderListLinkItem.bind(this))
                         : <div className="list-group-item">Loading</div>
                     }
                   </div>
