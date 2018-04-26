@@ -58,8 +58,7 @@ module.exports = {
             inRepair: false,
             adminOnly: false,
             isAvailable: true,
-          },
-          { userId: _user.id }
+          }
         ]
       }
     };
@@ -75,10 +74,13 @@ module.exports = {
 
       opts.where = { 
         $or : [
-          { userId: _user.id },
           sequelize.literal("groupCar.group_role_id = 7")
         ]
       };
+    }
+
+    if(_user) {
+      opts.where['$or'].push({ userId: _user.id });
     }
 
     return yield Car.find(opts);
