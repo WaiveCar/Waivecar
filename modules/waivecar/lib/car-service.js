@@ -32,6 +32,14 @@ module.exports = {
   // Track api errors to notify admins
   _errors : {},
 
+  *shouldRelay(car) {
+    var hour = (new Date()).getHours();
+    if(hour >= 4 && hour < 8) {
+      return yield car.hasTag('level');
+    }
+    return true;
+  },
+
   // people only really care about licenses ... so this 
   // helps convert things over in some non-braindead way.
   *id2license(id) {
@@ -130,14 +138,6 @@ module.exports = {
       as :'groupCar'
     };
 
-    /*
-    if(!_user.isSuperAdmin()) {
-      includeGroupCar.where = {
-        groupRoleId: _user.groupRole.id
-      }
-    }
-    */
-
     let cars = yield Car.find({
       include: [
         includeGroupCar,
@@ -196,7 +196,7 @@ module.exports = {
     });
     perf.push("misc " + (new Date() - start));
 
-    console.log(perf.join(' | '));
+    //console.log(perf.join(' | '));
     return cars;
   },
 
@@ -284,13 +284,6 @@ module.exports = {
       model : 'GroupCar',
       as: 'groupCar'
     }
-    /*
-    if(!_user.isSuperAdmin()) {
-      includeCarGroup.where = {
-        groupRoleId: _user.groupRole.id
-      };
-    }
-    */
 
     let car = yield Car.findById(id, { include: [includeCarGroup]});
     if (!car) {
@@ -305,10 +298,12 @@ module.exports = {
     let device = yield this.getDevice(car.id, _user, 'update');
 
     yield car.update(Object.assign(device || {}, payload));
-    relay.emit('cars', {
-      type : 'update',
-      data : car.toJSON()
-    });
+    if(yield this.shouldRelay(car)) {
+      relay.emit('cars', {
+        type : 'update',
+        data : car.toJSON()
+      });
+    }
 
     return car;
   },
@@ -321,10 +316,12 @@ module.exports = {
       yield model.unavailable();
     }
 
-    relay.emit('cars', {
-      type : 'update',
-      data : model.toJSON()
-    });
+    if(yield this.shouldRelay(model)) {
+      relay.emit('cars', {
+        type : 'update',
+        data : model.toJSON()
+      });
+    }
 
     if (_user) yield LogService.create({ carId : id, action : isAvailable ? Actions.MAKE_CAR_AVAILABLE : Actions.MAKE_CAR_UNAVAILABLE }, _user);
 
@@ -474,10 +471,12 @@ module.exports = {
 
     yield existingCar.update(data);
 
-    relay.emit('cars', {
-      type: 'update',
-      data: existingCar.toJSON()
-    });
+    if(yield this.shouldRelay(existingCar)) {
+      relay.emit('cars', {
+        type: 'update',
+        data: existingCar.toJSON()
+      });
+    }
 
     if (data.isIgnitionOn || existingCar.mileage !== data.mileage || data.calculatedSpeed > 0 || data.currentSpeed > 0 || !data.isParked) {
       let booking = yield Booking.findOne({where: {status: 'started', carId: existingCar.id}});
@@ -491,10 +490,7 @@ module.exports = {
     return existingCar;
   },
 
-  /**
-   * Does sync operations against all cars in the invers fleet.
-   * @return {Array}
-   */
+  // Does sync operations against all cars in the invers fleet.
   *syncCars() {
     log.debug('CarService : syncCars : start');
     let refreshAfter = config.car.staleLimit || 15;
