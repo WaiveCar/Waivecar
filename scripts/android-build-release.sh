@@ -14,13 +14,14 @@ export KEYSTORE_PASS="yEt7Mon3I9Swi5woY4Wu"
 export KEYSTORE="certs/waivecardrive.keystore"
 export KEYSTORE_ALIAS="waivecardrive"
 export APK_NAME="waivecardrive"
-export APK_LOCATION="platforms/android/build/outputs/apk/android-release-unsigned.apk"
 
+base=platforms/android/build/outputs/apk
 nvmcheck
 
-#which cordova 
-
 cordova build android --release
+
+export APK_LOCATION="$base/release/android-release-unsigned.apk"
+[ -e $base/android-release-unsigned.apk ] && export APK_LOCATION="$base/android-release-unsigned.apk"
 
 jarsigner \
   -storepass $KEYSTORE_PASS \
@@ -38,7 +39,7 @@ release_path_archive=$ROOT/releases/$APK_NAME-$apk_version.apk
 
 mkdir -p releases
 zipalign -f 4 \
-  platforms/android/build/outputs/apk/android-release-unsigned.apk \
+  $APK_LOCATION \
   $release_path_archive
 
 [ -e $release_path ] && unlink $release_path
