@@ -419,9 +419,10 @@ module.exports = [
       controller: 'DashboardController as ctrl',
       data: {
         auth: true,
-        hasGMap: true,
+        hasGMap: true/*,
         intercom: true,
         intercomPadding: 70
+        */
       }
     })
 
