@@ -80,7 +80,7 @@ module.exports = angular.module('app.services').service('IntercomService', [
     };
 
     this.setBottomPadding = function(padding) {
-      intercom().setBottomPadding(padding);
+      //intercom().setBottomPadding(padding);
     }
 
     function createIntecomUserModel(user) {
