@@ -29,6 +29,7 @@
     <preference name="intercom-android-push-type" value="FCM" />
     <preference name="SplashScreenDelay" value="3000" />
     <preference name="PlayServicesVersion" value="10.0.+" />
+    <preference name="orientation" value="portrait" />
     <platform name="android">
         <hook src="scripts/android-prebuild" type="before_build" />
         <allow-intent href="market:*" />
