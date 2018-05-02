@@ -65,7 +65,11 @@ class TableIndex extends React.Component {
       amount = parseInt(amount, 10);
     }
     if(amount) {
-      this.letinreal({amount: amount})
+      this.letinreal({
+        idList: this.table.data.map((row) => {
+          return row.id;
+        }).slice(0, amount)
+      });
     }
   }
 
