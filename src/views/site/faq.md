@@ -1,4 +1,5 @@
 ﻿## What is WaiveCar?
+
 WaiveCar is the first ever FREE & 100% electric car sharing program. We are ad-supported so the funds we receive from advertisers to display their ads on our roof-mounted screens and body wraps allow users to drive our cars FREE for 2 hours then $5.99/hr...MIC DROP.
 
 ## Signing up
@@ -13,6 +14,7 @@ To us, a good driving record means one without any:
  * Moving violations
  * Driving with a suspended license
  * Any similar negligent or reckless acts
+ * Accidents 
 
 ### Does it cost any money to sign up?
 Nope! We promise there REALLY are no catches. We're that magical.
@@ -30,30 +32,36 @@ No. Unfortunately we require a smart phone so that a phone number can be attache
 Yep! Insurance with a $1,000 deductible is included in the signup! The information is in the glove box!
 
 ### Can I use an out of state drivers license to drive with WaiveCar?
-Yep! However, if you have a Pennsylvania license, please email us at support@waive.car as Pennsylvania requires a separate background check form to be filled out.
+
+Yep! However, if you have a Pennsylvania, Utah or Washington license, please email us at support@waive.car as those states require a separate background check form to be filled out.
 
 ### Can I use an out of country drivers license?
-Yep! However you will need to contact your DMV and obtain a driving record to email to us at support@waive.car
+
+Yep! However you will need to contact your country’s DMV equivalent to obtain a driving record to email to us at support@waive.car (It must be translated into English)
 
 ### Can I use a temporary drivers license?
 Unfortunately you will need a permanent license to drive with WaiveCar.
 
 ### How long does the signup take?
-It's very quick! Should only take about 10 minutes for the signup and the background check to complete. If the background check seems to be taking longer, please give us a call at 855-WAIVE55
+
+It's very quick! Should only take about 10 minutes for the signup and the background check to complete. If the background check seems to be taking longer, please give us a contact us.
 
 ## Booking Cars
 
 ### What are WaiveCar's hours?
-Our cars are available 24/7 however the HQ is open from 9am-10pm and the customer service line is open from 9am-midnight. If you need assistance at other hours, simply send us an email at support@waive.car and we will reach you at our earliest convenience.
+
+Our cars are available 24/7 however the HQ is open from 9am-10pm and the customer service line is open from 8am-10pm. If you need assistance at other hours, simply send us an email at support@waive.car and we will reach you at our earliest convenience. Please note new rentals cannot be created between 1am & 5am. 
 
 ### How do I book a WaiveCar?
 Log onto the app and find the closest available WaiveCar to you. Hit "Book it"! You then have 15 minutes to get to the car before the reservation times out.
 
 ### Where can I get a WaiveCar?
-Right now our cars are only dispersed around Santa Monica, CA. In the near future, you will be able to pick them up anywhere in LA and other major cities!
+
+Right now our cars are only dispersed around Santa Monica, Venice, Sawtelle, Mar Vista and Marina Del Ray, CA. In the near future, you will be able to pick them up anywhere in LA and other major cities!
 
 ### How long do I have to get to a WaiveCar?
-You have 15 minutes to get to a WaiveCar before the reservation times out.
+
+You have 15 minutes to get to a WaiveCar before the reservation times out. You may purchase an additional 10 minutes for a $1 fee. 
 
 Once you get there, please make sure you drive the WaiveCar! We may have to forfeit your booking if the WaiveCar isn't being used.  But don't worry, we send out a message beforehand and you'll have plenty of time to contact us if we've made a mistake.
 
@@ -75,16 +83,20 @@ Then your reservation will expire! So hurry up and try to rebook the same car or
 ### What's with that $1 charge when I book a WaiveCar?
 No worries! It's just a $1 hold on your card we will refund right back to you when your ride is complete!
 
-### How many WaiveCars are there?
-We currently have 37 in Santa Monica and we are expanding very soon.
-
 ## Driving Cars
 ### How far can I drive with a WaiveCar?
-You can drive up to 20 miles outside our HQ in Santa Monica, which includes most of LA. You will get a text message alert when you have passed the boundaries! Along with being free the first 2 hours, a single WaiveCar can be rented for up to 12 hours at a time.
+
+You can drive up to 20 miles outside of any of our parking borders, which includes most of LA. You will get a text message alert when you have passed the boundaries! Along with being free the first 2 hours, a single WaiveCar can be rented for up to 12 hours at a time.
 
 ### Where are the keys?
+
+#### In our Sparks EVs 
+
 You don't need keys to start the car, however if you need to lock the car DURING your rental, the keys are on a sensor in the glovebox! Just make sure you replace them when you're done.
 
+#### In our Hyundai IONIQs
+
+There are no keys, simply use the app to lock, unlock and end all rides. 
 ### I've never driven an electric car. How many miles per charge do I get?
 Our Chevy Spark EVs have 50-70 miles per charge, depending on driving style. Our Hyundai Ioniqs have between 110-130 depending on driving style.
 
@@ -104,17 +116,19 @@ Yep! More magic.
 This one's a big N.O. The ONLY person allowed to drive a WaiveCar is the person on the account who has booked the car. Big consequences if we find out otherwise!
 
 ### What happens if there's a parking ticket?
-If you get a ticket, you have 10 days to pay it. If you don't pay it within that time, we will charge your account for the amount due. If you see a ticket from a previous user, simply put it in the glove box.
+
+If you get a ticket, you have 7 days to pay it. If you don't pay it within that time, we will charge your account for the amount due. If you see a ticket from a previous user, simply put it in the glove box.
 
 ## Ending Your Ride
 
 ### Where can I park when I'm done?
-If the battery is over 25 miles charged, you can park at any 3 hour public parking spot in Santa Monica without paying the meter. If the battery is under 25 miles charged you MUST return it at the headquarters at 2102 Pico Blvd.
 
-However, after midnight, parking must be valid until 10:00 AM that morning.
+If the battery is over 25 miles charged, you can park at any 3 hour public parking spot in Santa Monica without paying the meter. Outside of Santa Monica 12 hours of free parking is needed. Please note, meters are NOT free outside of Santa Monica!!!  If the battery is under 25 miles charged you MUST return it at the headquarters at 2102 Pico Blvd.
+
+However, after 10pm, parking must be valid until 10:00 AM that morning.
 
 ### Where can I **NOT** park?
-Private parking spaces, parking garages, permit-only spots, any business parking lot, or ANYWHERE not in Santa Monica! Make sure to check street signs so that there are no parking restrictions on the spot for 3 hours.
+Private parking spaces, parking garages, permit-only spots, any business parking lot, or ANYWHERE not in Santa Monica, Venice, Sawtelle, Mar Vista and Marina Del Ray! Make sure to check street signs so that there are no parking restrictions on the spot for 3 hours(in SM) and 12 hours (Outside of SM).
 
 Restricted parking includes:
 
