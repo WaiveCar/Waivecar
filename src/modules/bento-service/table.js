@@ -40,6 +40,7 @@ module.exports = class Table {
         more   : data.length === 20,
         offset : this.ctx.state.offset + data.length
       });
+      this.data = data;
       relay.dispatch(this.resource, {
         type : 'index',
         data : data
@@ -132,6 +133,7 @@ module.exports = class Table {
           more   : data.length === this.limit,
           offset : data.length
         });
+        this.data = data;
         relay.dispatch(this.resource, {
           type : 'index',
           data : data
@@ -196,6 +198,7 @@ module.exports = class Table {
           ...data
         ];
       }
+      this.data = data;
       relay.dispatch(this.resource, {
         type : 'index',
         data : data
