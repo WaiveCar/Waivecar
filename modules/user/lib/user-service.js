@@ -73,7 +73,8 @@ module.exports = {
     let token = yield tokens.create({
       id      : user.id,
       purpose : 'password-reset'
-    });
+    // give it a huge window
+    }, 48 * 60);
     return {'user': user, 'token': token}
   },
 
