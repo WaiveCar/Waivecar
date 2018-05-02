@@ -218,8 +218,10 @@ module.exports = {
         sequelize.literal(`concat_ws(' ', first_name, last_name, place_name) like '%${queryIn.search}%'`)
       ] };
     } else {
-      query.where = {user_id: null };
+      query.where = { user_id: null };
     }
+    query.limit = parseInt(queryIn.limit, 10);
+    query.offset = parseInt(queryIn.offset, 10);
 
     return yield Waitlist.find(query);
   },
