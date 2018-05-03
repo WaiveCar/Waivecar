@@ -39,6 +39,9 @@ class UsersListView extends React.Component {
       sort : {
         key   : 'id',
         order : 'ASC'
+      },
+      searchObj: {
+        order: 'id,DESC'
       }
     });
   }
@@ -115,7 +118,7 @@ class UsersListView extends React.Component {
             {
               this.state.more ?
                 <div className="text-center" style={{ marginTop : 20 }}>
-                  <button className="btn btn-primary" onClick={ this.table.more }>Load More</button>
+                  <button className="btn btn-primary" onClick={ () => this.table.more(false) }>Load More</button>
                 </div>
                 :
                 ''

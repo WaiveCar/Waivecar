@@ -14,6 +14,7 @@ class TableIndex extends React.Component {
     super(...args);
     this.table = new Table(this, 'waitlist', null, '/waitlist');
     this.state = {
+      search : null,
       sort : {
         key   : null,
         order : 'DESC'
@@ -122,7 +123,7 @@ class TableIndex extends React.Component {
             {
               this.state.more ?
                 <div className="text-center" style={{ marginTop : 20 }}>
-                  <button className="btn btn-primary" onClick={ this.table.more }>Load More</button>
+                  <button className="btn btn-primary" onClick={ () => this.table.more(false) }>Load More</button>
                 </div>
                 :
                 ''
