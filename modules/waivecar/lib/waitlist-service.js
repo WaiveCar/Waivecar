@@ -286,7 +286,7 @@ module.exports = {
       yield record.update({userId: userRecord.id});
       userList.push(userRecord);
 
-      let res = yield UserService.generatePasswordToken(userRecord);
+      let res = yield UserService.generatePasswordToken(userRecord, 7 * 24 * 60);
     
       // If a candidate signs up again we "re-let" them in ... effectively sending them the same email again
       let email = new Email(), emailOpts = {};
