@@ -61,7 +61,8 @@ module.exports = {
   },
 
   // Creates an password access token used to reset a users password.
-  *generatePasswordToken(identifier) {
+  *generatePasswordToken(identifier, expire) {
+    expire = expire || (24 * 60);
     let user = false;
 
     if (!_.isString(identifier) && identifier && ('id' in identifier)) {
@@ -73,8 +74,7 @@ module.exports = {
     let token = yield tokens.create({
       id      : user.id,
       purpose : 'password-reset'
-    // give it a huge window
-    }, 48 * 60);
+    }, expire);
     return {'user': user, 'token': token}
   },
 
