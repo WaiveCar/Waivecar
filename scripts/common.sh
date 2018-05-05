@@ -3,10 +3,13 @@ APP=com.waivecardrive.app
 NODE_VERSION=v6.11.4
 cdv=`grep buildToolsVersion $DIR/../misc/build-extras.gradle | awk ' { print $2 }'`
 if [ -n "$cdv" ]; then
-  #export ORG_GRADLE_PROJECT_cdvBuildToolsVersion=$cdv
+  export ORG_GRADLE_PROJECT_cdvBuildToolsVersion=$cdv
   true
 fi
-export ORG_GRADLE_PROJECT_cdvCompileSdkVersion=`grep ext.cdvCompileSdkVersion $DIR/../misc/build-extras.gradle | awk ' { print $3 }'`
+sdk=`grep ext.cdvCompileSdkVersion $DIR/../misc/build-extras.gradle | awk ' { print $3 }'`
+if [ -n "$sdk" ]; then
+  export ORG_GRADLE_PROJECT_cdvCompileSdkVersion=$sdk
+fi
 
 #DBG=
 
@@ -88,17 +91,21 @@ build() {
 
   nvmcheck
   prebuild
-  #$DBG cordova build android --debug -- --gradleArg=-PcdvCompileSdkVersion=$ORG_GRADLE_PROJECT_cdvCompileSdkVersion
-  #$DBG cordova build android --debug -- --gradleArg=-PcdvCompileSdkVersion=$ORG_GRADLE_PROJECT_cdvCompileSdkVersion --gradleArg=--debug --gradleArg=--info --gradleArg=--stacktrace
-  $DBG cordova build android 
-  if [ $? -ne 0 ] ; then
-    echo 'failed to build. Fuck this shit.'
-    exit 1
+  if [ -n "$ORG_GRADLE_PROJECT_cdvCompileSdkVersion" ]; then
+    echo "Injecting $ORG_GRADLE_PROJECT_cdvCompileSdkVersion"
+    $DBG cordova build android 
+    #$DBG cordova build android --debug -- --gradleArg=-PcdvCompileSdkVersion=$ORG_GRADLE_PROJECT_cdvCompileSdkVersion
+  else
+    $DBG cordova build android 
   fi
+  #$DBG cordova build android --debug -- --gradleArg=-PcdvCompileSdkVersion=$ORG_GRADLE_PROJECT_cdvCompileSdkVersion --gradleArg=--debug --gradleArg=--info --gradleArg=--stacktrace
 
   after=
   if [ -e www/dist/bundle.js ]; then
     after=`stat -c %Y www/dist/bundle.js`
+  else
+    echo 'Failed to build. Fuck this shit.' "(($last))"
+    exit 1
   fi
 
   if [ www/dist/bundle.js -nt platforms/android/assets/www/dist/bundle.js ]; then
