@@ -1,6 +1,6 @@
 ext.cdvCompileSdkVersion = 26
 android {
-    buildToolsVersion "26.0.1"
+    //build ToolsVersion "26.0.1"
     packagingOptions {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/LICENSE'
