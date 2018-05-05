@@ -182,7 +182,7 @@ hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
         //
         // We do this by only raising an alert after it's been verified.  Otherwise
         // we don't care.
-        prevUser.verifiedPhone &&
+        (prevUser.verifiedPhone || reason.length) &&
 
         prevUser.phone !== nextUser.phone) {
 
