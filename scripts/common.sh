@@ -85,7 +85,7 @@ build() {
     echo 'failed to produce new file'
     unfuckup
     build
-  elif [ $after != $before ]; then
+  elif [ "$after" != "$before" ]; then
     echo 'Our dist file was rewritten under our feet, building again.'
     build
   else
@@ -97,7 +97,7 @@ unfuckup() {
   path=www/js/controllers/car-controller.js
   cd $DIR/..
   set -x
-  [ -e releases ] && rm releases/waivecardrive.apk
+  [ -e releases/waivecardrive.apk ] && rm releases/waivecardrive.apk
   [ -e platforms/android/build ] && rm -fr platforms/android/build
   [ -e platforms/android/assets/www ] && rm -fr platforms/android/assets/www
   [ -e www/dist ] && rm -fr www/dist/*
