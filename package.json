@@ -108,7 +108,13 @@
     "cordova-plugin-whitelist": "^1.2.2",
     "cordova.plugins.diagnostic": "^3.3.3",
     "hmacsha1": "^1.0.0",
-    "ionic-plugin-keyboard": "^2.2.1"
+    "ionic-plugin-keyboard": "^2.2.1",
+    "cordova-plugin-firebase": "^0.1.25",
+    "cordova-plugin-intercom": "^3.2.2",
+    "cordova-plugin-googlemaps": "^2.0.11",
+    "cordova-plugin-splashscreen": "~4.0.1",
+    "cordova-plugin-hide-home-indicator": "~1.0.0",
+    "cordova-open-native-settings": "~1.4.1"
   },
   "devDependencies": {
     "angular": "^1.4.6",
@@ -193,14 +199,18 @@
       "cordova-plugin-x-toast": {},
       "cordova.plugins.diagnostic": {},
       "ionic-plugin-keyboard": {},
-      "com.zendrive.phonegap.sdk": {},
       "cordova-plugin-ble-central": {},
       "cordova-plugin-googlemaps": {
         "API_KEY_FOR_ANDROID": "AIzaSyDuTxwQN4WKCktkzkLTHZSD7EzHvCn3WHs",
         "API_KEY_FOR_IOS": "AIzaSyCjNzEEetDOi63O7qrD6APLffH0daZIDeQ",
         "LOCATION_WHEN_IN_USE_DESCRIPTION": "Show your location on the map",
         "LOCATION_ALWAYS_USAGE_DESCRIPTION": "Trace your location on the map"
-      }
+      },
+      "cordova-plugin-firebase": {},
+      "cordova-plugin-intercom": {},
+      "cordova-plugin-splashscreen": {},
+      "cordova-plugin-hide-home-indicator": {},
+      "cordova-open-native-settings": {}
     },
     "platforms": [
       "browser",
