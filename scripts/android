@@ -1,8 +1,5 @@
 #!/bin/bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-export ORG_GRADLE_PROJECT_cdvBuildToolsVersion=26.0.2
-#export ORG_GRADLE_PROJECT_cdvCompileSdkVersion=26
-
 
 help() {
   echo verbose find restart unfuckup clear remove build install install_release stop start

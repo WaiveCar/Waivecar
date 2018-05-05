@@ -1,6 +1,13 @@
 #!/bin/bash
 APP=com.waivecardrive.app
 NODE_VERSION=v6.11.4
+cdv=`grep buildToolsVersion $DIR/../misc/build-extras.gradle | awk ' { print $2 }'`
+if [ -n "$cdv" ]; then
+  #export ORG_GRADLE_PROJECT_cdvBuildToolsVersion=$cdv
+  true
+fi
+export ORG_GRADLE_PROJECT_cdvCompileSdkVersion=`grep ext.cdvCompileSdkVersion $DIR/../misc/build-extras.gradle | awk ' { print $3 }'`
+
 #DBG=
 
 get_device() {
@@ -74,13 +81,26 @@ prebuild() {
 }
 
 build() {
-  before=`stat -c %Y www/dist/bundle.js`
+  before=
+  if [ -e www/dist/bundle.js ]; then
+    before=`stat -c %Y www/dist/bundle.js`
+  fi
+
   nvmcheck
   prebuild
   #$DBG cordova build android --debug -- --gradleArg=-PcdvCompileSdkVersion=$ORG_GRADLE_PROJECT_cdvCompileSdkVersion
   #$DBG cordova build android --debug -- --gradleArg=-PcdvCompileSdkVersion=$ORG_GRADLE_PROJECT_cdvCompileSdkVersion --gradleArg=--debug --gradleArg=--info --gradleArg=--stacktrace
   $DBG cordova build android 
-  after=`stat -c %Y www/dist/bundle.js`
+  if [ $? -ne 0 ] ; then
+    echo 'failed to build. Fuck this shit.'
+    exit 1
+  fi
+
+  after=
+  if [ -e www/dist/bundle.js ]; then
+    after=`stat -c %Y www/dist/bundle.js`
+  fi
+
   if [ www/dist/bundle.js -nt platforms/android/assets/www/dist/bundle.js ]; then
     echo 'failed to produce new file'
     unfuckup
