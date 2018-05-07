@@ -70,3 +70,25 @@ ion-content .bar-subheader {
   width: 100%;
   display: block;
 }
+
+// Only for IPhone X header changes
+@media only screen
+  and (device-width : 375px)
+  and (device-height : 812px)
+  and (-webkit-device-pixel-ratio : 3) {
+    .bar {
+      .title {
+        margin-top: 43px !important;
+      }
+    }
+    .bar-header {
+      height: 90px !important;
+      .buttons {
+        margin-top: 40px !important;
+      }
+    }
+
+    .scroll-content {
+      top: 90px !important;
+    }
+}
