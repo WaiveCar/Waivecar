@@ -6,8 +6,21 @@ You need nvm in order to run this. We are using node 4.2.6
   # Follow the instructions and put the lines into ~/.profile and start a new terminal
 
   $ nvm install v4.2.6
+  $ sudo mkdir /var/log/outgoing /var/log/invers
+  $ sudo chmod 0777 /var/log/outgoing /var/log/invers
+  $ sudo apt install mysql-server redis-server mongodb-server git nginx
+   
+Add
+  127.0.0.1 datastore
 
-Notes:
+  to /etc/hosts
+
+The nginx.conf is in the root directory, you can copy it over to
+
+  /etc/nginx
+
+
+## Notes:
 
 Ending a booking: end@`modules/waivecar/lib/booking-service.js`
 
