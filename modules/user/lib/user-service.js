@@ -99,13 +99,13 @@ module.exports = {
     }
 
     if (!payload || payload.purpose !== 'password-reset') {
-      throw error.parse({
+      throw bError.parse({
         code    : 'TOKEN_INVALID',
         message : 'The provided token is not a valid reset token.'
       });
     }
     if (!password || password.length === 0) {
-      throw error.parse({
+      throw bError.parse({
         code    : 'PASSWORD_INVALID',
         message : 'A password must be supplied'
       });
