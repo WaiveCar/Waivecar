@@ -158,7 +158,25 @@ module.exports = {
       yield record.save();
     }
 
-    if(promo === 'hyrecar') {
+    if(promo === 'vip' || promo === 'seekdiscomfort') {
+      res.fastTrack = 'yes';
+      delete res.inside;
+      user = yield this.letInByRecord([record]);
+      user = userList[0];
+
+      let UserNote = Bento.model('UserNote');
+
+      let note = new UserNote({
+        userId: user.id,
+        // the author id currently can't be null
+        // so we make it the level fleet account
+        authorId: 14827,
+        content: promo,
+        type: 'promo'
+      });
+      yield note.save();
+
+    } else if(promo === 'hyrecar') {
       // This means they can skip the line -
       // it's more of a communication to the app
       // then it is any functional thing.
