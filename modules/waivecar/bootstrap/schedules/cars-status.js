@@ -14,7 +14,6 @@ scheduler.process('cars-odometer', function *(job) {
     return;
   }
 
-  console.log("Reading odometers");
   let carList = yield Car.find();
   for (let i = 0; i < carList.length; i++) {
     let car = carList[i];
