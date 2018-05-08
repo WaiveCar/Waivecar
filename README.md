@@ -1,3 +1,12 @@
+## Installation
+
+You need nvm in order to run this. We are using node 4.2.6
+
+  $ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash 
+  # Follow the instructions and put the lines into ~/.profile and start a new terminal
+
+  $ nvm install v4.2.6
+
 Notes:
 
 Ending a booking: end@`modules/waivecar/lib/booking-service.js`
