@@ -161,7 +161,7 @@ module.exports = {
     if(promo === 'vip' || promo === 'seekdiscomfort') {
       res.fastTrack = 'yes';
       delete res.inside;
-      user = yield this.letInByRecord([record]);
+      let userList = yield this.letInByRecord([record]);
       user = userList[0];
 
       let UserNote = Bento.model('UserNote');
