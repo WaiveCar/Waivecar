@@ -302,6 +302,7 @@ module.exports = {
           // in good faith, going through the entire process again,
           // presuming that they didn't receive or lost the previous. 
           log.warn(`Found user with email ${ record.email } or phone ${ record.phone }. Not adding`);
+          console.log(userRecord);
           yield record.update({userId: userRecord.id});
           if(userRecord.status === 'waitlist') {
             yield userRecord.update({status: 'active'});
@@ -345,7 +346,7 @@ module.exports = {
       }
     }
     if (_user) {
-      let list = nameList.slice(0, -2).join(',') + nameList.slice(-2).join(' and ');
+      let list = nameList.slice(0, -2).join(', ') + nameList.slice(-2).join(' and ');
       yield notify.notifyAdmins(`:rocket: ${ _user.name() } let in ${ list }`, [ 'slack' ], { channel : '#user-alerts' })
     }
     return userList;
