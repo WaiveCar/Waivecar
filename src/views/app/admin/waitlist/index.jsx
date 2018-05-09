@@ -80,10 +80,10 @@ class TableIndex extends React.Component {
   row(waitlist) {
     return (
       <tr key={ waitlist.id }>
-        <td className="hidden-sm-down">{ waitlist.firstName } { waitlist.lastName }</td>
-        <td className="hidden-sm-down">{ waitlist.placeName }</td>
-        <td className="hidden-sm-down">{ moment(waitlist.createdAt).format('YYYY-MM-DD HH:mm:ss') }</td>
-        <td className="hidden-sm-down">
+          <td>{ waitlist.firstName } { waitlist.lastName }</td>
+          <td className="hidden-sm-down">{ waitlist.placeName }</td> 
+          <td className="hidden-sm-down">{ moment(waitlist.createdAt).format('YYYY-MM-DD HH:mm:ss') }</td> 
+          <td>
           <a style={{ cursor: 'pointer' }} onClick={ this.letinbyid.bind(this, waitlist.id) }>
             Let In
           </a>
@@ -113,10 +113,10 @@ class TableIndex extends React.Component {
             <table className="box-table table-striped">
               <thead>
                 <tr ref="sort">
-                  <ThSort sort="name"     value="Name"     ctx={ this } className="hidden-sm-down" />
-                  <ThSort sort="location" value="Location" ctx={ this } />
-                  <ThSort sort="date"     value="Date"     ctx={ this } />
-                  <th className="hidden-sm-down"></th>
+                  <ThSort sort="name"     value="Name"     ctx={ this } />
+                  <ThSort sort="location" value="Location" ctx={ this } className="hidden-sm-down"/>
+                  <ThSort sort="date"     value="Date"     ctx={ this } className="hidden-sm-down"/>
+                  <th></th> 
                 </tr>
               </thead>
               <tbody>
