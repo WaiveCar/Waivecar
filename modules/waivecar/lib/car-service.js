@@ -103,7 +103,7 @@ module.exports = {
       available += car.isAvailable;
     });
     if (_user && !_user.hasAccess('admin')) {
-      fs.appendFile('/var/log/outgoing/carsrequest.txt', JSON.stringify([new Date(), available, _user.id]) + '\n');
+      fs.appendFile('/var/log/outgoing/carsrequest.txt', JSON.stringify([new Date(), available, _user.id, _user.latitude, _user.longitude]) + '\n');
     }
 
     return cars;
