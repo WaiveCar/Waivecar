@@ -161,7 +161,7 @@ module.exports = {
     if(promo === 'vip' || promo === 'seekdiscomfort') {
       res.fastTrack = 'yes';
       delete res.inside;
-      let userList = yield this.letInByRecord([record]);
+      let userList = yield this.letInByRecord([record], null, {intro: 'vip'});
       user = userList[0];
 
       let UserNote = Bento.model('UserNote');
@@ -183,7 +183,7 @@ module.exports = {
       res.fastTrack = 'yes';
       res.hyrecar = 'yes';
       delete res.inside;
-      yield this.letInByRecord([record]);
+      yield this.letInByRecord([record], null, {intro: 'hyrecar'});
     } else if(promo === 'levelbk') {
       res.level = 'yes';
       res.fastTrack = 'yes';
@@ -252,8 +252,21 @@ module.exports = {
   //
   *letInByRecord(recordList, _user, opts) {
     opts = opts || {};
+    let params = {};
     let nameList = [];
     let userList = [];
+
+    let introMap = {
+      waitlist: "Thanks for your patience. It's paid off because you are next in line and we've created your account.",
+      hyrecar: "Thanks for signing up through Hyrecar.",
+      vip: "You've been fast-tracked and skipped the waitlist!"
+    }
+
+    opts.intro = opts.intro || 'waitlist';
+    if(! (opts.intro in introMap) )  {
+      opts.intro = 'waitlist';
+    }
+    params.intro = introMap[opts.intro];
 
     for(var ix = 0; ix < recordList.length; ix++) {
 
@@ -292,7 +305,6 @@ module.exports = {
           yield record.update({userId: userRecord.id});
         } else {
           log.warn(`Unable to add user with email ${ record.email } and phone ${ record.phone }`);
-          console.log(ex);
           continue;
         }
       }
@@ -313,11 +325,11 @@ module.exports = {
           to       : record.email,
           from     : config.email.sender,
           subject  : 'Welcome to WaiveCar',
-          template : opts.email || 'waitlist-letin-email',
-          context  : {
+          template : opts.email || 'letin-email',
+          context  : Object.extend({}, params || {}, {
             name: fullName,
             passwordlink: `${config.api.uri}/reset-password?hash=${res.token.hash}&isnew=yes`
-          }
+          })
         };
         yield email.send(emailOpts);
       } catch(err) {
