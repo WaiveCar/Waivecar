@@ -345,6 +345,9 @@ module.exports = class CarsIndex extends React.Component {
         if (item.isCharging) { 
           word = 'Charging';
         }
+        if (word == 'Available') {
+          word = <b>{ word }</b>
+        }
         if (item.latitude > 34.019708 && item.latitude < 34.02 && item.longitude > -118.468597 && item.longitude < -118.467835) {
           home = <i className="fa fa-home"></i>;
           // This is the pico office.
