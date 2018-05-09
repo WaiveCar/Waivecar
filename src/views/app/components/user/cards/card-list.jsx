@@ -34,7 +34,7 @@ class CardList extends React.Component {
 
   creditMod(who, amount, cards, description) {
 
-  if(this.props.user.credit >= 0 && amount === 0) {
+    if(this.props.user.credit >= 0 && amount === 0) {
       snackbar.notify({
         type    : `success`,
         message : 'Nothing needs to be done. Thanks'
@@ -57,12 +57,16 @@ class CardList extends React.Component {
       message : 'processing...'
     });
 
-    api.post('/shop/quickcharge', {
+    let opts = {
       userId      : who.id,
-      source      : cards[0].id,
       amount      : amount * 100,
       description : description
-    }, (err, res) => {
+    };
+    if(cards.length) {
+      opts.source = cards[0].id;
+    }
+
+    api.post('/shop/quickcharge', opts, (err, res) => {
       this.setState({
         user: err ? err.data : res.user,
         processing: false
@@ -138,57 +142,66 @@ class CardList extends React.Component {
 
   renderCardTable() {
     let cards = this.shop.getState('cards');
-    if (!cards.length) {
-      return <div className="no-records">{ this.props.currentUser ? 'You have ' : 'User has'} not registered any cards.</div>;
-    }
 
-    return (
-      <div>
-        <div className='credit'>Current Credit: { this.amount(this.state.user.credit) }{
+    let header = (
+      <div className='credit'>Current Credit: { this.amount(this.state.user ? this.state.user.credit : this.props.user.credit) }
+        {
           auth.user().hasAccess('admin') ? 
             <div className="pull-right">
               <button onClick={ this.props.addCard } className='btn btn-link btn-sm'>Add Card</button>
               <button onClick={ this.addCredit.bind(this, this.props.user, cards) } className='btn btn-link btn-sm'>Add Credit</button>
             </div>
-            : 
-            this.renderNotice(this.state.user.credit)
-        }</div>
-        <table className="table-striped profile-table">
-          <thead>
-            <tr>
-              <th>Card number</th>
-              <th className="text-center">Brand</th>
-              <th className="text-center">Expiration Date</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-          {
-            cards.map(function (card) {
-              return (
-                <tr key={ card.id }>
-                  <td>**** - **** - **** - { card.last4 }</td>
-                  <td className="text-center">{ card.brand }</td>
-                  <td className="text-center">{ card.expMonth } / { card.expYear }</td>
-                  <td className="text-center">
-                    <button className="test" onClick={ this.shop.deleteCard.bind(this, card.id) } ref={ `delete-card-${ card.id }` }>
-                      <i className="material-icons">delete</i>
-                    </button>
-                  </td>
-                </tr>
-              )
-            }.bind(this))
-          }
-          </tbody>
-        </table>
-        <div style={{ textAlign: 'right' }}>
-          { 
-            auth.user().hasAccess('admin') ? 
-              <button onClick={ this.chargeUser.bind(this, this.props.user, cards) } className='btn btn-link btn-sm'>Charge User</button> 
-              : '' 
-          }
-          <button onClick={ this.creditMod.bind(this, this.props.user, 0, cards) } className={'btn btn-sm ' + (this.props.user.credit >= 0 ? 'btn-link disabled' : '' ) }>Attempt to Clear Balance</button> 
-        </div>
+            : this.renderNotice(this.state.user.credit)
+        }
+      </div>
+    );
+
+    let footer = (
+      <div style={{ textAlign: 'right' }}>
+        { 
+          auth.user().hasAccess('admin') ? 
+            <button onClick={ this.chargeUser.bind(this, this.props.user, cards) } className='btn btn-link btn-sm'>Charge User</button> 
+            : '' 
+        }
+        <button onClick={ this.creditMod.bind(this, this.props.user, 0, cards) } className={'btn btn-sm ' + (this.props.user.credit >= 0 ? 'btn-link disabled' : '' ) }>Attempt to Clear Balance</button> 
+      </div>
+    );
+
+    return (
+      <div>
+        { header } 
+        { !cards.length ?
+            <div className="no-records">{ this.props.currentUser ? 'You have ' : 'User has'} not registered any cards.</div>
+         : <table className="table-striped profile-table">
+            <thead>
+              <tr>
+                <th>Card number</th>
+                <th className="text-center">Brand</th>
+                <th className="text-center">Expiration Date</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+            {
+              cards.map(function (card) {
+                return (
+                  <tr key={ card.id }>
+                    <td>**** - **** - **** - { card.last4 }</td>
+                    <td className="text-center">{ card.brand }</td>
+                    <td className="text-center">{ card.expMonth } / { card.expYear }</td>
+                    <td className="text-center">
+                      <button className="test" onClick={ this.shop.deleteCard.bind(this, card.id) } ref={ `delete-card-${ card.id }` }>
+                        <i className="material-icons">delete</i>
+                      </button>
+                    </td>
+                  </tr>
+                )
+              }.bind(this))
+            }
+            </tbody>
+          </table>
+        }
+        { footer }
       </div>
     );
   }
