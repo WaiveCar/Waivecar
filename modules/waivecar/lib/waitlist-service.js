@@ -326,14 +326,14 @@ module.exports = {
           from     : config.email.sender,
           subject  : 'Welcome to WaiveCar',
           template : opts.email || 'letin-email',
-          context  : Object.extend({}, params || {}, {
+          context  : Object.assign({}, params || {}, {
             name: fullName,
             passwordlink: `${config.api.uri}/reset-password?hash=${res.token.hash}&isnew=yes`
           })
         };
         yield email.send(emailOpts);
       } catch(err) {
-        log.warn('Failed to deliver notification email: ', emailOpts);      
+        log.warn('Failed to deliver notification email: ', emailOpts, err);      
       }
     }
     if (_user) {
