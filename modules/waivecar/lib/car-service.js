@@ -76,8 +76,9 @@ module.exports = {
 
     var hour = (new Date()).getHours();
 
-    // Don't show la cars between 1 and 3am pacific time.
-    if(hour >= 4 && hour < 8) {
+    // Don't show la cars between 1 and 5am pacific time.
+    // Unless you are an admin
+    if(hour >= 4 && hour < 8 && (_user && !_user.hasAccess('admin')) ) {
       opts.include = [{
         model: 'GroupCar',
         as: 'groupCar',
@@ -95,23 +96,6 @@ module.exports = {
     }
 
     return yield Car.find(opts);
-
-    /*
-    if (_user && _user.hasAccess('admin')) {
-      let bookings = yield Booking.find({ where : { status : 'started' } });
-      this.joinCarsWithBookings(cars, bookings);
-    }
-
-    cars.forEach(function(car) {
-      car.license = car.license || '';
-      available += car.isAvailable;
-    });
-
-    if (_user && !_user.hasAccess('admin')) {
-      fs.appendFileSync('/var/log/outgoing/carsrequest.txt', JSON.stringify([new Date(), available, _user.id]) + '\n');
-    }
-    return cars;
-    */
   },
 
   joinCarsWithBookings(cars, bookings) {
