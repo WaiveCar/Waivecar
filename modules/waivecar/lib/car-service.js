@@ -95,7 +95,18 @@ module.exports = {
       opts.where['$or'].push({ userId: _user.id });
     }
 
-    return yield Car.find(opts);
+    let cars = yield Car.find(opts);
+
+    let available = 0;
+    cars.forEach(function(car) {
+      car.license = car.license || '';
+      available += car.isAvailable;
+    });
+    if (_user && !_user.hasAccess('admin')) {
+      fs.appendFile('/var/log/outgoing/carsrequest.txt', JSON.stringify([new Date(), available, _user.id]) + '\n');
+    }
+
+    return cars;
   },
 
   joinCarsWithBookings(cars, bookings) {
