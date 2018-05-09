@@ -305,6 +305,11 @@ module.exports = {
           yield record.update({userId: userRecord.id});
           if(userRecord.status === 'waitlist') {
             yield userRecord.update({status: 'active'});
+          } else {
+            // Otherwise, the user is onboarded and we should just continue
+            // with the next user and make sure we don't add them to the email
+            // list or generate a reset token.
+            continue;
           }
         } else {
           log.warn(`Unable to add user with email ${ record.email } and phone ${ record.phone }`);
