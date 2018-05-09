@@ -303,6 +303,7 @@ module.exports = {
           // presuming that they didn't receive or lost the previous. 
           log.warn(`Found user with email ${ record.email } or phone ${ record.phone }. Not adding`);
           yield record.update({userId: userRecord.id});
+          yield userRecord.update({status: 'active'});
         } else {
           log.warn(`Unable to add user with email ${ record.email } and phone ${ record.phone }`);
           continue;
