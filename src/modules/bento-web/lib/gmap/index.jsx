@@ -200,7 +200,6 @@ module.exports = class GMap extends React.Component {
     let markerIcon = this.getMarkerIcon();
     let ix = 0;
     markers.forEach((val) => {
-      console.log(val);
       var 
         marker = false;
         importance = 0, 
@@ -217,6 +216,10 @@ module.exports = class GMap extends React.Component {
         });
         marker.setMap(this.map);
       } else if (val.license) {
+        let duration = (moment.duration(moment.utc().diff(moment(val.lastActionTime)))).asMilliseconds();
+        let lastAction = parseInt(moment.utc(duration).format('H'), 10);
+        let lastFormatted = moment.utc(duration).format('H:mm');
+
         label = val.license.replace(/[^\d]*/, '');
         if (val.charge < 25 && !val.isCharging) {
           importance++;
@@ -224,11 +227,23 @@ module.exports = class GMap extends React.Component {
         if (val.charge < 15 && !val.isCharging) {
           importance++;
         }
+        if(lastAction > 5) {
+          importance++;
+        }
+        if(lastAction > 11) {
+          importance++;
+        }
+        if(lastAction > 18) {
+          importance++;
+        }
+
+        /*
         if(val.booking && val.user && !val.user.isWaivework) {
           if( moment.utc().diff(moment(val.booking[0].createdAt) ) / 1000 / 3600 > 3 ) {
             importance++;
           }
         }
+        */
 
         markerIcon = this.getImportanceIcon(importance);
       } else if (val.type) {
@@ -264,7 +279,7 @@ module.exports = class GMap extends React.Component {
           } else {
             let bid = val.booking[0].id;
             content += `<div> ${ val.booking[0].status } <a style="color:darkgreen" href=/bookings/${ bid }>Booking ${bid}</a></div>`;
-            content += `<div>${ moment(val.booking[0].createdAt).format('YYYY-MM-DD HH:mm:ss') }</div>`;
+            content += `<div>${ lastFormatted }</div>`;
           }
           infoWindow.setContent(content);
           infoWindow.setPosition(e.latLng);
