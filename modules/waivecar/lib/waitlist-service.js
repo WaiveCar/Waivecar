@@ -284,7 +284,7 @@ module.exports = {
           passwordEncrypted: record.password,
           phone: record.phone,
           email: record.email,
-          status: 'pending'
+          status: 'active'
         }, _user);
       } catch(ex) {
         userRecord = yield User.findOne({ 
