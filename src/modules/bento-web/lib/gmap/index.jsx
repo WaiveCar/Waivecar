@@ -229,14 +229,20 @@ module.exports = class GMap extends React.Component {
           if (val.charge < 14 && !val.isCharging) {
             importance++;
           }
-          if(lastAction > 5) {
-            importance++;
+          if(val.user) {
+            label = [val.user.firstName[0], val.user.lastName].join(' ')
           }
-          if(lastAction > 11) {
-            importance++;
-          }
-          if(lastAction > 20) {
-            importance++;
+
+          if(!(val.user && val.user.isWaivework)) {
+            if(lastAction > 5) {
+              importance++;
+            }
+            if(lastAction > 11) {
+              importance++;
+            }
+            if(lastAction > 20) {
+              importance++;
+            }
           }
         }
 
