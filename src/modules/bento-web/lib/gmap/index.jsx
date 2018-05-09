@@ -201,7 +201,8 @@ module.exports = class GMap extends React.Component {
     let ix = 0;
     markers.forEach((val) => {
       var 
-        marker = false;
+        lastFormatted = '',
+        marker = false,
         importance = 0, 
         label = val.name;
       if (val.shape) {
@@ -218,23 +219,25 @@ module.exports = class GMap extends React.Component {
       } else if (val.license) {
         let duration = (moment.duration(moment.utc().diff(moment(val.lastActionTime)))).asMilliseconds();
         let lastAction = parseInt(moment.utc(duration).format('H'), 10);
-        let lastFormatted = moment.utc(duration).format('H:mm');
+        lastFormatted = moment.utc(duration).format('H:mm');
 
         label = val.license.replace(/[^\d]*/, '');
-        if (val.charge < 25 && !val.isCharging) {
-          importance++;
-        }
-        if (val.charge < 15 && !val.isCharging) {
-          importance++;
-        }
-        if(lastAction > 5) {
-          importance++;
-        }
-        if(lastAction > 11) {
-          importance++;
-        }
-        if(lastAction > 18) {
-          importance++;
+        if(!val.inRepair) {
+          if (val.charge < 25 && !val.isCharging) {
+            importance++;
+          }
+          if (val.charge < 14 && !val.isCharging) {
+            importance++;
+          }
+          if(lastAction > 5) {
+            importance++;
+          }
+          if(lastAction > 11) {
+            importance++;
+          }
+          if(lastAction > 20) {
+            importance++;
+          }
         }
 
         /*
