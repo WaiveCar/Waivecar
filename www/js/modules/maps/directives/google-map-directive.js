@@ -382,7 +382,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         var markerObj = new google.maps.Marker({
           map: this.map,
           animation: google.maps.Animation.DROP,
-          position: mapToGoogleLatLong(marker),
+          position: ctrl.mapToGoogleLatLong(marker),
           icon: iconOpt
         });
 
