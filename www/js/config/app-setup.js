@@ -120,14 +120,17 @@ var run = [
   'IntercomService',
   '$ionicSideMenuDelegate',
   function Run($rootScope, $cordovaKeyboard, $ionicPlatform, $auth, $state, IntercomService, $ionicSideMenuDelegate) {
+    /*
     $ionicPlatform.ready(function() {
       if (ionic.Platform.isWebView()) {
         $cordovaKeyboard.hideAccessoryBar(false);
       }
     });
-    $rootScope.$on('$stateChangeStart', function(event, toState) {
+    */
+    $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams) {
 
-        var authRequired;
+      //console.log(toState, fromState, JSON.stringify($auth.me));
+      var authRequired;
       if (toState && _.has(toState, 'data') && _.has(toState.data, 'auth')) {
         authRequired = toState.data.auth;
       }
@@ -155,6 +158,12 @@ var run = [
       } else if (!isAuthenticated && authRequired) {
         event.preventDefault();
         $state.go('auth');
+        // if we can't figure out where else to go and we've falled through here
+        // then the chances are that the user still needs to set up more of their
+        // account so we drop them into the account setup page.
+      } else if(isAuthenticated && fromState.name === '' && toState.name !== 'users-edit' && !$auth.me.tested) {
+        event.preventDefault();
+        $state.go('users-edit');
       }
 
       var showIntercom = toState && toState.data && toState.data.intercom;
