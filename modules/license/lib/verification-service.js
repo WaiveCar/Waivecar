@@ -135,8 +135,7 @@ module.exports = class LicenseVerificationService extends Service {
         let result = yield this.getResult(update);
 
         if (result === 'consider') {
-          yield notify.slack({ text : `:bicyclist: ${ user.link() } license moved to 'consider' }`
-          }, { channel : '#user-alerts' });
+          yield notify.slack({ text : `:bicyclist: ${ user.link() } license moved to 'consider'` }, { channel : '#user-alerts' });
         }
 
         yield license.update({
