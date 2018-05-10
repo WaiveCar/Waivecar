@@ -137,12 +137,12 @@ function ApplicationController ($rootScope, $scope, $injector) {
   }
 
   function setupState() {
+    LocationService.getCurrentLocation();
+    $data.initialize('locations').catch($message.error);
+    myState();
     if($data.me.tested) {
-      LocationService.getCurrentLocation();
-      $data.initialize('locations').catch($message.error);
       // this hopefully loads up a ride screen if necessary
       $ride.init();
-      myState();
 
       NotificationService.setupPushNotifications();
       IntercomService.registerIdentifiedUser($auth.me);
