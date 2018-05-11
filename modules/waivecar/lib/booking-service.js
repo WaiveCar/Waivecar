@@ -569,12 +569,13 @@ module.exports = class BookingService extends Service {
   }
 
   static *getZone(car) {
-    var zone = false;
+    let zone = false;
     (yield Location.find({type: 'zone'})).forEach(function(row) {
-      //geolib.isPointInside
-      console.log(row.shape);
+      if(geolib.isPointInside({latitude: car.latitude, longitude: car.longitude}, row.shape)){
+        return row;
+      }
     });
-    return car;
+    return null;
   }
 
   /**
@@ -922,9 +923,12 @@ module.exports = class BookingService extends Service {
     }
 
     // The user should be seeing cars to rent now.
+    let zone = yield this.getZone(car);
+    let address = yield this.getAddress(car.latitude, car.longitude);
+
     let message = yield this.updateState('completed', _user, user);
     yield notify.sendTextMessage(user, `Thanks for renting with WaiveCar! Your rental is complete. You can see your trip summary in the app.`);
-    yield notify.slack({ text : `:coffee: ${ message } | ${ car.info() } | ${ booking.link() }`
+    yield notify.slack({ text : `:coffee: ${ message } | ${ car.info() } | ${ booking.link() }, ${zone ? 'Zone: ' + zone.name : ''} Address: ` + address
     }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
 
