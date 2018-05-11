@@ -67,6 +67,11 @@ Route.del('/locations/:id', [ 'isAuthenticated', 'isAdmin', 'LocationsController
 
 Route.get('/locations/dropoff', 'LocationsController@dropoff');
 
+// ### EVGo chargers
+
+Route.put('/chargers/unlock/:id/:charger', 'ChargersController@unlock');
+Route.get('/chargers/list', 'ChargersController@chargers');
+
 
 // ### Notifications
 
