@@ -274,18 +274,23 @@ module.exports = {
       let userRecord = false;
       let fullName = `${record.firstName} ${record.lastName}`;
 
+      let opts = {
+        firstName: record.firstName,
+        lastName: record.lastName,
+        // we already bcrypted their password when
+        // we passed it into the waitlist
+        passwordEncrypted: record.password,
+        email: record.email,
+        status: 'active'
+      };
+
+      if (record.phone) {
+        opts.phone = record.phone;
+      }
+
       // We create their user account.
       try {
-        userRecord = yield UserService.store({
-          firstName: record.firstName,
-          lastName: record.lastName,
-          // we already bcrypted their password when
-          // we passed it into the waitlist
-          passwordEncrypted: record.password,
-          phone: record.phone,
-          email: record.email,
-          status: 'active'
-        }, _user);
+        userRecord = yield UserService.store(opts, _user);
       } catch(ex) {
         userRecord = yield User.findOne({ 
           where: { 
