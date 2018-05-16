@@ -1,5 +1,6 @@
 'use strict';
 
+let apiConfig   = Bento.config.api;
 let Booking = Bento.model('Booking');
 
 let Utils = require('sequelize/lib/utils');
@@ -228,6 +229,10 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
         },
         order: [['created_at', 'DESC']]
       });
+    },
+
+    link: function() {
+      return `<${ apiConfig.uri }/cars/${ this.id }|${ this.license }>`;
     },
 
     // get last log for current car

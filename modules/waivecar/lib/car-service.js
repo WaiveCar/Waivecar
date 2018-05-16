@@ -455,7 +455,7 @@ module.exports = {
     }
 
     if (data.boardVoltage < 10.5 && data.isIgnitionOn) {
-      let message = `:skull: ${ existingCar.license } board voltage is at ${ data.boardVoltage }v`;
+      let message = `:skull: ${ existingCar.link() } board voltage is at ${ data.boardVoltage }v`;
       if (existingCar.userId) {
         let user = User.findById(existingCar.userId);
         message += ` (Current user is ${ user.link() })`;
