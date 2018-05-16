@@ -64,7 +64,7 @@ var checkBooking = co.wrap(function *(booking) {
 
       if (duration >= 11 * 60 && !booking.isFlagged('11h-warning')) {
         yield booking.flag('11h-warning');
-        yield notify.notifyAdmins(`:waning_crescent_moon: ${ user.name() } has had ${ car.info() } for 11 hours`, [ 'slack' ], { channel : '#rental-alerts' });
+        yield notify.notifyAdmins(`:waning_crescent_moon: ${ user.link() } has had ${ car.link() } for 11 hours`, [ 'slack' ], { channel : '#rental-alerts' });
         yield notify.sendTextMessage(user, 'Hey there, WaiveCar has a 12 hour rental limit. Please end your rental in the next hour. Thanks!');
       }
     }
