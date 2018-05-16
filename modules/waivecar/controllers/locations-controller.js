@@ -33,8 +33,11 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
       return row;
     });
 
-    let chargers = yield Chargers.list();
-    return locations.concat(chargers);
+    return locations;
+    //
+    // let chargers = yield Chargers.list();
+    // return locations.concat(chargers);
+    //
   };
 
   controller.dropoff = function *() {
