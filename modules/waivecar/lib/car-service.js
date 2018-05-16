@@ -455,7 +455,13 @@ module.exports = {
     }
 
     if (data.boardVoltage < 10.5 && data.isIgnitionOn) {
-      yield notify.notifyAdmins(`:skull: ${ existingCar.license } board voltage is at ${ data.boardVoltage }v`, [ 'slack' ], { channel : '#rental-alerts' });
+      let message = `:skull: ${ existingCar.license } board voltage is at ${ data.boardVoltage }v`;
+      if (existingCar.userId) {
+        let user = User.findById(existingCar.userId);
+        message += ` (Current user is ${ user.link() })`;
+      }
+
+      yield notify.notifyAdmins(message, [ 'slack' ], { channel : '#rental-alerts' });
     }
 
     // We find out if our charging status has changed
