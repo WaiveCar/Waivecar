@@ -396,6 +396,22 @@ module.exports = {
     return yield Car.findById(deviceId);
   },
 
+  *closest(long, lat) {
+    let all = (yield Car.find()).map((row) => {
+      let obj = Object.assign({}, row);
+      obj.distance = Math.sqrt( Math.pow(long - row.longitude, 2) + Math.pow(lat - row.latitude, 2) );
+      return obj;
+    });
+
+    let nearest = all.sort((a, b) => {
+      return a.distance - b.distance;
+    })[0];
+
+    if(nearest.distance < 0.1) {
+      return nearest;
+    }
+  },
+
   /**
    * A convenience method to update the local Car (to enable pre-save model transformations)
    * @param  {Number} id          car Id
