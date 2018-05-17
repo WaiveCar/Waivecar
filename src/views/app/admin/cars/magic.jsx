@@ -13,7 +13,7 @@ module.exports = class Magic extends React.Component {
   }
 
   doAct(position) {
-    console.log(position, arguments);
+    this.setState({action: 'processing...'});
     let act = this.props.params && this.props.params.act || 'unlock';
     api.put(`/magic/${ act }?latitude=${ position.coords.latitude }&longitude=${ position.coords.longitude }`, {}, (err, res) => {
       if(res.car) {
@@ -55,11 +55,10 @@ module.exports = class Magic extends React.Component {
 
     return (
       <div>
-        <h1> { this.state.action }{ this.state.car ? this.state.car.license : '' } </h1>
+        <h1> { this.state.action } { this.state.car ? this.state.car.license : '' } </h1>
         { this.state.action ?
           <div>
-            <button className="btn" onClick={ this.lock() }>lock</button>
-            <button className="btn" onClick={ this.unlock() }>unlock</button>
+            <button className="btn" onClick={ this.lock.bind(this) }>lock</button> <button className="btn" onClick={ this.unlock.bind(this) }>unlock</button>
           </div> : ''
         }
       </div>
