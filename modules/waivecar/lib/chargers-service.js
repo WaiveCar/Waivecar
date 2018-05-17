@@ -1,6 +1,6 @@
 'use strict';
 
-let request = require('co-request');
+let request = require('./request-cache-service');
 let error = Bento.Error;
 let config = Bento.config;
 let _ = require('lodash');
@@ -11,21 +11,17 @@ let Car       = Bento.model('Car');
 
 
 module.exports = {
-
-    /**
-     * Fetch api versions
-     * */
   *getVersions() {
     let url = 'https://evgotest.driivz.com/externalIncoming/ocpi/cpo/versions';
 
     let reqResponse = yield request({
-        url     : url,
-        method  : 'GET',
-        headers : {
-            Referer : config.api.uri,
-            Accept  : 'application/json',
-            Authorization: 'Token ' + config.evgo.token
-        }
+      url     : url,
+      method  : 'GET',
+      headers : {
+        Referer : config.api.uri,
+        Accept  : 'application/json',
+        Authorization: 'Token ' + config.evgo.token
+      }
     });
 
     let versionUrlsArray = JSON.parse(reqResponse.body).data;
@@ -69,9 +65,9 @@ module.exports = {
      });
 
      return response.body;
-    },
+   },
 
-    *list() {
+  *list() {
         //mocked token
         let requestObj = this.prepareRequest('locations', 'GET');
         let response = yield request(requestObj);
@@ -79,84 +75,84 @@ module.exports = {
         let result = JSON.parse(response.body);
         let locations = (result.data || []).map(loc => this.mapCharger(loc));
         return locations.filter( loc => GeocodingService.inDrivingZone(loc.latitude, loc.longitude));
-    },
+  },
 
-    *getCharger(id) {
-        let requestObj = this.prepareRequest(`locations/${id}`, 'GET');
-        let response = yield request(requestObj);
-        return JSON.parse(response.body).data;
-    },
+  *getCharger(id) {
+      let requestObj = this.prepareRequest(`locations/${id}`, 'GET');
+      let response = yield request(requestObj);
+      return JSON.parse(response.body).data;
+  },
 
-    prepareRequest(url, method) {
-        return {
-            url     : config.evgo.cpoUrl + url,
-            method  : method,
-            headers : {
-                Referer : config.api.uri,
-                Accept  : 'application/json',
-                Authorization: 'Token ' + config.evgo.token
-            }
-        }
-    },
-
-    mapCharger(loc) {
-        let availableEvses = (loc.evses || []).filter((evse) => {return evse.status === 'AVAILABLE';});
-
-        let newLoc = {
-            id: 'charger_' + loc.id,
-            address: loc.address,
-            type: 'chargingStation',
-            latitude: loc.coordinates.latitude,
-            longitude: loc.coordinates.longitude,
-            name: loc.name,
-            status: availableEvses.length > 0 ? 'available' : 'unavailable'
-        };
-
-        if (newLoc.name === 'LAXN512DC1') {
-            newLoc.address = 'test charger location';
-            newLoc.latitude = 34.0199;
-            newLoc.longitude = -118.48908000;
-        };
-
-        return newLoc;
-    },
-
-    *startChargeSession(chargerId){
-        let charger = yield this.getCharger(chargerId);
-        let availableEvses = (charger.evses || []).filter((evse) => {return evse.status === 'AVAILABLE';});
-
-        let status = availableEvses.length > 0;
-
-        if (!status) {
-            throw  error.parse({
-                code    : 'NO_EVSE_AVAILABLE',
-                message : 'There is no available EVSE at the moment.'
-            }, 400);
-        }
-
-        let evse = availableEvses[0];
-
-        let startSession = {
-            location_id: chargerId,
-            evse_uid: evse.id
-        };
-
-        let startCommand = this.prepareRequest('commands/START_SESSION', 'POST');
-        startCommand.body = JSON.stringify(startSession);
-        let response = yield request(startCommand);
-        return JSON.parse(response.body).data;
-    },
-
-    *stopChargeSession(chargerId){
-
-    },
-
-    *unlock(carId, chargerId) {
-        let car = yield Car.findById(carId);
-        let id = chargerId.replace('charger_', '');
-        let response = yield this.startChargeSession(id);
-        car.isCharging = response  === 'ACCEPTED';
-        //todo: send update status for charger and unlock available connector
-        return yield cars.syncUpdate(carId, car);
+  prepareRequest(url, method) {
+    return {
+      url     : config.evgo.cpoUrl + url,
+      method  : method,
+      headers : {
+        Referer : config.api.uri,
+        Accept  : 'application/json',
+        Authorization: 'Token ' + config.evgo.token
+      }
     }
+  },
+
+  mapCharger(loc) {
+      let availableEvses = (loc.evses || []).filter((evse) => {return evse.status === 'AVAILABLE';});
+
+      let newLoc = {
+          id: 'charger_' + loc.id,
+          address: loc.address,
+          type: 'chargingStation',
+          latitude: loc.coordinates.latitude,
+          longitude: loc.coordinates.longitude,
+          name: loc.name,
+          status: availableEvses.length > 0 ? 'available' : 'unavailable'
+      };
+
+      if (newLoc.name === 'LAXN512DC1') {
+          newLoc.address = 'test charger location';
+          newLoc.latitude = 34.0199;
+          newLoc.longitude = -118.48908000;
+      };
+
+      return newLoc;
+  },
+
+  *startChargeSession(chargerId){
+      let charger = yield this.getCharger(chargerId);
+      let availableEvses = (charger.evses || []).filter((evse) => {return evse.status === 'AVAILABLE';});
+
+      let status = availableEvses.length > 0;
+
+      if (!status) {
+          throw  error.parse({
+              code    : 'NO_EVSE_AVAILABLE',
+              message : 'There is no available EVSE at the moment.'
+          }, 400);
+      }
+
+      let evse = availableEvses[0];
+
+      let startSession = {
+          location_id: chargerId,
+          evse_uid: evse.id
+      };
+
+      let startCommand = this.prepareRequest('commands/START_SESSION', 'POST');
+      startCommand.body = JSON.stringify(startSession);
+      let response = yield request(startCommand);
+      return JSON.parse(response.body).data;
+  },
+
+  *stopChargeSession(chargerId){
+
+  },
+
+  *unlock(carId, chargerId) {
+      let car = yield Car.findById(carId);
+      let id = chargerId.replace('charger_', '');
+      let response = yield this.startChargeSession(id);
+      car.isCharging = response  === 'ACCEPTED';
+      //todo: send update status for charger and unlock available connector
+      return yield cars.syncUpdate(carId, car);
+  }
 };
