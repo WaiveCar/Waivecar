@@ -4,12 +4,12 @@ let request = require('co-request');
 let md5     = require('md5');
 let fs = require('fs');
 
-let CACHE = 'request-cache';
+let CACHE = '../request-cache';
 let MAXAGE = 1000 * 60 * 60 * 18;
 
 module.exports = function*(params, opts) {
+  let cache_point = `${CACHE}/${md5(JSON.stringify(params))}`;
   if (!params.method || params.method.toLowerCase() === 'get') {
-    let cache_point = `${CACHE}/${md5(JSON.stringify(params))}`;
     opts = opts || {};
     opts.maxAge = opts.maxAge || MAXAGE;
 
