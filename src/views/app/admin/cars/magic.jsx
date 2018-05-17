@@ -12,8 +12,9 @@ module.exports = class Magic extends React.Component {
   }
 
   findCar(position) {
+    console.log(position, arguments);
     let act = this.props.params && this.props.params.act || 'unlock';
-    api.put('/magic/' + act + '?latitude=' + position.latitude + '&longitude=' + position.longitude, {}, (err, res) => {
+    api.put('/magic/' + act + '?latitude=' + position.coords.latitude + '&longitude=' + position.coords.longitude, {}, (err, res) => {
       if(res.car) {
         this.setState({car: res.car.license });
       } else {
