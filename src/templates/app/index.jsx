@@ -99,6 +99,11 @@ templates.register('app', {
         onEnter   : policies.isAdministrator
       },
       {
+        path      : '/magic',
+        component : require('../../views/app/admin/cars/magic'),
+        onEnter   : policies.isAdministrator
+      },
+      {
         path      : '/admin/waitlist',
         component : require('../../views/app/admin/waitlist'),
         onEnter   : policies.isAdministrator
