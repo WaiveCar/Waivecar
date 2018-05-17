@@ -15,7 +15,7 @@ let error     = Bento.Error;
 hooks.set('auth:login', function *(payload) {
   let user = yield getUser(payload.identifier);
   if (!user) {
-    throw invalidCredentials('The email is unrecognized. Please check the spelling.);
+    throw invalidCredentials('The email is unrecognized. Please check the spelling.');
   }
 
   if(user.status === 'waitlist') {
@@ -31,7 +31,7 @@ hooks.set('auth:login', function *(payload) {
 
   let password = yield bcrypt.compare(payload.password, user.password);
   if (!password) {
-    throw invalidCredentials('We found an account with that email but the password is incorrect. Please try again');
+    throw invalidCredentials('We found an account with that email but the password is incorrect. Please try again.');
   }
 
   yield verifyUser(user, payload);
