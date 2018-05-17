@@ -12,7 +12,8 @@ module.exports = class Magic extends React.Component {
   }
 
   findCar(position) {
-    api.put('/magic/unlock?latitude=' + position.latitude + '&longitude=' + position.longitude, {}, (err, res) => {
+    let act = this.props.params && this.props.params.act || 'unlock';
+    api.put('/magic/' + act + '?latitude=' + position.latitude + '&longitude=' + position.longitude, {}, (err, res) => {
       if(res.car) {
         this.setState({car: res.car.license });
       } else {
@@ -26,7 +27,7 @@ module.exports = class Magic extends React.Component {
   }
 
   componentDidMount() {
-    navigator.geolocation.getCurrentPosition(this.findCar, this.fail, {
+    navigator.geolocation.getCurrentPosition(this.findCar.bind(this), this.fail.bind(this), {
       enableHighAccuracy: true,
       timeout: 5000,
       maximumAge: 0
