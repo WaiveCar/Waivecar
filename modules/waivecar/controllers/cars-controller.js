@@ -27,6 +27,17 @@ Bento.Register.Controller('CarsController', function(controller) {
     return yield car.update(id, this.payload, this.auth.user);
   };
 
+  controller.magic = function *(command) {
+    let close = yield car.closest(this.query.longitude, this.query.latitude);
+    if(close) {
+      let res = yield controller.command.call(this, close.id, command);
+      return {
+        car: close,
+        status: res
+      };
+    }
+  };
+
   /**
    * Execute a command on a single car.
    * @param  {Number} id The Car Id.
