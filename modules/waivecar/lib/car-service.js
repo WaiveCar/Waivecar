@@ -403,10 +403,16 @@ module.exports = {
       obj.distance = geolib.getDistance({longitude: long, latitude: lat}, row);
       return obj;
     });
+    let nearest = [];
 
-    let nearest = all.filter((row) => {
-      return row.distance < 20;
-    });
+    for(var radius = 20; radius < 300; radius+=20 ) {
+      nearest = all.filter((row) => {
+        return row.distance < radius;
+      });
+      if(nearest.length > 1) {
+        break;
+      }
+    }
 
     return nearest;
   },
