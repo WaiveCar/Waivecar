@@ -29,13 +29,16 @@ Bento.Register.Controller('CarsController', function(controller) {
 
   controller.magic = function *(command) {
     let close = yield car.closest(this.query.longitude, this.query.latitude);
-    if(close) {
-      let res = yield controller.command.call(this, close.id, command);
+
+    if(close.length === 1) {
+      let res = yield controller.command.call(this, close[0].id, command);
       return {
         car: close,
         status: res
       };
-    }
+    } 
+
+    return { candidates: close };
   };
 
   /**
@@ -58,6 +61,10 @@ Bento.Register.Controller('CarsController', function(controller) {
       case 'repair'             : return yield car.updateRepair(id, this.auth.user);
       case 'visible'            : return yield car.updateVisibility(id, true, this.auth.user);
       case 'hidden'             : return yield car.updateVisibility(id, false, this.auth.user);
+
+      case 'retrieve'           : return [ yield this.command(id, 'unlock'), yield this.command(id, 'unlock-immobilizer'), yield this.command(id, 'unavailable') ];
+      case 'rentable'           : return [ yield this.command(id, 'lock'), yield this.command(id, 'lock-immobilizer'), yield this.command(id, 'available') ];
+
       default                   : {
         throw error.parse({
           code    : `CAR_UNRECOGNIZED_COMMAND`,

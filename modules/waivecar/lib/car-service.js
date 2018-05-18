@@ -25,6 +25,7 @@ let User = Bento.model('User');
 let Car  = Bento.model('Car');
 let Booking = Bento.model('Booking');
 
+let geolib      = require('geolib');
 let fs = require('fs');
 let carMap = false;
 
@@ -399,17 +400,15 @@ module.exports = {
   *closest(long, lat) {
     let all = (yield Car.find()).map((row) => {
       let obj = Object.assign({}, row);
-      obj.distance = Math.sqrt( Math.pow(long - row.longitude, 2) + Math.pow(lat - row.latitude, 2) );
+      obj.distance = geolib.getDistance({longitude: long, latitude: lat}, row);
       return obj;
     });
 
-    let nearest = all.sort((a, b) => {
-      return a.distance - b.distance;
-    })[0];
+    let nearest = all.filter((row) => {
+      return row.distance < 20;
+    });
 
-    if(nearest.distance < 0.1) {
-      return nearest;
-    }
+    return nearest;
   },
 
   /**
