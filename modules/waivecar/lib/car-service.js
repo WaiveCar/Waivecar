@@ -147,9 +147,9 @@ module.exports = {
         { 
           model : 'Booking',
           as: 'booking',
-          order: [
-            ['created_at', 'DESC']
-          ],
+          where: {
+            status: { $in : ['reserved','pending','ready','started','ended'] }
+          },
           limit: 1
         }
       ]
