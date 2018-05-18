@@ -62,8 +62,8 @@ Bento.Register.Controller('CarsController', function(controller) {
       case 'visible'            : return yield car.updateVisibility(id, true, this.auth.user);
       case 'hidden'             : return yield car.updateVisibility(id, false, this.auth.user);
 
-      case 'retrieve'           : return [ yield this.command(id, 'unlock'), yield this.command(id, 'unlock-immobilizer'), yield this.command(id, 'unavailable') ];
-      case 'rentable'           : return [ yield this.command(id, 'lock'), yield this.command(id, 'lock-immobilizer'), yield this.command(id, 'available') ];
+      case 'retrieve'           : return [ yield controller.command(id, 'unlock'), yield controller.command(id, 'unlock-immobilizer'), yield controller.command(id, 'unavailable') ];
+      case 'rentable'           : return [ yield controller.command(id, 'lock'), yield controller.command(id, 'lock-immobilizer'), yield controller.command(id, 'available') ];
 
       default                   : {
         throw error.parse({
