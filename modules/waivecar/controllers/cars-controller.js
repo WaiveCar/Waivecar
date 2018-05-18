@@ -41,6 +41,14 @@ Bento.Register.Controller('CarsController', function(controller) {
     return { candidates: close };
   };
 
+  controller.multi = function *(id, commandList) {
+    let res = [];
+    for(var i = 0; i < commandList.length; i++) {
+      res.push(yield controller.command.call(this, id, commandList[i]))
+    }
+    return res;
+  }
+
   /**
    * Execute a command on a single car.
    * @param  {Number} id The Car Id.
@@ -62,8 +70,8 @@ Bento.Register.Controller('CarsController', function(controller) {
       case 'visible'            : return yield car.updateVisibility(id, true, this.auth.user);
       case 'hidden'             : return yield car.updateVisibility(id, false, this.auth.user);
 
-      case 'retrieve'           : return [ yield controller.command(id, 'unlock'), yield controller.command(id, 'unlock-immobilizer'), yield controller.command(id, 'unavailable') ];
-      case 'rentable'           : return [ yield controller.command(id, 'lock'), yield controller.command(id, 'lock-immobilizer'), yield controller.command(id, 'available') ];
+      case 'retrieve'           : return yield controller.multi.call(this, id, [ 'unlock', 'unlock-immobilizer', 'unavailable' ]);
+      case 'rentable'           : return yield controller.multi.call(this, id, [ 'lock', 'lock-immobilizer', 'available' ]);
 
       default                   : {
         throw error.parse({
