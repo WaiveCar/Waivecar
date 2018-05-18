@@ -195,7 +195,7 @@ module.exports = {
     });
     perf.push("misc " + (new Date() - start));
 
-    //console.log(perf.join(' | '));
+    console.log(perf.join(' | '));
     return cars;
   },
 
