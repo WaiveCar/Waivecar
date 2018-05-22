@@ -66,7 +66,9 @@ class TableIndex extends React.Component {
     }
     if(amount) {
       this.letinreal({
-        idList: this.table.data.map((row) => {
+        idList: this.table.data.filter((row) => {
+          return row.accountType === 'normal';
+        }).map((row) => {
           return row.id;
         }).slice(0, amount)
       });
@@ -82,6 +84,7 @@ class TableIndex extends React.Component {
       <tr key={ waitlist.id }>
           <td>{ waitlist.firstName } { waitlist.lastName }</td>
           <td className="hidden-sm-down">{ waitlist.placeName }</td> 
+          <td className="hidden-sm-down">{ waitlist.accountType }</td> 
           <td className="hidden-sm-down">{ moment(waitlist.createdAt).format('YYYY-MM-DD HH:mm:ss') }</td> 
           <td>
           <a style={{ cursor: 'pointer' }} onClick={ this.letinbyid.bind(this, waitlist.id) }>
@@ -115,6 +118,7 @@ class TableIndex extends React.Component {
                 <tr ref="sort">
                   <ThSort sort="name"     value="Name"     ctx={ this } />
                   <ThSort sort="location" value="Location" ctx={ this } className="hidden-sm-down"/>
+                  <ThSort sort="accountType"     value="Type"     ctx={ this } className="hidden-sm-down"/>
                   <ThSort sort="date"     value="Date"     ctx={ this } className="hidden-sm-down"/>
                   <th></th> 
                 </tr>
