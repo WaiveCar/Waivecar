@@ -164,17 +164,19 @@ module.exports = {
       let userList = yield this.letInByRecord([record], null, {intro: 'vip'});
       user = userList[0];
 
-      let UserNote = Bento.model('UserNote');
+      if(user) {
+        let UserNote = Bento.model('UserNote');
 
-      let note = new UserNote({
-        userId: user.id,
-        // the author id currently can't be null
-        // so we make it the level fleet account
-        authorId: 14827,
-        content: promo,
-        type: 'promo'
-      });
-      yield note.save();
+        let note = new UserNote({
+          userId: user.id,
+          // the author id currently can't be null
+          // so we make it the level fleet account
+          authorId: 14827,
+          content: promo,
+          type: 'promo'
+        });
+        yield note.save();
+      }
 
     } else if(promo === 'hyrecar') {
       // This means they can skip the line -
@@ -307,7 +309,6 @@ module.exports = {
           // in good faith, going through the entire process again,
           // presuming that they didn't receive or lost the previous. 
           log.warn(`Found user with email ${ record.email } or phone ${ record.phone }. Not adding`);
-          console.log(userRecord);
           yield record.update({userId: userRecord.id});
           if(userRecord.status === 'waitlist') {
             yield userRecord.update({status: 'active'});
