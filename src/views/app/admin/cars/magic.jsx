@@ -1,6 +1,8 @@
 import React from 'react';
 import { api, auth, relay, dom }  from 'bento';
 
+var _ = require('lodash');
+
 module.exports = class Magic extends React.Component {
 
   constructor(...args) {
@@ -13,13 +15,13 @@ module.exports = class Magic extends React.Component {
   }
 
   doTrick(position) {
-    this.setState({action: 'processing...'});
+    this.setState({action: 'Looking around...'});
     let act = this.props.params && this.props.params.act || 'retrieve';
     api.put(`/magic/${ act }?latitude=${ position.coords.latitude }&longitude=${ position.coords.longitude }`, {}, (err, res) => {
       if(res.car) {
-        this.setState({action: act, car: res.car });
+        this.setState({action: act, car: res.car[0] });
       } else if(res.candidates) {
-        this.setState({action: "Nearby Cars" });
+        this.setState({action: "Nearby Cars (" + act + ")" });
         this.setState({candidates: res.candidates.sort((a, b) => {
             return a.distance - b.distance;
           })
@@ -30,16 +32,22 @@ module.exports = class Magic extends React.Component {
     });
   }
 
-  beBoring(act) {
-    api.put(`/cars/${ this.state.car.id }/${act}`, {}, (err, res) => {
-      this.setState({ action: verb });
+  beBoring(act, car) {
+    if(!_.isString(car)) {
+      car = this.state.car.id;
+    }
+
+    this.setState({action: 'Working...'});
+    api.put(`/cars/${ car }/${ act }`, {}, (err, res) => {
+      this.setState({ action: act });
     });
   }
 
-  chooseCar(i) {
+  chooseaCar(i) {
     let act = this.props.params && this.props.params.act || 'retrieve';
-    this.setState({car: this.state.candidates[i]});
-    this.beBoring(act);
+    let car = this.state.candidates[i];
+    this.setState({car: car, candidates: undefined});
+    this.beBoring(act, car.id);
   }
 
   fail(what) {
@@ -47,7 +55,7 @@ module.exports = class Magic extends React.Component {
   }
 
   findMe() {
-    navigator.geolocation.getCurrentPosition(this.doTrick.bind(this), this.fail.bind(this), {
+    navigator.geolocation.getCurrentPosition(this.doTrick.bind(this), this.fail, {
       enableHighAccuracy: true,
       timeout: 5000,
       maximumAge: 0
@@ -57,30 +65,27 @@ module.exports = class Magic extends React.Component {
     this.findMe();
   }
 
+  showCandidates() {
+    var rows = this.state.candidates.map((row, i) => {
+      return <button className='btn' onClick={ this.chooseaCar.bind(this, i) }>{ this.state.candidates[i].license } (<em>{this.state.candidates[i].charge}%</em>)</button>
+    });
+    return <div> { rows } </div>
+  }
+  showControls() {
+    var rows = ['rentable', 'retrieve', 'lock','unlock','lock-immobilizer','unlock-immobilizer','available','unavailable'].map((verb) => {
+      return <button className='btn' onClick={ this.beBoring.bind(this, verb) }>{ verb }</button>
+    });
+    return <div> { rows } </div>
+  }
+
   render() {
     dom.setTitle(`${ this.state.action } Magic`);
 
     return (
-      <div>
-        <h1> { this.state.action } { this.state.car ? this.state.car.license : '' } </h1>
-        { this.state.candidates ?
-          <div>
-            { this.state.candidates.sort((a, b) => {
-                return a.distance - b.distance;
-              }).map((row, i) => {
-                return <button className='btn' onClick={ this.chooseCar.call(this, i) }>{ row.license }</button> 
-              })
-            }
-          </div> : ''
-        }
-        { this.state.car ?
-          <div>
-            { ['lock','unlock','lock-immobilizer','unlock-immobilizer','available','unavailable'].map((act) => {
-                return <button className="btn" onClick={ this.act.call(this, act) }>{ act }</button>
-              })
-            }
-          </div> : ''
-        }
+      <div className="magic">
+        <h1> { this.state.action } { this.state.car ? <a href={ "/cars/" + this.state.car.id }>{ this.state.car.license } ({this.state.car.charge}%)</a> : '' } </h1>
+        { this.state.candidates ? this.showCandidates() : '' }
+        { this.state.car ? this.showControls() : '' }
       </div>
     );
   }
