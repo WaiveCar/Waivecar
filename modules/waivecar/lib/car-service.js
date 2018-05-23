@@ -402,7 +402,7 @@ module.exports = {
     });
     let nearest = [];
 
-    for(var radius = 20; radius < 300; radius+=20 ) {
+    for(var radius = 7; radius < 300; radius+=10 ) {
       nearest = all.filter((row) => {
         return row.distance < radius;
       });
