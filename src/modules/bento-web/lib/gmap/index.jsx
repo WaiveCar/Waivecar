@@ -286,8 +286,10 @@ module.exports = class GMap extends React.Component {
           if(!val.booking) {
             content += '<em>Available</em>';
           } else {
-            let bid = val.booking[0].id;
-            content += `<div> ${ val.booking[0].status } <a style="color:darkgreen" href=/bookings/${ bid }>Booking ${bid}</a></div>`;
+            if(val.booking.length) {
+              let bid = val.booking[0].id;
+              content += `<div> ${ val.booking[0].status } <a style="color:darkgreen" href=/bookings/${ bid }>Booking ${bid}</a></div>`;
+            }
             content += `<div>${ lastFormatted }</div>`;
           }
           infoWindow.setContent(content);
