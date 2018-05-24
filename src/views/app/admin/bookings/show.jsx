@@ -24,6 +24,9 @@ module.exports = class BookingsView extends React.Component {
       error    : null,
       items    : [],
       carPath  : [],
+      user     : false,
+      payments : false,
+      car      : false,
       reservationTime: 10
     };
 
@@ -40,20 +43,11 @@ module.exports = class BookingsView extends React.Component {
     relay.unsubscribe(this, 'bookings');
   }
 
-  /**
-   * Fetches the requested booking.
-   * @return {Void}
-   */
   componentDidMount() {
     this.loadBooking(this.props.params.id);
     this.loadCarPath(this.props.params.id)
   }
 
-  /**
-   * Loads booking.
-   * @param  {Number} id
-   * @return {Void}
-   */
   loadBooking(id) {
     api.get(`/bookings/${ id }`, (err, booking) => {
       if (err) {
@@ -62,6 +56,15 @@ module.exports = class BookingsView extends React.Component {
         });
         return;
       }
+      // When the relay updates the booking it doesn't pass over a user
+      // object or the car or payments, this means that it gets blown away 
+      // and the page stops functioning.  To work around this, since 
+      // the user doesn't change we store it OOB of the booking variable
+      this.setState({
+        payments: booking.payments,
+        user: booking.user,
+        car: booking.car
+      });
       this.bookings.store(booking);
     });
   }
@@ -200,7 +203,6 @@ module.exports = class BookingsView extends React.Component {
     }
 
     let action = false;
-    console.log(booking.status);
     switch (booking.status) {
       case 'reserved' : {
         action = ( 
@@ -208,13 +210,7 @@ module.exports = class BookingsView extends React.Component {
             <div>
               <button type="button" onClick={ () => { this.cancel() } } className="btn btn-primary">Cancel</button>
               <button type="button" onClick={ () => { this.update('ready') } } className="btn btn-link">Start Ride</button>
-            </div>
-            
-            <div>
-              <div className="form-group row hide">
-                <button type="button" onClick={ () => { this.update('extend') } } className="btn btn-link">Extend 10 minutes for $1</button>
-                <button type="button" onClick={ () => { this.extendForFree(10) } } className="btn btn-link">Extend 10 minutes for $0</button>
-              </div>
+              { booking.flags.extended ? '' : <button type="button" onClick={ () => { this.extendForFree(10) } } className="btn btn-link">Extend</button> }
             </div>
          </div>
 
@@ -222,7 +218,7 @@ module.exports = class BookingsView extends React.Component {
         break;
       }
       case 'ready'   : {
-        action = <button type="button" onClick={ () => { this.update('ready') } } className="btn btn-primary">Start Ride</button>;
+        action = <button type="button" onClick={ () => { this.update('ready') } } className="btn btn-primary">Start Ride</button>
         break;
       }
       case 'started' : {
@@ -280,7 +276,11 @@ module.exports = class BookingsView extends React.Component {
     }
 
     let booking = this.state.bookings.find(val => val.id === parseInt(this.props.params.id));
-    if (!booking || !booking.user ) {
+    let user = this.state.user;
+    let payments = this.state.payments;
+    let car = this.state.car;
+
+    if (!booking || !user ) {
       return (
         <div id="booking-view">
           <div className="booking-message">
@@ -302,7 +302,7 @@ module.exports = class BookingsView extends React.Component {
     return (
       <div id="booking-view">
         <div className="box">
-          <h3>Booking <small>Current booking status</small></h3>
+          <h3>Booking</h3>
           <div className="box-content">
             <div className="row">
               <div className="col-xs-12 col-md-4 booking-status text-center">
@@ -315,8 +315,8 @@ module.exports = class BookingsView extends React.Component {
               <div className="col-xs-12 col-md-4 booking-status text-center">
                 <strong>Customer</strong>
                 <div>
-                  <Link to={ `/users/${ booking.user.id }` }>
-                    { booking.user.firstName } { booking.user.lastName }
+                  <Link to={ `/users/${ user.id }` }>
+                    { user.firstName } { user.lastName }
                   </Link>
                   <small><button className='btn-link' onClick={this.showUserInfo}>Show License</button></small>
                 </div>
@@ -324,9 +324,9 @@ module.exports = class BookingsView extends React.Component {
               <div className="col-xs-12 col-md-4 booking-status text-center">
                 <strong>Car</strong>
                 <div>
-                  { booking.car ? 
-                    <Link to={ `/cars/${ booking.car.id }` }>
-                      { booking.car.license || booking.car.id }
+                  { car ? 
+                    <Link to={ `/cars/${ car.id }` }>
+                      { car.license || car.id }
                     </Link>
                     :
                     "(unknown car)"
@@ -340,25 +340,24 @@ module.exports = class BookingsView extends React.Component {
         </div>
         <div className="box" id="userInfoWindow">
           <div className="box-content">
-             <UserLicense id={ booking.user.id } readOnly="1" />
+             <UserLicense id={ user.id } readOnly="1" />
           </div>
         </div>
         {
-          [ 'ended', 'completed', 'closed' ].indexOf(booking.status) !== -1
-            ? <BookingDetails booking={ booking } carPath = {this.state.carPath }/>
+          this.state.carPath ? <BookingDetails booking={ booking } carPath = { this.state.carPath }/>
             : <div className="box-empty">
                 <h3>Details</h3>
                 A ride must be ended before details are shown.
               </div>
         }
         {
-          booking.payments.length
-            ? this.renderPayments(booking.payments)
+          payments.length
+            ? this.renderPayments(payments)
             : ''
         }
         {
           booking.status === 'completed'
-            ? <BookingFees bookingId={ booking.id } userId={ booking.userId } cartId={ booking.cartId } />
+            ? <BookingFees bookingId={ booking.id } userId={ user.id } cartId={ booking.cartId } />
             : ''
         }
         { this.renderNotes(booking) }
