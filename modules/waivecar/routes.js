@@ -30,8 +30,6 @@ Route.get('/bookingsUserContribution/:id', ['BookingsController@userContribution
 
 Route.put('/bookings/addressDetails', [ 'isAuthenticated', 'isAdmin', 'BookingsController@patchAddressDetails' ]);
 
-
-
 // ### Problem Report
 
 Route.post('/reports', {

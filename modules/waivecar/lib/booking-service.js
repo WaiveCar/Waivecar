@@ -408,77 +408,16 @@ module.exports = class BookingService extends Service {
     return booking;
   }
 
-  static *extendForFree(id, _user, time) {
-    yield redis.failOnMultientry('booking-extend', id, 5 * 1000);
-
-    let booking = yield this.getBooking(id);
-    let user    = yield this.getUser(booking.userId);
-    let car     = yield this.getCar(booking.carId);
-    let err     = false;
-    let default_reservation_time = 10;//default is 10 mins
-
-    if (_user) this.hasAccess(user, _user);
-
-    if (!time) time = default_reservation_time;
-
-    if(booking.status !== 'reserved') {
-      err = "You can only extend your time if you haven't started the ride.";
-    }
-    if(booking.isFlagged('extended')) {
-      err = "Booking reservation has already been extended.";
-    }
-
-    if(!err && _user.isAdmin()) {
-      booking.extended_reservation_time = time;
-      yield booking.save();
-      yield booking.flag('extended');
-      yield notify.sendTextMessage(user, `Your WaiveCar reservation has been extended 10 minutes.`);
-      yield notify.notifyAdmins(`:clock1: ${ user.link() } extended their reservation with ${ car.info() } by 10 minutes.`, [ 'slack' ], { channel : '#reservations' });
-      booking.relay('update');
-    }
-    if(err) {
-      throw error.parse({
-        code    : `BOOKING_REQUEST_INVALID`,
-        message : err
-      }, 400);
-    }
+  static *extendForFree(id, _user) {
+    return yield _extend(id, {free: true}, _user);
   }
 
-  //todo: reuse other extend methods here
-  static *extendForFreeTime(id, _user, time){
-    yield redis.failOnMultientry('booking-extend', id, 5 * 1000);
-
-    let booking = yield this.getBooking(id);
-    let user    = yield this.getUser(booking.userId);
-    let car     = yield this.getCar(booking.carId);
-    let err     = false;
-
-    if (_user) this.hasAccess(user, _user);
-
-    if(booking.status !== 'reserved') {
-      err = "You can only extend your time if you haven't started the ride.";
-    }
-    if(booking.isFlagged('extended')) {
-      err = "Booking reservation has already been extended.";
-    }
-
-    if(!err && _user.isAdmin()) {
-
-      yield booking.flag('extended');
-      yield notify.sendTextMessage(user, `Your WaiveCar reservation has been extended 10 minutes.`);
-      yield notify.notifyAdmins(`:clock1: ${ user.link() } extended their reservation with ${ car.info() } by 10 minutes.`, [ 'slack' ], { channel : '#reservations' });
-      booking.relay('update');
-    }
-    if(err) {
-      throw error.parse({
-        code    : `BOOKING_REQUEST_INVALID`,
-        message : err
-      }, 400);
-    }
-  }
-
-  // extends reservation for $1.00 - see https://github.com/WaiveCar/Waivecar/issues/550
   static *extend(id, _user) {
+    return yield _extend(id, {}, _user);
+  }
+
+  static *_extend(id, opts, _user) {
+    // extends reservation for $1.00 - see https://github.com/WaiveCar/Waivecar/issues/550
     yield redis.failOnMultientry('booking-extend', id, 5 * 1000);
 
     let booking = yield this.getBooking(id);
@@ -496,7 +435,7 @@ module.exports = class BookingService extends Service {
     }
 
     if(!err) {
-      if(yield OrderService.extendReservation(booking, user)) {
+      if(opts.free || yield OrderService.extendReservation(booking, user)) {
         yield booking.flag('extended');
         yield notify.sendTextMessage(user, `Your WaiveCar reservation has been extended 10 minutes.`);
         yield notify.notifyAdmins(`:clock1: ${ user.link() } extended their reservation with ${ car.info() } by 10 minutes.`, [ 'slack' ], { channel : '#reservations' });
