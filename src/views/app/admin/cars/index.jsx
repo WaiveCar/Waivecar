@@ -344,7 +344,7 @@ module.exports = class CarsIndex extends React.Component {
         let lock = '';
         let charge = '';
         if (item.isCharging) { 
-          charge = <i style={{ color: 'blue' }}>className="fa fa-bolt"></i>
+          charge = <i style={{ color: 'blue' }} className="fa fa-bolt"></i>
         }
         if (word == 'Available') {
           word = <b>{ word }</b>
