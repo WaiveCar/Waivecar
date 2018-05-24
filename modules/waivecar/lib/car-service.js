@@ -186,6 +186,11 @@ module.exports = {
       car.license = car.license || '';
       if(car.booking && car.booking[0]) {
         car.statuscolumn = statusMap[car.booking[0].status] || 'Unavailable';
+
+        if(car.statuscolumn === 'Available' && !car.isAvailable) {
+          car.statuscolumn = 'Unavailable';
+        }
+
       } else { 
         car.statuscolumn = car.isAvailable ? 'Available' : 'Unavailable';
       }
