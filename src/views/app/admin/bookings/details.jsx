@@ -1,6 +1,7 @@
 import React   from 'react';
 import moment  from 'moment';
 import { GMap } from 'bento-web';
+var _ = require('lodash');
 
 module.exports = class RideDetails extends React.Component {
 
@@ -17,6 +18,19 @@ module.exports = class RideDetails extends React.Component {
       carName:  data.car.make + ' ' + data.car.model + (data.car.year ? ' ' + data.car.year : '')
     };
 
+    // If the ride is in progress we should render it
+    // up to this point.
+    if(!ride.end) {
+      ride.end = _.last(this.props.carPath);
+      if(!ride.end) {
+        ride.end = ride.start;
+      }
+
+      ride.end.createdAt = new Date();
+      ride.distance = ''
+    } else {
+      ride.distance = parseFloat(Math.round(((ride.end.mileage - ride.start.mileage) * 0.621371192) * 100) / 100).toFixed(2) + ' miles'
+    }
     // ### Duration
 
     let duration  = moment.duration(moment(ride.end.createdAt).diff(moment(ride.start.createdAt)));
@@ -84,10 +98,12 @@ module.exports = class RideDetails extends React.Component {
                     }
                     </strong>
                   </div>
-                  <div>
-                    Distance Traveled<br/>
-                    <strong>{ parseFloat(Math.round(((ride.end.mileage - ride.start.mileage) * 0.621371192) * 100) / 100).toFixed(2) } miles</strong>
-                  </div>
+                  { !ride.distance ? '' :
+                      <div>
+                        Distance Traveled<br/>
+                        <strong>{ ride.distance }</strong>
+                      </div>
+                  }
                 </div>
               </div>
             </div>
