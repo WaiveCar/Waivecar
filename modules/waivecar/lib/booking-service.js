@@ -456,7 +456,7 @@ module.exports = class BookingService extends Service {
     }
 
     if(!err) {
-      if(opts.free || yield OrderService.extendReservation(booking, user)) {
+      if(opts.free || (yield OrderService.extendReservation(booking, user))) {
         yield booking.flag('extended');
         yield notify.sendTextMessage(user, `Your WaiveCar reservation has been extended 10 minutes.`);
         yield notify.notifyAdmins(`:clock1: ${ user.link() } extended their reservation with ${ car.info() } by 10 minutes.`, [ 'slack' ], { channel : '#reservations' });
