@@ -429,8 +429,16 @@ module.exports = class BookingService extends Service {
     return booking;
   }
 
-  // extends reservation for $1.00 - see https://github.com/WaiveCar/Waivecar/issues/550
+  static *extendForFree(id, _user) {
+    return yield _extend(id, {free: true}, _user);
+  }
+
   static *extend(id, _user) {
+    return yield _extend(id, {}, _user);
+  }
+
+  static *_extend(id, opts, _user) {
+    // extends reservation for $1.00 - see https://github.com/WaiveCar/Waivecar/issues/550
     yield redis.failOnMultientry('booking-extend', id, 5 * 1000);
 
     let booking = yield this.getBooking(id);
@@ -448,7 +456,7 @@ module.exports = class BookingService extends Service {
     }
 
     if(!err) {
-      if(yield OrderService.extendReservation(booking, user)) {
+      if(opts.free || yield OrderService.extendReservation(booking, user)) {
         yield booking.flag('extended');
         yield notify.sendTextMessage(user, `Your WaiveCar reservation has been extended 10 minutes.`);
         yield notify.notifyAdmins(`:clock1: ${ user.link() } extended their reservation with ${ car.info() } by 10 minutes.`, [ 'slack' ], { channel : '#reservations' });

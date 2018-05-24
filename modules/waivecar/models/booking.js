@@ -46,10 +46,6 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       type : Sequelize.TEXT()
     },
 
-    /**
-     * The boooking status.
-     * @type {Enum}
-     */
     status : {
       type : Sequelize.ENUM(
         'reserved',  // The booking has been reserved and the car has been made unavailable.

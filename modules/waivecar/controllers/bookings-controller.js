@@ -129,6 +129,9 @@ Bento.Register.Controller('BookingsController', function(controller) {
     }
   };
 
+  controller.extendForFree = function *(id, time) {
+    return yield booking.extendForFree(id, this.auth.user, time);
+  };
   /**
    * Updates all the details missing their addresses.
    * @yield {[type]} [description]

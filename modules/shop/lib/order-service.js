@@ -554,7 +554,7 @@ module.exports = class OrderService extends Service {
           });
         }
       } catch (ex) {
-        // This more or less says we were unable to chage the user.
+        // This more or less says we were unable to charge the user.
         // If we are capturing, as in, we expected to charge them,
         // this is a splendid time to modify their credit with us.
         if (capture) {
