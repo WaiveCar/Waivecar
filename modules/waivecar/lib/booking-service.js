@@ -430,11 +430,11 @@ module.exports = class BookingService extends Service {
   }
 
   static *extendForFree(id, _user) {
-    return yield _extend(id, {free: true}, _user);
+    return yield this._extend(id, {free: true}, _user);
   }
 
   static *extend(id, _user) {
-    return yield _extend(id, {}, _user);
+    return yield this._extend(id, {}, _user);
   }
 
   static *_extend(id, opts, _user) {
