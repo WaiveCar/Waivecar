@@ -5,14 +5,20 @@
 # test(1) uses as the qualifier in [ ] bare testing.
 server=$1
 
-echo -n "Last was: "; cat .last-deploy
+# example form:
+# last=(0 201708281708-api-427-g57a2401c 201708281708-api-427-g57a2401c 201708281708-api-427-g57a2401c)
+. .last-deploy
+
+echo "${last[$server]} prod$1 current"
 version=`git describe`
-echo $version > .last-deploy$drypostfix
 
 # we make a log of the deploy history
-echo `date` $version >> .deploy-history$drypostfix
-echo -n "This is: "; cat .last-deploy$drypostfix
+echo `date` $server $version >> .deploy-history
+echo "$version prod$1 new"
 
+last[$server]=$version
+
+echo "last=(${last[@]})" > .last-deploy
 set -x
 
 # we put the new stuff to be in the "new" directory.
