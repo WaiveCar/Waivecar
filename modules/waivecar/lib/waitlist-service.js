@@ -67,6 +67,9 @@ module.exports = {
     if(promo === 'levelbk') {
       payload.placeName = 'brooklyn';
     }
+    if(!payload.placeName) {
+      payload.placeName = promo;
+    }
 
     // only accept certain fields...
     ['accountType', 'days', 'hours', 'experience', 'password', 'phone', 'latitude', 'longitude', 'firstName', 'lastName', 'email', 'placeName', 'placeId'].forEach((field) => {
@@ -74,7 +77,7 @@ module.exports = {
         if ( requiredList.indexOf(field) !== -1) {
           throw error.parse({
             code    : 'MALFORMED QUERY',
-            message : 'You need to post ' + field
+            message : `The ${ field } field cannot be empty. Please contact us if you think this is in error.`
           }, 400);
         }
       } else {
