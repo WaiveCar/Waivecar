@@ -375,7 +375,7 @@ module.exports = class CarsIndex extends React.Component {
     );
   }
 
-  renderShownFilters() {
+  renderShownFilters(count) {
     return (
       <div className="form-group row">
         { shownList.map((what) =>
@@ -387,6 +387,7 @@ module.exports = class CarsIndex extends React.Component {
       </div>
     );
   }
+
   renderSearch() {
     return (
       <div className="filter-container" >
@@ -418,6 +419,7 @@ module.exports = class CarsIndex extends React.Component {
       return false;
     }
 
+    let displayedCars = this.state.shownCars.filter((car) => this.isCarIncludes(car, this.state.filter) );
     return (
       <div className="cars-index" >
         <section className="container" >
@@ -432,7 +434,7 @@ module.exports = class CarsIndex extends React.Component {
                       </div>
                     </div>
 
-                    { this.renderShownFilters() }
+                    { this.renderShownFilters(displayedCars.length) }
 
                     <div className="griddle-container">
                       <div className="griddle-body">
@@ -448,8 +450,7 @@ module.exports = class CarsIndex extends React.Component {
                             </thead>
                             <tbody>
                             {
-                              this.state.shownCars
-                                .filter((car) => this.isCarIncludes(car, this.state.filter) )
+                              displayedCars
                                 .sort((a, b) => this.sortComparator(a, b))
                                 .map((car) => this.renderCarRow(car))
                             }
@@ -463,13 +464,11 @@ module.exports = class CarsIndex extends React.Component {
                 </div>
                 <div className="hidden-lg-up visible-md-down">
                   { this.renderSearch() }
-                  <small>Updated: { this.state.updated } <a style={{cursor:'pointer', padding: '0 1em'}} onClick={ this.update.bind(this) }>refresh</a></small>
+                  <small>Updated: { this.state.updated } <a style={{cursor:'pointer', padding: '0 1em'}} onClick={ this.update.bind(this) }>refresh</a> (Showing { displayedCars.length })</small>
                   <div className="list-group">
                     {
                       this.state.shownCars
-                        ? this.state.shownCars
-                          .filter((car) => this.isCarIncludes(car, this.state.filter) )
-                          .sort(this.licenseComparator).map(this.renderListLinkItem.bind(this))
+                        ? displayedCars.sort(this.licenseComparator).map(this.renderListLinkItem.bind(this))
                         : <div className="list-group-item">Loading</div>
                     }
                   </div>
