@@ -405,9 +405,10 @@ module.exports = {
       obj.distance = geolib.getDistance({longitude: long, latitude: lat}, row);
       return obj;
     });
+    let radius = 30;
     let nearest = [];
 
-    for(var radius = 7; radius < 300; radius+=10 ) {
+    for(; radius < 1000; radius+=20 ) {
       nearest = all.filter((row) => {
         return row.distance < radius;
       });
@@ -416,7 +417,7 @@ module.exports = {
       }
     }
 
-    return nearest;
+    return {distance: radius, res: nearest};
   },
 
   /**
