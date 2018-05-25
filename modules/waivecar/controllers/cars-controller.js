@@ -29,16 +29,21 @@ Bento.Register.Controller('CarsController', function(controller) {
 
   controller.magic = function *(command) {
     let close = yield car.closest(this.query.longitude, this.query.latitude);
+    let carList = close.res;
 
-    if(close.length === 1) {
-      let res = yield controller.command.call(this, close[0].id, command);
+    if(carList.length === 1 && distance < 400) {
+      let res = yield controller.command.call(this, carList[0].id, command);
       return {
-        car: close,
+        car: carList,
+        distance: close.distance,
         status: res
       };
     } 
 
-    return { candidates: close };
+    return { 
+      candidates: carList,
+      distance: close.distance
+    };
   };
 
   controller.multi = function *(id, commandList) {
