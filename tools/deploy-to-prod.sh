@@ -9,12 +9,12 @@ server=$1
 # last=(0 201708281708-api-427-g57a2401c 201708281708-api-427-g57a2401c 201708281708-api-427-g57a2401c)
 . .last-deploy
 
-echo "${last[$server]} prod$1 current"
+echo "${last[$server]} prod$server current"
 version=`git describe`
 
 # we make a log of the deploy history
 echo `date` $server $version >> .deploy-history
-echo "$version prod$1 new"
+echo "$version prod$server new"
 
 last[$server]=$version
 
