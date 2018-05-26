@@ -90,7 +90,7 @@
     }
   },
   "dependencies": {
-    "cordova": "^6.5.0",
+    "cordova": "^8.0.0",
     "cordova-browser": "~4.1.0",
     "cordova-ios": "^4.4.0",
     "cordova-plugin-app-version": "https://github.com/whiteoctober/cordova-plugin-app-version",
@@ -109,8 +109,8 @@
     "cordova.plugins.diagnostic": "^3.3.3",
     "hmacsha1": "^1.0.0",
     "ionic-plugin-keyboard": "^2.2.1",
-    "cordova-plugin-firebase": "^0.1.25",
-    "cordova-plugin-intercom": "^3.2.2",
+    "cordova-plugin-firebase": "^1.0.5",
+    "cordova-plugin-intercom": "^5.1.1",
     "cordova-plugin-googlemaps": "^2.0.11",
     "cordova-plugin-splashscreen": "~4.0.1",
     "cordova-plugin-hide-home-indicator": "~1.0.0",
