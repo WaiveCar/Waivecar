@@ -1,12 +1,12 @@
 #!/bin/bash
 APP=com.waivecardrive.app
 NODE_VERSION=v6.11.4
-cdv=`grep buildToolsVersion $DIR/../misc/build-extras.gradle | awk ' { print $2 }'`
+cdv=`grep buildToolsVersion $DIR/../misc/build-extras.gradle | grep -v \/\/ | awk ' { print $2 }'`
 if [ -n "$cdv" ]; then
   export ORG_GRADLE_PROJECT_cdvBuildToolsVersion=$cdv
   true
 fi
-sdk=`grep ext.cdvCompileSdkVersion $DIR/../misc/build-extras.gradle | awk ' { print $3 }'`
+sdk=`grep ext.cdvCompileSdkVersion $DIR/../misc/build-extras.gradle | grep -v \/\/ | awk ' { print $3 }'`
 if [ -n "$sdk" ]; then
   export ORG_GRADLE_PROJECT_cdvCompileSdkVersion=$sdk
 fi
@@ -78,6 +78,8 @@ prebuild() {
     cp $i platforms/android/$i >& /dev/null
   done
 
+  cp misc/strings.xml platforms/android/app/src/main/res/values/
+
   for i in platforms/android/app/src/main/ platforms/android platforms/android/app/src/; do
     [ -e $i ] && cp -up misc/build-extras.gradle $i
   done
@@ -85,18 +87,20 @@ prebuild() {
 
 build() {
   before=
+  exists=
   if [ -e www/dist/bundle.js ]; then
     before=`stat -c %Y www/dist/bundle.js`
   fi
+  [ -e platforms/android/build/outputs/apk/android-debug.apk ] && exist=1
 
   nvmcheck
   prebuild
+  baseBuild="$DBG cordova build android --debug -- --gradleArg=--debug --gradleArg=--info --gradleArg=--stacktrace"
   if [ -n "$ORG_GRADLE_PROJECT_cdvCompileSdkVersion" ]; then
     echo "Injecting $ORG_GRADLE_PROJECT_cdvCompileSdkVersion"
-    $DBG cordova build android 
-    #$DBG cordova build android --debug -- --gradleArg=-PcdvCompileSdkVersion=$ORG_GRADLE_PROJECT_cdvCompileSdkVersion
+    $baseBuild
   else
-    $DBG cordova build android 
+    $baseBuild
   fi
   #$DBG cordova build android --debug -- --gradleArg=-PcdvCompileSdkVersion=$ORG_GRADLE_PROJECT_cdvCompileSdkVersion --gradleArg=--debug --gradleArg=--info --gradleArg=--stacktrace
 
@@ -108,16 +112,16 @@ build() {
     exit 1
   fi
 
-  if [ www/dist/bundle.js -nt platforms/android/assets/www/dist/bundle.js ]; then
+  if [ www/dist/bundle.js -nt platforms/android/assets/www/dist/bundle.js -a -n "$exists" ]; then
     echo 'failed to produce new file'
     unfuckup
     build
   elif [ "$after" != "$before" ]; then
-    echo 'Our dist file was rewritten under our feet, building again.'
-    build
-  else
-    echo -e "\nbundle is from" $(( `date +%s` - after )) "seconds ago\n"
+    #echo 'Our dist file was rewritten under our feet, building again.'
+    #build
+    true
   fi
+  echo -e "\nbundle is from" $(( `date +%s` - after )) "seconds ago\n"
 }
  
 unfuckup() {
