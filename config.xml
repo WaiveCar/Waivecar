@@ -118,7 +118,7 @@
         <variable name="APP_NAME" value="WaiveCar" />
     </plugin>
     <plugin name="cordova-plugin-file-transfer" spec="^1.4.0" />
-    <plugin name="cordova-plugin-geolocation" spec="~4.0.1" />
+    <plugin name="cordova-plugin-geolocation" spec="~4.0.1">
         <variable name="GEOLOCATION_USAGE_DESCRIPTION" value=" " />
     </plugin>
     <plugin name="cordova-plugin-inappbrowser" spec="^1.5.0" />
