@@ -74,10 +74,28 @@ done
 [ "$remove" ] && wrap uninstall
 if [ "$install" ]; then
   path=''
-  for i in $DIR/../platforms/android/build/outputs/apk/debug $DIR/../platforms/android/build/outputs/apk; do
+  build=''
+  pathList="$DIR/../platforms/android/build/outputs/apk/debug $DIR/../platforms/android/build/outputs/apk $DIR/../platforms/android/app/build/outputs/apk/debug"
+  buildList="android-debug.apk app-debug.apk"
+
+  for i in $pathList; do
     [ -z "$path" -a -d "$i" ] && path=$i
   done
-  wrap install $path/android-debug.apk
+
+  if [ -z "$path" ]; then 
+    echo "Can't find the paths $pathList. Bailing"
+    exit -1
+  fi
+
+  for i in $buildList; do
+    [ -z "$build" -a -e "$path/$i" ] && build=$i
+  done
+  if [ -z "$build" ]; then 
+    echo "Can't find this files $buildList in $path (path list: $pathList). Bailing"
+    exit -1
+  fi
+
+  wrap install $path/$build
 fi
 [ "$install_release" ] && wrap install $DIR/../releases/waivecardrive.apk
 [ "$clear" ] && wrap clear
