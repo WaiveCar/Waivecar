@@ -1,4 +1,4 @@
-ext.cdvCompileSdkVersion = 26
+//ext.cdvCompileSdkVersion = 26
 android {
     //build ToolsVersion "26.0.1"
     packagingOptions {
