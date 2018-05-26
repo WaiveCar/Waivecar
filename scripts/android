@@ -28,7 +28,7 @@ for i in $*; do
       prebuild
       exit
       ;;
-    debug) export DBG="strace -f" ;;
+    debug) export DBG="strace -f -q -s 100 -o /tmp/app.trc " ;;
     find) find=1 ;;
     stop) stop=1 ;;
     start) start=1 ;;
