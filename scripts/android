@@ -2,7 +2,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 help() {
-  echo verbose find restart unfuckup clear remove build install install_release stop start
+  echo verbose nuke find restart unfuckup clear remove build install install_release stop start
   exit
 }
 
@@ -37,6 +37,7 @@ for i in $*; do
       stop=1 
       ;;
     clear) clear=1 ;; 
+    nuke) nuke=1 ;;
     unfuckup) 
       unfuckup=1 ;;
     remove) 
@@ -67,36 +68,13 @@ for i in $*; do
   shift
 done
 
+[ "$nuke" ] && nuke
 [ "$find" ] && get_device
 [ "$unfuckup" ] && unfuckup
 [ "$stop" ] && wrap stop
 [ "$build" ] && build
 [ "$remove" ] && wrap uninstall
-if [ "$install" ]; then
-  path=''
-  build=''
-  pathList="$DIR/../platforms/android/build/outputs/apk/debug $DIR/../platforms/android/build/outputs/apk $DIR/../platforms/android/app/build/outputs/apk/debug"
-  buildList="android-debug.apk app-debug.apk"
-
-  for i in $pathList; do
-    [ -z "$path" -a -d "$i" ] && path=$i
-  done
-
-  if [ -z "$path" ]; then 
-    echo "Can't find the paths $pathList. Bailing"
-    exit -1
-  fi
-
-  for i in $buildList; do
-    [ -z "$build" -a -e "$path/$i" ] && build=$i
-  done
-  if [ -z "$build" ]; then 
-    echo "Can't find this files $buildList in $path (path list: $pathList). Bailing"
-    exit -1
-  fi
-
-  wrap install $path/$build
-fi
+[ "$install" ] && find_and_install
 [ "$install_release" ] && wrap install $DIR/../releases/waivecardrive.apk
 [ "$clear" ] && wrap clear
 [ "$start" ] && wrap start

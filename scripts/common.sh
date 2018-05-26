@@ -79,6 +79,7 @@ prebuild() {
   done
 
   cp misc/strings.xml platforms/android/app/src/main/res/values/
+  #cp misc/project.properties platforms/android/
 
   for i in platforms/android/app/src/main/ platforms/android platforms/android/app/src/; do
     [ -e $i ] && cp -up misc/build-extras.gradle $i
@@ -124,6 +125,21 @@ build() {
   echo -e "\nbundle is from" $(( `date +%s` - after )) "seconds ago\n"
 }
  
+nuke() {
+  [ -e $DIR/../plugins ] && rm -fr $DIR/../plugins
+  nvmcheck
+  unfuckup
+  wrap clear
+  cordova platform remove android
+  cordova platform list
+  cordova plugin list
+  echo "Waiting for entry to rebuild"
+  read
+  cordova platform add android@7.1.0
+  cordova platform list
+  cordova plugin list
+}
+
 unfuckup() {
   path=www/js/controllers/car-controller.js
   cd $DIR/..
@@ -134,6 +150,32 @@ unfuckup() {
   [ -e www/dist ] && rm -fr www/dist/*
   [ -e $path ] && touch $path
   set +x
+}
+
+find_and_install() {
+  path=''
+  build=''
+  pathList="$DIR/../platforms/android/build/outputs/apk/debug $DIR/../platforms/android/build/outputs/apk $DIR/../platforms/android/app/build/outputs/apk/debug"
+  buildList="android-debug.apk app-debug.apk"
+
+  for i in $pathList; do
+    [ -z "$path" -a -d "$i" ] && path=$i
+  done
+
+  if [ -z "$path" ]; then 
+    echo "Can't find the paths $pathList. Bailing"
+    exit -1
+  fi
+
+  for i in $buildList; do
+    [ -z "$build" -a -e "$path/$i" ] && build=$i
+  done
+  if [ -z "$build" ]; then 
+    echo "Can't find this files $buildList in $path (path list: $pathList). Bailing"
+    exit -1
+  fi
+
+  wrap install $path/$build
 }
 
 stop()       { adb -s $1 shell am force-stop $APP; }
