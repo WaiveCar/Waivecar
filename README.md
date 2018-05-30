@@ -10,10 +10,15 @@ You need nvm in order to run this. We are using node 4.2.6
   $ sudo chmod 0777 /var/log/outgoing /var/log/invers
   $ sudo apt install mysql-server redis-server mongodb-server git nginx
    
-Add
-  127.0.0.1 datastore
+  $ mysql -uroot
+  > create database waivecar_development
+  > create user 'waivecar'@'%' identified by 'eNwlGGl6g6V0w0qX3vx0S5GKbGvTtR3X';
+  > grant all on *.* to 'waivecar'@'%';
+  $ mysql -uroot waivecar_development < (backup file)
 
-  to /etc/hosts
+  # Add 127.0.0.1 datastore to /etc/hosts 
+  $ echo 127.0.0.1 datastore |& sudo tee -a /etc/hosts
+  $ sudo service nginx restart
 
 The nginx.conf is in the root directory, you can copy it over to
 
