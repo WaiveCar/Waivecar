@@ -121,6 +121,12 @@ module.exports = class BookingService extends Service {
         // details.
         let details = 'no card';
         if(OrderService.authorize.last) {
+          if(!OrderService.authorize.last.card) {
+            throw error.parse({
+              code    : 'BOOKING_AUTHORIZATION',
+              message : 'We do not have a credit card for you on file. Please go to the account and add one before booking'
+            }, 400);
+          }
           details = OrderService.authorize.last.card.last4;
         }
         yield UserLog.addUserEvent(driver, 'AUTH', details, `Failed to authorize $${ (OrderService.authorize.last.amount / 100).toFixed(2) }`);
