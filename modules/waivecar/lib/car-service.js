@@ -26,7 +26,8 @@ let Car  = Bento.model('Car');
 let Booking = Bento.model('Booking');
 
 let geolib      = require('geolib');
-let fs = require('fs');
+let fs          = require('fs');
+
 let carMap = false;
 
 module.exports = {
@@ -102,8 +103,14 @@ module.exports = {
     let available = 0;
     cars.forEach(function(car) {
       car.license = car.license || '';
+
+      // we want a single reference for this number
+      // and not have it be computed in various places
+      car.range = car.milesAvailable(); 
+
       available += car.isAvailable;
     });
+
     if (_user && !_user.hasAccess('admin')) {
       fs.appendFile('/var/log/outgoing/carsrequest.txt', JSON.stringify([new Date(), available, _user.id, _user.latitude, _user.longitude]) + '\n');
     }
