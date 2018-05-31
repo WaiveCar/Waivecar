@@ -60,10 +60,27 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       defaultValue : 'reserved'
     },
 
+    parkCount : {
+      type : Sequelize.INTEGER,
+      defaultValue : 0
+    },
+
+    driveCount : {
+      type : Sequelize.INTEGER,
+      defaultValue : 0
+    },
+
+    reservationEnd : {
+      type : Sequelize.DATE
+    },
+
+    freetimeEnd : {
+      type : Sequelize.DATE
+    },
+
     createdAt : {
       type : Sequelize.DATE
     }
-
   };
 
   model.relations = [
