@@ -22,7 +22,7 @@ function LicenseEditController ($injector, licenses, $scope) {
   }
 
   if (this.license.birthDate) {
-    this.birthDateMoment = moment(this.license.birthDate).format('MM/DD/YYYY');
+    this.birthDateString = this.license.birthDateOriginal.split(/T/)[0];
   }
 
   this.canEdit = (this.license.status == null || this.license.status === 'pending');

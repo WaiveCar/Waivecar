@@ -33,7 +33,8 @@ module.exports = angular.module('app').factory('Licenses', [
       }
       data = angular.fromJson(data);
       if (data.birthDate) {
-        data.birthDate = moment(data.birthDate, 'MM-DD-YYYY').toDate();
+        data.birthDateOriginal = data.birthDate;
+        data.birthDate = moment(data.birthDate).toDate();
       }
       return data;
 
