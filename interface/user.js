@@ -113,11 +113,6 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       defaultValue : null
     },
 
-    autoExtend : {
-      type         : Sequelize.BOOLEAN,
-      defaultValue : false
-    },
-
     version : {
       type         : Sequelize.INTEGER,
       defaultValue : null
@@ -247,13 +242,13 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
 
     *getTagList(filter) {
       return (yield this.loadTagList())
-        .filter((row) => { return filter ? row.group.name === filter : true; })
+        .filter((row) => { return filter ? row.group.name.toLowerCase() === filter.toLowerCase() : true; })
         .map((row) => { return row.groupRole.name; });
     },
 
     *getTag(tag) {
       return (yield this.loadTagList()).filter((row) => {
-        return row.groupRole.name === tag;
+        return row.groupRole.name.toLowerCase() === tag.toLowerCase();
       });
     },
 
