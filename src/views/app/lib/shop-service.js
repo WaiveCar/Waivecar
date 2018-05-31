@@ -68,11 +68,6 @@ module.exports = class ShopService extends Service {
 
   // ### Shop Cards
 
-  /**
-   * Form submission method for bento-web form component.
-   * @param  {Object}   data
-   * @param  {Function} reset
-   */
   submitCard(user, data, reset) {
     this.addCard(user, data, (card) => {
       this.setState('cards', [
