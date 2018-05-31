@@ -65,23 +65,38 @@ module.exports = {
   },
 
   *index(query, _user) {
+    var hour = (new Date()).getHours();
+    var isAdmin = _user && _user.hasAccess('admin');
+
     var opts = {
       where : {
+        // This $or division is used below for 
+        // users to find their own booking.
+        // Don't simplify it.
         $or: [
           {
             inRepair: false,
-            adminOnly: false,
-            isAvailable: true,
+            adminOnly: false
+            //
+            // This gets put in the list
+            // if the user is not an admin.
+            // Otherwise, the admin should be
+            // able to see unavailable cars in 
+            // the app.
+            //
+            // isAvailable: true,
           }
         ]
       }
     };
 
-    var hour = (new Date()).getHours();
+    if (!isAdmin) {
+      opts.where['$or'][0].isAvailable = true;
+    }
 
     // Don't show la cars between 1 and 5am pacific time.
     // Unless you are an admin
-    if(hour >= 4 && hour < 8 && (_user && !_user.hasAccess('admin')) ) {
+    if(hour >= 4 && hour < 8 && !isAdmin) {
       opts.include = [{
         model: 'GroupCar',
         as: 'groupCar',
