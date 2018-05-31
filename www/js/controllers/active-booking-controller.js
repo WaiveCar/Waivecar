@@ -28,7 +28,8 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   var expired;
   // 0.019 essentially maps to "100 imperial feet" - about
   // the length of a suburban home + property.
-  var UNLOCK_RADIUS = 0.019 * 2;
+  // ^^ Actually this is wayyy too far, let's make it 0.013
+  var UNLOCK_RADIUS = 0.013 * 2;
 
   // $scope is used to store ref. to $ride and the active models in $data.
   $scope.distance = 'Unknown';
@@ -49,10 +50,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     watchForUnlock();
     if ($data.active.bookings) {
       loadCar($data.active.bookings.carId);
-      expired = moment($data.active.bookings.createdAt).add(15, 'm');
-      if(ctrl.isExtended) {
-        expired = moment($data.active.bookings.createdAt).add(25, 'm');
-      }
+      expired = moment($data.active.bookings.reservationEnd);
     }
   });
 
@@ -120,7 +118,6 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
           // time happens ... as a boolean.  That's also the
           // test case to see if it was extended at all.  So
           // we are doing 2 things in one place - bad idea.
-          expired = moment($data.active.bookings.createdAt).add(25, 'm');
           ctrl.isExtended = true;
         }
       }
