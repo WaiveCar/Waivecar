@@ -24,9 +24,9 @@ Bento.Register.Controller('BookingsController', function(controller) {
 
     if(!message) {
       if(!iPhone) {
-        message = "Your WaiveCar has been reserved.<br/><b>A new app is needed for the Ioniqs and Chevys.</b><ol style='text-align:left;margin:.5em 0 .75em 2.5em;list-style-type:decimal'><li>Install the new app</li><li>Uninstall the old app with the square logo</li><li>Enjoy!</li></ol>";
+        message = "Your WaiveCar is reserved.<br/><b>A new app is needed for the Ioniqs and Chevys.</b><ol style='text-align:left;margin:.5em 0 .75em 2.5em;list-style-type:decimal'><li>Install the new app</li><li>Uninstall the old app with the square logo</li><li>Enjoy!</li></ol>";
       } else {
-        message = "Your WaiveCar has been reserved. However, you need to upgrade the App before starting the ride.";
+        message = "Your WaiveCar is reserved. However, you need to upgrade the App before starting the ride.";
       }
     }
 
