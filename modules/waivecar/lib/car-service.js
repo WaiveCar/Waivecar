@@ -92,6 +92,8 @@ module.exports = {
 
     if (!isAdmin) {
       opts.where['$or'][0].isAvailable = true;
+    } else {
+      opts.where['$or'][0].userId = null;
     }
 
     // Don't show la cars between 1 and 5am pacific time.
