@@ -7,42 +7,55 @@ module.exports = class RideDetails extends React.Component {
 
 
   render() {
-    let data = this.props.booking;
+    try {
+      let data = this.props.booking;
 
-    // ### Ride
+      // ### Ride
 
-    let ride = {
-      start : data.details.find(val => val.type === 'start'),
-      end   : data.details.find(val => val.type === 'end'),
-      fee   : data.payments.reduce((value, payment) => { return value + (payment.amount - payment.refunded); }, 0) / 100,
-      carName:  data.car.make + ' ' + data.car.model + (data.car.year ? ' ' + data.car.year : '')
-    };
+      let ride = {
+        start : data.details.find(val => val.type === 'start'),
+        end   : data.details.find(val => val.type === 'end'),
+        fee   : data.payments.reduce((value, payment) => { return value + (payment.amount - payment.refunded); }, 0) / 100,
+        carName:  data.car.make + ' ' + data.car.model + (data.car.year ? ' ' + data.car.year : '')
+      };
 
-    // If the ride is in progress we should render it
-    // up to this point.
-    if(!ride.end) {
-      ride.end = _.last(this.props.carPath);
+      // If the ride is in progress we should render it
+      // up to this point.
       if(!ride.end) {
-        ride.end = _.clone(ride.start);
-      }
+        ride.end = _.last(this.props.carPath);
+        if(!ride.end) {
+          ride.end = _.clone(ride.start);
+        }
 
-      if(ride.end) {
-        ride.end.createdAt = new Date();
+        if(ride.end) {
+          ride.end.createdAt = new Date();
+        }
+        ride.distance = '';
+      } else {
+        ride.distance = parseFloat(Math.round(((ride.end.mileage - ride.start.mileage) * 0.621371192) * 100) / 100).toFixed(2) + ' miles'
       }
-      ride.distance = '';
-    } else {
-      ride.distance = parseFloat(Math.round(((ride.end.mileage - ride.start.mileage) * 0.621371192) * 100) / 100).toFixed(2) + ' miles'
+      // ### Duration
+
+      let duration  = moment.duration(moment(ride.end.createdAt).diff(moment(ride.start.createdAt)));
+      ride.duration = {
+        raw     : duration,
+        days    : duration.days(),
+        hours   : duration.hours(),
+        minutes : duration.minutes(),
+        seconds : duration.seconds()
+      };
+    } catch(ex) {
+      return (
+        <div className="ride-details">
+          <div className="box">
+            <h3>Details <small>Current ride details</small></h3>
+            <div className="container ride-map">
+            Details not available until the ride ends
+            </div>
+          </div>
+        </div>
+      );
     }
-    // ### Duration
-
-    let duration  = moment.duration(moment(ride.end.createdAt).diff(moment(ride.start.createdAt)));
-    ride.duration = {
-      raw     : duration,
-      days    : duration.days(),
-      hours   : duration.hours(),
-      minutes : duration.minutes(),
-      seconds : duration.seconds()
-    };
 
     return (
       <div className="ride-details">
