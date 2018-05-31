@@ -149,6 +149,17 @@ class ChargeList extends Component {
 
   }
 
+  renderTotals() {
+    return <div />
+        /*
+      { this.props.currentUser ?
+          <div className="totalChargesSum">Total rented hours: {this.totalHours}, avg: {this.avg}</div>
+        :
+          <div className="totalChargesSum">Total fees: {this.totalFees}</div>
+      }
+      */
+  }
+
   render() {
     var boxClass = classNames({
       box: true,
@@ -189,11 +200,7 @@ class ChargeList extends Component {
 
           }
         </div>
-        { this.props.currentUser ?
-            <div className="totalChargesSum">Total rented hours: {this.totalHours}, avg: {this.avg}</div>
-          :
-            <div className="totalChargesSum">Total fees: {this.totalFees}</div>
-        }
+        { this.renderTotals() }
       </div>
     );
   }
