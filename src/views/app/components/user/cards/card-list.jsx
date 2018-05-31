@@ -120,6 +120,10 @@ class CardList extends React.Component {
   }
 
   amount(num) {
+    if( num === false) {
+      return <span>&hellip;</span>
+    }
+
     let n = Math.abs(num/100).toFixed(2);
     if(num === 0) {
       return '$' + n;
@@ -131,6 +135,10 @@ class CardList extends React.Component {
   }
 
   renderNotice(credit) {
+    if (credit === '...') {
+      return <div />
+    }
+       
     if (credit < 0) {
       return <div className='notice'>You cannot book WaiveCars until this balance is cleared.</div>
     }
@@ -142,16 +150,22 @@ class CardList extends React.Component {
 
   renderCardTable() {
     let cards = this.shop.getState('cards');
+    let credit = false;
+    if(this.state.user) {
+      credit = this.state.user.credit;
+    } else if (this.props.user) {
+      credit = this.props.user.credit;
+    }
 
     let header = (
-      <div className='credit'>Current Credit: { this.amount(this.state.user ? this.state.user.credit : this.props.user.credit) }
+      <div className='credit'>Current Credit: { this.amount(credit) }
         {
           auth.user().hasAccess('admin') ? 
             <div className="pull-right">
               <button onClick={ this.props.addCard } className='btn btn-link btn-sm'>Add Card</button>
               <button onClick={ this.addCredit.bind(this, this.props.user, cards) } className='btn btn-link btn-sm'>Add Credit</button>
             </div>
-            : this.renderNotice(this.state.user.credit)
+            : this.renderNotice(credit)
         }
       </div>
     );
