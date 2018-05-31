@@ -19,8 +19,8 @@ I (cjm) can't find any evidence of some UI builder that was used to manager the 
 
 Here's the install notes:
 
-  $ npm install ionic@1.7 cordova@6 gulp -g
-  $ cordova platform add android
+  $ npm install ionic@1.7 cordova@6.5 gulp -g
+  $ cordova platform add android@7.1.0
 
 Apparently you need two things, in one window you need to run
 
@@ -78,12 +78,12 @@ Here's generally what I did after installing the above:
   $ npm install ionic@1.7 cordova@6 gulp -g
   $ ionic platform add ios@4.3.1
 
-    # At least *I* didn't have to do the `--unsafe-perm=true` that was recommended here.
-  $ sudo npm install ios-sim ios-deploy -g
-
     # intercom needs cocoapods ... I don't know ... I just don't know sometimes.
   $ sudo gem install cocoapods 
   $ pod setup
+    # At least *I* didn't have to do the `--unsafe-perm=true` that was recommended here.
+  $ sudo npm install ios-sim ios-deploy -g
+
   $ ionic build ios // this *may* not be needed. It appears that "run ios" will do a build.
   $ ionic run ios
 
