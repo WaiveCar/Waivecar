@@ -23,11 +23,13 @@ module.exports = class RideDetails extends React.Component {
     if(!ride.end) {
       ride.end = _.last(this.props.carPath);
       if(!ride.end) {
-        ride.end = ride.start;
+        ride.end = _.clone(ride.start);
       }
 
-      ride.end.createdAt = new Date();
-      ride.distance = ''
+      if(ride.end) {
+        ride.end.createdAt = new Date();
+      }
+      ride.distance = '';
     } else {
       ride.distance = parseFloat(Math.round(((ride.end.mileage - ride.start.mileage) * 0.621371192) * 100) / 100).toFixed(2) + ' miles'
     }
