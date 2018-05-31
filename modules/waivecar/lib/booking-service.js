@@ -195,7 +195,8 @@ module.exports = class BookingService extends Service {
     }
 
     // Users over 55 should always get 25 minutes to get to the car #1230
-    let autoExtend = driver.autoExtend;
+
+    let autoExtend = yield driver.hasTag('aid');
     if (!autoExtend) {
       let age = yield driver.age();
       autoExtend = age >= 55;
@@ -492,6 +493,9 @@ module.exports = class BookingService extends Service {
     if(!err) {
       if(opts.free || (yield OrderService.extendReservation(booking, user))) {
         yield booking.flag('extended');
+        yield booking.update({
+          reservationEnd: moment(booking.reservationEnd).add(10, 'minutes')
+        });
 
         if(!opts.silent) {
           yield notify.sendTextMessage(user, `Your WaiveCar reservation has been extended 10 minutes.`);
