@@ -194,12 +194,40 @@ module.exports = class BookingService extends Service {
       throw err;
     }
 
+    // Users over 55 should always get 25 minutes to get to the car #1230
+    let autoExtend = driver.autoExtend;
+    if (!autoExtend) {
+      let age = yield driver.age();
+      autoExtend = age >= 55;
+    }
+
     let isLevel = yield car.isTagged('level');
-    let timerMap = isLevel ? config.booking.timers.level : config.booking.timers; 
+    let timerMap = config.booking.timers;
+
+    // The longest time period is 30 minutes, this is 
+    // the best case
+    if(isLevel) {
+      timerMap = config.booking.timers.level;
+
+      // Otherwise if they are old and decrepit they
+      // can hobble over to the car with 25 free minutes
+    } else if (autoExtend) {
+      timerMap = config.booking.timers.aid;
+    }
+
     let timeToCar = timerMap.autoCancel.value;
+
+    yield booking.update({
+      reservationEnd: moment(booking.createdAt).add(timeToCar, 'minutes')
+    });
 
     // ### Notifications
     yield booking.setCancelTimer(timerMap);
+    let inject = 'You have';
+    if(autoExtend) {
+      inject = 'As a WaiveAid member, you have';
+    }
+    let msg = `Your reservation with ${ car.license } is confirmed. ${ inject } ${ timeToCar } minutes to get to your WaiveCar before your reservation expires.`;
 
     if (isLevel) {
       // https://lb.waivecar.com/users/14827
@@ -211,7 +239,7 @@ module.exports = class BookingService extends Service {
     booking.relay('store', driver);
 
 
-    yield notify.sendTextMessage(driver, `Hi There! Your WaiveCar reservation with ${ car.license } has been confirmed. You'll have ${ timeToCar } minutes to get to your WaiveCar before your reservation expires. Let us know if you have any questions.`);
+    yield notify.sendTextMessage(driver, msg);
 
     let message = yield this.updateState('created', _user, driver);
     yield notify.notifyAdmins(`:musical_keyboard: ${ message } | ${ car.info() } ${ car.averageCharge() }%`, [ 'slack' ], { channel : '#reservations' });
@@ -435,8 +463,8 @@ module.exports = class BookingService extends Service {
     return booking;
   }
 
-  static *extendForFree(id, _user) {
-    return yield this._extend(id, {free: true}, _user);
+  static *extendForFree(id, _user, opts) {
+    return yield this._extend(id, Object.assign(opts || {}, {free: true}), _user);
   }
 
   static *extend(id, _user) {
@@ -464,8 +492,12 @@ module.exports = class BookingService extends Service {
     if(!err) {
       if(opts.free || (yield OrderService.extendReservation(booking, user))) {
         yield booking.flag('extended');
-        yield notify.sendTextMessage(user, `Your WaiveCar reservation has been extended 10 minutes.`);
-        yield notify.notifyAdmins(`:clock1: ${ user.link() } extended their reservation with ${ car.info() } by 10 minutes.`, [ 'slack' ], { channel : '#reservations' });
+
+        if(!opts.silent) {
+          yield notify.sendTextMessage(user, `Your WaiveCar reservation has been extended 10 minutes.`);
+          yield notify.notifyAdmins(`:clock1: ${ user.link() } extended their reservation with ${ car.info() } by 10 minutes.`, [ 'slack' ], { channel : '#reservations' });
+        }
+
         booking.relay('update');
       } else {
         err = "Unable to charge $1.00 to your account. Reservation extension failed.";
