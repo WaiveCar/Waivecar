@@ -100,8 +100,9 @@ module.exports = class UserDetails extends React.Component {
   }
 
   hasTag = (tag) => {
+    tag = tag.toLowerCase();
     return this.state.currentUser.tagList.filter((row) => {
-      return row.groupRole.name === tag;
+      return row.groupRole.name.toLowerCase() === tag;
     }).length > 0;
   }
 
@@ -424,6 +425,14 @@ module.exports = class UserDetails extends React.Component {
                         Brooklyn
                       </label>
                     </div>
+
+                    <div className="radio-inline">
+                      <label>
+                        <input type="checkbox" name="tagList[]" value="Aid" defaultChecked={ this.hasTag('aid') } />
+                        Aid
+                      </label>
+                    </div>
+
                   </div>
                 </div>
 
