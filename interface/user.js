@@ -113,6 +113,11 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       defaultValue : null
     },
 
+    autoExtend : {
+      type         : Sequelize.BOOLEAN,
+      defaultValue : false
+    },
+
     version : {
       type         : Sequelize.INTEGER,
       defaultValue : null
@@ -175,6 +180,17 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
           [ 'created_at', 'DESC' ]
         ]
       });
+    },
+
+    *age() {
+      let License = Bento.model('License');
+      let moment  = require('moment');
+
+      let userLicense = yield License.findOne({where: {userId: this.id} });
+      if(!userLicense) {
+        return 0;
+      } 
+      return moment().diff(moment(userLicense.birthDate), 'years');
     },
 
     *notes(opts) {
