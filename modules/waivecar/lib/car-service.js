@@ -124,6 +124,14 @@ module.exports = {
       car.range = car.milesAvailable(); 
 
       available += car.isAvailable;
+
+      // We toggle the car to be "available" for the admin so
+      // that it will show up on the list of cars. This helps
+      // fleet pick up low cars at night from the app in an 
+      // easy way.
+      if(!car.isAvailable && isAdmin) {
+        car.isAvailable = true;
+      }
     });
 
     if (_user && !_user.hasAccess('admin')) {
