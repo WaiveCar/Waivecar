@@ -66,6 +66,14 @@
   .button-dark {
     background: #353434;
   }
+
+  .button-link {
+    margin-top: 25px;
+    border: none;
+    text-decoration: underline;
+    background: none;
+    color: $lightGray;
+  }
 }
 
 .circle-loader {
