@@ -653,6 +653,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
       case 'valet':
       case 'homebase':
       case 'homebase-active':
+      case 'homebase-nocars':
         return {
           url: 'img/icon-' + iconType + fileExt,
           iconRetinaUrl: 'img/icon-' + iconType + fileExt,
