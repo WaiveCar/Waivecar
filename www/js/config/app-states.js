@@ -334,6 +334,8 @@ module.exports = [
                 if ($stateParams.ids != null) {
                   return cars.filter(function (car) {
                     return _.includes($stateParams.ids, car.id);
+                  }).sort(function(a, b) {
+                    return b.range - a.range;
                   });
                 }
                 return cars;
@@ -419,8 +421,8 @@ module.exports = [
       controller: 'DashboardController as ctrl',
       data: {
         auth: true,
-        hasGMap: true/*,
-        intercom: true,
+        hasGMap: true,
+        intercom: true/*,
         intercomPadding: 70
         */
       }
