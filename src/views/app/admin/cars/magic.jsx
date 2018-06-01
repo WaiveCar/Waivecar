@@ -65,9 +65,23 @@ module.exports = class Magic extends React.Component {
     this.findMe();
   }
 
+  carInfo(car) {
+      let state = <span>
+        { car.isImmobilized ? <i class="fas fa-stop-circle"></i> : '' }
+        { car.userId ? <i class="fa fa-user-circle"></i> : '' }
+        { car.isLocked ? <i class="fa fa-lock"></i> : '' }
+        { car.inRepair ? <i class="fa fa-wrench"></i> : '' }
+        { car.isCharging ? <i class="fa fa-bolt"></i> : '' }
+      </span>
+
+      return <span>{ car.license } { state } (<em>{ car.charge }%</em>)</span>
+  }
+
   showCandidates() {
     var rows = this.state.candidates.map((row, i) => {
-      return <button className='btn' onClick={ this.chooseaCar.bind(this, i) }>{ this.state.candidates[i].license } (<em>{this.state.candidates[i].charge}%</em>)</button>
+      let car = this.state.candidates[i];
+
+      return <button className='btn' onClick={ this.chooseaCar.bind(this, i) }>{ this.carInfo(car) }</button>
     });
     return <div> { rows } </div>
   }
@@ -83,7 +97,7 @@ module.exports = class Magic extends React.Component {
 
     return (
       <div className="magic">
-        <h1> { this.state.action } { this.state.car ? <a href={ "/cars/" + this.state.car.id }>{ this.state.car.license } ({this.state.car.charge}%)</a> : '' } </h1>
+        <h1> { this.state.action } { this.state.car ? this.carInfo(this.state.car) : '' } </h1>
         { this.state.candidates ? this.showCandidates() : '' }
         { this.state.car ? this.showControls() : '' }
       </div>
