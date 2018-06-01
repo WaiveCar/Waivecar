@@ -7,12 +7,13 @@ module.exports = class RideDetails extends React.Component {
 
 
   render() {
+    var ride = null, data = null, duration = null;
     try {
-      let data = this.props.booking;
+      data = this.props.booking;
 
       // ### Ride
 
-      let ride = {
+      ride = {
         start : data.details.find(val => val.type === 'start'),
         end   : data.details.find(val => val.type === 'end'),
         fee   : data.payments.reduce((value, payment) => { return value + (payment.amount - payment.refunded); }, 0) / 100,
@@ -36,7 +37,7 @@ module.exports = class RideDetails extends React.Component {
       }
       // ### Duration
 
-      let duration  = moment.duration(moment(ride.end.createdAt).diff(moment(ride.start.createdAt)));
+      duration  = moment.duration(moment(ride.end.createdAt).diff(moment(ride.start.createdAt)));
       ride.duration = {
         raw     : duration,
         days    : duration.days(),
