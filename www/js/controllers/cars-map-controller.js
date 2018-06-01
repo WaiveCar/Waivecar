@@ -215,9 +215,15 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
       // items within 100 yards of homebase will get on the same marker
       homebase.size = _.filter(tempItems[0], 'isAvailable').length;
       homebase.isAvailable = homebase.size > 0;
-      homebase.icon = 'homebase-active';
       homebase.isWaiveCarLot = true;
       homebase.cars = tempItems[0];
+
+      if(homebase.size > 0) {
+        homebase.icon = 'homebase';
+      } else {
+        homebase.icon = 'homebase-nocars';
+      }
+
       //
       // we have this information in the type field ... I don't
       // think any legacy code is looking at this. We should 
@@ -256,10 +262,10 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
 
   this.showCar = function showCar(car) {
     if (car.isWaiveCarLot) {
-      var ids = _(car.cars).filter(isCarAccessible).map('id').value();
-      if (ids.length) {
+      var idList = _(car.cars).filter(isCarAccessible).map('id').value();
+      if (idList.length) {
         $state.go('cars-list', {
-          ids: ids
+          ids: idList
         });
       } else {
         showLotUnavailableModal();
