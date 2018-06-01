@@ -18,10 +18,10 @@
         <div class="car-cell">
           <h2 ng-bind="car.license || '&nbsp;'"></h2>
           <div>
-            <strong ng-bind="car.charge"></strong>% charged {{ car.model }}
+            <strong>{{ car.range.toFixed(0) }}</strong> mile range
           </div>
           <div>
-            <strong>{{ car.range.toFixed(0) }}</strong> mile range
+            <small><span ng-bind="car.charge"></span>% charged {{ car.model }}</small>
           </div>
         </div>
       </ion-item>
