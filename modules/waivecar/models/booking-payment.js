@@ -27,6 +27,7 @@ Bento.Register.Model('BookingPayment', 'sequelize', function(model, Sequelize) {
     }
 
   };
+  
 
   model.attributes = [
     'shopOrder'
@@ -35,10 +36,11 @@ Bento.Register.Model('BookingPayment', 'sequelize', function(model, Sequelize) {
   model.relations = [
     'Shop/Order',
     function(ShopOrder) {
-      this.hasOne(ShopOrder, { as : 'shopOrder', foreignKey : 'order_id' });
+      this.belongsTo(ShopOrder, { as : 'shopOrder', foreignKey : 'orderId' });
     }
   ];
 
+ 
   return model;
 
 });
