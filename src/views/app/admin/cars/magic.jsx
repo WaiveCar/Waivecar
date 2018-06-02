@@ -66,23 +66,31 @@ module.exports = class Magic extends React.Component {
   }
 
   carInfo(car) {
-      let state = <span>
-        { car.isImmobilized ? <i class="fas fa-stop-circle"></i> : '' }
-        { car.userId ? <i class="fa fa-user-circle"></i> : '' }
-        { car.isLocked ? <i class="fa fa-lock"></i> : '' }
-        { car.inRepair ? <i class="fa fa-wrench"></i> : '' }
-        { car.isCharging ? <i class="fa fa-bolt"></i> : '' }
-      </span>
+      let htmlList = [];
+      let checkList = [
+        ['isImmobilized', 'stop'],
+        ['userId', 'user'],
+        ['isLocked', 'lock'],
+        ['inRepair', 'wrench'],
+        ['isCharging', 'bolt']
+      ];
 
-      return <span>{ car.license } { state } (<em>{ car.charge }%</em>)</span>
+      checkList.forEach((row) => {
+        let className = (car[row[0]] ? "active" : "inactive") + " fa fa-" + row[1];
+        htmlList.push( <i className={ className }></i> );
+      })
+
+      return <span>{ htmlList } { car.license } <em>{ car.charge }%</em></span>
   }
 
   showCandidates() {
-    var rows = this.state.candidates.map((row, i) => {
-      let car = this.state.candidates[i];
+    var rows = this.state.candidates
+      .sort((a,b) => { return b.charge - a.charge })
+      .map((row, i) => {
+        let car = this.state.candidates[i];
 
-      return <button className='btn' onClick={ this.chooseaCar.bind(this, i) }>{ this.carInfo(car) }</button>
-    });
+        return <button className='btn' onClick={ this.chooseaCar.bind(this, i) }>{ this.carInfo(car) }</button>
+      });
     return <div> { rows } </div>
   }
   showControls() {

@@ -74,6 +74,23 @@
     margin: 1%;
     width: 47%;
     font-size: 13px;
+    padding: 10px 4px;
+    text-align: left;
+  }
+  i { 
+    font-size: 12px;
+    margin-right: 0.2em; 
+  }
+  em {
+    font-style: normal;
+    font-size: 12px;
+    font-family: monospace;
+  }
+  .inactive {
+    color: rgba(180,180,180,0.4);
+  }
+  .active {
+    color: rgb(0,0,0);
   }
 }
     
