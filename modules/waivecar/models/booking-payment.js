@@ -2,18 +2,8 @@
 
 Bento.Register.Model('BookingPayment', 'sequelize', function(model, Sequelize) {
 
-  /**
-   * The identity of the table created in your database.
-   * @property table
-   * @type     String
-   */
   model.table = 'booking_payments';
 
-  /**
-   * The sequelize schema definition of your model.
-   * @property schema
-   * @type     Object
-   */
   model.schema = {
 
     // ### Booking ID
@@ -37,6 +27,17 @@ Bento.Register.Model('BookingPayment', 'sequelize', function(model, Sequelize) {
     }
 
   };
+
+  model.attributes = [
+    'shopOrder'
+  ];
+
+  model.relations = [
+    'Shop/Order',
+    function(ShopOrder) {
+      this.hasOne(ShopOrder, { as : 'shopOrder', foreignKey : 'order_id' });
+    }
+  ];
 
   return model;
 

@@ -145,15 +145,7 @@ Bento.Register.Model('Shop/Order', 'sequelize', (model, Sequelize) => {
   };
 
   model.attributes = [
-    'shopOrder',
     'description=>items'
-  ];
-
-  model.relations = [
-    'Shop/Order',
-    function(ShopOrder) {
-      this.hasOne(ShopOrder, { as : 'shopOrder', foreignKey : 'order_id' });
-    }
   ];
 
   return model;
