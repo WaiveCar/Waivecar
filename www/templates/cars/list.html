@@ -13,12 +13,17 @@
       can-swipe="false">
       <ion-item ng-repeat="car in cars.all"
         class="item-thumbnail-left car-row"
+        ng-class="{ available : car.isAvailable, unavailable : !car.isAvailable }"
         ng-click="cars.show(car)">
         <img ng-src="{{ car.image }}">
-        <div class="car-cell">
+        <div 
+          class="car-cell">
           <h2 ng-bind="car.license || '&nbsp;'"></h2>
-          <div>
+          <div ng-if="car.isAvailable">
             <strong>{{ car.range.toFixed(0) }}</strong> mile range
+          </div>
+          <div ng-if="!car.isAvailable">
+            (no longer available)
           </div>
           <div>
             <small><span ng-bind="car.charge"></span>% charged {{ car.model }}</small>
