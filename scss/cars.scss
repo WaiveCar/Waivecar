@@ -109,6 +109,10 @@ car-charge-status svg {
   margin: 10px;
 }
 
+.car-row.unavailable {
+  opacity: 0.4;
+  color: #444;
+}
 .car-row {
   svg {
     height: 16px;
