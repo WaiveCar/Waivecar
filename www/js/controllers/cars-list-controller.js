@@ -29,6 +29,16 @@ function CarsListController ($rootScope, $scope, $state, $injector, $data, cars,
 
     car.charge = Math.min(car.charge, 100) || 0;
     car.image = "https://waivecar.com/images/cars/" + stub + "_100.png";
+    
+    if(!('range' in car)) {
+      if(stub === 'ioniq') {
+        multiplier = 1.35;
+      } else {
+        multiplier = 0.7;
+      }
+
+      car.range = car.charge * multiplier;
+    }
   });
 
   this.show = function showCar (car) {
