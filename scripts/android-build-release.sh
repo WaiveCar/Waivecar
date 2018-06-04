@@ -17,11 +17,13 @@ export APK_NAME="waivecardrive"
 
 base=platforms/android/build/outputs/apk
 nvmcheck
+[ -e $base ] || base=platforms/android/app/build/outputs/apk
 
 cordova build android --release
 
 export APK_LOCATION="$base/release/android-release-unsigned.apk"
 [ -e $base/android-release-unsigned.apk ] && export APK_LOCATION="$base/android-release-unsigned.apk"
+[ -e $APK_LOCATION ] || APK_LOCATION="$base/release/app-release-unsigned.apk"
 
 jarsigner \
   -storepass $KEYSTORE_PASS \
