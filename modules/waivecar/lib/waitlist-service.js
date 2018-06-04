@@ -100,7 +100,7 @@ module.exports = {
     };
 
     if(payload.phone && payload.phone.length) {
-      searchopts.where['$or'].push({ phone: payload.phone });
+      searchOpts.where['$or'].push({ phone: payload.phone });
     }
 
     // We first see if the person has already tried to join us previously
