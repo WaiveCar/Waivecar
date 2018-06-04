@@ -31,6 +31,8 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   // ^^ Actually this is wayyy too far, let's make it 0.013
   var UNLOCK_RADIUS = 0.013 * 2;
 
+  var modalMap = {};
+
   // $scope is used to store ref. to $ride and the active models in $data.
   $scope.distance = 'Unknown';
   $scope.service = $ride;
@@ -65,6 +67,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         className: 'button-balanced',
         text: opts.label ? opts.label : 'ok',
         handler: function () {
+          console.log('.......');
           modal.remove();
           if(opts.cb) {
             opts.cb();
@@ -73,6 +76,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       }]
     })
     .then(function (_modal) {
+      console.log('!!!!!');
       modal = _modal;
       modal.show();
     });
@@ -165,9 +169,9 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     if (_.isFinite(distance)) {
       $scope.distance = distance;
       if ($scope.distance <= UNLOCK_RADIUS) {
-        console.log('Showing unlock');
         stopWatchingForUnlock();
         showUnlock();
+        return true;
       }
     }
   }
@@ -261,6 +265,15 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     });
   };
 
+  // This is for when a user gets to the waivecar but the unlock screen comes up
+  // before they can actually find the car. They will want to return to the map
+  // to see where the car is.
+  function showMap () {
+    if(modalMap.unlock) {
+      modalMap.unlock.remove();
+    }
+  }
+
   function showUnlock () {
     var modal;
     var unlocking;
@@ -285,9 +298,15 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         className: 'button-balanced',
         text: 'Unlock ' + $data.active.cars.license,
         handler: onUnlock
-      }, {
+      }, 
+      {
         className: 'button-dark',
-        text: 'Cancel Booking',
+        text: 'Return to the Map',
+        handler: showMap
+      },
+      {
+        className: 'button-small button-link',
+        text: 'Cancel Your Booking',
         handler: function () {
           unlockModal = false;
           modal.remove();
@@ -298,6 +317,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     .then(function (_modal) {
       modal = _modal;
       modal.show();
+      modalMap.unlock = modal;
       unlockModal = true;
     });
 
@@ -344,17 +364,22 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   };
 
   ctrl.startIfBleFound = function() {
-    $ionicLoading.show();
+    unlockModal = false;
+    if(!checkIsInRange( ctrl.currentLocation )) {
+      //$ionicLoading.show();
     
-    $data.resources.cars.connect({id: this.car.id})
-      .then(function() {
-        $ionicLoading.hide();
-        showUnlock();
-      }).catch(function(reason){
-        $ionicLoading.hide();
-        console.log("Unable to connect", reason);
-        showFailure("Can't find car", "Please make sure you are next to the WaiveCar");
-      });
+      $data.resources.cars.connect({id: this.car.id})
+        .then(function() {
+          //$ionicLoading.hide();
+          showUnlock();
+        }).catch(function(reason){
+          //$ionicLoading.hide();
+          console.log("Unable to connect", reason);
+          showFailure("Can't find car", "Please make sure you are next to the WaiveCar");
+        });
+    } else {
+      showUnlock();
+    }
   }
 
   $scope.$on('$destroy', function () {
