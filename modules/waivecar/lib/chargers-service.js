@@ -100,9 +100,12 @@ module.exports = {
     let requestObj = this.prepareRequest('locations', 'GET');
     let response = yield request(requestObj);
 
+    return [];
+    /*
     let result = JSON.parse(response.body);
     let locations = (result.data || []).map(loc => this.mapCharger(loc));
     return locations.filter( loc => GeocodingService.inDrivingZone(loc.latitude, loc.longitude));
+    */
   },
 
   *getCharger(id) {
