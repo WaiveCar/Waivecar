@@ -392,7 +392,7 @@ module.exports = {
         yield user.untag(toRemove[ix]);
 
         if(toRemove[ix] === 'aid') {
-          yield notify.notifyAdmins(`:runner: ${ _user.name() } removed ${ user.name() } from WaiveAid.`, [ 'slack' ], { channel : '#user-alerts' });
+          yield notify.notifyAdmins(`:runner: ${ _user.name() } removed ${ user.link() } from WaiveAid.`, [ 'slack' ], { channel : '#user-alerts' });
         }
         // The user doesn't get any email that they've been removed, that's hostile.
       }
@@ -406,7 +406,7 @@ module.exports = {
         yield user.addTag(toAdd[ix]);
 
         if(toAdd[ix] === 'aid') {
-          yield notify.notifyAdmins(`:older_adult: ${ _user.name() } added ${ user.name() } to WaiveAid.`, [ 'slack' ], { channel : '#user-alerts' });
+          yield notify.notifyAdmins(`:older_adult: ${ _user.name() } added ${ user.link() } to WaiveAid.`, [ 'slack' ], { channel : '#user-alerts' });
 
           yield (new Email()).send({
             to: user.email,
