@@ -379,8 +379,11 @@ module.exports = {
       yield this.unsuspend(user, _user);
     }
 
-    // this is explicitly only regions
     if (payload.tagList) {
+      payload.tagList = payload.tagList.map((row) => { return row.toLowerCase(); });
+
+      // this is explicitly only regions because we don't want to remove
+      // user permissions.
       let oldTags = yield user.getTagList('region');      
 
       // We remove the ones we've unchecked
@@ -390,11 +393,22 @@ module.exports = {
         return user.untag(tagName);
       });
 
-      // And add the ne ones if relevant.
-      let toAdd = _.difference(payload.tagList, oldTags);
-      yield toAdd.map((tagName) => {
-        return user.addTag(tagName);
-      });
+      // And add the new ones if relevant (this goes outside the 
+      // regions exclusive
+      let AllOldTags = yield user.getTagList();
+      let toAdd = _.difference(payload.tagList, AllOldTags);
+
+      for(var ix = 0; ix < toAdd.length; ix++) {
+        yield user.addTag(toAdd[ix]);
+        if(toAdd[ix] === 'aid') {
+          yield (new Email()).send({
+            to: user.email,
+            from: emailConfig.sender,
+            subject: "Welcome to WaiveAid",
+            template: "waiveaid-welcome"
+          });
+        }
+      }
     }
 
     // admins can change a users group role.
