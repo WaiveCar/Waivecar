@@ -10,6 +10,7 @@ let UserLog     = require('../../log/lib/log-service');
 let Email       = Bento.provider('email');
 let queryParser = Bento.provider('sequelize/helpers').query;
 let User        = Bento.model('User');
+let Car         = Bento.model('Car');
 let Cart        = Bento.model('Shop/Cart');
 let Card        = Bento.model('Shop/Card');
 let Order       = Bento.model('Shop/Order');
@@ -276,8 +277,15 @@ module.exports = class OrderService extends Service {
         booking_id: booking.id
       }
     });
+    let city = `in ${details[1].address.split(',').slice(this.length - 3, this.length - 2)[0].trim()}` || '';
 
-    let city = details[1].address.split(',').slice(this.length - 3, this.length - 2)[0].trim();
+    let car = yield Car.findOne({
+      where: {
+        id: booking.carId
+      }
+    });
+    let carName = car.license;
+
     let allCharges = yield this.getTotalCharges(booking);
     let email = new Email();
 
@@ -286,7 +294,7 @@ module.exports = class OrderService extends Service {
 	      yield email.send({
 		        to       : user.email,
 		        from     : emailConfig.sender,
-		        subject  : `[WaiveCar] $${ (allCharges.totalAmount / 100).toFixed(2) } charged for your recent booking in ${ city }. Thanks for using WaiveCar.`,
+		        subject  : `[WaiveCar] $${ (allCharges.totalAmount / 100).toFixed(2) } charged for your recent booking ${ city }. Thanks for using WaiveCar.`,
 		        template : 'time-charge',
 		        context  : {
 		        name     : user.name(),
@@ -302,11 +310,11 @@ module.exports = class OrderService extends Service {
 	      yield email.send({
 		        to       : user.email,
 		        from     : emailConfig.sender,
-		        subject  : `[WaiveCar] No charges for your recent booking in ${ city }. Thanks for using WaiveCar.`,
+		        subject  : `[WaiveCar] No charges for your recent booking ${ city }. Thanks for using WaiveCar.`,
 		        template : 'free-ride-complete',
 		        context  : {
 		        name     : user.name(),
-            car      : 'a car', //needs to be changed to get the car number
+            car      : carName, //needs to be changed to get the car number
             duration : minutesOver,
             city     : city,
 		        amount   : (amount / 100).toFixed(2)
@@ -342,20 +350,6 @@ module.exports = class OrderService extends Service {
     }
   }
 
-  static *getAddress(lat, long) {
-    // Gets the address corresponding with a latitude and longitude
-    try { 
-      let res = yield request(`http://maps.googleapis.com/maps/api/geocode/json`, {
-        qs : {
-          latlng : `${ lat },${ long }`
-        }    
-      });  
-      let body = JSON.parse(res.body);
-      return body.results.length ? body.results[0].formatted_address : null;
-    } catch(ex) {
-      return null;
-    }    
-  }
   /**
    * Creates a authorized order of a given amount to be captured later.
    * @param  {Object} payload
