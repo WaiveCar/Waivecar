@@ -277,7 +277,14 @@ module.exports = class OrderService extends Service {
         booking_id: booking.id
       }
     });
-    let city = `in ${details[1].address.split(',').slice(this.length - 3, this.length - 2)[0].trim()}` || '';
+    let validAddress = details[0].address !== null ? details[0].address : details[1].address;
+
+    let city = '';
+    try {
+      city = `in ${validAddress.split(',').slice(this.length - 3, this.length - 2)[0].trim()}`;
+    } catch (err) {
+      console.log(err);
+    }
 
     let car = yield Car.findOne({
       where: {
@@ -287,6 +294,7 @@ module.exports = class OrderService extends Service {
     let carName = car.license;
 
     let allCharges = yield this.getTotalCharges(booking);
+    let dollarAmount = (allCharges.totalAmount / 100).toFixed(2);
     let email = new Email();
 
     if(allCharges.totalAmount > 0) {
@@ -294,12 +302,12 @@ module.exports = class OrderService extends Service {
 	      yield email.send({
 		        to       : user.email,
 		        from     : emailConfig.sender,
-		        subject  : `[WaiveCar] $${ (allCharges.totalAmount / 100).toFixed(2) } charged for your recent booking ${ city }. Thanks for using WaiveCar.`,
+		        subject  : `[WaiveCar] $${ dollarAmount } charged for your recent booking ${ city }. Thanks for using WaiveCar.`,
 		        template : 'time-charge',
 		        context  : {
 		        name     : user.name(),
 		        duration : minutesOver,
-		        amount   : (amount / 100).toFixed(2)
+		        amount   : dollarAmount
 		      }
 	      });
 	    } catch (err) {
