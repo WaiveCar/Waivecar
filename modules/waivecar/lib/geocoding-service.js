@@ -35,10 +35,33 @@ module.exports = {
   },
 
   // Check if provided lat / long is within 20 mile driving zone
-
   inDrivingZone(lat, long) {
     let distance = geolib.getDistance({ latitude : lat, longitude : long }, config.waivecar.homebase.coords);
     let miles = distance * 0.000621371;
     return miles <= 25;
+  },
+
+  *getAddressComponent(lat, lng, type) {
+    let list = yield this.getAddress(lat, lng, 'address_components');
+    for(var ix = 0; ix < list.length; ix++) {
+      if (list[ix].type.includes(type)) {
+        return list[ix];
+      }
+    }
+  },
+
+  *getAddress(lat, long, param) {
+    try { 
+      let res = yield request(`http://maps.googleapis.com/maps/api/geocode/json`, {
+        qs : {
+          latlng : `${ lat },${ long }`
+        }
+      });
+      let body = JSON.parse(res.body);
+      param = param || 'formatted_address';
+      return body.results.length ? body.results[0][param] : null;
+    } catch(ex) {
+      return null;
+    }
   }
 };

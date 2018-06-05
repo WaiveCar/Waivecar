@@ -1,7 +1,7 @@
 'use strict';
 
 let co          = require('co');
-let request      = require('co-request');
+let request     = require('co-request');
 let Service     = require('./classes/service');
 let CartService = require('./cart-service');
 let moment      = require('moment');
@@ -271,8 +271,13 @@ module.exports = class OrderService extends Service {
       yield payment.save();
     }
 
-    let address = yield this.getAddress(user.latitude, user.longitude);
-    let city = address.split(',').slice(this.length - 3, this.length - 2)[0].trim();
+    let details = yield BookingDetails.find({
+      where: {
+        booking_id: booking.id
+      }
+    });
+
+    let city = details[1].address.split(',').slice(this.length - 3, this.length - 2)[0].trim();
     let allCharges = yield this.getTotalCharges(booking);
     let email = new Email();
 

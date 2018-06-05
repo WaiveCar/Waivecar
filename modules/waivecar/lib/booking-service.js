@@ -4,6 +4,7 @@ let request      = require('co-request');
 let Service      = require('./classes/service');
 let cars         = require('./car-service');
 let fees         = require('./fee-service');
+let geocode      = require('./geocoding-service');
 let notify       = require('./notification-service');
 let UserService  = require('../../user/lib/user-service.js');
 let CarService   = require('./car-service');
@@ -1284,25 +1285,13 @@ module.exports = class BookingService extends Service {
     return ret;
   }
 
-  /**
-   * Fetches an address from the provided lat long coordinates.
-   * @param  {Number} lat
-   * @param  {Number} long
-   * @return {String}
-   */
-  static *getAddress(lat, long) {
-    try { 
-      let res = yield request(`http://maps.googleapis.com/maps/api/geocode/json`, {
-        qs : {
-          latlng : `${ lat },${ long }`
-        }
-      });
-      let body = JSON.parse(res.body);
-      return body.results.length ? body.results[0].formatted_address : null;
-    } catch(ex) {
-      return null;
-    }
+  // getAddress has been moved to the geocoding services.
+  // A reference has been left here for legacy compatibility
+  // cjm 20180605
+  static *getAddress(lat, long, param) {
+    return yield geocode.getAddress(lat, long, param); 
   }
+
 
   /**
    * Determines if user has booked car in last 10 minutes
