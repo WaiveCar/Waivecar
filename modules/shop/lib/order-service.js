@@ -272,7 +272,7 @@ module.exports = class OrderService extends Service {
     }
 
     let address = yield this.getAddress(user.latitude, user.longitude);
-    let city = address.split(',').slice(this.length - 3, this.length - 2)[0];
+    let city = address.split(',').slice(this.length - 3, this.length - 2)[0].trim();
     let allCharges = yield this.getTotalCharges(booking);
     let email = new Email();
 
@@ -281,7 +281,7 @@ module.exports = class OrderService extends Service {
 	      yield email.send({
 		        to       : user.email,
 		        from     : emailConfig.sender,
-		        subject  : `[WaiveCar] ${ (allCharges.totalAmount / 100).toFixed(2) } charged for your recent booking in ${ city }. Thanks for using WaiveCar.`,
+		        subject  : `[WaiveCar] $${ (allCharges.totalAmount / 100).toFixed(2) } charged for your recent booking in ${ city }. Thanks for using WaiveCar.`,
 		        template : 'time-charge',
 		        context  : {
 		        name     : user.name(),
