@@ -745,13 +745,13 @@ module.exports = class BookingService extends Service {
     let deltas = yield this.getDeltas(booking);
 
     // Handle auto charge for time
-    if (!isAdmin) {
+    //    if (!isAdmin) {
       yield OrderService.createTimeOrder(booking, user);
 
-    } else if(deltas.duration > freeTime) {
-      yield notify.slack({ text : `:umbrella: Booking ended by admin. Time driven was over 2 hours. ${ Bento.config.web.uri }/bookings/${ id }`
-      }, { channel : '#adminended' });
-    }
+    //} else if(deltas.duration > freeTime) {
+    //  yield notify.slack({ text : `:umbrella: Booking ended by admin. Time driven was over 2 hours. ${ Bento.config.web.uri }/bookings/${ id }`
+    //  }, { channel : '#adminended' });
+    //}
 
     // Parking restrictions:
     let parkingSlack;
@@ -1380,3 +1380,4 @@ module.exports = class BookingService extends Service {
   }
 
 };
+

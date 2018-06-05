@@ -4,7 +4,6 @@ let User        = Bento.model('User');
 let error       = Bento.Error;
 let relay       = Bento.Relay;
 let Redis   = require('./redis-service');
-let BookingService   = require('./booking-service');
 
 let Step    = Bento.model('ActionEngine');
 let Booking = Bento.model('Booking');

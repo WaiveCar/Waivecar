@@ -270,12 +270,10 @@ module.exports = class OrderService extends Service {
       });
       yield payment.save();
     }
+
     let address = yield this.getAddress(user.latitude, user.longitude);
     let city = address.split(',').slice(this.length - 3, this.length - 2)[0];
-    console.log(city, 'city of booking');
-
     let allCharges = yield this.getTotalCharges(booking);
-    console.log('all charges: ', allCharges);
     let email = new Email();
 
     if(allCharges.totalAmount > 0) {
@@ -295,7 +293,6 @@ module.exports = class OrderService extends Service {
 	      log.warn('Failed to deliver time notification email: ', err);
 	    } 
     } else {
-      console.log('no charges for your booking', booking);
 	    try {
 	      yield email.send({
 		        to       : user.email,
