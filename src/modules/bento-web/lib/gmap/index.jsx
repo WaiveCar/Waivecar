@@ -262,18 +262,23 @@ module.exports = class GMap extends React.Component {
       }
 
       if(!marker) {
-        marker = new google.maps.Marker({
+        let props = {
           map: this.map,
           position: new google.maps.LatLng(val.lat, val.long),
-          label: {
+          icon: markerIcon,
+          zIndex: importance * 100 + ix
+        };
+
+        if(label) {
+          props.label = {
             fontSize: (9 + (1.3 * importance)) + 'px',
             color: 'rgba(0,0,0,' + (importance / 5 + 0.6) + ')',
             text: label,
             zIndex: importance * 100 + ix
-          },
-          icon: markerIcon,
-          zIndex: importance * 100 + ix
-        });
+          };
+        }
+
+        marker = new google.maps.Marker(props);
       }
 
       ix++;
