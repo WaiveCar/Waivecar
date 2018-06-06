@@ -283,7 +283,7 @@ module.exports = class OrderService extends Service {
     try {
       city = `in ${validAddress.split(',').slice(this.length - 3, this.length - 2)[0].trim()}`;
     } catch (err) {
-      console.log(err);
+      log.warn(err);
     }
 
     let car = yield Car.findOne({
@@ -296,6 +296,16 @@ module.exports = class OrderService extends Service {
     let allCharges = yield this.getTotalCharges(booking);
     let dollarAmount = (allCharges.totalAmount / 100).toFixed(2);
     let email = new Email();
+    console.log(allCharges.types);
+    let chargesList = '';
+    let chargesString = allCharges.types.join(' ');
+    console.log(chargesString);
+    if(chargesString.includes('reservation extension')) {
+      chargesList += '<li>$1.00 for a reservation extension</li>';
+    }
+    if(chargesString.includes()) {
+      chargesList += `${minutesOver} minutes x $5.99 / hr`;
+    }
 
     if(allCharges.totalAmount > 0) {
 	    try {
@@ -305,12 +315,13 @@ module.exports = class OrderService extends Service {
 		        subject  : `[WaiveCar] $${ dollarAmount } charged for your recent booking ${ city }. Thanks for using WaiveCar.`,
 		        template : 'time-charge',
 		        context  : {
-		        name     : user.name(),
-		        duration : minutesOver,
-		        amount   : dollarAmount
-		      }
+		          name     : user.name(),
+		          duration : minutesOver,
+		          amount   : dollarAmount,
+              list     : chargesList
+		        }
 	      });
-	    } catch (err) {
+	    } catch(err) {
 	      log.warn('Failed to deliver time notification email: ', err);
 	    } 
     } else {
@@ -321,14 +332,13 @@ module.exports = class OrderService extends Service {
 		        subject  : `[WaiveCar] No charges for your recent booking ${ city }. Thanks for using WaiveCar.`,
 		        template : 'free-ride-complete',
 		        context  : {
-		        name     : user.name(),
-            car      : carName, //needs to be changed to get the car number
-            duration : minutesOver,
-            city     : city,
-		        amount   : (amount / 100).toFixed(2)
-		      }
+		          name     : user.name(),
+              car      : carName, 
+              duration : minutesOver,
+              city     : city
+		        }
 	      });
-	    } catch (err) {
+	    } catch(err) {
 	      log.warn('Failed to deliver time notification email: ', err);
 	    } 
     }
@@ -353,7 +363,6 @@ module.exports = class OrderService extends Service {
     }
     return {
       totalAmount,
-      payments,
       types,
     }
   }
