@@ -211,7 +211,7 @@ module.exports = class OrderService extends Service {
       return true;
     }
     // Don't charge the waivework users or admins for going over 2 hours.
-    if(user.isWaivework || user.isAdmin()) {
+    if (user.isWaivework || user.isAdmin()) {
       return true;
     }
     let isLevel = yield user.isTagged('level');
@@ -271,7 +271,8 @@ module.exports = class OrderService extends Service {
       });
       yield payment.save();
     }
-
+    
+    // This gets the city of the booking off of the address of the current booking
     let details = yield BookingDetails.find({
       where: {
         booking_id: booking.id
@@ -286,6 +287,7 @@ module.exports = class OrderService extends Service {
       log.warn(err);
     }
 
+    // This gets which WaivCar was used for the booking
     let car = yield Car.findOne({
       where: {
         id: booking.carId
@@ -294,20 +296,13 @@ module.exports = class OrderService extends Service {
     let carName = car.license;
 
     let allCharges = yield this.getTotalCharges(booking);
+    let chargesList = allCharges.types.map((type) => `<li>${type.trim()}</li>`).join();
     let dollarAmount = (allCharges.totalAmount / 100).toFixed(2);
-    let email = new Email();
-    console.log(allCharges.types);
-    let chargesList = '';
-    let chargesString = allCharges.types.join(' ');
-    console.log(chargesString);
-    if(chargesString.includes('reservation extension')) {
-      chargesList += '<li>$1.00 for a reservation extension</li>';
-    }
-    if(chargesString.includes()) {
-      chargesList += `${minutesOver} minutes x $5.99 / hr`;
-    }
 
-    if(allCharges.totalAmount > 0) {
+    let email = new Email();
+    // This creates a list of charges to be injected into the template
+    if (allCharges.totalAmount > 0) {
+      // This is sent out if there are charges for the booking 
 	    try {
 	      yield email.send({
 		        to       : user.email,
@@ -325,6 +320,7 @@ module.exports = class OrderService extends Service {
 	      log.warn('Failed to deliver time notification email: ', err);
 	    } 
     } else {
+      // This is sent out if there are no charges for the booking
 	    try {
 	      yield email.send({
 		        to       : user.email,
@@ -358,8 +354,8 @@ module.exports = class OrderService extends Service {
     let totalAmount = 0;
     let types = [];
     if (payments.length) {
-       totalAmount = payments.reduce((total, payment) => total + payment.shopOrder.amount, 0);
-       types = payments.map(payment => payment.shopOrder.description.replace('Booking ', ''));
+      totalAmount = payments.reduce((total, payment) => total + payment.shopOrder.amount, 0);
+      types = payments.map(payment => payment.shopOrder.description.replace(/Booking\s\d*/i, ''));
     }
     return {
       totalAmount,
