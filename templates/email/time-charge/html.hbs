@@ -4,14 +4,11 @@
 <div class="main">
   <h3>Hello {{ name }},</h3>
   <p>
-    Here's a breakdown of the charges for your recent booking with {{ car }}.
+    Here's a breakdown of the charges for your recent booking with {{ car }}:
   </p>
-  <p>
-    Charges Include:
-    <ul>
-      {{{ list }}}
-    </ul>
-  </p>
+  <ul>
+    {{{ list }}}
+  </ul>
   <p>
     {{#if paid}}
       <strong>Total charges for your ride: ${{ paid }}</strong>
