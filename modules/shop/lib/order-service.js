@@ -294,23 +294,27 @@ module.exports = class OrderService extends Service {
     let carName = car.license;
 
     let allCharges = yield this.getTotalCharges(booking);
+    let totalAmount = allCharges.totalCredit + allCharges.totalPaid;
     let chargesList = allCharges.types.map((type) => `<li>${type.trim()}</li>`).join();
-    let dollarAmount = (allCharges.totalAmount / 100).toFixed(2);
+    let dollarAmount = (totalAmount / 100).toFixed(2);
 
     let email = new Email();
     // This creates a list of charges to be injected into the template
-    if (allCharges.totalAmount > 0) {
+    if (totalAmount > 0) {
       // This is sent out if there are charges for the booking 
 	    try {
 	      yield email.send({
 		        to       : user.email,
 		        from     : emailConfig.sender,
-		        subject  : `$${ dollarAmount } charged for your recent booking${ city }. Thanks for using WaiveCar.`,
+		        subject  : `$${ dollarAmount } receipt for your recent booking with ${carName}${ city }`,
 		        template : 'time-charge',
 		        context  : {
 		          name     : user.name(),
+              car      : carName, 
 		          duration : minutesOver,
-		          amount   : dollarAmount,
+		          paid     : allCharges.totalPaid ? (allCharges.totalPaid / 100).toFixed(2) : false,
+              credit   : allCharges.totalCredit ? (allCharges.totalCredit / 100).toFixed(2) : false,
+              creditLeft: (user.credit / 100).toFixed(2),
               list     : chargesList
 		        }
 	      });
@@ -349,15 +353,20 @@ module.exports = class OrderService extends Service {
         }
       ]
     });
-    let totalAmount = 0;
+
+    let totalCredit = 0;
+    let totalPaid = 0;
     let types = [];
+
     if (payments.length) {
-      totalAmount = payments.reduce((total, payment) => total + payment.shopOrder.amount, 0);
+      totalCredit = payments.filter((row) => row.chargeId === '0' ).reduce((total, payment) => total + payment.shopOrder.amount, 0);
+      totalPaid = payments.filter((row) => row.chargeId !== '0' ).reduce((total, payment) => total + payment.shopOrder.amount, 0);
       types = payments.map(payment => payment.shopOrder.description.replace(/Booking\s\d*/i, ''));
     }
 
     return {
-      totalAmount,
+      totalCredit,
+      totalPaid,
       types,
     };
   }
