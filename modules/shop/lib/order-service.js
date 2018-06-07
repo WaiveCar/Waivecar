@@ -323,7 +323,7 @@ module.exports = class OrderService extends Service {
 	      yield email.send({
 		        to       : user.email,
 		        from     : emailConfig.sender,
-		        subject  : `No charges for your recent booking ${ city }. Thanks for using WaiveCar.`,
+		        subject  : `You drove for free in ${ city }. Thanks for using WaiveCar.`,
 		        template : 'free-ride-complete',
 		        context  : {
 		          name     : user.name(),
