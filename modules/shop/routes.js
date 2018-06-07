@@ -25,7 +25,7 @@ Route.post('/shop/quickcharge', {
   policy : [ 'isAuthenticated' ],
   uses   : 'Shop/OrdersController@quickcharge',
 });
-// This route is for refunding charges
+// This route is for refunding charges. It requires an amount property in the body of the request.
 Route.post('/shop/refund/:id', [ /*'isAuthenticated', 'isAdmin',*/ 'Shop/OrdersController@refund' ]);
 
 Route.post('/shop/cards', {

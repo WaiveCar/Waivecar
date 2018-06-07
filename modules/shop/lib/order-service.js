@@ -114,6 +114,13 @@ module.exports = class OrderService extends Service {
     return {order: order, user: user};
   }
 
+  static *refund(payload, _user, paymentId) {
+    let user = yield this.getUser(payload.userId);
+    let charge = {amount: payload.amount};
+
+    return {payload, _user, paymentId};
+  }
+
   static *create(payload, _user) {
     let data  = yield hooks.call('shop:store:order:before', payload, _user);
     let user  = yield this.getUser(data.userId);
