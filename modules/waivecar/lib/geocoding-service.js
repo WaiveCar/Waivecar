@@ -35,6 +35,7 @@ module.exports = {
   },
 
   // Check if provided lat / long is within 20 mile driving zone
+
   inDrivingZone(lat, long) {
     let distance = geolib.getDistance({ latitude : lat, longitude : long }, config.waivecar.homebase.coords);
     let miles = distance * 0.000621371;

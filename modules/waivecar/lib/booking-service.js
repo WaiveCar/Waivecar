@@ -748,6 +748,7 @@ module.exports = class BookingService extends Service {
     // Handle auto charge for time
     if (!isAdmin) {
       yield OrderService.createTimeOrder(booking, user);
+
     } else if(deltas.duration > freeTime) {
       yield notify.slack({ text : `:umbrella: Booking ended by admin. Time driven was over 2 hours. ${ Bento.config.web.uri }/bookings/${ id }`
       }, { channel : '#adminended' });
@@ -1291,7 +1292,6 @@ module.exports = class BookingService extends Service {
     return yield geocode.getAddress(lat, long, param); 
   }
 
-
   /**
    * Determines if user has booked car in last 10 minutes
    * @param {Object} user
@@ -1368,4 +1368,3 @@ module.exports = class BookingService extends Service {
   }
 
 };
-

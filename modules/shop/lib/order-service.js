@@ -28,7 +28,6 @@ let emailConfig = Bento.config.email;
 let log         = Bento.Log;
 let apiConfig   = Bento.config.api;
 
-
 module.exports = class OrderService extends Service {
 
   // Apparently you can't just charge a user without filling up a fucking
@@ -210,10 +209,12 @@ module.exports = class OrderService extends Service {
       yield notify.notifyAdmins(`Avoiding a potential double charging of booking ${ booking.id }`, [ 'slack' ], { channel : '#rental-alerts' });
       return true;
     }
+
     // Don't charge the waivework users or admins for going over 2 hours.
-    if (user.isWaivework || user.isAdmin()) {
+    if(user.isWaivework || user.isAdmin()) {
       return true;
     }
+
     let isLevel = yield user.isTagged('level');
     // level cars get 3 free hours, not 2. #1159
     let freeTime = isLevel ? 180 : 120;
@@ -236,24 +237,25 @@ module.exports = class OrderService extends Service {
     }
 
     if (minutesOver !== 0) {
-	    billableGroups = Math.ceil(minutesOver / 10);
-	    amount = Math.round((billableGroups / 6 * 5.99) * 100);
+      billableGroups = Math.ceil(minutesOver / 10);
+      amount = Math.round((billableGroups / 6 * 5.99) * 100);
 
-	    let card = yield Card.findOne({ where : { userId : user.id } });
-	    let cart = yield CartService.createTimeCart(minutesOver, amount, user);
-	    let order = new Order({
-	      createdBy : user.id,
-	      userId    : user.id,
+      let card = yield Card.findOne({ where : { userId : user.id } });
+      let cart = yield CartService.createTimeCart(minutesOver, amount, user);
+      let order = new Order({
+        createdBy : user.id,
+        userId    : user.id,
 
-	      // User card id
-	      source      : card.id,
-	      description : `${ minutesOver }min for booking ${ booking.id }`,
-	      metadata    : null,
-	      currency    : 'usd',
-	      amount      : amount
-	    });
-	    yield order.save();
-	    yield this.addItems(order, cart.items);
+        // User card id
+        source      : card.id,
+        description : `${ minutesOver }min for booking ${ booking.id }`,
+        metadata    : null,
+        currency    : 'usd',
+        amount      : amount
+      });
+
+      yield order.save();
+      yield this.addItems(order, cart.items);
 
       try {
         yield this.charge(order, user);
@@ -287,12 +289,8 @@ module.exports = class OrderService extends Service {
       log.warn(err);
     }
 
-    // This gets which WaivCar was used for the booking
-    let car = yield Car.findOne({
-      where: {
-        id: booking.carId
-      }
-    });
+    // This gets which WaiveCar was used for the booking
+    let car = yield Car.findById(booking.carId);
     let carName = car.license;
 
     let allCharges = yield this.getTotalCharges(booking);
@@ -307,7 +305,7 @@ module.exports = class OrderService extends Service {
 	      yield email.send({
 		        to       : user.email,
 		        from     : emailConfig.sender,
-		        subject  : `[WaiveCar] $${ dollarAmount } charged for your recent booking ${ city }. Thanks for using WaiveCar.`,
+		        subject  : `$${ dollarAmount } charged for your recent booking ${ city }. Thanks for using WaiveCar.`,
 		        template : 'time-charge',
 		        context  : {
 		          name     : user.name(),
@@ -325,7 +323,7 @@ module.exports = class OrderService extends Service {
 	      yield email.send({
 		        to       : user.email,
 		        from     : emailConfig.sender,
-		        subject  : `[WaiveCar] No charges for your recent booking ${ city }. Thanks for using WaiveCar.`,
+		        subject  : `No charges for your recent booking ${ city }. Thanks for using WaiveCar.`,
 		        template : 'free-ride-complete',
 		        context  : {
 		          name     : user.name(),
@@ -357,10 +355,11 @@ module.exports = class OrderService extends Service {
       totalAmount = payments.reduce((total, payment) => total + payment.shopOrder.amount, 0);
       types = payments.map(payment => payment.shopOrder.description.replace(/Booking\s\d*/i, ''));
     }
+
     return {
       totalAmount,
       types,
-    }
+    };
   }
 
   /**
