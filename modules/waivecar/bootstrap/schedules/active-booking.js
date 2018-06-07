@@ -68,12 +68,21 @@ var checkBooking = co.wrap(function *(booking) {
         yield notify.sendTextMessage(user, 'Hey there, WaiveCar has a 12 hour rental limit. Please end your rental in the next hour. Thanks!');
       }
     }
+
+    let trigger = isLevel ? 240 : 180;
+    // This text message warning if the booking is 1 hour over the free time
+    if ((duration >= trigger || duration >= 180) && !booking.isFlagged('hour-over-notice'0)) {
+      yield booking.flag('hour-over-notice');
+      let hour = trigger/60;
+      let carName = car.license;
+      yield notify.sendTextMessage(user, `Just a reminder that you are ${ hour } hours into your booking with ${ carName }. If you feel this is a mistake, give us a call. Otherwise enjoy your ride!`);
+    }
     //
     // New user rental warning (under 5 rentals, over 3 hours) #463
     //
     // Send an alert to 'rental alerts' if a new user (less than 5 trips) has taken a car for longer than 3 hours. 
     //
-    if (duration >= 180 && !booking.isFlagged('new-user-long-rental')) {
+    if (duration >= trigger && !booking.isFlagged('new-user-long-rental')) {
       yield booking.flag('new-user-long-rental');
       booking_history = yield Booking.find({ where : { userId : user.id }});
 
