@@ -60,7 +60,7 @@ module.exports = {
             ).format("H:mm");
 
           report.booked.push([
-            license, user.link(), status, `<${ Bento.config.web.uri }/bookings/${booking.id}|#${booking.id}>`, car.chargeReport, location
+            license, user.link(), status, `<${ Bento.config.web.uri }/bookings/${booking.id}|#${booking.id}>`, car.chargeReport(), location
           ].join(' '));
 
         } else {
