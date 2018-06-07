@@ -680,16 +680,16 @@ module.exports = {
    * @return {Array}
    */
   *getDevice(id, _user, source) {
+    /*
     if (process.env.NODE_ENV !== 'production') {
       return false;
     }
+    */
     try {
       let status = yield this.request(`/devices/${ id }/status`, { timeout : 30000 });
       this._errors[id] = 0;
       if (status) {
-
         this.logStatus(status, id, source);
-
         return this.transformDeviceToCar(id, status);
       }
     } catch (err) {
