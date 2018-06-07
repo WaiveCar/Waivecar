@@ -8,6 +8,10 @@ Bento.Register.Controller('Shop/OrdersController', (controller) => {
     return yield service.quickCharge(this.payload, this.auth.user);
   };
 
+  controller.refund = function *(id) {
+    return yield { payload: this.payload, auth: this.auth, id, };
+  }; 
+
   // Creates a new order.
   controller.create = function *() {
     return yield service.create(this.payload, this.auth.user);

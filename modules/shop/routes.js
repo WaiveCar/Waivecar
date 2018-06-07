@@ -25,6 +25,8 @@ Route.post('/shop/quickcharge', {
   policy : [ 'isAuthenticated' ],
   uses   : 'Shop/OrdersController@quickcharge',
 });
+// This route is for refunding charges
+Route.post('/shop/refund/:id', [ /*'isAuthenticated', 'isAdmin',*/ 'Shop/OrdersController@refund' ]);
 
 Route.post('/shop/cards', {
   policy : 'isAuthenticated',
@@ -99,4 +101,4 @@ Route.get('/shop/orders',     [ 'isAuthenticated', 'Shop/OrdersController@index'
 Route.get('/shop/orders/:id', [ 'isAuthenticated', 'Shop/OrdersController@show' ]);
 
 // ## CHARGES
-Route.get('/shop/charges/:id', [ 'Shop/ChargesController@show' ]);
+// Route.get('/shop/charges/:id', [ 'Shop/ChargesController@show' ]);
