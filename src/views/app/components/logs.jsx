@@ -80,6 +80,7 @@ module.exports = class Logs extends React.Component {
           </div>
         );
       case 'UNLOCK_CAR':
+      case 'UNLOCK':
         return (
           <div>
             <Link to={ `/users/${ log.actor.id }` }>{ log.actor.firstName } { log.actor.lastName }</Link>
@@ -88,6 +89,7 @@ module.exports = class Logs extends React.Component {
           </div>
         );
       case 'LOCK_CAR':
+      case 'LOCK':
         return (
           <div>
             <Link to={ `/users/${ log.actor.id }` }>{ log.actor.firstName } { log.actor.lastName }</Link>
@@ -96,6 +98,7 @@ module.exports = class Logs extends React.Component {
           </div>
         );
       case 'IMMOBILIZE_CAR':
+      case 'IMMOBILIZE':
         return (
           <div>
             <Link to={ `/users/${ log.actor.id }` }>{ log.actor.firstName } { log.actor.lastName }</Link>
@@ -104,6 +107,7 @@ module.exports = class Logs extends React.Component {
           </div>
         );
       case 'UNIMMOBILIZE_CAR':
+      case 'UNIMMOBILIZE':
         return (
           <div>
             <Link to={ `/users/${ log.actor.id }` }>{ log.actor.firstName } { log.actor.lastName }</Link>
