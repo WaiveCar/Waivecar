@@ -104,17 +104,17 @@ var checkBooking = co.wrap(function *(booking) {
 
   // Check charge level
   // See Api: Low charge text message triggers #495 & #961
-  if (car.milesAvailable() < 7 && !booking.isFlagged('low-2')) {
+  if (car.avgMilesAvailable() < 7 && !booking.isFlagged('low-2')) {
     yield booking.flag('low-2');
     yield notify.sendTextMessage(user, "Hi, you're WaiveCar is getting dangerously low on charge! If it runs out of juice, we'll have to tow it at your expense! Please call us at this number and we'll direct you to the nearest charger.");
     yield notify.notifyAdmins(`:interrobang: ${ user.link() } is persisting and is now disastrously low with ${ car.info() }, oh dear. ${ car.chargeReport() }. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
 
-  } else if (car.milesAvailable() < 14 && !booking.isFlagged('low-1')) {
+  } else if (car.avgMilesAvailable() < 14 && !booking.isFlagged('low-1')) {
     yield booking.flag('low-1');
     yield notify.sendTextMessage(user, "Hi, you're WaiveCar is getting really low. Please call us and we can help you get to a charger.");
     yield notify.notifyAdmins(`:small_red_triangle: ${ user.link() } is continuing to drive ${ car.info() } to an even lower charge. ${ car.chargeReport() }. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
 
-  } else if (car.milesAvailable() < 21 && !booking.isFlagged('low-0')) {
+  } else if (car.avgMilesAvailable() < 21 && !booking.isFlagged('low-0')) {
     yield booking.flag('low-0');
     yield notify.sendTextMessage(user, 'Hey there! Looks like your WaiveCar battery is getting really low. Please return your WaiveCar to the home base.');
     yield notify.notifyAdmins(`:battery: ${ user.link() } has driven ${ car.info() } to a low charge. ${ car.chargeReport() }. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
