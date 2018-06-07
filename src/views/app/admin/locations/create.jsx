@@ -172,7 +172,6 @@ class LocationsIndex extends React.Component {
                     </div>
                     <div className="form-group row">
                       <div className="col-xs-12 bento-form-input focus">
-                        <label>Polygon (1. <a target="_blank" href="http://www.gmapgis.com/">Draw a Polygon</a> 2. Save as KML 3. Copy and paste the numbers)</label>
                         <textarea rows="5" placeholder="-118.27366,34.03844,0.0&#10;-118.27272,34.0453,0.0&#10;-118.25838,34.05358,0.0&#10;-118.24843,34.06226,0.0&#10;-118.23641,34.0565,0.0" className="form-control" name="shape" onChange={this.handleInputChange} />
                       </div>
                     </div>
