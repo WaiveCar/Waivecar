@@ -284,7 +284,7 @@ module.exports = class OrderService extends Service {
 
     let city = '';
     try {
-      city = `in ${validAddress.split(',').slice(this.length - 3, this.length - 2)[0].trim()}`;
+      city = ` in ${validAddress.split(',').slice(this.length - 3, this.length - 2)[0].trim()}`;
     } catch (err) {
       log.warn(err);
     }
@@ -305,7 +305,7 @@ module.exports = class OrderService extends Service {
 	      yield email.send({
 		        to       : user.email,
 		        from     : emailConfig.sender,
-		        subject  : `$${ dollarAmount } charged for your recent booking ${ city }. Thanks for using WaiveCar.`,
+		        subject  : `$${ dollarAmount } charged for your recent booking${ city }. Thanks for using WaiveCar.`,
 		        template : 'time-charge',
 		        context  : {
 		          name     : user.name(),
@@ -323,7 +323,7 @@ module.exports = class OrderService extends Service {
 	      yield email.send({
 		        to       : user.email,
 		        from     : emailConfig.sender,
-		        subject  : `You drove for free in ${ city }. Thanks for using WaiveCar.`,
+		        subject  : `You drove for free${ city }. Thanks for using WaiveCar.`,
 		        template : 'free-ride-complete',
 		        context  : {
 		          name     : user.name(),
