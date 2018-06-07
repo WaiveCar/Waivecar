@@ -47,7 +47,7 @@ module.exports = {
       let where = atShop(car) ? 'shop' : 'wild';
       let location = '';
       if(where === 'wild') {
-        location = yield geolib.getAddress(car.latitude, car.longitude);
+        location = yield geocode.getAddress(car.latitude, car.longitude);
       }
 
 
