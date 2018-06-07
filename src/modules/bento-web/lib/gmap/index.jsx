@@ -5,17 +5,6 @@ import ReactDOM from 'react-dom';
 import moment   from 'moment';
 
 let icons = [
-  'WAIVE1',
-  'WAIVE2',
-  'WAIVE3',
-  'WAIVE4',
-  'WAIVE5',
-  'WAIVE6',
-  'WAIVE7',
-  'WAIVE8',
-  'WAIVE9',
-  'WAIVE10',
-  'WAIVE11',
   'valet',
   'station',
   'homebase',
@@ -57,7 +46,11 @@ module.exports = class GMap extends React.Component {
     }
 
     if (this.props.path) {
-      this.preparePath(this.props.path);
+      var opts = {};
+      if(this.props.editPath) {
+        opts.draggable = true;
+      }
+      this.preparePath(this.props.path, opts);
     }
   }
 
@@ -107,21 +100,20 @@ module.exports = class GMap extends React.Component {
     }.bind(this));
   }
 
-  preparePath(rawPath) {
+  preparePath(rawPath, opts) {
     if (!this.map) {
       return;
     }
 
     let path = this.getPath(rawPath);
 
-
-    var polyline = new google.maps.Polyline({
+    var polyline = new google.maps.Polyline(Object.assign(opts || {}, {
       path: path,
       geodesic: true,
       strokeColor: '#0000FF',
       strokeOpacity: 1.0,
       strokeWeight: 2
-    });
+    }));
 
     polyline.setMap(this.map);
   }
@@ -177,7 +169,18 @@ module.exports = class GMap extends React.Component {
       });
       this.map.fitBounds(bounds);
     } else {
-      this.map.setCenter(new google.maps.LatLng(markers[0].lat, markers[0].long));
+
+      var lat, lng;
+
+      if(!markers[0].lat) {
+        lat = markers[0].shape[0][1];
+        lng = markers[0].shape[0][0];
+      } else {
+        lat = markers[0].lat;
+        lng = markers[0].long;
+      }
+
+      this.map.setCenter(new google.maps.LatLng(lat, lng));
     }
   }
 
@@ -338,8 +341,8 @@ module.exports = class GMap extends React.Component {
 
   render() {
     return (
-      <div className="map-wrapper animated fadeIn">
-        <div  ref="map" className="map-container" />
+      <div className="map-wrapper">
+        <div ref="map" className="map-container" />
       </div>
     );
   }
