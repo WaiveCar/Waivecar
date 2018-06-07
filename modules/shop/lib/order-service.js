@@ -359,8 +359,8 @@ module.exports = class OrderService extends Service {
     let types = [];
 
     if (payments.length) {
-      totalCredit = payments.filter((row) => row.chargeId === '0' ).reduce((total, payment) => total + payment.shopOrder.amount, 0);
-      totalPaid = payments.filter((row) => row.chargeId !== '0' ).reduce((total, payment) => total + payment.shopOrder.amount, 0);
+      totalCredit = payments.filter((row) => row.chargeId.length <= 1 ).reduce((total, payment) => total + payment.shopOrder.amount, 0);
+      totalPaid = payments.filter((row) => row.chargeId.length > 1 ).reduce((total, payment) => total + payment.shopOrder.amount, 0);
       types = payments.map(payment => payment.shopOrder.description.replace(/Booking\s\d*/i, ''));
     }
 
