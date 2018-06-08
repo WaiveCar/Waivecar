@@ -578,7 +578,8 @@ module.exports = class BookingService extends Service {
       yield this.logDetails('start', booking, car);
 
       yield booking.setReminders(user, config.booking.timers);
-      yield booking.setForfeitureTimers(user, config.booking.timers);
+      // we are doing this in the booking loop now
+      // yield booking.setForfeitureTimers(user, config.booking.timers);
       yield booking.start();
 
       yield cars.unlockCar(car.id, _user);

@@ -541,15 +541,6 @@ module.exports = {
       });
     }
 
-    if (data.isIgnitionOn || existingCar.mileage !== data.mileage || data.calculatedSpeed > 0 || data.currentSpeed > 0 || !data.isParked) {
-      let booking = yield Booking.findOne({where: {status: 'started', carId: existingCar.id}});
-      if ( booking && !booking.isFlagged('drove') ) {
-        yield booking.flag('drove');
-        yield booking.delForfeitureTimers();
-      }
-    }
-
-
     return existingCar;
   },
 

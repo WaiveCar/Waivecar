@@ -40,6 +40,20 @@ var checkBooking = co.wrap(function *(booking) {
   if (!device || !car || !user) return;
 
   if (start) {
+    if (!booking.isFlagged('drove') ) {
+      if (device.isIgnitionOn || car.mileage !== device.mileage || device.calculatedSpeed > 0 || device.currentSpeed > 0 || !device.isParked) {
+        yield booking.flag('drove');
+        if (!booking.isFlagged('first-sync')) {
+          yield booking.delForfeitureTimers();
+        }
+      } else if (!booking.isFlagged('first-sync')) {
+        yield booking.setForfeitureTimers(user, config.booking.timers);
+        // we don't want to send off anything to the user
+        // unless we've checked the car
+        yield booking.flag('first-sync');
+      }
+    }
+
     // Check that battery use is changing as expected
     let milesDriven = (car.mileage - start.mileage) * 0.621371;
     if (milesDriven >= 7 && car.charge === device.charge) {
