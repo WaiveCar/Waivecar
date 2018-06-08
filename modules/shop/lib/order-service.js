@@ -120,14 +120,24 @@ module.exports = class OrderService extends Service {
     let user = yield this.getUser(_user.id);
     let charge = {amount: payload.amount};
     let order = yield Order.findById(paymentId);
+    let response;
     try {
       let refund = yield stripe.charges.refund(order.chargeId, payload.amount);
-      console.log(refund);
+      response = refund;
     } catch(err) {
-      console.log(err);
-      return err;
+      throw {
+        status: 400,
+        code: err.code,
+        message: err.message,
+        data: user,
+      };
     }
-    return {payload, _user, paymentId};
+    return {
+      status: response.status, 
+      payload, 
+      user, 
+      paymentId,
+    };
   }
 
   static *create(payload, _user) {
