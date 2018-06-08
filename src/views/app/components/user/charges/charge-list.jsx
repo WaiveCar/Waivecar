@@ -68,18 +68,26 @@ class ChargeList extends Component {
   }
 
   refund(id, amount, description) {
+    console.log(id, amount, description);
     let refundAmount = prompt('Refunding up to $' + (amount / 100).toFixed(2) + ' for:\n  ' + description + '\nTo issue a partial refund, ent  er the amount below. For a full refund, leave the field blank');
-    console.log(refundAmount, Number(refundAmount));
-    if (Number(refundAmount) === 0) {
-      // refund full amount
-      console.log('refund the full amount');
-    } else if (refundAmount > 0) {
-      // refund specific amount
-      console.log(`refund of ${ amount } dollars`);
+    if (Number(refundAmount) >= 0) {
+      // Issues a refund if a 
+      api.post(`/shop/refund/${id}`, {
+        'amount': 100,
+	      'userId': 16126
+      }, (err, response) => {
+        if (err) {
+          return console.log(err);
+        }
+        return console.log(response);
+      });
+      // Refund the full amount when no amount is entered
+      console.log(`refund of ${amount > 0 ? `$${amount} refunded` : 'full amount refunded'}`);
     } else if (refundAmount === null) {
+      // This occurs when the cancel button is pressed
       return;
     } else {
-      // invalid input
+      // For invalid inputs
       console.log('invalid input');
       this.refund(id, amount, description);
     }
