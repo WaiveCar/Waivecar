@@ -51,6 +51,17 @@ class LocationsIndex extends React.Component {
 
     var data = this.state.location;
 
+    try {
+      if(data.shape.length > 0) {
+        let path = JSON.parse(data.shape);
+      }
+    } catch(ex) {
+      return snackbar.notify({
+        type    : `danger`,
+        message : 'path may not be valid json'
+      });
+    }
+
     api.put('/locations/' + this.props.params.id, data, (err) => {
 
       if (err) {
@@ -86,7 +97,9 @@ class LocationsIndex extends React.Component {
       this.setState({loading: true});
       api.get(`/locations/${ this.props.params.id }`, (err, location) => {
         if(location.shape) {
-          location.path = JSON.parse(location.shape)
+          try {
+            location.path = JSON.parse(location.shape)
+          } catch(ex) {}
         }
         this.setState({location: location, loading: false});
 
