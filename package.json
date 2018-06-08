@@ -113,7 +113,7 @@
     "cordova-plugin-request-location-accuracy": "^2.2.1",
     "cordova-plugin-splashscreen": "~4.0.1",
     "cordova-plugin-whitelist": "^1.2.2",
-    "cordova.plugins.diagnostic": "^3.3.3",
+    "cordova.plugins.diagnostic": "^4.0.8",
     "hmacsha1": "^1.0.0",
     "ionic-plugin-keyboard": "^2.2.1"
   },
@@ -197,7 +197,6 @@
       "cordova-plugin-statusbar": {},
       "cordova-plugin-whitelist": {},
       "cordova-plugin-x-toast": {},
-      "cordova.plugins.diagnostic": {},
       "ionic-plugin-keyboard": {},
       "cordova-plugin-ble-central": {},
       "cordova-plugin-googlemaps": {
@@ -215,7 +214,8 @@
         "ANDROID_SUPPORT_VERSION": "27.+"
       },
       "cordova-plugin-intercom": {},
-      "cordova-custom-config": {}
+      "cordova-custom-config": {},
+      "cordova.plugins.diagnostic": {}
     },
     "platforms": [
       "ios"
