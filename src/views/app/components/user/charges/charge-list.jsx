@@ -68,25 +68,29 @@ class ChargeList extends Component {
   }
 
   refund(id, amount, description) {
+    let chargeIdx = this.state.charges.map(payment => payment.id).indexOf(id);
     console.log('id: ', id, 'total amount: ', amount, 'description : ', description);
-    let refundAmount = prompt('Refunding up to $' + (amount / 100).toFixed(2) + ' for:\n  ' + description + '\nTo issue a partial refund, enter the amount below. For a full refund, leave the field blank');
+    let dollars = (amount / 100).toFixed(2);
+    let refundAmount = prompt('Refunding up to $' + dollars + ' for:\n  ' + description + '\nTo issue a partial refund, enter the amount below. For a full refund, leave the field blank');
     if (refundAmount === null) {
       // This occurs when the cancel button is pressed
       return;
-    } else if (Number(refundAmount) > 0 || (Number(refundAmount) === 0 && refundAmount.length === 0)) {
+    } else if ((Number(refundAmount) > 0 && Number(refundAmount) <= dollars) || (Number(refundAmount) === 0 && refundAmount.length === 0)) {
       // Issues a refund if field has a valid value or is blank 
-      refundAmount = Number(refundAmount) === 0 ? amount : Number(refundAmount);
-
+      refundAmount = Number(refundAmount) === 0 ? amount : Number(refundAmount) * 100;
       api.post(`/shop/refund/${id}`, {
         'amount': refundAmount,
       }, (err, response) => {
         if (err) {
           return console.log(err);
         }
+        let temp = this.state.charges.slice();
+        temp[chargeIdx].status = 'refunded';
+        this.setState({ charges: temp });
         return console.log(response);
       });
       // Refund the full amount when no amount is entered
-      console.log(`refund of ${Number(refundAmount) === 0 ? `${amount} refunded` : `${Number(refundAmount)} amount refunded`}`);
+      console.log(`refund of ${Number(refundAmount) === 0 ? `$${dollars}` : `$${Number(refundAmount) / 100} amount refunded`}`);
     } else {
       // For invalid inputs
       console.log('invalid input');
