@@ -91,8 +91,9 @@
   },
   "dependencies": {
     "cordova": "^8.0.0",
-    "cordova-browser": "~4.1.0",
-    "cordova-ios": "^4.4.0",
+    "cordova-android-support-gradle-release": "1.3.0",
+    "cordova-custom-config": "^5.0.2",
+    "cordova-ios": "^4.5.4",
     "cordova-open-native-settings": "~1.4.1",
     "cordova-plugin-app-version": "https://github.com/whiteoctober/cordova-plugin-app-version",
     "cordova-plugin-ble-central": "~1.1.4",
@@ -174,10 +175,9 @@
     "plugins": {
       "cordova-plugin-app-version": {},
       "cordova-plugin-camera": {
-        "CAMERA_USAGE_DESCRIPTION": "Upload Photos",
-        "PHOTOLIBRARY_USAGE_DESCRIPTION": "Use Photos"
+        "CAMERA_USAGE_DESCRIPTION": "",
+        "PHOTOLIBRARY_USAGE_DESCRIPTION": ""
       },
-      "cordova-plugin-console": {},
       "cordova-plugin-device": {},
       "cordova-plugin-facebook4": {
         "APP_ID": "1022704731082512",
@@ -185,13 +185,13 @@
       },
       "cordova-plugin-file-transfer": {},
       "cordova-plugin-geolocation": {
-        "GEOLOCATION_USAGE_DESCRIPTION": " "
+        "GEOLOCATION_USAGE_DESCRIPTION": ""
       },
       "cordova-plugin-inappbrowser": {},
       "cordova-plugin-ios-camera-permissions": {
-        "CAMERA_USAGE_DESCRIPTION": "This app needs camera access",
-        "MICROPHONE_USAGE_DESCRIPTION": "This app needs microphone access",
-        "PHOTOLIBRARY_USAGE_DESCRIPTION": "This app needs photo library access"
+        "CAMERA_USAGE_DESCRIPTION": "",
+        "MICROPHONE_USAGE_DESCRIPTION": "",
+        "PHOTOLIBRARY_USAGE_DESCRIPTION": ""
       },
       "cordova-plugin-request-location-accuracy": {},
       "cordova-plugin-statusbar": {},
@@ -203,17 +203,21 @@
       "cordova-plugin-googlemaps": {
         "API_KEY_FOR_ANDROID": "AIzaSyDuTxwQN4WKCktkzkLTHZSD7EzHvCn3WHs",
         "API_KEY_FOR_IOS": "AIzaSyCjNzEEetDOi63O7qrD6APLffH0daZIDeQ",
-        "LOCATION_WHEN_IN_USE_DESCRIPTION": "Show your location on the map",
-        "LOCATION_ALWAYS_USAGE_DESCRIPTION": "Trace your location on the map"
+        "LOCATION_WHEN_IN_USE_DESCRIPTION": "",
+        "LOCATION_ALWAYS_USAGE_DESCRIPTION": "",
+        "PLAY_SERVICES_VERSION": "15.0.0"
       },
       "cordova-plugin-firebase": {},
-      "cordova-plugin-intercom": {},
       "cordova-plugin-splashscreen": {},
       "cordova-plugin-hide-home-indicator": {},
-      "cordova-open-native-settings": {}
+      "cordova-open-native-settings": {},
+      "cordova-android-support-gradle-release": {
+        "ANDROID_SUPPORT_VERSION": "27.+"
+      },
+      "cordova-plugin-intercom": {},
+      "cordova-custom-config": {}
     },
     "platforms": [
-      "browser",
       "ios"
     ]
   }
