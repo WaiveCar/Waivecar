@@ -115,9 +115,8 @@ module.exports = class OrderService extends Service {
   }
 
   static *refund(payload, _user, paymentId) {
-    let user = yield this.getUser(payload.userId);
+    let user = yield this.getUser(_user.id);
     let charge = {amount: payload.amount};
-
     return {payload, _user, paymentId};
   }
 
