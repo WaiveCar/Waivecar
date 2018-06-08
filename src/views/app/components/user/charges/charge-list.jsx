@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { auth, relay, api, dom, helpers } from 'bento';
+import { snackbar } from 'bento-web';
 import moment from 'moment';
 import classNames from 'classnames';
 
@@ -73,28 +74,35 @@ class ChargeList extends Component {
     let dollars = (amount / 100).toFixed(2);
     let refundAmount = prompt('Refunding up to $' + dollars + ' for:\n  ' + description + '\nTo issue a partial refund, enter the amount below. For a full refund, leave the field blank');
     if (refundAmount === null) {
-      // This occurs when the cancel button is pressed
+      // This is for presses of the cancel button
       return;
     } else if ((Number(refundAmount) > 0 && Number(refundAmount) <= dollars) || (Number(refundAmount) === 0 && refundAmount.length === 0)) {
-      // Issues a refund if field has a valid value or is blank 
+      // Issues a refund if a vaild refund is possible 
       refundAmount = Number(refundAmount) === 0 ? amount : Number(refundAmount) * 100;
+      dollars = refundAmount < amount ? refundAmount / 100 : dollars;
       api.post(`/shop/refund/${id}`, {
         'amount': refundAmount,
       }, (err, response) => {
         if (err) {
-          return console.log(err);
+          return snackbar.notify({
+            type: 'danger',
+            message: `Internal error processing refund: ${err}. Please Try Again!`
+          });
         }
         let temp = this.state.charges.slice();
         temp[chargeIdx].status = 'refunded';
         this.setState({ charges: temp });
-        return console.log(response);
+        return snackbar.notify({
+          type: 'success',
+          message: `$${dollars} successfully refunded!`
+        });
       });
       // Refund the full amount when no amount is entered
-      console.log(`refund of ${Number(refundAmount) === 0 ? `$${dollars}` : `$${Number(refundAmount) / 100} amount refunded`}`);
     } else {
-      // For invalid inputs
-      console.log('invalid input');
-      this.refund(id, amount, description);
+      return snackbar.notify({
+        type: 'danger',
+        message: 'Invalid input. Please Try Again!'
+      });
     }
   }
 
