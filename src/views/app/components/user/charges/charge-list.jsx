@@ -70,16 +70,15 @@ class ChargeList extends Component {
 
   refund(id, amount, description) {
     let chargeIdx = this.state.charges.map(payment => payment.id).indexOf(id);
-    console.log('id: ', id, 'total amount: ', amount, 'description : ', description);
-    let dollars = (amount / 100).toFixed(2);
-    let refundAmount = prompt('Refunding up to $' + dollars + ' for:\n  ' + description + '\nTo issue a partial refund, enter the amount below. For a full refund, leave the field blank');
+    let possibleDollars = (amount / 100).toFixed(2);
+    let refundAmount = prompt('Refunding up to $' + possibleDollars + ' for:\n  ' + description + '\nTo issue a partial refund, enter the amount below. For a full refund, leave the field blank');
     if (refundAmount === null) {
       // This is for presses of the cancel button
       return;
-    } else if ((Number(refundAmount) > 0 && Number(refundAmount) <= dollars) || (Number(refundAmount) === 0 && refundAmount.length === 0)) {
+    } else if ((Number(refundAmount) > 0 && Number(refundAmount) <= possibleDollars) || (Number(refundAmount) === 0 && refundAmount.length === 0)) {
       // Issues a refund if a vaild refund is possible 
       refundAmount = Number(refundAmount) === 0 ? amount : Number(refundAmount) * 100;
-      dollars = refundAmount < amount ? refundAmount / 100 : dollars;
+      let dollars = (refundAmount / 100).toFixed(2);
       api.post(`/shop/refund/${id}`, {
         'amount': refundAmount,
       }, (err, response) => {
