@@ -28,6 +28,8 @@ let emailConfig = Bento.config.email;
 let log         = Bento.Log;
 let apiConfig   = Bento.config.api;
 
+let stripe = require('./stripe');
+
 module.exports = class OrderService extends Service {
 
   // Apparently you can't just charge a user without filling up a fucking
@@ -117,6 +119,14 @@ module.exports = class OrderService extends Service {
   static *refund(payload, _user, paymentId) {
     let user = yield this.getUser(_user.id);
     let charge = {amount: payload.amount};
+    let order = yield Order.findById(paymentId);
+    try {
+      let refund = yield stripe.charges.refund(order.chargeId, payload.amount);
+      console.log(refund);
+    } catch(err) {
+      console.log(err);
+      return err;
+    }
     return {payload, _user, paymentId};
   }
 
