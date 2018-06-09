@@ -136,6 +136,27 @@ module.exports = class OrderService extends Service {
       refunded: payload.amount,
       status: 'refunded',
     });
+
+    let email = new Email()
+    let amount = (payload.amount / 100).toFixed(2);
+    let orderDate = moment(order.createdAt).format('MMMM Do YYYY'); 
+
+    try {
+	    yield email.send({
+		    to       : user.email,
+		    from     : emailConfig.sender,
+        subject  : `[WaiveCar] $${ amount } for your trip in on ${ orderDate } has been refunded`,
+		    template : 'refund',
+		    context  : {
+		      name       : user.name(),
+          amount     : amount,
+          description: order.description, 
+          date       : orderDate,
+		    }
+      });
+    } catch(err) {
+      console.log(err);
+    };
     return {
       status: response.status, 
       payload, 
