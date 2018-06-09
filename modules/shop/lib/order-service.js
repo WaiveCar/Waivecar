@@ -440,7 +440,6 @@ module.exports = class OrderService extends Service {
 
     let charge = yield this.charge(order, _user, {nocapture: true});
     yield this.cancel(order, _user, charge);
-
     return order;
   }
 
@@ -743,7 +742,7 @@ module.exports = class OrderService extends Service {
     let service = this.getService(config.service, 'charges');
     yield service.refund(charge.id);
     yield order.update({
-      status : 'refunded'
+      status : 'cancelled'
     });
   }
 
