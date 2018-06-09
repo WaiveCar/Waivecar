@@ -132,6 +132,10 @@ module.exports = class OrderService extends Service {
         data: user,
       };
     }
+    yield order.update({
+      refunded: payload.amount,
+      status: 'refunded',
+    });
     return {
       status: response.status, 
       payload, 
