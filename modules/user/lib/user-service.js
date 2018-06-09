@@ -379,22 +379,43 @@ module.exports = {
       yield this.unsuspend(user, _user);
     }
 
-    // this is explicitly only regions
     if (payload.tagList) {
+      payload.tagList = payload.tagList.map((row) => { return row.toLowerCase(); });
+
+      // this is explicitly only regions because we don't want to remove
+      // user permissions.
       let oldTags = yield user.getTagList('region');      
 
       // We remove the ones we've unchecked
       let toRemove = _.difference(oldTags, payload.tagList);
-      // see https://stackoverflow.com/a/32001777/535759
-      yield toRemove.map((tagName) => {
-        return user.untag(tagName);
-      });
+      for(var ix = 0; ix < toRemove.length; ix++) {
+        yield user.untag(toRemove[ix]);
 
-      // And add the ne ones if relevant.
-      let toAdd = _.difference(payload.tagList, oldTags);
-      yield toAdd.map((tagName) => {
-        return user.addTag(tagName);
-      });
+        if(toRemove[ix] === 'aid') {
+          yield notify.notifyAdmins(`:runner: ${ _user.name() } removed ${ user.link() } from WaiveAid.`, [ 'slack' ], { channel : '#user-alerts' });
+        }
+        // The user doesn't get any email that they've been removed, that's hostile.
+      }
+
+      // And add the new ones if relevant (this goes outside the 
+      // regions exclusive
+      let AllOldTags = yield user.getTagList();
+      let toAdd = _.difference(payload.tagList, AllOldTags);
+
+      for(var ix = 0; ix < toAdd.length; ix++) {
+        yield user.addTag(toAdd[ix]);
+
+        if(toAdd[ix] === 'aid') {
+          yield notify.notifyAdmins(`:older_adult: ${ _user.name() } added ${ user.link() } to WaiveAid.`, [ 'slack' ], { channel : '#user-alerts' });
+
+          yield (new Email()).send({
+            to: user.email,
+            from: emailConfig.sender,
+            subject: "Welcome to WaiveAid",
+            template: "waiveaid-welcome"
+          });
+        }
+      }
     }
 
     // admins can change a users group role.

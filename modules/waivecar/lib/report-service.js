@@ -13,6 +13,7 @@ let log         = Bento.Log;
 let notify      = Bento.module('waivecar/lib/notification-service');
 let moment      = require('moment');
 let sequelize = Bento.provider('sequelize');
+let geocode      = require('./geocoding-service');
 let fs        = require('fs');
 
 
@@ -43,6 +44,12 @@ module.exports = {
         continue;
       }
       var license = '*' + car.license.replace(/waive/i,'') + '*';
+      let where = atShop(car) ? 'shop' : 'wild';
+      let location = '';
+      if(where === 'wild') {
+        location = yield geocode.getAddress(car.latitude, car.longitude);
+      }
+
 
       if(!car.isAvailable) {
         if(car.userId) {
@@ -53,14 +60,14 @@ module.exports = {
             ).format("H:mm");
 
           report.booked.push([
-            license, user.name(), status, `(${ Bento.config.web.uri }/bookings/${booking.id})`, car.chargeReport()
+            license, user.link(), status, `<${ Bento.config.web.uri }/bookings/${booking.id}|#${booking.id}>`, car.chargeReport(), location
           ].join(' '));
 
         } else {
-          report.unavailable[ atShop(car) ? 'shop' : 'wild' ].push([license, car.chargeReport()].join('   '));
+          report.unavailable[where].push([license, car.chargeReport(), location].join('   '));
         }
       } else {
-        report.available[ atShop(car) ? 'shop' : 'wild' ].push([license, car.chargeReport()].join('   '));
+        report.available[where].push([license, car.chargeReport(), location].join('   '));
       }
     }
 

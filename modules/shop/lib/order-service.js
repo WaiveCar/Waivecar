@@ -1,6 +1,7 @@
 'use strict';
 
 let co          = require('co');
+let request     = require('co-request');
 let Service     = require('./classes/service');
 let CartService = require('./cart-service');
 let moment      = require('moment');
@@ -9,6 +10,7 @@ let UserLog     = require('../../log/lib/log-service');
 let Email       = Bento.provider('email');
 let queryParser = Bento.provider('sequelize/helpers').query;
 let User        = Bento.model('User');
+let Car         = Bento.model('Car');
 let Cart        = Bento.model('Shop/Cart');
 let Card        = Bento.model('Shop/Card');
 let Order       = Bento.model('Shop/Order');
@@ -234,59 +236,139 @@ module.exports = class OrderService extends Service {
       }
     }
 
-    if (minutesOver === 0) return;
-    billableGroups = Math.ceil(minutesOver / 10);
-    amount = Math.round((billableGroups / 6 * 5.99) * 100);
+    if (minutesOver !== 0) {
+      billableGroups = Math.ceil(minutesOver / 10);
+      amount = Math.round((billableGroups / 6 * 5.99) * 100);
 
-    let card = yield Card.findOne({ where : { userId : user.id } });
-    let cart = yield CartService.createTimeCart(minutesOver, amount, user);
-    let order = new Order({
-      createdBy : user.id,
-      userId    : user.id,
+      let card = yield Card.findOne({ where : { userId : user.id } });
+      let cart = yield CartService.createTimeCart(minutesOver, amount, user);
+      let order = new Order({
+        createdBy : user.id,
+        userId    : user.id,
 
-      // User card id
-      source      : card.id,
-      description : `${ minutesOver }min for booking ${ booking.id }`,
-      metadata    : null,
-      currency    : 'usd',
-      amount      : amount
+        // User card id
+        source      : card.id,
+        description : `${ minutesOver }min for booking ${ booking.id }`,
+        metadata    : null,
+        currency    : 'usd',
+        amount      : amount
+      });
+
+      yield order.save();
+      yield this.addItems(order, cart.items);
+
+      try {
+        yield this.charge(order, user);
+        yield notify.notifyAdmins(`:moneybag: Charged ${ user.link() } $${ amount / 100 } for ${ minutesOver } minutes | ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
+        log.info(`Charged user for time driven : $${ amount / 100 } : booking ${ booking.id }`);
+      } catch (err) {
+        yield this.failedCharge(amount, user, err, ` | ${ apiConfig.uri }/bookings/${ booking.id }`);
+      }
+
+      // Regardless of whether we successfully charged the user or not, we need
+      // to associate this booking with the users' order id
+      let payment = new BookingPayment({
+        bookingId : booking.id,
+        orderId   : order.id
+      });
+      yield payment.save();
+    }
+    
+    // This gets the city of the booking off of the address of the current booking
+    let details = yield BookingDetails.find({
+      where: {
+        booking_id: booking.id
+      }
     });
+    let validAddress = details[0].address !== null ? details[0].address : details[1].address;
 
-    yield order.save();
-    yield this.addItems(order, cart.items);
+    let city = '';
+    try {
+      city = ` in ${validAddress.split(',').slice(this.length - 3, this.length - 2)[0].trim()}`;
+    } catch (err) {
+      log.warn(err);
+    }
+
+    // This gets which WaiveCar was used for the booking
+    let car = yield Car.findById(booking.carId);
+    let carName = car.license;
+
+    let allCharges = yield this.getTotalCharges(booking);
+    let totalAmount = allCharges.totalCredit + allCharges.totalPaid;
+    let chargesList = allCharges.types.map((type) => `<li>${type.trim()}</li>`).join();
+    let dollarAmount = (totalAmount / 100).toFixed(2);
 
     let email = new Email();
-    try {
-      yield email.send({
-        to       : user.email,
-        from     : emailConfig.sender,
-        subject  : '[WaiveCar] Charge Added For Time',
-        template : 'time-charge',
-        context  : {
-          name     : user.name(),
-          duration : minutesOver,
-          amount   : (amount / 100).toFixed(2)
+    // This creates a list of charges to be injected into the template
+    if (totalAmount > 0) {
+      // This is sent out if there are charges for the booking 
+	    try {
+	      yield email.send({
+		        to       : user.email,
+		        from     : emailConfig.sender,
+		        subject  : `$${ dollarAmount } receipt for your recent booking with ${carName}${ city }`,
+		        template : 'time-charge',
+		        context  : {
+		          name     : user.name(),
+              car      : carName, 
+		          duration : minutesOver,
+		          paid     : allCharges.totalPaid ? (allCharges.totalPaid / 100).toFixed(2) : false,
+              credit   : allCharges.totalCredit ? (allCharges.totalCredit / 100).toFixed(2) : false,
+              creditLeft: (user.credit / 100).toFixed(2),
+              list     : chargesList
+		        }
+	      });
+	    } catch(err) {
+	      log.warn('Failed to deliver time notification email: ', err);
+	    } 
+    } else {
+      // This is sent out if there are no charges for the booking
+	    try {
+	      yield email.send({
+		        to       : user.email,
+		        from     : emailConfig.sender,
+		        subject  : `You drove for free${ city }. Thanks for using WaiveCar.`,
+		        template : 'free-ride-complete',
+		        context  : {
+		          name     : user.name(),
+              car      : carName, 
+              duration : minutesOver,
+              city     : city
+		        }
+	      });
+	    } catch(err) {
+	      log.warn('Failed to deliver time notification email: ', err);
+	    } 
+    }
+  }
+
+  static *getTotalCharges(booking) {
+    // Fetches all payments for a booking and returns the total charges for a trip
+    let payments = yield BookingPayment.find({
+      where: { booking_id: booking.id },
+      include: [
+        {
+          model: 'Shop/Order',
+          as: 'shopOrder'
         }
-      });
-    } catch (err) {
-      log.warn('Failed to deliver time notification email: ', err);
-    }
-
-    try {
-      yield this.charge(order, user);
-      yield notify.notifyAdmins(`:moneybag: Charged ${ user.link() } $${ amount / 100 } for ${ minutesOver } minutes | ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
-      log.info(`Charged user for time driven : $${ amount / 100 } : booking ${ booking.id }`);
-    } catch (err) {
-      yield this.failedCharge(amount, user, err, ` | ${ apiConfig.uri }/bookings/${ booking.id }`);
-    }
-
-    // Regardless of whether we successfully charged the user or not, we need
-    // to associate this booking with the users' order id
-    let payment = new BookingPayment({
-      bookingId : booking.id,
-      orderId   : order.id
+      ]
     });
-    yield payment.save();
+
+    let totalCredit = 0;
+    let totalPaid = 0;
+    let types = [];
+
+    if (payments.length) {
+      totalCredit = payments.filter((row) => row.shopOrder.chargeId === '0' ).reduce((total, payment) => total + payment.shopOrder.amount, 0);
+      totalPaid = payments.filter((row) => row.shopOrder.chargeId !== '0' ).reduce((total, payment) => total + payment.shopOrder.amount, 0);
+      types = payments.map(payment => payment.shopOrder.description.replace(/Booking\s\d*/i, ''));
+    }
+
+    return {
+      totalCredit,
+      totalPaid,
+      types,
+    };
   }
 
   /**

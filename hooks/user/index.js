@@ -198,7 +198,7 @@ hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
     if (prevUser.id == _user.id) {
       who = 'by themselves';
     } else {
-      who = `by ${ _user.name() } (#${ _user.id })`;
+      who = `by ${ _user.name() }`;
     }
     
     if (reason.length) {

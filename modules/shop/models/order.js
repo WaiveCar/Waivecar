@@ -144,10 +144,6 @@ Bento.Register.Model('Shop/Order', 'sequelize', (model, Sequelize) => {
 
   };
 
-  /**
-   * List of custom out of schema attributes.
-   * @type {Array}
-   */
   model.attributes = [
     'description=>items'
   ];

@@ -541,15 +541,6 @@ module.exports = {
       });
     }
 
-    if (data.isIgnitionOn || existingCar.mileage !== data.mileage || data.calculatedSpeed > 0 || data.currentSpeed > 0 || !data.isParked) {
-      let booking = yield Booking.findOne({where: {status: 'started', carId: existingCar.id}});
-      if ( booking && !booking.isFlagged('drove') ) {
-        yield booking.flag('drove');
-        yield booking.delForfeitureTimers();
-      }
-    }
-
-
     return existingCar;
   },
 
@@ -770,6 +761,22 @@ module.exports = {
     if (_user) yield LogService.create({ carId : id, action : Actions.CLOSE_DOOR_CAR }, _user);
     let car = yield Car.findById(id);
     return yield car.closeDoor();
+  },
+
+  *retrieve(id, _user) {
+    if (_user) yield LogService.create({ carId : id, action : Actions.RETRIEVE }, _user);
+    yield this.executeCommand(id, 'central_lock', 'unlock', _user);
+    yield this.executeCommand(id, 'immobilizer', 'unlock', _user);
+    let car = yield this.updateAvailabilityAnonymous(id, false, _user);
+    yield notify.notifyAdmins(`:scooter: ${ _user.link() } is retrieving ${ car.license }.`, ['slack'], {channel: '#reservations'});
+  },
+
+  *rentable(id, _user) {
+    if (_user) yield LogService.create({ carId : id, action : Actions.RENTABLE }, _user);
+    yield this.executeCommand(id, 'central_lock', 'lock', _user);
+    yield this.executeCommand(id, 'immobilizer', 'lock', _user);
+    let car = yield this.updateAvailabilityAnonymous(id, true, _user);
+    yield notify.notifyAdmins(`:motor_scooter: ${ _user.link() } made ${ car.license } rentable.`, ['slack'], {channel: '#reservations'});
   },
 
   *unlockImmobilzer(id, _user) {

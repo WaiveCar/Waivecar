@@ -40,6 +40,20 @@ var checkBooking = co.wrap(function *(booking) {
   if (!device || !car || !user) return;
 
   if (start) {
+    if (!booking.isFlagged('drove') ) {
+      if (device.isIgnitionOn || car.mileage !== device.mileage || device.calculatedSpeed > 0 || device.currentSpeed > 0 || !device.isParked) {
+        yield booking.flag('drove');
+        if (!booking.isFlagged('first-sync')) {
+          yield booking.delForfeitureTimers();
+        }
+      } else if (!booking.isFlagged('first-sync')) {
+        yield booking.setForfeitureTimers(user, config.booking.timers);
+        // we don't want to send off anything to the user
+        // unless we've checked the car
+        yield booking.flag('first-sync');
+      }
+    }
+
     // Check that battery use is changing as expected
     let milesDriven = (car.mileage - start.mileage) * 0.621371;
     if (milesDriven >= 7 && car.charge === device.charge) {
@@ -57,7 +71,8 @@ var checkBooking = co.wrap(function *(booking) {
     // to avoid issues with latency
     //
     if (!user.isWaivework) {
-      if (duration >= 104 && !booking.isFlagged('1hr45-warning')) {
+      let freetime = isLevel ? 180 : 120;
+      if (duration >= (freetime - 16) && !booking.isFlagged('1hr45-warning')) {
         yield booking.flag('1hr45-warning');
         yield notify.sendTextMessage(user, 'Hi there, your free WaiveCar rental period ends in about 15 minutes. After the free period is over, rentals are $5.99 / hour. Enjoy!');
       }
@@ -67,13 +82,23 @@ var checkBooking = co.wrap(function *(booking) {
         yield notify.notifyAdmins(`:waning_crescent_moon: ${ user.link() } has had ${ car.link() } for 11 hours`, [ 'slack' ], { channel : '#rental-alerts' });
         yield notify.sendTextMessage(user, 'Hey there, WaiveCar has a 12 hour rental limit. Please end your rental in the next hour. Thanks!');
       }
+      
+      let trigger = freetime + 60;
+      // This text message warning if the booking is 1 hour over the free time
+      if (duration >= trigger && !booking.isFlagged('hour-over-notice')) {
+        yield booking.flag('hour-over-notice');
+        let hour = trigger / 60;
+        let carName = car.license;
+        yield notify.sendTextMessage(user, `Just a reminder that you are ${ hour } hours into your booking with ${ carName }. If you feel this is a mistake, give us a call. Otherwise enjoy your ride!`);
+      }
     }
+
     //
     // New user rental warning (under 5 rentals, over 3 hours) #463
     //
     // Send an alert to 'rental alerts' if a new user (less than 5 trips) has taken a car for longer than 3 hours. 
     //
-    if (duration >= 180 && !booking.isFlagged('new-user-long-rental')) {
+    if (duration >= trigger && !booking.isFlagged('new-user-long-rental')) {
       yield booking.flag('new-user-long-rental');
       booking_history = yield Booking.find({ where : { userId : user.id }});
 
@@ -104,17 +129,17 @@ var checkBooking = co.wrap(function *(booking) {
 
   // Check charge level
   // See Api: Low charge text message triggers #495 & #961
-  if (car.milesAvailable() < 7 && !booking.isFlagged('low-2')) {
+  if (car.avgMilesAvailable() < 7 && !booking.isFlagged('low-2')) {
     yield booking.flag('low-2');
     yield notify.sendTextMessage(user, "Hi, you're WaiveCar is getting dangerously low on charge! If it runs out of juice, we'll have to tow it at your expense! Please call us at this number and we'll direct you to the nearest charger.");
     yield notify.notifyAdmins(`:interrobang: ${ user.link() } is persisting and is now disastrously low with ${ car.info() }, oh dear. ${ car.chargeReport() }. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
 
-  } else if (car.milesAvailable() < 14 && !booking.isFlagged('low-1')) {
+  } else if (car.avgMilesAvailable() < 14 && !booking.isFlagged('low-1')) {
     yield booking.flag('low-1');
     yield notify.sendTextMessage(user, "Hi, you're WaiveCar is getting really low. Please call us and we can help you get to a charger.");
     yield notify.notifyAdmins(`:small_red_triangle: ${ user.link() } is continuing to drive ${ car.info() } to an even lower charge. ${ car.chargeReport() }. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
 
-  } else if (car.milesAvailable() < 21 && !booking.isFlagged('low-0')) {
+  } else if (car.avgMilesAvailable() < 21 && !booking.isFlagged('low-0')) {
     yield booking.flag('low-0');
     yield notify.sendTextMessage(user, 'Hey there! Looks like your WaiveCar battery is getting really low. Please return your WaiveCar to the home base.');
     yield notify.notifyAdmins(`:battery: ${ user.link() } has driven ${ car.info() } to a low charge. ${ car.chargeReport() }. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });

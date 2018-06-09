@@ -93,14 +93,23 @@ module.exports = {
     if (data.password) {
       data.password = yield bcrypt.hash(data.password, 10);
     }
+    let searchOpts = { 
+      where: { 
+        $or: [ { email: payload.email } ]
+      }
+    };
+
+    if(payload.phone && payload.phone.length) {
+      searchOpts.where['$or'].push({ phone: payload.phone });
+    }
 
     // We first see if the person has already tried to join us previously
-    let record = yield Waitlist.findOne({ where: { email: payload.email } });
+    let record = yield Waitlist.findOne(searchOpts);
 
     // If a legacy user which never appeared in the waitlist is trying to rejoin
     // we should be able to find them as well.
     if (!record) {
-      user = yield User.findOne({ where: { email: payload.email } });
+      user = yield User.findOne(searchOpts);
     }
 
     if (record || user) {

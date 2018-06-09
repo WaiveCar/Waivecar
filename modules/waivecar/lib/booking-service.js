@@ -4,6 +4,7 @@ let request      = require('co-request');
 let Service      = require('./classes/service');
 let cars         = require('./car-service');
 let fees         = require('./fee-service');
+let geocode      = require('./geocoding-service');
 let notify       = require('./notification-service');
 let UserService  = require('../../user/lib/user-service.js');
 let CarService   = require('./car-service');
@@ -195,7 +196,8 @@ module.exports = class BookingService extends Service {
     }
 
     // Users over 55 should always get 25 minutes to get to the car #1230
-    let autoExtend = driver.autoExtend;
+
+    let autoExtend = yield driver.hasTag('aid');
     if (!autoExtend) {
       let age = yield driver.age();
       autoExtend = age >= 55;
@@ -492,6 +494,9 @@ module.exports = class BookingService extends Service {
     if(!err) {
       if(opts.free || (yield OrderService.extendReservation(booking, user))) {
         yield booking.flag('extended');
+        yield booking.update({
+          reservationEnd: moment(booking.reservationEnd).add(10, 'minutes')
+        });
 
         if(!opts.silent) {
           yield notify.sendTextMessage(user, `Your WaiveCar reservation has been extended 10 minutes.`);
@@ -573,7 +578,8 @@ module.exports = class BookingService extends Service {
       yield this.logDetails('start', booking, car);
 
       yield booking.setReminders(user, config.booking.timers);
-      yield booking.setForfeitureTimers(user, config.booking.timers);
+      // we are doing this in the booking loop now
+      // yield booking.setForfeitureTimers(user, config.booking.timers);
       yield booking.start();
 
       yield cars.unlockCar(car.id, _user);
@@ -910,7 +916,12 @@ module.exports = class BookingService extends Service {
     // be completed and released for next booking.
 
     if(process.env.NODE_ENV === 'production') {
-      if (car.isIgnitionOn) { errors.push('turn off the ignition'); }
+      if (car.isIgnitionOn && !car.isCharging) {
+        // if the car is charging and the charger is locked we unlock the vehicle so
+        // that the user can remove the charger
+        yield cars.unlockCar(car.id, _user);
+        errors.push('turn off the ignition and if applicable, remove the charger'); 
+      }
       if (!car.isKeySecure) { errors.push('secure the key'); }
       if (car.isDoorOpen) { errors.push('make sure the doors are closed');}
     }
@@ -1280,24 +1291,11 @@ module.exports = class BookingService extends Service {
     return ret;
   }
 
-  /**
-   * Fetches an address from the provided lat long coordinates.
-   * @param  {Number} lat
-   * @param  {Number} long
-   * @return {String}
-   */
-  static *getAddress(lat, long) {
-    try { 
-      let res = yield request(`http://maps.googleapis.com/maps/api/geocode/json`, {
-        qs : {
-          latlng : `${ lat },${ long }`
-        }
-      });
-      let body = JSON.parse(res.body);
-      return body.results.length ? body.results[0].formatted_address : null;
-    } catch(ex) {
-      return null;
-    }
+  // getAddress has been moved to the geocoding services.
+  // A reference has been left here for legacy compatibility
+  // cjm 20180605
+  static *getAddress(lat, long, param) {
+    return yield geocode.getAddress(lat, long, param); 
   }
 
   /**

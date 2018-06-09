@@ -84,3 +84,5 @@ prepaid_users.csv
 *.sql
 package-lock.json
 .vscode/**
+*.tgz
+*.swp

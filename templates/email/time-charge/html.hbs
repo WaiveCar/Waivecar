@@ -2,15 +2,21 @@
   <img src="https://s3.amazonaws.com/waivecar-assets/email-logo.png">
 </div>
 <div class="main">
-  <h3>Hello, {{ name }}</h3>
+  <h3>Hello {{ name }},</h3>
   <p>
-    You have been charged for additional time to your recent WaiveCar booking.
+    Here's a breakdown of the charges for your recent booking with {{ car }}:
   </p>
+  <ul>
+    {{{ list }}}
+  </ul>
   <p>
-    {{ duration }} minutes x $5.99 / hr
-  </p>
-  <p>
-    <strong>${{ amount }}</strong>
+    {{#if paid}}
+      <strong>Total charges for your ride: ${{ paid }}</strong>
+    {{/if }}
+    {{#if credit}}
+      <strong>Total credit used: ${{ credit }}</strong>
+      <p>Your remaining credit: ${{ creditLeft }}</p>
+    {{/if }}
   </p>
   <p>
     Visit <a href="https://waive.car">https://waive.car</a> to access your account.
