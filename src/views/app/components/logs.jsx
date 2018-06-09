@@ -48,89 +48,67 @@ module.exports = class Logs extends React.Component {
   }
 
   renderAction(log) {
+    let actorLink =  <Link to={ `/users/${ log.actor.id }` }>{ log.actor.firstName } { log.actor.lastName }</Link>
+    let bookingLink = '';
+    let carLink = '';
+    if (log.booking) {
+      bookingLink = <Link to={ `/bookings/${ log.booking.id }` }>booking</Link> 
+    }
+    if (log.car) {
+      carLink = <Link to={ `/cars/${ log.car.id }`}>{ log.car.license || log.car.id }</Link>
+    }
+    let verbMap = {
+      CREATE_BOOKING: 'created',
+      END_BOOKING: 'ended',
+      COMPLETE_BOOKING: 'completed',
+      UNLOCK_CAR: 'unlocked',
+      UNLOCK: 'unlocked',
+      LOCK_CAR: 'locked',
+      LOCK: 'locked',
+      IMMOBILIZE_CAR: 'immobilized',
+      IMMOBILIZE: 'immobilized',
+      UNIMMOBILIZE_CAR: 'unimmobilized',
+      UNIMMOBILIZE: 'unimmobilized',
+      MAKE_CAR_AVAILABLE: 'available',
+      MAKE_CAR_UNAVAILABLE: 'unavailable',
+      RETRIEVE: 'retrieved',
+      RENTABLE: 'rentable'
+    }
+    let verb = verbMap[log.action];
+
     switch(log.action) {
       case 'CREATE_BOOKING':
-        return (
-          <div>
-            <Link to={ `/users/${ log.actor.id }` }>{ log.actor.firstName } { log.actor.lastName }</Link>
-            <span> created a </span>
-            <Link to={ `/bookings/${ log.booking.id }` }>booking</Link>
-            <span> for </span>
-            <Link to={ `/users/${ log.actor.id }` }>{ log.user.firstName } { log.user.lastName }</Link>
-          </div>
-        );
       case 'END_BOOKING':
-        return (
-          <div>
-            <Link to={ `/users/${ log.actor.id }` }>{ log.actor.firstName } { log.actor.lastName }</Link>
-            <span> ended a </span>
-            <Link to={ `/bookings/${ log.booking.id }` }>booking</Link>
-            <span> for </span>
-            <Link to={ `/users/${ log.actor.id }` }>{ log.user.firstName } { log.user.lastName }</Link>
-          </div>
-        );
       case 'COMPLETE_BOOKING':
+        let who = '';
+        if(log.user.id !== log.actor.id) {
+          who = <span> for <Link to={ `/users/${ log.user.id }` }>{ log.user.firstName } { log.user.lastName }</Link></span>
+        }
         return (
           <div>
-            <Link to={ `/users/${ log.actor.id }` }>{ log.actor.firstName } { log.actor.lastName }</Link>
-            <span> completed a </span>
-            <Link to={ `/bookings/${ log.booking.id }` }>booking</Link>
-            <span> for </span>
-            <Link to={ `/users/${ log.actor.id }` }>{ log.user.firstName } { log.user.lastName }</Link>
+            { actorLink } { verb } a { bookingLink } { who }
           </div>
         );
       case 'UNLOCK_CAR':
       case 'UNLOCK':
-        return (
-          <div>
-            <Link to={ `/users/${ log.actor.id }` }>{ log.actor.firstName } { log.actor.lastName }</Link>
-            <span> unlocked </span>
-            <Link to={ `/cars/${ log.car.id }`}>{ log.car.license || log.car.id }</Link>
-          </div>
-        );
       case 'LOCK_CAR':
       case 'LOCK':
-        return (
-          <div>
-            <Link to={ `/users/${ log.actor.id }` }>{ log.actor.firstName } { log.actor.lastName }</Link>
-            <span> locked </span>
-            <Link to={ `/cars/${ log.car.id }`}>{ log.car.license || log.car.id }</Link>
-          </div>
-        );
       case 'IMMOBILIZE_CAR':
       case 'IMMOBILIZE':
-        return (
-          <div>
-            <Link to={ `/users/${ log.actor.id }` }>{ log.actor.firstName } { log.actor.lastName }</Link>
-            <span> locked immobilizer on </span>
-            <Link to={ `/cars/${ log.car.id }`}>{ log.car.license || log.car.id }</Link>
-          </div>
-        );
       case 'UNIMMOBILIZE_CAR':
       case 'UNIMMOBILIZE':
+      case 'RETRIEVE':
         return (
           <div>
-            <Link to={ `/users/${ log.actor.id }` }>{ log.actor.firstName } { log.actor.lastName }</Link>
-            <span> unlocked immobilizer on </span>
-            <Link to={ `/cars/${ log.car.id }`}>{ log.car.license || log.car.id }</Link>
+            { actorLink } { verb } { carLink }
           </div>
         );
       case 'MAKE_CAR_AVAILABLE':
-        return (
-          <div>
-            <Link to={ `/users/${ log.actor.id }` }>{ log.actor.firstName } { log.actor.lastName }</Link>
-            <span> made </span>
-            <Link to={ `/cars/${ log.car.id }`}>{ log.car.license || log.car.id }</Link>
-            <span> available </span>
-          </div>
-        );
       case 'MAKE_CAR_UNAVAILABLE':
+      case 'RENTABLE':
         return (
           <div>
-            <Link to={ `/users/${ log.actor.id }` }>{ log.actor.firstName } { log.actor.lastName }</Link>
-            <span> made </span>
-            <Link to={ `/cars/${ log.car.id }`}>{ log.car.license || log.car.id }</Link>
-            <span> unavailable </span>
+            { actorLink } made { carLink } { verb }
           </div>
         );
       default:
