@@ -37,7 +37,7 @@ class ChargeList extends Component {
     api.get('/shop/orders', {
       userId  : this.props.user.id,
       order   : 'id,DESC',
-      status  : 'failed,paid',
+      status  : 'failed,paid,refunded',
       offset  : this.state.offset,
       limit   : this.state.limit
     }, (err, charges) => {
@@ -57,7 +57,7 @@ class ChargeList extends Component {
     api.get('/shop/orders', {
       userId  : this.props.user.id,
       order   : 'id,DESC',
-      status  : 'failed,paid',
+      status  : 'failed,paid,refunded',
       offset  : this.state.offset + (this.state.limit * step),
       limit   : this.state.limit
     }, (err, charges) => {
@@ -76,7 +76,6 @@ class ChargeList extends Component {
       // This is for presses of the cancel button
       return;
     } else if ((Number(refundAmount) > 0 && Number(refundAmount) <= possibleDollars) || (Number(refundAmount) === 0 && refundAmount.length === 0)) {
-      // Issues a refund if a vaild refund is possible 
       refundAmount = Number(refundAmount) === 0 ? amount : Number(refundAmount) * 100;
       let dollars = (refundAmount / 100).toFixed(2);
       api.post(`/shop/refund/${id}`, {
@@ -85,7 +84,7 @@ class ChargeList extends Component {
         if (err) {
           return snackbar.notify({
             type: 'danger',
-            message: `Internal error processing refund: ${err}. Please Try Again!`
+            message: `Internal error processing refund: ${err.message}. Please Try Again!`
           });
         }
         let temp = this.state.charges.slice();
@@ -96,7 +95,6 @@ class ChargeList extends Component {
           message: `$${dollars} successfully refunded!`
         });
       });
-      // Refund the full amount when no amount is entered
     } else {
       return snackbar.notify({
         type: 'danger',
