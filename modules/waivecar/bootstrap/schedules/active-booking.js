@@ -36,15 +36,19 @@ var checkBooking = co.wrap(function *(booking) {
   let duration = 0;
   let isLevel = yield car.hasTag('level');
   let booking_history = null;
-  
-  // This increments drive_count and park_count 
+
+  // This section increments drive_count, park_count and charge_count 
   let bookingRecord = yield Booking.findById(booking.id);
   if (device.isIgnitionOn) {
     // If the ignition is on, drive_count is incremented
-    yield bookingRecord.update({ driveCount: bookingEntry.driveCount + 1 });
+    yield bookingRecord.update({ driveCount: bookingRecord.driveCount + 1 });
   } else {
     // If it is off, park_count is incremented
-    yield bookingRecord.update({ parkCount: bookingEntry.parkCount + 1 });
+    yield bookingRecord.update({ parkCount: bookingRecord.parkCount + 1 });
+  } 
+  if (device.isCharging) {
+    // If the car is charging charge_count is incremented
+    yield bookingRecord.update({ chargeCount: bookingRecord.chargeCount + 1 });
   }
 
   if (!device || !car || !user) return;
