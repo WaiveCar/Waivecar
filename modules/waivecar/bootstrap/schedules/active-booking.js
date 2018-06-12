@@ -36,9 +36,11 @@ var checkBooking = co.wrap(function *(booking) {
   let duration = 0;
   let isLevel = yield car.hasTag('level');
   let booking_history = null;
+  let freetime = isLevel ? 180 : 120;
+  let trigger = freetime + 60;
   
   if (!device || !car || !user) return;
-
+ 
   if (start) {
     if (!booking.isFlagged('drove') ) {
       if (device.isIgnitionOn || car.mileage !== device.mileage || device.calculatedSpeed > 0 || device.currentSpeed > 0 || !device.isParked) {
@@ -71,7 +73,6 @@ var checkBooking = co.wrap(function *(booking) {
     // to avoid issues with latency
     //
     if (!user.isWaivework) {
-      let freetime = isLevel ? 180 : 120;
       if (duration >= (freetime - 16) && !booking.isFlagged('1hr45-warning')) {
         yield booking.flag('1hr45-warning');
         yield notify.sendTextMessage(user, 'Hi there, your free WaiveCar rental period ends in about 15 minutes. After the free period is over, rentals are $5.99 / hour. Enjoy!');
@@ -83,7 +84,6 @@ var checkBooking = co.wrap(function *(booking) {
         yield notify.sendTextMessage(user, 'Hey there, WaiveCar has a 12 hour rental limit. Please end your rental in the next hour. Thanks!');
       }
       
-      let trigger = freetime + 60;
       // This text message warning if the booking is 1 hour over the free time
       if (duration >= trigger && !booking.isFlagged('hour-over-notice')) {
         yield booking.flag('hour-over-notice');
