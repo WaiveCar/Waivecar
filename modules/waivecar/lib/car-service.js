@@ -160,12 +160,22 @@ module.exports = {
 
   },
 
-  *bookings(id, _user) {
-    return yield Booking.find({
+  *bookings(query, id, _user) {
+    let opts = {
       where: { carId: id },
       order: [ ['created_at', 'desc'] ],
-      limit: 20
-    });
+      include : [
+        {
+          model : 'BookingDetails',
+          as    : 'details'
+        }
+      ],
+      limit: parseInt(query.limit, 10) || 20
+    }
+    if(query.status) {
+      opts.where.status = { $in: query.status.split(',') };
+    }
+    return yield Booking.find(opts);
   },
 
   *carsWithBookings(_user) {

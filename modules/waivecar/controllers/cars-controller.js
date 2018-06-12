@@ -14,7 +14,7 @@ Bento.Register.Controller('CarsController', function(controller) {
   };
 
   controller.bookings = function *(id) {
-    return yield car.bookings(id, this.auth.user);
+    return yield car.bookings(this.query, id, this.auth.user);
   };
 
   controller.show = function *(id) {
