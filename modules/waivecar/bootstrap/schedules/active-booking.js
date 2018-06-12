@@ -145,7 +145,6 @@ var checkBooking = co.wrap(function *(booking) {
     yield notify.notifyAdmins(`:battery: ${ user.link() } has driven ${ car.info() } to a low charge. ${ car.chargeReport() }. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
   }
 
-  console.log("In active booking");
   // Log position
   let location = new Location({
     bookingId : booking.id,
