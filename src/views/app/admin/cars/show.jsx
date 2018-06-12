@@ -548,6 +548,12 @@ class CarsShowView extends React.Component {
     return <div className="row">{ res }</div>;
   }
 
+  renderNewestImage() {
+    return (
+      <div>Newest Image</div>
+    );
+  }
+
   renderDamage(car) {
     let ix = 0;
     let toShow = this.state.damage.filter((row) => { return row.files.length });
@@ -614,11 +620,12 @@ class CarsShowView extends React.Component {
 
     return (
       <div className="cars cars-show">
-        { this.renderCarForm(car) }
         { this.renderCarGroup(car) }
         { this.renderCarActions(car) }
         { this.renderCarMedia(car) }
+        { this.renderNewestImage() }
         { this.renderCarIndicators(car) }
+        { this.renderCarForm(car) }
         <NotesList type='car' identifier={ car.id }></NotesList>
         <Logs carId={ car.id } />
         { this.renderDamage(car) }
