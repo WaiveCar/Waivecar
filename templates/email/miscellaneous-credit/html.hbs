@@ -2,18 +2,12 @@
   <img src="https://s3.amazonaws.com/waivecar-assets/email-logo.png">
 </div>
 <div class="main">
-  <h3>Hello, {{ name }}</h3>
+  <h3>Hello {{ name }},</h3>
   <p>
-    Hey, thanks for being an awesome Waiver! We've credited your account ${{ charge.total }}. It'll be used in future bookings automatically to waive even more fees so you can drive even more free! Have a great day.
+    Thanks for being an awesome Waiver! We've credited your account ${{ charge.total }}. It'll be used in future bookings automatically to waive even more fees so you can drive even more free! Have a great day.
   </p>
   <p>
-    {{ charge.quantity }} x {{ charge.description }}
-  </p>
-  <p>
-    <strong>${{ charge.total }}</strong>
-  </p>
-  <p>
-    Visit <a href="https://waive.car">https://waive.car</a> to access your account.
+    You can visit <a href="https://waive.car">https://waive.car</a> to access your account.
   </p>
   <p>
     Best regards,<br>
