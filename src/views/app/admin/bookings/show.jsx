@@ -74,15 +74,19 @@ module.exports = class BookingsView extends React.Component {
   loadCarPath(id) {
     api.get(`/history/booking/${ id }`, (err, model) => {
       var locationHistory = model.data.data;
-      console.log('Model: ', model);
       if (!Object.keys(model.data).length) {
+        // This is done so that the bookings that are missing carpaths show the beginning and end of ride
         let { details } = this.state; 
         let start = [details[0].latitude, details[0].longitude, details[0].createdAt];
-        let end = [details[1].latitude, details[1].longitude, details[1].createdAt];
+        let end;
+        if (details[1]) {
+          end = [details[1].latitude, details[1].longitude, details[1].createdAt];
+        } else {
+          end = start;
+        }
         this.setState({
           carPath : [start, end]
         });
-        console.log('None or one data points: ', this.state);
       } else {
         this.setState({
           carPath : locationHistory
