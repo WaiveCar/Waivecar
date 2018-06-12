@@ -16,7 +16,7 @@ class RideDetails extends Component {
     let extraText = false;
     let isExtended = data.flags && data.flags.search(/extended/) !== -1;
 
-    let carName = data.car.make + ' ' + data.car.model + (data.car.year ? ' ' + data.car.year : '');
+    let carName = !data.car.make ? data.car.license : data.car.make + ' ' + data.car.model + (data.car.year ? ' ' + data.car.year : '');
     let carImage = data.car.make === 'Chevy' ? "/images/cars/chevy_spark.png" : "/images/cars/ioniq_hyundai_384.png";
 
     if (this.props.duration.hours > 2 && !fee) {
