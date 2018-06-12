@@ -160,6 +160,14 @@ module.exports = {
 
   },
 
+  *bookings(id, _user) {
+    return yield Booking.find({
+      where: { carId: id },
+      order: [ ['created_at', 'desc'] ],
+      limit: 20
+    });
+  },
+
   *carsWithBookings(_user) {
     let start = new Date();
     let perf = [];

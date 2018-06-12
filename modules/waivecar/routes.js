@@ -54,6 +54,7 @@ Route.put('/magic/:command',    [ 'isAuthenticated', 'isAdmin', 'CarsController@
 Route.get('/cars/:id',          [ 'isAuthenticated', 'CarsController@show' ]);
 Route.get('/cars/:id/notes',    [ 'isAuthenticated', 'NotesController@getCarNotes' ]);
 Route.get('/cars/:id/events',   [ 'isAuthenticated', 'CarsController@events' ]);
+Route.get('/cars/:id/bookings', [ 'isAuthenticated', 'CarsController@bookings' ]);
 Route.get('/cars/:id/:command', [ 'isAuthenticated', 'CarsController@command' ]);
 Route.put('/cars/:id/:command', [ 'isAuthenticated', 'CarsController@command' ]);
 Route.put('/cars/:id',          [ 'isAuthenticated', 'CarsController@update' ]);
