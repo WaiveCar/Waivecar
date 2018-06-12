@@ -844,18 +844,30 @@ module.exports = class OrderService extends Service {
     try {
       item.total = (Math.abs(item.quantity * item.price / 100)).toFixed(2);
       let word = item.price > 0 ? 'Charge' : 'Credit';
-
-      yield email.send({
-        to       : user.email,
-        from     : emailConfig.sender,
-        subject  : `[WaiveCar] Additional ${ word }`,
-        template : 'miscellaneous-charge',
-        context  : {
-          name   : user.name(),
-          charge : item,
-          word   : word
-        }
-      });
+      if (word === 'Charge') {
+        yield email.send({
+          to       : user.email,
+          from     : emailConfig.sender,
+          subject  : `[WaiveCar] Additional ${ word }`,
+          template : 'miscellaneous-charge',
+          context  : {
+            name   : user.name(),
+            charge : item,
+            word   : word
+          }
+        });
+      } else {
+        yield email.send({
+          to: user.email,
+          from: emailConfig.sender,
+          subject  : `You just got $${item.total} for future rides with WaiveCar`,
+          template : 'miscellaneous-credit',
+          context  : {
+            name   : user.name(),
+            charge : item,
+          }
+        });
+      }
     } catch (err) {
       log.warn('Failed to deliver notification email: ', err);
     }
