@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { auth, relay, api, dom, helpers } from 'bento';
+import { snackbar } from 'bento-web';
 import moment from 'moment';
 import classNames from 'classnames';
 
@@ -36,7 +37,7 @@ class ChargeList extends Component {
     api.get('/shop/orders', {
       userId  : this.props.user.id,
       order   : 'id,DESC',
-      status  : 'failed,paid',
+      status  : 'failed,paid,refunded',
       offset  : this.state.offset,
       limit   : this.state.limit
     }, (err, charges) => {
@@ -56,7 +57,7 @@ class ChargeList extends Component {
     api.get('/shop/orders', {
       userId  : this.props.user.id,
       order   : 'id,DESC',
-      status  : 'failed,paid',
+      status  : 'failed,paid,refunded',
       offset  : this.state.offset + (this.state.limit * step),
       limit   : this.state.limit
     }, (err, charges) => {
@@ -68,7 +69,38 @@ class ChargeList extends Component {
   }
 
   refund(id, amount, description) {
-    var amount = prompt("Refunding up to $" + (amount / 100).toFixed(2) + " for:\n  " + description + "\nTo issue a partial refund, enter the amount below. For a full refund, leave the field blank");
+    let chargeIdx = this.state.charges.map(payment => payment.id).indexOf(id);
+    let possibleDollars = (amount / 100).toFixed(2);
+    let refundAmount = prompt('Refunding up to $' + possibleDollars + ' for:\n  ' + description + '\nTo issue a partial refund, enter the amount below. For a full refund, leave the field blank');
+    if (refundAmount === null) {
+      // This is for presses of the cancel button
+      return;
+    } else if ((Number(refundAmount) > 0 && Number(refundAmount) <= possibleDollars) || (Number(refundAmount) === 0 && refundAmount.length === 0)) {
+      refundAmount = Number(refundAmount) === 0 ? amount : Number(refundAmount) * 100;
+      let dollars = (refundAmount / 100).toFixed(2);
+      api.post(`/shop/refund/${id}`, {
+        'amount': refundAmount,
+      }, (err, response) => {
+        if (err) {
+          return snackbar.notify({
+            type: 'danger',
+            message: `Internal error processing refund: ${err.message}. Please Try Again!`
+          });
+        }
+        let temp = this.state.charges.slice();
+        temp[chargeIdx].status = 'refunded';
+        this.setState({ charges: temp });
+        return snackbar.notify({
+          type: 'success',
+          message: `$${dollars} successfully refunded!`
+        });
+      });
+    } else {
+      return snackbar.notify({
+        type: 'danger',
+        message: 'Invalid input. Please Try Again!'
+      });
+    }
   }
 
   prevPage() {
