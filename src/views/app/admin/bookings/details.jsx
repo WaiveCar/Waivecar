@@ -19,7 +19,6 @@ module.exports = class RideDetails extends React.Component {
         fee   : data.payments.reduce((value, payment) => { return value + (payment.amount - payment.refunded); }, 0) / 100,
         carName:  data.car.make + ' ' + data.car.model + (data.car.year ? ' ' + data.car.year : '')
       };
-
       // If the ride is in progress we should render it
       // up to this point.
       if(!ride.end) {
@@ -57,7 +56,6 @@ module.exports = class RideDetails extends React.Component {
         </div>
       );
     }
-
     return (
       <div className="ride-details">
         <div className="box">

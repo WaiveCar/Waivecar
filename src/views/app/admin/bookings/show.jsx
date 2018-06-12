@@ -23,6 +23,7 @@ module.exports = class BookingsView extends React.Component {
       force    : false,
       error    : null,
       items    : [],
+      details  : [],
       carPath  : [],
       user     : false,
       payments : false,
@@ -45,7 +46,7 @@ module.exports = class BookingsView extends React.Component {
 
   componentDidMount() {
     this.loadBooking(this.props.params.id);
-    this.loadCarPath(this.props.params.id)
+    //this.loadCarPath(this.props.params.id)
   }
 
   loadBooking(id) {
@@ -61,10 +62,11 @@ module.exports = class BookingsView extends React.Component {
       // and the page stops functioning.  To work around this, since 
       // the user doesn't change we store it OOB of the booking variable
       this.setState({
+        details: booking.details,
         payments: booking.payments,
         user: booking.user,
         car: booking.car
-      });
+      }, () => this.loadCarPath(id));
       this.bookings.store(booking);
     });
   }
@@ -72,9 +74,20 @@ module.exports = class BookingsView extends React.Component {
   loadCarPath(id) {
     api.get(`/history/booking/${ id }`, (err, model) => {
       var locationHistory = model.data.data;
-      this.setState({
-        carPath : locationHistory
-      });
+      console.log('Model: ', model);
+      if (!Object.keys(model.data).length) {
+        let { details } = this.state; 
+        let start = [details[0].latitude, details[0].longitude, details[0].createdAt];
+        let end = [details[1].latitude, details[1].longitude, details[1].createdAt];
+        this.setState({
+          carPath : [start, end]
+        });
+        console.log('None or one data points: ', this.state);
+      } else {
+        this.setState({
+          carPath : locationHistory
+        });
+      }
     });
   }
 
@@ -298,7 +311,6 @@ module.exports = class BookingsView extends React.Component {
     }
 
     let extended = booking.flags.extended ? 'Extended' : 'Not Extended';
-
     return (
       <div id="booking-view">
         <div className="box">
