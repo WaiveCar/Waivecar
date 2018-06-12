@@ -837,7 +837,6 @@ module.exports = class OrderService extends Service {
 
   // Notify user that miscellaneous was added to their booking
   static *notifyOfCharge(item, user) {
-    console.log(item);
     if(item.price === 0) {
       return;
     }
@@ -861,7 +860,7 @@ module.exports = class OrderService extends Service {
         yield email.send({
           to: user.email,
           from: emailConfig.sender,
-          subject  : `[WaiveCar] You just got $${item.total} for future rides with WaiveCar`,
+          subject  : `You just got $${item.total} for future rides with WaiveCar`,
           template : 'miscellaneous-credit',
           context  : {
             name   : user.name(),
