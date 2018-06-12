@@ -53,7 +53,11 @@ class CarsShowView extends React.Component {
 
   componentDidMount() {
     this.service.setCar(this.id());
-
+    api.get(`/cars/${ this.id() }/bookings/?limit=1/?status=completed`, (err, bookings) => {
+      this.setState({
+        latestBooking: bookings[0]
+      });
+    });
     api.get(`/history/car/${ this.id() }`, (err, model) => {
       this.setState({
         carPath : model.data.data
@@ -65,16 +69,13 @@ class CarsShowView extends React.Component {
         damage : model
       });
     });
-
     api.get('/group', (err, groups) => {
       if(err) {
         snackbar.danger(err);
       }
-
       this.setState({
         groups : groups
       });
-
     });
   }
 
@@ -169,6 +170,16 @@ class CarsShowView extends React.Component {
             </div>
           </div>
         </div>
+      </div>
+    );
+  }
+
+  renderParkingLocation(car) {
+    console.log('State: ', this.state);
+    console.log('Car: ', car);
+    return (
+      <div className="box">
+        <h3>Newest Parking Location</h3>
       </div>
     );
   }
@@ -548,12 +559,6 @@ class CarsShowView extends React.Component {
     return <div className="row">{ res }</div>;
   }
 
-  renderNewestImage() {
-    return (
-      <div>Newest Image</div>
-    );
-  }
-
   renderDamage(car) {
     let ix = 0;
     let toShow = this.state.damage.filter((row) => { return row.files.length });
@@ -623,7 +628,7 @@ class CarsShowView extends React.Component {
         { this.renderCarGroup(car) }
         { this.renderCarActions(car) }
         { this.renderCarMedia(car) }
-        { this.renderNewestImage() }
+        { this.renderParkingLocation(car) }
         { this.renderCarIndicators(car) }
         { this.renderCarForm(car) }
         <NotesList type='car' identifier={ car.id }></NotesList>
