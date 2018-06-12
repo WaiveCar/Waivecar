@@ -97,7 +97,7 @@ module.exports = class RideDetails extends React.Component {
               </div>
               <div className="col-md-6 ride-car">
                 <div className="ride-car-meta">
-                  <h3>{ ride.carName }</h3>
+                  <h3>{ ride.carName !== 'null null' ? ride.carName : data.car.license }</h3>
                   <div>
                     Ride Duration<br/>
                     <strong>
