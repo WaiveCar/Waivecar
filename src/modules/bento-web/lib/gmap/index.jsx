@@ -67,7 +67,6 @@ module.exports = class GMap extends React.Component {
    * @param {Object} props
    */
   componentWillReceiveProps(nextProps) {
-    console.log("componentWillReceiveProps ");
 
     if (nextProps.markers) {
       this.prepareMarkers(nextProps.markers);
