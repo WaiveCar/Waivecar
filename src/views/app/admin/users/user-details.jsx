@@ -408,7 +408,7 @@ module.exports = class UserDetails extends React.Component {
                     <div className="col-sm-12 text-right help-text" style={{ paddingRight: 0, fontSize: "85%", marginTop: "-0.70em" }}>
                       User #{ user.id }. Signup: { user.createdAt.split('T')[0] }
                       { suspensionReason ? <b><br/>Suspension Reason: {suspensionReason}</b> : '' } 
-                    <a onClick={ this.toggleUserAgent } className="btn btn-xs btn-link">{this.state.showUserAgent ? "UA" : this.state.currentUser.device}</a>
+                    <a onClick={ this.toggleUserAgent } className="btn btn-xs btn-link">{!this.state.showUserAgent ? "UA" : this.state.currentUser.device}</a>
                     </div>
                     <a onClick={ this.waiveWorkToggle } className="btn btn-xs btn-link">{ this.isWaiveWork() ? "Remove From" : "Add to" } WaiveWork</a>
                   </div>
