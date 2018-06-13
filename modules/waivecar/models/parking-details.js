@@ -7,12 +7,7 @@ Bento.Register.Model('ParkingDetails', 'sequelize', (model, Sequelize) => {
   model.schema = {
 
     bookingDetailId : {
-      type       : Sequelize.INTEGER,
-      allowNull  : false,
-      references : {
-        model : 'booking_details',
-        key   : 'id'
-      }
+      type       : Sequelize.INTEGER
     },
 
     type : {
