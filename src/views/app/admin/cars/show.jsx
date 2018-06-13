@@ -58,12 +58,15 @@ class CarsShowView extends React.Component {
         latestBooking: bookings[0]
       }, () => {
         api.get(`/bookings/${ bookings[0].id }/parkingDetails`, (err, response) => {
-          if (err) {
-            snackbar.danger(err);
-          } else {
+          if (response) {
             this.setState({ parkingDetails: response.details });
           }
         });
+      });
+    });
+    api.get(`/history/car/${ this.id() }`, (err, model) => {
+      this.setState({
+        carPath : model.data.data
       });
     });
     api.get(`/reports/car/${ this.id() }`, (err, model) => {
@@ -182,7 +185,14 @@ class CarsShowView extends React.Component {
       <div className="box">
         <h3>Newest Parking Location</h3>
         <div className="box-content">
-          {this.state.latestBooking ? <div>Has Image</div> : <div>No Image</div>}
+          {this.state.parkingDetails ? ( 
+            <div>
+              <img src={`https://s3.amazonaws.com/waivecar-prod/${this.state.parkingDetails.path}`} />
+            </div>) : (
+            <div>
+              No Parking Details Available
+            </div>
+          )}
         </div>
       </div>
     );
