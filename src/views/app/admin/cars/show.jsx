@@ -181,13 +181,20 @@ class CarsShowView extends React.Component {
   }
 
   renderParkingLocation(car) {
+    let { parkingDetails } = this.state;
     return (
       <div className="box">
         <h3>Newest Parking Location</h3>
         <div className="box-content">
           {this.state.parkingDetails ? ( 
             <div>
-              <img src={`https://s3.amazonaws.com/waivecar-prod/${this.state.parkingDetails.path}`} />
+              <img src={`https://s3.amazonaws.com/waivecar-prod/${parkingDetails.path}`} />
+              <div>
+                Parked At: {moment(parkingDetails.createdAt).format('MMMM Do YYYY, h:mm:ss a')}
+              </div>
+              <div>
+                Hours of Parking: {parkingDetails.streetHours}
+              </div>
             </div>) : (
             <div>
               No Parking Details Available
