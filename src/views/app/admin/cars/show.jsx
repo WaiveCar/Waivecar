@@ -188,12 +188,16 @@ class CarsShowView extends React.Component {
         <div className="box-content">
           {this.state.parkingDetails ? ( 
             <div>
-              <img src={`https://s3.amazonaws.com/waivecar-prod/${parkingDetails.path}`} />
+              <div className="row">
               <div>
-                Parked At: {moment(parkingDetails.createdAt).format('MMMM Do YYYY, h:mm:ss a')}
+                Parked At: {moment(parkingDetails.createdAt).format('MMMM Do YYYY, h:mm a')}
               </div>
               <div>
                 Hours of Parking: {parkingDetails.streetHours}
+              </div>
+                <div className="col-md-4 gallery-image">
+                  <img src={`https://s3.amazonaws.com/waivecar-prod/${parkingDetails.path}`} />
+                </div>
               </div>
             </div>) : (
             <div>
