@@ -466,8 +466,15 @@ module.exports = class BookingService extends Service {
   }
 
   static *getParkingDetails(id) {
-    console.log(id);
-    return { id:id };
+    let details = yield ParkingDetails.find({ where: { bookingId: id } });
+    if (details.length) {
+      return { details: details[0] };
+    } else {
+      throw error.parse({
+        code: 'PARKING_DETAILS_NOT_FOUND',
+        message: 'Parking details not found',
+      }, 404);
+    }
   };
 
   static *extendForFree(id, _user, opts) {
