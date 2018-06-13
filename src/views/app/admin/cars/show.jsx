@@ -56,11 +56,14 @@ class CarsShowView extends React.Component {
     api.get(`/cars/${ this.id() }/bookings/?limit=1/?status=completed`, (err, bookings) => {
       this.setState({
         latestBooking: bookings[0]
-      });
-    });
-    api.get(`/history/car/${ this.id() }`, (err, model) => {
-      this.setState({
-        carPath : model.data.data
+      }, () => {
+        api.get(`/bookings/${ bookings[0].id }/parkingDetails`, (err, response) => {
+          if (err) {
+            snackbar.danger(err);
+          } else {
+            this.setState({ parkingDetails: response.details });
+          }
+        });
       });
     });
     api.get(`/reports/car/${ this.id() }`, (err, model) => {
@@ -175,11 +178,12 @@ class CarsShowView extends React.Component {
   }
 
   renderParkingLocation(car) {
-    console.log('State: ', this.state);
-    console.log('Car: ', car);
     return (
       <div className="box">
         <h3>Newest Parking Location</h3>
+        <div className="box-content">
+          {this.state.latestBooking ? <div>Has Image</div> : <div>No Image</div>}
+        </div>
       </div>
     );
   }
