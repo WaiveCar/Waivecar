@@ -2,24 +2,10 @@
 
 Bento.Register.Model('ParkingDetails', 'sequelize', (model, Sequelize) => {
 
-  /**
-   * The identity of the table created in your database.
-   * @property table
-   * @type     String
-   */
   model.table = 'parking_details';
 
-  /**
-   * The sequelize schema definition of your model.
-   * @property schema
-   * @type     Object
-   */
   model.schema = {
 
-    /**
-     * The booking id.
-     * @type {Integer}
-     */
     bookingDetailId : {
       type       : Sequelize.INTEGER,
       allowNull  : false,
@@ -29,10 +15,6 @@ Bento.Register.Model('ParkingDetails', 'sequelize', (model, Sequelize) => {
       }
     },
 
-    /**
-     * The detail type of the ride, start, or end.
-     * @type {Enum}
-     */
     type : {
       type      : Sequelize.ENUM('lot', 'street'),
       allowNull : false
@@ -72,7 +54,7 @@ Bento.Register.Model('ParkingDetails', 'sequelize', (model, Sequelize) => {
       type         : Sequelize.BOOLEAN,
       defaultValue : false
     },
-
+      
     streetSignImage : {
       type       : Sequelize.STRING,
       references : {
@@ -94,8 +76,15 @@ Bento.Register.Model('ParkingDetails', 'sequelize', (model, Sequelize) => {
     streetOvernightRest : {
       type         : Sequelize.BOOLEAN,
       defaultValue : false
-    }
+    },
 
+    bookingId : {
+      type       : Sequelize.INTEGER
+    },
+
+    path : {
+      type       : Sequelize.STRING
+    },
   };
 
   return model;

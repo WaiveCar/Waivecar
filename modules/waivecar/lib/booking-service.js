@@ -759,7 +759,7 @@ module.exports = class BookingService extends Service {
     let parkingSlack;
     if (payload && payload.data && payload.data.type) {
       let parkingText = '';
-      payload.data.bookingDetailId = endDetails.id;
+      payload.data.bookingId = id;
 
       if (payload.data.type === 'street') {
         let minuteText = ((payload.data.streetMinutes || 0) + 100).toString().slice(1);
@@ -792,6 +792,7 @@ module.exports = class BookingService extends Service {
       };
 
       if (payload.data.streetSignImage && payload.data.streetSignImage.id) {
+        payload.data.path = payload.data.streetSignImage.path;
         parkingSlack.attachments.push({
           fallback  : 'Parking image',
           color     : '#D00000',
