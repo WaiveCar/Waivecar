@@ -69,6 +69,10 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       type : Sequelize.INTEGER,
       defaultValue : 0
     },
+    chargeCount: {
+      type : Sequelize.INTEGER,
+      defaultValue : 0
+    },
 
     reservationEnd : {
       type : Sequelize.DATE
