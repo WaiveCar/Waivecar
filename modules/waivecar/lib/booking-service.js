@@ -465,6 +465,11 @@ module.exports = class BookingService extends Service {
     return booking;
   }
 
+  static *getParkingDetails(id) {
+    console.log(id);
+    return { id:id };
+  };
+
   static *extendForFree(id, _user, opts) {
     return yield this._extend(id, Object.assign(opts || {}, {free: true}), _user);
   }

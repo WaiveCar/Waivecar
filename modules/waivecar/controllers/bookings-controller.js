@@ -101,6 +101,10 @@ Bento.Register.Controller('BookingsController', function(controller) {
     return yield booking.show(id, this.auth.user);
   };
 
+  controller.getParkingDetails = function *(id) {
+    return yield booking.getParkingDetails(id);
+  };
+
   /**
    * Initiates the booking and starts the ride.
    * @param  {Number} id
