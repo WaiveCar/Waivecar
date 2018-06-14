@@ -272,12 +272,6 @@ module.exports = {
     return true;
   },
 
-  /**
-   * Returns a car based on provided id from the local database.
-   * @param  {Number} id
-   * @param  {Object} _user
-   * @return {Object}
-   */
   *show(id, _user) {
     // there's an old bug that we are trying to access the car's
     // ble through this -- if we are hitting this bug we don't even try
@@ -289,13 +283,6 @@ module.exports = {
         model : 'GroupCar',
         as: 'groupCar'
       }
-      /*
-      if(!_user.isSuperAdmin()) {
-        includeCarGroup.where = {
-          groupRoleId: _user.groupRole.id
-        };
-      }
-      */
 
       car = yield Car.findById(id, {
         include : [
@@ -322,12 +309,6 @@ module.exports = {
     return car;
   },
 
-  /**
-   * @param  {Number} id
-   * @param  {Object}  payload
-   * @param  {Object} _user
-   * @return {Mixed}
-   */
   *update(id, payload, _user) {
     access.verifyAdmin(_user);
 
@@ -884,12 +865,6 @@ module.exports = {
     return yield this.syncUpdate(id, updatedCar, existingCar, _user);
   },
 
-  /**
-   * Events for a provided Car from Invers
-   * @param  {String} id
-   * @param  {Object} _user
-   * @return {Array}        Array of Event Objects
-   */
   *getEvents(id, _user) {
     let events = yield this.request(`/events?device=${ id }&timeout=0`);
     return events.data;
@@ -969,13 +944,7 @@ module.exports = {
     }
   },
 
-  /**
-   * Returns the Response from a Request aginst the Invers API
-   * @param  {String} resource uri endpoint of required resource
-   * @param  {String} method   HTTP method
-   * @param  {Object} data
-   * @return {Object}          Response Object
-   */
+  // Returns the Response from a Request aginst the Invers API
   *request(resource, options, data) {
     options = options || {};
 
@@ -1019,5 +988,4 @@ module.exports = {
       throw err;
     }
   }
-
 };
