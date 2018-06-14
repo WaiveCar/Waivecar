@@ -20,6 +20,7 @@ module.exports = class FacebookService {
    * @return {Object}
    */
   static *handle(data, _user) {
+    console.log('DATA TYPE: ', data.type);
 
     // ### Connect
     // Facebook connect requests requires that the request is coming from an authenticated user
@@ -107,10 +108,20 @@ module.exports = class FacebookService {
 
     // ### Conflicts
     // Check for conflicts, if the facebook id or email already exists in the system.
+    console.log('userEntry: ', userEntry);
+    console.log('waitlistEntry: ', waitlistEntry); 
+
+    if (waitlistEntry && !userEntry) {
+      throw error.parse({
+        code    : `AUTH_INVALID_GROUP`,
+        message : `You're currently on the waitlist. We'll contact you when you're account is active.`
+      }, 400);
+    }
 
     if ((userEntry && userEntry.facebook) || (waitlistEntry && waitlistEntry.facebook)) {
-      let responseId = userEntry !== null ? userEntry.id : waitlistEntry.id;
-      let responseEmail = userEntry !== null ? userEntry.email : waitlistEntry.id;
+      let responseId = userEntry !== null ? userEntry.id : null;
+      let responseEmail = userEntry !== null ? userEntry.email : waitlistEntry.email;
+      console.log(responseId, responseEmail);
       throw error.parse({
         code     : `FB_ID_EXISTS`,
         message  : `The facebook account is already connected to an account in our system.`,
@@ -123,8 +134,8 @@ module.exports = class FacebookService {
     }
 
     if (userEntry || waitlistEntry) {
-      let responseId = userEntry ? userEntry.id : waitlistEntry.id;
-      let responseEmail = userEntry !== null ? userEntry.email : waitlistEntry.id;
+      let responseId = userEntry ? userEntry.id : null;
+      let responseEmail = userEntry !== null ? userEntry.email : waitlistEntry.email;
       throw error.parse({
         code     : `FB_EMAIL_EXISTS`,
         message  : `The email connected to this facebook account has already been registered in our system.`,
@@ -152,10 +163,11 @@ module.exports = class FacebookService {
 
     // ### Register User
 
-    //let user = new User(data);
-    //yield user.save();
+    /*
     let listUser = new Waitlist(data);
     yield listUser.save();
+    */
+    let listUser = yield waitlist.add(data);
     console.log('New waitlist entry: ', listUser);
     // ### Assign Group
     // All new users are registered under the default group.
@@ -170,7 +182,7 @@ module.exports = class FacebookService {
     */
     yield hooks.call('user:store:after', listUser);
 
-    relay.emit('waitlist', {
+    relay.emit('user', {
       type : 'store',
       data : listUser.toJSON()
     });
