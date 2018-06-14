@@ -295,7 +295,7 @@ module.exports = class OrderService extends Service {
 
     let allCharges = yield this.getTotalCharges(booking);
     let totalAmount = allCharges.totalCredit + allCharges.totalPaid;
-    let chargesList = allCharges.types.map((type) => `<li>${type.trim()}</li>`).join();
+    let chargesList = allCharges.types.map((type) => `<li>${type.trim()}</li>`).join('');
     let dollarAmount = (totalAmount / 100).toFixed(2);
 
     let email = new Email();
