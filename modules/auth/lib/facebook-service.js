@@ -3,6 +3,7 @@
 let Facebook   = require('./social/facebook');
 let User       = Bento.model('User');
 let GroupUser  = Bento.model('GroupUser');
+let Waitlist   = Bento.model('Waitlist');
 let changeCase = Bento.Helpers.Case;
 let hooks      = Bento.Hooks;
 let error      = Bento.Error;
@@ -37,6 +38,7 @@ module.exports = class FacebookService {
     // Attempt to retrieve the facebook profile based on the provided data.
 
     let fb = yield this.getProfile(data);
+    console.log('Facebook Profile: ', fb);
 
     // ### Request Type
     // Handle the request based on the request type provided.
@@ -86,7 +88,7 @@ module.exports = class FacebookService {
   }
 
   static *checkIfExists(fb) {
-    let res = yield User.findOne({
+    let userEntry = yield User.findOne({
       where : {
         $or : [
           { email : fb.email },
@@ -94,36 +96,49 @@ module.exports = class FacebookService {
         ]
       }
     });
+    let waitlistEntry = yield Waitlist.findOne({
+      where : {
+        $or : [
+          { email: fb.email },
+          { facebook : fb.id },
+        ]
+      }
+    }); 
 
     // ### Conflicts
     // Check for conflicts, if the facebook id or email already exists in the system.
 
-    if (res && res.facebook) {
+    if ((userEntry && userEntry.facebook) || (waitlistEntry && waitlistEntry.facebook)) {
+      let responseId = userEntry !== null ? userEntry.id : waitlistEntry.id;
+      let responseEmail = userEntry !== null ? userEntry.email : waitlistEntry.id;
       throw error.parse({
         code     : `FB_ID_EXISTS`,
         message  : `The facebook account is already connected to an account in our system.`,
         solution : `Send a facebook login request with the same details to sign the user in via facebook.`,
         data     : {
-          id    : res.id,
-          email : res.email
+          id    : responseId,
+          email : responseEmail,
         }
       }, 400);
     }
 
-    if (res) {
+    if (userEntry || waitlistEntry) {
+      let responseId = userEntry ? userEntry.id : waitlistEntry.id;
+      let responseEmail = userEntry !== null ? userEntry.email : waitlistEntry.id;
       throw error.parse({
         code     : `FB_EMAIL_EXISTS`,
         message  : `The email connected to this facebook account has already been registered in our system.`,
         solution : `Have the user sign in to the system and perform a facebook connect request.`,
         data     : {
-          id    : res.id,
-          email : res.email
+          id    : responseId,
+          email : responseEmail,
         }
       }, 400);
     }
   }
 
   static *register(fb) {
+    // This just throws errors if there are problems, may need to also check the waitlist table
     yield this.checkIfExists(fb);
 
     fb.facebook = fb.id;
@@ -137,42 +152,30 @@ module.exports = class FacebookService {
 
     // ### Register User
 
-    let user = new User(data);
-    yield user.save();
-
+    //let user = new User(data);
+    //yield user.save();
+    let listUser = new Waitlist(data);
+    yield listUser.save();
+    console.log('New waitlist entry: ', listUser);
     // ### Assign Group
     // All new users are registered under the default group.
-
+    /*
     let group = new GroupUser({
       groupId     : 1,
-      userId      : user.id,
+      userId      : listUser.id,
       groupRoleId : 1
     });
+    console.log('Group: ', group);
     yield group.save();
+    */
+    yield hooks.call('user:store:after', listUser);
 
-    yield hooks.call('user:store:after', user);
-
-    relay.emit('users', {
+    relay.emit('waitlist', {
       type : 'store',
-      data : user.toJSON()
+      data : listUser.toJSON()
     });
 
-    return user;
-  }
-
-  static *waitlist(fb) {
-    yield this.checkIfExists(fb);
-
-    fb.facebook = fb.id;
-
-    delete fb.id;
-
-    let data = changeCase.objectKeys('toCamel', fb);
-
-    let res = yield waitlist.internalAdd(data);
-    res.in = data;
-    res._type = 'waitlist';
-    return res;
+    return listUser;
   }
 
   static *getProfile(data) {
