@@ -1,5 +1,6 @@
 #!/bin/bash
-cat > /tmp/staging-secret << ENDL
+key=/tmp/staging-secret
+cat > $key << ENDL
 -----BEGIN RSA PRIVATE KEY-----
 MIIEowIBAAKCAQEAqAQJEtZdJUqiTtQtee0LOICYsZVWZEXv9qrXGCoHu9tNaog+
 sBbVOMJPdqOb6AXbwGFmEJCLKueZF1UC1wxnl1kkgsG8ZHMdFMRkI3vYIsNudDRx
@@ -29,8 +30,9 @@ yBlBCx7EjiT3JyPRlGx71kJTpnk7H8u+RcqEtdlEHCAM+l3GpqB3
 -----END RSA PRIVATE KEY-----
 ENDL
 
-chmod 0600 /tmp/staging-secret
+chmod 0600 $key
 
 [ -e /tmp/.make-stage-pid ] && kill `cat /tmp/.make-stage-pid`
-ssh -i /tmp/staging-secret -NC -R 45.79.111.50:4300:0.0.0.0:3080 waiver@45.79.111.50 &
+ssh -i $key waiver@45.79.111.50 "pkill -o -u waiver sshd"
+ssh -i $key -NC -R 45.79.111.50:4300:0.0.0.0:3080 waiver@45.79.111.50 &
 echo $! > /tmp/.make-stage-pid
