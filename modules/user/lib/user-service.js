@@ -221,7 +221,7 @@ module.exports = {
     // ### Create Query String
 
     let qs = config.filter(queryParser, query);
-    qs.where.status = { $not: 'waitlist' };
+    // qs.where.status = { $not: 'waitlist' };
 
     let users = [];
     if(query.search) {
@@ -360,6 +360,12 @@ module.exports = {
 
     // and log this as a transgression
     yield UserLog.addUserEvent(user, 'SUSPENDED', _user.id, reason);
+  },
+
+  *notifyStart() {
+  },
+
+  *notifyEnd() {
   },
 
   *update(id, payload, _user) {
