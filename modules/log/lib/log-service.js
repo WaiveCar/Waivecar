@@ -14,7 +14,6 @@ let hooks       = Bento.Hooks;
 let error       = Bento.Error;
 let logs        = Bento.Log;
 let _           = require('lodash');
-let CarService  = require('../../waivecar/lib/car-service');
 
 
 module.exports = class LogService {
@@ -32,7 +31,11 @@ module.exports = class LogService {
     }
   }
 
-  static *stats(day){
+  static *stats(day) {
+    // There's a circular dependency here. Make sure you know what you're doing
+    // before you 'refactor' this to the top.
+    let CarService  = require('../../waivecar/lib/car-service');
+
     //
     // An implementation of https://github.com/clevertech/Waivecar/issues/623
     //
@@ -263,7 +266,11 @@ module.exports = class LogService {
     }).join('\n');
   }
 
-  static *report(year_month, type){
+  static *report(year_month, type) {
+    // There's a circular dependency here. Make sure you know what you're doing
+    // before you 'refactor' this to the top.
+    let CarService  = require('../../waivecar/lib/car-service');
+
     //
     // Total number of rides taken/times the vehicle was rented
     // Total number of drivers
