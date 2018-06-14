@@ -7,6 +7,8 @@ let License = Bento.model('License');
 let Card    = Bento.model('Shop/Card');
 let error   = Bento.Error;
 
+let notify  = require('../notification-service');
+
 module.exports = class Service {
 
   /**
@@ -136,6 +138,9 @@ module.exports = class Service {
       if (reason.length) {
         statedReason = reason[0].content;
       }
+
+      yield notify.notifyAdmins(`:middle_finger: ${ user.link() } is trying to use the service but is suspended: ${ statedReason }`, [ 'slack' ], { channel : '#user-alerts' });
+
       if(!statedReason) {
         statedReason = 'The most common reason for a suspended account is an expired credit cards. Try updating your card in the account section';
       } else {
@@ -147,10 +152,26 @@ module.exports = class Service {
         message : `<div style='text-align:left;margin-bottom:1em'>Your account has been suspended. ${statedReason}</div>`
       }, 400);
     } else if (user.status === 'pending') {
+      yield notify.notifyAdmins(`:see_no_evil: ${ user.link() } is trying to use the service and is in pending.`, [ 'slack' ], { channel : '#user-alerts' });
       throw error.parse({
         code    : `BOOKING_PENDING_USER`,
         message : `You are not yet approved to book a WaiveCar. Please contact us to activate your account.`
       }, 400);
+    } else if (user.status !== 'active') {
+      let bookingList = yield Booking.find({ where: { userId: user.id } });
+
+      if(bookingList.length > 1) {
+        // let this user book because they think they're in. We need to notify the user-alerts channel
+        // of our mistake
+        yield notify.notifyAdmins(`:speak_no_evil: Woops, ${ user.link() } was supposed to be waitlisted but we accidentally let them use the service already. We're going to just move them to active now.`, [ 'slack' ], { channel : '#user-alerts' });
+        yield user.update({status: 'active'});
+      } else {
+        yield notify.notifyAdmins(`:see_no_evil: ${ user.link() } is trying to use the service and is on the waitlist.`, [ 'slack' ], { channel : '#user-alerts' });
+        throw error.parse({
+          code    : `BOOKING_INVALID_PRIVILEGES`,
+          message : `You're still on the waitlist and cannot book yet. Please contact us for details`
+        }, 400);
+      }
     }
 
     if (!user.tested) {
