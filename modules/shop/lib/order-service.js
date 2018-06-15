@@ -122,8 +122,7 @@ module.exports = class OrderService extends Service {
     let order = yield Order.findById(paymentId);
     let response;
     try {
-      let refund = yield stripe.charges.refund(order.chargeId, payload.amount);
-      response = refund;
+      response = yield stripe.charges.refund(order.chargeId, payload.amount);
     } catch(err) {
       throw {
         status: 400,
@@ -137,7 +136,7 @@ module.exports = class OrderService extends Service {
       status: 'refunded',
     });
 
-    let email = new Email()
+    let email = new Email();
     let amount = (payload.amount / 100).toFixed(2);
     let orderDate = moment(order.createdAt).format('MMMM Do YYYY'); 
 
@@ -145,7 +144,7 @@ module.exports = class OrderService extends Service {
 	    yield email.send({
 		    to       : user.email,
 		    from     : emailConfig.sender,
-        subject  : `[WaiveCar] $${ amount } for your trip in on ${ orderDate } has been refunded`,
+        subject  : `$${ amount } refunded for your trip on ${ orderDate }`,
 		    template : 'refund',
 		    context  : {
 		      name       : user.name(),
@@ -461,6 +460,7 @@ module.exports = class OrderService extends Service {
 
     let charge = yield this.charge(order, _user, {nocapture: true});
     yield this.cancel(order, _user, charge);
+
     return order;
   }
 
