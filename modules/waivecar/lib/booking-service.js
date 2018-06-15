@@ -971,7 +971,7 @@ module.exports = class BookingService extends Service {
       } catch (err) {
         log.warn(`Failed to update ${ car.info() } when completing booking ${ booking.id }`);
       }
-      res = yield finalCheckFail();
+      let res = yield finalCheckFail();
       if(res) {
         throw res;
       }
