@@ -3,6 +3,7 @@
 # If the script is run with any argument, at all, we assume it's a dry run.
 # this code, with any argument, makes dry not the empty string which is what
 # test(1) uses as the qualifier in [ ] bare testing.
+[ $# -ne 1 ] && exit
 server=$1
 
 # example form:
