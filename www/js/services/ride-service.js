@@ -49,12 +49,20 @@ module.exports = angular.module('app.services').factory('$ride', [
       check : {
         isKeySecure        : { isVisible: true, confirmed: false },
         isIgnitionOn       : { isVisible: true, confirmed: false },
-        isDoorsClosed      : { isVisible: true, confirmed: false },
+        isDoorOpen         : { isVisible: true, confirmed: false },
         isChargeCardSecure : { isVisible: false, confirmed: false },
         isCharging         : { isVisible: false, confirmed: false }
       }
     };
     /*eslint-enable */
+
+    var checkForLockHandle;
+    function checkForLock() {
+      if (checkForLockHandle) {
+        $interval.cancel(checkForLockHandle);
+        checkForLockHandle = null;
+      }
+    }
 
     service.isInitialized = false;
 
@@ -97,10 +105,7 @@ module.exports = angular.module('app.services').factory('$ride', [
       $data.resources.cars.refresh({id: car.id});
 
       if (car == null || booking == null) {
-        if (this.checkForLock) {
-          $interval.cancel(this.checkForLock);
-          this.checkForLock = null;
-        }
+        checkForLock();
         return;
       }
 
@@ -108,10 +113,7 @@ module.exports = angular.module('app.services').factory('$ride', [
         if (booking.status !== 'completed') {
           return;
         }
-        if (this.checkForLock) {
-          $interval.cancel(this.checkForLock);
-          this.checkForLock = null;
-        }
+        checkForLock();
         $data.fetch('bookings');
         $data.deactivate('bookings');
         $data.deactivate('cars');
@@ -121,16 +123,13 @@ module.exports = angular.module('app.services').factory('$ride', [
       }
 
       if (service.state.booking.readyToEnd) {
-        if (this.checkForLock) {
-          $interval.cancel(this.checkForLock);
-          this.checkForLock = null;
-        }
+        checkForLock();
         return;
       }
 
       _.forEach(service.state.check, function (item, key) {
         item.confirmed = car[key];
-        if (key === 'isIgnitionOn') {
+        if (key === 'isIgnitionOn' || key === 'isDoorOpen') {
           item.confirmed = !car[key];
         }
       });
@@ -143,13 +142,9 @@ module.exports = angular.module('app.services').factory('$ride', [
       if (!isReady) {
         return;
       }
-      console.log('ready to end');
 
       service.state.booking.readyToEnd = true;
-      if (this.checkForLock) {
-        $interval.cancel(this.checkForLock);
-        this.checkForLock = null;
-      }
+      checkForLock();
     };
 
     service.processEndRide = function() {
@@ -158,13 +153,13 @@ module.exports = angular.module('app.services').factory('$ride', [
         return null;
       }
 
-      this.checkForLock = $interval(function() {
+      checkForLockHandle = $interval(function() {
         service.setCheck();
       }, 5000);
 
       $timeout(function(){
-        $interval.cancel(this.checkForLock);
-      }.bind(this), 5 * 60 * 1000);
+        $interval.cancel(checkForLockHandle);
+      }, 5 * 60 * 1000);
 
       var payload = angular.copy(service.state.parkingLocation);
       var locationType = _.find(service.state.location, function (item) {
@@ -304,10 +299,7 @@ module.exports = angular.module('app.services').factory('$ride', [
         template: '<div class="circle-loader"><span>Loading</span></div>'
       });
       var id = service.state.booking.id;
-      if (this.checkForLock) {
-        $interval.cancel(this.checkForLock);
-        this.checkForLock = null;
-      }
+      checkForLock();
       return $data.resources.bookings.complete({ id: id }).$promise
       .then(function() {
         $ionicLoading.hide();
@@ -378,12 +370,6 @@ module.exports = angular.module('app.services').factory('$ride', [
       // Really we need to be system-wide consistent with this number.
       return genericCheck(id, obj, function(status) {
         return status.charge > 20 || status.isCharging;
-      });
-    };
-
-    service.isDoorsClosed = function(id, obj) {
-      return genericCheck(id, obj, function(status) {
-        return status.isDoorClosed;
       });
     };
 
