@@ -342,30 +342,29 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       queue.scheduler.cancel('booking-forfeiture', uid);
     },
 
-    *setCompleteCheck() {
-      queue.scheduler.add('booking-complete-check', {
+    *doTask(what, when, opts) {
+      queue.scheduler.add(what, {
         uid   : `booking-${ this.id }`,
         timer : {
-          value : 1.5,
+          value : when,
           type  : 'minutes'
         },
-        data : {
+        data : Object.assign(opts || {}, {
           bookingId : this.id
-        }
+        })
       });
     },
 
+    *setCompleteCheck() {
+      this.doTask('booking-complete-check', 1.5);
+    },
+
+    *setNowLock(opts) {
+      this.doTask('booking-now-lock', 0.02, opts);
+    },
+
     *setAutoLock() {
-      queue.scheduler.add('booking-auto-lock', {
-        uid   : `booking-${ this.id }`,
-        timer : {
-          value : 5,
-          type  : 'minutes'
-        },
-        data : {
-          bookingId : this.id
-        }
-      });
+      this.doTask('booking-auto-lock', 5);
     }
 
   };
