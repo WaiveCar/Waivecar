@@ -47,6 +47,7 @@ hooks.set('auth:login', function *(payload) {
  */
 hooks.set('auth:social', function *(user, payload) {
   yield verifyUser(user, payload);
+  console.log('after verify user');
   if(user.status === 'waitlist' && user.phone) {
     throw error.parse({
       code    : `AUTH_INVALID_GROUP`,
@@ -76,9 +77,9 @@ function *verifyUser(user, payload) {
   //   throw accountSuspended();
   // }
   //
-  
+  console.log(user, payload);
   let group = yield getGroup(user.id, payload.group || 1);
-  if (!group) {
+  if (!group && !user.newUser) {
     throw invalidGroup();
   }
 }
@@ -108,6 +109,7 @@ function invalidCredentials(msg) {
 }
 
 function invalidGroup() {
+  console.log('Checking group here');
   return error.parse({
     code    : `AUTH_INVALID_GROUP`,
     message : `Your account does not have access to requested group.`

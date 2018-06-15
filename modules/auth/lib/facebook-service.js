@@ -89,6 +89,8 @@ module.exports = class FacebookService {
   }
 
   static *checkIfExists(fb) {
+    fb.facebook = fb.id;
+    //delete fb.id; // Remove facebook id value so not to over-write our system value.
     let userEntry = yield User.findOne({
       where : {
         $or : [
@@ -107,9 +109,20 @@ module.exports = class FacebookService {
     }); 
 
     // ### Conflicts
+
     // Check for conflicts, if the facebook id or email already exists in the system.
-    console.log('userEntry: ', userEntry);
-    console.log('waitlistEntry: ', waitlistEntry); 
+    if (!waitlistEntry && !userEntry) {
+      let data = changeCase.objectKeys('toCamel', fb);
+      if (hooks.has('user:store:before')) {
+        data = yield hooks.call('user:store:before', data);
+      }
+      data.facebook = data.id;
+      delete data.id;
+      yield waitlist.add(data);
+      data.newUser = true;
+      console.log('Data: ', data);
+      return data;
+    }
 
     if (waitlistEntry && !userEntry) {
       throw error.parse({
@@ -117,7 +130,7 @@ module.exports = class FacebookService {
         message : `You're currently on the waitlist. We'll contact you when you're account is active.`
       }, 400);
     }
-
+    /*
     if ((userEntry && userEntry.facebook) || (waitlistEntry && waitlistEntry.facebook)) {
       let responseId = userEntry !== null ? userEntry.id : null;
       let responseEmail = userEntry !== null ? userEntry.email : waitlistEntry.email;
@@ -146,48 +159,38 @@ module.exports = class FacebookService {
         }
       }, 400);
     }
+    */
   }
-
   static *register(fb) {
     // This just throws errors if there are problems, may need to also check the waitlist table
-    yield this.checkIfExists(fb);
+    let res = yield this.checkIfExists(fb);
 
-    fb.facebook = fb.id;
+    //fb.facebook = fb.id;
 
-    delete fb.id; // Remove facebook id value so not to over-write our system value.
-
+    //delete fb.id; // Remove facebook id value so not to over-write our system value.
+    /*
     let data = changeCase.objectKeys('toCamel', fb);
     if (hooks.has('user:store:before')) {
       data = yield hooks.call('user:store:before', data);
     }
-
+    */
     // ### Register User
 
     /*
     let listUser = new Waitlist(data);
     yield listUser.save();
     */
-    let listUser = yield waitlist.add(data);
-    console.log('New waitlist entry: ', listUser);
+    //let listUser = yield waitlist.add(data);
     // ### Assign Group
     // All new users are registered under the default group.
-    /*
-    let group = new GroupUser({
-      groupId     : 1,
-      userId      : listUser.id,
-      groupRoleId : 1
-    });
-    console.log('Group: ', group);
-    yield group.save();
-    */
-    yield hooks.call('user:store:after', listUser);
+    //yield hooks.call('user:store:after', listUser);
 
-    relay.emit('user', {
+    /*relay.emit('user', {
       type : 'store',
-      data : listUser.toJSON()
-    });
+      data : listUser
+    });*/
 
-    return listUser;
+    return res;
   }
 
   static *getProfile(data) {

@@ -18,10 +18,7 @@ module.exports = class AuthService {
   }
 
   static *social(target, data, _user) {
-    console.log('Data: ', data, '\n_user: ', _user);
-    console.log('Facebook auth type: ', data.type);
-    //let service = getSocialService(target);
-    let user    = yield facebookService.handle(data, _user);
+    let user = yield facebookService.handle(data, _user);
 
     if(user && user._type === 'waitlist') {
       return user;

@@ -72,7 +72,7 @@ module.exports = {
     }
 
     // only accept certain fields...
-    ['accountType', 'days', 'hours', 'experience', 'password', 'phone', 'latitude', 'longitude', 'firstName', 'lastName', 'email', 'placeName', 'placeId'].forEach((field) => {
+    ['accountType', 'days', 'hours', 'experience', 'password', 'phone', 'latitude', 'longitude', 'firstName', 'lastName', 'email', 'placeName', 'placeId', 'facebook'].forEach((field) => {
       if (! (field in payload) ) {
         if ( requiredList.indexOf(field) !== -1) {
           throw error.parse({
