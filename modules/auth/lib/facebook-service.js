@@ -62,17 +62,12 @@ module.exports = class FacebookService {
    * @return {Object}
    */
   static *login(fb) {
-    let waitlistEntry = yield Waitlist.findOne({
-      where : {
-        facebook : fb.id
-      }
-    });
     let user = yield User.findOne({
       where : {
         facebook : fb.id
       }
     });
-    if (!waitlistEntry && !user) {
+    if (!user) {
       throw error.parse({
         code     : `FB_LOGIN_FAILED`,
         message  : `The provided facebook account has not been connected with any account in our system.`,
@@ -82,7 +77,9 @@ module.exports = class FacebookService {
         }
       }, 400);
     }
-    return user ? user : waitlistEntry;
+    
+
+    return user;
   }
 
   static *connect(fb, user) {
@@ -163,18 +160,10 @@ module.exports = class FacebookService {
       }
       data.facebook = data.id;
       let item = yield waitlist.add(data);
-      relay.emit('user', {
-        type : 'store',
-        data : item.record.toJSON(),
-      });
       return item.record;
     }
 
     if (waitlistEntry && !userEntry) {
-      relay.emit('user', {
-        type : 'store',
-        data : waitlistEntry.toJSON(),
-      });
       throw error.parse({
         code    : `AUTH_INVALID_GROUP`,
         message : `You're currently on the waitlist. We'll contact you when you're account is active.`
