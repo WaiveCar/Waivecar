@@ -249,10 +249,6 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       });
     },
 
-    /**
-     * Removes the automatic cancellation of the booking.
-     * @return {Void}
-     */
     *delCancelTimer() {
       queue.scheduler.cancel('booking-auto-cancel', `booking-${ this.id }`);
     },
@@ -342,7 +338,7 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       queue.scheduler.cancel('booking-forfeiture', uid);
     },
 
-    *doTask(what, when, opts) {
+    doTask(what, when, opts) {
       let timer = {
         value : when,
         type  : 'minutes'
@@ -361,8 +357,6 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
         })
       };
 
-      console.log(what, params);
-
       queue.scheduler.add(what, params);
     },
 
@@ -371,7 +365,7 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
     },
 
     *setNowLock(opts) {
-      this.doTask('booking-now-lock', 0.1, opts);
+      this.doTask('booking-now-lock', 0.03, opts);
     },
 
     *setAutoLock() {
