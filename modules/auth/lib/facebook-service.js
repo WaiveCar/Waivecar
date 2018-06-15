@@ -62,12 +62,17 @@ module.exports = class FacebookService {
    * @return {Object}
    */
   static *login(fb) {
+    let waitlistEntry = yield Waitlist.findOne({
+      where : {
+        facebook : fb.id
+      }
+    });
     let user = yield User.findOne({
       where : {
         facebook : fb.id
       }
     });
-    if (!user) {
+    if (!waitlistEntry && !user) {
       throw error.parse({
         code     : `FB_LOGIN_FAILED`,
         message  : `The provided facebook account has not been connected with any account in our system.`,
@@ -77,7 +82,7 @@ module.exports = class FacebookService {
         }
       }, 400);
     }
-    return user;
+    return user ? user : waitlistEntry;
   }
 
   static *connect(fb, user) {
@@ -85,7 +90,7 @@ module.exports = class FacebookService {
       facebook : fb.id
     });
   }
-
+/*
   static *checkIfExists(fb) {
     fb.facebook = fb.id;
     //delete fb.id; // Remove facebook id value so not to over-write our system value.
@@ -105,6 +110,8 @@ module.exports = class FacebookService {
         ]
       }
     }); 
+    // Need to add checks for if email and phone number are already in db and need to add appropriate error messages
+    // Also need to figure out why you cannot sign up for facebook from the login page
 
     if (!waitlistEntry && !userEntry) {
       let data = changeCase.objectKeys('toCamel', fb);
@@ -123,8 +130,8 @@ module.exports = class FacebookService {
         message : `You're currently on the waitlist. We'll contact you when you're account is active.`
       }, 400);
     }
-    // Need to add checks for email and phone number
   }
+*/
   static *register(fb) {
     // This just throws errors if there are problems, may need to also check the waitlist table
     // May be able to remove this function altogether
@@ -147,16 +154,15 @@ module.exports = class FacebookService {
         ]
       }
     }); 
+    // Need to add checks for if email and phone number are already in db and need to add appropriate error messages
 
     if (!waitlistEntry && !userEntry) {
-      console.log('Brand new user!')
       let data = changeCase.objectKeys('toCamel', fb);
       if (hooks.has('user:store:before')) {
         data = yield hooks.call('user:store:before', data);
       }
       data.facebook = data.id;
       let item = yield waitlist.add(data);
-      //data.newUser = true;
       relay.emit('user', {
         type : 'store',
         data : item.record.toJSON(),
