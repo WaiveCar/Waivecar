@@ -8,6 +8,7 @@ let EventLog    = Bento.model('EventLog');
 let Booking     = Bento.model('Booking');
 let Log         = Bento.model('Log');
 let Location    = Bento.model('BookingLocation');
+let CarHistory  = Bento.model('CarHistory');
 let sequelize   = Bento.provider('sequelize');
 let GroupUser   = Bento.model('GroupUser');
 let hooks       = Bento.Hooks;
@@ -293,6 +294,7 @@ module.exports = class LogService {
       start = {year:0, month:0},
       end = {year:0, month:0},
       fleetUserList = yield GroupUser.find({ where: { groupRoleId: { $gt: 1 } } }),
+      sparkMap = {},
       licenseMap = yield CarService.id2license();
 
     fleetUserList = fleetUserList.map((row) => { row.userId });
@@ -320,6 +322,7 @@ module.exports = class LogService {
     for(var id in licenseMap) {
       let license = licenseMap[id];
       if(license.match(/waive1?\d$/i) || license.match(/waive20$/i)) {
+        sparkMap[id] = licenseMap[id];
         delete licenseMap[id];
       }
     }
@@ -327,7 +330,18 @@ module.exports = class LogService {
     // see http://stackoverflow.com/questions/6273361/mysql-query-to-select-records-with-a-particular-date
     // for a discussion on the 'best' way to do this.
     let range = { $between: [`${start.year}-${start.month}-01 00:00:00`, `${end.year}-${end.month}-01 00:00:00`] };
-  
+    let allOdometers = yield CarHistory.find({
+      where : {
+        action: 'ODOMETER',
+        created_at : range,
+        car_id : { $in : Object.keys(licenseMap) }
+      },
+      order : [ 
+        ['created_at', 'ASC'],
+        ['car_id', 'ASC']
+      ]
+    });
+
     // we'll use this query to answer a number of questions.
     let allBookings = yield Booking.find({
       where : {
@@ -349,9 +363,19 @@ module.exports = class LogService {
 
     if(type === 'points') {
       
-      let qstr = 'select round(longitude,4) as lng, round(latitude,4) as lat, count(*) as weight ' +
-          'from booking_locations where booking_id in (' + allBookings.map((row) => { return row.id } ) + ') ' + 
-          'group by(concat(lng,lat))';
+      let allSparkBookings = yield Booking.find({
+        where : {
+          created_at : range,
+          car_id : { $in : Object.keys(sparkMap) }
+        },
+      });
+
+      let qstr = [
+        'select round(longitude,4) as lng, round(latitude,4) as lat, count(*) as weight',
+        'from booking_locations where booking_id not in (' + allSparkBookings.map((row) => { return row.id } ) + ')',
+        `and created_at > '${start.year}-${start.month}-01 00:00:00' and created_at < '${end.year}-${end.month}-01 00:00:00'`,
+        'group by(concat(lng,lat))'
+      ].join(' ');
 
       return (yield sequelize.query(qstr))[0].map((row) => {
         return [row.lat, row.lng, row.weight];
@@ -359,22 +383,23 @@ module.exports = class LogService {
 
     }
 
+    allOdometers.forEach((row) => {
+      let id = licenseMap[row.carId];
+      if( ! (id in bookByCar) ) {
+        bookByCar[id] = [];
+        carOdometer[id] = [Number.MAX_VALUE, 0];
+      }
+      carOdometer[id][0] = Math.min(+row.data, carOdometer[id][0]);
+      carOdometer[id][1] = Math.max(+row.data, carOdometer[id][1]);
+    });
+
     // These should already be done by date so yeah, that's convenient.
     allBookings.forEach((row) => {
       let id = licenseMap[row.carId];
       let userId = row.userId;
       let userType = 'user';
 
-      if( ! (id in bookByCar) ) {
-        bookByCar[id] = [];
-        carOdometer[id] = [Number.MAX_VALUE, 0];
-      }
       bookByCar[id].push(row);
-
-      row.details.forEach((record) => {
-        carOdometer[id][0] = Math.min(record.mileage, carOdometer[id][0]);
-        carOdometer[id][1] = Math.max(record.mileage, carOdometer[id][1]);
-      });
 
       if( userId in fleetUserList ) {
         userType = 'fleet';
@@ -389,6 +414,13 @@ module.exports = class LogService {
         totalDistance[userType] += Math.abs(row.details[0].mileage - row.details[1].mileage);
       }
     });
+
+    for(var car in carOdometer) {
+      if(carOdometer[car][0] === carOdometer[car][1]) {
+        delete carOdometer[car];
+        delete bookByCar[car];
+      }
+    }
 
     let odometerReading = _.values(carOdometer).reduce((accumulator, row) => {
         return Math.abs(row[1] - row[0]) + accumulator;
@@ -559,13 +591,6 @@ module.exports = class LogService {
     }
   }
 
-  /**
-   * Updates a log.
-   * @param  {String} type
-   * @param  {Number} id
-   * @param  {Object} payload
-   * @return {Object}
-   */
   static *update(type, id, payload) {
     let log = yield this.getLog(type, id);
     yield log.update(payload);
