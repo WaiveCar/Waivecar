@@ -23,6 +23,7 @@ let Group     = Bento.model('Group');
 let GroupUser = Bento.model('GroupUser');
 let GroupRole = Bento.model('GroupRole');
 let Booking   = Bento.model('Booking');
+let Waitlist  = Bento.model('Waitlist');
 let sequelize = Bento.provider('sequelize');
 let notify    = require('../../waivecar/lib/notification-service');
 let UserLog   = require('../../log/lib/log-service');
@@ -448,6 +449,11 @@ module.exports = {
 
     user.relay('update');
 
+    return user;
+  },
+
+  *updateNew(user) {
+    console.log(user); 
     return user;
   },
 

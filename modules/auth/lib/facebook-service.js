@@ -87,53 +87,13 @@ module.exports = class FacebookService {
       facebook : fb.id
     });
   }
-/*
-  static *checkIfExists(fb) {
-    fb.facebook = fb.id;
-    //delete fb.id; // Remove facebook id value so not to over-write our system value.
-    let userEntry = yield User.findOne({
-      where : {
-        $or : [
-          { email : fb.email },
-          { facebook : fb.id }
-        ]
-      }
-    });
-    let waitlistEntry = yield Waitlist.findOne({
-      where : {
-        $or : [
-          { email: fb.email },
-          { facebook : fb.id },
-        ]
-      }
-    }); 
-    // Need to add checks for if email and phone number are already in db and need to add appropriate error messages
-    // Also need to figure out why you cannot sign up for facebook from the login page
 
-    if (!waitlistEntry && !userEntry) {
-      let data = changeCase.objectKeys('toCamel', fb);
-      if (hooks.has('user:store:before')) {
-        data = yield hooks.call('user:store:before', data);
-      }
-      data.facebook = data.id;
-      yield waitlist.add(data);
-      data.newUser = true;
-      return data;
-    }
-
-    if (waitlistEntry && !userEntry) {
-      throw error.parse({
-        code    : `AUTH_INVALID_GROUP`,
-        message : `You're currently on the waitlist. We'll contact you when you're account is active.`
-      }, 400);
-    }
-  }
-*/
   static *register(fb) {
     // This just throws errors if there are problems, may need to also check the waitlist table
     // May be able to remove this function altogether
     //let res = yield this.checkIfExists(fb);
     fb.facebook = fb.id;
+    console.log('Facbook item: ', fb);
     //delete fb.id; // Remove facebook id value so not to over-write our system value.
     let userEntry = yield User.findOne({
       where : {
@@ -152,29 +112,23 @@ module.exports = class FacebookService {
       }
     }); 
     // Need to add checks for if email and phone number are already in db and need to add appropriate error messages
-
+    let data = changeCase.objectKeys('toCamel', fb);
+    if (hooks.has('user:store:before')) {
+      data = yield hooks.call('user:store:before', data);
+    }
     if (!waitlistEntry && !userEntry) {
-      let data = changeCase.objectKeys('toCamel', fb);
-      if (hooks.has('user:store:before')) {
-        data = yield hooks.call('user:store:before', data);
-      }
       data.facebook = data.id;
       let item = yield waitlist.add(data);
       item.record.isNew = true;
       return item.record;
     }
-
     if (waitlistEntry && !userEntry) {
+      console.log('waitlist exists but not user');
       throw error.parse({
         code    : `AUTH_INVALID_GROUP`,
         message : `You're currently on the waitlist. We'll contact you when you're account is active.`
       }, 400);
     }
-    // Also need to check database for email and phone number
-    relay.emit('user', {
-      type : 'store',
-      data : userEntry.toJSON(),
-    });
     return userEntry;
   }
 

@@ -4,6 +4,7 @@ let User   = Bento.model('User');
 let hooks  = Bento.Hooks;
 let auth   = Bento.Auth;
 let error  = Bento.Error;
+let relay      = Bento.Relay;
 let facebookService = require('./facebook-service');
 
 module.exports = class AuthService {
@@ -19,8 +20,11 @@ module.exports = class AuthService {
 
   static *social(target, data, _user) {
     let user = yield facebookService.handle(data, _user);
-    if(user && (user._type === 'waitlist' || user.isNew)) {
-      console.log(this);
+    relay.emit('user', {
+      type : 'store',
+      data : user.toJSON(),
+    });
+    if (user && user.isNew) {
       return user;
     }
 
@@ -32,7 +36,6 @@ module.exports = class AuthService {
       return;
     }
 
-    console.log('breakpoint in auth-service')
     return yield hooks.require('auth:social', user, data.options || {});
   }
 

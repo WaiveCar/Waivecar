@@ -3,7 +3,7 @@
 let config = Bento.config.user;
 
 // ### Unique Routes
-
+Route.post('/users',               'UsersController@updateNew');
 Route.get('/users/me',             'UsersController@me');
 Route.put('/reset-password',       'UsersController@passwordReset');
 Route.pst('/reset-password/token', 'UsersController@passwordToken');
