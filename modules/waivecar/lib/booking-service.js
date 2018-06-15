@@ -982,7 +982,7 @@ module.exports = class BookingService extends Service {
     if (!isLevel) { 
       try {
         yield booking.setNowLock({userId: _user.id, carId: car.id});
-        //yield cars.lockCar(car.id, _user);
+        yield cars.lockCar(car.id, _user);
       } catch (err) {
         log.warn(`Failed to lock ${ car.info() } when completing booking ${ booking.id }`);
       }

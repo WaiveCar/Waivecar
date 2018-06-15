@@ -353,13 +353,17 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
         timer.type = 'seconds';
       }
 
-      queue.scheduler.add(what, {
+      let params = {
         uid   : `booking-${ this.id }`,
         timer : timer,
         data  : Object.assign(opts || {}, {
           bookingId : this.id
         })
-      });
+      };
+
+      console.log(what, params);
+
+      queue.scheduler.add(what, params);
     },
 
     *setCompleteCheck() {
