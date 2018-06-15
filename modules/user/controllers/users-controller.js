@@ -18,10 +18,6 @@ Bento.Register.ResourceController('User', 'UsersController', (controller) => {
   };
 
   controller.me = function *() {
-    console.log('Auth: ', this.auth);
-    if (this.auth.user === null) {
-      return;
-    }
     if (this.auth.check()) {
       // We are also piggy-backing the user agent on top of this.
       // see ticket #561 for more details.
@@ -41,6 +37,9 @@ Bento.Register.ResourceController('User', 'UsersController', (controller) => {
 
       return model;
     }
+    if (this.auth.user === null) {
+      return;
+    }
     throw error.parse({
       code    : `INVALID_TOKEN`,
       message : `No user was found under the provided authentication token.`
@@ -48,6 +47,7 @@ Bento.Register.ResourceController('User', 'UsersController', (controller) => {
   };
 
   controller.update = function *(id) {
+    console.log('is it calling controller.update');
     return yield service.update(id, this.payload, this.auth.user);
   };
 
@@ -62,6 +62,7 @@ Bento.Register.ResourceController('User', 'UsersController', (controller) => {
    * @yield {[type]} [description]
    */
   controller.verify = function *() {
+    console.log('is it calling controller.verify?')
     return yield service.verify(this.payload.token);
   };
 
