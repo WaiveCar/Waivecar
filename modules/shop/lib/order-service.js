@@ -875,7 +875,7 @@ module.exports = class OrderService extends Service {
       yield email.send({
         to       : user.email,
         from     : emailConfig.sender,
-        subject  : '[WaiveCar] Important! Failed Charge.',
+        subject  : 'Important! Failed Charge.',
         template : 'failed-charge',
         context  : {
           name   : user.name(),
@@ -901,7 +901,7 @@ module.exports = class OrderService extends Service {
         yield email.send({
           to       : user.email,
           from     : emailConfig.sender,
-          subject  : `[WaiveCar] Additional ${ word }`,
+          subject  : `Additional ${ word } on your account`,
           template : 'miscellaneous-charge',
           context  : {
             name   : user.name(),
