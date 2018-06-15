@@ -47,7 +47,7 @@ hooks.set('auth:login', function *(payload) {
  */
 hooks.set('auth:social', function *(user, payload) {
   yield verifyUser(user, payload);
-  if ((user.status === 'waitlist' && user.phone) || user.isNew) {
+  if (user.status === 'waitlist' && user.phone) {
     throw error.parse({
       code    : `AUTH_INVALID_GROUP`,
       message : `You're currently on the waitlist. We'll contact you when you're account is active.`

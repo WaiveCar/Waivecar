@@ -18,6 +18,10 @@ Bento.Register.ResourceController('User', 'UsersController', (controller) => {
   };
 
   controller.me = function *() {
+    console.log('Auth: ', this.auth);
+    if (this.auth.user === null) {
+      return;
+    }
     if (this.auth.check()) {
       // We are also piggy-backing the user agent on top of this.
       // see ticket #561 for more details.

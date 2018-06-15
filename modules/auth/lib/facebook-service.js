@@ -160,6 +160,7 @@ module.exports = class FacebookService {
       }
       data.facebook = data.id;
       let item = yield waitlist.add(data);
+      item.record.isNew = true;
       return item.record;
     }
 

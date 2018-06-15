@@ -19,7 +19,8 @@ module.exports = class AuthService {
 
   static *social(target, data, _user) {
     let user = yield facebookService.handle(data, _user);
-    if((user && user._type === 'waitlist')) {
+    if(user && (user._type === 'waitlist' || user.isNew)) {
+      console.log(this);
       return user;
     }
 
@@ -31,6 +32,7 @@ module.exports = class AuthService {
       return;
     }
 
+    console.log('breakpoint in auth-service')
     return yield hooks.require('auth:social', user, data.options || {});
   }
 
