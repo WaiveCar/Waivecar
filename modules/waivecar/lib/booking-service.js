@@ -963,7 +963,6 @@ module.exports = class BookingService extends Service {
       }
     }
 
-    let res = yield finalCheckFail();
     // if it looks like we'd fail this, then and only then do we probe the device one final time.
     if(finalCheckFail()) {
       try {
