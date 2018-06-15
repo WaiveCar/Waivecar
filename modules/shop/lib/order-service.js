@@ -28,6 +28,8 @@ let emailConfig = Bento.config.email;
 let log         = Bento.Log;
 let apiConfig   = Bento.config.api;
 
+let stripe = require('./stripe');
+
 module.exports = class OrderService extends Service {
 
   // Apparently you can't just charge a user without filling up a fucking
@@ -112,6 +114,54 @@ module.exports = class OrderService extends Service {
     }
 
     return {order: order, user: user};
+  }
+
+  static *refund(payload, _user, paymentId) {
+    let user = yield this.getUser(_user.id);
+    let charge = {amount: payload.amount};
+    let order = yield Order.findById(paymentId);
+    let response;
+    try {
+      response = yield stripe.charges.refund(order.chargeId, payload.amount);
+    } catch(err) {
+      throw {
+        status: 400,
+        code: err.code,
+        message: err.message,
+        data: user,
+      };
+    }
+    yield order.update({
+      refunded: payload.amount,
+      status: 'refunded',
+    });
+
+    let email = new Email();
+    let amount = (payload.amount / 100).toFixed(2);
+    let orderDate = moment(order.createdAt).format('MMMM Do YYYY'); 
+
+    try {
+	    yield email.send({
+		    to       : user.email,
+		    from     : emailConfig.sender,
+        subject  : `$${ amount } refunded for your trip on ${ orderDate }`,
+		    template : 'refund',
+		    context  : {
+		      name       : user.name(),
+          amount     : amount,
+          description: order.description, 
+          date       : orderDate,
+		    }
+      });
+    } catch(err) {
+      console.log(err);
+    };
+    return {
+      status: response.status, 
+      payload, 
+      user, 
+      paymentId,
+    };
   }
 
   static *create(payload, _user) {
@@ -713,7 +763,7 @@ module.exports = class OrderService extends Service {
     let service = this.getService(config.service, 'charges');
     yield service.refund(charge.id);
     yield order.update({
-      status : 'refunded'
+      status : 'cancelled'
     });
   }
 
