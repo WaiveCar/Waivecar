@@ -157,7 +157,7 @@ module.exports = class Service {
         code    : `BOOKING_PENDING_USER`,
         message : `You are not yet approved to book a WaiveCar. Please contact us to activate your account.`
       }, 400);
-    } else if (user.status !== 'active') {
+    } else if (user.status === 'waitlist') {
       let bookingList = yield Booking.find({ where: { userId: user.id } });
 
       if(bookingList.length > 1) {
