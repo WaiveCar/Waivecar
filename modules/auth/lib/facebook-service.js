@@ -20,7 +20,6 @@ module.exports = class FacebookService {
    * @return {Object}
    */
   static *handle(data, _user) {
-    console.log('DATA TYPE: ', data.type);
 
     // ### Connect
     // Facebook connect requests requires that the request is coming from an authenticated user
@@ -39,7 +38,6 @@ module.exports = class FacebookService {
     // Attempt to retrieve the facebook profile based on the provided data.
 
     let fb = yield this.getProfile(data);
-    console.log('Facebook Profile: ', fb);
 
     // ### Request Type
     // Handle the request based on the request type provided.
@@ -117,10 +115,9 @@ module.exports = class FacebookService {
         data = yield hooks.call('user:store:before', data);
       }
       data.facebook = data.id;
-      delete data.id;
+      //delete data.id;
       yield waitlist.add(data);
       data.newUser = true;
-      console.log('Data: ', data);
       return data;
     }
 
@@ -130,36 +127,6 @@ module.exports = class FacebookService {
         message : `You're currently on the waitlist. We'll contact you when you're account is active.`
       }, 400);
     }
-    /*
-    if ((userEntry && userEntry.facebook) || (waitlistEntry && waitlistEntry.facebook)) {
-      let responseId = userEntry !== null ? userEntry.id : null;
-      let responseEmail = userEntry !== null ? userEntry.email : waitlistEntry.email;
-      console.log(responseId, responseEmail);
-      throw error.parse({
-        code     : `FB_ID_EXISTS`,
-        message  : `The facebook account is already connected to an account in our system.`,
-        solution : `Send a facebook login request with the same details to sign the user in via facebook.`,
-        data     : {
-          id    : responseId,
-          email : responseEmail,
-        }
-      }, 400);
-    }
-
-    if (userEntry || waitlistEntry) {
-      let responseId = userEntry ? userEntry.id : null;
-      let responseEmail = userEntry !== null ? userEntry.email : waitlistEntry.email;
-      throw error.parse({
-        code     : `FB_EMAIL_EXISTS`,
-        message  : `The email connected to this facebook account has already been registered in our system.`,
-        solution : `Have the user sign in to the system and perform a facebook connect request.`,
-        data     : {
-          id    : responseId,
-          email : responseEmail,
-        }
-      }, 400);
-    }
-    */
   }
   static *register(fb) {
     // This just throws errors if there are problems, may need to also check the waitlist table
