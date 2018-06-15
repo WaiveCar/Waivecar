@@ -156,7 +156,7 @@ module.exports = class FacebookService {
       }
       data.facebook = data.id;
       let item = yield waitlist.add(data);
-      data.newUser = true;
+      //data.newUser = true;
       relay.emit('user', {
         type : 'store',
         data : item.record.toJSON(),

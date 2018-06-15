@@ -77,7 +77,7 @@ function *verifyUser(user, payload) {
   // }
   //
   let group = yield getGroup(user.id, payload.group || 1);
-  if (!group && !user.newUser) {
+  if (!group) {
     throw invalidGroup();
   }
 }
