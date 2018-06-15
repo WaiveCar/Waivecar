@@ -116,11 +116,12 @@ module.exports = class OrderService extends Service {
     return {order: order, user: user};
   }
 
-  static *refund(payload, _user, paymentId) {
-    let user = yield this.getUser(_user.id);
+  static *refund(payload, pyamentId, _user) {
     let charge = {amount: payload.amount};
     let order = yield Order.findById(paymentId);
+    let user = yield this.getUser(order.userId);
     let response;
+
     try {
       response = yield stripe.charges.refund(order.chargeId, payload.amount);
     } catch(err) {
@@ -156,7 +157,7 @@ module.exports = class OrderService extends Service {
 		    }
       });
     } catch(err) {
-      console.log(err);
+      log.warno(err);
     };
     return {
       status: response.status, 

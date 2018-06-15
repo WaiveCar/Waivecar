@@ -9,7 +9,7 @@ Bento.Register.Controller('Shop/OrdersController', (controller) => {
   };
 
   controller.refund = function *(id) {
-    return yield service.refund(this.payload, this.auth.user, id);
+    return yield service.refund(this.payload, id, this.auth.user);
   }; 
 
   // Creates a new order.
