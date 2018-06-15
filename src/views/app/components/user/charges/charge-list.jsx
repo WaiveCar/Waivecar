@@ -171,7 +171,7 @@ class ChargeList extends Component {
           </td>
           <td className={ 'status ' + data.status }>
             { helpers.changeCase.toCapital(data.status) }
-            { auth.user().hasAccess('admin') && data.status === 'paid' &&
+            { auth.user().hasAccess('admin') && data.status === 'paid' && data.status.chargeId != "0"
               <button onClick = { this.refund.bind(this, data.id, data.amount, data.description) } className='btn btn-xs btn-link undo'><span className="fa fa-undo"></span></button>
             }
           </td>
