@@ -140,6 +140,8 @@ module.exports = class OrderService extends Service {
     let amount = (payload.amount / 100).toFixed(2);
     let orderDate = moment(order.createdAt).format('MMMM Do YYYY'); 
 
+    yield notify.notifyAdmins(`:carousel_horse: ${ _user.link() } refunded $${ amount } to ${ user.link() } which was for ${ charge.description }`, [ 'slack' ], { channel : '#rental-alerts' });
+
     try {
 	    yield email.send({
 		    to       : user.email,
