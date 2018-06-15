@@ -963,15 +963,18 @@ module.exports = class BookingService extends Service {
       }
     }
 
+    let res = yield finalCheckFail();
     // if it looks like we'd fail this, then and only then do we probe the device one final time.
-    if(finalCheckFail()) {
+    if(res) {
+      console.log("Failure, retrying");
+      console.log(res);
       try {
         let data = yield cars.getDevice(car.id, _user, 'booking.complete');
         yield car.update(data);
       } catch (err) {
         log.warn(`Failed to update ${ car.info() } when completing booking ${ booking.id }`);
       }
-      let res = yield finalCheckFail();
+      res = yield finalCheckFail();
       if(res) {
         throw res;
       }
