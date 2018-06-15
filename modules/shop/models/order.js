@@ -41,7 +41,8 @@ Bento.Register.Model('Shop/Order', 'sequelize', (model, Sequelize) => {
         'authorized', // Order has been authorized from two-step payment.
         'paid',       // Order was successfully completed.
         'refunded',   // Order has been fully, or partially refunded.
-        'failed'      // Order has failed.
+        'failed',     // Order has failed.
+        'cancelled'
       ),
       defaultValue : 'pending'
     },
