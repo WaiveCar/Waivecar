@@ -343,13 +343,20 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
     },
 
     *doTask(what, when, opts) {
+      let timer = {
+        value : when,
+        type  : 'minutes'
+      };
+
+      if(when < 1) {
+        timer.value *= 60;
+        timer.type = 'seconds';
+      }
+
       queue.scheduler.add(what, {
         uid   : `booking-${ this.id }`,
-        timer : {
-          value : when,
-          type  : 'minutes'
-        },
-        data : Object.assign(opts || {}, {
+        timer : timer,
+        data  : Object.assign(opts || {}, {
           bookingId : this.id
         })
       });
@@ -360,7 +367,7 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
     },
 
     *setNowLock(opts) {
-      this.doTask('booking-now-lock', 0.02, opts);
+      this.doTask('booking-now-lock', 0.1, opts);
     },
 
     *setAutoLock() {

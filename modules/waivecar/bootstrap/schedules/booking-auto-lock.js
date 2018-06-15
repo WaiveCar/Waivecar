@@ -25,6 +25,7 @@ scheduler.process('booking-complete-check', function *(job) {
 // We are offloading the locking of the car to be outside the complete code in
 // order to potentially fix some issues with ending rides
 scheduler.process('booking-now-lock', function *(job) {
+  console.log("booking now lock", job);
   let carId = job.data.carId;
 
   if(!carId) {
@@ -37,6 +38,7 @@ scheduler.process('booking-now-lock', function *(job) {
 });
 
 scheduler.process('booking-auto-lock', function *(job) {
+  console.log("booking auto lock", job);
   let booking = yield Booking.findOne({ where : { id : job.data.bookingId } });
   if (!booking) {
     throw error.parse({
