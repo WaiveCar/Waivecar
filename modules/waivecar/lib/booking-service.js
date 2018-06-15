@@ -913,57 +913,71 @@ module.exports = class BookingService extends Service {
     this.hasAccess(user, _user);
 
     if (booking.status !== 'ended') {
-      throw {
-        code    : `BOOKING_REQUEST_INVALID`,
-        message : `You cannot complete a booking which has not yet ended.`
-      };
-    }
-
-    try {
-      let data = yield cars.getDevice(car.id, _user, 'booking.complete');
-      yield car.update(data);
-    } catch (err) {
-      log.warn(`Failed to update ${ car.info() } when completing booking ${ booking.id }`);
+      yield this.end(id, _user, query, payload);
+      if (booking.status !== 'ended') {
+        throw {
+          code    : `BOOKING_REQUEST_INVALID`,
+          message : `You cannot complete a booking which has not yet ended.`
+        };
+      }
     }
 
     // ### Validate Complete Status
     // Make sure all required car states are valid before allowing the booking to
     // be completed and released for next booking.
 
-    if(process.env.NODE_ENV === 'production') {
-      if (car.isIgnitionOn && !car.isCharging) {
-        // if the car is charging and the charger is locked we unlock the vehicle so
-        // that the user can remove the charger
-        yield cars.unlockCar(car.id, _user);
-        errors.push('turn off the ignition and if applicable, remove the charger'); 
+    function *finalCheckFail() {
+      if(process.env.NODE_ENV === 'production') {
+        if (car.isIgnitionOn && !car.isCharging) {
+          // if the car is charging and the charger is locked we unlock the vehicle so
+          // that the user can remove the charger
+          yield cars.unlockCar(car.id, _user);
+          errors.push('turn off the ignition and if applicable, remove the charger'); 
+        }
+        if (!car.isKeySecure) { errors.push('secure the key'); }
+        if (car.isDoorOpen) { errors.push('make sure the doors are closed');}
       }
-      if (!car.isKeySecure) { errors.push('secure the key'); }
-      if (car.isDoorOpen) { errors.push('make sure the doors are closed');}
-    }
-      
-    if (errors.length && !(_user.hasAccess('admin') && query.force)) {
-      let message = `Your ride cannot be completed until you `;
-      switch (errors.length) {
-        case 1: {
-          message = `${ message }${ errors[0] }.`;
-          break;
+        
+      if (errors.length && !(_user.hasAccess('admin') && query.force)) {
+        let message = `Your ride cannot be completed until you `;
+        switch (errors.length) {
+          case 1: {
+            message = `${ message }${ errors[0] }.`;
+            break;
+          }
+          case 2: {
+            message = `${ message }${ errors.join(' and ') }.`;
+            break;
+          }
+          default: {
+            message = `${ message }${ errors.slice(0, -1).join(', ') } and ${ errors.slice(-1) }.`;
+            break;
+          }
         }
-        case 2: {
-          message = `${ message }${ errors.join(' and ') }.`;
-          break;
-        }
-        default: {
-          message = `${ message }${ errors.slice(0, -1).join(', ') } and ${ errors.slice(-1) }.`;
-          break;
-        }
-      }
 
-      throw {
-        code    : `BOOKING_COMPLETE_INVALID`,
-        message : message,
-        data    : errors
-      };
+        return {
+          code    : `BOOKING_COMPLETE_INVALID`,
+          message : message,
+          data    : errors
+        };
+      }
     }
+
+    let res = yield finalCheckFail();
+    // if it looks like we'd fail this, then and only then do we probe the device one final time.
+    if(finalCheckFail()) {
+      try {
+        let data = yield cars.getDevice(car.id, _user, 'booking.complete');
+        yield car.update(data);
+      } catch (err) {
+        log.warn(`Failed to update ${ car.info() } when completing booking ${ booking.id }`);
+      }
+      res = yield finalCheckFail();
+      if(res) {
+        throw res;
+      }
+    }
+
 
     if (!isLevel) { 
       try {
