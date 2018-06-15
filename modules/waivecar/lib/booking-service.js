@@ -908,7 +908,6 @@ module.exports = class BookingService extends Service {
     let user    = yield this.getUser(booking.userId);
     let isLevel = yield user.isTagged('level');
     let isAdmin = _user.hasAccess('admin');
-    let errors  = [];
 
     this.hasAccess(user, _user);
 
@@ -927,6 +926,7 @@ module.exports = class BookingService extends Service {
     // be completed and released for next booking.
 
     function *finalCheckFail() {
+      let errors  = [];
       if(process.env.NODE_ENV === 'production') {
         if (car.isIgnitionOn && !car.isCharging) {
           // if the car is charging and the charger is locked we unlock the vehicle so
