@@ -19,6 +19,7 @@ module.exports = class AuthService {
 
   static *social(target, data, _user) {
     let user = yield facebookService.handle(data, _user);
+    console.log(user);
     if((user && user._type === 'waitlist') || user.isNew) {
       return user;
     }

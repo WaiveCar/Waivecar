@@ -221,7 +221,7 @@ module.exports = {
       });
       yield note.save();
     }
-
+    res.record = record;
     return res;
   },
 

@@ -106,16 +106,12 @@ module.exports = class FacebookService {
       }
     }); 
 
-    // ### Conflicts
-
-    // Check for conflicts, if the facebook id or email already exists in the system.
     if (!waitlistEntry && !userEntry) {
       let data = changeCase.objectKeys('toCamel', fb);
       if (hooks.has('user:store:before')) {
         data = yield hooks.call('user:store:before', data);
       }
       data.facebook = data.id;
-      //delete data.id;
       yield waitlist.add(data);
       data.newUser = true;
       return data;
@@ -127,37 +123,63 @@ module.exports = class FacebookService {
         message : `You're currently on the waitlist. We'll contact you when you're account is active.`
       }, 400);
     }
+    // Need to add checks for email and phone number
   }
   static *register(fb) {
     // This just throws errors if there are problems, may need to also check the waitlist table
-    let res = yield this.checkIfExists(fb);
-
-    //fb.facebook = fb.id;
-
+    // May be able to remove this function altogether
+    //let res = yield this.checkIfExists(fb);
+    fb.facebook = fb.id;
     //delete fb.id; // Remove facebook id value so not to over-write our system value.
-    /*
-    let data = changeCase.objectKeys('toCamel', fb);
-    if (hooks.has('user:store:before')) {
-      data = yield hooks.call('user:store:before', data);
+    let userEntry = yield User.findOne({
+      where : {
+        $or : [
+          { email : fb.email },
+          { facebook : fb.id }
+        ]
+      }
+    });
+    let waitlistEntry = yield Waitlist.findOne({
+      where : {
+        $or : [
+          { email: fb.email },
+          { facebook : fb.id },
+        ]
+      }
+    }); 
+
+    if (!waitlistEntry && !userEntry) {
+      console.log('Brand new user!')
+      let data = changeCase.objectKeys('toCamel', fb);
+      if (hooks.has('user:store:before')) {
+        data = yield hooks.call('user:store:before', data);
+      }
+      data.facebook = data.id;
+      let item = yield waitlist.add(data);
+      data.newUser = true;
+      relay.emit('user', {
+        type : 'store',
+        data : item.record.toJSON(),
+      });
+      return item.record;
     }
-    */
-    // ### Register User
 
-    /*
-    let listUser = new Waitlist(data);
-    yield listUser.save();
-    */
-    //let listUser = yield waitlist.add(data);
-    // ### Assign Group
-    // All new users are registered under the default group.
-    //yield hooks.call('user:store:after', listUser);
-
-    /*relay.emit('user', {
+    if (waitlistEntry && !userEntry) {
+      relay.emit('user', {
+        type : 'store',
+        data : waitlistEntry.toJSON(),
+      });
+      throw error.parse({
+        code    : `AUTH_INVALID_GROUP`,
+        message : `You're currently on the waitlist. We'll contact you when you're account is active.`
+      }, 400);
+    }
+    // Also need to check database for email and phone number
+    relay.emit('user', {
       type : 'store',
-      data : listUser
-    });*/
-
-    return res;
+      data : userEntry.toJSON(),
+    });
+    return userEntry;
   }
 
   static *getProfile(data) {
