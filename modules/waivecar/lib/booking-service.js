@@ -385,9 +385,9 @@ module.exports = class BookingService extends Service {
       }
     });
 
-    // ### Query Bookings
-
-    if (_user.hasAccess('admin')) {
+    // This could save one db lookup ... we use this at the complete booking
+    // and we're trying to speed things up.
+    if (_user.id === query.userId || _user.hasAccess('admin')) {
       bookingsCount = yield Booking.count(dbQuery);
     } else {
       dbQuery.where.user_id = _user.id;

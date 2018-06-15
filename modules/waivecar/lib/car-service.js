@@ -427,7 +427,14 @@ module.exports = {
     } else {
       log.debug(`Cars : Refresh : failed to retrieve ${ deviceId } to update database.`);
     }
-    return yield Car.findById(deviceId);
+    let res = yield Car.findById(deviceId);
+
+    // The current app (2018-06-15) uses an "incorrect" check to see if the doors are closed.
+    // This little thing here is to hopefully make it so that the legacy apps can end their
+    // rides better.
+    res.isDoorsClosed = !res.isDoorOpen;
+
+    return res;
   },
 
   *closest(long, lat) {
