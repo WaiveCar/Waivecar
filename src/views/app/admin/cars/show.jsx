@@ -53,7 +53,7 @@ class CarsShowView extends React.Component {
 
   componentDidMount() {
     this.service.setCar(this.id());
-    api.get(`/cars/${ this.id() }/bookings/?limit=1/?status=completed`, (err, bookings) => {
+    api.get(`/cars/${ this.id() }/bookings?limit=1&status=completed`, (err, bookings) => {
       this.setState({
         latestBooking: bookings[0]
       }, () => {
@@ -75,13 +75,16 @@ class CarsShowView extends React.Component {
         damage : model
       });
     });
+
     api.get('/group', (err, groups) => {
       if(err) {
         snackbar.danger(err);
       }
+
       this.setState({
         groups : groups
       });
+
     });
   }
 

@@ -304,6 +304,7 @@ module.exports = class UserDetails extends React.Component {
   render() {
     let user = this.state.currentUser;
     let suspensionReason = user ? this.getSuspensionReason(user) : false;
+
     if (!user) {
       return (
         <div className="box-empty">
@@ -410,7 +411,7 @@ module.exports = class UserDetails extends React.Component {
                       { suspensionReason ? <b><br/>Suspension Reason: {suspensionReason}</b> : '' } 
                     <a onClick={ this.toggleUserAgent } className="btn btn-xs btn-link">{!this.state.showUserAgent ? "UA" : this.state.currentUser.device}</a>
                     </div>
-                    <a onClick={ this.waiveWorkToggle } className="btn btn-xs btn-link">{ this.isWaiveWork() ? "Remove From" : "Add to" } WaiveWork</a>
+                    <a onClick={ this.waiveWorkToggle.bind(this) } className="btn btn-xs btn-link">{ this.isWaiveWork() ? "Remove From" : "Add to" } WaiveWork</a>
                   </div>
 
                 </div>
