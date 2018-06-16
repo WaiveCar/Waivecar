@@ -265,6 +265,7 @@ module.exports = {
   // is what converges the waitlist users to actual users.
   //
   *letInByRecord(recordList, _user, opts) {
+    console.log(recordList);
     opts = opts || {};
     let params = {};
     let nameList = [];
@@ -295,6 +296,7 @@ module.exports = {
         // we passed it into the waitlist
         passwordEncrypted: record.password,
         email: record.email,
+        facebook: record.facebook,
         status: 'active'
       };
 
