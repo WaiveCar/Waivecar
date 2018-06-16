@@ -20,7 +20,7 @@ module.exports = angular.module('app.controllers').controller('CarsMapController
 function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, locations, $modal) {
   var $distance = $injector.get('$distance');
   var LocationService = $injector.get('LocationService');
-
+  var $auth = $injector.get('$auth');
   // the accuracy should be within this amount of meters to show the Bummer dialog
   var minAccuracyThreshold = 200;
   var modal;
@@ -129,23 +129,53 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
     }
   }.bind(this));
 
+
+  //todo: move to some service
+  this.notifyWhenAvailable = function(){
+    $data.resources.cars.notifyAvailability({
+      user_id: $auth.me.id
+    }).$promise
+      .then(function(res){
+        //todo: error check
+        console.log(res);
+    });
+  }
+
   function ensureAvailableCars(allCars) {
     var availableCars = _.filter(allCars, isCarAccessible);
 
     if (availableCars.length) {
       return;
     }
-    if (modal && modal.isShown()) {
+    var unavailableModal;
+
+    if (unavailableModal && unavailableModal.isShown()) {
       return;
     }
     $modal('simple-modal', {
       title: 'Bummer',
-      message: 'There are no WaiveCars currently available for rental. Please check back later.'
+      message: 'There are no WaiveCars currently available for rental. Please check back later.',
+      actions: [{
+        className: 'button-balanced',
+        text: 'Get dibs on the next local WaiveCar',
+        handler: function () {
+          unavailableModal.remove();
+          ctrl.notifyWhenAvailable();
+        }
+      }, {
+        className: 'button-balanced',
+        text: 'OK',
+        handler: function () {
+          unavailableModal.remove();
+        }
+      }]
     }).then(function (_modal) {
-      modal = _modal;
-      modal.show();
+      unavailableModal = _modal;
+      unavailableModal.show();
     });
   }
+
+
 
   function carsInRange(allCars, currentLocation) {
     if (
