@@ -193,7 +193,7 @@ class CarsShowView extends React.Component {
             <div>
               <div className="row">
               <h4 className="text-center">
-                Parked at {moment(parkingDetails.createdAt).format('h:mm a MMMM Do')} (Claimed: {parkingDetails.streetHours} hours) <a href={`/bookings/${this.state.latestBooking.id}`}>Booking Details</a>
+                {moment(parkingDetails.createdAt).format('HH:mm MMMM Do')} (Claimed: {parkingDetails.streetHours} hours) <a href={`/bookings/${this.state.latestBooking.id}`}>Booking Details</a>
               </h4>
                 <div className="image-center-container">
                   <div className="col-md-6 gallery-image">
@@ -204,7 +204,7 @@ class CarsShowView extends React.Component {
             </div>) : (
             <div>
               <h4 className="text-center">
-                Parked at {moment(this.state.latestBooking.details[1].createdAt).format('HH:mm MMMM Do')}. <a href={`/bookings/${this.state.latestBooking.id}`}>Booking Details</a>
+                {moment(this.state.latestBooking.details[1].createdAt).format('HH:mm MMMM Do')}. <a href={`/bookings/${this.state.latestBooking.id}`}>Booking Details</a>
               </h4>
               No Parking Image
             </div>
