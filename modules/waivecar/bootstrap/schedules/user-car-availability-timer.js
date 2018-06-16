@@ -4,12 +4,12 @@ let notify    = require('../../lib/notification-service');
 
 let scheduler = Bento.provider('queue').scheduler;
 let Car       = Bento.model('Car');
-let User       = Bento.model('User');
+let User      = Bento.model('User');
 let UserCarNotification  = Bento.model('UserCarNotification');
 let geolib    = require('geolib');
 
 
-let THRESHOLD = 5;//
+let THRESHOLD = 5;
 
 function isCloseToUser(car, user, threshold) {
   let distance = geolib.getDistance({ latitude : car.latitude, longitude : car.longitude }, {latitude: user.latitude, longitude: user.longitude});
