@@ -267,10 +267,11 @@ module.exports = class LogService {
     }).join('\n');
   }
 
-  static *report(year_month, type) {
+  static *report(year_month, type, query) {
     // There's a circular dependency here. Make sure you know what you're doing
     // before you 'refactor' this to the top.
     let CarService  = require('../../waivecar/lib/car-service');
+    let Car = Bento.model('Car');
 
     //
     // Total number of rides taken/times the vehicle was rented
@@ -294,8 +295,17 @@ module.exports = class LogService {
       start = {year:0, month:0},
       end = {year:0, month:0},
       fleetUserList = yield GroupUser.find({ where: { groupRoleId: { $gt: 1 } } }),
-      sparkMap = {},
-      licenseMap = yield CarService.id2license();
+      excludeMap = {},
+      includeMap = {},
+      allCars = yield Car.find({
+         include: [
+           {
+             model : 'GroupCar',
+             as    : 'groupCar'
+           }
+         ]
+      });
+
 
     fleetUserList = fleetUserList.map((row) => { row.userId });
 
@@ -311,21 +321,24 @@ module.exports = class LogService {
       }
     }
       
-    //
-    // IMPORTANT!!
-    //
-    // This is for Hyundai so we
-    // get rid of the cars that are not ioniq.
-    //
-    // IMPORTANT!!
-    //
-    for(var id in licenseMap) {
-      let license = licenseMap[id];
-      if(license.match(/waive1?\d$/i) || license.match(/waive20$/i)) {
-        sparkMap[id] = licenseMap[id];
-        delete licenseMap[id];
+    query.type = query.type || 'ioniq';
+    for(var ix = 0; ix < allCars.length; ix++) {
+      let row = allCars[ix];
+      if(query.type === 'ioniq') {
+        if(row.license.match(/waive1?\d$/i) || row.license.match(/waive20$/i)) {
+          excludeMap[row.id] = row.license;
+        } else {
+          includeMap[row.id] = row.license;
+        }
+      } else if(query.type === 'level') {
+        if(yield row.hasTag('level')) {
+          includeMap[row.id] = row.license;
+        } else {
+          excludeMap[row.id] = row.license;
+        }
       }
     }
+    console.log(includeMap);
 
     // see http://stackoverflow.com/questions/6273361/mysql-query-to-select-records-with-a-particular-date
     // for a discussion on the 'best' way to do this.
@@ -334,7 +347,7 @@ module.exports = class LogService {
       where : {
         action: 'ODOMETER',
         created_at : range,
-        car_id : { $in : Object.keys(licenseMap) }
+        car_id : { $in : Object.keys(includeMap) }
       },
       order : [ 
         ['created_at', 'ASC'],
@@ -347,7 +360,7 @@ module.exports = class LogService {
       where : {
         status : { $in : [ 'completed', 'closed', 'ended', 'started' ] },
         created_at : range,
-        car_id : { $in : Object.keys(licenseMap) }
+        car_id : { $in : Object.keys(includeMap) }
       },
       order : [ 
         ['created_at', 'ASC'],
@@ -366,7 +379,7 @@ module.exports = class LogService {
       let allSparkBookings = yield Booking.find({
         where : {
           created_at : range,
-          car_id : { $in : Object.keys(sparkMap) }
+          car_id : { $in : Object.keys(excludeMap) }
         },
       });
 
@@ -384,7 +397,7 @@ module.exports = class LogService {
     }
 
     allOdometers.forEach((row) => {
-      let id = licenseMap[row.carId];
+      let id = includeMap[row.carId];
       if( ! (id in bookByCar) ) {
         bookByCar[id] = [];
         carOdometer[id] = [Number.MAX_VALUE, 0];
@@ -395,7 +408,7 @@ module.exports = class LogService {
 
     // These should already be done by date so yeah, that's convenient.
     allBookings.forEach((row) => {
-      let id = licenseMap[row.carId];
+      let id = includeMap[row.carId];
       let userId = row.userId;
       let userType = 'user';
 
