@@ -93,7 +93,6 @@ module.exports = class FacebookService {
     // May be able to remove this function altogether
     //let res = yield this.checkIfExists(fb);
     fb.facebook = fb.id;
-    console.log('Facbook item: ', fb);
     //delete fb.id; // Remove facebook id value so not to over-write our system value.
     let userEntry = yield User.findOne({
       where : {
@@ -123,7 +122,6 @@ module.exports = class FacebookService {
       return item.record;
     }
     if (waitlistEntry && !userEntry) {
-      console.log('waitlist exists but not user');
       throw error.parse({
         code    : `AUTH_INVALID_GROUP`,
         message : `You're currently on the waitlist. We'll contact you when you're account is active.`

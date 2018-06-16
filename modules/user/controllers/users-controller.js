@@ -18,7 +18,6 @@ Bento.Register.ResourceController('User', 'UsersController', (controller) => {
   };
 
   controller.me = function *() {
-    console.log('this in me request: ', this.auth);
     if (this.auth.check()) {
       // We are also piggy-backing the user agent on top of this.
       // see ticket #561 for more details.
@@ -35,7 +34,6 @@ Bento.Register.ResourceController('User', 'UsersController', (controller) => {
       //See #1132
       delete model.password;
       model.booking = yield this.auth.user.currentBooking();
-      console.log('Model: ', model);
 
       return model;
     }
@@ -67,7 +65,6 @@ Bento.Register.ResourceController('User', 'UsersController', (controller) => {
    * @yield {[type]} [description]
    */
   controller.verify = function *() {
-    console.log('is it calling controller.verify?')
     return yield service.verify(this.payload.token);
   };
 
