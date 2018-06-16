@@ -187,13 +187,13 @@ class CarsShowView extends React.Component {
     let { parkingDetails } = this.state;
     return (
       <div className="box">
-        <h3>Most Recent Parking Location</h3>
+        <h3>Parking Info</h3>
         <div className="box-content">
           {this.state.parkingDetails ? ( 
             <div>
               <div className="row">
               <h4 className="text-center">
-                Parked at {moment(parkingDetails.createdAt).format('MMMM Do YYYY, h:mm a')} in a {parkingDetails.streetHours} hour parking zone
+                Parked at {moment(parkingDetails.createdAt).format('h:mm a MMMM Do')} (Claimed: {parkingDetails.streetHours} hours) <a href={`/bookings/${this.state.latestBooking.id}`}>Booking Details</a>
               </h4>
                 <div className="image-center-container">
                   <div className="col-md-6 gallery-image">
@@ -203,7 +203,10 @@ class CarsShowView extends React.Component {
               </div>
             </div>) : (
             <div>
-              No Parking Details Available
+              <h4 className="text-center">
+                Parked at {moment(this.state.latestBooking.details[1].createdAt).format('HH:mm MMMM Do')}. <a href={`/bookings/${this.state.latestBooking.id}`}>Booking Details</a>
+              </h4>
+              No Parking Image
             </div>
           )}
         </div>
