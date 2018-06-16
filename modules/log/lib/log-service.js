@@ -292,8 +292,8 @@ module.exports = class LogService {
       bookBy = {user: {}, fleet: {} },
       totalDistance = {user: 0, fleet: 0 },
       totalBookings = {user: 0, fleet: 0},
-      start = {year:0, month:0},
-      end = {year:0, month:0},
+      start = {year:0, month:0, day:0},
+      end = {year:0, month:0, day:0},
       fleetUserList = yield GroupUser.find({ where: { groupRoleId: { $gt: 1 } } }),
       excludeMap = {},
       includeMap = {},
@@ -310,15 +310,26 @@ module.exports = class LogService {
     fleetUserList = fleetUserList.map((row) => { row.userId });
 
     let parts = year_month.split('-');
-    if(parts.length == 2) {
-      start.year = parseInt(parts[0], 10);
+    start.year = parseInt(parts[0], 10);
+    end.year = start.year;
+
+    if(parts.length > 1) {
       start.month = parseInt(parts[1], 10);
       end.month = start.month + 1;
-      end.year = start.year;
-      if(end.month > 12) {
-        end.year = start.year + 1;
-        end.month = 1;
-      }
+    } else {
+      // otherwise take the whole year.
+      start.month = 1;
+      end.month = 13;
+    }
+    
+    if(end.month > 12) {
+      end.year = start.year + 1;
+      end.month = 1;
+    }
+
+    if(parts.length > 2) {
+      start.day = parseInt(parts[2], 10);
+      end.day = parseInt(parts[2], 10);
     }
       
     query.type = query.type || 'ioniq';
@@ -338,11 +349,11 @@ module.exports = class LogService {
         }
       }
     }
-    console.log(includeMap);
 
     // see http://stackoverflow.com/questions/6273361/mysql-query-to-select-records-with-a-particular-date
     // for a discussion on the 'best' way to do this.
     let range = { $between: [`${start.year}-${start.month}-01 00:00:00`, `${end.year}-${end.month}-01 00:00:00`] };
+    //console.log(includeMap, range);
     let allOdometers = yield CarHistory.find({
       where : {
         action: 'ODOMETER',
