@@ -158,12 +158,6 @@ module.exports = {
     return report;
   },
 
-  /**
-   * Returns an indexed array of reports.
-   * @param  {Object} query
-   * @param  {Object} _user
-   * @return {Array}
-   */
   *index(query, _user) {
 
     let parsedQuery = queryParser(query, {
