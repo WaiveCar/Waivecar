@@ -53,7 +53,17 @@ class CarsShowView extends React.Component {
 
   componentDidMount() {
     this.service.setCar(this.id());
-
+    api.get(`/cars/${ this.id() }/bookings?limit=1&status=completed`, (err, bookings) => {
+      this.setState({
+        latestBooking: bookings[0]
+      }, () => {
+        api.get(`/bookings/${ bookings[0].id }/parkingDetails`, (err, response) => {
+          if (response) {
+            this.setState({ parkingDetails: response.details });
+          }
+        });
+      });
+    });
     api.get(`/history/car/${ this.id() }`, (err, model) => {
       this.setState({
         carPath : model.data.data
@@ -168,6 +178,34 @@ class CarsShowView extends React.Component {
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  renderParkingLocation(car) {
+    let { parkingDetails } = this.state;
+    return (
+      <div className="box">
+        <h3>Most Recent Parking Location</h3>
+        <div className="box-content">
+          {this.state.parkingDetails ? ( 
+            <div>
+              <div className="row">
+              <h4 className="text-center">
+                Parked at {moment(parkingDetails.createdAt).format('MMMM Do YYYY, h:mm a')} in a {parkingDetails.streetHours} hour parking zone
+              </h4>
+                <div className="image-center-container">
+                  <div className="col-md-6 gallery-image">
+                    <img src={`https://s3.amazonaws.com/waivecar-prod/${parkingDetails.path}`} />
+                  </div>
+                </div>
+              </div>
+            </div>) : (
+            <div>
+              No Parking Details Available
+            </div>
+          )}
         </div>
       </div>
     );
@@ -614,11 +652,12 @@ class CarsShowView extends React.Component {
 
     return (
       <div className="cars cars-show">
-        { this.renderCarForm(car) }
         { this.renderCarGroup(car) }
         { this.renderCarActions(car) }
         { this.renderCarMedia(car) }
+        { this.renderParkingLocation(car) }
         { this.renderCarIndicators(car) }
+        { this.renderCarForm(car) }
         <NotesList type='car' identifier={ car.id }></NotesList>
         <Logs carId={ car.id } />
         { this.renderDamage(car) }

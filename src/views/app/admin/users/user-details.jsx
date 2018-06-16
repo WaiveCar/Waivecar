@@ -17,7 +17,8 @@ module.exports = class UserDetails extends React.Component {
     super(...args);
     this.state = {
       showDanger: false,
-      addCard: false
+      addCard: false,
+      showUserAgent: false,
     }
     relay.subscribe(this, 'users');
     relay.subscribe(this, 'notes');
@@ -126,6 +127,11 @@ module.exports = class UserDetails extends React.Component {
     }
   }
 
+  toggleUserAgent = () => {
+    let { showUserAgent } = this.state;
+    this.setState({ showUserAgent: !showUserAgent });
+  }
+
   waiveWorkToggle = () => { 
     let user = this.state.currentUser;
     let word = this.isWaiveWork() ? ['remove', 'from'] : ['add', 'to'];
@@ -152,7 +158,6 @@ module.exports = class UserDetails extends React.Component {
   
   submit = (event) => {
     let form = new Form(event);
-    console.log(event, form);
 
     // If we are suspending the user then we ask for a reason
     if (form.data.status === 'suspended' && this.state.currentUser.status !== 'suspended') {
@@ -404,6 +409,7 @@ module.exports = class UserDetails extends React.Component {
                     <div className="col-sm-12 text-right help-text" style={{ paddingRight: 0, fontSize: "85%", marginTop: "-0.70em" }}>
                       User #{ user.id }. Signup: { user.createdAt.split('T')[0] }
                       { suspensionReason ? <b><br/>Suspension Reason: {suspensionReason}</b> : '' } 
+                    <a onClick={ this.toggleUserAgent } className="btn btn-xs btn-link">{!this.state.showUserAgent ? "UA" : this.state.currentUser.device}</a>
                     </div>
                     <a onClick={ this.waiveWorkToggle.bind(this) } className="btn btn-xs btn-link">{ this.isWaiveWork() ? "Remove From" : "Add to" } WaiveWork</a>
                   </div>

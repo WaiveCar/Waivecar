@@ -13,3 +13,9 @@
     font-size   : 1.05rem;
   }
 }
+
+@media(max-width: 500px) {
+  .row {
+    margin: 0;
+  }
+}
