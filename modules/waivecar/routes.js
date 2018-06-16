@@ -19,6 +19,7 @@ Route.get('/history/booking/:id',  [ 'LogController@bookingHistory' ]);
 Route.get('/bookings',             [ 'isAuthenticated', 'BookingsController@index' ]);
 Route.get('/bookings/:id',         [ 'isAuthenticated', 'BookingsController@show' ]);
 Route.get('/bookings/:id/notes',   [ 'isAuthenticated', 'NotesController@getBookingNotes' ]);
+Route.get('/bookings/:id/parkingDetails',   [ 'isAuthenticated', 'BookingsController@getParkingDetails' ]);
 Route.put('/bookings/:id/checkParity', [ 'isAuthenticated', 'BookingsController@checkCarParityWithUser' ]);
 Route.put('/bookings/:id/:time?/extendForFree', [ 'isAuthenticated', 'isAdmin', 'BookingsController@extendForFree' ]);
 Route.put('/bookings/:id/:action', [ 'isAuthenticated', 'BookingsController@update' ]);
