@@ -12,6 +12,7 @@ class LogIndex extends React.Component {
     super(...args);
     this.table = new Table(this, 'logs', [], '/audit/log');
     this.state = {
+      search : null,
       sort : {
         key   : null,
         order : 'DESC'
@@ -32,6 +33,9 @@ class LogIndex extends React.Component {
       sort : {
         key   : 'id',
         order : 'ASC'
+      },
+      searchObj: {
+        order: 'id,DESC'
       }
     });
   }
@@ -165,7 +169,7 @@ class LogIndex extends React.Component {
             {
               this.state.more ?
                 <div className="text-center" style={{ marginTop : 20 }}>
-                  <button className="btn btn-primary" onClick={ this.table.more }>Load More</button>
+                  <button className="btn btn-primary" onClick={ () => this.table.more(false) }>Load More</button>
                 </div>
                 :
                 ''
