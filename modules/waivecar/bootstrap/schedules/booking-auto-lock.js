@@ -38,7 +38,6 @@ scheduler.process('booking-now-lock', function *(job) {
 });
 
 scheduler.process('booking-auto-lock', function *(job) {
-  console.log("booking auto lock", job);
   let booking = yield Booking.findOne({ where : { id : job.data.bookingId } });
   if (!booking) {
     throw error.parse({
