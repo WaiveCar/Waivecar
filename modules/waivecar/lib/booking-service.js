@@ -1015,11 +1015,12 @@ module.exports = class BookingService extends Service {
       yield this.notifyUsers(car);
     }
 
-    // The user should be seeing cars to rent now.
-    let zone = yield this.getZone(car);
-    zone = `(${zone})` || '';
-
-    let address = yield this.getAddress(car.latitude, car.longitude);
+    let zone = '', address = '';
+    try {
+      zone = yield this.getZone(car);
+      zone = `(${zone})` || '';
+      address = yield this.getAddress(car.latitude, car.longitude);
+    } catch(ex) {}
 
     let message = yield this.updateState('completed', _user, user);
     yield notify.sendTextMessage(user, `Thanks for renting with WaiveCar! Your rental is complete. You can see your trip summary in the app.`);
