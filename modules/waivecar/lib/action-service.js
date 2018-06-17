@@ -173,8 +173,13 @@ module.exports = {
         }
       });
       if(!state.car) {
-        console.log(state);
-        doError("Can't find an active car for the user");
+        let booking = yield getBooking(state.user.id);
+        if(booking) {
+          state.car = yield Car.findOne(booking.carId);
+        } else {
+          console.log(state);
+          doError("Can't find an active car for the user");
+        }
       }
     }
 
