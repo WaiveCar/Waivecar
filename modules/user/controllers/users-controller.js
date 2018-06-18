@@ -37,9 +37,11 @@ Bento.Register.ResourceController('User', 'UsersController', (controller) => {
 
       return model;
     }
+    // A request is made with no token when a facebook user first signs up
     if (!this.auth.token) {
       return;
     }
+
     throw error.parse({
       code    : `INVALID_TOKEN`,
       message : `No user was found under the provided authentication token.`

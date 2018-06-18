@@ -21,14 +21,10 @@ module.exports = class AuthService {
   static *social(target, data, _user) {
     let user = yield facebookService.handle(data, _user);
 
+    // When the user logging in / signing up is new, the user waitlist object is returned
     if (user && user.isNew) {
       return user;
     }
-
-    relay.emit('user', {
-      type : 'store',
-      data : user.toJSON(),
-    });
 
     // ### Connect
     // A connect request does not require us to return an authentication
@@ -37,6 +33,11 @@ module.exports = class AuthService {
     if (data.type === 'connect') {
       return;
     }
+    // For users who have previously signed up, the user model with their info is emitted to the store
+    relay.emit('user', {
+      type : 'store',
+      data : user.toJSON(),
+    });
 
     return yield hooks.require('auth:social', user, data.options || {});
   }

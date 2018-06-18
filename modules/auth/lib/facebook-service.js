@@ -89,11 +89,7 @@ module.exports = class FacebookService {
   }
 
   static *register(fb) {
-    // This just throws errors if there are problems, may need to also check the waitlist table
-    // May be able to remove this function altogether
-    //let res = yield this.checkIfExists(fb);
     fb.facebook = fb.id;
-    //delete fb.id; // Remove facebook id value so not to over-write our system value.
     let userEntry = yield User.findOne({
       where : {
         $or : [
@@ -110,7 +106,7 @@ module.exports = class FacebookService {
         ]
       }
     }); 
-
+    // If a user has already signed up using an email and password, they are unable to sign in with facebook 
     if ((userEntry && userEntry.facebook !== fb.id) || waitlistEntry && waitlistEntry.facebook !== fb.id) {
       throw error.parse({
         code    : 'SIGNED_UP_WITH_PASSWORD',
@@ -118,17 +114,19 @@ module.exports = class FacebookService {
       }, 400);
     }
 
-    // Need to add checks for if email and phone number are already in db and need to add appropriate error messages
     let data = changeCase.objectKeys('toCamel', fb);
     if (hooks.has('user:store:before')) {
       data = yield hooks.call('user:store:before', data);
     }
+
+    // If their is no waitlist entry and no user entry, it must be the user's first time signing up
     if (!waitlistEntry && !userEntry) {
       data.facebook = data.id;
       let item = yield waitlist.add(data);
       item.record.isNew = true;
       return item.record;
     }
+    // If they are waitlisted, but not active users, this error is thrown
     if (waitlistEntry && !userEntry) {
       throw error.parse({
         code    : `AUTH_INVALID_GROUP`,
