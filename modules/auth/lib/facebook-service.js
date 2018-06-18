@@ -110,6 +110,14 @@ module.exports = class FacebookService {
         ]
       }
     }); 
+
+    if ((userEntry && userEntry.facebook !== fb.id) || waitlistEntry && waitlistEntry.facebook !== fb.id) {
+      throw error.parse({
+        code    : 'SIGNED_UP_WITH_PASSWORD',
+        message : 'You have previously signed with the associated e-mail using a password'
+      }, 400);
+    }
+
     // Need to add checks for if email and phone number are already in db and need to add appropriate error messages
     let data = changeCase.objectKeys('toCamel', fb);
     if (hooks.has('user:store:before')) {
