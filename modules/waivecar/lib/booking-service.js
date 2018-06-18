@@ -672,7 +672,7 @@ module.exports = class BookingService extends Service {
     }
 
     var isCarReachable = true;
-    if(process.env.NODE_ENV === 'production') {
+    if(process.env.NODE_ENV === 'production' && car.isIgnitionOn) {
       try {
         Object.assign(car, yield cars.getDevice(car.id, _user, 'booking.end'));
       } catch (err) {
@@ -709,12 +709,15 @@ module.exports = class BookingService extends Service {
         // When level rental ends, unlock the car
         yield cars.unlockCar(car.id, _user);
       } else {
-        status = yield cars.lockImmobilzer(car.id, _user);
+        status = {isImmobilized: true};
+        // this is now done at the end of the ride.
+        //status = yield cars.lockImmobilzer(car.id, _user);
       }
     } catch (err) {
       log.warn(`Unable to lock immobilizer when ending booking ${ booking.id }`);
     }
 
+    /*
     if (isCarReachable && (!status || !status.isImmobilized) ) {
       if (isAdmin) {
         warnings.push('the engine is not immobilized');
@@ -725,6 +728,7 @@ module.exports = class BookingService extends Service {
         }, 400);
       }
     }
+    */
 
     if (isAdmin && warnings.length && !query.force) {
       throw error.parse({
