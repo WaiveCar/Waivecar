@@ -265,7 +265,6 @@ module.exports = {
   // is what converges the waitlist users to actual users.
   //
   *letInByRecord(recordList, _user, opts) {
-    console.log(recordList);
     opts = opts || {};
     let params = {};
     let nameList = [];
