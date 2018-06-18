@@ -301,7 +301,7 @@ module.exports = class OrderService extends Service {
 
         // User card id
         source      : card.id,
-        description : `${ minutesOver }min for booking ${ booking.id }`,
+        description : `${ minutesOver }min overage booking ${ booking.id }`,
         metadata    : null,
         currency    : 'usd',
         amount      : amount
