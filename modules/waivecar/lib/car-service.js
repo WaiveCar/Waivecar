@@ -415,18 +415,17 @@ module.exports = {
     return model;
   },
 
-  /**
-   * Updates the local car with the remote fleet device.
-   * @param {String} deviceId
-   */
   *refresh(deviceId) {
-    let updatedCar = yield this.getDevice(deviceId, null, 'refresh');
-    if (updatedCar) {
-      log.debug(`Cars : Refresh : updating ${ deviceId }.`);
-      yield this.syncUpdate(deviceId, updatedCar);
-    } else {
-      log.debug(`Cars : Refresh : failed to retrieve ${ deviceId } to update database.`);
-    }
+    // sometimes this will throw an error and cause issues with the booking ending
+    try { 
+      let updatedCar = yield this.getDevice(deviceId, null, 'refresh');
+      if (updatedCar) {
+        log.debug(`Cars : Refresh : updating ${ deviceId }.`);
+        yield this.syncUpdate(deviceId, updatedCar);
+      } else {
+        log.debug(`Cars : Refresh : failed to retrieve ${ deviceId } to update database.`);
+      }
+    } catch(ex) { }
     let res = yield Car.findById(deviceId);
 
     // The current app (2018-06-15) uses an "incorrect" check to see if the doors are closed.
