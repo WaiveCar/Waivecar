@@ -37,7 +37,7 @@ Bento.Register.ResourceController('User', 'UsersController', (controller) => {
 
       return model;
     }
-    if (this.auth.user === null) {
+    if (!this.auth.token) {
       return;
     }
     throw error.parse({

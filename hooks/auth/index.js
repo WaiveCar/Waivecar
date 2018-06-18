@@ -53,6 +53,7 @@ hooks.set('auth:social', function *(user, payload) {
       message : `You're currently on the waitlist. We'll contact you when you're account is active.`
     }, 400);
   }
+  
   return yield auth.token(user.id, payload);
 });
 
@@ -77,7 +78,7 @@ function *verifyUser(user, payload) {
   // }
   //
   let group = yield getGroup(user.id, payload.group || 1);
-  if (!group) {
+  if (!group && !user.isNew) {
     throw invalidGroup();
   }
 }

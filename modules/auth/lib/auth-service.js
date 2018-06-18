@@ -20,13 +20,15 @@ module.exports = class AuthService {
 
   static *social(target, data, _user) {
     let user = yield facebookService.handle(data, _user);
+
+    if (user && user.isNew) {
+      return user;
+    }
+
     relay.emit('user', {
       type : 'store',
       data : user.toJSON(),
     });
-    if (user && user.isNew) {
-      return user;
-    }
 
     // ### Connect
     // A connect request does not require us to return an authentication
