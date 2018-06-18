@@ -175,7 +175,7 @@ module.exports = {
       if(!state.car) {
         let booking = yield getBooking(state.user.id);
         if(booking) {
-          state.car = yield Car.findOne(booking.carId);
+          state.car = yield Car.findById(booking.carId);
         } else {
           console.log(state);
           doError("Can't find an active car for the user");
