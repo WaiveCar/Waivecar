@@ -52,24 +52,27 @@ class CarsShowView extends React.Component {
   }
 
   componentDidMount() {
-    this.service.setCar(this.id());
-    api.get(`/cars/${ this.id() }/bookings?limit=1&status=completed`, (err, bookings) => {
-      this.setState({
-        latestBooking: bookings[0]
-      }, () => {
-        api.get(`/bookings/${ bookings[0].id }/parkingDetails`, (err, response) => {
-          if (response) {
-            this.setState({ parkingDetails: response.details });
-          }
+    let id = this.id();
+    this.service.setCar(id);
+    api.get(`/cars/${ id }/bookings?limit=1&status=completed`, (err, bookings) => {
+      if(bookings.length) {
+        this.setState({
+          latestBooking: bookings[0]
+        }, () => {
+          api.get(`/bookings/${ bookings[0].id }/parkingDetails`, (err, response) => {
+            if (response) {
+              this.setState({ parkingDetails: response.details });
+            }
+          });
         });
-      });
+      }
     });
-    api.get(`/history/car/${ this.id() }`, (err, model) => {
+    api.get(`/history/car/${ id }`, (err, model) => {
       this.setState({
         carPath : model.data.data
       });
     });
-    api.get(`/reports/car/${ this.id() }`, (err, model) => {
+    api.get(`/reports/car/${ id }`, (err, model) => {
       model.reverse();
       this.setState({
         damage : model
@@ -93,7 +96,7 @@ class CarsShowView extends React.Component {
   }
 
   id() {
-    return this.props.params && this.props.params.id || 'create';
+    return this.props.params ? this.props.params.id : 'create';
   }
 
   renderBoolean(val) {
