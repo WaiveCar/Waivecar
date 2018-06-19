@@ -211,27 +211,12 @@ hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
   return nextUser;
 });
 
-/**
- * Executed after a user has been successfully updated.
- * @param  {Object} user
- * @param  {Object} _user
- * @return {Void}
- */
 hooks.set('user:update:after', function *(user, _user) {
   if (user.phone && !user.verifiedPhone) {
     yield verification.requestPhoneVerification(user.id, user.phone);
   }
 });
 
-// ### Delete Hooks
-
-/**
- * Executed before the user is deleted.
- * @param  {Object} user
- * @param  {Object} query The query that was provided with the delete request.
- * @param  {Object} _user
- * @return {Boolean}
- */
 hooks.set('user:delete:before', function *(user, query, _user) {
   let res = yield intercom.removeUser(user);
   return true;
