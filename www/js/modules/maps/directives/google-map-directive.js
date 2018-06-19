@@ -1,5 +1,3 @@
-/* global navigator */
-/* global google */
 'use strict';
 var angular = require('angular');
 var ionic = require('ionic');
@@ -210,7 +208,14 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
   };
 
   function charge2color(marker) {
-    return Math.min(2, Math.floor(marker.charge / 33));
+    var miles =  marker.range;
+    if (miles >= 80) {
+      return 2;
+    } else if (miles >= 40 && miles <= 80) {
+      return 1;
+    } else {
+      return 0;
+    }
   }
 
   function GeneralMapObject(mapCtrl, data) {
@@ -385,7 +390,6 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
           position: ctrl.mapToGoogleLatLong(marker),
           icon: iconOpt
         });
-
         mapObject.setMarker(markerObj);
       }
 
