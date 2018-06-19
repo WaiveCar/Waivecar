@@ -969,13 +969,13 @@ module.exports = {
     try {
       let res = yield request(payload);
       if (res.statusCode !== 200) {
-        let body = res.body ? JSON.parse(res.body) : null;
+        console.log(payload, res.body);
         throw error.parse({
           code    : 'CAR_SERVICE',
           message : 'An interaction attempt against the fleet service api failed.',
           data    : {
             status   : res.statusCode,
-            message  : body ? body.error : null,
+            message  : res.body,
             resource : resource
           }
         }, 400);
