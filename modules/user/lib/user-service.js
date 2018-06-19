@@ -276,7 +276,6 @@ module.exports = {
         return list;
       }, []);
     }
-    console.log(new Date() - start);
 
     return users;
   },
