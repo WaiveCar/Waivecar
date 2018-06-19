@@ -560,6 +560,12 @@ module.exports = class BookingService extends Service {
     // ### Verify Status
 
     if (booking.status !== 'reserved') {
+      // we're calling this a second time, we are going to just pass through 
+      // and succeed.
+      if(booking.status === 'started') {
+        return true;
+      }
+
       throw error.parse({
         code    : `BOOKING_REQUEST_INVALID`,
         status  : booking.status,
