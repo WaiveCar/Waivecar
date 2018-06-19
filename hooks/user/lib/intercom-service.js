@@ -4,31 +4,47 @@ let Intercom = require('intercom-client');
 
 module.exports = {
 
-    getClient(){
-        return new Intercom.Client({token: 'dG9rOjJiN2E3N2Y4XzNkZWRfNDFmYV85MDQ4X2JhZjgzNTYyOTgxMzoxOjA='});
-    },
+  getClient(){
+      return new Intercom.Client({token: 'dG9rOjJiN2E3N2Y4XzNkZWRfNDFmYV85MDQ4X2JhZjgzNTYyOTgxMzoxOjA='});
+  },
 
-    /**
-     * Add user to intercom
-     * @param  {Object} user
-     * @return {Object}
-     */
-    *addUser (user){
-        return yield this.getClient().users.create({
-            email: user.email,
-            phone: user.phone,
-            name: user.firstName + ' ' + user.lastName
-        });
-    },
+  *addUser (user){
+    return yield this.getClient().users.create({
+      email: user.email,
+      phone: user.phone,
+      name: user.firstName + ' ' + user.lastName
+    });
+  },
 
-    /**
-     * Remove user from intercom
-     * @param  {Object} user
-     * @return {Object}
-     */
-    *removeUser(user){
-        let client = this.getClient();
-        let u = yield client.users.find({ email: user.email });
-        return yield client.users.delete({ id: u.body.id });
+  *removeUser (user){
+    let client = this.getClient();
+    return yield client.users.delete({ id: user.id });
+  },
+
+  *update(who, what) {
+    var payload = {user_id: who.id};
+
+    if(what) {
+      if(!Array.isArray(what)) {
+        what = [what];
+      }
+
+      let topLevel = ['email', 'phone', 'name'];
+
+      what.forEach((row) => {
+        if(topLevel.indexOf(row) !== -1) {
+          payload[row] = who[row];
+        } else {
+          if(!payload.custom_attributes) {
+            payload.custom_attributes = {};
+          }
+          payload.custom_attributes[row] = who[row];
+        }
+      });
     }
+    let res = yield (this.getClient()).users.update(payload);
+
+    console.log(res);
+  }
+
 };
