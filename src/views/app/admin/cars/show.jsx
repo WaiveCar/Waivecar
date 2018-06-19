@@ -658,7 +658,7 @@ class CarsShowView extends React.Component {
         { this.renderCarGroup(car) }
         { this.renderCarActions(car) }
         { this.renderCarMedia(car) }
-        { this.state.latestBooking ? this.renderParkingLocation(car) : null }
+        { this.state.latestBooking && this.renderParkingLocation(car) }
         { this.renderCarIndicators(car) }
         { this.renderCarForm(car) }
         <NotesList type='car' identifier={ car.id }></NotesList>
