@@ -26,6 +26,8 @@ let Booking   = Bento.model('Booking');
 let sequelize = Bento.provider('sequelize');
 let notify    = require('../../waivecar/lib/notification-service');
 let UserLog   = require('../../log/lib/log-service');
+let Intercom  = require('../../../hooks/user/lib/intercom-service.js');
+
 let _         = require('lodash')
 
 module.exports = {
@@ -332,14 +334,15 @@ module.exports = {
 
   *unsuspend(user, _user) {
     yield notify.notifyAdmins(`:innocent: ${ user.name() } was unsuspended by ${ _user.name() }.`, [ 'slack' ], { channel : '#user-alerts' });
+    yield user.update({status: 'active'});
     yield UserLog.addUserEvent(user, 'UNSUSPENDED', _user.id);
+    yield Intercom.update(user, 'status');
   },
 
   *suspend(user, reason, _user) {
     // notify the admins that the person has been suspended
     let message = reason ? `because "${ reason }"` : '';
     let who = _user ? `by ${ _user.name() }` : 'automatically';
-    yield notify.notifyAdmins(`:exclamation: ${ user.name() } was suspended ${ who } ${ message }.`, [ 'slack' ], { channel : '#user-alerts' });
 
     if(!_user) {
       _user = {id: 0};
@@ -355,10 +358,10 @@ module.exports = {
     });
     yield note.save();
 
+    yield notify.notifyAdmins(`:exclamation: ${ user.name() } was suspended ${ who } ${ message }.`, [ 'slack' ], { channel : '#user-alerts' });
     yield user.update({status: 'suspended'});
-
-    // and log this as a transgression
     yield UserLog.addUserEvent(user, 'SUSPENDED', _user.id, reason);
+    yield Intercom.update(user, 'status');
   },
 
   *notifyStart() {
