@@ -29,38 +29,45 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
   // First load
   // Need zones outside rental. See #1114
   var zones = [];
-  /*
-   * this is new rather untested code that fucks up brooklyn so
-   * for now it's commented out until it can be done right.
-   *
-  var zones = locations.filter(function (x) {
-    return x.type === 'zone';
-  });
-  */
   
   this.all = cars;
+  var isInBG = false;
+
+  document.addEventListener("pause", function() {
+    console.log("... in bg");
+    isInBG = true;
+  }, false);
+
+  document.addEventListener("resume", function() {
+    console.log("... in FOREGROUND");
+    isInBG = false;
+  }, false);
 
   function firstLoad(currentLocation) {
     if(!ctrl.clearCarWatcher) {
       ctrl.clearCarWatcher = $scope.$watch(function () {
         return $data.instances.cars;
       }, function (value) {
-        if (value == null) {
-          return false;
+        if (!isInBG && value && value.length > 0) {
+          ctrl.all = prepareCars(value);
         }
-        if (Array.isArray(value) && !value.length) {
-          return false;
-        }
-
-        ctrl.all = prepareCars(value);
-
-        return false;
       }, true);
     }
 
     ctrl.all = prepareCars(cars);
     ctrl.fitMapBoundsByMarkers = getMarkersToFitBoundBy(ctrl.all, currentLocation);
-    carsInRange(ctrl.all, currentLocation);
+    if(!carsInRange(ctrl.all, currentLocation, 30)) {
+      if (modal && modal.isShown()) {
+        return;
+      }
+      $modal('simple-modal', {
+        title: 'Bummer',
+        message: 'WaiveCar is not available in your area. Check back when you are in LA or select markets.'
+      }).then(function (_modal) {
+        modal = _modal;
+        modal.show();
+      });
+    }
     ensureAvailableCars(cars);
   }
 
@@ -176,8 +183,7 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
   }
 
 
-
-  function carsInRange(allCars, currentLocation) {
+  function carsInRange(allCars, currentLocation, maxDistance) {
     if (
       !currentLocation || (
       currentLocation &&
@@ -187,24 +193,11 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
       return;
     }
 
-    var maxDistance = 30; // at least one car should be less than 30 miles away
-    var carInRange = _(allCars).find(function (car) {
+    return _(allCars).find(function (car) {
       var distance = $distance(car, currentLocation);
       return _.isFinite(distance) && distance < maxDistance;
     });
 
-    if (carInRange == null) {
-      if (modal && modal.isShown()) {
-        return;
-      }
-      $modal('simple-modal', {
-        title: 'Bummer',
-        message: 'WaiveCar is not available in your area. Check back when you are in LA or select markets.'
-      }).then(function (_modal) {
-        modal = _modal;
-        modal.show();
-      });
-    }
   }
 
   function hasTag(tag) {
