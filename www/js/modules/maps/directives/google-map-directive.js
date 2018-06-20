@@ -133,6 +133,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
       var lastLocation = [0, 0];
       var watchers = [
         $scope.$watch('map.markers', function (value) {
+          console.log("marker update", value);
           if (value) {
             ctrl.updateMarkers(value);
           }
@@ -308,7 +309,15 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
     if (ctrl.useCordova()) {
   
-      if(marker.type === 'zone') {
+      if(marker.type === 'circle') {
+        ctrl.map.addCircle({
+          position: ctrl.mapToNativeLatLong(marker),
+          radius: marker.radius,
+          strokeColor: '#00008080',
+          fillColor: '#0028A01A',
+          strokeWidth: 2,
+        });
+      } else if(marker.type === 'zone') {
         ctrl.map.addPolygon({
           points: marker.shape.map(function(point) {
             return {lat: point[1], lng: point[0] };
@@ -456,10 +465,11 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
   MapController.prototype.updateMarkers = function updateMarkers(newMarkers) {
     var ctrl = this;
 
+    // this is a replay system to addresss a backlog.
     function onUpdateFinish() {
-      ctrl.updatesQueue.shift();
-      if (ctrl.updatesQueue.length > 0) {
-        ctrl.unsafeUpdateMarkers(ctrl.updatesQueue[0]).then(onUpdateFinish);
+      var nextSet = ctrl.updatesQueue.shift();
+      if(nextSet) {
+        ctrl.unsafeUpdateMarkers(nextSet).then(onUpdateFinish);
       }
     }
 
