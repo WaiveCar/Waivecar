@@ -211,11 +211,11 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     var miles =  marker.range;
     if (miles >= 80) {
       return 2;
-    } else if (miles >= 40 && miles <= 80) {
-      return 1;
-    } else {
-      return 0;
     }
+    if (miles >= 40) {
+      return 1;
+    } 
+    return 0;
   }
 
   function GeneralMapObject(mapCtrl, data) {
