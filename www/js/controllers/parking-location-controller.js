@@ -52,6 +52,7 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
     ctrl.addPicture = addPicture;
     ctrl.minhours = 3;
     ctrl.init = init;
+    ctrl.closeParkingPage = closeParkingPage;
 
     ctrl.init();
 
@@ -367,6 +368,10 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
           endRideModal = _modal;
           endRideModal.show();
         });
+    }
+
+    function closeParkingPage() {
+      console.log('button clicked');
     }
   }
 ]);
