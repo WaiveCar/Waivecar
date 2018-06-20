@@ -1,10 +1,11 @@
 'use strict';
 
-let request = require('./request-cache-service');
-let error = Bento.Error;
-let config = Bento.config;
 let _ = require('lodash');
 let GeocodingService = require('./geocoding-service');
+
+let request   = require('./request-cache-service');
+let error     = Bento.Error;
+let config    = Bento.config;
 let cars      = require('./car-service');
 let Car       = Bento.model('Car');
 
@@ -100,12 +101,9 @@ module.exports = {
     let requestObj = this.prepareRequest('locations', 'GET');
     let response = yield request(requestObj);
 
-    return [];
-    /*
     let result = JSON.parse(response.body);
     let locations = (result.data || []).map(loc => this.mapCharger(loc));
     return locations.filter( loc => GeocodingService.inDrivingZone(loc.latitude, loc.longitude));
-    */
   },
 
   *getCharger(id) {

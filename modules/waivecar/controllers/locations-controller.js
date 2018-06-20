@@ -33,9 +33,8 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
       return row;
     });
 
-    return locations;/*
     let chargers = yield Chargers.list();
-    return locations.concat(chargers);*/
+    return locations.concat(chargers);
   };
 
   controller.dropoff = function *() {
@@ -58,10 +57,8 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
       return row;
     });
 
-    return locations;/*
     let chargers = yield Chargers.list();
     return locations.concat(chargers);
-    */
   };
   
   function parseDayOfWeek(dayOfWeekStr) {
