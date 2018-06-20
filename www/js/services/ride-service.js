@@ -304,7 +304,7 @@ module.exports = angular.module('app.services').factory('$ride', [
       .then(function() {
         $ionicLoading.hide();
         $data.resources.cars.disconnect();
-        $data.fetch('bookings');
+        // $data.fetch('bookings');
         $data.deactivate('bookings');
         $data.deactivate('cars');
         service.setState();
