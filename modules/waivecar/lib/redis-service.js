@@ -19,7 +19,7 @@ module.exports = (function() {
   res.storeTimeMS = 10 * 60 * 1000;
 
   res.failOnMultientry = function *(type, id, timeout) {
-    if(!res.shouldProceed(type, id, timeout)) {
+    if(!(yield res.shouldProceed(type, id, timeout))) {
       throw error.parse({
         code    : 'DOUBLE_ENTRY',
         message : 'Please try again.'
