@@ -10,6 +10,16 @@
       <h1>Getting Location. Please Wait...</h1>
     </div>
 
+    <div ng-if="!cars.showDibs" class="dibs">
+      <p>
+        There's no nearby WaiveCar. Get dibs on the next one near you.
+      </p>
+      <div>
+        <button type="button" class="button button-link" ng-click="cars.showDibsHelp()">Find out more</button>
+        <button type="button" class="button" ng-click="cars.getDibs()">Get Dibs</button>
+      </div>
+    </div>
+
     <google-map 
       ng-if="cars.currentLocation"
       id="map"
