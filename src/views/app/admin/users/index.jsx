@@ -37,11 +37,11 @@ class UsersListView extends React.Component {
     this.table.init();
     this.setState({
       sort : {
-        key   : 'id',
+        key   : 'updated_at',
         order : 'ASC'
       },
       searchObj: {
-        order: 'id,DESC'
+        order: 'updated_at, DESC'
       }
     });
   }
