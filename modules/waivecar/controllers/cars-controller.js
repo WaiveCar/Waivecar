@@ -31,6 +31,7 @@ Bento.Register.Controller('CarsController', function(controller) {
   };
 
   controller.magic = function *(command) {
+    let Car = Bento.model('Car');
     let close = yield car.closest(this.query.longitude, this.query.latitude);
     let carList = close.res;
     let all = yield Car.find();
