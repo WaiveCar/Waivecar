@@ -21,7 +21,7 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
   '$message',
   '$data',
   'LocationService',
-  function($rootScope, $scope, $settings, $window, $state, $stateParams, $ride, $geocoding, $ionicLoading, $modal, $uploadImage, ZendriveService, $message, $data, LocationService ) {
+  function($rootScope, $scope, $settings, $window, $state, $stateParams, $ride, $geocoding, $ionicLoading, $modal, $uploadImage, ZendriveService, $message, $data, LocationService) {
     $scope.service = $ride;
     var ctrl = this;
 
@@ -52,6 +52,7 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
     ctrl.addPicture = addPicture;
     ctrl.minhours = 3;
     ctrl.init = init;
+    ctrl.closeParkingPage = closeParkingPage;
 
     ctrl.init();
 

@@ -92,24 +92,14 @@
               <input ng-model="ctrl.street.streetHours" type="text">
               <span class="input-label">Hours</span>
             </div>
-            <div class="small-input">
-              <input ng-model="ctrl.street.streetMinutes" type="text">
-              <span class="input-label">Min</span>
-            </div>
-          </div>
-        </div>
-        <div>
-          <p class="text-left pull-left">
-            Is there an overnight restriction?<br>
-            (ex: No Parking from 3AM - 5AM)
-          </p>
-          <div class="text-right">
-            <yes-no-toggle val="ctrl.street.streetOvernightRest"></yes-no-toggle>
           </div>
         </div>
       </div>
       <div class="padding-top padding-bottom">
-        <button ng-click="ctrl.submit()" class="button button-balanced button-block">Continue</button>
+        <button ng-click="ctrl.submit()" class="button button-balanced button-block">My Parking is OK</button>
+      </div>
+      <div class="text-center">
+        <p><a class='link' ui-sref="dashboard">Resume your ride</a> and park somewhere else</p>
       </div>
     </div>
   </ion-content>

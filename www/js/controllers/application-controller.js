@@ -75,7 +75,7 @@ function ApplicationController ($rootScope, $scope, $injector) {
         $ride.init();
       } else if(newScreen === 'dashboard' && oldScreen === 'end-ride-location') {
         // prevents the transition from being made
-        event.preventDefault();
+        //event.preventDefault();
       } else if((newScreen === 'dashboard' || newScreen === 'cars-show') && $data.active.bookings && $data.active.bookings.status === 'reserved') {
         // on the reservation screen and the user has requested to go to the cars screen
         event.preventDefault();
