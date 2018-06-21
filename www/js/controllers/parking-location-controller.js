@@ -21,8 +21,7 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
   '$message',
   '$data',
   'LocationService',
-  '$ionicHistory',
-  function($rootScope, $scope, $settings, $window, $state, $stateParams, $ride, $geocoding, $ionicLoading, $modal, $uploadImage, ZendriveService, $message, $data, LocationService, $ionicHistory) {
+  function($rootScope, $scope, $settings, $window, $state, $stateParams, $ride, $geocoding, $ionicLoading, $modal, $uploadImage, ZendriveService, $message, $data, LocationService) {
     $scope.service = $ride;
     var ctrl = this;
 
@@ -369,10 +368,6 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
           endRideModal = _modal;
           endRideModal.show();
         });
-    }
-
-    function closeParkingPage() {
-      $state.go('dashboard', {id: $stateParams.id});
     }
   }
 ]);
