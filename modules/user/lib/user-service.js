@@ -173,7 +173,7 @@ module.exports = {
         opts.where = {
           $and: _.flatten(
             query.map((term) => {
-              return sequelize.literal(`concat_ws(' ', first_name, last_name) like '%${term}%'`);
+              return sequelize.literal(`concat_ws(' ', first_name, last_name, status) like '%${term}%'`);
             })
           )
         };
@@ -229,6 +229,7 @@ module.exports = {
     if(query.search) {
       users = yield this.find(query.search, qs.offset, qs.limit);
     } else {
+      qs.order = [['updated_at', 'DESC']];
       users = yield User.find(qs);
     }
     //log.info(JSON.stringify(users));
