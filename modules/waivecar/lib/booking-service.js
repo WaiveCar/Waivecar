@@ -621,7 +621,7 @@ module.exports = class BookingService extends Service {
           base = 'one of the highlighted zones on the map';
           freetime = '2';
         }
-        yield notify.sendTextMessage(user, `Your WaiveCar rental has started! The first ${ freetime } hours are completely FREE! After that, it's $5.99 / hour. Make sure to return the car to ${ base }, don't drain the battery under 25mi, and keep within our driving borders to avoid any charges. Thanks for renting with WaiveCar!`);
+        yield notify.sendTextMessage(user, `Your WaiveCar rental has started! The first ${ freetime } hours are completely FREE! After that, it's $5.99 / hour. Make sure to return the car to ${ base }, don't drain the battery under 25mi, and keep within our driving borders to avoid any charges. Thanks for driving with WaiveCar!`);
       }
 
       // ### Relay Update
@@ -1033,7 +1033,7 @@ module.exports = class BookingService extends Service {
     } catch(ex) {}
 
     let message = yield this.updateState('completed', _user, user);
-    yield notify.sendTextMessage(user, `Thanks for renting with WaiveCar! Your rental is complete. You can see your trip summary in the app.`);
+    yield notify.sendTextMessage(user, `Thanks for driving with WaiveCar! Your rental is complete. You can see your trip summary in the app.`);
     yield notify.slack({ text : `:coffee: ${ message } ${ car.info() } ${ zone } ${ address } ${ booking.link() }` }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
 
