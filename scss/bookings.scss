@@ -179,6 +179,10 @@
     height: 60px;
   }
 }
+.button-blue {
+  color: $blue;
+  border-color: $blue;
+}
 .button-gray.button-lighter {
   background-color: #666 !important;
 }

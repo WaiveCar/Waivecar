@@ -306,10 +306,11 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
     var type = marker.icon || marker.type;
     if('charge' in marker) {
-      if(!marker.range) {
-        type = 'locked-car';
-      } else {
+      if('model' in marker) {
+        marker.range = marker.range || (marker.charge * [135,70][+(marker.model === "Spark EV")]);
         type = 'active-waivecar-' + charge2color(marker);
+      } else {
+        type = 'locked-car';
       }
     }
     var iconOpt = getIconOptions(type, ctrl.useCordova() ? '.png' : '.svg');
