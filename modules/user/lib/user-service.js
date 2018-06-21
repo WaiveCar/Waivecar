@@ -173,7 +173,7 @@ module.exports = {
         opts.where = {
           $and: _.flatten(
             query.map((term) => {
-              return sequelize.literal(`concat_ws(' ', first_name, last_name) like '%${term}%'`);
+              return sequelize.literal(`concat_ws(' ', first_name, last_name, status) like '%${term}%'`);
             })
           )
         };
