@@ -1,5 +1,5 @@
 import React from 'react';
-import { api, auth, relay, dom }  from 'bento';
+import { api }  from 'bento';
 
 var _ = require('lodash');
 
@@ -12,7 +12,6 @@ module.exports = class Magic extends React.Component {
       action: null,
       car : null
     };
-    dom.setTitle('Magic');
   }
 
   componentDidMount() {
@@ -125,24 +124,27 @@ module.exports = class Magic extends React.Component {
   renderCarHeader() {
     return <span>
         { this.carInfo(this.state.car) }
-        <small><a onClick={ this.showCarList.bind(this) }>car list</a></small>
+        <div><a onClick={ this.showCarList.bind(this) }>car list</a></div>
       </span>
   }
 
   renderLinks() {
-    return <small>
+    return <div>
       <a onClick={ this.setAction.bind(this, 'unlock') }>unlock</a> <a onClick={ this.setAction.bind(this, 'lock') }>lock</a> <a onClick={ this.setAction.bind(this, 'rentable') }>rentable</a> <a onClick={ this.setAction.bind(this, 'retrieve') }>retrieve</a>
-    </small>
+    </div>
+  }
+
+  renderSearch() {
+    return <div />
   }
 
   render() {
-    dom.setTitle(`${ this.state.action } Magic`);
-
     return (
       <div className="magic">
         <h1> { this.state.actionText } { this.state.car ? this.renderCarHeader() : this.renderLinks() } </h1>
         { (this.state.candidates && !this.state.car) ? this.showCandidates() : '' }
         { this.state.car ? this.showControls() : '' }
+        { !this.state.car && this.renderSearch() }
       </div>
     );
   }
