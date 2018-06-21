@@ -138,6 +138,9 @@ module.exports = angular.module('app.services').factory('$ble', [
           });
         });
       },
+      doit: function(what) {
+        doit(what, ok(what), failure(what)); 
+      },
       read: function(what) {
         Object.keys(_cisMap).forEach(function(key) {
           cis(key, function(res) {
