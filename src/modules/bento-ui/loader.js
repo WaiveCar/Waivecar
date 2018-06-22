@@ -4,6 +4,7 @@ import resources  from './lib/resources';
 import fields     from './lib/fields';
 import components from './lib/components';
 import apiRoutes from './lib/apiRoutes';
+import uiFields from './lib/uiFields';
 
 // ### Component List
 
@@ -39,7 +40,7 @@ module.exports = function (done) {
     // ### Load Fields
     // Loads all the available fields defined via config in the api.
     console.log('fields: ', result.fields);
-    fields.add(result.fields);
+    fields.add(uiFields);
 
     // ### UI Components
     // Import list of available reach-ui components, these are loaded into
