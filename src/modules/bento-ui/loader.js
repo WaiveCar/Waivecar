@@ -3,7 +3,7 @@ import views      from './lib/views';
 import resources  from './lib/resources';
 import fields     from './lib/fields';
 import components from './lib/components';
-import resources from './resources';
+import apiRoutes from './lib/apiRoutes';
 
 // ### Component List
 
@@ -34,7 +34,7 @@ module.exports = function (done) {
 
     // ### Load Resources
     // Loads all the available resources defined via config in the api.
-    resources.add(resources);
+    resources.add(apiRoutes);
 
     // ### Load Fields
     // Loads all the available fields defined via config in the api.
