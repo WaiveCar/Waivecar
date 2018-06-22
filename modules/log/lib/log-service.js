@@ -267,7 +267,7 @@ module.exports = class LogService {
     }).join('\n');
   }
 
-  static *report(year_month, type, query) {
+  static *report(year_month, kind, query) {
     // There's a circular dependency here. Make sure you know what you're doing
     // before you 'refactor' this to the top.
     let CarService  = require('../../waivecar/lib/car-service');
@@ -332,16 +332,23 @@ module.exports = class LogService {
       end.day = parseInt(parts[2], 10);
     }
       
-    query.type = query.type || 'ioniq';
+    //
+    // This is where we determine what cars we are looking at. As far as the query goes,
+    // the ?scope=XXX parameter determines this.  Since documentation is the first thing
+    // to code rot, I recommend looking at the loop to see the options.
+    //
+    query.scope = query.scope || 'ioniq';
     for(var ix = 0; ix < allCars.length; ix++) {
       let row = allCars[ix];
-      if(query.type === 'ioniq') {
+      if(query.scope === 'all') {
+          includeMap[row.id] = row.license;
+      } else if(query.scope === 'ioniq') {
         if(row.license.match(/waive1?\d$/i) || row.license.match(/waive20$/i)) {
           excludeMap[row.id] = row.license;
         } else {
           includeMap[row.id] = row.license;
         }
-      } else if(query.type === 'level') {
+      } else if(query.scope === 'level') {
         if(yield row.hasTag('level')) {
           includeMap[row.id] = row.license;
         } else {
@@ -384,27 +391,40 @@ module.exports = class LogService {
         }
       ]
     });
+    let allExcludedBookings = yield Booking.find({
+      where : {
+        created_at : range,
+        car_id : { $in : Object.keys(excludeMap) }
+      },
+    });
 
-    if(type === 'points') {
+    var excludedBookingsQuery = '';
+    if(allExcludedBookings.length) {
+      excludedBookingsQuery = ' booking_id not in (' + allExcludedBookings.map((row) => { return row.id } ) + ') and ';
+    }
+
+
+    if(kind === 'carpoints') {
       
-      let allSparkBookings = yield Booking.find({
-        where : {
-          created_at : range,
-          car_id : { $in : Object.keys(excludeMap) }
-        },
-      });
+      let qstr = [
+        'select car_id, longitude, latitude, bl.created_at',
+        `from booking_locations bl join bookings on bookings.id = bl.booking_id where ${excludedBookingsQuery}`,
+        `bl.created_at > '${start.year}-${start.month}-01 00:00:00' and bl.created_at < '${end.year}-${end.month}-01 00:00:00'`
+      ].join(' ');
 
+      return yield sequelize.query(qstr);
+
+    } else if(kind === 'points' || kind === 'points.js') {
       let qstr = [
         'select round(longitude,4) as lng, round(latitude,4) as lat, count(*) as weight',
-        'from booking_locations where booking_id not in (' + allSparkBookings.map((row) => { return row.id } ) + ')',
-        `and created_at > '${start.year}-${start.month}-01 00:00:00' and created_at < '${end.year}-${end.month}-01 00:00:00'`,
+        `from booking_locations where ${excludedBookingsQuery}`,
+        `created_at > '${start.year}-${start.month}-01 00:00:00' and created_at < '${end.year}-${end.month}-01 00:00:00'`,
         'group by(concat(lng,lat))'
       ].join(' ');
 
-      return (yield sequelize.query(qstr))[0].map((row) => {
+      return (kind === 'points.js' ? 'var points = ' : '') + (yield sequelize.query(qstr))[0].map((row) => {
         return [row.lat, row.lng, row.weight];
       });
-
     }
 
     allOdometers.forEach((row) => {
