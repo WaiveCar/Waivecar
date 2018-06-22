@@ -21,7 +21,6 @@ import ToolboxApp           from 'react-toolbox/lib/app';
 // Loads in all non dynamic reducers defined in the ./reducers directory.
 
 let reducers = require.context('./reducers', true, /\.js$/);
-console.log(reducers);
 reducers.keys().forEach((key) => {
   reducers(key);
 });

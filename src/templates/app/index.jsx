@@ -227,6 +227,14 @@ let order = 2;
     order     : order++
   },
   {
+    title     : 'Cars',
+    icon      : 'directions_car',
+    path      : '/cars',
+    parent    : null,
+    locations : [ 'sidebar' ],
+    order     : order++
+  },
+  {
     title     : 'Tickets',
     icon      : 'list',
     path      : '/tickets',
@@ -234,4 +242,12 @@ let order = 2;
     locations : [ 'sidebar' ],
     order     : order++
   },
+  {
+    title     : 'Locations',
+    icon      : 'location_on',
+    path      : '/locations',
+    parent    : null,
+    locations : [ 'sidebar' ],
+    order     : order++
+  }
 ].forEach(val => menu.add(val));
