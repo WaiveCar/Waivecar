@@ -82,16 +82,14 @@
             <button ng-click="ctrl.addPicture()" class="button button-dark add-image"></button>
           </div>
         </div>
-        <div>
-          <p class="text-center">
+        <div class='text-center'>
+          <p>
             2) How long is the spot valid from now?<br>
             (at least <b>{{ ctrl.minhours }}</b> hours for <b>{{ ctrl.zone }}</b>)
           </p>
-          <div class="text-center">
-            <div class="small-input">
-              <input ng-model="ctrl.street.streetHours" type="text">
-              <span class="input-label">Hours</span>
-            </div>
+          <div class="small-input">
+            <input ng-model="ctrl.street.streetHours" type="text">
+            <span class="input-label">Hours</span>
           </div>
         </div>
       </div>
