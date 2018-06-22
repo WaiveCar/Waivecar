@@ -784,16 +784,9 @@ module.exports = class BookingService extends Service {
       let parkingText = '';
       payload.data.bookingId = id;
 
-      if (payload.data.type === 'street') {
-        let minuteText = ((payload.data.streetMinutes || 0) + 100).toString().slice(1);
-        parkingText += `Parked on street for ${ payload.data.streetHours }:${ minuteText }.  `;
-        parkingText += payload.data.streetOvernightRest ? 'Has an overnight restriction.' : 'Does not have an overnight restriction.';
-      } else {
-        parkingText += `Parked in lot for ${ payload.data.lotHours }:${ payload.data.lotMinutes }.  `;
-        parkingText += payload.data.lotFreePeriod ? `Has free period of ${ payload.data.lotFreeHours } hours.  ` : '';
-        parkingText += payload.data.lotLevel ? `On level ${ payload.data.lotLevel }, spot ${ payload.data.lotSpot }.  ` : '';
-        parkingText += payload.data.streetOvernightRest ? 'Has an overnight restriction.' : 'Does not have an overnight restriction.';
-      }
+      let minuteText = ((payload.data.streetMinutes || 0) + 100).toString().slice(1);
+      parkingText += `Parked on street for ${ payload.data.streetHours }:${ minuteText }.  `;
+      parkingText += payload.data.streetOvernightRest ? 'Has an overnight restriction.' : 'Does not have an overnight restriction.';
 
       let message = yield this.updateState('ended', _user, user);
 
