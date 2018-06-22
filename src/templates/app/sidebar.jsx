@@ -39,6 +39,7 @@ module.exports = class Sidebar extends React.Component {
    * @return {Object}
    */
   admin() {
+    console.log(menu.get('sidebar'));
     let user = auth.user();
     if (user.hasAccess('admin')) {
       return (
