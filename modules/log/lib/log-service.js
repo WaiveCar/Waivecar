@@ -360,19 +360,6 @@ module.exports = class LogService {
     // see http://stackoverflow.com/questions/6273361/mysql-query-to-select-records-with-a-particular-date
     // for a discussion on the 'best' way to do this.
     let range = { $between: [`${start.year}-${start.month}-01 00:00:00`, `${end.year}-${end.month}-01 00:00:00`] };
-    //console.log(includeMap, range);
-    let allOdometers = yield CarHistory.find({
-      where : {
-        action: 'ODOMETER',
-        created_at : range,
-        car_id : { $in : Object.keys(includeMap) }
-      },
-      order : [ 
-        ['created_at', 'ASC'],
-        ['car_id', 'ASC']
-      ]
-    });
-
     // we'll use this query to answer a number of questions.
     let allBookings = yield Booking.find({
       where : {
@@ -404,11 +391,21 @@ module.exports = class LogService {
     }
 
 
-    if(kind === 'carpoints') {
+    if(kind === 'parking') {
+      let qstr = [
+        'select bd.created_at,bd.longitude,bd.latitude,street_hours,street_minutes,street_overnight_rest,concat("https://s3.amazonaws.com/waivecar-prod/",path) as image',
+        'from parking_details pd join booking_details bd on bd.booking_id = pd.booking_id',
+        `where ${excludedBookingsQuery}`,
+        `bd.type = 'end' and bd.created_at > '${start.year}-${start.month}-01 00:00:00' and bd.created_at < '${end.year}-${end.month}-01 00:00:00'`
+      ].join(' ');
+
+      return yield sequelize.query(qstr);
+
+    } else if(kind === 'carpoints') {
       
       let qstr = [
         'select car_id, longitude, latitude, bl.created_at',
-        `from booking_locations bl join bookings on bookings.id = bl.booking_id where ${excludedBookingsQuery}`,
+        `from bookings join booking_locations bl on bookings.id = bl.booking_id where ${excludedBookingsQuery}`,
         `bl.created_at > '${start.year}-${start.month}-01 00:00:00' and bl.created_at < '${end.year}-${end.month}-01 00:00:00'`
       ].join(' ');
 
@@ -426,6 +423,19 @@ module.exports = class LogService {
         return [row.lat, row.lng, row.weight];
       });
     }
+    //console.log(includeMap, range);
+    let allOdometers = yield CarHistory.find({
+      where : {
+        action: 'ODOMETER',
+        created_at : range,
+        car_id : { $in : Object.keys(includeMap) }
+      },
+      order : [ 
+        ['created_at', 'ASC'],
+        ['car_id', 'ASC']
+      ]
+    });
+
 
     allOdometers.forEach((row) => {
       let id = includeMap[row.carId];
