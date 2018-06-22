@@ -3,6 +3,7 @@ import views      from './lib/views';
 import resources  from './lib/resources';
 import fields     from './lib/fields';
 import components from './lib/components';
+import resources from './resources';
 
 // ### Component List
 
@@ -33,12 +34,11 @@ module.exports = function (done) {
 
     // ### Load Resources
     // Loads all the available resources defined via config in the api.
-
-    resources.add(result.resources);
+    resources.add(resources);
 
     // ### Load Fields
     // Loads all the available fields defined via config in the api.
-
+    console.log('fields: ', result.fields);
     fields.add(result.fields);
 
     // ### UI Components
