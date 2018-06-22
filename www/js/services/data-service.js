@@ -40,6 +40,7 @@ module.exports = angular.module('app.services').factory('$data', [
   'Chargers',
   function ($rootScope, $http, $q, $socket, Bookings, Cars, Locations, Users, Licenses, Card, File, Auth, User, Verification, Notifications, Messages, Chargers) {
 
+    var isInBG = false;
     var service = {
 
       resources: {
@@ -249,6 +250,10 @@ module.exports = angular.module('app.services').factory('$data', [
     //   }
     // });
 
+
+    document.addEventListener("pause", function() { isInBG = true; }, false);
+    document.addEventListener("resume", function() { isInBG = false; }, false);
+
     $socket.on('relay', function (resource, action) {
       var model = action.data;
 
@@ -259,6 +264,10 @@ module.exports = angular.module('app.services').factory('$data', [
 
       if (resource === 'actions' && service.onActionNotification) {
         service.onActionNotification(model);
+      }
+
+      if(isInBG && resource === 'cars') {
+        return;
       }
 
       switch (action.type) {
