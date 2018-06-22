@@ -119,11 +119,6 @@ templates.register('app', {
         onEnter   : policies.isAdministrator
       },
       {
-        path      : '/licenses',
-        component : require('../../views/app/admin/licenses'),
-        onEnter   : policies.isAdministrator
-      },
-      {
         path      : '/locations',
         component : require('../../views/app/admin/locations'),
         onEnter   : policies.isAdministrator
@@ -238,13 +233,5 @@ let order = 2;
     parent    : null,
     locations : [ 'sidebar' ],
     order     : order++
-  },
-  {
-    title     : 'Licenses',
-    icon      : 'picture_in_picture',
-    path      : '/licenses',
-    parent    : null,
-    locations : [ 'sidebar' ],
-    order     : order++ 
   },
 ].forEach(val => menu.add(val));

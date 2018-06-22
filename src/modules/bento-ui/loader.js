@@ -25,12 +25,10 @@ module.exports = function (done) {
   if (hasLoaded) {
     return done(null);
   }
-
   api.get('/ui', (error, result) => {
     if (error) {
       return done(error);
     }
-
     // ### Load Resources
     // Loads all the available resources defined via config in the api.
 
@@ -56,7 +54,7 @@ module.exports = function (done) {
     // ### Load State
 
     hasLoaded = true;
-
+   
     done(null);
   });
 }
