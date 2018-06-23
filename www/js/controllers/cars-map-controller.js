@@ -90,36 +90,6 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
     }.bind(this)
   );
 
-  /*
-  this.clearCarWatcher = $scope.$watch(function () {
-    var zzones = $data.instances.locations
-      .filter(function (x) {
-        return x.type === 'zone'
-      });
-    return {
-      cars: $data.instances.cars,
-      zones: zzones
-    };
-  }, function (value) {
-    if (value.cars == null || value.zones == null) {
-      return false;
-    }
-
-    if (Array.isArray(value.cars) && !value.cars.length) {
-      return false;
-    }
-
-    if (Array.isArray(value.zones) && !value.zones.length) {
-      return false;
-    }
-
-    this.all = prepareCars(value.cars)
-      .concat(value.zones);
-
-    return false;
-  }.bind(this), true);
-  */
-
   $scope.$on('$destroy', function () {
     if (this.stopLocationWatch) {
       this.stopLocationWatch();
@@ -191,8 +161,9 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
 
     return _(allCars).find(function (car) {
       var distance = $distance(car, currentLocation);
+      console.log(distance);
       return _.isFinite(distance) && distance < maxDistance;
-    });
+    }).length;
 
   }
 
@@ -306,59 +277,34 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
     return false;
   };
 
-  function showCarUnavailableModal() {
-    var unavailableModal;
+  function modal(title, message) {
+    var modal;
     $modal('result', {
       icon: 'x-icon',
-      title: 'This WaiveCar is unavailable right now',
-      message: 'Please try again later',
+      title: title,
+      message: message,
       actions: [{
         text: 'Ok',
         handler: function () {
-          unavailableModal.remove();
+          modal.remove();
         }
       }]
     })
     .then(function (_modal) {
-      unavailableModal = _modal;
-      unavailableModal.show();
+      modal = _modal;
+      modal.show();
     });
+  }
+
+  function showCarUnavailableModal() {
+    return modal('This WaiveCar is unavailable right now', 'Please try again later');
   }
 
   function showLotUnavailableModal() {
-    var unavailableModal;
-    $modal('result', {
-      icon: 'x-icon',
-      title: 'There are no WaiveCars available in the homebase right now',
-      actions: [{
-        text: 'Ok',
-        handler: function () {
-          unavailableModal.remove();
-        }
-      }]
-    })
-    .then(function (_modal) {
-      unavailableModal = _modal;
-      unavailableModal.show();
-    });
+    return modal('Nothing Available', 'There are no WaiveCars available in the homebase right now');
   }
 
   function showCarTooFarModal() {
-    var farModal;
-    $modal('result', {
-      icon: 'x-icon',
-      title: 'You\'re too far away to rent this car',
-      message: 'Get within 10 miles of the WaiveCar to book it.',
-      actions: [{
-        text: 'Close',
-        handler: function () {
-          farModal.remove();
-        }
-      }]
-    })
-    .then(function (_modal) {
-      farModal = _modal;
-      farModal.show();
-    });
+    return modal('You\'re too far away to rent this car', 'Get within 10 miles of the WaiveCar to book it.');
   }
 }
