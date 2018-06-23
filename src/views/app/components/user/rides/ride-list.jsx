@@ -37,12 +37,15 @@ class RideList extends Component {
       userId  : this.props.user.id,
       order   : 'id,DESC',
       details : true,
-      status  : 'ended,completed,closed',
+      status  : 'started,reserved,ended,completed,closed',
       offset  : this.state.offset,
       limit   : this.state.limit
     }, (err, bookings) => {
       if (err) {
         return console.log(err);
+      }
+      if(['started','reserved'].indexOf(bookings[0].status) !== -1) {
+        this.setState({ currentBooking: bookings[0] });
       }
       this.setState({
         bookings : bookings
@@ -196,9 +199,17 @@ class RideList extends Component {
       <div className={ boxClass }>
         <h3>
           { this.props.currentUser ? 'My' : 'User\'s' } Rides
-          <small>
-            { this.props.currentUser ? 'Your' : 'User\'s' } current and past ride history.
-          </small>
+          { this.state.currentBooking ? 
+            <em>
+              Currently in { 
+                this.props.currentUser ?  <b>{this.state.currentBooking.car.license}</b> :
+                  <span>
+                    <a href={ '/cars/' + this.state.currentBooking.car.id }>{this.state.currentBooking.car.license}</a> <a href={ '/bookings/' + this.state.currentBooking.id }>(booking info)</a> 
+                  </span>
+              }
+            </em>
+            : ""
+          }
         </h3>
         <div className="box-content no-padding">
           {
