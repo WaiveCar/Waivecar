@@ -119,16 +119,6 @@ templates.register('app', {
         onEnter   : policies.isAdministrator
       },
       {
-        path      : '/licenses',
-        component : require('../../views/app/admin/licenses'),
-        onEnter   : policies.isAdministrator
-      },
-      {
-        path      : '/logs',
-        component : require('../../views/app/admin/logs'),
-        onEnter   : policies.isAdministrator
-      },
-      {
         path      : '/locations',
         component : require('../../views/app/admin/locations'),
         onEnter   : policies.isAdministrator
@@ -237,6 +227,14 @@ let order = 2;
     order     : order++
   },
   {
+    title     : 'Cars',
+    icon      : 'directions_car',
+    path      : '/cars',
+    parent    : null,
+    locations : [ 'sidebar' ],
+    order     : order++
+  },
+  {
     title     : 'Tickets',
     icon      : 'list',
     path      : '/tickets',
@@ -245,20 +243,11 @@ let order = 2;
     order     : order++
   },
   {
-    title     : 'Licenses',
-    icon      : 'picture_in_picture',
-    path      : '/licenses',
-    parent    : null,
-    locations : [ 'sidebar' ],
-    order     : order++ 
-  },
-  {
-    title     : 'Audit Log',
-    icon      : 'picture_in_picture',
-    path      : '/logs',
+    title     : 'Locations',
+    icon      : 'location_on',
+    path      : '/locations',
     parent    : null,
     locations : [ 'sidebar' ],
     order     : order++
   }
-
 ].forEach(val => menu.add(val));
