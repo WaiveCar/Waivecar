@@ -596,6 +596,6 @@ function details($car = false, $start = false) {
 
 //booking_duration();
 //details('60000018942E1401', '2017-04-24');
-boo();
-boo111();
-//availability();
+//boo();
+//boo111();
+availability();

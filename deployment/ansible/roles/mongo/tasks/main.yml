@@ -1,7 +1,0 @@
----
-
-- name: Install latest MongoDB release
-  apt: pkg=mongodb-org state=present
-
-- name: Make sure Mongo is strated
-  service: name=mongod state=started
