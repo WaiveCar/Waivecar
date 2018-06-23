@@ -539,12 +539,14 @@ module.exports = {
 
     yield existingCar.update(data);
 
+    /*
     if(yield this.shouldRelay(existingCar)) {
       relay.emit('cars', {
         type: 'update',
         data: existingCar.toJSON()
       });
     }
+    */
 
     return existingCar;
   },
@@ -676,11 +678,9 @@ module.exports = {
    * @return {Array}
    */
   *getDevice(id, _user, source) {
-    /*
     if (process.env.NODE_ENV !== 'production') {
       return false;
     }
-    */
     try {
       let status = yield this.request(`/devices/${ id }/status`, { timeout : 30000 });
       this._errors[id] = 0;
