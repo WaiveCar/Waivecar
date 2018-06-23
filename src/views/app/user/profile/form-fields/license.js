@@ -8,7 +8,6 @@ let layout = fields.mergeFromLayout('licenses', [
   ],
   [
     { name : 'birthDate', className : 'col-md-6 bento-form-input' },
-    { name : 'gender',    className : 'col-md-6 bento-form-select' },
   ],
   [
     { name : 'number', className : 'col-md-6 bento-form-input' },
