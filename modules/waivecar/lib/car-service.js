@@ -539,14 +539,12 @@ module.exports = {
 
     yield existingCar.update(data);
 
-    /*
-    if(yield this.shouldRelay(existingCar)) {
-      relay.emit('cars', {
+    if(existingCar.userId) {
+      relay.user(existingCar.userId, 'cars', {
         type: 'update',
         data: existingCar.toJSON()
       });
     }
-    */
 
     return existingCar;
   },
