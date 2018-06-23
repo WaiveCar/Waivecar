@@ -1,9 +1,0 @@
-{
-  "name": "mongo",
-  "private": true,
-  "bento": {
-    "name": "mongo",
-    "type": "provider",
-    "init": "setup.js"
-  }
-}

@@ -157,7 +157,7 @@ module.exports = class OrderService extends Service {
 		    }
       });
     } catch(err) {
-      log.warno(err);
+      log.warn(err);
     };
     return {
       status: response.status, 

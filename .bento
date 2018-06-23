@@ -62,10 +62,6 @@
       "location": "providers",
       "folder": "email"
     },
-    "mongo": {
-      "location": "providers",
-      "folder": "mongo"
-    },
     "queue": {
       "location": "providers",
       "folder": "queue"

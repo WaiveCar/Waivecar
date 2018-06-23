@@ -1,8 +1,0 @@
-{
-  "name": "ui",
-  "private": true,
-  "bento": {
-    "name": "ui",
-    "type": "module"
-  }
-}
