@@ -5,11 +5,15 @@ let waitlist      = require('../lib/waitlist-service');
 Bento.Register.Controller('WaitlistController', function(controller) {
 
   controller.prioritize = function *() {
-    return yield waitlist.prioritize(this.query, this.auth.user);
+    return yield waitlist.prioritize(this.payload, this.auth.user);
   }
 
   controller.add = function *() {
     return yield waitlist.add(this.payload, this.auth.user);
+  }
+
+  controller.addNote = function *() {
+    return yield waitlist.addNote(this.payload, this.auth.user);
   }
 
   controller.addById = function *() {

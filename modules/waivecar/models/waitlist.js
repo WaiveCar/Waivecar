@@ -85,6 +85,10 @@ Bento.Register.Model('Waitlist', 'sequelize', function(model, Sequelize) {
 
     days : {
       type       : Sequelize.INTEGER,
+    },
+
+    notes : {
+      type       : Sequelize.TEXT
     }
   };
 

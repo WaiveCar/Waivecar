@@ -38,10 +38,27 @@ function inside(obj) {
 
 module.exports = {
 
+  *addNote(payload, _user) {
+    let record = yield Waitlist.findById(payload.id);
+    if (record) {
+      var notes = [];
+      try {
+        notes = JSON.parse(record.notes);
+      } catch(ex) {
+        notes = [];
+      }
+      if(!notes || !('push' in notes)) {
+        notes = [];
+      }
+      notes.push(payload.note);
+    }
+    yield record.update({notes: JSON.stringify(notes)});
+  },
+
   *prioritize(payload, _user) {
     let record = yield Waitlist.findById(payload.id);
     if (record) {
-      record.update({priority: _pri.high});
+      yield record.update({priority: record.priority + +payload.direction});
       return record;
     }
   },
@@ -247,11 +264,24 @@ module.exports = {
     if (queryIn.search) {
       query.where = { $and: [
         {user_id: null },
-        sequelize.literal(`concat_ws(' ', first_name, last_name, place_name) like '%${queryIn.search}%'`)
+        sequelize.literal(`concat_ws(' ', first_name, last_name, place_name, notes) like '%${queryIn.search}%'`)
       ] };
     } else {
       query.where = { user_id: null };
     }
+    if (queryIn.type) {
+      query.where.accountType = queryIn.type;
+    }
+    if(queryIn.type === 'waivework') {
+      query.order = [ 
+        [ 'priority', 'desc' ] ,
+        [ 'hours', 'desc' ],
+        [ 'days', 'desc', ],
+        [ 'experience', 'desc' ],
+        [ 'created_at', 'asc' ]
+      ];
+    }
+
     query.limit = parseInt(queryIn.limit, 10);
     query.offset = parseInt(queryIn.offset, 10);
 
