@@ -109,6 +109,11 @@ templates.register('app', {
         onEnter   : policies.isAdministrator
       },
       {
+        path      : '/admin/waivework',
+        component : require('../../views/app/admin/waivework'),
+        onEnter   : policies.isAdministrator
+      },
+      {
         path      : '/users',
         component : require('../../views/app/admin/users'),
         onEnter   : policies.isAdministrator
@@ -222,6 +227,14 @@ let order = 2;
     title     : 'Waitlist',
     icon      : 'list',
     path      : '/admin/waitlist',
+    parent    : null,
+    locations : [ 'sidebar' ],
+    order     : order++
+  },
+  {
+    title     : 'Waivework',
+    icon      : 'building',
+    path      : '/admin/waivework',
     parent    : null,
     locations : [ 'sidebar' ],
     order     : order++
