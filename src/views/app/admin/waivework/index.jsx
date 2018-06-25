@@ -27,7 +27,7 @@ class TableIndex extends React.Component {
 
   componentDidMount() {
     this.table.init();
-    dom.setTitle("Waitlist");
+    dom.setTitle("Waivework");
     this.setState({
       sort : {
         key   : 'id',
@@ -137,7 +137,7 @@ class TableIndex extends React.Component {
       <div id="waitlist-list" className="container">
         <div className="box full">
           <div className='col-md-12'>
-            <h3>Waitlist</h3>
+            <h3>Waivework</h3>
           </div>
           { this.state.userSelected ?
             <div className="info-box box-content">
