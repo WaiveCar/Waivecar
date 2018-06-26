@@ -70,6 +70,7 @@ var checkBooking = co.wrap(function *(booking) {
         yield booking.flag('first-sync');
       }
     }
+
     // Check that battery use is changing as expected
     let milesDriven = (car.mileage - start.mileage) * 0.621371;
     if (milesDriven >= 7 && car.charge === device.charge) {
@@ -121,8 +122,10 @@ var checkBooking = co.wrap(function *(booking) {
       }
     }
   }
+
   // Check if outside driving zone 
   let deviceInside = GeocodingService.inDrivingZone(device.latitude, device.longitude);
+
   if (!user.isWaivework) {
     // if we thought we were outside but now we're inside
     if (deviceInside && booking.isFlagged('outside-range')) {
@@ -138,7 +141,7 @@ var checkBooking = co.wrap(function *(booking) {
       }
     }
   }
-  
+ 
   // Check charge level
   // See Api: Low charge text message triggers #495 & #961
   if (car.avgMilesAvailable() < 7 && !booking.isFlagged('low-2')) {
@@ -159,7 +162,7 @@ var checkBooking = co.wrap(function *(booking) {
 
   let lastLocation = yield Location.findOne({
     where: { bookingId: booking.id },
-    order: [ [ 'created_at', 'DESC' ]]
+    order: [[ 'created_at', 'DESC' ]]
   });
   // Log current position
   let newLocation = new Location({
