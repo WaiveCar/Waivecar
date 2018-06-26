@@ -402,9 +402,7 @@ class CarsShowView extends React.Component {
   }
 
   renderCarActions(car) {
-    if (this.service.getState('isLoading')) {
-      console.log('it is loading now!');
-    }
+    console.log(this.state);
     let switches = [
       {
         ref : 1,
@@ -440,7 +438,6 @@ class CarsShowView extends React.Component {
         onChange : this.service.executeCommand.bind(this, car, 'refresh')
       }
     ];
-    console.log(car.lastUpdated);
     return (
       <div className="box">
         <h3>
@@ -450,6 +447,9 @@ class CarsShowView extends React.Component {
           <div className="container-fluid">
             <div className="row">
               <div className="col-md-6">
+                <div>
+                  Car currently{ this.state.car.cars[0].isLocked ? ' locked' : ' unlocked' }
+                </div>
                 <Button
                   key       = { switches[0].ref }
                   className = { 'btn btn-primary btn-sm col-xs-6' }
@@ -510,7 +510,9 @@ class CarsShowView extends React.Component {
                   value     = { switches[5].label }
                   onClick   = { switches[5].onChange }
                 />
-                Updated: { this.service.getState('isLoading') ?  <img src="../images/site/spinner.gif" /> : car.lastUpdated }
+                Updated: { this.service.getState('isLoading') ?  
+                  <img src="../images/site/spinner.gif" /> : (car.lastUpdated ? car.lastUpdated : this.service.getState('updatedAt')) 
+                }
               </div>
             </div>
             <div className="row">
