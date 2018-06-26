@@ -115,6 +115,9 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
 
   var timer = $interval(function() {
     if (expired) {
+      // When the booking is extended, the end time needs to be pulled
+      // down from the booking
+      expired = moment($data.active.bookings.reservationEnd);
       if($data.active.bookings) {
         if(!ctrl.isExtended && $data.active.bookings.flags && $data.active.bookings.flags.search(/exten/) !== -1) {
           // A perhaps bad idea on my part (cjm) ... I swap out
@@ -188,8 +191,14 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         text: 'I\'ll buy that for a dollar',
         handler: function () {
           modal.remove();
+
+          // It takes a few seconds for the extension to go through since it
+          // calls stripe and does a charge so we fake it until we make it. 
+          ctrl.isExtended = true;
+          $data.active.bookings.reservationEnd = moment($data.active.bookings.reservationEnd).add(10, 'm');
+
           $data.resources.bookings.extend({id: $ride.state.booking.id}).$promise
-            .then(function() {} )
+            .then(function() { })
             .catch(function(err) {
               showFailure('Unable to extend', 'There was a problem extending your reservation');
             });
@@ -290,9 +299,13 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       plateNumber += ' (' + data.active.cars.plateNumber + ')';
     }
 
+    var survey = '';
+    if($data.active.cars.model !== 'Spark EV') {
+      survey = "\nPlease note that there's a brief survey with the Ioniqs after the first three rides.";
+    }
     $modal('result', {
       title: 'You\'re In Reach',
-      message: 'Welcome to ' + plateNumber + '. Now you can unlock your WaiveCar!\nPlease note that there\'s a brief survey with the Ioniqs after the first three rides.',
+      message: 'Welcome to ' + plateNumber + '. Now you can unlock your WaiveCar!' + survey,
       icon: 'check-icon',
       actions: [{
         className: 'button-balanced',
