@@ -175,7 +175,7 @@ var checkBooking = co.wrap(function *(booking) {
   if (lastLocation) {
     let hasMoved = GeocodingService.hasMoved(lastLocation, newLocation);
     // If the car has moved, but the ignition is off, that means that the vehicle may currently be being towed and a notification is sent tto slack
-    if (hasMoved && !device.isIgnitionOn) {
+    if (hasMoved && !device.isIgnitionOn && car.mileage === device.mileage) {
       yield notify.notifyAdmins(`:flying_saucer: ${ car.license } is moving without the ignition on or odometer incrementing. It may be on a tow truck.`, [ 'slack' ], { channel : '#rental-alerts' });
     }
   }
