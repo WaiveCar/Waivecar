@@ -402,30 +402,9 @@ class CarsShowView extends React.Component {
   }
 
   renderCarActions(car) {
-    console.log(this.state);
+console.log(this.service.getState('isLoading'));
     if (this.service.getState('isLoading')) {
-      return (
-        <div className="box">
-          <h3>
-            Controls for { car.license }
-          </h3>
-          <div className="box-content">
-            <div className="loading-panel">
-              <div className="sk-cube-grid">
-                <div className="sk-cube sk-cube1"></div>
-                <div className="sk-cube sk-cube2"></div>
-                <div className="sk-cube sk-cube3"></div>
-                <div className="sk-cube sk-cube4"></div>
-                <div className="sk-cube sk-cube5"></div>
-                <div className="sk-cube sk-cube6"></div>
-                <div className="sk-cube sk-cube7"></div>
-                <div className="sk-cube sk-cube8"></div>
-                <div className="sk-cube sk-cube9"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
+      console.log('it is loading now!');
     }
     let switches = [
       {
@@ -531,7 +510,7 @@ class CarsShowView extends React.Component {
                   value     = { switches[5].label }
                   onClick   = { switches[5].onChange }
                 />
-                Updated: { car.lastUpdated }
+                Updated: { this.service.getState('isLoading') ?  'loading' : car.lastUpdated }
               </div>
             </div>
             <div className="row">

@@ -11,6 +11,7 @@ module.exports = class Car extends Service {
   constructor(ctx) {
     super(ctx, 'car', {
       isLoading : false,
+      updated   : null,
       cars      : []
     });
     this.update = this.update.bind(this);
