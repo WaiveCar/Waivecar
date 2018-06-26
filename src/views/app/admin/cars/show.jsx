@@ -402,7 +402,6 @@ class CarsShowView extends React.Component {
   }
 
   renderCarActions(car) {
-    console.log(this.state);
     let switches = [
       {
         ref : 1,
