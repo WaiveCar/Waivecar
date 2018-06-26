@@ -53,7 +53,7 @@ var checkBooking = co.wrap(function *(booking) {
     // If the car is charging charge_count is incremented
     yield bookingRecord.update({ chargeCount: bookingRecord.chargeCount + 1 });
   }
-  
+  // This always returns false if NODE_ENV !== production
   if (!device || !car || !user) return;
 
   if (start) {
@@ -121,7 +121,7 @@ var checkBooking = co.wrap(function *(booking) {
       }
     }
   }
-  // Check if outside driving zone
+  // Check if outside driving zone 
   let deviceInside = GeocodingService.inDrivingZone(device.latitude, device.longitude);
   if (!user.isWaivework) {
     // if we thought we were outside but now we're inside
@@ -138,7 +138,7 @@ var checkBooking = co.wrap(function *(booking) {
       }
     }
   }
-
+  
   // Check charge level
   // See Api: Low charge text message triggers #495 & #961
   if (car.avgMilesAvailable() < 7 && !booking.isFlagged('low-2')) {
@@ -156,23 +156,26 @@ var checkBooking = co.wrap(function *(booking) {
     yield notify.sendTextMessage(user, 'Hey there! Looks like your WaiveCar battery is getting really low. Please return your WaiveCar to the home base.');
     yield notify.notifyAdmins(`:battery: ${ user.link() } has driven ${ car.info() } to a low charge. ${ car.chargeReport() }. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
   }
-  // Log position
-  let oldLocation = yield Location.findOne({
+
+  let lastLocation = yield Location.findOne({
     where: { bookingId: booking.id },
     order: [ [ 'created_at', 'DESC' ]]
   });
-
+  // Log current position
   let newLocation = new Location({
     bookingId : booking.id,
     latitude  : car.latitude,
     longitude : car.longitude
   });
   yield newLocation.save();
-
-  if (oldLocation) {
-    let hasMoved = GeocodingService.hasMoved(oldLocation, newLocation);
-    console.log(hasMoved);
+  
+  if (lastLocation) {
+    let hasMoved = GeocodingService.hasMoved(lastLocation, newLocation);
+    if (hasMoved && !device.isIgnitionOn) {
+      yield notify.notifyAdmins(`:flying_saucer: ${ car.license } is moving without the ignition on or odometer incrementing. It may be on a tow truck.`, [ 'slack' ], { channel : '#rental-alerts' });
+    }
   }
+
   yield cars.syncUpdate(car.id, device, car);
 });
 
