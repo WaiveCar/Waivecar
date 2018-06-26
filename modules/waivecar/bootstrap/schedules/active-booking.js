@@ -53,9 +53,9 @@ var checkBooking = co.wrap(function *(booking) {
     // If the car is charging charge_count is incremented
     yield bookingRecord.update({ chargeCount: bookingRecord.chargeCount + 1 });
   }
-
+  
   if (!device || !car || !user) return;
- 
+
   if (start) {
     if (!booking.isFlagged('drove') ) {
       if (device.isIgnitionOn || car.mileage !== device.mileage || device.calculatedSpeed > 0 || device.currentSpeed > 0 || !device.isParked) {
@@ -70,7 +70,6 @@ var checkBooking = co.wrap(function *(booking) {
         yield booking.flag('first-sync');
       }
     }
-
     // Check that battery use is changing as expected
     let milesDriven = (car.mileage - start.mileage) * 0.621371;
     if (milesDriven >= 7 && car.charge === device.charge) {
@@ -122,10 +121,8 @@ var checkBooking = co.wrap(function *(booking) {
       }
     }
   }
-
   // Check if outside driving zone
   let deviceInside = GeocodingService.inDrivingZone(device.latitude, device.longitude);
-
   if (!user.isWaivework) {
     // if we thought we were outside but now we're inside
     if (deviceInside && booking.isFlagged('outside-range')) {
@@ -159,15 +156,23 @@ var checkBooking = co.wrap(function *(booking) {
     yield notify.sendTextMessage(user, 'Hey there! Looks like your WaiveCar battery is getting really low. Please return your WaiveCar to the home base.');
     yield notify.notifyAdmins(`:battery: ${ user.link() } has driven ${ car.info() } to a low charge. ${ car.chargeReport() }. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
   }
-
   // Log position
-  let location = new Location({
+  let oldLocation = yield Location.findOne({
+    where: { bookingId: booking.id },
+    order: [ [ 'created_at', 'DESC' ]]
+  });
+
+  let newLocation = new Location({
     bookingId : booking.id,
     latitude  : car.latitude,
     longitude : car.longitude
   });
-  yield location.save();
+  yield newLocation.save();
 
+  if (oldLocation) {
+    let hasMoved = GeocodingService.hasMoved(oldLocation, newLocation);
+    console.log(hasMoved);
+  }
   yield cars.syncUpdate(car.id, device, car);
 });
 
