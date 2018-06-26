@@ -402,7 +402,6 @@ class CarsShowView extends React.Component {
   }
 
   renderCarActions(car) {
-console.log(this.service.getState('isLoading'));
     if (this.service.getState('isLoading')) {
       console.log('it is loading now!');
     }
@@ -441,6 +440,7 @@ console.log(this.service.getState('isLoading'));
         onChange : this.service.executeCommand.bind(this, car, 'refresh')
       }
     ];
+    console.log(car.lastUpdated);
     return (
       <div className="box">
         <h3>
@@ -510,7 +510,7 @@ console.log(this.service.getState('isLoading'));
                   value     = { switches[5].label }
                   onClick   = { switches[5].onChange }
                 />
-                Updated: { this.service.getState('isLoading') ?  'loading' : car.lastUpdated }
+                Updated: { this.service.getState('isLoading') ?  <img src="../images/site/spinner.gif" /> : car.lastUpdated }
               </div>
             </div>
             <div className="row">
