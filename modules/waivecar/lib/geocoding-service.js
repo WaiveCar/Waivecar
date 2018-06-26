@@ -38,6 +38,14 @@ module.exports = {
     return miles <= 25;
   },
 
+  hasMoved(location1, location2) {
+    let distance = geolib.getDistance(
+      { latitude : location1.latitude, longitude : location1.longitude },
+      { latitude : location2.latitude, longitude : location2.longitude }
+    );
+    return distance >= 250;
+  },
+
   *getAddressComponent(lat, lng, type) {
     let list = yield this.getAddress(lat, lng, 'address_components');
     for(var ix = 0; ix < list.length; ix++) {
