@@ -349,7 +349,7 @@ module.exports = class LogService {
           includeMap[row.id] = row.license;
         }
       } else if(query.scope === 'level') {
-        if(yield row.hasTag('level')) {
+        if((yield row.hasTag('level')) && row.license.indexOf('WORK') === -1) {
           includeMap[row.id] = row.license;
         } else {
           excludeMap[row.id] = row.license;
