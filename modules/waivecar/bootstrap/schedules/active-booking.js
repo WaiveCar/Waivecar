@@ -72,7 +72,7 @@ var checkBooking = co.wrap(function *(booking) {
     }
 
     // Check that battery use is changing as expected
-    let milesDriven = (car.mileage - start.mileage) * 0.621371;
+    let milesDriven = (car.totalMileage - start.mileage) * 0.621371;
     if (milesDriven >= 7 && car.charge === device.charge) {
       yield notify.notifyAdmins(`${ car.info() } has been driven ${ milesDriven } miles since last change reported, but charge level has not changed. ${ config.api.uri }/cars/${ car.id }`, [ 'slack' ], { channel : '#rental-alerts' });
     }
@@ -175,8 +175,8 @@ var checkBooking = co.wrap(function *(booking) {
   if (lastLocation) {
     let hasMoved = GeocodingService.hasMoved(lastLocation, newLocation);
     // If the car has moved, but the ignition is off, that means that the vehicle may currently be being towed and a notification is sent tto slack
+    console.log(car, device, car.totalMileage, device.totalMileage, device.isIgnitionOn, car.isIgnitionOn, hasMoved);
     if (hasMoved && !device.isIgnitionOn && !car.isIgnitionOn && car.totalMileage === device.totalMileage) {
-      console.log(car.totalMileage, device.totalMileage, device.isIgnitionOn, car.isIgnitionOn, hasMoved);
       //yield notify.notifyAdmins(`:flying_saucer: ${ car.license } is moving without the ignition on or odometer incrementing. It may be on a tow truck.`, [ 'slack' ], { channel : '#rental-alerts' });
     }
   }
