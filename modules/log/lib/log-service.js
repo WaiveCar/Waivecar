@@ -419,7 +419,7 @@ module.exports = class LogService {
         'group by(concat(lng,lat))'
       ].join(' ');
 
-      let res = yield sequelize.query(qstr))[0].map((row) => {
+      let res = (yield sequelize.query(qstr))[0].map((row) => {
         return [row.lat, row.lng, row.weight];
       });
 
