@@ -277,8 +277,8 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
     return false;
   };
 
-  function modal(title, message) {
-    var modal;
+  function quickmodal(title, message) {
+    var modalWindow;
     $modal('result', {
       icon: 'x-icon',
       title: title,
@@ -286,25 +286,25 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
       actions: [{
         text: 'Ok',
         handler: function () {
-          modal.remove();
+          modalWindow.remove();
         }
       }]
     })
     .then(function (_modal) {
-      modal = _modal;
-      modal.show();
+      modalWindow = _modal;
+      modalWindow.show();
     });
   }
 
   function showCarUnavailableModal() {
-    return modal('This WaiveCar is unavailable right now', 'Please try again later');
+    return quickmodal('This WaiveCar is unavailable right now', 'Please try again later');
   }
 
   function showLotUnavailableModal() {
-    return modal('Nothing Available', 'There are no WaiveCars available in the homebase right now');
+    return quickmodal('Nothing Available', 'There are no WaiveCars available in the homebase right now');
   }
 
   function showCarTooFarModal() {
-    return modal('You\'re too far away to rent this car', 'Get within 10 miles of the WaiveCar to book it.');
+    return quickmodal('You\'re too far away to rent this car', 'Get within 10 miles of the WaiveCar to book it.');
   }
 }
