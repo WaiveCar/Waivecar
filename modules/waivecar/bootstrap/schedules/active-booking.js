@@ -72,10 +72,12 @@ var checkBooking = co.wrap(function *(booking) {
     }
 
     // Check that battery use is changing as expected
+    /*
     let milesDriven = (car.totalMileage - start.mileage) * 0.621371;
     if (milesDriven >= 7 && car.charge === device.charge) {
       yield notify.notifyAdmins(`${ car.info() } has been driven ${ milesDriven } miles since last change reported, but charge level has not changed. ${ config.api.uri }/cars/${ car.id }`, [ 'slack' ], { channel : '#rental-alerts' });
     }
+    */
 
     duration = moment().utc().diff(start.createdAt, 'minutes');
 
