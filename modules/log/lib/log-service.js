@@ -419,9 +419,11 @@ module.exports = class LogService {
         'group by(concat(lng,lat))'
       ].join(' ');
 
-      return (kind === 'points.js' ? 'var points = ' : '') + (yield sequelize.query(qstr))[0].map((row) => {
+      let res = yield sequelize.query(qstr))[0].map((row) => {
         return [row.lat, row.lng, row.weight];
       });
+
+      return kind === 'points.js' ? ('var points = ' + JSON.stringify(res)) : res;
     }
     //console.log(includeMap, range);
     let allOdometers = yield CarHistory.find({
