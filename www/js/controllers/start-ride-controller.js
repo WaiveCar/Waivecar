@@ -27,14 +27,13 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
     ctrl.intDamage = true;
     ctrl.dirty = true;
     ctrl.pictures = {
-      begin_front: null,
-      begin_left: null,
-      begin_rear: null,
-      begin_right: null,
-      begin_dirty: null,
-      begin_other: null,
+      beginFront: null,
+      beginLeft: null,
+      beginRear: null,
+      beginRight: null,
+      beginDirty: null,
+      beginOther: null,
     }
-    console.log('ctrl: ', ctrl);
 
     ctrl.start = start;
     ctrl.toggle = toggle;
@@ -65,7 +64,6 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
       })
       .then(function (result) {
         if (result && Array.isArray(result)) result = result[0];
-        alert($settings.uri.api + '/file/' + result.id);
         if (result) {
           result.style = {
             'background-image': 'url(' + $settings.uri.api + '/file/' + result.id + ')'
