@@ -66,6 +66,7 @@ app.run(setup.run);
 
 // Controllers
 require('./controllers/application-controller');
+require('./controllers/add-photos-controller');
 require('./controllers/auth-controller');
 require('./controllers/active-booking-controller');
 require('./controllers/blocker-controller.js');

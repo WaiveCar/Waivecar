@@ -31,8 +31,8 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
       beginLeft: null,
       beginRear: null,
       beginRight: null,
-      beginDirty: null,
       beginOther: null,
+      beginDirty: null,
     }
 
     ctrl.start = start;
