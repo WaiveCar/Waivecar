@@ -24,9 +24,16 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
     ctrl.extDamage = true;
     ctrl.intDamage = true;
     ctrl.dirty = true;
+    ctrl.pictures = {
+      front: null,
+      left: null,
+      rear: null,
+      right: null,
+    }
 
     ctrl.start = start;
     ctrl.toggle = toggle;
+    ctrl.addPicture = addPicture;
 
     var initialized = $scope.$watch('service.isInitialized', function(isInitialized) {
       if (isInitialized !== true) {
@@ -38,43 +45,16 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
       ctrl.timeLeft = moment(booking.createdAt).add(120, 'm').toNow(true);
     });
 
-    function showNote() {
-      var modal;
-      $modal('result', {
-        title: 'Please Note',
-        message: 'I am reporting this car has no known damage. If the next user reports damage that I missed, I will be held responsible for it.',
-        icon: 'x-icon',
-        actions: [{
-          className: 'button-balanced',
-          text: 'I Understand',
-          handler: function () {
-            modal.remove();
-            $state.go('dashboard', null, {location: 'replace'});
-          }
-        }, {
-          className: 'button-dark',
-          text: 'I\'ll Take another look',
-          handler: function () {
-            modal.remove();
-          }
-        }]
-      })
-      .then(function (_modal) {
-        modal = _modal;
-        modal.show();
-      });
-    }
-
     function start () {
-      if (ctrl.dirty || ctrl.intDamage || ctrl.extDamage) {
-        $state.go('damage-gallery', { id: $stateParams.id, return: 'dashboard' });
-      } else {
-        showNote();
-      }
+      $state.go('dashboard', null, {location: 'replace'});
     }
 
     function toggle(field) {
       this[field] = !this[field];
+    }
+
+    function addPicture() {
+      console.log('clicked');
     }
   }
 

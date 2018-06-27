@@ -23,7 +23,22 @@
               </div>
             </div>
             <p>{{ ctrl.data.cars.license }} is almost ready.</p>
-            <p>Quick checklist before you start.</p>
+            Document any existing issues by taking the following photos before starting your ride
+            <div class="text-center">
+              <div>
+                Front: <button ng-click="ctrl.addPicture()" class="button add-image"></button>
+              </div>
+              <div>
+                Left: <button ng-click="ctrl.addPicture()" class="button add-image"></button> 
+              </div>
+              <div>
+                Rear: <button ng-click="ctrl.addPicture()" class="button add-image"></button>
+              </div>
+              <div>
+                Right: <button ng-click="ctrl.addPicture()" class="button add-image"></button>
+              </div>
+            </div>
+<!--            <p>Quick checklist before you start.</p>
             <ul class="list-unstyled text-left bold-list">
               <li>
                 <p class="pull-left">No damage to car exterior</p>
@@ -82,7 +97,7 @@
                   </span>
                 </label>
               </li>
-            </ul>
+  -->        </ul>
             <p>Last few things</p>
             <ul class="list-unstyled text-left bold-list">
               <li>
