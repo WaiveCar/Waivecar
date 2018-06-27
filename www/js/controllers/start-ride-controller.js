@@ -11,7 +11,9 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
   '$injector',
   '$stateParams',
   '$ride',
-  function ($scope, $rootScope, $injector, $stateParams, $ride) {
+  '$uploadImage',
+  '$settings',
+  function ($scope, $rootScope, $injector, $stateParams, $ride, $uploadImage, $settings) {
     var $data = $injector.get('$data');
     var $state = $injector.get('$state');
     var $ionicLoading = $injector.get('$ionicLoading');
@@ -25,11 +27,14 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
     ctrl.intDamage = true;
     ctrl.dirty = true;
     ctrl.pictures = {
-      front: null,
-      left: null,
-      rear: null,
-      right: null,
+      begin_front: null,
+      begin_left: null,
+      begin_rear: null,
+      begin_right: null,
+      begin_dirty: null,
+      begin_other: null,
     }
+    console.log('ctrl: ', ctrl);
 
     ctrl.start = start;
     ctrl.toggle = toggle;
@@ -53,8 +58,33 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
       this[field] = !this[field];
     }
 
-    function addPicture() {
-      console.log('clicked');
+    function addPicture(type) {
+      $uploadImage({
+        endpoint: '/files?bookingId=' + ctrl.data.bookings.id,
+        filename: type + ctrl.data.bookings.id.id + '_' + Date.now() + '.jpg',
+      })
+      .then(function (result) {
+        if (result && Array.isArray(result)) result = result[0];
+        alert($settings.uri.api + '/file/' + result.id);
+        if (result) {
+          result.style = {
+            'background-image': 'url(' + $settings.uri.api + '/file/' + result.id + ')'
+          };
+          ctrl.pictures[type] = result;
+        }
+      })
+      .catch(function (err) {
+        var message = err.message;
+        if (err instanceof $window.FileTransferError) {
+          if (err.body) {
+            var error = angular.fromJson(err.body);
+            if (error.message) {
+              message = error.message;
+            }
+          }
+        }
+        submitFailure(message);
+      });
     }
   }
 

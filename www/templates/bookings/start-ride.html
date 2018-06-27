@@ -26,16 +26,36 @@
             Document any existing issues by taking the following photos before starting your ride
             <div class="text-center">
               <div>
-                Front: <button ng-click="ctrl.addPicture()" class="button add-image"></button>
+                Front: 
+                <button 
+                  ng-click="ctrl.addPicture('begin_front')" 
+                  ng-style="ctrl.pictures.begin_front.style" 
+                  class="button add-image">
+                </button>
               </div>
               <div>
-                Left: <button ng-click="ctrl.addPicture()" class="button add-image"></button> 
+                Left: 
+                <button 
+                  ng-click="ctrl.addPicture('begin_left')" 
+                  ng-style="ctrl.pictures.begin_left.style" 
+                  class="button add-image">
+                </button> 
               </div>
               <div>
-                Rear: <button ng-click="ctrl.addPicture()" class="button add-image"></button>
+                Rear: 
+                <button 
+                  ng-click="ctrl.addPicture('begin_rear')" 
+                  ng-style="ctrl.pictures.begin_front.style" 
+                  class="button add-image">
+                </button>
               </div>
               <div>
-                Right: <button ng-click="ctrl.addPicture()" class="button add-image"></button>
+                Right: 
+                <button 
+                  ng-click="ctrl.addPicture('begin_right')" 
+                  ng-style="ctrl.pictures.begin_front.style" 
+                  class="button add-image">
+                </button>
               </div>
             </div>
 <!--            <p>Quick checklist before you start.</p>
