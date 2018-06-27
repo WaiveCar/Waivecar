@@ -292,8 +292,7 @@ module.exports = class LogService {
       bookBy = {user: {}, fleet: {} },
       totalDistance = {user: 0, fleet: 0 },
       totalBookings = {user: 0, fleet: 0},
-      start = {year:0, month:0, day:0},
-      end = {year:0, month:0, day:0},
+      start = {year:0, month:1, day:1},
       fleetUserList = yield GroupUser.find({ where: { groupRoleId: { $gt: 1 } } }),
       excludeMap = {},
       includeMap = {},
@@ -311,27 +310,21 @@ module.exports = class LogService {
 
     let parts = year_month.split('-');
     start.year = parseInt(parts[0], 10);
-    end.year = start.year;
 
+    let duration = 'year';
     if(parts.length > 1) {
+      duration = 'month';
       start.month = parseInt(parts[1], 10);
-      end.month = start.month + 1;
-    } else {
-      // otherwise take the whole year.
-      start.month = 1;
-      end.month = 13;
-    }
-    
-    if(end.month > 12) {
-      end.year = start.year + 1;
-      end.month = 1;
+
+      if(parts.length > 2) {
+        duration = 'week';
+        start.day = parseInt(parts[2], 10);
+      }
     }
 
-    if(parts.length > 2) {
-      start.day = parseInt(parts[2], 10);
-      end.day = parseInt(parts[2], 10);
-    }
-      
+    let dtStr = `${start.year}-${start.month}-${start.day} 00:00:00`;
+    let end = `DATE_ADD("${dtStr}", interval 1 ${duration})`;
+
     //
     // This is where we determine what cars we are looking at. As far as the query goes,
     // the ?scope=XXX parameter determines this.  Since documentation is the first thing
@@ -359,7 +352,7 @@ module.exports = class LogService {
 
     // see http://stackoverflow.com/questions/6273361/mysql-query-to-select-records-with-a-particular-date
     // for a discussion on the 'best' way to do this.
-    let range = { $between: [`${start.year}-${start.month}-01 00:00:00`, `${end.year}-${end.month}-01 00:00:00`] };
+    let range = { $between: [dtStr, sequelize.literal(end)] };
     // we'll use this query to answer a number of questions.
     let allBookings = yield Booking.find({
       where : {
@@ -391,12 +384,13 @@ module.exports = class LogService {
     }
 
 
+    let dateRange = `bl.created_at > '${dtStr}' and bl.created_at < ${end}`;
     if(kind === 'parking') {
       let qstr = [
-        'select bd.created_at,bd.longitude,bd.latitude,street_hours,street_minutes,street_overnight_rest,concat("https://s3.amazonaws.com/waivecar-prod/",path) as image',
-        'from parking_details pd join booking_details bd on bd.booking_id = pd.booking_id',
-        `where ${excludedBookingsQuery}`,
-        `bd.type = 'end' and bd.created_at > '${start.year}-${start.month}-01 00:00:00' and bd.created_at < '${end.year}-${end.month}-01 00:00:00'`
+        'select bl.created_at,bl.longitude,bl.latitude,street_hours,street_minutes,street_overnight_rest,concat("https://s3.amazonaws.com/waivecar-prod/",path) as image',
+        'from parking_details pd join booking_details bl on bl.booking_id = pd.booking_id',
+        `where ${excludedBookingsQuery} bl.type = 'end' and`,
+        dateRange,
       ].join(' ');
 
       return yield sequelize.query(qstr);
@@ -406,7 +400,7 @@ module.exports = class LogService {
       let qstr = [
         'select car_id, longitude, latitude, bl.created_at',
         `from bookings join booking_locations bl on bookings.id = bl.booking_id where ${excludedBookingsQuery}`,
-        `bl.created_at > '${start.year}-${start.month}-01 00:00:00' and bl.created_at < '${end.year}-${end.month}-01 00:00:00'`
+        dateRange,
       ].join(' ');
 
       return yield sequelize.query(qstr);
@@ -414,8 +408,8 @@ module.exports = class LogService {
     } else if(kind === 'points' || kind === 'points.js') {
       let qstr = [
         'select round(longitude,4) as lng, round(latitude,4) as lat, count(*) as weight',
-        `from booking_locations where ${excludedBookingsQuery}`,
-        `created_at > '${start.year}-${start.month}-01 00:00:00' and created_at < '${end.year}-${end.month}-01 00:00:00'`,
+        `from booking_locations bl where ${excludedBookingsQuery}`,
+        dateRange,
         'group by(concat(lng,lat))'
       ].join(' ');
 
@@ -455,6 +449,9 @@ module.exports = class LogService {
       let userId = row.userId;
       let userType = 'user';
 
+      if( ! (id in bookByCar) ) {
+        bookByCar[id] = [];
+      }
       bookByCar[id].push(row);
 
       if( userId in fleetUserList ) {
@@ -498,6 +495,7 @@ module.exports = class LogService {
 
     return {
       period: year_month,
+      duration: `1 ${duration}`,
       activeCars: Object.keys(bookByCar),
       activeCarCount: Object.keys(bookByCar).length,
       userCount:  Object.keys(bookBy.user).length,
