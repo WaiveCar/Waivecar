@@ -43,7 +43,7 @@ module.exports = {
       { latitude : location1.latitude, longitude : location1.longitude },
       { latitude : location2.latitude, longitude : location2.longitude }
     );
-    return distance >= 250;
+    return distance >= 250 ? distance : 0;
   },
 
   *getAddressComponent(lat, lng, type) {
