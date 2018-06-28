@@ -34,7 +34,7 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
       beginOther: null,
       beginDirty: null,
     }
-
+    ctrl.buttonClass = 'button button-dark add-image'; 
     ctrl.start = start;
     ctrl.toggle = toggle;
     ctrl.addPicture = addPicture;
