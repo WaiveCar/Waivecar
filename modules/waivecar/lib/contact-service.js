@@ -16,7 +16,7 @@ let fs      = require('fs');
 
 module.exports = {
   *deliverMessage(payload, _user) {
-    yield notify.slack({ text : `From: ${ _user.name() } ${ _user.email } ${ _user.info() }\n Subject: ${ payload.subject || '_(none)_' }\n${ payload.message || '_(none)_' }` }, { channel : '#app_support' });
+    yield notify.slack({ text : `From: ${ _user.link() } ${ _user.email } ${ _user.info() }\n Subject: ${ payload.subject || '_(none)_' }\n${ payload.message || '_(none)_' }` }, { channel : '#app_support' });
   },
 
   
@@ -221,7 +221,7 @@ module.exports = {
     let smstext = params.query.Body.trim().toLowerCase();
     let phone = params.query.From;
     let user = yield User.findOne({ where : { phone: phone } });
-    let who = user ? user.name() : '_unknown_';
+    let who = user ? user.link() : '_unknown_';
     let ts = moment.tz(moment.utc(), "America/Los_Angeles").format('YYYY/MM/DD HH:mm:ss');
     fs.appendFileSync('/var/log/outgoing/sms.txt', `${ts} ${phone} ${who}: ${ params.query.Body }\n`);
 
