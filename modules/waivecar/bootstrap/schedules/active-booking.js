@@ -169,8 +169,8 @@ var checkBooking = co.wrap(function *(booking) {
   // Log current position
   let newLocation = new Location({
     bookingId : booking.id,
-    latitude  : car.latitude,
-    longitude : car.longitude
+    latitude  : device.latitude,
+    longitude : device.longitude
   });
   yield newLocation.save();
   
@@ -178,7 +178,7 @@ var checkBooking = co.wrap(function *(booking) {
     let hasMoved = GeocodingService.hasMoved(lastLocation, newLocation);
     // If the car has moved, but the ignition is off, that means that the vehicle may currently be being towed and a notification is sent tto slack
     if (hasMoved && !device.isIgnitionOn && !car.isIgnitionOn && car.totalMileage === device.totalMileage) {
-      console.log(car, device, car.totalMileage, device.totalMileage, device.isIgnitionOn, car.isIgnitionOn, hasMoved);
+      console.log(car, device, car.totalMileage, device.totalMileage, device.isIgnitionOn, car.isIgnitionOn, hasMoved, lastLocation, newLocation);
       //yield notify.notifyAdmins(`:flying_saucer: ${ car.license } is moving without the ignition on or odometer incrementing. It may be on a tow truck.`, [ 'slack' ], { channel : '#rental-alerts' });
     }
   }
