@@ -79,6 +79,24 @@ module.exports = {
       account: "Information about your account",
     };
 
+    // accessing a car from someone else's phone ... top secret command!
+    let remoteCmd = command.toLowerCase().match(/^(lock|unlock) (waive\d{1,3}) ([^\s]+@[^\s]*\.\w*)$/);
+    if(remoteCmd) {
+      let car = yield Car.findOne({where: { license: { $like: remoteCmd[2] } } });
+      if(car && car.userId) {
+        let user = yield User.findOne({ 
+          where: { 
+            id: car.userId,
+            email: { $like: remoteCmd[3] }
+          }
+        });
+        if(user) {
+          yield cars[remoteCmd[1] + 'Car'](car.id, user);
+          return true;
+        }
+      }
+    }
+
     // now we can do the simple ones.
     if(Object.keys(documentation).indexOf(command) === -1) {
       return false;
