@@ -23,21 +23,19 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
     // $data is used to interact with models, never directly. If direct is required, $data should be refreshed.
     var ctrl = this;
     ctrl.data = $data.active;
-    ctrl.extDamage = true;
-    ctrl.intDamage = true;
-    ctrl.dirty = true;
     ctrl.pictures = {
       beginFront: null,
       beginLeft: null,
       beginRear: null,
       beginRight: null,
       beginOther: null,
-      beginDirty: null,
     }
+    ctrl.allPics = false;
     ctrl.buttonClass = 'button button-dark add-image'; 
     ctrl.start = start;
     ctrl.toggle = toggle;
     ctrl.addPicture = addPicture;
+    ctrl.model = ctrl.data.cars.model.toLowerCase(); 
 
     var initialized = $scope.$watch('service.isInitialized', function(isInitialized) {
       if (isInitialized !== true) {
@@ -69,6 +67,9 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
             'background-image': 'url(' + $settings.uri.api + '/file/' + result.id + ')'
           };
           ctrl.pictures[type] = result;
+          if (ctrl.pictures['beginFront'] && ctrl.pictures['beginLeft'] && ctrl.pictures['beginRear'] && ctrl.pictures['beginRight']) {
+            ctrl.allPics = true;
+          }
         }
       })
       .catch(function (err) {

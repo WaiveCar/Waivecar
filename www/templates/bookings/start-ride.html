@@ -27,7 +27,7 @@
             <div class="text-center">
               <div>
                 <div class="start-ride-holder">
-                  <img src="https://waivecar.com/images/cars/ioniq_front.jpg" class="sample-image"></img>
+                  <img ng-src="https://waivecar.com/images/cars/{{ctrl.model}}_front.jpg" class="sample-image"></img>
                   <button 
                     ng-click="ctrl.addPicture('beginFront')" 
                     ng-style="ctrl.pictures.beginFront.style" 
@@ -38,7 +38,7 @@
               </div>
               <div>
                 <div class="start-ride-holder">
-                <img src="https://waivecar.com/images/cars/ioniq_driver.jpg" class="sample-image"></img>
+                <img ng-src="https://waivecar.com/images/cars/{{ctrl.model}}_driver.jpg" class="sample-image"></img>
                 <button 
                   ng-click="ctrl.addPicture('beginLeft')" 
                   ng-style="ctrl.pictures.beginLeft.style" 
@@ -49,7 +49,7 @@
               </div>
               <div> 
                 <div class="start-ride-holder">
-                  <img src="https://waivecar.com/images/cars/ioniq_back.jpg" class="sample-image"></img>
+                  <img ng-src="https://waivecar.com/images/cars/{{ctrl.model}}_back.jpg" class="sample-image"></img>
                   <button 
                     ng-click="ctrl.addPicture('beginRear')" 
                     ng-style="ctrl.pictures.beginRear.style" 
@@ -60,7 +60,7 @@
               </div>
               <div> 
                 <div class="start-ride-holder">
-                  <img src="https://waivecar.com/images/cars/ioniq_passenger.jpg" class="sample-image"></img>
+                  <img ng-src="https://waivecar.com/images/cars/{{ctrl.model}}_passenger.jpg" class="sample-image"></img>
                   <button 
                     ng-click="ctrl.addPicture('beginRight')" 
                     ng-style="ctrl.pictures.beginRight.style" 
@@ -70,7 +70,7 @@
                 Right
               </div>
               <div>
-                Any other damage? Is the car dirty or messy Put pictures here.
+                Any other damage? Is the car dirty or messy? Put pictures here.
                 <div>
                   <button 
                     ng-click="ctrl.addPicture('beginOther')" 
@@ -99,15 +99,9 @@
                 </label>
               </li>
             </ul>
-            <div ng-if="ctrl.dirty || ctrl.intDamage || ctrl.extDamage">
+            <div>
               <button type="button" class="button button-block button-balanced"
-                ng-disabled="!(ctrl.data.bookings.status === 'started' || ctrl.data.bookings.status === 'ready')"
-                ng-click="ctrl.start()">Continue</button>
-              <p>You can fill in damage details on the next screen.</p>
-            </div>
-            <div ng-if="!(ctrl.dirty || ctrl.intDamage || ctrl.extDamage)">
-              <button type="button" class="button button-block button-balanced"
-                ng-disabled="!(ctrl.data.bookings.status === 'started' || ctrl.data.bookings.status === 'ready')"
+                ng-disabled="!ctrl.allPics"
                 ng-click="ctrl.start()">Start Ride</button>
               <p></p>
             </div>
