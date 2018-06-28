@@ -6,8 +6,8 @@
       </div>
     </page-title>
   </ion-nav-title>
-  <ion-content scroll="false" padding="true" class="ion-content--center dark-bg start-ride">
-    <div  class="row row-center row-full-height">
+  <ion-content scroll="true" padding="false" class="ion-content--center dark-bg start-ride">
+    <div  class="row row-center">
       <div class="col col-center">
         <div>
           <h3>START RIDE</h3>
@@ -26,7 +26,6 @@
             Document any existing issues by taking the following photos before starting your ride
             <div class="text-center">
               <div>
-                Front: 
                 <div>
                   <button 
                     ng-click="ctrl.addPicture('beginFront')" 
@@ -34,9 +33,9 @@
                     class="button side-image">
                   </button>
                 </div>
+                Front 
               </div>
               <div>
-                Left: 
                 <div>
                 <button 
                   ng-click="ctrl.addPicture('beginLeft')" 
@@ -44,9 +43,9 @@
                   class="button side-image">
                 </button> 
                 </div>
+                Left
               </div>
-              <div>
-                Rear: 
+              <div> 
                 <div>
                   <button 
                     ng-click="ctrl.addPicture('beginRear')" 
@@ -54,9 +53,9 @@
                     class="button side-image">
                   </button>
                 </div>
+                Rear
               </div>
-              <div>
-                Right: 
+              <div> 
                 <div>
                   <button 
                     ng-click="ctrl.addPicture('beginRight')" 
@@ -64,6 +63,7 @@
                     class="button side-image">
                   </button>
                 </div>
+                Right
               </div>
               <div>
                 Any other damage? Put a picture here.
