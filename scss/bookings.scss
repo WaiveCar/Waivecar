@@ -308,3 +308,9 @@
   background-size: 100%;
   background-color: white;
 }
+
+.start-ride-holder {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
