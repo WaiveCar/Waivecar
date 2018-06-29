@@ -51,8 +51,10 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
       beginRear: null,
       beginRight: null,
       beginOther: null,
+      streetSignImage: null,
     }
-    //ctrl.model = ctrl.data.cars.model.toLowerCase(); 
+    ctrl.appPics = false;
+    ctrl.model = $data.active.cars.model.toLowerCase(); 
 
     // Attach methods
     ctrl.setType = setType;
@@ -135,34 +137,25 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
         });
     }
 
-    /**
-     * Uploads image to server for street sign
-     * @returns {Void} null
-     */
-    function addPicture () {
-      console.log('Data: ', $data, '$state', $state);
+    function addPicture(type) {
       $uploadImage({
         endpoint: '/files?bookingId=' + $stateParams.id,
-        filename: 'parking_' + $stateParams.id + '_' + Date.now() + '.jpg',
+        filename: type + $stateParams.id.id + '_' + Date.now() + '.jpg',
       })
       .then(function (result) {
         if (result && Array.isArray(result)) result = result[0];
-
         if (result) {
           result.style = {
             'background-image': 'url(' + $settings.uri.api + '/file/' + result.id + ')'
           };
-          ctrl.street.streetSignImage = result;
+          console.log($settings.uri.api + '/file/' + result.id); 
+          ctrl.pictures[type] = result;
+          if (ctrl.pictures['streetSignImage'] && ctrl.pictures['beginFront'] && ctrl.pictures['beginLeft'] && ctrl.pictures['beginRear'] && ctrl.pictures['beginRight']) {
+            ctrl.allPics = true;
+          }
         }
       })
       .catch(function (err) {
-        // for testing to skip photo. See #1113
-
-        // var result = {id: 'asdf'}.style = {
-        //   'background-image': 'url(' + $settings.uri.api + '/file/asdf' +  ')'
-        // };
-        // ctrl.street.streetSignImage = result;
-        // return;
         var message = err.message;
         if (err instanceof $window.FileTransferError) {
           if (err.body) {
@@ -174,7 +167,7 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
         }
         submitFailure(message);
       });
-    };
+    }
 
     function submit() {
 

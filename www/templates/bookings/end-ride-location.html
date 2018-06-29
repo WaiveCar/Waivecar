@@ -11,8 +11,8 @@
             1) Take a picture of the parking sign.
           </p>
           <div class="text-center">
-            <div ng-if="ctrl.street.streetSignImage" class="street-sign-image" ng-style="ctrl.street.streetSignImage.style"></div>
-            <button ng-click="ctrl.addPicture()" class="button button-dark add-image"></button>
+            <div ng-if="ctrl.pictures.streetSignImage" class="street-sign-image" ng-style="ctrl.pictures.streetSignImage.style"></div>
+            <button ng-click="ctrl.addPicture('streetSignImage')" class="button button-dark add-image"></button>
           </div>
         </div>
         <div class='text-center'>
@@ -26,99 +26,72 @@
           </div>
         </div>
       </div>
-      
-    <div  class="row row-center">
-      <div class="col col-center">
-        <div>
+      <div  class="row row-center">
+        <div class="col col-center">
           <div>
-            <p>Your ride in {{ ctrl.data.cars.license }} is almost almost.</p>
-            Document any existing issues by taking the following photos before ending your ride. The pictures on the left are examples             of how they should look.
-            <div class="text-center">
-              <div>
-                <div class="start-ride-holder">
-                  <img ng-src="https://waivecar.com/images/cars/{{ctrl.model}}_front.jpg" class="sample-image"></img>
-                  <button 
-                    ng-click="ctrl.addPicture('beginFront')" 
-                    ng-style="ctrl.pictures.beginFront.style" 
-                    class="button side-image">
-                  </button>
-                </div>
-                Front 
-              </div>
-              <div>
-                <div class="start-ride-holder">
-                <img ng-src="https://waivecar.com/images/cars/{{ctrl.model}}_driver.jpg" class="sample-image"></img>
-                <button 
-                  ng-click="ctrl.addPicture('beginLeft')" 
-                  ng-style="ctrl.pictures.beginLeft.style" 
-                  class="button side-image">
-                </button> 
-                </div>
-                Left
-              </div>
-              <div> 
-                <div class="start-ride-holder">
-                  <img ng-src="https://waivecar.com/images/cars/{{ctrl.model}}_back.jpg" class="sample-image"></img>
-                  <button 
-                    ng-click="ctrl.addPicture('beginRear')" 
-                    ng-style="ctrl.pictures.beginRear.style" 
-                    class="button side-image">
-                  </button>
-                </div>
-                Rear
-              </div>
-              <div> 
-                <div class="start-ride-holder">
-                  <img ng-src="https://waivecar.com/images/cars/{{ctrl.model}}_passenger.jpg" class="sample-image"></img>
-                  <button 
-                    ng-click="ctrl.addPicture('beginRight')" 
-                    ng-style="ctrl.pictures.beginRight.style" 
-                    class="button side-image">
-                  </button>
-                </div>
-                Right
-              </div>
-              <div>
-                Any other damage? Is the car dirty or messy? Put pictures here.
-                <div>
-                  <button 
-                    ng-click="ctrl.addPicture('beginOther')" 
-                    ng-style="ctrl.pictures.beginOther.style" 
-                    class="button side-image">
-                  </button>
-                </div>
-              </div>
-            </div>
-            <p>Last few things</p>
-            <ul class="list-unstyled text-left bold-list">
-              <li>
-                <p class="pull-left">Check your mirrors</p>
-                <label class="pull-right">
-                  <span class="check">
-                    <ng-include src="'/img/check-icon.svg'" />
-                  </span>
-                </label>
-              </li>
-              <li>
-                <p class="pull-left">Take note of your charge level</p>
-                <label class="pull-right">
-                  <span class="check">
-                    <ng-include src="'/img/check-icon.svg'" />
-                  </span>
-                </label>
-              </li>
-            </ul>
             <div>
-              <button type="button" class="button button-block button-balanced"
-                ng-disabled="!ctrl.allPics"
-                ng-click="ctrl.start()">Start Ride</button>
-              <p></p>
+              <p>Your ride in {{ ctrl.data.cars.license }} is almost almost.</p>
+              Document any existing issues by taking the following photos before ending your ride. The pictures on the left are examples             of how they should look.
+              <div class="text-center">
+                <div>
+                  <div class="start-ride-holder">
+                    <img ng-src="https://waivecar.com/images/cars/{{ctrl.model}}_front.jpg" class="sample-image"></img>
+                    <button 
+                      ng-click="ctrl.addPicture('beginFront')" 
+                      ng-style="ctrl.pictures.beginFront.style" 
+                      class="button side-image">
+                    </button>
+                  </div>
+                  Front 
+                </div>
+                <div>
+                  <div class="start-ride-holder">
+                  <img ng-src="https://waivecar.com/images/cars/{{ctrl.model}}_driver.jpg" class="sample-image"></img>
+                  <button 
+                    ng-click="ctrl.addPicture('beginLeft')" 
+                    ng-style="ctrl.pictures.beginLeft.style" 
+                    class="button side-image">
+                  </button> 
+                  </div>
+                  Left
+                </div>
+                <div> 
+                  <div class="start-ride-holder">
+                    <img ng-src="https://waivecar.com/images/cars/{{ctrl.model}}_back.jpg" class="sample-image"></img>
+                    <button 
+                      ng-click="ctrl.addPicture('beginRear')" 
+                      ng-style="ctrl.pictures.beginRear.style" 
+                      class="button side-image">
+                    </button>
+                  </div>
+                  Rear
+                </div>
+                <div> 
+                  <div class="start-ride-holder">
+                    <img ng-src="https://waivecar.com/images/cars/{{ctrl.model}}_passenger.jpg" class="sample-image"></img>
+                    <button 
+                      ng-click="ctrl.addPicture('beginRight')" 
+                      ng-style="ctrl.pictures.beginRight.style" 
+                      class="button side-image">
+                    </button>
+                  </div>
+                  Right
+                </div>
+                <div>
+                  Any other damage? Is the car dirty or messy? Put pictures here.
+                  <div>
+                    <button 
+                      ng-click="ctrl.addPicture('beginOther')" 
+                      ng-style="ctrl.pictures.beginOther.style" 
+                      class="button side-image">
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-
       <div class="padding-top padding-bottom">
         <button ng-click="ctrl.submit()" class="button button-balanced button-block">My Parking is OK</button>
       </div>
