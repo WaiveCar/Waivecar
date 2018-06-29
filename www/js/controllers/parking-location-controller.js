@@ -38,7 +38,6 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
       lotOvernightRest: false
     };
     ctrl.street = {
-      streetSignImage: null,
       streetHours: null,
       streetMinutes: null,
       streetOvernightRest: false
@@ -66,6 +65,8 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
     ctrl.addPicture = addPicture;
     ctrl.toggle = toggle;
     ctrl.minhours = 3;
+    ctrl.loadBooking = loadBooking;
+    ctrl.loadCar = loadCar;
     ctrl.init = init;
 
     ctrl.init();
@@ -173,7 +174,6 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
     }
 
     function addPicture(type) {
-      console.log(ctrl.zone);
       $uploadImage({
         endpoint: '/files?bookingId=' + $stateParams.id,
         filename: type + $stateParams.id.id + '_' + Date.now() + '.jpg',
@@ -209,6 +209,10 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
       // Force users to take pictures. See #1113
       if ((ctrl.type === 'street' || ctrl.type === 'lot') && !ctrl.pictures.streetSignImage) {
         return submitFailure('Ending here requires a photo of the parking sign.');
+      }
+
+      if (!ctrl.pictures.beginFront || !ctrl.beginLeft || !ctrl.beginRight || !ctrl.beginRear) {
+        return submitFailure('Please take pictures of all sides of the vehicle before proceeding');
       }
       
       if (!ctrl.overrideStreetRestrictions && checkIsParkingRestricted()) {

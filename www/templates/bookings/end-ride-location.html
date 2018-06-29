@@ -133,10 +133,10 @@
           <li>
             <p class="pull-left">Key in holder</p>
             <label class="pull-right">
-              <span class="check" ng-show="ctrl.data.cars.isKeySecure">
+              <span class="check" ng-show="ctrl.car.isKeySecure">
                 <ng-include src="'/img/check-icon.svg'" />
               </span>
-              <span ng-hide="ctrl.data.cars.isKeySecure">
+              <span ng-hide="ctrl.car.isKeySecure">
                 <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
               </span>
             </label>
@@ -144,10 +144,10 @@
           <li>
             <p class="pull-left">Engine off</p>
             <label class="pull-right">
-              <span class="check" ng-hide="ctrl.data.cars.isIgnitionOn">
+              <span class="check" ng-hide="ctrl.car.isIgnitionOn">
                 <ng-include src="'/img/check-icon.svg'" />
               </span>
-              <span ng-show="ctrl.data.cars.isIgnitionOn">
+              <span ng-show="ctrl.car.isIgnitionOn">
                 <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
               </span>
             </label>
