@@ -197,11 +197,7 @@ module.exports = {
         },
         { 
           model : 'Booking',
-          as: 'booking',
-          where: {
-            status: { $in : ['reserved','pending','ready','started','ended'] }
-          },
-          limit: 1
+          as: 'currentBooking'
         }
       ]
     });
@@ -234,8 +230,8 @@ module.exports = {
         car.lastActionTime = car.lastAction.createdAt;
       }
       car.license = car.license || '';
-      if(car.booking && car.booking[0]) {
-        car.statuscolumn = statusMap[car.booking[0].status] || 'Unavailable';
+      if(car.currentBooking) {
+        car.statuscolumn = statusMap[car.currentBooking.status] || 'Unavailable';
 
         if(car.statuscolumn === 'Available' && !car.isAvailable) {
           car.statuscolumn = 'Unavailable';
