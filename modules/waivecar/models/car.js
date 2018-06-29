@@ -29,6 +29,10 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       }
     },
 
+    bookingId : {
+      type       : Sequelize.INTEGER,
+    },
+
     isAvailable : {
       type         : Sequelize.BOOLEAN,
       defaultValue : false
@@ -350,10 +354,11 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       });
     },
 
-    addDriver : function *(userId) {
+    addDriver : function *(userId, bookingId) {
       yield this.update({
         userId      : userId,
-        isAvailable : false
+        isAvailable : false,
+        bookingId   : bookingId
       });
     },
 
@@ -425,15 +430,14 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
     removeDriver : function *() {
       yield this.update({
-        userId : null
+        userId      : null,
+        bookingId   : null
       });
     }
 
   };
 
   model.attributes = [
-    'bookingId',
-    'lastBooking',
     'statuscolumn',
     'lastAction',
     'lastActionTime',
@@ -446,6 +450,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     'GroupCar',
     function(User, Booking, GroupCar) {
       this.belongsTo(User, { as : 'user', foreignKey : 'userId' });
+      this.belongsTo(Booking, { as : 'currentBooking', foreignKey : 'bookingId' });
       this.hasMany(Booking, { as : 'booking' });
       this.hasMany(GroupCar,  { as : 'groupCar', foreignKey : 'carId' });
     }
