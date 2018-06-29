@@ -19,7 +19,6 @@
               class="button parking-image">
             </button> 
             </div>
-            Left
           </div>
         </div>
         <div class='text-center'>
@@ -37,7 +36,7 @@
         <div class="col col-center">
           <div>
             <div>
-              <p>Your ride in {{ ctrl.data.cars.license }} is almost almost.</p>
+              <p>Your ride in {{ ctrl.car.license }} is almost complete.</p>
               Document any existing issues by taking the following photos before ending your ride. The pictures on the left are examples             of how they should look.
               <div class="text-center">
                 <div>
@@ -98,6 +97,76 @@
             </div>
           </div>
         </div>
+      </div>
+      <div>
+        <div class="info-header">
+          <div class="info-header-item">
+            <ng-include class="battery" src="'/img/battery.svg'"></ng-include>
+            {{ ctrl.data.cars.charge | number:0 }} %
+          </div>
+          <div class="info-header-item">
+            <ng-include src="'/img/clock-icon.svg'"></ng-include>
+            {{ ctrl.hours }}:{{ ctrl.minutes }}
+          </div>
+        </div>
+        <p>Quick checklist to wrap things up:</p>
+        <ul class="list-unstyled text-left bold-list">
+          <li>
+            <p class="pull-left">No tickets recieved</p>
+            <label ng-if="!ctrl.tickets" ng-click="ctrl.toggle('tickets')" class="pull-right">
+              <span class="check">
+                <div class="empty-red"></div>
+              </span>
+              <span class="check">
+                <ng-include src="'/img/check-icon.svg'" />
+              </span>
+            </label>
+            <label ng-if="ctrl.tickets" ng-click="ctrl.toggle('tickets')" class="pull-right">
+              <span class="check">
+                <ng-include src="'/img/x-icon.svg'" />
+              </span>
+              <span class="check">
+                <div class="empty-green"></div>
+              </span>
+            </label>
+          </li>
+        </ul>
+
+        <p>
+          Last few things
+        </p>
+        <ul class="list-unstyled text-left bold-list">
+          <li>
+            <p class="pull-left">Key in holder</p>
+            <label class="pull-right">
+              <span class="check" ng-show="ctrl.data.cars.isKeySecure">
+                <ng-include src="'/img/check-icon.svg'" />
+              </span>
+              <span ng-hide="ctrl.data.cars.isKeySecure">
+                <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
+              </span>
+            </label>
+          </li>
+          <li>
+            <p class="pull-left">Engine off</p>
+            <label class="pull-right">
+              <span class="check" ng-hide="ctrl.data.cars.isIgnitionOn">
+                <ng-include src="'/img/check-icon.svg'" />
+              </span>
+              <span ng-show="ctrl.data.cars.isIgnitionOn">
+                <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
+              </span>
+            </label>
+          </li>
+          <li>
+            <p class="pull-left" style="max-width: 250px; text-align: left;">Take your belongings and close the doors</p>
+            <label class="pull-right">
+              <span class="check">
+                <ng-include src="'/img/check-icon.svg'" />
+              </span>
+            </label>
+          </li>
+        </ul>
       </div>
       <div class="padding-top padding-bottom">
         <button ng-click="ctrl.submit()" class="button button-balanced button-block">My Parking is OK</button>

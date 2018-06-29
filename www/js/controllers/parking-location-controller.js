@@ -54,7 +54,8 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
       streetSignImage: null,
     }
     ctrl.appPics = false;
-    ctrl.model = $data.active.cars.model.toLowerCase(); 
+    ctrl.car = $data.active.cars;
+    ctrl.model = ctrl.car.model.toLowerCase(); 
 
     // Attach methods
     ctrl.setType = setType;
@@ -138,6 +139,7 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
     }
 
     function addPicture(type) {
+      console.log(ctrl.zone);
       $uploadImage({
         endpoint: '/files?bookingId=' + $stateParams.id,
         filename: type + $stateParams.id.id + '_' + Date.now() + '.jpg',
@@ -171,7 +173,7 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
     function submit() {
 
       // Force users to take pictures. See #1113
-      if ((ctrl.type === 'street' || ctrl.type === 'lot') && !ctrl.street.streetSignImage) {
+      if ((ctrl.type === 'street' || ctrl.type === 'lot') && !ctrl.pictures.streetSignImage) {
         return submitFailure('Ending here requires a photo of the parking sign.');
       }
       
