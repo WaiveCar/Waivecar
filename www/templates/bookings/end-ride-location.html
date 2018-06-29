@@ -1,9 +1,19 @@
 <ion-view hide-back-button="true">
   <ion-nav-title>
-    <page-title class="dark-bg">Parking Location</page-title>
+    <page-title class="dark-bg">End Ride</page-title>
   </ion-nav-title>
   <ion-content padding="true" class="has-header ion-content--center dark-bg parking-location">
     <div class="parking-details-wrap">
+        <div class="info-header">
+          <div class="info-header-item">
+            <ng-include class="battery" src="'/img/battery.svg'"></ng-include>
+            {{ ctrl.car.charge | number:0 }} %
+          </div>
+          <div class="info-header-item">
+            <ng-include src="'/img/clock-icon.svg'"></ng-include>
+            {{ ctrl.hours }}:{{ ctrl.minutes }}
+          </div>
+        </div>
       <div ng-if="ctrl.type === 'street'" class="parking-details">
         <div class="address row" ng-bind-html="ctrl.address_markup"></div>
         <div>
@@ -37,7 +47,7 @@
           <div>
             <div>
               <p>Your ride in {{ ctrl.car.license }} is almost complete.</p>
-              Document any existing issues by taking the following photos before ending your ride. The pictures on the left are examples             of how they should look.
+              3) Document any existing issues by taking the following photos before ending your ride. The pictures on the left are examples             of how they should look.
               <div class="text-center">
                 <div>
                   <div class="start-ride-holder">
@@ -99,16 +109,6 @@
         </div>
       </div>
       <div>
-        <div class="info-header">
-          <div class="info-header-item">
-            <ng-include class="battery" src="'/img/battery.svg'"></ng-include>
-            {{ ctrl.car.charge | number:0 }} %
-          </div>
-          <div class="info-header-item">
-            <ng-include src="'/img/clock-icon.svg'"></ng-include>
-            {{ ctrl.hours }}:{{ ctrl.minutes }}
-          </div>
-        </div>
         <p>Quick checklist to wrap things up:</p>
         <ul class="list-unstyled text-left bold-list">
           <li>
