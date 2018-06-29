@@ -102,7 +102,7 @@
         <div class="info-header">
           <div class="info-header-item">
             <ng-include class="battery" src="'/img/battery.svg'"></ng-include>
-            {{ ctrl.data.cars.charge | number:0 }} %
+            {{ ctrl.car.charge | number:0 }} %
           </div>
           <div class="info-header-item">
             <ng-include src="'/img/clock-icon.svg'"></ng-include>
@@ -130,12 +130,6 @@
               </span>
             </label>
           </li>
-        </ul>
-
-        <p>
-          Last few things
-        </p>
-        <ul class="list-unstyled text-left bold-list">
           <li>
             <p class="pull-left">Key in holder</p>
             <label class="pull-right">

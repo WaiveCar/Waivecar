@@ -2,6 +2,7 @@
 
 var angular = require('angular');
 var moment = require('moment');
+var _ = require('lodash');
 
 require('../services/zendrive-service');
 
@@ -56,12 +57,14 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
     ctrl.appPics = false;
     ctrl.car = $data.active.cars;
     ctrl.model = ctrl.car.model.toLowerCase(); 
+    ctrl.tickets = true;
 
     // Attach methods
     ctrl.setType = setType;
     ctrl.geocode = geocode;
     ctrl.submit = submit;
     ctrl.addPicture = addPicture;
+    ctrl.toggle = toggle;
     ctrl.minhours = 3;
     ctrl.init = init;
 
@@ -80,8 +83,35 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
         // Kick off geocoding
         ctrl.geocode();
       });
+      loadBooking($stateParams.id)
+        .then(function(booking) {
+          ctrl.booking = booking;
+          $ride.setBooking(booking.id);
+          //ZendriveService.stop(booking.id);
+
+          var start = _.find(booking.details, { type: 'start' });
+          var end = _.find(booking.details, { type: 'end' });
+          ctrl.hours = moment().diff(moment(start.createdAt), 'hours');
+          ctrl.minutes = moment().diff(moment(start.createdAt), 'minutes');
+          ctrl.minutes = ("" + (100 + ctrl.minutes % 60)).slice(1);
+
+          return loadCar(booking.carId);
+        })
+        .then(function(car) {
+          ctrl.car = car;
+        })
+        .catch(function(err) {
+          console.log('init failed: ', err);
+        });
+    }
+    
+    function loadBooking(id) {
+      return $data.resources.bookings.get({ id: id }).$promise;
     }
 
+    function loadCar(id) {
+      return $data.activate('cars', id);
+    }
     /**
      * Toggle parking type
      * @param {String} type Type of parking info
@@ -89,6 +119,10 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
      */
     function setType(type) {
       ctrl.type = type;
+    }
+
+    function toggle(field) {
+      this[field] = !this[field];
     }
 
     function geocode() {
