@@ -30,12 +30,12 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
       beginRight: null,
       beginOther: null,
     }
+    ctrl.model = ctrl.data.cars.model.toLowerCase(); 
     ctrl.allPics = false;
     ctrl.buttonClass = 'button button-dark add-image'; 
     ctrl.start = start;
     ctrl.toggle = toggle;
     ctrl.addPicture = addPicture;
-    ctrl.model = ctrl.data.cars.model.toLowerCase(); 
 
     var initialized = $scope.$watch('service.isInitialized', function(isInitialized) {
       if (isInitialized !== true) {

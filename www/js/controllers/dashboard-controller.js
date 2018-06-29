@@ -395,7 +395,7 @@ function DashboardController ($scope, $rootScope, $injector) {
           });
         } else if(endLocation.type === 'zone') {
           return showZonePrompt(endLocation, function () {
-            return $state.go('end-ride-location', { id: bookingId, zone: endLocation })
+            return $state.go('end-ride-location', { id: bookingId, car: $data, zone: endLocation })
           });
         } else {
           // Not inside geofence -> show error

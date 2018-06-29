@@ -2,75 +2,8 @@
   <ion-nav-title>
     <page-title class="dark-bg">Parking Location</page-title>
   </ion-nav-title>
-  <ion-content scroll="false" padding="true" class="has-header ion-content--center dark-bg parking-location">
+  <ion-content padding="true" class="has-header ion-content--center dark-bg parking-location">
     <div class="parking-details-wrap">
-      <!--
-      <div class="button-bar">
-        <a class="button"
-          ng-class="{ 'button-balanced' : ctrl.type === 'lot', 'button-dark' : ctrl.type !== 'lot'  }"
-          ng-click="ctrl.setType('lot')"
-          >Parking Lot</a>
-        <a class="button"
-          ng-class="{ 'button-balanced' : ctrl.type === 'street', 'button-dark' : ctrl.type !== 'street'  }"
-          ng-click="ctrl.setType('street')"
-          >Street</a>
-      </div>
-      <div ng-if="ctrl.type === 'lot'" class="parking-details">
-        <div class="address row" ng-bind-html="ctrl.address_markup"></div>
-        <div class="row">
-          <p class="text-left fill">Is there a free parking period?</p>
-          <div class="text-right">
-            <yes-no-toggle val="ctrl.lot.lotFreePeriod"></yes-no-toggle>
-            <div class="small-input">
-              <input ng-model="ctrl.lot.lotFreeHours" ng-disabled="!ctrl.lot.lotFreePeriod" type="text">
-              <span class="input-label">Hours</span>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <p class="text-left fill">
-            How long can you park in the lot?<br>
-            (minimum 3 hours)
-          </p>
-          <div class="text-right">
-            <div class="small-input">
-              <input ng-model="ctrl.lot.lotHours" type="text">
-              <span class="input-label">Hours</span>
-            </div>
-            <div class="small-input">
-              <input ng-model="ctrl.lot.lotMinutes" type="text">
-              <span class="input-label">Min.</span>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <p class="text-left fill">What is your spot number?</p>
-          <div class="text-right">
-            <div class="small-input">
-              <input ng-model="ctrl.lot.lotLevel" type="text">
-              <span class="input-label">Level</span>
-            </div>
-            <div class="small-input">
-              <input ng-model="ctrl.lot.lotSpot" type="text">
-              <span class="input-label">Spot</span>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <p class="text-left fill">
-            Is there an overnight restriction?<br>
-            (ex: No Parking from 3AM - 5AM)
-          </p>
-          <div class="text-right">
-            <yes-no-toggle val="ctrl.lot.lotOvernightRest"></yes-no-toggle>
-          </div>
-        </div>
-        <div>
-          <br>
-          <p class="text-center">Please put the parking ticket in the glove box.</p>
-        </div>
-      </div>
-      -->
       <div ng-if="ctrl.type === 'street'" class="parking-details">
         <div class="address row" ng-bind-html="ctrl.address_markup"></div>
         <div>
@@ -93,6 +26,99 @@
           </div>
         </div>
       </div>
+      
+    <div  class="row row-center">
+      <div class="col col-center">
+        <div>
+          <div>
+            <p>Your ride in {{ ctrl.data.cars.license }} is almost almost.</p>
+            Document any existing issues by taking the following photos before ending your ride. The pictures on the left are examples             of how they should look.
+            <div class="text-center">
+              <div>
+                <div class="start-ride-holder">
+                  <img ng-src="https://waivecar.com/images/cars/{{ctrl.model}}_front.jpg" class="sample-image"></img>
+                  <button 
+                    ng-click="ctrl.addPicture('beginFront')" 
+                    ng-style="ctrl.pictures.beginFront.style" 
+                    class="button side-image">
+                  </button>
+                </div>
+                Front 
+              </div>
+              <div>
+                <div class="start-ride-holder">
+                <img ng-src="https://waivecar.com/images/cars/{{ctrl.model}}_driver.jpg" class="sample-image"></img>
+                <button 
+                  ng-click="ctrl.addPicture('beginLeft')" 
+                  ng-style="ctrl.pictures.beginLeft.style" 
+                  class="button side-image">
+                </button> 
+                </div>
+                Left
+              </div>
+              <div> 
+                <div class="start-ride-holder">
+                  <img ng-src="https://waivecar.com/images/cars/{{ctrl.model}}_back.jpg" class="sample-image"></img>
+                  <button 
+                    ng-click="ctrl.addPicture('beginRear')" 
+                    ng-style="ctrl.pictures.beginRear.style" 
+                    class="button side-image">
+                  </button>
+                </div>
+                Rear
+              </div>
+              <div> 
+                <div class="start-ride-holder">
+                  <img ng-src="https://waivecar.com/images/cars/{{ctrl.model}}_passenger.jpg" class="sample-image"></img>
+                  <button 
+                    ng-click="ctrl.addPicture('beginRight')" 
+                    ng-style="ctrl.pictures.beginRight.style" 
+                    class="button side-image">
+                  </button>
+                </div>
+                Right
+              </div>
+              <div>
+                Any other damage? Is the car dirty or messy? Put pictures here.
+                <div>
+                  <button 
+                    ng-click="ctrl.addPicture('beginOther')" 
+                    ng-style="ctrl.pictures.beginOther.style" 
+                    class="button side-image">
+                  </button>
+                </div>
+              </div>
+            </div>
+            <p>Last few things</p>
+            <ul class="list-unstyled text-left bold-list">
+              <li>
+                <p class="pull-left">Check your mirrors</p>
+                <label class="pull-right">
+                  <span class="check">
+                    <ng-include src="'/img/check-icon.svg'" />
+                  </span>
+                </label>
+              </li>
+              <li>
+                <p class="pull-left">Take note of your charge level</p>
+                <label class="pull-right">
+                  <span class="check">
+                    <ng-include src="'/img/check-icon.svg'" />
+                  </span>
+                </label>
+              </li>
+            </ul>
+            <div>
+              <button type="button" class="button button-block button-balanced"
+                ng-disabled="!ctrl.allPics"
+                ng-click="ctrl.start()">Start Ride</button>
+              <p></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
       <div class="padding-top padding-bottom">
         <button ng-click="ctrl.submit()" class="button button-balanced button-block">My Parking is OK</button>
       </div>

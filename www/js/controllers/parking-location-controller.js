@@ -45,6 +45,15 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
     
     ctrl.overrideStreetRestrictions = false;
 
+    ctrl.pictures = {
+      beginFront: null,
+      beginLeft: null,
+      beginRear: null,
+      beginRight: null,
+      beginOther: null,
+    }
+    //ctrl.model = ctrl.data.cars.model.toLowerCase(); 
+
     // Attach methods
     ctrl.setType = setType;
     ctrl.geocode = geocode;
@@ -131,6 +140,7 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
      * @returns {Void} null
      */
     function addPicture () {
+      console.log('Data: ', $data, '$state', $state);
       $uploadImage({
         endpoint: '/files?bookingId=' + $stateParams.id,
         filename: 'parking_' + $stateParams.id + '_' + Date.now() + '.jpg',
