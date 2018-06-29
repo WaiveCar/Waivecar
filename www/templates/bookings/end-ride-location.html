@@ -10,9 +10,16 @@
           <p class="text-center">
             1) Take a picture of the parking sign.
           </p>
-          <div class="text-center">
-            <div ng-if="ctrl.pictures.streetSignImage" class="street-sign-image" ng-style="ctrl.pictures.streetSignImage.style"></div>
-            <button ng-click="ctrl.addPicture('streetSignImage')" class="button button-dark add-image"></button>
+          <div>
+            <div class="start-ride-holder">
+            <img src="https://www.waivecar.com/images/cars/parking-sign.jpg" class="parking-sample-image"></img>
+            <button 
+              ng-click="ctrl.addPicture('streetSignImage')" 
+              ng-style="ctrl.pictures.beginLeft.style" 
+              class="button parking-image">
+            </button> 
+            </div>
+            Left
           </div>
         </div>
         <div class='text-center'>

@@ -305,7 +305,6 @@
   height: 100px;
   width: 133px;
   background-size: 100%;
-  background-color: white;
 }
 
 .start-ride-holder {
@@ -313,3 +312,19 @@
   flex-direction: row;
   justify-content: space-around;
 }
+
+.parking-image {
+  height: 133px;
+  width: 100px;
+  background-color: #444;
+  background: url('../img/camera.svg') center center no-repeat;
+  background-size: 100%;
+}
+
+.parking-sample-image {
+  height: 133px;
+  width: 100px;
+  background-size: 100%;
+}
+
+

@@ -148,7 +148,6 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
           result.style = {
             'background-image': 'url(' + $settings.uri.api + '/file/' + result.id + ')'
           };
-          console.log($settings.uri.api + '/file/' + result.id); 
           ctrl.pictures[type] = result;
           if (ctrl.pictures['streetSignImage'] && ctrl.pictures['beginFront'] && ctrl.pictures['beginLeft'] && ctrl.pictures['beginRear'] && ctrl.pictures['beginRight']) {
             ctrl.allPics = true;
