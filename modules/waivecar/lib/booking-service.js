@@ -165,7 +165,6 @@ module.exports = class BookingService extends Service {
         message : `Another driver has already reserved this WaiveCar.`
       }, 400);
     }
-    yield car.addDriver(driver.id);
 
     //
     // We *could* do this, but it will be expiring in 15 seconds any way and there's
@@ -191,9 +190,10 @@ module.exports = class BookingService extends Service {
     try {
       yield booking.save();
     } catch (err) {
-      yield car.removeDriver(); // Remove driver if we failed to save the booking
       throw err;
     }
+
+    yield car.addDriver(driver.id, booking.id);
 
     // Users over 55 should always get 25 minutes to get to the car #1230
 
