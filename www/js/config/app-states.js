@@ -439,19 +439,11 @@ module.exports = [
 
     .state('end-ride', {
       url: '/bookings/:id/end-ride',
-      templateUrl: '/templates/bookings/end-ride-location.html',
-      controller: 'ParkingLocationController as ctrl',
+      templateUrl: '/templates/bookings/end-ride.html',
+      controller: 'EndRideController as ctrl',
       params: {
         zone: null
       },
-      data: {
-        auth: true
-      }
-    })
-    .state('end-ride-no-longer-used', {
-      url: '/bookings/:id/end-ride-no-longer',
-      templateUrl: '/templates/bookings/complete-ride.html',
-      controller: 'CompleteRideController as ctrl',
       data: {
         auth: true
       }
