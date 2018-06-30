@@ -437,8 +437,8 @@ module.exports = [
       }
     })
 
-    .state('end-ride-location', {
-      url: '/bookings/:id/end-ride/location',
+    .state('end-ride', {
+      url: '/bookings/:id/end-ride',
       templateUrl: '/templates/bookings/end-ride-location.html',
       controller: 'ParkingLocationController as ctrl',
       params: {
@@ -448,8 +448,8 @@ module.exports = [
         auth: true
       }
     })
-    .state('end-ride', {
-      url: '/bookings/:id/end-ride',
+    .state('end-ride-no-longer-used', {
+      url: '/bookings/:id/end-ride-no-longer',
       templateUrl: '/templates/bookings/complete-ride.html',
       controller: 'CompleteRideController as ctrl',
       data: {

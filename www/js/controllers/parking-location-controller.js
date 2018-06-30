@@ -211,10 +211,15 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
         return submitFailure('Ending here requires a photo of the parking sign.');
       }
 
-      if (!ctrl.pictures.beginFront || !ctrl.beginLeft || !ctrl.beginRight || !ctrl.beginRear) {
-        return submitFailure('Please take pictures of all sides of the vehicle before proceeding');
+      if (!ctrl.pictures.beginFront || !ctrl.pictures.beginLeft || !ctrl.pictures.beginRight || !ctrl.pictures.beginRear) {
+        return submitFailure('Please take pictures of all sides of the vehicle before proceeding.');
       }
-      
+      if (!ctrl.car.isKeySecure) {
+        return submitFailure('Please return the key to the glovebox');
+      }
+      if (ctrl.car.isIgnitionOn) {
+        return submitFailure('Please make sure the ignition is off before ending your ride.');
+      }
       if (!ctrl.overrideStreetRestrictions && checkIsParkingRestricted()) {
         return parkingRestrictionFailure();
       }
@@ -351,7 +356,7 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
       $ride.setParkingDetails(payload);
       return $ride.processEndRide().then(function () {
         $ionicLoading.hide();
-        return $state.go('end-ride', {id: $ride.state.booking.id});
+        return $ride.checkAndProcessActionOnBookingEnd();
       });
     }
 
