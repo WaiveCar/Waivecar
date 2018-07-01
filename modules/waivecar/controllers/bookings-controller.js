@@ -14,6 +14,11 @@ Bento.Register.Controller('BookingsController', function(controller) {
     var request = obj.request;
     let osVersion = 0;
     let header = request.header['user-agent'];
+
+    if(!header) {
+      return true;
+    }
+
     let iPhone = header.match(/iPhone/);
 
     // App versions between android and iphone are dramatically different for some reason.

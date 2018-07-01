@@ -69,6 +69,10 @@ module.exports = {
     var isAdmin = _user && _user.hasAccess('admin');
 
     var opts = {
+      include: [{
+        model: 'GroupCar',
+        as: 'groupCar',
+      }],
       where : {
         // This $or division is used below for 
         // users to find their own booking.
@@ -99,10 +103,6 @@ module.exports = {
     // Don't show la cars between 1 and 5am pacific time.
     // Unless you are an admin
     if(hour >= 4 && hour < 8 && !isAdmin) {
-      opts.include = [{
-        model: 'GroupCar',
-        as: 'groupCar',
-      }];
 
       opts.where = { 
         $or : [

@@ -171,6 +171,10 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
           },
           userId : this.id
         },
+        include: [{
+          model: 'BookingDetails',
+          as: 'details'
+        }],
         order : [
           [ 'created_at', 'DESC' ]
         ]

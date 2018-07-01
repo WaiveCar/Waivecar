@@ -671,6 +671,9 @@ module.exports = class BookingService extends Service {
     // ### Status Check
     // Go through end booking checklist.
     if ([ 'ready', 'started' ].indexOf(booking.status) === -1) {
+      if(booking.status === 'ended') {
+        return true;
+      }
       throw error.parse({
         code    : `BOOKING_REQUEST_INVALID`,
         message : `You can only end a booking which has been made ready or has already started.`
