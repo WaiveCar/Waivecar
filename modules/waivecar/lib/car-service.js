@@ -102,8 +102,16 @@ module.exports = {
 
     // Don't show la cars between 1 and 5am pacific time.
     // Unless you are an admin
-    if(hour >= 4 && hour < 8 && !isAdmin) {
-
+    if(hour >= 1 && hour < 4 && !isAdmin) {
+      let $or = opts.where['$or']; 
+      delete opts.where['$or'];
+      opts.where['$and'] = [
+        { 
+          charge: { $gt : 55 }
+        },
+        $or
+      ];
+    } else if(hour >= 4 && hour < 8 && !isAdmin) {
       opts.where = { 
         $or : [
           sequelize.literal("groupCar.group_role_id = 7")
@@ -112,6 +120,9 @@ module.exports = {
     }
 
     if(_user) {
+      if(!opts.where['$or']) {
+        opts.where['$or'] = [];
+      }
       opts.where['$or'].push({ userId: _user.id });
     }
 
