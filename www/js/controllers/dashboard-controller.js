@@ -237,7 +237,6 @@ function DashboardController ($scope, $rootScope, $injector) {
     $ride.unlockCharger($data.active.cars.id, chargerId)
       .then(function(car) {
         OnCarChargeChange(car.isCharging);
-        console.log(car);
         $ionicLoading.hide();
     })
     .catch(function (reason) {
@@ -390,9 +389,7 @@ function DashboardController ($scope, $rootScope, $injector) {
 
       return $ride.canEndHereCheck(obj).then(function(endLocation) {
         if (endLocation.type === 'hub' || endLocation.type === 'homebase') {
-          return $ride.processEndRide().then(function() {
-            return $state.go('end-ride', { id: bookingId, zone: endLocation });
-          });
+          return $state.go('end-ride', { id: bookingId, zone: 'hub' });
         } else if(endLocation.type === 'zone') {
           return showZonePrompt(endLocation, function () {
             return $state.go('end-ride', { id: bookingId, zone: endLocation });
