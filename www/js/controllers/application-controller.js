@@ -73,7 +73,7 @@ function ApplicationController ($rootScope, $scope, $injector) {
         // to the reservation state.
       } else if(newState === 'reserved' && (newScreen === 'bookings-active' || lastState === 'created')) {
         $ride.init();
-      } else if(newScreen === 'dashboard' && oldScreen === 'end-ride-location') {
+      } else if(newScreen === 'dashboard' && oldScreen === 'end-ride') {
         // prevents the transition from being made
         //event.preventDefault();
       } else if((newScreen === 'dashboard' || newScreen === 'cars-show') && $data.active.bookings && $data.active.bookings.status === 'reserved') {
