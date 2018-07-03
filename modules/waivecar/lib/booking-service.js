@@ -1380,11 +1380,11 @@ module.exports = class BookingService extends Service {
     opts = opts || {};
 
     let minutesLapsed = moment().diff(booking.updatedAt, 'minutes');
-    let minTime = 25;
+    let minTime = 15;
 
     switch (booking.status) {
       case 'cancelled':
-        minTime = 30;
+        minTime += 5;
         break;
     }
 
@@ -1416,7 +1416,7 @@ module.exports = class BookingService extends Service {
       ].join('');
       throw error.parse({
         code    : 'RECENT_BOOKING',
-        message : `Sorry! You need to wait ${remainingTime}min more to rebook the same WaiveCar! ${buyNow}`
+        message : `Sorry! You need to wait ${remainingTime}min more to rebook the same WaiveCar!`// ${buyNow}`
       }, 400);
     }
    
