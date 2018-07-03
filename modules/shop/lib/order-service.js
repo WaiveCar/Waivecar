@@ -222,6 +222,40 @@ module.exports = class OrderService extends Service {
     return order;
   }
 
+  static *getCarNow(booking, user, amount) {
+    let card = yield Card.findOne({ where : { userId : user.id } });
+    let car = yield Car.findOne({ where: { carId: booking.carId } });
+
+    let order = new Order({
+      createdBy : user.id,
+      userId    : user.id,
+      source      : card.id,
+      description : `${car.license} rebook`,
+      metadata    : null,
+      currency    : 'usd',
+      amount      : amount
+    });
+    let fee = (amount/100).toFixed(2);
+
+    yield order.save();
+    try {
+      yield this.charge(order, user);
+      yield notify.notifyAdmins(`:heavy_dollar_sign: Charged the impatient ${ user.link() } $${ fee } to rebook ${ car.license }`, [ 'slack' ], { channel : '#rental-alerts' });
+    } catch (err) {
+      yield this.failedCharge(amount, user, err, ` | ${ apiConfig.uri }/bookings/${ booking.id }`);
+      return false;
+    }
+
+    // Regardless of whether we successfully charged the user or not, we need
+    // to associate this booking with the users' order id
+    let payment = new BookingPayment({
+      bookingId : booking.id,
+      orderId   : order.id
+    });
+    yield payment.save();
+    return true;
+  }
+
   static *extendReservation(booking, user) {
     let amount = 100;
 

@@ -69,12 +69,7 @@ module.exports = class BookingService extends Service {
       `${ _user.name() } ${ state } for ${ driver.link() }`;
   }
 
-  /**
-   * Creates a new booking.
-   * @param  {Object} data  Data object containing carId, and userId.
-   * @param  {Object} _user User making the request.
-   * @return {Object}
-   */
+  // Creates a new booking.
   static *create(data, _user) {
     if (!redis.shouldProcess('booking-car', data.carId, 10 * 1000)) {
       throw error.parse({
@@ -100,7 +95,7 @@ module.exports = class BookingService extends Service {
     }
 
     if (!_user.hasAccess('admin')) {
-      yield this.recentBooking(driver, car);
+      yield this.recentBooking(driver, car, data.opts);
     }
 
     // If someone owes us more than a dollar
@@ -1369,13 +1364,8 @@ module.exports = class BookingService extends Service {
     return yield geocode.getAddress(lat, long, param); 
   }
 
-  /**
-   * Determines if user has booked car in last 10 minutes
-   * @param {Object} user
-   * @param {Object} car
-   * @return {Void}
-   */
-  static *recentBooking(user, car) {
+  // Determines if user has booked car recently
+  static *recentBooking(user, car, opts) {
     let booking = yield Booking.findOne({
       where : {
         userId : user.id,
@@ -1387,20 +1377,46 @@ module.exports = class BookingService extends Service {
     });
 
     if (!booking) return;
+    opts = opts || {};
 
     let minutesLapsed = moment().diff(booking.updatedAt, 'minutes');
-    let minTime = 10;
+    let minTime = 25;
 
     switch (booking.status) {
       case 'cancelled':
-        minTime = 15;
+        minTime = 30;
         break;
     }
 
-    if (minutesLapsed < minTime) {
+    if (minutesLapsed < minTime && !opts.buyNow) {
+      if(opts.buyNow) {
+        if(yield OrderService.getCarNow(booking, user, opts.buyNow * 100)) {
+          return true;
+        }
+      }
+      let remainingTime =  Math.max(1, Math.ceil(minTime - minutesLapsed));
+      let fee = Math.ceil(remainingTime / minTime * 5);
+      let postparams = JSON.stringify({
+        userId: user.id,
+        carId: car.id,
+        opts: {
+          buyNow: fee
+        }
+      });
+      let buyNow = [
+        "<script>function buyit_pCj8zFIPSkOiGq8zBlO1ng(){",
+          "var x=new XMLHttpRequest(),",
+            "a=JSON.parse(localStorage['auth']);",
+          "x.open('POST','https://api.waivecar.com/bookings',true);",
+          "x.setRequestHeader('Authorization',a.token);",
+          "x.setRequestHeader('Content-Type','application/json');",
+          `x.send('${postparams}');`,
+        "}</script>",
+        `<div style='height:0'><button style='position:relative;top:60px;text-transform:none;color:lightblue' onclick="buyit_pCj8zFIPSkOiGq8zBlO1ng()" class="button button-dark button-link">(Beta feature) Get it now for $${fee}.00</button></div>`,
+      ].join('');
       throw error.parse({
         code    : 'RECENT_BOOKING',
-        message : 'Sorry! You need to wait ' + Math.max(1, Math.ceil(minTime - minutesLapsed)) + 'min more to rebook the same WaiveCar. Sharing is caring!'
+        message : `Sorry! You need to wait ${remainingTime}min more to rebook the same WaiveCar! ${buyNow}`
       }, 400);
     }
    
