@@ -1,6 +1,6 @@
 <ion-view class="report-problem-new">
   <ion-content padding="true" class="ion-content--center dark-bg">
-    <div class="large-image" style="background-image: url('{{ctrl.model.file.url}}');"></div>
+    <div class="large-image" style="background-image: url({{ctrl.model.file.url}});"></div>
     <form ng-submit="ctrl.submit()">
       <label class="item item-input">
         <textarea ng-model="ctrl.model.comment" rows="4" placeholder="Describe the problem with {{ctrl.model.car}} here"></textarea>
