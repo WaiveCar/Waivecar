@@ -224,7 +224,7 @@ module.exports = class OrderService extends Service {
 
   static *getCarNow(booking, user, amount) {
     let card = yield Card.findOne({ where : { userId : user.id } });
-    let car = yield Car.findOne({ where: { carId: booking.carId } });
+    let car = yield Car.findOne({ where: { id: booking.carId } });
 
     let order = new Order({
       createdBy : user.id,

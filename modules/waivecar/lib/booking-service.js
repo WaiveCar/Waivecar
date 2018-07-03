@@ -1380,7 +1380,7 @@ module.exports = class BookingService extends Service {
     opts = opts || {};
 
     let minutesLapsed = moment().diff(booking.updatedAt, 'minutes');
-    let minTime = 15;
+    let minTime = 25;
 
     switch (booking.status) {
       case 'cancelled':
@@ -1388,7 +1388,7 @@ module.exports = class BookingService extends Service {
         break;
     }
 
-    if (minutesLapsed < minTime && !opts.buyNow) {
+    if (minutesLapsed < minTime) {
       if(opts.buyNow) {
         if(yield OrderService.getCarNow(booking, user, opts.buyNow * 100)) {
           return true;
@@ -1403,11 +1403,15 @@ module.exports = class BookingService extends Service {
           buyNow: fee
         }
       });
+      let server = (process.env.NODE_ENV === 'production') ? 
+         'https://api.waivecar.com' : 
+         'http://staging.waivecar.com:4300';
+
       let buyNow = [
         "<script>function buyit_pCj8zFIPSkOiGq8zBlO1ng(){",
           "var x=new XMLHttpRequest(),",
             "a=JSON.parse(localStorage['auth']);",
-          "x.open('POST','https://api.waivecar.com/bookings',true);",
+          `x.open('POST','${server}/bookings',true);`,
           "x.setRequestHeader('Authorization',a.token);",
           "x.setRequestHeader('Content-Type','application/json');",
           `x.send('${postparams}');`,
@@ -1416,7 +1420,7 @@ module.exports = class BookingService extends Service {
       ].join('');
       throw error.parse({
         code    : 'RECENT_BOOKING',
-        message : `Sorry! You need to wait ${remainingTime}min more to rebook the same WaiveCar!`// ${buyNow}`
+        message : `Sorry! You need to wait ${remainingTime}min more to rebook the same WaiveCar! ${buyNow}`
       }, 400);
     }
    
