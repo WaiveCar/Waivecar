@@ -369,7 +369,9 @@ module.exports = angular.module('app.services').factory('$ride', [
       // Complaints about the cars not being able to end below 25 miles
       // Really we need to be system-wide consistent with this number.
       return genericCheck(id, obj, function(status) {
-        return status.charge > 20 || status.isCharging;
+        var stub = status.model.toLowerCase().split(' ')[0];
+        var multiplier = (stub === 'spark') ? 0.70 : 1.35;
+        return (multiplier * status.charge) > 20 || status.isCharging;
       });
     };
 
