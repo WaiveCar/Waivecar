@@ -102,7 +102,7 @@ module.exports = {
 
     // Don't show la cars between 1 and 5am pacific time.
     // Unless you are an admin
-    if(hour >= 1 && hour < 4 && !isAdmin) {
+    if(true){//hour >= 1 && hour < 4 && !isAdmin) {
       let $or = opts.where['$or']; 
       delete opts.where['$or'];
       opts.where['$and'] = [
@@ -118,10 +118,13 @@ module.exports = {
     }
 
     if(_user) {
-      if(!opts.where['$or']) {
-        opts.where['$or'] = [];
-      }
-      opts.where['$or'].push({ userId: _user.id });
+      let $where = opts.where;
+      opts.where = {
+        $or: [
+          { userId: _user.id },
+          $where
+        ]
+      };
     }
 
     const util = require('util');
