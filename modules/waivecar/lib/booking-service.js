@@ -800,7 +800,7 @@ module.exports = class BookingService extends Service {
       let parkingText = '';
       payload.data.bookingId = id;
 
-      let minuteText = ((+payload.data.streetMinutes || 0) + 100).toString().slice(1);
+      let minuteText = ((payload.data.streetMinutes || 0) + 100).toString().slice(1);
       parkingText += `Parked on street for ${ payload.data.streetHours }:${ minuteText }.  `;
       parkingText += payload.data.streetOvernightRest ? 'Has an overnight restriction.' : 'Does not have an overnight restriction.';
 
@@ -1037,7 +1037,7 @@ module.exports = class BookingService extends Service {
     let zone = '', address = '';
     try {
       zone = yield this.getZone(car);
-      zone = `(${zone})` || '';
+      zone = `(${zone.name})` || '';
       address = yield this.getAddress(car.latitude, car.longitude);
     } catch(ex) {}
 
