@@ -112,8 +112,9 @@ module.exports = {
       createdBy   : _user.id
     });
     yield report.save();
+    yield booking.addFlag('inspected');
 
-    let txt = `${ _user.name() } has reported a problem with ${ car.license } on booking ${ booking.id }`;
+    let txt = `${ _user.link() } has reported a problem with ${ car.license } on booking ${ booking.id }`;
     let slackPayload = {
       text        : txt,
       channel     : '#rental-alerts',
