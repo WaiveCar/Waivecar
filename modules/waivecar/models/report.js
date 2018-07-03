@@ -37,6 +37,14 @@ Bento.Register.Model('Report', 'sequelize', function(model, Sequelize) {
       type : Sequelize.TEXT
     },
 
+    fileId : {
+      type       : Sequelize.STRING,
+      allowNull  : false,
+      references : {
+        model : 'files',
+        key   : 'id'
+      }
+    },
     /**
      * Logs the user that created the report.
      * @type {Integer}
