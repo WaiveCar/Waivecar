@@ -121,9 +121,6 @@ module.exports = {
       };
     }
 
-    const util = require('util');
-
-    console.log(util.inspect(opts.where, false, null));
     let cars = yield Car.find(opts);
 
     let available = 0;
