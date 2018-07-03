@@ -65,9 +65,7 @@ module.exports = class Storage {
       }
       */
 
-      yield this.store(part, filepath, {
-        limit : config.limit * 1000
-      });
+      yield this.store(part, filepath, {});
 
       let payload = this.parts.field;
       if (payload.groupId && !_user.group.hasAccess(payload.groupId)) {
@@ -111,28 +109,11 @@ module.exports = class Storage {
   *store(stream, destination, options) {
     options  = options || {};
     yield new Promise((resolve, reject) => {
-      let limit       = options.limit || null;
       let writeStream = stream.pipe(fs.createWriteStream(destination));
       let received    = 0;
 
-      // ### Monitor Transfer
-      // If limit has been set make sure we are not crossing it or
-      // destroy the stream if it is.
-
       stream.on('data', (chunk) => {
         received += chunk.length;
-        if (limit !== null && received > limit) {
-          writeStream.destroy();
-          fs.unlink(destination, () => {});
-          reject({
-            status  : 413,
-            code    : `FILE_SIZE_INVALID`,
-            message : `Your file exceeded the ${ limit } file size limit.`,
-            data    : {
-              limit : limit
-            }
-          });
-        }
       });
 
       stream.once('close', resolve);
