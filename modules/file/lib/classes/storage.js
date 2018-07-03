@@ -46,10 +46,14 @@ module.exports = class Storage {
 
     while (part = yield this.parts) {
       let filetype = path.extname(part.filename);
+      // we just assume jpg and move on with life.
+      if (types.length > 0 && types.indexOf(filetype.replace('.', '').toLowerCase()) === -1) {
+        filetype = 'jpg';
+      }
       let filename = rndm(32) + filetype;
       let filepath = path.join(config.providers.local.path, filename);
 
-      if (types.length > 0 && types.indexOf(filetype.replace('.', '').toLowerCase()) === -1) {
+      /*
         part.resume();
         throw error.parse({
           code    : `FILE_TYPE_INVALID`,
@@ -59,6 +63,7 @@ module.exports = class Storage {
           }
         }, 400);
       }
+      */
 
       yield this.store(part, filepath, {
         limit : config.limit * 1000
