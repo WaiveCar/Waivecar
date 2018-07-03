@@ -563,7 +563,7 @@ module.exports = class BookingService extends Service {
       // we're calling this a second time, we are going to just pass through 
       // and succeed.
       if(booking.status === 'started') {
-        return true;
+        return;
       }
 
       throw error.parse({
