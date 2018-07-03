@@ -124,6 +124,7 @@ module.exports = {
       opts.where['$or'].push({ userId: _user.id });
     }
 
+    console.log(opts.where);
     let cars = yield Car.find(opts);
 
     let available = 0;
