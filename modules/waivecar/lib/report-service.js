@@ -112,9 +112,8 @@ module.exports = {
       createdBy   : _user.id
     });
     yield report.save();
-    yield booking.addFlag('inspected');
 
-    let txt = `${ _user.link() } has reported a problem with ${ car.license } on booking ${ booking.id }`;
+    let txt = `${ _user.name() } has reported a problem with ${ car.license } on booking ${ booking.id }`;
     let slackPayload = {
       text        : txt,
       channel     : '#rental-alerts',
@@ -319,18 +318,15 @@ module.exports = {
         model : Report._schema,
         as    : 'reports',
         include : [{
-          model : ReportFile._schema,
-          as    : 'files',
-          include : [{
-            model : File._schema,
-            as    : 'details'
-          }]
+          model : File._schema,
+          as    : 'file'
         }]
       }]
     };
 
     var result = yield Booking._schema.findAll(dbQuery);
-
+    return result.filter(each => each.reports.length);
+    
     return result.filter(function(booking) {
       return booking.reports.filter(function(report) {
           return report.files.length > 0;

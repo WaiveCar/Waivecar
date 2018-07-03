@@ -19,6 +19,8 @@ class FileService extends Service {
    * @return {Object}
    */
   *store(query, payload, _user) {
+    console.log('Query: ', query);
+    console.log('Payload: ', payload);
     let validate   = hooks.get('file:validate');
     let collection = hooks.get('file:collection');
     let capture    = hooks.get('file:capture');
