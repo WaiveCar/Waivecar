@@ -74,41 +74,35 @@ module.exports = {
         as: 'groupCar',
       }],
       where : {
-        // This $or division is used below for 
-        // users to find their own booking.
-        // Don't simplify it.
-        $or: [
-          {
-            inRepair: false,
-            adminOnly: false
-            //
-            // This gets put in the list
-            // if the user is not an admin.
-            // Otherwise, the admin should be
-            // able to see unavailable cars in 
-            // the app.
-            //
-            // isAvailable: true,
-          }
-        ]
+        inRepair: false,
+        adminOnly: false
+        //
+        // This gets put in the list
+        // if the user is not an admin.
+        // Otherwise, the admin should be
+        // able to see unavailable cars in 
+        // the app.
+        //
+        // isAvailable: true,
       }
     };
 
     if (!isAdmin) {
-      opts.where['$or'][0].isAvailable = true;
+      opts.where.isAvailable = true;
     } else {
-      opts.where['$or'][0].userId = null;
+      opts.where.userId = null;
     }
 
     // Don't show la cars between 1 and 5am pacific time.
     // Unless you are an admin
-    if(true){//hour >= 1 && hour < 4 && !isAdmin) {
-      let $or = opts.where['$or']; 
-      delete opts.where['$or'];
-      opts.where['$and'] = [
-        { charge: { $gt : 55 } }, 
-        { $or: $or }
-      ];
+    if(hour >= 1 && hour < 4 && !isAdmin) {
+      let $where = opts.where;
+      opts.where = {
+        $and: [ 
+          { charge: { $gt : 55 } }, 
+          $where 
+        ]
+      };
     } else if(hour >= 4 && hour < 8 && !isAdmin) {
       opts.where = { 
         $or : [
