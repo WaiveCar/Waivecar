@@ -46,6 +46,12 @@ Bento.Register.Model('Report', 'sequelize', function(model, Sequelize) {
       }
     },
 
+    type :{
+      type      : Sequelize.ENUM,
+      values    : ['left','right','front','rear','other'],
+      allowNull : true
+    },
+
     /**
      * Logs the user that created the report.
      * @type {Integer}
@@ -62,10 +68,8 @@ Bento.Register.Model('Report', 'sequelize', function(model, Sequelize) {
   };
 
   model.relations = [
-    //'ReportFile',
     'File',
-    function relations(File){//ReportFile, File) {
-      //this.hasMany(ReportFile, { as : 'files',  foreignKey : 'reportId' });
+    function relations(File) {
       this.belongsTo(File, { foreignKey: 'fileId', as: 'file'});
     }
   ];

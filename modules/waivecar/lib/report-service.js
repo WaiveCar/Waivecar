@@ -326,14 +326,5 @@ module.exports = {
 
     var result = yield Booking._schema.findAll(dbQuery);
     return result.filter(each => each.reports.length);
-    
-    return result.filter(function(booking) {
-      return booking.reports.filter(function(report) {
-          return report.files.length > 0;
-        }).length > 0;
-    }).reduce (function(result, booking) {
-      return result.concat(booking.reports);
-    }, []);
   }
-
 };
