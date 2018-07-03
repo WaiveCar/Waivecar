@@ -639,13 +639,15 @@ module.exports = class BookingService extends Service {
   }
 
   static *getZone(car) {
-    let zone = false;
-    (yield Location.find({type: 'zone'})).forEach(function(row) {
+    var zone;
+    (yield Location.find({where: {type: 'zone'} })).forEach(function(row) {
+      row.shape = JSON.parse(row.shape).map((row) => { return {latitude:row[1], longitude:row[0]};});
+
       if(geolib.isPointInside({latitude: car.latitude, longitude: car.longitude}, row.shape)){
-        return row;
+        zone = row;
       }
     });
-    return null;
+    return zone;
   }
 
   /**
@@ -706,6 +708,17 @@ module.exports = class BookingService extends Service {
       }
     }
 
+    // we need to make sure that it's in a valid return zone
+    if (!isAdmin) {
+      let zone = yield this.getZone(car);
+      if(!zone) {
+        throw error.parse({
+          code    : `OUTSIDE_ZONE`,
+          message : `You cannot return the WaiveCar here. Please end the booking inside the green zone on the map.`
+        }, 400);
+      }
+    }
+    
     // Immobilize the engine.
     let status;
     try {
@@ -787,7 +800,7 @@ module.exports = class BookingService extends Service {
       let parkingText = '';
       payload.data.bookingId = id;
 
-      let minuteText = ((payload.data.streetMinutes || 0) + 100).toString().slice(1);
+      let minuteText = ((+payload.data.streetMinutes || 0) + 100).toString().slice(1);
       parkingText += `Parked on street for ${ payload.data.streetHours }:${ minuteText }.  `;
       parkingText += payload.data.streetOvernightRest ? 'Has an overnight restriction.' : 'Does not have an overnight restriction.';
 
