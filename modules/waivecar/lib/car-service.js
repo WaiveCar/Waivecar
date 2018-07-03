@@ -106,10 +106,8 @@ module.exports = {
       let $or = opts.where['$or']; 
       delete opts.where['$or'];
       opts.where['$and'] = [
-        { 
-          charge: { $gt : 55 }
-        },
-        $or
+        { charge: { $gt : 55 } }, 
+        { $or: $or }
       ];
     } else if(hour >= 4 && hour < 8 && !isAdmin) {
       opts.where = { 
