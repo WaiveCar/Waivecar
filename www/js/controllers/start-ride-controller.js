@@ -24,11 +24,11 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
     var ctrl = this;
     ctrl.data = $data.active;
     ctrl.pictures = {
-      beginFront: null,
-      beginLeft: null,
-      beginRear: null,
-      beginRight: null,
-      beginOther: null,
+      front: null,
+      left: null,
+      rear: null,
+      right: null,
+      other: null,
     }
     ctrl.model = ctrl.data.cars.model.toLowerCase(); 
     ctrl.allPics = false;
@@ -58,6 +58,7 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
     function addPicture(type) {
       $uploadImage({
         endpoint: '/files?bookingId=' + ctrl.data.bookings.id,
+        type: type,
         filename: type + ctrl.data.bookings.id.id + '_' + Date.now() + '.jpg',
       })
       .then(function (result) {
@@ -67,7 +68,7 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
             'background-image': 'url(' + $settings.uri.api + '/file/' + result.id + ')'
           };
           ctrl.pictures[type] = result;
-          if (ctrl.pictures['beginFront'] && ctrl.pictures['beginLeft'] && ctrl.pictures['beginRear'] && ctrl.pictures['beginRight']) {
+          if (ctrl.pictures['front'] && ctrl.pictures['left'] && ctrl.pictures['rear'] && ctrl.pictures['right']) {
             ctrl.allPics = true;
           }
         }

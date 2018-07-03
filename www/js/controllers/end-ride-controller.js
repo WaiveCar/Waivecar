@@ -46,11 +46,11 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     ctrl.overrideStreetRestrictions = false;
 
     ctrl.pictures = {
-      beginFront: null,
-      beginLeft: null,
-      beginRear: null,
-      beginRight: null,
-      beginOther: null,
+      front: null,
+      left: null,
+      rear: null,
+      right: null,
+      other: null,
       streetSignImage: null,
     }
     ctrl.appPics = false;
@@ -178,6 +178,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     function addPicture(type) {
       $uploadImage({
         endpoint: '/files?bookingId=' + $stateParams.id,
+        type: type,
         filename: type + $stateParams.id.id + '_' + Date.now() + '.jpg',
       })
       .then(function (result) {
@@ -187,7 +188,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
             'background-image': 'url(' + $settings.uri.api + '/file/' + result.id + ')'
           };
           ctrl.pictures[type] = result;
-          if (ctrl.pictures['streetSignImage'] && ctrl.pictures['beginFront'] && ctrl.pictures['beginLeft'] && ctrl.pictures['beginRear'] && ctrl.pictures['beginRight']) {
+          if (ctrl.pictures['streetSignImage'] && ctrl.pictures['front'] && ctrl.pictures['left'] && ctrl.pictures['rear'] && ctrl.pictures['right']) {
             ctrl.allPics = true;
           }
         }
@@ -213,7 +214,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
         return submitFailure('Ending here requires a photo of the parking sign.');
       }
 
-      if (!ctrl.pictures.beginFront || !ctrl.pictures.beginLeft || !ctrl.pictures.beginRight || !ctrl.pictures.beginRear) {
+      if (!ctrl.pictures.front || !ctrl.pictures.left || !ctrl.pictures.right || !ctrl.pictures.rear) {
         return submitFailure('Please take pictures of all sides of the vehicle before proceeding.');
       }
       if (!ctrl.car.isKeySecure) {
