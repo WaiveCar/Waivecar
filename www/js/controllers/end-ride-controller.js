@@ -22,10 +22,11 @@ module.exports = angular.module('app.controllers').controller('EndRideController
   '$message',
   '$data',
   'LocationService',
-  function($rootScope, $scope, $settings, $window, $state, $stateParams, $ride, $geocoding, $ionicLoading, $modal, $uploadImage, ZendriveService, $message, $data, LocationService) {
+  '$injector',
+  function($rootScope, $scope, $settings, $window, $state, $stateParams, $ride, $geocoding, $ionicLoading, $modal, $uploadImage, ZendriveService, $message, $data, LocationService, $injector) {
     $scope.service = $ride;
     var ctrl = this;
-
+    var Reports = $injector.get('Reports');
     ctrl.service = $ride;
     ctrl.type = 'street';
     ctrl.lot = {
@@ -40,7 +41,8 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     ctrl.street = {
       streetHours: null,
       streetMinutes: null,
-      streetOvernightRest: false
+      streetOvernightRest: false,
+      streetSignImage: null,
     };
     
     ctrl.overrideStreetRestrictions = false;
@@ -187,6 +189,9 @@ module.exports = angular.module('app.controllers').controller('EndRideController
           result.style = {
             'background-image': 'url(' + $settings.uri.api + '/file/' + result.id + ')'
           };
+          if (type === 'streetSignImage') {
+            ctrl.street.streetSignImage = result;
+          } 
           ctrl.pictures[type] = result;
           if (ctrl.pictures['streetSignImage'] && ctrl.pictures['front'] && ctrl.pictures['left'] && ctrl.pictures['rear'] && ctrl.pictures['right']) {
             ctrl.allPics = true;

@@ -18,6 +18,7 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
     var $state = $injector.get('$state');
     var $ionicLoading = $injector.get('$ionicLoading');
     var $modal = $injector.get('$modal');
+    var Reports = $injector.get('Reports');
     $scope.service = $ride;
 
     // $data is used to interact with models, never directly. If direct is required, $data should be refreshed.
