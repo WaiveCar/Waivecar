@@ -27,6 +27,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     $scope.service = $ride;
     var ctrl = this;
     var Reports = $injector.get('Reports');
+
     ctrl.service = $ride;
     ctrl.type = 'street';
     ctrl.lot = {
@@ -52,8 +53,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       left: null,
       rear: null,
       right: null,
-      other: null,
-      streetSignImage: null,
+      other: null
     }
     ctrl.appPics = false;
     ctrl.car = $data.active.cars;
@@ -191,9 +191,10 @@ module.exports = angular.module('app.controllers').controller('EndRideController
           };
           if (type === 'streetSignImage') {
             ctrl.street.streetSignImage = result;
-          } 
-          ctrl.pictures[type] = result;
-          if (ctrl.pictures['streetSignImage'] && ctrl.pictures['front'] && ctrl.pictures['left'] && ctrl.pictures['rear'] && ctrl.pictures['right']) {
+          } else { 
+            ctrl.pictures[type] = result;
+          }
+          if (ctrl.street.streetSignImage && ctrl.pictures['front'] && ctrl.pictures['left'] && ctrl.pictures['rear'] && ctrl.pictures['right']) {
             ctrl.allPics = true;
           }
         }
@@ -215,7 +216,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     function submit() {
 
       // Force users to take pictures. See #1113
-      if ((ctrl.type === 'street' || ctrl.type === 'lot') && !ctrl.pictures.streetSignImage) {
+      if ((ctrl.type === 'street' || ctrl.type === 'lot') && !ctrl.street.streetSignImage) {
         return submitFailure('Ending here requires a photo of the parking sign.');
       }
 
@@ -236,8 +237,18 @@ module.exports = angular.module('app.controllers').controller('EndRideController
         template: '<div class="circle-loader"><span>Loading</span></div>'
       });
 
-      var isNightTime = moment().hours() >= 23 || moment().hours() < 5;
+      var picsToSend = [];
+      for (var picture in ctrl.pictures) {
+        picsToSend.push(ctrl.pictures[picture]);
+      }
 
+      Reports.create({
+        bookingId: $stateParams.id,
+        description: null,
+        files: picsToSend
+      });
+      var isNightTime = moment().hours() >= 23 || moment().hours() < 5;
+      return // remove thiswhen done with this part
       goToEndRide(isNightTime);
     }
     
