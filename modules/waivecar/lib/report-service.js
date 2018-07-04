@@ -105,11 +105,11 @@ module.exports = {
         message : 'Booking does not exist, or you do not have access to it.'
       }, 400);
     }
-
+    /* TODO: Come back and add correct slack notifications
     let report = new Report({
       bookingId   : booking.id,
       description : payload.description,
-      createdBy   : _user.id
+      createdBy   : _user.id,
     });
     yield report.save();
 
@@ -131,31 +131,34 @@ module.exports = {
         }
       ]
     };
-
+    */
     if (payload.files && payload.files.length) {
       let files = payload.files;
 
       for (let i = 0; i < files.length; ++i) {
         let file = files[i];
 
-        let report_file = new ReportFile({
-          reportId : report.id,
-          fileId : file.id
+        let report = new Report({
+          bookingId   : booking.id,
+          description : payload.description,
+          createdBy   : _user.id,
+          fileId      : file.id, 
+          type        : file.type,
         });
-
-        yield report_file.save();
-
+        yield report.save();
+        /*
         slackPayload.attachments.push({
           fallback  : `Image ${ i }`,
           color     : '#D00000',
           image_url : `https://s3.amazonaws.com/waivecar-prod/${ file.path }` // eslint-disable-line
         });
+        */
       }
     }
 
-    yield slack.message(slackPayload);
+    //yield slack.message(slackPayload);
 
-    return report;
+    return;
   },
 
   *index(query, _user) {
