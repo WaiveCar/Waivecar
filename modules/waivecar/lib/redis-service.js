@@ -40,6 +40,7 @@ module.exports = (function() {
   }
 
   // These both sound like reasonable names.
+  // timeout is ostensibly in milliseconds.
   res.shouldProceed = res.shouldProcess = function *(type, id, timeout) {
     //
     // Currently (2016-12-09) the scheduler goes every 45 seconds and there's
