@@ -228,8 +228,11 @@ module.exports = {
       let carIdList = allCars.map((row) => row.id);
 
       let bookingList = yield Booking.find({where: { id: { $in: bookingIdList } } });
+      perf.push("bookings " + (new Date() - start));
       let userList = yield User.find({where: { id: { $in: userIdList } } });
+      perf.push("users " + (new Date() - start));
       let groupList = yield GroupCar.find({where: { carId: { $in: carIdList } } });
+      perf.push("groups " + (new Date() - start));
 
       let carMap = {};
       let userMap = {};
