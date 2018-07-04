@@ -1382,10 +1382,8 @@ module.exports = class BookingService extends Service {
     let minutesLapsed = moment().diff(booking.updatedAt, 'minutes');
     let minTime = 25;
 
-    switch (booking.status) {
-      case 'cancelled':
-        minTime += 5;
-        break;
+    if(booking.status === 'cancelled') {
+      minTime += 5;
     }
 
     if (minutesLapsed < minTime) {
@@ -1408,7 +1406,12 @@ module.exports = class BookingService extends Service {
          'http://staging.waivecar.com:4300';
 
       let buyNow = [
-        "<script>function buyit_pCj8zFIPSkOiGq8zBlO1ng(){",
+        "<script>function buyit_pCj8zFIPSkOiGq8zBlO1ng(el){",
+          'el.removeAttribute("onclick");',
+          `el.innerHTML="Thanks for using this beta feature. For now, just press the back button twice and you'll be in the rental.";`,
+          'el.style.textDecoration="none";',
+          'el.style.color="#fff";',
+          'el.style.lineHeight="1.5em";',
           "var x=new XMLHttpRequest(),",
             "a=JSON.parse(localStorage['auth']);",
           `x.open('POST','${server}/bookings',true);`,
@@ -1416,11 +1419,15 @@ module.exports = class BookingService extends Service {
           "x.setRequestHeader('Content-Type','application/json');",
           `x.send('${postparams}');`,
         "}</script>",
-        `<div style='height:0'><button style='position:relative;top:60px;text-transform:none;color:lightblue' onclick="buyit_pCj8zFIPSkOiGq8zBlO1ng()" class="button button-dark button-link">(Beta feature) Get it now for $${fee}.00</button></div>`,
+        `<div class='action-box' style='height:0'><button style='position:relative;top:60px;text-transform:none;color:lightblue' onclick="buyit_pCj8zFIPSkOiGq8zBlO1ng(this)" class="button button-dark button-link">(Beta feature) Get it now for $${fee}.00</button></div>`,
       ].join('');
       throw error.parse({
         code    : 'RECENT_BOOKING',
-        message : `Sorry! You need to wait ${remainingTime}min more to rebook the same WaiveCar! ${buyNow}`
+        message : `Sorry! You need to wait ${remainingTime}min more to rebook the same WaiveCar! ${buyNow}`,
+        options: [{
+          title: `Get it now for $${fee}.00`,
+          action: ['post', 'bookings', postparams]
+        }]
       }, 400);
     }
    
