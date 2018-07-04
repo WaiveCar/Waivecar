@@ -49,6 +49,15 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
     });
 
     function start () {
+      var picsToSend = [];
+      for (var picture in ctrl.pictures) {
+        picsToSend.push(ctrl.pictures[picture]);
+      }
+      Reports.create({
+        bookingId: $stateParams.id,
+        description: null,
+        files: picsToSend
+      });
       $state.go('dashboard', null, {location: 'replace'});
     }
 
@@ -69,6 +78,7 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
             'background-image': 'url(' + $settings.uri.api + '/file/' + result.id + ')'
           };
           ctrl.pictures[type] = result;
+          ctrl.pictures[type].type = type;
           if (ctrl.pictures['front'] && ctrl.pictures['left'] && ctrl.pictures['rear'] && ctrl.pictures['right']) {
             ctrl.allPics = true;
           }

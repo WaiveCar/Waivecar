@@ -249,7 +249,6 @@ module.exports = angular.module('app.controllers').controller('EndRideController
         files: picsToSend
       });
       var isNightTime = moment().hours() >= 23 || moment().hours() < 5;
-      return // remove thiswhen done with this part
       goToEndRide(isNightTime);
     }
     
