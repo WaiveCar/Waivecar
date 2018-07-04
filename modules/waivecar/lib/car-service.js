@@ -234,10 +234,14 @@ module.exports = {
       let carMap = {};
       let userMap = {};
 
-      allCars.forEach((row) => { carMap[row.id] = row; });
+      allCars.forEach((row) => { 
+        carMap[row.id] = row; 
+        // there will be multipls groupCars ... see below.
+        carMap[row.id].groupCar = [];
+      });
       userList.forEach((row) => { userMap[row.id] = row; });
 
-      groupList.forEach((row) => { carMap[row.carId].groupCar = row; });
+      groupList.forEach((row) => { carMap[row.carId].groupCar.push( row ); });
       bookingList.forEach((row) => { carMap[row.carId].currentBooking = row; });
       allCars.forEach((row) => { row.user = userMap[row.userId]; });
 
