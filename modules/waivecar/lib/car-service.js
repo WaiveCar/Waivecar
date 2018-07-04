@@ -24,6 +24,7 @@ let hooks       = Bento.Hooks;
 let User = Bento.model('User');
 let Car  = Bento.model('Car');
 let Booking = Bento.model('Booking');
+let GroupCar  = Bento.model('GroupCar');
 
 let geolib      = require('geolib');
 let fs          = require('fs');
@@ -187,28 +188,69 @@ module.exports = {
   *carsWithBookings(_user) {
     let start = new Date();
     let perf = [];
-    // See #1077. Super Admin can access all cars.
-    // But still we need car's group on UI
-    let includeGroupCar = {
-      model: 'GroupCar',
-      as :'groupCar'
-    };
+    let cars = [];
 
-    let cars = yield Car.find({
-      include: [
-        includeGroupCar,
-        { 
-          model : 'User',
-          as: 'user'
-        },
-        { 
-          model : 'Booking',
-          as: 'currentBooking'
-        }
-      ]
-    });
-    perf.push("car " + (new Date() - start));
+    function *join_method() {
+      perf.push('table join');
 
+      // See #1077. Super Admin can access all cars.
+      // But still we need car's group on UI
+      cars = yield Car.find({
+        include: [
+          {
+            model: 'GroupCar',
+            as :'groupCar'
+          },
+          { 
+            model : 'User',
+            as: 'user'
+          },
+          { 
+            model : 'Booking',
+            as: 'currentBooking'
+          }
+        ]
+      });
+      perf.push("car " + (new Date() - start));
+    }
+
+    function *separate_method() {
+      perf.push('separate');
+
+      // See #1077. Super Admin can access all cars.
+      // But still we need car's group on UI
+      let allCars = yield Car.find();
+
+      let carsOfInterest = allCars.filter((row) => row.bookingId);
+
+      let bookingIdList = carsOfInterest.map((row) => row.bookingId);
+      let userIdList = carsOfInterest.map((row) => row.userId);
+      let carIdList = allCars.map((row) => row.id);
+
+      let bookingList = yield Booking.find({where: { id: { $in: bookingIdList } } });
+      let userList = yield User.find({where: { id: { $in: userIdList } } });
+      let groupList = yield GroupCar.find({where: { carId: { $in: carIdList } } });
+
+      let carMap = {};
+      let userMap = {};
+
+      allCars.forEach((row) => { carMap[row.id] = row; });
+      userList.forEach((row) => { userMap[row.id] = row; });
+
+      groupList.forEach((row) => { carMap[row.carId].groupCar = row; });
+      bookingList.forEach((row) => { carMap[row.carId].currentBooking = row; });
+      allCars.forEach((row) => { row.user = userMap[row.userId]; });
+
+      cars = allCars;
+      perf.push("car " + (new Date() - start));
+    }
+
+    if(Math.random() < 0.5) {
+      yield join_method();
+    } else {
+      yield separate_method();
+    }
+    
     // the schema as of this writing is
     // enum('reserved','pending','cancelled','ready','started','ended','completed','closed') 
     let statusMap = {
