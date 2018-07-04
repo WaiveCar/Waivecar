@@ -503,7 +503,14 @@ module.exports = {
       // We notify fleet if the car passes a threshold to make
       // sure that they put the car out.
       // see https://github.com/WaiveCar/Waivecar/issues/857
-      if (data.isCharging && !existingCar.isAvailable && !(yield redis.shouldProcess('car-charge-notice', existingCar.id))) {
+      //
+      // Also we want to prevent things from being hit multiple times. Normally we can do average charge
+      // and flags, but this won't work here because we have the classic flag clearing problem since car 
+      // rows are persistent and reused and I'm not going to make a mark and sweep system for this stupid 
+      // thing.  So instead we are going to make the lock something like 5 minutes ... that should make
+      // things shut up
+      //
+      if (data.isCharging && !existingCar.isAvailable && !(yield redis.shouldProcess('car-charge-notice', existingCar.id, 5 * 60 * 1000))) {
         if (
             (data.charge >= 100 && existingCar.charge < 100) ||
             (data.charge >= 80 && existingCar.charge < 80)
