@@ -239,7 +239,7 @@ module.exports = class OrderService extends Service {
 
     yield order.save();
     try {
-      yield this.charge(order, user);
+      yield this.charge(order, user, {nodebt: true});
       yield notify.notifyAdmins(`:heavy_dollar_sign: Charged the impatient ${ user.link() } $${ fee } to rebook ${ car.license }`, [ 'slack' ], { channel : '#rental-alerts' });
     } catch (err) {
       yield this.failedCharge(amount, user, err, ` | ${ apiConfig.uri }/bookings/${ booking.id }`);
@@ -272,7 +272,7 @@ module.exports = class OrderService extends Service {
 
     yield order.save();
     try {
-      yield this.charge(order, user);
+      yield this.charge(order, user, {nodebt: true});
       yield notify.notifyAdmins(`:moneybag: Charged ${ user.link() } $1.00 for a reservation extension | ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
     } catch (err) {
       yield this.failedCharge(amount, user, err, ` | ${ apiConfig.uri }/bookings/${ booking.id }`);
@@ -729,7 +729,13 @@ module.exports = class OrderService extends Service {
         if (capture) {
           // We failed to charge order.amount so that's what our math is.
           // It's not more complex than that.
-          yield user.update({ credit: user.credit - order.amount });
+          
+          // If we failed to charge someone, sometimes they were attempting
+          // to buy something, in which case, we don't give it to them and
+          // don't charge them.
+          if(!opts.nodebt) {
+            yield user.update({ credit: user.credit - order.amount });
+          }
 
           // A failed charge needs to be marked as such (see #670).
           yield order.update({ status: 'failed' });
