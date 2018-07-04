@@ -50,7 +50,7 @@ Route.del('/reports/:id', [ 'isAuthenticated', 'isAdmin', 'ReportsController@del
 // ### Cars
 
 Route.get('/cars',              [ 'CarsController@index' ]);
-Route.get('/carsWithBookings',  [ 'isAuthenticated', 'isAdmin', 'CarsController@carsWithBookings' ]);
+Route.get('/carsWithBookings',  [ 'isAdmin', 'CarsController@carsWithBookings' ]);
 Route.put('/magic/:command',    [ 'isAuthenticated', 'isAdmin', 'CarsController@magic' ]);
 Route.get('/cars/:id',          [ 'isAuthenticated', 'CarsController@show' ]);
 Route.get('/cars/:id/notes',    [ 'isAuthenticated', 'NotesController@getCarNotes' ]);
