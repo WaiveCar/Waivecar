@@ -193,6 +193,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
             ctrl.street.streetSignImage = result;
           } else { 
             ctrl.pictures[type] = result;
+            ctrl.pictures[type].type = type;
           }
           if (ctrl.street.streetSignImage && ctrl.pictures['front'] && ctrl.pictures['left'] && ctrl.pictures['rear'] && ctrl.pictures['right']) {
             ctrl.allPics = true;
