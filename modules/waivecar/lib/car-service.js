@@ -517,6 +517,7 @@ module.exports = {
    * @return {Object}             updated Car
    */
   *syncUpdate(id, data, existingCar, _user) {
+    let user = false;
     if (!existingCar) {
       existingCar = yield Car.findById(id);
     }
@@ -564,7 +565,16 @@ module.exports = {
             (data.charge >= 100 && existingCar.charge < 100) ||
             (data.charge >= 80 && existingCar.charge < 80)
         ) {
-          yield notify.notifyAdmins(`:car: ${ existingCar.license } has charged to ${ data.charge }% and should be made available.`, ['slack'], {channel: '#rental-alerts'});
+          let secondHalf = '';
+          if(existingCar.userId) {
+            if(!user) {
+              user = yield User.findById(existingCar.userId);
+            }
+            secondHalf = `by ${user.link()}!`;
+          } else {
+            secondHalf = ' and should be made available.';
+          }
+          yield notify.notifyAdmins(`:car: ${ existingCar.link() } has charged to ${ data.charge }% ${ secondHalf }.`, ['slack'], {channel: '#rental-alerts'});
         }
       }
 
@@ -576,7 +586,9 @@ module.exports = {
     if (data.boardVoltage < 10.5 && data.isIgnitionOn) {
       let message = `:skull: ${ existingCar.link() } board voltage is at ${ data.boardVoltage }v`;
       if (existingCar.userId) {
-        let user = User.findById(existingCar.userId);
+        if(!user) {
+          user = User.findById(existingCar.userId);
+        }
         message += ` (Current user is ${ user.link() })`;
       }
 
