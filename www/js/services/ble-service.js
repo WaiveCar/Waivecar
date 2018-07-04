@@ -534,38 +534,30 @@ module.exports = angular.module('app.services').factory('$ble', [
     }
 
     function wrap(carId, cmd, done) {
-
       log.reset();
       var defer = $q.defer();
-      defer.reject();
+      
+      // We need to make sure that if we have no network and
+      // the app has crashed that we can try to do some good
+      // guess work to find out what the car is that we need
+      // to talk to. At worse this will simply be undefined
+      // while at best it will be the car we need.
+      if(!carId) {
+        carId = _creds.carId;
+      }
+      
+      connect(carId).promise.then(function(){
+        log("Doing " + cmd);
+     
+        if(!done) {
+          return doit(cmd, ok("Done " + cmd, defer.resolve), failure("Not done " + cmd, defer.reject));
+        } else {
+          return defer.resolve("Skipping " + cmd + " - already done");
+        }
+      }).catch(failure("connect", defer.reject));
+     
       defer.$promise = defer.promise;
-
       return defer;
-
-      // log.reset();
-      // var defer = $q.defer();
-      //
-      // // We need to make sure that if we have no network and
-      // // the app has crashed that we can try to do some good
-      // // guess work to find out what the car is that we need
-      // // to talk to. At worse this will simply be undefined
-      // // while at best it will be the car we need.
-      // if(!carId) {
-      //   carId = _creds.carId;
-      // }
-      //
-      // connect(carId).promise.then(function(){
-      //   log("Doing " + cmd);
-      //
-      //   if(!done) {
-      //     return doit(cmd, ok("Done " + cmd, defer.resolve), failure("Not done " + cmd, defer.reject));
-      //   } else {
-      //     return defer.resolve("Skipping " + cmd + " - already done");
-      //   }
-      // }).catch(failure("connect", defer.reject));
-      //
-      // defer.$promise = defer.promise;
-      // return defer;
     }
 
     function isLocked(obj) {
