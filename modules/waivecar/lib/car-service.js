@@ -220,6 +220,7 @@ module.exports = {
       // See #1077. Super Admin can access all cars.
       // But still we need car's group on UI
       let allCars = yield Car.find();
+      perf.push("cars " + (new Date() - start));
 
       let carsOfInterest = allCars.filter((row) => row.bookingId);
 
