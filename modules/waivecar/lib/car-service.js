@@ -571,11 +571,11 @@ module.exports = {
             if(!user) {
               user = yield User.findById(existingCar.userId);
             }
-            secondHalf = `by ${user.link()}!`;
+            secondHalf = ` by ${user.link()}!`;
           } else {
             secondHalf = ' and should be made available.';
           }
-          yield notify.notifyAdmins(`:car: ${ existingCar.link() } has charged to ${ data.charge }% ${ secondHalf }.`, ['slack'], {channel: '#rental-alerts'});
+          yield notify.notifyAdmins(`:car: ${ existingCar.link() } has charged to ${ data.charge }% ${ secondHalf }`, ['slack'], {channel: '#rental-alerts'});
         }
       }
 
