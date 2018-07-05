@@ -80,7 +80,6 @@ class CarsShowView extends React.Component {
       if (err) {
         console.log(err);
       }
-      console.log(model);
       model.reverse();
       this.setState({
         damage : model
@@ -208,7 +207,7 @@ class CarsShowView extends React.Component {
               </h4>
                 <div className="image-center-container">
                   <div className="col-md-6 gallery-image">
-                    <img src={`https://s3.amazonaws.com/waivecar-prod/${parkingDetails.path}`} />
+                    <img src={`${API_URI}/file/${parkingDetails.streetSignImage}`} />
                   </div>
                 </div>
               </div>
