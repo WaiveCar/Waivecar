@@ -11,6 +11,9 @@ import { Form, Button, GMap, snackbar } from 'bento-web';
 import Service               from '../../lib/car-service';
 import NotesList from '../components/notes/list';
 import Logs from '../../components/logs';
+import config   from 'config';
+
+const API_URI = config.api.uri + (config.api.port ? ':' + config.api.port : '');
 
 let formFields = {
   photo : [],
@@ -73,6 +76,10 @@ class CarsShowView extends React.Component {
       });
     });
     api.get(`/reports/car/${ id }`, (err, model) => {
+      if (err) {
+        console.log(err);
+      }
+      console.log(model);
       model.reverse();
       this.setState({
         damage : model
@@ -585,7 +592,7 @@ class CarsShowView extends React.Component {
           <div className="btn-container">
             <button className='btn-link remove-image' onClick={ this.deleteImage.bind(this, row, file.id) }><i className="material-icons" role="true">close</i></button>
           </div>
-          <img key={ ix++ } src={ "https://api.waivecar.com/file/" + file.fileId } />
+          <img key={ ix++ } src={ API_URI + file.fileId } />
         </div>
       );
     });
@@ -593,6 +600,23 @@ class CarsShowView extends React.Component {
   }
 
   renderDamage(car) {
+    console.log('Car: ', this.state);
+    return (
+      <div>
+        {this.state.damage.map((set, i) =>
+          <div key={i}>
+            Booking Id: {set.id}
+            {set.reports.map((image, j) =>  
+              <div key={j}>
+                <img src={API_URI + '/file/' + image.file.id} />
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
+    /*
+    return null;
     let ix = 0;
     let toShow = this.state.damage.filter((row) => { return row.files.length });
     let res = toShow.map((row) => {
@@ -620,7 +644,7 @@ class CarsShowView extends React.Component {
         </div>
       </div>
     );
-       
+    */   
   }
 
   renderLocation(car) {
