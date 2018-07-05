@@ -168,7 +168,9 @@ hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
     if ( (nextUser.lastName && nextUser.firstName) &&
          (nextUser.lastName != prevUser.lastName || nextUser.firstName != prevUser.firstName)
       ) {
-      nextUser.status = 'pending';
+      if (prevUser.status != 'suspended') {
+        nextUser.status = 'pending';
+      }
       reason.push(`Name change ${ prevUser.firstName } ${ prevUser.lastName } -> ${ nextUser.firstName } ${ nextUser.lastName }`);
     }
 
@@ -187,25 +189,36 @@ hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
         prevUser.phone !== nextUser.phone) {
 
       nextUser.verifiedPhone = false;
-      nextUser.status = 'pending';
+      if (prevUser.status != 'suspended') {
+        nextUser.status = 'pending';
+      }
       reason.push(`Phone number change ${ prevUser.phone } -> ${ nextUser.phone }`);
     }
   }
 
-  if (nextUser.status == 'pending' && (prevUser.status == 'active' || reason.length)) {
+  if (
+       (prevUser.status === 'suspended' && reason.length) || 
+       (nextUser.status == 'pending' && (prevUser.status == 'active' || reason.length))
+     ) {
     let who = '';
+    let what = '';
 
-    if (prevUser.id == _user.id) {
-      who = 'by themselves';
+    if(prevUser.status !== nextUser.status && nextUser.status) {
+      what = `a previously ${ prevUser.status } user is moving to ${ nextUser.status }`;
+      if (prevUser.id == _user.id) {
+        who = 'by themselves';
+      } else {
+        who = `by ${ _user.name() }`;
+      }
     } else {
-      who = `by ${ _user.name() }`;
+      what = `a ${ prevUser.status } user, changed some information`;
     }
-    
+
     if (reason.length) {
       who += ' (' + reason.join(', ') + ')';
     }
     yield UserLog.addUserEvent(prevUser, 'PENDING', _user.id, [reason || []].join(', '));
-    yield notify.notifyAdmins(`:construction: ${ prevUser.link() }, a previously ${ prevUser.status } user, has been moved to pending ${ who }`, [ 'slack' ], { channel : '#user-alerts' });
+    yield notify.notifyAdmins(`:construction: ${ prevUser.link() }, ${ what } ${ who }`, [ 'slack' ], { channel : '#user-alerts' });
   }
 
   return nextUser;
