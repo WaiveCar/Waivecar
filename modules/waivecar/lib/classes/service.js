@@ -155,7 +155,7 @@ module.exports = class Service {
       yield notify.notifyAdmins(`:see_no_evil: ${ user.link() } is trying to use the service and is in pending.`, [ 'slack' ], { channel : '#user-alerts' });
       throw error.parse({
         code    : `BOOKING_PENDING_USER`,
-        message : `You are not yet approved to book a WaiveCar. Please contact us to activate your account.`
+        message : `You are not currently approved to book a WaiveCar. Please contact us to activate your account.`
       }, 400);
     } else if (user.status === 'waitlist') {
       let bookingList = yield Booking.find({ where: { userId: user.id } });
