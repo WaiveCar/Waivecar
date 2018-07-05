@@ -642,19 +642,7 @@ class CarsShowView extends React.Component {
           <div>
             {this.state.damage.map((row, i) =>
               <div key={i}>
-                <div>Booking Id: {row.id}</div>
-                <div>
-                  { moment(row.created_at).format('YYYY-MM-DD HH:mm:ss') }
-                </div>
-                <div>
-                  {row.reports.filter(item => this.state.damageFilter ? item.type === this.state.damageFilter : true)
-                      .map((image, j) =>  
-                        <span key={j}>
-                          {image.type}
-                          <img className="damage-image" src={`${API_URI}/file/${image.file.id}`} />
-                        </span>
-                  )}
-                </div>
+                {this.renderBookingDamage(row)}
               </div>
             )}
           </div>
@@ -665,6 +653,31 @@ class CarsShowView extends React.Component {
 
   filterDamage(type) {
     this.setState({damageFilter: type});    
+  }
+
+  renderBookingDamage(row) {
+    let currentFilter = row.reports.filter(item => this.state.damageFilter ? item.type === this.state.damageFilter : true)
+    return (
+      <div>
+        {currentFilter.length > 0 && 
+        <div>
+        <div>
+          Booking Id: <a href={ '/bookings/' + row.id }>#{ row.id }</a>
+        </div>
+        <div>
+          { moment(row.created_at).format('YYYY-MM-DD HH:mm:ss') }
+        </div>
+        <div>
+          {currentFilter.map((image, j) =>  
+            <a href={ `${API_URI}/file/${image.file.id}` } targe="_blank" key={j}>
+              <img className="damage-image" src={`${API_URI}/file/${image.file.id}`} />
+            </a>
+          )}
+        </div>
+        </div>
+        }
+      </div>
+    );
   }
 
   renderLocation(car) {
