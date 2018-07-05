@@ -41,7 +41,8 @@ class CarsShowView extends React.Component {
   constructor(...args) {
     super(...args);
     this.state = {
-      carPath : null
+      carPath : null,
+      damageFilter: null,
     };
     dom.setTitle('Car');
     this.service = new Service(this);
@@ -600,21 +601,6 @@ class CarsShowView extends React.Component {
   }
 
   renderDamage(car) {
-    console.log('Car: ', this.state);
-    return (
-      <div>
-        {this.state.damage.map((set, i) =>
-          <div key={i}>
-            Booking Id: {set.id}
-            {set.reports.map((image, j) =>  
-              <div key={j}>
-                <img src={API_URI + '/file/' + image.file.id} />
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    );
     /*
     return null;
     let ix = 0;
@@ -636,15 +622,49 @@ class CarsShowView extends React.Component {
         </div> 
       );
     });
+    */
     return (
       <div className="box">
         <h3>Damage and uncleanliness</h3>
         <div className="box-content">
-        { res }
+          <div> 
+            <div>Filter by angle:</div> 
+            {[null, 'front', 'left', 'rear', 'right', 'other'].map((angle, i) => 
+              <button 
+                key={i}
+                className="btn btn-sm btn-primary" 
+                onClick={() => this.setState({damageFilter: angle})}
+              >
+                {angle ? angle : 'all'}
+              </button>
+            )}
+          </div>
+          <div>
+            {this.state.damage.map((row, i) =>
+              <div key={i}>
+                <div>Booking Id: {row.id}</div>
+                <div>
+                  { moment(row.created_at).format('YYYY-MM-DD HH:mm:ss') }
+                </div>
+                <div>
+                  {row.reports.filter(item => this.state.damageFilter ? item.type === this.state.damageFilter : true)
+                      .map((image, j) =>  
+                        <span key={j}>
+                          {image.type}
+                          <img className="damage-image" src={`${API_URI}/file/${image.file.id}`} />
+                        </span>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );
-    */   
+  }
+
+  filterDamage(type) {
+    this.setState({damageFilter: type});    
   }
 
   renderLocation(car) {
