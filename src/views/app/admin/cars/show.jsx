@@ -571,34 +571,6 @@ class CarsShowView extends React.Component {
     );
   }
 
-  deleteImage(row, index) {
-    row.files = row.files.filter((row) => { return row.id != index; });
-
-    api.delete('/reports/' + index, (err, user) => {
-      return snackbar.notify({
-        type    : 'success',
-        message : 'Image deleted'
-      });
-    });
-
-    this.forceUpdate();
-  }
-
-  renderImages(row) {
-    let ix = 0;
-    let res = row.files.map((file) => {
-      return (
-        <div className="col-md-4 gallery-image">
-          <div className="btn-container">
-            <button className='btn-link remove-image' onClick={ this.deleteImage.bind(this, row, file.id) }><i className="material-icons" role="true">close</i></button>
-          </div>
-          <img key={ ix++ } src={ API_URI + file.fileId } />
-        </div>
-      );
-    });
-    return <div className="row">{ res }</div>;
-  }
-
   renderDamage(car) {
     /*
     return null;
@@ -650,30 +622,43 @@ class CarsShowView extends React.Component {
     );
   }
 
-  filterDamage(type) {
-    this.setState({damageFilter: type});    
-  }
-
-  renderBookingDamage(row) {
-    let currentFilter = row.reports.filter(item => this.state.damageFilter ? item.type === this.state.damageFilter : true)
+  renderBookingDamage(booking) {
+    let bookingList = booking.reports;
+    let { damageFilter } = this.state;
+    let rowsToRender = [];
+    if (!damageFilter && bookingList.length >=8) {
+      let other = bookingList.filter(item => item.type === 'other');
+      let angles = bookingList.filter(item => item.type !== 'other');
+      rowsToRender = [angles.slice(0, 4), angles.slice(4), other];
+    } else {
+      rowsToRender.push(bookingList.filter(item => item.type === damageFilter));
+    }
+    console.log(rowsToRender);
+    console.log(rowsToRender[0].length);
     return (
       <div>
-        {currentFilter.length > 0 && 
-        <div>
-        <div>
-          Booking Id: <a href={ '/bookings/' + row.id }>#{ row.id }</a>
-        </div>
-        <div>
-          { moment(row.created_at).format('YYYY-MM-DD HH:mm:ss') }
-        </div>
-        <div>
-          {currentFilter.map((image, j) =>  
-            <a href={ `${API_URI}/file/${image.file.id}` } targe="_blank" key={j}>
-              <img className="damage-image" src={`${API_URI}/file/${image.file.id}`} />
-            </a>
-          )}
-        </div>
-        </div>
+        {(rowsToRender[0] && rowsToRender[0].length > 0) &&
+          <div>
+            <div>
+              Booking Id: <a href={ '/bookings/' + booking.id }>#{booking.id}</a>
+            </div>
+            <div>
+              {moment(booking.created_at).format('YYYY-MM-DD HH:mm:ss')}
+            </div>
+            <div>
+              {rowsToRender.map((row, i) => {
+                return (
+                  <div key={i} className="dmg-row">
+                    {row.map((image, j) =>  
+                      <a className="damage-image-holder" href={`${API_URI}/file/${image.file.id}` } targe="_blank" key={j}>
+                        <img className="damage-image" src={`${API_URI}/file/${image.file.id}`} />
+                      </a>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
         }
       </div>
     );
