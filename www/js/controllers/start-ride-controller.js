@@ -69,7 +69,7 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
       $uploadImage({
         endpoint: '/files?bookingId=' + ctrl.data.bookings.id,
         type: type,
-        filename: type + ctrl.data.bookings.id.id + '_' + Date.now() + '.jpg',
+        filename: type + $stateParams.id + '_' + Date.now() + '.jpg',
       })
       .then(function (result) {
         if (result && Array.isArray(result)) result = result[0];
