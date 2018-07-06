@@ -633,26 +633,28 @@ class CarsShowView extends React.Component {
     } else {
       rowsToRender.push(bookingList.filter(item => item.type === damageFilter));
     }
-    console.log(rowsToRender);
-    console.log(rowsToRender[0].length);
+    let rowTags = ['after', 'before', 'other'];
     return (
       <div>
         {(rowsToRender[0] && rowsToRender[0].length > 0) &&
           <div>
-            <div>
+            <h3>
               Booking Id: <a href={ '/bookings/' + booking.id }>#{booking.id}</a>
-            </div>
-            <div>
+            </h3>
+            <h4>
               {moment(booking.created_at).format('YYYY-MM-DD HH:mm:ss')}
-            </div>
+            </h4>
             <div>
               {rowsToRender.map((row, i) => {
                 return (
                   <div key={i} className="dmg-row">
                     {row.map((image, j) =>  
-                      <a className="damage-image-holder" href={`${API_URI}/file/${image.file.id}` } targe="_blank" key={j}>
-                        <img className="damage-image" src={`${API_URI}/file/${image.file.id}`} />
-                      </a>
+                      <div>
+                        <a className="damage-image-holder" href={`${API_URI}/file/${image.file.id}` } target="_blank" key={j}>
+                          <div>{image.type}</div>
+                          <img className="damage-image" src={`${API_URI}/file/${image.file.id}`} />
+                        </a>
+                      </div>
                     )}
                   </div>
                 )
