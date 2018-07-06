@@ -16,6 +16,10 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
       location: null,
       general: []
     };
+    if(!plugin || !plugin.google) {
+      $window.plugin = $window.plugin || {};
+      $window.plugin.google = google;
+    }
   }
 
   MapController.prototype.useCordova = function() {
@@ -94,14 +98,28 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
 
   function link($scope, $elem, attrs, ctrl) {
-    var center = ctrl.center ? ctrl.center : ctrl.currentLocation;
-    center = center || $data.homebase;
+    // we need a place to put this map. We have 5 fallbacks if it gets initialized without something.
+    var center = ctrl.center 
+      || ctrl.currentLocation 
+      || $data.homebase 
+      || $rootScope.currentLocation 
+      || $data.me
+      || {latitude: 34.0195, longitude: -118.4912}; 
+         // ^^ if nothing works then we throw up our hands, 
+         // yell "fuck it" and just start in santa monica.
 
     ctrl.staticMap = !!attrs.static;
 
-    // console.log(ctrl, center, attrs, $elem, $scope, ctrl.currentLocation,  $data.homebase);
+    // console.log($rootScope, ctrl, center, attrs, $elem, $scope, ctrl.currentLocation,  $data.homebase);
 
     ctrl.map = ctrl.createGMap( $elem.find('.map-instance')[0], center, attrs.noscroll);
+
+    // this is used for compatibility purposes.
+    if(!ctrl.map.moveCamera) {
+      ctrl.map.moveCamera = function(args) {
+        ctrl.map.fitBounds(args.target);
+      }
+    }
 
     ctrl.updatesQueue = [];
     ctrl.drawRouteQueue = [];
@@ -191,21 +209,17 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
   MapController.prototype.mapFitBounds = function mapFitBounds(markers) {
     var ctrl = this;
+    //console.log('fitting around', markers);
 
     if (markers && markers.length > 1) {
 
-      var bounds = ctrl.useCordova() ? new plugin.google.maps.LatLngBounds() : new google.maps.LatLngBounds();
+      var bounds = new plugin.google.maps.LatLngBounds();
       markers.forEach(function (marker) {
         bounds.extend(ctrl.mapToLatLong(marker));
       });
 
-      if (ctrl.useCordova()) {
-        ctrl.map.moveCamera({ target: bounds });
-      } else {
-        ctrl.map.fitBounds(bounds);
-      }
+      ctrl.map.moveCamera({ target: bounds });
     }
-
   };
 
   function charge2color(marker) {
