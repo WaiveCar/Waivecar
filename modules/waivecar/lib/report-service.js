@@ -327,7 +327,13 @@ module.exports = {
       }]
     };
 
-    var result = yield Booking._schema.findAll(dbQuery);
-    return result.filter(each => each.reports.length);
+    let result = yield Booking._schema.findAll(dbQuery).filter(each => each.reports.length);
+
+    // This section is for backwards compatibility to potentially be removed at a later time
+    result = yield result.map(item => {
+      let newProps = {newProp: 'newProp'};
+      return Object.assign(item.toJSON(), newProps);
+    });
+    return result;
   }
 };
