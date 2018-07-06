@@ -94,10 +94,6 @@ module.exports = class BookingService extends Service {
       yield this.hasBookingAccess(driver);
     }
 
-    if (!_user.hasAccess('admin')) {
-      yield this.recentBooking(driver, car, data.opts);
-    }
-
     // If someone owes us more than a dollar
     // we tell them to settle their balance with us.
     if(driver.credit < -100) {
@@ -107,32 +103,6 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
-    if(process.env.NODE_ENV === 'production') {
-      // ### Pre authorization payment
-      try {
-        yield OrderService.authorize(null, driver);
-      } catch (err) {
-        // Failing to secure the authorization hold should be recorded as an
-        // iniquity. See https://github.com/WaiveCar/Waivecar/issues/861 for
-        // details.
-        let details = 'no card';
-        if(OrderService.authorize.last) {
-          if(!OrderService.authorize.last.card) {
-            throw error.parse({
-              code    : 'BOOKING_AUTHORIZATION',
-              message : 'We do not have a credit card for you on file. Please go to the account and add one before booking'
-            }, 400);
-          }
-          details = OrderService.authorize.last.card.last4;
-        }
-        yield UserLog.addUserEvent(driver, 'AUTH', details, `Failed to authorize $${ (OrderService.authorize.last.amount / 100).toFixed(2) }`);
-
-        throw error.parse({
-          code    : 'BOOKING_AUTHORIZATION',
-          message : 'Unable to authorize payment. Please validate payment method.'
-        }, 400);
-      }
-    }
 
     //
     // Add the driver to the car so no simultaneous requests can book this car.
@@ -159,6 +129,47 @@ module.exports = class BookingService extends Service {
         code    : `BOOKING_REQUEST_INVALID`,
         message : `Another driver has already reserved this WaiveCar.`
       }, 400);
+    }
+
+    //
+    // After we achieve the lock on the car, then we can do the various things
+    // with credit cards and charges.
+    //
+    // Importantly, we do this BEFORE CREATING A BOOKING.
+    //
+    // Why? Otherwise we could do, for instance, a $1 hould, then 
+    // run into a race condition and never release the hold 
+    //
+    // The above code guarantees that we can book a car, it doesn't
+    // necessarily give it to us.
+    //
+    if(process.env.NODE_ENV === 'production') {
+      try {
+        yield OrderService.authorize(null, driver);
+      } catch (err) {
+        // Failing to secure the authorization hold should be recorded as an
+        // iniquity. See https://github.com/WaiveCar/Waivecar/issues/861 for
+        // details.
+        let details = 'no card';
+        if(OrderService.authorize.last) {
+          if(!OrderService.authorize.last.card) {
+            throw error.parse({
+              code    : 'BOOKING_AUTHORIZATION',
+              message : 'We do not have a credit card for you on file. Please go to the account and add one before booking'
+            }, 400);
+          }
+          details = OrderService.authorize.last.card.last4;
+        }
+        yield UserLog.addUserEvent(driver, 'AUTH', details, `Failed to authorize $${ (OrderService.authorize.last.amount / 100).toFixed(2) }`);
+
+        throw error.parse({
+          code    : 'BOOKING_AUTHORIZATION',
+          message : 'Unable to authorize payment. Please validate payment method.'
+        }, 400);
+      }
+    }
+    if (!_user.hasAccess('admin')) {
+      yield this.recentBooking(driver, car, data.opts);
     }
 
     //
