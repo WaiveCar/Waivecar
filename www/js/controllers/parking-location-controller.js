@@ -3,8 +3,6 @@
 var angular = require('angular');
 var moment = require('moment');
 
-require('../services/zendrive-service');
-
 module.exports = angular.module('app.controllers').controller('ParkingLocationController', [
   '$rootScope',
   '$scope',
@@ -17,11 +15,10 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
   '$ionicLoading',
   '$modal',
   '$uploadImage',
-  'ZendriveService',
   '$message',
   '$data',
   'LocationService',
-  function($rootScope, $scope, $settings, $window, $state, $stateParams, $ride, $geocoding, $ionicLoading, $modal, $uploadImage, ZendriveService, $message, $data, LocationService) {
+  function($rootScope, $scope, $settings, $window, $state, $stateParams, $ride, $geocoding, $ionicLoading, $modal, $uploadImage, $message, $data, LocationService) {
     $scope.service = $ride;
     var ctrl = this;
 

@@ -29,7 +29,7 @@ module.exports = angular.module('app.controllers').controller('CompleteRideContr
 
     ctrl.init();
 
-    var ZendriveService = $injector.get('ZendriveService');
+    //var ZendriveService = $injector.get('ZendriveService');
 
     function init() {
       loadBooking($stateParams.id)

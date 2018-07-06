@@ -6,7 +6,6 @@ var _ = require('lodash');
 require('../services/progress-service');
 require('../services/geofencing-service');
 require('../services/notification-service');
-require('../services/zendrive-service');
 require('../services/chargers-service');
 
 function DashboardController ($scope, $rootScope, $injector) {
@@ -22,7 +21,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   var $ionicLoading = $injector.get('$ionicLoading');
   var $session = $injector.get('$session');
   var GeofencingService = $injector.get('GeofencingService');
-  var ZendriveService = $injector.get('ZendriveService');
+  //var ZendriveService = $injector.get('ZendriveService');
   var LocationService = $injector.get('LocationService');
   var ChargersService = $injector.get('ChargersService');
   //var homebase = $injector.get('homebase');
