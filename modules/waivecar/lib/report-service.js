@@ -329,11 +329,19 @@ module.exports = {
 
     let result = yield Booking._schema.findAll(dbQuery).filter(each => each.reports.length);
 
-    // This section is for backwards compatibility to potentially be removed at a later time
+    // This section (until 342) is for backwards compatibility to potentially be removed at a later time
+    // Schemas have since been changed to no longer depend on the ReportFiles table
     result = yield result.map(item => {
-      let newProps = {newProp: 'newProp'};
-      return Object.assign(item.toJSON(), newProps);
+      item = item.toJSON()
+      let newProps = {
+        bookingId: item.id,
+        createdBy: item.userId,
+        description: null,
+        files: item.reports.map(each => Object.assign(each, {details: each.file}))
+      };
+      return Object.assign(item, newProps);
     });
+
     return result;
   }
 };
