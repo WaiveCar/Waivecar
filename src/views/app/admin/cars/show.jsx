@@ -572,34 +572,14 @@ class CarsShowView extends React.Component {
   }
 
   renderDamage(car) {
-    /*
-    return null;
-    let ix = 0;
-    let toShow = this.state.damage.filter((row) => { return row.files.length });
-    let res = toShow.map((row) => {
-      return (
-        <div key={ ix ++ } className='damage-row'>
-          <div className="row">
-            <div className="col-xs-12">
-              { moment(row.created_at).format('YYYY-MM-DD HH:mm:ss') } <a href={ "/bookings/" + row.bookingId }>#{ row.bookingId }</a>
-            </div>
-          </div>
-          <div className="row">
-             <div className="col-md-11">
-                { row.description }
-             </div>
-          </div>
-          { this.renderImages(row) }
-        </div> 
-      );
-    });
-    */
     return (
       <div className="box">
         <h3>Damage and uncleanliness</h3>
         <div className="box-content">
-          <div> 
-            <div>Filter by angle:</div> 
+          <div className="text-center">
+            Filter by angle:
+          </div> 
+          <div className="button-holder"> 
             {[null, 'front', 'left', 'rear', 'right', 'other'].map((angle, i) => 
               <button 
                 key={i}
@@ -633,16 +613,13 @@ class CarsShowView extends React.Component {
     } else {
       rowsToRender.push(bookingList.filter(item => item.type === damageFilter));
     }
-    let rowTags = ['after', 'before', 'other'];
     return (
       <div>
         {(rowsToRender[0] && rowsToRender[0].length > 0) &&
           <div>
-            <h3>
-              Booking Id: <a href={ '/bookings/' + booking.id }>#{booking.id}</a>
-            </h3>
-            <h4>
-              {moment(booking.created_at).format('YYYY-MM-DD HH:mm:ss')}
+            <h4 className="damage-title">
+              Booking Id: <a href={ '/bookings/' + booking.id } target="_blank">#{booking.id}</a>
+              {' on '}{moment(booking.created_at).format('YYYY-MM-DD HH:mm:ss')}
             </h4>
             <div>
               {rowsToRender.map((row, i) => {
