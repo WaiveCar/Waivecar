@@ -6,7 +6,6 @@ env:
 rules:
     no-console: 0
     indent: [0, 2]
-    camelcase: [1, { properties: "never" }]
     comma-style: [2, "last"]
     comma-dangle: 0
     curly: [0]
