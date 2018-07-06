@@ -633,16 +633,65 @@ module.exports = class BookingService extends Service {
     // so that the app doesn't hit any errors when attempting to call it.
   }
 
+  static *isAtHub(car) {
+    var hub;
+    (yield Location.find({where: {type: 'hub'} })).forEach(function(row) {
+      if(geolib.getDistance(car, row) < row.radius) {
+        hub = row;
+      }
+    });
+    return hub;
+  }
+
   static *getZone(car) {
     var zone;
     (yield Location.find({where: {type: 'zone'} })).forEach(function(row) {
       row.shape = JSON.parse(row.shape).map((row) => { return {latitude:row[1], longitude:row[0]};});
-
       if(geolib.isPointInside({latitude: car.latitude, longitude: car.longitude}, row.shape)){
         zone = row;
       }
     });
     return zone;
+  }
+
+  // The meat of canEnd, the cheap check
+  static *_canEnd(car, isAdmin) {
+    if(isAdmin) {
+      return true;
+    }
+
+    let zoneOrHub = false;
+    // we give the user until this amount to make sure that they are ok
+    if (car.milesAvailable() < 21) {
+
+      zoneOrHub = yield this.isAtHub(car);
+      if(!zoneOrHub) {
+        throw error.parse({
+          code    : `CHARGE_TOO_LOW`,
+          message : `The WaiveCar's charge is too low to end here. Please return it to the homebase.`
+        }, 400);
+      }
+    } else {
+
+      // we need to make sure that it's in a valid return zone
+      zoneOrHub = yield this.getZone(car);
+      if(!zoneOrHub) {
+        throw error.parse({
+          code    : `OUTSIDE_ZONE`,
+          message : `You cannot return the WaiveCar here. Please end the booking inside the green zone on the map.`
+        }, 400);
+      }
+    }
+
+    return zoneOrHub;
+  }
+
+  // A *very cheap* check to see if the ending spot it legal.
+  static *canEnd(id, _user, query, payload) {
+    let booking = yield this.getBooking(id);
+    let car     = yield this.getCar(booking.carId);
+    let isAdmin = _user.isAdmin();
+    return yield this._canEnd(car, isAdmin);
   }
 
   /**
@@ -703,16 +752,7 @@ module.exports = class BookingService extends Service {
       }
     }
 
-    // we need to make sure that it's in a valid return zone
-    if (!isAdmin) {
-      let zone = yield this.getZone(car);
-      if(!zone) {
-        throw error.parse({
-          code    : `OUTSIDE_ZONE`,
-          message : `You cannot return the WaiveCar here. Please end the booking inside the green zone on the map.`
-        }, 400);
-      }
-    }
+    yield this._canEnd(car, isAdmin);
     
     // Immobilize the engine.
     let status;
@@ -1005,11 +1045,18 @@ module.exports = class BookingService extends Service {
       }
     }
 
+
+    // --- 
+    //
+    // By this point we assume that the user is allowed to end the booking
+    // at the charge/location the car is currently at. If that's not true, 
+    // then you need to yell at the user above this.
+    //
+    // ---
+
     if (!isLevel) { 
       yield booking.setNowLock({userId: _user.id, carId: car.id});
     }
-
-    // ### Booking & Car Updates
 
     yield booking.complete();
     yield car.removeDriver();
@@ -1020,7 +1067,7 @@ module.exports = class BookingService extends Service {
 
     // If car is under 25% make it unavailable after ride is done #514
     // We use the average to make this assessment.
-    if (car.milesAvailable() < 25.00 && !isAdmin) {
+    if (car.milesAvailable() < 25 && !isAdmin) {
       yield cars.updateAvailabilityAnonymous(car.id, false);
       yield notify.slack({ text : `:spider: ${ car.link() } unavailable due to charge being under 25mi. ${ car.chargeReport() }`
       }, { channel : '#rental-alerts' });
