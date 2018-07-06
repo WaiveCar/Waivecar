@@ -161,10 +161,8 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
 
     return _(allCars).find(function (car) {
       var distance = $distance(car, currentLocation);
-      console.log(distance);
       return _.isFinite(distance) && distance < maxDistance;
-    }).length;
-
+    });
   }
 
   function hasTag(tag) {

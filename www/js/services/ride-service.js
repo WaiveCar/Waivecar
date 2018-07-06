@@ -230,8 +230,14 @@ module.exports = angular.module('app.services').factory('$ride', [
 
     // obj is returned by the car and should have a long/lat
     // first and foremost the users' gps is used.
-    service.canEndHereCheck = function(car) {
-      return $data.resources.locations.dropoff().$promise.then(function(locationList) {
+        /*
+    service.canEndHereCheck = function(bookingId) {
+      return $data.resources.bookings.canend({id: bookingId}).$promise.then(function(res) {
+        console.log('hi', res);
+      }).catch(function(err) {
+        $message.error(err);
+      });
+        locations.dropoff().$promise.then(function(locationList) {
         // We have order precendence here ...
         var METERTOFEET = 3.28084;
         var precedence = {
@@ -244,6 +250,7 @@ module.exports = angular.module('app.services').factory('$ride', [
         var resLocation;
 
         // If the charge isn't ok then we can only end at hubs, not zones.
+        
         if(!service.isChargeOkay(car.id, car)) {
           locationList = locationList.filter(function(location) { return ['hub','homebase', 'chargeStation'].indexOf(location.type) !== -1; });
         }
@@ -267,12 +274,10 @@ module.exports = angular.module('app.services').factory('$ride', [
           if(location.radius && location.radius < 0.1) {
             location.radius *= (3 * 5280);
           }
-          /*
-          console.log($distance.fallbackInMeters(location, car), location, location.name, precedence[location.type], precedence[type]);
-          if(location.radius) {
-            console.log($distance.fallbackInMeters(location, car) * METERTOFEET, location.radius);
-          }
-          */
+          //console.log($distance.fallbackInMeters(location, car), location, location.name, precedence[location.type], precedence[type]);
+          //if(location.radius) {
+          //  console.log($distance.fallbackInMeters(location, car) * METERTOFEET, location.radius);
+          //}
           if (precedence[location.type] > precedence[type] && (
                 location.radius && $distance.fallbackInMeters(location, car) * METERTOFEET < location.radius ||
                 location.shape && GeofencingService.insideFastCheck(car, location.shape)
@@ -287,8 +292,8 @@ module.exports = angular.module('app.services').factory('$ride', [
           return false;
         }
         return resLocation;
-      });
     };
+          */
 
     service.setParkingDetails = function(details) {
       service.state.parkingDetails = details;
@@ -364,16 +369,20 @@ module.exports = angular.module('app.services').factory('$ride', [
       });
     };
 
+    /*
     service.isChargeOkay = function(id, obj) {
       // see https://github.com/WaiveCar/Waivecar/issues/828
       // Complaints about the cars not being able to end below 25 miles
       // Really we need to be system-wide consistent with this number.
       return genericCheck(id, obj, function(status) {
+        console.log(status.model);
         var stub = status.model.toLowerCase().split(' ')[0];
         var multiplier = (stub === 'spark') ? 0.70 : 1.35;
         return (multiplier * status.charge) > 20 || status.isCharging;
+        return true;
       });
     };
+    */
 
     service.lockCar = function(id) {
       return $data.resources.cars.lock({ id: id });

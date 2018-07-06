@@ -40,6 +40,13 @@ module.exports = angular.module('app').factory('Bookings', [
           id: '@id'
         }
       },
+      canend: {
+        method: 'PUT',
+        url: $utils.getCustomRoute('bookings/:id/canend'),
+        params: {
+          id: '@id'
+        }
+      },
       end: {
         method: 'PUT',
         url: $utils.getCustomRoute('bookings/:id/end'),

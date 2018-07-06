@@ -165,9 +165,11 @@ function DashboardController ($scope, $rootScope, $injector) {
     }, 1000);
     //ZendriveService.start($session.get('me'), $data.active.bookings.id, $data.active.cars.id);
 
+    /*
     $scope.$watch(function() {
       return $data.active.cars.isLocked
     }, OnLockStateChange);
+    */
 
   }.bind(this));
 
@@ -388,7 +390,7 @@ function DashboardController ($scope, $rootScope, $injector) {
         return showIgnitionOnModal();
       }
 
-      return $ride.canEndHereCheck(obj).then(function(endLocation) {
+      return $data.resources.bookings.canend({id: bookingId}).$promise.then(function(endLocation) {
         if (endLocation.type === 'hub' || endLocation.type === 'homebase') {
           return $ride.processEndRide().then(function() {
             return $state.go('end-ride', { id: bookingId });
@@ -397,13 +399,16 @@ function DashboardController ($scope, $rootScope, $injector) {
           return showZonePrompt(endLocation, function () {
             return $state.go('end-ride-location', { id: bookingId, zone: endLocation })
           });
-        } else {
+        } 
+          /*
+        else {
           // Not inside geofence -> show error
           if ($ride.isChargeOkay(carId, obj)) {
             return $q.reject('Looks like you\'re outside of the rental zone. Please head back to end your rental.');
           }
           return $q.reject('Looks like the charge is pretty low. Please head to the nearest hub or charger!');
         }
+          */
       }).then($ionicLoading.hide)
         .catch(endRideFailure);
     }).catch(function(obj) {
@@ -456,6 +461,9 @@ function DashboardController ($scope, $rootScope, $injector) {
 
     if (message && message.search && message.search(/{/) !== -1) {
       message = 'Unable to end your ride. Please try again or call us at (855) 924-8355.';
+    }
+    if('data' in message && 'message' in message.data) {
+      message = message.data.message;
     }
 
     $modal('result', {
