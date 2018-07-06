@@ -10,12 +10,12 @@ module.exports = angular.module('app').factory('Bookings', [
     var resource = $resource(null, null, $utils.createResource('bookings', {
       current: {
         method: 'GET',
-        url: $utils.getCustomRoute('bookings?type=mine&limit=1&order=created_at,DESC&status=ended,started'),
+        url: $utils.getCustomRoute('bookings?type=mine&limit=1&order=created_at,DESC&status=ended,started,reserved'),
         isArray: true
       },
       query: {
         method: 'GET',
-        url: $utils.getCustomRoute('bookings?type=mine&order=created_at,DESC&details=true'),
+        url: $utils.getCustomRoute('bookings?type=mine&limit=1&order=created_at,DESC&details=true'),
         isArray: true
       },
       completedCount: {
