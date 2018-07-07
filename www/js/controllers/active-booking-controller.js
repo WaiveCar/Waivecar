@@ -93,6 +93,9 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   function showExpired() {
     return showFailure('Booking is expired', 'You booking is expired', {
       cb: function() {
+        // There's two ways of expiring the booking in the app state. We can
+        // either try to pull it down ourselves ... which
+        delete $data.active.bookings;
         $state.go('cars');
       }
     });
@@ -113,7 +116,9 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     });
   }
 
+  var timer_ix = 0;
   var timer = $interval(function() {
+    timer_ix++;
     if (expired) {
       // When the booking is extended, the end time needs to be pulled
       // down from the booking
@@ -130,9 +135,14 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       }
       // if we are in the future then the answer is 0.
       if (moment().diff(expired) > 0) {
-        console.log(expired, moment().diff(expired));
-        $interval.cancel(timer);
-        showExpired();
+        if(timer_ix % 12 == 0) {
+          $data.fetch('bookings').then(function(bookingList) {
+            if(bookingList[0].status === 'cancelled') {
+              $interval.cancel(timer);
+              showExpired();
+            }
+          });
+        }
       } else {
         ctrl.timeLeft = moment(expired).format('h:mm A');
         return ctrl.timeLeft;
