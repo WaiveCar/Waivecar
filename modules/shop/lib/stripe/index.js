@@ -8,7 +8,7 @@ let error           = Bento.Error;
 
 // ### Stripe Service Configuration
 
-let stripe = () => {
+let stripe = (function() {
   if (!config.stripe) {
     throw error.parse({
       code     : 'PAYMENTS_STRIPE_CONFIG',
@@ -17,7 +17,7 @@ let stripe = () => {
     });
   }
   return require('stripe')(config.stripe.secret);
-}();
+})();
 
 // ### Instances
 

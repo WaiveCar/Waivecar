@@ -44,7 +44,7 @@ module.exports = {
     name      : 'expYear',
     label     : 'Expiration year',
     component : 'select',
-    options   : () => {
+    options   : (function(){ 
       let date   = new Date();
       let year   = date.getFullYear();
       let result = [];
@@ -55,7 +55,7 @@ module.exports = {
         });
       }
       return result;
-    }()
+    })()
   },
   cvc : {
     name      : 'cvc',

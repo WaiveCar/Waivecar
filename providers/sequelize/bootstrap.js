@@ -17,7 +17,7 @@ module.exports = function *() {
   yield database(host);
   yield groups();
   yield roles();
-  yield require('./setup');
+  yield (require('./setup'))();
 };
 
 /**
