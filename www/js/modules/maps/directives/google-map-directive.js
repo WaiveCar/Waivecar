@@ -42,7 +42,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
   };
 
   MapController.prototype.createGMap  = function (mapElement, center, noscroll) {
-    console.log(mapElement, center, noscroll);
+    //console.log(mapElement, center, noscroll);
 
     var mapOptions;
 
@@ -149,7 +149,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
       var lastLocation = [0, 0];
       var watchers = [
         $scope.$watch('map.markers', function (value) {
-          console.log("marker update", value);
+          //console.log("marker update", value);
           if (value) {
             ctrl.updateMarkers(value);
           }
