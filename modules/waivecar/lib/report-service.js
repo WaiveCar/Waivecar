@@ -89,12 +89,6 @@ module.exports = {
     yield notify.slack({ text : slackReport }, { channel : '#reservations' });
   },
   
-  /**
-   * Creates a new report.
-   * @param  {Object} payload
-   * @param  {Object} _user
-   * @return {Object}
-   */
   *create(payload, _user) {
     let booking = yield Booking.findById(payload.bookingId);
     let car = yield Car.findById(booking.carId);
@@ -105,13 +99,6 @@ module.exports = {
         message : 'Booking does not exist, or you do not have access to it.'
       }, 400);
     }
-    /* TODO: Come back and add correct slack notifications
-    let report = new Report({
-      bookingId   : booking.id,
-      description : payload.description,
-      createdBy   : _user.id,
-    });
-    yield report.save();
 
     let txt = `${ _user.name() } has reported a problem with ${ car.license } on booking ${ booking.id }`;
     let slackPayload = {
@@ -124,14 +111,13 @@ module.exports = {
           fields   : [
             {
               title : 'Report',
-              value : report.description,
               short : false
             }
           ]
         }
       ]
     };
-    */
+
     if (payload.files && payload.files.length) {
       let files = payload.files;
 
@@ -146,17 +132,17 @@ module.exports = {
           type        : file.type,
         });
         yield report.save();
-        /*
-        slackPayload.attachments.push({
-          fallback  : `Image ${ i }`,
-          color     : '#D00000',
-          image_url : `https://s3.amazonaws.com/waivecar-prod/${ file.path }` // eslint-disable-line
-        });
-        */
+        if (file.type === 'other') {
+          slackPayload.attachments.push({
+            fallback  : `Image ${ i }`,
+            color     : '#D00000',
+            image_url : `https://s3.amazonaws.com/waivecar-prod/${ file.path }`
+          });
+        }
       }
     }
 
-    //yield slack.message(slackPayload);
+    yield slack.message(slackPayload);
 
     return;
   },
