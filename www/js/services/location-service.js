@@ -123,7 +123,7 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
     }, {
       maximumAge: 3000,
       timeout: 10000,
-      enableHighAccuracy: true
+      enableHighAccuracy: false
     });
 
     activeLocationWatchers.push(watchId);
