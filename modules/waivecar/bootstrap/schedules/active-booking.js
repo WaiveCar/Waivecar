@@ -40,19 +40,25 @@ var checkBooking = co.wrap(function *(booking) {
   let trigger = freetime + 60;
   
 
-  // This section increments drive_count, park_count and charge_count 
-  let bookingRecord = yield Booking.findById(booking.id);
-  if (device.isIgnitionOn) {
-    // If the ignition is on, drive_count is incremented
-    yield bookingRecord.update({ driveCount: bookingRecord.driveCount + 1 });
+  if(device) {
+    // This section increments drive_count, park_count and charge_count 
+    let bookingRecord = yield Booking.findById(booking.id);
+    if (device.isIgnitionOn) {
+      // If the ignition is on, drive_count is incremented
+      yield bookingRecord.update({ driveCount: bookingRecord.driveCount + 1 });
+    } else {
+      // If it is off, park_count is incremented
+      yield bookingRecord.update({ parkCount: bookingRecord.parkCount + 1 });
+    } 
+    if (device.isCharging) {
+      // If the car is charging charge_count is incremented
+      yield bookingRecord.update({ chargeCount: bookingRecord.chargeCount + 1 });
+    }
   } else {
-    // If it is off, park_count is incremented
-    yield bookingRecord.update({ parkCount: bookingRecord.parkCount + 1 });
-  } 
-  if (device.isCharging) {
-    // If the car is charging charge_count is incremented
-    yield bookingRecord.update({ chargeCount: bookingRecord.chargeCount + 1 });
+    // if we failed to fetch the device we just pretend and move on
+    device = car;
   }
+
   // This always returns false if NODE_ENV !== production
   if (!device || !car || !user) return;
 
