@@ -35,7 +35,7 @@ let Query = module.exports = function query(queryValueMap, options) {
 
   let handlerMap = options.where;
   for (let key in handlerMap) {
-    if (queryValueMap && queryValueMap.hasOwnProperty(key)) {
+    if (key in queryValueMap) {
       result.where[key] = prepareValue(handlerMap[key], queryValueMap[key]);
     }
   }
