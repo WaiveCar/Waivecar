@@ -360,22 +360,21 @@ module.exports = class BookingService extends Service {
       }
     }
 
-    //if (query.includePath) {
-    let paths = yield BookingLocation.find({
-      where: {
-        booking_id:{
-          $in: bookings.map(x => x.id)
-        }
-      },
-      order: [[ 'created_at', 'asc' ]],
-      attributes: ['booking_id', 'latitude', 'longitude']
-    });
+    if (query.includePath) {
+      let paths = yield BookingLocation.find({
+        where: {
+          booking_id:{
+            $in: bookings.map(x => x.id)
+          }
+        },
+        order: [[ 'created_at', 'asc' ]],
+        attributes: ['booking_id', 'latitude', 'longitude']
+      });
 
-    for(let i = 0; i < bookings.length; ++i) {
-      bookings[i].carPath = paths.filter((x) => x.bookingId == bookings[i].id);
+      for(let i = 0; i < bookings.length; ++i) {
+        bookings[i].carPath = paths.filter((x) => x.bookingId == bookings[i].id);
+      }
     }
-    
-    //}
 
     return bookings;
   }
@@ -403,6 +402,7 @@ module.exports = class BookingService extends Service {
     return {bookingsCount: bookingsCount};
   }
 
+  // this is a bullshit incompetent mess
   static *show(id, _user, ignoreUser) {
     let relations = {
       include : [
@@ -445,6 +445,7 @@ module.exports = class BookingService extends Service {
     } catch(ex) {
       booking.cart     = null;
     }
+    /*
     booking.payments = yield Order.find({
       where : {
         id : booking.payments.reduce((list, next) => {
@@ -467,6 +468,7 @@ module.exports = class BookingService extends Service {
         collectionId : booking.collectionId || undefined
       }
     });
+    */
 
     return booking;
   }
