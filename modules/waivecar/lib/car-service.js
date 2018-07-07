@@ -143,7 +143,7 @@ module.exports = {
       }
     });
 
-    if (_user && !_user.hasAccess('admin')) {
+    if (_user) {
       fs.appendFile('/var/log/outgoing/carsrequest.txt', JSON.stringify([new Date(), available, _user.id, _user.latitude, _user.longitude]) + '\n');
     }
 
