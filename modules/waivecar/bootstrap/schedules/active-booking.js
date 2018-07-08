@@ -70,7 +70,7 @@ var checkBooking = co.wrap(function *(booking) {
           yield booking.delForfeitureTimers();
         }
       } else if (!booking.isFlagged('first-sync')) {
-        yield booking.setForfeitureTimers(user, config.booking.timers);
+        yield booking.setForfeitureTimers(user, config.waivecar.booking.timers);
         // we don't want to send off anything to the user
         // unless we've checked the car
         yield booking.flag('first-sync');
