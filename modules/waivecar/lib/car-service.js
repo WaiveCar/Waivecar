@@ -674,34 +674,28 @@ module.exports = {
         // If Device does not match any Car then add it to the database.
         let excludedCar = allCars.find(c => c.id === device.id);
         if (!excludedCar) {
-          let isMockCar = [ 'EE000017DC652701', 'C0000017DC247801' ].indexOf(device.id) > -1;
-          if (!config.mock.cars && isMockCar) {
-            // this is a dev kit, ignore update.
-            log.debug(`Cars : Sync : skipping DevKit ${ device.id }.`);
-          } else  {
-            let newCar = yield this.getDevice(device.id);
-            if (newCar) {
-              let car = new Car(newCar);
-              let meta = config.car.meta[car.id];
-              if (meta) {
-                car.license = meta.license;
-              } else {
-                let nextNumber = (yield Car.find()).length; 
-                let candidateName = '';
-                do {
-                  candidateName = `newCar${ nextNumber }`;
-                  existingCar = yield Car.findOne({ where : { license: candidateName } });
-                  nextNumber ++;
-                } while(existingCar);
-
-                car.license = candidateName;
-              }
-              car.licenseUsed = car.license;
-              log.debug(`Cars : Sync : adding ${ device.id }.`);
-              yield car.upsert();
+          let newCar = yield this.getDevice(device.id);
+          if (newCar) {
+            let car = new Car(newCar);
+            let meta = config.car.meta[car.id];
+            if (meta) {
+              car.license = meta.license;
             } else {
-              log.debug(`Cars : Sync : failed to retrieve ${ device.id } to add to database.`);
+              let nextNumber = (yield Car.find()).length; 
+              let candidateName = '';
+              do {
+                candidateName = `newCar${ nextNumber }`;
+                existingCar = yield Car.findOne({ where : { license: candidateName } });
+                nextNumber ++;
+              } while(existingCar);
+
+              car.license = candidateName;
             }
+            car.licenseUsed = car.license;
+            log.debug(`Cars : Sync : adding ${ device.id }.`);
+            yield car.upsert();
+          } else {
+            log.debug(`Cars : Sync : failed to retrieve ${ device.id } to add to database.`);
           }
         } else {
           // If Device was found in database but not in our filtered list, ignore.
