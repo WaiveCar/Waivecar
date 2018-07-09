@@ -8,10 +8,6 @@ Bento.Register.Controller('ReportsController', function(controller) {
     return yield service.create(this.payload, this.auth.user);
   };
 
-  controller.index = function *() {
-    return yield service.index(this.query, this.auth.user);
-  };
-
   controller.status = function *() {
     return yield service.status();
   };

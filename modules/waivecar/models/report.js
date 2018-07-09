@@ -2,24 +2,10 @@
 
 Bento.Register.Model('Report', 'sequelize', function(model, Sequelize) {
 
-  /**
-   * The identity of the table created in your database.
-   * @property table
-   * @type     String
-   */
   model.table = 'reports';
 
-  /**
-   * The sequelize schema definition of your model.
-   * @property schema
-   * @type     Object
-   */
   model.schema = {
 
-    /**
-     * The booking to attach the report to.
-     * @type {Integer}
-     */
     bookingId : {
       type       : Sequelize.INTEGER,
       allowNull  : false,
@@ -29,10 +15,6 @@ Bento.Register.Model('Report', 'sequelize', function(model, Sequelize) {
       }
     },
 
-    /**
-     * Report text.
-     * @type {Text}
-     */
     description : {
       type : Sequelize.TEXT
     },
@@ -52,10 +34,6 @@ Bento.Register.Model('Report', 'sequelize', function(model, Sequelize) {
       allowNull : true
     },
 
-    /**
-     * Logs the user that created the report.
-     * @type {Integer}
-     */
     createdBy : {
       type       : Sequelize.INTEGER,
       allowNull  : false,
@@ -75,5 +53,4 @@ Bento.Register.Model('Report', 'sequelize', function(model, Sequelize) {
   ];
 
   return model;
-
 });

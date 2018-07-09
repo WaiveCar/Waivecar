@@ -147,29 +147,8 @@ module.exports = {
     return;
   },
 
-  *index(query, _user) {
-
-    let parsedQuery = queryParser(query, {
-      where : {
-        bookingId : queryParser.NUMBER,
-        createdBy : queryParser.NUMBER
-      }
-    });
-
-    parsedQuery.include = [{
-      model : ReportFile._schema,
-      as    : 'files',
-      include : [{
-        model : File._schema,
-        as    : 'details'
-      }]
-    }];
-
-
-    return yield Report._schema.findAll(parsedQuery);
-  },
-
   *delete(id, _user) {
+    // This route is no longer used by the front-end, but should still work to delete files that are in the report_files table
     let file = yield ReportFile.findById(id);
 
     if(file) {
