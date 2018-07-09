@@ -69,12 +69,7 @@ module.exports = class BookingService extends Service {
       `${ _user.name() } ${ state } for ${ driver.link() }`;
   }
 
-  /**
-   * Creates a new booking.
-   * @param  {Object} data  Data object containing carId, and userId.
-   * @param  {Object} _user User making the request.
-   * @return {Object}
-   */
+  // Creates a new booking.
   static *create(data, _user) {
     if (!redis.shouldProcess('booking-car', data.carId, 10 * 1000)) {
       throw error.parse({
@@ -99,10 +94,6 @@ module.exports = class BookingService extends Service {
       yield this.hasBookingAccess(driver);
     }
 
-    if (!_user.hasAccess('admin')) {
-      yield this.recentBooking(driver, car);
-    }
-
     // If someone owes us more than a dollar
     // we tell them to settle their balance with us.
     if(driver.credit < -100) {
@@ -112,32 +103,6 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
-    if(process.env.NODE_ENV === 'production') {
-      // ### Pre authorization payment
-      try {
-        yield OrderService.authorize(null, driver);
-      } catch (err) {
-        // Failing to secure the authorization hold should be recorded as an
-        // iniquity. See https://github.com/WaiveCar/Waivecar/issues/861 for
-        // details.
-        let details = 'no card';
-        if(OrderService.authorize.last) {
-          if(!OrderService.authorize.last.card) {
-            throw error.parse({
-              code    : 'BOOKING_AUTHORIZATION',
-              message : 'We do not have a credit card for you on file. Please go to the account and add one before booking'
-            }, 400);
-          }
-          details = OrderService.authorize.last.card.last4;
-        }
-        yield UserLog.addUserEvent(driver, 'AUTH', details, `Failed to authorize $${ (OrderService.authorize.last.amount / 100).toFixed(2) }`);
-
-        throw error.parse({
-          code    : 'BOOKING_AUTHORIZATION',
-          message : 'Unable to authorize payment. Please validate payment method.'
-        }, 400);
-      }
-    }
 
     //
     // Add the driver to the car so no simultaneous requests can book this car.
@@ -164,6 +129,47 @@ module.exports = class BookingService extends Service {
         code    : `BOOKING_REQUEST_INVALID`,
         message : `Another driver has already reserved this WaiveCar.`
       }, 400);
+    }
+
+    //
+    // After we achieve the lock on the car, then we can do the various things
+    // with credit cards and charges.
+    //
+    // Importantly, we do this BEFORE CREATING A BOOKING.
+    //
+    // Why? Otherwise we could do, for instance, a $1 hould, then 
+    // run into a race condition and never release the hold 
+    //
+    // The above code guarantees that we can book a car, it doesn't
+    // necessarily give it to us.
+    //
+    if(process.env.NODE_ENV === 'production') {
+      try {
+        yield OrderService.authorize(null, driver);
+      } catch (err) {
+        // Failing to secure the authorization hold should be recorded as an
+        // iniquity. See https://github.com/WaiveCar/Waivecar/issues/861 for
+        // details.
+        let details = 'no card';
+        if(OrderService.authorize.last) {
+          if(!OrderService.authorize.last.card) {
+            throw error.parse({
+              code    : 'BOOKING_AUTHORIZATION',
+              message : 'We do not have a credit card for you on file. Please go to the account and add one before booking'
+            }, 400);
+          }
+          details = OrderService.authorize.last.card.last4;
+        }
+        yield UserLog.addUserEvent(driver, 'AUTH', details, `Failed to authorize $${ (OrderService.authorize.last.amount / 100).toFixed(2) }`);
+
+        throw error.parse({
+          code    : 'BOOKING_AUTHORIZATION',
+          message : 'Unable to authorize payment. Please validate payment method.'
+        }, 400);
+      }
+    }
+    if (!_user.hasAccess('admin')) {
+      yield this.recentBooking(driver, car, data.opts);
     }
 
     //
@@ -354,22 +360,21 @@ module.exports = class BookingService extends Service {
       }
     }
 
-    //if (query.includePath) {
-    let paths = yield BookingLocation.find({
-      where: {
-        booking_id:{
-          $in: bookings.map(x => x.id)
-        }
-      },
-      order: [[ 'created_at', 'asc' ]],
-      attributes: ['booking_id', 'latitude', 'longitude']
-    });
+    if (query.includePath) {
+      let paths = yield BookingLocation.find({
+        where: {
+          booking_id:{
+            $in: bookings.map(x => x.id)
+          }
+        },
+        order: [[ 'created_at', 'asc' ]],
+        attributes: ['booking_id', 'latitude', 'longitude']
+      });
 
-    for(let i = 0; i < bookings.length; ++i) {
-      bookings[i].carPath = paths.filter((x) => x.bookingId == bookings[i].id);
+      for(let i = 0; i < bookings.length; ++i) {
+        bookings[i].carPath = paths.filter((x) => x.bookingId == bookings[i].id);
+      }
     }
-    
-    //}
 
     return bookings;
   }
@@ -397,6 +402,7 @@ module.exports = class BookingService extends Service {
     return {bookingsCount: bookingsCount};
   }
 
+  // this is a bullshit incompetent mess
   static *show(id, _user, ignoreUser) {
     let relations = {
       include : [
@@ -439,6 +445,7 @@ module.exports = class BookingService extends Service {
     } catch(ex) {
       booking.cart     = null;
     }
+    /*
     booking.payments = yield Order.find({
       where : {
         id : booking.payments.reduce((list, next) => {
@@ -461,6 +468,7 @@ module.exports = class BookingService extends Service {
         collectionId : booking.collectionId || undefined
       }
     });
+    */
 
     return booking;
   }
@@ -487,7 +495,7 @@ module.exports = class BookingService extends Service {
 
   static *_extend(id, opts, _user) {
     // extends reservation for $1.00 - see https://github.com/WaiveCar/Waivecar/issues/550
-    yield redis.failOnMultientry('booking-extend', id, 5 * 1000);
+    yield redis.failOnMultientry('booking-extend', id, 20 * 1000);
 
     let booking = yield this.getBooking(id);
     let user    = yield this.getUser(booking.userId);
@@ -563,7 +571,7 @@ module.exports = class BookingService extends Service {
       // we're calling this a second time, we are going to just pass through 
       // and succeed.
       if(booking.status === 'started') {
-        return true;
+        return;
       }
 
       throw error.parse({
@@ -638,14 +646,65 @@ module.exports = class BookingService extends Service {
     // so that the app doesn't hit any errors when attempting to call it.
   }
 
-  static *getZone(car) {
-    let zone = false;
-    (yield Location.find({type: 'zone'})).forEach(function(row) {
-      if(geolib.isPointInside({latitude: car.latitude, longitude: car.longitude}, row.shape)){
-        return row;
+  static *isAtHub(car) {
+    var hub;
+    (yield Location.find({where: {type: 'hub'} })).forEach(function(row) {
+      if(geolib.getDistance(car, row) < row.radius) {
+        hub = row;
       }
     });
-    return null;
+    return hub;
+  }
+
+  static *getZone(car) {
+    var zone;
+    (yield Location.find({where: {type: 'zone'} })).forEach(function(row) {
+      row.shape = JSON.parse(row.shape).map((row) => { return {latitude:row[1], longitude:row[0]};});
+      if(geolib.isPointInside({latitude: car.latitude, longitude: car.longitude}, row.shape)){
+        zone = row;
+      }
+    });
+    return zone;
+  }
+
+  // The meat of canEnd, the cheap check
+  static *_canEnd(car, isAdmin) {
+    if(isAdmin) {
+      return true;
+    }
+
+    let zoneOrHub = false;
+    // we give the user until this amount to make sure that they are ok
+    if (car.milesAvailable() < 21) {
+
+      zoneOrHub = yield this.isAtHub(car);
+      if(!zoneOrHub) {
+        throw error.parse({
+          code    : `CHARGE_TOO_LOW`,
+          message : `The WaiveCar's charge is too low to end here. Please return it to the homebase.`
+        }, 400);
+      }
+    } else {
+
+      // we need to make sure that it's in a valid return zone
+      zoneOrHub = yield this.getZone(car);
+      if(!zoneOrHub) {
+        throw error.parse({
+          code    : `OUTSIDE_ZONE`,
+          message : `You cannot return the WaiveCar here. Please end the booking inside the green zone on the map.`
+        }, 400);
+      }
+    }
+
+    return zoneOrHub;
+  }
+
+  // A *very cheap* check to see if the ending spot it legal.
+  static *canEnd(id, _user, query, payload) {
+    let booking = yield this.getBooking(id);
+    let car     = yield this.getCar(booking.carId);
+    let isAdmin = _user.isAdmin();
+    return yield this._canEnd(car, isAdmin);
   }
 
   /**
@@ -706,6 +765,8 @@ module.exports = class BookingService extends Service {
       }
     }
 
+    yield this._canEnd(car, isAdmin);
+    
     // Immobilize the engine.
     let status;
     try {
@@ -997,11 +1058,18 @@ module.exports = class BookingService extends Service {
       }
     }
 
+
+    // --- 
+    //
+    // By this point we assume that the user is allowed to end the booking
+    // at the charge/location the car is currently at. If that's not true, 
+    // then you need to yell at the user above this.
+    //
+    // ---
+
     if (!isLevel) { 
       yield booking.setNowLock({userId: _user.id, carId: car.id});
     }
-
-    // ### Booking & Car Updates
 
     yield booking.complete();
     yield car.removeDriver();
@@ -1012,7 +1080,7 @@ module.exports = class BookingService extends Service {
 
     // If car is under 25% make it unavailable after ride is done #514
     // We use the average to make this assessment.
-    if (car.milesAvailable() < 25.00 && !isAdmin) {
+    if (car.milesAvailable() < 25 && !isAdmin) {
       yield cars.updateAvailabilityAnonymous(car.id, false);
       yield notify.slack({ text : `:spider: ${ car.link() } unavailable due to charge being under 25mi. ${ car.chargeReport() }`
       }, { channel : '#rental-alerts' });
@@ -1024,7 +1092,7 @@ module.exports = class BookingService extends Service {
     let zone = '', address = '';
     try {
       zone = yield this.getZone(car);
-      zone = `(${zone})` || '';
+      zone = `(${zone.name})` || '';
       address = yield this.getAddress(car.latitude, car.longitude);
     } catch(ex) {}
 
@@ -1356,13 +1424,8 @@ module.exports = class BookingService extends Service {
     return yield geocode.getAddress(lat, long, param); 
   }
 
-  /**
-   * Determines if user has booked car in last 10 minutes
-   * @param {Object} user
-   * @param {Object} car
-   * @return {Void}
-   */
-  static *recentBooking(user, car) {
+  // Determines if user has booked car recently
+  static *recentBooking(user, car, opts) {
     let booking = yield Booking.findOne({
       where : {
         userId : user.id,
@@ -1374,20 +1437,57 @@ module.exports = class BookingService extends Service {
     });
 
     if (!booking) return;
+    opts = opts || {};
 
     let minutesLapsed = moment().diff(booking.updatedAt, 'minutes');
-    let minTime = 10;
+    let minTime = 25;
 
-    switch (booking.status) {
-      case 'cancelled':
-        minTime = 15;
-        break;
+    if(booking.status === 'cancelled') {
+      minTime += 5;
     }
 
     if (minutesLapsed < minTime) {
+      if(opts.buyNow) {
+        if(yield OrderService.getCarNow(booking, user, opts.buyNow * 100)) {
+          return true;
+        }
+      }
+      let remainingTime =  Math.max(1, Math.ceil(minTime - minutesLapsed));
+      let fee = Math.ceil(remainingTime / minTime * 5);
+      let postparams = JSON.stringify({
+        userId: user.id,
+        carId: car.id,
+        opts: {
+          buyNow: fee
+        }
+      });
+      let server = (process.env.NODE_ENV === 'production') ? 
+         'https://api.waivecar.com' : 
+         'http://staging.waivecar.com:4300';
+
+      let buyNow = [
+        "<script>function buyit_pCj8zFIPSkOiGq8zBlO1ng(el){",
+          'el.removeAttribute("onclick");',
+          `el.innerHTML="Thanks for using this beta feature. For now, just press the back button twice and you'll be in the rental.";`,
+          'el.style.textDecoration="none";',
+          'el.style.color="#fff";',
+          'el.style.lineHeight="1.5em";',
+          "var x=new XMLHttpRequest(),",
+            "a=JSON.parse(localStorage['auth']);",
+          `x.open('POST','${server}/bookings',true);`,
+          "x.setRequestHeader('Authorization',a.token);",
+          "x.setRequestHeader('Content-Type','application/json');",
+          `x.send('${postparams}');`,
+        "}</script>",
+        `<div class='action-box' style='height:0'><button style='position:relative;top:60px;text-transform:none;color:lightblue' onclick="buyit_pCj8zFIPSkOiGq8zBlO1ng(this)" class="button button-dark button-link">(Beta feature) Get it now for $${fee}.00</button></div>`,
+      ].join('');
       throw error.parse({
         code    : 'RECENT_BOOKING',
-        message : 'Sorry! You need to wait ' + Math.max(1, Math.ceil(minTime - minutesLapsed)) + 'min more to rebook the same WaiveCar. Sharing is caring!'
+        message : `Sorry! You need to wait ${remainingTime}min more to rebook the same WaiveCar! ${buyNow}`,
+        options: [{
+          title: `Get it now for $${fee}.00`,
+          action: ['post', 'bookings', postparams]
+        }]
       }, 400);
     }
    

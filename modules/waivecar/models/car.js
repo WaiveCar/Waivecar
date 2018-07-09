@@ -441,6 +441,8 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     'statuscolumn',
     'lastAction',
     'lastActionTime',
+    'currentBooking',
+    'groupCar',
     'user'
   ];
 

@@ -24,6 +24,7 @@ let hooks       = Bento.Hooks;
 let User = Bento.model('User');
 let Car  = Bento.model('Car');
 let Booking = Bento.model('Booking');
+let GroupCar  = Bento.model('GroupCar');
 
 let geolib      = require('geolib');
 let fs          = require('fs');
@@ -74,43 +75,35 @@ module.exports = {
         as: 'groupCar',
       }],
       where : {
-        // This $or division is used below for 
-        // users to find their own booking.
-        // Don't simplify it.
-        $or: [
-          {
-            inRepair: false,
-            adminOnly: false
-            //
-            // This gets put in the list
-            // if the user is not an admin.
-            // Otherwise, the admin should be
-            // able to see unavailable cars in 
-            // the app.
-            //
-            // isAvailable: true,
-          }
-        ]
+        inRepair: false,
+        adminOnly: false
+        //
+        // This gets put in the list
+        // if the user is not an admin.
+        // Otherwise, the admin should be
+        // able to see unavailable cars in 
+        // the app.
+        //
+        // isAvailable: true,
       }
     };
 
     if (!isAdmin) {
-      opts.where['$or'][0].isAvailable = true;
+      opts.where.isAvailable = true;
     } else {
-      opts.where['$or'][0].userId = null;
+      opts.where.userId = null;
     }
 
     // Don't show la cars between 1 and 5am pacific time.
     // Unless you are an admin
     if(hour >= 1 && hour < 4 && !isAdmin) {
-      let $or = opts.where['$or']; 
-      delete opts.where['$or'];
-      opts.where['$and'] = [
-        { 
-          charge: { $gt : 55 }
-        },
-        $or
-      ];
+      let $where = opts.where;
+      opts.where = {
+        $and: [ 
+          { charge: { $gt : 55 } }, 
+          $where 
+        ]
+      };
     } else if(hour >= 4 && hour < 8 && !isAdmin) {
       opts.where = { 
         $or : [
@@ -120,10 +113,13 @@ module.exports = {
     }
 
     if(_user) {
-      if(!opts.where['$or']) {
-        opts.where['$or'] = [];
-      }
-      opts.where['$or'].push({ userId: _user.id });
+      let $where = opts.where;
+      opts.where = {
+        $or: [
+          { userId: _user.id },
+          $where
+        ]
+      };
     }
 
     let cars = yield Car.find(opts);
@@ -147,7 +143,7 @@ module.exports = {
       }
     });
 
-    if (_user && !_user.hasAccess('admin')) {
+    if (_user) {
       fs.appendFile('/var/log/outgoing/carsrequest.txt', JSON.stringify([new Date(), available, _user.id, _user.latitude, _user.longitude]) + '\n');
     }
 
@@ -192,28 +188,77 @@ module.exports = {
   *carsWithBookings(_user) {
     let start = new Date();
     let perf = [];
-    // See #1077. Super Admin can access all cars.
-    // But still we need car's group on UI
-    let includeGroupCar = {
-      model: 'GroupCar',
-      as :'groupCar'
-    };
+    let cars = [];
 
-    let cars = yield Car.find({
-      include: [
-        includeGroupCar,
-        { 
-          model : 'User',
-          as: 'user'
-        },
-        { 
-          model : 'Booking',
-          as: 'currentBooking'
-        }
-      ]
-    });
-    perf.push("car " + (new Date() - start));
+    function *join_method() {
+      perf.push('table join');
 
+      // See #1077. Super Admin can access all cars.
+      // But still we need car's group on UI
+      cars = yield Car.find({
+        include: [
+          {
+            model: 'GroupCar',
+            as :'groupCar'
+          },
+          { 
+            model : 'User',
+            as: 'user'
+          },
+          { 
+            model : 'Booking',
+            as: 'currentBooking'
+          }
+        ]
+      });
+      perf.push("car " + (new Date() - start));
+    }
+
+    function *separate_method() {
+      perf.push('separate');
+
+      // See #1077. Super Admin can access all cars.
+      // But still we need car's group on UI
+      let allCars = yield Car.find();
+      perf.push("cars " + (new Date() - start));
+
+      let carsOfInterest = allCars.filter((row) => row.bookingId);
+
+      let bookingIdList = carsOfInterest.map((row) => row.bookingId);
+      let userIdList = carsOfInterest.map((row) => row.userId);
+      let carIdList = allCars.map((row) => row.id);
+
+      let bookingList = yield Booking.find({where: { id: { $in: bookingIdList } } });
+      perf.push("bookings " + (new Date() - start));
+      let userList = yield User.find({where: { id: { $in: userIdList } } });
+      perf.push("users " + (new Date() - start));
+      let groupList = yield GroupCar.find({where: { carId: { $in: carIdList } } });
+      perf.push("groups " + (new Date() - start));
+
+      let carMap = {};
+      let userMap = {};
+
+      allCars.forEach((row) => { 
+        carMap[row.id] = row; 
+        // there will be multipls groupCars ... see below.
+        carMap[row.id].groupCar = [];
+      });
+      userList.forEach((row) => { userMap[row.id] = row; });
+
+      groupList.forEach((row) => { carMap[row.carId].groupCar.push( row ); });
+      bookingList.forEach((row) => { carMap[row.carId].currentBooking = row; });
+      allCars.forEach((row) => { row.user = userMap[row.userId]; });
+
+      cars = allCars;
+      perf.push("car " + (new Date() - start));
+    }
+
+    if(Math.random() < 0.5) {
+      yield join_method();
+    } else {
+      yield separate_method();
+    }
+    
     // the schema as of this writing is
     // enum('reserved','pending','cancelled','ready','started','ended','completed','closed') 
     let statusMap = {
@@ -473,6 +518,7 @@ module.exports = {
    * @return {Object}             updated Car
    */
   *syncUpdate(id, data, existingCar, _user) {
+    let user = false;
     if (!existingCar) {
       existingCar = yield Car.findById(id);
     }
@@ -508,12 +554,28 @@ module.exports = {
       // We notify fleet if the car passes a threshold to make
       // sure that they put the car out.
       // see https://github.com/WaiveCar/Waivecar/issues/857
-      if (data.isCharging && !existingCar.isAvailable && !(yield redis.shouldProcess('car-charge-notice', existingCar.id))) {
+      //
+      // Also we want to prevent things from being hit multiple times. Normally we can do average charge
+      // and flags, but this won't work here because we have the classic flag clearing problem since car 
+      // rows are persistent and reused and I'm not going to make a mark and sweep system for this stupid 
+      // thing.  So instead we are going to make the lock something like 5 minutes ... that should make
+      // things shut up
+      //
+      if (data.isCharging && !existingCar.isAvailable && !(yield redis.shouldProcess('car-charge-notice', existingCar.id, 5 * 60 * 1000))) {
         if (
             (data.charge >= 100 && existingCar.charge < 100) ||
             (data.charge >= 80 && existingCar.charge < 80)
         ) {
-          yield notify.notifyAdmins(`:car: ${ existingCar.license } has charged to ${ data.charge }% and should be made available.`, ['slack'], {channel: '#rental-alerts'});
+          let secondHalf = '';
+          if(existingCar.userId) {
+            if(!user) {
+              user = yield User.findById(existingCar.userId);
+            }
+            secondHalf = ` by ${user.link()}!`;
+          } else {
+            secondHalf = ' and should be made available.';
+          }
+          yield notify.notifyAdmins(`:car: ${ existingCar.link() } has charged to ${ data.charge }% ${ secondHalf }`, ['slack'], {channel: '#rental-alerts'});
         }
       }
 
@@ -525,7 +587,9 @@ module.exports = {
     if (data.boardVoltage < 10.5 && data.isIgnitionOn) {
       let message = `:skull: ${ existingCar.link() } board voltage is at ${ data.boardVoltage }v`;
       if (existingCar.userId) {
-        let user = User.findById(existingCar.userId);
+        if(!user) {
+          user = User.findById(existingCar.userId);
+        }
         message += ` (Current user is ${ user.link() })`;
       }
 
@@ -610,34 +674,28 @@ module.exports = {
         // If Device does not match any Car then add it to the database.
         let excludedCar = allCars.find(c => c.id === device.id);
         if (!excludedCar) {
-          let isMockCar = [ 'EE000017DC652701', 'C0000017DC247801' ].indexOf(device.id) > -1;
-          if (!config.mock.cars && isMockCar) {
-            // this is a dev kit, ignore update.
-            log.debug(`Cars : Sync : skipping DevKit ${ device.id }.`);
-          } else  {
-            let newCar = yield this.getDevice(device.id);
-            if (newCar) {
-              let car = new Car(newCar);
-              let meta = config.car.meta[car.id];
-              if (meta) {
-                car.license = meta.license;
-              } else {
-                let nextNumber = (yield Car.find()).length; 
-                let candidateName = '';
-                do {
-                  candidateName = `newCar${ nextNumber }`;
-                  existingCar = yield Car.findOne({ where : { license: candidateName } });
-                  nextNumber ++;
-                } while(existingCar);
-
-                car.license = candidateName;
-              }
-              car.licenseUsed = car.license;
-              log.debug(`Cars : Sync : adding ${ device.id }.`);
-              yield car.upsert();
+          let newCar = yield this.getDevice(device.id);
+          if (newCar) {
+            let car = new Car(newCar);
+            let meta = config.car.meta[car.id];
+            if (meta) {
+              car.license = meta.license;
             } else {
-              log.debug(`Cars : Sync : failed to retrieve ${ device.id } to add to database.`);
+              let nextNumber = (yield Car.find()).length; 
+              let candidateName = '';
+              do {
+                candidateName = `newCar${ nextNumber }`;
+                existingCar = yield Car.findOne({ where : { license: candidateName } });
+                nextNumber ++;
+              } while(existingCar);
+
+              car.license = candidateName;
             }
+            car.licenseUsed = car.license;
+            log.debug(`Cars : Sync : adding ${ device.id }.`);
+            yield car.upsert();
+          } else {
+            log.debug(`Cars : Sync : failed to retrieve ${ device.id } to add to database.`);
           }
         } else {
           // If Device was found in database but not in our filtered list, ignore.

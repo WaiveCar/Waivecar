@@ -6,10 +6,6 @@ module.exports = function *() {
   yield relations();
 };
 
-/**
- * Setup the model relations.
- * @return {Void}
- */
 function *relations() {
   let models = Object.keys(Bento.store.models);
   for (let i = 0, len = models.length; i < len; i++) {

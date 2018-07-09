@@ -98,10 +98,6 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
     }
   ];
 
-  /**
-   * Possible custom attributes attached to booking outside of schema.
-   * @type {Array}
-   */
   model.attributes = [
     'status=>user',
     'user=>car',

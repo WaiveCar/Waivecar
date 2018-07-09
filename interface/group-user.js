@@ -9,10 +9,6 @@ Bento.Register.Model('GroupUser', 'sequelize', (model, Sequelize) => {
     // ### Required Fields
     // These fields are locked and should not be removed or have its key changed.
 
-    /**
-     * The group id the user belongs to.
-     * @type {Integer}
-     */
     groupId : {
       type       : Sequelize.INTEGER,
       allowNull  : false,
@@ -31,10 +27,6 @@ Bento.Register.Model('GroupUser', 'sequelize', (model, Sequelize) => {
       }
     },
 
-    /**
-     * The custom role name for the user within the group.
-     * @type {Integer}
-     */
     groupRoleId : {
       type       : Sequelize.INTEGER,
       references : {

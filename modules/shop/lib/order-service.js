@@ -222,6 +222,40 @@ module.exports = class OrderService extends Service {
     return order;
   }
 
+  static *getCarNow(booking, user, amount) {
+    let card = yield Card.findOne({ where : { userId : user.id } });
+    let car = yield Car.findOne({ where: { id: booking.carId } });
+
+    let order = new Order({
+      createdBy : user.id,
+      userId    : user.id,
+      source      : card.id,
+      description : `${car.license} rebook`,
+      metadata    : null,
+      currency    : 'usd',
+      amount      : amount
+    });
+    let fee = (amount/100).toFixed(2);
+
+    yield order.save();
+    try {
+      yield this.charge(order, user, {nodebt: true});
+      yield notify.notifyAdmins(`:heavy_dollar_sign: Charged the impatient ${ user.link() } $${ fee } to rebook ${ car.license }`, [ 'slack' ], { channel : '#rental-alerts' });
+    } catch (err) {
+      yield this.failedCharge(amount, user, err, ` | ${ apiConfig.uri }/bookings/${ booking.id }`);
+      return false;
+    }
+
+    // Regardless of whether we successfully charged the user or not, we need
+    // to associate this booking with the users' order id
+    let payment = new BookingPayment({
+      bookingId : booking.id,
+      orderId   : order.id
+    });
+    yield payment.save();
+    return true;
+  }
+
   static *extendReservation(booking, user) {
     let amount = 100;
 
@@ -238,7 +272,7 @@ module.exports = class OrderService extends Service {
 
     yield order.save();
     try {
-      yield this.charge(order, user);
+      yield this.charge(order, user, {nodebt: true});
       yield notify.notifyAdmins(`:moneybag: Charged ${ user.link() } $1.00 for a reservation extension | ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
     } catch (err) {
       yield this.failedCharge(amount, user, err, ` | ${ apiConfig.uri }/bookings/${ booking.id }`);
@@ -695,7 +729,13 @@ module.exports = class OrderService extends Service {
         if (capture) {
           // We failed to charge order.amount so that's what our math is.
           // It's not more complex than that.
-          yield user.update({ credit: user.credit - order.amount });
+          
+          // If we failed to charge someone, sometimes they were attempting
+          // to buy something, in which case, we don't give it to them and
+          // don't charge them.
+          if(!opts.nodebt) {
+            yield user.update({ credit: user.credit - order.amount });
+          }
 
           // A failed charge needs to be marked as such (see #670).
           yield order.update({ status: 'failed' });

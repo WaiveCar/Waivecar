@@ -38,12 +38,13 @@ module.exports = {
     return miles <= 25;
   },
 
-  hasMoved(location1, location2) {
+  hasMoved(location1, location2, threshold) {
+    threshold = threshold || 250;
     let distance = geolib.getDistance(
       { latitude : location1.latitude, longitude : location1.longitude },
       { latitude : location2.latitude, longitude : location2.longitude }
     );
-    return distance >= 250 ? distance : 0;
+    return distance >= threshold ? distance : 0;
   },
 
   *getAddressComponent(lat, lng, type) {

@@ -7,7 +7,7 @@ let config = require('bentojs-config');
 // ### Bento
 // Expose bento on the global scope.
 
-GLOBAL.Bento = module.exports = {};
+global.Bento = module.exports = {};
 
 // ### Paths
 // Absolute paths to the various core concept folders of the bento api.

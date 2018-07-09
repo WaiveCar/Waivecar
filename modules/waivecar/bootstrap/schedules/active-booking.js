@@ -40,19 +40,25 @@ var checkBooking = co.wrap(function *(booking) {
   let trigger = freetime + 60;
   
 
-  // This section increments drive_count, park_count and charge_count 
-  let bookingRecord = yield Booking.findById(booking.id);
-  if (device.isIgnitionOn) {
-    // If the ignition is on, drive_count is incremented
-    yield bookingRecord.update({ driveCount: bookingRecord.driveCount + 1 });
+  if(device) {
+    // This section increments drive_count, park_count and charge_count 
+    let bookingRecord = yield Booking.findById(booking.id);
+    if (device.isIgnitionOn) {
+      // If the ignition is on, drive_count is incremented
+      yield bookingRecord.update({ driveCount: bookingRecord.driveCount + 1 });
+    } else {
+      // If it is off, park_count is incremented
+      yield bookingRecord.update({ parkCount: bookingRecord.parkCount + 1 });
+    } 
+    if (device.isCharging) {
+      // If the car is charging charge_count is incremented
+      yield bookingRecord.update({ chargeCount: bookingRecord.chargeCount + 1 });
+    }
   } else {
-    // If it is off, park_count is incremented
-    yield bookingRecord.update({ parkCount: bookingRecord.parkCount + 1 });
-  } 
-  if (device.isCharging) {
-    // If the car is charging charge_count is incremented
-    yield bookingRecord.update({ chargeCount: bookingRecord.chargeCount + 1 });
+    // if we failed to fetch the device we just pretend and move on
+    device = car;
   }
+
   // This always returns false if NODE_ENV !== production
   if (!device || !car || !user) return;
 
@@ -64,7 +70,7 @@ var checkBooking = co.wrap(function *(booking) {
           yield booking.delForfeitureTimers();
         }
       } else if (!booking.isFlagged('first-sync')) {
-        yield booking.setForfeitureTimers(user, config.booking.timers);
+        yield booking.setForfeitureTimers(user, config.waivecar.booking.timers);
         // we don't want to send off anything to the user
         // unless we've checked the car
         yield booking.flag('first-sync');
@@ -170,11 +176,11 @@ var checkBooking = co.wrap(function *(booking) {
   });
   yield newLocation.save();
   
-  let hasMoved = GeocodingService.hasMoved(car, device);
+  let hasMoved = GeocodingService.hasMoved(car, device, 600);
   // If the car has moved, but the ignition is off, that means that the vehicle may currently be being towed and a notification is sent tto slack
-  if (hasMoved && !device.isIgnitionOn && !car.isIgnitionOn && car.totalMileage === device.totalMileage) {
+  if (hasMoved && !device.isIgnitionOn && !car.isIgnitionOn && car.totalMileage === device.totalMileage && hasMoved < 10000) {
     console.log(car, device, car.totalMileage, device.totalMileage, device.isIgnitionOn, car.isIgnitionOn, hasMoved);
-    //yield notify.notifyAdmins(`:flying_saucer: ${ car.license } is moving without the ignition on or odometer incrementing. It may be on a tow truck.`, [ 'slack' ], { channel : '#rental-alerts' });
+    yield notify.notifyAdmins(`:flying_saucer: ${ car.license } is moving without the ignition on or odometer incrementing. It may be on a tow truck.`, [ 'slack' ], { channel : '#rental-alerts' });
   }
 
   yield cars.syncUpdate(car.id, device, car);

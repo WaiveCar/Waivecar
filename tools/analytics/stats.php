@@ -598,4 +598,4 @@ function details($car = false, $start = false) {
 //details('60000018942E1401', '2017-04-24');
 //boo();
 //boo111();
-availability();
+avail();
