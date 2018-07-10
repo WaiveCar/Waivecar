@@ -57,10 +57,7 @@ module.exports = {
 
   *deleteNote(payload, _user) {
     let record = yield Waitlist.findById(payload.id);
-    if (record) {
-      var notes = JSON.parse(record.notes).splice(notes.indexOf(payload.note), 1);
-    }
-    yield record.update({notes: JSON.stringify(notes)});
+    yield record.update({notes: JSON.stringify(JSON.parse(record.notes).splice(record.notes.indexOf(payload.note), 1))});
   },
 
   *prioritize(payload, _user) {
