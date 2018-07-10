@@ -22,6 +22,7 @@ class TableIndex extends React.Component {
       more   : false,
       offset : 0,
       noteValue: null,
+      currentNotes: [],
     };
     relay.subscribe(this, 'waitlist');
   }
@@ -97,6 +98,10 @@ class TableIndex extends React.Component {
       userSelected: this.table.data.filter((row) => { 
         return row.id === id;
       })[0]
+    }, () => {
+      this.setState({
+        currentNotes: JSON.parse(this.state.userSelected.notes)
+      });
     });
   }
 
@@ -127,11 +132,19 @@ class TableIndex extends React.Component {
   addNote() {
     api.post('/waitlist/addNote', { id: this.state.userSelected.id, note: this.state.noteValue }, (err, response) => {
       this.setState({
-        noteValue: ''
+        noteValue: '',
+        currentNotes: [...this.state.currentNotes, this.state.noteValue],
       });
     });
   }
 
+  deleteNote(note) {
+    api.post('/waitlist/deleteNote', { id: this.state.userSelected.id, note: note }, (err, response) => {
+      let temp = [...this.state.currentNotes];
+      temp.splice(temp.indexOf(note), 1);
+      this.setState({currentNotes: temp});
+    });
+  }
 
   render() {
     return (
@@ -147,9 +160,14 @@ class TableIndex extends React.Component {
               <div> <b>Email:</b> <a href={'mailto:' + this.state.userSelected.email }>{ this.state.userSelected.email }</a> </div>
               <div> <b>Priority:</b> { this.state.userSelected.priority } </div>
               <span>
-                <div> <b>Notes:</b> { JSON.parse(this.state.userSelected.notes).map((note, i) => {
+                <div> <b>Notes:</b> { this.state.userSelected.notes && this.state.currentNotes.map((note, i) => {
                   return (
-                    <div key={i}>{note}</div>
+                    <div key={i}>
+                      {note}
+                      <button onClick={() => this.deleteNote(note)}>
+                        x
+                      </button>
+                    </div>
                   );
                 }) } </div>
                 <textarea value={this.state.noteValue} onChange={(e) => this.setState({noteValue: e.target.value})}/><br/>
