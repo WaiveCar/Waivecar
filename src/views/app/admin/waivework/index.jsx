@@ -148,7 +148,9 @@ class TableIndex extends React.Component {
               <div> <b>Priority:</b> { this.state.userSelected.priority } </div>
               <span>
                 <div> <b>Notes:</b> { JSON.parse(this.state.userSelected.notes).map((note, i) => {
-                  <div key={i}>{note}</div>
+                  return (
+                    <div key={i}>{note}</div>
+                  );
                 }) } </div>
                 <textarea value={this.state.noteValue} onChange={(e) => this.setState({noteValue: e.target.value})}/><br/>
                 <button  className='btn btn-primary' style={{ cursor: 'pointer' }} onClick={ this.addNote.bind(this) }>
