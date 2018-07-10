@@ -109,6 +109,7 @@ Route.get('/waitlist', [ 'isAuthenticated', 'isAdmin', 'WaitlistController@index
 Route.post('/waitlist/letIn', [ 'isAuthenticated', 'isAdmin', 'WaitlistController@letIn' ]);
 Route.post('/waitlist/add', ['WaitlistController@add' ]);
 Route.post('/waitlist/addNote', ['WaitlistController@addNote' ]);
+Route.del('/waitlist/deleteNote', ['WaitlistController@deleteNote']);
 Route.post('/waitlist/prioritize', ['WaitlistController@prioritize' ]);
 Route.post('/waitlist/addById', ['WaitlistController@addById' ]);
 

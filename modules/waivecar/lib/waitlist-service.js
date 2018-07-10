@@ -47,10 +47,18 @@ module.exports = {
       } catch(ex) {
         notes = [];
       }
-      if(!notes || !('push' in notes)) {
+      if(!notes || !(Array.isArray(notes))) {
         notes = [];
       }
       notes.push(payload.note);
+    }
+    yield record.update({notes: JSON.stringify(notes)});
+  },
+
+  *deleteNote(payload, _user) {
+    let record = yield Waitlist.findById(payload.id);
+    if (record) {
+      var notes = JSON.parse(record.notes).splice(notes.indexOf(payload.note), 1);
     }
     yield record.update({notes: JSON.stringify(notes)});
   },
