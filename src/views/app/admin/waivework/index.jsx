@@ -21,13 +21,14 @@ class TableIndex extends React.Component {
       },
       more   : false,
       offset : 0,
+      noteValue: null,
     };
     relay.subscribe(this, 'waitlist');
   }
 
   componentDidMount() {
     this.table.init();
-    dom.setTitle("Waivework");
+    dom.setTitle('Waivework');
     this.setState({
       sort : {
         key   : 'id',
@@ -61,7 +62,7 @@ class TableIndex extends React.Component {
   }
 
   letin() {
-    let amount = prompt("How many people do you want to let in?");
+    let amount = prompt('How many people do you want to let in?');
     if(amount) {
       amount = parseInt(amount, 10);
     }
@@ -124,9 +125,9 @@ class TableIndex extends React.Component {
   }
 
   addNote() {
-    api.post('/waitlist/addNote', { id: this.state.userSelected.id, note: this.state.notevalue }, (err) => {
+    api.post('/waitlist/addNote', { id: this.state.userSelected.id, note: this.state.noteValue }, (err, response) => {
       this.setState({
-        notevalue: null
+        noteValue: ''
       });
     });
   }
@@ -143,11 +144,13 @@ class TableIndex extends React.Component {
             <div className="info-box box-content">
               <div> <b>Name:</b> { this.state.userSelected.firstName } { this.state.userSelected.lastName }</div>
               <div> <b>Phone:</b> { this.state.userSelected.phone } </div>
-              <div> <b>Email:</b> <a href={"mailto:" + this.state.userSelected.email }>{ this.state.userSelected.email }</a> </div>
+              <div> <b>Email:</b> <a href={'mailto:' + this.state.userSelected.email }>{ this.state.userSelected.email }</a> </div>
               <div> <b>Priority:</b> { this.state.userSelected.priority } </div>
-              <span style={{ display: 'none' }}>
-                <div> <b>Notes:</b> { this.state.userSelected.notes } </div>
-                <textarea value={this.state.notevalue} /><br/>
+              <span>
+                <div> <b>Notes:</b> { JSON.parse(this.state.userSelected.notes).map((note, i) => {
+                  <div key={i}>{note}</div>
+                }) } </div>
+                <textarea value={this.state.noteValue} onChange={(e) => this.setState({noteValue: e.target.value})}/><br/>
                 <button  className='btn btn-primary' style={{ cursor: 'pointer' }} onClick={ this.addNote.bind(this) }>
                   Add Note
                 </button>
