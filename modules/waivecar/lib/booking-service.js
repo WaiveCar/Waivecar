@@ -71,7 +71,7 @@ module.exports = class BookingService extends Service {
 
   // Creates a new booking.
   static *create(data, _user) {
-    if (!redis.shouldProcess('booking-car', data.carId, 10 * 1000)) {
+    if (!(yield redis.shouldProcess('booking-car', data.carId, 10 * 1000))) {
       throw error.parse({
         code    : 'BOOKING_AUTHORIZATION',
         message : 'Unable to start booking. Someone else is booking.'
@@ -590,7 +590,7 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
-    if (redis.shouldProcess('booking-start', booking.id)) {
+    if (yield redis.shouldProcess('booking-start', booking.id)) {
       // ### Start Booking
       // 1. Delete the booking cancelation timer
       // 2. Log the initial details of the booking and car details.
@@ -982,7 +982,7 @@ module.exports = class BookingService extends Service {
 
   // Locks, and makes the car available for a new booking.
   static *_complete(id, _user, query, payload) {
-    if (!redis.shouldProcess('booking-complete', id)) {
+    if (!(yield redis.shouldProcess('booking-complete', id))) {
       return;
     }
 
