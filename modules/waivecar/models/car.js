@@ -224,15 +224,19 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
   model.methods = {
 
     getCurrentBooking: function *() {
-      return yield Booking.findOne({ 
-        where : { 
-          car_id : this.id,
-          status : {
-            $in : ['started', 'reserved', 'ended']
-          }
-        },
-        order: [['created_at', 'DESC']]
-      });
+      if(this.bookingId) {
+        return yield Booking.findById(this.bookingId);
+      } else {
+        return yield Booking.findOne({ 
+          where : { 
+            car_id : this.id,
+            status : {
+              $in : ['started', 'reserved', 'ended']
+            }
+          },
+          order: [['created_at', 'DESC']]
+        });
+      }
     },
 
     link: function() {
