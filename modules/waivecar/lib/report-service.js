@@ -63,6 +63,8 @@ module.exports = {
             report.booked.push([
               license, user.link(), status, `<${ Bento.config.web.uri }/bookings/${booking.id}|#${booking.id}>`, car.chargeReport(), location
             ].join(' '));
+          } else {
+            console.log("no booking found for " + car.license);
           }
 
         } else {
