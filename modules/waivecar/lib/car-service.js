@@ -746,11 +746,9 @@ module.exports = {
    * @return {Array}
    */
   *getDevice(id, _user, source) {
-    /*
     if (process.env.NODE_ENV !== 'production') {
       return false;
     }
-    */
     try {
       let status = yield this.request(`/devices/${ id }/status`, { timeout : 30000 });
       this._errors[id] = 0;
