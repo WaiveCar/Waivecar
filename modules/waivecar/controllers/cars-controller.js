@@ -21,11 +21,6 @@ Bento.Register.Controller('CarsController', function(controller) {
     return yield car.show(id, this.auth.user);
   };
 
-  /**
-   * Updates the provided user.
-   * @param  {Number} id
-   * @return {Object}
-   */
   controller.update = function *(id) {
     return yield car.update(id, this.payload, this.auth.user);
   };

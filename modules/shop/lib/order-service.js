@@ -458,56 +458,45 @@ module.exports = class OrderService extends Service {
     };
   }
 
-  /**
-   * Creates a authorized order of a given amount to be captured later.
-   * @param  {Object} payload
-   * @param  {Object} _user
-   * @return {Object}
-   */
   static *authorize(payload, _user) {
     let card = yield Card.findOne({ where : { userId : _user.id } });
-    let amount = 100;
-
+    let amount = _user.credit > 0 ? 100 : 20000;
     // This data leak is so that if we fail to charge the card, we can
     // find the card and amount we tried to charge.
     this.authorize.last = {
       card: card,
       amount: amount
     };
-
-    if (!card) {
-      throw error.parse({
-        code    : 'SHOP_MISSING_CARD',
-        message : 'The user does not have a valid payment method.'
+    let now = moment().utc();
+    if (_user.lastHoldAt === null || (_user.lastHoldAt && now.diff(_user.lastHoldAt, 'days') > 2)) {
+      if (!card) {
+        throw error.parse({
+          code    : 'SHOP_MISSING_CARD',
+          message : 'The user does not have a valid payment method.'
+        });
+      }
+      // ### Create Order
+      let order = new Order({
+        createdBy   : _user.id,
+        userId      : _user.id,
+        source      : card.id,
+        description : 'Pre booking authorization',
+        currency    : 'usd',
+        amount      : amount
       });
+      yield order.save();
+      // ### Charge
+      let charge = yield this.charge(order, _user, {nocapture: true});
+      if (charge.status !== 'failed') {
+        yield _user.update({ lastHoldAt: now });
+      }
+      console.log('Charge: ', charge);
+      console.log('_user', _user);
+      yield this.cancel(order, _user, charge);
     }
-
-    // ### Create Order
-    let order = new Order({
-      createdBy   : _user.id,
-      userId      : _user.id,
-      source      : card.id,
-      description : 'Pre booking authorization',
-      currency    : 'usd',
-      amount      : amount
-    });
-    yield order.save();
-
-    // ### Charge
-
-    let charge = yield this.charge(order, _user, {nocapture: true});
-    yield this.cancel(order, _user, charge);
-
     return order;
   }
 
-  /**
-   * Captures an authorized payment with the submitted cart.
-   * @param  {Number} id
-   * @param  {Object} payload
-   * @param  {Object} _user
-   * @return {Object}
-   */
   static *captures(id, payload, _user) {
     let order = yield this.getOrder(id);
     let user  = yield this.getUser(order.userId);
@@ -795,13 +784,6 @@ module.exports = class OrderService extends Service {
     return charge;
   }
 
-  /**
-   * Cancel pending payment
-   * @param {Object} order
-   * @param {Object} user
-   * @param {Object} charge
-   * @return {Void}
-   */
   static *cancel(order, user, charge) {
     let service = this.getService(config.service, 'charges');
     yield service.refund(charge.id);
@@ -822,12 +804,6 @@ module.exports = class OrderService extends Service {
     });
   }
 
-  /**
-   * Captures order items
-   * @param {Object} order
-   * @param {Array} items
-   * reeturn {Void}
-   */
   static *addItems(order, items) {
     for (let i = 0, len = items.length; i < len; i++) {
       let item = new OrderItem({
@@ -843,11 +819,6 @@ module.exports = class OrderService extends Service {
     }
   }
 
-  /**
-   * Checks if the provided currency is supported by the shop.
-   * @param  {String} currency
-   * @return {Void}
-   */
   static verifyCurrency(currency) {
     if (config.currencies.indexOf(currency) === -1) {
       throw error.parse({

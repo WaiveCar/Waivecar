@@ -143,7 +143,8 @@ module.exports = class BookingService extends Service {
     // The above code guarantees that we can book a car, it doesn't
     // necessarily give it to us.
     //
-    if(process.env.NODE_ENV === 'production') {
+    //TODO: uncomment process.env.NODE_ENV === 'production' when done with api-1286
+    //if(process.env.NODE_ENV === 'production') {
       try {
         yield OrderService.authorize(null, driver);
       } catch (err) {
@@ -167,7 +168,7 @@ module.exports = class BookingService extends Service {
           message : 'Unable to authorize payment. Please validate payment method.'
         }, 400);
       }
-    }
+    //}
     if (!_user.hasAccess('admin')) {
       yield this.recentBooking(driver, car, data.opts);
     }
@@ -278,12 +279,6 @@ module.exports = class BookingService extends Service {
    |
    */
 
-  /**
-   * Returns a list of bookings.
-   * @param  {Object} query
-   * @param  {Object} _user
-   * @return {Array}
-   */
   static *index(query, _user) {
     let bookings    = [];
     let dbQuery     = queryParser(query, {
