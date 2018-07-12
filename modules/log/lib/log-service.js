@@ -296,6 +296,9 @@ module.exports = class LogService {
       fleetUserList = yield GroupUser.find({ where: { groupRoleId: { $gt: 1 } } }),
       excludeMap = {},
       includeMap = {},
+      allExcludedBookings,
+      excludedBookingsQuery = '',
+      includedBookingsQuery = '',
       allCars = yield Car.find({
          include: [
            {
@@ -331,21 +334,31 @@ module.exports = class LogService {
     // to code rot, I recommend looking at the loop to see the options.
     //
     query.scope = query.scope || 'ioniq';
-    for(var ix = 0; ix < allCars.length; ix++) {
-      let row = allCars[ix];
-      if(query.scope === 'all') {
+    if(!['ioniq','all','level'].includes(query.scope)) { 
+      let carList = query.scope.toUpperCase().split(',');
+      allCars.forEach((row) => {
+        if(carList.includes(row.id) || carList.includes(row.license.toUpperCase())) {
           includeMap[row.id] = row.license;
-      } else if(query.scope === 'ioniq') {
-        if(row.license.match(/waive1?\d$/i) || row.license.match(/waive20$/i)) {
-          excludeMap[row.id] = row.license;
-        } else {
+        } 
+      });
+      excludeMap = false;
+    } else {
+      for(var ix = 0; ix < allCars.length; ix++) {
+        let row = allCars[ix];
+        if(query.scope === 'all') {
           includeMap[row.id] = row.license;
-        }
-      } else if(query.scope === 'level') {
-        if((yield row.hasTag('level')) && row.license.indexOf('WORK') === -1) {
-          includeMap[row.id] = row.license;
-        } else {
-          excludeMap[row.id] = row.license;
+        } else if(query.scope === 'ioniq') {
+          if(row.license.match(/waive1?\d$/i) || row.license.match(/waive20$/i)) {
+            excludeMap[row.id] = row.license;
+          } else {
+            includeMap[row.id] = row.license;
+          }
+        } else if(query.scope === 'level') {
+          if((yield row.hasTag('level')) && row.license.indexOf('WORK') === -1) {
+            includeMap[row.id] = row.license;
+          } else {
+            excludeMap[row.id] = row.license;
+          }
         }
       }
     }
@@ -371,16 +384,20 @@ module.exports = class LogService {
         }
       ]
     });
-    let allExcludedBookings = yield Booking.find({
-      where : {
-        created_at : range,
-        car_id : { $in : Object.keys(excludeMap) }
-      },
-    });
+    if(excludeMap !== false) {
+      allExcludedBookings = yield Booking.find({
+        where : {
+          created_at : range,
+          car_id : { $in : Object.keys(excludeMap) }
+        },
+      });
 
-    var excludedBookingsQuery = '';
-    if(allExcludedBookings.length) {
-      excludedBookingsQuery = ' booking_id not in (' + allExcludedBookings.map((row) => { return row.id } ) + ') and ';
+      if(allExcludedBookings.length) {
+        excludedBookingsQuery = ' booking_id not in (' + allExcludedBookings.map((row) => { return row.id } ) + ') and ';
+      }
+    } else {
+      consol.log(includeMap, allBookings);
+      includedBookingsQuery = ' booking_id in (' + allBookings.map((row) => row.id) + ') and ';
     }
 
 
@@ -399,8 +416,10 @@ module.exports = class LogService {
       
       let qstr = [
         'select car_id, longitude, latitude, bl.created_at',
-        `from bookings join booking_locations bl on bookings.id = bl.booking_id where ${excludedBookingsQuery}`,
-        dateRange,
+        `from bookings join booking_locations bl on bookings.id = bl.booking_id where `,
+        excludedBookingsQuery,
+        includedBookingsQuery,
+        dateRange
       ].join(' ');
 
       return yield sequelize.query(qstr);
@@ -408,7 +427,9 @@ module.exports = class LogService {
     } else if(kind === 'points' || kind === 'points.js') {
       let qstr = [
         'select round(longitude,4) as lng, round(latitude,4) as lat, count(*) as weight',
-        `from booking_locations bl where ${excludedBookingsQuery}`,
+        `from booking_locations bl where`,
+        excludedBookingsQuery,
+        includedBookingsQuery,
         dateRange,
         'group by(concat(lng,lat))'
       ].join(' ');
