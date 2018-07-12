@@ -127,7 +127,7 @@ Bento.Register.Controller('BookingsController', function(controller) {
       case 'end'      : return yield booking.end(id, this.auth.user, this.query, this.payload);
       case 'canend'   : return yield booking.canEnd(id, this.auth.user, this.query, this.payload);
       case 'complete' : return yield booking.complete(id, this.auth.user, this.query, this.payload);
-      case 'extend'   : return yield booking.extend(id, this.auth.user);
+      case 'extend'   : return yield booking.extend(id, this.query, this.auth.user);
       case 'close'    : return yield booking.close(id, this.auth.user);
       case 'cancelforfeit' : return yield booking.cancelForfeit(id, this.auth.user);
       default         : {
