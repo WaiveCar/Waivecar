@@ -57,7 +57,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     }
     ctrl.appPics = false;
     ctrl.car = $data.active.cars;
-    ctrl.model = ctrl.car.model ? ctrl.car.model.toLowerCase() : 'ioniq'; 
+    ctrl.model = ctrl.car.model ? ctrl.car.model.split(' ')[0].toLowerCase() : 'ioniq'; 
     ctrl.tickets = true;
 
     // Attach methods

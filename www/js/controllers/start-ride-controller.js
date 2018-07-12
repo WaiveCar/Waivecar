@@ -31,7 +31,7 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
       right: null,
       other: null,
     }
-    ctrl.model = ctrl.data.cars.model.toLowerCase(); 
+    ctrl.model = ctrl.data.cars.model.split(' ')[0].toLowerCase(); 
     ctrl.allPics = false;
     ctrl.buttonClass = 'button button-dark add-image'; 
     ctrl.start = start;
