@@ -489,7 +489,7 @@ module.exports = class BookingService extends Service {
     return yield this._extend(id, Object.assign(opts || {}, {free: true}), _user);
   }
 
-  static *extend(id, _user) {
+  static *extend(id, query, _user) {
     return yield this._extend(id, {}, _user);
   }
 
@@ -502,6 +502,14 @@ module.exports = class BookingService extends Service {
     let car     = yield this.getCar(booking.carId);
     let err     = false;
 
+    let amount  = 100;
+    let time    = 10;
+
+    if(opts.howmuch == 20) {
+      amount  = 420;
+      time    = 20;
+    }
+
     if (_user) this.hasAccess(user, _user);
 
     if(booking.status !== 'reserved') {
@@ -512,15 +520,15 @@ module.exports = class BookingService extends Service {
     }
 
     if(!err) {
-      if(opts.free || (yield OrderService.extendReservation(booking, user))) {
+      if(opts.free || (yield OrderService.extendReservation(booking, user, amount, time))) {
         yield booking.flag('extended');
         yield booking.update({
-          reservationEnd: moment(booking.reservationEnd).add(10, 'minutes')
+          reservationEnd: moment(booking.reservationEnd).add(time, 'minutes')
         });
 
         if(!opts.silent) {
-          yield notify.sendTextMessage(user, `Your WaiveCar reservation has been extended 10 minutes.`);
-          yield notify.notifyAdmins(`:clock1: ${ user.link() } extended their reservation with ${ car.info() } by 10 minutes.`, [ 'slack' ], { channel : '#reservations' });
+          yield notify.sendTextMessage(user, `Your WaiveCar reservation has been extended ${ time } minutes.`);
+          yield notify.notifyAdmins(`:clock1: ${ user.link() } extended their reservation with ${ car.info() } by ${ time } minutes.`, [ 'slack' ], { channel : '#reservations' });
         }
 
         booking.relay('update');

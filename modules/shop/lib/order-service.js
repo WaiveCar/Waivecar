@@ -256,15 +256,17 @@ module.exports = class OrderService extends Service {
     return true;
   }
 
-  static *extendReservation(booking, user) {
-    let amount = 100;
+  static *extendReservation(booking, user, amount, time) {
+    amount = amount || 100;
+    time = time || 10;
 
     let card = yield Card.findOne({ where : { userId : user.id } });
+
     let order = new Order({
-      createdBy : user.id,
-      userId    : user.id,
+      createdBy   : user.id,
+      userId      : user.id,
       source      : card.id,
-      description : `Booking ${booking.id} reservation extension`,
+      description : `Booking ${booking.id} ${time} reservation extension`,
       metadata    : null,
       currency    : 'usd',
       amount      : amount
@@ -273,9 +275,9 @@ module.exports = class OrderService extends Service {
     yield order.save();
     try {
       yield this.charge(order, user, {nodebt: true});
-      yield notify.notifyAdmins(`:moneybag: Charged ${ user.link() } $1.00 for a reservation extension | ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
+      yield notify.notifyAdmins(`:moneybag: Charged ${ user.link() } $${ (amount / 100).toFixed(2) } on ${ booking.link() } ${ time }min extension.`, [ 'slack' ], { channel : '#rental-alerts' });
     } catch (err) {
-      yield this.failedCharge(amount, user, err, ` | ${ apiConfig.uri }/bookings/${ booking.id }`);
+      yield this.failedCharge(amount, user, err, ` | ${ booking.link() }`);
       return false;
     }
 
