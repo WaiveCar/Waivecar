@@ -20,7 +20,7 @@ let Scheduler = module.exports = (job) => {
       let schedule = yield redis.get(schedules[i]);
       if (schedule) {
         schedule = JSON.parse(schedule);
-        yield Scheduler.add(schedule.job, schedule.options);
+        Scheduler.add(schedule.job, schedule.options);
       }
     }
   });
