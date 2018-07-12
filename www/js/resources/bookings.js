@@ -28,9 +28,10 @@ module.exports = angular.module('app').factory('Bookings', [
       },
       extend: {
         method: 'PUT',
-        url: $utils.getCustomRoute('bookings/:id/extend'),
+        url: $utils.getCustomRoute('bookings/:id/extend?howmuch=:howmuch'),
         params: {
-          id: '@id'
+          id: '@id',
+          howmuch: '@howmuch'
         }
       },
       ready: {

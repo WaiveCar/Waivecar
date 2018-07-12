@@ -189,29 +189,54 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     }
   }
 
+  this.extendAction = function (howmuch) {
+    // It takes a few seconds for the extension to go through since it
+    // calls stripe and does a charge so we fake it until we make it. 
+    ctrl.isExtended = true;
+    var oldEnd = $data.active.bookings.reservationEnd;
+    $data.active.bookings.reservationEnd = moment($data.active.bookings.reservationEnd).add(howmuch, 'm');
+
+    $data.resources.bookings.extend({
+      howmuch: howmuch,
+      id: $ride.state.booking.id
+    }).$promise
+      .then(function() { })
+      .catch(function(err) {
+        $data.active.bookings.reservationEnd = oldEnd;
+        ctrl.isExtended = false;
+        showFailure('Unable to extend', 'There was a problem extending your reservation');
+      });
+  }
+
   this.extendBooking = function extendBooking() {
     var modal;
-    var extendedExpire = moment(expired).add(10, 'm').format('h:mm A');
+
+    var extendedExpire = {
+      10: moment(expired).add(10, 'm').format('h:mm A'),
+      20: moment(expired).add(20, 'm').format('h:mm A')
+    };
+
     $modal('result', {
       title: 'Extend Reservation?',
-      message: 'Extend reservation to <b>' + extendedExpire + '</b> for $1.00?',
+      message: 'You can extend the reservation' + [
+        '10 minutes to <b>' + extendedExpire['10'] + '</b> for $1.00',
+        'or',
+        '20 minutes to <b>' + extendedExpire['20'] + '</b> for $4.20'
+      ].join(' '),
       icon: 'waivecar-mark',
       actions: [{
         className: 'button-balanced',
-        text: 'I\'ll buy that for a dollar',
+        text: 'Extend to ' +  extendedExpire['10'] + ' for $1.00',
         handler: function () {
           modal.remove();
-
-          // It takes a few seconds for the extension to go through since it
-          // calls stripe and does a charge so we fake it until we make it. 
-          ctrl.isExtended = true;
-          $data.active.bookings.reservationEnd = moment($data.active.bookings.reservationEnd).add(10, 'm');
-
-          $data.resources.bookings.extend({id: $ride.state.booking.id}).$promise
-            .then(function() { })
-            .catch(function(err) {
-              showFailure('Unable to extend', 'There was a problem extending your reservation');
-            });
+          this.extendAction(10);
+        }
+      }, { 
+        className: 'button-balanced',
+        text: 'Extend to ' +  extendedExpire['20'] + ' for $4.20',
+        handler: function () {
+          modal.remove();
+          this.extendAction(20);
         }
       }, {
         className: 'button-dark',
