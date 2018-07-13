@@ -273,7 +273,7 @@ module.exports = class OrderService extends Service {
       createdBy   : user.id,
       userId      : user.id,
       source      : card.id,
-      description : `Booking ${booking.id} ${time} reservation extension`,
+      description : `Booking ${booking.id} ${time}min reservation extension`,
       metadata    : null,
       currency    : 'usd',
       amount      : amount
