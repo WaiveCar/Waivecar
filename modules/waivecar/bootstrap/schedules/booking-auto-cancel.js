@@ -45,7 +45,7 @@ scheduler.process('booking-extension-offer', function *(job) {
   let car = yield Car.findById(booking.carId);
 
   if(booking && booking.status === 'reserved' && !booking.isFlagged('extended')) {
-    yield notify.sendTextMessage(booking.userId, `The reservation time for ${car.info()} is almost up! You can add an extra 10 minutes to get to the car for $1.00 by responding "SAVE" to this message.`);
+    yield notify.sendTextMessage(booking.userId, `${car.info()} reservation time is almost up! Need more time? Respond "SAVE" to pay $4.20 for 20 extra minutes, "SAVE LESS" for $1.00 for 10 extra minutes, and "ABORT" to cancel the booking.`);
   }
 });
 
@@ -65,16 +65,17 @@ scheduler.process('booking-auto-cancel', function *(job) {
     if (RedisService.shouldProcess('booking-start', booking.id)) {
       if (booking.isFlagged('extended') && !booking.isFlagged('ext-started')) {
         yield booking.addFlag('ext-started');
+        let timer = booking.isFlagged('extend20') ? config.booking.timers.extend20 : config.booking.timers.extend10;
 
         scheduler.add('booking-auto-cancel', {
           uid   : `booking-${ booking.id }`,
-          timer : config.booking.timers.extension,
+          timer : timer,
           data  : {
             bookingId : booking.id
           }
         });
         // tell the user that this is actually happening.
-        yield notify.sendTextMessage(booking.userId, `Your reservation extension time has started! You have ${ config.booking.timers.extension.value } minutes more to get to ${ car.info() }.`);
+        yield notify.sendTextMessage(booking.userId, `Your reservation extension time has started! You have ${ timer.value } minutes more to get to ${ car.info() }.`);
 
         // and then get out of here.
         return true;

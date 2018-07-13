@@ -522,6 +522,9 @@ module.exports = class BookingService extends Service {
     if(!err) {
       if(opts.free || (yield OrderService.extendReservation(booking, user, amount, time))) {
         yield booking.flag('extended');
+        if(opts.howmuch == 20) {
+          yield booking.flag('extend20');
+        } 
         yield booking.update({
           reservationEnd: moment(booking.reservationEnd).add(time, 'minutes')
         });
@@ -533,7 +536,7 @@ module.exports = class BookingService extends Service {
 
         booking.relay('update');
       } else {
-        err = "Unable to charge $1.00 to your account. Reservation extension failed.";
+        err = `Unable to charge $${(amount / 100).toFixed(2)} to your account. Reservation Extension failed.`;
 
         // Since it failed, we credit the user the dollar back since we didn't offer
         // the service. Additionally this should really be a red flag and we should
