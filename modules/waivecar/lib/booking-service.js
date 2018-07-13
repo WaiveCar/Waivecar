@@ -71,7 +71,7 @@ module.exports = class BookingService extends Service {
 
   // Creates a new booking.
   static *create(data, _user) {
-    if (!redis.shouldProcess('booking-car', data.carId, 10 * 1000)) {
+    if (!(yield redis.shouldProcess('booking-car', data.carId, 10 * 1000))) {
       throw error.parse({
         code    : 'BOOKING_AUTHORIZATION',
         message : 'Unable to start booking. Someone else is booking.'
@@ -484,7 +484,7 @@ module.exports = class BookingService extends Service {
     return yield this._extend(id, Object.assign(opts || {}, {free: true}), _user);
   }
 
-  static *extend(id, _user) {
+  static *extend(id, query, _user) {
     return yield this._extend(id, {}, _user);
   }
 
@@ -497,6 +497,14 @@ module.exports = class BookingService extends Service {
     let car     = yield this.getCar(booking.carId);
     let err     = false;
 
+    let amount  = 100;
+    let time    = 10;
+
+    if(opts.howmuch == 20) {
+      amount  = 420;
+      time    = 20;
+    }
+
     if (_user) this.hasAccess(user, _user);
 
     if(booking.status !== 'reserved') {
@@ -507,20 +515,23 @@ module.exports = class BookingService extends Service {
     }
 
     if(!err) {
-      if(opts.free || (yield OrderService.extendReservation(booking, user))) {
+      if(opts.free || (yield OrderService.extendReservation(booking, user, amount, time))) {
         yield booking.flag('extended');
+        if(opts.howmuch == 20) {
+          yield booking.flag('extend20');
+        } 
         yield booking.update({
-          reservationEnd: moment(booking.reservationEnd).add(10, 'minutes')
+          reservationEnd: moment(booking.reservationEnd).add(time, 'minutes')
         });
 
         if(!opts.silent) {
-          yield notify.sendTextMessage(user, `Your WaiveCar reservation has been extended 10 minutes.`);
-          yield notify.notifyAdmins(`:clock1: ${ user.link() } extended their reservation with ${ car.info() } by 10 minutes.`, [ 'slack' ], { channel : '#reservations' });
+          yield notify.sendTextMessage(user, `Your WaiveCar reservation has been extended ${ time } minutes.`);
+          yield notify.notifyAdmins(`:clock1: ${ user.link() } extended their reservation with ${ car.info() } by ${ time } minutes.`, [ 'slack' ], { channel : '#reservations' });
         }
 
         booking.relay('update');
       } else {
-        err = "Unable to charge $1.00 to your account. Reservation extension failed.";
+        err = `Unable to charge $${(amount / 100).toFixed(2)} to your account. Reservation Extension failed.`;
 
         // Since it failed, we credit the user the dollar back since we didn't offer
         // the service. Additionally this should really be a red flag and we should
@@ -585,7 +596,7 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
-    if (redis.shouldProcess('booking-start', booking.id)) {
+    if (yield redis.shouldProcess('booking-start', booking.id)) {
       // ### Start Booking
       // 1. Delete the booking cancelation timer
       // 2. Log the initial details of the booking and car details.
@@ -699,6 +710,17 @@ module.exports = class BookingService extends Service {
     let booking = yield this.getBooking(id);
     let car     = yield this.getCar(booking.carId);
     let isAdmin = _user.isAdmin();
+    // we look to see the last time we updated the car
+    let lastUpdate = (new Date() - car.updatedAt) / (60 * 1000);
+
+    // if we haven't updated the car's location in the past minute, we try to get it again.
+    if(lastUpdate > 1) {
+      let data = yield cars.getDevice(car.id, _user, 'booking.canend');
+      if(data) {
+        yield car.update(data);
+      }
+    }
+
     return yield this._canEnd(car, isAdmin);
   }
 
@@ -966,7 +988,7 @@ module.exports = class BookingService extends Service {
 
   // Locks, and makes the car available for a new booking.
   static *_complete(id, _user, query, payload) {
-    if (!redis.shouldProcess('booking-complete', id)) {
+    if (!(yield redis.shouldProcess('booking-complete', id))) {
       return;
     }
 
@@ -1042,8 +1064,7 @@ module.exports = class BookingService extends Service {
     // if it looks like we'd fail this, then and only then do we probe the device one final time.
     if(res) {
       try {
-        let data = yield cars.getDevice(car.id, _user, 'booking.complete');
-        yield car.update(data);
+        yield car.update( yield cars.getDevice(car.id, _user, 'booking.complete') );
       } catch (err) {
         log.warn(`Failed to update ${ car.info() } when completing booking ${ booking.id }`);
       }

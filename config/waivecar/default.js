@@ -24,7 +24,8 @@ module.exports = {
         },
         extensionOffer: { value : 12, type  : 'minutes' },
         autoCancel : { value : 15, type  : 'minutes' },
-        extension : { value : 10, type  : 'minutes' },
+        extend10 : { value : 10, type  : 'minutes' },
+        extend20 : { value : 20, type  : 'minutes' },
         freeRideReminder : {
           value : 90,
           type  : 'minutes'

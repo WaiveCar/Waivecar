@@ -37,9 +37,10 @@ module.exports = class OrderService extends Service {
   // we are subverting that by copying the code below (see *create) and
   // removing all the overlapping dependency anti-patterned nonsense.
   // I mean god damn...
-  static *quickCharge(data, _user) {
+  static *quickCharge(data, _user, opts) {
     let user = yield this.getUser(data.userId);
     let charge = {amount: data.amount};
+    opts = opts || opts;
 
     if (
       // if we aren't an admin, this may be ok
@@ -88,7 +89,7 @@ module.exports = class OrderService extends Service {
       // The order here matters.  If a charge fails then only the failed charge will appear
       // as a transgression, not the fee itself.  So we need to log this prior to the charge
       yield UserLog.addUserEvent(user, 'FEE', order.id, data.description);
-      charge = yield this.charge(order, user);
+      charge = yield this.charge(order, user, opts);
 
       if(data.amount > 0) {
         yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.link() } $${ data.amount / 100 } for ${ data.description }`, [ 'slack' ], { channel : '#rental-alerts' });
@@ -114,6 +115,12 @@ module.exports = class OrderService extends Service {
     }
 
     return {order: order, user: user};
+  }
+
+  static *topUp(data, _user) {
+    if(yield this.quickCharge({description: "Top up $20"}, _user, {nocredit: true})) {
+      yield _user.update({credit: _user.credit + 20 * 100});
+    }
   }
 
   static *refund(payload, paymentId, _user) {
@@ -256,15 +263,17 @@ module.exports = class OrderService extends Service {
     return true;
   }
 
-  static *extendReservation(booking, user) {
-    let amount = 100;
+  static *extendReservation(booking, user, amount, time) {
+    amount = amount || 100;
+    time = time || 10;
 
     let card = yield Card.findOne({ where : { userId : user.id } });
+
     let order = new Order({
-      createdBy : user.id,
-      userId    : user.id,
+      createdBy   : user.id,
+      userId      : user.id,
       source      : card.id,
-      description : `Booking ${booking.id} reservation extension`,
+      description : `Booking ${booking.id} ${time}min reservation extension`,
       metadata    : null,
       currency    : 'usd',
       amount      : amount
@@ -273,9 +282,9 @@ module.exports = class OrderService extends Service {
     yield order.save();
     try {
       yield this.charge(order, user, {nodebt: true});
-      yield notify.notifyAdmins(`:moneybag: Charged ${ user.link() } $1.00 for a reservation extension | ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
+      yield notify.notifyAdmins(`:moneybag: Charged ${ user.link() } $${ (amount / 100).toFixed(2) } on ${ booking.link() } ${ time }min extension.`, [ 'slack' ], { channel : '#rental-alerts' });
     } catch (err) {
-      yield this.failedCharge(amount, user, err, ` | ${ apiConfig.uri }/bookings/${ booking.id }`);
+      yield this.failedCharge(amount, user, err, ` | ${ booking.link() }`);
       return false;
     }
 
@@ -665,6 +674,9 @@ module.exports = class OrderService extends Service {
       // when we aren't capturing.
       credit = 0;
     }
+    if(opts.nocredit) {
+      credit = 0;
+    }
 
     // If the user doesn't have enough credit to cover the entire costs, we
     // proceed to attempt to charge things.
@@ -722,7 +734,7 @@ module.exports = class OrderService extends Service {
           // If we failed to charge someone, sometimes they were attempting
           // to buy something, in which case, we don't give it to them and
           // don't charge them.
-          if(!opts.nodebt) {
+          if(!(opts.nodebt || opts.nocredit)) {
             yield user.update({ credit: user.credit - order.amount });
           }
 
@@ -758,7 +770,9 @@ module.exports = class OrderService extends Service {
         // This is the amount that we actually charged.
         yield order.update({ amount: order.amount - credit });
 
-        yield user.update({ credit: 0 });
+        if(!opts.nocredit) {
+          yield user.update({ credit: 0 });
+        }
       }
     } else {
       // If the user can cover the entirety of the charge with the
@@ -769,7 +783,9 @@ module.exports = class OrderService extends Service {
       // parent logic, but excluding this would incur a fragile 
       // dependency on the parent logic not changing - so we keep it.
       if (capture) {
-        yield user.update({ credit: credit - order.amount });
+        if(!opts.nocredit) {
+          yield user.update({ credit: credit - order.amount });
+        }
 
         // We now "fake" as if we did a CC charge to keep the
         // rest of the code from being confused by this.

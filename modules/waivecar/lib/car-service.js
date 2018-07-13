@@ -122,28 +122,33 @@ module.exports = {
       };
     }
 
+    // This special endpoint gets all the cars without much ado.
+    if(query.type === 'all') {
+      opts = {};
+    }
+
     let cars = yield Car.find(opts);
 
-    let available = 0;
-    cars.forEach(function(car) {
-      car.license = car.license || '';
+    if(_user) {
+      let available = 0;
+      cars.forEach(function(car) {
+        car.license = car.license || '';
 
-      // we want a single reference for this number
-      // and not have it be computed in various places
-      car.range = car.milesAvailable(); 
+        // we want a single reference for this number
+        // and not have it be computed in various places
+        car.range = car.milesAvailable(); 
 
-      available += car.isAvailable;
+        available += car.isAvailable;
 
-      // We toggle the car to be "available" for the admin so
-      // that it will show up on the list of cars. This helps
-      // fleet pick up low cars at night from the app in an 
-      // easy way.
-      if(!car.isAvailable && isAdmin) {
-        car.isAvailable = true;
-      }
-    });
+        // We toggle the car to be "available" for the admin so
+        // that it will show up on the list of cars. This helps
+        // fleet pick up low cars at night from the app in an 
+        // easy way.
+        if(!car.isAvailable && isAdmin) {
+          car.isAvailable = true;
+        }
+      });
 
-    if (_user) {
       fs.appendFile('/var/log/outgoing/carsrequest.txt', JSON.stringify([new Date(), available, _user.id, _user.latitude, _user.longitude]) + '\n');
     }
 

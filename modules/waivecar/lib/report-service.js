@@ -55,13 +55,17 @@ module.exports = {
         if(car.userId) {
           let user = yield User.findById(car.userId);
           let booking = yield car.getCurrentBooking();
-          let status = (booking.status !== 'started') ? booking.status : moment.utc(
-              moment().utc().diff(booking.createdAt, 'milliseconds')
-            ).format("H:mm");
+          if(booking) {
+            let status = (booking.status !== 'started') ? booking.status : moment.utc(
+                moment().utc().diff(booking.createdAt, 'milliseconds')
+              ).format("H:mm");
 
-          report.booked.push([
-            license, user.link(), status, `<${ Bento.config.web.uri }/bookings/${booking.id}|#${booking.id}>`, car.chargeReport(), location
-          ].join(' '));
+            report.booked.push([
+              license, user.link(), status, `<${ Bento.config.web.uri }/bookings/${booking.id}|#${booking.id}>`, car.chargeReport(), location
+            ].join(' '));
+          } else {
+            console.log("no booking found for " + car.license);
+          }
 
         } else {
           report.unavailable[where].push([license, car.chargeReport(), location].join('   '));
