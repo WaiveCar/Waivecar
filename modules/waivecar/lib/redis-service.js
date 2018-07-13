@@ -2,6 +2,7 @@
 
 let uuid      = require('uuid');
 let wrapper   = require('co-redis');
+let error     = Bento.Error;
 
 module.exports = (function() {
   let client = null;
