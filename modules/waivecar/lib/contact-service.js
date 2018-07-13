@@ -67,7 +67,8 @@ module.exports = {
       available: "List available WaiveCars",
       book: "Book a WaiveCar. Example:\n   book waive14",
       commands: null,
-      save: "Add 10 additional minutes to get to a WaiveCar reservation for $1.00",
+      save: "Add 20 additional minutes to get to a WaiveCar reservation for $4.20",
+      "save less": "Add 10 additional minutes to get to a WaiveCar reservation for $1.00",
       abort: "Cancel your booking",
       cancel: null,
       start: "Start your ride",
@@ -218,8 +219,10 @@ module.exports = {
     try {
       if(command === 'start') {
         yield booking.ready(id, user);
+      } else if (command === 'save less') {
+        yield booking._extend(id, {}, user);
       } else if (command === 'save') {
-        yield booking.extend(id);
+        yield booking._extend(id, {howmuch: 20}, user);
       } else if (command === 'cancel' || command === 'abort') {
         yield booking.cancel(id, user);
       } else if (command === 'unlock') {
