@@ -355,7 +355,7 @@ module.exports = class OrderService extends Service {
 
       try {
         yield this.charge(order, user);
-        yield notify.notifyAdmins(`:moneybag: Charged ${ user.link() } $${ amount / 100 } for ${ minutesOver } minutes | ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
+        yield notify.notifyAdmins(`:moneybag: Charged ${ user.link() } $${ (amount / 100).toFixed(2) } for ${ minutesOver }min ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
         log.info(`Charged user for time driven : $${ amount / 100 } : booking ${ booking.id }`);
       } catch (err) {
         yield this.failedCharge(amount, user, err, ` | ${ apiConfig.uri }/bookings/${ booking.id }`);
