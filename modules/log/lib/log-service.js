@@ -396,7 +396,6 @@ module.exports = class LogService {
         excludedBookingsQuery = ' booking_id not in (' + allExcludedBookings.map((row) => { return row.id } ) + ') and ';
       }
     } else {
-      consol.log(includeMap, allBookings);
       includedBookingsQuery = ' booking_id in (' + allBookings.map((row) => row.id) + ') and ';
     }
 
