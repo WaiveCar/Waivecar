@@ -126,7 +126,7 @@ var checkBooking = co.wrap(function *(booking) {
       booking_history = yield Booking.find({ where : { userId : user.id }});
 
       if(booking_history.length < 5) {
-        yield notify.notifyAdmins(`:cactus: ${ user.name() } drove ${ car.info() } ${ duration } minutes but has only rented ${ booking_history.length } times. ${ user.phone || user.email }`, [ 'slack' ], { channel : '#rental-alerts' });
+        yield notify.notifyAdmins(`:cactus: ${ user.link() } drove ${ car.link() } ${ duration } minutes and has only rented ${ booking_history.length } times.`, [ 'slack' ], { channel : '#rental-alerts' });
       }
     }
   }
