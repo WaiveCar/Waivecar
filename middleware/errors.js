@@ -25,20 +25,10 @@ module.exports = function(app) {
         err = error.handlers[route](err);
       }
 
-      // ### Status
-      // Set the error response status
+      this.status = err.httpStatus || 500;
 
-      this.status = err.status || 500;
-
-      // ### Prepare Error
-      // Prepares the error response for display.
-
-      let response = {
-        code     : err.code || err.type,
-        message  : err.message,
-        solution : err.solution,
-        data     : err.data || null
-      };
+      let response = Object.assign({}, err);
+      response.code = response.code || response.type;
 
       // ### Error
       // Logs error to console including the requesters IP and ID
@@ -55,19 +45,19 @@ module.exports = function(app) {
 
         // ### Return Error
 
-        this.body = {
+        this.body = Object.assign({
           code    : 'INTERNAL_SERVER_ERROR',
           message : 'An internal error occured in the service',
-        };
+        }, response);
 
       } else if (this.status === 501) {
-        log.debug(`${ err.status } > ${ err.message }`);
+        log.debug(`${ err.httpStatus } > ${ err.message }`);
         this.body = {
           code    : 'NOT_IMPLEMENTED',
           message : 'This service is currently not supporting this request'
         };
       } else {
-        log.debug(`${ err.status } > ${ err.message }`);
+        log.debug(`${ err.httpStatus } > ${ err.message }`);
         this.body = response;
       }
     }
