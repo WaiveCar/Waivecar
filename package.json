@@ -47,7 +47,6 @@
     "moment-timezone": "^0.5.13",
     "mysql": "2.9.0",
     "node-fs": "0.1.7",
-    "node-sass": "3.4.1",
     "nodemailer": "1.8.0",
     "nodemailer-mandrill-transport": "0.3.0",
     "pluralize": "1.2.1",
