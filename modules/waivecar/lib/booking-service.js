@@ -1502,9 +1502,11 @@ module.exports = class BookingService extends Service {
         "}</script>",
         `<div class='action-box' style='height:0'><button style='position:relative;top:60px;text-transform:none;color:lightblue' onclick="buyit_pCj8zFIPSkOiGq8zBlO1ng(this)" class="button button-dark button-link">(Beta feature) Get it now for $${fee}.00</button></div>`,
       ].join('');
+      
       throw error.parse({
         code    : 'RECENT_BOOKING',
-        message : `Sorry! You need to wait ${remainingTime}min more to rebook the same WaiveCar! ${buyNow}`,
+        message : `Sorry! You need to wait ${remainingTime}min more to rebook the same WaiveCar!`,
+        inject  : buyNow,
         options: [{
           title: `Get it now for $${fee}.00`,
           action: ['post', 'bookings', postparams]
