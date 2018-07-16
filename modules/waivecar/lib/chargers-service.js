@@ -18,7 +18,7 @@ let Header = {
 
 module.exports = {
   *getVersions() {
-    let url = 'https://evgotest.driivz.com/externalIncoming/ocpi/cpo/versions';
+    let url = 'https://op.evgo.com/externalIncoming/ocpi/cpo/2.1.1/versions';
 
     let reqResponse = yield request({
       url     : url,
