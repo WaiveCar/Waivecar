@@ -356,7 +356,7 @@ module.exports = class BookingService extends Service {
     // Prepares bookings with payment, and file details.
     if (query.details) {
       for (let i = 0, len = bookings.length; i < len; i++) {
-        bookings[i] = yield this.show(bookings[i].id, _user);
+        bookings[i] = yield this.show(bookings[i].id, _user,  {nopath: true, nopayments: true, nofiles: true});
       }
     }
 
@@ -403,7 +403,7 @@ module.exports = class BookingService extends Service {
   }
 
   // this is a bullshit incompetent mess
-  static *show(id, _user, ignoreUser) {
+  static *show(id, _user, opts) {
     let relations = {
       include : [
         {
@@ -418,12 +418,13 @@ module.exports = class BookingService extends Service {
       ]
     };
 
+    opts = opts || {};
     // ### Get Booking
 
     let booking = yield this.getBooking(id, relations);
     let user    = yield this.getUser(booking.userId);
 
-    if (!ignoreUser) this.hasAccess(user, _user);
+    this.hasAccess(user, _user);
 
     // ### Prepare Booking
 
@@ -440,35 +441,41 @@ module.exports = class BookingService extends Service {
       ]
     };
     booking.car      = yield Car.findById(booking.carId, carOptions);
-    try {
-      booking.cart     = yield fees.get(booking.cartId, _user);
-    } catch(ex) {
-      booking.cart     = null;
-    }
-    /*
-    booking.payments = yield Order.find({
-      where : {
-        id : booking.payments.reduce((list, next) => {
-          list.push(next.orderId);
-          return list;
-        }, [])
-      }
-    });
 
-    // ### Attach parking details
-    if (booking.details && booking.details.length) {
-      for (let i = 0, len = booking.details.length; i < len; i++) {
-        let detail = booking.details[i];
-        detail.parkingDetails = yield ParkingDetails.findOne({ where : { bookingDetailId : detail.id } });
+    if(!opts.nopayments) {
+      try {
+        booking.cart     = yield fees.get(booking.cartId, _user);
+      } catch(ex) {
+        booking.cart     = null;
       }
+
+      booking.payments = yield Order.find({
+        where : {
+          id : booking.payments.reduce((list, next) => {
+            list.push(next.orderId);
+            return list;
+          }, [])
+        }
+      });
     }
 
-    booking.files = yield File.find({
-      where : {
-        collectionId : booking.collectionId || undefined
+    if(!opts.nopath) {
+      if (booking.details && booking.details.length) {
+        for (let i = 0, len = booking.details.length; i < len; i++) {
+          let detail = booking.details[i];
+          detail.parkingDetails = yield ParkingDetails.findOne({ where : { bookingDetailId : detail.id } });
+        }
       }
-    });
-    */
+    }
+
+
+    if(!opts.nofiles) {
+      booking.files = yield File.find({
+        where : {
+          collectionId : booking.collectionId || undefined
+        }
+      });
+    }
 
     return booking;
   }
@@ -1381,7 +1388,7 @@ module.exports = class BookingService extends Service {
   static *relay(type, booking, _user) {
     let payload = {
       type : type,
-      data : yield this.show(booking.id, _user)
+      data : yield this.show(booking.id, _user, {nopath: true, nopayments: true, nofiles: true})
     };
     relay.user(booking.userId, 'bookings', payload);
     relay.admin('bookings', payload);
