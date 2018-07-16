@@ -402,9 +402,18 @@ module.exports = {
   // to kick them out
   *kickUser(id, _user) {
     let model = yield Car.findById(id);
-    if(!model.bookingId && model.userId) {
-      yield model.update({userId: null});
+    if(model.userId) {
+
+      if(model.bookingId) {
+        let booking = yield Booking.findById(model.bookingId);
+        // only kick out users if the booking is finished
+        if(!booking.isFinished()) {
+          return false;
+        }
+      }
+      yield model.update({bookingId: null, userId: null});
     }
+
     if(yield this.shouldRelay(model)) {
       relay.emit('cars', {
         type : 'update',
