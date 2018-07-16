@@ -483,10 +483,14 @@ class CarsShowView extends React.Component {
             <div className="row" style={{ marginTop: 10 }}>
               <div className="col-md-6">
                 {
-                  (car.booking && car.user) ?
+                  car.user ?
                     <div>
                       <a style={{ marginRight: "10px" }} href={ `/users/${ car.userId }` }>{ car.user.firstName + " " + car.user.lastName }</a>
-                      Booking #<a href={ `/bookings/${ car.booking.id }` }>{ car.booking.id }</a> 
+                      { 
+                        car.booking ?
+                          <span>Booking #<a href={ `/bookings/${ car.booking.id }` }>{ car.booking.id }</a></span> :
+                          <span>No booking. <a onclick={ this.service.executeCommand.bind(this,car,'kick')}>Kick user out</a></span>
+                      }
                     </div>
                   : <div className="col-md-12"> 
                       <div className="row" style={{ marginTop: "4px" }}>
