@@ -216,6 +216,14 @@ class CardList extends React.Component {
           </table>
         }
         { footer }
+        <div>
+          <button onClick={() => console.log('click')} className="btn btn-sm">
+            Add a $20 Credit.
+          </button>
+          <div className="credit-tip">
+            Why would I do this? The $20 hold that is placed on your account when you use WaiveCar will be reduced to $1.
+          </div>
+        </div>
       </div>
     );
   }
