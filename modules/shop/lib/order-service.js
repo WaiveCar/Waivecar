@@ -469,7 +469,7 @@ module.exports = class OrderService extends Service {
 
   static *authorize(payload, _user) {
     let card = yield Card.findOne({ where : { userId : _user.id } });
-    let amount = _user.credit > 0 ? 100 : 20000;
+    let amount = _user.credit > 0 ? 100 : 2000;
     // This data leak is so that if we fail to charge the card, we can
     // find the card and amount we tried to charge.
     this.authorize.last = {
