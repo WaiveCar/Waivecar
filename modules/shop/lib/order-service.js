@@ -485,7 +485,7 @@ module.exports = class OrderService extends Service {
         });
       }
       // ### Create Order
-      let order = new Order({
+      var order = new Order({
         createdBy   : _user.id,
         userId      : _user.id,
         source      : card.id,
