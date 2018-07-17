@@ -1517,7 +1517,7 @@ module.exports = class BookingService extends Service {
         options: [{
           title: `Get it now for $${fee}.00`,
           hotkey: 'now',
-          action: ['post', 'bookings', postparams]
+          action: ['post', 'bookings', postparams],
           internal: ['booking-service','create', postparams]
         }]
       }, 400);
