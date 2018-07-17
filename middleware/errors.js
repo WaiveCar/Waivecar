@@ -25,7 +25,7 @@ module.exports = function(app) {
         err = error.handlers[route](err);
       }
 
-      this.status = err.httpStatus || 500;
+      this.status = err.httpStatus || err.status || 500;
 
       let response = Object.assign({}, err);
       response.code = response.code || response.type;
