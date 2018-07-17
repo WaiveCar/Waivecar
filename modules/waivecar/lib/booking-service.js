@@ -143,8 +143,7 @@ module.exports = class BookingService extends Service {
     // The above code guarantees that we can book a car, it doesn't
     // necessarily give it to us.
     //
-    //TODO: uncomment process.env.NODE_ENV === 'production' when done with api-1286
-    //if(process.env.NODE_ENV === 'production') {
+    if(process.env.NODE_ENV === 'production') {
       try {
         yield OrderService.authorize(null, driver);
       } catch (err) {
@@ -168,7 +167,7 @@ module.exports = class BookingService extends Service {
           message : 'Unable to authorize payment. Please validate payment method.'
         }, 400);
       }
-    //}
+    }
     if (!_user.hasAccess('admin')) {
       yield this.recentBooking(driver, car, data.opts);
     }
