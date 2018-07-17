@@ -148,6 +148,24 @@ class CardList extends React.Component {
     return <div className='notice'>Everything's good! Thanks.</div>
   }
 
+  topUp(user, amount, cards) {
+    let opts = {
+      userId      : user.id,
+      amount      : amount * 100,
+      description : 'Top up $20',
+    };
+    if(cards.length) {
+      opts.source = cards[0].id;
+    }
+
+    api.post('/shop/topUp', opts, (err, result) => {
+      if (err) {
+        return err;
+      }
+      this.setState({ user: { ...this.state.user, credit: this.state.user.credit + 2000 } });
+    });
+  }
+
   renderCardTable() {
     let cards = this.shop.getState('cards');
     let credit = false;
@@ -217,7 +235,7 @@ class CardList extends React.Component {
         }
         { footer }
         <div>
-          <button onClick={() => console.log('click')} className="btn btn-sm">
+          <button onClick={() => this.topUp(this.props.user, 20, cards)} className="btn btn-sm">
             Add a $20 Credit.
           </button>
           <div className="credit-tip">
