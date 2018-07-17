@@ -118,8 +118,9 @@ module.exports = class OrderService extends Service {
   }
 
   static *topUp(data, _user) {
+    let user = yield User.findById(data.userId);
     if(yield this.quickCharge(data, _user, {nocredit: true})) {
-      yield _user.update({credit: _user.credit + 20 * 100});
+      yield user.update({credit: user.credit + 20 * 100});
     }
   }
 
@@ -499,8 +500,6 @@ module.exports = class OrderService extends Service {
       if (charge.status !== 'failed') {
         yield _user.update({ lastHoldAt: now });
       }
-      console.log('Charge: ', charge);
-      console.log('_user', _user);
       yield this.cancel(order, _user, charge);
     }
     return order;
