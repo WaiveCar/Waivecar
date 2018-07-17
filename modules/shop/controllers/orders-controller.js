@@ -9,7 +9,6 @@ Bento.Register.Controller('Shop/OrdersController', (controller) => {
   };
 
   controller.topup = function *() {
-    console.log('topping up');
     return yield service.topUp(this.payload, this.auth.user);
   };
 

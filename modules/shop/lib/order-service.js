@@ -118,14 +118,8 @@ module.exports = class OrderService extends Service {
   }
 
   static *topUp(data, _user) {
-    console.log('data: ', data);
-    console.log(_user);
     if(yield this.quickCharge(data, _user, {nocredit: true})) {
-      try {
-        yield _user.update({credit: _user.credit + 20 * 100});
-      } catch(err) {
-        console.log(err);
-      }
+      yield _user.update({credit: _user.credit + 20 * 100});
     }
   }
 
