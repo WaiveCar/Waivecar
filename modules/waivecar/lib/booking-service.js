@@ -71,7 +71,7 @@ module.exports = class BookingService extends Service {
 
   // Creates a new booking.
   static *create(data, _user) {
-    if (!(yield redis.shouldProcess('booking-car', data.carId, 10 * 1000))) {
+    if (!(yield redis.shouldProcess('booking-car', data.carId, 11 * 1000))) {
       throw error.parse({
         code    : 'BOOKING_AUTHORIZATION',
         message : 'Unable to start booking. Someone else is booking.'
@@ -116,12 +116,12 @@ module.exports = class BookingService extends Service {
     let uniq = uuid.v4();
 
     // We put a 15000 ms (15second) lock on this resource ... that should be ok.
-    let canProceed = yield redis.set(key, uniq, 'nx', 'px', 15000);
+    let canProceed = yield redis.set(key, uniq, 'nx', 'px', 10000);
     let check = yield redis.get(key);
 
     // We re-get the car to update the value.
     car = yield this.getCar(data.carId, data.userId, true);
-    if (!canProceed || check !== uniq || car.userId !== null) {
+    if (!canProceed || check !== uniq || (car.userId !== null && car.bookingId !== null)) {
 
       yield notify.notifyAdmins(`Potentially stopped a double booking of ${ car.info() }.`, [ 'slack' ], { channel : '#rental-alerts' });
 

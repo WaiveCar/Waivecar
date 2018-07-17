@@ -216,6 +216,10 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       });
     },
 
+    isFinished() {
+      return (['closed','completed','ended','started','cancelled'].includes(this.status));
+    },
+
     /*
      |--------------------------------------------------------------------------------
      | Booking Timers

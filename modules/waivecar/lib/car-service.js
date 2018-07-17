@@ -398,6 +398,30 @@ module.exports = {
     return car;
   },
 
+  // If the car has no booking and a user languishing around, we should be able
+  // to kick them out
+  *kickUser(id, _user) {
+    let model = yield Car.findById(id);
+    if(model.userId) {
+
+      if(model.bookingId) {
+        let booking = yield Booking.findById(model.bookingId);
+        // only kick out users if the booking is finished
+        if(!booking.isFinished()) {
+          return false;
+        }
+      }
+      yield model.update({bookingId: null, userId: null});
+    }
+
+    if(yield this.shouldRelay(model)) {
+      relay.emit('cars', {
+        type : 'update',
+        data : model.toJSON()
+      });
+    }
+  },
+
   *updateAvailabilityAnonymous(id, isAvailable, _user) {
     let model = yield Car.findById(id);
     if (isAvailable) {
