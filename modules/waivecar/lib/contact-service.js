@@ -20,10 +20,18 @@ module.exports = {
   },
 
   
-  *returnError(user, err) {
+  *returnError(user, err, base) {
     if(err.message) {
-      let message = err.message.replace(/<br>/g, '\n');
+      let parts = err.message.split('\t');
+      let message = parts[0].replace(/<br>/g, '\n');
       message = message.replace(/<[^>]*>/g, '');
+
+      if(err.options) {
+        err.options.forEach((row) => {
+          message += `\n${ row.title }. Reply "${base} ${row.hotkey}"`;
+        });
+      }
+
       yield notify.sendTextMessage(user, message);
     }
   },
@@ -53,7 +61,7 @@ module.exports = {
             yield notify.sendTextMessage(user, `${requestedCar.license} is available. It's at ${requestedCar.charge}%. It's current GPS coordinates are https://maps.google.com/?q=${requestedCar.latitude},${requestedCar.longitude}`);
           }
         } catch(ex) {
-          yield this.returnError(user, ex);
+          yield this.returnError(user, ex, command);
         }
       } else {
         yield notify.sendTextMessage(user, `Unable to access ${license}. Check your spelling.`);
@@ -185,6 +193,8 @@ module.exports = {
         let address = yield booking.getAddress(car.latitude, car.longitude);
         if(address) {
           address = ', located at ' + address;
+        } else {
+          address = '';
         }
 
         message.push(`Your booking with ${ car.license }, ${ car.averageCharge() }% charged${address} is ${ currentBooking.status } as of ${hour}${minute}m${second}s ago`);
