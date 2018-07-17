@@ -65,7 +65,6 @@ class CardList extends React.Component {
     if(cards.length) {
       opts.source = cards[0].id;
     }
-
     api.post('/shop/quickcharge', opts, (err, res) => {
       this.setState({
         user: err ? err.data : res.user,
@@ -157,7 +156,6 @@ class CardList extends React.Component {
     if(cards.length) {
       opts.source = cards[0].id;
     }
-
     api.post('/shop/topUp', opts, (err, result) => {
       if (err) {
         return err;
