@@ -405,12 +405,12 @@ class CarsShowView extends React.Component {
     let switches = [
       {
         ref : 1,
-        label    : 'Unlock Doors',
+        label    : 'Unlock',
         onChange : this.service.executeCommand.bind(this, car, 'unlock')
       },
       {
         ref: 2,
-        label    : 'Lock Doors',
+        label    : 'Lock',
         onChange : this.service.executeCommand.bind(this, car, 'lock')
       },
       {
@@ -437,6 +437,7 @@ class CarsShowView extends React.Component {
         onChange : this.service.executeCommand.bind(this, car, 'refresh')
       }
     ];
+    let isLocked = this.state.car.cars[0].isLocked, css = 'btn-gray';
     return (
       <div className="box">
         <h3>
@@ -445,34 +446,31 @@ class CarsShowView extends React.Component {
         <div className="box-content">
           <div className="container-fluid">
             <div className="row">
-              <div className="col-md-6">
-                <div>
-                  Car currently{ this.state.car.cars[0].isLocked ? ' locked' : ' unlocked' }
-                </div>
+              <div className="col-xs-6">
                 <Button
                   key       = { switches[0].ref }
-                  className = { 'btn btn-primary btn-sm col-xs-6' }
+                  className = { 'btn btn-sm col-xs-6 ' + (isLocked ? css : 'btn-link') }
                   type      = { 'button' }
                   value     = { switches[0].label }
                   onClick   = { switches[0].onChange }
                 />
                 <Button
                   key       = { switches[1].ref }
-                  className = { 'btn btn-primary btn-sm col-xs-6' }
+                  className = { 'btn btn-sm col-xs-6 ' + (!isLocked ? css : 'btn-link') }
                   type      = { 'button' }
                   value     = { switches[1].label }
                   onClick   = { switches[1].onChange }
                 />
               </div>
-              <div className="col-md-6">
+              <div className="col-xs-6">
                 <Switch { ...switches[2] } />
               </div>
             </div>
             <div className="row">
-              <div className="col-md-6">
+              <div className="col-xs-6">
                 <Switch { ...switches[3] } />
               </div>
-              <div className="col-md-6">
+              <div className="col-xs-6">
                 <Switch { ...switches[4] } />
               </div>
             </div>
@@ -484,7 +482,7 @@ class CarsShowView extends React.Component {
                       <a style={{ marginRight: "10px" }} href={ `/users/${ car.userId }` }>{ car.user.firstName + " " + car.user.lastName }</a>
                       Booking #<a href={ `/bookings/${ car.booking.id }` }>{ car.booking.id }</a> 
                     </div>
-                  : <div className="col-md-12"> 
+                  : <div>
                       <div className="row" style={{ marginTop: "4px" }}>
                         <input 
                           onChange={ this.updateUser.bind(this) }
