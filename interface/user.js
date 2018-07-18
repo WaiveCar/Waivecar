@@ -245,9 +245,20 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
     },
 
     *getTagList(filter) {
-      return (yield this.loadTagList())
-        .filter((row) => { return filter ? row.group.name.toLowerCase() === filter.toLowerCase() : true; })
-        .map((row) => { return row.groupRole.name; });
+
+      function getTags(filter) {
+        return tagList
+          .filter((row) => { return filter ? row.group.name.toLowerCase() === filter.toLowerCase() : true; })
+          .map((row) => { return row.groupRole.name; });
+      }
+
+      let tagList = yield this.loadTagList();
+
+      if(Array.isArray(filter)) {
+        return Array.prototype.concat.apply([], filter.map(getTags));
+      }
+
+      return getTags(filter);
     },
 
     *getTag(tag) {
