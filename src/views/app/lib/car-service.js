@@ -1,6 +1,7 @@
 import { api, auth, dom, helpers } from 'bento';
 import Service                     from './component-service';
 import async                       from 'async';
+import moment                      from 'moment';
 
 module.exports = class Car extends Service {
 
@@ -11,6 +12,7 @@ module.exports = class Car extends Service {
   constructor(ctx) {
     super(ctx, 'car', {
       isLoading : false,
+      updatedAt : null,
       cars      : []
     });
     this.update = this.update.bind(this);
@@ -27,7 +29,7 @@ module.exports = class Car extends Service {
       if (err) {
         return this.error(err.data ? err.data : err.message);
       }
-
+      this.setState('updatedAt', moment(model.updatedAt).format('h:mm:ss A'));
       this.getBooking(model, () => {
         this.success('Command completed successfully.');
       });

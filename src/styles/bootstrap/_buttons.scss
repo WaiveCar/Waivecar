@@ -46,7 +46,7 @@
 }
 
 // Future-proof disabling of clicks on `<a>` elements
-a.btn.disaabled,
+a.btn.disabled,
 fieldset[disabled] a.btn {
   pointer-events: none;
 }
@@ -61,6 +61,9 @@ fieldset[disabled] a.btn {
 }
 .btn-secondary {
   @include button-variant($btn-secondary-color, $btn-secondary-bg, $btn-secondary-border);
+}
+.btn-gray {
+  @include button-variant(#000, $gray-lighter, $gray);
 }
 .btn-info {
   @include button-variant($btn-info-color, $btn-info-bg, $btn-info-border);

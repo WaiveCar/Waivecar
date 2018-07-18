@@ -402,61 +402,42 @@ class CarsShowView extends React.Component {
   }
 
   renderCarActions(car) {
-    if (this.service.getState('isLoading')) {
-      return (
-        <div className="box">
-          <h3>
-            Controls for { car.license }
-          </h3>
-          <div className="box-content">
-            <div className="loading-panel">
-              <div className="sk-cube-grid">
-                <div className="sk-cube sk-cube1"></div>
-                <div className="sk-cube sk-cube2"></div>
-                <div className="sk-cube sk-cube3"></div>
-                <div className="sk-cube sk-cube4"></div>
-                <div className="sk-cube sk-cube5"></div>
-                <div className="sk-cube sk-cube6"></div>
-                <div className="sk-cube sk-cube7"></div>
-                <div className="sk-cube sk-cube8"></div>
-                <div className="sk-cube sk-cube9"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      );
-    }
     let switches = [
       {
         ref : 1,
-        checked  : car.isLocked,
-        label    : car.isLocked ? 'Unlock Doors' : 'Lock Doors',
-        onChange : this.service.executeCommand.bind(this, car, car.isLocked ? 'unlock' : 'lock')
+        label    : 'Unlock',
+        onChange : this.service.executeCommand.bind(this, car, 'unlock')
       },
       {
-        ref : 2,
+        ref: 2,
+        label    : 'Lock',
+        onChange : this.service.executeCommand.bind(this, car, 'lock')
+      },
+      {
+        ref : 3,
         checked  : car.inRepair,
         label    : car.inRepair ? 'Put in Service' : 'Make Repair',
         onChange : this.toggleService.bind(this, car)
       },
       {
-        ref : 3,
+        ref : 4,
         checked  : car.isImmobilized,
         label    : car.isImmobilized ? 'Deactivate Immobilizer' : 'Activate Immobilizer',
         onChange : this.service.executeCommand.bind(this, car, car.isImmobilized ? 'unlock-immobilizer' : 'lock-immobilizer')
       },
       {
-        ref : 4,
+        ref : 5,
         checked  : car.isAvailable,
         label    : car.isAvailable ? 'Make Unavailable' : 'Make Available',
         onChange : this.toggleAvailable.bind(this, car)
       },
       {
-        ref : 5,
+        ref : 6,
         label    : 'Refresh Cloudboxx Data',
         onChange : this.service.executeCommand.bind(this, car, 'refresh')
       }
     ];
+    let isLocked = this.state.car.cars[0].isLocked, css = 'btn-gray';
     return (
       <div className="box">
         <h3>
@@ -465,19 +446,32 @@ class CarsShowView extends React.Component {
         <div className="box-content">
           <div className="container-fluid">
             <div className="row">
-              <div className="col-md-6">
-                <Switch { ...switches[0] } />
+              <div className="col-xs-6">
+                <Button
+                  key       = { switches[0].ref }
+                  className = { 'btn btn-sm col-xs-6 ' + (isLocked ? css : 'btn-link') }
+                  type      = { 'button' }
+                  value     = { switches[0].label }
+                  onClick   = { switches[0].onChange }
+                />
+                <Button
+                  key       = { switches[1].ref }
+                  className = { 'btn btn-sm col-xs-6 ' + (!isLocked ? css : 'btn-link') }
+                  type      = { 'button' }
+                  value     = { switches[1].label }
+                  onClick   = { switches[1].onChange }
+                />
               </div>
-              <div className="col-md-6">
-                <Switch { ...switches[1] } />
+              <div className="col-xs-6">
+                <Switch { ...switches[2] } />
               </div>
             </div>
             <div className="row">
-              <div className="col-md-6">
-                <Switch { ...switches[2] } />
-              </div>
-              <div className="col-md-6">
+              <div className="col-xs-6">
                 <Switch { ...switches[3] } />
+              </div>
+              <div className="col-xs-6">
+                <Switch { ...switches[4] } />
               </div>
             </div>
             <div className="row" style={{ marginTop: 10 }}>
@@ -492,7 +486,7 @@ class CarsShowView extends React.Component {
                           <span>No booking. <a href="#" onClick={ this.service.executeCommand.bind(this,car,'kick')}>Kick user out</a></span>
                       }
                     </div>
-                  : <div className="col-md-12"> 
+                  : <div>
                       <div className="row" style={{ marginTop: "4px" }}>
                         <input 
                           onChange={ this.updateUser.bind(this) }
@@ -511,13 +505,15 @@ class CarsShowView extends React.Component {
               </div>
               <div className="col-md-6">
                 <Button
-                  key       = { switches[4].ref }
+                  key       = { switches[5].ref }
                   className = { 'btn btn-primary-outline' }
                   type      = { 'button' }
-                  value     = { switches[4].label }
-                  onClick   = { switches[4].onChange }
+                  value     = { switches[5].label }
+                  onClick   = { switches[5].onChange }
                 />
-                Updated: { car.lastUpdated }
+                Updated: { this.service.getState('isLoading') ?  
+                  <img src="../images/site/spinner.gif" /> : (car.lastUpdated ? car.lastUpdated : this.service.getState('updatedAt')) 
+                }
               </div>
             </div>
             <div className="row">
