@@ -489,7 +489,7 @@ class CarsShowView extends React.Component {
                       { 
                         car.booking ?
                           <span>Booking #<a href={ `/bookings/${ car.booking.id }` }>{ car.booking.id }</a></span> :
-                          <span>No booking. <a onclick={ this.service.executeCommand.bind(this,car,'kick')}>Kick user out</a></span>
+                          <span>No booking. <a href="#" onClick={ this.service.executeCommand.bind(this,car,'kick')}>Kick user out</a></span>
                       }
                     </div>
                   : <div className="col-md-12"> 
