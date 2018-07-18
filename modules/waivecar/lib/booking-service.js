@@ -71,7 +71,7 @@ module.exports = class BookingService extends Service {
 
   // Creates a new booking.
   static *create(data, _user) {
-    if (!(yield redis.shouldProcess('booking-car', data.carId, 11 * 1000))) {
+    if (!(yield redis.shouldProcess('booking-car', data.carId, 10 * 1000))) {
       throw error.parse({
         code    : 'BOOKING_AUTHORIZATION',
         message : 'Unable to start booking. Someone else is booking.'
@@ -116,12 +116,12 @@ module.exports = class BookingService extends Service {
     let uniq = uuid.v4();
 
     // We put a 15000 ms (15second) lock on this resource ... that should be ok.
-    let canProceed = yield redis.set(key, uniq, 'nx', 'px', 10000);
+    let canProceed = yield redis.set(key, uniq, 'nx', 'px', 15000);
     let check = yield redis.get(key);
 
     // We re-get the car to update the value.
     car = yield this.getCar(data.carId, data.userId, true);
-    if (!canProceed || check !== uniq || (car.userId !== null && car.bookingId !== null)) {
+    if (!canProceed || check !== uniq || car.userId !== null) {
 
       yield notify.notifyAdmins(`Potentially stopped a double booking of ${ car.info() }.`, [ 'slack' ], { channel : '#rental-alerts' });
 
@@ -143,9 +143,10 @@ module.exports = class BookingService extends Service {
     // The above code guarantees that we can book a car, it doesn't
     // necessarily give it to us.
     //
-    if(process.env.NODE_ENV === 'production') {
+    //TODO: uncomment process.env.NODE_ENV === 'production' when done with api-1286
+    //if(process.env.NODE_ENV === 'production') {
       try {
-        yield OrderService.authorize(null, driver);
+        var order = yield OrderService.authorize(null, driver);
       } catch (err) {
         // Failing to secure the authorization hold should be recorded as an
         // iniquity. See https://github.com/WaiveCar/Waivecar/issues/861 for
@@ -167,11 +168,12 @@ module.exports = class BookingService extends Service {
           message : 'Unable to authorize payment. Please validate payment method.'
         }, 400);
       }
-    }
+    //}
     if (!_user.hasAccess('admin')) {
       yield this.recentBooking(driver, car, data.opts);
     }
 
+    console.log('That weird thing: ', OrderService.authorize.last);
     //
     // We *could* do this, but it will be expiring in 15 seconds any way and there's
     // a way that the double booking could still occur here. 
@@ -198,6 +200,21 @@ module.exports = class BookingService extends Service {
     } catch (err) {
       throw err;
     }
+    console.log('booking: ', booking);
+
+    // If there is a new authorization, a new BookingPayment must be created so that it can be itemized on the receipt.
+    if (OrderService.authorize.last.newAuthorization) {
+      try {
+        let authorizationPayment = new BookingPayment({
+          bookingId : booking.id,
+          orderId   : order.id,
+        });
+        yield authorizationPayment.save();
+        console.log('payment: ', authorizationPayment);
+      } catch(err) {
+        console.log(err);
+      }
+    };
 
     yield car.addDriver(driver.id, booking.id);
 
@@ -470,7 +487,6 @@ module.exports = class BookingService extends Service {
         }
       });
     }
-
     return booking;
   }
 
@@ -1388,13 +1404,6 @@ module.exports = class BookingService extends Service {
     relay.admin('bookings', payload);
   }
 
-  /**
-   * Logs the ride details.
-   * @param  {String} type    The detail type, start|end.
-   * @param  {Object} booking
-   * @param  {Object} car
-   * @return {Void}
-   */
   static *logDetails(type, booking, car) {
     let details = new BookingDetails({
       bookingId : booking.id,
