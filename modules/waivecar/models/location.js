@@ -7,7 +7,7 @@ Bento.Register.Model('Location', 'sequelize', function(model, Sequelize) {
   model.schema = {
 
     type : {
-      type         : Sequelize.ENUM('station', 'valet', 'homebase', 'item-of-interest', 'hub', 'zone'),
+      type         : Sequelize.ENUM('station', 'valet', 'homebase', 'item-of-interest', 'hub', 'zone', 'user-parking'),
       defaultValue : 'station'
     },
 
