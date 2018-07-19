@@ -1,9 +1,25 @@
 'use strict';
 
+let Location = Bento.model('Location');
 let UserParking = Bento.model('UserParking');
 
 module.exports = {
   *create(query, _user) {
-    return 'query made';
+    let location = new Location({
+      type: 'user-parking',
+      latitude: query.latitude,  
+      longitude: query.longitude,
+      address: query.address,
+      radius: 20,
+      status: 'available',
+    });
+    yield location.save();
+    let entry = new UserParking({
+      locationId: location.id,
+      ownerId: query.ownerId,
+      notes: query.notes,
+    });
+    yield entry.save();
+    return entry;
   },
 };
