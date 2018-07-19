@@ -21,16 +21,18 @@ class TableIndex extends React.Component {
       },
       more   : false,
       offset : 0,
+      noteValue: null,
+      currentNotes: [],
     };
     relay.subscribe(this, 'waitlist');
   }
 
   componentDidMount() {
     this.table.init();
-    dom.setTitle("Waivework");
+    dom.setTitle('Waivework');
     this.setState({
       sort : {
-        key   : 'id',
+        key   : 'priority',
         order : 'ASC'
       },
       searchObj: {
@@ -61,7 +63,7 @@ class TableIndex extends React.Component {
   }
 
   letin() {
-    let amount = prompt("How many people do you want to let in?");
+    let amount = prompt('How many people do you want to let in?');
     if(amount) {
       amount = parseInt(amount, 10);
     }
@@ -80,7 +82,7 @@ class TableIndex extends React.Component {
     return window.getComputedStyle(document.getElementById('isMobile')).display === 'none';
   }
 
-  priority(id, direction) {
+  priority(id, direction, waitlist) {
     api.post('/waitlist/prioritize', { id: id, direction: direction }, (err) => {
       if (err) {
         return snackbar.notify({
@@ -88,6 +90,11 @@ class TableIndex extends React.Component {
           message : err.message
         });
       }
+      this.table.init();
+      return snackbar.notify({
+        type    : 'success',
+        message : `${waitlist.firstName} ${waitlist.lastName} priority level ${direction === Math.abs(direction) ? 'increased' : 'decreased'}`
+      });
     }); 
   }
 
@@ -96,26 +103,31 @@ class TableIndex extends React.Component {
       userSelected: this.table.data.filter((row) => { 
         return row.id === id;
       })[0]
+    }, () => {
+      this.table.init()
+      this.setState({
+        currentNotes: JSON.parse(this.state.userSelected.notes)
+      }, () => this.table.init());
     });
   }
 
   row(waitlist) {
     return (
       <tr key={ waitlist.id }>
-          <td>{ waitlist.firstName } { waitlist.lastName }</td>
-          <td className="hidden-sm-down">{ waitlist.placeName }</td> 
-          <td className="hidden-sm-down">{ waitlist.hours}</td> 
-          <td className="hidden-sm-down">{ waitlist.days}</td> 
-          <td className="hidden-sm-down">{ waitlist.experience}</td> 
-          <td className="hidden-sm-down">{ moment(waitlist.createdAt).format('YYYY-MM-DD HH:mm:ss') }</td> 
-          <td>
-          <a style={{ cursor: 'pointer' }} onClick={ this.priority.bind(this, waitlist.id, -1) }>
+        <td>{ waitlist.firstName } { waitlist.lastName }</td>
+        <td className="hidden-sm-down">{ waitlist.placeName }</td> 
+        <td className="hidden-sm-down">{ waitlist.hours}</td> 
+        <td className="hidden-sm-down">{ waitlist.experience}</td> 
+        <td >{ waitlist.priority }</td>
+        <td className="hidden-sm-down">{ moment(waitlist.createdAt).format('YYYY-MM-DD HH:mm:ss') }</td> 
+        <td>
+          <a style={{ cursor: 'pointer' }} onClick={() => this.priority(waitlist.id, -1, waitlist)}>
             &#9660;
           </a>
-          <a style={{ cursor: 'pointer' }} onClick={ this.moreinfo.bind(this, waitlist.id) }>
+          <a style={{ cursor: 'pointer' }} onClick={() => this.moreinfo(waitlist.id)}>
             More Info 
           </a>
-          <a style={{ cursor: 'pointer' }} onClick={ this.priority.bind(this, waitlist.id, 1) }>
+          <a style={{ cursor: 'pointer' }} onClick={() => this.priority(waitlist.id, 1, waitlist)}>
             &#9650;
           </a>
         </td>
@@ -124,35 +136,57 @@ class TableIndex extends React.Component {
   }
 
   addNote() {
-    api.post('/waitlist/addNote', { id: this.state.userSelected.id, note: this.state.notevalue }, (err) => {
+    api.post('/waitlist/addNote', { id: this.state.userSelected.id, note: this.state.noteValue }, (err, response) => {
+      let temp = this.state.currentNotes ? [...this.state.currentNotes, this.state.noteValue] : [this.state.noteValue];
       this.setState({
-        notevalue: null
+        noteValue: '',
+        currentNotes: temp,
       });
     });
   }
 
+  deleteNote(note) {
+    api.post('/waitlist/deleteNote', { id: this.state.userSelected.id, note: note }, (err, response) => {
+      let temp = [...this.state.currentNotes];
+      temp.splice(temp.indexOf(note), 1);
+      this.setState({currentNotes: temp});
+    });
+  }
 
   render() {
+    let {userSelected} = this.state;
     return (
       <div id="waitlist-list" className="container">
         <div className="box full">
           <div className='col-md-12'>
             <h3>Waivework</h3>
           </div>
-          { this.state.userSelected ?
+          { userSelected ?
             <div className="info-box box-content">
-              <div> <b>Name:</b> { this.state.userSelected.firstName } { this.state.userSelected.lastName }</div>
-              <div> <b>Phone:</b> { this.state.userSelected.phone } </div>
-              <div> <b>Email:</b> <a href={"mailto:" + this.state.userSelected.email }>{ this.state.userSelected.email }</a> </div>
-              <div> <b>Priority:</b> { this.state.userSelected.priority } </div>
-              <span style={{ display: 'none' }}>
-                <div> <b>Notes:</b> { this.state.userSelected.notes } </div>
-                <textarea value={this.state.notevalue} /><br/>
+              <div> <b>Name:</b> { userSelected.firstName } { userSelected.lastName }</div>
+              <div> <b>Phone:</b> { userSelected.phone } </div>
+              <div> <b>Email:</b> <a href={'mailto:' + userSelected.email }>{ userSelected.email }</a> </div>
+              <div> <b>Priority:</b> { userSelected.priority } </div>
+              <button className='btn btn-primary' onClick={() => this.priority(userSelected.id, userSelected.priority > 0 ? -userSelected.priority - 1 : -1, userSelected)}>
+                Deprioritize
+              </button>  
+              <span>
+                <div className="container-fluid notes"> <b>Notes:</b> { this.state.currentNotes && this.state.currentNotes.map((note, i) => {
+                  return (
+                    <div className="row note" key={i}>
+                      {note}
+                      <button className="btn-link remove-note" onClick={() => this.deleteNote(note)}>
+                        <i className="material-icons" role="true">close</i>
+                      </button>
+                    </div>
+                  );
+                }) } </div>
+                <textarea className="form-control" value={this.state.noteValue} onChange={(e) => this.setState({noteValue: e.target.value})}/><br/>
                 <button  className='btn btn-primary' style={{ cursor: 'pointer' }} onClick={ this.addNote.bind(this) }>
                   Add Note
                 </button>
               </span>
-              <a  style={{ cursor: 'pointer', marginLeft: '30px' }} onClick={ this.letinbyid.bind(this, this.state.userSelected.id) }> Let In </a>
+              <a style={{ cursor: 'pointer', marginLeft: '30px' }} onClick={ this.letinbyid.bind(this, userSelected.id) }> Let In </a>
             </div> : ''
           }
           <div className="box-content">
@@ -169,8 +203,8 @@ class TableIndex extends React.Component {
                   <ThSort sort="name"     value="Name"     ctx={ this } />
                   <ThSort sort="location" value="Location" ctx={ this } className="hidden-sm-down"/>
                   <ThSort sort="hours"    value="Hours" ctx={ this } className="hidden-sm-down"/>
-                  <ThSort sort="days"     value="Days" ctx={ this } className="hidden-sm-down"/>
-                  <ThSort sort="experience"    value="Experience" ctx={ this } className="hidden-sm-down"/>
+                  <ThSort sort="experience" value="Experience" ctx={ this } className="hidden-sm-down"/>
+                  <ThSort sort="priority" value="Priority" ctx={ this } />
                   <ThSort sort="date"     value="Date"     ctx={ this } className="hidden-sm-down"/>
                   <th></th> 
                 </tr>
