@@ -14,12 +14,22 @@ module.exports = {
       status: 'available',
     });
     yield location.save();
+    console.log(location);
     let entry = new UserParking({
       locationId: location.id,
       ownerId: query.ownerId,
       notes: query.notes,
     });
     yield entry.save();
+    console.log(entry);
     return entry;
+  },
+
+  *toggle(parkingId, type) {
+    let space = yield UserParking.findById(parkingId); 
+    let updateObj = {};
+    updateObj[type] = !space[type];
+    yield space.update(updateObj);
+    return space;
   },
 };

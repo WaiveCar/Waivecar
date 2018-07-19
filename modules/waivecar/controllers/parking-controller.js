@@ -7,5 +7,9 @@ Bento.Register.Controller('ParkingController', function(controller) {
     return yield parking.create(this.payload, this.auth.user);
   };
 
+  controller.toggle = function*(id, type) {
+    return yield parking.toggle(id, type);
+  };
+
   return controller;
 });

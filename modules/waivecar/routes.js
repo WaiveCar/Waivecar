@@ -73,6 +73,7 @@ Route.get('/locations/dropoff', 'LocationsController@dropoff');
 
 // ### User Parking
 Route.post('/parking', [ /*'isAuthenticated',*/ 'ParkingController@create' ]);
+Route.put('/parking/:id/toggle/:type', [/*'isAuthenticated', */ 'ParkingController@toggle']);
 
 
 // ### EVGo chargers
