@@ -1,6 +1,6 @@
 'use strict';
 
-let waitlist      = require('../lib/waitlist-service');
+let waitlist = require('../lib/waitlist-service');
 
 Bento.Register.Controller('WaitlistController', function(controller) {
 
@@ -14,6 +14,10 @@ Bento.Register.Controller('WaitlistController', function(controller) {
 
   controller.addNote = function *() {
     return yield waitlist.addNote(this.payload, this.auth.user);
+  }
+
+  controller.deleteNote = function *() {
+    return yield waitlist.deleteNote(this.payload, this.auth.user);
   }
 
   controller.addById = function *() {
