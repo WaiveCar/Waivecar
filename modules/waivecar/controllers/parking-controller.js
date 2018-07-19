@@ -11,5 +11,9 @@ Bento.Register.Controller('ParkingController', function(controller) {
     return yield parking.toggle(id, type);
   };
 
+  controller.updateNote = function*(id) {
+    return yield parking.updateParking(id, this.payload);
+  };
+
   return controller;
 });
