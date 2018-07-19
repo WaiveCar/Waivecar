@@ -117,9 +117,8 @@ class TableIndex extends React.Component {
         <td>{ waitlist.firstName } { waitlist.lastName }</td>
         <td className="hidden-sm-down">{ waitlist.placeName }</td> 
         <td className="hidden-sm-down">{ waitlist.hours}</td> 
-        <td className="hidden-sm-down">{ waitlist.days}</td> 
         <td className="hidden-sm-down">{ waitlist.experience}</td> 
-        <td className="hidden-sm-down">{ waitlist.priority }</td>
+        <td >{ waitlist.priority }</td>
         <td className="hidden-sm-down">{ moment(waitlist.createdAt).format('YYYY-MM-DD HH:mm:ss') }</td> 
         <td>
           <a style={{ cursor: 'pointer' }} onClick={() => this.priority(waitlist.id, -1, waitlist)}>
@@ -204,9 +203,8 @@ class TableIndex extends React.Component {
                   <ThSort sort="name"     value="Name"     ctx={ this } />
                   <ThSort sort="location" value="Location" ctx={ this } className="hidden-sm-down"/>
                   <ThSort sort="hours"    value="Hours" ctx={ this } className="hidden-sm-down"/>
-                  <ThSort sort="days"     value="Days" ctx={ this } className="hidden-sm-down"/>
                   <ThSort sort="experience" value="Experience" ctx={ this } className="hidden-sm-down"/>
-                  <ThSort sort="priority" value="Priority" ctx={ this } className="hidden-sm-down"/>
+                  <ThSort sort="priority" value="Priority" ctx={ this } />
                   <ThSort sort="date"     value="Date"     ctx={ this } className="hidden-sm-down"/>
                   <th></th> 
                 </tr>
