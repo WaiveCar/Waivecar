@@ -158,9 +158,10 @@ module.exports = class BookingService extends Service {
         }, 400);
       }
     }
-    //if (!_user.hasAccess('admin')) {
-    yield this.recentBooking(driver, car, data.opts, lockKeys);
-    //}
+
+    if (!_user.hasAccess('admin') && _user.id !== driver.id) {
+      yield this.recentBooking(driver, car, data.opts, lockKeys);
+    }
 
     //
     // We *could* do this, but it will be expiring in 15 seconds any way and there's
