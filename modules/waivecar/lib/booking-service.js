@@ -71,7 +71,8 @@ module.exports = class BookingService extends Service {
 
   // Creates a new booking.
   static *create(data, _user) {
-    if (!(yield redis.shouldProcess('booking-car', data.carId, 11 * 1000))) {
+    let lockKeys = yield redis.shouldProcess('booking-car', data.carId, 9 * 1000);
+    if (!lockKeys) {
       throw error.parse({
         code    : 'BOOKING_AUTHORIZATION',
         message : 'Unable to start booking. Someone else is booking.'
@@ -97,6 +98,7 @@ module.exports = class BookingService extends Service {
     // If someone owes us more than a dollar
     // we tell them to settle their balance with us.
     if(driver.credit < -100) {
+      yield redis.doneWithIt(lockKeys);
       throw error.parse({
         code    : 'BOOKING_OUTSTANDING_CREDIT',
         message : `You have an outstanding balance of <b>$${ (-driver.credit / 100).toFixed(2) }</b>. This needs to be resolved before making a booking.`
@@ -104,27 +106,13 @@ module.exports = class BookingService extends Service {
     }
 
 
-    //
-    // Add the driver to the car so no simultaneous requests can book this car.
-    //
-    // We're trying to address https://github.com/clevertech/Waivecar/issues/435
-    // This is ct's really terrible way of trying to do locks. The way below
-    // is from http://redis.io/topics/distlock and probably has some edge case ...
-    // but for the time being I don't care, this is better than the other thing.
-    //
-    let key = ['booking-lock', data.carId].join(':');
-    let uniq = uuid.v4();
-
-    // We put a 15000 ms (15second) lock on this resource ... that should be ok.
-    let canProceed = yield redis.set(key, uniq, 'nx', 'px', 10000);
-    let check = yield redis.get(key);
-
     // We re-get the car to update the value.
     car = yield this.getCar(data.carId, data.userId, true);
-    if (!canProceed || check !== uniq || (car.userId !== null && car.bookingId !== null)) {
+    if (car.userId !== null && car.bookingId !== null) {
 
       yield notify.notifyAdmins(`Potentially stopped a double booking of ${ car.info() }.`, [ 'slack' ], { channel : '#rental-alerts' });
 
+      yield redis.doneWithIt(lockKeys);
       throw error.parse({
         code    : `BOOKING_REQUEST_INVALID`,
         message : `Another driver has already reserved this WaiveCar.`
@@ -153,6 +141,7 @@ module.exports = class BookingService extends Service {
         let details = 'no card';
         if(OrderService.authorize.last) {
           if(!OrderService.authorize.last.card) {
+            yield redis.doneWithIt(lockKeys);
             throw error.parse({
               code    : 'BOOKING_AUTHORIZATION',
               message : 'We do not have a credit card for you on file. Please go to the account and add one before booking'
@@ -162,14 +151,16 @@ module.exports = class BookingService extends Service {
         }
         yield UserLog.addUserEvent(driver, 'AUTH', details, `Failed to authorize $${ (OrderService.authorize.last.amount / 100).toFixed(2) }`);
 
+        yield redis.doneWithIt(lockKeys);
         throw error.parse({
           code    : 'BOOKING_AUTHORIZATION',
           message : 'Unable to authorize payment. Please validate payment method.'
         }, 400);
       }
     }
-    if (!_user.hasAccess('admin')) {
-      yield this.recentBooking(driver, car, data.opts);
+
+    if (!_user.hasAccess('admin') && _user.id !== driver.id) {
+      yield this.recentBooking(driver, car, data.opts, lockKeys);
     }
 
     //
@@ -246,13 +237,13 @@ module.exports = class BookingService extends Service {
     car.relay('update');
     booking.relay('store', driver);
 
-
     yield notify.sendTextMessage(driver, msg);
 
     let message = yield this.updateState('created', _user, driver);
     yield notify.notifyAdmins(`:musical_keyboard: ${ message } ${ car.info() } ${ car.averageCharge() }%`, [ 'slack' ], { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : driver.id, action : Actions.CREATE_BOOKING }, _user);
 
+    yield redis.doneWithIt(lockKeys);
     return booking;
   }
 
@@ -1453,7 +1444,7 @@ module.exports = class BookingService extends Service {
   }
 
   // Determines if user has booked car recently
-  static *recentBooking(user, car, opts) {
+  static *recentBooking(user, car, opts, lockKeys) {
     let booking = yield Booking.findOne({
       where : {
         userId : user.id,
@@ -1510,6 +1501,9 @@ module.exports = class BookingService extends Service {
         `<div class='action-box' style='height:0'><button style='position:relative;top:60px;text-transform:none;color:lightblue' onclick="buyit_pCj8zFIPSkOiGq8zBlO1ng(this)" class="button button-dark button-link">(Beta feature) Get it now for $${fee}.00</button></div>`,
       ].join('');
       
+
+      yield redis.doneWithIt(lockKeys);
+
       throw error.parse({
         code    : 'RECENT_BOOKING',
         message : `Sorry! You need to wait ${remainingTime}min more to rebook the same WaiveCar!`,
@@ -1517,7 +1511,7 @@ module.exports = class BookingService extends Service {
         options: [{
           title: `Get it now for $${fee}.00`,
           hotkey: 'now',
-          action: ['post', 'bookings', postparams],
+          action: {verb:'post', url:'bookings', params:postparams},
           internal: ['booking-service','create', postparams]
         }]
       }, 400);

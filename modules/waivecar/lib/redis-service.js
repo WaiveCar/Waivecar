@@ -40,6 +40,19 @@ module.exports = (function() {
     return uniq;
   }
 
+  res.doneWithIt = function *(vals) {
+    let [key, uniq, timeout] = vals;
+
+    // persist the key
+    yield res.expire(key, timeout);
+    let check = yield res.get(key);
+    if(check === uniq) {
+      // now we can be mostly guaranteed that it wasn't set underneath us.
+      yield res.del(key);
+    }
+  }
+
+
   // These both sound like reasonable names.
   // timeout is ostensibly in milliseconds.
   res.shouldProceed = res.shouldProcess = function *(type, id, timeout) {
@@ -61,7 +74,10 @@ module.exports = (function() {
     // The nx will only only succeed if the key hasn't been set. 
     let canProceed = yield res.set(key, uniq, 'nx', 'px', timeout);
     let check = yield res.get(key);
-    return (canProceed && check === uniq);
+    // return the handle.
+    if (canProceed && check === uniq) {
+      return [key, uniq, timeout];
+    }
   }
   return res;
   
