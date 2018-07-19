@@ -393,7 +393,7 @@ module.exports = {
 
       // this is explicitly only regions because we don't want to remove
       // user permissions.
-      let oldTags = yield user.getTagList('region');      
+      let oldTags = yield user.getTagList(['region', 'perk']);      
 
       // We remove the ones we've unchecked
       let toRemove = _.difference(oldTags, payload.tagList);
