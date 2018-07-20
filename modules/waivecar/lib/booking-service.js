@@ -488,7 +488,7 @@ module.exports = class BookingService extends Service {
   }
 
   static *extend(id, query, _user) {
-    return yield this._extend(id, {}, _user);
+    return yield this._extend(id, query, _user);
   }
 
   static *_extend(id, opts, _user) {
