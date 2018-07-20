@@ -159,7 +159,8 @@ module.exports = class BookingService extends Service {
       }
     }
 
-    if (!_user.hasAccess('admin') && _user.id !== driver.id) {
+    // If the creator isn't an admin or is booking for themselves
+    if (!_user.hasAccess('admin') || _user.id === driver.id) {
       yield this.recentBooking(driver, car, data.opts, lockKeys);
     }
 
