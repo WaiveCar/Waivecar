@@ -36,18 +36,21 @@ module.exports = angular.module('app.controllers').controller('CarController', [
     var modal;
 
     var stopLocationWatch = LocationService.watchLocation(function (currentLocation, callCount) {
-        if (!callCount) {
-          ctrl.route = {
-            destiny: car
-          };
-        }
-        ctrl.route.start = currentLocation;
-        // this is needed because sometimes this will get called more than once before
-        // the map is actually called. Then the fitting is never done. So to alleviate
-        // this bug we make it so that the first *few* will fit the bound.
-        ctrl.route.fitBoundsByRoute = (callCount < 3);
+      if (!callCount) {
+        ctrl.route = {
+          destiny: car
+        };
       }
-    );
+      ctrl.route.start = currentLocation;
+      // this is needed because sometimes this will get called more than once before
+      // the map is actually called. Then the fitting is never done. So to alleviate
+      // this bug we make it so that the first *few* will fit the bound.
+      ctrl.route.fitBoundsByRoute = (callCount < 3);
+      /*
+      ctrl.route.start = currentLocation;
+      ctrl.route.fitBoundsByRoute = isInitialCall;
+      */
+    });
 
     $scope.$on('$destroy', function () {
       if (stopLocationWatch != null) {
