@@ -657,7 +657,13 @@ module.exports = class BookingService extends Service {
 
   static *isAtHub(car) {
     var hub;
-    (yield Location.find({where: {type: 'hub'} })).forEach(function(row) {
+    (yield Location.find({
+      where: {
+        type: { 
+          $in: ['hub', 'homebase'] 
+        }
+      } 
+    })).forEach(function(row) {
       if(geolib.getDistance(car, row) < row.radius) {
         hub = row;
       }
@@ -678,34 +684,36 @@ module.exports = class BookingService extends Service {
 
   // The meat of canEnd, the cheap check
   static *_canEnd(car, isAdmin) {
-    if(isAdmin) {
-      return true;
+    // We preference hubs over zones because cars can end there at any charge without a photo
+    let hub = yield this.isAtHub(car);
+
+    // if we are at a hub then we can return the car here regardless
+    if(hub) {
+      return hub;
     }
 
-    let zoneOrHub = false;
-    // we give the user until this amount to make sure that they are ok
-    if (car.milesAvailable() < 21) {
-
-      zoneOrHub = yield this.isAtHub(car);
-      if(!zoneOrHub) {
-        throw error.parse({
-          code    : `CHARGE_TOO_LOW`,
-          message : `The WaiveCar's charge is too low to end here. Please return it to the homebase.`
-        }, 400);
-      }
-    } else {
-
-      // we need to make sure that it's in a valid return zone
-      zoneOrHub = yield this.getZone(car);
-      if(!zoneOrHub) {
-        throw error.parse({
-          code    : `OUTSIDE_ZONE`,
-          message : `You cannot return the WaiveCar here. Please end the booking inside the green zone on the map.`
-        }, 400);
-      }
+    // otherwise if we aren't there and the car is low, we need to go back to a hub
+    if (car.milesAvailable() < 21 && !isAdmin) {
+      throw error.parse({
+        code    : `CHARGE_TOO_LOW`,
+        message : `The WaiveCar's charge is too low to end here. Please return it to the homebase.`
+      }, 400);
     }
 
-    return zoneOrHub;
+    // if our car is fine and we aren't at a hub then we can return it so long as
+    // we are in a zone.
+    let zone = yield this.getZone(car);
+
+    if(zone) {
+      return zone;
+    } else if(!isAdmin) {
+      throw error.parse({
+        code    : `OUTSIDE_ZONE`,
+        message : `You cannot return the WaiveCar here. Please end the booking inside the green zone on the map.`
+      }, 400);
+    }
+
+    return isAdmin;
   }
 
   // A *very cheap* check to see if the ending spot it legal.
