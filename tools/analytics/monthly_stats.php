@@ -73,12 +73,14 @@ while ( true ) {
   } else {
     sort($idleList);
     $avg_available = $idleList[ ceil(count($idleList) / 2)];// array_sum($idleList) / count($idleList);
+    $mean_available = array_sum($idleList) / count($idleList);
   }
   $avail_util = 0;
   if(count($bookList) !== 0 && count($idleList) !== 0) {
     $avail_util = array_sum($bookList) / (array_sum($bookList) + array_sum($idleList));
   }
   $count[] = ['median available time between bookings', $avg_available];
+  $count[] = ['mean available time between bookings', $mean_available];
   $count[] = ['utilization when available', $avail_util];
 
   $total_active = 0;
