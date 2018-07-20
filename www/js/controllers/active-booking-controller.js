@@ -69,6 +69,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         handler: function () {
           console.log('.......');
           modal.remove();
+          modal = false;
           if(opts.cb) {
             opts.cb();
           }
@@ -76,6 +77,12 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       }]
     })
     .then(function (_modal) {
+      setTimeout(function(){
+        if(modal) {
+          console.log("automatic removal");
+          modal.remove();
+        }
+      }, 7 * 1000);
       console.log('!!!!!');
       modal = _modal;
       modal.show();
@@ -95,6 +102,9 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       cb: function() {
         // There's two ways of expiring the booking in the app state. We can
         // either try to pull it down ourselves ... which
+        Object.values(modalMap).forEach(function(modal) {
+          modal.remove();
+        });
         delete $data.active.bookings;
         $state.go('cars');
       }
@@ -212,40 +222,43 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     var modal;
 
     var extendedExpire = {
+      0: moment(expired).format('h:mm A'),
       10: moment(expired).add(10, 'm').format('h:mm A'),
       20: moment(expired).add(20, 'm').format('h:mm A')
     };
 
     $modal('result', {
-      title: 'Extend Reservation?',
-      message: 'You can extend the reservation' + [
-        '10 minutes to <b>' + extendedExpire['10'] + '</b> for $1.00',
-        'or',
-        '20 minutes to <b>' + extendedExpire['20'] + '</b> for $4.20'
+      title: 'Extend Reservation',
+      message: 'Extend your reservation for more time to get to your WaiveCar.' + [
+        "<br/><p><b>Reminder:</b> You'll have to wait 30 minutes to rebook the same WaiveCar if you don't make it in time!</p>"
       ].join(' '),
       icon: 'waivecar-mark',
-      actions: [{
-        className: 'button-balanced',
-        text: 'Extend to ' +  extendedExpire['10'] + ' for $1.00',
-        handler: function () {
-          modal.remove();
-          this.extendAction(10);
-        }
-      }, { 
+      actions: [
+      { 
         className: 'button-balanced',
         text: 'Extend to ' +  extendedExpire['20'] + ' for $4.20',
         handler: function () {
           modal.remove();
-          this.extendAction(20);
+          ctrl.extendAction(20);
         }
-      }, {
+      }, 
+      {
         className: 'button-dark',
-        text: 'No thanks',
+        text: 'Extend to ' +  extendedExpire['10'] + ' for $1.00',
+        handler: function () {
+          modal.remove();
+          ctrl.extendAction(10);
+        }
+      }, 
+      {
+        className: 'button-link button-small',
+        text: "I'll make it by " + extendedExpire['0'] + ". No thanks!",
         handler: function () {
           modal.remove();
       }}]
     })
     .then(function (_modal) {
+      modalMap.extend = _modal;
       modal = _modal;
       modal.show();
     });
@@ -256,6 +269,9 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     var cancelling = false;
     var booking = $data.active.bookings;
     if (booking == null || booking.status !== 'reserved') {
+      if(booking.status === 'cancelled') {
+        return $state.go('cars');
+      }
       return;
     }
 
@@ -304,6 +320,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         }
       }]
     }).then(function (_modal) {
+      modalMap.cancel = _modal;
       modal = _modal;
       modal.show();
     });
