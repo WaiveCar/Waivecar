@@ -956,9 +956,25 @@ module.exports = class OrderService extends Service {
         item.totalNum = item.quantity * item.price;
       }
       item.total =  (Math.abs(item.totalNum / 100)).toFixed(2);
-
+      let chargeList = item.map(charge => 
+        `<tr>
+          <td>
+            ${charge.name}
+          </td>
+          <td>
+            ${charge.quantity}
+          </td>
+          <td>
+            $${(Math.abs(charge.price / 100)).toFixed(2)}
+          </td>
+          <td>
+            $${(Math.abs(charge.total / 100)).toFixed(2)}
+          </td>
+        <tr>` ).join('');
       let word = item.totalNum > 0 ? 'charge' : 'credit';
+      console.log(item);
       if (word === 'charge') {
+        try {
         yield email.send({
           to       : user.email,
           from     : emailConfig.sender,
@@ -966,10 +982,14 @@ module.exports = class OrderService extends Service {
           template : 'miscellaneous-charge',
           context  : {
             name   : user.name(),
+            word   : word,
             charge : item,
-            word   : word
+            chargeList,
           }
         });
+        } catch(err) {
+          console.log('error: ', err);
+        }
       } else {
         yield email.send({
           to: user.email,

@@ -6,11 +6,17 @@
   <p>
     A {{ word }} was added to your account with WaiveCar.
   </p>
+  <table width="80%" style="border:1px solid #ccc;">
+    <tr style="boder-bottom: 1px solid #ccc">
+      <td>Description</td>
+      <td>Quantity</td>
+      <td>Price</td>
+      <td>Total</td>
+    </tr>
+    {{{chargeList}}}
+  </table>
   <p>
-    {{ charge.quantity }} x {{ charge.description }}
-  </p>
-  <p>
-    <strong>${{ charge.total }}</strong>
+    <strong>Total: ${{ charge.total }}</strong>
   </p>
   <p>
     Visit <a href="https://waive.car">https://waive.car</a> to access your account.
