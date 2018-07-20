@@ -81,6 +81,9 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         if(modal) {
           console.log("automatic removal");
           modal.remove();
+          if(opts.cb) {
+            opts.cb();
+          }
         }
       }, 7 * 1000);
       console.log('!!!!!');
