@@ -502,6 +502,9 @@ iframe.quiz {
 .scroll-content {
   overflow: auto;
 }
+.scroll-content-false {
+  overflow: hidden !important;
+}
 .blocker {
   background: #000;
 }
