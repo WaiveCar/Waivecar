@@ -15,5 +15,9 @@ Bento.Register.Controller('ParkingController', function(controller) {
     return yield parking.updateParking(id, this.payload);
   };
 
+  controller.reserve = function*(id) {
+    return yield parking.reserve(id, this.auth.user);
+  };
+
   return controller;
 });

@@ -16,7 +16,7 @@ module.exports = {
     yield location.save();
     let entry = new UserParking({
       locationId: location.id,
-      ownerId: query.ownerId,
+      ownerId: query.ownerId, // This will need to be changed to _user.id once this route is used with authorization
       notes: query.notes,
     });
     yield entry.save();
@@ -41,4 +41,7 @@ module.exports = {
       location,
     };
   },
+  *reserve() {
+    return 'reserved';
+  }
 };
