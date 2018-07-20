@@ -34,6 +34,11 @@ module.exports = {
   *updateParking(parkingId, updateObj) {
     let space = yield UserParking.findById(parkingId);
     yield space.update(updateObj);
-    return space;
+    let location = yield Location.findById(space.locationId);
+    yield location.update(updateObj);
+    return {
+      space,
+      location,
+    };
   },
 };
