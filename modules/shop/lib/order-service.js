@@ -202,12 +202,11 @@ module.exports = class OrderService extends Service {
     // ### Add Items
 
     yield this.addItems(order, items);
-    miscCharge = _.find(items, { name : 'Miscellaneous' });
 
     // Notify user if they received a miscellaneous charge
-    if (miscCharge) {
+    if (items) {
       log.info(`Notifying user of miscellaneous charge: ${ user.id }`);
-      yield this.notifyOfCharge(miscCharge, user);
+      yield this.notifyOfCharge(items, user);
 
       // A miscellaneous charge is likely an issue we should keep track of
       yield UserLog.addUserEvent(user, 'FEE', order.id, data.description);
@@ -951,13 +950,19 @@ module.exports = class OrderService extends Service {
     }
     let email = new Email();
     try {
-      item.total = (Math.abs(item.quantity * item.price / 100)).toFixed(2);
-      let word = item.price > 0 ? 'Charge' : 'Credit';
-      if (word === 'Charge') {
+      if(Array.isArray(item)) {
+        item.totalNum = item.map((row) => row.quantity * row.price).reduce((a,b) => a + b);
+      } else {
+        item.totalNum = item.quantity * item.price;
+      }
+      item.total =  (Math.abs(item.totalNum / 100)).toFixed(2);
+
+      let word = item.totalNum > 0 ? 'charge' : 'credit';
+      if (word === 'charge') {
         yield email.send({
           to       : user.email,
           from     : emailConfig.sender,
-          subject  : `Additional ${ word } on your account`,
+          subject  : `$${ item.total } ${ word } on your account`,
           template : 'miscellaneous-charge',
           context  : {
             name   : user.name(),
