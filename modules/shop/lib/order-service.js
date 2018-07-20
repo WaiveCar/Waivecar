@@ -956,24 +956,24 @@ module.exports = class OrderService extends Service {
         item.totalNum = item.quantity * item.price;
       }
       item.total =  (Math.abs(item.totalNum / 100)).toFixed(2);
+      console.log(item);
       let chargeList = item.map(charge => 
         `<tr>
           <td>
             ${charge.name}
           </td>
-          <td>
+          <td class="right-item">
             ${charge.quantity}
           </td>
-          <td>
+          <td class="right-item">
             $${(Math.abs(charge.price / 100)).toFixed(2)}
           </td>
-          <td>
+          <td class="right-item">
             $${(Math.abs(charge.total / 100)).toFixed(2)}
           </td>
         <tr>` ).join('');
-      let word = item.totalNum > 0 ? 'charge' : 'credit';
-      console.log(item);
-      if (word === 'charge') {
+      let word = item.totalNum > 0 ? 'Charges' : 'credit';
+      if (word === 'Charges') {
         try {
         yield email.send({
           to       : user.email,

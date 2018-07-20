@@ -4,19 +4,39 @@
 <div class="main">
   <h3>Hello, {{ name }}</h3>
   <p>
-    A {{ word }} was added to your account with WaiveCar.
+    {{ word }} were added to your account with WaiveCar.
   </p>
-  <table width="80%" style="border:1px solid #ccc;">
-    <tr style="boder-bottom: 1px solid #ccc">
-      <td>Description</td>
-      <td>Quantity</td>
-      <td>Price</td>
-      <td>Total</td>
+  <style>
+    tr, td {
+      padding: 7px;
+    }
+    .right-item {
+      border-left: 1px solid #ccc;
+      text-align: center;
+      width: 10%;
+    }
+  </style>
+  <table align="center" width="90%" style="border-collapse: collapse">
+    <tr stype="border: 1px solid #ccc">
+      <td style="border: 1px solid #ccc" width="70%">
+        <strong>Description</strong>
+      </td>
+      <td style="border: 1px solid #ccc" class="right-item">
+        <strong>Quantity</strong>
+      </td>
+      <td style="border: 1px solid #ccc" class="right-item">
+        <strong>Price</strong>
+      </td>
+      <td style="border: 1px solid #ccc" class="right-item">
+        <strong>Total</strong>
+      </td>
     </tr>
     {{{chargeList}}}
   </table>
   <p>
-    <strong>Total: ${{ charge.total }}</strong>
+    <div style="text-align: right">
+      <strong>Total Charges: ${{ charge.total }}</strong>
+    </div>
   </p>
   <p>
     Visit <a href="https://waive.car">https://waive.car</a> to access your account.
