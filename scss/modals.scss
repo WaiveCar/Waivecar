@@ -74,6 +74,10 @@
     background: none;
     color: $lightGray;
   }
+  .button-small {
+    text-transform: none;
+    font-size: 80%;
+  }
 }
 
 .circle-loader {
