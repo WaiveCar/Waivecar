@@ -37,10 +37,6 @@ module.exports = class Email {
     };
   }
 
-  /**
-   * Sends an Email based on a predefined Template
-   * @param {Object} email
-   */
   *send(email) {
     email._t = new Date();
     // This is an exceptionally magical mode
@@ -63,11 +59,9 @@ module.exports = class Email {
         message : 'Invalid transport.'
       }, 400);
     }
-
     let content = yield this.renderTemplate(email.template, email.context);
-    email.html  = content.html ? content.html : email.html;
+    email.html  = content.html ? content.html.trim() : email.html.trim();
     email.text  = content.text ? context.text : email.text;
-
     return yield (done) => {
       this.transporter.sendMail(email, done);
     };

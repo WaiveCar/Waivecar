@@ -402,9 +402,18 @@ module.exports = class OrderService extends Service {
 
     let allCharges = yield this.getTotalCharges(booking);
     let totalAmount = allCharges.totalCredit + allCharges.totalPaid;
-    let chargesList = allCharges.types.map((type) => `<li>${type.trim()}</li>`).join('');
+    // This creates a list of charges to be injected into the template
+    let chargesList = allCharges.payments.map(charge =>
+      `<tr>
+        <td>
+          ${charge.shopOrder.description.replace(/Booking\s\d*/i, '')}
+        </td>
+        <td class="right-item">
+          $${(Math.abs(charge.shopOrder.amount / 100)).toFixed(2)}
+        </td>
+      <tr>` 
+    ).join('').trim();
     let dollarAmount = (totalAmount / 100).toFixed(2);
-
     let email = new Email();
     // This creates a list of charges to be injected into the template
     if (totalAmount > 0) {
@@ -475,6 +484,7 @@ module.exports = class OrderService extends Service {
       totalCredit,
       totalPaid,
       types,
+      payments,
     };
   }
 

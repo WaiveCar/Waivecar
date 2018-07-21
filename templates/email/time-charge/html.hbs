@@ -6,17 +6,37 @@
   <p>
     Here's a breakdown of the charges for your recent booking with {{ car }}:
   </p>
-  <ul>
+  <style>
+    tr, td {
+      padding: 7px;
+    }
+    .right-item {
+      border-left: 1px solid #ccc;
+      text-align: center;
+      width: 10%;
+    }
+  </style>
+  <table align="center" width="90%" style="border-collapse: collapse">
+    <tr stype="border: 1px solid #ccc">
+      <td style="border: 1px solid #ccc" width="90%">
+        <strong>Description</strong>
+      </td>
+      <td style="border: 1px solid #ccc" class="right-item">
+        <strong>Price</strong>
+      </td>
+    </tr>
     {{{ list }}}
-  </ul>
+  </table>
   <p>
-    {{#if paid}}
-      <strong>Total charges for your ride: ${{ paid }}</strong>
-    {{/if }}
-    {{#if credit}}
-      <strong>Total credit used: ${{ credit }}</strong>
-      <p>Your remaining credit: ${{ creditLeft }}</p>
-    {{/if }}
+    <div style="text-align: right">
+      {{#if paid}}
+        <strong>Total charges for your ride: ${{ paid }}</strong>
+      {{/if }}
+      {{#if credit}}
+        <strong>Total credit used: ${{ credit }}</strong>
+        <p>Your remaining credit: ${{ creditLeft }}</p>
+      {{/if }}
+    </div>
   </p>
   <p>
     Visit <a href="https://waive.car">https://waive.car</a> to access your account.
