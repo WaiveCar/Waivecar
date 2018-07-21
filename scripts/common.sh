@@ -1,6 +1,14 @@
 #!/bin/bash
 APP=com.waivecardrive.app
 NODE_VERSION=v6.11.4
+if [ "`uname -s`" = 'Darwin' ]; then
+  cp='cp -p'
+  stat='stat -f %m'
+else
+  cp='cp -up'
+  stat='stat -c %Y'
+fi
+
 cdv=`grep buildToolsVersion $DIR/../misc/build-extras.gradle | grep -v \/\/ | awk ' { print $2 }'`
 if [ -n "$cdv" ]; then
   export ORG_GRADLE_PROJECT_cdvBuildToolsVersion=$cdv
@@ -82,7 +90,7 @@ prebuild() {
   #cp misc/project.properties platforms/android/
 
   for i in platforms/android/app/src/main/ platforms/android platforms/android/app/src/; do
-    [ -e $i ] && cp -up misc/build-extras.gradle $i
+    [ -e $i ] && $cp misc/build-extras.gradle $i
   done
 }
 
@@ -90,7 +98,7 @@ build() {
   before=
   exists=
   if [ -e www/dist/bundle.js ]; then
-    before=`stat -c %Y www/dist/bundle.js`
+    before=`$stat www/dist/bundle.js`
   fi
   [ -e platforms/android/build/outputs/apk/android-debug.apk ] && exist=1
 
@@ -107,7 +115,7 @@ build() {
 
   after=
   if [ -e www/dist/bundle.js ]; then
-    after=`stat -c %Y www/dist/bundle.js`
+    after=`$stat www/dist/bundle.js`
   else
     echo 'Failed to build. Fuck this shit.' "(($last))"
     exit 1
