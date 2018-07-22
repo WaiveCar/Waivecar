@@ -446,7 +446,7 @@ class CarsShowView extends React.Component {
         <div className="box-content">
           <div className="container-fluid">
             <div className="row">
-              <div className="col-xs-6">
+              <div className="col-md-6 col-xs-12">
                 <Button
                   key       = { switches[0].ref }
                   className = { 'btn btn-sm col-xs-6 ' + (isLocked ? css : 'btn-link') }
@@ -462,15 +462,15 @@ class CarsShowView extends React.Component {
                   onClick   = { switches[1].onChange }
                 />
               </div>
-              <div className="col-xs-6">
+              <div className="col-md-6 col-xs-12">
                 <Switch { ...switches[2] } />
               </div>
             </div>
             <div className="row">
-              <div className="col-xs-6">
+              <div className="col-md-6">
                 <Switch { ...switches[3] } />
               </div>
-              <div className="col-xs-6">
+              <div className="col-md-6">
                 <Switch { ...switches[4] } />
               </div>
             </div>
