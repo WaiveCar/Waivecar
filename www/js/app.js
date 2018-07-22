@@ -70,7 +70,6 @@ require('./controllers/auth-controller');
 require('./controllers/active-booking-controller');
 require('./controllers/blocker-controller.js');
 require('./controllers/booking-in-progress-controller');
-require('./controllers/booking-prepare-controller');
 require('./controllers/bookings-controller');
 require('./controllers/quiz-controller');
 require('./controllers/car-controller');
