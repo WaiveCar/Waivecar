@@ -49,24 +49,15 @@ module.exports = {
       reservedById: userId, //_user.id,
       reservedAt: new Date(new Date().toUTCString()),
     });
-    let reservationLength = 2000//5 * 60000; // makes reservation 5 minutes long
-    setTimeout(() => {
-      function* gen() {
-        console.log('did the timeout work?');
-        try {
-        yield space.update({
-          reserved: false,
-          reservedById: null,
-          reservedAt: null,
-        });
-        console.log(space);
-        } catch(e) {
-          console.log('error: ', e);
-        }
-      }
-      let y = gen();
-      y.next();
-    }, reservationLength);
+
+    // This can be changed to make the process end at a different time
+    let timerObj = {value: 5, type: 'seconds'};
+
+    queue.scheduler.add('parking-auto-cancel', {
+      uid: `parking-${parkingId}`,
+      timer: timerObj, 
+      data: space,
+    });
     return space;
   }
 };
