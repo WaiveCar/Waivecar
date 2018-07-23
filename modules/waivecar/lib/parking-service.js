@@ -2,6 +2,7 @@
 
 let Location = Bento.model('Location');
 let UserParking = Bento.model('UserParking');
+let queue = Bento.provider('queue');
 
 module.exports = {
   *create(query, _user) {
@@ -41,7 +42,31 @@ module.exports = {
       location,
     };
   },
-  *reserve() {
-    return 'reserved';
+  *reserve(parkingId, _user, userId) {
+    let space = yield UserParking.findById(parkingId);
+    yield space.update({
+      reserved: true,
+      reservedById: userId, //_user.id,
+      reservedAt: new Date(new Date().toUTCString()),
+    });
+    let reservationLength = 2000//5 * 60000; // makes reservation 5 minutes long
+    setTimeout(() => {
+      function* gen() {
+        console.log('did the timeout work?');
+        try {
+        yield space.update({
+          reserved: false,
+          reservedById: null,
+          reservedAt: null,
+        });
+        console.log(space);
+        } catch(e) {
+          console.log('error: ', e);
+        }
+      }
+      let y = gen();
+      y.next();
+    }, reservationLength);
+    return space;
   }
 };
