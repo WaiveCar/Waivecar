@@ -15,6 +15,7 @@ let Cart        = Bento.model('Shop/Cart');
 let Card        = Bento.model('Shop/Card');
 let Order       = Bento.model('Shop/Order');
 let OrderItem   = Bento.model('Shop/OrderItem');
+let Booking     = Bento.model('Booking');
 let BookingDetails = Bento.model('BookingDetails');
 let BookingPayment = Bento.model('BookingPayment');
 let RedisService   = require('../../waivecar/lib/redis-service');
@@ -202,11 +203,22 @@ module.exports = class OrderService extends Service {
     // ### Add Items
 
     yield this.addItems(order, items);
-
     // Notify user if they received a miscellaneous charge
     if (items) {
       log.info(`Notifying user of miscellaneous charge: ${ user.id }`);
-      yield this.notifyOfCharge(items, user);
+      let currentBooking = yield Booking.find({
+        where: { id: payload.bookingId }, 
+        include: [
+          {
+            model: 'Car',
+            as: 'car',
+          }
+        ]
+      });
+      yield this.notifyOfCharge(items, user, {
+        subject: `Charges for your booking in ${currentBooking[0].car.license} on ${moment(currentBooking[0].createdAt).format('MMMM Do, YYYY')}`,
+        leadin: `Here's your receipt for any additional charges from your booking on ${moment(currentBooking[0].createdAt).format('MMMM Do, YYYY')} with ${currentBooking[0].car.license}:`
+      });
 
       // A miscellaneous charge is likely an issue we should keep track of
       yield UserLog.addUserEvent(user, 'FEE', order.id, data.description);
@@ -390,9 +402,18 @@ module.exports = class OrderService extends Service {
 
     let allCharges = yield this.getTotalCharges(booking);
     let totalAmount = allCharges.totalCredit + allCharges.totalPaid;
-    let chargesList = allCharges.types.map((type) => `<li>${type.trim()}</li>`).join('');
+    // This creates a list of charges to be injected into the template
+    let chargesList = allCharges.payments.map(charge =>
+      `<tr>
+        <td>
+          ${charge.shopOrder.description.replace(/Booking\s\d*/i, '')}
+        </td>
+        <td class="right-item">
+          $${(Math.abs(charge.shopOrder.amount / 100)).toFixed(2)}
+        </td>
+      <tr>` 
+    ).join('').trim();
     let dollarAmount = (totalAmount / 100).toFixed(2);
-
     let email = new Email();
     // This creates a list of charges to be injected into the template
     if (totalAmount > 0) {
@@ -463,6 +484,7 @@ module.exports = class OrderService extends Service {
       totalCredit,
       totalPaid,
       types,
+      payments,
     };
   }
 
@@ -944,7 +966,7 @@ module.exports = class OrderService extends Service {
   }
 
   // Notify user that miscellaneous was added to their booking
-  static *notifyOfCharge(item, user) {
+  static *notifyOfCharge(item, user, opts={}) {
     if(item.price === 0) {
       return;
     }
@@ -956,18 +978,36 @@ module.exports = class OrderService extends Service {
         item.totalNum = item.quantity * item.price;
       }
       item.total =  (Math.abs(item.totalNum / 100)).toFixed(2);
-
-      let word = item.totalNum > 0 ? 'charge' : 'credit';
-      if (word === 'charge') {
+      let chargeList = item.map(charge => 
+        `<tr>
+          <td>
+            ${charge.name}
+          </td>
+          <td class="right-item">
+            ${charge.quantity}
+          </td>
+          <td class="right-item">
+            $${(Math.abs(charge.price / 100)).toFixed(2)}
+          </td>
+          <td class="right-item">
+            $${(Math.abs(charge.total / 100)).toFixed(2)}
+          </td>
+        <tr>` ).join('');
+      let word = item.totalNum > 0 ? 'Charges' : 'credit';
+      if (word === 'Charges') {
+        opts.subject = opts.subject || `$${ item.total } charges on your account`;
+        opts.leadin = opts.leadin || 'Here is your receipt for charges added to your account:';
         yield email.send({
           to       : user.email,
           from     : emailConfig.sender,
-          subject  : `$${ item.total } ${ word } on your account`,
+          subject  : opts.subject,
           template : 'miscellaneous-charge',
           context  : {
+            leadin   : opts.leadin,
             name   : user.name(),
+            word   : word,
             charge : item,
-            word   : word
+            chargeList,
           }
         });
       } else {
