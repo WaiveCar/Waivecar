@@ -128,14 +128,14 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
     $modal('simple-modal', {
       title: 'Bummer',
       message: 'There are no WaiveCars currently available for rental. Please check back later.',
-      actions: [{
+      actions: [/*{
         className: 'button-balanced',
         text: 'Get dibs on the next local WaiveCar',
         handler: function () {
           unavailableModal.remove();
           ctrl.notifyWhenAvailable();
         }
-      }, {
+      },*/ {
         className: 'button-balanced',
         text: 'OK',
         handler: function () {
