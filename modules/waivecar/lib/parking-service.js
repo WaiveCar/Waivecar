@@ -3,6 +3,7 @@
 let Location = Bento.model('Location');
 let UserParking = Bento.model('UserParking');
 let queue = Bento.provider('queue');
+let notify = require('./notification-service');
 
 module.exports = {
   *create(query, _user) {
@@ -43,19 +44,35 @@ module.exports = {
     };
   },
   *reserve(parkingId, _user, userId) {
+    // Remove  this through line 52 later
+    _user = {
+      id: 555,
+      firstName: 'first',
+      lastName: 'last',
+    };
     let space = yield UserParking.findById(parkingId);
     yield space.update({
       reserved: true,
-      reservedById: userId, //_user.id,
+      reservedById: _user.id, //_user.id,
       reservedAt: new Date(new Date().toUTCString()),
     });
-    // This can be changed to make the process end at a different time
+    // Change this to 5 minutes later
     let timerObj = {value: 5, type: 'seconds'};
     queue.scheduler.add('parking-auto-cancel', {
       uid: `parking-${parkingId}`,
       timer: timerObj,
-      data: {spaceId: space.id},
+      data: {
+        spaceId: space.id,
+        user: _user,
+      },
     });
+    yield notify.notifyAdmins(
+      `:parking: ${_user.firstName} ${
+        _user.lastName
+      } has reserved parking spot #${space.id}`,
+      ['slack'],
+      {channel: '#reservations'},
+    );
     return space;
   },
 };
