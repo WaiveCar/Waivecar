@@ -35,6 +35,10 @@ module.exports = angular.module('app.controllers').controller('CarController', [
     var minAccuracyThreshold = 200;
     var modal;
 
+    $preBook.injected = function(what, opts) {
+      ctrl[what](opts);
+    }
+
     var stopLocationWatch = LocationService.watchLocation(function (currentLocation, callCount) {
       if (!callCount) {
         ctrl.route = {
@@ -64,12 +68,17 @@ module.exports = angular.module('app.controllers').controller('CarController', [
       this.car.icon = 'unavailable';
     }
 
-    this.book = function() {
-      var model = { version: appVersion, userId: $auth.me.id, carId: $state.params.id };
+    this.injected = function(what, opts) {
+      this[what](opts);
+    }
+
+    this.book = function(opts) {
+      var model = Object.assign({ version: appVersion, userId: $auth.me.id, carId: $state.params.id }, opts);
 
       $ionicLoading.show({
         template: '<div class="circle-loader"><span>Loading</span></div>'
       });
+
 
       // Create a Booking
       return $data.create('bookings', model)

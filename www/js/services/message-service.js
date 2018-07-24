@@ -11,15 +11,8 @@ module.exports = angular.module('app.services').factory('$message', [
         return false;
       }
 
-      if (_(message).isObject()) {
-        if (message.data) {
-          if(_(message.data).isString()) {
-            message = message.data;
-          } else if( _(message.data).isObject() && _(message.data.message).isString() ) {
-            message = message.data.message;
-          }
-
-        }
+      if (message && message.data) {
+        message = message.data.message || message.data;
       }
 
       // See #716 - we want to minimize JS errors being passed back to the
@@ -40,15 +33,12 @@ module.exports = angular.module('app.services').factory('$message', [
     var debouncedPopup = _.debounce(launchPopup, 100);
 
     return {
-
       error: function (message) {
         debouncedPopup('Error', message);
       },
-
       info: function (message) {
         debouncedPopup('Info', message);
       },
-
       success: function (message) {
         debouncedPopup('Success!', message);
       }
