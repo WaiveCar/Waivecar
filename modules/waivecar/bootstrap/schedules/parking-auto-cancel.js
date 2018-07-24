@@ -2,25 +2,12 @@
 
 let scheduler = Bento.provider('queue').scheduler;
 let UserParking = Bento.model('UserParking');
-let relay = Bento.Relay;
+let ParkingService = require('../../lib/parking-service');
 let notify = require('../../lib/notification-service');
 
 scheduler.process('parking-auto-cancel', function*(job) {
-  let space = yield UserParking.findById(job.data.spaceId);
-  let currentUserId = space.reservedById;
-  yield space.update({
-    reserved: false,
-    reservedById: null,
-    reservedAt: null,
-  });
-  relay.user(currentUserId, 'userParking', {
-    type: 'update',
-    data: space.toJSON(),
-  });
-  relay.admin('userParking', {
-    type: 'update',
-    data: space.toJSON(),
-  });
+  let space = yield ParkingService.cancelReservation(job.data.spaceId);
+  console.log('Space After: ', space);
   yield notify.notifyAdmins(
     `:rage: ${job.data.user.firstName} ${
       job.data.user.lastName

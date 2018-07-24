@@ -2,6 +2,7 @@
 
 let Location = Bento.model('Location');
 let UserParking = Bento.model('UserParking');
+let relay = Bento.Relay;
 let queue = Bento.provider('queue');
 let notify = require('./notification-service');
 
@@ -43,6 +44,7 @@ module.exports = {
       location,
     };
   },
+
   *reserve(parkingId, _user, userId) {
     // Remove  this through line 52 later
     _user = {
@@ -73,6 +75,26 @@ module.exports = {
       ['slack'],
       {channel: '#reservations'},
     );
+    return space;
+  },
+
+  *cancelReservation(parkingId) {
+    let space = yield UserParking.findById(parkingId);
+    console.log('Space before: ', space);
+    let currentUserId = space.reservedById;
+    yield space.update({
+      reserved: false,
+      reservedById: null,
+      reservedAt: null,
+    });
+    relay.user(currentUserId, 'userParking', {
+      type: 'update',
+      data: space.toJSON(),
+    });
+    relay.admin('userParking', {
+      type: 'update',
+      data: space.toJSON(),
+    });
     return space;
   },
 };
