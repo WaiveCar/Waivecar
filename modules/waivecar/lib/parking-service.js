@@ -7,6 +7,7 @@ let ParkingReservation = Bento.model('ParkingReservation');
 let relay = Bento.Relay;
 let queue = Bento.provider('queue');
 let notify = require('./notification-service');
+let error = Bento.Error;
 
 module.exports = {
   *create(query) {
@@ -52,6 +53,15 @@ module.exports = {
   *reserve(parkingId, userId) {
     let user = yield User.findById(userId);
     let space = yield UserParking.findById(parkingId);
+    if (space.reservationId) {
+      throw error.parse(
+        {
+          code: 'PARKING_ALREADY_RESERVED',
+          message: `Parking space ${space.id} is already reserved`,
+        },
+        400,
+      );
+    }
     let reservation = new ParkingReservation({
       userId: user.id,
       spaceId: space.id,
@@ -62,7 +72,7 @@ module.exports = {
       reservationId: reservation.id,
     });
 
-    let timerObj = {value: 5, type: 'minutes'};
+    let timerObj = {value: 5, type: 'seconds'};
     queue.scheduler.add('parking-auto-cancel', {
       uid: `parking-${parkingId}`,
       timer: timerObj,
