@@ -1,13 +1,16 @@
 'use strict';
 
 let Location = Bento.model('Location');
+let User = Bento.model('User');
 let UserParking = Bento.model('UserParking');
+let ParkingReservation = Bento.model('ParkingReservation');
 let relay = Bento.Relay;
 let queue = Bento.provider('queue');
 let notify = require('./notification-service');
 
 module.exports = {
-  *create(query, _user) {
+  *create(query) {
+    //remove through line 17 later
     let location = new Location({
       type: 'user-parking',
       latitude: query.latitude,
@@ -19,7 +22,7 @@ module.exports = {
     yield location.save();
     let entry = new UserParking({
       locationId: location.id,
-      ownerId: query.ownerId, // This will need to be changed to _user.id once this route is used with authorization
+      ownerId: query.userId, // This will need to be changed to _user.id once this route is used with authorization
       notes: query.notes,
     });
     yield entry.save();
@@ -27,6 +30,7 @@ module.exports = {
   },
 
   *toggle(parkingId, type) {
+    // The value of type will generally be ownerOccupied or waivecarOccupied
     let space = yield UserParking.findById(parkingId);
     let updateObj = {};
     updateObj[type] = !space[type];
@@ -45,19 +49,17 @@ module.exports = {
     };
   },
 
-  *reserve(parkingId, _user, userId) {
-    // Remove  this through line 52 later
-    _user = {
-      id: 555,
-      firstName: 'first',
-      lastName: 'last',
-    };
-
+  *reserve(parkingId, userId) {
+    let user = yield User.findById(userId);
     let space = yield UserParking.findById(parkingId);
+    let reservation = new ParkingReservation({
+      userId: user.id,
+      spaceId: space.id,
+    });
+    yield reservation.save();
+
     yield space.update({
-      reserved: true,
-      reservedById: _user.id, //_user.id,
-      reservedAt: new Date(new Date().toUTCString()),
+      reservationId: reservation.id,
     });
 
     let timerObj = {value: 5, type: 'minutes'};
@@ -66,12 +68,14 @@ module.exports = {
       timer: timerObj,
       data: {
         spaceId: space.id,
-        user: _user,
+        reservation,
+        user,
       },
     });
+
     yield notify.notifyAdmins(
-      `:parking: ${_user.firstName} ${
-        _user.lastName
+      `:parking: ${user.firstName} ${
+        user.lastName
       } has reserved parking spot #${space.id}`,
       ['slack'],
       {channel: '#reservations'},
@@ -79,23 +83,22 @@ module.exports = {
     return space;
   },
 
-  *cancel(parkingId, _user) {
+  *cancel(parkingId, userId, currentReservationId) {
     let space = yield UserParking.findById(parkingId);
-    console.log('Space before: ', space);
-    let currentUserId = space.reservedById;
-    yield space.update({
-      reserved: false,
-      reservedById: null,
-      reservedAt: null,
-    });
-    relay.user(currentUserId, 'userParking', {
-      type: 'update',
-      data: space.toJSON(),
-    });
-    relay.admin('userParking', {
-      type: 'update',
-      data: space.toJSON(),
-    });
+    if (space.reservationId === currentReservationId) {
+      yield space.update({
+        reservationId: null,
+      });
+      console.log('space after cancel: ', space);
+      relay.user(userId, 'userParking', {
+        type: 'update',
+        data: space.toJSON(),
+      });
+      relay.admin('userParking', {
+        type: 'update',
+        data: space.toJSON(),
+      });
+    }
     return space;
   },
 };

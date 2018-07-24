@@ -43,10 +43,6 @@ Bento.Register.Model('UserParking', 'sequelize', function register(
       type: Sequelize.INTEGER,
       defaultValue: null,
     },
-    reservedAt: {
-      type: Sequelize.DATE,
-      defaultValue: null,
-    },
     notes: {
       type: Sequelize.TEXT,
       defaultValue: null,

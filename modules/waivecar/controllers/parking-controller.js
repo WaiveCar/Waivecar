@@ -4,7 +4,7 @@ let parking = require('../lib/parking-service');
 
 Bento.Register.Controller('ParkingController', function(controller) {
   controller.create = function*() {
-    return yield parking.create(this.payload, this.auth.user);
+    return yield parking.create(this.payload);
   };
 
   controller.toggle = function*(id, type) {
@@ -16,11 +16,11 @@ Bento.Register.Controller('ParkingController', function(controller) {
   };
 
   controller.reserve = function*(id) {
-    return yield parking.reserve(id, this.auth.user, this.payload.userId);
+    return yield parking.reserve(id, this.payload.userId);
   };
 
   controller.cancel = function*(id) {
-    return yield parking.cancel(id, this.auth.user);
+    return yield parking.cancel(id, this.payload.userId, this.payload.reservationId);
   };
 
   return controller;
