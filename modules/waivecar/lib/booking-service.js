@@ -1523,6 +1523,10 @@ module.exports = class BookingService extends Service {
           hotkey: 'now',
           action: {verb:'post', url:'bookings', params:postparams},
           internal: ['booking-service','create', postparams]
+        },{
+          title: "No thanks! I'll wait!",
+          theme: 'dark',
+          action: false
         }]
       }, 400);
     }
