@@ -166,7 +166,8 @@ hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
 
   if(!_user.hasAccess('admin')) {
     if ( (nextUser.lastName && nextUser.firstName) &&
-         (nextUser.lastName != prevUser.lastName || nextUser.firstName != prevUser.firstName)
+         (nextUser.lastName.toLowerCase() !== prevUser.lastName.toLowerCase() || 
+          nextUser.firstName.toLowerCase() !== prevUser.firstName.toLowerCase())
       ) {
       if (prevUser.status != 'suspended') {
         nextUser.status = 'pending';
