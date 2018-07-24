@@ -49,15 +49,14 @@ module.exports = {
       reservedById: userId, //_user.id,
       reservedAt: new Date(new Date().toUTCString()),
     });
-
     // This can be changed to make the process end at a different time
     let timerObj = {value: 5, type: 'seconds'};
-
+    console.log('spaceId: ', space.id);
     queue.scheduler.add('parking-auto-cancel', {
       uid: `parking-${parkingId}`,
-      timer: timerObj, 
-      data: space,
+      timer: timerObj,
+      data: {spaceId: space.id},
     });
     return space;
-  }
+  },
 };
