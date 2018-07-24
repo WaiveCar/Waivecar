@@ -52,14 +52,15 @@ module.exports = {
       firstName: 'first',
       lastName: 'last',
     };
+
     let space = yield UserParking.findById(parkingId);
     yield space.update({
       reserved: true,
       reservedById: _user.id, //_user.id,
       reservedAt: new Date(new Date().toUTCString()),
     });
-    // Change this to 5 minutes later
-    let timerObj = {value: 5, type: 'seconds'};
+
+    let timerObj = {value: 5, type: 'minutes'};
     queue.scheduler.add('parking-auto-cancel', {
       uid: `parking-${parkingId}`,
       timer: timerObj,
@@ -78,7 +79,7 @@ module.exports = {
     return space;
   },
 
-  *cancelReservation(parkingId) {
+  *cancel(parkingId, _user) {
     let space = yield UserParking.findById(parkingId);
     console.log('Space before: ', space);
     let currentUserId = space.reservedById;

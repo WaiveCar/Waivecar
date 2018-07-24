@@ -39,11 +39,7 @@ Bento.Register.Model('UserParking', 'sequelize', function register(
       type: Sequelize.BOOLEAN,
       defaultValue: false,
     },
-    reserved: {
-      type: Sequelize.BOOLEAN,
-      defaultValue: false,
-    },
-    reservedById: {
+    reservationId: {
       type: Sequelize.INTEGER,
       defaultValue: null,
     },
