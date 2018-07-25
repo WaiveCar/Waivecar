@@ -148,20 +148,22 @@ class CardList extends React.Component {
   }
 
   topUp(user, amount, cards) {
-    let opts = {
-      userId      : user.id,
-      amount      : amount * 100,
-      description : 'Top up $20',
-    };
-    if(cards.length) {
-      opts.source = cards[0].id;
-    }
-    api.post('/shop/topUp', opts, (err, result) => {
-      if (err) {
-        return err;
+    if (confirm('Are you sure you want to top up $20?')) {
+      let opts = {
+        userId      : user.id,
+        amount      : amount * 100,
+        description : 'Top up $20',
+      };
+      if(cards.length) {
+        opts.source = cards[0].id;
       }
-      this.setState({ user: { ...this.state.user, credit: this.state.user.credit + 2000 } });
-    });
+      api.post('/shop/topUp', opts, (err, result) => {
+        if (err) {
+          return err;
+        }
+        this.setState({ user: { ...this.state.user, credit: this.state.user.credit + 2000 } });
+      });
+    }
   }
 
   renderCardTable() {
