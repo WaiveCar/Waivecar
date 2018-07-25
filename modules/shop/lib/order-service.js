@@ -44,6 +44,7 @@ module.exports = class OrderService extends Service {
     opts = opts || opts;
 
     if (
+      !opts.overrideAdminCheck && 
       // if we aren't an admin, this may be ok
       !_user.hasAccess('admin') && (
         // we have to be modifying ourselves
@@ -120,7 +121,7 @@ module.exports = class OrderService extends Service {
 
   static *topUp(data, _user) {
     let user = yield User.findById(data.userId);
-    if(yield this.quickCharge(data, _user, {nocredit: true})) {
+    if(yield this.quickCharge(data, _user, {nocredit: true, overrideAdminCheck: true})) {
       yield user.update({credit: user.credit + 20 * 100});
     }
   }
