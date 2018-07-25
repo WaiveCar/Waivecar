@@ -143,10 +143,9 @@ module.exports = class BookingService extends Service {
     // The above code guarantees that we can book a car, it doesn't
     // necessarily give it to us.
     //
-    //TODO: uncomment process.env.NODE_ENV === 'production' when done with api-1286
-    //if(process.env.NODE_ENV === 'production') {
+    if(process.env.NODE_ENV === 'production') {
       try {
-        var order = yield OrderService.authorize(null, driver);
+        yield OrderService.authorize(null, driver);
       } catch (err) {
         // Failing to secure the authorization hold should be recorded as an
         // iniquity. See https://github.com/WaiveCar/Waivecar/issues/861 for
@@ -168,12 +167,11 @@ module.exports = class BookingService extends Service {
           message : 'Unable to authorize payment. Please validate payment method.'
         }, 400);
       }
-    //}
+    }
     if (!_user.hasAccess('admin')) {
       yield this.recentBooking(driver, car, data.opts);
     }
 
-    console.log('That weird thing: ', OrderService.authorize.last);
     //
     // We *could* do this, but it will be expiring in 15 seconds any way and there's
     // a way that the double booking could still occur here. 
@@ -200,7 +198,6 @@ module.exports = class BookingService extends Service {
     } catch (err) {
       throw err;
     }
-    console.log('booking: ', booking);
 
     // If there is a new authorization, a new BookingPayment must be created so that it can be itemized on the receipt.
     if (OrderService.authorize.last.newAuthorization) {
