@@ -41,7 +41,7 @@ module.exports = class OrderService extends Service {
   static *quickCharge(data, _user, opts) {
     let user = yield this.getUser(data.userId);
     let charge = {amount: data.amount};
-    opts = opts || opts;
+    opts = opts || {};
 
     if (
       !opts.overrideAdminCheck && 
