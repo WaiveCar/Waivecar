@@ -105,7 +105,6 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
-
     // We re-get the car to update the value.
     car = yield this.getCar(data.carId, data.userId, true);
     if (car.userId !== null && car.bookingId !== null) {
@@ -159,7 +158,8 @@ module.exports = class BookingService extends Service {
       }
     }
 
-    if (!_user.hasAccess('admin') && _user.id !== driver.id) {
+    // If the creator isn't an admin or is booking for themselves
+    if (!_user.hasAccess('admin') || _user.id === driver.id) {
       yield this.recentBooking(driver, car, data.opts, lockKeys);
     }
 
@@ -189,6 +189,20 @@ module.exports = class BookingService extends Service {
     } catch (err) {
       throw err;
     }
+
+    // If there is a new authorization, a new BookingPayment must be created so that it can be itemized on the receipt.
+    if (OrderService.authorize.last.newAuthorization) {
+      try {
+        let authorizationPayment = new BookingPayment({
+          bookingId : booking.id,
+          orderId   : order.id,
+        });
+        yield authorizationPayment.save();
+        console.log('payment: ', authorizationPayment);
+      } catch(err) {
+        console.log(err);
+      }
+    };
 
     yield car.addDriver(driver.id, booking.id);
 
@@ -269,12 +283,6 @@ module.exports = class BookingService extends Service {
    |
    */
 
-  /**
-   * Returns a list of bookings.
-   * @param  {Object} query
-   * @param  {Object} _user
-   * @return {Array}
-   */
   static *index(query, _user) {
     let bookings    = [];
     let dbQuery     = queryParser(query, {
@@ -467,7 +475,6 @@ module.exports = class BookingService extends Service {
         }
       });
     }
-
     return booking;
   }
 
@@ -488,7 +495,7 @@ module.exports = class BookingService extends Service {
   }
 
   static *extend(id, query, _user) {
-    return yield this._extend(id, {}, _user);
+    return yield this._extend(id, query, _user);
   }
 
   static *_extend(id, opts, _user) {
@@ -657,7 +664,13 @@ module.exports = class BookingService extends Service {
 
   static *isAtHub(car) {
     var hub;
-    (yield Location.find({where: {type: 'hub'} })).forEach(function(row) {
+    (yield Location.find({
+      where: {
+        type: { 
+          $in: ['hub', 'homebase'] 
+        }
+      } 
+    })).forEach(function(row) {
       if(geolib.getDistance(car, row) < row.radius) {
         hub = row;
       }
@@ -678,34 +691,36 @@ module.exports = class BookingService extends Service {
 
   // The meat of canEnd, the cheap check
   static *_canEnd(car, isAdmin) {
-    if(isAdmin) {
-      return true;
+    // We preference hubs over zones because cars can end there at any charge without a photo
+    let hub = yield this.isAtHub(car);
+
+    // if we are at a hub then we can return the car here regardless
+    if(hub) {
+      return hub;
     }
 
-    let zoneOrHub = false;
-    // we give the user until this amount to make sure that they are ok
-    if (car.milesAvailable() < 21) {
-
-      zoneOrHub = yield this.isAtHub(car);
-      if(!zoneOrHub) {
-        throw error.parse({
-          code    : `CHARGE_TOO_LOW`,
-          message : `The WaiveCar's charge is too low to end here. Please return it to the homebase.`
-        }, 400);
-      }
-    } else {
-
-      // we need to make sure that it's in a valid return zone
-      zoneOrHub = yield this.getZone(car);
-      if(!zoneOrHub) {
-        throw error.parse({
-          code    : `OUTSIDE_ZONE`,
-          message : `You cannot return the WaiveCar here. Please end the booking inside the green zone on the map.`
-        }, 400);
-      }
+    // otherwise if we aren't there and the car is low, we need to go back to a hub
+    if (car.milesAvailable() < 21 && !isAdmin) {
+      throw error.parse({
+        code    : `CHARGE_TOO_LOW`,
+        message : `The WaiveCar's charge is too low to end here. Please return it to the homebase.`
+      }, 400);
     }
 
-    return zoneOrHub;
+    // if our car is fine and we aren't at a hub then we can return it so long as
+    // we are in a zone.
+    let zone = yield this.getZone(car);
+
+    if(zone) {
+      return zone;
+    } else if(!isAdmin) {
+      throw error.parse({
+        code    : `OUTSIDE_ZONE`,
+        message : `You cannot return the WaiveCar here. Please end the booking inside the green zone on the map.`
+      }, 400);
+    }
+
+    return isAdmin;
   }
 
   // A *very cheap* check to see if the ending spot it legal.
@@ -1385,13 +1400,6 @@ module.exports = class BookingService extends Service {
     relay.admin('bookings', payload);
   }
 
-  /**
-   * Logs the ride details.
-   * @param  {String} type    The detail type, start|end.
-   * @param  {Object} booking
-   * @param  {Object} car
-   * @return {Void}
-   */
   static *logDetails(type, booking, car) {
     let details = new BookingDetails({
       bookingId : booking.id,
@@ -1506,6 +1514,7 @@ module.exports = class BookingService extends Service {
 
       throw error.parse({
         code    : 'RECENT_BOOKING',
+        title   : 'Unable to rebook the same WaiveCar',
         message : `Sorry! You need to wait ${remainingTime}min more to rebook the same WaiveCar!`,
         inject  : buyNow,
         options: [{
@@ -1513,6 +1522,10 @@ module.exports = class BookingService extends Service {
           hotkey: 'now',
           action: {verb:'post', url:'bookings', params:postparams},
           internal: ['booking-service','create', postparams]
+        },{
+          title: "No thanks! I'll wait!",
+          theme: 'dark',
+          action: false
         }]
       }, 400);
     }

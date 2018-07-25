@@ -15,6 +15,7 @@ let Cart        = Bento.model('Shop/Cart');
 let Card        = Bento.model('Shop/Card');
 let Order       = Bento.model('Shop/Order');
 let OrderItem   = Bento.model('Shop/OrderItem');
+let Booking     = Bento.model('Booking');
 let BookingDetails = Bento.model('BookingDetails');
 let BookingPayment = Bento.model('BookingPayment');
 let RedisService   = require('../../waivecar/lib/redis-service');
@@ -40,9 +41,10 @@ module.exports = class OrderService extends Service {
   static *quickCharge(data, _user, opts) {
     let user = yield this.getUser(data.userId);
     let charge = {amount: data.amount};
-    opts = opts || opts;
+    opts = opts || {};
 
     if (
+      !opts.overrideAdminCheck && 
       // if we aren't an admin, this may be ok
       !_user.hasAccess('admin') && (
         // we have to be modifying ourselves
@@ -118,8 +120,9 @@ module.exports = class OrderService extends Service {
   }
 
   static *topUp(data, _user) {
-    if(yield this.quickCharge({description: "Top up $20"}, _user, {nocredit: true})) {
-      yield _user.update({credit: _user.credit + 20 * 100});
+    let user = yield User.findById(data.userId);
+    if(yield this.quickCharge(data, _user, {nocredit: true, overrideAdminCheck: true})) {
+      yield user.update({credit: user.credit + 20 * 100});
     }
   }
 
@@ -202,12 +205,22 @@ module.exports = class OrderService extends Service {
     // ### Add Items
 
     yield this.addItems(order, items);
-    miscCharge = _.find(items, { name : 'Miscellaneous' });
-
     // Notify user if they received a miscellaneous charge
-    if (miscCharge) {
+    if (items) {
       log.info(`Notifying user of miscellaneous charge: ${ user.id }`);
-      yield this.notifyOfCharge(miscCharge, user);
+      let currentBooking = yield Booking.find({
+        where: { id: payload.bookingId }, 
+        include: [
+          {
+            model: 'Car',
+            as: 'car',
+          }
+        ]
+      });
+      yield this.notifyOfCharge(items, user, {
+        subject: `Charges for your booking in ${currentBooking[0].car.license} on ${moment(currentBooking[0].createdAt).format('MMMM Do, YYYY')}`,
+        leadin: `Here's your receipt for any additional charges from your booking on ${moment(currentBooking[0].createdAt).format('MMMM Do, YYYY')} with ${currentBooking[0].car.license}:`
+      });
 
       // A miscellaneous charge is likely an issue we should keep track of
       yield UserLog.addUserEvent(user, 'FEE', order.id, data.description);
@@ -391,9 +404,18 @@ module.exports = class OrderService extends Service {
 
     let allCharges = yield this.getTotalCharges(booking);
     let totalAmount = allCharges.totalCredit + allCharges.totalPaid;
-    let chargesList = allCharges.types.map((type) => `<li>${type.trim()}</li>`).join('');
+    // This creates a list of charges to be injected into the template
+    let chargesList = allCharges.payments.map(charge =>
+      `<tr>
+        <td>
+          ${charge.shopOrder.description.replace(/Booking\s\d*/i, '')}
+        </td>
+        <td class="right-item">
+          $${(Math.abs(charge.shopOrder.amount / 100)).toFixed(2)}
+        </td>
+      <tr>` 
+    ).join('').trim();
     let dollarAmount = (totalAmount / 100).toFixed(2);
-
     let email = new Email();
     // This creates a list of charges to be injected into the template
     if (totalAmount > 0) {
@@ -464,59 +486,48 @@ module.exports = class OrderService extends Service {
       totalCredit,
       totalPaid,
       types,
+      payments,
     };
   }
 
-  /**
-   * Creates a authorized order of a given amount to be captured later.
-   * @param  {Object} payload
-   * @param  {Object} _user
-   * @return {Object}
-   */
   static *authorize(payload, _user) {
     let card = yield Card.findOne({ where : { userId : _user.id } });
-    let amount = 100;
-
+    let amount = _user.credit > 0 ? 100 : 2000;
     // This data leak is so that if we fail to charge the card, we can
     // find the card and amount we tried to charge.
     this.authorize.last = {
       card: card,
       amount: amount
     };
-
-    if (!card) {
-      throw error.parse({
-        code    : 'SHOP_MISSING_CARD',
-        message : 'The user does not have a valid payment method.'
+    let now = moment().utc();
+    if (_user.lastHoldAt === null || (_user.lastHoldAt && now.diff(_user.lastHoldAt, 'days') > 2)) {
+      if (!card) {
+        throw error.parse({
+          code    : 'SHOP_MISSING_CARD',
+          message : 'The user does not have a valid payment method.'
+        });
+      }
+      // ### Create Order
+      var order = new Order({
+        createdBy   : _user.id,
+        userId      : _user.id,
+        source      : card.id,
+        description : 'Pre booking authorization',
+        currency    : 'usd',
+        amount      : amount
       });
+      yield order.save();
+
+      let charge = yield this.charge(order, _user, {nocapture: true});
+      if (charge.status !== 'failed') {
+        this.authorize.last.newAuthorization = true;
+        yield _user.update({ lastHoldAt: now });
+      }
+      yield this.cancel(order, _user, charge);
     }
-
-    // ### Create Order
-    let order = new Order({
-      createdBy   : _user.id,
-      userId      : _user.id,
-      source      : card.id,
-      description : 'Pre booking authorization',
-      currency    : 'usd',
-      amount      : amount
-    });
-    yield order.save();
-
-    // ### Charge
-
-    let charge = yield this.charge(order, _user, {nocapture: true});
-    yield this.cancel(order, _user, charge);
-
     return order;
   }
 
-  /**
-   * Captures an authorized payment with the submitted cart.
-   * @param  {Number} id
-   * @param  {Object} payload
-   * @param  {Object} _user
-   * @return {Object}
-   */
   static *captures(id, payload, _user) {
     let order = yield this.getOrder(id);
     let user  = yield this.getUser(order.userId);
@@ -811,13 +822,6 @@ module.exports = class OrderService extends Service {
     return charge;
   }
 
-  /**
-   * Cancel pending payment
-   * @param {Object} order
-   * @param {Object} user
-   * @param {Object} charge
-   * @return {Void}
-   */
   static *cancel(order, user, charge) {
     let service = this.getService(config.service, 'charges');
     yield service.refund(charge.id);
@@ -838,12 +842,6 @@ module.exports = class OrderService extends Service {
     });
   }
 
-  /**
-   * Captures order items
-   * @param {Object} order
-   * @param {Array} items
-   * reeturn {Void}
-   */
   static *addItems(order, items) {
     for (let i = 0, len = items.length; i < len; i++) {
       let item = new OrderItem({
@@ -859,11 +857,6 @@ module.exports = class OrderService extends Service {
     }
   }
 
-  /**
-   * Checks if the provided currency is supported by the shop.
-   * @param  {String} currency
-   * @return {Void}
-   */
   static verifyCurrency(currency) {
     if (config.currencies.indexOf(currency) === -1) {
       throw error.parse({
@@ -945,24 +938,48 @@ module.exports = class OrderService extends Service {
   }
 
   // Notify user that miscellaneous was added to their booking
-  static *notifyOfCharge(item, user) {
+  static *notifyOfCharge(item, user, opts={}) {
     if(item.price === 0) {
       return;
     }
     let email = new Email();
     try {
-      item.total = (Math.abs(item.quantity * item.price / 100)).toFixed(2);
-      let word = item.price > 0 ? 'Charge' : 'Credit';
-      if (word === 'Charge') {
+      if(Array.isArray(item)) {
+        item.totalNum = item.map((row) => row.quantity * row.price).reduce((a,b) => a + b);
+      } else {
+        item.totalNum = item.quantity * item.price;
+      }
+      item.total =  (Math.abs(item.totalNum / 100)).toFixed(2);
+      let chargeList = item.map(charge => 
+        `<tr>
+          <td>
+            ${charge.name}
+          </td>
+          <td class="right-item">
+            ${charge.quantity}
+          </td>
+          <td class="right-item">
+            $${(Math.abs(charge.price / 100)).toFixed(2)}
+          </td>
+          <td class="right-item">
+            $${(Math.abs(charge.total / 100)).toFixed(2)}
+          </td>
+        <tr>` ).join('');
+      let word = item.totalNum > 0 ? 'Charges' : 'credit';
+      if (word === 'Charges') {
+        opts.subject = opts.subject || `$${ item.total } charges on your account`;
+        opts.leadin = opts.leadin || 'Here is your receipt for charges added to your account:';
         yield email.send({
           to       : user.email,
           from     : emailConfig.sender,
-          subject  : `Additional ${ word } on your account`,
+          subject  : opts.subject,
           template : 'miscellaneous-charge',
           context  : {
+            leadin   : opts.leadin,
             name   : user.name(),
+            word   : word,
             charge : item,
-            word   : word
+            chargeList,
           }
         });
       } else {
