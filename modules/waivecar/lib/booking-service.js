@@ -731,8 +731,9 @@ module.exports = class BookingService extends Service {
     // we look to see the last time we updated the car
     let lastUpdate = (new Date() - car.updatedAt) / (60 * 1000);
 
+    console.log(lastUpdate, new Date(), car.updatedAt);
     // if we haven't updated the car's location in the past minute, we try to get it again.
-    if(lastUpdate > 1) {
+    if(lastUpdate > 0.5) {
       let data = yield cars.getDevice(car.id, _user, 'booking.canend');
       if(data) {
         yield car.update(data);
