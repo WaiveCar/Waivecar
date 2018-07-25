@@ -40,11 +40,6 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       unique : true
     },
 
-    /**
-     * Users profile image.
-     * @type   {String}
-     * @module files
-     */
     avatar : {
       type : Sequelize.STRING
     },
@@ -124,13 +119,13 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
 
     longitude : {
       type      : Sequelize.DECIMAL(11, 8),
-    }
+    },
+
+    lastHoldAt : {
+      type       : Sequelize.DATE
+    },
   };
 
-  /**
-   * List of custom out of schema attributes.
-   * @type {Array}
-   */
   model.attributes = [ 'email=>role', 'role=>group', 'group=>groupRole', 'tagList' ];
 
   model.relations = [

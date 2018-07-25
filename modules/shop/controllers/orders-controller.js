@@ -8,6 +8,10 @@ Bento.Register.Controller('Shop/OrdersController', (controller) => {
     return yield service.quickCharge(this.payload, this.auth.user);
   };
 
+  controller.topup = function *() {
+    return yield service.topUp(this.payload, this.auth.user);
+  };
+
   controller.refund = function *(id) {
     return yield service.refund(this.payload, id, this.auth.user);
   }; 
@@ -21,11 +25,6 @@ Bento.Register.Controller('Shop/OrdersController', (controller) => {
     return yield service.authorize(this.payload, this.auth.user);
   };
 
-  /**
-   * Submits cart for authorized order.
-   * @param  {Number} id
-   * @return {Object}
-   */
   controller.capture = function *(id) {
     return yield service.captures(id, this.payload, this.auth.user);
   };

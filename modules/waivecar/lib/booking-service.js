@@ -105,7 +105,6 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
-
     // We re-get the car to update the value.
     car = yield this.getCar(data.carId, data.userId, true);
     if (car.userId !== null && car.bookingId !== null) {
@@ -191,6 +190,20 @@ module.exports = class BookingService extends Service {
       throw err;
     }
 
+    // If there is a new authorization, a new BookingPayment must be created so that it can be itemized on the receipt.
+    if (OrderService.authorize.last.newAuthorization) {
+      try {
+        let authorizationPayment = new BookingPayment({
+          bookingId : booking.id,
+          orderId   : order.id,
+        });
+        yield authorizationPayment.save();
+        console.log('payment: ', authorizationPayment);
+      } catch(err) {
+        console.log(err);
+      }
+    };
+
     yield car.addDriver(driver.id, booking.id);
 
     // Users over 55 should always get 25 minutes to get to the car #1230
@@ -270,12 +283,6 @@ module.exports = class BookingService extends Service {
    |
    */
 
-  /**
-   * Returns a list of bookings.
-   * @param  {Object} query
-   * @param  {Object} _user
-   * @return {Array}
-   */
   static *index(query, _user) {
     let bookings    = [];
     let dbQuery     = queryParser(query, {
@@ -468,7 +475,6 @@ module.exports = class BookingService extends Service {
         }
       });
     }
-
     return booking;
   }
 
@@ -1394,13 +1400,6 @@ module.exports = class BookingService extends Service {
     relay.admin('bookings', payload);
   }
 
-  /**
-   * Logs the ride details.
-   * @param  {String} type    The detail type, start|end.
-   * @param  {Object} booking
-   * @param  {Object} car
-   * @return {Void}
-   */
   static *logDetails(type, booking, car) {
     let details = new BookingDetails({
       bookingId : booking.id,
