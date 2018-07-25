@@ -8,6 +8,7 @@ let geocode      = require('./geocoding-service');
 let notify       = require('./notification-service');
 let UserService  = require('../../user/lib/user-service.js');
 let CarService   = require('./car-service');
+let Email        = Bento.provider('email');
 let queue        = Bento.provider('queue');
 let queryParser  = Bento.provider('sequelize/helpers').query;
 let relay        = Bento.Relay;
@@ -26,6 +27,7 @@ let _            = require('lodash');
 let geolib    = require('geolib');
 let sequelize = Bento.provider('sequelize');
 let fs        = require('fs');
+let emailConfig = Bento.config.email;
 
 
 // ### Models
@@ -146,7 +148,30 @@ module.exports = class BookingService extends Service {
     //TODO: uncomment process.env.NODE_ENV === 'production' when done with api-1286
     //if(process.env.NODE_ENV === 'production') {
       try {
-        var order = yield OrderService.authorize(null, driver);
+        let order = yield OrderService.authorize(null, driver);
+        let amount = (order.amount / 100).toFixed(2);
+        let orderDate = moment(order.createdAt).format('MMMM Do YYYY'); 
+        let email = new Email();
+        let body = amount === 20 ? 'A $20 hold has been placed on your account for your ride with WaiveCar. This hold will be placed on your account every 2 days that you use our service. The amount of the hold can be reduced by adding a $20 credit to your account at our website' : `A $${amount} hold has been placed on your account for your ride with WaiveCar. This hold will be placed on your account every 2 days that you use our service.`
+        console.log('successful charge order: ', order);
+        try {
+	        yield email.send({
+		        to       : driver.email,
+		        from     : emailConfig.sender,
+            subject  : `$A $${amount} hold has been placed on your account during your ride on ${orderDate}`,
+		        template : 'authorization',
+		        context  : {
+		          name       : driver.name(),
+              amount     : amount,
+              date       : orderDate,
+              body,
+		        }
+          });
+        } catch(err) {
+          log.warn(err);
+        };
+
+        // notify of charge
       } catch (err) {
         // Failing to secure the authorization hold should be recorded as an
         // iniquity. See https://github.com/WaiveCar/Waivecar/issues/861 for
@@ -173,7 +198,6 @@ module.exports = class BookingService extends Service {
       yield this.recentBooking(driver, car, data.opts);
     }
 
-    console.log('That weird thing: ', OrderService.authorize.last);
     //
     // We *could* do this, but it will be expiring in 15 seconds any way and there's
     // a way that the double booking could still occur here. 

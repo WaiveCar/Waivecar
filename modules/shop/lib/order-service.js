@@ -502,6 +502,8 @@ module.exports = class OrderService extends Service {
         yield _user.update({ lastHoldAt: now });
       }
       yield this.cancel(order, _user, charge);
+    } else {
+      // notify that there was no hold for the ride
     }
     return order;
   }
