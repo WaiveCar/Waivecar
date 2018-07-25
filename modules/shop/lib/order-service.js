@@ -503,8 +503,12 @@ module.exports = class OrderService extends Service {
       }
       yield this.cancel(order, _user, charge);
     } else {
-      // notify that there was no hold for the ride
+      // this is created for when there will be no charge on the account
+      var order = {
+        amount: 0,
+      };
     }
+    // notify that there was no hold for the ride
     return order;
   }
 
