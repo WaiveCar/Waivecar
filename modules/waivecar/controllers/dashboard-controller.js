@@ -13,7 +13,7 @@ Bento.Register.Controller('DashboardController', function(controller) {
 
     var nowQuery = {};
 
-    var weekAgoQuery = { where : { createdAt: { $lt: oneWeekAgo }}};
+    var weekAgoQuery = { where : { created_at: { $lt: oneWeekAgo }}};
 
 
     var bookingsCount = {
