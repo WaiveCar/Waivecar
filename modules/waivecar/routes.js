@@ -73,6 +73,7 @@ Route.get('/locations/dropoff', 'LocationsController@dropoff');
 
 // ### User Parking
 Route.post('/parking', [ /*'isAuthenticated',*/ 'ParkingController@create' ]);
+Route.del('/parking/:id', [/*'isAuthenticated', */ 'ParkingController@delete' ]);
 Route.put('/parking/:id/toggle/:type', [/*'isAuthenticated', */ 'ParkingController@toggle' ]);
 Route.put('/parking/:id/updateParking', [/*isAuthenticated',*/ 'ParkingController@updateParking' ]);
 Route.post('/parking/:id/reserve', [/*isAuthenticated',*/ 'ParkingController@reserve' ]);

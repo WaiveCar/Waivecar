@@ -11,7 +11,6 @@ let error = Bento.Error;
 
 module.exports = {
   *create(query) {
-    //remove through line 17 later
     let location = new Location({
       type: 'user-parking',
       latitude: query.latitude,
@@ -28,6 +27,11 @@ module.exports = {
     });
     yield entry.save();
     return entry;
+  },
+
+  *delete(parkingId) {
+    // This function remains to be emplemented. Further discussion needed
+    return 'To Be implemented in the future';
   },
 
   *toggle(parkingId, type) {
@@ -111,7 +115,9 @@ module.exports = {
       throw error.parse(
         {
           code: 'PARKING_NOT_RESERVED_BY_USER',
-          message: `Parking space #${space.id} was not reserved by user #${userId}`,
+          message: `Parking space #${
+            space.id
+          } was not reserved by user #${userId}`,
         },
         400,
       );

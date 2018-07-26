@@ -7,6 +7,10 @@ Bento.Register.Controller('ParkingController', function(controller) {
     return yield parking.create(this.payload);
   };
 
+  controller.delete = function*(id) {
+    return yield parking.delete(id);
+  };
+
   controller.toggle = function*(id, type) {
     return yield parking.toggle(id, type);
   };
@@ -20,7 +24,11 @@ Bento.Register.Controller('ParkingController', function(controller) {
   };
 
   controller.cancel = function*(id) {
-    return yield parking.cancel(id, this.payload.userId, this.payload.reservationId);
+    return yield parking.cancel(
+      id,
+      this.payload.userId,
+      this.payload.reservationId,
+    );
   };
 
   return controller;

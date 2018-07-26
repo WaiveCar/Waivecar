@@ -5,7 +5,7 @@ Bento.Register.Model('ParkingReservation', 'sequelize', function register(
   Sequelize,
 ) {
   model.table = 'parking_reservations';
- 
+
   model.schema = {
     userId: {
       type: Sequelize.INTEGER,
@@ -27,6 +27,6 @@ Bento.Register.Model('ParkingReservation', 'sequelize', function register(
       type: Sequelize.DATE,
     },
   };
-  
+
   return model;
 });
