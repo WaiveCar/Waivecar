@@ -409,7 +409,7 @@ module.exports = class LogService {
         dateRange,
       ].join(' ');
 
-      return yield sequelize.query(qstr);
+      return yield sequelize.query(qstr, {type: sequelize.QueryTypes.SELECT});
 
     } else if(kind === 'carpoints') {
       
@@ -421,7 +421,7 @@ module.exports = class LogService {
         dateRange
       ].join(' ');
 
-      return yield sequelize.query(qstr);
+      return yield sequelize.query(qstr, {type: sequelize.QueryTypes.SELECT});
 
     } else if(kind === 'points' || kind === 'points.js') {
       let qstr = [
@@ -433,7 +433,7 @@ module.exports = class LogService {
         'group by(concat(lng,lat))'
       ].join(' ');
 
-      let res = (yield sequelize.query(qstr))[0].map((row) => {
+      let res = (yield sequelize.query(qstr,  {type: sequelize.QueryTypes.SELECT})).map((row) => {
         return [row.lat, row.lng, row.weight];
       });
 
