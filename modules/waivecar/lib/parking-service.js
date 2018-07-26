@@ -72,7 +72,7 @@ module.exports = {
       reservationId: reservation.id,
     });
 
-    let timerObj = {value: 5, type: 'seconds'};
+    let timerObj = {value: 5, type: 'minutes'};
     queue.scheduler.add('parking-auto-cancel', {
       uid: `parking-${parkingId}`,
       timer: timerObj,
@@ -99,7 +99,6 @@ module.exports = {
       yield space.update({
         reservationId: null,
       });
-      console.log('space after cancel: ', space);
       relay.user(userId, 'userParking', {
         type: 'update',
         data: space.toJSON(),
@@ -108,6 +107,14 @@ module.exports = {
         type: 'update',
         data: space.toJSON(),
       });
+    } else {
+      throw error.parse(
+        {
+          code: 'PARKING_NOT_RESERVED_BY_USER',
+          message: `Parking space #${space.id} was not reserved by user #${userId}`,
+        },
+        400,
+      );
     }
     return space;
   },
