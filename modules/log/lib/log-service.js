@@ -342,6 +342,9 @@ module.exports = class LogService {
         } 
       });
       excludeMap = false;
+      if(Object.keys(includeMap).length === 0) {
+        return [];
+      }
     } else {
       for(var ix = 0; ix < allCars.length; ix++) {
         let row = allCars[ix];
@@ -396,6 +399,9 @@ module.exports = class LogService {
         excludedBookingsQuery = ' booking_id not in (' + allExcludedBookings.map((row) => { return row.id } ) + ') and ';
       }
     } else {
+      if(allBookings.length === 0) {
+        return [];
+      }
       includedBookingsQuery = ' booking_id in (' + allBookings.map((row) => row.id) + ') and ';
     }
 
@@ -421,6 +427,7 @@ module.exports = class LogService {
         dateRange
       ].join(' ');
 
+      //console.log(qstr);
       return yield sequelize.query(qstr, {type: sequelize.QueryTypes.SELECT});
 
     } else if(kind === 'points' || kind === 'points.js') {
