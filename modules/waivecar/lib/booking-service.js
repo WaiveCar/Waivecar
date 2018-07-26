@@ -8,6 +8,7 @@ let geocode      = require('./geocoding-service');
 let notify       = require('./notification-service');
 let UserService  = require('../../user/lib/user-service.js');
 let CarService   = require('./car-service');
+let Email        = Bento.provider('email');
 let queue        = Bento.provider('queue');
 let queryParser  = Bento.provider('sequelize/helpers').query;
 let relay        = Bento.Relay;
@@ -26,6 +27,7 @@ let _            = require('lodash');
 let geolib    = require('geolib');
 let sequelize = Bento.provider('sequelize');
 let fs        = require('fs');
+let emailConfig = Bento.config.email;
 
 
 // ### Models
@@ -131,9 +133,37 @@ module.exports = class BookingService extends Service {
     // The above code guarantees that we can book a car, it doesn't
     // necessarily give it to us.
     //
-    if(process.env.NODE_ENV === 'production') {
+    //if(process.env.NODE_ENV === 'production') {
       try {
         order = yield OrderService.authorize(null, driver);
+        let orderDate = moment(order.createdAt).format('MMMM Do YYYY');
+        let amount = (order.amount / 100).toFixed(2);
+        let title;
+        let body;
+        if (order.amount > 0) {
+          title = `$A $${amount} hold has been placed on your account during your ride on ${orderDate}` 
+          body = amount === '20.00' ? 'A $20 hold has been placed on your account for your ride with WaiveCar. This hold will be placed on your account every 2 days that you use our service. The amount of the hold can be reduced by adding a $20 credit to your account at our website.' : `A $${amount} hold has been placed on your account for your ride with WaiveCar. This hold will be placed on your account every 2 days that you use our service.`
+        } else {
+          title = `No hold on your account during your ride on ${orderDate}`
+          body = 'No hold has been placed on your account for your ride today. A hold will be placed for every 2 days that you use our service.'
+        }
+        let email = new Email();
+        try {
+	        yield email.send({
+		        to       : driver.email,
+		        from     : emailConfig.sender,
+            subject  : title,
+		        template : 'authorization',
+		        context  : {
+		          name       : driver.name(),
+              amount     : amount,
+              date       : orderDate,
+              body,
+		        }
+          });
+        } catch(err) {
+          log.warn('email error: ', err);
+        };
       } catch (err) {
         // Failing to secure the authorization hold should be recorded as an
         // iniquity. See https://github.com/WaiveCar/Waivecar/issues/861 for
@@ -157,7 +187,7 @@ module.exports = class BookingService extends Service {
           message : 'Unable to authorize payment. Please validate payment method.'
         }, 400);
       }
-    }
+    //}
 
     // If the creator isn't an admin or is booking for themselves
     if (!_user.hasAccess('admin') || _user.id === driver.id) {
@@ -183,7 +213,6 @@ module.exports = class BookingService extends Service {
           orderId   : order.id,
         });
         yield authorizationPayment.save();
-        console.log('payment: ', authorizationPayment);
       } catch(err) {
         console.log(err);
       }
@@ -441,6 +470,10 @@ module.exports = class BookingService extends Service {
           }, [])
         }
       });
+      console.log(booking.payments);
+      // This filters out the Pre booking authorization
+      booking.payments = booking.payments.filter(payment => !payment.description.includes('Pre booking authorization'));
+      console.log(booking.payments);
     }
 
     if(!opts.nopath) {
@@ -855,10 +888,10 @@ module.exports = class BookingService extends Service {
     let deltas = yield this.getDeltas(booking);
 
     // Handle auto charge for time
-    if (!isAdmin) {
+    //if (!isAdmin) {
       yield OrderService.createTimeOrder(booking, user);
 
-    } else if(deltas.duration > freeTime) {
+    /*} else*/ if(deltas.duration > freeTime) {
       yield notify.slack({ text : `:umbrella: Booking ended by admin. Time driven was over 2 hours. ${ Bento.config.web.uri }/bookings/${ id }`
       }, { channel : '#adminended' });
     }

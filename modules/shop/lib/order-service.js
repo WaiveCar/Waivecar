@@ -475,10 +475,10 @@ module.exports = class OrderService extends Service {
     let totalCredit = 0;
     let totalPaid = 0;
     let types = [];
-
     if (payments.length) {
       totalCredit = payments.filter((row) => row.shopOrder.chargeId === '0' ).reduce((total, payment) => total + payment.shopOrder.amount, 0);
-      totalPaid = payments.filter((row) => row.shopOrder.chargeId !== '0' ).reduce((total, payment) => total + payment.shopOrder.amount, 0);
+      let filteredPayments = payments.filter((row) => row.shopOrder.description !== 'Pre booking authorization');
+      totalPaid = filteredPayments.filter((row) => row.shopOrder.chargeId !== '0').reduce((total, payment) => total + payment.shopOrder.amount, 0);
       types = payments.map(payment => payment.shopOrder.description.replace(/Booking\s\d*/i, ''));
     }
 
@@ -524,7 +524,13 @@ module.exports = class OrderService extends Service {
         yield _user.update({ lastHoldAt: now });
       }
       yield this.cancel(order, _user, charge);
+    } else {
+      // this is created for when there will be no charge on the account
+      var order = {
+        amount: 0,
+      };
     }
+    // notify that there was no hold for the ride
     return order;
   }
 
