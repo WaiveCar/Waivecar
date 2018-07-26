@@ -79,7 +79,6 @@ require('./controllers/credit-card-controller');
 require('./controllers/credit-cards-controller');
 require('./controllers/dashboard-controller');
 require('./controllers/info-controller');
-require('./controllers/inspection-controller');
 require('./controllers/landing-controller');
 require('./controllers/license-controller');
 require('./controllers/license-edit-controller');
@@ -94,7 +93,6 @@ require('./controllers/report-problem-controller');
 require('./controllers/show-problem-controller');
 require('./controllers/damage-gallery-controller');
 require('./controllers/start-ride-controller');
-require('./controllers/timer-controller');
 require('./controllers/menu-controller');
 require('./controllers/verify-controller');
 require('./controllers/complete-ride-controller');
@@ -104,11 +102,8 @@ require('./controllers/verify-id-controller');
 require('./constants/us-states');
 
 // Directives
-require('./directives/go-back-directive');
 require('./directives/lined-directive');
-require('./directives/page-title-directive');
 require('./directives/reverse-geocoding-directive');
-require('./directives/time-left-directive');
 require('./directives/wizard-directive');
 require('./directives/car-charge-status-directive');
 require('./directives/yes-no-toggle');
