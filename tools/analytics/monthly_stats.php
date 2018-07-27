@@ -57,7 +57,8 @@ while ( true ) {
       $carMap[$row['car_id']] = false;
     } else {
       if(array_key_exists($row['car_id'], $carMap)) {
-        if($row['action'] === 'CREATE_BOOKING' && $carMap[$row['car_id']]['action'] === 'MAKE_CAR_AVAILABLE') {
+	//echo $row['car_id'] . " " . $row['action'] . "\n";
+        if($row['action'] === 'CREATE_BOOKING' && in_array($carMap[$row['car_id']]['action'], ['END_BOOKING', 'MAKE_CAR_AVAILABLE'])) {
           $duration = strtotime($row['created_at']) - strtotime($carMap[$row['car_id']]['created_at']);
           $idleList[] = $duration;
         } else if($row['action'] === 'END_BOOKING' && $carMap[$row['car_id']]['action'] === 'CREATE_BOOKING') {

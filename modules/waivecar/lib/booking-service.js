@@ -81,6 +81,7 @@ module.exports = class BookingService extends Service {
 
     let driver = yield this.getUser(data.userId);
     let car = yield this.getCar(data.carId, data.userId, true);
+    let order;
 
     this.hasAccess(driver, _user);
 
@@ -132,7 +133,7 @@ module.exports = class BookingService extends Service {
     //
     if(process.env.NODE_ENV === 'production') {
       try {
-        yield OrderService.authorize(null, driver);
+        order = yield OrderService.authorize(null, driver);
       } catch (err) {
         // Failing to secure the authorization hold should be recorded as an
         // iniquity. See https://github.com/WaiveCar/Waivecar/issues/861 for
@@ -162,22 +163,6 @@ module.exports = class BookingService extends Service {
     if (!_user.hasAccess('admin') || _user.id === driver.id) {
       yield this.recentBooking(driver, car, data.opts, lockKeys);
     }
-
-    //
-    // We *could* do this, but it will be expiring in 15 seconds any way and there's
-    // a way that the double booking could still occur here. 
-    //
-    // A gets db record
-    // B gets db record
-    // A adds driver and removes lock
-    // B sees the lock isn't there and then adds driver and removes lock
-    //
-    // See doing this will screw things up...
-    // yield redis.del(key)
-
-    // ### Create Booking
-    // Attempt to create a new booking, if booking fails to save we remove the
-    // driver before throwing the error.
 
     let booking = new Booking({
       carId  : data.carId,
@@ -731,8 +716,9 @@ module.exports = class BookingService extends Service {
     // we look to see the last time we updated the car
     let lastUpdate = (new Date() - car.updatedAt) / (60 * 1000);
 
+    console.log(lastUpdate, new Date(), car.updatedAt);
     // if we haven't updated the car's location in the past minute, we try to get it again.
-    if(lastUpdate > 1) {
+    if(lastUpdate > 0.5) {
       let data = yield cars.getDevice(car.id, _user, 'booking.canend');
       if(data) {
         yield car.update(data);

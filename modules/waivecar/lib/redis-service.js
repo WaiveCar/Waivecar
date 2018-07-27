@@ -44,7 +44,7 @@ module.exports = (function() {
     let [key, uniq, timeout] = vals;
 
     // persist the key
-    yield res.expire(key, timeout);
+    yield res.pexpire(key, timeout);
     let check = yield res.get(key);
     if(check === uniq) {
       // now we can be mostly guaranteed that it wasn't set underneath us.
