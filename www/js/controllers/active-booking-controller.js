@@ -225,10 +225,18 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     var modal;
 
     var extendedExpire = {
-      0: moment(expired).format('h:mm A'),
-      10: moment(expired).add(10, 'm').format('h:mm A'),
-      20: moment(expired).add(20, 'm').format('h:mm A')
+      0: 'by ' + moment(expired).format('h:mm A'),
+      10: 'to ' + moment(expired).add(10, 'm').format('h:mm A'),
+      20: 'to ' + moment(expired).add(20, 'm').format('h:mm A')
     };
+
+    if(extendedExpire['10'].search(/Invalid/i) !== -1) {
+      extendedExpire = {
+        0: 'on time',
+        10: '10 minutes',
+        20: '20 minutes'
+      };
+    }
 
     $modal('result', {
       title: 'Extend Reservation',
@@ -239,7 +247,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       actions: [
       { 
         className: 'button-balanced',
-        text: 'Extend to ' +  extendedExpire['20'] + ' for $4.20',
+        text: 'Extend ' +  extendedExpire['20'] + ' for $4.20',
         handler: function () {
           modal.remove();
           ctrl.extendAction(20);
@@ -247,7 +255,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       }, 
       {
         className: 'button-dark',
-        text: 'Extend to ' +  extendedExpire['10'] + ' for $1.00',
+        text: 'Extend ' +  extendedExpire['10'] + ' for $1.00',
         handler: function () {
           modal.remove();
           ctrl.extendAction(10);
@@ -255,7 +263,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       }, 
       {
         className: 'button-link button-small',
-        text: "I'll make it by " + extendedExpire['0'] + ". No thanks!",
+        text: "I'll make it " + extendedExpire['0'] + ". No thanks!",
         handler: function () {
           modal.remove();
       }}]
