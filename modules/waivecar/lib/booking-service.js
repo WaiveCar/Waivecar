@@ -8,6 +8,7 @@ let geocode      = require('./geocoding-service');
 let notify       = require('./notification-service');
 let UserService  = require('../../user/lib/user-service.js');
 let CarService   = require('./car-service');
+let Email        = Bento.provider('email');
 let queue        = Bento.provider('queue');
 let queryParser  = Bento.provider('sequelize/helpers').query;
 let relay        = Bento.Relay;
@@ -26,6 +27,7 @@ let _            = require('lodash');
 let geolib    = require('geolib');
 let sequelize = Bento.provider('sequelize');
 let fs        = require('fs');
+let emailConfig = Bento.config.email;
 
 
 // ### Models
@@ -183,9 +185,8 @@ module.exports = class BookingService extends Service {
           orderId   : order.id,
         });
         yield authorizationPayment.save();
-        console.log('payment: ', authorizationPayment);
       } catch(err) {
-        console.log(err);
+        log.warn(err);
       }
     };
 
@@ -441,6 +442,7 @@ module.exports = class BookingService extends Service {
           }, [])
         }
       });
+      booking.payments = booking.payments.filter(payment => !payment.description.includes('Pre booking authorization'));
     }
 
     if(!opts.nopath) {
