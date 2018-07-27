@@ -404,37 +404,63 @@ module.exports = class OrderService extends Service {
 
     let allCharges = yield this.getTotalCharges(booking);
     let totalAmount = allCharges.totalCredit + allCharges.totalPaid;
+
+    let fullAuthorization = false;
+    let authCharges = 0;
     // This creates a list of charges to be injected into the template
-    let chargesList = allCharges.payments.map(charge =>
-      `<tr>
-        <td>
-          ${charge.shopOrder.description.replace(/Booking\s\d*/i, '')}
-        </td>
-        <td class="right-item">
-          $${(Math.abs(charge.shopOrder.amount / 100)).toFixed(2)}
-        </td>
-      <tr>` 
-    ).join('').trim();
+    let chargesList = allCharges.payments.map(charge => {
+      let description = charge.shopOrder.description.replace(/Booking\s\d*/i, '');
+      if (description.includes('authorization')) {
+        description += ' - refunded';
+        authCharges += charge.shopOrder.amount;
+      }
+      if (charge.shopOrder.amount === 2000) {
+        fullAuthorization = true;
+      }
+      return (
+        `<tr>
+          <td>
+            ${description}
+          </td>
+          <td class="right-item">
+            $${(Math.abs(charge.shopOrder.amount / 100)).toFixed(2)}
+          </td>
+        <tr>`
+      )
+    }).join('').trim();
     let dollarAmount = (totalAmount / 100).toFixed(2);
     let email = new Email();
     // This creates a list of charges to be injected into the template
+    let optionalText = fullAuthorization ? ( 
+      `<p>
+        A $20 hold has been placed on your account. This is done each time you use WaiveCar for your first 
+        ride in every 2 days. If you would like to reduce the amount of this hold to $1, you can visit our 
+        website and add a $20 credit to your account from your profile.
+      </p>`
+    ) : (
+      `<p>
+         A $1 hold  hold has been placed on your account. This is done each time you use WaiveCar for your 
+         first ride in every 2 days.    
+      </p>`
+      );
     if (totalAmount > 0) {
-      // This is sent out if there are charges for the booking 
+      // This is sent out if there are charges for the booking or if the user is receiving a $20 hold 
 	    try {
 	      yield email.send({
-		        to       : user.email,
-		        from     : emailConfig.sender,
-		        subject  : `$${ dollarAmount } receipt for your recent booking with ${carName}${ city }`,
-		        template : 'time-charge',
-		        context  : {
-		          name     : user.name(),
-              car      : carName, 
-		          duration : minutesOver,
-		          paid     : allCharges.totalPaid ? (allCharges.totalPaid / 100).toFixed(2) : false,
-              credit   : allCharges.totalCredit ? (allCharges.totalCredit / 100).toFixed(2) : false,
-              creditLeft: (user.credit / 100).toFixed(2),
-              list     : chargesList
-		        }
+		      to       : user.email,
+		      from     : emailConfig.sender,
+		      subject  : `$${ dollarAmount } receipt for your recent booking with ${carName}${ city }`,
+		      template : 'time-charge',
+		      context  : {
+		        name     : user.name(),
+            car      : carName, 
+		        duration : minutesOver,
+		        paid     : allCharges.totalPaid ? (allCharges.totalPaid / 100).toFixed(2) : false,
+            credit   : allCharges.totalCredit ? (allCharges.totalCredit / 100).toFixed(2) : false,
+            creditLeft: (user.credit / 100).toFixed(2),
+            list     : chargesList,
+            optionalText: authCharges > 0 ? optionalText : null 
+		      }
 	      });
 	    } catch(err) {
 	      log.warn('Failed to deliver time notification email: ', err);
@@ -451,7 +477,8 @@ module.exports = class OrderService extends Service {
 		          name     : user.name(),
               car      : carName, 
               duration : minutesOver,
-              city     : city
+              city     : city,
+              optionalText: authCharges > 0 ? optionalText : null
 		        }
 	      });
 	    } catch(err) {
@@ -475,10 +502,10 @@ module.exports = class OrderService extends Service {
     let totalCredit = 0;
     let totalPaid = 0;
     let types = [];
-
     if (payments.length) {
       totalCredit = payments.filter((row) => row.shopOrder.chargeId === '0' ).reduce((total, payment) => total + payment.shopOrder.amount, 0);
-      totalPaid = payments.filter((row) => row.shopOrder.chargeId !== '0' ).reduce((total, payment) => total + payment.shopOrder.amount, 0);
+      let filteredPayments = payments.filter((row) => row.shopOrder.description !== 'Pre booking authorization');
+      totalPaid = filteredPayments.filter((row) => row.shopOrder.chargeId !== '0').reduce((total, payment) => total + payment.shopOrder.amount, 0);
       types = payments.map(payment => payment.shopOrder.description.replace(/Booking\s\d*/i, ''));
     }
 
@@ -524,7 +551,13 @@ module.exports = class OrderService extends Service {
         yield _user.update({ lastHoldAt: now });
       }
       yield this.cancel(order, _user, charge);
+    } else {
+      // this is created for when there will be no charge on the account
+      var order = {
+        amount: 0,
+      };
     }
+    // notify that there was no hold for the ride
     return order;
   }
 

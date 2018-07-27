@@ -144,7 +144,8 @@ module.exports = {
         // that it will show up on the list of cars. This helps
         // fleet pick up low cars at night from the app in an 
         // easy way.
-        if(!car.isAvailable && isAdmin) {
+        car.isReallyAvailable = car.isAvailable;
+        if(isAdmin) {
           car.isAvailable = true;
         }
       });
