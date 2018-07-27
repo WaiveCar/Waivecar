@@ -136,8 +136,6 @@ module.exports = class BookingService extends Service {
     if(process.env.NODE_ENV === 'production') {
       try {
         order = yield OrderService.authorize(null, driver);
-        let orderDate = moment(order.createdAt).format('MMMM Do YYYY');
-        let amount = (order.amount / 100).toFixed(2);
       } catch (err) {
         // Failing to secure the authorization hold should be recorded as an
         // iniquity. See https://github.com/WaiveCar/Waivecar/issues/861 for
