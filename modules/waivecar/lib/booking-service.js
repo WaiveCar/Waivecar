@@ -133,7 +133,7 @@ module.exports = class BookingService extends Service {
     // The above code guarantees that we can book a car, it doesn't
     // necessarily give it to us.
     //
-    //if(process.env.NODE_ENV === 'production') {
+    if(process.env.NODE_ENV === 'production') {
       try {
         order = yield OrderService.authorize(null, driver);
         let orderDate = moment(order.createdAt).format('MMMM Do YYYY');
@@ -187,7 +187,7 @@ module.exports = class BookingService extends Service {
           message : 'Unable to authorize payment. Please validate payment method.'
         }, 400);
       }
-    //}
+    }
 
     // If the creator isn't an admin or is booking for themselves
     if (!_user.hasAccess('admin') || _user.id === driver.id) {
@@ -214,7 +214,7 @@ module.exports = class BookingService extends Service {
         });
         yield authorizationPayment.save();
       } catch(err) {
-        console.log(err);
+        log.warn(err);
       }
     };
 
@@ -470,10 +470,7 @@ module.exports = class BookingService extends Service {
           }, [])
         }
       });
-      console.log(booking.payments);
-      // This filters out the Pre booking authorization
       booking.payments = booking.payments.filter(payment => !payment.description.includes('Pre booking authorization'));
-      console.log(booking.payments);
     }
 
     if(!opts.nopath) {
@@ -888,10 +885,10 @@ module.exports = class BookingService extends Service {
     let deltas = yield this.getDeltas(booking);
 
     // Handle auto charge for time
-    //if (!isAdmin) {
+    if (!isAdmin) {
       yield OrderService.createTimeOrder(booking, user);
 
-    /*} else*/ if(deltas.duration > freeTime) {
+    } else if(deltas.duration > freeTime) {
       yield notify.slack({ text : `:umbrella: Booking ended by admin. Time driven was over 2 hours. ${ Bento.config.web.uri }/bookings/${ id }`
       }, { channel : '#adminended' });
     }

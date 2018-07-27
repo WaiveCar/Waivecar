@@ -62,7 +62,6 @@ module.exports = class Email {
     let content = yield this.renderTemplate(email.template, email.context);
     email.html  = content.html ? content.html.trim() : email.html.trim();
     email.text  = content.text ? context.text : email.text;
-    console.log(email.html);
     return yield (done) => {
       this.transporter.sendMail(email, done);
     };
