@@ -443,6 +443,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
   model.attributes = [
     'statuscolumn',
+    'isReallyAvailable',
     'lastAction',
     'lastActionTime',
     'currentBooking',
