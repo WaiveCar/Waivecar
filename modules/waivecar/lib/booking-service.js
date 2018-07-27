@@ -138,32 +138,6 @@ module.exports = class BookingService extends Service {
         order = yield OrderService.authorize(null, driver);
         let orderDate = moment(order.createdAt).format('MMMM Do YYYY');
         let amount = (order.amount / 100).toFixed(2);
-        let title;
-        let body;
-        if (order.amount > 0) {
-          title = `$A $${amount} hold has been placed on your account during your ride on ${orderDate}` 
-          body = amount === '20.00' ? 'A $20 hold has been placed on your account for your ride with WaiveCar. This hold will be placed on your account every 2 days that you use our service. The amount of the hold can be reduced by adding a $20 credit to your account at our website.' : `A $${amount} hold has been placed on your account for your ride with WaiveCar. This hold will be placed on your account every 2 days that you use our service.`
-        } else {
-          title = `No hold on your account during your ride on ${orderDate}`
-          body = 'No hold has been placed on your account for your ride today. A hold will be placed for every 2 days that you use our service.'
-        }
-        let email = new Email();
-        try {
-	        yield email.send({
-		        to       : driver.email,
-		        from     : emailConfig.sender,
-            subject  : title,
-		        template : 'authorization',
-		        context  : {
-		          name       : driver.name(),
-              amount     : amount,
-              date       : orderDate,
-              body,
-		        }
-          });
-        } catch(err) {
-          log.warn('email error: ', err);
-        };
       } catch (err) {
         // Failing to secure the authorization hold should be recorded as an
         // iniquity. See https://github.com/WaiveCar/Waivecar/issues/861 for
