@@ -112,6 +112,7 @@
     "cordova-plugin-ios-camera-permissions": "^1.0.5",
     "cordova-plugin-request-location-accuracy": "^2.2.1",
     "cordova-plugin-splashscreen": "~4.0.1",
+    "cordova-plugin-statusbar": "git+https://github.com/apache/cordova-plugin-statusbar.git",
     "cordova-plugin-whitelist": "^1.2.2",
     "cordova.plugins.diagnostic": "^4.0.8",
     "hmacsha1": "^1.0.0",
@@ -194,7 +195,6 @@
         "PHOTOLIBRARY_USAGE_DESCRIPTION": ""
       },
       "cordova-plugin-request-location-accuracy": {},
-      "cordova-plugin-statusbar": {},
       "cordova-plugin-whitelist": {},
       "cordova-plugin-x-toast": {},
       "ionic-plugin-keyboard": {},
@@ -213,9 +213,10 @@
       "cordova-android-support-gradle-release": {
         "ANDROID_SUPPORT_VERSION": "27.+"
       },
-      "cordova-plugin-intercom": {},
       "cordova-custom-config": {},
-      "cordova.plugins.diagnostic": {}
+      "cordova.plugins.diagnostic": {},
+      "cordova-plugin-intercom": {},
+      "cordova-plugin-statusbar": {}
     },
     "platforms": [
       "ios"
