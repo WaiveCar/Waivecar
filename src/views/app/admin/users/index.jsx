@@ -1,5 +1,5 @@
 import React             from 'react';
-import { relay, dom }         from 'bento';
+import { relay, dom }    from 'bento';
 import Table             from 'bento-service/table';
 import mixin             from 'react-mixin';
 import { History, Link } from 'react-router';

@@ -7,6 +7,7 @@ import Account                   from '../../lib/account-service';
 import CardList                  from '../../components/user/cards/card-list';
 import RideList                  from '../../components/user/rides/ride-list';
 import ChargeList                from '../../components/user/charges/charge-list';
+import UserParking               from '../../components/user/user-parking/user-parking';
 import facebook                  from '../../../auth/facebook';
 
 // ### Form Fields
@@ -259,6 +260,7 @@ module.exports = class ProfileView extends React.Component {
     let user = auth.user();
     return (
       <div className="profile">
+        <UserParking userId={ user.id }/>
         <div className="profile-header">
           <div className="profile-image">
             <input type="file" style={{ display : 'none' }} ref="avatar" onChange={ this.avatar.bindUpload(`/files?isAvatar=true&userId=${ user.id }`, user.avatar) } />
@@ -274,7 +276,6 @@ module.exports = class ProfileView extends React.Component {
             </div>
           </div>
         </div>
-
         { this.renderFacebookConnect() }
         { this.renderPersonalDetails() }
         { this.renderCards() }
