@@ -22,11 +22,19 @@ module.exports = {
     yield location.save();
     let entry = new UserParking({
       locationId: location.id,
-      ownerId: query.userId, // This will need to be changed to _user.id once this route is used with authorization
+      ownerId: query.userId,
       notes: query.notes,
     });
     yield entry.save();
     return entry;
+  },
+
+  *getByUser(userId) {
+    return yield UserParking.find({
+      where: {
+        ownerId: userId,
+      },
+    });
   },
 
   *delete(parkingId) {
