@@ -32,19 +32,17 @@ export default class AddSpaces extends Component {
     autocomplete.addListener('place_changed', () => {
       let place = autocomplete.getPlace();
       let coord = place.geometry.location;
-      this.setState(
-        {
-          latitude: coord.lat(),
-          longitude: coord.lng(),
-          address: place.formatted_address,
-        },
-        () => console.log('state with location: ', this.state),
-      );
+      this.setState({
+        latitude: coord.lat(),
+        longitude: coord.lng(),
+        address: place.formatted_address,
+      });
     });
   }
 
   render = () => {
     let {address} = this.state;
+    let {addSpace} = this.props;
     return (
       <div>
         Add Spaces Here:
@@ -72,7 +70,11 @@ export default class AddSpaces extends Component {
           </div>
           <div className="form-actions text-center">
             <div className="btn-group" role="group">
-              <button type="submit" className="btn btn-primary btn-wave">
+              <button
+                type="submit"
+                className="btn btn-primary btn-wave"
+                style={{marginTop: '1em'}}
+                onClick={() => addSpace(this.state)}>
                 Add Location
               </button>
             </div>
