@@ -5,6 +5,7 @@ export default class AddSpaces extends Component {
     super(props);
     this.state = {
       address: '',
+      notes: '',
     };
   }
 
@@ -13,12 +14,13 @@ export default class AddSpaces extends Component {
     let autocomplete = new google.maps.places.Autocomplete(locationInput, {
       types: ['establishment', 'geocode'],
     });
-    let ctrl = this;
+
     google.maps.event.addDomListener(locationInput, 'keydown', function(event) {
       if (event.keyCode === 13) {
         event.preventDefault();
       }
     });
+
     let coors = document.getElementsByTagName('textarea')[0];
     coors.onfocus = () => {
       this.disableTA = true;
@@ -45,7 +47,7 @@ export default class AddSpaces extends Component {
     let {address} = this.state;
     return (
       <div>
-        Add Spaces Here Address:
+        Add Spaces Here:
         <div className="form-group row">
           <div className="col-xs-12 bento-form-input focus">
             <label>Location</label>
@@ -56,6 +58,24 @@ export default class AddSpaces extends Component {
               defaultValue="Enter an address"
               ref="location"
             />
+          </div>
+        </div>
+        <div className="form-group row">
+          <div className="col-xs-12 bento-form-input focus">
+            <label>Notes</label>
+            <input
+              type="text"
+              className="form-control"
+              name="parking-notes"
+              onChange={e => this.setState({notes: e.target.value})}
+            />
+          </div>
+          <div className="form-actions text-center">
+            <div className="btn-group" role="group">
+              <button type="submit" className="btn btn-primary btn-wave">
+                Add Location
+              </button>
+            </div>
           </div>
         </div>
       </div>
