@@ -46,7 +46,7 @@ export default class UserParking extends Component {
         <div className="box-content">
           <AddSpaces />
           <h4>Your parking spaces</h4>
-          <div>{spaces.map(space => <div>A space</div>)}</div>
+          <div>{spaces.map((space, i) => <div key={i}>A space</div>)}</div>
         </div>
       </div>
     );
