@@ -72,13 +72,13 @@ Route.del('/locations/:id', [ 'isAuthenticated', 'isAdmin', 'LocationsController
 Route.get('/locations/dropoff', 'LocationsController@dropoff');
 
 // ### User Parking
-Route.post('/parking', [ /*'isAuthenticated',*/ 'ParkingController@create' ]);
-Route.get('/parking/users/:userId', [/*'isAuthenticated',*/ 'ParkingController@getByUser' ]);
-Route.del('/parking/:id', [/*'isAuthenticated', */ 'ParkingController@delete' ]);
-Route.put('/parking/:id/toggle/:type', [/*'isAuthenticated', */ 'ParkingController@toggle' ]);
-Route.put('/parking/:id/updateParking', [/*isAuthenticated',*/ 'ParkingController@updateParking' ]);
-Route.post('/parking/:id/reserve', [/*isAuthenticated',*/ 'ParkingController@reserve' ]);
-Route.put('/parking/:id/cancel', [/*isAuthenticated',*/ 'ParkingController@cancel' ]);
+Route.post('/parking', [ 'isAuthenticated', 'ParkingController@create' ]);
+Route.get('/parking/users/:userId', ['isAuthenticated', 'ParkingController@getByUser' ]);
+Route.del('/parking/:id', ['isAuthenticated', 'ParkingController@delete' ]);
+Route.put('/parking/:id/toggle/:type', ['isAuthenticated', 'ParkingController@toggle' ]);
+Route.put('/parking/:id/updateParking', ['isAuthenticated', 'ParkingController@updateParking' ]);
+Route.post('/parking/:id/reserve', ['isAuthenticated', 'ParkingController@reserve' ]);
+Route.put('/parking/:id/cancel', ['isAuthenticated', 'ParkingController@cancel' ]);
 
 
 // ### EVGo chargers
