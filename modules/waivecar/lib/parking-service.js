@@ -34,6 +34,12 @@ module.exports = {
       where: {
         ownerId: userId,
       },
+      include: [
+        {
+          model: 'Location',
+          as: 'location',
+        },
+      ],
     });
   },
 
