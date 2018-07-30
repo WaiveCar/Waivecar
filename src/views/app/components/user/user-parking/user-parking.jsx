@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {api, relay} from 'bento';
+import AddSpaces from './add-spaces';
 
 export default class UserParking extends Component {
   constructor(props) {
@@ -11,6 +12,10 @@ export default class UserParking extends Component {
   }
 
   componentDidMount() {
+    this.getSpaces();
+  }
+
+  getSpaces() {
     let {userId} = this.props;
     api.get(`/parking/users/${userId}`, (err, spaces) => {
       if (err) {
@@ -18,6 +23,15 @@ export default class UserParking extends Component {
       }
       console.log('spaces: ', spaces);
       this.setState({spaces}, () => console.log('state: ', this.state));
+    });
+  }
+
+  addSpace(opts) {
+    api.post('/parking', options, (err, response) => {
+      if (err) {
+        console.log('error: ', err);
+      }
+      console.log('response: ', response);
     });
   }
 
@@ -30,10 +44,9 @@ export default class UserParking extends Component {
           <small>Manage parking spaces</small>
         </h3>
         <div className="box-content">
+          <AddSpaces />
           <h4>Your parking spaces</h4>
-          <div>
-            {spaces.map(space => <div>A space</div>)}
-          </div>
+          <div>{spaces.map(space => <div>A space</div>)}</div>
         </div>
       </div>
     );
