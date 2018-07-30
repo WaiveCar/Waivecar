@@ -135,7 +135,9 @@ module.exports = class BookingService extends Service {
     //
     if(process.env.NODE_ENV === 'production') {
       try {
-        order = yield OrderService.authorize(null, driver);
+        if(!driver.hasAccess('admin')) {
+          order = yield OrderService.authorize(null, driver);
+        }
       } catch (err) {
         // Failing to secure the authorization hold should be recorded as an
         // iniquity. See https://github.com/WaiveCar/Waivecar/issues/861 for
@@ -180,11 +182,13 @@ module.exports = class BookingService extends Service {
     // If there is a new authorization, a new BookingPayment must be created so that it can be itemized on the receipt.
     if (process.env.NODE_ENV === 'production' && OrderService.authorize.last.newAuthorization) {
       try {
-        let authorizationPayment = new BookingPayment({
-          bookingId : booking.id,
-          orderId   : order.id,
-        });
-        yield authorizationPayment.save();
+        if(!driver.hasAccess('admin')) {
+          let authorizationPayment = new BookingPayment({
+            bookingId : booking.id,
+            orderId   : order.id,
+          });
+          yield authorizationPayment.save();
+        }
       } catch(err) {
         log.warn(err);
       }
