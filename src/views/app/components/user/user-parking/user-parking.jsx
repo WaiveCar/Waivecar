@@ -21,9 +21,12 @@ export default class UserParking extends Component {
     let {userId} = this.props;
     api.get(`/parking/users/${userId}`, (err, spaces) => {
       if (err) {
-        console.log('error: ', err);
+        return snackbar.notify({
+          type: 'danger',
+          message: `Error: ${err}`,
+        });
       }
-      this.setState({spaces}, () => console.log('state: ', this.state));
+      this.setState({spaces});
     });
   }
 
@@ -31,7 +34,6 @@ export default class UserParking extends Component {
     let {userId} = this.props;
     opts.userId = userId;
     opts.notes && !opts.notes.length && delete opts.notes;
-    console.log('opts: ', opts);
     if (!opts.address.length) {
       return snackbar.notify({
         type: 'danger',
@@ -49,8 +51,21 @@ export default class UserParking extends Component {
     });
   };
 
+  toggleSpace = (spaceId, type) => {
+    api.put(`/parking/${spaceId}/toggle/${type}`, {}, (err) => {
+      if (err) {
+        return snackbar.notify({
+          type: 'danger',
+          message: `Error: ${err}`,
+        });
+      }
+      this.getSpaces();
+    });
+  };
+
   render = () => {
     let {spaces} = this.state;
+    let {addSpace, toggleSpace} = this;
     return (
       <div className="box">
         <h3>
@@ -59,8 +74,8 @@ export default class UserParking extends Component {
         </h3>
         <div className="box-content">
           <h4>Your parking spaces</h4>
-          {spaces.map((space, i) => <Space space={space} key={i} />)}
-          <AddSpaces addSpace={this.addSpace} />
+          {spaces.map((space, i) => <Space toggleSpace={toggleSpace} space={space} key={i} />)}
+          <AddSpaces addSpace={addSpace} />
         </div>
       </div>
     );
