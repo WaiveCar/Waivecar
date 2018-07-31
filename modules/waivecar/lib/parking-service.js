@@ -26,6 +26,7 @@ module.exports = {
       notes: query.notes,
     });
     yield entry.save();
+    entry.location = location;
     return entry;
   },
 
