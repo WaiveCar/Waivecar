@@ -56,16 +56,15 @@ module.exports = {
     updateObj[type] = !space[type];
     yield space.update(updateObj);
     let location = yield Location.findById(space.locationId);
-    if (space.ownerOccupied) {
-      yield location.update({
-        status: 'unavailable'
-      });
-    }
-    if (space.waivecarOccupied) {
-      yield location.update({
-        status: 'unavailable'
-      });
-    }
+
+    let newStatus =
+      space.ownerOccupied || space.waivecarOccupied
+        ? 'unavailable'
+        : 'available';
+    yield location.update({
+      status: newStatus,
+    });
+
     return space;
   },
 
@@ -145,7 +144,7 @@ module.exports = {
       let location = yield Location.findById(space.locationId);
       if (!space.ownerOccupied) {
         yield location.update({
-          status: 'available'
+          status: 'available',
         });
       }
     } else {
