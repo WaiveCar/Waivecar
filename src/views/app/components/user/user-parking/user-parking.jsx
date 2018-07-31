@@ -77,10 +77,25 @@ export default class UserParking extends Component {
     }
   };
 
+  updateSpace = (spaceId, opts) => {
+    api.put(`/parking/${spaceId}/update`, opts, (err, result) => {
+      if (err) {
+        return snackbar.notify({
+          type: 'danger',
+          message: `Error: ${err}`,
+        });
+      }
+      return snackbar.notify({
+        type: 'success',
+        message: 'Space successfully updated',
+      });
+    });
+  };
+
   render = () => {
     let {spaces} = this.state;
     let {admin} = this.props;
-    let {addSpace, toggleSpace} = this;
+    let {addSpace, toggleSpace, deleteSpace, updateSpace} = this;
     return (
       <div className="box">
         <h3>
@@ -92,7 +107,8 @@ export default class UserParking extends Component {
           {spaces.map((space, i) => (
             <Space
               toggleSpace={toggleSpace}
-              deleteSpace={this.deleteSpace}
+              deleteSpace={deleteSpace}
+              updateSpace={updateSpace}
               space={space}
               key={i}
             />
