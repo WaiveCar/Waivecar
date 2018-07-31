@@ -65,7 +65,7 @@ export default class UserParking extends Component {
   };
 
   deleteSpace = (spaceId) => {
-    api.delete(`/parking/${spaceId}`, {} , err => {
+    api.delete(`/parking/${spaceId}`, (err, response) => {
       if (err) {
         return snackbar.notify({
           type: 'danger',
@@ -89,7 +89,7 @@ export default class UserParking extends Component {
         <div className="box-content">
           <h4>{admin ? "User's" : 'My'} parking spaces</h4>
           {spaces.map((space, i) => (
-            <Space toggleSpace={toggleSpace} space={space} key={i} />
+            <Space toggleSpace={toggleSpace} deleteSpace={this.deleteSpace} space={space} key={i} />
           ))}
           <AddSpaces addSpace={addSpace} />
         </div>
