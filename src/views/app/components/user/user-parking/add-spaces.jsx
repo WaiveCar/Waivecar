@@ -41,7 +41,6 @@ export default class AddSpaces extends Component {
   }
 
   render = () => {
-    let {address} = this.state;
     let {addSpace} = this.props;
     return (
       <div>

@@ -22,7 +22,6 @@ export default class UserParking extends Component {
       if (err) {
         console.log('error: ', err);
       }
-      console.log('spaces: ', spaces);
       this.setState({spaces}, () => console.log('state: ', this.state));
     });
   }
@@ -31,22 +30,20 @@ export default class UserParking extends Component {
     let {userId} = this.props;
     opts.userId = userId;
     opts.notes && !opts.notes.length && delete opts.notes;
-    console.log('opts: ', opts);
     if (!opts.address.length) {
       return snackbar.notify({
         type: 'danger',
         message: 'Please enter an address for this parking space',
       });
     }
-    return;
-    api.post('/parking', options, (err, response) => {
+    api.post('/parking', opts, (err, response) => {
       if (err) {
         return snackbar.notify({
           type: 'danger',
           message: `Error: ${err}`,
         });
       }
-      console.log('response: ', response);
+      this.setState({spaces: [...this.state.spaces, response]});
     });
   };
 
