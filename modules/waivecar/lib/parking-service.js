@@ -8,6 +8,7 @@ let relay = Bento.Relay;
 let queue = Bento.provider('queue');
 let notify = require('./notification-service');
 let error = Bento.Error;
+let sequelize = Bento.provider('sequelize');
 
 module.exports = {
   *create(query) {
@@ -45,8 +46,26 @@ module.exports = {
   },
 
   *delete(parkingId) {
-    // This function remains to be emplemented. Further discussion needed
-    return 'To Be implemented in the future';
+    try {
+      console.log('is function here? ', sequelize.query);
+      let parking = yield UserParking.findById(parkingId);
+      let location = yield Location.findById(parking.locationId);
+      // These raw queries are used to create a hard delete
+      yield sequelize.query(`DELETE FROM user_parking WHERE id=${parking.id}`);
+      yield sequelize.query(`DELETE FROM locations WHERE id=${parking.locationId}`);
+      return {
+        parking,
+        location,
+      };
+    } catch (err) {
+      throw error.parse(
+        {
+          code: 'ERROR_DELETING_PARKING',
+          message: `Error deleting parking space: ${err}`,
+        },
+        400,
+      );
+    }
   },
 
   *toggle(parkingId, type) {
@@ -56,7 +75,6 @@ module.exports = {
     updateObj[type] = !space[type];
     yield space.update(updateObj);
     let location = yield Location.findById(space.locationId);
-
     let newStatus =
       space.ownerOccupied || space.waivecarOccupied
         ? 'unavailable'
@@ -64,19 +82,28 @@ module.exports = {
     yield location.update({
       status: newStatus,
     });
-
     return space;
   },
 
   *updateParking(parkingId, updateObj) {
-    let space = yield UserParking.findById(parkingId);
-    yield space.update(updateObj);
-    let location = yield Location.findById(space.locationId);
-    yield location.update(updateObj);
-    return {
-      space,
-      location,
-    };
+    try {
+      let space = yield UserParking.findById(parkingId);
+      yield space.update(updateObj);
+      let location = yield Location.findById(space.locationId);
+      yield location.update(updateObj);
+      return {
+        space,
+        location,
+      };
+    } catch (err) {
+      throw error.parse(
+        {
+          code: 'ERROR_UPDATING_PARKING',
+          message: `Error updating parking space: ${err}`,
+        },
+        400,
+      );
+    }
   },
 
   *reserve(parkingId, userId) {
