@@ -260,7 +260,6 @@ module.exports = class ProfileView extends React.Component {
     let user = auth.user();
     return (
       <div className="profile">
-        <UserParking userId={ user.id }/>
         <div className="profile-header">
           <div className="profile-image">
             <input type="file" style={{ display : 'none' }} ref="avatar" onChange={ this.avatar.bindUpload(`/files?isAvatar=true&userId=${ user.id }`, user.avatar) } />
@@ -276,6 +275,7 @@ module.exports = class ProfileView extends React.Component {
             </div>
           </div>
         </div>
+        <UserParking userId={ user.id }/>
         { this.renderFacebookConnect() }
         { this.renderPersonalDetails() }
         { this.renderCards() }

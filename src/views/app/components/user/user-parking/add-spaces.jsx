@@ -20,8 +20,7 @@ export default class AddSpaces extends Component {
         event.preventDefault();
       }
     });
-
-    let coors = document.getElementsByTagName('textarea')[0];
+    let coors = document.getElementsByTagName('input')[0];
     coors.onfocus = () => {
       this.disableTA = true;
     };
@@ -44,7 +43,7 @@ export default class AddSpaces extends Component {
     let {addSpace} = this.props;
     return (
       <div>
-        Add Spaces Here:
+        <h4>Add Spaces Here:</h4>
         <div className="form-group row">
           <div className="col-xs-12 bento-form-input focus">
             <label>Location</label>

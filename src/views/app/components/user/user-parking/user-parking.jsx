@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {api, relay} from 'bento';
 import {snackbar} from 'bento-web';
 import AddSpaces from './add-spaces';
+import Space from './space';
 
 export default class UserParking extends Component {
   constructor(props) {
@@ -30,6 +31,7 @@ export default class UserParking extends Component {
     let {userId} = this.props;
     opts.userId = userId;
     opts.notes && !opts.notes.length && delete opts.notes;
+    console.log('opts: ', opts);
     if (!opts.address.length) {
       return snackbar.notify({
         type: 'danger',
@@ -56,9 +58,9 @@ export default class UserParking extends Component {
           <small>Manage parking spaces</small>
         </h3>
         <div className="box-content">
-          <AddSpaces addSpace={this.addSpace} />
           <h4>Your parking spaces</h4>
-          <div>{spaces.map((space, i) => <div key={i}>A space</div>)}</div>
+          {spaces.map((space, i) => <Space space={space} key={i} />)}
+          <AddSpaces addSpace={this.addSpace} />
         </div>
       </div>
     );
