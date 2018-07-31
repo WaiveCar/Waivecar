@@ -47,7 +47,6 @@ module.exports = {
 
   *delete(parkingId) {
     try {
-      console.log('is function here? ', sequelize.query);
       let parking = yield UserParking.findById(parkingId);
       let location = yield Location.findById(parking.locationId);
       // These raw queries are used to create a hard delete
