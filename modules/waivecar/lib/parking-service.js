@@ -17,7 +17,7 @@ module.exports = {
       longitude: query.longitude,
       address: query.address,
       radius: 20,
-      status: 'available',
+      status: 'unavailable',
     });
     yield location.save();
     let entry = new UserParking({
@@ -55,6 +55,17 @@ module.exports = {
     let updateObj = {};
     updateObj[type] = !space[type];
     yield space.update(updateObj);
+    let location = yield Location.findById(space.locationId);
+    if (space.ownerOccupied) {
+      yield location.update({
+        status: 'unavailable'
+      });
+    }
+    if (space.waivecarOccupied) {
+      yield location.update({
+        status: 'unavailable'
+      });
+    }
     return space;
   },
 
@@ -89,6 +100,11 @@ module.exports = {
 
     yield space.update({
       reservationId: reservation.id,
+    });
+
+    let location = yield Location.findById(space.locationId);
+    yield location.update({
+      status: 'unavailable',
     });
 
     let timerObj = {value: 5, type: 'minutes'};
@@ -126,6 +142,12 @@ module.exports = {
         type: 'update',
         data: space.toJSON(),
       });
+      let location = yield Location.findById(space.locationId);
+      if (!space.ownerOccupied) {
+        yield location.update({
+          status: 'available'
+        });
+      }
     } else {
       throw error.parse(
         {
