@@ -252,10 +252,6 @@ module.exports = class ProfileView extends React.Component {
     );
   }
 
-  /**
-   * Render the profile view.
-   * @return {Object}
-   */
   render() {
     let user = auth.user();
     return (
@@ -275,7 +271,7 @@ module.exports = class ProfileView extends React.Component {
             </div>
           </div>
         </div>
-        <UserParking userId={ user.id }/>
+        <UserParking admin={false} userId={ user.id }/>
         { this.renderFacebookConnect() }
         { this.renderPersonalDetails() }
         { this.renderCards() }
