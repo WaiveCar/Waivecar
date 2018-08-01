@@ -43,7 +43,7 @@ export default class AddSpaces extends Component {
     let {addSpace} = this.props;
     return (
       <div>
-        <h4>Add Spaces Here:</h4>
+        <h4>Add Spaces:</h4>
         <div className="form-group row">
           <div className="col-xs-12 bento-form-input focus">
             <label>Location</label>

@@ -13,13 +13,14 @@ export default class Space extends Component {
     let {space, toggleSpace, deleteSpace, updateSpace} = this.props;
     let {notes} = this.state;
     return (
-      <div>
+      <div className="parking-space">
         <div className="row">
           <div className="col-md-6 col-xs-12">
             <div>Address: {space.location.address}</div>
           </div>
           <div className="col-md-6 col-xs-12">
             <Switch
+              className="space-switch"
               style={{fontSize: '1rem'}}
               checked={!space.ownerOccupied}
               label={
@@ -32,11 +33,11 @@ export default class Space extends Component {
           </div>
         </div>
         <input
-          style={{width: '100%'}}
+          className="space-note"
           defaultValue={space.notes ? space.notes : 'Enter a note'}
           onChange={e => this.setState({notes: e.target.value})}
         />
-        <div className="form-actions text-center">
+        <div className="text-center" style={{'margin': '1rem 0'}}>
           <div className="btn-group" role="group">
             <button
               className="btn btn-primary btn-wave"

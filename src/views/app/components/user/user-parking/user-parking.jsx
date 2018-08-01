@@ -97,7 +97,7 @@ export default class UserParking extends Component {
     let {admin} = this.props;
     let {addSpace, toggleSpace, deleteSpace, updateSpace} = this;
     return (
-      <div className="box">
+      <div className="box parking-box">
         <h3>
           <span>Parking Spaces</span>
           <small>Manage parking spaces</small>
