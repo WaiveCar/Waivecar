@@ -90,14 +90,21 @@ module.exports = {
     // The value of type will generally be ownerOccupied or waivecarOccupied
     let space = yield UserParking.findById(parkingId);
     // This happens if someone is trying to make their space unavailable while it is reserved
-    if (space.reservationId && space.ownerOccupied) {
-      throw error.parse({
-        code: 'SPACE_CURRENTLY_RESERVED',
-        message:
-          'Spaces cannot be made unavailable while they are reserved by users',
-      });
+    if (space.reservationId && !space.ownerOccupied) {
+      throw error.parse(
+        {
+          code: 'SPACE_CURRENTLY_RESERVED',
+          message:
+            'Spaces cannot be made unavailable while they are reserved by users',
+        },
+        400,
+      );
     }
-
+    /*
+    if (space.waivecarOccupied) {
+      //what needs to be done in this situation is tbd
+    }
+    */
     let updateObj = {};
     updateObj[type] = !space[type];
     yield space.update(updateObj);
@@ -147,12 +154,15 @@ module.exports = {
       );
     }
     if (location.status === 'unavailable') {
-      throw error.parse({
-        code: 'SPACE_NOT_CURRENTLY_AVAILABLE',
-        message: `Space #${
-          space.id
-        } is unavailable. It is likely to be owner occupied`,
-      });
+      throw error.parse(
+        {
+          code: 'SPACE_NOT_CURRENTLY_AVAILABLE',
+          message: `Space #${
+            space.id
+          } is unavailable. It is likely to be owner occupied`,
+        },
+        400,
+      );
     }
     let reservation = new ParkingReservation({
       userId: user.id,
