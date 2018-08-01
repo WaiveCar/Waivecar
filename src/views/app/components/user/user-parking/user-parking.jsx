@@ -99,20 +99,24 @@ export default class UserParking extends Component {
     return (
       <div className="box parking-box">
         <h3>
-          <span>Parking Spaces</span>
+          <span>Parking Spaces:</span>
           <small>Manage parking spaces</small>
         </h3>
         <div className="box-content">
           <h4>{admin ? "User's" : 'My'} parking spaces</h4>
-          {spaces.map((space, i) => (
-            <Space
-              toggleSpace={toggleSpace}
-              deleteSpace={deleteSpace}
-              updateSpace={updateSpace}
-              space={space}
-              key={i}
-            />
-          ))}
+          {spaces.length ? (
+            spaces.map((space, i) => (
+              <Space
+                toggleSpace={toggleSpace}
+                deleteSpace={deleteSpace}
+                updateSpace={updateSpace}
+                space={space}
+                key={i}
+              />
+            ))
+          ) : (
+            <div className="no-spaces">No spaces added yet</div>
+          )}
           <AddSpaces addSpace={addSpace} />
         </div>
       </div>

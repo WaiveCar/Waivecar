@@ -12,6 +12,7 @@ export default class Space extends Component {
   render = () => {
     let {space, toggleSpace, deleteSpace, updateSpace} = this.props;
     let {notes} = this.state;
+    !!!!(space.parkingDetailId || space.reservationId) && console.log(space);
     return (
       <div className="parking-space">
         <div className="row">
@@ -37,7 +38,7 @@ export default class Space extends Component {
           defaultValue={space.notes ? space.notes : 'Enter a note'}
           onChange={e => this.setState({notes: e.target.value})}
         />
-        <div className="text-center" style={{'margin': '1rem 0'}}>
+        <div className="text-center" style={{margin: '1rem 0'}}>
           <div className="btn-group" role="group">
             <button
               className="btn btn-primary btn-wave"

@@ -13,8 +13,8 @@ module.exports = class AdminUsersView extends React.Component {
   render() {
     return (
       <div id="users">
-        <UserParking admin={true} userId={ this.props.params.id }/>
         <UserDetails id={ this.props.params.id } />
+        <UserParking admin={true} userId={ this.props.params.id }/>
         <UserLicense id={ this.props.params.id } />
         <UsersEvents id={ this.props.params.id } />
         <Logs userId={ this.props.params.id } />

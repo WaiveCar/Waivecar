@@ -210,6 +210,13 @@
 .space-switch {
   width: 50px;
 }
+
 .parking-box [data-react-toolbox="checkbox"] :last-child {
   font-size: 1rem;
 }
+
+.no-spaces {
+  text-align: center;
+  margin: 3rem 0;
+}
+
