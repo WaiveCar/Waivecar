@@ -1279,18 +1279,17 @@ module.exports = class BookingService extends Service {
     }
 
     // save user and car position into a file for research
-    let lastUserPos = userLocations.pop();
     let lastCarPos = carLocations.pop();
     if(lastCarPos) {
       let positionInfo = {
         bookingId: id,
         userId: user.id,
         carId: lastCarPos.id,
-        userLocation: lastUserPos,
+        userLocation: userLocations,
         carLocation: lastCarPos,
         time: new Date()
       };
-      fs.appendFileSync('/var/log/outgoing/user-gps.txt', JSON.stringify(positionInfo) + '\n');
+      fs.appendFile('/var/log/outgoing/user-gps.txt', JSON.stringify(positionInfo) + '\n');
     }
 
     return { isPaired: isPaired };
