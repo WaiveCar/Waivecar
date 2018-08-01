@@ -89,6 +89,15 @@ module.exports = {
   *toggle(parkingId, type) {
     // The value of type will generally be ownerOccupied or waivecarOccupied
     let space = yield UserParking.findById(parkingId);
+    // This happens if someone is trying to make their space unavailable while it is reserved
+    if (space.reservationId && space.ownerOccupied) {
+      throw error.parse({
+        code: 'SPACE_CURRENTLY_RESERVED',
+        message:
+          'Spaces cannot be made unavailable while they are reserved by users',
+      });
+    }
+
     let updateObj = {};
     updateObj[type] = !space[type];
     yield space.update(updateObj);
@@ -127,14 +136,23 @@ module.exports = {
   *reserve(parkingId, userId) {
     let user = yield User.findById(userId);
     let space = yield UserParking.findById(parkingId);
+    let location = yield Location.findById(space.locationId);
     if (space.reservationId) {
       throw error.parse(
         {
           code: 'SPACE_ALREADY_RESERVED',
-          message: `Parking space ${space.id} is already reserved`,
+          message: `Parking space ${space.id} is already reserved.`,
         },
         400,
       );
+    }
+    if (location.status === 'unavailable') {
+      throw error.parse({
+        code: 'SPACE_NOT_CURRENTLY_AVAILABLE',
+        message: `Space #${
+          space.id
+        } is unavailable. It is likely to be owner occupied`,
+      });
     }
     let reservation = new ParkingReservation({
       userId: user.id,
@@ -146,7 +164,6 @@ module.exports = {
       reservationId: reservation.id,
     });
 
-    let location = yield Location.findById(space.locationId);
     yield location.update({
       status: 'unavailable',
     });
