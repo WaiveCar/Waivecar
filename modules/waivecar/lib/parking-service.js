@@ -4,6 +4,7 @@ let Location = Bento.model('Location');
 let User = Bento.model('User');
 let UserParking = Bento.model('UserParking');
 let ParkingReservation = Bento.model('ParkingReservation');
+let ParkingDetails = Bento.model('ParkingDetails');
 let relay = Bento.Relay;
 let queue = Bento.provider('queue');
 let notify = require('./notification-service');
@@ -41,6 +42,14 @@ module.exports = {
           model: 'Location',
           as: 'location',
         },
+        {
+          model: 'ParkingReservation',
+          as: 'reservation',
+        },
+        {
+          model: 'ParkingDetails',
+          as: 'parkingDetails',
+        },
       ],
     });
   },
@@ -49,9 +58,11 @@ module.exports = {
     try {
       let parking = yield UserParking.findById(parkingId);
       let location = yield Location.findById(parking.locationId);
-      // These raw queries are used to create a hard delete
+      // These raw queries are used to create a hard delete. The sequelize.delete function only does a soft delete
       yield sequelize.query(`DELETE FROM user_parking WHERE id=${parking.id}`);
-      yield sequelize.query(`DELETE FROM locations WHERE id=${parking.locationId}`);
+      yield sequelize.query(
+        `DELETE FROM locations WHERE id=${parking.locationId}`,
+      );
       return {
         parking,
         location,
