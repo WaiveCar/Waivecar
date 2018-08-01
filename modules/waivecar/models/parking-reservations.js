@@ -28,5 +28,12 @@ Bento.Register.Model('ParkingReservation', 'sequelize', function register(
     },
   };
 
+  model.relations = [
+    'User',
+    function(User) {
+      this.belongsTo(User, {as: 'user', foreignKey: 'userId'});
+    },
+  ];
+
   return model;
 });

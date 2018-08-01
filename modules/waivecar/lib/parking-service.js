@@ -33,7 +33,7 @@ module.exports = {
   },
 
   *getByUser(userId) {
-    return yield UserParking.find({
+    let spaces = yield UserParking.find({
       where: {
         ownerId: userId,
       },
@@ -52,6 +52,14 @@ module.exports = {
         },
       ],
     });
+    spaces = yield spaces.map(function*(space) {
+      let temp = space.toJSON();
+      if (temp.reservation) {
+        temp.reservedBy = yield User.findById(space.reservation.userId);
+      }
+      return temp;
+    });
+    return spaces;
   },
 
   *delete(parkingId) {
@@ -122,7 +130,7 @@ module.exports = {
     if (space.reservationId) {
       throw error.parse(
         {
-          code: 'PARKING_ALREADY_RESERVED',
+          code: 'SPACE_ALREADY_RESERVED',
           message: `Parking space ${space.id} is already reserved`,
         },
         400,
