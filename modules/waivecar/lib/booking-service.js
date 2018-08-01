@@ -1227,8 +1227,7 @@ module.exports = class BookingService extends Service {
        latitude: location.latitude,
        longitude: location.longitude,
        accuracy: location.accuracy,
-       time: new Date( location.timestamp - payload.appNowTime + now.getTime()),
-       ts: location.timestamp
+       time: new Date( location.timestamp - payload.appNowTime + now.getTime())
      }
     });
 
