@@ -23,7 +23,7 @@ export default class UserParking extends Component {
       if (err) {
         return snackbar.notify({
           type: 'danger',
-          message: `Error: ${err}`,
+          message: `Error: ${err.message}`,
         });
       }
       this.setState({spaces});
@@ -44,7 +44,7 @@ export default class UserParking extends Component {
       if (err) {
         return snackbar.notify({
           type: 'danger',
-          message: `Error: ${err}`,
+          message: `Error: ${err.message}`,
         });
       }
       this.setState({spaces: [...this.state.spaces, response]});
@@ -56,7 +56,7 @@ export default class UserParking extends Component {
       if (err) {
         return snackbar.notify({
           type: 'danger',
-          message: `Error: ${err}`,
+          message: `Error: ${err.message}`,
         });
       }
       this.getSpaces();
@@ -69,7 +69,7 @@ export default class UserParking extends Component {
         if (err) {
           return snackbar.notify({
             type: 'danger',
-            message: `Error: ${err}`,
+            message: `Error: ${err.message}`,
           });
         }
         this.getSpaces();
@@ -82,7 +82,7 @@ export default class UserParking extends Component {
       if (err) {
         return snackbar.notify({
           type: 'danger',
-          message: `Error: ${err}`,
+          message: `Error: ${err.message}`,
         });
       }
       return snackbar.notify({
@@ -111,6 +111,7 @@ export default class UserParking extends Component {
                 deleteSpace={deleteSpace}
                 updateSpace={updateSpace}
                 space={space}
+                admin={admin}
                 key={i}
               />
             ))

@@ -10,8 +10,9 @@ export default class Space extends Component {
   }
 
   render = () => {
-    let {space, toggleSpace, deleteSpace, updateSpace} = this.props;
+    let {space, toggleSpace, deleteSpace, updateSpace, admin} = this.props;
     let {notes} = this.state;
+    console.log(space);
     !!!!(space.parkingDetailId || space.reservationId) && console.log(space);
     return (
       <div className="parking-space">
@@ -23,9 +24,9 @@ export default class Space extends Component {
             <Switch
               className="space-switch"
               style={{fontSize: '1rem'}}
-              checked={!space.ownerOccupied}
+              checked={space.location.status === 'available'}
               label={
-                space.ownerOccupied
+                space.location.status === 'unavailable'
                   ? 'Make Space Available'
                   : 'Make Space Unavailable'
               }
@@ -33,6 +34,19 @@ export default class Space extends Component {
             />
           </div>
         </div>
+        {space.reservation && (
+          <div className="parking-reservation-info">
+            Space currently reserved{' '}
+            {admin && (
+              <span>
+                by{' '}
+                <a href={`/users/${space.reservedBy.id}`}>{`${
+                  space.reservedBy.firstName
+                } ${space.reservedBy.lastName}`}</a>
+              </span>
+            )}
+          </div>
+        )}
         <input
           className="space-note"
           defaultValue={space.notes ? space.notes : 'Enter a note'}
