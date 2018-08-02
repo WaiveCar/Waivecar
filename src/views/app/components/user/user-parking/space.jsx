@@ -12,8 +12,6 @@ export default class Space extends Component {
   render = () => {
     let {space, toggleSpace, deleteSpace, updateSpace, admin} = this.props;
     let {notes} = this.state;
-    console.log(space);
-    !!!!(space.parkingDetailId || space.reservationId) && console.log(space);
     return (
       <div className="parking-space">
         <div className="row">
