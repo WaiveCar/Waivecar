@@ -235,6 +235,15 @@ module.exports = {
 
   *cancel(parkingId, currentReservationId) {
     let space = yield UserParking.findById(parkingId);
+    if (!space.reservationId) {
+      throw error.parse(
+        {
+          code: 'PARKING_NOT_RESERVED',
+          message: `Parking space #${space.id} is not currently reserved.`,
+        },
+        400,
+      );
+    }
     if (space.reservationId === currentReservationId) {
       yield space.update({
         reservationId: null,
