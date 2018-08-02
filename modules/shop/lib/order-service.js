@@ -66,6 +66,11 @@ module.exports = class OrderService extends Service {
       data.description = "Clearing outstanding balance";
     }
 
+    if(!_user) {
+      _user = {id: 0, name: function() { return "The Computer"; }};
+    }
+
+
     let order = new Order({
       createdBy   : _user.id,
       userId      : data.userId,
@@ -90,13 +95,17 @@ module.exports = class OrderService extends Service {
     try {
       // The order here matters.  If a charge fails then only the failed charge will appear
       // as a transgression, not the fee itself.  So we need to log this prior to the charge
-      yield UserLog.addUserEvent(user, 'FEE', order.id, data.description);
+      if(data.amount > 0) {
+        yield UserLog.addUserEvent(user, 'FEE', order.id, data.description);
+      } else {
+        yield UserLog.addUserEvent(user, 'CREDIT', order.id, data.description);
+      }
       charge = yield this.charge(order, user, opts);
 
       if(data.amount > 0) {
-        yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.link() } $${ data.amount / 100 } for ${ data.description }`, [ 'slack' ], { channel : '#rental-alerts' });
+        yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.link() } $${ (data.amount / 100).toFixed(2) } for ${ data.description }`, [ 'slack' ], { channel : '#rental-alerts' });
       } else if(data.amount < 0) {
-        yield notify.notifyAdmins(`:money_with_wings: ${ _user.name() } *credited* ${ user.link() } $${ -data.amount / 100 } for ${ data.description }`, [ 'slack' ], { channel : '#rental-alerts' });
+        yield notify.notifyAdmins(`:money_with_wings: ${ _user.name() } *credited* ${ user.link() } $${ (-data.amount / 100).toFixed(2) } for ${ data.description }`, [ 'slack' ], { channel : '#rental-alerts' });
       } else {
         charge.amount = charge.amount || 0;
         charge = `$${ charge.amount / 100 }`;
@@ -923,7 +932,7 @@ module.exports = class OrderService extends Service {
     log.warn(`Failed to charge user: ${ user.id }`, err);
     let amountInDollars = (amountInCents / 100).toFixed(2);
     extra = extra || '';
-    yield notify.notifyAdmins(`:lemon: Failed to charge ${ user.link() } $${ amountInDollars }: ${ err } ${ extra }`, [ 'slack' ], { channel : '#rental-alerts' });
+    yield notify.notifyAdmins(`:lemon: Failed to charge ${ user.link() } $${ amountInDollars }: ${ JSON.stringify(err) } ${ extra }`, [ 'slack' ], { channel : '#rental-alerts' });
 
     // We need to communicate that there was a potential charge + a potential 
     // balance that was attempted to be cleared.  This email can cover all 3
@@ -976,13 +985,13 @@ module.exports = class OrderService extends Service {
       return;
     }
     let email = new Email();
+    let word = false;
     try {
-      if(Array.isArray(item)) {
-        item.totalNum = item.map((row) => row.quantity * row.price).reduce((a,b) => a + b);
-      } else {
-        item.totalNum = item.quantity * item.price;
+      if(!Array.isArray(item)) {
+        item = [item];
       }
-      item.total =  (Math.abs(item.totalNum / 100)).toFixed(2);
+      item.totalNum = item.map((row) => row.quantity * row.price).reduce((a,b) => a + b);
+      item.total = (Math.abs(item.totalNum / 100)).toFixed(2);
       let chargeList = item.map(charge => 
         `<tr>
           <td>
@@ -998,7 +1007,7 @@ module.exports = class OrderService extends Service {
             $${(Math.abs(charge.total / 100)).toFixed(2)}
           </td>
         <tr>` ).join('');
-      let word = item.totalNum > 0 ? 'Charges' : 'credit';
+      word = item.totalNum > 0 ? 'Charges' : 'credit';
       if (word === 'Charges') {
         opts.subject = opts.subject || `$${ item.total } charges on your account`;
         opts.leadin = opts.leadin || 'Here is your receipt for charges added to your account:';
@@ -1028,7 +1037,7 @@ module.exports = class OrderService extends Service {
         });
       }
     } catch (err) {
-      log.warn('Failed to deliver notification email: ', err);
+      log.warn(`Failed to deliver ${word} notification email: `, err);
     }
   }
 
