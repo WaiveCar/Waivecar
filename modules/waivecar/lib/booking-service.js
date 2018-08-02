@@ -860,6 +860,27 @@ module.exports = class BookingService extends Service {
 
     let deltas = yield this.getDeltas(booking);
 
+    //
+    // Car charge reward program: #1306
+    //
+    // We want to be benevolent to the users who leave the cars better off then when they started.
+    // Regardless of the charge we credit them here. This sends out notification for the reason and
+    // it will be tallied prior to the charge.
+    //
+    if(deltas.charge > 0) {
+      // we err in the user's favor by using the high estimates
+      let miles = Math.floor((deltas.charge / 100) * car.getRange('HIGH'));
+      let credit = Math.floor(miles / 10);
+      if(credit > 0) {
+        yield OrderService.quickCharge({
+          userId: booking.userId,
+          amount: -(100 * credit),
+          description: `Ending ${ car.license } with ${ miles } miles more than at the start!`
+        }, null, {overrideAdminCheck: true});
+      }
+    }
+
+  
     // Handle auto charge for time
     if (!isAdmin) {
       yield OrderService.createTimeOrder(booking, user);
@@ -927,7 +948,7 @@ module.exports = class BookingService extends Service {
       yield notify.slack({ text : `:popcorn: ${ user.link() } drove 0 miles for ${ deltas.duration } minutes. ${ booking.link() }`
       }, { channel : '#user-alerts' });
     }
-  
+
     let message = yield this.updateState('ended', _user, user);
     yield notify.slack(parkingSlack || { text : `:cherries: ${ message } ${ car.info() } ${ car.averageCharge() }% ${ booking.link() }`
     }, { channel : '#reservations' });
@@ -1431,6 +1452,7 @@ module.exports = class BookingService extends Service {
       ret.hasMoved = absDistance > 0.00005;
       //console.log(`<< ${ret.distance} ${ret.duration} ${absDistance}`);
     }
+    ret.charge = end.charge - start.charge;
 
     return ret;
   }
