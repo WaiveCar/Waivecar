@@ -1032,6 +1032,7 @@ module.exports = class OrderService extends Service {
           template : 'miscellaneous-credit',
           context  : {
             name   : user.name(),
+            description: item[0].description,
             charge : item,
           }
         });
