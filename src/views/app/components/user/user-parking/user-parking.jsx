@@ -7,7 +7,7 @@ import Space from './space';
 export default class UserParking extends Component {
   constructor(props) {
     super(props);
-    relay.subscribe(this, 'users');
+    relay.subscribe(this, 'userParking');
     this.state = {
       spaces: [],
     };
