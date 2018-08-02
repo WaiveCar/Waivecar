@@ -62,6 +62,31 @@ module.exports = {
     return spaces;
   },
 
+  *emitChanges(space, location, reservation, user, parkingDetails) {
+    let json = space.toJSON();
+    json.location = location.toJSON();
+    if (space.reservationId) {
+      json.reservation = reservation ? reservation : yield ParkingReservation.findById(space.reservationId);
+      json.reservation = json.reservation.toJSON();
+      json.reservedBy = user ? user : yield User.findById(json.reservation.userId);
+      json.reservedBy = json.reservedBy.toJSON();
+    }
+    if (space.parkingDetailId) {
+      json.parkingDetails = parkingDetails ? parkingDetails : yield ParkingDetails.findById(space.parkingDetailId);
+      json.parkingDetails = json.parkingDetails.toJSON();
+    }
+    console.log('json: ', json);
+    relay.user(space.id, 'userParking', {
+      type: 'update',
+      data: json,
+    });
+    relay.admin('userParking', {
+      type: 'update',
+      data: json,
+    });
+  },
+
+
   *delete(parkingId) {
     try {
       let parking = yield UserParking.findById(parkingId);
@@ -120,33 +145,13 @@ module.exports = {
     return space;
   },
 
-  *emitChanges(space, location) {
-    let json = space.toJSON();
-    json.location = location.toJSON();
-    if (space.reservationId) {
-      json.reservation = yield ParkingReservation.findById().toJSON();
-      json.reservedBy = yield User.findById(json.reservation.userId);
-    }
-    if (space.parkingDetailId) {
-      json.parkingDetails = yield ParkingDetails.findById(space.parkingDetailId).toJSON();
-    }
-    console.log('json: ', json);
-    relay.user(space.id, 'userParking', {
-      type: 'update',
-      data: json,
-    });
-    relay.admin('userParking', {
-      type: 'update',
-      data: json,
-    });
-  },
-
   *updateParking(parkingId, updateObj) {
     try {
       let space = yield UserParking.findById(parkingId);
       yield space.update(updateObj);
       let location = yield Location.findById(space.locationId);
       yield location.update(updateObj);
+      yield this.emitChanges(space, location);
       return {
         space,
         location,
@@ -211,6 +216,8 @@ module.exports = {
       },
     });
 
+    yield this.emitChanges(space, location);
+
     yield notify.notifyAdmins(
       `:parking: ${user.firstName} ${
         user.lastName
@@ -233,6 +240,7 @@ module.exports = {
           status: 'available',
         });
       }
+      yield this.emitChanges(space, location);
     } else {
       throw error.parse(
         {
