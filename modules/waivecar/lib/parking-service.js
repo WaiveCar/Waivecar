@@ -13,7 +13,9 @@ let sequelize = Bento.provider('sequelize');
 
 module.exports = {
   *create(query) {
+    let user = yield User.findById(query.userId);
     let location = new Location({
+      name: `${user.firstName} ${user.lastName}'s personal parking`,
       type: 'user-parking',
       latitude: query.latitude,
       longitude: query.longitude,
