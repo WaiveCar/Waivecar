@@ -116,7 +116,29 @@ module.exports = {
     yield location.update({
       status: newStatus,
     });
+    yield this.emitChanges(space, location);
     return space;
+  },
+
+  *emitChanges(space, location) {
+    let json = space.toJSON();
+    json.location = location.toJSON();
+    if (space.reservationId) {
+      json.reservation = yield ParkingReservation.findById().toJSON();
+      json.reservedBy = yield User.findById(json.reservation.userId);
+    }
+    if (space.parkingDetailId) {
+      json.parkingDetails = yield ParkingDetails.findById(space.parkingDetailId).toJSON();
+    }
+    console.log('json: ', json);
+    relay.user(space.id, 'userParking', {
+      type: 'update',
+      data: json,
+    });
+    relay.admin('userParking', {
+      type: 'update',
+      data: json,
+    });
   },
 
   *updateParking(parkingId, updateObj) {
@@ -204,14 +226,6 @@ module.exports = {
     if (space.reservationId === currentReservationId) {
       yield space.update({
         reservationId: null,
-      });
-      relay.user(userId, 'userParking', {
-        type: 'update',
-        data: space.toJSON(),
-      });
-      relay.admin('userParking', {
-        type: 'update',
-        data: space.toJSON(),
       });
       let location = yield Location.findById(space.locationId);
       if (!space.ownerOccupied) {
