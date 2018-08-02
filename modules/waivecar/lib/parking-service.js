@@ -66,13 +66,19 @@ module.exports = {
     let json = space.toJSON();
     json.location = location.toJSON();
     if (space.reservationId) {
-      json.reservation = reservation ? reservation : yield ParkingReservation.findById(space.reservationId);
+      json.reservation = reservation
+        ? reservation
+        : yield ParkingReservation.findById(space.reservationId);
       json.reservation = json.reservation.toJSON();
-      json.reservedBy = user ? user : yield User.findById(json.reservation.userId);
+      json.reservedBy = user
+        ? user
+        : yield User.findById(json.reservation.userId);
       json.reservedBy = json.reservedBy.toJSON();
     }
     if (space.parkingDetailId) {
-      json.parkingDetails = parkingDetails ? parkingDetails : yield ParkingDetails.findById(space.parkingDetailId);
+      json.parkingDetails = parkingDetails
+        ? parkingDetails
+        : yield ParkingDetails.findById(space.parkingDetailId);
       json.parkingDetails = json.parkingDetails.toJSON();
     }
     console.log('json: ', json);
@@ -85,7 +91,6 @@ module.exports = {
       data: json,
     });
   },
-
 
   *delete(parkingId) {
     try {
@@ -216,7 +221,7 @@ module.exports = {
       },
     });
 
-    yield this.emitChanges(space, location);
+    yield this.emitChanges(space, location, reservation, user, null);
 
     yield notify.notifyAdmins(
       `:parking: ${user.firstName} ${
@@ -228,7 +233,7 @@ module.exports = {
     return space;
   },
 
-  *cancel(parkingId, userId, currentReservationId) {
+  *cancel(parkingId, currentReservationId) {
     let space = yield UserParking.findById(parkingId);
     if (space.reservationId === currentReservationId) {
       yield space.update({
@@ -247,7 +252,7 @@ module.exports = {
           code: 'PARKING_NOT_RESERVED_BY_USER',
           message: `Parking space #${
             space.id
-          } was not reserved by user #${userId}`,
+          } does not correspond with this reservation`,
         },
         400,
       );

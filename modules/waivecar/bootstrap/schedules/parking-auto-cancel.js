@@ -6,11 +6,7 @@ let ParkingService = require('../../lib/parking-service');
 let notify = require('../../lib/notification-service');
 
 scheduler.process('parking-auto-cancel', function*(job) {
-  yield ParkingService.cancel(
-    job.data.spaceId,
-    job.data.user.id,
-    job.data.reservation.id,
-  );
+  yield ParkingService.cancel(job.data.spaceId, job.data.reservation.id);
   yield notify.notifyAdmins(
     `:rage: ${job.data.user.firstName} ${
       job.data.user.lastName
