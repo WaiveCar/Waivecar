@@ -1115,7 +1115,11 @@ module.exports = class BookingService extends Service {
     // ---
 
     if (!isLevel) { 
-      yield booking.setNowLock({userId: _user.id, carId: car.id});
+      yield cars.lockCar(car.id, _user);
+      yield cars.lockImmobilzer(car.id, _user);
+      // This was causing problems ... I'd rather have booking ending having issues
+      // then cars being idle and unlocked
+      // yield booking.setNowLock({userId: _user.id, carId: car.id});
     }
 
     yield booking.complete();

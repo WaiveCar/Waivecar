@@ -33,12 +33,9 @@ scheduler.process('booking-now-lock', function *(job) {
     carId = booking.carId;
   }
 
-  console.log("Locking car " + carId);
-
   let user = yield User.findById(job.data.userId);
   let car = yield Car.findById(carId);
 
-  console.log("Locking immobilizer " + carId);
   yield cars.lockCar(car.id, user);
   yield cars.lockImmobilzer(car.id, user); 
 });
