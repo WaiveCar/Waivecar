@@ -95,7 +95,7 @@ export default class UserParking extends Component {
   render = () => {
     let {spaces} = this.state;
     let {admin} = this.props;
-    let {addSpace, toggleSpace, deleteSpace, updateSpace} = this;
+    let {getSpaces, addSpace, toggleSpace, deleteSpace, updateSpace} = this;
     return (
       <div className="box parking-box">
         <h3>
@@ -103,7 +103,16 @@ export default class UserParking extends Component {
           <small>Manage parking spaces</small>
         </h3>
         <div className="box-content">
-          <h4>{admin ? "User's" : 'My'} parking spaces</h4>
+          <h4>{admin ? "User's" : 'My'} parking spaces:</h4>
+          <div className="form-actions text-center refresh-button">
+            <div className="btn-group" role="group">
+              <button
+                className="btn btn-primary-outline btn-wave"
+                onClick={() => getSpaces()}>
+                Refresh Status
+              </button>
+            </div>
+          </div>
           {spaces.length ? (
             spaces.map((space, i) => (
               <Space
