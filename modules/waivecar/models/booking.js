@@ -367,7 +367,7 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
     },
 
     *setNowLock(opts) {
-      this.doTask('booking-now-lock', 0.03, opts);
+      this.doTask('booking-now-lock', 0.15, opts);
     },
 
     *setAutoLock() {
