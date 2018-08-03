@@ -84,11 +84,7 @@ module.exports = {
       json.parkingDetails = json.parkingDetails.toJSON();
     }
     console.log('json: ', json);
-    relay.user(space.id, 'userParking', {
-      type: 'update',
-      data: json,
-    });
-    relay.admin('userParking', {
+    relay.emit('userParking', {
       type: 'update',
       data: json,
     });
