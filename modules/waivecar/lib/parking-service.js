@@ -88,6 +88,10 @@ module.exports = {
       type: 'update',
       data: json,
     });
+    relay.emit('locations', {
+      type: 'update',
+      data: json.location,
+    });
   },
 
   *delete(parkingId) {
