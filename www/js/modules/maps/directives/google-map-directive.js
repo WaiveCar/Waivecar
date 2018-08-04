@@ -518,11 +518,17 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     var newIds = newMarkers.map(function (m) {
       return m.id;
     });
-
     var markersToUpdate = _.intersection(oldIds, newIds);
     var markersToAdd = _.difference(newIds, markersToUpdate);
     var markersToRemove = _.difference(oldIds, markersToUpdate);
     var actualMarkers = [];
+
+    // This is hacky, but works to update markers for the user-parking to show if they are available or not
+    newMarkers.forEach(function (marker) {
+      if (marker.type === 'user-parking') {
+        markersToAdd.push(marker.id);
+      }
+    });
 
     markersToUpdate.forEach(function (id) {
       var currentMarker = ctrl._addedMarkers.general.filter(function (m) {
@@ -556,7 +562,6 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
           markerObj: markerObj
         };
       });
-
       markersAddAllPromises.push(promise);
     });
 
