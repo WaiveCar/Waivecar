@@ -330,7 +330,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         type = 'locked-car';
       }
     }
-    var iconOpt = getIconOptions(type, ctrl.useCordova() ? '.png' : '.svg');
+    var iconOpt = getIconOptions(type, ctrl.useCordova() ? '.png' : '.svg', marker);
     if (type === 'user-parking') {
       console.log('iconOpt: ', iconOpt);
     }
@@ -680,7 +680,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     }
   };
 
-  function getIconOptions(iconType, fileExt) {
+  function getIconOptions(iconType, fileExt, marker) {
     switch (iconType) {
       case 'active-waivecar':
       case 'active-waivecar-0':
@@ -747,9 +747,10 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
           origin: new google.maps.Point(0, 0)
         };
       case 'user-parking':
+        var fileName = marker.status === 'available' ? 'parking-available' : 'parking-in-use';
         return {
-          url: 'img/parking-available.svg',
-          iconRetinaUrl: 'img/parking-available' + fileExt,
+          url: 'img/' + fileName + fileExt,
+          iconRetinaUrl: 'img/' + fileName + fileExt,
           scaledSize: new google.maps.Size(24, 24),
           anchor: new google.maps.Point(12, 12),
           origin: new google.maps.Point(0, 0)
