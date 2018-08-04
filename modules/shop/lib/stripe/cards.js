@@ -49,6 +49,9 @@ module.exports = class StripeCards {
 
     card        = new Card(result);
     card.userId = user.id;
+    card.type   = result.funding;
+    card.name   = result.name;
+
     yield card.save();
 
     return card;
