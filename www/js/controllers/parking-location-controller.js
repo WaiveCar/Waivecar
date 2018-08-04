@@ -166,9 +166,13 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
     function submit() {
 
       // Force users to take pictures. See #1113
+      
+      /* Put this back in later to require pictures again.
+        // do these changes register?
       if ((ctrl.type === 'street' || ctrl.type === 'lot') && !ctrl.street.streetSignImage) {
         return submitFailure('Ending here requires a photo of the parking sign.');
       }
+      */
       
       if (!ctrl.overrideStreetRestrictions && checkIsParkingRestricted()) {
         return parkingRestrictionFailure();

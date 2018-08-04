@@ -319,6 +319,9 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     var deferred = $q.defer();
 
     var type = marker.icon || marker.type;
+    if (type === 'user-parking') {
+      console.log('marker: ', marker);
+    }
     if('charge' in marker) {
       if('model' in marker) {
         marker.range = marker.range || (marker.charge * [135,70][+(marker.model === "Spark EV")]);
@@ -328,6 +331,9 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
       }
     }
     var iconOpt = getIconOptions(type, ctrl.useCordova() ? '.png' : '.svg');
+    if (type === 'user-parking') {
+      console.log('iconOpt: ', iconOpt);
+    }
 
     var mapObject = new GeneralMapObject(ctrl, marker);
 
@@ -740,6 +746,14 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
           anchor: new google.maps.Point(12, 12),
           origin: new google.maps.Point(0, 0)
         };
+      case 'user-parking':
+        return {
+          url: 'img/parking-available.svg',
+          iconRetinaUrl: 'img/parking-available' + fileExt,
+          scaledSize: new google.maps.Size(24, 24),
+          anchor: new google.maps.Point(12, 12),
+          origin: new google.maps.Point(0, 0)
+        }
       default:
         return {
           url: 'img/user-location' + fileExt,
