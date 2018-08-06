@@ -41,6 +41,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   this.unlockCar = unlockCar;
   this.endRide = endRide;
   this.showUnlockChargerPrompt = showUnlockChargerPrompt;
+  this.reserveParking = reserveParking;
 
   // State
   this.ending = false;
@@ -482,6 +483,10 @@ function DashboardController ($scope, $rootScope, $injector) {
       endRideModal = _modal;
       endRideModal.show();
     });
+  }
+
+  function reserveParking() {
+    console.log('Reserve parking function called');
   }
 }
 

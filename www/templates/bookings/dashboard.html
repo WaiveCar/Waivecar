@@ -53,6 +53,11 @@
           <button type="button" class="button button-small button-dark" ng-show="ctrl.selectedItem.type ==='chargingStation'" ng-click="ctrl.showUnlockChargerPrompt(ctrl.selectedItem.id)">Unlock charging station</button>
         </div>
       </div>
+      <div class="row">
+        <div class="col">
+          <button type="button" class="button button-small button-dark" ng-show="ctrl.selectedItem.type ==='user-parking'" ng-click="ctrl.reserveParking()">Reserve parking</button>
+        </div>
+      </div>
     </div>
     <button type="button" class="button button-gray button-block" ng-click="ctrl.closePopover()">Close</button>
   </div>
