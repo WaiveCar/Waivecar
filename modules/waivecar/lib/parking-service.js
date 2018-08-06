@@ -69,6 +69,20 @@ module.exports = {
       where: {
         locationId,
       },
+      include: [
+        {
+          model: 'Location',
+          as: 'location',
+        },
+        {
+          model: 'ParkingReservation',
+          as: 'reservation',
+        },
+        {
+          model: 'ParkingDetails',
+          as: 'parkingDetails',
+        },
+      ],
     });
   },
 
