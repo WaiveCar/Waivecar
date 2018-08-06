@@ -74,7 +74,7 @@ Route.get('/locations/dropoff', 'LocationsController@dropoff');
 // ### User Parking
 Route.post('/parking', [ 'isAuthenticated', 'ParkingController@create' ]);
 Route.get('/parking/users/:userId', [ 'isAuthenticated', 'ParkingController@getByUser' ]);
-Route.get('/parking/:locationId', [ 'isAuthenticated', 'ParkingController@findByLocation' ]);
+Route.get('/parking/locations/:locationId', [ /*'isAuthenticated',*/ 'ParkingController@findByLocation' ]);
 Route.del('/parking/:id', [ 'isAuthenticated', 'ParkingController@delete' ]);
 Route.put('/parking/:id/toggle/:type', [ 'isAuthenticated', 'ParkingController@toggle' ]);
 Route.put('/parking/:id/update', [ 'isAuthenticated', 'ParkingController@updateParking' ]);
