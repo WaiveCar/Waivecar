@@ -65,8 +65,7 @@ module.exports = {
   },
 
   *findByLocation(locationId) {
-    console.log(locationId);
-    return yield UserParking.find({
+    return yield UserParking.findOne({
       where: {
         locationId,
       },
