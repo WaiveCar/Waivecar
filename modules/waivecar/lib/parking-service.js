@@ -64,6 +64,14 @@ module.exports = {
     return spaces;
   },
 
+  *findByLocation(locationId) {
+    return yield UserParking.find({
+      where: {
+        locationId,
+      },
+    });
+  },
+
   *emitChanges(space, location, reservation, user, parkingDetails) {
     let json = space.toJSON();
     json.location = location.toJSON();
