@@ -56,6 +56,8 @@ function DashboardController ($scope, $rootScope, $injector) {
     $ride.openDirections(ctrl.selectedItem, ctrl.selectedItem.name);
   }
 
+  this.parkingReservation = null;
+
   // So there was a bug when this thing wasn't running right ... so
   // we need to put it in an interval BUUT sometimes it was so we
   // need to avoid getting this thing to run multiple times
@@ -485,8 +487,13 @@ function DashboardController ($scope, $rootScope, $injector) {
     });
   }
 
-  function reserveParking() {
-    console.log('Reserve parking function called');
+  function reserveParking(id) {
+    console.log('selected item: ', id);
+    ctrl.parkingReservation = true;
+    console.log('resources: ', $data.resources);
+    return $data.resources.parking.findByLocation({locationId: id}).$promise.then(function(parking){
+      console.log('parking: ', parking);
+    });
   }
 }
 

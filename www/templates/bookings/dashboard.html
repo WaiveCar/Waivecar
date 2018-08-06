@@ -16,11 +16,13 @@
     </google-map>
 
   </ion-content>
-
   <div class="info-header ride-footer">
     <div class="info-header-item">
       <ng-include class="battery icon" src="'/img/battery-darkgrey.svg'"></ng-include>
       {{ data.cars.charge > 100 ? 100 : data.cars.charge | number:0 }}%
+    </div>
+    <div ng-show="ctrl.parkingReservation !== null">
+      Parking Reserved
     </div>
     <!--
     <div class="info-header-item">
@@ -55,7 +57,7 @@
       </div>
       <div class="row">
         <div class="col">
-          <button type="button" class="button button-small button-dark" ng-show="ctrl.selectedItem.type ==='user-parking'" ng-click="ctrl.reserveParking()">Reserve parking</button>
+          <button type="button" class="button button-small button-dark" ng-show="ctrl.selectedItem.type ==='user-parking'" ng-click="ctrl.reserveParking(ctrl.selectedItem.id)">Reserve parking</button>
         </div>
       </div>
     </div>

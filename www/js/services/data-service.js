@@ -5,6 +5,7 @@ require('../resources/bookings');
 require('../resources/cars');
 require('../resources/locations');
 require('../resources/car-chargers');
+require('../resources/parking');
 require('../resources/users');
 require('../resources/licenses');
 require('../resources/notification');
@@ -38,7 +39,8 @@ module.exports = angular.module('app.services').factory('$data', [
   'Notifications',
   'Messages',
   'Chargers',
-  function ($rootScope, $http, $q, $socket, Bookings, Cars, Locations, Users, Licenses, Card, File, Auth, User, Verification, Notifications, Messages, Chargers) {
+  'Parking',
+  function ($rootScope, $http, $q, $socket, Bookings, Cars, Locations, Users, Licenses, Card, File, Auth, User, Verification, Notifications, Messages, Chargers, Parking) {
 
     var isInBG = false;
     var service = {
@@ -52,6 +54,7 @@ module.exports = angular.module('app.services').factory('$data', [
         notification: Notifications,
         messages: Messages,
         chargers: Chargers,
+        parking: Parking,
 
         Card: Card,
         File: File,
@@ -256,6 +259,9 @@ module.exports = angular.module('app.services').factory('$data', [
 
     $socket.on('relay', function (resource, action) {
       var model = action.data;
+      console.log('resource: ', resource);
+      console.log('action: ', action);
+      console.log('all resources: ', service);
 
       if (resource === 'users') {
         service.me = resource;
