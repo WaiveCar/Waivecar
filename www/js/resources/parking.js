@@ -12,8 +12,7 @@ module.exports = angular.module('app').factory('Parking', [
         url: $utils.getCustomRoute('parking/locations/:locationId'),
         params: {
           locationId: '@locationId'
-        },
-        isArray: true
+        }
       },
 
       reserve : {
