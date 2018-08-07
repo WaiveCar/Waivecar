@@ -254,6 +254,8 @@ module.exports = {
       ['slack'],
       {channel: '#reservations'},
     );
+    space.reservation = reservation;
+    space.location = location;
     return space;
   },
 
