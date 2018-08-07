@@ -19,8 +19,14 @@
   <div class="parking-footer" ng-show="ctrl.reservedParking">
     <div>
       <div>
-        Parking Reserved 
+        Parking Reservation: {{ ctrl.reservedParking.location.address }} 
       </div>
+      <button type="button" class="button button-small" ng-click="ctrl.getDirections(ctrl.reservedParking.location)"/>
+        Get Directions
+      </button>
+      <button type="button" class="button button-small" />
+        Cancel Reservation
+      </button>
     </div>
   </div>
   <div class="info-header ride-footer">

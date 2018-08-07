@@ -52,7 +52,10 @@ function DashboardController ($scope, $rootScope, $injector) {
   this.lastUserLocations = [];
   this.parityCheckTimeout = null;
 
-  this.getDirections = function() {
+  this.getDirections = function(option) {
+    console.log('selected item: ', ctrl.selectedItem);
+    console.log('option: ', option);
+    ctrl.selectedItem = option ? optio.location : ctrl.selectedItem;
     $ride.openDirections(ctrl.selectedItem, ctrl.selectedItem.name);
   }
 
@@ -190,7 +193,6 @@ function DashboardController ($scope, $rootScope, $injector) {
 
 
   function openPopover(item) {
-    console.log('item: ', item)
     $timeout(function () {
       ctrl.selectedItem = item;
     });
@@ -489,14 +491,14 @@ function DashboardController ($scope, $rootScope, $injector) {
   }
 
   function reserveParking(id) {
-    console.log('selected item: ', ctrl.selectedItem)
     ctrl.parkingReservation = true;
     return $data.resources.parking.findByLocation({locationId: id}).$promise.then(function(parking){
       return $data.resources.parking.reserve({id: parking.id, userId: $data.me.id}).$promise.then(function(space){
         ctrl.reservedParking = space;
-        console.log('ctrl.reservedParking: ', ctrl.reservedParking)
+        // Need to do an alert here describing how the reservation works
       })
       .catch(function(error){
+        // Need to do an alert here for the error
         console.log('error: ', error);
       });
     });
