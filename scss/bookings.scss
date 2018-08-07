@@ -179,6 +179,17 @@
     height: 60px;
   }
 }
+
+.parking-footer {
+  position: absolute;
+  bottom: 105px;
+  z-index: 800;
+  background-color: white;
+  width: 100%;
+  font-size: 20px;
+  padding: 10px 5px;
+}
+
 .button-blue {
   color: $blue;
   border-color: $blue;

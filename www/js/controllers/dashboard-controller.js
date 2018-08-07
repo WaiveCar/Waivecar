@@ -190,6 +190,7 @@ function DashboardController ($scope, $rootScope, $injector) {
 
 
   function openPopover(item) {
+    console.log('item: ', item)
     $timeout(function () {
       ctrl.selectedItem = item;
     });
@@ -488,11 +489,12 @@ function DashboardController ($scope, $rootScope, $injector) {
   }
 
   function reserveParking(id) {
+    console.log('selected item: ', ctrl.selectedItem)
     ctrl.parkingReservation = true;
     return $data.resources.parking.findByLocation({locationId: id}).$promise.then(function(parking){
       return $data.resources.parking.reserve({id: parking.id, userId: $data.me.id}).$promise.then(function(space){
-        ctrl.parkingReservation = space;
-        console.log(ctrl.parkingReservation)
+        ctrl.reservedParking = space;
+        console.log('ctrl.reservedParking: ', ctrl.reservedParking)
       })
       .catch(function(error){
         console.log('error: ', error);
