@@ -100,6 +100,11 @@ module.exports = class OrderService extends Service {
       } else {
         yield UserLog.addUserEvent(user, 'CREDIT', order.id, data.description);
       }
+    } catch (ex) {
+      log.info(`Couldn't log the user event for an order!`);
+    }
+
+    try {
       charge = yield this.charge(order, user, opts);
 
       if(data.amount > 0) {
@@ -770,7 +775,7 @@ module.exports = class OrderService extends Service {
           silentFailure = true;
           throw new Error;
         } else {
-          charge  = yield service.create({
+          charge = yield service.create({
             source      : order.source,
             description : order.description,
             metadata    : order.metadata ? JSON.parse(order.metadata) : {},
