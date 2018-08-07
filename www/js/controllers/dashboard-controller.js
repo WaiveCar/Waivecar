@@ -491,7 +491,11 @@ function DashboardController ($scope, $rootScope, $injector) {
     ctrl.parkingReservation = true;
     return $data.resources.parking.findByLocation({locationId: id}).$promise.then(function(parking){
       return $data.resources.parking.reserve({id: parking.id, userId: $data.me.id}).$promise.then(function(space){
-        console.log('space: ', space);
+        ctrl.parkingReservation = space;
+        console.log(ctrl.parkingReservation)
+      })
+      .catch(function(error){
+        console.log('error: ', error);
       });
     });
   }
