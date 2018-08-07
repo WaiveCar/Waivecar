@@ -16,7 +16,7 @@
     </google-map>
 
   </ion-content>
-  <div class="parking-footer" ng-show="ctrl.reservedParking">
+  <div class="parking-footer" ng-show="ctrl.reservedParking !== null">
     <div>
       <div>
         Parking Reservation: {{ ctrl.reservedParking.location.address }} 
@@ -24,7 +24,7 @@
       <button type="button" class="button button-small" ng-click="ctrl.getDirections(ctrl.reservedParking.location)"/>
         Get Directions
       </button>
-      <button type="button" class="button button-small" />
+      <button type="button" class="button button-small" ng-click="ctrl.cancelParking(ctrl.reservedParking.id)"/>
         Cancel Reservation
       </button>
     </div>

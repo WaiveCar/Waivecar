@@ -319,9 +319,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     var deferred = $q.defer();
 
     var type = marker.icon || marker.type;
-    if (type === 'user-parking') {
-      console.log('marker: ', marker);
-    }
+
     if('charge' in marker) {
       if('model' in marker) {
         marker.range = marker.range || (marker.charge * [135,70][+(marker.model === "Spark EV")]);
@@ -331,9 +329,6 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
       }
     }
     var iconOpt = getIconOptions(type, ctrl.useCordova() ? '.png' : '.svg', marker);
-    if (type === 'user-parking') {
-      console.log('iconOpt: ', iconOpt);
-    }
 
     var mapObject = new GeneralMapObject(ctrl, marker);
 

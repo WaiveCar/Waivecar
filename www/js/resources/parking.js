@@ -21,6 +21,13 @@ module.exports = angular.module('app').factory('Parking', [
         params: {
           id: '@id'
         }
+      },
+      cancel : {
+        method: 'PUT',
+        url: $utils.getCustomRoute('parking/:id/cancel'),
+        params: {
+          id: '@id'
+        }
       }
     }));
     return resource;

@@ -42,6 +42,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   this.endRide = endRide;
   this.showUnlockChargerPrompt = showUnlockChargerPrompt;
   this.reserveParking = reserveParking;
+  this.cancelParking = cancelParking;
 
   // State
   this.ending = false;
@@ -53,9 +54,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   this.parityCheckTimeout = null;
 
   this.getDirections = function(option) {
-    console.log('selected item: ', ctrl.selectedItem);
-    console.log('option: ', option);
-    ctrl.selectedItem = option ? optio.location : ctrl.selectedItem;
+    ctrl.selectedItem = option ? option.location : ctrl.selectedItem;
     $ride.openDirections(ctrl.selectedItem, ctrl.selectedItem.name);
   }
 
@@ -497,10 +496,21 @@ function DashboardController ($scope, $rootScope, $injector) {
         ctrl.reservedParking = space;
         // Need to do an alert here describing how the reservation works
       })
-      .catch(function(error){
+      .catch(function(error) {
         // Need to do an alert here for the error
         console.log('error: ', error);
       });
+    });
+  }
+
+  function cancelParking(id) {
+    return $data.resources.parking.cancel({id: id, reservationId: ctrl.reservedParking.reservation.id}).$promise.then(function(response){
+      ctrl.reservedParking = null;
+      console.log('parking successfully cancelled: ', response);
+      console.log('reservedParking: ', ctrl.reservedParking);
+    })
+    .catch(function(error) {
+      console.log('error cancelling: ', error);
     });
   }
 }
