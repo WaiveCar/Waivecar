@@ -15,7 +15,7 @@ module.exports = {
   *create(query) {
     let user = yield User.findById(query.userId);
     let location = new Location({
-      name: `${user.firstName} ${user.lastName}'s personal parking`,
+      name: `${user.firstName} ${user.lastName}'s Personal Parking`,
       type: 'user-parking',
       latitude: query.latitude,
       longitude: query.longitude,
@@ -261,6 +261,10 @@ module.exports = {
 
   *cancel(parkingId, currentReservationId) {
     let space = yield UserParking.findById(parkingId);
+    let reservation = yield ParkingReservation.findById(currentReservationId);
+    yield reservation.update({
+      expired: true,
+    });
     if (!space.reservationId) {
       throw error.parse(
         {
