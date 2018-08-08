@@ -54,10 +54,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   this.parityCheckTimeout = null;
 
   this.getDirections = function(option) {
-    console.log('selected item: ', ctrl.selectedItem);
-    console.log('option: ', option);
     ctrl.selectedItem = option ? option : ctrl.selectedItem;
-    console.log('after: ', ctrl.selectedItem);
     $ride.openDirections(ctrl.selectedItem, ctrl.selectedItem.name);
   }
 
@@ -71,6 +68,9 @@ function DashboardController ($scope, $rootScope, $injector) {
       return;
     }
     rideServiceReady();
+    $data.resources.parking.fetchReservation({userId: $data.me.id}).$promise.then(function(parking){
+      ctrl.reservedParking = parking;
+    })
 
     ctrl.locations = $data.instances.locations;
     if ($data.active.cars) {
@@ -510,8 +510,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   function cancelParking(id) {
     return $data.resources.parking.cancel({id: id, reservationId: ctrl.reservedParking.reservation.id}).$promise.then(function(response){
       ctrl.reservedParking = null;
-      console.log('parking successfully cancelled: ', response);
-      console.log('reservedParking: ', ctrl.reservedParking);
+      // Add an alert for cancelled parking
     })
     .catch(function(error) {
       console.log('error cancelling: ', error);

@@ -14,7 +14,13 @@ module.exports = angular.module('app').factory('Parking', [
           locationId: '@locationId'
         }
       },
-
+      fetchReservation : {
+        method: 'GET',
+        url: $utils.getCustomRoute('parking/fetchReservation/:userId'),
+        params: {
+          userId: '@userId'
+        }
+      },
       reserve : {
         method: 'POST',
         url: $utils.getCustomRoute('parking/:id/reserve'),
