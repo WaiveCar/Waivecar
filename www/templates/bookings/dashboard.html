@@ -16,19 +16,19 @@
     </google-map>
 
   </ion-content>
-  <div class="parking-footer" ng-show="ctrl.reservedParking !== null">
+  <div class="parking-footer" ng-show="ctrl.$data.reservedParking !== null">
     <div>
       <div>
-        Parking Reservation: {{ ctrl.reservedParking.location.address }} 
+        Parking Reservation: {{ ctrl.$data.reservedParking.location.address }} 
       </div>
       <div class="info-header">
         <div class="info-header-item">
-          <button type="button" class="button button-small" ng-click="ctrl.getDirections(ctrl.reservedParking.location)"/>
+          <button type="button" class="button button-small" ng-click="ctrl.getDirections(ctrl.$data.reservedParking.location)"/>
             Get Directions
           </button>
         </div>
         <div class="info-header-item">
-          <button type="button" class="button button-small" ng-click="ctrl.cancelParking(ctrl.reservedParking.id)"/>
+          <button type="button" class="button button-small" ng-click="ctrl.cancelParking(ctrl.$data.reservedParking.id)"/>
             Cancel Reservation
           </button>
         </div>
@@ -73,7 +73,7 @@
       </div>
       <div class="row">
         <div class="col">
-          <button type="button" class="button button-small button-dark" ng-show="ctrl.selectedItem.type ==='user-parking' && !ctrl.reservedParking && ctrl.selectedItem.status === 'available'" ng-click="ctrl.reserveParking(ctrl.selectedItem.id)">Reserve parking</button>
+          <button type="button" class="button button-small button-dark" ng-show="ctrl.selectedItem.type ==='user-parking' && !ctrl.$data.reservedParking && ctrl.selectedItem.status === 'available'" ng-click="ctrl.reserveParking(ctrl.selectedItem.id)">Reserve parking</button>
         </div>
       </div>
     </div>

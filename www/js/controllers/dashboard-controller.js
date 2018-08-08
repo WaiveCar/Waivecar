@@ -34,6 +34,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   var ctrl = this;
   this.locations = $data.instances.locations;
   this.fitMapBoundsByMarkers = featured(this.locations);
+  this.$data = $data;
 
   this.openPopover = openPopover;
   this.closePopover = closePopover;
@@ -54,11 +55,9 @@ function DashboardController ($scope, $rootScope, $injector) {
   this.parityCheckTimeout = null;
 
   this.getDirections = function(option) {
-    ctrl.selectedItem = option ? option : ctrl.selectedItem;
-    $ride.openDirections(ctrl.selectedItem, ctrl.selectedItem.name);
+    var toGet = option ? option : ctrl.selectedItem;
+    $ride.openDirections(toGet, toGet.name);
   }
-
-  this.reservedParking = null;
 
   // So there was a bug when this thing wasn't running right ... so
   // we need to put it in an interval BUUT sometimes it was so we
@@ -69,8 +68,8 @@ function DashboardController ($scope, $rootScope, $injector) {
     }
     rideServiceReady();
     $data.resources.parking.fetchReservation({userId: $data.me.id}).$promise.then(function(parking){
-      ctrl.reservedParking = parking;
-    })
+      $data.reservedParking = parking;
+    });
 
     ctrl.locations = $data.instances.locations;
     if ($data.active.cars) {
@@ -498,6 +497,8 @@ function DashboardController ($scope, $rootScope, $injector) {
       return $data.resources.parking.reserve({id: parking.id, userId: $data.me.id}).$promise.then(function(space){
         ctrl.reservedParking = space;
         ctrl.selectedItem = null;
+        $data.reservedParking = space;
+        console.log('$data: ', $data);
         // Need to do an alert here describing how the reservation works
       })
       .catch(function(error) {
@@ -508,8 +509,9 @@ function DashboardController ($scope, $rootScope, $injector) {
   }
 
   function cancelParking(id) {
-    return $data.resources.parking.cancel({id: id, reservationId: ctrl.reservedParking.reservation.id}).$promise.then(function(response){
-      ctrl.reservedParking = null;
+    return $data.resources.parking.cancel({id: id, reservationId: $data.reservedParking.reservation.id}).$promise.then(function(response){
+      $data.reservedParking = null;
+      console.log('$data: ', $data)
       // Add an alert for cancelled parking
     })
     .catch(function(error) {

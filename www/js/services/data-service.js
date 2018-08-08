@@ -65,6 +65,7 @@ module.exports = angular.module('app.services').factory('$data', [
 
       me: void 0,
       userLocation: {},
+      reservedParking: null,
       instances: {},
       active: {},
       isSubscribed: false,
