@@ -54,7 +54,10 @@ function DashboardController ($scope, $rootScope, $injector) {
   this.parityCheckTimeout = null;
 
   this.getDirections = function(option) {
-    ctrl.selectedItem = option ? option.location : ctrl.selectedItem;
+    console.log('selected item: ', ctrl.selectedItem);
+    console.log('option: ', option);
+    ctrl.selectedItem = option ? option : ctrl.selectedItem;
+    console.log('after: ', ctrl.selectedItem);
     $ride.openDirections(ctrl.selectedItem, ctrl.selectedItem.name);
   }
 
@@ -494,6 +497,7 @@ function DashboardController ($scope, $rootScope, $injector) {
     return $data.resources.parking.findByLocation({locationId: id}).$promise.then(function(parking){
       return $data.resources.parking.reserve({id: parking.id, userId: $data.me.id}).$promise.then(function(space){
         ctrl.reservedParking = space;
+        ctrl.selectedItem = null;
         // Need to do an alert here describing how the reservation works
       })
       .catch(function(error) {
