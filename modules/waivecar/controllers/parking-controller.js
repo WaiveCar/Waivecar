@@ -15,6 +15,10 @@ Bento.Register.Controller('ParkingController', function(controller) {
     return yield parking.findByLocation(locationId);
   };
 
+  controller.fetchReservation = function*(userId) {
+    return yield parking.fetchReservation(userId);
+  };
+
   controller.delete = function*(id) {
     return yield parking.delete(id);
   };

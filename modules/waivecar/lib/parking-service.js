@@ -86,6 +86,39 @@ module.exports = {
     });
   },
 
+  *fetchReservation(userId) {
+    let reservation = yield ParkingReservation.findOne({
+      where: {
+        userId,
+        expired: false,
+      },
+    });
+    if (reservation) {
+      return yield UserParking.findOne({
+        where: {
+          reservationId: reservation.id,
+        },
+        include: [
+          {
+            model: 'Location',
+            as: 'location',
+          },
+          {
+            model: 'ParkingReservation',
+            as: 'reservation',
+          },
+        ],
+      });
+    }
+    throw error.parse(
+      {
+        code: 'USER_HAS_NO_CURRENT_RESERVATION',
+        message: 'User has no active parking reservation',
+      },
+      400,
+    );
+  },
+
   *emitChanges(space, location, reservation, user, parkingDetails) {
     let json = space.toJSON();
     json.location = location.toJSON();
@@ -105,7 +138,6 @@ module.exports = {
         : yield ParkingDetails.findById(space.parkingDetailId);
       json.parkingDetails = json.parkingDetails.toJSON();
     }
-    console.log('json: ', json);
     relay.emit('userParking', {
       type: 'update',
       data: json,
@@ -284,7 +316,7 @@ module.exports = {
           status: 'available',
         });
       }
-      yield this.emitChanges(space, location);
+      yield this.emitChanges(space, location, reservation);
     } else {
       throw error.parse(
         {
