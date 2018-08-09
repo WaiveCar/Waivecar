@@ -266,10 +266,11 @@ module.exports = {
       status: 'unavailable',
     });
 
-    let timerObj = {value: 5, type: 'minutes'};
+    let timerObj = {value: 30, type: 'seconds'};
     queue.scheduler.add('parking-auto-cancel', {
-      uid: `parking-${parkingId}`,
+      uid: `parking-reservation-${reservation.id}`,
       timer: timerObj,
+      unique: true,
       data: {
         spaceId: space.id,
         reservation,
@@ -328,6 +329,7 @@ module.exports = {
         400,
       );
     }
+    queue.scheduler.cancel('parking-auto-cancel', `parking-reservation-${currentReservationId}`);
     return space;
   },
 };
