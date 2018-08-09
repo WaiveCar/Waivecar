@@ -40,8 +40,9 @@ module.exports = angular.module('app.services').factory('$data', [
   'Messages',
   'Chargers',
   'Parking',
-  function ($rootScope, $http, $q, $socket, Bookings, Cars, Locations, Users, Licenses, Card, File, Auth, User, Verification, Notifications, Messages, Chargers, Parking) {
-
+  '$injector',
+  function ($rootScope, $http, $q, $socket, Bookings, Cars, Locations, Users, Licenses, Card, File, Auth, User, Verification, Notifications, Messages, Chargers, Parking, $injector) {
+    var $modal = $injector.get('$modal'), modal;
     var isInBG = false;
     var service = {
 
@@ -270,6 +271,13 @@ module.exports = angular.module('app.services').factory('$data', [
         var reservedParking = service.reservedParking;
         if (reservedParking && reservedParking.id === action.data.id && reservedParking.reservationId !== action.data.reservationId) {
           service.reservedParking = null; 
+          $modal('simple-modal', {
+            title: 'Expired Parking',
+            message: 'Your most recent parking reservation has expired.',
+          }).then(function (_modal) {
+            modal = _modal;
+            modal.show();
+          });
         }
       }
 
