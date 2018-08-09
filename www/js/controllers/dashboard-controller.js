@@ -492,6 +492,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   }
 
   function reserveParking(id) {
+    var modal;
     ctrl.parkingReservation = true;
     return $data.resources.parking.findByLocation({locationId: id}).$promise.then(function(parking){
       return $data.resources.parking.reserve({id: parking.id, userId: $data.me.id}).$promise.then(function(space){
@@ -499,6 +500,13 @@ function DashboardController ($scope, $rootScope, $injector) {
         ctrl.selectedItem = null;
         $data.reservedParking = space;
         // Need to do an alert here describing how the reservation works
+        $modal('simple-modal', {
+          title: 'Parking Reserved',
+          message: 'You have reserved a parking space at ' + space.location.address + '. Your reservation will expire in 5 minutes.',
+        }).then(function (_modal) {
+          modal = _modal;
+          modal.show();
+        });
       })
       .catch(function(error) {
         // Need to do an alert here for the error
