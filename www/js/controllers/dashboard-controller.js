@@ -499,7 +499,6 @@ function DashboardController ($scope, $rootScope, $injector) {
         ctrl.reservedParking = space;
         ctrl.selectedItem = null;
         $data.reservedParking = space;
-        // Need to do an alert here describing how the reservation works
         $modal('simple-modal', {
           title: 'Parking Reserved',
           message: 'You have reserved a parking space at ' + space.location.address + '. Your reservation will expire in 5 minutes.',
@@ -509,19 +508,39 @@ function DashboardController ($scope, $rootScope, $injector) {
         });
       })
       .catch(function(error) {
-        // Need to do an alert here for the error
-        console.log('error: ', error);
+        $modal('simple-modal', {
+          title: 'Parking Reservation Failed',
+          message: 'Your reservation at ' + space.location.address + ' has failed. ' + error.message,
+        }).then(function (_modal) {
+          modal = _modal;
+          modal.show();
+        });
+
       });
     });
   }
 
   function cancelParking(id) {
+    var modal;
+    var address = $data.reservedParking.location.address;
+    $modal('simple-modal', {
+      title: 'Parking Reservation Cancelled',
+      message: 'You have cancelled or reservation for the parking space at ' + address + '.' ,
+    }).then(function (_modal) {
+      modal = _modal;
+      modal.show();
+    });
     return $data.resources.parking.cancel({id: id, reservationId: $data.reservedParking.reservation.id}).$promise.then(function(response){
       $data.reservedParking = null;
-      // Add an alert for cancelled parking
     })
     .catch(function(error) {
-      console.log('error cancelling: ', error);
+      $modal('simple-modal', {
+        title: 'Cancellation Failed',
+        message: 'You cancellation of your reservation for the parking space at ' + address + ' has failed.' + error.message ,
+      }).then(function (_modal) {
+        modal = _modal;
+        modal.show();
+      });
     });
   }
 }

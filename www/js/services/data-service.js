@@ -266,7 +266,7 @@ module.exports = angular.module('app.services').factory('$data', [
         service.me = resource;
         return;
       }
-
+      console.log(action);
       if (resource === 'userParking') {
         var reservedParking = service.reservedParking;
         if (reservedParking && reservedParking.id === action.data.id && reservedParking.reservationId !== action.data.reservationId) {
@@ -274,6 +274,9 @@ module.exports = angular.module('app.services').factory('$data', [
           $modal('simple-modal', {
             title: 'Expired Parking',
             message: 'Your most recent parking reservation has expired.',
+            close: function() {
+              console.log('closed');
+            }
           }).then(function (_modal) {
             modal = _modal;
             modal.show();
