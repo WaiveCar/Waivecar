@@ -492,6 +492,8 @@ function DashboardController ($scope, $rootScope, $injector) {
   }
 
   function reserveParking(id) {
+    // TODO: make sure that parking reservations are nullified after the ride ends
+    // TODO: make sure that the modal for parking reservation cancellation does not freeze the app for a few seconds
     var modal;
     ctrl.parkingReservation = true;
     return $data.resources.parking.findByLocation({locationId: id}).$promise.then(function(parking){
