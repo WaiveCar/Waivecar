@@ -10,6 +10,7 @@ let log        = Bento.Log;
 let error      = Bento.Error;
 let SCHEDULES  = changeCase.toParam(config.api.name) + ':schedules:';
 let redis      = getRedis();
+let UUID       = require('uuid');
 
 // ### Schedules
 
@@ -33,14 +34,21 @@ let Scheduler = module.exports = (job) => {
  */
 Scheduler.store = {};
 
-/**
- * Adds a new job schedule.
- * @param  {String} job
- * @param  {Object} options
- * @return {Void}
- */
 Scheduler.add = function add(job, options) {
   co(function *() {
+    //
+    // For unknown legacy reasons, there's ways of grouping
+    // similar schedules on the same timer. Because we do not
+    // have time to audit why this is, whether it's a feature
+    // or a bug or what it will break, we are adding an optional
+    // way to break out of this system without having to put
+    // the burden of finding a unique identifier on the 
+    // implementer each time.
+    //
+    if(options.unique) {
+      options.uid = options.uid || UUID.v4();
+    }
+
     let uid      = options.uid ? ':' + options.uid : '';
     let schedule = yield redis.get(SCHEDULES + job + uid);
     let timer    = null;

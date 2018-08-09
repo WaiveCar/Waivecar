@@ -9,6 +9,7 @@ let _ = require('lodash');
 Bento.Register.ResourceController('Location', 'LocationsController', function(controller) {
 
   controller.index = function *() {
+    var opts = this.query;
     var query = {
       // Legacy apps only know about one homebase.
       // We have two now with the addition of level in brooklyn
@@ -16,10 +17,10 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
       // ascending order.
       order: [[ 'id', 'asc' ]]
     };
-    if (this.query.search) {
+    if (opts.search) {
       query.where = { $or: [
-        { name : { $like : `%${ this.query.search }%` } },
-        { address : { $like : `%${ this.query.search }%` } }
+        { name : { $like : `%${ opts.search }%` } },
+        { address : { $like : `%${ opts.search }%` } }
       ]};
     }
     let locations =  (yield Location.find(query)).map((row) => {
@@ -34,7 +35,12 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
     });
 
     let chargers = yield Chargers.list();
-    return locations.concat(chargers);
+    let res = locations.concat(chargers);
+
+    if(opts.type) {
+      return res.filter((row) => row.type === opts.type);
+    }
+    return res;
   };
 
   controller.dropoff = function *() {

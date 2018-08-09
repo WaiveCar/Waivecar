@@ -860,6 +860,27 @@ module.exports = class BookingService extends Service {
 
     let deltas = yield this.getDeltas(booking);
 
+    //
+    // Car charge reward program: #1306
+    //
+    // We want to be benevolent to the users who leave the cars better off then when they started.
+    // Regardless of the charge we credit them here. This sends out notification for the reason and
+    // it will be tallied prior to the charge.
+    //
+    if(deltas.charge > 0) {
+      // we err in the user's favor by using the high estimates
+      let miles = Math.floor((deltas.charge / 100) * car.getRange('HIGH'));
+      let credit = Math.floor(miles / 5);
+      if(credit > 0) {
+        yield OrderService.quickCharge({
+          userId: booking.userId,
+          amount: -(100 * credit),
+          description: `Ending ${ car.license } with ${ miles } miles more than at the start!`
+        }, null, {overrideAdminCheck: true});
+      }
+    }
+
+  
     // Handle auto charge for time
     if (!isAdmin) {
       yield OrderService.createTimeOrder(booking, user);
@@ -927,7 +948,7 @@ module.exports = class BookingService extends Service {
       yield notify.slack({ text : `:popcorn: ${ user.link() } drove 0 miles for ${ deltas.duration } minutes. ${ booking.link() }`
       }, { channel : '#user-alerts' });
     }
-  
+
     let message = yield this.updateState('ended', _user, user);
     yield notify.slack(parkingSlack || { text : `:cherries: ${ message } ${ car.info() } ${ car.averageCharge() }% ${ booking.link() }`
     }, { channel : '#reservations' });
@@ -1094,7 +1115,11 @@ module.exports = class BookingService extends Service {
     // ---
 
     if (!isLevel) { 
-      yield booking.setNowLock({userId: _user.id, carId: car.id});
+      yield cars.lockCar(car.id, _user);
+      yield cars.lockImmobilzer(car.id, _user);
+      // This was causing problems ... I'd rather have booking ending having issues
+      // then cars being idle and unlocked
+      // yield booking.setNowLock({userId: _user.id, carId: car.id});
     }
 
     yield booking.complete();
@@ -1279,18 +1304,17 @@ module.exports = class BookingService extends Service {
     }
 
     // save user and car position into a file for research
-    let lastUserPos = userLocations.pop();
     let lastCarPos = carLocations.pop();
     if(lastCarPos) {
       let positionInfo = {
         bookingId: id,
         userId: user.id,
         carId: lastCarPos.id,
-        userLocation: lastUserPos,
+        userLocation: userLocations,
         carLocation: lastCarPos,
         time: new Date()
       };
-      fs.appendFileSync('/var/log/outgoing/user-gps.txt', JSON.stringify(positionInfo) + '\n');
+      fs.appendFile('/var/log/outgoing/user-gps.txt', JSON.stringify(positionInfo) + '\n');
     }
 
     return { isPaired: isPaired };
@@ -1432,6 +1456,7 @@ module.exports = class BookingService extends Service {
       ret.hasMoved = absDistance > 0.00005;
       //console.log(`<< ${ret.distance} ${ret.duration} ${absDistance}`);
     }
+    ret.charge = end.charge - start.charge;
 
     return ret;
   }

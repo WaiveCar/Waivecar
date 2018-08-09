@@ -293,21 +293,30 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       this.chargeHistory = JSON.stringify(history);
     },
    
-    getRange: function() {
+    getRange: function(est) {
+      let multiplier = 1.0;
+      let delta = 0.04;
+
+      if(est === 'HIGH') {
+        multiplier += delta;
+      } else if(est === 'LOW') {
+        multiplier -= delta;
+      }
+
       if(this.model === "Spark EV") { 
-        return 70;
+        return 70 * multiplier;
       } else {
-        return 135;
+        return 140 * multiplier;
       }
     },
 
-    avgMilesAvailable: function () {
-      return (this.averageCharge() * this.getRange()) / 100;
+    avgMilesAvailable: function (est) {
+      return (this.averageCharge() * this.getRange(est)) / 100;
     },
 
-    milesAvailable: function () {
+    milesAvailable: function (est) {
       // charge is 0-100
-      return (this.charge * this.getRange()) / 100;
+      return (this.charge * this.getRange(est)) / 100;
     },
 
     averageCharge : function () {

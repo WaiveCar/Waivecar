@@ -27,6 +27,7 @@ scheduler.process('booking-complete-check', function *(job) {
 scheduler.process('booking-now-lock', function *(job) {
   let carId = job.data.carId;
 
+  console.log("Trying to lock car");
   if(!carId) {
     let booking = yield Booking.findOne({ where : { id : job.data.bookingId } });
     carId = booking.carId;
@@ -34,6 +35,7 @@ scheduler.process('booking-now-lock', function *(job) {
 
   let user = yield User.findById(job.data.userId);
   let car = yield Car.findById(carId);
+
   yield cars.lockCar(car.id, user);
   yield cars.lockImmobilzer(car.id, user); 
 });
