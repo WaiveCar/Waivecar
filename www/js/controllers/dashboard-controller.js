@@ -498,7 +498,6 @@ function DashboardController ($scope, $rootScope, $injector) {
         ctrl.reservedParking = space;
         ctrl.selectedItem = null;
         $data.reservedParking = space;
-        console.log('$data: ', $data);
         // Need to do an alert here describing how the reservation works
       })
       .catch(function(error) {
@@ -511,7 +510,6 @@ function DashboardController ($scope, $rootScope, $injector) {
   function cancelParking(id) {
     return $data.resources.parking.cancel({id: id, reservationId: $data.reservedParking.reservation.id}).$promise.then(function(response){
       $data.reservedParking = null;
-      console.log('$data: ', $data)
       // Add an alert for cancelled parking
     })
     .catch(function(error) {

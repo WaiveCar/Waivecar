@@ -260,13 +260,17 @@ module.exports = angular.module('app.services').factory('$data', [
 
     $socket.on('relay', function (resource, action) {
       var model = action.data;
-      console.log('resource: ', resource);
-      console.log('action: ', action);
-      console.log('all resources: ', service);
 
       if (resource === 'users') {
         service.me = resource;
         return;
+      }
+
+      if (resource === 'userParking') {
+        var reservedParking = service.reservedParking;
+        if (reservedParking && reservedParking.id === action.data.id && reservedParking.reservationId !== action.data.reservationId) {
+          service.reservedParking = null; 
+        }
       }
 
       if (resource === 'actions' && service.onActionNotification) {
