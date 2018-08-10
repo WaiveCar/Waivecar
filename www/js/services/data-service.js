@@ -276,36 +276,10 @@ module.exports = angular.module('app.services').factory('$data', [
           $modal('simple-modal', {
             title: 'Expired Parking',
             message: 'Your most recent parking reservation has expired.',
-            close: function() {
-              console.log('closed');
-            }
           }).then(function (_modal) {
             modal = _modal;
             modal.show();
           });
-          /*
-          var resolvePromise;
-          var modal;
-          $modal('result', {
-            icon: 'waivecar-mark',
-            message: 'Your most recent parking reservation has expired.',
-            actions: [{
-              className: 'button-dark',
-              text: 'I\'m Done ',
-              handler: function () {
-                modal.remove();
-                $ionicLoading.show({
-                  template: '<div class="circle-loader"><span>Loading</span></div>'
-                });
-                resolvePromise();
-              }
-            }]
-          }).then(function (_modal) {
-            modal = _modal;
-            $ionicLoading.hide();
-            modal.show();
-          });
-          */
         }
       }
 
