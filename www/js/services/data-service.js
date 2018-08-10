@@ -42,7 +42,8 @@ module.exports = angular.module('app.services').factory('$data', [
   'Parking',
   '$injector',
   function ($rootScope, $http, $q, $socket, Bookings, Cars, Locations, Users, Licenses, Card, File, Auth, User, Verification, Notifications, Messages, Chargers, Parking, $injector) {
-    var $modal = $injector.get('$modal'), modal;
+    var $modal = $injector.get('$modal');
+    var $ionicLoading = $injector.get('$ionicLoading');
     var isInBG = false;
     var service = {
 
@@ -271,6 +272,7 @@ module.exports = angular.module('app.services').factory('$data', [
         var reservedParking = service.reservedParking;
         if (reservedParking && reservedParking.id === action.data.id && reservedParking.reservationId !== action.data.reservationId) {
           service.reservedParking = null; 
+          var modal;
           $modal('simple-modal', {
             title: 'Expired Parking',
             message: 'Your most recent parking reservation has expired.',
@@ -281,6 +283,29 @@ module.exports = angular.module('app.services').factory('$data', [
             modal = _modal;
             modal.show();
           });
+          /*
+          var resolvePromise;
+          var modal;
+          $modal('result', {
+            icon: 'waivecar-mark',
+            message: 'Your most recent parking reservation has expired.',
+            actions: [{
+              className: 'button-dark',
+              text: 'I\'m Done ',
+              handler: function () {
+                modal.remove();
+                $ionicLoading.show({
+                  template: '<div class="circle-loader"><span>Loading</span></div>'
+                });
+                resolvePromise();
+              }
+            }]
+          }).then(function (_modal) {
+            modal = _modal;
+            $ionicLoading.hide();
+            modal.show();
+          });
+          */
         }
       }
 

@@ -552,16 +552,28 @@ function DashboardController ($scope, $rootScope, $injector) {
   function startParkingTimer(createdAt) {
     var expiration = moment(createdAt);
     expiration.add(5, 'minutes');
-    //console.log('expiration: ', expiration.format('hh:mm:ss'))
     var duration = moment.duration(expiration.diff(moment()))
-    //console.log('druation: ', duration);
     ctrl.parkingReservationTime = moment(duration.asMilliseconds()).format('m:ss');
-    setInterval(function(){
+    var interval = setInterval(function(){
+      if ($data.reservedParking === null) {
+        clearInterval(interval);
+      }
       duration.subtract(1, 'second');
       var newTime = moment(duration.asMilliseconds()).format('m:ss');
+      if (newTime === '0:00') {
+        clearInterval(interval);
+        $data.reservedParking = null;
+        var modal;
+        $modal('simple-modal', {
+          title: 'Expired Parking',
+          message: 'Your most recent parking reservation has expired.',
+        }).then(function (_modal) {
+          modal = _modal;
+          modal.show();
+        });
+      }
       ctrl.parkingReservationTime = newTime;
     }, 1000);
-    //console.log('reserved at: ', ctrl.parkingReservationTime);
   }
 }
 

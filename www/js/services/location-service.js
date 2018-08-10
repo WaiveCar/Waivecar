@@ -13,7 +13,7 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
   };
 
   var $perm = $injector.get('PermissionService');
-  var $modal = $injector.get('$modal'), modal;
+  var $modal = $injector.get('$modal');
   var activeLocationWatchers = [];
 
   var diagnostic = $window.cordova ? $window.cordova.plugins.diagnostic || false : false;
@@ -27,6 +27,7 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
   };
 
   function askUserToEnableLocation(cb) {
+    var modal;
     if(!modal || !modal.isShown()) {
       $modal('simple-modal', {
         title: 'Please Enable Location Settings',
