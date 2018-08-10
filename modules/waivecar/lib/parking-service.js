@@ -119,7 +119,7 @@ module.exports = {
     );
   },
 
-  *emitChanges(space, location, reservation, user, parkingDetails) {
+  *emitChanges(space, location, reservation, user, parkingDetails, fromApi) {
     let json = space.toJSON();
     json.location = location.toJSON();
     if (space.reservationId) {
@@ -138,10 +138,12 @@ module.exports = {
         : yield ParkingDetails.findById(space.parkingDetailId);
       json.parkingDetails = json.parkingDetails.toJSON();
     }
-    relay.emit('userParking', {
-      type: 'update',
-      data: json,
-    });
+    if (!fromApi) {
+      relay.emit('userParking', {
+        type: 'update',
+        data: json,
+      });
+    }
     relay.emit('locations', {
       type: 'update',
       data: json.location,
@@ -266,7 +268,7 @@ module.exports = {
       status: 'unavailable',
     });
 
-    let timerObj = {value: 30, type: 'seconds'};
+    let timerObj = {value: 5, type: 'minutes'};
     queue.scheduler.add('parking-auto-cancel', {
       uid: `parking-reservation-${reservation.id}`,
       timer: timerObj,
@@ -292,7 +294,7 @@ module.exports = {
     return space;
   },
 
-  *cancel(parkingId, currentReservationId) {
+  *cancel(parkingId, currentReservationId, fromApi) {
     let space = yield UserParking.findById(parkingId);
     let reservation = yield ParkingReservation.findById(currentReservationId);
     yield reservation.update({
@@ -317,7 +319,7 @@ module.exports = {
           status: 'available',
         });
       }
-      yield this.emitChanges(space, location, reservation);
+      yield this.emitChanges(space, location, reservation, null, null, fromApi);
     } else {
       throw error.parse(
         {
@@ -329,7 +331,10 @@ module.exports = {
         400,
       );
     }
-    queue.scheduler.cancel('parking-auto-cancel', `parking-reservation-${currentReservationId}`);
+    queue.scheduler.cancel(
+      'parking-auto-cancel',
+      `parking-reservation-${currentReservationId}`,
+    );
     return space;
   },
 };
