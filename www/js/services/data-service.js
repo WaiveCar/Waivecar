@@ -279,12 +279,17 @@ module.exports = angular.module('app.services').factory('$data', [
             title: 'Expired Parking',
             message: 'Your most recent parking reservation has expired.',
           }).then(function (_modal) {
+            setTimeout(function(){
+              if(modal) {
+                console.log("automatic removal");
+                modal.remove();
+              }
+            }, 7 * 1000);
             modal = _modal;
             modal.show();
           });
         }
       }
-
       if (resource === 'actions' && service.onActionNotification) {
         service.onActionNotification(model);
       }
