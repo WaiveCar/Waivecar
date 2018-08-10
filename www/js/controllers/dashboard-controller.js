@@ -53,6 +53,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   this.lastTimeOfParityCheck = null;
   this.lastUserLocations = [];
   this.parityCheckTimeout = null;
+  this.parkingReservationTime = null;
 
   this.getDirections = function(option) {
     var toGet = option ? option : ctrl.selectedItem;
@@ -69,6 +70,16 @@ function DashboardController ($scope, $rootScope, $injector) {
     rideServiceReady();
     $data.resources.parking.fetchReservation({userId: $data.me.id}).$promise.then(function(parking){
       $data.reservedParking = parking;
+      ctrl.parkingReservationTime = timeRemaining(parking.reservation.createdAt);
+      /*
+      var expiration = moment(parking.reservation.createdAt);
+      expiration.add(5, 'minutes');
+      //console.log('expiration: ', expiration.format('hh:mm:ss'))
+      var duration = moment.duration(expiration.diff(moment()))
+      //console.log('druation: ', duration);
+      ctrl.parkingReservationTime = moment(duration.asMilliseconds()).format('m:ss');
+      //console.log('reserved at: ', ctrl.parkingReservationTime);
+      */
     });
 
     ctrl.locations = $data.instances.locations;
@@ -534,6 +545,7 @@ function DashboardController ($scope, $rootScope, $injector) {
     });
     return $data.resources.parking.cancel({id: id, reservationId: $data.reservedParking.reservation.id}).$promise.then(function(response){
       $data.reservedParking = null;
+      ctrl.parkingReservationTime =null;
     })
     .catch(function(error) {
       $modal('simple-modal', {
@@ -544,6 +556,16 @@ function DashboardController ($scope, $rootScope, $injector) {
         modal.show();
       });
     });
+  }
+
+  function timeRemaining(createdAt) {
+    var expiration = moment(createdAt);
+    expiration.add(5, 'minutes');
+    //console.log('expiration: ', expiration.format('hh:mm:ss'))
+    var duration = moment.duration(expiration.diff(moment()))
+    //console.log('druation: ', duration);
+    return moment(duration.asMilliseconds()).format('m:ss');
+    //console.log('reserved at: ', ctrl.parkingReservationTime);
   }
 }
 

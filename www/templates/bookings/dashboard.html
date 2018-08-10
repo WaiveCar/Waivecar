@@ -28,6 +28,11 @@
           </button>
         </div>
         <div class="info-header-item">
+          <div>
+            Time Remaining: <br>{{ctrl.parkingReservationTime}}
+          </div>
+        </div>
+        <div class="info-header-item">
           <button type="button" class="button button-small" ng-click="ctrl.cancelParking(ctrl.$data.reservedParking.id)"/>
             Cancel Reservation
           </button>
