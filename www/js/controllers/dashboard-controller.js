@@ -70,16 +70,7 @@ function DashboardController ($scope, $rootScope, $injector) {
     rideServiceReady();
     $data.resources.parking.fetchReservation({userId: $data.me.id}).$promise.then(function(parking){
       $data.reservedParking = parking;
-      ctrl.parkingReservationTime = timeRemaining(parking.reservation.createdAt);
-      /*
-      var expiration = moment(parking.reservation.createdAt);
-      expiration.add(5, 'minutes');
-      //console.log('expiration: ', expiration.format('hh:mm:ss'))
-      var duration = moment.duration(expiration.diff(moment()))
-      //console.log('druation: ', duration);
-      ctrl.parkingReservationTime = moment(duration.asMilliseconds()).format('m:ss');
-      //console.log('reserved at: ', ctrl.parkingReservationTime);
-      */
+      ctrl.parkingReservationTime = startParkingTimer(parking.reservation.createdAt);
     });
 
     ctrl.locations = $data.instances.locations;
@@ -509,7 +500,7 @@ function DashboardController ($scope, $rootScope, $injector) {
     ctrl.parkingReservation = true;
     return $data.resources.parking.findByLocation({locationId: id}).$promise.then(function(parking){
       return $data.resources.parking.reserve({id: parking.id, userId: $data.me.id}).$promise.then(function(space){
-        ctrl.reservedParking = space;
+        startParkingTimer(space.reservation.createdAt);
         ctrl.selectedItem = null;
         $data.reservedParking = space;
         $modal('simple-modal', {
@@ -558,13 +549,18 @@ function DashboardController ($scope, $rootScope, $injector) {
     });
   }
 
-  function timeRemaining(createdAt) {
+  function startParkingTimer(createdAt) {
     var expiration = moment(createdAt);
     expiration.add(5, 'minutes');
     //console.log('expiration: ', expiration.format('hh:mm:ss'))
     var duration = moment.duration(expiration.diff(moment()))
     //console.log('druation: ', duration);
-    return moment(duration.asMilliseconds()).format('m:ss');
+    ctrl.parkingReservationTime = moment(duration.asMilliseconds()).format('m:ss');
+    setInterval(function(){
+      duration.subtract(1, 'second');
+      var newTime = moment(duration.asMilliseconds()).format('m:ss');
+      ctrl.parkingReservationTime = newTime;
+    }, 1000);
     //console.log('reserved at: ', ctrl.parkingReservationTime);
   }
 }
