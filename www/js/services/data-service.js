@@ -281,10 +281,9 @@ module.exports = angular.module('app.services').factory('$data', [
           }).then(function (_modal) {
             setTimeout(function(){
               if(modal) {
-                console.log("automatic removal");
                 modal.remove();
               }
-            }, 7 * 1000);
+            }, 5 * 1000);
             modal = _modal;
             modal.show();
           });
