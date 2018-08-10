@@ -495,7 +495,6 @@ function DashboardController ($scope, $rootScope, $injector) {
 
   function reserveParking(id) {
     // TODO: make sure that parking reservations are nullified after the ride ends
-    // TODO: make sure that the modal for parking reservation cancellation does not freeze the app for a few seconds
     var modal;
     ctrl.parkingReservation = true;
     return $data.resources.parking.findByLocation({locationId: id}).$promise.then(function(parking){
@@ -550,6 +549,10 @@ function DashboardController ($scope, $rootScope, $injector) {
   }
 
   function startParkingTimer(createdAt) {
+    // This starts a timer for the parking reservation that will cause the reservation to 
+    // expire on the client side if the expiration is not emitted on time from the server.
+    // Sometimes the expiration of the parking reservation is emitted after the amount of
+    // time that it is supposed to take
     var expiration = moment(createdAt);
     expiration.add(5, 'minutes');
     var duration = moment.duration(expiration.diff(moment()))
@@ -562,15 +565,19 @@ function DashboardController ($scope, $rootScope, $injector) {
       var newTime = moment(duration.asMilliseconds()).format('m:ss');
       if (newTime === '0:00') {
         clearInterval(interval);
-        $data.reservedParking = null;
-        var modal;
-        $modal('simple-modal', {
-          title: 'Expired Parking',
-          message: 'Your most recent parking reservation has expired.',
-        }).then(function (_modal) {
-          modal = _modal;
-          modal.show();
-        });
+        // This conditional is here so that two modals don't pop up when the reservation expires. 
+        // The other modal that could pop up for the same event comes from the data service
+        if ($data.reservedParking) { 
+          var modal;
+          $modal('simple-modal', {
+            title: 'Expired Parking',
+            message: 'Your most recent parking reservation has expired.',
+          }).then(function (_modal) {
+            modal = _modal;
+            modal.show();
+          });
+          $data.reservedParking = null;
+        }
       }
       ctrl.parkingReservationTime = newTime;
     }, 1000);

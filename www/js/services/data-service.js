@@ -267,8 +267,10 @@ module.exports = angular.module('app.services').factory('$data', [
         service.me = resource;
         return;
       }
-      console.log(action);
+      console.log('action: ', action);
       if (resource === 'userParking') {
+        // This section occurs when a user loses their reservation for a parking spot. This is also 
+        // checked in the dashboard-controller to make sure that the parking space expires correctly 
         var reservedParking = service.reservedParking;
         if (reservedParking && reservedParking.id === action.data.id && reservedParking.reservationId !== action.data.reservationId) {
           service.reservedParking = null; 
