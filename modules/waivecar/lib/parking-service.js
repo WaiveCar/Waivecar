@@ -293,7 +293,7 @@ module.exports = {
   },
 
   *occupy(parkingId, carId) {
-    // Needs to cancel queue auto-cancel. If parking is aborted, space needs to be made available
+    // If parking is aborted, space needs to be made available
     let space = yield UserParking.findById(parkingId);
     queue.scheduler.cancel(
       'parking-auto-cancel',
