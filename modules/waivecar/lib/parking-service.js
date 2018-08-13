@@ -188,11 +188,7 @@ module.exports = {
         400,
       );
     }
-    /*
-    if (space.waivecarOccupied) {
-      //what needs to be done in this situation is tbd
-    }
-    */
+
     let updateObj = {};
     updateObj[type] = !space[type];
     yield space.update(updateObj);
@@ -209,6 +205,8 @@ module.exports = {
   },
 
   *updateParking(parkingId, updateObj) {
+    // This function is not currently used, but can be used to update any properties
+    // on a parking entry and the corresponding location entry
     try {
       let space = yield UserParking.findById(parkingId);
       yield space.update(updateObj);
@@ -291,6 +289,25 @@ module.exports = {
     );
     space.reservation = reservation;
     space.location = location;
+    return space;
+  },
+
+  *occupy(parkingId, carId) {
+    // Needs to cancel queue auto-cancel. If parking is aborted, space needs to be made available
+    let space = yield UserParking.findById(parkingId);
+    queue.scheduler.cancel(
+      'parking-auto-cancel',
+      `parking-reservation-${space.reservationId}`,
+    );
+    yield space.update({
+      reservationId: null,
+      waivecarOccupied: true,
+      carId,
+    });
+    let location = yield Location.findById(space.locationId);
+    yield this.emitChanges(space, location);
+    space = space.toJSON();
+    space.location = location.toJSON();
     return space;
   },
 

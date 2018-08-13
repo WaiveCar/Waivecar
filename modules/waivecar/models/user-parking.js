@@ -35,6 +35,14 @@ Bento.Register.Model('UserParking', 'sequelize', function register(
       type: Sequelize.BOOLEAN,
       defaultValue: true,
     },
+    carId: {
+      type: Sequelize.INTEGER,
+      defaultValue: null,
+      references: {
+        model: 'cars',
+        key: 'id',
+      },
+    },
     waivecarOccupied: {
       type: Sequelize.BOOLEAN,
       defaultValue: false,
