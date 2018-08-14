@@ -8,6 +8,7 @@ let geocode      = require('./geocoding-service');
 let notify       = require('./notification-service');
 let UserService  = require('../../user/lib/user-service.js');
 let CarService   = require('./car-service');
+let ParkingService = require('./parking-service');
 let Email        = Bento.provider('email');
 let queue        = Bento.provider('queue');
 let queryParser  = Bento.provider('sequelize/helpers').query;
@@ -620,9 +621,10 @@ module.exports = class BookingService extends Service {
       yield cars.unlockImmobilzer(car.id, _user);
       //yield cars.openDoor(car.id, _user);
 
+      yield ParkingService.vacate(car.id);
+      /*
       let userParking = yield UserParking.findOne({ where: { carId: car.id } });
       if (userParking) {
-        console.log('userParking: ', userParking);
         yield userParking.update({
           carId: null,
           waivecarOccupied: false,
@@ -632,6 +634,7 @@ module.exports = class BookingService extends Service {
           status: 'available',
         });
       }
+      */
 
       // ### Notify
 

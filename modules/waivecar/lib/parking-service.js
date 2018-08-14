@@ -316,6 +316,21 @@ module.exports = {
     return space;
   },
 
+  *vacate(carId) {
+    let userParking = yield UserParking.findOne({ where: { carId } });
+    if (userParking) {
+      yield userParking.update({
+        carId: null,
+        waivecarOccupied: false,
+      });
+      let location = yield Location.findById(userParking.locationId);
+      yield location.update({
+        status: 'available',
+      });
+      yield this.emitChanges(userParking, location);
+    }
+  },
+
   *cancel(parkingId, currentReservationId, fromApi) {
     let space = yield UserParking.findById(parkingId);
     let reservation = yield ParkingReservation.findById(currentReservationId);
