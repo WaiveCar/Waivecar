@@ -36,7 +36,7 @@ Bento.Register.Model('UserParking', 'sequelize', function register(
       defaultValue: true,
     },
     carId: {
-      type: Sequelize.INTEGER,
+      type: Sequelize.STRING,
       defaultValue: null,
       references: {
         model: 'cars',

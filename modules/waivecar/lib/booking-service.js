@@ -41,6 +41,7 @@ let BookingPayment = Bento.model('BookingPayment');
 let ParkingDetails = Bento.model('ParkingDetails');
 let BookingLocation= Bento.model('BookingLocation');
 let Location       = Bento.model('Location');
+let UserParking    = Bento.model('UserParking');
 
 module.exports = class BookingService extends Service {
 
@@ -560,7 +561,7 @@ module.exports = class BookingService extends Service {
    */
 
   /**
-   * Unlocks the car and lets the driver prepare before starting the ride.
+   * Unlocks the car and lets the driver prepare before starting the ride. It also removes the car from parking spaces if it is in one
    * @param  {Number} id    The booking ID.
    * @param  {Object} _user
    * @return {Object}
@@ -618,6 +619,19 @@ module.exports = class BookingService extends Service {
       yield cars.unlockCar(car.id, _user);
       yield cars.unlockImmobilzer(car.id, _user);
       //yield cars.openDoor(car.id, _user);
+
+      let userParking = yield UserParking.findOne({ where: { carId: car.id } });
+      if (userParking) {
+        console.log('userParking: ', userParking);
+        yield userParking.update({
+          carId: null,
+          waivecarOccupied: false,
+        });
+        let location = yield Location.findById(userParking.locationId);
+        yield location.update({
+          status: 'available',
+        });
+      }
 
       // ### Notify
 

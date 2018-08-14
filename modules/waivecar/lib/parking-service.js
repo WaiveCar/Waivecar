@@ -292,7 +292,7 @@ module.exports = {
     return space;
   },
 
-  *occupy(parkingId, carId) {
+  *occupy(parkingId, carId, reservationId) {
     // If parking is aborted, space needs to be made available
     let space = yield UserParking.findById(parkingId);
     queue.scheduler.cancel(
@@ -305,9 +305,14 @@ module.exports = {
       carId,
     });
     let location = yield Location.findById(space.locationId);
-    yield this.emitChanges(space, location);
+    let reservation = yield ParkingReservation.findById(reservationId);
+    yield reservation.update({
+      expired: true,
+    });
+    yield this.emitChanges(space, location, reservation);
     space = space.toJSON();
     space.location = location.toJSON();
+    space.reservation = reservation.toJSON();
     return space;
   },
 
