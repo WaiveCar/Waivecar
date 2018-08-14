@@ -397,6 +397,14 @@ function DashboardController ($scope, $rootScope, $injector) {
       if($ride.isCarOn(carId, obj)) {
         return showIgnitionOnModal();
       }
+      console.log('reserved: ', $data.reservedParking);
+      if ($data.reservedParking !== null) {
+        console.log('user has a parking reservation');
+        // confirm if the user is or is not at reservation 
+        confirmParking(function(){
+          return $state.go('end-ride', { id: bookingId });
+        }); 
+      }
 
       return $data.resources.bookings.canend({id: bookingId}).$promise.then(function(endLocation) {
         if (endLocation.type === 'hub' || endLocation.type === 'homebase') {
@@ -496,7 +504,6 @@ function DashboardController ($scope, $rootScope, $injector) {
   function reserveParking(id) {
     // TODO: make sure that parking reservations are nullified after the ride ends
     var modal;
-    ctrl.parkingReservation = true;
     return $data.resources.parking.findByLocation({locationId: id}).$promise.then(function(parking){
       return $data.resources.parking.reserve({id: parking.id, userId: $data.me.id}).$promise.then(function(space){
         startParkingTimer(space.reservation.createdAt);
@@ -535,7 +542,7 @@ function DashboardController ($scope, $rootScope, $injector) {
     });
     return $data.resources.parking.cancel({id: id, reservationId: $data.reservedParking.reservation.id}).$promise.then(function(response){
       $data.reservedParking = null;
-      ctrl.parkingReservationTime =null;
+      ctrl.parkingReservationTime = null;
     })
     .catch(function(error) {
       $modal('simple-modal', {
@@ -581,6 +588,39 @@ function DashboardController ($scope, $rootScope, $injector) {
       }
       ctrl.parkingReservationTime = newTime;
     }, 1000);
+  }
+
+  function confirmParking(cb) {
+    var modal;
+    $modal('zone', {
+      title: 'Is UserParking',
+      zoneName: 'Parking Confirmation',
+      description: 'Are you ending your ride in the parking that you reserved?',
+      actions: [{
+        text: 'Yes my car is in the space I reserved',
+        className: 'button-dark',
+        handler: function () {
+          modal.remove();
+          cb();
+        }
+      }, {
+        text: 'No, I am ending it elsewhere',
+        className: 'button-balanced',
+        handler: function () {
+          modal.remove();
+          ctrl.cancelParking($data.reservedParking.id);
+        }
+      }, {
+        text: 'I would like to cancel ending now',
+        className: 'button-balanced',
+        handler: function() {
+          modal.remove();  
+        }
+      }]
+    }).then(function (_modal) {
+      modal = _modal;
+      modal.show();
+    });
   }
 }
 
