@@ -397,16 +397,17 @@ function DashboardController ($scope, $rootScope, $injector) {
       if($ride.isCarOn(carId, obj)) {
         return showIgnitionOnModal();
       }
-      console.log('reserved: ', $data.reservedParking);
-      if ($data.reservedParking !== null) {
-        console.log('user has a parking reservation');
-        // confirm if the user is or is not at reservation 
-        confirmParking(function(){
-          return $state.go('end-ride', { id: bookingId });
-        }); 
-      }
 
       return $data.resources.bookings.canend({id: bookingId}).$promise.then(function(endLocation) {
+        if ($data.reservedParking !== null) {
+          console.log('user has a parking reservation');
+          // confirm if the user is or is not at reservation 
+          return confirmParking(carId, bookingId, attempt, function(){
+            return $ride.processEndRide().then(function(){
+              return $state.go('end-ride', { id: bookingId });
+            });
+          }); 
+        }
         if (endLocation.type === 'hub' || endLocation.type === 'homebase') {
           return $ride.processEndRide().then(function() {
             return $state.go('end-ride', { id: bookingId });
@@ -530,19 +531,24 @@ function DashboardController ($scope, $rootScope, $injector) {
     });
   }
 
-  function cancelParking(id) {
+  function cancelParking(id, inDashboard, cb) {
     var modal;
     var address = $data.reservedParking.location.address;
-    $modal('simple-modal', {
-      title: 'Parking Reservation Cancelled',
-      message: 'You have cancelled or reservation for the parking space at ' + address + '.' ,
-    }).then(function (_modal) {
-      modal = _modal;
-      modal.show();
-    });
+    if (!inDashboard) {
+      $modal('simple-modal', {
+        title: 'Parking Reservation Cancelled',
+        message: 'You have cancelled or reservation for the parking space at ' + address + '.' ,
+      }).then(function (_modal) {
+        modal = _modal;
+        modal.show();
+      });
+    }
     return $data.resources.parking.cancel({id: id, reservationId: $data.reservedParking.reservation.id}).$promise.then(function(response){
       $data.reservedParking = null;
       ctrl.parkingReservationTime = null;
+      if (cb) {
+        cb();
+      }
     })
     .catch(function(error) {
       $modal('simple-modal', {
@@ -590,7 +596,7 @@ function DashboardController ($scope, $rootScope, $injector) {
     }, 1000);
   }
 
-  function confirmParking(cb) {
+  function confirmParking(carId, bookingId, attempt, cb) {
     var modal;
     $modal('zone', {
       title: 'Is UserParking',
@@ -605,10 +611,12 @@ function DashboardController ($scope, $rootScope, $injector) {
         }
       }, {
         text: 'No, I am ending it elsewhere',
-        className: 'button-balanced',
+        className: 'button-dark',
         handler: function () {
           modal.remove();
-          ctrl.cancelParking($data.reservedParking.id);
+          ctrl.cancelParking($data.reservedParking.id, true, function() {
+            endRide(carId, bookingId, attempt); 
+          });
         }
       }, {
         text: 'I would like to cancel ending now',
