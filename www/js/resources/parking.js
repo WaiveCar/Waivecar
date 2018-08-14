@@ -29,7 +29,7 @@ module.exports = angular.module('app').factory('Parking', [
         }
       },
       occupy: {
-        method: 'POST',
+        method: 'PUT',
         url: $utils.getCustomRoute('parking/:id/occupy'),
         params: {
           id: '@id'

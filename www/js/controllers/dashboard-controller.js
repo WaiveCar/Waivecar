@@ -400,11 +400,11 @@ function DashboardController ($scope, $rootScope, $injector) {
 
       return $data.resources.bookings.canend({id: bookingId}).$promise.then(function(endLocation) {
         if ($data.reservedParking !== null) {
-          console.log('user has a parking reservation');
-          // confirm if the user is or is not at reservation 
           return confirmParking(carId, bookingId, attempt, function(){
             return $ride.processEndRide().then(function(){
-              return $state.go('end-ride', { id: bookingId });
+              return $data.resources.parking.occupy({id: $data.reservedParking.id, carId: carId, reservationId: $data.reservedParking.reservation.id}).$promise.then(function(response){
+                return $state.go('end-ride', { id: bookingId });  
+              });
             });
           }); 
         }
@@ -614,7 +614,7 @@ function DashboardController ($scope, $rootScope, $injector) {
         className: 'button-dark',
         handler: function () {
           modal.remove();
-          ctrl.cancelParking($data.reservedParking.id, true, function() {
+          cancelParking($data.reservedParking.id, true, function() {
             endRide(carId, bookingId, attempt); 
           });
         }
