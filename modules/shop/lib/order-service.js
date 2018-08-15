@@ -257,7 +257,7 @@ module.exports = class OrderService extends Service {
   }
 
   static *getCarNow(booking, user, amount) {
-    let card = yield Card.findOne({ where : { userId : user.id } });
+    let card = yield user.getCard();
     let car = yield Car.findOne({ where: { id: booking.carId } });
 
     let order = new Order({
@@ -294,7 +294,7 @@ module.exports = class OrderService extends Service {
     amount = amount || 100;
     time = time || 10;
 
-    let card = yield Card.findOne({ where : { userId : user.id } });
+    let card = yield user.getCard();
 
     let order = new Order({
       createdBy   : user.id,
@@ -363,7 +363,7 @@ module.exports = class OrderService extends Service {
       billableGroups = Math.ceil(minutesOver / 10);
       amount = Math.round((billableGroups / 6 * 5.99) * 100);
 
-      let card = yield Card.findOne({ where : { userId : user.id } });
+      let card = yield user.getCard();
       let cart = yield CartService.createTimeCart(minutesOver, amount, user);
       let order = new Order({
         createdBy : user.id,
@@ -532,7 +532,7 @@ module.exports = class OrderService extends Service {
   }
 
   static *authorize(payload, _user) {
-    let card = yield Card.findOne({ where : { userId : _user.id } });
+    let card = yield _user.getCard();
     let amount = _user.credit > 0 ? 100 : 2000;
     // This data leak is so that if we fail to charge the card, we can
     // find the card and amount we tried to charge.

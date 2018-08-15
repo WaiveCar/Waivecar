@@ -1,19 +1,8 @@
 'use strict';
 
 Bento.Register.Model('Shop/Card', 'sequelize', (model, Sequelize) => {
-
-  /**
-   * The identity of the table created in your database.
-   * @property table
-   * @type     String
-   */
   model.table = 'shop_payment_cards';
 
-  /**
-   * The sequelize schema definition of your model.
-   * @property schema
-   * @type     Object
-   */
   model.schema = {
 
     // ### Card ID
@@ -56,8 +45,15 @@ Bento.Register.Model('Shop/Card', 'sequelize', (model, Sequelize) => {
     expYear : {
       type      : Sequelize.INTEGER,
       allowNull : false
-    }
+    },
 
+    type : {
+      type : Sequelize.STRING(8)
+    },
+
+    name : {
+      type : Sequelize.STRING(96)
+    }
   };
 
   model.attributes = [

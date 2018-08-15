@@ -126,11 +126,7 @@ module.exports = class Service {
       }
     });
 
-    let card = yield Card.findOne({
-      where : {
-        userId : user.id
-      }
-    });
+    let card = yield user.getCard();
 
     // ### Check account status
     if (user.status === 'suspended') {
@@ -195,6 +191,13 @@ module.exports = class Service {
 
     if(license && !license.fileId) {
       missing.push('license photo');
+    }
+
+    if(card && card.type !== 'credit') {
+      throw error.parse({
+        code    : `CARD_INVALID`,
+        message : `Please make sure you're using a non-prepaid credit card.`
+      }, 400);
     }
 
     if (missing.length) {

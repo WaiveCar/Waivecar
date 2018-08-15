@@ -30,10 +30,16 @@ module.exports = class StripeCards {
     let result = yield new Promise((resolve, reject) => {
       this.stripe.customers.createCard(user.stripeId, { card : changeCase.objectKeys('toSnake', card) }, (err, res) => {
         if (err) return reject(err);
-        if (res.funding === 'prepaid') return reject(error.parse({
-          code    : 'PREPAID_CARD',
-          message : 'Prepaid cards are not allowed.'
-        }, 400));
+
+        // No debit cars (#1305) and no pre-paid (no ticket found actually)
+        // There's a *fourth* type of card, 'unknown' ... for our sakes
+        // we're just going to let pass thru to avoid issues.
+        if (res.funding === 'debit' || res.funding === 'prepaid') {
+          return reject(error.parse({
+            code    : 'DEBIT_CARD',
+            message : 'Please use a non-prepaid credit card.'
+          }, 400));
+        }
         resolve(res);
       });
     });
@@ -43,6 +49,9 @@ module.exports = class StripeCards {
 
     card        = new Card(result);
     card.userId = user.id;
+    card.type   = result.funding;
+    card.name   = result.name;
+
     yield card.save();
 
     return card;
