@@ -92,10 +92,25 @@ export default class UserParking extends Component {
     });
   };
 
+  removeCar = carId => {
+    api.put(`/parking/vacate/${carId}`, {}, (err, space) => {
+      if (err) {
+        return snackbar.notify({
+          type: 'danger',
+          message: `Error: ${err.message}`,
+        });
+      }
+      return snackbar.notify({
+        type: 'success',
+        message: `Car removed from space #${space.id}`,
+      });
+    });
+  };
+
   render = () => {
     let {spaces} = this.state;
     let {admin} = this.props;
-    let {getSpaces, addSpace, toggleSpace, deleteSpace, updateSpace} = this;
+    let {getSpaces, addSpace, toggleSpace, deleteSpace, updateSpace, removeCar} = this;
     return (
       <div className="box parking-box">
         <h3>
@@ -119,6 +134,7 @@ export default class UserParking extends Component {
                 toggleSpace={toggleSpace}
                 deleteSpace={deleteSpace}
                 updateSpace={updateSpace}
+                removeCar={removeCar}
                 space={space}
                 admin={admin}
                 key={i}

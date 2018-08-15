@@ -10,8 +10,14 @@ export default class Space extends Component {
   }
 
   render = () => {
-    let {space, toggleSpace, deleteSpace, updateSpace, admin} = this.props;
-    console.log(space);
+    let {
+      space,
+      toggleSpace,
+      deleteSpace,
+      updateSpace,
+      removeCar,
+      admin,
+    } = this.props;
     let {notes} = this.state;
     return (
       <div className="parking-space">
@@ -25,9 +31,7 @@ export default class Space extends Component {
               style={{fontSize: '1rem'}}
               checked={!space.ownerOccupied}
               label={
-                space.ownerOccupied
-                  ? 'Space occupied'
-                  : 'Space reservable'
+                space.ownerOccupied ? 'Space occupied' : 'Space reservable'
               }
               onChange={() => toggleSpace(space.id, 'ownerOccupied')}
             />
@@ -50,13 +54,17 @@ export default class Space extends Component {
           <div className="parking-reservation-info">
             {admin ? (
               <span>
-                <a href={`/cars/${space.car.id}`}>{`${
-                  space.car.license
-                }`}</a>
+                <a href={`/cars/${space.car.id}`}>{`${space.car.license}`}</a>
+                <button
+                  className="btn btn-danger btn-wave"
+                  onClick={() => removeCar(space.car.id)}>
+                  Remove Car
+                </button>
               </span>
             ) : (
               <span>{space.car.license}</span>
-            )} currently parked here.
+            )}{' '}
+            currently parked here.
           </div>
         )}
         <input
