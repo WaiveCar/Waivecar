@@ -128,6 +128,7 @@ module.exports = class Service {
     });
 
     let card = yield user.getCard();
+    console.log(user, card);
 
     // ### Check account status
     if (user.status === 'suspended') {
