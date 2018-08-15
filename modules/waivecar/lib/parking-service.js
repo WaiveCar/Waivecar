@@ -52,6 +52,10 @@ module.exports = {
           model: 'ParkingDetails',
           as: 'parkingDetails',
         },
+        {
+          model: 'Car',
+          as: 'car',
+        },
       ],
     });
     spaces = yield spaces.map(function*(space) {
@@ -317,7 +321,7 @@ module.exports = {
   },
 
   *vacate(carId) {
-    let userParking = yield UserParking.findOne({ where: { carId } });
+    let userParking = yield UserParking.findOne({where: {carId}});
     if (userParking) {
       yield userParking.update({
         carId: null,
