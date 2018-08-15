@@ -15,12 +15,13 @@ To us, a good driving record means one without any:
  * Moving violations
  * Driving with a suspended license
  * Any similar negligent or reckless acts
+ * Accidents
 
 ### Does it cost any money to sign up?
 Nope! We promise there REALLY are no catches. We're that magical.
 
 ### Why do I need a credit/debit card to sign up if it's free?
-We charge a temporary $1 hold on your card when you book a car that will be refunded as soon as your ride is over just to make sure there are funds in case you go over the 2 free hours!
+We charge a temporary $20 hold on your card when you book a car that is immediately refunded just to make sure there are funds in case you go over the 2 free hours!
 
 ### How old do I need to be to drive WaiveCar?
 You need to be 21 to drive with WaiveCar.
@@ -32,15 +33,18 @@ No. Unfortunately we require a smart phone so that a phone number can be attache
 Yep! Insurance with a $1,000 deductible is included in the signup! The information is in the glove box!
 
 ### Can I use an out of state drivers license to drive with WaiveCar?
+
 Yep! However, if you have a Pennsylvania license, please email us at support@waive.car as Pennsylvania requires a separate background check form to be filled out.
 
 ### Can I use an out of country drivers license?
+
 Yep! However you will need to contact your DMV and obtain a driving record to email to us at support@waive.car
 
 ### Can I use a temporary drivers license?
 Unfortunately you will need a permanent license to drive with WaiveCar.
 
 ### How long does the signup take?
+
 It's very quick! Should only take about 10 minutes for the signup and the background check to complete. If the background check seems to be taking longer, please give us a call at 855-WAIVE55
 
 ## Booking Cars
@@ -52,6 +56,7 @@ Our cars are available 24/7 and the customer service line is open from 9am-midni
 Log onto the app to see if any cars are available. Tap on a car and hit "Book it"! You then have 15 minutes to get to the car before the reservation times out.
 
 ### Where can I get a WaiveCar?
+
 WaiveCars are an exclusive amenity of level residents in Brooklyn and are available at 34 N 7th Street. We also have a large fleet available on the West Side of Los Angeles so come on by if you're ever in sunny LA.
 
 ### How long do I have to get to a WaiveCar?
@@ -100,6 +105,7 @@ Fast chargers typically cost around $10 and take about 15 minutes. Level 2 charg
 This one's a big N.O. The ONLY person allowed to drive a WaiveCar is the person on the account who has booked the car. Big consequences if we find out otherwise!
 
 ### What happens if there's a parking ticket?
+
 If you get a ticket, you have 10 days to pay it. If you don't pay it within that time, we will charge your account for the amount due. If you see a ticket from a previous user, simply put it in the glove box.
 
 ## Ending Your Ride
