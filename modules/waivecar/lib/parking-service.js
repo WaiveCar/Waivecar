@@ -316,7 +316,7 @@ module.exports = {
     yield reservation.update({
       expired: true,
     });
-    yield this.emitChanges(space, location, reservation);
+    yield this.emitChanges(space, location, reservation, null, null, true);
     space = space.toJSON();
     space.location = location.toJSON();
     space.reservation = reservation.toJSON();
