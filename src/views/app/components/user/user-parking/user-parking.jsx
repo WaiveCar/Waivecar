@@ -100,6 +100,7 @@ export default class UserParking extends Component {
           message: `Error: ${err.message}`,
         });
       }
+      this.getSpaces();
       return snackbar.notify({
         type: 'success',
         message: `Car removed from space #${space.id}`,
