@@ -56,11 +56,13 @@ export default class Space extends Component {
               <span>
                 <a href={`/cars/${space.car.id}`}>{`${space.car.license}`}</a>{' '}
                 currently parked here.
-                <button
-                  className="btn btn-danger btn-wave"
-                  onClick={() => removeCar(space.car.id)}>
-                  Remove Car
-                </button>
+                <div className="btn-group" role="group">
+                  <button
+                    className="btn btn-danger btn-wave"
+                    onClick={() => removeCar(space.car.id)}>
+                    Remove Car
+                  </button>
+                </div>
               </span>
             ) : (
               <span>{space.car.license} currently parked here.</span>

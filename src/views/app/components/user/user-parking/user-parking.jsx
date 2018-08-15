@@ -93,6 +93,7 @@ export default class UserParking extends Component {
   };
 
   removeCar = carId => {
+    if (confirm('Are you sure you want to remove this car from the space?')) {
     api.put(`/parking/vacate/${carId}`, {}, (err, space) => {
       if (err) {
         return snackbar.notify({
@@ -106,6 +107,7 @@ export default class UserParking extends Component {
         message: `Car removed from space #${space.id}`,
       });
     });
+    }
   };
 
   render = () => {
