@@ -11,6 +11,7 @@ export default class Space extends Component {
 
   render = () => {
     let {space, toggleSpace, deleteSpace, updateSpace, admin} = this.props;
+    console.log(space);
     let {notes} = this.state;
     return (
       <div className="parking-space">
@@ -42,6 +43,20 @@ export default class Space extends Component {
                   space.reservedBy.firstName
                 } ${space.reservedBy.lastName}`}</a>
               </span>
+            )}
+          </div>
+        )}
+        {space.car && (
+          <div className="parking-reservation-info">
+            Space currently occupied by{' '}
+            {admin ? (
+              <span>
+                <a href={`/cars/${space.car.id}`}>{`${
+                  space.car.license
+                }`}</a>
+              </span>
+            ) : (
+              <span>{space.car.license}</span>
             )}
           </div>
         )}
