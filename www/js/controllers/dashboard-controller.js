@@ -403,6 +403,7 @@ function DashboardController ($scope, $rootScope, $injector) {
           return confirmParking(carId, bookingId, attempt, function(){
             return $ride.processEndRide().then(function(){
               return $data.resources.parking.occupy({id: $data.reservedParking.id, carId: carId, reservationId: $data.reservedParking.reservation.id}).$promise.then(function(response){
+                $data.reservedParking = null;
                 return $state.go('end-ride', { id: bookingId });  
               });
             });
@@ -503,7 +504,6 @@ function DashboardController ($scope, $rootScope, $injector) {
   }
 
   function reserveParking(id) {
-    // TODO: make sure that parking reservations are nullified after the ride ends
     var modal;
     return $data.resources.parking.findByLocation({locationId: id}).$promise.then(function(parking){
       return $data.resources.parking.reserve({id: parking.id, userId: $data.me.id}).$promise.then(function(space){
@@ -591,9 +591,6 @@ function DashboardController ($scope, $rootScope, $injector) {
           });
           $data.reservedParking = null;
         }
-      }
-      if (!$data.reservedParking) {
-        clearInterval(interval);
       }
       ctrl.parkingReservationTime = newTime;
     }, 1000);
