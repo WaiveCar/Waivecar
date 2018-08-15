@@ -592,6 +592,9 @@ function DashboardController ($scope, $rootScope, $injector) {
           $data.reservedParking = null;
         }
       }
+      if (!$data.reservedParking) {
+        clearInterval(interval);
+      }
       ctrl.parkingReservationTime = newTime;
     }, 1000);
   }
