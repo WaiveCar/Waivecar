@@ -198,7 +198,7 @@ module.exports = class Service {
     if(card && card.type !== 'credit') {
       throw error.parse({
         code    : `CARD_INVALID`,
-        message : `Please make sure you're using a non-prepaid credit card.`
+        message : `Please make sure you're using a non-prepaid credit card. <br/><b>Please note: We no longer accept debit cards.</b> `
       }, 400);
     }
 
