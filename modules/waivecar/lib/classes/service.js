@@ -82,11 +82,6 @@ module.exports = class Service {
     return car;
   }
 
-  /**
-   * Attempts to return the user with the provided id or throws an error.
-   * @param  {Number} id
-   * @return {Object}
-   */
   static *getUser(id) {
     let user = yield User.findById(id);
     if (!user) {
@@ -196,10 +191,19 @@ module.exports = class Service {
     }
 
     if(card && card.type !== 'credit') {
-      throw error.parse({
-        code    : `CARD_INVALID`,
-        message : `Please make sure you're using a credit card. <br/><b>Please note: We no longer accept debit cards.</b> `
-      }, 400);
+      let bookingCount = 0;
+      //
+      // see 1312: Permit legacy power users to still use a debit card
+      //
+      if(card.type === 'debit') {
+        let bookingCount = yield Booking.count({where: {userId: user.id}});
+      }
+      if(bookingCount < 300) {
+        throw error.parse({
+          code    : `CARD_INVALID`,
+          message : `Please make sure you're using a credit card. <br/><b>Please note: We no longer accept debit cards.</b> `
+        }, 400);
+      }
     }
 
     if (missing.length) {
