@@ -184,7 +184,7 @@ module.exports = class Service {
 
     if (!user.stripeId || !card) { 
       missing.push('credit card'); 
-      after = ' Please note, we no longer accept debit cards.';
+      after = '<br/><em>Please note: We no longer accept debit cards.</em>';
     }
 
     if (!license || !license.isValid()) {
