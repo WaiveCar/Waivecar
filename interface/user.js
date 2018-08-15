@@ -242,9 +242,10 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
     *getCard() {
       let Card = Bento.model('Shop/Card');
 
+      console.log(this.id);
       yield Card.findOne({ 
-        where : { userId : this.id },
-        order : [['updated_at', 'DESC']]
+        where : { userId : this.id }/*,
+        order : [['updated_at', 'DESC']]*/
       });
     },
 
