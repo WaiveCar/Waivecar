@@ -143,6 +143,7 @@ module.exports = {
       json.parkingDetails = json.parkingDetails.toJSON();
     }
     if (!fromApi) {
+      // This only is needed for when reservations expire
       relay.emit('userParking', {
         type: 'update',
         data: json,
