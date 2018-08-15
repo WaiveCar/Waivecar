@@ -181,7 +181,9 @@ module.exports = {
   *toggle(parkingId, type) {
     // The value of type will generally be ownerOccupied or waivecarOccupied
     let space = yield UserParking.findById(parkingId);
-    // This happens if someone is trying to make their space unavailable while it is reserved
+    // This happens if someone is trying to make their space unavailable while it is reserved.
+    // It is not currently used, but may be added back in later
+    /*
     if (space.reservationId && !space.ownerOccupied) {
       throw error.parse(
         {
@@ -192,6 +194,7 @@ module.exports = {
         400,
       );
     }
+    */
 
     let updateObj = {};
     updateObj[type] = !space[type];
@@ -328,9 +331,11 @@ module.exports = {
         waivecarOccupied: false,
       });
       let location = yield Location.findById(userParking.locationId);
-      yield location.update({
-        status: 'available',
-      });
+      if (!space.userOccupied) {
+        yield location.update({
+          status: 'available',
+        });
+      }
       yield this.emitChanges(userParking, location);
     }
   },
