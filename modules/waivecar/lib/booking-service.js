@@ -758,6 +758,7 @@ module.exports = class BookingService extends Service {
    * @return {Object}
    */
   static *end(id, _user, query, payload) {
+    console.log('ending payload: ', payload);
     let booking = yield this.getBooking(id);
     let car     = yield this.getCar(booking.carId);
     let user    = yield this.getUser(booking.userId);
@@ -945,7 +946,7 @@ module.exports = class BookingService extends Service {
         });
         payload.data.streetSignImage = payload.data.streetSignImage.id;
       }
-
+      console.log('payload.dat before details: ', payload.data);
       let parking = new ParkingDetails(payload.data);
       yield parking.save();
     }

@@ -15,14 +15,6 @@ Bento.Register.Model('UserParking', 'sequelize', function register(
         key: 'id',
       },
     },
-    parkingDetailId: {
-      type: Sequelize.INTEGER,
-      defaultValue: null,
-      references: {
-        model: 'parking_details',
-        key: 'id',
-      },
-    },
     ownerId: {
       type: Sequelize.INTEGER,
       allowNull: false,
@@ -67,10 +59,6 @@ Bento.Register.Model('UserParking', 'sequelize', function register(
       this.belongsTo(ParkingReservation, {
         as: 'reservation',
         foreignKey: 'reservationId',
-      });
-      this.belongsTo(ParkingDetails, {
-        as: 'parkingDetails',
-        foreignKey: 'parkingDetailId',
       });
       this.belongsTo(Car, {
         as: 'car',

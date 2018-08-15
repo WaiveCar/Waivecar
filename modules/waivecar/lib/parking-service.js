@@ -5,6 +5,7 @@ let User = Bento.model('User');
 let UserParking = Bento.model('UserParking');
 let ParkingReservation = Bento.model('ParkingReservation');
 let ParkingDetails = Bento.model('ParkingDetails');
+let Car = Bento.model('Car');
 let relay = Bento.Relay;
 let queue = Bento.provider('queue');
 let notify = require('./notification-service');
@@ -49,10 +50,6 @@ module.exports = {
           as: 'reservation',
         },
         {
-          model: 'ParkingDetails',
-          as: 'parkingDetails',
-        },
-        {
           model: 'Car',
           as: 'car',
         },
@@ -81,10 +78,6 @@ module.exports = {
         {
           model: 'ParkingReservation',
           as: 'reservation',
-        },
-        {
-          model: 'ParkingDetails',
-          as: 'parkingDetails',
         },
       ],
     });
@@ -123,7 +116,7 @@ module.exports = {
     );
   },
 
-  *emitChanges(space, location, reservation, user, parkingDetails, fromApi) {
+  *emitChanges(space, location, reservation, user, fromApi) {
     let json = space.toJSON();
     json.location = location.toJSON();
     if (space.reservationId) {
@@ -136,14 +129,8 @@ module.exports = {
         : yield User.findById(json.reservation.userId);
       json.reservedBy = json.reservedBy.toJSON();
     }
-    if (space.parkingDetailId) {
-      json.parkingDetails = parkingDetails
-        ? parkingDetails
-        : yield ParkingDetails.findById(space.parkingDetailId);
-      json.parkingDetails = json.parkingDetails.toJSON();
-    }
     if (!fromApi) {
-      // This only is needed for when reservations expire
+      // This emit is only needed for when reservations expire
       relay.emit('userParking', {
         type: 'update',
         data: json,
@@ -286,7 +273,7 @@ module.exports = {
       },
     });
 
-    yield this.emitChanges(space, location, reservation, user, null);
+    yield this.emitChanges(space, location, reservation, user);
 
     yield notify.notifyAdmins(
       `:parking: ${user.firstName} ${
@@ -317,7 +304,12 @@ module.exports = {
     yield reservation.update({
       expired: true,
     });
-    yield this.emitChanges(space, location, reservation, null, null, true);
+    yield this.emitChanges(space, location, reservation, null, true);
+    let car = yield Car.findById(carId);
+    yield notify.sendTextMessage(
+      space.ownerId,
+      `${car.license} has been parked in your parking space`,
+    );
     space = space.toJSON();
     space.location = location.toJSON();
     space.reservation = reservation.toJSON();
@@ -369,7 +361,7 @@ module.exports = {
           status: 'available',
         });
       }
-      yield this.emitChanges(space, location, reservation, null, null, fromApi);
+      yield this.emitChanges(space, location, reservation, null, fromApi);
     } else {
       throw error.parse(
         {
