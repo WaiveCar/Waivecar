@@ -81,8 +81,8 @@ Route.put('/parking/:id/toggle/:type', [ 'isAuthenticated', 'ParkingController@t
 Route.put('/parking/:id/update', [ 'isAuthenticated', 'ParkingController@updateParking' ]);
 Route.post('/parking/:id/reserve', [ 'isAuthenticated', 'ParkingController@reserve' ]);
 Route.put('/parking/:id/occupy', [ 'isAuthenticated', 'ParkingController@occupy' ]);
-Route.put('/parking/vacate/:carId', [ 'isAuthenticated', 'ParkingController@vacate' ]);
 Route.put('/parking/:id/cancel', [ 'isAuthenticated', 'ParkingController@cancel' ]);
+Route.put('/parking/vacate/:carId', [ 'isAuthenticated', 'ParkingController@vacate' ]);
 
 
 // ### EVGo chargers

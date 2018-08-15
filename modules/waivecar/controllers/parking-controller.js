@@ -44,7 +44,7 @@ Bento.Register.Controller('ParkingController', function(controller) {
   };
 
   controller.vacate = function*(carId) {
-    return yield parking.vacte(carId);
+    return yield parking.vacate(carId);
   };
 
   controller.cancel = function*(id) {

@@ -324,20 +324,23 @@ module.exports = {
   },
 
   *vacate(carId) {
-    let userParking = yield UserParking.findOne({where: {carId}});
-    if (userParking) {
-      yield userParking.update({
+    let space = yield UserParking.findOne({where: {carId}});
+    if (space) {
+      yield space.update({
         carId: null,
         waivecarOccupied: false,
       });
-      let location = yield Location.findById(userParking.locationId);
+      let location = yield Location.findById(space.locationId);
       if (!space.userOccupied) {
         yield location.update({
           status: 'available',
         });
       }
-      yield this.emitChanges(userParking, location);
+      yield this.emitChanges(space, location);
+      space = space.toJSON();
+      space.location = location.toJSON();
     }
+    return space;
   },
 
   *cancel(parkingId, currentReservationId, fromApi) {
