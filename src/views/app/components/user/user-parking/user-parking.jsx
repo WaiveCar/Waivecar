@@ -111,7 +111,14 @@ export default class UserParking extends Component {
   render = () => {
     let {spaces} = this.state;
     let {admin} = this.props;
-    let {getSpaces, addSpace, toggleSpace, deleteSpace, updateSpace, removeCar} = this;
+    let {
+      getSpaces,
+      addSpace,
+      toggleSpace,
+      deleteSpace,
+      updateSpace,
+      removeCar,
+    } = this;
     return (
       <div className="box parking-box">
         <h3>
