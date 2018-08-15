@@ -23,11 +23,11 @@ export default class Space extends Component {
             <Switch
               className="space-switch"
               style={{fontSize: '1rem'}}
-              checked={space.location.status === 'available'}
+              checked={!space.ownerOccupied}
               label={
-                space.location.status === 'unavailable'
-                  ? 'Make Space Available'
-                  : 'Make Space Unavailable'
+                space.ownerOccupied
+                  ? 'Space occupied'
+                  : 'Space reservable'
               }
               onChange={() => toggleSpace(space.id, 'ownerOccupied')}
             />
@@ -48,7 +48,6 @@ export default class Space extends Component {
         )}
         {space.car && (
           <div className="parking-reservation-info">
-            Space currently occupied by{' '}
             {admin ? (
               <span>
                 <a href={`/cars/${space.car.id}`}>{`${
@@ -57,7 +56,7 @@ export default class Space extends Component {
               </span>
             ) : (
               <span>{space.car.license}</span>
-            )}
+            )} currently parked here.
           </div>
         )}
         <input
