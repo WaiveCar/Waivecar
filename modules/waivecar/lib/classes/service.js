@@ -120,6 +120,7 @@ module.exports = class Service {
    */
   static *hasBookingAccess(user) {
     let missing = [];
+    let after = '';
     let license = yield License.findOne({
       where : {
         userId : user.id
@@ -183,6 +184,7 @@ module.exports = class Service {
 
     if (!user.stripeId || !card) { 
       missing.push('credit card'); 
+      after = ' Please note, we no longer accept debit cards.';
     }
 
     if (!license || !license.isValid()) {
@@ -204,11 +206,11 @@ module.exports = class Service {
       let message = `You are not yet approved to book a WaiveCar. Please ensure your `;
       switch (missing.length) {
         case 1: {
-          message = `${ message }${ missing[0] } has been provided and validated.`;
+          message = `${ message }${ missing[0] } has been provided and validated.${ after }`;
           break;
         }
         default: {
-          message = `${ message }${ missing.slice(0, -1).join(', ') } and ${ missing.slice(-1) } have been provided and validated.`;
+          message = `${ message }${ missing.slice(0, -1).join(', ') } and ${ missing.slice(-1) } have been provided and validated.${ after }`;
           break;
         }
       }
