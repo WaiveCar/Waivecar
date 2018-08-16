@@ -206,8 +206,9 @@ module.exports = {
   },
 
   *updateParking(parkingId, updateObj) {
-    // This function is not currently used, but can be used to update any properties
-    // on a parking entry and the corresponding location entry.
+    // This function is currently only used for updating the note on a parking space, 
+    // but can be used to update any properties on a parking entry and the corresponding 
+    // location entry.
     try {
       let space = yield UserParking.findById(parkingId);
       yield space.update(updateObj);
