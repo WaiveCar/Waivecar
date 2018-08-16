@@ -14,7 +14,6 @@ let emailConfig = Bento.config.email;
 let log         = Bento.Log;
 let waiveConfig = Bento.config;
 
-
 // ### Models
 
 let User      = Bento.model('User');
@@ -23,6 +22,7 @@ let Group     = Bento.model('Group');
 let GroupUser = Bento.model('GroupUser');
 let GroupRole = Bento.model('GroupRole');
 let Booking   = Bento.model('Booking');
+let ShopOrder = Bento.model('Shop/Order');
 let sequelize = Bento.provider('sequelize');
 let notify    = require('../../waivecar/lib/notification-service');
 let UserLog   = require('../../log/lib/log-service');
@@ -519,6 +519,15 @@ module.exports = {
   },
 
   *stats(userId) {
-    return 'here are user stats';
+    let totalPaid = yield ShopOrder.find({
+      attributes: [
+        [sequelize.fn('SUM', sequelize.col('amount')), 'amount']
+      ],
+      where: {
+        userId,
+        status: 'paid'
+      }
+    });
+    return totalPaid;
   }
 };

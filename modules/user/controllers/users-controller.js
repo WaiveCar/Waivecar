@@ -84,5 +84,4 @@ Bento.Register.ResourceController('User', 'UsersController', (controller) => {
   };
 
   return controller;
-
 });
