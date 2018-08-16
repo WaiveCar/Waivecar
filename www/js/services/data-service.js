@@ -278,6 +278,8 @@ module.exports = angular.module('app.services').factory('$data', [
             title: 'Expired Parking',
             message: 'Your most recent parking reservation has expired.',
           }).then(function (_modal) {
+            // This setTimeout automatically removes the modal. There is a problem with the modal itself
+            // that causes it not to be able to be closed.
             setTimeout(function(){
               if(modal) {
                 modal.remove();

@@ -68,7 +68,9 @@ function DashboardController ($scope, $rootScope, $injector) {
       return;
     }
     rideServiceReady();
+   
     $data.resources.parking.fetchReservation({userId: $data.me.id}).$promise.then(function(parking){
+      // This loads in the current parking reservation if there is one.
       $data.reservedParking = parking;
       ctrl.parkingReservationTime = startParkingTimer(parking.reservation.createdAt);
     });
@@ -399,6 +401,7 @@ function DashboardController ($scope, $rootScope, $injector) {
       }
 
       return $data.resources.bookings.canend({id: bookingId}).$promise.then(function(endLocation) {
+        // The part within the conditional is what happens when someone is ending their ride in user parking.
         if ($data.reservedParking !== null) {
           return confirmParking(carId, bookingId, attempt, function(){
             return $ride.processEndRide().then(function(){
@@ -504,6 +507,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   }
 
   function reserveParking(id) {
+    // This function reserves a parking space and handles what should happen when this reservation starts
     var modal;
     return $data.resources.parking.findByLocation({locationId: id}).$promise.then(function(parking){
       return $data.resources.parking.reserve({id: parking.id, userId: $data.me.id}).$promise.then(function(space){
@@ -526,15 +530,16 @@ function DashboardController ($scope, $rootScope, $injector) {
           modal = _modal;
           modal.show();
         });
-
       });
     });
   }
 
   function cancelParking(id, inDashboard, cb) {
+    // This function cancels the parking reservation.
     var modal;
     var address = $data.reservedParking.location.address;
-    if (!inDashboard) {
+    if (inDashboard) {
+      // If the parking is cancelled while ending a ride, this modal will not pop up.
       $modal('simple-modal', {
         title: 'Parking Reservation Cancelled',
         message: 'You have cancelled or reservation for the parking space at ' + address + '.' ,
@@ -565,7 +570,7 @@ function DashboardController ($scope, $rootScope, $injector) {
     // This starts a timer for the parking reservation that will cause the reservation to 
     // expire on the client side if the expiration is not emitted on time from the server.
     // Sometimes the expiration of the parking reservation is emitted after the amount of
-    // time that it is supposed to take
+    // time that it is supposed to take.
     var expiration = moment(createdAt);
     expiration.add(5, 'minutes');
     var duration = moment.duration(expiration.diff(moment()))
@@ -574,12 +579,11 @@ function DashboardController ($scope, $rootScope, $injector) {
       if ($data.reservedParking === null) {
         clearInterval(interval);
       }
-      duration.subtract(1, 'second');
       var newTime = moment(duration.asMilliseconds()).format('m:ss');
       if (newTime === '0:00') {
         clearInterval(interval);
         // This conditional is here so that two modals don't pop up when the reservation expires. 
-        // The other modal that could pop up for the same event comes from the data service
+        // The other modal that could pop up for the same event comes from the data service.
         if ($data.reservedParking) { 
           var modal;
           $modal('simple-modal', {
@@ -597,6 +601,8 @@ function DashboardController ($scope, $rootScope, $injector) {
   }
 
   function confirmParking(carId, bookingId, attempt, cb) {
+    // This function is for allowing the user to occupy a reserved parking space. It only
+    // pops up when a user ends the ride when they have a parking reservation.
     var modal;
     $modal('zone', {
       title: 'Is UserParking',
@@ -614,7 +620,9 @@ function DashboardController ($scope, $rootScope, $injector) {
         className: 'button-dark',
         handler: function () {
           modal.remove();
-          cancelParking($data.reservedParking.id, true, function() {
+          // When the user wants to end somewhere they have not reserved, the parking reservation
+          // is cancelled and the endRide process is started again.
+          cancelParking($data.reservedParking.id, false, function() {
             endRide(carId, bookingId, attempt); 
           });
         }

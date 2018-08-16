@@ -8,6 +8,7 @@ module.exports = angular.module('app').factory('Parking', [
   function ($resource, $utils) {
     var resource = $resource(null, null, $utils.createResource('parking', {
       findByLocation : {
+        // This fetches a parking spot by its location id.
         method: 'GET',
         url: $utils.getCustomRoute('parking/locations/:locationId'),
         params: {
@@ -15,6 +16,7 @@ module.exports = angular.module('app').factory('Parking', [
         }
       },
       fetchReservation : {
+        // This is for getting current reservations when the dashboard component is mounted.
         method: 'GET',
         url: $utils.getCustomRoute('parking/fetchReservation/:userId'),
         params: {
@@ -22,6 +24,8 @@ module.exports = angular.module('app').factory('Parking', [
         }
       },
       reserve : {
+        // This is for reserving parking spaces. It requires a corresponding userId in the body of 
+        // the request.
         method: 'POST',
         url: $utils.getCustomRoute('parking/:id/reserve'),
         params: {
@@ -29,6 +33,8 @@ module.exports = angular.module('app').factory('Parking', [
         }
       },
       occupy: {
+        // This is for moving a car into a space when it is reserved. It requires bot a carId
+        // and a reservationId in the body of the request.
         method: 'PUT',
         url: $utils.getCustomRoute('parking/:id/occupy'),
         params: {
@@ -36,6 +42,7 @@ module.exports = angular.module('app').factory('Parking', [
         }
       },
       cancel : {
+        // This cancels a parking reservation. It requires a reservationId in the body of the request.
         method: 'PUT',
         url: $utils.getCustomRoute('parking/:id/cancel'),
         params: {
