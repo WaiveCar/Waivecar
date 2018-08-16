@@ -14,3 +14,5 @@ Route.put('/set-password-admin/:id',   [ 'isAuthenticated', 'isAdmin', 'UsersCon
 Route.resource('users', 'UsersController', {
   params : config.params ? config.params : null
 });
+
+Route.get('/users/:id/stats', [ /*'isAuthenticated', 'isAdmin'*/ 'UsersController@stats']);

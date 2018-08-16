@@ -516,6 +516,9 @@ module.exports = {
     }
 
     return user;
-  }
+  },
 
+  *stats(userId) {
+    return 'here are user stats';
+  }
 };
