@@ -15,6 +15,8 @@ let sequelize = Bento.provider('sequelize');
 
 module.exports = {
   *create(query) {
+    // This is used to create new parking spaces. When new spaces are created, they are
+    // not available until they are marked as bookable on the website.
     let user = yield User.findById(query.userId);
     let location = new Location({
       name: `${user.firstName} ${user.lastName}'s Personal Parking`,
@@ -37,6 +39,8 @@ module.exports = {
   },
 
   *getByUser(userId) {
+    // This returns all spaces that are owned by one particular user and puts all of the pertinent
+    // information onto the response if it is available.
     let spaces = yield UserParking.find({
       where: {
         ownerId: userId,
@@ -57,6 +61,7 @@ module.exports = {
       ],
     });
     spaces = yield spaces.map(function*(space) {
+      // This adds the reserver of a space to the response if there is a current reservation in it
       let temp = space.toJSON();
       if (temp.reservation) {
         temp.reservedBy = yield User.findById(space.reservation.userId);
@@ -67,6 +72,8 @@ module.exports = {
   },
 
   *findByLocation(locationId) {
+    // This returns the space that corresponds to a particular location. This is used for when a
+    // user selects one of the locations from the map in the app.
     return yield UserParking.findOne({
       where: {
         locationId,
@@ -85,6 +92,9 @@ module.exports = {
   },
 
   *fetchReservation(userId) {
+    // This route is for fetching a current reservation. It is used when the dashboard component
+    // is mounted in the app so that it does not lose the current reservation when the app
+    // is closed and reopened.
     let reservation = yield ParkingReservation.findOne({
       where: {
         userId,
@@ -118,6 +128,11 @@ module.exports = {
   },
 
   *emitChanges(space, location, reservation, user, fromApi) {
+    // This function is used to emit changes to the socket from all the routes that
+    // update the parking spaces. The space and location arguments are optional. The
+    // reservation and user argument values are looked up if they are not provided, and
+    // true should be passed in for the fromApi argument if the changes are made by an
+    // api call rather than by a scheduled process.
     let json = space.toJSON();
     json.location = location.toJSON();
     if (space.reservationId) {
@@ -131,7 +146,7 @@ module.exports = {
       json.reservedBy = json.reservedBy.toJSON();
     }
     if (!fromApi) {
-      // This emit is only needed for when reservations expire
+      // This emit is only needed for when reservations expire via the automatic queue process.
       relay.emit('userParking', {
         type: 'update',
         data: json,
@@ -144,10 +159,12 @@ module.exports = {
   },
 
   *delete(parkingId) {
+    // This is for deleting spaces. It deletes the parking space and associated location.
     try {
       let parking = yield UserParking.findById(parkingId);
       let location = yield Location.findById(parking.locationId);
-      // These raw queries are used to create a hard delete. The sequelize.delete function only does a soft delete
+      // These raw queries are used to create a hard delete. The sequelize.delete function only
+      // does a soft delete with the implementation used in bentoJS
       yield sequelize.query(`DELETE FROM user_parking WHERE id=${parking.id}`);
       yield sequelize.query(
         `DELETE FROM locations WHERE id=${parking.locationId}`,
@@ -168,7 +185,9 @@ module.exports = {
   },
 
   *toggle(parkingId, type) {
-    // The value of type will generally be ownerOccupied or waivecarOccupied
+    // This is used to toggle boolean properties of spaces. The value of type
+    // will generally be ownerOccupied or waivecarOccupied. Availability of the space
+    // based on these two properties is also toggled on the corresponding location.
     let space = yield UserParking.findById(parkingId);
 
     let updateObj = {};
@@ -188,7 +207,7 @@ module.exports = {
 
   *updateParking(parkingId, updateObj) {
     // This function is not currently used, but can be used to update any properties
-    // on a parking entry and the corresponding location entry
+    // on a parking entry and the corresponding location entry.
     try {
       let space = yield UserParking.findById(parkingId);
       yield space.update(updateObj);
@@ -211,9 +230,12 @@ module.exports = {
   },
 
   *reserve(parkingId, userId) {
+    // This reserves a parking space for a user and makes the necessary updates to
+    // the corresponding location object. It also creates a reservation object.
     let user = yield User.findById(userId);
     let space = yield UserParking.findById(parkingId);
     let location = yield Location.findById(space.locationId);
+    // This conditional should ensure that the space does not get double booked.
     if (yield redis.shouldProcess('parking-reservation', space.id, 9 * 1000)) {
       if (space.reservationId) {
         throw error.parse(
@@ -249,6 +271,8 @@ module.exports = {
         status: 'unavailable',
       });
 
+      // The process below makes the parking space reservations expire after 5 minutes
+      // and takes all necessary auxiliary actions.
       let timerObj = {value: 5, type: 'minutes'};
       queue.scheduler.add('parking-auto-cancel', {
         uid: `parking-reservation-${reservation.id}`,
@@ -275,6 +299,7 @@ module.exports = {
       return space;
     }
     throw error.parse(
+      // This is thrown if the space is being double booked.
       {
         code: 'SPACE_BEING_RESERVED_BY_OTHER_USER',
         message: `Space #${
@@ -286,7 +311,8 @@ module.exports = {
   },
 
   *occupy(parkingId, carId, reservationId) {
-    // If parking is aborted, space needs to be made available
+    // This is used when a car is lefty in a space by a current reservation. It
+    // makes all changes that are necessitated by this action.
     let space = yield UserParking.findById(parkingId);
     queue.scheduler.cancel(
       'parking-auto-cancel',
@@ -304,6 +330,7 @@ module.exports = {
     });
     yield this.emitChanges(space, location, reservation, null, true);
     let car = yield Car.findById(carId);
+    // This sends a text to the owner of a space that a car has been parked in it.
     yield notify.sendTextMessage(
       space.ownerId,
       `${car.license} has been parked in your parking space`,
@@ -315,6 +342,9 @@ module.exports = {
   },
 
   *vacate(carId) {
+    // This function is used to remove a car from a space when a new booking starts and
+    // and the car is in it. It is also used by the web app as a way of force removing
+    // cars from spaces.
     let space = yield UserParking.findOne({where: {carId}});
     if (space) {
       yield space.update({
@@ -335,6 +365,8 @@ module.exports = {
   },
 
   *cancel(parkingId, currentReservationId, fromApi) {
+    // This is used for cancellation of reservations it is used by both a route for
+    // cancelling reservations directly and by the booking-auto-cancel process.
     let space = yield UserParking.findById(parkingId);
     let reservation = yield ParkingReservation.findById(currentReservationId);
     yield reservation.update({
@@ -361,6 +393,8 @@ module.exports = {
       }
       yield this.emitChanges(space, location, reservation, null, fromApi);
     } else {
+      // This error is thrown when a space is no longer reserved by the user trying
+      // to cancel the reservation.
       throw error.parse(
         {
           code: 'PARKING_NOT_RESERVED_BY_USER',
