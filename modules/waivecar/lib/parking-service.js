@@ -9,6 +9,7 @@ let Car = Bento.model('Car');
 let relay = Bento.Relay;
 let queue = Bento.provider('queue');
 let notify = require('./notification-service');
+let redis = require('./redis-service');
 let error = Bento.Error;
 let sequelize = Bento.provider('sequelize');
 
@@ -169,20 +170,6 @@ module.exports = {
   *toggle(parkingId, type) {
     // The value of type will generally be ownerOccupied or waivecarOccupied
     let space = yield UserParking.findById(parkingId);
-    // This happens if someone is trying to make their space unavailable while it is reserved.
-    // It is not currently used, but may be added back in later
-    /*
-    if (space.reservationId && !space.ownerOccupied) {
-      throw error.parse(
-        {
-          code: 'SPACE_CURRENTLY_RESERVED',
-          message:
-            'Spaces cannot be made unavailable while they are reserved by users',
-        },
-        400,
-      );
-    }
-    */
 
     let updateObj = {};
     updateObj[type] = !space[type];
@@ -227,64 +214,75 @@ module.exports = {
     let user = yield User.findById(userId);
     let space = yield UserParking.findById(parkingId);
     let location = yield Location.findById(space.locationId);
-    if (space.reservationId) {
-      throw error.parse(
-        {
-          code: 'SPACE_ALREADY_RESERVED',
-          message: `Parking space ${space.id} is already reserved.`,
-        },
-        400,
-      );
-    }
-    if (location.status === 'unavailable') {
-      throw error.parse(
-        {
-          code: 'SPACE_NOT_CURRENTLY_AVAILABLE',
-          message: `Space #${
-            space.id
-          } is unavailable. It is likely to be owner occupied`,
-        },
-        400,
-      );
-    }
-    let reservation = new ParkingReservation({
-      userId: user.id,
-      spaceId: space.id,
-    });
-    yield reservation.save();
-
-    yield space.update({
-      reservationId: reservation.id,
-    });
-
-    yield location.update({
-      status: 'unavailable',
-    });
-
-    let timerObj = {value: 5, type: 'minutes'};
-    queue.scheduler.add('parking-auto-cancel', {
-      uid: `parking-reservation-${reservation.id}`,
-      timer: timerObj,
-      unique: true,
-      data: {
+    if (yield redis.shouldProcess('parking-reservation', space.id, 9 * 1000)) {
+      if (space.reservationId) {
+        throw error.parse(
+          {
+            code: 'SPACE_ALREADY_RESERVED',
+            message: `Parking space ${space.id} is already reserved.`,
+          },
+          400,
+        );
+      }
+      if (location.status === 'unavailable') {
+        throw error.parse(
+          {
+            code: 'SPACE_NOT_CURRENTLY_AVAILABLE',
+            message: `Space #${
+              space.id
+            } is unavailable. It is likely to be owner occupied`,
+          },
+          400,
+        );
+      }
+      let reservation = new ParkingReservation({
+        userId: user.id,
         spaceId: space.id,
-        reservation,
-        user,
+      });
+      yield reservation.save();
+
+      yield space.update({
+        reservationId: reservation.id,
+      });
+
+      yield location.update({
+        status: 'unavailable',
+      });
+
+      let timerObj = {value: 5, type: 'minutes'};
+      queue.scheduler.add('parking-auto-cancel', {
+        uid: `parking-reservation-${reservation.id}`,
+        timer: timerObj,
+        unique: true,
+        data: {
+          spaceId: space.id,
+          reservation,
+          user,
+        },
+      });
+
+      yield this.emitChanges(space, location, reservation, user);
+
+      yield notify.notifyAdmins(
+        `:parking: ${user.firstName} ${
+          user.lastName
+        } has reserved parking spot #${space.id}`,
+        ['slack'],
+        {channel: '#reservations'},
+      );
+      space.reservation = reservation;
+      space.location = location;
+      return space;
+    }
+    throw error.parse(
+      {
+        code: 'SPACE_BEING_RESERVED_BY_OTHER_USER',
+        message: `Space #${
+          space.id
+        } was booked by another user while you were trying to book it.`,
       },
-    });
-
-    yield this.emitChanges(space, location, reservation, user);
-
-    yield notify.notifyAdmins(
-      `:parking: ${user.firstName} ${
-        user.lastName
-      } has reserved parking spot #${space.id}`,
-      ['slack'],
-      {channel: '#reservations'},
+      400,
     );
-    space.reservation = reservation;
-    space.location = location;
-    return space;
   },
 
   *occupy(parkingId, carId, reservationId) {
