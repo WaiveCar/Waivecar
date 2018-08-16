@@ -18,6 +18,7 @@ export default class UserParking extends Component {
   }
 
   getSpaces = () => {
+    // This gets all spaces belonging to the userId associated with this component.
     let {userId} = this.props;
     api.get(`/parking/users/${userId}`, (err, spaces) => {
       if (err) {
@@ -31,6 +32,7 @@ export default class UserParking extends Component {
   };
 
   addSpace = opts => {
+    // This makes a new parking space.
     let {userId} = this.props;
     opts.userId = userId;
     opts.notes && !opts.notes.length && delete opts.notes;
@@ -52,6 +54,7 @@ export default class UserParking extends Component {
   };
 
   toggleSpace = (spaceId, type) => {
+    // This toggles certain properties of a parking space.
     api.put(`/parking/${spaceId}/toggle/${type}`, {}, err => {
       if (err) {
         return snackbar.notify({
@@ -64,6 +67,7 @@ export default class UserParking extends Component {
   };
 
   deleteSpace = spaceId => {
+    // This deletes a space of a certain id.
     if (confirm(`Are you sure you want to delete space ${spaceId}`)) {
       api.delete(`/parking/${spaceId}`, (err, response) => {
         if (err) {
@@ -78,6 +82,7 @@ export default class UserParking extends Component {
   };
 
   updateSpace = (spaceId, opts) => {
+    // This updates a particular parking space and is currently used to update notes.
     api.put(`/parking/${spaceId}/update`, opts, (err, result) => {
       if (err) {
         return snackbar.notify({
@@ -93,20 +98,21 @@ export default class UserParking extends Component {
   };
 
   removeCar = carId => {
+    // This is for removing cars from a space.
     if (confirm('Are you sure you want to remove this car from the space?')) {
-    api.put(`/parking/vacate/${carId}`, {}, (err, space) => {
-      if (err) {
+      api.put(`/parking/vacate/${carId}`, {}, (err, space) => {
+        if (err) {
+          return snackbar.notify({
+            type: 'danger',
+            message: `Error: ${err.message}`,
+          });
+        }
+        this.getSpaces();
         return snackbar.notify({
-          type: 'danger',
-          message: `Error: ${err.message}`,
+          type: 'success',
+          message: `Car removed from space #${space.id}`,
         });
-      }
-      this.getSpaces();
-      return snackbar.notify({
-        type: 'success',
-        message: `Car removed from space #${space.id}`,
       });
-    });
     }
   };
 
