@@ -192,16 +192,19 @@ module.exports = class Service {
 
     if(card && card.type !== 'credit') {
       let bookingCount = 0;
+      let isUserExcepted = false;
       //
-      // see 1312: Permit legacy power users to still use a debit card
+      // see 1312, 1313: 
+      // Permit legacy power users to still use a debit card
       //
       if(card.type === 'debit') {
-        let bookingCount = yield Booking.count({where: {userId: user.id}});
+        isUserExcepted = yield user.hasTag('debit');
+        bookingCount = yield Booking.count({where: {userId: user.id}});
       }
-      if(bookingCount < 400) {
+      if(bookingCount < 400 && !isUserExcepted) {
         throw error.parse({
           code    : `CARD_INVALID`,
-          message : `Please make sure you're using a credit card. <br/><b>Please note: We no longer accept debit cards.</b> `
+          message : `Please make sure you're using a credit card.<br/><b>Please note: We no longer accept debit or pre-paid cards.</b> `
         }, 400);
       }
     }
