@@ -403,6 +403,9 @@ module.exports = {
         if(toRemove[ix] === 'aid') {
           yield notify.notifyAdmins(`:runner: ${ _user.name() } removed ${ user.link() } from WaiveAid.`, [ 'slack' ], { channel : '#user-alerts' });
         }
+        if(toRemove[ix] === 'debit') {
+          yield notify.notifyAdmins(`:face_with_monocle: ${ _user.name() } has decided ${ user.link() } shouldn't be able to use a debit card.`, [ 'slack' ], { channel : '#user-alerts' });
+        }
         // The user doesn't get any email that they've been removed, that's hostile.
       }
 
@@ -414,6 +417,9 @@ module.exports = {
       for(var ix = 0; ix < toAdd.length; ix++) {
         yield user.addTag(toAdd[ix]);
 
+        if(toAdd[ix] === 'debit') {
+          yield notify.notifyAdmins(`:thinking_face: ${ _user.name() } decided it was ok for ${ user.link() } to use a debit card.`, [ 'slack' ], { channel : '#user-alerts' });
+        }
         if(toAdd[ix] === 'aid') {
           yield notify.notifyAdmins(`:older_adult: ${ _user.name() } added ${ user.link() } to WaiveAid.`, [ 'slack' ], { channel : '#user-alerts' });
 

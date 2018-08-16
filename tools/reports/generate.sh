@@ -1,5 +1,7 @@
 #!/bin/bash
 
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 year_month=$1
 
 # This is run on a personal server (cjm)
@@ -39,7 +41,7 @@ echo "naive: $naive"
 echo "generous: $generous"
 echo "conservative: $conservative"
 echo "Making heatmap"
-./makepoints.sh $year_month
+$DIR/makepoints.sh $year_month
 echo "Putting monthly report in report.json"
 curl -s https://api.waivecar.com/report/$date/report > report.json
 

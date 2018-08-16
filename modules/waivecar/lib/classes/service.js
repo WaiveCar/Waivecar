@@ -82,11 +82,6 @@ module.exports = class Service {
     return car;
   }
 
-  /**
-   * Attempts to return the user with the provided id or throws an error.
-   * @param  {Number} id
-   * @return {Object}
-   */
   static *getUser(id) {
     let user = yield User.findById(id);
     if (!user) {
@@ -120,17 +115,14 @@ module.exports = class Service {
    */
   static *hasBookingAccess(user) {
     let missing = [];
+    let after = '';
     let license = yield License.findOne({
       where : {
         userId : user.id
       }
     });
 
-    let card = yield Card.findOne({
-      where : {
-        userId : user.id
-      }
-    });
+    let card = yield user.getCard();
 
     // ### Check account status
     if (user.status === 'suspended') {
@@ -187,6 +179,7 @@ module.exports = class Service {
 
     if (!user.stripeId || !card) { 
       missing.push('credit card'); 
+      after = '<br/><em>Please note: We no longer accept debit cards.</em>';
     }
 
     if (!license || !license.isValid()) {
@@ -197,15 +190,34 @@ module.exports = class Service {
       missing.push('license photo');
     }
 
+    if(card && card.type !== 'credit') {
+      let bookingCount = 0;
+      let isUserExcepted = false;
+      //
+      // see 1312, 1313: 
+      // Permit legacy power users to still use a debit card
+      //
+      if(card.type === 'debit') {
+        isUserExcepted = yield user.hasTag('debit');
+        bookingCount = yield Booking.count({where: {userId: user.id}});
+      }
+      if(bookingCount < 400 && !isUserExcepted) {
+        throw error.parse({
+          code    : `CARD_INVALID`,
+          message : `Please make sure you're using a credit card.<br/><b>Please note: We no longer accept debit or pre-paid cards.</b> `
+        }, 400);
+      }
+    }
+
     if (missing.length) {
       let message = `You are not yet approved to book a WaiveCar. Please ensure your `;
       switch (missing.length) {
         case 1: {
-          message = `${ message }${ missing[0] } has been provided and validated.`;
+          message = `${ message }${ missing[0] } has been provided and validated.${ after }`;
           break;
         }
         default: {
-          message = `${ message }${ missing.slice(0, -1).join(', ') } and ${ missing.slice(-1) } have been provided and validated.`;
+          message = `${ message }${ missing.slice(0, -1).join(', ') } and ${ missing.slice(-1) } have been provided and validated.${ after }`;
           break;
         }
       }
