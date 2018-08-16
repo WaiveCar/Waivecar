@@ -198,7 +198,7 @@ module.exports = class Service {
       if(card.type === 'debit') {
         let bookingCount = yield Booking.count({where: {userId: user.id}});
       }
-      if(bookingCount < 300) {
+      if(bookingCount < 400) {
         throw error.parse({
           code    : `CARD_INVALID`,
           message : `Please make sure you're using a credit card. <br/><b>Please note: We no longer accept debit cards.</b> `
