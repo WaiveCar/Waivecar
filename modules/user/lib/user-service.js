@@ -519,7 +519,7 @@ module.exports = {
   },
 
   *stats(userId) {
-    let totalPaid = yield ShopOrder.find({
+    let totalSpent = yield ShopOrder.findOne({
       attributes: [
         [sequelize.fn('SUM', sequelize.col('amount')), 'amount']
       ],
@@ -528,6 +528,18 @@ module.exports = {
         status: 'paid'
       }
     });
-    return totalPaid;
+    let totalBookings = yield Booking.find({
+      where :{
+        userId,
+        $or: [
+          {status: 'completed'},
+          {status: 'closed'},
+        ]
+      }
+    });
+    return {
+      totalSpent: (totalSpent.amount / 100).toFixed(2),
+      totalBookings: totalBookings.length,
+    }
   }
 };
