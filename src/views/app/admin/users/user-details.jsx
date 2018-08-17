@@ -64,9 +64,6 @@ module.exports = class UserDetails extends React.Component {
       }
     });
     api.get(`/users/${this.props.id}/stats`, (err, stats) => {
-      if(err) {
-        console.log('error getting stats');
-      }
       this.setState({stats});
     });
   }
@@ -448,8 +445,12 @@ module.exports = class UserDetails extends React.Component {
                   </div>
                 </div>
                 <div>
-                  Total Rides: {this.state.stats.totalBookings}
-                  Total Spent: ${this.state.stats.totalSpent}
+                  <label className="form-control-label" style={{ color : '#666', fontWeight : 300 }}>
+                    Total Rides: {this.state.stats.totalBookings}
+                  </label>
+                  <label className="form-control-label" style={{ color : '#666', fontWeight : 300 }}>
+                    Total Spent: ${this.state.stats.totalSpent}
+                  </label>
                 </div>
                 <div className="form-group row">
                   <label className="col-sm-4 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Danger Zone <a onClick={ this.toggleDanger }>({ this.state.showDanger ? 'hide' : 'show' })</a></label>
