@@ -30,11 +30,11 @@
       <table ng-show="ctrl.booking.payments && ctrl.booking.payments.length">
         <tr ng-repeat="item in ctrl.booking.payments">
           <td class="title">{{ item.description }}</td>
-          <td class="value">{{ item.amount / 100 | currency:$:0  }}</td>
+          <td class="value">${{ (item.amount / 100).toFixed(2) }}</td>
         </tr>
         <tr class="totalRow">
           <td class="title total">total</td>
-          <td class="value">{{ ctrl.booking.total ? (ctrl.booking.total / 100 | currency:$:0) : "&hellip;"}}</td>
+          <td class="value">${{ (ctrl.booking.total / 100).toFixed(2) }}</td>
         </tr>
       </table>
     </div>
