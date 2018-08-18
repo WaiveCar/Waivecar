@@ -18,8 +18,10 @@ module.exports = {
     // This is used to create new parking spaces. When new spaces are created, they are
     // not available until they are marked as bookable on the website.
     let user = yield User.findById(query.userId);
+    let lastRecord = yield Location.findOne({order: ['id','desc']});
+    let lastId = lastRecord.id;
     let location = new Location({
-      name: `${user.firstName} ${user.lastName}'s Personal Parking`,
+      name: `WaiveSpot${ lastId + 1 }`,
       type: 'user-parking',
       latitude: query.latitude,
       longitude: query.longitude,
@@ -291,7 +293,7 @@ module.exports = {
       yield notify.notifyAdmins(
         `:parking: ${user.firstName} ${
           user.lastName
-        } has reserved parking spot #${space.id}`,
+        } reserved parking spot #${space.id}`,
         ['slack'],
         {channel: '#reservations'},
       );

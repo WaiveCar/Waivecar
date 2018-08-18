@@ -14,7 +14,7 @@ scheduler.process('parking-auto-cancel', function*(job) {
   yield notify.notifyAdmins(
     `:rage: ${job.data.user.firstName} ${
       job.data.user.lastName
-    } has lost their reservation for parking spot #${job.data.spaceId}`,
+    } lost their reservation for parking spot #${job.data.spaceId}`,
     ['slack'],
     {channel: '#reservations'},
   );
