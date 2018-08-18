@@ -8,6 +8,7 @@ let geocode      = require('./geocoding-service');
 let notify       = require('./notification-service');
 let UserService  = require('../../user/lib/user-service.js');
 let CarService   = require('./car-service');
+let ParkingService = require('./parking-service');
 let Email        = Bento.provider('email');
 let queue        = Bento.provider('queue');
 let queryParser  = Bento.provider('sequelize/helpers').query;
@@ -41,6 +42,7 @@ let BookingPayment = Bento.model('BookingPayment');
 let ParkingDetails = Bento.model('ParkingDetails');
 let BookingLocation= Bento.model('BookingLocation');
 let Location       = Bento.model('Location');
+let UserParking    = Bento.model('UserParking');
 
 module.exports = class BookingService extends Service {
 
@@ -560,7 +562,7 @@ module.exports = class BookingService extends Service {
    */
 
   /**
-   * Unlocks the car and lets the driver prepare before starting the ride.
+   * Unlocks the car and lets the driver prepare before starting the ride. It also removes the car from parking spaces if it is in one
    * @param  {Number} id    The booking ID.
    * @param  {Object} _user
    * @return {Object}
@@ -618,6 +620,21 @@ module.exports = class BookingService extends Service {
       yield cars.unlockCar(car.id, _user);
       yield cars.unlockImmobilzer(car.id, _user);
       //yield cars.openDoor(car.id, _user);
+
+      yield ParkingService.vacate(car.id);
+      /*
+      let userParking = yield UserParking.findOne({ where: { carId: car.id } });
+      if (userParking) {
+        yield userParking.update({
+          carId: null,
+          waivecarOccupied: false,
+        });
+        let location = yield Location.findById(userParking.locationId);
+        yield location.update({
+          status: 'available',
+        });
+      }
+      */
 
       // ### Notify
 
@@ -928,7 +945,6 @@ module.exports = class BookingService extends Service {
         });
         payload.data.streetSignImage = payload.data.streetSignImage.id;
       }
-
       let parking = new ParkingDetails(payload.data);
       yield parking.save();
     }
