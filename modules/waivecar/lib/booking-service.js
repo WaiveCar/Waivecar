@@ -164,21 +164,34 @@ module.exports = class BookingService extends Service {
         }, 400);
       }
     }
-
+    let rebookOrder;
     // If the creator isn't an admin or is booking for themselves
     if (!_user.hasAccess('admin') || _user.id === driver.id) {
-      yield this.recentBooking(driver, car, data.opts, lockKeys);
+      rebookOrder = yield this.recentBooking(driver, car, data.opts, lockKeys);
     }
 
     let booking = new Booking({
       carId  : data.carId,
       userId : data.userId
     });
-
+    
     try {
       yield booking.save();
     } catch (err) {
       throw err;
+    }
+
+    try { 
+      if (rebookOrder) {
+        // This booking payment is shown here so that it shows up in the itemization for the correct booking.
+        let rebookPayment = new BookingPayment({
+          bookingId: booking.id,
+          orderId: rebookOrder.id, 
+        });
+        yield rebookPayment.save();
+      }
+    } catch (e) {
+      log.warn('error saving rebook payment: ', e);
     }
 
     // If there is a new authorization, a new BookingPayment must be created so that it can be itemized on the receipt.
@@ -1506,10 +1519,13 @@ module.exports = class BookingService extends Service {
       minTime += 5;
     }
 
+    let rebookOrder;
+
     if (minutesLapsed < minTime) {
       if(opts.buyNow) {
-        if(yield OrderService.getCarNow(booking, user, opts.buyNow * 100)) {
-          return true;
+        rebookOrder = yield OrderService.getCarNow(booking, user, opts.buyNow * 100);
+        if (rebookOrder) {
+          return rebookOrder;
         }
       }
       let remainingTime =  Math.max(1, Math.ceil(minTime - minutesLapsed));
@@ -1601,6 +1617,6 @@ module.exports = class BookingService extends Service {
            [ 'slack' ], { channel : '#user-alerts' });
       }
     }
+    return;
   }
-
 };
