@@ -439,6 +439,13 @@ module.exports = class UserDetails extends React.Component {
                       </label>
                     </div>
 
+                    <div className="radio-inline">
+                      <label>
+                        <input type="checkbox" name="tagList[]" value="debit" defaultChecked={ this.hasTag('debit') } />
+                        Debit
+                      </label>
+                    </div>
+
                   </div>
                 </div>
 
