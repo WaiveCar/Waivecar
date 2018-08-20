@@ -196,4 +196,35 @@
   margin: 0rem 2rem;
 }
 
+.parking-space {
+  border-bottom: 1px solid #eee;
+  margin-bottom: 1.5rem;
+}
 
+.space-note {
+  width: 100%;
+  color: #434749;
+  padding: 0.375rem 0.75rem;
+}
+
+.space-switch {
+  width: 50px;
+}
+
+.parking-box [data-react-toolbox="checkbox"] :last-child {
+  font-size: 1rem;
+}
+
+.no-spaces {
+  text-align: center;
+  margin: 3rem 0;
+}
+
+.parking-reservation-info {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.refresh-button {
+  margin: 1rem;
+}

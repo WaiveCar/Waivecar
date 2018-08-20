@@ -7,6 +7,7 @@ import Account                   from '../../lib/account-service';
 import CardList                  from '../../components/user/cards/card-list';
 import RideList                  from '../../components/user/rides/ride-list';
 import ChargeList                from '../../components/user/charges/charge-list';
+import UserParking               from '../../components/user/user-parking/user-parking';
 import facebook                  from '../../../auth/facebook';
 
 // ### Form Fields
@@ -251,10 +252,6 @@ module.exports = class ProfileView extends React.Component {
     );
   }
 
-  /**
-   * Render the profile view.
-   * @return {Object}
-   */
   render() {
     let user = auth.user();
     return (
@@ -278,6 +275,7 @@ module.exports = class ProfileView extends React.Component {
         { this.renderFacebookConnect() }
         { this.renderPersonalDetails() }
         { this.renderCards() }
+        <UserParking admin={false} userId={ user.id }/>
         { this.renderRides() }
         { this.renderCharges() }
         { this.renderAccountStatus() }
