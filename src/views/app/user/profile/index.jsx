@@ -271,6 +271,7 @@ module.exports = class ProfileView extends React.Component {
             </div>
           </div>
         </div>
+
         { this.renderFacebookConnect() }
         { this.renderPersonalDetails() }
         { this.renderCards() }
