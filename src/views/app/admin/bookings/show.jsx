@@ -7,7 +7,7 @@ import BookingDetails          from './details';
 import { snackbar }         from 'bento-web';
 import NotesList from '../components/notes/list';
 import UserLicense from '../users/user-license';
-import moment            from 'moment';
+import moment from 'moment';
 
 module.exports = class BookingsView extends React.Component {
 
@@ -46,6 +46,9 @@ module.exports = class BookingsView extends React.Component {
 
   componentDidMount() {
     this.loadBooking(this.props.params.id);
+    api.get(`/bookings/${ this.props.params.id }/parkingDetails`, (err, response) => {
+      this.setState({ parkingDetails: response.details });
+    });
     //this.loadCarPath(this.props.params.id)
   }
 
@@ -296,6 +299,7 @@ module.exports = class BookingsView extends React.Component {
     let user = this.state.user;
     let payments = this.state.payments;
     let car = this.state.car;
+    let {parkingDetails} = this.state;
 
     if (!booking || !user ) {
       return (
@@ -359,6 +363,25 @@ module.exports = class BookingsView extends React.Component {
              <UserLicense id={ user.id } readOnly="1" />
           </div>
         </div>
+        { parkingDetails && (
+          <div className="box">
+            <h3>Parking Info</h3>
+            <div className="box-content">
+              <div>
+                <div className="row">
+                <h4 className="text-center">
+                  {moment(parkingDetails.createdAt).format('HH:mm MMMM Do')} (Claimed: {parkingDetails.streetHours} hours) <a href={`/bookings/${this.props.params.id}`}>Booking Details</a>
+                </h4>
+                  <div className="image-center-container">
+                    <div className="col-md-6 gallery-image">
+                      <img src={`https://s3.amazonaws.com/waivecar-prod/${parkingDetails.path}`} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         {
           this.state.carPath ? <BookingDetails booking={ booking } carPath = { this.state.carPath }/>
             : <div className="box-empty">
