@@ -24,11 +24,6 @@ module.exports = class Email {
     }
   }
 
-  /**
-   * Render Email from Template
-   * @param {String} templateName
-   * @param {Object} context
-   */
   *renderTemplate(templateName, context) {
     let templateLocation = path.join(this.templates, templateName);
     let template         = new Template(templateLocation);
