@@ -277,17 +277,10 @@ module.exports = class OrderService extends Service {
       yield notify.notifyAdmins(`:heavy_dollar_sign: Charged the impatient ${ user.link() } $${ fee } to rebook ${ car.license }`, [ 'slack' ], { channel : '#rental-alerts' });
     } catch (err) {
       yield this.failedCharge(amount, user, err, ` | ${ apiConfig.uri }/bookings/${ booking.id }`);
-      return false;
+      return;
     }
 
-    // Regardless of whether we successfully charged the user or not, we need
-    // to associate this booking with the users' order id
-    let payment = new BookingPayment({
-      bookingId : booking.id,
-      orderId   : order.id
-    });
-    yield payment.save();
-    return true;
+    return order;
   }
 
   static *extendReservation(booking, user, amount, time) {
