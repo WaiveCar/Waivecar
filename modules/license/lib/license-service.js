@@ -127,9 +127,6 @@ module.exports = class LicenseService extends Service {
 
   /**
    * Retrieves a license based on provided id.
-   * @param  {Number} id
-   * @param  {Object} _user
-   * @return {Object}
    */
   static *show(id, _user) {
     let license = yield this.getLicense(id);
@@ -142,10 +139,6 @@ module.exports = class LicenseService extends Service {
 
   /**
    * Updates a license.
-   * @param  {Number} id
-   * @param  {Object} data
-   * @param  {Object} _user
-   * @return {Object}
    */
   static *update(id, data, _user) {
 

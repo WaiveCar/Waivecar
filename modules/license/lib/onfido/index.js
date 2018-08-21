@@ -22,14 +22,10 @@ if (!config.onfido) {
   });
 }
 
+console.log('checkr config: ', config.checkr);
+
 module.exports = class OnfidoService {
 
-  /**
-   * Create Applicant
-   * @param  {Object} data
-   * @param  {Object} _user
-   * @return {Object}
-   */
   static *createUserLink(user, license, _user) {
 
     [ 'email', 'phone' ].forEach((val) => {
@@ -53,36 +49,26 @@ module.exports = class OnfidoService {
     });
 
     // ### Create Verification Candidate
-    /*eslint-disable */
     let candidate = {
       email       : user.email,
-      mobile      : user.phone,
+      phone      : user.phone,
       first_name  : license.firstName,
       last_name   : license.lastName,
       dob         : license.birthDate,
       country     : 'USA',
-      id_numbers  : [
-        {
-          type       : 'driving_license',
-          value      : license.number,
-          state_code : license.state
-        }
-      ]
+      driver_license_number : license.number,
+      driver_license_state : license.state,
     };
 
     // optional inclusions:
     if (license.middleName) candidate['middle_name'] = license.middleName;
-    if (license.gender) candidate.gender = license.gender;
-    /*eslint-enable */
 
-    let response = yield this.request('/applicants', 'POST', candidate, user);
+    let response = yield this.request('/candidates', 'POST', candidate, user);
     return response;
   }
 
   /**
    * Retrieves all Applicants
-   * @param  {Object} _user
-   * @return {Object}
    */
   static *getUserLinks(_user) {
     let response = yield this.request(`/applicants`);
@@ -91,9 +77,6 @@ module.exports = class OnfidoService {
 
   /**
    * Retrieves an Applicant
-   * @param  {Object} applicantId
-   * @param  {Object} _user
-   * @return {Object}
    */
   static *getUserLink(applicantId, _user) {
     let response = yield this.request(`/applicants/${ applicantId }`);
@@ -127,19 +110,15 @@ module.exports = class OnfidoService {
 
   /**
    * Returns the Response from a Request aginst the Onfido API
-   * @param  {String} resource uri endpoint of required resource
-   * @param  {String} method   HTTP method
-   * @param  {Object} data
-   * @return {Object}          Response Object
    */
   static *request(resource, method, data, user) {
+    var auth = 'Basic ' + Buffer.from(config.checkr.key + ':').toString('base64');
     let options = {
-      url     : config.onfido.uri + resource,
+      url     : config.checkr.uri + resource,
       method  : method || 'GET',
       headers : {
         Accept         : 'application/json',
         'Content-Type' : 'application/json',
-        Authorization  : `Token token=${ config.onfido.key }`
       }
     };
 
@@ -157,6 +136,7 @@ module.exports = class OnfidoService {
     fs.appendFileSync('/var/log/outgoing/onfido.txt', JSON.stringify([options, body, response]) + "\n");
 
     if (!response || response.statusCode > 201) {
+      console.log('errors: ', result);
       throw error.parse(yield this.getError(resource, result, user), response.statusCode || 400);
     }
 
