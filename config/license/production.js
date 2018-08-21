@@ -16,7 +16,14 @@ module.exports = {
     onfido : {
       key  : 'live_as_IHLB4xIpsv281PmGRfg57U5welUN_',
       hook : 'w_ghPA06XdKc6ih26ROM27brGz9wtqIK'
+    },
+    /*
+    Production key and token will need to be put here
+    checkr : {
+      key : '',
+      token : ''
     }
+    */
   }
 
 };
