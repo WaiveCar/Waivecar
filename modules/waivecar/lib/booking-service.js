@@ -1039,103 +1039,109 @@ module.exports = class BookingService extends Service {
       return;
     }
 
-    let relations = {
-      include : [
-        {
-          model : 'BookingDetails',
-          as    : 'details'
-        }
-      ]
-    };
-    let booking = yield this.getBooking(id, relations);
-    let car     = yield this.getCar(booking.carId);
-    let user    = yield this.getUser(booking.userId);
-    let isLevel = yield user.isTagged('level');
-    let isAdmin = _user.hasAccess('admin');
+    var isAdmin = _user.hasAccess('admin');
+    try {
+      let relations = {
+        include : [
+          {
+            model : 'BookingDetails',
+            as    : 'details'
+          }
+        ]
+      };
+      var booking = yield this.getBooking(id, relations);
+      var car     = yield this.getCar(booking.carId);
+      var user    = yield this.getUser(booking.userId);
+      var isLevel = yield user.isTagged('level');
 
-    this.hasAccess(user, _user);
+      this.hasAccess(user, _user);
 
-    if (booking.status !== 'ended') {
-      yield this.end(id, _user, query, payload);
       if (booking.status !== 'ended') {
-        throw {
-          code    : `BOOKING_REQUEST_INVALID`,
-          message : `You cannot complete a booking which has not yet ended.`
-        };
-      }
-    }
-
-    // ### Validate Complete Status
-    // Make sure all required car states are valid before allowing the booking to
-    // be completed and released for next booking.
-
-    function *finalCheckFail() {
-      let errors  = [];
-      if(process.env.NODE_ENV === 'production') {
-        if (car.isIgnitionOn && !car.isCharging) {
-          // if the car is charging and the charger is locked we unlock the vehicle so
-          // that the user can remove the charger
-          yield cars.unlockCar(car.id, _user);
-          errors.push('turn off the ignition and if applicable, remove the charger'); 
+        yield this.end(id, _user, query, payload);
+        if (booking.status !== 'ended') {
+          throw {
+            code    : `BOOKING_REQUEST_INVALID`,
+            message : `You cannot complete a booking which has not yet ended.`
+          };
         }
-        if (!car.isKeySecure) { errors.push('secure the key'); }
-        if (car.isDoorOpen) { errors.push('make sure the doors are closed');}
       }
-        
-      if (errors.length && !(_user.hasAccess('admin') && query.force)) {
-        let message = `Your ride cannot be completed until you `;
-        switch (errors.length) {
-          case 1: {
-            message = `${ message }${ errors[0] }.`;
-            break;
+
+      // ### Validate Complete Status
+      // Make sure all required car states are valid before allowing the booking to
+      // be completed and released for next booking.
+
+      function *finalCheckFail() {
+        let errors  = [];
+        if(process.env.NODE_ENV === 'production') {
+          if (car.isIgnitionOn && !car.isCharging) {
+            // if the car is charging and the charger is locked we unlock the vehicle so
+            // that the user can remove the charger
+            yield cars.unlockCar(car.id, _user);
+            errors.push('turn off the ignition and if applicable, remove the charger'); 
           }
-          case 2: {
-            message = `${ message }${ errors.join(' and ') }.`;
-            break;
-          }
-          default: {
-            message = `${ message }${ errors.slice(0, -1).join(', ') } and ${ errors.slice(-1) }.`;
-            break;
-          }
+          if (!car.isKeySecure) { errors.push('secure the key'); }
+          if (car.isDoorOpen) { errors.push('make sure the doors are closed');}
         }
+          
+        if (errors.length && !(_user.hasAccess('admin') && query.force)) {
+          let message = `Your ride cannot be completed until you `;
+          switch (errors.length) {
+            case 1: {
+              message = `${ message }${ errors[0] }.`;
+              break;
+            }
+            case 2: {
+              message = `${ message }${ errors.join(' and ') }.`;
+              break;
+            }
+            default: {
+              message = `${ message }${ errors.slice(0, -1).join(', ') } and ${ errors.slice(-1) }.`;
+              break;
+            }
+          }
 
-        return {
-          code    : `BOOKING_COMPLETE_INVALID`,
-          message : message,
-          data    : errors
-        };
+          return {
+            code    : `BOOKING_COMPLETE_INVALID`,
+            message : message,
+            data    : errors
+          };
+        }
       }
-    }
 
-    let res = yield finalCheckFail();
-    // if it looks like we'd fail this, then and only then do we probe the device one final time.
-    if(res) {
-      try {
-        yield car.update( yield cars.getDevice(car.id, _user, 'booking.complete') );
-      } catch (err) {
-        log.warn(`Failed to update ${ car.info() } when completing booking ${ booking.id }`);
-      }
-      res = yield finalCheckFail();
+      let res = yield finalCheckFail();
+      // if it looks like we'd fail this, then and only then do we probe the device one final time.
       if(res) {
-        throw res;
+        try {
+        yield car.update( yield cars.getDevice(car.id, _user, 'booking.complete') );
+        } catch (err) {
+          log.warn(`Failed to update ${ car.info() } when completing booking ${ booking.id }`);
+        }
+        res = yield finalCheckFail();
+        if(res) {
+          throw res;
+        }
       }
-    }
 
 
-    // --- 
-    //
-    // By this point we assume that the user is allowed to end the booking
-    // at the charge/location the car is currently at. If that's not true, 
-    // then you need to yell at the user above this.
-    //
-    // ---
+      // --- 
+      //
+      // By this point we assume that the user is allowed to end the booking
+      // at the charge/location the car is currently at. If that's not true, 
+      // then you need to yell at the user above this.
+      //
+      // ---
 
-    if (!isLevel) { 
-      yield cars.lockCar(car.id, _user);
-      yield cars.lockImmobilzer(car.id, _user);
-      // This was causing problems ... I'd rather have booking ending having issues
-      // then cars being idle and unlocked
-      // yield booking.setNowLock({userId: _user.id, carId: car.id});
+      if (!isLevel) { 
+        yield cars.lockCar(car.id, _user);
+        yield cars.lockImmobilzer(car.id, _user);
+        // This was causing problems ... I'd rather have booking ending having issues
+        // then cars being idle and unlocked
+        // yield booking.setNowLock({userId: _user.id, carId: car.id});
+      }
+    } catch(ex) {
+      if (!query.force || !booking || !car || !user) {
+        throw ex;
+      }
     }
 
     yield booking.complete();
