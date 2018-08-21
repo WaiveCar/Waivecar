@@ -14,9 +14,6 @@ module.exports = class LicenseVerificationService extends Service {
 
   /**
    * Executes a request for a license to be verified.
-   * @param  {Object} data
-   * @param  {Object} _user
-   * @return {Object}
    */
   static *store(id, data, _user) {
     let user = yield this.getUser(data.userId);
@@ -28,17 +25,13 @@ module.exports = class LicenseVerificationService extends Service {
     let reportId = license.reportId;
     let check;
 
-    if (status === 'provided') {
-      let payload = {
-        type    : 'express',
-        reports : [
-          {
-            name : 'driving_record'
-          }
-        ]
-      };
+    let payload = {};
 
-      check = yield Verification.createCheck(license.linkedUserId, payload, _user);
+    if (status === 'provided') {
+      payload.package = 'motor_vehicle_report';
+      payload['candidate_id'] = license.linkedUserId;
+
+      check = yield Verification.createCheck(payload, _user);
 
       status = 'unknown';
       switch (check.status) {
@@ -53,10 +46,9 @@ module.exports = class LicenseVerificationService extends Service {
       }
 
       checkId = check.id;
-      reportId = check.reports[0].id;
     }
 
-    let report = yield Verification.getReport(license.linkedUserId, checkId, reportId);
+    let report = yield Verification.getReport(checkId);
     if (report.status === 'complete') {
 
       // Get result
@@ -84,7 +76,6 @@ module.exports = class LicenseVerificationService extends Service {
       });
     }
 
-    // ### Relay
     relay.admin(resource, {
       type : 'update',
       data : license
@@ -105,7 +96,6 @@ module.exports = class LicenseVerificationService extends Service {
 
     let license = yield this.getLicense(id);
     let report = yield Verification.getChecks(license.linkedUserId, _user);
-    console.log(report);
     return report;
   }
 

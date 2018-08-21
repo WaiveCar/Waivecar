@@ -13,9 +13,6 @@ module.exports = class LicenseService extends Service {
 
   /**
    * Registers a new license with the requested user.
-   * @param  {Object} data
-   * @param  {Object} _user
-   * @return {Object}
    */
   static *store(data, _user) {
     let user = yield this.getUser(data.userId);
@@ -85,9 +82,6 @@ module.exports = class LicenseService extends Service {
 
   /**
    * Returns license index.
-   * @param  {Object} query
-   * @param  {Object} _user
-   * @return {Object}
    */
   static *index(query, _user) {
     if (query.search) {

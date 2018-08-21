@@ -22,8 +22,6 @@ if (!config.onfido) {
   });
 }
 
-console.log('checkr config: ', config.checkr);
-
 module.exports = class OnfidoService {
 
   static *createUserLink(user, license, _user) {
@@ -61,7 +59,11 @@ module.exports = class OnfidoService {
     };
 
     // optional inclusions:
-    if (license.middleName) candidate['middle_name'] = license.middleName;
+    if (license.middleName) {
+      candidate['middle_name'] = license.middleName;
+    } else {
+      candidate['no_middle_name'] = true;
+    }
 
     let response = yield this.request('/candidates', 'POST', candidate, user);
     return response;
@@ -83,8 +85,9 @@ module.exports = class OnfidoService {
     return response;
   }
 
-  static *createCheck(applicantId, data, _user) {
-    let response = yield this.request(`/applicants/${ applicantId }/checks`, 'POST', data);
+  static *createCheck(data, _user) {
+    console.log('data: ', data);
+    let response = yield this.request('/reports', 'POST', data);
     return response;
   }
 
@@ -98,13 +101,8 @@ module.exports = class OnfidoService {
     return response;
   }
 
-  static *getReport(applicantId, checkId, _user) {
-    let response = yield this.request(`/checks/${ checkId }/reports`);
-    return response;
-  }
-
-  static *getReport(applicantId, checkId, reportId, _user) {
-    let response = yield this.request(`/checks/${ checkId }/reports/${ reportId }`);
+  static *getReport(checkId) {
+    let response = yield this.request(`/reports/${ checkId }`);
     return response;
   }
 
@@ -112,7 +110,6 @@ module.exports = class OnfidoService {
    * Returns the Response from a Request aginst the Onfido API
    */
   static *request(resource, method, data, user) {
-    var auth = 'Basic ' + Buffer.from(config.checkr.key + ':').toString('base64');
     let options = {
       url     : config.checkr.uri + resource,
       method  : method || 'GET',
@@ -134,9 +131,8 @@ module.exports = class OnfidoService {
       body = JSON.parse(response.body);
     }
     fs.appendFileSync('/var/log/outgoing/onfido.txt', JSON.stringify([options, body, response]) + "\n");
-
+    console.log('body: ', body);
     if (!response || response.statusCode > 201) {
-      console.log('errors: ', result);
       throw error.parse(yield this.getError(resource, result, user), response.statusCode || 400);
     }
 
