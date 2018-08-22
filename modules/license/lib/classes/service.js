@@ -9,8 +9,6 @@ module.exports = class Service {
 
   /**
    * Retrieves a license from the database.
-   * @param  {Number} id
-   * @return {Object}
    */
   static *getLicense(id) {
     let license = yield License.findById(id);
@@ -25,8 +23,6 @@ module.exports = class Service {
 
   /**
    * Retrieves a license by User Reference from the database.
-   * @param  {Number} id
-   * @return {Object}
    */
   static *getLicenseByUserLink(id) {
     let license = yield License.find({ userLinkId : id });
@@ -41,8 +37,6 @@ module.exports = class Service {
 
   /**
    * Retrieves a license by Report Reference from the database.
-   * @param  {Number} id
-   * @return {Object}
    */
   static *getLicenseByReport(id) {
     let license = yield License.find({ reportId : id });
@@ -57,13 +51,11 @@ module.exports = class Service {
 
   /**
    * Retrieves a license by Checkr's Candidate Id from the database.
-   * @param  {Number} id
-   * @return {Object}
    */
   static *getLicensesInProgress() {
     return yield License.find({
       where : {
-        status  : 'in-progress',
+        status  : 'pending',
         checkId : {
           $ne : null
         }
@@ -73,8 +65,6 @@ module.exports = class Service {
 
   /**
    * Attempts to return the user with the provided id or throws an error.
-   * @param  {Number} id
-   * @return {Object}
    */
   static *getUser(id) {
     let user = yield User.findById(id);
@@ -89,9 +79,6 @@ module.exports = class Service {
 
   /**
    * Only allow access if the requesting user is the actor or is administrator.
-   * @param  {Object}  user  The user to be modified.
-   * @param  {Object}  _user The user requesting modification.
-   * @return {Boolean}
    */
   static hasAccess(user, _user) {
     if (user.id !== _user.id && !_user.hasAccess('admin')) {

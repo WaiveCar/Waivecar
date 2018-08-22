@@ -113,7 +113,6 @@ module.exports = class OnfidoService {
     if (!response || response.statusCode > 201) {
       throw error.parse(yield this.getError(resource, result, user), response.statusCode || 400);
     }
-    console.log('response: ', body);
     return body;
   }
 
