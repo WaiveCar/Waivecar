@@ -12,7 +12,6 @@ module.exports = class Handler {
 
   /**
    * Handles the receipt of a completed report from checkr
-   * @param {Object} payload
    */
   static *receive(data) {
     let license = yield this.getLicenseByReport(data.id);
@@ -21,7 +20,7 @@ module.exports = class Handler {
       status : data.status
     });
 
-    let update = yield Api.getReport(license.linkedUserId, license.checkId, license.reportId);
+    let update = yield Api.getReport(license.reportId);
     if (update.status !== license.status) {
       yield license.update({
         status     : update.status,
@@ -31,5 +30,4 @@ module.exports = class Handler {
       log.info(`License ${ license.id } updated via webhook.`);
     }
   }
-
 };

@@ -70,7 +70,6 @@ module.exports = class OnfidoService {
   }
 
   static *createCheck(data, _user) {
-    console.log('data: ', data);
     let response = yield this.request('/reports', 'POST', data);
     return response;
   }
@@ -111,7 +110,6 @@ module.exports = class OnfidoService {
       body = JSON.parse(response.body);
     }
     fs.appendFileSync('/var/log/outgoing/onfido.txt', JSON.stringify([options, body, response]) + "\n");
-    console.log('body: ', body);
     if (!response || response.statusCode > 201) {
       throw error.parse(yield this.getError(resource, result, user), response.statusCode || 400);
     }
@@ -119,6 +117,7 @@ module.exports = class OnfidoService {
     return body;
   }
 
+  // The errors for checkr are probably not the same, and this function probably no longer gets the correct errors
   static *getError(resource, result, user) {
     let data;
     try {

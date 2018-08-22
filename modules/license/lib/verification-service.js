@@ -44,28 +44,33 @@ module.exports = class LicenseVerificationService extends Service {
           break;
         }
       }
-
       checkId = check.id;
+      reportId = check['motor_vehicle_report_id'];
     }
 
     let report = yield Verification.getReport(checkId);
-    if (report.status === 'complete') {
+    if (report.status === 'consider' || report.status === 'clear') {
 
-      // Get result
-      report.result = yield this.getResult(report);
+      // The function used below does not work for the checkr response
+      //report.result = yield this.getResult(report);
 
       if (report.result === 'consider') {
         yield notify.slack({ text : `:bicyclist: ${ user.link() } license moved to 'consider'.`
         }, { channel : '#user-alerts' });
       }
 
+      if (report.result === 'clear') {
+        yield notify.slack({ text : `:bicyclist: ${ user.link() } license moved to 'clear'.`
+        }, { channel : '#user-alerts' });
+      }
+
       log.debug(`LICENSE VERIFICATION : ${ report.id } : ${ report.status }`);
       yield license.update({
         status     : report.status,
-        outcome    : report.result,
+        outcome    : report.status,
         report     : JSON.stringify(report),
         checkId    : license.checkId || check.id,
-        reportId   : report.id,
+        reportId   : reportId,
         verifiedAt : new Date()
       });
     } else {
@@ -84,6 +89,7 @@ module.exports = class LicenseVerificationService extends Service {
     return license;
   }
 
+  // The api call for this needs to be fixed
   /**
    * Returns a reigstered card based on the provided cardId.
    */
@@ -96,10 +102,6 @@ module.exports = class LicenseVerificationService extends Service {
     return report;
   }
 
-  /**
-   * Syncs licenses.
-   * @return {Void}
-   */
   static *syncLicenses() {
     let licenses = yield this.getLicensesInProgress();
     let count    = licenses.length;
@@ -147,7 +149,7 @@ module.exports = class LicenseVerificationService extends Service {
       }
     }
   }
-
+  // This does not work with any of the possible responses from checkr
   static *getResult(report) {
     // Check if reason for 'consider' is simple restriction
     if (report.result === 'consider' && report.breakdown) {
