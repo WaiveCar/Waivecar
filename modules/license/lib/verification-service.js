@@ -86,9 +86,6 @@ module.exports = class LicenseVerificationService extends Service {
 
   /**
    * Returns a reigstered card based on the provided cardId.
-   * @param  {String} cardId
-   * @param  {Object} _user  The authenticated user making the request.
-   * @return {Object}
    */
   static *show(id, data, _user) {
     //let user = yield this.getUser(data.userId);
@@ -117,7 +114,7 @@ module.exports = class LicenseVerificationService extends Service {
       }
 
       let user    = yield User.findById(license.userId);
-      let update  = yield Verification.getReport(license.linkedUserId, license.checkId, license.reportId);
+      let update  = yield Verification.getReport(license.reportId);
       if (update.status !== license.status) {
         log.debug(`${ update.id } : ${ update.status }`);
 

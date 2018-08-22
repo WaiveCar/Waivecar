@@ -14,11 +14,11 @@ let Service       = require('../classes/service');
 let notify        = Bento.module('waivecar/lib/notification-service');
 let fs            = require('fs');
 
-if (!config.onfido) {
+if (!config.checkr) {
   throw error.parse({
-    code     : 'LICENSE_ONFIDO_CONFIG',
-    message  : 'Missing configuration for license service [Onfido]',
-    solution : 'Make sure to set up the correct configuration for your Onfido account'
+    code     : 'LICENSE_CHECKR_CONFIG',
+    message  : 'Missing configuration for license service [Checkr]',
+    solution : 'Make sure to set up the correct configuration for your Checkr account'
   });
 }
 
@@ -69,40 +69,20 @@ module.exports = class OnfidoService {
     return response;
   }
 
-  /**
-   * Retrieves all Applicants
-   */
-  static *getUserLinks(_user) {
-    let response = yield this.request(`/applicants`);
-    return response;
-  }
-
-  /**
-   * Retrieves an Applicant
-   */
-  static *getUserLink(applicantId, _user) {
-    let response = yield this.request(`/applicants/${ applicantId }`);
-    return response;
-  }
-
   static *createCheck(data, _user) {
     console.log('data: ', data);
     let response = yield this.request('/reports', 'POST', data);
     return response;
   }
-
+  
+  // This is used and needs to be repaired
   static *getChecks(applicantId, _user) {
     let response = yield this.request(`/applicants/${ applicantId }/checks`);
     return response;
   }
 
-  static *getCheck(applicantId, checkId, _user) {
-    let response = yield this.request(`/applicants/${ applicantId }/checks/${ checkId }`);
-    return response;
-  }
-
-  static *getReport(checkId) {
-    let response = yield this.request(`/reports/${ checkId }`);
+  static *getReport(reportId) {
+    let response = yield this.request(`/reports/${ reportId }`);
     return response;
   }
 
