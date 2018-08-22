@@ -48,11 +48,11 @@ module.exports = class LicenseVerificationService extends Service {
       reportId = check['motor_vehicle_report_id'];
     }
 
-    let report = yield Verification.getReport(checkId);
-    if (report.status === 'consider' || report.status === 'clear') {
+    let report = yield Verification.getReport(reportId);
 
-      // The function used below does not work for the checkr response
-      //report.result = yield this.getResult(report);
+    if (report.status !== 'pending') {
+
+      report.result = yield this.getResult(report);
 
       if (report.result === 'consider') {
         yield notify.slack({ text : `:bicyclist: ${ user.link() } license moved to 'consider'.`
@@ -69,7 +69,7 @@ module.exports = class LicenseVerificationService extends Service {
         status     : report.status,
         outcome    : report.status,
         report     : JSON.stringify(report),
-        checkId    : license.checkId || check.id,
+        checkId    : checkId,
         reportId   : reportId,
         verifiedAt : new Date()
       });
@@ -149,26 +149,9 @@ module.exports = class LicenseVerificationService extends Service {
       }
     }
   }
-  // This does not work with any of the possible responses from checkr
-  static *getResult(report) {
-    // Check if reason for 'consider' is simple restriction
-    if (report.result === 'consider' && report.breakdown) {
-      let reasons = [];
-      for (let key in report.breakdown) {
-        if (report.breakdown[key].result !== 'clear') {
-          reasons.push(key);
-        }
-      }
 
-      // Ensure only restrictions are the cause for 'consider'
-      if (reasons.length === 1 && reasons[0] === 'driving_restrictions') {
-        // Check for corrective lenses restriction
-        let restriction = report.properties.restrictions.length && report.properties.restrictions[0];
-        if (restriction && restriction.name === 'CORRECTIVE LENSES') {
-          return 'clear';
-        }
-      }
-    }
+  static *getResult(report) {
+    // This can be modified to put filters on reports to clear the correct ones for minor things
     return report.result;
   }
 

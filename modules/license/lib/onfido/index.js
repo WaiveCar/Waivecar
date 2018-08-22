@@ -81,7 +81,7 @@ module.exports = class OnfidoService {
   }
 
   static *getReport(reportId) {
-    let response = yield this.request(`/reports/${ reportId }`);
+    let response = yield this.request(`/motor_vehicle_reports/${ reportId }`);
     return response;
   }
 
@@ -113,7 +113,7 @@ module.exports = class OnfidoService {
     if (!response || response.statusCode > 201) {
       throw error.parse(yield this.getError(resource, result, user), response.statusCode || 400);
     }
-
+    console.log('response: ', body);
     return body;
   }
 
