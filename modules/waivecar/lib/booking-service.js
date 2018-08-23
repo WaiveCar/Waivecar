@@ -75,7 +75,7 @@ module.exports = class BookingService extends Service {
 
   // Creates a new booking.
   static *create(data, _user) {
-    let lockKeys = yield redis.shouldProcess('booking-car', data.carId, 9 * 1000);
+    let lockKeys = yield redis.shouldProcess('booking-car', data.carId, 45 * 1000);
     if (!lockKeys) {
       throw error.parse({
         code    : 'BOOKING_AUTHORIZATION',
