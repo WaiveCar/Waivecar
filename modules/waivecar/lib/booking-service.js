@@ -129,7 +129,7 @@ module.exports = class BookingService extends Service {
     //
     // Importantly, we do this BEFORE CREATING A BOOKING.
     //
-    // Why? Otherwise we could do, for instance, a $1 hould, then 
+    // Why? Otherwise we could do, for instance, a $1 hold, then 
     // run into a race condition and never release the hold 
     //
     // The above code guarantees that we can book a car, it doesn't
