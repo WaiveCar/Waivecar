@@ -70,8 +70,8 @@ module.exports = class LicenseVerificationService extends Service {
           );
         }
         yield license.update({
-          status: report.status,
-          outcome: report.status,
+          status: update.status,
+          outcome: update.status,
           verifiedAt: new Date(),
           report: JSON.stringify(update),
         });
