@@ -199,6 +199,24 @@ module.exports = class BookingService extends Service {
       rebookOrder = yield this.recentBooking(driver, car, data.opts, lockKeys);
     }
 
+    // see #1318 we do this, as of this comment's writing, a second time, after 
+    // a potential charge has gone through because stripe has some issues
+    car = yield this.getCar(data.carId, data.userId, true);
+    if (car.userId !== null && car.bookingId !== null) {
+
+      yield notify.notifyAdmins(`Phew, at the last second, we stopped a double booking ${ car.info() } by ${ driver.link() }.`, [ 'slack' ], { channel : '#rental-alerts' });
+
+      if(rebookOrder) {
+        yield OrderService.refund(null, rebookOrder.id, driver);
+      }
+
+      yield redis.doneWithIt(lockKeys);
+      throw error.parse({
+        code    : `BOOKING_REQUEST_INVALID`,
+        message : `Another driver has already reserved this WaiveCar.`
+      }, 400);
+    }
+
     let booking = new Booking({
       carId  : data.carId,
       userId : data.userId
