@@ -85,7 +85,6 @@ module.exports = class BookingService extends Service {
 
     let driver = yield this.getUser(data.userId);
     let car = yield this.getCar(data.carId, data.userId, true);
-    let order;
 
     this.hasAccess(driver, _user);
 
@@ -146,7 +145,7 @@ module.exports = class BookingService extends Service {
         let title;
         let body;
         if (order.amount > 0) {
-          title = `$A $${amount} hold has been placed on your account during your ride on ${orderDate}` 
+          title = `A $${amount} hold has been placed on your account during your ride on ${orderDate}` 
           body = amount === '20.00' ? 'A $20 hold has been placed on your account for your ride with WaiveCar. This hold will be placed on your account every 2 days that you use our service. The amount of the hold can be reduced by adding a $20 credit to your account at our website.' : `A $${amount} hold has been placed on your account for your ride with WaiveCar. This hold will be placed on your account every 2 days that you use our service.`
         } else {
           title = `No hold on your account during your ride on ${orderDate}`
