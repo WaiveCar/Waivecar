@@ -1212,7 +1212,7 @@ module.exports = class BookingService extends Service {
 
     // If car is under 25% make it unavailable after ride is done #514
     // We use the average to make this assessment.
-    if (car.milesAvailable() < 25 && !isAdmin) {
+    if (car.milesAvailable() < 25 && !isAdmin && !isLevel) {
       yield cars.updateAvailabilityAnonymous(car.id, false);
       yield notify.slack({ text : `:spider: ${ car.link() } unavailable due to charge being under 25mi. ${ car.chargeReport() }`
       }, { channel : '#rental-alerts' });
