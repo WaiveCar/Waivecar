@@ -24,6 +24,7 @@ if (!config.checkr) {
 }
 
 module.exports = class CheckrService {
+  // This function puts the users into the checkr system and adds the checkr id to the database
   static *createUserLink(user, license, _user) {
     ['email', 'phone'].forEach(val => {
       let currentValue = user[val];
@@ -51,7 +52,6 @@ module.exports = class CheckrService {
       }
     });
 
-    // ### Create Verification Candidate
     let candidate = {
       email: user.email,
       phone: user.phone,
@@ -62,8 +62,7 @@ module.exports = class CheckrService {
       driver_license_number: license.number,
       driver_license_state: license.state,
     };
-
-    // optional inclusions:
+    // optional inclusions the 'no_middle_name' option is required for checkr if there is no middle name
     if (license.middleName) {
       candidate['middle_name'] = license.middleName;
     } else {
@@ -73,18 +72,12 @@ module.exports = class CheckrService {
     let response = yield this.request('/candidates', 'POST', candidate, user);
     return response;
   }
-
+  // This creates a request to checkr to make checkr fetch the report
   static *createCheck(data, _user) {
     let response = yield this.request('/reports', 'POST', data);
     return response;
   }
-
-  // This is used and needs to be repaired
-  static *getChecks(applicantId, _user) {
-    let response = yield this.request(`/applicants/${applicantId}/checks`);
-    return response;
-  }
-
+  // This fetches the report for an indiviudal report id
   static *getReport(reportId) {
     let response = yield this.request(`/motor_vehicle_reports/${reportId}`);
     return response;
@@ -115,7 +108,7 @@ module.exports = class CheckrService {
       body = JSON.parse(response.body);
     }
     fs.appendFileSync(
-      '/var/log/outgoing/onfido.txt',
+      '/var/log/outgoing/checkr.txt',
       JSON.stringify([options, body, response]) + '\n',
     );
     if (!response || response.statusCode > 201) {

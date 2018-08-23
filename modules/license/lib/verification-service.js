@@ -23,16 +23,14 @@ module.exports = class LicenseVerificationService extends Service {
     let payload = {};
 
     if (status === 'provided') {
+      // If the license has been provided, a check for it is created to be fetched later by the license-sync process
       payload.package = 'motor_vehicle_report';
       payload['candidate_id'] = license.linkedUserId;
-
       check = yield Verification.createCheck(payload, _user);
       status = 'pending';
       checkId = check.id;
       reportId = check['motor_vehicle_report_id'];
     }
-    let report = yield Verification.getReport(reportId);
-
     yield license.update({
       status: status,
       checkId: checkId,
@@ -45,38 +43,35 @@ module.exports = class LicenseVerificationService extends Service {
     return license;
   }
 
+  // This function is used by the task that checks for updated licenses
   static *syncLicenses() {
     let licenses = yield this.getLicensesInProgress();
     let count = licenses.length;
     log.info(`License : Checking ${count} Licenses`);
     for (let i = count - 1; i >= 0; i--) {
       let license = licenses[i];
-
-      if (!(yield redis.shouldProcess('license', license.userId))) {
+      if (!(yield redis.shouldProcess('license', license.userId, 9 * 1000))) {
         continue;
       }
-
       let user = yield User.findById(license.userId);
       let update = yield Verification.getReport(license.reportId);
       if (update.status !== license.status) {
         log.debug(`${update.id} : ${update.status}`);
-
-        let result = yield this.getResult(update);
-        if (result === 'consider') {
+        if (report.status === 'consider') {
           yield notify.slack(
             {text: `:bicyclist: ${user.link()} license moved to 'consider'`},
             {channel: '#user-alerts'},
           );
         }
-        if (result === 'clear') {
+        if (report.status === 'clear') {
           yield notify.slack(
             {text: `:bicyclist: ${user.link()} license moved to 'clear'.`},
             {channel: '#user-alerts'},
           );
         }
         yield license.update({
-          status: result,
-          outcome: result,
+          status: report.status,
+          outcome: report.status,
           verifiedAt: new Date(),
           report: JSON.stringify(update),
         });
@@ -86,10 +81,5 @@ module.exports = class LicenseVerificationService extends Service {
         });
       }
     }
-  }
-
-  static *getResult(report) {
-    // This can be modified to put filters on reports to clear the correct ones for minor things
-    return report.status;
   }
 };
