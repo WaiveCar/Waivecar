@@ -57,13 +57,13 @@ module.exports = class LicenseVerificationService extends Service {
       let update = yield Verification.getReport(license.reportId);
       if (update.status !== license.status) {
         log.debug(`${update.id} : ${update.status}`);
-        if (report.status === 'consider') {
+        if (update.status === 'consider') {
           yield notify.slack(
             {text: `:bicyclist: ${user.link()} license moved to 'consider'`},
             {channel: '#user-alerts'},
           );
         }
-        if (report.status === 'clear') {
+        if (update.status === 'clear') {
           yield notify.slack(
             {text: `:bicyclist: ${user.link()} license moved to 'clear'.`},
             {channel: '#user-alerts'},
