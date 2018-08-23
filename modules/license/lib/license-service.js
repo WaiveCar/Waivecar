@@ -4,7 +4,7 @@ let License      = Bento.model('License');
 let error        = Bento.Error;
 let relay        = Bento.Relay;
 let Service      = require('./classes/service');
-let Verification = require('./onfido');
+let Verification = require('./checkr');
 let resource     = 'licenses';
 let moment       = require('moment');
 let notify       = Bento.module('waivecar/lib/notification-service');
@@ -143,7 +143,6 @@ module.exports = class LicenseService extends Service {
 
     // ### create user in verification provider and establish link.
 
-
     if (!license.linkedUserId) {
       let userLink      = yield Verification.createUserLink(user, data, _user);
       data.linkedUserId = userLink.id;
@@ -154,7 +153,6 @@ module.exports = class LicenseService extends Service {
 
     // So when a license moves to consider we need to send an SMS to the user.
     // This is where it happens to happen.
-    //
     if(license.outcome !== data.outcome && data.outcome === 'clear') {
       yield notify.sendTextMessage(user, `Congrats! You have been approved to drive with WaiveCar!`);
     }
@@ -173,9 +171,6 @@ module.exports = class LicenseService extends Service {
 
   /**
    * Deletes a license.
-   * @param  {Number} id
-   * @param  {Object} _user
-   * @return {Object}
    */
   static *delete(id, _user) {
     let license = yield this.getLicense(id);

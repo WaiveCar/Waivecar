@@ -1,7 +1,7 @@
 'use strict';
 
 let Service = require('./classes/service');
-let Verification = require('./onfido');
+let Verification = require('./checkr');
 let notify = Bento.module('waivecar/lib/notification-service');
 let redis = require('../../waivecar/lib/redis-service');
 let User = Bento.model('User');
