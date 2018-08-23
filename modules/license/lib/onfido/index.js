@@ -86,7 +86,7 @@ module.exports = class OnfidoService {
   }
 
   /**
-   * Returns the Response from a Request aginst the Onfido API
+   * Returns the Response from a Request aginst the Checkr API
    */
   static *request(resource, method, data, user) {
     let options = {
@@ -111,7 +111,10 @@ module.exports = class OnfidoService {
     }
     fs.appendFileSync('/var/log/outgoing/onfido.txt', JSON.stringify([options, body, response]) + "\n");
     if (!response || response.statusCode > 201) {
-      throw error.parse(yield this.getError(resource, result, user), response.statusCode || 400);
+      throw error.parse({
+        code    : 'ERROR_MAKING_REQUEST',
+        message : 'There was an error in your request to checkr.'
+      }, 400);
     }
     return body;
   }

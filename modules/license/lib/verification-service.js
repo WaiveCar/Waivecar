@@ -1,17 +1,15 @@
 'use strict';
 
-let Service      = require('./classes/service');
+let Service = require('./classes/service');
 let Verification = require('./onfido');
-let notify       = Bento.module('waivecar/lib/notification-service');
-let redis        = require('../../waivecar/lib/redis-service');
-let User         = Bento.model('User');
-let relay        = Bento.Relay;
-let log          = Bento.Log;
-let resource     = 'licenses';
-let apiConfig    = Bento.config.api;
+let notify = Bento.module('waivecar/lib/notification-service');
+let redis = require('../../waivecar/lib/redis-service');
+let User = Bento.model('User');
+let relay = Bento.Relay;
+let log = Bento.Log;
+let apiConfig = Bento.config.api;
 
 module.exports = class LicenseVerificationService extends Service {
-
   // Executes a request for a license to be verified.
   static *store(id, data, _user) {
     let user = yield this.getUser(data.userId);
@@ -35,38 +33,14 @@ module.exports = class LicenseVerificationService extends Service {
     }
     let report = yield Verification.getReport(reportId);
 
-    if (report.status !== 'pending') {
-      report.result = yield this.getResult(report);
-
-      if (report.result === 'consider') {
-        yield notify.slack({ text : `:bicyclist: ${ user.link() } license moved to 'consider'.`
-        }, { channel : '#user-alerts' });
-      }
-
-      if (report.result === 'clear') {
-        yield notify.slack({ text : `:bicyclist: ${ user.link() } license moved to 'clear'.`
-        }, { channel : '#user-alerts' });
-      }
-
-      log.debug(`LICENSE VERIFICATION : ${ report.id } : ${ report.status }`);
-      yield license.update({
-        status     : report.status,
-        outcome    : report.status,
-        report     : JSON.stringify(report),
-        checkId    : checkId,
-        reportId   : reportId,
-        verifiedAt : new Date()
-      });
-    } else {
-      yield license.update({
-        status   : status,
-        checkId  : checkId,
-        reportId : reportId
-      });
-    }
-    relay.admin(resource, {
-      type : 'update',
-      data : license
+    yield license.update({
+      status: status,
+      checkId: checkId,
+      reportId: reportId,
+    });
+    relay.admin('licenses', {
+      type: 'update',
+      data: license,
     });
     return license;
   }
@@ -74,7 +48,7 @@ module.exports = class LicenseVerificationService extends Service {
   static *syncLicenses() {
     let licenses = yield this.getLicensesInProgress();
     let count = licenses.length;
-    log.info(`License : Checking ${ count } Licenses`);
+    log.info(`License : Checking ${count} Licenses`);
     for (let i = count - 1; i >= 0; i--) {
       let license = licenses[i];
 
@@ -82,29 +56,33 @@ module.exports = class LicenseVerificationService extends Service {
         continue;
       }
 
-      let user    = yield User.findById(license.userId);
-      let update  = yield Verification.getReport(license.reportId);
+      let user = yield User.findById(license.userId);
+      let update = yield Verification.getReport(license.reportId);
       if (update.status !== license.status) {
-        log.debug(`${ update.id } : ${ update.status }`);
+        log.debug(`${update.id} : ${update.status}`);
+
         let result = yield this.getResult(update);
-
         if (result === 'consider') {
-          yield notify.slack({ text : `:bicyclist: ${ user.link() } license moved to 'consider'` }, { channel : '#user-alerts' });
+          yield notify.slack(
+            {text: `:bicyclist: ${user.link()} license moved to 'consider'`},
+            {channel: '#user-alerts'},
+          );
         }
-
         if (result === 'clear') {
-          yield notify.slack({ text : `:bicyclist: ${ user.link() } license moved to 'clear'.` }, { channel : '#user-alerts' });
+          yield notify.slack(
+            {text: `:bicyclist: ${user.link()} license moved to 'clear'.`},
+            {channel: '#user-alerts'},
+          );
         }
-
         yield license.update({
-          status     : result,
-          outcome    : result,
-          verifiedAt : new Date(),
-          report     : JSON.stringify(update)
+          status: result,
+          outcome: result,
+          verifiedAt: new Date(),
+          report: JSON.stringify(update),
         });
-        relay.admin(resource, {
-          type : 'update',
-          data : license
+        relay.admin('licenses', {
+          type: 'update',
+          data: license,
         });
       }
     }

@@ -7,10 +7,11 @@ let service   = require('../../lib/verification-service');
 
 module.exports = function *() {
   scheduler.add('license-sync', {
+    init   : true,
     repeat : true,
     timer  : {
-      value : 10,
-      type  : 'seconds'
+      value : 1,
+      type  : 'minute'
     }
   });
 };

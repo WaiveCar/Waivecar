@@ -1,5 +1,5 @@
 'use strict';
 
 module.exports = function *() {
-  yield require('./jobs');
+  yield require('./schedules/license-sync');
 };
