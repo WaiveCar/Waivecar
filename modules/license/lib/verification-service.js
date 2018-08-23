@@ -71,26 +71,13 @@ module.exports = class LicenseVerificationService extends Service {
     return license;
   }
 
-  // The api call for this needs to be fixed
-  /**
-   * Returns a reigstered card based on the provided cardId.
-   */
-  static *show(id, data, _user) {
-    //let user = yield this.getUser(data.userId);
-    //this.hasAccess(user, _user);
-
-    let license = yield this.getLicense(id);
-    let report = yield Verification.getChecks(license.linkedUserId, _user);
-    return report;
-  }
-
   static *syncLicenses() {
     let licenses = yield this.getLicensesInProgress();
     let count = licenses.length;
     log.info(`License : Checking ${ count } Licenses`);
     for (let i = count - 1; i >= 0; i--) {
       let license = licenses[i];
-      // locking mechanism for scaling
+
       if (!(yield redis.shouldProcess('license', license.userId))) {
         continue;
       }
