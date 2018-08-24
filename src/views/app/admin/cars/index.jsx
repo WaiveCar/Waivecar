@@ -27,7 +27,7 @@ module.exports = class CarsIndex extends React.Component {
     this.columns = [
       {key : "license", title:"License", type : "text", comparator : this.licenseComparator.bind(this)},
       {key : "charge", title:"Charge", type : "text"},
-      {key : "currentSpeed", title:"Speed", type : "text"},
+      {key : "lastTimeAtHq", title:"Last At HQ", type : "datetime"},
 
       {key : "isIgnitionOn", title:"Ignition", type : "bool"},
       //{key : "isKeySecure", title:"Key Secure", type : "bool"},
