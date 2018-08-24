@@ -120,7 +120,6 @@ Bento.Register.Controller('BookingsController', function(controller) {
     if (action === 'start') {
       yield checkVersion(this, "Please upgrade the WaiveCar app before continuing");
     }
-
     switch (action) {
       case 'start'    : return yield booking.start(id, this.auth.user);
       case 'ready'    : return yield booking.ready(id, this.auth.user);

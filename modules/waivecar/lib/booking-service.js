@@ -622,14 +622,19 @@ module.exports = class BookingService extends Service {
 
   /**
    * Unlocks the car and lets the driver prepare before starting the ride. It also removes the car from parking spaces if it is in one
-   * @param  {Number} id    The booking ID.
-   * @param  {Object} _user
-   * @return {Object}
    */
   static *ready(id, _user) {
     let booking = yield this.getBooking(id);
     let user    = yield this.getUser(booking.userId);
     let car     = yield this.getCar(booking.carId);
+
+    let atHq = yield this.isAtHub(car);
+
+    if (atHq) {
+      yield car.update({
+        lastTimeAtHq: new Date(), 
+      });
+    }
 
     this.hasAccess(user, _user);
 

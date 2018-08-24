@@ -213,6 +213,10 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       type : Sequelize.DATE
     },
 
+    lastTimeAtHq : {
+      type : Sequelize.DATE
+    },
+
     comments : {
       type : Sequelize.TEXT()
     }
