@@ -738,7 +738,8 @@ module.exports = class BookingService extends Service {
         }
       } 
     })).forEach(function(row) {
-      if(geolib.getDistance(car, row) < row.radius) {
+      let radiusInMeters = row.radius > 1 ? row.radius : row.radius / 0.00062137; 
+      if(geolib.getDistance(car, row) < radiusInMeters) {
         hub = row;
       }
     });
@@ -760,7 +761,6 @@ module.exports = class BookingService extends Service {
   static *_canEnd(car, isAdmin) {
     // We preference hubs over zones because cars can end there at any charge without a photo
     let hub = yield this.isAtHub(car);
-
     // if we are at a hub then we can return the car here regardless
     if(hub) {
       return hub;
