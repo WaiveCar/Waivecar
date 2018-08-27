@@ -1228,21 +1228,35 @@ module.exports = class BookingService extends Service {
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
 
     // Notify slack, create a ticket to move car, also need to create tickets to be created that close if the car is moved
+    // This also needs to be made compatible with the changes I made in the last ticket I worked on.
 
     // Admins will be notified of expiring parking 30 mins before expiration if parking is shorter than 5 hours
     // and 90 mins before if it is longer
-    let notificationTime = payload.streetHours < 5 ? 30 : 90;
-    let timerObj = {value: notificationTime, type: 'minutes'};
-    queue.scheduler.add('parking-notify-expiration', {
-      uid: `parking-notify-expiration-${car.id}`,
-      timer: timerObj,
-      unique: true,
-      data: {
-        carId: car.id,
-        zone,
-        address,
-      },
+
+    let details = yield ParkingDetails.find({
+      where: {
+        bookingId: id,
+      }
     });
+
+    if (details) {
+      let notificationTime = details.streetHours < 5 ? 30 : 90;
+      
+      let testObj = {value: 10, type: 'seconds'};
+
+      let timerObj = {value: notificationTime, type: 'minutes'};
+      queue.scheduler.add('parking-notify-expiration', {
+        uid: `parking-notify-expiration-${car.id}`,
+        timer: testObj,
+        unique: true,
+        data: {
+          notificationTime,
+          car,
+          zone,
+          address,
+        },
+      });
+    }
     // ### Relay
 
     // if it's between 1am and 5am (which is 4 and 8 according to our east coast servers), then

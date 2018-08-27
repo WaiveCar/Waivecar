@@ -14,4 +14,5 @@ module.exports = function *() {
   yield require('./schedules/cars-status');
   yield require('./schedules/cache-update');
   yield require('./schedules/parking-auto-cancel');
+  yield require('./schedules/parking-notify-expiration');
 };
