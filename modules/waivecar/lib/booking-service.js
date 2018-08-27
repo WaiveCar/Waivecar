@@ -622,9 +622,6 @@ module.exports = class BookingService extends Service {
 
   /**
    * Unlocks the car and lets the driver prepare before starting the ride. It also removes the car from parking spaces if it is in one
-   * @param  {Number} id    The booking ID.
-   * @param  {Object} _user
-   * @return {Object}
    */
   static *ready(id, _user) {
     let booking = yield this.getBooking(id);
@@ -812,9 +809,6 @@ module.exports = class BookingService extends Service {
 
   /**
    * Ends the ride by calculating costs and setting the booking into pending payment state.
-   * @param  {Number} id    The booking ID.
-   * @param  {Object} _user
-   * @return {Object}
    */
   static *end(id, _user, query, payload) {
     let booking = yield this.getBooking(id);
@@ -1006,6 +1000,8 @@ module.exports = class BookingService extends Service {
       }
       let parking = new ParkingDetails(payload.data);
       yield parking.save();
+      // Notify slack, create a ticket to move car, also need to create tickets to be created that close if the car is moved
+
     }
 
     //
