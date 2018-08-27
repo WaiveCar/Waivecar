@@ -1233,13 +1233,14 @@ module.exports = class BookingService extends Service {
     // Admins will be notified of expiring parking 30 mins before expiration if parking is shorter than 5 hours
     // and 90 mins before if it is longer
 
-    let details = yield ParkingDetails.find({
+    let details = yield ParkingDetails.findOne({
       where: {
         bookingId: id,
       }
     });
 
     if (details) {
+      console.log('parking details: ', details);
       let notificationTime = details.streetHours < 5 ? 30 : 90;
       
       let testObj = {value: 10, type: 'seconds'};
@@ -1251,7 +1252,7 @@ module.exports = class BookingService extends Service {
         unique: true,
         data: {
           notificationTime,
-          car,
+          car: car.license,
           zone,
           address,
         },
