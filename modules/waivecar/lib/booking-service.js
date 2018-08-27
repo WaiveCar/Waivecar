@@ -1000,8 +1000,6 @@ module.exports = class BookingService extends Service {
       }
       let parking = new ParkingDetails(payload.data);
       yield parking.save();
-      // Notify slack, create a ticket to move car, also need to create tickets to be created that close if the car is moved
-
     }
 
     //
@@ -1229,6 +1227,22 @@ module.exports = class BookingService extends Service {
     yield notify.slack({ text : `:coffee: ${ message } ${ car.info() } ${ zone } ${ address } ${ booking.link() }` }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
 
+    // Notify slack, create a ticket to move car, also need to create tickets to be created that close if the car is moved
+
+    // Admins will be notified of expiring parking 30 mins before expiration if parking is shorter than 5 hours
+    // and 90 mins before if it is longer
+    let notificationTime = payload.streetHours < 5 ? 30 : 90;
+    let timerObj = {value: notificationTime, type: 'minutes'};
+    queue.scheduler.add('parking-notify-expiration', {
+      uid: `parking-notify-expiration-${car.id}`,
+      timer: timerObj,
+      unique: true,
+      data: {
+        carId: car.id,
+        zone,
+        address,
+      },
+    });
     // ### Relay
 
     // if it's between 1am and 5am (which is 4 and 8 according to our east coast servers), then
