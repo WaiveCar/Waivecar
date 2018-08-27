@@ -43,7 +43,6 @@ let ParkingDetails = Bento.model('ParkingDetails');
 let BookingLocation= Bento.model('BookingLocation');
 let Location       = Bento.model('Location');
 let UserParking    = Bento.model('UserParking');
-let Ticket         = Bento.model('Ticket');
 
 module.exports = class BookingService extends Service {
 
@@ -720,6 +719,10 @@ module.exports = class BookingService extends Service {
     } else {
       yield notify.notifyAdmins(`:timer_clock: ${ user.link() } started a booking when it was being canceled. This was denied. ${ car.info() }.`, [ 'slack' ], { channel : '#reservations' });
     }
+    queue.scheduler.cancel(
+      'parking-notify-expiration',
+      `parking-notify-expiration-${car.id}`,
+    );
   }
 
   static *start(id, _user) {
@@ -1234,6 +1237,8 @@ module.exports = class BookingService extends Service {
     // Admins will be notified of expiring parking 30 mins before expiration if parking is shorter than 5 hours
     // and 90 mins before if it is longer
 
+
+    // If there are parking details, a slack notification is sent out close to expiration
     let details = yield ParkingDetails.findOne({
       where: {
         bookingId: id,
@@ -1241,14 +1246,12 @@ module.exports = class BookingService extends Service {
     });
 
     if (details) {
-      let notificationTime = details.streetHours < 5 ? 30 : 90;
-      
-      let testObj = {value: 10, type: 'seconds'};
-
+      let notificationTime = details.streetHours < 5 ? 30 : 90; 
       let timerObj = {value: notificationTime, type: 'minutes'};
+
       queue.scheduler.add('parking-notify-expiration', {
         uid: `parking-notify-expiration-${car.id}`,
-        timer: testObj,
+        timer: timerObj,
         unique: true,
         data: {
           notificationTime,
