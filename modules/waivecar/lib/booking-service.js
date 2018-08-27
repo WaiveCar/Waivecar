@@ -43,6 +43,7 @@ let ParkingDetails = Bento.model('ParkingDetails');
 let BookingLocation= Bento.model('BookingLocation');
 let Location       = Bento.model('Location');
 let UserParking    = Bento.model('UserParking');
+let Ticket         = Bento.model('Ticket');
 
 module.exports = class BookingService extends Service {
 
@@ -1240,7 +1241,6 @@ module.exports = class BookingService extends Service {
     });
 
     if (details) {
-      console.log('parking details: ', details);
       let notificationTime = details.streetHours < 5 ? 30 : 90;
       
       let testObj = {value: 10, type: 'seconds'};
@@ -1253,6 +1253,7 @@ module.exports = class BookingService extends Service {
         data: {
           notificationTime,
           car: car.license,
+          carId: car.id,
           zone,
           address,
         },
