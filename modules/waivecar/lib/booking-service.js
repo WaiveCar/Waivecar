@@ -1181,6 +1181,16 @@ module.exports = class BookingService extends Service {
         }
       }
 
+      let details = yield BookingDetails.find({
+        where: {
+          bookingId: booking.id
+        }
+      });
+      console.log('details: ', details);
+
+      let totalDriven = yield sequelize.query(`select type, sum(mileage) as total from booking_details join bookings on booking_details.booking_id = bookings.id where user_id=${user.id} group by type;`);
+      console.log('total distance driven', totalDriven[0]);
+
 
       // --- 
       //
