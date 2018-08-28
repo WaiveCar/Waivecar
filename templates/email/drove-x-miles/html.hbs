@@ -1,0 +1,25 @@
+
+<div class="header">
+  <img src="https://s3.amazonaws.com/waivecar-assets/email-logo.png">
+</div>
+<div class="main">
+  <h3>Hello {{ name }},</h3>
+  <p>
+  It's been a great (time since signup) months since you've joined us at WaiveCar! In that time you've had XX bookings - that's almost (math.ceil(bookings/time)) a month!
+  </p>
+  <p>
+    That's (miles / 24.7) gallons of gas not put in a car^1, (gallons * 19.6) pounds of CO2 not put in the air^2
+    and $(miles * 0.545) not removed from you wallet^3!
+  </p>
+    Good job! Thanks for choosing WaiveCar and helping us build a brighter tomorrow!
+  <p>
+    Best regards,<br>
+    The WaiveCar Team
+  </p>
+  <p>
+    references:
+    [1] Average fuel economy of new cars from Reuters: https://www.reuters.com/article/us-autos-emissions/u-s-vehicle-fuel-economy-rises-to-record-24-7-mpg-epa-idUSKBN1F02BX
+    [2] CO2 per mile of gas from the US Energy Agency: https://www.eia.gov/tools/faqs/faq.php?id=307&t=11
+    [3] Vehicle cost per mile from AAA: https://newsroom.aaa.com/tag/driving-cost-per-mile/
+  </p>
+</div>
