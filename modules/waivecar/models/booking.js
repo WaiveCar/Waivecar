@@ -252,7 +252,7 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
     },
 
     *delCancelTimer() {
-      queue.scheduler.cancel('booking-auto-cancel', `booking-${ this.id }`);
+      return queue.scheduler.cancel('booking-auto-cancel', `booking-${ this.id }`);
     },
 
     /**

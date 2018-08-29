@@ -20,12 +20,14 @@ module.exports = (function() {
   res.storeTimeMS = 10 * 60 * 1000;
 
   res.failOnMultientry = function *(type, id, timeout) {
-    if(!(yield res.shouldProceed(type, id, timeout))) {
+    let lockKeys = yield res.shouldProceed(type, id, timeout);
+    if(!lockKeys) {
       throw error.parse({
         code    : 'DOUBLE_ENTRY',
         message : 'Please try again.'
       }, 400);
     }
+    return lockKeys;
   }
 
   res.tempGet = function*(key) {

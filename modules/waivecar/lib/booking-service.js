@@ -429,7 +429,6 @@ module.exports = class BookingService extends Service {
     return bookings;
   }
 
-
   static *count(query, _user) {
     let bookingsCount    = null;
     let dbQuery     = queryParser(query, {
@@ -817,6 +816,8 @@ module.exports = class BookingService extends Service {
    * @return {Object}
    */
   static *end(id, _user, query, payload) {
+    let lockKeys = yield redis.failOnMultientry('booking-end', id, 40 * 1000);
+
     let booking = yield this.getBooking(id);
     let car     = yield this.getCar(booking.carId);
     let user    = yield this.getUser(booking.userId);
@@ -836,6 +837,7 @@ module.exports = class BookingService extends Service {
       if(booking.status === 'ended') {
         return true;
       }
+      yield redis.doneWithIt(lockKeys);
       throw error.parse({
         code    : `BOOKING_REQUEST_INVALID`,
         message : `You can only end a booking which has been made ready or has already started.`
@@ -860,6 +862,7 @@ module.exports = class BookingService extends Service {
         if (isAdmin) {
           warnings.push('the ignition is on');
         } else {
+          yield redis.doneWithIt(lockKeys);
           throw error.parse({
             code    : `BOOKING_REQUEST_INVALID`,
             message : `You must park, and turn off the engine before ending your booking.`
@@ -904,6 +907,7 @@ module.exports = class BookingService extends Service {
     */
 
     if (isAdmin && warnings.length && !query.force) {
+      yield redis.doneWithIt(lockKeys);
       throw error.parse({
         code    : `BOOKING_END`,
         message : `The booking can't be ended because ${ warnings.join(' and ')}.`
@@ -920,6 +924,16 @@ module.exports = class BookingService extends Service {
     // ### Reset Car --- moved to _complete
     //yield car.removeDriver();
 
+    //
+    // --------------------------------------------------------
+    //
+    // At this point we've done all the checks and can safely
+    // mark the booking as complete. This is involves logging,
+    // deleting timers and adding a row to the booking_details
+    // table 
+    // 
+    // --------------------------------------------------------
+    //
     let endDetails = yield this.logDetails('end', booking, car);
 
     // Create a shop cart with automated fees.
@@ -956,7 +970,6 @@ module.exports = class BookingService extends Service {
       }
     }
 
-  
     // Handle auto charge for time
     if (!isAdmin) {
       yield OrderService.createTimeOrder(booking, user);
@@ -1033,6 +1046,7 @@ module.exports = class BookingService extends Service {
 
     car.relay('update');
     yield this.relay('update', booking, _user);
+    yield redis.doneWithIt(lockKeys);
 
     return {
       isCarReachable : isCarReachable
@@ -1212,7 +1226,7 @@ module.exports = class BookingService extends Service {
 
     // If car is under 25% make it unavailable after ride is done #514
     // We use the average to make this assessment.
-    if (car.milesAvailable() < 25 && !isAdmin) {
+    if (car.milesAvailable() < 25 && !isAdmin && !isLevel) {
       yield cars.updateAvailabilityAnonymous(car.id, false);
       yield notify.slack({ text : `:spider: ${ car.link() } unavailable due to charge being under 25mi. ${ car.chargeReport() }`
       }, { channel : '#rental-alerts' });
@@ -1498,6 +1512,27 @@ module.exports = class BookingService extends Service {
   }
 
   static *logDetails(type, booking, car) {
+    //
+    // see 1329: Fix multiple end and multiple start
+    //
+    // There's an issue fundamental to restart that we
+    // are trying to avoid (see #1330 for the details)
+    //
+    // We are trying to make sure we aren't logging things
+    // twice. This is a last-ditch protection for it and
+    // it shouldn't be required. But famous last words...
+    //
+    let check = yield BookingDetails.find({
+      where: {
+        bookingId : booking.id,
+        type      : type
+      }
+    });
+
+    if(check && check.length > 0) {
+      return check[0];
+    }
+
     let details = new BookingDetails({
       bookingId : booking.id,
       type      : type,
