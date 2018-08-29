@@ -113,7 +113,7 @@ Scheduler.cancel = function cancel(job, uid) {
 
     // See if the redis key exists or 
     // if it has already been handled.
-    let check = yield res.get(jobString);
+    let check = yield redis.get(jobString);
     yield redis.del(jobString);
 
     //
