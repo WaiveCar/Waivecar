@@ -1186,11 +1186,36 @@ module.exports = class BookingService extends Service {
           bookingId: booking.id
         }
       });
-      console.log('details: ', details);
 
-      let totalDriven = yield sequelize.query(`select type, sum(mileage) as total from booking_details join bookings on booking_details.booking_id = bookings.id where user_id=${user.id} group by type;`);
-      console.log('total distance driven', totalDriven[0]);
-
+      let sumQuery = yield sequelize.query(`select type, sum(mileage) as total from booking_details join bookings on booking_details.booking_id = bookings.id where user_id=${user.id} group by type;`);
+      let totalMiles = sumQuery[0][1].total - sumQuery[0][0].total;
+      let lastTripDistance = details[1].mileage - details[0].mileage;
+      let beforeLastTrip = totalMiles - lastTripDistance;
+      // This email will be sent for every 500 miles a user drives
+      if (Math.floor(totalMiles / 500) !== Math.floor(beforeLastTrip / 500)) {
+        let email = new Email();
+        let numMonths = Math.floor(moment(Date.now()).diff(moment(user.createdAt), 'months'));
+        let allBookings = yield Booking.find({where: {userId: user.id}});
+        let gallons = Math.floor(totalMiles / 24.7);
+        try {
+	        yield email.send({
+		        to       : user.email,
+		        from     : emailConfig.sender,
+            subject  : `You just drove your ${Math.floor(totalMiles) * 500}th mile with WaiveCar!`,
+		        template : 'drove-x-miles',
+		        context  : {
+		          name       : user.name(),
+              numMonths,
+              numBookings: allBookings.length,
+              gallons,
+              pounds: Math.floor(gallons * 19.6),
+              savings: (totalMiles * 0.545).toFixed(2),
+		        }
+          });
+        } catch(err) {
+          log.warn('email error: ', err);
+        }; 
+      }
 
       // --- 
       //
