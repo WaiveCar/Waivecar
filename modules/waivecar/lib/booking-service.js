@@ -1498,6 +1498,27 @@ module.exports = class BookingService extends Service {
   }
 
   static *logDetails(type, booking, car) {
+    //
+    // see 1329: Fix multiple end and multiple start
+    //
+    // There's an issue fundamental to restart that we
+    // are trying to avoid (see #1330 for the details)
+    //
+    // We are trying to make sure we aren't logging things
+    // twice. This is a last-ditch protection for it and
+    // it shouldn't be required. But famous last words...
+    //
+    let check = yield BookingDetails.find({
+      where: {
+        bookingId : booking.id,
+        type      : type
+      }
+    });
+
+    if(check && check.length > 0) {
+      return check[0];
+    }
+
     let details = new BookingDetails({
       bookingId : booking.id,
       type      : type,
