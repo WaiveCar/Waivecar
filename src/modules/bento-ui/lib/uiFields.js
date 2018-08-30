@@ -479,17 +479,6 @@ module.exports = {
       required: true,
       type: 'text',
     },
-    gender: {
-      component: 'select',
-      helpText: null,
-      label: 'Gender',
-      name: 'gender',
-      options: [
-        {name: 'Male', value: 'male'},
-        {name: 'Female', value: 'female'},
-      ],
-      required: false,
-    },
     id: {
       component: 'input',
       label: 'ID',

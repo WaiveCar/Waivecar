@@ -194,23 +194,10 @@ module.exports = class UserDetails extends React.Component {
                 <input type="text" name="lastName" className="form-control" defaultValue={ license.lastName } disabled={ !license.provided } required />
               </FormInput>
             </div>
-
             <div className="form-group row">
               <FormInput className="col-md-4 bento-form-input">
                 <label>Birth Date</label>
                 <input type="date" name="birthDate" className="form-control" defaultValue={ moment(license.birthDate.slice(0,-1)).format('YYYY-MM-DD') } required />
-              </FormInput>
-              <FormInput className="col-md-4 bento-form-input">
-                <label>Gender</label>
-                <FormSelect
-                  name     = "gender"
-                  value    = { license.gender }
-                  disabled = { !license.provided }
-                  options  = {[
-                    { value : 'male', label : 'Male' },
-                    { value : 'female', label : 'Female' }
-                  ]}
-                />
               </FormInput>
               <FormInput className="col-md-4 bento-form-input">
                 <label>Outcome</label>
