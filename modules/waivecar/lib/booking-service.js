@@ -621,14 +621,19 @@ module.exports = class BookingService extends Service {
 
   /**
    * Unlocks the car and lets the driver prepare before starting the ride. It also removes the car from parking spaces if it is in one
-   * @param  {Number} id    The booking ID.
-   * @param  {Object} _user
-   * @return {Object}
    */
   static *ready(id, _user) {
     let booking = yield this.getBooking(id);
     let user    = yield this.getUser(booking.userId);
     let car     = yield this.getCar(booking.carId);
+
+    let atHq = yield this.isAtHub(car);
+
+    if (atHq) {
+      yield car.update({
+        lastTimeAtHq: new Date(), 
+      });
+    }
 
     this.hasAccess(user, _user);
 
@@ -737,7 +742,8 @@ module.exports = class BookingService extends Service {
         }
       } 
     })).forEach(function(row) {
-      if(geolib.getDistance(car, row) < row.radius) {
+      let radiusInMeters = row.radius > 1 ? row.radius : row.radius / 0.00062137; 
+      if(geolib.getDistance(car, row) < radiusInMeters) {
         hub = row;
       }
     });
@@ -759,7 +765,6 @@ module.exports = class BookingService extends Service {
   static *_canEnd(car, isAdmin) {
     // We preference hubs over zones because cars can end there at any charge without a photo
     let hub = yield this.isAtHub(car);
-
     // if we are at a hub then we can return the car here regardless
     if(hub) {
       return hub;
