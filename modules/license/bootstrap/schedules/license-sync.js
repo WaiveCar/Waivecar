@@ -20,7 +20,7 @@ module.exports = function *() {
 scheduler.process('license-sync', function *(job) {
   log.info('License : Sync');
   try {
-    let updateLicenses = yield service.syncLicenses();
+    yield service.syncLicenses();
   } catch(err) {
     log.warn('License : Sync : failed to sync licenses : ', err);
   }

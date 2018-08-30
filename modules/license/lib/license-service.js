@@ -4,7 +4,7 @@ let License      = Bento.model('License');
 let error        = Bento.Error;
 let relay        = Bento.Relay;
 let Service      = require('./classes/service');
-let Verification = require('./onfido');
+let Verification = require('./checkr');
 let resource     = 'licenses';
 let moment       = require('moment');
 let notify       = Bento.module('waivecar/lib/notification-service');
@@ -13,9 +13,6 @@ module.exports = class LicenseService extends Service {
 
   /**
    * Registers a new license with the requested user.
-   * @param  {Object} data
-   * @param  {Object} _user
-   * @return {Object}
    */
   static *store(data, _user) {
     let user = yield this.getUser(data.userId);
@@ -85,9 +82,6 @@ module.exports = class LicenseService extends Service {
 
   /**
    * Returns license index.
-   * @param  {Object} query
-   * @param  {Object} _user
-   * @return {Object}
    */
   static *index(query, _user) {
     if (query.search) {
@@ -127,9 +121,6 @@ module.exports = class LicenseService extends Service {
 
   /**
    * Retrieves a license based on provided id.
-   * @param  {Number} id
-   * @param  {Object} _user
-   * @return {Object}
    */
   static *show(id, _user) {
     let license = yield this.getLicense(id);
@@ -142,10 +133,6 @@ module.exports = class LicenseService extends Service {
 
   /**
    * Updates a license.
-   * @param  {Number} id
-   * @param  {Object} data
-   * @param  {Object} _user
-   * @return {Object}
    */
   static *update(id, data, _user) {
 
@@ -155,7 +142,6 @@ module.exports = class LicenseService extends Service {
     this.hasAccess(user, _user);
 
     // ### create user in verification provider and establish link.
-
 
     if (!license.linkedUserId) {
       let userLink      = yield Verification.createUserLink(user, data, _user);
@@ -167,7 +153,6 @@ module.exports = class LicenseService extends Service {
 
     // So when a license moves to consider we need to send an SMS to the user.
     // This is where it happens to happen.
-    //
     if(license.outcome !== data.outcome && data.outcome === 'clear') {
       yield notify.sendTextMessage(user, `Congrats! You have been approved to drive with WaiveCar!`);
     }
@@ -186,9 +171,6 @@ module.exports = class LicenseService extends Service {
 
   /**
    * Deletes a license.
-   * @param  {Number} id
-   * @param  {Object} _user
-   * @return {Object}
    */
   static *delete(id, _user) {
     let license = yield this.getLicense(id);
