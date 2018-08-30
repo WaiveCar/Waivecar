@@ -49,20 +49,6 @@ module.exports = class UserDetails extends React.Component {
     });
   }
 
-  setReport(id) {
-    api.get(`/licenses/${ id }/report`, (err, report) => {
-      if (err) {
-        return snackbar.notify({
-          type    : `danger`,
-          message : err.message
-        });
-      }
-      this.setState({
-        report : report
-      });
-    });
-  }
-
   deleteLicense(id) {
     var response = prompt("Warning, there is no way to undo this. If you delete a license the user will have to add it again. type 'ok' to confirm.");
     if(response && response.toLowerCase() === 'ok') {
