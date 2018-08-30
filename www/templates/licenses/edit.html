@@ -35,14 +35,6 @@
           <span class="input-label required">Last Name</span>
           <input name="lastName" type="text" placeholder="Last Name" ng-model="licenseCtrl.license.lastName" required ng-disabled="!licenseCtrl.canEdit">
         </label>
-        <label class="item item-input item-select">
-          <div class="input-label">Gender</div>
-          <select name="gender" ng-model="licenseCtrl.license.gender" ng-disabled="!licenseCtrl.canEdit">
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-            <option value="other">Other</option>
-          </select>
-        </label>
         <label class="item item-input">
           <span class="input-label required">Date Of Birth</span>
           <input name="birthDate" type="date" value="" placeholder="Date of Birth" ng-model="licenseCtrl.license.birthDate" required ng-if="licenseCtrl.canEdit">
