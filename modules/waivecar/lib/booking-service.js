@@ -1188,15 +1188,15 @@ module.exports = class BookingService extends Service {
       });
 
       let sumQuery = yield sequelize.query(`select type, sum(mileage) as total from booking_details join bookings on booking_details.booking_id = bookings.id where user_id=${user.id} group by type;`);
-      let totalMiles = sumQuery[0][1].total - sumQuery[0][0].total;
-      let lastTripDistance = details[1].mileage - details[0].mileage;
+      let totalMiles = Math.abs(sumQuery[0][1].total - sumQuery[0][0].total);
+      let lastTripDistance = Math.abs(details[1].mileage - details[0].mileage);
       let beforeLastTrip = totalMiles - lastTripDistance;
       // This email will be sent for every 500 miles a user drives
       if (Math.floor(totalMiles / 500) !== Math.floor(beforeLastTrip / 500)) {
         let email = new Email();
-        let numMonths = Math.floor(moment(Date.now()).diff(moment(user.createdAt), 'months'));
+        let numMonths = Math.ceil(moment(Date.now()).diff(moment(user.createdAt), 'months'));
         let allBookings = yield Booking.find({where: {userId: user.id}});
-        let gallons = Math.floor(totalMiles / 24.7);
+        let gallons = Math.ceil(totalMiles / 24.7);
         try {
 	        yield email.send({
 		        to       : user.email,
@@ -1208,7 +1208,7 @@ module.exports = class BookingService extends Service {
               numMonths,
               numBookings: allBookings.length,
               gallons,
-              pounds: Math.floor(gallons * 19.6),
+              pounds: Math.ceil(gallons * 19.6),
               savings: (totalMiles * 0.545).toFixed(2),
 		        }
           });
