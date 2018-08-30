@@ -66,7 +66,7 @@ module.exports = {
   },
 
   *index(query, _user) {
-    var hour = (new Date()).getHours();
+    var hour = moment().tz('America/Los_Angeles').format('h');
     var isAdmin = _user && _user.hasAccess('admin');
 
     var opts = {
@@ -96,7 +96,7 @@ module.exports = {
 
     // Don't show la cars between 1 and 5am pacific time.
     // Unless you are an admin
-    if(hour >= 1 && hour < 4 && !isAdmin) {
+    if(hour >= 22 || hour < 1 && !isAdmin) {
       let $where = opts.where;
       opts.where = {
         $and: [ 
@@ -104,7 +104,7 @@ module.exports = {
           $where 
         ]
       };
-    } else if(hour >= 4 && hour < 8 && !isAdmin) {
+    } else if(hour >= 1 && hour < 4 && !isAdmin) {
       opts.where = { 
         $or : [
           sequelize.literal("groupCar.group_role_id = 7")
