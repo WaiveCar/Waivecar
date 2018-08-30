@@ -426,7 +426,14 @@ module.exports = {
   *updateAvailabilityAnonymous(id, isAvailable, _user) {
     let model = yield Car.findById(id);
     if (isAvailable) {
-      yield model.available();
+      if (!model.bookingId) {
+        yield model.available();
+      } else {
+        throw error.parse({
+          code    : 'CAR_IN_BOOKING',
+          message : 'Cars can\'t be made available while they are in a current booking.',
+        }, 400);
+      }
     } else {
       yield model.unavailable();
     }
@@ -443,12 +450,6 @@ module.exports = {
     return model;
   },
 
-  /**
-   * @param  {Number}  id
-   * @param  {Boolean} isAvailable
-   * @param  {Object}  _user
-   * @return {Mixed}
-   */
   *updateAvailability(id, isAvailable, _user) {
     access.verifyAdmin(_user);
 
