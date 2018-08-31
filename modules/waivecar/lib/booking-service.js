@@ -1312,7 +1312,8 @@ module.exports = class BookingService extends Service {
         unique: true,
         data: {
           notificationTime,
-          car: car.license,
+          bookingId: booking.id,
+          userId: user.id,
           carId: car.id,
           zone,
           address,
