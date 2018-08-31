@@ -51,6 +51,11 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
     }
 
     ctrl.all = prepareCars(cars);
+    //ctrl.allMarkers = ctrl.all.concat(ctrl.zoneMarkers);
+    ctrl.allMarkers = locations.filter(function (location) {
+      return location.type === 'zone'; 
+    }).concat(ctrl.all);
+
     ctrl.fitMapBoundsByMarkers = getMarkersToFitBoundBy(ctrl.all, currentLocation);
     if(!carsInRange(ctrl.all, currentLocation, 30)) {
       if (modal && modal.isShown()) {
