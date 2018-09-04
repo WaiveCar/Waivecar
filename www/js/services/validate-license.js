@@ -127,7 +127,7 @@ function LicenseValidationService ($injector) {
     var modal;
     var modalOpts = {
       title: 'Validating your license',
-      message: 'Validating usually takes 10 seconds. However in some cases it could take up to a business day',
+      message: 'Validating usually takes a few minutes. However in some cases it could take up to a business day',
       icon: '/templates/modals/loader.html',
       actions: [{
         text: 'Close',
