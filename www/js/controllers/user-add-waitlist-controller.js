@@ -27,8 +27,8 @@ function UserAddWaitlistController($injector){
 
     if (this.user.fullName){
       var arr = this.user.fullName.split(' ');
-      this.user.firstName = arr[0];
-      this.user.lastName = arr[1];
+      this.user.lastName = arr.pop();
+      this.user.firstName = arr.join(' ');
     }
 
     if (form.$invalid){
