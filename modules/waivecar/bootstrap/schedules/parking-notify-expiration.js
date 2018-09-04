@@ -5,6 +5,7 @@ let notify = require('../../lib/notification-service');
 let Ticket = Bento.model('Ticket');
 let Car       = Bento.model('Car');
 let User      = Bento.model('User');
+let Booking   = Bento.model('Booking');
 
 scheduler.process('parking-notify-expiration', function*(job) {
   let {bookingId, userId, address, zone, notificationTime, carId} = job.data;
