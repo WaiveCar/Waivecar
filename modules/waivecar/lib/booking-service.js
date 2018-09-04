@@ -987,8 +987,6 @@ module.exports = class BookingService extends Service {
 
     // Parking restrictions:
     let parkingSlack;
-    console.log('payload: ', payload);
-    console.log('end: ', end);
     if (payload && payload.data && payload.data.type) {
       if (end.isZone && payload.data.streetHours < end.parkingTime) {
         throw error.parse({
@@ -1275,18 +1273,18 @@ module.exports = class BookingService extends Service {
 
     // If car is under 25% make it unavailable after ride is done #514
     // We use the average to make this assessment.
-    if (car.milesAvailable() < 25 && !isAdmin && !isLevel) {
-      yield cars.updateAvailabilityAnonymous(car.id, false);
-      yield notify.slack({ text : `:spider: ${ car.link() } unavailable due to charge being under 25mi. ${ car.chargeReport() }`
-      }, { channel : '#rental-alerts' });
-    } else {
-      yield car.available();
-      yield this.notifyUsers(car);
-    }
 
     let zone = '', address = '';
     try {
       zone = yield this.getZone(car);
+      if (car.milesAvailable() <= zone.minimumCharge && !isAdmin && !isLevel) {
+        yield cars.updateAvailabilityAnonymous(car.id, false);
+        yield notify.slack({ text : `:spider: ${ car.link() } unavailable due to charge being under ${zone.minimumCharge}. ${ car.chargeReport() }`
+        }, { channel : '#rental-alerts' });
+      } else {
+        yield car.available();
+        yield this.notifyUsers(car);
+      }
       zone = `(${zone.name})` || '';
       address = yield this.getAddress(car.latitude, car.longitude);
     } catch(ex) {}
