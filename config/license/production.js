@@ -16,8 +16,8 @@ module.exports = {
       hook : 'w_ghPA06XdKc6ih26ROM27brGz9wtqIK'
     },
     checkr : {
-      key : '98413a44829d07166004a0bab8b7535a12f727e6',
-      token : '304e6e802f2fb602ae63778bcbfc0a0b0078d05',
+      key : 'e85d14c01d7f9f8970181b447b56f61e8d65d377',
+      token : 'b98ba65960820e9869bc8972191767c1de72f6d8',
       uri : 'https://98413a44829d07166004a0bab8b7535a12f727e6:@api.checkr.com/v1'
     }
   }
