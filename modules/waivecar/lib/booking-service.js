@@ -195,7 +195,8 @@ module.exports = class BookingService extends Service {
     let rebookOrder;
     // If the creator isn't an admin or is booking for themselves
     if (!driver.isWaiveWork || !_user.hasAccess('admin') || _user.id !== driver.id) {
-      rebookOrder = yield this.recentBooking(driver, car, data.opts, lockKeys);
+      // The line below needs to be commented back in
+      //rebookOrder = yield this.recentBooking(driver, car, data.opts, lockKeys);
     }
 
     // see #1318 we do this, as of this comment's writing, a second time, after 
@@ -777,7 +778,6 @@ module.exports = class BookingService extends Service {
     // if our car is fine and we aren't at a hub then we can return it so long as
     // we are in a zone.
     let zone = yield this.getZone(car);
-
     // otherwise if we aren't there and the car is low, we need to go back to a hub
     if (car.milesAvailable() < zone.minimumCharge && !isAdmin) {
       throw error.parse({
@@ -787,6 +787,7 @@ module.exports = class BookingService extends Service {
     }
 
     if(zone) {
+      zone.isZone = true;
       return zone;
     } else if(!isAdmin) {
       throw error.parse({
@@ -877,8 +878,7 @@ module.exports = class BookingService extends Service {
       }
     }
 
-    yield this._canEnd(car, isAdmin);
-    
+    let end = yield this._canEnd(car, isAdmin);
     // Immobilize the engine.
     let status;
     try {
@@ -987,7 +987,15 @@ module.exports = class BookingService extends Service {
 
     // Parking restrictions:
     let parkingSlack;
+    console.log('payload: ', payload);
+    console.log('end: ', end);
     if (payload && payload.data && payload.data.type) {
+      if (end.isZone && payload.data.streetHours < end.parkingTime) {
+        throw error.parse({
+          code    : 'NOT_ENOUGH_PARKING_TIME',
+          message : 'Your parking is not valid for a long enough time.'
+        }, 400);
+      }
       let parkingText = '';
       payload.data.bookingId = id;
 
