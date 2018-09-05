@@ -1275,8 +1275,11 @@ module.exports = class BookingService extends Service {
     // We use the average to make this assessment.
 
     let zone = '', address = '';
+    let minCharge;
+
     try {
       zone = yield this.getZone(car);
+      minCharge = zone.minimumCharge;
       if (car.milesAvailable() <= zone.minimumCharge && !isAdmin && !isLevel) {
         yield cars.updateAvailabilityAnonymous(car.id, false);
         yield notify.slack({ text : `:spider: ${ car.link() } unavailable due to charge being under ${zone.minimumCharge}. ${ car.chargeReport() }`
@@ -1288,6 +1291,17 @@ module.exports = class BookingService extends Service {
       zone = `(${zone.name})` || '';
       address = yield this.getAddress(car.latitude, car.longitude);
     } catch(ex) {}
+
+    minCharge = minCharge ? minCharge : 25;
+
+    if (car.milesAvailable() <= minCharge && !isAdmin && !isLevel) {
+      yield cars.updateAvailabilityAnonymous(car.id, false);
+      yield notify.slack({ text : `:spider: ${ car.link() } unavailable due to charge being under ${minCharge}mi. ${ car.chargeReport() }`
+      }, { channel : '#rental-alerts' });
+    } else {
+      yield car.available();
+      yield this.notifyUsers(car);
+    }
 
     let message = yield this.updateState('completed', _user, user);
     yield notify.sendTextMessage(user, `Thanks for driving with WaiveCar! Your rental is complete. You can see your trip summary in the app.`);
