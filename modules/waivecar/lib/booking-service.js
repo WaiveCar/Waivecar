@@ -194,7 +194,7 @@ module.exports = class BookingService extends Service {
     }
     let rebookOrder;
     // If the creator isn't an admin or is booking for themselves
-    if (!driver.isWaiveWork || !_user.hasAccess('admin')) {// || _user.id !== driver.id) {
+    if (!(driver.isWaiveWork || _user.hasAccess('admin'))) {// || _user.id !== driver.id) {
       rebookOrder = yield this.recentBooking(driver, car, data.opts, lockKeys);
     }
 
