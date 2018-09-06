@@ -344,7 +344,13 @@ module.exports = {
 
       // We create their user account.
       try {
-        userRecord = yield UserService.store(opts, _user);
+        //
+        // The issue with this method is that it's orchestrated by the
+        // admin and calls a function that sends them a text message
+        // to verify their phone number. Stupid. We're adding an option
+        // to avoid that nonsense.
+        //
+        userRecord = yield UserService.store(opts, _user, {nosms: true});
       } catch(ex) {
         userRecord = yield User.findOne({ 
           where: { 

@@ -77,6 +77,7 @@ hooks.set('user:send-password-token', function *(user, token, resetUrl) {
   });
 });
 
+// this is total bullshit and is not the way you do this.
 let phoneFormat = function(phone) {
   phone = phone.replace(/[^0-9+]/g, '');
   if (phone.startsWith('0')) {
@@ -108,29 +109,12 @@ hooks.set('user:store:before', function *(payload, _user) {
   return payload;
 });
 
-/**
- * Executed after a new user has been sucessfully registered.
- * @param  {Object} user
- * @param  {Object} _user
- * @return {Void}
- */
-hooks.set('user:store:after', function *(user, _user) {
-  if (user.email && user.email.match(/fixture\.none/gi)) {
-    return; // Ignore test accounts...
-  }
+hooks.set('user:store:after', function *(user, _user, opts) {
+  opts = opts || {};
 
-  // ### Verify Phone
-
-  if (user.phone && !user.verifiedPhone) {
+  if (user.phone && !user.verifiedPhone && !opts.nosms) {
     yield verification.requestPhoneVerification(user.id, user.phone);
   }
-
-  // ### Verify Email
-
-  //
-  // if (user.email && !user.verifiedEmail) {
-  //  yield verification.requestEmailVerification(user.id, user.email, user.name());
-  //}
 
   if(!user.email) {
     user.email = 'Unknown_email_' + user.id + '@waivecar.com';

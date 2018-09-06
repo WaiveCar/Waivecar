@@ -32,8 +32,8 @@ let _         = require('lodash')
 
 module.exports = {
 
-  *store(payload, _user) {
-    let data = yield hooks.require('user:store:before', payload, _user);
+  *store(payload, _user, opts) {
+    let data = yield hooks.require('user:store:before', payload, _user, opts);
 
     // ### Create User
     let user = new User(data);
@@ -52,7 +52,7 @@ module.exports = {
     });
     yield group.save();
 
-    yield hooks.require('user:store:after', user, _user);
+    yield hooks.require('user:store:after', user, _user, opts);
 
     relay.emit('users', {
       type : 'store',
