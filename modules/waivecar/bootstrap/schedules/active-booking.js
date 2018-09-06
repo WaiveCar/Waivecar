@@ -163,8 +163,10 @@ var checkBooking = co.wrap(function *(booking) {
     yield notify.notifyAdmins(`:small_red_triangle: ${ user.link() } is continuing to drive ${ car.info() } to an even lower charge. ${ car.chargeReport() }. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
 
   } else if (car.avgMilesAvailable() < 21 && !booking.isFlagged('low-0')) {
+    let homebase = isLevel ? '34 N 7th Street' : '2102 Pico Blvd, Santa Monica 90405';
+
     yield booking.flag('low-0');
-    yield notify.sendTextMessage(user, 'Hey there! Looks like your WaiveCar battery is getting really low. Please return your WaiveCar to the home base.');
+    yield notify.sendTextMessage(user, `Hey there! Looks like your WaiveCar battery is getting really low. Please return your WaiveCar to ${ homebase }.`);
     yield notify.notifyAdmins(`:battery: ${ user.link() } has driven ${ car.info() } to a low charge. ${ car.chargeReport() }. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
   }
 
