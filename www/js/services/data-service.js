@@ -5,6 +5,7 @@ require('../resources/bookings');
 require('../resources/cars');
 require('../resources/locations');
 require('../resources/car-chargers');
+require('../resources/parking');
 require('../resources/users');
 require('../resources/licenses');
 require('../resources/notification');
@@ -38,8 +39,11 @@ module.exports = angular.module('app.services').factory('$data', [
   'Notifications',
   'Messages',
   'Chargers',
-  function ($rootScope, $http, $q, $socket, Bookings, Cars, Locations, Users, Licenses, Card, File, Auth, User, Verification, Notifications, Messages, Chargers) {
-
+  'Parking',
+  '$injector',
+  function ($rootScope, $http, $q, $socket, Bookings, Cars, Locations, Users, Licenses, Card, File, Auth, User, Verification, Notifications, Messages, Chargers, Parking, $injector) {
+    var $modal = $injector.get('$modal');
+    var $ionicLoading = $injector.get('$ionicLoading');
     var isInBG = false;
     var service = {
 
@@ -52,6 +56,7 @@ module.exports = angular.module('app.services').factory('$data', [
         notification: Notifications,
         messages: Messages,
         chargers: Chargers,
+        parking: Parking,
 
         Card: Card,
         File: File,
@@ -62,6 +67,7 @@ module.exports = angular.module('app.services').factory('$data', [
 
       me: void 0,
       userLocation: {},
+      reservedParking: null,
       instances: {},
       active: {},
       isSubscribed: false,
@@ -261,7 +267,29 @@ module.exports = angular.module('app.services').factory('$data', [
         service.me = resource;
         return;
       }
-
+      if (resource === 'userParking') {
+        // This section occurs when a user loses their reservation for a parking spot. This is also 
+        // checked in the dashboard-controller to make sure that the parking space expires correctly 
+        var reservedParking = service.reservedParking;
+        if (reservedParking && reservedParking.id === action.data.id && reservedParking.reservationId !== action.data.reservationId) {
+          service.reservedParking = null; 
+          var modal;
+          $modal('simple-modal', {
+            title: 'Expired Parking',
+            message: 'Your most recent parking reservation has expired.',
+          }).then(function (_modal) {
+            // This setTimeout automatically removes the modal. There is a problem with the modal itself
+            // that causes it not to be able to be closed.
+            setTimeout(function(){
+              if(modal) {
+                modal.remove();
+              }
+            }, 5 * 1000);
+            modal = _modal;
+            modal.show();
+          });
+        }
+      }
       if (resource === 'actions' && service.onActionNotification) {
         service.onActionNotification(model);
       }

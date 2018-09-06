@@ -319,6 +319,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     var deferred = $q.defer();
 
     var type = marker.icon || marker.type;
+
     if('charge' in marker) {
       if('model' in marker) {
         marker.range = marker.range || (marker.charge * [135,70][+(marker.model === "Spark EV")]);
@@ -327,7 +328,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         type = 'locked-car';
       }
     }
-    var iconOpt = getIconOptions(type, ctrl.useCordova() ? '.png' : '.svg');
+    var iconOpt = getIconOptions(type, ctrl.useCordova() ? '.png' : '.svg', marker);
 
     var mapObject = new GeneralMapObject(ctrl, marker);
 
@@ -512,11 +513,17 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     var newIds = newMarkers.map(function (m) {
       return m.id;
     });
-
     var markersToUpdate = _.intersection(oldIds, newIds);
     var markersToAdd = _.difference(newIds, markersToUpdate);
     var markersToRemove = _.difference(oldIds, markersToUpdate);
     var actualMarkers = [];
+
+    // This is hacky, but works to update markers for the user-parking to show if they are available or not
+    newMarkers.forEach(function (marker) {
+      if (marker.type === 'user-parking') {
+        markersToAdd.push(marker.id);
+      }
+    });
 
     markersToUpdate.forEach(function (id) {
       var currentMarker = ctrl._addedMarkers.general.filter(function (m) {
@@ -550,7 +557,6 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
           markerObj: markerObj
         };
       });
-
       markersAddAllPromises.push(promise);
     });
 
@@ -674,7 +680,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     }
   };
 
-  function getIconOptions(iconType, fileExt) {
+  function getIconOptions(iconType, fileExt, marker) {
     switch (iconType) {
       case 'active-waivecar':
       case 'active-waivecar-0':
@@ -740,6 +746,15 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
           anchor: new google.maps.Point(12, 12),
           origin: new google.maps.Point(0, 0)
         };
+      case 'user-parking':
+        var fileName = marker.status === 'available' ? 'parking-available' : 'parking-in-use';
+        return {
+          url: 'img/' + fileName + fileExt,
+          iconRetinaUrl: 'img/' + fileName + fileExt,
+          scaledSize: new google.maps.Size(24, 24),
+          anchor: new google.maps.Point(12, 12),
+          origin: new google.maps.Point(0, 0)
+        }
       default:
         return {
           url: 'img/user-location' + fileExt,

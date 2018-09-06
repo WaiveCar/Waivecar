@@ -34,6 +34,7 @@ function DashboardController ($scope, $rootScope, $injector) {
   var ctrl = this;
   this.locations = $data.instances.locations;
   this.fitMapBoundsByMarkers = featured(this.locations);
+  this.$data = $data;
 
   this.openPopover = openPopover;
   this.closePopover = closePopover;
@@ -41,6 +42,8 @@ function DashboardController ($scope, $rootScope, $injector) {
   this.unlockCar = unlockCar;
   this.endRide = endRide;
   this.showUnlockChargerPrompt = showUnlockChargerPrompt;
+  this.reserveParking = reserveParking;
+  this.cancelParking = cancelParking;
 
   // State
   this.ending = false;
@@ -50,9 +53,11 @@ function DashboardController ($scope, $rootScope, $injector) {
   this.lastTimeOfParityCheck = null;
   this.lastUserLocations = [];
   this.parityCheckTimeout = null;
+  this.parkingReservationTime = null;
 
-  this.getDirections = function() {
-    $ride.openDirections(ctrl.selectedItem, ctrl.selectedItem.name);
+  this.getDirections = function(option) {
+    var toGet = option ? option : ctrl.selectedItem;
+    $ride.openDirections(toGet, toGet.name);
   }
 
   // So there was a bug when this thing wasn't running right ... so
@@ -63,6 +68,12 @@ function DashboardController ($scope, $rootScope, $injector) {
       return;
     }
     rideServiceReady();
+   
+    $data.resources.parking.fetchReservation({userId: $data.me.id}).$promise.then(function(parking){
+      // This loads in the current parking reservation if there is one.
+      $data.reservedParking = parking;
+      ctrl.parkingReservationTime = startParkingTimer(parking.reservation.createdAt);
+    });
 
     ctrl.locations = $data.instances.locations;
     if ($data.active.cars) {
@@ -390,6 +401,17 @@ function DashboardController ($scope, $rootScope, $injector) {
       }
 
       return $data.resources.bookings.canend({id: bookingId}).$promise.then(function(endLocation) {
+        // The part within the conditional is what happens when someone is ending their ride in user parking.
+        if ($data.reservedParking !== null) {
+          return confirmParking(carId, bookingId, attempt, function(){
+            return $ride.processEndRide().then(function(){
+              return $data.resources.parking.occupy({id: $data.reservedParking.id, carId: carId, reservationId: $data.reservedParking.reservation.id}).$promise.then(function(response){
+                $data.reservedParking = null;
+                return $state.go('end-ride', { id: bookingId });  
+              });
+            });
+          }); 
+        }
         if (endLocation.type === 'hub' || endLocation.type === 'homebase') {
           return $ride.processEndRide().then(function() {
             return $state.go('end-ride', { id: bookingId });
@@ -481,6 +503,139 @@ function DashboardController ($scope, $rootScope, $injector) {
       _modal.show();
       endRideModal = _modal;
       endRideModal.show();
+    });
+  }
+
+  function reserveParking(id) {
+    // This function reserves a parking space and handles what should happen when this reservation starts
+    var modal;
+    return $data.resources.parking.findByLocation({locationId: id}).$promise.then(function(parking){
+      return $data.resources.parking.reserve({id: parking.id, userId: $data.me.id}).$promise.then(function(space){
+        startParkingTimer(space.reservation.createdAt);
+        ctrl.selectedItem = null;
+        $data.reservedParking = space;
+        $modal('simple-modal', {
+          title: 'Parking Reserved',
+          message: 'You have reserved a parking space at ' + space.location.address + '. Your reservation will expire in 5 minutes.',
+        }).then(function (_modal) {
+          modal = _modal;
+          modal.show();
+        });
+      })
+      .catch(function(error) {
+        $modal('simple-modal', {
+          title: 'Parking Reservation Failed',
+          message: 'Your reservation at ' + space.location.address + ' has failed. ' + error.message,
+        }).then(function (_modal) {
+          modal = _modal;
+          modal.show();
+        });
+      });
+    });
+  }
+
+  function cancelParking(id, inDashboard, cb) {
+    // This function cancels the parking reservation.
+    var modal;
+    var address = $data.reservedParking.location.address;
+    if (inDashboard) {
+      // If the parking is cancelled while ending a ride, this modal will not pop up.
+      $modal('simple-modal', {
+        title: 'Parking Reservation Cancelled',
+        message: 'You have cancelled or reservation for the parking space at ' + address + '.' ,
+      }).then(function (_modal) {
+        modal = _modal;
+        modal.show();
+      });
+    }
+    return $data.resources.parking.cancel({id: id, reservationId: $data.reservedParking.reservation.id}).$promise.then(function(response){
+      $data.reservedParking = null;
+      ctrl.parkingReservationTime = null;
+      if (cb) {
+        cb();
+      }
+    })
+    .catch(function(error) {
+      $modal('simple-modal', {
+        title: 'Cancellation Failed',
+        message: 'You cancellation of your reservation for the parking space at ' + address + ' has failed.' + error.message ,
+      }).then(function (_modal) {
+        modal = _modal;
+        modal.show();
+      });
+    });
+  }
+
+  function startParkingTimer(createdAt) {
+    // This starts a timer for the parking reservation that will cause the reservation to 
+    // expire on the client side if the expiration is not emitted on time from the server.
+    // Sometimes the expiration of the parking reservation is emitted after the amount of
+    // time that it is supposed to take.
+    var expiration = moment(createdAt);
+    expiration.add(5, 'minutes');
+    var duration = moment.duration(expiration.diff(moment()))
+    ctrl.parkingReservationTime = moment(duration.asMilliseconds()).format('m:ss');
+    var interval = setInterval(function(){
+      if ($data.reservedParking === null) {
+        clearInterval(interval);
+      }
+      var newTime = moment(duration.asMilliseconds()).format('m:ss');
+      if (newTime === '0:00') {
+        clearInterval(interval);
+        // This conditional is here so that two modals don't pop up when the reservation expires. 
+        // The other modal that could pop up for the same event comes from the data service.
+        if ($data.reservedParking) { 
+          var modal;
+          $modal('simple-modal', {
+            title: 'Expired Parking',
+            message: 'Your most recent parking reservation has expired.',
+          }).then(function (_modal) {
+            modal = _modal;
+            modal.show();
+          });
+          $data.reservedParking = null;
+        }
+      }
+      ctrl.parkingReservationTime = newTime;
+    }, 1000);
+  }
+
+  function confirmParking(carId, bookingId, attempt, cb) {
+    // This function is for allowing the user to occupy a reserved parking space. It only
+    // pops up when a user ends the ride when they have a parking reservation.
+    var modal;
+    $modal('zone', {
+      title: 'Is UserParking',
+      zoneName: 'Parking Confirmation',
+      description: 'Are you ending your ride in the parking that you reserved?',
+      actions: [{
+        text: 'Yes my car is in the space I reserved',
+        className: 'button-dark',
+        handler: function () {
+          modal.remove();
+          cb();
+        }
+      }, {
+        text: 'No, I am ending it elsewhere',
+        className: 'button-dark',
+        handler: function () {
+          modal.remove();
+          // When the user wants to end somewhere they have not reserved, the parking reservation
+          // is cancelled and the endRide process is started again.
+          cancelParking($data.reservedParking.id, false, function() {
+            endRide(carId, bookingId, attempt); 
+          });
+        }
+      }, {
+        text: 'Cancel. I'm not done with my WaiveCar.',
+        className: 'button-balanced',
+        handler: function() {
+          modal.remove();  
+        }
+      }]
+    }).then(function (_modal) {
+      modal = _modal;
+      modal.show();
     });
   }
 }
