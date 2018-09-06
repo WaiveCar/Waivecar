@@ -229,7 +229,7 @@ module.exports = {
       res.level = 'yes';
       res.fastTrack = 'yes';
       delete res.inside;
-      let userList = yield this.letInByRecord([record], null, {email: 'level-letin'});
+      let userList = yield this.letInByRecord([record], null, {template: 'level-letin'});
 
       user = userList[0];
 
@@ -392,7 +392,7 @@ module.exports = {
           to       : record.email,
           from     : config.email.sender,
           subject  : 'Welcome to WaiveCar',
-          template : opts.email || 'letin-email',
+          template : opts.template || 'letin-email',
           context  : Object.assign({}, params || {}, {
             name: fullName,
             passwordlink: `${config.api.uri}/reset-password?hash=${res.token.hash}&isnew=yes`
