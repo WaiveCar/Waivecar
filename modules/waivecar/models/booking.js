@@ -255,11 +255,11 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       return queue.scheduler.cancel('booking-auto-cancel', `booking-${ this.id }`);
     },
 
-    /**
-     * Sets ride reminder schedules.
-     * @param {Object} user
-     * @param {Object} timers
-     */
+    //
+    // Sets ride reminder schedules.
+    // @param {Object} user
+    // @param {Object} timers
+    // 
     *setReminders(user, timers) {
 
       if (!user.isWaivework){
@@ -332,7 +332,6 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
     },
 
     *delForfeitureTimers() {
-
       let uid = `booking-${ this.id }`;
 
       queue.scheduler.cancel('booking-forfeiture-first-warning', uid);
