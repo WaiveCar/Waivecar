@@ -9,6 +9,7 @@ let relay     = Bento.Relay;
 let error     = Bento.Error;
 let config    = Bento.config.waivecar;
 let RedisService   = require('../../lib/redis-service');
+let BookingService = require('../../lib/booking-service');
 
 
 // See #550 - Allow user to extend Reservation period for $1.
@@ -81,29 +82,7 @@ scheduler.process('booking-auto-cancel', function *(job) {
         return true;
       }
 
-      yield booking.update({
-        status : 'cancelled'
-      });
-
-      // ### Update Car
-      // Remove the user from the car and make it available again.
-      yield car.update({
-        userId      : null,
-        isAvailable : true
-      });
-
-      // ### Emit Event
-      // Sends the cancelled event to the user and administrators.
-
-      relay.user(booking.userId, 'bookings', {
-        type : 'update',
-        data : booking.toJSON()
-      });
-
-      relay.admin('bookings', {
-        type : 'update',
-        data : booking.toJSON()
-      });
+      yield BookingService.cancelBookingAndMakeCarAvailable(booking, car);
 
       let timeWindow = booking.isFlagged('level') ? config.booking.timers.level.autoCancel.value : config.booking.timers.autoCancel.value;
       timeWindow = parseInt(timeWindow, 10);
@@ -117,7 +96,7 @@ scheduler.process('booking-auto-cancel', function *(job) {
 
       log.info(`The booking with ${ car.info() } was automatically cancelled, booking status was '${ booking.status }'.`);
     } else {
-      yield notify.notifyAdmins(`:timer_clock: ${ user.name() } started a booking when it was being canceled. This was granted. ${ car.info() }.`, [ 'slack' ], { channel : '#reservations' });
+      yield notify.notifyAdmins(`:timer_clock: ${ user.name() } started a booking exactly as their reservation time was expiring. This booking was granted. ${ car.info() }.`, [ 'slack' ], { channel : '#reservations' });
     }
   } else {
     log.warn(`Auto cancellation of booking ${ booking.id } was request but ignored | Booking status: ${ booking.status }`);
