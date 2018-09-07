@@ -627,7 +627,7 @@ function DashboardController ($scope, $rootScope, $injector) {
           });
         }
       }, {
-        text: 'Cancel. I'm not done with my WaiveCar.',
+        text: "Cancel. I'm not done with my WaiveCar.",
         className: 'button-balanced',
         handler: function() {
           modal.remove();  
