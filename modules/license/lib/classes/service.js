@@ -7,9 +7,6 @@ let log     = Bento.Log;
 
 module.exports = class Service {
 
-  /**
-   * Retrieves a license from the database.
-   */
   static *getLicense(id) {
     let license = yield License.findById(id);
     if (!license) {

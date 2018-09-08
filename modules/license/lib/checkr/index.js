@@ -77,15 +77,14 @@ module.exports = class CheckrService {
     let response = yield this.request('/reports', 'POST', data);
     return response;
   }
+
   // This fetches the report for an indiviudal report id
   static *getReport(reportId) {
     let response = yield this.request(`/motor_vehicle_reports/${reportId}`);
     return response;
   }
 
-  /**
-   * Returns the Response from a Request aginst the Checkr API
-   */
+  // Returns the Response from a Request aginst the Checkr API
   static *request(resource, method, data, user) {
     let options = {
       url: config.checkr.uri + resource,
@@ -107,7 +106,7 @@ module.exports = class CheckrService {
     if (response && response.body) {
       body = JSON.parse(response.body);
     }
-    fs.appendFileSync(
+    fs.appendFile(
       '/var/log/outgoing/checkr.txt',
       JSON.stringify([options, body, response]) + '\n',
     );

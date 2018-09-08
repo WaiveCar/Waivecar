@@ -10,10 +10,6 @@ let moment       = require('moment');
 let notify       = Bento.module('waivecar/lib/notification-service');
 
 module.exports = class LicenseService extends Service {
-
-  /**
-   * Registers a new license with the requested user.
-   */
   static *store(data, _user) {
     let user = yield this.getUser(data.userId);
 
@@ -119,9 +115,6 @@ module.exports = class LicenseService extends Service {
     return yield License.find(query);
   }
 
-  /**
-   * Retrieves a license based on provided id.
-   */
   static *show(id, _user) {
     let license = yield this.getLicense(id);
     let user    = yield this.getUser(license.userId);
@@ -131,9 +124,6 @@ module.exports = class LicenseService extends Service {
     return license;
   }
 
-  /**
-   * Updates a license.
-   */
   static *update(id, data, _user) {
 
     let license = yield this.getLicense(id);
@@ -143,7 +133,12 @@ module.exports = class LicenseService extends Service {
 
     // ### create user in verification provider and establish link.
 
-    if (!license.linkedUserId) {
+    //
+    // The old style onfido ids were pure base16 uuidv5s with hyphens.
+    // The checkr ones appear to be base64 strings. So we can check for
+    // a hyphen to see if its onfido. If so we re-run it.
+    //
+    if (!license.linkedUserId || license.linkedUserId.match(/-/)) {
       let userLink      = yield Verification.createUserLink(user, data, _user);
       data.linkedUserId = userLink.id;
       data.status       = 'provided';
@@ -159,8 +154,6 @@ module.exports = class LicenseService extends Service {
 
     yield license.update(data);
 
-    // ### Relay
-
     relay.admin(resource, {
       type : 'update',
       data : license
@@ -169,18 +162,11 @@ module.exports = class LicenseService extends Service {
     return license;
   }
 
-  /**
-   * Deletes a license.
-   */
   static *delete(id, _user) {
     let license = yield this.getLicense(id);
     let user    = yield this.getUser(license.userId);
 
-    // ### Delete License
-
     yield license.delete();
-
-    // ### Relay
 
     relay.admin(resource, {
       type : 'delete',
