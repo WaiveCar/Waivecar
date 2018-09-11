@@ -4,7 +4,7 @@ var angular = require('angular');
 require('../services/distance-service');
 require('../services/modal-service');
 require('angular-ui-router');
-
+/*eslint-disable */
 module.exports = angular.module('app.controllers').controller('CarsMapController', [
   '$rootScope',
   '$scope',

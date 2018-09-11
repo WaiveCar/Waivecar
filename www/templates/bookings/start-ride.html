@@ -6,8 +6,8 @@
       </div>
     </page-title>
   </ion-nav-title>
-  <ion-content scroll="false" padding="true" class="ion-content--center dark-bg start-ride">
-    <div  class="row row-center row-full-height">
+  <ion-content scroll="true" padding="false" class="ion-content--center dark-bg start-ride">
+    <div  class="row row-center">
       <div class="col col-center">
         <div>
           <h3>START RIDE</h3>
@@ -23,66 +23,63 @@
               </div>
             </div>
             <p>{{ ctrl.data.cars.license }} is almost ready.</p>
-            <p>Quick checklist before you start.</p>
-            <ul class="list-unstyled text-left bold-list">
-              <li>
-                <p class="pull-left">No damage to car exterior</p>
-                <label ng-if="!ctrl.extDamage" ng-click="ctrl.toggle('extDamage')" class="pull-right">
-                  <span class="check">
-                    <div class="empty-red"></div>
-                  </span>
-                  <span class="check">
-                    <ng-include src="'/img/check-icon.svg'" />
-                  </span>
-                </label>
-                <label ng-if="ctrl.extDamage" ng-click="ctrl.toggle('extDamage')" class="pull-right">
-                  <span class="check">
-                    <ng-include src="'/img/x-icon.svg'" />
-                  </span>
-                  <span class="check">
-                    <div class="empty-green"></div>
-                  </span>
-                </label>
-              </li>
-              <li>
-                <p class="pull-left">No damage to car interior</p>
-                <label ng-if="!ctrl.intDamage" ng-click="ctrl.toggle('intDamage')" class="pull-right">
-                  <span class="check">
-                    <div class="empty-red"></div>
-                  </span>
-                  <span class="check">
-                    <ng-include src="'/img/check-icon.svg'" />
-                  </span>
-                </label>
-                <label ng-if="ctrl.intDamage" ng-click="ctrl.toggle('intDamage')" class="pull-right">
-                  <span class="check">
-                    <ng-include src="'/img/x-icon.svg'" />
-                  </span>
-                  <span class="check">
-                    <div class="empty-green"></div>
-                  </span>
-                </label>
-              </li>
-              <li>
-                <p class="pull-left">Car is clean</p>
-                <label ng-if="!ctrl.dirty" ng-click="ctrl.toggle('dirty')" class="pull-right">
-                  <span class="check">
-                    <div class="empty-red"></div>
-                  </span>
-                  <span class="check">
-                    <ng-include src="'/img/check-icon.svg'" />
-                  </span>
-                </label>
-                <label ng-if="ctrl.dirty" ng-click="ctrl.toggle('dirty')" class="pull-right">
-                  <span class="check">
-                    <ng-include src="'/img/x-icon.svg'" />
-                  </span>
-                  <span class="check">
-                    <div class="empty-green"></div>
-                  </span>
-                </label>
-              </li>
-            </ul>
+            Document any existing issues by taking the following photos before starting your ride. The pictures on the left are examples             of how they should look.
+            <div class="text-center">
+              <div>
+                <div class="start-ride-holder">
+                  <img ng-src="https://waivecar.com/images/cars/{{ctrl.model}}_front.jpg" class="sample-image"></img>
+                  <button 
+                    ng-click="ctrl.addPicture('front')" 
+                    ng-style="ctrl.pictures.front.style" 
+                    class="button side-image">
+                  </button>
+                </div>
+                Front 
+              </div>
+              <div>
+                <div class="start-ride-holder">
+                <img ng-src="https://waivecar.com/images/cars/{{ctrl.model}}_driver.jpg" class="sample-image"></img>
+                <button 
+                  ng-click="ctrl.addPicture('left')" 
+                  ng-style="ctrl.pictures.left.style" 
+                  class="button side-image">
+                </button> 
+                </div>
+                Left
+              </div>
+              <div> 
+                <div class="start-ride-holder">
+                  <img ng-src="https://waivecar.com/images/cars/{{ctrl.model}}_back.jpg" class="sample-image"></img>
+                  <button 
+                    ng-click="ctrl.addPicture('rear')" 
+                    ng-style="ctrl.pictures.rear.style" 
+                    class="button side-image">
+                  </button>
+                </div>
+                Rear
+              </div>
+              <div> 
+                <div class="start-ride-holder">
+                  <img ng-src="https://waivecar.com/images/cars/{{ctrl.model}}_passenger.jpg" class="sample-image"></img>
+                  <button 
+                    ng-click="ctrl.addPicture('right')" 
+                    ng-style="ctrl.pictures.right.style" 
+                    class="button side-image">
+                  </button>
+                </div>
+                Right
+              </div>
+              <div>
+                Any other damage? Is the car dirty or messy? Put pictures here.
+                <div>
+                  <button 
+                    ng-click="ctrl.addPicture('other')" 
+                    ng-style="ctrl.pictures.other.style" 
+                    class="button side-image">
+                  </button>
+                </div>
+              </div>
+            </div>
             <p>Last few things</p>
             <ul class="list-unstyled text-left bold-list">
               <li>
@@ -102,16 +99,10 @@
                 </label>
               </li>
             </ul>
-            <div ng-if="ctrl.dirty || ctrl.intDamage || ctrl.extDamage">
+            <div>
               <button type="button" class="button button-block button-balanced"
-                ng-disabled="!(ctrl.data.bookings.status === 'started' || ctrl.data.bookings.status === 'ready')"
-                ng-click="ctrl.start()">Continue</button>
-              <p>You can fill in damage details on the next screen.</p>
-            </div>
-            <div ng-if="!(ctrl.dirty || ctrl.intDamage || ctrl.extDamage)">
-              <button type="button" class="button button-block button-balanced"
-                  ng-disabled="!(ctrl.data.bookings.status === 'started' || ctrl.data.bookings.status === 'ready')"
-                  ng-click="ctrl.start()">Start Ride</button>
+                ng-disabled="!ctrl.allPics"
+                ng-click="ctrl.start()">Start Ride</button>
               <p></p>
             </div>
           </div>

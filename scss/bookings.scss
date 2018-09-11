@@ -223,7 +223,6 @@
   }
 
   .parking-details-wrap {
-    height: 100%;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -310,3 +309,39 @@
     }
   }
 }
+
+.side-image {
+  height: 100px;
+  width: 133px;
+  background-color: #444;
+  background: url('../img/camera.svg') center center no-repeat;
+  background-size: 100%;
+}
+
+.sample-image {
+  height: 100px;
+  width: 133px;
+  background-size: 100%;
+}
+
+.start-ride-holder {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.parking-image {
+  height: 133px;
+  width: 100px;
+  background-color: #444;
+  background: url('../img/camera.svg') center center no-repeat;
+  background-size: 100%;
+}
+
+.parking-sample-image {
+  height: 133px;
+  width: 100px;
+  background-size: 100%;
+}
+
+

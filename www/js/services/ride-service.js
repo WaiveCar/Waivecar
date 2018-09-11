@@ -333,7 +333,6 @@ module.exports = angular.module('app.services').factory('$ride', [
               }
             });
           }
-
           if (loadUrl) {
 
             $data.onActionNotification = function(action) {

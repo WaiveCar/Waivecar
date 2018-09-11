@@ -11,22 +11,32 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
   '$injector',
   '$stateParams',
   '$ride',
-  function ($scope, $rootScope, $injector, $stateParams, $ride) {
+  '$uploadImage',
+  '$settings',
+  function ($scope, $rootScope, $injector, $stateParams, $ride, $uploadImage, $settings) {
     var $data = $injector.get('$data');
     var $state = $injector.get('$state');
     var $ionicLoading = $injector.get('$ionicLoading');
     var $modal = $injector.get('$modal');
+    var Reports = $injector.get('Reports');
     $scope.service = $ride;
 
     // $data is used to interact with models, never directly. If direct is required, $data should be refreshed.
     var ctrl = this;
     ctrl.data = $data.active;
-    ctrl.extDamage = true;
-    ctrl.intDamage = true;
-    ctrl.dirty = true;
-
+    ctrl.pictures = {
+      front: null,
+      left: null,
+      rear: null,
+      right: null,
+      other: null,
+    }
+    ctrl.model = ctrl.data.cars.model.split(' ')[0].toLowerCase(); 
+    ctrl.allPics = false;
+    ctrl.buttonClass = 'button button-dark add-image'; 
     ctrl.start = start;
     ctrl.toggle = toggle;
+    ctrl.addPicture = addPicture;
 
     var initialized = $scope.$watch('service.isInitialized', function(isInitialized) {
       if (isInitialized !== true) {
@@ -38,43 +48,54 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
       ctrl.timeLeft = moment(booking.createdAt).add(120, 'm').toNow(true);
     });
 
-    function showNote() {
-      var modal;
-      $modal('result', {
-        title: 'Please Note',
-        message: 'I am reporting this car has no known damage. If the next user reports damage that I missed, I will be held responsible for it.',
-        icon: 'x-icon',
-        actions: [{
-          className: 'button-balanced',
-          text: 'I Understand',
-          handler: function () {
-            modal.remove();
-            $state.go('dashboard', null, {location: 'replace'});
-          }
-        }, {
-          className: 'button-dark',
-          text: 'I\'ll Take another look',
-          handler: function () {
-            modal.remove();
-          }
-        }]
-      })
-      .then(function (_modal) {
-        modal = _modal;
-        modal.show();
-      });
-    }
-
     function start () {
-      if (ctrl.dirty || ctrl.intDamage || ctrl.extDamage) {
-        $state.go('damage-gallery', { id: $stateParams.id, return: 'dashboard' });
-      } else {
-        showNote();
+      var picsToSend = [];
+      for (var picture in ctrl.pictures) {
+        picsToSend.push(ctrl.pictures[picture]);
       }
+      Reports.create({
+        bookingId: $stateParams.id,
+        description: null,
+        files: picsToSend
+      });
+      $state.go('dashboard', null, {location: 'replace'});
     }
 
     function toggle(field) {
       this[field] = !this[field];
+    }
+
+    function addPicture(type) {
+      $uploadImage({
+        endpoint: '/files?bookingId=' + ctrl.data.bookings.id,
+        type: type,
+        filename: type + $stateParams.id + '_' + Date.now() + '.jpg',
+      })
+      .then(function (result) {
+        if (result && Array.isArray(result)) result = result[0];
+        if (result) {
+          result.style = {
+            'background-image': 'url(' + $settings.uri.api + '/file/' + result.id + ')'
+          };
+          ctrl.pictures[type] = result;
+          ctrl.pictures[type].type = type;
+          if (ctrl.pictures['front'] && ctrl.pictures['left'] && ctrl.pictures['rear'] && ctrl.pictures['right']) {
+            ctrl.allPics = true;
+          }
+        }
+      })
+      .catch(function (err) {
+        var message = err.message;
+        if (err instanceof $window.FileTransferError) {
+          if (err.body) {
+            var error = angular.fromJson(err.body);
+            if (error.message) {
+              message = error.message;
+            }
+          }
+        }
+        submitFailure(message);
+      });
     }
   }
 

@@ -2,8 +2,15 @@
 
 var angular = require('angular');
 var moment = require('moment');
+var _ = require('lodash');
 
+<<<<<<< HEAD:www/js/controllers/parking-location-controller.js
 module.exports = angular.module('app.controllers').controller('ParkingLocationController', [
+=======
+require('../services/zendrive-service');
+
+module.exports = angular.module('app.controllers').controller('EndRideController', [
+>>>>>>> origin/app-1276-group-damage-photos-into-categories:www/js/controllers/end-ride-controller.js
   '$rootScope',
   '$scope',
   '$settings',
@@ -18,9 +25,11 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
   '$message',
   '$data',
   'LocationService',
-  function($rootScope, $scope, $settings, $window, $state, $stateParams, $ride, $geocoding, $ionicLoading, $modal, $uploadImage, $message, $data, LocationService) {
+  '$injector',
+  function($rootScope, $scope, $settings, $window, $state, $stateParams, $ride, $geocoding, $ionicLoading, $modal, $uploadImage, ZendriveService, $message, $data, LocationService, $injector) {
     $scope.service = $ride;
     var ctrl = this;
+    var Reports = $injector.get('Reports');
 
     ctrl.service = $ride;
     ctrl.type = 'street';
@@ -34,20 +43,35 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
       lotOvernightRest: false
     };
     ctrl.street = {
-      streetSignImage: null,
       streetHours: null,
       streetMinutes: null,
-      streetOvernightRest: false
+      streetOvernightRest: false,
+      streetSignImage: null,
     };
     
     ctrl.overrideStreetRestrictions = false;
+
+    ctrl.pictures = {
+      front: null,
+      left: null,
+      rear: null,
+      right: null,
+      other: null
+    }
+    ctrl.appPics = false;
+    ctrl.car = $data.active.cars;
+    ctrl.model = ctrl.car.model ? ctrl.car.model.split(' ')[0].toLowerCase() : 'ioniq'; 
+    ctrl.tickets = true;
 
     // Attach methods
     ctrl.setType = setType;
     ctrl.geocode = geocode;
     ctrl.submit = submit;
     ctrl.addPicture = addPicture;
+    ctrl.toggle = toggle;
     ctrl.minhours = 3;
+    ctrl.loadBooking = loadBooking;
+    ctrl.loadCar = loadCar;
     ctrl.init = init;
 
     ctrl.init();
@@ -61,19 +85,46 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
           return;
         }
         rideServiceReady();
-
         // Kick off geocoding
         ctrl.geocode();
       });
+      loadBooking($stateParams.id)
+        .then(function(booking) {
+          ctrl.booking = booking;
+          $ride.setBooking(booking.id);
+          //ZendriveService.stop(booking.id);
+
+          var start = _.find(booking.details, { type: 'start' });
+          var end = _.find(booking.details, { type: 'end' });
+          ctrl.hours = moment().diff(moment(start.createdAt), 'hours');
+          ctrl.minutes = moment().diff(moment(start.createdAt), 'minutes');
+          ctrl.minutes = ("" + (100 + ctrl.minutes % 60)).slice(1);
+
+          return loadCar(booking.carId);
+        })
+        .then(function(car) {
+          ctrl.car = car;
+        })
+        .catch(function(err) {
+          console.log('init failed: ', err);
+        });
+    }
+    
+    function loadBooking(id) {
+      return $data.resources.bookings.get({ id: id }).$promise;
     }
 
-    /**
-     * Toggle parking type
-     * @param {String} type Type of parking info
-     * @returns {Void} none
-     */
+    function loadCar(id) {
+      return $data.activate('cars', id);
+    }
+    
+     
     function setType(type) {
       ctrl.type = type;
+    }
+
+    function toggle(field) {
+      this[field] = !this[field];
     }
 
     function geocode() {
@@ -82,13 +133,16 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
       }
       return $geocoding($rootScope.currentLocation.latitude, $rootScope.currentLocation.longitude)
         .then(function (location) {
+          if ($stateParams.zone === 'hub') {
+            ctrl.isHub = true;
+          }
           // BUGBUG: this information should be in the database. 1235 is santa monica
           if($stateParams.zone.id === 1235) {
             ctrl.minhours = 3;
           } else {
             ctrl.minhours = 12;
           }
-          ctrl.zone = $stateParams.zone.name;
+          ctrl.zone = $stateParams.zone.name ? ' for' +  $stateParams.zone.name : null;
           $ride.state.parkingLocation.addressLine1 = location.display_name;
           ctrl.address = location.address;
           var addr = ctrl.address;
@@ -123,33 +177,30 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
         });
     }
 
-    /**
-     * Uploads image to server for street sign
-     * @returns {Void} null
-     */
-    function addPicture () {
+    function addPicture(type) {
       $uploadImage({
         endpoint: '/files?bookingId=' + $stateParams.id,
-        filename: 'parking_' + $stateParams.id + '_' + Date.now() + '.jpg',
+        type: type,
+        filename: type + $stateParams.id + '_' + Date.now() + '.jpg',
       })
       .then(function (result) {
         if (result && Array.isArray(result)) result = result[0];
-
         if (result) {
           result.style = {
             'background-image': 'url(' + $settings.uri.api + '/file/' + result.id + ')'
           };
-          ctrl.street.streetSignImage = result;
+          if (type === 'streetSignImage') {
+            ctrl.street.streetSignImage = result;
+          } else { 
+            ctrl.pictures[type] = result;
+            ctrl.pictures[type].type = type;
+          }
+          if (ctrl.street.streetSignImage && ctrl.pictures['front'] && ctrl.pictures['left'] && ctrl.pictures['rear'] && ctrl.pictures['right']) {
+            ctrl.allPics = true;
+          }
         }
       })
       .catch(function (err) {
-        // for testing to skip photo. See #1113
-
-        // var result = {id: 'asdf'}.style = {
-        //   'background-image': 'url(' + $settings.uri.api + '/file/asdf' +  ')'
-        // };
-        // ctrl.street.streetSignImage = result;
-        // return;
         var message = err.message;
         if (err instanceof $window.FileTransferError) {
           if (err.body) {
@@ -161,7 +212,7 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
         }
         submitFailure(message);
       });
-    };
+    }
 
     function submit() {
 
@@ -169,7 +220,16 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
       if ((ctrl.type === 'street' || ctrl.type === 'lot') && !ctrl.street.streetSignImage) {
         return submitFailure('Ending here requires a photo of the parking sign.');
       }
-      
+
+      if (!ctrl.pictures.front || !ctrl.pictures.left || !ctrl.pictures.right || !ctrl.pictures.rear) {
+        return submitFailure('Please take pictures of all sides of the vehicle before proceeding.');
+      }
+      if (!ctrl.car.isKeySecure) {
+        return submitFailure('Please return the key to the glovebox');
+      }
+      if (ctrl.car.isIgnitionOn) {
+        return submitFailure('Please make sure the ignition is off before ending your ride.');
+      }
       if (!ctrl.overrideStreetRestrictions && checkIsParkingRestricted()) {
         return parkingRestrictionFailure();
       }
@@ -178,8 +238,17 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
         template: '<div class="circle-loader"><span>Loading</span></div>'
       });
 
-      var isNightTime = moment().hours() >= 23 || moment().hours() < 5;
+      var picsToSend = [];
+      for (var picture in ctrl.pictures) {
+        picsToSend.push(ctrl.pictures[picture]);
+      }
 
+      Reports.create({
+        bookingId: $stateParams.id,
+        description: null,
+        files: picsToSend
+      });
+      var isNightTime = moment().hours() >= 23 || moment().hours() < 5;
       goToEndRide(isNightTime);
     }
     
@@ -306,7 +375,7 @@ module.exports = angular.module('app.controllers').controller('ParkingLocationCo
       $ride.setParkingDetails(payload);
       return $ride.processEndRide().then(function () {
         $ionicLoading.hide();
-        return $state.go('end-ride', {id: $ride.state.booking.id});
+        return $ride.checkAndProcessActionOnBookingEnd();
       });
     }
 
