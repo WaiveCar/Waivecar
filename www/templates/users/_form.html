@@ -22,11 +22,6 @@
     <input type="text" name="phone" placeholder="(323) 567-5555" ng-model="user.phone" required />
   </label>
 
-  <label ng-if="!user.facebook" class="item item-input">
-    <span class="input-label required">Password</span>
-    <input type="password" placeholder="* * * * * *" name="password" ng-model="user.password" ng-required="!user.id" ng-minlength="6">
-  </label>
-
   <div class="validations" ng-if="form.$submitted && form.$invalid">
     <div class="help-block" ng-if="form.firstName.$error.required">First Name is required</div>
     <div class="help-block" ng-if="form.lastName.$error.required">Last Name is required</div>
