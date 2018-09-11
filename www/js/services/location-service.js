@@ -65,10 +65,12 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
     });
   };
 
-  var MOVETHRESHOLD = 0.000012;
+  var MOVETHRESHOLD = 0.000035;
 
   var hasMoved = this.hasMoved = function (last, current) {
     var isMoved = false, distance = false;
+    current = current.coords || current;
+
     if(! last.latitude ) {
       isMoved = true;
       distance = true;
@@ -110,7 +112,8 @@ function LocationService ($rootScope, $cordovaGeolocation, $q, $message, $window
 
     watchId = navigator.geolocation.watchPosition(function (position) {
       $timeout(function(){
-        if(hasMoved(last, position)) {
+        var distance = hasMoved(last, position.coords);
+        if(distance) {
           var location = update(position);
           invokeCallback(location);
         }
