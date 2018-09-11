@@ -122,6 +122,9 @@ module.exports = angular.module('app.controllers').controller('UserEditControlle
 
     $scope.init();
 
-  }
+    $scope.goToResetPassword = function() {
+      $state.go('auth-forgot-password');
+    }
 
+  }
 ]);
