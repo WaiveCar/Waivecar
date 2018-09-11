@@ -9,7 +9,8 @@ module.exports = angular.module('app').factory('Cars', [
   '$ble',
   '$timeout',
   '$q',
-  function Resource($resource, $utils, $ble, $timeout, $q) {
+  '$rootScope',
+  function Resource($resource, $utils, $ble, $timeout, $q, $rootScope) {
 
     var res = $resource(null, null, $utils.createResource('cars', {
       _lock: {
@@ -39,10 +40,19 @@ module.exports = angular.module('app').factory('Cars', [
           id: '@id'
         }
       },
-      query: {
+      _query: {
         method: 'GET',
         url: $utils.getCustomRoute('cars'),
         isArray: true
+      },
+      _queryLocation: {
+        method: 'GET',
+        url: $utils.getCustomRoute('cars?lat=:lat&lng=:lng'),
+        isArray: true,
+        params: {
+          lat: '@lat',
+          lng: '@lng'
+        }
       },
 
       notifyAvailability: {
@@ -54,6 +64,14 @@ module.exports = angular.module('app').factory('Cars', [
         }
       }
     }));
+
+    res.query = function() {
+      return $rootScope.currentLocation ?
+        res._queryLocation({
+          lat: $rootScope.currentLocation.latitude,
+          lng: $rootScope.currentLocation.longitude
+        }) : res._query();
+    }
 
     res.setup = function(kv) {
       $ble.setFunction('getBle', res.ble);
