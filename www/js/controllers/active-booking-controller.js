@@ -59,6 +59,16 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   function showFailure(title, message, opts) {
     opts = opts || {};
     var modal;
+    function handler() {
+      if(modal) {
+        if(opts.cb) {
+          opts.cb();
+        }
+        modal.remove();
+        modal = false;
+      }
+    }
+
     $modal('result', {
       title: title,
       message: message,
@@ -66,27 +76,11 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       actions: [{
         className: 'button-balanced',
         text: opts.label ? opts.label : 'ok',
-        handler: function () {
-          console.log('.......');
-          modal.remove();
-          modal = false;
-          if(opts.cb) {
-            opts.cb();
-          }
-        }
+        handler: handler
       }]
     })
     .then(function (_modal) {
-      setTimeout(function(){
-        if(modal) {
-          console.log("automatic removal");
-          modal.remove();
-          if(opts.cb) {
-            opts.cb();
-          }
-        }
-      }, 7 * 1000);
-      console.log('!!!!!');
+      setTimeout(handler, 7 * 1000);
       modal = _modal;
       modal.show();
     });
@@ -104,12 +98,12 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     return showFailure('Booking is expired', 'You booking is expired', {
       cb: function() {
         // There's two ways of expiring the booking in the app state. We can
-        // either try to pull it down ourselves ... which
+        // either try to pull it down ourselves or we can just dumpt it like so.
+        delete $data.active.bookings;
+        $state.go('cars');
         Object.values(modalMap).forEach(function(modal) {
           modal.remove();
         });
-        delete $data.active.bookings;
-        $state.go('cars');
       }
     });
   }
