@@ -8,4 +8,16 @@ android {
     dexOptions {
         jumboMode true
     }
+    configurations.all {
+      resolutionStrategy {
+        force 'com.facebook.android:facebook-android-sdk:4.34.0'
+      }
+    }
+}
+allprojects {
+    configurations.all {
+      resolutionStrategy {
+        force 'com.facebook.android:facebook-android-sdk:4.34.0'
+      }
+    }
 }
