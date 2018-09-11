@@ -20,6 +20,7 @@ module.exports = angular.module('app.controllers').controller('CompleteRideContr
     ctrl.dirty = true;
     ctrl.damage = true;
     ctrl.tickets = true;
+    ctrl.notifyOfMovement = false;
     ctrl.data = $data.active;
 
     ctrl.init = init;

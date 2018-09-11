@@ -132,6 +132,25 @@
                     </span>
                   </label>
                 </li>
+                <li>
+                  <p class="pull-left">Notify me when the car is moved</p>
+                  <label ng-if="ctrl.notifyOfMovement" ng-click="ctrl.toggle('notifyOfMovement')" class="pull-right">
+                    <span class="check">
+                      <div class="empty-red"></div>
+                    </span>
+                    <span class="check">
+                      <ng-include src="'/img/check-icon.svg'" />
+                    </span>
+                  </label>
+                  <label ng-if="!ctrl.notifyOfMovement" ng-click="ctrl.toggle('notifyOfMovement')" class="pull-right">
+                    <span class="check">
+                      <ng-include src="'/img/x-icon.svg'" />
+                    </span>
+                    <span class="check">
+                      <div class="empty-green"></div>
+                    </span>
+                  </label>
+                </li>
               </ul>
             </div>
 
