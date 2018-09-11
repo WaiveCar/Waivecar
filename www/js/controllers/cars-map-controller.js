@@ -34,7 +34,6 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
   var isInBG = false;
 
   document.addEventListener("resume", function() {
-    //console.log("... in FOREGROUND");
     $data.initialize('cars');
     isInBG = false;
   }, false);

@@ -322,7 +322,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
     if('charge' in marker) {
       if('model' in marker) {
-        marker.range = marker.range || (marker.charge * [135,70][+(marker.model === "Spark EV")]);
+        marker.range = marker.range || (marker.charge * [135,68][+(marker.model === "Spark EV")]);
         type = 'active-waivecar-' + charge2color(marker);
       } else {
         type = 'locked-car';
