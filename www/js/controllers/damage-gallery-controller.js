@@ -102,7 +102,7 @@ function DamageGalleryController ($injector, $stateParams) {
 
   this.goBack = function() {
     if ($stateParams.return === 'bookings-show') {
-      return $ride.checkAndProcessActionOnBookingEnd();
+      return $ride.checkAndProcessActionOnBookingEnd($stateParams.notifyOfMovement);
     } else {
       $state.go($stateParams.return, $stateParams, {location: 'replace'});
     }

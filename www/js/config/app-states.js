@@ -474,7 +474,7 @@ module.exports = [
       }
     })
     .state('damage-gallery', {
-      url: '/bookings/:id/damage-gallery/:return',
+      url: '/bookings/:id/damage-gallery/:return/:notifyOfMovement',
       templateUrl: '/templates/report-problem/gallery.html',
       controller: 'DamageGalleryController as ctrl',
       data: {

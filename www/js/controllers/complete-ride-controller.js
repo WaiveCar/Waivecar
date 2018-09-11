@@ -110,12 +110,16 @@ module.exports = angular.module('app.controllers').controller('CompleteRideContr
       if (!car.isKeySecure || car.isIgnitionOn) {
         return null;
       }
-
-      return $ride.checkAndProcessActionOnBookingEnd();
+      return $ride.checkAndProcessActionOnBookingEnd(ctrl.notifyOfMovement);
     }
 
     function reportProblem() {
-      $state.go('damage-gallery', { id: $stateParams.id, return: 'bookings-show' }, { location: 'replace' });
+      var params = {
+        id: $stateParams.id,
+        return: 'bookings-show',
+        notifyOfMovement: ctrl.notifyOfMovement
+      }
+      $state.go('damage-gallery', params);
     }
   }
 ]);

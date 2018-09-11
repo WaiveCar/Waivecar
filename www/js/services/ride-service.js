@@ -299,13 +299,18 @@ module.exports = angular.module('app.services').factory('$ride', [
       service.state.parkingDetails = details;
     };
 
-    service.processCompleteRide = function() {
+    service.processCompleteRide = function(notifyOfMovement) {
       $ionicLoading.show({
         template: '<div class="circle-loader"><span>Loading</span></div>'
       });
       var id = service.state.booking.id;
       checkForLock();
-      return $data.resources.bookings.complete({ id: id }).$promise
+      // This is done because when a boolean is passed via $stateParams, it becomse a string
+      if (typeof notifyOfMovement === 'string') {
+        notifyOfMovement = notifyOfMovement === 'true' ? true : false;
+      }
+
+      return $data.resources.bookings.complete({ id: id, notifyOfMovement: notifyOfMovement}).$promise
       .then(function() {
         $ionicLoading.hide();
         $data.resources.cars.disconnect();
@@ -320,7 +325,7 @@ module.exports = angular.module('app.services').factory('$ride', [
       });
     };
 
-    service.checkAndProcessActionOnBookingEnd = function() {
+    service.checkAndProcessActionOnBookingEnd = function(notifyOfMovement) {
 
       return $data.resources.bookings.getEndBookingActions({ userId: $auth.me.id })
         .$promise.then(function(result) {
@@ -346,7 +351,7 @@ module.exports = angular.module('app.services').factory('$ride', [
 
 
           } else {
-            service.processCompleteRide()
+            service.processCompleteRide(notifyOfMovement);
           }
         });
     };
