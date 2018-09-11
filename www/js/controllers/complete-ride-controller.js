@@ -31,6 +31,13 @@ module.exports = angular.module('app.controllers').controller('CompleteRideContr
 
     //var ZendriveService = $injector.get('ZendriveService');
 
+    function computeMiles(obj) {
+      if(obj) {
+        var multiplier = (obj.model === "Spark EV") ? 73 : 143;
+        ctrl.miles = Math.round(obj.charge * multiplier / 100);
+      }
+    }
+
     function init() {
       loadBooking($stateParams.id)
         .then(function(booking) {
@@ -45,10 +52,13 @@ module.exports = angular.module('app.controllers').controller('CompleteRideContr
           ctrl.minutes = moment(end.createdAt).diff(moment(start.createdAt), 'minutes');
           ctrl.minutes = ("" + (100 + ctrl.minutes % 60)).slice(1);
 
+          computeMiles(ctrl.data.cars);
+
           return loadCar(booking.carId);
         })
         .then(function(car) {
           ctrl.car = car;
+          computeMiles(car);
         })
         .catch(function(err) {
           console.log('init failed: ', err);
