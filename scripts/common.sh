@@ -19,7 +19,7 @@ if [ -n "$sdk" ]; then
   export ORG_GRADLE_PROJECT_cdvCompileSdkVersion=$sdk
 fi
 
-#DBG=
+#DBG="strace -f"
 
 get_device() {
   if [ "$DEVICE" ]; then
@@ -113,11 +113,12 @@ build() {
   fi
   #$DBG cordova build android --debug -- --gradleArg=-PcdvCompileSdkVersion=$ORG_GRADLE_PROJECT_cdvCompileSdkVersion --gradleArg=--debug --gradleArg=--info --gradleArg=--stacktrace
 
+  distPath=www/dist/bundle.js
   after=
-  if [ -e www/dist/bundle.js ]; then
-    after=`$stat www/dist/bundle.js`
+  if [ -e $distPath ]; then
+    after=`$stat $distPath`
   else
-    echo 'Failed to build. Fuck this shit.' "(($last))"
+    echo "Failed to build $distPath. Fuck this shit." "(($last))"
     exit 1
   fi
 

@@ -66,7 +66,7 @@ function ApplicationController ($rootScope, $scope, $injector) {
 
       // We need to both check the state that the user is currently in
       // along with what they are currently viewing in the app
-      if(newState === 'created' && newScreen === 'cars') {
+      if(newState === 'created' && newScreen === 'cars' && currentBooking && currentBooking.status !== 'cancelled') {
         $ride.init();
         // If the user is in a reservation state (get to your waivecar) and they
         // navigate away and then go to "current ride" it should take them back
