@@ -1132,9 +1132,7 @@ module.exports = class BookingService extends Service {
       var car     = yield this.getCar(booking.carId);
 
       if (payload.notifyOfMovement) {
-        console.log('payload: ', payload);
-        console.log('_user: ', _user);
-        let timerObj = {value: 10, type: 'seconds'};
+        let timerObj = {value: 10, type: 'minutes'};
         queue.scheduler.add('notify-of-movement', {
           uid: `notify-of-movement-${_user.id}`,
           timer: timerObj,
@@ -1144,7 +1142,6 @@ module.exports = class BookingService extends Service {
             _user,
           },
         });
-        return
       }
 
       var user    = yield this.getUser(booking.userId);
