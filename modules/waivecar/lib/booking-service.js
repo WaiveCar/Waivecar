@@ -1130,6 +1130,17 @@ module.exports = class BookingService extends Service {
       };
       var booking = yield this.getBooking(id, relations);
       var car     = yield this.getCar(booking.carId);
+
+      if (payload.notifyOfMovement) {
+        // If the notifyOfMovement option is true, a process is started to notify the user when the car has moved  
+        // Potentially add a flag to the car that would make it send the text
+        // Could also maybe use the redis store to store a list of the cars that need to notify users that they have moved
+        // A timer could be started in 10 mins that checks until the car is moved, and once it has moved, send notification
+        console.log('payload: ', payload);
+        console.log('_user: ', _user);
+        return
+      }
+
       var user    = yield this.getUser(booking.userId);
       var isLevel = yield user.isTagged('level');
 
