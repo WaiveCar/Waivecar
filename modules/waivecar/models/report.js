@@ -2,24 +2,10 @@
 
 Bento.Register.Model('Report', 'sequelize', function(model, Sequelize) {
 
-  /**
-   * The identity of the table created in your database.
-   * @property table
-   * @type     String
-   */
   model.table = 'reports';
 
-  /**
-   * The sequelize schema definition of your model.
-   * @property schema
-   * @type     Object
-   */
   model.schema = {
 
-    /**
-     * The booking to attach the report to.
-     * @type {Integer}
-     */
     bookingId : {
       type       : Sequelize.INTEGER,
       allowNull  : false,
@@ -29,18 +15,25 @@ Bento.Register.Model('Report', 'sequelize', function(model, Sequelize) {
       }
     },
 
-    /**
-     * Report text.
-     * @type {Text}
-     */
     description : {
       type : Sequelize.TEXT
     },
 
-    /**
-     * Logs the user that created the report.
-     * @type {Integer}
-     */
+    fileId : {
+      type       : Sequelize.STRING,
+      allowNull  : false,
+      references : {
+        model : 'files',
+        key   : 'id'
+      }
+    },
+
+    type :{
+      type      : Sequelize.ENUM,
+      values    : ['left','right','front','rear','other'],
+      allowNull : true
+    },
+
     createdBy : {
       type       : Sequelize.INTEGER,
       allowNull  : false,
@@ -53,12 +46,11 @@ Bento.Register.Model('Report', 'sequelize', function(model, Sequelize) {
   };
 
   model.relations = [
-    'ReportFile',
-    function relations(ReportFile) {
-      this.hasMany(ReportFile, { as : 'files',  foreignKey : 'reportId' });
+    'File',
+    function relations(File) {
+      this.belongsTo(File, { foreignKey: 'fileId', as: 'file'});
     }
   ];
 
   return model;
-
 });

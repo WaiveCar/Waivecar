@@ -93,12 +93,6 @@ module.exports = {
     yield notify.slack({ text : slackReport }, { channel : '#reservations' });
   },
   
-  /**
-   * Creates a new report.
-   * @param  {Object} payload
-   * @param  {Object} _user
-   * @return {Object}
-   */
   *create(payload, _user) {
     let booking = yield Booking.findById(payload.bookingId);
     let car = yield Car.findById(booking.carId);
@@ -110,15 +104,7 @@ module.exports = {
       }, 400);
     }
 
-    let report = new Report({
-      bookingId   : booking.id,
-      description : payload.description,
-      createdBy   : _user.id
-    });
-    yield report.save();
-    yield booking.addFlag('inspected');
-
-    let txt = `${ _user.link() } has reported a problem with ${ car.license } on booking ${ booking.id }`;
+    let txt = `${ _user.name() } has reported a problem with ${ car.license } on booking ${ booking.id }`;
     let slackPayload = {
       text        : txt,
       channel     : '#rental-alerts',
@@ -129,7 +115,6 @@ module.exports = {
           fields   : [
             {
               title : 'Report',
-              value : report.description,
               short : false
             }
           ]
@@ -143,49 +128,31 @@ module.exports = {
       for (let i = 0; i < files.length; ++i) {
         let file = files[i];
 
-        let report_file = new ReportFile({
-          reportId : report.id,
-          fileId : file.id
+        let report = new Report({
+          bookingId   : booking.id,
+          description : payload.description,
+          createdBy   : _user.id,
+          fileId      : file.id, 
+          type        : file.type,
         });
-
-        yield report_file.save();
-
-        slackPayload.attachments.push({
-          fallback  : `Image ${ i }`,
-          color     : '#D00000',
-          image_url : `https://s3.amazonaws.com/waivecar-prod/${ file.path }` // eslint-disable-line
-        });
+        yield report.save();
+        if (file.type === 'other') {
+          slackPayload.attachments.push({
+            fallback  : `Image ${ i }`,
+            color     : '#D00000',
+            image_url : `https://s3.amazonaws.com/waivecar-prod/${ file.path }`
+          });
+        }
       }
     }
 
     yield slack.message(slackPayload);
 
-    return report;
-  },
-
-  *index(query, _user) {
-
-    let parsedQuery = queryParser(query, {
-      where : {
-        bookingId : queryParser.NUMBER,
-        createdBy : queryParser.NUMBER
-      }
-    });
-
-    parsedQuery.include = [{
-      model : ReportFile._schema,
-      as    : 'files',
-      include : [{
-        model : File._schema,
-        as    : 'details'
-      }]
-    }];
-
-
-    return yield Report._schema.findAll(parsedQuery);
+    return;
   },
 
   *delete(id, _user) {
+    // This route is no longer used by the front-end, but should still work to delete files that are in the report_files table
     let file = yield ReportFile.findById(id);
 
     if(file) {
@@ -323,25 +290,27 @@ module.exports = {
         model : Report._schema,
         as    : 'reports',
         include : [{
-          model : ReportFile._schema,
-          as    : 'files',
-          include : [{
-            model : File._schema,
-            as    : 'details'
-          }]
+          model : File._schema,
+          as    : 'file'
         }]
       }]
     };
 
-    var result = yield Booking._schema.findAll(dbQuery);
+    let result = yield Booking._schema.findAll(dbQuery).filter(each => each.reports.length);
 
-    return result.filter(function(booking) {
-      return booking.reports.filter(function(report) {
-          return report.files.length > 0;
-        }).length > 0;
-    }).reduce (function(result, booking) {
-      return result.concat(booking.reports);
-    }, []);
+    // This section (until 342) is for backwards compatibility to potentially be removed at a later time
+    // Schemas have since been changed to no longer depend on the ReportFiles table
+    result = yield result.map(item => {
+      item = item.toJSON()
+      let newProps = {
+        bookingId: item.id,
+        createdBy: item.userId,
+        description: null,
+        files: item.reports.map(each => Object.assign(each, {details: each.file}))
+      };
+      return Object.assign(item, newProps);
+    });
+
+    return result;
   }
-
 };
