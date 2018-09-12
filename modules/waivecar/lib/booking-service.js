@@ -1132,12 +1132,18 @@ module.exports = class BookingService extends Service {
       var car     = yield this.getCar(booking.carId);
 
       if (payload.notifyOfMovement) {
-        // If the notifyOfMovement option is true, a process is started to notify the user when the car has moved  
-        // Potentially add a flag to the car that would make it send the text
-        // Could also maybe use the redis store to store a list of the cars that need to notify users that they have moved
-        // A timer could be started in 10 mins that checks until the car is moved, and once it has moved, send notification
         console.log('payload: ', payload);
         console.log('_user: ', _user);
+        let timerObj = {value: 10, type: 'seconds'};
+        queue.scheduler.add('notify-of-movement', {
+          uid: `notify-of-movement-${_user.id}`,
+          timer: timerObj,
+          unique: true,
+          data: {
+            car,
+            _user,
+          },
+        });
         return
       }
 
