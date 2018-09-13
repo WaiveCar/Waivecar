@@ -74,8 +74,19 @@ module.exports = class CheckrService {
   }
   // This creates a request to checkr to make checkr fetch the report
   static *createCheck(data, _user) {
-    let response = yield this.request('/reports', 'POST', data);
-    return response;
+    try {
+      let response = yield this.request('/reports', 'POST', data);
+      return response;
+    } catch(err) {
+      notify.sendTextMessage(user, 'WaiveCar is unable to check your license. Extra paperwork is sometimes needed. Call us at this number between 9AM-9PM for assistance.');
+      throw error.parse(
+        {
+          code: 'ERROR_FETCHING_REPORT',
+          message: 'There was error with your report request to checkr.',
+        },
+        400,
+      ); 
+    }
   }
 
   // This fetches the report for an indiviudal report id
