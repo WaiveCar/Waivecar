@@ -178,12 +178,14 @@ var checkBooking = co.wrap(function *(booking) {
   });
   yield newLocation.save();
   
+  /*
   let hasMoved = GeocodingService.hasMoved(car, device, 600);
   // If the car has moved, but the ignition is off, that means that the vehicle may currently be being towed and a notification is sent tto slack
   if (hasMoved && !device.isIgnitionOn && !car.isIgnitionOn && car.totalMileage === device.totalMileage && hasMoved < 20000) {
     console.log(car, device, car.totalMileage, device.totalMileage, device.isIgnitionOn, car.isIgnitionOn, hasMoved);
     yield notify.notifyAdmins(`:flying_saucer: ${ car.license } is moving without the ignition on or odometer incrementing. It may be on a tow truck.`, [ 'slack' ], { channel : '#rental-alerts' });
   }
+  */
 
   yield cars.syncUpdate(car.id, device, car);
 });
