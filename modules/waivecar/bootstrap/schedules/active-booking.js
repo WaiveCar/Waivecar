@@ -36,7 +36,7 @@ var checkBooking = co.wrap(function *(booking) {
   let duration = 0;
   let isLevel = yield car.hasTag('level');
   let booking_history = null;
-  let freetime = isLevel ? 180 : 120;
+  let freetime = booking.getFreeTime(isLevel);
   let trigger = freetime + 60;
   
 

@@ -833,7 +833,7 @@ module.exports = class BookingService extends Service {
     // BUGBUG: We are using the user tagging and not the car tagging
     // for level accounts
     let isLevel = yield user.isTagged('level');
-    let freeTime = isLevel ? 180 : 120;
+    let freeTime = booking.getFreeTime(isLevel);
 
     this.hasAccess(user, _user);
 

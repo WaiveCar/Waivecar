@@ -114,18 +114,14 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
   // A list of methods attached to the model.
   model.methods = {
 
-    /*
-     |--------------------------------------------------------------------------------
-     | Booking Status
-     |--------------------------------------------------------------------------------
-     */
-
-    /**
-     * Returns the booking status in a human readable manner.
-     * @return {String}
-     */
     getStatus() {
       return this.status.replace('-', ' ');
+    },
+
+    getFreeTime(isLevel) {
+      // #1159: Level cars get 3 free hours, not 2.
+      // #1151: Add 5 minutes to inspect the vehicle and take pictures.
+      return (isLevel ? 180 : 120) + 5;
     },
 
     link() {
