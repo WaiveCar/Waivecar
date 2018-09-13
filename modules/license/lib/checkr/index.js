@@ -13,6 +13,7 @@ let log = Bento.Log;
 let Service = require('../classes/service');
 let notify = Bento.module('waivecar/lib/notification-service');
 let fs = require('fs');
+let log = Bento.Log;
 
 if (!config.checkr) {
   throw error.parse({
@@ -91,8 +92,12 @@ module.exports = class CheckrService {
 
   // This fetches the report for an indiviudal report id
   static *getReport(reportId) {
-    let response = yield this.request(`/motor_vehicle_reports/${reportId}`);
-    return response;
+    try {
+      let response = yield this.request(`/motor_vehicle_reports/${reportId}`);
+      return response;
+    } catch(err) {
+      log.warn(`Failed to fetch report ${reportId}`);  
+    }
   }
 
   // Returns the Response from a Request aginst the Checkr API
