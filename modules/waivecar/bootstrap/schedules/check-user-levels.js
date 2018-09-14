@@ -19,19 +19,24 @@ scheduler.process('check-user-levels', function*(job) {
   });
   let usersToProcess = new Set();
   newBookings.forEach(booking => usersToProcess.add(booking.userId));
-  let lastTenBookings = {};
+  let recentBookings = {};
   for (let id of usersToProcess) {
-    let temp = yield Booking.find({
+    recentBookings[id] = yield Booking.find({
       where: {
         userId: id,
         status: 'completed',
       },
       order: [['id', 'DESC']],
-      limit: 10,
+      limit: 20,
+      include: [{
+        model: 'BookingDetails',
+        as: 'details',
+      }],
     });
-    lastTenBookings[id] = temp;
   }
-  console.log('last 10: ', lastTenBookings);
+  for (let user in recentBookings) {
+    recentBookings[user].forEach(booking => console.log(booking.details));
+  }
 });
 
 module.exports = function*() {
