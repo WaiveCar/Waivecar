@@ -276,6 +276,7 @@ module.exports = {
         {user_id: null },
         sequelize.literal(`concat_ws(' ', first_name, last_name, place_name, notes) like '%${queryIn.search}%'`)
       ] };
+      query.order = [ ['created_at', 'asc'] ];
     } else {
       query.where = { user_id: null };
     }
