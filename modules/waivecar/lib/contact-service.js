@@ -254,7 +254,7 @@ module.exports = {
     let user = yield User.findOne({ where : { phone: phone } });
     let who = user ? user.link() : '_unknown_';
     let ts = moment.tz(moment.utc(), "America/Los_Angeles").format('YYYY/MM/DD HH:mm:ss');
-    fs.appendFileSync('/var/log/outgoing/sms.txt', `${ts} ${phone} ${who}: ${ params.query.Body }\n`);
+    fs.appendFile('/var/log/outgoing/sms.txt', `${ts} ${phone} ${who}: ${ params.query.Body }\n`);
 
     // We need to be open to the possibility of people texting us which
     // have not registered. In these cases we pass everything through.

@@ -26,7 +26,7 @@ class LogService {
     log.actorId = payload.actorId;
     payload.t = new Date();
 
-    fs.appendFileSync('/var/log/invers/log.txt', JSON.stringify(payload) + "\n");
+    fs.appendFile('/var/log/invers/log.txt', JSON.stringify(payload) + "\n");
 
     yield log.save();
 

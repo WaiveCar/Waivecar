@@ -149,7 +149,7 @@ module.exports = {
     slackPayload.t = 'slack';
     slackPayload.at = new Date();
     try {
-      fs.appendFileSync('/var/log/outgoing/log.txt', JSON.stringify(slackPayload) + "\n");
+      fs.appendFile('/var/log/outgoing/log.txt', JSON.stringify(slackPayload) + "\n");
     } catch (err) {
       log.warn(`Failed to write to the log file: ${ err.message }`);
     }
