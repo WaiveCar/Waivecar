@@ -123,10 +123,12 @@ module.exports = {
     };
 
     if (payload.files && payload.files.length) {
+      console.log(payload.files);
       let files = payload.files;
 
       for (let i = 0; i < files.length; ++i) {
         let file = files[i];
+        console.log(file.path);
 
         let report = new Report({
           bookingId   : booking.id,
@@ -136,6 +138,7 @@ module.exports = {
           type        : file.type,
         });
         yield report.save();
+        console.log(report);
         if (file.type === 'other') {
           slackPayload.attachments.push({
             fallback  : `Image ${ i }`,
@@ -145,9 +148,23 @@ module.exports = {
         }
       }
     }
+    function log_message(type, what) {
+      // There's probably a more frameworky way of doing this in a much
+      // more convoluted and hard way --- watch me not care at all.
+      what.t = type;
+      what.at = new Date();
 
-    yield slack.message(slackPayload);
+      try {
+        fs.appendFileSync('/var/log/outgoing/log.txt', JSON.stringify(what) + "\n");
+      } catch (err) {
+        log.warn(`Failed to write to the log file: ${ err.message }`);
+      }
+    }
+    log_message('slack', slackPayload);
 
+    if (process.env.NODE_ENV === 'production') {
+      yield slack.message(slackPayload);
+    }
     return;
   },
 
