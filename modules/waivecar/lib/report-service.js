@@ -148,19 +148,14 @@ module.exports = {
         }
       }
     }
-    function log_message(type, what) {
-      // There's probably a more frameworky way of doing this in a much
-      // more convoluted and hard way --- watch me not care at all.
-      what.t = type;
-      what.at = new Date();
 
-      try {
-        fs.appendFileSync('/var/log/outgoing/log.txt', JSON.stringify(what) + "\n");
-      } catch (err) {
-        log.warn(`Failed to write to the log file: ${ err.message }`);
-      }
+    slackPayload.t = 'slack';
+    slackPayload.at = new Date();
+    try {
+      fs.appendFileSync('/var/log/outgoing/log.txt', JSON.stringify(slackPayload) + "\n");
+    } catch (err) {
+      log.warn(`Failed to write to the log file: ${ err.message }`);
     }
-    log_message('slack', slackPayload);
 
     if (process.env.NODE_ENV === 'production') {
       yield slack.message(slackPayload);
