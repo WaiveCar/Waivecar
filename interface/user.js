@@ -50,7 +50,7 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
     },
 
     level: {
-      type : Sequelize.ENUM('drainer','normal','charger','super-charger'),
+      type : Sequelize.ENUM('drainer','normal','charger','super-charger', 'gifted-charger'),
       defaultValue : null
     },
 
