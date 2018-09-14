@@ -46,7 +46,7 @@ module.exports = class Email {
       email.to = this.config.recipient;
     }
 
-    fs.appendFileSync('/var/log/outgoing/email.txt', JSON.stringify(email) + '\n');
+    fs.appendFile('/var/log/outgoing/email.txt', JSON.stringify(email) + '\n');
 
     if (!this.transporter) {
       throw error.parse({

@@ -136,7 +136,7 @@ module.exports = {
           type        : file.type,
         });
         yield report.save();
-        if (file.type === 'other') {
+        if (file.type === 'other' || !file.type) {
           slackPayload.attachments.push({
             fallback  : `Image ${ i }`,
             color     : '#D00000',
@@ -146,8 +146,17 @@ module.exports = {
       }
     }
 
-    yield slack.message(slackPayload);
+    slackPayload.t = 'slack';
+    slackPayload.at = new Date();
+    try {
+      fs.appendFile('/var/log/outgoing/log.txt', JSON.stringify(slackPayload) + "\n");
+    } catch (err) {
+      log.warn(`Failed to write to the log file: ${ err.message }`);
+    }
 
+    if (process.env.NODE_ENV === 'production') {
+      yield slack.message(slackPayload);
+    }
     return;
   },
 

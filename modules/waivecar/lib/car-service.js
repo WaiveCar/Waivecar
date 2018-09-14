@@ -761,7 +761,7 @@ module.exports = {
     status.id = id;
     status.t = new Date();
     status._misc = misc;
-    fs.appendFileSync('/var/log/invers/log.txt', JSON.stringify(status) + "\n");
+    fs.appendFile('/var/log/invers/log.txt', JSON.stringify(status) + "\n");
   },
 
   /**
