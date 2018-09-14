@@ -123,12 +123,10 @@ module.exports = {
     };
 
     if (payload.files && payload.files.length) {
-      console.log(payload.files);
       let files = payload.files;
 
       for (let i = 0; i < files.length; ++i) {
         let file = files[i];
-        console.log(file.path);
 
         let report = new Report({
           bookingId   : booking.id,
@@ -138,8 +136,7 @@ module.exports = {
           type        : file.type,
         });
         yield report.save();
-        console.log(report);
-        if (file.type === 'other') {
+        if (file.type === 'other' || !file.type) {
           slackPayload.attachments.push({
             fallback  : `Image ${ i }`,
             color     : '#D00000',
