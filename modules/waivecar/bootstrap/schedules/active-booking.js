@@ -110,7 +110,7 @@ var checkBooking = co.wrap(function *(booking) {
       // This text message warning if the booking is 1 hour over the free time
       if (duration >= trigger && !booking.isFlagged('hour-over-notice')) {
         yield booking.flag('hour-over-notice');
-        let hour = trigger / 60;
+        let hour = Math.floor(trigger / 60);
         let carName = car.license;
         yield notify.sendTextMessage(user, `Just a reminder that you are ${ hour } hours into your booking with ${ carName }. If you feel this is a mistake, give us a call. Otherwise enjoy your ride!`);
       }
