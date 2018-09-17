@@ -1,6 +1,6 @@
 import MySQLdb as mysql
 import json
-
+import sys
 
 mysql_connection = mysql.connect(user='root', database='waivecar_development')
 cursor = mysql_connection.cursor()
@@ -93,3 +93,6 @@ def findLevels(ratioList):
 
 mysql_connection.close()
 print(findLevels(ratio)) 
+
+#This loads in the list of users to update that was passed in as the first argument when running this script
+usersToUpdate = json.loads(sys.argv[1])

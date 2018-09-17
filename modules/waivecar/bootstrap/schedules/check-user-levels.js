@@ -40,12 +40,13 @@ scheduler.process('check-user-levels', function*(job) {
       ],
     });
   }
-  exec('python3 analysis/carCharge.py', (err, stdout) => {
+  exec(`python3 analysis/carCharge.py ${JSON.stringify(Array.from(usersToProcess))}`, (err, stdout) => {
     if (err) {
       console.log(`error: ${err}`);
     }
-    let data = JSON.parse(stdout.replace(/'/g, `"`));
-    console.log(data.normalMinimum);
+    //let data = JSON.parse(stdout.replace(/'/g, `"`));
+    //console.log(data.normalMinimum);
+    console.log(stdout);
   });
   /*
   for (let user in recentBookings) {
