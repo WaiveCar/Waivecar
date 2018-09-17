@@ -1,14 +1,9 @@
-#!/usr/bin/python
-import MySQLdb as mariadb
+import MySQLdb as mysql
 import json
-#import pprint
-#import matplotlib.pyplot as plt
-#from operator import itemgetter
 
 
-
-mariadb_connection = mariadb.connect(user='root', database='waivecar_development')
-cursor = mariadb_connection.cursor()
+mysql_connection = mysql.connect(user='root', database='waivecar_development')
+cursor = mysql_connection.cursor()
 
 cursor.execute("""select bookings.id, cars.license, booking_details.type, booking_details.mileage, booking_details.charge, bookings.user_id from bookings
 join booking_details on bookings.id = booking_details.booking_id
@@ -63,7 +58,6 @@ for key in charge.keys():
             chargeDifference[key] = c*.70
         else:
             chargeDifference[key] = c*1.40
-#print('chargeDifference: ', chargeDifference)
 
 #This is a list of all of the diffent ratios that have been calculated
 ratio = []
@@ -83,20 +77,19 @@ for key in distance.keys():
             if user[key] not in freq:
                 freq[user[key]] = 0
             freq[user[key]] += 1
-#print(list(reversed(sorted([(user,times) for user,times in freq.items()], key=itemgetter(1)))))
 
 #This function calculates the maximum ratios of a user to be placed in any particular level (drainers, normal, chargers, super-chargers)
-def find_levels(ratio_list):
-    sorted_ratios = sorted(ratio_list)
-    normal_index = round(0.1 * len(ratio_list))
-    charger_index = round(0.8 * len(ratio_list))
-    super_charger_index = round(0.97 * len(ratio_list))
+def findLevels(ratioList):
+    sortedRatios = sorted(ratioList)
+    normalIndex = round(0.1 * len(ratioList))
+    chargerIndex = round(0.8 * len(ratioList))
+    superChargerIndex = round(0.97 * len(ratioList))
     return {
-        "normal_minimum": sorted_ratios[normal_index],
-        "charger_minimum": sorted_ratios[charger_index],
-        "super_charger_minimum": sorted_ratios[super_charger_index]
+        "normalMinimum": sortedRatios[normalIndex],
+        "chargerMinimum": sortedRatios[chargerIndex],
+        "superChargerMinimum": sortedRatios[superChargerIndex]
     }
-print('Ratio thresholds: ', find_levels(ratio))
+#print('Ratio thresholds: ', find_levels(ratio))
 
-mariadb_connection.close()
-
+mysql_connection.close()
+print(findLevels(ratio)) 

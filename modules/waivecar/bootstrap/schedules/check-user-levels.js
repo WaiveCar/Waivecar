@@ -40,15 +40,12 @@ scheduler.process('check-user-levels', function*(job) {
       ],
     });
   }
-  yield calculateLevel();
-  exec('python3 analysis/carCharge.py', (err, stdout, stderr) => {
+  exec('python3 analysis/carCharge.py', (err, stdout) => {
     if (err) {
       console.log(`error: ${err}`);
     }
-    if (stderr) {
-      console.log(`stderr:  ${stderr}`);
-    }
-    console.log(`stdout: ${stdout}`);
+    let data = JSON.parse(stdout.replace(/'/g, `"`));
+    console.log(data.normalMinimum);
   });
   /*
   for (let user in recentBookings) {
