@@ -1,8 +1,10 @@
 import MySQLdb as mysql
 import json
+import os
 import sys
 
-mysql_connection = mysql.connect(user='root', database='waivecar_development')
+db_config = json.loads(sys.argv[2])
+mysql_connection = mysql.connect(database=db_config['database'], user=db_config['username'], password=db_config['password'])
 cursor = mysql_connection.cursor()
 
 cursor.execute("""select bookings.id, cars.license, booking_details.type, booking_details.mileage, booking_details.charge, bookings.user_id from bookings
@@ -46,7 +48,6 @@ for b in cursor:
         charge[booking_id] += [(b[4], b[2], b[1])]
     elif booking_id not in charge and b[2] == 'start':
         charge[booking_id] = [(b[4], b[2], b[1])]
-#print('charge: ', charge)
 
 #This calculates the charge differences for bookings
 chargeDifference = {}

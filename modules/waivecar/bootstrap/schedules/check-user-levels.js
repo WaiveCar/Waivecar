@@ -40,14 +40,24 @@ scheduler.process('check-user-levels', function*(job) {
       ],
     });
   }
-  exec(`python3 analysis/carCharge.py ${JSON.stringify(Array.from(usersToProcess))}`, (err, stdout) => {
-    if (err) {
-      console.log(`error: ${err}`);
-    }
-    //let data = JSON.parse(stdout.replace(/'/g, `"`));
-    //console.log(data.normalMinimum);
-    console.log(stdout);
+  let config = JSON.stringify({
+    database: Bento.config.sequelize.database,
+    username: Bento.config.sequelize.username,
+    password: Bento.config.sequelize.password,
   });
+  exec(
+    `python3 analysis/carCharge.py ${JSON.stringify(
+      Array.from(usersToProcess),
+    )} ${JSON.stringify(config)}`,
+    (err, stdout) => {
+      if (err) {
+        console.log(`error: ${err}`);
+      }
+      //let data = JSON.parse(stdout.replace(/'/g, `"`));
+      //console.log(data.normalMinimum);
+      console.log(stdout);
+    },
+  );
   /*
   for (let user in recentBookings) {
     recentBookings[user].forEach(booking => console.log(booking.details));
