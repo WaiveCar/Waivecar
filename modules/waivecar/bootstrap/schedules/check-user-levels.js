@@ -4,6 +4,7 @@ let scheduler = Bento.provider('queue').scheduler;
 let Booking = Bento.model('Booking');
 let User = Bento.model('User');
 let moment = require('moment');
+let {exec} = require('child_process');
 
 scheduler.process('check-user-levels', function*(job) {
   console.log('check user levels here');
@@ -11,7 +12,7 @@ scheduler.process('check-user-levels', function*(job) {
     where: {
       createdAt: {
         $gte: moment()
-          .subtract(1, 'days')
+          .subtract(4, 'days')
           .toDate(),
       },
       status: 'completed',
@@ -40,6 +41,15 @@ scheduler.process('check-user-levels', function*(job) {
     });
   }
   yield calculateLevel();
+  exec('python3 analysis/carCharge.py', (err, stdout, stderr) => {
+    if (err) {
+      console.log(`error: ${err}`);
+    }
+    if (stderr) {
+      console.log(`stderr:  ${stderr}`);
+    }
+    console.log(`stdout: ${stdout}`);
+  });
   /*
   for (let user in recentBookings) {
     recentBookings[user].forEach(booking => console.log(booking.details));
@@ -48,7 +58,7 @@ scheduler.process('check-user-levels', function*(job) {
 });
 
 let calculateLevel = function*(bookings) {
-  console.log('calcuate level with this fucntion');
+  console.log('calculate level with this fucntion');
 };
 
 module.exports = function*() {
