@@ -11,10 +11,9 @@ cursor = mysql_connection.cursor()
 cursor.execute("""select bookings.id, cars.license, booking_details.type, booking_details.mileage, booking_details.charge, bookings.user_id from bookings
 join booking_details on bookings.id = booking_details.booking_id
 join cars on bookings.car_id = cars.id
-where bookings.created_at > '2016-06-01'
+where bookings.created_at > '2018-06-01'
 order by bookings.created_at asc, cars.license asc
 ;""")
-
 #This matches a booking to a starting and ending mileage
 mileage = {}
 #This matches the bookings to a user
@@ -79,35 +78,53 @@ for key in distance.keys():
                 freq[user[key]] = 0
             freq[user[key]] += 1
 #This calculates the maximum ratios of users for placement in each level (drainers, normal, chargers, super-chargers)
-sortedRatios = sorted(ratio)
-normalIndex = round(0.1 * len(ratio))
-chargerIndex = round(0.8 * len(ratio))
-superChargerIndex = round(0.97 * len(ratio))
+def getThresholds(ratio_list):
+    sortedRatios = sorted(ratio_list)
+    normalIndex = round(0.1 * len(ratio_list))
+    chargerIndex = round(0.8 * len(ratio_list))
+    superChargerIndex = round(0.97 * len(ratio_list))
+    return {
+        "normalMinimum": sortedRatios[normalIndex],
+        "chargerMinimum": sortedRatios[chargerIndex],
+        "superChargerMinimum": sortedRatios[superChargerIndex]
+    }
 
-currentThresholds = {
-    "normalMinimum": sortedRatios[normalIndex],
-    "chargerMinimum": sortedRatios[chargerIndex],
-    "superChargerMinimum": sortedRatios[superChargerIndex]
-}
+currentThresholds = getThresholds(ratio)
 
-print(currentThresholds)
+#This function gets the ratio for a booking with row1 being the row containing the starting booking
+#detail and row2 being the row containing the ending booking detail
+def getRatio(row1, row2):
+    multiplier = 0.7 if row1[1].lower() in ["waive{}".format(x) for x in range(1, 20)] else 1.4
+    differenceInCharge = (row1[4] - row2[4]) * multiplier
+    if differenceInCharge == 0:
+        differenceInCharge = 0.1
+    return (float(row2[3] - row1[3])) / differenceInCharge
 
-##This loads in the list of users to update that was passed in as the first argument when running this script
-#usersToUpdate = json.loads(sys.argv[2])
-##This gets each user in the list's 20 most recent bookings, calculates their average ratios
-#newUserRatios = {}
-#for userId in usersToUpdate:
-#    query = """select id from bookings where user_id={} and created_at > '2016-06-01' order by id desc limit 20;""".format(userId)
-#    cursor.execute(query)
-#    currentUserBookings = []
-#    for row in cursor:
-#        currentUserBookings.append(row[0])
-#    currentUserRatios = []
-#    for booking in currentUserBookings:
-#        if booking in bookingRatios:
-#            currentUserRatios.append(bookingRatios[booking])
-#    print((currentUserBookings), len(currentUserRatios))
-#    #newUserRatios[userId] = sum(currentUserRatios) / len(currentUserRatios)
-#print(newUserRatios)
+#This loads in the list of users to update that was passed in as the first argument when running this script
+recentUsers = json.loads(sys.argv[2])
+#This function gets each user in the list's 20 most recent bookings, calculates their average ratios
+def getRatiosForUsers(usersToUpdate):
+    for userId in usersToUpdate:
+        query = """select bookings.id, cars.license, booking_details.type, booking_details.mileage, booking_details.charge, bookings.user_id 
+        from bookings join booking_details on bookings.id = booking_details.booking_id
+        join cars on bookings.car_id = cars.id where bookings.user_id={}
+        order by bookings.created_at desc, cars.license asc limit 40;""".format(userId);
+        cursor.execute(query)
+        rows = list(cursor)
+        bookingsToDetails = dict()
+        for row in rows:
+            if not row[0] in bookingsToDetails:
+                bookingsToDetails[row[0]] = []
+            bookingsToDetails[row[0]].append(row)
+        for booking in bookingsToDetails:
+            if len(bookingsToDetails[booking]) < 2:
+                continue
+            if bookingsToDetails[booking][0][2] == "end":
+                bookingsToDetails[booking][0], bookingsToDetails[booking][1] = bookingsToDetails[booking][1], bookingsToDetails[booking][0] 
+        for booking in bookingsToDetails:
+            if len(bookingsToDetails[booking]) > 1:
+                print(getRatio(bookingsToDetails[booking][0], bookingsToDetails[booking][1]))
+
+getRatiosForUsers(recentUsers)
 
 mysql_connection.close()
