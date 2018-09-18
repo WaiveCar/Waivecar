@@ -1221,7 +1221,7 @@ module.exports = class BookingService extends Service {
 	        yield email.send({
 		        to       : user.email,
 		        from     : emailConfig.sender,
-            subject  : `You just drove your ${Math.floor(totalMiles) * 500}th mile with WaiveCar!`,
+            subject  : `You just drove your ${Math.floor(totalMiles)}th mile with WaiveCar!`,
 		        template : 'drove-x-miles',
 		        context  : {
 		          name       : user.name(),
