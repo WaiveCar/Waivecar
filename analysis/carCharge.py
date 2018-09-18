@@ -60,12 +60,9 @@ for key in charge.keys():
 ratio = []
 #This is is a hash table of all the different users with a rating below 0
 freq = {}
-#This table matches bookings to their ratio
-booking_ratios = {}
 for key in distance.keys():
     if key in charge_difference and charge_difference[key]:
         r = float(distance[key])/charge_difference[key]
-        booking_ratios[key] = r
         if r > -5.5 and r < 5.5:
             ratio += [r]
         if r < -0:
@@ -86,7 +83,6 @@ def get_thresholds(ratio_list):
     }
 
 current_thresholds = get_thresholds(ratio)
-print('Current Thresholds: ', current_thresholds)
 
 #This function gets the ratio for a booking with row1 being the row containing the starting booking
 #detail and row2 being the row containing the ending booking detail
@@ -99,12 +95,14 @@ def get_ratio(row1, row2):
 
 #This loads in the list of users to update that was passed in as the first argument when running this script
 recent_users = json.loads(sys.argv[2])
+
 #This function gets each user in the list's 20 most recent bookings, calculates their average ratios
 def get_ratios_for_users(users_to_update):
+    new_ratios = {}
     for user_id in users_to_update:
         query = """select bookings.id, cars.license, booking_details.type, booking_details.mileage, booking_details.charge, bookings.user_id 
         from bookings join booking_details on bookings.id = booking_details.booking_id
-        join cars on bookings.car_id = cars.id where bookings.user_id={}
+        join cars on bookings.car_id = cars.id where bookings.user_id={} and bookings.status="completed"
         order by bookings.created_at desc, cars.license asc limit 40;""".format(user_id);
         cursor.execute(query)
         rows = list(cursor)
@@ -118,10 +116,18 @@ def get_ratios_for_users(users_to_update):
                 continue
             if bookings_to_details[booking][0][2] == "end":
                 bookings_to_details[booking][0], bookings_to_details[booking][1] = bookings_to_details[booking][1], bookings_to_details[booking][0] 
+        current_user_ratios = []
         for booking in bookings_to_details:
             if len(bookings_to_details[booking]) > 1:
-                print(get_ratio(bookings_to_details[booking][0], bookings_to_details[booking][1]))
+                current_user_ratios.append(get_ratio(bookings_to_details[booking][0], bookings_to_details[booking][1]))
+        current_user_ratios = list(filter(lambda x: (-5.5 <= x <= 5.5), current_user_ratios))
+        new_ratios[user_id] = sum(current_user_ratios) / len(current_user_ratios)
+    return new_ratios
 
-get_ratios_for_users(recent_users)
-
+new_user_ratios = get_ratios_for_users(recent_users)
 mysql_connection.close()
+
+print(json.dumps({
+    "currentThresholds": current_thresholds,
+    "newUserRatios": new_user_ratios
+}))
