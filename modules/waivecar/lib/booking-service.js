@@ -1210,6 +1210,7 @@ module.exports = class BookingService extends Service {
       let lastTripDistance = Math.abs(details[1].mileage - details[0].mileage);
       let beforeLastTrip = totalMiles - lastTripDistance;
       // This email will be sent for every 500 miles a user drives
+      /*
       if (Math.floor(totalMiles / 500) !== Math.floor(beforeLastTrip / 500)) {
         let email = new Email();
         let numMonths = Math.ceil(moment(Date.now()).diff(moment(user.createdAt), 'months'));
@@ -1234,6 +1235,7 @@ module.exports = class BookingService extends Service {
           log.warn('email error: ', err);
         }; 
       }
+      */
 
       // --- 
       //
