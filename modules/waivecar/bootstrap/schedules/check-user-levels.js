@@ -23,6 +23,7 @@ scheduler.process('check-user-levels', function*(job) {
 
   console.log('list of users to check: ', usersToProcess);
 
+  /* This is likely not needed
   let recentBookings = {};
   for (let id of usersToProcess) {
     recentBookings[id] = yield Booking.find({
@@ -40,15 +41,16 @@ scheduler.process('check-user-levels', function*(job) {
       ],
     });
   }
+  */
   let config = JSON.stringify({
     database: Bento.config.sequelize.database,
     username: Bento.config.sequelize.username,
     password: Bento.config.sequelize.password,
   });
   exec(
-    `python3 analysis/carCharge.py ${JSON.stringify(
+    `python3 analysis/carCharge.py ${JSON.stringify(config)} ${JSON.stringify(
       Array.from(usersToProcess),
-    )} ${JSON.stringify(config)}`,
+    )}`,
     (err, stdout) => {
       if (err) {
         console.log(`error: ${err}`);
@@ -58,11 +60,6 @@ scheduler.process('check-user-levels', function*(job) {
       console.log(stdout);
     },
   );
-  /*
-  for (let user in recentBookings) {
-    recentBookings[user].forEach(booking => console.log(booking.details));
-  }
-  */
 });
 
 let calculateLevel = function*(bookings) {

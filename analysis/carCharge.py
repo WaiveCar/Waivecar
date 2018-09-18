@@ -1,9 +1,11 @@
+#The first argument for this script is an object with the mysql configuration information 
+#and the second argument is a list of users whose new level is to be calculated
 import MySQLdb as mysql
 import json
 import os
 import sys
 
-db_config = json.loads(sys.argv[2])
+db_config = json.loads(sys.argv[1])
 mysql_connection = mysql.connect(database=db_config['database'], user=db_config['username'], password=db_config['password'])
 cursor = mysql_connection.cursor()
 
@@ -66,9 +68,12 @@ ratio = []
 freq = {}
 #This table matches user ids to a list of ratios from their bookings
 userRatios = {}
+#This table matches bookings to their ratio
+bookingRatios = {}
 for key in distance.keys():
     if key in chargeDifference and chargeDifference[key]:
         r = float(distance[key])/chargeDifference[key]
+        bookingRatios[key] = r
         if r > -5.5 and r < 5.5:
             if not user[key] in userRatios:
                 userRatios[user[key]] = []
@@ -90,10 +95,19 @@ def findLevels(ratioList):
         "chargerMinimum": sortedRatios[chargerIndex],
         "superChargerMinimum": sortedRatios[superChargerIndex]
     }
-#print('Ratio thresholds: ', find_levels(ratio))
 
-mysql_connection.close()
-print(findLevels(ratio)) 
+print('Level Parameters: ', findLevels(ratio)) 
 
 #This loads in the list of users to update that was passed in as the first argument when running this script
-usersToUpdate = json.loads(sys.argv[1])
+usersToUpdate = json.loads(sys.argv[2])
+#This matches userIds to their last 20 bookings
+userBookings = {}
+for userId in usersToUpdate:
+    query = """select id from bookings where user_id={} order by id desc limit 20;""".format(userId)
+    cursor.execute(query)
+    currentUserBookings = []
+    for row in cursor:
+        currentUserBookings.append(row[0])
+    userBookings[userId] = currentUserBookings
+
+mysql_connection.close()
