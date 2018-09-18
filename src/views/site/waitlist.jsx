@@ -85,6 +85,12 @@ module.exports = class WaitList extends Component {
                   <p>Due to overwhelming popularity there is a waitlist for new registrations.</p>
                   <p>Our staff has been informed of your arrival and we'll contact you
                   over email as soon as a slot opens up.</p>
+                  <p>To drive with WaiveCar you'll need:
+                    <ul style={{ marginLeft: '2em', textAlign: 'left' }}>
+                      <li>A very clean driving record</li>
+                      <li>A valid credit card</li>
+                    </ul>
+                  </p>
                 </div>
               }
               <div className="advertise">
