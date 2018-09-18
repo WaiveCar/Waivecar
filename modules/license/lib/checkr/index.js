@@ -13,7 +13,6 @@ let log = Bento.Log;
 let Service = require('../classes/service');
 let notify = Bento.module('waivecar/lib/notification-service');
 let fs = require('fs');
-let log = Bento.Log;
 
 if (!config.checkr) {
   throw error.parse({
