@@ -23,8 +23,6 @@ user = {}
 for b in cursor:
     booking_id = b[0] 
     user[booking_id] = b[5]
-    if b[5] in [2723,3213,8779,10453]:
-        continue
     if booking_id in mileage and b[2] == 'end':
         mileage[booking_id] += [(b[3], b[2], b[1])]
     elif booking_id not in mileage and b[2] == 'start':
@@ -66,7 +64,7 @@ for key in charge.keys():
 ratio = []
 #This is is a hash table of all the different users with a rating below 0
 freq = {}
-#This table matches user ids to a list of ratios from their bookings
+#This table matches user ids to a list of ratios from all of their bookings
 userRatios = {}
 #This table matches bookings to their ratio
 bookingRatios = {}
@@ -84,30 +82,27 @@ for key in distance.keys():
                 freq[user[key]] = 0
             freq[user[key]] += 1
 
-#This function calculates the maximum ratios of a user to be placed in any particular level (drainers, normal, chargers, super-chargers)
-def findLevels(ratioList):
-    sortedRatios = sorted(ratioList)
-    normalIndex = round(0.1 * len(ratioList))
-    chargerIndex = round(0.8 * len(ratioList))
-    superChargerIndex = round(0.97 * len(ratioList))
-    return {
-        "normalMinimum": sortedRatios[normalIndex],
-        "chargerMinimum": sortedRatios[chargerIndex],
-        "superChargerMinimum": sortedRatios[superChargerIndex]
-    }
-
-print('Level Parameters: ', findLevels(ratio)) 
+#This calculates the maximum ratios of users for placement in each level (drainers, normal, chargers, super-chargers)
+sortedRatios = sorted(ratio)
+normalIndex = round(0.1 * len(ratio))
+chargerIndex = round(0.8 * len(ratio))
+superChargerIndex = round(0.97 * len(ratio))
+currentThresholds = {
+    "normalMinimum": sortedRatios[normalIndex],
+    "chargerMinimum": sortedRatios[chargerIndex],
+    "superChargerMinimum": sortedRatios[superChargerIndex]
+}
 
 #This loads in the list of users to update that was passed in as the first argument when running this script
 usersToUpdate = json.loads(sys.argv[2])
-#This matches userIds to their last 20 bookings
-userBookings = {}
+#This gets each user in the list's 20 most recent bookings, calculates their average ratios
+newUserRatios = {}
 for userId in usersToUpdate:
     query = """select id from bookings where user_id={} order by id desc limit 20;""".format(userId)
     cursor.execute(query)
     currentUserBookings = []
     for row in cursor:
         currentUserBookings.append(row[0])
-    userBookings[userId] = currentUserBookings
+    newUserRatios[userId] = sum(currentUserBookings) / len(currentUserBookings)
 
 mysql_connection.close()
