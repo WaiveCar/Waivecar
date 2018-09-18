@@ -23,7 +23,7 @@
         </label>
 
         <label class="item item-input item-select">
-          <span class="input-label">License State</span>
+          <span class="input-label">State</span>
           <select name="state" ng-model="licenseCtrl.license.state" required>
             <option value=""></option>
             <option ng-repeat="state in licenseCtrl.states" value="{{state.abbreviation}}">{{state.name}}</option>
@@ -31,12 +31,12 @@
         </label>
 
         <label class="item item-input">
-          <span class="input-label">License expiration date</span>
+          <span class="input-label">Expiration Date</span>
           <input name="expirationDate" type="text" value="" placeholder="MM/DD/YYYY" required ng-model="licenseCtrl.license.expirationDate">
         </label>
 
         <label class="item item-input">
-          <span class="input-label">Date Of Birth</span>
+          <span class="input-label">Date of Birth</span>
           <input name="birthDate" type="text" value="" placeholder="MM/DD/YYYY" required ng-model="licenseCtrl.license.birthDate">
         </label>
 
@@ -51,7 +51,7 @@
             <div ng-message="required">License expiration date is required</div>
           </div>
           <div ng-messages="form.birthDate.$error" ng-if="form.$submitted">
-            <div ng-message="required">Date Of Birth is required</div>
+            <div ng-message="required">Date of Birth is required</div>
           </div>
         </div>
 
