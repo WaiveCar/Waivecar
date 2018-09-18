@@ -1,4 +1,5 @@
-#The first argument for this script is an object with the mysql configuration information 
+#The first argument for this script is an object with the mysql configuration information and
+#the second is a list of users whose status needs to be recalculated
 import MySQLdb as mysql
 import json
 import os
@@ -8,67 +9,69 @@ db_config = json.loads(sys.argv[1])
 mysql_connection = mysql.connect(database=db_config['database'], user=db_config['username'], password=db_config['password'])
 cursor = mysql_connection.cursor()
 
-cursor.execute("""select bookings.id, cars.license, booking_details.type, booking_details.mileage, booking_details.charge, bookings.user_id from bookings
-join booking_details on bookings.id = booking_details.booking_id
-join cars on bookings.car_id = cars.id
-where bookings.created_at > '2018-06-01'
-order by bookings.created_at asc, cars.license asc
-;""")
-#This matches a booking to a starting and ending mileage
-mileage = {}
-#This matches the bookings to a user
-user = {}
-for b in cursor:
-    booking_id = b[0] 
-    user[booking_id] = b[5]
-    if booking_id in mileage and b[2] == 'end':
-        mileage[booking_id] += [(b[3], b[2], b[1])]
-    elif booking_id not in mileage and b[2] == 'start':
-        mileage[booking_id] = [(b[3], b[2], b[1])]
-a = []
-b = []
-#This matches a booking to its distance in miles
-distance = {}
-for key in mileage.keys():
-    if len(mileage[key]) == 2:
-        d = mileage[key][1][0] - mileage[key][0][0]
-        if d > 10:
-            distance[key] = d
-            a += [d]
-        else:
-            b += [d]
-
-#This matches bookings with their charges at the starts and ends of rides
-charge = {}
-for b in cursor:
-    booking_id = b[0] 
-    if booking_id in charge and b[2] == 'end':
-        charge[booking_id] += [(b[4], b[2], b[1])]
-    elif booking_id not in charge and b[2] == 'start':
-        charge[booking_id] = [(b[4], b[2], b[1])]
-#This calculates the charge differences for bookings
-charge_difference = {}
-for key in charge.keys():
-    if len(charge[key]) == 2 and charge[key][1][0] and charge[key][0][0]:
-        c = float(charge[key][0][0] - charge[key][1][0])
-     
-        if charge[key][0][2].lower() in ["waive{}".format(x) for x in range(1, 20)]:
-            charge_difference[key] = c*.70
-        else:
-            charge_difference[key] = c*1.45
-#This is a list of all of the diffent ratios that have been calculated
-ratio = []
-#This is is a hash table of all the different users with a rating below 0
-freq = {}
-for key in distance.keys():
-    if key in charge_difference and charge_difference[key]:
-        r = float(distance[key])/charge_difference[key]
-        if r > -5.5 and r < 5.5:
-            ratio += [r]
-        if r < -0:
-            if user[key] not in freq:
-                freq[user[key]] = 0
-            freq[user[key]] += 1
+def get_ratios():
+    cursor.execute("""select bookings.id, cars.license, booking_details.type, booking_details.mileage, booking_details.charge, bookings.user_id from bookings
+    join booking_details on bookings.id = booking_details.booking_id
+    join cars on bookings.car_id = cars.id
+    where bookings.created_at > '2018-06-01'
+    order by bookings.created_at asc, cars.license asc
+    ;""")
+    #This matches a booking to a starting and ending mileage
+    mileage = {}
+    #This matches the bookings to a user
+    user = {}
+    for b in cursor:
+        booking_id = b[0] 
+        user[booking_id] = b[5]
+        if booking_id in mileage and b[2] == 'end':
+            mileage[booking_id] += [(b[3], b[2], b[1])]
+        elif booking_id not in mileage and b[2] == 'start':
+            mileage[booking_id] = [(b[3], b[2], b[1])]
+    a = []
+    b = []
+    #This matches a booking to its distance in miles
+    distance = {}
+    for key in mileage.keys():
+        if len(mileage[key]) == 2:
+            d = mileage[key][1][0] - mileage[key][0][0]
+            if d > 10:
+                distance[key] = d
+                a += [d]
+            else:
+                b += [d]
+    
+    #This matches bookings with their charges at the starts and ends of rides
+    charge = {}
+    for b in cursor:
+        booking_id = b[0] 
+        if booking_id in charge and b[2] == 'end':
+            charge[booking_id] += [(b[4], b[2], b[1])]
+        elif booking_id not in charge and b[2] == 'start':
+            charge[booking_id] = [(b[4], b[2], b[1])]
+    #This calculates the charge differences for bookings
+    charge_difference = {}
+    for key in charge.keys():
+        if len(charge[key]) == 2 and charge[key][1][0] and charge[key][0][0]:
+            c = float(charge[key][0][0] - charge[key][1][0])
+         
+            if charge[key][0][2].lower() in ["waive{}".format(x) for x in range(1, 20)]:
+                charge_difference[key] = c*.70
+            else:
+                charge_difference[key] = c*1.45
+    #This is a list of all of the diffent ratios that have been calculated
+    ratio = []
+    #This is is a hash table of all the different users with a rating below 0
+    freq = {}
+    for key in distance.keys():
+        if key in charge_difference and charge_difference[key]:
+            r = float(distance[key])/charge_difference[key]
+            if r > -5.5 and r < 5.5:
+                ratio += [r]
+            if r < -0:
+                if user[key] not in freq:
+                    freq[user[key]] = 0
+                freq[user[key]] += 1
+    return ratio
 
 #This calculates the maximum ratios of users for placement in each level (drainers, normal, chargers, super-chargers)
 def get_thresholds(ratio_list):
@@ -81,9 +84,6 @@ def get_thresholds(ratio_list):
         "chargerMinimum": sorted_ratios[charger_index],
         "superChargerMinimum": sorted_ratios[super_charger_index]
     }
-
-current_thresholds = get_thresholds(ratio)
-
 #This function gets the ratio for a booking with row1 being the row containing the starting booking
 #detail and row2 being the row containing the ending booking detail
 def get_ratio(row1, row2):
@@ -92,9 +92,6 @@ def get_ratio(row1, row2):
     if difference_in_charge == 0:
         difference_in_charge = 0.1
     return (float(row2[3] - row1[3])) / difference_in_charge
-
-#This loads in the list of users to update that was passed in as the first argument when running this script
-recent_users = json.loads(sys.argv[2])
 
 #This function gets each user in the list's 20 most recent bookings, calculates their average ratios
 def get_ratios_for_users(users_to_update):
@@ -124,10 +121,14 @@ def get_ratios_for_users(users_to_update):
         new_ratios[user_id] = sum(current_user_ratios) / len(current_user_ratios)
     return new_ratios
 
-new_user_ratios = get_ratios_for_users(recent_users)
-mysql_connection.close()
-
-print(json.dumps({
-    "currentThresholds": current_thresholds,
-    "newUserRatios": new_user_ratios
-}))
+if __name__ == "__main__":
+    booking_ratios = get_ratios() 
+    current_thresholds = get_thresholds(booking_ratios)
+    #This loads in the list of users to update that was passed in as the first argument when running this script
+    recent_users = json.loads(sys.argv[2])
+    new_user_ratios = get_ratios_for_users(recent_users)
+    mysql_connection.close()
+    print(json.dumps({
+        "currentThresholds": current_thresholds,
+        "newUserRatios": new_user_ratios
+    }))

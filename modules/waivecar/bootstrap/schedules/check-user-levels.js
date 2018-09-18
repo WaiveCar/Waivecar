@@ -6,7 +6,7 @@ let User = Bento.model('User');
 let moment = require('moment');
 let {exec} = require('child_process');
 
-let execPromise = (query) => {
+let execPromise = query => {
   return new Promise((resolve, reject) => {
     exec(query, (error, stdout) => {
       if (error) {
@@ -15,11 +15,7 @@ let execPromise = (query) => {
       resolve(stdout);
     });
   });
-}
-  /*
-let calculateRatio = function*(booking) {
-  let vehicleMultiplier =
-};*/
+};
 
 scheduler.process('check-user-levels', function*(job) {
   let newBookings = yield Booking.find({
@@ -41,51 +37,18 @@ scheduler.process('check-user-levels', function*(job) {
     username: Bento.config.sequelize.username,
     password: Bento.config.sequelize.password,
   });
-  try {
-    let thresholds = yield execPromise(
-      `python3 analysis/carCharge.py ${JSON.stringify(mysqlConfig)} ${JSON.stringify(Array.from(usersToProcess))}`
-    );
-    console.log(thresholds);
-  } catch(err) {
-    console.log('error: ', err);
-  }
-  /*
-  thresholds = JSON.parse(thresholds.replace(/'/g, `"`));
-
-  let recentBookings = {};
-  for (let id of usersToProcess) {
-    recentBookings[id] = yield Booking.find({
-      where: {
-        userId: id,
-        status: 'completed',
-      },
-      order: [['id', 'DESC']],
-      limit: 20,
-      include: [
-        {
-          model: 'BookingDetails',
-          as: 'details',
-        },
-        {
-          model: 'Car',
-          as: 'car',
-        }
-      ],
-    });
-  }
-
-  for (let user in recentBookings) {
-    for (let booking of recentBookings[user]) {
-      yield calculateRatio(booking);
-    }
-  }
-  */
+  let stdout = yield execPromise(
+    `python3 analysis/carCharge.py ${JSON.stringify(
+      mysqlConfig,
+    )} ${JSON.stringify(Array.from(usersToProcess))}`,
+  );
+  console.log(JSON.parse(stdout));
 });
 
 module.exports = function*() {
   scheduler.add('check-user-levels', {
     init: true,
     repeat: true,
-    timer: {value: 30, type: 'seconds'},
+    timer: {value: 15, type: 'seconds'},
   });
 };
