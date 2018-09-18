@@ -1,5 +1,4 @@
 #The first argument for this script is an object with the mysql configuration information 
-#and the second argument is a list of users whose new level is to be calculated
 import MySQLdb as mysql
 import json
 import os
@@ -12,7 +11,7 @@ cursor = mysql_connection.cursor()
 cursor.execute("""select bookings.id, cars.license, booking_details.type, booking_details.mileage, booking_details.charge, bookings.user_id from bookings
 join booking_details on bookings.id = booking_details.booking_id
 join cars on bookings.car_id = cars.id
-where bookings.created_at > '2018-06-01'
+where bookings.created_at > '2016-06-01'
 order by bookings.created_at asc, cars.license asc
 ;""")
 
@@ -48,7 +47,6 @@ for b in cursor:
         charge[booking_id] += [(b[4], b[2], b[1])]
     elif booking_id not in charge and b[2] == 'start':
         charge[booking_id] = [(b[4], b[2], b[1])]
-
 #This calculates the charge differences for bookings
 chargeDifference = {}
 for key in charge.keys():
@@ -58,8 +56,7 @@ for key in charge.keys():
         if charge[key][0][2].lower() in ["waive{}".format(x) for x in range(1, 20)]:
             chargeDifference[key] = c*.70
         else:
-            chargeDifference[key] = c*1.40
-
+            chargeDifference[key] = c*1.45
 #This is a list of all of the diffent ratios that have been calculated
 ratio = []
 #This is is a hash table of all the different users with a rating below 0
@@ -81,28 +78,36 @@ for key in distance.keys():
             if user[key] not in freq:
                 freq[user[key]] = 0
             freq[user[key]] += 1
-
 #This calculates the maximum ratios of users for placement in each level (drainers, normal, chargers, super-chargers)
 sortedRatios = sorted(ratio)
 normalIndex = round(0.1 * len(ratio))
 chargerIndex = round(0.8 * len(ratio))
 superChargerIndex = round(0.97 * len(ratio))
+
 currentThresholds = {
     "normalMinimum": sortedRatios[normalIndex],
     "chargerMinimum": sortedRatios[chargerIndex],
     "superChargerMinimum": sortedRatios[superChargerIndex]
 }
 
-#This loads in the list of users to update that was passed in as the first argument when running this script
-usersToUpdate = json.loads(sys.argv[2])
-#This gets each user in the list's 20 most recent bookings, calculates their average ratios
-newUserRatios = {}
-for userId in usersToUpdate:
-    query = """select id from bookings where user_id={} order by id desc limit 20;""".format(userId)
-    cursor.execute(query)
-    currentUserBookings = []
-    for row in cursor:
-        currentUserBookings.append(row[0])
-    newUserRatios[userId] = sum(currentUserBookings) / len(currentUserBookings)
+print(currentThresholds)
+
+##This loads in the list of users to update that was passed in as the first argument when running this script
+#usersToUpdate = json.loads(sys.argv[2])
+##This gets each user in the list's 20 most recent bookings, calculates their average ratios
+#newUserRatios = {}
+#for userId in usersToUpdate:
+#    query = """select id from bookings where user_id={} and created_at > '2016-06-01' order by id desc limit 20;""".format(userId)
+#    cursor.execute(query)
+#    currentUserBookings = []
+#    for row in cursor:
+#        currentUserBookings.append(row[0])
+#    currentUserRatios = []
+#    for booking in currentUserBookings:
+#        if booking in bookingRatios:
+#            currentUserRatios.append(bookingRatios[booking])
+#    print((currentUserBookings), len(currentUserRatios))
+#    #newUserRatios[userId] = sum(currentUserRatios) / len(currentUserRatios)
+#print(newUserRatios)
 
 mysql_connection.close()

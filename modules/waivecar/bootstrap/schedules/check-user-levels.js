@@ -6,8 +6,18 @@ let User = Bento.model('User');
 let moment = require('moment');
 let {exec} = require('child_process');
 
+function execPromise(query) {
+  return new Promise((resolve, reject) => {
+    exec(query, (error, stdout) => {
+      if (error) {
+        throw error;
+      }
+      resolve(stdout);
+    });
+  });
+}
+
 scheduler.process('check-user-levels', function*(job) {
-  console.log('check user levels here');
   let newBookings = yield Booking.find({
     where: {
       createdAt: {
@@ -21,9 +31,6 @@ scheduler.process('check-user-levels', function*(job) {
   let usersToProcess = new Set();
   newBookings.forEach(booking => usersToProcess.add(booking.userId));
 
-  console.log('list of users to check: ', usersToProcess);
-
-  /* This is likely not needed
   let recentBookings = {};
   for (let id of usersToProcess) {
     recentBookings[id] = yield Booking.find({
@@ -41,29 +48,33 @@ scheduler.process('check-user-levels', function*(job) {
       ],
     });
   }
-  */
+
   let config = JSON.stringify({
     database: Bento.config.sequelize.database,
     username: Bento.config.sequelize.username,
     password: Bento.config.sequelize.password,
   });
+  let thresholds = yield execPromise(
+    `python3 analysis/carCharge.py ${JSON.stringify(config)}`,
+  );
+  thresholds = JSON.parse(thresholds.replace(/'/g, `"`));
+  console.log(thresholds);
+  /*
   exec(
-    `python3 analysis/carCharge.py ${JSON.stringify(config)} ${JSON.stringify(
-      Array.from(usersToProcess),
-    )}`,
+    `python3 analysis/carCharge.py ${JSON.stringify(config)}`,
     (err, stdout) => {
       if (err) {
         console.log(`error: ${err}`);
       }
-      //let data = JSON.parse(stdout.replace(/'/g, `"`));
-      //console.log(data.normalMinimum);
-      console.log(stdout);
+      let thresholds = JSON.parse(stdout.replace(/'/g, `"`));
     },
   );
+  */
 });
 
-let calculateLevel = function*(bookings) {
+let calculateRatio = function*(booking) {
   console.log('calculate level with this fucntion');
+  console.log('booking: ', booking);
 };
 
 module.exports = function*() {
