@@ -79,6 +79,10 @@ module.exports = class CheckrService {
       let response = yield this.request('/reports', 'POST', data);
       return response;
     } catch(err) {
+      yield notify.slack(
+        {text: `:lightning: ${user.link()} license failed to be processed by checkr.`},
+        {channel: '#user-alerts'}
+      );
       notify.sendTextMessage(user, 'WaiveCar is unable to check your license. Extra paperwork is sometimes needed. Call us at this number between 9AM-9PM for assistance.');
       throw error.parse(
         {
