@@ -47,84 +47,81 @@ for b in cursor:
     elif booking_id not in charge and b[2] == 'start':
         charge[booking_id] = [(b[4], b[2], b[1])]
 #This calculates the charge differences for bookings
-chargeDifference = {}
+charge_difference = {}
 for key in charge.keys():
     if len(charge[key]) == 2 and charge[key][1][0] and charge[key][0][0]:
         c = float(charge[key][0][0] - charge[key][1][0])
      
         if charge[key][0][2].lower() in ["waive{}".format(x) for x in range(1, 20)]:
-            chargeDifference[key] = c*.70
+            charge_difference[key] = c*.70
         else:
-            chargeDifference[key] = c*1.45
+            charge_difference[key] = c*1.45
 #This is a list of all of the diffent ratios that have been calculated
 ratio = []
 #This is is a hash table of all the different users with a rating below 0
 freq = {}
-#This table matches user ids to a list of ratios from all of their bookings
-userRatios = {}
 #This table matches bookings to their ratio
-bookingRatios = {}
+booking_ratios = {}
 for key in distance.keys():
-    if key in chargeDifference and chargeDifference[key]:
-        r = float(distance[key])/chargeDifference[key]
-        bookingRatios[key] = r
+    if key in charge_difference and charge_difference[key]:
+        r = float(distance[key])/charge_difference[key]
+        booking_ratios[key] = r
         if r > -5.5 and r < 5.5:
-            if not user[key] in userRatios:
-                userRatios[user[key]] = []
-            userRatios[user[key]].append(r)
             ratio += [r]
         if r < -0:
             if user[key] not in freq:
                 freq[user[key]] = 0
             freq[user[key]] += 1
+
 #This calculates the maximum ratios of users for placement in each level (drainers, normal, chargers, super-chargers)
-def getThresholds(ratio_list):
-    sortedRatios = sorted(ratio_list)
-    normalIndex = round(0.1 * len(ratio_list))
-    chargerIndex = round(0.8 * len(ratio_list))
-    superChargerIndex = round(0.97 * len(ratio_list))
+def get_thresholds(ratio_list):
+    sorted_ratios = sorted(ratio_list)
+    normal_index = round(0.1 * len(ratio_list))
+    charger_index = round(0.8 * len(ratio_list))
+    super_charger_index = round(0.97 * len(ratio_list))
     return {
-        "normalMinimum": sortedRatios[normalIndex],
-        "chargerMinimum": sortedRatios[chargerIndex],
-        "superChargerMinimum": sortedRatios[superChargerIndex]
+        "normalMinimum": sorted_ratios[normal_index],
+        "chargerMinimum": sorted_ratios[charger_index],
+        "superChargerMinimum": sorted_ratios[super_charger_index]
     }
 
-currentThresholds = getThresholds(ratio)
+current_thresholds = get_thresholds(ratio)
+print('Current Thresholds: ', current_thresholds)
 
 #This function gets the ratio for a booking with row1 being the row containing the starting booking
 #detail and row2 being the row containing the ending booking detail
-def getRatio(row1, row2):
+def get_ratio(row1, row2):
     multiplier = 0.7 if row1[1].lower() in ["waive{}".format(x) for x in range(1, 20)] else 1.4
-    differenceInCharge = (row1[4] - row2[4]) * multiplier
-    if differenceInCharge == 0:
-        differenceInCharge = 0.1
-    return (float(row2[3] - row1[3])) / differenceInCharge
+    difference_in_charge = (row1[4] - row2[4]) * multiplier
+    if difference_in_charge == 0:
+        difference_in_charge = 0.1
+    return (float(row2[3] - row1[3])) / difference_in_charge
 
 #This loads in the list of users to update that was passed in as the first argument when running this script
-recentUsers = json.loads(sys.argv[2])
+recent_users = json.loads(sys.argv[2])
 #This function gets each user in the list's 20 most recent bookings, calculates their average ratios
-def getRatiosForUsers(usersToUpdate):
-    for userId in usersToUpdate:
+def get_ratios_for_users(users_to_update):
+    for user_id in users_to_update:
         query = """select bookings.id, cars.license, booking_details.type, booking_details.mileage, booking_details.charge, bookings.user_id 
         from bookings join booking_details on bookings.id = booking_details.booking_id
         join cars on bookings.car_id = cars.id where bookings.user_id={}
-        order by bookings.created_at desc, cars.license asc limit 40;""".format(userId);
+        order by bookings.created_at desc, cars.license asc limit 40;""".format(user_id);
         cursor.execute(query)
         rows = list(cursor)
-        bookingsToDetails = dict()
+        bookings_to_details = dict()
         for row in rows:
-            if not row[0] in bookingsToDetails:
-                bookingsToDetails[row[0]] = []
-            bookingsToDetails[row[0]].append(row)
-        for booking in bookingsToDetails:
-            if len(bookingsToDetails[booking]) < 2:
+            if not row[0] in bookings_to_details:
+                bookings_to_details[row[0]] = []
+            bookings_to_details[row[0]].append(row)
+        for booking in bookings_to_details:
+            if len(bookings_to_details[booking]) < 2:
                 continue
-            if bookingsToDetails[booking][0][2] == "end":
-                bookingsToDetails[booking][0], bookingsToDetails[booking][1] = bookingsToDetails[booking][1], bookingsToDetails[booking][0] 
-        for booking in bookingsToDetails:
-            if len(bookingsToDetails[booking]) > 1:
-                print(getRatio(bookingsToDetails[booking][0], bookingsToDetails[booking][1]))
+            if bookings_to_details[booking][0][2] == "end":
+                bookings_to_details[booking][0], bookings_to_details[booking][1] = bookings_to_details[booking][1], bookings_to_details[booking][0] 
+        for booking in bookings_to_details:
+            if len(bookings_to_details[booking]) > 1:
+                print(get_ratio(bookings_to_details[booking][0], bookings_to_details[booking][1]))
 
-getRatiosForUsers(recentUsers)
+get_ratios_for_users(recent_users)
 
 mysql_connection.close()
