@@ -47,6 +47,11 @@ module.exports = class LicenseService extends Service {
       data.birthDate = data.birthDate.split('T')[0];
     }
 
+    // Strip time off expirationDate
+    if (data.expirationDate && /.+T.+/.test(data.expirationDate)) {
+      data.expirationDate = data.expirationDate.split('T')[0];
+    }
+
     // Check that birthdate is > 21 years
     var age = moment().diff(data.birthDate, 'years');
     if (age < 21) {
@@ -76,9 +81,6 @@ module.exports = class LicenseService extends Service {
     return license;
   }
 
-  /**
-   * Returns license index.
-   */
   static *index(query, _user) {
     if (query.search) {
       query = {
