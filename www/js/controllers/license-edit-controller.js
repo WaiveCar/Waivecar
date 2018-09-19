@@ -24,6 +24,9 @@ function LicenseEditController ($injector, licenses, $scope) {
   if (this.license.birthDate) {
     this.birthDateString = this.license.birthDateOriginal.split(/T/)[0];
   }
+  if (this.license.expirationDate) {
+    this.expirationDateString = this.license.expirationDateOriginal.split(/T/)[0];
+  }
 
   this.canEdit = (this.license.status == null || this.license.status === 'pending');
   this.states = USStates;

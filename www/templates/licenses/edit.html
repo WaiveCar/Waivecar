@@ -7,38 +7,39 @@
     <form ng-submit="licenseCtrl.update(form)" name="form" id="form" novalidate>
       <div class="list list-inset">
         <label class="item item-input" ng-if="licenseCtrl.license && licenseCtrl.license.status !== 'pending'">
-          <span ng-if="licenseCtrl.license.status === 'provided'" class="input-label">Your Driver's License is pending validation.</span>
-          <span ng-if="licenseCtrl.license.status === 'in-progress'" class="input-label">Your Driver's License is ongoing validation.</span>
-          <span ng-if="licenseCtrl.license.status === 'complete' && licenseCtrl.license.outcome === 'reject'" class="input-label">Driver's License has failed validation.</span>
-          <span ng-if="licenseCtrl.license.status === 'complete' && licenseCtrl.license.outcome === 'consider'" class="input-label">Driver's License is pending further review.</span>
-          <span ng-if="licenseCtrl.license.status === 'complete' && licenseCtrl.license.outcome === 'clear'" class="input-label">Your Driver's License is cleared.</span>
+          <span ng-if="licenseCtrl.license.status === 'provided'" class="input-label">Driver's license is pending validation.</span>
+          <span ng-if="licenseCtrl.license.status === 'in-progress'" class="input-label">Driver's license is ongoing validation.</span>
+          <span ng-if="licenseCtrl.license.status === 'complete' && licenseCtrl.license.outcome === 'reject'" class="input-label">Driver's license failed validation.</span>
+          <span ng-if="licenseCtrl.license.status === 'complete' && licenseCtrl.license.outcome === 'consider'" class="input-label">Driver's license is pending further review.</span>
+          <span ng-if="licenseCtrl.license.status === 'complete' && licenseCtrl.license.outcome === 'clear'" class="input-label">Driver's license cleared.</span>
         </label>
         <label class="item item-input">
-          <span class="input-label required">License Number</span>
+          <span class="input-label">License Number</span>
           <input name="text" type="text" placeholder="Driver's License Number" ng-model="licenseCtrl.license.number" autofocus required ng-disabled="!licenseCtrl.canEdit">
         </label>
         <label class="item item-input item-select">
-          <div class="input-label required">License State</div>
+          <div class="input-label">State</div>
           <select ng-model="licenseCtrl.license.state" name="state" required ng-options="state.abbreviation as state.name for state in licenseCtrl.states" ng-disabled="!licenseCtrl.canEdit">
             <option value=""></option>
           </select>
         </label>
         <label class="item item-input">
-          <span class="input-label required">First Name</span>
+          <span class="input-label">First Name</span>
           <input name="firstName" type="text" placeholder="First Name" ng-model="licenseCtrl.license.firstName" required ng-disabled="!licenseCtrl.canEdit">
         </label>
         <label class="item item-input">
-          <span class="input-label">Middle Name</span>
-          <input name="middleName" type="text" placeholder="Middle Name" ng-model="licenseCtrl.license.middleName" ng-disabled="!licenseCtrl.canEdit">
-        </label>
-        <label class="item item-input">
-          <span class="input-label required">Last Name</span>
+          <span class="input-label">Last Name</span>
           <input name="lastName" type="text" placeholder="Last Name" ng-model="licenseCtrl.license.lastName" required ng-disabled="!licenseCtrl.canEdit">
         </label>
         <label class="item item-input">
-          <span class="input-label required">Date Of Birth</span>
+          <span class="input-label">Date of Birth</span>
           <input name="birthDate" type="date" value="" placeholder="Date of Birth" ng-model="licenseCtrl.license.birthDate" required ng-if="licenseCtrl.canEdit">
           <span class="input-label" ng-if="licenseCtrl.birthDateString">{{::licenseCtrl.birthDateString}}</span>
+        </label>
+        <label class="item item-input">
+          <span class="input-label">Expiration Date</span>
+          <input name="expirationDate" type="date" value="" placeholder="Expiration Date" ng-model="licenseCtrl.license.expirationDate" required ng-if="licenseCtrl.canEdit">
+          <span class="input-label" ng-if="licenseCtrl.expirationDateString">{{::licenseCtrl.expirationDateString}}</span>
         </label>
       </div>
       <div class="validations" ng-if="form.$submitted && form.$invalid">
