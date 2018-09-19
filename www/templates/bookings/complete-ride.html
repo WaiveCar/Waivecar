@@ -57,25 +57,6 @@
                 </span>
               </label>
             </li>
-            <li>
-              <p class="pull-left">No tickets recieved</p>
-              <label ng-if="!ctrl.tickets" ng-click="ctrl.toggle('tickets')" class="pull-right">
-                <span class="check">
-                  <div class="empty-red"></div>
-                </span>
-                <span class="check">
-                  <ng-include src="'/img/check-icon.svg'" />
-                </span>
-              </label>
-              <label ng-if="ctrl.tickets" ng-click="ctrl.toggle('tickets')" class="pull-right">
-                <span class="check">
-                  <ng-include src="'/img/x-icon.svg'" />
-                </span>
-                <span class="check">
-                  <div class="empty-green"></div>
-                </span>
-              </label>
-            </li>
           </ul>
 
           <p>
@@ -115,12 +96,12 @@
           </ul>
         </div>
 
-        <div ng-if="ctrl.dirty || ctrl.damage || ctrl.tickets">
+        <div ng-if="ctrl.dirty || ctrl.damage">
           <button type="button" class="button button-block button-balanced"
             ng-disabled="ctrl.data.cars.isIgnitionOn || !ctrl.data.cars.isKeySecure"
             ng-click="ctrl.reportProblem()">Continue</button>
         </div>
-        <div ng-if="!(ctrl.dirty || ctrl.damage || ctrl.tickets)">
+        <div ng-if="!(ctrl.dirty || ctrl.damage)">
           <button type="button" class="button button-block button-balanced"  ng-click="ctrl.onComplete()"
             ng-disabled="ctrl.data.cars.isIgnitionOn || !ctrl.data.cars.isKeySecure"
           >Finish and Lock Car</button>

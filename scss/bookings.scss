@@ -344,4 +344,46 @@
   background-size: 100%;
 }
 
-
+.parking-section {
+  margin: 18px 0;
+  p {
+    text-align: left;
+  }
+  .half-width {
+    width: 60%;
+    float: left;
+  }
+  .photo-section {
+    margin: 0 0 24px;
+    p {
+      text-align: right;
+      margin: 0 8px 2px 0;
+    }
+  }
+  .photo-wrapper {
+    margin-top: -20px;
+  }
+  .resume-ride {
+    margin-top: 8px;
+  }
+  .parking-input {
+    margin: 20px 12px 15px 0;
+    div, p {
+      float: right;
+    }
+    p {
+      text-align: right;
+      max-width: 80%;
+      margin-right: 12px;
+    }
+  }
+  ul.bold-list > li > p.pull-left {
+    font-weight: normal;
+  }
+  h4 {
+    display: block;
+    text-align: left;
+    text-transform: none !important;
+    font-weight: 600;
+  }
+}
