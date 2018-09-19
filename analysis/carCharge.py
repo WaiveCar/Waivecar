@@ -118,6 +118,10 @@ def get_ratios_for_users(users_to_update):
             if len(bookings_to_details[booking]) > 1:
                 current_user_ratios.append(get_ratio(bookings_to_details[booking][0], bookings_to_details[booking][1]))
         current_user_ratios = list(filter(lambda x: (-5.5 <= x <= 5.5), current_user_ratios))
+        #An error will be caused if there is not a usable ratio in the list and a user should 
+        #not be given a rating if this is the case 
+        if len(current_user_ratios) == 0:
+            continue
         new_ratios[user_id] = sum(current_user_ratios) / len(current_user_ratios)
     return new_ratios
 

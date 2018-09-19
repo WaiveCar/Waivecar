@@ -37,12 +37,33 @@ scheduler.process('check-user-levels', function*(job) {
     username: Bento.config.sequelize.username,
     password: Bento.config.sequelize.password,
   });
-  let stdout = yield execPromise(
-    `python3 analysis/carCharge.py ${JSON.stringify(
-      mysqlConfig,
-    )} ${JSON.stringify(Array.from(usersToProcess))}`,
+  let stdout = JSON.parse(
+    yield execPromise(
+      `python3 analysis/carCharge.py ${JSON.stringify(
+        mysqlConfig,
+      )} ${JSON.stringify(Array.from(usersToProcess))}`,
+    ),
   );
-  console.log(JSON.parse(stdout));
+  let {newUserRatios, currentThresholds} = stdout;
+  for (let userId in newUserRatios) {
+    let level;
+    switch (true) {
+      case newUserRatios[userId] < currentThresholds.normalMinimum:
+        level = 'drainer';
+        break;
+      case newUserRatios[userId] < currentThresholds.chargerMinimum:
+        level = 'normal';
+        break;
+      case newUserRatios[userId] < currentThresholds.superChargerMinimum:
+        level = 'charger';
+        break;
+      default:
+        level = 'super-charger';
+        break;
+    }
+    let user = yield User.findById(userId);
+    yield user.update({level});
+  }
 });
 
 module.exports = function*() {
