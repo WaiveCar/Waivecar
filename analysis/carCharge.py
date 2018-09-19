@@ -78,7 +78,7 @@ def get_thresholds(ratio_list):
     #The minmum threshold for normal may need to be placed a bit higher. When using 0.1 as the multiplier barely any
     #users are marked as drainers. This is likely because few users have many bookings that fall into the bottom 10th of
     #all bookings. When the window is increased to the bottom 20%, there are definitely some users who are marked as drainers
-    normal_index = round(0.1 * len(ratio_list))
+    normal_index = round(0.15 * len(ratio_list))
     charger_index = round(0.8 * len(ratio_list))
     super_charger_index = round(0.97 * len(ratio_list))
     return {
