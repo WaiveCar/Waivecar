@@ -19,6 +19,9 @@ module.exports = angular.module('app').factory('Licenses', [
       if (data.birthDate) {
         data.birthDate = moment(data.birthDate, 'MM-DD-YYYY').format('YYYY-MM-DD');
       }
+      if (data.expirationDate) {
+        data.expirationDate = moment(data.expirationDate, 'MM-DD-YYYY').format('YYYY-MM-DD');
+      }
       delete data.createdAt;
       delete data.updatedAt;
       delete data.deletedAt;
@@ -35,6 +38,10 @@ module.exports = angular.module('app').factory('Licenses', [
       if (data.birthDate) {
         data.birthDateOriginal = data.birthDate;
         data.birthDate = moment(data.birthDate).toDate();
+      }
+      if (data.expirationDate) {
+        data.expirationDateOriginal = data.expirationDate;
+        data.expirationDate = moment(data.expirationDate).toDate();
       }
       return data;
 
