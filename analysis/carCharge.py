@@ -71,18 +71,17 @@ def get_ratios():
                 if user[key] not in freq:
                     freq[user[key]] = 0
                 freq[user[key]] += 1
-    return ratio
+    return sorted(ratio)[::-1]
 
 #This calculates the maximum ratios of users for placement in each level (drainers, normal, chargers, super-chargers)
 def get_thresholds(ratio_list):
-    sorted_ratios = sorted(ratio_list)
     normal_index = round(0.1 * len(ratio_list))
     charger_index = round(0.8 * len(ratio_list))
     super_charger_index = round(0.97 * len(ratio_list))
     return {
-        "normalMinimum": sorted_ratios[normal_index],
-        "chargerMinimum": sorted_ratios[charger_index],
-        "superChargerMinimum": sorted_ratios[super_charger_index]
+        "normalMaximum": ratio_list[normal_index],
+        "chargerMaximum": ratio_list[charger_index],
+        "superChargerMaximum": ratio_list[super_charger_index]
     }
 #This function gets the ratio for a booking with row1 being the row containing the starting booking
 #detail and row2 being the row containing the ending booking detail

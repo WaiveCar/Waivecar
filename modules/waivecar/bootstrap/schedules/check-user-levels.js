@@ -22,7 +22,7 @@ scheduler.process('check-user-levels', function*(job) {
     where: {
       createdAt: {
         $gte: moment()
-          .subtract(5, 'days')
+          .subtract(6, 'days')
           .toDate(),
       },
       status: 'completed',
@@ -37,34 +37,39 @@ scheduler.process('check-user-levels', function*(job) {
     username: Bento.config.sequelize.username,
     password: Bento.config.sequelize.password,
   });
-  let stdout = JSON.parse(
-    yield execPromise(
-      `python3 analysis/carCharge.py ${JSON.stringify(
-        mysqlConfig,
-      )} ${JSON.stringify(Array.from(usersToProcess))}`,
-    ),
-  );
-  let {newUserRatios, currentThresholds} = stdout;
-  for (let userId in newUserRatios) {
-    let level;
-    switch (true) {
-      case newUserRatios[userId] < currentThresholds.normalMinimum:
-        level = 'drainer';
-        break;
-      case newUserRatios[userId] < currentThresholds.chargerMinimum:
-        level = 'normal';
-        break;
-      case newUserRatios[userId] < currentThresholds.superChargerMinimum:
-        level = 'charger';
-        break;
-      default:
-        level = 'super-charger';
-        break;
+  try {
+    let stdout = JSON.parse(
+      yield execPromise(
+        `python3 analysis/carCharge.py ${JSON.stringify(
+          mysqlConfig,
+        )} ${JSON.stringify(Array.from(usersToProcess))}`,
+      ),
+    );
+    let {newUserRatios, currentThresholds} = stdout;
+    for (let userId in newUserRatios) {
+      let level;
+      switch (true) {
+        case newUserRatios[userId] > currentThresholds.normalMaximum:
+          level = 'drainer';
+          break;
+        case newUserRatios[userId] > currentThresholds.chargerMaximum:
+          level = 'normal';
+          break;
+        case newUserRatios[userId] > currentThresholds.superChargerMaximum:
+          level = 'charger';
+          break;
+        default:
+          level = 'super-charger';
+          break;
+      }
+      let user = yield User.findById(userId);
+      console.log(`${user.firstName} ${user.lastName}: ${level}`);
+      if (!user.level === 'gifted-charger') {
+        yield user.update({level});
+      }
     }
-    let user = yield User.findById(userId);
-    if (!user.level === 'gifted-charger') {
-      yield user.update({level});
-    }
+  } catch (e) {
+    console.log('error: ', e);
   }
 });
 
