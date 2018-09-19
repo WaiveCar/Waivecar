@@ -62,7 +62,9 @@ scheduler.process('check-user-levels', function*(job) {
         break;
     }
     let user = yield User.findById(userId);
-    yield user.update({level});
+    if (!user.level === 'gifted-charger') {
+      yield user.update({level});
+    }
   }
 });
 
