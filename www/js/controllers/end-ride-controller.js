@@ -4,13 +4,7 @@ var angular = require('angular');
 var moment = require('moment');
 var _ = require('lodash');
 
-<<<<<<< HEAD:www/js/controllers/parking-location-controller.js
-module.exports = angular.module('app.controllers').controller('ParkingLocationController', [
-=======
-require('../services/zendrive-service');
-
 module.exports = angular.module('app.controllers').controller('EndRideController', [
->>>>>>> origin/app-1276-group-damage-photos-into-categories:www/js/controllers/end-ride-controller.js
   '$rootScope',
   '$scope',
   '$settings',
@@ -26,7 +20,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
   '$data',
   'LocationService',
   '$injector',
-  function($rootScope, $scope, $settings, $window, $state, $stateParams, $ride, $geocoding, $ionicLoading, $modal, $uploadImage, ZendriveService, $message, $data, LocationService, $injector) {
+  function($rootScope, $scope, $settings, $window, $state, $stateParams, $ride, $geocoding, $ionicLoading, $modal, $uploadImage, $message, $data, LocationService, $injector) {
     $scope.service = $ride;
     var ctrl = this;
     var Reports = $injector.get('Reports');
@@ -43,10 +37,10 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       lotOvernightRest: false
     };
     ctrl.street = {
+      streetSignImage: null,
       streetHours: null,
       streetMinutes: null,
       streetOvernightRest: false,
-      streetSignImage: null,
     };
     
     ctrl.overrideStreetRestrictions = false;
@@ -85,6 +79,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
           return;
         }
         rideServiceReady();
+
         // Kick off geocoding
         ctrl.geocode();
       });
@@ -117,7 +112,6 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     function loadCar(id) {
       return $data.activate('cars', id);
     }
-    
      
     function setType(type) {
       ctrl.type = type;
@@ -133,7 +127,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       }
       return $geocoding($rootScope.currentLocation.latitude, $rootScope.currentLocation.longitude)
         .then(function (location) {
-          if ($stateParams.zone === 'hub') {
+          if ($stateParams.zone.type === 'hub') {
             ctrl.isHub = true;
           }
           // BUGBUG: this information should be in the database. 1235 is santa monica
@@ -217,7 +211,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     function submit() {
 
       // Force users to take pictures. See #1113
-      if ((ctrl.type === 'street' || ctrl.type === 'lot') && !ctrl.street.streetSignImage) {
+      if(!ctrl.isHub && ctrl.type === 'street' && !ctrl.street.streetSignImage) {
         return submitFailure('Ending here requires a photo of the parking sign.');
       }
 
@@ -360,14 +354,16 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       var payload;
 
       // Check which type we are submitting
-      if (ctrl.type === 'lot') {
-        if (ctrl.lot.lotHours < ctrl.minhours && !ctrl.lot.lotFreePeriod) return submitFailure('You can\'t return your WaiveCar here. The spot needs to be valid for at least ' + ctrl.minhours + ' hours.');
-        if (isNightTime && ctrl.lot.lotOvernightRest) return submitFailure('You can\'t return your WaiveCar here. If the car is ticketed or towed, you\'ll be responsible for the fees.');
-        payload = ctrl.lot;
-      } else if (ctrl.type === 'street') {
-        if (ctrl.street.streetHours < ctrl.minhours) return submitFailure('You can\'t return your WaiveCar here. The spot needs to be valid for at least ' + ctrl.minhours + ' hours.');
-        if (isNightTime && ctrl.street.streetOvernightRest) return submitFailure('You can\'t return your WaiveCar here. If the car is ticketed or towed, you\'ll be responsible for the fees.');
-        payload = ctrl.street;
+      if (!ctrl.isHub) {
+        if (ctrl.type === 'lot') {
+          if (ctrl.lot.lotHours < ctrl.minhours && !ctrl.lot.lotFreePeriod) return submitFailure('You can\'t return your WaiveCar here. The spot needs to be valid for at least ' + ctrl.minhours + ' hours.');
+          if (isNightTime && ctrl.lot.lotOvernightRest) return submitFailure('You can\'t return your WaiveCar here. If the car is ticketed or towed, you\'ll be responsible for the fees.');
+          payload = ctrl.lot;
+        } else if (ctrl.type === 'street') {
+          if (ctrl.street.streetHours < ctrl.minhours) return submitFailure('You can\'t return your WaiveCar here. The spot needs to be valid for at least ' + ctrl.minhours + ' hours.');
+          if (isNightTime && ctrl.street.streetOvernightRest) return submitFailure('You can\'t return your WaiveCar here. If the car is ticketed or towed, you\'ll be responsible for the fees.');
+          payload = ctrl.street;
+        }
       }
 
       //ZendriveService.stop();
@@ -379,11 +375,6 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       });
     }
 
-    /**
-     * Displays error message
-     * @param {String} message Message to display
-     * @returns {Void} null
-     */
     function submitFailure(message) {
       $ionicLoading.hide();
       var endRideModal;
