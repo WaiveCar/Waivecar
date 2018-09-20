@@ -29,7 +29,6 @@ let geolib    = require('geolib');
 let sequelize = Bento.provider('sequelize');
 let fs        = require('fs');
 let emailConfig = Bento.config.email;
-let GroupUser = Bento.model('GroupUser');
 
 
 // ### Models
@@ -138,7 +137,6 @@ module.exports = class BookingService extends Service {
     let order;
     if(process.env.NODE_ENV === 'production') {
       try {
-        console.log(driver, driver.hasAccess('admin'));
         if(driver.hasAccess('admin')) {
           // we need to make sure that admins will pass the code below
           order = {amount: 0, createdAt: new Date()};
@@ -245,15 +243,13 @@ module.exports = class BookingService extends Service {
     }
 
     // If there is a new authorization, a new BookingPayment must be created so that it can be itemized on the receipt.
-    if (process.env.NODE_ENV === 'production' && OrderService.authorize.last.newAuthorization) {
+    if (process.env.NODE_ENV === 'production' && !driver.hasAccess('admin') && OrderService.authorize.last.newAuthorization) {
       try {
-        if(!driver.hasAccess('admin')) {
-          let authorizationPayment = new BookingPayment({
-            bookingId : booking.id,
-            orderId   : order.id,
-          });
-          yield authorizationPayment.save();
-        }
+        let authorizationPayment = new BookingPayment({
+          bookingId : booking.id,
+          orderId   : order.id,
+        });
+        yield authorizationPayment.save();
       } catch(err) {
         log.warn(err);
       }
