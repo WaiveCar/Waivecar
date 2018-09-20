@@ -35,7 +35,7 @@ scheduler.process('check-user-levels', function*(job) {
     where: {
       createdAt: {
         $gte: moment()
-          .subtract(7, 'days')
+          .subtract(1, 'days')
           .toDate(),
       },
       status: 'completed',
@@ -94,10 +94,10 @@ scheduler.process('check-user-levels', function*(job) {
   }
 });
 
-module.exports = () => {
+module.exports = function*() {
   scheduler.add('check-user-levels', {
     init: true,
     repeat: true,
-    timer: {value: 15, type: 'seconds'},
+    timer: {value: 24, type: 'hours'},
   });
 };
