@@ -6,6 +6,7 @@ let User    = Bento.model('User');
 let License = Bento.model('License');
 let Card    = Bento.model('Shop/Card');
 let error   = Bento.Error;
+let GroupUser = Bento.model('GroupUser');
 
 let notify  = require('../notification-service');
 

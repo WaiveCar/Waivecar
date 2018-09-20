@@ -29,6 +29,7 @@ let geolib    = require('geolib');
 let sequelize = Bento.provider('sequelize');
 let fs        = require('fs');
 let emailConfig = Bento.config.email;
+let GroupUser = Bento.model('GroupUser');
 
 
 // ### Models
