@@ -170,7 +170,6 @@ module.exports = class BookingService extends Service {
           } 
         }
       } catch (err) {
-        console.log(err);
         // Failing to secure the authorization hold should be recorded as an
         // iniquity. See https://github.com/WaiveCar/Waivecar/issues/861 for
         // details.
