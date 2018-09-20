@@ -82,13 +82,64 @@ module.exports = class Service {
     return car;
   }
 
-  static *getUser(id) {
+  static *getUser(id, perms) {
     let user = yield User.findById(id);
     if (!user) {
       throw error.parse({
         code    : `INVALID_USER`,
         message : `The user was not found in our records.`
       }, 400);
+    }
+    if(perms) {
+      let allRecords = yield GroupUser.find({
+        where : {
+          //groupId : session.group,
+          userId  : id
+        },
+        order: [[ 'id', 'asc' ]],
+        include: [
+          {
+            model: 'Group',
+            as: 'group'
+          },
+          {
+            model: 'GroupRole',
+            as: 'group_role'
+          }
+        ]
+      });
+
+      let connector = allRecords[0];
+
+      // ### Group && Group Role
+      // Fetches the group, and group role. If either of these are missing we throw
+      // a invalidated group session error.
+
+      user.group = connector.group;
+      user.groupRole = connector.groupRole; // new functionality needs this in context
+
+      if (!user.group || !user.groupRole) {
+        throw errors.invalidGroupSession();
+      }
+
+      // ### Role
+      // Fetches the system access role assigned via the groupRole the user is
+      // connected to.
+
+      let role = yield Role.findById(user.groupRole.roleId);
+      if (!role) {
+        throw errors.invalidGroupRole();
+      }
+
+      // ### Assignments
+      // Assigns the group object to the user for group related verifications along
+      // with the users role title and system role name.
+
+      user.tagList = allRecords;
+      user.role  = {
+        title : user.groupRole.name,
+        name  : role.name
+      };
     }
     return user;
   }

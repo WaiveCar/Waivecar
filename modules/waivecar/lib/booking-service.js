@@ -83,7 +83,7 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
-    let driver = yield this.getUser(data.userId);
+    let driver = yield this.getUser(data.userId, true);
     let car = yield this.getCar(data.carId, data.userId, true);
 
     this.hasAccess(driver, _user);
