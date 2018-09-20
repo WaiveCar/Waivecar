@@ -137,6 +137,7 @@ module.exports = class BookingService extends Service {
     let order;
     if(process.env.NODE_ENV === 'production') {
       try {
+        console.log(driver, driver.hasAccess('admin'));
         if(driver.hasAccess('admin')) {
           // we need to make sure that admins will pass the code below
           order = {amount: 0, createdAt: new Date()};
