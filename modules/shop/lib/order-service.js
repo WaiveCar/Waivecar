@@ -420,7 +420,6 @@ module.exports = class OrderService extends Service {
     let chargesList = allCharges.payments.map(charge => {
       let description = charge.shopOrder.description.replace(/Booking\s\d*/i, '');
       if (description.includes('authorization')) {
-        description += ' - refunded';
         authCharges += charge.shopOrder.amount;
       }
       if (charge.shopOrder.amount === 2000) {
@@ -514,7 +513,7 @@ module.exports = class OrderService extends Service {
     let types = [];
     if (payments.length) {
       totalCredit = payments.filter((row) => row.shopOrder.chargeId === '0' ).reduce((total, payment) => total + payment.shopOrder.amount, 0);
-      let filteredPayments = payments.filter((row) => row.shopOrder.description !== 'Pre booking authorization');
+      let filteredPayments = payments.filter((row) => row.shopOrder.description !== 'Pre booking authorization - refunded');
       totalPaid = filteredPayments.filter((row) => row.shopOrder.chargeId !== '0').reduce((total, payment) => total + payment.shopOrder.amount, 0);
       types = payments.map(payment => payment.shopOrder.description.replace(/Booking\s\d*/i, ''));
     }
@@ -549,7 +548,7 @@ module.exports = class OrderService extends Service {
         createdBy   : _user.id,
         userId      : _user.id,
         source      : card.id,
-        description : 'Pre booking authorization',
+        description : 'Pre booking authorization - refunded',
         currency    : 'usd',
         amount      : amount
       });

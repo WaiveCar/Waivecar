@@ -504,7 +504,6 @@ module.exports = class BookingService extends Service {
           }, [])
         }
       });
-      booking.payments = booking.payments.filter(payment => !payment.description.includes('Pre booking authorization'));
     }
 
     if(!opts.nopath) {
