@@ -137,9 +137,12 @@ module.exports = class BookingService extends Service {
     let order;
     if(process.env.NODE_ENV === 'production') {
       try {
-        if(!driver.hasAccess('admin')) {
+        if(driver.hasAccess('admin')) {
+          // we need to make sure that admins will pass the code below
+          order = {amount: 0};
+        } else {
           order = yield OrderService.authorize(null, driver);
-        }
+        } 
         let orderDate = moment(order.createdAt).format('MMMM Do YYYY');
         let amount = (order.amount / 100).toFixed(2);
         let title;
