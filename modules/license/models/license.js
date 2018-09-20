@@ -55,6 +55,10 @@ Bento.Register.Model('License', 'sequelize', function(model, Sequelize) {
       type : Sequelize.DATEONLY()
     },
 
+    expirationDate : {
+      type : Sequelize.DATEONLY()
+    },
+
     linkedUserId : {
       type      : Sequelize.STRING(64),
       allowNull : true

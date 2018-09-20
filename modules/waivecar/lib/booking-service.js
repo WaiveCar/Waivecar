@@ -83,7 +83,7 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
-    let driver = yield this.getUser(data.userId);
+    let driver = yield this.getUser(data.userId, true);
     let car = yield this.getCar(data.carId, data.userId, true);
 
     this.hasAccess(driver, _user);
@@ -137,9 +137,12 @@ module.exports = class BookingService extends Service {
     let order;
     if(process.env.NODE_ENV === 'production') {
       try {
-        if(!driver.hasAccess('admin')) {
+        if(driver.hasAccess('admin')) {
+          // we need to make sure that admins will pass the code below
+          order = {amount: 0, createdAt: new Date()};
+        } else {
           order = yield OrderService.authorize(null, driver);
-        }
+        } 
         let orderDate = moment(order.createdAt).format('MMMM Do YYYY');
         let amount = (order.amount / 100).toFixed(2);
         let title;
@@ -239,15 +242,13 @@ module.exports = class BookingService extends Service {
     }
 
     // If there is a new authorization, a new BookingPayment must be created so that it can be itemized on the receipt.
-    if (process.env.NODE_ENV === 'production' && OrderService.authorize.last.newAuthorization) {
+    if (process.env.NODE_ENV === 'production' && !driver.hasAccess('admin') && OrderService.authorize.last.newAuthorization) {
       try {
-        if(!driver.hasAccess('admin')) {
-          let authorizationPayment = new BookingPayment({
-            bookingId : booking.id,
-            orderId   : order.id,
-          });
-          yield authorizationPayment.save();
-        }
+        let authorizationPayment = new BookingPayment({
+          bookingId : booking.id,
+          orderId   : order.id,
+        });
+        yield authorizationPayment.save();
       } catch(err) {
         log.warn(err);
       }
