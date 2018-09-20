@@ -405,7 +405,7 @@ module.exports = class BookingService extends Service {
     // Prepares bookings with payment, and file details.
     if (query.details) {
       for (let i = 0, len = bookings.length; i < len; i++) {
-        bookings[i] = yield this.show(bookings[i].id, _user,  {nopath: true, nopayments: true, nofiles: true});
+        bookings[i] = yield this.show(bookings[i].id, _user,  {nopath: true, nopayments: false, nofiles: true});
       }
     }
 
@@ -452,6 +452,7 @@ module.exports = class BookingService extends Service {
 
   // this is a bullshit incompetent mess
   static *show(id, _user, opts) {
+    console.log('opts: ', opts);
     let relations = {
       include : [
         {
@@ -461,17 +462,16 @@ module.exports = class BookingService extends Service {
         {
           model      : 'BookingPayment',
           as         : 'payments',
-          attributes : [ 'orderId' ]
+          attributes : [ 'orderId' ],
         }
       ]
     };
 
     opts = opts || {};
     // ### Get Booking
-
     let booking = yield this.getBooking(id, relations);
     let user    = yield this.getUser(booking.userId);
-
+    
     this.hasAccess(user, _user);
 
     // ### Prepare Booking
