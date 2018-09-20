@@ -55,7 +55,6 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     ctrl.appPics = false;
     ctrl.car = $data.active.cars;
     ctrl.model = ctrl.car.model ? ctrl.car.model.split(' ')[0].toLowerCase() : 'ioniq'; 
-    ctrl.tickets = true;
 
     // Attach methods
     ctrl.setType = setType;
@@ -351,22 +350,18 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     }
 
     function goToEndRide(isNightTime) {
-      var payload;
+      var payload = {};
 
+      //ZendriveService.stop();
       // Check which type we are submitting
       if (!ctrl.isHub) {
-        if (ctrl.type === 'lot') {
-          if (ctrl.lot.lotHours < ctrl.minhours && !ctrl.lot.lotFreePeriod) return submitFailure('You can\'t return your WaiveCar here. The spot needs to be valid for at least ' + ctrl.minhours + ' hours.');
-          if (isNightTime && ctrl.lot.lotOvernightRest) return submitFailure('You can\'t return your WaiveCar here. If the car is ticketed or towed, you\'ll be responsible for the fees.');
-          payload = ctrl.lot;
-        } else if (ctrl.type === 'street') {
+        if (ctrl.type === 'street') {
           if (ctrl.street.streetHours < ctrl.minhours) return submitFailure('You can\'t return your WaiveCar here. The spot needs to be valid for at least ' + ctrl.minhours + ' hours.');
-          if (isNightTime && ctrl.street.streetOvernightRest) return submitFailure('You can\'t return your WaiveCar here. If the car is ticketed or towed, you\'ll be responsible for the fees.');
+          if (isNightTime) return submitFailure('You can\'t return your WaiveCar here. If the car is ticketed or towed, you\'ll be responsible for the fees.');
           payload = ctrl.street;
         }
       }
 
-      //ZendriveService.stop();
       payload.type = ctrl.type;
       $ride.setParkingDetails(payload);
       return $ride.processEndRide().then(function () {
