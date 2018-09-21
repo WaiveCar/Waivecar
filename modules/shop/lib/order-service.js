@@ -197,6 +197,8 @@ module.exports = class OrderService extends Service {
   static *create(payload, _user) {
     let data  = yield hooks.call('shop:store:order:before', payload, _user);
     let user  = yield this.getUser(data.userId);
+    console.log('booking: ', mostRecentBooking);
+    console.log('data: ', data);
 
     this.hasAccess(user, _user);
     this.verifyCurrency(data.currency);
@@ -208,20 +210,31 @@ module.exports = class OrderService extends Service {
     let amountInCents = items.reduce((prev, next) => {
       return prev + next.total;
     }, 0);
-    let order = new Order({
-      createdBy   : _user.id,
-      userId      : data.userId,
-      source      : data.source,
-      description : data.description,
-      metadata    : data.metadata,
-      currency    : data.currency,
-      amount      : amountInCents
-    });
-    yield order.save();
+    console.log('cart: ', cart);
+    console.log('cart items: ', items);
+    let order;
+    for (let item of items) {
+      let description = item.quantity > 1 ? `${item.name} X ${item.quantity}` : item.description;
+        currentItem = new Order({
+        createdBy   : _user.id,
+        userId      : data.userId,
+        source      : data.source,
+        description,
+        metadata    : data.metadata,
+        currency    : data.currency,
+        amount      : (item. price * item.quantity),
+      });
+      yield currentItem.save();
+      let bookingPayment = new BookingPayment({
+        bookingId: payload.bookingId,
+        orderId: order.id,
+      });
+      yield bookingPayment.save();
+    }
 
     // ### Add Items
 
-    yield this.addItems(order, items);
+    //yield this.addItems(order, items);
     // Notify user if they received a miscellaneous charge
     if (items) {
       log.info(`Notifying user of miscellaneous charge: ${ user.id }`);
@@ -244,7 +257,7 @@ module.exports = class OrderService extends Service {
     }
 
     try {
-      yield this.charge(order, user);
+      //yield this.charge(order, user);
       yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.link() } $${ amountInCents / 100 } for ${ data.description } | ${ apiConfig.uri }/bookings/${ data.bookingId }`, [ 'slack' ], { channel : '#rental-alerts' });
 
       yield hooks.call('shop:store:order:after', order, payload, _user);
@@ -275,8 +288,8 @@ module.exports = class OrderService extends Service {
     let fee = (amount/100).toFixed(2);
 
     yield order.save();
-    try {
-      yield this.charge(order, user, {nodebt: true});
+    try {         
+      yield this. charge(order, user, {nodebt: true});
       yield notify.notifyAdmins(`:heavy_dollar_sign: Charged the impatient ${ user.link() } $${ fee } to rebook ${ car.license }`, [ 'slack' ], { channel : '#rental-alerts' });
     } catch (err) {
       yield this.failedCharge(amount, user, err, ` | ${ apiConfig.uri }/bookings/${ booking.id }`);
