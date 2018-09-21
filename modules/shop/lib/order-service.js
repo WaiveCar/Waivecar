@@ -219,7 +219,7 @@ module.exports = class OrderService extends Service {
     });
     yield order.save();
     for (let item of items) {
-      let description = item.quantity > 1 ? `${item.name} x ${item.quantity}` : item.description;
+      let description = item.quantity > 1 ? `${item.name} x ${item.quantity}` : item.name;
       let currentItem = new Order({
         createdBy   : _user.id,
         userId      : data.userId,
