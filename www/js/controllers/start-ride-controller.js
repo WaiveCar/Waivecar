@@ -71,6 +71,7 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
         endpoint: '/files?bookingId=' + ctrl.data.bookings.id,
         type: type,
         filename: type + $stateParams.id + '_' + Date.now() + '.jpg',
+        sourceList: ['camera']
       })
       .then(function (result) {
         if (result && Array.isArray(result)) result = result[0];
