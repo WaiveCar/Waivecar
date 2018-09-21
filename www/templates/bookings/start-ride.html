@@ -10,24 +10,27 @@
     <div  class="row row-center">
       <div class="col col-center">
         <div>
-          <h3>START {{ ctrl.data.cars.license }} is almost ready.</h3>
+          <h3>START {{ ctrl.data.cars.license }}</h3>
           <div>
             <div class="info-header">
               <div class="info-header-item">
                 <ng-include class="battery" src="'/img/battery.svg'"></ng-include>
-                {{ ctrl.data.cars.charge | number:0 }} %
+                {{ (ctrl.range + "mi") || (ctrl.data.cars.charge + "%") }}
               </div>
               <div class="info-header-item">
                 <ng-include src="'/img/clock-icon.svg'"></ng-include>
                 {{ ctrl.timeLeft }}
               </div>
             </div>
+          </div>
+          <div class="parking-section">
             <h4>Instructions</h4>
             <p>We need a few photos to start your ride.<br/>
             The photos on the left are examples.<br/>
             Tap the camera icon to add your versions.</p>
-
-            <div class="text-center">
+          </div>
+          <div class="parking-section">
+            <div class="text-center photo-wrapper">
               <div class='photo-section'> 
                 <p>Front</p>
                 <div class="start-ride-holder">
@@ -83,6 +86,8 @@
                 </div>
               </div>
             </div>
+          </div>
+          <div class="parking-section">
             <ul class="list-unstyled text-left bold-list">
               <li>
                 <p class="pull-left">Check your mirrors</p>
