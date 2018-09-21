@@ -1149,6 +1149,9 @@ module.exports = class BookingService extends Service {
       // be completed and released for next booking.
 
       function *finalCheckFail() {
+        if(isAdmin && query.force) {
+          return false;
+        }
         let errors  = [];
         if(process.env.NODE_ENV === 'production') {
           if (car.isIgnitionOn && !car.isCharging) {
@@ -1161,7 +1164,7 @@ module.exports = class BookingService extends Service {
           if (car.isDoorOpen) { errors.push('make sure the doors are closed');}
         }
           
-        if (errors.length && !(_user.hasAccess('admin') && query.force)) {
+        if (errors.length) {
           let message = `Your ride cannot be completed until you `;
           switch (errors.length) {
             case 1: {
@@ -1190,7 +1193,7 @@ module.exports = class BookingService extends Service {
       // if it looks like we'd fail this, then and only then do we probe the device one final time.
       if(res) {
         try {
-        yield car.update( yield cars.getDevice(car.id, _user, 'booking.complete') );
+          yield car.update( yield cars.getDevice(car.id, _user, 'booking.complete') );
         } catch (err) {
           log.warn(`Failed to update ${ car.info() } when completing booking ${ booking.id }`);
         }
