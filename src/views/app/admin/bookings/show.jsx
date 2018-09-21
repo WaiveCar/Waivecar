@@ -194,9 +194,9 @@ module.exports = class BookingsView extends React.Component {
    * @param {Object}
    */
   renderPayments(payments) {
-    let ids = payments.map(payment => payment.id);
+    console.log('payments: ', payments)
     return (
-      <BookingPayment paymentIds={ ids } payments={ payments }/>
+      <BookingPayment payments={ payments }/>
     );
   }
 
