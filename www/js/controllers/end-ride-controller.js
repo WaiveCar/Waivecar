@@ -128,7 +128,13 @@ module.exports = angular.module('app.controllers').controller('EndRideController
         .then(function (location) {
           if ($stateParams.zone.type === 'hub') {
             ctrl.isHub = true;
+            ctrl.okText = "Finish";
+          } else {
+            ctrl.okText = "My parking is OK";
           }
+          // we do this so we don't get some annoying UX flash
+          ctrl.geocodeLoaded = true;
+
           // BUGBUG: this information should be in the database. 1235 is santa monica
           if($stateParams.zone.id === 1235) {
             ctrl.minhours = 3;

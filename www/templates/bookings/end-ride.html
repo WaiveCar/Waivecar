@@ -10,7 +10,7 @@
         The photos on the left are examples.<br/>
         Tap the camera icon to add your versions.</p>
       </div>
-      <div ng-if="!ctrl.isHub" class="parking-details parking-section">
+      <div ng-if="ctrl.geocodeLoaded && !ctrl.isHub" class="parking-details parking-section">
         <div>
           <h4>Parking</h4>
           <p><small>
@@ -117,7 +117,7 @@
             </label>
           </li>
           <li>
-            <p class="pull-left">Engine off</p>
+            <p class="pull-left">Engine off & charger unplugged</p>
             <label class="pull-right">
               <span class="check" ng-hide="ctrl.car.isIgnitionOn">
                 <ng-include src="'/img/check-icon.svg'" />
@@ -137,8 +137,8 @@
           </li>
         </ul>
       </div>
-      <div class="padding-top padding-bottom">
-        <button ng-click="ctrl.submit()" class="button button-balanced button-block">My Parking is OK</button>
+      <div class="padding-top padding-bottom" ng-if="ctrl.geocodeLoaded">
+        <button ng-click="ctrl.submit()" class="button button-balanced button-block">{{ ctrl.okText }}</button>
       </div>
     </div>
   </ion-content>
