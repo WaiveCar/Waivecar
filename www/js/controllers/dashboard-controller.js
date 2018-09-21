@@ -211,7 +211,12 @@ function DashboardController ($scope, $rootScope, $injector) {
     return true;
   }
 
+  function doUnlock() {
+    return doLock(false, false);
+  }
+
   function doLock(id, state) {
+    id = id || $data.active.cars.id;
     $ionicLoading.show({
       template: '<div class="circle-loader"><span>Loading</span></div>'
     });
@@ -412,7 +417,8 @@ function DashboardController ($scope, $rootScope, $injector) {
           }); 
         }
         if (endLocation.type === 'hub' || endLocation.type === 'homebase') {
-          return $state.go('end-ride', { id: bookingId, zone: 'hub' });
+          endLocation.type = 'hub';
+          return $state.go('end-ride', { id: bookingId, zone: endLocation });
         } else if(endLocation.type === 'zone') {
           return showZonePrompt(endLocation, function () {
             return $state.go('end-ride', { id: bookingId, zone: endLocation });
@@ -458,12 +464,13 @@ function DashboardController ($scope, $rootScope, $injector) {
     var ignitionOnModal;
     $modal('result', {
       icon: 'x-icon',
-      title: 'Please turn the car off',
+      title: 'Please turn the WaiveCar off and, if applicable, unplug the charger to end the booking',
       actions: [{
-        text: 'Ok',
+        text: 'Unlock WaiveCar',
         className: 'button-balanced',
         handler: function () {
           ignitionOnModal.remove();
+          doUnlock();
         }
       }]
     })
