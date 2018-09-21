@@ -197,8 +197,6 @@ module.exports = class OrderService extends Service {
   static *create(payload, _user) {
     let data  = yield hooks.call('shop:store:order:before', payload, _user);
     let user  = yield this.getUser(data.userId);
-    console.log('booking: ', mostRecentBooking);
-    console.log('data: ', data);
 
     this.hasAccess(user, _user);
     this.verifyCurrency(data.currency);
@@ -210,12 +208,19 @@ module.exports = class OrderService extends Service {
     let amountInCents = items.reduce((prev, next) => {
       return prev + next.total;
     }, 0);
-    console.log('cart: ', cart);
-    console.log('cart items: ', items);
-    let order;
+    let order = new Order({
+      createdBy   : _user.id,
+      userId      : data.userId,
+      source      : data.source,
+      description : data.description,
+      metadata    : data.metadata,
+      currency    : data.currency,
+      amount      : amountInCents
+    });
+    yield order.save();
     for (let item of items) {
-      let description = item.quantity > 1 ? `${item.name} X ${item.quantity}` : item.description;
-        currentItem = new Order({
+      let description = item.quantity > 1 ? `${item.name} x ${item.quantity}` : item.description;
+      let currentItem = new Order({
         createdBy   : _user.id,
         userId      : data.userId,
         source      : data.source,
@@ -227,14 +232,16 @@ module.exports = class OrderService extends Service {
       yield currentItem.save();
       let bookingPayment = new BookingPayment({
         bookingId: payload.bookingId,
-        orderId: order.id,
+        orderId: currentItem.id,
       });
       yield bookingPayment.save();
+      // A miscellaneous charge is likely an issue we should keep track of
+      yield UserLog.addUserEvent(user, 'FEE', bookingPayment.id, description);
     }
 
     // ### Add Items
 
-    //yield this.addItems(order, items);
+    yield this.addItems(order, items);
     // Notify user if they received a miscellaneous charge
     if (items) {
       log.info(`Notifying user of miscellaneous charge: ${ user.id }`);
@@ -251,13 +258,10 @@ module.exports = class OrderService extends Service {
         subject: `Charges for your booking in ${currentBooking[0].car.license} on ${moment(currentBooking[0].createdAt).format('MMMM Do, YYYY')}`,
         leadin: `Here's your receipt for any additional charges from your booking on ${moment(currentBooking[0].createdAt).format('MMMM Do, YYYY')} with ${currentBooking[0].car.license}:`
       });
-
-      // A miscellaneous charge is likely an issue we should keep track of
-      yield UserLog.addUserEvent(user, 'FEE', order.id, data.description);
     }
 
     try {
-      //yield this.charge(order, user);
+      yield this.charge(order, user);
       yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.link() } $${ amountInCents / 100 } for ${ data.description } | ${ apiConfig.uri }/bookings/${ data.bookingId }`, [ 'slack' ], { channel : '#rental-alerts' });
 
       yield hooks.call('shop:store:order:after', order, payload, _user);
@@ -268,7 +272,7 @@ module.exports = class OrderService extends Service {
         message : `The card was declined.`
       }, 400);
     }
-
+    yield order.delete();
     return order;
   }
 

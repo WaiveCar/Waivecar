@@ -452,7 +452,6 @@ module.exports = class BookingService extends Service {
 
   // this is a bullshit incompetent mess
   static *show(id, _user, opts) {
-    console.log('opts: ', opts);
     let relations = {
       include : [
         {
