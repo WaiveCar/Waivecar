@@ -324,6 +324,9 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
       if('model' in marker) {
         marker.range = marker.range || (marker.charge * [135,68][+(marker.model === "Spark EV")]);
         type = 'active-waivecar-' + charge2color(marker);
+        if(marker.isReallyAvailable === false) {
+          type += '-noavail';
+        }
       } else {
         type = 'locked-car';
       }
@@ -686,6 +689,9 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
       case 'active-waivecar-0':
       case 'active-waivecar-1':
       case 'active-waivecar-2':
+      case 'active-waivecar-0-noavail':
+      case 'active-waivecar-1-noavail':
+      case 'active-waivecar-2-noavail':
       case 'station':
       case 'station-active':
       case 'valet-active':
