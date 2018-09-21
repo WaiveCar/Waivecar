@@ -773,19 +773,19 @@ module.exports = class BookingService extends Service {
       return hub;
     }
 
+    // if our car is fine and we aren't at a hub then we can return it so long as
+    // we are in a zone.
+    let zone = yield this.getZone(car);
     // otherwise if we aren't there and the car is low, we need to go back to a hub
-    if (car.milesAvailable() < 21 && !isAdmin) {
+    if (car.milesAvailable() < zone.minimumCharge && !isAdmin) {
       throw error.parse({
         code    : `CHARGE_TOO_LOW`,
         message : `The WaiveCar's charge is too low to end here. Please return it to the homebase.`
       }, 400);
     }
 
-    // if our car is fine and we aren't at a hub then we can return it so long as
-    // we are in a zone.
-    let zone = yield this.getZone(car);
-
     if(zone) {
+      zone.isZone = true;
       return zone;
     } else if(!isAdmin) {
       throw error.parse({
@@ -876,8 +876,7 @@ module.exports = class BookingService extends Service {
       }
     }
 
-    yield this._canEnd(car, isAdmin);
-    
+    let end = yield this._canEnd(car, isAdmin);
     // Immobilize the engine.
     let status;
     try {
@@ -987,6 +986,12 @@ module.exports = class BookingService extends Service {
     // Parking restrictions:
     let parkingSlack;
     if (payload && payload.data && payload.data.type) {
+      if (end.isZone && payload.data.streetHours < end.parkingTime) {
+        throw error.parse({
+          code    : 'NOT_ENOUGH_PARKING_TIME',
+          message : 'Your parking is not valid for a long enough time.'
+        }, 400);
+      }
       let parkingText = '';
       payload.data.bookingId = id;
 
@@ -1275,21 +1280,35 @@ module.exports = class BookingService extends Service {
 
     // If car is under 25% make it unavailable after ride is done #514
     // We use the average to make this assessment.
-    if (car.milesAvailable() < 25 && !isAdmin && !isLevel) {
+
+    let zone = '', address = '';
+    let minCharge;
+
+    try {
+      zone = yield this.getZone(car);
+      minCharge = zone.minimumCharge;
+      if (car.milesAvailable() <= zone.minimumCharge && !isAdmin && !isLevel) {
+        yield cars.updateAvailabilityAnonymous(car.id, false);
+        yield notify.slack({ text : `:spider: ${ car.link() } unavailable due to charge being under ${zone.minimumCharge}. ${ car.chargeReport() }`
+        }, { channel : '#rental-alerts' });
+      } else {
+        yield car.available();
+        yield this.notifyUsers(car);
+      }
+      zone = `(${zone.name})` || '';
+      address = yield this.getAddress(car.latitude, car.longitude);
+    } catch(ex) {}
+
+    minCharge = minCharge ? minCharge : 25;
+
+    if (car.milesAvailable() <= minCharge && !isAdmin && !isLevel) {
       yield cars.updateAvailabilityAnonymous(car.id, false);
-      yield notify.slack({ text : `:spider: ${ car.link() } unavailable due to charge being under 25mi. ${ car.chargeReport() }`
+      yield notify.slack({ text : `:spider: ${ car.link() } unavailable due to charge being under ${minCharge}mi. ${ car.chargeReport() }`
       }, { channel : '#rental-alerts' });
     } else {
       yield car.available();
       yield this.notifyUsers(car);
     }
-
-    let zone = '', address = '';
-    try {
-      zone = yield this.getZone(car);
-      zone = `(${zone.name})` || '';
-      address = yield this.getAddress(car.latitude, car.longitude);
-    } catch(ex) {}
 
     let message = yield this.updateState('completed', _user, user);
     yield notify.sendTextMessage(user, `Thanks for driving with WaiveCar! Your rental is complete. You can see your trip summary in the app.`);

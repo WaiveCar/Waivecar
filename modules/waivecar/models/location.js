@@ -56,6 +56,18 @@ Bento.Register.Model('Location', 'sequelize', function(model, Sequelize) {
         'unknown'
       ),
       defaultValue : 'available'
+    },
+
+    parkingTime : {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+      defaultValue: null,
+    },
+
+    minimumCharge : {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+      defaultValue: null,
     }
   };
 
