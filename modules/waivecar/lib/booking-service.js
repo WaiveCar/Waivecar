@@ -1113,7 +1113,8 @@ module.exports = class BookingService extends Service {
 
   // Locks, and makes the car available for a new booking.
   static *_complete(id, _user, query, payload) {
-    if (!(yield redis.shouldProcess('booking-complete', id))) {
+    let lockKeys = yield redis.shouldProcess('booking-complete', id);
+    if (!lockKeys) {
       return;
     }
 
@@ -1137,6 +1138,7 @@ module.exports = class BookingService extends Service {
       if (booking.status !== 'ended') {
         yield this.end(id, _user, query, payload);
         if (booking.status !== 'ended') {
+          yield redis.doneWithIt(lockKeys);
           throw {
             code    : `BOOKING_REQUEST_INVALID`,
             message : `You cannot complete a booking which has not yet ended.`
@@ -1199,6 +1201,7 @@ module.exports = class BookingService extends Service {
         }
         res = yield finalCheckFail();
         if(res) {
+          yield redis.doneWithIt(lockKeys);
           throw res;
         }
       }
@@ -1258,6 +1261,7 @@ module.exports = class BookingService extends Service {
       }
     } catch(ex) {
       if (!query.force || !booking || !car || !user) {
+        yield redis.doneWithIt(lockKeys);
         throw ex;
       }
     }
