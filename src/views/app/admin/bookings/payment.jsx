@@ -13,6 +13,7 @@ module.exports = class BookingFeesView extends React.Component {
       return <div></div>;
     }
     let {payments} = this.props;
+    console.log('payments: ', payments);
     return (
       <div className="box">
         <h3>Payment <small>The payment invoice for this booking.</small></h3>
@@ -20,7 +21,7 @@ module.exports = class BookingFeesView extends React.Component {
           {payments.map(payment => (
             <div className="row payment-item">
               <div className="col-xs-8">
-                { payment.name } { payment.description ? ` - ${ payment.description }` : '' }
+                { payment.description.replace(/Booking\s\d*/i, '') }
               </div>
               <div className="col-xs-2 text-right">
                 { payment.quantity } x
