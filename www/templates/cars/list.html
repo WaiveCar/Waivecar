@@ -11,7 +11,7 @@
       can-swipe="false">
       <ion-item ng-repeat="car in cars.all"
         class="item-thumbnail-left car-row"
-        ng-class="{ available : car.isAvailable, unavailable : !car.isAvailable }"
+        ng-class="{ available : car.isAvailable, unavailable : (!car.isAvailable || car.isReallyAvailable === false) }"
         ng-click="cars.show(car)">
         <img ng-src="{{ car.image }}">
         <div 
