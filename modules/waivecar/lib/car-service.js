@@ -592,7 +592,7 @@ module.exports = {
       // thing.  So instead we are going to make the lock something like 5 minutes ... that should make
       // things shut up
       //
-      if (data.isCharging && !existingCar.isAvailable && !(yield redis.shouldProcess('car-charge-notice', existingCar.id, 5 * 60 * 1000))) {
+      if (data.isCharging && !existingCar.isAvailable && (yield redis.shouldProcess('car-charge-notice', existingCar.id, 5 * 60 * 1000))) {
         if (
             (data.charge >= 100 && existingCar.charge < 100) ||
             (data.charge >= 80 && existingCar.charge < 80)
