@@ -248,8 +248,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
         description: null,
         files: picsToSend
       });
-      var isNightTime = moment().hours() >= 23 || moment().hours() < 5;
-      goToEndRide(isNightTime);
+      goToEndRide();
     }
     
     function dayLess(date1, date2) {
@@ -356,17 +355,13 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       return hasRestrictions;
     }
 
-    function goToEndRide(isNightTime) {
+    function goToEndRide() {
       var payload = {};
 
       //ZendriveService.stop();
-      // Check which type we are submitting
-      if (!ctrl.isHub) {
-        if (ctrl.type === 'street') {
-          if (ctrl.street.streetHours < ctrl.minhours) return submitFailure('You can\'t return your WaiveCar here. The spot needs to be valid for at least ' + ctrl.minhours + ' hours.');
-          if (isNightTime) return submitFailure('You can\'t return your WaiveCar here. If the car is ticketed or towed, you\'ll be responsible for the fees.');
-          payload = ctrl.street;
-        }
+      if (!ctrl.isHub && ctrl.type === 'street') {
+        if (ctrl.street.streetHours < ctrl.minhours) return submitFailure('You can\'t return your WaiveCar here. The spot needs to be valid for at least ' + ctrl.minhours + ' hours.');
+        payload = ctrl.street;
       }
 
       payload.type = ctrl.type;
