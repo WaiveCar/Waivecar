@@ -114,6 +114,18 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
     ctrl.map = ctrl.createGMap( $elem.find('.map-instance')[0], center, attrs.noscroll);
 
+    ctrl.helpContainer = $elem.find('.help')[0];
+    ctrl.helpLink = $elem.find('.help-link')[0];
+    $elem.find('.help-link')[0].addEventListener('click', function() {
+      ctrl.helpContainer.style.display = 'block';
+      ctrl.helpLink.style.display = 'none';
+    });
+    $elem.find('.close')[0].addEventListener('click', function() {
+      ctrl.helpContainer.style.display = 'none';
+      ctrl.helpLink.style.display = 'block';
+    });
+
+
     // this is used for compatibility purposes.
     if(!ctrl.map.moveCamera) {
       ctrl.map.moveCamera = function(args) {
@@ -731,7 +743,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         };
       case 'chargingStation':
         return {
-          url: 'img/icon-station' + fileExt,
+          url: 'img/icon-station-free' + fileExt,
           iconRetinaUrl: 'img/icon-station' + iconType + fileExt,
           scaledSize: new google.maps.Size(35, 44),
           anchor: new google.maps.Point(17, 44),
@@ -819,7 +831,17 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
   return {
     restrict: 'E',
-    template: '<div class="map-instance" ></div>',
+    template: [
+      '<div class="map-instance">',
+        '<div class="help-wrap">',
+          '<a class="help-link">&#xFFFD; Help</a>',
+          '<div class="help">',
+            '<iframe src="https://waive.car/guide"></iframe>',
+            '<a class="close">&#x2716;</a>',
+          '</div>',
+        '</div>',
+      '</div>'
+    ].join(''),
     controller: MapController,
     controllerAs: 'map',
     scope: true,
