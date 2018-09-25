@@ -411,7 +411,7 @@ module.exports = {
       }
     }
     if (_user) {
-      let list = nameList.slice(0, -2).join(', ') + ' ' + nameList.slice(-2).join(' and ');
+      let list = nameList.slice(0, -2).join(', ') + (nameList.length > 2 ? ', ' : ' ') + nameList.slice(-2).join(' and ');
       yield notify.notifyAdmins(`:rocket: ${ _user.name() } let in ${ list }`, [ 'slack' ], { channel : '#user-alerts' })
     }
     return userList;
