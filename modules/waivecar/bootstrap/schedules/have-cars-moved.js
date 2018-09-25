@@ -1,16 +1,16 @@
 'use strict';
 let scheduler = Bento.provider('queue').scheduler;
 let Car = Bento.model('Car');
-let bookingService = require('../../lib/booking-service.js');
+let bookingService = require('../../lib/booking-service');
+let notify = require('../../lib/notification-service');
+let geocodeService = require('../../lib/geocoding-service');
+
 let timerSettings = {
   value: 15,
   type: 'seconds',
-  incrementTime: 3,
-  incrementUnit: 'hours',
 };
 
 scheduler.process('have-cars-moved', function*(job) {
-  console.log('running process');
   let carsForNextCheck = !job.data.carsForNextCheck
     ? {}
     : job.data.carsForNextCheck;
@@ -20,6 +20,7 @@ scheduler.process('have-cars-moved', function*(job) {
       isWaivework: false,
     },
   });
+  console.log(carsForNextCheck);
 
   for (let car of cars) {
     if (!(yield bookingService.isAtHub(car))) {
@@ -27,18 +28,27 @@ scheduler.process('have-cars-moved', function*(job) {
         let toStore = {
           latitude: car.latitude,
           longitude: car.longitude,
-          hoursSitting: 0,
+          timeSitting: 0,
+          address: yield geocodeService.getAddress(car.latitude, car.longitude), 
         };
+        //let address = yield geocodeService.getAddress(car.latitude, car.longitude); 
         carsForNextCheck[car.license] = toStore;
       } else if (
         carsForNextCheck[car.license].latitude === car.latitude &&
         carsForNextCheck[car.license].longitude === car.longitude
       ) {
-        //carsForNextCheck[car.license].hoursSitting += incrementTime;
-        //notify slack
+        carsForNextCheck[car.license].timeSitting += timerSettings.value;
+        yield notify.notifyAdmins(
+          ':fishing_pole_and_fish: a message',
+          ['slack'],
+          {channel: '#rental-alerts'},
+        );
+      } else {
+        delete carsForNextCheck[car.license];
       }
     }
   }
+
   scheduler.add('have-cars-moved', {
     timer: timerSettings,
     data: {carsForNextCheck},
