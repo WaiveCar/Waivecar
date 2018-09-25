@@ -945,6 +945,10 @@ module.exports = {
     // We only touch cars if we are in production. See
     // https://github.com/WaiveCar/Waivecar/issues/739
     //
+    throw error.parse({
+      code    : 'IGNITION_ON',
+      message : 'The car many not have locked because it is either charging or the ignition may be on.'
+    }, 400);
     if (process.env.NODE_ENV === 'production') {
       let status     = yield this.request(`/devices/${ id }/status`, {
         method : 'PATCH'
@@ -957,14 +961,10 @@ module.exports = {
         if(command === 'unlock') { updatedCar.isLocked = false; }
         if(command === 'lock')   { 
           if (updatedCar.isIgnitionOn) {
-          throw error.parse({
-            code    : 'IGNITION_ON',
-            message : 'An interaction attempt against the fleet service api failed.',
-            data    : {
-              message  : 'Your vehicle cannot be locked with the ignition on',
-            }
-          }, 400);
-
+            throw error.parse({
+              code    : 'IGNITION_ON',
+              message : 'The car many not have locked because it is either charging or the ignition may be on.'
+            }, 400);
           }
           updatedCar.isLocked = true; 
         }
