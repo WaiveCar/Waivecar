@@ -945,17 +945,13 @@ module.exports = {
     // We only touch cars if we are in production. See
     // https://github.com/WaiveCar/Waivecar/issues/739
     //
-    throw error.parse({
-      code    : 'IGNITION_ON',
-      message : 'The car many not have locked because it is either charging or the ignition may be on.'
-    }, 400);
-    if (process.env.NODE_ENV === 'production') {
+    //if (process.env.NODE_ENV === 'production') {
       let status     = yield this.request(`/devices/${ id }/status`, {
         method : 'PATCH'
       }, payload);
       this.logStatus(status, id, payload);
       updatedCar = this.transformDeviceToCar(id, status);
-    } else {
+    /*} else {
       updatedCar = existingCar;
       if(part === 'central_lock') {
         if(command === 'unlock') { updatedCar.isLocked = false; }
@@ -973,7 +969,7 @@ module.exports = {
         if(command === 'unlock') { updatedCar.isImmobilized = false; }
         if(command === 'lock')   { updatedCar.isImmobilized = true; }
       }
-    }
+    }*/
     return yield this.syncUpdate(id, updatedCar, existingCar, _user);
   },
 
@@ -1084,6 +1080,18 @@ module.exports = {
             message  : res.body,
             resource : resource
           }
+        }, 400);
+      }
+      // This error is thrown here because this response body will say the car has locked even though
+      // the lock command will not work if the iginition is on
+      console.log('data: ', data);
+      console.log(data['central_lock'] === 'locked');
+      let json = JSON.parse(res.body);
+      console.log('json: ', json.ignition);
+      if (json.ignition === 'on' && data['central_lock'] === 'locked') {
+        throw error.parse({
+          code    : 'IGNITION_ON',
+          message : 'The car many not have locked because it is either charging or the ignition may be on.'
         }, 400);
       }
       return JSON.parse(res.body);
