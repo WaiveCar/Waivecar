@@ -955,7 +955,19 @@ module.exports = {
       updatedCar = existingCar;
       if(part === 'central_lock') {
         if(command === 'unlock') { updatedCar.isLocked = false; }
-        if(command === 'lock')   { updatedCar.isLocked = true; }
+        if(command === 'lock')   { 
+          if (updatedCar.isIgnitionOn) {
+          throw error.parse({
+            code    : 'IGNITION_ON',
+            message : 'An interaction attempt against the fleet service api failed.',
+            data    : {
+              message  : 'Your vehicle cannot be locked with the ignition on',
+            }
+          }, 400);
+
+          }
+          updatedCar.isLocked = true; 
+        }
       }
       if(part === 'immobilizer') {
         if(command === 'unlock') { updatedCar.isImmobilized = false; }
