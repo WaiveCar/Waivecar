@@ -11,6 +11,7 @@ let hooks        = Bento.Hooks;
 let config       = Bento.config;
 let notify       = Bento.module('waivecar/lib/notification-service');
 let intercom     = require('./lib/intercom-service');
+let redis        = require('./redis-service');
 
 // ### Register Jobs
 
@@ -181,29 +182,31 @@ hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
     }
   }
 
-  if (
-       (prevUser.status === 'suspended' && reason.length) || 
-       (nextUser.status == 'pending' && (prevUser.status == 'active' || reason.length))
-     ) {
-    let who = '';
-    let what = '';
+  if (yield redis.shouldProceed('user-change', prevUser.id)) {
+    if (
+         (prevUser.status === 'suspended' && reason.length) || 
+         (nextUser.status == 'pending' && (prevUser.status == 'active' || reason.length))
+       ) {
+      let who = '';
+      let what = '';
 
-    if(prevUser.status !== nextUser.status && nextUser.status) {
-      what = `a previously ${ prevUser.status } user is moving to ${ nextUser.status }`;
-      if (prevUser.id == _user.id) {
-        who = 'by themselves';
+      if(prevUser.status !== nextUser.status && nextUser.status) {
+        what = `a previously ${ prevUser.status } user is moving to ${ nextUser.status }`;
+        if (prevUser.id == _user.id) {
+          who = 'by themselves';
+        } else {
+          who = `by ${ _user.name() }`;
+        }
       } else {
-        who = `by ${ _user.name() }`;
+        what = `a ${ prevUser.status } user, changed some information`;
       }
-    } else {
-      what = `a ${ prevUser.status } user, changed some information`;
-    }
 
-    if (reason.length) {
-      who += ' (' + reason.join(', ') + ')';
+      if (reason.length) {
+        who += ' (' + reason.join(', ') + ')';
+      }
+      yield UserLog.addUserEvent(prevUser, 'PENDING', _user.id, [reason || []].join(', '));
+      yield notify.notifyAdmins(`:construction: ${ prevUser.link() }, ${ what } ${ who }`, [ 'slack' ], { channel : '#user-alerts' });
     }
-    yield UserLog.addUserEvent(prevUser, 'PENDING', _user.id, [reason || []].join(', '));
-    yield notify.notifyAdmins(`:construction: ${ prevUser.link() }, ${ what } ${ who }`, [ 'slack' ], { channel : '#user-alerts' });
   }
 
   return nextUser;
