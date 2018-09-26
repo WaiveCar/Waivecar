@@ -9,168 +9,89 @@ let config    = Bento.config;
 let cars      = require('./car-service');
 let Car       = Bento.model('Car');
 
-
-let Header = {
-  Referer : config.api.uri,
-  Accept  : 'application/json',
-  Authorization: 'Token ' + config.evgo.token
-};
-
 module.exports = {
-  *getVersions() {
-    let url = 'https://op.evgo.com/externalIncoming/ocpi/cpo/2.1.1/versions';
-
-    let reqResponse = yield request({
-      url     : url,
-      method  : 'GET',
-      headers : Header
-    });
-
-    let versionUrlsArray = JSON.parse(reqResponse.body).data;
-
-    let latestVersion = versionUrlsArray[versionUrlsArray.length - 1].url;
-
-    let response = yield request({
-      url     : latestVersion,
-      method  : 'GET',
-      headers : Header
-    });
-
-    return response.body;
+  *request(url, method, opts) {
+    method = method || 'GET';
+    return yield request({
+      url     : config.evgo.cpoUrl + url,
+      method  : method,
+      headers : {
+        Referer : config.api.uri,
+        Accept  : 'application/json',
+        Authorization: 'Token ' + config.evgo.token
+      }
+    }, opts);
   },
 
-  *execRequest(what, params) {
-    let versionsData = yield this.getVersions();
-    let versions = JSON.parse(versionsData).data.endpoints;
-
-    let execUrl = _.filter(versions, function (endpoint) {
-      return endpoint.identifier === what;
-    });
-
-    if(execUrl) {
-      return yield request({
-        url     : execUrl[0],
-        method  : 'GET',
-        headers : Header
-      });
+  *getLocations() {
+    let response = yield this.request('locations');
+    try {
+      return (JSON.parse(response.body)).data;
+    } catch(ex) {
+      return [];
     }
-  },
-
-  *getToken() {
-    if(this.token) {
-      return this.token;
-    }
-    let credentials = yield this.execRequest('credentials');
-
-    if(credentials) { 
-      this.token = credentials.data.token;
-      this.credentials = credentials.data;
-    }
-
-    return this.token;
-  },
-
-
-  *authorize() {
-    let versionsData = yield this.getVersions();
-    let versions = JSON.parse(versionsData).data.endpoints;
-
-    let credentialsUrl = _.filter(versions, function (endpoint) {
-      return endpoint.identifier === 'credentials';
-    })[0];
-
-    let response = yield request({
-       url: credentialsUrl.url,
-       method: 'POST',
-       headers: {
-           Referer: config.api.uri,
-           Accept: 'application/json'
-       },
-       body: JSON.stringify({
-           token: 'test_token',
-           country_code: "US",
-           url: config.api.uri
-       })
-    });
-
-    return response.body;
   },
 
   *list() {
-    //mocked token
-    let requestObj = this.prepareRequest('locations', 'GET');
-    let response = yield request(requestObj);
+    let locations = (yield this.getLocations()).map(loc => {
+      let obj = {
+        id: 'charger_' + loc.id,
+        address: loc.address,
+        type: 'chargingStation',
+        latitude: loc.coordinates.latitude,
+        longitude: loc.coordinates.longitude,
+        name: loc.name,
+        portList: []
+      };
+      loc.evses.forEach(evse => {
+        let type = evse.connectors[0].standard;
+        if(type === 'IEC_62196_T1_COMBO' || type === 'IEC_62196_T1') {
+          obj.portList.push({
+            type: type === 'IEC_62196_T1_COMBO' ? 'fast' : 'slow',
+            id: evse.uid
+          });
+        }
+      });
+      return obj;
+    });
 
-    let result = JSON.parse(response.body);
-    let locations = (result.data || []).map(loc => this.mapCharger(loc));
     return locations.filter( loc => GeocodingService.inDrivingZone(loc.latitude, loc.longitude));
   },
 
   *getCharger(id) {
-    let requestObj = this.prepareRequest(`locations/${id}`, 'GET');
-    let response = yield request(requestObj, {force: true});
-    return JSON.parse(response.body);
+    let locations = (yield this.getLocations()).filter(row => row.id == 'id');
+    return locations.length ? locations : false;
   },
 
-  prepareRequest(url, method) {
-    return {
-      url     : config.evgo.cpoUrl + url,
-      method  : method,
-      headers : Header
-    }
-  },
-
-  mapCharger(loc) {
-    let availableEvses = (loc.evses || []).filter((evse) => {return evse.status === 'AVAILABLE';});
-
-    let newLoc = {
-      id: 'charger_' + loc.id,
-      address: loc.address,
-      type: 'chargingStation',
-      latitude: loc.coordinates.latitude,
-      longitude: loc.coordinates.longitude,
-      name: loc.name,
-      status: availableEvses.length > 0 ? 'available' : 'unavailable'
-    };
-
-    if (newLoc.name === 'LAXN512DC1') {
-      newLoc.address = 'test charger location';
-      newLoc.latitude = 34.019907;
-      newLoc.longitude = -118.468192;
-    };
-
-    return newLoc;
-  },
 
   *startChargeSession(chargerId){
-    let req = yield this.getCharger(chargerId);
-    let charger = req.data;
-    console.log(req);
-    let availableEvses = (charger.evses || []).filter((evse) => {
-      return evse.status.toLowerCase() === 'available';
-    });
-
-    let status = availableEvses.length > 0;
-
-    if (!status) {
-      throw  error.parse({
-        code    : 'NO_EVSE_AVAILABLE',
-        message : 'There is no available EVSE at the moment.'
-      }, 400);
-    }
-
-    let evse = availableEvses[0];
-
-    // we probably need a token to start the charge (see https://github.com/ocpi/ocpi/blob/master/releases/2.1.1/mod_commands.md#33-startsession-object)
-    let startSession = {
+    /*
+ curl --data '{"response_url":"http://9ol.es/charger-postback.php","token":{"uid":"049B53DA085280","type":"RFID","auth_id":"7e64ef7b-20cb-447c-92e0-253605c4edf7","visual_number":null,"issuer":"RFID Issuer","valid":true,"whitelist":"ALWAYS","language":null,"last_updated":"2018-08-15T03:09:32Z"},"location_id":"316","evse_uid":"366"}'  -X POST -vsH "Authorization: Token 7e64ef7b-20cb-447c-92e0-253605c4edf7" -H "Content-type: application/json" https://op.evgo.com/externalIncoming/ocpi/cpo/2.1.1/commands/START_SESSION
+    */
+    let body = {
+      response_url: "http://9ol.es/charger-postback.php",
+      token: {
+        uid: "049B53DA085280",
+        type: "RFID",
+        auth_id: "7e64ef7b-20cb-447c-92e0-253605c4edf7",
+        visual_number: null,
+        issuer: "RFID Issuer",
+        valid: true,
+        whitelist: "ALWAYS",
+        language: "null",
+        last_updated: "" + new Date()
+      },
       location_id: chargerId,
-      evse_uid: evse.id
+      evse_id: chargerId
     };
 
+
+    /*
     let startCommand = this.prepareRequest('commands/START_SESSION', 'POST');
     startCommand.body = JSON.stringify(startSession);
     let response = yield request(startCommand);
     return JSON.parse(response.body);
+    */
   },
 
   *stopChargeSession(chargerId){
