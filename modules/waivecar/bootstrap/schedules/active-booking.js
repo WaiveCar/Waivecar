@@ -191,24 +191,14 @@ var checkBooking = co.wrap(function *(booking) {
 });
 
 scheduler.process('active-booking', function *(job) {
-  let sitCounts;
-  try {
-    sitCounts = yield redis.get('sitCounts');
-    console.log('sitCounts: ', sitCounts);
-    sitCounts = sitCounts ? JSON.parse(sitCounts) : {};
-    console.log('sitCounts', sitCounts);
-  } catch(e) {
-    console.log('error: ', e);
-  }
-  /*
-  redis.get('sitCounts', (err, result) => {
-    if (err) {
-      console.log('error: ', err);
-    }
-    console.log('result: ', result);
-  });
-  */
+
   log.info('ActiveBooking : start ');
+
+  //yield redis.set('sitCounts', JSON.stringify({}));
+  let  sitCounts = yield redis.get('sitCounts');
+  sitCounts = sitCounts ? JSON.parse(sitCounts) : {};
+  console.log('sitCounts before: ', sitCounts);
+
   let bookings = yield Booking.find({ 
     where : { 
       status : 'started', 
@@ -221,18 +211,15 @@ scheduler.process('active-booking', function *(job) {
  
   for (let i = 0, len = bookings.length; i < len; i++) {
     let booking = bookings[i];
-    if (!booking.car.isIgnitionOn) {
-      sitCounts[booking.id]++;
-    }
-    /*
-    if (!sitCounts[booking.id] && booking.car.isIgnitionOn === false) {
-      sitCounts[booking.id] = 0
-    } else if (booking.car.isIgnitionOn === false) {
-      sitCounts[booking.id]++;
-    } else if (booking.car.isIgnitionOn === true) {
+    if (booking.car.isIgnitionOn === false) {
+      if (sitCounts[booking.id] >= 0) {
+        sitCounts[booking.id]++;
+      } else {
+        sitCounts[booking.id] = 0;
+      }
+    } else {
       delete sitCounts[booking.id];
     }
-    */
 
     try {
       //
@@ -253,6 +240,6 @@ scheduler.process('active-booking', function *(job) {
       log.warn(`ActiveBooking : failed to handle booking ${ booking.id } : ${ err } (${ err.stack })`);
     }
   }
-  console.log(sitCounts);
+  console.log('sitCounts after: ', sitCounts);
   yield redis.set('sitCounts', JSON.stringify(sitCounts));
 });
