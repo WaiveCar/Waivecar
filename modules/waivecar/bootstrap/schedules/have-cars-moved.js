@@ -20,26 +20,22 @@ scheduler.process('have-cars-moved', function*(job) {
       isWaivework: false,
     },
   });
-  console.log(carsForNextCheck);
-
   for (let car of cars) {
     if (!(yield bookingService.isAtHub(car))) {
       if (!carsForNextCheck[car.license]) {
-        let toStore = {
+        carsForNextCheck[car.license] = {
           latitude: car.latitude,
           longitude: car.longitude,
           timeSitting: 0,
-          address: yield geocodeService.getAddress(car.latitude, car.longitude), 
+          address: yield geocodeService.getAddress(car.latitude, car.longitude),
         };
-        //let address = yield geocodeService.getAddress(car.latitude, car.longitude); 
-        carsForNextCheck[car.license] = toStore;
       } else if (
         carsForNextCheck[car.license].latitude === car.latitude &&
         carsForNextCheck[car.license].longitude === car.longitude
       ) {
         carsForNextCheck[car.license].timeSitting += timerSettings.value;
         yield notify.notifyAdmins(
-          ':fishing_pole_and_fish: a message',
+          `:fishing_pole_and_fish: a message`,
           ['slack'],
           {channel: '#rental-alerts'},
         );
@@ -48,7 +44,7 @@ scheduler.process('have-cars-moved', function*(job) {
       }
     }
   }
-
+  console.log(carsForNextCheck);
   scheduler.add('have-cars-moved', {
     timer: timerSettings,
     data: {carsForNextCheck},
@@ -56,7 +52,6 @@ scheduler.process('have-cars-moved', function*(job) {
 });
 
 module.exports = function*() {
-  //scheduler.cancel('have-cars-moved');
   scheduler.add('have-cars-moved', {
     init: true,
     timer: timerSettings,
