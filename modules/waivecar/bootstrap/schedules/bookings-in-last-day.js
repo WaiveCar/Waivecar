@@ -16,6 +16,12 @@ scheduler.process('bookings-in-last-day', function*(job) {
         {
           model: 'Booking',
           as: 'bookings',
+          required: false,
+          where: {
+            createdAt: {
+              $gt: moment().subtract(1, 'days'),
+            },
+          },
         },
       ],
     });
