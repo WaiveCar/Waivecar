@@ -2,31 +2,38 @@
 
 let scheduler = Bento.provider('queue').scheduler;
 let Car = Bento.model('Car');
+let moment = require('moment');
 
 scheduler.process('bookings-in-last-day', function*(job) {
   console.log('bookings in last day');
   try {
-  let updatedCars = yield Car.find({
-    where: {
-      inRepair: false,
-    },
-    include: {
-      model: 'booking',
-    }
-  });
-  } catch(e) {
+    let cars = yield Car.find({
+      where: {
+        isWaivework: false,
+        inRepair: false,
+      },
+      include: [
+        {
+          model: 'Booking',
+          as: 'bookings',
+        },
+      ],
+    });
+    console.log('cars: ', cars);
+  } catch (e) {
     console.log('error: ', e);
   }
 
   scheduler.add('bookings-in-last-day', {
     timer: {
       value: 24,
-      type: 'hours',
+      type: 'seconds',
     },
   });
 });
 
 module.exports = function*() {
+  //scheduler.cancel('bookings-in-last-day');
   // This gets the hour of the current time
   let currentHour = Number(
     moment()
