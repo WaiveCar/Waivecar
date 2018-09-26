@@ -11,7 +11,7 @@ let hooks        = Bento.Hooks;
 let config       = Bento.config;
 let notify       = Bento.module('waivecar/lib/notification-service');
 let intercom     = require('./lib/intercom-service');
-let redis        = require('./redis-service');
+let redis        = require('../../modules/waivecar/lib/redis-service');   
 
 // ### Register Jobs
 
