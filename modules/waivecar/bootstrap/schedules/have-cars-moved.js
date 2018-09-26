@@ -1,4 +1,5 @@
 'use strict';
+
 let scheduler = Bento.provider('queue').scheduler;
 let Car = Bento.model('Car');
 let bookingService = require('../../lib/booking-service');
