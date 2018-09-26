@@ -30,7 +30,7 @@ module.exports = function *() {
 var checkBooking = co.wrap(function *(booking) {
   let details = yield BookingDetails.find({ where : { bookingId : booking.id } });
   let start = _.find(details, { type : 'start' });
-  let car = yield Car.findById(booking.carId);
+  let car = booking.car;
   let device = yield cars.getDevice(car.id, null, 'booking-loop');
   let user = yield User.findById(car.userId);
   let duration = 0;
@@ -192,10 +192,26 @@ var checkBooking = co.wrap(function *(booking) {
 
 scheduler.process('active-booking', function *(job) {
   log.info('ActiveBooking : start ');
-  let bookings = yield Booking.find({ where : { status : 'started' } });
+  let bookings = yield Booking.find({ 
+    where : { 
+      status : 'started', 
+    }, 
+    include: [{
+      model: 'Car',
+      as: 'car',
+    }]
+  });
+ 
+  let sitCounts = {};
 
   for (let i = 0, len = bookings.length; i < len; i++) {
     let booking = bookings[i];
+    if (!sitCounts[booking.id] && !booking.car.isIgnitionOn) {
+      console.log(`${booking.id} is currently stationary`);
+    } else {
+      console.log(`${booking.id} has the ignition on`);
+    }
+
     try {
       //
       // We need to make sure multiple servers don't process the same booking
