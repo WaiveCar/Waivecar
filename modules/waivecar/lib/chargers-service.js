@@ -18,8 +18,8 @@ module.exports = {
       url     : (opts.url || config.evgo.cpoUrl) + url,
       method  : method,
       headers : {
-        Accept  : 'application/json',
-        Authorization: 'Token ' + config.evgo.token
+        'Content-type' : 'application/json',
+        Authorization  : 'Token ' + config.evgo.token
       }
     };
   },
