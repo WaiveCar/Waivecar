@@ -11,13 +11,13 @@ let Car       = Bento.model('Car');
 
 module.exports = {
 
-  prepareRequest(url, method) {
+  prepareRequest(url, method, opts) {
     method = method || 'GET';
+    opts = opts || {};
     return {
-      url     : config.evgo.cpoUrl + url,
+      url     : (opts.url || config.evgo.cpoUrl) + url,
       method  : method,
       headers : {
-        Referer : config.api.uri,
         Accept  : 'application/json',
         Authorization: 'Token ' + config.evgo.token
       }
@@ -86,11 +86,11 @@ module.exports = {
     };
 
 
-    let startCommand = this.prepareRequest('commands/START_SESSION', 'POST');
+    let startCommand = this.prepareRequest('commands/START_SESSION', 'POST', {url: 'http://9ol.es:6501/'});
     startCommand.body = JSON.stringify(body);
     console.log(startCommand);
     let response = yield request(startCommand);
-    console.log(response.body);
+    console.log(response);
     return JSON.parse(response.body);
     /*
     car.isCharging = data.response === 'ACCEPTED';

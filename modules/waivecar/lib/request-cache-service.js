@@ -19,7 +19,6 @@ module.exports = function*(params, opts) {
     doCache = true;
   }
 
-  console.log(params);
   // If we make it to here then we are getting another copy.
   let reqResponse = yield request(params);
 
