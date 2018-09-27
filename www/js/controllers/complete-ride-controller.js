@@ -124,7 +124,6 @@ module.exports = angular.module('app.controllers').controller('CompleteRideContr
     }
 
     function reportProblem() {
-      $state.go('damage-gallery', { id: $stateParams.id, return: 'bookings-show' }, { location: 'replace' });
     }
   }
 ]);

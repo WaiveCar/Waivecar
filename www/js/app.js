@@ -91,7 +91,6 @@ require('./controllers/user-edit-controller');
 require('./controllers/user-edit-general-controller');
 require('./controllers/report-problem-controller');
 require('./controllers/show-problem-controller');
-require('./controllers/damage-gallery-controller');
 require('./controllers/start-ride-controller');
 require('./controllers/menu-controller');
 require('./controllers/verify-controller');
