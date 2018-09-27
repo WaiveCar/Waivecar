@@ -27,6 +27,39 @@
   margin-top: 10px;
 }
 
+.item-popover-content .navigate {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.5em;
+}
+.portList {
+  text-align: center;
+  .port { 
+    display: inline-block;
+    padding: 0.4rem;
+    border: 1px solid rgba(96,96,255,1);
+    border-radius: 5px;
+    color: #66f;
+    text-align: center;
+    margin: 0 0.5rem;
+    width: 65px;
+    img {
+      width: 40px;
+      padding-bottom:0.2rem;
+      display:inline-block;
+      max-height: 50px;
+    }
+  }
+}
+.item-popover {
+  .name {
+    font-weight: bold;
+    line-height: 36px;
+  }
+  .description {
+    margin-top: 0.2rem;
+  }
+}
 .charging-station-info .close-button {
   z-index: 2;
 }
