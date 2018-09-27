@@ -204,8 +204,12 @@ scheduler.process('active-booking', function *(job) {
     include: [{
       model: 'Car',
       as: 'car',
+    }, {
+      model: 'User',
+      as: 'user',
     }]
   });
+  console.log(bookings[0]);
   // This is for removing completed bookings from the sitCounts object
   let bookingIds = new Set(bookings.map(booking => booking.id));
   for (let id in sitCounts) {
@@ -213,7 +217,7 @@ scheduler.process('active-booking', function *(job) {
       delete sitCounts[id];
     }
   }
-  console.log('sitCounts: ', sitCounts);
+
   for (let i = 0, len = bookings.length; i < len; i++) {
     let booking = bookings[i];
     // This increments the sitCount if it seems the car has been sitting since the last check
@@ -225,6 +229,7 @@ scheduler.process('active-booking', function *(job) {
         if ((sitCounts[booking.id] * multiplier) % 1/*replace with 20 later */  === 0) {
           //notify here
           console.log('number divisible by 20', (sitCounts[booking.id] * multiplier));
+          yield notify.sendTextMessage(user, ``);
         }
       } else {
         sitCounts[booking.id] = 0;
