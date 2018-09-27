@@ -764,8 +764,59 @@ module.exports = class BookingService extends Service {
     return zone;
   }
 
+  static *finalCheckFail(_user, car, query) {
+    if(_user.hasAccess('admin') && query.force) {
+      return false;
+    }
+    let errors = [];
+    if(process.env.NODE_ENV === 'production') {
+      if (car.isIgnitionOn && !car.isCharging) {
+        // if the car is charging and the charger is locked we unlock the vehicle so
+        // that the user can remove the charger
+        yield cars.unlockCar(car.id, _user);
+        errors.push('turn off the ignition and if applicable, remove the charger'); 
+      }
+      if (!car.isKeySecure) { errors.push('secure the key'); }
+      if (car.isDoorOpen) { errors.push('make sure the doors are closed');}
+    }
+      
+    if (errors.length) {
+      let message = `Your ride cannot be completed until you `;
+      switch (errors.length) {
+        case 1: {
+          message = `${ message }${ errors[0] }.`;
+          break;
+        }
+        case 2: {
+          message = `${ message }${ errors.join(' and ') }.`;
+          break;
+        }
+        default: {
+          message = `${ message }${ errors.slice(0, -1).join(', ') } and ${ errors.slice(-1) }.`;
+          break;
+        }
+      }
+
+      return {
+        code    : `BOOKING_COMPLETE_INVALID`,
+        message : message,
+        data    : errors
+      };
+    }
+  }
+
+  // A more expensive check that updates the car status and makes sure
+  // that the vehicle is in the right state to make ending legal.
+  static *endCheck(id, _user, query, payload) {
+    var booking = yield this.getBooking(id);
+    var car     = yield this.getCar(booking.carId);
+    yield car.update( yield cars.getDevice(car.id, _user, 'booking.complete') );
+    return yield this.finalCheckFail(_user, car, query);
+  }
+
+
   // The meat of canEnd, the cheap check
-  static *_canEnd(car, isAdmin) {
+  static *_canEndHere(car, isAdmin) {
     // We preference hubs over zones because cars can end there at any charge without a photo
     let hub = yield this.isAtHub(car);
     // if we are at a hub then we can return the car here regardless
@@ -798,7 +849,7 @@ module.exports = class BookingService extends Service {
   }
 
   // A *very cheap* check to see if the ending spot it legal.
-  static *canEnd(id, _user, query, payload) {
+  static *canEndHere(id, _user, query, payload) {
     let booking = yield this.getBooking(id);
     let car     = yield this.getCar(booking.carId);
     let isAdmin = _user.isAdmin();
@@ -814,12 +865,10 @@ module.exports = class BookingService extends Service {
       }
     }
 
-    return yield this._canEnd(car, isAdmin);
+    return yield this._canEndHere(car, isAdmin);
   }
 
-  /**
-   * Ends the ride by calculating costs and setting the booking into pending payment state.
-   */
+  // Ends the ride by calculating costs and setting the booking into pending payment state.
   static *end(id, _user, query, payload) {
     let lockKeys = yield redis.failOnMultientry('booking-end', id, 40 * 1000);
 
@@ -876,7 +925,7 @@ module.exports = class BookingService extends Service {
       }
     }
 
-    let end = yield this._canEnd(car, isAdmin);
+    let end = yield this._canEndHere(car, isAdmin);
     // Immobilize the engine.
     let status;
     try {
@@ -1155,48 +1204,7 @@ module.exports = class BookingService extends Service {
       // Make sure all required car states are valid before allowing the booking to
       // be completed and released for next booking.
 
-      function *finalCheckFail() {
-        if(isAdmin && query.force) {
-          return false;
-        }
-        let errors  = [];
-        if(process.env.NODE_ENV === 'production') {
-          if (car.isIgnitionOn && !car.isCharging) {
-            // if the car is charging and the charger is locked we unlock the vehicle so
-            // that the user can remove the charger
-            yield cars.unlockCar(car.id, _user);
-            errors.push('turn off the ignition and if applicable, remove the charger'); 
-          }
-          if (!car.isKeySecure) { errors.push('secure the key'); }
-          if (car.isDoorOpen) { errors.push('make sure the doors are closed');}
-        }
-          
-        if (errors.length) {
-          let message = `Your ride cannot be completed until you `;
-          switch (errors.length) {
-            case 1: {
-              message = `${ message }${ errors[0] }.`;
-              break;
-            }
-            case 2: {
-              message = `${ message }${ errors.join(' and ') }.`;
-              break;
-            }
-            default: {
-              message = `${ message }${ errors.slice(0, -1).join(', ') } and ${ errors.slice(-1) }.`;
-              break;
-            }
-          }
-
-          return {
-            code    : `BOOKING_COMPLETE_INVALID`,
-            message : message,
-            data    : errors
-          };
-        }
-      }
-
-      let res = yield finalCheckFail();
+      let res = yield this.finalCheckFail(_user, car, query);
       // if it looks like we'd fail this, then and only then do we probe the device one final time.
       if(res) {
         try {
@@ -1204,7 +1212,7 @@ module.exports = class BookingService extends Service {
         } catch (err) {
           log.warn(`Failed to update ${ car.info() } when completing booking ${ booking.id }`);
         }
-        res = yield finalCheckFail();
+        res = yield this.finalCheckFail(_user, car, query);
         if(res) {
           yield redis.doneWithIt(lockKeys);
           throw res;
