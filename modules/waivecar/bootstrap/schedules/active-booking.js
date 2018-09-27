@@ -191,7 +191,6 @@ var checkBooking = co.wrap(function *(booking) {
 });
 
 scheduler.process('active-booking', function *(job) {
-
   log.info('ActiveBooking : start ');
 
   //yield redis.set('sitCounts', JSON.stringify({}));
@@ -207,7 +206,6 @@ scheduler.process('active-booking', function *(job) {
       as: 'car',
     }]
   });
-  console.log('sitCounts before: ', sitCounts);
   // This is for removing completed bookings from the sitCounts object
   let bookingIds = new Set(bookings.map(booking => booking.id));
   for (let id in sitCounts) {
@@ -215,17 +213,24 @@ scheduler.process('active-booking', function *(job) {
       delete sitCounts[id];
     }
   }
- 
+  console.log('sitCounts: ', sitCounts);
   for (let i = 0, len = bookings.length; i < len; i++) {
     let booking = bookings[i];
     // This increments the sitCount if it seems the car has been sitting since the last check
     if (booking.car.isIgnitionOn === false) {
       if (sitCounts[booking.id] >= 0) {
         sitCounts[booking.id]++;
+        // If the booking has reached a 20 minute interval, the user needs to be notified here
+        let multiplier = config.waivecar.booking.timers.carLocation.value / 60;
+        if ((sitCounts[booking.id] * multiplier) % 1/*replace with 20 later */  === 0) {
+          //notify here
+          console.log('number divisible by 20', (sitCounts[booking.id] * multiplier));
+        }
       } else {
         sitCounts[booking.id] = 0;
       }
     } else {
+      // The booking is deleted from the object if the ignition is on
       delete sitCounts[booking.id];
     }
 
@@ -248,6 +253,5 @@ scheduler.process('active-booking', function *(job) {
       log.warn(`ActiveBooking : failed to handle booking ${ booking.id } : ${ err } (${ err.stack })`);
     }
   }
-  console.log('sitCounts after: ', sitCounts);
   yield redis.set('sitCounts', JSON.stringify(sitCounts));
 });
