@@ -197,7 +197,6 @@ scheduler.process('active-booking', function *(job) {
   //yield redis.set('sitCounts', JSON.stringify({}));
   let  sitCounts = yield redis.get('sitCounts');
   sitCounts = sitCounts ? JSON.parse(sitCounts) : {};
-  console.log('sitCounts before: ', sitCounts);
 
   let bookings = yield Booking.find({ 
     where : { 
@@ -208,9 +207,18 @@ scheduler.process('active-booking', function *(job) {
       as: 'car',
     }]
   });
+  console.log('sitCounts before: ', sitCounts);
+  // This is for removing completed bookings from the sitCounts object
+  let bookingIds = new Set(bookings.map(booking => booking.id));
+  for (let id in sitCounts) {
+    if (!bookingIds.has(Number(id))) {
+      delete sitCounts[id];
+    }
+  }
  
   for (let i = 0, len = bookings.length; i < len; i++) {
     let booking = bookings[i];
+    // This increments the sitCount if it seems the car has been sitting since the last check
     if (booking.car.isIgnitionOn === false) {
       if (sitCounts[booking.id] >= 0) {
         sitCounts[booking.id]++;
