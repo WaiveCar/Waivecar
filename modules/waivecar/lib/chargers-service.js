@@ -10,9 +10,10 @@ let cars      = require('./car-service');
 let Car       = Bento.model('Car');
 
 module.exports = {
-  *request(url, method, opts) {
+
+  prepareRequest(url, method) {
     method = method || 'GET';
-    return yield request({
+    return {
       url     : config.evgo.cpoUrl + url,
       method  : method,
       headers : {
@@ -20,7 +21,11 @@ module.exports = {
         Accept  : 'application/json',
         Authorization: 'Token ' + config.evgo.token
       }
-    }, opts);
+    };
+  },
+
+  *request(url, method, opts) {
+    return yield request(prepareRequest(url, method), opts);
   },
 
   *getLocations() {
@@ -58,13 +63,7 @@ module.exports = {
     return locations.filter( loc => GeocodingService.inDrivingZone(loc.latitude, loc.longitude));
   },
 
-  *getCharger(id) {
-    let locations = (yield this.getLocations()).filter(row => row.id == 'id');
-    return locations.length ? locations : false;
-  },
-
-
-  *startChargeSession(chargerId){
+  *start(carId, chargerId) {
     /*
  curl --data '{"response_url":"http://9ol.es/charger-postback.php","token":{"uid":"049B53DA085280","type":"RFID","auth_id":"7e64ef7b-20cb-447c-92e0-253605c4edf7","visual_number":null,"issuer":"RFID Issuer","valid":true,"whitelist":"ALWAYS","language":null,"last_updated":"2018-08-15T03:09:32Z"},"location_id":"316","evse_uid":"366"}'  -X POST -vsH "Authorization: Token 7e64ef7b-20cb-447c-92e0-253605c4edf7" -H "Content-type: application/json" https://op.evgo.com/externalIncoming/ocpi/cpo/2.1.1/commands/START_SESSION
     */
@@ -86,27 +85,14 @@ module.exports = {
     };
 
 
-    /*
     let startCommand = this.prepareRequest('commands/START_SESSION', 'POST');
-    startCommand.body = JSON.stringify(startSession);
+    startCommand.body = JSON.stringify(body);
     let response = yield request(startCommand);
     return JSON.parse(response.body);
-    */
-  },
-
-  *stopChargeSession(chargerId){
-    let charger = yield this.getCharger(chargerId);
-    let startCommand = this.prepareRequest('commands/STOP_SESSION', 'POST');
-
-  },
-
-  *unlock(carId, chargerId) {
-    let car = yield Car.findById(carId);
-    let id = chargerId.replace('charger_', '');
-    let data = yield this.startChargeSession(id);
-    console.log(data);
+    /*
     car.isCharging = data.response === 'ACCEPTED';
     //todo: send update status for charger and unlock available connector
     return yield cars.syncUpdate(carId, car);
-  }
+    */
+  },
 };

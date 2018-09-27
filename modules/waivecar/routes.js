@@ -83,10 +83,7 @@ Route.put('/parking/:id/occupy', [ 'isAuthenticated', 'ParkingController@occupy'
 Route.put('/parking/:id/cancel', [ 'isAuthenticated', 'ParkingController@cancel' ]);
 Route.put('/parking/vacate/:carId', [ 'isAuthenticated', 'ParkingController@vacate' ]);
 
-
-// ### EVGo chargers
-
-Route.put('/chargers/unlock/:id/:charger', 'ChargersController@unlock');
+Route.put('/chargers/start/:id/:charger', 'ChargersController@start');
 Route.get('/chargers/list', 'ChargersController@chargers');
 
 
