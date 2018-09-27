@@ -65,9 +65,6 @@ module.exports = {
   },
 
   *start(carId, chargerId) {
-    /*
- curl --data '{"response_url":"http://9ol.es/charger-postback.php","token":{"uid":"049B53DA085280","type":"RFID","auth_id":"7e64ef7b-20cb-447c-92e0-253605c4edf7","visual_number":null,"issuer":"RFID Issuer","valid":true,"whitelist":"ALWAYS","language":null,"last_updated":"2018-08-15T03:09:32Z"},"location_id":"316","evse_uid":"366"}'  -X POST -vsH "Authorization: Token 7e64ef7b-20cb-447c-92e0-253605c4edf7" -H "Content-type: application/json" https://op.evgo.com/externalIncoming/ocpi/cpo/2.1.1/commands/START_SESSION
-    */
     let body = {
       response_url: "http://9ol.es/charger-postback.php",
       token: {
@@ -86,7 +83,7 @@ module.exports = {
     };
 
 
-    let startCommand = this.prepareRequest('commands/START_SESSION', 'POST');//, {url: 'http://9ol.es:6501/'});
+    let startCommand = this.prepareRequest('commands/START_SESSION', 'POST', {url: 'http://9ol.es:6501/'});
     startCommand.body = JSON.stringify(body);
     console.log(startCommand);
     let response = yield request(startCommand);
