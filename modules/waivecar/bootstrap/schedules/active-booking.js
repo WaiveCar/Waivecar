@@ -227,7 +227,7 @@ scheduler.process('active-booking', function *(job) {
         sitCounts[booking.id]++;
         // If the booking has reached a 20 minute interval, the user needs to be notified here
         let multiplier = config.waivecar.booking.timers.carLocation.value / 60;
-        if ((sitCounts[booking.id] * multiplier) % 20 === 0) {
+        if ((sitCounts[booking.id] * multiplier) % 20 === 0 && !booking.car.license.match(/work/i)) {
           yield notify.sendTextMessage(booking.user, 
             `Your booking in ${booking.car.license} has been parked for ${sitCounts[booking.id] * multiplier} minutes and is still active.`
           );
