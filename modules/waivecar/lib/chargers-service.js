@@ -79,7 +79,7 @@ module.exports = {
         last_updated: (new Date()).toISOString().replace(/\.\d*Z/, 'Z')
       },
       location_id: chargerId,
-      evse_id: chargerId
+      evse_uid: chargerId
     };
 
 
