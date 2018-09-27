@@ -39,6 +39,10 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
     ctrl.toggle = toggle;
     ctrl.addPicture = addPicture;
 
+    ctrl.skip = function() {
+      ctrl.allPics = true;
+    }
+
     var initialized = $scope.$watch('service.isInitialized', function(isInitialized) {
       if (isInitialized !== true) {
         return;
