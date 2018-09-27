@@ -6,7 +6,7 @@ let fs      = require('fs');
 let Redis   = require('./redis-service.js');
 
 module.exports = function*(params, opts) {
-  let cache_point = JSON.stringify(params);
+  let cache_point = JSON.stringify(params), doCache = false;
 
   if (!params.method || params.method.toLowerCase() === 'get') {
     // This logic is written in a way to reduce the i/o. sync
@@ -16,12 +16,16 @@ module.exports = function*(params, opts) {
     if(body !== null) {
       return { body: body };
     } 
+    doCache = true;
   }
 
   // If we make it to here then we are getting another copy.
   let reqResponse = yield request(params);
+  console.log(reqResponse);
 
-  yield Redis.hset('cache', cache_point, reqResponse.body);
+  if(doCache) {
+    yield Redis.hset('cache', cache_point, reqResponse.body);
+  }
 
   return { body: reqResponse.body };
 };

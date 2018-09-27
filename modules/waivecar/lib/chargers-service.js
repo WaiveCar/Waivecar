@@ -53,6 +53,7 @@ module.exports = {
         if(type === 'IEC_62196_T1_COMBO' || type === 'IEC_62196_T1') {
           obj.portList.push({
             type: type === 'IEC_62196_T1_COMBO' ? 'fast' : 'slow',
+            name: evse.physical_reference,
             id: evse.uid
           });
         }
@@ -87,6 +88,7 @@ module.exports = {
 
     let startCommand = this.prepareRequest('commands/START_SESSION', 'POST');
     startCommand.body = JSON.stringify(body);
+    console.log(startCommand);
     let response = yield request(startCommand);
     return JSON.parse(response.body);
     /*
