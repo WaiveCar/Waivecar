@@ -131,7 +131,7 @@ function PreBookService ($injector) {
 
     return $modal('result', {
       icon: 'x-icon',
-      title: actions.length > 1 ? 'Missing Required Information' : 'Unable to start your booking',
+      title:'Unable to book',
       message: message,
       actions: actions
     }).then(function (_modal) {
