@@ -215,21 +215,21 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     }
 
     function submit() {
+      var issues = [];
 
       // Force users to take pictures. See #1113
       if(!ctrl.isHub && ctrl.type === 'street' && !ctrl.street.streetSignImage) {
-        return submitFailure('Ending here requires a photo of the parking sign.');
+        issues.push('Ending here requires a photo of the parking sign.');
       }
 
       if (!ctrl.pictures.front || !ctrl.pictures.left || !ctrl.pictures.right || !ctrl.pictures.rear) {
-        return submitFailure('Please take pictures of all sides of the vehicle before proceeding.');
+        issues.push('Please take pictures of all sides of the vehicle before proceeding.');
       }
-      if (!ctrl.car.isKeySecure) {
-        return submitFailure('Please return the key to the glovebox');
+
+      if(issues.length) {
+        return submitFailure(issues.join(' '));
       }
-      if (ctrl.car.isIgnitionOn) {
-        return submitFailure('Please make sure the ignition is off before ending your ride.');
-      }
+
       if (!ctrl.overrideStreetRestrictions && checkIsParkingRestricted()) {
         return parkingRestrictionFailure();
       }
@@ -237,18 +237,24 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       $ionicLoading.show({
         template: '<div class="circle-loader"><span>Loading</span></div>'
       });
+      $data.resources.bookings.endcheck({id: ctrl.booking.id}).$promise.then(function(carCheck) {
+        if(carCheck.message) {
+          $ionicLoading.hide();
+          return submitFailure(carCheck.message);
+        }
 
-      var picsToSend = [];
-      for (var picture in ctrl.pictures) {
-        picsToSend.push(ctrl.pictures[picture]);
-      }
+        var picsToSend = [];
+        for (var picture in ctrl.pictures) {
+          picsToSend.push(ctrl.pictures[picture]);
+        }
 
-      Reports.create({
-        bookingId: $stateParams.id,
-        description: null,
-        files: picsToSend
+        Reports.create({
+          bookingId: $stateParams.id,
+          description: null,
+          files: picsToSend
+        });
+        goToEndRide();
       });
-      goToEndRide();
     }
     
     function dayLess(date1, date2) {

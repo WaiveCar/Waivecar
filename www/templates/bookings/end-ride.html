@@ -102,41 +102,6 @@
           </div>
         </div>
       </div>
-      <div class="parking-section">
-        <h4>Final Checks</h4>
-        <ul class="list-unstyled text-left bold-list">
-          <li ng-if="ctrl.car.model == 'Spark EV'">
-            <p class="pull-left">Key in holder</p>
-            <label class="pull-right">
-              <span class="check" ng-show="ctrl.car.isKeySecure">
-                <ng-include src="'/img/check-icon.svg'" />
-              </span>
-              <span ng-hide="ctrl.car.isKeySecure">
-                <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
-              </span>
-            </label>
-          </li>
-          <li>
-            <p class="pull-left">Engine off & charger unplugged</p>
-            <label class="pull-right">
-              <span class="check" ng-hide="ctrl.car.isIgnitionOn">
-                <ng-include src="'/img/check-icon.svg'" />
-              </span>
-              <span ng-show="ctrl.car.isIgnitionOn">
-                <ion-spinner icon="crescent" class="spinner-balanced"></ion-spinner>
-              </span>
-            </label>
-          </li>
-          <li>
-            <p class="pull-left">Take your belongings</p>
-            <label class="pull-right">
-              <span class="check">
-                <ng-include src="'/img/check-icon.svg'" />
-              </span>
-            </label>
-          </li>
-        </ul>
-      </div>
       <div class="padding-top padding-bottom" ng-if="ctrl.geocodeLoaded">
         <button ng-click="ctrl.submit()" class="button button-balanced button-block">{{ ctrl.okText }}</button>
       </div>
