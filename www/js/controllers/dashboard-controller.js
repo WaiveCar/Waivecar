@@ -247,21 +247,23 @@ function DashboardController ($scope, $rootScope, $injector) {
     $ionicLoading.show({
       template: '<div class="circle-loader"><span>Loading</span></div>'
     });
-    $ride.startCharge($data.active.cars.id, chargerId)
-      .then(function(car) {
-        $ionicLoading.hide();
+
+    $ride.startCharge($data.active.cars.id, chargerId).then(function(car) {
+      $ionicLoading.hide();
+      ctrl.closePopover();
+      $message.success("Your charge should begin shortly. Please watch the charger's screen to make sure it starts. When you're done fueling, unlock the plug and return it to its holder.");
     })
     .catch(function (reason) {
-        $ionicLoading.hide();
-        $message.error("Unable to start the charge. Please check the connections and try again.");
+      $ionicLoading.hide();
+      $message.error("Unable to start the charge. Please check the connections and try again.");
     });
   }
 
-  function showUnlockChargerPrompt(id){
+  function showUnlockChargerPrompt(id, name){
     var modal;
     $modal('result', {
       icon: 'waivecar-mark',
-      title: 'Station ' + id,
+      title: 'Station ' + name,
       message: "Make sure the plug is fully plugged into the WaiveCar and the charging station's screen is asking for payment.",
       actions: [{
         text: 'Start fueling',

@@ -71,10 +71,10 @@
       </div>
       <div class="row portList" ng-show="ctrl.selectedItem.type ==='chargingStation'">
         <div ng-repeat="port in ctrl.selectedItem.portList">
-          <div ng-click="ctrl.showUnlockChargerPrompt(port.id)" class='port'>
+          <div ng-click="ctrl.showUnlockChargerPrompt(port.id,port.name)" class='port'>
             <img src="img/charger-fast.svg" ng-if="port.type == 'fast'">
             <img src="img/charger-slow.svg" ng-if="port.type == 'slow'">
-            #{{ port.id }}
+            {{ port.name }}
           </div>
         </div>
       </div>
