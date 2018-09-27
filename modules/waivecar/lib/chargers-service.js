@@ -79,7 +79,7 @@ module.exports = {
         valid: true,
         whitelist: "ALWAYS",
         language: "null",
-        last_updated: "" + new Date()
+        last_updated: (new Date()).toISOString()
       },
       location_id: chargerId,
       evse_id: chargerId
@@ -90,6 +90,7 @@ module.exports = {
     startCommand.body = JSON.stringify(body);
     console.log(startCommand);
     let response = yield request(startCommand);
+    console.log(response.body);
     return JSON.parse(response.body);
     /*
     car.isCharging = data.response === 'ACCEPTED';
