@@ -25,7 +25,7 @@ module.exports = {
   },
 
   *request(url, method, opts) {
-    return yield request(prepareRequest(url, method), opts);
+    return yield request(this.prepareRequest(url, method), opts);
   },
 
   *getLocations() {
