@@ -76,7 +76,7 @@ module.exports = {
         valid: true,
         whitelist: "ALWAYS",
         language: null,
-        last_updated: (new Date()).toISOString()
+        last_updated: (new Date()).toISOString().replace(/\.\d*Z/, 'Z')
       },
       location_id: chargerId,
       evse_id: chargerId
