@@ -75,7 +75,7 @@ module.exports = {
         issuer: "RFID Issuer",
         valid: true,
         whitelist: "ALWAYS",
-        language: "null",
+        language: null,
         last_updated: (new Date()).toISOString()
       },
       location_id: chargerId,
