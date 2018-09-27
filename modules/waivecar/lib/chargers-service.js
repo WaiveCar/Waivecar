@@ -83,7 +83,7 @@ module.exports = {
     };
 
 
-    let startCommand = this.prepareRequest('commands/START_SESSION', 'POST', {url: 'http://9ol.es:6501/'});
+    let startCommand = this.prepareRequest('commands/START_SESSION', 'POST');//, {url: 'http://9ol.es:6501/'});
     startCommand.body = JSON.stringify(body);
     console.log(startCommand);
     let response = yield request(startCommand);
