@@ -32,7 +32,7 @@ var checkBooking = co.wrap(function *(booking) {
   let start = _.find(details, { type : 'start' });
   let car = booking.car;
   let device = yield cars.getDevice(car.id, null, 'booking-loop');
-  let user = yield User.findById(car.userId);
+  let user = booking.user;
   let duration = 0;
   let isLevel = yield car.hasTag('level');
   let booking_history = null;
@@ -192,9 +192,10 @@ var checkBooking = co.wrap(function *(booking) {
 
 scheduler.process('active-booking', function *(job) {
   log.info('ActiveBooking : start ');
-
-  //yield redis.set('sitCounts', JSON.stringify({}));
+  // This is the object that is used to store the number of increments of active booking that a car 
+  // has had its ignition off for
   let  sitCounts = yield redis.get('sitCounts');
+  // If the sitCounts object has not yet been set in the store, it needs to be set as an empty object
   sitCounts = sitCounts ? JSON.parse(sitCounts) : {};
 
   let bookings = yield Booking.find({ 
@@ -209,8 +210,8 @@ scheduler.process('active-booking', function *(job) {
       as: 'user',
     }]
   });
-  console.log(bookings[0]);
-  // This is for removing completed bookings from the sitCounts object
+  // This is for removing completed bookings from the sitCounts object once they 
+  // no longer need to be in it
   let bookingIds = new Set(bookings.map(booking => booking.id));
   for (let id in sitCounts) {
     if (!bookingIds.has(Number(id))) {
@@ -226,10 +227,10 @@ scheduler.process('active-booking', function *(job) {
         sitCounts[booking.id]++;
         // If the booking has reached a 20 minute interval, the user needs to be notified here
         let multiplier = config.waivecar.booking.timers.carLocation.value / 60;
-        if ((sitCounts[booking.id] * multiplier) % 1/*replace with 20 later */  === 0) {
-          //notify here
-          console.log('number divisible by 20', (sitCounts[booking.id] * multiplier));
-          yield notify.sendTextMessage(user, ``);
+        if ((sitCounts[booking.id] * multiplier) % 20 === 0) {
+          yield notify.sendTextMessage(booking.user, 
+            `Your booking in ${booking.car.license} has been parked for ${sitCounts[booking.id] * multiplier} minutes and is still active.`
+          );
         }
       } else {
         sitCounts[booking.id] = 0;
