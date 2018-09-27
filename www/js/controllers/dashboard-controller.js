@@ -265,18 +265,19 @@ function DashboardController ($scope, $rootScope, $injector) {
   function showUnlockChargerPrompt(id){
     var modal;
     $modal('result', {
-      icon: 'x-icon',
-      title: 'Charging Station',
-      message: 'Do you wanna unlock charger?',
+      icon: 'waivecar-mark',
+      title: 'Station ' + id,
+      message: "Make sure the plug is fully plugged into the WaiveCar and the charging station's screen is asking for payment.",
       actions: [{
-        text: 'yes',
+        text: 'Start fueling',
         className: 'button-balanced',
         handler: function () {
           modal.remove();
           unlockCharger(id);
         }
       }, {
-        text: 'no',
+        text: 'Cancel',
+        className: 'button-dark',
         handler: function () {
           modal.remove();
         }

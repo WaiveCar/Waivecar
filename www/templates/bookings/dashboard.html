@@ -64,21 +64,23 @@
   </ion-footer-bar>
   <div class="item-popover" ng-if="ctrl.selectedItem">
     <div class="item-popover-content">
-      <div class="row">
-        <div class="col">
-          <h1>{{ ctrl.selectedItem.name }}</h1>
-          <h2>{{ ctrl.selectedItem.description }}</h2>
-          <button type="button" class="button button-small button-dark" ng-click="ctrl.getDirections()">Directions to {{ ctrl.selectedItem.type }}</button>
+      <div>
+        <div class="name">{{ ctrl.selectedItem.name }}</div>
+        <div class="description">{{ ctrl.selectedItem.description }}</div>
+        <button type="button" class="button button-link button-small button-blue navigate" ng-click="ctrl.getDirections()"><i class="fa fa-location-arrow" aria-hidden="true"></i> Navigate</button>
+      </div>
+      <div class="row portList" ng-show="ctrl.selectedItem.type ==='chargingStation'">
+        <div ng-repeat="port in ctrl.selectedItem.portList">
+          <div ng-click="ctrl.showUnlockChargerPrompt(port.id)" class='port'>
+            <img src="img/charger-fast.svg" ng-if="port.type == 'fast'">
+            <img src="img/charger-slow.svg" ng-if="port.type == 'slow'">
+            #{{ port.id }}
+          </div>
         </div>
       </div>
-      <div class="row">
+      <div class="row" ng-show="ctrl.selectedItem.type ==='user-parking' && !ctrl.$data.reservedParking && ctrl.selectedItem.status === 'available'">
         <div class="col">
-          <button type="button" class="button button-small button-dark" ng-show="ctrl.selectedItem.type ==='chargingStation'" ng-click="ctrl.showUnlockChargerPrompt(ctrl.selectedItem.id)">Unlock charging station</button>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          <button type="button" class="button button-small button-dark" ng-show="ctrl.selectedItem.type ==='user-parking' && !ctrl.$data.reservedParking && ctrl.selectedItem.status === 'available'" ng-click="ctrl.reserveParking(ctrl.selectedItem.id)">Reserve parking</button>
+          <button type="button" class="button button-small button-dark" ng-click="ctrl.reserveParking(ctrl.selectedItem.id)">Reserve parking</button>
         </div>
       </div>
     </div>
