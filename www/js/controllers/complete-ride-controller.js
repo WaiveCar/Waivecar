@@ -33,7 +33,7 @@ module.exports = angular.module('app.controllers').controller('CompleteRideContr
 
     function computeMiles(obj) {
       if(obj) {
-        var multiplier = (obj.model === "Spark EV") ? 73 : 143;
+        var multiplier = (obj.model === "Spark EV") ? 65 : 132;
         ctrl.miles = Math.round(obj.charge * multiplier / 100);
       }
     }
