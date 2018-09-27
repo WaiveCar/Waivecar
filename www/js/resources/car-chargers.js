@@ -12,9 +12,9 @@ module.exports = angular.module('app').factory('Chargers', [
         url: $utils.getCustomRoute('chargers/list'),
         isArray: true
       },
-      unlock: {
+      startCharge: {
         method: 'PUT',
-        url: $utils.getCustomRoute('chargers/unlock/:id/:charger'),
+        url: $utils.getCustomRoute('chargers/start/:id/:charger'),
         params: {
           id: '@carId',
           charger: '@chargerId'

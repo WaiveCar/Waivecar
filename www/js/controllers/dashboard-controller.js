@@ -243,22 +243,17 @@ function DashboardController ($scope, $rootScope, $injector) {
      }
   }
 
-  function OnCarChargeChange(isLocked) {
-    //todo: add new marking for charging car
-  }
-
-  function unlockCharger(chargerId) {
+  function startCharge(chargerId) {
     $ionicLoading.show({
       template: '<div class="circle-loader"><span>Loading</span></div>'
     });
-    $ride.unlockCharger($data.active.cars.id, chargerId)
+    $ride.startCharge($data.active.cars.id, chargerId)
       .then(function(car) {
-        OnCarChargeChange(car.isCharging);
         $ionicLoading.hide();
     })
     .catch(function (reason) {
         $ionicLoading.hide();
-        $message.error("Charger unlocking failed. Please make sure you're connected to available EVSE connector.");
+        $message.error("Unable to start the charge. Please check the connections and try again.");
     });
   }
 
@@ -273,7 +268,7 @@ function DashboardController ($scope, $rootScope, $injector) {
         className: 'button-balanced',
         handler: function () {
           modal.remove();
-          unlockCharger(id);
+          startCharge(id);
         }
       }, {
         text: 'Cancel',
@@ -425,15 +420,6 @@ function DashboardController ($scope, $rootScope, $injector) {
             return $state.go('end-ride', { id: bookingId, zone: endLocation });
           });
         } 
-          /*
-        else {
-          // Not inside geofence -> show error
-          if ($ride.isChargeOkay(carId, obj)) {
-            return $q.reject('Looks like you\'re outside of the rental zone. Please head back to end your rental.');
-          }
-          return $q.reject('Looks like the charge is pretty low. Please head to the nearest hub or charger!');
-        }
-          */
       }).then($ionicLoading.hide)
         .catch(endRideFailure);
     }).catch(function(obj) {
