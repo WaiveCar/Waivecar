@@ -128,20 +128,22 @@ module.exports = {
       for (let i = 0; i < files.length; ++i) {
         let file = files[i];
 
-        let report = new Report({
-          bookingId   : booking.id,
-          description : payload.description,
-          createdBy   : _user.id,
-          fileId      : file.id, 
-          type        : file.type,
-        });
-        yield report.save();
-        if (file.type === 'other' || !file.type) {
-          slackPayload.attachments.push({
-            fallback  : `Image ${ i }`,
-            color     : '#D00000',
-            image_url : `https://s3.amazonaws.com/waivecar-prod/${ file.path }`
+        if(file) {
+          let report = new Report({
+            bookingId   : booking.id,
+            description : payload.description,
+            createdBy   : _user.id,
+            fileId      : file.id, 
+            type        : file.type,
           });
+          yield report.save();
+          if (file.type === 'other' || !file.type) {
+            slackPayload.attachments.push({
+              fallback  : `Image ${ i }`,
+              color     : '#D00000',
+              image_url : `https://s3.amazonaws.com/waivecar-prod/${ file.path }`
+            });
+          }
         }
       }
     }
