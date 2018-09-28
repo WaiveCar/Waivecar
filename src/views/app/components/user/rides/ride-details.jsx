@@ -76,7 +76,7 @@ class RideDetails extends Component {
                 <div>
                   <small>Booking <a href={ '/bookings/' +  id }>#{ id }</a></small><br/>
                   Distance Traveled<br/>
-                  <strong>{ (end.mileage - start.mileage).toFixed(2) } miles</strong>
+                  <strong>{ parseFloat(Math.round(((end.mileage - start.mileage) * 0.621371192) * 100) / 100).toFixed(2) } miles</strong>
                   <div>
                   { isExtended ? "Reservation Extended" : "" }
                   </div>

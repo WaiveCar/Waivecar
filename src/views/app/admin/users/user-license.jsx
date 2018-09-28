@@ -49,20 +49,6 @@ module.exports = class UserDetails extends React.Component {
     });
   }
 
-  setReport(id) {
-    api.get(`/licenses/${ id }/report`, (err, report) => {
-      if (err) {
-        return snackbar.notify({
-          type    : `danger`,
-          message : err.message
-        });
-      }
-      this.setState({
-        report : report
-      });
-    });
-  }
-
   deleteLicense(id) {
     var response = prompt("Warning, there is no way to undo this. If you delete a license the user will have to add it again. type 'ok' to confirm.");
     if(response && response.toLowerCase() === 'ok') {
@@ -194,23 +180,10 @@ module.exports = class UserDetails extends React.Component {
                 <input type="text" name="lastName" className="form-control" defaultValue={ license.lastName } disabled={ !license.provided } required />
               </FormInput>
             </div>
-
             <div className="form-group row">
               <FormInput className="col-md-4 bento-form-input">
                 <label>Birth Date</label>
                 <input type="date" name="birthDate" className="form-control" defaultValue={ moment(license.birthDate.slice(0,-1)).format('YYYY-MM-DD') } required />
-              </FormInput>
-              <FormInput className="col-md-4 bento-form-input">
-                <label>Gender</label>
-                <FormSelect
-                  name     = "gender"
-                  value    = { license.gender }
-                  disabled = { !license.provided }
-                  options  = {[
-                    { value : 'male', label : 'Male' },
-                    { value : 'female', label : 'Female' }
-                  ]}
-                />
               </FormInput>
               <FormInput className="col-md-4 bento-form-input">
                 <label>Outcome</label>

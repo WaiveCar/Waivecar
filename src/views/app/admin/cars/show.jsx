@@ -282,7 +282,7 @@ class CarsShowView extends React.Component {
                     In Service
                   </li>
                   <li className="list-group-item">
-                    <span className="pull-right">{ car.totalMileage }</span>
+                    <span className="pull-right">{ Math.round(0.621371 * car.totalMileage)  }</span>
                     Total Miles
                   </li>
                 </ul>

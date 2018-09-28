@@ -1,4 +1,5 @@
 import { api, auth, dom, helpers } from 'bento';
+import { snackbar }                from 'bento-web';
 import Service                     from './component-service';
 import async                       from 'async';
 import moment                      from 'moment';
@@ -27,6 +28,10 @@ module.exports = class Car extends Service {
     api.put(`/cars/${ car.id }/${ command }`, { }, function (err, model) {
       this.setState('isLoading', false);
       if (err) {
+        snackbar.notify({
+          type    : 'danger',
+          message : `Error updating car: ${err.message}`
+        });
         return this.error(err.data ? err.data : err.message);
       }
       this.setState('updatedAt', moment(model.updatedAt).format('h:mm:ss A'));

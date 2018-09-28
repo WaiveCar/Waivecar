@@ -27,7 +27,7 @@ module.exports = class CarsIndex extends React.Component {
     this.columns = [
       {key : "license", title:"License", type : "text", comparator : this.licenseComparator.bind(this)},
       {key : "charge", title:"Charge", type : "text"},
-      {key : "currentSpeed", title:"Speed", type : "text"},
+      {key : "lastTimeAtHq", title:"Last At HQ", type : "duration"},
 
       {key : "isIgnitionOn", title:"Ignition", type : "bool"},
       //{key : "isKeySecure", title:"Key Secure", type : "bool"},
@@ -35,7 +35,7 @@ module.exports = class CarsIndex extends React.Component {
       {key : "isImmobilized", title:"Immobilized", type : "bool"},
       {key : "isCharging", title:"Charging", type : "bool"},
       {key : "statuscolumn", title:"Status", type : "status"},
-      {key : "updatedAt", title:"Last Action", type : "lastaction"},
+      {key : "lastActionTime", title:"Last Action", type : "duration"},
       // {key : "action", title:"Last Action", type : "text"},
       // {key : "actionAt", title:"Action At", type : "datetime"}
       //{key : "inService", title:"In Repair", type : "bool"}
@@ -196,14 +196,17 @@ module.exports = class CarsIndex extends React.Component {
       return <td title={date} key={column.key}><span>{date}</span></td>
     }
 
-    if (column.type === "lastaction") {
-      let duration = (moment.duration(moment.utc().diff(moment(car.lastActionTime)))).asMilliseconds();
-      let value = moment.utc(duration).format('H:mm');
+    if (column.type == "duration") {
+      if(!car[column.key]) {
+        value = '-';
+      } else {
+        let duration = (moment.duration(moment.utc().diff(moment(car[column.key])))).asMilliseconds();
+        value = moment.utc(duration).format('H:mm');
 
-      if(duration > oneDay) {
-        value = Math.floor(duration/oneDay) + 'd ' + value;
+        if(duration > oneDay) {
+          value = Math.floor(duration/oneDay) + 'd ' + value;
+        }
       }
-
       return <td key={column.key}>{ value }</td>
     }
 
@@ -315,16 +318,29 @@ module.exports = class CarsIndex extends React.Component {
     )
   }
 
+  //
+  // These are the colunns for the mobile view. 
+  // They are special in that they aren't really 
+  // "columns" in a tabular sense nor are they
+  // sortable.
+  //
   renderListLinkItem(item, index) {
     let route = `/cars/${ item.id }`;
 
-    let duration = (moment.duration(moment.utc().diff(moment(item.lastActionTime)))).asMilliseconds();
-    let value = moment.utc(duration).format('H:mm');
+    let durationMap = {
+      lastAction: { num: (moment.duration(moment.utc().diff(moment(item.lastActionTime)))).asMilliseconds() },
+      lastSeen: { num: (moment.duration(moment.utc().diff(moment(item.lastTimeAtHq)))).asMilliseconds() }
+    };
 
-    if(duration > oneDay) {
-      value = Math.floor(duration/oneDay) + 'd ' + value;
-    }
-    let text = <span>{ item.id } <small className="pull-right">{ value }</small></span>
+    Object.keys(durationMap).forEach((key) => {
+      let str = moment.utc(durationMap[key].num).format('H:mm');
+      if(durationMap[key] > oneDay) {
+        str = Math.floor(durationMap[key].num/oneDay) + 'd ' + str;
+      }
+      durationMap[key].str = str;
+    })
+
+    let text = <span>{ item.id } <small className="pull-right">{ durationMap.lastAction.str }</small></span>
 
 
     if (item.license) {
@@ -366,7 +382,7 @@ module.exports = class CarsIndex extends React.Component {
         name = <em>{item.charge}% { word } { home }{ repair } { charge } { lock }</em>
       }
 
-      text = <span><span className='carname'>{ item.license }</span> <small>{ name }</small><small className="cartime pull-right">{ value }</small></span>
+      text = <span><span className='carname'>{ item.license }</span> <small>{ name }</small><small className="cartime pull-right">{ durationMap.lastAction.str }</small></span>
     }
 
     return (

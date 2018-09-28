@@ -85,7 +85,6 @@ module.exports = class License extends Service {
         middleName : license.middleName,
         lastName   : license.lastName,
         birthDate  : license.birthDate,
-        gender     : license.gender,
         state      : license.state,
         number     : license.number
       }, (err, license) => {

@@ -8,6 +8,7 @@ let icons = [
   'valet',
   'station',
   'homebase',
+  'user-parking',
   'car-available',
   'user-location',
   'start',

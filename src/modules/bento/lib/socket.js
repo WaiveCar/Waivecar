@@ -5,11 +5,6 @@ let socket = getSocket();
 
 class Socket {
 
-  /**
-   * Event listener.
-   * @param  {...Mixed} args
-   * @return {Void}
-   */
   static on(...args) {
     if (!socket) {
       return console.warn(`Socket > Service has not been configured with this application.`);
@@ -17,11 +12,6 @@ class Socket {
     socket.on(...args);
   }
 
-  /**
-   * Emit an event on the socket.
-   * @param  {...Mixed} args
-   * @return {Void}
-   */
   static emit(...args) {
     if (!socket) {
       return console.warn(`Socket > Service has not been configured with this application.`);
@@ -29,11 +19,6 @@ class Socket {
     socket.emit(...args);
   }
 
-  /**
-   * Authenticate with the socket.
-   * @param  {String} token
-   * @return {Void}
-   */
   static authenticate(token) {
     this.emit('authenticate', token, (error) => {
       if (error) {
@@ -45,11 +30,6 @@ class Socket {
 
 }
 
-/**
- * Returns a new socke tinstance base don the configuration set
- * in the application.
- * @return {Object}
- */
 function getSocket() {
   let settings = config.api.socket;
 
@@ -96,7 +76,6 @@ if (socket) {
   socket.on('relay', (resource, payload) => {
     relay.dispatch(resource, payload);
   });
-
 }
 
 // Export Socket
