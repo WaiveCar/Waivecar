@@ -305,7 +305,7 @@ module.exports = [
         // 14-Find-waivecar
         url: '/cars',
         templateUrl: '/templates/cars/index.html',
-        controller: 'CarsMapController as cars',
+        controller: 'CarsMapController as ctrl',
         data: {
           auth: true,
           hasGMap: true
