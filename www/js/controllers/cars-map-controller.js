@@ -31,29 +31,30 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
   var zones = [];
   
   this.all = cars;
+  ctrl.homebase = false;
   var isInBG = false;
 
   document.addEventListener("resume", function() {
-    $data.initialize('cars');
+    //$data.initialize('cars');
     isInBG = false;
   }, false);
 
   function firstLoad(currentLocation) {
+    var zoneList = locations.filter(function (location) {
+      return location.type === 'zone'; 
+    });
+
     if(!ctrl.clearCarWatcher) {
       ctrl.clearCarWatcher = $scope.$watch(function () {
         return $data.instances.cars;
       }, function (value) {
-        if (!isInBG && value && value.length > 0) {
-          ctrl.all = prepareCars(value);
+        if (!isInBG && value && value.length) {
+          ctrl.allMarkers = [].concat(zoneList, prepareCars(value));
         }
       }, true);
     }
 
     ctrl.all = prepareCars(cars);
-    //ctrl.allMarkers = ctrl.all.concat(ctrl.zoneMarkers);
-    ctrl.allMarkers = locations.filter(function (location) {
-      return location.type === 'zone'; 
-    }).concat(ctrl.all);
 
     ctrl.fitMapBoundsByMarkers = getMarkersToFitBoundBy(ctrl.all, currentLocation);
     if(!carsInRange(ctrl.all, currentLocation, 30)) {
@@ -180,25 +181,28 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
   }
 
   function prepareCars(items) {
-    var res = locations.filter(function(location){
-      // todo this sholdn't be so retarded.
-      if( location.type === 'homebase' ) {
-        // it's possible for $data.me.hasTag not to exist, I don't know how.
-        // and it's 5am when I'm writing this so we're being ineffecient here.
-        if(hasTag('level')) {
-          // like this hard coded id here, that's really bad form.
-          // Also note that below we assign a new id of a string value
-          // to a copy of the homebase object to.
-          return location.id === 1246;
-        } else {
-          return true;
+    if(ctrl.homebase === false) {
+      var res = locations.filter(function(location){
+        // todo this sholdn't be so retarded.
+        if( location.type === 'homebase' ) {
+          // it's possible for $data.me.hasTag not to exist, I don't know how.
+          // and it's 5am when I'm writing this so we're being ineffecient here.
+          if(hasTag('level')) {
+            // like this hard coded id here, that's really bad form.
+            // Also note that below we assign a new id of a string value
+            // to a copy of the homebase object to.
+            return location.id === 1246;
+          } else {
+            return true;
+          }
         }
-      }
-    })[0];
+      })[0];
+      ctrl.homebase = res;
+    }
 
-    if(res) {
+    if(ctrl.homebase) {
       // make sure we don't pollute our pristine database results.
-      var homebase = Object.assign({}, res);
+      var homebase = Object.assign({}, ctrl.homebase);
       var tempItems = _.partition(items, function (item) {
         var miles = $distance(item, homebase);
         var yards = miles * 1760;
@@ -307,6 +311,6 @@ function CarsMapController($rootScope, $scope, $state, $injector, $data, cars, l
   }
 
   function showCarTooFarModal() {
-    return quickmodal('You\'re too far away to rent this car', 'Get within 10 miles of the WaiveCar to book it.');
+    return quickmodal('You\'re too far away to book', 'Get within 10 miles of the WaiveCar to book it.');
   }
 }
