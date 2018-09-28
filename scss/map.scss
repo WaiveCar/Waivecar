@@ -6,13 +6,12 @@
     margin-top: 0.4rem;
     margin-left: 0.4rem;
     text-align:left;
-    width: 83%;
-    height: 60%;
     overflow: hidden;
     .help {
       display: none;
-      height: 100%;
       position: relative;
+      width: 83%;
+      height: 20rem;
     }
     .help-iframe {
       -webkit-overflow-scrolling: touch;
