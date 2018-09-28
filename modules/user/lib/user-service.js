@@ -466,12 +466,6 @@ module.exports = {
     return user;
   },
 
-  /**
-   * @param  {Number} id
-   * @param  {Object} query [description]
-   * @param  {Object} _user
-   * @return {Object}
-   */
   *delete(id, query, _user) {
     let user = yield this.get(id, _user);
 
@@ -519,13 +513,15 @@ module.exports = {
   },
 
   *stats(userId) {
+    let allOrders = yield ShopOrder.find({where: {userId, description: {$notLike: '%authorization%'}}});
     let totalSpent = yield ShopOrder.findOne({
       attributes: [
         [sequelize.fn('SUM', sequelize.col('amount')), 'amount']
       ],
       where: {
         userId,
-        status: 'paid'
+        status: 'paid',
+        description: {$notLike: '%authorization%'},
       }
     });
     let totalBookings = yield Booking.find({
