@@ -542,9 +542,16 @@ module.exports = {
         {
           model: 'BookingDetails',
           as: 'details',
+        },
+        {
+          model: 'Car',
+          as: 'car',
         }
       ],
     });
+    let monthAgo = moment().subtract(30, 'days');
+    let weekAgo = moment().subtract(7, 'days');
+    let dayAgo = moment().subtract(1, 'days');
     return {
       totalSpent: (totalSpent.amount / 100).toFixed(2),
       totalBookings: allBookings.length,
@@ -553,16 +560,16 @@ module.exports = {
         booking: allBookings,
       },
       month: {
-        order: allOrders.filter(order => order.createdAt > moment().subtract(30, 'days')),
-        bookings: allBookings.filter(booking => booking.createdAt > moment().subtract(30, 'days')),
+        order: allOrders.filter(order => order.createdAt > monthAgo),
+        bookings: allBookings.filter(booking => booking.createdAt > monthAgo),
       },
       week: {
-        order: allOrders.filter(order => order.createdAt > moment().subtract(7, 'days')),
-        bookings: allBookings.filter(booking => booking.createdAt > moment().subtract(7, 'days')),
+        order: allOrders.filter(order => order.createdAt > weekAgo),
+        bookings: allBookings.filter(booking => booking.createdAt > weekAgo),
       }, 
       day: {
-        order: allOrders.filter(order => order.createdAt > moment().subtract(1, 'days')),
-        bookings: allBookings.filter(booking => booking.createdAt > moment().subtract(1, 'days')),
+        order: allOrders.filter(order => order.createdAt > dayAgo),
+        bookings: allBookings.filter(booking => booking.createdAt > dayAgo),
       }
     }
   }
