@@ -7,7 +7,7 @@ Bento.Register.Model('Location', 'sequelize', function(model, Sequelize) {
   model.schema = {
 
     type : {
-      type         : Sequelize.ENUM('station', 'valet', 'homebase', 'item-of-interest', 'hub', 'zone'),
+      type         : Sequelize.ENUM('station', 'valet', 'homebase', 'item-of-interest', 'hub', 'zone', 'user-parking'),
       defaultValue : 'station'
     },
 
@@ -56,6 +56,18 @@ Bento.Register.Model('Location', 'sequelize', function(model, Sequelize) {
         'unknown'
       ),
       defaultValue : 'available'
+    },
+
+    parkingTime : {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+      defaultValue: null,
+    },
+
+    minimumCharge : {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+      defaultValue: null,
     }
   };
 

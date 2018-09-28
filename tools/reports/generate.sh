@@ -2,11 +2,11 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+path=/tmp/carreq
 year_month=$1
 
 # This is run on a personal server (cjm)
 appImpressions() {
-  path=/tmp/carreq
   mkdir -p $path
   cd $path
   [ -e accum ] && rm accum
@@ -42,6 +42,6 @@ echo "generous: $generous"
 echo "conservative: $conservative"
 echo "Making heatmap"
 $DIR/makepoints.sh $year_month
-echo "Putting monthly report in report.json"
-curl -s https://api.waivecar.com/report/$date/report > report.json
+echo "Putting monthly report in $path/report.json"
+curl -s https://api.waivecar.com/report/$year_month/report > $path/report.json
 

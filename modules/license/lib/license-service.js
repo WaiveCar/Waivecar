@@ -4,19 +4,12 @@ let License      = Bento.model('License');
 let error        = Bento.Error;
 let relay        = Bento.Relay;
 let Service      = require('./classes/service');
-let Verification = require('./onfido');
+let Verification = require('./checkr');
 let resource     = 'licenses';
 let moment       = require('moment');
 let notify       = Bento.module('waivecar/lib/notification-service');
 
 module.exports = class LicenseService extends Service {
-
-  /**
-   * Registers a new license with the requested user.
-   * @param  {Object} data
-   * @param  {Object} _user
-   * @return {Object}
-   */
   static *store(data, _user) {
     let user = yield this.getUser(data.userId);
 
@@ -54,6 +47,11 @@ module.exports = class LicenseService extends Service {
       data.birthDate = data.birthDate.split('T')[0];
     }
 
+    // Strip time off expirationDate
+    if (data.expirationDate && /.+T.+/.test(data.expirationDate)) {
+      data.expirationDate = data.expirationDate.split('T')[0];
+    }
+
     // Check that birthdate is > 21 years
     var age = moment().diff(data.birthDate, 'years');
     if (age < 21) {
@@ -83,12 +81,6 @@ module.exports = class LicenseService extends Service {
     return license;
   }
 
-  /**
-   * Returns license index.
-   * @param  {Object} query
-   * @param  {Object} _user
-   * @return {Object}
-   */
   static *index(query, _user) {
     if (query.search) {
       query = {
@@ -125,12 +117,6 @@ module.exports = class LicenseService extends Service {
     return yield License.find(query);
   }
 
-  /**
-   * Retrieves a license based on provided id.
-   * @param  {Number} id
-   * @param  {Object} _user
-   * @return {Object}
-   */
   static *show(id, _user) {
     let license = yield this.getLicense(id);
     let user    = yield this.getUser(license.userId);
@@ -140,13 +126,6 @@ module.exports = class LicenseService extends Service {
     return license;
   }
 
-  /**
-   * Updates a license.
-   * @param  {Number} id
-   * @param  {Object} data
-   * @param  {Object} _user
-   * @return {Object}
-   */
   static *update(id, data, _user) {
 
     let license = yield this.getLicense(id);
@@ -156,8 +135,12 @@ module.exports = class LicenseService extends Service {
 
     // ### create user in verification provider and establish link.
 
-
-    if (!license.linkedUserId) {
+    //
+    // The old style onfido ids were pure base16 uuidv5s with hyphens.
+    // The checkr ones appear to be base64 strings. So we can check for
+    // a hyphen to see if its onfido. If so we re-run it.
+    //
+    if (!license.linkedUserId || license.linkedUserId.match(/-/)) {
       let userLink      = yield Verification.createUserLink(user, data, _user);
       data.linkedUserId = userLink.id;
       data.status       = 'provided';
@@ -167,14 +150,11 @@ module.exports = class LicenseService extends Service {
 
     // So when a license moves to consider we need to send an SMS to the user.
     // This is where it happens to happen.
-    //
     if(license.outcome !== data.outcome && data.outcome === 'clear') {
       yield notify.sendTextMessage(user, `Congrats! You have been approved to drive with WaiveCar!`);
     }
 
     yield license.update(data);
-
-    // ### Relay
 
     relay.admin(resource, {
       type : 'update',
@@ -184,21 +164,11 @@ module.exports = class LicenseService extends Service {
     return license;
   }
 
-  /**
-   * Deletes a license.
-   * @param  {Number} id
-   * @param  {Object} _user
-   * @return {Object}
-   */
   static *delete(id, _user) {
     let license = yield this.getLicense(id);
     let user    = yield this.getUser(license.userId);
 
-    // ### Delete License
-
     yield license.delete();
-
-    // ### Relay
 
     relay.admin(resource, {
       type : 'delete',

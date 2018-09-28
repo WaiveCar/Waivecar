@@ -11,7 +11,7 @@ Bento.Register.Model('ParkingDetails', 'sequelize', (model, Sequelize) => {
     },
 
     type : {
-      type      : Sequelize.ENUM('lot', 'street'),
+      type      : Sequelize.ENUM('lot', 'street', 'user-parking'),
       allowNull : false
     },
 

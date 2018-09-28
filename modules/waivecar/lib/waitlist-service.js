@@ -229,7 +229,7 @@ module.exports = {
       res.level = 'yes';
       res.fastTrack = 'yes';
       delete res.inside;
-      let userList = yield this.letInByRecord([record], null, {email: 'level-letin'});
+      let userList = yield this.letInByRecord([record], null, {template: 'level-letin'});
 
       user = userList[0];
 
@@ -276,6 +276,7 @@ module.exports = {
         {user_id: null },
         sequelize.literal(`concat_ws(' ', first_name, last_name, place_name, notes) like '%${queryIn.search}%'`)
       ] };
+      query.order = [ ['created_at', 'asc'] ];
     } else {
       query.where = { user_id: null };
     }
@@ -344,7 +345,13 @@ module.exports = {
 
       // We create their user account.
       try {
-        userRecord = yield UserService.store(opts, _user);
+        //
+        // The issue with this method is that it's orchestrated by the
+        // admin and calls a function that sends them a text message
+        // to verify their phone number. Stupid. We're adding an option
+        // to avoid that nonsense.
+        //
+        userRecord = yield UserService.store(opts, _user, {nosms: true});
       } catch(ex) {
         userRecord = yield User.findOne({ 
           where: { 
@@ -392,7 +399,7 @@ module.exports = {
           to       : record.email,
           from     : config.email.sender,
           subject  : 'Welcome to WaiveCar',
-          template : opts.email || 'letin-email',
+          template : opts.template || 'letin-email',
           context  : Object.assign({}, params || {}, {
             name: fullName,
             passwordlink: `${config.api.uri}/reset-password?hash=${res.token.hash}&isnew=yes`
@@ -404,7 +411,7 @@ module.exports = {
       }
     }
     if (_user) {
-      let list = nameList.slice(0, -2).join(', ') + ' ' + nameList.slice(-2).join(' and ');
+      let list = nameList.slice(0, -2).join(', ') + (nameList.length > 2 ? ', ' : ' ') + nameList.slice(-2).join(' and ');
       yield notify.notifyAdmins(`:rocket: ${ _user.name() } let in ${ list }`, [ 'slack' ], { channel : '#user-alerts' })
     }
     return userList;

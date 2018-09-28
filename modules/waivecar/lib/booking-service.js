@@ -8,6 +8,7 @@ let geocode      = require('./geocoding-service');
 let notify       = require('./notification-service');
 let UserService  = require('../../user/lib/user-service.js');
 let CarService   = require('./car-service');
+let ParkingService = require('./parking-service');
 let Email        = Bento.provider('email');
 let queue        = Bento.provider('queue');
 let queryParser  = Bento.provider('sequelize/helpers').query;
@@ -41,6 +42,7 @@ let BookingPayment = Bento.model('BookingPayment');
 let ParkingDetails = Bento.model('ParkingDetails');
 let BookingLocation= Bento.model('BookingLocation');
 let Location       = Bento.model('Location');
+let UserParking    = Bento.model('UserParking');
 
 module.exports = class BookingService extends Service {
 
@@ -73,7 +75,7 @@ module.exports = class BookingService extends Service {
 
   // Creates a new booking.
   static *create(data, _user) {
-    let lockKeys = yield redis.shouldProcess('booking-car', data.carId, 9 * 1000);
+    let lockKeys = yield redis.shouldProcess('booking-car', data.carId, 45 * 1000);
     if (!lockKeys) {
       throw error.parse({
         code    : 'BOOKING_AUTHORIZATION',
@@ -81,9 +83,8 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
-    let driver = yield this.getUser(data.userId);
+    let driver = yield this.getUser(data.userId, true);
     let car = yield this.getCar(data.carId, data.userId, true);
-    let order;
 
     this.hasAccess(driver, _user);
 
@@ -127,16 +128,46 @@ module.exports = class BookingService extends Service {
     //
     // Importantly, we do this BEFORE CREATING A BOOKING.
     //
-    // Why? Otherwise we could do, for instance, a $1 hould, then 
+    // Why? Otherwise we could do, for instance, a $1 hold, then 
     // run into a race condition and never release the hold 
     //
     // The above code guarantees that we can book a car, it doesn't
     // necessarily give it to us.
     //
+    let order;
     if(process.env.NODE_ENV === 'production') {
       try {
-        if(!driver.hasAccess('admin')) {
+        if(driver.hasAccess('admin')) {
+          // we need to make sure that admins will pass the code below
+          order = {amount: 0, createdAt: new Date()};
+        } else {
           order = yield OrderService.authorize(null, driver);
+        } 
+        let orderDate = moment(order.createdAt).format('MMMM Do YYYY');
+        let amount = (order.amount / 100).toFixed(2);
+        let title;
+        let body;
+        if (order.amount > 0) {
+          title = `A $${amount} hold has been placed on your account during your ride on ${orderDate}` 
+          body = amount === '20.00' ? 'A $20 hold has been placed on your account for your ride with WaiveCar. This hold will be placed on your account every 2 days that you use our service. The amount of the hold can be reduced by adding a $20 credit to your account at our website.' : `A $${amount} hold has been placed on your account for your ride with WaiveCar. This hold will be placed on your account every 2 days that you use our service.`
+
+          let email = new Email();
+          try {
+            yield email.send({
+              to       : driver.email,
+              from     : emailConfig.sender,
+              subject  : title,
+              template : 'authorization',
+              context  : {
+                name       : driver.name(),
+                amount     : amount,
+                date       : orderDate,
+                body,
+              }
+            });
+          } catch(err) {
+            log.warn('email error: ', err);
+          } 
         }
       } catch (err) {
         // Failing to secure the authorization hold should be recorded as an
@@ -162,33 +193,62 @@ module.exports = class BookingService extends Service {
         }, 400);
       }
     }
-
+    let rebookOrder;
     // If the creator isn't an admin or is booking for themselves
-    if (!_user.hasAccess('admin') || _user.id === driver.id) {
-      yield this.recentBooking(driver, car, data.opts, lockKeys);
+    if (!(driver.isWaiveWork || _user.hasAccess('admin'))) {// || _user.id !== driver.id) {
+      rebookOrder = yield this.recentBooking(driver, car, data.opts, lockKeys);
+    }
+
+    // see #1318 we do this, as of this comment's writing, a second time, after 
+    // a potential charge has gone through because stripe has some issues
+    car = yield this.getCar(data.carId, data.userId, true);
+    if (car.userId !== null && car.bookingId !== null) {
+
+      yield notify.notifyAdmins(`Phew, at the last second, we stopped a double booking ${ car.info() } by ${ driver.link() }.`, [ 'slack' ], { channel : '#rental-alerts' });
+
+      if(rebookOrder) {
+        yield OrderService.refund(null, rebookOrder.id, driver);
+      }
+
+      yield redis.doneWithIt(lockKeys);
+      throw error.parse({
+        code    : `BOOKING_REQUEST_INVALID`,
+        message : `Another driver has already reserved this WaiveCar.`
+      }, 400);
     }
 
     let booking = new Booking({
       carId  : data.carId,
       userId : data.userId
     });
-
+    
     try {
       yield booking.save();
     } catch (err) {
       throw err;
     }
 
+    try { 
+      if (rebookOrder) {
+        // This booking payment is shown here so that it shows up in the itemization for the correct booking.
+        let rebookPayment = new BookingPayment({
+          bookingId: booking.id,
+          orderId: rebookOrder.id, 
+        });
+        yield rebookPayment.save();
+      }
+    } catch (e) {
+      log.warn('error saving rebook payment: ', e);
+    }
+
     // If there is a new authorization, a new BookingPayment must be created so that it can be itemized on the receipt.
-    if (process.env.NODE_ENV === 'production' && OrderService.authorize.last.newAuthorization) {
+    if (process.env.NODE_ENV === 'production' && !driver.hasAccess('admin') && OrderService.authorize.last.newAuthorization) {
       try {
-        if(!driver.hasAccess('admin')) {
-          let authorizationPayment = new BookingPayment({
-            bookingId : booking.id,
-            orderId   : order.id,
-          });
-          yield authorizationPayment.save();
-        }
+        let authorizationPayment = new BookingPayment({
+          bookingId : booking.id,
+          orderId   : order.id,
+        });
+        yield authorizationPayment.save();
       } catch(err) {
         log.warn(err);
       }
@@ -367,7 +427,6 @@ module.exports = class BookingService extends Service {
 
     return bookings;
   }
-
 
   static *count(query, _user) {
     let bookingsCount    = null;
@@ -560,15 +619,20 @@ module.exports = class BookingService extends Service {
    */
 
   /**
-   * Unlocks the car and lets the driver prepare before starting the ride.
-   * @param  {Number} id    The booking ID.
-   * @param  {Object} _user
-   * @return {Object}
+   * Unlocks the car and lets the driver prepare before starting the ride. It also removes the car from parking spaces if it is in one
    */
   static *ready(id, _user) {
     let booking = yield this.getBooking(id);
     let user    = yield this.getUser(booking.userId);
     let car     = yield this.getCar(booking.carId);
+
+    let atHq = yield this.isAtHub(car);
+
+    if (atHq) {
+      yield car.update({
+        lastTimeAtHq: new Date(), 
+      });
+    }
 
     this.hasAccess(user, _user);
 
@@ -619,6 +683,21 @@ module.exports = class BookingService extends Service {
       yield cars.unlockImmobilzer(car.id, _user);
       //yield cars.openDoor(car.id, _user);
 
+      yield ParkingService.vacate(car.id);
+      /*
+      let userParking = yield UserParking.findOne({ where: { carId: car.id } });
+      if (userParking) {
+        yield userParking.update({
+          carId: null,
+          waivecarOccupied: false,
+        });
+        let location = yield Location.findById(userParking.locationId);
+        yield location.update({
+          status: 'available',
+        });
+      }
+      */
+
       // ### Notify
 
       let message = yield this.updateState('started', _user, user);
@@ -646,6 +725,10 @@ module.exports = class BookingService extends Service {
     } else {
       yield notify.notifyAdmins(`:timer_clock: ${ user.link() } started a booking when it was being canceled. This was denied. ${ car.info() }.`, [ 'slack' ], { channel : '#reservations' });
     }
+    queue.scheduler.cancel(
+      'parking-notify-expiration',
+      `parking-notify-expiration-${car.id}`,
+    );
   }
 
   static *start(id, _user) {
@@ -662,7 +745,8 @@ module.exports = class BookingService extends Service {
         }
       } 
     })).forEach(function(row) {
-      if(geolib.getDistance(car, row) < row.radius) {
+      let radiusInMeters = row.radius > 1 ? row.radius : row.radius / 0.00062137; 
+      if(geolib.getDistance(car, row) < radiusInMeters) {
         hub = row;
       }
     });
@@ -680,29 +764,79 @@ module.exports = class BookingService extends Service {
     return zone;
   }
 
+  static *finalCheckFail(_user, car, query) {
+    if(_user.hasAccess('admin') && query.force) {
+      return false;
+    }
+    let errors = [];
+    if(process.env.NODE_ENV === 'production') {
+      if (car.isIgnitionOn && !car.isCharging) {
+        // if the car is charging and the charger is locked we unlock the vehicle so
+        // that the user can remove the charger
+        yield cars.unlockCar(car.id, _user);
+        errors.push('turn off the ignition and if applicable, remove the charger'); 
+      }
+      if (!car.isKeySecure) { errors.push('secure the key'); }
+      if (car.isDoorOpen) { errors.push('make sure the doors are closed');}
+    }
+      
+    if (errors.length) {
+      let message = `Your ride cannot be completed until you `;
+      switch (errors.length) {
+        case 1: {
+          message = `${ message }${ errors[0] }.`;
+          break;
+        }
+        case 2: {
+          message = `${ message }${ errors.join(' and ') }.`;
+          break;
+        }
+        default: {
+          message = `${ message }${ errors.slice(0, -1).join(', ') } and ${ errors.slice(-1) }.`;
+          break;
+        }
+      }
+
+      return {
+        code    : `BOOKING_COMPLETE_INVALID`,
+        message : message,
+        data    : errors
+      };
+    }
+  }
+
+  // A more expensive check that updates the car status and makes sure
+  // that the vehicle is in the right state to make ending legal.
+  static *endCheck(id, _user, query, payload) {
+    var booking = yield this.getBooking(id);
+    var car     = yield this.getCar(booking.carId);
+    yield car.update( yield cars.getDevice(car.id, _user, 'booking.complete') );
+    return yield this.finalCheckFail(_user, car, query);
+  }
+
+
   // The meat of canEnd, the cheap check
-  static *_canEnd(car, isAdmin) {
+  static *_canEndHere(car, isAdmin) {
     // We preference hubs over zones because cars can end there at any charge without a photo
     let hub = yield this.isAtHub(car);
-
     // if we are at a hub then we can return the car here regardless
     if(hub) {
       return hub;
     }
 
+    // if our car is fine and we aren't at a hub then we can return it so long as
+    // we are in a zone.
+    let zone = yield this.getZone(car);
     // otherwise if we aren't there and the car is low, we need to go back to a hub
-    if (car.milesAvailable() < 21 && !isAdmin) {
+    if (car.milesAvailable() < 23 && !isAdmin) {
       throw error.parse({
         code    : `CHARGE_TOO_LOW`,
         message : `The WaiveCar's charge is too low to end here. Please return it to the homebase.`
       }, 400);
     }
 
-    // if our car is fine and we aren't at a hub then we can return it so long as
-    // we are in a zone.
-    let zone = yield this.getZone(car);
-
     if(zone) {
+      zone.isZone = true;
       return zone;
     } else if(!isAdmin) {
       throw error.parse({
@@ -715,7 +849,7 @@ module.exports = class BookingService extends Service {
   }
 
   // A *very cheap* check to see if the ending spot it legal.
-  static *canEnd(id, _user, query, payload) {
+  static *canEndHere(id, _user, query, payload) {
     let booking = yield this.getBooking(id);
     let car     = yield this.getCar(booking.carId);
     let isAdmin = _user.isAdmin();
@@ -731,16 +865,13 @@ module.exports = class BookingService extends Service {
       }
     }
 
-    return yield this._canEnd(car, isAdmin);
+    return yield this._canEndHere(car, isAdmin);
   }
 
-  /**
-   * Ends the ride by calculating costs and setting the booking into pending payment state.
-   * @param  {Number} id    The booking ID.
-   * @param  {Object} _user
-   * @return {Object}
-   */
+  // Ends the ride by calculating costs and setting the booking into pending payment state.
   static *end(id, _user, query, payload) {
+    let lockKeys = yield redis.failOnMultientry('booking-end', id, 40 * 1000);
+
     let booking = yield this.getBooking(id);
     let car     = yield this.getCar(booking.carId);
     let user    = yield this.getUser(booking.userId);
@@ -750,7 +881,7 @@ module.exports = class BookingService extends Service {
     // BUGBUG: We are using the user tagging and not the car tagging
     // for level accounts
     let isLevel = yield user.isTagged('level');
-    let freeTime = isLevel ? 180 : 120;
+    let freeTime = booking.getFreeTime(isLevel);
 
     this.hasAccess(user, _user);
 
@@ -760,6 +891,7 @@ module.exports = class BookingService extends Service {
       if(booking.status === 'ended') {
         return true;
       }
+      yield redis.doneWithIt(lockKeys);
       throw error.parse({
         code    : `BOOKING_REQUEST_INVALID`,
         message : `You can only end a booking which has been made ready or has already started.`
@@ -784,6 +916,7 @@ module.exports = class BookingService extends Service {
         if (isAdmin) {
           warnings.push('the ignition is on');
         } else {
+          yield redis.doneWithIt(lockKeys);
           throw error.parse({
             code    : `BOOKING_REQUEST_INVALID`,
             message : `You must park, and turn off the engine before ending your booking.`
@@ -792,8 +925,7 @@ module.exports = class BookingService extends Service {
       }
     }
 
-    yield this._canEnd(car, isAdmin);
-    
+    let end = yield this._canEndHere(car, isAdmin);
     // Immobilize the engine.
     let status;
     try {
@@ -828,6 +960,7 @@ module.exports = class BookingService extends Service {
     */
 
     if (isAdmin && warnings.length && !query.force) {
+      yield redis.doneWithIt(lockKeys);
       throw error.parse({
         code    : `BOOKING_END`,
         message : `The booking can't be ended because ${ warnings.join(' and ')}.`
@@ -844,6 +977,16 @@ module.exports = class BookingService extends Service {
     // ### Reset Car --- moved to _complete
     //yield car.removeDriver();
 
+    //
+    // --------------------------------------------------------
+    //
+    // At this point we've done all the checks and can safely
+    // mark the booking as complete. This is involves logging,
+    // deleting timers and adding a row to the booking_details
+    // table 
+    // 
+    // --------------------------------------------------------
+    //
     let endDetails = yield this.logDetails('end', booking, car);
 
     // Create a shop cart with automated fees.
@@ -880,7 +1023,6 @@ module.exports = class BookingService extends Service {
       }
     }
 
-  
     // Handle auto charge for time
     if (!isAdmin) {
       yield OrderService.createTimeOrder(booking, user);
@@ -893,6 +1035,12 @@ module.exports = class BookingService extends Service {
     // Parking restrictions:
     let parkingSlack;
     if (payload && payload.data && payload.data.type) {
+      if (end.isZone && payload.data.streetHours < end.parkingTime) {
+        throw error.parse({
+          code    : 'NOT_ENOUGH_PARKING_TIME',
+          message : 'Your parking is not valid for a long enough time.'
+        }, 400);
+      }
       let parkingText = '';
       payload.data.bookingId = id;
 
@@ -928,7 +1076,6 @@ module.exports = class BookingService extends Service {
         });
         payload.data.streetSignImage = payload.data.streetSignImage.id;
       }
-
       let parking = new ParkingDetails(payload.data);
       yield parking.save();
     }
@@ -958,6 +1105,7 @@ module.exports = class BookingService extends Service {
 
     car.relay('update');
     yield this.relay('update', booking, _user);
+    yield redis.doneWithIt(lockKeys);
 
     return {
       isCarReachable : isCarReachable
@@ -1019,107 +1167,116 @@ module.exports = class BookingService extends Service {
 
   // Locks, and makes the car available for a new booking.
   static *_complete(id, _user, query, payload) {
-    if (!(yield redis.shouldProcess('booking-complete', id))) {
+    let lockKeys = yield redis.shouldProcess('booking-complete', id);
+    if (!lockKeys) {
       return;
     }
 
-    let relations = {
-      include : [
-        {
-          model : 'BookingDetails',
-          as    : 'details'
-        }
-      ]
-    };
-    let booking = yield this.getBooking(id, relations);
-    let car     = yield this.getCar(booking.carId);
-    let user    = yield this.getUser(booking.userId);
-    let isLevel = yield user.isTagged('level');
-    let isAdmin = _user.hasAccess('admin');
+    var isAdmin = _user.hasAccess('admin');
+    try {
+      let relations = {
+        include : [
+          {
+            model : 'BookingDetails',
+            as    : 'details'
+          }
+        ]
+      };
+      var booking = yield this.getBooking(id, relations);
+      var car     = yield this.getCar(booking.carId);
+      var user    = yield this.getUser(booking.userId);
+      var isLevel = yield user.isTagged('level');
 
-    this.hasAccess(user, _user);
+      this.hasAccess(user, _user);
 
-    if (booking.status !== 'ended') {
-      yield this.end(id, _user, query, payload);
       if (booking.status !== 'ended') {
-        throw {
-          code    : `BOOKING_REQUEST_INVALID`,
-          message : `You cannot complete a booking which has not yet ended.`
-        };
-      }
-    }
-
-    // ### Validate Complete Status
-    // Make sure all required car states are valid before allowing the booking to
-    // be completed and released for next booking.
-
-    function *finalCheckFail() {
-      let errors  = [];
-      if(process.env.NODE_ENV === 'production') {
-        if (car.isIgnitionOn && !car.isCharging) {
-          // if the car is charging and the charger is locked we unlock the vehicle so
-          // that the user can remove the charger
-          yield cars.unlockCar(car.id, _user);
-          errors.push('turn off the ignition and if applicable, remove the charger'); 
+        yield this.end(id, _user, query, payload);
+        if (booking.status !== 'ended') {
+          yield redis.doneWithIt(lockKeys);
+          throw {
+            code    : `BOOKING_REQUEST_INVALID`,
+            message : `You cannot complete a booking which has not yet ended.`
+          };
         }
-        if (!car.isKeySecure) { errors.push('secure the key'); }
-        if (car.isDoorOpen) { errors.push('make sure the doors are closed');}
       }
-        
-      if (errors.length && !(_user.hasAccess('admin') && query.force)) {
-        let message = `Your ride cannot be completed until you `;
-        switch (errors.length) {
-          case 1: {
-            message = `${ message }${ errors[0] }.`;
-            break;
-          }
-          case 2: {
-            message = `${ message }${ errors.join(' and ') }.`;
-            break;
-          }
-          default: {
-            message = `${ message }${ errors.slice(0, -1).join(', ') } and ${ errors.slice(-1) }.`;
-            break;
-          }
-        }
 
-        return {
-          code    : `BOOKING_COMPLETE_INVALID`,
-          message : message,
-          data    : errors
-        };
-      }
-    }
+      // ### Validate Complete Status
+      // Make sure all required car states are valid before allowing the booking to
+      // be completed and released for next booking.
 
-    let res = yield finalCheckFail();
-    // if it looks like we'd fail this, then and only then do we probe the device one final time.
-    if(res) {
-      try {
-        yield car.update( yield cars.getDevice(car.id, _user, 'booking.complete') );
-      } catch (err) {
-        log.warn(`Failed to update ${ car.info() } when completing booking ${ booking.id }`);
-      }
-      res = yield finalCheckFail();
+      let res = yield this.finalCheckFail(_user, car, query);
+      // if it looks like we'd fail this, then and only then do we probe the device one final time.
       if(res) {
-        throw res;
+        try {
+          yield car.update( yield cars.getDevice(car.id, _user, 'booking.complete') );
+        } catch (err) {
+          log.warn(`Failed to update ${ car.info() } when completing booking ${ booking.id }`);
+        }
+        res = yield this.finalCheckFail(_user, car, query);
+        if(res) {
+          yield redis.doneWithIt(lockKeys);
+          throw res;
+        }
       }
-    }
 
+      let details = yield BookingDetails.find({
+        where: {
+          bookingId: booking.id
+        }
+      });
 
-    // --- 
-    //
-    // By this point we assume that the user is allowed to end the booking
-    // at the charge/location the car is currently at. If that's not true, 
-    // then you need to yell at the user above this.
-    //
-    // ---
+      let sumQuery = yield sequelize.query(`select type, sum(mileage) as total from booking_details join bookings on booking_details.booking_id = bookings.id where user_id=${user.id} group by type;`);
+      let totalMiles = Math.abs(sumQuery[0][1].total - sumQuery[0][0].total);
+      let lastTripDistance = Math.abs(details[1].mileage - details[0].mileage);
+      let beforeLastTrip = totalMiles - lastTripDistance;
+      // This email will be sent for every 500 miles a user drives
+      /*
+      if (Math.floor(totalMiles / 500) !== Math.floor(beforeLastTrip / 500)) {
+        let email = new Email();
+        let numMonths = Math.ceil(moment(Date.now()).diff(moment(user.createdAt), 'months'));
+        let allBookings = yield Booking.find({where: {userId: user.id}});
+        let gallons = Math.ceil(totalMiles / 24.7);
+        try {
+	        yield email.send({
+		        to       : user.email,
+		        from     : emailConfig.sender,
+            subject  : `You just drove your ${Math.floor(totalMiles)}th mile with WaiveCar!`,
+		        template : 'drove-x-miles',
+		        context  : {
+		          name       : user.name(),
+              numMonths,
+              numBookings: allBookings.length,
+              gallons,
+              pounds: Math.ceil(gallons * 19.6),
+              savings: (totalMiles * 0.545).toFixed(2),
+		        }
+          });
+        } catch(err) {
+          log.warn('email error: ', err);
+        }; 
+      }
+      */
 
-    if (!isLevel) { 
-      yield cars.lockCar(car.id, _user);
-      yield cars.lockImmobilzer(car.id, _user);
-      // This was causing problems ... I'd rather have booking ending having issues
-      // then cars being idle and unlocked
-      // yield booking.setNowLock({userId: _user.id, carId: car.id});
+      // --- 
+      //
+      // By this point we assume that the user is allowed to end the booking
+      // at the charge/location the car is currently at. If that's not true, 
+      // then you need to yell at the user above this.
+      //
+      // ---
+
+      if (!isLevel) { 
+        yield cars.lockCar(car.id, _user);
+        yield cars.lockImmobilzer(car.id, _user);
+        // This was causing problems ... I'd rather have booking ending having issues
+        // then cars being idle and unlocked
+        // yield booking.setNowLock({userId: _user.id, carId: car.id});
+      }
+    } catch(ex) {
+      if (!query.force || !booking || !car || !user) {
+        yield redis.doneWithIt(lockKeys);
+        throw ex;
+      }
     }
 
     yield booking.complete();
@@ -1131,27 +1288,73 @@ module.exports = class BookingService extends Service {
 
     // If car is under 25% make it unavailable after ride is done #514
     // We use the average to make this assessment.
-    if (car.milesAvailable() < 25 && !isAdmin) {
+
+    let zone = '', address = '';
+    let minCharge;
+
+    try {
+      zone = yield this.getZone(car);
+      minCharge = zone.minimumCharge;
+      if (car.milesAvailable() <= zone.minimumCharge && !isAdmin && !isLevel) {
+        yield cars.updateAvailabilityAnonymous(car.id, false);
+        yield notify.slack({ text : `:spider: ${ car.link() } unavailable due to charge being under ${zone.minimumCharge}. ${ car.chargeReport() }`
+        }, { channel : '#rental-alerts' });
+      } else {
+        yield car.available();
+        yield this.notifyUsers(car);
+      }
+      zone = `(${zone.name})` || '';
+      address = yield this.getAddress(car.latitude, car.longitude);
+    } catch(ex) {}
+
+    minCharge = minCharge ? minCharge : 25;
+
+    if (car.milesAvailable() <= minCharge && !isAdmin && !isLevel) {
       yield cars.updateAvailabilityAnonymous(car.id, false);
-      yield notify.slack({ text : `:spider: ${ car.link() } unavailable due to charge being under 25mi. ${ car.chargeReport() }`
+      yield notify.slack({ text : `:spider: ${ car.link() } unavailable due to charge being under ${minCharge}mi. ${ car.chargeReport() }`
       }, { channel : '#rental-alerts' });
     } else {
       yield car.available();
       yield this.notifyUsers(car);
     }
 
-    let zone = '', address = '';
-    try {
-      zone = yield this.getZone(car);
-      zone = `(${zone.name})` || '';
-      address = yield this.getAddress(car.latitude, car.longitude);
-    } catch(ex) {}
-
     let message = yield this.updateState('completed', _user, user);
     yield notify.sendTextMessage(user, `Thanks for driving with WaiveCar! Your rental is complete. You can see your trip summary in the app.`);
     yield notify.slack({ text : `:coffee: ${ message } ${ car.info() } ${ zone } ${ address } ${ booking.link() }` }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
 
+    // Notify slack, create a ticket to move car, also need to create tickets to be created that close if the car is moved
+    // This also needs to be made compatible with the changes I made in the last ticket I worked on.
+
+    // Admins will be notified of expiring parking 30 mins before expiration if parking is shorter than 5 hours
+    // and 90 mins before if it is longer
+
+
+    // If there are parking details, a slack notification is sent out close to expiration
+    let details = yield ParkingDetails.findOne({
+      where: {
+        bookingId: id,
+      }
+    });
+
+    if (details) {
+      let notificationTime = details.streetHours < 5 ? 30 : 90; 
+      let timerObj = {value: notificationTime, type: 'minutes'};
+
+      queue.scheduler.add('parking-notify-expiration', {
+        uid: `parking-notify-expiration-${car.id}`,
+        timer: timerObj,
+        unique: true,
+        data: {
+          notificationTime,
+          bookingId: booking.id,
+          userId: user.id,
+          carId: car.id,
+          zone,
+          address,
+        },
+      });
+    }
     // ### Relay
 
     // if it's between 1am and 5am (which is 4 and 8 according to our east coast servers), then
@@ -1417,6 +1620,27 @@ module.exports = class BookingService extends Service {
   }
 
   static *logDetails(type, booking, car) {
+    //
+    // see 1329: Fix multiple end and multiple start
+    //
+    // There's an issue fundamental to restart that we
+    // are trying to avoid (see #1330 for the details)
+    //
+    // We are trying to make sure we aren't logging things
+    // twice. This is a last-ditch protection for it and
+    // it shouldn't be required. But famous last words...
+    //
+    let check = yield BookingDetails.find({
+      where: {
+        bookingId : booking.id,
+        type      : type
+      }
+    });
+
+    if(check && check.length > 0) {
+      return check[0];
+    }
+
     let details = new BookingDetails({
       bookingId : booking.id,
       type      : type,
@@ -1490,10 +1714,13 @@ module.exports = class BookingService extends Service {
       minTime += 5;
     }
 
+    let rebookOrder;
+
     if (minutesLapsed < minTime) {
       if(opts.buyNow) {
-        if(yield OrderService.getCarNow(booking, user, opts.buyNow * 100)) {
-          return true;
+        rebookOrder = yield OrderService.getCarNow(booking, user, opts.buyNow * 100);
+        if (rebookOrder) {
+          return rebookOrder;
         }
       }
       let remainingTime =  Math.max(1, Math.ceil(minTime - minutesLapsed));
@@ -1585,6 +1812,6 @@ module.exports = class BookingService extends Service {
            [ 'slack' ], { channel : '#user-alerts' });
       }
     }
+    return;
   }
-
 };

@@ -55,12 +55,8 @@ Bento.Register.Model('License', 'sequelize', function(model, Sequelize) {
       type : Sequelize.DATEONLY()
     },
 
-    gender : {
-      type : Sequelize.ENUM(
-        'male',
-        'female'
-      ),
-      defaultValue : 'male'
+    expirationDate : {
+      type : Sequelize.DATEONLY()
     },
 
     linkedUserId : {

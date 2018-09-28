@@ -24,11 +24,6 @@ module.exports = class Email {
     }
   }
 
-  /**
-   * Render Email from Template
-   * @param {String} templateName
-   * @param {Object} context
-   */
   *renderTemplate(templateName, context) {
     let templateLocation = path.join(this.templates, templateName);
     let template         = new Template(templateLocation);
@@ -51,7 +46,7 @@ module.exports = class Email {
       email.to = this.config.recipient;
     }
 
-    fs.appendFileSync('/var/log/outgoing/email.txt', JSON.stringify(email) + '\n');
+    fs.appendFile('/var/log/outgoing/email.txt', JSON.stringify(email) + '\n');
 
     if (!this.transporter) {
       throw error.parse({

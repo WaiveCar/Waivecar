@@ -2,18 +2,8 @@
 
 Bento.Register.Model('ReportFile', 'sequelize', function(model, Sequelize) {
 
-  /**
-   * The identity of the table created in your database.
-   * @property table
-   * @type     String
-   */
   model.table = 'report_files';
 
-  /**
-   * The sequelize schema definition of your model.
-   * @property schema
-   * @type     Object
-   */
   model.schema = {
 
     reportId : {
@@ -44,5 +34,4 @@ Bento.Register.Model('ReportFile', 'sequelize', function(model, Sequelize) {
   ];
 
   return model;
-
 });

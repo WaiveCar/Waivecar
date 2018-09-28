@@ -120,12 +120,12 @@ Bento.Register.Controller('BookingsController', function(controller) {
     if (action === 'start') {
       yield checkVersion(this, "Please upgrade the WaiveCar app before continuing");
     }
-
     switch (action) {
       case 'start'    : return yield booking.start(id, this.auth.user);
       case 'ready'    : return yield booking.ready(id, this.auth.user);
       case 'end'      : return yield booking.end(id, this.auth.user, this.query, this.payload);
-      case 'canend'   : return yield booking.canEnd(id, this.auth.user, this.query, this.payload);
+      case 'canend'   : return yield booking.canEndHere(id, this.auth.user, this.query, this.payload);
+      case 'endcheck' : return yield booking.endCheck(id, this.auth.user, this.query, this.payload);
       case 'complete' : return yield booking.complete(id, this.auth.user, this.query, this.payload);
       case 'extend'   : return yield booking.extend(id, this.query, this.auth.user);
       case 'close'    : return yield booking.close(id, this.auth.user);

@@ -4,27 +4,14 @@ let service = require('../lib/license-service');
 
 Bento.Register.Controller('LicensesController', function(controller) {
 
-  /**
-   * Stores a new license record.
-   * @return {Object}
-   */
   controller.store = function *() {
     return yield service.store(this.payload, this.auth.user);
   };
 
-  /**
-   * Returns a license index.
-   * @return {Array}
-   */
   controller.index = function *() {
     return yield service.index(this.query, this.auth.user);
   };
 
-  /**
-   * Returns a single license record.
-   * @param  {Mixed}  id
-   * @return {Object}
-   */
   controller.show = function *(id) {
     return yield service.show(id, this.auth.user);
   };

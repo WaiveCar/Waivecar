@@ -105,11 +105,26 @@ Scheduler.process = function process(jobId, handler) {
  * @return {Void} [description]
  */
 Scheduler.cancel = function cancel(job, uid) {
-  co(function *() {
+  return co(function *() {
     uid = uid ? ':' + uid : '';
-    log.info(`Cancel [${ SCHEDULES + job + uid }]`);
-    yield redis.del(SCHEDULES + job + uid);
+    let jobString = SCHEDULES + job + uid;
+
+    log.info(`Cancel [${ jobString }]`);
+
+    // See if the redis key exists or 
+    // if it has already been handled.
+    let check = yield redis.get(jobString);
+    yield redis.del(jobString);
+
+    //
+    // clearTimeout can't be used to check for validity:
+    //
+    // "Passing an invalid ID to clearTimeout() silently does nothing; no exception is thrown."
+    // https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/clearTimeout
+    //
     clearTimeout(Scheduler.store[job + uid]);
+
+    return check;
   });
 };
 

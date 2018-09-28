@@ -66,7 +66,7 @@ module.exports = {
   },
 
   *index(query, _user) {
-    var hour = (new Date()).getHours();
+    var hour = moment().tz('America/Los_Angeles').format('H');
     var isAdmin = _user && _user.hasAccess('admin');
 
     var opts = {
@@ -96,7 +96,7 @@ module.exports = {
 
     // Don't show la cars between 1 and 5am pacific time.
     // Unless you are an admin
-    if(hour >= 1 && hour < 4 && !isAdmin) {
+    if((hour >= 22 || hour < 1) && !isAdmin) {
       let $where = opts.where;
       opts.where = {
         $and: [ 
@@ -104,7 +104,7 @@ module.exports = {
           $where 
         ]
       };
-    } else if(hour >= 4 && hour < 8 && !isAdmin) {
+    } else if((hour >= 1 && hour < 4) && !isAdmin) {
       opts.where = { 
         $or : [
           sequelize.literal("groupCar.group_role_id = 7")
@@ -426,7 +426,14 @@ module.exports = {
   *updateAvailabilityAnonymous(id, isAvailable, _user) {
     let model = yield Car.findById(id);
     if (isAvailable) {
-      yield model.available();
+      if (!model.bookingId) {
+        yield model.available();
+      } else {
+        throw error.parse({
+          code    : 'CAR_IN_BOOKING',
+          message : 'Cars can\'t be made available while they are in a current booking.',
+        }, 400);
+      }
     } else {
       yield model.unavailable();
     }
@@ -443,12 +450,6 @@ module.exports = {
     return model;
   },
 
-  /**
-   * @param  {Number}  id
-   * @param  {Boolean} isAvailable
-   * @param  {Object}  _user
-   * @return {Mixed}
-   */
   *updateAvailability(id, isAvailable, _user) {
     access.verifyAdmin(_user);
 
@@ -591,7 +592,7 @@ module.exports = {
       // thing.  So instead we are going to make the lock something like 5 minutes ... that should make
       // things shut up
       //
-      if (data.isCharging && !existingCar.isAvailable && !(yield redis.shouldProcess('car-charge-notice', existingCar.id, 5 * 60 * 1000))) {
+      if (data.isCharging && !existingCar.isAvailable && (yield redis.shouldProcess('car-charge-notice', existingCar.id, 5 * 60 * 1000))) {
         if (
             (data.charge >= 100 && existingCar.charge < 100) ||
             (data.charge >= 80 && existingCar.charge < 80)
@@ -760,7 +761,7 @@ module.exports = {
     status.id = id;
     status.t = new Date();
     status._misc = misc;
-    fs.appendFileSync('/var/log/invers/log.txt', JSON.stringify(status) + "\n");
+    fs.appendFile('/var/log/invers/log.txt', JSON.stringify(status) + "\n");
   },
 
   /**

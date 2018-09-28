@@ -36,7 +36,7 @@ var checkBooking = co.wrap(function *(booking) {
   let duration = 0;
   let isLevel = yield car.hasTag('level');
   let booking_history = null;
-  let freetime = isLevel ? 180 : 120;
+  let freetime = booking.getFreeTime(isLevel);
   let trigger = freetime + 60;
   
 
@@ -110,7 +110,7 @@ var checkBooking = co.wrap(function *(booking) {
       // This text message warning if the booking is 1 hour over the free time
       if (duration >= trigger && !booking.isFlagged('hour-over-notice')) {
         yield booking.flag('hour-over-notice');
-        let hour = trigger / 60;
+        let hour = Math.floor(trigger / 60);
         let carName = car.license;
         yield notify.sendTextMessage(user, `Just a reminder that you are ${ hour } hours into your booking with ${ carName }. If you feel this is a mistake, give us a call. Otherwise enjoy your ride!`);
       }
@@ -163,8 +163,10 @@ var checkBooking = co.wrap(function *(booking) {
     yield notify.notifyAdmins(`:small_red_triangle: ${ user.link() } is continuing to drive ${ car.info() } to an even lower charge. ${ car.chargeReport() }. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
 
   } else if (car.avgMilesAvailable() < 21 && !booking.isFlagged('low-0')) {
+    let homebase = isLevel ? '34 N 7th Street' : '2102 Pico Blvd, Santa Monica 90405';
+
     yield booking.flag('low-0');
-    yield notify.sendTextMessage(user, 'Hey there! Looks like your WaiveCar battery is getting really low. Please return your WaiveCar to the home base.');
+    yield notify.sendTextMessage(user, `Hey there! Looks like your WaiveCar battery is getting really low. Please return your WaiveCar to ${ homebase }.`);
     yield notify.notifyAdmins(`:battery: ${ user.link() } has driven ${ car.info() } to a low charge. ${ car.chargeReport() }. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
   }
 
@@ -176,12 +178,14 @@ var checkBooking = co.wrap(function *(booking) {
   });
   yield newLocation.save();
   
+  /*
   let hasMoved = GeocodingService.hasMoved(car, device, 600);
   // If the car has moved, but the ignition is off, that means that the vehicle may currently be being towed and a notification is sent tto slack
-  if (hasMoved && !device.isIgnitionOn && !car.isIgnitionOn && car.totalMileage === device.totalMileage && hasMoved < 10000) {
+  if (hasMoved && !device.isIgnitionOn && !car.isIgnitionOn && car.totalMileage === device.totalMileage && hasMoved < 20000) {
     console.log(car, device, car.totalMileage, device.totalMileage, device.isIgnitionOn, car.isIgnitionOn, hasMoved);
     yield notify.notifyAdmins(`:flying_saucer: ${ car.license } is moving without the ignition on or odometer incrementing. It may be on a tow truck.`, [ 'slack' ], { channel : '#rental-alerts' });
   }
+  */
 
   yield cars.syncUpdate(car.id, device, car);
 });

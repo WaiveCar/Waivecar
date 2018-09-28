@@ -61,17 +61,6 @@ module.exports = {
     label     : 'Date Of Birth',
     helpText  : null
   },
-  gender : {
-    name      : 'gender',
-    component : 'select',
-    required  : false,
-    label     : 'Gender',
-    helpText  : null,
-    options   : [
-      { name : 'Male',   value : 'male' },
-      { name : 'Female', value : 'female' }
-    ]
-  },
   state : {
     name      : 'state',
     component : 'select',

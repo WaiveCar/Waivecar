@@ -141,8 +141,11 @@ module.exports = class OrderService extends Service {
   }
 
   static *refund(payload, paymentId, _user) {
-    let charge = {amount: payload.amount};
     let order = yield Order.findById(paymentId);
+    if(!payload) {
+      payload = {amount: order.amount};
+    }
+    let charge = {amount: payload.amount};
     let user = yield this.getUser(order.userId);
     let response;
 
@@ -168,17 +171,17 @@ module.exports = class OrderService extends Service {
     yield notify.notifyAdmins(`:carousel_horse: ${ _user.link() } refunded $${ amount } to ${ user.link() } which was for ${ order.description }`, [ 'slack' ], { channel : '#rental-alerts' });
 
     try {
-	    yield email.send({
-		    to       : user.email,
-		    from     : emailConfig.sender,
+      yield email.send({
+        to       : user.email,
+        from     : emailConfig.sender,
         subject  : `$${ amount } refunded for your trip on ${ orderDate }`,
-		    template : 'refund',
-		    context  : {
-		      name       : user.name(),
+        template : 'refund',
+        context  : {
+          name       : user.name(),
           amount     : amount,
           description: order.description, 
           date       : orderDate,
-		    }
+        }
       });
     } catch(err) {
       log.warn(err);
@@ -277,17 +280,10 @@ module.exports = class OrderService extends Service {
       yield notify.notifyAdmins(`:heavy_dollar_sign: Charged the impatient ${ user.link() } $${ fee } to rebook ${ car.license }`, [ 'slack' ], { channel : '#rental-alerts' });
     } catch (err) {
       yield this.failedCharge(amount, user, err, ` | ${ apiConfig.uri }/bookings/${ booking.id }`);
-      return false;
+      return;
     }
 
-    // Regardless of whether we successfully charged the user or not, we need
-    // to associate this booking with the users' order id
-    let payment = new BookingPayment({
-      bookingId : booking.id,
-      orderId   : order.id
-    });
-    yield payment.save();
-    return true;
+    return order;
   }
 
   static *extendReservation(booking, user, amount, time) {
@@ -339,8 +335,7 @@ module.exports = class OrderService extends Service {
     }
 
     let isLevel = yield user.isTagged('level');
-    // level cars get 3 free hours, not 2. #1159
-    let freeTime = isLevel ? 180 : 120;
+    let freeTime = booking.getFreeTime(isLevel);
 
     // Determine time
     let amount = 0;
@@ -460,45 +455,45 @@ module.exports = class OrderService extends Service {
       );
     if (totalAmount > 0) {
       // This is sent out if there are charges for the booking or if the user is receiving a $20 hold 
-	    try {
-	      yield email.send({
-		      to       : user.email,
-		      from     : emailConfig.sender,
-		      subject  : `$${ dollarAmount } receipt for your recent booking with ${carName}${ city }`,
-		      template : 'time-charge',
-		      context  : {
-		        name     : user.name(),
+      try {
+        yield email.send({
+          to       : user.email,
+          from     : emailConfig.sender,
+          subject  : `$${ dollarAmount } receipt for your recent booking with ${carName}${ city }`,
+          template : 'time-charge',
+          context  : {
+            name     : user.name(),
             car      : carName, 
-		        duration : minutesOver,
-		        paid     : allCharges.totalPaid ? (allCharges.totalPaid / 100).toFixed(2) : false,
+            duration : minutesOver,
+            paid     : allCharges.totalPaid ? (allCharges.totalPaid / 100).toFixed(2) : false,
             credit   : allCharges.totalCredit ? (allCharges.totalCredit / 100).toFixed(2) : false,
             creditLeft: (user.credit / 100).toFixed(2),
             list     : chargesList,
             optionalText: authCharges > 0 ? optionalText : null 
-		      }
-	      });
-	    } catch(err) {
-	      log.warn('Failed to deliver time notification email: ', err);
-	    } 
+          }
+        });
+      } catch(err) {
+        log.warn('Failed to deliver time notification email: ', err);
+      } 
     } else {
       // This is sent out if there are no charges for the booking
-	    try {
-	      yield email.send({
-		        to       : user.email,
-		        from     : emailConfig.sender,
-		        subject  : `You drove for free${ city }. Thanks for using WaiveCar.`,
-		        template : 'free-ride-complete',
-		        context  : {
-		          name     : user.name(),
+      try {
+        yield email.send({
+            to       : user.email,
+            from     : emailConfig.sender,
+            subject  : `You drove for free${ city }. Thanks for using WaiveCar.`,
+            template : 'free-ride-complete',
+            context  : {
+              name     : user.name(),
               car      : carName, 
               duration : minutesOver,
               city     : city,
               optionalText: authCharges > 0 ? optionalText : null
-		        }
-	      });
-	    } catch(err) {
-	      log.warn('Failed to deliver time notification email: ', err);
-	    } 
+            }
+        });
+      } catch(err) {
+        log.warn('Failed to deliver time notification email: ', err);
+      } 
     }
   }
 

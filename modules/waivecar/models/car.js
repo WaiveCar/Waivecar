@@ -213,6 +213,10 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       type : Sequelize.DATE
     },
 
+    lastTimeAtHq : {
+      type : Sequelize.DATE
+    },
+
     comments : {
       type : Sequelize.TEXT()
     }
@@ -311,12 +315,12 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     },
 
     avgMilesAvailable: function (est) {
-      return (this.averageCharge() * this.getRange(est)) / 100;
+      return (Math.min(this.averageCharge(), 100) * this.getRange(est)) / 100;
     },
 
     milesAvailable: function (est) {
       // charge is 0-100
-      return (this.charge * this.getRange(est)) / 100;
+      return (Math.min(100, this.charge) * this.getRange(est)) / 100;
     },
 
     averageCharge : function () {
