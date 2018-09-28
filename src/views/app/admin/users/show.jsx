@@ -1,5 +1,4 @@
 import React from 'react';
-import {api} from 'bento';
 import UserDetails from './user-details';
 import Stats from './stats';
 import UserLicense from './user-license';
@@ -9,22 +8,10 @@ import NotesList from '../components/notes/list';
 import UserParking       from '../../components/user/user-parking/user-parking';
 
 module.exports = class AdminUsersView extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      stats: null,
-    }
-  }
-  componentDidMount() {
-    api.get(`/users/${this.props.params.id}/stats`, (err, stats) => {
-      this.setState({stats});
-    });
-  }
-
   render() {
     return (
       <div id="users">
-        <Stats stats={this.state.stats} />
+        <Stats id={ this.props.params.id }/>
         <UserDetails id={ this.props.params.id } />
         <UserParking admin={true} userId={ this.props.params.id }/>
         <UserLicense id={ this.props.params.id } />
