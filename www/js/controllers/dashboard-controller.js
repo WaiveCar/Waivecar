@@ -569,6 +569,7 @@ function DashboardController ($scope, $rootScope, $injector) {
     var duration = moment.duration(expiration.diff(moment()))
     ctrl.parkingReservationTime = moment(duration.asMilliseconds()).format('m:ss');
     var interval = setInterval(function(){
+      duration = moment.duration(duration - 1000, 'milliseconds')
       if ($data.reservedParking === null) {
         clearInterval(interval);
       }
