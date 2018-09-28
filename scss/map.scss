@@ -1,12 +1,13 @@
 .map-instance {
   width: 100%;
   height: 100%;
+  text-align:left;
 
   .help-wrap {
     margin-top: 0.4rem;
     margin-left: 0.4rem;
-    text-align:left;
     overflow: hidden;
+    display: inline-block;
     .help {
       display: none;
       position: relative;
