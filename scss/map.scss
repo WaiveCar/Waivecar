@@ -8,9 +8,15 @@
     text-align:left;
     width: 83%;
     height: 60%;
-    -webkit-overflow-scrolling: touch;
+    overflow: hidden;
     .help {
       display: none;
+      height: 100%;
+      position: relative;
+    }
+    .help-iframe {
+      -webkit-overflow-scrolling: touch;
+      overflow: scroll;
       height: 100%;
     }
     iframe {
@@ -23,13 +29,14 @@
       vertical-align: top;
     }
     .close {
-      display: inline-block;
-      margin-left: -2rem;
+      position: absolute;
       background: rgba(232,232,232,0.8);
       padding: 0.5rem;
-      position: relative;
       font-size: 1.15rem;
       color: rgb(32,32,32);
+      top: 0;
+      right: 0;
+      z-index: 20;
     }
 
     a {
