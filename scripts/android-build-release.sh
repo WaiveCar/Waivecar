@@ -36,8 +36,9 @@ jarsigner \
 echo "> verifying APK"
 jarsigner -verify -certs $APK_LOCATION
 
+date=`date +%Y%m%d`
 release_path=$ROOT/releases/$APK_NAME.apk
-release_path_archive=$ROOT/releases/$APK_NAME-$apk_version.apk
+release_path_archive=$ROOT/releases/$APK_NAME-$apk_version-$date.apk
 
 mkdir -p releases
 zipalign -f 4 \
