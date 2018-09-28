@@ -30,7 +30,7 @@ appSettings.provider('$settings', [
       baseUrl: 'https://api.waivecar.com'
     });
     envs.staging = _.extend({}, defaults, {
-      baseUrl: 'http://staging.waivecar.com:3000'
+      baseUrl: 'http://staging.waivecar.com:4300'
     });
 
     if(window.location.host.match(/^localhost/) && !localStorage.env) {
