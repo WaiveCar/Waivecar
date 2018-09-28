@@ -18,7 +18,7 @@ module.exports = {
     // This is used to create new parking spaces. When new spaces are created, they are
     // not available until they are marked as bookable on the website.
     let user = yield User.findById(query.userId);
-    let lastRecord = yield Location.findOne({order: ['id','desc']});
+    let lastRecord = yield Location.findOne({order: [['id','desc']]});
     let lastId = lastRecord.id;
     let location = new Location({
       name: `WaiveSpot${ lastId + 1 }`,
