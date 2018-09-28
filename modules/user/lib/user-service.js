@@ -13,6 +13,7 @@ let Email       = Bento.provider('email');
 let emailConfig = Bento.config.email;
 let log         = Bento.Log;
 let waiveConfig = Bento.config;
+let moment      = require('moment');
 
 // ### Models
 
@@ -513,7 +514,12 @@ module.exports = {
   },
 
   *stats(userId) {
-    let allOrders = yield ShopOrder.find({where: {userId, description: {$notLike: '%authorization%'}}});
+    let allOrders = yield ShopOrder.find({
+      where: {
+        userId, 
+        description: {$notLike: '%authorization%'}
+      }
+    });
     let totalSpent = yield ShopOrder.findOne({
       attributes: [
         [sequelize.fn('SUM', sequelize.col('amount')), 'amount']
@@ -524,18 +530,40 @@ module.exports = {
         description: {$notLike: '%authorization%'},
       }
     });
-    let totalBookings = yield Booking.find({
-      where :{
+    let allBookings = yield Booking.find({
+      where: {
         userId,
         $or: [
           {status: 'completed'},
           {status: 'closed'},
         ]
-      }
+      },
+      include: [
+        {
+          model: 'BookingDetails',
+          as: 'details',
+        }
+      ],
     });
     return {
       totalSpent: (totalSpent.amount / 100).toFixed(2),
-      totalBookings: totalBookings.length,
+      totalBookings: allBookings.length,
+      allTime: {
+        orders: allOrders,
+        booking: allBookings,
+      },
+      month: {
+        order: allOrders.filter(order => order.createdAt > moment().subtract(30, 'days')),
+        bookings: allBookings.filter(booking => booking.createdAt > moment().subtract(30, 'days')),
+      },
+      week: {
+        order: allOrders.filter(order => order.createdAt > moment().subtract(7, 'days')),
+        bookings: allBookings.filter(booking => booking.createdAt > moment().subtract(7, 'days')),
+      }, 
+      day: {
+        order: allOrders.filter(order => order.createdAt > moment().subtract(1, 'days')),
+        bookings: allBookings.filter(booking => booking.createdAt > moment().subtract(1, 'days')),
+      }
     }
   }
 };
