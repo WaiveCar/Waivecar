@@ -517,17 +517,19 @@ module.exports = {
     let allOrders = yield ShopOrder.find({
       where: {
         userId, 
-        description: {$notLike: '%authorization%'}
+        description: {$notLike: '%authorization%'},
+        status: {$not: 'refunded'},
       }
     });
     let totalSpent = yield ShopOrder.findOne({
       attributes: [
-        [sequelize.fn('SUM', sequelize.col('amount')), 'amount']
+        [sequelize.fn('SUM', sequelize.col('amount')), 'amount'],
       ],
       where: {
         userId,
         status: 'paid',
         description: {$notLike: '%authorization%'},
+        status: {$not: 'refunded'},
       }
     });
     let allBookings = yield Booking.find({
