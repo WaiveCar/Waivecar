@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {api} from 'bento';
+import moment from 'moment';
 
 class Stats extends Component {
   constructor(props) {
@@ -90,20 +91,47 @@ class Stats extends Component {
                 30 Days
               </button>
               <div>
+                <h4>Stats for selected period</h4>
                 <label
                   className="form-control-label"
                   style={{color: '#666', fontWeight: 300}}>
-                  Total Rides During This Period: {currentBookings.length}
+                  Total Rides: {currentBookings.length}
                 </label>
                 <label
                   className="form-control-label"
                   style={{color: '#666', fontWeight: 300}}>
-                  Total Spent During this period: ${(
+                  Total Spent: ${(
                     currentOrders.reduce(
                       (acc, order) => acc + order.amount,
                       0,
                     ) / 100
                   ).toFixed(2)}
+                </label>
+                <label
+                  className="form-control-label"
+                  style={{color: '#666', fontWeight: 300}}>
+                  Average Length Of Rides:
+                  {currentBookings.reduce((acc, booking) => {
+                    console.log(booking.details);
+                    console.log(
+                      moment.duration(
+                        moment(booking.details[1].createdAt).diff(
+                          moment(booking.details[0].createdAt),
+                        ),
+                      ),
+                    );
+                    return (
+                      acc +
+                      moment
+                        .duration(
+                          moment(booking.details[1].createdAt).diff(
+                            moment(booking.details[0].createdAt),
+                          ),
+                        )
+                        .asMilliseconds()
+                    );
+                  }, 0) / currentBookings.length}
+                  {/*The next part to do will be getting average distance of bookings All of this logic should be moved to the api*/}
                 </label>
               </div>
             </div>
