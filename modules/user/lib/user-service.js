@@ -559,18 +559,18 @@ module.exports = {
       totalBookings: allBookings.length,
       allTime: {
         orders: allOrders,
-        booking: allBookings,
+        bookings: allBookings,
       },
       month: {
-        order: allOrders.filter(order => order.createdAt > monthAgo),
+        orders: allOrders.filter(order => order.createdAt > monthAgo),
         bookings: allBookings.filter(booking => booking.createdAt > monthAgo),
       },
       week: {
-        order: allOrders.filter(order => order.createdAt > weekAgo),
+        orders: allOrders.filter(order => order.createdAt > weekAgo),
         bookings: allBookings.filter(booking => booking.createdAt > weekAgo),
       }, 
       day: {
-        order: allOrders.filter(order => order.createdAt > dayAgo),
+        orders: allOrders.filter(order => order.createdAt > dayAgo),
         bookings: allBookings.filter(booking => booking.createdAt > dayAgo),
       }
     }
