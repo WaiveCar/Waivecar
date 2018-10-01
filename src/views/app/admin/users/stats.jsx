@@ -23,6 +23,29 @@ class Stats extends Component {
     });
   }
 
+  getAverage = (rideList) => {
+    let divisor = rideList.length;
+    let detailsList = rideList.map(ride => ride.details);
+    let durations = detailsList.map(pair => {
+      let start = pair.find(val => val.type === 'start');
+      let end = pair.find(val => val.type === 'end');
+      if (!start || !end) {
+        divisor--;
+        return null;
+      }
+      return moment
+        .duration(moment(end.createdAt).diff(moment(start.createdAt)))
+        .asMilliseconds();
+    });
+    durations = durations.filter(val => val !== null);
+    if (!durations.length) {
+      return 'No Rides'
+    }
+    milliseconds = durations.reduce((acc, item) => acc + item, 0) / divisor;
+    let averageDuration = moment.duration(milliseconds);
+    return `${averageDuration.hours()}:${averageDuration.minutes()}:${averageDuration.seconds()}`;
+  }
+
   render() {
     let {stats, timeFrameSelected, currentBookings, currentOrders} = this.state;
     return (
@@ -111,27 +134,7 @@ class Stats extends Component {
                   className="form-control-label"
                   style={{color: '#666', fontWeight: 300}}>
                   Average Length Of Rides:
-                  {currentBookings.reduce((acc, booking) => {
-                    console.log(booking.details);
-                    console.log(
-                      moment.duration(
-                        moment(booking.details[1].createdAt).diff(
-                          moment(booking.details[0].createdAt),
-                        ),
-                      ),
-                    );
-                    return (
-                      acc +
-                      moment
-                        .duration(
-                          moment(booking.details[1].createdAt).diff(
-                            moment(booking.details[0].createdAt),
-                          ),
-                        )
-                        .asMilliseconds()
-                    );
-                  }, 0) / currentBookings.length}
-                  {/*The next part to do will be getting average distance of bookings All of this logic should be moved to the api*/}
+                  {this.getAverage(currentBookings)}
                 </label>
               </div>
             </div>
