@@ -23,7 +23,7 @@ class Stats extends Component {
     });
   }
 
-  getAverage = (rideList) => {
+  getAverage = rideList => {
     let divisor = rideList.length;
     let detailsList = rideList.map(ride => ride.details);
     let durations = detailsList.map(pair => {
@@ -39,12 +39,12 @@ class Stats extends Component {
     });
     durations = durations.filter(val => val !== null);
     if (!durations.length) {
-      return 'No Rides'
+      return 'No Rides';
     }
     milliseconds = durations.reduce((acc, item) => acc + item, 0) / divisor;
     let averageDuration = moment.duration(milliseconds);
     return `${averageDuration.hours()}:${averageDuration.minutes()}:${averageDuration.seconds()}`;
-  }
+  };
 
   render() {
     let {stats, timeFrameSelected, currentBookings, currentOrders} = this.state;
@@ -133,8 +133,7 @@ class Stats extends Component {
                 <label
                   className="form-control-label"
                   style={{color: '#666', fontWeight: 300}}>
-                  Average Length Of Rides:
-                  {this.getAverage(currentBookings)}
+                  Average Length Of Rides: {this.getAverage(currentBookings)}
                 </label>
               </div>
             </div>
