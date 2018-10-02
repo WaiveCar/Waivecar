@@ -38,6 +38,7 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
     ctrl.start = start;
     ctrl.toggle = toggle;
     ctrl.addPicture = addPicture;
+    ctrl.continueToRide = continueToRide;
 
     ctrl.skip = function() {
       ctrl.allPics = true;
@@ -103,6 +104,9 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
         submitFailure(message);
       });
     }
+    function continueToRide() {
+      console.log('continuing');
+      $state.go('dashboard', null, {location: 'replace'});
+    }
   }
-
 ]);
