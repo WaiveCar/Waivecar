@@ -20,11 +20,12 @@ function VerifyIdController($injector, $stateParams, $scope, $settings, $window,
     default: 'img/camera.svg'
   };
 
+  // avoiding image upload pictures as we deprecate the app
   ctrl.haveAllImages = function(){
-    return (
+    return true;/*(
       (images.license && images.license !== images.default) &&
       (images.selfie && images.selfie !== images.default)
-    );
+    );*/
   };
 
   ctrl.submit = function(form){

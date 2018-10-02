@@ -80,7 +80,10 @@ module.exports = angular.module('app.controllers').controller('UserEditControlle
         }
 
         // Has the user given us a selfie and license photo?
-        $scope.user.verified = ($scope.user.avatar && $scope.license.fileId);
+        //
+        // We are shortcutting this as we abandon this app (2018-10-02)
+        //
+        $scope.user.verified = true; // ($scope.user.avatar && $scope.license.fileId);
 
         // Have they at least filled in all the fields
         stepsDone = (
