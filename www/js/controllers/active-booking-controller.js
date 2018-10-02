@@ -274,7 +274,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     var cancelling = false;
     var booking = $data.active.bookings;
     if (booking == null || booking.status !== 'reserved') {
-      if(booking.status === 'cancelled') {
+      if(!booking || booking.status === 'cancelled') {
         return $state.go('cars');
       }
       return;
