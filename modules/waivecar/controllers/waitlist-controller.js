@@ -32,5 +32,9 @@ Bento.Register.Controller('WaitlistController', function(controller) {
     return yield waitlist.letIn(this.payload, this.auth.user);
   }
 
+  controller.FBletIn = function *() {
+    return yield waitlist.FBletIn(this.payload, this.auth.user);
+  }
+
   return controller;
 });

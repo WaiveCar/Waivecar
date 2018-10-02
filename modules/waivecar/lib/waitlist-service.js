@@ -299,6 +299,56 @@ module.exports = {
     return yield Waitlist.find(query);
   },
 
+  *FBLetIn(idList, _user) {
+    let params = {};
+    let nameList = [];
+    let userList = [];
+
+    params.intro = "Thanks for your patience. It's paid off because you are next in line and we've created your account.";
+
+    for(var ix = 0; ix < idList.length; ix++) {
+      let userRecord = yield User.findOne({ 
+        id: idList[ix]
+      });
+
+      if (userRecord) {
+        let fullName = `${userRecord.firstName} ${userRecord.lastName}`;
+        if(userRecord.status === 'waitlist') {
+          nameList.push(`<${config.api.uri}/users/${userRecord.id}|${fullName}>`);
+          yield userRecord.update({status: 'active'});
+          let email = new Email(), emailOpts = {};
+          try {
+            emailOpts = {
+              to       : record.email,
+              from     : config.email.sender,
+              subject  : 'Welcome to WaiveCar',
+              template : 'letin-email-fb',
+              context  : Object.assign({}, params || {}, {
+                name: fullName,
+              })
+            };
+            yield email.send(emailOpts);
+          } catch(err) {
+            log.warn('Failed to deliver notification email: ', emailOpts, err);      
+          }
+        } else {
+          // Otherwise, the user is onboarded and we should just continue
+          // with the next user and make sure we don't add them to the email
+          // list or generate a reset token.
+          continue;
+        }
+      } else {
+        log.warn(`Unable to add user with email ${ userRecord.email } and phone ${ userRecord.phone }`);
+        continue;
+      }
+    }
+    if (_user) {
+      let list = nameList.slice(0, -2).join(', ') + (nameList.length > 2 ? ', ' : ' ') + nameList.slice(-2).join(' and ');
+      yield notify.notifyAdmins(`:rocket: ${ _user.name() } let in ${ list }`, [ 'slack' ], { channel : '#user-alerts' })
+    }
+    return userList;
+  },
+
   //
   // letin and take are somewhat different.  The "take" name and idea is borrowed 
   // from ruby's array#take method https://apidock.com/ruby/Array/take  ... its 
