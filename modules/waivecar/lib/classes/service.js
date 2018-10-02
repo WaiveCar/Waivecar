@@ -240,9 +240,13 @@ module.exports = class Service {
       missing.push('license');
     }
 
+    /*
+    // not requiring license photos for now (2018-10-02)
+    // 
     if(license && !license.fileId) {
       missing.push('license photo');
     }
+    */
 
     if(card && card.type !== 'credit') {
       let bookingCount = 0;
