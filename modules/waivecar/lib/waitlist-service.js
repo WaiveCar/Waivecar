@@ -299,7 +299,7 @@ module.exports = {
     return yield Waitlist.find(query);
   },
 
-  *FBLetIn(idList, _user) {
+  *FBletIn(idList, _user) {
     let params = {};
     let nameList = [];
     let userList = [];
