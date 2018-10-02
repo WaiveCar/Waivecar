@@ -105,7 +105,6 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
       });
     }
     function continueToRide() {
-      console.log('continuing');
       $state.go('dashboard', null, {location: 'replace'});
     }
   }
