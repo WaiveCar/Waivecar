@@ -802,15 +802,6 @@ module.exports = {
     }
   },
 
-  /*
-   |--------------------------------------------------------------------------------
-   | Car Commands
-   |--------------------------------------------------------------------------------
-   |
-   | A list of methods used to execute commands against a device/car.
-   |
-   */
-
   *ble(id, _user) {
     let car = yield Car.findById(id);
     
