@@ -78,6 +78,7 @@ module.exports = class CheckrService {
       let response = yield this.request('/reports', 'POST', data);
       return response;
     } catch(err) {
+      /*
       yield notify.slack(
         {text: `:lightning: ${_user.link()} license failed to be processed by checkr.`},
         {channel: '#user-alerts'}
@@ -90,6 +91,8 @@ module.exports = class CheckrService {
         },
         400,
       ); 
+      */
+      return true;
     }
   }
 
