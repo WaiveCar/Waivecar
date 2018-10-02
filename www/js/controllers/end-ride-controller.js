@@ -66,6 +66,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     ctrl.loadBooking = loadBooking;
     ctrl.loadCar = loadCar;
     ctrl.init = init;
+    ctrl.skipToEnd = skipToEnd;
 
     ctrl.init();
 
@@ -372,6 +373,13 @@ module.exports = angular.module('app.controllers').controller('EndRideController
 
       payload.type = ctrl.type;
       $ride.setParkingDetails(payload);
+      return $ride.processEndRide().then(function () {
+        $ionicLoading.hide();
+        return $ride.checkAndProcessActionOnBookingEnd();
+      });
+    }
+
+    function skipToEnd() {
       return $ride.processEndRide().then(function () {
         $ionicLoading.hide();
         return $ride.checkAndProcessActionOnBookingEnd();
