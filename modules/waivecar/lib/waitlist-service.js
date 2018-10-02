@@ -306,10 +306,12 @@ module.exports = {
 
     params.intro = "Thanks for your patience. It's paid off because you are next in line and we've created your account.";
 
+    console.log(idList[ix]);
     for(var ix = 0; ix < idList.length; ix++) {
       let userRecord = yield User.findOne({ 
         id: idList[ix]
       });
+      console.log(idList[ix], userRecord);
 
       if (userRecord) {
         let fullName = `${userRecord.firstName} ${userRecord.lastName}`;
@@ -319,7 +321,7 @@ module.exports = {
           let email = new Email(), emailOpts = {};
           try {
             emailOpts = {
-              to       : record.email,
+              to       : userRecord.email,
               from     : config.email.sender,
               subject  : 'Welcome to WaiveCar',
               template : 'letin-email-fb',
