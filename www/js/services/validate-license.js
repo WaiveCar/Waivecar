@@ -11,7 +11,6 @@ function LicenseValidationService ($injector) {
   var $ionicHistory = $injector.get('$ionicHistory');
   var $distance = $injector.get('$distance');
 
-  var polling;
   var maxDistance = 30; // at least one car should be less than this distance
 
   function validate (license) {
@@ -115,19 +114,11 @@ function LicenseValidationService ($injector) {
     }
   }
 
-  function cancelPolling () {
-    if (polling == null) {
-      return;
-    }
-    $interval.cancel(polling);
-    polling = null;
-  };
-
   function spinner (license) {
     var modal;
     var modalOpts = {
       title: 'Validating your license',
-      message: 'Validating usually takes a few minutes. However in some cases it could take up to a business day',
+      message: "Validating usually takes a few minutes. However in some cases it could take up to a business day. You'll receive a text message after it's done processing.",
       icon: '/templates/modals/loader.html',
       actions: [{
         text: 'Close',
@@ -142,42 +133,30 @@ function LicenseValidationService ($injector) {
       modal = _modal;
       modal.show();
 
-      var count = 0;
       return $q(function (resolve, reject) {
-        polling = $interval(function () {
-          count++;
-          return $data.resources.licenses.get({id: license.id}).$promise
-            .then(function (lic) {
-              if (count === 15) {
-                modal.scope.message += '<p>Still waiting? Feel free to close this screen, we\'ll send you an SMS when your validation is completed.</p>';
-              }
-              if (lic.status !== 'complete') {
-                return;
-              }
-              if (lic.outcome === 'clear') {
-                cancelPolling();
-                modal.remove();
-                resolve();
-                return;
-              }
-              if (lic.outcome === 'consider') {
-                cancelPolling();
-                modal.remove();
-                reject({code: 'LICENSE_MANUAL_CHECK'});//'LICENSE_CONSIDER'});
-                return;
-              }
-              if (lic.outcome === 'reject') {
-                cancelPolling();
-                modal.remove();
-                reject({code: 'LICENSE_FAILED'});
-                return;
-              }
-              cancelPolling();
+        return $data.resources.licenses.get({id: license.id}).$promise
+          .then(function (lic) {
+            if (lic.status !== 'complete') {
+              return;
+            }
+            if (lic.outcome === 'clear') {
               modal.remove();
-              reject(lic);
-            });
-        }, 2000);
-
+              resolve();
+              return;
+            }
+            if (lic.outcome === 'consider') {
+              modal.remove();
+              reject({code: 'LICENSE_MANUAL_CHECK'});//'LICENSE_CONSIDER'});
+              return;
+            }
+            if (lic.outcome === 'reject') {
+              modal.remove();
+              reject({code: 'LICENSE_FAILED'});
+              return;
+            }
+            modal.remove();
+            reject(lic);
+          });
       });
     });
   }
