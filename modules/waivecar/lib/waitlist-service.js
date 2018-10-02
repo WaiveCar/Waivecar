@@ -113,7 +113,6 @@ module.exports = {
     });
 
     payload.email = payload.email.toLowerCase();
-
     // we store it encrypted and then pass it over to the 
     // userservice using a special passwordEncrypted parameter
     // so as not to be encrypted again.
@@ -138,7 +137,6 @@ module.exports = {
     if (!record) {
       user = yield User.findOne(searchOpts);
     }
-
     if (record || user) {
       // They've signed up before, that's chill. 
       
@@ -168,6 +166,12 @@ module.exports = {
       // We haven't seen this person before... 
 
       let isInside = inside(payload);
+
+      if (isInside) {
+        yield this.letInByRecord([data], _user, {fromWaitlist: true});
+        res.fastTrack = 'yes';
+        return res;
+      }
       // If they are outside la then we just give them
       // a priority of 0, otherwise it's 1. Note the plus
       // sign to duck type the boolean to an int.
@@ -306,6 +310,7 @@ module.exports = {
   // is what converges the waitlist users to actual users.
   //
   *letInByRecord(recordList, _user, opts) {
+    let {fromWaitlist} = opts;
     opts = opts || {};
     let params = {};
     let nameList = [];
@@ -387,7 +392,9 @@ module.exports = {
 
       // X-ref it back so that we don't do this again.
       // They'd be able to reset their password and that's about it.
-      yield record.update({userId: userRecord.id});
+      if (!fromWaitlist) {
+        yield record.update({userId: userRecord.id});
+      }
       userList.push(userRecord);
 
       let res = yield UserService.generatePasswordToken(userRecord, 7 * 24 * 60);
