@@ -48,9 +48,6 @@ function LicenseEditController ($injector, licenses, $scope) {
       return null;
     }
     validating = true;
-    $scope.$on('$destroy', function () {
-      $validateLicense.cancelPolling();
-    });
     return $validateLicense.validate(this.license)
       .finally(function () {
         validating = false;

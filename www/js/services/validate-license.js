@@ -230,8 +230,7 @@ function LicenseValidationService ($injector) {
   }
 
   return {
-    validate: validate,
-    cancelPolling: cancelPolling
+    validate: validate
   };
 }
 
