@@ -293,7 +293,7 @@ module.exports = class OrderService extends Service {
 
     yield order.save();
     try {         
-      yield this. charge(order, user, {nodebt: true});
+      yield this.charge(order, user, {nodebt: true});
       yield notify.notifyAdmins(`:heavy_dollar_sign: Charged the impatient ${ user.link() } $${ fee } to rebook ${ car.license }`, [ 'slack' ], { channel : '#rental-alerts' });
     } catch (err) {
       yield this.failedCharge(amount, user, err, ` | ${ apiConfig.uri }/bookings/${ booking.id }`);
