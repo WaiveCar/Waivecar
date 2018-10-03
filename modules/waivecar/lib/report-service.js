@@ -121,10 +121,10 @@ module.exports = {
         }
       ]
     };
-
+    
     if (payload.files && payload.files.length) {
       let files = payload.files;
-
+      console.log('files: ', files);
       for (let i = 0; i < files.length; ++i) {
         let file = files[i];
 
@@ -155,8 +155,7 @@ module.exports = {
     } catch (err) {
       log.warn(`Failed to write to the log file: ${ err.message }`);
     }
-
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env.NODE_ENV === 'production' && slackPayload.attachements.length > 1) {
       yield slack.message(slackPayload);
     }
     return;
