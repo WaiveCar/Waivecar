@@ -67,6 +67,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     ctrl.loadCar = loadCar;
     ctrl.init = init;
     ctrl.skipToEnd = skipToEnd;
+    ctrl.goToEndRide = goToEndRide;
 
     ctrl.init();
 
@@ -380,10 +381,15 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     }
 
     function skipToEnd() {
-      return $ride.processEndRide().then(function () {
-        $ionicLoading.hide();
-        return $ride.checkAndProcessActionOnBookingEnd();
-      });
+      if (ctrl.street.streetSignImage || ctrl.isHub) {
+        return $ride.processEndRide().then(function () {
+          $ionicLoading.hide();
+          return $ride.checkAndProcessActionOnBookingEnd();
+        });
+      }
+      if(!ctrl.isHub && ctrl.type === 'street' && !ctrl.street.streetSignImage) {
+        submitFailure('Ending here requires a photo of the parking sign.');
+      }
     }
 
     function submitFailure(message) {
