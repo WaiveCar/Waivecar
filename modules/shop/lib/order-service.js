@@ -218,6 +218,26 @@ module.exports = class OrderService extends Service {
       amount      : amountInCents
     });
     yield order.save();
+    for (let item of items) {
+      let description = item.quantity > 1 ? `${item.name} x ${item.quantity}` : item.name;
+      let currentItem = new Order({
+        createdBy   : _user.id,
+        userId      : data.userId,
+        source      : data.source,
+        description,
+        metadata    : data.metadata,
+        currency    : data.currency,
+        amount      : (item. price * item.quantity),
+      });
+      yield currentItem.save();
+      let bookingPayment = new BookingPayment({
+        bookingId: payload.bookingId,
+        orderId: currentItem.id,
+      });
+      yield bookingPayment.save();
+      // A miscellaneous charge is likely an issue we should keep track of
+      yield UserLog.addUserEvent(user, 'FEE', bookingPayment.id, description);
+    }
 
     // ### Add Items
 
@@ -238,9 +258,6 @@ module.exports = class OrderService extends Service {
         subject: `Charges for your booking in ${currentBooking[0].car.license} on ${moment(currentBooking[0].createdAt).format('MMMM Do, YYYY')}`,
         leadin: `Here's your receipt for any additional charges from your booking on ${moment(currentBooking[0].createdAt).format('MMMM Do, YYYY')} with ${currentBooking[0].car.license}:`
       });
-
-      // A miscellaneous charge is likely an issue we should keep track of
-      yield UserLog.addUserEvent(user, 'FEE', order.id, data.description);
     }
 
     try {
@@ -255,7 +272,7 @@ module.exports = class OrderService extends Service {
         message : `The card was declined.`
       }, 400);
     }
-
+    yield order.delete();
     return order;
   }
 
@@ -275,7 +292,7 @@ module.exports = class OrderService extends Service {
     let fee = (amount/100).toFixed(2);
 
     yield order.save();
-    try {
+    try {         
       yield this.charge(order, user, {nodebt: true});
       yield notify.notifyAdmins(`:heavy_dollar_sign: Charged the impatient ${ user.link() } $${ fee } to rebook ${ car.license }`, [ 'slack' ], { channel : '#rental-alerts' });
     } catch (err) {
@@ -420,7 +437,6 @@ module.exports = class OrderService extends Service {
     let chargesList = allCharges.payments.map(charge => {
       let description = charge.shopOrder.description.replace(/Booking\s\d*/i, '');
       if (description.includes('authorization')) {
-        description += ' - refunded';
         authCharges += charge.shopOrder.amount;
       }
       if (charge.shopOrder.amount === 2000) {
@@ -514,7 +530,7 @@ module.exports = class OrderService extends Service {
     let types = [];
     if (payments.length) {
       totalCredit = payments.filter((row) => row.shopOrder.chargeId === '0' ).reduce((total, payment) => total + payment.shopOrder.amount, 0);
-      let filteredPayments = payments.filter((row) => row.shopOrder.description !== 'Pre booking authorization');
+      let filteredPayments = payments.filter((row) => row.shopOrder.description !== 'Pre booking authorization - refunded');
       totalPaid = filteredPayments.filter((row) => row.shopOrder.chargeId !== '0').reduce((total, payment) => total + payment.shopOrder.amount, 0);
       types = payments.map(payment => payment.shopOrder.description.replace(/Booking\s\d*/i, ''));
     }
@@ -549,7 +565,7 @@ module.exports = class OrderService extends Service {
         createdBy   : _user.id,
         userId      : _user.id,
         source      : card.id,
-        description : 'Pre booking authorization',
+        description : 'Pre booking authorization - refunded',
         currency    : 'usd',
         amount      : amount
       });

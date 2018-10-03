@@ -405,7 +405,7 @@ module.exports = class BookingService extends Service {
     // Prepares bookings with payment, and file details.
     if (query.details) {
       for (let i = 0, len = bookings.length; i < len; i++) {
-        bookings[i] = yield this.show(bookings[i].id, _user,  {nopath: true, nopayments: true, nofiles: true});
+        bookings[i] = yield this.show(bookings[i].id, _user,  {nopath: true, nopayments: false, nofiles: true});
       }
     }
 
@@ -461,17 +461,16 @@ module.exports = class BookingService extends Service {
         {
           model      : 'BookingPayment',
           as         : 'payments',
-          attributes : [ 'orderId' ]
+          attributes : [ 'orderId' ],
         }
       ]
     };
 
     opts = opts || {};
     // ### Get Booking
-
     let booking = yield this.getBooking(id, relations);
     let user    = yield this.getUser(booking.userId);
-
+    
     this.hasAccess(user, _user);
 
     // ### Prepare Booking
@@ -505,7 +504,6 @@ module.exports = class BookingService extends Service {
           }, [])
         }
       });
-      booking.payments = booking.payments.filter(payment => !payment.description.includes('Pre booking authorization'));
     }
 
     if(!opts.nopath) {
