@@ -90,7 +90,7 @@ module.exports = class BookingService extends Service {
 
     // If the user doing the booking is also the driver and the
     // user is an admin we give them the car.
-    if (driver.id === _user.id && _user.hasAccess('admin')) {
+    if (driver.hasAccess('admin') || (driver.id === _user.id && _user.hasAccess('admin'))) {
       // skip access check...
     } else {
       // Otherwise we check to see if the driver can drive. This
