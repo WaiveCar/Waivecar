@@ -504,6 +504,9 @@ module.exports = class BookingService extends Service {
           }, [])
         }
       });
+      if (booking.payments) {
+        booking.payments = booking.payments.filter(payment => (payment.description && !payment.description.match(/authorization/gi) || !payment.description));
+      }
     }
 
     if(!opts.nopath) {
