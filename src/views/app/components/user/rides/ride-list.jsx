@@ -71,6 +71,7 @@ class RideList extends Component {
       if (err) {
         return console.log(err);
       }
+      console.log('bookings: ', bookings);
       cb(bookings);
     });
   }
@@ -129,7 +130,7 @@ class RideList extends Component {
     let ride = {
       start : data.details.find(val => val.type === 'start'),
       end   : data.details.find(val => val.type === 'end'),
-      fee   : data.payments.reduce((value, payment) => !payment.description.includes('authorization') ? value + (payment.amount - payment.refunded) : value, 0) / 100,
+      fee   : data.payments.reduce((value, payment) => value + (payment.amount - payment.refunded), 0) / 100,
       id    : data.id,
       data  : data
     };
