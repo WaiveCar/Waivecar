@@ -130,7 +130,7 @@ class RideList extends Component {
     let ride = {
       start : data.details.find(val => val.type === 'start'),
       end   : data.details.find(val => val.type === 'end'),
-      fee   : data.payments.reduce((value, payment) => value + (payment.amount - payment.refunded), 0) / 100,
+      fee   : data.payments.reduce((value, payment) => value + (payment.status === 'cancelled' ? 0 : (payment.amount - payment.refunded)), 0) / 100,
       id    : data.id,
       data  : data
     };
