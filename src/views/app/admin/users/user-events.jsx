@@ -29,6 +29,9 @@ module.exports = class UsersEvents extends React.Component {
     if (event.type === 'DECLINED') {
       comment = <a href={ '#charge-' + event.referenceId }>Charge #{ event.referenceId }</a>
     }
+    if (event.type === 'PHOTO') {
+      comment = <span dangerouslySetInnerHTML={{ __html: event.comment }} />
+    }
     return (
       <tr>
         <td title={ moment(event.createdAt).format('YYYY-MM-DD HH:mm:ss') }>{ moment(event.createdAt).format('MMM D YYYY') }</td>
