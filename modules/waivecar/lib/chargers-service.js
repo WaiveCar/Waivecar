@@ -68,7 +68,7 @@ module.exports = {
     let body = {
       response_url: "http://9ol.es/charger-postback.php",
       token: {
-        uid: "049B53DA085280",
+        uid: "049B53WAIVECAR",
         type: "RFID",
         auth_id: "7e64ef7b-20cb-447c-92e0-253605c4edf7",
         visual_number: null,

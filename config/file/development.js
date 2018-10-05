@@ -3,9 +3,9 @@ module.exports = {
     providers : {
       default : 's3',
       s3      : {
-        key    : 'AKIAIL22H244BMQLWNDQ',
-        secret : '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',
-        bucket : 'waivecar-dev',
+        key    : 'AKIAIL6YHEU5IWFSHELQ',
+        secret : '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',
+        bucket : 'waivecar-prod',
         region : 'us-east-1'
       }
     }

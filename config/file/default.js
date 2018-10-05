@@ -13,7 +13,7 @@ module.exports = {
 
   file : {
     types     : [ 'jpg', 'jpeg', 'png', 'gif', 'bmp' ],
-    limit     : 204800,
+    limit     : 20480000,
     providers : {
       default : 'local',
       local   : {

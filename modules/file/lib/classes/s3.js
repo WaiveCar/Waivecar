@@ -20,11 +20,6 @@ module.exports = class S3 {
     }
   }
 
-  /**
-   * Uploads a list of files to the s3 bucket.
-   * @param {Array}  files
-   * @param {String} [bucket]
-   */
   *upload(files, bucket) {
     let client = knox.createClient({
       key    : config.providers.s3.key,
@@ -124,10 +119,6 @@ function getClient(file) {
   return client;
 }
 
-/**
- * @private
- * @method validateConfig
- */
 function validateConfig() {
   return (config.providers.s3 && config.providers.s3.key && config.providers.s3.secret);
 }
@@ -153,7 +144,7 @@ function *uploadFile(file, client) {
   yield new Promise((resolve, reject) => {
     bucket.on('response', (res) => {
       if (res.statusCode !== 200) {
-        console.log(res);
+        //console.log(res);
         return reject({
           status  : 400,
           code    : 'FILE_S3_UPLOAD',
