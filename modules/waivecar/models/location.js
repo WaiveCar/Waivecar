@@ -70,6 +70,12 @@ Bento.Register.Model('Location', 'sequelize', function(model, Sequelize) {
       defaultValue: null,
     }
   };
+  model.relations = [
+    'UserParking',
+    function relations(UserParking) {
+      this.hasOne(UserParking, { as : 'parking',  foreignKey : 'locationId' });
+    }
+  ];
 
   return model;
 
