@@ -4,14 +4,10 @@ let File  = Bento.model('File');
 let User  = Bento.model('User');
 let relay = Bento.Relay;
 let error = Bento.Error;
+let UserLog      = require('../../../modules/log/lib/log-service');
 
 module.exports = class Avatar {
 
-  /**
-   * Validates the user.
-   * @param  {String} userId
-   * @return {Void}
-   */
   static *validate(userId) {
     let user = yield User.findById(userId);
     if (!user) {
@@ -22,15 +18,13 @@ module.exports = class Avatar {
     }
   }
 
-  /**
-   * Assigns the file as the new avatar for the provided userId.
-   * @param  {String} userId
-   * @param  {Object} file
-   * @param  {Object} _user
-   * @return {Void}
-   */
   static *assign(userId, file, _user) {
     let user = yield User.findById(userId);
+    if (user.avatar) {
+      let oldFile = yield File.findById(user.avatar);
+      let reason = `Profile picture change: <img src='http://waivecar-prod.s3.amazonaws.com/${oldFile.path}'> <img src='http://waivecar-prod.s3.amazonaws.com/${file.path}'>`;
+      yield UserLog.addUserEvent(user, 'SELFIE', _user.id, reason);
+    }
     yield user.update({
       avatar : file.id
     });
