@@ -58,7 +58,7 @@ export default class AddSpaces extends Component {
         </div>
         <div className="form-group row">
           <div className="col-xs-12 bento-form-input focus">
-            <label>Notes</label>
+            <label>Notes on where to park or how to get there</label>
             <input
               type="text"
               className="form-control"
