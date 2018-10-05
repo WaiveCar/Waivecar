@@ -149,24 +149,28 @@ class CardList extends React.Component {
     return <div className='notice'>Everything's good! Thanks.</div>
   }
 
-  topUp(user, amount, cardsi, cb) {
+  topUp(user, amount, cards) {
     if (confirm('Are you sure you want to top up $20?')) {
-      console.log('crediting 20');
-      let opts = {
-        userId      : user.id,
-        amount      : amount * 100,
-        description : 'Top up $20',
-      };
-      if(cards.length) {
-        opts.source = cards[0].id;
-      }
-      api.post('/shop/topUp', opts, (err, result) => {
-        if (err) {
-          return err;
+      this.setState({topUpDisabled: 'disabled'}, () => {
+        let opts = {
+          userId      : user.id,
+          amount      : amount * 100,
+          description : 'Top up $20',
+        };
+        if(cards.length) {
+          opts.source = cards[0].id;
         }
-        console.log('result: ', result);
-        this.setState({ user: { ...this.state.user, credit: this.state.user.credit + 2000 } }, () => cb());
-      });
+        api.post('/shop/topUp', opts, (err, result) => {
+          if (err) {
+            this.setState({topUpDisabled: ''});
+            return snackbar.notify({
+              type    : `danger`,
+              message : err.message
+            });
+          }
+          this.setState({ user: { ...this.state.user, credit: this.state.user.credit + 2000 } }, () => this.setState({topUpDisabled: ''}));
+        });
+      })
     }
   }
 
@@ -239,12 +243,7 @@ class CardList extends React.Component {
         }
         { footer }
         <div>
-          <button onClick={() => 
-            this.setState({topUpDisabled: 'disabled'}, () =>
-              this.topUp(this.props.user, 20, cards, () => 
-                this.setState({topUpDisabled: ''})
-            )
-          )} className={`btn btn-sm ${this.state.topUpDisabled}`}>
+          <button onClick={() => this.topUp(this.props.user, 20, cards)} className={`btn btn-sm ${this.state.topUpDisabled}`}>
             Add a $20 Credit.
           </button>
           <div className="credit-tip">
