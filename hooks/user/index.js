@@ -20,10 +20,6 @@ require('./jobs/registration');
 
 // ### Custom Hooks
 
-/**
- * Retrieves a user based on provided identifier.
- * @param {String} identifier
- */
 hooks.set('user:get', function *(identifier) {
   let user = yield User.findOne({
     where : {

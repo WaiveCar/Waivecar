@@ -8,10 +8,6 @@ Bento.Register.Controller('FilesController', (controller) => {
     return yield service.store(this.query, this.payload, this.auth.user);
   };
 
-  /**
-   * Returns a list of files based on the provided query.
-   * @return {Array}
-   */
   controller.index = function *() {
     return yield service.index(this.query, this.auth.user);
   };
