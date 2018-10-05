@@ -18,7 +18,9 @@ class CardList extends React.Component {
   constructor(...options) {
     super(...options);
 
-    this.state = {};
+    this.state = {
+      topUpDisabled: '',
+    };
     this.shop = new Shop(this);
   }
 
@@ -147,8 +149,9 @@ class CardList extends React.Component {
     return <div className='notice'>Everything's good! Thanks.</div>
   }
 
-  topUp(user, amount, cards) {
+  topUp(user, amount, cardsi, cb) {
     if (confirm('Are you sure you want to top up $20?')) {
+      console.log('crediting 20');
       let opts = {
         userId      : user.id,
         amount      : amount * 100,
@@ -161,7 +164,8 @@ class CardList extends React.Component {
         if (err) {
           return err;
         }
-        this.setState({ user: { ...this.state.user, credit: this.state.user.credit + 2000 } });
+        console.log('result: ', result);
+        this.setState({ user: { ...this.state.user, credit: this.state.user.credit + 2000 } }, () => cb());
       });
     }
   }
@@ -177,10 +181,10 @@ class CardList extends React.Component {
 
     let header = (
       <div className='credit'>Current Credit: { this.amount(credit) }
+      {this.props.addCard && <button onClick={ this.props.addCard } className='btn btn-link btn-sm'>Add Card</button>}
         {
           auth.user().hasAccess('admin') ? 
             <div className="pull-right">
-              <button onClick={ this.props.addCard } className='btn btn-link btn-sm'>Add Card</button>
               <button onClick={ this.addCredit.bind(this, this.props.user, cards) } className='btn btn-link btn-sm'>Add Credit</button>
             </div>
             : this.renderNotice(credit)
@@ -235,7 +239,12 @@ class CardList extends React.Component {
         }
         { footer }
         <div>
-          <button onClick={() => this.topUp(this.props.user, 20, cards)} className="btn btn-sm">
+          <button onClick={() => 
+            this.setState({topUpDisabled: 'disabled'}, () =>
+              this.topUp(this.props.user, 20, cards, () => 
+                this.setState({topUpDisabled: ''})
+            )
+          )} className={`btn btn-sm ${this.state.topUpDisabled}`}>
             Add a $20 Credit.
           </button>
           <div className="credit-tip">
