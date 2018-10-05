@@ -25,11 +25,6 @@ Bento.Register.Controller('FilesController', (controller) => {
     return yield service.show(this, id, this.auth.user);
   };
 
-  /**
-   * Deletes a file from the record and its physical location.
-   * @param  {String} id
-   * @return {Object}
-   */
   controller.delete = function *(id) {
     return yield service.delete(id, this.query, this.auth.user);
   };
