@@ -62,6 +62,7 @@ export default class AddSpaces extends Component {
             <input
               type="text"
               className="form-control"
+              placeHolder="Ex: 4th spot on the left down the alley"
               name="parking-notes"
               onChange={e => this.setState({notes: e.target.value})}
             />
