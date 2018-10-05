@@ -5,6 +5,7 @@ import { Form, snackbar }        from 'bento-web';
 import { resources, fields }     from 'bento-ui';
 import Account                   from '../../lib/account-service';
 import CardList                  from '../../components/user/cards/card-list';
+import AddCard                   from '../../components/user/cards/add-card';
 import RideList                  from '../../components/user/rides/ride-list';
 import ChargeList                from '../../components/user/charges/charge-list';
 import UserParking               from '../../components/user/user-parking/user-parking';
@@ -25,7 +26,9 @@ module.exports = class ProfileView extends React.Component {
 
     // ### State & Service
 
-    this.state   = {};
+    this.state   = {
+      addCard: false,
+    };
     this.account = new Account(this);
     this.avatar  = new Files(this, 'avatar');
 
@@ -180,8 +183,14 @@ module.exports = class ProfileView extends React.Component {
 
   renderCards() {
     let user = auth.user();
+    let {addCard} = this.state;
     return (
-      <CardList user={ user }></CardList>
+      <div>
+        {addCard &&
+          <AddCard user={ user }/>
+        }
+        <CardList user={ user } addCard={() => this.setState({ addCard: true }, () => console.log(this.state))} />
+      </div>
     );
   }
 

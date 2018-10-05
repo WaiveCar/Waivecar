@@ -18,7 +18,9 @@ class CardList extends React.Component {
   constructor(...options) {
     super(...options);
 
-    this.state = {};
+    this.state = {
+      topUpDisabled: '',
+    };
     this.shop = new Shop(this);
   }
 
@@ -149,20 +151,26 @@ class CardList extends React.Component {
 
   topUp(user, amount, cards) {
     if (confirm('Are you sure you want to top up $20?')) {
-      let opts = {
-        userId      : user.id,
-        amount      : amount * 100,
-        description : 'Top up $20',
-      };
-      if(cards.length) {
-        opts.source = cards[0].id;
-      }
-      api.post('/shop/topUp', opts, (err, result) => {
-        if (err) {
-          return err;
+      this.setState({topUpDisabled: 'disabled'}, () => {
+        let opts = {
+          userId      : user.id,
+          amount      : amount * 100,
+          description : 'Top up $20',
+        };
+        if(cards.length) {
+          opts.source = cards[0].id;
         }
-        this.setState({ user: { ...this.state.user, credit: this.state.user.credit + 2000 } });
-      });
+        api.post('/shop/topUp', opts, (err, result) => {
+          if (err) {
+            this.setState({topUpDisabled: ''});
+            return snackbar.notify({
+              type    : `danger`,
+              message : err.message
+            });
+          }
+          this.setState({ user: { ...this.state.user, credit: this.state.user.credit + 2000 } }, () => this.setState({topUpDisabled: ''}));
+        });
+      })
     }
   }
 
@@ -177,10 +185,10 @@ class CardList extends React.Component {
 
     let header = (
       <div className='credit'>Current Credit: { this.amount(credit) }
+      {this.props.addCard && <button onClick={ this.props.addCard } className='btn btn-link btn-sm'>Add Card</button>}
         {
           auth.user().hasAccess('admin') ? 
             <div className="pull-right">
-              <button onClick={ this.props.addCard } className='btn btn-link btn-sm'>Add Card</button>
               <button onClick={ this.addCredit.bind(this, this.props.user, cards) } className='btn btn-link btn-sm'>Add Credit</button>
             </div>
             : this.renderNotice(credit)
@@ -235,7 +243,7 @@ class CardList extends React.Component {
         }
         { footer }
         <div>
-          <button onClick={() => this.topUp(this.props.user, 20, cards)} className="btn btn-sm">
+          <button onClick={() => this.topUp(this.props.user, 20, cards)} className={`btn btn-sm ${this.state.topUpDisabled}`}>
             Add a $20 Credit.
           </button>
           <div className="credit-tip">
