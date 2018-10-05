@@ -35,9 +35,18 @@ module.exports = class StripeCards {
         // There's a *fourth* type of card, 'unknown' ... for our sakes
         // we're just going to let pass thru to avoid issues.
         if (res.funding === 'debit' || res.funding === 'prepaid') {
+          // The debit card must also be deleted from stripe to prevent it from being used by accident
+          this.stripe.customers.deleteCard(user.stripeId, res.id, (err, response) => {
+            if (err) {
+              return reject(error.parse({
+                code    : 'DEBIT_CARD',
+                message : 'Error deleting debit card.'
+              }, 400));
+            }
+          });
           return reject(error.parse({
             code    : 'DEBIT_CARD',
-            message : 'Please use a non-prepaid credit card.'
+            message : 'Please use a non-prepaid and non-debit credit card.'
           }, 400));
         }
         resolve(res);
