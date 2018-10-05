@@ -15,7 +15,12 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
       // We have two now with the addition of level in brooklyn
       // In order to facilitate this, we list the locations in
       // ascending order.
-      order: [[ 'id', 'asc' ]]
+      order: [[ 'id', 'asc' ]],
+
+      include: [{
+        model: 'UserParking',
+        as: 'parking',
+      }]
     };
     if (opts.search) {
       query.where = { $or: [
@@ -28,6 +33,10 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
         row.shape = JSON.parse(row.shape);
       }
   
+      if(row.parking && row.parking.notes) {
+        row.description = row.parking.notes;
+      }
+
       if(row.restrictions) {
         row.restrictions = JSON.parse(row.restrictions);
       }
