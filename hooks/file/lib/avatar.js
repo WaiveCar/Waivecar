@@ -22,8 +22,8 @@ module.exports = class Avatar {
     let user = yield User.findById(userId);
     if (user.avatar) {
       let oldFile = yield File.findById(user.avatar);
-      let reason = `Profile picture change: <img src='http://waivecar-prod.s3.amazonaws.com/${oldFile.path}'> <img src='http://waivecar-prod.s3.amazonaws.com/${file.path}'>`;
-      yield UserLog.addUserEvent(user, 'SELFIE', _user.id, reason);
+      let reason = `Selfie<br/><img src='http://waivecar-prod.s3.amazonaws.com/${oldFile.path}'><img src='http://waivecar-prod.s3.amazonaws.com/${file.path}'>`;
+      yield UserLog.addUserEvent(user, 'PHOTO', _user.id, reason);
     }
     yield user.update({
       avatar : file.id

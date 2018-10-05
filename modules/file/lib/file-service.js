@@ -11,13 +11,6 @@ let config      = Bento.config.file;
 
 class FileService extends Service {
 
-  /**
-   * Stores the incoming files.
-   * @param  {Object} query
-   * @param  {Object} payload
-   * @param  {Object} _user
-   * @return {Object}
-   */
   *store(query, payload, _user) {
     let validate   = hooks.get('file:validate');
     let collection = hooks.get('file:collection');
@@ -69,11 +62,6 @@ class FileService extends Service {
     return storage.files;
   }
 
-  /**
-   * Stores files to S3.
-   * @param {Array}  files
-   * @param {String} bucket
-   */
   *putS3(files, bucket) {
     try {
       let storage = new S3();
@@ -159,19 +147,10 @@ class FileService extends Service {
     }
   }
 
-  /**
-   * Deletes a file.
-   * @param  {String} fileId
-   * @param  {Object} query
-   * @param  {Object} _user
-   * @return {Object}
-   */
   *delete(fileId, query, _user) {
     let file     = yield this.getFile(fileId, _user);
     let deleted  = hooks.get('file:delete');
     let hasHooks = Object.keys(query).length ? true : false;
-
-    // ### Delete File
 
     switch (file.store) {
       case 'local' : {
@@ -179,7 +158,12 @@ class FileService extends Service {
         break;
       }
       case 's3' : {
-        yield S3.delete(file);
+        //
+        // We need to store the person's previous pictures
+        // in the case of fraud.
+        //
+        // yield S3.delete(file);
+        //
         break;
       }
       default : {
@@ -190,11 +174,10 @@ class FileService extends Service {
       }
     }
 
-    // ### Delete Hook
-
     if (hasHooks) {
       yield deleted(query, file, _user);
     }
+    yield file.delete();
   }
 
 };
