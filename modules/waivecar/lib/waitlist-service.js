@@ -362,6 +362,7 @@ module.exports = {
     let params = {};
     let nameList = [];
     let userList = [];
+    let template = 'letin-email';
 
     let introMap = {
       waitlist: "Thanks for your patience. It's paid off because you are next in line and we've created your account.",
@@ -442,7 +443,18 @@ module.exports = {
       yield record.update({userId: userRecord.id});
       userList.push(userRecord);
 
-      let res = yield UserService.generatePasswordToken(userRecord, 7 * 24 * 60);
+      let context = Object.assign({}, params || {}, {
+        name: fullName
+      });
+
+      // If a user set their password through signup then we transfer it over
+      if(record.password) {
+        template = 'letin-email-nopass';
+      } else {
+        // otherwise we need to have a password assignment
+        let res = yield UserService.generatePasswordToken(userRecord, 7 * 24 * 60);
+        context.passwordlink = `${config.api.uri}/reset-password?hash=${res.token.hash}&isnew=yes`;
+      }
     
       // If a candidate signs up again we "re-let" them in ... effectively sending them the same email again
       let email = new Email(), emailOpts = {};
@@ -451,11 +463,8 @@ module.exports = {
           to       : record.email,
           from     : config.email.sender,
           subject  : 'Welcome to WaiveCar',
-          template : opts.template || 'letin-email',
-          context  : Object.assign({}, params || {}, {
-            name: fullName,
-            passwordlink: `${config.api.uri}/reset-password?hash=${res.token.hash}&isnew=yes`
-          })
+          template : opts.template || template,
+          context  : context
         };
         yield email.send(emailOpts);
       } catch(err) {
