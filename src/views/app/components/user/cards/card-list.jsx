@@ -144,7 +144,7 @@ class CardList extends React.Component {
       return <div className='notice'>You cannot book WaiveCars until this balance is cleared.</div>
     }
     if (credit > 0) {
-      return <div className='notice'>This credit will be automatically applied against any future fees.</div>
+      return <div className='notice'>This credit will be automatically applied against any future fees excluding tickets and damage.</div>
     }
     return <div className='notice'>Everything's good! Thanks.</div>
   }
