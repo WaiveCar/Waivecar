@@ -197,10 +197,10 @@ module.exports = {
       yield record.save();
     }
 
-    if(promo === 'vip' || promo === 'seekdiscomfort') {
+    if(promo === 'vip' || promo === 'seekdiscomfort' || promo === 'high5') {
       res.fastTrack = 'yes';
       delete res.inside;
-      let userList = yield this.letInByRecord([record], null, {intro: 'vip'});
+      let userList = yield this.letInByRecord([record], null, {intro: 'vip', promo: promo});
       user = userList[0];
 
       if(user) {
@@ -376,6 +376,10 @@ module.exports = {
     }
     params.intro = introMap[opts.intro];
 
+    if(opts.promo === 'high5') {
+      params.intro += ' Your account is now active with $5.00 in credit. It only gets better from here.';
+    }
+
     for(var ix = 0; ix < recordList.length; ix++) {
 
       let record = recordList[ix];
@@ -391,6 +395,11 @@ module.exports = {
         email: record.email,
         status: 'active'
       };
+
+      // Give people using high5 $5 in credit (#1407)
+      if (opts.promo === 'high5') {
+        opts.credit = 500;
+      }
 
       if (record.phone) {
         opts.phone = record.phone;
