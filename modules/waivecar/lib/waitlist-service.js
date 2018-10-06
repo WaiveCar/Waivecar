@@ -10,6 +10,8 @@ let log           = Bento.Log;
 let notify        = Bento.module('waivecar/lib/notification-service');
 let sequelize     = Bento.provider('sequelize');
 let bcrypt        = Bento.provider('bcrypt');
+let OrderService = require('../../shop/lib/order-service.js');
+
 
 let UserService = require('./user-service');
 let geolib      = require('geolib');
@@ -386,7 +388,7 @@ module.exports = {
       let userRecord = false;
       let fullName = `${record.firstName} ${record.lastName}`;
 
-      let opts = {
+      let userOpts = {
         firstName: record.firstName,
         lastName: record.lastName,
         // we already bcrypted their password when
@@ -396,13 +398,9 @@ module.exports = {
         status: 'active'
       };
 
-      // Give people using high5 $5 in credit (#1407)
-      if (opts.promo === 'high5') {
-        opts.credit = 500;
-      }
 
       if (record.phone) {
-        opts.phone = record.phone;
+        userOpts.phone = record.phone;
       }
 
       // We create their user account.
@@ -413,7 +411,12 @@ module.exports = {
         // to verify their phone number. Stupid. We're adding an option
         // to avoid that nonsense.
         //
-        userRecord = yield UserService.store(opts, _user, {nosms: true});
+        userRecord = yield UserService.store(userOpts, _user, {nosms: true});
+
+        if (opts.promo === 'high5') {
+          yield OrderService.quickCharge({ description: "High5 promo signup", userId: userRecord.id, amount: -500 }, false, {overrideAdminCheck: true });
+        }
+
       } catch(ex) {
         userRecord = yield User.findOne({ 
           where: { 
