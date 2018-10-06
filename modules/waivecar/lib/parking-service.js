@@ -13,6 +13,7 @@ let redis = require('./redis-service');
 let error = Bento.Error;
 let sequelize = Bento.provider('sequelize');
 
+
 module.exports = {
   *create(query) {
     // This is used to create new parking spaces. When new spaces are created, they are
@@ -35,6 +36,9 @@ module.exports = {
       ownerId: query.userId,
       notes: query.notes,
     });
+
+    yield notify.notifyAdmins(`:bed: ${ user.link() } just made a waivespot at ${ query.address }!`, [ 'slack' ], { channel : '#user-alerts' });
+
     yield entry.save();
     entry.location = location;
     return entry;
@@ -291,9 +295,7 @@ module.exports = {
       yield this.emitChanges(space, location, reservation, user);
 
       yield notify.notifyAdmins(
-        `:parking: ${user.firstName} ${
-          user.lastName
-        } reserved parking spot #${space.id}`,
+        `:bellhop_bell: ${ user.link() } reserved parking spot #${space.id}`,
         ['slack'],
         {channel: '#reservations'},
       );
