@@ -47,7 +47,7 @@ module.exports = class WaitList extends Component {
                   <p>You're just a few steps away from your complementary electric car. Please check your email for further instructions.</p>
                 </div>
               }
-              { this.state.autoshow == 'yes' &&
+              { (this.state.fastTrack == 'yes' || this.state.autoshow == 'yes') &&
                 <div>
                   <p>You've been fast-tracked and skipped the waitlist!</p>
                   <p>Please check your email for further instructions.</p>
