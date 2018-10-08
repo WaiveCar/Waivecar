@@ -499,31 +499,69 @@ function DashboardController ($scope, $rootScope, $injector) {
     });
   }
 
-  function reserveParking(id) {
+  ctrl.cleanAddress = function(what) {
+    console.log(ctrl.$data.reservedParking);
+    return what ? what.replace(/, [A-Z]{2} /, ' ').replace(/, USA/, '') : '';
+  }
+
+  function reserveParking(parkingId) {
     // This function reserves a parking space and handles what should happen when this reservation starts
     var modal;
-    return $data.resources.parking.findByLocation({locationId: id}).$promise.then(function(parking){
-      return $data.resources.parking.reserve({id: parking.id, userId: $data.me.id}).$promise.then(function(space){
-        startParkingTimer(space.reservation.createdAt);
-        ctrl.selectedItem = null;
-        $data.reservedParking = space;
-        $modal('simple-modal', {
-          title: 'Parking Reserved',
-          message: 'You have reserved a parking space at ' + space.location.address + '. Your reservation will expire in 5 minutes.',
-        }).then(function (_modal) {
-          modal = _modal;
-          modal.show();
-        });
-      })
-      .catch(function(error) {
-        $modal('simple-modal', {
-          title: 'Parking Reservation Failed',
-          message: 'Your reservation at ' + space.location.address + ' has failed. ' + error.message,
-        }).then(function (_modal) {
-          modal = _modal;
-          modal.show();
-        });
+    ctrl.closePopover();
+    $ionicLoading.show({
+      template: '<div class="circle-loader"><span>Loading</span></div>'
+    });
+    return $data.resources.parking.reserve({id: parkingId, userId: $data.me.id}).$promise.then(function(space){
+      startParkingTimer(space.reservation.createdAt);
+      ctrl.selectedItem = null;
+      $data.reservedParking = space;
+      $modal('simple-modal', {
+        title: 'Parking Reserved',
+        message: 'You have reserved a parking space at ' + space.location.address + '. Your reservation will expire in 5 minutes.',
+      }).then(function (_modal) {
+        $ionicLoading.hide();
+        modal = _modal;
+        modal.show();
       });
+    })
+    .catch(function(error) {
+      $modal('simple-modal', {
+        title: 'Parking Reservation Failed',
+        message: 'Your reservation at ' + space.location.address + ' has failed. ' + error.message,
+      }).then(function (_modal) {
+        $ionicLoading.hide();
+        modal = _modal;
+        modal.show();
+      });
+    });
+  }
+
+  ctrl.cancelParkingConfirm = function (id, inDashboard, cb) {
+    var modal;
+    $modal('result', {
+      title: 'Cancel Parking Reservation',
+      message: 'Are you sure you want to cancel your parking reservation?',
+      icon: 'x-icon',
+      actions: [{
+        className: 'button-assertive',
+        text: 'Yes',
+        handler: function () {
+          modal.remove();
+          $ionicLoading.show({
+            template: '<div class="circle-loader"><span>Loading</span></div>'
+          });
+          cancelParking(id, true, cb);
+        }
+      }, {
+        className: 'button-dark',
+        text: 'No',
+        handler: function () {
+          modal.remove();
+        }
+      }]
+    }).then(function (_modal) {
+      modal = _modal;
+      modal.show();
     });
   }
 
@@ -535,8 +573,9 @@ function DashboardController ($scope, $rootScope, $injector) {
       // If the parking is cancelled while ending a ride, this modal will not pop up.
       $modal('simple-modal', {
         title: 'Parking Reservation Cancelled',
-        message: 'You have cancelled or reservation for the parking space at ' + address + '.' ,
+        message: 'You have cancelled your reservation for the parking space at ' + address + '.' ,
       }).then(function (_modal) {
+        $ionicLoading.hide();
         modal = _modal;
         modal.show();
       });
@@ -553,6 +592,7 @@ function DashboardController ($scope, $rootScope, $injector) {
         title: 'Cancellation Failed',
         message: 'You cancellation of your reservation for the parking space at ' + address + ' has failed.' + error.message ,
       }).then(function (_modal) {
+        $ionicLoading.hide();
         modal = _modal;
         modal.show();
       });
@@ -582,7 +622,7 @@ function DashboardController ($scope, $rootScope, $injector) {
           var modal;
           $modal('simple-modal', {
             title: 'Expired Parking',
-            message: 'Your most recent parking reservation has expired.',
+            message: 'Your parking reservation has expired.',
           }).then(function (_modal) {
             modal = _modal;
             modal.show();
