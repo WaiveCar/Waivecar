@@ -1014,7 +1014,7 @@ module.exports = class OrderService extends Service {
       let chargeList = item.map(charge => 
         `<tr>
           <td>
-            ${charge.name}
+            ${charge.name ? charge.name : 'Miscellaneous Charge'}
           </td>
           <td class="right-item">
             ${charge.quantity}
@@ -1023,7 +1023,7 @@ module.exports = class OrderService extends Service {
             $${(Math.abs(charge.price / 100)).toFixed(2)}
           </td>
           <td class="right-item">
-            $${(Math.abs(charge.total / 100)).toFixed(2)}
+            $${charge.total ? (Math.abs(charge.total / 100)).toFixed(2) : (charge.price / 100).toFixed(2)}
           </td>
         <tr>` ).join('');
       word = item.totalNum > 0 ? 'Charges' : 'credit';
