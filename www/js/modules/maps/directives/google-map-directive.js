@@ -704,8 +704,6 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
       case 'active-waivecar-0-noavail':
       case 'active-waivecar-1-noavail':
       case 'active-waivecar-2-noavail':
-      case 'station':
-      case 'station-active':
       case 'valet-active':
       case 'valet':
       case 'homebase':
@@ -741,12 +739,21 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
           anchor: new google.maps.Point(12, 12),
           origin: new google.maps.Point(0, 0)
         };
+      case 'station':
+      case 'station-active':
+        return {
+          url: 'img/icon-' + iconType + fileExt,
+          iconRetinaUrl: 'img/icon-' + iconType + fileExt,
+          scaledSize: new google.maps.Size(17, 23),
+          anchor: new google.maps.Point(8, 22),
+          origin: new google.maps.Point(0, 0)
+        };
       case 'chargingStation':
         return {
           url: 'img/icon-station-free' + fileExt,
           iconRetinaUrl: 'img/icon-station' + iconType + fileExt,
-          scaledSize: new google.maps.Size(35, 44),
-          anchor: new google.maps.Point(17, 44),
+          scaledSize: new google.maps.Size(17, 23),
+          anchor: new google.maps.Point(8, 22),
           origin: new google.maps.Point(0, 0)
         };
       case 'dropoff':

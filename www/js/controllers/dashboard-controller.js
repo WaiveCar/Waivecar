@@ -500,7 +500,6 @@ function DashboardController ($scope, $rootScope, $injector) {
   }
 
   ctrl.cleanAddress = function(what) {
-    console.log(ctrl.$data.reservedParking);
     return what ? what.replace(/, [A-Z]{2} /, ' ').replace(/, USA/, '') : '';
   }
 

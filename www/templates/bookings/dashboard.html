@@ -66,7 +66,7 @@
           </div>
         </div>
       </div>
-      <button type="button" class="button button-small button-dark" ng-click="ctrl.reserveParking(ctrl.selectedItem.parking.id)">Reserve parking</button>
+      <button ng-show="ctrl.selectedItem.type ==='user-parking'" type="button" class="button button-small button-dark" ng-click="ctrl.reserveParking(ctrl.selectedItem.parking.id)">Reserve parking</button>
     </div>
     <button type="button" class="button button-gray button-block" ng-click="ctrl.closePopover()">Close</button>
   </div>
