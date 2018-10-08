@@ -10,6 +10,8 @@ let log           = Bento.Log;
 let notify        = Bento.module('waivecar/lib/notification-service');
 let sequelize     = Bento.provider('sequelize');
 let bcrypt        = Bento.provider('bcrypt');
+let OrderService = require('../../shop/lib/order-service.js');
+
 
 let UserService = require('./user-service');
 let geolib      = require('geolib');
@@ -197,10 +199,10 @@ module.exports = {
       yield record.save();
     }
 
-    if(promo === 'vip' || promo === 'seekdiscomfort') {
+    if(promo === 'vip' || promo === 'seekdiscomfort' || promo === 'high5') {
       res.fastTrack = 'yes';
       delete res.inside;
-      let userList = yield this.letInByRecord([record], null, {intro: 'vip'});
+      let userList = yield this.letInByRecord([record], null, {intro: 'vip', promo: promo});
       user = userList[0];
 
       if(user) {
@@ -362,6 +364,7 @@ module.exports = {
     let params = {};
     let nameList = [];
     let userList = [];
+    let template = 'letin-email';
 
     let introMap = {
       waitlist: "Thanks for your patience. It's paid off because you are next in line and we've created your account.",
@@ -375,13 +378,17 @@ module.exports = {
     }
     params.intro = introMap[opts.intro];
 
+    if(opts.promo === 'high5') {
+      params.intro += ' Your account is now active with $5.00 in credit. It only gets better from here.';
+    }
+
     for(var ix = 0; ix < recordList.length; ix++) {
 
       let record = recordList[ix];
       let userRecord = false;
       let fullName = `${record.firstName} ${record.lastName}`;
 
-      let opts = {
+      let userOpts = {
         firstName: record.firstName,
         lastName: record.lastName,
         // we already bcrypted their password when
@@ -391,8 +398,9 @@ module.exports = {
         status: 'active'
       };
 
+
       if (record.phone) {
-        opts.phone = record.phone;
+        userOpts.phone = record.phone;
       }
 
       // We create their user account.
@@ -403,7 +411,12 @@ module.exports = {
         // to verify their phone number. Stupid. We're adding an option
         // to avoid that nonsense.
         //
-        userRecord = yield UserService.store(opts, _user, {nosms: true});
+        userRecord = yield UserService.store(userOpts, _user, {nosms: true});
+
+        if (opts.promo === 'high5') {
+          yield OrderService.quickCharge({ description: "High5 promo signup", userId: userRecord.id, amount: -500 }, false, {overrideAdminCheck: true });
+        }
+
       } catch(ex) {
         userRecord = yield User.findOne({ 
           where: { 
@@ -442,7 +455,18 @@ module.exports = {
       yield record.update({userId: userRecord.id});
       userList.push(userRecord);
 
-      let res = yield UserService.generatePasswordToken(userRecord, 7 * 24 * 60);
+      let context = Object.assign({}, params || {}, {
+        name: fullName
+      });
+
+      // If a user set their password through signup then we transfer it over
+      if(record.password) {
+        template = 'letin-email-nopass';
+      } else {
+        // otherwise we need to have a password assignment
+        let res = yield UserService.generatePasswordToken(userRecord, 7 * 24 * 60);
+        context.passwordlink = `${config.api.uri}/reset-password?hash=${res.token.hash}&isnew=yes`;
+      }
     
       // If a candidate signs up again we "re-let" them in ... effectively sending them the same email again
       let email = new Email(), emailOpts = {};
@@ -451,11 +475,8 @@ module.exports = {
           to       : record.email,
           from     : config.email.sender,
           subject  : 'Welcome to WaiveCar',
-          template : opts.template || 'letin-email',
-          context  : Object.assign({}, params || {}, {
-            name: fullName,
-            passwordlink: `${config.api.uri}/reset-password?hash=${res.token.hash}&isnew=yes`
-          })
+          template : opts.template || template,
+          context  : context
         };
         yield email.send(emailOpts);
       } catch(err) {
