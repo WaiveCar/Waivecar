@@ -20,6 +20,16 @@ module.exports = {
     // not available until they are marked as bookable on the website.
     let user = yield User.findById(query.userId);
     let lastRecord = yield Location.findOne({order: [['id','desc']]});
+    let previousSpaces = yield UserParking.find({
+      where: {
+        ownerId: user.id,
+      },
+      paranoid: false,
+    });
+    if (previousSpaces) {
+      // Send the email here
+    }
+
     let lastId = lastRecord.id;
     let location = new Location({
       name: `WaiveSpot${ lastId + 1 }`,
@@ -169,12 +179,8 @@ module.exports = {
     try {
       let parking = yield UserParking.findById(parkingId);
       let location = yield Location.findById(parking.locationId);
-      // These raw queries are used to create a hard delete. The sequelize.delete function only
-      // does a soft delete with the implementation used in bentoJS
-      yield sequelize.query(`DELETE FROM user_parking WHERE id=${parking.id}`);
-      yield sequelize.query(
-        `DELETE FROM locations WHERE id=${parking.locationId}`,
-      );
+      yield parking.delete();
+      yield location.delete();
       return {
         parking,
         location,
