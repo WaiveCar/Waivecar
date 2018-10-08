@@ -7,8 +7,11 @@ let ParkingReservation = Bento.model('ParkingReservation');
 let ParkingDetails = Bento.model('ParkingDetails');
 let Car = Bento.model('Car');
 let relay = Bento.Relay;
+let log = Bento.Log
 let queue = Bento.provider('queue');
 let notify = require('./notification-service');
+let Email = Bento.provider('email');
+let emailConfig = Bento.config.email;
 let redis = require('./redis-service');
 let error = Bento.Error;
 let sequelize = Bento.provider('sequelize');
@@ -26,10 +29,23 @@ module.exports = {
       },
       paranoid: false,
     });
-    if (previousSpaces) {
-      // Send the email here
+    if (!previousSpaces) {
+      let email = new Email(), emailOpts = {};
+      try {
+        emailOpts = {
+          to       : user.email,
+          from     : emailConfig.sender,
+          subject  : 'Thanks for joining WaivePark. You\'re playing a role in the carsharing revolution!',
+          template : 'waivepark-welcome-email',
+          context  : {
+            name: user.name(),
+          }
+        };
+        yield email.send(emailOpts);
+      } catch(err) {
+        log.warn('Failed to deliver notification email: ', emailOpts, err);
+      }
     }
-
     let lastId = lastRecord.id;
     let location = new Location({
       name: `WaiveSpot${ lastId + 1 }`,
