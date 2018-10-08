@@ -49,7 +49,12 @@ export default class UserParking extends Component {
           message: `Error: ${err.message}`,
         });
       }
-      this.setState({spaces: [...this.state.spaces, response]});
+      this.setState({spaces: [...this.state.spaces, response]}, () => {
+        return snackbar.notify({
+          type: 'success',
+          message: 'WaiveSpot successfully created!',
+        });
+      });
     });
   };
 
