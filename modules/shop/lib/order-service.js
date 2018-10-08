@@ -90,7 +90,8 @@ module.exports = class OrderService extends Service {
       quantity: 1,
       price: data.amount,
       description: data.description,
-      isTopUp: data.topup,
+      isTopUp: data.topUp,
+      chargeName: data.description,
     }, user);
 
     try {
@@ -136,7 +137,7 @@ module.exports = class OrderService extends Service {
 
   static *topUp(data, _user) {
     let user = yield User.findById(data.userId);
-    data.topup = true;
+    data.topUp = true;
     if(yield this.quickCharge(data, _user, {nocredit: true, overrideAdminCheck: true})) {
       yield user.update({credit: user.credit + 20 * 100});
     }
@@ -1014,7 +1015,7 @@ module.exports = class OrderService extends Service {
       let chargeList = item.map(charge => 
         `<tr>
           <td>
-            ${charge.name ? charge.name : 'Miscellaneous Charge'}
+            ${charge.name ? charge.name : (item[0].chargeName ? item[0].chargeName : 'Miscellaneous Charge')}
           </td>
           <td class="right-item">
             ${charge.quantity}
