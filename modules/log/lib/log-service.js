@@ -19,12 +19,6 @@ let _           = require('lodash');
 
 module.exports = class LogService {
 
-  /**
-   * Stores a new log record.
-   * @param  {String} type
-   * @param  {Object} payload
-   * @return {Object}
-   */
   static *create(type, payload) {
     switch (type) {
       case 'error' : return yield this.error(payload);
@@ -267,6 +261,10 @@ module.exports = class LogService {
     }).join('\n');
   }
 
+  // year_month should be in the format of
+  // YYYY-MM
+  // You can also have a duration, such as:
+  // YYYY-MM_1+month
   static *report(year_month, kind, query) {
     // There's a circular dependency here. Make sure you know what you're doing
     // before you 'refactor' this to the top.
@@ -311,22 +309,29 @@ module.exports = class LogService {
 
     fleetUserList = fleetUserList.map((row) => { row.userId });
 
+    // we allow for custom duration
+    let duration_parts = year_month.split('_');
+    let duration = false;
+
+    if(duration_parts.length > 1) {
+      duration = duration_parts[1];
+    } 
     let parts = year_month.split('-');
     start.year = parseInt(parts[0], 10);
 
-    let duration = 'year';
     if(parts.length > 1) {
-      duration = 'month';
+      duration = duration || '1 month';
       start.month = parseInt(parts[1], 10);
 
       if(parts.length > 2) {
-        duration = 'week';
+        duration = duration || '1 week';
         start.day = parseInt(parts[2], 10);
       }
     }
+    duration = duration || '1 year';
 
     let dtStr = `${start.year}-${start.month}-${start.day} 00:00:00`;
-    let end = `DATE_ADD("${dtStr}", interval 1 ${duration})`;
+    let end = `DATE_ADD("${dtStr}", interval ${duration})`;
 
     //
     // This is where we determine what cars we are looking at. As far as the query goes,
