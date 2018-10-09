@@ -811,7 +811,12 @@ module.exports = class BookingService extends Service {
   static *endCheck(id, _user, query, payload) {
     var booking = yield this.getBooking(id);
     var car     = yield this.getCar(booking.carId);
-    yield car.update( yield cars.getDevice(car.id, _user, 'booking.complete') );
+    let device  = yield cars.getDevice(car.id, _user, 'booking.complete');
+    if(device) {
+      yield car.update( device );
+    } else {
+      // we failed to contact the device at this time, let's not freak out and just try to go forward
+    } 
     return yield this.finalCheckFail(_user, car, query);
   }
 
