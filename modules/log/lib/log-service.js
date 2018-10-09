@@ -15,7 +15,7 @@ let hooks       = Bento.Hooks;
 let error       = Bento.Error;
 let logs        = Bento.Log;
 let _           = require('lodash');
-
+const util = require('util')
 
 module.exports = class LogService {
 
@@ -340,7 +340,10 @@ module.exports = class LogService {
     //
     query.scope = query.scope || 'ioniq';
     if(!['ioniq','all','level'].includes(query.scope)) { 
-      let carList = query.scope.toUpperCase().split(',');
+      let carList = query.scope.toUpperCase().split(',').map((row) => {
+        return row.indexOf('W') === -1 ? ('WAIVE' + row) : row;
+      });
+       
       allCars.forEach((row) => {
         if(carList.includes(row.id) || carList.includes(row.license.toUpperCase())) {
           includeMap[row.id] = row.license;
@@ -375,7 +378,7 @@ module.exports = class LogService {
     // for a discussion on the 'best' way to do this.
     let range = { $between: [dtStr, sequelize.literal(end)] };
     // we'll use this query to answer a number of questions.
-    let allBookings = yield Booking.find({
+    let allBookingsQuery = {
       where : {
         status : { $in : [ 'completed', 'closed', 'ended', 'started' ] },
         created_at : range,
@@ -391,7 +394,9 @@ module.exports = class LogService {
           as    : 'details'
         }
       ]
-    });
+    };
+    let allBookings = yield Booking.find(allBookingsQuery);
+
     if(excludeMap !== false) {
       allExcludedBookings = yield Booking.find({
         where : {
@@ -432,7 +437,6 @@ module.exports = class LogService {
         dateRange
       ].join(' ');
 
-      //console.log(qstr);
       return yield sequelize.query(qstr, {type: sequelize.QueryTypes.SELECT});
 
     } else if(kind === 'points' || kind === 'points.js') {
@@ -451,7 +455,7 @@ module.exports = class LogService {
 
       return kind === 'points.js' ? ('var points = ' + JSON.stringify(res)) : res;
     }
-    //console.log(includeMap, range);
+   
     let allOdometers = yield CarHistory.find({
       where : {
         action: 'ODOMETER',
@@ -464,16 +468,30 @@ module.exports = class LogService {
       ]
     });
 
+    // this means we are looking pretty far back and can't use that table
+    // for the odo readings ... woops.
+    if(allOdometers.length === 0) {
+      allBookings.forEach((row) => {
+        let id = includeMap[row.carId];
+        if( ! (id in bookByCar) ) {
+          bookByCar[id] = [];
+          carOdometer[id] = [Number.MAX_VALUE, 0];
+        }
+        carOdometer[id][0] = Math.min(row.details[0].mileage, carOdometer[id][0]);
+        carOdometer[id][1] = Math.max(row.details[1].mileage, carOdometer[id][1]);
+      });
+    } else {
 
-    allOdometers.forEach((row) => {
-      let id = includeMap[row.carId];
-      if( ! (id in bookByCar) ) {
-        bookByCar[id] = [];
-        carOdometer[id] = [Number.MAX_VALUE, 0];
-      }
-      carOdometer[id][0] = Math.min(+row.data, carOdometer[id][0]);
-      carOdometer[id][1] = Math.max(+row.data, carOdometer[id][1]);
-    });
+      allOdometers.forEach((row) => {
+        let id = includeMap[row.carId];
+        if( ! (id in bookByCar) ) {
+          bookByCar[id] = [];
+          carOdometer[id] = [Number.MAX_VALUE, 0];
+        }
+        carOdometer[id][0] = Math.min(+row.data, carOdometer[id][0]);
+        carOdometer[id][1] = Math.max(+row.data, carOdometer[id][1]);
+      });
+    }
 
     // These should already be done by date so yeah, that's convenient.
     allBookings.forEach((row) => {
@@ -526,8 +544,8 @@ module.exports = class LogService {
     }
 
     return {
-      period: year_month,
-      duration: `1 ${duration}`,
+      period: duration_parts[0],
+      duration: duration,
       activeCars: Object.keys(bookByCar),
       activeCarCount: Object.keys(bookByCar).length,
       userCount:  Object.keys(bookBy.user).length,
