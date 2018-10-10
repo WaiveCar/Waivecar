@@ -90,7 +90,6 @@ module.exports = class OrderService extends Service {
       quantity: 1,
       price: data.amount,
       description: data.description,
-      isTopUp: data.topUp,
       chargeName: data.description,
     }, user);
 
@@ -137,8 +136,7 @@ module.exports = class OrderService extends Service {
 
   static *topUp(data, _user) {
     let user = yield User.findById(data.userId);
-    data.topUp = true;
-    if(yield this.quickCharge(data, _user, {nocredit: true, overrideAdminCheck: true})) {
+    if(yield this.quickCharge(data, _user, {nocredit: true, overrideAdminCheck: true)) {
       yield user.update({credit: user.credit + 20 * 100});
     }
   }
@@ -1049,7 +1047,7 @@ module.exports = class OrderService extends Service {
         yield email.send({
           to: user.email,
           from: emailConfig.sender,
-          subject  : `You just got $${item.total} for future rides with WaiveCar`,
+          subject  : `$${item.total} credit added for future rides with WaiveCar`,
           template : 'miscellaneous-credit',
           context  : {
             name   : user.name(),
