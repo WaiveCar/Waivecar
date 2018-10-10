@@ -862,6 +862,29 @@ module.exports = {
     yield notify.notifyAdmins(`:scooter: ${ _user.link() } is retrieving ${ car.license }.`, ['slack'], {channel: '#reservations'});
   },
 
+  *instaBook(id, _user) {
+    let car = yield car.findById(id);
+    if (car.inRepair) {
+      throw error.parse({
+        code    : 'CAR_IN_REPAIR',
+        message : 'Car cannot be instabooked while in repair',
+        data    : {
+          id : id
+        }
+      }, 404);
+    }
+    let booking = new Booking({
+      carId: id,
+      userId: _user.id,
+      status: 'started',
+    });
+    if (_user) yield LogService.create({ carId : id, action : Actions.INSTABOOK }, _user);
+    yield this.executeCommand(id, 'central_lock', 'unlock', _user);
+    yield this.executeCommand(id, 'immobilizer', 'unlock', _user);
+    car = yield this.updateAvailabilityAnonymous(id, false, _user);
+    yield notify.notifyAdmins(`:scooter: ${ _user.link() } instabooked ${ car.license }.`, ['slack'], {channel: '#reservations'});
+  },
+
   *rentable(id, _user) {
     if (_user) yield LogService.create({ carId : id, action : Actions.RENTABLE }, _user);
     yield this.executeCommand(id, 'central_lock', 'lock', _user);

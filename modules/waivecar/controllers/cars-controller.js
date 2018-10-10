@@ -71,6 +71,7 @@ Bento.Register.Controller('CarsController', function(controller) {
       case 'hidden'             : return yield car.updateVisibility(id, false, this.auth.user);
       case 'kick'               : return yield car.kickUser(id, this.auth.user);                                
       case 'retrieve'           : return yield car.retrieve(id, this.auth.user);
+      case 'instabook'          : return yield car.instaBook(id, this.auth.user);
       case 'rentable'           : return yield car.rentable(id, this.auth.user);
 
       default                   : {
