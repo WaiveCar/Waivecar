@@ -89,7 +89,9 @@ module.exports = class OrderService extends Service {
     yield this.notifyOfCharge({
       quantity: 1,
       price: data.amount,
-      description: data.description
+      description: data.description,
+      isTopUp: data.topUp,
+      chargeName: data.description,
     }, user);
 
     try {
@@ -135,6 +137,7 @@ module.exports = class OrderService extends Service {
 
   static *topUp(data, _user) {
     let user = yield User.findById(data.userId);
+    data.topUp = true;
     if(yield this.quickCharge(data, _user, {nocredit: true, overrideAdminCheck: true})) {
       yield user.update({credit: user.credit + 20 * 100});
     }
@@ -1012,7 +1015,7 @@ module.exports = class OrderService extends Service {
       let chargeList = item.map(charge => 
         `<tr>
           <td>
-            ${charge.name}
+            ${charge.name ? charge.name : (item[0].chargeName ? item[0].chargeName : 'Miscellaneous Charge')}
           </td>
           <td class="right-item">
             ${charge.quantity}
@@ -1021,11 +1024,11 @@ module.exports = class OrderService extends Service {
             $${(Math.abs(charge.price / 100)).toFixed(2)}
           </td>
           <td class="right-item">
-            $${(Math.abs(charge.total / 100)).toFixed(2)}
+            $${charge.total ? (Math.abs(charge.total / 100)).toFixed(2) : (charge.price / 100).toFixed(2)}
           </td>
         <tr>` ).join('');
       word = item.totalNum > 0 ? 'Charges' : 'credit';
-      if (word === 'Charges') {
+      if (word === 'Charges' && !item[0].isTopUp) {
         opts.subject = opts.subject || `$${ item.total } charges on your account`;
         opts.leadin = opts.leadin || 'Here is your receipt for charges added to your account:';
         yield email.send({
