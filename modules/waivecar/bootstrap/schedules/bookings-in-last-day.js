@@ -2,7 +2,7 @@
 
 let scheduler = Bento.provider('queue').scheduler;
 let Car = Bento.model('Car');
-let moment = require('moment');
+let moment = require('moment-timezone');
 let notify = require('../../lib/notification-service');
 let geocodeService = require('../../lib/geocoding-service');
 

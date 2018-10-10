@@ -145,6 +145,7 @@ module.exports = class OrderService extends Service {
 
   static *refund(payload, paymentId, _user) {
     let order = yield Order.findById(paymentId);
+    let hasBooking = yield BookingPayment.findOne({ where: { orderId: order.id } }); 
     if(!payload) {
       payload = {amount: order.amount};
     }
@@ -177,12 +178,12 @@ module.exports = class OrderService extends Service {
       yield email.send({
         to       : user.email,
         from     : emailConfig.sender,
-        subject  : `$${ amount } refunded for your trip on ${ orderDate }`,
+        subject  : `$${ amount } refunded ${hasBooking ? `for your trip on ${ orderDate }` : `by WaiveCar ${order.description ? `for ${order.description.toLowerCase()}` : ''}`}`,
         template : 'refund',
         context  : {
           name       : user.name(),
           amount     : amount,
-          description: order.description, 
+          description: order.description.toLowerCase(), 
           date       : orderDate,
         }
       });

@@ -22,14 +22,12 @@ module.exports = {
     // This is used to create new parking spaces. When new spaces are created, they are
     // not available until they are marked as bookable on the website.
     let user = yield User.findById(query.userId);
-    let lastRecord = yield Location.findOne({order: [['id','desc']]});
     let previousSpaces = yield UserParking.find({
       where: {
         ownerId: user.id,
-      },
-      paranoid: false,
+      }
     });
-    if (!previousSpaces) {
+    if (!previousSpaces.length) {
       let email = new Email(), emailOpts = {};
       try {
         emailOpts = {
@@ -46,9 +44,8 @@ module.exports = {
         log.warn('Failed to deliver notification email: ', emailOpts, err);
       }
     }
-    let lastId = lastRecord.id;
+
     let location = new Location({
-      name: `WaiveSpot${ lastId + 1 }`,
       type: 'user-parking',
       latitude: query.latitude,
       longitude: query.longitude,
@@ -63,9 +60,9 @@ module.exports = {
       notes: query.notes,
     });
 
-    yield notify.notifyAdmins(`:bed: ${ user.link() } just made a waivespot at ${ query.address }!`, [ 'slack' ], { channel : '#user-alerts' });
-
     yield entry.save();
+    yield location.update({name: `WaivePark #${ entry.id }` });
+    yield notify.notifyAdmins(`:bed: ${ user.link() } just made WaivePark #${ entry.id } at ${ query.address }!`, [ 'slack' ], { channel : '#user-alerts' });
     entry.location = location;
     return entry;
   },
