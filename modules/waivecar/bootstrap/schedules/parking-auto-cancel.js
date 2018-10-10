@@ -14,12 +14,12 @@ scheduler.process('parking-auto-cancel', function*(job) {
   yield notify.notifyAdmins(
     `:rage: ${job.data.user.firstName} ${
       job.data.user.lastName
-    } lost their reservation for WaiveSpot #${job.data.spaceId}`,
+    } lost their reservation for WaivePark #${job.data.spaceId}`,
     ['slack'],
     {channel: '#reservations'},
   );
   yield notify.sendTextMessage(
     job.data.user.id,
-    `Your reservation for WaiveSpot #${job.data.spaceId} has expired`,
+    `Your reservation for WaivePark #${job.data.spaceId} has expired`,
   );
 });
