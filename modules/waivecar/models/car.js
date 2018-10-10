@@ -471,7 +471,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     function(User, Booking, GroupCar) {
       this.belongsTo(User, { as : 'user', foreignKey : 'userId' });
       this.belongsTo(Booking, { as : 'currentBooking', foreignKey : 'bookingId' });
-      this.hasMany(Booking, { as : 'booking' });
+      this.hasMany(Booking, { as : 'bookings' });
       this.hasMany(GroupCar,  { as : 'groupCar', foreignKey : 'carId' });
     }
   ];

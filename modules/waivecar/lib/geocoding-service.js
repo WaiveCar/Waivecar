@@ -58,7 +58,7 @@ module.exports = {
 
   *getAddress(lat, long, param) {
     try { 
-      let res = yield request(`http://maps.googleapis.com/maps/api/geocode/json`, {
+      let res = yield request(`https://maps.googleapis.com/maps/api/geocode/json?key=${config.gmaps.apiKey}`, {
         qs : {
           latlng : `${ lat },${ long }`
         }
