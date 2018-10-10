@@ -10,6 +10,7 @@ let Service     = require('./classes/service');
 let LogService  = require('./log-service');
 let UserLog     = require('../../log/lib/log-service');
 let redis       = require('./redis-service');
+let geocode      = require('./geocoding-service');
 let Actions     = LogService.getActions();
 let queue       = Bento.provider('queue');
 let queryParser = Bento.provider('sequelize/helpers').query;
@@ -24,6 +25,7 @@ let hooks       = Bento.Hooks;
 let User = Bento.model('User');
 let Car  = Bento.model('Car');
 let Booking = Bento.model('Booking');
+let BookingDetails = Bento.model('BookingDetails');
 let GroupCar  = Bento.model('GroupCar');
 
 let geolib      = require('geolib');
@@ -863,7 +865,9 @@ module.exports = {
   },
 
   *instaBook(id, _user) {
-    let car = yield car.findById(id);
+    console.log('id: ', id)
+    console.log('_user', _user);
+    let car = yield Car.findOne({where: {id}});
     if (car.inRepair) {
       throw error.parse({
         code    : 'CAR_IN_REPAIR',
@@ -878,11 +882,25 @@ module.exports = {
       userId: _user.id,
       status: 'started',
     });
+    yield booking.save();
+    let details = new BookingDetails({
+      bookingId : booking.id,
+      type      : 'start',
+      time      : new Date(),
+      latitude  : car.latitude,
+      longitude : car.longitude,
+      address   : yield geocode.getAddress(car.latitude, car.longitude),
+      mileage   : car.totalMileage,
+      charge    : car.charge,
+    });
+    yield details.save();
+      /*
     if (_user) yield LogService.create({ carId : id, action : Actions.INSTABOOK }, _user);
     yield this.executeCommand(id, 'central_lock', 'unlock', _user);
     yield this.executeCommand(id, 'immobilizer', 'unlock', _user);
     car = yield this.updateAvailabilityAnonymous(id, false, _user);
     yield notify.notifyAdmins(`:scooter: ${ _user.link() } instabooked ${ car.license }.`, ['slack'], {channel: '#reservations'});
+    */
   },
 
   *rentable(id, _user) {
