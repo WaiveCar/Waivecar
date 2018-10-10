@@ -22,10 +22,11 @@ export default class Space extends Component {
     return (
       <div className="parking-space">
         <div className="row">
-          <div className="col-md-6 col-xs-12">
-            <div>Address: {space.location.address}</div>
+          <div className="col-md-8 col-xs-12">
+            <h5>{ space.location.name }</h5>
+            <div>{space.location.address}</div>
           </div>
-          <div className="col-md-6 col-xs-12">
+          <div className="col-md-4 col-xs-12">
             <Switch
               className="space-switch"
               style={{fontSize: '1rem'}}
