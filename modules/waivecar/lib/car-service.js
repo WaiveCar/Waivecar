@@ -100,14 +100,15 @@ module.exports = {
       let $where = opts.where;
       opts.where = {
         $and: [ 
-          { charge: { $gt : 55 } }, 
+          { charge: { $lt : 50 } }, 
           $where 
         ]
       };
     } else if((hour >= 1 && hour < 4) && !isAdmin) {
       opts.where = { 
         $or : [
-          sequelize.literal("groupCar.group_role_id = 7")
+          sequelize.literal("groupCar.group_role_id = 7"),
+          { charge: { $lt : 20 } }, 
         ]
       };
     }
