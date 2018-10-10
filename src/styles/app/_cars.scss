@@ -102,4 +102,31 @@
     color: rgb(0,0,0);
   }
 }
-    
+ 
+.button-holder {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin: 1em;
+}
+
+.damage-image-holder {
+  width: 24%;
+}
+
+.damage-image {
+  max-width: 100%;
+  max-height: 150px;
+}
+
+.damage-title {
+  margin: 0.75em 0;
+}
+
+.dmg-row {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+

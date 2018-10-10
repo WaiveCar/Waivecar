@@ -11,6 +11,9 @@ import { Form, Button, GMap, snackbar } from 'bento-web';
 import Service               from '../../lib/car-service';
 import NotesList from '../components/notes/list';
 import Logs from '../../components/logs';
+import config   from 'config';
+
+const API_URI = config.api.uri + (config.api.port ? ':' + config.api.port : '');
 
 let formFields = {
   photo : [],
@@ -38,7 +41,8 @@ class CarsShowView extends React.Component {
   constructor(...args) {
     super(...args);
     this.state = {
-      carPath : null
+      carPath : null,
+      damageFilter: null,
     };
     dom.setTitle('Car');
     this.service = new Service(this);
@@ -73,6 +77,9 @@ class CarsShowView extends React.Component {
       });
     });
     api.get(`/reports/car/${ id }`, (err, model) => {
+      if (err) {
+        console.log(err);
+      }
       model.reverse();
       this.setState({
         damage : model
@@ -200,7 +207,7 @@ class CarsShowView extends React.Component {
               </h4>
                 <div className="image-center-container">
                   <div className="col-md-6 gallery-image">
-                    <img src={`https://s3.amazonaws.com/waivecar-prod/${parkingDetails.path}`} />
+                    <img src={`${API_URI}/file/${parkingDetails.streetSignImage}`} />
                   </div>
                 </div>
               </div>
@@ -564,63 +571,76 @@ class CarsShowView extends React.Component {
     );
   }
 
-  deleteImage(row, index) {
-    row.files = row.files.filter((row) => { return row.id != index; });
-
-    api.delete('/reports/' + index, (err, user) => {
-      return snackbar.notify({
-        type    : 'success',
-        message : 'Image deleted'
-      });
-    });
-
-    this.forceUpdate();
-  }
-
-  renderImages(row) {
-    let ix = 0;
-    let res = row.files.map((file) => {
-      return (
-        <div className="col-md-4 gallery-image">
-          <div className="btn-container">
-            <button className='btn-link remove-image' onClick={ this.deleteImage.bind(this, row, file.id) }><i className="material-icons" role="true">close</i></button>
-          </div>
-          <img key={ ix++ } src={ "https://api.waivecar.com/file/" + file.fileId } />
-        </div>
-      );
-    });
-    return <div className="row">{ res }</div>;
-  }
-
   renderDamage(car) {
-    let ix = 0;
-    let toShow = this.state.damage.filter((row) => { return row.files.length });
-    let res = toShow.map((row) => {
-      return (
-        <div key={ ix ++ } className='damage-row'>
-          <div className="row">
-            <div className="col-xs-12">
-              { moment(row.created_at).format('YYYY-MM-DD HH:mm:ss') } <a href={ "/bookings/" + row.bookingId }>#{ row.bookingId }</a>
-            </div>
-          </div>
-          <div className="row">
-             <div className="col-md-11">
-                { row.description }
-             </div>
-          </div>
-          { this.renderImages(row) }
-        </div> 
-      );
-    });
     return (
       <div className="box">
         <h3>Damage and uncleanliness</h3>
         <div className="box-content">
-        { res }
+          <div className="text-center">
+            Filter by angle:
+          </div> 
+          <div className="button-holder"> 
+            {[null, 'front', 'left', 'rear', 'right', 'other'].map((angle, i) => 
+              <button 
+                key={i}
+                className="btn btn-sm btn-primary" 
+                onClick={() => this.setState({damageFilter: angle})}
+              >
+                {angle ? angle : 'all'}
+              </button>
+            )}
+          </div>
+          <div>
+            {this.state.damage.map((row, i) =>
+              <div key={i}>
+                {this.renderBookingDamage(row)}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );
-       
+  }
+
+  renderBookingDamage(booking) {
+    let bookingList = booking.reports;
+    let { damageFilter } = this.state;
+    let rowsToRender = [];
+    if (!damageFilter && bookingList.length >=8) {
+      let other = bookingList.filter(item => item.type === 'other');
+      let angles = bookingList.filter(item => item.type !== 'other');
+      rowsToRender = [angles.slice(0, 4), angles.slice(4), other];
+    } else {
+      rowsToRender.push(bookingList.filter(item => item.type === damageFilter));
+    }
+    return (
+      <div>
+        {(rowsToRender[0] && rowsToRender[0].length > 0) &&
+          <div>
+            <h4 className="damage-title">
+              Booking Id: <a href={ '/bookings/' + booking.id } target="_blank">#{booking.id}</a>
+              {' on '}{moment(booking.created_at).format('YYYY-MM-DD HH:mm:ss')}
+            </h4>
+            <div>
+              {rowsToRender.map((row, i) => {
+                return (
+                  <div key={i} className="dmg-row">
+                    {row.map((image, j) =>  
+                      <div>
+                        <a className="damage-image-holder" href={`${API_URI}/file/${image.file.id}` } target="_blank" key={j}>
+                          <div>{image.type}</div>
+                          <img className="damage-image" src={`${API_URI}/file/${image.file.id}`} />
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        }
+      </div>
+    );
   }
 
   renderLocation(car) {
