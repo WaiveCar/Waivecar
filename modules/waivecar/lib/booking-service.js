@@ -1303,7 +1303,7 @@ module.exports = class BookingService extends Service {
       minCharge = zone.minimumCharge;
       if (car.milesAvailable() <= zone.minimumCharge && !isAdmin && !isLevel) {
         yield cars.updateAvailabilityAnonymous(car.id, false);
-        yield notify.slack({ text : `:spider: ${ car.link() } unavailable due to charge being under ${zone.minimumCharge}. ${ car.chargeReport() }`
+        yield notify.slack({ text : `:spider: ${ car.link() } unavailable due to charge being under ${zone.minimumCharge}mi:. ${ car.chargeReport() }`
         }, { channel : '#rental-alerts' });
       } else {
         yield car.available();
