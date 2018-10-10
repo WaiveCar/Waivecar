@@ -25,10 +25,9 @@ module.exports = {
     let previousSpaces = yield UserParking.find({
       where: {
         ownerId: user.id,
-      },
-      paranoid: false,
+      }
     });
-    if (!previousSpaces) {
+    if (!previousSpaces.length) {
       let email = new Email(), emailOpts = {};
       try {
         emailOpts = {
