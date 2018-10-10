@@ -7,8 +7,11 @@ let ParkingReservation = Bento.model('ParkingReservation');
 let ParkingDetails = Bento.model('ParkingDetails');
 let Car = Bento.model('Car');
 let relay = Bento.Relay;
+let log = Bento.Log
 let queue = Bento.provider('queue');
 let notify = require('./notification-service');
+let Email = Bento.provider('email');
+let emailConfig = Bento.config.email;
 let redis = require('./redis-service');
 let error = Bento.Error;
 let sequelize = Bento.provider('sequelize');
@@ -20,6 +23,29 @@ module.exports = {
     // not available until they are marked as bookable on the website.
     let user = yield User.findById(query.userId);
     let lastRecord = yield Location.findOne({order: [['id','desc']]});
+    let previousSpaces = yield UserParking.find({
+      where: {
+        ownerId: user.id,
+      },
+      paranoid: false,
+    });
+    if (!previousSpaces) {
+      let email = new Email(), emailOpts = {};
+      try {
+        emailOpts = {
+          to       : user.email,
+          from     : emailConfig.sender,
+          subject  : 'Thanks for joining WaivePark. You\'re playing a role in the carsharing revolution!',
+          template : 'waivepark-welcome-email',
+          context  : {
+            name: user.name(),
+          }
+        };
+        yield email.send(emailOpts);
+      } catch(err) {
+        log.warn('Failed to deliver notification email: ', emailOpts, err);
+      }
+    }
     let lastId = lastRecord.id;
     let location = new Location({
       name: `WaiveSpot${ lastId + 1 }`,
@@ -169,12 +195,8 @@ module.exports = {
     try {
       let parking = yield UserParking.findById(parkingId);
       let location = yield Location.findById(parking.locationId);
-      // These raw queries are used to create a hard delete. The sequelize.delete function only
-      // does a soft delete with the implementation used in bentoJS
-      yield sequelize.query(`DELETE FROM user_parking WHERE id=${parking.id}`);
-      yield sequelize.query(
-        `DELETE FROM locations WHERE id=${parking.locationId}`,
-      );
+      yield parking.delete();
+      yield location.delete();
       return {
         parking,
         location,

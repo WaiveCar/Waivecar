@@ -1,5 +1,6 @@
 'use strict';
 let fs          = require('fs');
+let Card        = Bento.model('Shop/Card');
 
 module.exports = class StripeCharges {
 
@@ -26,6 +27,12 @@ module.exports = class StripeCharges {
     if (user.stripeId) {
       charge.customer = user.stripeId;
     }
+    let paymentCard = yield Card.findOne({ 
+      where : { userId : user.id },
+      order : [['updated_at', 'DESC']]
+    });
+    charge.source = paymentCard.id;
+
     return yield new Promise((resolve, reject) => {
       this.stripe.charges.create(charge, (err, res) => {
 
