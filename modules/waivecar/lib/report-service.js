@@ -155,7 +155,7 @@ module.exports = {
       log.warn(`Failed to write to the log file: ${ err.message }`);
     }
     console.log('payload: ', slackPayload);
-    if (/*process.env.NODE_ENV === 'production' &&*/slackPayload.attachments.length > 1) {
+    if (process.env.NODE_ENV === 'production' && slackPayload.attachments.length > 1) {
       yield slack.message(slackPayload);
     }
     return;
