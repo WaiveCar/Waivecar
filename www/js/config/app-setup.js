@@ -144,7 +144,7 @@ var run = [
         event.preventDefault();
         $state.go('auth-account-verify', { step: 2 });
       } else if (isAuthenticated && !_.isUndefined(authRequired) && authRequired === false && $auth.me.tested) {
-        /*       event.preventDefault();
+        event.preventDefault();
         if($auth.me.booking) {
           if($auth.me.booking.status === 'started') {
             $state.go('dashboard', { id: $auth.me.booking.id });
@@ -154,7 +154,7 @@ var run = [
           }
         } else {
           $state.go('cars');
-        }*/
+        }
       } else if (!isAuthenticated && authRequired) {
         event.preventDefault();
         $state.go('auth');
