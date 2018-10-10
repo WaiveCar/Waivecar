@@ -73,7 +73,7 @@ export default class UserParking extends Component {
 
   deleteSpace = spaceId => {
     // This deletes a space of a certain id.
-    if (confirm(`Are you sure you want to delete space ${spaceId}`)) {
+    if (confirm(`Are you sure you want to remove WaivePark ${spaceId}`)) {
       api.delete(`/parking/${spaceId}`, (err, response) => {
         if (err) {
           return snackbar.notify({
