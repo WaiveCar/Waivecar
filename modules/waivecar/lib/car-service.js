@@ -100,7 +100,7 @@ module.exports = {
       let $where = opts.where;
       opts.where = {
         $and: [ 
-          { charge: { $lt : 50 } }, 
+          { charge: { $lt : 55 } }, 
           $where 
         ]
       };
@@ -108,7 +108,7 @@ module.exports = {
       opts.where = { 
         $or : [
           sequelize.literal("groupCar.group_role_id = 7"),
-          { charge: { $lt : 20 } }, 
+          { charge: { $lt : 35 } }, 
         ]
       };
     }
