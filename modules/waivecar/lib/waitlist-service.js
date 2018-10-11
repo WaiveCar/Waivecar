@@ -32,11 +32,10 @@ function inside(obj) {
 
     // the geolib docs say they report in meters.
     let distance = geolib.getDistance(ourCenter, obj);
-    console.log(distance, ourCenter, obj);
 
     return distance < 80467;
-  }
-  return false;
+  } 
+  return (obj.placeName.search(/los angeles|culver city|beverly hills|santa monica/i) != -1);
 }
 
 module.exports = {
