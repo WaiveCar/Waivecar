@@ -419,7 +419,23 @@ class CarsShowView extends React.Component {
       this.service.setCar(this.id());
       return snackbar.notify({
         type: 'success',
-        message: 'Instabook successful!'
+        message: 'InstaBook successful!'
+      });
+    });
+  }
+
+  instaEnd(carId) {
+    api.put(`/cars/${carId}/instaend`, {} ,(err, response) => {
+      if (err) {
+        return snackbar.notify({
+          type    : 'danger',
+          message : err.message
+        });
+      }
+      this.service.setCar(this.id());
+      return snackbar.notify({
+        type: 'success',
+        message: 'InstaEnd successful!'
       });
     });
   }
@@ -519,12 +535,25 @@ class CarsShowView extends React.Component {
                           placeholder="Name or ID" 
                         />
                         <button className="btn btn-primary btn-sm col-xs-6" onClick={ this.findUser.bind(this) }>Find User</button>
-                        <button className="btn btn-primary btn-sm col-xs-6" onClick={() => this.instaBook(car.id)}>Instabook</button>
                       </div>
                       <div className={ `row ${ this.state.user_find_name ? '' : 'hide' }` }>
                         { this.renderUserSearch(car) }
                       </div>
+                      {!car.booking &&
+                        <button className="btn btn-primary btn-sm col-xs-6" onClick={() => this.instaBook(car.id)}>Instabook</button>
+                      }
+                      {(car.userId === auth.id) &&
+                        <button className="btn btn-primary btn-sm col-xs-6" onClick={() => this.instaEnd(car.id)}>Instaend</button>
+                      }
                     </div>
+                }
+              </div>
+              <div>
+                {!car.booking &&
+                  <button className="btn btn-primary btn-sm col-xs-6" onClick={() => this.instaBook(car.id)}>InstaBook</button>
+                }
+                {(car.userId === auth.id) &&
+                  <button className="btn btn-primary btn-sm col-xs-6" onClick={() => this.instaEnd(car.id)}>InstaEnd</button>
                 }
               </div>
               <div className="col-md-6">
@@ -687,7 +716,6 @@ class CarsShowView extends React.Component {
 
   render() {
     let car = this.service.getState('cars').find(c => c.id === this.id());
-    console.log('car: ', car);
 
     if (!car || !car.id) {
       return <div className="text-center">Retrieving Car...</div>
