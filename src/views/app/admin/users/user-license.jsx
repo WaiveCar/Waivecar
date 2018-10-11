@@ -186,6 +186,10 @@ module.exports = class UserDetails extends React.Component {
                 <input type="date" name="birthDate" className="form-control" defaultValue={ moment(license.birthDate.slice(0,-1)).format('YYYY-MM-DD') } required />
               </FormInput>
               <FormInput className="col-md-4 bento-form-input">
+                <label>Expiration Date</label>
+                <input type="date" name="birthDate" className="form-control" defaultValue={ license.expirationDate ? moment(license.expirationDate.slice(0,-1)).format('YYYY-MM-DD') : 'not provided' } required />
+              </FormInput>
+              <FormInput className="col-md-4 bento-form-input">
                 <label>Outcome</label>
                 <FormSelect
                   name    = "outcome"

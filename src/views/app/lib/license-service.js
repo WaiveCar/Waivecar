@@ -6,7 +6,6 @@ module.exports = class License extends Service {
 
   /**
    * Stores the provided context.
-   * @param {Object} ctx
    */
   constructor(ctx) {
     super(ctx, 'license', {
@@ -60,12 +59,9 @@ module.exports = class License extends Service {
 
   /**
    * Adds a new license under the provided user.
-   * @param {Object}   user
-   * @param {Object}   license
-   * @param {Function} done
    */
   addLicense(user, license, done) {
-    async.each([ 'state', 'number', 'birthDate', 'lastName', 'firstName' ], function(field, next) {
+    async.each([ 'state', 'number', 'birthDate', 'expirationDate', 'lastName', 'firstName' ], function(field, next) {
       let currentValue = license.hasOwnProperty(field) ? license[field] : undefined;
       let valueName = helpers.changeCase.toSentence(field);
       if (!currentValue) {
@@ -85,6 +81,7 @@ module.exports = class License extends Service {
         middleName : license.middleName,
         lastName   : license.lastName,
         birthDate  : license.birthDate,
+        expirationDate: license.expirationDate,
         state      : license.state,
         number     : license.number
       }, (err, license) => {
@@ -112,7 +109,6 @@ module.exports = class License extends Service {
 
   /**
    * Deletes a license and updates the array on the ctx.
-   * @param {String} licenseId
    */
   deleteLicense(licenseId) {
 

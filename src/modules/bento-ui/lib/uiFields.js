@@ -455,6 +455,13 @@ module.exports = {
       label: 'Date Of Birth',
       helpText: null,
     },
+    expirationDate: {
+      name: 'expirationDate',
+      component: 'date',
+      required: true,
+      label: 'Expiration Date',
+      helpText: null,
+    },
     createdAt: {
       component: 'input',
       helpText: null,
