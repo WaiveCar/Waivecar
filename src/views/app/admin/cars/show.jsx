@@ -539,12 +539,6 @@ class CarsShowView extends React.Component {
                       <div className={ `row ${ this.state.user_find_name ? '' : 'hide' }` }>
                         { this.renderUserSearch(car) }
                       </div>
-                      {!car.booking &&
-                        <button className="btn btn-primary btn-sm col-xs-6" onClick={() => this.instaBook(car.id)}>Instabook</button>
-                      }
-                      {(car.userId === auth.id) &&
-                        <button className="btn btn-primary btn-sm col-xs-6" onClick={() => this.instaEnd(car.id)}>Instaend</button>
-                      }
                     </div>
                 }
               </div>
