@@ -413,9 +413,11 @@ class CarsShowView extends React.Component {
     this.setState({instaDisabled: 'disabled'}, () => {
       api.put(`/cars/${carId}/instabook`, {} ,(err, response) => {
         if (err) {
-          return snackbar.notify({
-            type    : 'danger',
-            message : err.message
+          this.setState({instaDisabled: ''}, () => {
+            return snackbar.notify({
+              type    : 'danger',
+              message : err.message
+            });
           });
         }
         this.service.setCar(this.id());
@@ -433,9 +435,11 @@ class CarsShowView extends React.Component {
     this.setState({instaDisabled: 'disabled'}, () => {
       api.put(`/cars/${carId}/instaend`, {} ,(err, response) => {
         if (err) {
-          return snackbar.notify({
-            type    : 'danger',
-            message : err,
+          this.setState({instaDisabled: ''}, () => {
+            return snackbar.notify({
+              type    : 'danger',
+              message : err,
+            });
           });
         }
         this.service.setCar(this.id());
