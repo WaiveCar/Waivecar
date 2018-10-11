@@ -6,7 +6,12 @@ var moment = require('moment-timezone');
 let relay = Bento.Relay;
 
 scheduler.process('make-cars-unavailable', function*(job) {
-  let carsToProcess = yield Car.find({where: {isAvailable: true}});
+  let carsToProcess = yield Car.find({
+    where: {
+      isAvailable: true, 
+      charge: { $gt : 35 } 
+    }
+  });
   carsToProcess.forEach(car => {
     // This sets the car as unavailable so that the unavailable car is relayed. This is so that
     // they disappear from users' maps without actually becoming marked unavailable in the database.
