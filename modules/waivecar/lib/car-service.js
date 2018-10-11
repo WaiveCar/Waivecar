@@ -1075,9 +1075,10 @@ module.exports = {
         }, 400);
       }
       // This error is thrown here because this response body will say the car has locked even though
-      // the lock command will not work if the iginition is on
+      // the lock command will not work if the ignition is on
       let json = JSON.parse(res.body);
-      if (json.ignition === 'on' && data['central_lock'] === 'locked') {
+      console.log(json, data, resource);
+      if (json.ignition === 'on' && json.central_lock === 'locked') {
         throw error.parse({
           code    : 'IGNITION_ON',
           message : 'The car may not have locked if the ignition is on.'
