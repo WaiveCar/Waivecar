@@ -411,9 +411,16 @@ class CarsShowView extends React.Component {
   instaBook(carId) {
     api.put(`/cars/${carId}/instabook`, {} ,(err, response) => {
       if (err) {
-        console.log('err: ', err);
+        return snackbar.notify({
+          type    : 'danger',
+          message : err.message
+        });
       }
-      console.log('response: ', response);
+      this.service.setCar(this.id());
+      return snackbar.notify({
+        type: 'success',
+        message: 'Instabook successful!'
+      });
     });
   }
 
