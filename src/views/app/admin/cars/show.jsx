@@ -591,7 +591,7 @@ class CarsShowView extends React.Component {
             )}
           </div>
           <div>
-            {this.state.damage.map((row, i) =>
+            {this.state.damage && this.state.damage.map((row, i) =>
               <div key={i}>
                 {this.renderBookingDamage(row)}
               </div>
@@ -626,12 +626,14 @@ class CarsShowView extends React.Component {
                 return (
                   <div key={i} className="dmg-row">
                     {row.map((image, j) =>  
-                      <div>
-                        <a className="damage-image-holder" href={`${API_URI}/file/${image.file.id}` } target="_blank" key={j}>
-                          <div>{image.type}</div>
-                          <img className="damage-image" src={`${API_URI}/file/${image.file.id}`} />
-                        </a>
-                      </div>
+                      { image && image.file && 
+                        <div>
+                          <a className="damage-image-holder" href={`${API_URI}/file/${image.file.id}` } target="_blank" key={j}>
+                            <div>{image.type}</div>
+                            <img className="damage-image" src={`${API_URI}/file/${image.file.id}`} />
+                          </a>
+                        </div>
+                      }
                     )}
                   </div>
                 )
