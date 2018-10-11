@@ -962,7 +962,16 @@ module.exports = {
         if(command === 'lock')   { updatedCar.isImmobilized = true; }
       }
     }
-    return yield this.syncUpdate(id, updatedCar, existingCar, _user);
+    let res = yield this.syncUpdate(id, updatedCar, existingCar, _user);
+
+    console.log(command, updatedCar, existingCar);
+    if (command == 'lock' && updatedCar.ignition === 'on') {
+      throw error.parse({
+        code    : 'IGNITION_ON',
+        message : 'The car may not have locked if the ignition is on.'
+      }, 400);
+    }
+    return res;
   },
 
   *getEvents(id, _user) {
@@ -1077,13 +1086,6 @@ module.exports = {
       // This error is thrown here because this response body will say the car has locked even though
       // the lock command will not work if the ignition is on
       let json = JSON.parse(res.body);
-      console.log(json, data, resource);
-      if (json.ignition === 'on' && json.central_lock === 'locked') {
-        throw error.parse({
-          code    : 'IGNITION_ON',
-          message : 'The car may not have locked if the ignition is on.'
-        }, 400);
-      }
       return JSON.parse(res.body);
     } catch (err) {
       if (err.message === 'ETIMEDOUT') {
