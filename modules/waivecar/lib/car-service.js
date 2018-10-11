@@ -947,7 +947,15 @@ module.exports = {
       updatedCar = existingCar;
       if(part === 'central_lock') {
         if(command === 'unlock') { updatedCar.isLocked = false; }
-        if(command === 'lock')   { updatedCar.isLocked = true; }
+        if(command === 'lock')   { 
+          if (updatedCar.isIgnitionOn) {
+            throw error.parse({
+              code    : 'IGNITION_ON',
+              message : 'The car may not have locked if the ignition is on.'
+            }, 400);
+          }
+          updatedCar.isLocked = true; 
+        }
       }
       if(part === 'immobilizer') {
         if(command === 'unlock') { updatedCar.isImmobilized = false; }
@@ -1064,6 +1072,15 @@ module.exports = {
             message  : res.body,
             resource : resource
           }
+        }, 400);
+      }
+      // This error is thrown here because this response body will say the car has locked even though
+      // the lock command will not work if the iginition is on
+      let json = JSON.parse(res.body);
+      if (json.ignition === 'on' && data['central_lock'] === 'locked') {
+        throw error.parse({
+          code    : 'IGNITION_ON',
+          message : 'The car may not have locked if the ignition is on.'
         }, 400);
       }
       return JSON.parse(res.body);
