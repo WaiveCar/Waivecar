@@ -865,13 +865,21 @@ module.exports = {
   },
 
   *instaBook(id, _user) {
-    console.log('id: ', id)
-    console.log('_user', _user);
     let car = yield Car.findOne({where: {id}});
+    if (car.bookingId) {
+      throw error.parse({
+        code    : 'CAR_IN_BOOKING',
+        message : 'Car is currently in an active booking.',
+        data    : {
+          id : id
+        }
+      }, 401);
+    }
+
     if (car.inRepair) {
       throw error.parse({
         code    : 'CAR_IN_REPAIR',
-        message : 'Car cannot be instabooked while in repair',
+        message : 'Car cannot be instabooked while in repair.',
         data    : {
           id : id
         }
@@ -894,6 +902,7 @@ module.exports = {
       charge    : car.charge,
     });
     yield details.save();
+    yield car.update({bookingId: booking.id});
     if (_user) yield LogService.create({ carId : id, action : Actions.INSTABOOK }, _user);
     yield this.executeCommand(id, 'central_lock', 'unlock', _user);
     yield this.executeCommand(id, 'immobilizer', 'unlock', _user);
