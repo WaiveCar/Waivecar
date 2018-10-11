@@ -18,4 +18,5 @@ module.exports = function *() {
   yield require('./schedules/have-cars-moved');
   yield require('./schedules/bookings-in-last-day');
   yield require('./schedules/make-cars-unavailable');
+  yield require('./schedules/check-user-levels');
 };
