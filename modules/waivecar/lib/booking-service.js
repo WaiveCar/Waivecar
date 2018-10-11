@@ -932,7 +932,7 @@ module.exports = class BookingService extends Service {
           yield redis.doneWithIt(lockKeys);
           throw error.parse({
             code    : `BOOKING_REQUEST_INVALID`,
-            message : `You must park and turn off the engine before ending your booking.`
+            message : `You must turn off the engine and remove any chargers before ending your booking.`
           }, 400);
         }
       }
