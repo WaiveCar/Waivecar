@@ -169,11 +169,6 @@ module.exports = {
 
       let isInside = inside(payload);
 
-      if (isInside) {
-        yield this.letInByRecord([data], _user, {fromWaitlist: true});
-        res.fastTrack = 'yes';
-        return res;
-      }
       // If they are outside la then we just give them
       // a priority of 0, otherwise it's 1. Note the plus
       // sign to duck type the boolean to an int.
@@ -201,6 +196,7 @@ module.exports = {
       }
 
       yield record.save();
+
     }
 
     if(promo === 'vip' || promo === 'seekdiscomfort' || promo === 'high5') {
@@ -253,6 +249,9 @@ module.exports = {
         type: 'unit'
       });
       yield note.save();
+    } else if (isInside) {
+      yield this.letInByRecord([record], null, {intro: 'vip'});
+      res.fastTrack = 'yes';
     }
 
     return res;
@@ -365,7 +364,6 @@ module.exports = {
   //
   *letInByRecord(recordList, _user, opts) {
     opts = opts || {};
-    let {fromWaitlist} = opts;
     let params = {};
     let nameList = [];
     let userList = [];
@@ -457,7 +455,7 @@ module.exports = {
 
       // X-ref it back so that we don't do this again.
       // They'd be able to reset their password and that's about it.
-      if (!fromWaitlist) {
+      if (record.update) {
         yield record.update({userId: userRecord.id});
       }
       userList.push(userRecord);
