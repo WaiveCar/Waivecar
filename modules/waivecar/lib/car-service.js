@@ -881,7 +881,6 @@ module.exports = {
     }, _user);
     yield booking.addFlag('instabook');
     yield bookingService.ready(booking.id, _user);
-    console.log('booking: ', booking.flags);
 
     if (_user) yield LogService.create({ carId : id, action : Actions.INSTABOOK }, _user);
     let car = yield this.updateAvailabilityAnonymous(id, false, _user);
