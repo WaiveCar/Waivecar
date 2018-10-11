@@ -408,6 +408,15 @@ class CarsShowView extends React.Component {
     });
   }
 
+  instaBook(carId) {
+    api.put(`/cars/${carId}/instabook`, {} ,(err, response) => {
+      if (err) {
+        console.log('err: ', err);
+      }
+      console.log('response: ', response);
+    });
+  }
+
   renderCarActions(car) {
     let switches = [
       {
@@ -503,6 +512,7 @@ class CarsShowView extends React.Component {
                           placeholder="Name or ID" 
                         />
                         <button className="btn btn-primary btn-sm col-xs-6" onClick={ this.findUser.bind(this) }>Find User</button>
+                        <button className="btn btn-primary btn-sm col-xs-6" onClick={() => this.instaBook(car.id)}>Instabook</button>
                       </div>
                       <div className={ `row ${ this.state.user_find_name ? '' : 'hide' }` }>
                         { this.renderUserSearch(car) }
@@ -670,6 +680,7 @@ class CarsShowView extends React.Component {
 
   render() {
     let car = this.service.getState('cars').find(c => c.id === this.id());
+    console.log('car: ', car);
 
     if (!car || !car.id) {
       return <div className="text-center">Retrieving Car...</div>
