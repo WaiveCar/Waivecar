@@ -5,8 +5,12 @@ let Car = Bento.model('Car');
 let moment = require('moment-timezone');
 let notify = require('../../lib/notification-service');
 let geocodeService = require('../../lib/geocoding-service');
+let redis     = require('../../lib/redis-service');
 
 scheduler.process('bookings-in-last-day', function*(job) {
+  if (!yield redis.shouldProcess('bookings-in-last-day', (new Date()).getDay(), 90 * 1000)) {
+    return;
+  }
   // This queries for all cars and their bookings from the last 24 hours
   let carsToCheck = yield Car.find({
     where: {

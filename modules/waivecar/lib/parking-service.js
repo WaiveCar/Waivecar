@@ -62,7 +62,7 @@ module.exports = {
 
     yield entry.save();
     yield location.update({name: `WaivePark #${ entry.id }` });
-    yield notify.notifyAdmins(`:bed: ${ user.link() } just made WaivePark #${ entry.id } at ${ query.address }!`, [ 'slack' ], { channel : '#user-alerts' });
+    yield notify.notifyAdmins(`:house: ${ user.link() } just made WaivePark #${ entry.id } at ${ query.address }!`, [ 'slack' ], { channel : '#user-alerts' });
     entry.location = location;
     return entry;
   },
