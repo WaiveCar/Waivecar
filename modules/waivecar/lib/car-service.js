@@ -873,7 +873,7 @@ module.exports = {
         data    : {
           id : id
         }
-      }, 401);
+      }, 404);
     }
 
     if (car.inRepair) {
@@ -892,17 +892,20 @@ module.exports = {
     });
     yield booking.save();
     let details = new BookingDetails({
-      bookingId : booking.id,
-      type      : 'start',
-      time      : new Date(),
-      latitude  : car.latitude,
-      longitude : car.longitude,
-      address   : yield geocode.getAddress(car.latitude, car.longitude),
-      mileage   : car.totalMileage,
-      charge    : car.charge,
+      bookingId: booking.id,
+      type: 'start',
+      time: new Date(),
+      latitude: car.latitude,
+      longitude: car.longitude,
+      address: yield geocode.getAddress(car.latitude, car.longitude),
+      mileage: car.totalMileage,
+      charge: car.charge,
     });
     yield details.save();
-    yield car.update({bookingId: booking.id});
+    yield car.update({
+      bookingId: booking.id,
+      userId: _user.id,
+    });
     if (_user) yield LogService.create({ carId : id, action : Actions.INSTABOOK }, _user);
     yield this.executeCommand(id, 'central_lock', 'unlock', _user);
     yield this.executeCommand(id, 'immobilizer', 'unlock', _user);
