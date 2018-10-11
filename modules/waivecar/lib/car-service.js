@@ -894,13 +894,11 @@ module.exports = {
       charge    : car.charge,
     });
     yield details.save();
-      /*
     if (_user) yield LogService.create({ carId : id, action : Actions.INSTABOOK }, _user);
     yield this.executeCommand(id, 'central_lock', 'unlock', _user);
     yield this.executeCommand(id, 'immobilizer', 'unlock', _user);
     car = yield this.updateAvailabilityAnonymous(id, false, _user);
     yield notify.notifyAdmins(`:scooter: ${ _user.link() } instabooked ${ car.license }.`, ['slack'], {channel: '#reservations'});
-    */
   },
 
   *rentable(id, _user) {

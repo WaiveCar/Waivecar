@@ -275,6 +275,7 @@ class LogService {
       UNIMMOBILIZE_CAR     : 'UNIMMOBILIZE',
       RENTABLE             : 'RENTABLE',
       RETRIEVE             : 'RETRIEVE',       
+      INSTABOOK            : 'INSTABOOK',
       MAKE_CAR_AVAILABLE   : 'MAKE_CAR_AVAILABLE',
       MAKE_CAR_UNAVAILABLE : 'MAKE_CAR_UNAVAILABLE',
       START_CHARGE         : 'START_CHARGE',
