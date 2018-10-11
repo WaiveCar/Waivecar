@@ -864,13 +864,16 @@ module.exports = {
   },
 
   *instaBook(id, _user) {
+    // This will allow admins to instantly book into cars and is designed to be a replacement for the "retrieve" api call
+    // it creates a booking and starts it immediately.
     let bookingService = require('./booking-service');
 
-    yield bookingService.create({
+    let booking = yield bookingService.create({
       source: 'web',
       userId: _user.id,
       carId: id,
     }, _user);
+    yield bookingService.ready(booking.id, _user);
 
     if (_user) yield LogService.create({ carId : id, action : Actions.INSTABOOK }, _user);
     yield this.executeCommand(id, 'central_lock', 'unlock', _user);
