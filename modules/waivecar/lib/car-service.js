@@ -959,7 +959,7 @@ module.exports = {
           if (updatedCar.isIgnitionOn) {
             throw error.parse({
               code    : 'IGNITION_ON',
-              message : 'The car many not have locked because it is either charging or the ignition may be on.'
+              message : 'The car may not have locked if the ignition is on.'
             }, 400);
           }
           updatedCar.isLocked = true; 
@@ -1088,7 +1088,7 @@ module.exports = {
       if (json.ignition === 'on' && data['central_lock'] === 'locked') {
         throw error.parse({
           code    : 'IGNITION_ON',
-          message : 'The car many not have locked because it is either charging or the ignition may be on.'
+          message : 'The car may not have locked if the ignition is on.'
         }, 400);
       }
       return JSON.parse(res.body);
