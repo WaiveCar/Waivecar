@@ -32,6 +32,7 @@ function inside(obj) {
 
     // the geolib docs say they report in meters.
     let distance = geolib.getDistance(ourCenter, obj);
+    console.log(distance, ourCenter, obj);
 
     return distance < 80467;
   }
