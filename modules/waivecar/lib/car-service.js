@@ -888,6 +888,20 @@ module.exports = {
     yield notify.notifyAdmins(`:scooter: ${ _user.link() } instabooked ${ car.license }.`, ['slack'], {channel: '#reservations'});
   },
 
+  *instaEnd(id, _user) {
+    if (!_user.hasAccess('admin')) {
+      throw error.parse({
+        code    : 'NON_ADMIN_CANNOT_INSTABOOK',
+        message : 'Users that are not admins cannot use instabook.',
+      }, 401);
+    }
+    
+    if (_user) yield LogService.create({ carId : id, action : Actions.INSTAEND }, _user);
+    yield this.executeCommand(id, 'central_lock', 'lock', _user);
+    yield this.executeCommand(id, 'immobilizer', 'lock', _user);
+    yield notify.notifyAdmins(`:scooter: ${ _user.link() } instaended ${ car.license }.`, ['slack'], {channel: '#reservations'});
+  }
+
   *rentable(id, _user) {
     if (_user) yield LogService.create({ carId : id, action : Actions.RENTABLE }, _user);
     yield this.executeCommand(id, 'central_lock', 'lock', _user);

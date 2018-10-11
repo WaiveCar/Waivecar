@@ -276,6 +276,7 @@ class LogService {
       RENTABLE             : 'RENTABLE',
       RETRIEVE             : 'RETRIEVE',       
       INSTABOOK            : 'INSTABOOK',
+      INSTAEND             : 'INSTAEND',
       MAKE_CAR_AVAILABLE   : 'MAKE_CAR_AVAILABLE',
       MAKE_CAR_UNAVAILABLE : 'MAKE_CAR_UNAVAILABLE',
       START_CHARGE         : 'START_CHARGE',
