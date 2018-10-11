@@ -97,7 +97,13 @@ module.exports = angular.module('app').factory('Cars', [
     };
 
     res.lock = function(params) {
-      return $ble.lock(params.id).promise.catch(function(){
+      return $ble.lock(params.id).promise.then(function(){
+        $ble.status(params.id).promise(function(car) {
+          if(car.isIgnitionOn === true) {
+            return $q.reject("Locking might have failed. Please check the ignition");
+          }
+        });
+      }).catch(function(){
         console.log("Failure ... using network");
         return res._lock(params).$promise;
       });
