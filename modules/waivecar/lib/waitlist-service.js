@@ -88,6 +88,7 @@ module.exports = {
 
     let requiredList = ['firstName', 'lastName', 'email', 'placeName'];
     var promo = '';
+    let isInside = '';
 
     if(payload.promoCode) {
       promo = payload.promoCode.toLowerCase();
@@ -167,7 +168,7 @@ module.exports = {
     } else {
       // We haven't seen this person before... 
 
-      let isInside = inside(payload);
+      isInside = inside(payload);
 
       // If they are outside la then we just give them
       // a priority of 0, otherwise it's 1. Note the plus
