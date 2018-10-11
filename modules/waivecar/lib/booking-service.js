@@ -84,7 +84,14 @@ module.exports = class BookingService extends Service {
     }
 
     let driver = yield this.getUser(data.userId, true);
-    let car = yield this.getCar(data.carId, data.userId, true);
+    var car;
+    try {
+      // this will throw an error if the car is not currently available.
+      car = yield this.getCar(data.carId, data.userId, true);
+    } catch(err) {
+      yield redis.doneWithIt(lockKeys);
+      throw err;
+    } 
 
     this.hasAccess(driver, _user);
 
