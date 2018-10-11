@@ -866,6 +866,12 @@ module.exports = {
   *instaBook(id, _user) {
     // This will allow admins to instantly book into cars and is designed to be a replacement for the "retrieve" api call
     // it creates a booking and starts it immediately.
+    if (!_user.hasAccess('admin')) {
+      throw error.parse({
+        code    : 'NON_ADMIN_CANNOT_INSTABOOK',
+        message : 'Users that are not admins cannot use instabook.',
+      }, 401);
+    }
     let bookingService = require('./booking-service');
 
     let booking = yield bookingService.create({
