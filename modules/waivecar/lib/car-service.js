@@ -10,7 +10,6 @@ let Service     = require('./classes/service');
 let LogService  = require('./log-service');
 let UserLog     = require('../../log/lib/log-service');
 let redis       = require('./redis-service');
-let geocode      = require('./geocoding-service');
 let Actions     = LogService.getActions();
 let queue       = Bento.provider('queue');
 let queryParser = Bento.provider('sequelize/helpers').query;
@@ -865,51 +864,18 @@ module.exports = {
   },
 
   *instaBook(id, _user) {
-    let car = yield Car.findOne({where: {id}});
-    if (car.bookingId) {
-      throw error.parse({
-        code    : 'CAR_IN_BOOKING',
-        message : 'Car is currently in an active booking.',
-        data    : {
-          id : id
-        }
-      }, 404);
-    }
+    let bookingService = require('./booking-service');
 
-    if (car.inRepair) {
-      throw error.parse({
-        code    : 'CAR_IN_REPAIR',
-        message : 'Car cannot be instabooked while in repair.',
-        data    : {
-          id : id
-        }
-      }, 404);
-    }
-    let booking = new Booking({
+    yield bookingService.create({
+      source: 'web',
+      userId: _user.id,
       carId: id,
-      userId: _user.id,
-      status: 'started',
-    });
-    yield booking.save();
-    let details = new BookingDetails({
-      bookingId: booking.id,
-      type: 'start',
-      time: new Date(),
-      latitude: car.latitude,
-      longitude: car.longitude,
-      address: yield geocode.getAddress(car.latitude, car.longitude),
-      mileage: car.totalMileage,
-      charge: car.charge,
-    });
-    yield details.save();
-    yield car.update({
-      bookingId: booking.id,
-      userId: _user.id,
-    });
+    }, _user);
+
     if (_user) yield LogService.create({ carId : id, action : Actions.INSTABOOK }, _user);
     yield this.executeCommand(id, 'central_lock', 'unlock', _user);
     yield this.executeCommand(id, 'immobilizer', 'unlock', _user);
-    car = yield this.updateAvailabilityAnonymous(id, false, _user);
+    let car = yield this.updateAvailabilityAnonymous(id, false, _user);
     yield notify.notifyAdmins(`:scooter: ${ _user.link() } instabooked ${ car.license }.`, ['slack'], {channel: '#reservations'});
   },
 
