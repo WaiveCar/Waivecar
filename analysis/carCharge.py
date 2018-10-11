@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 #The first argument for this script is an object with the mysql configuration information and
 #the second is a list of users whose status needs to be recalculated
 import MySQLdb as mysql
