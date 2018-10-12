@@ -89,7 +89,13 @@ scheduler.process('booking-auto-cancel', function *(job) {
         let timeWindow = booking.isFlagged('level') ? config.booking.timers.level.autoCancel.value : config.booking.timers.autoCancel.value;
         timeWindow = parseInt(timeWindow, 10);
 
+        let driver = yield User.findById(booking.userId);
+        let aid = yield driver.hasTag('aid');
+
         if(booking.isFlagged('extended')) {
+          timeWindow += 10;
+        }
+        if(aid) {
           timeWindow += 10;
         }
 
