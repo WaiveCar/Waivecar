@@ -137,6 +137,11 @@ templates.register('app', {
         path      : '/locations/:id',
         component : require('../../views/app/admin/locations/update'),
         onEnter   : policies.isAdministrator
+      },
+      {
+        path      : '/waivepark',
+        component : require('../../views/app/admin/waivepark'),
+        onEnter   : policies.isAdministrator
       }
     ].concat(views.getRoutes('app')));
   }
