@@ -383,6 +383,8 @@ function DashboardController ($scope, $rootScope, $injector) {
   }
 
   function endRide(carId, bookingId, attempt) {
+    var isLevel = Boolean($data.me.hasTag('level'));
+
     $ionicLoading.show({
       template: '<div class="circle-loader"><span>Loading</span></div>'
     });
@@ -416,8 +418,15 @@ function DashboardController ($scope, $rootScope, $injector) {
           }); 
         }
         if (endLocation.type === 'hub' || endLocation.type === 'homebase') {
-          endLocation.type = 'hub';
-          return $state.go('end-ride', { id: bookingId, zone: endLocation });
+          if (!isLevel) {
+            endLocation.type = 'hub';
+            return $state.go('end-ride', { id: bookingId, zone: endLocation });
+          } else {
+            return $ride.processEndRide().then(function () {
+              $ionicLoading.hide();
+              return $ride.checkAndProcessActionOnBookingEnd();
+            });
+          }
         } else if(endLocation.type === 'zone') {
           return showZonePrompt(endLocation, function () {
             return $state.go('end-ride', { id: bookingId, zone: endLocation });
