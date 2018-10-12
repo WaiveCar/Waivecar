@@ -411,7 +411,12 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         $ionicLoading.hide();
         modal.remove();
         unlocking = false;
-        $state.go('start-ride', { id: id });
+        if ($data.me.hasTag('level')) {
+          console.log('car is level');
+          $state.go('dashboard', { id: id });
+        } else {
+          $state.go('start-ride', { id: id });
+        }
       })
       .then(function(data) {
         return $data.fetch('bookings');
@@ -435,7 +440,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
 
   ctrl.startIfBleFound = function() {
     unlockModal = false;
-    if(!checkIsInRange( ctrl.currentLocation )) {
+    if(checkIsInRange( ctrl.currentLocation )) {
       //$ionicLoading.show();
     
       $data.resources.cars.connect({id: this.car.id})
