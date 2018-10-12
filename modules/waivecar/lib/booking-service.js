@@ -297,8 +297,10 @@ module.exports = class BookingService extends Service {
     if(autoExtend) {
       inject = 'As a WaiveAid member, you have';
     }
-    let msg = `Your reservation with ${ car.license } is confirmed. ${ inject } ${ timeToCar } minutes to get to your WaiveCar before your reservation expires.`;
+    // If the car is currently WaiveParked, the notes from the spot need to be attached to the message.
+    let currentParking = yield UserParking.findOne({ where: { carId: car.id } });
 
+    let msg = `${car.license} is yours! ${currentParking && `It is WaiveParked with the notes ${currentParking.notes}. `}${inject} ${timeToCar} minutes to get to it. Thanks!`;
     if (isLevel) {
       // https://lb.waivecar.com/users/14827
       yield notify.sendTextMessage(14827, `${ driver.name() } reserved ${ car.license }.`);
