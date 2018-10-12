@@ -422,9 +422,36 @@ function DashboardController ($scope, $rootScope, $injector) {
             endLocation.type = 'hub';
             return $state.go('end-ride', { id: bookingId, zone: endLocation });
           } else {
-            return $ride.processEndRide().then(function () {
-              $ionicLoading.hide();
-              return $ride.checkAndProcessActionOnBookingEnd();
+            // This part happens for level users only
+            $ionicLoading.hide();
+            var modal;
+            $modal('result', {
+              title: 'End Ride',
+              message: 'Are you sure you want to end your ride?',
+              icon: 'x-icon',
+              actions: [{
+                className: 'button-assertive',
+                text: 'Yes',
+                handler: function () {
+                  $ionicLoading.show({
+                    template: '<div class="circle-loader"><span>Loading</span></div>'
+                  });
+                  return $ride.processEndRide().then(function () {
+                    $ionicLoading.hide();
+                    modal.remove();
+                    return $ride.checkAndProcessActionOnBookingEnd();
+                  });
+                }
+              }, {
+                className: 'button-dark',
+                text: 'No',
+                handler: function () {
+                  modal.remove();
+                }
+              }]
+            }).then(function (_modal) {
+              modal = _modal;
+              modal.show();
             });
           }
         } else if(endLocation.type === 'zone') {
