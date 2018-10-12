@@ -7,11 +7,6 @@ let error  = Bento.Error;
 
 module.exports = class AuthService {
 
-  /**
-   * Authorize a user by the provided identifier and password.
-   * @param  {Object} payload
-   * @return {Object}
-   */
   static *login(payload) {
     return yield hooks.require('auth:login', payload);
   }
