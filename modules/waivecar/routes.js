@@ -71,6 +71,7 @@ Route.del('/locations/:id', [ 'isAuthenticated', 'isAdmin', 'LocationsController
 Route.get('/locations/dropoff', 'LocationsController@dropoff');
 
 // ### User Parking
+Route.get('/parking', ['isAuthenticated', 'ParkingController@index']);
 Route.post('/parking', [ 'isAuthenticated', 'ParkingController@create' ]);
 Route.get('/parking/users/:userId', [ 'isAuthenticated', 'ParkingController@getByUser' ]);
 Route.get('/parking/locations/:locationId', [ 'isAuthenticated', 'ParkingController@findByLocation' ]);

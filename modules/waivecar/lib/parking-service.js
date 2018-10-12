@@ -18,6 +18,25 @@ let sequelize = Bento.provider('sequelize');
 
 
 module.exports = {
+  *index() {
+    return yield UserParking.find({
+      include: [
+        {
+          model: 'Location',
+          as: 'location',
+        },
+        {
+          model: 'ParkingReservation',
+          as: 'reservation',
+        },
+        {
+          model: 'Car',
+          as: 'car',
+        },
+      ],
+    });
+  },
+
   *create(query) {
     // This is used to create new parking spaces. When new spaces are created, they are
     // not available until they are marked as bookable on the website.
