@@ -475,7 +475,7 @@ module.exports = class UserDetails extends React.Component {
 
                 <div className="form-actions text-center">
                   <div className="btn-group" role="group">
-                    <button type="submit" className="btn btn-primary">Update Details</button>
+                    <button type="submit" className="btn btn-sm">Update Details</button>
                   </div>
                 </div>
 

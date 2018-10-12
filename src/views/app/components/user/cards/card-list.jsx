@@ -184,15 +184,15 @@ class CardList extends React.Component {
     }
 
     let header = (
-      <div className='credit'>Current Credit: { this.amount(credit) }
+      <div className='credit'>Current Credit:<sup>*</sup> { this.amount(credit) }
       {this.props.addCard && <button onClick={ this.props.addCard } className='btn btn-link btn-sm'>Add Card</button>}
-        {
-          auth.user().hasAccess('admin') ? 
-            <div className="pull-right">
-              <button onClick={ this.addCredit.bind(this, this.props.user, cards) } className='btn btn-link btn-sm'>Add Credit</button>
-            </div>
-            : this.renderNotice(credit)
-        }
+      {
+        auth.user().hasAccess('admin') ? 
+          <div className="pull-right">
+            <button onClick={ this.addCredit.bind(this, this.props.user, cards) } className='btn btn-link btn-sm'>Add Credit</button>
+          </div>
+          : this.renderNotice(credit)
+      }
       </div>
     );
 
@@ -243,12 +243,15 @@ class CardList extends React.Component {
         }
         { footer }
         <div>
-          <button onClick={() => this.topUp(this.props.user, 20, cards)} className={`btn btn-sm ${this.state.topUpDisabled}`}>
-            Add a $20 Credit.
+          <button onClick={() => this.topUp(this.props.user, 20, cards)} className={`btn btn-primary ${this.state.topUpDisabled}`}>
+            Add $20 Credit
           </button>
           <div className="credit-tip">
-            Why would I do this? The $20 hold that is placed on your account when you use WaiveCar will be reduced to $1.
+            Do this and the $20 hold when you use a WaiveCar shrinks to a measly $1.
           </div>
+        </div>
+        <div className='credit-info'>
+          * Credit is automatically used for any fees originating from Waive such as reservation extensions and overtime usage. Other liabilities such as a red light ticket cannot be paid for with credits.
         </div>
       </div>
     );

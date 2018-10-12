@@ -138,17 +138,13 @@ module.exports = class ProfileView extends React.Component {
     });
   }
 
-  /**
-   * Render the personal details form.
-   * @return {Object}
-   */
   renderPersonalDetails() {
     let user = auth.user();
 
     let buttons = [{
       value : 'Update Details',
       type  : 'submit',
-      class : 'btn btn-primary btn-profile-submit'
+      class : 'btn btn-sm btn-profile-submit'
     }];
 
     if (user.phone && !user.verifiedPhone) {

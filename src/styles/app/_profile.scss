@@ -192,8 +192,14 @@
 
 .credit-tip {
   font-size: 0.85rem;
-  text-align: center;
-  margin: 0rem 2rem;
+  margin: 0.5rem 0;
+}
+.credit-info {
+  padding-top: 0.5rem;
+  margin-top: 1.25rem;
+  font-size: 0.70rem;
+  line-height: 1.15rem;
+  border-top: 2px solid #ccc;
 }
 
 .parking-space {
