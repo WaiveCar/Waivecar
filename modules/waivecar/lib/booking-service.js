@@ -692,19 +692,6 @@ module.exports = class BookingService extends Service {
       //yield cars.openDoor(car.id, _user);
 
       yield ParkingService.vacate(car.id);
-      /*
-      let userParking = yield UserParking.findOne({ where: { carId: car.id } });
-      if (userParking) {
-        yield userParking.update({
-          carId: null,
-          waivecarOccupied: false,
-        });
-        let location = yield Location.findById(userParking.locationId);
-        yield location.update({
-          status: 'available',
-        });
-      }
-      */
 
       // ### Notify
 
