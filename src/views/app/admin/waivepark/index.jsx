@@ -31,7 +31,11 @@ export default class WaivePark extends Component {
   render = () => {
     let {spaces} = this.state;
     let {getSpaces} = this;
-    let markers = spaces.map(space => space.location);
+    let markers = spaces.map(space => {
+      let location = space.location;
+      location.spaceId = space.id;
+      return location;
+    });
     return (
       <div className="container">
         <div className="box full">
@@ -44,6 +48,7 @@ export default class WaivePark extends Component {
                     <GMap
                       markerIcon={'/images/map/active-waivecar.svg'}
                       markers={markers}
+                      parking={true}
                     />
                   </div>
                 </div>
