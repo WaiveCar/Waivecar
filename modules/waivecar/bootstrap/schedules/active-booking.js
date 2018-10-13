@@ -104,7 +104,7 @@ var checkBooking = co.wrap(function *(booking) {
       if (duration >= 11 * 60 && !booking.isFlagged('11h-warning')) {
         yield booking.flag('11h-warning');
         yield notify.notifyAdmins(`:waning_crescent_moon: ${ user.link() } has had ${ car.link() } for 11 hours`, [ 'slack' ], { channel : '#rental-alerts' });
-        yield notify.sendTextMessage(user, 'Hey there, WaiveCar has a 12 hour rental limit. Please end your rental in the next hour. Thanks!');
+        yield notify.sendTextMessage(user, 'Hey there, Waive has a 12 hour rental limit. Please end your rental in the next hour. Thanks!');
       }
       
       // This text message warning if the booking is 1 hour over the free time
@@ -154,12 +154,12 @@ var checkBooking = co.wrap(function *(booking) {
   // See Api: Low charge text message triggers #495 & #961
   if (car.avgMilesAvailable() < 7 && !booking.isFlagged('low-2')) {
     yield booking.flag('low-2');
-    yield notify.sendTextMessage(user, "Hi, you're WaiveCar is getting dangerously low on charge! If it runs out of juice, we'll have to tow it at your expense! Please call us at this number and we'll direct you to the nearest charger.");
+    yield notify.sendTextMessage(user, "Hi, your WaiveCar is getting dangerously low on charge! If it runs out of juice, we'll have to tow it at your expense! Please call us at this number and we'll direct you to the nearest charger.");
     yield notify.notifyAdmins(`:interrobang: ${ user.link() } is persisting and is now disastrously low with ${ car.info() }, oh dear. ${ car.chargeReport() }. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
 
   } else if (car.avgMilesAvailable() < 14 && !booking.isFlagged('low-1')) {
     yield booking.flag('low-1');
-    yield notify.sendTextMessage(user, "Hi, you're WaiveCar is getting really low. Please call us and we can help you get to a charger.");
+    yield notify.sendTextMessage(user, "Hi, your WaiveCar is getting really low. Please call us and we can help you get to a charger.");
     yield notify.notifyAdmins(`:small_red_triangle: ${ user.link() } is continuing to drive ${ car.info() } to an even lower charge. ${ car.chargeReport() }. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
 
   } else if (car.avgMilesAvailable() < 21 && !booking.isFlagged('low-0')) {
