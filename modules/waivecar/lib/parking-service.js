@@ -91,7 +91,7 @@ module.exports = {
   },
 
   *show(id) {
-    return yield UserParking.find({
+    return yield UserParking.findOne({
       where: {
         id,
       },
