@@ -17,7 +17,6 @@ export default class ParkingShow extends ParkingActions {
   }
 
   getSpaces = (id) => {
-    console.log('id: ', id)
     api.get(`/parking/${id}`, (err, space) => {
       if (err) {
         return snackbar.notify({
@@ -25,7 +24,6 @@ export default class ParkingShow extends ParkingActions {
           message: `Error: ${err.message}`,
         });
       }
-      console.log('space: ', space);
       this.setState({space});
     });
   }
