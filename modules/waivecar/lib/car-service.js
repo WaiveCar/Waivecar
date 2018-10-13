@@ -927,6 +927,17 @@ module.exports = {
     };
     let existingCar = yield Car.findById(id, carOptions);
 
+    // 1373: We need to make sure the user has access to do this to the car.
+    // If it doesn't look like they do then we give a valid response as if
+    // the action happened, thus failing silently as far as they are concerned.
+    //
+    // We then send an alert to slack telling us of the issue.  It's more than
+    // likely a programming flaw on our part instead of a malicious hacker.
+    if(!_user.hasAccess('admin') && existingCar.userId !== _user.id) {
+      yield notify.notifyAdmins(`:sparkle: ${ _user.link() } was denied the privilege to ${ command } ${ existingCar.link() } because we don't believe they're in a booking.`, ['slack'], {channel: '#rental-alerts'});
+      return existingCar;
+    }
+
     let updatedCar = false;
     if (!existingCar) {
       let error    = new Error(`CAR: ${ id }`);
@@ -968,7 +979,6 @@ module.exports = {
     }
     let res = yield this.syncUpdate(id, updatedCar, existingCar, _user);
 
-    console.log(command, updatedCar, existingCar);
     if (command == 'lock' && updatedCar.ignition === 'on') {
       throw error.parse({
         code    : 'IGNITION_ON',
