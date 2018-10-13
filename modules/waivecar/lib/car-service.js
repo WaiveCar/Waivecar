@@ -933,7 +933,7 @@ module.exports = {
     //
     // We then send an alert to slack telling us of the issue.  It's more than
     // likely a programming flaw on our part instead of a malicious hacker.
-    if(!_user.hasAccess('admin') && existingCar.userId !== _user.id) {
+    if(_user && (!_user.hasAccess('admin') && existingCar.userId !== _user.id)) {
       yield notify.notifyAdmins(`:sparkle: ${ _user.link() } was denied the privilege to ${ command } ${ existingCar.link() } because we don't believe they're in a booking.`, ['slack'], {channel: '#rental-alerts'});
       return existingCar;
     }
