@@ -123,7 +123,7 @@ export default class UserParking extends Component {
 
   render = () => {
     let {spaces} = this.state;
-    let {admin} = this.props;
+    let {admin, fromList} = this.props;
     let {
       getSpaces,
       addSpace,
