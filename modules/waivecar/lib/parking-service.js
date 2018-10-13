@@ -90,6 +90,32 @@ module.exports = {
     return entry;
   },
 
+  *show(id) {
+    return yield UserParking.find({
+      where: {
+        id,
+      },
+      include: [
+        {
+          model: 'Location',
+          as: 'location',
+        },
+        {
+          model: 'ParkingReservation',
+          as: 'reservation',
+        },
+        {
+          model: 'Car',
+          as: 'car',
+        },
+        {
+          model: 'User',
+          as: 'owner',
+        }
+      ],
+    });
+  },
+
   *getByUser(userId) {
     // This returns all spaces that are owned by one particular user and puts all of the pertinent
     // information onto the response if it is available.

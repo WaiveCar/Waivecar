@@ -11,6 +11,10 @@ Bento.Register.Controller('ParkingController', function(controller) {
     return yield parking.create(this.payload);
   };
 
+  controller.show = function*(id) {
+    return yield parking.show(id);
+  };
+
   controller.getByUser = function*(userId) {
     return yield parking.getByUser(userId);
   };
