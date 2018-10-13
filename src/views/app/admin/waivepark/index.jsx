@@ -1,11 +1,17 @@
 import React, {Component} from 'react';
 import {api, auth} from 'bento';
 import {snackbar} from 'bento-web';
-import ParkingActions from '../../components/user/user-parking/parking-actions.jsx';
 import Space from '../../components/user/user-parking/space.jsx';
 import {GMap} from 'bento-web';
 
-export default class WaivePark extends ParkingActions {
+export default class WaivePark extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      spaces: [],
+    };
+  }
+
   componentDidMount() {
     this.getSpaces();
   }
@@ -24,7 +30,7 @@ export default class WaivePark extends ParkingActions {
 
   render = () => {
     let {spaces} = this.state;
-    let {getSpaces, toggleSpace, deleteSpace, updateSpace, removeCar} = this;
+    let {getSpaces} = this;
     let markers = spaces.map(space => space.location);
     return (
       <div className="container">
@@ -53,21 +59,6 @@ export default class WaivePark extends ParkingActions {
                 Refresh Status
               </button>
             </div>
-            {spaces &&
-              spaces.map((space, i) => (
-                <Space
-                  key={i}
-                  space={space}
-                  toggleSpace={toggleSpace}
-                  deleteSpace={deleteSpace}
-                  updateSpace={updateSpace}
-                  removeCar={removeCar}
-                  space={space}
-                  admin={auth.user().hasAccess('admin')}
-                  key={i}
-                  fromList={true}
-                />
-              ))}
           </div>
         </div>
       </div>
