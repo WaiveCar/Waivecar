@@ -33,6 +33,10 @@ module.exports = {
           model: 'Car',
           as: 'car',
         },
+        {
+          model: 'User',
+          as: 'owner',
+        }
       ],
     });
   },
