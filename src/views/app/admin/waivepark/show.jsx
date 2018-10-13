@@ -25,7 +25,6 @@ export default class ParkingShow extends ParkingActions {
           message: `Error: ${err.message}`,
         });
       }
-      console.log('space: ', space);
       this.setState({space});
     });
   };
@@ -35,6 +34,7 @@ export default class ParkingShow extends ParkingActions {
     let {space} = this.state;
     return (
       <div>
+        <Link to="/waivepark">Back</Link>
         {space && (
           <div className="box parking-box">
             <h3>
@@ -55,6 +55,16 @@ export default class ParkingShow extends ParkingActions {
                   show={true}
                 />
               )}
+            </div>
+            <div
+              className="btn-group"
+              role="group"
+              style={{marginBottom: '30px'}}>
+              <button
+                className="btn btn-primary-outline btn-wave"
+                onClick={() => getSpaces()}>
+                Refresh Status
+              </button>
             </div>
           </div>
         )}
