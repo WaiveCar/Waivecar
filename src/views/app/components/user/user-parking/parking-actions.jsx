@@ -1,31 +1,49 @@
-import React, {Component} from 'react';
-import {api, auth} from 'bento';
-import {snackbar} from 'bento-web';
-import ParkingActions from '../../components/user/user-parking/parking-actions.jsx';
-import Space from '../../components/user/user-parking/space.jsx';
+import {Component} from 'react';
+import {api} from 'bento';
 
-export default class WaivePark extends ParkingActions {
+export default class ParkingActions extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      spaces: [],
-    };
-  }
-
-  componentDidMount() {
-    this.getSpaces();
   }
 
   getSpaces = () => {
-    api.get('/parking', (err, response) => {
+    // This gets all spaces belonging to the userId associated with this component.
+    let {userId} = this.props;
+    api.get(`/parking/users/${userId}`, (err, spaces) => {
       if (err) {
-        snackbar.notify({
+        return snackbar.notify({
           type: 'danger',
-          message: 'Error fetching spaces.',
+          message: `Error: ${err.message}`,
         });
       }
-      console.log('response: ', response);
-      this.setState({spaces: response});
+      this.setState({spaces});
+    });
+  };
+
+  addSpace = opts => {
+    // This makes a new parking space.
+    let {userId} = this.props;
+    opts.userId = userId;
+    opts.notes && !opts.notes.length && delete opts.notes;
+    if (!opts.address.length) {
+      return snackbar.notify({
+        type: 'danger',
+        message: 'Please enter an address for this parking space',
+      });
+    }
+    api.post('/parking', opts, (err, response) => {
+      if (err) {
+        return snackbar.notify({
+          type: 'danger',
+          message: `Error: ${err.message}`,
+        });
+      }
+      this.setState({spaces: [...this.state.spaces, response]}, () => {
+        return snackbar.notify({
+          type: 'success',
+          message: 'WaiveSpot successfully created!',
+        });
+      });
     });
   };
 
@@ -91,41 +109,4 @@ export default class WaivePark extends ParkingActions {
       });
     }
   };
-
-  render = () => {
-    let {spaces} = this.state;
-    let {getSpaces, toggleSpace, deleteSpace, updateSpace, removeCar} = this;
-    return (
-      <div className="container">
-        <div className="box">
-          <h3>WaivePark Spaces</h3>
-          <div className="box-content">
-              <div className="btn-group" role="group" style={{marginBottom: '30px'}}>
-                <button
-                  className="btn btn-primary-outline btn-wave"
-                  onClick={() => getSpaces()}>
-                  Refresh Status
-                </button>
-              </div>
-            {spaces &&
-              spaces.map((space, i) => (
-                <Space
-                  key={i}
-                  space={space}
-                  toggleSpace={toggleSpace}
-                  deleteSpace={deleteSpace}
-                  updateSpace={updateSpace}
-                  removeCar={removeCar}
-                  space={space}
-                  admin={auth.user().hasAccess('admin')}
-                  key={i}
-                  fromList={true}
-                />
-              ))}
-          </div>
-        </div>
-      </div>
-    );
-  };
 }
-

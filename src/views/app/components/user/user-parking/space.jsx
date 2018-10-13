@@ -17,6 +17,7 @@ export default class Space extends Component {
       updateSpace,
       removeCar,
       admin,
+      fromList
     } = this.props;
     let {notes} = this.state;
     return (
