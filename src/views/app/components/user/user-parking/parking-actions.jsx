@@ -46,7 +46,7 @@ export default class ParkingActions extends Component {
           message: `Error: ${err.message}`,
         });
       }
-      this.getSpaces();
+      this.getSpaces(this.props.params.id && this.props.params.id);
     });
   };
 
@@ -60,7 +60,7 @@ export default class ParkingActions extends Component {
             message: `Error: ${err.message}`,
           });
         }
-        this.getSpaces();
+        this.getSpaces(this.props.params.id && this.props.params.id);
       });
     }
   };
@@ -91,7 +91,7 @@ export default class ParkingActions extends Component {
             message: `Error: ${err.message}`,
           });
         }
-        this.getSpaces();
+        this.getSpaces(this.props.params.id && this.props.params.id);
         return snackbar.notify({
           type: 'success',
           message: `Car removed from space #${space.id}`,
