@@ -1,24 +1,14 @@
 import {Component} from 'react';
 import {api} from 'bento';
+import {snackbar} from 'bento-web';
 
 export default class ParkingActions extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      spaces: [],
+    };
   }
-
-  getSpaces = () => {
-    // This gets all spaces belonging to the userId associated with this component.
-    let {userId} = this.props;
-    api.get(`/parking/users/${userId}`, (err, spaces) => {
-      if (err) {
-        return snackbar.notify({
-          type: 'danger',
-          message: `Error: ${err.message}`,
-        });
-      }
-      this.setState({spaces});
-    });
-  };
 
   addSpace = opts => {
     // This makes a new parking space.

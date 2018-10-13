@@ -18,6 +18,20 @@ export default class UserParking extends ParkingActions {
     this.getSpaces();
   }
 
+  getSpaces = () => {
+    // This gets all spaces belonging to the userId associated with this component.
+    let {userId} = this.props;
+    api.get(`/parking/users/${userId}`, (err, spaces) => {
+      if (err) {
+        return snackbar.notify({
+          type: 'danger',
+          message: `Error: ${err.message}`,
+        });
+      }
+      this.setState({spaces});
+    });
+  };
+
   render = () => {
     let {spaces} = this.state;
     let {admin} = this.props;
