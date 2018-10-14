@@ -42,6 +42,6 @@ echo "generous: $generous"
 echo "conservative: $conservative"
 echo "Making heatmap"
 $DIR/makepoints.sh $year_month
-echo "Putting monthly report in $path/report.json"
-curl -s https://api.waivecar.com/report/$year_month/report > $path/report.json
+echo "Putting monthly report in $path/report-${year_month}.json"
+curl -s https://api.waivecar.com/report/$year_month/report > $path/report-${year_month}.json
 
