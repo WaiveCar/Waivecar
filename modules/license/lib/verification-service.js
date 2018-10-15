@@ -43,6 +43,12 @@ module.exports = class LicenseVerificationService extends Service {
     return license;
   }
 
+  // Sometimes we just don't start the process for a user who is ready to
+  // start their process. This checks to see if people should be ran but
+  // haven't.
+  static *submitIfReady() {
+  }
+
   // Reports are immutable on checkr so if a user has an updated
   // one then the previous uuid is invalidated and they are issued
   // a new one.  This means that if we get a 404 for a report id
@@ -88,6 +94,7 @@ module.exports = class LicenseVerificationService extends Service {
             {text: `:bicyclist: ${user.link()} license moved to 'clear'.`},
             {channel: '#user-alerts'},
           );
+          yield notify.sendTextMessage(user, `Congrats! You have been approved to use Waive! Log in to the app and go get a car! Yay!`);
         }
         yield license.update({
           status: update.status,
