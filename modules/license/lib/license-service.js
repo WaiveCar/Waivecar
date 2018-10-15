@@ -151,6 +151,7 @@ module.exports = class LicenseService extends Service {
     // So when a license moves to consider we need to send an SMS to the user.
     // This is where it happens to happen.
     if(license.outcome !== data.outcome && data.outcome === 'clear') {
+      data.status = data.status || 'complete';
       yield notify.sendTextMessage(user, `Congrats! You have been approved to use Waive!`);
     }
 

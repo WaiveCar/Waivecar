@@ -4,6 +4,7 @@ let notify    = require('../../lib/notification-service');
 let scheduler = Bento.provider('queue').scheduler;
 let Booking   = Bento.model('Booking');
 let Car       = Bento.model('Car');
+let User      = Bento.model('User');
 let log       = Bento.Log;
 let relay     = Bento.Relay;
 let error     = Bento.Error;
