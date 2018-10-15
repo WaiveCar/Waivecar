@@ -102,7 +102,7 @@ module.exports = class CheckrService {
       let response = yield this.request(`/motor_vehicle_reports/${reportId}`);
       return response;
     } catch(err) {
-      log.warn(`Failed to fetch report ${reportId}`);  
+      log.info(`Failed to fetch report ${reportId}`);  
     }
   }
 

@@ -46,9 +46,6 @@ module.exports = class Service {
     return license;
   }
 
-  /**
-   * Retrieves a license by Checkr's Candidate Id from the database.
-   */
   static *getLicensesInProgress() {
     return yield License.find({
       where : {

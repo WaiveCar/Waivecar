@@ -43,6 +43,19 @@ module.exports = class LicenseVerificationService extends Service {
     return license;
   }
 
+  // Reports are immutable on checkr so if a user has an updated
+  // one then the previous uuid is invalidated and they are issued
+  // a new one.  This means that if we get a 404 for a report id
+  // we need to go back to the candidate endpoint and get a new
+  // one
+  static *updateReport(license) {
+    let report = yield Verification.request(`/reports/${license.checkId}`);
+    if (report && report['motor_vehicle_report_id']) {
+      yield license.update({reportId: report['motor_vehicle_report_id']});
+      return yield Verification.getReport(report['motor_vehicle_report_id']);
+    }
+  }
+
   // This function is used by the task that checks for updated licenses
   static *syncLicenses() {
     let licenses = yield this.getLicensesInProgress();
@@ -50,12 +63,19 @@ module.exports = class LicenseVerificationService extends Service {
     log.info(`License : Checking ${count} Licenses`);
     for (let i = count - 1; i >= 0; i--) {
       let license = licenses[i];
+      let user = yield User.findById(license.userId);
       if (!(yield redis.shouldProcess('license', license.userId, 9 * 1000))) {
         continue;
       }
-      let user = yield User.findById(license.userId);
       let update = yield Verification.getReport(license.reportId);
-      if (update.status !== license.status) {
+
+      if (!update) {
+        update = yield this.updateReport(license);
+        log.info(`Checking ${user.name()} ... updating report`);
+      }
+
+      if (update && (update.status !== license.outcome) ) {
+        log.info(`Checking for ${user.name()} - updating`);
         log.debug(`${update.id} : ${update.status}`);
         if (update.status === 'consider') {
           yield notify.slack(
@@ -79,7 +99,10 @@ module.exports = class LicenseVerificationService extends Service {
           type: 'update',
           data: license,
         });
+      } else {
+        log.info(`Checking for ${user.name()} - nothing`);
       }
     }
+    log.info("Done checking licenses");
   }
 };

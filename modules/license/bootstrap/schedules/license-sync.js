@@ -23,5 +23,6 @@ scheduler.process('license-sync', function *(job) {
     yield service.syncLicenses();
   } catch(err) {
     log.warn('License : Sync : failed to sync licenses : ', err);
+    console.log(err);
   }
 });
