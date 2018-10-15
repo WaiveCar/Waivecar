@@ -55,7 +55,12 @@ module.exports = class LicenseVerificationService extends Service {
   // we need to go back to the candidate endpoint and get a new
   // one
   static *updateReport(license) {
-    let report = yield Verification.request(`/reports/${license.checkId}`);
+    var report;
+    try { 
+      report = yield Verification.request(`/reports/${license.checkId}`);
+    } catch(ex) {
+      log.info(`Failed to get report ${ license.checkId } for license ${ license.id }`);
+    }
     if (report && report['motor_vehicle_report_id']) {
       yield license.update({reportId: report['motor_vehicle_report_id']});
       return yield Verification.getReport(report['motor_vehicle_report_id']);
@@ -73,6 +78,7 @@ module.exports = class LicenseVerificationService extends Service {
       if (!(yield redis.shouldProcess('license', license.userId, 9 * 1000))) {
         continue;
       }
+      log.info(`Checking ${user.name()} ...`);
       let update = yield Verification.getReport(license.reportId);
 
       if (!update) {
