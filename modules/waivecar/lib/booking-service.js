@@ -1329,7 +1329,7 @@ module.exports = class BookingService extends Service {
     }
 
     let message = yield this.updateState('completed', _user, user);
-    yield notify.sendTextMessage(user, `Thanks for driving with WaiveCar! Your rental is complete. You can see your trip summary in the app.`);
+    yield notify.sendTextMessage(user, `Thanks for using Waive! Your rental is complete.`);
     yield notify.slack({ text : `:coffee: ${ message } ${ car.info() } ${ zone } ${ address } ${ booking.link() }` }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
 
