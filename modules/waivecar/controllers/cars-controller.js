@@ -67,6 +67,7 @@ Bento.Register.Controller('CarsController', function(controller) {
       case 'available'          : return yield car.updateAvailability(id, true, this.auth.user);
       case 'unavailable'        : return yield car.updateAvailability(id, false, this.auth.user);
       case 'repair'             : return yield car.updateRepair(id, this.auth.user);
+      case 'total-loss'         : return yield car.updateTotalLoss(id, this.auth.user);
       case 'visible'            : return yield car.updateVisibility(id, true, this.auth.user);
       case 'hidden'             : return yield car.updateVisibility(id, false, this.auth.user);
       case 'kick'               : return yield car.kickUser(id, this.auth.user);                                
