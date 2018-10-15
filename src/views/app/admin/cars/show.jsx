@@ -225,6 +225,21 @@ class CarsShowView extends React.Component {
     );
   }
 
+  toggleTotalLoss(car) {
+    api.put(`/cars/${car.id}/total-loss`, {}, (err, car) => {
+      if (err) {
+        return snackbar.notify({
+          type    : 'danger',
+          message : 'Failed to toggle total loss.',
+        });
+      }
+      return snackbar.notify({
+        type    : 'success',
+        message : `Vehicle now marked as ${car.isTotalLoss ? 'a total loss' : 'not a total loss'}.`,
+      });
+    });
+  }
+
   renderCarForm(car) {
     return (
       <div className="box hidden-xs-down">
@@ -250,7 +265,8 @@ class CarsShowView extends React.Component {
                 ({this.state.hideDangerZone ? 'Show' : 'Hide'})
               </a>
               <div className={this.state.hideDangerZone ? 'hide' : ''}>
-                Danger Zone Here
+                Mark this car has a total loss: 
+                <button onClick={() => this.toggleTotalLoss(car)}>{car.isTotalLoss ? 'Unmark' : 'Mark'}</button>
               </div>
             </div>
           </div>
