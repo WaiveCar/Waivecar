@@ -233,6 +233,7 @@ class CarsShowView extends React.Component {
           message : 'Failed to toggle total loss.',
         });
       }
+      this.service.update(car);
       return snackbar.notify({
         type    : 'success',
         message : `Vehicle now marked as ${car.isTotalLoss ? 'a total loss' : 'not a total loss'}.`,
@@ -266,7 +267,9 @@ class CarsShowView extends React.Component {
               </a>
               <div className={this.state.hideDangerZone ? 'hide' : ''}>
                 Mark this car has a total loss: 
-                <button onClick={() => this.toggleTotalLoss(car)}>{car.isTotalLoss ? 'Unmark' : 'Mark'}</button>
+                <div>
+                  <button className="btn btn-primary btn-sm"  onClick={() => this.toggleTotalLoss(car)}>{car.isTotalLoss ? 'Unmark' : 'Mark'}</button>
+                </div>
               </div>
             </div>
           </div>
