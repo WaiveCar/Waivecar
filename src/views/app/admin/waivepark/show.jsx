@@ -34,7 +34,6 @@ export default class ParkingShow extends ParkingActions {
     let {space} = this.state;
     return (
       <div>
-        <Link to="/waivepark">Back</Link>
         {space && (
           <div className="box parking-box">
             <h3>
@@ -60,6 +59,7 @@ export default class ParkingShow extends ParkingActions {
               className="btn-group"
               role="group"
               style={{marginBottom: '30px'}}>
+              <Link className="btn btn-primary-outline btn-wave" to="/waivepark">Back</Link>
               <button
                 className="btn btn-primary-outline btn-wave"
                 onClick={() => getSpaces()}>
