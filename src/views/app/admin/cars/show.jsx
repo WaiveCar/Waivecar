@@ -43,7 +43,7 @@ class CarsShowView extends React.Component {
     this.state = {
       carPath : null,
       damageFilter: null,
-      hideDangerZone: 'hide',
+      hideDangerZone: true,
     };
     dom.setTitle('Car');
     this.service = new Service(this);
@@ -245,9 +245,13 @@ class CarsShowView extends React.Component {
             submit = { this.service.update }
           />
           <div className="row">
-            <div onClick={() => this.setState({hideDangerZone: ''})}>caution danger zone</div>
-            <div className={this.state.hideDangerZone}>
-              danger zone here
+            <div>
+              Danger Zone <a onClick={() => this.setState({hideDangerZone: !this.state.hideDangerZone})}>
+                ({this.state.hideDangerZone ? 'Show' : 'Hide'})
+              </a>
+              <div className={this.state.hideDangerZone ? 'hide' : ''}>
+                Danger Zone Here
+              </div>
             </div>
           </div>
         </div>
