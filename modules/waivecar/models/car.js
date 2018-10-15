@@ -94,7 +94,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     },
 
     isTotalLoss : {
-      type:        : Sequelize.BOOLEAN,
+      type         : Sequelize.BOOLEAN,
       defaultValue : false,
     },
 
