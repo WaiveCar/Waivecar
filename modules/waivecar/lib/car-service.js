@@ -628,10 +628,19 @@ module.exports = {
         }
         message += ` (Current user is ${ user.link() })`;
       }
-
       yield notify.notifyAdmins(message, [ 'slack' ], { channel : '#rental-alerts' });
+      if (existingCar.bookingId) {
+        let booking = yield Booking.findById(existingCar.bookingId);
+        if (!booking.isFlagged('low-12v-battery')) {
+          yield notify.sendTextMessage(
+            booking.userId,
+            `It looks like the battery on your WaiveCar, ${existingCar.licenses} is dropping. If it gets too low it won't be able to start without a jump. Please check to make sure things like the lights, stereo, and climate control are off. Thanks.`
+          );
+        } else {
+          booking.addFlag('low-12v-battery');
+        }
+      }
     }
-
     // We find out if our charging status has changed
     if (('charging' in data) && (data.isCharging != existingCar.isCharging)) {
       yield UserLog.addUserEvent(_user, data.isCharging ? Actions.START_CHARGE : Actions.END_CHARGE, id, data.charge);
