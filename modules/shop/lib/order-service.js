@@ -966,7 +966,7 @@ module.exports = class OrderService extends Service {
     log.warn(`Failed to charge user: ${ user.id }`, err);
     let amountInDollars = (amountInCents / 100).toFixed(2);
     extra = extra || '';
-    yield notify.notifyAdmins(`:lemon: Failed to charge ${ user.link() } $${ amountInDollars }: ${ JSON.stringify(err) }`, [ 'slack' ], { channel : '#rental-alerts' });
+    yield notify.notifyAdmins(`:lemon: Failed to charge ${ user.link() } $${ amountInDollars }`, [ 'slack' ], { channel : '#rental-alerts' });
 
     // We need to communicate that there was a potential charge + a potential 
     // balance that was attempted to be cleared.  This email can cover all 3
