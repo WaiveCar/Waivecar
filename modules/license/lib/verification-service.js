@@ -75,11 +75,11 @@ module.exports = class LicenseVerificationService extends Service {
 
     for(var ix = 0; ix < resTable.length; ix++) {
       let row = resTable[ix];
-      console.log(`Trying user: ${row['licenseId']}, ${row['userId']}, ${row['ln']}`);
+      // console.log(`Trying user: ${row['licenseId']}, ${row['userId']}, ${row['ln']}`);
       try {
         yield this.store(row['licenseId'], {userId: row['userId']});
       } catch(ex) {
-        console.log(`Unable to retrieve license for user ${row['userId']}`);
+        // console.log(`Unable to retrieve license for user ${row['userId']}`);
       }
     }
   }
@@ -116,7 +116,7 @@ module.exports = class LicenseVerificationService extends Service {
       if (!(yield redis.shouldProcess('license', license.userId, 9 * 1000))) {
         continue;
       }
-      log.info(`Checking ${user.name()} ...`);
+      // log.info(`Checking ${user.name()} ...`);
 
       if(license.outcome === 'clear') {
         yield license.update({
@@ -128,12 +128,11 @@ module.exports = class LicenseVerificationService extends Service {
 
       if (!update) {
         update = yield this.updateReport(license);
-        log.info(`Checking ${user.name()} ... updating report`);
+        // log.info(`Checking ${user.name()} ... updating report`);
       }
 
       if (update && (update.status !== license.outcome) ) {
-        log.info(`Checking ${user.name()} - updating`);
-        log.debug(`${update.id} : ${update.status}`);
+        // log.info(`Checking ${user.name()} - updating`);
         if (update.status === 'consider') {
           yield notify.slack(
             {text: `:bicyclist: ${user.link()} license moved to 'consider'`},
@@ -158,7 +157,7 @@ module.exports = class LicenseVerificationService extends Service {
           data: license,
         });
       } else {
-        log.info(`Checking for ${user.name()} - nothing`);
+        // log.info(`Checking for ${user.name()} - nothing`);
       }
     }
     log.info("Done checking licenses");
