@@ -39,6 +39,26 @@ var checkBooking = co.wrap(function *(booking) {
   let freetime = booking.getFreeTime(isLevel);
   let trigger = freetime + 60;
   
+  let sitCount = +(yield redis.hget('sitCount', booking.id));
+  // This increments the sitCount if it seems the car has been sitting since the last check
+  if (booking.car.isIgnitionOn === false) {
+    if (sitCount >= 0) {
+      sitCount++;
+      // If the booking has reached a 20 minute interval, the user needs to be notified here
+      let multiplier = config.waivecar.booking.timers.carLocation.value / 60;
+      if ((sitCount * multiplier) % 20 === 0 && !booking.car.license.match(/work/i)) {
+        yield notify.sendTextMessage(booking.user, 
+          `Your booking in ${booking.car.license} has been parked for ${sitCount * multiplier} minutes and is still active.`
+        );
+      }
+    } else {
+      sitCount = 0;
+    }
+    yield redis.hset('sitCount', booking.id, sitCount);
+  } else {
+    // The booking is deleted from the object if the ignition is on
+    yield redis.hdel('sitCount', booking.id);
+  }
 
   if(device) {
     // This section increments drive_count, park_count and charge_count 
@@ -194,9 +214,7 @@ scheduler.process('active-booking', function *(job) {
   log.info('ActiveBooking : start ');
   // This is the object that is used to store the number of increments of active booking that a car 
   // has had its ignition off for
-  let  sitCounts = yield redis.get('sitCounts');
-  // If the sitCounts object has not yet been set in the store, it needs to be set as an empty object
-  sitCounts = sitCounts ? JSON.parse(sitCounts) : {};
+  let sitCountList = yield redis.hkeys('sitCount');
 
   let bookings = yield Booking.find({ 
     where : { 
@@ -213,7 +231,7 @@ scheduler.process('active-booking', function *(job) {
   // This is for removing completed bookings from the sitCounts object once they 
   // no longer need to be in it
   let bookingIds = new Set(bookings.map(booking => booking.id));
-  for (let id in sitCounts) {
+  for (let id in sitCountList) {
     if (!bookingIds.has(Number(id))) {
       delete sitCounts[id];
     }
@@ -221,24 +239,6 @@ scheduler.process('active-booking', function *(job) {
 
   for (let i = 0, len = bookings.length; i < len; i++) {
     let booking = bookings[i];
-    // This increments the sitCount if it seems the car has been sitting since the last check
-    if (booking.car.isIgnitionOn === false) {
-      if (sitCounts[booking.id] >= 0) {
-        sitCounts[booking.id]++;
-        // If the booking has reached a 20 minute interval, the user needs to be notified here
-        let multiplier = config.waivecar.booking.timers.carLocation.value / 60;
-        if ((sitCounts[booking.id] * multiplier) % 20 === 0 && !booking.car.license.match(/work/i)) {
-          yield notify.sendTextMessage(booking.user, 
-            `Your booking in ${booking.car.license} has been parked for ${sitCounts[booking.id] * multiplier} minutes and is still active.`
-          );
-        }
-      } else {
-        sitCounts[booking.id] = 0;
-      }
-    } else {
-      // The booking is deleted from the object if the ignition is on
-      delete sitCounts[booking.id];
-    }
 
     try {
       //
@@ -259,5 +259,4 @@ scheduler.process('active-booking', function *(job) {
       log.warn(`ActiveBooking : failed to handle booking ${ booking.id } : ${ err } (${ err.stack })`);
     }
   }
-  yield redis.set('sitCounts', JSON.stringify(sitCounts));
 });
