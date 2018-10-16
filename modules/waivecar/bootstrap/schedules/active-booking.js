@@ -233,7 +233,7 @@ scheduler.process('active-booking', function *(job) {
   let bookingIds = new Set(bookings.map(booking => booking.id));
   for (let id in sitCountList) {
     if (!bookingIds.has(Number(id))) {
-      delete sitCounts[id];
+      yield redis.hdel('sitCount', id);
     }
   }
 
