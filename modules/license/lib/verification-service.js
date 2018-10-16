@@ -104,6 +104,9 @@ module.exports = class LicenseVerificationService extends Service {
 
   // This function is used by the task that checks for updated licenses
   static *syncLicenses() {
+    if (process.env.NODE_ENV !== 'production') {
+      return;
+    }
     let licenses = yield this.getLicensesInProgress();
     let count = licenses.length;
 

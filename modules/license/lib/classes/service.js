@@ -32,9 +32,6 @@ module.exports = class Service {
     return license;
   }
 
-  /**
-   * Retrieves a license by Report Reference from the database.
-   */
   static *getLicenseByReport(id) {
     let license = yield License.find({ reportId : id });
     if (!license) {
@@ -57,9 +54,6 @@ module.exports = class Service {
     });
   }
 
-  /**
-   * Attempts to return the user with the provided id or throws an error.
-   */
   static *getUser(id) {
     let user = yield User.findById(id);
     if (!user) {
