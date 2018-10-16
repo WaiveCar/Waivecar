@@ -49,6 +49,7 @@ Route.del('/reports/:id', [ 'isAuthenticated', 'isAdmin', 'ReportsController@del
 // ### Cars
 
 Route.get('/cars',              [ 'CarsController@index' ]);
+Route.get('/cars/stats',        [ 'CarsController@stats', 'isAuthenticated' ]);
 Route.get('/carsWithBookings',  [ 'isAdmin', 'CarsController@carsWithBookings' ]);
 Route.put('/magic/:command',    [ 'isAuthenticated', 'isAdmin', 'CarsController@magic' ]);
 Route.get('/cars/:id',          [ 'isAuthenticated', 'CarsController@show' ]);

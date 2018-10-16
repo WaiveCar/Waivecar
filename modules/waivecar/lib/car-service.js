@@ -161,6 +161,15 @@ module.exports = {
     return cars;
   },
 
+  *stats() {
+    let allCars = yield Car.find();
+    let count = allCars.reduce((acc, car) => car.inRepair ? acc + 1 : acc, 0);
+    return {
+      carsOutOfService: count,
+      percentOutOfService: (count / allCars.length) * 100,
+    };
+  },
+
   joinCarsWithBookings(cars, bookings) {
 
     var cardIdToBookingIdMap = {};
