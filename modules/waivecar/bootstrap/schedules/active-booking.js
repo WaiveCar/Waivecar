@@ -30,9 +30,9 @@ module.exports = function *() {
 var checkBooking = co.wrap(function *(booking) {
   let details = yield BookingDetails.find({ where : { bookingId : booking.id } });
   let start = _.find(details, { type : 'start' });
-  let car = yield Car.findById(booking.carId);
+  let car = booking.car;
   let device = yield cars.getDevice(car.id, null, 'booking-loop');
-  let user = yield User.findById(car.userId);
+  let user = booking.user;
   let duration = 0;
   let isLevel = yield car.hasTag('level');
   let booking_history = null;
@@ -192,10 +192,54 @@ var checkBooking = co.wrap(function *(booking) {
 
 scheduler.process('active-booking', function *(job) {
   log.info('ActiveBooking : start ');
-  let bookings = yield Booking.find({ where : { status : 'started' } });
+  // This is the object that is used to store the number of increments of active booking that a car 
+  // has had its ignition off for
+  let  sitCounts = yield redis.get('sitCounts');
+  // If the sitCounts object has not yet been set in the store, it needs to be set as an empty object
+  sitCounts = sitCounts ? JSON.parse(sitCounts) : {};
+
+  let bookings = yield Booking.find({ 
+    where : { 
+      status : 'started', 
+    }, 
+    include: [{
+      model: 'Car',
+      as: 'car',
+    }, {
+      model: 'User',
+      as: 'user',
+    }]
+  });
+  // This is for removing completed bookings from the sitCounts object once they 
+  // no longer need to be in it
+  let bookingIds = new Set(bookings.map(booking => booking.id));
+  for (let id in sitCounts) {
+    if (!bookingIds.has(Number(id))) {
+      delete sitCounts[id];
+    }
+  }
 
   for (let i = 0, len = bookings.length; i < len; i++) {
     let booking = bookings[i];
+    // This increments the sitCount if it seems the car has been sitting since the last check
+    if (booking.car.isIgnitionOn === false) {
+      if (sitCounts[booking.id] >= 0) {
+        sitCounts[booking.id]++;
+        // If the booking has reached a 20 minute interval, the user needs to be notified here
+        let multiplier = config.waivecar.booking.timers.carLocation.value / 60;
+        if ((sitCounts[booking.id] * multiplier) % 20 === 0 && !booking.car.license.match(/work/i)) {
+          yield notify.sendTextMessage(booking.user, 
+            `Your booking in ${booking.car.license} has been parked for ${sitCounts[booking.id] * multiplier} minutes and is still active.`
+          );
+        }
+      } else {
+        sitCounts[booking.id] = 0;
+      }
+    } else {
+      // The booking is deleted from the object if the ignition is on
+      delete sitCounts[booking.id];
+    }
+
     try {
       //
       // We need to make sure multiple servers don't process the same booking
@@ -215,4 +259,5 @@ scheduler.process('active-booking', function *(job) {
       log.warn(`ActiveBooking : failed to handle booking ${ booking.id } : ${ err } (${ err.stack })`);
     }
   }
+  yield redis.set('sitCounts', JSON.stringify(sitCounts));
 });
