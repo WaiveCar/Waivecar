@@ -408,6 +408,14 @@ class CarsShowView extends React.Component {
     });
   }
 
+  hasTag = (tag) => {
+    return true;
+    tag = tag.toLowerCase();
+    return this.state.car.tagList.filter((row) => {
+      return row.groupRole.name.toLowerCase() === tag;
+    }).length > 0;
+  }
+
   renderCarActions(car) {
     let switches = [
       {
@@ -528,6 +536,46 @@ class CarsShowView extends React.Component {
                 <div className="p-t">
                   <small className="text-danger hidden-xs-down">WARNING: These actions may remotely access and control the car</small>
                 </div>
+              </div>
+            </div>
+            <div className="form-group row">
+              <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Tags</label>
+              <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
+                <div className="radio-inline">
+                  <label>
+                    <input type="checkbox" name="tagList[]" value="la" defaultChecked={ !this.hasTag('level') } />
+                    Regular Service
+                  </label>
+                </div>
+                <div className="radio-inline">
+                  <label>
+                    <input type="checkbox" name="tagList[]" value="debit" defaultChecked={ this.hasTag('debit') } />
+                    CSULA
+                  </label>
+                </div>
+                <div className="radio-inline">
+                  <label>
+                    <input type="checkbox" name="tagList[]" value="level" defaultChecked={ this.hasTag('level') } />
+                    Level
+                  </label>
+                </div>
+                <div className="radio-inline">
+                  <label>
+                    <input type="checkbox" name="tagList[]" value="Aid" defaultChecked={ this.hasTag('aid') } />
+                    Choice Hotels
+                  </label>
+                </div>
+                <div className="radio-inline">
+                  <label>
+                    <input type="checkbox" name="tagList[]" value="debit" defaultChecked={ this.hasTag('debit') } />
+                    Debit
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div className="form-actions text-center">
+              <div className="btn-group" role="group">
+                <button type="submit" className="btn btn-sm">Update Tags</button>
               </div>
             </div>
           </div>
