@@ -41,17 +41,20 @@ var checkBooking = co.wrap(function *(booking) {
   
   // This increments the sitCount if it seems the car has been sitting since the last check
   if (booking.car.isIgnitionOn === false && !booking.car.license.match(/work/i)) {
+    console.log("Checking for booking " + booking.car.license);
     let sitStart = +(yield redis.hget('sitStart', booking.id));
     let now = +new Date();
     let unit = 20 * 60 * 1000;
     if(!sitStart) {
+      console.log("No sit time for booking " + booking.car.license);
       yield redis.hset('sitStart', booking.id, now);
       yield redis.hset('sitLast', booking.id, now);
     } else {
       let sitLast = +(yield redis.hget('sitLast', booking.id));
+      console.log(`Comparing ${booking.car.license} ${now} ${sitLast} ${unit}`);
       if(now - sitLast > unit) {
         let minute_count = Math.floor((sitStart - now) / unit) * unit;
-        console.log(minute_count);
+        console.log(`Comparing ${booking.car.license} ${minute_count}`);
         yield redis.hset('sitLast', booking.id, now);
       }
     }
