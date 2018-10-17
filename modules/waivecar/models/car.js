@@ -380,10 +380,10 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     },
 
     loadTagList : function* () {
-      // sometimes the groupCar is loaded by the name resolution depth is not.
-      if(!this.groupCar || (this.groupCar.length && !this.groupCar[0].groupRole)) {
+      // sometimes the tagList is loaded by the name resolution depth is not.
+      if(!this.tagList || (this.tagList.length && !this.tagList[0].groupRole)) {
         let GroupCar = Bento.model('GroupCar');
-        this.groupCar = yield GroupCar.find({
+        this.tagList = yield GroupCar.find({
           where: { carId: this.id },
           include: [
             {
@@ -393,7 +393,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
           ]
         });
       }
-      return this.groupCar;
+      return this.tagList;
     },
 
     getTagList : function* (filter) {
@@ -475,7 +475,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     'lastAction',
     'lastActionTime',
     'currentBooking',
-    'groupCar',
+    'tagList',
     'user'
   ];
 
@@ -487,7 +487,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       this.belongsTo(User, { as : 'user', foreignKey : 'userId' });
       this.belongsTo(Booking, { as : 'currentBooking', foreignKey : 'bookingId' });
       this.hasMany(Booking, { as : 'bookings' });
-      this.hasMany(GroupCar,  { as : 'groupCar', foreignKey : 'carId' });
+      this.hasMany(GroupCar,  { as : 'tagList', foreignKey : 'carId' });
     }
   ];
 
