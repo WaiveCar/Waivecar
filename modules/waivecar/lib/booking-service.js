@@ -758,9 +758,7 @@ module.exports = class BookingService extends Service {
       locationCache = yield Location.find({where: {type: 'zone'} });
     }
 
-    console.log(locationCache);
     locationCache.forEach(function(row) {
-      console.log(row, row.shape);
       try {
         row.shape = JSON.parse(row.shape).map((row) => { return {latitude:row[1], longitude:row[0]};});
         if(geolib.isPointInside({latitude: car.latitude, longitude: car.longitude}, row.shape)){
