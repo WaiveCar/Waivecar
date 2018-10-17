@@ -96,9 +96,6 @@ module.exports = class Car extends Service {
     }.call(this));
   }
 
-  /**
-   * Loads car from the api and adds it to ctx.
-   */
   setCar(id) {
     api.get(`/cars/${ id }`, (err, car) => {
       if (err) {
@@ -122,8 +119,8 @@ module.exports = class Car extends Service {
   updateCarGroup(car, newGroupRoleId) {
     // #1077. Currently we support only 1 to 1 relation
     var oldGroupRoleId = '';
-    if(car.groupCar && car.groupCar[0]) {
-      oldGroupRoleId = car.groupCar[0].groupRoleId;
+    if(car.tagList && car.tagList[0]) {
+      oldGroupRoleId = car.tagList[0].groupRoleId;
     }
 
     if(newGroupRoleId == '') {
@@ -135,12 +132,12 @@ module.exports = class Car extends Service {
         return this.success('Removed car from group');
       });
     } else {
-      api.post(`/group/${newGroupRoleId}/assigncar/${car.id}`, {}, (err, groupCar) => {
+      api.post(`/group/${newGroupRoleId}/assigncar/${car.id}`, {}, (err, tagList) => {
         if(err) {
           return this.error(err.data ? err.data : err.message);
         }
 
-        car.groupCar[0] = groupCar;
+        car.tagList[0] = tagList;
         this.updateCarState(car);
         return this.success('Car\'s group was updated');
       });
