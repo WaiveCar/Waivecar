@@ -41,20 +41,22 @@ var checkBooking = co.wrap(function *(booking) {
   
   // This increments the sitCount if it seems the car has been sitting since the last check
   if (booking.car.isIgnitionOn === false && !booking.car.license.match(/work/i)) {
-    console.log("Checking for booking " + booking.car.license);
+    // console.log("Checking for booking " + booking.car.license);
     let sitStart = +(yield redis.hget('sitStart', booking.id));
     let now = +new Date();
-    let unit = 20 * 60 * 1000;
+    let duration_min = 30;
+    let duration_ms = duration_min * 60 * 1000;
     if(!sitStart) {
-      console.log("No sit time for booking " + booking.car.license);
+      // console.log("No sit time for booking " + booking.car.license);
       yield redis.hset('sitStart', booking.id, now);
       yield redis.hset('sitLast', booking.id, now);
     } else {
       let sitLast = +(yield redis.hget('sitLast', booking.id));
-      console.log(`Comparing ${booking.car.license} ${now} ${sitLast} ${unit} ${ now - sitLast }`);
-      if(now - sitLast > unit) {
-        let minute_count = Math.floor((now - sitStart) / unit) * 20;
-        console.log(`NOTIFYING Comparing ${booking.car.license} ${minute_count}`);
+      if(now - sitLast > duration_ms) {
+        let minute_count = Math.floor((now - sitStart) / duration_ms) * duration_min;
+        yield notify.sendTextMessage(booking.user, 
+          `${booking.car.license} has been parked for ${minute_count} minutes and is still active. This courtesy message is brought to you to help save you money.`
+        );
         yield redis.hset('sitLast', booking.id, now);
       }
     }
