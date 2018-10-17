@@ -759,9 +759,8 @@ module.exports = class BookingService extends Service {
     }
 
     locationCache.forEach(function(row) {
-      if(!row.parsed) {
+      if(_.isString(row.shape)) {
         row.shape = JSON.parse(row.shape).map((row) => { return {latitude:row[1], longitude:row[0]};});
-        row.parsed = true;
       }
       if(geolib.isPointInside({latitude: car.latitude, longitude: car.longitude}, row.shape)){
         zone = row;
