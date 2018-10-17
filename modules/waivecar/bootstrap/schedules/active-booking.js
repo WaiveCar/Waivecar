@@ -39,25 +39,26 @@ var checkBooking = co.wrap(function *(booking) {
   let freetime = booking.getFreeTime(isLevel);
   let trigger = freetime + 60;
   
-  let sitCount = +(yield redis.hget('sitCount', booking.id));
   // This increments the sitCount if it seems the car has been sitting since the last check
-  if (booking.car.isIgnitionOn === false) {
-    if (sitCount >= 0) {
-      sitCount++;
-      // If the booking has reached a 20 minute interval, the user needs to be notified here
-      let multiplier = config.waivecar.booking.timers.carLocation.value / 60;
-      if ((sitCount * multiplier) % 20 === 0 && !booking.car.license.match(/work/i)) {
-        yield notify.sendTextMessage(booking.user, 
-          `Your booking in ${booking.car.license} has been parked for ${sitCount * multiplier} minutes and is still active.`
-        );
-      }
+  if (booking.car.isIgnitionOn === false && !booking.car.license.match(/work/i)) {
+    let sitStart = +(yield redis.hget('sitStart', booking.id));
+    let now = +new Date();
+    let unit = 20 * 60 * 60 * 1000;
+    if(!sitStart) {
+      yield redis.hset('sitStart', booking.id, now);
+      yield redis.hset('sitLast', booking.id, now);
     } else {
-      sitCount = 0;
+      let sitLast = +(yield redis.hget('sitLast', booking.id));
+      if(now - sitLast > unit) {
+        let minute_count = Math.floor((sitStart - now) / unit) * unit;
+        console.log(minute_count);
+        yield redis.hset('sitLast', booking.id, now);
+      }
     }
-    yield redis.hset('sitCount', booking.id, sitCount);
   } else {
     // The booking is deleted from the object if the ignition is on
-    yield redis.hdel('sitCount', booking.id);
+    yield redis.hdel('sitStart', booking.id);
+    yield redis.hdel('sitLast', booking.id);
   }
 
   if(device) {
@@ -214,7 +215,7 @@ scheduler.process('active-booking', function *(job) {
   log.info('ActiveBooking : start ');
   // This is the object that is used to store the number of increments of active booking that a car 
   // has had its ignition off for
-  let sitCountList = yield redis.hkeys('sitCount');
+  let sitCountList = (yield redis.hkeys('sitStart')).concat(yield redis.hkeys('sitLast'));
 
   let bookings = yield Booking.find({ 
     where : { 
@@ -233,7 +234,8 @@ scheduler.process('active-booking', function *(job) {
   let bookingIds = new Set(bookings.map(booking => booking.id));
   for (let id in sitCountList) {
     if (!bookingIds.has(Number(id))) {
-      yield redis.hdel('sitCount', id);
+      yield redis.hdel('sitLast', id);
+      yield redis.hdel('sitStart', id);
     }
   }
 
