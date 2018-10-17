@@ -224,6 +224,15 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       return false;
     },
 
+    *getCard() {
+      let Card = Bento.model('Shop/Card');
+
+      return yield Card.findOne({ 
+        where : { userId : this.id },
+        order : [['updated_at', 'DESC']]
+      });
+    },
+
     *loadTagList() {
       if(!this.tagList) {
         let GroupUser = Bento.model('GroupUser');
@@ -242,15 +251,6 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
         });
       }
       return this.tagList;
-    },
-
-    *getCard() {
-      let Card = Bento.model('Shop/Card');
-
-      return yield Card.findOne({ 
-        where : { userId : this.id },
-        order : [['updated_at', 'DESC']]
-      });
     },
 
     *getTagList(filter) {
