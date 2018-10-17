@@ -712,7 +712,7 @@ module.exports = class BookingService extends Service {
           base = 'one of the highlighted zones on the map';
           freetime = '2';
         }
-        yield notify.sendTextMessage(user, `Your WaiveCar rental has started! The first ${ freetime } hours are completely FREE! After that, it's $5.99 / hour. Make sure to return the car to ${ base }, don't drain the battery under 25mi, and keep within our driving borders to avoid any charges. Thanks for using Waive!`);
+        yield notify.sendTextMessage(user, `Your ${ freetime } free hours with ${ car.license } starts now! When you're finished, return the WaiveCar to ${ base } with at least 25mi charge. Enjoy your ride!`);
       }
 
       // ### Relay Update
