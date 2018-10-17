@@ -72,7 +72,7 @@ module.exports = {
     var opts = {
       include: [{
         model: 'GroupCar',
-        as: 'groupCar',
+        as: 'tagList',
       }],
       where : {
         inRepair: false,
@@ -107,7 +107,7 @@ module.exports = {
     } else if((hour >= 1 && hour < 4) && !isAdmin) {
       opts.where = { 
         $or : [
-          sequelize.literal("groupCar.group_role_id = 7"), { 
+          sequelize.literal("tagList.group_role_id = 7"), { 
             inRepair: false,
             adminOnly: false,
             isAvailable: true, 
@@ -210,7 +210,7 @@ module.exports = {
         include: [
           {
             model: 'GroupCar',
-            as :'groupCar'
+            as :'tagList'
           },
           { 
             model : 'User',
@@ -252,11 +252,11 @@ module.exports = {
       allCars.forEach((row) => { 
         carMap[row.id] = row; 
         // there will be multipls groupCars ... see below.
-        carMap[row.id].groupCar = [];
+        carMap[row.id].tagList = [];
       });
       userList.forEach((row) => { userMap[row.id] = row; });
 
-      groupList.forEach((row) => { carMap[row.carId].groupCar.push( row ); });
+      groupList.forEach((row) => { carMap[row.carId].tagList.push( row ); });
       bookingList.forEach((row) => { carMap[row.carId].currentBooking = row; });
       allCars.forEach((row) => { row.user = userMap[row.userId]; });
 
@@ -344,7 +344,7 @@ module.exports = {
       // See #1077
       let includeCarGroup = {
         model : 'GroupCar',
-        as: 'groupCar'
+        as: 'tagList'
       }
 
       car = yield Car.findById(id, {
@@ -378,7 +378,7 @@ module.exports = {
     // See #1077
     let includeCarGroup = {
       model : 'GroupCar',
-      as: 'groupCar'
+      as: 'tagList'
     }
 
     let car = yield Car.findById(id, { include: [includeCarGroup]});
@@ -921,7 +921,7 @@ module.exports = {
       include: [
         {
           model: 'GroupCar',
-          as: 'groupCar'
+          as: 'tagList'
         }
       ]
     };

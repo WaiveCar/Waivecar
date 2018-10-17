@@ -301,7 +301,7 @@ module.exports = class LogService {
          include: [
            {
              model : 'GroupCar',
-             as    : 'groupCar'
+             as    : 'tagList'
            }
          ]
       });

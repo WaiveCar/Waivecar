@@ -56,42 +56,42 @@ class GroupService {
   static *assignCar(groupRoleId, carId) {
 
     // See #1077. Currently one to one relation.
-    let groupCar = yield GroupCar.findOne({
+    let tagList = yield GroupCar.findOne({
       where : {
         carId: carId
       }
     });
 
-    if(!groupCar) {
-      groupCar = new GroupCar({
+    if(!tagList) {
+      tagList = new GroupCar({
         carId: carId,
         groupRoleId: groupRoleId
       });
 
-      yield groupCar.save();
+      yield tagList.save();
 
-      groupCar.relay({
+      tagList.relay({
         type: 'store'
       });
     } else {
-      yield groupCar.update({
+      yield tagList.update({
         groupRoleId: groupRoleId
       });
     }
 
-    return groupCar;
+    return tagList;
   }
 
   static *removeCar(groupRoleId, carId) {
-    let groupCar = yield GroupCar.findOne({
+    let tagList = yield GroupCar.findOne({
       where : {
         groupRoleId: groupRoleId,
         carId: carId
       }
     });
 
-    if(groupCar) {
-      yield groupCar.delete();
+    if(tagList) {
+      yield tagList.delete();
     }
   }
 };

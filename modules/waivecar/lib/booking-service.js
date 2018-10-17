@@ -493,7 +493,7 @@ module.exports = class BookingService extends Service {
       include: [
         {
           model : 'GroupCar',
-          as    : 'groupCar'
+          as    : 'tagList'
         }
       ]
     };
