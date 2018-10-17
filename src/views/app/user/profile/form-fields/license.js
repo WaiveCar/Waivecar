@@ -8,7 +8,7 @@ let layout = fields.mergeFromLayout('licenses', [
   ],
   [
     { name : 'birthDate', className : 'col-md-6 bento-form-input' },
-    { name : 'expirationDate', className : 'col-md-6 bento-form-input' },
+    { name : 'expirationDate', className : 'col-md-6 bento-form-input' }
   ],
   [
     { name : 'number', className : 'col-md-6 bento-form-input' },
