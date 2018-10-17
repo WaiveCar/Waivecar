@@ -137,7 +137,18 @@ templates.register('app', {
         path      : '/locations/:id',
         component : require('../../views/app/admin/locations/update'),
         onEnter   : policies.isAdministrator
+      },
+      {
+        path      : '/waivepark',
+        component : require('../../views/app/admin/waivepark'),
+        onEnter   : policies.isAdministrator
+      }, 
+      {
+        path      : '/waivepark/:id',
+        component : require('../../views/app/admin/waivepark/show'),
+        onEnter   : policies.isAdministrator
       }
+      
     ].concat(views.getRoutes('app')));
   }
 });
@@ -261,6 +272,13 @@ let order = 2;
     path      : '/locations',
     parent    : null,
     locations : [ 'sidebar' ],
+    order     : order++
+  },
+  {
+    title     : 'WaivePark',
+    icon      : 'location_on',
+    path      : '/waivepark',
+    locations : ['sidebar'],
     order     : order++
   }
 ].forEach(val => menu.add(val));

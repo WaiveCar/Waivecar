@@ -114,7 +114,7 @@ module.exports = class CarsIndex extends React.Component {
       let res = {
         waive: lic.includes('waive'),
         work: lic.includes('work'),
-        level: car.groupCar.length ? car.groupCar[0].groupRoleId === LEVEL : false
+        level: car.tagList.length ? car.tagList[0].groupRoleId === LEVEL : false
       };
 
       return (
