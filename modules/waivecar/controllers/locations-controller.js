@@ -4,6 +4,7 @@ let error = Bento.Error;
 let Location = Bento.model('Location');
 let moment       = require('moment');
 let Chargers = require('../lib/chargers-service');
+let Booking = require('../lib/booking-service');
 let _ = require('lodash');
 
 Bento.Register.ResourceController('Location', 'LocationsController', function(controller) {
@@ -28,13 +29,25 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
         { address : { $like : `%${ opts.search }%` } }
       ]};
     }
-    let locations =  (yield Location.find(query)).map((row) => {
+
+    // Here is how we filtre out user parking outside of a zone. 
+    // We use the obscure fact that Array.map, unluke the other 
+    // Array functions can take a generator.
+    let locations =  yield (yield Location.find(query)).map(function*(row) {
       if(row.shape) {
         row.shape = JSON.parse(row.shape);
       }
   
-      if(row.parking && row.parking.notes) {
-        row.description = row.parking.notes;
+      if(row.parking) {
+        // We created a caching system so we can call this a few
+        // times without being too stupid on the runtime
+        if(!(yield Booking.getZone(row))) {
+          // This will allow us to do a trivial filter below
+          return false;
+        }
+        if(row.parking.notes) {
+          row.description = row.parking.notes;
+        }
       }
 
       if(row.restrictions) {
@@ -42,6 +55,8 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
       }
       return row;
     });
+    // Here's where we remove parking that's outside the zone
+    locations = locations.filter(row => row);
 
     let chargers = yield Chargers.list();
     let res = locations.concat(chargers);

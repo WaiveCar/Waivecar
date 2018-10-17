@@ -43,6 +43,7 @@ let ParkingDetails = Bento.model('ParkingDetails');
 let BookingLocation= Bento.model('BookingLocation');
 let Location       = Bento.model('Location');
 let UserParking    = Bento.model('UserParking');
+let locationCache = false;
 
 module.exports = class BookingService extends Service {
 
@@ -752,7 +753,12 @@ module.exports = class BookingService extends Service {
 
   static *getZone(car) {
     var zone;
-    (yield Location.find({where: {type: 'zone'} })).forEach(function(row) {
+
+    if(!locationCache) {
+      locationCache = yield Location.find({where: {type: 'zone'} });
+    }
+
+    locationCache.forEach(function(row) {
       row.shape = JSON.parse(row.shape).map((row) => { return {latitude:row[1], longitude:row[0]};});
       if(geolib.isPointInside({latitude: car.latitude, longitude: car.longitude}, row.shape)){
         zone = row;
