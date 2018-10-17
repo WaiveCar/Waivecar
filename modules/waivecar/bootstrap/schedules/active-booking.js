@@ -43,7 +43,7 @@ var checkBooking = co.wrap(function *(booking) {
   if (booking.car.isIgnitionOn === false && !booking.car.license.match(/work/i)) {
     let sitStart = +(yield redis.hget('sitStart', booking.id));
     let now = +new Date();
-    let unit = 20 * 60 * 60 * 1000;
+    let unit = 20 * 60 * 1000;
     if(!sitStart) {
       yield redis.hset('sitStart', booking.id, now);
       yield redis.hset('sitLast', booking.id, now);
