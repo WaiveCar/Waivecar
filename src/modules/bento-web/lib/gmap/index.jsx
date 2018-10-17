@@ -28,6 +28,7 @@ module.exports = class GMap extends React.Component {
 
   // Creates a new skobbler map and adds it to the current map state.
   componentDidMount() {
+    console.log(this.props);
     this.loadMap();
   }
 
@@ -306,8 +307,10 @@ module.exports = class GMap extends React.Component {
         });
       } else if ('radius' in val) {
         marker.addListener('click', (e) => {
+          console.log('val: ', val);
           val.description = val.description || '';
-          infoWindow.setContent(`<b><a href=/locations/${ val.id }>${ val.name }</a></b> (${ val.type })<div style="width:20em">${ val.description }</div><em>${ val.address }</em>`);
+          let linkText = this.props.parking ? `<a href=/waivepark/${val.spaceId}>${val.name}</a>` : `<a href=/locations/${ val.id }>${ val.name }</a>`;
+          infoWindow.setContent(`<b>${linkText}</b> (${ val.type })<div style="width:20em">${ val.description }</div><em>${ val.address }</em>`);
           infoWindow.setPosition(e.latLng);
           infoWindow.open(this.map);
           //window.location = '/locations/' + val.id;
