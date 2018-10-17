@@ -613,7 +613,6 @@ class CarsShowView extends React.Component {
     } else {
       rowsToRender = !damageFilter ? [bookingList] : [bookingList.filter(item => item.type === damageFilter)];
     }
-    console.log('rowsToRender', rowsToRender);
     return (
       <div>
         {(rowsToRender[0] && rowsToRender[0].length > 0) &&
@@ -627,8 +626,6 @@ class CarsShowView extends React.Component {
                 return (
                   <div key={i} className="dmg-row">
                     {row.map((image, j) =>  { 
-                      console.log('image: ', image);
-                      console.log(image.file);
                       return image && image.file && ( 
                         <div>
                           <a className="damage-image-holder" href={`${API_URI}/file/${image.file.id}` } target="_blank" key={j}>
