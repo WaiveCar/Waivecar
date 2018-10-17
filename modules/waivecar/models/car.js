@@ -396,33 +396,28 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       return this.groupCar;
     },
 
-    getTag : function *(tag) {
+    getTagList : function* (filter) {
+
+      function getTags(filter) {
+        return tagList
+          .filter((row) => { return filter ? row.group.name.toLowerCase() === filter.toLowerCase() : true; })
+          .map((row) => { return row.groupRole.name; });
+      }
+
       let tagList = yield this.loadTagList();
-      var res = tagList.filter((row) => {
-        if(row.groupRole) {
-          return row.groupRole.name === tag;
-        } else {
-          console.log("Can't find tag for car", this.id, tagList);
-        }
-      });
-      return res;
+
+      if(Array.isArray(filter)) {
+        return Array.prototype.concat.apply([], filter.map(getTags));
+      }
+
+      return getTags(filter);
     },
 
-    addTag : function *(tag) {
-      let record = yield this.hasTag(tag);
-      if(record) {
-        return record;
-      }
-      let GroupRole = Bento.model('GroupRole');
-      let groupRecord = yield GroupRole.findOne({where: {name: tag}});
-      if(groupRecord) {
-        let GroupCar = Bento.model('GroupCar');
-        let tag = new GroupCar({
-          carId: this.id,
-          groupRoleId: groupRecord.id
-        });
-        yield tag.save();
-      }    
+
+    getTag : function *(tag) {
+      return (yield this.loadTagList()).filter((row) => {
+        return row.groupRole.name.toLowerCase() === tag.toLowerCase();
+      });
     },
 
     isTagged : function *(tag) {
@@ -444,6 +439,26 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     delTag : function *(tag) {
       return yield this.untag(tag);
     },
+
+    addTag : function *(tag) {
+      let record = yield this.hasTag(tag);
+      if(record) {
+        return record;
+      }
+      let GroupRole = Bento.model('GroupRole');
+      let groupRecord = yield GroupRole.findOne({where: {name: tag}});
+      if(groupRecord) {
+        let GroupCar = Bento.model('GroupCar');
+        let tag = new GroupCar({
+          carId: this.id,
+          groupRoleId: groupRecord.id,
+          // group cars does not have a groupId
+          //groupId: groupRecord.groupId
+        });
+        yield tag.save();
+      }    
+    },
+
 
     removeDriver : function *() {
       yield this.update({
