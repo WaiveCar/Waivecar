@@ -764,7 +764,9 @@ module.exports = class BookingService extends Service {
         if(geolib.isPointInside({latitude: car.latitude, longitude: car.longitude}, row.shape)){
           zone = row;
         }
-      } catch(ex) { }
+      } catch(ex) { 
+        console.log("Couldn't parse", row);
+      }
     });
     return zone;
   }
