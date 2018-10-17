@@ -611,15 +611,8 @@ class CarsShowView extends React.Component {
       let angles = bookingList.filter(item => item.type !== 'other');
       rowsToRender = [angles.slice(0, 4), angles.slice(4), other];
     } else {
-      console.log('bookingList: ', bookingList);
-      if (damageFilter) {
-        rowsToRender = [[bookingList]]
-      } else {
-        rowsToRender.push(bookingList.filter(item => item.type === damageFilter));
-      }
+      rowsToRender = !damageFilter ? [[bookingList]] : [bookingList.filter(item => item.type === damageFilter)];
     }
-    console.log('rowsToRender: ', rowsToRender);
-    console.log('API_URI', API_URI);
     return (
       <div>
         {(rowsToRender[0] && rowsToRender[0].length > 0) &&
