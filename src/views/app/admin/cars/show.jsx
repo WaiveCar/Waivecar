@@ -611,8 +611,9 @@ class CarsShowView extends React.Component {
       let angles = bookingList.filter(item => item.type !== 'other');
       rowsToRender = [angles.slice(0, 4), angles.slice(4), other];
     } else {
-      rowsToRender = !damageFilter ? [[bookingList]] : [bookingList.filter(item => item.type === damageFilter)];
+      rowsToRender = !damageFilter ? [bookingList] : [bookingList.filter(item => item.type === damageFilter)];
     }
+    console.log('rowsToRender', rowsToRender);
     return (
       <div>
         {(rowsToRender[0] && rowsToRender[0].length > 0) &&
@@ -623,17 +624,18 @@ class CarsShowView extends React.Component {
             </h4>
             <div>
               {rowsToRender.map((row, i) => {
-                console.log('row: ', row);
                 return (
                   <div key={i} className="dmg-row">
                     {row.map((image, j) =>  { 
-                      return (image && image.file && 
+                      console.log('image: ', image);
+                      console.log(image.file);
+                      return image && image.file && ( 
                         <div>
                           <a className="damage-image-holder" href={`${API_URI}/file/${image.file.id}` } target="_blank" key={j}>
-                            <div>{image.type}</div>
+                            <div>{image.type || 'other'}</div>
                             <img className="damage-image" src={`${API_URI}/file/${image.file.id}`} />
                           </a>
-                        </div>)
+                        </div>);
                       }
                     )}
                   </div>
