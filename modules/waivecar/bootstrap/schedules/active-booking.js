@@ -51,10 +51,10 @@ var checkBooking = co.wrap(function *(booking) {
       yield redis.hset('sitLast', booking.id, now);
     } else {
       let sitLast = +(yield redis.hget('sitLast', booking.id));
-      console.log(`Comparing ${booking.car.license} ${now} ${sitLast} ${unit}`);
+      console.log(`Comparing ${booking.car.license} ${now} ${sitLast} ${unit} ${ now - sitLast }`);
       if(now - sitLast > unit) {
         let minute_count = Math.floor((sitStart - now) / unit) * unit;
-        console.log(`Comparing ${booking.car.license} ${minute_count}`);
+        console.log(`NOTIFYING Comparing ${booking.car.license} ${minute_count}`);
         yield redis.hset('sitLast', booking.id, now);
       }
     }
