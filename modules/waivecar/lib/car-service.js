@@ -344,18 +344,16 @@ module.exports = {
       // See #1077
       let includeCarGroup = {
         model : 'GroupCar',
-        as: 'tagList'
+        as: 'tagList',
+        include: [
+          {
+            model: 'GroupRole',
+            as: 'group_role', 
+          }
+       ]
       }
 
-      car = yield Car.findById(id, {
-        include : [
-          {
-            model : 'User',
-            as    : 'user'
-          },
-          includeCarGroup
-        ]
-      });
+      car = yield Car.findById(id);
 
     }
 
@@ -368,7 +366,18 @@ module.exports = {
         }
       }, 404);
     }
+    car.tagList = yield GroupCar.find({
+      where : { carId: id },
 
+      order : [[ 'id', 'asc' ]],
+
+      include : [ 
+        {
+          model: 'GroupRole',
+          as: 'group_role'
+        }
+      ]
+    });
     return car;
   },
 
