@@ -400,7 +400,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
       function getTags(filter) {
         return tagList
-          .filter((row) => { return filter ? row.group.name.toLowerCase() === filter.toLowerCase() : true; })
+          .filter((row) => { return filter ? row.groupRole.name.toLowerCase() === filter.toLowerCase() : true; })
           .map((row) => { return row.groupRole.name; });
       }
 
