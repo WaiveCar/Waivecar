@@ -415,7 +415,18 @@ class CarsShowView extends React.Component {
 
   submit = (event) => {
     let form = new helpers.Form(event);
-    console.log(form.data);
+    api.put(`/cars/${ this.state.car.cars[0].id }`, form.data, (err) => {
+      if (err) {
+        return snackbar.notify({
+          type    : 'danger',
+          message : err.message
+        });
+      }
+      snackbar.notify({
+        type    : 'success',
+        message : 'Car details successfully updated'
+      });
+    });
     event.preventDefault();
   }
 
