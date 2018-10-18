@@ -69,6 +69,12 @@ module.exports = {
       return true;
     }
 
+    // this covers phrases like "end please or end waive
+    if(command.match(/^end(\s\w+|)$/i)) {
+      let message = `${ who } (${ phone }) send "${ params.query.Body }" and the computer finished the ride automatically`;
+      yield notify.slack({ text : message }, { channel : '#app_support' });
+      command = 'finish';
+    }
 
     // alias commands are blank.
     let documentation = {
