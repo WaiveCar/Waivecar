@@ -36,7 +36,7 @@ module.exports = {
     }
   },
 
-  *attemptAction(user, command) {
+  *attemptAction(user, command, opts) {
     // we try the complex book command first.
     let argCmd = command.match(/^(book|details)\s(\w+|\w+\s\d+)$/i);
 
@@ -108,7 +108,7 @@ module.exports = {
 
     // this covers phrases like "end please or end waive
     if(command.match(/^end(\s\w+|)$/i) && user) {
-      let message = `${ user.link() } (${ phone }) send "${ params.query.Body }" and the computer finished the ride automatically`;
+      let message = `${ user.link() } (${ opts.phone }) send "${ opts.raw }" and the computer finished the ride automatically`;
       yield notify.slack({ text : message }, { channel : '#app_support' });
       command = 'finish';
     }
@@ -265,7 +265,7 @@ module.exports = {
 
     // We need to be open to the possibility of people texting us which
     // have not registered. In these cases we pass everything through.
-    if(user && (yield this.attemptAction(user, smstext))) {
+    if(user && (yield this.attemptAction(user, smstext, {raw: params.query.Body, phone: phone}))) {
       return true;
     }
 
