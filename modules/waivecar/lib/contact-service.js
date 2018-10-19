@@ -108,7 +108,7 @@ module.exports = {
 
     // this covers phrases like "end please or end waive
     if(command.match(/^end(\s\w+|)$/i) && user) {
-      let message = `${ user.link() } (${ opts.phone }) send "${ opts.raw }" and the computer finished the ride automatically`;
+      let message = `User ${ user.link() } sms'd "${ opts.raw }" and the computer finished the ride automatically`;
       yield notify.slack({ text : message }, { channel : '#app_support' });
       command = 'finish';
     }
