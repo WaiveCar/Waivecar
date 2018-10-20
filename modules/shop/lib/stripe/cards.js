@@ -5,6 +5,7 @@ let Card       = Bento.model('Shop/Card');
 let error      = Bento.Error;
 let changeCase = Bento.Helpers.Case;
 let stripe     = null;
+let UserLog    = require('../../../log/lib/log-service');
 
 module.exports = class StripeCards {
 
@@ -34,7 +35,9 @@ module.exports = class StripeCards {
         // No debit cars (#1305) and no pre-paid (no ticket found actually)
         // There's a *fourth* type of card, 'unknown' ... for our sakes
         // we're just going to let pass thru to avoid issues.
-        if (res.funding === 'debit' || res.funding === 'prepaid') {
+        if ((res.funding === 'debit' && !(yield user.hasTag('debit'))) || res.funding === 'prepaid') {
+          yield UserLog.addUserEvent(user, 'DEBIT', `${res.funding} ${res.last4}`);
+
           // The debit card must also be deleted from stripe to prevent it from being used by accident
           this.stripe.customers.deleteCard(user.stripeId, res.id, (err, response) => {
             if (err) {
