@@ -991,7 +991,7 @@ module.exports = class BookingService extends Service {
     // --------------------------------------------------------
     //
     // At this point we've done all the checks and can safely
-    // mark the booking as complete. This is involves logging,
+    // mark the booking as complete. This involves logging,
     // deleting timers and adding a row to the booking_details
     // table 
     // 
