@@ -28,6 +28,7 @@ module.exports = class StripeCards {
 
     // ### Register Card
 
+    let isDebitUser = yield user.hasTag('debit');
     let result = yield new Promise((resolve, reject) => {
       this.stripe.customers.createCard(user.stripeId, { card : changeCase.objectKeys('toSnake', card) }, (err, res) => {
         if (err) return reject(err);
@@ -35,7 +36,7 @@ module.exports = class StripeCards {
         // No debit cars (#1305) and no pre-paid (no ticket found actually)
         // There's a *fourth* type of card, 'unknown' ... for our sakes
         // we're just going to let pass thru to avoid issues.
-        if ((res.funding === 'debit' && !(yield user.hasTag('debit'))) || res.funding === 'prepaid') {
+        if ((res.funding === 'debit' && !isDebitUser) || res.funding === 'prepaid') {
           yield UserLog.addUserEvent(user, 'DEBIT', `${res.funding} ${res.last4}`);
 
           // The debit card must also be deleted from stripe to prevent it from being used by accident
