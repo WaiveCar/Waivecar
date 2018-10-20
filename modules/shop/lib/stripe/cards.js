@@ -37,7 +37,7 @@ module.exports = class StripeCards {
         // There's a *fourth* type of card, 'unknown' ... for our sakes
         // we're just going to let pass thru to avoid issues.
         if ((res.funding === 'debit' && !isDebitUser) || res.funding === 'prepaid') {
-          yield UserLog.addUserEvent(user, 'DEBIT', `${res.funding} ${res.last4}`);
+          //yield UserLog.addUserEvent(user, 'DEBIT', `${res.funding} ${res.last4}`);
 
           // The debit card must also be deleted from stripe to prevent it from being used by accident
           this.stripe.customers.deleteCard(user.stripeId, res.id, (err, response) => {
