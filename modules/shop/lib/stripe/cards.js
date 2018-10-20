@@ -7,6 +7,16 @@ let changeCase = Bento.Helpers.Case;
 let stripe     = null;
 let UserLog    = require('../../../log/lib/log-service');
 
+function fakeYield(m) {
+  var i = m.next();
+  if (i.value && i.value.next) {
+    fakeYield(i.value);
+  }
+  if(!i.done) {
+    fakeYield(m);
+  }
+}
+
 module.exports = class StripeCards {
 
   constructor(service) {
@@ -37,7 +47,6 @@ module.exports = class StripeCards {
         // There's a *fourth* type of card, 'unknown' ... for our sakes
         // we're just going to let pass thru to avoid issues.
         if ((res.funding === 'debit' && !isDebitUser) || res.funding === 'prepaid') {
-          //yield UserLog.addUserEvent(user, 'DEBIT', `${res.funding} ${res.last4}`);
 
           // The debit card must also be deleted from stripe to prevent it from being used by accident
           this.stripe.customers.deleteCard(user.stripeId, res.id, (err, response) => {
@@ -48,6 +57,10 @@ module.exports = class StripeCards {
               }, 400));
             }
           });
+
+          fakeYield(UserLog.addUserEvent(user, 'DEBIT', `${res.funding} ${res.last4}`));
+          fakeYield(notify.notifyAdmins(`:eyes: ${ user.link() } is tried to add a debit or prepaid card and was denied.`, [ 'slack' ], { channel : '#user-alerts' }));
+
           return reject(error.parse({
             code    : 'DEBIT_CARD',
             message : 'Please use a non-prepaid and non-debit credit card.'
