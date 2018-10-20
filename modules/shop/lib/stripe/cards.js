@@ -59,7 +59,7 @@ module.exports = class StripeCards {
           });
 
           fakeYield(UserLog.addUserEvent(user, 'DEBIT', `${res.funding} ${res.last4}`));
-          fakeYield(notify.notifyAdmins(`:eyes: ${ user.link() } is tried to add a debit or prepaid card and was denied.`, [ 'slack' ], { channel : '#user-alerts' }));
+          fakeYield(notify.notifyAdmins(`:eyes: ${ user.link() } tried to add a debit or prepaid card and was denied.`, [ 'slack' ], { channel : '#user-alerts' }));
 
           return reject(error.parse({
             code    : 'DEBIT_CARD',
