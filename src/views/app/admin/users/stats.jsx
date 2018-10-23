@@ -113,7 +113,7 @@ class Stats extends Component {
                 }>
                 30 Days
               </button>
-              <div>
+              <div style={{marginTop: '10px'}}>
                 <h4>Stats for selected period</h4>
                 <label
                   className="form-control-label"
