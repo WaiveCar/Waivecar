@@ -620,7 +620,7 @@ module.exports = {
       data.chargeHistory = existingCar.chargeHistory;
     }
 
-    if (data.boardVoltage < 10.5 && data.isIgnitionOn) {
+    if (data.boardVoltage < 10.5) {
       let message = `:skull: ${ existingCar.link() } board voltage is at ${ data.boardVoltage }v`;
       if (existingCar.userId) {
         if(!user) {
@@ -629,17 +629,6 @@ module.exports = {
         message += ` (Current user is ${ user.link() })`;
       }
       yield notify.notifyAdmins(message, [ 'slack' ], { channel : '#rental-alerts' });
-      if (existingCar.bookingId) {
-        let booking = yield Booking.findById(existingCar.bookingId);
-        if (!booking.isFlagged('low-12v-battery')) {
-          yield notify.sendTextMessage(
-            booking.userId,
-            `It looks like the battery on ${existingCar.license} is dropping. If it gets too low it won't be able to start without a jump. Please check to make sure things like the lights, stereo, and climate control are off. Thanks.`
-          );
-        } else {
-          yield booking.addFlag('low-12v-battery');
-        }
-      }
     }
     // We find out if our charging status has changed
     if (('charging' in data) && (data.isCharging != existingCar.isCharging)) {

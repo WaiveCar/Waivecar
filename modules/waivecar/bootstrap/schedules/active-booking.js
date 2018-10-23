@@ -88,9 +88,6 @@ var checkBooking = co.wrap(function *(booking) {
     device = car;
   }
 
-  // This always returns false if NODE_ENV !== production
-  if (!device || !car || !user) return;
-
   if (start) {
     if (!booking.isFlagged('drove') ) {
       if (device.isIgnitionOn || car.mileage !== device.mileage || device.calculatedSpeed > 0 || device.currentSpeed > 0 || !device.isParked) {
@@ -158,6 +155,15 @@ var checkBooking = co.wrap(function *(booking) {
         yield notify.notifyAdmins(`:cactus: ${ user.link() } drove ${ car.link() } ${ duration } minutes and has only rented ${ booking_history.length } times.`, [ 'slack' ], { channel : '#rental-alerts' });
       }
     }
+  }
+
+  if (device.boardVoltage < 10.5) {
+    if (!booking.isFlagged('low-12v-battery')) {
+      yield booking.addFlag('low-12v-battery');
+      yield notify.sendTextMessage(user,
+        `It looks like the battery on ${car.license} is dropping. If it gets too low it won't be able to start without a jump. Please check to make sure things like the lights, stereo, and climate control are off. Thanks.`
+      );
+    } 
   }
 
   // Check if outside driving zone 
