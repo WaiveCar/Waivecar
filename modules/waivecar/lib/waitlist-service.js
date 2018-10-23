@@ -176,9 +176,12 @@ module.exports = {
       //
       // oh what fun type systems are!
       data.priority = +isInside;
+      if (promo === 'csula-student' || promo === 'csula-staff') {
+        isInside = false;
+        data.notes = promo;
+      }
 
       record = new Waitlist(data);
-
       // If this is a valid waivework signup
       if (isInside && data['accountType'] == 'waivework') {
         res.waivework = 'yes';
