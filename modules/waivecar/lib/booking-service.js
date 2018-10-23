@@ -838,7 +838,7 @@ module.exports = class BookingService extends Service {
     // we are in a zone.
     let zone = yield this.getZone(car);
     // otherwise if we aren't there and the car is low, we need to go back to a hub
-    if (car.milesAvailable() < 23 && !isAdmin) {
+    if (car.milesAvailable() < 21 && !isAdmin) {
       throw error.parse({
         code    : `CHARGE_TOO_LOW`,
         message : `The WaiveCar's charge is too low to end here. Please return it to the homebase.`
