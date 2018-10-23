@@ -177,11 +177,16 @@ module.exports = {
       // oh what fun type systems are!
       data.priority = +isInside;
       if (promo === 'csula-student' || promo === 'csula-staff') {
+        // for the csula users, their signups need to be shown as outside the zone
         isInside = false;
+        // below must == 'yes' so that the app does not throw an error
+        res.inside = 'yes';
+        data.placeName = 'csula';
         data.notes = promo;
       }
 
       record = new Waitlist(data);
+      yield record.save();
       // If this is a valid waivework signup
       if (isInside && data['accountType'] == 'waivework') {
         res.waivework = 'yes';
@@ -198,9 +203,7 @@ module.exports = {
           res.id = record.id;
         }
       }
-
-      yield record.save();
-
+      console.log('record: ', record);
     }
 
     if(promo === 'vip' || promo === 'seekdiscomfort' || promo === 'high5') {
@@ -257,7 +260,7 @@ module.exports = {
       yield this.letInByRecord([record], null, {intro: 'vip'});
       res.fastTrack = 'yes';
     }
-
+    console.log('res: ', res);
     return res;
   },
 
