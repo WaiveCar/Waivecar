@@ -624,7 +624,7 @@ module.exports = {
       let message = `:skull: ${ existingCar.link() } board voltage is at ${ data.boardVoltage }v`;
       if (existingCar.userId) {
         if(!user) {
-          user = User.findById(existingCar.userId);
+          user = yield User.findById(existingCar.userId);
         }
         message += ` (Current user is ${ user.link() })`;
       }
