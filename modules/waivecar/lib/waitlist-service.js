@@ -203,7 +203,6 @@ module.exports = {
           res.id = record.id;
         }
       }
-      console.log('record: ', record);
     }
 
     if(promo === 'vip' || promo === 'seekdiscomfort' || promo === 'high5') {
@@ -260,7 +259,6 @@ module.exports = {
       yield this.letInByRecord([record], null, {intro: 'vip'});
       res.fastTrack = 'yes';
     }
-    console.log('res: ', res);
     return res;
   },
 
