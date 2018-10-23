@@ -177,10 +177,10 @@ module.exports = {
       // oh what fun type systems are!
       data.priority = +isInside;
       if (promo === 'csula-student' || promo === 'csula-staff') {
-        // for the csula users, their signups need to be shown as outside the zone
+        // for the csula users, isInside needs to be set to false so that they are 
+        // not immediately let in off of the waitlist below
         isInside = false;
-        // below must == 'yes' so that the app does not throw an error
-        res.inside = 'yes';
+        res.isCsula = true;
         data.placeName = 'csula';
         data.notes = promo;
       }
