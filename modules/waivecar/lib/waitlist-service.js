@@ -391,10 +391,10 @@ module.exports = {
     }
 
     for(var ix = 0; ix < recordList.length; ix++) {
-
       let record = recordList[ix];
       let userRecord = false;
       let fullName = `${record.firstName} ${record.lastName}`;
+      let isCsula = record.location === 'csula';
 
       let userOpts = {
         firstName: record.firstName,
@@ -403,9 +403,8 @@ module.exports = {
         // we passed it into the waitlist
         passwordEncrypted: record.password,
         email: record.email,
-        status: 'active'
+        status: 'active',
       };
-
 
       if (record.phone) {
         userOpts.phone = record.phone;
@@ -420,7 +419,18 @@ module.exports = {
         // to avoid that nonsense.
         //
         userRecord = yield UserService.store(userOpts, _user, {nosms: true});
-
+        if (record.placeName === 'csula') {
+          let UserNote = Bento.model('UserNote');
+          let note = new UserNote({
+            userId: userRecord.id,
+            authorId: 14827,
+            content: record.notes,
+            type: 'unit'
+          });
+          yield note.save();
+          yield userRecord.addTag('csula');
+          let tags = yield userRecord.getTagList();
+        }
         if (opts.promo === 'high5') {
           yield OrderService.quickCharge({ description: "High5 promo signup", userId: userRecord.id, amount: -500 }, false, {overrideAdminCheck: true });
         }
