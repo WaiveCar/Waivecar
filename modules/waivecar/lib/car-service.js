@@ -634,10 +634,10 @@ module.exports = {
         if (!booking.isFlagged('low-12v-battery')) {
           yield notify.sendTextMessage(
             booking.userId,
-            `It looks like the battery on your WaiveCar, ${existingCar.licenses} is dropping. If it gets too low it won't be able to start without a jump. Please check to make sure things like the lights, stereo, and climate control are off. Thanks.`
+            `It looks like the battery on ${existingCar.license} is dropping. If it gets too low it won't be able to start without a jump. Please check to make sure things like the lights, stereo, and climate control are off. Thanks.`
           );
         } else {
-          booking.addFlag('low-12v-battery');
+          yield booking.addFlag('low-12v-battery');
         }
       }
     }
