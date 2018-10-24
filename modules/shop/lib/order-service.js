@@ -1042,7 +1042,6 @@ module.exports = class OrderService extends Service {
         <tr>` ).join('');
       word = item.totalNum > 0 ? 'Charges' : 'credit';
       if (word === 'Charges' && !item[0].isTopUp) {
-        console.log('item is not topUp');
         opts.subject = opts.subject || `$${ item.total } charges on your account`;
         opts.leadin = opts.leadin || 'Here is your receipt for charges added to your account:';
         yield email.send({
