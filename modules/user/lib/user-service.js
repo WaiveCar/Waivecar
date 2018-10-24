@@ -13,7 +13,7 @@ let Email       = Bento.provider('email');
 let emailConfig = Bento.config.email;
 let log         = Bento.Log;
 let waiveConfig = Bento.config;
-
+let moment      = require('moment');
 
 // ### Models
 
@@ -23,6 +23,7 @@ let Group     = Bento.model('Group');
 let GroupUser = Bento.model('GroupUser');
 let GroupRole = Bento.model('GroupRole');
 let Booking   = Bento.model('Booking');
+let ShopOrder = Bento.model('Shop/Order');
 let sequelize = Bento.provider('sequelize');
 let notify    = require('../../waivecar/lib/notification-service');
 let UserLog   = require('../../log/lib/log-service');
@@ -466,12 +467,6 @@ module.exports = {
     return user;
   },
 
-  /**
-   * @param  {Number} id
-   * @param  {Object} query [description]
-   * @param  {Object} _user
-   * @return {Object}
-   */
   *delete(id, query, _user) {
     let user = yield this.get(id, _user);
 
@@ -516,6 +511,68 @@ module.exports = {
     }
 
     return user;
-  }
+  },
 
+  *stats(userId) {
+    let allOrders = yield ShopOrder.find({
+      where: {
+        userId, 
+        description: {$notLike: '%authorization%'},
+        status: {$not: 'refunded'},
+      }
+    });
+    let totalSpent = yield ShopOrder.findOne({
+      attributes: [
+        [sequelize.fn('SUM', sequelize.col('amount')), 'amount'],
+      ],
+      where: {
+        userId,
+        status: 'paid',
+        description: {$notLike: '%authorization%'},
+        status: {$not: 'refunded'},
+      }
+    });
+    let allBookings = yield Booking.find({
+      where: {
+        userId,
+        $or: [
+          {status: 'completed'},
+          {status: 'closed'},
+        ]
+      },
+      include: [
+        {
+          model: 'BookingDetails',
+          as: 'details',
+        },
+        {
+          model: 'Car',
+          as: 'car',
+        }
+      ],
+    });
+    let monthAgo = moment().subtract(30, 'days');
+    let weekAgo = moment().subtract(7, 'days');
+    let dayAgo = moment().subtract(1, 'days');
+    return {
+      totalSpent: (totalSpent.amount / 100).toFixed(2),
+      totalBookings: allBookings.length,
+      allTime: {
+        orders: allOrders,
+        bookings: allBookings,
+      },
+      month: {
+        orders: allOrders.filter(order => order.createdAt > monthAgo),
+        bookings: allBookings.filter(booking => booking.createdAt > monthAgo),
+      },
+      week: {
+        orders: allOrders.filter(order => order.createdAt > weekAgo),
+        bookings: allBookings.filter(booking => booking.createdAt > weekAgo),
+      }, 
+      day: {
+        orders: allOrders.filter(order => order.createdAt > dayAgo),
+        bookings: allBookings.filter(booking => booking.createdAt > dayAgo),
+      }
+    }
+  }
 };
