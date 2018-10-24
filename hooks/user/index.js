@@ -176,6 +176,15 @@ hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
       }
       reason.push(`Phone number change ${ prevUser.phone } -> ${ nextUser.phone }`);
     }
+
+    if (prevUser.email && prevUser.email !== nextUser.email) {
+
+      nextUser.verifiedEmail = false;
+      if (prevUser.status != 'suspended') {
+        nextUser.status = 'pending';
+      }
+      reason.push(`Email change ${ prevUser.email } -> ${ nextUser.email }`);
+    }
   }
 
   if (yield redis.shouldProceed('user-change', prevUser.id)) {
@@ -201,7 +210,7 @@ hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
         who += ' (' + reason.join(', ') + ')';
       }
       yield UserLog.addUserEvent(prevUser, 'PENDING', _user.id, [reason || []].join(', '));
-      yield notify.notifyAdmins(`:construction: ${ prevUser.link() }, ${ what } ${ who }`, [ 'slack' ], { channel : '#user-alerts' });
+      yield notify.notifyAdmins(`:construction: ${ prevUser.link() }, ${ what }${ who }`, [ 'slack' ], { channel : '#user-alerts' });
     }
   }
 
