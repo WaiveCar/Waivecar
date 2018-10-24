@@ -91,6 +91,7 @@ module.exports = class OrderService extends Service {
       price: data.amount,
       description: data.description,
       chargeName: data.description,
+      isTopUp: opts.isTopUp,
     }, user);
 
     try {
@@ -136,7 +137,7 @@ module.exports = class OrderService extends Service {
 
   static *topUp(data, _user) {
     let user = yield User.findById(data.userId);
-    if(yield this.quickCharge(data, _user, {nocredit: true, overrideAdminCheck: true})) {
+    if(yield this.quickCharge(data, _user, {nocredit: true, overrideAdminCheck: true, isTopUp: true})) {
       yield user.update({credit: user.credit + 20 * 100});
     }
   }
@@ -1041,6 +1042,7 @@ module.exports = class OrderService extends Service {
         <tr>` ).join('');
       word = item.totalNum > 0 ? 'Charges' : 'credit';
       if (word === 'Charges' && !item[0].isTopUp) {
+        console.log('item is not topUp');
         opts.subject = opts.subject || `$${ item.total } charges on your account`;
         opts.leadin = opts.leadin || 'Here is your receipt for charges added to your account:';
         yield email.send({
