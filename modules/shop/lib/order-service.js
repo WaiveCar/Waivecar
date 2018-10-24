@@ -136,7 +136,7 @@ module.exports = class OrderService extends Service {
 
   static *topUp(data, _user) {
     let user = yield User.findById(data.userId);
-    if(yield this.quickCharge(data, _user, {nocredit: true, overrideAdminCheck: true)) {
+    if(yield this.quickCharge(data, _user, {nocredit: true, overrideAdminCheck: true})) {
       yield user.update({credit: user.credit + 20 * 100});
     }
   }
@@ -743,6 +743,19 @@ module.exports = class OrderService extends Service {
 
     opts = opts || {};
 
+    //
+    // We need to make sure that we have up to date information on this user.
+    //
+    // In the implementation of the car charge reward program (#1306), the
+    // user was credited in the database but the model of the user wasn't
+    // updated to reflect this credit. This means that users could get fully
+    // charged when trying things for the first time.  Instead of fixing
+    // things there and trying to make sure we aren't passing in stale models
+    // we really should be fixing them here and make sure that we don't have 
+    // stale information about the user so we pull it again.
+    //
+    user = yield User.findById(user.id);
+
     // Normally we try to capture the payment (as in, we actually charge
     // the user). We can do this two-step thing where we just see if the
     // CC is valid by specifying an opt
@@ -951,7 +964,7 @@ module.exports = class OrderService extends Service {
     log.warn(`Failed to charge user: ${ user.id }`, err);
     let amountInDollars = (amountInCents / 100).toFixed(2);
     extra = extra || '';
-    yield notify.notifyAdmins(`:lemon: Failed to charge ${ user.link() } $${ amountInDollars }: ${ JSON.stringify(err) }`, [ 'slack' ], { channel : '#rental-alerts' });
+    yield notify.notifyAdmins(`:lemon: Failed to charge ${ user.link() } $${ amountInDollars }`, [ 'slack' ], { channel : '#rental-alerts' });
 
     // We need to communicate that there was a potential charge + a potential 
     // balance that was attempted to be cleared.  This email can cover all 3
