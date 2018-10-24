@@ -15,7 +15,7 @@ scheduler.process('booking-complete-check', function *(job) {
   let booking = yield Booking.findOne({ where : { id : job.data.bookingId } });
   let user = yield User.findById(booking.userId);
   try {
-    yield bookingService._complete(job.data.bookingId, booking.userId);
+    yield bookingService._complete(job.data.bookingId, user);
   } catch (ex) {
     // so if we get here then the user forgot to do a few things.
     //yield notify.sendTextMessage(user, 'Hi! Thanks for using WaiveCar. This is a courtesy reminder to make sure you ' + ex.message + '. Thanks.');
@@ -41,47 +41,51 @@ scheduler.process('booking-now-lock', function *(job) {
 });
 
 scheduler.process('booking-auto-lock', function *(job) {
-  let booking = yield Booking.findOne({ where : { id : job.data.bookingId } });
-  if (!booking) {
-    throw error.parse({
-      code    : 'BOOKING_AUTO_LOCK',
-      message : 'Could not find a booking with the provided id',
-      data    : {
-        id : job.data.bookingId
+  try {
+    let booking = yield Booking.findOne({ where : { id : job.data.bookingId } });
+    if (!booking) {
+      throw error.parse({
+        code    : 'BOOKING_AUTO_LOCK',
+        message : 'Could not find a booking with the provided id',
+        data    : {
+          id : job.data.bookingId
+        }
+      });
+    }
+
+    let user = yield User.findById(booking.userId);
+
+    if (booking.status !== 'completed' && booking.status !== 'closed') {
+      let car = yield Car.findById(booking.carId);
+
+      // We need to try to find out why this isn't working.
+      let reason = [];
+
+      if (car.is_ignition_on) {
+        reason.push('ignition is on');
       }
-    });
-  }
+      if (!car.is_locked) {
+        reason.push('left unlocked (locking now)');
+      }
+      if (!car.is_key_secure) {
+        reason.push("key isn't in holder");
+      }
+      if(!car.is_door_open) {
+        reason.push("doors are open or ajar");
+      }
 
-  let user = yield User.findById(booking.userId);
+      if(reason.length) {
+        reason = 'reason(s): ' + reason.join(', ');
+      } else {
+        reason = 'reason unknown (ignition is off, doors are locked, and the key is in the holder)'; 
+      }
 
-  if (booking.status !== 'completed' && booking.status !== 'closed') {
-    let car = yield Car.findById(booking.carId);
+      yield cars.lockCar(car.id);
 
-    // We need to try to find out why this isn't working.
-    let reason = [];
-
-    if (car.is_ignition_on) {
-      reason.push('ignition is on');
+      yield notify.notifyAdmins(`:closed_lock_with_key: ${ user.link() }'s booking with ${ car.info() } was automaticaly locked and needs manual review | ${ reason } ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
     }
-    if (!car.is_locked) {
-      reason.push('left unlocked (locking now)');
-    }
-    if (!car.is_key_secure) {
-      reason.push("key isn't in holder");
-    }
-    if(!car.is_door_open) {
-      reason.push("doors are open or ajar");
-    }
-
-    if(reason.length) {
-      reason = 'reason(s): ' + reason.join(', ');
-    } else {
-      reason = 'reason unknown (ignition is off, doors are locked, and the key is in the holder)'; 
-    }
-
-    yield cars.lockCar(car.id);
-
-    yield notify.notifyAdmins(`:closed_lock_with_key: ${ user.link() }'s booking with ${ car.info() } was automaticaly locked and needs manual review | ${ reason } ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
+  } catch(ex) {
+    console.log("Unable to auto-complete: ", ex);
   }
 });
 
