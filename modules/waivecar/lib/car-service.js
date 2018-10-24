@@ -628,7 +628,10 @@ module.exports = {
         }
         message += ` (Current user is ${ user.link() })`;
       }
-      yield notify.notifyAdmins(message, [ 'slack' ], { channel : '#rental-alerts' });
+      // show them only 1/20 times
+      if(Math.random() < 0.05) {
+        yield notify.notifyAdmins(message, [ 'slack' ], { channel : '#rental-alerts' });
+      }
     }
     // We find out if our charging status has changed
     if (('charging' in data) && (data.isCharging != existingCar.isCharging)) {
