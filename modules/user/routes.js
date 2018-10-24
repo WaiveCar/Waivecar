@@ -15,4 +15,4 @@ Route.resource('users', 'UsersController', {
   params : config.params ? config.params : null
 });
 
-Route.get('/users/:id/stats', [ /*'isAuthenticated', 'isAdmin'*/ 'UsersController@stats']);
+Route.get('/users/:id/stats', [ 'isAuthenticated', 'isAdmin', 'UsersController@stats']);
