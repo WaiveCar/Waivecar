@@ -689,7 +689,7 @@ module.exports = {
       component: 'input',
       helpText: null,
       label: 'Cell Phone',
-      name: 'Phone',
+      name: 'phone',
       required: true,
       type: 'text',
     },
