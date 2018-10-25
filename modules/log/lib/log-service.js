@@ -261,10 +261,11 @@ module.exports = class LogService {
     }).join('\n');
   }
 
-  static *revenue(duration) {
-    duration = parseInt(duration || "1", 10);
+  static *revenue(start, end) {
+    start = parseInt(start || "1", 10);
+    end = parseInt(end || "0", 10);
     
-    let qstr = "select sum(amount) as ttl,count(*) as charges,first_name,last_name,users.status,users.credit,users.id from shop_orders join users on users.id = shop_orders.user_id where shop_orders.status='paid' and amount < 10000 and shop_orders.created_at > date_sub(current_date, interval " + duration + " month) group by user_id order by ttl desc";
+    let qstr = "select sum(amount) as ttl,count(*) as charges,first_name,last_name,users.status,users.credit,users.id from shop_orders join users on users.id = shop_orders.user_id where shop_orders.status='paid' and amount < 10000 and shop_orders.created_at > date_sub(current_date, interval " + start + " month) and shop_orders.created_at < date_sub(current_date, interval " + end + " month) group by user_id order by ttl desc";
 
     return yield sequelize.query(qstr, {type: sequelize.QueryTypes.SELECT});
   }

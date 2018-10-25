@@ -8,8 +8,8 @@ Bento.Register.Controller('LogsController', (controller) => {
     return yield service.create(type, this.payload);
   };
 
-  controller.revenue = function *(type) {
-    return yield service.revenue(type);
+  controller.revenue = function *(start,end) {
+    return yield service.revenue(start,end);
   };
 
   controller.stats = function *(type) {
