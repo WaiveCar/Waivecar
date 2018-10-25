@@ -42,11 +42,11 @@ class Stats extends Component {
       return 'No Rides';
     }
     milliseconds = durations.reduce((acc, item) => acc + item, 0) / divisor;
-    let averageDuration = moment.duration(milliseconds);
-    return `${averageDuration.hours()}:${averageDuration.minutes()}:${averageDuration.seconds()}`;
+    return moment(milliseconds).format('H:mm:ss');
   };
 
   render() {
+    let mthis = this;
     let {stats, timeFrameSelected, currentBookings, currentOrders} = this.state;
     return (
       <div>
@@ -57,64 +57,27 @@ class Stats extends Component {
               <small>on this user's usage</small>
             </h3>
             <div className="box-content">
-              <div>
-                <label
-                  className="form-control-label"
-                  style={{color: '#666', fontWeight: 300}}>
-                  Total Rides: {stats.totalBookings}
-                </label>
-                <label
-                  className="form-control-label"
-                  style={{color: '#666', fontWeight: 300}}>
-                  Total Spent: ${stats.totalSpent}
-                </label>
-              </div>
-              <button
-                className="btn btn-sm btn-primary"
-                onClick={() =>
-                  this.setState({
-                    timeFrameSelected: 'allTime',
-                    currentBookings: stats.allTime.bookings,
-                    currentOrders: stats.allTime.orders,
-                  })
-                }>
-                All Time
-              </button>
-              <button
-                className="btn btn-sm btn-primary"
-                onClick={() =>
-                  this.setState({
-                    timeFrameSelected: 'day',
-                    currentBookings: stats.day.bookings,
-                    currentOrders: stats.day.orders,
-                  })
-                }>
-                24 Hours
-              </button>
-              <button
-                className="btn btn-sm btn-primary"
-                onClick={() =>
-                  this.setState({
-                    timeFrameSelected: 'week',
-                    currentBookings: stats.week.bookings,
-                    currentOrders: stats.week.orders,
-                  })
-                }>
-                7 Days
-              </button>
-              <button
-                className="btn btn-sm btn-primary"
-                onClick={() =>
-                  this.setState({
-                    timeFrameSelected: 'month',
-                    currentBookings: stats.month.bookings,
-                    currentOrders: stats.month.orders,
-                  })
-                }>
-                30 Days
-              </button>
+              { [ 
+                  ['allTime', 'All Time'],
+                  ['day', '24 hours'],
+                  ['week', '7 days'],
+                  ['month', '30 days']
+                ].map((row) => {
+                  return <button
+                    style={{marginRight: "0.5rem"}}
+                    className={ "btn btn-sm " + (mthis.state.timeFrameSelected === row[0] ? 'btn-primary' : '') }
+                    onClick={() =>
+                      mthis.setState({
+                        timeFrameSelected: row[0],
+                        currentBookings: stats[row[0]].bookings,
+                        currentOrders: stats[row[0]].orders,
+                      })
+                    }>
+                    { row[1] }
+                  </button>
+                })
+              }
               <div style={{marginTop: '10px'}}>
-                <h4>Stats for selected period</h4>
                 <label
                   className="form-control-label"
                   style={{color: '#666', fontWeight: 300}}>
@@ -133,7 +96,7 @@ class Stats extends Component {
                 <label
                   className="form-control-label"
                   style={{color: '#666', fontWeight: 300}}>
-                  Average Length Of Rides: {this.getAverage(currentBookings)}
+                  Average Length: {this.getAverage(currentBookings)}
                 </label>
               </div>
             </div>
