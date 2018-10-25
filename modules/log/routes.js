@@ -6,6 +6,8 @@ Route.post('/logs/:type', {
 });
 
 Route.get('/stats/:day',     [ 'LogsController@stats' ]);
+Route.get('/revenue/:duration',     [ 'LogsController@revenue' ]);
+Route.get('/revenue',     [ 'LogsController@revenue' ]);
 Route.get('/report/:year_month/:type',     [ 'LogsController@report' ]);
 Route.get('/logs/:type',     [ 'isAuthenticated', 'LogsController@index' ]);
 Route.get('/logs/:type/:id', [ 'isAuthenticated', 'LogsController@show' ]);

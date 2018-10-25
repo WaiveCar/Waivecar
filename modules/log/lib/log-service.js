@@ -261,6 +261,14 @@ module.exports = class LogService {
     }).join('\n');
   }
 
+  static *revenue(duration) {
+    duration = duration || '1 month';
+    
+    let qstr = "select sum(amount) as ttl,count(*) as charges,users.* from shop_orders join users on users.id = shop_orders.user_id where shop_orders.status='paid' and amount < 120000 and shop_orders.created_at > date_sub(current_date, interval " + duration + ") group by user_id order by ttl desc";
+
+    return yield sequelize.query(qstr, {type: sequelize.QueryTypes.SELECT});
+  }
+
   // year_month should be in the format of
   // YYYY-MM
   // You can also have a duration, such as:
