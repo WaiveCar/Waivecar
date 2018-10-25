@@ -42,7 +42,7 @@ class Stats extends Component {
       return 'No Rides';
     }
     milliseconds = durations.reduce((acc, item) => acc + item, 0) / divisor;
-    return moment(milliseconds).format('H:mm:ss');
+    return moment.utc(milliseconds).format('H:mm:ss');
   };
 
   render() {
