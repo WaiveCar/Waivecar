@@ -450,14 +450,16 @@ module.exports = {
   licenses: {
     birthDate: {
       name: 'birthDate',
-      component: 'date',
+      component: 'input',
+      type: 'date',
       required: true,
       label: 'Date Of Birth',
       helpText: null,
     },
     expirationDate: {
       name: 'expirationDate',
-      component: 'date',
+      component: 'input',
+      type: 'date',
       required: true,
       label: 'Expiration Date',
       helpText: null,
