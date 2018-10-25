@@ -12,6 +12,7 @@ let booking = require('./booking-service');
 let cars    = require('./car-service');
 let moment  = require('moment-timezone');
 let fs      = require('fs');
+let Charger = require('./chargers-service');
 
 
 module.exports = {
@@ -75,6 +76,8 @@ module.exports = {
       available: "List available WaiveCars",
       book: "Book a WaiveCar. Example:\n   book waive14",
       commands: null,
+      // SECRET!!!!
+      // charge: "Charge a WaiveCar with EVgo",
       save: "Add 20 additional minutes to get to a WaiveCar reservation for $4.20",
       "save less": "Add 10 additional minutes to get to a WaiveCar reservation for $1.00",
       abort: "Cancel your booking",
@@ -88,8 +91,21 @@ module.exports = {
       account: "Information about your account",
     };
 
+    let remoteCmd = command.toLowerCase().match(/^charge (\w*)$/i);
+    if(remoteCmd) {
+      let id = yield Charger.nameToUUID(remoteCmd[1]);
+      if(id) {
+        yield Charger.start(null, id);
+        yield notify.sendTextMessage(user, "Starting " + remoteCmd[1]);
+        yield notify.slack({ text : `${user.link()} is charging via sms` }, { channel : '#rental-alerts' });
+      } else {
+        yield notify.sendTextMessage(user, "Could not find charger '" + remoteCmd[1] + "'. Check the spelling");
+      }
+      return true;
+    }
+
     // accessing a car from someone else's phone ... top secret command!
-    let remoteCmd = command.toLowerCase().match(/^(lock|unlock) (waive\d{1,3}) ([^\s]+@[^\s]*\.\w*)$/);
+    remoteCmd = command.toLowerCase().match(/^(lock|unlock) (waive\d{1,3}) ([^\s]+@[^\s]*\.\w*)$/);
     if(remoteCmd) {
       let car = yield Car.findOne({where: { license: { $like: remoteCmd[2] } } });
       if(car && car.userId) {

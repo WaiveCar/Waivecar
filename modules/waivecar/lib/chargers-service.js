@@ -67,6 +67,18 @@ module.exports = {
     return locations.filter( loc => GeocodingService.inDrivingZone(loc.latitude, loc.longitude));
   },
 
+  *nameToUUID(name) {
+    return (yield this.list()).reduce((res, row) => {
+      if(res) { return res };
+
+      let match = row.portList.filter(port => port.name === name.toUpperCase());
+
+      if(match.length) {
+        return match[0].id;
+      }
+    }, false);
+  },
+
   *start(carId, chargerId) {
     let body = {
       response_url: "http://9ol.es/charger-postback.php",
@@ -88,10 +100,14 @@ module.exports = {
 
     let startCommand = this.prepareRequest('commands/START_SESSION', 'POST');//, {url: 'http://9ol.es:6501/'});
     startCommand.body = JSON.stringify(body);
-    console.log(startCommand);
     let response = yield request(startCommand);
-    console.log(response);
-    return JSON.parse(response.body);
+
+    try {
+      return JSON.parse(response.body);
+    } catch(ex) { 
+      return response.body; 
+    }
+
     /*
     car.isCharging = data.response === 'ACCEPTED';
     //todo: send update status for charger and unlock available connector
