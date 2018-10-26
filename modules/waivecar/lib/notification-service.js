@@ -116,7 +116,7 @@ module.exports = {
       to       : 'chris@waive.car',
       from     : config.email.sender,
       subject  : what,
-      template : 'blank'
+      template : 'blank',
       context  : {}
     });
   },
