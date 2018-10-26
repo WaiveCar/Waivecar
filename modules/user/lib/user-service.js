@@ -518,7 +518,9 @@ module.exports = {
       where: {
         userId, 
         description: {$notLike: '%authorization%'},
+        status: 'paid',
         status: {$not: 'refunded'},
+        amount: {$lte: 70 * 100}
       }
     });
     let totalSpent = yield ShopOrder.findOne({
@@ -535,21 +537,7 @@ module.exports = {
     let allBookings = yield Booking.find({
       where: {
         userId,
-        $or: [
-          {status: 'completed'},
-          {status: 'closed'},
-        ]
-      },
-      include: [
-        {
-          model: 'BookingDetails',
-          as: 'details',
-        },
-        {
-          model: 'Car',
-          as: 'car',
-        }
-      ],
+      }
     });
     let monthAgo = moment().subtract(30, 'days');
     let weekAgo = moment().subtract(7, 'days');
