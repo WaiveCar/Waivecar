@@ -478,6 +478,9 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     'tagList',
     'user'
   ];
+ 
+  // this breaks the app
+  model.blacklist = [ 'plateNumber' ];
 
   model.relations = [
     'User',
