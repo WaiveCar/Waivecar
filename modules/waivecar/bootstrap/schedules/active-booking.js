@@ -124,7 +124,7 @@ var checkBooking = co.wrap(function *(booking) {
     if (!user.isWaivework) {
       if (duration >= (freetime - 16) && !booking.isFlagged('1hr45-warning')) {
         yield booking.flag('1hr45-warning');
-        yield notify.sendTextMessage(user, 'Hi there, your free WaiveCar rental period ends in about 15 minutes. After the free period is over, rentals are $5.99 / hour. Enjoy!');
+        // yield notify.sendTextMessage(user, 'Hi there, your free WaiveCar rental period ends in about 15 minutes. After the free period is over, rentals are $5.99 / hour. Enjoy!');
       }
 
       if (duration >= 11 * 60 && !booking.isFlagged('11h-warning')) {
