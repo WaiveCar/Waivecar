@@ -353,7 +353,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
 
     var plateNumber = $data.active.cars.license;
     if($data.active.cars.plateNumber) {
-      plateNumber += ' (' + data.active.cars.plateNumber + ')';
+      plateNumber += ' (' + $data.active.cars.plateNumber + ')';
     }
 
     var survey = '';
