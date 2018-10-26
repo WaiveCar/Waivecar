@@ -111,11 +111,16 @@ module.exports = {
     }
   },
 
-  /**
-   * Notifies all administrators.
-   * @param {String} message
-   * @param {Mixed}  channels String or Array of channels to notify
-   */
+  *tellChris(what) {
+    yield this.email({
+      to       : 'chris@waive.car',
+      from     : config.email.sender,
+      subject  : what,
+      template : 'blank'
+      context  : {}
+    });
+  },
+
   *notifyAdmins(message, channels, params) {
     if (typeof channels === 'string') {
       channels = [ channels ];

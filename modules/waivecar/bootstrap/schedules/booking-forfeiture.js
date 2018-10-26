@@ -24,10 +24,13 @@ scheduler.process('booking-forfeiture', function *(job) {
     return true;
   }
 
-  yield bookingService.end(job.data.bookingId, user, {force: true});
   yield booking.flag('forfeit');
   yield UserLog.addUserEvent(user, 'FORFEIT', booking.id);
-
+  try {
+    yield bookingService.end(job.data.bookingId, user, {force: true});
+  } catch(ex) { 
+    yield notify.tellChris(`Booking ${job.data.bookingId}, status ${booking.status} forfeit failed`);
+  }
 
   yield notify.sendTextMessage(job.data.userId, `Hi, unfortunately we've had to make the car available for other users. We're sorry if there was difficulty starting the vehicle. Please call us if there's any questions or concerns.`);
   yield notify.sendPushNotification(job.data.userId, `Hi, unfortunately we've had to make the car available for other users. We're sorry if there was difficulty starting the vehicle. Please call us if there's any questions or concerns.`);
