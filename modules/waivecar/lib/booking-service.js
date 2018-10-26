@@ -949,7 +949,7 @@ module.exports = class BookingService extends Service {
       } else {
         status = {isImmobilized: true};
         // this is now done at the end of the ride.
-        //status = yield cars.lockImmobilzer(car.id, _user);
+        //status = yield cars.lockImmobilizer(car.id, _user);
       }
     } catch (err) {
       log.warn(`Unable to lock immobilizer when ending booking ${ booking.id }`);
@@ -1284,7 +1284,7 @@ module.exports = class BookingService extends Service {
 
       if (!isLevel) { 
         yield cars.lockCar(car.id, _user);
-        yield cars.lockImmobilzer(car.id, _user);
+        yield cars.lockImmobilizer(car.id, _user);
         // This was causing problems ... I'd rather have booking ending having issues
         // then cars being idle and unlocked
         // yield booking.setNowLock({userId: _user.id, carId: car.id});
