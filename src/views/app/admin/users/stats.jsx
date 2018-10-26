@@ -23,28 +23,6 @@ class Stats extends Component {
     });
   }
 
-  getAverage = rideList => {
-    let divisor = rideList.length;
-    let detailsList = rideList.map(ride => ride.details);
-    let durations = detailsList.map(pair => {
-      let start = pair.find(val => val.type === 'start');
-      let end = pair.find(val => val.type === 'end');
-      if (!start || !end) {
-        divisor--;
-        return null;
-      }
-      return moment
-        .duration(moment(end.createdAt).diff(moment(start.createdAt)))
-        .asMilliseconds();
-    });
-    durations = durations.filter(val => val !== null);
-    if (!durations.length) {
-      return 'No Rides';
-    }
-    milliseconds = durations.reduce((acc, item) => acc + item, 0) / divisor;
-    return moment.utc(milliseconds).format('H:mm:ss');
-  };
-
   render() {
     let mthis = this;
     let {stats, timeFrameSelected, currentBookings, currentOrders} = this.state;
@@ -96,7 +74,6 @@ class Stats extends Component {
                 <label
                   className="form-control-label"
                   style={{color: '#666', fontWeight: 300}}>
-                  Average Length: {this.getAverage(currentBookings)}
                 </label>
               </div>
             </div>
