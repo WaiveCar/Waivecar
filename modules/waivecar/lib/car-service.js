@@ -840,7 +840,7 @@ module.exports = {
   // "Accessing" a car involves unlocking AND unimmobilizing, the latter which has a 
   // check and denies the user under a number of circumstances.
   *accessCar(id, _user, car) {
-    car = car || yield Car.findById(id);
+    car = car || (yield Car.findById(id));
     let res;
     try {
       res = yield this.unlockCar(id, _user, car);
@@ -856,7 +856,7 @@ module.exports = {
       }
     }
     return res;
-  }
+  },
 
   *unlockCar(id, _user, car) {
     if (_user) yield LogService.create({ carId : id, action : Actions.UNLOCK_CAR }, _user);
@@ -896,7 +896,7 @@ module.exports = {
     yield notify.notifyAdmins(`:motor_scooter: ${ _user.link() } made ${ car.license } rentable.`, ['slack'], {channel: '#reservations'});
   },
 
-  *unlockImmobilzer(id, _user, car, fromWhere) {
+  *unlockImmobilizer(id, _user, car, fromWhere) {
     if(!car || !car.currentBooking) {
       car = yield Car.findById(id, {
         include : [{
@@ -947,7 +947,7 @@ module.exports = {
     return yield this.executeCommand(id, 'immobilizer', 'unlock', _user, car);
   },
 
-  *lockImmobilzer(id, _user) {
+  *lockImmobilizer(id, _user) {
     if (_user.hasAccess('admin')) {
       // this is an admin immobilizing the vehicle ... 
       // the user in a booking shouldn't be able to undo this.
@@ -967,7 +967,7 @@ module.exports = {
     return yield this.executeCommand(id, 'immobilizer', 'lock', _user);
   },
 
-  *lockAndImmobilze(id, _user) {
+  *lockAndImmobilize(id, _user) {
     let existingCar = yield Car.findById(id);
     if (!existingCar) {
       let error    = new Error(`CAR: ${ id }`);
@@ -999,7 +999,7 @@ module.exports = {
    * @return {Object} updated Car
    */
   *executeCommand(id, part, command, _user, existingCar) {
-    existingCar = existingCar || yield Car.findById(id);
+    existingCar = existingCar || (yield Car.findById(id));
 
     // #1373: We need to make sure the user has access to do this to the car.
     // If it doesn't look like they do then we give a valid response as if
