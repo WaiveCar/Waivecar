@@ -79,12 +79,12 @@ module.exports = {
       commands: null,
       // SECRET!!!!
       // charge: "Charge a WaiveCar with EVgo",
-      // "start ride"
       save: "Add 20 additional minutes to get to a WaiveCar reservation for $4.20",
       "save less": "Add 10 additional minutes to get to a WaiveCar reservation for $1.00",
       abort: "Cancel your booking",
       cancel: null,
       start: "Start your ride",
+      "start ride": "A longer way to start your ride",
       finish: "Finish your ride",
       complete: null,
       notify: null,
@@ -131,7 +131,11 @@ module.exports = {
       command = 'finish';
     }
 
+    //
+    //
     // now we can do the simple ones.
+    //
+    //
     if(Object.keys(documentation).indexOf(command) === -1) {
       return false;
     }
