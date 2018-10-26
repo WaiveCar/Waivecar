@@ -59,7 +59,6 @@ Bento.Register.Controller('CarsController', function(controller) {
     switch (command) {
       case 'ble'                : return yield car.ble(id, this.auth.user);
       case 'lock'               : return yield car.lockCar(id, this.auth.user);
-      case 'unlock'             : return yield car.unlockCar(id, this.auth.user);
       case 'horn'               : return yield car.horn(id, this.auth.user);
       case 'lock-immobilizer'   : return yield car.lockImmobilzer(id, this.auth.user);
       case 'unlock-immobilizer' : return yield car.unlockImmobilzer(id, this.auth.user);
@@ -72,6 +71,35 @@ Bento.Register.Controller('CarsController', function(controller) {
       case 'kick'               : return yield car.kickUser(id, this.auth.user);                                
       case 'retrieve'           : return yield car.retrieve(id, this.auth.user);
       case 'rentable'           : return yield car.rentable(id, this.auth.user);
+      
+      //
+      // This one is a bit tricky.  For backwards compatibility we are keeping the
+      // verb unlock for now (2018-10-26) although it actually means
+      //
+      // unlock the doors AND immobilizer.
+      //
+      // This is from #1438, because we only attempted unimmobilizing once.
+      //
+      case 'unlock'             : return yield car.accessCar(id, this.auth.user);
+
+      //
+      // In the future, "unlock" will be deprecated in favor of the verb "access"
+      // There are extra checks for non-admin unimmobilizes
+      //
+      case 'access'             : return yield car.accessCar(id, this.auth.user);
+
+      //
+      // The classic unlock meaning just unlock is now known as "unlock-doors",
+      // which has been updated in the appropriate web back-ends (878ff666)
+      //
+      
+      case 'unlock-doors'       : return yield car.unlockCar(id, this.auth.user);
+
+      //
+      // This is here for naming consistency, deprecates "lock" and was also implemented
+      // in 878ff666.
+      //
+      case 'lock-doors'         : return yield car.lockCar(id, this.auth.user);
 
       default                   : {
         throw error.parse({

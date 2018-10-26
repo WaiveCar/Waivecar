@@ -837,14 +837,35 @@ module.exports = {
     return yield this.executeCommand(id, 'horn', 'on', _user);
   },
 
-  *unlockCar(id, _user) {
+  // "Accessing" a car involves unlocking AND unimmobilizing, the latter which has a 
+  // check and denies the user under a number of circumstances.
+  *accessCar(id, _user, car) {
+    car = car || yield Car.findById(id);
+    let res;
+    try {
+      res = yield this.unlockCar(id, _user, car);
+    } catch(ex) {
+      res = ex;
+    }
+
+    if(car.isImmobilized && (_user.hasAccess('admin') || car.userId === _user.id)) {
+      try {
+        res = yield this.unlockImmobilizer(id, _user, car, 'access');
+      } catch(ex) {
+        res = ex;
+      }
+    }
+    return res;
+  }
+
+  *unlockCar(id, _user, car) {
     if (_user) yield LogService.create({ carId : id, action : Actions.UNLOCK_CAR }, _user);
-    return yield this.executeCommand(id, 'central_lock', 'unlock', _user);
+    return yield this.executeCommand(id, 'central_lock', 'unlock', _user, car);
   },
 
-  *lockCar(id, _user) {
+  *lockCar(id, _user, car) {
     if (_user) yield LogService.create({ carId : id, action : Actions.LOCK_CAR }, _user);
-    return yield this.executeCommand(id, 'central_lock', 'lock', _user);
+    return yield this.executeCommand(id, 'central_lock', 'lock', _user, car);
   },
 
   *openDoor(id, _user){
@@ -875,13 +896,74 @@ module.exports = {
     yield notify.notifyAdmins(`:motor_scooter: ${ _user.link() } made ${ car.license } rentable.`, ['slack'], {channel: '#reservations'});
   },
 
-  *unlockImmobilzer(id, _user) {
-    if (_user) yield LogService.create({ carId : id, action : Actions.UNIMMOBILIZE_CAR }, _user);
-    return yield this.executeCommand(id, 'immobilizer', 'unlock', _user);
+  *unlockImmobilzer(id, _user, car, fromWhere) {
+    if(!car || !car.currentBooking) {
+      car = yield Car.findById(id, {
+        include : [{
+            model : 'Booking',
+            as    : 'currentBooking'
+          },
+        ]
+      });
+    }
+
+    let immobilized = car.currentBooking && car.currentBooking.isFlagged('immobilized');
+
+    // If the admin is unimmobilizing it then we can unflag it as such under a number
+    // of conditions.
+    if (_user.hasAccess('admin')) {
+
+      // This means that we are being called from the accessCar wrapper which
+      // has replaced the unlock command to address #1438 ... this is 
+      // potentially ok if the admin is using the service as a user, but we need
+      // to check that 
+      if(fromWhere === 'access') {
+
+        if(car.userId != _user.id) {
+          // This means that the admin called a legacy unlock command from somewhere
+          // in the backend that we haven't updated or caught. What we meant to do
+          // in this case is the legacy funcationality, that is, only unlock the doors.
+          yield notify.tellChris(`${ _user.name() } ${_user.id} tried to unimmobilize ${ car.license } from a legacy unlock`);
+          return false;
+        }
+        // Otherwise the user is likely using the service and we should treat them like
+        // a normal user and proceed.
+      } else if(immobilized) {
+        yield car.currentBooking.unFlag('immobilized');
+      }
+
+      // This means the user isn't an admin and they're trying to unimmobilize somehow ... 
+      // This shouldn't be possible. 
+      //
+      // There is yet another check at the executeCommand level btw that makes sure this
+      // doesn't happen. (see #1373)
+      //
+    } else if(immobilized || !car.currentBooking) {
+      yield notify.tellChris(`${ _user.name() } ${ _user.id } tried to unimmobilize ${ car.license }`);
+      return false;
+    }
+      
+    yield LogService.create({ carId : id, action : Actions.UNIMMOBILIZE_CAR }, _user);
+    return yield this.executeCommand(id, 'immobilizer', 'unlock', _user, car);
   },
 
   *lockImmobilzer(id, _user) {
-    if (_user) yield LogService.create({ carId : id, action : Actions.IMMOBILIZE_CAR }, _user);
+    if (_user.hasAccess('admin')) {
+      // this is an admin immobilizing the vehicle ... 
+      // the user in a booking shouldn't be able to undo this.
+      let car = yield Car.findById(id, {
+        include : [{
+            model : 'Booking',
+            as    : 'currentBooking'
+          },
+        ]
+      });
+      if(car.currentBooking && !car.currentBooking.isFlagged('immobilized')) {
+        yield car.currentBooking.addFlag('immobilized');
+      }
+    }
+
+    yield LogService.create({ carId : id, action : Actions.IMMOBILIZE_CAR }, _user);
     return yield this.executeCommand(id, 'immobilizer', 'lock', _user);
   },
 
@@ -916,19 +998,10 @@ module.exports = {
    * @param  {Object} _user
    * @return {Object} updated Car
    */
-  *executeCommand(id, part, command, _user) {
-    // #1077
-    let carOptions = {
-      include: [
-        {
-          model: 'GroupCar',
-          as: 'tagList'
-        }
-      ]
-    };
-    let existingCar = yield Car.findById(id, carOptions);
+  *executeCommand(id, part, command, _user, existingCar) {
+    existingCar = existingCar || yield Car.findById(id);
 
-    // 1373: We need to make sure the user has access to do this to the car.
+    // #1373: We need to make sure the user has access to do this to the car.
     // If it doesn't look like they do then we give a valid response as if
     // the action happened, thus failing silently as far as they are concerned.
     //

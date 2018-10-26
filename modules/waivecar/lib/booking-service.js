@@ -690,8 +690,7 @@ module.exports = class BookingService extends Service {
       // yield booking.setForfeitureTimers(user, config.booking.timers);
       yield booking.start();
 
-      yield cars.unlockCar(car.id, _user);
-      yield cars.unlockImmobilzer(car.id, _user);
+      yield cars.accessCar(car.id, _user, car);
       //yield cars.openDoor(car.id, _user);
 
       yield ParkingService.vacate(car.id);
@@ -778,7 +777,7 @@ module.exports = class BookingService extends Service {
       if (car.isIgnitionOn && !car.isCharging) {
         // if the car is charging and the charger is locked we unlock the vehicle so
         // that the user can remove the charger
-        yield cars.unlockCar(car.id, _user);
+        yield cars.unlockCar(car.id, _user, car);
         errors.push('turn off the ignition and if applicable, remove the charger'); 
       }
       if (!car.isKeySecure) { errors.push('secure the key'); }
@@ -946,7 +945,7 @@ module.exports = class BookingService extends Service {
         // smarter ways.
         status = {isImmobilized: true};
         // When level rental ends, unlock the car
-        yield cars.unlockCar(car.id, _user);
+        yield cars.unlockCar(car.id, _user, car);
       } else {
         status = {isImmobilized: true};
         // this is now done at the end of the ride.
