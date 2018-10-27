@@ -127,6 +127,7 @@ module.exports = class LicenseVerificationService extends Service {
         });
         continue;
       }
+
       let update = yield Verification.getReport(license.reportId);
 
       if (!update) {
