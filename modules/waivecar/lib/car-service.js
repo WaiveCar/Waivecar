@@ -748,17 +748,24 @@ module.exports = {
     }
   },
 
-  /**
-   * Returns a list of car devices from Invers.
-   * @param  {Object} query
-   * @param  {String} role
-   * @param  {Object} _user
-   * @return {Array}
-   */
-  *getAllDevices(_user) {
-    let devices = yield this.request('/devices?active=true&limit=100');
-    if (devices) {
-      return devices.data;
+  *getAllDevices() {
+    var deviceList = [];
+    var partial;
+    let offset = 0;
+    let total = 0;
+
+    do {
+      partial = yield this.request('/devices?active=true&limit=100&offset=' + offset);
+      total = partial.count || partial.data.length;
+      if(!partial.data || !partial.data.length) {
+        break;
+      }
+      deviceList = deviceList.concat(partial.data);
+      offset = deviceList.length;
+    } while(offset < total);
+
+    if(deviceList.length) {
+      return deviceList;
     }
     return null;
   },
@@ -770,13 +777,6 @@ module.exports = {
     fs.appendFile('/var/log/invers/log.txt', JSON.stringify(status) + "\n");
   },
 
-  /**
-   * Returns a single car device from Invers.
-   * @param  {Object} query
-   * @param  {String} role
-   * @param  {Object} _user
-   * @return {Array}
-   */
   *getDevice(id, _user, source) {
     if (process.env.NODE_ENV !== 'production') {
       return false;
