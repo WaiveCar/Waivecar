@@ -730,7 +730,8 @@ module.exports = {
             }
             car.licenseUsed = car.license;
             log.debug(`Cars : Sync : adding ${ device.id }.`);
-            yield car.upsert();
+            car = yield car.upsert();
+            yield car.addTag('la');
           } else {
             log.debug(`Cars : Sync : failed to retrieve ${ device.id } to add to database.`);
           }
