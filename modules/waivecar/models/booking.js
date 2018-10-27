@@ -120,6 +120,17 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       return this.status.replace('-', ' ');
     },
 
+    getEndTime() {
+      if(this.details) {
+        if(this.details[0].type === 'end') {
+          return this.details[0].updatedAt;
+        }
+        if(this.details[1].type === 'end') {
+          return this.details[1].updatedAt;
+        }
+      }
+    },
+
     getFreeTime(isLevel) {
       // #1159: Level cars get 3 free hours, not 2.
       // #1151: Add 5 minutes to inspect the vehicle and take pictures.

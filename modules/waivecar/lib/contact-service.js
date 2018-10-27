@@ -179,6 +179,7 @@ module.exports = {
       return true;
     }
 
+    let previousBooking;
     let currentBooking = yield Booking.findOne({ 
       where : { 
         status : {
@@ -235,6 +236,39 @@ module.exports = {
     }
 
     if(!currentBooking) {
+      if (command === 'unlock' || command === 'lock') {
+        previousBooking = yield Booking.findOne({ 
+          where : { 
+            status : {
+              in : [ 'completed', 'ended' ]
+            },
+            userId : user.id 
+          },
+          include: [ 
+            {
+              model: 'BookingDetails',
+              as: 'details',
+            },
+            {
+              model: 'Car',
+              as: 'car',
+            }
+          ],
+          order: [[ 'id', 'desc' ]]
+        });
+        if(command === 'unlock' && new Date() - previousBooking.getEndTime() < 1000 * 60 * 5) {
+          yield notify.slack({ text : `:rowboat: ${user.link()} is retrieving something from ${previousBooking.car.link()}` }, { channel : '#rental-alerts' });
+          yield cars.unlockCar(previousBooking.carId, user);
+          yield notify.sendTextMessage(user, `${previousBooking.car.license} is unlocked for you to retrieve your belongings. Important: Please reply with 'lock' to secure the vehicle when finished.`); 
+          return true;
+        }
+        if(command === 'lock' && new Date() - previousBooking.getEndTime() < 1000 * 60 * 12) {
+          yield notify.slack({ text : `:desert_island: ${user.link()} finished and secured ${previousBooking.car.link()}` }, { channel : '#rental-alerts' });
+          yield notify.sendTextMessage(user, `Thanks.`); 
+          return true;
+        }
+      }
+
       yield notify.sendTextMessage(user, "You don't have a current booking. Command not understood");
       return true;
     }
