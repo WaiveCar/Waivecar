@@ -20,6 +20,51 @@ function at_night($what) {
 
 define('ONE_WEEK', 7 * 24 * 60 * 60);
 
+function booking_location() {
+  $start = '2018-08-15';
+  $end = '2018-10-30';
+  $durationMap = [];
+  $bookingMap = [];
+  $max = 0;
+  $dMax = 0;
+  $cnt = 0;
+  $factor = 4 * 60;
+  $heatMap = [];
+  $res = [];
+
+  $rowList = all("select * from booking_details where created_at > '$start' and created_at < '$end'");
+
+  foreach($rowList as $row) {
+    $id = $row['booking_id'];
+    if($row['type'] === 'start') {
+      $bookingMap[$id] = [
+        'start' => $row['created_at'], 
+        'lat' => round($row['latitude'], 4), 
+        'lng' => round($row['longitude'], 4)
+      ];
+    }
+    if($row['type'] === 'end' && isset($bookingMap[$id])) {
+      $duration = strtotime($row['created_at']) - strtotime($bookingMap[$id]['start']);
+      $key = "{$bookingMap[$id]['lat']}|{$bookingMap[$id]['lng']}";
+      if(!isset($heatMap[$key])) {
+        $heatMap[$key] = ['count' => 0, 'ttl' => 0 ];
+      }
+      $duration -= (60 * 120);
+      $heatMap[$key]['count']++;
+      if($duration  < (60 * 60 * 10) && $duration > 0) {
+        $heatMap[$key]['ttl'] += $duration;
+      } else {
+        $heatMap[$key]['ttl'] += 1;
+      }
+    }
+  }
+  foreach($heatMap as $key => $value) {
+    list($lat, $lng) = explode('|', $key);
+    $res[] = [floatval($lat), floatval($lng), max(1,round($value['ttl'] / (60 * $value['count'])))];
+  }
+  echo json_encode($res);
+}
+
 function booking_duration_perbooking() {
   $start = '2016-04-02';
   $end = '2017-07-10';
@@ -594,8 +639,9 @@ function details($car = false, $start = false) {
   }
 }
 
+booking_location();
 //booking_duration();
 //details('60000018942E1401', '2017-04-24');
 //boo();
 //boo111();
-avail();
+//avail();
