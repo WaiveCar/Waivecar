@@ -18,18 +18,8 @@ module.exports = class Service {
     return license;
   }
 
-  /**
-   * Retrieves a license by User Reference from the database.
-   */
-  static *getLicenseByUserLink(id) {
-    let license = yield License.find({ userLinkId : id });
-    if (!license) {
-      throw error.parse({
-        code    : `INVALID_LICENSE`,
-        message : `A matching license for this linked user cannot be found`
-      }, 400);
-    }
-    return license;
+  static *getLicenseByUserId(id) {
+    return yield License.find({ userLinkId : id });
   }
 
   static *getLicenseByReport(id) {
