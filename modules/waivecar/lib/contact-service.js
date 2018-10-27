@@ -258,12 +258,13 @@ module.exports = {
         });
         if(command === 'unlock' && new Date() - previousBooking.getEndTime() < 1000 * 60 * 5) {
           yield notify.slack({ text : `:rowboat: ${user.link()} is retrieving something from ${previousBooking.car.link()}` }, { channel : '#rental-alerts' });
-          yield cars.unlockCar(previousBooking.carId, user);
+          yield cars.unlockCar(previousBooking.carId, user, {overrideAdminCheck: true});
           yield notify.sendTextMessage(user, `${previousBooking.car.license} is unlocked for you to retrieve your belongings. Important: Please reply with 'lock' to secure the vehicle when finished.`); 
           return true;
         }
         if(command === 'lock' && new Date() - previousBooking.getEndTime() < 1000 * 60 * 12) {
           yield notify.slack({ text : `:desert_island: ${user.link()} finished and secured ${previousBooking.car.link()}` }, { channel : '#rental-alerts' });
+          yield cars.lockCar(previousBooking.carId, user, {overrideAdminCheck: true});
           yield notify.sendTextMessage(user, `Thanks.`); 
           return true;
         }

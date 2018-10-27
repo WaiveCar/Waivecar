@@ -868,14 +868,14 @@ module.exports = {
     return res;
   },
 
-  *unlockCar(id, _user, car) {
+  *unlockCar(id, _user, car, opts) {
     if (_user) yield LogService.create({ carId : id, action : Actions.UNLOCK_CAR }, _user);
-    return yield this.executeCommand(id, 'central_lock', 'unlock', _user, car);
+    return yield this.executeCommand(id, 'central_lock', 'unlock', _user, car, opts);
   },
 
-  *lockCar(id, _user, car) {
+  *lockCar(id, _user, car, opts) {
     if (_user) yield LogService.create({ carId : id, action : Actions.LOCK_CAR }, _user);
-    return yield this.executeCommand(id, 'central_lock', 'lock', _user, car);
+    return yield this.executeCommand(id, 'central_lock', 'lock', _user, car, opts);
   },
 
   *openDoor(id, _user){
@@ -1008,7 +1008,8 @@ module.exports = {
    * @param  {Object} _user
    * @return {Object} updated Car
    */
-  *executeCommand(id, part, command, _user, existingCar) {
+  *executeCommand(id, part, command, _user, existingCar, opts) {
+    opts = opts || {};
     existingCar = existingCar || (yield Car.findById(id));
 
     // #1373: We need to make sure the user has access to do this to the car.
@@ -1017,7 +1018,9 @@ module.exports = {
     //
     // We then send an alert to slack telling us of the issue.  It's more than
     // likely a programming flaw on our part instead of a malicious hacker.
-    if(_user && (!_user.hasAccess('admin') && existingCar.userId !== _user.id)) {
+    if(!opts.overrideAdminCheck &&
+        _user && 
+        (!_user.hasAccess('admin') && existingCar.userId !== _user.id)) {
       yield notify.notifyAdmins(`:sparkle: ${ _user.link() } was denied the privilege to ${ command } ${ existingCar.link() } because we don't believe they're in a booking.`, ['slack'], {channel: '#rental-alerts'});
       return existingCar;
     }
