@@ -407,11 +407,9 @@ function DashboardController ($scope, $rootScope, $injector) {
         // The part within the conditional is what happens when someone is ending their ride in user parking.
         if ($data.reservedParking !== null) {
           return confirmParking(carId, bookingId, attempt, function(){
-            return $ride.processEndRide().then(function(){
-              return $data.resources.parking.occupy({id: $data.reservedParking.id, carId: carId, reservationId: $data.reservedParking.reservation.id}).$promise.then(function(response){
-                $data.reservedParking = null;
-                return $state.go('end-ride', { id: bookingId });  
-              });
+            return $data.resources.parking.occupy({id: $data.reservedParking.id, carId: carId, reservationId: $data.reservedParking.reservation.id}).$promise.then(function(response){
+              $data.reservedParking = null;
+              return $state.go('end-ride', { id: bookingId , zone: { type: 'waivePark' }});  
             });
           }); 
         }
