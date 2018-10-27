@@ -712,7 +712,7 @@ module.exports = class BookingService extends Service {
           base = 'one of the highlighted zones on the map';
           freetime = '2';
         }
-        yield notify.sendTextMessage(user, `Your ${ freetime } free hours with ${ car.license } starts now! When you're finished, return the WaiveCar to ${ base } with at least 25mi charge. Enjoy your ride!`);
+        yield notify.sendTextMessage(user, `${ freetime } free hours with ${ car.license } starts now! If you have trouble starting the WaiveCar try pressing the "unlock" button in the app. When you're finished, return the WaiveCar to ${ base } with at least 25mi charge. `);
       }
 
       // ### Relay Update
