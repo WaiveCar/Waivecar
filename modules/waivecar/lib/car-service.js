@@ -24,6 +24,7 @@ let hooks       = Bento.Hooks;
 let User = Bento.model('User');
 let Car  = Bento.model('Car');
 let Booking = Bento.model('Booking');
+let BookingDetails = Bento.model('BookingDetails');
 let GroupCar  = Bento.model('GroupCar');
 
 let geolib      = require('geolib');
@@ -896,6 +897,48 @@ module.exports = {
     yield this.executeCommand(id, 'immobilizer', 'unlock', _user);
     let car = yield this.updateAvailabilityAnonymous(id, false, _user);
     yield notify.notifyAdmins(`:scooter: ${ _user.link() } is retrieving ${ car.license }.`, ['slack'], {channel: '#reservations'});
+  },
+
+  *instaBook(id, _user) {
+    // This will allow admins to instantly book into cars and is designed to be a replacement for the "retrieve" api call
+    // it creates a booking and starts it immediately.
+    if (!_user.hasAccess('admin')) {
+      throw error.parse({
+        code    : 'NON_ADMIN_CANNOT_INSTABOOK',
+        message : 'Users that are not admins cannot use instabook.',
+      }, 401);
+    }
+    let bookingService = require('./booking-service');
+
+    let booking = yield bookingService.create({
+      source: 'web',
+      userId: _user.id,
+      carId: id,
+    }, _user);
+    yield booking.addFlag('instabook');
+    yield bookingService.ready(booking.id, _user);
+
+    if (_user) yield LogService.create({ carId : id, action : Actions.INSTABOOK }, _user);
+    let car = yield this.updateAvailabilityAnonymous(id, false, _user);
+    yield notify.notifyAdmins(`:scooter: ${ _user.link() } instabooked ${ car.license }.`, ['slack'], {channel: '#reservations'});
+  },
+
+  *instaEnd(id, _user) {
+    let car = yield Car.findById(id);
+    if (!_user.hasAccess('admin')) {
+      throw error.parse({
+        code    : 'NON_ADMIN_CANNOT_INSTABOOK',
+        message : 'Users that are not admins cannot use instabook.',
+      }, 401);
+    }
+    let bookingService = require('./booking-service');
+
+    yield bookingService.end(car.bookingId, _user, {}, {}); 
+    yield bookingService.complete(car.bookingId, _user, {}, {}); 
+
+    if (_user) yield LogService.create({ carId : id, action : Actions.INSTAEND }, _user);
+    car = yield this.updateAvailabilityAnonymous(id, true, _user);
+    yield notify.notifyAdmins(`:scooter: ${ _user.link() } instaended ${ car.license }.`, ['slack'], {channel: '#reservations'});
   },
 
   *rentable(id, _user) {
