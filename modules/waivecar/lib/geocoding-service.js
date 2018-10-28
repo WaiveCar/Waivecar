@@ -31,11 +31,12 @@ module.exports = {
     return response.body;
   },
 
-  // Check if provided lat / long is within 20 mile driving zone
-  inDrivingZone(lat, long) {
+  // Check if provided lat / long is within driving zone
+  inDrivingZone(lat, long, magnitude) {
+    magnitude = magnitude || 1;
     let distance = geolib.getDistance({ latitude : lat, longitude : long }, config.waivecar.homebase.coords);
     let miles = distance * 0.000621371;
-    return miles <= 25;
+    return miles <= (25 * magnitude);
   },
 
   hasMoved(location1, location2, threshold) {

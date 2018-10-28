@@ -61,7 +61,7 @@ module.exports = {
       return obj;
     });
 
-    return locations.filter( loc => GeocodingService.inDrivingZone(loc.latitude, loc.longitude));
+    return locations.filter( loc => GeocodingService.inDrivingZone(loc.latitude, loc.longitude, 1.5));
   },
 
   *start(carId, chargerId) {
@@ -85,9 +85,7 @@ module.exports = {
 
     let startCommand = this.prepareRequest('commands/START_SESSION', 'POST');//, {url: 'http://9ol.es:6501/'});
     startCommand.body = JSON.stringify(body);
-    console.log(startCommand);
     let response = yield request(startCommand);
-    console.log(response);
     return JSON.parse(response.body);
     /*
     car.isCharging = data.response === 'ACCEPTED';
