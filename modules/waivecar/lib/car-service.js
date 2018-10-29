@@ -29,6 +29,7 @@ let GroupCar  = Bento.model('GroupCar');
 
 let geolib      = require('geolib');
 let fs          = require('fs');
+let _         = require('lodash')
 
 let carMap = false;
 
@@ -354,18 +355,16 @@ module.exports = {
       // See #1077
       let includeCarGroup = {
         model : 'GroupCar',
-        as: 'tagList'
+        as: 'tagList',
+        include: [
+          {
+            model: 'GroupRole',
+            as: 'group_role', 
+          }
+       ]
       }
 
-      car = yield Car.findById(id, {
-        include : [
-          {
-            model : 'User',
-            as    : 'user'
-          },
-          includeCarGroup
-        ]
-      });
+      car = yield Car.findById(id);
 
     }
 
@@ -378,7 +377,18 @@ module.exports = {
         }
       }, 404);
     }
+    car.tagList = yield GroupCar.find({
+      where : { carId: id },
 
+      order : [[ 'id', 'asc' ]],
+
+      include : [ 
+        {
+          model: 'GroupRole',
+          as: 'group_role'
+        }
+      ]
+    });
     return car;
   },
 
@@ -402,6 +412,25 @@ module.exports = {
       }, 404);
     }
     let device = yield this.getDevice(car.id, _user, 'update');
+
+    if (payload.tagList) {
+      payload.tagList = payload.tagList.map((row) => { return row.toLowerCase(); });
+
+      let oldTags = yield car.getTagList(['la', 'csula', 'level', 'choice', 'waivework']);      
+
+      let toRemove = _.difference(oldTags, payload.tagList);
+      for(var ix = 0; ix < toRemove.length; ix++) {
+        yield car.untag(toRemove[ix]);
+      }
+
+      let AllOldTags = yield car.getTagList();
+      let toAdd = _.difference(payload.tagList, AllOldTags);
+
+      for(var ix = 0; ix < toAdd.length; ix++) {
+        yield car.addTag(toAdd[ix]);
+      }
+      // Notifications may need to be added for changes in groupCar
+    }
 
     yield car.update(Object.assign(device || {}, payload));
     if(yield this.shouldRelay(car)) {
