@@ -89,7 +89,6 @@ module.exports = class License extends Service {
         zip        : license.zip,
         number     : license.number
       }, (err, license) => {
-        console.log('license: ', license);
         if (err) {
           return done(err);
         }
