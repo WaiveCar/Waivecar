@@ -609,8 +609,8 @@ class CarsShowView extends React.Component {
     }) : [ {value: '', label: ''}];
 
     var currentGroupRoleId = '';
-    if(car.groupCar && car.groupCar[0]) {
-      currentGroupRoleId = car.groupCar[0].groupRoleId;
+    if(car.tagList && car.tagList[0]) {
+      currentGroupRoleId = car.tagList[0].groupRoleId;
     }
 
     return (
