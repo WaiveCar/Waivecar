@@ -39,7 +39,7 @@ module.exports = class CheckrService {
       }
     });
 
-    ['firstName', 'lastName', 'birthDate', 'number', 'state'].forEach(val => {
+   ['firstName', 'lastName', 'birthDate', 'number', 'state'].forEach(val => {
       let currentValue = license[val];
       if (!currentValue) {
         throw error.parse(
@@ -61,6 +61,9 @@ module.exports = class CheckrService {
       country: 'USA',
       driver_license_number: license.number,
       driver_license_state: license.state,
+      street: license.street1,
+      city: license.city,
+      zip: license.zip
     };
     // optional inclusions the 'no_middle_name' option is required for checkr if there is no middle name
     if (license.middleName) {
