@@ -165,7 +165,26 @@ module.exports = class UserDetails extends React.Component {
                 <input type="text" name="status" className="form-control" defaultValue={ license.status } disabled />
               </FormInput>
             </div>
-
+            <div className="form-group row">
+              <FormInput className="col-md-6 bento-form-input">
+                <label>Address Line 1</label>
+                <input type="text" name="number" className="form-control" defaultValue={ license.street1 } disabled={ !license.provided } required />
+              </FormInput>
+              <FormInput className="col-md-6 bento-form-input">
+                <label>Address Line 2</label>
+                <input type="text" name="state" className="form-control" defaultValue={ license.street2 } disabled={ !license.provided } required />
+              </FormInput>
+            </div>
+            <div className="form-group row">
+              <FormInput className="col-md-4 bento-form-input">
+                <label>City</label>
+                <input type="text" name="status" className="form-control" defaultValue={ license.city } disabled />
+              </FormInput>
+              <FormInput className="col-md-4 bento-form-input">
+                <label>Zip</label>
+                <input type="text" name="status" className="form-control" defaultValue={ license.zip } disabled />
+              </FormInput>
+            </div>
             <div className="form-group row">
               <FormInput className="col-md-4 bento-form-input">
                 <label>First Name</label>
