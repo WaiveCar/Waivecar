@@ -176,9 +176,17 @@ module.exports = {
       //
       // oh what fun type systems are!
       data.priority = +isInside;
+      if (promo === 'csula-student' || promo === 'csula-staff') {
+        // for the csula users, isInside needs to be set to false so that they are 
+        // not immediately let in off of the waitlist below
+        isInside = false;
+        res.isCsula = true;
+        data.placeName = 'csula';
+        data.notes = promo;
+      }
 
       record = new Waitlist(data);
-
+      yield record.save();
       // If this is a valid waivework signup
       if (isInside && data['accountType'] == 'waivework') {
         res.waivework = 'yes';
@@ -195,9 +203,6 @@ module.exports = {
           res.id = record.id;
         }
       }
-
-      yield record.save();
-
     }
 
     if(promo === 'vip' || promo === 'seekdiscomfort' || promo === 'high5') {
@@ -254,7 +259,6 @@ module.exports = {
       yield this.letInByRecord([record], null, {intro: 'vip'});
       res.fastTrack = 'yes';
     }
-
     return res;
   },
 
@@ -387,10 +391,10 @@ module.exports = {
     }
 
     for(var ix = 0; ix < recordList.length; ix++) {
-
       let record = recordList[ix];
       let userRecord = false;
       let fullName = `${record.firstName} ${record.lastName}`;
+      let isCsula = record.location === 'csula';
 
       let userOpts = {
         firstName: record.firstName,
@@ -399,9 +403,8 @@ module.exports = {
         // we passed it into the waitlist
         passwordEncrypted: record.password,
         email: record.email,
-        status: 'active'
+        status: 'active',
       };
-
 
       if (record.phone) {
         userOpts.phone = record.phone;
@@ -416,7 +419,17 @@ module.exports = {
         // to avoid that nonsense.
         //
         userRecord = yield UserService.store(userOpts, _user, {nosms: true});
-
+        if (record.placeName === 'csula') {
+          let UserNote = Bento.model('UserNote');
+          let note = new UserNote({
+            userId: userRecord.id,
+            authorId: 14827,
+            content: record.notes,
+            type: 'unit'
+          });
+          yield note.save();
+          yield userRecord.addTag('csula');
+        }
         if (opts.promo === 'high5') {
           yield OrderService.quickCharge({ description: "High5 promo signup", userId: userRecord.id, amount: -500 }, false, {overrideAdminCheck: true });
         }
