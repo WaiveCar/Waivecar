@@ -81,6 +81,7 @@ module.exports = {
       // charge: "Charge a WaiveCar with EVgo",
       save: "Add 20 additional minutes to get to a WaiveCar reservation for $4.20",
       "save less": "Add 10 additional minutes to get to a WaiveCar reservation for $1.00",
+      less: null,
       abort: "Cancel your booking",
       cancel: null,
       start: "Start your ride",
@@ -124,11 +125,21 @@ module.exports = {
       }
     }
 
-    // this covers phrases like "end please or end waive
-    if(command.match(/^end(\s\w+|)$/i) && user) {
-      let message = `User ${ user.link() } sms'd "${ opts.raw }" and the computer finished the ride automatically`;
-      yield notify.slack({ text : message }, { channel : '#app_support' });
-      command = 'finish';
+    if(user) {
+      for(var row of [
+        [/\sunlock\s/i, 'unlock'],
+        [/\slock\s/i,   'lock'],
+        [/end\s(waive|my\sride)/i,'end'],
+        [/^end(\s\w+|)$/i,'end']
+      ]) {
+        let [regex, todo] = row;
+
+        if (regex.match(command)) {
+          command = todo;
+          yield notify.slack({ text : `User ${ user.link() } sent "${ opts.raw }" and the computer ${todo}ed automatically` }, { channel : '#app_support' });
+          break;
+        }
+      }
     }
 
     //
@@ -296,7 +307,7 @@ module.exports = {
         yield notify.slack({ text : message }, { channel : '#app_support' });
 
         yield booking.ready(id, user);
-      } else if (command === 'save less') {
+      } else if (command === 'save less' || command === 'less') {
         yield booking._extend(id, {}, user);
       } else if (command === 'save') {
         yield booking._extend(id, {howmuch: 20}, user);
