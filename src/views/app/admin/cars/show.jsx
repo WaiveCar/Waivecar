@@ -11,7 +11,8 @@ import { Form, Button, GMap, snackbar } from 'bento-web';
 import Service               from '../../lib/car-service';
 import NotesList from '../components/notes/list';
 import Logs from '../../components/logs';
-import config   from 'config';
+import config from 'config';
+import helpers from 'bento/lib/helpers';
 
 const API_URI = config.api.uri + (config.api.port ? ':' + config.api.port : '');
 
@@ -408,17 +409,38 @@ class CarsShowView extends React.Component {
     });
   }
 
+  hasTag = (tag) => {
+    return this.state.car.cars[0].tagList.filter(item => item.groupRole.name === tag).length > 0;
+  }
+
+  submit = (event) => {
+    let form = new helpers.Form(event);
+    api.put(`/cars/${ this.state.car.cars[0].id }`, form.data, (err) => {
+      if (err) {
+        return snackbar.notify({
+          type    : 'danger',
+          message : err.message
+        });
+      }
+      snackbar.notify({
+        type    : 'success',
+        message : 'Car details successfully updated'
+      });
+    });
+    event.preventDefault();
+  }
+
   renderCarActions(car) {
     let switches = [
       {
         ref : 1,
         label    : 'Unlock',
-        onChange : this.service.executeCommand.bind(this, car, 'unlock')
+        onChange : this.service.executeCommand.bind(this, car, 'unlock-doors')
       },
       {
         ref: 2,
         label    : 'Lock',
-        onChange : this.service.executeCommand.bind(this, car, 'lock')
+        onChange : this.service.executeCommand.bind(this, car, 'lock-doors')
       },
       {
         ref : 3,
@@ -530,6 +552,48 @@ class CarsShowView extends React.Component {
                 </div>
               </div>
             </div>
+            <form role="form" onSubmit={ this.submit }>
+              <div className="form-group row">
+                <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Tags</label>
+                <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
+                  <div className="radio-inline">
+                    <label>
+                      <input type="checkbox" name="tagList[]" value="la" defaultChecked={ this.hasTag('la') } />
+                      Regular Service
+                    </label>
+                  </div>
+                  <div className="radio-inline">
+                    <label>
+                      <input type="checkbox" name="tagList[]" value="csula" defaultChecked={ this.hasTag('csula') } />
+                      CSULA
+                    </label>
+                  </div>
+                  <div className="radio-inline">
+                    <label>
+                      <input type="checkbox" name="tagList[]" value="level" defaultChecked={ this.hasTag('level') } />
+                      Level
+                    </label>
+                  </div>
+                  <div className="radio-inline">
+                    <label>
+                      <input type="checkbox" name="tagList[]" value="choice" defaultChecked={ this.hasTag('choice') } />
+                      Choice Hotels
+                    </label>
+                  </div>
+                  <div className="radio-inline">
+                    <label>
+                      <input type="checkbox" name="tagList[]" value="waivework" defaultChecked={ this.hasTag('waivework') } />
+                      WaiveWork
+                    </label>
+                  </div>
+                  <div className="form-actions text-center">
+                    <div className="btn-group" role="group">
+                      <button type="submit" className="btn btn-sm">Update Tags</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
           </div>
         </div>
       </div>
@@ -611,7 +675,7 @@ class CarsShowView extends React.Component {
       let angles = bookingList.filter(item => item.type !== 'other');
       rowsToRender = [angles.slice(0, 4), angles.slice(4), other];
     } else {
-      rowsToRender.push(bookingList.filter(item => item.type === damageFilter));
+      rowsToRender = !damageFilter ? [bookingList] : [bookingList.filter(item => item.type === damageFilter)];
     }
     return (
       <div>
@@ -625,14 +689,14 @@ class CarsShowView extends React.Component {
               {rowsToRender.map((row, i) => {
                 return (
                   <div key={i} className="dmg-row">
-                    {row.map((image, j) =>  
-                      { image && image.file && 
+                    {row.map((image, j) =>  { 
+                      return image && image.file && ( 
                         <div>
                           <a className="damage-image-holder" href={`${API_URI}/file/${image.file.id}` } target="_blank" key={j}>
-                            <div>{image.type}</div>
+                            <div>{image.type || 'other'}</div>
                             <img className="damage-image" src={`${API_URI}/file/${image.file.id}`} />
                           </a>
-                        </div>
+                        </div>);
                       }
                     )}
                   </div>

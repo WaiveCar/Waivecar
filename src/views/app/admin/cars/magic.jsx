@@ -104,7 +104,7 @@ module.exports = class Magic extends React.Component {
   }
 
   showControls() {
-    var rows = ['rentable', 'retrieve', 'lock','unlock','lock-immobilizer','unlock-immobilizer','available','unavailable'].map((verb) => {
+    var rows = ['rentable', 'retrieve', 'lock-doors','unlock-doors','lock-immobilizer','unlock-immobilizer','available','unavailable'].map((verb) => {
       return <button className='btn' onClick={ this.beBoring.bind(this, verb) }>{ verb }</button>
     });
     return <div> { rows } </div>
@@ -130,7 +130,7 @@ module.exports = class Magic extends React.Component {
 
   renderLinks() {
     return <div>
-      <a onClick={ this.setAction.bind(this, 'unlock') }>unlock</a> <a onClick={ this.setAction.bind(this, 'lock') }>lock</a> <a onClick={ this.setAction.bind(this, 'rentable') }>rentable</a> <a onClick={ this.setAction.bind(this, 'retrieve') }>retrieve</a>
+      <a onClick={ this.setAction.bind(this, 'unlock-doors') }>unlock</a> <a onClick={ this.setAction.bind(this, 'lock-door') }>lock</a> <a onClick={ this.setAction.bind(this, 'rentable') }>rentable</a> <a onClick={ this.setAction.bind(this, 'retrieve') }>retrieve</a>
     </div>
   }
 
