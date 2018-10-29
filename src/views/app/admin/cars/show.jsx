@@ -11,7 +11,8 @@ import { Form, Button, GMap, snackbar } from 'bento-web';
 import Service               from '../../lib/car-service';
 import NotesList from '../components/notes/list';
 import Logs from '../../components/logs';
-import config   from 'config';
+import config from 'config';
+import helpers from 'bento/lib/helpers';
 
 const API_URI = config.api.uri + (config.api.port ? ':' + config.api.port : '');
 
@@ -408,6 +409,27 @@ class CarsShowView extends React.Component {
     });
   }
 
+  hasTag = (tag) => {
+    return this.state.car.cars[0].tagList.filter(item => item.groupRole.name === tag).length > 0;
+  }
+
+  submit = (event) => {
+    let form = new helpers.Form(event);
+    api.put(`/cars/${ this.state.car.cars[0].id }`, form.data, (err) => {
+      if (err) {
+        return snackbar.notify({
+          type    : 'danger',
+          message : err.message
+        });
+      }
+      snackbar.notify({
+        type    : 'success',
+        message : 'Car details successfully updated'
+      });
+    });
+    event.preventDefault();
+  }
+
   renderCarActions(car) {
     let switches = [
       {
@@ -530,6 +552,48 @@ class CarsShowView extends React.Component {
                 </div>
               </div>
             </div>
+            <form role="form" onSubmit={ this.submit }>
+              <div className="form-group row">
+                <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Tags</label>
+                <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
+                  <div className="radio-inline">
+                    <label>
+                      <input type="checkbox" name="tagList[]" value="la" defaultChecked={ this.hasTag('la') } />
+                      Regular Service
+                    </label>
+                  </div>
+                  <div className="radio-inline">
+                    <label>
+                      <input type="checkbox" name="tagList[]" value="csula" defaultChecked={ this.hasTag('csula') } />
+                      CSULA
+                    </label>
+                  </div>
+                  <div className="radio-inline">
+                    <label>
+                      <input type="checkbox" name="tagList[]" value="level" defaultChecked={ this.hasTag('level') } />
+                      Level
+                    </label>
+                  </div>
+                  <div className="radio-inline">
+                    <label>
+                      <input type="checkbox" name="tagList[]" value="choice" defaultChecked={ this.hasTag('choice') } />
+                      Choice Hotels
+                    </label>
+                  </div>
+                  <div className="radio-inline">
+                    <label>
+                      <input type="checkbox" name="tagList[]" value="waivework" defaultChecked={ this.hasTag('waivework') } />
+                      WaiveWork
+                    </label>
+                  </div>
+                  <div className="form-actions text-center">
+                    <div className="btn-group" role="group">
+                      <button type="submit" className="btn btn-sm">Update Tags</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
           </div>
         </div>
       </div>
