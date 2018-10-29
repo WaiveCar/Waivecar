@@ -429,7 +429,6 @@ module.exports = {
           });
           yield note.save();
           yield userRecord.addTag('csula');
-          let tags = yield userRecord.getTagList();
         }
         if (opts.promo === 'high5') {
           yield OrderService.quickCharge({ description: "High5 promo signup", userId: userRecord.id, amount: -500 }, false, {overrideAdminCheck: true });
