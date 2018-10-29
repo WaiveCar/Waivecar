@@ -61,7 +61,7 @@ module.exports = class License extends Service {
    * Adds a new license under the provided user.
    */
   addLicense(user, license, done) {
-    async.each([ 'state', 'number', 'birthDate', 'expirationDate', 'lastName', 'firstName' ], function(field, next) {
+    async.each([ 'state', 'number', 'birthDate', 'expirationDate', 'lastName', 'firstName', 'street1', 'street2', 'city', 'zip' ], function(field, next) {
       let currentValue = license.hasOwnProperty(field) ? license[field] : undefined;
       let valueName = helpers.changeCase.toSentence(field);
       if (!currentValue) {
@@ -82,9 +82,14 @@ module.exports = class License extends Service {
         lastName   : license.lastName,
         birthDate  : license.birthDate,
         expirationDate: license.expirationDate,
+        street1    : license.street1,
+        street2    : license.street2,
+        city       : license.city,
         state      : license.state,
+        zip        : license.zip,
         number     : license.number
       }, (err, license) => {
+        console.log('license: ', license);
         if (err) {
           return done(err);
         }
