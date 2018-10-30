@@ -640,20 +640,6 @@ class CarsShowView extends React.Component {
       <div className="box">
         <h3>Damage and uncleanliness</h3>
         <div className="box-content">
-          <div className="text-center">
-            Filter by angle:
-          </div> 
-          <div className="button-holder"> 
-            {[null, 'front', 'left', 'rear', 'right', 'other'].map((angle, i) => 
-              <button 
-                key={i}
-                className="btn btn-sm btn-primary" 
-                onClick={() => this.setState({damageFilter: angle})}
-              >
-                {angle ? angle : 'all'}
-              </button>
-            )}
-          </div>
           <div>
             {this.state.damage && this.state.damage.map((row, i) =>
               <div key={i}>
@@ -679,30 +665,26 @@ class CarsShowView extends React.Component {
     }
     return (
       <div>
-        {(rowsToRender[0] && rowsToRender[0].length > 0) &&
-          <div>
-            <h4 className="damage-title">
-              Booking Id: <a href={ '/bookings/' + booking.id } target="_blank">#{booking.id}</a>
-              {' on '}{moment(booking.created_at).format('YYYY-MM-DD HH:mm:ss')}
-            </h4>
-            <div>
-              {rowsToRender.map((row, i) => {
-                return (
+        {(rowsToRender[0] && rowsToRender[0].length) &&
+          <div className="dmg-group">
+            {rowsToRender.map((row, i) => {
+              return (
+                <div>
+                  <a className='damage-booking-link' href={ '/bookings/' + booking.id } target="_blank">{ row[0] && moment(row[0].created_at).format('YYYY-MM-DD HH:mm:ss') }</a>
                   <div key={i} className="dmg-row">
                     {row.map((image, j) =>  { 
                       return image && image.file && ( 
-                        <div>
-                          <a className="damage-image-holder" href={`${API_URI}/file/${image.file.id}` } target="_blank" key={j}>
-                            <div>{image.type || 'other'}</div>
+                        <div className="damage-image-holder">
+                          <a href={`${API_URI}/file/${image.file.id}` } target="_blank" key={j}>
                             <img className="damage-image" src={`${API_URI}/file/${image.file.id}`} />
                           </a>
                         </div>);
                       }
                     )}
                   </div>
-                )
-              })}
-            </div>
+                </div>
+              )
+            })}
           </div>
         }
       </div>
