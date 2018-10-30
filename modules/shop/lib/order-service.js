@@ -90,8 +90,8 @@ module.exports = class OrderService extends Service {
       quantity: 1,
       price: data.amount,
       description: data.description,
-      chargeName: data.description,
       isTopUp: opts.isTopUp,
+      chargeName: data.description,
     }, user);
 
     try {
