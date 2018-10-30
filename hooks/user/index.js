@@ -12,6 +12,7 @@ let config       = Bento.config;
 let notify       = Bento.module('waivecar/lib/notification-service');
 let intercom     = require('./lib/intercom-service');
 let redis        = require('../../modules/waivecar/lib/redis-service');   
+let waitlistService = require('../../modules/waivecar/lib/waitlist-service');
 
 // ### Register Jobs
 
@@ -212,6 +213,9 @@ hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
       yield UserLog.addUserEvent(prevUser, 'PENDING', _user.id, [reason || []].join(', '));
       yield notify.notifyAdmins(`:construction: ${ prevUser.link() }, ${ what }${ who }`, [ 'slack' ], { channel : '#user-alerts' });
     }
+  }
+  if (prevUser.status === 'waitlist' && nextUser.status === 'active') { 
+    yield waitlistService.FBletIn([prevUser.id], _user);
   }
 
   return nextUser;
