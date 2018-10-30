@@ -21,9 +21,10 @@ module.exports = class License extends Service {
    * @param  {Object}   data
    * @param  {Function} reset
    */
-  submitLicense(data) {
-    this.addLicense(auth.user(), data, (err, license) => {
+  submitLicense(data, userId) {
+    this.addLicense(userId, data, (err, license) => {
       if (err) {
+        console.log('err submitting: ', err)
         return this.error(err.data ? err.data : err.message);
       }
 
@@ -60,7 +61,7 @@ module.exports = class License extends Service {
   /**
    * Adds a new license under the provided user.
    */
-  addLicense(user, license, done) {
+  addLicense(userId, license, done) {
     async.each([ 'state', 'number', 'birthDate', 'expirationDate', 'lastName', 'firstName' ], function(field, next) {
       let currentValue = license.hasOwnProperty(field) ? license[field] : undefined;
       let valueName = helpers.changeCase.toSentence(field);
@@ -76,7 +77,7 @@ module.exports = class License extends Service {
       }
 
       api.post('/licenses', {
-        userId     : user.id,
+        userId     : userId,
         firstName  : license.firstName,
         middleName : license.middleName,
         lastName   : license.lastName,
@@ -101,6 +102,7 @@ module.exports = class License extends Service {
       userId : userId
     }, (err, data) => {
       if (err) {
+        console.log('err: ', err);
         return this.error(err.message);
       }
       this.setState('licenses', data);

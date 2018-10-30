@@ -119,7 +119,7 @@ module.exports = class UserDetails extends React.Component {
   render() {
     if (!this.state.license) {
       return (
-        <License userId={this.props.params.id} />
+        <License userId={this.props.id} />
       );
     }
     let license = this.state.license;

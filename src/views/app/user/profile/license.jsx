@@ -34,7 +34,7 @@ module.exports = class ProfileLicenseView extends React.Component {
    * @return {Void}
    */
   componentDidMount() {
-    this.license.setLicenses(auth.user().id);
+    this.license.setLicenses(this.props.userId ? this.props.userId : auth.user().id);
   }
 
   /**
@@ -45,10 +45,9 @@ module.exports = class ProfileLicenseView extends React.Component {
   renderLicenseRegistration() {
     const user = auth.user();
     let license = {
-      firstName : user.firstName,
-      lastName  : user.lastName
+      firstName : '',
+      lastName  : ''
     };
-
     return (
       <div className="box">
         <h3>
@@ -67,7 +66,7 @@ module.exports = class ProfileLicenseView extends React.Component {
                 class : 'btn btn-primary btn-profile-submit'
               }
             ]}
-            submit = { this.license.submitLicense }
+            submit = { (formData) => this.license.submitLicense(formData, this.props.userId ? this.props.userId : auth.user().id) }
           />
         </div>
       </div>
