@@ -18,7 +18,7 @@ module.exports = {
 
   email : {
     templateFolder : 'templates/email',
-    sender         : 'WaiveCar <support@waivecar.com>',
+    sender         : 'Waive <support@waivecar.com>',
     transportName  : 'mandrill',
     transport      : {
       auth : {
