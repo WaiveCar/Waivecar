@@ -24,7 +24,6 @@ module.exports = class License extends Service {
   submitLicense(data, userId) {
     this.addLicense(userId, data, (err, license) => {
       if (err) {
-        console.log('err submitting: ', err)
         return this.error(err.data ? err.data : err.message);
       }
 

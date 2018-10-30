@@ -43,10 +43,9 @@ module.exports = class ProfileLicenseView extends React.Component {
    * @return {Object}
    */
   renderLicenseRegistration() {
-    const user = auth.user();
     let license = {
-      firstName : '',
-      lastName  : ''
+      firstName : this.props.userId ? '' : auth.user().firstName,
+      lastName  : this.props.userId ? '' : auth.user().lastName
     };
     return (
       <div className="box">
