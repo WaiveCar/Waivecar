@@ -333,7 +333,7 @@ module.exports = {
             emailOpts = {
               to       : userRecord.email,
               from     : config.email.sender,
-              subject  : 'Welcome to WaiveCar',
+              subject  : 'Welcome to Waive',
               template : 'letin-email-fb',
               context  : Object.assign({}, params || {}, {
                 name: fullName,
@@ -491,7 +491,7 @@ module.exports = {
         emailOpts = {
           to       : record.email,
           from     : config.email.sender,
-          subject  : 'Welcome to WaiveCar',
+          subject  : 'Welcome to Waive',
           template : opts.template || template,
           context  : context
         };

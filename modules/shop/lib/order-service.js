@@ -178,7 +178,7 @@ module.exports = class OrderService extends Service {
       yield email.send({
         to       : user.email,
         from     : emailConfig.sender,
-        subject  : `$${ amount } refunded ${hasBooking ? `for your trip on ${ orderDate }` : `by WaiveCar ${order.description ? `for ${order.description.toLowerCase()}` : ''}`}`,
+        subject  : `$${ amount } refunded ${hasBooking ? `for your trip on ${ orderDate }` : `by Waive ${order.description ? `for ${order.description.toLowerCase()}` : ''}`}`,
         template : 'refund',
         context  : {
           name       : user.name(),
@@ -463,14 +463,14 @@ module.exports = class OrderService extends Service {
     let optionalText = fullAuthorization ? ( 
       `<p>
         A temporaray $20 hold has been made on your card and is now released. This is done each time 
-        you use WaiveCar for your first ride in every 2 days. If you would like to reduce the amount 
+        you use Waive for your first ride in every 2 days. If you would like to reduce the amount 
         of this hold to $1, you can visit our website and add a $20 credit to your account from your 
         profile.
       </p>`
     ) : (
       `<p>
          A $1 hold has been made on your card and is now released. This is done each time you use 
-         WaiveCar for your first ride in every 2 days.    
+         Waive for your first ride in every 2 days.    
       </p>`
       );
     if (totalAmount > 0) {
@@ -501,7 +501,7 @@ module.exports = class OrderService extends Service {
         yield email.send({
             to       : user.email,
             from     : emailConfig.sender,
-            subject  : `You drove for free${ city }. Thanks for using WaiveCar.`,
+            subject  : `You drove for free${ city }. Thanks for using Waive.`,
             template : 'free-ride-complete',
             context  : {
               name     : user.name(),
@@ -1062,7 +1062,7 @@ module.exports = class OrderService extends Service {
         yield email.send({
           to: user.email,
           from: emailConfig.sender,
-          subject  : `You just got $${item.total} for future rides with WaiveCar`,
+          subject  : `You just got $${item.total} for future rides with Waive`,
           template : 'miscellaneous-credit',
           context  : {
             name   : user.name(),
