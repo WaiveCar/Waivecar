@@ -167,6 +167,10 @@ module.exports = class OrderService extends Service {
       status: 'refunded',
     });
 
+    if (order.description === 'Top up $20') {
+      yield user.update({credit: user.credit - 2000});
+    }
+
     let email = new Email();
     let amount = (payload.amount / 100).toFixed(2);
     let orderDate = moment(order.createdAt).format('MMMM Do YYYY'); 
