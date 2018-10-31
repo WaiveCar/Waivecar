@@ -4,7 +4,7 @@ let request   = require('./request-cache-service');
 let error     = Bento.Error;
 let config    = Bento.config;
 let Car       = Bento.model('Car');
-let License   = require('./license-service');
+let License   = require('../../license/lib/license-service');
 
 
 //
@@ -43,8 +43,16 @@ module.exports = {
     }
   },
 
-  *addCar(car) {
-    yield this.changeCar('subscribe', car);
+  *addCarIfNeeded(car) {
+    console.log("adding the car if needed\n\n\n\nwu");
+    if (!(yield car.hasTag('tikd'))) {
+      let res = yield this.changeCar('subscribe', car);
+      if(res) {
+        console.log(res);
+        yield car.addTag('tikd');
+      }
+      return false;
+    }
   },
 
   *removeCar(car) {
@@ -52,7 +60,10 @@ module.exports = {
   },
 
   *addLiability(booking, user, car) {
-    return yield this.changeLiability('service-started', booking, user, car);
+    return true;
+    if (yield this.addCarIfNeeded(car)) {
+      return yield this.changeLiability('service-started', booking, user, car);
+    }
   },
 
   *removeLiability(booking, user, car) {
@@ -60,19 +71,23 @@ module.exports = {
   },
 
   *changeCar(state, car) {
-    return yield this.post('fleet', {
-      transactionId: 'car-' + car.licenseUsed,
-      eventName: state,
-      vehicleInto: {
-        plateNumber: car.plateNumber,
-        plateState: car.plateState,
-        vin: car.vin,
-        metroArea: 'LosAngeles',
-        ownerInfo: {
-          email: 'chris@waivecar.com'
+    if(car.vin && car.plateNumber && car.plateState) {
+      return yield this.post('fleet', {
+        transactionId: 'car-' + car.licenseUsed,
+        eventName: state,
+        vehicleInto: {
+          plateNumber: car.plateNumber,
+          plateState: car.plateState,
+          vin: car.vin,
+          metroArea: 'LosAngeles',
+          ownerInfo: {
+            email: 'chris@waivecar.com'
+          }
         }
-      }
-    });
+      });
+    } else {
+      console.log(`${car.license} is missing something: vin(${car.vin}) license(${car.plateNumber}) state(${car.plateState})`);
+    }
   },
 
   *changeLiability(state, booking, user, car) {
