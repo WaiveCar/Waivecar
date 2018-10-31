@@ -322,6 +322,14 @@ module.exports = {
       label: 'Plate Number',
       helpText: null,
     },
+    plateState: {
+      name: 'plateState',
+      component: 'input',
+      type: 'text',
+      required: true,
+      label: 'Plate State',
+      helpText: null,
+    },
     positionUpdatedAt: {
       name: 'positionUpdatedAt',
       component: 'input',
