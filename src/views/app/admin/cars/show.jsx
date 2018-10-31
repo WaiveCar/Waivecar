@@ -242,6 +242,48 @@ class CarsShowView extends React.Component {
             ]}
             submit = { this.service.update }
           />
+          <form role="form" onSubmit={ this.submit }>
+            <div className="form-group row">
+              <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Tags</label>
+              <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
+                <div className="radio-inline">
+                  <label>
+                    <input type="checkbox" name="tagList[]" value="la" defaultChecked={ this.hasTag('la') } />
+                    Regular Service
+                  </label>
+                </div>
+                <div className="radio-inline">
+                  <label>
+                    <input type="checkbox" name="tagList[]" value="csula" defaultChecked={ this.hasTag('csula') } />
+                    CSULA
+                  </label>
+                </div>
+                <div className="radio-inline">
+                  <label>
+                    <input type="checkbox" name="tagList[]" value="level" defaultChecked={ this.hasTag('level') } />
+                    Level
+                  </label>
+                </div>
+                <div className="radio-inline">
+                  <label>
+                    <input type="checkbox" name="tagList[]" value="choice" defaultChecked={ this.hasTag('choice') } />
+                    Choice Hotels
+                  </label>
+                </div>
+                <div className="radio-inline">
+                  <label>
+                    <input type="checkbox" name="tagList[]" value="waivework" defaultChecked={ this.hasTag('waivework') } />
+                    WaiveWork
+                  </label>
+                </div>
+                <div className="form-actions text-center">
+                  <div className="btn-group" role="group">
+                    <button type="submit" className="btn btn-sm">Update Tags</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     );
@@ -550,48 +592,6 @@ class CarsShowView extends React.Component {
                 </div>
               </div>
             </div>
-            <form role="form" onSubmit={ this.submit }>
-              <div className="form-group row">
-                <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Tags</label>
-                <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
-                  <div className="radio-inline">
-                    <label>
-                      <input type="checkbox" name="tagList[]" value="la" defaultChecked={ this.hasTag('la') } />
-                      Regular Service
-                    </label>
-                  </div>
-                  <div className="radio-inline">
-                    <label>
-                      <input type="checkbox" name="tagList[]" value="csula" defaultChecked={ this.hasTag('csula') } />
-                      CSULA
-                    </label>
-                  </div>
-                  <div className="radio-inline">
-                    <label>
-                      <input type="checkbox" name="tagList[]" value="level" defaultChecked={ this.hasTag('level') } />
-                      Level
-                    </label>
-                  </div>
-                  <div className="radio-inline">
-                    <label>
-                      <input type="checkbox" name="tagList[]" value="choice" defaultChecked={ this.hasTag('choice') } />
-                      Choice Hotels
-                    </label>
-                  </div>
-                  <div className="radio-inline">
-                    <label>
-                      <input type="checkbox" name="tagList[]" value="waivework" defaultChecked={ this.hasTag('waivework') } />
-                      WaiveWork
-                    </label>
-                  </div>
-                  <div className="form-actions text-center">
-                    <div className="btn-group" role="group">
-                      <button type="submit" className="btn btn-sm">Update Tags</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </form>
           </div>
         </div>
       </div>
