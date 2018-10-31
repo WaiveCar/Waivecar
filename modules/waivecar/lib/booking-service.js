@@ -20,6 +20,7 @@ let apiConfig    = Bento.config.api;
 let OrderService = Bento.module('shop/lib/order-service');
 let UserLog      = require('../../log/lib/log-service');
 let LogService   = require('./log-service');
+let Tikd         = require('./tikd-service');
 let Actions      = LogService.getActions();
 let moment       = require('moment');
 let redis        = require('./redis-service');
@@ -629,9 +630,9 @@ module.exports = class BookingService extends Service {
    |
    */
 
-  /**
-   * Unlocks the car and lets the driver prepare before starting the ride. It also removes the car from parking spaces if it is in one
-   */
+  
+  // Unlocks the car and lets the driver prepare before starting the ride. 
+  // It also removes the car from parking spaces if it is in one
   static *ready(id, _user) {
     let booking = yield this.getBooking(id);
     let user    = yield this.getUser(booking.userId);
@@ -691,7 +692,8 @@ module.exports = class BookingService extends Service {
       yield booking.start();
 
       yield cars.accessCar(car.id, _user, car);
-      //yield cars.openDoor(car.id, _user);
+      yield tikd.addLiability(booking, _user, car);
+      // yield cars.openDoor(car.id, _user);
 
       yield ParkingService.vacate(car.id);
 
