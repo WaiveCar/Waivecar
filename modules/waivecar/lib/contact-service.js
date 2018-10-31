@@ -134,7 +134,7 @@ module.exports = {
       ]) {
         let [regex, todo] = row;
 
-        if (regex.match(command)) {
+        if (command.match(regex)) {
           command = todo;
           yield notify.slack({ text : `User ${ user.link() } sent "${ opts.raw }" and the computer ${todo}ed automatically` }, { channel : '#app_support' });
           break;
