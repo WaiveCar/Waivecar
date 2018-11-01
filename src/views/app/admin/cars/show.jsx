@@ -25,12 +25,10 @@ let formFields = {
       { name : 'vin',     className : 'col-md-4 bento-form-input' },
     ],
     [
-      { name : 'make',         className : 'col-md-4 bento-form-input' },
-      { name : 'model',        className : 'col-md-4 bento-form-input' },
-      { name : 'manufacturer', className : 'col-md-4 bento-form-input' }
-    ],
-    [
-      { name : 'plateNumber',  className : 'col-md-4 bento-form-input' }
+      { name : 'model',        className : 'col-md-3 bento-form-input' },
+      { name : 'manufacturer', className : 'col-md-3 bento-form-input' },
+      { name : 'plateNumber',  className : 'col-md-4 bento-form-input' },
+      { name : 'plateState',  className : 'col-md-2 bento-form-input' }
     ]
   ]),
 
@@ -244,6 +242,48 @@ class CarsShowView extends React.Component {
             ]}
             submit = { this.service.update }
           />
+          <form role="form" onSubmit={ this.submit }>
+            <div className="form-group row">
+              <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Tags</label>
+              <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
+                <div className="radio-inline">
+                  <label>
+                    <input type="checkbox" name="tagList[]" value="la" defaultChecked={ this.hasTag('la') } />
+                    Regular Service
+                  </label>
+                </div>
+                <div className="radio-inline">
+                  <label>
+                    <input type="checkbox" name="tagList[]" value="csula" defaultChecked={ this.hasTag('csula') } />
+                    CSULA
+                  </label>
+                </div>
+                <div className="radio-inline">
+                  <label>
+                    <input type="checkbox" name="tagList[]" value="level" defaultChecked={ this.hasTag('level') } />
+                    Level
+                  </label>
+                </div>
+                <div className="radio-inline">
+                  <label>
+                    <input type="checkbox" name="tagList[]" value="choice" defaultChecked={ this.hasTag('choice') } />
+                    Choice Hotels
+                  </label>
+                </div>
+                <div className="radio-inline">
+                  <label>
+                    <input type="checkbox" name="tagList[]" value="waivework" defaultChecked={ this.hasTag('waivework') } />
+                    WaiveWork
+                  </label>
+                </div>
+                <div className="form-actions text-center">
+                  <div className="btn-group" role="group">
+                    <button type="submit" className="btn btn-sm">Update Tags</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     );
@@ -552,48 +592,6 @@ class CarsShowView extends React.Component {
                 </div>
               </div>
             </div>
-            <form role="form" onSubmit={ this.submit }>
-              <div className="form-group row">
-                <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Tags</label>
-                <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
-                  <div className="radio-inline">
-                    <label>
-                      <input type="checkbox" name="tagList[]" value="la" defaultChecked={ this.hasTag('la') } />
-                      Regular Service
-                    </label>
-                  </div>
-                  <div className="radio-inline">
-                    <label>
-                      <input type="checkbox" name="tagList[]" value="csula" defaultChecked={ this.hasTag('csula') } />
-                      CSULA
-                    </label>
-                  </div>
-                  <div className="radio-inline">
-                    <label>
-                      <input type="checkbox" name="tagList[]" value="level" defaultChecked={ this.hasTag('level') } />
-                      Level
-                    </label>
-                  </div>
-                  <div className="radio-inline">
-                    <label>
-                      <input type="checkbox" name="tagList[]" value="choice" defaultChecked={ this.hasTag('choice') } />
-                      Choice Hotels
-                    </label>
-                  </div>
-                  <div className="radio-inline">
-                    <label>
-                      <input type="checkbox" name="tagList[]" value="waivework" defaultChecked={ this.hasTag('waivework') } />
-                      WaiveWork
-                    </label>
-                  </div>
-                  <div className="form-actions text-center">
-                    <div className="btn-group" role="group">
-                      <button type="submit" className="btn btn-sm">Update Tags</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </form>
           </div>
         </div>
       </div>
@@ -640,20 +638,6 @@ class CarsShowView extends React.Component {
       <div className="box">
         <h3>Damage and uncleanliness</h3>
         <div className="box-content">
-          <div className="text-center">
-            Filter by angle:
-          </div> 
-          <div className="button-holder"> 
-            {[null, 'front', 'left', 'rear', 'right', 'other'].map((angle, i) => 
-              <button 
-                key={i}
-                className="btn btn-sm btn-primary" 
-                onClick={() => this.setState({damageFilter: angle})}
-              >
-                {angle ? angle : 'all'}
-              </button>
-            )}
-          </div>
           <div>
             {this.state.damage && this.state.damage.map((row, i) =>
               <div key={i}>
@@ -680,30 +664,26 @@ class CarsShowView extends React.Component {
     }
     return (
       <div>
-        {(rowsToRender[0] && rowsToRender[0].length > 0) &&
-          <div>
-            <h4 className="damage-title">
-              Booking Id: <a href={ '/bookings/' + booking.id } target="_blank">#{booking.id}</a>
-              {' on '}{moment(booking.created_at).format('YYYY-MM-DD HH:mm:ss')}
-            </h4>
-            <div>
-              {rowsToRender.map((row, i) => {
-                return (
+        {(rowsToRender[0] && rowsToRender[0].length) &&
+          <div className="dmg-group">
+            {rowsToRender.map((row, i) => {
+              return (
+                <div>
+                  <a className='damage-booking-link' href={ '/bookings/' + booking.id } target="_blank">{ row[0] && moment(row[0].created_at).format('YYYY-MM-DD HH:mm:ss') }</a>
                   <div key={i} className="dmg-row">
                     {row.map((image, j) =>  { 
                       return image && image.file && ( 
-                        <div>
-                          <a className="damage-image-holder" href={`${API_URI}/file/${image.file.id}` } target="_blank" key={j}>
-                            <div>{image.type || 'other'}</div>
+                        <div className="damage-image-holder">
+                          <a href={`${API_URI}/file/${image.file.id}` } target="_blank" key={j}>
                             <img className="damage-image" src={`${API_URI}/file/${image.file.id}`} />
                           </a>
                         </div>);
                       }
                     )}
                   </div>
-                )
-              })}
-            </div>
+                </div>
+              )
+            })}
           </div>
         }
       </div>
