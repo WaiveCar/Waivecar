@@ -692,7 +692,7 @@ module.exports = class BookingService extends Service {
       yield booking.start();
 
       yield cars.accessCar(car.id, _user, car);
-      yield tikd.addLiability(booking, _user, car);
+      //yield Tikd.addLiability(booking, _user, car);
       // yield cars.openDoor(car.id, _user);
 
       yield ParkingService.vacate(car.id);
