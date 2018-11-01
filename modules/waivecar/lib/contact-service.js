@@ -335,8 +335,6 @@ module.exports = {
 
     try {
       if(command === 'start') {
-        yield notify.slack({ text : message }, { channel : '#app_support' });
-
         yield booking.ready(id, user);
       } else if (command === 'save less' || command === 'less') {
         command = 'extend';
