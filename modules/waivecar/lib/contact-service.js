@@ -136,7 +136,6 @@ module.exports = {
 
         if (command.match(regex)) {
           command = todo;
-          yield notify.slack({ text : `User ${ user.link() } sent "${ opts.raw }" and the computer ${todo}ed automatically` }, { channel : '#app_support' });
           break;
         }
       }
@@ -286,16 +285,20 @@ module.exports = {
     }
     let id = currentBooking.id;
 
+    let success = true;
     if (command === 'finish' || command === 'complete') {
+      command = 'finish';
       try {
         yield booking.end(id, user);
       } catch(ex) {
+        success = false;
         yield this.returnError(user, ex);
         console.log(ex.stack);
       }
       try {
         yield booking.complete(id, user);
       } catch(ex) {
+        success = false;
         yield this.returnError(user, ex);
         console.log(ex.stack);
       }
@@ -303,15 +306,19 @@ module.exports = {
 
     try {
       if(command === 'start' || command === 'start ride') {
+        command = 'start'
         let message = `User ${ user.link() } sms'd "${ opts.raw }" and the computer started the ride`;
         yield notify.slack({ text : message }, { channel : '#app_support' });
 
         yield booking.ready(id, user);
       } else if (command === 'save less' || command === 'less') {
+        command = 'extend';
         yield booking._extend(id, {}, user);
       } else if (command === 'save') {
+        command = 'extend';
         yield booking._extend(id, {howmuch: 20}, user);
       } else if (command === 'cancel' || command === 'abort') {
+        command = 'cancel';
         yield booking.cancel(id, user);
       } else if (command === 'unlock') {
         yield cars.unlockCar(currentBooking.carId, user);
@@ -319,8 +326,13 @@ module.exports = {
         yield cars.lockCar(currentBooking.carId, user);
       }
     } catch(ex) {
+      success = false;
       yield this.returnError(user, ex);
     }
+
+    let message = success ? `and the computer ${ command }ed automatically` : `but the computer failed to ${ command }`;
+      
+    yield notify.slack({ text : `User ${ user.link() } sent "${ opts.raw }" ${ message }` }, { channel : '#reservations' });
 
     return true;
   },
