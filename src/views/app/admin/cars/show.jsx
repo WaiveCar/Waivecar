@@ -79,6 +79,7 @@ class CarsShowView extends React.Component {
       if (err) {
         console.log(err);
       }
+      console.log('model: ', model);
       model.reverse();
       this.setState({
         damage : model
@@ -654,7 +655,6 @@ class CarsShowView extends React.Component {
     let bookingList = booking.reports;
     let { damageFilter } = this.state;
     let { details } = booking;
-    console.log('details: ', details);
     let rowsToRender = [];
     if (!damageFilter && bookingList.length >=8) {
       let other = bookingList.filter(item => item.type === 'other');
@@ -663,17 +663,30 @@ class CarsShowView extends React.Component {
     } else {
       rowsToRender = [bookingList];
     }
+    let bookingStart = details[0] && moment(details[0].created_at);
+    let bookingMiddle = details[0] && details[1] && moment(details[1].created_at).diff(moment(details[0].created_at)) / 2;
     return (
-      <div>
-        <div>
-          Booking Start: {details[0].created_at}
-        </div>
+      <div className="dmg-group">
+        {bookingStart &&
+          <div>
+              Booking Start: 
+              <div>
+                <a className='damage-booking-link' href={ '/bookings/' + booking.id } target="_blank">
+                  {bookingStart.format('MMMM DD YYYY hh:mm:ss A')}
+                </a>
+              </div>
+            </div>
+        }
         {(rowsToRender[0] && rowsToRender[0].length) &&
-          <div className="dmg-group">
+          <div>
             {rowsToRender.map((row, i) => {
               return (
                 <div>
-                  <a className='damage-booking-link' href={ '/bookings/' + booking.id } target="_blank">{ row[0] && moment(row[0].created_at).format('YYYY-MM-DD HH:mm:ss') }</a>
+                  {row.length && 
+                      <div className={bookingMiddle && (moment(row[0].created_at).diff(bookingStart) < bookingMiddle ? 'before-middle' : 'after-middle')}>
+                      {`+ ${moment.utc(moment(row[0].created_at).diff(bookingStart)).format('H:mm:ss')}`} 
+                    </div>
+                  }
                   <div key={i} className="dmg-row">
                     {row.map((image, j) =>  { 
                       return image && image.file && ( 
@@ -688,10 +701,15 @@ class CarsShowView extends React.Component {
                 </div>
               )
             })}
-          {
-            details[1] && <div>Booking End: {details[1].created_at}</div>
-          }
           </div>
+        }
+        {
+          details[1] && 
+            <div>
+              Booking End: 
+              <div>+ {moment.utc(moment(details[1].created_at).diff(bookingStart)).format('H:mm:ss')}</div>
+              <div>{moment(details[1].created_at).format('MMMM DD YYYY hh:mm:ss A')}</div>
+            </div>
         }
       </div>
     );
