@@ -310,11 +310,11 @@ module.exports = {
           include : [{
             model : File._schema,
             as    : 'file'
-          }]
+          }],
         }   
       ]
     };
-    let result = yield Booking._schema.findAll(dbQuery).filter(each => each.reports.length);
+    let result = yield Booking._schema.findAll(dbQuery);
     // This section (until 342) is for backwards compatibility to potentially be removed at a later time
     // Schemas have since been changed to no longer depend on the ReportFiles table
     result = yield result.map(item => {
