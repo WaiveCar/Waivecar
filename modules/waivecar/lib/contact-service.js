@@ -129,7 +129,7 @@ module.exports = {
       for(var row of [
         [/\sunlock\s/i, 'unlock'],
         [/\slock\s/i,   'lock'],
-        [/end\s(waive|my\sride|ride)/i,'finish'],
+        [/(end|finish)\s(waive|my\sride|ride)/i,'finish'],
         [/^end(\s\w+|)$/i,'finish']
       ]) {
         let [regex, todo] = row;
