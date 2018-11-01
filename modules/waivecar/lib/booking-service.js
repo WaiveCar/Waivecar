@@ -306,9 +306,9 @@ module.exports = class BookingService extends Service {
     }
     // If the car is currently WaiveParked, the notes from the spot need to be attached to the message.
     let currentParking = yield UserParking.findOne({ where: { carId: car.id } });
-    let timeToCar = isRush ? "You've been WaiveRushed so take your time, your reservation does not expire. Hourly charges begin at 10AM" : `${inject}${timeToCar} minutes to get to it`
+    let timeToCarStr = isRush ? "You've been WaiveRushed so take your time, your reservation does not expire. Hourly charges begin at 10AM" : `${inject}${timeToCar} minutes to get to it`
 
-    let msg = `${car.license} is yours!\nIf you have difficulties starting the ride with the app, reply 'start ride' when you're next to the WaiveCar.\n${currentParking ? `It is WaiveParked with the notes: "${currentParking.notes}". ` : ''}${timeToCar}. Thanks!`;
+    let msg = `${car.license} is yours!\nIf you have difficulties starting the ride with the app, reply 'start ride' when you're next to the WaiveCar.\n${currentParking ? `It is WaiveParked with the notes: "${currentParking.notes}". ` : ''}${timeToCarStr}. Thanks!`;
     if (isLevel) {
       // https://lb.waivecar.com/users/14827
       yield notify.sendTextMessage(14827, `${ driver.name() } reserved ${ car.license }.`);
