@@ -247,7 +247,7 @@ module.exports = {
     }
 
     if(!currentBooking) {
-      if (command === 'unlock' || command === 'lock') {
+      if (['unlock','lock','rebook'].includes(command)) {
         previousBooking = yield Booking.findOne({ 
           where : { 
             status : {
