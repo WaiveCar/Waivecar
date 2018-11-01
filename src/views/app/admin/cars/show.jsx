@@ -663,17 +663,18 @@ class CarsShowView extends React.Component {
     } else {
       rowsToRender = [bookingList];
     }
+    rowsToRender = rowsToRender.filter(row => row.length);
     let bookingStart = details[0] && moment(details[0].created_at);
     let bookingMiddle = details[0] && details[1] && moment(details[1].created_at).diff(moment(details[0].created_at)) / 2;
     return (
       <div className="dmg-group">
         {bookingStart &&
           <div>
-              Booking Start: 
-              <a className='damage-booking-link' href={ '/bookings/' + booking.id } target="_blank">
-                {bookingStart.format('MMMM DD YYYY hh:mm:ss A')}
-              </a>
-            </div>
+            Booking Start: 
+            <a className='damage-booking-link' href={ '/bookings/' + booking.id } target="_blank">
+              {bookingStart.format('MMMM DD YYYY hh:mm:ss A')}
+            </a>
+          </div>
         }
         {(rowsToRender[0] && rowsToRender[0].length) &&
           <div>
@@ -703,10 +704,9 @@ class CarsShowView extends React.Component {
         }
         {
           details[1] && 
-            <div>
-              Booking End: 
+            <div className="after-middle">
+              Booking End: {moment(details[1].created_at).format('MMMM DD YYYY hh:mm:ss A')} 
               <div>+ {moment.utc(moment(details[1].created_at).diff(bookingStart)).format('H:mm:ss')}</div>
-              <div>{moment(details[1].created_at).format('MMMM DD YYYY hh:mm:ss A')}</div>
             </div>
         }
       </div>
