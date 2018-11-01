@@ -332,7 +332,7 @@ module.exports = {
 
     let message = success ? `and the computer ${ command }ed automatically` : `but the computer failed to ${ command }`;
       
-    yield notify.slack({ text : `User ${ user.link() } sent "${ opts.raw }" ${ message }` }, { channel : '#reservations' });
+    yield notify.slack({ text : `:selfie: ${ user.link() } sent "${ opts.raw }" ${ message }` }, { channel : '#reservations' });
 
     return true;
   },
