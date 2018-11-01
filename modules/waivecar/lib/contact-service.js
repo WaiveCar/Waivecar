@@ -194,7 +194,7 @@ module.exports = {
     let currentBooking = yield Booking.findOne({ 
       where : { 
         status : {
-          $notIn : [ 'completed', 'closed', 'ended', 'cancelled' ]
+          $notIn : [ 'completed', 'closed', 'cancelled' ]
         },
         userId : user.id 
       }
