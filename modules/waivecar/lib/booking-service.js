@@ -1159,6 +1159,7 @@ module.exports = class BookingService extends Service {
     try { 
       return yield this._complete(id, _user, query, payload);
     } catch(ex) {
+      console.log(ex);
       throw error.parse(ex, 400);
     }
   }
