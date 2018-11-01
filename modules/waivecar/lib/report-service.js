@@ -292,10 +292,13 @@ module.exports = {
     return res;
   },
 
-  *showForCar(carId) {
+  *showForCar(carId, query) {
+    console.log('query: ', query);
+    let fromDateObj = query.fromDate && {createdAt: {$gt: query.fromDate}} 
     let dbQuery = {
       where : {
-        carId  : carId
+        carId  : carId,
+        ...fromDateObj,
       },
       include : [
         {
