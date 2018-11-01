@@ -650,7 +650,7 @@ module.exports = class BookingService extends Service {
     let car     = yield this.getCar(booking.carId);
 
     let atHq = yield this.isAtHub(car);
-    let isRush = yield booking.isFlagged('rush');
+    let isRush = booking.isFlagged('rush');
 
     if (atHq) {
       yield car.update({
