@@ -77,7 +77,7 @@ class CarsShowView extends React.Component {
         carPath : model.data.data
       });
     });
-    api.get(`/reports/car/${ id }`, (err, model) => {
+    api.get(`/reports/car/${ id }?fromDate=${moment().subtract(1, 'months').utc().format()}`, (err, model) => {
       if (err) {
         console.log(err);
       }
@@ -667,6 +667,7 @@ class CarsShowView extends React.Component {
   }
 
   renderBookingDamage(booking) {
+    console.log('booking: ', booking);
     let bookingList = booking.reports;
     let { damageFilter } = this.state;
     let rowsToRender = [];
