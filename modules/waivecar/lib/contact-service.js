@@ -335,7 +335,6 @@ module.exports = {
 
     try {
       if(command === 'start') {
-        let message = `User ${ user.link() } sms'd "${ opts.raw }" and the computer started the ride`;
         yield notify.slack({ text : message }, { channel : '#app_support' });
 
         yield booking.ready(id, user);
