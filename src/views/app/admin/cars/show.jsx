@@ -651,19 +651,23 @@ class CarsShowView extends React.Component {
   }
 
   renderBookingDamage(booking) {
-    console.log('booking: ', booking);
     let bookingList = booking.reports;
     let { damageFilter } = this.state;
+    let { details } = booking;
+    console.log('details: ', details);
     let rowsToRender = [];
     if (!damageFilter && bookingList.length >=8) {
       let other = bookingList.filter(item => item.type === 'other');
       let angles = bookingList.filter(item => item.type !== 'other');
       rowsToRender = [angles.slice(0, 4), angles.slice(4), other];
     } else {
-      rowsToRender = !damageFilter ? [bookingList] : [bookingList.filter(item => item.type === damageFilter)];
+      rowsToRender = [bookingList];
     }
     return (
       <div>
+        <div>
+          Booking Start: {details[0].created_at}
+        </div>
         {(rowsToRender[0] && rowsToRender[0].length) &&
           <div className="dmg-group">
             {rowsToRender.map((row, i) => {
@@ -684,6 +688,9 @@ class CarsShowView extends React.Component {
                 </div>
               )
             })}
+          {
+            details[1] && <div>Booking End: {details[1].created_at}</div>
+          }
           </div>
         }
       </div>
