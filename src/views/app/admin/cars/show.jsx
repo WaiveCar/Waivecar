@@ -670,11 +670,9 @@ class CarsShowView extends React.Component {
         {bookingStart &&
           <div>
               Booking Start: 
-              <div>
-                <a className='damage-booking-link' href={ '/bookings/' + booking.id } target="_blank">
-                  {bookingStart.format('MMMM DD YYYY hh:mm:ss A')}
-                </a>
-              </div>
+              <a className='damage-booking-link' href={ '/bookings/' + booking.id } target="_blank">
+                {bookingStart.format('MMMM DD YYYY hh:mm:ss A')}
+              </a>
             </div>
         }
         {(rowsToRender[0] && rowsToRender[0].length) &&
