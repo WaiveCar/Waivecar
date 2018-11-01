@@ -38,44 +38,11 @@ module.exports = {
   },
 
   *attemptAction(user, command, opts) {
-    // we try the complex book command first.
-    command = command.toLowerCase();
-    let argCmd = command.match(/^(book|details)\s(\w+|\w+\s\d+)$/i);
-
-    if(argCmd) {
-      let license = argCmd[2].replace(/\s/g, '');
-      let requestedCar = yield Car.findOne({
-        where: {
-          isAvailable: true,
-          license: {
-            $like: `${ license }`
-          }
-        }
-      });
-      if(requestedCar) {
-        try {
-          if(argCmd[1] === 'book') {
-            yield booking.create({
-              userId: user.id,
-              carId: requestedCar.id
-            }, user);
-          } else if(argCmd[1] === 'details') {
-            yield notify.sendTextMessage(user, `${requestedCar.license} is available. It's at ${requestedCar.charge}%. It's current GPS coordinates are https://maps.google.com/?q=${requestedCar.latitude},${requestedCar.longitude}`);
-          }
-        } catch(ex) {
-          yield this.returnError(user, ex, command);
-        }
-      } else {
-        yield notify.sendTextMessage(user, `Unable to access ${license}. Check your spelling.`);
-      }
-      return true;
-    }
-
-
     // alias commands are blank.
     let documentation = {
       available: "List available WaiveCars",
       book: "Book a WaiveCar. Example:\n   book waive14",
+      rush: "WaiveRush a WaiveCar (flat rate)",
       commands: null,
       // SECRET!!!!
       // charge: "Charge a WaiveCar with EVgo",
@@ -93,6 +60,46 @@ module.exports = {
       unlock: "Unlock the WaiveCar",
       account: "Information about your account",
     };
+
+    // we try the complex book command first.
+    command = command.toLowerCase();
+    let argCmd = command.match(/^(rush|book|details)\s(\w+|\w+\s\d+)$/i);
+
+    if(argCmd) {
+      let license = argCmd[2].replace(/\s/g, '');
+      let requestedCar = yield Car.findOne({
+        where: {
+          isAvailable: true,
+          license: {
+            $like: `${ license }`
+          }
+        }
+      });
+      if(requestedCar) {
+        try {
+          if(argCmd[1] === 'rush') {
+            yield booking.create({
+              userId: user.id,
+              carId: requestedCar.id,
+              rush: true
+            }, user);
+          } else if(argCmd[1] === 'book') {
+            yield booking.create({
+              userId: user.id,
+              carId: requestedCar.id
+            }, user);
+          } else if(argCmd[1] === 'details') {
+            yield notify.sendTextMessage(user, `${requestedCar.license} is available. It's at ${requestedCar.charge}%. It's current GPS coordinates are https://maps.google.com/?q=${requestedCar.latitude},${requestedCar.longitude}`);
+          }
+        } catch(ex) {
+          yield this.returnError(user, ex, command);
+        }
+      } else {
+        yield notify.sendTextMessage(user, `Unable to access ${license}. Check your spelling.`);
+      }
+      return true;
+    }
+
 
     let remoteCmd = command.match(/^charge (\w*)$/i);
     if(remoteCmd) {

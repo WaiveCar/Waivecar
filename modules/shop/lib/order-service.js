@@ -368,6 +368,7 @@ module.exports = class OrderService extends Service {
 
     let start = yield this.getDetails('start', booking.id);
     let end = yield this.getDetails('end', booking.id);
+    let description;
 
     if (start && end) {
 
@@ -380,7 +381,13 @@ module.exports = class OrderService extends Service {
 
     if (minutesOver !== 0) {
       billableGroups = Math.ceil(minutesOver / 10);
-      amount = Math.round((billableGroups / 6 * 5.99) * 100);
+      if(!booking.isFlagged('rush')) {
+        amount = Math.round((billableGroups / 6 * 5.99) * 100);
+        description = `${ minutesOver }min overage booking ${ booking.id }`;
+      } else {
+        amount = 1499;
+        description = `WaiveRush flat rate booking ${ booking.id }`;
+      }
 
       let card = yield user.getCard();
       let cart = yield CartService.createTimeCart(minutesOver, amount, user);
@@ -390,7 +397,7 @@ module.exports = class OrderService extends Service {
 
         // User card id
         source      : card.id,
-        description : `${ minutesOver }min overage booking ${ booking.id }`,
+        description : description,
         metadata    : null,
         currency    : 'usd',
         amount      : amount
@@ -401,8 +408,10 @@ module.exports = class OrderService extends Service {
 
       try {
         yield this.charge(order, user);
-        yield notify.notifyAdmins(`:moneybag: Charged ${ user.link() } $${ (amount / 100).toFixed(2) } for ${ minutesOver }min ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
-        log.info(`Charged user for time driven : $${ amount / 100 } : booking ${ booking.id }`);
+        yield notify.notifyAdmins(`:moneybag: Charged ${ user.link() } $${ (amount / 100).toFixed(2) } for ${ description }`, [ 'slack' ], { channel : '#rental-alerts' });
+        if(!booking.isFlagged('rush')) {
+          log.info(`Charged user for time driven : $${ amount / 100 } : booking ${ booking.id }`);
+        }
       } catch (err) {
         yield this.failedCharge(amount, user, err, ` | ${ apiConfig.uri }/bookings/${ booking.id }`);
       }

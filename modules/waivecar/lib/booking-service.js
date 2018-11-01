@@ -85,6 +85,7 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
+    let isRush = data.rush;
     let driver = yield this.getUser(data.userId, true);
     var car;
     try {
@@ -237,6 +238,10 @@ module.exports = class BookingService extends Service {
       throw err;
     }
 
+    if(isRush) {
+      yield booking.addFlag('rush');
+    }
+
     try { 
       if (rebookOrder) {
         // This booking payment is shown here so that it shows up in the itemization for the correct booking.
@@ -301,8 +306,9 @@ module.exports = class BookingService extends Service {
     }
     // If the car is currently WaiveParked, the notes from the spot need to be attached to the message.
     let currentParking = yield UserParking.findOne({ where: { carId: car.id } });
+    let timeToCar = isRush ? "You've been WaiveRushed so take your time, your reservation does not expire. Hourly charges begin at 10AM" : `${inject}${timeToCar} minutes to get to it`
 
-    let msg = `${car.license} is yours!\nIf you have difficulties starting the ride with the app, reply 'start ride' when you're next to the WaiveCar.\n${currentParking ? `It is WaiveParked with the notes: "${currentParking.notes}". ` : ''}${inject}${timeToCar} minutes to get to it. Thanks!`;
+    let msg = `${car.license} is yours!\nIf you have difficulties starting the ride with the app, reply 'start ride' when you're next to the WaiveCar.\n${currentParking ? `It is WaiveParked with the notes: "${currentParking.notes}". ` : ''}${timeToCar}. Thanks!`;
     if (isLevel) {
       // https://lb.waivecar.com/users/14827
       yield notify.sendTextMessage(14827, `${ driver.name() } reserved ${ car.license }.`);
@@ -315,7 +321,12 @@ module.exports = class BookingService extends Service {
     yield notify.sendTextMessage(driver, msg);
 
     let message = yield this.updateState('created', _user, driver);
-    yield notify.notifyAdmins(`:musical_keyboard: ${ message } ${ car.info() } ${ car.averageCharge() }%`, [ 'slack' ], { channel : '#reservations' });
+    if(isRush) {
+      yield notify.notifyAdmins(`:dash: Rush ${ message } ${ car.info() } ${ car.averageCharge() }%`, [ 'slack' ], { channel : '#reservations' });
+      yield this.ready(booking.id, _user);
+    } else {
+      yield notify.notifyAdmins(`:musical_keyboard: ${ message } ${ car.info() } ${ car.averageCharge() }%`, [ 'slack' ], { channel : '#reservations' });
+    }
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : driver.id, action : Actions.CREATE_BOOKING }, _user);
 
     yield redis.doneWithIt(lockKeys);
@@ -639,6 +650,7 @@ module.exports = class BookingService extends Service {
     let car     = yield this.getCar(booking.carId);
 
     let atHq = yield this.isAtHub(car);
+    let isRush = yield booking.isFlagged('rush');
 
     if (atHq) {
       yield car.update({
@@ -691,7 +703,10 @@ module.exports = class BookingService extends Service {
       // yield booking.setForfeitureTimers(user, config.booking.timers);
       yield booking.start();
 
-      yield cars.accessCar(car.id, _user, car);
+      // Rushed bookings start right away. We don't unlock the car yet.
+      if(!isRush) {
+        yield cars.accessCar(car.id, _user, car);
+      }
       //yield Tikd.addLiability(booking, _user, car);
       // yield cars.openDoor(car.id, _user);
 
@@ -714,7 +729,9 @@ module.exports = class BookingService extends Service {
           base = 'one of the highlighted zones on the map';
           freetime = '2';
         }
-        yield notify.sendTextMessage(user, `${ freetime } free hours with ${ car.license } starts now! If you have trouble starting the WaiveCar try pressing the "unlock" button in the app. When you're finished, return the WaiveCar to ${ base } with at least 25mi charge. `);
+        if(!isRush) {
+          yield notify.sendTextMessage(user, `${ freetime } free hours with ${ car.license } starts now! If you have trouble starting the WaiveCar try pressing the "unlock" button in the app. When you're finished, return the WaiveCar to ${ base } with at least 25mi charge. `);
+        }
       }
 
       // ### Relay Update

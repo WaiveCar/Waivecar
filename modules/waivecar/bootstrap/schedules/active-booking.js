@@ -30,6 +30,11 @@ module.exports = function *() {
 var checkBooking = co.wrap(function *(booking) {
   let details = yield BookingDetails.find({ where : { bookingId : booking.id } });
   let start = _.find(details, { type : 'start' });
+
+  if(!booking.car) {
+    booking.car = yield Car.findById(booking.carId);
+  }
+
   let car = booking.car;
   let device = yield cars.getDevice(car.id, null, 'booking-loop');
   let user = booking.user;
@@ -95,7 +100,7 @@ var checkBooking = co.wrap(function *(booking) {
         if (!booking.isFlagged('first-sync')) {
           yield booking.delForfeitureTimers();
         }
-      } else if (!booking.isFlagged('first-sync')) {
+      } else if (!booking.isFlagged('first-sync') && !booking.isFlagged('rush')) {
         yield booking.setForfeitureTimers(user, config.waivecar.booking.timers);
         // we don't want to send off anything to the user
         // unless we've checked the car
@@ -127,14 +132,14 @@ var checkBooking = co.wrap(function *(booking) {
         // yield notify.sendTextMessage(user, 'Hi there, your free WaiveCar rental period ends in about 15 minutes. After the free period is over, rentals are $5.99 / hour. Enjoy!');
       }
 
-      if (duration >= 11 * 60 && !booking.isFlagged('11h-warning')) {
+      if (duration >= 11 * 60 && !booking.isFlagged('rush') && !booking.isFlagged('11h-warning')) {
         yield booking.flag('11h-warning');
         yield notify.notifyAdmins(`:waning_crescent_moon: ${ user.link() } has had ${ car.link() } for 11 hours`, [ 'slack' ], { channel : '#rental-alerts' });
         yield notify.sendTextMessage(user, 'Hey there, Waive has a 12 hour rental limit. Please end your rental in the next hour. Thanks!');
       }
       
       // This text message warning if the booking is 1 hour over the free time
-      if (duration >= trigger && !booking.isFlagged('hour-over-notice')) {
+      if (duration >= trigger && !booking.isFlagged('rush') && !booking.isFlagged('hour-over-notice')) {
         yield booking.flag('hour-over-notice');
         let hour = Math.floor(trigger / 60);
         let carName = car.license;
