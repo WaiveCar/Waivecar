@@ -213,7 +213,7 @@ module.exports = {
       let message = [`Hi, ${user.name()}`];
 
       if(user.credit !== 0) {
-        let money = Math.abs(user.credit)/100;
+        let money = (Math.abs(user.credit)/100).toFixed(2);
 
         message.push( 
           user.credit < 0 ? 
