@@ -314,7 +314,7 @@ module.exports = {
         }   
       ]
     };
-    let result = yield Booking._schema.findAll(dbQuery);
+    let result = yield Booking._schema.findAll(dbQuery).filter(booking => booking.status !== 'cancelled');
     // This section (until 342) is for backwards compatibility to potentially be removed at a later time
     // Schemas have since been changed to no longer depend on the ReportFiles table
     result = yield result.map(item => {
