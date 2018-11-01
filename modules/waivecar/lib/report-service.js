@@ -293,7 +293,6 @@ module.exports = {
   },
 
   *showForCar(carId, query) {
-    console.log('query: ', query);
     let fromDateObj = query.fromDate && {createdAt: {$gt: query.fromDate}} 
     let dbQuery = {
       where : {
