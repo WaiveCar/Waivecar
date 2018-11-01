@@ -29,7 +29,9 @@ module.exports = {
 
       if(err.options) {
         err.options.forEach((row) => {
-          message += `\n${ row.title }. Reply "${base} ${row.hotkey}"`;
+          if(row.hotkey) {
+            message += `\n${ row.title }. Reply "${base} ${row.hotkey}"`;
+          }
         });
       }
 
