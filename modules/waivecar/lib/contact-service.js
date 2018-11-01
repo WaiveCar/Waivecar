@@ -84,8 +84,8 @@ module.exports = {
       less: null,
       abort: "Cancel your booking",
       cancel: null,
+      rebook: "Rebook the same WaiveCar (possibly for a fee)",
       start: "Start your ride",
-      "start ride": "A longer way to start your ride",
       finish: "Finish your ride",
       complete: null,
       notify: null,
@@ -129,6 +129,7 @@ module.exports = {
       for(var row of [
         [/\sunlock\s/i, 'unlock'],
         [/\slock\s/i,   'lock'],
+        [/^start (waive|my ride|ride)/i,'start'],
         [/(end|finish)\s(waive|my\sride|ride)/i,'finish'],
         [/^end(\s\w+|)$/i,'finish']
       ]) {
@@ -266,6 +267,20 @@ module.exports = {
           ],
           order: [[ 'id', 'desc' ]]
         });
+
+        if(command === 'rebook') {
+          try {
+            yield booking.create({
+              userId: user.id,
+              carId: previousBooking.carId
+            }, user);
+          } catch (ex) {
+            let params = JSON.parse(ex.options[0].action.params);
+            yield booking.create(params, user);
+            yield notify.sendTextMessage(user, `Rebooked for $${params.opts.buyNow / 100}.` );
+          }
+        }
+
         if(command === 'unlock' && new Date() - previousBooking.getEndTime() < 1000 * 60 * 5) {
           yield notify.slack({ text : `:rowboat: ${user.link()} is retrieving something from ${previousBooking.car.link()}` }, { channel : '#rental-alerts' });
           yield cars.unlockCar(previousBooking.carId, user, previousBooking.car, {overrideAdminCheck: true});
@@ -305,8 +320,7 @@ module.exports = {
     }
 
     try {
-      if(command === 'start' || command === 'start ride') {
-        command = 'start'
+      if(command === 'start') {
         let message = `User ${ user.link() } sms'd "${ opts.raw }" and the computer started the ride`;
         yield notify.slack({ text : message }, { channel : '#app_support' });
 
