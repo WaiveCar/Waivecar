@@ -78,11 +78,12 @@ module.exports = {
       if(requestedCar) {
         try {
           if(argCmd[1] === 'rush') {
-            yield booking.create({
+            let res = yield booking.create({
               userId: user.id,
               carId: requestedCar.id,
               rush: true
             }, user);
+            console.log(res);
           } else if(argCmd[1] === 'book') {
             yield booking.create({
               userId: user.id,
