@@ -269,16 +269,30 @@ module.exports = {
         });
 
         if(command === 'rebook') {
+          let params;
           try {
             yield booking.create({
               userId: user.id,
               carId: previousBooking.carId
             }, user);
+            yield notify.sendTextMessage(user, `Rebooked for free.` );
+            return true;
           } catch (ex) {
-            let params = JSON.parse(ex.options[0].action.params);
-            yield booking.create(params, user);
-            yield notify.sendTextMessage(user, `Rebooked for $${params.opts.buyNow / 100}.` );
+            if(ex.options && ex.options[0]) {
+              params = JSON.parse(ex.options[0].action.params);
+            }
           }
+          if(!params) {
+            yield notify.sendTextMessage(user, "Sorry, someone beat you to the WaiveCar. :-(." );
+            return true;
+          }
+          try {
+            yield booking.create(params, user);
+            yield notify.sendTextMessage(user, `Rebooked for $${params.opts.buyNow}.` );
+          } catch(ex){
+            yield notify.sendTextMessage(user, `Unable to rebook, please try again.` );
+          }
+          return true;
         }
 
         if(command === 'unlock' && new Date() - previousBooking.getEndTime() < 1000 * 60 * 5) {
