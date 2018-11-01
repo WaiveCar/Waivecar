@@ -6,6 +6,7 @@ let Report      = Bento.model('Report');
 let ReportFile  = Bento.model('ReportFile');
 let File        = Bento.model('File');
 let Booking     = Bento.model('Booking');
+let BookingDetails = Bento.model('BookingDetails');
 let Car         = Bento.model('Car');
 let User        = Bento.model('User');
 let error       = Bento.Error;
@@ -296,18 +297,22 @@ module.exports = {
       where : {
         carId  : carId
       },
-      include : [{
-        model : Report._schema,
-        as    : 'reports',
-        include : [{
-          model : File._schema,
-          as    : 'file'
-        }]
-      }]
+      include : [
+        {
+          model: BookingDetails._schema,
+          as: 'details',
+        },
+        {
+          model : Report._schema,
+          as    : 'reports',
+          include : [{
+            model : File._schema,
+            as    : 'file'
+          }]
+        }   
+      ]
     };
-
     let result = yield Booking._schema.findAll(dbQuery).filter(each => each.reports.length);
-
     // This section (until 342) is for backwards compatibility to potentially be removed at a later time
     // Schemas have since been changed to no longer depend on the ReportFiles table
     result = yield result.map(item => {
