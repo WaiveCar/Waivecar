@@ -110,7 +110,7 @@
         var maxfreq = Math.max(...points.slice(0,5000).map(row => Math.sqrt(row[3])));
 
         points.slice(0,5000).map(function(row) {
-          var mag = Math.min(1, 0.1 + 1.4 * Math.sqrt(row[3]) / maxfreq) * min;
+          var mag = Math.min(1.2, 0.1 + 1.4 * Math.sqrt(row[3]) / maxfreq) * min;
           var rect = [
             { lat: row[0] - mag, lng: row[1] - mag },
             { lat: row[0] + mag, lng: row[1] - mag },
@@ -120,10 +120,10 @@
 console.log(row[2],  255 * (Math.sqrt(row[2])) / maxVal);
           (new google.maps.Polygon({
             paths: rect,
-            fillOpacity: 1,
+            fillOpacity: 0.8,
             fillColor: 'rgb(0,' + 700 * (Math.sqrt(row[2])) / maxVal + ',0)',
 //            fillColor: '#FF0000',
-            strokeWeight: 0
+            strokeWeight: 1
           })).setMap(map);
         });
       }

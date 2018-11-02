@@ -30,6 +30,7 @@ def get_sit_times():
     i = 1
     endtime = 0
     sitTime = []
+    mult = 200.0
     
     while line:
         if i == 1:
@@ -40,16 +41,16 @@ def get_sit_times():
             while line and line[1] == carId:
                 if line[2] == 'end':
                     endTime = line[5]
-                    longEnd = round(line[3], 2)
-                    latEnd = round(line[4], 2)
+                    longEnd = round(line[3] * mult) / mult
+                    latEnd = round(line[4] * mult) / mult
                 else:
                     startTime = line[5]
                     timeBetween = startTime - endTime
                    
-                    longStart= round(line[3], 2)
-                    latStart = round(line[4], 2)
+                    longStart= round(line[3] * mult) / mult
+                    latStart = round(line[4] * mult) / mult
                     if longStart == longEnd and latStart == latEnd:
-                        sitTime += [(round(line[4]*2,2)/2, round(line[3]*2,2)/2, timeBetween.seconds, line[0], line[6])]
+                        sitTime += [(round(line[4]*2 * mult)/(2 * mult), round(line[3]*2 * mult)/(2 * mult), timeBetween.seconds, line[0], line[6])]
                 i += 1
                 line = cursor.fetchone()
             
@@ -57,7 +58,7 @@ def get_sit_times():
     print(sitTime) 
     averages = {}
     for i in sitTime:
-        points = (round(i[0]*2, 2)/2 , round(i[1]*2, 2)/2)
+        points = (round(i[0]*2 * mult)/(2 * mult) , round(i[1]*2 * mult)/(2 * mult))
         seconds = i[2]
         if points in averages:
             averages[points] += [seconds]
