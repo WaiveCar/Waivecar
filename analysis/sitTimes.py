@@ -10,11 +10,16 @@ cursor = mysql_connection.cursor()
 
 def get_sit_times():
     cursor.execute("""select bookings.id, bookings.car_id, booking_details.type, booking_details.longitude,
-    booking_details.latitude, booking_details.created_at from bookings
+    booking_details.latitude, booking_details.created_at, bookings.user_id from bookings
     join booking_details on bookings.id = booking_details.booking_id 
-    where bookings.created_at > '2018-09-01'
+    where date(bookings.created_at) > date('2018-09-01') 
+    and hour(bookings.created_at) between 7 + 7 and 20 + 7 
     order by car_id desc, bookings.created_at asc
     ;""")
+    count = 0
+    for row in cursor:
+        count += 1
+    print("{} rows".format(count))
 
     line = cursor.fetchone()
     count = 0
@@ -35,25 +40,24 @@ def get_sit_times():
             while line and line[1] == carId:
                 if line[2] == 'end':
                     endTime = line[5]
-                    longEnd = round(line[3], 3)
-                    latEnd = round(line[4], 3)
+                    longEnd = round(line[3], 2)
+                    latEnd = round(line[4], 2)
                 else:
                     startTime = line[5]
                     timeBetween = startTime - endTime
                    
-                    longStart= round(line[3], 3)
-                    latStart = round(line[4], 3)
+                    longStart= round(line[3], 2)
+                    latStart = round(line[4], 2)
                     if longStart == longEnd and latStart == latEnd:
-                        sitTime += [(round(line[4]*2,3)/2, round(line[3]*2,3)/2, timeBetween.seconds, line[0])]
+                        sitTime += [(round(line[4]*2,2)/2, round(line[3]*2,2)/2, timeBetween.seconds, line[0], line[6])]
                 i += 1
                 line = cursor.fetchone()
             
             line = cursor.fetchone()
-    print(sitTime)   
-    
+    print(sitTime) 
     averages = {}
     for i in sitTime:
-        points = (round(i[0]*2, 3)/2 , round(i[1]*2, 3)/2)
+        points = (round(i[0]*2, 2)/2 , round(i[1]*2, 2)/2)
         seconds = i[2]
         if points in averages:
             averages[points] += [seconds]
@@ -75,10 +79,12 @@ def get_sit_times():
     
     with open("sit-time-points.js", "w") as outfile:  
         outfile.write("{}{}".format("var points=", json.dumps(realSitTime)))
+    # The indicies in the subarray are [lat, lng, sit_time, booking_id, user_id]
+    return sitTime
 
 
 if __name__ == "__main__":
     cursor.execute("select * from booking_details order by id desc limit 10")
-    get_sit_times()
+    sit_times = get_sit_times()
     mysql_connection.close()
 
