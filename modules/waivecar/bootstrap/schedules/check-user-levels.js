@@ -92,6 +92,7 @@ scheduler.process('check-user-levels', function*(job) {
       );
     }
   }
+  /*
   let sitTimesOutput = JSON.parse(
     yield execPromise(
       `python3 analysis/sitTimes.py ${JSON.stringify(
@@ -99,7 +100,7 @@ scheduler.process('check-user-levels', function*(job) {
       )} ${JSON.stringify(Array.from(usersToProcess))}`,
     ),
   );
-  console.log('sitTimesOutput: ', sitTimesOutput);
+  */
 });
 
 module.exports = function*() {
@@ -107,6 +108,6 @@ module.exports = function*() {
   scheduler.add('check-user-levels', {
     init: true,
     repeat: true,
-    timer: {value: 24, type: 'seconds'},
+    timer: {value: 24, type: 'hours'},
   });
 };
