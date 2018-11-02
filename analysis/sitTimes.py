@@ -66,15 +66,16 @@ def get_sit_times():
       
     for i in averages.keys():
         av = sum(averages[i])/len(averages[i])
-        averages[i] = av
+        averages[i] = [av, len(averages[i])]
     
     
     realSitTime= []
     for i in averages.keys():
         long = i[0]
         lat = i[1]
-        time = averages[i]
-        realSitTime += [(long, lat, time)]
+        time = averages[i][0]
+        freq = averages[i][1]
+        realSitTime += [(long, lat, time, freq)]
     
     
     with open("sit-time-points.js", "w") as outfile:  
