@@ -97,9 +97,7 @@ def outliers_by_user(booking_list):
     users_list = list(map(lambda x: str(x), users_list))
     query = "select id, first_name, last_name from users where id in ({});".format(", ".join(users_list))
     cursor.execute(query)
-    counts_to_users = {}
-    for row in cursor:
-        counts_to_users[row] = outliers_counts[row[0]]
+    user_names = {a : (b, c) for a, b, c in cursor}
     query = "select user_id, count(id) from bookings where user_id in ({}) group by user_id;".format(", ".join(users_list))
     cursor.execute(query)
     bookings_counts = {a : b for a, b in cursor}
@@ -110,6 +108,13 @@ def outliers_by_user(booking_list):
             "bookings": bookings_counts[key],
             "outliers": outliers_counts[key]
         }
+    output = {}
+    for user in user_names:
+        output[user_names[user]] = user_ratios[user]
+    for row in output:
+        print(row, ": ", output[row])
+
+    return user_ratios
 
 if __name__ == "__main__":
     sit_times = get_sit_times()
