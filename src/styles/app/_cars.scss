@@ -125,13 +125,20 @@
   margin: 0.75em 0;
 }
 .damage-booking-link {
-  display: inline-block;
-  padding: 0.5rem 0.5rem 0.25rem;
+  display: block;
+  padding: 0.5rem 0 0.25rem;
 }
 
 .dmg-group {
   border-bottom: 1px solid #bbb;
-  padding-bottom: 0.5rem;
+  padding-top: 0.5rem;
+  .booking-link { float: right }
+  .offset {
+    display: inline-block;
+    font-family: monospace;
+    width: 3rem;
+    opacity: 0.65;
+  }
 }
 .dmg-row {
   width: 100%;
@@ -145,10 +152,10 @@
 }
 
 .before-middle {
-  color: #25C155;
+  color: #507C5C;
 }
 
 .after-middle {
-  color: #FF0000;
+  color: #7C5050;
 }
 
