@@ -51,6 +51,7 @@ scheduler.process('check-user-levels', function*(job) {
     username: Bento.config.sequelize.username,
     password: Bento.config.sequelize.password,
   });
+  console.log('mysql config: ', mysqlConfig);
 
   yield appendFilePromise(
     '/var/log/outgoing/user-levels.txt',
@@ -104,10 +105,10 @@ scheduler.process('check-user-levels', function*(job) {
 });
 
 module.exports = function*() {
-  //scheduler.cancel('check-user-levels');
+  scheduler.cancel('check-user-levels');
   scheduler.add('check-user-levels', {
     init: true,
     repeat: true,
-    timer: {value: 24, type: 'hours'},
+    timer: {value: 24, type: 'seconds'},
   });
 };

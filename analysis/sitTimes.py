@@ -87,25 +87,29 @@ def get_outlier_bookings(standard_deviation, sit_times, percent_outside_accepted
     return outliers
 
 def outliers_by_user(booking_list):
-    bookings_counts = {}
+    outliers_counts = {}
     for user in booking_list:
-        if user[4] in bookings_counts:
-            bookings_counts[user[4]] += 1
+        if user[4] in outliers_counts:
+            outliers_counts[user[4]] += 1
         else:
-            bookings_counts[user[4]] = 1
-    users_list = list(filter(lambda x: bookings_counts[x], bookings_counts))
+            outliers_counts[user[4]] = 1
+    users_list = list(filter(lambda x: outliers_counts[x], outliers_counts))
     users_list = list(map(lambda x: str(x), users_list))
     query = "select id, first_name, last_name from users where id in ({});".format(", ".join(users_list))
     cursor.execute(query)
     counts_to_users = {}
     for row in cursor:
-        counts_to_users[row] = bookings_counts[row[0]]
-    for row in counts_to_users:
-        print(row, ': ', counts_to_users[row])
-    query = "select user_id, count(id) from bookings where user_id={}".format(users_list[0])
+        counts_to_users[row] = outliers_counts[row[0]]
+    query = "select user_id, count(id) from bookings where user_id in ({}) group by user_id;".format(", ".join(users_list))
     cursor.execute(query)
-    for row in cursor:
-        print(row)
+    bookings_counts = {a : b for a, b in cursor}
+    user_ratios = {}
+    for key in outliers_counts:
+        user_ratios[key] = {
+            "ratio": outliers_counts[key] / bookings_counts[key],
+            "bookings": bookings_counts[key],
+            "outliers": outliers_counts[key]
+        }
 
 if __name__ == "__main__":
     sit_times = get_sit_times()
