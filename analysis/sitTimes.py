@@ -75,20 +75,42 @@ def get_sit_times():
     with open("sit-time-points.js", "w") as outfile:  
         outfile.write("{}{}".format("var points=", json.dumps(real_sit_time)))
     # The indicies in the subarray are [lat, lng, sit_time, booking_id, user_id]
-    return list(map(lambda x: x[2], sit_time))
+    return sit_time
+    #return list(map(lambda x: x[2], sit_time))
 
 def get_standard_deviation(sit_times):
-    return stdev(sit_times)
+    only_times = list(map(lambda x: x[2], sit_times))
+    return stdev(only_times)
 
-def get_outliers(standard_deviation, sit_times, percent_outside_accepted):
-    print("standard deviation: ", standard_deviation)
-    outliers = list(filter(lambda x: abs(standard_deviation - x) > standard_deviation + ((percent_outside_accepted / 100) * standard_deviation) , sit_times))
-    print("length of sit_times: ", len(sit_times))
-    print("length of outliers: ", len(outliers))
+def get_outlier_bookings(standard_deviation, sit_times, percent_outside_accepted):
+    outliers = list(filter(lambda x: abs(standard_deviation - x[2]) > standard_deviation + ((percent_outside_accepted / 100) * standard_deviation) , sit_times))
+    return outliers
+
+def outliers_by_user(booking_list):
+    bookings_counts = {}
+    for user in booking_list:
+        if user[4] in bookings_counts:
+            bookings_counts[user[4]] += 1
+        else:
+            bookings_counts[user[4]] = 1
+    users_list = list(filter(lambda x: bookings_counts[x], bookings_counts))
+    users_list = list(map(lambda x: str(x), users_list))
+    query = "select id, first_name, last_name from users where id in ({});".format(", ".join(users_list))
+    cursor.execute(query)
+    counts_to_users = {}
+    for row in cursor:
+        counts_to_users[row] = bookings_counts[row[0]]
+    for row in counts_to_users:
+        print(row, ': ', counts_to_users[row])
+    query = "select user_id, count(id) from bookings where user_id={}".format(users_list[0])
+    cursor.execute(query)
+    for row in cursor:
+        print(row)
 
 if __name__ == "__main__":
     sit_times = get_sit_times()
     standard_deviation = get_standard_deviation(sit_times)
-    get_outliers(standard_deviation, sit_times, 0)
+    outliers = get_outlier_bookings(standard_deviation, sit_times, 0)
+    users_with_outliers = outliers_by_user(outliers) 
     mysql_connection.close()
 
