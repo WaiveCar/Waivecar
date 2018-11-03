@@ -1463,7 +1463,7 @@ module.exports = class BookingService extends Service {
     // We consider a cancellation as effectively a reset
     yield this.updateState('completed', _user, user);
     let message = (_user.id === user.id) ?
-      `${ _user.link() } cancelled ` :
+      `${ _user.link() } cancelled` :
       `${ _user.name() } cancelled for ${ user.link() }`;
 
     yield notify.sendTextMessage(user, `Your WaiveCar reservation has been cancelled.`);

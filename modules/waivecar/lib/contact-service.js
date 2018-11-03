@@ -41,6 +41,7 @@ module.exports = {
 
   *attemptAction(user, command, opts) {
     // alias commands are blank.
+    let sendToSupport = false;
     let documentation = {
       available: "List available WaiveCars",
       book: "Book a WaiveCar. Example:\n   book waive14",
@@ -145,6 +146,7 @@ module.exports = {
       ]) {
         let [regex, todo] = row;
 
+        sendToSupport = true;
         if (command.match(regex)) {
           command = todo;
           break;
@@ -298,6 +300,7 @@ module.exports = {
           }
           try {
             yield booking.create(params, user);
+            yield notify.slack({ text : `:selfie: ${ user.link() } sent "${ opts.raw }" and the computer rebooked` }, { channel : '#reservations' });
             yield notify.sendTextMessage(user, `Rebooked for $${params.opts.buyNow}.` );
           } catch(ex){
             yield notify.sendTextMessage(user, `Unable to rebook, please try again.` );
@@ -369,7 +372,7 @@ module.exports = {
       
     yield notify.slack({ text : `:selfie: ${ user.link() } sent "${ opts.raw }" ${ message }` }, { channel : '#reservations' });
     
-    if(!success) {
+    if(!success || sendToSupport) {
       yield notify.slack({ text : `:selfie: ${ user.link() } sent "${ opts.raw }" ${ message }` }, { channel : '#app_support' });
     }
 

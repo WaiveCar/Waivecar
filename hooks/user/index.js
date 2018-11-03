@@ -198,9 +198,9 @@ hooks.set('user:update:before', function *(prevUser, nextUser, _user) {
       if(prevUser.status !== nextUser.status && nextUser.status) {
         what = `a previously ${ prevUser.status } user is moving to ${ nextUser.status }`;
         if (prevUser.id == _user.id) {
-          who = 'by themselves';
+          who = ' by themselves';
         } else {
-          who = `by ${ _user.name() }`;
+          who = ` by ${ _user.name() }`;
         }
       } else {
         what = `a ${ prevUser.status } user, changed some information`;
