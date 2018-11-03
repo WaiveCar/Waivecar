@@ -13,7 +13,7 @@ Bento.Register.Controller('ReportsController', function(controller) {
   };
 
   controller.showForCar = function *(id) {
-    return yield service.showForCar(id);
+    return yield service.showForCar(id, this.query);
   };
 
   controller.showMileage = function *(date) {
