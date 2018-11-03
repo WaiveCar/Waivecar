@@ -365,9 +365,13 @@ module.exports = {
       yield this.returnError(user, ex);
     }
 
-    let message = success ? `and the computer ${ command }ed automatically` : `but the computer failed to ${ command }`;
+    let message = success ? `and the computer ${ command }ed automatically` : `but the computer *failed* to ${ command }!`;
       
     yield notify.slack({ text : `:selfie: ${ user.link() } sent "${ opts.raw }" ${ message }` }, { channel : '#reservations' });
+    
+    if(!success) {
+      yield notify.slack({ text : `:selfie: ${ user.link() } sent "${ opts.raw }" ${ message }` }, { channel : '#app_support' });
+    }
 
     return true;
   },
