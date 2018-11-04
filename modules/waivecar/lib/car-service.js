@@ -353,19 +353,14 @@ module.exports = {
     if(id.length !== 'ble') {
 
       // See #1077
-      let includeCarGroup = {
-        model : 'GroupCar',
-        as: 'tagList',
+      car = yield Car.findById(id, {
         include: [
           {
-            model: 'GroupRole',
-            as: 'group_role', 
+            model : 'User',
+            as    : 'user'
           }
-       ]
-      }
-
-      car = yield Car.findById(id);
-
+        ]
+      });
     }
 
     if(!car) {
@@ -523,7 +518,7 @@ module.exports = {
         inRepair: !model.inRepair
       });
     }
-    yield LogService.create({carId: id, action: ['REPAIR_END', 'REPAIR_START']model.inRepair}, _user);
+    yield LogService.create({carId: id, action: ['REPAIR_END', 'REPAIR_START'][model.inRepair]}, _user);
 
     // we trick the relay into hiding cars that are set
     // to repair for legacy versions of the app so that
