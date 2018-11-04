@@ -119,27 +119,23 @@ module.exports = {
     }
 
     // accessing a car from someone else's phone ... top secret command!
-    remoteCmd = command.match(/unlock (waive\d{1,3}) ([^\s]+@[^\s]*\.\w*)/i);
-    console.log(remoteCmd);
+    remoteCmd = command.match(/^unlock (waive\d{1,3}) ([^\s]+@[^\s]*\.\w*)$/i);
     if(remoteCmd) {
-      let car = yield Car.findOne({where: { license: { $like: remoteCmd[2] } } });
-      console.log(car);
+      let car = yield Car.findOne({where: { license: { $like: remoteCmd[1] } } });
       if(car && car.userId) {
-        console.log(car.userId);
         let user = yield User.findOne({ 
           where: { 
             id: car.userId,
-            email: { $like: remoteCmd[3] }
+            email: { $like: remoteCmd[2] }
           }
         });
-        console.log(user);
         if(user) {
-          yield notify.slack({ text : `:grey_exclamation: ${user.link()} unlocked ${ car.link() } from a different number (${ opts.phone }).` }, { channel : '#rental-alerts' });
+          yield notify.slack({ text : `:grey_exclamation: ${user.link()} unlocked ${ car.link() } from a different number via email (${ opts.phone })!` }, { channel : '#rental-alerts' });
 
           // first immobilize then unlock
           yield cars.lockImmobilizer(car.id, user);
           yield cars.unlockCar(car.id, user);
-          return true;
+          return false;
         }
       }
     }
