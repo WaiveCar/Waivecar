@@ -119,7 +119,7 @@ module.exports = {
     }
 
     // accessing a car from someone else's phone ... top secret command!
-    remoteCmd = command.match(/^(lock|unlock) (waive\d{1,3}) ([^\s]+@[^\s]*\.\w*)$/);
+    remoteCmd = command.match(/^unlock (waive\d{1,3}) ([^\s]+@[^\s]*\.\w*)$/);
     if(remoteCmd) {
       let car = yield Car.findOne({where: { license: { $like: remoteCmd[2] } } });
       if(car && car.userId) {
@@ -130,7 +130,11 @@ module.exports = {
           }
         });
         if(user) {
-          yield cars[remoteCmd[1] + 'Car'](car.id, user);
+          yield notify.slack({ text : `:grey_exclamation: ${user.link()} unlocked ${ car.link() } from a different number (${ opts.phone }).` }, { channel : '#rental-alerts' });
+
+          // first immobilize then unlock
+          yield cars.lockImmobilizer(car.id, user);
+          yield cars.unlockCar(car.id, user);
           return true;
         }
       }
