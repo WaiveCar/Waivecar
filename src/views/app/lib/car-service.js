@@ -20,12 +20,14 @@ module.exports = class Car extends Service {
     this.executeCommand = this.executeCommand.bind(this);
   }
 
-  executeCommand(car, command) {
+  executeCommand(car, command, opts) {
+    opts = opts || {};
+
     if(command === 'refresh') {
       return this.setCar(car.id);
     }
     this.setState('isLoading', true);
-    api.put(`/cars/${ car.id }/${ command }`, { }, function (err, model) {
+    api.put(`/cars/${ car.id }/${ command }`, opts, function (err, model) {
       this.setState('isLoading', false);
       if (err) {
         snackbar.notify({

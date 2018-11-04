@@ -390,47 +390,34 @@ class CarsShowView extends React.Component {
     }
   }
 
-  toggleHidden(car) {
-    if (car.adminOnly) {
-      this.service.executeCommand(car, 'visible');
-    } else {
-      if (car.booking) {
-        snackbar.notify({
-          type    : 'danger',
-          message : 'Car is in active rental. Hide from app anyway?',
-          action : {
-            title : 'CONTINUE',
-            click : () => {
-              snackbar.dismiss();
-              this.service.executeCommand(car, 'hidden');
-            }
-          }
-        });
-      } else {
-        this.service.executeCommand(car, 'hidden');
-      }
-    }
-  }
-
   toggleService(car) {
-    if (car.adminOnly) {
-      this.service.executeCommand(car, 'service');
+    opts = {};
+    if (car.inRepair) {
+      opts.reason = prompt("How much did it cost to do the repair listed?\n" + car.repairReason);
     } else {
-      if (car.booking) {
+      opts.reason = prompt("What is wrong with the vehicle?");
+      if(!opts.reason) {
         snackbar.notify({
           type    : 'danger',
-          message : 'Car is in active rental. Set repair anyway?',
-          action : {
-            title : 'CONTINUE',
-            click : () => {
-              snackbar.dismiss();
-              this.service.executeCommand(car, 'repair');
-            }
-          }
+          message : 'You need to have a reason.'
         });
-      } else {
-        this.service.executeCommand(car, 'repair');
-      }
+        return;
+      } 
+    }
+    if (car.booking) {
+      snackbar.notify({
+        type    : 'danger',
+        message : 'Car is in active rental. Set repair anyway?',
+        action : {
+          title : 'CONTINUE',
+          click : () => {
+            snackbar.dismiss();
+            this.service.executeCommand(car, 'repair', opts);
+          }
+        }
+      });
+    } else {
+      this.service.executeCommand(car, 'repair', opts);
     }
   }
 
@@ -451,7 +438,7 @@ class CarsShowView extends React.Component {
   }
 
   hasTag = (tag) => {
-    return this.state.car.cars[0].tagList.filter(item => item.groupRole.name === tag).length > 0;
+    return this.state.car.cars[0].tagList ? this.state.car.cars[0].tagList.filter(item => item.groupRole.name === tag).length > 0 : false;
   }
 
   submit = (event) => {
@@ -486,7 +473,7 @@ class CarsShowView extends React.Component {
       {
         ref : 3,
         checked  : car.inRepair,
-        label    : car.inRepair ? 'Put in Service' : 'Make Repair',
+        label    : car.inRepair ? <div>Put in Service<em className='reason'>{moment(car.lastServiceAt).format('YYYY/MM/DD')} { car.repairReason }</em></div> : 'Make Repair',
         onChange : this.toggleService.bind(this, car)
       },
       {
@@ -514,7 +501,7 @@ class CarsShowView extends React.Component {
           Controls for { car.license }
         </h3>
         <div className="box-content">
-          <div className="container-fluid">
+          <div className="container-fluid car-controls">
             <div className="row">
               <div className="col-md-6 col-xs-12">
                 <Button
@@ -674,25 +661,24 @@ class CarsShowView extends React.Component {
           details[1] ?
             <div className="after-middle">
               <span className='offset'>{moment.utc(moment(details[1].created_at).diff(bookingStart)).format('H:mm')}</span> {moment(details[1].created_at).format('HH:mm YYYY/MM/DD')}  { link }
-
             </div>
-          : { link } 
+          : <div> { link } </div>
 
         }
         {(rowsToRender[0] && rowsToRender[0].length) &&
           <div>
             {rowList.map((row, i) => {
               return (
-                <div>
+                <div key={i}>
                   {row.length && 
-                      <div className={bookingMiddle && (moment(row[0].created_at).diff(bookingStart) < bookingMiddle ? 'before-middle' : 'after-middle')}>
+                      <div className={bookingMiddle && (moment(row[0].created_at).diff(bookingStart) < bookingMiddle ? 'ts before-middle' : 'ts after-middle')}>
                       <span className='offset'>{`${moment.utc(moment(row[0].created_at).diff(bookingStart)).format('H:mm')}`}</span>
                     </div>
                   }
-                  <div key={i} className="dmg-row">
+                  <div className="dmg-row">
                     {row.map((image, j) =>  { 
                       return image && image.file && ( 
-                        <div className="damage-image-holder">
+                        <div key={j} className="damage-image-holder">
                           <a href={`${API_URI}/file/${image.file.id}` } target="_blank" key={j}>
                             <img className="damage-image" src={`${API_URI}/file/${image.file.id}`} />
                           </a>

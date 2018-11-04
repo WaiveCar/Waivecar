@@ -19,7 +19,7 @@
   }
   [data-react-toolbox="checkbox"] {
     margin: 0;
-    :last-child {
+    >:last-child {
       font-size : 1rem;
     }
   }
@@ -133,6 +133,10 @@
   border-bottom: 1px solid #bbb;
   padding-top: 0.5rem;
   .booking-link { float: right }
+  .ts {
+    position: absolute;
+    background: rgba(255,255,255,0.95);
+  }
   .offset {
     display: inline-block;
     font-family: monospace;
@@ -148,6 +152,16 @@
   margin: -0.15rem 0 0.75rem;
   >* {
     width: 25%;
+  }
+}
+
+.car-controls {
+  em.reason {
+    display: block;
+    font-style: normal;
+    margin-top: -1.3rem;
+    font-size: 11px;
+    color: #444;
   }
 }
 
