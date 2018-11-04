@@ -504,21 +504,25 @@ module.exports = {
     if(!model.inRepair) {
       if(!payload.reason && !model.inRepair) {
         throw error.parse({
-          message : 'You needs a reason to put something in repair'
-        }, 401);
+          message : 'You need a reason to put something in repair'
+        }, 400);
       }
+      yield notify.notifyAdmins(`:face_with_head_bandage: ${ _user.link() } marked ${ model.link() } in repair for "${ payload.reason }"`, ['slack'], {channel: '#rental-alerts'});
+
       yield model.update({
         lastServiceAt: new Date(),
         repairReason: payload.reason,
         inRepair: !model.inRepair
       });
     } else {
+      yield notify.notifyAdmins(`:male-doctor: ${ _user.link() } unmarked ${ model.link() } in repair for "${ model.repairReason }" and said it cost $${ payload.reason }`, ['slack'], {channel: '#rental-alerts'});
       yield model.update({
         lastServiceAt: null,
+        repairReason: null,
         inRepair: !model.inRepair
       });
     }
-    yield LogService.create({carId: id, action: ['REPAIR_END', 'REPAIR_START'][model.inRepair]}, _user);
+    yield LogService.create({carId: id, action: model.inRepair ? 'REPAIR_START' : 'REPAIR_END'}, _user);
 
     // we trick the relay into hiding cars that are set
     // to repair for legacy versions of the app so that
