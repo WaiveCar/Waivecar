@@ -43,6 +43,8 @@ scheduler.process('have-cars-moved', function*(job) {
         // If the car is already in the object and has not moved, its time is incremented and
         // a slack notification is sent out
         carChecker[car.license].timeSitting += timerSettings.value;
+        // This needs to be more useful
+        /*
         yield notify.notifyAdmins(
           `:fishing_pole_and_fish: ${car.license} has been sitting for ${
             carChecker[car.license].timeSitting
@@ -50,6 +52,7 @@ scheduler.process('have-cars-moved', function*(job) {
           ['slack'],
           {channel: '#rental-alerts'},
         );
+        */
       } else {
         // If the car has moved, it is deleted from the object
         delete carChecker[car.license];
