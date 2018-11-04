@@ -69,13 +69,13 @@ Bento.Register.Controller('CarsController', function(controller) {
       case 'refresh'            : return yield car.refresh(id, this.auth.user);
       case 'available'          : return yield car.updateAvailability(id, true, this.auth.user);
       case 'unavailable'        : return yield car.updateAvailability(id, false, this.auth.user);
-      case 'repair'             : return yield car.updateRepair(id, this.auth.user);
+      case 'repair'             : return yield car.updateRepair(id, this.payload, this.auth.user);
       case 'visible'            : return yield car.updateVisibility(id, true, this.auth.user);
       case 'hidden'             : return yield car.updateVisibility(id, false, this.auth.user);
       case 'kick'               : return yield car.kickUser(id, this.auth.user);                                
       case 'retrieve'           : return yield car.retrieve(id, this.auth.user);
       case 'instabook'          : return yield car.instaBook(id, this.auth.user);
-      case 'instaend'          : return yield car.instaEnd(id, this.auth.user);
+      case 'instaend'           : return yield car.instaEnd(id, this.auth.user);
       case 'rentable'           : return yield car.rentable(id, this.auth.user);
       
       //

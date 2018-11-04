@@ -213,6 +213,10 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       type : Sequelize.DATE
     },
 
+    repairReason : {
+      type : Sequelize.STRING
+    },
+
     lastServiceAt : {
       type : Sequelize.DATE
     },

@@ -502,11 +502,28 @@ module.exports = {
     return model;
   },
 
-  *updateRepair(id, _user) {
+  *updateRepair(id, payload, _user) {
     access.verifyAdmin(_user);
     let model = yield Car.findById(id);
 
-    yield model.update({inRepair: !model.inRepair});
+    if(!model.inRepair) {
+      if(!payload.reason && !model.inRepair) {
+        throw error.parse({
+          message : 'You needs a reason to put something in repair'
+        }, 401);
+      }
+      yield model.update({
+        lastServiceAt: new Date(),
+        repairReason: payload.reason,
+        inRepair: !model.inRepair
+      });
+    } else {
+      yield model.update({
+        lastServiceAt: null,
+        inRepair: !model.inRepair
+      });
+    }
+    yield LogService.create({carId: id, action: ['REPAIR_END', 'REPAIR_START']model.inRepair}, _user);
 
     // we trick the relay into hiding cars that are set
     // to repair for legacy versions of the app so that
