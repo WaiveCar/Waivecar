@@ -111,8 +111,6 @@ def outliers_by_user(booking_list):
     output = {}
     for user in user_names:
         output[user_names[user]] = user_ratios[user]
-    for row in output:
-        print(row, ": ", output[row])
 
     return user_ratios
 
@@ -121,5 +119,6 @@ if __name__ == "__main__":
     standard_deviation = get_standard_deviation(sit_times)
     outliers = get_outlier_bookings(standard_deviation, sit_times, 0)
     users_with_outliers = outliers_by_user(outliers) 
+    print(json.dumps(users_with_outliers))
     mysql_connection.close()
 
