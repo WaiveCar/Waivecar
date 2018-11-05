@@ -54,6 +54,11 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       defaultValue : null
     },
 
+    sitTimeOutliers: {
+      type: Sequelize.FLOAT,
+      defaultValue: 0
+    },
+
     facebook : {
       type   : Sequelize.STRING,
       unique : true
