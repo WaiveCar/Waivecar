@@ -124,10 +124,9 @@ scheduler.process('check-user-levels', function*(job) {
 });
 
 module.exports = function*() {
-  //scheduler.cancel('check-user-levels');
   scheduler.add('check-user-levels', {
     init: true,
     repeat: true,
-    timer: {value: 24, type: 'seconds'},
+    timer: {value: 24, type: 'hours'},
   });
 };
