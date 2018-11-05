@@ -92,9 +92,10 @@ scheduler.process('check-user-levels', function*(job) {
       );
     }
   }
+  console.log('timestamp? : ', moment.utc().subtract(3, 'months').format('YYYY-MM-DD'));
   let sitTimesOutput = JSON.parse(
     yield execPromise(
-      `python3 analysis/sitTimes.py ${JSON.stringify(mysqlConfig)}`,
+      `python3 analysis/sitTimes.py ${JSON.stringify(mysqlConfig)} ${JSON.stringify(moment.utc().subtract(3, 'months').format('YYYY-MM-DD'))}`,
     ),
   );
   for (let id in sitTimesOutput) {

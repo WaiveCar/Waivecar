@@ -6,6 +6,7 @@ import sys
 from statistics import pstdev, stdev 
 
 db_config = json.loads(sys.argv[1])
+start_date = sys.argv[2]
 
 mysql_connection = mysql.connect(database=db_config['database'], user=db_config['username'], password=db_config['password'])
 cursor = mysql_connection.cursor()
@@ -14,10 +15,10 @@ def get_sit_times():
     cursor.execute("""select bookings.id, bookings.car_id, booking_details.type, booking_details.longitude,
     booking_details.latitude, booking_details.created_at, bookings.user_id from bookings
     join booking_details on bookings.id = booking_details.booking_id 
-    where date(bookings.created_at) > date('2018-09-01') 
+    where date(bookings.created_at) > date("{}") 
     and hour(bookings.created_at) between 7 + 7 and 20 + 7 
     order by car_id desc, bookings.created_at asc
-    ;""")
+    ;""".format(start_date))
 
     line = cursor.fetchone()
 
