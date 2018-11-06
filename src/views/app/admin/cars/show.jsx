@@ -508,12 +508,12 @@ class CarsShowView extends React.Component {
       {
         ref : 1,
         label    : 'Unlock',
-        onChange : this.service.executeCommand.bind(this, car, 'unlock-doors')
+        onChange : this.service.executeCommand.bind(this, car, 'unlock-doors', null)
       },
       {
         ref: 2,
         label    : 'Lock',
-        onChange : this.service.executeCommand.bind(this, car, 'lock-doors')
+        onChange : this.service.executeCommand.bind(this, car, 'lock-doors', null)
       },
       {
         ref : 3,
