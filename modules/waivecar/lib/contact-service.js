@@ -46,19 +46,20 @@ module.exports = {
       available: "List available WaiveCars",
       book: "Book a WaiveCar. Example:\n   book waive14",
       rush: "WaiveRush a WaiveCar (flat rate)",
-      commands: null,
       // SECRET!!!!
       // charge: "Charge a WaiveCar with EVgo",
       save: "Add 20 additional minutes to get to a WaiveCar reservation for $4.20",
       "save less": "Add 10 additional minutes to get to a WaiveCar reservation for $1.00",
-      less: null,
       abort: "Cancel your booking",
+      commands: null,
       cancel: null,
+      less: null,
+      access: null,
+      complete: null,
+      notify: null,
       rebook: "Rebook the same WaiveCar (possibly for a fee)",
       start: "Start your ride",
       finish: "Finish your ride",
-      complete: null,
-      notify: null,
       lock: "Lock the WaiveCar",
       unlock: "Unlock the WaiveCar",
       account: "Information about your account",
@@ -142,8 +143,11 @@ module.exports = {
 
     if(user) {
       for(var row of [
-        [/\sunlock\s/i, 'unlock'],
+        [/\sunlock/i, 'unlock'],
+        [/^unlock/i, 'unlock'],
+        [/\saccount/i, 'account'],
         [/\slock\s/i,   'lock'],
+        [/(immobilize|not starting)/i, 'access'],
         [/^start (waive|my ride|ride)/i,'start'],
         [/(end|finish)\s(waive|my\sride|ride)/i,'finish'],
         [/^end(\s\w+|)$/i,'finish']
@@ -362,6 +366,8 @@ module.exports = {
       } else if (command === 'cancel' || command === 'abort') {
         command = 'cancel';
         yield booking.cancel(id, user);
+      } else if (command === 'access') {
+        yield cars.accessCar(currentBooking.carId, user);
       } else if (command === 'unlock') {
         yield cars.unlockCar(currentBooking.carId, user);
       } else if (command === 'lock') {
@@ -377,7 +383,7 @@ module.exports = {
     yield notify.slack({ text : `:selfie: ${ user.link() } sent "${ opts.raw }" ${ message }` }, { channel : '#reservations' });
     
     if(!success || sendToSupport) {
-      yield notify.slack({ text : `:selfie: ${ user.link() } sent "${ opts.raw }" ${ message }` }, { channel : '#app_support' });
+      yield notify.slack({ text : `${ user.link() } sent "${ opts.raw }" ${ message }` }, { channel : '#app_support' });
     }
 
     return true;
