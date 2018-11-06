@@ -29,21 +29,13 @@ Bento.Register.Controller('CarsController', function(controller) {
     return yield car.update(id, this.payload, this.auth.user);
   };
 
+  // This is the retrieve/rentable utility that can be
+  // installed on the fleet's phones.
   controller.magic = function *(command) {
     let Car = Bento.model('Car');
     let close = yield car.closest(this.query.longitude, this.query.latitude);
     let carList = close.res;
     let all = yield Car.find();
-
-    if(carList.length === 1 && close < 400) {
-      let res = yield controller.command.call(this, carList[0].id, command);
-      return {
-        car: carList,
-        distance: close.distance,
-        all: all,
-        status: res
-      };
-    } 
 
     return { 
       candidates: carList,
@@ -53,12 +45,6 @@ Bento.Register.Controller('CarsController', function(controller) {
   };
 
 
-  /**
-   * Execute a command on a single car.
-   * @param  {Number} id The Car Id.
-   * @param  {String} command lock/unlock.
-   * @return {Object}
-   */
   controller.command = function *(id, command) {
     switch (command) {
       case 'ble'                : return yield car.ble(id, this.auth.user);
@@ -70,6 +56,7 @@ Bento.Register.Controller('CarsController', function(controller) {
       case 'available'          : return yield car.updateAvailability(id, true, this.auth.user);
       case 'unavailable'        : return yield car.updateAvailability(id, false, this.auth.user);
       case 'repair'             : return yield car.updateRepair(id, this.payload, this.auth.user);
+      case 'total-loss'         : return yield car.updateTotalLoss(id, this.auth.user);
       case 'visible'            : return yield car.updateVisibility(id, true, this.auth.user);
       case 'hidden'             : return yield car.updateVisibility(id, false, this.auth.user);
       case 'kick'               : return yield car.kickUser(id, this.auth.user);                                

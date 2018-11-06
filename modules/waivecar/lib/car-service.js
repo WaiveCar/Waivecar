@@ -540,6 +540,30 @@ module.exports = {
     return model;
   },
 
+  *updateTotalLoss(id, _user) {
+    access.verifyAdmin(_user);
+    let model = yield Car.findById(id);
+
+    yield model.update({isTotalLoss: !model.isTotalLoss});
+    if (model.isTotalLoss && !model.inRepair) {
+      yield model.update({
+        inRepair: true,
+        isAvailable: false,
+      });
+    }
+    var obj = model.toJSON();
+    if(model.isTotalLoss) {
+      obj.isAvailable = false;
+    }
+
+    relay.emit('cars', {
+      type : 'update',
+      data : obj
+    });
+
+    return model;
+  },
+
   *updateVisibility(id, isVisible, _user) {
     access.verifyAdmin(_user);
     let model = yield Car.findById(id);
