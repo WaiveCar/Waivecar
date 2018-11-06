@@ -21,7 +21,7 @@ module.exports = {
   },
 
   
-  *returnError(user, err, base) {
+  *returnError(user, err, what) {
     if(err.message) {
       let parts = err.message.split('\t');
       let message = parts[0].replace(/<br>/g, '\n');
@@ -30,13 +30,16 @@ module.exports = {
       if(err.options) {
         err.options.forEach((row) => {
           if(row.hotkey) {
-            message += `\n${ row.title }. Reply "${base} ${row.hotkey}"`;
+            message += `\n${ row.title }. Reply "${row.hotkey}"`;
           }
         });
       }
 
-      yield notify.sendTextMessage(user, message);
+    } else {
+      message = "Sorry something went wrong.";
     }
+    yield notify.sendTextMessage(user, message + " This is an automated message. Your texts have been forwarded to our support staff.");
+    return message;
   },
 
   *attemptAction(user, command, opts) {
@@ -143,13 +146,16 @@ module.exports = {
 
     if(user) {
       for(var row of [
-        [/\sunlock/i, 'unlock'],
-        [/^unlock/i, 'unlock'],
-        [/\saccount/i, 'account'],
+        // sometimes we get messages with both "card" and "account" so
+        // we pass those up.
+        [/ card /, false],
+        [/ unlock/, 'unlock'],
+        [/^unlock/, 'unlock'],
+        [/ account/, 'account'],
         [/\slock\s/i,   'lock'],
         [/(immobilize|not starting)/i, 'access'],
         [/^start (waive|my ride|ride)/i,'start'],
-        [/(end|finish)\s(waive|my\sride|ride)/i,'finish'],
+        [/(end|finish) (waive|(my |the |)ride)/i,'finish'],
         [/^end(\s\w+|)$/i,'finish']
       ]) {
         let [regex, todo] = row;
@@ -337,21 +343,20 @@ module.exports = {
     let id = currentBooking.id;
 
     let success = true;
+    let response;
     if (command === 'finish' || command === 'complete') {
       command = 'finish';
       try {
         yield booking.end(id, user);
       } catch(ex) {
         success = false;
-        yield this.returnError(user, ex);
-        console.log(ex.stack);
+        yield this.returnError(user, ex, command);
       }
       try {
         yield booking.complete(id, user);
       } catch(ex) {
         success = false;
-        yield this.returnError(user, ex);
-        console.log(ex.stack);
+        yield this.returnError(user, ex, command);
       }
     }
 
@@ -376,10 +381,10 @@ module.exports = {
       }
     } catch(ex) {
       success = false;
-      yield this.returnError(user, ex);
+      response = yield this.returnError(user, ex, command);
     }
 
-    let message = success ? `and the computer ${ command }ed automatically` : `but the computer *failed* to ${ command }!`;
+    let message = success ? `and the computer ${ command }ed` : `but the computer *failed* to ${ command }! We sent "${response}"`;
       
     yield notify.slack({ text : `:selfie: ${ user.link() } sent "${ opts.raw }" ${ message }` }, { channel : '#reservations' });
     
