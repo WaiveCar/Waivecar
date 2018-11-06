@@ -58,7 +58,7 @@ module.exports = class Logs extends React.Component {
       carLink = <Link to={ `/cars/${ log.car.id }`}>{ log.car.license || log.car.id }</Link>
     }
     let verbMap = {
-      REPAIR_START: 'repaired',
+      REPAIR_START: 'is repairing',
       REPAIR_END: 'fixed',
       CREATE_BOOKING: 'created',
       END_BOOKING: 'ended',
