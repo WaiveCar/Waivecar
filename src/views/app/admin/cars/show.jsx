@@ -43,6 +43,7 @@ class CarsShowView extends React.Component {
       carPath : null,
       damageFilter: null,
       instaDisabled: '',
+      hideDangerZone: true,
     };
     dom.setTitle('Car');
     this.service = new Service(this);
@@ -225,6 +226,22 @@ class CarsShowView extends React.Component {
     );
   }
 
+  toggleTotalLoss(car) {
+    api.put(`/cars/${car.id}/total-loss`, {}, (err, car) => {
+      if (err) {
+        return snackbar.notify({
+          type    : 'danger',
+          message : 'Failed to toggle total loss.',
+        });
+      }
+      this.service.update(car);
+      return snackbar.notify({
+        type    : 'success',
+        message : `Vehicle now marked as ${car.isTotalLoss ? 'a total loss' : 'not a total loss'}.`,
+      });
+    });
+  }
+
   renderCarForm(car) {
     return (
       <div className="box hidden-xs-down">
@@ -244,6 +261,19 @@ class CarsShowView extends React.Component {
             ]}
             submit = { this.service.update }
           />
+          <div className="row">
+            <div>
+              Danger Zone <a onClick={() => this.setState({hideDangerZone: !this.state.hideDangerZone})}>
+                ({this.state.hideDangerZone ? 'Show' : 'Hide'})
+              </a>
+              <div className={this.state.hideDangerZone ? 'hide' : ''}>
+                Mark this car has a total loss: 
+                <div>
+                  <button className="btn btn-primary btn-sm"  onClick={() => this.toggleTotalLoss(car)}>{car.isTotalLoss ? 'Unmark' : 'Mark'}</button>
+                </div>
+              </div>
+            </div>
+          </div>
           <form role="form" onSubmit={ this.submit }>
             <div className="form-group row">
               <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Tags</label>
