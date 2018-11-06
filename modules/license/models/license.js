@@ -33,11 +33,30 @@ Bento.Register.Model('License', 'sequelize', function(model, Sequelize) {
       allowNull : false
     },
 
+    street1 : {
+      type : Sequelize.STRING(255),
+      allowNull : true
+    },
+
+    street2 : {
+      type : Sequelize.STRING(255),
+      allowNull : true
+    },
+
+    city : {
+      type : Sequelize.STRING(255),
+      allowNull : true
+    },
+
     state : {
       type      : Sequelize.STRING(20),
       allowNull : false
     },
 
+    zip : {
+      type : Sequelize.STRING(15),
+      allowNull : true
+    },
 
     firstName : {
       type : Sequelize.STRING(80)
