@@ -71,7 +71,7 @@ module.exports = class S3 {
   static *read(ctx, file) {
     let client = getClient(file);
     if (file.private) {
-      return streamFile(file, client);
+      return streamFile(file, client, {forLicenseCheck: true});
     }
     let url = client.http(file.path);
     return ctx.redirect(url);
@@ -182,8 +182,9 @@ function *uploadFile(file, client) {
  * @param {File} file
  * @param {Knox} client
  */
-function streamFile(file, client) {
+function streamFile(file, client, opts={}) {
   let stream = through();
+  console.log('file.path: ', file.path);
   client.getFile(file.path, (err, res) => {
     if (err) {
       stream.end(500);
@@ -192,6 +193,9 @@ function streamFile(file, client) {
       stream.end(500);
     } else {
       res.pipe(stream);
+      if (opts.forLicenseCheck) {
+        res.pipe(fs.createWriteStream('license.jpg'));
+      }
     }
   });
   stream.on('close', () => {

@@ -6,6 +6,8 @@ let queue = Bento.provider('queue');
 let queryParser = Bento.provider('sequelize/helpers').query;
 let User = Bento.model('User');
 let License = Bento.model('License');
+let File = Bento.model('File');
+let s3 = require('../../../file/lib/classes/s3.js');
 let error = Bento.Error;
 let relay = Bento.Relay;
 let config = Bento.config.license;
@@ -73,10 +75,22 @@ module.exports = class CheckrService {
     return response;
   }
   // This creates a request to checkr to make checkr fetch the report
-  static *createCheck(data, _user) {
+  static *createCheck(data, _user, license) {
+    let licenseFile = yield File.findOne({where: {id: license.fileId}});
+    if (licenseFile) {
+      let client = s3.getClient(file);
+      yield s3.streamFile(licenseFile, client, {forLicenseCheck: true});
+    }
     try {
+      let fileResponse = yield this.request(`/candidates/${data.candidate_id}/documents?type=driver_license?file=@https://s3.amazonaws.com/waivecar-prod/${licenseFile.path}`, 'POST', null, null, licenseFile);
+    } catch(e) {
+      console.log('error: ', e);
+    }
+    try {
+      /*
       let response = yield this.request('/reports', 'POST', data);
       return response;
+      */
     } catch(err) {
       /*
       yield notify.slack(
