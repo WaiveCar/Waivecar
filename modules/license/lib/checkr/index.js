@@ -61,7 +61,7 @@ module.exports = class CheckrService {
       country: 'USA',
       driver_license_number: license.number,
       driver_license_state: license.state,
-      street: license.street1 + license.street2,
+      street: [license.street1, license.street2].join(' '),
       city: license.city,
       zip: license.zip
     };

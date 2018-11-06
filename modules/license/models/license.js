@@ -54,7 +54,7 @@ Bento.Register.Model('License', 'sequelize', function(model, Sequelize) {
     },
 
     zip : {
-      type : Sequelize.INTEGER,
+      type : Sequelize.STRING(15),
       allowNull : true
     },
 
