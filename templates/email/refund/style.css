@@ -14,22 +14,3 @@ body, * {
 .main {
   padding: 20px;
 }
-#logo{font-family:sans-serif;margin-bottom:1rem;font-size:18px}
-#logo b{
-  color:white;
-  display:inline-block;
-  position:relative;
-  top:-2px;
-  font-family:serif;
-  font-weight:500;
-  transform:rotate(18deg) skewY(-46deg);
-}
-#logo em{
-  display:inline-block;
-  text-align:center;
-  margin-right:0.25em;
-  background:green;
-  width:1em;
-  height:1em;
-  border-radius:100px;
-}
