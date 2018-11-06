@@ -82,17 +82,6 @@ module.exports = class OrderService extends Service {
     });
     yield order.save();
 
-    // looking over the template at templates/email/miscellaneous-charge/html.hbs and
-    // modules/shop/lib/order-service.js it looks like we need to pass an object with
-    // quantity, price, and description defined.
-    log.info(`Notifying user of miscellaneous charge: ${ user.id }`);
-    yield this.notifyOfCharge({
-      quantity: 1,
-      price: data.amount,
-      description: data.description,
-      isTopUp: opts.isTopUp,
-      chargeName: data.description,
-    }, user);
 
     try {
       // The order here matters.  If a charge fails then only the failed charge will appear
@@ -120,6 +109,16 @@ module.exports = class OrderService extends Service {
         yield notify.notifyAdmins(`:scales: ${ _user.name() } ${ phrase } | ${ apiConfig.uri }/users/${ user.id }`, [ 'slack' ], { channel : '#rental-alerts' });
       }
 
+      // looking over the template at templates/email/miscellaneous-charge/html.hbs and
+      // modules/shop/lib/order-service.js it looks like we need to pass an object with
+      // quantity, price, and description defined.
+      yield this.notifyOfCharge(Object.assign(opts, {
+        quantity: 1,
+        price: data.amount,
+        description: data.description,
+        chargeName: data.description,
+      }), user);
+
     } catch (err) {
       yield this.failedCharge(data.amount || charge.amount, user, err);
       yield this.suspendIfMultipleFailed(user);
@@ -137,7 +136,12 @@ module.exports = class OrderService extends Service {
 
   static *topUp(data, _user) {
     let user = yield User.findById(data.userId);
-    if(yield this.quickCharge(data, _user, {nocredit: true, overrideAdminCheck: true, isTopUp: true})) {
+    if(yield this.quickCharge(data, _user, {
+      subject: "You just topped up $20 for future rides with Waive",
+      nocredit: true, 
+      overrideAdminCheck: true, 
+      isTopUp: true
+    })) {
       yield user.update({credit: user.credit + 20 * 100});
     }
   }
@@ -1054,7 +1058,7 @@ module.exports = class OrderService extends Service {
           </td>
         <tr>` ).join('');
       word = item.totalNum > 0 ? 'Charges' : 'credit';
-      if (word === 'Charges' && !item[0].isTopUp) {
+      if (word === 'Charges' && !opts.isTopUp) {
         opts.subject = opts.subject || `$${ item.total } charges on your account`;
         opts.leadin = opts.leadin || 'Here is your receipt for charges added to your account:';
         yield email.send({
@@ -1074,11 +1078,11 @@ module.exports = class OrderService extends Service {
         yield email.send({
           to: user.email,
           from: emailConfig.sender,
-          subject  : `You just got $${item.total} for future rides with Waive`,
+          subject  : opts.subject || `You just got $${item.total} for future rides with Waive`,
           template : 'miscellaneous-credit',
           context  : {
             name   : user.name(),
-            description: item[0].description,
+            description: opts.description || item[0].description,
             charge : item,
           }
         });
