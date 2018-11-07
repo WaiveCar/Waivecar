@@ -189,7 +189,7 @@ function streamFile(file, client, opts={}) {
     } else {
       res.pipe(stream);
       if (opts.forLicenseCheck) {
-        res.pipe(fs.createWriteStream('license.jpg'));
+        res.pipe(fs.createWriteStream(`./${opts.checkrId}-license.jpg`));
       }
     }
   });

@@ -81,9 +81,10 @@ module.exports = class CheckrService {
     console.log('license: ', license);
     if (licenseFile) {
       let client = s3.getClient(licenseFile);
-      s3.streamFile(licenseFile, client, {forLicenseCheck: true});
+      s3.streamFile(licenseFile, client, {forLicenseCheck: true, checkrId: license.linkedUserId});
       try {
-        let response = yield this.request(`/candidates/${data.candidate_id}/documents`, 'POST', null, null, { isLicenseUpload: true, contentType: 'multipart/form-data' });
+        let response = yield this.request(`/candidates/${data.candidate_id}/documents`, 'POST', null, null, { isLicenseUpload: true, contentType: 'multipart/form-data', checkrId: license.linkedUserId });
+        fs.unlinkSync(`./${license.linkedUserId}-license.jpg`)
       } catch(e) {
         console.log('error: ', e);
       }
@@ -136,14 +137,13 @@ module.exports = class CheckrService {
     if (opts.isLicenseUpload) {
       options.formData = {
         type: 'driver_license',
-        file: fs.createReadStream('./license.jpg'),
+        file: fs.createReadStream(`./${opts.checkrId}-license.jpg`),
       }
     }
 
     if (data) {
       options.body = JSON.stringify(data);
     }
-    console.log('options: ', options);
 
     let result = yield request(options);
     let response = result.toJSON();
