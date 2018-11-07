@@ -41,7 +41,7 @@ class CarsShowView extends React.Component {
     super(...args);
     this.state = {
       carPath : null,
-      damageFilter: null,
+      showDamage: false,
       instaDisabled: '',
       hideDangerZone: true,
     };
@@ -490,47 +490,37 @@ class CarsShowView extends React.Component {
   }
 
   instaBook(carId) {
-    this.setState({instaDisabled: 'disabled'}, () => {
-      api.put(`/cars/${carId}/instabook`, {} ,(err, response) => {
-        if (err) {
-          this.setState({instaDisabled: ''}, () => {
-            return snackbar.notify({
-              type    : 'danger',
-              message : err.message
-            });
-          });
-        }
-        this.service.setCar(this.id());
-        this.setState({instaDisabled: ''}, () => {
-          return snackbar.notify({
-            type: 'success',
-            message: 'InstaBook successful!',
-          });
+    api.put(`/cars/${carId}/instabook`, {} ,(err, response) => {
+      if (err) {
+        return snackbar.notify({
+          type    : 'danger',
+          message : err.message
         });
+      }
+      this.service.setCar(this.id());
+      return snackbar.notify({
+        type: 'success',
+        message: 'InstaBook successful!',
       });
     });
   }
 
   instaEnd(carId) {
-    this.setState({instaDisabled: 'disabled'}, () => {
+   if(confirm("End the ride immediately?")) { 
       api.put(`/cars/${carId}/instaend`, {} ,(err, response) => {
         if (err) {
-          this.setState({instaDisabled: ''}, () => {
-            return snackbar.notify({
-              type    : 'danger',
-              message : err,
-            });
+          return snackbar.notify({
+            type    : 'danger',
+            message : err,
           });
         }
         this.service.setCar(this.id());
-        this.setState({instaDisabled: ''}, () => {
-          return snackbar.notify({
-            type: 'success',
-            message: 'InstaEnd successful!',
-          });
+        return snackbar.notify({
+          type: 'success',
+          message: 'InstaEnd successful!',
         });
       });
-    });
+    }
   }
 
   renderCarActions(car) {
@@ -569,7 +559,10 @@ class CarsShowView extends React.Component {
         onChange : this.service.executeCommand.bind(this, car, 'refresh')
       }
     ];
+
     let isLocked = this.state.car.cars[0].isLocked, css = 'btn-gray';
+    let me = auth.user();
+
     return (
       <div className="box">
         <h3>
@@ -614,7 +607,11 @@ class CarsShowView extends React.Component {
                       <a style={{ marginRight: "10px" }} href={ `/users/${ car.userId }` }>{ car.user.firstName + " " + car.user.lastName }</a>
                       { 
                         car.booking ?
-                          <span>Booking #<a href={ `/bookings/${ car.booking.id }` }>{ car.booking.id }</a></span> :
+                          <span>Booking #<a href={ `/bookings/${ car.booking.id }` }>{ car.booking.id }</a>
+                            <div style={{ margin: "8px 0", padding: "10px 0 20px", textAlign: "center" }}>
+                              <a className='btn btn-sm col-xs-12 col-md-6' onClick={() => this.instaEnd(car.id)}>End Booking</a>
+                            </div>
+                          </span> :
                           <span>No booking. <a href="#" onClick={ this.service.executeCommand.bind(this,car,'kick')}>Kick user out</a></span>
                       }
                     </div>
@@ -629,9 +626,18 @@ class CarsShowView extends React.Component {
                         />
                         <button className="btn btn-primary btn-sm col-xs-6" onClick={ this.findUser.bind(this) }>Find User</button>
                       </div>
-                      <div className={ `row ${ this.state.user_find_name ? '' : 'hide' }` }>
-                        { this.renderUserSearch(car) }
-                      </div>
+                      { this.state.user_find_id ? 
+                        <div className='row'>
+                          { this.renderUserSearch(car) }
+                        </div>
+                        :
+                        <div className='row'>
+                          <div className='row'>
+                            <div style={{ padding: "10px 0" }} className="col-xs-6"><a target='_blank' href={ `/users/${ me.id }` }>#{me.id}</a> { me.firstName } { me.lastName }</div>
+                            <button className="btn btn-link col-xs-6" onClick={ this.instaBook.bind(this, car.id) }>Book & Start { car.license }</button>
+                          </div>
+                        </div>
+                      }
                     </div>
                 }
               </div>
@@ -645,23 +651,6 @@ class CarsShowView extends React.Component {
                 />
                 Updated: { this.service.getState('isLoading') ?  
                   <img src="../images/site/spinner.gif" /> : (car.lastUpdated ? car.lastUpdated : this.service.getState('updatedAt')) 
-                }
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-md-12 text-center">
-                <div className="p-t">
-                  <small className="text-danger hidden-xs-down">WARNING: These actions may remotely access and control the car</small>
-                </div>
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-md-12">
-                {!car.booking &&
-                  <button className={`btn btn-primary btn-sm col-xs-3 text-center pull-right ${this.state.instaDisabled}`} onClick={() => this.instaBook(car.id)}>InstaBook</button>
-                }
-                {(car.userId === auth.id) &&
-                  <button className={`btn btn-primary btn-sm col-xs-3 text-center pull-right ${this.state.instaDisabled}`} onClick={() => this.instaEnd(car.id)}>InstaEnd</button>
                 }
               </div>
             </div>
@@ -712,11 +701,14 @@ class CarsShowView extends React.Component {
         <h3>Damage and uncleanliness</h3>
         <div className="box-content">
           <div>
-            {this.state.damage && this.state.damage.map((row, i) =>
-              <div key={i}>
-                {this.renderBookingDamage(row)}
-              </div>
-            )}
+            {this.state.damage &&  (this.state.showDamage ?
+              this.state.damage.map((row, i) =>
+                <div key={i}>
+                  {this.renderBookingDamage(row)}
+                </div>
+                ) : <a className='btn' onClick={() => this.setState({showDamage: true})}>Show Photos</a>
+              )
+            }
           </div>
         </div>
       </div>
@@ -725,10 +717,9 @@ class CarsShowView extends React.Component {
 
   renderBookingDamage(booking) {
     let bookingList = booking.reports;
-    let { damageFilter } = this.state;
     let { details } = booking;
     let rowsToRender = [];
-    if (!damageFilter && bookingList.length >=8) {
+    if (bookingList.length >=8) {
       let other = bookingList.filter(item => item.type === 'other');
       let angles = bookingList.filter(item => item.type !== 'other');
       rowsToRender = [angles.slice(0, 4), angles.slice(4), other];
