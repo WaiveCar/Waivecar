@@ -544,6 +544,11 @@ module.exports = {
     access.verifyAdmin(_user);
     let model = yield Car.findById(id);
 
+    if( !model.isTotalLoss) {
+      yield notify.notifyAdmins(`:boom: ${ _user.link() } marked ${ model.link() } as a total loss.`, ['slack'], {channel: '#rental-alerts'});
+    } else {
+      yield notify.notifyAdmins(`:shrug: ${ _user.link() } decided ${ model.link() } isn't that bad after all and unmarked it as a total loss.`, ['slack'], {channel: '#rental-alerts'});
+    }
     yield model.update({isTotalLoss: !model.isTotalLoss});
     if (model.isTotalLoss && !model.inRepair) {
       yield model.update({
