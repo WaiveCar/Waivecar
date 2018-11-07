@@ -72,6 +72,11 @@ module.exports = {
     command = command.toLowerCase();
     let argCmd = command.match(/^(rush|book|details)\s(\w+|\w+\s\d+)$/i);
 
+    // This is a level text
+    if(command.match(/we have received your pickup request/)) {
+      return true;
+    }
+
     if(argCmd) {
       let license = argCmd[2].replace(/\s/g, '');
       let requestedCar = yield Car.findOne({
@@ -152,11 +157,12 @@ module.exports = {
         [/ unlock/, 'unlock'],
         [/^unlock/, 'unlock'],
         [/ account/, 'account'],
-        [/\slock\s/i,   'lock'],
-        [/(immobilize|not starting)/i, 'access'],
-        [/^start (waive|my ride|ride)/i,'start'],
-        [/(end|finish) (waive|(my |the |)ride)/i,'finish'],
-        [/^end(\s\w+|)$/i,'finish']
+        [/^lock/, 'lock'],
+        [/ lock /, 'lock'],
+        [/(immobilize|not starting)/, 'access'],
+        [/^start (waive|my ride|ride)/,'start'],
+        [/(end|finish) (waive|(my |the |)ride)/,'finish'],
+        [/^end(\s\w+|)$/,'finish']
       ]) {
         let [regex, todo] = row;
 
