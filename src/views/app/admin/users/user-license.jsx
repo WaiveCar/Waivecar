@@ -6,6 +6,7 @@ import { Form }     from 'bento/lib/helpers';
 import md5          from 'md5';
 import FormSelect   from 'react-select';
 import FormInput    from '../components/form-input';
+import License      from '../../user/profile/license.jsx';
 
 module.exports = class UserDetails extends React.Component {
 
@@ -118,10 +119,7 @@ module.exports = class UserDetails extends React.Component {
   render() {
     if (!this.state.license) {
       return (
-        <div className="box-empty">
-          <h3>License</h3>
-          This user has not yet registered a license
-        </div>
+        <License userId={this.props.id} />
       );
     }
     let license = this.state.license;

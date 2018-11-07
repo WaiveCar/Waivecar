@@ -4,9 +4,6 @@ import async                       from 'async';
 
 module.exports = class License extends Service {
 
-  /**
-   * Stores the provided context.
-   */
   constructor(ctx) {
     super(ctx, 'license', {
       licenses : []
@@ -21,8 +18,8 @@ module.exports = class License extends Service {
    * @param  {Object}   data
    * @param  {Function} reset
    */
-  submitLicense(data) {
-    this.addLicense(auth.user(), data, (err, license) => {
+  submitLicense(data, userId) {
+    this.addLicense(userId, data, (err, license) => {
       if (err) {
         return this.error(err.data ? err.data : err.message);
       }
@@ -57,9 +54,6 @@ module.exports = class License extends Service {
     });
   }
 
-  /**
-   * Adds a new license under the provided user.
-   */
   addLicense(user, license, done) {
     async.each([ 'state', 'number', 'birthDate', 'expirationDate', 'lastName', 'firstName', 'street1', 'street2', 'city', 'zip' ], function(field, next) {
       let currentValue = license.hasOwnProperty(field) ? license[field] : undefined;
@@ -76,7 +70,7 @@ module.exports = class License extends Service {
       }
 
       api.post('/licenses', {
-        userId     : user.id,
+        userId     : userId,
         firstName  : license.firstName,
         middleName : license.middleName,
         lastName   : license.lastName,
@@ -105,6 +99,7 @@ module.exports = class License extends Service {
       userId : userId
     }, (err, data) => {
       if (err) {
+        console.log('err: ', err);
         return this.error(err.message);
       }
       this.setState('licenses', data);
