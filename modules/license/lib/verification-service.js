@@ -32,7 +32,7 @@ module.exports = class LicenseVerificationService extends Service {
       // If the license has been provided, a check for it is created to be fetched later by the license-sync process
       payload.package = 'motor_vehicle_report';
       payload['candidate_id'] = license.linkedUserId;
-      check = yield Verification.createCheck(payload, _user);
+      check = yield Verification.createCheck(payload, _user, license);
       status = 'pending';
       checkId = check.id;
       reportId = check['motor_vehicle_report_id'];

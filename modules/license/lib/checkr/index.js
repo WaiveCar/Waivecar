@@ -7,7 +7,7 @@ let queryParser = Bento.provider('sequelize/helpers').query;
 let User = Bento.model('User');
 let License = Bento.model('License');
 let File = Bento.model('File');
-let s3 = require('../../../file/lib/classes/s3.js');
+let S3 = require('../../../file/lib/classes/s3.js');
 let error = Bento.Error;
 let relay = Bento.Relay;
 let config = Bento.config.license;
@@ -76,15 +76,17 @@ module.exports = class CheckrService {
   }
   // This creates a request to checkr to make checkr fetch the report
   static *createCheck(data, _user, license) {
+    let s3 = new S3;
     let licenseFile = yield File.findOne({where: {id: license.fileId}});
+    console.log('license: ', license);
     if (licenseFile) {
-      let client = s3.getClient(file);
-      yield s3.streamFile(licenseFile, client, {forLicenseCheck: true});
-    }
-    try {
-      let fileResponse = yield this.request(`/candidates/${data.candidate_id}/documents?type=driver_license?file=@https://s3.amazonaws.com/waivecar-prod/${licenseFile.path}`, 'POST', null, null, licenseFile);
-    } catch(e) {
-      console.log('error: ', e);
+      let client = s3.getClient(licenseFile);
+      s3.streamFile(licenseFile, client, {forLicenseCheck: true});
+      try {
+        let response = yield this.request(`/candidates/${data.candidate_id}/documents`, 'POST', null, null, { isLicenseUpload: true, contentType: 'multipart/form-data' });
+      } catch(e) {
+        console.log('error: ', e);
+      }
     }
     try {
       /*
@@ -121,19 +123,27 @@ module.exports = class CheckrService {
   }
 
   // Returns the Response from a Request aginst the Checkr API
-  static *request(resource, method, data, user) {
+  static *request(resource, method, data, user, opts={}) {
     let options = {
       url: config.checkr.uri + resource,
       method: method || 'GET',
       headers: {
         Accept: 'application/json',
-        'Content-Type': 'application/json',
+        'Content-Type': !opts.contentType ? 'application/json' : opts.contentType,
       },
     };
+
+    if (opts.isLicenseUpload) {
+      options.formData = {
+        type: 'driver_license',
+        file: fs.createReadStream('./license.jpg'),
+      }
+    }
 
     if (data) {
       options.body = JSON.stringify(data);
     }
+    console.log('options: ', options);
 
     let result = yield request(options);
     let response = result.toJSON();
@@ -142,6 +152,7 @@ module.exports = class CheckrService {
     if (response && response.body) {
       body = JSON.parse(response.body);
     }
+    console.log(body);
     fs.appendFile(
       '/var/log/outgoing/checkr.txt',
       JSON.stringify([options, body, response]) + '\n',
