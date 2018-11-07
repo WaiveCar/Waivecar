@@ -227,19 +227,21 @@ class CarsShowView extends React.Component {
   }
 
   toggleTotalLoss(car) {
-    api.put(`/cars/${car.id}/total-loss`, {}, (err, car) => {
-      if (err) {
+    if(confirm("Are you sure you want to change the salvage status of " + car.license + "?")) {
+      api.put(`/cars/${car.id}/total-loss`, {}, (err, car) => {
+        if (err) {
+          return snackbar.notify({
+            type    : 'danger',
+            message : 'Failed to toggle total loss.',
+          });
+        }
+        this.service.update(car);
         return snackbar.notify({
-          type    : 'danger',
-          message : 'Failed to toggle total loss.',
+          type    : car.isTotalLoss ? 'danger' : 'success',
+          message : `${car.license} marked as ${car.isTotalLoss ? 'a total loss' : '<b>NOT</b> a total loss'}.`,
         });
-      }
-      this.service.update(car);
-      return snackbar.notify({
-        type    : 'success',
-        message : `Vehicle now marked as ${car.isTotalLoss ? 'a total loss' : 'not a total loss'}.`,
       });
-    });
+    }
   }
 
   renderCarForm(car) {
@@ -267,9 +269,8 @@ class CarsShowView extends React.Component {
                 ({this.state.hideDangerZone ? 'Show' : 'Hide'})
               </a>
               <div className={this.state.hideDangerZone ? 'hide' : ''}>
-                Mark this car has a total loss: 
                 <div>
-                  <button className="btn btn-primary btn-sm"  onClick={() => this.toggleTotalLoss(car)}>{car.isTotalLoss ? 'Unmark' : 'Mark'}</button>
+                  <button className="btn btn-danger btn-xs"  onClick={() => this.toggleTotalLoss(car)}>{car.isTotalLoss ? 'Unmark' : 'Mark'}</button> { car.license } as a total loss.
                 </div>
               </div>
             </div>
