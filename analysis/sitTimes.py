@@ -73,9 +73,11 @@ def get_sit_times():
         real_sit_time += [(long, lat, time, freq)]
     
     
-    with open("sit-time-points.js", "w") as outfile:  
+    """
+    with open("/var/log/outgoing/sit-time-points.js", "w") as outfile:  
         outfile.write("{}{}".format("var points=", json.dumps(real_sit_time)))
     # The indicies in the subarray are [lat, lng, sit_time, booking_id, user_id]
+    """
     return sit_time
     #return list(map(lambda x: x[2], sit_time))
 
