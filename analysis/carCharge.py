@@ -7,6 +7,7 @@ import os
 import sys
 
 db_config = json.loads(sys.argv[1])
+
 mysql_connection = mysql.connect(database=db_config['database'], user=db_config['username'], password=db_config['password'])
 cursor = mysql_connection.cursor()
 

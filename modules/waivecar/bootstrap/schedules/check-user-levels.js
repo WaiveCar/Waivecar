@@ -54,7 +54,7 @@ scheduler.process('check-user-levels', function*(job) {
 
   yield appendFilePromise(
     '/var/log/outgoing/user-levels.txt',
-    `\n${new Date(Date.now()).toDateString()}:\n`,
+    `\n${new Date(Date.now()).toDateString()}:\nUser Level Updates:\n`,
   );
 
   let scriptOutput = JSON.parse(
@@ -91,6 +91,35 @@ scheduler.process('check-user-levels', function*(job) {
         `User ${user.id}: ${user.firstName} ${user.lastName} ${level}\n`,
       );
     }
+  }
+  let sitTimesOutput = JSON.parse(
+    yield execPromise(
+      `python3 analysis/sitTimes.py ${JSON.stringify(
+        mysqlConfig,
+      )} ${JSON.stringify(
+        moment
+          .utc()
+          .subtract(3, 'months')
+          .format('YYYY-MM-DD'),
+      )}`,
+    ),
+  );
+  yield appendFilePromise(
+    '/var/log/outgoing/user-levels.txt',
+    '\nsitTime Outlier Ratios: \n\n',
+  );
+  for (let id in sitTimesOutput) {
+    let user = yield User.findById(id);
+    let currentSitTimeRatio = sitTimesOutput[id].ratio;
+    yield user.update({
+      sitTimeOutliers: currentSitTimeRatio,
+    });
+    yield appendFilePromise(
+      '/var/log/outgoing/user-levels.txt',
+      `User ${user.id}: ${user.firstName} ${
+        user.lastName
+      } ${currentSitTimeRatio}\n`,
+    );
   }
 });
 

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title><? echo $_GET['data']; ?></title>
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #floating-panel {
+        position: absolute;
+        top: 10px;
+        left: 25%;
+        z-index: 5;
+        background-color: #fff;
+        padding: 5px;
+        border: 1px solid #999;
+        text-align: center;
+        font-family: 'Roboto','sans-serif';
+        line-height: 30px;
+        padding-left: 10px;
+      }
+      #floating-panel {
+        background-color: #fff;
+        border: 1px solid #999;
+        left: 25%;
+        padding: 5px;
+        position: absolute;
+        top: 10px;
+        z-index: 5;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="floating-panel">
+      <button onclick="toggleHeatmap()">Toggle Heatmap</button>
+      <button onclick="changeGradient()">Change gradient</button>
+      <button onclick="changeRadius()">Change radius</button>
+      <button onclick="changeOpacity()">Change opacity</button>
+    </div>
+    <div id="map"></div>
+    <script src='sit-time-points.js'></script>
+    <script>
+
+      // This example requires the Visualization library. Include the libraries=visualization
+      // parameter when you first load the API. For example:
+      // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=visualization">
+
+      var map, heatmap;
+
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 14,
+          center: {lat: 34.015, lng: -118.489}
+        });
+
+        getPoints(map);
+      }
+
+      function changeGradient() {
+        var gradient = [
+          'rgba(0, 255, 255, 0)',
+          'rgba(0, 255, 255, 1)',
+          'rgba(0, 191, 255, 1)',
+          'rgba(0, 127, 255, 1)',
+          'rgba(0, 63, 255, 1)',
+          'rgba(0, 0, 255, 1)',
+          'rgba(0, 0, 223, 1)',
+          'rgba(0, 0, 191, 1)',
+          'rgba(0, 0, 159, 1)',
+          'rgba(0, 0, 127, 1)',
+          'rgba(63, 0, 91, 1)',
+          'rgba(127, 0, 63, 1)',
+          'rgba(191, 0, 31, 1)',
+          'rgba(255, 0, 0, 1)'
+        ]
+        heatmap.set('gradient', heatmap.get('gradient') ? null : gradient);
+      }
+
+      function changeRadius() {
+        var radius = (+(heatmap.get('radius') || 1) + 1) % 20;
+        radius = radius || 1;
+        console.log(radius);
+        heatmap.set('radius', radius);
+      }
+
+      function changeOpacity() {
+        heatmap.set('opacity', heatmap.get('opacity') ? null : 0.2);
+      }
+
+      function getPoints(map) {
+        var column = [...new Set(points.map(row => row[0]))]; 
+        var min = column.reduce(function(rec, row) {
+          return {
+            min: Math.min(Math.abs(row - rec.unit), rec.min),
+            unit: row
+          };
+        }, {min: 10000, unit: 1000}).min / 2; 
+
+        var maxVal = Math.max(...points.slice(0,50).map(row => Math.sqrt(row[2])));
+        var maxfreq = Math.max(...points.slice(0,5000).map(row => Math.sqrt(row[3])));
+
+        points.slice(0,5000).map(function(row) {
+          var mag = Math.min(1.2, 0.1 + 1.4 * Math.sqrt(row[3]) / maxfreq) * min;
+          var rect = [
+            { lat: row[0] - mag, lng: row[1] - mag },
+            { lat: row[0] + mag, lng: row[1] - mag },
+            { lat: row[0] + mag, lng: row[1] + mag },
+            { lat: row[0] - mag, lng: row[1] + mag }
+          ];
+console.log(row[2],  255 * (Math.sqrt(row[2])) / maxVal);
+          (new google.maps.Polygon({
+            paths: rect,
+            fillOpacity: 0.8,
+            fillColor: 'rgb(0,' + 700 * (Math.sqrt(row[2])) / maxVal + ',0)',
+//            fillColor: '#FF0000',
+            strokeWeight: 1
+          })).setMap(map);
+        });
+      }
+    </script>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBibUDNVBjFAKpwyPcZirJW4qHq2W2OO8M&libraries=visualization&callback=initMap">
+    </script>
+  </body>
+</html>
