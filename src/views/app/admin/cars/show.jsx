@@ -635,7 +635,7 @@ class CarsShowView extends React.Component {
                         <div className='row'>
                           <div className='row'>
                             <div style={{ padding: "10px 0" }} className="col-xs-6"><a target='_blank' href={ `/users/${ me.id }` }>#{me.id}</a> { me.firstName } { me.lastName }</div>
-                            <button className="btn btn-link col-xs-6" onClick={ this.instaBook.bind(this, car.id) }>Book & Start { car.license }</button>
+                            <button className="btn btn-link col-xs-6" onClick={ this.instaBook.bind(this, car.id) }>Book & Start</button>
                           </div>
                         </div>
                       }
