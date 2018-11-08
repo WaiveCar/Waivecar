@@ -1,6 +1,7 @@
 'use strict';
 
-let request = require('co-request');
+let coRequest = require('co-request');
+let request = require('request');
 let moment = require('moment');
 let queue = Bento.provider('queue');
 let queryParser = Bento.provider('sequelize/helpers').query;
@@ -15,6 +16,9 @@ let log = Bento.Log;
 let Service = require('../classes/service');
 let notify = Bento.module('waivecar/lib/notification-service');
 let fs = require('fs');
+let path = require('path');
+let http = require('http');
+let os = require('os');
 
 if (!config.checkr) {
   throw error.parse({
@@ -76,18 +80,32 @@ module.exports = class CheckrService {
   }
   // This creates a request to checkr to make checkr fetch the report
   static *createCheck(data, _user, license) {
-    let s3 = new S3;
-    let licenseFile = yield File.findOne({where: {id: license.fileId}});
-    console.log('license: ', license);
-    if (licenseFile) {
-      let client = s3.getClient(licenseFile);
-      s3.streamFile(licenseFile, client, {forLicenseCheck: true, checkrId: license.linkedUserId});
-      try {
-        let response = yield this.request(`/candidates/${data.candidate_id}/documents`, 'POST', null, null, { isLicenseUpload: true, contentType: 'multipart/form-data', checkrId: license.linkedUserId });
-        fs.unlinkSync(`./${license.linkedUserId}-license.jpg`)
-      } catch(e) {
-        console.log('error: ', e);
-      }
+    let licenseImageFile = yield File.findOne({where: {id: license.fileId}});
+    if (licenseImageFile) {
+      let file = fs.createWriteStream(path.join(os.tmpdir(), `${license.linkedUserId}-license.jpg`));
+      let image = request(`http://s3.amazonaws.com/waivecar-prod/${licenseImageFile.path}`);
+      image.pipe(file).on('finish', () => {
+        console.log('ended');
+        try {
+          request.post({
+            url: `${config.checkr.uri}/candidates/${data.candidate_id}/documents`, 
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'form-data'
+            },
+            formData: {
+              file: fs.createReadStream(path.join(os.tmpdir(), `${license.linkedUserId}-license.jpg`)),
+              type: 'driver_license',
+            }
+          }, (err, response, body) => {
+            err && console.log('error: ', err);
+            body && console.log('body: ', body);
+          });
+        } catch(e) {
+          console.log('error: ', e.message);
+        }
+      });
     }
     try {
       /*
@@ -124,7 +142,7 @@ module.exports = class CheckrService {
   }
 
   // Returns the Response from a Request aginst the Checkr API
-  static *request(resource, method, data, user, opts={}) {
+  static *request(resource, method, data, user) {
     let options = {
       url: config.checkr.uri + resource,
       method: method || 'GET',
@@ -134,25 +152,17 @@ module.exports = class CheckrService {
       },
     };
 
-    if (opts.isLicenseUpload) {
-      options.formData = {
-        type: 'driver_license',
-        file: fs.createReadStream(`./${opts.checkrId}-license.jpg`),
-      }
-    }
-
     if (data) {
       options.body = JSON.stringify(data);
     }
 
-    let result = yield request(options);
+    let result = yield coRequest(options);
     let response = result.toJSON();
     let body = false;
 
     if (response && response.body) {
       body = JSON.parse(response.body);
     }
-    console.log(body);
     fs.appendFile(
       '/var/log/outgoing/checkr.txt',
       JSON.stringify([options, body, response]) + '\n',
