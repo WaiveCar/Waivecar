@@ -1,6 +1,10 @@
 #!/bin/bash
 APP=com.waivecardrive.app
 NODE_VERSION=v6.11.4
+
+# see https://forum.ionicframework.com/t/generating-and-apk-file-error/143354
+[ -e $HOME/proggies/android-ndk-r17c/ ] && export ANDROID_NDK_HOME=$HOME/proggies/android-ndk-r17c/
+
 if [ "`uname -s`" = 'Darwin' ]; then
   cp='cp -p'
   stat='stat -f %m'
