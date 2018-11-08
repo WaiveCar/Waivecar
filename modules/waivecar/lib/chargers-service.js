@@ -64,7 +64,7 @@ module.exports = {
       return obj;
     });
 
-    return locations.filter( loc => GeocodingService.inDrivingZone(loc.latitude, loc.longitude, 1.5));
+    return locations.filter( loc => loc.portList.length && GeocodingService.inDrivingZone(loc.latitude, loc.longitude, 1.8));
   },
 
   *nameToUUID(name) {
