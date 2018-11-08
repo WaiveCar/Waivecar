@@ -47,7 +47,7 @@ scheduler.process('booking-extension-offer', function *(job) {
   let car = yield Car.findById(booking.carId);
 
   if(booking && booking.status === 'reserved' && !booking.isFlagged('extended')) {
-    yield notify.sendTextMessage(booking.userId, `${car.info()} reservation time is almost up! Need more time? Respond "SAVE" to pay $4.20 for 20 extra minutes, "SAVE LESS" for $1.00 for 10 extra minutes, and "ABORT" to cancel the booking.`);
+    yield notify.sendTextMessage(booking.userId, `${car.info()} reservation time is almost up! Need more time? Respond "SAVE" to pay $4.20 for 20 extra minutes or "SAVE LESS" for $1.00 for 10 extra minutes.`);
   }
 });
 

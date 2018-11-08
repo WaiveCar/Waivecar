@@ -16,13 +16,13 @@ module.exports = {
       timers : {
         level: {
           autoCancel : { value : 30, type  : 'minutes' },
-          extensionOffer: { value : 27, type  : 'minutes' }
+          extensionOffer: { value : 25, type  : 'minutes' }
         },
         aid: {
           autoCancel : { value : 25, type  : 'minutes' },
-          extensionOffer: { value : 22, type  : 'minutes' }
+          extensionOffer: { value : 20, type  : 'minutes' }
         },
-        extensionOffer: { value : 12, type  : 'minutes' },
+        extensionOffer: { value : 10, type  : 'minutes' },
         autoCancel : { value : 15, type  : 'minutes' },
         extend10 : { value : 10, type  : 'minutes' },
         extend20 : { value : 20, type  : 'minutes' },
