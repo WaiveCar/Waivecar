@@ -80,38 +80,11 @@ module.exports = class CheckrService {
   }
   // This creates a request to checkr to make checkr fetch the report
   static *createCheck(data, _user, license) {
-    let licenseImageFile = yield File.findOne({where: {id: license.fileId}});
-    if (licenseImageFile) {
-      let file = fs.createWriteStream(path.join(os.tmpdir(), `${license.linkedUserId}-license.jpg`));
-      let image = request(`http://s3.amazonaws.com/waivecar-prod/${licenseImageFile.path}`);
-      image.pipe(file).on('finish', () => {
-        console.log('ended');
-        try {
-          request.post({
-            url: `${config.checkr.uri}/candidates/${data.candidate_id}/documents`, 
-            method: 'POST',
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'form-data'
-            },
-            formData: {
-              file: fs.createReadStream(path.join(os.tmpdir(), `${license.linkedUserId}-license.jpg`)),
-              type: 'driver_license',
-            }
-          }, (err, response, body) => {
-            err && console.log('error: ', err);
-            body && console.log('body: ', body);
-          });
-        } catch(e) {
-          console.log('error: ', e.message);
-        }
-      });
-    }
+    yield this.uploadImage(data, license);
     try {
-      /*
       let response = yield this.request('/reports', 'POST', data);
+      console.log('response', response);
       return response;
-      */
     } catch(err) {
       /*
       yield notify.slack(
@@ -128,6 +101,40 @@ module.exports = class CheckrService {
       ); 
       */
       return true;
+    }
+  }
+
+  static *uploadImage(data, license) {
+    let licenseImageFile = yield File.findOne({where: {id: license.fileId}});
+    if (licenseImageFile) {
+      let file = fs.createWriteStream(path.join(os.tmpdir(), `${license.linkedUserId}-license.jpg`));
+      let image = request(`http://s3.amazonaws.com/waivecar-prod/${licenseImageFile.path}`);
+      image.pipe(file).on('finish', () => {
+        request.post({
+          url: `${config.checkr.uri}/candidates/${data.candidate_id}/documents`, 
+          method: 'post',
+          headers: {
+            accept: 'application/json',
+            'Content-Type': 'form-data'
+          },
+          formData: {
+            file: fs.createReadStream(path.join(os.tmpdir(), `${license.linkedUserId}-license.jpg`)),
+            type: 'driver_license',
+          }
+        }, (err, response, body) => {
+          if (err) {
+            fs.appendFile(
+              '/var/log/outgoing/checkr.txt',
+              JSON.stringify([err, body, response]) + '\n',
+            );
+            return err;
+          }
+          fs.appendFile(
+            '/var/log/outgoing/checkr.txt',
+            JSON.stringify([body, response]) + '\n',
+          );
+        });
+      });
     }
   }
 
@@ -148,7 +155,7 @@ module.exports = class CheckrService {
       method: method || 'GET',
       headers: {
         Accept: 'application/json',
-        'Content-Type': !opts.contentType ? 'application/json' : opts.contentType,
+        'Content-Type': 'application/json',
       },
     };
 
