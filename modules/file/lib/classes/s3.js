@@ -178,7 +178,7 @@ function *uploadFile(file, client) {
   fs.unlink(location);
 }
 
-function streamFile(file, client, opts={}) {
+function streamFile(file, client) {
   let stream = through();
   client.getFile(file.path, (err, res) => {
     if (err) {
@@ -188,9 +188,6 @@ function streamFile(file, client, opts={}) {
       stream.end(500);
     } else {
       res.pipe(stream);
-      if (opts.forLicenseCheck) {
-        res.pipe(fs.createWriteStream(`./${opts.checkrId}-license.jpg`));
-      }
     }
   });
   stream.on('close', () => {
