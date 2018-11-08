@@ -316,12 +316,10 @@ module.exports = {
 
     params.intro = "Thanks for your patience. It's paid off because you are next in line and we've created your account.";
 
-    console.log(idList);
     for(var ix = 0; ix < idList.length; ix++) {
       let userRecord = yield User.findOne({where: { 
         id: idList[ix]
       }});
-      console.log(idList[ix], userRecord);
 
       if (userRecord) {
         let fullName = `${userRecord.firstName} ${userRecord.lastName}`;
