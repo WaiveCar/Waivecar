@@ -99,7 +99,6 @@ module.exports = class Magic extends React.Component {
       .map((row, i) => {
         let dobar;
         let car = this.state.candidates[i];
-        console.log(car);
 
         if (car.inRepair && !bar) {
           bar = true;
