@@ -83,7 +83,6 @@ module.exports = class CheckrService {
     yield this.uploadImage(data, license);
     try {
       let response = yield this.request('/reports', 'POST', data);
-      console.log('response', response);
       return response;
     } catch(err) {
       /*
