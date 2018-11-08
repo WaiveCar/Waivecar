@@ -93,12 +93,24 @@ module.exports = class Magic extends React.Component {
   }
 
   showCandidates() {
+    var bar;
     var rows = this.state.candidates
-      .sort((a,b) => { return b.charge - a.charge })
+      .sort((a,b) => { return (a.inRepair - b.inRepair) * 150 + (b.charge - a.charge); })
       .map((row, i) => {
+        let dobar;
         let car = this.state.candidates[i];
+        console.log(car);
 
-        return <button className='btn' onClick={ this.chooseaCar.bind(this, i) }>{ this.carInfo(car) }</button>
+        if (car.inRepair && !bar) {
+          bar = true;
+          dobar = true;
+        }
+        return (
+          <span>
+            { dobar && <hr /> }
+            <button className='btn' onClick={ this.chooseaCar.bind(this, i) }>{ this.carInfo(car) }</button>
+          </span>
+        );
       });
     return <div> { rows } </div>
   }
@@ -129,8 +141,8 @@ module.exports = class Magic extends React.Component {
   }
 
   renderLinks() {
-    return <div>
-      <a onClick={ this.setAction.bind(this, 'unlock-doors') }>unlock</a> <a onClick={ this.setAction.bind(this, 'lock-door') }>lock</a> <a onClick={ this.setAction.bind(this, 'rentable') }>rentable</a> <a onClick={ this.setAction.bind(this, 'retrieve') }>retrieve</a>
+    return <div className="magic-links">
+      <a onClick={ this.setAction.bind(this, 'unlock-doors') }>unlock</a><a onClick={ this.setAction.bind(this, 'lock-door') }>lock</a><a onClick={ this.setAction.bind(this, 'rentable') }>rentable</a><a onClick={ this.setAction.bind(this, 'retrieve') }>retrieve</a>
     </div>
   }
 

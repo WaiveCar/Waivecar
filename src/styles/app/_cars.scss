@@ -76,6 +76,10 @@
   }
 }
 .magic {
+  .magic-links a {
+    display: inline-block;
+    width: 25%;
+  }
   button {
     margin: 1%;
     width: 47%;
