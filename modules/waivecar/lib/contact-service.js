@@ -150,7 +150,7 @@ module.exports = {
       }
     }
 
-    if(user) {
+    if(user && Object.keys(documentation).indexOf(command) === -1) {
       for(var row of [
         // sometimes we get messages with both "card" and "account" so
         // we pass those up.
