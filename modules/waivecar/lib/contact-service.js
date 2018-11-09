@@ -45,6 +45,7 @@ module.exports = {
   *attemptAction(user, command, opts) {
     // alias commands are blank.
     let sendToSupport = false;
+    let guessed = false;
     let documentation = {
       available: "List available WaiveCars",
       book: "Book a WaiveCar. Example:\n   book waive14",
@@ -159,6 +160,11 @@ module.exports = {
         [/ account/, 'account'],
         [/^lock/, 'lock'],
         [/ lock /, 'lock'],
+
+        // these were carefully tested over 30,000 historical text messages
+        [/(is|does|wo|will|ca).{0,3}n(o|'|)t start)/, 'access'],
+        [/(won't|not).{0,15}in.*drive /, 'access'],
+
         [/(immobilize|not starting)/, 'access'],
         [/^start (waive|my ride|ride)/,'start'],
         [/(end|finish) (waive|(my |the |)ride)/,'finish'],
@@ -166,8 +172,9 @@ module.exports = {
       ]) {
         let [regex, todo] = row;
 
-        sendToSupport = true;
         if (command.match(regex)) {
+          sendToSupport = true;
+          guessed = true;
           command = todo;
           break;
         }
@@ -343,8 +350,11 @@ module.exports = {
         }
       }
 
-      yield notify.sendTextMessage(user, "You don't have a current booking. Command not understood");
-      return true;
+      // if we guessed their intention but couldn't figure it out, then we don't give them a cryptic message
+      if(!guessed) {
+        yield notify.sendTextMessage(user, "You don't have a current booking. Command not understood");
+        return true;
+      }
     }
     let id = currentBooking.id;
 
