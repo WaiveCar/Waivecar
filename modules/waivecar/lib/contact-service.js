@@ -162,7 +162,7 @@ module.exports = {
         [/ lock /, 'lock'],
 
         // these were carefully tested over 30,000 historical text messages
-        [/(is|does|wo|will|ca).{0,3}n(o|'|)t start)/, 'access'],
+        [/(is|does|wo|will|ca).{0,3}n(o|'|)t start/, 'access'],
         [/(won't|not).{0,15}in.*drive /, 'access'],
 
         [/(immobilize|not starting)/, 'access'],
