@@ -4,7 +4,7 @@ let co          = require('co');
 let request     = require('co-request');
 let Service     = require('./classes/service');
 let CartService = require('./cart-service');
-let moment      = require('moment');
+let moment      = require('moment-timezone');
 let _           = require('lodash');
 let UserLog     = require('../../log/lib/log-service');
 let Email       = Bento.provider('email');
@@ -376,7 +376,6 @@ module.exports = class OrderService extends Service {
 
     if (start && end) {
 
-      // Get difference
       let diff = moment(end.createdAt).diff(start.createdAt, 'minutes');
       if (diff > freeTime) {
         minutesOver = Math.max(diff - freeTime, 0);
@@ -390,7 +389,20 @@ module.exports = class OrderService extends Service {
         description = `${ minutesOver }min overage booking ${ booking.id }`;
       } else {
         amount = 1499;
-        description = `WaiveRush flat rate booking ${ booking.id }`;
+
+        // waiverush is la exclusive for now (2018-11-08)
+        // Note: If the user keeps it an extra day this system *will* break.
+        let tenAM = moment().tz('America/Los_Angeles').format('YYYY-MM-DD 10:00');
+        minutesOver = Math.max( (new Date() - moment.tz(tenAM, 'America/Los_Angeles')) / 1000 / 60, 0);
+        console.log(minutesOver);
+        billableGroups = Math.ceil(minutesOver / 10);
+        amount += Math.round((billableGroups / 6 * 5.99) * 100);
+
+        description = [
+          'WaiveRush flat rate ',
+          billableGroups ? `+ ${ minutesOver }min over ` : '',
+          `booking ${ booking.id }`
+        ].join('');
       }
 
       let card = yield user.getCard();
