@@ -100,7 +100,7 @@ scheduler.process('booking-auto-cancel', function *(job) {
           timeWindow += 10;
         }
 
-        let user = yield notify.sendTextMessage(booking.userId, `Hi, sorry you couldn't make it to your car on time. Your ${ timeWindow } minutes have expired and we've had to cancel your reservation for ${ car.info() }`);
+        let user = yield notify.sendTextMessage(booking.userId, `Hi, sorry you couldn't make it to ${car.info()} in ${ timeWindow } minutes. We've had to cancel your reservation. You can rebook it for $5.00 by replying with "rebook".`);
         yield notify.notifyAdmins(`:timer_clock: ${ user.name() }, ${ car.info() } booking cancelled after ${ timeWindow } minute timer expiration.`, [ 'slack' ], { channel : '#reservations' });
 
         log.info(`The booking with ${ car.info() } was automatically cancelled, booking status was '${ booking.status }'.`);
