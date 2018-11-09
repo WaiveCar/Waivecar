@@ -355,6 +355,7 @@ module.exports = {
         yield notify.sendTextMessage(user, "You don't have a current booking. Command not understood");
         return true;
       }
+      return false;
     }
     let id = currentBooking.id;
 
