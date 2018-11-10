@@ -240,20 +240,61 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
   model.methods = {
 
-    getCurrentBooking: function *() {
-      if(this.bookingId) {
-        return yield Booking.findById(this.bookingId);
+    //
+    // This one takes some explaining. If you want the "current booking", normally what you mean is
+    // the one that's going on now or just ended, even if it had been disassociated from the vehicle.  
+    // If you want the "previous" booking, specified by a -1 option, then if there is no current booking
+    // you want the most recent booking that ended. Which means that an argument of 0 and -1 could 
+    // potentially yield the same booking if something was ended but not cleaned up right (shouldn't
+    // happen but this is designed for when it does anyway)
+    //
+    // If you specify an offset other than zero then you certainly do not want a booking that is in progress
+    // so we filter out the ones that are not in progress.
+    //
+    // But there's a problem here. The 0th index of the not-in-progress bookings is the previous booking,
+    // it means if a user calls the function with "-1", [0] is the one they actually want.  We accomodate
+    // this by knocking 1 off the argument they pass in.
+    //
+    // Stated another way.
+    //  
+    //  Calling with (0) always implicates the first one
+    //       | |
+    //       V |
+    // A. [started,   completed, completed, ...]
+    //         V       Y
+    // B. [completed, completed, completed, ...]
+    //      Y          |
+    //      |          |
+    //  Calling with (-1) implicates different orders depending
+    //  on the state of the car.
+    //
+    getBooking: function *(offset = 0) {
+      let searchSet = ['started', 'reserved', 'ended', 'completed', 'closed'];
+      offset = Math.abs(offset);
+
+      if(offset === 0) {
+        if(this.bookingId) {
+          return yield Booking.findById(this.bookingId);
+        }
       } else {
-        return yield Booking.findOne({ 
-          where : { 
-            car_id : this.id,
-            status : {
-              $in : ['started', 'reserved', 'ended']
-            }
-          },
-          order: [['created_at', 'DESC']]
-        });
+        searchSet = ['ended', 'completed', 'closed'];
+        offset -= 1;
       }
+
+      return yield Booking.findOne({ 
+        where : { 
+          car_id : this.id,
+          status : {
+            $in : searchSet,
+          }
+        },
+        order: [['created_at', 'DESC']],
+        offset: offset,
+      });
+    },
+
+    getCurrentBooking: function *() {
+      return yield this.getBooking();
     },
 
     link: function() {
