@@ -393,8 +393,7 @@ module.exports = class OrderService extends Service {
         // waiverush is la exclusive for now (2018-11-08)
         // Note: If the user keeps it an extra day this system *will* break.
         let tenAM = moment().tz('America/Los_Angeles').format('YYYY-MM-DD 10:00');
-        minutesOver = Math.max( (new Date() - moment.tz(tenAM, 'America/Los_Angeles')) / 1000 / 60, 0);
-        console.log(minutesOver);
+        minutesOver = Math.ceil(Math.max( (new Date() - moment.tz(tenAM, 'America/Los_Angeles')) / 1000 / 60, 0));
         billableGroups = Math.ceil(minutesOver / 10);
         amount += Math.round((billableGroups / 6 * 5.99) * 100);
 
