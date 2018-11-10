@@ -23,7 +23,7 @@ module.exports = {
       headers : {
         Accept          : "application.vnd.fleets.v1+json",
         'Content-type'  : 'application/json',
-        Authorization   : config.tikd.key
+        'x-api-key'     : config.tikd.key
       }
     };
   },
@@ -44,34 +44,55 @@ module.exports = {
   },
 
   *addCarIfNeeded(car) {
-    console.log("adding the car if needed\n\n\n\nwu");
     if (!(yield car.hasTag('tikd'))) {
+      console.log("adding " + car.license);
       let res = yield this.changeCar('subscribe', car);
       if(res) {
-        console.log(res);
         yield car.addTag('tikd');
       }
-      return false;
+      return res;
     }
+    return true;
   },
 
   *removeCar(car) {
     yield this.changeCar('unsubscribe', car);
   },
 
-  *addLiability(booking, user, car) {
-    return true;
+  *addLiability(car, booking, user) {
+    if(booking.hasFlag('tikdStart')) {
+      return true;
+    }
     if (yield this.addCarIfNeeded(car)) {
-      return yield this.changeLiability('service-started', booking, user, car);
+      let res = yield this.changeLiability('service-started', car, booking, user);
+      if(!res) {
+        console.log(`Can't add liability for booking ${booking.id}`);
+      } else {
+        yield booking.flag('tikdStart');
+      }
+      return res;
     }
   },
 
-  *removeLiability(booking, user, car) {
-    return yield this.changeLiability('service-ended', booking, user, car);
+  *removeLiability(car, booking, user) {
+    if(booking.hasFlag('tikdEnd')) {
+      return true;
+    }
+    let res = yield this.changeLiability('service-ended', car, booking, user);
+    if(!res) {
+      console.log(`Can't remove liability for booking ${booking.id}`);
+    } else {
+      yield booking.flag('tikdEnd');
+    }
+    return res;
   },
 
   *changeCar(state, car) {
     if(car.vin && car.plateNumber && car.plateState) {
+      let metroArea = 'LosAngeles';
+      if(yield car.hasTag('level')) {
+        metroArea = 'NewYorkCity';
+      }
       return yield this.post('fleet', {
         transactionId: 'car-' + car.licenseUsed,
         eventName: state,
@@ -79,7 +100,7 @@ module.exports = {
           plateNumber: car.plateNumber,
           plateState: car.plateState,
           vin: car.vin,
-          metroArea: 'LosAngeles',
+          metroArea: metroArea,
           ownerInfo: {
             email: 'chris@waivecar.com'
           }
@@ -90,7 +111,7 @@ module.exports = {
     }
   },
 
-  *changeLiability(state, booking, user, car) {
+  *changeLiability(state, car, booking, user) {
     let license = yield License.getLicenseByUserId(user.id);
     if(!license) {
       console.log(`Can't find a license for ${user.name()}`);
