@@ -707,7 +707,12 @@ module.exports = class BookingService extends Service {
       if(!isRush) {
         yield cars.accessCar(car.id, _user, car);
       }
-      // yield Tikd.addLiability(booking, _user, car);
+
+      let lastBooking = yield car.getBooking(-1);
+      let lastUser = yield User.findById(lastBooking.userId);
+      yield Tikd.removeLiability(car, lastBooking, lastUser);
+      yield Tikd.addLiability(car, booking, _user);
+
       // yield cars.openDoor(car.id, _user);
 
       yield ParkingService.vacate(car.id);
@@ -1328,24 +1333,13 @@ module.exports = class BookingService extends Service {
     // We use the average to make this assessment.
 
     let zone = '', address = '';
-    let minCharge;
+    let minCharge = 25;
 
     try {
       zone = yield this.getZone(car);
       minCharge = zone.minimumCharge;
-      if (car.milesAvailable() <= zone.minimumCharge && !isAdmin && !isLevel) {
-        yield cars.updateAvailabilityAnonymous(car.id, false);
-        yield notify.slack({ text : `:spider: ${ car.link() } unavailable due to charge being under ${zone.minimumCharge}mi:. ${ car.chargeReport() }`
-        }, { channel : '#rental-alerts' });
-      } else {
-        yield car.available();
-        yield this.notifyUsers(car);
-      }
       zone = `(${zone.name})` || '';
-      address = yield this.getAddress(car.latitude, car.longitude);
     } catch(ex) {}
-
-    minCharge = minCharge ? minCharge : 25;
 
     if (car.milesAvailable() <= minCharge && !isAdmin && !isLevel) {
       yield cars.updateAvailabilityAnonymous(car.id, false);
