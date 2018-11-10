@@ -707,7 +707,7 @@ module.exports = class BookingService extends Service {
       if(!isRush) {
         yield cars.accessCar(car.id, _user, car);
       }
-      //yield Tikd.addLiability(booking, _user, car);
+      // yield Tikd.addLiability(booking, _user, car);
       // yield cars.openDoor(car.id, _user);
 
       yield ParkingService.vacate(car.id);
@@ -1099,6 +1099,7 @@ module.exports = class BookingService extends Service {
       let miles = Math.floor((deltas.charge / 100) * car.getRange('HIGH'));
       let credit = Math.floor(miles / 5);
       if(credit > 0) {
+        yield booking.addFlag('charge');
         yield OrderService.quickCharge({
           userId: booking.userId,
           amount: -(100 * credit),
@@ -1755,6 +1756,10 @@ module.exports = class BookingService extends Service {
 
     if (minutesLapsed < minTime) {
       if(opts.buyNow) {
+        if (booking.hasFlag('charge')) {
+          yield notify.slack({ text : `:checker_flagged: The clever ${ user.link() } charged ${ car.link() } and then rebooked it.` }, { channel : '#rental-alerts' });
+        }
+
         rebookOrder = yield OrderService.getCarNow(booking, user, opts.buyNow * 100);
         if (rebookOrder) {
           return rebookOrder;
