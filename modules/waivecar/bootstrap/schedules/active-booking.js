@@ -34,6 +34,10 @@ var checkBooking = co.wrap(function *(booking) {
   if(!booking.car) {
     booking.car = yield Car.findById(booking.carId);
   }
+  if(!booking.car) {
+    log.warn("can't find car with id " + booking.carId);
+    return;
+  }
 
   let car = booking.car;
   let device = yield cars.getDevice(car.id, null, 'booking-loop');
