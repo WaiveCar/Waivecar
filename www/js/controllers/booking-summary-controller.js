@@ -36,7 +36,7 @@ module.exports = angular.module('app.controllers').controller('BookingSummaryCon
 
         if (ctrl.booking.payments) {
           ctrl.booking.total = ctrl.booking.payments.reduce(function(sum, payment) {
-            return sum + payment.amount;
+            return sum + (!payment.description.includes('authorization') ? payment.amount : 0);
           }, 0);
 
           // See https://github.com/WaiveCar/Waivecar/issues/487,
