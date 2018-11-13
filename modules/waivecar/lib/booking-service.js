@@ -1379,6 +1379,8 @@ module.exports = class BookingService extends Service {
       }
     });
 
+    // This implementation has proven to be unuseful
+    /*
     if (details) {
       let notificationTime = details.streetHours < 5 ? 30 : 90; 
       let timerObj = {value: notificationTime, type: 'minutes'};
@@ -1397,6 +1399,7 @@ module.exports = class BookingService extends Service {
         },
       });
     }
+    */
     // ### Relay
 
     // if it's between 1am and 5am (which is 4 and 8 according to our east coast servers), then
