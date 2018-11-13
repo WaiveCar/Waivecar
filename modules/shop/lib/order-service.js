@@ -99,9 +99,9 @@ module.exports = class OrderService extends Service {
       charge = yield this.charge(order, user, opts);
 
       if(data.amount > 0) {
-        yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.link() } $${ (data.amount / 100).toFixed(2) } for ${ data.description }`, [ 'slack' ], { channel : '#rental-alerts' });
+        yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.link() } $${ (data.amount / 100).toFixed(2) } for ${ data.description } (credit: $${ (user.credit / 100).toFixed(2) })`, [ 'slack' ], { channel : '#rental-alerts' });
       } else if(data.amount < 0) {
-        yield notify.notifyAdmins(`:money_with_wings: ${ _user.name() } *credited* ${ user.link() } $${ (-data.amount / 100).toFixed(2) } for ${ data.description }`, [ 'slack' ], { channel : '#rental-alerts' });
+        yield notify.notifyAdmins(`:money_with_wings: ${ _user.name() } *credited* ${ user.link() } $${ (-data.amount / 100).toFixed(2) } for ${ data.description } (credit: $${ (user.credit / 100).toFixed(2) })`, [ 'slack' ], { channel : '#rental-alerts' });
       } else {
         charge.amount = charge.amount || 0;
         charge = `$${ charge.amount / 100 }`;
@@ -333,7 +333,7 @@ module.exports = class OrderService extends Service {
     yield order.save();
     try {
       yield this.charge(order, user, {nodebt: true});
-      yield notify.notifyAdmins(`:moneybag: Charged ${ user.link() } $${ (amount / 100).toFixed(2) } on ${ booking.link() } ${ time }min extension.`, [ 'slack' ], { channel : '#rental-alerts' });
+      yield notify.notifyAdmins(`:moneybag: Charged ${ user.link() } $${ (amount / 100).toFixed(2) } on ${ booking.link() } ${ time }min extension. (credit: $${ (user.credit / 100).toFixed(2) })`, [ 'slack' ], { channel : '#rental-alerts' });
     } catch (err) {
       yield this.failedCharge(amount, user, err, ` | ${ booking.link() }`);
       return false;
@@ -423,7 +423,7 @@ module.exports = class OrderService extends Service {
 
       try {
         yield this.charge(order, user);
-        yield notify.notifyAdmins(`:moneybag: Charged ${ user.link() } $${ (amount / 100).toFixed(2) } for ${ description }`, [ 'slack' ], { channel : '#rental-alerts' });
+        yield notify.notifyAdmins(`:moneybag: Charged ${ user.link() } $${ (amount / 100).toFixed(2) } for ${ description } (credit: $${ (user.credit / 100).toFixed(2) })`, [ 'slack' ], { channel : '#rental-alerts' });
         if(!booking.isFlagged('rush')) {
           log.info(`Charged user for time driven : $${ amount / 100 } : booking ${ booking.id }`);
         }
