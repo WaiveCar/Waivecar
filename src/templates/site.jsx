@@ -49,7 +49,7 @@ templates.register('site', {
     },
     {
       path      : '/faq-csula',
-      component : require('views/site/csula')
+      component : require('views/site/faqcsula')
     },
     {
       path      : '/faq-level',

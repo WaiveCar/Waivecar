@@ -103,7 +103,7 @@ If you get a ticket, you have 7 days to pay it. If you don't pay it within that 
 All rentals must be returned to the lot in which you rented it.
 
 ### How do I end my ride?
-First make sure that you are parked in an accurate spot (see above). Turn off the car, put the key back on the sensor in the glovebox, grab your belongings, and exit the car. Select "End Ride" from the app and input the appropriate information. If you haven't received a confirmation text please call us at 855-WAIVE55!
+First make sure that you are parked, turn off the car, put the key back on the sensor in the glovebox, grab your belongings, and exit the car. Select "End Ride" from the app and input the appropriate information. If you haven't received a confirmation text please call us at 855-WAIVE55!
 
 ### Do I need to clean the car when I'm done?
 Yes! No need for an extensive cleaning, but make sure all your belongings are out of the car and clean up any trash you may leave. If you leave a mess, there could be a cleaning fee!

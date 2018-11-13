@@ -74,7 +74,7 @@ module.exports = class Faqcsula extends Component {
           <h3 id="where-can-i-park-when-im-done">Where can I park when I’m done?</h3>
           <p>All rentals must be returned to the lot in which you rented it.</p>
           <h3 id="how-do-i-end-my-ride">How do I end my ride?</h3>
-          <p>First make sure that you are parked in an accurate spot (see above). Turn off the car, put the key back on the sensor in the glovebox, grab your belongings, and exit the car. Select “End Ride” from the app and input the appropriate information. If you haven’t received a confirmation text please call us at 855-WAIVE55!</p>
+          <p>First make sure that you are parked, turn off the car, put the key back on the sensor in the glovebox, grab your belongings, and exit the car. Select “End Ride” from the app and input the appropriate information. If you haven’t received a confirmation text please call us at 855-WAIVE55!</p>
           <h3 id="do-i-need-to-clean-the-car-when-im-done">Do I need to clean the car when I’m done?</h3>
           <p>Yes! No need for an extensive cleaning, but make sure all your belongings are out of the car and clean up any trash you may leave. If you leave a mess, there could be a cleaning fee!</p>
           <h3 id="do-i-need-to-refuel-the-car-before-i-end-my-ride">Do I need to refuel the car before I end my ride?</h3>
