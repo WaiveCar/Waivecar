@@ -62,6 +62,7 @@ module.exports = {
       access: null,
       complete: null,
       notify: null,
+      "start ride": null,
       rebook: "Rebook the same WaiveCar (possibly for a fee)",
       start: "Start your ride",
       finish: "Finish your ride",
