@@ -1332,13 +1332,13 @@ module.exports = class BookingService extends Service {
     // If car is under 25% make it unavailable after ride is done #514
     // We use the average to make this assessment.
 
-    let zone = '', address = '';
+    let zone = {}, zoneString = '', address = '';
     let minCharge = 25;
 
     try {
-      zone = yield this.getZone(car);
+      zone = (yield this.getZone(car)) || {};
       minCharge = zone.minimumCharge;
-      zone = `(${zone.name})` || '';
+      zoneString = `(${zone.name})` || '';
     } catch(ex) {}
 
     if (car.milesAvailable() <= minCharge && !isAdmin && !isLevel) {
@@ -1352,8 +1352,18 @@ module.exports = class BookingService extends Service {
 
     let message = yield this.updateState('completed', _user, user);
     yield notify.sendTextMessage(user, `Your ride is complete. To rebook immediately for $5.00 reply with "rebook". If you left something behind, unlock ${car.license} by replying "unlock" in the next 5 minutes.`);
-    yield notify.slack({ text : `:coffee: ${ message } ${ car.info() } ${ zone } ${ address } ${ booking.link() }` }, { channel : '#reservations' });
+    yield notify.slack({ text : `:coffee: ${ message } ${ car.info() } ${ zoneString } ${ address } ${ booking.link() }` }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
+
+    queue.scheduler.add('user-liability-release', {
+      uid: `user-liability-release-${booking.id}`,
+      timer: {value: (zone.parkingTime || 0), type: 'hours'},
+      data: {
+        bookingId: booking.id,
+        userId: user.id,
+        carId: car.id,
+      },
+    });
 
     // Notify slack, create a ticket to move car, also need to create tickets to be created that close if the car is moved
     // This also needs to be made compatible with the changes I made in the last ticket I worked on.
