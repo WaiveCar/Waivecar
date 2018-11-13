@@ -1760,7 +1760,7 @@ module.exports = class BookingService extends Service {
 
     if (minutesLapsed < minTime) {
       if(opts.buyNow) {
-        if (booking.hasFlag('charge')) {
+        if (booking.isFlagged('charge')) {
           yield notify.slack({ text : `:checker_flagged: The clever ${ user.link() } charged ${ car.link() } and then rebooked it.` }, { channel : '#rental-alerts' });
         }
 

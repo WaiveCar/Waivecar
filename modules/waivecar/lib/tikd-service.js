@@ -60,7 +60,7 @@ module.exports = {
   },
 
   *addLiability(car, booking, user) {
-    if(booking.hasFlag('tikdStart')) {
+    if(booking.isFlagged('tikdStart')) {
       return true;
     }
     if (yield this.addCarIfNeeded(car)) {
@@ -75,7 +75,7 @@ module.exports = {
   },
 
   *removeLiability(car, booking, user) {
-    if(booking.hasFlag('tikdEnd')) {
+    if(booking.isFlagged('tikdEnd')) {
       return true;
     }
     let res = yield this.changeLiability('service-ended', car, booking, user);
