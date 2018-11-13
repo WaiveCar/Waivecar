@@ -42,7 +42,8 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       streetMinutes: null,
       streetOvernightRest: false,
     };
-    
+
+    ctrl.isWaivePark = false;
     ctrl.overrideStreetRestrictions = false;
 
     ctrl.pictures = {
@@ -131,6 +132,9 @@ module.exports = angular.module('app.controllers').controller('EndRideController
           if ($stateParams.zone.type === 'hub') {
             ctrl.isHub = true;
             ctrl.okText = "Finish";
+          } else if ($stateParams.zone.type === 'waivePark') {
+            ctrl.okText = 'Finish';
+            ctrl.isWaivePark = true;
           } else {
             ctrl.okText = "My parking is OK";
           }
@@ -220,7 +224,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
       var issues = [];
 
       // Force users to take pictures. See #1113
-      if(!ctrl.isHub && ctrl.type === 'street' && !ctrl.street.streetSignImage) {
+      if(!ctrl.isHub && !ctrl.isWaivePark && ctrl.type === 'street' && !ctrl.street.streetSignImage) {
         issues.push('Ending here requires a photo of the parking sign.');
       }
 
@@ -365,9 +369,9 @@ module.exports = angular.module('app.controllers').controller('EndRideController
 
     function goToEndRide() {
       var payload = {};
-
       //ZendriveService.stop();
-      if (!ctrl.isHub && ctrl.type === 'street') {
+      ctrl.street.streetHours = 100;
+      if (!ctrl.isHub && !ctrl.isWaivePark && ctrl.type === 'street') {
         if (ctrl.street.streetHours < ctrl.minhours) return submitFailure('You can\'t return your WaiveCar here. The spot needs to be valid for at least ' + ctrl.minhours + ' hours.');
         payload = ctrl.street;
       }
@@ -381,7 +385,7 @@ module.exports = angular.module('app.controllers').controller('EndRideController
     }
 
     function skipToEnd() {
-      if (ctrl.street.streetSignImage || ctrl.isHub) {
+      if (ctrl.street.streetSignImage || ctrl.isHub || ctrl.isWaivePark) {
         return $ride.processEndRide().then(function () {
           $ionicLoading.hide();
           return $ride.checkAndProcessActionOnBookingEnd();
