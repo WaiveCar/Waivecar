@@ -105,6 +105,9 @@ function UserCreateController($injector){
             return $state.go('auth-account-verify', { step: 2 });
           });
         } 
+        if (res.isCsula) {
+          nextPage = 'user-waitlist';  
+        }
         return $state.go(nextPage);
       })
       .catch(function (err) {
