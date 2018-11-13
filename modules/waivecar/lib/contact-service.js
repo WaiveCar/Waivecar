@@ -18,7 +18,7 @@ let Charger = require('./chargers-service');
 module.exports = {
   *deliverMessage(payload, _user) {
     yield notify.slack({ text : `From: ${ _user.link() } ${ _user.email } ${ _user.info() }\n Subject: ${ payload.subject || '_(none)_' }\n${ payload.message || '_(none)_' }` }, { channel : '#app_support' });
-    yield this.attemptAction(_user, payload.message, {raw: payload.message});
+    yield this.attemptAction(_user, [payload.subject, payload.message].join(' '), {raw: payload.message});
   },
 
   
