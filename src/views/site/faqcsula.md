@@ -3,7 +3,7 @@ WaiveCar is the first ever FREE & 100% emission free car sharing program. We are
 
 ## Signing up
 ### What do I need to sign up?
-All you need to sign up with WaiveCar is a smart phone, credit card, a valid driver's license, and a good driving record. Simply download the app from your app store!
+All you need to sign up with WaiveCar is a mobile phone, access to the internet, credit card, a valid driver's license, and a good driving record. If you have a smartphone, simply download the app from your app store!
 
 #### What's a good driving record?
 To us, a good driving record means one without any:
@@ -42,13 +42,13 @@ It's very quick! Should only take about 15 minutes for the signup and the backgr
 
 ## Booking Cars
 ### What are WaiveCar's hours?
-Our cars are available from 5am - 1am and the HQ is open from 24/7 and the customer service line is open from 8am-10pm. If you need assistance at other hours, simply send us an email at support@waive.car and we will reach you at our earliest convenience. 
+Our cars are available from 5am - 1am and the customer service line is open from 8am-10pm. If you need assistance at other hours, simply send us an email at support@waive.car and we will reach you at our earliest convenience. 
 
 ### How do I book a WaiveCar?
 Log onto the app and find the closest available WaiveCar to you. Hit "Book it"! You then have 15 minutes to get to the car before the reservation times out.
 
 ### Where can I get a WaiveCar?
-We have WaiveCars parked in designated spots throughout campus. Please check the map in the app to find out where you can end your ride.
+We have WaiveCars parked in designated spots throughout campus. 
 
 ### How long do I have to get to a WaiveCar?
 You have 15 minutes to get to a WaiveCar before the reservation times out. You may purchase an additional 10 minutes for a $1 fee. 
@@ -85,7 +85,7 @@ You can drive up to 25 miles outside of campus, which includes most of LA. You w
 #### In our Hyundai Tucsons 
 You don't need keys to start the car, however if you need to lock the car DURING your rental, the keys are on a sensor in the glovebox! Just make sure you replace them when you're done.
 
-### I've never driven a Fuel Cell (Hydrogen) car,  How many miles per charge do I get?
+### I've never driven a Fuel Cell (Hydrogen) car,  How many miles per tank do I get?
 Our Hyundai Tucsons have 250-300 miles per fill-up, depending on driving style.
 
 ### What should I do if I'm running low on fuel?

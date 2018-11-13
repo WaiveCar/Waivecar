@@ -48,6 +48,10 @@ templates.register('site', {
       component : require('views/site/waitlist')
     },
     {
+      path      : '/faq-csula',
+      component : require('views/site/csula')
+    },
+    {
       path      : '/faq-level',
       component : require('views/site/faqlevel')
     },
