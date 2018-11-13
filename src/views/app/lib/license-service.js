@@ -13,11 +13,6 @@ module.exports = class License extends Service {
     this.deleteLicense = this.deleteLicense.bind(this);
   }
 
-  /**
-   * Form submission method for bento-web form component.
-   * @param  {Object}   data
-   * @param  {Function} reset
-   */
   submitLicense(data, userId) {
     this.addLicense(userId, data, (err, license) => {
       if (err) {
@@ -54,8 +49,8 @@ module.exports = class License extends Service {
     });
   }
 
-  addLicense(user, license, done) {
-    async.each([ 'state', 'number', 'birthDate', 'expirationDate', 'lastName', 'firstName', 'street1', 'street2', 'city', 'zip' ], function(field, next) {
+  addLicense(userId, license, done) {
+    async.each([ 'state', 'number', 'birthDate', 'expirationDate', 'lastName', 'firstName', 'street1', 'city', 'zip' ], function(field, next) {
       let currentValue = license.hasOwnProperty(field) ? license[field] : undefined;
       let valueName = helpers.changeCase.toSentence(field);
       if (!currentValue) {
@@ -68,7 +63,6 @@ module.exports = class License extends Service {
       if (err) {
         return done(err);
       }
-
       api.post('/licenses', {
         userId     : userId,
         firstName  : license.firstName,

@@ -100,11 +100,6 @@ module.exports = class ProfileLicenseView extends React.Component {
     )
   }
 
-  /**
-   * Renders file upload box.
-   * @param  {Number} id The id of the license.
-   * @return {Object}
-   */
   renderFileUpload(id) {
     return (
       <div className="box">
@@ -119,10 +114,6 @@ module.exports = class ProfileLicenseView extends React.Component {
     );
   }
 
-  /**
-   * Submits license image for upload to the api.
-   * @return {Void}
-   */
   uploadFile = () => {
     let licenseImage = this.refs.licenseImage;
     if (licenseImage) {
@@ -137,11 +128,6 @@ module.exports = class ProfileLicenseView extends React.Component {
     }
   }
 
-  /**
-   * Returns a license box containing the license image.
-   * @param  {Number} id License id.
-   * @return {Object}
-   */
   renderLicenseImage(id) {
     return (
       <div className="box">
@@ -155,10 +141,6 @@ module.exports = class ProfileLicenseView extends React.Component {
     );
   }
 
-  /**
-   * Render Verification CTA
-   * @return {Object}
-   */
   renderStatus(status, outcome) {
     if (status !== 'provided') {
       return (
