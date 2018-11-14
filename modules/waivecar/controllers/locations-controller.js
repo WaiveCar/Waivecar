@@ -40,15 +40,21 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
       ]};
     }
 
+    console.log(user);
     if(user && !(yield user.isTagged('la'))) {
       matchSet = yield user.getTagList(false, 'id');
+      console.log(matchSet);
       if(!matchSet.length) {
+        console.log(matchSet.length);
         matchSet = [6];
       }
+      console.log("here");
       query.include[1].where = {
         groupRoleId: { $in: matchSet }
       };
+      console.log(query.include);
     }
+    console.log(query);
 
     // Here is how we filtre out user parking outside of a zone. 
     // We use the obscure fact that Array.map, unluke the other 
