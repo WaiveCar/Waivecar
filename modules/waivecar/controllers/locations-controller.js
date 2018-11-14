@@ -43,7 +43,7 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
     console.log(user);
     if(user) {
       matchSet = [6];
-      if !(yield user.isTagged('la')) {
+      if (!(yield user.isTagged('la'))) {
         matchSet = yield user.getTagList(false, 'id');
         console.log(matchSet);
       }
