@@ -59,37 +59,6 @@ module.exports = (name, getModelSetup) => {
    */
   SequelizeModel._relations = _model.relations;
 
-  /**
-   * Attributes that can be provided that is not part of the model schema.
-   * @property {Array} _attributes
-   */
-  SequelizeModel.prototype._attributes = SequelizeModel._attributes = _model.attributes || [];
-
-  /**
-   * Attributes to remove before returning the model as JSON.
-   * @property {Array} _blacklist
-   */
-  SequelizeModel.prototype._blacklist = _model.blacklist;
-
-  // ### Static Methods
-
-  SequelizeModel.count    = require('./count');
-  SequelizeModel.find     = require('./find');
-  SequelizeModel.findOne  = require('./findOne');
-  SequelizeModel.destroy  = require('./destroy');
-  SequelizeModel.findById = require('./findById');
-  SequelizeModel.raw      = require('./raw');
-
-  // ### Instance Methods
-
-  SequelizeModel.prototype.save   = require('./save');
-  SequelizeModel.prototype.upsert = require('./upsert');
-  SequelizeModel.prototype.update = require('./update');
-  SequelizeModel.prototype.delete = require('./delete');
-  SequelizeModel.prototype.relay  = require('./relay');
-
-  // ### Custom Methods
-
   if (_model.tagSystem) {
     let model = _model.tagSystem.model;
     let key = _model.tagSystem.key;
@@ -157,6 +126,7 @@ module.exports = (name, getModelSetup) => {
       },
 
       updateTagList : function *(newList) {
+        let _         = require('lodash')
         newList = newList.map((row) => { return row.toLowerCase(); });
         let oldTags = yield this.getTagList();
         var ix;
@@ -166,7 +136,7 @@ module.exports = (name, getModelSetup) => {
           yield this.untag(toRemove[ix]);
         }
 
-        let toAdd = _.difference(payload.tagList, oldTags);
+        let toAdd = _.difference(newList, oldTags);
         for(ix = 0; ix < toAdd.length; ix++) {
           yield this.addTag(toAdd[ix]);
         }
@@ -188,7 +158,41 @@ module.exports = (name, getModelSetup) => {
         }    
       }
     });
+
+    _model.attributes = (_model.attributes || []).concat('tagList');
   };
+
+  /**
+   * Attributes that can be provided that is not part of the model schema.
+   * @property {Array} _attributes
+   */
+  SequelizeModel.prototype._attributes = SequelizeModel._attributes = _model.attributes || [];
+
+  /**
+   * Attributes to remove before returning the model as JSON.
+   * @property {Array} _blacklist
+   */
+  SequelizeModel.prototype._blacklist = _model.blacklist;
+
+  // ### Static Methods
+
+  SequelizeModel.count    = require('./count');
+  SequelizeModel.find     = require('./find');
+  SequelizeModel.findOne  = require('./findOne');
+  SequelizeModel.destroy  = require('./destroy');
+  SequelizeModel.findById = require('./findById');
+  SequelizeModel.raw      = require('./raw');
+
+  // ### Instance Methods
+
+  SequelizeModel.prototype.save   = require('./save');
+  SequelizeModel.prototype.upsert = require('./upsert');
+  SequelizeModel.prototype.update = require('./update');
+  SequelizeModel.prototype.delete = require('./delete');
+  SequelizeModel.prototype.relay  = require('./relay');
+
+  // ### Custom Methods
+
 
   if (_model.methods) {
     for (let key in _model.methods) {
