@@ -1751,6 +1751,7 @@ module.exports = class BookingService extends Service {
     opts = opts || {};
 
     let minutesLapsed = moment().diff(booking.updatedAt, 'minutes');
+    let minutesStarted = moment().diff(booking.createdAt, 'minutes');
     let minTime = 25;
 
     if(booking.status === 'cancelled') {
@@ -1762,7 +1763,7 @@ module.exports = class BookingService extends Service {
     if (minutesLapsed < minTime) {
       if(opts.buyNow) {
         if (booking.isFlagged('charge')) {
-          yield notify.slack({ text : `:checker_flagged: The clever ${ user.link() } charged ${ car.link() } and then rebooked it.` }, { channel : '#rental-alerts' });
+          yield notify.slack({ text : `:checker_flag: The clever ${ user.link() }, booked ${ car.link() } ${ minutesStarted }min ago, charged it and then rebooked it.` }, { channel : '#rental-alerts' });
         }
 
         rebookOrder = yield OrderService.getCarNow(booking, user, opts.buyNow * 100);
