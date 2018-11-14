@@ -72,7 +72,7 @@ module.exports = (name, getModelSetup) => {
             include: [
               {
                 model: 'GroupRole',
-                as: 'group_role'
+                as: 'groupRole'
               }
             ]
           };
