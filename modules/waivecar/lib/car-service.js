@@ -125,11 +125,11 @@ module.exports = {
         //console.log(util.inspect(cars, false, null));
         let matchSet = yield _user.getTagList(false, 'id');
 
-        if(!_user.isTagged('level')) {
+        if(!(yield _user.isTagged('level'))) {
           matchSet = [6];
         }
 
-        console.log([isAdmin, _user.isTagged('level')]);
+        console.log([isAdmin, (yield _user.isTagged('level'))]);
         /*
         // for legacy reasons, some users aren't marked as la, which is '6' numerically
         if(matchSet.length === 0) {
