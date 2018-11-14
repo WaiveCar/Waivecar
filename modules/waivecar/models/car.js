@@ -361,7 +361,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
       if(this.model === "Spark EV") { 
         return 70 * multiplier;
-      } else if(this.model === 'Tuscon') {
+      } else if(this.model === 'Tucson') {
         return 255 * multiplier;
       } else { // IONIQ
         return 140 * multiplier;
