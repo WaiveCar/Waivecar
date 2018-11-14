@@ -26,6 +26,7 @@ let Car  = Bento.model('Car');
 let Booking = Bento.model('Booking');
 let BookingDetails = Bento.model('BookingDetails');
 let GroupCar  = Bento.model('GroupCar');
+const util = require('util')
 
 let geolib      = require('geolib');
 let fs          = require('fs');
@@ -120,6 +121,20 @@ module.exports = {
     }
 
     if(_user) {
+      if(!isAdmin) {
+        //console.log(util.inspect(cars, false, null));
+        let matchSet = yield _user.getTagList(false, 'id');
+
+        // for legacy reasons, some users aren't marked as la, which is '6' numerically
+        if(matchSet.length === 0) {
+          matchSet = [6];
+        }
+
+        opts.include[0].where = {
+          groupRoleId: { $in: matchSet }
+        };
+      }
+
       let $where = opts.where;
       opts.where = {
         $or: [
@@ -128,6 +143,7 @@ module.exports = {
         ]
       };
     }
+    //console.log(util.inspect(opts, false, null));
 
     // This special endpoint gets all the cars without much ado.
     if(query.type === 'all') {
