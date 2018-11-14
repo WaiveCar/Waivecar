@@ -236,8 +236,6 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
 
   };
 
-  // ### Model Methods
-
   model.methods = {
 
     //
@@ -399,14 +397,12 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
       return `${ this.averageCharge() }% (${ this.getChargeHistory().join(', ') })`;
     },
 
-    // Sets the car into unavailable mode.
     unavailable : function *() {
       yield this.update({
         isAvailable : false
       });
     },
 
-    // Sets the car into available mode.
     available : function *() {
       yield this.update({
         isAvailable : true
