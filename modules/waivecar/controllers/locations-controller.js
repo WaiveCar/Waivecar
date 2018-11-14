@@ -6,6 +6,8 @@ let moment       = require('moment');
 let Chargers = require('../lib/chargers-service');
 let Booking = require('../lib/booking-service');
 let _ = require('lodash');
+const util = require('util')
+
 
 Bento.Register.ResourceController('Location', 'LocationsController', function(controller) {
 
@@ -41,7 +43,7 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
     if(user && !(yield user.isTagged('la'))) {
       matchSet = yield user.getTagList(false, 'id');
       query.include[1].where = {
-        id: { $in: matchSet }
+        groupRoleId: { $in: matchSet }
       };
     }
 
@@ -72,12 +74,15 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
     });
     // Here's where we remove parking that's outside the zone
     locations = locations.filter(row => row);
+    let res = locations;
 
-    let chargers = yield Chargers.list();
-    let res = locations.concat(chargers);
+    if(!matchSet) {
+      let chargers = yield Chargers.list();
+      res = locations.concat(chargers);
 
-    if(opts.type) {
-      return res.filter((row) => row.type === opts.type);
+      if(opts.type) {
+        return res.filter((row) => row.type === opts.type);
+      }
     }
     return res;
   };
