@@ -90,6 +90,106 @@ module.exports = (name, getModelSetup) => {
 
   // ### Custom Methods
 
+  if (_model.tagSystem) {
+    let model = _model.tagSystem.model;
+    let key = _model.tagSystem.key;
+    _model.methods = Object.assign(_model.methods || {}, {
+      loadTagList : function* () {
+        // sometimes the tagList is loaded by the name resolution depth is not.
+        if(!this.tagList || (this.tagList.length && !this.tagList[0].groupRole)) {
+          let group = Bento.model(model);
+          let query = { 
+            where: {},
+            include: [
+              {
+                model: 'GroupRole',
+                as: 'group_role'
+              }
+            ]
+          };
+          query.where[key] = this.id;
+
+          this.tagList = yield group.find(query);
+        }
+        return this.tagList;
+      },
+
+      getTagList : function* (filter, field = 'name') {
+        function getTags(filter) {
+          return tagList
+            .filter((row) => { return filter ? row.group[field] === filter : true; })
+            .map((row) => { return row.groupRole[field]; });
+        }
+
+        let tagList = yield this.loadTagList();
+
+        if(Array.isArray(filter)) {
+          return Array.prototype.concat.apply([], filter.map(getTags));
+        }
+
+        return getTags(filter);
+      },
+
+      getTag : function *(tag, field = 'name') {
+        return (yield this.loadTagList()).filter((row) => {
+          return row.groupRole[field] === tag;
+        });
+      },
+
+      isTagged : function *(tag, field = 'name') {
+        return (yield this.getTag(tag, field)).length;
+      },
+
+      hasTag : function *(tag, field = 'name') {
+        return (yield this.getTag(tag, field)).length;
+      },
+
+      untag : function *(tag) {
+        let record = yield this.getTag(tag);
+        if(record.length) {
+          let group = Bento.model(model);
+          yield group.destroy({where: {id: record[0].id} });
+        }
+      },
+
+      delTag : function *(tag) {
+        return yield this.untag(tag);
+      },
+
+      updateTagList : function *(newList) {
+        newList = newList.map((row) => { return row.toLowerCase(); });
+        let oldTags = yield this.getTagList();
+        var ix;
+
+        let toRemove = _.difference(oldTags, newList);
+        for(ix = 0; ix < toRemove.length; ix++) {
+          yield this.untag(toRemove[ix]);
+        }
+
+        let toAdd = _.difference(payload.tagList, oldTags);
+        for(ix = 0; ix < toAdd.length; ix++) {
+          yield this.addTag(toAdd[ix]);
+        }
+      },
+
+      addTag : function *(tag) {
+        let record = yield this.hasTag(tag);
+        if(record) {
+          return record;
+        }
+        let GroupRole = Bento.model('GroupRole');
+        let groupRecord = yield GroupRole.findOne({where: {name: tag}});
+        if(groupRecord) {
+          let group = Bento.model(model);
+          let query = { groupRoleId: groupRecord.id };
+          query[key] = this.id;
+          let tag = new group(query);
+          yield tag.save();
+        }    
+      }
+    });
+  };
+
   if (_model.methods) {
     for (let key in _model.methods) {
       SequelizeModel.prototype[key] = _model.methods[key];
