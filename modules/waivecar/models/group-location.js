@@ -10,33 +10,16 @@ Bento.Register.Model('GroupLocation', 'sequelize', function(model, Sequelize) {
   };
   
   model.schema = {
-    
-    groupRoleId : {
-      type       : Sequelize.INTEGER,
-      allowNull  : false,
-      references : {
-        model : 'group_roles',
-        key   : 'id'
-      }
-    },
-    
-    locationId : {
-      type       : Sequelize.INTEGER,
-      allowNull  : false,
-      references : {
-        model : 'location',
-        key   : 'id'
-      }
-    }
-    
+    groupRoleId : { type : Sequelize.INTEGER },
+    locationId : { type : Sequelize.INTEGER }
   };
   
   model.relations = [
     'GroupRole',
     'Location',
     function relations(GroupRole, Location) {
-      this.belongsTo(GroupRole, { as : 'group_role' });
-      this.belongsTo(Location,  { as : 'location'  });
+      this.belongsTo(GroupRole, { as: 'groupRole' });
+      this.belongsTo(Location, { as : 'location' });
     }
   ];
   
