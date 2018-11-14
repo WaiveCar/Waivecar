@@ -10,6 +10,13 @@ let _ = require('lodash');
 Bento.Register.ResourceController('Location', 'LocationsController', function(controller) {
 
   controller.index = function *() {
+    let user = this.auth.user;
+
+    let matchSet = false;
+    let excludeSet = false;
+
+    //if(user && !(yield user.isTagged('la'))) {
+        // 
     var opts = this.query;
     var query = {
       // Legacy apps only know about one homebase.
@@ -21,6 +28,9 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
       include: [{
         model: 'UserParking',
         as: 'parking',
+      }, {
+        model: 'GroupLocation',
+        as: 'tagList',
       }]
     };
     if (opts.search) {
@@ -161,13 +171,15 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
     let model = yield Location.findById(id);
     let data  = this.payload;
 
-    // ### Verify Resource Exists
-
     if (!model) {
       throw error.parse({
         code    : 'LOCATION_NOT_FOUND',
         message : 'Could not find resource requested for update'
       }, 404);
+    }
+
+    if(data.tagList) {
+      yield model.updateTagList(data.tagList);
     }
 
     // ### Verify Ownership
@@ -197,6 +209,21 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
 
     location.relay('delete');
   };
+
+  controller.show = function*(id) {
+    let sequelize   = Bento.provider('sequelize');
+
+    return yield Location._schema.findById(id, {
+      include: [{
+        model: sequelize.models.GroupLocation,
+        as: 'tagList',
+        include: [{
+          model: sequelize.models.GroupRole,
+          as: 'groupRole'
+        }]
+      }]
+    });
+  }
 
   controller._hasAccess = function *(user) {
     if (!user.hasAccess('admin')) {
