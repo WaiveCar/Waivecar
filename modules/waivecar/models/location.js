@@ -70,10 +70,19 @@ Bento.Register.Model('Location', 'sequelize', function(model, Sequelize) {
       defaultValue: null,
     }
   };
+
+  model.tagSystem = {model: 'GroupLocation', key: 'locationId'};
+
+  model.attributes = [
+    'tagList',
+  ];
+ 
   model.relations = [
     'UserParking',
-    function relations(UserParking) {
+    'GroupLocation',
+    function relations(UserParking, GroupLocation) {
       this.hasOne(UserParking, { as : 'parking',  foreignKey : 'locationId' });
+      this.hasMany(GroupLocation,  { as : 'tagList', foreignKey : 'locationId' });
     }
   ];
 
