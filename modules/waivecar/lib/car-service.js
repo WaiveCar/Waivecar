@@ -153,7 +153,7 @@ module.exports = {
         ]
       };
     }
-    console.log(util.inspect(opts, false, null));
+    //console.log(util.inspect(opts, false, null));
 
     // This special endpoint gets all the cars without much ado.
     if(query.type === 'all') {
