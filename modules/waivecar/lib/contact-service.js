@@ -270,16 +270,20 @@ module.exports = {
         hour = (hour === '0') ? '' : `${hour}hr `;
 
         let minute = mStart.format('m');
+        minute = (minute === '0') ? '' : `${minute}m `;
+
         let second = mStart.format('s');
         let car = yield Car.findById(currentBooking.carId);
+        console.log([car.latitude, car.longitude]);
         let address = yield booking.getAddress(car.latitude, car.longitude);
+        console.log(address);
         if(address) {
           address = ', located at ' + address;
         } else {
           address = '';
         }
 
-        message.push(`Your booking with ${ car.license }, ${ car.averageCharge() }% charged${address} is ${ currentBooking.status } as of ${hour}${minute}m${second}s ago`);
+        message.push(`Your booking with ${ car.license }, ${ car.averageCharge() }% charged${address} is ${ currentBooking.status } as of ${hour}${minute}${second}s ago`);
       } else {
         message.push('You do not have an active booking');
       }
