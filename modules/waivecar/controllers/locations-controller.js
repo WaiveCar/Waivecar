@@ -15,8 +15,6 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
     let matchSet = false;
     let excludeSet = false;
 
-    //if(user && !(yield user.isTagged('la'))) {
-        // 
     var opts = this.query;
     var query = {
       // Legacy apps only know about one homebase.
@@ -38,6 +36,13 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
         { name : { $like : `%${ opts.search }%` } },
         { address : { $like : `%${ opts.search }%` } }
       ]};
+    }
+
+    if(user && !(yield user.isTagged('la'))) {
+      matchSet = yield user.getTagList(false, 'id');
+      query.include[1].where = {
+        id: { $in: matchSet }
+      };
     }
 
     // Here is how we filtre out user parking outside of a zone. 
