@@ -1000,6 +1000,7 @@ module.exports = {
     }
     let bookingService = require('./booking-service');
 
+    let car = yield this.updateAvailabilityAnonymous(id, true, _user);
     let booking = yield bookingService.create({
       source: 'web',
       userId: _user.id,
@@ -1009,7 +1010,6 @@ module.exports = {
     yield bookingService.ready(booking.id, _user);
 
     if (_user) yield LogService.create({ carId : id, action : Actions.INSTABOOK }, _user);
-    let car = yield this.updateAvailabilityAnonymous(id, false, _user);
     yield notify.notifyAdmins(`:scooter: ${ _user.link() } instabooked ${ car.license }.`, ['slack'], {channel: '#reservations'});
   },
 
