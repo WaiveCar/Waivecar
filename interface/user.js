@@ -161,6 +161,10 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       return `<${ apiConfig.uri }/users/${ this.id }|${ this.name() }>`;
     },
 
+    getCredit() {
+      return `(credit: $${ (this.credit / 100).toFixed(2) })`;
+    },
+
     // This is used mostly in slack messages ... it emits the users phone number 
     // in a non-stupid way.
     info() {
@@ -207,14 +211,6 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       });
     },
 
-    // ### Role Methods
-    // A batch of methods that can determine the users access rights.
-
-    /**
-     * Checks if the user has access based on the provided role.
-     * @param  {String}  role
-     * @return {Boolean}
-     */
     hasAccess(role) {
       try {
         let roles = Bento.Interface.roles;
