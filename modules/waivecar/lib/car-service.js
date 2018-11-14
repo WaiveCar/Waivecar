@@ -125,10 +125,16 @@ module.exports = {
         //console.log(util.inspect(cars, false, null));
         let matchSet = yield _user.getTagList(false, 'id');
 
+        if(!_user.isTagged('level')) {
+          matchSet = [6];
+        }
+
+        /*
         // for legacy reasons, some users aren't marked as la, which is '6' numerically
         if(matchSet.length === 0) {
           matchSet = [6];
         }
+        */
 
         opts.include[0].where = {
           groupRoleId: { $in: matchSet }
