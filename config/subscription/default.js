@@ -20,6 +20,7 @@ module.exports = {
     }
   },
   gmaps: {
-    apiKey: 'AIzaSyD3Bf8BTFI_z00lrxWdReV4MpaqnQ8urzc'
+    apiKey: 'AIzaSyBibUDNVBjFAKpwyPcZirJW4qHq2W2OO8M',
+    apiKeyOld: 'AIzaSyD3Bf8BTFI_z00lrxWdReV4MpaqnQ8urzc'
   }
 };
