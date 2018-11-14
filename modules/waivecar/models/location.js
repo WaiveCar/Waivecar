@@ -73,10 +73,6 @@ Bento.Register.Model('Location', 'sequelize', function(model, Sequelize) {
 
   model.tagSystem = {model: 'GroupLocation', key: 'locationId'};
 
-  model.attributes = [
-    'tagList',
-  ];
- 
   model.relations = [
     'UserParking',
     'GroupLocation',
