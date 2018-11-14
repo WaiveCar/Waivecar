@@ -129,6 +129,7 @@ module.exports = {
           matchSet = [6];
         }
 
+        console.log([isAdmin, _user.isTagged('level')]);
         /*
         // for legacy reasons, some users aren't marked as la, which is '6' numerically
         if(matchSet.length === 0) {
@@ -149,7 +150,7 @@ module.exports = {
         ]
       };
     }
-    //console.log(util.inspect(opts, false, null));
+    console.log(util.inspect(opts, false, null));
 
     // This special endpoint gets all the cars without much ado.
     if(query.type === 'all') {
