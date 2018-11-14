@@ -38,6 +38,10 @@ class LocationsIndex extends React.Component {
     this.forceUpdate();
   }
 
+  hasTag(tag) {
+    return this.state.location.tagList.filter(row => row.groupRole.name === tag).length;
+  }
+
   handleInputChange(event) {
 
     const target = event.target;
@@ -48,11 +52,16 @@ class LocationsIndex extends React.Component {
   }
 
   handleSubmit(event) {
+    event.preventDefault();
 
     var data = this.state.location;
 
+    data.tagList = Array.prototype.map.call(event.target['tagList'], function(row) {
+      return row.checked ? row.value : false;
+    }).filter(row => row);
+
     try {
-      if(data.shape.length > 0) {
+      if(data.shape && data.shape.length > 0) {
         let path = JSON.parse(data.shape);
       }
     } catch(ex) {
@@ -74,7 +83,6 @@ class LocationsIndex extends React.Component {
       document.location = '/locations';
 
     });
-    event.preventDefault();
   }
 
   handleDelete() {
@@ -136,6 +144,31 @@ class LocationsIndex extends React.Component {
     }
   }
 
+  tagList() {
+    let rowList = [
+      ['la', 'LA'],
+      ['csula', 'CSULA'],
+      ['level', 'Level'],
+      ['choice', 'Choice']
+    ].map((row, i) => (
+      <div className="radio-inline" key={i}>
+        <label>
+          <input type="checkbox" name="tagList" value={ row[0] } defaultChecked={ this.hasTag(row[0]) } />
+          { row[1] } 
+        </label>
+      </div>
+    ));
+
+    return ( 
+      <div className="form-group row">
+        <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Tags</label>
+        <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
+        { rowList }
+        </div>
+      </div>
+    );
+  }
+
   render() {
 
     if (this.state.loading) {
@@ -158,12 +191,6 @@ class LocationsIndex extends React.Component {
                   <form className="bento-form" onSubmit={this.handleSubmit}>
                     <div className="form-group row">
                       <div className="col-xs-12 bento-form-input focus">
-                        <label>ID</label>
-                        <input type="text" className="form-control" name="id" defaultValue={ location.id } onChange={this.handleInputChange}/>
-                      </div>
-                    </div>
-                    <div className="form-group row">
-                      <div className="col-xs-12 bento-form-input focus">
                         <label>Type</label>
                         <ReactSelect
                           name        = "type"
@@ -173,6 +200,7 @@ class LocationsIndex extends React.Component {
                           />
                       </div>
                     </div>
+                    { this.tagList() }
                     <div className="form-group row">
                       <div className="col-xs-12 bento-form-input focus">
                         <Switch checked={ this.state.location.isPublic } label="Show in the APP" onChange={this.handleIsPublicChange} />
@@ -196,7 +224,6 @@ class LocationsIndex extends React.Component {
                         <input type="text" className="form-control" name="description" defaultValue={ location.description } onChange={this.handleInputChange}/>
                       </div>
                     </div>
-                    <p>Specify a radius or a polygon (leave one blank)</p>
                     <div className="form-group row">
                       <div className="col-xs-12 bento-form-input focus">
                         <label>Radius (in US Feet, 0.3048m) </label>
@@ -211,12 +238,12 @@ class LocationsIndex extends React.Component {
                     }
                     <div className="form-group row">
                       <div className="col-xs-12 bento-form-input focus">
+                        <label><em>or</em> Polygon </label>
                         <textarea rows="5" placeholder="-118.27366,34.03844,0.0&#10;-118.27272,34.0453,0.0&#10;-118.25838,34.05358,0.0&#10;-118.24843,34.06226,0.0&#10;-118.23641,34.0565,0.0" className="form-control" name="shape" defaultValue={ location.shape } onChange={this.handleInputChange} />
                       </div>
                     </div>
                     <div className="form-actions text-center">
                       <div className="btn-group" role="group">
-                        <button type="button" className="btn btn-danger btn-wave" onClick={() => this.handleDelete()} >delete</button>
                         <button type="submit" className="btn btn-primary btn-wave" >update</button>
                       </div>
                     </div>
