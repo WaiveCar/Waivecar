@@ -274,11 +274,9 @@ module.exports = {
 
         let second = mStart.format('s');
         let car = yield Car.findById(currentBooking.carId);
-        console.log([car.latitude, car.longitude]);
         let address = yield booking.getAddress(car.latitude, car.longitude);
-        console.log(address);
         if(address) {
-          address = ', located at ' + address;
+          address = ', located at ' + address.replace(/, USA/, '');
         } else {
           address = '';
         }
