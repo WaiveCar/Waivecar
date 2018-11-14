@@ -41,14 +41,12 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
     }
 
     console.log(user);
-    if(user && !(yield user.isTagged('la'))) {
-      matchSet = yield user.getTagList(false, 'id');
-      console.log(matchSet);
-      if(!matchSet.length) {
-        console.log(matchSet.length);
-        matchSet = [6];
+    if(user) {
+      matchSet = [6];
+      if !(yield user.isTagged('la')) {
+        matchSet = yield user.getTagList(false, 'id');
+        console.log(matchSet);
       }
-      console.log("here");
       query.include[1].where = {
         groupRoleId: { $in: matchSet }
       };
