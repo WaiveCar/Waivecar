@@ -32,7 +32,7 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
       other: null,
     }
     ctrl.model = ctrl.data.cars.model.split(' ')[0].toLowerCase(); 
-    ctrl.range = Math.floor(0.01 * ctrl.data.cars.charge * [132,65][+(ctrl.data.cars.model === "Spark EV")]);
+    ctrl.range = Math.floor(0.01 * ctrl.data.cars.charge * ({"Spark EV":65,Tucson:255}[ctrl.data.cars.model]||132));
     ctrl.allPics = false;
     ctrl.buttonClass = 'button button-dark add-image'; 
     ctrl.start = start;

@@ -15,6 +15,8 @@ module.exports = angular.module('app.directives')
           } 
           if(car.model === 'Spark EV') {
             ratio = 0.68;
+          } else if(car.model === 'Tucson') {
+            ratio = 2.55;
           } else {
             ratio = 1.35;
           }
