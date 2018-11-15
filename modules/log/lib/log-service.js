@@ -352,9 +352,9 @@ module.exports = class LogService {
        
       var fuckThesePeople = false;
       allCars.forEach((row) => {
-        if(carList.includes(row.id)) {
+        if(fuckThesePeople || carList.includes(row.id)) {
           fuckThesePeople = true;
-          break;
+          return;
         }
         if(carList.includes(row.id) || carList.includes(row.license.toUpperCase())) {
           includeMap[row.id] = row.license;
