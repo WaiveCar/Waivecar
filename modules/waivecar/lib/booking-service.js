@@ -1957,7 +1957,7 @@ module.exports = class BookingService extends Service {
       throw error.parse({
         code    : 'RECENT_BOOKING',
         title   : 'Rebook the same WaiveCar',
-        message : `Sorry! You need to wait ${remainingTime}min more to rebook ${ car.license }!`,
+        message : `Sorry! You need to wait ${remainingTime}min more to rebook ${ car.license } for free!`,
         options : [
           buyOption,
           {
