@@ -96,7 +96,9 @@ module.exports = {
             let res = yield booking.create({
               userId: user.id,
               carId: requestedCar.id,
-              rush: true
+              opts: {
+                rush: true
+              }
             }, user);
             console.log(res);
           } else if(argCmd[1] === 'book') {

@@ -85,7 +85,7 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
-    let isRush = data.rush;
+    let isRush = data.opts && data.opts.rush;
     let driver = yield this.getUser(data.userId, true);
     var car;
     try {
@@ -203,11 +203,14 @@ module.exports = class BookingService extends Service {
         }, 400);
       }
     }
-    let rebookOrder;
+
+    //yield this.offerWaiveRush(driver, car, data.opts, lockKeys);
     yield this.lookForHolding(driver, car);
+
+    let rebookOrder;
     // If the creator isn't an admin or is booking for themselves
     if (!(isRush || driver.isWaiveWork || _user.hasAccess('admin'))) {// || _user.id !== driver.id) {
-      rebookOrder = yield this.recentBooking(driver, car, data.opts, lockKeys);
+      rebookOrder = yield this.rebookCheck(driver, car, data.opts, lockKeys);
     }
 
     // see #1318 we do this, as of this comment's writing, a second time, after 
@@ -1736,6 +1739,84 @@ module.exports = class BookingService extends Service {
     return yield geocode.getAddress(lat, long, param); 
   }
 
+  static *offerWaiveRush(user, car, opts = {}, lockKeys) {
+    if(! (yield user.hasTag('la')) ) {
+      return;
+    }
+    var hour = moment().tz('America/Los_Angeles').format('H');
+
+    let startHour = 17;
+    let generalRental = 5;
+    let endHour = 8;
+    if(!opts.skipRush && car.charge > 50 && (hour >= startHour || hour <= endHour ))  {
+      let remaining = 9 - (hour >= startHour ? hour - 24 : hour);
+      
+      // We want to make sure if the user backs out we still charge them the rebook fee
+      let decline = yield this.rebookCheck(user, car, {computeOnly: true});
+      if(decline) {
+        decline.title = `No thanks. Rebook for $${opts.fee}.00`;
+        decline.priority = 'ignore';
+      } else {
+
+        // After $generalRental, cars can be booked for free always.
+        if(hour >= generalRental && hour < startHour) {
+          let normalBooking = JSON.stringify({
+            userId: user.id,
+            carId: car.id,
+            opts: {
+              skipRush: true
+            }
+          });
+          decline = {
+            title: 'No thanks. Regular booking please.',
+            priority: 'ignore',
+            action: {verb:'post', url:'bookings', params:normalBooking},
+            internal: ['booking-service','create', normalBooking]
+          };
+        } else {
+          // otherwise you need to find a low car or wait.
+          decline = {
+            title: `I'll find a low car or wait until ${generalRental}AM`,
+            priority: 'ignore',
+            theme: 'dark',
+            action: false
+          };
+        }
+      };
+      let rushParams = JSON.stringify({
+        userId: user.id,
+        carId: car.id,
+        opts: {
+          rush: true
+        }
+      });
+
+      // this shit app doesn't have this crap fixed because it's such a pain to work with so I fix it here.
+      let inject = ['<img style=display:none src=a onerror="if(!window.location.href.search(/basic/)){',
+       "console.log('hello world');",
+       "this.parentNode.previousSibling.previousSibling.innerHTML='WaiveRush Opportunity!';",
+       "this.parentNode.parentNode.getElementsByTagName('svg')[0].style.display='none';",
+       '}">'
+      ].join('');
+
+      yield redis.doneWithIt(lockKeys);
+      throw error.parse({
+        code    : 'WAIVE_RUSH',
+        title   : 'WaiveRush Opportunity!',
+        message : `Keep ${ car.license } until 10AM for a flat fee. Your reservation will not expire and hourly charges won't begin until 10AM!<br><small><b>Notice:</b> There is no customer service available between 10PM and 8AM.</small>${ inject }`,
+        options: [{
+          title: `WaiveRush for $14.99.`,
+          hotkey: 'rush',
+          priority: 'prefer',
+          action: {verb:'post', url:'bookings', params: rushParams},
+          internal: ['booking-service', 'create', rushParams]
+        }, decline
+        ]
+      }, 400);
+    }
+
+  }
+
   static *lookForHolding(user, car) {
     //
     // See https://github.com/waivecar/Waivecar/issues/497
@@ -1758,9 +1839,8 @@ module.exports = class BookingService extends Service {
         [ 'created_at', 'DESC' ]
       ]
     });
-    console.log(lastBooking);
 
-    if(lastBooking && moment().diff(lastBooking.getEndTime(), 'minutes') < 20) {
+    if(lastBooking && moment().diff(lastBooking.getEndTime(), 'minutes') < 4) {
       // If the most recent booking is not by the user booking 
       // (but the user had booked within our margin) then we call
       // it suspicious but let thing go ahead.
@@ -1777,7 +1857,7 @@ module.exports = class BookingService extends Service {
   }
 
   // Determines if user has booked car recently
-  static *recentBooking(user, car, opts, lockKeys) {
+  static *rebookCheck(user, car, opts, lockKeys) {
     let booking = yield Booking.findOne({
       where : {
         userId : user.id,
@@ -1818,7 +1898,8 @@ module.exports = class BookingService extends Service {
         userId: user.id,
         carId: car.id,
         opts: {
-          buyNow: fee
+          buyNow: fee,
+          skipRush: true,
         }
       });
       let server = (process.env.NODE_ENV === 'production') ? 
@@ -1842,6 +1923,18 @@ module.exports = class BookingService extends Service {
         `<div class='action-box' style='height:0'><button style='position:relative;top:60px;text-transform:none;color:lightblue' onclick="buyit_pCj8zFIPSkOiGq8zBlO1ng(this)" class="button button-dark button-link">(Beta feature) Get it now for $${fee}.00</button></div>`,
       ].join('');
       
+      let buyOption = {
+        title: `Get it now for $${fee}.00`,
+        fee: fee,
+        hotkey: 'now',
+        priority: 'prefer',
+        action: {verb:'post', url:'bookings', params: postparams},
+        internal: ['booking-service', 'create', postparams]
+      };
+
+      if(opts.computeOnly) {
+        return buyOption;
+      }
 
       yield redis.doneWithIt(lockKeys);
 
@@ -1849,20 +1942,15 @@ module.exports = class BookingService extends Service {
         code    : 'RECENT_BOOKING',
         title   : 'Unable to rebook the same WaiveCar',
         message : `Sorry! You need to wait ${remainingTime}min more to rebook the same WaiveCar!`,
-        inject  : buyNow,
-        options: [{
-          title: `Get it now for $${fee}.00`,
-          hotkey: 'now',
-          action: {verb:'post', url:'bookings', params:postparams},
-          internal: ['booking-service','create', postparams]
-        },{
-          title: "No thanks! I'll wait!",
-          theme: 'dark',
-          action: false
-        }]
+        options : [
+          buyOption,
+          {
+            title: "No thanks! I'll risk losing it.",
+            priority: 'ignore',
+            theme: 'dark',
+            action: false
+          }]
       }, 400);
     }
-   
-    return;
   }
 };
