@@ -20,11 +20,13 @@ function log_message(type, what) {
   what.t = type;
   what.at = new Date();
 
-  try {
-    fs.appendFile('/var/log/outgoing/log.txt', JSON.stringify(what) + "\n");
-  } catch (err) {
-    log.warn(`Failed to write to the log file: ${ err.message }`);
-  }
+  setTimeout(function(){
+    try {
+      fs.appendFile('/var/log/outgoing/log.txt', JSON.stringify(what) + "\n");
+    } catch (err) {
+      log.warn(`Failed to write to the log file: ${ err.message }`);
+    }
+  },0);
 }
 
 let fcm = new FCM(config.push.serverKey);
@@ -122,62 +124,11 @@ module.exports = {
   },
 
   *notifyAdmins(message, channels, params) {
-    if (typeof channels === 'string') {
-      channels = [ channels ];
-    }
-
-    let admins = yield GroupUser.find({
-      where : {
-        groupRoleId : {
-          $gte : 3
-        }
-      }
-    });
-
-    if (admins && admins.length) {
-      let users = yield User.find({
-        where : {
-          id : {
-            $in : admins.reduce((list, next) => {
-              list.push(next.id);
-              return list;
-            }, [])
-          }
-        }
-      });
-
-      if (channels.indexOf('slack') !== -1) {
-        yield this.slack({
-          text : message
-        }, params);
-      }
-
-      if (channels.indexOf('sms') !== -1) {
-        yield this.sendToAll(users, message);
-      }
-
-      if (channels.indexOf('email') !== -1) {
-        let mailingList = users.reduce((list, next) => {
-          list.push(next.email);
-          return list;
-        }, []);
-        yield this.email({
-          to       : mailingList.join(','),
-          from     : config.email.sender,
-          subject  : 'WaiveCar [Notification]',
-          template : 'waivecar-notification',
-          context  : {
-            message : message
-          }
-        });
-      }
-    }
+    yield this.slack({
+      text : message
+    }, params);
   },
 
-  /**
-   * Sends a slack notification to the waivecar slack.
-   * @param {Object} payload
-   */
   *slack(payload, params) {
     if (params && params.channel) payload.channel = params.channel;
     log_message('slack', payload);
@@ -191,9 +142,6 @@ module.exports = {
     } 
   },
 
-  /**
-   * Sends a new email.
-   */
   *email(payload) {
     let email = new Email();
     log_message('email', payload);
