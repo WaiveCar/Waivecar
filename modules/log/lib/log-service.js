@@ -300,7 +300,6 @@ module.exports = class LogService {
       totalDistance = {user: 0, fleet: 0},
       totalBookings = {user: 0, fleet: 0},
       start = {year:0, month:1, day:1},
-      fleetUserList = yield GroupUser.find({ where: { groupRoleId: { $gt: 1 } } }),
       excludeMap = {},
       includeMap = {},
       allExcludedBookings,
@@ -315,8 +314,6 @@ module.exports = class LogService {
          ]
       });
 
-
-    fleetUserList = fleetUserList.map((row) => { row.userId });
 
     // we allow for custom duration
     let duration_parts = year_month.split('_');
@@ -363,6 +360,7 @@ module.exports = class LogService {
           includeMap[row.id] = row.license;
         } 
       });
+      console.log(includeMap);
       if(fuckThesePeople) {
         return [];
       }
@@ -521,9 +519,6 @@ module.exports = class LogService {
       }
       bookByCar[id].push(row);
 
-      if( userId in fleetUserList ) {
-        userType = 'fleet';
-      }
       totalBookings[userType] ++;
       if( ! (userId in bookBy[userType]) ) {
         bookBy[userType][userId] = [];
