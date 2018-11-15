@@ -13,7 +13,7 @@ function PreBookService ($injector) {
   var ctrl;
 
   function handlePreBookError(err, licenses) {
-    var modal, message;
+    var modal, message, title;
     var actions = [{
       className: 'button-balanced',
       text: 'OK',
@@ -24,6 +24,8 @@ function PreBookService ($injector) {
 
     if (err && err.data) {
       message = err.data.message;
+      title = err.data.title;
+
       if (err.data.code === 'CAR_IN_PROGRESS') {
         return $modal('result', {
           icon: 'x-icon',
@@ -130,8 +132,7 @@ function PreBookService ($injector) {
     }
 
     return $modal('result', {
-      icon: 'x-icon',
-      title:'Unable to book',
+      title: title || 'Unable to book',
       message: message,
       actions: actions
     }).then(function (_modal) {
