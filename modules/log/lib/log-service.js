@@ -353,11 +353,19 @@ module.exports = class LogService {
         return row.indexOf('W') === -1 ? ('WAIVE' + row) : row;
       });
        
+      var fuckThesePeople = false;
       allCars.forEach((row) => {
+        if(carList.includes(row.id)) {
+          fuckThesePeople = true;
+          break;
+        }
         if(carList.includes(row.id) || carList.includes(row.license.toUpperCase())) {
           includeMap[row.id] = row.license;
         } 
       });
+      if(fuckThesePeople) {
+        return [];
+      }
       excludeMap = false;
       if(Object.keys(includeMap).length === 0) {
         return [];
