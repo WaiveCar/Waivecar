@@ -122,14 +122,17 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
 
     getEndTime() {
       if(this.details) {
+        if(!this.details.length) {
+          // canceled bookings
+          return this.updatedAt;
+        }
+
         if(this.details[0].type === 'end') {
           return this.details[0].updatedAt;
         }
         if(this.details[1] && this.details[1].type === 'end') {
           return this.details[1].updatedAt;
         }
-        // canceled bookings
-        return this.updatedAt;
       }
     },
 
