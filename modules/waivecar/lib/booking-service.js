@@ -1842,7 +1842,8 @@ module.exports = class BookingService extends Service {
     // We now look for a booking in between.
     let lastBooking = yield Booking.findOne({
       where : {
-        carId  : car.id
+        carId  : car.id,
+        status : 'cancelled'
       },
       include: [ 
         {
