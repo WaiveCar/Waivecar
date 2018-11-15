@@ -204,6 +204,7 @@ module.exports = class BookingService extends Service {
       }
     }
     let rebookOrder;
+    yield this.lookForHolding(driver, car);
     // If the creator isn't an admin or is booking for themselves
     if (!(isRush || driver.isWaiveWork || _user.hasAccess('admin'))) {// || _user.id !== driver.id) {
       rebookOrder = yield this.recentBooking(driver, car, data.opts, lockKeys);
@@ -1735,6 +1736,46 @@ module.exports = class BookingService extends Service {
     return yield geocode.getAddress(lat, long, param); 
   }
 
+  static *lookForHolding(user, car) {
+    //
+    // See https://github.com/waivecar/Waivecar/issues/497
+    //
+    // The logic here is that we are going to try to see if this is under say, XX minutes and there
+    // is another booking in between. 
+    
+    // We now look for a booking in between.
+    let lastBooking = yield Booking.findOne({
+      where : {
+        carId  : car.id
+      },
+      include: [ 
+        {
+          model: 'BookingDetails',
+          as: 'details',
+        }
+      ],
+      order : [
+        [ 'created_at', 'DESC' ]
+      ]
+    });
+    console.log(lastBooking);
+
+    if(lastBooking && moment().diff(lastBooking.getEndTime(), 'minutes') < 20) {
+      // If the most recent booking is not by the user booking 
+      // (but the user had booked within our margin) then we call
+      // it suspicious but let thing go ahead.
+      if(lastBooking.userId != user.id) {
+        let holder = yield User.findById(lastBooking.userId);
+
+        // We tarnish both users' stellar records.
+        yield UserLog.addUserEvent(user, 'HOLDING', holder.id, holder.name());
+        yield UserLog.addUserEvent(holder, 'HOLDING', user.id, user.name());
+
+        yield notify.notifyAdmins(`:dark_sunglasses: ${ holder.link() } may have been holding a car for ${ user.link() }.`, [ 'slack' ], { channel : '#user-alerts' });
+      }
+    }
+  }
+
   // Determines if user has booked car recently
   static *recentBooking(user, car, opts, lockKeys) {
     let booking = yield Booking.findOne({
@@ -1822,44 +1863,6 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
    
-    //
-    // See https://github.com/waivecar/Waivecar/issues/497
-    //
-    // The logic here is that we are going to try to see if this is under say, XX minutes and there
-    // is another booking in between. 
-    
-    // We consider the minutes lapsed to be the updated metric.
-    minutesLapsed = moment().diff(booking.updatedAt, 'minutes');
-    
-    // And give a margin of minutes
-    minTime = 20;
-
-    if(minutesLapsed < minTime) {
-
-      // We now look for a booking in between.
-      let bookingForCar = yield Booking.findOne({
-        where : {
-          carId  : car.id
-        },
-        order : [
-          [ 'created_at', 'DESC' ]
-        ]
-      });
-
-      // If the most recent booking is not by the user booking 
-      // (but the user had booked within our margin) then we call
-      // it suspicious but let thing go ahead.
-      if(bookingForCar && bookingForCar.userId != user.id) {
-        let holder = yield User.findById(bookingForCar.userId);
-
-        // We tarnish both users' stellar records.
-        yield UserLog.addUserEvent(user, 'HOLDING', holder.id, holder.name());
-        yield UserLog.addUserEvent(holder, 'HOLDING', user.id, user.name());
-
-        yield notify.notifyAdmins(`:dark_sunglasses: ${ holder.link() } may have been holding a car for ${ user.link() }.`,
-           [ 'slack' ], { channel : '#user-alerts' });
-      }
-    }
     return;
   }
 };
