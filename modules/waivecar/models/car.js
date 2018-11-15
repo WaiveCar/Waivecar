@@ -266,7 +266,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     //  Calling with (-1) implicates different orders depending
     //  on the state of the car.
     //
-    getBooking: function *(offset = 0) {
+    getBooking: function *(offset = 0, opts = {}) {
       let searchSet = ['started', 'reserved', 'ended', 'completed', 'closed'];
       offset = Math.abs(offset);
 
@@ -279,16 +279,16 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
         offset -= 1;
       }
 
-      return yield Booking.findOne({ 
+      return yield Booking.findOne(Object.assign(opts, { 
         where : { 
-          car_id : this.id,
+          carId : this.id,
           status : {
             $in : searchSet,
           }
         },
         order: [['created_at', 'DESC']],
         offset: offset,
-      });
+      }));
     },
 
     getCurrentBooking: function *() {
