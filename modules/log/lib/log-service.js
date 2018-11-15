@@ -360,7 +360,6 @@ module.exports = class LogService {
           includeMap[row.id] = row.license;
         } 
       });
-      console.log(includeMap);
       if(fuckThesePeople) {
         return [];
       }
