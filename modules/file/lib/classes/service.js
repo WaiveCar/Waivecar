@@ -54,22 +54,22 @@ module.exports = class Service {
     return user;
   }
 
-  /**
-   * Deletes a list of files.
-   * @param {Array} files
-   */
   *deleteFiles(files) {
     for (let i = 0, len = files.length; i < len; i++) {
-      let file = files[i];
-      switch (file.store) {
-        case 'local' : {
-          yield Storage.delete(file);
-          break;
+      try {
+        let file = files[i];
+        switch (file.store) {
+          case 'local' : {
+            yield Storage.delete(file);
+            break;
+          }
+          case 's3' : {
+            yield S3.delete(file);
+            break;
+          }
         }
-        case 's3' : {
-          yield S3.delete(file);
-          break;
-        }
+      } catch(ex) { 
+        console.log('Unable to delete ', file);
       }
     }
   }
