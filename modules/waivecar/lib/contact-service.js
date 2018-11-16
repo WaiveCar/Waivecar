@@ -226,7 +226,7 @@ module.exports = {
         let message = yield carList.map(function *(car) {
           return car.license + " (" + Math.round(car.avgMilesAvailable()) + "mi) " + cleanAddy(yield booking.getAddress(car.latitude, car.longitude));
         });
-        yield notify.sendTextMessage(user, "Available:\n" + message.join('\n'));
+        yield notify.sendTextMessage(user, message.join('\n'));
       }
      
       return true;
