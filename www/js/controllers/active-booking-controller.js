@@ -39,7 +39,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
 
   // $data is used to interact with models, never directly. If direct is required, $data should be refreshed.
   this.data = $data.active;
-  var unlockModal;
+  var _unlockModal;
 
   var stopServiceWatch = $scope.$watch('service.isInitialized', function(isInitialized) {
     if (!isInitialized) {
@@ -336,16 +336,23 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   // to see where the car is.
   function showMap () {
     if(modalMap.unlock) {
-      modalMap.unlock.remove();
+      modalMap.unlock.hide();
     }
   }
 
   function showUnlock () {
-    var modal;
     var unlocking;
     var booking = $data.active.bookings;
-    if (booking == null || booking.status !== 'reserved' || unlockModal) {
+    if (booking == null || booking.status !== 'reserved' || _unlockModal) {
       return;
+    }
+    function show() {
+      _unlockModal = true;
+      modalMap.unlock.show();
+    }
+
+    if(modalMap.unlock) {
+      return show();
     }
     // we try to buy a few seconds to connect to the car's ble by starting the
     // process right before flaunting the unlock screen
@@ -362,7 +369,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
     }
     $modal('result', {
       title: 'You\'re In Reach',
-      message: 'Welcome to ' + plateNumber + '. Now you can unlock your WaiveCar!' + survey,
+      message: 'Welcome to ' + plateNumber + ". It's time to start your ride!" + survey,
       icon: 'check-icon',
       actions: [{
         className: 'button-balanced',
@@ -378,21 +385,18 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         className: 'button-small button-link',
         text: 'Cancel Your Booking',
         handler: function () {
-          unlockModal = false;
-          modal.remove();
+          _unlockModal = false;
+          modal.hide();
           ctrl.showCancel();
         }
       }]
     })
     .then(function (_modal) {
-      modal = _modal;
-      modal.show();
-      modalMap.unlock = modal;
-      unlockModal = true;
+      modalMap.unlock = _modal;
+      show();
     });
 
     function onUnlock () {
-      unlockModal = false;
       if (unlocking) {
         return;
       }
@@ -402,15 +406,17 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
         template: '<div class="circle-loader"><span>Loading</span></div>'
       });
 
-      $interval.cancel(timer);
       var id = $ride.state.booking.id;
 
       $data.resources.cars.unlock({ id: $data.active.cars.id });
       $data.resources.bookings.ready({ id: id }).$promise
       .then(function() {
+        _unlockModal = false;
         $ionicLoading.hide();
-        modal.remove();
+        modalMap.unlock.hide();
+        $interval.cancel(timer);
         unlocking = false;
+
         if ($data.me.hasTag('level')) {
           console.log('car is level');
           $state.go('dashboard', { id: id });
@@ -421,14 +427,11 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
       .then(function(data) {
         return $data.fetch('bookings');
       })
-      .then(function() {
-        IntercomService.emitBookingEvent($data.active.bookings);
-      })
       .catch(function(err) {
         $ionicLoading.hide();
         unlocking = false;
         $message.error(err);
-        modal.remove();
+        modalMap.unlock.hide();
         showRetry();
       });
     }
@@ -439,7 +442,7 @@ function ActiveBookingController ($scope, $rootScope, $injector) {
   };
 
   ctrl.startIfBleFound = function() {
-    unlockModal = false;
+    _unlockModal = false;
     if(checkIsInRange( ctrl.currentLocation )) {
       //$ionicLoading.show();
     
