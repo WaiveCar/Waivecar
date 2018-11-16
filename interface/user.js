@@ -254,27 +254,22 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       return this.tagList;
     },
 
-    *getTagList(filter, field = 'name') {
+    // the Type is things like "region" but it is NOT things like
+    // "la" or "level". It returns things like *only* the region.
+    *getTagList(type, field = 'name') {
 
-      function getTags(filter) {
-        return tagList
-          .filter((row) => { return filter ? row.group[field] === filter : true; })
-          .map((row) => { return row.groupRole[field]; });
+      var tagList = yield this.loadTagList();
+
+      function getTags(type) {
+        let _tagList = type ? tagList.filter(row => row.group.name === type) : tagList;
+        return _tagList.map(row => row.groupRole[field]);
       }
 
-      let tagList = yield this.loadTagList();
-
-      if(Array.isArray(filter)) {
-        return Array.prototype.concat.apply([], filter.map(getTags));
+      if(Array.isArray(type)) {
+        return Array.prototype.concat.apply([], type.map(getTags));
       }
 
-      return getTags(filter);
-    },
-
-    *getTagByType(type) {
-      return (yield this.loadTagList()).filter((row) => {
-        return row.group.name === type;
-      });
+      return getTags(type);
     },
 
     *getTag(tag) {
