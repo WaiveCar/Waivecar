@@ -214,20 +214,15 @@ module.exports = {
     }
 
     if(command === 'available') {
-      let footer = "\nType 'commands' for help.";
-      let carList = yield Car.find({where: {
-          isWaivework: false,
-          isAvailable: true
-        }
-      });
+      let carList = yield cars.index(false, user);
       
       if(carList.length === 0) {
-        yield notify.sendTextMessage(user, "There are no WaiveCars available. :(" + footer);
+        yield notify.sendTextMessage(user, "There are no WaiveCars available. :(");
       } else {
         let message = yield carList.map(function *(car) {
-          return car.license + " (" + car.charge + "%) " + (yield booking.getAddress(car.latitude, car.longitude));
+          return car.license + " (" + car.avgMilesAvailable() + "mi) " + (yield booking.getAddress(car.latitude, car.longitude));
         });
-        yield notify.sendTextMessage(user, "Available WaiveCars:\n" + message.join('\n') + "\n" + footer);
+        yield notify.sendTextMessage(user, "Available WaiveCars:\n" + message.join('\n');
       }
      
       return true;
