@@ -423,7 +423,7 @@ module.exports = class UserDetails extends React.Component {
                   <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
                     <div className="radio-inline">
                       <label>
-                        <input type="checkbox" name="tagList[]" value="la" defaultChecked={ !this.hasTag('level') } />
+                        <input type="checkbox" name="tagList[]" value="la" defaultChecked={ this.hasTag('la') } />
                         LA
                       </label>
                     </div>
