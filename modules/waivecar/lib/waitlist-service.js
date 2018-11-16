@@ -176,14 +176,6 @@ module.exports = {
       //
       // oh what fun type systems are!
       data.priority = +isInside;
-      if (promo === 'csula-student' || promo === 'csula-staff') {
-        // for the csula users, isInside needs to be set to false so that they are 
-        // not immediately let in off of the waitlist below
-        isInside = false;
-        res.isCsula = true;
-        data.placeName = 'csula';
-        data.notes = promo;
-      }
 
       record = new Waitlist(data);
       yield record.save();
@@ -224,15 +216,30 @@ module.exports = {
         });
         yield note.save();
       }
+      yield user.addTag('la');
 
-    } else if(promo === 'hyrecar') {
-      // This means they can skip the line -
-      // it's more of a communication to the app
-      // then it is any functional thing.
+    } else if (promo === 'csula-student' || promo === 'csula-staff') {
+      res.csula = 'yes';
       res.fastTrack = 'yes';
-      res.hyrecar = 'yes';
       delete res.inside;
-      yield this.letInByRecord([record], null, {intro: 'hyrecar'});
+      let userList = yield this.letInByRecord([record], null, {intro: 'csula', promo: promo});
+
+      user = userList[0];
+
+      // we need to save what the user said their
+      // unit or account number
+      yield user.addTag('csula');
+
+      let UserNote = Bento.model('UserNote');
+      let note = new UserNote({
+        userId: user.id,
+        // the author id currently can't be null
+        // so we make it the level fleet account
+        authorId: 14827,
+        content: [promo, payload.account].join(' '),
+        type: 'unit'
+      });
+      yield note.save();
     } else if(promo === 'levelbk') {
       res.level = 'yes';
       res.fastTrack = 'yes';
@@ -374,7 +381,7 @@ module.exports = {
 
     let introMap = {
       waitlist: "Thanks for your patience. It's paid off because you are next in line and we've created your account.",
-      hyrecar: "Thanks for signing up through Hyrecar.",
+      csula: "Welcome aboard Waive's CSULA program.",
       vip: "You've been fast-tracked and skipped the waitlist!"
     }
 
@@ -417,17 +424,6 @@ module.exports = {
         // to avoid that nonsense.
         //
         userRecord = yield UserService.store(userOpts, _user, {nosms: true});
-        if (record.placeName === 'csula') {
-          let UserNote = Bento.model('UserNote');
-          let note = new UserNote({
-            userId: userRecord.id,
-            authorId: 14827,
-            content: record.notes,
-            type: 'unit'
-          });
-          yield note.save();
-          yield userRecord.addTag('csula');
-        }
         if (opts.promo === 'high5') {
           yield OrderService.quickCharge({ description: "High5 promo signup", userId: userRecord.id, amount: -500 }, false, {overrideAdminCheck: true });
         }
