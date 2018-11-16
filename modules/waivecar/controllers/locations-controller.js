@@ -40,31 +40,20 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
       ]};
     }
 
-    let isLevel = user && (yield user.isTagged('level'));
-    /*
-    if(user) {
-      matchSet = [6];
-      let tlist = yield user.getTagList(false, 'id');
-      console.log(tlist);
-      if (!(yield user.isTagged('la'))) {
-        matchSet = yield user.getTagList(false, 'id');
-        console.log(matchSet);
+    if(user && !user.isAdmin()) {
+      let matchSet = yield user.getTagList('region', 'id');
+      if(matchSet.length === 0) {
+        matchSet = [6];
       }
       query.include[1].where = {
         groupRoleId: { $in: matchSet }
       };
-      console.log(query.include[1].where);
     }
-    console.log(query);
-    */
 
-    // Here is how we filtre out user parking outside of a zone. 
+    // Here is how we filter out user parking outside of a zone. 
     // We use the obscure fact that Array.map, unluke the other 
     // Array functions can take a generator.
     let locations =  yield (yield Location.find(query)).map(function*(row) {
-      if(row.id === 1246 && !isLevel) {
-        return false;
-      }
       if(row.shape) {
         row.shape = JSON.parse(row.shape);
       }
