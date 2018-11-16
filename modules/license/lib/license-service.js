@@ -52,12 +52,14 @@ module.exports = class LicenseService extends Service {
       data.expirationDate = data.expirationDate.split('T')[0];
     }
 
-    // Check that birthdate is > 21 years
+    // Check that birthdate is over the minimum
+    var minimumAge = (yield user.hastTag('csula')) ? 18 : 21;
+
     var age = moment().diff(data.birthDate, 'years');
-    if (age < 21) {
+    if (age < minimumAge) {
       throw error.parse({
         code    : `INVALID_LICENSE`,
-        message : `You must be 21 years old to access this service`
+        message : `You must be ${minimumAge} years old to access this service`
       }, 400);
     } else if (age > 200) {
       throw error.parse({
