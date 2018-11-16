@@ -224,7 +224,7 @@ module.exports = {
         yield notify.sendTextMessage(user, "There are no WaiveCars available. :(");
       } else {
         let message = yield carList.map(function *(car) {
-          return car.license + " (" + Math.round(car.avgMilesAvailable()) + "mi) " + cleanAddy(yield booking.getAddress(car.latitude, car.longitude)));
+          return car.license + " (" + Math.round(car.avgMilesAvailable()) + "mi) " + cleanAddy(yield booking.getAddress(car.latitude, car.longitude));
         });
         yield notify.sendTextMessage(user, "Available:\n" + message.join('\n'));
       }
