@@ -11,8 +11,21 @@
         Tap the camera icon to add your versions.</p>
       </div>
       <div ng-if="ctrl.geocodeLoaded && !ctrl.isHub && !ctrl.isWaivePark" class="parking-details parking-section">
+        <h4>Parking</h4>
+        <div class="resume-ride">
+          <p><small><b>{{ ctrl.minhours }}</b> or more hours are required. Enter "24" if it's over a day.
+          You can also <a class='link' ui-sref="dashboard">resume your ride</a> and park somewhere else.
+          </small></p>
+        </div>
+        <div class='parking-input'>
+          <div class="small-input">
+            <input ng-model="ctrl.street.streetHours" type="text">
+          </div>
+          <p>
+          How many hours until {{ctrl.car.license}} needs to move?
+          </p>
+        </div>
         <div>
-          <h4>Parking</h4>
           <p><small>
            If there is no parking sign, take a picture of the last intersection you entered showing there's no sign.
           </small></p>
@@ -26,19 +39,6 @@
             </button> 
             </div>
           </div>
-        </div>
-        <div class='parking-input'>
-          <div class="small-input">
-            <input ng-model="ctrl.street.streetHours" type="text">
-          </div>
-          <p>
-          How many hours until {{ctrl.car.license}} needs to move?
-          </p>
-        </div>
-        <div class="resume-ride">
-          <p><small>Note: <b>{{ ctrl.minhours }}</b> or more hours are required. Enter "24" if it's over a day.
-          You can also <a class='link' ui-sref="dashboard">resume your ride</a> and park somewhere else.
-          </small></p>
         </div>
       </div>
       <div class="parking-section">
