@@ -301,7 +301,7 @@ module.exports = {
     let allRecords = yield GroupUser.find({
       where : { userId  : user.id },
 
-      order : [[ 'id', 'asc' ]],
+      order : [[ 'group_id', 'asc' ]],
 
       include : [ 
         {
