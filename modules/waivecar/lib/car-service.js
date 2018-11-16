@@ -113,7 +113,7 @@ module.exports = {
           sequelize.literal("tagList.group_role_id = 7"), { 
             inRepair: false,
             adminOnly: false,
-            isAvailable: true, 
+            isAvailable: true,
             charge: { $lt : 35 } 
           }, 
         ]
@@ -123,22 +123,13 @@ module.exports = {
     if(_user) {
       if(!isAdmin) {
         //console.log(util.inspect(cars, false, null));
-        let matchSet = yield _user.getTagList(false, 'id');
+        let matchSet = yield _user.getTagList('region', 'id');
 
-        if(!(yield _user.isTagged('level'))) {
-          matchSet = [6];
-        }
-
-        /*
-        console.log([isAdmin, 
-            (yield _user.getTag('level')),
-            (yield _user.isTagged('level'))
-             ]);
+        
         // for legacy reasons, some users aren't marked as la, which is '6' numerically
         if(matchSet.length === 0) {
           matchSet = [6];
         }
-        */
 
         opts.include[0].where = {
           groupRoleId: { $in: matchSet }
@@ -153,7 +144,6 @@ module.exports = {
         ]
       };
     }
-    //console.log(util.inspect(opts, false, null));
 
     // This special endpoint gets all the cars without much ado.
     if(query.type === 'all') {
