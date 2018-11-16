@@ -228,25 +228,12 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
   };
 
   GeneralMapObject.prototype.remove = function() {
-    if (this.mapCtrl.useCordova()) {
-      if (this.marker) {
-        this.marker.remove();
-      }
+    if (this.marker) {
+      this.marker.remove();
+    }
 
-      if (this.geometry) {
-        this.geometry.remove();
-      }
-
-    } else {
-
-      if (this.marker) {
-        this.marker.setMap(null);
-      }
-
-      if (this.geometry) {
-        this.geometry.setMap(null);
-      }
-
+    if (this.geometry) {
+      this.geometry.remove();
     }
   };
 
@@ -259,11 +246,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
         onClick(marker.getPosition());
       };
 
-      if (this.mapCtrl.useCordova()) {
-        marker.on(plugin.google.maps.event.MARKER_CLICK, clickHandler);
-      } else {
-        marker.addListener('click', clickHandler);
-      }
+      marker.on(plugin.google.maps.event.MARKER_CLICK, clickHandler);
     }
   };
 
@@ -374,13 +357,7 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
           if (zoomLevel >= 13) {
             onMarkerTap(marker);
           } else {
-
-            if (ctrl.useCordova()) {
-              ctrl.map.moveCamera({target: position, zoom : 13});
-            } else {
-              ctrl.map.setZoom(13);
-              ctrl.map.setCenter(position);
-            }
+            ctrl.map.moveCamera({target: position, zoom : 13});
           }
         };
 
@@ -566,23 +543,12 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
     }
     var path = points.map(ctrl.mapToLatLong.bind(this));
 
-    if(ctrl.useCordova()) {
-      ctrl.map.addPolyline({
-        points: path,
-        color: '#0000FF',
-        width: 2,
-        geodesic: true
-      });
-    } else {
-      var polyline = new google.maps.Polyline({
-        path: path,
-        geodesic: true,
-        strokeColor: '#0000FF',
-        strokeOpacity: 1.0,
-        strokeWeight: 2
-      });
-      polyline.setMap(ctrl.map);
-    }
+    ctrl.map.addPolyline({
+      points: path,
+      color: '#0000FF',
+      width: 2,
+      geodesic: true
+    });
 
     ctrl.mapFitBounds(points);
   }
