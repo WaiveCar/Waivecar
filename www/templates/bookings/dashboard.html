@@ -31,7 +31,7 @@
   <div class="info-header ride-footer">
     <div class="info-header-item">
       <ng-include class="battery icon" src="'/img/battery-darkgrey.svg'"></ng-include>
-      about {{("" + ((data.cars.charge * ({"Spark EV":65,Tucson:255}[data.cars.model] || 132) / 100)).split('.')[0]}}mi.
+      about {{ ctrl.range() }}mi.
     </div>
     <!--
     <div class="info-header-item">
