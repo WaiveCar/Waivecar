@@ -217,7 +217,7 @@ module.exports = {
       let carList = yield cars.index(false, user);
 
       function cleanAddy(addr) {
-        return addr.replace(/(, CA|, USA)/,'');
+        return addr.replace(/(, CA|, USA)/g,'');
       }
       
       if(carList.length === 0) {
