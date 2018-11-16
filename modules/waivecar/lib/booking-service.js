@@ -1818,7 +1818,7 @@ module.exports = class BookingService extends Service {
       throw error.parse({
         code    : 'WAIVE_RUSH',
         title   : 'WaiveRush Opportunity!',
-        message : `Keep ${ car.license } until 10AM for a flat fee. Your reservation will not expire and hourly charges won't begin until 10AM!<br><small><b>Notice:</b> There is no customer service available between 10PM and 8AM.</small>${ inject }`,
+        message : `Keep ${ car.license } until 10AM for a flat fee. Your reservation will not expire and hourly charges won't begin until 10AM!<br><small><b>Notice:</b> There is no customer service available between 10PM and 9AM.</small>${ inject }`,
         options: [{
           title: `WaiveRush for $14.99.`,
           hotkey: 'rush',
