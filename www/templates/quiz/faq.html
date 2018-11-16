@@ -7,7 +7,8 @@
   <ion-content padding="true" class="ion-content--center gray-bg">
 
   <iframe ng-if="user.hasTag('level')" class='quiz' width="100%" height="{{ user.tested ? '100%' : '60%' }}" src="https://lb.waivecar.com/faq-level"></iframe>
-  <iframe ng-if="!user.hasTag('level')" class='quiz' width="100%" height="{{ user.tested ? '100%' : '60%' }}" src="https://lb.waivecar.com/faq"></iframe>
+  <iframe ng-if="user.hasTag('csula')" class='quiz' width="100%" height="{{ user.tested ? '100%' : '60%' }}" src="https://lb.waivecar.com/faq-csula"></iframe>
+  <iframe ng-if="user.hasTag('la')" class='quiz' width="100%" height="{{ user.tested ? '100%' : '60%' }}" src="https://lb.waivecar.com/faq"></iframe>
 
     <div class='quiz-content' ng-if='!user.tested'>
       <div ng-if="!showQuiz()">
