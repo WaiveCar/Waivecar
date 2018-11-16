@@ -55,6 +55,14 @@ function DashboardController ($scope, $rootScope, $injector) {
   this.parityCheckTimeout = null;
   this.parkingReservationTime = null;
 
+  this.range = function() {
+    if($data.active.cars) {
+      var multiplier = {"Spark EV":.65,Tucson:2.55}[$data.active.cars.model] || 1.32;
+      return Math.round($data.active.cars.charge * multiplier);
+    }
+    return '--';
+  }
+
   this.getDirections = function(option) {
     var toGet = option ? option : ctrl.selectedItem;
     $ride.openDirections(toGet, toGet.name);
@@ -72,13 +80,18 @@ function DashboardController ($scope, $rootScope, $injector) {
     $data.resources.parking.fetchReservation({userId: $data.me.id}).$promise.then(function(parking){
       // This loads in the current parking reservation if there is one.
       $data.reservedParking = parking;
-      ctrl.parkingReservationTime = startParkingTimer(parking.reservation.createdAt);
+      if(parking && parking.reservation) {
+        ctrl.parkingReservationTime = startParkingTimer(parking.reservation.createdAt);
+      }
     });
 
     ctrl.locations = $data.instances.locations;
+    /*
     if ($data.active.cars) {
-      OnLockStateChange($data.active.cars.isLocked);
+      //  type: "locked-car",
+      ctrl.locations.push($data.active.cars);
     }
+    */
 
     var stopLocationWatch = LocationService.watchLocation(function (currentLocation, callCount) {
       if (!callCount) {
@@ -175,27 +188,7 @@ function DashboardController ($scope, $rootScope, $injector) {
     }, 1000);
     //ZendriveService.start($session.get('me'), $data.active.bookings.id, $data.active.cars.id);
 
-    /*
-    $scope.$watch(function() {
-      return $data.active.cars.isLocked
-    }, OnLockStateChange);
-    */
-
   }.bind(this));
-
-  function OnLockStateChange(isLocked) {
-    if (isLocked) {
-      var lockedCarMarker = {
-        type: "locked-car",
-        latitude: $data.active.cars.latitude,
-        longitude: $data.active.cars.longitude
-      };
-      ctrl.locations = $data.instances.locations.concat([lockedCarMarker]);
-    } else {
-      ctrl.locations = $data.instances.locations;
-    }
-  }
-
 
   function openPopover(item) {
     $timeout(function () {
@@ -226,19 +219,20 @@ function DashboardController ($scope, $rootScope, $injector) {
       $ride[ state ? 'lockCar' : 'unlockCar'](id)
         .then(function (car) {
 
-          OnLockStateChange(car.isLocked);
-
           ctrl.locking = false;
           $ionicLoading.hide();
         })
         .catch(function (reason) {
           $ionicLoading.hide();
           ctrl.locking = false;
-          var modalMessage = reason.data.message ? reason.data.message : '';
-          if(state) {
-            $message.error("Locking Failed. <b>Car did not lock!</b><br>" + modalMessage + " Please try again.");
-          } else {
-            $message.error("Unlocking failed. Please make sure you're next to the car and try again.");
+          console.log(reason);
+          if(reason.data) {
+            var modalMessage = reason.data.message ? reason.data.message : '';
+            if(state) {
+              $message.error("Locking Failed. <b>Car did not lock!</b><br>" + modalMessage + " Please try again.");
+            } else {
+              $message.error("Unlocking failed. Please make sure you're next to the car and try again.");
+            }
           }
         });
      }
