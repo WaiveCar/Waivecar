@@ -99,7 +99,13 @@ module.exports = class Service {
           //groupId : session.group,
           userId  : id
         },
-        order: [[ 'id', 'asc' ]],
+
+        // we want the first group id to be the 
+        // "general" because of some legacy code below.
+        // There's other ways of doing this, but
+        // this method works fine as long as it's
+        // documented. That's what this is.
+        order: [[ 'group_id', 'asc' ]],
         include: [
           {
             model: 'Group',
