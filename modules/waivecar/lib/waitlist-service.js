@@ -230,6 +230,9 @@ module.exports = {
       // unit or account number
       yield user.addTag('csula');
 
+      // TODO: remove this after new release (2018-11-15)
+      yield user.update({tested: true});
+
       let UserNote = Bento.model('UserNote');
       let note = new UserNote({
         userId: user.id,
