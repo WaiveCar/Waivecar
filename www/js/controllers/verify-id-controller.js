@@ -119,6 +119,7 @@ function VerifyIdController($injector, $stateParams, $scope, $settings, $window,
 
         ctrl.license = $scope.license;
         ctrl.licenseDisplay = true;
+        console.log($scope, ctrl);
         updateImages();
       }).catch($message.error);
   };
