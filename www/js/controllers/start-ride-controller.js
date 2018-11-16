@@ -31,7 +31,7 @@ module.exports = angular.module('app.controllers').controller('StartRideControll
       right: null,
       other: null,
     }
-    ctrl.model = ctrl.data.cars.model.split(' ')[0].toLowerCase(); 
+    ctrl.model = ctrl.data.cars.model ? ctrl.data.cars.model.split(' ')[0].toLowerCase() : 'ioniq';
     ctrl.range = Math.floor(0.01 * ctrl.data.cars.charge * ({"Spark EV":65,Tucson:255}[ctrl.data.cars.model]||132));
     ctrl.allPics = false;
     ctrl.buttonClass = 'button button-dark add-image'; 
