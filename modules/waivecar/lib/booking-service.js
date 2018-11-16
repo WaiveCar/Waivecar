@@ -728,8 +728,10 @@ module.exports = class BookingService extends Service {
       }
 
       let lastBooking = yield car.getBooking(-1);
-      let lastUser = yield User.findById(lastBooking.userId);
-      yield Tikd.removeLiability(car, lastBooking, lastUser);
+      if(lastBooking) {
+        let lastUser = yield User.findById(lastBooking.userId);
+        yield Tikd.removeLiability(car, lastBooking, lastUser);
+      }
       yield Tikd.addLiability(car, booking, _user);
 
       // yield cars.openDoor(car.id, _user);
