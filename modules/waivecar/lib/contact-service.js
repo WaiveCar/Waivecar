@@ -215,6 +215,7 @@ module.exports = {
 
     if(command === 'available') {
       let carList = yield cars.index(false, user);
+      console.log(carList);
       
       if(carList.length === 0) {
         yield notify.sendTextMessage(user, "There are no WaiveCars available. :(");
@@ -222,7 +223,7 @@ module.exports = {
         let message = yield carList.map(function *(car) {
           return car.license + " (" + car.avgMilesAvailable() + "mi) " + (yield booking.getAddress(car.latitude, car.longitude));
         });
-        yield notify.sendTextMessage(user, "Available WaiveCars:\n" + message.join('\n');
+        yield notify.sendTextMessage(user, "Available WaiveCars:\n" + message.join('\n'));
       }
      
       return true;
