@@ -560,6 +560,16 @@ module.exports = angular.module('app.services').factory('$ble', [
       return defer;
     }
 
+    function updateStatus(what) {
+      cis('STATUS_1', function(obj) {
+        // This passes up state to the controller if we have it
+        _lastStatus = obj;
+        if(what) {
+          what(obj);
+        }
+      });
+    }
+
     function isLocked(obj) {
       obj = obj || _lastStatus;
       if(obj) {
@@ -569,14 +579,20 @@ module.exports = angular.module('app.services').factory('$ble', [
 
     function getStatus(carId) {
       var defer = $q.defer();
-      if(_creds.carId === carId && _lastStatus) {
-        defer.resolve({
-          isIgnitionOn: _lastStatus.ignition === ON,
-          isLocked: isLocked()
-        });
-      } else {
+      if(_creds.carId !== carId) { 
         defer.reject();
       }
+
+      updateStatus(function(obj) {
+        defer.resolve({
+          isIgnitionOn: obj.ignition === ON,
+          isLocked: isLocked(obj)
+        });
+      });
+
+      // This is to satisfy two conflicting interfaces.
+      defer.promise.promise = defer.promise;
+
       return defer.promise;
     }
 
