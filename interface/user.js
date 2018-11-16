@@ -271,6 +271,12 @@ Bento.Register.Model('User', 'sequelize', function register(model, Sequelize) {
       return getTags(filter);
     },
 
+    *getTagByType(type) {
+      return (yield this.loadTagList()).filter((row) => {
+        return row.group.name === type;
+      });
+    },
+
     *getTag(tag) {
       return (yield this.loadTagList()).filter((row) => {
         return row.groupRole.name.toLowerCase() === tag.toLowerCase();
