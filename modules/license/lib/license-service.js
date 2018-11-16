@@ -53,7 +53,7 @@ module.exports = class LicenseService extends Service {
     }
 
     // Check that birthdate is over the minimum
-    var minimumAge = (yield user.hastTag('csula')) ? 18 : 21;
+    var minimumAge = (yield user.hasTag('csula')) ? 18 : 21;
 
     var age = moment().diff(data.birthDate, 'years');
     if (age < minimumAge) {
