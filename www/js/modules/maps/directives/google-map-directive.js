@@ -38,62 +38,36 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
   };
 
   MapController.prototype.mapToLatLong = function(location) {
-    return this.useCordova() ? this.mapToNativeLatLong(location) : this.mapToGoogleLatLong(location);
+    return this.mapToNativeLatLong(location);
   };
 
   MapController.prototype.createGMap  = function (mapElement, center, noscroll) {
     //console.log(mapElement, center, noscroll);
+    // reference: https://developers.google.com/maps/documentation/android-api/controls
 
-    var mapOptions;
-
-    if (this.useCordova()) {
-
-      // reference: https://developers.google.com/maps/documentation/android-api/controls
-      mapOptions = {
-        mapType: plugin.google.maps.MapTypeId.ROADMAP,
-        controls: {
-          compass: false,
-          mapToolbar: false,
-          myLocationButton: false,
-          indoorPicker: false,
-          zoom: false
+    var mapOptions = {
+      mapType: plugin.google.maps.MapTypeId.ROADMAP,
+      controls: {
+        compass: false,
+        mapToolbar: false,
+        myLocationButton: false,
+        indoorPicker: false,
+        zoom: false
+      },
+      camera : {
+        target: this.mapToNativeLatLong(center),
+        zoom: 14
+      },
+      preferences: {
+        zoom: {
+          minZoom: 10,
+          maxZoom: 18
         },
-        camera : {
-          target: this.mapToNativeLatLong(center),
-          zoom: 14
-        },
-        preferences: {
-          zoom: {
-            minZoom: 10,
-            maxZoom: 18
-          },
-          building: false
-        }
-      };
-
-      return plugin.google.maps.Map.getMap(mapElement, mapOptions)
-    } else {
-      mapOptions = {
-        streetViewControl: false,
-        mapTypeControl: false,
-        zoom: 14,
-        fullscreenControl: false,
-        center: this.mapToGoogleLatLong(center),
-        zoomControl: false
-      };
-
-      if (this.staticMap) {
-        mapOptions.draggable = false;
-        mapOptions.scrollwheel = false;
-        mapOptions.disableDoubleClickZoom = true;
+        building: false
       }
+    };
 
-      if(noscroll) {
-        mapOptions.gestureHandling = 'cooperative';
-      }
-
-      return new google.maps.Map(mapElement, mapOptions);
-    }
+    return plugin.google.maps.Map.getMap(mapElement, mapOptions)
   };
 
 
@@ -138,24 +112,17 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
     ctrl.invokeOnMapReady($scope, function() {
 
-      if (ctrl.useCordova()) {
-        $rootScope.$on('mainMenuStateChange', function (event, data) {
-          if (data === 'open') {
-            ctrl.map.setClickable(false);
-          }
-          if (data === 'close') {
-            ctrl.map.setClickable(true);
-          }
-        });
-      }
+      $rootScope.$on('mainMenuStateChange', function (event, data) {
+        if (data === 'open') {
+          ctrl.map.setClickable(false);
+        }
+        if (data === 'close') {
+          ctrl.map.setClickable(true);
+        }
+      });
 
       if ('route' in attrs) {
-        if (ctrl.useCordova()) {
-          ctrl.directionsRenderer = createNativeDirectionsRenderer(ctrl.map)
-        } else {
-          ctrl.directionsRenderer = new google.maps.DirectionsRenderer({suppressMarkers: true, preserveViewport: true});
-          ctrl.directionsRenderer.setMap(ctrl.map);
-        }
+        ctrl.directionsRenderer = createNativeDirectionsRenderer(ctrl.map)
       }
 
       var lastLocation = [0, 0];
@@ -209,13 +176,9 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
   MapController.prototype.invokeOnMapReady = function invokeOnMapReady($scope,readyHandler) {
     var ctrl = this;
 
-    if (ctrl.useCordova()) {
-      ctrl.map.one(plugin.google.maps.event.MAP_READY, function() {
-        $scope.$apply(readyHandler);
-      });
-    } else {
-      readyHandler();
-    }
+    ctrl.map.one(plugin.google.maps.event.MAP_READY, function() {
+      $scope.$apply(readyHandler);
+    });
   };
 
 
@@ -347,98 +310,53 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
     var mapObject = new GeneralMapObject(ctrl, marker);
 
-    if (ctrl.useCordova()) {
-  
-      if(marker.type === 'circle') {
-        ctrl.map.addCircle({
-          position: ctrl.mapToNativeLatLong(marker),
-          radius: marker.radius,
-          strokeColor: '#00008080',
-          fillColor: '#0028A01A',
-          strokeWidth: 2,
-        });
-      } else if(marker.type === 'zone') {
-        ctrl.map.addPolygon({
-          points: marker.shape.map(function(point) {
-            return {lat: point[1], lng: point[0] };
-          }),
-          strokeColor: '#00800080',
-          strokeWidth: 2,
-          fillColor: '#00A0281A'
-        }, function (polygon) {
-          mapObject.setZone(polygon);
-          deferred.resolve(mapObject);
-        });
-        
-      } else if(marker.type === 'parking') {
-        ctrl.map.addPolyline({
-          points: marker.shape.map(function(point) {
-            return {lat: point[1], lng: point[0] };
-          }),
-          color: '#00800080',
-          width: 2
-        }, function (polygon) {
-          mapObject.setParking(polygon);
-          deferred.resolve(mapObject);
-        });
-      } else  {
-
-        ctrl.map.addMarker({
-          position: ctrl.mapToNativeLatLong(marker),
-          icon: {
-            url: 'www/' + iconOpt.url,
-            size: iconOpt.scaledSize,
-            anchor: iconOpt.anchor
-          }
-        }, function (markerObj) {
-          mapObject.setMarker(markerObj);
-          deferred.resolve(mapObject);
-        });
-      }
-      
-    } else {
-
-      if (marker.type === 'zone') {
-        
-        var polygon = new google.maps.Polygon({
-          paths: marker.shape.map(function(point) {
-            return {lat: point[1], lng: point[0] };
-          }),
-          strokeColor: '#00AA00',
-          strokeOpacity: 0.8,
-          strokeWeight: 2,
-          fillColor: '#00FF00',
-          fillOpacity: 0.35
-        });
-        polygon.setMap(this.map);
+    if(marker.type === 'circle') {
+      ctrl.map.addCircle({
+        position: ctrl.mapToNativeLatLong(marker),
+        radius: marker.radius,
+        strokeColor: '#00008080',
+        fillColor: '#0028A01A',
+        strokeWidth: 2,
+      });
+    } else if(marker.type === 'zone') {
+      ctrl.map.addPolygon({
+        points: marker.shape.map(function(point) {
+          return {lat: point[1], lng: point[0] };
+        }),
+        strokeColor: '#00800080',
+        strokeWidth: 2,
+        fillColor: '#00A0281A'
+      }, function (polygon) {
         mapObject.setZone(polygon);
-        
-      } else if (marker.type === 'parking') {
-        
-        var polyline = new google.maps.Polyline({
-          paths: marker.shape.map(function(point) {
-            return {lat: point[1], lng: point[0] };
-          }),
-          strokeColor: '#00AA00',
-          strokeOpacity: 0.8,
-          strokeWeight: 2
-        });
-        polyline.setMap(this.map);
-        mapObject.setParking(polyline);
-        
-      } else {
+        deferred.resolve(mapObject);
+      });
+      
+    } else if(marker.type === 'parking') {
+      ctrl.map.addPolyline({
+        points: marker.shape.map(function(point) {
+          return {lat: point[1], lng: point[0] };
+        }),
+        color: '#00800080',
+        width: 2
+      }, function (polygon) {
+        mapObject.setParking(polygon);
+        deferred.resolve(mapObject);
+      });
+    } else  {
 
-        var markerObj = new google.maps.Marker({
-          map: this.map,
-          animation: google.maps.Animation.DROP,
-          position: ctrl.mapToGoogleLatLong(marker),
-          icon: iconOpt
-        });
+      ctrl.map.addMarker({
+        position: ctrl.mapToNativeLatLong(marker),
+        icon: {
+          url: 'www/' + iconOpt.url,
+          size: iconOpt.scaledSize,
+          anchor: iconOpt.anchor
+        }
+      }, function (markerObj) {
         mapObject.setMarker(markerObj);
-      }
-
-      deferred.resolve(mapObject);
+        deferred.resolve(mapObject);
+      });
     }
+      
 
     return deferred.promise;
   };
