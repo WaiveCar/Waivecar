@@ -7,8 +7,9 @@ var _ = require('lodash');
 
 
 const oneDay = 1000 * 60 * 60 * 24;
-const shownList = ['work', 'waive', 'level', 'other'];
+const shownList = ['work', 'waive', 'level', 'csula', 'other'];
 const LEVEL = 7;
+const CSULA = 11;
 
 module.exports = class CarsIndex extends React.Component {
 
@@ -114,14 +115,16 @@ module.exports = class CarsIndex extends React.Component {
       let res = {
         waive: lic.includes('waive'),
         work: lic.includes('work'),
-        level: car.tagList.length ? car.tagList[0].groupRoleId === LEVEL : false
+        level: car.tagList.length ? car.tagList[0].groupRoleId === LEVEL : false,
+        csula: car.tagList.length ? car.tagList[0].groupRoleId === CSULA : false
       };
 
       return (
         (shownMap.level && res.level) ||
-        (shownMap.waive && (res.waive && !res.level)) ||
+        (shownMap.waive && (res.waive && !res.csula && !res.level)) ||
+        (shownMap.csula && res.csula) ||
         (shownMap.work && res.work)   ||
-        (shownMap.other && !res.level && !res.work && !res.waive)  
+        (shownMap.other && !res.csula && !res.level && !res.work && !res.waive)  
       );
     });
     return shownList;

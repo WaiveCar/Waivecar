@@ -41,7 +41,12 @@ module.exports = class WaitList extends Component {
 
           <div className='row'>
             <div className="col-xs-12 col-md-6 col-md-push-3 waitlist">
-              <h2>Thanks{ (this.state.autoshow == 'yes' || this.state.level == 'yes') ? ", you're in" : (this.state.waivework === 'yes' ? ' for Signing up' : ' for Coming') }!</h2>
+              <h2>Thanks{ (this.state.csula == 'yes' || this.state.autoshow == 'yes' || this.state.level == 'yes') ? ", you're in" : (this.state.waivework === 'yes' ? ' for Signing up' : ' for Coming') }!</h2>
+              { this.state.csula == 'yes' &&
+                <div>
+                  <p>You're just a few steps away from driving the shiny fleet of Hydrogen cars. Please check your email for further instructions.</p>
+                </div>
+              }
               { this.state.level == 'yes' &&
                 <div>
                   <p>You're just a few steps away from your complementary electric car. Please check your email for further instructions.</p>
