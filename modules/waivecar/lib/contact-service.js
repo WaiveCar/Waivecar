@@ -23,9 +23,10 @@ module.exports = {
 
   
   *returnError(user, err, what) {
+    var message
     if(err.message) {
       let parts = err.message.split('\t');
-      let message = parts[0].replace(/<br>/g, '\n');
+      message = parts[0].replace(/<br>/g, '\n');
       message = message.replace(/<[^>]*>/g, '');
 
       if(err.options) {
