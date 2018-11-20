@@ -385,13 +385,13 @@ module.exports = {
         yield booking.end(id, user);
       } catch(ex) {
         success = false;
-        yield this.returnError(user, ex, command);
+        response = yield this.returnError(user, ex, command);
       }
       try {
         yield booking.complete(id, user);
       } catch(ex) {
         success = false;
-        yield this.returnError(user, ex, command);
+        response = yield this.returnError(user, ex, command);
       }
     }
 
