@@ -266,8 +266,10 @@ module.exports = {
       });
       yield note.save();
     } else if (isInside) {
-      yield this.letInByRecord([record], null, {intro: 'vip'});
+      let userList = yield this.letInByRecord([record], null, {intro: 'vip'});
       res.fastTrack = 'yes';
+      user = userList[0];
+      yield user.addTag('la');
     }
     return res;
   },
