@@ -56,9 +56,11 @@ module.exports = (name, getModelSetup) => {
   SequelizeModel._relations = _model.relations;
 
   // A cheap type-checking system bacsed on the table name.
-  _model.methods.isA = _model.methods.isA || function(what) {
-    return _model.table.includes(what);
-  }
+  _model.methods = Object.assign(_model.methods || {}, {
+    isA: function(what) {
+      return _model.table.includes(what);
+    }
+  });
 
   if (_model.tagSystem) {
     let model = _model.tagSystem.model;
