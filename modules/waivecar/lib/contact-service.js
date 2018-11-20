@@ -297,7 +297,7 @@ module.exports = {
         previousBooking = yield Booking.findOne({ 
           where : { 
             status : {
-              in : [ 'completed', 'ended' ]
+              in : [ 'completed', 'ended', 'cancelled' ]
             },
             userId : user.id 
           },
@@ -321,7 +321,7 @@ module.exports = {
               userId: user.id,
               carId: previousBooking.carId
             }, user);
-            yield notify.sendTextMessage(user, `Rebooked for free.` );
+            yield notify.sendTextMessage(user, `Rebooked ${ previousBooking.car.license } for free.` );
             return true;
           } catch (ex) {
             if(ex.options && ex.options[0]) {
@@ -329,15 +329,15 @@ module.exports = {
             }
           }
           if(!params) {
-            yield notify.sendTextMessage(user, "Sorry, someone beat you to the WaiveCar. :-(." );
+            yield notify.sendTextMessage(user, `Sorry, someone beat you to ${ previousBooking.car.license }. :-(.` );
             return true;
           }
           try {
             yield booking.create(params, user);
             yield notify.slack({ text : `:selfie: ${ user.link() } sent "${ opts.raw }" and the computer rebooked` }, { channel : '#reservations' });
-            yield notify.sendTextMessage(user, `Rebooked for $${params.opts.buyNow}.` );
+            yield notify.sendTextMessage(user, `Rebooked ${ previousBooking.car.license } for $${params.opts.buyNow}.` );
           } catch(ex){
-            yield notify.sendTextMessage(user, `Unable to rebook, please try again.` );
+            yield notify.sendTextMessage(user, `Unable to rebook ${ previousBooking.car.license }, please try again.` );
           }
           return true;
         }
