@@ -33,10 +33,12 @@ module.exports = {
 
   inDrivingZone(obj, magnitude = 1) {
     let reference = config.waivecar.homebase.coords;
+    /*
     if(obj.isA('car')) {
       if(yield obj.hasTag('csula')) {
       }
     } 
+    */
     let distance = geolib.getDistance(obj, reference);
     let miles = distance * 0.000621371;
     return miles <= (25 * magnitude);
