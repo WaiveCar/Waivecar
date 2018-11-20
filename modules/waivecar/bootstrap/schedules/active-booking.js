@@ -44,6 +44,7 @@ var checkBooking = co.wrap(function *(booking) {
   let user = booking.user;
   let duration = 0;
   let isLevel = yield car.hasTag('level');
+  let isCsula = yield car.hasTag('csula');
   let booking_history = null;
   let freetime = booking.getFreeTime(isLevel);
   let trigger = freetime + 60;
@@ -146,8 +147,7 @@ var checkBooking = co.wrap(function *(booking) {
       if (duration >= trigger && !booking.isFlagged('rush') && !booking.isFlagged('hour-over-notice')) {
         yield booking.flag('hour-over-notice');
         let hour = Math.floor(trigger / 60);
-        let carName = car.license;
-        yield notify.sendTextMessage(user, `Just a reminder that you are ${ hour } hours into your booking with ${ carName }. If you feel this is a mistake, give us a call. Otherwise enjoy your ride!`);
+        yield notify.sendTextMessage(user, `Just a reminder that you are ${ hour } hours into your booking with ${ car.license }. If you feel this is a mistake, give us a call. Otherwise enjoy your ride!`);
       }
     }
 
@@ -158,9 +158,13 @@ var checkBooking = co.wrap(function *(booking) {
     //
     if (duration >= trigger && !booking.isFlagged('new-user-long-rental')) {
       yield booking.flag('new-user-long-rental');
-      booking_history = yield Booking.find({ where : { userId : user.id }});
+      let newUserCutoff = 5;
+      booking_history = yield Booking.find({ 
+        where : { userId : user.id },
+        limit : newUserCutoff + 2
+      });
 
-      if(booking_history.length < 5) {
+      if(booking_history.length < newUserCutoff) {
         yield notify.notifyAdmins(`:cactus: ${ user.link() } drove ${ car.link() } ${ duration } minutes and has only rented ${ booking_history.length } times.`, [ 'slack' ], { channel : '#rental-alerts' });
       }
     }
@@ -175,8 +179,7 @@ var checkBooking = co.wrap(function *(booking) {
     } 
   }
 
-  // Check if outside driving zone 
-  let deviceInside = GeocodingService.inDrivingZone(device.latitude, device.longitude);
+  let deviceInside = GeocodingService.inDrivingZone(car);
 
   if (!user.isWaivework) {
     // if we thought we were outside but now we're inside
