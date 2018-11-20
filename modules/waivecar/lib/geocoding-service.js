@@ -31,10 +31,13 @@ module.exports = {
     return response.body;
   },
 
-  // Check if provided lat / long is within driving zone
-  inDrivingZone(lat, long, magnitude) {
-    magnitude = magnitude || 1;
-    let distance = geolib.getDistance({ latitude : lat, longitude : long }, config.waivecar.homebase.coords);
+  inDrivingZone(obj, magnitude = 1) {
+    let reference = config.waivecar.homebase.coords;
+    if(obj.isA('car')) {
+      if(yield obj.hasTag('csula')) {
+      }
+    } 
+    let distance = geolib.getDistance(obj, reference);
     let miles = distance * 0.000621371;
     return miles <= (25 * magnitude);
   },
