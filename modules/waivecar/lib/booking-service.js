@@ -870,7 +870,7 @@ module.exports = class BookingService extends Service {
 
 
   // The meat of canEnd, the cheap check
-  static *_canEndHere(car, isAdmin) {
+  static *_canEndHere(car, isAdmin, user) {
     // We preference hubs over zones because cars can end there at any charge without a photo
     let hub = yield this.isAtHub(car);
     // if we are at a hub then we can return the car here regardless
@@ -910,7 +910,6 @@ module.exports = class BookingService extends Service {
     // we look to see the last time we updated the car
     let lastUpdate = (new Date() - car.updatedAt) / (60 * 1000);
 
-    console.log(lastUpdate, new Date(), car.updatedAt);
     // if we haven't updated the car's location in the past minute, we try to get it again.
     if(lastUpdate > 0.5) {
       let data = yield cars.getDevice(car.id, _user, 'booking.canend');
@@ -919,7 +918,7 @@ module.exports = class BookingService extends Service {
       }
     }
 
-    return yield this._canEndHere(car, isAdmin);
+    return yield this._canEndHere(car, isAdmin, _user);
   }
 
   // Ends the ride by calculating costs and setting the booking into pending payment state.
@@ -979,7 +978,7 @@ module.exports = class BookingService extends Service {
       }
     }
 
-    let end = yield this._canEndHere(car, isAdmin);
+    let end = yield this._canEndHere(car, isAdmin, user);
     // Immobilize the engine.
     let status;
     try {
