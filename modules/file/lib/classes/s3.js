@@ -18,6 +18,8 @@ module.exports = class S3 {
         message : 'S3 service has not been enabled for this API'
       }, 400);
     }
+    this.streamFile = streamFile;
+    this.getClient = getClient;
   }
 
   *upload(files, bucket) {
@@ -71,7 +73,7 @@ module.exports = class S3 {
   static *read(ctx, file) {
     let client = getClient(file);
     if (file.private) {
-      return streamFile(file, client);
+      return streamFile(file, client, {forLicenseCheck: true});
     }
     let url = client.http(file.path);
     return ctx.redirect(url);
@@ -176,12 +178,6 @@ function *uploadFile(file, client) {
   fs.unlink(location);
 }
 
-/**
- * @private
- * @method streamFile
- * @param {File} file
- * @param {Knox} client
- */
 function streamFile(file, client) {
   let stream = through();
   client.getFile(file.path, (err, res) => {
