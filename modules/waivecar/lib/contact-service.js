@@ -162,7 +162,6 @@ module.exports = {
         [/ card /, false],
         [/ unlock/, 'unlock'],
         [/^unlock/, 'unlock'],
-        [/ account/, 'account'],
         [/^lock/, 'lock'],
         [/ lock /, 'lock'],
 
@@ -276,11 +275,13 @@ module.exports = {
 
         let second = mStart.format('s');
         let car = yield Car.findById(currentBooking.carId);
-        let address = yield booking.getAddress(car.latitude, car.longitude);
-        if(address) {
-          address = ', located at ' + address.replace(/, USA/, '');
-        } else {
-          address = '';
+        if(car) {
+          let address = yield booking.getAddress(car.latitude, car.longitude);
+          if(address) {
+            address = ', located at ' + address.replace(/, USA/, '');
+          } else {
+            address = '';
+          }
         }
 
         message.push(`Your booking with ${ car.license }, ${ car.averageCharge() }% charged${address} is ${ currentBooking.status } as of ${hour}${minute}${second}s ago`);
