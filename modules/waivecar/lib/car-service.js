@@ -152,6 +152,8 @@ module.exports = {
 
     let cars = yield Car.find(opts);
 
+    // console.log(util.inspect(opts, false, null));
+
     if(_user) {
       let available = 0;
       cars.forEach(function(car) {
@@ -950,6 +952,15 @@ module.exports = {
     }
 
     if(car.isImmobilized && (_user.hasAccess('admin') || car.userId === _user.id)) {
+
+      if(car.userId === _user.id) {
+        let booking = yield _user.currentBooking();
+        if(booking.status === 'reserved') {
+          let BookingService = require('./booking-service');
+          yield BookingService.ready(booking.id, _user);
+        }
+      }
+
       try {
         res = yield this.unlockImmobilizer(id, _user, car, 'access');
       } catch(ex) {
