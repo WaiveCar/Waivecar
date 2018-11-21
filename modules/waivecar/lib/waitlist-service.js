@@ -549,7 +549,9 @@ module.exports = {
     }
     if(recordList.length) {
       let userList = yield this.letInByRecord(recordList, _user);
-      userList.map(user => yield user.addTag('la'));
+      for(var ix = 0; ix < userList.length; ix++) {
+        yield userList[ix].addTag('la');
+      }
     }
   }
 
