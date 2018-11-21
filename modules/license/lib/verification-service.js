@@ -116,11 +116,14 @@ module.exports = class LicenseVerificationService extends Service {
     for (let i = count - 1; i >= 0; i--) {
       let license = licenses[i];
       let user = yield User.findById(license.userId);
+      console.log("Checking for " + user.name());
       if (!(yield redis.shouldProcess('license', license.userId, 9 * 1000))) {
+        console.log(" skipping");
         continue;
       }
       // log.info(`Checking ${user.name()} ...`);
 
+      console.log(" outcome: " + license.outcome);
       if(license.outcome === 'clear') {
         yield license.update({
           status: 'complete'
@@ -131,7 +134,9 @@ module.exports = class LicenseVerificationService extends Service {
       let update = yield Verification.getReport(license.reportId);
 
       if (!update) {
+        console.log(" no report");
         update = yield this.updateReport(license);
+        console.log(" got report");
         // log.info(`Checking ${user.name()} ... updating report`);
       }
 

@@ -55,9 +55,6 @@ module.exports = class Service {
     return user;
   }
 
-  /**
-   * Only allow access if the requesting user is the actor or is administrator.
-   */
   static hasAccess(user, _user) {
     if (user.id !== _user.id && !_user.hasAccess('admin')) {
       throw error.parse({
