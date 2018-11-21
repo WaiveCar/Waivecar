@@ -425,7 +425,7 @@ class CarsShowView extends React.Component {
   toggleService(car) {
     opts = {};
     if (car.inRepair) {
-      opts.reason = prompt("How much did it cost to do the repair listed?\n" + car.repairReason);
+      opts.reason = prompt("How much did it cost to do the repair listed?\n" + (car.repairReason || ''));
     } else {
       opts.reason = prompt("What is wrong with the vehicle?");
       if(!opts.reason) {
@@ -552,6 +552,7 @@ class CarsShowView extends React.Component {
         ref : 5,
         checked  : car.isAvailable,
         label    : car.isAvailable ? 'Make Unavailable' : 'Make Available',
+        disabled : car.inRepair,
         onChange : this.toggleAvailable.bind(this, car)
       },
       {
