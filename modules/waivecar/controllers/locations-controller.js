@@ -50,10 +50,15 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
       };
     }
 
+    let homebase = false;
+
     // Here is how we filter out user parking outside of a zone. 
     // We use the obscure fact that Array.map, unluke the other 
     // Array functions can take a generator.
     let locations =  yield (yield Location.find(query)).map(function*(row) {
+      if(row.type === 'homebase') {
+        homebase = row;
+      }
       if(row.shape) {
         row.shape = JSON.parse(row.shape);
       }
@@ -80,7 +85,7 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
     let res = locations;
 
     if(!matchSet) {
-      let chargers = yield Chargers.list();
+      let chargers = yield Chargers.list(homebase);
       res = locations.concat(chargers);
 
       if(opts.type) {

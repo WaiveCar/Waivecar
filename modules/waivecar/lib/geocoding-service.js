@@ -31,8 +31,8 @@ module.exports = {
     return response.body;
   },
 
-  inDrivingZone(obj, magnitude = 1) {
-    let reference = config.waivecar.homebase.coords;
+  inDrivingZone(obj, magnitude = 1, reference) {
+    reference = reference || config.waivecar.homebase.coords;
     /*
     if(obj.isA('car')) {
       if(yield obj.hasTag('csula')) {

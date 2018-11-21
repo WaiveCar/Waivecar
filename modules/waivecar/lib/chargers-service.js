@@ -40,7 +40,7 @@ module.exports = {
     }
   },
 
-  *list() {
+  *list(homebase) {
     let locations = (yield this.getLocations()).map(loc => {
       let obj = {
         id: 'charger_' + loc.id,
@@ -64,7 +64,7 @@ module.exports = {
       return obj;
     });
 
-    return locations.filter( loc => loc.portList.length && GeocodingService.inDrivingZone(loc, 1.8));
+    return locations.filter( loc => loc.portList.length && GeocodingService.inDrivingZone(loc, 1.8, homebase));
   },
 
   *nameToUUID(name) {
