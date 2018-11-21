@@ -361,7 +361,7 @@ module.exports = class UserDetails extends React.Component {
                   </FormInput>
                   <FormInput className="col-md-6 bento-form-input" helpText={ user.verifiedPhone ? 'Phone has been verified' : 'Phone has not been verified' }>
                     <label>Cell Phone</label>
-                    <input type="text" name="phone" className="form-control" defaultValue={ user.phone } required />
+                    <input type="text" name="phone" className="form-control" defaultValue={ user.phone } />
                     { !user.verifiedPhone &&
                       <div>
                         <button type="button" className="btn btn-info" style={{ marginRight: 5 }} onClick={this.requestVerification}>Send Code</button>

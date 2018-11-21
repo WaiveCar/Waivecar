@@ -732,7 +732,6 @@ module.exports = {
       helpText: null,
       label: 'Cell Phone',
       name: 'phone',
-      required: true,
       type: 'text',
     },
     role: {
