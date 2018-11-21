@@ -548,7 +548,8 @@ module.exports = {
       }
     }
     if(recordList.length) {
-      yield this.letInByRecord(recordList, _user);
+      let userList = yield this.letInByRecord(recordList, _user);
+      userList.map(user => yield user.addTag('la'));
     }
   }
 
