@@ -35,18 +35,20 @@ module.exports = class Service {
 
   static *getLicensesInProgress() {
     return yield License.find({
-      where : $or: [
-        {
-          status : 'complete',
-          outcome : 'pending',
-        },
-        {
-          status  : 'pending',
-          checkId : {
-            $ne : null
+      where : {
+        $or: [
+          {
+            status : 'complete',
+            outcome : 'pending',
+          },
+          {
+            status  : 'pending',
+            checkId : {
+              $ne : null
+            }
           }
-        }
-      ]
+        ]
+      }
     });
   }
 
