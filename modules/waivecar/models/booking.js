@@ -302,9 +302,6 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
 
     },
 
-    /**
-     * Removes scheduled ride reminders.
-     */
     *delReminders() {
       queue.scheduler.cancel('booking-free-timer', `booking-${ this.id }`);
       queue.scheduler.cancel('booking-free-timer-expired', `booking-${ this.id }`);
