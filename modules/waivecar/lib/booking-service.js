@@ -216,7 +216,7 @@ module.exports = class BookingService extends Service {
     if(!driver.isWaiveWork) {
       let hoardRes = yield this.lookForHoarding(driver, car);
       t("hoarding-look");
-      if(hoardRes[0] >= 0.5) {
+      if(hoardRes[0] >= 0.4) {
         yield notify.slack({ text : `:pig2: The rapacious ${ driver.link() } did ${ hoardRes[1] } of the last ${ hoardRes[2] } bookings with ${ car.license }. How rude!` }, { channel : '#rental-alerts' });
       }
     }
@@ -1853,7 +1853,9 @@ module.exports = class BookingService extends Service {
       ],
       limit: limit
     });
-    let count = 0;
+    // this is done AFTER a successful booking so we need to start at 1.
+    let count = 1;
+    limit ++;
     lastBookingList.forEach(row => count += (row.userId === user.id));
     return [count / limit, count, limit];
   }
