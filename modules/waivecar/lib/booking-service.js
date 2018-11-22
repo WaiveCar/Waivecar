@@ -756,7 +756,7 @@ module.exports = class BookingService extends Service {
           freetime = '2';
         }
         if(!isRush) {
-          yield notify.sendTextMessage(user, `${ freetime } free hours with ${ car.license } starts now! If you have trouble starting the WaiveCar try pressing the "unlock" button in the app. When you're finished, return the WaiveCar to ${ base } with at least 25mi charge. `);
+          yield notify.sendTextMessage(user, `${ freetime } free hours with ${ car.license } start now! If you have trouble starting the WaiveCar try pressing the "unlock" button in the app. When you're finished, return the WaiveCar to ${ base } with at least 25mi charge. `);
         }
       }
 

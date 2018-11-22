@@ -416,6 +416,7 @@ module.exports = {
         yield cars.lockCar(currentBooking.carId, user);
       }
     } catch(ex) {
+      console.log(ex);
       success = false;
       response = yield this.returnError(user, ex, command);
     }
