@@ -629,9 +629,9 @@ module.exports = class BookingService extends Service {
     }
 
     if(!err) {
-      if(opts.free || (yield OrderService.extendReservation(booking, user, amount, time))) {
+      if(opts.free || amount === -1 || (yield OrderService.extendReservation(booking, user, amount, time))) {
         yield booking.flag('extended');
-        if(opts.howmuch == -1) {
+        if(amount == -1) {
           yield booking.flag('extendinfinite');
 
           // POTENTIAL FOR FUTURE BUGS
