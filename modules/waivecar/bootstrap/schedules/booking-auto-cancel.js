@@ -63,6 +63,7 @@ scheduler.process('booking-extension-reminder', function *(job) {
       yield notify.notifyAdmins(`:turtle: The lollygagger ${ driver.link() } is ${ minutesOver }min into their extension with ${ car.info() }`, [ 'slack' ], { channel : '#reservations' });
     }
 
+    console.log("Booking-before...");
     scheduler.add('booking-extension-reminder', {
       uid   : `booking-${ booking.id }-${ minutesOver }`,
       timer : { value : 6, type  : 'minutes' },
@@ -70,6 +71,7 @@ scheduler.process('booking-extension-reminder', function *(job) {
         bookingId : booking.id
       }
     });
+    console.log("Booking-after...");
   }
 });
 
