@@ -217,6 +217,7 @@ module.exports = class BookingService extends Service {
       let hoardRes = yield this.lookForHoarding(driver, car);
       t("hoarding-look");
       if(hoardRes[0] >= 0.4) {
+        yield UserLog.addUserEvent(driver, 'HOARD', hoardRes[0].toFixed(3) );
         yield notify.slack({ text : `:pig2: The rapacious ${ driver.link() } did ${ hoardRes[1] } of the last ${ hoardRes[2] } bookings with ${ car.license }. How rude!` }, { channel : '#rental-alerts' });
       }
     }
