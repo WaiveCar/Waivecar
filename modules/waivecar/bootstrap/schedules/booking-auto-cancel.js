@@ -58,13 +58,13 @@ scheduler.process('booking-extension-reminder', function *(job) {
     let minutesOver = Math.ceil( Math.max(0, (new Date() - booking.reservationEnd) / (1000 * 60) ));
     yield notify.sendTextMessage(booking.userId, `You're ${minutesOver}min into your ${ car.license } extension. Reply with "abort" to end the reservation and cancel the ride.`);
 
-    if(minutesOver > 24) {
+    if(minutesOver > 21) {
       let driver = yield User.findById(booking.userId);
       yield notify.notifyAdmins(`:turtle: The lollygagger ${ driver.link() } is ${ minutesOver }min into their extension with ${ car.info() }`, [ 'slack' ], { channel : '#reservations' });
     }
 
     scheduler.add('booking-extension-reminder', {
-      uid   : `booking-${ booking.id }`,
+      uid   : `booking-${ booking.id }-${ minutesOver }`,
       timer : { value : 6, type  : 'minutes' },
       data  : {
         bookingId : booking.id
