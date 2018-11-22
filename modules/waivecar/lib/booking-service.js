@@ -1899,7 +1899,7 @@ module.exports = class BookingService extends Service {
 
   // We see if someone is hoarding the car (defined as 50% or more of the past 6 successful bookings.
   static *lookForHoarding(user, car) {
-    let limit = 6
+    let limit = 9;
     let lastBookingList = yield Booking.find({
       where : {
         carId  : car.id,
