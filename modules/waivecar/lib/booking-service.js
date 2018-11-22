@@ -610,6 +610,10 @@ module.exports = class BookingService extends Service {
     let amount  = 100;
     let time    = 10;
 
+    if(opts.howmuch == -1) {
+      amount = -1;
+      time = -1;
+    }
     if(opts.howmuch == 20) {
       amount  = 420;
       time    = 20;
@@ -627,16 +631,35 @@ module.exports = class BookingService extends Service {
     if(!err) {
       if(opts.free || (yield OrderService.extendReservation(booking, user, amount, time))) {
         yield booking.flag('extended');
-        if(opts.howmuch == 20) {
-          yield booking.flag('extend20');
-        } 
-        yield booking.update({
-          reservationEnd: moment(booking.reservationEnd).add(time, 'minutes')
-        });
+        if(opts.howmuch == -1) {
+          yield booking.flag('extendinfinite');
 
-        if(!opts.silent) {
-          yield notify.sendTextMessage(user, `Your WaiveCar reservation has been extended ${ time } minutes.`);
-          yield notify.notifyAdmins(`:clock1: ${ user.link() } extended their reservation with ${ car.info() } by ${ time } minutes.`, [ 'slack' ], { channel : '#reservations' });
+          // POTENTIAL FOR FUTURE BUGS
+          //
+          // Currently we aren't using this value AND we really need the base
+          // reservation time in order to compute an infinite extension fee
+          // so instead of clearing it here, which is the "correct" thing to
+          // do, we just leave it set.
+          //
+          // What a mess I'm making.
+          //
+          // yield booking.update({ reservationEnd: null });
+          //
+          if(!opts.silent) {
+            yield notify.sendTextMessage(user, `Your WaiveCar reservation will be extended.`);
+            yield notify.notifyAdmins(`:snail: ${ user.link() } extended their reservation with ${ car.info() } *indefinitely*`, [ 'slack' ], { channel : '#reservations' });
+          }
+        } else {
+          if(opts.howmuch == 20) {
+            yield booking.flag('extend20');
+          } 
+          yield booking.update({
+            reservationEnd: moment(booking.reservationEnd).add(time, 'minutes')
+          });
+          if(!opts.silent) {
+            yield notify.sendTextMessage(user, `Your WaiveCar reservation has been extended ${ time } minutes.`);
+            yield notify.notifyAdmins(`:clock1: ${ user.link() } extended their reservation with ${ car.info() } by ${ time } minutes.`, [ 'slack' ], { channel : '#reservations' });
+          }
         }
 
         booking.relay('update');
@@ -719,6 +742,26 @@ module.exports = class BookingService extends Service {
       // 3. Start the free ride remind timer.
       // 4. Update the booking status to 'started'.
       // 5. Unlock the car and immobilizer.
+
+      //
+      // If the user has infinite extension time we charge their card 
+      // now.  If it fails, we still give them the car, otherwise that'd 
+      // be a real dick move. They'll have a debt and we'll try to 
+      // collect later. Que sera sera
+      //
+      if(booking.isFlagged('extendinfinite')) {
+        // our deal is $1.00 for the first 10 minutes + $.30/min thereafter
+        //
+        // NOTE THAT WE ARE USING booking.reservationEnd HERE. THIS IS POTENTIAL
+        // FOR A FUTURE BUG IF WE EVER USE THAT VALUE PROPERLY
+        //
+        let minutesOver = Math.ceil( Math.max(0, (new Date() - booking.reservationEnd) / (1000 * 60) - 10));
+        let fee = 100 + minutesOver * 30;
+
+        try {
+          yield OrderService.extendReservation(booking, user, fee, minutesOver + 10);
+        } catch(ex) { }
+      }
 
       yield booking.delCancelTimer();
 
@@ -1493,6 +1536,19 @@ module.exports = class BookingService extends Service {
     }
 
     yield this.cancelBookingAndMakeCarAvailable(booking, car);
+
+    if(booking.isFlagged('extendinfinite')) {
+      //
+      // NOTE THAT WE ARE USING booking.reservationEnd HERE. THIS IS POTENTIAL
+      // FOR A FUTURE BUG IF WE EVER USE THAT VALUE PROPERLY
+      //
+      let minutesOver = Math.ceil( Math.max(0, (new Date() - booking.reservationEnd) / (1000 * 60) - 10));
+      let fee = 100 + minutesOver * 30;
+
+      try {
+        yield OrderService.extendReservation(booking, user, fee, minutesOver + 10);
+      } catch(ex) { }
+    }
 
     // We consider a cancellation as effectively a reset
     yield this.updateState('completed', _user, user);

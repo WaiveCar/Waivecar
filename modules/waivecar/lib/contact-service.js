@@ -54,8 +54,8 @@ module.exports = {
       rush: "WaiveRush a WaiveCar (flat rate)",
       // SECRET!!!!
       // charge: "Charge a WaiveCar with EVgo",
-      save: "Add 20 additional minutes to get to a WaiveCar reservation for $4.20",
-      "save less": "Add 10 additional minutes to get to a WaiveCar reservation for $1.00",
+      save: "Add 10 additional minutes to get to a WaiveCar reservation for $1.00 and $0.30/min thereafter",
+      "save less": null,
       abort: "Cancel your booking",
       commands: null,
       cancel: null,
@@ -399,12 +399,9 @@ module.exports = {
     try {
       if(command === 'start') {
         yield booking.ready(id, user);
-      } else if (command === 'save less' || command === 'less') {
+      } else if (command === 'save less' || command === 'less' || command === 'save') {
         command = 'extend';
-        yield booking._extend(id, {}, user);
-      } else if (command === 'save') {
-        command = 'extend';
-        yield booking._extend(id, {howmuch: 20}, user);
+        yield booking._extend(id, {howmuch: -1}, user);
       } else if (command === 'cancel' || command === 'abort') {
         command = 'cancel';
         yield booking.cancel(id, user);

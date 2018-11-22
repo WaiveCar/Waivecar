@@ -47,9 +47,32 @@ scheduler.process('booking-extension-offer', function *(job) {
   let car = yield Car.findById(booking.carId);
 
   if(booking && booking.status === 'reserved' && !booking.isFlagged('extended')) {
-    yield notify.sendTextMessage(booking.userId, `${car.info()} reservation time is almost up! Need more time? Respond "SAVE" to pay $4.20 for 20 extra minutes or "SAVE LESS" for $1.00 for 10 extra minutes.`);
+    yield notify.sendTextMessage(booking.userId, `${car.info()} reservation time is almost up! Need more time? Respond "SAVE" to pay $1.00 for 10 extra minutes and $0.30/min thereafter until you get to the WaiveCar.`);
   }
 });
+
+scheduler.process('booking-extension-reminder', function *(job) {
+  let booking = yield Booking.findOne({ where : { id : job.data.bookingId } });
+  if(booking && booking.status === 'reserved') {
+    let minutesOver = Math.ceil( Math.max(0, (new Date() - booking.reservationEnd) / (1000 * 60) ));
+    yield notify.sendTextMessage(booking.userId, `Hi, you're ${minutesOver} into your extension. If you'd like to cancel the reservation, reply with "abort"`);
+
+    if(minutesOver > 24) {
+      let driver = yield User.findById(booking.userId);
+      let car = yield Car.findById(booking.carId);
+      yield notify.notifyAdmins(`:turtle: The lollygagger ${ driver.link() } is ${ minutesOver }min into their extension with ${ car.info() }`, [ 'slack' ], { channel : '#reservations' });
+    }
+
+    scheduler.add('booking-extension-reminder', {
+      uid   : `booking-${ booking.id }`,
+      timer : { value : 6, type  : 'minutes' },
+      data  : {
+        bookingId : booking.id
+      }
+    });
+  }
+});
+
 
 scheduler.process('booking-auto-cancel', function *(job) {
   let booking = yield Booking.findOne({ where : { id : job.data.bookingId } });
@@ -69,17 +92,30 @@ scheduler.process('booking-auto-cancel', function *(job) {
       if (RedisService.shouldProcess('booking-cancel', booking.id)) {
         if (booking.isFlagged('extended') && !booking.isFlagged('ext-started')) {
           yield booking.addFlag('ext-started');
-          let timer = booking.isFlagged('extend20') ? config.booking.timers.extend20 : config.booking.timers.extend10;
 
-          scheduler.add('booking-auto-cancel', {
-            uid   : `booking-${ booking.id }`,
-            timer : timer,
-            data  : {
-              bookingId : booking.id
-            }
-          });
-          // tell the user that this is actually happening.
-          yield notify.sendTextMessage(booking.userId, `Your reservation extension time has started! You have ${ timer.value } minutes more to get to ${ car.info() }.`);
+          if(booking.isFlagged('extendinfinite')) {
+            scheduler.add('booking-extension-reminder', {
+              uid   : `booking-${ booking.id }`,
+              timer : { value : 15, type  : 'minutes' },
+              data  : {
+                bookingId : booking.id
+              }
+            });
+            yield notify.sendTextMessage(booking.userId, `Your reservation extension time has started! First 10 minutes are $1.00 and it's $0.30/min therafter until you get to the WaiveCar.`);
+          } else {
+
+            let timer = booking.isFlagged('extend20') ? config.booking.timers.extend20 : config.booking.timers.extend10;
+
+            scheduler.add('booking-auto-cancel', {
+              uid   : `booking-${ booking.id }`,
+              timer : timer,
+              data  : {
+                bookingId : booking.id
+              }
+            });
+            // tell the user that this is actually happening.
+            yield notify.sendTextMessage(booking.userId, `Your reservation extension time has started! You have ${ timer.value } minutes more to get to ${ car.info() }.`);
+          }
 
           // and then get out of here.
           return true;
@@ -101,12 +137,12 @@ scheduler.process('booking-auto-cancel', function *(job) {
         }
 
         let user = yield notify.sendTextMessage(booking.userId, `Hi, sorry you couldn't make it to ${car.info()} in ${ timeWindow } minutes. We've had to cancel your reservation. You can rebook it for $5.00 by replying with "rebook".`);
-        yield notify.notifyAdmins(`:timer_clock: ${ user.name() }, ${ car.info() } booking cancelled after ${ timeWindow } minute timer expiration.`, [ 'slack' ], { channel : '#reservations' });
+        yield notify.notifyAdmins(`:timer_clock: ${ user.link() } jilted ${ car.info() } and got cancelled after ${ timeWindow }min.`, [ 'slack' ], { channel : '#reservations' });
 
         log.info(`The booking with ${ car.info() } was automatically cancelled, booking status was '${ booking.status }'.`);
       }
     } else {
-      yield notify.notifyAdmins(`:timer_clock: ${ user.name() } started a booking exactly as their reservation time was expiring. This booking was granted. ${ car.info() }.`, [ 'slack' ], { channel : '#reservations' });
+      yield notify.notifyAdmins(`:timer_clock: ${ user.link() } started a booking exactly as their reservation time was expiring. This booking was granted. ${ car.info() }.`, [ 'slack' ], { channel : '#reservations' });
     }
   } else {
     log.warn(`Auto cancellation of booking ${ booking.id } was request but ignored | Booking status: ${ booking.status }`);
