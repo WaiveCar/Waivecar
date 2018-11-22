@@ -206,13 +206,20 @@ module.exports = class BookingService extends Service {
     yield this.lookForHolding(driver, car);
     t("holding-look");
 
-
     let rebookOrder;
     // If the creator isn't an admin or is booking for themselves
     if (!(isRush || driver.isWaiveWork || _user.hasAccess('admin'))) {// || _user.id !== driver.id) {
       rebookOrder = yield this.rebookCheck(driver, car, data.opts, lockKeys);
     }
     t("rebook-look");
+
+    if(!driver.isWaiveWork) {
+      let hoardRes = yield this.lookForHoarding(driver, car);
+      t("hoarding-look");
+      if(hoardRes[0] >= 0.5) {
+        yield notify.slack({ text : `:pig2: The rapacious ${ driver.link() } did ${ hoardRes[1] } of the last ${ hoardRes[2] } bookings with ${ car.license }. How rude!` }, { channel : '#rental-alerts' });
+      }
+    }
 
     // see #1318 we do this, as of this comment's writing, a second time, after 
     // a potential charge has gone through because stripe has some issues
@@ -1831,6 +1838,24 @@ module.exports = class BookingService extends Service {
       }, 400);
     }
 
+  }
+
+  // We see if someone is hoarding the car (defined as 50% or more of the past 6 successful bookings.
+  static *lookForHoarding(user, car) {
+    let limit = 6
+    let lastBookingList = yield Booking.find({
+      where : {
+        carId  : car.id,
+        status : { $in: ['ended', 'completed', 'closed'] }
+      },
+      order : [
+        [ 'created_at', 'DESC' ]
+      ],
+      limit: limit
+    });
+    let count = 0;
+    lastBookingList.forEach(row => count += (row.userId === user.id));
+    return [count / limit, count, limit];
   }
 
   static *lookForHolding(user, car) {
