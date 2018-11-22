@@ -54,12 +54,12 @@ scheduler.process('booking-extension-offer', function *(job) {
 scheduler.process('booking-extension-reminder', function *(job) {
   let booking = yield Booking.findOne({ where : { id : job.data.bookingId } });
   if(booking && booking.status === 'reserved') {
+    let car = yield Car.findById(booking.carId);
     let minutesOver = Math.ceil( Math.max(0, (new Date() - booking.reservationEnd) / (1000 * 60) ));
-    yield notify.sendTextMessage(booking.userId, `Hi, you're ${minutesOver} into your extension. If you'd like to cancel the reservation, reply with "abort"`);
+    yield notify.sendTextMessage(booking.userId, `${minutesOver}min lapsed on your ${ car.license } extension. Reply with "abort" to end the reservation and cancel the ride.`);
 
     if(minutesOver > 24) {
       let driver = yield User.findById(booking.userId);
-      let car = yield Car.findById(booking.carId);
       yield notify.notifyAdmins(`:turtle: The lollygagger ${ driver.link() } is ${ minutesOver }min into their extension with ${ car.info() }`, [ 'slack' ], { channel : '#reservations' });
     }
 
