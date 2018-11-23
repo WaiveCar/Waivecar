@@ -340,7 +340,7 @@ module.exports = {
     });
     perf.push("misc " + (new Date() - start));
 
-    console.log(perf.join(' | '));
+    //console.log(perf.join(' | '));
     return cars;
   },
 
@@ -610,7 +610,7 @@ module.exports = {
     try { 
       let updatedCar = yield this.getDevice(deviceId, null, 'refresh');
       if (updatedCar) {
-        log.debug(`Cars : Refresh : updating ${ deviceId }.`);
+        //log.debug(`Cars : Refresh : updating ${ deviceId }.`);
         yield this.syncUpdate(deviceId, updatedCar);
       } else {
         log.debug(`Cars : Refresh : failed to retrieve ${ deviceId } to update database.`);
@@ -761,7 +761,7 @@ module.exports = {
 
   // Does sync operations against all cars in the invers fleet.
   *syncCars() {
-    log.debug('CarService : syncCars : start');
+    //log.debug('CarService : syncCars : start');
     let refreshAfter = config.car.staleLimit || 15;
 
     // Retrieve all local cars.
@@ -786,9 +786,9 @@ module.exports = {
     }
 
     // Retrieve all Active Devices from Invers and loop.
-    log.debug(`Cars : Sync : retrieving device list from Cloudboxx.`);
+    //log.debug(`Cars : Sync : retrieving device list from Cloudboxx.`);
     let devices = yield this.getAllDevices();
-    log.debug(`Cars : Sync : ${ devices.length } devices available for sync.`);
+    //log.debug(`Cars : Sync : ${ devices.length } devices available for sync.`);
 
     let syncList = devices.map(device => this.syncCar(device, cars, allCars));
     let result   = yield parallel(syncList);
@@ -804,7 +804,7 @@ module.exports = {
       if (existingCar) {
         let updatedCar = yield this.getDevice(device.id, null, 'sync');
         if (updatedCar) {
-          log.debug(`Cars : Sync : updating ${ device.id }.`);
+          // log.debug(`Cars : Sync : updating ${ device.id }.`);
           yield this.syncUpdate(existingCar.id, updatedCar, existingCar);
         } else {
           log.debug(`Cars : Sync : failed to retrieve ${ device.id } to update database.`);
@@ -1317,10 +1317,10 @@ module.exports = {
     try {
       let res = yield request(payload);
       if (res.statusCode !== 200) {
-        console.log(payload, res.body);
+        //console.log(payload, res.body);
         throw error.parse({
           code    : 'CAR_SERVICE',
-          message : 'An interaction attempt against the fleet service api failed.',
+          message : "The server can't contact the car, please try again.',
           data    : {
             status   : res.statusCode,
             message  : res.body,
@@ -1336,7 +1336,7 @@ module.exports = {
       if (err.message === 'ETIMEDOUT') {
         throw error.parse({
           code    : 'CAR_SERVICE_TIMEDOUT',
-          message : 'The interaction attempt against fleet service timed out.',
+          message : "The server can't contact the car, please try again.',
           data    : {
             target : resource
           }

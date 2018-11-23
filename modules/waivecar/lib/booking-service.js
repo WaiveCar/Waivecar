@@ -79,7 +79,7 @@ module.exports = class BookingService extends Service {
   static *create(data, _user) {
     let start = new Date(), code = Math.round(Math.random() * 36 * 36).toString(36);
     function t(what) {
-      console.log(code, new Date() - start, what);
+      //console.log(code, new Date() - start, what);
     }
     let lockKeys = yield redis.shouldProcess('booking-car', data.carId, 45 * 1000);
     if (!lockKeys) {
