@@ -125,23 +125,16 @@ scheduler.process('booking-auto-cancel', function *(job) {
 
         yield BookingService.cancelBookingAndMakeCarAvailable(booking, car);
 
-        let timeWindow = booking.isFlagged('level') ? config.booking.timers.level.autoCancel.value : config.booking.timers.autoCancel.value;
-        timeWindow = parseInt(timeWindow, 10);
+        // we derive the amount of time we gave them and assume it's divisible by 5 ... hopefully we are right.
+        let timeWindow = Math.round((new Date() - booking.createdAt) / (5*60*1000)) * 5;
 
         let driver = yield User.findById(booking.userId);
         let aid = yield driver.hasTag('aid');
 
-        if(booking.isFlagged('extended')) {
-          timeWindow += 10;
-        }
-        if(aid) {
-          timeWindow += 10;
-        }
-
         let user = yield notify.sendTextMessage(booking.userId, `Hi, sorry you couldn't make it to ${car.info()} in ${ timeWindow } minutes. We've had to cancel your reservation. You can rebook it for $5.00 by replying with "rebook".`);
         yield notify.notifyAdmins(`:timer_clock: ${ user.link() } jilted ${ car.info() } and got cancelled after ${ timeWindow }min.`, [ 'slack' ], { channel : '#reservations' });
 
-        log.info(`The booking with ${ car.info() } was automatically cancelled, booking status was '${ booking.status }'.`);
+        // log.info(`The booking with ${ car.info() } was automatically cancelled, booking status was '${ booking.status }'.`);
       }
     } else {
       yield notify.notifyAdmins(`:timer_clock: ${ user.link() } started a booking exactly as their reservation time was expiring. This booking was granted. ${ car.info() }.`, [ 'slack' ], { channel : '#reservations' });
