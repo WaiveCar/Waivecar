@@ -844,7 +844,7 @@ module.exports = {
       }
     } catch(err) {
       if(err.data) {
-        log.warn(`Cars : Sync : ${ err.data.status } : ${ err.data.message } : ${ err.data.resource }`);
+        log.warn(`Cars : Sync : ${ err.data.status } : ${ err.data.resource }`);
       } else {
         log.warn(`Cars : Sync : ${ err }`);
       }
