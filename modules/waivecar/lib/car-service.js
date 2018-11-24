@@ -1320,7 +1320,7 @@ module.exports = {
         //console.log(payload, res.body);
         throw error.parse({
           code    : 'CAR_SERVICE',
-          message : "The server can't contact the car, please try again.',
+          message : "The server can't contact the car, please try again.",
           data    : {
             status   : res.statusCode,
             message  : res.body,
