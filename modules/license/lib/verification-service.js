@@ -164,6 +164,6 @@ module.exports = class LicenseVerificationService extends Service {
         // log.info(`Checking for ${user.name()} - nothing`);
       }
     }
-    log.info("Done checking licenses");
+    //log.info("Done checking licenses");
   }
 };

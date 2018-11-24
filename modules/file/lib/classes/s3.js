@@ -140,8 +140,6 @@ function *uploadFile(file, client) {
     'x-amz-acl'      : file.private ? 'private' : 'public-read'
   });
 
-  // ### Upload File
-
   target.pipe(bucket);
   yield new Promise((resolve, reject) => {
     bucket.on('response', (res) => {
@@ -166,7 +164,6 @@ function *uploadFile(file, client) {
     });
   });
 
-  // ### Update File
 
   yield file.update({
     store  : 's3',

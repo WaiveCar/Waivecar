@@ -137,8 +137,7 @@ module.exports = class CheckrService {
   // This fetches the report for an indiviudal report id
   static *getReport(reportId) {
     try {
-      let response = yield this.request(`/motor_vehicle_reports/${reportId}`);
-      return response;
+      return yield this.request(`/motor_vehicle_reports/${reportId}`);
     } catch(err) {
       log.info(`Failed to fetch report ${reportId}`);  
     }
@@ -166,10 +165,7 @@ module.exports = class CheckrService {
     if (response && response.body) {
       body = JSON.parse(response.body);
     }
-    fs.appendFile(
-      '/var/log/outgoing/checkr.txt',
-      JSON.stringify([options, body, response]) + '\n',
-    );
+    fs.appendFile( '/var/log/outgoing/checkr.txt', JSON.stringify([options, body, response]) + '\n', function(){});
     if (!response || response.statusCode > 201) {
       throw error.parse(
         {
