@@ -1336,7 +1336,7 @@ module.exports = {
       if (err.message === 'ETIMEDOUT') {
         throw error.parse({
           code    : 'CAR_SERVICE_TIMEDOUT',
-          message : "The server can't contact the car, please try again.',
+          message : "The server can't contact the car, please try again.",
           data    : {
             target : resource
           }
