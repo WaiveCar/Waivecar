@@ -6,12 +6,6 @@ let log        = Bento.Log;
 let changeCase = Bento.Helpers.Case;
 let types      = Bento.Helpers.Type;
 
-/**
- * Finds a list of records based on the provided query options.
- * @method find
- * @param  {Object} options
- * @return {Array}
- */
 module.exports = function *find(options) {
   let relations = new Relations(this, options);
   let result    = yield this._schema.findAll(options);
@@ -69,6 +63,6 @@ function sequelizeRelay(data, type, resource, user) {
   }
 
   if (!Bento.isTesting()) {
-    log.debug(`Relay [${ resource }:${ type }][...${ resource }]`);
+    // log.debug(`Relay [${ resource }:${ type }][...${ resource }]`);
   }
 }
