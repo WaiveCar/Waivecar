@@ -1984,8 +1984,8 @@ module.exports = class BookingService extends Service {
 
     if (minutesLapsed < minTime) {
       if(opts.buyNow) {
-        if (booking.isFlagged('charge')) {
-          yield notify.slack({ text : `:checker_flag: The clever ${ user.link() }, booked ${ car.link() } ${ minutesStarted }min ago, charged it and then rebooked it.` }, { channel : '#rental-alerts' });
+        if (booking.isFlagged('charge') && minutesStarted < 45) {
+          yield notify.slack({ text : `:checkered_flag: The clever ${ user.link() }, booked ${ car.link() } ${ minutesStarted }min ago, charged it and then rebooked it.` }, { channel : '#rental-alerts' });
         }
 
         rebookOrder = yield OrderService.getCarNow(booking, user, opts.buyNow * 100);
