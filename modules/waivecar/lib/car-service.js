@@ -1156,6 +1156,13 @@ module.exports = {
     opts = opts || {};
     existingCar = existingCar || (yield Car.findById(id));
 
+    if(!id || !existingCar) {
+      throw error.parse({
+        code    : 'IGNITION_ON',
+        message : "That didn't work. Are you sure you are in a booking?"
+      }, 400);
+    }
+
     // #1373: We need to make sure the user has access to do this to the car.
     // If it doesn't look like they do then we give a valid response as if
     // the action happened, thus failing silently as far as they are concerned.
