@@ -175,7 +175,7 @@ module.exports = {
         }
       });
 
-      fs.appendFile('/var/log/outgoing/carsrequest.txt', JSON.stringify([new Date(), available, _user.id, _user.latitude, _user.longitude]) + '\n');
+      fs.appendFile('/var/log/outgoing/carsrequest.txt', JSON.stringify([new Date(), available, _user.id, _user.latitude, _user.longitude]) + '\n',function(){});
     }
 
     return cars;
@@ -877,7 +877,7 @@ module.exports = {
     status.id = id;
     status.t = new Date();
     status._misc = misc;
-    fs.appendFile('/var/log/invers/log.txt', JSON.stringify(status) + "\n");
+    fs.appendFile('/var/log/invers/log.txt', JSON.stringify(status) + "\n", function(){});
   },
 
   *getDevice(id, _user, source) {

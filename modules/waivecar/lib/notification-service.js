@@ -22,7 +22,7 @@ function log_message(type, what) {
 
   setTimeout(function(){
     try {
-      fs.appendFile('/var/log/outgoing/log.txt', JSON.stringify(what) + "\n");
+      fs.appendFile('/var/log/outgoing/log.txt', JSON.stringify(what) + "\n", function(){});
     } catch (err) {
       log.warn(`Failed to write to the log file: ${ err.message }`);
     }
@@ -32,11 +32,6 @@ function log_message(type, what) {
 let fcm = new FCM(config.push.serverKey);
 
 module.exports = {
-  /**
-   * Sends a sms text message.
-   * @param {Object} user
-   * @param {String} message
-   */
   *sendTextMessage(query, message) {
     let user = false;
     if(Number.isInteger(query)) {

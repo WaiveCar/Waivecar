@@ -1644,7 +1644,7 @@ module.exports = class BookingService extends Service {
         carLocation: lastCarPos,
         time: new Date()
       };
-      fs.appendFile('/var/log/outgoing/user-gps.txt', JSON.stringify(positionInfo) + '\n');
+      fs.appendFile('/var/log/outgoing/user-gps.txt', JSON.stringify(positionInfo) + '\n', function(){});
     }
 
     return { isPaired: isPaired };

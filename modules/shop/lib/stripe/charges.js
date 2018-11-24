@@ -15,7 +15,7 @@ module.exports = class StripeCharges {
       payload.push(extra);
     }
 
-    fs.appendFile('/var/log/outgoing/stripe.txt', JSON.stringify(payload) + "\n");
+    fs.appendFile('/var/log/outgoing/stripe.txt', JSON.stringify(payload) + "\n", function(){});
   }
 
   // Charges the provided account.

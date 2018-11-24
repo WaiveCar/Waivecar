@@ -151,11 +151,11 @@ module.exports = {
     slackPayload.t = 'slack';
     slackPayload.at = new Date();
     try {
-      fs.appendFile('/var/log/outgoing/log.txt', JSON.stringify(slackPayload) + "\n");
+      fs.appendFile('/var/log/outgoing/log.txt', JSON.stringify(slackPayload) + "\n",function(){});
     } catch (err) {
       log.warn(`Failed to write to the log file: ${ err.message }`);
     }
-    console.log('payload: ', slackPayload);
+    //console.log('payload: ', slackPayload);
     if (process.env.NODE_ENV === 'production' && slackPayload.attachments.length > 1) {
       yield slack.message(slackPayload);
     }

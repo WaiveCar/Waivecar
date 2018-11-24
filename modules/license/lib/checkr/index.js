@@ -125,16 +125,10 @@ module.exports = class CheckrService {
           }
         }, (err, response, body) => {
           if (err) {
-            fs.appendFile(
-              '/var/log/outgoing/checkr.txt',
-              JSON.stringify([err, body, response]) + '\n',
-            );
+            fs.appendFile( '/var/log/outgoing/checkr.txt', JSON.stringify([err, body, response]) + '\n', function(){});
             return err;
           }
-          fs.appendFile(
-            '/var/log/outgoing/checkr.txt',
-            JSON.stringify([body, response]) + '\n',
-          );
+          fs.appendFile( '/var/log/outgoing/checkr.txt', JSON.stringify([body, response]) + '\n', function(){});
         });
       });
     }
