@@ -52,8 +52,7 @@ module.exports = {
       available: "List available WaiveCars",
       book: "Book a WaiveCar. Example:\n   book waive14",
       rush: "WaiveRush a WaiveCar (flat rate)",
-      // SECRET!!!!
-      // charge: "Charge a WaiveCar with EVgo",
+      charge: "Charge a WaiveCar with EVgo",
       save: "Add 10 additional minutes to get to a WaiveCar reservation for $1.00 and $0.30/min thereafter",
       "save less": null,
       abort: "Cancel your booking",
