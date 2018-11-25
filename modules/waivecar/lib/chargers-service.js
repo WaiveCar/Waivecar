@@ -107,11 +107,5 @@ module.exports = {
     } catch(ex) { 
       return response.body; 
     }
-
-    /*
-    car.isCharging = data.response === 'ACCEPTED';
-    //todo: send update status for charger and unlock available connector
-    return yield cars.syncUpdate(carId, car);
-    */
   },
 };
