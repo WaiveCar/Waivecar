@@ -201,7 +201,7 @@ var checkBooking = co.wrap(function *(booking) {
   // See Api: Low charge text message triggers #495 & #961
   if (car.avgMilesAvailable() < 7 && !booking.isFlagged('low-2')) {
     yield booking.flag('low-2');
-    yield notify.sendTextMessage(user, "Hi, your WaiveCar is getting dangerously low on charge! If it runs out of juice, we'll have to tow it at your expense! Please call us at this number and we'll direct you to the nearest charger.");
+    yield notify.sendTextMessage(user, "Hi, your WaiveCar is getting dangerously low! If it runs out of juice, we'll have to tow it at your expense! Please call us at this number and we'll direct you to the nearest station.");
     yield notify.notifyAdmins(`:interrobang: ${ user.link() } is persisting and is now disastrously low with ${ car.info() }, oh dear. ${ car.chargeReport() }. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
 
   } else if (car.avgMilesAvailable() < 14 && !booking.isFlagged('low-1')) {
@@ -213,7 +213,7 @@ var checkBooking = co.wrap(function *(booking) {
     let homebase = isLevel ? '34 N 7th Street' : '2102 Pico Blvd, Santa Monica 90405';
 
     yield booking.flag('low-0');
-    yield notify.sendTextMessage(user, `Hey there! Looks like your WaiveCar battery is getting really low. Please return your WaiveCar to ${ homebase }.`);
+    yield notify.sendTextMessage(user, `Hey there! Looks like your WaiveCar is getting really low. Please return your WaiveCar to ${ homebase }.`);
     yield notify.notifyAdmins(`:battery: ${ user.link() } has driven ${ car.info() } to a low charge. ${ car.chargeReport() }. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
   }
 
