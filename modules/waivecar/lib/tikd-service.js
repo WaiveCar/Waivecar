@@ -28,17 +28,12 @@ module.exports = {
     };
   },
 
-  *request(url, method, opts) {
-    try {
-      return yield request(this.prepareRequest(url, method), opts);
-    } catch (ex) { }
-  },
-
   *post(url, payload) {
     let startCommand = this.prepareRequest(url, 'POST');//, {url: 'http://9ol.es:6501/'});
     startCommand.body = JSON.stringify(payload);
     var response;
     try {
+      fs.appendFile('/var/log/outgoing/tikd.txt', JSON.stringify([url, payload]) + "\n",function(){});
       response = yield request(startCommand);
       return JSON.parse(response.body);
     } catch(ex) {
