@@ -72,6 +72,6 @@ function sequelizeRelay(data, type, resource, user) {
   }
 
   if (!Bento.isTesting()) {
-    log.debug(`Relay [${ resource }:${ type }][...${ resource }]`);
+    //log.debug(`Relay [${ resource }:${ type }][...${ resource }]`);
   }
 }
