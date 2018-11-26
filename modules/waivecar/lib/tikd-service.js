@@ -36,7 +36,7 @@ module.exports = {
     try {
       response = yield request(startCommand);
       responseJSON = JSON.parse(response.body);
-      fs.appendFile('/var/log/outgoing/tikd.txt', JSON.stringify([url, payload, responseJSON]) + "\n",function(){});
+      fs.appendFile('/var/log/outgoing/tikd.txt', JSON.stringify([startCommand, responseJSON]) + "\n",function(){});
       return responseJSON;
     } catch(ex) {
       console.log(ex);
@@ -99,7 +99,7 @@ module.exports = {
         metroArea = 'NewYorkCity';
       }
       return yield this.post('fleet', {
-        transactionId: 'car-' + car.licenseUsed,
+        transactionId: 'car-' + car.license,
         eventName: state,
         vehicleInto: {
           plateNumber: car.plateNumber,
