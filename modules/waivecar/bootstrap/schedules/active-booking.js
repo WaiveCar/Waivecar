@@ -179,9 +179,10 @@ var checkBooking = co.wrap(function *(booking) {
     } 
   }
 
-  let deviceInside = GeocodingService.inDrivingZone(car);
-
   if (!user.isWaivework) {
+    // A cheap way to do csula check ... we just expand the santa monica zone.
+    let deviceInside = GeocodingService.inDrivingZone(car, isCsula ? 1.5 : 1);
+
     // if we thought we were outside but now we're inside
     if (deviceInside && booking.isFlagged('outside-range')) {
       yield booking.unFlag('outside-range');
@@ -190,8 +191,9 @@ var checkBooking = co.wrap(function *(booking) {
     // if we thought we were inside but now we are outside.
     } else if (!deviceInside && !booking.isFlagged('outside-range')) {
       if(!isLevel) {
+        let homebase = (isCsula && 'at the CSULA campus') || 'in the green zone on the map';
         yield booking.flag('outside-range');
-        yield notify.sendTextMessage(user, 'Hi there, looks like you are driving your WaiveCar outside of our range. As a reminder, all rentals must be completed in one of the green zones on the map. Thanks & enjoy your drive!');
+        yield notify.sendTextMessage(user, `Hi there, looks like you are driving your WaiveCar outside of our range. As a reminder, all rentals must be completed ${ homebase }. Thanks & enjoy your drive!`);
         yield notify.notifyAdmins(`:waving_black_flag: ${ user.link() } took ${ car.info() } outside of the driving zone. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
       }
     }
