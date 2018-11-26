@@ -159,11 +159,10 @@ module.exports = {
         // sometimes we get messages with both "card" and "account" so
         // we pass those up.
         [/ card /, false],
-        [/ unlock/, 'unlock'],
+        [/ unlock(ing|)/, 'unlock'],
         [/^unlock/, 'unlock'],
         [/^lock/, 'lock'],
-        [/locking/, 'lock'],
-        [/ lock /, 'lock'],
+        [/ lock(ing|) /, 'lock'],
 
         // these were carefully tested over 30,000 historical text messages
         [/(is|does|wo|will|ca).{0,3}n(o|'|)t start/, 'access'],
