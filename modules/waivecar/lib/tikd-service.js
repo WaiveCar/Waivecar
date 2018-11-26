@@ -30,12 +30,18 @@ module.exports = {
   },
 
   *post(url, payload) {
-    let startCommand = this.prepareRequest(url, 'POST');//, {url: 'http://9ol.es:6501/'});
-    startCommand.body = payload;
-    var response, responseJSON;
+    var 
+      response, responseJSON,
+      startCommand = this.prepareRequest(url, 'POST');//, {url: 'http://9ol.es:6501/'});
+
+    startCommand.body = JSON.stringify(payload);
+
     try {
       response = yield request(startCommand);
       responseJSON = JSON.parse(response.body);
+
+      // for debugging
+      startCommand.body = payload;
       fs.appendFile('/var/log/outgoing/tikd.txt', JSON.stringify([startCommand, response]) + "\n",function(){});
       return responseJSON;
     } catch(ex) {
