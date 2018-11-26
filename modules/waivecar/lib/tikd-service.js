@@ -31,11 +31,12 @@ module.exports = {
   *post(url, payload) {
     let startCommand = this.prepareRequest(url, 'POST');//, {url: 'http://9ol.es:6501/'});
     startCommand.body = JSON.stringify(payload);
-    var response;
+    var response, responseJSON;
     try {
-      fs.appendFile('/var/log/outgoing/tikd.txt', JSON.stringify([url, payload]) + "\n",function(){});
       response = yield request(startCommand);
-      return JSON.parse(response.body);
+      responseJSON = JSON.parse(response.body);
+      fs.appendFile('/var/log/outgoing/tikd.txt', JSON.stringify([url, payload, responseJSON]) + "\n",function(){});
+      return responseJSON;
     } catch(ex) {
       console.log(ex);
       if(response) {
@@ -50,6 +51,8 @@ module.exports = {
       let res = yield this.changeCar('subscribe', car);
       if(res) {
         yield car.addTag('tikd');
+      } else {
+        console.log(res);
       }
       return res;
     }
