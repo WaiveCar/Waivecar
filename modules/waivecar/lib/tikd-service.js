@@ -104,7 +104,7 @@ module.exports = {
       if(yield car.hasTag('level')) {
         metroArea = 'NewYorkCity';
       }
-      return yield this.post('fleet', {
+      return yield this.post('fleets', {
         transactionId: 'car-' + car.license,
         eventName: state,
         vehicleInto: {
