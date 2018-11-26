@@ -36,7 +36,7 @@ module.exports = {
     try {
       response = yield request(startCommand);
       responseJSON = JSON.parse(response.body);
-      fs.appendFile('/var/log/outgoing/tikd.txt', JSON.stringify([startCommand, responseJSON]) + "\n",function(){});
+      fs.appendFile('/var/log/outgoing/tikd.txt', JSON.stringify([startCommand, response]) + "\n",function(){});
       return responseJSON;
     } catch(ex) {
       console.log(ex);
