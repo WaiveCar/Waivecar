@@ -37,6 +37,7 @@ module.exports = {
       response = yield request(startCommand);
       return JSON.parse(response.body);
     } catch(ex) {
+      console.log(ex);
       if(response) {
         return response.body;
       }
