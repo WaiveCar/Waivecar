@@ -14,27 +14,20 @@ let fs        = require('fs');
 //
 module.exports = {
 
-  prepareRequest(url, method, opts) {
-    method = method || 'GET';
-    opts = opts || {};
-    return {
-      url     : (opts.url || config.tikd.ep) + url,
-      method  : method,
-      headers : {
+  *post(url, payload, opts) {
+    var response, responseJSON;
+
+    var startCommand =  {
+      url     : config.tikd.ep + url,
+      method  : 'POST',
+      body    : JSON.stringify(payload),
+      headers : Object.assign({
         Accept          : "application.vnd.fleets.v1+json",
         'Content-type'  : 'application/json',
         //'Authorization' : config.tikd.key,
         'x-api-key'     : config.tikd.key
-      }
+      }, opts)
     };
-  },
-
-  *post(url, payload) {
-    var 
-      response, responseJSON,
-      startCommand = this.prepareRequest(url, 'POST');//, {url: 'http://9ol.es:6501/'});
-
-    startCommand.body = JSON.stringify(payload);
 
     try {
       response = yield request(startCommand);
@@ -107,7 +100,7 @@ module.exports = {
       return yield this.post('fleets', {
         transactionId: 'car-' + car.license,
         eventName: state,
-        vehicleInto: {
+        vehicleInfo: {
           plateNumber: car.plateNumber,
           plateState: car.plateState,
           vin: car.vin,
@@ -116,7 +109,7 @@ module.exports = {
             email: 'chris@waivecar.com'
           }
         }
-      });
+      }, { Accept : 'application.vnd.fleets.v1+json' });
     } else {
       console.log(`${car.license} is missing something: vin(${car.vin}) license(${car.plateNumber}) state(${car.plateState})`);
     }
@@ -144,6 +137,6 @@ module.exports = {
         licenseStateIssued : license.state,
         address: [ ]
       }
-    });
+    }, { Accept : 'application.vnd.renters.v1+json' });
   }
 };
