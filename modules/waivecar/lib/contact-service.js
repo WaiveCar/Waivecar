@@ -162,6 +162,7 @@ module.exports = {
         [/ unlock/, 'unlock'],
         [/^unlock/, 'unlock'],
         [/^lock/, 'lock'],
+        [/locking/, 'lock'],
         [/ lock /, 'lock'],
 
         // these were carefully tested over 30,000 historical text messages
