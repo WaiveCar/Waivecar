@@ -23,6 +23,7 @@ module.exports = {
       headers : {
         Accept          : "application.vnd.fleets.v1+json",
         'Content-type'  : 'application/json',
+        'Authorization' : config.tikd.key
         'x-api-key'     : config.tikd.key
       }
     };
@@ -130,7 +131,7 @@ module.exports = {
         plateState : car.plateState
       },
       renterInfo : {
-        "e-mail" : user.email,
+        email : user.email,
         firstName : license.firstName,
         lastName : license.lastName,
         licenseNumber : license.number,
