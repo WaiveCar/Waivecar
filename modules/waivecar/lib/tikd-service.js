@@ -23,7 +23,7 @@ module.exports = {
       headers : {
         Accept          : "application.vnd.fleets.v1+json",
         'Content-type'  : 'application/json',
-        'Authorization' : config.tikd.key,
+        //'Authorization' : config.tikd.key,
         'x-api-key'     : config.tikd.key
       }
     };
