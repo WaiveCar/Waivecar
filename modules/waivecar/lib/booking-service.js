@@ -992,13 +992,13 @@ module.exports = class BookingService extends Service {
     // ### Status Check
     // Go through end booking checklist.
     if ([ 'ready', 'started' ].indexOf(booking.status) === -1) {
-      if(booking.status === 'ended') {
+      if(['ended', 'completed'].indexOf(booking.status) !== -1) {
         return true;
       }
       yield redis.doneWithIt(lockKeys);
       throw error.parse({
         code    : `BOOKING_REQUEST_INVALID`,
-        message : `You can only end a booking which has been made ready or has already started.`
+        message : 'An error happened, please try again'
       }, 400);
     }
 
@@ -1298,6 +1298,7 @@ module.exports = class BookingService extends Service {
       var car     = yield this.getCar(booking.carId);
       var user    = yield this.getUser(booking.userId);
       var isLevel = yield user.isTagged('level');
+      var isCsula = yield car.hasTag('csula');
 
       this.hasAccess(user, _user);
 
@@ -1410,10 +1411,25 @@ module.exports = class BookingService extends Service {
       zoneString = `(${zone.name})` || '';
     } catch(ex) {}
 
+    // see https://github.com/WaiveCar/Waivecar/issues/1455#issuecomment-439516353
+    if (isCsula) {
+      minCharge = 50;
+    }
+
     if (car.milesAvailable() <= minCharge && !isAdmin && !isLevel) {
       yield cars.updateAvailabilityAnonymous(car.id, false);
-      yield notify.slack({ text : `:spider: ${ car.link() } unavailable due to charge being under ${minCharge}mi. ${ car.chargeReport() }`
-      }, { channel : '#rental-alerts' });
+      yield notify.slack({ text : `:spider: ${ car.link() } unavailable due to charge being under ${minCharge}mi. ${ car.chargeReport() }` }, { channel : '#rental-alerts' });
+
+      if(isCsula) {
+        // we email michael.dray@calstatela.edu with the car number
+        // and charge.
+        yield (new Email()).send({
+          to: 'michael.dray@calstatela.edu',
+          from: emailConfig.sender,
+          subject: `${car.license}'s at ${car.milesAvailable()}mi est. fuel and was made unavailable for booking`,
+          template: 'blank'
+        });
+      }
     } else {
       yield car.available();
       yield this.notifyUsers(car);
