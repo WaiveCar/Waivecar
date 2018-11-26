@@ -22,9 +22,8 @@ module.exports = {
       method  : 'POST',
       body    : JSON.stringify(payload),
       headers : Object.assign({
-        Accept          : "application.vnd.fleets.v1+json",
-        'Content-type'  : 'application/json',
         //'Authorization' : config.tikd.key,
+        Accept          : "application.vnd.fleets.v1+json",
         'x-api-key'     : config.tikd.key
       }, opts)
     };
