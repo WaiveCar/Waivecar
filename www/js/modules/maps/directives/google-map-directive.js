@@ -199,10 +199,11 @@ function directive($rootScope, MapsLoader, RouteService, $q, $timeout, $window, 
 
   function charge2color(marker) {
     var miles =  marker.range;
-    if (miles >= 80) {
+    var cutoffList = (marker.model === 'Tucson' && [180, 100]) || [80, 40];
+    if (miles >= cutoffList[0]) {
       return 2;
     }
-    if (miles >= 40) {
+    if (miles >= cutoffList[1]) {
       return 1;
     } 
     return 0;
