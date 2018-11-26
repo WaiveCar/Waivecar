@@ -1,6 +1,6 @@
 'use strict';
 
-let request   = require('./request-cache-service');
+let request   = require('co-request');
 let error     = Bento.Error;
 let config    = Bento.config;
 let Car       = Bento.model('Car');
@@ -31,7 +31,7 @@ module.exports = {
 
   *post(url, payload) {
     let startCommand = this.prepareRequest(url, 'POST');//, {url: 'http://9ol.es:6501/'});
-    startCommand.body = JSON.stringify(payload);
+    startCommand.body = payload;
     var response, responseJSON;
     try {
       response = yield request(startCommand);
