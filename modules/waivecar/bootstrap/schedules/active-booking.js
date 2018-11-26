@@ -199,18 +199,21 @@ var checkBooking = co.wrap(function *(booking) {
  
   // Check charge level
   // See Api: Low charge text message triggers #495 & #961
-  if (car.avgMilesAvailable() < 7 && !booking.isFlagged('low-2')) {
+  // See #1455 for the csula related numbers.
+  let lowList = isCsula ? [ 45, 30, 15 ] : [ 21, 14, 7 ];
+
+  if (car.avgMilesAvailable() < lowList[2] && !booking.isFlagged('low-2')) {
     yield booking.flag('low-2');
     yield notify.sendTextMessage(user, "Hi, your WaiveCar is getting dangerously low! If it runs out of juice, we'll have to tow it at your expense! Please call us at this number and we'll direct you to the nearest station.");
     yield notify.notifyAdmins(`:interrobang: ${ user.link() } is persisting and is now disastrously low with ${ car.info() }, oh dear. ${ car.chargeReport() }. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
 
-  } else if (car.avgMilesAvailable() < 14 && !booking.isFlagged('low-1')) {
+  } else if (car.avgMilesAvailable() < lowList[1] && !booking.isFlagged('low-1')) {
     yield booking.flag('low-1');
-    yield notify.sendTextMessage(user, "Hi, your WaiveCar is getting really low. Please call us and we can help you get to a charger.");
+    yield notify.sendTextMessage(user, "Hi, your WaiveCar is getting really low. Please call us and we can help you get to a station.");
     yield notify.notifyAdmins(`:small_red_triangle: ${ user.link() } is continuing to drive ${ car.info() } to an even lower charge. ${ car.chargeReport() }. ${ booking.link() }`, [ 'slack' ], { channel : '#rental-alerts' });
 
-  } else if (car.avgMilesAvailable() < 21 && !booking.isFlagged('low-0')) {
-    let homebase = isLevel ? '34 N 7th Street' : '2102 Pico Blvd, Santa Monica 90405';
+  } else if (car.avgMilesAvailable() < lowList[0] && !booking.isFlagged('low-0')) {
+    let homebase = (isLevel && '34 N 7th Street') || (isCsula && 'the CSULA campus') || '2102 Pico Blvd, Santa Monica 90405';
 
     yield booking.flag('low-0');
     yield notify.sendTextMessage(user, `Hey there! Looks like your WaiveCar is getting really low. Please return your WaiveCar to ${ homebase }.`);
