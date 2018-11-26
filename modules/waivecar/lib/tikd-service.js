@@ -5,7 +5,7 @@ let error     = Bento.Error;
 let config    = Bento.config;
 let Car       = Bento.model('Car');
 let License   = require('../../license/lib/license-service');
-
+let fs        = require('fs');
 
 //
 // A pdf of the documentation can be found in ticket #1322:
