@@ -321,7 +321,7 @@ module.exports = class BookingService extends Service {
     // ### Notifications
     yield booking.setCancelTimer(timerMap);
     t("canceltimers");
-    let inject = 'You have';
+    let inject = 'You have ';
     if(autoExtend) {
       inject = 'As a WaiveAid member, you have ';
     }
@@ -330,7 +330,7 @@ module.exports = class BookingService extends Service {
     t("userparking");
     let timeToCarStr = isRush ? "You've been WaiveRushed so take your time, your reservation does not expire. Hourly charges begin at 10AM" : `${inject}${timeToCar} minutes to get to it`
 
-    let msg = `${car.license} is yours!\nIf you have difficulties starting the ride with the app, reply 'start ride' when you're next to the WaiveCar.\n${currentParking ? `It is WaiveParked with the notes: "${currentParking.notes}". ` : ''}${timeToCarStr}. Thanks!`;
+    let msg = `${car.license} is yours!\nIf you have difficulties starting the ride with the app, reply "start ride" when you're next to the WaiveCar.\n${currentParking ? `It is WaiveParked with the notes: "${currentParking.notes}". ` : ''}${timeToCarStr}. Thanks!`;
     if (isLevel) {
       // https://lb.waivecar.com/users/14827
       yield notify.sendTextMessage(14827, `${ driver.name() } reserved ${ car.license }.`);
