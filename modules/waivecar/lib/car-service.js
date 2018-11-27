@@ -404,6 +404,7 @@ module.exports = {
     });
     // legacy issues
     car.plateNumberWork = car.plateNumber;
+    delete car.plateNumber;
 
     return car;
   },
