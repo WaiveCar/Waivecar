@@ -62,7 +62,6 @@ module.exports = {
       access: null,
       complete: null,
       notify: null,
-      "start ride": null,
       rebook: "Rebook the same WaiveCar (possibly for a fee)",
       start: "Start your ride",
       finish: "Finish your ride",
@@ -159,6 +158,7 @@ module.exports = {
         // sometimes we get messages with both "card" and "account" so
         // we pass those up.
         [/ card /, false],
+        [/start ride/, 'start'],
         [/ unlock(ing|)/, 'unlock'],
         [/^unlock/, 'unlock'],
         [/^lock/, 'lock'],
