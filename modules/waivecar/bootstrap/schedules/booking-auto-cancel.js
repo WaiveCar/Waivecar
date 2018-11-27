@@ -56,7 +56,7 @@ scheduler.process('booking-extension-offer', function *(job) {
         goad = `(You've got $${(driver.credit / 100).toFixed(2)} in credit!) `;
       }
 
-      yield notify.sendTextMessage(booking.userId, `${car.info()} reservation time is almost up! Need longer? Respond "SAVE" to pay $1.00 for 10 more minutes ${goad}and $0.30/min thereafter until you get to ${car.info()}.`);
+      yield notify.sendTextMessage(booking.userId, `${car.info()} reservation time is almost up! Need longer? Respond "SAVE" to get 10 more minutes for just a dollar ${goad}and $0.30/min thereafter until you start your ride.`);
     }
   } catch(ex) {
     console.log(ex);
