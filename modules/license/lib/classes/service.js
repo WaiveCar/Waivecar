@@ -19,7 +19,10 @@ module.exports = class Service {
   }
 
   static *getLicenseByUserId(id) {
-    return yield License.find({where: { userLinkId : id } });
+    return yield License.find({
+      where: { userId : id },
+      order: [['created_at', 'DESC']]
+    });
   }
 
   static *getLicenseByReport(id) {
