@@ -45,9 +45,16 @@ let BookingService = require('../../lib/booking-service');
 scheduler.process('booking-extension-offer', function *(job) {
   let booking = yield Booking.findOne({ where : { id : job.data.bookingId } });
   let car = yield Car.findById(booking.carId);
+  let driver = yield User.findById(booking.userId);
 
   if(booking && booking.status === 'reserved' && !booking.isFlagged('extended')) {
-    yield notify.sendTextMessage(booking.userId, `${car.info()} reservation time is almost up! Need more time? Respond "SAVE" to pay $1.00 for 10 extra minutes and $0.30/min thereafter until you get to the WaiveCar.`);
+    // if the driver has a good amount of credit we try to encourage them to use it here.
+    let goad = '';
+    if(driver.credit > 2000) {
+      goad = `(You've got $${(driver.credit / 100).toFixed(2)} in credit!) `;
+    }
+
+    yield notify.sendTextMessage(booking.userId, `${car.info()} reservation time is almost up! Need longer? Respond "SAVE" to pay $1.00 for 10 more minutes ${goad}and $0.30/min thereafter until you get to ${car.info()}.`);
   }
 });
 
