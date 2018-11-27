@@ -19,11 +19,11 @@ module.exports = class Service {
   }
 
   static *getLicenseByUserId(id) {
-    return yield License.find({ userLinkId : id });
+    return yield License.find({where: { userLinkId : id } });
   }
 
   static *getLicenseByReport(id) {
-    let license = yield License.find({ reportId : id });
+    let license = yield License.find({where: { reportId : id } });
     if (!license) {
       throw error.parse({
         code    : `INVALID_LICENSE`,
