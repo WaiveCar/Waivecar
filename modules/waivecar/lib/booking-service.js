@@ -619,6 +619,49 @@ module.exports = class BookingService extends Service {
       time    = 20;
     }
 
+    if(!('howmuch' in opts)) {
+      let postparams = JSON.stringify({
+        userId: user.id,
+        carId: car.id,
+        opts: {
+          buyNow: fee,
+          skipRush: true,
+        }
+      });
+      let server = (process.env.NODE_ENV === 'production') ? 
+         'https://api.waivecar.com' : 
+         'http://staging.waivecar.com:4300';
+
+      let buyNow = [
+        "<script>function buyit_pCj8zFIPSkOiGq8zBlO1ng(el){",
+          'el.removeAttribute("onclick");',
+          `el.innerHTML="Thanks for using this beta feature. For now, just press the back button twice and you'll be in the rental.";`,
+          'el.style.textDecoration="none";',
+          'el.style.color="#fff";',
+          'el.style.lineHeight="1.5em";',
+          "var x=new XMLHttpRequest(),",
+            "a=JSON.parse(localStorage['auth']);",
+          `x.open('POST','${server}/bookings',true);`,
+          "x.setRequestHeader('Authorization',a.token);",
+          "x.setRequestHeader('Content-Type','application/json');",
+          `x.send('${postparams}');`,
+        "}</script>",
+        `<div class='action-box' style='height:0'><button style='position:relative;top:60px;text-transform:none;color:lightblue' onclick="buyit_pCj8zFIPSkOiGq8zBlO1ng(this)" class="button button-dark button-link">(Beta feature) Get it now for $${fee}.00</button></div>`,
+      ].join('');
+      
+      let buyOption = {
+        title: `Get ${ car.license } now for $${fee}.00`,
+        fee: fee,
+        hotkey: 'now',
+        priority: 'prefer',
+        action: {verb:'post', url:'extend', params: postparams},
+        internal: ['booking-service', 'extend', postparams]
+      };
+      if(opts.computeOnly) {
+        return buyOption;
+      }
+    }
+
     if (_user) this.hasAccess(user, _user);
 
     if(booking.status !== 'reserved') {
@@ -2000,8 +2043,9 @@ module.exports = class BookingService extends Service {
 
     if (minutesLapsed < minTime) {
       if(opts.buyNow) {
-        if (booking.isFlagged('charge') && minutesStarted < 45) {
+        if (booking.isFlagged('charge')) {
           yield notify.slack({ text : `:checkered_flag: The clever ${ user.link() }, booked ${ car.link() } ${ minutesStarted }min ago, charged it and then rebooked it.` }, { channel : '#rental-alerts' });
+          yield UserLog.addUserEvent(user, 'CHARGE-REBOOK', booking.id, `car.link() ${ minutesStarted }`);
         }
 
         rebookOrder = yield OrderService.getCarNow(booking, user, opts.buyNow * 100);
