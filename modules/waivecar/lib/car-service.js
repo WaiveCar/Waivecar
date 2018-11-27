@@ -402,6 +402,10 @@ module.exports = {
         }
       ]
     });
+    // legacy issues
+    car.plateNumber_ = car.plateNumber;
+    delete car.plateNumber;
+
     return car;
   },
 

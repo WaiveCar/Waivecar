@@ -522,6 +522,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
   };
 
   model.attributes = [
+    'plateNumber_',
     'statuscolumn',
     'isReallyAvailable',
     'lastAction',
