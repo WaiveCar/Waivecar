@@ -134,8 +134,7 @@ module.exports = {
         firstName : license.firstName,
         lastName : license.lastName,
         licenseNumber : license.number,
-        licenseStateIssued : license.state,
-        address: [ ]
+        licenseStateIssued : license.state
       }
     }, { Accept : 'application.vnd.renters.v1+json' });
   }
