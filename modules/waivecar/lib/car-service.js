@@ -402,6 +402,7 @@ module.exports = {
         }
       ]
     });
+    car =  JSON.parse(JSON.stringify(car));
     // legacy issues
     car.plateNumber_ = car.plateNumber;
     delete car.plateNumber;
