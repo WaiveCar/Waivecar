@@ -492,7 +492,7 @@ module.exports = class LogService {
           carOdometer[id] = [Number.MAX_VALUE, 0];
         }
         carOdometer[id][0] = Math.min(row.details[0].mileage, carOdometer[id][0]);
-        carOdometer[id][1] = Math.max(row.details[1].mileage, carOdometer[id][1]);
+        carOdometer[id][1] = Math.max(row.details[1] ? row.details[1].mileage : carOdometer[id][0], carOdometer[id][1]);
       });
     } else {
 
@@ -543,6 +543,7 @@ module.exports = class LogService {
     totalDistance.odometer = odometerReading;
     totalDistance.fleetDerived = odometerReading - totalDistance.user;
 
+    let carsWithBookings = 0;
     let details = {};
     for(var id in carOdometer) {
       details[id] = {
@@ -552,12 +553,16 @@ module.exports = class LogService {
       }
       details[id].distance = details[id].end - details[id].start;
       details[id].average = details[id].distance / details[id].bookings;
+      if(details[id].bookings) {
+        carsWithBookings++;
+      }
     }
 
     return {
       period: duration_parts[0],
       duration: duration,
       activeCars: Object.keys(bookByCar),
+      activeCarsWithBookings: carsWithBookings,
       activeCarCount: Object.keys(bookByCar).length,
       userCount:  Object.keys(bookBy.user).length,
       numberOfRides: totalBookings,
