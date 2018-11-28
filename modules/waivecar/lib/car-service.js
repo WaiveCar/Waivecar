@@ -34,6 +34,11 @@ let _         = require('lodash')
 
 let carMap = false;
 
+function legacyWorkAround(car) {
+  car.plateNumberWork = car.plateNumber;
+  delete car.plateNumber;
+}
+
 module.exports = {
 
   // Track api errors to notify admins
@@ -173,6 +178,8 @@ module.exports = {
         if(isAdmin) {
           car.isAvailable = true;
         }
+
+        legacyWorkAround(car);
       });
 
       fs.appendFile('/var/log/outgoing/carsrequest.txt', JSON.stringify([new Date(), available, _user.id, _user.latitude, _user.longitude]) + '\n',function(){});
@@ -402,9 +409,7 @@ module.exports = {
         }
       ]
     });
-    // legacy issues
-    car.plateNumberWork = car.plateNumber;
-    delete car.plateNumber;
+    legacyWorkAround(car);
 
     return car;
   },
@@ -451,6 +456,7 @@ module.exports = {
 
     yield car.update(Object.assign(device || {}, payload));
     if(yield this.shouldRelay(car)) {
+      legacyWorkAround(car);
       relay.emit('cars', {
         type : 'update',
         data : car.toJSON()
@@ -754,6 +760,7 @@ module.exports = {
     yield existingCar.update(data);
 
     if(existingCar.userId) {
+      legacyWorkAround(existingCar);
       relay.user(existingCar.userId, 'cars', {
         type: 'update',
         data: existingCar.toJSON()
