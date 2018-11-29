@@ -84,7 +84,7 @@ Bento.Register.ResourceController('Location', 'LocationsController', function(co
     locations = locations.filter(row => row);
     let res = locations;
 
-    if(!matchSet) {
+    if(homebase) {
       let chargers = yield Chargers.list(homebase);
       res = locations.concat(chargers);
 
