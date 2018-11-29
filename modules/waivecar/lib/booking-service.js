@@ -218,7 +218,7 @@ module.exports = class BookingService extends Service {
       t("hoarding-look");
       if(hoardRes[0] >= 0.5) {
         yield UserLog.addUserEvent(driver, 'HOARD', hoardRes[0].toFixed(3) );
-        yield notify.slack({ text : `:pig2: The rapacious ${ driver.link() } did ${ hoardRes[1] } of the last ${ hoardRes[2] } bookings with ${ car.license }. How rude!` }, { channel : '#rental-alerts' });
+        yield notify.slack({ text : `:pig2:The rapacious ${ driver.link() } did ${ hoardRes[1] } of the last ${ hoardRes[2] } bookings with ${ car.license }. How rude!` }, { channel : '#rental-alerts' });
       }
     }
 
@@ -321,7 +321,7 @@ module.exports = class BookingService extends Service {
     if(autoExtend && !isRush) {
       try {
         yield this.extend(booking.id, {howmuch: -1, silent: true}, driver);
-        yield notify.notifyAdmins(`:tulip: ${ driver.link() } autoextended their reservation with ${ car.info() }`, [ 'slack' ], { channel : '#reservations' });
+        yield notify.notifyAdmins(`:tulip:${ driver.link() } autoextended their reservation with ${ car.info() }`, [ 'slack' ], { channel : '#reservations' });
       } catch(ex) { }
     }
 
@@ -371,10 +371,10 @@ module.exports = class BookingService extends Service {
     let message = yield this.updateState('created', _user, driver);
     t("slack");
     if(isRush) {
-      yield notify.notifyAdmins(`:dash: Rush ${ message } ${ car.info() } ${ car.averageCharge() }%`, [ 'slack' ], { channel : '#reservations' });
+      yield notify.notifyAdmins(`:dash:Rush ${ message } ${ car.info() } ${ car.averageCharge() }%`, [ 'slack' ], { channel : '#reservations' });
       yield this.ready(booking.id, _user);
     } else {
-      yield notify.notifyAdmins(`:musical_keyboard: ${ message } ${ car.info() } ${ car.averageCharge() }%`, [ 'slack' ], { channel : '#reservations' });
+      yield notify.notifyAdmins(`:musical_keyboard:${ message } ${ car.info() } ${ car.averageCharge() }%`, [ 'slack' ], { channel : '#reservations' });
     }
     t("log-pre");
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : driver.id, action : Actions.CREATE_BOOKING }, _user);
@@ -726,7 +726,7 @@ module.exports = class BookingService extends Service {
           });
           if(!opts.silent) {
             yield notify.sendTextMessage(user, `Your WaiveCar reservation has been extended ${ time } minutes.`);
-            yield notify.notifyAdmins(`:clock1: ${ user.link() } extended their reservation with ${ car.info() } by ${ time } minutes.`, [ 'slack' ], { channel : '#reservations' });
+            yield notify.notifyAdmins(`:clock1:${ user.link() } extended their reservation with ${ car.info() } by ${ time } minutes.`, [ 'slack' ], { channel : '#reservations' });
           }
         }
 
@@ -860,7 +860,7 @@ module.exports = class BookingService extends Service {
       // ### Notify
 
       let message = yield this.updateState('started', _user, user);
-      yield notify.notifyAdmins(`:octopus: ${ message } ${ car.info() } ${ car.averageCharge() }% ${ booking.link() }`, [ 'slack' ], { channel : '#reservations' });
+      yield notify.notifyAdmins(`:octopus:${ message } ${ car.info() } ${ car.averageCharge() }% ${ booking.link() }`, [ 'slack' ], { channel : '#reservations' });
       if (user.isWaivework){
         yield notify.sendTextMessage(user, `Thanks for using WaiveWork! Your booking has started.`);
       } else {
@@ -884,7 +884,7 @@ module.exports = class BookingService extends Service {
       car.relay('update');
       yield this.relay('update', booking, _user);
     } else {
-      yield notify.notifyAdmins(`:timer_clock: ${ user.link() } started a booking when it was being canceled. This was denied. ${ car.info() }.`, [ 'slack' ], { channel : '#reservations' });
+      yield notify.notifyAdmins(`:timer_clock:${ user.link() } started a booking when it was being canceled. This was denied. ${ car.info() }.`, [ 'slack' ], { channel : '#reservations' });
     }
     queue.scheduler.cancel(
       'parking-notify-expiration',
@@ -1255,7 +1255,7 @@ module.exports = class BookingService extends Service {
       yield OrderService.createTimeOrder(booking, user);
 
     } else if(deltas.duration > freeTime) {
-      yield notify.slack({ text : `:umbrella: Booking ended by admin. Time driven was over 2 hours. ${ Bento.config.web.uri }/bookings/${ id }`
+      yield notify.slack({ text : `:umbrella:Booking ended by admin. Time driven was over 2 hours. ${ Bento.config.web.uri }/bookings/${ id }`
       }, { channel : '#adminended' });
     }
 
@@ -1271,12 +1271,12 @@ module.exports = class BookingService extends Service {
     // 
     if(deltas.duration > 10 && deltas.distance === 0 && !deltas.hasMoved) {
       yield UserLog.addUserEvent(user, 'SIT', booking.id, deltas.duration);
-      yield notify.slack({ text : `:popcorn: ${ user.link() } drove 0 miles for ${ deltas.duration } minutes. ${ booking.link() }`
+      yield notify.slack({ text : `:popcorn:${ user.link() } drove 0 miles for ${ deltas.duration } minutes. ${ booking.link() }`
       }, { channel : '#user-alerts' });
     }
 
     let message = yield this.updateState('ended', _user, user);
-    yield notify.slack(parkingSlack || { text : `:cherries: ${ message } ${ car.info() } ${ car.averageCharge() }% ${ booking.link() }`
+    yield notify.slack(parkingSlack || { text : `:cherries:${ message } ${ car.info() } ${ car.averageCharge() }% ${ booking.link() }`
     }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.END_BOOKING }, _user);
 
@@ -1505,7 +1505,7 @@ module.exports = class BookingService extends Service {
 
     let message = yield this.updateState('completed', _user, user);
     yield notify.sendTextMessage(user, `Your ride is complete. To rebook immediately for $5.00 reply with "rebook". If you left something behind, unlock ${car.license} by replying "unlock" in the next 5 minutes.`);
-    yield notify.slack({ text : `:coffee: ${ message } ${ car.info() } ${ zoneString } ${ address } ${ booking.link() }` }, { channel : '#reservations' });
+    yield notify.slack({ text : `:coffee:${ message } ${ car.info() } ${ zoneString } ${ address } ${ booking.link() }` }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
 
     queue.scheduler.add('user-liability-release', {
@@ -1641,7 +1641,7 @@ module.exports = class BookingService extends Service {
       `${ _user.name() } cancelled for ${ user.link() }`;
 
     yield notify.sendTextMessage(user, `Your WaiveCar reservation has been cancelled.`);
-    yield notify.slack({ text : `:pill: ${ message } ${ car.info() } ${ booking.link() }`
+    yield notify.slack({ text : `:pill:${ message } ${ car.info() } ${ booking.link() }`
     }, { channel : '#reservations' });
   }
 
@@ -1714,7 +1714,7 @@ module.exports = class BookingService extends Service {
     if (!isPaired && Math.random() * 5 < 1) {
       let car     = yield Car.findById(booking.carId);
       let link = [closestLocations.userLocation.latitude, closestLocations.userLocation.longitude].join(',');
-      yield notify.notifyAdmins(`:airplane: Location check failed on ${ booking.link()}. ${ user.link() } is <https://www.google.com/maps/?q=${link} | ${ (0.000621371 * distance).toFixed(2) }mi> from ${car.license}.`, [ 'slack' ], { channel : '#rental-alerts' });
+      yield notify.notifyAdmins(`:airplane:Location check failed on ${ booking.link()}. ${ user.link() } is <https://www.google.com/maps/?q=${link} | ${ (0.000621371 * distance).toFixed(2) }mi> from ${car.license}.`, [ 'slack' ], { channel : '#rental-alerts' });
     }
 
     // save user and car position into a file for research
@@ -2036,7 +2036,7 @@ module.exports = class BookingService extends Service {
         yield UserLog.addUserEvent(user, 'HOLDING', holder.id, holder.name());
         yield UserLog.addUserEvent(holder, 'HOLDING', user.id, user.name());
 
-        yield notify.notifyAdmins(`:dark_sunglasses: ${ holder.link() } may have been holding a car for ${ user.link() }.`, [ 'slack' ], { channel : '#user-alerts' });
+        yield notify.notifyAdmins(`:dark_sunglasses:${ holder.link() } may have been holding a car for ${ user.link() }.`, [ 'slack' ], { channel : '#user-alerts' });
       }
     }
   }
@@ -2069,7 +2069,7 @@ module.exports = class BookingService extends Service {
     if (minutesLapsed < minTime) {
       if(opts.buyNow) {
         if (booking.isFlagged('charge')) {
-          yield notify.slack({ text : `:checkered_flag: The clever ${ user.link() }, booked ${ car.link() } ${ minutesStarted }min ago, charged it and then rebooked it.` }, { channel : '#rental-alerts' });
+          yield notify.slack({ text : `:checkered_flag:The clever ${ user.link() }, booked ${ car.link() } ${ minutesStarted }min ago, charged it and then rebooked it.` }, { channel : '#rental-alerts' });
           yield UserLog.addUserEvent(user, 'CHARGE-REBOOK', booking.id, `car.link() ${ minutesStarted }`);
         }
 
