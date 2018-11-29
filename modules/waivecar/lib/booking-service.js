@@ -339,8 +339,8 @@ module.exports = class BookingService extends Service {
     let timeToCarStr = '';
     if(isRush) {
       timeToCarStr = "You've been WaiveRushed so take your time, your reservation does not expire. Hourly charges begin at 10AM.";
-    } else if(autoextend) {
-      timeToCarStr = "You've opted for automatic reservation extensions. Reply 'NO SAVE' to opt-out in the future.";
+    } else if(autoExtend) {
+      timeToCarStr = "You've opted for automatic reservation extensions.";
     } else {
       timeToCarStr = [
         aidExtend ? 'With WaiveAid, you have' : 'You have',
