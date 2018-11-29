@@ -182,7 +182,7 @@ module.exports = {
           guessed = true;
           command = todo;
           break;
-        a
+        }
       }
     }
 
