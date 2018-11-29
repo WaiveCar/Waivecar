@@ -182,7 +182,7 @@ module.exports = {
           guessed = true;
           command = todo;
           break;
-        }
+        a
       }
     }
 
@@ -351,7 +351,7 @@ module.exports = {
           }
           try {
             yield booking.create(params, user);
-            yield notify.slack({ text : `:selfie: ${ user.link() } sent "${ opts.raw }" and the computer rebooked` }, { channel : '#reservations' });
+            yield notify.slack({ text : `:selfie:${ user.link() } sent "${ opts.raw }" and the computer rebooked` }, { channel : '#reservations' });
             yield notify.sendTextMessage(user, `Rebooked ${ previousBooking.car.license } for $${params.opts.buyNow}.` );
           } catch(ex){
             yield notify.sendTextMessage(user, `Unable to rebook ${ previousBooking.car.license }, please try again.` );
@@ -370,7 +370,7 @@ module.exports = {
             (command === 'unlock' || (command === 'lock' && !previousBooking.isFlagged('retrieveStart'))) && 
             new Date() - previousBooking.getEndTime() < 1000 * 60 * 5) {
           yield previousBooking.flag('retrieveStart');
-          yield notify.slack({ text : `:rowboat: ${user.link()} is retrieving something from ${previousBooking.car.link()}` }, { channel : '#rental-alerts' });
+          yield notify.slack({ text : `:rowboat:${user.link()} is retrieving something from ${previousBooking.car.link()}` }, { channel : '#rental-alerts' });
           yield cars.unlockCar(previousBooking.carId, user, previousBooking.car, {overrideAdminCheck: true});
           yield notify.sendTextMessage(user, `${previousBooking.car.license} is unlocked for you to retrieve your belongings. Important: Please reply with 'lock' to secure the vehicle when finished.`); 
           return true;
@@ -378,7 +378,7 @@ module.exports = {
         // We give them a longer amount of time to secure the car since it doesn't open up a new hole.
         if(command === 'lock' && new Date() - previousBooking.getEndTime() < 1000 * 60 * 18) {
           yield previousBooking.flag('retrieveEnd');
-          yield notify.slack({ text : `:desert_island: ${user.link()} finished and secured ${previousBooking.car.link()}` }, { channel : '#rental-alerts' });
+          yield notify.slack({ text : `:desert_island:${user.link()} finished and secured ${previousBooking.car.link()}` }, { channel : '#rental-alerts' });
           yield cars.lockCar(previousBooking.carId, user, previousBooking.car, {overrideAdminCheck: true});                                                                 
           yield notify.sendTextMessage(user, `Thanks.`); 
           return true;
