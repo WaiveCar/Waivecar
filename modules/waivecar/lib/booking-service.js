@@ -265,6 +265,7 @@ module.exports = class BookingService extends Service {
           bookingId: booking.id,
           orderId: rebookOrder.id, 
         });
+        yield booking.addFlag('rebook');
         yield rebookPayment.save();
       }
     } catch (e) {
@@ -2059,12 +2060,12 @@ module.exports = class BookingService extends Service {
     let minutesLapsed = moment().diff(booking.updatedAt, 'minutes');
     let minutesStarted = moment().diff(booking.createdAt, 'minutes');
     let minTime = 25;
+    let rebookOrder;
+    let baseline = 0;
 
     if(booking.status === 'cancelled') {
       minTime += 5;
     }
-
-    let rebookOrder;
 
     if (minutesLapsed < minTime) {
       if(opts.buyNow) {
@@ -2078,8 +2079,16 @@ module.exports = class BookingService extends Service {
           return rebookOrder;
         }
       }
+
       let remainingTime =  Math.max(1, Math.ceil(minTime - minutesLapsed));
-      let fee = Math.ceil(remainingTime / minTime * 5);
+
+      // This is a second rebook of the vehicle, we are going to make this far less attractive.
+      let append = '';
+      if (booking.isFlagged('rebook')) {
+        baseline = 8;
+        append = ' another time';
+      }
+      let fee = Math.ceil(remainingTime / minTime * 5) + baseline;
       let postparams = JSON.stringify({
         userId: user.id,
         carId: car.id,
@@ -2106,11 +2115,11 @@ module.exports = class BookingService extends Service {
           "x.setRequestHeader('Content-Type','application/json');",
           `x.send('${postparams}');`,
         "}</script>",
-        `<div class='action-box' style='height:0'><button style='position:relative;top:60px;text-transform:none;color:lightblue' onclick="buyit_pCj8zFIPSkOiGq8zBlO1ng(this)" class="button button-dark button-link">(Beta feature) Get it now for $${fee}.00</button></div>`,
+        `<div class='action-box' style='height:0'><button style='position:relative;top:60px;text-transform:none;color:lightblue' onclick="buyit_pCj8zFIPSkOiGq8zBlO1ng(this)" class="button button-dark button-link">(Beta feature) Get it now for $${fee.toFixed(2)}</button></div>`,
       ].join('');
       
       let buyOption = {
-        title: `Get ${ car.license } now for $${fee}.00`,
+        title: `Get ${ car.license } now for $${fee.toFixed(2)}`,
         fee: fee,
         hotkey: 'now',
         priority: 'prefer',
@@ -2126,8 +2135,8 @@ module.exports = class BookingService extends Service {
 
       throw error.parse({
         code    : 'RECENT_BOOKING',
-        title   : 'Rebook the same WaiveCar',
-        message : `Sorry! You need to wait ${remainingTime}min more to rebook ${ car.license } for free!`,
+        title   : `Rebook the same WaiveCar${append}`,
+        message : `Sorry! You need to wait ${remainingTime}min more to rebook ${ car.license }${ append } for free!`,
         options : [
           buyOption,
           {
