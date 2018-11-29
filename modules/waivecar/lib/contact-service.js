@@ -236,7 +236,7 @@ module.exports = {
     if(command === 'save always') {
       yield user.addTag('extend');
       yield notify.notifyAdmins(`:rose:The munificent ${ user.link() } added themselves to auto-extend.`, [ 'slack' ], { channel : '#user-alerts' });
-      yield notify.sendTextMessage(user, "Thanks for choosing auto-extend. Never lose a car again! You'll buy extensions automatically with each future booking. ($1 for 10 extra minutes, $.30 until you get to the car). Reply \"NO SAVE\" to undo this.");
+      yield notify.sendTextMessage(user, "Thanks for choosing auto-extend. Never lose a car again! You'll buy extensions automatically with each future booking. ($1.00 for 10 extra minutes, then $0.30/min thereafter until you get to the car). Reply \"NO SAVE\" to undo this.");
       return true;
     }
 

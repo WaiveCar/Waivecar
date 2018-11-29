@@ -714,7 +714,7 @@ module.exports = class BookingService extends Service {
           // yield booking.update({ reservationEnd: null });
           //
           if(!opts.silent) {
-            yield notify.sendTextMessage(user, `Your WaiveCar reservation will be extended.`);
+            yield notify.sendTextMessage(user, `Your WaiveCar reservation will be extended. Want to extend automatically? Reply "Save Always".`);
             yield notify.notifyAdmins(`:snail: ${ user.link() } extended their reservation with ${ car.info() } *indefinitely*`, [ 'slack' ], { channel : '#reservations' });
           }
         } else {
@@ -725,7 +725,7 @@ module.exports = class BookingService extends Service {
             reservationEnd: moment(booking.reservationEnd).add(time, 'minutes')
           });
           if(!opts.silent) {
-            yield notify.sendTextMessage(user, `Your WaiveCar reservation has been extended ${ time } minutes.`);
+            yield notify.sendTextMessage(user, `Your WaiveCar reservation has been extended ${ time } minutes. Want to extend automatically? Reply "Save Always".`);
             yield notify.notifyAdmins(`:clock1:${ user.link() } extended their reservation with ${ car.info() } by ${ time } minutes.`, [ 'slack' ], { channel : '#reservations' });
           }
         }
