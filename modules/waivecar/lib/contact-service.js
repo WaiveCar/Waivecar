@@ -46,6 +46,7 @@ module.exports = {
 
   *attemptAction(user, command, opts) {
     // alias commands are blank.
+    var success = true;
     let sendToSupport = false;
     let guessed = false;
     let documentation = {
@@ -236,14 +237,14 @@ module.exports = {
     if(command === 'save always') {
       yield user.addTag('extend');
       yield notify.notifyAdmins(`:rose:The munificent ${ user.link() } added themselves to auto-extend.`, [ 'slack' ], { channel : '#user-alerts' });
-      yield notify.sendTextMessage(user, "Thanks for choosing auto-extend. Never lose a car again! You'll buy extensions automatically with each future booking. ($1.00 for 10 extra minutes, then $0.30/min thereafter until you get to the car). Reply \"NO SAVE\" to undo this.");
+      yield notify.sendTextMessage(user, "Thanks for choosing auto-extend. Never lose a car again! You'll buy extensions automatically with each future booking. ($1.00 for 10 extra minutes, then $0.30/min thereafter until you get to the car). Reply \"No save\" to undo this.");
       return true;
     }
 
     if(command === 'no save') {
       yield user.delTag('extend');
       yield notify.notifyAdmins(`:wilted_flower:The miserly ${ user.link() } removed themselves from auto-extend.`, [ 'slack' ], { channel : '#user-alerts' });
-      yield notify.sendTextMessage(user, "Sorry things didn't work out. Auto-extend is canceled. Reply \"SAVE ALWAYS\" to extend automatically again. We welcome you to reach out to us to help improve the experience.");
+      yield notify.sendTextMessage(user, "Sorry things didn't work out. Auto-extend is canceled. Reply \"Save always\" to extend automatically again. We welcome you to reach out to us to help improve the experience.");
       return true;
     }
 
@@ -394,7 +395,6 @@ module.exports = {
     }
     let id = currentBooking.id;
 
-    let success = true;
     let response;
     if (command === 'finish' || command === 'complete') {
       command = 'finish';
