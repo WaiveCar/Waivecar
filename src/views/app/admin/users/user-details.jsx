@@ -304,6 +304,36 @@ module.exports = class UserDetails extends React.Component {
     }
   } 
 
+
+  tagList() {
+    let rowList = [
+      ['la', 'LA', 'Normal service'],
+      ['csula', 'CSULA', 'Hydrogen cars'],
+      ['level', 'Level', 'Brooklyn'],
+      ['choice', 'Choice', 'Hotel user'],
+      ['aid', 'Aid', 'WaiveAid'],
+      ['extend', 'Extend', 'Auto extend'],
+      ['debt', 'Debt', 'Debit card usage'],
+    ].map((row, i) => (
+      <div className="radio-inline" key={i}>
+        <label title={ row[2] } >
+          <input type="checkbox" name="tagList" value={ row[0] } defaultChecked={ this.hasTag(row[0]) } />
+          { row[1] } 
+        </label>
+      </div>
+    ));
+
+    return ( 
+      <div className="form-group row">
+        <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Tags</label>
+        <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
+        { rowList }
+        </div>
+      </div>
+    );
+  }
+
+
   render() {
     let user = this.state.currentUser;
     let suspensionReason = user ? this.getSuspensionReason(user) : false;
@@ -419,42 +449,7 @@ module.exports = class UserDetails extends React.Component {
 
                 </div>
                 <div className="form-group row">
-                  <label className="col-sm-3 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Tags</label>
-                  <div className="col-sm-9 text-right" style={{ padding : '8px 0px' }}>
-                    <div className="radio-inline">
-                      <label>
-                        <input type="checkbox" name="tagList[]" value="la" defaultChecked={ this.hasTag('la') } />
-                        LA
-                      </label>
-                    </div>
-                    <div className="radio-inline">
-                      <label>
-                        <input type="checkbox" name="tagList[]" value="csula" defaultChecked={ this.hasTag('csula') } />
-                        CSULA
-                      </label>
-                    </div>
-                    <div className="radio-inline">
-                      <label>
-                        <input type="checkbox" name="tagList[]" value="level" defaultChecked={ this.hasTag('level') } />
-                        Brooklyn
-                      </label>
-                    </div>
-
-                    <div className="radio-inline">
-                      <label>
-                        <input type="checkbox" name="tagList[]" value="Aid" defaultChecked={ this.hasTag('aid') } />
-                        Aid
-                      </label>
-                    </div>
-
-                    <div className="radio-inline">
-                      <label>
-                        <input type="checkbox" name="tagList[]" value="debit" defaultChecked={ this.hasTag('debit') } />
-                        Debit
-                      </label>
-                    </div>
-
-                  </div>
+                  { this.tagList() }
                 </div>
                 <div className="form-group row">
                   <label className="col-sm-4 form-control-label" style={{ color : '#666', fontWeight : 300 }}>Danger Zone <a onClick={ this.toggleDanger }>({ this.state.showDanger ? 'hide' : 'show' })</a></label>
