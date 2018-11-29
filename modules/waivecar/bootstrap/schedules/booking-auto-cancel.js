@@ -72,7 +72,7 @@ scheduler.process('booking-extension-reminder', function *(job) {
 
     if(minutesOver > 21) {
       let driver = yield User.findById(booking.userId);
-      yield notify.notifyAdmins(`:turtle: The lollygagger ${ driver.link() } is ${ minutesOver }min into their extension with ${ car.info() }`, [ 'slack' ], { channel : '#reservations' });
+      yield notify.notifyAdmins(`:turtle:The lollygagger ${ driver.link() } is ${ minutesOver }min into their extension with ${ car.info() }`, [ 'slack' ], { channel : '#reservations' });
     }
 
     console.log("Booking-before...");
@@ -144,12 +144,12 @@ scheduler.process('booking-auto-cancel', function *(job) {
         let aid = yield driver.hasTag('aid');
 
         let user = yield notify.sendTextMessage(booking.userId, `Sorry you didn't make it to ${car.info()} in ${ timeWindow }min. Never lose another car, reply "Save Always". Rebook ${car.info()} for $5.00, reply "Rebook".`);
-        yield notify.notifyAdmins(`:hourglass: The shambolic ${ user.link() } jilted ${ car.info() } and got cancelled after ${ timeWindow }min.`, [ 'slack' ], { channel : '#reservations' });
+        yield notify.notifyAdmins(`:hourglass:The shambolic ${ user.link() } jilted ${ car.info() } and got cancelled after ${ timeWindow }min.`, [ 'slack' ], { channel : '#reservations' });
 
         // log.info(`The booking with ${ car.info() } was automatically cancelled, booking status was '${ booking.status }'.`);
       }
     } else {
-      yield notify.notifyAdmins(`:timer_clock: ${ user.link() } started a booking exactly as their reservation time was expiring. This booking was granted. ${ car.info() }.`, [ 'slack' ], { channel : '#reservations' });
+      yield notify.notifyAdmins(`:timer_clock:${ user.link() } started a booking exactly as their reservation time was expiring. This booking was granted. ${ car.info() }.`, [ 'slack' ], { channel : '#reservations' });
     }
   } else {
     log.warn(`Auto cancellation of booking ${ booking.id } was request but ignored | Booking status: ${ booking.status }`);
