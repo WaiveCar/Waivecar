@@ -290,11 +290,12 @@ module.exports = class BookingService extends Service {
 
     // Users over 55 should always get 25 minutes to get to the car #1230
 
-    let autoExtend = yield driver.hasTag('aid');
-    if (!autoExtend) {
+    let aidExtend = yield driver.hasTag('aid');
+    if (!aidExtend) {
       let age = yield driver.age();
-      autoExtend = age >= 55;
+      aidExtend = age >= 55;
     }
+    let autoExtend = yield driver.hasTag('extend');
     t("autoextend");
 
     let isLevel = yield car.isTagged('level');
@@ -307,8 +308,21 @@ module.exports = class BookingService extends Service {
 
       // Otherwise if they are old and decrepit they
       // can hobble over to the car with 25 free minutes
-    } else if (autoExtend) {
+    } else if (aidExtend) {
       timerMap = config.booking.timers.aid;
+    }
+
+    // careful careful... we first set the cancel timer, always.
+    yield booking.setCancelTimer(timerMap);
+    t("canceltimers");
+
+    // if the user is autoextended then we do an infinite extension
+    // without sending an extra message
+    if(autoExtend && !isRush) {
+      try {
+        yield this.extend(booking.id, {howmuch: -1, silent: true}, driver);
+        yield notify.notifyAdmins(`:tulip: ${ driver.link() } autoextended their reservation with ${ car.info() }`, [ 'slack' ], { channel : '#reservations' });
+      } catch(ex) { }
     }
 
     let timeToCar = timerMap.autoCancel.value;
@@ -318,19 +332,30 @@ module.exports = class BookingService extends Service {
     });
     t("reservationend");
 
-    // ### Notifications
-    yield booking.setCancelTimer(timerMap);
-    t("canceltimers");
-    let inject = 'You have ';
-    if(autoExtend) {
-      inject = 'As a WaiveAid member, you have ';
-    }
     // If the car is currently WaiveParked, the notes from the spot need to be attached to the message.
     let currentParking = yield UserParking.findOne({ where: { carId: car.id } });
     t("userparking");
-    let timeToCarStr = isRush ? "You've been WaiveRushed so take your time, your reservation does not expire. Hourly charges begin at 10AM" : `${inject}${timeToCar} minutes to get to it`
 
-    let msg = `${car.license} is yours!\nIf you have difficulties starting the ride with the app, reply "start ride" when you're next to the WaiveCar.\n${currentParking ? `It is WaiveParked with the notes: "${currentParking.notes}". ` : ''}${timeToCarStr}. Thanks!`;
+    let timeToCarStr = '';
+    if(isRush) {
+      timeToCarStr = "You've been WaiveRushed so take your time, your reservation does not expire. Hourly charges begin at 10AM.";
+    } else if(autoextend) {
+      timeToCarStr = "You've opted for automatic reservation extensions. Reply 'NO SAVE' to opt-out in the future.";
+    } else {
+      timeToCarStr = [
+        aidExtend ? 'With WaiveAid, you have' : 'You have',
+        `${timeToCar} minutes to get to it`
+      ].join(' ');
+    }
+
+    let msg = [
+      `${car.license} is yours!`,
+      'If you have trouble, reply "start ride" when next to the WaiveCar.', 
+      (currentParking ? `It is WaiveParked with the notes: "${currentParking.notes}". ` : ''),
+      timeToCarStr,
+      'Thanks!'
+    ].join(' ');
+
     if (isLevel) {
       // https://lb.waivecar.com/users/14827
       yield notify.sendTextMessage(14827, `${ driver.name() } reserved ${ car.license }.`);

@@ -54,6 +54,8 @@ module.exports = {
       rush: "WaiveRush a WaiveCar (flat rate)",
       charge: "Charge a WaiveCar with EVgo",
       save: "Add 10 additional minutes to get to a WaiveCar reservation for $1.00 and $0.30/min thereafter",
+      "no save": "Opt-out of auto extension",
+      "save always": "Opt-in to autoextension",
       "save less": null,
       abort: "Cancel your booking",
       commands: null,
@@ -228,6 +230,20 @@ module.exports = {
         yield notify.sendTextMessage(user, message.join('\n'));
       }
      
+      return true;
+    }
+
+    if(command === 'save always') {
+      yield user.addTag('extend');
+      yield notify.notifyAdmins(`:rose: The munificent ${ user.link() } added themselves to auto-extend.`, [ 'slack' ], { channel : '#user-alerts' });
+      yield notify.sendTextMessage(user, "Thanks for choosing auto-extend. Never lose a car again! You'll buy extensions automatically with each future booking. ($1 for 10 extra minutes, $.30 until you get to the car)");
+      return true;
+    }
+
+    if(command === 'no save') {
+      yield user.delTag('extend');
+      yield notify.notifyAdmins(`:wilted_flower: The miserly ${ user.link() } removed themselves from auto-extend.`, [ 'slack' ], { channel : '#user-alerts' });
+      yield notify.sendTextMessage(user, "Sorry things didn't work out. Auto-extend is canceled. We welcome you to reach out to us to help improve the experience.");
       return true;
     }
 

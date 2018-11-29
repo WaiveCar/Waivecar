@@ -403,11 +403,14 @@ module.exports = {
 
         if(toRemove[ix] === 'aid') {
           yield notify.notifyAdmins(`:runner: ${ _user.name() } removed ${ user.link() } from WaiveAid.`, [ 'slack' ], { channel : '#user-alerts' });
+          // The user doesn't get any email that they've been removed, that's hostile.
         }
         if(toRemove[ix] === 'debit') {
           yield notify.notifyAdmins(`:face_with_monocle: ${ _user.name() } has decided ${ user.link() } shouldn't be able to use a debit card.`, [ 'slack' ], { channel : '#user-alerts' });
         }
-        // The user doesn't get any email that they've been removed, that's hostile.
+        if(toRemove[ix] === 'extend') {
+          yield notify.notifyAdmins(`:wilted_flower: ${ _user.name() } removed the miserly ${ user.link() } from auto-extend.`, [ 'slack' ], { channel : '#user-alerts' });
+        }
       }
 
       // And add the new ones if relevant (this goes outside the 
@@ -420,6 +423,9 @@ module.exports = {
 
         if(toAdd[ix] === 'debit') {
           yield notify.notifyAdmins(`:thinking_face: ${ _user.name() } decided it was ok for ${ user.link() } to use a debit card.`, [ 'slack' ], { channel : '#user-alerts' });
+        }
+        if(toAdd[ix] === 'extend') {
+          yield notify.notifyAdmins(`:rose: ${ _user.name() } added the bounteous ${ user.link() } to auto-extend.`, [ 'slack' ], { channel : '#user-alerts' });
         }
         if(toAdd[ix] === 'aid') {
           yield notify.notifyAdmins(`:older_adult: ${ _user.name() } added ${ user.link() } to WaiveAid.`, [ 'slack' ], { channel : '#user-alerts' });
