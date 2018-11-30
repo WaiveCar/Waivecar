@@ -13,7 +13,13 @@ module.exports = class Faq extends Component {
           <p>All you need to sign up with WaiveCar is a smart phone, credit card, a valid driver’s license, and a good driving record. Simply download the app from your app store!</p>
           <h4 id="whats-a-good-driving-record">What’s a good driving record?</h4>
           <p>To us, a good driving record means one without any:</p>
-          <p> * DUIs  * Moving violations  * Driving with a suspended license  * Any similar negligent or reckless acts  * Accidents</p>
+          <ul>
+          <li>DUIs</li>
+          <li>Moving violations</li>
+          <li>Driving with a suspended license</li>
+          <li>Any similar negligent or reckless acts</li>
+          <li>Accidents</li>
+          </ul>
           <h3 id="does-it-cost-any-money-to-sign-up">Does it cost any money to sign up?</h3>
           <p>Nope! We promise there REALLY are no catches. We’re that magical.</p>
           <h3 id="why-do-i-need-a-credit-card-to-sign-up-if-its-free">Why do I need a credit card to sign up if it’s free?</h3>
@@ -34,7 +40,7 @@ module.exports = class Faq extends Component {
           <p>It’s very quick! Should only take about 15 minutes for the signup and the background check to complete. If the background check seems to be taking longer, please give us a contact us.</p>
           <h2 id="booking-cars">Booking Cars</h2>
           <h3 id="what-are-waivecars-hours">What are WaiveCar’s hours?</h3>
-          <p>Our cars are available from 5am - 1am and the HQ is open from 9am-10pm and the customer service line is open from 8am-10pm. If you need assistance at other hours, simply send us an email at support@waive.car and we will reach you at our earliest convenience. </p>
+          <p>Our cars are available 24 hours and the HQ is open from 9am-10pm and the customer service line is open from 8am-10pm. If you need assistance at other hours, simply send us an email at support@waive.car and we will reach you at our earliest convenience. </p>
           <h3 id="how-do-i-book-a-waivecar">How do I book a WaiveCar?</h3>
           <p>Log onto the app and find the closest available WaiveCar to you. Hit “Book it”! You then have 15 minutes to get to the car before the reservation times out.</p>
           <h3 id="where-can-i-get-a-waivecar">Where can I get a WaiveCar?</h3>
@@ -45,7 +51,9 @@ module.exports = class Faq extends Component {
           <h3 id="can-i-reserve-a-car-in-advance">Can I reserve a car in advance?</h3>
           <p>Unlike a rental company, you CANNOT reserve a car in advance. WaiveCar believes in the convenience of giving you a free car NOW! Get it while it’s hot!</p>
           <h3 id="can-i-book-multiple-cars-a-day">Can I book multiple cars a day?</h3>
-          <p>Yep! And even better, you will get the free 2 hours for EVERY ride! However, there is a 30 minute wait to re-book the car you just finished renting. We do allow you to skip the wait period for a $5 charge. ### Does the free 2 hours start when I reserve a car or when I start the ride? When you start the ride! Enjoy your leisurely walk!</p>
+          <p>Yep! And even better, you will get the free 2 hours for EVERY ride! However, there is a 30 minute wait to re-book the car you just finished renting. We do allow you to skip the wait period for a $5 charge.</p>
+          <h3 id="does-the-free-2-hours-start-when-i-reserve-a-car-or-when-i-start-the-ride">Does the free 2 hours start when I reserve a car or when I start the ride?</h3>
+          <p>When you start the ride! Enjoy your leisurely walk!</p>
           <h3 id="is-the-free-2-hours-only-when-im-driving-the-car">Is the free 2 hours only when I’m driving the car?</h3>
           <p>Nope! The free 2 hours counts for having the car while it’s driving or parked. </p>
           <h3 id="what-happens-if-i-dont-make-it-to-the-car-in-15-minutes">What happens if I don’t make it to the car in 15 minutes?</h3>
@@ -79,7 +87,13 @@ module.exports = class Faq extends Component {
           <h3 id="where-can-i-not-park">Where can I <strong>NOT</strong> park?</h3>
           <p>Private parking spaces, parking garages, permit-only spots, any business parking lot, or ANYWHERE not in our operating area! Make sure to check street signs so that there are no parking restrictions on the spot for 3 hours(in SM) and 12 hours (Outside of SM).</p>
           <p>Restricted parking includes:</p>
-          <p> * Street parking restricted by signs such as during street sweeping hours  * Private lots (Whole Foods, Ralphs, etc.)  * Private driveways &amp; Permit-only zones  * Indoor public lots with less than 3 hours free parking  * Upside down and engulfed in flames</p>
+          <ul>
+          <li>Street parking restricted by signs such as during street sweeping hours</li>
+          <li>Private lots (Whole Foods, Ralphs, etc.)</li>
+          <li>Private driveways &amp; Permit-only zones</li>
+          <li>Indoor public lots with less than 3 hours free parking</li>
+          <li>Upside down and engulfed in flames</li>
+          </ul>
           <h3 id="is-it-true-i-dont-have-to-pay-any-parking-meter-in-santa-monica">Is it true I don’t have to pay any parking meter in Santa Monica?</h3>
           <p>Yep! Since we have the bumper sticker for fully electric cars, all parking meters in Santa Monica ONLY are free!</p>
           <h3 id="how-do-i-end-my-ride">How do I end my ride?</h3>
@@ -90,15 +104,25 @@ module.exports = class Faq extends Component {
           <p>Nope! Follow the rules above. If the car is under 25 miles charged, simply return it at the HQ!</p>
           <h3 id="fees"><a name="fees"></a>Fees</h3>
           <p>There are some modest fees in order to keep our fleet bright and shiny.</p>
-          <p> * <strong>Ending with under 20 miles charge and not brought back to WaiveCar’s lot</strong> $20  * <strong>Dead Battery / Lights Left On</strong> $100  * <strong>Missing Key (Failure to return equipment)</strong> $300  * <strong>Parking Violation (Any violation of our parking rules)</strong> $40  * <strong>Vehicle Recovery (if left outside Santa Monica)</strong> $300 minimum  * <strong>Declined Credit Card</strong> Charges + $5 penalty fee  * <strong>Excess Time (Non Waive time)</strong> $1 for every 10 mins. ($5.99/hour)</p>
+          <ul>
+          <li><strong>Ending with under 20 miles charge and not brought back to WaiveCar’s lot</strong> $20</li>
+          <li><strong>Dead Battery / Lights Left On</strong> $100</li>
+          <li><strong>Missing Key (Failure to return equipment)</strong> $300</li>
+          <li><strong>Parking Violation (Any violation of our parking rules)</strong> $40</li>
+          <li><strong>Vehicle Recovery (if left outside Santa Monica)</strong> $300 minimum</li>
+          <li><strong>Declined Credit Card</strong> Charges + $5 penalty fee</li>
+          <li><strong>Excess Time (Non Waive time)</strong> $1 for every 10 mins. ($5.99/hour)</li>
+          </ul>
           <h4 id="special-cleaning">Special Cleaning </h4>
-          <p> * <strong>Smoking</strong> $200  * <strong>Pet not in carrier/odor</strong> $50  * <strong>Damage to the interior</strong> Our costs to repair</p>
-          <p>There’s a few unfortunate events that can happen where we have pass the costs on to you:</p>
-          <p> * <strong>Public Garage Parking Fee</strong> Cost to remove vehicle from garage + $40 parking violation  * <strong>Vehicle Recovery (inside Santa Monica)</strong> Miscellaneous Recovery Costs  * <strong>Parking Ticket</strong> Ticket Price + $20.00 Handling fee (unless user pays themselves)  * <strong>Impounded Vehicle</strong> Cost of impound fee + $100 recovery</p>
+          <ul>
+          <li><strong>Smoking</strong> $200</li>
+          <li><strong>Pet not in carrier/odor</strong> $50</li>
+          <li><strong>Damage to the interior</strong> Our costs to repair</li>
+          </ul>
+          <p>There’s a few unfortunate events that can happen where we have pass the costs on to you: * <strong>Public Garage Parking Fee</strong> Cost to remove vehicle from garage + $40 parking violation * <strong>Vehicle Recovery (inside Santa Monica)</strong> Miscellaneous Recovery Costs * <strong>Parking Ticket</strong> Ticket Price + $20.00 Handling fee (unless user pays themselves) * <strong>Impounded Vehicle</strong> Cost of impound fee + $100 recovery</p>
           <p>If the car is physically damaged during the rental due to things such as an accident, we will hold $1,000 deposit and will return it to you if the insurance determines you are not at fault.</p>
           <h3 id="restricted-parking">Restricted Parking</h3>
-          <p>Restricted parking includes:</p>
-          <p> * Street parking restricted by signs such as during street sweeping hours  * Private lots (Whole Foods, Ralphs, etc.)  * Private driveways &amp; Permit-only zones  * Indoor public lots with less than 3 hours Free Parking</p>
+          <p>Restricted parking includes: * Street parking restricted by signs such as during street sweeping hours * Private lots (Whole Foods, Ralphs, etc.) * Private driveways &amp; Permit-only zones * Indoor public lots with less than 3 hours Free Parking</p>
           </div>
         </div>
       </div>

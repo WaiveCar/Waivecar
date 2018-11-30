@@ -9,11 +9,11 @@ All you need to sign up with WaiveCar is a smart phone, credit card, a valid dri
 
 To us, a good driving record means one without any:
 
- * DUIs
- * Moving violations
- * Driving with a suspended license
- * Any similar negligent or reckless acts
- * Accidents
+* DUIs
+* Moving violations
+* Driving with a suspended license
+* Any similar negligent or reckless acts
+* Accidents
 
 ### Does it cost any money to sign up?
 Nope! We promise there REALLY are no catches. We're that magical.
@@ -49,7 +49,7 @@ It's very quick! Should only take about 15 minutes for the signup and the backgr
 
 ### What are WaiveCar's hours?
 
-Our cars are available from 5am - 1am and the HQ is open from 9am-10pm and the customer service line is open from 8am-10pm. If you need assistance at other hours, simply send us an email at support@waive.car and we will reach you at our earliest convenience. 
+Our cars are available 24 hours and the HQ is open from 9am-10pm and the customer service line is open from 8am-10pm. If you need assistance at other hours, simply send us an email at support@waive.car and we will reach you at our earliest convenience. 
 
 ### How do I book a WaiveCar?
 Log onto the app and find the closest available WaiveCar to you. Hit "Book it"! You then have 15 minutes to get to the car before the reservation times out.
@@ -71,6 +71,7 @@ Unlike a rental company, you CANNOT reserve a car in advance. WaiveCar believes 
 ### Can I book multiple cars a day?
 Yep! And even better, you will get the free 2 hours for EVERY ride!
 However, there is a 30 minute wait to re-book the car you just finished renting. We do allow you to skip the wait period for a $5 charge.
+
 ### Does the free 2 hours start when I reserve a car or when I start the ride?
 When you start the ride! Enjoy your leisurely walk!
 
@@ -132,11 +133,11 @@ Private parking spaces, parking garages, permit-only spots, any business parking
 
 Restricted parking includes:
 
- * Street parking restricted by signs such as during street sweeping hours
- * Private lots (Whole Foods, Ralphs, etc.)
- * Private driveways & Permit-only zones
- * Indoor public lots with less than 3 hours free parking
- * Upside down and engulfed in flames
+* Street parking restricted by signs such as during street sweeping hours
+* Private lots (Whole Foods, Ralphs, etc.)
+* Private driveways & Permit-only zones
+* Indoor public lots with less than 3 hours free parking
+* Upside down and engulfed in flames
 
 ### Is it true I don't have to pay any parking meter in Santa Monica?
 Yep! Since we have the bumper sticker for fully electric cars, all parking meters in Santa Monica ONLY are free!
@@ -154,25 +155,24 @@ Nope! Follow the rules above. If the car is under 25 miles charged, simply retur
 
 There are some modest fees in order to keep our fleet bright and shiny.
 
- * **Ending with under 20 miles charge and not brought back to WaiveCar's lot** $20
- * **Dead Battery / Lights Left On** $100
- * **Missing Key (Failure to return equipment)** $300
- * **Parking Violation (Any violation of our parking rules)** $40
- * **Vehicle Recovery (if left outside Santa Monica)** $300 minimum
- * **Declined Credit Card** Charges + $5 penalty fee
- * **Excess Time (Non Waive time)** $1 for every 10 mins. ($5.99/hour)
+* **Ending with under 20 miles charge and not brought back to WaiveCar's lot** $20
+* **Dead Battery / Lights Left On** $100
+* **Missing Key (Failure to return equipment)** $300
+* **Parking Violation (Any violation of our parking rules)** $40
+* **Vehicle Recovery (if left outside Santa Monica)** $300 minimum
+* **Declined Credit Card** Charges + $5 penalty fee
+* **Excess Time (Non Waive time)** $1 for every 10 mins. ($5.99/hour)
 
 #### Special Cleaning 
- * **Smoking** $200
- * **Pet not in carrier/odor** $50
- * **Damage to the interior** Our costs to repair
+* **Smoking** $200
+* **Pet not in carrier/odor** $50
+* **Damage to the interior** Our costs to repair
 
 There's a few unfortunate events that can happen where we have pass the costs on to you:
-
- * **Public Garage Parking Fee** Cost to remove vehicle from garage + $40 parking violation
- * **Vehicle Recovery (inside Santa Monica)** Miscellaneous Recovery Costs
- * **Parking Ticket** Ticket Price + $20.00 Handling fee (unless user pays themselves)
- * **Impounded Vehicle** Cost of impound fee + $100 recovery
+* **Public Garage Parking Fee** Cost to remove vehicle from garage + $40 parking violation
+* **Vehicle Recovery (inside Santa Monica)** Miscellaneous Recovery Costs
+* **Parking Ticket** Ticket Price + $20.00 Handling fee (unless user pays themselves)
+* **Impounded Vehicle** Cost of impound fee + $100 recovery
 
 If the car is physically damaged during the rental due to things such as an accident, we will hold
 $1,000 deposit and will return it to you if the insurance determines you are not at fault.
@@ -180,9 +180,8 @@ $1,000 deposit and will return it to you if the insurance determines you are not
 ### Restricted Parking
 
 Restricted parking includes:
-
- * Street parking restricted by signs such as during street sweeping hours
- * Private lots (Whole Foods, Ralphs, etc.)
- * Private driveways & Permit-only zones
- * Indoor public lots with less than 3 hours Free Parking
+* Street parking restricted by signs such as during street sweeping hours
+* Private lots (Whole Foods, Ralphs, etc.)
+* Private driveways & Permit-only zones
+* Indoor public lots with less than 3 hours Free Parking
 
