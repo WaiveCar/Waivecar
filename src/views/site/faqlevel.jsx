@@ -18,7 +18,8 @@ module.exports = class Faqlevel extends Component {
           <li>DUIs</li>
           <li>Moving violations</li>
           <li>Driving with a suspended license</li>
-          <li>Any similar negligent or reckless acts  * Accidents</li>
+          <li>Any similar negligent or reckless acts</li>
+          <li>Accidents</li>
           </ul>
           <h3 id="does-it-cost-any-money-to-sign-up">Does it cost any money to sign up?</h3>
           <p>Nope! We promise there REALLY are no catches. We’re that magical.</p>

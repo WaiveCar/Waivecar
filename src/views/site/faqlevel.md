@@ -11,11 +11,11 @@ All you need to sign up with WaiveCar is to be a resident of level, a smart phon
 
 To us, a good driving record means one without any:
 
- * DUIs
- * Moving violations
- * Driving with a suspended license
- * Any similar negligent or reckless acts
- * Accidents
+* DUIs
+* Moving violations
+* Driving with a suspended license
+* Any similar negligent or reckless acts
+* Accidents
 
 ### Does it cost any money to sign up?
 Nope! We promise there REALLY are no catches. We're that magical.
@@ -126,24 +126,24 @@ Nope! Follow the rules above. If the car is under 25 miles charged, simply retur
 
 There are some modest fees in order to keep our fleet bright and shiny.
 
- * **Ending with under 20 miles charge and not brought back to the lot** $20
- * **Dead Battery / Lights Left On** $100
- * **Missing Key (Failure to return equipment)** $300
- * **Parking Violation (Any violation of our parking rules)** $40
- * **Vehicle Recovery (if left outside Brooklyn)** $300 minimum
- * **Declined Credit Card** Charges + $5 penalty fee
- * **Excess Time (Non Waive time)** $1 for every 10 mins. ($5.99/hour)
+* **Ending with under 20 miles charge and not brought back to the lot** $20
+* **Dead Battery / Lights Left On** $100
+* **Missing Key (Failure to return equipment)** $300
+* **Parking Violation (Any violation of our parking rules)** $40
+* **Vehicle Recovery (if left outside Brooklyn)** $300 minimum
+* **Declined Credit Card** Charges + $5 penalty fee
+* **Excess Time (Non Waive time)** $1 for every 10 mins. ($5.99/hour)
 
 #### Special Cleaning 
- * **Smoking** $200
- * **Pet not in carrier/odor** $50
- * **Damage to the interior** Our costs to repair
+* **Smoking** $200
+* **Pet not in carrier/odor** $50
+* **Damage to the interior** Our costs to repair
 
 There's a few unfortunate events that can happen where we have pass the costs on to you:
 
- * **Vehicle Recovery** Miscellaneous Recovery Costs
- * **Parking Ticket** Ticket Price + $20.00 Handling fee (unless user pays themselves)
- * **Impounded Vehicle** Cost of impound fee + $100 recovery
+* **Vehicle Recovery** Miscellaneous Recovery Costs
+* **Parking Ticket** Ticket Price + $20.00 Handling fee (unless user pays themselves)
+* **Impounded Vehicle** Cost of impound fee + $100 recovery
 
 If the car is physically damaged during the rental due to things such as an accident, we will hold
 $1,000 deposit and will return it to you if the insurance determines you are not at fault.
