@@ -117,7 +117,7 @@ module.exports = {
           $where 
         ]
       };
-    } else if((hour >= 1 && hour < 40) && !isAdmin) {
+    } else if((hour >= 1 && hour < 4) && !isAdmin) {
       opts.where = { 
         $or : [
           sequelize.literal("is_available = true and tagList.group_role_id = 7"), { 
