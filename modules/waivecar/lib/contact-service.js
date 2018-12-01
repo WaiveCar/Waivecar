@@ -18,6 +18,7 @@ let Charger = require('./chargers-service');
 module.exports = {
   *deliverMessage(payload, _user) {
     yield notify.slack({ text : `From: ${ _user.link() } ${ _user.email } ${ _user.info() }\n Subject: ${ payload.subject || '_(none)_' }\n${ payload.message || '_(none)_' }` }, { channel : '#app_support' });
+    payload.message = payload.message || '';
     yield this.attemptAction(_user, [payload.subject, payload.message].join(' '), {raw: payload.message});
   },
 
@@ -75,7 +76,7 @@ module.exports = {
 
     // we try the complex book command first.
     command = command.toLowerCase();
-    let argCmd = command.match(/^(rush|book|details)\s(\w+|\w+\s\d+)$/i);
+    let argCmd = command.match(/^(rush|book|b|details|d)\s(\w+|\w+\s\d+)$/i);
 
     // This is a level text
     if(command.match(/we have received your pickup request/)) {
@@ -83,7 +84,11 @@ module.exports = {
     }
 
     if(argCmd) {
+
       let license = argCmd[2].replace(/\s/g, '');
+      if(license.length < 4) {
+        license = 'waive' + license;
+      }
       let requestedCar = yield Car.findOne({
         where: {
           isAvailable: true,
@@ -95,6 +100,8 @@ module.exports = {
       if(requestedCar) {
         try {
           if(argCmd[1] === 'rush') {
+            var hour = moment().tz('America/Los_Angeles').format('H');
+            if(hour >= 20 || hour <=8) {
             let res = yield booking.create({
               userId: user.id,
               carId: requestedCar.id,
@@ -103,12 +110,12 @@ module.exports = {
               }
             }, user);
             console.log(res);
-          } else if(argCmd[1] === 'book') {
+          } else if(['book','b'].includes(argCmd[1])) {
             yield booking.create({
               userId: user.id,
               carId: requestedCar.id
             }, user);
-          } else if(argCmd[1] === 'details') {
+          } else if(['details','d'].includes(argCmd[1])) {
             yield notify.sendTextMessage(user, `${requestedCar.license} is available. It's at ${requestedCar.charge}%. It's current GPS coordinates are https://maps.google.com/?q=${requestedCar.latitude},${requestedCar.longitude}`);
           }
         } catch(ex) {
@@ -164,6 +171,12 @@ module.exports = {
         [/start ride/, 'start'],
         [/ unlock(ing|)/, 'unlock'],
         [/^unlock/, 'unlock'],
+        // one character commands
+        [/^l$/, 'lock'],
+        [/^u$/, 'unlock'],
+        [/^f$/, 'finish'],
+        [/^s$/, 'start'],
+
         [/^lock/, 'lock'],
         [/ lock(ing|) /, 'lock'],
 
