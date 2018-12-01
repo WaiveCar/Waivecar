@@ -200,7 +200,9 @@ module.exports = class BookingService extends Service {
       }
     }
 
-    yield this.offerWaiveRush(driver, car, data.opts, lockKeys);
+    if(!_user.hasAccess('admin')) {
+      yield this.offerWaiveRush(driver, car, data.opts, lockKeys);
+    }
     yield this.lookForHolding(driver, car);
 
     let rebookOrder;
