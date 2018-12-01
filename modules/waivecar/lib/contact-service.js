@@ -74,6 +74,10 @@ module.exports = {
       account: "Information about your account",
     };
 
+    function *slack(message = '') {
+      yield notify.slack({ text : `:selfie: ${ user.link() } sent "${ opts.raw }" ${message}` }, { channel : '#reservations' });
+    }
+
     // we try the complex book command first.
     command = command.toLowerCase();
     let argCmd = command.match(/^(rush|book|b|details|d)\s(\w+|\w+\s\d+)$/i);
@@ -107,7 +111,6 @@ module.exports = {
                 rush: true
               }
             }, user);
-            console.log(res);
           } else if(['book','b'].includes(argCmd[1])) {
             yield booking.create({
               userId: user.id,
@@ -122,9 +125,10 @@ module.exports = {
       } else {
         yield notify.sendTextMessage(user, `Unable to access ${license}. Check your spelling.`);
       }
+      yield slack();
+
       return true;
     }
-
 
     let remoteCmd = command.match(/^charge (\w*)$/i);
     if(remoteCmd) {
@@ -132,7 +136,7 @@ module.exports = {
       if(id) {
         yield Charger.start(null, id);
         yield notify.sendTextMessage(user, "Starting " + remoteCmd[1]);
-        yield notify.slack({ text : `${user.link()} is charging via sms` }, { channel : '#rental-alerts' });
+        yield slack('and is charging via sms');
       } else {
         yield notify.sendTextMessage(user, "Could not find charger '" + remoteCmd[1] + "'. Check the spelling");
       }
@@ -172,6 +176,7 @@ module.exports = {
         // one character commands
         [/^l$/, 'lock'],
         [/^u$/, 'unlock'],
+        [/^c$/, 'abort'],
         [/^f$/, 'finish'],
         [/^s$/, 'start'],
 
@@ -363,7 +368,7 @@ module.exports = {
           }
           try {
             yield booking.create(params, user);
-            yield notify.slack({ text : `:selfie:${ user.link() } sent "${ opts.raw }" and the computer rebooked` }, { channel : '#reservations' });
+            yield slack('and the computer rebooked');
             yield notify.sendTextMessage(user, `Rebooked ${ previousBooking.car.license } for $${params.opts.buyNow}.` );
           } catch(ex){
             yield notify.sendTextMessage(user, `Unable to rebook ${ previousBooking.car.license }, please try again.` );
