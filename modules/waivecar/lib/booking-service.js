@@ -1957,7 +1957,7 @@ module.exports = class BookingService extends Service {
         } else {
           // otherwise you need to find a low car or wait.
           decline = {
-            title: `I'll find a low car or wait until ${generalRental}AM`,
+            title: `I'll find a low car`,
             priority: 'ignore',
             theme: 'dark',
             action: false
@@ -1983,7 +1983,7 @@ module.exports = class BookingService extends Service {
       throw error.parse({
         code    : 'WAIVE_RUSH',
         title   : 'WaiveRush Opportunity!',
-        message : `Keep ${ car.license } until 10AM for a flat fee. Your reservation will not expire and hourly charges won't begin until 10AM!<br><small><b>Notice:</b> There is no customer service available between 10PM and 9AM.</small>${ inject }`,
+        message : `<p style=text-align:left>Keep ${ car.license } until 10AM for a flat fee. Your reservation will not expire and hourly charges won't begin until 10AM!<br><small><b>Notice:</b> There is no customer service available between 10PM and 9AM. Find a low car for a normal WaiveCar booking.</small></p>${ inject }`,
         options: [{
           title: `WaiveRush for $14.99.`,
           priority: 'prefer',
