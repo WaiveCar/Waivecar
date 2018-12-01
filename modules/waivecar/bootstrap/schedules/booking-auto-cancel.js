@@ -43,7 +43,6 @@ let BookingService = require('../../lib/booking-service');
 // a booking flag ... it's likely easier
 //
 scheduler.process('booking-extension-offer', function *(job) {
-  console.log("booking extension offer");
   try {
     let booking = yield Booking.findOne({ where : { id : job.data.bookingId } });
     let car = yield Car.findById(booking.carId);
