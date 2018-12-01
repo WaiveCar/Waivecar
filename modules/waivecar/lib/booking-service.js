@@ -1484,7 +1484,7 @@ module.exports = class BookingService extends Service {
     }
 
     let message = yield this.updateState('completed', _user, user);
-    let rebookCost = bookings.isFlagged('rebook') ? 13 : 5;
+    let rebookCost = booking.isFlagged('rebook') ? 13 : 5;
     yield notify.sendTextMessage(user, `You're all done! Reply "rebook" to rebook now for $${rebookCost}.00. Leave something behind? Reply "unlock" to get it in the next 5min.`);
     yield notify.slack({ text : `:coffee: ${ message } ${ car.info() } ${ zoneString } ${ address } ${ booking.link() }` }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
