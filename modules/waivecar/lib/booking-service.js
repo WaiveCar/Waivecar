@@ -1886,7 +1886,7 @@ module.exports = class BookingService extends Service {
   static *willRushFail(car) {
     let timezone = (yield car.hasTag('level')) ? 'America/New_York' : 'America/Los_Angeles';
     var hour = moment().tz(timezone).format('H');
-    let startHour = 12;
+    let startHour = 22;
     let generalRental = 5;
     let endHour = 8;
 
