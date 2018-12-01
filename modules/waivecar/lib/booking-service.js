@@ -694,7 +694,7 @@ module.exports = class BookingService extends Service {
           // yield booking.update({ reservationEnd: null });
           //
           if(!opts.silent) {
-            yield notify.sendTextMessage(user, `Your WaiveCar reservation will be extended. Want to extend automatically? Reply "Save always".`);
+            yield notify.sendTextMessage(user, `Your reservation will be extended. Want to extend automatically? Reply "Save always".`);
             yield notify.notifyAdmins(`:snail: ${ user.link() } extended their reservation with ${ car.info() } *indefinitely*`, [ 'slack' ], { channel : '#reservations' });
           }
         } else {
@@ -705,7 +705,7 @@ module.exports = class BookingService extends Service {
             reservationEnd: moment(booking.reservationEnd).add(time, 'minutes')
           });
           if(!opts.silent) {
-            yield notify.sendTextMessage(user, `Your WaiveCar reservation has been extended ${ time } minutes. Want to extend automatically? Reply "Save always".`);
+            yield notify.sendTextMessage(user, `Your reservation has been extended ${ time } minutes. Want to extend automatically? Reply "Save always".`);
             yield notify.notifyAdmins(`:clock1: ${ user.link() } extended their reservation with ${ car.info() } by ${ time } minutes.`, [ 'slack' ], { channel : '#reservations' });
           }
         }
@@ -845,21 +845,21 @@ module.exports = class BookingService extends Service {
         yield notify.sendTextMessage(user, `Thanks for using WaiveWork! Your booking has started.`);
       } else {
         let isLevel = yield car.hasTag('level');
-        let base = '', freetime = '';
+        let isCsula = yield car.hasTag('csula');
+        let base = '', freetime = '2';
 
         if(isLevel) {
           base = 'the parking garage';
           freetime = '3';
+        } else if(isCsula) {
+          base = 'the parking spot you started at';
         } else {
-          base = 'one of the highlighted zones on the map';
-          freetime = '2';
+          base = 'one of the highlighted zones on the map with at least 25mi charge';
         }
         if(!isRush) {
-          yield notify.sendTextMessage(user, `${ freetime } free hours with ${ car.license } start now! If you have trouble starting the WaiveCar try pressing the "unlock" button in the app. When you're finished, return the WaiveCar to ${ base } with at least 25mi charge. `);
+          yield notify.sendTextMessage(user, `${ freetime } free hours with ${ car.license } start now! If you have trouble starting the WaiveCar try pressing the "unlock" button in the app. When you're finished, return the WaiveCar to ${ base }. `);
         }
       }
-
-      // ### Relay Update
 
       car.relay('update');
       yield this.relay('update', booking, _user);
@@ -1484,8 +1484,9 @@ module.exports = class BookingService extends Service {
     }
 
     let message = yield this.updateState('completed', _user, user);
-    yield notify.sendTextMessage(user, `Your ride is complete. To rebook immediately for $5.00 reply with "rebook". If you left something behind, unlock ${car.license} by replying "unlock" in the next 5 minutes.`);
-    yield notify.slack({ text : `:coffee:${ message } ${ car.info() } ${ zoneString } ${ address } ${ booking.link() }` }, { channel : '#reservations' });
+    let rebookCost = bookings.isFlagged('rebook') ? 13 : 5;
+    yield notify.sendTextMessage(user, `You're all done! Reply "rebook" to rebook now for $${rebookCost}.00. Leave something behind? Reply "unlock" to get it in the next 5min.`);
+    yield notify.slack({ text : `:coffee: ${ message } ${ car.info() } ${ zoneString } ${ address } ${ booking.link() }` }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
 
     queue.scheduler.add('user-liability-release', {
@@ -1620,8 +1621,9 @@ module.exports = class BookingService extends Service {
       `${ _user.link() } cancelled` :
       `${ _user.name() } cancelled for ${ user.link() }`;
 
-    yield notify.sendTextMessage(user, `Your WaiveCar reservation has been cancelled. To rebook for $5.00 reply with "Rebook".`);
-    yield notify.slack({ text : `:pill:${ message } ${ car.info() } ${ booking.link() }`
+    let rebookCost = bookings.isFlagged('rebook') ? 13 : 5;
+    yield notify.sendTextMessage(user, `Your reservation is cancelled. Reply "rebook" to rebook now for $${rebookCost}.00.`);
+    yield notify.slack({ text : `:pill: ${ message } ${ car.info() } ${ booking.link() }`
     }, { channel : '#reservations' });
   }
 
