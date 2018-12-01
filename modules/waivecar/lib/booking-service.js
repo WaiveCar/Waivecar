@@ -1258,7 +1258,7 @@ module.exports = class BookingService extends Service {
     }
 
     let message = yield this.updateState('ended', _user, user);
-    yield notify.slack(parkingSlack || { text : `:cherries:${ message } ${ car.info() } ${ car.averageCharge() }% ${ booking.link() }`
+    yield notify.slack(parkingSlack || { text : `:cherries: ${ message } ${ car.info() } ${ car.averageCharge() }% ${ booking.link() }`
     }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.END_BOOKING }, _user);
 
