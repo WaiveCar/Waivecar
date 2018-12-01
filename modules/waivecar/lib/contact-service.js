@@ -25,15 +25,21 @@ module.exports = {
   
   *returnError(user, err, what) {
     var message
+    var append = " This is an automated message. Your texts have been forwarded to our support staff.";
     if(err.message) {
       let parts = err.message.split('\t');
       message = parts[0].replace(/<br>/g, '\n');
       message = message.replace(/<[^>]*>/g, '');
 
+      if(err.title) {
+        message = err.title + '\n' + message;
+      }
+
       if(err.options) {
+        append = '';
         err.options.forEach((row) => {
           if(row.hotkey) {
-            message += `\n${ row.title }. Reply "${row.hotkey}"`;
+            message += `\n${ row.title } Reply "${row.hotkey}"`;
           }
         });
       }
@@ -41,7 +47,7 @@ module.exports = {
     } else {
       message = "Sorry something went wrong.";
     }
-    yield notify.sendTextMessage(user, message + " This is an automated message. Your texts have been forwarded to our support staff.");
+    yield notify.sendTextMessage(user, message + append);
     return message;
   },
 

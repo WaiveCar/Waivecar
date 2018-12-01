@@ -1990,6 +1990,7 @@ module.exports = class BookingService extends Service {
         options: [{
           title: `WaiveRush for $14.99!`,
           priority: 'prefer',
+          hotkey: `rush ${ car.license }`,
           action: {verb:'post', url:'bookings', params: rushParams},
           internal: ['booking-service', 'create', rushParams]
         }, decline
