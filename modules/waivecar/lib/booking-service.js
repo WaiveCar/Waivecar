@@ -77,10 +77,7 @@ module.exports = class BookingService extends Service {
 
   // Creates a new booking.
   static *create(data, _user) {
-    let start = new Date(), code = Math.round(Math.random() * 36 * 36).toString(36);
-    function t(what) {
-      //console.log(code, new Date() - start, what);
-    }
+    let start = new Date();
     let lockKeys = yield redis.shouldProcess('booking-car', data.carId, 45 * 1000);
     if (!lockKeys) {
       throw error.parse({
@@ -88,11 +85,11 @@ module.exports = class BookingService extends Service {
         message : 'Unable to start booking. Someone else is booking.'
       }, 400);
     }
-    t("lock-get");
 
+    let timerMap = config.booking.timers;
     let isRush = data.opts && data.opts.rush;
     let driver = yield this.getUser(data.userId, true);
-    t("user-get");
+
     var car;
     try {
       // this will throw an error if the car is not currently available.
@@ -101,8 +98,12 @@ module.exports = class BookingService extends Service {
       yield redis.doneWithIt(lockKeys);
       throw err;
     } 
+    let isLevel = yield car.isTagged('level');
 
-    t("car-get");
+    if(isRush) {
+      var hour = moment().tz('America/Los_Angeles').format('H');
+    }
+
     this.hasAccess(driver, _user);
 
     // If the user doing the booking is also the driver and the
@@ -116,7 +117,6 @@ module.exports = class BookingService extends Service {
       yield this.hasBookingAccess(driver);
     }
 
-    t("booking-access");
     // If someone owes us more than a dollar
     // we tell them to settle their balance with us.
     if(driver.credit < -100) {
@@ -171,7 +171,6 @@ module.exports = class BookingService extends Service {
                 body,
               }
             });
-            t("email");
           } catch(err) {
             log.warn('email error: ', err);
           } 
@@ -192,7 +191,6 @@ module.exports = class BookingService extends Service {
           details = OrderService.authorize.last.card.last4;
         }
         yield UserLog.addUserEvent(driver, 'AUTH', details, `Failed to authorize $${ (OrderService.authorize.last.amount / 100).toFixed(2) }`);
-        t("user-log");
 
         yield redis.doneWithIt(lockKeys);
         throw error.parse({
@@ -202,20 +200,17 @@ module.exports = class BookingService extends Service {
       }
     }
 
-    //yield this.offerWaiveRush(driver, car, data.opts, lockKeys);
+    yield this.offerWaiveRush(driver, car, data.opts, lockKeys);
     yield this.lookForHolding(driver, car);
-    t("holding-look");
 
     let rebookOrder;
     // If the creator isn't an admin or is booking for themselves
     if (!(isRush || driver.isWaiveWork || _user.hasAccess('admin'))) {// || _user.id !== driver.id) {
       rebookOrder = yield this.rebookCheck(driver, car, data.opts, lockKeys);
     }
-    t("rebook-look");
 
     if(!driver.isWaiveWork) {
       let hoardRes = yield this.lookForHoarding(driver, car);
-      t("hoarding-look");
       if(hoardRes[0] >= 0.5) {
         yield UserLog.addUserEvent(driver, 'HOARD', hoardRes[0].toFixed(3) );
         yield notify.slack({ text : `:pig2: The rapacious ${ driver.link() } did ${ hoardRes[1] } of the last ${ hoardRes[2] } bookings with ${ car.license }. How rude!` }, { channel : '#rental-alerts' });
@@ -252,7 +247,6 @@ module.exports = class BookingService extends Service {
     } catch (err) {
       throw err;
     }
-    t("booking-create");
 
     if(isRush) {
       yield booking.addFlag('rush');
@@ -280,27 +274,20 @@ module.exports = class BookingService extends Service {
           orderId   : order.id,
         });
         yield authorizationPayment.save();
-        t("authorize");
       } catch(err) {
         log.warn(err);
       }
     };
 
     yield car.addDriver(driver.id, booking.id);
-    t("add-driver");
 
     // Users over 55 should always get 25 minutes to get to the car #1230
-
     let aidExtend = yield driver.hasTag('aid');
     if (!aidExtend) {
       let age = yield driver.age();
       aidExtend = age >= 55;
     }
     let autoExtend = yield driver.hasTag('extend');
-    t("autoextend");
-
-    let isLevel = yield car.isTagged('level');
-    let timerMap = config.booking.timers;
 
     // The longest time period is 30 minutes, this is 
     // the best case
@@ -315,7 +302,6 @@ module.exports = class BookingService extends Service {
 
     // careful careful... we first set the cancel timer, always.
     yield booking.setCancelTimer(timerMap);
-    t("canceltimers");
 
     // if the user is autoextended then we do an infinite extension
     // without sending an extra message
@@ -331,11 +317,9 @@ module.exports = class BookingService extends Service {
     yield booking.update({
       reservationEnd: moment(booking.createdAt).add(timeToCar, 'minutes')
     });
-    t("reservationend");
 
     // If the car is currently WaiveParked, the notes from the spot need to be attached to the message.
     let currentParking = yield UserParking.findOne({ where: { carId: car.id } });
-    t("userparking");
 
     let timeToCarStr = '';
     if(isRush) {
@@ -367,22 +351,17 @@ module.exports = class BookingService extends Service {
     booking.relay('store', driver);
 
     yield notify.sendTextMessage(driver, msg);
-    t("sms");
 
     let message = yield this.updateState('created', _user, driver);
-    t("slack");
     if(isRush) {
       yield notify.notifyAdmins(`:dash: Rush ${ message } ${ car.info() } ${ car.averageCharge() }%`, [ 'slack' ], { channel : '#reservations' });
       yield this.ready(booking.id, _user);
     } else {
       yield notify.notifyAdmins(`:musical_keyboard: ${ message } ${ car.info() } ${ car.averageCharge() }%`, [ 'slack' ], { channel : '#reservations' });
     }
-    t("log-pre");
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : driver.id, action : Actions.CREATE_BOOKING }, _user);
-    t("log");
 
     yield redis.doneWithIt(lockKeys);
-    t("key-release");
     return booking;
   }
 
@@ -1239,8 +1218,8 @@ module.exports = class BookingService extends Service {
     //
     if(deltas.charge > 0) {
       // we err in the user's favor by using the high estimates
-      let miles = Math.floor((deltas.charge / 100) * car.getRange('HIGH'));
-      let credit = Math.floor(miles / 5);
+      let miles = Math.floor((deltas.charge / 100) * car.getRange('LOW'));
+      let credit = Math.floor(miles);
       if(credit > 0) {
         yield booking.addFlag('charge');
         yield OrderService.quickCharge({
@@ -1616,7 +1595,7 @@ module.exports = class BookingService extends Service {
     if (states.indexOf(booking.status) === -1) {
       throw error.parse({
         code    : `BOOKING_REQUEST_INVALID`,
-        message : `You cannot cancel a booking that is ${ booking.getStatus() }.`
+        message : `You cannot cancel a booking that is ${ booking.getStatus() }, please end your ride.`
       }, 400);
     }
 
@@ -1904,16 +1883,52 @@ module.exports = class BookingService extends Service {
     return yield geocode.getAddress(lat, long, param); 
   }
 
-  static *offerWaiveRush(user, car, opts = {}, lockKeys) {
-    if(! (yield user.hasTag('la')) ) {
-      return;
-    }
-    var hour = moment().tz('America/Los_Angeles').format('H');
-
-    let startHour = 17;
+  static *willRushFail(car) {
+    let timezone = (yield car.hasTag('level')) ? 'America/New_York' : 'America/Los_Angeles';
+    var hour = moment().tz(timezone).format('H');
+    let startHour = 12;
     let generalRental = 5;
     let endHour = 8;
-    if(!opts.skipRush && car.charge > 50 && (hour >= startHour || hour <= endHour ))  {
+
+    if(hour >= startHour || hour < endHour) {
+      if(car.milesAvailable() < 80) {
+        return `WaiveRush isn't available with low cars. Look for green cars on the map`;
+      }
+    } else {
+      return `WaiveRush is only offered between ${startHour}:00 and ${endHour}:00.`;
+    }
+  }
+
+  static *offerWaiveRush(user, car, opts = {}, lockKeys) {
+    var hour = moment().tz('America/Los_Angeles').format('H');
+
+    let startHour = 22;
+    let generalRental = 5;
+    let endHour = 8;
+
+    if(!opts.skipRush) {
+
+      // See if we can do a rush at this time.
+      let failureReason = yield this.willRushFail(car);
+
+      // If we cannot, we only care to bug the user
+      // if they were asking to do it.
+      if(failureReason) {
+        if(opts.rush) {
+          yield redis.doneWithIt(lockKeys);
+          throw error.parse({
+            code    : 'WAIVE_RUSH',
+            message : failureReason
+          }, 400);
+        } 
+        return true;
+      }
+
+      // We've already said yes.
+      if(opts.rush) {
+        return true;
+      }
+
       let remaining = 9 - (hour >= startHour ? hour - 24 : hour);
       
       // We want to make sure if the user backs out we still charge them the rebook fee
@@ -1971,7 +1986,6 @@ module.exports = class BookingService extends Service {
         message : `Keep ${ car.license } until 10AM for a flat fee. Your reservation will not expire and hourly charges won't begin until 10AM!<br><small><b>Notice:</b> There is no customer service available between 10PM and 9AM.</small>${ inject }`,
         options: [{
           title: `WaiveRush for $14.99.`,
-          hotkey: 'rush',
           priority: 'prefer',
           action: {verb:'post', url:'bookings', params: rushParams},
           internal: ['booking-service', 'create', rushParams]
