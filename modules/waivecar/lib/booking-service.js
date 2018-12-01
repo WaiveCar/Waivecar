@@ -147,7 +147,6 @@ module.exports = class BookingService extends Service {
           order = {amount: 0, createdAt: new Date()};
         } else {
           order = yield OrderService.authorize(null, driver);
-          t("authorize");
         } 
         let orderDate = moment(order.createdAt).format('MMMM Do YYYY');
         let amount = (order.amount / 100).toFixed(2);
