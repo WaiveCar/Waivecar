@@ -100,8 +100,6 @@ module.exports = {
       if(requestedCar) {
         try {
           if(argCmd[1] === 'rush') {
-            var hour = moment().tz('America/Los_Angeles').format('H');
-            if(hour >= 20 || hour <=8) {
             let res = yield booking.create({
               userId: user.id,
               carId: requestedCar.id,
