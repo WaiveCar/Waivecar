@@ -1983,9 +1983,9 @@ module.exports = class BookingService extends Service {
       throw error.parse({
         code    : 'WAIVE_RUSH',
         title   : 'WaiveRush Opportunity!',
-        message : `<div style=text-align:left>Keep ${ car.license } until 10AM for a flat fee. Your reservation will not expire and hourly charges won't begin until 10AM!<br><small><b>Notice:</b> There is no customer service available between 10PM and 9AM. Find a low car for a normal WaiveCar booking.</small></div>${ inject }`,
+        message : `<div style=text-align:left>Keep ${ car.license } until 10AM for a flat fee. Your reservation will not expire and hourly charges won't begin until 10AM!<br><br><small><b>Notice:</b> There is no customer service available between 10PM and 9AM. Find a low car for a normal WaiveCar booking.</small></div>${ inject }`,
         options: [{
-          title: `WaiveRush for $14.99.`,
+          title: `WaiveRush for $14.99!`,
           priority: 'prefer',
           action: {verb:'post', url:'bookings', params: rushParams},
           internal: ['booking-service', 'create', rushParams]
