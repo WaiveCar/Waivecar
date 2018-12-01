@@ -1889,7 +1889,6 @@ module.exports = class BookingService extends Service {
     let timezone = (yield car.hasTag('level')) ? 'America/New_York' : 'America/Los_Angeles';
     var hour = moment().tz(timezone).format('H');
     let startHour = 22;
-    let generalRental = 5;
     let endHour = 8;
 
     if(hour >= startHour || hour < endHour) {
@@ -1905,7 +1904,7 @@ module.exports = class BookingService extends Service {
     var hour = moment().tz('America/Los_Angeles').format('H');
 
     let startHour = 22;
-    let generalRental = 5;
+    let generalRental = 4;
     let endHour = 8;
 
     if(!opts.skipRush) {
@@ -1975,7 +1974,6 @@ module.exports = class BookingService extends Service {
 
       // this shit app doesn't have this crap fixed because it's such a pain to work with so I fix it here.
       let inject = ['<img style=display:none src=a onerror="if(!window.location.href.search(/basic/)){',
-       "console.log('hello world');",
        "this.parentNode.previousSibling.previousSibling.innerHTML='WaiveRush Opportunity!';",
        "this.parentNode.parentNode.getElementsByTagName('svg')[0].style.display='none';",
        '}">'

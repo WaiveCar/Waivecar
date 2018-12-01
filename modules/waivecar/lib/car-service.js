@@ -108,18 +108,28 @@ module.exports = {
       let $where = opts.where;
       opts.where = {
         $and: [ 
-          { charge: { $lt : 55 } }, 
+          { 
+            $or: [ 
+              { charge: { $lt : 55 } }, 
+              { charge: { $gt : 80 } }
+            ]
+          },
           $where 
         ]
       };
-    } else if((hour >= 1 && hour < 4) && !isAdmin) {
+    } else if((hour >= 1 && hour < 40) && !isAdmin) {
       opts.where = { 
         $or : [
           sequelize.literal("is_available = true and tagList.group_role_id = 7"), { 
             inRepair: false,
             adminOnly: false,
             isAvailable: true,
-            charge: { $lt : 35 } 
+            charge: {
+              $or: [
+                { $lt : 35 },
+                { $gt : 80 }
+              ]
+            }
           }, 
         ]
       };
