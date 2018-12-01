@@ -1621,7 +1621,7 @@ module.exports = class BookingService extends Service {
       `${ _user.link() } cancelled` :
       `${ _user.name() } cancelled for ${ user.link() }`;
 
-    let rebookCost = bookings.isFlagged('rebook') ? 13 : 5;
+    let rebookCost = booking.isFlagged('rebook') ? 13 : 5;
     yield notify.sendTextMessage(user, `Your reservation is cancelled. Reply "rebook" to rebook now for $${rebookCost}.00.`);
     yield notify.slack({ text : `:pill: ${ message } ${ car.info() } ${ booking.link() }`
     }, { channel : '#reservations' });
