@@ -1487,7 +1487,7 @@ module.exports = class BookingService extends Service {
 
     let message = yield this.updateState('completed', _user, user);
     let rebookCost = booking.isFlagged('rebook') ? 13 : 5;
-    yield notify.sendTextMessage(user, `You're all done! Reply "rebook" to rebook now for $${rebookCost}.00. Leave something behind? Reply "unlock" to get it in the next 5min.`);
+    yield notify.sendTextMessage(user, `You're all done! Reply "rebook" to rebook now for $${rebookCost}. Left a thing behind? Reply "unlock" to get it in the next 5min.`);
     yield notify.slack({ text : `:coffee: ${ message } ${ car.info() } ${ zoneString } ${ address } ${ booking.link() }` }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
 
@@ -1990,7 +1990,7 @@ module.exports = class BookingService extends Service {
         options: [{
           title: `WaiveRush for $14.99!`,
           priority: 'prefer',
-          hotkey: `rush ${ car.license }`,
+          hotkey: `Rush ${ car.license }`,
           action: {verb:'post', url:'bookings', params: rushParams},
           internal: ['booking-service', 'create', rushParams]
         }, decline

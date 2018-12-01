@@ -36,6 +36,7 @@ module.exports = {
       }
 
       if(err.options) {
+        message += '\n';
         append = '';
         err.options.forEach((row) => {
           if(row.hotkey) {
