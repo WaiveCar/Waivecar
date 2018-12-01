@@ -1935,6 +1935,7 @@ module.exports = class BookingService extends Service {
       // We want to make sure if the user backs out we still charge them the rebook fee
       let decline = yield this.rebookCheck(user, car, {computeOnly: true});
       if(decline) {
+        opts.fee = opts.fee || 5;
         decline.title = `No thanks. Rebook for $${opts.fee}.00`;
         decline.priority = 'ignore';
       } else {
@@ -2135,7 +2136,6 @@ module.exports = class BookingService extends Service {
       let buyOption = {
         title: `Get ${ car.license } now for $${fee.toFixed(2)}`,
         fee: fee,
-        hotkey: 'now',
         priority: 'prefer',
         action: {verb:'post', url:'bookings', params: postparams},
         internal: ['booking-service', 'create', postparams]
