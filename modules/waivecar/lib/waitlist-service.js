@@ -179,6 +179,22 @@ module.exports = {
 
       record = new Waitlist(data);
       yield record.save();
+      if(data['accountType'] == 'waivework') {
+        let email = new Email()
+        try {
+          emailOpts = {
+            to       : 'frank@waive.car',
+            from     : config.email.sender,
+            subject  : `WaiveWork signup ${data['first_name']} ${data['last_name']}`,
+            template : 'blank',
+            context  : {
+              payload: data
+            }
+          };
+          yield email.send(emailOpts);
+        } catch(ex) {}
+      }
+
       // If this is a valid waivework signup
       if (isInside && data['accountType'] == 'waivework') {
         res.waivework = 'yes';
