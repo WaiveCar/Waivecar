@@ -1489,7 +1489,7 @@ module.exports = class BookingService extends Service {
     let message = yield this.updateState('completed', _user, user);
     let rebookCost = booking.isFlagged('rebook') ? 13 : 5;
     let stats = "(" + [
-      (details[1].mileage - details[0].mileage) * 0.621371 + "mi",
+      ((details[1].mileage - details[0].mileage) * 0.621371).toFixed(2) + "mi",
       (details[1].charge  - details[0].charge) + "%",
       Math.round((details[1].createdAt - details[0].createdAt) / 60000) + "min"
     ].join(" ") + ")";
