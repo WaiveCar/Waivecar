@@ -1330,6 +1330,7 @@ module.exports = class BookingService extends Service {
   // Locks, and makes the car available for a new booking.
   static *_complete(id, _user, query, payload) {
     let lockKeys = yield redis.shouldProcess('booking-complete', id);
+    let details;
     if (!lockKeys) {
       return;
     }
@@ -1382,18 +1383,18 @@ module.exports = class BookingService extends Service {
         }
       }
 
-      let details = yield BookingDetails.find({
+      details = yield BookingDetails.find({
         where: {
           bookingId: booking.id
         }
       });
 
+      /*
       let sumQuery = yield sequelize.query(`select type, sum(mileage) as total from booking_details join bookings on booking_details.booking_id = bookings.id where user_id=${user.id} group by type;`);
       let totalMiles = Math.abs(sumQuery[0][1].total - sumQuery[0][0].total);
       let lastTripDistance = Math.abs(details[1].mileage - details[0].mileage);
       let beforeLastTrip = totalMiles - lastTripDistance;
       // This email will be sent for every 500 miles a user drives
-      /*
       if (Math.floor(totalMiles / 500) !== Math.floor(beforeLastTrip / 500)) {
         let email = new Email();
         let numMonths = Math.ceil(moment(Date.now()).diff(moment(user.createdAt), 'months'));
@@ -1487,8 +1488,14 @@ module.exports = class BookingService extends Service {
 
     let message = yield this.updateState('completed', _user, user);
     let rebookCost = booking.isFlagged('rebook') ? 13 : 5;
-    yield notify.sendTextMessage(user, `You're all done! Reply "rebook" to rebook for $${rebookCost}. Forget something? Reply "unlock" to get it in the next 5min.`);
-    yield notify.slack({ text : `:coffee: ${ message } ${ car.info() } ${ zoneString } ${ address } ${ booking.link() }` }, { channel : '#reservations' });
+    let stats = "(" + [
+      (details[1].mileage - details[0].mileage) * 0.621371 + "mi",
+      (details[1].charge  - details[0].charge) + "%",
+      Math.round((details[1].createdAt - details[0].createdAt) / 60000) + "min"
+    ].join(" ") + ")";
+
+    yield notify.sendTextMessage(user, `You're done! Reply "rebook" to rebook for $${rebookCost}. Forget something? Reply "unlock" to get it in the next 5min.`);
+    yield notify.slack({ text : `:coffee: ${ message } ${ car.info() } ${ stats } ${ zoneString } ${ address } ${ booking.link() }` }, { channel : '#reservations' });
     yield LogService.create({ bookingId : booking.id, carId : car.id, userId : user.id, action : Actions.COMPLETE_BOOKING }, _user);
 
     queue.scheduler.add('user-liability-release', {
@@ -1509,6 +1516,7 @@ module.exports = class BookingService extends Service {
 
 
     // If there are parking details, a slack notification is sent out close to expiration
+    /*
     let details = yield ParkingDetails.findOne({
       where: {
         bookingId: id,
@@ -1516,7 +1524,6 @@ module.exports = class BookingService extends Service {
     });
 
     // This implementation has proven to be unuseful
-    /*
     if (details) {
       let notificationTime = details.streetHours < 5 ? 30 : 90; 
       let timerObj = {value: notificationTime, type: 'minutes'};
