@@ -180,23 +180,24 @@ module.exports = {
       record = new Waitlist(data);
       yield record.save();
       if(data['accountType'] == 'waivework') {
-        let email = new Email()
         try {
-          emailOpts = {
+          let email = new Email();
+          yield email.send({
             to       : 'frank@waive.car',
             from     : config.email.sender,
-            subject  : `WaiveWork signup ${data['first_name']} ${data['last_name']}`,
+            subject  : `WaiveWork signup ${data['firstName']} ${data['lastName']}`,
             template : 'blank',
             context  : {
               payload: data
             }
-          };
-          yield email.send(emailOpts);
-        } catch(ex) {}
+          });
+        } catch(ex) {
+          console.log("Unable to send email", ex);
+        }
       }
 
       // If this is a valid waivework signup
-      if (isInside && data['accountType'] == 'waivework') {
+      if (data['accountType'] == 'waivework') {
         res.waivework = 'yes';
       } else {
         // FIELD
@@ -213,79 +214,85 @@ module.exports = {
       }
     }
 
-    if(promo === 'vip' || promo === 'seekdiscomfort' || promo === 'high5') {
-      res.fastTrack = 'yes';
-      delete res.inside;
-      let userList = yield this.letInByRecord([record], null, {intro: 'vip', promo: promo});
-      user = userList[0];
+    if(data['accountType'] != 'waivework') {
+      if(promo === 'vip' || promo === 'seekdiscomfort' || promo === 'high5') {
+        res.fastTrack = 'yes';
+        delete res.inside;
+        let userList = yield this.letInByRecord([record], null, {intro: 'vip', promo: promo});
+        user = userList[0];
 
-      if(user) {
+        if(user) {
+          let UserNote = Bento.model('UserNote');
+
+          let note = new UserNote({
+            userId: user.id,
+            // the author id currently can't be null
+            // so we make it the level fleet account
+            authorId: 14827,
+            content: promo,
+            type: 'promo'
+          });
+          yield note.save();
+        }
+        yield user.addTag('la');
+
+      } else if (promo === 'csula-student' || promo === 'csula-staff') {
+        res.csula = 'yes';
+        res.fastTrack = 'yes';
+        delete res.inside;
+        let userList = yield this.letInByRecord([record], null, {intro: 'csula', promo: promo});
+
+        user = userList[0];
+
+        // we need to save what the user said their
+        // unit or account number
+        yield user.addTag('csula');
+
+        // TODO: remove this after new release (2018-11-15)
+        yield user.update({tested: true});
+
         let UserNote = Bento.model('UserNote');
-
         let note = new UserNote({
           userId: user.id,
           // the author id currently can't be null
           // so we make it the level fleet account
           authorId: 14827,
-          content: promo,
-          type: 'promo'
+          content: [promo, payload.account].join(' '),
+          type: 'unit'
         });
         yield note.save();
+      } else if(promo === 'levelbk') {
+        res.level = 'yes';
+        res.fastTrack = 'yes';
+        delete res.inside;
+        let userList = yield this.letInByRecord([record], null, {template: 'level-letin'});
+
+        user = userList[0];
+
+        // we need to save what the user said their
+        // unit or account number
+        yield user.addTag('level');
+
+        let UserNote = Bento.model('UserNote');
+        let note = new UserNote({
+          userId: user.id,
+          // the author id currently can't be null
+          // so we make it the level fleet account
+          authorId: 14827,
+          content: payload.account,
+          type: 'unit'
+        });
+        yield note.save();
+      } else if (isInside) {
+        let userList = yield this.letInByRecord([record], null, {intro: 'vip'});
+        res.fastTrack = 'yes';
+        user = userList[0];
+        if(user) {
+          yield user.addTag('la');
+        } else {
+          console.log("The following produced an error", record);
+        }
       }
-      yield user.addTag('la');
-
-    } else if (promo === 'csula-student' || promo === 'csula-staff') {
-      res.csula = 'yes';
-      res.fastTrack = 'yes';
-      delete res.inside;
-      let userList = yield this.letInByRecord([record], null, {intro: 'csula', promo: promo});
-
-      user = userList[0];
-
-      // we need to save what the user said their
-      // unit or account number
-      yield user.addTag('csula');
-
-      // TODO: remove this after new release (2018-11-15)
-      yield user.update({tested: true});
-
-      let UserNote = Bento.model('UserNote');
-      let note = new UserNote({
-        userId: user.id,
-        // the author id currently can't be null
-        // so we make it the level fleet account
-        authorId: 14827,
-        content: [promo, payload.account].join(' '),
-        type: 'unit'
-      });
-      yield note.save();
-    } else if(promo === 'levelbk') {
-      res.level = 'yes';
-      res.fastTrack = 'yes';
-      delete res.inside;
-      let userList = yield this.letInByRecord([record], null, {template: 'level-letin'});
-
-      user = userList[0];
-
-      // we need to save what the user said their
-      // unit or account number
-      yield user.addTag('level');
-
-      let UserNote = Bento.model('UserNote');
-      let note = new UserNote({
-        userId: user.id,
-        // the author id currently can't be null
-        // so we make it the level fleet account
-        authorId: 14827,
-        content: payload.account,
-        type: 'unit'
-      });
-      yield note.save();
-    } else if (isInside) {
-      let userList = yield this.letInByRecord([record], null, {intro: 'vip'});
-      res.fastTrack = 'yes';
-      user = userList[0];
-      yield user.addTag('la');
     }
     return res;
   },
