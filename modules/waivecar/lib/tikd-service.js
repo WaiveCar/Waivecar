@@ -91,7 +91,7 @@ module.exports = {
   },
 
   *changeCar(state, car) {
-    if(car.vin && car.plateNumber && car.plateState) {
+    if(car.vin && car.plateNumberWork && car.plateState) {
       let metroArea = 'LosAngeles';
       if(yield car.hasTag('level')) {
         metroArea = 'NewYorkCity';
@@ -100,7 +100,7 @@ module.exports = {
         transactionId: 'car-' + car.license,
         eventName: state,
         vehicleInfo: {
-          plateNumber: car.plateNumber,
+          plateNumber: car.plateNumberWork,
           plateState: car.plateState,
           vin: car.vin,
           metroArea: metroArea,
@@ -110,7 +110,7 @@ module.exports = {
         }
       }, { Accept : 'application.vnd.fleets.v1+json' });
     } else {
-      console.log(`${car.license} is missing something: vin(${car.vin}) license(${car.plateNumber}) state(${car.plateState})`);
+      console.log(`${car.license} is missing something: vin(${car.vin}) license(${car.plateNumberWork}) state(${car.plateState})`);
       console.log(car);
     }
   },
