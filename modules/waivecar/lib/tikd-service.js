@@ -111,6 +111,7 @@ module.exports = {
       }, { Accept : 'application.vnd.fleets.v1+json' });
     } else {
       console.log(`${car.license} is missing something: vin(${car.vin}) license(${car.plateNumber}) state(${car.plateState})`);
+      console.log(car);
     }
   },
 
