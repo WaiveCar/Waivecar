@@ -108,13 +108,15 @@ module.exports = {
     }
   },
 
-  *tellChris(what) {
+  *tellChris(what, body) {
     yield this.email({
       to       : 'chris@waive.car',
       from     : config.email.sender,
       subject  : what,
       template : 'blank',
-      context  : {}
+      context  : {
+        payload: body
+      }
     });
   },
 
