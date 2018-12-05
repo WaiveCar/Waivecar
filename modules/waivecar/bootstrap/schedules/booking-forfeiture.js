@@ -29,7 +29,7 @@ scheduler.process('booking-forfeiture', function *(job) {
   try {
     yield bookingService.end(job.data.bookingId, user, {force: true});
   } catch(ex) { 
-    yield notify.tellChris(`Booking ${job.data.bookingId}, status ${booking.status} forfeit failed`);
+    yield notify.tellChris(`Booking ${job.data.bookingId}, status ${booking.status} forfeit failed`, ex);
   }
 
   yield notify.sendTextMessage(job.data.userId, `Hi, unfortunately we've had to make the car available for other users. We're sorry if there was difficulty starting the vehicle. Please call us if there's any questions or concerns.`);
