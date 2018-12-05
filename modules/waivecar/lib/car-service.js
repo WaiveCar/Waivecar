@@ -1097,8 +1097,8 @@ module.exports = {
         if(car.userId != _user.id) {
           // This means that the admin called a legacy unlock command from somewhere
           // in the backend that we haven't updated or caught. What we meant to do
-          // in this case is the legacy funcationality, that is, only unlock the doors.
-          yield notify.tellChris(`${ _user.name() } ${_user.id} tried to unimmobilize ${ car.license } from a legacy unlock`);
+          // in this case is the legacy functionality, that is, only unlock the doors.
+          //yield notify.tellChris(`${ _user.name() } ${_user.id} tried to unimmobilize ${ car.license } from a legacy unlock`);
           return false;
         }
         // Otherwise the user is likely using the service and we should treat them like
