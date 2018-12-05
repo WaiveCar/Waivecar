@@ -109,6 +109,7 @@ module.exports = {
   },
 
   *tellChris(what, body) {
+    body = body || {};
     yield this.email({
       to       : 'chris@waive.car',
       from     : config.email.sender,
