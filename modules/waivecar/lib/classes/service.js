@@ -34,13 +34,6 @@ module.exports = class Service {
     return booking;
   }
 
-  /**
-   * Attempts to return the car.
-   * @param  {String}  carId     The car id to retrieve.
-   * @param  {Number}  userId    The user being assigned to the car if isBooking.
-   * @param  {Boolean} isBooking We have special cases when isBooking is true.
-   * @return {Object}
-   */
   static *getCar(carId, userId, isBooking) {
     let car = yield Car.findById(carId);
 
@@ -50,6 +43,12 @@ module.exports = class Service {
         message : `The requested car does not exist.`
       }, 400);
     }
+
+    // TODO: FIXME
+    // This is for legacy apps because there's a bug with plateNumber
+    // AND a bug with the version checking module in ionic so we can't
+    // force an upgrade anymore. It's awesome
+    car.plateNumberWork = car.plateNumber;
 
     // ### Booking
     // If we are booking we need to make sure that the car is available, and that
