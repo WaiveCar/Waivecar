@@ -2,6 +2,36 @@
 
 $db_instance = false;
 
+define('ONE_WEEK', 7 * 24 * 60 * 60);
+function monthRange($start) {
+  $next = [$start[0], $start[1] + 1];
+  if($next[1] > 12) {
+    $next[0] ++;
+    $next[1] = 1;
+  }
+  return [$start, $next];
+}
+
+
+$csvFirst = true;
+$csvHandle = false;
+function csvrow($row) {
+  global $csvFirst, $csvHandle;
+  if(!$csvHandle) {
+    $csvHandle = fopen('php://stdout', 'w');
+  }
+
+  if($csvFirst) {
+    fputcsv($csvHandle, array_map(function($obj) { return $obj[0]; }, $row));
+    $csvFirst = false;
+  }
+  fputcsv($csvHandle, array_map(function($obj) { return $obj[1]; }, $row));
+}
+
+function sqldate($what) {
+  return sprintf("'%d-%02d'", $what[0], $what[1]);
+}
+
 function db() {
   global $db_instance;
   if(!$db_instance) {

@@ -18,7 +18,39 @@ function at_night($what) {
   return $what > $late && $what < $early;
 }
 
-define('ONE_WEEK', 7 * 24 * 60 * 60);
+function debit_cards() {
+  list($start, $end) = monthRange(['2016','01']); 
+  function query($what, $start, $end) {
+    $sStart = sqldate($start);
+    $sEnd = sqldate($end);
+    if($what) {
+      $what = "and type $what";
+    }
+    return one("select count(*) as m from shop_payment_cards where user_id in (select distinct user_id from bookings 
+      where created_at > $sStart and created_at < $sEnd) $what and (deleted_at is null or deleted_at > $sEnd) and created_at < $sEnd")['m'];
+  }
+
+  while ( true ) {
+    $dateStr =sprintf("%d-%02d", $start[0], $start[1]);
+    $row = [
+      ['date', $dateStr],
+      ['all', query(false, $start, $end)],
+      ['either', query("is not null", $start, $end)],
+      ['credit', query("='credit'", $start, $end)],
+      ['debit', query("='debit'", $start, $end)],
+      ['unknown', query("is null", $start, $end)],
+    ];
+    
+    if($row[1][1] == 0) {
+      break;
+    }
+
+    csvrow($row);
+    list($start, $end) = monthRange($end);
+  }
+
+
+}
 
 function booking_location() {
   $start = '2018-08-15';
@@ -639,7 +671,8 @@ function details($car = false, $start = false) {
   }
 }
 
-booking_location();
+debit_cards();
+//booking_location();
 //booking_duration();
 //details('60000018942E1401', '2017-04-24');
 //boo();
