@@ -374,12 +374,13 @@ module.exports = {
             return true;
           }
           try {
+            console.log(params);
             yield booking.create(params, user);
             yield slack('and the computer rebooked');
             let amount = params.opts.buyNow ? ('$' + params.opts.buyNow) : 'free';
             yield notify.sendTextMessage(user, `Rebooked ${ previousBooking.car.license } for ${ amount }.` );
           } catch(ex){
-            yield notify.sendTextMessage(user, `Unable to rebook ${ previousBooking.car.license }, please try again.` );
+            yield this.returnError(user, ex, command);
           }
           return true;
         }
