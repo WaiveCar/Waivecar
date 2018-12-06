@@ -111,7 +111,7 @@ module.exports = {
           { 
             $or: [ 
               { charge: { $lt : 50 } }, 
-              { charge: { $gt : 73 } }
+              { charge: { $gt : 65 } }
             ]
           },
           $where 
@@ -127,7 +127,7 @@ module.exports = {
             charge: {
               $or: [
                 { $lt : 35 },
-                { $gt : 67 }
+                { $gt : 65 }
               ]
             }
           }, 
