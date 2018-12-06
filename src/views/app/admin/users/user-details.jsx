@@ -313,11 +313,11 @@ module.exports = class UserDetails extends React.Component {
       ['choice', 'Choice', 'Hotel user'],
       ['aid', 'Aid', 'WaiveAid'],
       ['extend', 'Extend', 'Auto extend'],
-      ['debt', 'Debt', 'Debit card usage'],
+      ['debit', 'Debit', 'Debit card usage'],
     ].map((row, i) => (
       <div className="radio-inline" key={i}>
         <label title={ row[2] } >
-          <input type="checkbox" name="tagList" value={ row[0] } defaultChecked={ this.hasTag(row[0]) } />
+          <input type="checkbox" name="tagList[]" value={ row[0] } defaultChecked={ this.hasTag(row[0]) } />
           { row[1] } 
         </label>
       </div>

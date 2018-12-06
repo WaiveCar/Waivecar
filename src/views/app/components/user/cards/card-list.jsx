@@ -34,7 +34,8 @@ class CardList extends React.Component {
     this.setState({user: this.props.user});
   }
 
-  creditMod(who, amount, cards, description) {
+  creditMod(who, amount, cards, description, params) {
+    params = params || {};
 
     if(this.props.user.credit >= 0 && amount === 0) {
       snackbar.notify({
@@ -59,11 +60,11 @@ class CardList extends React.Component {
       message : 'processing...'
     });
 
-    let opts = {
+    let opts = Object.assign({
       userId      : who.id,
       amount      : amount * 100,
       description : description
-    };
+    }, params);
     if(cards.length) {
       opts.source = cards[0].id;
     }
@@ -95,15 +96,20 @@ class CardList extends React.Component {
     });
   }
 
-  chargeUser(who, cards) {
-    let name = [who.firstName, who.lastName].join(' ');
-    let amount = prompt("YOU ARE ABOUT TO CHARGE " + name + ".\nHow much would you like to charge " + name + "?\n(Tap Cancel to abort).");
+  chargeUser(who, cards, opts) {
+    let name = [who.firstName, who.lastName].join(' '),
+      warn = '';
+
+    if(opts.bypass) {
+      warn = '\n\nThis bypasses any credit they may have.\n';
+    }
+    let amount = prompt("YOU ARE ABOUT TO CHARGE " + name + "." + warn + "\nHow much would you like to charge " + name + "?\n(Tap Cancel to abort).");
 
     if (amount) {
       let reason = prompt('Optionally, give a reason for this charge.\nYou can leave this blank. But you must tap "OK" for the charge to go through.');
 
       if (reason !== null) {
-        return this.creditMod(who, amount, cards, reason);
+        return this.creditMod(who, amount, cards, reason, opts);
       }
     }
     snackbar.notify({
@@ -200,10 +206,13 @@ class CardList extends React.Component {
       <div style={{ textAlign: 'right' }}>
         { 
           auth.user().hasAccess('admin') ? 
-            <button onClick={ this.chargeUser.bind(this, this.props.user, cards) } className='btn btn-link btn-sm'>Charge User</button> 
+            <span>
+              <a onClick={ this.chargeUser.bind(this, this.props.user, cards, {bypass: 1}) } className='btn btn-link btn-sm'>Bypass Charge</a> 
+              <button onClick={ this.chargeUser.bind(this, this.props.user, cards, {bypass: 0}) } className='btn btn-link btn-sm'>Charge User</button> 
+            </span>
             : '' 
         }
-        <button onClick={ this.creditMod.bind(this, this.props.user, 0, cards) } className={'btn btn-sm ' + (this.props.user.credit >= 0 ? 'btn-link disabled' : '' ) }>Attempt to Clear Balance</button> 
+        <button onClick={ this.creditMod.bind(this, this.props.user, 0, cards, {}) } className={'btn btn-sm ' + (this.props.user.credit >= 0 ? 'btn-link disabled' : '' ) }>Attempt to Clear Balance</button> 
       </div>
     );
 
