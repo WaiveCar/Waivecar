@@ -121,6 +121,10 @@ module.exports = {
       console.log(`Can't find a license for ${user.name()}`);
     }
     license = license[0];
+    if(!license) {
+      console.log(`Can't find a license for ${user.name()}`);
+      return;
+    }
 
     return yield this.post('renters', {
       rentalId : "booking-" + booking.id,
