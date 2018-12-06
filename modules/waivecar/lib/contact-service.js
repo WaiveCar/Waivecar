@@ -374,7 +374,9 @@ module.exports = {
             return true;
           }
           try {
-            console.log(params);
+            // we aren't going to automatically rush from a rebook ... that's nonsense.
+            delete params.opts.rush;
+
             yield booking.create(params, user);
             yield slack('and the computer rebooked');
             let amount = params.opts.buyNow ? ('$' + params.opts.buyNow) : 'free';
