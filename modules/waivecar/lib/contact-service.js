@@ -183,7 +183,7 @@ module.exports = {
         // one character commands
         [/^l$/, 'lock'],
         [/^u$/, 'unlock'],
-        [/^c$/, 'abort'],
+        [/^[ca]$/, 'abort'],
         [/^f$/, 'finish'],
         [/^s$/, 'start'],
 
