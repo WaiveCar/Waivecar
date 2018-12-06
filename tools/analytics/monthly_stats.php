@@ -11,6 +11,21 @@ function tz($hour) {
 
 function duration_fix($duration, $startTime, $endTime) {
   global $lateHour, $earlyHour;
+  if(is_string($startTime)) {
+    $startTime = strtotime($startTime);
+  }
+  if(is_string($endTime)) {
+    $endTime = strtotime($endTime);
+  }
+  if($startTime > $endTime) {
+    $swap = $startTime;
+    $startTime = $endTime;
+    $endTime = $swap;
+  }
+  if(!$duration) {
+    $duration = $endTime - $startTime;
+  }
+
   $endHour = tz(date('G', $endTime));
   $startHour = tz(date('G', $startTime));
   if($startHour < $earlyHour) {
@@ -22,11 +37,11 @@ function duration_fix($duration, $startTime, $endTime) {
   return $duration;
 }
 
-$lateHour = 20;
-$earlyHour = 9;
+$lateHour = 22;
+$earlyHour = 8;
 
 $activeHourCount = $lateHour - $earlyHour;
-$last = [2018, 1];
+$last = [2017, 1];
 
 $current = [$last[0], $last[1] + 1];
 if($current[1] > 12) {
@@ -92,10 +107,11 @@ while ( true ) {
       if(array_key_exists($row['car_id'], $carMap)) {
 	//echo $row['car_id'] . " " . $row['action'] . "\n";
         if($row['action'] === 'CREATE_BOOKING' && in_array($carMap[$row['car_id']]['action'], ['END_BOOKING', 'MAKE_CAR_AVAILABLE'])) {
-          $duration = strtotime($row['created_at']) - strtotime($carMap[$row['car_id']]['created_at']);
+          $duration = duration_fix(null, $row['created_at'], $carMap[$row['car_id']]['created_at']);
+
           $idleList[] = $duration;
         } else if($row['action'] === 'END_BOOKING' && $carMap[$row['car_id']]['action'] === 'CREATE_BOOKING') {
-          $duration = strtotime($row['created_at']) - strtotime($carMap[$row['car_id']]['created_at']);
+          $duration = duration_fix(null, $row['created_at'], $carMap[$row['car_id']]['created_at']);
           $bookList[] = $duration;
         }
       }
@@ -128,6 +144,7 @@ while ( true ) {
     //printf("%5s:%-4d",  $day, count(array_keys($carList)));
     $total_active += count(array_keys($carList));
   }
+  printf("%d-%02d,%f\n", $last[0], $last[1], $total_active / $ix);
       //printf("\n");
   
   // 365/12(months) * $activeHourCount
@@ -147,9 +164,6 @@ while ( true ) {
     $current[0]++;
   }
 
-  foreach($availCount as $row) {
-  fputcsv($handle, $row);
-  }
   /*
   if($first) {
     fputcsv($handle, array_map(function($row) { return $row[0]; }, $count));
