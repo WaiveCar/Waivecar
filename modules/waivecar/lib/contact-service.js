@@ -46,7 +46,9 @@ module.exports = {
       }
 
     } else {
+      console.log("\n\n\n\n");
       console.log(err);
+      console.log("\n\n\n\n");
       message = "Sorry something went wrong.";
     }
     yield notify.sendTextMessage(user, message + append);
