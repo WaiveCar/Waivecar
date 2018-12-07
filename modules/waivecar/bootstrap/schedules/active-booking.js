@@ -170,7 +170,7 @@ var checkBooking = co.wrap(function *(booking) {
     }
   }
 
-  if (device.boardVoltage < 10.5) {
+  if (device.boardVoltage < 11.1) {
     if (!booking.isFlagged('low-12v-battery')) {
       yield booking.addFlag('low-12v-battery');
       yield notify.sendTextMessage(user,
