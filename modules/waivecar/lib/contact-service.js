@@ -46,6 +46,7 @@ module.exports = {
       }
 
     } else {
+      console.log(err);
       message = "Sorry something went wrong.";
     }
     yield notify.sendTextMessage(user, message + append);
