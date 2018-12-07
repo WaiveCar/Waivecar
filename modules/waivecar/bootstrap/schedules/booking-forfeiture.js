@@ -28,15 +28,16 @@ scheduler.process('booking-forfeiture', function *(job) {
   yield UserLog.addUserEvent(user, 'FORFEIT', booking.id);
   try {
     yield bookingService.end(job.data.bookingId, user, {force: true});
+    yield notify.sendTextMessage(job.data.userId, `Hi, unfortunately we've had to make the car available for other users. We're sorry if there was difficulty starting the vehicle. Please call us if there's any questions or concerns.`);
+    yield notify.sendPushNotification(job.data.userId, `Hi, unfortunately we've had to make the car available for other users. We're sorry if there was difficulty starting the vehicle. Please call us if there's any questions or concerns.`);
+
+    let adminMessage = `:shoe: ${ user.link() } forfeited ${ car.license }`;
+    yield notify.notifyAdmins(adminMessage, [ 'slack' ], { channel : '#rental-alerts' });
   } catch(ex) { 
-    yield notify.tellChris(`Booking ${job.data.bookingId}, status ${booking.status} forfeit failed`, ex);
+    let adminMessage = `:athletic_shoe: We failed to forfeit for ${ user.link() } on ${ car.license }, they likely made it there just in time!`;
+    yield notify.notifyAdmins(adminMessage, [ 'slack' ], { channel : '#rental-alerts' });
+    yield notify.tellChris(`Booking ${job.data.bookingId}, status ${booking.status} forfeit failed`, JSON.encode(ex));
   }
-
-  yield notify.sendTextMessage(job.data.userId, `Hi, unfortunately we've had to make the car available for other users. We're sorry if there was difficulty starting the vehicle. Please call us if there's any questions or concerns.`);
-  yield notify.sendPushNotification(job.data.userId, `Hi, unfortunately we've had to make the car available for other users. We're sorry if there was difficulty starting the vehicle. Please call us if there's any questions or concerns.`);
-
-  let adminMessage = `:shoe: ${ user.name() } forfeited ${ car.license }`;
-  yield notify.notifyAdmins(adminMessage, [ 'slack' ], { channel : '#rental-alerts' });
 });
 
 module.exports = function *() {
