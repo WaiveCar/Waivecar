@@ -440,6 +440,9 @@ module.exports = {
         success = false;
         response = yield this.returnError(user, ex, command);
       }
+      if(success && Math.random() < 0.2) {
+        yield notify.sendTextMessage(user, "Ending your ride over text comes with greater liability! Use the app or https://basic.waivecar.com next time to protect yourself.")
+      }
     }
 
     try {
