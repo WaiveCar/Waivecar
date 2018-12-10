@@ -345,7 +345,7 @@ module.exports = class LogService {
     // to code rot, I recommend looking at the loop to see the options.
     //
     query.scope = query.scope || 'ioniq';
-    if(!['ioniq','all','level'].includes(query.scope)) { 
+    if(!['ioniq','all','level','csula'].includes(query.scope)) { 
       let carList = query.scope.toUpperCase().split(',').map((row) => {
         return row.indexOf('W') === -1 ? ('WAIVE' + row) : row;
       });
@@ -377,6 +377,12 @@ module.exports = class LogService {
             excludeMap[row.id] = row.license;
           } else {
             includeMap[row.id] = row.license;
+          }
+        } else if(query.scope === 'csula') {
+          if(row.license.match(/csula/i)) {
+            includeMap[row.id] = row.license;
+          } else {
+            excludeMap[row.id] = row.license;
           }
         } else if(query.scope === 'level') {
           if((yield row.hasTag('level')) && row.license.indexOf('WORK') === -1) {
