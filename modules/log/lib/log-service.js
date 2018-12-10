@@ -508,8 +508,13 @@ module.exports = class LogService {
           bookByCar[id] = [];
           carOdometer[id] = [Number.MAX_VALUE, 0];
         }
-        carOdometer[id][0] = Math.min(+row.data, carOdometer[id][0]);
-        carOdometer[id][1] = Math.max(+row.data, carOdometer[id][1]);
+        row.data = +row.data;
+        // we really don't want to consider 0s for the beginning of our
+        // analysis ... no cars start at 0 miles while available for rental
+        if(row.data > 0) {
+          carOdometer[id][0] = Math.min(row.data, carOdometer[id][0]);
+        }
+        carOdometer[id][1] = Math.max(row.data, carOdometer[id][1]);
       });
     }
 
