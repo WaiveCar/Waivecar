@@ -2114,6 +2114,7 @@ module.exports = class BookingService extends Service {
         append = ' another time';
       }
       let fee = Math.ceil(remainingTime / minTime * 5) + baseline;
+      let creditClaim = '';
       let postparams = JSON.stringify({
         userId: user.id,
         carId: car.id,
@@ -2155,12 +2156,16 @@ module.exports = class BookingService extends Service {
         return buyOption;
       }
 
+      if(user.credit > 1800) {
+        creditClaim = ` (You have $${ (user.credit/100).toFixed(2) } in credit!)`;
+      }
+
       yield redis.doneWithIt(lockKeys);
 
       throw error.parse({
         code    : 'RECENT_BOOKING',
         title   : `Rebook the same WaiveCar${append}`,
-        message : `Sorry! You need to wait ${remainingTime}min more to rebook ${ car.license }${ append } for free!`,
+        message : `Sorry! You need to wait ${remainingTime}min more to rebook ${ car.license }${ append } for free!${ creditClaim }`,
         options : [
           buyOption,
           {
