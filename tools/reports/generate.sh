@@ -4,6 +4,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 path=/tmp/carreq
 year_month=$1
+scope=$2
 
 # This is run on a personal server (cjm)
 appImpressions() {
@@ -36,12 +37,18 @@ appImpressions() {
   conservative=`cat accum | sed -E s'/[0-9]\.[0-9]{3}Z//' | sort -n | uniq | wc -l`
 }
 
-appImpressions
-echo "naive: $naive"
-echo "generous: $generous"
-echo "conservative: $conservative"
+base=https://api.waivecar.com/report/$year_month/report
+if [ -z "$scope" ]; then 
+  appImpressions
+  echo "naive: $naive"
+  echo "generous: $generous"
+  echo "conservative: $conservative"
+else
+  base="${base}?scope=$scope"
+fi
 echo "Making heatmap"
-$DIR/makepoints.sh $year_month
-echo "Putting monthly report in $path/report-${year_month}.json"
-curl -s https://api.waivecar.com/report/$year_month/report > $path/report-${year_month}.json
+$DIR/makepoints.sh $year_month $scope
+report="$path/report-$scope${year_month}.json"
+echo "Putting monthly report in $report"
+curl -s $base > $report
 
