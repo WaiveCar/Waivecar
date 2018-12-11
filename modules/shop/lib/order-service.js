@@ -757,6 +757,10 @@ module.exports = class OrderService extends Service {
   // order is the core object here. It effectively gets passed
   // through to stripe as-is in shop/lib/stripe/charges.js
   static *charge(order, user, opts) {
+    let start = new Date();
+    function t(what){ 
+      console.log(" ", new Date() - start, what);
+    }
     // See #650: Api: Pass through the credit column before charging a user 
     //
     // We do two things here at once:
@@ -813,7 +817,7 @@ module.exports = class OrderService extends Service {
     if (order.amount >= 0 && credit < order.amount) {
       try {
         let service = this.getService(config.service, 'charges');
-        console.log("charges-get");
+        t("charges-get");
 
         // Since debt is negative credit we need to subtract to add
         // to the amount being charged. Yes that's confusing, read it
@@ -842,7 +846,7 @@ module.exports = class OrderService extends Service {
             amount      : amountToCharge,
             capture     : capture
           }, user);
-          console.log("charges-create");
+          t("charges-create");
 
           charge.amount = order.amount - credit;
 
@@ -851,7 +855,7 @@ module.exports = class OrderService extends Service {
             chargeId : charge.id,
             status   : capture ? 'paid' : 'authorized'
           });
-          console.log("order-update");
+          t("order-update");
         }
       } catch (ex) {
         // This more or less says we were unable to charge the user.
