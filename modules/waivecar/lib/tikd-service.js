@@ -51,7 +51,7 @@ module.exports = {
       if(res) {
         yield car.addTag('tikd');
       } else {
-        console.log(res);
+        console.log('failure', res);
       }
       return res;
     }
