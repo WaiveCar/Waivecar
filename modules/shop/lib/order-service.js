@@ -601,8 +601,10 @@ module.exports = class OrderService extends Service {
         amount      : amount
       });
       yield order.save();
+      console.log('order-save');
 
       let charge = yield this.charge(order, _user, {nocapture: true});
+      console.log('charge-made');
       if (charge.status !== 'failed') {
         this.authorize.last.newAuthorization = true;
         yield _user.update({ lastHoldAt: now });
