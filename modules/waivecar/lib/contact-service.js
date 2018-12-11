@@ -21,7 +21,6 @@ module.exports = {
     payload.message = payload.message || '';
     yield this.attemptAction(_user, [payload.subject, payload.message].join(' '), {raw: payload.message});
   },
-
   
   *returnError(user, err, what) {
     var message
@@ -56,6 +55,16 @@ module.exports = {
   },
 
   *attemptAction(user, command, opts) {
+    var res = false;
+    var parts = command.split(';');
+
+    while(parts.length) {
+      res |= yield this.attemptSingleAction(user, parts.shift(), opts);
+    }
+    return res;
+  },
+
+  *attemptSingleAction(user, command, opts) {
     // alias commands are blank.
     var success = true;
     let sendToSupport = false;
@@ -86,11 +95,12 @@ module.exports = {
 
     function *slack(message = '') {
       yield notify.slack({ text : `:selfie: ${ user.link() } sent "${ opts.raw }" ${message}` }, { channel : '#reservations' });
+      return true;
     }
 
     // we try the complex book command first.
     command = command.toLowerCase();
-    let argCmd = command.match(/^(rush|book|b|details|d)\s(\w+|\w+\s\d+)$/i);
+    let argCmd = command.match(/^(una|ava|ret|rush|book|b|details|d)\s(\w+|\w+\s\d+)$/i);
 
     // This is a level text
     if(command.match(/we have received your pickup request/)) {
@@ -113,6 +123,20 @@ module.exports = {
       });
       if(requestedCar) {
         try {
+          if(user.hasAccess('admin')) {
+            if(argCmd[1] === 'una') {
+              yield cars.updateAvailability(requestedCar.id, false, user);
+              return yield slack();
+            }
+            if(argCmd[1] === 'ava') {
+              yield cars.updateAvailability(requestedCar.id, true, user);
+              return yield slack();
+            }
+            if(argCmd[1] === 'ret') {
+              yield cars.retrieve(requestedCar.id, user);
+              return yield slack();
+            }
+          }
           if(argCmd[1] === 'rush') {
             let res = yield booking.create({
               userId: user.id,
