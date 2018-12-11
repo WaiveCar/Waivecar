@@ -813,6 +813,7 @@ module.exports = class OrderService extends Service {
     if (order.amount >= 0 && credit < order.amount) {
       try {
         let service = this.getService(config.service, 'charges');
+        console.log("charges-get");
 
         // Since debt is negative credit we need to subtract to add
         // to the amount being charged. Yes that's confusing, read it
@@ -841,6 +842,7 @@ module.exports = class OrderService extends Service {
             amount      : amountToCharge,
             capture     : capture
           }, user);
+          console.log("charges-create");
 
           charge.amount = order.amount - credit;
 
@@ -849,6 +851,7 @@ module.exports = class OrderService extends Service {
             chargeId : charge.id,
             status   : capture ? 'paid' : 'authorized'
           });
+          console.log("order-update");
         }
       } catch (ex) {
         // This more or less says we were unable to charge the user.
