@@ -78,7 +78,10 @@ module.exports = class BookingService extends Service {
   // Creates a new booking.
   static *create(data, _user) {
     let start = new Date();
-    let lockKeys = yield redis.shouldProcess('booking-car', data.carId, 45 * 1000);
+    function t(b) {
+      console.log(new Date() - start, b);
+    }
+    let lockKeys = yield redis.shouldProcess('booking-car', data.carId, 60 * 1000);
     if (!lockKeys) {
       throw error.parse({
         code    : 'BOOKING_AUTHORIZATION',
@@ -89,6 +92,7 @@ module.exports = class BookingService extends Service {
     let timerMap = config.booking.timers;
     let isRush = data.opts && data.opts.rush;
     let driver = yield this.getUser(data.userId, true);
+    t("begin");
 
     var car;
     try {
@@ -99,6 +103,7 @@ module.exports = class BookingService extends Service {
       throw err;
     } 
     let isLevel = yield car.isTagged('level');
+    t("get car");
 
     if(isRush) {
       var hour = moment().tz('America/Los_Angeles').format('H');
@@ -116,6 +121,7 @@ module.exports = class BookingService extends Service {
       // themselves, this code is still run.
       yield this.hasBookingAccess(driver);
     }
+    t("has access");
 
     // If someone owes us more than a dollar
     // we tell them to settle their balance with us.
@@ -148,6 +154,7 @@ module.exports = class BookingService extends Service {
         } else {
           order = yield OrderService.authorize(null, driver);
         } 
+        t("auth");
         let orderDate = moment(order.createdAt).format('MMMM Do YYYY');
         let amount = (order.amount / 100).toFixed(2);
         let title;
@@ -170,6 +177,7 @@ module.exports = class BookingService extends Service {
                 body,
               }
             });
+            t("email");
           } catch(err) {
             log.warn('email error: ', err);
           } 
@@ -202,14 +210,17 @@ module.exports = class BookingService extends Service {
 
     if(!_user.hasAccess('admin')) {
       yield this.offerWaiveRush(driver, car, data.opts, lockKeys);
+      t("rush-check");
     }
     yield this.lookForHolding(driver, car);
+    t("holding-check");
 
     let rebookOrder;
     // If the creator isn't an admin or is booking for themselves
     if (!(isRush || driver.isWaiveWork || _user.hasAccess('admin'))) {// || _user.id !== driver.id) {
       rebookOrder = yield this.rebookCheck(driver, car, data.opts, lockKeys);
     }
+    t("rebook-check");
 
     if(!driver.isWaiveWork) {
       let hoardRes = yield this.lookForHoarding(driver, car);
@@ -218,6 +229,7 @@ module.exports = class BookingService extends Service {
         yield notify.slack({ text : `:pig2: The rapacious ${ driver.link() } did ${ hoardRes[1] } of the last ${ hoardRes[2] } bookings with ${ car.license }. How rude!` }, { channel : '#rental-alerts' });
       }
     }
+    t("hoard-check");
 
     // see #1318 we do this, as of this comment's writing, a second time, after 
     // a potential charge has gone through because stripe has some issues
@@ -243,7 +255,8 @@ module.exports = class BookingService extends Service {
       carId  : data.carId,
       userId : data.userId
     });
-    
+    t("booking-create");
+
     try {
       yield booking.save();
     } catch (err) {
