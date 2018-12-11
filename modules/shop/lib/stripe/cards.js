@@ -31,11 +31,9 @@ module.exports = class StripeCards {
     this.verifyStripeId(user);
 
     let isDebitUser = yield user.hasTag('debit');
-    console.log(isDebitUser);
     let result = yield new Promise((resolve, reject) => {
       this.stripe.customers.createCard(user.stripeId, { card : changeCase.objectKeys('toSnake', card) }, (err, res) => {
         if (err) return reject(err);
-        console.log(res);
 
         // No debit cars (#1305) and no pre-paid (no ticket found actually)
         // There's a *fourth* type of card, 'unknown' ... for our sakes
@@ -59,7 +57,7 @@ module.exports = class StripeCards {
 
           return reject(error.parse({
             code    : 'DEBIT_CARD',
-            message : 'Please use a non-prepaid and non-debit credit card.'
+            message : `Please use a non-prepaid and non-debit credit card. This is a ${res.funding} card.`
           }, 400));
         }
         resolve(res);
