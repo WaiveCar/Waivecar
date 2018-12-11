@@ -1450,7 +1450,7 @@ module.exports = class BookingService extends Service {
         // yield booking.setNowLock({userId: _user.id, carId: car.id});
       }
     } catch(ex) {
-      if (!query.force || !booking || !car || !user) {
+      if (!(query && query.force) || !booking || !car || !user) {
         yield redis.doneWithIt(lockKeys);
         throw ex;
       }
