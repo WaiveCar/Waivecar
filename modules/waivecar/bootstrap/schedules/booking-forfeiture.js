@@ -34,6 +34,7 @@ scheduler.process('booking-forfeiture', function *(job) {
     let adminMessage = `:shoe: ${ user.link() } forfeited ${ car.license }`;
     yield notify.notifyAdmins(adminMessage, [ 'slack' ], { channel : '#rental-alerts' });
   } catch(ex) { 
+    console.log('booking-forfeit-fail', ex);
     let adminMessage = `:athletic_shoe: We failed to forfeit for ${ user.link() } on ${ car.license }, they likely made it there just in time!`;
     yield notify.notifyAdmins(adminMessage, [ 'slack' ], { channel : '#rental-alerts' });
     yield notify.tellChris(`Booking ${job.data.bookingId}, status ${booking.status} forfeit failed`, JSON.encode(ex));
