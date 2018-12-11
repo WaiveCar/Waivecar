@@ -23,12 +23,6 @@ module.exports = class StripeCards {
     this.stripe = service;
   }
 
-  /**
-   * Registers a new credit card with the stripe service.
-   * @param  {Object} user User to assign the credit card under.
-   * @param  {Object} card The card information.
-   * @return {Object}      Returns the api representation of the card.
-   */
   *create(user, card) {
     // This just checks for a property on the user object existing
     // and throws an error if it doesn't ... probably a bad way
@@ -36,12 +30,12 @@ module.exports = class StripeCards {
     // error catcher higher up but that's the way it goes.
     this.verifyStripeId(user);
 
-    // ### Register Card
-
     let isDebitUser = yield user.hasTag('debit');
+    console.log(isDebitUser);
     let result = yield new Promise((resolve, reject) => {
       this.stripe.customers.createCard(user.stripeId, { card : changeCase.objectKeys('toSnake', card) }, (err, res) => {
         if (err) return reject(err);
+        console.log(res);
 
         // No debit cars (#1305) and no pre-paid (no ticket found actually)
         // There's a *fourth* type of card, 'unknown' ... for our sakes
