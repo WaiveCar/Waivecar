@@ -44,7 +44,7 @@ function QuizController($injector, $stateParams, $scope, $interval, $data){
           prompt: 'How do you fuel a WaiveCar?',
           answerList: [
             [ 0, '87 Octane at a gas station', "That's a BIG NO! These cars take a special kind of fuel." ],
-            [ 1, 'On campus for free between 8AM-5PM at the Hydrogen station, off campus at my expense', 'Correct. Hydrogen fuel off campus is expensive'],
+            [ 1, 'On campus for free between 9AM-5PM at the Hydrogen station, off campus at my expense', 'Correct. Hydrogen fuel off campus is expensive'],
             [ 0, 'They are electric and you plug them in to a wall', 'No. Their are many fine electric cars, but these are Hydrogen Fuel Cells.'],
             [ 0, 'The cars run forever on a perpetual motion machine', "What Sorcery! No, sorry."]
           ]
