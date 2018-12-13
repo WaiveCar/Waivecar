@@ -382,7 +382,7 @@ module.exports = class OrderService extends Service {
       }
     }
 
-    if (minutesOver !== 0) {
+    if (minutesOver !== 0 || booking.isFlagged('rush')) {
       billableGroups = Math.ceil(minutesOver / 10);
       if(!booking.isFlagged('rush')) {
         amount = Math.round((billableGroups / 6 * 5.99) * 100);
@@ -390,9 +390,17 @@ module.exports = class OrderService extends Service {
       } else {
         amount = 1499;
 
-        // waiverush is la exclusive for now (2018-11-08)
-        // Note: If the user keeps it an extra day this system *will* break.
-        let tenAM = moment().tz('America/Los_Angeles').format('YYYY-MM-DD 10:00');
+        // waiverush is LA exclusive for now (2018-11-08)
+        let startHour = +moment(start.createdAt).tz('America/Los_Angeles').format('H');
+
+        // We need to find out whether we are considering 10AM today or tomorrow
+        let dayToCompute = moment(start.createdAt);
+        if(startHour > 12) {
+          // This means it's 10AM tomorrow.
+          dayToCompute = dayToCompute.add('1','day');
+        }
+
+        let tenAM = dayToCompute.tz('America/Los_Angeles').format('YYYY-MM-DD 10:00');
         minutesOver = Math.ceil(Math.max( (new Date() - moment.tz(tenAM, 'America/Los_Angeles')) / 1000 / 60, 0));
         billableGroups = Math.ceil(minutesOver / 10);
         amount += Math.round((billableGroups / 6 * 5.99) * 100);
