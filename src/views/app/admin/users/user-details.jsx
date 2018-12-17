@@ -9,6 +9,7 @@ import CardList       from '../../components/user/cards/card-list';
 import AddCard        from '../../components/user/cards/add-card';
 import RideList       from '../../components/user/rides/ride-list';
 import ChargeList     from '../../components/user/charges/charge-list';
+import WaiveWorkDetails from './waivework-details'; 
 
 
 module.exports = class UserDetails extends React.Component {
@@ -44,6 +45,7 @@ module.exports = class UserDetails extends React.Component {
             message : err.message
           });
         }
+        console.log('user: ', user);
         this.setState({currentUser: user});
         this.users.store(user);
       });
@@ -472,7 +474,6 @@ module.exports = class UserDetails extends React.Component {
                     }
                   </div>
                 </div>
-
                 <div className="form-actions text-center">
                   <div className="btn-group" role="group">
                     <button type="submit" className="btn btn-sm">Update Details</button>
@@ -488,6 +489,7 @@ module.exports = class UserDetails extends React.Component {
             : ''
           }
           <CardList addCard={ this.addCard } user={ user } currentUser={ false }></CardList>
+          { this.state.currentUser.isWaivework && <WaiveWorkDetails /> }
           <div className='rides'>
             <RideList user={ user } currentUser={ false } full={ false }></RideList>
             <ChargeList user={ user } currentUser={ false } full={ false }></ChargeList>
