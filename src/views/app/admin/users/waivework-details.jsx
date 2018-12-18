@@ -6,8 +6,14 @@ class WaiveWorkDetails extends Component {
   }
   render() {
     return (
-      <div>
-        WaiveWork Details
+      <div className="box">
+        <h3>
+          WaiveWork Billing
+          <small>Setup User's WaiveWork Billing</small>
+        </h3>
+        <div className="box-content">
+          WaiveWork Stuff
+        </div>
       </div>
     );
   }
