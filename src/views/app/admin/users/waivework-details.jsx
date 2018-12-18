@@ -6,6 +6,10 @@ class WaiveWorkDetails extends Component {
     super(props);
     this.state = {
       currentWaiveWorkBooking: null,
+      allTime: 0,
+      lastMonth: 0,
+      lastWeek: 0,
+      yesterday: 0,
     };
   }
 
@@ -31,6 +35,13 @@ class WaiveWorkDetails extends Component {
   }
 
   render() {
+    let {
+      currentWaiveWorkBooking,
+      allTime,
+      lastMonth,
+      lastWeek,
+      yesterday,
+    } = this.state;
     return (
       <div className="box">
         <h3>
@@ -40,12 +51,42 @@ class WaiveWorkDetails extends Component {
         <div className="box-content">
           {this.state.currentWaiveWorkBooking ? (
             <div>
-              Currently In WaiveWork
+              Current WaiveWork Booking
+              <div>Start Date:</div>
+              <div>Next Billing Date:</div>
+              <div>Total Miles Driven:</div>
+              <div style={{textAlign: 'center'}}>
+                Average Miles Per Day:
+                <table style={{width: '100%'}}>
+                  <tbody>
+                    <tr>
+                      <th>All Time</th>
+                      <th>Last Month</th>
+                      <th>Last Week</th>
+                      <th>Yesterday</th>
+                    </tr>
+                    <tr>
+                      <td>{allTime}</td>
+                      <td>{lastMonth}</td>
+                      <td>{lastWeek}</td>
+                      <td>{yesterday}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div>
+                Price Per Week:
+              </div>
+              <div className="text-center">
+                <div className="btn-group" role="group">
+                  <button type="button" className="btn btn-primary">
+                    Update
+                  </button>
+                </div>
+              </div>
             </div>
           ) : (
-            <div>
-              Not currently in WaiveWork
-            </div>
+            <div>Not currently into a WaiveWork vehicle</div>
           )}
         </div>
       </div>
