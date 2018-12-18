@@ -374,7 +374,6 @@ module.exports = class UserDetails extends React.Component {
             </h3>
             <div className="box-content">
               <form className="bento-form-static" role="form" onSubmit={ this.submit }>
-
                 <div className="form-group row">
                   <FormInput className="col-md-6 bento-form-input">
                     <label>First Name</label>
@@ -489,7 +488,7 @@ module.exports = class UserDetails extends React.Component {
             : ''
           }
           <CardList addCard={ this.addCard } user={ user } currentUser={ false }></CardList>
-          { this.state.currentUser.isWaivework && <WaiveWorkDetails /> }
+          { this.state.currentUser.isWaivework && <WaiveWorkDetails user={user} /> }
           <div className='rides'>
             <RideList user={ user } currentUser={ false } full={ false }></RideList>
             <ChargeList user={ user } currentUser={ false } full={ false }></ChargeList>
