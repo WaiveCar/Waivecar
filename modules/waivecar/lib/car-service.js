@@ -23,6 +23,7 @@ let hooks       = Bento.Hooks;
 
 let User = Bento.model('User');
 let Car  = Bento.model('Car');
+let CarHistory = Bento.model('CarHistory');
 let Booking = Bento.model('Booking');
 let BookingDetails = Bento.model('BookingDetails');
 let GroupCar  = Bento.model('GroupCar');
@@ -207,8 +208,10 @@ module.exports = {
     };
   },
 
-  *history(id) {
-    return id;
+  *history(id, query) {
+    console.log('query: ', query);
+    let history = yield CarHistory.find({ where: {carId: id}});
+    return history;
   },
 
   joinCarsWithBookings(cars, bookings) {

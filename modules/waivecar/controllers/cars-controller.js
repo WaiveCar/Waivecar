@@ -122,7 +122,7 @@ Bento.Register.Controller('CarsController', function(controller) {
   };
 
   controller.history = function *(id) {
-    return yield car.history(id);
+    return yield car.history(id, this.query);
   } 
 
   return controller;
