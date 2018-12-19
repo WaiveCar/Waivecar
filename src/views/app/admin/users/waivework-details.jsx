@@ -30,7 +30,14 @@ class WaiveWorkDetails extends Component {
           return console.log(err);
         }
         if (bookings[0] && bookings[0].car.license.match(/work/gi)) {
-          this.setState({currentWaiveWorkBooking: bookings[0]});
+          this.setState({currentWaiveWorkBooking: bookings[0]}, () => {
+            api.get(`/cars/${bookings[0].car.id}/history`, (err, history) => {
+              if (err) {
+                return console.log(err);
+              }
+              console.log('car history: ', history);
+            });
+          });
         }
       },
     );
@@ -57,8 +64,8 @@ class WaiveWorkDetails extends Component {
               Current WaiveWork Booking{' '}
               <Link to={`/bookings/${currentWaiveWorkBooking.id}`}>
                 {currentWaiveWorkBooking.id}
-              </Link>
-              {' '} in {' '} 
+              </Link>{' '}
+              in{' '}
               <Link to={`/cars/${currentWaiveWorkBooking.car.id}`}>
                 {currentWaiveWorkBooking.car.license}
               </Link>
@@ -69,8 +76,10 @@ class WaiveWorkDetails extends Component {
               <div>Next Billing Date:</div>
               <div>
                 Total Miles Driven:{' '}
-                {currentWaiveWorkBooking.car.totalMileage -
-                  currentWaiveWorkBooking.details[0].mileage}
+                {(
+                  currentWaiveWorkBooking.car.totalMileage -
+                  currentWaiveWorkBooking.details[0].mileage
+                ).toFixed(2)}
               </div>
               <div style={{textAlign: 'center'}}>
                 Average Miles Per Day:
