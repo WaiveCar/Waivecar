@@ -26,6 +26,10 @@ Bento.Register.Model('CarHistory', 'sequelize', function(model, Sequelize) {
     data : {
       type      : Sequelize.STRING(64),
       allowNull : false
+    },
+
+    createdAt : {
+      type: Sequelize.DATE
     }
   };
 

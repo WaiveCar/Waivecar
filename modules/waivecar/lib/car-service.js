@@ -210,7 +210,13 @@ module.exports = {
 
   *history(id, query) {
     console.log('query: ', query);
-    let history = yield CarHistory.find({ where: {carId: id}});
+    let queryObj = {
+      where: {
+        carId: id,
+      }
+    };
+    queryObj.where.createdAt = query.start ? {$gte: query.start} : null;
+    let history = yield CarHistory.find(queryObj);
     return history;
   },
 
