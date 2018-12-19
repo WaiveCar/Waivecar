@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {api} from 'bento';
+import moment from 'moment';
 
 class WaiveWorkDetails extends Component {
   constructor(props) {
@@ -42,6 +43,7 @@ class WaiveWorkDetails extends Component {
       lastWeek,
       yesterday,
     } = this.state;
+    console.log('booking: ', currentWaiveWorkBooking);
     return (
       <div className="box">
         <h3>
@@ -52,9 +54,16 @@ class WaiveWorkDetails extends Component {
           {this.state.currentWaiveWorkBooking ? (
             <div>
               Current WaiveWork Booking
-              <div>Start Date:</div>
+              <div>
+                Start Date:{' '}
+                {moment(currentWaiveWorkBooking.createdAt).format('MM/DD/YYYY')}
+              </div>
               <div>Next Billing Date:</div>
-              <div>Total Miles Driven:</div>
+              <div>
+                Total Miles Driven:{' '}
+                {currentWaiveWorkBooking.car.totalMileage -
+                  currentWaiveWorkBooking.details[0].mileage}
+              </div>
               <div style={{textAlign: 'center'}}>
                 Average Miles Per Day:
                 <table style={{width: '100%'}}>
@@ -74,9 +83,7 @@ class WaiveWorkDetails extends Component {
                   </tbody>
                 </table>
               </div>
-              <div>
-                Price Per Week:
-              </div>
+              <div>Price Per Week:</div>
               <div className="text-center">
                 <div className="btn-group" role="group">
                   <button type="button" className="btn btn-primary">
@@ -86,7 +93,7 @@ class WaiveWorkDetails extends Component {
               </div>
             </div>
           ) : (
-            <div>Not currently into a WaiveWork vehicle</div>
+            <div>Not currently booked into a WaiveWork vehicle</div>
           )}
         </div>
       </div>
