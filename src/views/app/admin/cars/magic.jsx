@@ -73,7 +73,8 @@ module.exports = class Magic extends React.Component {
       let htmlList = [];
       let klass = '';
       let checkList = [
-        ['isImmobilized', 'stop'],
+        ['isAvailable', 'thumbs-up'],
+        ['isImmobilized', 'exclamation-triangle'],
         ['userId', 'user'],
         ['isLocked', 'lock'],
         ['inRepair', 'wrench'],
