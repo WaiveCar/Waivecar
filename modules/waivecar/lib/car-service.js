@@ -207,6 +207,10 @@ module.exports = {
     };
   },
 
+  *history(id) {
+    return id;
+  },
+
   joinCarsWithBookings(cars, bookings) {
 
     var cardIdToBookingIdMap = {};

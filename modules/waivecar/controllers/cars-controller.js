@@ -121,6 +121,10 @@ Bento.Register.Controller('CarsController', function(controller) {
     return yield car.ping();
   };
 
+  controller.history = function *(id) {
+    return yield car.history(id);
+  } 
+
   return controller;
 
 });
