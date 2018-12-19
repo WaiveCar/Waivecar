@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {Link} from 'react-router';
 import {api} from 'bento';
 import moment from 'moment';
 
@@ -53,7 +54,14 @@ class WaiveWorkDetails extends Component {
         <div className="box-content">
           {this.state.currentWaiveWorkBooking ? (
             <div>
-              Current WaiveWork Booking
+              Current WaiveWork Booking{' '}
+              <Link to={`/bookings/${currentWaiveWorkBooking.id}`}>
+                {currentWaiveWorkBooking.id}
+              </Link>
+              {' '} in {' '} 
+              <Link to={`/cars/${currentWaiveWorkBooking.car.id}`}>
+                {currentWaiveWorkBooking.car.license}
+              </Link>
               <div>
                 Start Date:{' '}
                 {moment(currentWaiveWorkBooking.createdAt).format('MM/DD/YYYY')}
@@ -83,7 +91,9 @@ class WaiveWorkDetails extends Component {
                   </tbody>
                 </table>
               </div>
-              <div>Price Per Week:</div>
+              <div>
+                Price Per Week: <input type="number" />
+              </div>
               <div className="text-center">
                 <div className="btn-group" role="group">
                   <button type="button" className="btn btn-primary">
