@@ -31,7 +31,7 @@ class WaiveWorkDetails extends Component {
         }
         if (bookings[0] && bookings[0].car.license.match(/work/gi)) {
           this.setState({currentWaiveWorkBooking: bookings[0]}, () => {
-            api.get(`/cars/${bookings[0].car.id}/history`, (err, history) => {
+            api.get(`/cars/${bookings[0].car.id}/history?start=${bookings[0].createdAt}`, (err, history) => {
               if (err) {
                 return console.log(err);
               }
@@ -52,6 +52,7 @@ class WaiveWorkDetails extends Component {
       yesterday,
     } = this.state;
     console.log('booking: ', currentWaiveWorkBooking);
+    // TODO: Add conversion from km to miles
     return (
       <div className="box">
         <h3>
