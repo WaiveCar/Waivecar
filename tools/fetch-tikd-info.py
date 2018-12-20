@@ -26,6 +26,7 @@ with open('./tikd-sheet.csv', 'r') as f:
                       info.stripe_id, 
                       licenses.number, 
                       info.email, 
+                      info.phone,
                       info.first_name, 
                       info.last_name, 
                       licenses.street_1, 
@@ -44,6 +45,7 @@ with open('./tikd-sheet.csv', 'r') as f:
                           users.email, 
                           users.first_name, 
                           users.last_name, 
+                          users.phone,
                           users.stripe_id 
                         from 
                           (
@@ -86,7 +88,9 @@ with open('./tikd-sheet.csv', 'r') as f:
             for item in cursor:
                 row[15] = item[0]
                 for i in range(1, len(item)):
-                    row[17 + i] = item[i]
-                print('completed row: ', row)
+                    row[16 + i] = item[i]
+    with open('./tikd-result.csv', "w") as output:
+        writer = csv.writer(output, lineterminator='\n')
+        writer.writerows(rows)
 
 mysql_connection.close()
