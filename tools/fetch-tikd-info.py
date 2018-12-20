@@ -8,10 +8,10 @@ with open('./tikd-sheet.csv', 'r') as f:
     rows = list(reader)
     for i in range(1, len(rows)):
         row = rows[i]
-        if not len(row[18]):
+        if not len(row[19]):
             issue_time = row[13]
             issue_date = row[14]
-            plate_number = row[16]
+            plate_number = row[17]
             local = pytz.timezone ('America/Los_Angeles')
             naive = datetime.datetime.strptime ('{} {}'.format(issue_date, issue_time), '%m/%d/%Y %H:%M:%S %p')
             local_dt = local.localize(naive, is_dst=None)
@@ -86,9 +86,9 @@ with open('./tikd-sheet.csv', 'r') as f:
             except exception as e:
                 print('error executing query: ', e)
             for item in cursor:
-                row[15] = item[0]
+                row[16] = item[0]
                 for i in range(1, len(item)):
-                    row[16 + i] = item[i]
+                    row[17 + i] = item[i]
     with open('./tikd-result.csv', "w") as output:
         writer = csv.writer(output, lineterminator='\n')
         writer.writerows(rows)
