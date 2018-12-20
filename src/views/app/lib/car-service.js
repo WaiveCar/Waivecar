@@ -6,10 +6,6 @@ import moment                      from 'moment';
 
 module.exports = class Car extends Service {
 
-  /**
-   * Stores the provided context.
-   * @param {Object} ctx
-   */
   constructor(ctx) {
     super(ctx, 'car', {
       isLoading : false,
@@ -21,7 +17,7 @@ module.exports = class Car extends Service {
   }
 
   executeCommand(car, command, opts) {
-    opts = opts || {};
+    opts = (opts && opts.constructor.name !== 'SyntheticMouseEvent') || {};
 
     if(command === 'refresh') {
       return this.setCar(car.id);
