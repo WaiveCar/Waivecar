@@ -84,7 +84,9 @@ with open('./tikd-sheet.csv', 'r') as f:
             except exception as e:
                 print('error executing query: ', e)
             for item in cursor:
-                print(row)
-                print(item)
+                row[15] = item[0]
+                for i in range(1, len(item)):
+                    row[17 + i] = item[i]
+                print('completed row: ', row)
 
 mysql_connection.close()
