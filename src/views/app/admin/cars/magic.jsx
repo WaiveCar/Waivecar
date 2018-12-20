@@ -74,7 +74,7 @@ module.exports = class Magic extends React.Component {
       let klass = '';
       let checkList = [
         ['isAvailable', 'thumbs-up'],
-        ['isImmobilized', 'exclamation-triangle'],
+        ['isImmobilized', 'exclamation-triangle', true],
         ['userId', 'user'],
         ['isLocked', 'lock'],
         ['inRepair', 'wrench'],
@@ -82,7 +82,7 @@ module.exports = class Magic extends React.Component {
       ];
 
       checkList.forEach((row) => {
-        let className = (car[row[0]] ? "active" : "inactive") + " fa fa-" + row[1];
+        let className = (car[row[0]]^row[2] ? "active" : "inactive") + " fa fa-" + row[1];
         htmlList.push( <i className={ className }></i> );
       })
 
