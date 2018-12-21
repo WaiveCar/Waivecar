@@ -14,7 +14,7 @@ with open('./tikd-sheet.csv', 'r') as f:
         issue_date = row[14]
         plate_number = row[17]
         date_time = dateparser.parse(issue_time + ' ' + issue_date)
-        local = pytz.timezone('America/Los_Angeles' if row[15] == 'PT' else 'US/Eastern')
+        local = pytz.timezone('America/Los_Angeles')
         naive = datetime.datetime.strptime (str(date_time), '%Y-%m-%d %H:%M:%S')
         local_dt = local.localize(naive, is_dst=None)
         utc_dt = local_dt.astimezone(pytz.utc)
@@ -83,8 +83,14 @@ with open('./tikd-sheet.csv', 'r') as f:
         except Exception as e:
             print('error executing query: ', e)
         item = cursor.fetchone()
+
+        if row[15] != 'PT':
+            print('dt: ', date_time)
+            print('naive: ', naive)
+            print('utc: ', utc_dt)
+            print('itemmmmmm: ', item)
         if not item:
-            print('row not found: ', row)
+        #    print('row not found: ', row)
             continue
         for i in range(len(item)):
             row[19 + i] = item[i]
