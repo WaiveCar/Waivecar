@@ -1,4 +1,5 @@
-import csv, pytz, datetime
+import csv, pytz, datetime, re
+import dateparser
 import MySQLdb as mysql
 mysql_connection = mysql.connect(database='waivecar_development', user='waivecar', password='eNwlGGl6g6V0w0qX3vx0S5GKbGvTtR3X')
 cursor = mysql_connection.cursor()
@@ -10,10 +11,12 @@ with open('./tikd-sheet.csv', 'r') as f:
         row = rows[i]
         if not len(row[19]):
             issue_time = row[13]
+            issue_time = re.sub('\.', ':', issue_time)
             issue_date = row[14]
             plate_number = row[17]
-            local = pytz.timezone ('America/Los_Angeles')
-            naive = datetime.datetime.strptime ('{} {}'.format(issue_date, issue_time), '%m/%d/%Y %H:%M:%S %p')
+            date_time = dateparser.parse(issue_time + ' ' + issue_date)
+            local = pytz.timezone('America/Los_Angeles' if row[15] == 'LA' else 'US/Eastern')
+            naive = datetime.datetime.strptime (str(date_time), '%Y-%m-%d %H:%M:%S')
             local_dt = local.localize(naive, is_dst=None)
             utc_dt = local_dt.astimezone(pytz.utc)
             try:
@@ -83,12 +86,20 @@ with open('./tikd-sheet.csv', 'r') as f:
                     where 
                       licenses.user_id = info.user_id;
                 '''.format(plate_number, utc_dt))
-            except exception as e:
+            except Exception as e:
                 print('error executing query: ', e)
-            for item in cursor:
-                row[16] = item[0]
-                for i in range(1, len(item)):
-                    row[17 + i] = item[i]
+
+            for r in cursor:
+                item = r
+            cursor.execute('''
+                select created_at from booking_details where booking_id={} and type="end";        
+            '''.format(item[2]))
+            #for i in cursor:
+            #    print(i)
+            row[16] = item[0]
+            for i in range(1, len(item)):
+                row[17 + i] = item[i]
+
     with open('./tikd-result.csv', "w") as output:
         writer = csv.writer(output, lineterminator='\n')
         writer.writerows(rows)
