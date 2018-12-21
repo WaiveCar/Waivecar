@@ -21,70 +21,64 @@ with open('./tikd-sheet.csv', 'r') as f:
         cursor = mysql_connection.cursor()
         try:
             cursor.execute('''
-                select 
-                  license, 
-                  plate, 
-                  booking_id, 
-                  info.user_id, 
-                  info.stripe_id, 
-                  licenses.number, 
-                  info.email, 
-                  info.phone,
-                  info.first_name, 
-                  info.last_name, 
-                  licenses.street_1, 
-                  licenses.street_2, 
-                  licenses.city, 
-                  licenses.state, 
-                  licenses.zip 
-                from 
-                  (
-                    select 
-                      booking.car_id, 
-                      booking.license, 
-                      booking.plate, 
-                      booking.user_id, 
-                      booking.booking_id, 
-                      users.email, 
-                      users.first_name, 
-                      users.last_name, 
-                      users.phone,
-                      users.stripe_id 
-                    from 
-                      (
-                        select 
-                          car.id as car_id, 
-                          car.license, 
-                          car.plate, 
-                          bookings.id as booking_id, 
-                          bookings.user_id 
-                        from 
-                          (
-                            select 
-                              id, 
-                              license, 
-                              plate_number as plate 
-                            from 
-                              cars 
-                            where 
-                              plate_number = "{}"
-                          ) as car 
-                          right join bookings on bookings.car_id = car.id 
-                        where 
-                          bookings.car_id = car.id 
-                          and bookings.created_at < '{}' 
-                        order by 
-                          bookings.created_at desc 
-                        limit 
-                          1
-                      ) as booking 
-                      right join users on booking.user_id = users.id 
-                    where 
-                      booking.user_id = users.id
-                  ) as info 
-                  right join licenses on licenses.user_id = info.user_id 
-                where 
-                  licenses.user_id = info.user_id;
+            select
+              booking.booking_id,
+              user.id,
+              user.stripe_id,
+              user.number,
+              user.email,
+              user.phone,
+              user.first_name,
+              user.last_name,
+              user.street_1,
+              user.street_2,
+              user.city,
+              user.state,
+              user.zip
+            from
+              (
+                select
+                  bookings.id as booking_id,
+                  bookings.user_id
+                from
+                  bookings
+                  right join booking_details on booking_details.booking_id = bookings.id
+                where
+                  bookings.car_id =(
+                    select
+                      id
+                    from
+                      cars
+                    where
+                      plate_number = "{}"
+                  )
+                  and booking_details.created_at < "{}"
+                  and booking_details.type = "start"
+                order by
+                  booking_details.id desc
+                limit
+                  1
+              ) as booking
+              right join (
+                select
+                  users.id as id,
+                  users.email,
+                  users.phone,
+                  users.first_name,
+                  users.last_name,
+                  users.stripe_id,
+                  licenses.number,
+                  licenses.street_1,
+                  licenses.street_2,
+                  licenses.city,
+                  licenses.state,
+                  licenses.zip
+                from
+                  users
+                  right join licenses on licenses.user_id = users.id
+              ) as user on booking.user_id = user.id
+            where
+              booking.user_id = user.id;
             '''.format(plate_number, utc_dt))
         except Exception as e:
             print('error executing query: ', e)
@@ -92,9 +86,8 @@ with open('./tikd-sheet.csv', 'r') as f:
         if not item:
             print('row not found: ', row)
             continue
-        row[16] = item[0]
-        for i in range(1, len(item)):
-            row[17 + i] = item[i]
+        for i in range(len(item)):
+            row[19 + i] = item[i]
 
     with open('./tikd-result.csv', "w") as output:
         writer = csv.writer(output, lineterminator='\n')
