@@ -2170,7 +2170,7 @@ module.exports = class BookingService extends Service {
         return buyOption;
       }
 
-      if(user.credit > 1800) {
+      if(user.credit - (fee * 100) > 100) {
         creditClaim = ` (You have $${ (user.credit/100).toFixed(2) } in credit!)`;
       }
 
