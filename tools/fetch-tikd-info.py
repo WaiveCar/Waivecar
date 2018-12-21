@@ -10,96 +10,106 @@ with open('./tikd-sheet.csv', 'r') as f:
     rows = list(reader)
     for i in range(1, len(rows)):
         row = rows[i]
-        if not len(row[19]):
-            issue_time = row[13]
-            issue_time = re.sub('\.', ':', issue_time)
-            issue_date = row[14]
-            plate_number = row[17]
-            date_time = dateparser.parse(issue_time + ' ' + issue_date)
-            local = pytz.timezone('America/Los_Angeles')
-            naive = datetime.datetime.strptime(str(date_time), '%Y-%m-%d %H:%M:%S')
-            local_dt = local.localize(naive, is_dst=None)
-            utc_dt = local_dt.astimezone(pytz.utc).replace(tzinfo=None)
-            cursor = mysql_connection.cursor()
-            try:
-                cursor.execute('''
+        #if not len(row[19]):
+        issue_time = row[13]
+        issue_time = re.sub('\.', ':', issue_time)
+        issue_date = row[14]
+        plate_number = row[17]
+        date_time = dateparser.parse(issue_time + ' ' + issue_date)
+        local = pytz.timezone('America/Los_Angeles')
+        naive = datetime.datetime.strptime(str(date_time), '%Y-%m-%d %H:%M:%S')
+        local_dt = local.localize(naive, is_dst=None)
+        utc_dt = local_dt.astimezone(pytz.utc).replace(tzinfo=None)
+        cursor = mysql_connection.cursor()
+        try:
+            cursor.execute('''
+            select
+              booking.booking_id,
+              user.id,
+              user.stripe_id,
+              user.number,
+              user.email,
+              user.phone,
+              user.first_name,
+              user.last_name,
+              user.street_1,
+              user.street_2,
+              user.city,
+              user.state,
+              user.zip
+            from
+              (
                 select
-                  booking.booking_id,
-                  user.id,
-                  user.stripe_id,
-                  user.number,
-                  user.email,
-                  user.phone,
-                  user.first_name,
-                  user.last_name,
-                  user.street_1,
-                  user.street_2,
-                  user.city,
-                  user.state,
-                  user.zip
+                  bookings.id as booking_id,
+                  bookings.user_id
                 from
-                  (
-                    select
-                      bookings.id as booking_id,
-                      bookings.user_id
-                    from
-                      bookings
-                      right join booking_details on booking_details.booking_id = bookings.id
-                    where
-                      bookings.car_id =(
-                        select
-                          id
-                        from
-                          cars
-                        where
-                          plate_number = "{}"
-                      )
-                      and booking_details.created_at < '{}'
-                    order by
-                      booking_details.id desc
-                    limit
-                      1
-                  ) as booking
-                  right join (
-                    select
-                      users.id as id,
-                      users.email,
-                      users.phone,
-                      users.first_name,
-                      users.last_name,
-                      users.stripe_id,
-                      licenses.number,
-                      licenses.street_1,
-                      licenses.street_2,
-                      licenses.city,
-                      licenses.state,
-                      licenses.zip
-                    from
-                      users
-                      right join licenses on licenses.user_id = users.id
-                  ) as user on booking.user_id = user.id
+                  bookings
+                  right join booking_details on booking_details.booking_id = bookings.id
                 where
-                  booking.user_id = user.id;
-                '''.format(plate_number, utc_dt))
-            except Exception as e:
-                print('error executing query: ', e)
-            item = cursor.fetchone()
+                  bookings.car_id =(
+                    select
+                      id
+                    from
+                      cars
+                    where
+                      plate_number = "{}"
+                  )
+                  and booking_details.created_at < '{}'
+                order by
+                  booking_details.id desc
+                limit
+                  1
+              ) as booking
+              right join (
+                select
+                  users.id as id,
+                  users.email,
+                  users.phone,
+                  users.first_name,
+                  users.last_name,
+                  users.stripe_id,
+                  licenses.number,
+                  licenses.street_1,
+                  licenses.street_2,
+                  licenses.city,
+                  licenses.state,
+                  licenses.zip
+                from
+                  users
+                  right join licenses on licenses.user_id = users.id
+              ) as user on booking.user_id = user.id
+            where
+              booking.user_id = user.id;
+            '''.format(plate_number, utc_dt))
+        except Exception as e:
+            print('error executing query: ', e)
+        item = cursor.fetchone()
 
-            if not item:
-                print('row not found: ', row, '\n This is probably due to the plate number being missing or wrong in the database')
-                continue
-            cursor.execute('select created_at, type from booking_details where booking_id = {} and type="end"'.format(item[0]))
-            booking_end = cursor.fetchone()
-            user_responsibility = True
-            if booking_end:
-                print('end: ', booking_end[0], 'ticket time: ', utc_dt)
-                print('delta', item[0], (utc_dt.replace(tzinfo=None) - booking_end[0]))
-                is_sm = True if re.search('santa monica', row[3], re.IGNORECASE) else False
-            if user_responsibility:
-                for i in range(len(item)):
-                    row[19 + i] = item[i]
-            else:
-                row[19] = 'waivecar ticket'
+        if not item:
+            print('row not found: ', row, '\n This is probably due to the plate number being missing or wrong in the database')
+            continue
+        cursor.execute('select booking_details.created_at, booking_details.type from booking_details right join parking_details on parking_details.booking_detail_id=booking_details.id where booking_details.booking_id = {} and booking_details.type="end"'.format(item[0]))
+        booking_end = cursor.fetchone()
+        user_responsibility = True
+        if booking_end:
+            difference = (utc_dt.replace(tzinfo=None) - booking_end[0]).total_seconds()
+            is_sm = True if re.search('santa monica', row[3], re.IGNORECASE) else False
+            max_time = 3600 * 3 if is_sm else 3600 * 12
+            if difference > max_time:
+                print('______________________________________')
+                print('waive responsibility')
+                print('end: ', item[0], booking_end[0], 'ticket time: ', utc_dt)
+                print('is sm?', is_sm)
+                print('difference: ', difference)
+                print('max time', max_time)
+                print('______________________________________')
+                user_responsibility = False
+        if user_responsibility:
+            for i in range(len(item)):
+                row[19 + i] = item[i]
+        else:
+            print(row)
+            row[19] = 'waivecar ticket'
 
 
     with open('./tikd-result.csv', 'w') as output:
