@@ -584,6 +584,10 @@ module.exports = class OrderService extends Service {
 
   static *authorize(payload, _user) {
     payload = payload || {};
+    // this is created for when there will be no charge on the account
+    var order = {
+      amount: 0,
+    };
     let card = yield _user.getCard();
     let amount = _user.credit > 0 ? 100 : 2000;
     // This data leak is so that if we fail to charge the card, we can
@@ -603,7 +607,7 @@ module.exports = class OrderService extends Service {
         });
       }
       // ### Create Order
-      var order = new Order({
+      order = new Order({
         createdBy   : _user.id,
         userId      : _user.id,
         source      : card.id,
@@ -621,12 +625,7 @@ module.exports = class OrderService extends Service {
         yield _user.update({ lastHoldAt: now });
       }
       yield this.cancel(order, _user, charge);
-    } else {
-      // this is created for when there will be no charge on the account
-      var order = {
-        amount: 0,
-      };
-    }
+    } 
     // notify that there was no hold for the ride
     return order;
   }
