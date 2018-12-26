@@ -583,6 +583,7 @@ module.exports = class OrderService extends Service {
   }
 
   static *authorize(payload, _user) {
+    payload = payload || {};
     let card = yield _user.getCard();
     let amount = _user.credit > 0 ? 100 : 2000;
     // This data leak is so that if we fail to charge the card, we can
@@ -592,7 +593,9 @@ module.exports = class OrderService extends Service {
       amount: amount
     };
     let now = moment().utc();
-    if (_user.lastHoldAt === null || (_user.lastHoldAt && now.diff(_user.lastHoldAt, 'days') > 2)) {
+    if(payload.bypass) {
+      yield notify.notifyAdmins(`:rabbit2: ${ _user.link() } is bypassing authorization check`, [ 'slack' ], { channel : '#rental-alerts' });
+    } else if ( _user.lastHoldAt === null || (_user.lastHoldAt && now.diff(_user.lastHoldAt, 'days') > 2)) {
       if (!card) {
         throw error.parse({
           code    : 'SHOP_MISSING_CARD',

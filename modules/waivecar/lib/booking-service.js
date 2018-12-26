@@ -152,7 +152,8 @@ module.exports = class BookingService extends Service {
           // we need to make sure that admins will pass the code below
           order = {amount: 0, createdAt: new Date()};
         } else {
-          order = yield OrderService.authorize(null, driver);
+          let opts = {bypass: data.bypass};
+          order = yield OrderService.authorize(opts, driver);
         } 
         t("auth");
         let orderDate = moment(order.createdAt).format('MMMM Do YYYY');
