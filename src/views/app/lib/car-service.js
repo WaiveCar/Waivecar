@@ -17,7 +17,9 @@ module.exports = class Car extends Service {
   }
 
   executeCommand(car, command, opts) {
-    opts = (opts && opts.constructor.name !== 'SyntheticMouseEvent') || {};
+    if(!opts || opts.constructor.name == 'SyntheticMouseEvent') {
+      opts = {};
+    }
 
     if(command === 'refresh') {
       return this.setCar(car.id);
@@ -39,11 +41,6 @@ module.exports = class Car extends Service {
     }.bind(this));
   }
 
-  /**
-   * Form submission method for bento-web form component.
-   * @param  {Object}   data
-   * @param  {Function} reset
-   */
   update(data) {
     this.save(auth.user(), data, function (err, model) {
       if (err) {
