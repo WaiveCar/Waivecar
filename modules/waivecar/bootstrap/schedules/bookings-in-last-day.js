@@ -2,6 +2,7 @@
 
 let scheduler = Bento.provider('queue').scheduler;
 let Car = Bento.model('Car');
+let User = Bento.model('User');
 let moment = require('moment-timezone');
 let notify = require('../../lib/notification-service');
 let geocodeService = require('../../lib/geocoding-service');
@@ -51,6 +52,10 @@ function *showBookings() {
     for(let car of carList) {
       let lastBooking = Math.round((new Date() - car.bookings[0].createdAt) / 1000 / 24 / 60 / 60);
       let warn = car.isAvailable ? " AVAILABLE" : (!car.inRepair ? " NOT IN REPAIR" : "");
+      if(warn == '' && car.userId) {
+        let user = yield User.findById(car.userId);
+        warn = user.link();
+      }
       row.push(`${car.license} ${lastBooking}d (${car.averageCharge()}%) ${warn}`);
     }
     output.push(`*${header}*` + row.join("\n… "));
