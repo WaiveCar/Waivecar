@@ -46,17 +46,17 @@ function *showBookings() {
       carList[0].latitude,
       carList[0].longitude,
     );
-    let row = [];
+    let row = [[]];
     
     for(let car of carList) {
       let lastBooking = Math.round((new Date() - car.bookings[0].createdAt) / 1000 / 24 / 60 / 60);
       let warn = car.isAvailable ? " *AVAILABLE*" : (!car.inRepair ? " *NOT IN REPAIR*" : "");
       row.push(`${car.license} (${car.averageCharge()}%${warn}) last booked ${lastBooking}d ago`);
     }
-    output.push(header + "\n " + row.join("\n "));
+    output.push(header + row.join("\n&nbsp;&nbsp;"));
   }
   yield notify.notifyAdmins(
-    ':sleeping_accommodation: ' + output.join("\n"),
+    ':sleeping_accommodation: ' + output.join("\n\n"),
     ['slack'],
     {channel: '#rental-alerts'},
   );
