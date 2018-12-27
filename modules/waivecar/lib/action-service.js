@@ -34,6 +34,18 @@ function makeState(state, value) {
   };
 }
 
+function getStep(state) {
+  return parseInt(state.step ? state.step.state : 0, 10);
+}
+
+function increment(state) {
+  let current = getStep(state);
+  current ++;
+  state.nextStep = makeState(state, current);
+
+  return {action: false, state: state};
+}
+
 function *getBooking(id) {
   return yield Booking.findOne({
     where : {
@@ -48,15 +60,31 @@ function *getBooking(id) {
 
 
 var eventMap = {
+  tagWarnLockCar: {
+    type: USER,
+    forward: function *(state) {
+      return increment(state);
+    },
+    cb: function *(state) {
+      return {action: getStep(state) < 5, state: state};
+    }
+  },
+
+  tagWarnStartRide: {
+    type: USER,
+    forward: function *(state) {
+      return increment(state);
+    },
+    cb: function *(state) {
+      return {action: getStep(state) < 5, state: state};
+    }
+  },
+
   endBooking: {
     type: USER,
     requireList: [BOOKING, CAR],
     forward: function *(state) {
-      let current = parseInt(state.step ? state.step.state : 0, 10);
-      current ++;
-      state.nextStep = makeState(state, current);
-
-      return {action: false, state: state};
+      return increment(state);
     },
 
     cb: function *(state) {
@@ -69,7 +97,7 @@ var eventMap = {
       ];
 
       if(state.car.model !== "Spark EV") { //'IONIQ') {
-        let current = parseInt(state.step ? state.step.state : 0, 10);
+        let current = getStep(state);
         if(current < stateList.length) {
           let url = `https://waivecar.typeform.com/to/${ stateList[current][0] }?user=${ state.user.id }&booking=${ state.booking.id }`;
           action = [['loadUrl', url]];
@@ -108,6 +136,7 @@ module.exports = {
     });
 
     let res = yield ev.forward(state);
+    console.log(res, state);
 
     // set the new state.
     if(res.state.nextStep) {

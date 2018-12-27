@@ -998,7 +998,22 @@ module.exports = {
 
   *lockCar(id, _user, car, opts) {
     if (_user) yield LogService.create({ carId : id, action : Actions.LOCK_CAR }, _user);
-    return yield this.executeCommand(id, 'central_lock', 'lock', _user, car, opts);
+    let res = yield this.executeCommand(id, 'central_lock', 'lock', _user, car, opts);
+
+    let bookingService = require('./booking-service');
+    car = car || (yield Car.findById(id));
+    let isInSantaMonica = yield bookingService.getZone(car, 'Santa Monica');
+    if(isInSantaMonica) {
+      let actionService = require('./action-service');
+      let shouldWarn = yield actionService.getAction('tagWarnLockCar', _user.id, _user);
+      if(shouldWarn.action) {
+        yield actionService.goForward('tagWarnLockCar', _user.id);
+        throw error.parse({
+          code    : 'TAG_WARNING',
+          message : 'As of January 1, 2019, parking meters are <b>No Longer Free</b> in the City of Santa Monica. If this changes in the future, we will notify you. We will remind you of this the first few times when you lock the car in the Santa Monica.'
+        }, 400);
+      }
+    }
   },
 
   *openDoor(id, _user){
