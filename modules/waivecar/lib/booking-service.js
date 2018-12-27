@@ -1348,6 +1348,7 @@ module.exports = class BookingService extends Service {
   // Locks, and makes the car available for a new booking.
   static *_complete(id, _user, query, payload) {
     let lockKeys = yield redis.shouldProcess('booking-complete', id);
+    let errorAtEnd = false;
     let details;
     if (!lockKeys) {
       return;
@@ -1462,7 +1463,12 @@ module.exports = class BookingService extends Service {
         // yield booking.setNowLock({userId: _user.id, carId: car.id});
       }
     } catch(ex) {
-      console.log(ex);
+      if(ex.code === 'TAG_WARNING') {
+        errorAtEnd = ex;
+      } else if (!(query && query.force) || !booking || !car || !user) {
+        yield redis.doneWithIt(lockKeys);
+        throw ex;
+      }
     }
 
     yield booking.complete();
@@ -1574,6 +1580,9 @@ module.exports = class BookingService extends Service {
       car.relay('update');
     }
     yield this.relay('update', booking, _user);
+    if(errorAtEnd) {
+      throw errorAtEnd;
+    }
   }
 
   // Closes a booking, this method is run when no payment is needed.
