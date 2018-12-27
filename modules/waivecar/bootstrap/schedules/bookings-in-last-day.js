@@ -31,7 +31,7 @@ function *showBookings() {
     if (car.license.search(/(waive|csula)/i) != -1 && car.bookings.length) {
       let lastBooking = new Date() - car.bookings[0].createdAt;
       if(lastBooking / 1000 / 24 / 60 / 60 > 0.8) { 
-        let key = (2*car.latitude).toFixed(2) + (2*car.longitude).toFixed(2);
+        let key = (car.latitude).toFixed(2) + (car.longitude).toFixed(2);
         if(!locHash[key]) {
           locHash[key] = [];
         }
@@ -51,7 +51,7 @@ function *showBookings() {
     for(let car of carList) {
       let lastBooking = Math.round((new Date() - car.bookings[0].createdAt) / 1000 / 24 / 60 / 60);
       let warn = car.isAvailable ? " AVAILABLE" : (!car.inRepair ? " NOT IN REPAIR" : "");
-      row.push(`${car.license} (${car.averageCharge()}%${warn}) last booked ${lastBooking}d ago`);
+      row.push(`${car.license} ${lastBooking}d (${car.averageCharge()}) %${warn}`);
     }
     output.push(`*${header}*` + row.join("\n… "));
   }
