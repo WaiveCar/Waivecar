@@ -1447,6 +1447,13 @@ module.exports = class BookingService extends Service {
       //
       // ---
 
+    } catch(ex) {
+      if (!(query && query.force) || !booking || !car || !user) {
+        yield redis.doneWithIt(lockKeys);
+        throw ex;
+      }
+    }
+    try { 
       if (!isLevel) { 
         yield cars.lockCar(car.id, _user);
         yield cars.lockImmobilizer(car.id, _user);
@@ -1455,10 +1462,7 @@ module.exports = class BookingService extends Service {
         // yield booking.setNowLock({userId: _user.id, carId: car.id});
       }
     } catch(ex) {
-      if (!(query && query.force) || !booking || !car || !user) {
-        yield redis.doneWithIt(lockKeys);
-        throw ex;
-      }
+      console.log(ex);
     }
 
     yield booking.complete();
