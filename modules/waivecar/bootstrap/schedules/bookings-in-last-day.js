@@ -28,7 +28,7 @@ function *showBookings() {
   let locHash = {};
   carsToCheck.sort(function(a, b) { return a.latitude - b.latitude + (a.longitude - b.longitude) } ); 
   for (let car of carsToCheck) {
-    if (car.license.search(/work/) === -1 && car.bookings.length) {
+    if (car.license.search(/work/i) === -1 && car.bookings.length) {
       let lastBooking = new Date() - car.bookings[0].createdAt;
       if(lastBooking / 1000 / 24 / 60 / 60 > 0.8) { 
         let key = (2*car.latitude).toFixed(2) + (2*car.longitude).toFixed(2);
