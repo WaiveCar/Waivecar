@@ -51,12 +51,17 @@ function *showBookings() {
     
     for(let car of carList) {
       let lastBooking = Math.round((new Date() - car.bookings[0].createdAt) / 1000 / 24 / 60 / 60);
+      let weeks = Math.round(lastBooking / 7);
       let warn = car.isAvailable ? "AVAILABLE" : (!car.inRepair ? "NOT IN REPAIR" : "");
       if(car.userId) {
         let user = yield User.findById(car.userId);
         warn += ' ' + user.link();
       }
-      row.push(`${car.link()} ${lastBooking}d (${car.averageCharge()}%) ${warn}`);
+      let msg = `${car.link()} ${lastBooking}d ${warn}`;
+      if(weeks > 1) {
+        msg += ` (${weeks} weeks!)`
+      }
+      row.push(msg);
     }
     output.push(`*${header}*` + row.join("\n… "));
   }
