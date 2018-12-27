@@ -136,7 +136,6 @@ module.exports = {
     });
 
     let res = yield ev.forward(state);
-    console.log(res, state);
 
     // set the new state.
     if(res.state.nextStep) {

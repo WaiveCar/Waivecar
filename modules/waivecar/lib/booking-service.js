@@ -342,6 +342,7 @@ module.exports = class BookingService extends Service {
     if(!isLevel) {
       let actionService = require('./action-service');
       let shouldWarn = yield actionService.getAction('tagWarnStartRide', driver.id, driver);
+      console.log(shouldWarn);
       if(shouldWarn.action) {
         yield actionService.goForward('tagWarnLockCar', driver.id);
         carpoolWarning = ' Notice: As of January 1, 2019, WaiveCars no longer have special carpool lane privileges.';
