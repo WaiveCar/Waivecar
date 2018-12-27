@@ -28,10 +28,10 @@ function *showBookings() {
   let locHash = {};
   carsToCheck.sort(function(a, b) { return a.latitude - b.latitude + (a.longitude - b.longitude) } ); 
   for (let car of carsToCheck) {
-    if (car.license.search(/work/) === -1 && car.bookings.length) {
+    if (car.license.search(/(waive|csula)/i) != -1 && car.bookings.length) {
       let lastBooking = new Date() - car.bookings[0].createdAt;
       if(lastBooking / 1000 / 24 / 60 / 60 > 0.8) { 
-        let key = (2*car.latitude).toFixed(2) + (2*car.longitude).toFixed(2);
+        let key = (car.latitude).toFixed(2) + (car.longitude).toFixed(2);
         if(!locHash[key]) {
           locHash[key] = [];
         }
@@ -42,21 +42,21 @@ function *showBookings() {
 
   for (let key in locHash) {
     let carList = locHash[key];
-    let header = yield geocodeService.getAddress(
+    let header = (yield geocodeService.getAddress(
       carList[0].latitude,
       carList[0].longitude,
-    );
-    let row = [];
+    )).replace(/, (CA|NY|USA)/g,'');
+    let row = [[]];
     
     for(let car of carList) {
       let lastBooking = Math.round((new Date() - car.bookings[0].createdAt) / 1000 / 24 / 60 / 60);
-      let warn = car.isAvailable ? " *AVAILABLE*" : (!car.inRepair ? " *NOT IN REPAIR*" : "");
-      row.push(`${car.license} (${car.averageCharge()}%${warn}) last booked ${lastBooking}d ago`);
+      let warn = car.isAvailable ? " AVAILABLE" : (!car.inRepair ? " NOT IN REPAIR" : "");
+      row.push(`${car.license} ${lastBooking}d (${car.averageCharge()}%) ${warn}`);
     }
-    output.push(header + "\n " + row.join("\n "));
+    output.push(`*${header}*` + row.join("\n… "));
   }
   yield notify.notifyAdmins(
-    ':sleeping_accommodation: ' + output.join("\n"),
+    ':sleeping_accommodation: Sleeping cars\n' + output.join("\n\n"),
     ['slack'],
     {channel: '#rental-alerts'},
   );
