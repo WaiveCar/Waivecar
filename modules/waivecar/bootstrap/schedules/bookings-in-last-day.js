@@ -43,11 +43,10 @@ function *showBookings() {
 
   for (let key in locHash) {
     let carList = locHash[key];
-    let locationName = (yield geocodeService.getAddress(
+    let header = (yield geocodeService.getAddress(
       carList[0].latitude,
       carList[0].longitude,
     )).replace(/, (CA|NY|USA)/g,'');
-    let header = `<https://maps.google.com/?q=${carList[0].latitude},${carList[0].longitude}|${locationName}>`;
     let row = [[]];
     
     for(let car of carList) {
