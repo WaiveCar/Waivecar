@@ -108,7 +108,6 @@ module.exports = function*() {
   // This gets the seconds until the cars are to be marked unavailable
   let secondsUntilTime = Math.abs(moment().diff(timeToCheck, 'seconds'));
   let timerObj = {value: secondsUntilTime, type: 'seconds'};
-  yield showBookings();
   scheduler.add('bookings-in-last-day', {
     timer: timerObj,
   });
