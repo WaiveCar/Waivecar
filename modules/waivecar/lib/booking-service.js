@@ -910,7 +910,7 @@ module.exports = class BookingService extends Service {
     return hub;
   }
 
-  static *getZone(car) {
+  static *getZone(car, query=false) {
     var zone;
 
     if(!locationCache) {
@@ -925,6 +925,9 @@ module.exports = class BookingService extends Service {
         zone = row;
       }
     });
+    if(query) {
+      return zone && (zone.name.search(query) !== -1);
+    }
     return zone;
   }
 
