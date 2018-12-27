@@ -344,7 +344,7 @@ module.exports = class BookingService extends Service {
       let shouldWarn = yield actionService.getAction('tagWarnStartRide', driver.id, driver);
       if(shouldWarn.action) {
         yield actionService.goForward('tagWarnLockCar', driver.id);
-        carpoolWarning = ' Notice: as of January 1, 2019, WaiveCars no longer have special carpool lane privileges.';
+        carpoolWarning = ' Notice: As of January 1, 2019, WaiveCars no longer have special carpool lane privileges.';
       }
     }
 
