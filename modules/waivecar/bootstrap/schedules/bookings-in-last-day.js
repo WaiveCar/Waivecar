@@ -43,7 +43,7 @@ scheduler.process('bookings-in-last-day', function*(job) {
         car.longitude,
       );
       // if the car is available and not in repair, this is a bad sign
-      let warn = car.isAvailable) ? " *AVAILABLE*" : (!car.inRepair ? " *NOT IN REPAIR*" : "");
+      let warn = car.isAvailable ? " *AVAILABLE*" : (!car.inRepair ? " *NOT IN REPAIR*" : "");
       yield notify.notifyAdmins(
         `:sleeping_accommodation: ${
           car.license
