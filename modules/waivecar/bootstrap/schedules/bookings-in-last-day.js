@@ -57,7 +57,7 @@ function *showBookings() {
         let user = yield User.findById(car.userId);
         warn = user.link();
       }
-      row.push(`${car.license} ${lastBooking}d (${car.averageCharge()}%) ${warn}`);
+      row.push(`${car.link()} ${lastBooking}d (${car.averageCharge()}%) ${warn}`);
     }
     output.push(`*${header}*` + row.join("\n… "));
   }
