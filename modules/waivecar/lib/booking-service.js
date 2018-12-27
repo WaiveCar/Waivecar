@@ -1250,7 +1250,7 @@ module.exports = class BookingService extends Service {
     //
     if(deltas.charge > 0) {
       // we err in the user's favor by using the high estimates
-      let miles = Math.floor((deltas.charge / 100) * car.getRange('LOW') * 0.90);
+      let miles = Math.floor((deltas.charge / 100) * car.getRange('LOW') * 0.94);
       let credit = Math.floor(miles / 5);
       if(credit > 0) {
         yield booking.addFlag('charge');
