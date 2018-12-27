@@ -31,18 +31,23 @@ scheduler.process('bookings-in-last-day', function*(job) {
     ],
   });
 
+  // puts cars near each other approximately next to each other.
+  carsToCheck.sort(function(a, b) { return a.latitude - b.latitude + (a.longitude - b.longitude) } );
+
   for (let car of carsToCheck) {
-    if (car.bookings.length === 0) {
+    if (car.bookings.length === 0 && car.license.search(/work/) === -1) {
       // If there are no bookings from the last 24 hours, the address of the car is
       // found and the slack notification is sent out
       let address = yield geocodeService.getAddress(
         car.latitude,
         car.longitude,
       );
+      // if the car is available and not in repair, this is a bad sign
+      let warn = car.isAvailable) ? " *AVAILABLE*" : (!car.inRepair ? " *NOT IN REPAIR*" : "");
       yield notify.notifyAdmins(
         `:sleeping_accommodation: ${
           car.license
-        } has not been booked in the last 24 hours. It is currently at ${address}`,
+        } (${car.range}%${warn}) has not been booked in the last 24 hours. It is currently at ${address}`,
         ['slack'],
         {channel: '#rental-alerts'},
       );
@@ -71,13 +76,13 @@ module.exports = function*() {
       ? moment()
           .tz('America/Los_Angeles')
           .hours(22)
-          .minutes(0)
+          .minutes(35)
           .seconds(0)
       : moment()
           .tz('America/Los_Angeles')
           .add(1, 'days')
           .hours(22)
-          .minutes(0)
+          .minutes(35)
           .seconds(0);
   // This gets the seconds until the cars are to be marked unavailable
   let secondsUntilTime = Math.abs(moment().diff(timeToCheck, 'seconds'));
