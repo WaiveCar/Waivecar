@@ -337,6 +337,17 @@ module.exports = class BookingService extends Service {
     // If the car is currently WaiveParked, the notes from the spot need to be attached to the message.
     let currentParking = yield UserParking.findOne({ where: { carId: car.id } });
 
+    let carpoolWarning = '';
+
+    if(!isLevel) {
+      let actionService = require('./action-service');
+      let shouldWarn = yield actionService.getAction('tagWarnStartRide', driver.id, driver);
+      if(shouldWarn.action) {
+        yield actionService.goForward('tagWarnLockCar', driver.id);
+        carpoolWarning = ' Notice: as of January 1, 2019, WaiveCars no longer have special carpool lane privileges.';
+      }
+    }
+
     let timeToCarStr = '';
     if(isRush) {
       timeToCarStr = "You've been WaiveRushed so take your time, your reservation does not expire. Hourly charges begin at 10AM.";
@@ -350,7 +361,7 @@ module.exports = class BookingService extends Service {
     }
 
     let msg = [
-      `${car.license} is yours!`,
+      `${car.license}'s yours!${carpoolWarning}`,
       'If you have trouble, reply "start ride" when next to the WaiveCar.', 
       (currentParking ? `It is WaiveParked with the notes: "${currentParking.notes}". ` : ''),
       timeToCarStr,
