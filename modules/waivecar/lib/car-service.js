@@ -25,6 +25,7 @@ let User = Bento.model('User');
 let Car  = Bento.model('Car');
 let Booking = Bento.model('Booking');
 let BookingDetails = Bento.model('BookingDetails');
+let ParkingDetails = Bento.model('ParkingDetails');
 let GroupCar  = Bento.model('GroupCar');
 const util = require('util')
 
@@ -76,6 +77,7 @@ module.exports = {
   *index(query, _user) {
     var hour = moment().tz('America/Los_Angeles').format('H');
     var isAdmin = _user && _user.hasAccess('admin');
+    let cars;
 
     var opts = {
       include: [{
@@ -165,34 +167,71 @@ module.exports = {
       opts = {};
     }
 
-    let cars = yield Car.find(opts);
+    if(query.type === 'parking') {
+      opts.where = {
+        inRepair: false,
+        adminOnly: false,
+        bookingId: null,
+        license: { $notLike: '%work%' }
+      };
+      
+      opts.include = [{
+        model: sequelize.models.GroupCar,
+        as: 'tagList',
+      }, {
+        model: sequelize.models.Booking,
+        as: 'bookings',
+        required: false,
+        limit: 1,
+        where: {
+          status: { $in: ['completed', 'ended'] }
+        },
+        order: [['created_at','desc']],
+        include: [{
+          required: false,
+          model : sequelize.models.BookingDetails,
+          as    : 'details',
+          where: {
+            type: 'end'
+          }
+        },{
+          model: sequelize.models.ParkingDetails,
+          required: false,
+          as    : 'parkingDetails'
+        }],
+      }];
 
-    // console.log(util.inspect(opts, false, null));
+      cars = yield Car._schema.findAll(opts);
+    } else {
+      cars = yield Car.find(opts);
 
-    if(_user) {
-      let available = 0;
-      cars.forEach(function(car) {
-        car.license = car.license || '';
+      // console.log(util.inspect(opts, false, null));
 
-        // we want a single reference for this number
-        // and not have it be computed in various places
-        car.range = car.milesAvailable(); 
+      if(_user) {
+        let available = 0;
+        cars.forEach(function(car) {
+          car.license = car.license || '';
 
-        available += car.isAvailable;
+          // we want a single reference for this number
+          // and not have it be computed in various places
+          car.range = car.milesAvailable(); 
 
-        // We toggle the car to be "available" for the admin so
-        // that it will show up on the list of cars. This helps
-        // fleet pick up low cars at night from the app in an 
-        // easy way.
-        car.isReallyAvailable = car.isAvailable;
-        if(isAdmin) {
-          car.isAvailable = true;
-        }
+          available += car.isAvailable;
 
-        legacyWorkAround(car);
-      });
+          // We toggle the car to be "available" for the admin so
+          // that it will show up on the list of cars. This helps
+          // fleet pick up low cars at night from the app in an 
+          // easy way.
+          car.isReallyAvailable = car.isAvailable;
+          if(isAdmin) {
+            car.isAvailable = true;
+          }
 
-      fs.appendFile('/var/log/outgoing/carsrequest.txt', JSON.stringify([new Date(), available, _user.id, _user.latitude, _user.longitude]) + '\n',function(){});
+          legacyWorkAround(car);
+        });
+
+        fs.appendFile('/var/log/outgoing/carsrequest.txt', JSON.stringify([new Date(), available, _user.id, _user.latitude, _user.longitude]) + '\n',function(){});
+      }
     }
 
     return cars;
