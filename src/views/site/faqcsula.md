@@ -42,16 +42,16 @@ It's very quick! Should only take about 15 minutes for the signup and the backgr
 
 ## Booking Cars
 ### What are WaiveCar's hours?
-Our cars are available from 5am - 1am and the customer service line is open from 8am-10pm. If you need assistance at other hours, simply send us an email at support@waive.car and we will reach you at our earliest convenience. 
+Our cars are available from 5am - 1am and the customer service line is open from 9am - 10pm. If you need assistance at other hours, simply send us an email at support@waive.car and we will reach you at our earliest convenience. 
 
 ### How do I book a WaiveCar?
-Log onto the app and find the closest available WaiveCar to you. Hit "Book it"! You then have 15 minutes to get to the car before the reservation times out.
+Log onto the app and find the closest available WaiveCar to you. You then have 15 minutes to get to the car before the reservation times out.
 
 ### Where can I get a WaiveCar?
-We have WaiveCars parked in designated spots throughout campus. 
+We have WaiveCars parked in designated spots throughout the CSULA campus. 
 
 ### How long do I have to get to a WaiveCar?
-You have 15 minutes to get to a WaiveCar before the reservation times out. You may purchase an additional 10 minutes for a $1 fee. 
+You have 15 minutes to get to a WaiveCar before the reservation times out. You may purchase an additional 10 minutes for a $1 fee and $.30/min thereafter until you get to the vehicle.
 
 If you are 55 or over, you automatically get WaiveAid. WaiveAid allows you 25 minutes to get to your WaiveCar, for free, every time. You can still purchase an additional 10 minutes more for $1, totaling 35 minutes. If you are under 55 and need assistance, such as having a child in stroller or a handicap placard, please contact us
 
@@ -63,7 +63,7 @@ Unlike a rental company, you CANNOT reserve a car in advance. WaiveCar believes 
 ### Can I book multiple cars a day?
 Yep! And even better, you will get the free 2 hours for EVERY ride!
 
-However, there is a 30 minute wait to re-book the car you just finished renting. We do allow you to skip the wait period for a $5 charge.
+However, there is a 25 minute wait to re-book the car you just finished renting. We do allow you to skip the wait period for a fee.
 
 ### Does the free 2 hours start when I reserve a car or when I start the ride?
 When you start the ride! Enjoy your leisurely walk!
@@ -72,7 +72,7 @@ When you start the ride! Enjoy your leisurely walk!
 Nope! The free 2 hours counts for having the car while it's driving or parked. 
 
 ### What happens if I don't make it to the car in 15 minutes?
-Then your reservation will expire! So hurry up and try to rebook the same car or another WaiveCar before it's gone! We're a hot commodity!
+Then your reservation will expire! So make sure you book when you can get to the car within the free reservation time (15 minutes) and it'll be free. You can rebook a missed reservation for a fee.
 
 ### What's with that $20 charge when I book a WaiveCar?
 No worries! It's just a $20 hold on your card we will refund right back to you when your ride is complete!
