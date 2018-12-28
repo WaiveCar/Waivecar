@@ -1,11 +1,13 @@
 ## What is WaiveCar?
-WaiveCar is the first ever FREE & 100% electric car sharing program. We are ad-supported so the funds we receive from advertisers to display their ads on our roof-mounted screens and body wraps allow users to drive our cars FREE for 2 hours then $5.99/hr...MIC DROP.
+WaiveCar is the first ever FREE & 100% electric car sharing program. We are ad-supported so the funds we receive from advertisers to display their ads on our roof-mounted screens and body wraps allow users to drive our cars FREE for 2 hours then $5.99/hr. 
+
+Yes, 2 hours free, for a car, then half the price of an e-scooter every hour after.
 
 ## Signing up
 ### What do I need to sign up?
 All you need to sign up with Waive is a smart phone, credit card, a valid driver's license, and a good driving record. Simply download the app from your app store!
 
-<small>Otherwise, if you have reliable access to a computer with the internet and a traditional cellphone, using our service is a bit more work still entirely possible (many of our frequest users do this). Register through [our website](https://waive.car), then [use WaiveBasic to find cars](https://medium.com/@Waive/introducing-waivebasic-the-simple-way-to-waive-41ea9df926b9) and control the [car over text during the booking](https://medium.com/@Waive/how-to-control-a-waivecar-over-text-7a1cc6176b45).</small>
+<aside>Are you a power user? We have many programs and features not explained in this faq. Find out more by reading through our blog at medium.com/@waive. Want to look later? Search "medium waive" in your search engine of choice.</aside>
 
 #### What's a good driving record?
 
@@ -18,7 +20,7 @@ To us, a good driving record means one without any:
 * Accidents
 
 ### Does it cost any money to sign up?
-Nope! We promise there REALLY are no catches. We're that magical.
+Nope! We promise there really are no catches. We're that magical.
 
 ### Why do I need a credit card to sign up if it's free?
 We charge a temporary $20 hold on your card when you book a car that is immediately refunded just to make sure there are funds in case you go over the 2 free hours!
@@ -63,12 +65,13 @@ Right now our cars are dispersed between Marina Del Rey and Hollywood, check our
 ### How long do I have to get to a WaiveCar?
 
 You have 15 minutes to get to a WaiveCar before the reservation times out. You may purchase an additional 10 minutes for a $1 fee and $.30/min thereafter until you get to the vehicle.
-If you are 55 or over, you automatically get WaiveAid. WaiveAid allows you 25 minutes to get to your WaiveCar, for free, every time. You can still purchase an additional 10 minutes more for $1, totaling 35 minutes. If you are under 55 and need assistance, such as having a child in stroller or a handicap placard, please contact us
 
 Once you get there, please make sure you drive the WaiveCar! We may have to forfeit your booking if the WaiveCar isn't being used. But don't worry, we send out a message beforehand and you'll have plenty of time to contact us if we've made a mistake.
 
+<aside>Members 55+ automatically get an extra 10 free minutes (25 minutes total) to get to their WaiveCar. This program is available for anyone who needs assistance. Read more info at our blog.</aside>
+
 ### Can I reserve a car in advance?
-Yes! We have a program where you can hold a car overnight for a special flat rate until 10AM of $14.99. Book a high charged car after 10PM and you will be offered a program we call WaiveRush. Hourly charges won't begin until 10AM.
+Yes! We have a program where you can hold a car overnight for a special flat rate until 10AM of $14.99 (info on the medium blog). Book a high charged car after 10PM and you will be offered a program we call WaiveRush. Hourly charges won't begin until 10AM.
 
 ### Can I book multiple cars a day?
 Yep! And even better, you will get the free 2 hours for EVERY ride!
@@ -87,6 +90,8 @@ Then your reservation will expire! So make sure you book when you can get to the
 ### What's with that $20 charge when I book a WaiveCar?
 No worries! It's just a $20 hold on your card we will refund right back to you when your ride is complete!
 
+<aside>If you have credit in your account, for instance, by "topping up" and adding $20.00 on the website, the hold is reduced to just $1.00!</aside>
+
 ## Driving Cars
 ### How far can I drive with a WaiveCar?
 
@@ -96,16 +101,24 @@ You can drive up to 30 miles outside of any of our parking borders, which includ
 There are no keys, simply use the app to lock, unlock and end all rides. 
 
 ### I've never driven an electric car. How many miles per charge do I get?
-Our Hyundai Ioniqs have between 110-140 depending on driving style.
+Our Hyundai Ioniqs have between 110-140 miles depending on driving style. 
+
+<aside>The best way to get all the miles you can is to take it slow, roll up the windows and turn down the heat.</aside>
 
 ### What should I do if I'm running low on charge?
 Check the app for the closest fast charger, or download the app "PlugShare". Give us a call at 855-WAIVE55 if there is any confusion and we can direct you to one!
 
 ### Do you guys cover the charging station costs?
-If you use a charger listed in the app with our partners, EVgo, charging is free and can be done in under 30 minutes. You will also [receive credit](https://medium.com/@Waive/free-fast-charging-this-changes-everything-again-b7480f8d0dd4) if you end the ride at a higher charge than when you began it at.
+If you use an EVgo fast charger listed in the app, charging is free and can be done in under 30 minutes. 
+
+Also there is a company, Volta, which provides free charging at various retail stores for their current customers. Their "Level-2" chargers will add about 12 miles of fuel per hour charged.
+
+<aside>You will receive credit if you end the ride at a higher charge than when you began it at. We have a variety of incentive programs you can participate in - read the medium blog for all the details.</aside>
 
 ### Is it true I can drive in the carpool lane on the highway?
-As of January 1, 2019, CA law has changed and some of our cars no longer have special car pool lane privileges because they need to be re-registered and re-tagged. We are working on making sure all of our vehicles have the proper decals and will notify you when they do.  Until then, cars with a red decal on the back have special car pool privileges.
+**Currently No:** As of January 1, 2019, California law has changed and some of our cars no longer have special car pool lane privileges because they need to be re-registered and re-tagged. 
+
+We are working on making sure all of our vehicles have the proper decals and will notify you when they do.  Until then, cars with a red decal on the back have special car pool privileges.
 
 ### Can someone else drive using my account?
 This one's a big N.O. The ONLY person allowed to drive a WaiveCar is the person on the account who has booked the car. Big consequences if we find out otherwise!
@@ -120,12 +133,12 @@ If you get a ticket, you have 7 days to pay it. If you don't pay it within that 
 
 If the battery is over 25 miles charged, you can park at any 3 hour public parking spot in Santa Monica excluding metered parking. Outside of Santa Monica 12 hours of free parking is needed. Please note, if the battery is under 25 miles charged you MUST return it at the headquarters at 2102 Pico Blvd in Santa Monica (Not 2102 Pico near S Alverado St).
 
-However, after 10pm, parking must be valid until 10:00 AM that morning.
+However, after 10pm, parking must be valid until 10:00 AM.
 
 ### Where can I **NOT** park?
 Private parking spaces, parking garages, permit-only spots, any business parking lot, or ANYWHERE not in our operating area! Make sure to check street signs so that there are no parking restrictions on the spot for 3 hours(in SM) and 12 hours (Outside of SM).
 
-We have a program where you can declare a parking space you own to be valid for any waivecar to park at. [Check out our medium post for more info](https://medium.com/@Waive/want-waivecars-to-magically-appear-delivered-free-to-your-driveway-fa05bb3a345b).
+<aside>We have a program where you can declare a parking space you own to be valid for any WaiveCar to park at called WaivePark described at our blog.</aside>
 
 Restricted parking includes:
 
@@ -142,7 +155,9 @@ First make sure that you are parked in an accurate spot (see above). Turn off th
 Yes! No need for an extensive cleaning, but make sure all your belongings are out of the car and clean up any trash you may leave. If you leave a mess, there could be a cleaning fee!
 
 ### Do I need to charge the car before I end my ride?
-Nope! Follow the rules above. If the car is under 25 miles charged, simply return it at the HQ!
+Nope! Follow the rules above. If the car is under 25 miles charged, simply return it to 2102 Pico in Santa Monica.
+
+<aside>The gates at our lot never close and WaiveCars can be returned at any hour at any charge there. Please tidely park the car so others can access the lot.</aside>
 
 ### <a name="fees"></a>Fees
 
@@ -152,7 +167,7 @@ There are some modest fees in order to keep our fleet bright and shiny.
 * **Dead Battery / Lights Left On** $100
 * **Missing Key (Failure to return equipment)** $300
 * **Parking Violation (Any violation of our parking rules)** $40
-* **Vehicle Recovery (if left outside Santa Monica)** $300 minimum
+* **Vehicle Recovery (If left outside Santa Monica)** $300 minimum
 * **Declined Credit Card** Charges + $5 penalty fee
 * **Excess Time (Non Waive time)** $1 for every 10 mins. ($5.99/hour)
 
@@ -162,10 +177,13 @@ There are some modest fees in order to keep our fleet bright and shiny.
 * **Damage to the interior** Our costs to repair
 
 There's a few unfortunate events that can happen where we have pass the costs on to you:
+
 * **Public Garage Parking Fee** Cost to remove vehicle from garage + $40 parking violation
 * **Vehicle Recovery (inside Santa Monica)** Miscellaneous Recovery Costs
 * **Parking Ticket** Ticket Price + $20.00 Handling fee (unless user pays themselves)
 * **Impounded Vehicle** Cost of impound fee + $100 recovery
+
+<aside>The *best* way to avoid fees is to make sure the vehicle doesn't ever get too low. Remember, there's plenty of free places to charge a WaiveCar.</aside>
 
 If the car is physically damaged during the rental due to things such as an accident, we will hold
 $1,000 deposit and will return it to you if the insurance determines you are not at fault.
@@ -173,6 +191,7 @@ $1,000 deposit and will return it to you if the insurance determines you are not
 ### Restricted Parking
 
 Restricted parking includes:
+
 * Street parking restricted by signs such as during street sweeping hours
 * Private lots (Whole Foods, Ralphs, etc.)
 * Private driveways & Permit-only zones unless WaiveParked

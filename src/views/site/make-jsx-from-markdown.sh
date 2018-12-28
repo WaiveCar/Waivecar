@@ -14,7 +14,7 @@ module.exports = class $ucfirst_name extends Component {
         <div className='row'>
           <div className="col-xs-12 col-md-8 col-md-push-2 faq">
 ENDL
-pandoc $file | sed s'/^/          /'
+pandoc $file | sed s'/^/          /' | sed s/'a href/a target="_blank" href/g'
 cat << ENDL
           </div>
         </div>

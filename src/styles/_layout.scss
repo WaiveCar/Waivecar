@@ -62,3 +62,16 @@ body {
   transform  : translateX(-50%) translateY(-50%);
   background : $gray-dark;
 }
+aside:before {
+  content: "💡 ";
+  margin-left: -1.3rem;
+  font-style: normal;
+}
+aside {
+  padding: 0.5rem;
+  padding-left: 1.65rem;
+  background: seashell;
+  border-left: 3px solid NavajoWhite;
+  font-style: italic;
+  margin-bottom: 1rem;
+}
