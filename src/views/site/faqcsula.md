@@ -1,5 +1,6 @@
 ## What is WaiveCar?
-WaiveCar is the first ever FREE & 100% emission free car sharing program. We are ad-supported so the funds we receive from advertisers to display their ads on our roof-mounted screens and body wraps allow users to drive our cars FREE for 2 hours then $5.99/hr...MIC DROP.
+WaiveCar is the first ever FREE & 100% emission free car sharing program. We are ad-supported so the funds we receive from advertisers to display their ads on our roof-mounted screens and body wraps allow users to drive our cars FREE for 2 hours then $5.99/hr.
+
 Yes, 2 hours free, for a car, then half the price of an e-scooter every hour after.
 
 ## Signing up
