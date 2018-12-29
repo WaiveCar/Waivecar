@@ -2113,7 +2113,7 @@ module.exports = class BookingService extends Service {
           yield notify.notifyAdmins(`:dark_sunglasses: ${ holder.link() } may have been holding a car for ${ user.link() }.`, [ 'slack' ], { channel : '#user-alerts' });
         }
         if(scam === 'SWAPPING') {
-          yield notify.notifyAdmins(`:couple: ${ holder.link() } (${Math.round(lastBooking.getDurationInMinutes())}min booking) may bw swapping ${ car.link() } with ${ user.link() }.`, [ 'slack' ], { channel : '#user-alerts' });
+          yield notify.notifyAdmins(`:couple: ${ holder.link() } (${Math.round(lastBooking.getDurationInMinutes())}min booking) may be swapping ${ car.link() } with ${ user.link() }.`, [ 'slack' ], { channel : '#user-alerts' });
         }
       }
     }
