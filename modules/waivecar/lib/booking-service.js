@@ -2081,7 +2081,7 @@ module.exports = class BookingService extends Service {
     let lastBooking = yield Booking.findOne({
       where : {
         carId  : car.id,
-        status : 'cancelled'
+        status : { $in: ['cancelled', 'completed'] }
       },
       include: [ 
         {
@@ -2094,18 +2094,27 @@ module.exports = class BookingService extends Service {
       ]
     });
 
-    if(lastBooking && moment().diff(lastBooking.getEndTime(), 'minutes') < 2) {
+    if(lastBooking && moment().diff(lastBooking.getEndTime(), 'minutes') < 1.75) {
       // If the most recent booking is not by the user booking 
       // (but the user had booked within our margin) then we call
       // it suspicious but let thing go ahead.
       if(lastBooking.userId != user.id) {
         let holder = yield User.findById(lastBooking.userId);
 
+        let scam = (lastBooking.status === 'completed') ? 'SWAPPING': 'HOLDING';
+        if(scam === 'SWAPPING' && lastBooking.getDurationInMinutes() < 102 && lastBooking.getDurationInMinutes() > 17) {
+          return;
+        }
         // We tarnish both users' stellar records.
-        yield UserLog.addUserEvent(user, 'HOLDING', holder.id, holder.name());
-        yield UserLog.addUserEvent(holder, 'HOLDING', user.id, user.name());
+        yield UserLog.addUserEvent(user, scam, holder.id, holder.name());
+        yield UserLog.addUserEvent(holder, scam, user.id, user.name());
 
-        yield notify.notifyAdmins(`:dark_sunglasses: ${ holder.link() } may have been holding a car for ${ user.link() }.`, [ 'slack' ], { channel : '#user-alerts' });
+        if(scam === 'HOLDING') {
+          yield notify.notifyAdmins(`:dark_sunglasses: ${ holder.link() } may have been holding a car for ${ user.link() }.`, [ 'slack' ], { channel : '#user-alerts' });
+        }
+        if(scam === 'SWAPPING') {
+          yield notify.notifyAdmins(`:couple: ${ holder.link() } (${Math.round(lastBooking.getDurationInMinutes())}min booking) may be swapping cars with ${ user.link() }.`, [ 'slack' ], { channel : '#user-alerts' });
+        }
       }
     }
   }
