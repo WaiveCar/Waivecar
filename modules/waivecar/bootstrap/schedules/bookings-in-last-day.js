@@ -46,7 +46,12 @@ function *showBookings() {
     let header = (yield geocodeService.getAddress(
       carList[0].latitude,
       carList[0].longitude,
-    )).replace(/, (CA|NY|USA)/g,'');
+    ));
+    if(header) {
+      header = header.replace(/, (CA|NY|USA)/g,'');
+    } else {
+      header = `${carList[0].latitude}, ${carList[0].longitude}`;
+    }
     let row = [[]];
     
     for(let car of carList) {
