@@ -122,6 +122,23 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
       return this.status.replace('-', ' ');
     },
 
+    getDurationInMinutes() {
+      if(this.details) {
+        if(!this.details.length) {
+          // canceled bookings
+          return 0;
+        }
+
+        // buggy bookings
+        if(this.details[0].type === 'end') {
+          return 0;
+        }
+        if(this.details[1] && this.details[1].type === 'end') {
+          return (this.details[1].updatedAt - this.details[0].createdAt) / 60000;
+        }
+      }
+    },
+
     getEndTime() {
       if(this.details) {
         if(!this.details.length) {
