@@ -59,7 +59,8 @@ function *showBookings() {
       }
       let msg = `${car.link()} ${lastBooking}d ${warn}`;
       if(weeks > 1) {
-        msg += ` (${weeks} weeks!)`
+        msg = msg.trim();
+        msg += ` (${weeks}wk)`
       }
       row.push(msg);
     }
