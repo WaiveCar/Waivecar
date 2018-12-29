@@ -66,7 +66,7 @@ module.exports = {
 
     console.log("trying to get " + lat + " " + long);
     try { 
-      let res = yield request(`https://basic.waivecar.com/location.php?latitude=${lat}&longitude=${long}`);
+      let res = yield request(`http://basic.waivecar.com/location.php?latitude=${lat}&longitude=${long}`);
       return res.body;
     } catch(ex) {
       console.log(ex);
