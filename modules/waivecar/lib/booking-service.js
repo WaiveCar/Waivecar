@@ -2107,7 +2107,7 @@ module.exports = class BookingService extends Service {
       ]
     });
 
-    if(lastBooking && moment().diff(lastBooking.getEndTime(), 'minutes') < 1) {
+    if(lastBooking && moment().diff(lastBooking.getEndTime(), 'minutes') < 0.6) {
       // If the most recent booking is not by the user booking 
       // (but the user had booked within our margin) then we call
       // it suspicious but let thing go ahead.
@@ -2115,7 +2115,8 @@ module.exports = class BookingService extends Service {
         let holder = yield User.findById(lastBooking.userId);
 
         let scam = (lastBooking.status === 'completed') ? 'SWAPPING': 'HOLDING';
-        if(scam === 'SWAPPING' && lastBooking.getDurationInMinutes() < 102 && lastBooking.getDurationInMinutes() > 17) {
+        let duration = lastBooking.getDurationInMinutes();
+        if(scam === 'SWAPPING' && (duration > 200 || (duration < 102 && duration > 17))) {
           return;
         }
         // We tarnish both users' stellar records.
