@@ -795,11 +795,24 @@ module.exports = class BookingService extends Service {
         return;
       }
 
-      throw error.parse({
-        code    : `BOOKING_REQUEST_INVALID`,
-        status  : booking.status,
-        message : `You must be in 'reserved' status to start your ride, you are currently in '${ booking.getStatus() }' status.`
-      }, 400);
+      // the person didn't complete the last ride so what we try to do is tell them that
+      // and just complete the ride
+      if(booking.status === 'ended') {
+        try {
+          yield this._complete(id, _user);
+        } catch(ex) {
+          // We were unable to end the ride so we then have to explain why
+          // a start ride is tripping us up.
+          ex.message = "You haven't ended your previous ride and we can't do it automatically because \"" + ex.message + "\"";
+          throw ex;
+        }
+      } else {
+        throw error.parse({
+          code    : `BOOKING_REQUEST_INVALID`,
+          status  : booking.status,
+          message : `You must be in 'reserved' status to start your ride, you are currently in '${ booking.getStatus() }' status.`
+        }, 400);
+      }
     }
 
     // Verify no one else has booked car
