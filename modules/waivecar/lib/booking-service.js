@@ -2094,7 +2094,7 @@ module.exports = class BookingService extends Service {
       ]
     });
 
-    if(lastBooking && moment().diff(lastBooking.getEndTime(), 'minutes') < 1.75) {
+    if(lastBooking && moment().diff(lastBooking.getEndTime(), 'minutes') < 1) {
       // If the most recent booking is not by the user booking 
       // (but the user had booked within our margin) then we call
       // it suspicious but let thing go ahead.
