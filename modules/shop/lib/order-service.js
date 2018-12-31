@@ -94,6 +94,11 @@ module.exports = class OrderService extends Service {
     }
 
     try {
+      // this is a dry run that populates the charge with the amount we would like to charge the user
+      charge = yield this.charge(order, user, Object.assign({dry: true}, opts));
+
+      // this is the real one and if successful will override the last value with a real charge, 
+      // otherwise the previous assignment sticks.
       charge = yield this.charge(order, user, opts);
 
       if(data.amount > 0) {
@@ -117,8 +122,7 @@ module.exports = class OrderService extends Service {
         chargeName: data.description,
       }), user);
 
-    } catch (struct) {
-      let [charge, err] = struct; 
+    } catch (err) {
       yield this.failedCharge(data.amount || charge.amount, user, err);
       yield this.suspendIfMultipleFailed(user);
 
@@ -275,8 +279,7 @@ module.exports = class OrderService extends Service {
       yield notify.notifyAdmins(`:moneybag: ${ _user.name() } charged ${ user.link() } $${ amountInCents / 100 } for ${ data.description } | ${ apiConfig.uri }/bookings/${ data.bookingId }`, [ 'slack' ], { channel : '#rental-alerts' });
 
       yield hooks.call('shop:store:order:after', order, payload, _user);
-    } catch (struct) {
-      let [charge, err] = struct; 
+    } catch (err) {
       yield this.failedCharge(amountInCents, user, err);
       throw error.parse({
         code    : `SHOP_PAYMENT_FAILED`,
@@ -306,8 +309,7 @@ module.exports = class OrderService extends Service {
     try {         
       yield this.charge(order, user, {nodebt: true});
       yield notify.notifyAdmins(`:heavy_dollar_sign: Charged the impatient ${ user.link() } $${ fee } to rebook ${ car.license }. ${ user.getCredit() }`, [ 'slack' ], { channel : '#rental-alerts' });
-    } catch (struct) {
-      let [charge, err] = struct; 
+    } catch (err) {
       yield this.failedCharge(amount, user, err, ` ${booking.link()} `);
       return;
     }
@@ -335,8 +337,7 @@ module.exports = class OrderService extends Service {
     try {
       yield this.charge(order, user, {nodebt: true});
       yield notify.notifyAdmins(`:moneybag: Charged ${ user.link() } $${ (amount / 100).toFixed(2) } on ${ booking.link() } ${ time }min extension. ${ user.getCredit() }`, [ 'slack' ], { channel : '#rental-alerts' });
-    } catch (struct) {
-      let [charge, err] = struct; 
+    } catch (err) {
       yield this.failedCharge(amount, user, err, ` | ${ booking.link() }`);
       return false;
     }
@@ -437,8 +438,7 @@ module.exports = class OrderService extends Service {
         if(!booking.isFlagged('rush')) {
           log.info(`Charged user for time driven : $${ amount / 100 } : booking ${ booking.id }`);
         }
-      } catch (struct) {
-        let [charge, err] = struct; 
+      } catch (err) {
         yield this.failedCharge(amount, user, err, ` | ${ booking.link() }`);
       }
 
@@ -843,6 +843,9 @@ module.exports = class OrderService extends Service {
         // Then 4 - 2 = 2 ... we charge them $2.
         let amountToCharge = order.amount - credit;
         charge.amount = amountToCharge;
+        if(opts.dry) {
+          return charge;
+        }
 
         // Stripe will sensibly tell us to jump in a lake if the amount to
         // charge is under a dollar. If this is the case we don't bother.
@@ -850,7 +853,7 @@ module.exports = class OrderService extends Service {
         //
         if(amountToCharge < 100) {
           silentFailure = true;
-          throw [charge, new Error];
+          throw new Error;
         } else {
           charge = yield service.create({
             source      : order.source,
@@ -902,7 +905,7 @@ module.exports = class OrderService extends Service {
         if(!silentFailure) {
           // We need to pass up this error because it's being handled
           // above us.
-          throw [charge, ex];
+          throw ex;
         }
 
         // This is here in case someone is sloppy and removes the 
