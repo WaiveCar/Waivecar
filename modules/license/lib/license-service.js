@@ -142,7 +142,7 @@ module.exports = class LicenseService extends Service {
     // The checkr ones appear to be base64 strings. So we can check for
     // a hyphen to see if its onfido. If so we re-run it.
     //
-    if (!license.linkedUserId || license.linkedUserId.match(/-/) || license.checkId.match(/-/)) {
+    if (!license.linkedUserId || (license.linkedUserId && license.linkedUserId.match(/-/)) || (license.checkId && license.checkId.match(/-/))) {
       let userLink      = yield Verification.createUserLink(user, data, _user);
       data.linkedUserId = userLink.id;
       data.status       = 'provided';
