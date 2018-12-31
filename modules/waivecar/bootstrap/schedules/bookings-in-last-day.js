@@ -2,52 +2,80 @@
 
 let scheduler = Bento.provider('queue').scheduler;
 let Car = Bento.model('Car');
+let User = Bento.model('User');
 let moment = require('moment-timezone');
 let notify = require('../../lib/notification-service');
 let geocodeService = require('../../lib/geocoding-service');
 let redis     = require('../../lib/redis-service');
 
-scheduler.process('bookings-in-last-day', function*(job) {
+function *showBookings() {
   if (!(yield redis.shouldProcess('bookings-in-last-day', (new Date()).getDay(), 90 * 1000))) {
     return;
   }
   // This queries for all cars and their bookings from the last 24 hours
   let carsToCheck = yield Car.find({
-    where: {
-      isWaivework: false,
-      inRepair: false,
-    },
     include: [
       {
         model: 'Booking',
         as: 'bookings',
         required: false,
-        where: {
-          createdAt: {
-            $gt: moment().subtract(1, 'days'),
-          },
-        },
+        limit: 1,
+        order: [['created_at','desc']],
       },
     ],
   });
 
+  let output = [];
+  let locHash = {};
+  carsToCheck.sort(function(a, b) { return a.latitude - b.latitude + (a.longitude - b.longitude) } ); 
   for (let car of carsToCheck) {
-    if (car.bookings.length === 0) {
-      // If there are no bookings from the last 24 hours, the address of the car is
-      // found and the slack notification is sent out
-      let address = yield geocodeService.getAddress(
-        car.latitude,
-        car.longitude,
-      );
-      yield notify.notifyAdmins(
-        `:sleeping_accommodation: ${
-          car.license
-        } has not been booked in the last 24 hours. It is currently at ${address}`,
-        ['slack'],
-        {channel: '#rental-alerts'},
-      );
+    if (car.license.search(/(waive|csula)/i) != -1 && car.bookings.length) {
+      let lastBooking = new Date() - car.bookings[0].createdAt;
+      if(lastBooking / 1000 / 24 / 60 / 60 > 0.8) { 
+        let key = (car.latitude).toFixed(2) + (car.longitude).toFixed(2);
+        if(!locHash[key]) {
+          locHash[key] = [];
+        }
+        locHash[key].push(car);
+      }
     }
   }
+
+  for (let key in locHash) {
+    let carList = locHash[key];
+    let header = (yield geocodeService.getAddress(
+      carList[0].latitude,
+      carList[0].longitude,
+    ));
+    if(header) {
+      header = header.replace(/, (CA|NY|USA)/g,'');
+    } else {
+      header = `${carList[0].latitude}, ${carList[0].longitude}`;
+    }
+    let row = [[]];
+    
+    for(let car of carList) {
+      let lastBooking = Math.round((new Date() - car.bookings[0].createdAt) / 1000 / 24 / 60 / 60);
+      let weeks = Math.round(lastBooking / 7);
+      let warn = car.isAvailable ? "AVAILABLE" : (!car.inRepair ? "NOT IN REPAIR" : "");
+      if(car.userId) {
+        let user = yield User.findById(car.userId);
+        warn += ' ' + user.link();
+      }
+      let msg = `${car.link()} ${lastBooking}d ${warn}`;
+      if(weeks > 1) {
+        msg = msg.trim();
+        msg += ` (${weeks}wk)`
+      }
+      row.push(msg);
+    }
+    output.push(`*${header}*` + row.join("\n… "));
+  }
+  yield notify.notifyAdmins(
+    ':sleeping_accommodation: Sleeping cars\n' + output.join("\n\n"),
+    ['slack'],
+    {channel: '#rental-alerts'},
+  );
 
   scheduler.add('bookings-in-last-day', {
     timer: {
@@ -55,6 +83,10 @@ scheduler.process('bookings-in-last-day', function*(job) {
       type: 'hours',
     },
   });
+}
+
+scheduler.process('bookings-in-last-day', function*(job) {
+  yield showBookings();
 });
 
 module.exports = function*() {

@@ -484,4 +484,31 @@ module.exports = {
     );
     return space;
   },
+
+  // payload is an array of lat/lng
+  *query(payload) {
+    const util = require('util')
+
+    let resAll = [];
+    let threshold = 0.0012;
+
+    var start = new Date();
+    for(let row of payload.qstr) {
+      row.latitude = parseFloat(row.latitude);
+      row.longitude = parseFloat(row.longitude);
+      if(!isNaN(row.latitude) && !isNaN(row.longitude)) {
+        let qstr = [
+          `select address, pd.path, pd.created_at, abs(latitude - ${row.latitude}) + abs(longitude - ${row.longitude}) as dist`,
+          'from booking_details bd join parking_details pd on bd.id = pd.booking_id',
+          'where bd.type = "end" and pd.created_at > date_sub(current_timestamp, interval 20 month) and path is not null',
+          `having dist < ${threshold}`,
+          'order by dist asc limit 5'
+        ].join(' ');
+        row.results = (yield sequelize.query(qstr, {type: sequelize.QueryTypes.SELECT}));
+      }
+      resAll.push(row);
+    }
+    console.log(new Date() - start, payload.qstr.length);
+    return resAll;
+  }
 };

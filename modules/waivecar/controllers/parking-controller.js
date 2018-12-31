@@ -4,8 +4,11 @@ let parking = require('../lib/parking-service');
 
 Bento.Register.Controller('ParkingController', function(controller) {
   controller.index = function*() {
-    console.log("here");
     return yield parking.index();
+  };
+
+  controller.parkingQuery = function*() {
+    return yield parking.query(this.payload);
   };
 
   controller.create = function*() {

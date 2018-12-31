@@ -583,6 +583,11 @@ module.exports = class OrderService extends Service {
   }
 
   static *authorize(payload, _user) {
+    payload = payload || {};
+    // this is created for when there will be no charge on the account
+    var order = {
+      amount: 0,
+    };
     let card = yield _user.getCard();
     let amount = _user.credit > 0 ? 100 : 2000;
     // This data leak is so that if we fail to charge the card, we can
@@ -592,7 +597,9 @@ module.exports = class OrderService extends Service {
       amount: amount
     };
     let now = moment().utc();
-    if (_user.lastHoldAt === null || (_user.lastHoldAt && now.diff(_user.lastHoldAt, 'days') > 2)) {
+    if(payload.bypass) {
+      yield notify.notifyAdmins(`:rabbit2: ${ _user.link() } is bypassing authorization check`, [ 'slack' ], { channel : '#rental-alerts' });
+    } else if ( _user.lastHoldAt === null || (_user.lastHoldAt && now.diff(_user.lastHoldAt, 'days') > 2)) {
       if (!card) {
         throw error.parse({
           code    : 'SHOP_MISSING_CARD',
@@ -600,7 +607,7 @@ module.exports = class OrderService extends Service {
         });
       }
       // ### Create Order
-      var order = new Order({
+      order = new Order({
         createdBy   : _user.id,
         userId      : _user.id,
         source      : card.id,
@@ -618,12 +625,7 @@ module.exports = class OrderService extends Service {
         yield _user.update({ lastHoldAt: now });
       }
       yield this.cancel(order, _user, charge);
-    } else {
-      // this is created for when there will be no charge on the account
-      var order = {
-        amount: 0,
-      };
-    }
+    } 
     // notify that there was no hold for the ride
     return order;
   }
@@ -837,6 +839,7 @@ module.exports = class OrderService extends Service {
         // If the user has a credit of $2 and the fee is $4 
         // Then 4 - 2 = 2 ... we charge them $2.
         let amountToCharge = order.amount - credit;
+        charge.amount = amountToCharge;
 
         // Stripe will sensibly tell us to jump in a lake if the amount to
         // charge is under a dollar. If this is the case we don't bother.
@@ -856,7 +859,7 @@ module.exports = class OrderService extends Service {
           }, user);
           t("charges-create");
 
-          charge.amount = order.amount - credit;
+          charge.amount = amountToCharge;
 
           yield order.update({
             service  : config.service,

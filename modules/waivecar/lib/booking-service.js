@@ -152,7 +152,8 @@ module.exports = class BookingService extends Service {
           // we need to make sure that admins will pass the code below
           order = {amount: 0, createdAt: new Date()};
         } else {
-          order = yield OrderService.authorize(null, driver);
+          let opts = {bypass: data.bypass};
+          order = yield OrderService.authorize(opts, driver);
         } 
         t("auth");
         let orderDate = moment(order.createdAt).format('MMMM Do YYYY');
@@ -336,6 +337,18 @@ module.exports = class BookingService extends Service {
     // If the car is currently WaiveParked, the notes from the spot need to be attached to the message.
     let currentParking = yield UserParking.findOne({ where: { carId: car.id } });
 
+    let carpoolWarning = '';
+
+    if(!isLevel) {
+      let actionService = require('./action-service');
+      let shouldWarn = yield actionService.getAction('tagWarnStartRide', driver.id, driver);
+      console.log(shouldWarn);
+      if(shouldWarn.action) {
+        yield actionService.goForward('tagWarnLockCar', driver.id);
+        carpoolWarning = ' Notice: As of January 1, 2019, WaiveCars no longer have special carpool lane privileges.';
+      }
+    }
+
     let timeToCarStr = '';
     if(isRush) {
       timeToCarStr = "You've been WaiveRushed so take your time, your reservation does not expire. Hourly charges begin at 10AM.";
@@ -349,7 +362,7 @@ module.exports = class BookingService extends Service {
     }
 
     let msg = [
-      `${car.license} is yours!`,
+      `${car.license}'s yours!${carpoolWarning}`,
       'If you have trouble, reply "start ride" when next to the WaiveCar.', 
       (currentParking ? `It is WaiveParked with the notes: "${currentParking.notes}". ` : ''),
       timeToCarStr,
@@ -782,11 +795,24 @@ module.exports = class BookingService extends Service {
         return;
       }
 
-      throw error.parse({
-        code    : `BOOKING_REQUEST_INVALID`,
-        status  : booking.status,
-        message : `You must be in 'reserved' status to start your ride, you are currently in '${ booking.getStatus() }' status.`
-      }, 400);
+      // the person didn't complete the last ride so what we try to do is tell them that
+      // and just complete the ride
+      if(booking.status === 'ended') {
+        try {
+          yield this._complete(id, _user);
+        } catch(ex) {
+          // We were unable to end the ride so we then have to explain why
+          // a start ride is tripping us up.
+          ex.message = "You haven't ended your previous ride and we can't do it automatically because \"" + ex.message + "\"";
+          throw ex;
+        }
+      } else {
+        throw error.parse({
+          code    : `BOOKING_REQUEST_INVALID`,
+          status  : booking.status,
+          message : `You must be in 'reserved' status to start your ride, you are currently in '${ booking.getStatus() }' status.`
+        }, 400);
+      }
     }
 
     // Verify no one else has booked car
@@ -909,7 +935,7 @@ module.exports = class BookingService extends Service {
     return hub;
   }
 
-  static *getZone(car) {
+  static *getZone(car, query=false) {
     var zone;
 
     if(!locationCache) {
@@ -924,6 +950,9 @@ module.exports = class BookingService extends Service {
         zone = row;
       }
     });
+    if(query) {
+      return zone && (zone.name.search(query) !== -1);
+    }
     return zone;
   }
 
@@ -1060,6 +1089,7 @@ module.exports = class BookingService extends Service {
       }
       yield redis.doneWithIt(lockKeys);
       throw error.parse({
+        _status : booking.status,
         code    : `BOOKING_REQUEST_INVALID`,
         message : 'An error happened, please try again'
       }, 400);
@@ -1233,7 +1263,7 @@ module.exports = class BookingService extends Service {
     //
     if(deltas.charge > 0) {
       // we err in the user's favor by using the high estimates
-      let miles = Math.floor((deltas.charge / 100) * car.getRange('LOW') * 0.90);
+      let miles = Math.floor((deltas.charge / 100) * car.getRange('LOW') * 0.98);
       let credit = Math.floor(miles / 5);
       if(credit > 0) {
         yield booking.addFlag('charge');
@@ -1343,6 +1373,7 @@ module.exports = class BookingService extends Service {
   // Locks, and makes the car available for a new booking.
   static *_complete(id, _user, query, payload) {
     let lockKeys = yield redis.shouldProcess('booking-complete', id);
+    let errorAtEnd = false;
     let details;
     if (!lockKeys) {
       return;
@@ -1442,6 +1473,13 @@ module.exports = class BookingService extends Service {
       //
       // ---
 
+    } catch(ex) {
+      if (!(query && query.force) || !booking || !car || !user) {
+        yield redis.doneWithIt(lockKeys);
+        throw ex;
+      }
+    }
+    try { 
       if (!isLevel) { 
         yield cars.lockCar(car.id, _user);
         yield cars.lockImmobilizer(car.id, _user);
@@ -1450,7 +1488,9 @@ module.exports = class BookingService extends Service {
         // yield booking.setNowLock({userId: _user.id, carId: car.id});
       }
     } catch(ex) {
-      if (!(query && query.force) || !booking || !car || !user) {
+      if(ex.code === 'TAG_WARNING') {
+        errorAtEnd = ex;
+      } else if (!(query && query.force) || !booking || !car || !user) {
         yield redis.doneWithIt(lockKeys);
         throw ex;
       }
@@ -1565,6 +1605,9 @@ module.exports = class BookingService extends Service {
       car.relay('update');
     }
     yield this.relay('update', booking, _user);
+    if(errorAtEnd) {
+      throw errorAtEnd;
+    }
   }
 
   // Closes a booking, this method is run when no payment is needed.
@@ -2051,7 +2094,7 @@ module.exports = class BookingService extends Service {
     let lastBooking = yield Booking.findOne({
       where : {
         carId  : car.id,
-        status : 'cancelled'
+        status : { $in: ['cancelled', 'completed'] }
       },
       include: [ 
         {
@@ -2064,18 +2107,28 @@ module.exports = class BookingService extends Service {
       ]
     });
 
-    if(lastBooking && moment().diff(lastBooking.getEndTime(), 'minutes') < 2) {
+    if(lastBooking && moment().diff(lastBooking.getEndTime(), 'minutes') < 0.5) {
       // If the most recent booking is not by the user booking 
       // (but the user had booked within our margin) then we call
       // it suspicious but let thing go ahead.
       if(lastBooking.userId != user.id) {
         let holder = yield User.findById(lastBooking.userId);
 
+        let scam = (lastBooking.status === 'completed') ? 'SWAPPING': 'HOLDING';
+        let duration = lastBooking.getDurationInMinutes();
+        if(scam === 'SWAPPING' && (duration > 200 || (duration < 102 && duration > 17))) {
+          return;
+        }
         // We tarnish both users' stellar records.
-        yield UserLog.addUserEvent(user, 'HOLDING', holder.id, holder.name());
-        yield UserLog.addUserEvent(holder, 'HOLDING', user.id, user.name());
+        yield UserLog.addUserEvent(user, scam, holder.id, holder.name());
+        yield UserLog.addUserEvent(holder, scam, user.id, user.name());
 
-        yield notify.notifyAdmins(`:dark_sunglasses: ${ holder.link() } may have been holding a car for ${ user.link() }.`, [ 'slack' ], { channel : '#user-alerts' });
+        if(scam === 'HOLDING') {
+          yield notify.notifyAdmins(`:dark_sunglasses: ${ holder.link() } may have been holding a car for ${ user.link() }.`, [ 'slack' ], { channel : '#user-alerts' });
+        }
+        if(scam === 'SWAPPING') {
+          yield notify.notifyAdmins(`:couple: ${ holder.link() } (${Math.round(lastBooking.getDurationInMinutes())}min booking) may be swapping ${ car.link() } with ${ user.link() }.`, [ 'slack' ], { channel : '#user-alerts' });
+        }
       }
     }
   }
@@ -2109,7 +2162,7 @@ module.exports = class BookingService extends Service {
       if(opts.buyNow) {
         if (booking.isFlagged('charge')) {
           yield notify.slack({ text : `:checkered_flag: The clever ${ user.link() }, booked ${ car.link() } ${ minutesStarted }min ago, charged it and then rebooked it.` }, { channel : '#rental-alerts' });
-          yield UserLog.addUserEvent(user, 'CHARGE-REBOOK', booking.id, `car.link() ${ minutesStarted }`);
+          yield UserLog.addUserEvent(user, 'CHARGE-REBOOK', booking.id, `${car.link()} ${ minutesStarted }`);
         }
 
         rebookOrder = yield OrderService.getCarNow(booking, user, opts.buyNow * 100);
@@ -2169,7 +2222,7 @@ module.exports = class BookingService extends Service {
         return buyOption;
       }
 
-      if(user.credit > 1800) {
+      if(user.credit - (fee * 100) > 100) {
         creditClaim = ` (You have $${ (user.credit/100).toFixed(2) } in credit!)`;
       }
 

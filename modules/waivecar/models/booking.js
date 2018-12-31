@@ -90,12 +90,14 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
   model.relations = [
     'BookingDetails',
     'BookingPayment',
+    'ParkingDetails',
     'Report',
     'Car',
     'User',
-    function relations(BookingDetails, BookingPayment, Report, Car, User) {
+    function relations(BookingDetails, BookingPayment, ParkingDetails, Report, Car, User) {
       this.hasMany(BookingDetails, { as : 'details',  foreignKey : 'bookingId' });
       this.hasMany(BookingPayment, { as : 'payments', foreignKey : 'bookingId' });
+      this.hasOne(ParkingDetails,  { as : 'parkingDetails', foreignKey : 'bookingId' });
       this.hasMany(Report,         { as : 'reports', foreignKey : 'bookingId' });
       this.belongsTo(Car, { as: 'car', foreignKey : 'carId' });
       this.belongsTo(User, { as: 'user', foreignKey : 'userId' });
@@ -118,6 +120,23 @@ Bento.Register.Model('Booking', 'sequelize', function(model, Sequelize) {
 
     getStatus() {
       return this.status.replace('-', ' ');
+    },
+
+    getDurationInMinutes() {
+      if(this.details) {
+        if(!this.details.length) {
+          // canceled bookings
+          return 0;
+        }
+
+        // buggy bookings
+        if(this.details[0].type === 'end') {
+          return 0;
+        }
+        if(this.details[1] && this.details[1].type === 'end') {
+          return (this.details[1].updatedAt - this.details[0].createdAt) / 60000;
+        }
+      }
     },
 
     getEndTime() {

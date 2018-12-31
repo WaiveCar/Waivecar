@@ -528,6 +528,7 @@ Bento.Register.Model('Car', 'sequelize', function register(model, Sequelize) {
     'lastAction',
     'lastActionTime',
     'currentBooking',
+    'parking',
     'tagList',
     'user'
   ];

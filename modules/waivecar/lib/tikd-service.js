@@ -15,6 +15,9 @@ let fs        = require('fs');
 module.exports = {
 
   *post(url, payload, opts) {
+    if(process.env.NODE_ENV !== 'production') {
+      return;
+    }
     var response, responseJSON;
 
     var startCommand =  {

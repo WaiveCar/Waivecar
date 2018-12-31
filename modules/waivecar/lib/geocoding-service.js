@@ -63,15 +63,10 @@ module.exports = {
   },
 
   *getAddress(lat, long, param) {
+
     try { 
-      let res = yield request(`https://maps.googleapis.com/maps/api/geocode/json?key=${config.gmaps.apiKey}`, {
-        qs : {
-          latlng : `${ lat },${ long }`
-        }
-      });
-      let body = JSON.parse(res.body);
-      param = param || 'formatted_address';
-      return body.results.length ? body.results[0][param] : null;
+      let res = yield request(`http://basic.waivecar.com/location.php?latitude=${lat}&longitude=${long}`);
+      return res.body;
     } catch(ex) {
       return null;
     }
