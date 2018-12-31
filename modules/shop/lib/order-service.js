@@ -839,6 +839,7 @@ module.exports = class OrderService extends Service {
         // If the user has a credit of $2 and the fee is $4 
         // Then 4 - 2 = 2 ... we charge them $2.
         let amountToCharge = order.amount - credit;
+        charge.amount = amountToCharge;
 
         // Stripe will sensibly tell us to jump in a lake if the amount to
         // charge is under a dollar. If this is the case we don't bother.
@@ -858,7 +859,7 @@ module.exports = class OrderService extends Service {
           }, user);
           t("charges-create");
 
-          charge.amount = order.amount - credit;
+          charge.amount = amountToCharge;
 
           yield order.update({
             service  : config.service,
