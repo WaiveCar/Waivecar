@@ -106,20 +106,20 @@ module.exports = {
 
     // Don't show la cars between 1 and 5am pacific time.
     // Unless you are an admin
-    if((hour >= 22 || hour < 1) && !isAdmin) {
+    if((hour >= 21 || hour < 0) && !isAdmin) {
       let $where = opts.where;
       opts.where = {
         $and: [ 
           { 
             $or: [ 
-              { charge: { $lt : 50 } }, 
-              { charge: { $gt : 60 } }
+              //{ charge: { $lt : 50 } }, 
+              { charge: { $gt : 75 } }
             ]
           },
           $where 
         ]
       };
-    } else if((hour >= 1 && hour < 4) && !isAdmin) {
+    } else if((hour >= 0 && hour < 3) && !isAdmin) {
       opts.where = { 
         $or : [
           sequelize.literal("is_available = true and tagList.group_role_id = 7"), { 
@@ -128,8 +128,8 @@ module.exports = {
             isAvailable: true,
             charge: {
               $or: [
-                { $lt : 35 },
-                { $gt : 60 }
+                //{ $lt : 35 },
+                { $gt : 90 }
               ]
             }
           }, 
